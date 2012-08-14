@@ -34,10 +34,10 @@ WHERE 1=1
 
 $outerProgramBaseQuery = "
 SELECT
-DISTINCT
-pg.Program_ID,
-pgi.Institution_ID 'Program_Institution_ID',
-f.Fund_ID
+	DISTINCT
+	pg.Program_ID,
+	pgi.Institution_ID 'Program_Institution_ID',
+	f.Fund_ID
 FROM Programs pg
 LEFT OUTER JOIN Projects pj ON pg.Program_ID = pj.Program_ID
 LEFT OUTER JOIN Institutions pgi ON pg.Program_LeadInstitution = pgi.Institution_ID
@@ -128,15 +128,47 @@ WHERE Project_ID = ";
 
 $baseInnerQuery = "	
 SELECT 
-DISTINCT
-p.People_ID,
-p.People_Department,
-p.People_Institution
+	DISTINCT
+	p.People_ID,
+	p.People_Department,
+	p.People_Institution
 FROM People p
 JOIN ProjPeople pp ON p.People_ID = pp.People_ID
 WHERE pp.Project_ID = ";
 
+$basePersonQuery = "	
+SELECT 
+	DISTINCT
+	p.People_ID,
+	p.People_Department,
+	p.People_Institution
+FROM People p
+LEFT OUTER JOIN Institutions i ON p.People_Institution = i.Institution_ID
+LEFT OUTER JOIN Departments d ON p.People_Department = d.Department_ID
+LEFT OUTER JOIN ProjPeople pp ON p.People_ID = pp.People_ID
+WHERE 1=1
+";
+
 $basePeopleQuery = "	
+SELECT 
+	p.People_Title 'Title',
+	p.People_LastName 'LastName',
+	p.People_FirstName 'FirstName',
+	p.People_MiddleName 'MiddleName',
+	p.People_Suffix 'Suffix', 
+	p.People_AdrStreet1 'AdrStreet1',
+	p.People_AdrStreet2 'AdrStreet2',
+	p.People_AdrCity 'AdrCity',
+	p.People_AdrState 'AdrState',
+	p.People_AdrZip 'AdrZip',
+	p.People_Email 'Email',
+	p.People_PhoneNum 'PhoneNum',
+	p.People_GulfBase 'GulfBase',
+	p.People_Comment 'Comment'
+FROM People p
+WHERE p.People_ID = ";
+
+$personQuery = "	
 SELECT 
 	p.People_Title 'Title',
 	p.People_LastName 'LastName',
