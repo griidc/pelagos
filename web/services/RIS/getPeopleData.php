@@ -25,6 +25,7 @@ function getData($params)
 	$q_Department = '';
 	$taskID = '';
 	$projectID = '';
+	$email = '';
 	
 	//Extract parameters into existing variables
 	$rc = extract($params, EXTR_IF_EXISTS);
@@ -79,6 +80,11 @@ function getData($params)
 	if ($q_Department <> "")
 	{
 		$outerQuery .= "AND d.Department_Name LIKE \"%$q_Department%\" ";	
+	}
+	
+	if ($email <> "")
+	{
+		$outerQuery .= "AND p.People_Email = \"$email\" ";	
 	}
 	
 	if ($maxResults>0)
