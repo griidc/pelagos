@@ -15,9 +15,11 @@ $debug = false;
 //With default settings
 $app = new Slim();
 
+$app->config('debug', $debug);
+
 if (!$debug)
 {
-	$app->error();
+	//$app->error();
 }
 
 //Default function
@@ -30,7 +32,6 @@ $app->get('/', function () use ($app) {
 	$response['X-Powered-By'] = 'Slim';
 	//}
 });
-
 
 $app->run();
 
