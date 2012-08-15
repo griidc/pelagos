@@ -31,8 +31,6 @@ unset($doc);
 }
 
 
-
-
 function getTaskOptionListByName($lastName,$firstName, $what)
 {
 	global $baseURL;
