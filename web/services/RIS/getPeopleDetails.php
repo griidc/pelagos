@@ -1,7 +1,7 @@
 <?php
 // Module: getPeopleDetails.php
 // Author(s): Michael van den Eijnden
-// Last Updated: 14 August 2012
+// Last Updated: 15 August 2012
 // Parameters: None
 // Returns: xml rest request
 // Purpose: Entry point in REST (using Slim) to return XML data for People Data
