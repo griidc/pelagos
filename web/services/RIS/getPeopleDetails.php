@@ -16,9 +16,11 @@ $debug = false;
 //With default settings
 $app = new Slim();
 
+$app->config('debug', $debug);
+
 if (!$debug)
 {
-	$app->error();
+	//$app->error();
 }
 
 //Default function
