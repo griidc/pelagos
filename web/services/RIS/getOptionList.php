@@ -30,7 +30,6 @@ foreach($result as $ribbit){ echo $ribbit; }
 unset($doc);
 }
 
-
 function getTaskOptionListByName($lastName,$firstName, $what)
 {
 	global $baseURL;
