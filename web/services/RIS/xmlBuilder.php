@@ -1,10 +1,10 @@
 <?php
 // Module: xmlBuilder.php
 // Author(s): Michael van den Eijnden
-// Last Updated: 3 August 2012
+// Last Updated: 16 August 2012
 // Parameters: None
 // Returns: a Class
-// Purpose: An class to with shortcuts for easy xml Dom document generation
+// Purpose: An class with shortcuts for easy xml Dom document generation
 
 class xmlBuilder
 {
@@ -13,7 +13,7 @@ class xmlBuilder
 	public function __construct()
 	{
 		// Start XML file
-		$this->doc = new DomDocument('1.0');
+		$this->doc = new DomDocument('1.0','UTF-8');
 	}
 	
  	public function rowToXmlChild($parent,$row)
@@ -26,7 +26,9 @@ class xmlBuilder
 			}
 			else
 			{
-				$fieldvalue = utf8_encode ($fieldvalue);
+				$fieldvalue = utf8_encode($fieldvalue);
+				$fieldvalue = html_entity_decode($fieldvalue, ENT_QUOTES,'UTF-8') ;
+				$fieldvalue = strip_tags($fieldvalue);
 				$child = $this->doc->createElement($fieldname);
 				$child = $parent->appendChild($child);
 				$value = $this->doc->createTextNode($fieldvalue);
