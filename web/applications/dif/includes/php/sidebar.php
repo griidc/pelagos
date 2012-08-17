@@ -2,23 +2,18 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="en-GB">
 <head>
-<link rel="stylesheet" type="text/css" href="https://proteus.tamucc.edu/~mvandeneijnden/dif/_styles.css" media="screen"> 
+   <link rel="stylesheet" type="text/css" href="dif/includes/css/bar.css">
+   <meta name="description" content="Free Web tutorials" />
+   <meta name="keywords" content="Tasks" />
+   <meta name="author" content="Micheal Van Den Ijnden" />
+   <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
 </head>
 <body bgcolor="#cdcdcd">
-
-
-
-
-
-
 <?php
-
-
-
-echo "<table class=cleair>
-    <tbody class=tbody>
-
-<tr><td>";
+#########################################################
+#              SIDEBAR BOBBLE CONTROLS                  #
+#########################################################
+echo "<table class=cleair><tbody class=tbody><tr><td>";
 
 
 echo " <h2 class=\"title\" align=center>Showing All Tasks for ".$firstName." ".$lastName."<hr /></FONT>";
