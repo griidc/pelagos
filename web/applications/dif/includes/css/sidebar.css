@@ -1,0 +1,100 @@
+
+/* CSS Tree menu styles */
+
+	ol.tree
+	{
+		padding: 0 0 0 30px;
+		/*width: 300px;*/
+	}
+		li.folder 
+		{ 
+			position: relative; 
+			margin-left: -15px;
+			list-style: none;
+		}
+			li.redfile
+			{
+				margin-left: -1px !important;
+			}
+			li.redfile a
+			{
+				background: url(red_bobble.png) 0 0 no-repeat;
+				color: #000;
+				padding-left: 20px;
+				text-decoration: none;
+				display: block;
+			}
+			li.redfile a[href *= '.pdf']	{ background: url(red_bobble.png) 0 0 no-repeat; }
+			li.redfile a[href *= '.html']	{ background: url(red_bobble.png) 0 0 no-repeat; }
+			li.redfile a[href $= '.css']	{ background: url(red_bobble.png) 0 0 no-repeat; }
+			li.redfile a[href $= '.js']	{ background: url(red_bobble.png) 0 0 no-repeat; }
+			
+			li.greenfile
+			{
+				margin-left: -1px !important;
+			}
+			li.greenfile a
+			{
+				background: url(green_bobble.png) 0 0 no-repeat;
+				color: #000;
+				padding-left: 20px;
+				text-decoration: none;
+				display: block;
+			}
+			li.greenfile a[href *= '.pdf']	{ background: url(green_bobble.png) 0 0 no-repeat; }
+			li.greenfile a[href *= '.html']	{ background: url(green_bobble.png) 0 0 no-repeat; }
+			li.greenfile a[href $= '.css']	{ background: url(green_bobble.png) 0 0 no-repeat; }
+			li.greenfile a[href $= '.js']		{ background: url(green_bobble.png) 0 0 no-repeat; }
+			
+			li.yellowfile
+			{
+				margin-left: -1px !important;
+			}
+			li.yellowfile a
+			{
+				background: url(yellow_bobble.png) 0 0 no-repeat;
+				color: #000;
+				padding-left: 20px;
+				text-decoration: none;
+				display: block;
+			}
+			li.yellowfile a[href *= '.pdf']	{ background: url(yellow_bobble.png) 0 0 no-repeat; }
+			li.yellowfile a[href *= '.html']	{ background: url(yellow_bobble.png) 0 0 no-repeat; }
+			li.yellowfile a[href $= '.css']	{ background: url(yellow_bobble.png) 0 0 no-repeat; }
+			li.yellowfile a[href $= '.js']	{ background: url(yellow_bobble.png) 0 0 no-repeat; }
+		li.folder input
+		{
+			position: absolute;
+			left: 0;
+			margin-left: 0;
+			opacity: 0;
+			z-index: 2;
+			cursor: pointer;
+			height: 1em;
+			width: 1em;
+			top: 0;
+		}
+			li.folder input + ol
+			{
+				background: url(toggle-small-expand.png) 40px 0 no-repeat;
+				margin: -0.938em 0 0 -44px; /* 15px */
+				height: 1em;
+			}
+			li input + ol > li { display: none; margin-left: -14px !important; padding-left: 1px; }
+		li.folder label
+		{
+			background: url(folder-horizontal.png) 15px 1px no-repeat;
+			cursor: pointer;
+			display: block;
+			padding-left: 37px;
+		}
+
+		li.folder input:checked + ol
+		{
+			background: url(toggle-small.png) 40px 5px no-repeat;
+			margin: -1.25em 0 0 -44px; /* 20px */
+			padding: 1.563em 0 0 80px;
+			height: auto;
+		}
+			li.folder input:checked + ol > li { display: block; margin: 0 0 0.125em;  /* 2px */}
+			li.folder input:checked + ol > li:last-child { margin: 0 0 0.063em; /* 1px */ }

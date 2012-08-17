@@ -1,0 +1,254 @@
+BODY {
+    font-family: "Trebuchet MS", Arial,Helvetica,Sans Serif;
+    font-size: 10pt;
+}
+a  {
+	text-decoration : none;
+}
+a:hover  {
+	text-decoration: underline;
+}
+p {
+    padding-bottom: 8px;
+}
+#coords1 {
+    padding: 5px;
+    font-weight: bold;
+}
+#presenter {
+    opacity:0.7;
+    filter:alpha(opacity=70);
+    -ms-filter:”alpha(opacity=70)”;
+    -moz-opacity:0.7;
+    KHTMLOpacity: 0.7;
+    MozOpacity: 0.7;
+    -khtml-opacity:.70;
+}
+#buttonrow {
+    position: absolute;
+    top: 40px;
+    left: 320px;
+    width: 505px;
+    height: 80px;
+}
+
+
+#julie {
+    position: relative;
+    top: 10px;
+    left: 10px;
+}
+
+
+#presenter {
+    position: absolute;
+    top: 150px;
+    left: 320px;
+    width: 380px;
+    height: 200px;
+    border: 2px solid #ccc;
+}
+#map_header {
+    position: absolute;
+    top: 5px;
+    left: 10px;
+    width: 1020px;
+    height: 40px;
+    background-color: #ffffff;
+      visibility: hidden;
+}
+#map_canvas {
+    position: absolute;
+    top: 50px;
+    left: 0px;
+    width: 300px;
+    height: 300px;
+    background-color: #ffffff;
+}
+#polygonstuff {
+    position: absolute;
+    top: 400px;
+    left: 5px;
+    width: 70px;
+    height: 60px;
+    background-color: #ff0000;
+    color: #ffffff;
+    visibility: hidden;
+}
+#title {
+    background-color: transparent;
+    width: 300px;
+    float: left;
+}
+.choice {
+    background-color: transparent;
+    width: 100px;
+    float: left;
+}
+
+.topbutton {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    float: left;
+}
+#googlead {
+    margin: 0 auto;
+    width: 800px;
+    padding-top: 5px;
+}
+.clear {
+	clear:both;
+}
+#content {
+    margin: 10px
+}
+#polylineoptions {
+    position: absolute;
+    background-color: #ffffff;
+    top: 200px;
+    left: 560px;
+    width: 260px;
+    height: 210px;
+    border: 2px solid #337EB7;
+    visibility: hidden;
+}
+#polygonoptions {
+    position: absolute;
+    background-color: #ffffff;
+    top: 200px;
+    left: 560px;
+    width: 260px;
+    height: 255px;
+    border: 2px solid #337EB7;
+    visibility: hidden;
+}
+#rectang {
+    position: absolute;
+    background-color: #ffffff;
+    top: 200px;
+    left: 560px;
+    width: 260px;
+    height: 260px;
+    border: 2px solid #337EB7;
+    visibility: hidden;
+}
+#circleoptions {
+    position: absolute;
+    background-color: #ffffff;
+    top: 200px;
+    left: 560px;
+    width: 260px;
+    height: 260px;
+    border: 2px solid #337EB7;
+    visibility: hidden;
+}
+#markeroptions {
+    width: 950px;
+    height: 310px;
+    background-color: #ffffff;
+    margin: 2px 2px 2px 2px;
+    padding: 8px;
+    border: 1px solid #aaa;
+    position: absolute;
+    top: 45px;
+    left: 10px;
+    z-index:99999;
+    visibility:hidden;
+}
+#directionstyles {
+    position: absolute;
+    background-color: #ffffff;
+    top: 200px;
+    left: 560px;
+    width: 260px;
+    height: 210px;
+    border: 2px solid #337EB7;
+    visibility: hidden;
+}
+#iconimages {
+    width: 430px;
+    height: 300px;
+    background-color: #ffffff;
+    margin: 2px 2px 2px 2px;
+    padding: 8px;
+    float: left;
+}
+#stylestext {
+    width: 485px;
+    height: 280px;
+    background-color: #ffffff;
+    margin: 0px 0px 2px 2px;
+    padding: 5px;
+    float: left;
+}
+#toppers {
+    width: 405px;
+    height: 300px;
+    background-color: #ffffff;
+    margin: 2px 2px 2px 2px;
+    padding: 8px;
+    position: absolute;
+    top: 165px;
+    left: 90px;
+    z-index:99999;
+    visibility:hidden;
+}
+#dirtoppers {
+    width: 405px;
+    height: 350px;
+    background-color: #ffffff;
+    margin: 2px 2px 2px 2px;
+    padding: 8px;
+    position: absolute;
+    top: 165px;
+    left: 90px;
+    z-index:99999;
+    visibility: hidden;
+}
+.styletitle {
+    margin-left:5px;
+    padding:0 3px 0 5px;
+    font-weight:bold;
+    background-color: #CCCCFF;
+}
+.closebutton {
+    border:1px solid #000000;
+    padding:1px 4px 1px 4px;
+    margin:1px 3px 1px 0px;
+    color:#ffffff;
+    background-color: #337EB7;
+}
+#RegretButton {
+    visibility: hidden;
+}
+.label {
+	float: left;
+	text-align: right;
+	margin-right: 5px;
+	width: 80px;
+	padding-top: 5px;
+}
+.input {
+    float: left;
+	padding-left: 3px;
+	width: 55px;
+	margin: 3px 0px 0px 3px;
+	border: 2px solid #ccc;
+}
+.inputlong {
+    float: left;
+	padding-left: 3px;
+	width: 75px;
+	margin: 3px 0px 0px 3px;
+	border: 2px solid #ccc;
+}
+.oklink {
+    margin-left: 25px;
+    padding:0px 3px 0px 3px;
+    background-color: #CCFF66;
+    text-decoration: none;
+}
+#morelinks td {
+    padding-right: 10px;
+}
