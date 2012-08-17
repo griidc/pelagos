@@ -90,7 +90,7 @@ em { font-weight: bold; padding-right: 1em; vertical-align: top; color:#FF0000;}
 #                    CONNECTION TO POSTGRES                        #
 ####################################################################
 $connection = pg_connect("host=localhost port=5432 dbname=gomri user=gomri_user password=$harkbait!")  
-or die ("ERROR:: " . pg_last_error($connection)); 
+or die ("ERROR::: " . pg_last_error($connection)); 
 if (!$connection) { die("Error in connection: " . pg_last_error()); } 
 ####################################################################
 #                    Check ID                        #
