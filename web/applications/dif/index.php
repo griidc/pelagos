@@ -2,8 +2,8 @@
 <?PHP 
 global $user;
 	$userId = $user->name;
-	#$ldap = ldap_connect("ldap://triton.tamucc.edu");
-        $ldap = ldap_connect("ldap://proteus.tamucc.edu");
+	$ldap = ldap_connect("ldap://triton.tamucc.edu");
+        #$ldap = ldap_connect("ldap://proteus.tamucc.edu");
 	$result = ldap_search($ldap, "ou=people,dc=griidc,dc=org", "(uid=$userId)", array('givenName','sn'));
 	$entries = ldap_get_entries($ldap, $result);
 	for ($i=0; $i<$entries['count']; $i++) 
@@ -89,7 +89,7 @@ em { font-weight: bold; padding-right: 1em; vertical-align: top; color:#FF0000;}
 ####################################################################
 #                    CONNECTION TO POSTGRES                        #
 ####################################################################
-$connection = pg_connect("host=localhost port=5432 dbname=gomri user=postgres password=postgres")  
+$connection = pg_connect("host=localhost port=5432 dbname=gomri user=gomri_user password=$harkbait!")  
 or die ("ERROR:: " . pg_last_error($connection)); 
 if (!$connection) { die("Error in connection: " . pg_last_error()); } 
 ####################################################################
