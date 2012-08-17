@@ -15,10 +15,11 @@ global $user;
 #####################################################
 #          IF ADMIN - SUB FOR A SHORTER USER ID     #
 #####################################################
-echo "$firstName $lastName";
+#echo "$firstName $lastName";
 
 
-if ($firstName == ""){$firstName = "Vernon"; $lastName = "Asper";}
+$firstName = "Vernon"; $lastName = "Asper";
+
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"> 
@@ -36,7 +37,7 @@ if ($firstName == ""){$firstName = "Vernon"; $lastName = "Asper";}
 <div class="bgCover">&nbsp;</div>
 <div class="overlayBox">
 	<div class="overlayContent">
-        <a href="#" class="closeLink">X</a>
+        <a href="#" class="closeLink">XX</a>
         <h2><IMG SRC="images/info.png"> INFO</h2>
         <p></p>
 	</div>
