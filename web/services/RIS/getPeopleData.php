@@ -84,7 +84,7 @@ function getData($params)
 	
 	if ($email <> "")
 	{
-		$outerQuery .= "AND p.People_Email = \"$email\" ";	
+		$outerQuery .= "AND UPPER(p.People_Email) = \"" . strtoupper($email). "\" ";	
 	}
 	
 	if ($maxResults>0)
@@ -104,11 +104,11 @@ function getData($params)
 	{
 		$outerQuery .= ' ORDER BY p.People_LastName';
 	}
-			
+		
 	// Execute SQL
 	$outerResult = executeMyQuery($outerQuery);
 	$numberOfRows = mysql_num_rows($outerResult);
-	
+		
 	if ($numberOfRows == 0)
 	{
 		echo showException('NoDataAvailable','No data was available on the selected request!');
