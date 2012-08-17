@@ -89,7 +89,7 @@ em { font-weight: bold; padding-right: 1em; vertical-align: top; color:#FF0000;}
 ####################################################################
 #                    CONNECTION TO POSTGRES                        #
 ####################################################################
-$connection = pg_connect("host=172.22.10.206 port=5432 dbname=gomri user=postgres password=postgres")  
+$connection = pg_connect("host=localhost port=5432 dbname=gomri user=postgres password=postgres")  
 or die ("ERROR:: " . pg_last_error($connection)); 
 if (!$connection) { die("Error in connection: " . pg_last_error()); } 
 ####################################################################
