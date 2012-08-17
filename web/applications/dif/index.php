@@ -15,6 +15,9 @@ global $user;
 #####################################################
 #          IF ADMIN - SUB FOR A SHORTER USER ID     #
 #####################################################
+echo "$firstName $lastName";
+
+
 if ($firstName == ""){$firstName = "Vernon"; $lastName = "Asper";}
 
 ?>
@@ -70,7 +73,6 @@ function imposeMaxLength(Object, MaxLen)
 p { clear: both; }
 .submit { margin-left: 12em; }
 em { font-weight: bold; padding-right: 1em; vertical-align: top; color:#FF0000;}
-
 </style>
   <script>
   $(document).ready(function(){
@@ -81,8 +83,6 @@ em { font-weight: bold; padding-right: 1em; vertical-align: top; color:#FF0000;}
 <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
 <SCRIPT LANGUAGE=JAVASCRIPT SRC="/dif/includes/js/map.js"></SCRIPT>
 <LINK href="/dif/includes/css/map.css" rel="stylesheet" type="text/css">
-
-
 </head>
 <body id="body" onload="initmap()" >
 <?php 
@@ -91,13 +91,13 @@ em { font-weight: bold; padding-right: 1em; vertical-align: top; color:#FF0000;}
 ####################################################################
 $connection = pg_connect("host=localhost port=5432 dbname=gomri user=gomri_user password=Sharkbait!")  
 or die ("ERROR::: " . pg_last_error($connection)); 
-if (!$connection) { die("Error in connection: " . pg_last_error()); } 
+if (!$connection) { die("Error in connection: " . pg_last_error()); } else {echo "Success:::Connection";}
 ####################################################################
 #                    Check ID                        #
 ####################################################################
 $pu=array();
 $result3 = pg_exec($connection, "SELECT * FROM form_info ORDER BY form_info.id ASC");
-if (!$result3) { die("Error in SQL query: " . pg_last_error()); } 
+if (!$result3) { die("Error in SQL query: " . pg_last_error()); } else {echo "Success to the Tables";}
 while($row = pg_fetch_row($result3)){
 echo " <div id=\"demo$row[0]_tip\" style=\"display:none;\"> <img src=\"/dif/images/info.png\" style=\"float:right;\" /> $row[1]</div>";
 array_push($pu, $row[0]); }
@@ -120,6 +120,7 @@ if ($_POST['later']) { $status = 0;}else{$status = 1;}
    $national= $nat1."|".$nat2."|".$nat3."|".$nat4."|".$nat5."|".$othernat;
    $datatype =$sascii."|".$uascii."|".$images."|".$netCDF."|".$dtvideo."|".$video."|".$gml."|".$otherdty;
 ####################################################################
+#                               SQL                                #
 ####################################################################
 if ($flag== "update"){$uid =$modts;
 $sql = "UPDATE datasets SET dataset_uid='".$uid."', task_uid='".$task."', title='".$title."', abstract='".$abstract."', dataset_type='".$datatype."', dataset_for='".$datafor."', size='".$size."', observation='".$observation ."', approach='".$approach ."', historic_links='".$historical."', meta_editor='".$ed ."', meta_standards='".$standards."', point='".$point."', national='".$national ."', ethical='".$privacy."', remarks='".$remarks ."', primary_poc='".$ppoc."', secondary_poc='".$spoc ."', logname='".$usernumber."', status='".$status ."', start_date='".$sdate."', end_date='".$edate."', geo_location='".$geoloc ."'  WHERE dataset_uid='".$uid."'";
@@ -165,7 +166,7 @@ pg_close($connection);
 ####################################################################
 #                               FORM                               #
 ####################################################################
-include("includes/php/dataset_form.php");
+#include("includes/php/dataset_form.php");
 ####################################################################
 #                               Body JS                            #
 ####################################################################
