@@ -60,7 +60,7 @@ class xmlBuilder
 	
 	public function __tostring()
 	{
-		//$this->doc->normalizeDocument();
+		$this->doc->normalizeDocument();
 		return $this->doc->saveXML();
 	}
 }
