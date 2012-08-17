@@ -36,7 +36,9 @@ echo "</div></td></tr> </tbody> </table>";
 
 function displayTaskStatusByName($lastName, $firstName)
 {
-	$baseurl = 'https://proteus.tamucc.edu/~mvandeneijnden/ProjectDB/getTaskDetails.php?maxResults=-1';
+	
+echo "Hello World";
+$baseurl = 'https://proteus.tamucc.edu/~mvandeneijnden/ProjectDB/getTaskDetails.php?maxResults=-1';
 	$url = $baseurl . "&lastName=$lastName&firstName=$firstName";
 	$doc = simplexml_load_file($url);
 	$tasks = $doc->xpath('Task');
