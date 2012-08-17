@@ -15,11 +15,11 @@ global $user;
 #####################################################
 #          IF ADMIN - SUB FOR A SHORTER USER ID     #
 #####################################################
-#echo "$firstName $lastName";
+
 
 
 $firstName = "Vernon"; $lastName = "Asper";
-
+echo "$firstName $lastName";
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"> 
