@@ -22,24 +22,22 @@ if ($firstName == ""){$firstName = "Vernon"; $lastName = "Asper";}
 <html> 
 <head> 
 <title>Dataset Form</title>
-<LINK href="http://proteus.tamucc.edu/~jlann/ff/includes/css/overwrite.css" rel="stylesheet" type="text/css">
-<LINK href="http://proteus.tamucc.edu/~jlann/ff/includes/css/Tooltip.css" rel="stylesheet" type="text/css">
-<SCRIPT LANGUAGE="JavaScript" SRC="http://proteus.tamucc.edu/~jlann/ff/includes/js/ds.js"> </SCRIPT>
+<LINK href="/dif/includes/css/overwrite.css" rel="stylesheet" type="text/css">
+<LINK href="/dif/includes/css/Tooltip.css" rel="stylesheet" type="text/css">
+<SCRIPT LANGUAGE="JavaScript" SRC="/dif/includes/js/ds.js"> </SCRIPT>
 <script language="javascript" src="http://proteus.tamucc.edu/sites/all/themes/litejazz/includes/js/jquery-1.2.6.min.js"></script>
-<script src="https://proteus.tamucc.edu/~jlann/ff/includes/js/Tooltip.js"></script> 
-  <script src="https://proteus.tamucc.edu/~jlann/ff/includes/htmltooltip.js"></script>
-  <script src="https://proteus.tamucc.edu/~jlann/ff/includes/js/jquery-latest.js"></script>
-  <script type="text/javascript" src="http://proteus.tamucc.edu/~jlann/ff/includes/js/jquery.validate.js"></script>
+<script src="/dif/includes/js/Tooltip.js"></script> 
+  <script src="/dif/includes/htmltooltip.js"></script>
+  <script src="/dif/includes/js/jquery-latest.js"></script>
+  <script type="text/javascript" src="/dif/includes/js/jquery.validate.js"></script>
 <div class="bgCover">&nbsp;</div>
 <div class="overlayBox">
 	<div class="overlayContent">
         <a href="#" class="closeLink">X</a>
-        <h2><IMG SRC="http://proteus.tamucc.edu/sites/all/themes/litejazz/images/info.png"> INFO</h2>
+        <h2><IMG SRC="images/info.png"> INFO</h2>
         <p></p>
 	</div>
 </div>
-
-
 <script language="JavaScript">
 <!--
 function enable_text(status)
@@ -50,12 +48,7 @@ document.ed.video.value = "";
 }
 //-->
 </script>
-
-
-
-
 <script type="text/javascript">
-
 function getVal(){
 var el=document.getElementById('inp0');
 var i=0, c, arr=[];
@@ -86,8 +79,8 @@ em { font-weight: bold; padding-right: 1em; vertical-align: top; color:#FF0000;}
   </script>
 
 <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
-<SCRIPT LANGUAGE=JAVASCRIPT SRC="http://proteus.tamucc.edu/~jlann/ff/includes/js/map.js"></SCRIPT>
-<LINK href="http://proteus.tamucc.edu/~jlann/ff/includes/css/map.css" rel="stylesheet" type="text/css">
+<SCRIPT LANGUAGE=JAVASCRIPT SRC="/dif/includes/js/map.js"></SCRIPT>
+<LINK href="/dif/includes/css/map.css" rel="stylesheet" type="text/css">
 
 
 </head>
@@ -106,7 +99,7 @@ $pu=array();
 $result3 = pg_exec($connection, "SELECT * FROM form_info ORDER BY form_info.id ASC");
 if (!$result3) { die("Error in SQL query: " . pg_last_error()); } 
 while($row = pg_fetch_row($result3)){
-echo " <div id=\"demo$row[0]_tip\" style=\"display:none;\"> <img src=\"https://proteus.tamucc.edu/sites/all/themes/litejazz/images/info.png\" style=\"float:right;\" /> $row[1]</div>";
+echo " <div id=\"demo$row[0]_tip\" style=\"display:none;\"> <img src=\"/dif/images/info.png\" style=\"float:right;\" /> $row[1]</div>";
 array_push($pu, $row[0]); }
 ####################################################################
 #                      SUBMITTED!!!!                               #
