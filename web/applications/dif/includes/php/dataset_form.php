@@ -2,11 +2,11 @@
 ################################################################
 #                  Includes & Requires                         #
 ################################################################
-include ('/dif/includes/php/functions.php'); 
-require ('/services/RPIS/getOptionList.php');
+include ('functions.php'); 
 ################################################################
 #                        FORM                                  #
 ################################################################
+
 ?>
 <form class="cleair cmxform" id="commentForm" name="ed" action="" method="post"> 
 <INPUT TYPE="hidden" name=flag value=<?PHP echo "$flag"; ?>>
@@ -24,7 +24,9 @@ require ('/services/RPIS/getOptionList.php');
 <select name=task style="width:800px;" width="800px"; id="ctask" <?PHP if ($status==2){echo "disabled";} ?>  class="required" >
 
 <option value='0'>[SELECT A TASK]</option>
-<?PHP getTaskOptionListByName($lastName,$firstName, $m[1]); ?>
+<?PHP 
+getTaskOptionListByName($lastName,$firstName, $m[1]);
+ ?>
  </select> </fieldset> </p>
 
 
@@ -34,14 +36,18 @@ require ('/services/RPIS/getOptionList.php');
 <table WIDTH="100%"><tr><td> <p> 
 <fieldset><label for="cppoc"> <em>*</em> Primary Point of Contact: <span style="float:right;" class="tooltip" onmouseover="tooltip.add(this, 'demo3_tip')"> <IMG SRC="/dif/images/info.png"> </span> </label> 
 <select name=ppoc id="cppoc" <?PHP if ($status==2){echo "disabled";} ?>  class="required" style="width:385px;">
-  <?PHP  getPersonOptionListByName($lastName,$firstName, $m[19]); ?>
+  <?PHP  
+getPersonOptionListByName($lastName,$firstName, $m[19]); 
+?>
 </select></fieldset></p>
 </td><td>&nbsp;&nbsp;&nbsp;&nbsp;
 </td><td>
 
 <p><fieldset><label for="cspoc"> Secondary Point of Contact: <span style="float:right;" class="tooltip" onmouseover="tooltip.add(this, 'demo4_tip')"> <IMG SRC="/dif/images/info.png"> </span> </label>
 <select name=spoc id="cspoc" style="width:385px;" <?PHP if ($status==2){echo "disabled";} ?> >
-  <?PHP  getPersonOptionListByName($lastName,$firstName, $m[20]); ?>
+  <?PHP  
+getPersonOptionListByName($lastName,$firstName, $m[20]); 
+?>
 </select></fieldset>
 </p> </td></tr></table>
 
@@ -227,3 +233,4 @@ require ('/services/RPIS/getOptionList.php');
 <br /> <input class="submit" type="submit" name="later" value="Save &amp; Continue Later" size="30">  <input class="submit" type="submit" name="submit" value="Submit &amp; Done" size="30"> 
 <?PHP } ?>
  </form>
+

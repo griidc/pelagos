@@ -1,49 +1,22 @@
-<?PHP error_reporting(0);?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html lang="en-GB">
-<head>
-   <link rel="stylesheet" type="text/css" href="dif/includes/css/bar.css">
-   <meta name="description" content="Free Web tutorials" />
-   <meta name="keywords" content="Tasks" />
-   <meta name="author" content="Micheal Van Den Ijnden" />
-   <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
-</head>
-<body bgcolor="#cdcdcd">
+<LINK href="/dif/includes/css/sidebar.css" rel="stylesheet" type="text/css">
 <?php
 #########################################################
 #              SIDEBAR BOBBLE CONTROLS                  #
 #########################################################
+#$firstName="Vernon";
+#$lastName="Asper";
 echo "<table class=cleair><tbody class=tbody><tr><td>";
-
-
 echo " <h2 class=\"title\" align=center>Showing All Tasks for ".$firstName." ".$lastName."<hr /></FONT>";
 echo "</h2></td></tr><tr><td><div style=width:100%;height:800px;overflow:auto; BGCOLOR=#efefef>";
-
 	displayTaskStatusByName($lastName,$firstName);
-
-
-
 echo "</div></td></tr> </tbody> </table>";
-?>
-
-
-
-</body>
-</html>
-
-<?php
-//showTable('select * from datasets');
-
 function displayTaskStatusByName($lastName, $firstName)
 {
-	
-echo "Hello World";
-$baseurl = 'https://proteus.tamucc.edu/~mvandeneijnden/ProjectDB/getTaskDetails.php?maxResults=-1';
+	$baseurl = 'http://griidc.tamucc.edu/services/RPIS/getTaskDetails.php?maxResults=-1';
 	$url = $baseurl . "&lastName=$lastName&firstName=$firstName";
 	$doc = simplexml_load_file($url);
 	$tasks = $doc->xpath('Task');
         echo '<ol class=" tree">';
-//	echo '<ol class="tree">';
 	foreach ($tasks as $task)
 	{
 		$taskID = $task['ID'];
@@ -80,7 +53,7 @@ $baseurl = 'https://proteus.tamucc.edu/~mvandeneijnden/ProjectDB/getTaskDetails.
 				//echo '<td align="center" valign="middle"><img src="green_bobble.png" width="10"></td>';
 				break;
 			}
-                        echo '<a href="https://proteus.tamucc.edu/Form2?uid='.$datasetid.'">'.$title.'</a></li>';
+                        echo '<a href="/dif?uid='.$datasetid.'">'.$title.'</a></li>';
 
 		}
 		echo '</ol></li>';
@@ -92,10 +65,10 @@ $baseurl = 'https://proteus.tamucc.edu/~mvandeneijnden/ProjectDB/getTaskDetails.
 #region PostGreSQL stuff
 function dbconnect()
 {
-	$username='admin';
-	$password='password';
+	$username='gomri_user';
+	$password='Sharkbait!';
 	$database='gomri';
-	$dbserver='proteus.tamucc.edu';
+	$dbserver='localhost';
 	$port=5432;
 	
 	//Connect to database
@@ -133,28 +106,5 @@ function dbexecute($query,$connection=null)
 	return $returnds;
 }
 
-function showTable($query)
-{
-	$results = dbexecute($query);
-	echo "<p><h2>Table:</h2></p><table border=1><tr>";
-
-	for ($i = 0; $i < pg_numfields($results);$i++)
-	{
-		echo '<th>' . pg_field_name($results,$i) . '</th>';
-	}
-	echo '</tr>';
-
-	while ($row = pg_fetch_row($results)) 
-	{
-		echo "<tr>";
-		foreach ($row as $field)
-		{
-			echo "<td>" . $field . "</td>";
-		}
-		echo "</tr>";
-	}	
-	echo '</table>'; 
-}
-#end region
 
 ?>
