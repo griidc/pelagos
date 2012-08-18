@@ -12,8 +12,8 @@ global $user;
 		$lastName = $entries[$i]['sn'][0];
 		
 	}
-#$firstName = "Vernon";
-#$lastName = "Asper";
+$firstName = "Vernon";
+$lastName = "Asper";
 #####################################################
 #          IF ADMIN - SUB FOR A SHORTER USER ID     #
 #####################################################
