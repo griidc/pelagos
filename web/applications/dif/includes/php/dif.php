@@ -115,7 +115,7 @@ pg_free_result($result);
 #$status=0;
 #$flag="";
 #####################################################################
-##               PICK ONE FROM THE SIDE BAR                         #
+#               PICK ONE FROM THE SIDE BAR                         #
 #####################################################################
 }elseif ($uid=$_GET['uid']){
   $sql5 = "SELECT * FROM datasets where dataset_uid=".$uid;
