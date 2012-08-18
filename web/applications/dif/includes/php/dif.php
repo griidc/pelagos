@@ -62,7 +62,6 @@ global $user;
 <SCRIPT LANGUAGE=JAVASCRIPT SRC="/dif/includes/js/map.js"></SCRIPT>
 <LINK href="/dif/includes/css/map.css" rel="stylesheet" type="text/css">-->
 </head>
-
 <body >
 <?php 
 ####################################################################
