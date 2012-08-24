@@ -26,9 +26,22 @@ function getPersonOptionListByName($lastName,$firstName, $whom)
   }
 $result = array_unique($buildarray);
 //sort($result);
-foreach($result as $ribbit){ echo $ribbit; }
+foreach($result as $ribbit){ 
+
+
+
+
+
+
+
+
+
+echo $ribbit; }
 unset($doc);
 }
+
+
+
 
 function getTaskOptionListByName($lastName,$firstName, $what)
 {
