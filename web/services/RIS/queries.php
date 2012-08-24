@@ -94,11 +94,23 @@ SELECT
 	pg.Program_Comment  'Comment',
 	pg.Program_Completed  'Completed',
 	pgkw.Keyword_Word 'Keywords',
-	pgkw.Keyword_ID '__Attr__ID'
+	pgkw.Keyword_ID '__Attr__ID',
+	IF (LOCATE('Year One',fs.Fund_Name)<>0,'Year 1 Block Grant',fs.Fund_Name) AS 'FundingSource'
 FROM Programs pg
 LEFT OUTER JOIN ProjKeywords pgk ON pg.Program_ID = pgk.Program_ID
 LEFT OUTER JOIN Keywords pgkw ON pgkw.Keyword_ID = pgk.Keyword_ID
+LEFT OUTER JOIN FundingSource fs ON pg.Program_FundSrc = fs.Fund_ID
 WHERE pg.Program_ID = ";
+
+/* for sharper filtering
+ * 
+ * CASE
+	WHEN LOCATE('Year One',Fund_Name)<>0 THEN 'Year 1 Block Grant'
+	WHEN LOCATE('Bridge Grants',Fund_Name)<>0 THEN 'Bridge Grants'
+	ELSE Fund_Name
+	END AS 'FundingSource'
+	
+*/
 
 $baseInstitutionQuery = "
 SELECT 

@@ -285,15 +285,18 @@ function getData($params)
 					$xmlBld->addAttribute($personNode,'ID',$innr_People_ID);
 					$xmlBld->rowToXmlChild($personNode,$row);
 					
-					$departmentQuery = $baseDepartmentQuery . $innr_People_Department;
 					
-					$departmentResult = executeMyQuery($departmentQuery);
-					
-					while ($row = @mysql_fetch_assoc($departmentResult))
+					if (isset($innr_People_Department))
 					{
-						$InstitutionNode = $xmlBld->createXmlNode($personNode,'Department');
-						$xmlBld->addAttribute($InstitutionNode,'ID',$innr_People_Department);
-						$xmlBld->rowToXmlChild($InstitutionNode,$row);
+						$departmentQuery = $baseDepartmentQuery . $innr_People_Department;
+						$departmentResult = executeMyQuery($departmentQuery);
+						
+						while ($row = @mysql_fetch_assoc($departmentResult))
+						{
+							$InstitutionNode = $xmlBld->createXmlNode($personNode,'Department');
+							$xmlBld->addAttribute($InstitutionNode,'ID',$innr_People_Department);
+							$xmlBld->rowToXmlChild($InstitutionNode,$row);
+						}
 					}
 					
 					$personInstitutionQuery = $baseInstitutionQuery . $innr_People_Institution;
