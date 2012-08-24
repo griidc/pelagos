@@ -8,7 +8,7 @@ $baseURL = 'https://proteus.tamucc.edu/~mvandeneijnden/ProjectDB/getTaskDetails.
 function getPersonOptionListByName($lastName,$firstName, $whom)
 {
   global $baseURL;
-  $url = "https://proteus.tamucc.edu/~mvandeneijnden/ProjectDB/getTaskDetails.php?maxResults=-1&listResearchers=true&lastName=$lastName&firstname=$firstName";
+  $url = "http://griidc.tamucc.edu/services/RPIS/getTaskDetails.php?maxResults=-1&listResearchers=true&lastName=$lastName&firstname=$firstName";
   $maxLength = 98; 
   $doc = simplexml_load_file($url); 
   $tasks = $doc->xpath('Task');
@@ -46,7 +46,7 @@ unset($doc);
 function getTaskOptionListByName($lastName,$firstName, $what)
 {
 	global $baseURL;
-	$url = "https://proteus.tamucc.edu/~mvandeneijnden/ProjectDB/getTaskDetails.php?maxResults=-1&listResearchers=false&lastName=$lastName&firstname=$firstName";
+	$url = "http://griidc.tamucc.edu/services/RPIS/getTaskDetails.php?maxResults=-1&listResearchers=false&lastName=$lastName&firstname=$firstName";
 	$maxLength = 200;
 	$doc = simplexml_load_file($url);
         $tasks = $doc->xpath('Task');
