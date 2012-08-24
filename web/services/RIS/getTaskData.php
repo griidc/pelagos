@@ -36,6 +36,7 @@ function getData($params)
 	$projectLastName = '';
 	$projectFirstName = '';
 	$taskID = '';
+	$fundingSource = '';
 	
 	//Extract parameters into existing variables
 	$rc = extract($params, EXTR_IF_EXISTS);
@@ -147,6 +148,11 @@ function getData($params)
 	if ($projectFirstName <> "")
 	{
 		$outerQuery .= "AND plg.People_FirstName = \"$projectFirstName\" ";	
+	}
+	
+	if ($fundingSource <> "")
+	{
+		$outerQuery .= "AND f.Fund_Name LIKE \"%$fundingSource%\" ";	
 	}
 	
 	if ($maxResults>0)
