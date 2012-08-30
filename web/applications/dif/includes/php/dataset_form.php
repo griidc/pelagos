@@ -114,7 +114,7 @@ CDF/netCDF&nbsp;&nbsp;&nbsp;&nbsp;</td>
 <td COLSPAN="2">
 
 <TABLE WIDTH="95%"><TR>
-    <TD> Others: </TD><TD><input style= "width:100%;" type="text" name="otherdty" width=100% <?PHP if ($status != 0){echo "disabled";} ?>  value=<?PHP  if (($flag=="update")&&($dtt[7])){echo "'$dtt[7]'";} ?>></TD></TR></TABLE>
+    <TD> Others: </TD><TD><input style= "width:100%;" type="text" name="otherdty" width=100%   <?PHP if ($status != 0){echo "disabled";} ?>  value=<?PHP  if (($flag=="update")&&($dtt[7])){echo "'$dtt[7]'";} ?>></TD></TR></TABLE>
 </td>
 
 </tr> <tr>
@@ -238,7 +238,7 @@ Economics&nbsp;&nbsp;&nbsp;&nbsp;
    <input type="checkbox" <?PHP if ($status != 0){echo "disabled";} ?> name="s3" value="DUBLIN" <?PHP  if (($flag=="update")&&($stand[2] == "DUBLIN")){echo " checked";} ?>  id="cstandards"  />Dublin/Darwin Core<br />
    <input type="checkbox" <?PHP if ($status != 0){echo "disabled";} ?> name="s4" value="EML" <?PHP  if (($flag=="update")&&($stand[3] == "EML")){echo " checked";} ?>  id="cstandards"  />
    Ecological Metadata Language (EML)<br />
-   <table><tr><td>Other:</td><td width="100%"><input style="width:95%;" type="text" <?PHP if ($status != 0){echo "disabled";} ?> name="otherst" value=<?PHP  if (($flag=="update")&&($stand[4])){echo "'$stand[4]'";} ?>></td></tr></table>
+   <table><tr><td>Others:</td><td width="100%"><input style="width:95%;" type="text" <?PHP if ($status != 0){echo "disabled";} ?> name="otherst" value=<?PHP  if (($flag=="update")&&($stand[4])){echo "'$stand[4]'";} ?>></td></tr></table>
 </fieldset></P>
 
 
@@ -248,7 +248,7 @@ Economics&nbsp;&nbsp;&nbsp;&nbsp;
    <input type="checkbox" <?PHP if ($status != 0){echo "disabled";} ?> name="a2" id="caccess" value="TDS" <?PHP  if (($flag=="update")&&($point[1] == "TDS")){echo " checked";} ?> />THREDDS Data Server (TDS)<br />
    <input type="checkbox" <?PHP if ($status != 0){echo "disabled";} ?> name="a3" id="caccess" value="ERDAP" <?PHP  if (($flag=="update")&&($point[2] == "ERDAP")){echo " checked";} ?> />
    Environmental Research Division's Data Access Program (ERDDAP)<br />
-   <br /><table><tr><td>Other:</td><td width="100%"><input style="width:95%;" type="text" <?PHP if ($status != 0){echo "disabled";} ?> name="accessother" value=<?PHP  if (($flag=="update")&&($point[3])){echo "'$point[3]'";} ?>></td></tr></table>
+   <br /><table><tr><td>Others:</td><td width="100%"><input style="width:95%;" type="text" <?PHP if ($status != 0){echo "disabled";} ?> name="accessother" value=<?PHP  if (($flag=="update")&&($point[3])){echo "'$point[3]'";} ?>></td></tr></table>
 </fieldset></P>
 </TD></TR></TABLE>
 
