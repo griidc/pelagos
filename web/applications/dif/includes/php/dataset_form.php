@@ -10,6 +10,10 @@
 echo "hun";
 ?>
 
+<script type="text/javascript">
+   $("#commentForm").validate();
+</script>
+
 <form class="cleair cmxform" id="commentForm" name="ed" action="" method="post"> 
 
 <INPUT TYPE="hidden" name=flag value=<?PHP echo "$flag"; ?>>
@@ -44,7 +48,7 @@ echo "hun";
  
  
 <p><fieldset><label for="ctitle"><em>*</em>Dataset Title:<span style="float:right;" class="tooltip" onmouseover="tooltip.add(this, 'demo2_tip')"> <IMG SRC="/dif/images/info.png"> </span>
-</label> <textarea <?PHP if ($status != 0){echo "disabled";} ?> name="title" id="ctitle" class="required" rows=3 cols=98  onkeypress="return imposeMaxLength(this, 200);" }><?PHP if ($flag=="update"){echo $m[2];} ?></textarea></fieldset></p>
+</label> <textarea <?PHP if ($status != 0){echo "disabled";} ?> name="title" id="ctitle" class="required" maxlength="200" rows=3 cols=98  onkeypress="return imposeMaxLength(this, 200);" }><?PHP if ($flag=="update"){echo $m[2];} ?></textarea></fieldset></p>
 
 <table WIDTH="100%"><tr><td> <p> 
 
@@ -89,7 +93,7 @@ getPersonOptionListByName($lastName,$firstName, $m[19], 51);
 </td></tr></table>
 
 <p><fieldset><labelbr for="cabstract"> <b><em>*</em>Dataset Abstract:</b> <span  style="float:right;" class="tooltip" class="tooltip" onmouseover="tooltip.add(this, 'demo5_tip')"><IMG SRC="/dif/images/info.png"></span></label><br />
-<textarea <?PHP if ($status != 0){echo "disabled";} ?> name="abstract" id="cabstract" class="required" rows=3 cols=98 onkeypress="return imposeMaxLength(this, 400);" ><?PHP if ($flag=="update"){echo $m[3];} ?></textarea></fieldset></p>
+<textarea <?PHP if ($status != 0){echo "disabled";} ?> name="abstract" id="cabstract" class="required" maxlength="400" rows=3 cols=98 onkeypress="return imposeMaxLength(this, 400);" ><?PHP if ($flag=="update"){echo $m[3];} ?></textarea></fieldset></p>
 
 
 
