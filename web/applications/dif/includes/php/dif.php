@@ -6,19 +6,19 @@
 // Returns: Form / Sidebar
 // Purpose: Wrapper for form and action scripts to update database & email at later date.
    error_reporting(0);
-   global $user;
-   $userId = $user->name;
-   $ldap = ldap_connect("ldap://triton.tamucc.edu");
+#   global $user;
+#   $userId = $user->name;
+#   $ldap = ldap_connect("ldap://triton.tamucc.edu");
 
-   $result = ldap_search($ldap, "ou=people,dc=griidc,dc=org", "(uid=$userId)", array('givenName','sn'));
-   $entries = ldap_get_entries($ldap, $result);
-   for ($i=0; $i<$entries['count']; $i++) 
-      {
-         $firstName = $entries[$i]['givenname'][0];
-         $lastName = $entries[$i]['sn'][0];
-      }
-#         $firstName = "Vernon";
-#         $lastName = "Asper";
+#   $result = ldap_search($ldap, "ou=people,dc=griidc,dc=org", "(uid=$userId)", array('givenName','sn'));
+#   $entries = ldap_get_entries($ldap, $result);
+#   for ($i=0; $i<$entries['count']; $i++) 
+#      {
+#         $firstName = $entries[$i]['givenname'][0];
+#         $lastName = $entries[$i]['sn'][0];
+#      }
+         $firstName = "Vernon";
+         $lastName = "Asper";
 #echo "Julie was here";
 #drupal_add_js('/var/www/dif/includes/css/Tooltip.css');
 include ('functions.php'); 
@@ -41,6 +41,19 @@ include ('functions.php');
         <p></p>
 	</div>
    </div>
+   
+<script type="text/javascript"> 
+
+function stopRKey(evt) { 
+  var evt = (evt) ? evt : ((event) ? event : null); 
+  var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null); 
+  if ((evt.keyCode == 13) && (node.type=="text"))  {return false;} 
+} 
+
+document.onkeypress = stopRKey; 
+
+</script> 
+   
    
    <script language="JavaScript">
 <!--
@@ -103,11 +116,12 @@ document.ed.video.value = "";
 
 </head>
 
-<body
-
+<body  
 
 
 <?PHP  if ($_GET['uid']==""){echo "onload=enable_text(false);";} ?>
+
+
 
 >
 
@@ -127,7 +141,10 @@ array_push($pu, $row[0]); }
 //SUBMITTED
 $status = 0;$usernumber=1;
 //if (($_POST['submit'])||($_POST['later'])) { 
+
+
 if (($_POST['submit'])||($_POST['later'])||($_POST['reject'])||($_POST['accept'])) { 
+echo "SUBMITTTTTTTTTTTTTTT::::::".$_POST['submit']."and ".$_POST['accept']." ".$_POST['later']." and ".$_POST['reject'];
 if ($_POST['later']) { $status = 0;}else{$status = 1;}
 
    //CONCAT TO FIT DB
