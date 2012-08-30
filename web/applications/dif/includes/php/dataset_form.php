@@ -189,11 +189,11 @@ Economics&nbsp;&nbsp;&nbsp;&nbsp;
 <textarea  name="observation" <?PHP if ($status != 0){echo "disabled";} ?> id="coberservations" rows=3 cols=98  onkeypress="return imposeMaxLength(this, 300);"><?PHP if ($flag=="update"){echo $m[7];} ?></textarea></fieldset></p>
 
 <p><fieldset><labelbr for="capproach"> 
-<b> Procedure to Aquiring or Creating the Data: </b> <span style="float:right; class="tooltip" onmouseover="tooltip.add(this, 'demo10_tip')"> <IMG SRC="/dif/images/info.png"> </span> </label><br />
+<b> Procedure to Acquiring or Creating the Data: </b> <span style="float:right; class="tooltip" onmouseover="tooltip.add(this, 'demo10_tip')"> <IMG SRC="/dif/images/info.png"> </span> </label><br />
 <TABLE WIDTH="100%"><TR><TD>
 <input type="checkbox" name="field" id="capproach" <?PHP if ($status != 0){echo "disabled";} ?> value="Field Sampling" <?PHP  if (($flag=="update")&&($aq[0] == "Field Sampling")){echo " checked";} ?> />Field Sampling&nbsp;&nbsp;&nbsp;&nbsp;
 </TD><TD> <input type="checkbox" name="sim" id="capproach"  <?PHP if ($status != 0){echo "disabled";} ?> value="Simulated or Generated" <?PHP  if (($flag=="update")&&($aq[1] == "Simulated or Generated")){echo " checked";} ?> />Simulated/Generated&nbsp;&nbsp;&nbsp;&nbsp;
-</TD><TD> <input type="checkbox" name="lab" id="capproach"  <?PHP if ($status != 0){echo "disabled";} ?> value="Labratory" <?PHP  if (($flag=="update")&&($aq[2] == "Labratory")){echo " checked";} ?> />Labratory&nbsp;&nbsp;&nbsp;&nbsp;
+</TD><TD> <input type="checkbox" name="lab" id="capproach"  <?PHP if ($status != 0){echo "disabled";} ?> value="Labratory" <?PHP  if (($flag=="update")&&($aq[2] == "Labratory")){echo " checked";} ?> />Laboratory&nbsp;&nbsp;&nbsp;&nbsp;
 </TD></TR><TR><TD> <input type="checkbox" name="lit" id="capproach"  <?PHP if ($status != 0){echo "disabled";} ?> value="Literature Based"  <?PHP  if (($flag=="update")&&($aq[3] == "Literature Based")){echo " checked";} ?> />Literature Based&nbsp;&nbsp;&nbsp;&nbsp;
 </TD><TD> <input type="checkbox" name="remote" id="capproach" <?PHP if ($status != 0){echo "disabled";} ?> value="Remote Sensing" <?PHP  if (($flag=="update")&&($aq[4] == "Remote Sensing")){echo " checked";} ?> />Remote Sensing&nbsp;&nbsp;&nbsp;&nbsp;
 </TD><TD><TABLE WIDTH="100%"><TR>
@@ -247,7 +247,7 @@ Economics&nbsp;&nbsp;&nbsp;&nbsp;
    <input type="checkbox" <?PHP if ($status != 0){echo "disabled";} ?> name="a1" id="caccess" value="FTP" <?PHP  if (($flag=="update")&&($point[0] == "FTP")){echo " checked";} ?> />File Transfer Protocol (FTP)<br />
    <input type="checkbox" <?PHP if ($status != 0){echo "disabled";} ?> name="a2" id="caccess" value="TDS" <?PHP  if (($flag=="update")&&($point[1] == "TDS")){echo " checked";} ?> />THREDDS Data Server (TDS)<br />
    <input type="checkbox" <?PHP if ($status != 0){echo "disabled";} ?> name="a3" id="caccess" value="ERDAP" <?PHP  if (($flag=="update")&&($point[2] == "ERDAP")){echo " checked";} ?> />
-   Envionmental Research Division's Data Access Program (ERDDAP)<br />
+   Environmental Research Division's Data Access Program (ERDDAP)<br />
    <br /><table><tr><td>Other:</td><td width="100%"><input style="width:95%;" type="text" <?PHP if ($status != 0){echo "disabled";} ?> name="accessother" value=<?PHP  if (($flag=="update")&&($point[3])){echo "'$point[3]'";} ?>></td></tr></table>
 </fieldset></P>
 </TD></TR></TABLE>
@@ -263,7 +263,7 @@ Economics&nbsp;&nbsp;&nbsp;&nbsp;
    <input type="checkbox" <?PHP if ($status != 0){echo "disabled";} ?> name="nat4" value="National Center for Biotechnology Information" <?PHP  if (($flag=="update")&&($nta[3] == "National Center for Biotechnology Information")){echo " checked";} ?>  id="cnational"  />National Center for Biotechnology Information <a href="http://www.ncbi.nlm.nih.gov" target="_new">(http://www.ncbi.nlm.nih.gov)</a><br />
    <input type="checkbox" <?PHP if ($status != 0){echo "disabled";} ?> name="nat5" value="Data.gov Dataset Management System" <?PHP  if (($flag=="update")&&($nta[4] == "Data.gov Dataset Management System")){echo " checked";} ?>  id="cnational"  />Data.gov Dataset Management System <a href="http://www.dms.data.gov" target="_new">(http://www.dms.data.gov)</a><br />
    <hr />
-<input type="checkbox" <?PHP if ($status != 0){echo "disabled";} ?> name="nat6" value="Gulf of Mexico Research Initiative Inforation and Data Cooperative (GRIIDC)" <?PHP  if (($flag=="update")&&($nta[5] == "Gulf of Mexico Research Initiative Inforation and Data Cooperative (GRIIDC)")){echo " checked";} ?>  id="cnational"  />Gulf of Mexico Research Initiative Inforation and Data Cooperative (GRIIDC) <a href="https://griidc.gomri.org" target="_new">(https://griidc.gomri.org)</a><br /><hr /> 
+<input type="checkbox" <?PHP if ($status != 0){echo "disabled";} ?> name="nat6" value="Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC)" <?PHP  if (($flag=="update")&&($nta[5] == "Gulf of Mexico Research Initiative Inforation and Data Cooperative (GRIIDC)")){echo " checked";} ?>  id="cnational"  />Gulf of Mexico Research Initiative Inforation and Data Cooperative (GRIIDC) <a href="https://griidc.gomri.org" target="_new">(https://griidc.gomri.org)</a><br /><hr /> 
    <table>
    <tr>
      <td>Others:</td>
