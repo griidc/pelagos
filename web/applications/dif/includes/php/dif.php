@@ -5,7 +5,7 @@
 // Parameters: Form fields with to add to the database or update.
 // Returns: Form / Sidebar
 // Purpose: Wrapper for form and action scripts to update database & email at later date.
-error_reporting(0);
+   error_reporting(0);
    global $user;
    $userId = $user->name;
    $ldap = ldap_connect("ldap://triton.tamucc.edu");
@@ -17,7 +17,10 @@ error_reporting(0);
          $firstName = $entries[$i]['givenname'][0];
          $lastName = $entries[$i]['sn'][0];
       }
-//IF ADMIN - SUB FOR A SHORTER USER ID
+#         $firstName = "Vernon";
+#         $lastName = "Asper";
+#echo "Julie was here";
+#drupal_add_js('/var/www/dif/includes/css/Tooltip.css');
 include ('functions.php'); 
 ?>
 <html> 
@@ -27,7 +30,7 @@ include ('functions.php');
   <LINK href="/dif/includes/css/Tooltip.css" rel="stylesheet" type="text/css">
   <!--<SCRIPT LANGUAGE="JavaScript" SRC="/dif/includes/js/ds.js"> </SCRIPT>-->
   <script language="javascript" src="/dif/includes/js/jquery-1.2.6.min.js"></script>
-  <script src="/dif/includes/js/Tooltip.js"></script> 
+ <script src="/dif/includes/js/Tooltip.js"></script> 
   <script src="/dif/includes/js/jquery-latest.js"></script>
   <script type="text/javascript" src="/dif/includes/js/jquery.validate.js"></script>
   <div class="bgCover">&nbsp;</div>
