@@ -7,6 +7,7 @@
 // Purpose: Wrapper for form and action scripts to update database & email at later date.
 
 //FORM 
+echo "hun";
 ?>
 
 <form class="cleair cmxform" id="commentForm" name="ed" action="" method="post"> 
@@ -31,7 +32,7 @@
 
  <?PHP  if (!$flag){ ?>
  <p><fieldset> <label for="ctask"><em>*</em>Task Title: <span style="float:right;" class="tooltip" onmouseover="tooltip.add(this, 'demo1_tip')"> <IMG SRC="/dif/images/info.png"> </span> </label>
-  <select name="task" style="width:800px;" size="1" onchange="setOptions(document.ed.task.options[document.ed.task.selectedIndex].value);"><option value=" " selected="selected">[SELECT]</option><?PHP getTaskOptionListByName($lastName,$firstName, $m[1]); ?>
+  <select name="task" style="width:800px;" size="1" onchange="setOptions(document.ed.task.options[document.ed.task.selectedIndex].value);" class="required" ><option value=" " selected="selected">[SELECT]</option><?PHP getTaskOptionListByName($lastName,$firstName, $m[1]); ?>
    </select> </fieldset> </p>
  <?PHP }else{ ?>
  <p><fieldset> <label for="ctask"><em>*</em>Task Title: <span style="float:right;" class="tooltip" onmouseover="tooltip.add(this, 'demo1_tip')"> <IMG SRC="/dif/images/info.png"> </span> </label>
@@ -49,7 +50,7 @@
 
  <?PHP  if (!$flag){ ?>
  <fieldset><label for="cppoc"> <em>*</em> Primary Point of Contact: <span style="float:right;" class="tooltip" onmouseover="tooltip.add(this, 'demo3_tip')"> <IMG SRC="/dif/images/info.png"> </span> </label> 
-<select name="ppoc" size="1"  style="width:385px;"> <option value=" " selected="selected">[SELECT]</option> </select></fieldset></p>
+<select name="ppoc" size="1"  style="width:385px;" class="required" > <option value=" " selected="selected">[SELECT]</option> </select></fieldset></p>
  <?PHP }else{ ?>
 <fieldset><label for="cppoc"> <em>*</em> Primary Point of Contact: <span style="float:right;" class="tooltip" onmouseover="tooltip.add(this, 'demo3_tip')"> <IMG SRC="/dif/images/info.png"> </span> </label> 
 <select name=ppoc id="contact1" <?PHP if ($status != 0){echo "disabled";} ?>  class="required" style="width:385px;">
@@ -70,7 +71,7 @@ getPersonOptionListByName($lastName,$firstName, $m[19], 51);
 
 <p><fieldset><label for="spoc"> Secondary Point of Contact: <span style="float:right;" class="tooltip" onmouseover="tooltip.add(this, 'demo4_tip')"> <IMG SRC="/dif/images/info.png"> </span> </label>
 
-<select name="spoc" size="1"  style="width:385px;"> <option value=" " selected="selected">[SELECT]</option> </select>
+<select name="spoc" size="1"  style="width:385px;" > <option value=" " selected="selected">[SELECT]</option> </select>
 </select></fieldset>
 </p> 
 
