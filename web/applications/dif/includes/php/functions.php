@@ -89,7 +89,7 @@ function getPersonOptionListByName($lastName,$firstName, $whom, $ti) {
 		
 	$doc = simplexml_load_file($url);
 	$tasks = $doc->xpath('Task');
-	$buildarray=array('<option value=" " selected="selected">[SELECTcc]</option>');
+	$buildarray=array('<option value=" " selected="selected">[SELECT]</option>');
 	foreach ($tasks as $task) {
 		$peops = $task->xpath('Researchers/Person');
 		foreach ($peops as $peoples) {
