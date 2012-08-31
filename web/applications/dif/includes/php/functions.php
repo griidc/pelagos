@@ -62,8 +62,8 @@ function getPersonOptionListByName($lastName,$firstName, $whom, $ti) {
   	global $baseURL;
 	$baseurl = "http://griidc.tamucc.edu/services/RPIS/getTaskDetails.php";
 	$switch = '?'.'maxResults=-1&listResearchers=true';
-	$filters = "&lastName=$lastName&firstname=$firstName";
-	$filters = "&taskID=$ti";
+	$filters = "&lastName=$lastName&firstname=$firstName&taskID=$ti";
+	//$filters = "&taskID=$ti";
 	$url = $baseurl.$switch.$filters;
 		
 	$doc = simplexml_load_file($url);
@@ -75,7 +75,7 @@ function getPersonOptionListByName($lastName,$firstName, $whom, $ti) {
 			$personID = $peoples['ID'];
 			$line= "<option value=\"$personID\"";
 			if ($whom==$personID){$line .= " SELECTED";}
-			$line.= ">$peoples->LastName, $peoples->FirstName ($peoples->Email) hi</option>";
+			$line.= ">$peoples->LastName, $peoples->FirstName ($peoples->Email)</option>";
 			array_push($buildarray, $line );
 
 		}

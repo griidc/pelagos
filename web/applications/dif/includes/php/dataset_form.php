@@ -62,7 +62,7 @@
 <fieldset><label for="cppoc"> <em>*</em> Primary Point of Contact: <span style="float:right;" class="tooltip" onmouseover="tooltip.add(this, 'demo3_tip')"> <IMG SRC="/dif/images/info.png"> </span> </label> 
 <select name=ppoc id="contact1" <?PHP if ($status != 0){echo "disabled";} ?>  class="required" style="width:385px;"><option value=" " selected="selected">[SELECT]</option>
   <?PHP  
-getPersonOptionListByName($lastName,$firstName, $m[19], 51); 
+getPersonOptionListByName($lastName,$firstName, $m[19]); 
 ?>
 </select></fieldset></p>
 
