@@ -3,4 +3,5 @@ $username='username';
 $password='password';
 $database='gomri';
 $dbserver='localhost';
+$port='5432';
 ?>
