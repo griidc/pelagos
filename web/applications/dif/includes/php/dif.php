@@ -6,20 +6,18 @@
 // Returns: Form / Sidebar
 // Purpose: Wrapper for form and action scripts to update database & email at later date.
    error_reporting(0);
-#   global $user;
-#   $userId = $user->name;
-#   $ldap = ldap_connect("ldap://triton.tamucc.edu");
+   global $user;
+   $userId = $user->name;
+   $ldap = ldap_connect("ldap://triton.tamucc.edu");
 
-#   $result = ldap_search($ldap, "ou=people,dc=griidc,dc=org", "(uid=$userId)", array('givenName','sn'));
-#   $entries = ldap_get_entries($ldap, $result);
-#   for ($i=0; $i<$entries['count']; $i++) 
-#      {
-#         $firstName = $entries[$i]['givenname'][0];
-#         $lastName = $entries[$i]['sn'][0];
-#      }
-         $firstName = "Vernon";
-         $lastName = "Asper";
-#echo "Julie was here";
+   $result = ldap_search($ldap, "ou=people,dc=griidc,dc=org", "(uid=$userId)", array('givenName','sn'));
+   $entries = ldap_get_entries($ldap, $result);
+   for ($i=0; $i<$entries['count']; $i++) 
+      {
+         $firstName = $entries[$i]['givenname'][0];
+         $lastName = $entries[$i]['sn'][0];
+      }
+
 #drupal_add_js('/var/www/dif/includes/css/Tooltip.css');
 include ('functions.php'); 
 ?>
@@ -49,9 +47,7 @@ function stopRKey(evt) {
   var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null); 
   if ((evt.keyCode == 13) && (node.type=="text"))  {return false;} 
 } 
-
 document.onkeypress = stopRKey; 
-
 </script> 
    
    
@@ -93,23 +89,18 @@ document.ed.video.value = "";
 <SCRIPT LANGUAGE=JAVASCRIPT SRC="/dif/includes/js/map.js"></SCRIPT>
 <LINK href="/dif/includes/css/map.css" rel="stylesheet" type="text/css">-->
 
-
-
    	<script language="javascript" type="text/javascript">
       function setOptions(chosen) {
-         var selbox = document.ed.ppoc;
+	     var selboxp = document.ed.ppoc;
          var selboxs = document.ed.spoc;
-         selbox.options.length = 0;
-	     if (chosen == " ") { selbox.options[selbox.options.length] = new Option('Please Choose a Task.',' '); }
-	     else{  <?php getTaskOptionListByNameTwo($lastName,$firstName, 884); ?>  }
+		 selboxp.options.length = 0;
+	     if (chosen == " ") { selboxp.options[selboxp.options.length] = new Option('Please Choose a Task',' '); }
+	     else{ 
+		 <?php 
+		 makeTaskGrouping($lastName,$firstName, "p"); ?>  }
 	     selboxs.options.length = 0;
          if (chosen == " ") { selboxs.options[selboxs.options.length] = new Option('Please Choose a Task',' '); }
-		 else{  <?php 
-		 
-		 getTaskOptionListByNameTwos($lastName,$firstName, 884); 
-		 
-		 
-		 ?>  }
+		 else{  <?php makeTaskGrouping($lastName,$firstName, "s");  ?>  }
        }
 </script>
 
@@ -127,9 +118,7 @@ document.ed.video.value = "";
 
 <?php 
 //CONNECTION TO POSTGRES
-//$connection = pg_connect("host=localhost port=5432 dbname=gomri user=admin password=password")
-$connection = pg_connect("host=localhost port=5432 dbname=gomri user=gomri_user password=Sharkbait!") 
-or die ("ERROR: " . pg_last_error($connection)); 
+$connection = pg_connect("host=localhost port=5432 dbname=gomri user=gomri_user password=Sharkbait!") or die ("ERROR: " . pg_last_error($connection)); 
 if (!$connection) { die("Error in connection: " . pg_last_error()); } 
 //CHECKID
 $pu=array();
@@ -140,13 +129,8 @@ echo " <div id=\"demo$row[0]_tip\" style=\"display:none;\"> <img src=\"/dif/imag
 array_push($pu, $row[0]); }
 //SUBMITTED
 $status = 0;$usernumber=1;
-//if (($_POST['submit'])||($_POST['later'])) { 
-
-
 if (($_POST['submit'])||($_POST['later'])||($_POST['reject'])||($_POST['accept'])) { 
-echo "SUBMITTTTTTTTTTTTTTT::::::".$_POST['submit']."and ".$_POST['accept']." ".$_POST['later']." and ".$_POST['reject'];
 if ($_POST['later']) { $status = 0;}else{$status = 1;}
-
    //CONCAT TO FIT DB
    foreach ($_POST as $k=>$v) { $$k = pg_escape_string($v);}
    $datafor = $eco.'|'.$phys.'|'.$atm.'|'.$ch.'|'.$geog.'|'.$scpe.'|'.$econom.'|'.$geop.'|'.$dtother;
