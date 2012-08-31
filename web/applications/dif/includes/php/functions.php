@@ -14,48 +14,42 @@ function test_print($item2, $key,  $prefix) {
 	if ($prefix==$key){echo " SELECTED";}  echo ">".$item2."</option>\n";
 	}
 
-
-function getPersonOptionListByNameTwos($lastName,$firstName, $whom, $ti) {
+function makeTaskGrouping($lastName,$firstName, $which) {
 	global $baseURL;
 	$baseurl = "http://griidc.tamucc.edu/services/RPIS/getTaskDetails.php";
-	$switch = '?'.'maxResults=-1&listResearchers=true';
-	$filters = "&taskID=$ti";
+	$switch = '?'.'maxResults=-1&listResearchers=false';
+	$filters = "&lastName=$lastName&firstname=$firstName";
 	$url = $baseurl.$switch.$filters;
 	$doc = simplexml_load_file($url);
 	$tasks = $doc->xpath('Task');
-	$buildarray=array();
-	foreach ($tasks as $task) {
-		$peops = $task->xpath('Researchers/Person');
-		foreach ($peops as $peoples) {
-			$personID = $peoples['ID'];
-            $line = "\nselboxs.options[selboxs.options.length] = new \nOption(' $peoples->LastName, $peoples->FirstName - ($peoples->Email)', $personID);";
-			array_push($buildarray, $line );
-
-		}
+	foreach ($tasks as $task){
+		$dbOptionValue = $task['ID'];
+		$dbOption = $taskTitle;
+		 echo "if (chosen == \"$dbOptionValue\") { ";
+		 callPeople($lastName,$firstName, $which, $dbOptionValue);
+		 echo" }\n\n";
 	}
-	//$result = array_unique($buildarray);
-	$result = $buildarray;
-	foreach($result as $ribbit){ echo $ribbit; }
 	unset($doc);
 }
-
-
-function getPersonOptionListByNameTwo($lastName,$firstName, $whom, $ti) {
+		
+	function callPeople($lastName,$firstName, $w, $ti) {
   	global $baseURL;
 	$baseurl = "http://griidc.tamucc.edu/services/RPIS/getTaskDetails.php";
 	$switch = '?'.'maxResults=-1&listResearchers=true';
-	#$filters = "&lastName=$lastName&firstname=$firstName";
-	$filters = "&taskID=$ti";
-	$url = $baseurl.$switch.$filters;
-		
+	$filters = "&lastName=$lastName&firstname=$firstName&taskID=$ti";
+	#$filters = "&taskID=$ti";
+	$url = $baseurl.$switch.$filters;		
 	$doc = simplexml_load_file($url);
 	$tasks = $doc->xpath('Task');
-	$buildarray=array();
+	$he = "\nselboxs.options[selboxs.options.length] = new \nOption('[SELECT]', '999');";
+	if ($w=="s"){$buildarray=array($he);}else{$buildarray =array();}
 	foreach ($tasks as $task) {
 		$peops = $task->xpath('Researchers/Person');
 		foreach ($peops as $peoples) {
 			$personID = $peoples['ID'];
-			$line = "\nselbox.options[selbox.options.length] = new \nOption('$peoples->LastName, $peoples->FirstName - ($peoples->Email)', $personID);";
+			#if ($personID== "514"){$bool = 1;}else{$bool = 0;}
+			$bool = 0;
+			$line = "\nselbox$w.options[selbox$w.options.length] = new \nOption('$peoples->LastName, $peoples->FirstName - ($peoples->Email)', $personID, '', $bool);";
 			array_push($buildarray, $line );
 		}
 	}
@@ -63,25 +57,25 @@ function getPersonOptionListByNameTwo($lastName,$firstName, $whom, $ti) {
 	foreach($result as $ribbit){ echo $ribbit; }
 	unset($doc);
 }
-    
+   	
 function getPersonOptionListByName($lastName,$firstName, $whom, $ti) {
   	global $baseURL;
 	$baseurl = "http://griidc.tamucc.edu/services/RPIS/getTaskDetails.php";
 	$switch = '?'.'maxResults=-1&listResearchers=true';
-	#$filters = "&lastName=$lastName&firstname=$firstName";
+	$filters = "&lastName=$lastName&firstname=$firstName";
 	$filters = "&taskID=$ti";
 	$url = $baseurl.$switch.$filters;
 		
 	$doc = simplexml_load_file($url);
 	$tasks = $doc->xpath('Task');
-	$buildarray=array();
+	$buildarray=array('<option value=" " selected="selected">[SELECTcc]</option>');
 	foreach ($tasks as $task) {
 		$peops = $task->xpath('Researchers/Person');
 		foreach ($peops as $peoples) {
 			$personID = $peoples['ID'];
 			$line= "<option value=\"$personID\"";
 			if ($whom==$personID){$line .= " SELECTED";}
-			$line.= ">$peoples->LastName, $peoples->FirstName ($peoples->Email)</option>";
+			$line.= ">$peoples->LastName, $peoples->FirstName ($peoples->Email) hi</option>";
 			array_push($buildarray, $line );
 
 		}
@@ -90,60 +84,6 @@ function getPersonOptionListByName($lastName,$firstName, $whom, $ti) {
 	foreach($result as $ribbit){ echo $ribbit; }
 	unset($doc);
 }
-
-
-
-
-function getTaskOptionListByNameTwos($lastName,$firstName, $what) {
-	global $baseURL;
-	$baseurl = "http://griidc.tamucc.edu/services/RPIS/getTaskDetails.php";
-	$switch = '?'.'maxResults=-1&listResearchers=false';
-	$filters = "&lastName=$lastName&firstname=$firstName";
-	$url = $baseurl.$switch.$filters;
-
-	$maxLength = 200;
-	$doc = simplexml_load_file($url);
-	$tasks = $doc->xpath('Task');
-
-	foreach ($tasks as $task){
-		$dbOptionValue = $task['ID'];
-		$dbOption = $taskTitle;
-		 echo "if (chosen == \"$dbOptionValue\") { ";
-		 getPersonOptionListByNameTwos($lastName,$firstName, 488, $dbOptionValue); 
-		 echo" }\n\n";
-	}
-	unset($doc);
-}
-
-
-
-
-
-
-
-
-
-function getTaskOptionListByNameTwo($lastName,$firstName, $what) {
-	global $baseURL;
-	$baseurl = "http://griidc.tamucc.edu/services/RPIS/getTaskDetails.php";
-	$switch = '?'.'maxResults=-1&listResearchers=false';
-	$filters = "&lastName=$lastName&firstname=$firstName";
-	$url = $baseurl.$switch.$filters;
-
-	$maxLength = 200;
-	$doc = simplexml_load_file($url);
-	$tasks = $doc->xpath('Task');
-
-	foreach ($tasks as $task){
-		$dbOptionValue = $task['ID'];
-		$dbOption = $taskTitle;
-		 echo "if (chosen == \"$dbOptionValue\") { ";
-		 getPersonOptionListByNameTwo($lastName,$firstName, 488, $dbOptionValue); 
-		 echo" }\n\n";
-	}
-	unset($doc);
-}
-
 
 function getTaskOptionListByName($lastName,$firstName, $what) {
 	global $baseURL;
