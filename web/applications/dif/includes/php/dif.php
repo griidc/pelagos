@@ -6,19 +6,17 @@
 // Returns: Form / Sidebar
 // Purpose: Wrapper for form and action scripts to update database & email at later date.
    error_reporting(0);
-#   global $user;
-#   $userId = $user->name;
-#   $ldap = ldap_connect("ldap://triton.tamucc.edu");
+   global $user;
+   $userId = $user->name;
+   $ldap = ldap_connect("ldap://triton.tamucc.edu");
 
-#   $result = ldap_search($ldap, "ou=people,dc=griidc,dc=org", "(uid=$userId)", array('givenName','sn'));
-#   $entries = ldap_get_entries($ldap, $result);
-#   for ($i=0; $i<$entries['count']; $i++) 
-#      {
-#         $firstName = $entries[$i]['givenname'][0];
-#         $lastName = $entries[$i]['sn'][0];
-#      }
-         $firstName = "Vernon";
-         $lastName = "Asper";
+   $result = ldap_search($ldap, "ou=people,dc=griidc,dc=org", "(uid=$userId)", array('givenName','sn'));
+   $entries = ldap_get_entries($ldap, $result);
+   for ($i=0; $i<$entries['count']; $i++) 
+      {
+         $firstName = $entries[$i]['givenname'][0];
+         $lastName = $entries[$i]['sn'][0];
+      }
 
 #drupal_add_js('/var/www/dif/includes/css/Tooltip.css');
 include ('functions.php'); 
