@@ -7,7 +7,6 @@
 // Purpose: Wrapper for form and action scripts to update database & email at later date.
 
 //FORM 
-echo "hun";
 ?>
 
 <script type="text/javascript">
