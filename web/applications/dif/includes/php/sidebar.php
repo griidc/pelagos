@@ -21,7 +21,7 @@ echo "</div></td></tr> </tbody> </table>";
 function displayTaskStatusByName($lastName, $firstName)
 {
 	$baseurl = 'http://griidc.tamucc.edu/services/RPIS/getTaskDetails.php';
-	$switch = '?'.'maxResults=-1'; 				
+	$switch = '?'.'maxResults=-1';
 	$filters = "&lastName=$lastName&firstName=$firstName"; 
 	$url = $baseurl . $switch . $filters;
 
@@ -31,11 +31,11 @@ function displayTaskStatusByName($lastName, $firstName)
 	echo "<script type=\"text/javascript\">\n\n";
 	echo "d = new dTree('d');\n\n";
 	echo "d.add(0,-1,'Datasets','');\n\n";
-	$nodeCount = 1;	
+	$nodeCount = 1;
 	$folderCount =1;
 	foreach ($tasks as $task)
-	{
-		$taskID = $task['ID'];
+    {
+        $taskID = $task['ID'];
 		
 		$taskTitle = $task->Title;
 			
@@ -50,7 +50,7 @@ function displayTaskStatusByName($lastName, $firstName)
 			$status = $row[1];
 			$title = $row[0];
 			$datasetid = $row[2];
-									
+
 			switch ($status)
 			{
 				case null:
@@ -77,17 +77,8 @@ function displayTaskStatusByName($lastName, $firstName)
 
 function dbconnect()
 {
-	#$username='gomri_user';
-	#$password='Sharkbait!';
-	#$database='gomri';
-	#$dbserver='localhost';
-	
-	$username='admin';
-	$password='password';
-	$database='gomri';
-	$dbserver='proteus.tamucc.edu';
-	$port=5432;
-	
+	include 'dbGomri.php';
+		
 	//Connect to database
 	$connString = "host=$dbserver port=$port dbname=$database user=$username password=$password";
 	$dbconn = pg_connect($connString)
