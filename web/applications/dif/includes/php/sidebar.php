@@ -7,8 +7,8 @@
 // Returns: Folder list op datasets by task.
 // Purpose: To return data gather from the RPIS service and database to show a list of datasets by task.
 ?>
-<link rel="StyleSheet" href="http://localhost:48880/dif/includes/css/dtree.css" type="text/css" />
-<script type="text/javascript" src="http://localhost:48880/dif/includes/js/dtree.js"></script>
+<link rel="StyleSheet" href="/dif/includes/css/dtree.css" type="text/css" />
+<script type="text/javascript" src="/dif/includes/js/dtree.js"></script>
 <?php
 echo "<table class=cleair><tbody class=tbody><tr><td>";
 echo "<h2 class=\"title\" align=center>Tasks and datasets for ".$firstName." ".$lastName."<hr /></FONT>";
@@ -23,7 +23,8 @@ function displayTaskStatusByName($lastName, $firstName)
 	$baseurl = 'http://griidc.tamucc.edu/services/RPIS/getTaskDetails.php';
 	$switch = '?'.'maxResults=-1';
 	$filters = "&lastName=$lastName&firstName=$firstName"; 
-	$url = $baseurl . $switch . $filters;
+	$url = $baseurl.$switch;
+    if (!isAdmin()) $url .= $filters;
 
 	$doc = simplexml_load_file($url);
 	$tasks = $doc->xpath('Task');
@@ -88,7 +89,7 @@ function dbconnect()
 	if(!($dbconn))
 	{
 		//connection failed, exit with an error
-		echo pg_errormessage($dbconn);
+		echo 'Database Connection Failed: ' . pg_errormessage($dbconn);
 		exit;
 	}
 	return $dbconn;

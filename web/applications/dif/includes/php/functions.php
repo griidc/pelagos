@@ -14,30 +14,47 @@ function test_print($item2, $key,  $prefix) {
 	if ($prefix==$key){echo " SELECTED";}  echo ">".$item2."</option>\n";
 	}
 
+function isAdmin() {
+    global $user;
+    $admin = false;
+    if ($user->uid) {
+        $logged_in_uid = $user->name;
+        $ldap = ldap_connect('ldap://triton.tamucc.edu');
+        $adminsResult = ldap_search($ldap, "cn=administrators,ou=DIF,ou=applications,dc=griidc,dc=org", '(objectClass=*)', array("member"));
+        $admins = ldap_get_entries($ldap, $adminsResult);
+        for ($i=0;$i<$admins[0]['member']['count'];$i++) {
+            if ("uid=$logged_in_uid,ou=members,ou=people,dc=griidc,dc=org" == $admins[0]['member'][$i]) {
+                $admin = true;
+            }
+        }
+    }
+    return $admin;
+}
+
 function makeTaskGrouping($lastName,$firstName, $which) {
 	global $baseURL;
 	$baseurl = "http://griidc.tamucc.edu/services/RPIS/getTaskDetails.php";
 	$switch = '?'.'maxResults=-1&listResearchers=false';
 	$filters = "&lastName=$lastName&firstname=$firstName";
-	$url = $baseurl.$switch.$filters;
+	$url = $baseurl.$switch;
+    if (!isAdmin()) $url .= $filters;
 	$doc = simplexml_load_file($url);
 	$tasks = $doc->xpath('Task');
 	foreach ($tasks as $task){
 		$dbOptionValue = $task['ID'];
 		$dbOption = $taskTitle;
 		 echo "if (chosen == \"$dbOptionValue\") { ";
-		 callPeople($lastName,$firstName, $which, $dbOptionValue);
+		 callPeople($which, $dbOptionValue);
 		 echo" }\n\n";
 	}
 	unset($doc);
 }
 		
-	function callPeople($lastName,$firstName, $w, $ti) {
+	function callPeople($w, $ti) {
   	global $baseURL;
 	$baseurl = "http://griidc.tamucc.edu/services/RPIS/getTaskDetails.php";
 	$switch = '?'.'maxResults=-1&listResearchers=true';
-	$filters = "&lastName=$lastName&firstname=$firstName&taskID=$ti";
-	#$filters = "&taskID=$ti";
+	$filters = "&taskID=$ti";
 	$url = $baseurl.$switch.$filters;		
 	$doc = simplexml_load_file($url);
 	$tasks = $doc->xpath('Task');
@@ -49,7 +66,10 @@ function makeTaskGrouping($lastName,$firstName, $which) {
 			$personID = $peoples['ID'];
 			#if ($personID== "514"){$bool = 1;}else{$bool = 0;}
 			$bool = 0;
-			$line = "\nselbox$w.options[selbox$w.options.length] = new \nOption('$peoples->LastName, $peoples->FirstName - ($peoples->Email)', $personID, '', $bool);";
+			$LastName = preg_replace('/\'/','\\\'',$peoples->LastName);
+			$FirstName = preg_replace('/\'/','\\\'',$peoples->FirstName);
+			$Email = preg_replace('/\'/','\\\'',$peoples->Email);
+			$line = "\nselbox$w.options[selbox$w.options.length] = new \nOption('$LastName, $FirstName - ($Email)', $personID, '', $bool);";
 			array_push($buildarray, $line );
 		}
 	}
@@ -64,7 +84,8 @@ function getPersonOptionListByName($lastName,$firstName, $whom, $ti) {
 	$switch = '?'.'maxResults=-1&listResearchers=true';
 	$filters = "&lastName=$lastName&firstname=$firstName&taskID=$ti";
 	//$filters = "&taskID=$ti";
-	$url = $baseurl.$switch.$filters;
+	$url = $baseurl.$switch;
+    if (!isAdmin()) $url .= $filters;
 		
 	$doc = simplexml_load_file($url);
 	$tasks = $doc->xpath('Task');
@@ -90,7 +111,8 @@ function getTaskOptionListByName($lastName,$firstName, $what) {
 	$baseurl = "http://griidc.tamucc.edu/services/RPIS/getTaskDetails.php";
 	$switch = '?'.'maxResults=-1&listResearchers=false';
 	$filters = "&lastName=$lastName&firstname=$firstName";
-	$url = $baseurl.$switch.$filters;
+	$url = $baseurl.$switch;
+    if (!isAdmin()) $url .= $filters;
 
 	$maxLength = 200;
 	$doc = simplexml_load_file($url);
