@@ -158,11 +158,7 @@ Video&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
 </td></tr></table>
 </fieldset></p>
 
-<!--
-<p><fieldset><labelbr for="cprovisions"> <b>If Dataset Type is Video, Please Provide Video Attributes:</b> <span  style="float:right; class="tooltip" onmouseover="tooltip.add(this, 'demo7_tip')"> <IMG SRC="/dif/images/info.png"> </span> </label><br />
-<textarea name="video" <?PHP if ($status != 0){echo "disabled";} ?> id="cprovisions"  rows=3 cols=98  onkeypress="return imposeMaxLength(this, 200);"><?PHP if ($flag=="update"){echo $m[5];} ?></textarea></fieldset>
-</p>
--->
+
 <p><fieldset><b> Dataset For:</b> <labelbr for="cdatafor"><span  style="float:right;" class="tooltip" class="tooltip" onmouseover="tooltip.add(this, 'demo23_tip')"> <IMG SRC="/dif/images/info.png"> </span> </label><br />
 <TABLE WIDTH="100%"><TR><TD> <input type="checkbox" name="eco"  value="Ecological/Biological" <?PHP if ($status != 0){echo "disabled";} ?>  <?PHP if (($flag=="update")&&($dtf[0]=="Ecological/Biological")){echo " checked";} ?>  />Ecological/Biological&nbsp;&nbsp;&nbsp;&nbsp;
 </TD><TD> <input type="checkbox" name="phys" value="Physical Oceanographical" <?PHP if ($status != 0){echo "disabled";} ?>  <?PHP  if (($flag=="update")&&($dtf[1] == "Physical Oceanographical")){echo " checked";} ?>  />
@@ -170,11 +166,11 @@ Physical Oceanography&nbsp;&nbsp;&nbsp;&nbsp;
 </TD><TD> <input type="checkbox" name="atm" value="Atmospheric" <?PHP if ($status != 0){echo "disabled";} ?>  <?PHP  if (($flag=="update")&&($dtf[2] == "Atmospheric")){echo " checked";} ?>  />
 Atmospheric&nbsp;&nbsp;&nbsp;&nbsp;
 </TD></TR><TR><TD> <input type="checkbox" name="ch" value="Chemical" <?PHP if ($status != 0){echo "disabled";} ?> <?PHP  if (($flag=="update")&&($dtf[3] == "Chemical")){echo " checked";} ?>  />Chemical&nbsp;&nbsp;&nbsp;&nbsp;
-</TD><TD> <input type="checkbox" name="geog" value="Human health" <?PHP if ($status != 0){echo "disabled";} ?> <?PHP  if (($flag=="update")&&($dtf[4] == "Geographical")){echo " checked";} ?>  />
-  Human health&nbsp;&nbsp;&nbsp;
+</TD><TD> <input type="checkbox" name="geog" value="Human Health" <?PHP if ($status != 0){echo "disabled";} ?> <?PHP  if (($flag=="update")&&($dtf[4] == "Human Health")){echo " checked";} ?>  />
+  Human Health&nbsp;&nbsp;&nbsp;
 </TD><TD> <input type="checkbox" name="scpe" value="Social/Cultural/Political" <?PHP if ($status != 0){echo "disabled";} ?> <?PHP  if (($flag=="update")&&($dtf[5] == "Social/Cultural/Political")){echo " checked";} ?>  /> 
 Social/Cultural/Political&nbsp;&nbsp;&nbsp;&nbsp;
-</TD></TR><TR><TD> <input type="checkbox" name="econom" value="Economics" <?PHP if ($status != 0){echo "disabled";} ?> <?PHP  if (($flag=="update")&&($dtf[6] == "Economical")){echo " checked";} ?> />
+</TD></TR><TR><TD> <input type="checkbox" name="econom" value="Economics" <?PHP if ($status != 0){echo "disabled";} ?> <?PHP  if (($flag=="update")&&($dtf[6] == "Economics")){echo " checked";} ?> />
 Economics&nbsp;&nbsp;&nbsp;&nbsp;
 </TD>
 <TD> 
@@ -191,12 +187,12 @@ Economics&nbsp;&nbsp;&nbsp;&nbsp;
  
 <p><fieldset><labelbr for="csize"> 
 <b><em>* </em>Approximate Dataset Size:</b> <span style="float:right; class="tooltip" onmouseover="tooltip.add(this, 'demo8_tip')"> <IMG SRC="/dif/images/info.png"> </span> </label><br /> 
-<input type="radio" name="size" <?PHP if ($status != 0){echo "disabled";} ?> value="< 1 Gb"   <?PHP echo " $size[0]"; ?>> < 1GB &nbsp;&nbsp;&nbsp;&nbsp; 
+<input type="radio" name="size" <?PHP if ($status != 0){echo "disabled";} ?> value="< 1 Gb"   <?PHP echo " $size[0]"; ?> checked="checked"> < 1GB &nbsp;&nbsp;&nbsp;&nbsp; 
 <input type="radio" name="size" <?PHP if ($status != 0){echo "disabled";} ?> value="1GB-10GB" <?PHP echo " $size[1]"; ?>> 1GB-10GB&nbsp;&nbsp;&nbsp;&nbsp;
 <input type="radio" name="size" <?PHP if ($status != 0){echo "disabled";} ?> value="10GB-200GB"<?PHP echo " $size[2]"; ?>> 10GB-200GB&nbsp;&nbsp;&nbsp;&nbsp;
 <input type="radio" name="size" <?PHP if ($status != 0){echo "disabled";} ?> value="200GB-1TB"<?PHP echo " $size[3]"; ?>> 200GB-1TB&nbsp;&nbsp;&nbsp;&nbsp;
 <input type="radio" name="size" <?PHP if ($status != 0){echo "disabled";} ?> value="1TB-5TB"<?PHP echo " $size[4]"; ?>> 1TB-5TB&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<input type="radio" name="size" <?PHP if ($status != 0){echo "disabled";} ?> value=">5TB" <?PHP echo " $size[5]"; ?> class="required">  >5TB
+<input type="radio" name="size" <?PHP if ($status != 0){echo "disabled";} ?> value=">5TB" <?PHP echo " $size[5]"; ?>>  >5TB
 </fieldset>
 </p>
 
@@ -279,7 +275,7 @@ Economics&nbsp;&nbsp;&nbsp;&nbsp;
    <input type="checkbox" <?PHP if ($status != 0){echo "disabled";} ?> name="nat4" value="National Center for Biotechnology Information" <?PHP  if (($flag=="update")&&($nta[3] == "National Center for Biotechnology Information")){echo " checked";} ?>  id="cnational"  />National Center for Biotechnology Information <a href="http://www.ncbi.nlm.nih.gov" target="_new">(http://www.ncbi.nlm.nih.gov)</a><br />
    <input type="checkbox" <?PHP if ($status != 0){echo "disabled";} ?> name="nat5" value="Data.gov Dataset Management System" <?PHP  if (($flag=="update")&&($nta[4] == "Data.gov Dataset Management System")){echo " checked";} ?>  id="cnational"  />Data.gov Dataset Management System <a href="http://www.dms.data.gov" target="_new">(http://www.dms.data.gov)</a><br />
    <hr />
-<input type="checkbox" <?PHP if ($status != 0){echo "disabled";} ?> name="nat6" value="Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC)" <?PHP  if (($flag=="update")&&($nta[5] == "Gulf of Mexico Research Initiative Inforation and Data Cooperative (GRIIDC)")){echo " checked";} ?>  id="cnational"  />Gulf of Mexico Research Initiative Inforation and Data Cooperative (GRIIDC) <a href="https://griidc.gomri.org" target="_new">(https://griidc.gomri.org)</a><br /><hr /> 
+<input type="checkbox" <?PHP if ($status != 0){echo "disabled";} ?> name="nat6" value="Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC)" <?PHP  if (($flag=="update")&&($nta[5] == "Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC)")){echo " checked";} ?>  id="cnational"  />Gulf of Mexico Research Initiative Inforation and Data Cooperative (GRIIDC) <a href="https://griidc.gomri.org" target="_new">(https://griidc.gomri.org)</a><br /><hr /> 
    <table>
    <tr>
      <td>Others:</td>

@@ -17,8 +17,8 @@
          $firstName = $entries[$i]['givenname'][0];
          $lastName = $entries[$i]['sn'][0];
       }
-         $firstName = "Vernon";
-         $lastName = "Asper";
+       #  $firstName = "Vernon";
+       #  $lastName = "Asper";
 #drupal_add_js('/var/www/dif/includes/css/Tooltip.css');
 include ('functions.php'); 
 ?>
