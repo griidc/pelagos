@@ -35,7 +35,7 @@
  <?PHP  if (!$flag){ ?>
  <p><fieldset> <label for="ctask"><em>*</em>Task Title: <span style="float:right;" class="tooltip" onmouseover="tooltip.add(this, 'demo1_tip')">
  <IMG SRC="/dif/images/info.png"> </span> </label>
-  <select name="task" style="width:800px;" size="1" onchange="setOptions(document.ed.task.options[document.ed.task.selectedIndex].value);" class="required" ><option value=" " selected="selected">[SELECT A TASK]</option><?PHP getTaskOptionListByName($lastName,$firstName, $m[1]); ?>
+  <select name="task" style="width:800px;" size="1" onchange="setOptions(document.ed.task.options[document.ed.task.selectedIndex].value);" class="required" ><option value="" selected="selected">[SELECT A TASK]</option><?PHP getTaskOptionListByName($lastName,$firstName, $m[1]); ?>
    </select> </fieldset> </p>
  <?PHP }else{ ?>
  
@@ -47,7 +47,7 @@
 <p><fieldset> <label for="ctask"><em>*</em> Task Title: <span style="float:right;" class="tooltip" onmouseover="tooltip.add(this, 'demo1_tip')">
  <IMG SRC="/dif/images/info.png"> </span> </label>
  <select name="task" style="width:800px;" size="1" onchange="setOptions(document.ed.task.options[document.ed.task.selectedIndex].value);" class="required" 
-<select name=task style="width:800px;"  id="cctask" class="required" <?PHP if ($status != 0){echo "disabled";} ?>  >
+  id="cctask" class="required" <?PHP if ($status != 0){echo "disabled";} ?>  >
 <option value=' '>[SELECT A TASK]</option>
 <?PHP getTaskOptionListByName($lastName,$firstName, $m[1]); ?>
 </select> </fieldset> </p>
@@ -61,10 +61,10 @@
 
  <?PHP  if (!$flag){ ?>
  <fieldset><label for="cppoc"> <em>*</em> Primary Point of Contact: <span style="float:right;" class="tooltip" onmouseover="tooltip.add(this, 'demo3_tip')"> <IMG SRC="/dif/images/info.png"> </span> </label> 
-<select name="ppoc" size="1"  style="width:385px;" class="required" > <option value=" " selected="selected">Please Choose a Task</option> </select></fieldset></p>
+<select name="ppoc" size="1"  style="width:385px;" class="required" > <option value="" selected="selected">Please Choose a Task</option> </select></fieldset></p>
  <?PHP }else{ ?>
 <fieldset><label for="cppoc"> <em>*</em> Primary Point of Contact: <span style="float:right;" class="tooltip" onmouseover="tooltip.add(this, 'demo3_tip')"> <IMG SRC="/dif/images/info.png"> </span> </label> 
-<select name=ppoc id="contact1" <?PHP if ($status != 0){echo "disabled";} ?>  class="required" style="width:385px;"><option value=" " selected="selected">[SELECT]</option>
+<select name=ppoc id="contact1" <?PHP if ($status != 0){echo "disabled";} ?>  class="required" style="width:385px;"><option value="" selected="selected">[SELECT]</option>
   <?PHP  
 getPersonOptionListByName($lastName,$firstName, $m[19]); 
 ?>
@@ -83,7 +83,7 @@ getPersonOptionListByName($lastName,$firstName, $m[19]);
 <p><fieldset><label for="spoc"> Secondary Point of Contact: <span style="float:right;" class="tooltip" onmouseover="tooltip.add(this, 'demo4_tip')"> 
 <IMG SRC="/dif/images/info.png"> </span> </label>
 
-<select name="spoc" size="1"  style="width:385px;" > <option value=" " selected="selected">Please Choose a Task</option> </select>
+<select name="spoc" size="1"  style="width:385px;" > <option value="" selected="selected">Please Choose a Task</option> </select>
 </select></fieldset>
 </p> 
 
