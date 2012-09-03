@@ -78,18 +78,15 @@ function displayTaskStatusByName($lastName, $firstName)
 
 function dbconnect()
 {
-	include 'dbGomri.php';
-		
+    include 'dbGomri.php';
 	//Connect to database
 	$connString = "host=$dbserver port=$port dbname=$database user=$username password=$password";
-	$dbconn = pg_connect($connString)
-	or die("Couldn't Connect " . pg_last_error());
-	
+ 	$dbconn = pg_connect($connString)or die("Couldn't Connect : " . pg_last_error());
 	//Check it
 	if(!($dbconn))
 	{
 		//connection failed, exit with an error
-		echo 'Database Connection Failed: ' . pg_errormessage($dbconn);
+		echo 'Database Connection Failed: ' . pg_errormessage($dbconn);#
 		exit;
 	}
 	return $dbconn;
