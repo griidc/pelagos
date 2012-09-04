@@ -35,7 +35,7 @@ function makeTaskGrouping($lastName,$firstName, $which) {
 	global $baseURL;
 	$baseurl = "http://griidc.tamucc.edu/services/RPIS/getTaskDetails.php";
 	$switch = '?'.'maxResults=-1&listResearchers=false';
-	$filters = "&lastName=$lastName&firstname=$firstName";
+	$filters = "&lastName=$lastName&firstName=$firstName";
 	$url = $baseurl.$switch;
     if (!isAdmin()) $url .= $filters;
 	$doc = simplexml_load_file($url);
@@ -82,7 +82,7 @@ function getPersonOptionListByName($lastName,$firstName, $whom, $ti) {
   	global $baseURL;
 	$baseurl = "http://griidc.tamucc.edu/services/RPIS/getTaskDetails.php";
 	$switch = '?'.'maxResults=-1&listResearchers=true';
-	$filters = "&lastName=$lastName&firstname=$firstName&taskID=$ti";
+	$filters = "&lastName=$lastName&firstName=$firstName&taskID=$ti";
 	//$filters = "&taskID=$ti";
 	$url = $baseurl.$switch;
     if (!isAdmin()) $url .= $filters;
@@ -110,7 +110,7 @@ function getTaskOptionListByName($lastName,$firstName, $what) {
 	global $baseURL;
 	$baseurl = "http://griidc.tamucc.edu/services/RPIS/getTaskDetails.php";
 	$switch = '?'.'maxResults=-1&listResearchers=false';
-	$filters = "&lastName=$lastName&firstname=$firstName";
+	$filters = "&lastName=$lastName&firstName=$firstName";
 	$url = $baseurl.$switch;
     if (!isAdmin()) $url .= $filters;
 
@@ -137,7 +137,7 @@ function getProjectOptionListByName($lastName,$firstName) {
 	global $baseURL;
 	$baseurl = "http://griidc.tamucc.edu/services/RPIS/getTaskDetails.php";
 	$switch = '?'.'maxResults=-1&listResearchers=false'; 
-	$filters = "&lastName=$lastName&firstname=$firstName";
+	$filters = "&lastName=$lastName&firstName=$firstName";
 	$url = $baseurl.$switch.$filters;
 	
 	$maxLength = 50;
