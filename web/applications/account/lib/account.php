@@ -1,0 +1,382 @@
+<?php
+
+function find_unique_uid($firstName,$lastName) {
+    $uid = strtolower(substr($firstName,0,1) . $lastName);
+    $uid = preg_replace('/[^A-Za-z]/','',$uid);
+
+    $num = 1;
+    $foundUnique = 0;
+    $searchUid = $uid;
+
+    # search ldap
+    while (!$foundUnique) {
+        $personsResult = ldap_search($GLOBALS['LDAP'], "dc=griidc,dc=org", "(uid=$searchUid)", array("uid"));
+        $persons = ldap_get_entries($GLOBALS['LDAP'], $personsResult);
+        if ($persons['count'] > 0) {
+            $num++;
+        }
+        else {
+            $foundUnique = 1;
+        }
+        $searchUid = $uid . $num;
+    }
+
+    # search pending account requests
+    $ldifs = scandir(SPOOL_DIR.'/incoming');
+    foreach ($ldifs as $ldifFile) {
+        if (!preg_match('/\.ldif$/',$ldifFile)) continue;
+        $ldif = read_ldif(SPOOL_DIR . "/incoming/$ldifFile");
+        if (isset($ldif['person']['uid']['value']) and $ldif['person']['uid']['value'] == $uid . $num) {
+            $num++;
+        }
+    }
+
+    if ($num > 1) { $uid .= $num; }
+
+    return $uid;
+}
+
+function find_free_uidNumber() {
+    # search ldap
+    $accountsResult = ldap_search($GLOBALS['LDAP'], "dc=griidc,dc=org", '(objectClass=posixAccount)', array("uidNumber"));
+    $accounts = ldap_get_entries($GLOBALS['LDAP'], $accountsResult);
+    $maxUidNumber = 999;
+    foreach ($accounts as $account) {
+        $foundUidNumber = $account['uidnumber'][0];
+        if ($foundUidNumber > $maxUidNumber) {
+            $maxUidNumber = $foundUidNumber;
+        }
+    }
+
+    # search pending account requests
+    $ldifs = scandir(SPOOL_DIR.'/incoming');
+    foreach ($ldifs as $ldifFile) {
+        if (!preg_match('/\.ldif$/',$ldifFile)) continue;
+        $ldif = read_ldif(SPOOL_DIR . "/incoming/$ldifFile");
+        if (isset($ldif['person']['uidNumber']['value']) and $ldif['person']['uidNumber']['value'] > $maxUidNumber) {
+            $maxUidNumber = $ldif['person']['uidNumber']['value'];
+        }
+    }
+
+    return $maxUidNumber + 1;
+}
+
+function make_ssha_password($password) {
+    mt_srand((double)microtime()*1000000);
+    $salt = pack("CCCC", mt_rand(), mt_rand(), mt_rand(), mt_rand());
+    $hash = "{SSHA}" . base64_encode(pack("H*", sha1($password . $salt)) . $salt);
+    return $hash;
+}
+
+function query_RPIS($email) {
+    $respStr = file_get_contents("http://griidc.tamucc.edu/services/RPIS/getPeopleDetails.php?email=$email");
+    $respArr = json_decode(json_encode((array) simplexml_load_string($respStr)),1);
+
+    $retval['exception'] = false;
+
+    if (isset($respArr['Exception'])) {
+        $retval['exception'] = true;
+        if (isset($respArr['Exception']['@attributes']) and isset($respArr['Exception']['@attributes']['exceptionCode'])) {
+            $retval['exceptionCode'] = $respArr['Exception']['@attributes']['exceptionCode'];
+        }
+        if (isset($respArr['Exception']['ExceptionText'])) {
+            $retval['ExceptionText'] = $respArr['Exception']['ExceptionText'];
+        }
+    }
+    elseif (!isset($respArr['Count'])) {
+        $retval['exception'] = true;
+        $retval['ExceptionText'] = 'Bad response: Count element not found.';
+    }
+    elseif ($respArr['Count'] < 1) {
+        $retval['exception'] = true;
+        $retval['ExceptionText'] = 'Bad response: Count returned less than one.';
+    }
+    elseif ($respArr['Count'] > 1) {
+        $retval['exception'] = true;
+        $retval['ExceptionText'] = 'More than one person found with that email address.';
+    }
+    else {
+        $retval['Person'] = $respArr['Person'];
+        $retval['hash'] = md5($respStr);
+    }
+
+    return $retval;
+}
+
+function query_griidc_people($email) {
+#    $connString = "host=localhost port=5432 dbname=griidc_people user=griidc_people_user password=password";
+    $connString = sprintf('host=%s port=5432 dbname=%s user=%s password=%s',GRIIDC_PEOPLE_HOST,GRIIDC_PEOPLE_DBNAME,GRIIDC_PEOPLE_USER,GRIIDC_PEOPLE_PASSWORD);
+    $dbconn = pg_connect($connString) or die("Couldn't Connect " . pg_last_error());
+    $returnds = pg_query($dbconn, "select first_name,middle_name,last_name,business_phone,job_title,suffix,email from people where upper(email) = '" . strtoupper($email) . "'");
+    $retval['found'] = false;
+    while ($row = pg_fetch_row($returnds)){
+        $retval['Person']['FirstName'] = $row[0];
+        $retval['Person']['MiddleName'] = $row[1];
+        $retval['Person']['LastName'] = $row[2];
+        $retval['Person']['PhoneNum'] = $row[3];
+        $retval['Person']['JobTitle'] = $row[4];
+        $retval['Person']['Suffix'] = $row[5];
+        $retval['Person']['Email'] = $row[6];
+        $retval['found'] = true;
+    }
+    if ($retval['found']) {
+        $str = '';
+        foreach ($retval['Person'] as $field) {
+            $str .= $field;
+        }
+        $retval['hash'] = md5($str);
+    }
+    return $retval;
+}
+
+function check_person($app,$type='u') {
+    $retval = array();
+    $retval['err'] = array();
+    foreach ($GLOBALS['PERSON_FIELDS'] as $field => $details) {
+        $value = $app->request()->post($field);
+        if (in_array($type,$details['attrs'])) {
+            $retval['person'][$field]['value'] = $value;
+            if (in_array('r',$details['attrs']) and (is_null($value) or $value == '')) {
+                $retval['err'][] = "\"$details[name]\" is a required field";
+                $retval['person'][$field]['class'] = 'account_errorfield';
+            }
+        }
+    }
+    $affiliation = $app->request()->post('affiliation');
+    if (is_null($affiliation) or $affiliation == '') {
+        $retval['err'][] = 'you must select an affiliation (select "Other:" and enter your affiliation if yours is not listed)';
+    }
+    elseif ($affiliation == 'Other' and $retval['person']['o']['value'] == '') {
+        $retval['err'][] = 'you must specify your affiliation if you select "Other:"';
+        $retval['person']['o']['class'] = 'account_errorfield';
+    }
+    return $retval;
+}
+
+function add_posix_fields($person) {
+    $person['uidNumber']['value'] = find_free_uidNumber();
+    $person['gidNumber']['value'] = '1000';
+    $person['gecos']['value'] = preg_replace('/,/','',$person['cn']['value']);
+    $person['homeDirectory']['value'] = '/home/users/' . $person['uid']['value'];
+    $person['loginShell']['value'] = '/bin/bash';
+    return $person;
+}
+
+function read_ldif($ldifFile) {
+    $ldif = array();
+    $ldif['objectClasses'] = array();
+    $ldif['applications'] = array();
+    $contents = file_get_contents($ldifFile);
+    $ldif['raw'] = $contents;
+    $lines = explode("\n", $contents);
+    $person = true;
+    foreach ($lines as $line) {
+        if ($line == '') $person = false;
+        if ($person) {
+            if (preg_match('/^(\w+): (.*)/',$line,$matches)) {
+                if ($matches[1] == 'objectClass') {
+                    $ldif['objectClasses'][] = $matches[2];
+                    continue;
+                }
+                $ldif['person'][$matches[1]]['value'] = $matches[2];
+            }
+        }
+        else {
+            if (preg_match('/^dn: cn=([^,]+),ou=[^,]+,ou=groups,dc=griidc,dc=org/',$line,$matches)) {
+                $ldif['affiliation'] = $matches[1];
+            }
+            if (preg_match('/^dn: cn=([^,]+),ou=([^,]+),ou=applications,dc=griidc,dc=org/',$line,$matches)) {
+                $ldif['applications'][$matches[2]] = $matches[1];
+            }
+        }
+    }
+    if (!isset($ldif['affiliation'])) $ldif['affiliation'] = 'Other';
+    return $ldif;
+}
+
+function write_ldif($ldifFile,$ldif) {
+    $ldif['person']['dn']['value'] = 'uid=' . $ldif['person']['uid']['value'] . ',ou=members,ou=people,dc=griidc,dc=org';
+    $contents = 'dn: ' . $ldif['person']['dn']['value'];
+
+    # add person fields
+    foreach ($GLOBALS['PERSON_FIELDS'] as $field => $details) {
+        if (isset($ldif['person'][$field]['value']) and $ldif['person'][$field]['value'] != '') {
+            $contents .= "\n$field: ". $ldif['person'][$field]['value'];
+        }
+    }
+
+    # add posixAccount fields if posixAccount objectClass found
+    if (in_array('posixAccount',$ldif['objectClasses'])) {
+        foreach ($GLOBALS['POSIX_ACCOUNT_FIELDS'] as $field) {
+            if (isset($ldif['person'][$field]['value']) and $ldif['person'][$field]['value'] != '') {
+                $contents .= "\n$field: ". $ldif['person'][$field]['value'];
+            }
+        }
+    }
+
+    foreach ($ldif['objectClasses'] as $objectClass) {
+        $contents .= "\nobjectClass: $objectClass";
+    }
+
+    if (isset($ldif['affiliation']) and $ldif['affiliation'] != '' and $ldif['affiliation'] != 'Other') {
+        $groupResult = ldap_search($GLOBALS['LDAP'], "ou=groups,dc=griidc,dc=org", "(&(objectClass=groupOfNames)(cn=$ldif[affiliation]))", array("dn"));
+        $groups = ldap_get_entries($GLOBALS['LDAP'], $groupResult);
+        for ($i=0; $i<$groups['count']; $i++) {
+            $contents .= "\n\ndn: " . $groups[$i]['dn'];
+            $contents .= "\nchangetype: modify";
+            $contents .= "\nadd: member";
+            $contents .= "\nmember: " . $ldif['person']['dn']['value'];
+        }
+    }
+
+    foreach ($ldif['applications'] as $application => $group) {
+        $contents .= "\n\ndn: cn=$group,ou=$application,ou=applications,dc=griidc,dc=org";
+        $contents .= "\nchangetype: modify";
+        $contents .= "\nadd: member";
+        $contents .= "\nmember: " . $ldif['person']['dn']['value'];
+    }
+
+#    echo '<pre>';
+#    echo $contents;
+#    echo '</pre>';
+    umask(0066);
+    file_put_contents($ldifFile,$contents);
+    $ldif['raw'] = $contents;
+    return $ldif;
+}
+
+function notPosixAccount($var) {
+    if ($var == 'posixAccount') {
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+
+function verify_email ($email,$hash) {
+    $retval['verified'] = false;
+    if (is_null($email) or $email == '') {
+        $retval['error_message'] = 'missing email';
+    }
+    elseif (is_null($hash) or $hash == '') {
+        $retval['error_message'] = 'missing hash';
+    }
+    else {
+        $found = false;
+
+        $griidc_person = query_griidc_people($email);
+
+        if ($griidc_person['found']) {
+            $found = true;
+            $retval['person'] = $griidc_person;
+        }
+        else {
+            $RPIS = query_RPIS($email);
+
+            if ($RPIS['exception']) {
+                $retval['error_message'] = 'RPIS exception';
+            }
+            else {
+                $found = true;
+                $retval['person'] = $RPIS;
+            }
+        }
+
+        if (!$found) {
+            $retval['error_message'] = 'email not found';
+        }
+        elseif ($hash != $retval['person']['hash']) {
+            $retval['error_message'] = 'hash does not match';
+        }
+        else {
+            $retval['verified'] = true;
+        }
+    }
+    if (!$retval['verified']) {
+        drupal_set_message("Email verification failed: $retval[error_message]",'error');
+    }
+    return $retval;
+}
+
+function get_affiliations($affiliation) {
+    $affiliations = array();
+
+    foreach (array('GoMRI','consortia') as $ou) {
+        $result = ldap_search($GLOBALS['LDAP'], "ou=$ou,ou=groups,dc=griidc,dc=org", '(objectClass=groupOfNames)', array("cn"));
+        $groups = ldap_get_entries($GLOBALS['LDAP'], $result);
+        foreach ($groups as $group) {
+            $cn = $group['cn'][0];
+            if ($cn == $affiliation) {
+                $affiliations[$ou][$cn] = 1;
+            }
+            else {
+                $affiliations[$ou][$cn] = 0;
+            }
+        }
+    }
+
+    if ($affiliation == 'Other') {
+        $affiliations['other'] = 1;
+    }
+    else {
+        $affiliations['other'] = 0;
+    }
+    return $affiliations;
+}
+
+function output_errors($err) {
+    $err_message = '<div style="position:relative; left:-5px">Please correct the following errors (fields hilighted in red below):</div><ul>';
+    foreach ($err as $e) {
+        $err_message .= "<li>$e</li>";
+    }
+    $err_message .= '</ul>';
+    drupal_set_message($err_message,'error');
+}
+
+function generate_pki($uid,$passphrase) {
+    $retval = array();
+    $pemfile = "/tmp/$uid.pem";
+    $ppkfile = "/tmp/$uid.ppk";
+    $pubfile = "/tmp/$uid.pem.pub";
+
+    # escape user-provided data to prevent bad things
+    $passphrase_arg = escapeshellarg($passphrase);
+    $pemfile_arg = escapeshellarg($pemfile);
+    $ppkfile_arg = escapeshellarg($ppkfile);
+
+    # generate keypair
+    exec("/usr/bin/ssh-keygen -q -b 2048 -t rsa -N $passphrase_arg -f $pemfile_arg");
+
+    # build ppk from private key
+    exec("echo $passphrase_arg | /usr/bin/puttygen $pemfile_arg -o $ppkfile_arg");
+
+    # slurp in keys from temp files
+    $retval['privKey'] = file_get_contents($pemfile);
+    $retval['ppk'] = file_get_contents($ppkfile);
+    $pubKey = file_get_contents($pubfile);
+
+    # replace apache@... with uid
+    $pubKey = preg_replace("/\S+\n?$/",$uid,$pubKey);
+    $retval['pubKey'] = $pubKey;
+
+    # clean up temporary files
+    unlink($pemfile);
+    unlink($ppkfile);
+    unlink($pubfile);
+    return $retval;
+}
+
+function AuthLDAP() {
+    if ($_SERVER["PHP_AUTH_USER"] > "" && $_SERVER["PHP_AUTH_PW"] > "") {
+        $bind_dn = "uid=".$_SERVER["PHP_AUTH_USER"].",ou=members,ou=people,dc=griidc,dc=org";
+        $ldap = ldap_connect("ldap://localhost");
+        if ($ldap && @ldap_bind($ldap,$bind_dn,$_SERVER["PHP_AUTH_PW"])) return $ldap;
+    }
+    Header("WWW-Authenticate: Basic realm=GRIIDC");
+    Header("HTTP/1.0 401 Unauthorized");
+    echo "A valid GRIIDC username and password is required to use this page.";
+    exit(0);
+}
+
+?>
