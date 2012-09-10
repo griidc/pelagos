@@ -199,8 +199,8 @@ $app->post("$GLOBALS[BASE]/request", function () use ($app) {
                 $stash['checked'][$application] = $app->request()->post($application) ? 1 : 0;
             }
 
-            foreach (array('pkiNone','pkiGenerate','pkiProvide') as $pubKeyAction) {
-                $stash['checked'][$pubKeyAction] = $app->request()->post('pubKeyAction') == $pubKeyAction ? 1 : 0;
+            foreach (array('pkiNone','pkiGenerate','pkiProvide') as $pubKeyActionOption) {
+                $stash['checked'][$pubKeyActionOption] = $pubKeyActionOption == $pubKeyAction ? 1 : 0;
             }
 
             $stash['affiliations'] = get_affiliations($app->request()->post('affiliation'));
@@ -224,14 +224,14 @@ $app->post("$GLOBALS[BASE]/request", function () use ($app) {
                 $stash['person'] = add_posix_fields($stash['person']);
             }
 
-            if ($app->request()->post('pubKeyAction') == 'pkiGenerate') {
+            if ($pubKeyAction == 'pkiGenerate') {
                 $stash['pkiGenerate'] = 1;
                 $stash['pki'] = generate_pki($uid,$app->request()->post('userPassword'));
                 $stash['person']['sshPublicKey']['value'] = $stash['pki']['pubKey'];
                 $objectClasses[] = 'ldapPublicKey';
             }
-            elseif ($app->request()->post('pubKeyAction') == 'pkiProvide') {
-                $stash['person']['sshPublicKey'] = $app->request()->post('sshPublicKey');
+            elseif ($pubKeyAction == 'pkiProvide' and $sshPublicKey != PASTE_PUB_KEY) {
+                $stash['person']['sshPublicKey']['value'] = $sshPublicKey;
                 $objectClasses[] = 'ldapPublicKey';
             }
 

@@ -43,10 +43,6 @@ $GLOBALS['PERSON_FIELDS'] = array(
                                 'userPassword' => array(
                                     'name' => 'Password',
                                     'attrs' => array('r','u')
-                                ),
-                                'sshPublicKey' => array(
-                                    'name' => 'SSH Public Key',
-                                    'attrs' => array('u')
                                 )
                             );
 

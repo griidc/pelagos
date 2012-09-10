@@ -205,6 +205,15 @@ function write_ldif($ldifFile,$ldif) {
         }
     }
 
+    # add sshPublicKey if ldapPublicKey objectClass found
+    if (in_array('ldapPublicKey',$ldif['objectClasses'])) {
+        if (isset($ldif['person']['sshPublicKey']['value']) and 
+            $ldif['person']['sshPublicKey']['value'] != '' and
+            $ldif['person']['sshPublicKey']['value'] != PASTE_PUB_KEY) {
+            $contents .= "\nsshPublicKey: ". $ldif['person']['sshPublicKey']['value'];
+        }
+    }
+
     # add posixAccount fields if posixAccount objectClass found
     if (in_array('posixAccount',$ldif['objectClasses'])) {
         foreach ($GLOBALS['POSIX_ACCOUNT_FIELDS'] as $field) {
