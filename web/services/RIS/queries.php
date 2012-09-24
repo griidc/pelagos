@@ -71,7 +71,7 @@ SELECT
 	pj.Project_Completed 'Completed',
 	pjkw.Keyword_Word 'Keywords',
 	pjkw.Keyword_ID '__Attr__ID'
-FROM Projects pj
+    FROM Projects pj
 LEFT OUTER JOIN ProjKeywords pjk ON pj.Project_ID = pjk.Project_ID
 LEFT OUTER JOIN Keywords pjkw ON pjkw.Keyword_ID = pjk.Keyword_ID
 WHERE pj.Project_ID = ";
@@ -95,11 +95,14 @@ SELECT
 	pg.Program_Completed  'Completed',
 	pgkw.Keyword_Word 'Keywords',
 	pgkw.Keyword_ID '__Attr__ID',
-	IF (LOCATE('Year One',fs.Fund_Name)<>0,'Year 1 Block Grant',fs.Fund_Name) AS 'FundingSource'
+	IF (LOCATE('Year One',fs.Fund_Name)<>0,'Year 1 Block Grant',fs.Fund_Name) AS 'FundingSource',
+    CONCAT(ppi.People_LastName,', ',ppi.People_FirstName) AS 'PrincipalInvestigator'
 FROM Programs pg
 LEFT OUTER JOIN ProjKeywords pgk ON pg.Program_ID = pgk.Program_ID
 LEFT OUTER JOIN Keywords pgkw ON pgkw.Keyword_ID = pgk.Keyword_ID
 LEFT OUTER JOIN FundingSource fs ON pg.Program_FundSrc = fs.Fund_ID
+LEFT OUTER JOIN ProjPeople pppi ON pg.Program_ID = pppi.Program_ID AND pppi.Role_ID = 1
+LEFT OUTER JOIN People ppi ON ppi.People_ID = pppi.People_ID
 WHERE pg.Program_ID = ";
 
 /* for sharper filtering

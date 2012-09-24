@@ -12,6 +12,9 @@ require_once 'owsException.php';
 
 function getData($params)
 {
+    //Make Paramaters caps insencitive.
+    //array_change_key_case($params,CASE_LOWER);
+    
 	require 'queries.php';
 	//Parameters predefined as variables.
 	$title = '';
