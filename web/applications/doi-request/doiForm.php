@@ -3,12 +3,12 @@
     <link href="/dif/includes/css/Tooltip.css" rel="stylesheet" type="text/css">
     <script src="/dif/includes/js/Tooltip.js" type="text/javascript"></script>
     
-    <link href="/doi/css/ui-lightness/jquery-ui-1.8.23.custom.css" rel="stylesheet" type="text/css" />
+    <link href="https://proteus.tamucc.edu/~mvandeneijnden/doi/css/smoothness/jquery-ui-1.8.23.custom.css" rel="stylesheet" type="text/css" />
     
-    <script src="/doi/js/urlValidate.js" type="text/javascript"></script>
-    <script src="/doi/js/jquery-1.8.1.min.js" type="text/javascript"></script>
-    <script src="/doi/js/jquery.validate.js" type="text/javascript"></script>
-    <script src="/doi/js/jquery-ui-1.8.23.custom.min.js" type="text/javascript"></script>
+    <script src="https://proteus.tamucc.edu/~mvandeneijnden/doi/js/urlValidate.js" type="text/javascript"></script>
+    <script src="https://proteus.tamucc.edu/~mvandeneijnden/doi/js/jquery-1.8.1.min.js" type="text/javascript"></script>
+    <script src="https://proteus.tamucc.edu/~mvandeneijnden/doi/js/jquery.validate.js" type="text/javascript"></script>
+    <script src="https://proteus.tamucc.edu/~mvandeneijnden/doi/js/jquery-ui-1.8.23.custom.min.js" type="text/javascript"></script>
     
     <script type="text/javascript">
         $.validator.setDefaults({
@@ -16,10 +16,11 @@
             {
                 if (document.getElementById("urlValidate").value.indexOf("200") == -1)
                 {
-                    $("#dialog p").text(document.getElementById("urlValidate").value);
+                    $("#dialog").text(document.getElementById("urlValidate").value);
                     $( "#dialog" ).dialog({
                         title: "Warning",
                         modal: true,
+                        dialogClass: "dialog",
                         buttons: {
                             "Let me change it...": function() {
                                 $( this ).dialog( "close" );
@@ -82,10 +83,6 @@
 		});
     </script>
     
-    <style type="text/css"> 
-        label.error { block; color: red; padding-left: 10px; } 
-    </style>       
-    
     <title>DOI Form</title>
 </head>
 <body>
@@ -110,10 +107,7 @@ for ($i=0; $i<$entries['count']; $i++)
 }
 ldap_close($ldap);
 
-// REMOVE ME!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//$userId = 'fgayanilo';
-
-$isAdminMember = partOfLDAPGroup($userId,'ldapadmins');
+$isAdminMember = partOfLDAPGroup($userId,'cn=administrators,ou=Data Monitoring,ou=applications,dc=griidc,dc=org');
 $formReadOnly = false;
 
 if (isset($_GET['formKey']) AND !$isAdminMember) 
@@ -126,13 +120,16 @@ function partOfLDAPGroup($user,$group)
     $ldap = ldap_connect("ldap://triton.tamucc.edu") or die('Could not connect to LDAP server.');
     
     $attributes = array('member');
-    //$result = ldap_read($ldap, "uid=$user,ou=members,ou=people,dc=griidc,dc=org", "(member={$group})", $attributes);
-    $result = ldap_read($ldap, "cn=$group,ou=groups,dc=griidc,dc=org", "(member=uid=$user,ou=members,ou=people,dc=griidc,dc=org)", $attributes);
-    $entries = ldap_get_entries($ldap, $result);
-    //var_dump($entries);
-    if ($result === FALSE) { return FALSE; };
-    $entries = ldap_get_entries($ldap, $result);
-    if ($entries['count'] > 0) { return TRUE; }else{ return FALSE; };
+    $result = ldap_read($ldap, "$group", "(member=uid=$user,ou=members,ou=people,dc=griidc,dc=org)", $attributes);
+    if ($result === FALSE) 
+    { 
+        return FALSE; 
+    }
+    else
+    {
+        $entries = ldap_get_entries($ldap, $result);
+        if ($entries['count'] > 0) { return TRUE; }else{ return FALSE; };
+    }
     ldap_close($ldap);
 }
 
@@ -147,8 +144,8 @@ function splitToDoi($doiString)
 
 function sendMailSubmit($formHash,$userEmail,$userFirstName,$userLastName)
 {
-    $query = "SELECT email, firstname, lastname, doi FROM doi_regs WHERE formhash='$formHash';";
-    $result = dbexecute ($query);
+    //$query = "SELECT email, firstname, lastname, doi FROM doi_regs WHERE formhash='$formHash';";
+    //$result = dbexecute ($query);
     
     $to      = $userEmail;
     $subject = 'DOI Form Submission';
@@ -193,14 +190,14 @@ function sendMailApprove($formHash)
     global $userLastName;
     global $userFirstName;
     
-    $query = "SELECT email, firstname, lastname, doi FROM doi_regs WHERE formhash='$formHash';";
+    $query = "SELECT reqemail, doi, reqfirstname, reqlastname FROM doi_regs WHERE formhash='$formHash';";
     $result = dbexecute ($query);
     
-    $doi = splitToDoi($result[3]);
+    $doi = splitToDoi($result[1]);
     
     $userEmail = $result[0];
-    $userEmail = $result[0];
-    $userEmail = $result[0];
+    $userFirstName = $result[2];
+    $userLastName = $result[3];
     
     $to      = $userEmail;
     $subject = 'DOI Approved';
@@ -213,8 +210,9 @@ function sendMailApprove($formHash)
     $parameters = '-ODeliveryMode=d'; 
     
     $message = "Congratulations!<br /><br />";
-    $message .= "Your information has been approved and a DOI has been assigned. The link to your DOI is xxxxxxxxxxx.xxxxxxxx.";
-    $message .= "If you have any questions regarding your DOI please contact griidc@gomri.org. ";
+    $message .= "Your information has been approved and a DOI has been assigned. The link to your DOI is $doi.<br \>";
+    $message .= "If you have any questions regarding your DOI please contact griidc@gomri.org.<br \><br \>";
+    $message .= "<em>The GRIIDC Team.</em><br \>";
     
     mail($to, $subject, $message, $headers,$parameters);
 }
@@ -238,7 +236,6 @@ if ($_GET)
 
 if ($_POST)
 {
-    
     $formHash = sha1(serialize($_POST));
     
     extract($_POST);
@@ -279,8 +276,8 @@ if ($_POST)
     }
     else
     {
-        $query = "INSERT INTO doi_regs (url,creator,title,publisher,dsdate,urlstatus,formhash,reqdate,reqip,reqemail,reqby) 
-        VALUES ('$txtURL', '$txtWho', '$txtWhat', '$txtWhere', '$txtDate', '$urlValidate', '$formHash', '$now', '$ip','$userEmail','$userId');";
+        $query = "INSERT INTO doi_regs (url,creator,title,publisher,dsdate,urlstatus,formhash,reqdate,reqip,reqemail,reqby, reqfirstname, reqlastname) 
+        VALUES ('$txtURL', '$txtWho', '$txtWhat', '$txtWhere', '$txtDate', '$urlValidate', '$formHash', '$now', '$ip','$userEmail','$userId', '$userFirstName', '$userLastName');";
         $result = dbexecute ($query);
         
         if (strpos($result,"duplicate") == FALSE)
@@ -306,9 +303,7 @@ if ($_POST)
 
 ?>
 
-
-
-<div id="dialog"></div>
+<div id="dialog" style="font-size:smaller"></div>
 
 <div id="url_tip" style="display:none;">
     <img src="/dif/images/info.png" style="float:right;" />
