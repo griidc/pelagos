@@ -161,7 +161,7 @@ function getData($params)
     
     if ($projectID <> "")
 	{
-		$outerQuery .= "AND pj.People_FirstName = \"$projectID\" ";	
+		$outerQuery .= "AND pj.Project_ID = \"$projectID\" ";	
 	}
 	
 	if ($maxResults>0)
