@@ -1,6 +1,6 @@
 <?php
 
-require 'build_url.php';
+//require 'build_url.php';
 
 echo checkURL($_GET['url']);
 
