@@ -251,7 +251,7 @@ if ($_POST)
     
     extract($_POST);
     
-    date_default_timezone_set('UTC');
+    //date_default_timezone_set('UTC');
     $now = date('c');
     $ip = $_SERVER['REMOTE_ADDR'];
     
@@ -311,7 +311,7 @@ if ($_POST)
         else
         {
             $dMessage= "Sorry, the data was already succesfully submitted, you will be contacted by GRIIDC shortly with your DOI. Please email <a href=\"mailto:griidc@gomri.org?subject=DOI Form\">griidc@gomri.org</a> if you have any questions.";
-            drupal_set_message($dMessage,'error');
+            drupal_set_message($dMessage,'warning');
         }
     }
 }    
