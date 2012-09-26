@@ -20,7 +20,7 @@
                     $( "#dialog" ).dialog({
                         title: "Warning",
                         modal: true,
-                        dialogClass: "dialog",
+                        width: 500,
                         buttons: {
                             "Let me change it...": function() {
                                 $( this ).dialog( "close" );
@@ -38,8 +38,7 @@
                 }
             }
         });
-        
-        
+                
         $().ready(function() {
             // validate doi form on submit
             $("#doiForm").validate({
@@ -88,15 +87,27 @@
 <body>
 
 <?php
-error_reporting(-1);
+error_reporting(0);
 
 require '/home/users/mvandeneijnden/public_html/doi/dbFunctions.php';
 require '/home/users/mvandeneijnden/public_html/doi/doiFunctions.php';
 
 global $user;
 $userId = $user->name;
-$ldap = ldap_connect("ldap://triton.tamucc.edu") or die('Could not connect to LDAP server.');
 
+function connectLDAP()
+{
+    $ldapconnect = ldap_connect("ldap://triton.tamucc.edu");
+    
+    if (!ldap_bind($ldapconnect))
+    {
+        $dMessage = "Could not connect to LDAP. Please contact the administrator <a href=\"mailto:griidc@gomri.org?subject=DOI Error\">griidc@gomri.org</a>.";
+        drupal_set_message($dMessage,'error',false);
+    }
+    return $ldapconnect;
+}
+
+$ldap = connectLDAP();
 $result = ldap_search($ldap, "ou=people,dc=griidc,dc=org", "(uid=$userId)", array('givenName','sn', 'mail',));
 $entries = ldap_get_entries($ldap, $result);
 for ($i=0; $i<$entries['count']; $i++) 
@@ -117,7 +128,7 @@ if (isset($_GET['formKey']) AND !$isAdminMember)
 
 function partOfLDAPGroup($user,$group)
 {
-    $ldap = ldap_connect("ldap://triton.tamucc.edu") or die('Could not connect to LDAP server.');
+    $ldap = connectLDAP();
     
     $attributes = array('member');
     $result = ldap_read($ldap, "$group", "(member=uid=$user,ou=members,ou=people,dc=griidc,dc=org)", $attributes);
@@ -175,7 +186,7 @@ function sendMailSubmit($formHash,$userEmail,$userFirstName,$userLastName)
     $headers .= "Subject: {$subject}" . "\r\n";
     $headers .= 'X-Mailer: PHP/' . phpversion();
        
-    $appMessage = "<br \>Please approve this application";
+    $appMessage = "<hr \><br \>Please approve this application";
     $appMessage .= "<p>Link for approval: https://proteus.tamucc.edu/doi?formKey=$formHash</p>";
     
     $message = $message.$appMessage;
@@ -209,8 +220,8 @@ function sendMailApprove($formHash)
     $headers .= 'X-Mailer: PHP/' . phpversion();
     $parameters = '-ODeliveryMode=d'; 
     
-    $message = "Congratulations!<br /><br />";
-    $message .= "Your information has been approved and a DOI has been assigned. The link to your DOI is $doi.<br \>";
+    $message = "Congratulations $userFirstName $userLastName!<br /><br />";
+    $message .= "Your information has been approved and a DOI has been assigned. The link to your DOI is <a href=\"http://n2t.net/ezid/id/$doi\">$doi</a>.<br \>";
     $message .= "If you have any questions regarding your DOI please contact griidc@gomri.org.<br \><br \>";
     $message .= "<em>The GRIIDC Team.</em><br \>";
     
@@ -261,17 +272,20 @@ if ($_POST)
                 $query = "UPDATE doi_regs SET doi='$doiResult' where formHash='$formKey'";
                 $result = dbexecute ($query);
                 sendMailApprove($formKey);
-                echo '<h2>The DOI form was Approved, the issued DOI is: <strong>'.splitToDoi($doiResult).'</strong><br>An e-mail will be send to the requestor.</h2>';
+                $dMessage = 'The DOI form was Approved, the issued DOI is: <strong>'.splitToDoi($doiResult).'</strong> An e-mail will be send to the requestor.';
+                drupal_set_message($dMessage,'status');
             }
             else
             {
-                echo "<h2>An error happened getting the DOI!<br>Please contact the administrator <a href=\"mailto:griidc@gomri.org?subject=Unable to issue DOI\">griidc@gomri.org</a>.</h2><br>";
+                $dMessage = "An error happened getting the DOI! Please contact the administrator <a href=\"mailto:griidc@gomri.org?subject=Unable to issue DOI\">griidc@gomri.org</a>.";
+                drupal_set_message($dMessage,'status');
             }
         }
         else
         {
             $doiArr = explode(' ',$result[0]);
-            echo '<h2>Sorry, a DOI with this information already exists number: ' . $doiArr[1] . '</h2><a href="http://n2t.net/ezid/id/'.$doiArr[1].'">Link to DOI.</a>';
+            $dMessage = 'Sorry, a DOI with this information already exists number: <a href="http://n2t.net/ezid/id/'.$doiArr[1].'">' . $doiArr[1] . '</a>';
+            drupal_set_message($dMessage,'warning');
         }
     }
     else
@@ -279,27 +293,36 @@ if ($_POST)
         $query = "INSERT INTO doi_regs (url,creator,title,publisher,dsdate,urlstatus,formhash,reqdate,reqip,reqemail,reqby, reqfirstname, reqlastname) 
         VALUES ('$txtURL', '$txtWho', '$txtWhat', '$txtWhere', '$txtDate', '$urlValidate', '$formHash', '$now', '$ip','$userEmail','$userId', '$userFirstName', '$userLastName');";
         $result = dbexecute ($query);
-        
+                     
         if (strpos($result,"duplicate") == FALSE)
         {
-            if (strpos($result,"ERROR") == FALSE)
+            if (strpos($result,"ERROR") == FALSE && $result)
             {
-                echo "<h2>Thank you for your submission, you will be contacted by GRIIDC shortly with your DOI. Please email <a href=\"mailto:griidc@gomri.org?subject=DOI Form\">griidc@gomri.org</a> if you have any questions. </h2>";
+                $dMessage = "Thank you for your submission, you will be contacted by GRIIDC shortly with your DOI. Please email <a href=\"mailto:griidc@gomri.org?subject=DOI Form\">griidc@gomri.org</a> if you have any questions.";
+                drupal_set_message($dMessage,'status');
                 sendMailSubmit($formHash,$userEmail,$userFirstName,$userLastName);
             }
             else
             {
-                echo "<h2>An error happened, please contact the administrator <a href=\"mailto:griidc@gomri.org?subject=DOI Error\">griidc@gomri.org</a>.</h2>";
+                $dMessage= "A database error happened, please contact the administrator <a href=\"mailto:griidc@gomri.org?subject=DOI Error\">griidc@gomri.org</a>.";
+                drupal_set_message($dMessage,'error');
             }
         }
         else
         {
-            echo "<h2>Sorry, the data was already succesfully submitted, you will be contacted by GRIIDC shortly with your DOI. Please email <a href=\"mailto:griidc@gomri.org?subject=DOI Form\">griidc@gomri.org</a> if you have any questions. </h2>";
+            $dMessage= "Sorry, the data was already succesfully submitted, you will be contacted by GRIIDC shortly with your DOI. Please email <a href=\"mailto:griidc@gomri.org?subject=DOI Form\">griidc@gomri.org</a> if you have any questions.";
+            drupal_set_message($dMessage,'error');
         }
     }
 }    
     
-
+if ($userId == "")
+{
+    $dMessage = "Please log in first.";
+    drupal_set_message($dMessage,'warning');
+    $formReadOnly = true;
+    $isAdminMember = false;
+}
 
 ?>
 
@@ -403,7 +426,6 @@ if ($_POST)
     </span>
     <br />
 </fieldset>
-
 
 <?php 
     if (isset($drUrlValidate) AND !$formReadOnly)

@@ -5,13 +5,15 @@ function dbconnect()
     include 'dbConfig.php';
 	//Connect to database
 	$connString = "host=$dbserver port=$port dbname=$database user=$username password=$password";
- 	$dbconn = pg_connect($connString)or die("Couldn't Connect : " . pg_last_error());
-	//Check it
+ 	$dbconn = pg_connect($connString);
+    
 	if(!($dbconn))
 	{
 		//connection failed, exit with an error
-		echo 'Database Connection Failed: ' . pg_errormessage($dbconn);#
-		exit;
+        $dMessage = "Could not connect to the database. Please contact the administrator <a href=\"mailto:griidc@gomri.org?subject=DOI Error\">griidc@gomri.org</a>.";
+        drupal_set_message($dMessage,'error',false);
+		//echo 'Database Connection Failed: ' . pg_errormessage($dbconn);#
+		//exit;
 	}
 	return $dbconn;
 }
