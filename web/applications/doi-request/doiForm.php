@@ -1,14 +1,15 @@
+<?php require 'fileGetter.php';?>
 <html>
 <head>
     <link href="/dif/includes/css/Tooltip.css" rel="stylesheet" type="text/css">
     <script src="/dif/includes/js/Tooltip.js" type="text/javascript"></script>
+        
+    <link href="?getfile=/css/smoothness/jquery-ui-1.8.23.custom.css" rel="stylesheet" type="text/css" />
     
-    <link href="https://proteus.tamucc.edu/~mvandeneijnden/doi/css/smoothness/jquery-ui-1.8.23.custom.css" rel="stylesheet" type="text/css" />
-    
-    <script src="https://proteus.tamucc.edu/~mvandeneijnden/doi/js/urlValidate.js" type="text/javascript"></script>
-    <script src="https://proteus.tamucc.edu/~mvandeneijnden/doi/js/jquery-1.8.1.min.js" type="text/javascript"></script>
-    <script src="https://proteus.tamucc.edu/~mvandeneijnden/doi/js/jquery.validate.js" type="text/javascript"></script>
-    <script src="https://proteus.tamucc.edu/~mvandeneijnden/doi/js/jquery-ui-1.8.23.custom.min.js" type="text/javascript"></script>
+    <script src="?getfile=/js/urlValidate.js" type="text/javascript"></script>
+    <script src="?getfile=/js/jquery-1.8.1.min.js" type="text/javascript"></script>
+    <script src="?getfile=/js/jquery.validate.js" type="text/javascript"></script>
+    <script src="?getfile=/js/jquery-ui-1.8.23.custom.min.js" type="text/javascript"></script>
     
     <script type="text/javascript">
         $.validator.setDefaults({
@@ -89,8 +90,8 @@
 <?php
 error_reporting(0);
 
-require '/home/users/mvandeneijnden/public_html/doi/dbFunctions.php';
-require '/home/users/mvandeneijnden/public_html/doi/doiFunctions.php';
+require 'dbFunctions.php';
+require 'doiFunctions.php';
 
 global $user;
 $userId = $user->name;
@@ -162,8 +163,8 @@ function sendMailSubmit($formHash,$userEmail,$userFirstName,$userLastName)
     $subject = 'DOI Form Submission';
     $headers  = 'MIME-Version: 1.0' . "\r\n";
     $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-    $headers .= "To: $userLastName, $userFirstName <$userEmail>" . "\r\n";
-    $headers .= 'From: GRIIDC <griidc@gomri.org>' . "\r\n";
+    $headers .= "To: \"$userLastName, $userFirstName\" <$userEmail>" . "\r\n";
+    $headers .= 'From: \"GRIIDC\" <griidc@gomri.org>' . "\r\n";
     $headers .= "Subject: {$subject}" . "\r\n";
     $headers .= 'X-Mailer: PHP/' . phpversion();
     
@@ -181,8 +182,8 @@ function sendMailSubmit($formHash,$userEmail,$userFirstName,$userLastName)
     $subject = 'DOI Form Submission';
     $headers  = 'MIME-Version: 1.0' . "\r\n";
     $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-    $headers .= "To: GRIIDC <griidc@gomri.org>" . "\r\n";
-    $headers .= 'From: GRIIDC <griidc@gomri.org>' . "\r\n";
+    $headers .= "To: \"GRIIDC\" <griidc@gomri.org>" . "\r\n";
+    $headers .= 'From: \"GRIIDC\" <griidc@gomri.org>' . "\r\n";
     $headers .= "Subject: {$subject}" . "\r\n";
     $headers .= 'X-Mailer: PHP/' . phpversion();
        
@@ -214,9 +215,9 @@ function sendMailApprove($formHash)
     $subject = 'DOI Approved';
     $headers  = 'MIME-Version: 1.0' . "\r\n";
     $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-    $headers .= "To: $userLastName, $userFirstName <$userEmail>" . "\r\n";
+    $headers .= "To: \"$userLastName, $userFirstName\" <$userEmail>" . "\r\n";
     $headers .= "Bcc: griidc@gomri.org" . "\r\n";
-    $headers .= 'From: GRIIDC <griidc@gomri.org>' . "\r\n";
+    $headers .= 'From: \"GRIIDC\" <griidc@gomri.org>' . "\r\n";
     $headers .= 'X-Mailer: PHP/' . phpversion();
     $parameters = '-ODeliveryMode=d'; 
     
@@ -251,67 +252,75 @@ if ($_POST)
     
     extract($_POST);
     
-    //date_default_timezone_set('UTC');
-    $now = date('c');
-    $ip = $_SERVER['REMOTE_ADDR'];
-    
-    if (isset($formKey))
+    if ($txtURL == "" OR $txtWho == "" OR $txtWhat == "" OR $txtWhere =="")
     {
-        $query = "SELECT doi FROM doi_regs WHERE formhash='$formKey';";
-        $result = dbexecute ($query);
-        
-        if ($result[0] == "" || !$result[0])
-        {
-            $input = "_target: $txtURL\n_profile: dc\ndc.creator:$txtWho\ndc.title:$txtWhat\ndc.publisher:$txtWhere\ndc.date:$txtDate";
-            
-            $doiResult = createDOI($input);
-            
-            if (strpos($doiResult,'message:201') <> -1)
-            {
-                echo $userEmail;
-                $query = "UPDATE doi_regs SET doi='$doiResult' where formHash='$formKey'";
-                $result = dbexecute ($query);
-                sendMailApprove($formKey);
-                $dMessage = 'The DOI form was Approved, the issued DOI is: <strong>'.splitToDoi($doiResult).'</strong> An e-mail will be send to the requestor.';
-                drupal_set_message($dMessage,'status');
-            }
-            else
-            {
-                $dMessage = "An error happened getting the DOI! Please contact the administrator <a href=\"mailto:griidc@gomri.org?subject=Unable to issue DOI\">griidc@gomri.org</a>.";
-                drupal_set_message($dMessage,'status');
-            }
-        }
-        else
-        {
-            $doiArr = explode(' ',$result[0]);
-            $dMessage = 'Sorry, a DOI with this information already exists number: <a href="http://n2t.net/ezid/id/'.$doiArr[1].'">' . $doiArr[1] . '</a>';
-            drupal_set_message($dMessage,'warning');
-        }
+        $dMessage = 'Not all fields where filled out!';
+        drupal_set_message($dMessage,'warning');
     }
     else
     {
-        $query = "INSERT INTO doi_regs (url,creator,title,publisher,dsdate,urlstatus,formhash,reqdate,reqip,reqemail,reqby, reqfirstname, reqlastname) 
-        VALUES ('$txtURL', '$txtWho', '$txtWhat', '$txtWhere', '$txtDate', '$urlValidate', '$formHash', '$now', '$ip','$userEmail','$userId', '$userFirstName', '$userLastName');";
-        $result = dbexecute ($query);
-                     
-        if (strpos($result,"duplicate") == FALSE)
+        //date_default_timezone_set('UTC');
+        $now = date('c');
+        $ip = $_SERVER['REMOTE_ADDR'];
+        
+        if (isset($formKey))
         {
-            if (strpos($result,"ERROR") == FALSE && $result)
+            $query = "SELECT doi FROM doi_regs WHERE formhash='$formKey';";
+            $result = dbexecute ($query);
+            
+            if ($result[0] == "" || !$result[0])
             {
-                $dMessage = "Thank you for your submission, you will be contacted by GRIIDC shortly with your DOI. Please email <a href=\"mailto:griidc@gomri.org?subject=DOI Form\">griidc@gomri.org</a> if you have any questions.";
-                drupal_set_message($dMessage,'status');
-                sendMailSubmit($formHash,$userEmail,$userFirstName,$userLastName);
+                $input = "_target: $txtURL\n_profile: dc\ndc.creator:$txtWho\ndc.title:$txtWhat\ndc.publisher:$txtWhere\ndc.date:$txtDate";
+                
+                $doiResult = createDOI($input);
+                
+                if (strpos($doiResult,'message:201') <> -1)
+                {
+                    echo $userEmail;
+                    $query = "UPDATE doi_regs SET doi='$doiResult' where formHash='$formKey'";
+                    $result = dbexecute ($query);
+                    sendMailApprove($formKey);
+                    $dMessage = 'The DOI form was Approved, the issued DOI is: <strong>'.splitToDoi($doiResult).'</strong> An e-mail will be send to the requestor.';
+                    drupal_set_message($dMessage,'status');
+                }
+                else
+                {
+                    $dMessage = "An error happened getting the DOI! Please contact the administrator <a href=\"mailto:griidc@gomri.org?subject=Unable to issue DOI\">griidc@gomri.org</a>.";
+                    drupal_set_message($dMessage,'status');
+                }
             }
             else
             {
-                $dMessage= "A database error happened, please contact the administrator <a href=\"mailto:griidc@gomri.org?subject=DOI Error\">griidc@gomri.org</a>.";
-                drupal_set_message($dMessage,'error');
+                $doiArr = explode(' ',$result[0]);
+                $dMessage = 'Sorry, a DOI with this information already exists number: <a href="http://n2t.net/ezid/id/'.$doiArr[1].'">' . $doiArr[1] . '</a>';
+                drupal_set_message($dMessage,'warning');
             }
         }
         else
         {
-            $dMessage= "Sorry, the data was already succesfully submitted, you will be contacted by GRIIDC shortly with your DOI. Please email <a href=\"mailto:griidc@gomri.org?subject=DOI Form\">griidc@gomri.org</a> if you have any questions.";
-            drupal_set_message($dMessage,'warning');
+            $query = "INSERT INTO doi_regs (url,creator,title,publisher,dsdate,urlstatus,formhash,reqdate,reqip,reqemail,reqby, reqfirstname, reqlastname) 
+            VALUES ('$txtURL', '$txtWho', '$txtWhat', '$txtWhere', '$txtDate', '$urlValidate', '$formHash', '$now', '$ip','$userEmail','$userId', '$userFirstName', '$userLastName');";
+            $result = dbexecute ($query);
+                         
+            if (strpos($result,"duplicate") == FALSE)
+            {
+                if (strpos($result,"ERROR") == FALSE && $result)
+                {
+                    $dMessage = "Thank you for your submission, you will be contacted by GRIIDC shortly with your DOI. Please email <a href=\"mailto:griidc@gomri.org?subject=DOI Form\">griidc@gomri.org</a> if you have any questions.";
+                    drupal_set_message($dMessage,'status');
+                    sendMailSubmit($formHash,$userEmail,$userFirstName,$userLastName);
+                }
+                else
+                {
+                    $dMessage= "A database error happened, please contact the administrator <a href=\"mailto:griidc@gomri.org?subject=DOI Error\">griidc@gomri.org</a>.";
+                    drupal_set_message($dMessage,'error');
+                }
+            }
+            else
+            {
+                $dMessage= "Sorry, the data was already succesfully submitted, you will be contacted by GRIIDC shortly with your DOI. Please email <a href=\"mailto:griidc@gomri.org?subject=DOI Form\">griidc@gomri.org</a> if you have any questions.";
+                drupal_set_message($dMessage,'warning');
+            }
         }
     }
 }    
