@@ -1,15 +1,20 @@
-<?php require 'fileGetter.php';?>
+<?php 
+require 'fileGetter.php';
+require 'checkURL.php';
+?>
 <html>
 <head>
+    
     <link href="/dif/includes/css/Tooltip.css" rel="stylesheet" type="text/css">
     <script src="/dif/includes/js/Tooltip.js" type="text/javascript"></script>
         
-    <link href="?getfile=/css/smoothness/jquery-ui-1.8.23.custom.css" rel="stylesheet" type="text/css" />
+    <link href="./includes/css/ui-lightness/jquery-ui-1.8.23.custom.css" rel="stylesheet" type="text/css" />
+       
+    <script src="./includes/js/jquery-1.8.1.min.js" type="text/javascript"></script>
+    <script src="./includes/js/jquery.validate.js" type="text/javascript"></script>
+    <script src="./includes/js/jquery-ui-1.8.23.custom.min.js" type="text/javascript"></script>
     
-    <script src="?getfile=/js/urlValidate.js" type="text/javascript"></script>
-    <script src="?getfile=/js/jquery-1.8.1.min.js" type="text/javascript"></script>
-    <script src="?getfile=/js/jquery.validate.js" type="text/javascript"></script>
-    <script src="?getfile=/js/jquery-ui-1.8.23.custom.min.js" type="text/javascript"></script>
+    <script src="./includes/js/urlValidate.js" type="text/javascript"></script>
     
     <script type="text/javascript">
         $.validator.setDefaults({
@@ -29,6 +34,7 @@
                             "This URL is ok anyway! Let me submit the form.": function() {
                                 document.getElementById("urlValidate").value += " [200 OVERWRITE]";
                                 $( this ).dialog( "close" );
+                                form.submit();
                             }
                         },
                     });            
@@ -70,7 +76,7 @@
         $(function() {
             $( "#txtDate" ).datepicker({
                 showOn: "button",
-                buttonImage: "https://proteus.tamucc.edu/~mvandeneijnden/doi/images/calendar.gif",
+                buttonImage: "includes/images/calendar.gif",
                 buttonImageOnly: false,
                 dateFormat: "yy-mm-dd",
                 autoSize:true
@@ -88,13 +94,21 @@
 <body>
 
 <?php
-error_reporting(0);
+
+if (!function_exists('drupal_set_message'))
+{
+    function drupal_set_message($message = NULL, $type = 'status', $repeat = TRUE)
+    {
+        echo "<p>[$type]: $message</p>";
+    }
+}
 
 require 'dbFunctions.php';
 require 'doiFunctions.php';
 
-global $user;
-$userId = $user->name;
+$isAdminMember = false;
+$formReadOnly = false;
+$userId = "";
 
 function connectLDAP()
 {
@@ -108,19 +122,26 @@ function connectLDAP()
     return $ldapconnect;
 }
 
-$ldap = connectLDAP();
-$result = ldap_search($ldap, "ou=people,dc=griidc,dc=org", "(uid=$userId)", array('givenName','sn', 'mail',));
-$entries = ldap_get_entries($ldap, $result);
-for ($i=0; $i<$entries['count']; $i++) 
-{
-    $userFirstName = $entries[$i]['givenname'][0];
-    $userLastName = $entries[$i]['sn'][0];
-    $userEmail = $entries[$i]['mail'][0];
-}
-ldap_close($ldap);
+global $user;
 
-$isAdminMember = partOfLDAPGroup($userId,'cn=administrators,ou=Data Monitoring,ou=applications,dc=griidc,dc=org');
-$formReadOnly = false;
+if (isset($user))
+{
+    $userId = $user->name;
+
+    $ldap = connectLDAP();
+    $result = ldap_search($ldap, "ou=people,dc=griidc,dc=org", "(uid=$userId)", array('givenName','sn', 'mail',));
+    $entries = ldap_get_entries($ldap, $result);
+    for ($i=0; $i<$entries['count']; $i++) 
+    {
+        $userFirstName = $entries[$i]['givenname'][0];
+        $userLastName = $entries[$i]['sn'][0];
+        $userEmail = $entries[$i]['mail'][0];
+    }
+    ldap_close($ldap);
+
+    $isAdminMember = partOfLDAPGroup($userId,'cn=administrators,ou=Data Monitoring,ou=applications,dc=griidc,dc=org');
+}
+    
 
 if (isset($_GET['formKey']) AND !$isAdminMember) 
 {
@@ -195,7 +216,6 @@ function sendMailSubmit($formHash,$userEmail,$userFirstName,$userLastName)
     mail($to, $subject, $message, $headers,$parameters);
 }
 
-
 function sendMailApprove($formHash)
 {
     global $userEmail;
@@ -228,7 +248,6 @@ function sendMailApprove($formHash)
     
     mail($to, $subject, $message, $headers,$parameters);
 }
-
 
 if ($_GET)
 {
@@ -301,10 +320,10 @@ if ($_POST)
             $query = "INSERT INTO doi_regs (url,creator,title,publisher,dsdate,urlstatus,formhash,reqdate,reqip,reqemail,reqby, reqfirstname, reqlastname) 
             VALUES ('$txtURL', '$txtWho', '$txtWhat', '$txtWhere', '$txtDate', '$urlValidate', '$formHash', '$now', '$ip','$userEmail','$userId', '$userFirstName', '$userLastName');";
             $result = dbexecute ($query);
-                         
-            if (strpos($result,"duplicate") == FALSE)
+                       
+            if (strpos($result,"duplicate") === false)
             {
-                if (strpos($result,"ERROR") == FALSE && $result)
+                if (strpos($result,"ERROR") === false AND !is_null($result))
                 {
                     $dMessage = "Thank you for your submission, you will be contacted by GRIIDC shortly with your DOI. Please email <a href=\"mailto:griidc@gomri.org?subject=DOI Form\">griidc@gomri.org</a> if you have any questions.";
                     drupal_set_message($dMessage,'status');
@@ -313,7 +332,7 @@ if ($_POST)
                 else
                 {
                     $dMessage= "A database error happened, please contact the administrator <a href=\"mailto:griidc@gomri.org?subject=DOI Error\">griidc@gomri.org</a>.";
-                    drupal_set_message($dMessage,'error');
+                    drupal_set_message($dMessage,'error',false);
                 }
             }
             else
@@ -381,7 +400,7 @@ if ($userId == "")
 
 <strong>NOTICE:</strong> Fields preceded by an asterisk (<em>*</em>) are required inputs.<hr />
 
-<form id="doiForm" name="doiForm" action="https://proteus.tamucc.edu/doi" method="post">
+<form id="doiForm" name="doiForm" action="" method="post">
 
 <fieldset>
     <label for="txtURL"><em>*</em>Dataset URL:</label>

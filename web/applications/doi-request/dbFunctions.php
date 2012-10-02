@@ -10,7 +10,7 @@ function dbconnect()
 	if(!($dbconn))
 	{
 		//connection failed, exit with an error
-        $dMessage = "Could not connect to the database. Please contact the administrator <a href=\"mailto:griidc@gomri.org?subject=DOI Error\">griidc@gomri.org</a>.";
+        $dMessage= "A database error happened, please contact the administrator <a href=\"mailto:griidc@gomri.org?subject=DOI Error\">griidc@gomri.org</a>.";
         drupal_set_message($dMessage,'error',false);
 		//echo 'Database Connection Failed: ' . pg_errormessage($dbconn);#
 		//exit;
