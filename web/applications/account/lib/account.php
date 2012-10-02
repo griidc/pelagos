@@ -104,7 +104,6 @@ function query_RPIS($email) {
 }
 
 function query_griidc_people($email) {
-#    $connString = "host=localhost port=5432 dbname=griidc_people user=griidc_people_user password=password";
     $connString = sprintf('host=%s port=5432 dbname=%s user=%s password=%s',GRIIDC_PEOPLE_HOST,GRIIDC_PEOPLE_DBNAME,GRIIDC_PEOPLE_USER,GRIIDC_PEOPLE_PASSWORD);
     $dbconn = pg_connect($connString) or die("Couldn't Connect " . pg_last_error());
     $returnds = pg_query($dbconn, "select first_name,middle_name,last_name,business_phone,job_title,suffix,email from people where upper(email) = '" . strtoupper($email) . "'");
@@ -182,7 +181,7 @@ function read_ldif($ldifFile) {
             }
         }
         else {
-            if (preg_match('/^dn: cn=([^,]+),ou=[^,]+,ou=groups,dc=griidc,dc=org/',$line,$matches)) {
+            if (preg_match('/^dn: (.*,ou=groups,dc=griidc,dc=org)/',$line,$matches)) {
                 $ldif['affiliation'] = $matches[1];
             }
             if (preg_match('/^dn: cn=([^,]+),ou=([^,]+),ou=applications,dc=griidc,dc=org/',$line,$matches)) {
@@ -227,15 +226,11 @@ function write_ldif($ldifFile,$ldif) {
         $contents .= "\nobjectClass: $objectClass";
     }
 
-    if (isset($ldif['affiliation']) and $ldif['affiliation'] != '' and $ldif['affiliation'] != 'Other') {
-        $groupResult = ldap_search($GLOBALS['LDAP'], "ou=groups,dc=griidc,dc=org", "(&(objectClass=groupOfNames)(cn=$ldif[affiliation]))", array("dn"));
-        $groups = ldap_get_entries($GLOBALS['LDAP'], $groupResult);
-        for ($i=0; $i<$groups['count']; $i++) {
-            $contents .= "\n\ndn: " . $groups[$i]['dn'];
-            $contents .= "\nchangetype: modify";
-            $contents .= "\nadd: member";
-            $contents .= "\nmember: " . $ldif['person']['dn']['value'];
-        }
+    if (isset($ldif['affiliation']) and $ldif['affiliation'] != '' and $ldif['affiliation'] != 'other') {
+        $contents .= "\n\ndn: $ldif[affiliation]";
+        $contents .= "\nchangetype: modify";
+        $contents .= "\nadd: member";
+        $contents .= "\nmember: " . $ldif['person']['dn']['value'];
     }
 
     foreach ($ldif['applications'] as $application => $group) {
@@ -245,9 +240,6 @@ function write_ldif($ldifFile,$ldif) {
         $contents .= "\nmember: " . $ldif['person']['dn']['value'];
     }
 
-#    echo '<pre>';
-#    echo $contents;
-#    echo '</pre>';
     umask(0066);
     file_put_contents($ldifFile,$contents);
     $ldif['raw'] = $contents;
@@ -311,26 +303,19 @@ function verify_email ($email,$hash) {
 function get_affiliations($affiliation) {
     $affiliations = array();
 
-    foreach (array('GoMRI','consortia') as $ou) {
-        $result = ldap_search($GLOBALS['LDAP'], "ou=$ou,ou=groups,dc=griidc,dc=org", '(objectClass=groupOfNames)', array("cn"));
-        $groups = ldap_get_entries($GLOBALS['LDAP'], $result);
-        foreach ($groups as $group) {
-            $cn = $group['cn'][0];
-            if ($cn == $affiliation) {
-                $affiliations[$ou][$cn] = 1;
-            }
-            else {
-                $affiliations[$ou][$cn] = 0;
-            }
+    foreach ($GLOBALS['LDAP_AFFILIATIONS'] as $la) {
+        $name_attr = $GLOBALS['NAME_ATTRS'][$la['objectClass']];
+        $result = ldap_list($GLOBALS['LDAP'], "ou=$la[ou],ou=groups,dc=griidc,dc=org","(objectClass=$la[objectClass])",array($name_attr,'dn'));
+        $entries = ldap_get_entries($GLOBALS['LDAP'], $result);
+        sort($entries);
+        foreach ($entries as $entry) {
+            $dn = $entry['dn'];
+            if ($la['objectClass'] == 'organizationalUnit') $dn = "cn=members,$dn";
+            $affiliations[$la['ou']][] = array('name' => $entry[$name_attr][0], 'dn' => $dn, 'selected' => $dn == $affiliation);
         }
     }
 
-    if ($affiliation == 'Other') {
-        $affiliations['other'] = 1;
-    }
-    else {
-        $affiliations['other'] = 0;
-    }
+    $affiliations['other'] = $affiliation == 'Other';
     return $affiliations;
 }
 
@@ -374,18 +359,6 @@ function generate_pki($uid,$passphrase) {
     unlink($ppkfile);
     unlink($pubfile);
     return $retval;
-}
-
-function AuthLDAP() {
-    if ($_SERVER["PHP_AUTH_USER"] > "" && $_SERVER["PHP_AUTH_PW"] > "") {
-        $bind_dn = "uid=".$_SERVER["PHP_AUTH_USER"].",ou=members,ou=people,dc=griidc,dc=org";
-        $ldap = ldap_connect("ldap://localhost");
-        if ($ldap && @ldap_bind($ldap,$bind_dn,$_SERVER["PHP_AUTH_PW"])) return $ldap;
-    }
-    Header("WWW-Authenticate: Basic realm=GRIIDC");
-    Header("HTTP/1.0 401 Unauthorized");
-    echo "A valid GRIIDC username and password is required to use this page.";
-    exit(0);
 }
 
 ?>

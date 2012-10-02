@@ -26,14 +26,14 @@
             <td><span class=account_required>Affiliation:</span></td>
             <td>
                 <select name=affiliation onchange='if (this.value=="Other") document.getElementById("otherAffiliation").style.visibility="visible"; else document.getElementById("otherAffiliation").style.visibility="hidden";'>
-                    {% for option, selected in affiliations.GoMRI %}
-                        <option value='{{option}}' {{ selected ? 'selected' : '' }}>{{option}}</option>
+                    {% for aff in affiliations.GoMRI %}
+                        <option value='{{aff.dn}}' {{ aff.selected ? 'selected' : '' }}>{{aff.name}}</option>
                     {% endfor %}
-                    {% for option, selected in affiliations.consortia %}
-                        <option value='{{option}}' {{ selected ? 'selected' : '' }}>{{option}}</option>
+                    {% for aff in affiliations.consortia %}
+                        <option value='{{aff.dn}}' {{ aff.selected ? 'selected' : '' }}>{{aff.name}}</option>
                     {% endfor %}
                     <option value=''></option>
-                    <option value='Other' {{ affiliations.other ? 'selected' : '' }}>Other:</option>
+                    <option value='other' {{ affiliations.other ? 'selected' : '' }}>Other:</option>
                 </select>
                 <input type=text name=o id=otherAffiliation size=25 class="{{person.o.class}}" value='{{person.o.value}}' style='visibility:{{ affiliations.other ? 'visible' : 'hidden' }}'> 
             </td>
