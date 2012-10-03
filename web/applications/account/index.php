@@ -255,20 +255,11 @@ $app->post("$GLOBALS[BASE]/request", function () use ($app) {
 
             write_ldif($ldifFile,$stash);
 
-            $notify_to = array();
-            $adminsResult = ldap_search($GLOBALS['LDAP'], "cn=ldapadmins,ou=groups,dc=griidc,dc=org", '(objectClass=*)', array("member"));
-            $admins = ldap_get_entries($GLOBALS['LDAP'], $adminsResult);
-            for ($i=0;$i<$admins[0]['member']['count'];$i++) {
-                $adminEmailResult = ldap_search($GLOBALS['LDAP'], $admins[0]['member'][$i], '(objectClass=*)', array("mail"));
-                $adminEmail = ldap_get_entries($GLOBALS['LDAP'], $adminEmailResult);
-                $notify_to[] = $adminEmail[0]['mail'][0];
-            }
-
             $fromAddress = 'GRIIDC Account Request <griidc@gomri.org>';
             $subject = "GRIIDC Account Request: $uid";
             $message = "An account request has been submitted.\n\nTo review and approve this request, please visit: https://$GLOBALS[HOST]$GLOBALS[BASE]/approve?uid=$uid";
 
-            foreach ($notify_to as $toAddress) {
+            foreach (get_notify_to() as $toAddress) {
                 mail($toAddress,$subject,$message,"From: $fromAddress");
             }
 
@@ -328,6 +319,13 @@ $app->post("$GLOBALS[BASE]/approve", $GLOBALS['AUTH_FOR_ROLE']('admin'), functio
         }
         drupal_add_css("$GLOBALS[BASE]/css/account-form.css",'external');
         return $app->render('approve_form.html',$stash);
+
+        $subject = "GRIIDC Account Request: $uid";
+        $message = "The account request for $uid has been updated by " . $user->name . ".";
+
+        foreach (get_notify_to() as $toAddress) {
+            mail($toAddress,$subject,$message,"From: $fromAddress");
+        }
     }
 });
 
@@ -359,6 +357,13 @@ $app->post("$GLOBALS[BASE]/approve/create", $GLOBALS['AUTH_FOR_ROLE']('admin'), 
             $message = "Your account request has been approved.\n\nYour username is: $uid\n\nYou may now use this username and the password you provided to log in to GRIIDC services.";
 
             mail($toAddress,$subject,$message,"From: $fromAddress");
+
+            $subject = "GRIIDC Account Request: $uid";
+            $message = "The account request for $uid has been approved by " . $user->name . ".";
+
+            foreach (get_notify_to() as $toAddress) {
+                mail($toAddress,$subject,$message,"From: $fromAddress");
+            }
         }
     }
 });
@@ -370,6 +375,13 @@ $app->post("$GLOBALS[BASE]/approve/delete", $GLOBALS['AUTH_FOR_ROLE']('admin'), 
         $ldifFile = SPOOL_DIR . "/incoming/$uid.ldif";
         rename($ldifFile,SPOOL_DIR . "/trash/$uid.ldif");
         drupal_set_message("Account request $uid deleted.",'status');
+
+        $subject = "GRIIDC Account Request: $uid";
+        $message = "The account request for $uid has been deleted by " . $user->name . ".";
+
+        foreach (get_notify_to() as $toAddress) {
+            mail($toAddress,$subject,$message,"From: $fromAddress");
+        }
     }
 });
 

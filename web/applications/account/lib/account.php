@@ -361,4 +361,16 @@ function generate_pki($uid,$passphrase) {
     return $retval;
 }
 
+function get_notify_to() {
+    $notify_to = array();
+    $adminsResult = ldap_search($GLOBALS['LDAP'], "cn=ldapadmins,ou=groups,dc=griidc,dc=org", '(objectClass=*)', array("member"));
+    $admins = ldap_get_entries($GLOBALS['LDAP'], $adminsResult);
+    for ($i=0;$i<$admins[0]['member']['count'];$i++) {
+        $adminEmailResult = ldap_search($GLOBALS['LDAP'], $admins[0]['member'][$i], '(objectClass=*)', array("mail"));
+        $adminEmail = ldap_get_entries($GLOBALS['LDAP'], $adminEmailResult);
+        $notify_to[] = $adminEmail[0]['mail'][0];
+    }
+    return $notify_to;
+}
+
 ?>
