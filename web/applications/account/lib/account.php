@@ -229,8 +229,16 @@ function write_ldif($ldifFile,$ldif) {
     if (isset($ldif['affiliation']) and $ldif['affiliation'] != '' and $ldif['affiliation'] != 'other') {
         $contents .= "\n\ndn: $ldif[affiliation]";
         $contents .= "\nchangetype: modify";
-        $contents .= "\nadd: member";
-        $contents .= "\nmember: " . $ldif['person']['dn']['value'];
+        $result = ldap_read($GLOBALS['LDAP'],$ldif['affiliation'],'(objectClass=*)',array('objectClass'));
+        $entry = ldap_get_entries($GLOBALS['LDAP'], $result);
+        if ($entry[0]['objectclass'][0] == 'posixGroup') {
+            $contents .= "\nadd: memberUid";
+            $contents .= "\nmemberUid: " . $ldif['person']['uid']['value'];
+        }
+        else {
+            $contents .= "\nadd: member";
+            $contents .= "\nmember: " . $ldif['person']['dn']['value'];
+        }
     }
 
     foreach ($ldif['applications'] as $application => $group) {

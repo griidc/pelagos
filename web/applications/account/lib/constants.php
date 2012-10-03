@@ -48,6 +48,6 @@ $GLOBALS['PERSON_FIELDS'] = array(
 
 $GLOBALS['POSIX_ACCOUNT_FIELDS'] = array('uidNumber','gidNumber','gecos','homeDirectory','loginShell');
 
-$GLOBALS['NAME_ATTRS'] = array('groupOfNames'=>'cn','organizationalUnit'=>'ou');
+$GLOBALS['NAME_ATTRS'] = array('groupOfNames'=>'cn','organizationalUnit'=>'ou','posixGroup'=>'cn');
 
 ?>

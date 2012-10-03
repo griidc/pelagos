@@ -297,6 +297,7 @@ $app->get("$GLOBALS[BASE]/approve", $GLOBALS['AUTH_FOR_ROLE']('admin'), function
 });
 
 $app->post("$GLOBALS[BASE]/approve", $GLOBALS['AUTH_FOR_ROLE']('admin'), function () use ($app) {
+    global $user;
     $env = $app->environment();
     if (isset($env['authorized']) and $env['authorized']) {
         $stash = array();
@@ -330,6 +331,7 @@ $app->post("$GLOBALS[BASE]/approve", $GLOBALS['AUTH_FOR_ROLE']('admin'), functio
 });
 
 $app->post("$GLOBALS[BASE]/approve/create", $GLOBALS['AUTH_FOR_ROLE']('admin'), function () use ($app) {
+    global $user;
     $env = $app->environment();
     if  (isset($env['authorized']) and $env['authorized']) {
         $uid = $app->request()->get('uid');
@@ -369,6 +371,7 @@ $app->post("$GLOBALS[BASE]/approve/create", $GLOBALS['AUTH_FOR_ROLE']('admin'), 
 });
 
 $app->post("$GLOBALS[BASE]/approve/delete", $GLOBALS['AUTH_FOR_ROLE']('admin'), function () use ($app) {
+    global $user;
     $env = $app->environment();
     if  (isset($env['authorized']) and $env['authorized']) {
         $uid = $app->request()->get('uid');
