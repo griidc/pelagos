@@ -20,7 +20,7 @@ function connectLDAP($ldaphost)
 function getDNs($ldap,$basedn,$search) 
 {
     $attributes = array('dn');
-    $result = ldap_search($ldap, $basedn,"($search)", $attributes);
+    $result = ldap_search($ldap, $basedn, $search, $attributes);
     if ($result === FALSE) { return array(); }
     $entries = ldap_get_entries($ldap, $result);
     if ($entries['count']>0) 
