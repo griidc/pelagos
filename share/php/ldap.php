@@ -2,8 +2,7 @@
 
 require_once('drupal.php');
 
-function connectLDAP($ldaphost)
-{
+function connectLDAP($ldaphost) {
     $ldapconnect = ldap_connect("ldap://$ldaphost");
     
     ldap_set_option($ldapconnect, LDAP_OPT_PROTOCOL_VERSION, 3);
@@ -17,8 +16,7 @@ function connectLDAP($ldaphost)
     return $ldapconnect;
 }
 
-function getDNs($ldap,$basedn,$search) 
-{
+function getDNs($ldap,$basedn,$search) {
     $attributes = array('dn');
     $result = ldap_search($ldap, $basedn, $search, $attributes);
     if ($result === FALSE) { return array(); }
@@ -33,8 +31,7 @@ function getDNs($ldap,$basedn,$search)
     }
 }
 
-function isMember($ldap,$userDN,$groupDN)
-{
+function isMember($ldap,$userDN,$groupDN) {
     $attributes = array('member');
     $result = ldap_read($ldap, "$groupDN", "(member=$userDN)", $attributes);
     if ($result === FALSE) 
@@ -48,7 +45,5 @@ function isMember($ldap,$userDN,$groupDN)
     }
     ldap_close($ldap);
 }
-
-
 
 ?>
