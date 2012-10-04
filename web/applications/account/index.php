@@ -220,25 +220,16 @@ $app->post("$GLOBALS[BASE]/request", function () use ($app) {
             $stash['person']['uid']['value'] = $uid;
             $stash['pkiGenerate'] = 0;
 
-            $objectClasses = array('top','person','inetOrgPerson','organizationalPerson');
-
-            if ($app->request()->post('Shell')) {
-                $objectClasses[] = 'posixAccount';
-                $stash['person'] = add_posix_fields($stash['person']);
-            }
-
             if ($pubKeyAction == 'pkiGenerate') {
                 $stash['pkiGenerate'] = 1;
                 $stash['pki'] = generate_pki($uid,$app->request()->post('userPassword'));
                 $stash['person']['sshPublicKey']['value'] = $stash['pki']['pubKey'];
-                $objectClasses[] = 'ldapPublicKey';
+                $stash['objectClasses'][] = 'ldapPublicKey';
             }
             elseif ($pubKeyAction == 'pkiProvide' and $sshPublicKey != PASTE_PUB_KEY) {
                 $stash['person']['sshPublicKey']['value'] = $sshPublicKey;
-                $objectClasses[] = 'ldapPublicKey';
+                $stash['objectClasses'][] = 'ldapPublicKey';
             }
-
-            $stash['objectClasses'] = $objectClasses;
 
             $stash['applications'] = array();
             foreach ($GLOBALS['APPLICATIONS'] as $application) {
@@ -300,24 +291,27 @@ $app->post("$GLOBALS[BASE]/approve", $GLOBALS['AUTH_FOR_ROLE']('admin'), functio
     global $user;
     $env = $app->environment();
     if (isset($env['authorized']) and $env['authorized']) {
-        $stash = array();
         $uid = $app->request()->get('uid');
-
-        $stash = check_person($app,'a');
+        $ldifFile = SPOOL_DIR . "/incoming/$uid.ldif";
+        $ldif = read_ldif($ldifFile);
+        $stash = check_person($app,'a',$ldif);
         if (count($stash['err']) > 0) {
             output_errors($stash['err']);
         }
         else {
-            $ldifFile = SPOOL_DIR . "/incoming/$uid.ldif";
             drupal_set_message("Account request $uid updated.",'status');
         }
 
         $stash['BASE'] = $GLOBALS['BASE'];
         $stash['uid'] = $uid;
-        $stash['affiliations'] = get_affiliations($app->request()->post('affiliation'));
+        $stash['affiliation'] = $app->request()->post('affiliation');
+        $stash['affiliations'] = get_affiliations($stash['affiliation']);
         foreach (array_merge($GLOBALS['APPLICATIONS'],array('Shell')) as $application) {
             $stash['checked'][$application] = $app->request()->post($application) ? 1 : 0;
         }
+
+        write_ldif($ldifFile,$stash);
+
         drupal_add_css("$GLOBALS[BASE]/css/account-form.css",'external');
         return $app->render('approve_form.html',$stash);
 

@@ -128,8 +128,9 @@ function query_griidc_people($email) {
     return $retval;
 }
 
-function check_person($app,$type='u') {
-    $retval = array();
+function check_person($app,$type='u',$ldif=null) {
+    if (is_null($ldif)) $retval = array();
+    else $retval = $ldif;
     $retval['err'] = array();
     foreach ($GLOBALS['PERSON_FIELDS'] as $field => $details) {
         $value = $app->request()->post($field);
@@ -149,6 +150,20 @@ function check_person($app,$type='u') {
         $retval['err'][] = 'you must specify your affiliation if you select "Other:"';
         $retval['person']['o']['class'] = 'account_errorfield';
     }
+    if (!array_key_exists('objectClasses',$retval))
+        $retval['objectClasses'] = array('top','person','inetOrgPerson','organizationalPerson');
+    if ($app->request()->post('Shell')) {
+        if (!in_array('posixAccount',$retval['objectClasses'])) {
+            $retval['objectClasses'][] = 'posixAccount';
+            $retval['person'] = add_posix_fields($retval['person']);
+        }
+    }
+    else {
+        if (in_array('posixAccount',$retval['objectClasses'])) {
+            $retval['objectClasses'] = array_diff($retval['objectClasses'],array('posixAccount'));
+            $retval['person'] = remove_posix_fields($retval['person']);
+        }
+    }
     return $retval;
 }
 
@@ -158,6 +173,13 @@ function add_posix_fields($person) {
     $person['gecos']['value'] = preg_replace('/,/','',$person['cn']['value']);
     $person['homeDirectory']['value'] = '/home/users/' . $person['uid']['value'];
     $person['loginShell']['value'] = '/bin/bash';
+    return $person;
+}
+
+function remove_posix_fields($person) {
+    foreach ($GLOBALS['POSIX_ACCOUNT_FIELDS'] as $field) {
+        unset($person[$field]);
+    }
     return $person;
 }
 
