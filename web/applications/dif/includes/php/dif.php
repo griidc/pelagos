@@ -6,21 +6,32 @@
 // Returns: Form / Sidebar
 // Purpose: Wrapper for form and action scripts to update database & email at later date.
    error_reporting(0);
-   global $user;
-   $userId = $user->name;
-   $ldap = ldap_connect("ldap://triton.tamucc.edu");
 
-   $result = ldap_search($ldap, "ou=people,dc=griidc,dc=org", "(uid=$userId)", array('givenName','sn'));
-   $entries = ldap_get_entries($ldap, $result);
-   for ($i=0; $i<$entries['count']; $i++) 
-      {
-         $firstName = $entries[$i]['givenname'][0];
-         $lastName = $entries[$i]['sn'][0];
-      }
-       #  $firstName = "Vernon";
-       #  $lastName = "Asper";
+include_once '/usr/local/share/GRIIDC/php/ldap.php';
+include_once '/usr/local/share/GRIIDC/php/drupal.php';
+
+$ldap = connectLDAP('triton.tamucc.edu');
+$basedn = 'dc=griidc,dc=org';
+
+$uid = getDrupalUserName();
+
+if (isset($uid)) {
+    $userDNs = getDNs($ldap,$basedn,"uid=$uid");
+    $userDN = $userDNs[0]['dn'];
+    if (count($userDNs) > 0) {
+        $attributes = getAttributes($ldap,$userDN,array('givenName','sn');
+        if (count($attributes) > 0) {
+            if (array_key_exists($attributes['givenName']) $firstName = $attributes['givenName'];
+            if (array_key_exists($attributes['sn']) $lastName = $attributes['sn'];
+        }
+    }
+}
+
 #drupal_add_js('/var/www/dif/includes/css/Tooltip.css');
 include ('functions.php'); 
+
+$tasks = getTasks($ldap,$userDN,$firstName,$lastName);
+
 ?>
 <html> 
 <head> 
@@ -97,11 +108,10 @@ document.ed.video.value = "";
 		 selboxp.options.length = 0;
 	     if (chosen == "") { selboxp.options[selboxp.options.length] = new Option('Please Choose a Task',' '); }
 	     else{ 
-		 <?php 
-		 makeTaskGrouping($lastName,$firstName, "p"); ?>  }
+		 <?php makeTaskGrouping($tasks, "p"); ?>  }
 	     selboxs.options.length = 0;
          if (chosen == "") { selboxs.options[selboxs.options.length] = new Option('Please Choose a Task',' '); }
-		 else{  <?php makeTaskGrouping($lastName,$firstName, "s");  ?>  }
+		 else{  <?php makeTaskGrouping($tasks, "s");  ?>  }
        }
 </script>
 

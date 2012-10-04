@@ -31,15 +31,7 @@ function isAdmin() {
     return $admin;
 }
 
-function makeTaskGrouping($lastName,$firstName, $which) {
-	global $baseURL;
-	$baseurl = "http://griidc.tamucc.edu/services/RPIS/getTaskDetails.php";
-	$switch = '?'.'maxResults=-1&listResearchers=false';
-	$filters = "&lastName=$lastName&firstName=$firstName";
-	$url = $baseurl.$switch;
-    if (!isAdmin()) $url .= $filters;
-	$doc = simplexml_load_file($url);
-	$tasks = $doc->xpath('Task');
+function makeTaskGrouping($tasks, $which) {
 	foreach ($tasks as $task){
 		$dbOptionValue = $task['ID'];
 		$dbOption = $taskTitle;
@@ -106,18 +98,7 @@ function getPersonOptionListByName($lastName,$firstName, $whom, $ti) {
 	unset($doc);
 }
 
-function getTaskOptionListByName($lastName,$firstName, $what) {
-	global $baseURL;
-	$baseurl = "http://griidc.tamucc.edu/services/RPIS/getTaskDetails.php";
-	$switch = '?'.'maxResults=-1&listResearchers=false';
-	$filters = "&lastName=$lastName&firstName=$firstName";
-	$url = $baseurl.$switch;
-    if (!isAdmin()) $url .= $filters;
-
-	$maxLength = 200;
-	$doc = simplexml_load_file($url);
-	$tasks = $doc->xpath('Task');
-
+function getTaskOptionList($tasks, $what) {
 	foreach ($tasks as $task){
 		if (strlen($task->Title) > $maxLength){
 			$taskTitle=substr($task->Title,0,$maxLength).'...';
@@ -133,32 +114,38 @@ function getTaskOptionListByName($lastName,$firstName, $what) {
 	unset($doc);
 }
 
-function getProjectOptionListByName($lastName,$firstName) {
-	global $baseURL;
-	$baseurl = "http://griidc.tamucc.edu/services/RPIS/getTaskDetails.php";
-	$switch = '?'.'maxResults=-1&listResearchers=false'; 
-	$filters = "&lastName=$lastName&firstName=$firstName";
-	$url = $baseurl.$switch.$filters;
-	
-	$maxLength = 50;
-	$doc = simplexml_load_file($url);
-	$projectList = array();
-	$tasks = $doc->xpath('Task');
-	foreach ($tasks as $task){
-		$projectName = $task->Project->Title;
-		array_push($projectList, $projectName);
-	}
-	$projectList = array_unique($projectList);
+function getTasks($ldap,$userDN,$firstName,$lastName) {
+    $baseurl = 'http://griidc.tamucc.edu/services/RPIS/getTaskDetails.php';
+    $switch = '?'.'maxResults=-1';
 
-	foreach ($projectList as $title) {
-		if (strlen($title) > $maxLength){
-			$projectTitle=substr($title,0,$maxLength).'...';
-		} else {
-		$projectTitle = $title;
-		}
-		echo "<option value=\"$title\">$projectTitle</option>";
-	}
-	unset($doc);
+    $tasks = array();
+
+    if (isAdmin())
+    {
+        $doc = simplexml_load_file($baseurl.$switch);
+        $tasks = array_merge($tasks,$doc->xpath('Task'));
+    }
+    else
+    {
+        $groupDNs = getDNs($ldap,'ou=groups,'.$basedn,"(&(member=$userDN)(cn=administrators))");
+
+        foreach ($groupDNs as $group)
+        {
+            if (!is_array($group)) continue;
+            preg_match('/ou=([^,]+)/',$group['dn'],$matches);
+            $filters = "&projectTitle=$matches[1]";
+            $doc = simplexml_load_file($baseurl.$switch.$filters);
+            $tasks = array_merge($tasks,$doc->xpath('Task'));
+        }
+
+        if (count($groupDNs) == 0)
+        {
+            $filters = "&lastName=$lastName&firstName=$firstName";
+            $doc = simplexml_load_file($baseurl.$switch.$filters);
+            $tasks = array_merge($tasks,$doc->xpath('Task'));
+        }
+    }
 }
+
 ?>
 
