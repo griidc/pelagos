@@ -24,39 +24,39 @@ echo "</div></td></tr> </tbody> </table>";
 
 function displayTaskStatusByName($lastName, $firstName)
 {
-	$baseurl = 'http://griidc.tamucc.edu/services/RPIS/getTaskDetails.php';
-	$switch = '?'.'maxResults=-1';
+    $baseurl = 'http://griidc.tamucc.edu/services/RPIS/getTaskDetails.php';
+    $switch = '?'.'maxResults=-1';
     
     $tasks = array();
     
     if (isAdmin())
     {
         $doc = simplexml_load_file($baseurl.$switch);
-        array_merge($tasks,$doc->xpath('Task'));
+        $tasks = array_merge($tasks,$doc->xpath('Task'));
     }
     else
     {
         $uid = getDrupalUserName();
         $basedn = 'dc=griidc,dc=org';
         $ldap = connectLDAP('triton.tamucc.edu');
-        $userdns = getDNs($ldap,$basedn,'uid=jdavis');
+        $userdns = getDNs($ldap,$basedn,"uid=$uid");
         $userdn = $userdns[0]['dn'];
         $groupdns = getDNs($ldap,'ou=groups,'.$basedn,"(&(member=$userdn)(cn=administrators))");
-    
+
         foreach ($groupdns as $group)
         {
             if (!is_array($group)) continue;
             preg_match('/ou=([^,]+)/',$group['dn'],$matches);
             $filters = "&projectTitle=$matches[1]";
             $doc = simplexml_load_file($baseurl.$switch.$filters);
-            array_merge($tasks,$doc->xpath('Task'));
+            $tasks = array_merge($tasks,$doc->xpath('Task'));
         }
     
         if (count($groupdns) == 0)
         {
             $filters = "&lastName=$lastName&firstName=$firstName";
             $doc = simplexml_load_file($baseurl.$switch.$filters);
-            array_merge($tasks,$doc->xpath('Task'));
+            $tasks = array_merge($tasks,$doc->xpath('Task'));
         }
     }
     
