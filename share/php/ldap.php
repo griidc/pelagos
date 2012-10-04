@@ -18,7 +18,7 @@ function connectLDAP($ldaphost) {
 function getDNs($ldap,$basedn,$search) {
     $attributes = array('dn');
     $result = ldap_search($ldap, $basedn, $search, $attributes);
-    if ($result === FALSE) { return array(); }
+    if ($result === false) { return array(); }
     $entries = ldap_get_entries($ldap, $result);
     if ($entries['count']>0) { 
         return $entries;
@@ -31,14 +31,29 @@ function getDNs($ldap,$basedn,$search) {
 function isMember($ldap,$userDN,$groupDN) {
     $attributes = array('member');
     $result = ldap_read($ldap, "$groupDN", "(member=$userDN)", $attributes);
-    if ($result === FALSE) { 
-        return FALSE; 
+    if ($result === false) { 
+        return false; 
     }
     else {
         $entries = ldap_get_entries($ldap, $result);
-        if ($entries['count'] > 0) { return TRUE; }else{ return FALSE; };
+        if ($entries['count'] > 0) { return TRUE; }else{ return false; };
     }
-    ldap_close($ldap);
+}
+
+function getAttributes($ldap,$dn,$attributes) {
+    $result = ldap_read($ldap,$dn,'(objectClass=*)',$attributes);
+    if ($result === false) { 
+        return array();
+    }
+    else {
+        $entries = ldap_get_entries($ldap, $result);
+        if ($entries['count'] > 0) {
+            return $entries[0];
+        }
+        else {
+            return array();
+        }
+    }
 }
 
 ?>
