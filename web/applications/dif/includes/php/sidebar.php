@@ -6,6 +6,10 @@
 // Parameters: None
 // Returns: Folder list op datasets by task.
 // Purpose: To return data gather from the RPIS service and database to show a list of datasets by task.
+
+include_once '/usr/local/share/GRIIDC/php/ldap.php';
+include_once '/usr/local/share/GRIIDC/php/drupal.php';
+
 ?>
 <link rel="StyleSheet" href="/dif/includes/css/dtree.css" type="text/css" />
 <script type="text/javascript" src="/dif/includes/js/dtree.js"></script>
@@ -22,12 +26,40 @@ function displayTaskStatusByName($lastName, $firstName)
 {
 	$baseurl = 'http://griidc.tamucc.edu/services/RPIS/getTaskDetails.php';
 	$switch = '?'.'maxResults=-1';
-	$filters = "&lastName=$lastName&firstName=$firstName"; 
-	$url = $baseurl.$switch;
-    if (!isAdmin()) $url .= $filters;
-
-	$doc = simplexml_load_file($url);
-	$tasks = $doc->xpath('Task');
+    
+    $tasks = array();
+    
+    if (isAdmin())
+    {
+        $doc = simplexml_load_file($baseurl.$switch);
+        array_merge($tasks,$doc->xpath('Task'));
+    }
+    else
+    {
+        $uid = getDrupalUserName();
+        $basedn = 'dc=griidc,dc=org';
+        $ldap = connectLDAP('triton.tamucc.edu');
+        $userdns = getDNs($ldap,$basedn,'uid=jdavis');
+        $userdn = $userdns[0]['dn'];
+        $groupdns = getDNs($ldap,'ou=groups,'.$basedn,"(&(member=$userdn)(cn=administrators))");
+    
+        foreach ($groupdns as $group)
+        {
+            if (!is_array($group)) continue;
+            preg_match('/ou=([^,]+)/',$group['dn'],$matches);
+            $filters = "&projectTitle=$matches[1]";
+            $doc = simplexml_load_file($baseurl.$switch.$filters);
+            array_merge($tasks,$doc->xpath('Task'));
+        }
+    
+        if (count($groupdns) == 0)
+        {
+            $filters = "&lastName=$lastName&firstName=$firstName";
+            $doc = simplexml_load_file($baseurl.$switch.$filters);
+            array_merge($tasks,$doc->xpath('Task'));
+        }
+    }
+    
     echo "<div class=\"dtree\">\n";
 	echo "<script type=\"text/javascript\">\n\n";
 	echo "d = new dTree('d');\n\n";
