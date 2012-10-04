@@ -8,8 +8,7 @@ function connectLDAP($ldaphost) {
     ldap_set_option($ldapconnect, LDAP_OPT_PROTOCOL_VERSION, 3);
     ldap_set_option($ldapconnect, LDAP_OPT_REFERRALS, 0);
     
-    if (!ldap_bind($ldapconnect))
-    {
+    if (!ldap_bind($ldapconnect)) {
         $dMessage = "Could not connect to LDAP. Please contact the administrator <a href=\"mailto:griidc@gomri.org?subject=DOI Error\">griidc@gomri.org</a>.";
         drupal_set_message($dMessage,'error',false);
     }
@@ -21,12 +20,10 @@ function getDNs($ldap,$basedn,$search) {
     $result = ldap_search($ldap, $basedn, $search, $attributes);
     if ($result === FALSE) { return array(); }
     $entries = ldap_get_entries($ldap, $result);
-    if ($entries['count']>0) 
-    { 
+    if ($entries['count']>0) { 
         return $entries;
     }
-    else 
-    { 
+    else { 
         return array(); 
     }
 }
@@ -34,12 +31,10 @@ function getDNs($ldap,$basedn,$search) {
 function isMember($ldap,$userDN,$groupDN) {
     $attributes = array('member');
     $result = ldap_read($ldap, "$groupDN", "(member=$userDN)", $attributes);
-    if ($result === FALSE) 
-    { 
+    if ($result === FALSE) { 
         return FALSE; 
     }
-    else
-    {
+    else {
         $entries = ldap_get_entries($ldap, $result);
         if ($entries['count'] > 0) { return TRUE; }else{ return FALSE; };
     }
