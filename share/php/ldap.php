@@ -46,9 +46,10 @@ function getAttributes($ldap,$dn,$attributes) {
         return array();
     }
     else {
-        $entries = ldap_get_entries($ldap, $result);
-        if ($entries['count'] > 0) {
-            return $entries[0];
+        $entry = ldap_first_entry($ldap, $result);
+        $attrs = ldap_get_attributes($ldap, $entry);
+        if ($attrs['count'] > 0) {
+            return $attrs;
         }
         else {
             return array();
