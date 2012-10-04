@@ -21,8 +21,8 @@ if (isset($uid)) {
     if (count($userDNs) > 0) {
         $attributes = getAttributes($ldap,$userDN,array('givenName','sn'));
         if (count($attributes) > 0) {
-            if (array_key_exists('givenName',$attributes)) $firstName = $attributes['givenName'];
-            if (array_key_exists('sn',$attributes)) $lastName = $attributes['sn'];
+            if (array_key_exists('givenName',$attributes)) $firstName = $attributes['givenName'][0];
+            if (array_key_exists('sn',$attributes)) $lastName = $attributes['sn'][0];
         }
     }
 }
