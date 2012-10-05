@@ -152,18 +152,10 @@ function check_person($app,$type='u',$ldif=null) {
     }
     if (!array_key_exists('objectClasses',$retval))
         $retval['objectClasses'] = array('top','person','inetOrgPerson','organizationalPerson');
-    if ($app->request()->post('Shell')) {
-        if (!in_array('posixAccount',$retval['objectClasses'])) {
-            $retval['objectClasses'][] = 'posixAccount';
-            $retval['person'] = add_posix_fields($retval['person']);
-        }
-    }
-    else {
-        if (in_array('posixAccount',$retval['objectClasses'])) {
-            $retval['objectClasses'] = array_diff($retval['objectClasses'],array('posixAccount'));
-            $retval['person'] = remove_posix_fields($retval['person']);
-        }
-    }
+    if ($app->request()->post('Shell') and !in_array('posixAccount',$retval['objectClasses']))
+        $retval['objectClasses'][] = 'posixAccount';
+    elseif (in_array('posixAccount',$retval['objectClasses']))
+        $retval['objectClasses'] = array_diff($retval['objectClasses'],array('posixAccount'));
     return $retval;
 }
 
@@ -173,13 +165,6 @@ function add_posix_fields($person) {
     $person['gecos']['value'] = preg_replace('/,/','',$person['cn']['value']);
     $person['homeDirectory']['value'] = '/home/users/' . $person['uid']['value'];
     $person['loginShell']['value'] = '/bin/bash';
-    return $person;
-}
-
-function remove_posix_fields($person) {
-    foreach ($GLOBALS['POSIX_ACCOUNT_FIELDS'] as $field) {
-        unset($person[$field]);
-    }
     return $person;
 }
 
@@ -340,7 +325,11 @@ function get_affiliations($affiliation) {
         sort($entries);
         foreach ($entries as $entry) {
             $dn = $entry['dn'];
-            if ($la['objectClass'] == 'organizationalUnit') $dn = "cn=members,$dn";
+            if ($la['objectClass'] == 'organizationalUnit') {
+                $defaultGroup = $la['defaultGroup'];
+                $defaultGroup = preg_replace("/\\\$$name_attr/",strtolower($entry[$name_attr][0]),$defaultGroup);
+                $dn = "cn=$defaultGroup,$dn";
+            }
             $affiliations[$la['ou']][] = array('name' => $entry[$name_attr][0], 'dn' => $dn, 'selected' => $dn == $affiliation);
         }
     }

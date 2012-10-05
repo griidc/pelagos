@@ -32,7 +32,7 @@
                     {% for aff in affiliations.consortia %}
                         <option value='{{aff.dn}}' {{ aff.selected ? 'selected' : '' }}>{{aff.name}}</option>
                     {% endfor %}
-                    {% for aff in affiliations.HRI %}
+                    {% for aff in affiliations.Other %}
                         <option value='{{aff.dn}}' {{ aff.selected ? 'selected' : '' }}>{{aff.name}}</option>
                     {% endfor %}
                     <option value=''></option>

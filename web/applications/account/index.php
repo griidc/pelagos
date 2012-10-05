@@ -331,6 +331,11 @@ $app->post("$GLOBALS[BASE]/approve/create", $GLOBALS['AUTH_FOR_ROLE']('admin'), 
         $uid = $app->request()->get('uid');
         $ldifFile = SPOOL_DIR . "/incoming/$uid.ldif";
         $ldif = read_ldif($ldifFile);
+        $ldif = check_person($app,'a',$ldif);
+        if (in_array('posixAccount',$ldif['objectClasses'])) {
+            $ldif['person'] = add_posix_fields($ldif['person']);
+        }
+        write_ldif($ldifFile,$ldif);
         $return_val = 0;
         $cmd = sprintf('/usr/bin/ldapadd -h "%s" -D "%s" -w "%s" -f "%s" 2>&1',LDAP_HOST,LDAP_BIND_DN,LDAP_BIND_PW,$ldifFile);
         exec($cmd,$output,$return_val);
