@@ -152,8 +152,10 @@ function check_person($app,$type='u',$ldif=null) {
     }
     if (!array_key_exists('objectClasses',$retval))
         $retval['objectClasses'] = array('top','person','inetOrgPerson','organizationalPerson');
-    if ($app->request()->post('Shell') and !in_array('posixAccount',$retval['objectClasses']))
-        $retval['objectClasses'][] = 'posixAccount';
+    if ($app->request()->post('Shell')) {
+        if (!in_array('posixAccount',$retval['objectClasses']))
+            $retval['objectClasses'][] = 'posixAccount';
+    }
     elseif (in_array('posixAccount',$retval['objectClasses']))
         $retval['objectClasses'] = array_diff($retval['objectClasses'],array('posixAccount'));
     return $retval;
@@ -259,15 +261,6 @@ function write_ldif($ldifFile,$ldif) {
     file_put_contents($ldifFile,$contents);
     $ldif['raw'] = $contents;
     return $ldif;
-}
-
-function notPosixAccount($var) {
-    if ($var == 'posixAccount') {
-        return false;
-    }
-    else {
-        return true;
-    }
 }
 
 function verify_email ($email,$hash) {
