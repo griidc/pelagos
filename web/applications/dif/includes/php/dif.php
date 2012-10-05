@@ -105,11 +105,11 @@ document.ed.video.value = "";
 	     var selboxp = document.ed.ppoc;
          var selboxs = document.ed.spoc;
 		 selboxp.options.length = 0;
-	     if (chosen == "") { selboxp.options[selboxp.options.length] = new Option('Please Choose a Task',' '); }
+	     if (chosen == "") { selboxp.options[selboxp.options.length] = new Option('Please Choose a Task First',''); }
 	     else{ 
 		 <?php makeTaskGrouping($tasks, "p"); ?>  }
 	     selboxs.options.length = 0;
-         if (chosen == "") { selboxs.options[selboxs.options.length] = new Option('Please Choose a Task',' '); }
+         if (chosen == "") { selboxs.options[selboxs.options.length] = new Option('Please Choose a Task First',''); }
 		 else{  <?php makeTaskGrouping($tasks, "s");  ?>  }
        }
 </script>

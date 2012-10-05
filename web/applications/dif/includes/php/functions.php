@@ -42,7 +42,7 @@ function makeTaskGrouping($tasks, $which) {
 	unset($doc);
 }
 		
-	function callPeople($w, $ti) {
+function callPeople($w, $ti) {
   	global $baseURL;
 	$baseurl = "http://griidc.tamucc.edu/services/RPIS/getTaskDetails.php";
 	$switch = '?'.'maxResults=-1&listResearchers=true';
@@ -70,32 +70,23 @@ function makeTaskGrouping($tasks, $which) {
 	unset($doc);
 }
    	
-function getPersonOptionListByName($lastName,$firstName, $whom, $ti) {
-  	global $baseURL;
-	$baseurl = "http://griidc.tamucc.edu/services/RPIS/getTaskDetails.php";
-	$switch = '?'.'maxResults=-1&listResearchers=true';
-	$filters = "&lastName=$lastName&firstName=$firstName&taskID=$ti";
-	//$filters = "&taskID=$ti";
-	$url = $baseurl.$switch;
-    if (!isAdmin()) $url .= $filters;
-		
-	$doc = simplexml_load_file($url);
-	$tasks = $doc->xpath('Task');
-	$buildarray=array('<option value=" " selected="selected">[SELECT]</option>');
-	foreach ($tasks as $task) {
-		$peops = $task->xpath('Researchers/Person');
-		foreach ($peops as $peoples) {
-			$personID = $peoples['ID'];
-			$line= "<option value=\"$personID\"";
-			if ($whom==$personID){$line .= " SELECTED";}
-			$line.= ">$peoples->LastName, $peoples->FirstName ($peoples->Email)</option>";
-			array_push($buildarray, $line );
-
-		}
-	}
-	$result = array_unique($buildarray);
-	foreach($result as $ribbit){ echo $ribbit; }
-	unset($doc);
+function getPersonOptionList($whom, $ti) {
+    $baseurl = "http://griidc.tamucc.edu/services/RPIS/getPeopleDetails.php";
+    $filters = "?taskID=$ti";
+    $url = $baseurl.$filters;
+    $doc = simplexml_load_file($url);
+    $buildarray=array('<option value="">[SELECT]</option>');
+    $peops = $doc->xpath('Person');
+    foreach ($peops as $peoples) {
+        $personID = $peoples['ID'];
+        $line= "<option value=\"$personID\"";
+        if ($whom==$personID){$line .= " SELECTED";}
+        $line.= ">$peoples->LastName, $peoples->FirstName ($peoples->Email)</option>";
+        array_push($buildarray, $line );
+    }
+    $result = array_unique($buildarray);
+    foreach($result as $ribbit){ echo $ribbit; }
+    unset($doc);
 }
 
 function getTaskOptionList($tasks, $what) {

@@ -54,47 +54,29 @@
 
 <table WIDTH="100%"><tr><td> <p> 
 
- <?PHP  if (!$flag){ ?>
- <fieldset><label for="cppoc"> <em>*</em> Primary Point of Contact: <span style="float:right;" class="tooltip" onmouseover="tooltip.add(this, 'demo3_tip')"> <IMG SRC="/dif/images/info.png"> </span> </label> 
-<select name="ppoc" size="1"  style="width:385px;" class="required" > <option value="" selected="selected">Please Choose a Task</option> </select></fieldset></p>
- <?PHP }else{ ?>
 <fieldset><label for="cppoc"> <em>*</em> Primary Point of Contact: <span style="float:right;" class="tooltip" onmouseover="tooltip.add(this, 'demo3_tip')"> <IMG SRC="/dif/images/info.png"> </span> </label> 
-<select name=ppoc id="contact1" <?PHP if ($status != 0){echo "disabled";} ?>  class="required" style="width:385px;"><option value="" selected="selected">[SELECT]</option>
-  <?PHP  
-getPersonOptionListByName($lastName,$firstName, $m[19]); 
-?>
-</select></fieldset></p>
 
-   <?PHP } ?>
+<select name="ppoc" id="contact1" <?PHP if ($status != 0) echo "disabled"; ?> class="required" style="width:385px;">
+    <?PHP if (!$flag) { ?>
+    <option value="">Please Choose a Task First</option>
+    <?PHP } else getPersonOptionList($m[19],$m[1]); ?>
+</select>
 
+</fieldset></p>
 
 </td><td>&nbsp;&nbsp;&nbsp;&nbsp;
 </td><td>
 
-
- <?PHP  if (!$flag){ ?>
-
-
-<p><fieldset><label for="spoc"> Secondary Point of Contact: <span style="float:right;" class="tooltip" onmouseover="tooltip.add(this, 'demo4_tip')"> 
-<IMG SRC="/dif/images/info.png"> </span> </label>
-
-<select name="spoc" size="1"  style="width:385px;" > <option value="" selected="selected">Please Choose a Task</option> </select>
-</select></fieldset>
-</p> 
-
-
- <?PHP }else{ ?>
 <p><fieldset><label for="cspoc"> Secondary Point of Contact: <span style="float:right;" class="tooltip" onmouseover="tooltip.add(this, 'demo4_tip')"> 
 <IMG SRC="/dif/images/info.png"> </span> </label>
-<select name=spoc id="cspoc" style="width:385px;" <?PHP if ($status != 0){echo "disabled";} ?> >
-  <?PHP  
-  getPersonOptionListByName($lastName,$firstName, $m[20]); 
-  ?>
-</select></fieldset>
-</p> 
-   <?PHP } ?>
 
+<select name="spoc" id="cspoc" style="width:385px;" <?PHP if ($status != 0){echo "disabled";} ?> >
+    <?PHP if (!$flag) { ?>
+    <option value="">Please Choose a Task First</option>
+    <?PHP } else getPersonOptionList($m[20],$m[1]); ?>
+</select>
 
+</fieldset></p> 
 
 </td></tr></table>
 
