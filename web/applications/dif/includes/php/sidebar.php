@@ -18,48 +18,12 @@ echo "<table class=cleair><tbody class=tbody><tr><td>";
 echo "<h2 class=\"title\" align=center>Tasks and datasets for ".$firstName." ".$lastName."<hr /></FONT>";
 echo "</h2></td></tr><tr><td><div style=width:100%;height:800px;overflow:auto; BGCOLOR=#efefef>";
 
-displayTaskStatusByName($lastName,$firstName);
+displayTaskStatus($tasks);
 
 echo "</div></td></tr> </tbody> </table>";
 
-function displayTaskStatusByName($lastName, $firstName)
+function displayTaskStatus($tasks)
 {
-    $baseurl = 'http://griidc.tamucc.edu/services/RPIS/getTaskDetails.php';
-    $switch = '?'.'maxResults=-1';
-    
-    $tasks = array();
-    
-    if (isAdmin())
-    {
-        $doc = simplexml_load_file($baseurl.$switch);
-        $tasks = array_merge($tasks,$doc->xpath('Task'));
-    }
-    else
-    {
-        $uid = getDrupalUserName();
-        $basedn = 'dc=griidc,dc=org';
-        $ldap = connectLDAP('triton.tamucc.edu');
-        $userdns = getDNs($ldap,$basedn,"uid=$uid");
-        $userdn = $userdns[0]['dn'];
-        $groupdns = getDNs($ldap,'ou=groups,'.$basedn,"(&(member=$userdn)(cn=administrators))");
-
-        foreach ($groupdns as $group)
-        {
-            if (!is_array($group)) continue;
-            preg_match('/ou=([^,]+)/',$group['dn'],$matches);
-            $filters = "&projectTitle=$matches[1]";
-            $doc = simplexml_load_file($baseurl.$switch.$filters);
-            $tasks = array_merge($tasks,$doc->xpath('Task'));
-        }
-    
-        if (count($groupdns) == 0)
-        {
-            $filters = "&lastName=$lastName&firstName=$firstName";
-            $doc = simplexml_load_file($baseurl.$switch.$filters);
-            $tasks = array_merge($tasks,$doc->xpath('Task'));
-        }
-    }
-    
     echo "<div class=\"dtree\">\n";
 	echo "<script type=\"text/javascript\">\n\n";
 	echo "d = new dTree('d');\n\n";
