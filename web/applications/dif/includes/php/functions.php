@@ -99,6 +99,7 @@ function getPersonOptionListByName($lastName,$firstName, $whom, $ti) {
 }
 
 function getTaskOptionList($tasks, $what) {
+    $maxLength = 200;
 	foreach ($tasks as $task){
 		if (strlen($task->Title) > $maxLength){
 			$taskTitle=substr($task->Title,0,$maxLength).'...';
@@ -114,7 +115,7 @@ function getTaskOptionList($tasks, $what) {
 	unset($doc);
 }
 
-function getTasks($ldap,$userDN,$firstName,$lastName) {
+function getTasks($ldap,$baseDN,$userDN,$firstName,$lastName) {
     $baseurl = 'http://griidc.tamucc.edu/services/RPIS/getTaskDetails.php';
     $switch = '?'.'maxResults=-1';
 
@@ -127,7 +128,7 @@ function getTasks($ldap,$userDN,$firstName,$lastName) {
     }
     else
     {
-        $groupDNs = getDNs($ldap,'ou=groups,'.$basedn,"(&(member=$userDN)(cn=administrators))");
+        $groupDNs = getDNs($ldap,'ou=groups,'.$baseDN,"(&(member=$userDN)(cn=administrators))");
 
         foreach ($groupDNs as $group)
         {
@@ -145,6 +146,8 @@ function getTasks($ldap,$userDN,$firstName,$lastName) {
             $tasks = array_merge($tasks,$doc->xpath('Task'));
         }
     }
+
+    return $tasks;
 }
 
 ?>

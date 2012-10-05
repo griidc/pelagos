@@ -11,12 +11,12 @@ include_once '/usr/local/share/GRIIDC/php/ldap.php';
 include_once '/usr/local/share/GRIIDC/php/drupal.php';
 
 $ldap = connectLDAP('triton.tamucc.edu');
-$basedn = 'dc=griidc,dc=org';
+$baseDN = 'dc=griidc,dc=org';
 
 $uid = getDrupalUserName();
 
 if (isset($uid)) {
-    $userDNs = getDNs($ldap,$basedn,"uid=$uid");
+    $userDNs = getDNs($ldap,$baseDN,"uid=$uid");
     $userDN = $userDNs[0]['dn'];
     if (count($userDNs) > 0) {
         $attributes = getAttributes($ldap,$userDN,array('givenName','sn'));
@@ -27,10 +27,9 @@ if (isset($uid)) {
     }
 }
 
-#drupal_add_js('/var/www/dif/includes/css/Tooltip.css');
 include ('functions.php'); 
 
-$tasks = getTasks($ldap,$userDN,$firstName,$lastName);
+$tasks = getTasks($ldap,$baseDN,$userDN,$firstName,$lastName);
 
 ?>
 <html> 
