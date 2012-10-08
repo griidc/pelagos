@@ -1,22 +1,23 @@
 <?php 
+include_once '/usr/local/share/GRIIDC/php/ldap.php';
+include_once '/usr/local/share/GRIIDC/php/drupal.php';
 require 'fileGetter.php';
 require 'checkURL.php';
+
+drupal_add_library('system', 'ui.datepicker');
+drupal_add_library('system', 'ui.dialog');
+drupal_add_js('includes/js/urlValidate.js','external');
+
 ?>
 <html>
 <head>
     
     <link href="/dif/includes/css/Tooltip.css" rel="stylesheet" type="text/css">
     <script src="/dif/includes/js/Tooltip.js" type="text/javascript"></script>
-        
-    <link href="./includes/css/ui-lightness/jquery-ui-1.8.23.custom.css" rel="stylesheet" type="text/css" />
-       
-    <script src="./includes/js/jquery-1.8.1.min.js" type="text/javascript"></script>
     <script src="./includes/js/jquery.validate.js" type="text/javascript"></script>
-    <script src="./includes/js/jquery-ui-1.8.23.custom.min.js" type="text/javascript"></script>
-    
-    <script src="./includes/js/urlValidate.js" type="text/javascript"></script>
-    
+        
     <script type="text/javascript">
+    (function ($) {
         $.validator.setDefaults({
             submitHandler: function() 
             {
@@ -31,7 +32,7 @@ require 'checkURL.php';
                             "Let me change it...": function() {
                                 $( this ).dialog( "close" );
                             },
-                            "This URL is ok anyway! Let me submit the form.": function() {
+                            "This URL is OK anyway! Let me submit the form.": function() {
                                 document.getElementById("urlValidate").value += " [200 OVERWRITE]";
                                 $( this ).dialog( "close" );
                                 form.submit();
@@ -72,7 +73,7 @@ require 'checkURL.php';
                 }
             });
         });
-	    
+     
         $(function() {
             $( "#txtDate" ).datepicker({
                 showOn: "button",
@@ -87,6 +88,7 @@ require 'checkURL.php';
 			$( "#dialog" ).dialog( "open" );
 			return false;
 		});
+        })(jQuery);
     </script>
     
     <title>DOI Form</title>
@@ -185,7 +187,7 @@ function sendMailSubmit($formHash,$userEmail,$userFirstName,$userLastName)
     $headers  = 'MIME-Version: 1.0' . "\r\n";
     $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
     $headers .= "To: \"$userLastName, $userFirstName\" <$userEmail>" . "\r\n";
-    $headers .= 'From: \"GRIIDC\" <griidc@gomri.org>' . "\r\n";
+    $headers .= "From: \"GRIIDC\" <griidc@gomri.org>" . "\r\n";
     $headers .= "Subject: {$subject}" . "\r\n";
     $headers .= 'X-Mailer: PHP/' . phpversion();
     
@@ -204,7 +206,7 @@ function sendMailSubmit($formHash,$userEmail,$userFirstName,$userLastName)
     $headers  = 'MIME-Version: 1.0' . "\r\n";
     $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
     $headers .= "To: \"GRIIDC\" <griidc@gomri.org>" . "\r\n";
-    $headers .= 'From: \"GRIIDC\" <griidc@gomri.org>' . "\r\n";
+    $headers .= "From: \"GRIIDC\" <griidc@gomri.org>" . "\r\n";
     $headers .= "Subject: {$subject}" . "\r\n";
     $headers .= 'X-Mailer: PHP/' . phpversion();
        
@@ -237,7 +239,7 @@ function sendMailApprove($formHash)
     $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
     $headers .= "To: \"$userLastName, $userFirstName\" <$userEmail>" . "\r\n";
     $headers .= "Bcc: griidc@gomri.org" . "\r\n";
-    $headers .= 'From: \"GRIIDC\" <griidc@gomri.org>' . "\r\n";
+    $headers .= "From: \"GRIIDC\" <griidc@gomri.org>" . "\r\n";
     $headers .= 'X-Mailer: PHP/' . phpversion();
     $parameters = '-ODeliveryMode=d'; 
     
