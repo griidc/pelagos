@@ -1,21 +1,24 @@
 <?php 
 include_once '/usr/local/share/GRIIDC/php/ldap.php';
 include_once '/usr/local/share/GRIIDC/php/drupal.php';
-require 'fileGetter.php';
-require 'checkURL.php';
+include_once '/usr/local/share/GRIIDC/php/fileGetter.php';
 
 drupal_add_library('system', 'ui.datepicker');
 drupal_add_library('system', 'ui.dialog');
+drupal_add_js('/dif/includes/js/Tooltip.js','external');
+drupal_add_js('includes/js/jquery.validate.js','external');
+
+//Enargite JS
 drupal_add_js('includes/js/urlValidate.js','external');
+
+require 'checkURL.php';
 
 ?>
 <html>
 <head>
     
     <link href="/dif/includes/css/Tooltip.css" rel="stylesheet" type="text/css">
-    <script src="/dif/includes/js/Tooltip.js" type="text/javascript"></script>
-    <script src="./includes/js/jquery.validate.js" type="text/javascript"></script>
-        
+            
     <script type="text/javascript">
     (function ($) {
         $.validator.setDefaults({
@@ -97,14 +100,6 @@ drupal_add_js('includes/js/urlValidate.js','external');
 
 <?php
 
-if (!function_exists('drupal_set_message'))
-{
-    function drupal_set_message($message = NULL, $type = 'status', $repeat = TRUE)
-    {
-        echo "<p>[$type]: $message</p>";
-    }
-}
-
 require 'dbFunctions.php';
 require 'doiFunctions.php';
 
@@ -112,60 +107,37 @@ $isAdminMember = false;
 $formReadOnly = false;
 $userId = "";
 
-function connectLDAP()
+$userId = getDrupalUserName();
+
+
+
+if (isset($userId))
 {
-    $ldapconnect = ldap_connect("ldap://triton.tamucc.edu");
+    $ldap = connectLDAP('triton.tamucc.edu');
     
-    if (!ldap_bind($ldapconnect))
+    $userDN = getDNs($ldap,"dc=griidc,dc=org", "(uid=$userId)");
+            
+    $userDN = $userDN[0]['dn'];
+        
+    $attributes = array('givenName','sn','mail');
+    
+    $entries = getAttributes($ldap,$userDN,$attributes);
+                
+    if (count($entries)>0)
     {
-        $dMessage = "Could not connect to LDAP. Please contact the administrator <a href=\"mailto:griidc@gomri.org?subject=DOI Error\">griidc@gomri.org</a>.";
-        drupal_set_message($dMessage,'error',false);
+        $userFirstName = $entries['givenName'][0];
+        $userLastName = $entries['sn'][0];
+        $userEmail = $entries['mail'][0];
     }
-    return $ldapconnect;
-}
-
-global $user;
-
-if (isset($user))
-{
-    $userId = $user->name;
-
-    $ldap = connectLDAP();
-    $result = ldap_search($ldap, "ou=people,dc=griidc,dc=org", "(uid=$userId)", array('givenName','sn', 'mail',));
-    $entries = ldap_get_entries($ldap, $result);
-    for ($i=0; $i<$entries['count']; $i++) 
-    {
-        $userFirstName = $entries[$i]['givenname'][0];
-        $userLastName = $entries[$i]['sn'][0];
-        $userEmail = $entries[$i]['mail'][0];
-    }
+        
+    $isAdminMember = isMember($ldap,$userDN,'cn=administrators,ou=Data Monitoring,ou=applications,dc=griidc,dc=org');
+    
     ldap_close($ldap);
-
-    $isAdminMember = partOfLDAPGroup($userId,'cn=administrators,ou=Data Monitoring,ou=applications,dc=griidc,dc=org');
 }
-    
 
 if (isset($_GET['formKey']) AND !$isAdminMember) 
 {
     $formReadOnly=true; 
-}
-
-function partOfLDAPGroup($user,$group)
-{
-    $ldap = connectLDAP();
-    
-    $attributes = array('member');
-    $result = ldap_read($ldap, "$group", "(member=uid=$user,ou=members,ou=people,dc=griidc,dc=org)", $attributes);
-    if ($result === FALSE) 
-    { 
-        return FALSE; 
-    }
-    else
-    {
-        $entries = ldap_get_entries($ldap, $result);
-        if ($entries['count'] > 0) { return TRUE; }else{ return FALSE; };
-    }
-    ldap_close($ldap);
 }
 
 function splitToDoi($doiString)
@@ -389,7 +361,7 @@ if ($userId == "")
 <div id="date_tip" style="display:none;">
     <img src="/dif/images/info.png" style="float:right;" />
     <p>
-        <strong>Date:</strong> Please enter a valid ISO date. <em>e.g. (2012/12/23)</em>
+        <strong>Date:</strong> A valid ISO date. <em>e.g. (2012/12/23)</em>
     </p>
 </div>
 
@@ -460,9 +432,11 @@ if ($userId == "")
 <?php 
     if (isset($drUrlValidate) AND !$formReadOnly)
     {
+        echo '<fieldset>';    
         echo '<label for="urlValidate">URL Status:</label></br>';
         echo '<textarea readonly id="urlValidate" row=3 cols=100>'.$drUrlValidate.'</textarea>';
         echo '<input type="hidden" name="formKey" id="formKey" value="'.$_GET['formKey'].'" size="100"/>';
+        echo '</fieldset>';
     }
     else
     {
