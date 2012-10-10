@@ -61,7 +61,7 @@ if ($_GET)
     }
 }
 
-if (substr($_SERVER['REQUEST_URI'],-1) != "/")
+if (!preg_match('/\?|\/$/',$_SERVER['REQUEST_URI']))
 {
     $newLocation = 'Location:'.$_SERVER['REQUEST_URI']. '/';
     header($newLocation);
