@@ -1,25 +1,22 @@
 <?php 
 include_once '/usr/local/share/GRIIDC/php/ldap.php';
 include_once '/usr/local/share/GRIIDC/php/drupal.php';
-include_once '/usr/local/share/GRIIDC/php/fileGetter.php';
+include_once '/usr/local/share/GRIIDC/php/aliasIncludes.php';
 
 drupal_add_library('system', 'ui.datepicker');
 drupal_add_library('system', 'ui.dialog');
-drupal_add_js('/dif/includes/js/Tooltip.js','external');
-drupal_add_js('includes/js/jquery.validate.js','external');
+
+drupal_add_js('/includes/Menucool/Tooltip/Tooltip.js',array('type'=>'external'));
+drupal_add_css('/includes/Menucool/Tooltip/Tooltip.css',array('type'=>'external'));
+
+drupal_add_js('/includes/jquery-validation/jquery.validate.js',array('type'=>'external'));
 
 //Enargite JS
-drupal_add_js('includes/js/urlValidate.js','external');
+drupal_add_js('includes/js/urlValidate.js',array('type'=>'external'));
 
 require 'checkURL.php';
 
-?>
-<html>
-<head>
-    
-    <link href="/dif/includes/css/Tooltip.css" rel="stylesheet" type="text/css">
-            
-    <script type="text/javascript">
+drupal_add_js('
     (function ($) {
         $.validator.setDefaults({
             submitHandler: function() 
@@ -92,13 +89,7 @@ require 'checkURL.php';
 			return false;
 		});
         })(jQuery);
-    </script>
-    
-    <title>DOI Form</title>
-</head>
-<body>
-
-<?php
+',array('type'=>'inline'));
 
 require 'dbFunctions.php';
 require 'doiFunctions.php';
@@ -461,6 +452,3 @@ if ($userId == "")
 </td>
 </tr>
 </table>
-
-</body>
-</html>

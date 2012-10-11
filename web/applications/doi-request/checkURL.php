@@ -2,7 +2,7 @@
 
 //require 'build_url.php';
 
-echo checkURL($_GET['url']);
+if (isset($_GET['url'])) echo checkURL($_GET['url']);
 
 function checkURL($url)
 {
