@@ -3,9 +3,9 @@
 //require 'build_url.php';
 
 if (isset($_GET['url'])) {
-    echo checkURL($_GET['url']
+    echo checkURL($_GET['url']);
     exit;
-);
+};
 
 function checkURL($url)
 {
