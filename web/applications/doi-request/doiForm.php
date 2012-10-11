@@ -260,7 +260,7 @@ if ($_POST)
                 
                 if (strpos($doiResult,'message:201') <> -1)
                 {
-                    $query = "UPDATE doi_regs SET doi='$doiResult', aproved=1, approvedby=$userId, approvedon=$now where formHash='$formKey'";
+                    $query = "UPDATE doi_regs SET doi='$doiResult', aproved=1, approvedby='$userId', approvedon='$now' where formHash='$formKey'";
                     $result = dbexecute ($query);
                     sendMailApprove($formKey);
                     $dMessage = 'The DOI form was Approved, the issued DOI is: <strong>'.splitToDoi($doiResult).'</strong> An e-mail will be send to the requestor.';
