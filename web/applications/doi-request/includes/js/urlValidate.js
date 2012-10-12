@@ -36,7 +36,7 @@ function validateURL(url)
             document.getElementById("urlValidate").value=xmlhttp.responseText;
         }
     }
-    xmlhttp.open("GET","https://proteus.tamucc.edu/~mvandeneijnden/doi/checkURL.php?url="+url,true);
+    xmlhttp.open("GET","?url="+url,true);
     xmlhttp.send();
 }
 
