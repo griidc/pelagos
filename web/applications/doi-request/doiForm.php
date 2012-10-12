@@ -161,6 +161,7 @@ function sendMailSubmit($formHash,$userEmail,$userFirstName,$userLastName)
     $message .= "You will receive an email shortly containing a link to your DOI.<br \><br \>";
     $message .= "Thank you for your submission,<br \><br \>";
     $message .= "<em>The GRIIDC Team.</em><br \>";
+    $message .= "<p>Link to you application for you review: https://".$_SERVER['SERVER_NAME']."/doi?formKey=$formHash</p>";
     
     mail($to, $subject, $message, $headers,$parameters);
     
@@ -174,7 +175,7 @@ function sendMailSubmit($formHash,$userEmail,$userFirstName,$userLastName)
     $headers .= 'X-Mailer: PHP/' . phpversion();
        
     $appMessage = "<hr \><br \>Please approve this application";
-    $appMessage .= "<p>Link for approval: https://proteus.tamucc.edu/doi?formKey=$formHash</p>";
+    $appMessage .= "<p>Link for approval: https://".$_SERVER['SERVER_NAME']."/doi?formKey=$formHash</p>";
     
     $message = $message.$appMessage;
     
