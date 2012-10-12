@@ -10,101 +10,87 @@
 include_once '/usr/local/share/GRIIDC/php/ldap.php';
 include_once '/usr/local/share/GRIIDC/php/drupal.php';
 
+
+
+
 ?>
-<link rel="StyleSheet" href="/dif/includes/css/dtree.css" type="text/css" />
-<script type="text/javascript" src="/dif/includes/js/dtree.js"></script>
+
+
+<script type="text/javascript">
+    function updateSidebar(personID)
+    {
+        //alert(personID);
+        if (window.XMLHttpRequest)
+        {// code for IE7+, Firefox, Chrome, Opera, Safari
+            xmlhttp=new XMLHttpRequest();
+        }
+        else
+        {// code for IE6, IE5
+            xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        xmlhttp.onreadystatechange=function updateSidebar()
+        {
+            if (xmlhttp.readyState==4 && xmlhttp.status==200)
+            {
+                //alert(xmlhttp.responseText);
+                eval(xmlhttp.responseText);
+                //document.getElementById("dstree").innerHTML=xmlhttp.responseText;
+            }
+        }
+        xmlhttp.open("GET","?personID="+personID,true);
+        xmlhttp.send();
+    }
+</script>
+
 <?php
+
+
 echo "<table class=cleair><tbody class=tbody><tr><td>";
 echo "<h2 class=\"title\" align=center>Tasks and datasets for ".$firstName." ".$lastName."<hr /></FONT>";
-echo "</h2></td></tr><tr><td><div style=width:100%;height:800px;overflow:auto; BGCOLOR=#efefef>";
+echo "</h2></td></tr><tr><td>";
 
-displayTaskStatus($tasks);
+if ($GLOBALS['isGroupAdmin'] OR isAdmin())
+{
+    echo '<form id="filter" name="filter">';
+    echo '<label for="name">Filter by Researcher:</label>';
+    echo '<select id="name" onchange="updateSidebar(this.value);">';
+        
+    $buildarray=array();
+    foreach ($tasks as $task) 
+    {
+        $peops = $task->xpath('Researchers/Person');
+            
+        foreach ($peops as $peoples) 
+        {
+            $personID = $peoples['ID'];
+            $personName = "$peoples->LastName, $peoples->FirstName ($peoples->Email)";
+            array_push($buildarray, "$personName|$personID");
+        }
+    }
+
+    $result = array_unique($buildarray);
+    sort($result,SORT_STRING);
+
+    echo '<option value="">[SELECT]</option>';
+    foreach($result as $person){ 
+        $people = explode("|",$person);
+        $line= "<option value=\"$people[1]\"";
+        $line.= ">$people[0]</option>";
+        echo $line;
+    }
+        
+    echo '</select>';
+}
+echo '<div id="dstree" style="width:100%;height:800px;overflow:auto;" BGCOLOR="#efefef">';
+
+echo "<div class=\"dtree\">\n";
+echo "<script type=\"text/javascript\">\n\n";
+
+displayTaskStatus($tasks,null);
+
+echo "</script>\n</div>\n";
 
 echo "</div></td></tr> </tbody> </table>";
 
-function displayTaskStatus($tasks)
-{
-    echo "<div class=\"dtree\">\n";
-	echo "<script type=\"text/javascript\">\n\n";
-	echo "d = new dTree('d');\n\n";
-	echo "d.add(0,-1,'Datasets','');\n\n";
-	$nodeCount = 1;
-	$folderCount =1;
-	foreach ($tasks as $task)
-    {
-        $taskID = $task['ID'];
-		
-		$taskTitle = $task->Title;
-			
-		echo "d.add($nodeCount,0,'".addslashes($taskTitle)."','javascript: d.o($nodeCount);','".addslashes($taskTitle)."','','','',true);\n";
-		$nodeCount++;
-		
-		$query = "select title,status,dataset_uid from datasets where task_uid=$taskID";
-		$results = dbexecute($query);
-		
-		while ($row = pg_fetch_row($results)) 
-		{
-			$status = $row[1];
-			$title = $row[0];
-			$datasetid = $row[2];
 
-			switch ($status)
-			{
-				case null:
-				echo "d.add($nodeCount,$folderCount,'".addslashes($title)."','/dif?uid=$datasetid','".addslashes($title)."','_self','/dif/images/red_bobble.png');\n";
-				break;
-				case 0:
-				echo "d.add($nodeCount,$folderCount,'".addslashes($title)."','/dif?uid=$datasetid','".addslashes($title)."','_self','/dif/images/red_bobble.png');\n";
-				break;
-				case 1:
-				echo "d.add($nodeCount,$folderCount,'".addslashes($title)."','/dif?uid=$datasetid','".addslashes($title)."','_self','/dif/images/yellow_bobble.png');\n";
-				break;
-				case 2:
-				echo "d.add($nodeCount,$folderCount,'".addslashes($title)."','/dif?uid=$datasetid','".addslashes($title)."','_self','/dif/images/green_bobble.png');\n";
-				break;
-			}
-		$nodeCount++;
-		}
-		$folderCount=$nodeCount;
-	}
-	echo "\ndocument.write(d);\n";
-	echo "</script>\n</div>\n";
-	
-}
-
-function dbconnect()
-{
-    include 'dbGomri.php';
-	//Connect to database
-	$connString = "host=$dbserver port=$port dbname=$database user=$username password=$password";
- 	$dbconn = pg_connect($connString)or die("Couldn't Connect : " . pg_last_error());
-	//Check it
-	if(!($dbconn))
-	{
-		//connection failed, exit with an error
-		echo 'Database Connection Failed: ' . pg_errormessage($dbconn);#
-		exit;
-	}
-	return $dbconn;
-}
-
-function dbexecute($query,$connection=null)
-{
-	if (isset($connection))
-	{
-		$returnds = pg_query($connection, $query);
-	}
-	else
-	{
-		$connection = dbconnect();
-		$returnds = pg_query($connection, $query);
-		pg_close($connection);
-	}
-	
-	if (!$returnds)
-	{
-		echo "Could not execute query!<br>";
-	}
-	return $returnds;
-}
 ?>

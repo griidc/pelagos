@@ -10,10 +10,20 @@
 include_once '/usr/local/share/GRIIDC/php/ldap.php';
 include_once '/usr/local/share/GRIIDC/php/drupal.php';
 
+?>
+
+
+<link rel="StyleSheet" href="/dif/includes/css/dtree.css" type="text/css" />
+<script type="text/javascript" src="/dif/includes/js/dtree.js"></script>
+
+<?php
+
 $ldap = connectLDAP('triton.tamucc.edu');
 $baseDN = 'dc=griidc,dc=org';
 
 $uid = getDrupalUserName();
+
+//$uid= 'vasper';
 
 if (isset($uid)) {
     $userDNs = getDNs($ldap,$baseDN,"uid=$uid");
@@ -30,6 +40,21 @@ if (isset($uid)) {
 include ('functions.php'); 
 
 $tasks = getTasks($ldap,$baseDN,$userDN,$firstName,$lastName);
+
+
+
+if ($_GET) 
+{
+    if (isset($_GET['personID'])) 
+    {
+        $person = $_GET['personID'];
+        ob_clean();
+        echo displayTaskStatus($tasks,$person);
+        exit;
+    }
+}
+
+
 
 ?>
 <html> 
@@ -203,6 +228,7 @@ $flag="";
 pg_close($connection); 
 //FORM
 include("dataset_form.php");
+
 ?> 
 </body> 
 </html> 

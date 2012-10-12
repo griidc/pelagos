@@ -9,6 +9,8 @@
 $change=array("01"=>"Jan.","02"=>"Feb.","03"=>"Mar.","04"=>"Apr.","05"=>"May ","06"=>"Jun.","07"=>"Jul.","08"=>"Aug.","09"=>"Sep.","10"=>"Oct.","11"=>"Nov.","12"=>"Dec.");
 $baseurl = "http://griidc.tamucc.edu/services/RPIS/getTaskDetails.php";
 
+$isGroupAdmin = false;
+
 function test_print($item2, $key,  $prefix) {
 		echo "<option value=".$key;  
 	if ($prefix==$key){echo " SELECTED";}  echo ">".$item2."</option>\n";
@@ -72,7 +74,10 @@ function callPeople($w, $ti) {
    	
 function getPersonOptionList($whom, $ti) {
     $baseurl = "http://griidc.tamucc.edu/services/RPIS/getPeopleDetails.php";
-    $filters = "?taskID=$ti";
+    if ($taskID > 0)
+    {
+        $filters .= "&taskID=$taskID";
+    }
     $url = $baseurl.$filters;
     $doc = simplexml_load_file($url);
     $buildarray=array('<option value="">[SELECT]</option>');
@@ -107,10 +112,13 @@ function getTaskOptionList($tasks, $what) {
 }
 
 function getTasks($ldap,$baseDN,$userDN,$firstName,$lastName) {
+    global $isGroupAdmin;
     $baseurl = 'http://griidc.tamucc.edu/services/RPIS/getTaskDetails.php';
     $switch = '?'.'maxResults=-1';
 
     $tasks = array();
+    
+    
 
     if (isAdmin())
     {
@@ -128,6 +136,8 @@ function getTasks($ldap,$baseDN,$userDN,$firstName,$lastName) {
             $filters = "&projectTitle=$matches[1]";
             $doc = simplexml_load_file($baseurl.$switch.$filters);
             $tasks = array_merge($tasks,$doc->xpath('Task'));
+            echo 'group';
+            $GLOBALS['isGroupAdmin'] = true;
         }
 
         if (count($groupDNs) == 0)
@@ -139,6 +149,126 @@ function getTasks($ldap,$baseDN,$userDN,$firstName,$lastName) {
     }
 
     return $tasks;
+}
+
+function displayTaskStatus($tasks,$person)
+{
+    //echo "<div class=\"dtree\">\n";
+    //echo "<script type=\"text/javascript\">\n\n";
+    echo "d = new dTree('d');\n\n";
+    echo "d.add(0,-1,'Datasets','');\n\n";
+    $nodeCount = 1;
+    $folderCount =1;
+    foreach ($tasks as $task)
+    {
+        $taskID = $task['ID'];
+        
+        $taskTitle = $task->Title;
+        
+        if (isset($person))
+        {
+            
+            $thisPerson = false;
+            $peoples = $task->xpath('Researchers/Person');
+            foreach ($peoples as $people) 
+            {
+                $personid = $people['ID'];
+                if ($personid == $person) 
+                {
+                    $thisPerson=true;
+                }
+            }
+        }
+        else
+        {
+            $thisPerson = true;
+        }
+        
+        if ($thisPerson)
+        {
+            echo "d.add($nodeCount,0,'".addslashes($taskTitle)."','javascript: d.o($nodeCount);','".addslashes($taskTitle)."','','','',true);\n";
+            $nodeCount++;
+            
+            $query = "select title,status,dataset_uid from datasets where task_uid=$taskID";
+            
+            $results = dbexecute($query);
+            
+            while ($row = pg_fetch_row($results)) 
+            {
+                $status = $row[1];
+                $title = $row[0];
+                $datasetid = $row[2];
+                
+                switch ($status)
+                {
+                    case null:
+                    echo "d.add($nodeCount,$folderCount,'".addslashes($title)."','/dif?uid=$datasetid','".addslashes($title)."','_self','/dif/images/red_bobble.png');\n";
+                    break;
+                    case 0:
+                    echo "d.add($nodeCount,$folderCount,'".addslashes($title)."','/dif?uid=$datasetid','".addslashes($title)."','_self','/dif/images/red_bobble.png');\n";
+                    break;
+                    case 1:
+                    echo "d.add($nodeCount,$folderCount,'".addslashes($title)."','/dif?uid=$datasetid','".addslashes($title)."','_self','/dif/images/yellow_bobble.png');\n";
+                    break;
+                    case 2:
+                    echo "d.add($nodeCount,$folderCount,'".addslashes($title)."','/dif?uid=$datasetid','".addslashes($title)."','_self','/dif/images/green_bobble.png');\n";
+                    break;
+                }
+                $nodeCount++;
+            }
+            $folderCount=$nodeCount;
+        }
+    }
+    if (isset($person))
+    {
+        echo 'document.getElementById("dstree").innerHTML=d;';
+    }
+        else
+    {
+        echo "\ndocument.write(d);\n";
+    }
+    //echo "</script>\n</div>\n";
+    
+}
+
+function dbconnect()
+{
+    include 'dbGomri.php';
+    //Connect to database
+    $connString = "host=$dbserver port=$port dbname=$database user=$username password=$password";
+    $dbconn = pg_connect($connString)or die("Couldn't Connect : " . pg_last_error());
+    
+    
+    
+    
+    //Check it
+    if(!($dbconn))
+    {
+        //connection failed, exit with an error
+        echo 'Database Connection Failed: ' . pg_errormessage($dbconn);#
+        exit;
+    }
+    return $dbconn;
+}
+
+function dbexecute($query,$connection=null)
+{
+    if (isset($connection))
+    {
+        $returnds = pg_query($connection, $query);
+    }
+    else
+    {
+        $connection = dbconnect();
+        $returnds = pg_query($connection, $query);
+        pg_close($connection);
+    }
+    
+    if (!$returnds)
+    {
+        echo "Could not execute query!<br>";
+    }
+    return $returnds;
 }
 
 ?>
