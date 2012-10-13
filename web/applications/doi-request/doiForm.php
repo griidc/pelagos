@@ -352,7 +352,7 @@ if ($userId == "")
 <div id="date_tip" style="display:none;">
     <img src="/dif/images/info.png" style="float:right;" />
     <p>
-        <strong>Date:</strong> A valid ISO date. <em>e.g. (2012/12/23)</em>
+        <strong>Date:</strong> A valid ISO 8601 date. <em>e.g. (2012-12-23)</em>
     </p>
 </div>
 
