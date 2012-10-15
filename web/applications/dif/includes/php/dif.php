@@ -5,16 +5,37 @@
 // Parameters: Form fields with to add to the database or update.
 // Returns: Form / Sidebar
 // Purpose: Wrapper for form and action scripts to update database & email at later date.
-   error_reporting(0);
+error_reporting(0);   
 
 include_once '/usr/local/share/GRIIDC/php/ldap.php';
 include_once '/usr/local/share/GRIIDC/php/drupal.php';
 
 ?>
-
-
 <link rel="StyleSheet" href="/dif/includes/css/dtree.css" type="text/css" />
 <script type="text/javascript" src="/dif/includes/js/dtree.js"></script>
+
+<script type="text/javascript">
+    function updateTaskList(personID)
+    {
+        if (window.XMLHttpRequest)
+        {// code for IE7+, Firefox, Chrome, Opera, Safari
+            xmlhttp=new XMLHttpRequest();
+        }
+        else
+        {// code for IE6, IE5
+            xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        xmlhttp.onreadystatechange=function updateTaskList()
+        {
+            if (xmlhttp.readyState==4 && xmlhttp.status==200)
+            {
+                document.getElementById("cctask").innerHTML=xmlhttp.responseText;
+            }
+        }
+        xmlhttp.open("GET","?persontask="+personID,true);
+        xmlhttp.send();
+    }
+</script>
 
 <?php
 
@@ -22,8 +43,6 @@ $ldap = connectLDAP('triton.tamucc.edu');
 $baseDN = 'dc=griidc,dc=org';
 
 $uid = getDrupalUserName();
-
-//$uid= 'vasper';
 
 if (isset($uid)) {
     $userDNs = getDNs($ldap,$baseDN,"uid=$uid");
@@ -41,20 +60,30 @@ include ('functions.php');
 
 $tasks = getTasks($ldap,$baseDN,$userDN,$firstName,$lastName);
 
-
-
 if ($_GET) 
 {
     if (isset($_GET['personID'])) 
     {
         $person = $_GET['personID'];
         ob_clean();
-        echo displayTaskStatus($tasks,$person);
+        ob_flush();
+        $tasks = filterTasks($tasks,$person);
+        echo displayTaskStatus($tasks,true);
         exit;
     }
+    
+    if (isset($_GET['persontask'])) 
+    {
+        $person = $_GET['persontask'];
+        ob_clean();
+        ob_flush();
+        $tasks = filterTasks($tasks,$person);
+        echo "<option value=' '>[SELECT A TASK]</option>";
+        echo getTaskOptionList($tasks, null);
+        exit;
+    }
+    
 }
-
-
 
 ?>
 <html> 

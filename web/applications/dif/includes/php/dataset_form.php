@@ -30,12 +30,10 @@
 <?PHP if ($status != 0){echo "<div STYLE=text-align:right><a href=dif><IMG SRC=/dif/images/button.png></A></div>"; }?>
 
 
-
-
  <?PHP  if (!$flag){ ?>
  <p><fieldset> <label for="ctask"><em>*</em>Task Title: <span style="float:right;" class="tooltip" onmouseover="tooltip.add(this, 'demo1_tip')">
  <IMG SRC="/dif/images/info.png"> </span> </label>
-  <select name="task" style="width:800px;" size="1" onchange="setOptions(document.ed.task.options[document.ed.task.selectedIndex].value);" class="required" ><option value="" selected="selected">[SELECT A TASK]</option><?PHP getTaskOptionList($tasks, $m[1]); ?>
+  <select id="cctask" name="task" style="width:800px;" size="1" onchange="setOptions(document.ed.task.options[document.ed.task.selectedIndex].value);" class="required" ><option value="" selected="selected">[SELECT A TASK]</option><?PHP getTaskOptionList($tasks, $m[1]); ?>
    </select> </fieldset> </p>
  <?PHP }else{ ?>
  

@@ -58,7 +58,6 @@ function callPeople($w, $ti) {
 		$peops = $task->xpath('Researchers/Person');
 		foreach ($peops as $peoples) {
 			$personID = $peoples['ID'];
-			#if ($personID== "514"){$bool = 1;}else{$bool = 0;}
 			$bool = 0;
 			$LastName = preg_replace('/\'/','\\\'',$peoples->LastName);
 			$FirstName = preg_replace('/\'/','\\\'',$peoples->FirstName);
@@ -117,9 +116,7 @@ function getTasks($ldap,$baseDN,$userDN,$firstName,$lastName) {
     $switch = '?'.'maxResults=-1';
 
     $tasks = array();
-    
-    
-
+ 
     if (isAdmin())
     {
         $doc = simplexml_load_file($baseurl.$switch);
@@ -136,7 +133,6 @@ function getTasks($ldap,$baseDN,$userDN,$firstName,$lastName) {
             $filters = "&projectTitle=$matches[1]";
             $doc = simplexml_load_file($baseurl.$switch.$filters);
             $tasks = array_merge($tasks,$doc->xpath('Task'));
-            echo 'group';
             $GLOBALS['isGroupAdmin'] = true;
         }
 
@@ -151,10 +147,8 @@ function getTasks($ldap,$baseDN,$userDN,$firstName,$lastName) {
     return $tasks;
 }
 
-function displayTaskStatus($tasks,$person)
+function displayTaskStatus($tasks,$update=null)
 {
-    //echo "<div class=\"dtree\">\n";
-    //echo "<script type=\"text/javascript\">\n\n";
     echo "d = new dTree('d');\n\n";
     echo "d.add(0,-1,'Datasets','');\n\n";
     $nodeCount = 1;
@@ -164,62 +158,40 @@ function displayTaskStatus($tasks,$person)
         $taskID = $task['ID'];
         
         $taskTitle = $task->Title;
+
+        echo "d.add($nodeCount,0,'".addslashes($taskTitle)."','javascript: d.o($nodeCount);','".addslashes($taskTitle)."','','','',true);\n";
+        $nodeCount++;
         
-        if (isset($person))
+        $query = "select title,status,dataset_uid from datasets where task_uid=$taskID";
+        
+        $results = dbexecute($query);
+        
+        while ($row = pg_fetch_row($results)) 
         {
+            $status = $row[1];
+            $title = $row[0];
+            $datasetid = $row[2];
             
-            $thisPerson = false;
-            $peoples = $task->xpath('Researchers/Person');
-            foreach ($peoples as $people) 
+            switch ($status)
             {
-                $personid = $people['ID'];
-                if ($personid == $person) 
-                {
-                    $thisPerson=true;
-                }
+                case null:
+                echo "d.add($nodeCount,$folderCount,'".addslashes($title)."','/dif?uid=$datasetid','".addslashes($title)."','_self','/dif/images/red_bobble.png');\n";
+                break;
+                case 0:
+                echo "d.add($nodeCount,$folderCount,'".addslashes($title)."','/dif?uid=$datasetid','".addslashes($title)."','_self','/dif/images/red_bobble.png');\n";
+                break;
+                case 1:
+                echo "d.add($nodeCount,$folderCount,'".addslashes($title)."','/dif?uid=$datasetid','".addslashes($title)."','_self','/dif/images/yellow_bobble.png');\n";
+                break;
+                case 2:
+                echo "d.add($nodeCount,$folderCount,'".addslashes($title)."','/dif?uid=$datasetid','".addslashes($title)."','_self','/dif/images/green_bobble.png');\n";
+                break;
             }
-        }
-        else
-        {
-            $thisPerson = true;
-        }
-        
-        if ($thisPerson)
-        {
-            echo "d.add($nodeCount,0,'".addslashes($taskTitle)."','javascript: d.o($nodeCount);','".addslashes($taskTitle)."','','','',true);\n";
             $nodeCount++;
-            
-            $query = "select title,status,dataset_uid from datasets where task_uid=$taskID";
-            
-            $results = dbexecute($query);
-            
-            while ($row = pg_fetch_row($results)) 
-            {
-                $status = $row[1];
-                $title = $row[0];
-                $datasetid = $row[2];
-                
-                switch ($status)
-                {
-                    case null:
-                    echo "d.add($nodeCount,$folderCount,'".addslashes($title)."','/dif?uid=$datasetid','".addslashes($title)."','_self','/dif/images/red_bobble.png');\n";
-                    break;
-                    case 0:
-                    echo "d.add($nodeCount,$folderCount,'".addslashes($title)."','/dif?uid=$datasetid','".addslashes($title)."','_self','/dif/images/red_bobble.png');\n";
-                    break;
-                    case 1:
-                    echo "d.add($nodeCount,$folderCount,'".addslashes($title)."','/dif?uid=$datasetid','".addslashes($title)."','_self','/dif/images/yellow_bobble.png');\n";
-                    break;
-                    case 2:
-                    echo "d.add($nodeCount,$folderCount,'".addslashes($title)."','/dif?uid=$datasetid','".addslashes($title)."','_self','/dif/images/green_bobble.png');\n";
-                    break;
-                }
-                $nodeCount++;
-            }
-            $folderCount=$nodeCount;
         }
+        $folderCount=$nodeCount;
     }
-    if (isset($person))
+    if ($update)
     {
         echo 'document.getElementById("dstree").innerHTML=d;';
     }
@@ -227,8 +199,6 @@ function displayTaskStatus($tasks,$person)
     {
         echo "\ndocument.write(d);\n";
     }
-    //echo "</script>\n</div>\n";
-    
 }
 
 function dbconnect()
@@ -237,9 +207,6 @@ function dbconnect()
     //Connect to database
     $connString = "host=$dbserver port=$port dbname=$database user=$username password=$password";
     $dbconn = pg_connect($connString)or die("Couldn't Connect : " . pg_last_error());
-    
-    
-    
     
     //Check it
     if(!($dbconn))
@@ -269,6 +236,32 @@ function dbexecute($query,$connection=null)
         echo "Could not execute query!<br>";
     }
     return $returnds;
+}
+
+function filterTasks($tasks, $person)
+{
+    $filteredTasks = array();
+    foreach ($tasks as $task)
+    {
+        if (isset($person) and $person>0)
+        {
+            $peoples = $task->xpath('Researchers/Person');
+            foreach ($peoples as $people) 
+            {
+                $personid = $people['ID'];
+                if ($personid == $person) 
+                {
+                    array_push($filteredTasks, $task);
+                }
+            }
+        }
+        else
+        {
+            array_push($filteredTasks, $task);
+        }
+    }
+    
+    return $filteredTasks;
 }
 
 ?>
