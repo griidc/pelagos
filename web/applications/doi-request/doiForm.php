@@ -142,9 +142,7 @@ function splitToDoi($doiString)
 
 function sendMailSubmit($formHash,$userEmail,$userFirstName,$userLastName)
 {
-    //$query = "SELECT email, firstname, lastname, doi FROM doi_regs WHERE formhash='$formHash';";
-    //$result = dbexecute ($query);
-    
+   
     $to      = $userEmail;
     $subject = 'DOI Form Submission';
     $headers  = 'MIME-Version: 1.0' . "\r\n";
@@ -219,15 +217,15 @@ if ($_GET)
 {
     if (isset($_GET['formKey']))
     {
-        $query = "SELECT * FROM doi_regs WHERE formhash='". $_GET['formKey'] ."';";
+        $query = "SELECT url,creator,title,publisher,dsdate,urlstatus FROM doi_regs WHERE formhash='". $_GET['formKey'] ."';";
         $result = dbexecute ($query);
             
-        $drURL = $result[1];
-        $drCreator = $result[2];
-        $drTitle = $result[3];
-        $drPublisher = $result[4];
-        $drDate = $result[5];
-        $drUrlValidate = $result[15];
+        $drURL = $result[0];
+        $drCreator = $result[1];
+        $drTitle = $result[2];
+        $drPublisher = $result[3];
+        $drDate = $result[4];
+        $drUrlValidate = $result[5];
     }
 }
 
@@ -360,7 +358,7 @@ if ($userId == "")
 <tr>
 <td>
 <fieldset>
-    <p><STRONG> NOTE: </STRONG><FONT COLOR="grey">A Digital Object Identifier (DOI) is a character sting used to identify an electronic dataset (or document). The DOI is a permanent marker that is linked to metadata about the dataset. The metadata will include important information about the dataset including items as to when the data was collected, who is responsible for the data and a URL to the given dataset. Since the information included in the metadata is not always permanent (ex. URL changes) DOI's provide a way to permanently "stamp" the data so it can be easily searched and referenced. The following form will allow you to submit the appropriate information to receive a DOI for your dataset or document. Once you have filled out this form your information will be sent to GRIIDC for approval, and once approved a DOI will be sent to you.</font></p>
+    <p><STRONG> NOTE: </STRONG><FONT COLOR="grey">A Digital Object Identifier (DOI) is a character string used to identify an electronic dataset (or document). The DOI is a permanent marker that is linked to metadata about the dataset. The metadata will include important information about the dataset including items as to when the data was collected, who is responsible for the data and a URL to the given dataset. Since the information included in the metadata is not always permanent (ex. URL changes) DOI's provide a way to permanently "stamp" the data so it can be easily searched and referenced. The following form will allow you to submit the appropriate information to receive a DOI for your dataset or document. Once you have filled out this form your information will be sent to GRIIDC for approval, and once approved a DOI will be sent to you.</font></p>
 </fieldset>
 
 <strong>NOTICE:</strong> Fields preceded by an asterisk (<em>*</em>) are required inputs.<hr />
