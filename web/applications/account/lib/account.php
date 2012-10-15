@@ -146,7 +146,7 @@ function check_person($app,$type='u',$ldif=null) {
     if (is_null($affiliation) or $affiliation == '') {
         $retval['err'][] = 'you must select an affiliation (select "Other:" and enter your affiliation if yours is not listed)';
     }
-    elseif ($affiliation == 'Other' and $retval['person']['o']['value'] == '') {
+    elseif ($affiliation == 'other' and $retval['person']['o']['value'] == '') {
         $retval['err'][] = 'you must specify your affiliation if you select "Other:"';
         $retval['person']['o']['class'] = 'account_errorfield';
     }
@@ -198,7 +198,7 @@ function read_ldif($ldifFile) {
             }
         }
     }
-    if (!isset($ldif['affiliation'])) $ldif['affiliation'] = 'Other';
+    if (!isset($ldif['affiliation'])) $ldif['affiliation'] = 'other';
     return $ldif;
 }
 
@@ -327,7 +327,7 @@ function get_affiliations($affiliation) {
         }
     }
 
-    $affiliations['other'] = $affiliation == 'Other';
+    $affiliations['other'] = $affiliation == 'other';
     return $affiliations;
 }
 

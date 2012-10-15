@@ -25,7 +25,7 @@
         <tr>
             <td><span class=account_required>Affiliation:</span></td>
             <td>
-                <select name=affiliation onchange='if (this.value=="Other") document.getElementById("otherAffiliation").style.visibility="visible"; else document.getElementById("otherAffiliation").style.visibility="hidden";'>
+                <select name=affiliation onchange='if (this.value=="other") document.getElementById("otherAffiliation").style.visibility="visible"; else document.getElementById("otherAffiliation").style.visibility="hidden";'>
                     {% for aff in affiliations.GoMRI %}
                         <option value='{{aff.dn}}' {{ aff.selected ? 'selected' : '' }}>{{aff.name}}</option>
                     {% endfor %}
