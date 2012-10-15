@@ -159,7 +159,7 @@ function sendMailSubmit($formHash,$userEmail,$userFirstName,$userLastName)
     $message .= "You will receive an email shortly containing a link to your DOI.<br \><br \>";
     $message .= "Thank you for your submission,<br \><br \>";
     $message .= "<em>The GRIIDC Team.</em><br \>";
-    $message .= "<p>Link to you application for you review: https://".$_SERVER['SERVER_NAME']."/doi?formKey=$formHash</p>";
+    $message .= "<p>Link to your application for you review: https://".$_SERVER['SERVER_NAME']."/doi?formKey=$formHash</p>";
     
     mail($to, $subject, $message, $headers,$parameters);
     
