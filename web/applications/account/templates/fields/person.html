@@ -25,13 +25,17 @@
         <tr>
             <td><span class=account_required>Affiliation:</span></td>
             <td>
-                <select name=affiliation onchange='if (this.value=="other") document.getElementById("otherAffiliation").style.visibility="visible"; else document.getElementById("otherAffiliation").style.visibility="hidden";'>
+                <select name=affiliation onchange='if (this.value=="other") document.getElementById("otherAffiliation").style.visibility="visible"; else document.getElementById("otherAffiliation").style.visibility="hidden"; if (this.value=="") { alert("Please select an affiliation or select Other: and enter your affiliation."); this.value="select"; }'>
+                    <option value='select'> [SELECT] </option>
+                    <option value=''></option>
                     {% for aff in affiliations.GoMRI %}
                         <option value='{{aff.dn}}' {{ aff.selected ? 'selected' : '' }}>{{aff.name}}</option>
                     {% endfor %}
+                    <option value=''></option>
                     {% for aff in affiliations.consortia %}
                         <option value='{{aff.dn}}' {{ aff.selected ? 'selected' : '' }}>{{aff.name}}</option>
                     {% endfor %}
+                    <option value=''></option>
                     {% for aff in affiliations.Other %}
                         <option value='{{aff.dn}}' {{ aff.selected ? 'selected' : '' }}>{{aff.name}}</option>
                     {% endfor %}

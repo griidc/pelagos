@@ -143,7 +143,7 @@ function check_person($app,$type='u',$ldif=null) {
         }
     }
     $affiliation = $app->request()->post('affiliation');
-    if (is_null($affiliation) or $affiliation == '') {
+    if (is_null($affiliation) or $affiliation == 'select' or $affiliation == '') {
         $retval['err'][] = 'you must select an affiliation (select "Other:" and enter your affiliation if yours is not listed)';
     }
     elseif ($affiliation == 'other' and $retval['person']['o']['value'] == '') {
@@ -235,7 +235,7 @@ function write_ldif($ldifFile,$ldif) {
         $contents .= "\nobjectClass: $objectClass";
     }
 
-    if (isset($ldif['affiliation']) and $ldif['affiliation'] != '' and $ldif['affiliation'] != 'other') {
+    if (isset($ldif['affiliation']) and $ldif['affiliation'] != '' and $ldif['affiliation'] != 'other' and $ldif['affiliation'] != 'select') {
         $contents .= "\n\ndn: $ldif[affiliation]";
         $contents .= "\nchangetype: modify";
         $result = ldap_read($GLOBALS['LDAP'],$ldif['affiliation'],'(objectClass=*)',array('objectClass'));
@@ -317,6 +317,7 @@ function get_affiliations($affiliation) {
         $entries = ldap_get_entries($GLOBALS['LDAP'], $result);
         sort($entries);
         foreach ($entries as $entry) {
+            if (empty($entry['dn'])) continue;
             $dn = $entry['dn'];
             if ($la['objectClass'] == 'organizationalUnit') {
                 $defaultGroup = $la['defaultGroup'];
