@@ -9,6 +9,8 @@ drupal_add_library('system', 'ui.dialog');
 drupal_add_js('/includes/Menucool/Tooltip/Tooltip.js',array('type'=>'external'));
 drupal_add_css('/includes/Menucool/Tooltip/Tooltip.css',array('type'=>'external'));
 
+drupal_add_css('/dif/includes/css/overwrite.css',array('type'=>'external'));
+
 drupal_add_js('/includes/jquery-validation/jquery.validate.js',array('type'=>'external'));
 
 //Enargite JS
@@ -159,7 +161,7 @@ function sendMailSubmit($formHash,$userEmail,$userFirstName,$userLastName)
     $message .= "You will receive an email shortly containing a link to your DOI.<br \><br \>";
     $message .= "Thank you for your submission,<br \><br \>";
     $message .= "<em>The GRIIDC Team.</em><br \>";
-    $message .= "<p>Link to your application for you review: https://".$_SERVER['SERVER_NAME']."/doi?formKey=$formHash</p>";
+    $message .= "<p>Link to your application for your review: https://".$_SERVER['SERVER_NAME']."/doi?formKey=$formHash</p>";
     
     mail($to, $subject, $message, $headers,$parameters);
     
