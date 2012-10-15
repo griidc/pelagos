@@ -8,7 +8,7 @@ CREATE TABLE doi_regs
   title character varying(120),
   publisher character varying(120),
   dsdate date,
-  reqdate date,
+  reqdate timestamp with time zone,
   reqby character varying(60),
   reqip character varying(16),
   reqemail character varying(60),
@@ -17,10 +17,10 @@ CREATE TABLE doi_regs
   emailsend boolean,
   approved boolean,
   approvedby character varying,
-  approvedon date,
+  approvedon timestamp without time zone,
   doi text,
   urlstatus text,
   formhash text,
-  CONSTRAINT "Primary ID" PRIMARY KEY (id),
-  CONSTRAINT doi_regs_formhash_key UNIQUE (formhash)
+  CONSTRAINT "Primary ID" PRIMARY KEY (id ),
+  CONSTRAINT doi_regs_formhash_key UNIQUE (formhash )
 );
