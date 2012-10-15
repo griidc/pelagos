@@ -29,7 +29,7 @@ include_once '/usr/local/share/GRIIDC/php/drupal.php';
         {
             if (xmlhttp.readyState==4 && xmlhttp.status==200)
             {
-                document.getElementById("cctask").innerHTML=xmlhttp.responseText;
+                document.getElementById("ctask").innerHTML=xmlhttp.responseText;
             }
         }
         xmlhttp.open("GET","?persontask="+personID,true);

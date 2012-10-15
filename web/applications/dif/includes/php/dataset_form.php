@@ -33,14 +33,14 @@
  <?PHP  if (!$flag){ ?>
  <p><fieldset> <label for="ctask"><em>*</em>Task Title: <span style="float:right;" class="tooltip" onmouseover="tooltip.add(this, 'demo1_tip')">
  <IMG SRC="/dif/images/info.png"> </span> </label>
-  <select id="cctask" name="task" style="width:800px;" size="1" onchange="setOptions(document.ed.task.options[document.ed.task.selectedIndex].value);" class="required" ><option value="" selected="selected">[SELECT A TASK]</option><?PHP getTaskOptionList($tasks, $m[1]); ?>
+  <select id="ctask" name="task" style="width:800px;" size="1" onchange="setOptions(document.ed.task.options[document.ed.task.selectedIndex].value);" class="required" ><option value="" selected="selected">[SELECT A TASK]</option><?PHP getTaskOptionList($tasks, $m[1]); ?>
    </select> </fieldset> </p>
  <?PHP }else{ ?>
  
 <p><fieldset> <label for="ctask"><em>*</em> Task Title: <span style="float:right;" class="tooltip" onmouseover="tooltip.add(this, 'demo1_tip')">
  <IMG SRC="/dif/images/info.png"> </span> </label>
  <select name="task" style="width:800px;" size="1" onchange="setOptions(document.ed.task.options[document.ed.task.selectedIndex].value);" class="required" 
-  id="cctask" class="required" <?PHP if ($status != 0){echo "disabled";} ?>  >
+  id="ctask" class="required" <?PHP if ($status != 0){echo "disabled";} ?>  >
 <option value=' '>[SELECT A TASK]</option>
 <?PHP getTaskOptionList($tasks, $m[1]); ?>
 </select> </fieldset> </p>
