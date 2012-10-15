@@ -227,7 +227,7 @@ if ($_GET)
         $drTitle = $result[3];
         $drPublisher = $result[4];
         $drDate = $result[5];
-        $drUrlValidate = $result[15];
+        $drUrlValidate = $result[18];
     }
 }
 
