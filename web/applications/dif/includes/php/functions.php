@@ -175,16 +175,16 @@ function displayTaskStatus($tasks,$update=null)
             switch ($status)
             {
                 case null:
-                echo "d.add($nodeCount,$folderCount,'".addslashes($title)."','/dif?uid=$datasetid','".addslashes($title)."','_self','/dif/images/red_bobble.png');\n";
+                echo "d.add($nodeCount,$folderCount,'".addslashes($title)."','?uid=$datasetid','".addslashes($title)."','_self','/dif/images/red_bobble.png');\n";
                 break;
                 case 0:
-                echo "d.add($nodeCount,$folderCount,'".addslashes($title)."','/dif?uid=$datasetid','".addslashes($title)."','_self','/dif/images/red_bobble.png');\n";
+                echo "d.add($nodeCount,$folderCount,'".addslashes($title)."','?uid=$datasetid','".addslashes($title)."','_self','/dif/images/red_bobble.png');\n";
                 break;
                 case 1:
-                echo "d.add($nodeCount,$folderCount,'".addslashes($title)."','/dif?uid=$datasetid','".addslashes($title)."','_self','/dif/images/yellow_bobble.png');\n";
+                echo "d.add($nodeCount,$folderCount,'".addslashes($title)."','?uid=$datasetid','".addslashes($title)."','_self','/dif/images/yellow_bobble.png');\n";
                 break;
                 case 2:
-                echo "d.add($nodeCount,$folderCount,'".addslashes($title)."','/dif?uid=$datasetid','".addslashes($title)."','_self','/dif/images/green_bobble.png');\n";
+                echo "d.add($nodeCount,$folderCount,'".addslashes($title)."','?uid=$datasetid','".addslashes($title)."','_self','/dif/images/green_bobble.png');\n";
                 break;
             }
             $nodeCount++;

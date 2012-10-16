@@ -82,7 +82,6 @@ if ($_GET)
         echo getTaskOptionList($tasks, null);
         exit;
     }
-    
 }
 
 ?>
@@ -171,14 +170,7 @@ document.ed.video.value = "";
 
 </head>
 
-<body  
-
-
-<?PHP  if ($_GET['uid']==""){echo "onload=enable_text(false);";} ?>
-
-
-
->
+<body <?PHP  if ($_GET['uid']==""){echo "onload=enable_text(false);";} ?>>
 
 <?php 
 //CONNECTION TO POSTGRES
