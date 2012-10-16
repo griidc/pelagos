@@ -6,9 +6,6 @@ include_once '/usr/local/share/GRIIDC/php/aliasIncludes.php';
 drupal_add_library('system', 'ui.datepicker');
 drupal_add_library('system', 'ui.dialog');
 
-drupal_add_js('/includes/Menucool/Tooltip/Tooltip.js',array('type'=>'external'));
-drupal_add_css('/includes/Menucool/Tooltip/Tooltip.css',array('type'=>'external'));
-
 drupal_add_css('/dif/includes/css/overwrite.css',array('type'=>'external'));
 
 drupal_add_js('/includes/jquery-validation/jquery.validate.js',array('type'=>'external'));
@@ -74,6 +71,83 @@ drupal_add_js('
                     txtDate: "Please enter a Date [YYYY-MM-DD]."
                 }
             });
+                      
+            $("#qtip_date").qtip({
+                content: $("#date_tip"), 
+                position: {
+                    adjust: {
+                    method: "shift shift"
+                },
+                    my: "middle left",
+                    at: "middle right",
+                    viewport: $(window)
+                    },
+                    style: {
+                classes: "ui-tooltip-shadow ui-tooltip-tipped"
+                }
+            });
+            
+            $("#qtip_pub").qtip({
+            content: $("#publisher_tip"), 
+            position: {
+            adjust: {
+            method: "shift shift"
+            },
+            my: "middle left",
+            at: "middle right",
+            viewport: $(window)
+            },
+            style: {
+            classes: "ui-tooltip-shadow ui-tooltip-tipped"
+            }
+            });
+           
+            $("#qtip_title").qtip({
+                content: $("#title_tip"),
+                position: {
+                adjust: {
+                    method: "shift shift"
+                    },
+                    my: "middle left",
+                at: "middle right",
+                viewport: $(window)
+                },
+                style: {
+                classes: "ui-tooltip-shadow ui-tooltip-tipped"
+                }
+            });
+            
+            $("#qtip_creator").qtip({
+                content: $("#creator_tip"),
+                position: {
+                    adjust: {
+                    method: "shift shift"
+                },
+                    my: "middle left",
+                    at: "middle right",
+                viewport: $(window)
+                },
+                style: {
+                classes: "ui-tooltip-shadow ui-tooltip-tipped"
+                }
+            });
+                
+            $("#qtip_url").qtip({
+                content: $("#url_tip"),
+                position: {
+                    adjust: {
+                    method: "shift shift"
+                },
+                    my: "middle left",
+                    at: "middle right",
+                viewport: $(window)
+                },
+                style: {
+                classes: "ui-tooltip-shadow ui-tooltip-tipped"
+                }
+            });
+        
+                              
         });
      
         $(function() {
@@ -90,6 +164,7 @@ drupal_add_js('
 			$( "#dialog" ).dialog( "open" );
 			return false;
 		});
+        
         })(jQuery);
 ',array('type'=>'inline'));
 
@@ -101,8 +176,6 @@ $formReadOnly = false;
 $userId = "";
 
 $userId = getDrupalUserName();
-
-
 
 if (isset($userId))
 {
@@ -318,7 +391,7 @@ if ($userId == "")
 }
 
 ?>
-
+<div>
 <div id="dialog" style="font-size:smaller"></div>
 
 <div id="url_tip" style="display:none;">
@@ -367,58 +440,53 @@ if ($userId == "")
 
 <form id="doiForm" name="doiForm" action="" method="post">
 
-<fieldset>
+<fieldset id="qurl">
+    <span id="qtip_url" style="float:right;">
+        <img src="/dif/images/info.png">
+    </span>
     <label for="txtURL"><em>*</em>Dataset URL:</label>
     <br />
     <input <?php if ($formReadOnly) {echo 'disabled';};?> value="<?php if (isset($drURL)){echo $drURL;}?>" name="txtURL" id="txtURL" type="url" onblur="this.value=checkURL(this.value)" onkeyup="this.value=checkURL(this.value)" size="100"/>
-    <span style="float:right;" class="tooltip" onmouseover="tooltip.add(this, 'url_tip')">
-        <img src="/dif/images/info.png">
-    </span>
-    <br />
 </fieldset>
 
-<fieldset>
+<fieldset id="qcreator">
+    <span id="qtip_creator" style="float:right;">
+        <img src="/dif/images/info.png">
+    </span>
     <label for="txtWho"><em>*</em>Dataset Creator:</label>
     <br />
     <input <?php if ($formReadOnly) {echo 'disabled';};?> value="<?php if (isset($drCreator)){echo $drCreator;}?>" class="popWho" type="text" name="txtWho" id="txtWho" size="100"/>
-    <span style="float:right;" class="tooltip" onmouseover="tooltip.add(this, 'creator_tip')">
-        <img src="/dif/images/info.png">
-    </span>
-    <br />
 </fieldset>
 
-<fieldset>
+<fieldset id="qtitle">
+    <span id="qtip_title" style="float:right;">
+        <img src="/dif/images/info.png">
+    </span>
     <label for="txtWhat"><em>*</em>Dataset Title:</label>
     <br />
     <input <?php if ($formReadOnly) {echo 'disabled';};?> value="<?php if (isset($drTitle)){echo $drTitle;}?>" class="popWhat" type="text" name="txtWhat" id="txtWhat" size="100"/>
     <br />
-    <span style="float:right;" class="tooltip" onmouseover="tooltip.add(this, 'title_tip')">
-        <img src="/dif/images/info.png">
-    </span>
-    <br />
 </fieldset>
 
-<fieldset>
+<fieldset id="qpub">
+    <span id="qtip_pub" style="float:right;">
+        <img src="/dif/images/info.png">
+    </span>
     <label for="txtWhere"><em>*</em>Dataset Publisher:</label>
     <br />
     <input <?php if ($formReadOnly) {echo 'disabled';};?> value="<?php if (isset($drPublisher)){echo $drPublisher;}else{echo 'Harte Research Institute';}?>" class="popWhere" type="text" name="txtWhere" id="txtWhere" size="100"/>
     <br />
-    <span style="float:right;" class="tooltip" onmouseover="tooltip.add(this, 'publisher_tip')">
-        <img src="/dif/images/info.png">
-    </span>
-    <br />
 </fieldset>
 
-<fieldset>
+<fieldset id="qdate">
+    <span id="qtip_date" style="float:right;">
+        <img src="/dif/images/info.png">
+    </span>
     <label for="txtDate"><em>*</em>Dataset Date:</label>
     <br />
     <input <?php if ($formReadOnly) {echo 'disabled';};?> value="<?php if (isset($drDate)){echo $drDate;}?>" class="popDate" type="text" name="txtDate" id="txtDate" size="100"/>
     <br />
-    <span style="float:right;" class="tooltip" onmouseover="tooltip.add(this, 'date_tip')">
-        <img src="/dif/images/info.png">
-    </span>
-    <br />
-</fieldset>
+ </fieldset>
 
 <?php 
     if (isset($drUrlValidate) AND !$formReadOnly)
