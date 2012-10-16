@@ -6,30 +6,18 @@
 // Returns: Form / Sidebar
 // Purpose: Wrapper for form and action scripts to update database & email at later date.
 error_reporting(0);   
-
 include_once '/usr/local/share/GRIIDC/php/ldap.php';
 include_once '/usr/local/share/GRIIDC/php/drupal.php';
-
 ?>
 <link rel="StyleSheet" href="/dif/includes/css/dtree.css" type="text/css" />
 <script type="text/javascript" src="/dif/includes/js/dtree.js"></script>
-
 <script type="text/javascript">
-    function updateTaskList(personID)
-    {
-        if (window.XMLHttpRequest)
-        {// code for IE7+, Firefox, Chrome, Opera, Safari
-            xmlhttp=new XMLHttpRequest();
-        }
-        else
-        {// code for IE6, IE5
-            xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-        }
-        xmlhttp.onreadystatechange=function updateTaskList()
-        {
-            if (xmlhttp.readyState==4 && xmlhttp.status==200)
-            {
-                document.getElementById("ctask").innerHTML=xmlhttp.responseText;
+function updateTaskList(personID) {
+   if (window.XMLHttpRequest) { xmlhttp=new XMLHttpRequest(); } else { xmlhttp=new ActiveXObject("Microsoft.XMLHTTP"); }
+       xmlhttp.onreadystatechange=function updateTaskList() {
+            if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+                var here = document.getElementById("cctask").innerHTML=xmlhttp.responseText;
+                var help=document.getElementById('span1').innerHTML = " <select id='cctask' name='task' style='width:800px;' size='1' onchange='setOptions(document.ed.task.options[document.ed.task.selectedIndex].value);' class='required' >" + here + "</select>";
             }
         }
         xmlhttp.open("GET","?persontask="+personID,true);
