@@ -25,6 +25,7 @@ function getData($params)
 	$q_lastName = '';
 	$q_firstName = '';
 	$firstName = '';
+    $peopleId = '';
 	$q_taskKeyWord = '';
 	$q_projectKeyWord = '';
 	$q_taskLeadInstitution = '';
@@ -87,6 +88,11 @@ function getData($params)
 	{
 		$outerQuery .= "AND plj.People_FirstName = \"$firstName\" ";	
 	}
+	
+    if ($peopleId <> "")
+    {
+        $outerQuery .= "AND plj.People_ID = \"$peopleId\" ";
+    }
 	
 	if ($q_taskKeyWord <> "") 
 	{
