@@ -49,7 +49,7 @@ function getData($params)
 	
 	if ($lastName <> "")
 	{
-		$outerQuery .= "AND p.People_LastName = \"$lastName\" ";	
+		$outerQuery .= "AND p.People_LastName LIKE \"$lastName\" ";	
 	}
 	
 	if ($q_firstName <> "")
@@ -59,7 +59,7 @@ function getData($params)
 	
 	if ($firstName <> "")
 	{
-		$outerQuery .= "AND p.People_FirstName = \"$firstName\" ";	
+		$outerQuery .= "AND p.People_FirstName LIKE \"$firstName\" ";	
 	}
 	
 	if ($q_Institution <> "")
