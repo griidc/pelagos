@@ -30,6 +30,7 @@ LEFT OUTER JOIN People plg ON ppg.People_ID = plg.People_ID
 LEFT OUTER JOIN People plj ON ppj.People_ID = plj.People_ID
 LEFT OUTER JOIN Departments d ON plj.People_Department = d.Department_ID
 WHERE Project_Completed=1 AND Program_Completed=1
+AND F.Fund_ID > 0
 ";
 
 $outerProgramBaseQuery = "
