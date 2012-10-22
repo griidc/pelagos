@@ -44,7 +44,7 @@ $baseDN = 'dc=griidc,dc=org';
 
 $uid = getDrupalUserName();
 
-//$uid = 'vasper';
+$uid = 'bcaggiano';
 
 if (isset($uid)) {
     $userDNs = getDNs($ldap,$baseDN,"uid=$uid");
