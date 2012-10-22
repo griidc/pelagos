@@ -43,7 +43,7 @@ include_once '/usr/local/share/GRIIDC/php/drupal.php';
 if ($GLOBALS['isGroupAdmin'] OR isAdmin())
 {
     echo '<table class=cleair><tbody class=tbody><tr><td>';
-    echo '<h2>Dataset Filter</h2>';
+    //echo '<h2>Dataset Filter</h2>';
     echo '<form id="filter" name="filter">';
     echo '<label for="name">Filter by Researcher:</label>';
     echo '<select id="name" onchange="updateSidebar(this.value);">';

@@ -5,8 +5,61 @@
 // Parameters: On modification/view Database parameters are taken to autofill else no parameters are taken in.
 // Returns: Form 
 // Purpose: Wrapper for form and action scripts to update database & email at later date.
-
+error_reporting(0);
 //FORM 
+
+
+$js = '
+(function ($) {
+    $().ready(function() {
+    $.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
+        position: {
+        adjust: {
+        method: "shift shift"
+        },
+        my: "middle left",
+        at: "middle right",
+        viewport: $(window)
+        },
+        show: {
+        event: "mouseenter focus",
+        solo: true
+        },
+        hide: {
+        event: "mouseleave blur",
+        delay: 100,
+        fixed: true
+        },
+        style: {
+        classes: "ui-tooltip-shadow ui-tooltip-tipped"
+    }
+    });
+
+';
+
+foreach ($pu as $pus)
+    {
+ 
+    $js .= '$("#i'. $pus .'").qtip({
+    content: $("#'.$pus.'_tip"),
+    position: {
+    target: $(\'*[id="i'. $pus  .'"]\')
+    }
+    });
+    
+    ';
+
+};
+
+$js .= ' 
+       
+    });
+
+})(jQuery);';
+
+
+drupal_add_js("$js",array('type'=>'inline'));
+
 ?>
 
 <script type="text/javascript">
@@ -30,31 +83,30 @@
 <?PHP if ($status != 0){echo "<div STYLE=text-align:right><a href=dif><IMG SRC=/dif/images/button.png></A></div>"; }?>
 
 
+ <p><fieldset id="qtask"> <label for="ctask"><em>*</em>Task Title: <span id="itask" style="float:right;">
+ <IMG SRC="/dif/images/info.png"> </span> </label>
  <?PHP  if (!$flag){ ?>
- <p><fieldset> <label for="ctask"><em>*</em>Task Title: <span style="float:right;" class="tooltip" onmouseover="tooltip.add(this, 'demo1_tip')">
- <IMG SRC="/dif/images/info.png"> </span> </label>
-  <select id="ctask" name="task" style="width:800px;" size="1" onchange="setOptions(document.ed.task.options[document.ed.task.selectedIndex].value);" class="required" ><option value="" selected="selected">[SELECT A TASK]</option><?PHP getTaskOptionList($tasks, $m[1]); ?>
-   </select> </fieldset> </p>
+  <select id="ctask" name="task" style="width:800px;" size="1" onchange="setOptions(document.ed.task.options[document.ed.task.selectedIndex].value);" class="required" >
+    <option value="" selected="selected">[SELECT A TASK]</option>
+    <?PHP getTaskOptionList($tasks, $m[1]); ?>
+   
  <?PHP }else{ ?>
- 
-<p><fieldset> <label for="ctask"><em>*</em> Task Title: <span style="float:right;" class="tooltip" onmouseover="tooltip.add(this, 'demo1_tip')">
- <IMG SRC="/dif/images/info.png"> </span> </label>
- <select name="task" style="width:800px;" size="1" onchange="setOptions(document.ed.task.options[document.ed.task.selectedIndex].value);" class="required" 
-  id="ctask" class="required" <?PHP if ($status != 0){echo "disabled";} ?>  >
+ <select id="ctask" name="task" style="width:800px;" size="1" onchange="setOptions(document.ed.task.options[document.ed.task.selectedIndex].value);" class="required" 
+   <?PHP if ($status != 0){echo "disabled";} ?>  >
 <option value=' '>[SELECT A TASK]</option>
 <?PHP getTaskOptionList($tasks, $m[1]); ?>
-</select> </fieldset> </p>
+
    <?PHP    }    ?>
+</select> </fieldset> </p> 
  
- 
-<p><fieldset><label for="ctitle"><em>*</em>Dataset Title:<span style="float:right;" class="tooltip" onmouseover="tooltip.add(this, 'demo2_tip')"> <IMG SRC="/dif/images/info.png"> </span>
+<p><fieldset id="qtitle"><label for="ctitle"><em>*</em>Dataset Title:<span id="ititle" style="float:right;"><IMG SRC="/dif/images/info.png"></span>
 </label> <textarea <?PHP if ($status != 0){echo "disabled";} ?> name="title" id="ctitle" class="required" maxlength="200" rows=3 cols=98  onkeypress="return imposeMaxLength(this, 200);" }><?PHP if ($flag=="update"){echo $m[2];} ?></textarea></fieldset></p>
 
 <table WIDTH="100%"><tr><td> <p> 
 
-<fieldset><label for="cppoc"> <em>*</em> Primary Point of Contact: <span style="float:right;" class="tooltip" onmouseover="tooltip.add(this, 'demo3_tip')"> <IMG SRC="/dif/images/info.png"> </span> </label> 
+<fieldset id="qppoc"><label for="cppoc"> <em>*</em> Primary Point of Contact: <span style="float:right;"> <IMG id="ippoc" SRC="/dif/images/info.png"> </span> </label> 
 
-<select name="ppoc" id="contact1" <?PHP if ($status != 0) echo "disabled"; ?> class="required" style="width:385px;">
+<select name="ppoc" id="cppoc" <?PHP if ($status != 0) echo "disabled"; ?> class="required" style="width:385px;">
     <?PHP if (!$flag) { ?>
     <option value="">Please Choose a Task First</option>
     <?PHP } else getPersonOptionList($m[19],$m[1]); ?>
@@ -65,7 +117,7 @@
 </td><td>&nbsp;&nbsp;&nbsp;&nbsp;
 </td><td>
 
-<p><fieldset><label for="cspoc"> Secondary Point of Contact: <span style="float:right;" class="tooltip" onmouseover="tooltip.add(this, 'demo4_tip')"> 
+<p><fieldset id="qspoc"><label for="cspoc"> Secondary Point of Contact: <span id="ispoc" style="float:right;"> 
 <IMG SRC="/dif/images/info.png"> </span> </label>
 
 <select name="spoc" id="cspoc" style="width:385px;" <?PHP if ($status != 0){echo "disabled";} ?> >
@@ -78,15 +130,14 @@
 
 </td></tr></table>
 
-<p><fieldset><labelbr for="cabstract"> <b><em>*</em>Dataset Abstract:</b> <span  style="float:right;" class="tooltip" class="tooltip" onmouseover="tooltip.add(this, 'demo5_tip')"><IMG SRC="/dif/images/info.png"></span></label><br />
+<p><fieldset id="qabstract"><label for="cabstract"> <b><em>*</em>Dataset Abstract:</b> <span id="iabstract" style="float:right;"><IMG SRC="/dif/images/info.png"></span></label><br />
 <textarea <?PHP if ($status != 0){echo "disabled";} ?> name="abstract" id="cabstract" class="required" maxlength="400" rows=3 cols=98 onkeypress="return imposeMaxLength(this, 400);" ><?PHP if ($flag=="update"){echo $m[3];} ?></textarea></fieldset></p>
 
 
 
-<p><fieldset><b> Dataset Type:</b> <labelbr for="cdatatype"><span  style="float:right;" class="tooltip" class="tooltip" onmouseover="tooltip.add(this, 'demo6_tip')"> <IMG SRC="/dif/images/info.png"> </span> </label><br />
-<TABLE WIDTH="100%"><TR>
-
-
+<p><fieldset><b> Dataset Type:</b> <label for="cdatatype"><span id="idatatype" style="float:right;"> <IMG SRC="/dif/images/info.png"> </span> </label><br />
+<TABLE id="cdatatype" WIDTH="100%"><TR>
+<div id="qdatatype">
 <TD width="39%"> <input type="checkbox" name="sascii"  value="Structured, Generic Text/ASCII File (CSV, TSV)" <?PHP if ($status != 0){echo "disabled";} ?>  <?PHP if (($flag=="update")&&($dtt[0]=="Structured, Generic Text/ASCII File (CSV, TSV)")){echo " checked";} ?>  />Structured, Generic Text/ASCII File (CSV, TSV)&nbsp;&nbsp;&nbsp;&nbsp; </TD>
 <TD width="27%"> <input type="checkbox" name="images" value="Images" <?PHP if ($status != 0){echo "disabled";} ?>  <?PHP  if (($flag=="update")&&($dtt[2] == "Images")){echo " checked";} ?>  />
 Images&nbsp;&nbsp;(JPG, TIFF, PNG, GIF)&nbsp; </TD>
@@ -108,7 +159,7 @@ CDF/netCDF&nbsp;&nbsp;&nbsp;&nbsp;</td>
     <TD> Others: </TD><TD><input style= "width:100%;" type="text" name="otherdty" width=100%   <?PHP if ($status != 0){echo "disabled";} ?>  value=<?PHP  if (($flag=="update")&&($dtt[7])){echo "'$dtt[7]'";} ?>></TD></TR></TABLE>
 </td>
 
-</tr> <tr>
+</tr> <tr> </div>
 <td> 
 
 <?PHP 
@@ -125,16 +176,16 @@ $toggle="this.checked";
 Video&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
 <tr><td COLSPAN="3"> 
 
+<p id="qvideo"><label for="cvideo"> 
+<b>Video Attributes (if applicable):</b> <span id="ivideo" style="float:right;"> <IMG SRC="/dif/images/info.png"> </span> </label><br />
 
-<p><labelbr for="cprovisions"> 
-<b>Video Attributes (if applicable):</b> <span  style="float:right; class="tooltip" onmouseover="tooltip.add(this, 'demo7_tip')"> <IMG SRC="/dif/images/info.png"> </span> </label><br />
+<textarea name="video" <?PHP if ($status != 0){echo "disabled";} ?> id="cvideo" maxlength="200" rows=3 cols=98  onkeypress="return imposeMaxLength(this, 200);"><?PHP if ($flag=="update"){echo "$dtt[5]";} ?></textarea>
 
-<textarea name="video" <?PHP if ($status != 0){echo "disabled";} ?> id="cprovisions"  rows=3 cols=98  onkeypress="return imposeMaxLength(this, 200);"><?PHP if ($flag=="update"){echo "$dtt[5]";} ?></textarea>
 </td></tr></table>
 </fieldset></p>
 
 
-<p><fieldset><b> Dataset For:</b> <labelbr for="cdatafor"><span  style="float:right;" class="tooltip" class="tooltip" onmouseover="tooltip.add(this, 'demo23_tip')"> <IMG SRC="/dif/images/info.png"> </span> </label><br />
+<p><fieldset><b> Dataset For:</b> <label for="cdatafor"><span style="float:right;" id="idatafor"> <IMG SRC="/dif/images/info.png"> </span> </label><br />
 <TABLE WIDTH="100%"><TR><TD> <input type="checkbox" name="eco"  value="Ecological/Biological" <?PHP if ($status != 0){echo "disabled";} ?>  <?PHP if (($flag=="update")&&($dtf[0]=="Ecological/Biological")){echo " checked";} ?>  />Ecological/Biological&nbsp;&nbsp;&nbsp;&nbsp;
 </TD><TD> <input type="checkbox" name="phys" value="Physical Oceanographical" <?PHP if ($status != 0){echo "disabled";} ?>  <?PHP  if (($flag=="update")&&($dtf[1] == "Physical Oceanographical")){echo " checked";} ?>  />
 Physical Oceanography&nbsp;&nbsp;&nbsp;&nbsp;
@@ -160,8 +211,8 @@ Economics&nbsp;&nbsp;&nbsp;&nbsp;
  <?PHP if (($flag == "update")&&($m[6]=="1TB-5TB")){$size[4]=" checked";} ?>
  <?PHP if (($flag == "update")&&($m[6]==">5TB")){$size[5]=" checked";} ?>
  
-<p><fieldset><labelbr for="csize"> 
-<b><em>* </em>Approximate Dataset Size:</b> <span style="float:right; class="tooltip" onmouseover="tooltip.add(this, 'demo8_tip')"> <IMG SRC="/dif/images/info.png"> </span> </label><br /> 
+<p><fieldset><label for="csize"> 
+<b><em>* </em>Approximate Dataset Size:</b> <span style="float:right" id="isize"> <IMG SRC="/dif/images/info.png"> </span> </label><br /> 
 <input type="radio" name="size" <?PHP if ($status != 0){echo "disabled";} ?> value="< 1 Gb"   <?PHP echo " $size[0]"; ?> checked="checked"> < 1GB &nbsp;&nbsp;&nbsp;&nbsp; 
 <input type="radio" name="size" <?PHP if ($status != 0){echo "disabled";} ?> value="1GB-10GB" <?PHP echo " $size[1]"; ?>> 1GB-10GB&nbsp;&nbsp;&nbsp;&nbsp;
 <input type="radio" name="size" <?PHP if ($status != 0){echo "disabled";} ?> value="10GB-200GB"<?PHP echo " $size[2]"; ?>> 10GB-200GB&nbsp;&nbsp;&nbsp;&nbsp;
@@ -171,12 +222,12 @@ Economics&nbsp;&nbsp;&nbsp;&nbsp;
 </fieldset>
 </p>
 
-<p><fieldset> <labelbr for="coberservations"> 
-<b>Phenomenon/Variables Observed or Generated:</b> <span  style="float:right; class="tooltip" onmouseover="tooltip.add(this, 'demo9_tip')"> <IMG SRC="/dif/images/info.png"> </span> </label><br />
+<p><fieldset> <label for="coberservations"> 
+<b>Phenomenon/Variables Observed or Generated:</b> <span  style="float:right;" id="iobservation"> <IMG SRC="/dif/images/info.png"> </span> </label><br />
 <textarea  name="observation" <?PHP if ($status != 0){echo "disabled";} ?> id="coberservations" rows=3 cols=98  onkeypress="return imposeMaxLength(this, 300);"><?PHP if ($flag=="update"){echo $m[7];} ?></textarea></fieldset></p>
 
-<p><fieldset><labelbr for="capproach"> 
-<b> Procedure for Acquiring or Creating the Data: </b> <span style="float:right; class="tooltip" onmouseover="tooltip.add(this, 'demo10_tip')"> <IMG SRC="/dif/images/info.png"> </span> </label><br />
+<p><fieldset><label for="capproach"> 
+<b> Procedure for Acquiring or Creating the Data: </b> <span style="float:right;" id="iapproach"> <IMG SRC="/dif/images/info.png"> </span> </label><br />
 <TABLE WIDTH="100%"><TR><TD>
 <input type="checkbox" name="field" id="capproach" <?PHP if ($status != 0){echo "disabled";} ?> value="Field Sampling" <?PHP  if (($flag=="update")&&($aq[0] == "Field Sampling")){echo " checked";} ?> />Field Sampling&nbsp;&nbsp;&nbsp;&nbsp;
 </TD><TD> <input type="checkbox" name="sim" id="capproach"  <?PHP if ($status != 0){echo "disabled";} ?> value="Simulated or Generated" <?PHP  if (($flag=="update")&&($aq[1] == "Simulated or Generated")){echo " checked";} ?> />Simulated/Generated&nbsp;&nbsp;&nbsp;&nbsp;
@@ -189,8 +240,8 @@ Economics&nbsp;&nbsp;&nbsp;&nbsp;
 </fieldset>
 </p>
 
-<p><fieldset><labelbr for="cdate"> 
-<span style="float:right; class="tooltip" class="tooltip" onmouseover="tooltip.add(this, 'demo11_tip')"> <IMG SRC="/dif/images/info.png"> </span> <b>Data Sampling/Generation Period:</b> </label>
+<p><fieldset><label for="cdate"> 
+<span style="float:right;" id="idate"> <IMG SRC="/dif/images/info.png"> </span> <b>Data Sampling/Generation Period:</b> </label>
 <CENTER> <STRONG>Start Date</STRONG> 
       <select name=smo size=1 <?PHP if ($status != 0){echo "disabled";} ?> class=required><?PHP array_walk($change, 'test_print', $l[1]);?> </select>
       <select name=sye size=1 <?PHP if ($status != 0){echo "disabled";} ?> class=required> <?PHP for ($z = 2009; $z <= 2022; $z++) {echo "<option value=$z";  if ($l[0] == $z){echo " SELECTED";} echo">$z\n\r";}?> </SELECT> &nbsp;&nbsp; to&nbsp;&nbsp; 
@@ -199,27 +250,23 @@ Economics&nbsp;&nbsp;&nbsp;&nbsp;
 </center> </fieldset> </p>
 
 
-<!-- FORM INSERT
-<p><fieldset><labelbr for="cgeoloc"> <span style="float:right; class="tooltip" onmouseover="tooltip.add(this, 'demo12_tip')"> <IMG SRC="/dif/images/info.png"></span> <b>Geographic/Study Area:</b>i<!--<IMG SRC="/dif/images/marker.png"></label><br /> -->
 
-<!--</fieldset></p>-->
-
-<p><fieldset><labelbr for="cgeoloc"> <span style="float:right; class="tooltip" onmouseover="tooltip.add(this, 'demo12_tip')"> <IMG SRC="/dif/images/info.png"></span> <b>Geographic/Study Area:</b><!--<IMG SRC="/dif/images/marker.png">--></label><br /> 
+<p><fieldset><label for="cgeoloc"> <span style="float:right;" id="igeoloc"> <IMG SRC="/dif/images/info.png"></span> <b>Geographic/Study Area:</b><!--<IMG SRC="/dif/images/marker.png">--></label><br /> 
 <textarea name="geoloc"<?PHP if ($status != 0){echo "disabled";} ?>  id="cgeoloc"  rows=3 cols=98 onkeypress="return imposeMaxLength(this, 300);"><?PHP if ($flag=="update"){echo $m[11];} ?></textarea></fieldset></p>
 
-<p><fieldset><labelbr for="chistoric"> 
-<b>Historical Data References (if applicable): </b> <span  style="float:right; class="tooltip" onmouseover="tooltip.add(this, 'demo13_tip')"> <IMG SRC="/dif/images/info.png"></span></label><br />
+<p><fieldset><label for="chistorical"> 
+<b>Historical Data References (if applicable): </b> <span id="ihistorical" style="float:right;"> <IMG SRC="/dif/images/info.png"></span></label><br />
 <textarea name="historical" <?PHP if ($status != 0){echo "disabled";} ?> id="chistoric" rows=3 cols=98  onkeypress="return imposeMaxLength(this, 300);"><?PHP if ($flag=="update"){echo $m[12];} ?></textarea></fieldset></p>
 
 
-<p><fieldset><labelbr for="ced"> 
-<span style="float:right; class="tooltip" onmouseover="tooltip.add(this, 'demo14_tip')"> <IMG SRC="/dif/images/info.png"> </span> <b>Metadata Editor to  Use:</b> </label><br /> 
+<p><fieldset><label for="ced"> 
+<span style="float:right;" id="ied"> <IMG SRC="/dif/images/info.png"> </span> <b>Metadata Editor to  Use:</b> </label><br /> 
 <textarea name="ed" <?PHP if ($status != 0){echo "disabled";} ?> id="ced" rows=3 cols=98  onkeypress="return imposeMaxLength(this, 300);"><?PHP  if ($flag=="update"){echo $m[13];} ?></textarea></fieldset></p>
 
 <?PHP list($stand[0], $stand[1], $stand[2], $stand[3], $stand[4])=explode("|", $m[14] ); ?>
 <TABLE WIDTH="100%"><TR><TD>
-<p><fieldset><labelbr for="cstandards"> 
-<b>Metadata Standards to Use:</b> <span style="float:right; class="tooltip" onmouseover="tooltip.add(this, 'demo15_tip')"> <IMG SRC="/dif/images/info.png"> </span> </label><br /> 
+<p><fieldset><label for="cstandards"> 
+<b>Metadata Standards to Use:</b> <span id="istandards" style="float:right;"> <IMG SRC="/dif/images/info.png"> </span> </label><br /> 
    <input type="checkbox" <?PHP if ($status != 0){echo "disabled";} ?> name="s1" value="ISO19115"<?PHP  if (($flag=="update")&&($stand[0] == "ISO19115")){echo " checked";} ?>  id="cstandards"  />ISO 19115<br />
    <input type="checkbox" <?PHP if ($status != 0){echo "disabled";} ?> name="s2" value="CSDGM" <?PHP  if (($flag=="update")&&($stand[1] == "CSDGM")){echo " checked";} ?> id="cstandards"  />FGDC-CSDGM<br />
    <input type="checkbox" <?PHP if ($status != 0){echo "disabled";} ?> name="s3" value="DUBLIN" <?PHP  if (($flag=="update")&&($stand[2] == "DUBLIN")){echo " checked";} ?>  id="cstandards"  />Dublin/Darwin Core<br />
@@ -230,7 +277,7 @@ Economics&nbsp;&nbsp;&nbsp;&nbsp;
 
 
 <?PHP list($point[0], $point[1], $point[2], $point[3])=explode("|", $m[15] );?>
-</TD><TD>&nbsp;&nbsp;&nbsp;</TD><TD> <p><fieldset><labelbr for="caccess"> <b>Data Access Points: </b> <span style="float:right; class="tooltip" onmouseover="tooltip.add(this, 'demo16_tip')"> <IMG SRC="/dif/images/info.png"> </span></label><br />
+</TD><TD>&nbsp;&nbsp;&nbsp;</TD><TD> <p><fieldset><label for="caccess"> <b>Data Access Points: </b> <span id="iaccess" style="float:right;"> <IMG SRC="/dif/images/info.png"> </span></label><br />
    <input type="checkbox" <?PHP if ($status != 0){echo "disabled";} ?> name="a1" id="caccess" value="FTP" <?PHP  if (($flag=="update")&&($point[0] == "FTP")){echo " checked";} ?> />File Transfer Protocol (FTP)<br />
    <input type="checkbox" <?PHP if ($status != 0){echo "disabled";} ?> name="a2" id="caccess" value="TDS" <?PHP  if (($flag=="update")&&($point[1] == "TDS")){echo " checked";} ?> />THREDDS Data Server (TDS)<br />
    <input type="checkbox" <?PHP if ($status != 0){echo "disabled";} ?> name="a3" id="caccess" value="ERDAP" <?PHP  if (($flag=="update")&&($point[2] == "ERDAP")){echo " checked";} ?> />
@@ -241,8 +288,8 @@ Economics&nbsp;&nbsp;&nbsp;&nbsp;
 
 
 <?php list($nta[0], $nta[1], $nta[2], $nta[3], $nta[4], $nta[5], $nta[6])=explode("|", $m[16] );?>
-<p><fieldset><labelbr for="cnational"> 
-<b>National Data Center(s) that the Dataset will be Submitted to:</b> <span style="float:right;" class="tooltip" onmouseover="tooltip.add(this, 'demo17_tip')"> <IMG SRC="/dif/images/info.png"> </span> </label><br />
+<p><fieldset><label for="cnational"> 
+<b>National Data Center(s) that the Dataset will be Submitted to:</b> <span id="inational" style="float:right;"> <IMG SRC="/dif/images/info.png"> </span> </label><br />
 
    <input type="checkbox" <?PHP if ($status != 0){echo "disabled";} ?> name="nat1" value="National Oceanographic Data Center" <?PHP  if (($flag=="update")&&($nta[0] == "National Oceanographic Data Center")){echo " checked";} ?>  id="cnational"  />National Oceanographic Data Center <a href="http://www.nodc.noaa.gov" target="_new">(http://www.nodc.noaa.gov)</a><br />
    <input type="checkbox" <?PHP if ($status != 0){echo "disabled";} ?> name="nat2" value="US EPA Storet" <?PHP  if (($flag=="update")&&($nta[1] == "US EPA Storet")){echo " checked";} ?> id="cnational"  />US EPA Storet <a href="http://www.epa.gov/storet/wqx" target="_new">(http://www.epa.gov/storet/wqx)</a><br />
@@ -256,16 +303,12 @@ Economics&nbsp;&nbsp;&nbsp;&nbsp;
      <td>Others:</td>
      <td width="100%"><input style="width:95%;" type="text" <?PHP if ($status != 0){echo "disabled";} ?> name="othernat" value=<?PHP  if (($flag=="update")&&($nta[6])){echo "'$nta[6]'";} ?>></td></tr></table>
 </fieldset></P>
-<!--
-<p><fieldset><labelbr for="cnational"> <b>List/Identify any National Data Center(s) Used for this Dataset:</b> <span style="float:right;" class="tooltip" onmouseover="tooltip.add(this, 'demo17_tip')"> <IMG SRC="/dif/images/info.png"> </span> </label><br />
-<p><fieldset><labelbr for="cnational"> <b>List/Identify any National Data Center(s) Used for this Dataset:</b> <span style="float:right; class="tooltip" onmouseover="tooltip.add(this, 'demo17_tip')"> <IMG SRC="/dif/images/info.png"> </span> </label><br />
-<textarea name="national" id="cnational"  rows=3 cols=98  <?PHP if ($status != 0){echo "disabled";} ?> onkeypress="return imposeMaxLength(this, 200);"><?PHP if ($flag =="update"){echo $m[16];} ?></textarea></fieldset></p>
--->
+
  <?PHP if (($flag == "update")&&($zz[0]=="No")){$ep[0]=" checked";} ?>
  <?PHP if (($flag == "update")&&($zz[0]=="Yes")){$ep[1]=" checked";} ?>
  <?PHP if (($flag == "update")&&($zz[0]=="Uncertain")){$ep[2]=" checked";} ?>
   
-<p><fieldset><labelbr for="privacy"> <b>Ethical or Privacy Issues:</b> <span style="float:right; class="tooltip" onmouseover="tooltip.add(this, 'demo18_tip')"> <IMG SRC="/dif/images/info.png"> </span> </label><br />
+<p><fieldset><label for="privacy"> <b>Ethical or Privacy Issues:</b> <span id="iprivacy" style="float:right;"> <IMG SRC="/dif/images/info.png"> </span> </label><br />
    
    <input type="radio" <?PHP if ($status != 0){echo "disabled";} ?> name="privacy" id="cprivacy" value="No" <?PHP echo " $ep[0]"; ?>> No<br />
    <input type="radio" <?PHP if ($status != 0){echo "disabled";} ?> name="privacy" id="cprivacy" value="Yes" <?PHP echo " $ep[1]"; ?>> Yes<br />
@@ -277,7 +320,7 @@ Economics&nbsp;&nbsp;&nbsp;&nbsp;
 
 </fieldset></p>
 
-<p><fieldset><labelbr for="cremarks"> <b>Remarks:</b> <span style="float:right; class="tooltip" onmouseover="tooltip.add(this, 'demo19_tip')"> <IMG SRC="/dif/images/info.png"> </span> </label> <br />
+<p><fieldset><label for="cremarks"> <b>Remarks:</b> <span id="iremarks" style="float:right;"> <IMG SRC="/dif/images/info.png"> </span> </label> <br />
 <textarea name="remarks" <?PHP if ($status != 0){echo "disabled";} ?> id="cremarks"  rows=3 cols=98  onkeypress="return imposeMaxLength(this, 200);"><?PHP if ($flag =="update"){echo $m[18];} ?></textarea></fieldset></p>
 
 <p><strong>NOTE:</strong> Clicking the <i>Save & Continue Later</i> or the <i>Submit &amp; Done</i> buttons will clear the form and ready to accept new inputs. Please be reminded that clicking the <i>Submit &amp; Done</i> button will lock the record for review but it can be unlocked for modification by contacting GRIIDC (<a HREF="mailto:griidc@gomri.org">griidc@gomri.org</a>).</p>

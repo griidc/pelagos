@@ -5,7 +5,7 @@
 // Parameters: Form fields with to add to the database or update.
 // Returns: Form / Sidebar
 // Purpose: Wrapper for form and action scripts to update database & email at later date.
-error_reporting(0);   
+//error_reporting(0);   
 
 include_once '/usr/local/share/GRIIDC/php/ldap.php';
 include_once '/usr/local/share/GRIIDC/php/drupal.php';
@@ -43,6 +43,8 @@ $ldap = connectLDAP('triton.tamucc.edu');
 $baseDN = 'dc=griidc,dc=org';
 
 $uid = getDrupalUserName();
+
+//$uid = 'vasper';
 
 if (isset($uid)) {
     $userDNs = getDNs($ldap,$baseDN,"uid=$uid");
@@ -178,10 +180,10 @@ $connection = pg_connect("host=localhost port=5432 dbname=gomri user=gomri_user 
 if (!$connection) { die("Error in connection: " . pg_last_error()); } 
 //CHECKID
 $pu=array();
-$result3 = pg_exec($connection, "SELECT * FROM form_info ORDER BY form_info.id ASC");
+$result3 = pg_exec($connection, "SELECT var_name, comments FROM form_info ORDER BY form_info.id ASC");
 if (!$result3) { die("Error in SQL query: " . pg_last_error()); } 
 while($row = pg_fetch_row($result3)){
-echo " <div id=\"demo$row[0]_tip\" style=\"display:none;\"> <img src=\"/dif/images/info.png\" style=\"float:right;\" /> $row[1]</div>";
+echo " <div id=\"$row[0]_tip\" style=\"display:none;\"> <img src=\"/dif/images/info.png\" style=\"float:right;\" /> $row[1]</div>";
 array_push($pu, $row[0]); }
 //SUBMITTED
 $status = 0;$usernumber=1;
