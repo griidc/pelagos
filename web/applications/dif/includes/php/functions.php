@@ -21,7 +21,6 @@ function isAdmin() {
     $admin = false;
     if ($user->uid) {
         $logged_in_uid = $user->name;
-        $logged_in_uid = 'bcaggiano';
         $ldap = ldap_connect('ldap://triton.tamucc.edu');
         $adminsResult = ldap_search($ldap, "cn=administrators,ou=DIF,ou=applications,dc=griidc,dc=org", '(objectClass=*)', array("member"));
         $admins = ldap_get_entries($ldap, $adminsResult);
