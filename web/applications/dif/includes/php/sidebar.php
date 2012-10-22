@@ -1,5 +1,4 @@
 <?php
-
 // Module: sidebar.php
 // Author(s): Michael van den Eijnden
 // Last Updated: 21 August 2012
@@ -9,7 +8,6 @@
 
 include_once '/usr/local/share/GRIIDC/php/ldap.php';
 include_once '/usr/local/share/GRIIDC/php/drupal.php';
-
 ?>
 <script type="text/javascript">
     function updateSidebar(personID)
@@ -29,7 +27,7 @@ include_once '/usr/local/share/GRIIDC/php/drupal.php';
             {
                 //alert(xmlhttp.responseText);
                 eval(xmlhttp.responseText);
-                doalso="updateTaskList("+personID+");";
+                var doalso="updateTaskList("+personID+");";
                 eval(doalso);
                 //document.getElementById("dstree").innerHTML=xmlhttp.responseText;
             }
