@@ -82,21 +82,28 @@ drupal_add_js("$js",array('type'=>'inline'));
 <?PHP if ($status != 0){echo "<div STYLE=text-align:right><a href=dif><IMG SRC=/dif/images/button.png></A></div>"; }?>
 
 
- <p><fieldset id="qtask"> <label for="ctask"><em>*</em>Task Title: <span id="itask" style="float:right;">
- <IMG SRC="/dif/images/info.png"> </span> </label>
- <?PHP  if (!$flag){ ?>
+ <p><fieldset id="qtask"> 
+
+<label for="ctask"><em>*</em>Task Title: <span id="itask" style="float:right;"> <IMG SRC="/dif/images/info.png"> </span> </label>
+
+<?PHP  if (!$flag){ ?>
+<span id="span1">
   <select id="ctask" name="task" style="width:800px;" size="1" onchange="setOptions(document.ed.task.options[document.ed.task.selectedIndex].value);" class="required" >
     <option value="" selected="selected">[SELECT A TASK]</option>
     <?PHP getTaskOptionList($tasks, $m[1]); ?>
+</select>
+</span>
    
  <?PHP }else{ ?>
+
+<span id="span1">
  <select id="ctask" name="task" style="width:800px;" size="1" onchange="setOptions(document.ed.task.options[document.ed.task.selectedIndex].value);" class="required" 
    <?PHP if ($status != 0){echo "disabled";} ?>  >
 <option value=' '>[SELECT A TASK]</option>
 <?PHP getTaskOptionList($tasks, $m[1]); ?>
-
+</select>
    <?PHP    }    ?>
-</select> </fieldset> </p> 
+ </fieldset> </p> 
  
 <p><fieldset id="qtitle"><label for="ctitle"><em>*</em>Dataset Title:<span id="ititle" style="float:right;"><IMG SRC="/dif/images/info.png"></span>
 </label> <textarea <?PHP if ($status != 0){echo "disabled";} ?> name="title" id="ctitle" class="required" maxlength="200" rows=3 cols=98  onkeypress="return imposeMaxLength(this, 200);" }><?PHP if ($flag=="update"){echo $m[2];} ?></textarea></fieldset></p>

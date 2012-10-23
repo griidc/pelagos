@@ -16,8 +16,8 @@ function updateTaskList(personID) {
    if (window.XMLHttpRequest) { xmlhttp=new XMLHttpRequest(); } else { xmlhttp=new ActiveXObject("Microsoft.XMLHTTP"); }
        xmlhttp.onreadystatechange=function updateTaskList() {
             if (xmlhttp.readyState==4 && xmlhttp.status==200) {
-                var here = document.getElementById("cctask").innerHTML=xmlhttp.responseText;
-                var help=document.getElementById('span1').innerHTML = " <select id='cctask' name='task' style='width:800px;' size='1' onchange='setOptions(document.ed.task.options[document.ed.task.selectedIndex].value);' class='required' >" + here + "</select>";
+                var here = document.getElementById("ctask").innerHTML=xmlhttp.responseText;
+                var help=document.getElementById('span1').innerHTML = " <select id='ctask' name='task' style='width:800px;' size='1' onchange='setOptions(document.ed.task.options[document.ed.task.selectedIndex].value);' class='required' >" + here + "</select>";
             }
         }
         xmlhttp.open("GET","?persontask="+personID,true);
