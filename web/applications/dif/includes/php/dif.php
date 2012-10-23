@@ -72,7 +72,10 @@ if ($_GET)
     }
 }
 
-?>
+
+
+ ?> 
+
 <html> 
 <head> 
   <title></title>
@@ -177,6 +180,7 @@ if (($_POST['submit'])||($_POST['later'])||($_POST['reject'])||($_POST['accept']
 if ($_POST['later']) { $status = 0;}else{$status = 1;}
    //CONCAT TO FIT DB
    foreach ($_POST as $k=>$v) { $$k = pg_escape_string($v);}
+   $title = str_replace(array("\r\n", "\n\r", "\r", "\n", "\t"), " ", $title);
    $datafor = $eco.'|'.$phys.'|'.$atm.'|'.$ch.'|'.$geog.'|'.$scpe.'|'.$econom.'|'.$geop.'|'.$dtother;
    $approach = $field."|".$sim."|".$lab."|".$lit."|".$remote."|".$approachother;
    $sdate="$sye-$smo-01";$edate="$eye-$emo-01";
