@@ -6,11 +6,10 @@
 // Returns: xml rest request
 // Purpose: Entry point in REST (using Slim) to return XML data
 
-
 require 'Slim/Slim.php';
 require 'getTaskData.php';
 
-$debug = false;
+$debug = true;
 
 //With default settings
 $app = new Slim();

@@ -13,55 +13,55 @@ require_once 'owsException.php';
 function getData($params)
 {
     //Make Paramaters caps insencitive.
-    //array_change_key_case($params,CASE_LOWER);
+    array_change_key_case($params,CASE_LOWER);
     
 	require 'queries.php';
 	//Parameters predefined as variables.
 	$title = '';
 	$q_title = '';
-	$listResearchers = true;
-	$maxResults = 5;
-	$lastName = '';
-	$q_lastName = '';
-	$q_firstName = '';
-	$firstName = '';
-    $peopleId = '';
-	$q_taskKeyWord = '';
-	$q_projectKeyWord = '';
-	$q_taskLeadInstitution = '';
-	$taskLeadInstitution = '';
-	$taskAbstract = '';
-	$taskState = '';
-	$projectDate = '';
-	$taskDepartment = '';
-	$q_taskDepartment = '';
-	$projectLeadInstitution = '';
-	$q_projectLeadInstitution = '';
-	$projectLastName = '';
-	$projectFirstName = '';
-	$taskID = '';
-	$fundingSource = '';
-    $projectID = '';
-    $projectTitle = '';
+	$listresearchers = true;
+	$maxresults = 5;
+	$lastname = '';
+	$q_lastname = '';
+	$q_firstname = '';
+	$firstname = '';
+    $peopleid = '';
+	$q_taskkeyword = '';
+	$q_projectkeyword = '';
+	$q_taskleadinstitution = '';
+	$taskleadinstitution = '';
+	$taskabstract = '';
+	$taskstate = '';
+	$projectdate = '';
+	$taskdepartment = '';
+	$q_taskdepartment = '';
+	$projectleadinstitution = '';
+	$q_projectleadinstitution = '';
+	$projectlastname = '';
+	$projectfirstname = '';
+	$taskid = '';
+	$fundingsource = '';
+    $projectid = '';
+    $projecttitle = '';
 	
 	//Extract parameters into existing variables
 	$rc = extract($params, EXTR_IF_EXISTS);
 		
 	$outerQuery = $outerBaseQuery;
 	
-	if (strtoupper($listResearchers) == "FALSE" || strtoupper($listResearchers) == "NO" || $listResearchers == "0")
+	if (strtoupper($listresearchers) == "FALSE" || strtoupper($listresearchers) == "NO" || $listresearchers == "0")
 	{
-		$listResearchers = false;
+		$listresearchers = false;
 	}
 	
-	if ($taskID <> "")
+	if ($taskid <> "")
 	{
-		$outerQuery .= "AND pj.Project_ID = \"$taskID\" ";	
+		$outerQuery .= "AND pj.Project_ID = \"$taskid\" ";	
 	}
 		
 	if ($title <> "")
 	{
-		$outerQuery .= "AND Project_Title = \"$title\" ";	
+		$outerQuery .= "AND Project_Title LIKE \"$title\" ";	
 	}
 	
 	if ($q_title <> "")
@@ -69,116 +69,116 @@ function getData($params)
 		$outerQuery .= "AND Project_Title LIKE \"%$q_title%\" ";	
 	}
 		
-	if ($q_lastName <> "")
+	if ($q_lastname <> "")
 	{
-		$outerQuery .= "AND plj.People_LastName LIKE \"%$q_lastName%\" ";	
+		$outerQuery .= "AND plj.People_lastname LIKE \"%$q_lastname%\" ";	
 	}
 	
-	if ($lastName <> "")
+	if ($lastname <> "")
 	{
-		$outerQuery .= "AND plj.People_LastName = \"$lastName\" ";	
+		$outerQuery .= "AND plj.People_lastname LIKE \"$lastname\" ";	
 	}
 	
-	if ($q_firstName <> "")
+	if ($q_firstname <> "")
 	{
-		$outerQuery .= "AND plj.People_FirstName LIKE \"%$q_firstName%\" ";	
+		$outerQuery .= "AND plj.People_firstname LIKE \"%$q_firstname%\" ";	
 	}
 	
-	if ($firstName <> "")
+	if ($firstname <> "")
 	{
-		$outerQuery .= "AND plj.People_FirstName = \"$firstName\" ";	
+		$outerQuery .= "AND plj.People_firstname = \"$firstname\" ";	
 	}
 	
-    if ($peopleId <> "")
+    if ($peopleid <> "")
     {
-        $outerQuery .= "AND plj.People_ID = \"$peopleId\" ";
+        $outerQuery .= "AND plj.People_ID = \"$peopleid\" ";
     }
 	
-	if ($q_taskKeyWord <> "") 
+	if ($q_taskkeyword <> "") 
 	{
 		//This is Project Keywords
-		$outerQuery .= "AND pjkw.Keyword_Word LIKE \"%$q_taskKeyWord%\" ";	
+		$outerQuery .= "AND pjkw.Keyword_Word LIKE \"%$q_taskkeyword%\" ";	
 	}
 	
-	if ($q_projectKeyWord <> "") 
+	if ($q_projectkeyword <> "") 
 	{
 		//This is Program Keywords
-		$outerQuery .= "AND pgkw.Keyword_Word LIKE \"%$q_projectKeyWord%\" ";	
+		$outerQuery .= "AND pgkw.Keyword_Word LIKE \"%$q_projectkeyword%\" ";	
 	}
 	
-	if ($q_taskLeadInstitution <> "")
+	if ($q_taskleadinstitution <> "")
 	{
-		$outerQuery .= "AND pji.Institution_Name LIKE \"%$q_taskLeadInstitution%\" ";	
+		$outerQuery .= "AND pji.Institution_Name LIKE \"%$q_taskleadinstitution%\" ";	
 	}
 	
-	if ($taskLeadInstitution <> "")
+	if ($taskleadinstitution <> "")
 	{
-		$outerQuery .= "AND pji.Institution_Name = \"$taskLeadInstitution\" ";	
+		$outerQuery .= "AND pji.Institution_Name = \"$taskleadinstitution\" ";	
 	}
 	
-	if ($q_projectLeadInstitution <> "")
+	if ($q_projectleadinstitution <> "")
 	{
-		$outerQuery .= "AND pji.Institution_Name LIKE \"%$q_projectLeadInstitution%\" ";	
+		$outerQuery .= "AND pji.Institution_Name LIKE \"%$q_projectleadinstitution%\" ";	
 	}
 	
-	if ($projectLeadInstitution <> "")
+	if ($projectleadinstitution <> "")
 	{
-		$outerQuery .= "AND pji.Institution_Name = \"$projectLeadInstitution\" ";	
+		$outerQuery .= "AND pji.Institution_Name = \"$projectleadinstitution\" ";	
 	}
 	
-	if ($taskAbstract <> "")
+	if ($taskabstract <> "")
 	{
-		$outerQuery .= "AND pj.Project_Abstract LIKE \"%$taskAbstract%\" ";	
+		$outerQuery .= "AND pj.Project_Abstract LIKE \"%$taskabstract%\" ";	
 	}
 			
-	if ($taskState <> "")
+	if ($taskstate <> "")
 	{
-		$outerQuery .= "AND pji.Institution_State = \"$taskState\" ";	
+		$outerQuery .= "AND pji.Institution_State = \"$taskstate\" ";	
 	}
 		
-	if ($projectDate <> "")
+	if ($projectdate <> "")
 	{
-		$outerQuery .= "AND (pg.Program_StartDate >= \"$programDate\" AND pg.Program_StartDate <= \"$projectDate\") ";	
+		$outerQuery .= "AND (pg.Program_StartDate >= \"$programDate\" AND pg.Program_StartDate <= \"$projectdate\") ";	
 	}
 	
-	if ($taskDepartment <> "")
+	if ($taskdepartment <> "")
 	{
-		$outerQuery .= "AND d.Department_Name = \"$taskDepartment\" ";	
+		$outerQuery .= "AND d.Department_Name = \"$taskdepartment\" ";	
 	}
 	
-	if ($q_taskDepartment <> "")
+	if ($q_taskdepartment <> "")
 	{
-		$outerQuery .= "AND d.Department_Name LIKE \"%$q_taskDepartment%\" ";	
+		$outerQuery .= "AND d.Department_Name LIKE \"%$q_taskdepartment%\" ";	
 	}
 	
-	if ($projectLastName <> "")
+	if ($projectlastname <> "")
 	{
-		$outerQuery .= "AND plg.People_LastName = \"$projectLastName\" ";	
+		$outerQuery .= "AND plg.People_lastname = \"$projectlastname\" ";	
 	}
 	
-	if ($projectFirstName <> "")
+	if ($projectfirstname <> "")
 	{
-		$outerQuery .= "AND plg.People_FirstName = \"$projectFirstName\" ";	
+		$outerQuery .= "AND plg.People_firstname = \"$projectfirstname\" ";	
 	}
 	
-	if ($fundingSource <> "")
+	if ($fundingsource <> "")
 	{
-		$outerQuery .= "AND f.Fund_Name LIKE \"%$fundingSource%\" ";	
+		$outerQuery .= "AND f.Fund_Name LIKE \"%$fundingsource%\" ";	
 	}
     
-    if ($projectID <> "")
+    if ($projectid <> "")
 	{
-		$outerQuery .= "AND pg.Program_ID = \"$projectID\" ";	
+		$outerQuery .= "AND pg.Program_ID = \"$projectid\" ";	
 	}
 
-    if ($projectTitle <> "")
+    if ($projecttitle <> "")
 	{
-		$outerQuery .= "AND pg.Program_Title LIKE \"%$projectTitle%\" ";	
+		$outerQuery .= "AND pg.Program_Title LIKE \"%$projecttitle%\" ";	
 	}
 	
-	if ($maxResults>0)
+	if ($maxresults>0)
 	{
-		$outerQuery .= "LIMIT 0,$maxResults";
+		$outerQuery .= "LIMIT 0,$maxresults";
 	}
 	
 	if ($rc == 0)
@@ -190,9 +190,6 @@ function getData($params)
 		echo showException('InvalidParameterValue','No Valid Parameters Were Provided!',$vars);
 		goto errend;
 	}
-	
-	//echo $outerQuery;
-	//exit;
 	
 	// Execute SQL
 	$outerResult = executeMyQuery($outerQuery);
@@ -211,9 +208,7 @@ function getData($params)
 	
 	//Add a node of Count with number of returned results.	
 	$xmlBld->addChildValue($root,'Count',$numberOfRows);
-		
-	//echo $outerQuery . '<br>';
-		
+			
 	while ($outrow = @mysql_fetch_assoc($outerResult)) 
 	{
 		extract($outrow,EXTR_PREFIX_ALL,'outr');
@@ -230,7 +225,21 @@ function getData($params)
 		
 		//echo var_dump($outrow) . '<br>';
 		
-		$projectQuery = $baseProjectQuery . $outr_Project_ID;
+		if (isset($outr_Project_ID))
+        {
+           $projectQuery = $baseProjectQuery ."
+            LEFT OUTER JOIN ProjKeywords pjk ON pj.Project_ID = pjk.Project_ID 
+            LEFT OUTER JOIN Keywords pjkw ON pjkw.Keyword_ID = pjk.Keyword_ID 
+           WHERE pj.Project_ID = $outr_Project_ID" ;    
+        }
+        else
+        {
+            $projectQuery = $baseProjectQuery ."
+            LEFT OUTER JOIN ProjKeywords pjk ON pj.Program_ID = pjk.Program_ID 
+            LEFT OUTER JOIN Keywords pjkw ON pjkw.Keyword_ID = pjk.Keyword_ID 
+            WHERE pj.Program_ID = $outr_Program_ID" ;    
+        }
+                
 		$outerProjectResult = executeMyQuery($projectQuery);
 				
 		while ($row = @mysql_fetch_assoc($outerProjectResult))
@@ -274,7 +283,17 @@ function getData($params)
 			}
 		}
 		
-		$projectThemesQuery = $themesQuery . $outr_Project_ID;
+               
+        if (isset($outr_Project_ID))
+        {
+            $projectThemesQuery = $themesQuery . $outr_Project_ID;
+            
+        }
+        else
+        {
+            $projectThemesQuery = $themesQuery . "-1";
+        }
+		
 		$themesResult = executeMyQuery($projectThemesQuery);
 		$projectThemesNode = $xmlBld->createXmlNode($projectNode,'Themes');		
 		
@@ -287,14 +306,24 @@ function getData($params)
 			}
 		}
 			
-		if ($listResearchers)
+		if ($listresearchers)
 		{
 			//add subnode for Researchers
 			$innerParentNode = $xmlBld->createXmlNode($projectNode,'Researchers'); 
 			$ProgramID = $outr_Program_ID;
-			
-			$innerQuery = $baseInnerQuery . $outr_Project_ID;
-			
+            
+            
+            
+            
+            if (isset($outr_Project_ID))
+            {
+                $innerQuery = $baseInnerQuery . "WHERE pp.Project_ID = $outr_Project_ID";
+            }
+            else
+            {
+                $innerQuery = $baseInnerQuery . "WHERE pp.Program_ID = $outr_Program_ID";
+            }
+            
 			$innerResult = executeMyQuery($innerQuery);
 			
 			while ($row = mysql_fetch_assoc($innerResult)) 
@@ -335,17 +364,18 @@ function getData($params)
 						$xmlBld->addAttribute($peopleInstitutionNode,'ID',$innr_People_Institution);
 						$xmlBld->rowToXmlChild($peopleInstitutionNode,$row);
 					}
-									
-					$roleQuery = "
-					SELECT 
-						r.Role_Name 'Name',
-						r.Role_ID AS '__Attr__ID'
-					FROM Roles r
-					JOIN ProjPeople pp ON pp.Role_ID = r.Role_ID
-					WHERE pp.People_ID = $innr_People_ID
-					AND pp.Project_ID = $outr_Project_ID
-					";
-					
+				      
+                    if (isset($outr_Project_ID))
+                    {
+                        $roleQuery = $baseRoleQuery . "$innr_People_ID
+                        AND pp.Project_ID = $outr_Project_ID";    
+                    }
+                    else
+                    {
+                        $roleQuery = $baseRoleQuery . "$innr_People_ID
+                        AND pp.Program_ID = $outr_Program_ID";
+                    }              
+                    					
 					$rolesNode = $xmlBld->createXmlNode($personNode,'Roles');
 					$roleResult = executeMyQuery($roleQuery);
 					

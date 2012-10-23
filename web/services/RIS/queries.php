@@ -15,7 +15,7 @@ SELECT
 	pgi.Institution_ID 'Program_Institution_ID',
 	pji.Institution_ID 'Project_Institution_ID',
 	f.Fund_ID
-FROM Projects pj
+FROM v_Projects pj
 LEFT OUTER JOIN Programs pg ON pj.Program_ID = pg.Program_ID
 LEFT OUTER JOIN Institutions pgi ON pg.Program_LeadInstitution = pgi.Institution_ID
 LEFT OUTER JOIN Institutions pji ON pj.Project_LeadInstitution = pji.Institution_ID
@@ -72,10 +72,11 @@ SELECT
 	pj.Project_Completed 'Completed',
 	pjkw.Keyword_Word 'Keywords',
 	pjkw.Keyword_ID '__Attr__ID'
-    FROM Projects pj
-LEFT OUTER JOIN ProjKeywords pjk ON pj.Project_ID = pjk.Project_ID
-LEFT OUTER JOIN Keywords pjkw ON pjkw.Keyword_ID = pjk.Keyword_ID
-WHERE pj.Project_ID = ";
+    FROM v_Projects pj
+    ";
+//LEFT OUTER JOIN ProjKeywords pjk ON pj.Project_ID = pjk.Project_ID
+//LEFT OUTER JOIN Keywords pjkw ON pjkw.Keyword_ID = pjk.Keyword_ID
+//WHERE pj.Project_ID = ";
 
 $baseProgramQuery = "
 SELECT
@@ -150,7 +151,8 @@ SELECT
 	p.People_Institution
 FROM People p
 JOIN ProjPeople pp ON p.People_ID = pp.People_ID
-WHERE pp.Project_ID = ";
+";
+//WHERE pp.Project_ID = ";
 
 $basePersonQuery = "	
 SELECT 
@@ -217,5 +219,13 @@ SELECT
 	d.Department_Long 'Long'
 FROM Departments d
 WHERE Department_ID = ";
+
+$baseRoleQuery = "
+SELECT 
+r.Role_Name 'Name',
+r.Role_ID AS '__Attr__ID'
+FROM Roles r
+JOIN ProjPeople pp ON pp.Role_ID = r.Role_ID
+WHERE pp.People_ID =";
 
 ?>
