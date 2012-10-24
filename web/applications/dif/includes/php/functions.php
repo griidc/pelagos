@@ -35,6 +35,9 @@ function isAdmin() {
 
 function makeTaskGrouping($tasks, $which) {
 	foreach ($tasks as $task){
+           //var parts = $task['ID'].split('|');
+
+		//$dbOptionValue = parts[0];
 		$dbOptionValue = $task['ID'];
 		$dbOption = $taskTitle;
 		 echo "if (chosen == \"$dbOptionValue\") { ";
@@ -102,10 +105,12 @@ function getTaskOptionList($tasks, $what) {
 			$taskTitle=$task->Title;
 		}
 		$dbOptionValue = $task['ID'];
+                $dbOptioncallnum = $task['ID']. '-' . $task->Project['ID'];
 		$dbOption = $taskTitle;
+
 		echo "<option value=\"$dbOptionValue\"";
 		if ($what==$dbOptionValue){echo " SELECTED";}
-		echo ">$dbOption</option>";
+		echo ">[$dbOptioncallnum] $dbOption</option>";
 	}
 	unset($doc);
 }
@@ -114,9 +119,7 @@ function getTasks($ldap,$baseDN,$userDN,$firstName,$lastName) {
     global $isGroupAdmin;
     $baseurl = 'http://griidc.tamucc.edu/services/RPIS/getTaskDetails.php';
     $switch = '?'.'maxResults=-1';
-
     $tasks = array();
- 
     if (isAdmin())
     {
         $doc = simplexml_load_file($baseurl.$switch);
@@ -264,5 +267,6 @@ function filterTasks($tasks, $person)
     return $filteredTasks;
 }
 
+function helps($for, $ht, $tip){ echo "\n<label for=\"$for\"><b>$ht: </b><span id=\"$tip\" style=\"float:right;\"> <IMG SRC=\"/dif/images/info.png\"></span></label>\n"; }
 ?>
 

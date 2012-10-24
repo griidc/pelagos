@@ -1,11 +1,14 @@
 <?php
 // Module: dif.php
 // Author(s): Jew-Lee Irena Lann
-// Last Updated: 21 August 2012
+// Last Updated: 23 October 2012
 // Parameters: Form fields with to add to the database or update.
 // Returns: Form / Sidebar
 // Purpose: Wrapper for form and action scripts to update database & email at later date.
-//error_reporting(0);   
+error_reporting(0);   
+
+
+
 include_once '/usr/local/share/GRIIDC/php/ldap.php';
 include_once '/usr/local/share/GRIIDC/php/drupal.php';
 ?>
