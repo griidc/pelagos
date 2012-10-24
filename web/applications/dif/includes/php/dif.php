@@ -216,9 +216,6 @@ $result = pg_query($connection, $sql);
 if (!$result) { $mymesg="error"; $yn= "Something Went Wrong!!!" . pg_last_error(); } else { $mymesg= "status"; $yn= "Data successfully inserted"; } 
 echo " <div class=\"messages ". $mymesg."\"> <h2 class=\"element-invisible\">". $mymesg."message</h2> <ul> <li>$yn</li> </ul> </div> <br /> "; 
 pg_free_result($result); 
-//mail commented out on the group sit down 17th
-#mail("griidc.info@gomri.org", "[New dataset]-Submitted by $firstName $lastName", "".$title $q.\n\n REVIEW: \n".$sql."\n\nHeader Table:\n".$sql2."\n", "From: griidc.infor@gomri.org\n");
-mail("griidc.info@gomri.org", "[New dataset]-Submitted by $firstName $lastName", "Title:".$title."\n\n REVIEW: \n".$sql."\n\nHeader Table:\n".$sql2."\n", "From: griidc.infor@gomri.org\n");
 
 $status=0;
 $flag="";
