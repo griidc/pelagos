@@ -58,7 +58,6 @@ $js .= '
 
 
 drupal_add_js("$js",array('type'=>'inline'));
-//function helps($for, $ht, $tip){ echo "\n<label for=\"$for\"><b>$ht: </b><span id=\"$tip\" style=\"float:right;\"> <IMG SRC=\"/dif/images/info.png\"></span></label>\n"; }
 ?>
 
 <script type="text/javascript">
@@ -80,7 +79,7 @@ drupal_add_js("$js",array('type'=>'inline'));
     <strong>NOTICE:</strong> Fields that are preceded by an asterisk (<em>*</em>) are required inputs. Note that only records that have not been submitted can be edited. Also, <i>Tasks</i> may have more than one 
     <i>Dataset</i>. Submitting a record with e same <i>Task Title</i> but with a different <i>Dataset Title</i> produces several <i>Dataset</i> records for that <i>Task</i>.<hr /><br />
 
-    <?PHP if ($status != 0){echo "<div STYLE=text-align:right><a href=dif><IMG SRC=/dif/images/button.png></A></div>"; }?>
+    <?PHP if ($status != 0){echo "<div STYLE=text-align:right><a href=\"?\"><IMG SRC=/dif/images/button.png></A></div>"; }?>
 
    <p><fieldset id="qtask"> 
        <?PHP helps("ctask", "<em>*</em>Task Title", "itask"); ?>
@@ -320,15 +319,20 @@ Video&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
     <p><strong>NOTE:</strong> Clicking the <i>Save & Continue Later</i> or the <i>Submit &amp; Done</i> buttons will clear the form and ready to accept new inputs. Please be reminded that clicking the 
     <i>Submit &amp; Done</i> button will lock the record for review but it can be unlocked for modification by contacting GRIIDC (<a HREF="mailto:griidc@gomri.org">griidc@gomri.org</a>).</p>
     <?PHP
-        $admins= array('Susan Rogers','Felimon Gayanilo');
-        $compare=$firstName.' '.$lastName;
-        if (in_array($compare,$admins)&&(($status ==1)||($status==2))){
+        if ((isAdmin())&&(($status ==1)||($status==2))){
     ?>
     <input class="submit" type="submit" name="accept" value="Accept" size="30">  <input class="submit" type="submit" name="reject" value="Reject" size="30"> 
     <?PHP }else{ ?>
 
-    <?PHP if ($status==2){echo "<FONT COLOR=green><strong>This record has been approved and locked. Contact GRIIDC if this record needs to be unlocked.</strong></FONT>";
-          }elseif ($status==1){echo "<FONT COLOR=#CCCC00><strong>This record has been locked and awaiting approval. Contact GRIIDC if this record needs to be unlocked.</strong></FONT>";}else{ ?>
+    <?PHP if ($status==2){
+
+echo " <div class=\"messages status\"> <h2>This record has been approved and locked.</h2> <ul> <li>Contact <A HREF=\"mailto:griidc@gomri.org?subject=[DIFF-Web Request] Record Request To Be Unlocked: ".$_GET['uid']."\">GRIIDC</a> if this record needs to be unlocked.</li> </ul> </div> <br /> ";
+          }elseif ($status==1){
+
+echo " <div class=\"messages warning\"> <h2>This record has been locked and is awaiting approval.</h2> <ul> <li>Contact <A HREF=\"mailto:griidc@gomri.org?subject=[DIFF-Web Request] Record Request To Be Unlocked: ".$_GET['uid']."\">GRIIDC</a> if this record needs to be unlocked.</li> </ul> </div> <br /> ";
+
+
+}else{ ?>
     <br /> <input class="submit" type="submit" name="later" value="Save &amp; Continue Later" size="30">  <input class="submit" type="submit" name="submit" value="Submit &amp; Done" size="30"> 
 <?PHP }} ?>
 </form>
