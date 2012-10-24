@@ -35,10 +35,8 @@ function isAdmin() {
 
 function makeTaskGrouping($tasks, $which) {
 	foreach ($tasks as $task){
-           //var parts = $task['ID'].split('|');
-
-		//$dbOptionValue = parts[0];
-		$dbOptionValue = $task['ID'];
+		//$dbOptionValue = $task['ID'];
+                $dbOptionValue = $task['ID']. '|' . $task->Project['ID'];
 		$dbOption = $taskTitle;
 		 echo "if (chosen == \"$dbOptionValue\") { ";
 		 callPeople($which, $dbOptionValue);
@@ -104,13 +102,13 @@ function getTaskOptionList($tasks, $what) {
 		} else {
 			$taskTitle=$task->Title;
 		}
-		$dbOptionValue = $task['ID'];
-                $dbOptioncallnum = $task['ID']. '-' . $task->Project['ID'];
+		//$dbOptionValue = $task['ID'];
+                $dbOptionValue = $task['ID']. '|' . $task->Project['ID'];
 		$dbOption = $taskTitle;
 
 		echo "<option value=\"$dbOptionValue\"";
 		if ($what==$dbOptionValue){echo " SELECTED";}
-		echo ">[$dbOptioncallnum] $dbOption</option>";
+		echo ">$dbOption</option>";
 	}
 	unset($doc);
 }

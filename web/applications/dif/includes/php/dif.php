@@ -183,6 +183,7 @@ if (($_POST['submit'])||($_POST['later'])||($_POST['reject'])||($_POST['accept']
 if ($_POST['later']) { $status = 0;}else{$status = 1;}
    //CONCAT TO FIT DB
    foreach ($_POST as $k=>$v) { $$k = pg_escape_string($v);}
+   list($task, $project)=explode("|", $task);
    $title = str_replace(array("\r\n", "\n\r", "\r", "\n", "\t"), " ", $title);
    $datafor = $eco.'|'.$phys.'|'.$atm.'|'.$ch.'|'.$geog.'|'.$scpe.'|'.$econom.'|'.$geop.'|'.$dtother;
    $approach = $field."|".$sim."|".$lab."|".$lit."|".$remote."|".$approachother;
@@ -205,10 +206,10 @@ if ($_POST['accept'] OR $_POST['reject'])
 else
 {
 	if ($flag== "update"){$uid =$modts;
-	$sql = "UPDATE datasets SET dataset_uid='".$uid."', task_uid='".$task."', title='".$title."', abstract='".$abstract."', dataset_type='".$datatype."', dataset_for='".$datafor."', size='".$size."', observation='".$observation ."', approach='".$approach ."', historic_links='".$historical."', meta_editor='".$ed ."', meta_standards='".$standards."', point='".$point."', national='".$national ."', ethical='".$privacy."', remarks='".$remarks ."', primary_poc='".$ppoc."', secondary_poc='".$spoc ."', logname='".$usernumber."', status='".$status ."', start_date='".$sdate."', end_date='".$edate."', geo_location='".$geoloc ."'  WHERE dataset_uid='".$uid."'";
+	$sql = "UPDATE datasets SET dataset_uid='".$uid."', task_uid='".$task."', title='".$title."', abstract='".$abstract."', dataset_type='".$datatype."', dataset_for='".$datafor."', size='".$size."', observation='".$observation ."', approach='".$approach ."', historic_links='".$historical."', meta_editor='".$ed ."', meta_standards='".$standards."', point='".$point."', national='".$national ."', ethical='".$privacy."', remarks='".$remarks ."', primary_poc='".$ppoc."', secondary_poc='".$spoc ."', logname='".$usernumber."', status='".$status."', project_id='".$project."', start_date='".$sdate."', end_date='".$edate."', geo_location='".$geoloc ."'  WHERE dataset_uid='".$uid."'";
 	}else{
 	$uid = time();
-	$sql = "INSERT INTO datasets(dataset_uid, task_uid, title, abstract, dataset_type, dataset_for, size, observation, approach, start_date, end_date, geo_location, historic_links, meta_editor, meta_standards, point, national, ethical, remarks, primary_poc, secondary_poc, logname, status) VALUES('$uid', '$task', '$title', '$abstract', '$datatype', '$datafor', '$size', '$observation', '$approach', '$sdate', '$edate','$geoloc', '$historical', '$ed', '$standards', '$point', '$national', '$privacy', '$remarks', '$ppoc', '$spoc', '1','$status')";
+	$sql = "INSERT INTO datasets(dataset_uid, task_uid, title, abstract, dataset_type, dataset_for, size, observation, approach, start_date, end_date, geo_location, historic_links, meta_editor, meta_standards, point, national, ethical, remarks, primary_poc, secondary_poc, logname, status, project_id) VALUES('$uid', '$task', '$title', '$abstract', '$datatype', '$datafor', '$size', '$observation', '$approach', '$sdate', '$edate','$geoloc', '$historical', '$ed', '$standards', '$point', '$national', '$privacy', '$remarks', '$ppoc', '$spoc', '1','$status', '$project')";
 	}
 }
 $result = pg_query($connection, $sql); 
@@ -217,7 +218,7 @@ echo " <div class=\"messages ". $mymesg."\"> <h2 class=\"element-invisible\">". 
 pg_free_result($result); 
 //mail commented out on the group sit down 17th
 #mail("griidc.info@gomri.org", "[New dataset]-Submitted by $firstName $lastName", "".$title $q.\n\n REVIEW: \n".$sql."\n\nHeader Table:\n".$sql2."\n", "From: griidc.infor@gomri.org\n");
-mail("jew_lee@hotmail.com", "[New dataset]-Submitted by $firstName $lastName", "Title:".$title."\n\n REVIEW: \n".$sql."\n\nHeader Table:\n".$sql2."\n", "From: griidc.infor@gomri.org\n");
+mail("griidc.info@gomri.org", "[New dataset]-Submitted by $firstName $lastName", "Title:".$title."\n\n REVIEW: \n".$sql."\n\nHeader Table:\n".$sql2."\n", "From: griidc.infor@gomri.org\n");
 
 $status=0;
 $flag="";
@@ -238,6 +239,8 @@ $flag="";
     list($n[0], $n[1], $junk)=explode("-", $m[10]);
     list($dtf[0], $dtf[1], $dtf[2], $dtf[3], $dtf[4], $dtf[5], $dtf[6], $dtf[7],  $dtf[8]) = explode("|", $m[5]); 
     foreach ($m as $kk=>$vv) {  $$kk = pg_escape_string($vv); }
+$mtask = $m[1]."|".$m[24];
+
     $flag="update";
 }
 //CLOSE CONNECTIONS AND FREE RESOURCES

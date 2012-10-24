@@ -58,7 +58,7 @@ $js .= '
 
 
 drupal_add_js("$js",array('type'=>'inline'));
-function helps($for, $ht, $tip){ echo "\n<label for=\"$for\"><b>$ht: </b><span id=\"$tip\" style=\"float:right;\"> <IMG SRC=\"/dif/images/info.png\"></span></label>\n"; }
+//function helps($for, $ht, $tip){ echo "\n<label for=\"$for\"><b>$ht: </b><span id=\"$tip\" style=\"float:right;\"> <IMG SRC=\"/dif/images/info.png\"></span></label>\n"; }
 ?>
 
 <script type="text/javascript">
@@ -95,14 +95,15 @@ function helps($for, $ht, $tip){ echo "\n<label for=\"$for\"><b>$ht: </b><span i
            <span id="span1">
                <select id="ctask" name="task" style="width:800px;" size="1" onchange="setOptions(document.ed.task.options[document.ed.task.selectedIndex].value);" class="required" <?PHP if ($status != 0){echo "disabled";} ?>  >
                    <option value=' '>[SELECT A TASK]</option>
-                   <?PHP getTaskOptionList($tasks, $m[1]); ?>
+                   <?PHP getTaskOptionList($tasks, $mtask); ?>
                </select>
        <?PHP } ?>
     </fieldset></p> 
+
  
     <p><fieldset id="qtitle">
         <?PHP helps("ctitle", "<em>*</em>Dataset Title", "ititle"); ?>
-        <textarea <?PHP if ($status != 0){echo "disabled";} ?> name="title" id="ctitle" class="required" maxlength="200" rows=3 cols=98  onkeypress="return imposeMaxLength(this, 200);" }><?PHP if ($flag=="update"){echo $m[2];} ?></textarea>
+        <textarea <?PHP if ($status != 0){echo "disabled";} ?> name="title" id="ctitle" class="required" maxlength="200" rows=3 cols=98  onkeypress="return imposeMaxLength(this, 200);" ><?PHP if ($flag=="update"){echo $m[2];} ?></textarea>
     </fieldset></p>
 
     <table WIDTH="100%"><tr><td> 
@@ -127,9 +128,7 @@ function helps($for, $ht, $tip){ echo "\n<label for=\"$for\"><b>$ht: </b><span i
 
     <p><fieldset id="qabstract">
         <?PHP helps("cabstract", "<em>*</em>Dataset Abstract", "iabstract"); ?>
-           <textarea <?PHP if ($status != 0){echo "disabled";} ?> name="abstract" id="cabstract" class="required" maxlength="400" rows=3 cols=98 onkeypress="return imposeMaxLength(this, 400);" >
-              <?PHP if ($flag=="update"){echo $m[3];} ?>
-           </textarea> 
+           <textarea <?PHP if ($status != 0){echo "disabled";} ?> name="abstract" id="cabstract" class="required" maxlength="400" rows=3 cols=98 onkeypress="return imposeMaxLength(this, 400);" ><?PHP if ($flag=="update"){echo $m[3];} ?></textarea> 
     </fieldset></p>
 
     <p><fieldset>
