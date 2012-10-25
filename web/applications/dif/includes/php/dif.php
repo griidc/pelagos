@@ -1,40 +1,21 @@
 <?php
+
 // Module: dif.php
 // Author(s): Jew-Lee Irena Lann
 // Last Updated: 23 October 2012
 // Parameters: Form fields with to add to the database or update.
 // Returns: Form / Sidebar
 // Purpose: Wrapper for form and action scripts to update database & email at later date.
+
 error_reporting(0);   
-
-
-
 include_once '/usr/local/share/GRIIDC/php/ldap.php';
 include_once '/usr/local/share/GRIIDC/php/drupal.php';
-?>
-<link rel="StyleSheet" href="/dif/includes/css/dtree.css" type="text/css" />
-<script type="text/javascript" src="/dif/includes/js/dtree.js"></script>
-<script type="text/javascript">
-function updateTaskList(personID) {
-   if (window.XMLHttpRequest) { xmlhttp=new XMLHttpRequest(); } else { xmlhttp=new ActiveXObject("Microsoft.XMLHTTP"); }
-       xmlhttp.onreadystatechange=function updateTaskList() {
-            if (xmlhttp.readyState==4 && xmlhttp.status==200) {
-                var here = document.getElementById("ctask").innerHTML=xmlhttp.responseText;
-                var help=document.getElementById('span1').innerHTML = " <select id='ctask' name='task' style='width:800px;' size='1' onchange='setOptions(document.ed.task.options[document.ed.task.selectedIndex].value);' class='required' >" + here + "</select>";
-            }
-        }
-        xmlhttp.open("GET","?persontask="+personID,true);
-        xmlhttp.send();
-    }
-</script>
-
-<?php
-
+include ('functions.php'); 
+include ("dbGomri.php");
 $ldap = connectLDAP('triton.tamucc.edu');
 $baseDN = 'dc=griidc,dc=org';
-
 $uid = getDrupalUserName();
-
+$tasks = getTasks($ldap,$baseDN,$userDN,$firstName,$lastName);
 if (isset($uid)) {
     $userDNs = getDNs($ldap,$baseDN,"uid=$uid");
     $userDN = $userDNs[0]['dn'];
@@ -46,11 +27,6 @@ if (isset($uid)) {
         }
     }
 }
-
-include ('functions.php'); 
-
-$tasks = getTasks($ldap,$baseDN,$userDN,$firstName,$lastName);
-
 if ($_GET) 
 {
     if (isset($_GET['personID'])) 
@@ -75,8 +51,6 @@ if ($_GET)
     }
 }
 
-
-
  ?> 
 
 <html> 
@@ -98,6 +72,49 @@ if ($_GET)
 	</div>
    </div>
    
+
+
+
+
+<link rel="StyleSheet" href="/dif/includes/css/dtree.css" type="text/css" />
+<script type="text/javascript" src="/dif/includes/js/dtree.js"></script>
+<script type="text/javascript">
+function updateTaskList(personID) {
+   if (window.XMLHttpRequest) { xmlhttp=new XMLHttpRequest(); } else { xmlhttp=new ActiveXObject("Microsoft.XMLHTTP"); }
+       xmlhttp.onreadystatechange=function updateTaskList() {
+            if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+                var here = document.getElementById("ctask").innerHTML=xmlhttp.responseText;
+                var help=document.getElementById('span1').innerHTML = " <select id='ctask' name='task' style='width:800px;' size='1' onchange='setOptions(document.ed.task.options[document.ed.task.selectedIndex].value);' class='required' >" + here + "</select>";
+            }
+        }
+        xmlhttp.open("GET","?persontask="+personID,true);
+        xmlhttp.send();
+    }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <script type="text/javascript"> 
 
 function stopRKey(evt) { 
@@ -168,9 +185,8 @@ document.ed.video.value = "";
 
 <?php 
 //CONNECTION TO POSTGRES
-$connection = pg_connect("host=localhost port=5432 dbname=gomri user=gomri_user password=Sharkbait!") or die ("ERROR: " . pg_last_error($connection)); 
+$connection = pg_connect("host=$dbserver port=$port dbname=$database user=$username password=$password") or die ("ERROR: " . pg_last_error($connection)); 
 if (!$connection) { die("Error in connection: " . pg_last_error()); } 
-//CHECKID
 $pu=array();
 $result3 = pg_exec($connection, "SELECT var_name, comments FROM form_info ORDER BY form_info.id ASC");
 if (!$result3) { die("Error in SQL query: " . pg_last_error()); } 
