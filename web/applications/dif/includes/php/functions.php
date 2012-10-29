@@ -159,11 +159,20 @@ function displayTaskStatus($tasks,$update=null)
         $taskID = $task['ID'];
         
         $taskTitle = $task->Title;
+        $projectID = $task->Project[ID];
 
         echo "d.add($nodeCount,0,'".addslashes($taskTitle)."','javascript: d.o($nodeCount);','".addslashes($taskTitle)."','','','',true);\n";
         $nodeCount++;
         
-        $query = "select title,status,dataset_uid from datasets where task_uid=$taskID";
+        if ($taskID > 0)
+        {
+            $query = "select title,status,dataset_uid from datasets where task_uid=$taskID";
+        }
+        else
+        {
+            $query = "select title,status,dataset_uid from datasets where project_id=$projectID";
+
+        }   	
         
         $results = dbexecute($query);
         
