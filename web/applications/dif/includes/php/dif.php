@@ -15,7 +15,6 @@ include ("dbGomri.php");
 $ldap = connectLDAP('triton.tamucc.edu');
 $baseDN = 'dc=griidc,dc=org';
 $uid = getDrupalUserName();
-$tasks = getTasks($ldap,$baseDN,$userDN,$firstName,$lastName);
 if (isset($uid)) {
     $userDNs = getDNs($ldap,$baseDN,"uid=$uid");
     $userDN = $userDNs[0]['dn'];
@@ -28,6 +27,9 @@ if (isset($uid)) {
         }
     }
 }
+
+$tasks = getTasks($ldap,$baseDN,$userDN,$firstName,$lastName);
+
 if ($_GET) 
 {
     if (isset($_GET['personID'])) 
