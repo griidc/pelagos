@@ -90,11 +90,8 @@ $app->post("$GLOBALS[BASE]/new", function () use ($app) {
         $RPIS = query_RPIS($email);
         if ($RPIS['exception']) {
             if (isset($RPIS['exceptionCode']) and $RPIS['exceptionCode'] == 'NoDataAvailable') {
-                echo "<div style='font-size:120%'>";
-                echo "<p>I'm sorry, the email address \"$email\" has not yet been authorized for account creation.</p>";
-                echo "<p>If you are affiliated with a GoMRI research project, please check to make sure you are listed in the <a href='http://research.gulfresearchinitiative.org/gomri-funded-researchers/' target='_blank'>GoMRI Research Project Information System (RPIS)</a>. If you are not listed in RPIS or your email address is incorrect, please contact Jay Ritchie (<a href='mailto:jay.ritchie@gomri.org'>jay.ritchie@gomri.org</a>).</p>";
-                echo "<p>If you are not affiliated with a GoMRI research project, but otherwise affiliated with GoMRI, please email <a href='mailto:griidc@gomri.org'>griidc@gomri.org</a> to request authorization for a GRIIDC account.</p>";
-                echo "</div>";
+                $stash{'email'} = $email;
+                return $app->render('email_not_found.html',$stash);
             }
             elseif (isset($RPIS['ExceptionText'])) {
                 drupal_set_message("An error occurred: $RPIS[ExceptionText]",'error');
