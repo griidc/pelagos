@@ -180,7 +180,7 @@ if ($_POST['later']) { $status = 0;}else{$status = 1;}
    $approach = $field."|".$sim."|".$lab."|".$lit."|".$remote."|".$approachother;
    $sdate="$sye-$smo-01";$edate="$eye-$emo-01";
    $standards=$s1."|".$s2."|".$s3."|".$s4."|".$otherst;
-   $point =$da1."|".$a2."|".$a3."|".$accessother;
+   $point =$a1."|".$a2."|".$a3."|".$accessother;
    $privacy = $privacy."|".$privacyother;
    $national= $nat1."|".$nat2."|".$nat3."|".$nat4."|".$nat5."|".$nat6."|".$othernat;
    $datatype =$sascii."|".$uascii."|".$images."|".$netCDF."|".$dtvideo."|".$video."|".$gml."|".$otherdty;
