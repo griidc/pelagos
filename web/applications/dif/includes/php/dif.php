@@ -2,7 +2,7 @@
 
 // Module: dif.php
 // Author(s): Jew-Lee Irena Lann
-// Last Updated: 23 October 2012
+// Last Updated: 30 October 2012
 // Parameters: Form fields with to add to the database or update.
 // Returns: Form / Sidebar
 // Purpose: Wrapper for form and action scripts to update database & email at later date.
@@ -20,10 +20,11 @@ if (isset($uid)) {
     $userDNs = getDNs($ldap,$baseDN,"uid=$uid");
     $userDN = $userDNs[0]['dn'];
     if (count($userDNs) > 0) {
-        $attributes = getAttributes($ldap,$userDN,array('givenName','sn'));
+        $attributes = getAttributes($ldap,$userDN,array('givenName','sn','employeeNumber'));
         if (count($attributes) > 0) {
             if (array_key_exists('givenName',$attributes)) $firstName = $attributes['givenName'][0];
             if (array_key_exists('sn',$attributes)) $lastName = $attributes['sn'][0];
+            if (array_key_exists('employeeNumber',$attributes)) $submittedby = $attributes['employeeNumber'][0];
         }
     }
 }
@@ -71,10 +72,6 @@ if ($_GET)
         <p></p>
 	</div>
    </div>
-   
-
-
-
 
 <link rel="StyleSheet" href="/dif/includes/css/dtree.css" type="text/css" />
 <script type="text/javascript" src="/dif/includes/js/dtree.js"></script>
@@ -91,29 +88,6 @@ function updateTaskList(personID) {
         xmlhttp.send();
     }
 </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 <script type="text/javascript"> 
 
@@ -184,6 +158,7 @@ document.ed.video.value = "";
 <body <?PHP  if ($_GET['uid']==""){echo "onload=enable_text(false);";} ?>>
 
 <?php 
+if (!$submittedby){$submittedby = '-1';}
 //CONNECTION TO POSTGRES
 $connection = pg_connect("host=$dbserver port=$port dbname=$database user=$username password=$password") or die ("ERROR: " . pg_last_error($connection)); 
 if (!$connection) { die("Error in connection: " . pg_last_error()); } 
@@ -205,7 +180,7 @@ if ($_POST['later']) { $status = 0;}else{$status = 1;}
    $approach = $field."|".$sim."|".$lab."|".$lit."|".$remote."|".$approachother;
    $sdate="$sye-$smo-01";$edate="$eye-$emo-01";
    $standards=$s1."|".$s2."|".$s3."|".$s4."|".$otherst;
-   $point =$a1."|".$a2."|".$a3."|".$accessother;
+   $point =$da1."|".$a2."|".$a3."|".$accessother;
    $privacy = $privacy."|".$privacyother;
    $national= $nat1."|".$nat2."|".$nat3."|".$nat4."|".$nat5."|".$nat6."|".$othernat;
    $datatype =$sascii."|".$uascii."|".$images."|".$netCDF."|".$dtvideo."|".$video."|".$gml."|".$otherdty;
@@ -222,10 +197,10 @@ if ($_POST['accept'] OR $_POST['reject'])
 else
 {
 	if ($flag== "update"){$uid =$modts;
-	$sql = "UPDATE datasets SET dataset_uid='".$uid."', task_uid='".$task."', title='".$title."', abstract='".$abstract."', dataset_type='".$datatype."', dataset_for='".$datafor."', size='".$size."', observation='".$observation ."', approach='".$approach ."', historic_links='".$historical."', meta_editor='".$ed ."', meta_standards='".$standards."', point='".$point."', national='".$national ."', ethical='".$privacy."', remarks='".$remarks ."', primary_poc='".$ppoc."', secondary_poc='".$spoc ."', logname='".$usernumber."', status='".$status."', project_id='".$project."', start_date='".$sdate."', end_date='".$edate."', geo_location='".$geoloc ."'  WHERE dataset_uid='".$uid."'";
+	$sql = "UPDATE datasets SET dataset_uid='".$uid."', task_uid='".$task."', title='".$title."', abstract='".$abstract."', dataset_type='".$datatype."', dataset_for='".$datafor."', size='".$size."', observation='".$observation ."', approach='".$approach ."', historic_links='".$historical."', meta_editor='".$ed ."', meta_standards='".$standards."', point='".$point."', national='".$national ."', ethical='".$privacy."', remarks='".$remarks ."', primary_poc='".$ppoc."', secondary_poc='".$spoc ."', logname='".$submittedby."', status='".$status."', project_id='".$project."', start_date='".$sdate."', end_date='".$edate."', geo_location='".$geoloc ."'  WHERE dataset_uid='".$uid."'";
 	}else{
 	$uid = time();
-	$sql = "INSERT INTO datasets(dataset_uid, task_uid, title, abstract, dataset_type, dataset_for, size, observation, approach, start_date, end_date, geo_location, historic_links, meta_editor, meta_standards, point, national, ethical, remarks, primary_poc, secondary_poc, logname, status, project_id) VALUES('$uid', '$task', '$title', '$abstract', '$datatype', '$datafor', '$size', '$observation', '$approach', '$sdate', '$edate','$geoloc', '$historical', '$ed', '$standards', '$point', '$national', '$privacy', '$remarks', '$ppoc', '$spoc', '1','$status', '$project')";
+	$sql = "INSERT INTO datasets(dataset_uid, task_uid, title, abstract, dataset_type, dataset_for, size, observation, approach, start_date, end_date, geo_location, historic_links, meta_editor, meta_standards, point, national, ethical, remarks, primary_poc, secondary_poc, logname, status, project_id) VALUES('$uid', '$task', '$title', '$abstract', '$datatype', '$datafor', '$size', '$observation', '$approach', '$sdate', '$edate','$geoloc', '$historical', '$ed', '$standards', '$point', '$national', '$privacy', '$remarks', '$ppoc', '$spoc', '$submittedby','$status', '$project')";
 	}
 }
 $result = pg_query($connection, $sql); 
