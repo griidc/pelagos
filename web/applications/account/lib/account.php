@@ -324,7 +324,9 @@ function get_affiliations($affiliation) {
                 $defaultGroup = preg_replace("/\\\$$name_attr/",strtolower($entry[$name_attr][0]),$defaultGroup);
                 $dn = "cn=$defaultGroup,$dn";
             }
-            $affiliations[$la['ou']][] = array('name' => $entry[$name_attr][0], 'dn' => $dn, 'selected' => $dn == $affiliation);
+            $name = $la['ou'];
+            if ($entry[$name_attr][0] != 'members') $name .= ': ' . $entry[$name_attr][0];
+            $affiliations[$la['ou']][] = array('name' => $name, 'dn' => $dn, 'selected' => $dn == $affiliation);
         }
     }
 
