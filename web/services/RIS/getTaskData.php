@@ -11,10 +11,10 @@ require_once 'owsException.php';
 
 function getData($params)
 {
-    $xmlfilename = '/tmp/rpiscache.xml$$';
+    $xmlfilename = '/tmp/rpiscache.xml';
     
     //Make Paramaters caps insensitive.
-    array_change_key_case($params,CASE_LOWER);
+    $params = array_change_key_case($params,CASE_LOWER);
     
     require 'queries.php';
     //Parameters predefined as variables.
@@ -45,7 +45,7 @@ function getData($params)
     $projectid = '';
     $projecttitle = '';
     $cached = false;
-        
+    
     //Extract parameters into existing variables
     $rc = extract($params, EXTR_IF_EXISTS);
         
@@ -78,27 +78,36 @@ function getData($params)
         
     if ($q_lastname <> "")
     {
-        $outerQuery .= "AND plj.People_lastname = \"%$q_lastname%\" ";    
+        $lastname = "%$q_lastname%";    
     }
-    
-    if ($lastname <> "")
-    {
-        $outerQuery .= "AND plj.People_lastname LIKE \"$lastname\" ";    
-    }
-    
+
     if ($q_firstname <> "")
     {
-        $outerQuery .= "AND plj.People_firstname LIKE \"%$q_firstname%\" ";    
+        $firstname="%$q_firstname%";    
     }
-    
-    if ($firstname <> "")
+         
+    if ($lastname <> "" and $firstname <> "")
     {
-        $outerQuery .= "AND plj.People_firstname = \"$firstname\" ";    
+        $outerQuery .= "AND (ppj.People_ID IN (SELECT People_ID FROM People WHERE People_lastName LIKE \"$lastname\" AND People_firstName = \"$firstname\")";
+        $outerQuery .= "or ppg.People_ID IN (SELECT People_ID FROM People WHERE People_lastName LIKE \"$lastname\" AND People_firstName = \"$firstname\"))";
     }
-    
+    else
+    {
+        if ($lastname <> "")
+        {
+            $outerQuery .= "AND (ppj.People_ID IN (SELECT People_ID FROM People WHERE People_lastName LIKE \"$lastname\")";
+            $outerQuery .= "or ppg.People_ID IN (SELECT People_ID FROM People WHERE People_lastName LIKE \"$lastname\"))";
+        }
+        if ($firstname <> "")
+        {
+            $outerQuery .= "AND (ppj.People_ID IN (SELECT People_ID FROM People WHERE People_firstName LIKE \"$firstname\")";
+            $outerQuery .= "or ppg.People_ID IN (SELECT People_ID FROM People WHERE People_firstName LIKE \"$firstname\"))";
+        }
+    }
+
     if ($peopleid <> "")
     {
-        $outerQuery .= "AND plj.People_ID = \"$peopleid\" ";
+        $outerQuery .= "AND (ppj.People_ID = \"$peopleid\" OR ppg.People_ID = \"$peopleid\") ";
     }
     
     if ($q_taskkeyword <> "") 
@@ -185,7 +194,7 @@ function getData($params)
     
     if ($maxresults>0)
     {
-        $outerQuery .= "LIMIT 0,$maxresults";
+        $outerQuery .= "LIMIT 0,$maxresults;";
     }
     
     if ($rc == 0)
@@ -201,7 +210,15 @@ function getData($params)
     {
         $outerQuery = $outerBaseQuery;
         
-        $cachedoc = simplexml_load_file($xmlfilename);
+        if (file_exists($xmlfilename))
+        {
+            $cachedoc = simplexml_load_file($xmlfilename);
+        }
+        else
+        {
+            $cachedoc = false;
+        }
+        
         
         if ($cachedoc !== false)
         {
@@ -210,19 +227,18 @@ function getData($params)
             $dateinterval = $now->diff($created);
             $secondsold = $dateinterval->format('%s');
             
-            if ($secondsold <= 300) //24 hours
+            if ($secondsold <= 3600) //1 hour
             {
                 echo $cachedoc->saveXML();
                 goto errend;
             }
         }
-
+        
     }
-    
-    
-    
+        
     // Execute SQL
     $outerResult = executeMyQuery($outerQuery);
+
     $numberOfRows = mysql_num_rows($outerResult);
     
     if ($numberOfRows == 0)
@@ -230,9 +246,7 @@ function getData($params)
         echo showException('NoDataAvailable','No data was available on the selected request!');
         goto errend;
     }
-    
-    $liteVersion = true;
-                        
+
     //Create New xmlBuilder
     $xmlBld = new xmlBuilder();
     //Create a root with parent self name gomri
@@ -274,7 +288,7 @@ function getData($params)
         }
                 
         $outerProjectResult = executeMyQuery($projectQuery);
-        
+                
         while ($row = @mysql_fetch_assoc($outerProjectResult))
         {
             $projectNode = $xmlBld->createXmlNode($root,'Task');
@@ -335,7 +349,6 @@ function getData($params)
             }
         }
             
-        // Researchers
         if ($listresearchers)
         {
             //add subnode for Researchers
@@ -347,7 +360,7 @@ function getData($params)
             {
                 $innerQuery = $baseInnerQuery . "
                 WHERE pp.Project_ID = $outr_Project_ID
-                OR pp.Program_ID = $outr_Program_ID";
+                OR (pp.Program_ID = $outr_Program_ID AND pp.Project_ID = 0)";
             }
             else
             {
@@ -398,14 +411,14 @@ function getData($params)
                     {
                         $roleQuery = $baseRoleQuery . "$innr_People_ID
                         AND (pp.Project_ID = $outr_Project_ID
-                            OR pp.Program_ID = $outr_Program_ID)";    
+                            OR pp.Program_ID = $outr_Program_ID AND pp.Project_ID = 0)";
                     }
                     else
                     {
                         $roleQuery = $baseRoleQuery . "$innr_People_ID
                         AND pp.Program_ID = $outr_Program_ID";
                     }              
-                      
+                                        
                     $rolesNode = $xmlBld->createXmlNode($personNode,'Roles');
                     $roleResult = executeMyQuery($roleQuery);
                     
@@ -420,16 +433,11 @@ function getData($params)
     } 
     
     // get completed xml document
-    
-   
-    
     echo $xmlBld;
-    
     if ($cached)
     {
         $xmlBld->save($xmlfilename);
     }
-    
     errend:
     return true;
 }
