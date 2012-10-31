@@ -11,6 +11,8 @@ require_once 'owsException.php';
 
 function getData($params)
 {
+    $xmlfilename = '/tmp/rpiscache.xml$$';
+    
     //Make Paramaters caps insensitive.
     array_change_key_case($params,CASE_LOWER);
     
@@ -42,7 +44,8 @@ function getData($params)
     $fundingsource = '';
     $projectid = '';
     $projecttitle = '';
-    
+    $cached = false;
+        
     //Extract parameters into existing variables
     $rc = extract($params, EXTR_IF_EXISTS);
         
@@ -51,6 +54,11 @@ function getData($params)
     if (strtoupper($listresearchers) == "FALSE" || strtoupper($listresearchers) == "NO" || $listresearchers == "0")
     {
         $listresearchers = false;
+    }
+    
+    if (strtoupper($cached) == "TRUE" || strtoupper($cached) == "YES" || $cached == "1")
+    {
+        $cached = true;
     }
     
     if ($taskid <> "")
@@ -189,6 +197,30 @@ function getData($params)
         goto errend;
     }
     
+    if ($cached)
+    {
+        $outerQuery = $outerBaseQuery;
+        
+        $cachedoc = simplexml_load_file($xmlfilename);
+        
+        if ($cachedoc !== false)
+        {
+            $now = new DateTime("now");
+            $created =  new DateTime($cachedoc->CreatedDate);
+            $dateinterval = $now->diff($created);
+            $secondsold = $dateinterval->format('%s');
+            
+            if ($secondsold <= 300) //24 hours
+            {
+                echo $cachedoc->saveXML();
+                goto errend;
+            }
+        }
+
+    }
+    
+    
+    
     // Execute SQL
     $outerResult = executeMyQuery($outerQuery);
     $numberOfRows = mysql_num_rows($outerResult);
@@ -198,6 +230,8 @@ function getData($params)
         echo showException('NoDataAvailable','No data was available on the selected request!');
         goto errend;
     }
+    
+    $liteVersion = true;
                         
     //Create New xmlBuilder
     $xmlBld = new xmlBuilder();
@@ -206,6 +240,7 @@ function getData($params)
     
     //Add a node of Count with number of returned results.    
     $xmlBld->addChildValue($root,'Count',$numberOfRows);
+    $xmlBld->addChildValue($root,'CreatedDate',date('c'));
             
     while ($outrow = @mysql_fetch_assoc($outerResult)) 
     {
@@ -224,6 +259,7 @@ function getData($params)
         if (isset($outr_Project_ID))
         {
            $projectQuery = $baseProjectQuery ."
+            FROM Projects pj
             LEFT OUTER JOIN ProjKeywords pjk ON pj.Project_ID = pjk.Project_ID 
             LEFT OUTER JOIN Keywords pjkw ON pjkw.Keyword_ID = pjk.Keyword_ID 
             WHERE pj.Project_ID = $outr_Project_ID" ;    
@@ -231,13 +267,14 @@ function getData($params)
         else
         {
             $projectQuery = $baseProjectQuery ."
+            FROM v_Projects pj
             LEFT OUTER JOIN ProjKeywords pjk ON pj.Program_ID = pjk.Program_ID 
             LEFT OUTER JOIN Keywords pjkw ON pjkw.Keyword_ID = pjk.Keyword_ID 
             WHERE pj.Program_ID = $outr_Program_ID" ;    
         }
                 
         $outerProjectResult = executeMyQuery($projectQuery);
-                
+        
         while ($row = @mysql_fetch_assoc($outerProjectResult))
         {
             $projectNode = $xmlBld->createXmlNode($root,'Task');
@@ -298,6 +335,7 @@ function getData($params)
             }
         }
             
+        // Researchers
         if ($listresearchers)
         {
             //add subnode for Researchers
@@ -367,7 +405,7 @@ function getData($params)
                         $roleQuery = $baseRoleQuery . "$innr_People_ID
                         AND pp.Program_ID = $outr_Program_ID";
                     }              
-                                        
+                      
                     $rolesNode = $xmlBld->createXmlNode($personNode,'Roles');
                     $roleResult = executeMyQuery($roleQuery);
                     
@@ -382,7 +420,16 @@ function getData($params)
     } 
     
     // get completed xml document
+    
+   
+    
     echo $xmlBld;
+    
+    if ($cached)
+    {
+        $xmlBld->save($xmlfilename);
+    }
+    
     errend:
     return true;
 }

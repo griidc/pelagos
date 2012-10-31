@@ -58,7 +58,13 @@ class xmlBuilder
 		return $node;
 	}
 	
-	public function __tostring()
+	public function save($filename)
+	{
+		$this->doc->normalizeDocument();
+		return $this->doc->save($filename);
+	}
+    
+    public function __tostring()
 	{
 		$this->doc->normalizeDocument();
 		return $this->doc->saveXML();

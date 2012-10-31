@@ -6,6 +6,9 @@
 // Returns: xml rest request
 // Purpose: Entry point in REST (using Slim) to return XML data
 
+ini_set('display_errors',true);
+error_reporting(-1);
+
 require 'Slim/Slim.php';
 require 'getTaskData.php';
 

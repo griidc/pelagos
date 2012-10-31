@@ -72,8 +72,9 @@ SELECT
 	pj.Project_Completed 'Completed',
 	pjkw.Keyword_Word 'Keywords',
 	pjkw.Keyword_ID '__Attr__ID'
-    FROM v_Projects pj
     ";
+    //FROM v_Projects pj
+    //";
 //LEFT OUTER JOIN ProjKeywords pjk ON pj.Project_ID = pjk.Project_ID
 //LEFT OUTER JOIN Keywords pjkw ON pjkw.Keyword_ID = pjk.Keyword_ID
 //WHERE pj.Project_ID = ";
