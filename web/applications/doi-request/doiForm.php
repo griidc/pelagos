@@ -404,7 +404,7 @@ if ($userId == "")
 <div id="creator_tip" style="display:none;">
     <img src="/dif/images/info.png" style="float:right;" />
     <p>
-        <strong>Creator:</strong> The main researcher involved in producing the data, or the authors of the publication in priority order. Each name may be a corporate, institutional, or personal name, in personal names list family name before given name, as in Darwin, Charles. Non-roman names should be transliterated according to the ALA-LC schemes <em>(http://www.loc.gov/catdir/cpso/roman.html)</em>. 
+        <strong>Creator:</strong> The main researchers involved in producing the data, or the authors of the publication in priority order. Each name may be a corporate, institutional, or personal name, in personal names list family name before given name, as in Darwin, Charles. Non-roman names should be transliterated according to the ALA-LC schemes <em>(http://www.loc.gov/catdir/cpso/roman.html)</em>. 
     </p>
 </div>
 
