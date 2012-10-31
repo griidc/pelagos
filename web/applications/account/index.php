@@ -133,14 +133,14 @@ $app->get("$GLOBALS[BASE]/request", function () use ($app) {
         $stash['person']['givenName']['value'] = $person['FirstName'];
         $stash['person']['sn']['value'] = $person['LastName'];
         $stash['person']['cn']['value'] = '';
-        if (isset($person['Title'][0]) and $person['Title'][0] != '') $stash['person']['cn']['value'] .= $person['Title'][0] . ' ';
+        if (isset($person['Title']) and !is_array($person['Title']) and $person['Title'] != '') $stash['person']['cn']['value'] .= $person['Title'] . ' ';
         $stash['person']['cn']['value'] .= $person['FirstName'];
-        if (isset($person['MiddleName']) and $person['MiddleName'] != '') $stash['person']['cn']['value'] .= ' ' . $person['MiddleName'];
+        if (isset($person['MiddleName']) and !is_array($person['MiddleName']) and $person['MiddleName'] != '') $stash['person']['cn']['value'] .= ' ' . $person['MiddleName'];
         $stash['person']['cn']['value'] .= ' ' .$person['LastName'];
-        if (isset($person['Suffix']) and $person['Suffix'] != '') $stash['person']['cn']['value'] .= ', ' . $person['Suffix'];
+        if (isset($person['Suffix']) and !is_array($person['Suffix']) and $person['Suffix'] != '') $stash['person']['cn']['value'] .= ', ' . $person['Suffix'];
         $stash['person']['mail']['value'] = $email;
         $stash['person']['telephoneNumber']['value'] = $person['PhoneNum'];
-        if (isset($person['JobTitle']) and $person['JobTitle'] != '') $stash['person']['title']['value'] = $person['JobTitle'];
+        if (isset($person['JobTitle']) and !is_array($person['JobTitle']) and $person['JobTitle'] != '') $stash['person']['title']['value'] = $person['JobTitle'];
 
         $stash['person']['sshPublicKey']['value'] = PASTE_PUB_KEY;
         $stash['affiliations'] = get_affiliations(null);
