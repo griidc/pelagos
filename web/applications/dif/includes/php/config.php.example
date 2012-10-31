@@ -1,0 +1,5 @@
+<?php
+
+$GLOBALS['RPIS_baseurl'] = 'http://someserver.com/path/to/RPIS/getTaskDetails.php';
+
+?>

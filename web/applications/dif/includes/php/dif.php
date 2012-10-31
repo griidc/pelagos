@@ -12,6 +12,7 @@ include_once '/usr/local/share/GRIIDC/php/ldap.php';
 include_once '/usr/local/share/GRIIDC/php/drupal.php';
 include ('functions.php'); 
 include ("dbGomri.php");
+include ("config.php");
 $ldap = connectLDAP('triton.tamucc.edu');
 $baseDN = 'dc=griidc,dc=org';
 $uid = getDrupalUserName();
