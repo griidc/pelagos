@@ -34,39 +34,29 @@ function isAdmin() {
 
 function makeTaskGrouping($tasks, $which) {
 	foreach ($tasks as $task){
-		//$dbOptionValue = $task['ID'];
                 $dbOptionValue = $task['ID']. '|' . $task->Project['ID'];
 		$dbOption = $taskTitle;
 		 echo "if (chosen == \"$dbOptionValue\") { ";
-		 callPeople($which, $dbOptionValue);
+		 callPeople($which, $task);
 		 echo" }\n\n";
 	}
-	unset($doc);
 }
 		
-function callPeople($w, $ti) {
-	$switch = '?'.'maxResults=-1&listResearchers=true';
-	$filters = "&taskID=$ti";
-	$url = $GLOBALS['RPIS_baseurl'].$switch.$filters;		
-	$doc = simplexml_load_file($url);
-	$tasks = $doc->xpath('Task');
+function callPeople($w, $task) {
 	$he = "\nselboxs.options[selboxs.options.length] = new \nOption('[SELECT]', '999');";
 	if ($w=="s"){$buildarray=array($he);}else{$buildarray =array();}
-	foreach ($tasks as $task) {
-		$peops = $task->xpath('Researchers/Person');
-		foreach ($peops as $peoples) {
-			$personID = $peoples['ID'];
-			$bool = 0;
-			$LastName = preg_replace('/\'/','\\\'',$peoples->LastName);
-			$FirstName = preg_replace('/\'/','\\\'',$peoples->FirstName);
-			$Email = preg_replace('/\'/','\\\'',$peoples->Email);
-			$line = "\nselbox$w.options[selbox$w.options.length] = new \nOption('$LastName, $FirstName - ($Email)', $personID, '', $bool);";
-			array_push($buildarray, $line );
-		}
+	$peops = $task->xpath('Researchers/Person');
+	foreach ($peops as $peoples) {
+		$personID = $peoples['ID'];
+		$bool = 0;
+		$LastName = preg_replace('/\'/','\\\'',$peoples->LastName);
+		$FirstName = preg_replace('/\'/','\\\'',$peoples->FirstName);
+		$Email = preg_replace('/\'/','\\\'',$peoples->Email);
+		$line = "\nselbox$w.options[selbox$w.options.length] = new \nOption('$LastName, $FirstName - ($Email)', $personID, '', $bool);";
+		array_push($buildarray, $line );
 	}
 	$result = array_unique($buildarray);
 	foreach($result as $ribbit){ echo $ribbit; }
-	unset($doc);
 }
    	
 function getPersonOptionList($whom, $ti) {
