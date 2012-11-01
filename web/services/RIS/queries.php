@@ -9,26 +9,24 @@
 
 $outerBaseQuery = "
 SELECT
-	DISTINCT
-	pj.Project_ID,
-	pg.Program_ID,
-	pgi.Institution_ID 'Program_Institution_ID',
-	pji.Institution_ID 'Project_Institution_ID',
-	f.Fund_ID
-FROM v_Projects pj
-LEFT OUTER JOIN Programs pg ON pj.Program_ID = pg.Program_ID
-LEFT OUTER JOIN Institutions pgi ON pg.Program_LeadInstitution = pgi.Institution_ID
-LEFT OUTER JOIN Institutions pji ON pj.Project_LeadInstitution = pji.Institution_ID
-LEFT OUTER JOIN ProjKeywords pjk ON pj.Project_ID = pjk.Project_ID
-LEFT OUTER JOIN ProjKeywords pgk ON pg.Program_ID = pgk.Program_ID
-LEFT OUTER JOIN Keywords pjkw ON pjkw.Keyword_ID = pjk.Keyword_ID
-LEFT OUTER JOIN Keywords pgkw ON pgkw.Keyword_ID = pgk.Keyword_ID
-LEFT OUTER JOIN FundingSource f ON f.Fund_ID = pg.Program_FundSrc
-LEFT OUTER JOIN ProjPeople ppg ON ppg.Program_ID = pg.Program_ID
-LEFT OUTER JOIN ProjPeople ppj ON ppj.Project_ID = pj.Project_ID
-LEFT OUTER JOIN People plg ON ppg.People_ID = plg.People_ID
-LEFT OUTER JOIN People plj ON ppj.People_ID = plj.People_ID
-LEFT OUTER JOIN Departments d ON plj.People_Department = d.Department_ID
+    DISTINCT
+    pj.Project_ID,
+    pg.Program_ID,
+    pgi.Institution_ID 'Program_Institution_ID',
+    pji.Institution_ID 'Project_Institution_ID',
+f.Fund_ID
+FROM ProjPeople pp
+    LEFT OUTER JOIN v_Projects pj ON (pp.Project_ID = pj.Project_ID AND pp.Program_ID = pj.Program_ID)
+    LEFT OUTER JOIN Programs pg ON pj.Program_ID = pg.Program_ID
+    LEFT OUTER JOIN Institutions pgi ON pg.Program_LeadInstitution = pgi.Institution_ID
+    LEFT OUTER JOIN Institutions pji ON pj.Project_LeadInstitution = pji.Institution_ID
+    LEFT OUTER JOIN ProjKeywords pjk ON pj.Project_ID = pjk.Project_ID
+    LEFT OUTER JOIN ProjKeywords pgk ON pg.Program_ID = pgk.Program_ID
+    LEFT OUTER JOIN Keywords pjkw ON pjkw.Keyword_ID = pjk.Keyword_ID
+    LEFT OUTER JOIN Keywords pgkw ON pgkw.Keyword_ID = pgk.Keyword_ID
+    LEFT OUTER JOIN FundingSource f ON f.Fund_ID = pg.Program_FundSrc
+    LEFT OUTER JOIN People p ON pp.People_ID = p.People_ID
+LEFT OUTER JOIN Departments d ON p.People_Department = d.Department_ID
 WHERE Project_Completed=1 AND Program_Completed=1
 AND f.Fund_ID > 0
 ";

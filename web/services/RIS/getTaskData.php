@@ -11,11 +11,13 @@ require_once 'owsException.php';
 
 function getData($params)
 {
-    $xmlfilename = '/tmp/rpiscache.xml';
-    
     //Make Paramaters caps insensitive.
     $params = array_change_key_case($params,CASE_LOWER);
     
+    $paramHash = sha1(serialize($params));
+    
+    $xmlfilename = "/tmp/rpiscache$paramHash.xml";
+        
     require 'queries.php';
     //Parameters predefined as variables.
     $title = '';
@@ -88,20 +90,17 @@ function getData($params)
          
     if ($lastname <> "" and $firstname <> "")
     {
-        $outerQuery .= "AND (ppj.People_ID IN (SELECT People_ID FROM People WHERE People_lastName LIKE \"$lastname\" AND People_firstName = \"$firstname\")";
-        $outerQuery .= "or ppg.People_ID IN (SELECT People_ID FROM People WHERE People_lastName LIKE \"$lastname\" AND People_firstName = \"$firstname\"))";
+        $outerQuery .= "AND pp.People_ID IN (SELECT People_ID FROM People WHERE People_lastName LIKE \"$lastname\" AND People_firstName = \"$firstname\")";
     }
     else
     {
         if ($lastname <> "")
         {
-            $outerQuery .= "AND (ppj.People_ID IN (SELECT People_ID FROM People WHERE People_lastName LIKE \"$lastname\")";
-            $outerQuery .= "or ppg.People_ID IN (SELECT People_ID FROM People WHERE People_lastName LIKE \"$lastname\"))";
+            $outerQuery .= "AND pp.People_ID IN (SELECT People_ID FROM People WHERE People_lastName LIKE \"$lastname\")";
         }
         if ($firstname <> "")
         {
-            $outerQuery .= "AND (ppj.People_ID IN (SELECT People_ID FROM People WHERE People_firstName LIKE \"$firstname\")";
-            $outerQuery .= "or ppg.People_ID IN (SELECT People_ID FROM People WHERE People_firstName LIKE \"$firstname\"))";
+            $outerQuery .= "AND pp.People_ID IN (SELECT People_ID FROM People WHERE People_firstName LIKE \"$firstname\")";
         }
     }
 
@@ -237,7 +236,7 @@ function getData($params)
         
     // Execute SQL
     $outerResult = executeMyQuery($outerQuery);
-
+   
     $numberOfRows = mysql_num_rows($outerResult);
     
     if ($numberOfRows == 0)
@@ -269,7 +268,7 @@ function getData($params)
             $outr_Project_Institution_ID = -1;
         }
         
-        if (isset($outr_Project_ID))
+        if ($outr_Project_ID > 0)
         {
            $projectQuery = $baseProjectQuery ."
             FROM Projects pj
@@ -325,7 +324,7 @@ function getData($params)
             }
         }
                
-        if (isset($outr_Project_ID))
+        if ($outr_Project_ID>0)
         {
             $projectThemesQuery = $themesQuery . $outr_Project_ID;
             
@@ -354,7 +353,7 @@ function getData($params)
             $ProgramID = $outr_Program_ID;
             
             
-            if (isset($outr_Project_ID))
+            if ($outr_Project_ID>0)
             {
                 $innerQuery = $baseInnerQuery . "
                 WHERE pp.Project_ID = $outr_Project_ID
@@ -405,7 +404,7 @@ function getData($params)
                         $xmlBld->rowToXmlChild($peopleInstitutionNode,$row);
                     }
                       
-                    if (isset($outr_Project_ID))
+                    if ($outr_Project_ID>0)
                     {
                         $roleQuery = $baseRoleQuery . "$innr_People_ID
                         AND (pp.Project_ID = $outr_Project_ID
