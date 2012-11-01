@@ -78,9 +78,10 @@ function callPeople($w, $task) {
 
    	
 function getPersonOptionList($whom, $ti) {
+    $filters = '';
     if ($ti > 0)
     {
-        $filters .= "&taskID=$ti";
+        $filters .= "?taskID=$ti";
     }
     $url = $GLOBALS['RPIS_people_baseurl'].$filters;
     $doc = simplexml_load_file($url);
