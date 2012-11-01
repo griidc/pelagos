@@ -219,14 +219,16 @@ function getData($params)
             $cachedoc = false;
         }
         
-        
         if ($cachedoc !== false)
         {
             $now = new DateTime("now");
             $created =  new DateTime($cachedoc->CreatedDate);
             $dateinterval = $now->diff($created);
-            $secondsold = $dateinterval->format('%s');
-            
+            $secondsold = (int) $dateinterval->format('%s'); 
+            $secondsold += ((int) $dateinterval->format('%i')*60);
+            $secondsold += ((int) $dateinterval->format('%h') * 3600);
+            $secondsold += ((int) $dateinterval->format('%d') * 86400);
+
             if ($secondsold <= 3600) //1 hour
             {
                 echo $cachedoc->saveXML();
@@ -325,7 +327,6 @@ function getData($params)
                 $xmlBld->rowToXmlChild($InstitutionNode,$row);
             }
         }
-        
                
         if (isset($outr_Project_ID))
         {
