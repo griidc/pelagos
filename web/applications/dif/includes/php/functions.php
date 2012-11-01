@@ -42,22 +42,40 @@ function makeTaskGrouping($tasks, $which) {
 	}
 }
 		
+
+
+
+
+
+
 function callPeople($w, $task) {
-	$he = "\nselboxs.options[selboxs.options.length] = new \nOption('[SELECT]', '999');";
-	if ($w=="s"){$buildarray=array($he);}else{$buildarray =array();}
-	$peops = $task->xpath('Researchers/Person');
-	foreach ($peops as $peoples) {
-		$personID = $peoples['ID'];
-		$bool = 0;
-		$LastName = preg_replace('/\'/','\\\'',$peoples->LastName);
-		$FirstName = preg_replace('/\'/','\\\'',$peoples->FirstName);
-		$Email = preg_replace('/\'/','\\\'',$peoples->Email);
-		$line = "\nselbox$w.options[selbox$w.options.length] = new \nOption('$LastName, $FirstName - ($Email)', $personID, '', $bool);";
-		array_push($buildarray, $line );
-	}
-	$result = array_unique($buildarray);
-	foreach($result as $ribbit){ echo $ribbit; }
+    $bb=array();
+    $he = "\nselboxs.options[selboxs.options.length] = new \nOption('[SELECT]', '999');";
+    if ($w=="s"){$b=array($he);}else{$b =array();}
+    $peops = $task->xpath('Researchers/Person');
+    foreach ($peops as $peoples) {
+         $personID = $peoples['ID'];
+         $bool = 0;
+         $LastName = preg_replace('/\'/','\\\'',$peoples->LastName);
+         $FirstName = preg_replace('/\'/','\\\'',$peoples->FirstName);
+         $Email = preg_replace('/\'/','\\\'',$peoples->Email);
+         if (!$Email){}else{$Email = " <$Email>";}
+         $line = "\nselbox$w.options[selbox$w.options.length] = new \nOption('$LastName, $FirstName $Email', $personID, '', $bool);";
+         array_push($bb, $line );
+    }
+    array_unique($bb);
+    sort($bb);
+    $result = array_merge($b, $bb);
+    foreach($result as $ribbit){ echo $ribbit; }
 }
+
+
+
+
+
+
+
+
    	
 function getPersonOptionList($whom, $ti) {
     if ($taskID > 0)
