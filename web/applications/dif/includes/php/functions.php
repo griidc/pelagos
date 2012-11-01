@@ -78,11 +78,11 @@ function callPeople($w, $task) {
 
    	
 function getPersonOptionList($whom, $ti) {
-    if ($taskID > 0)
+    if ($ti > 0)
     {
-        $filters .= "&taskID=$taskID";
+        $filters .= "&taskID=$ti";
     }
-    $url = $GLOBALS['RPIS_baseurl'].$filters;
+    $url = $GLOBALS['RPIS_people_baseurl'].$filters;
     $doc = simplexml_load_file($url);
     $buildarray=array('<option value="">[SELECT]</option>');
     $peops = $doc->xpath('Person');
@@ -123,7 +123,7 @@ function getTasks($ldap,$baseDN,$userDN,$firstName,$lastName) {
     $tasks = array();
     if (isAdmin())
     {
-        $doc = simplexml_load_file($GLOBALS['RPIS_baseurl'].$switch.'&cached=true');
+        $doc = simplexml_load_file($GLOBALS['RPIS_task_baseurl'].$switch.'&cached=true');
         $tasks = array_merge($tasks,$doc->xpath('Task'));
     }
     else
@@ -135,7 +135,7 @@ function getTasks($ldap,$baseDN,$userDN,$firstName,$lastName) {
             if (!is_array($group)) continue;
             preg_match('/ou=([^,]+)/',$group['dn'],$matches);
             $filters = "&projectTitle=$matches[1]";
-            $doc = simplexml_load_file($GLOBALS['RPIS_baseurl'].$switch.$filters);
+            $doc = simplexml_load_file($GLOBALS['RPIS_task_baseurl'].$switch.$filters);
             $tasks = array_merge($tasks,$doc->xpath('Task'));
             $GLOBALS['isGroupAdmin'] = true;
         }
@@ -143,7 +143,7 @@ function getTasks($ldap,$baseDN,$userDN,$firstName,$lastName) {
         if (count($groupDNs) == 0)
         {
             $filters = "&lastName=$lastName&firstName=$firstName";
-            $doc = simplexml_load_file($GLOBALS['RPIS_baseurl'].$switch.$filters);
+            $doc = simplexml_load_file($GLOBALS['RPIS_task_baseurl'].$switch.$filters);
             $tasks = array_merge($tasks,$doc->xpath('Task'));
         }
     }
