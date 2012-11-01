@@ -221,13 +221,10 @@ function getData($params)
         
         if ($cachedoc !== false)
         {
-            $now = new DateTime("now");
-            $created =  new DateTime($cachedoc->CreatedDate);
-            $dateinterval = $now->diff($created);
-            $secondsold = (int) $dateinterval->format('%s'); 
-            $secondsold += ((int) $dateinterval->format('%i')*60);
-            $secondsold += ((int) $dateinterval->format('%h') * 3600);
-            $secondsold += ((int) $dateinterval->format('%d') * 86400);
+            $now = time();
+            $created = (int) $cachedoc->CreatedDate;
+            
+            $secondsold = $now - $created;
 
             if ($secondsold <= 3600) //1 hour
             {
@@ -256,7 +253,7 @@ function getData($params)
     
     //Add a node of Count with number of returned results.    
     $xmlBld->addChildValue($root,'Count',$numberOfRows);
-    $xmlBld->addChildValue($root,'CreatedDate',date('c'));
+    $xmlBld->addChildValue($root,'CreatedDate',time());
             
     while ($outrow = @mysql_fetch_assoc($outerResult)) 
     {
