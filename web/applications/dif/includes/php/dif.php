@@ -35,23 +35,34 @@ if ($_GET)
 {
     if (isset($_GET['personID'])) 
     {
-        $person = $_GET['personID'];
+        $personid = $_GET['personID'];
         ob_clean();
         ob_flush();
-        $tasks = filterTasks($tasks,$person);
-        echo displayTaskStatus($tasks,true);
+        $tasks = filterTasks($tasks,$personid);
+        echo displayTaskStatus($tasks,true,$personid);
         exit;
     }
     
     if (isset($_GET['persontask'])) 
     {
-        $person = $_GET['persontask'];
+        $personid = $_GET['persontask'];
         ob_clean();
         ob_flush();
-        $tasks = filterTasks($tasks,$person);
+        $tasks = filterTasks($tasks,$personid);
         echo "<option value=' '>[SELECT A TASK]</option>";
         echo getTaskOptionList($tasks, null);
         exit;
+    }
+    
+    if (isset($_GET['prsid'])) 
+    {
+        $GLOBALS['personid'] = $_GET['prsid'];
+        $alltasks = $tasks;
+        $tasks = filterTasks($tasks,$GLOBALS['personid']);
+    }
+    else
+    {
+        unset($GLOBALS['personid']);
     }
 }
 

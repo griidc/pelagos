@@ -38,13 +38,13 @@ include_once '/usr/local/share/GRIIDC/php/drupal.php';
 </script>
 
 <?php
-if ($GLOBALS['isGroupAdmin'] OR isAdmin())
+
+function buildFilter($tasks,$personid,$alltasks=null)
 {
-    echo '<table class=cleair><tbody class=tbody><tr><td>';
-    //echo '<h2>Dataset Filter</h2>';
-    echo '<form id="filter" name="filter">';
-    echo '<label for="name">Filter by Researcher:</label>';
-    echo '<select id="name" onchange="updateSidebar(this.value);">';
+    if (isset($alltasks))
+    {
+        $tasks = $alltasks;
+    }
     
     $buildarray=array();
     foreach ($tasks as $task) 
@@ -66,9 +66,22 @@ if ($GLOBALS['isGroupAdmin'] OR isAdmin())
     foreach($result as $person){ 
         $people = explode("|",$person);
         $line= "<option value=\"$people[1]\"";
+        if ($personid == $people[1]) {$line.= ' selected ';}
         $line.= ">$people[0]</option>";
         echo $line;
-    }
+    } 
+    
+}
+
+if ($GLOBALS['isGroupAdmin'] OR isAdmin())
+{
+    echo '<table class=cleair><tbody class=tbody><tr><td>';
+    //echo '<h2>Dataset Filter</h2>';
+    echo '<form id="filter" name="filter">';
+    echo '<label for="name">Filter by Researcher:</label>';
+    echo '<select id="name" onchange="updateSidebar(this.value);">';
+    
+    buildFilter($tasks,$GLOBALS['personid'],$alltasks);
     
     echo '</select>';
     echo '</form><br \>';
@@ -83,7 +96,7 @@ echo "</h2></td></tr><tr><td>";
 echo '<div id="dstree" style="width:100%;height:800px;overflow:auto;" BGCOLOR="#efefef">';
 echo "<div class=\"dtree\">\n";
 echo "<script type=\"text/javascript\">\n\n";
-displayTaskStatus($tasks,null);
+displayTaskStatus($tasks,null,$GLOBALS['personid']);
 echo "</script>\n</div>\n";
 echo "</div></td></tr> </tbody> </table>";
 

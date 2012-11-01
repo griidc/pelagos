@@ -133,7 +133,7 @@ function getTasks($ldap,$baseDN,$userDN,$firstName,$lastName) {
     return $tasks;
 }
 
-function displayTaskStatus($tasks,$update=null)
+function displayTaskStatus($tasks,$update=null,$personid=null)
 {
     echo "d = new dTree('d');\n\n";
     echo "d.add(0,-1,'Datasets','');\n\n";
@@ -167,19 +167,32 @@ function displayTaskStatus($tasks,$update=null)
             $title = $row[0];
             $datasetid = $row[2];
             
+            if (isset($personid))
+            {
+                echo "d.add($nodeCount,$folderCount,'".addslashes($title)."','?uid=$datasetid&prsid=$personid','".addslashes($title)."','_self'";
+            }
+            else
+            {
+                echo "d.add($nodeCount,$folderCount,'".addslashes($title)."','?uid=$datasetid','".addslashes($title)."','_self'";
+            }
+            
+            
             switch ($status)
             {
                 case null:
-                echo "d.add($nodeCount,$folderCount,'".addslashes($title)."','?uid=$datasetid','".addslashes($title)."','_self','/dif/images/red_bobble.png');\n";
+                echo ",'/dif/images/red_bobble.png');\n";
                 break;
                 case 0:
-                echo "d.add($nodeCount,$folderCount,'".addslashes($title)."','?uid=$datasetid','".addslashes($title)."','_self','/dif/images/red_bobble.png');\n";
+                echo ",'/dif/images/red_bobble.png');\n";
                 break;
                 case 1:
-                echo "d.add($nodeCount,$folderCount,'".addslashes($title)."','?uid=$datasetid','".addslashes($title)."','_self','/dif/images/yellow_bobble.png');\n";
+                echo ",'/dif/images/yellow_bobble.png');\n";
                 break;
                 case 2:
-                echo "d.add($nodeCount,$folderCount,'".addslashes($title)."','?uid=$datasetid','".addslashes($title)."','_self','/dif/images/green_bobble.png');\n";
+                echo ",'/dif/images/green_bobble.png');\n";
+                break;
+                default:
+                echo ");\n";
                 break;
             }
             $nodeCount++;
