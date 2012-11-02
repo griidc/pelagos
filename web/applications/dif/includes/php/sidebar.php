@@ -66,7 +66,6 @@ $email = "";
     
     $result = array_unique($buildarray);
     sort($result,SORT_STRING);
-    
     echo '<option value="">[Show ALL]</option>';
     foreach($result as $person){ 
         $people = explode("|",$person);
@@ -98,7 +97,7 @@ echo "<h2 class=\"title\" align=center>Tasks and datasets for ".$firstName." ".$
 echo "</h2></td></tr><tr><td>";
 
 
-echo '<div id="dstree" style="width:100%;height:800px;overflow:auto;" BGCOLOR="#efefef">';
+echo '<div id="dstree" style="width:100%;height:2570px;overflow:auto;" BGCOLOR="#efefef">';
 echo "<div class=\"dtree\">\n";
 echo "<script type=\"text/javascript\">\n\n";
 displayTaskStatus($tasks,null,$GLOBALS['personid']);
