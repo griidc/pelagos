@@ -44,7 +44,7 @@ padding:10px;
 -moz-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
 box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
 }
-
+em { font-weight: bold; padding-right: 1em; vertical-align: top; color:#FF0000;}
 
 .cleair {
 margin:auto;
