@@ -33,6 +33,9 @@ function isAdmin() {
 }
 
 function makeTaskGrouping($tasks, $which) {
+        $dbOption = "";
+        $dbOptionValue ="";
+        $taskTitle ="";
 	foreach ($tasks as $task){
                 $dbOptionValue = $task['ID']. '|' . $task->Project['ID'];
 		$dbOption = $taskTitle;
@@ -149,6 +152,9 @@ function getTasks($ldap,$baseDN,$userDN,$firstName,$lastName) {
 
 function displayTaskStatus($tasks,$update=null,$personid=null)
 {
+    $projectID ="";
+    $taskTitle="";
+    $taskID ="";
     echo "d = new dTree('d');\n\n";
     echo "d.add(0,-1,'Datasets','');\n\n";
     $nodeCount = 1;
@@ -156,9 +162,8 @@ function displayTaskStatus($tasks,$update=null,$personid=null)
     foreach ($tasks as $task)
     {
         $taskID = $task['ID'];
-        
         $taskTitle = $task->Title;
-        $projectID = $task->Project[ID];
+        $projectID = $task->Project['ID'];
 
         echo "d.add($nodeCount,0,'".addslashes($taskTitle)."','javascript: d.o($nodeCount);','".addslashes($taskTitle)."','','','',true);\n";
         $nodeCount++;

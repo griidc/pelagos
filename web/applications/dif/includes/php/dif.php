@@ -17,6 +17,7 @@ $ldap = connectLDAP('triton.tamucc.edu');
 $baseDN = 'dc=griidc,dc=org';
 $uid = getDrupalUserName();
 if (isset($uid)) {
+    $submittedby ="";
     $userDNs = getDNs($ldap,$baseDN,"uid=$uid");
     $userDN = $userDNs[0]['dn'];
     if (count($userDNs) > 0) {
