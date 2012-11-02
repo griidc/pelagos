@@ -204,7 +204,7 @@ Video&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
 
     <p><fieldset> 
         <?PHP helps("coberservations", "Phenomenon/Variables Observed or Generated", "iobservation"); ?>
-            <textarea  name="observation" <?PHP if ($status != 0){echo "disabled";} ?> id="coberservations" rows=3 cols=98  onkeypress="return imposeMaxLength(this, 300);"><?PHP if ($flag=="update"){echo $m[7];} ?></textarea>
+            <textarea  name="observation" <?PHP if ($status != 0){echo "disabled";} ?> id="coberservations" rows=3 cols=98  maxlength="300"   onkeypress="return imposeMaxLength(this, 300);"><?PHP if ($flag=="update"){echo $m[7];} ?></textarea>
     </fieldset></p>
 
     <p><fieldset>

@@ -187,7 +187,13 @@ $status = 0;$usernumber=1;
 if (($_POST['submit'])||($_POST['later'])||($_POST['reject'])||($_POST['accept'])) { 
 if ($_POST['later']) { $status = 0;}else{$status = 1;}
    //CONCAT TO FIT DB
-   foreach ($_POST as $k=>$v) { $$k = pg_escape_string($v);}
+   foreach ($_POST as $k=>$v) { 
+//if (!$v){$v="NULL";}
+//echo "$k and $v<HR>";
+//array_push($ssa, "$k|$v"); 
+
+$$k = pg_escape_string($v);}
+
    list($task, $project)=explode("|", $task);
    $title = str_replace(array("\r\n", "\n\r", "\r", "\n", "\t"), " ", $title);
    $datafor = $eco.'|'.$phys.'|'.$atm.'|'.$ch.'|'.$geog.'|'.$scpe.'|'.$econom.'|'.$geop.'|'.$dtother;
@@ -205,23 +211,31 @@ if ($_POST['accept'] OR $_POST['reject'])
 { 
 	$uid =$modts;
 	$sql = "UPDATE datasets SET status='".$status ."'  WHERE dataset_uid='".$uid."'";
-	//echo $sql;
-	//exit;
 }
 else
 {
 
 
+
+
 if ($flag== "update"){$uid =$modts;
-	$sql = "UPDATE datasets SET dataset_uid='".$uid."', task_uid='".$task."', title='".$title."', abstract='".$abstract."', dataset_type='".$datatype."', dataset_for='".$datafor."', size='".$size."', observation='".$observation ."', approach='".$approach ."', historic_links='".$historical."', meta_editor='".$ed ."', meta_standards='".$standards."', point='".$point."', national='".$national ."', ethical='".$privacy."', remarks='".$remarks ."', primary_poc='".$ppoc."', secondary_poc='".$spoc ."', logname='".$submittedby."', status='".$status."', project_id='".$project."', start_date='".$sdate."', end_date='".$edate."', geo_location='".$geoloc ."'  WHERE dataset_uid='".$uid."'";
-	}else{
-	$uid = time();
-	$sql = "INSERT INTO datasets(dataset_uid, task_uid, title, abstract, dataset_type, dataset_for, size, observation, approach, start_date, end_date, geo_location, historic_links, meta_editor, meta_standards, point, national, ethical, remarks, primary_poc, secondary_poc, logname, status, project_id) VALUES('$uid', '$task', '$title', '$abstract', '$datatype', '$datafor', '$size', '$observation', '$approach', '$sdate', '$edate','$geoloc', '$historical', '$ed', '$standards', '$point', '$national', '$privacy', '$remarks', '$ppoc', '$spoc', '$submittedby','$status', '$project')";
-	}
-
-
-
-
+    $sql = "UPDATE datasets SET dataset_uid='".$uid."', task_uid='".$task."', title='".$title."', abstract='".$abstract."', dataset_type='".$datatype."', dataset_for='".$datafor."', size='".$size."', observation='".$observation ."', approach='".$approach ."', historic_links='".$historical."', meta_editor='".$ed ."', meta_standards='".$standards."', point='".$point."', national='".$national ."', ethical='".$privacy."', remarks='".$remarks ."', primary_poc=";
+    if ($ppoc ==""){$sql .="null";}else{ $sql.="'".$ppoc."'";}
+    $sql .=", secondary_poc=";
+    if ($spoc ==""){$sql .="null";}else{ $sql.="'".$spoc."'";}
+    $sql.=", logname='".$submittedby."', status='".$status."', project_id=";
+    if ($project ==""){$sql .="null";}else{ $sql.="'".$project."'";}
+    $sql.=", start_date='".$sdate."', end_date='".$edate."', geo_location='".$geoloc ."'  WHERE dataset_uid='".$uid."'";
+}else{
+    $uid = time();
+    $sql = "INSERT INTO datasets(dataset_uid, task_uid, title, abstract, dataset_type, dataset_for, size, observation, approach, start_date, end_date, geo_location, historic_links, meta_editor, meta_standards, point, national, ethical, remarks, primary_poc, secondary_poc, logname, status, project_id) VALUES('$uid', '$task', '$title', '$abstract', '$datatype', '$datafor', '$size', '$observation', '$approach', '$sdate', '$edate','$geoloc', '$historical', '$ed', '$standards', '$point', '$national', '$privacy', '$remarks', ";
+if ($ppoc ==""){$sql .="null";}else{ $sql.="'".$ppoc."'";}
+   $sql.=", ";
+   if ($spoc ==""){$sql .="null";}else{ $sql.="'".$spoc."'";}
+   $sql .=", '$submittedby','$status', ";
+   if ($project ==""){$sql .="null";}else{ $sql.="'".$project."'";}
+   $sql .=")";
+}
 }
 $result = pg_query($connection, $sql); 
 if (!$result) { $mymesg="error"; $yn= "Something Went Wrong!!!" . pg_last_error(); } else { $mymesg= "status"; $yn= "Data successfully inserted"; } 

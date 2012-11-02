@@ -45,12 +45,9 @@ function makeTaskGrouping($tasks, $which) {
 
 
 
-
-
-
 function callPeople($w, $task) {
     $bb=array();
-    $he = "\nselboxs.options[selboxs.options.length] = new \nOption('[SELECT]', '999');";
+    $he = "\nselboxs.options[selboxs.options.length] = new \nOption('[SELECT]', '');";
     if ($w=="s"){$b=array($he);}else{$b =array();}
     $peops = $task->xpath('Researchers/Person');
     foreach ($peops as $peoples) {
@@ -107,10 +104,8 @@ function getTaskOptionList($tasks, $what) {
 		} else {
 			$taskTitle=$task->Title;
 		}
-		//$dbOptionValue = $task['ID'];
                 $dbOptionValue = $task['ID']. '|' . $task->Project['ID'];
 		$dbOption = $taskTitle;
-
 		echo "<option value=\"$dbOptionValue\"";
 		if ($what==$dbOptionValue){echo " SELECTED";}
 		echo ">$dbOption</option>";
