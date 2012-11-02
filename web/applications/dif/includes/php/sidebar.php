@@ -41,6 +41,7 @@ include_once '/usr/local/share/GRIIDC/php/drupal.php';
 
 function buildFilter($tasks,$personid,$alltasks=null)
 {
+$email = "";
     if (isset($alltasks))
     {
         $tasks = $alltasks;
@@ -54,7 +55,11 @@ function buildFilter($tasks,$personid,$alltasks=null)
         foreach ($peops as $peoples) 
         {
             $personID = $peoples['ID'];
-            $personName = "$peoples->LastName, $peoples->FirstName ($peoples->Email)";
+            $email = $peoples->Email;
+            $personName = "$peoples->LastName, $peoples->FirstName ";
+              if ($peoples->Email !=""){$personName .= "< ";}
+               $personName .= "$email";
+              if ($peoples->Email !=""){$personName .= " >";}
             array_push($buildarray, "$personName|$personID");
         }
     }
