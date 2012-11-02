@@ -71,83 +71,51 @@ drupal_add_js('
                     txtDate: "Please enter a Date [YYYY-MM-DD]."
                 }
             });
-                      
-            $("#qtip_date").qtip({
-                content: $("#date_tip"), 
-                position: {
+            
+            $.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
+            position: {
                     adjust: {
-                    method: "shift shift"
+                    method: "flip flip"
                 },
                     my: "middle left",
                     at: "middle right",
                     viewport: $(window)
+                    },
+                    show: {
+                    event: "mouseenter focus",
+                    solo: true
+                    },
+                    hide: {
+                    event: "mouseleave blur",
+                    delay: 100,
+                    fixed: true
                     },
                     style: {
                 classes: "ui-tooltip-shadow ui-tooltip-tipped"
                 }
             });
             
+                   
+                      
+            $("#qtip_date").qtip({
+                content: $("#txtDate_tip")
+            });
+            
             $("#qtip_pub").qtip({
-            content: $("#publisher_tip"), 
-            position: {
-            adjust: {
-            method: "shift shift"
-            },
-            my: "middle left",
-            at: "middle right",
-            viewport: $(window)
-            },
-            style: {
-            classes: "ui-tooltip-shadow ui-tooltip-tipped"
-            }
+                content: $("#publisher_tip")
             });
            
             $("#qtip_title").qtip({
-                content: $("#title_tip"),
-                position: {
-                adjust: {
-                    method: "shift shift"
-                    },
-                    my: "middle left",
-                at: "middle right",
-                viewport: $(window)
-                },
-                style: {
-                classes: "ui-tooltip-shadow ui-tooltip-tipped"
-                }
+                content: $("#title_tip")
             });
             
             $("#qtip_creator").qtip({
-                content: $("#creator_tip"),
-                position: {
-                    adjust: {
-                    method: "shift shift"
-                },
-                    my: "middle left",
-                    at: "middle right",
-                viewport: $(window)
-                },
-                style: {
-                classes: "ui-tooltip-shadow ui-tooltip-tipped"
-                }
+                content: $("#creator_tip")
             });
                 
             $("#qtip_url").qtip({
-                content: $("#url_tip"),
-                position: {
-                    adjust: {
-                    method: "shift shift"
-                },
-                    my: "middle left",
-                    at: "middle right",
-                viewport: $(window)
-                },
-                style: {
-                classes: "ui-tooltip-shadow ui-tooltip-tipped"
-                }
+                content: $("#url_tip")
             });
-        
-                              
         });
      
         $(function() {
@@ -355,6 +323,10 @@ if ($_POST)
         }
         else
         {
+            $txtWhat = pg_escape_string($txtWhat);
+            $txtWho = pg_escape_string($txtWho);
+            $txtWhere = pg_escape_string($txtWhere);
+            
             $query = "INSERT INTO doi_regs (url,creator,title,publisher,dsdate,urlstatus,formhash,reqdate,reqip,reqemail,reqby, reqfirstname, reqlastname) 
             VALUES ('$txtURL', '$txtWho', '$txtWhat', '$txtWhere', '$txtDate', '$urlValidate', '$formHash', '$now', '$ip','$userEmail','$userId', '$userFirstName', '$userLastName');";
             $result = dbexecute ($query);
@@ -391,6 +363,7 @@ if ($userId == "")
 }
 
 ?>
+
 <div>
 <div id="dialog" style="font-size:smaller"></div>
 
@@ -422,16 +395,16 @@ if ($userId == "")
     </p>
 </div>
 
-<div id="date_tip" style="display:none;">
+<div id="txtDate_tip" style="display:none;">
     <img src="/dif/images/info.png" style="float:right;" />
     <p>
-        <strong>Date:</strong> A valid ISO 8601 date. <em>e.g. (2012-12-23)</em>
+        <strong>Date:</strong> A valid ISO 8601 date.<br \><em>e.g. (2012-12-23)</em>
     </p>
 </div>
 
-<table border=0 width="40%,*">
+<table  border=0 width="45%,*">
 <tr>
-<td>
+<td class="cleair cmxform">
 <fieldset>
     <p><STRONG> NOTE: </STRONG><FONT COLOR="grey">A Digital Object Identifier (DOI) is a character string used to identify an electronic dataset (or document). The DOI is a permanent marker that is linked to metadata about the dataset. The metadata will include important information about the dataset including items as to when the data was collected, who is responsible for the data and a URL to the given dataset. Since the information included in the metadata is not always permanent (ex. URL changes) DOI's provide a way to permanently "stamp" the data so it can be easily searched and referenced. The following form will allow you to submit the appropriate information to receive a DOI for your dataset or document. Once you have filled out this form your information will be sent to GRIIDC for approval, and once approved a DOI will be sent to you.</font></p>
 </fieldset>
@@ -446,7 +419,7 @@ if ($userId == "")
     </span>
     <label for="txtURL"><em>*</em>Dataset URL:</label>
     <br />
-    <input <?php if ($formReadOnly) {echo 'disabled';};?> value="<?php if (isset($drURL)){echo $drURL;}?>" name="txtURL" id="txtURL" type="url" onblur="this.value=checkURL(this.value)" onkeyup="this.value=checkURL(this.value)" size="100"/>
+    <input <?php if ($formReadOnly) {echo 'disabled';};?> value="<?php if (isset($drURL)){echo $drURL;}?>" name="txtURL" id="txtURL" type="url" onblur="this.value=checkURL(this.value)" onkeyup="this.value=checkURL(this.value)" size="120"/>
 </fieldset>
 
 <fieldset id="qcreator">
@@ -455,7 +428,7 @@ if ($userId == "")
     </span>
     <label for="txtWho"><em>*</em>Dataset Creator:</label>
     <br />
-    <input <?php if ($formReadOnly) {echo 'disabled';};?> value="<?php if (isset($drCreator)){echo $drCreator;}?>" class="popWho" type="text" name="txtWho" id="txtWho" size="100"/>
+    <input <?php if ($formReadOnly) {echo 'disabled';};?> value="<?php if (isset($drCreator)){echo $drCreator;}?>" class="popWho" type="text" name="txtWho" id="txtWho" size="120"/>
 </fieldset>
 
 <fieldset id="qtitle">
@@ -464,7 +437,7 @@ if ($userId == "")
     </span>
     <label for="txtWhat"><em>*</em>Dataset Title:</label>
     <br />
-    <input <?php if ($formReadOnly) {echo 'disabled';};?> value="<?php if (isset($drTitle)){echo $drTitle;}?>" class="popWhat" type="text" name="txtWhat" id="txtWhat" size="100"/>
+    <input <?php if ($formReadOnly) {echo 'disabled';};?> value="<?php if (isset($drTitle)){echo $drTitle;}?>" class="popWhat" type="text" name="txtWhat" id="txtWhat" size="120"/>
     <br />
 </fieldset>
 
@@ -474,17 +447,17 @@ if ($userId == "")
     </span>
     <label for="txtWhere"><em>*</em>Dataset Publisher:</label>
     <br />
-    <input <?php if ($formReadOnly) {echo 'disabled';};?> value="<?php if (isset($drPublisher)){echo $drPublisher;}else{echo 'Harte Research Institute';}?>" class="popWhere" type="text" name="txtWhere" id="txtWhere" size="100"/>
+    <input <?php if ($formReadOnly) {echo 'disabled';};?> value="<?php if (isset($drPublisher)){echo $drPublisher;}else{echo 'Harte Research Institute';}?>" class="popWhere" type="text" name="txtWhere" id="txtWhere" size="120"/>
     <br />
 </fieldset>
 
-<fieldset id="qdate">
+<fieldset id="txtDate_fld">
     <span id="qtip_date" style="float:right;">
         <img src="/dif/images/info.png">
     </span>
     <label for="txtDate"><em>*</em>Dataset Date:</label>
     <br />
-    <input <?php if ($formReadOnly) {echo 'disabled';};?> value="<?php if (isset($drDate)){echo $drDate;}?>" class="popDate" type="text" name="txtDate" id="txtDate" size="100"/>
+    <input <?php if ($formReadOnly) {echo 'disabled';};?> value="<?php if (isset($drDate)){echo $drDate;}?>" class="popDate" type="text" name="txtDate" id="txtDate" size="120"/>
     <br />
  </fieldset>
 
