@@ -7,7 +7,9 @@
 // Returns: Form / Sidebar
 // Purpose: Wrapper for form and action scripts to update database & email at later date.
 
-error_reporting(0);   
+//error_reporting(0);   
+
+$alltasks="";
 include_once '/usr/local/share/GRIIDC/php/ldap.php';
 include_once '/usr/local/share/GRIIDC/php/drupal.php';
 include ('functions.php'); 
@@ -29,11 +31,11 @@ if (isset($uid)) {
         }
     }
 }
-
 $tasks = getTasks($ldap,$baseDN,$userDN,$firstName,$lastName);
-
+$GLOBALS['personid'] ="";
 if ($_GET) 
 {
+
     if (isset($_GET['personID'])) 
     {
         $personid = $_GET['personID'];
@@ -60,10 +62,6 @@ if ($_GET)
         $GLOBALS['personid'] = $_GET['prsid'];
         $alltasks = $tasks;
         $tasks = filterTasks($tasks,$GLOBALS['personid']);
-    }
-    else
-    {
-        unset($GLOBALS['personid']);
     }
 }
 

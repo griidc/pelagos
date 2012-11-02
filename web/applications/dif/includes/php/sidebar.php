@@ -41,8 +41,9 @@ include_once '/usr/local/share/GRIIDC/php/drupal.php';
 
 function buildFilter($tasks,$personid,$alltasks=null)
 {
+
 $email = "";
-    if (isset($alltasks))
+    if ($alltasks != '')
     {
         $tasks = $alltasks;
     }
