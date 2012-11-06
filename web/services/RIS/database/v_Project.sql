@@ -13,7 +13,7 @@ UNION ALL
 
 SELECT
 	DISTINCT
-		null AS 'Project_ID', 
+		0 AS 'Project_ID', 
 		pg.Program_ID,
 		pg.Program_SubTasks AS 'Project_SubTaskNum',
 		pg.Program_Title AS 'Project_Title',
