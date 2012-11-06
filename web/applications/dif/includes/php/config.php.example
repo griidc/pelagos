@@ -1,6 +1,0 @@
-<?php
-
-$GLOBALS['RPIS_task_baseurl'] = 'http://someserver.com/path/to/RPIS/getTaskDetails.php';
-$GLOBALS['RPIS_people_baseurl'] = 'http://someserver.com/path/to/RPIS/getPeopleDetails.php';
-
-?>

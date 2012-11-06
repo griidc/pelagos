@@ -1,0 +1,14 @@
+<?php
+
+# RPIS Web Services
+define('RPIS_task_baseurl','http://someserver.com/path/to/RPIS/getTaskDetails.php');
+define('RPIS_people_baseurl','http://someserver.com/path/to/RPIS/getPeopleDetails.php');
+
+# GoMRI Database
+define('DB_server','localhost');
+define('DB_port',5432);
+define('DB_database','gomri');
+define('DB_username','foobar');
+define('DB_password','barfoo');
+
+?>

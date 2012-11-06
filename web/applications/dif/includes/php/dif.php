@@ -10,11 +10,16 @@
 //error_reporting(0);   
 
 $alltasks="";
-include_once '/usr/local/share/GRIIDC/php/ldap.php';
-include_once '/usr/local/share/GRIIDC/php/drupal.php';
-include ('functions.php'); 
-include ("dbGomri.php");
-include ("config.php");
+require_once '/usr/local/share/GRIIDC/php/ldap.php';
+require_once '/usr/local/share/GRIIDC/php/drupal.php';
+require_once 'functions.php';
+
+if (!file_exists('config.php')) {
+    echo 'Error: config.php is missing. Please see config.php.example for an example config file.';
+    exit;
+}
+require_once 'config.php';
+
 $ldap = connectLDAP('triton.tamucc.edu');
 $baseDN = 'dc=griidc,dc=org';
 $uid = getDrupalUserName();
@@ -173,7 +178,7 @@ document.ed.video.value = "";
 <?php 
 if (!$submittedby){$submittedby = '-1';}
 //CONNECTION TO POSTGRES
-$connection = pg_connect("host=$dbserver port=$port dbname=$database user=$username password=$password") or die ("ERROR: " . pg_last_error($connection)); 
+$connection = pg_connect(GOMRI_DB_CONN_STRING) or die ("ERROR: " . pg_last_error($connection)); 
 if (!$connection) { die("Error in connection: " . pg_last_error()); } 
 $pu=array();
 $result3 = pg_exec($connection, "SELECT var_name, comments FROM form_info ORDER BY form_info.id ASC");
