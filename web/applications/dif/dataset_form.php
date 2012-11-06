@@ -254,7 +254,7 @@ Video&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
              <textarea name="ed" <?PHP if ($status != 0){echo "disabled";} ?> id="ced" rows=3 cols=98  onkeypress="return imposeMaxLength(this, 300);"><?PHP  if ($flag=="update"){echo $m[13];} ?></textarea>
     </fieldset></p>
 
-<?PHP list($stand[0], $stand[1], $stand[2], $stand[3], $stand[4])=explode("|", $m[14] ); ?>
+<?PHP if (isset($m[14]) and !empty($m[14])) { list($stand[0], $stand[1], $stand[2], $stand[3], $stand[4])=explode("|", $m[14] ); } ?>
 
 <table width="100%"><TR><TD>
     <p><fieldset>
@@ -268,7 +268,7 @@ Video&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
                  <td width="100%"><input style="width:95%;" type="text" <?PHP if ($status != 0){echo "disabled";} ?> name="otherst" value=<?PHP  if (($flag=="update")&&($stand[4])){echo "'$stand[4]'";} ?>></td>
              </tr></table>
     </fieldset></P>
-<?PHP list($point[0], $point[1], $point[2], $point[3])=explode("|", $m[15] );?>
+<?PHP if (isset($m[15]) and !empty($m[15])) { list($point[0], $point[1], $point[2], $point[3])=explode("|", $m[15] ); } ?>
 </TD><TD>&nbsp;&nbsp;&nbsp;</TD><TD> 
     <p><fieldset>
         <?PHP helps("caccess", "Data Access Points", "iaccess"); ?>
@@ -280,7 +280,7 @@ Video&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
 </TD></TR></TABLE>
 
 
-<?php list($nta[0], $nta[1], $nta[2], $nta[3], $nta[4], $nta[5], $nta[6])=explode("|", $m[16] );?>
+<?php if (isset($m[16]) and !empty($m[16])) { list($nta[0], $nta[1], $nta[2], $nta[3], $nta[4], $nta[5], $nta[6])=explode("|", $m[16] ); } ?>
 <p><fieldset>
         <?PHP helps("cnational", "National Data Center(s) that the Dataset will be Submitted to", "inational"); ?>
    <input type="checkbox" <?PHP if ($status != 0){echo "disabled";} ?> name="nat1" value="National Oceanographic Data Center" <?PHP  if (($flag=="update")&&($nta[0] == "National Oceanographic Data Center")){echo " checked";} ?>  id="cnational"  />National Oceanographic Data Center <a href="http://www.nodc.noaa.gov" target="_new">(http://www.nodc.noaa.gov)</a><br />
