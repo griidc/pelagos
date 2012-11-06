@@ -195,6 +195,9 @@ $n = array('','');
 $stand = array('','','','','');
 $point = array('','','','','');
 $ep = array('','','');
+$dtt = array('','','','','','','','');
+$dtf = array('','','','','','','','','');
+$aq = array('','','','','','');
 
 //SUBMITTED
 if ((isset($_POST['submit']) and $_POST['submit'])||(isset($_POST['later']) and $_POST['later'])||(isset($_POST['reject']) and $_POST['reject'])||(isset($_POST['accept']) and $_POST['accept'])) {
@@ -264,14 +267,14 @@ elseif (isset($_GET['uid']) and $uid=$_GET['uid']) {
     $m = pg_fetch_row($result4);
     //EXPLODE FOR DATA POPULATION
     $status=$m[22];
-    list($stand[0], $stand[1], $stand[2], $stand[3], $stand[4])=explode("|", $m[14] );
-    list($point[0], $point[1], $point[2], $point[3])=explode("|", $m[15] );
-    list($zz[0], $zz[1])=explode("|", $m[17]);
-    list($aq[0], $aq[1], $aq[2], $aq[3], $aq[4], $aq[5])=explode("|", $m[8] );
-    list($dtt[0], $dtt[1], $dtt[2], $dtt[3], $dtt[4], $dtt[5], $dtt[6], $dtt[7]) = explode("|", $m[4]);
-    list($l[0], $l[1],  $junk2)=explode("-", $m[9]);
-    list($n[0], $n[1], $junk)=explode("-", $m[10]);
-    list($dtf[0], $dtf[1], $dtf[2], $dtf[3], $dtf[4], $dtf[5], $dtf[6], $dtf[7],  $dtf[8]) = explode("|", $m[5]);
+    if (isset($m[14]) and !empty($m[14])) list($stand[0], $stand[1], $stand[2], $stand[3], $stand[4])=explode("|", $m[14] );
+    if (isset($m[15]) and !empty($m[15])) list($point[0], $point[1], $point[2], $point[3])=explode("|", $m[15] );
+    if (isset($m[17]) and !empty($m[17])) list($zz[0], $zz[1])=explode("|", $m[17]);
+    if (isset($m[8]) and !empty($m[8])) list($aq[0], $aq[1], $aq[2], $aq[3], $aq[4], $aq[5])=explode("|", $m[8] );
+    if (isset($m[4]) and !empty($m[4])) list($dtt[0], $dtt[1], $dtt[2], $dtt[3], $dtt[4], $dtt[5], $dtt[6], $dtt[7]) = explode("|", $m[4]);
+    if (isset($m[9]) and !empty($m[9])) list($l[0], $l[1],  $junk2)=explode("-", $m[9]);
+    if (isset($m[10]) and !empty($m[10])) list($n[0], $n[1], $junk)=explode("-", $m[10]);
+    if (isset($m[5]) and !empty($m[5])) list($dtf[0], $dtf[1], $dtf[2], $dtf[3], $dtf[4], $dtf[5], $dtf[6], $dtf[7],  $dtf[8]) = explode("|", $m[5]);
     foreach ($m as $kk=>$vv) {  $$kk = pg_escape_string($vv); }
     $mtask = $m[1]."|".$m[24];
 
