@@ -1,8 +1,0 @@
-<?php
-	$username='gomri_user';
-	$password='Sharkbait!';
-	$database='gomri';
-	$dbserver='localhost';
-	$port=5432;
-	 
-?>

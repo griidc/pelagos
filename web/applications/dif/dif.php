@@ -12,7 +12,7 @@
 $alltasks="";
 require_once '/usr/local/share/GRIIDC/php/ldap.php';
 require_once '/usr/local/share/GRIIDC/php/drupal.php';
-require_once 'functions.php';
+require_once 'lib/functions.php';
 
 if (!file_exists('config.php')) {
     echo 'Error: config.php is missing. Please see config.php.example for an example config file.';
