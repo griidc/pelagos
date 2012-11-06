@@ -37,6 +37,9 @@ function executeMyQuery($query)
 		$message= 'Can\'t use db: ' . mysql_error();
 		throw new Exception ($message);
 	}
+
+    // Set client character set to UTF-8
+    mysql_query('set character_set_client = utf8;');
 	
 	// Execute Query
 	$result = mysql_query($query);
