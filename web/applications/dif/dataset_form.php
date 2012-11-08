@@ -127,7 +127,7 @@ drupal_add_js("$js",array('type'=>'inline'));
 
     <p><fieldset id="qabstract">
         <?PHP helps("cabstract", "<em>*</em>Dataset Abstract", "iabstract"); ?>
-           <textarea <?PHP if ($status != 0){echo "disabled";} ?> name="abstract" id="cabstract" class="required" maxlength="400" rows=3 cols=98 onkeypress="return imposeMaxLength(this, 400);" ><?PHP if ($flag=="update"){echo $m[3];} ?></textarea> 
+           <textarea <?PHP if ($status != 0){echo "disabled";} ?> name="abstract" id="cabstract" class="required" maxlength="4000" rows=3 cols=98 onkeypress="return imposeMaxLength(this, 4000);" ><?PHP if ($flag=="update"){echo $m[3];} ?></textarea> 
     </fieldset></p>
 
     <p><fieldset>
