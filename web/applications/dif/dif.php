@@ -199,6 +199,55 @@ $dtt = array('','','','','','','','');
 $dtf = array('','','','','','','','','');
 $aq = array('','','','','','');
 
+$task = '|';
+$title = '';
+$eco = '';
+$phys = '';
+$atm = '';
+$ch = '';
+$geog = '';
+$scpe = '';
+$econom = '';
+$geop = '';
+$dtother = '';
+$field = '';
+$sim = '';
+$lab = '';
+$lit = '';
+$remote = '';
+$approachother = '';
+$sye = '';
+$smo = '';
+$edate = '';
+$eye = '';
+$emo = '';
+$s1 = '';
+$s2 = '';
+$s3 = '';
+$s4 = '';
+$otherst = '';
+$a1 = '';
+$a2 = '';
+$a3 = '';
+$accessother = '';
+$privacy = '';
+$privacyother = '';
+$nat1 = '';
+$nat2 = '';
+$nat3 = '';
+$nat4 = '';
+$nat5 = '';
+$nat6 = '';
+$othernat = '';
+$sascii = '';
+$uascii = '';
+$images = '';
+$netCDF = '';
+$dtvideo = '';
+$video = '';
+$gml = '';
+$otherdty = '';
+
 //SUBMITTED
 if ((isset($_POST['submit']) and $_POST['submit'])||(isset($_POST['later']) and $_POST['later'])||(isset($_POST['reject']) and $_POST['reject'])||(isset($_POST['accept']) and $_POST['accept'])) {
     if (isset($_POST['later']) and $_POST['later']) { $status = 0;}else{$status = 1;}
@@ -223,7 +272,7 @@ if ((isset($_POST['submit']) and $_POST['submit'])||(isset($_POST['later']) and 
     //SQL
     if (isset($_POST['reject']) and $_POST['reject']) { $status = 0;}
     if (isset($_POST['accept']) and $_POST['accept']) { $status = 2;}
-    if (isset($_POST['accept']) and $_POST['accept'] OR $_POST['reject'])
+    if (isset($_POST['accept']) and $_POST['accept'] OR isset($_POST['reject']) AND $_POST['reject'])
     { 
     	$uid =$modts;
     	$sql = "UPDATE datasets SET status='".$status ."'  WHERE dataset_uid='".$uid."'";
