@@ -77,16 +77,21 @@ function callPeople($w, $task) {
 
 
    	
+function sortByName($node1, $node2) {
+    return strcmp($node1->LastName.$node1->FirstName, $node2->LastName.$node2->FirstName);
+}
+
 function getPersonOptionList($whom, $ti) {
     $filters = '';
     if ($ti > 0)
     {
         $filters .= "?taskID=$ti";
     }
-    $url = RPIS_PEOPLE_BASEURL.$filters;
+    $url = RPIS_TASK_BASEURL.$filters;
     $doc = simplexml_load_file($url);
     $buildarray=array('<option value="">[SELECT]</option>');
-    $peops = $doc->xpath('Person');
+    $peops = $doc->xpath('Task/Researchers/Person');
+    usort($peops,'sortByName');
     foreach ($peops as $peoples) {
         $personID = $peoples['ID'];
         $line= "<option value=\"$personID\"";
