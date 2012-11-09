@@ -90,23 +90,39 @@ function getData($params)
          
     if ($lastname <> "" and $firstname <> "")
     {
-        $outerQuery .= "AND pp.People_ID IN (SELECT People_ID FROM People WHERE People_lastName LIKE \"$lastname\" AND People_firstName = \"$firstname\")";
+        $peopleIDQuery = "SELECT People_ID FROM People WHERE People_lastName LIKE \"$lastname\" AND People_firstName = \"$firstname\";";
     }
     else
     {
         if ($lastname <> "")
         {
-            $outerQuery .= "AND pp.People_ID IN (SELECT People_ID FROM People WHERE People_lastName LIKE \"$lastname\")";
+            $peopleIDQuery = "SELECT People_ID FROM People WHERE People_lastName LIKE \"$lastname\";";
+
         }
         if ($firstname <> "")
         {
-            $outerQuery .= "AND pp.People_ID IN (SELECT People_ID FROM People WHERE People_firstName LIKE \"$firstname\")";
+            $peopleIDQuery = "SELECT People_ID FROM People WHERE People_firstName LIKE \"$firstname\";";
+
         }
+    }
+    
+    if ($lastname <> "" or $firstname <> "")
+    {
+        $peopleIDResult = executeMyQuery($peopleIDQuery);
+        
+        while ($peopleIDRows = @mysql_fetch_assoc($peopleIDResult)) 
+        {
+            $peopleid .= $peopleIDRows['People_ID'] . ',';
+        }
+        
+        $peopleid = substr($peopleid,0,-1);
     }
 
     if ($peopleid <> "")
     {
-        $outerQuery .= "AND pp.People_ID = \"$peopleid\" ";
+        $outerQuery .= "AND (pp.Program_ID in (SELECT DISTINCT Program_ID FROM ProjPeople WHERE People_ID in ($peopleid) AND Project_ID = 0) ";
+        $outerQuery .= "OR pp.Project_ID in (SELECT DISTINCT Project_ID FROM ProjPeople WHERE People_ID in ($peopleid) AND Project_ID <> 0)) ";
+        
     }
     
     if ($q_taskkeyword <> "") 
@@ -233,6 +249,10 @@ function getData($params)
         }
         
     }
+    
+    //echo $outerQuery;
+    
+    //exit;
         
     // Execute SQL
     $outerResult = executeMyQuery($outerQuery);
