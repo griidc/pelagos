@@ -106,7 +106,7 @@ function getData($params)
 
     if ($peopleid <> "")
     {
-        $outerQuery .= "AND (ppj.People_ID = \"$peopleid\" OR ppg.People_ID = \"$peopleid\") ";
+        $outerQuery .= "AND pp.People_ID = \"$peopleid\" ";
     }
     
     if ($q_taskkeyword <> "") 
