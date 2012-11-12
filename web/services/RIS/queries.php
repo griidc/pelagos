@@ -95,8 +95,9 @@ SELECT
 	pg.Program_Comment  'Comment',
 	pg.Program_Completed  'Completed',
 	pgkw.Keyword_Word 'Keywords',
-	pgkw.Keyword_ID '__Attr__ID',
+	pgkw.Keyword_ID '__Keywords__ID',
 	IF (LOCATE('Year One',fs.Fund_Name)<>0,'Year 1 Block Grant',fs.Fund_Name) AS 'FundingSource',
+    fs.Fund_ID '__FundingSource__ID',
     CONCAT(ppi.People_LastName,', ',ppi.People_FirstName) AS 'PrincipalInvestigator'
 FROM Programs pg
 LEFT OUTER JOIN ProjKeywords pgk ON pg.Program_ID = pgk.Program_ID

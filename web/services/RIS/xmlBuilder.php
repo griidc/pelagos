@@ -20,9 +20,9 @@ class xmlBuilder
 	{
 		
 		foreach ($row as $fieldname => $fieldvalue) {
-			if (substr($fieldname,0,8) == '__Attr__')
+			if (preg_match('/^__.+__(.+)/',$fieldname,$matches))
 			{
-				$child->setAttribute(substr($fieldname,8),$fieldvalue);
+				$child->setAttribute($matches[1],$fieldvalue);
 			}
 			else
 			{
