@@ -259,7 +259,7 @@ if ((isset($_POST['submit']) and $_POST['submit'])||(isset($_POST['later']) and 
 
     $$k = pg_escape_string($v);}
 
-    list($task, $project)=explode("|", $task);
+    list($task,$project,$fundSrc)=explode("|", $task);
     $title = str_replace(array("\r\n", "\n\r", "\r", "\n", "\t"), " ", $title);
     $datafor = $eco.'|'.$phys.'|'.$atm.'|'.$ch.'|'.$geog.'|'.$scpe.'|'.$econom.'|'.$geop.'|'.$dtother;
     $approach = $field."|".$sim."|".$lab."|".$lit."|".$remote."|".$approachother;
@@ -291,13 +291,13 @@ if ((isset($_POST['submit']) and $_POST['submit'])||(isset($_POST['later']) and 
         }
         else {
             $uid = time();
-            $sql = "INSERT INTO datasets(dataset_uid, task_uid, title, abstract, dataset_type, dataset_for, size, observation, approach, start_date, end_date, geo_location, historic_links, meta_editor, meta_standards, point, national, ethical, remarks, primary_poc, secondary_poc, logname, status, project_id) VALUES('$uid', '$task', '$title', '$abstract', '$datatype', '$datafor', '$size', '$observation', '$approach', '$sdate', '$edate','$geoloc', '$historical', '$ed', '$standards', '$point', '$national', '$privacy', '$remarks', ";
+            $sql = "INSERT INTO datasets(dataset_uid, task_uid, title, abstract, dataset_type, dataset_for, size, observation, approach, start_date, end_date, geo_location, historic_links, meta_editor, meta_standards, point, national, ethical, remarks, primary_poc, secondary_poc, logname, status, project_id, dataset_udi) VALUES('$uid', '$task', '$title', '$abstract', '$datatype', '$datafor', '$size', '$observation', '$approach', '$sdate', '$edate','$geoloc', '$historical', '$ed', '$standards', '$point', '$national', '$privacy', '$remarks', ";
             if ($ppoc ==""){$sql .="null";}else{ $sql.="'".$ppoc."'";}
             $sql.=", ";
             if ($spoc ==""){$sql .="null";}else{ $sql.="'".$spoc."'";}
             $sql .=", '$submittedby','$status', ";
             if ($project ==""){$sql .="null";}else{ $sql.="'".$project."'";}
-            $sql .=")";
+            $sql .=", nextudi($project,$task,'$fundSrc'))";
         }
     }
     $result = pg_query($connection, $sql); 

@@ -37,7 +37,18 @@ function makeTaskGrouping($tasks, $which) {
         $dbOptionValue ="";
         $taskTitle ="";
 	foreach ($tasks as $task){
-                $dbOptionValue = $task['ID']. '|' . $task->Project['ID'];
+        if ($task->Project->FundingSource['ID'] > 0 and $task->Project->FundingSource['ID'] < 7) {
+            $fundSrc = 'Y1';
+        }
+        else {
+            switch ($task->Project->FundingSource['ID']) {
+                case 7: $fundSrc = 'R1'; break;
+                case 8: $fundSrc = 'R2'; break;
+                case 9: $fundSrc = 'R3'; break;
+                default: $fundSrc = '??';
+            }
+        }
+        $dbOptionValue = $task['ID']. '|' . $task->Project['ID'] . '|' . $fundSrc;
 		$dbOption = $taskTitle;
 		 echo "if (chosen == \"$dbOptionValue\") { ";
 		 callPeople($which, $task);
@@ -112,7 +123,18 @@ function getTaskOptionList($tasks, $what) {
 		} else {
 			$taskTitle=$task->Title;
 		}
-                $dbOptionValue = $task['ID']. '|' . $task->Project['ID'];
+        if ($task->Project->FundingSource['ID'] > 0 and $task->Project->FundingSource['ID'] < 7) {
+            $fundSrc = 'Y1';
+        }
+        else {
+            switch ($task->Project->FundingSource['ID']) {
+                case 7: $fundSrc = 'R1'; break;
+                case 8: $fundSrc = 'R2'; break;
+                case 9: $fundSrc = 'R3'; break;
+                default: $fundSrc = '??';
+            }
+        }
+        $dbOptionValue = $task['ID']. '|' . $task->Project['ID'] . '|' . $fundSrc;
 		$dbOption = $taskTitle;
 		echo "<option value=\"$dbOptionValue\"";
 		if ($what==$dbOptionValue){echo " SELECTED";}
@@ -175,11 +197,11 @@ function displayTaskStatus($tasks,$update=null,$personid=null)
         
         if ($taskID > 0)
         {
-            $query = "select title,status,dataset_uid from datasets where task_uid=$taskID";
+            $query = "select title,status,dataset_uid,dataset_udi from datasets where task_uid=$taskID";
         }
         else
         {
-            $query = "select title,status,dataset_uid from datasets where project_id=$projectID";
+            $query = "select title,status,dataset_uid,dataset_udi from datasets where project_id=$projectID";
 
         }   	
         
@@ -190,14 +212,15 @@ function displayTaskStatus($tasks,$update=null,$personid=null)
             $status = $row[1];
             $title = $row[0];
             $datasetid = $row[2];
+            $dataset_udi = $row[3];
             
             if (isset($personid))
             {
-                echo "d.add($nodeCount,$folderCount,'".addslashes($title)."','?uid=$datasetid&prsid=$personid','".addslashes($title)."','_self'";
+                echo "d.add($nodeCount,$folderCount,'".addslashes("[$dataset_udi] $title")."','?uid=$datasetid&prsid=$personid','".addslashes("[$dataset_udi] $title")."','_self'";
             }
             else
             {
-                echo "d.add($nodeCount,$folderCount,'".addslashes($title)."','?uid=$datasetid','".addslashes($title)."','_self'";
+                echo "d.add($nodeCount,$folderCount,'".addslashes("[$dataset_udi] $title")."','?uid=$datasetid','".addslashes("[$dataset_udi] $title")."','_self'";
             }
             
             
