@@ -169,7 +169,7 @@ if (!$submittedby){$submittedby = '-1';}
 $connection = pg_connect(GOMRI_DB_CONN_STRING) or die ("ERROR: " . pg_last_error($connection)); 
 if (!$connection) { die("Error in connection: " . pg_last_error()); } 
 $pu=array();
-$result3 = pg_exec($connection, "SELECT var_name, comments FROM form_info ORDER BY form_info.id ASC");
+$result3 = pg_exec($connection, "SELECT var_name, comments FROM form_info WHERE form = 'dif' ORDER BY form_info.id ASC");
 if (!$result3) { die("Error in SQL query: " . pg_last_error()); } 
 while($row = pg_fetch_row($result3)){
 echo " <div id=\"$row[0]_tip\" style=\"display:none;\"> <img src=\"/dif/images/info.png\" style=\"float:right;\" /> $row[1]</div>";
@@ -177,7 +177,7 @@ array_push($pu, $row[0]); }
 $status = 0;$usernumber=1;
 
 $flag = '';
-$m = array('','','','','','','','','','','','','','','','','');
+$m = array('','','','','','','','','','','','','','','','','','','','','','','','','','');
 $size = array('','','','','','');
 $l = array('','');
 $n = array('','');
