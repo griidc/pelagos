@@ -276,7 +276,11 @@ if ((isset($_POST['submit']) and $_POST['submit'])||(isset($_POST['later']) and 
             if ($spoc ==""){$sql .="null";}else{ $sql.="'".$spoc."'";}
             $sql.=", logname='".$submittedby."', status='".$status."', project_id=";
             if ($project == "") { $sql .= "null";}else{ $sql.="'".$project."'";}
-            $sql.=", start_date='".$sdate."', end_date='".$edate."', geo_location='".$geoloc ."'  WHERE dataset_uid='".$uid."'";
+            $sql.=", start_date='".$sdate."', end_date='".$edate."', geo_location='".$geoloc ."'";
+            if (sprintf('%s.x%03d.%03d',$fundSrc,$project,$task) != substr($dataset_udi,0,11)) {
+                $sql .= ", dataset_udi = nextudi($project,$task,'$fundSrc')";
+            }
+            $sql .= " WHERE dataset_uid='".$uid."'";
         }
         else {
             $uid = time();
