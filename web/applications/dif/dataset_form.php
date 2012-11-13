@@ -77,7 +77,7 @@ drupal_add_js("$js",array('type'=>'inline'));
 
     <h1>Dataset Information&nbsp&nbsp&nbsp&nbsp;<?PHP echo "<span  style=float:right; ><img src=\"/dif/images/$status.png\"></SPAN>"; ?> </h1>
     <strong>NOTICE:</strong> Fields that are preceded by an asterisk (<em>*</em>) are required inputs. Note that only records that have not been submitted can be edited. Also, <i>Tasks</i> may have more than one 
-    <i>Dataset</i>. Submitting a record with e same <i>Task Title</i> but with a different <i>Dataset Title</i> produces several <i>Dataset</i> records for that <i>Task</i>.<hr /><br />
+    <i>Dataset</i>. Submitting a record with the same <i>Task Title</i>, but with a different <i>Dataset Title</i>, produces several <i>Dataset</i> records for that <i>Task</i>.<hr /><br />
 
     <?PHP if ($status != 0){echo "<div STYLE=text-align:right><a href=\"?\"><IMG SRC=/dif/images/button.png></A></div>"; }?>
 
