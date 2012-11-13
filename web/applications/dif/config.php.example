@@ -1,14 +1,10 @@
 <?php
 
 # RPIS Web Services
-define('RPIS_task_baseurl','http://someserver.com/path/to/RPIS/getTaskDetails.php');
-define('RPIS_people_baseurl','http://someserver.com/path/to/RPIS/getPeopleDetails.php');
+define('RPIS_TASK_BASEURL','http://someserver.com/path/to/RPIS/getTaskDetails.php');
+define('RPIS_PEOPLE_BASEURL','http://someserver.com/path/to/RPIS/getPeopleDetails.php');
 
 # GoMRI Database
-define('DB_server','localhost');
-define('DB_port',5432);
-define('DB_database','gomri');
-define('DB_username','foobar');
-define('DB_password','barfoo');
+define('GOMRI_DB_CONN_STRING','host=localhost port=5432 dbname=gomri user=foobar password=barfoo');
 
 ?>
