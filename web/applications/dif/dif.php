@@ -144,7 +144,7 @@ document.ed.video.value = "";
    <style type="text/css">
      p { clear: both; }
      .submit { margin-left: 12em; }
-     em { font-weight: bold; padding-right: 1em; vertical-align: top; color:#FF0000;}
+     em.form { font-weight: bold; padding-right: 1em; vertical-align: top; color:#FF0000;}
    </style>
   <script>
      $(document).ready(function(){

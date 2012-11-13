@@ -76,13 +76,13 @@ drupal_add_js("$js",array('type'=>'inline'));
     </fieldset>
 
     <h1>Dataset Information&nbsp&nbsp&nbsp&nbsp;<?PHP echo "<span  style=float:right; ><img src=\"/dif/images/$status.png\"></SPAN>"; ?> </h1>
-    <strong>NOTICE:</strong> Fields that are preceded by an asterisk (<em>*</em>) are required inputs. Note that only records that have not been submitted can be edited. Also, <i>Tasks</i> may have more than one 
+    <strong>NOTICE:</strong> Fields that are preceded by an asterisk (<em style="font-weight: bold; vertical-align: top; color:#FF0000;">*</em>) are required inputs. Note that only records that have not been submitted can be edited. Also, <i>Tasks</i> may have more than one 
     <i>Dataset</i>. Submitting a record with the same <i>Task Title</i>, but with a different <i>Dataset Title</i>, produces several <i>Dataset</i> records for that <i>Task</i>.<hr /><br />
 
     <?PHP if ($status != 0){echo "<div STYLE=text-align:right><a href=\"?\"><IMG SRC=/dif/images/button.png></A></div>"; }?>
 
    <p><fieldset id="qtask"> 
-       <?PHP helps("ctask", "<em>*</em>Task Title", "itask"); ?>
+       <?PHP helps("ctask", "<em class='form'>*</em>Task Title", "itask"); ?>
        <?PHP  if (!$flag){ ?>
            <span id="span1"> 
                 <select id="ctask" name="task" style="width:800px;" size="1" onchange="setOptions(document.ed.task.options[document.ed.task.selectedIndex].value);" class="required" >
@@ -101,13 +101,13 @@ drupal_add_js("$js",array('type'=>'inline'));
 
  
     <p><fieldset id="qtitle">
-        <?PHP helps("ctitle", "<em>*</em>Dataset Title", "ititle"); ?>
+        <?PHP helps("ctitle", "<em class='form'>*</em>Dataset Title", "ititle"); ?>
         <textarea <?PHP if ($status != 0){echo "disabled";} ?> name="title" id="ctitle" class="required" maxlength="200" rows=3 cols=98  onkeypress="return imposeMaxLength(this, 200);" ><?PHP if ($flag=="update"){echo $m[2];} ?></textarea>
     </fieldset></p>
 
     <table WIDTH="100%"><tr><td> 
     <p><fieldset id="qppoc">
-       <?PHP helps("cppoc", "<em>*</em>Primary Point of Contact", "ippoc"); ?>
+       <?PHP helps("cppoc", "<em class='form'>*</em>Primary Point of Contact", "ippoc"); ?>
            <select name="ppoc" id="cppoc" <?PHP if ($status != 0) echo "disabled"; ?> class="required" style="width:385px;">
                <?PHP if (!$flag) { ?>
                    <option value="">Please Choose a Task First</option>
@@ -126,7 +126,7 @@ drupal_add_js("$js",array('type'=>'inline'));
     </td></tr></table>
 
     <p><fieldset id="qabstract">
-        <?PHP helps("cabstract", "<em>*</em>Dataset Abstract", "iabstract"); ?>
+        <?PHP helps("cabstract", "<em class='form'>*</em>Dataset Abstract", "iabstract"); ?>
            <textarea <?PHP if ($status != 0){echo "disabled";} ?> name="abstract" id="cabstract" class="required" maxlength="4000" rows=3 cols=98 onkeypress="return imposeMaxLength(this, 4000);" ><?PHP if ($flag=="update"){echo $m[3];} ?></textarea> 
     </fieldset></p>
 
@@ -193,7 +193,7 @@ Video&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
     <?PHP if (($flag == "update")&&($m[6]==">5TB")){$size[5]=" checked";} ?>
  
     <p><fieldset>
-        <?PHP helps("csize", "<em>* </em>Approximate Dataset Size", "isize"); ?>
+        <?PHP helps("csize", "<em class='form'>* </em>Approximate Dataset Size", "isize"); ?>
             <input type="radio" name="size" <?PHP if ($status != 0){echo "disabled";} ?> value="< 1 Gb"   <?PHP echo " $size[0]"; ?> checked="checked"> < 1GB &nbsp;&nbsp;&nbsp;&nbsp; 
             <input type="radio" name="size" <?PHP if ($status != 0){echo "disabled";} ?> value="1GB-10GB" <?PHP echo " $size[1]"; ?>> 1GB-10GB&nbsp;&nbsp;&nbsp;&nbsp;
             <input type="radio" name="size" <?PHP if ($status != 0){echo "disabled";} ?> value="10GB-200GB"<?PHP echo " $size[2]"; ?>> 10GB-200GB&nbsp;&nbsp;&nbsp;&nbsp;
