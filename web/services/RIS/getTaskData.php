@@ -9,7 +9,7 @@ require_once 'xmlBuilder.php';
 require_once 'dbMyFunc.php';
 require_once 'owsException.php';
 
-function getData($params)
+function getData($params,$recache = false)
 {
     //Make Paramaters caps insensitive.
     $params = array_change_key_case($params,CASE_LOWER);
@@ -225,7 +225,7 @@ function getData($params)
     {
         $outerQuery = $outerBaseQuery;
         
-        if (file_exists($xmlfilename))
+        if (file_exists($xmlfilename) and !$recache)
         {
             $cachedoc = simplexml_load_file($xmlfilename);
         }

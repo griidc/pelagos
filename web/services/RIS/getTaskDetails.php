@@ -28,7 +28,13 @@ if (!$debug)
 $app->get('/', function () use ($app) {
     global $debug;
 	$allGetParams = $app->request()->get();
-	$results = getData($allGetParams); //Has to return TRUE or no XML.
+	if (isset($allGetParams['recache'])) {
+		unset($allGetParams['recache']);
+		$results = getData($allGetParams,true); //Has to return TRUE or no XML.
+	}
+	else {
+		$results = getData($allGetParams); //Has to return TRUE or no XML.
+	}
 	$response = $app->response();
 	$response['Content-Type'] = 'application/xml';
 	$response['X-Powered-By'] = 'Slim';
