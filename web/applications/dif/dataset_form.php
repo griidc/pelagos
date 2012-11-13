@@ -87,7 +87,7 @@ drupal_add_js("$js",array('type'=>'inline'));
            <span id="span1"> 
                 <select id="ctask" name="task" style="width:800px;" size="1" onchange="setOptions(document.ed.task.options[document.ed.task.selectedIndex].value);" class="required" >
                     <option value="" selected="selected">[SELECT A TASK]</option>
-                    <?PHP getTaskOptionList($tasks, $m[1]); ?>
+                    <?PHP getTaskOptionList($tasks); ?>
                 </select>
            </span>
        <?PHP }else{ ?>

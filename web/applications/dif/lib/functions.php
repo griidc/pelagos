@@ -115,7 +115,7 @@ function getPersonOptionList($whom, $ti) {
     unset($doc);
 }
 
-function getTaskOptionList($tasks, $what) {
+function getTaskOptionList($tasks, $what = null) {
     $maxLength = 200;
 	foreach ($tasks as $task){
 		if (strlen($task->Title) > $maxLength){

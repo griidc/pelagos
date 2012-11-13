@@ -325,7 +325,7 @@ elseif (isset($_GET['uid']) and $uid=$_GET['uid']) {
     if (isset($m[10]) and !empty($m[10])) list($n[0], $n[1], $junk)=explode("-", $m[10]);
     if (isset($m[5]) and !empty($m[5])) list($dtf[0], $dtf[1], $dtf[2], $dtf[3], $dtf[4], $dtf[5], $dtf[6], $dtf[7],  $dtf[8]) = explode("|", $m[5]);
     foreach ($m as $kk=>$vv) {  $$kk = pg_escape_string($vv); }
-    $mtask = $m[1]."|".$m[24];
+    $mtask = $m[1]."|".$m[24].'|'.substr($m[25],0,2);
 
     $flag="update";
 }
