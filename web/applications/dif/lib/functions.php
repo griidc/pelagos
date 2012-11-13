@@ -197,11 +197,11 @@ function displayTaskStatus($tasks,$update=null,$personid=null)
         
         if ($taskID > 0)
         {
-            $query = "select title,status,dataset_uid,dataset_udi from datasets where task_uid=$taskID";
+            $query = "select title,status,dataset_uid,dataset_udi from datasets where task_uid=$taskID order by dataset_udi";
         }
         else
         {
-            $query = "select title,status,dataset_uid,dataset_udi from datasets where project_id=$projectID";
+            $query = "select title,status,dataset_uid,dataset_udi from datasets where project_id=$projectID order by dataset_udi";
 
         }   	
         
