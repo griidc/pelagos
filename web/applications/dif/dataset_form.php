@@ -248,17 +248,17 @@ Video&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
 
     <p><fieldset>
         <?PHP helps("cgeoloc", "Geographic/Study Area", "igeoloc"); ?>
-           <textarea name="geoloc"<?PHP if ($status != 0){echo "disabled";} ?>  id="cgeoloc"  rows=3 cols=98 onkeypress="return imposeMaxLength(this, 200);"><?PHP if ($flag=="update"){echo $m[11];} ?></textarea>
+           <textarea name="geoloc"<?PHP if ($status != 0){echo "disabled";} ?>  id="cgeoloc"  rows=3 cols=98 maxlength=200 onkeypress="return imposeMaxLength(this, 200);"><?PHP if ($flag=="update"){echo $m[11];} ?></textarea>
     </fieldset></p>
 
     <p><fieldset>
         <?PHP helps("chistorical", "Historical Data References (if applicable)", "ihistorical"); ?>
-            <textarea name="historical" <?PHP if ($status != 0){echo "disabled";} ?> id="chistoric" rows=3 cols=98  onkeypress="return imposeMaxLength(this, 300);"><?PHP if ($flag=="update"){echo $m[12];} ?></textarea>
+            <textarea name="historical" <?PHP if ($status != 0){echo "disabled";} ?> id="chistoric" rows=3 cols=98 maxlength=300 onkeypress="return imposeMaxLength(this, 300);"><?PHP if ($flag=="update"){echo $m[12];} ?></textarea>
     </fieldset></p>
 
     <p><fieldset>
         <?PHP helps("ced", "Metadata Editor to  Use", "ied"); ?>
-             <textarea name="ed" <?PHP if ($status != 0){echo "disabled";} ?> id="ced" rows=3 cols=98  onkeypress="return imposeMaxLength(this, 300);"><?PHP  if ($flag=="update"){echo $m[13];} ?></textarea>
+             <textarea name="ed" <?PHP if ($status != 0){echo "disabled";} ?> id="ced" rows=3 cols=98 maxlength=300 onkeypress="return imposeMaxLength(this, 300);"><?PHP  if ($flag=="update"){echo $m[13];} ?></textarea>
     </fieldset></p>
 
 <?PHP if (isset($m[14]) and !empty($m[14])) { list($stand[0], $stand[1], $stand[2], $stand[3], $stand[4])=explode("|", $m[14] ); } ?>
@@ -320,7 +320,7 @@ Video&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
 
     <p><fieldset>
         <?PHP helps("cremarks", "Remarks", "iremarks"); ?>
-            <textarea name="remarks" <?PHP if ($status != 0){echo "disabled";} ?> id="cremarks"  rows=3 cols=98  onkeypress="return imposeMaxLength(this, 200);"><?PHP if ($flag =="update"){echo $m[18];} ?></textarea>
+            <textarea name="remarks" <?PHP if ($status != 0){echo "disabled";} ?> id="cremarks"  rows=3 cols=98 maxlength=200 onkeypress="return imposeMaxLength(this, 200);"><?PHP if ($flag =="update"){echo $m[18];} ?></textarea>
     </fieldset></p>
 
     <p><strong>NOTE:</strong> Clicking the <i>Save & Continue Later</i> or the <i>Submit &amp; Done</i> buttons will clear the form and ready to accept new inputs. Please be reminded that clicking the 
