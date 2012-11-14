@@ -287,7 +287,7 @@ Video&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
 </TD></TR></TABLE>
 
 
-<?php if (isset($m[16]) and !empty($m[16])) { list($nta[0], $nta[1], $nta[2], $nta[3], $nta[4], $nta[5], $nta[6])=explode("|", $m[16] ); } echo $m[16]; ?>
+<?php if (isset($m[16]) and !empty($m[16])) { list($nta[0], $nta[1], $nta[2], $nta[3], $nta[4], $nta[5], $nta[6])=explode("|", $m[16] ); } ?>
 <p><fieldset>
         <?PHP helps("cnational", "National Data Center(s) that the Dataset will be Submitted to", "inational"); ?>
    <input type="checkbox" <?PHP if ($status != 0){echo "disabled";} ?> name="nat1" value="National Oceanographic Data Center" <?PHP  if (($flag=="update")&&($nta[0] == "National Oceanographic Data Center")){echo " checked";} ?>  id="cnational"  />National Oceanographic Data Center <a href="http://www.nodc.noaa.gov" target="_new">(http://www.nodc.noaa.gov)</a><br />
