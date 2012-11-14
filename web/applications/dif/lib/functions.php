@@ -92,11 +92,15 @@ function sortByName($node1, $node2) {
     return strcmp($node1->LastName.$node1->FirstName, $node2->LastName.$node2->FirstName);
 }
 
-function getPersonOptionList($whom, $ti) {
+function getPersonOptionList($whom, $ti, $project_id) {
     $filters = '';
     if ($ti > 0)
     {
         $filters .= "?taskID=$ti";
+    }
+    else
+    {
+        $filters .= "?projectId=$project_id";
     }
     $url = RPIS_TASK_BASEURL.$filters;
     $doc = simplexml_load_file($url);

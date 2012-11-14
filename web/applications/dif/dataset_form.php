@@ -118,7 +118,7 @@ drupal_add_js("$js",array('type'=>'inline'));
            <select name="ppoc" id="cppoc" <?PHP if ($status != 0) echo "disabled"; ?> class="required" style="width:385px;">
                <?PHP if (!$flag) { ?>
                    <option value="">Please Choose a Task First</option>
-               <?PHP } else getPersonOptionList($m[19],$m[1]); ?>
+               <?PHP } else getPersonOptionList($m[19],$m[1],$m[24]); ?>
            </select>
     </fieldset></p>
     </td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
@@ -127,7 +127,7 @@ drupal_add_js("$js",array('type'=>'inline'));
            <select name="spoc" id="cspoc" style="width:385px;" <?PHP if ($status != 0){echo "disabled";} ?> >
                <?PHP if (!$flag) { ?>
                    <option value="">Please Choose a Task First</option>
-               <?PHP } else getPersonOptionList($m[20],$m[1]); ?>
+               <?PHP } else getPersonOptionList($m[20],$m[1],$m[24]); ?>
            </select>
     </fieldset></p> 
     </td></tr></table>
