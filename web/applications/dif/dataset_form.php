@@ -230,7 +230,7 @@ Video&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
                  Remote Sensing&nbsp;&nbsp;&nbsp;&nbsp;</TD>
              <TD>
                  <TABLE WIDTH="100%"><TR>
-                     <TD> Others:</TD><TD> <input style= "width:95%;" type="text" <?PHP if ($status != 0){echo "disabled";} ?> name="approachother" value=<?PHP  if (($flag=="update")&&($aq[4])){echo "'$aq[5]'";} ?>> </TD>
+                     <TD> Others:</TD><TD> <input style= "width:95%;" type="text" <?PHP if ($status != 0){echo "disabled";} ?> name="approachother" value=<?PHP  if (($flag=="update")&&($aq[5])){echo "'$aq[5]'";} ?>> </TD>
                  </TR></TABLE>
             </TD>
         </TR></TABLE>
