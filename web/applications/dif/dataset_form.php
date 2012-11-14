@@ -248,7 +248,7 @@ Video&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
 
     <p><fieldset>
         <?PHP helps("cgeoloc", "Geographic/Study Area", "igeoloc"); ?>
-           <textarea name="geoloc"<?PHP if ($status != 0){echo "disabled";} ?>  id="cgeoloc"  rows=3 cols=98 onkeypress="return imposeMaxLength(this, 300);"><?PHP if ($flag=="update"){echo $m[11];} ?></textarea>
+           <textarea name="geoloc"<?PHP if ($status != 0){echo "disabled";} ?>  id="cgeoloc"  rows=3 cols=98 onkeypress="return imposeMaxLength(this, 200);"><?PHP if ($flag=="update"){echo $m[11];} ?></textarea>
     </fieldset></p>
 
     <p><fieldset>
