@@ -44,6 +44,7 @@ function getData($params,$recache = false)
     $projectfirstname = '';
     $taskid = '';
     $fundingsource = '';
+    $fundingid = '';
     $projectid = '';
     $projecttitle = '';
     $cached = false;
@@ -195,6 +196,11 @@ function getData($params,$recache = false)
     if ($fundingsource <> "")
     {
         $outerQuery .= "AND f.Fund_Name LIKE \"%$fundingsource%\" ";    
+    }
+
+    if ($fundingid <> "")
+    {
+        $outerQuery .= "AND f.Fund_ID = \"$fundingid\" ";
     }
     
     if ($projectid <> "")
