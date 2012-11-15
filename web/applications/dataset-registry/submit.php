@@ -34,7 +34,7 @@ echo "<tr><td><b>DOI:</b></td><td>$doi</td></tr>";
 echo '</td>';
 echo '</tr>';
 echo '</table>';
-echo '<button type="button" onclick="window.open(\'http://'.$_SERVER['SERVER_NAME'].'/reg\')">Fill out another Registration Form</button>';
+echo '<button type="button" onclick="window.location.href=\'http://'.$_SERVER['SERVER_NAME'].'/reg\'">Fill out another Registration Form</button>';
 echo '</fieldset>';
 
 

@@ -177,7 +177,7 @@ if ($_POST)
         '$uid'
         );";
       
-        if (!$_SESSION['submivtok'])
+        if (!$_SESSION['submitok'])
         {
             $result = pdoDBQuery($conn,$query);
             $dberr = $conn->errorInfo();
