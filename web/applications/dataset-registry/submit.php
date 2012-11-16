@@ -6,7 +6,7 @@ echo '<table border="1" width="1500px,*" class="cccc" border="0">';
 echo "<tr><td width=\"500px\" align=\"top\"><b>Registry Identifier:</b></td><td><h2><a href=\"http://".$_SERVER['SERVER_NAME']."/reg?regid=$reg_id\">$reg_id</h2></td></tr>";
 echo "<tr rowspan=2><td><b>Dataset Title:</b></td><td>$title</td></tr>";
 echo "<tr rowspan=3><td><b>Dataset Abstract:</b></td><td>$abstrct</td></tr>";
-echo "<tr><td><b>Point of Contact Name:</b></td><td>$poc</td></tr>";
+echo "<tr><td><b>Point of Contact Name:</b></td><td>$pocname</td></tr>";
 echo "<tr><td><b>Point of Contact E-Mail:</b></td><td>$pocemail</td></tr>";
 
 echo "<tr><td><b>Data URL:</b></td><td>$dataurl</td></tr>";

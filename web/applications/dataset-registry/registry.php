@@ -115,7 +115,7 @@ if ($_POST)
         $reg_id = $udi.'.'.$newsub;    
     }
             
-    if ($title == "" OR $abstrct == "" OR $dataurl == "" OR $poc == "")
+    if ($title == "" OR $abstrct == "" OR $dataurl == "" OR $pocname == "")
     {
         $dMessage = 'Not all required fields where filled out!';
         drupal_set_message($dMessage,'warning');
