@@ -42,13 +42,102 @@ else
     $poc_email = "";
     $row = "";
 }
-function createTimesDD()
+
+if ($_GET) 
+{
+    if (isset($_GET['regid']))
+    {
+        $reg_id = $_GET['regid'];
+        $query = "select * from registry where registry_id='$reg_id'";
+        
+        $row = pdoDBQuery($conn,$query);
+        //var_dump($row);
+        
+        if ($row == false)
+        {
+        
+            $dMessage= "Sorry, the registration with ID: $reg_id could not be found. Please email <a href=\"mailto:griidc@gomri.org?subject=REG Form\">griidc@gomri.org</a> if you have any questions.";
+            drupal_set_message($dMessage,'warning');
+        }
+        else
+        {
+            $dif_id = true;        
+            
+            $row['title'] = $row['dataset_title'];
+            $row['abstract'] = $row['dataset_abstract'];
+            $row['primary_poc'] = $row['dataset_poc_name'];
+            $poc_email = $row['dataset_poc_email'];
+        }
+    }
+    
+}
+
+function createTimesDD($time="")
 {
     for ($i = 0; $i <= 23; $i++) {
-        echo '<option>' . str_pad($i, 2,'0',STR_PAD_LEFT) . ':00</option>';
-        echo '<option>' . str_pad($i, 2,'0',STR_PAD_LEFT) . ':15</option>';
-        echo '<option>' . str_pad($i, 2,'0',STR_PAD_LEFT) . ':30</option>';
-        echo '<option>' . str_pad($i, 2,'0',STR_PAD_LEFT) . ':45</option>';
+        
+        
+        $temptime = str_pad($i, 2,'0',STR_PAD_LEFT) . ':00';
+        if ($temptime == substr($time,0,5))
+        {
+            echo "<option selected>$temptime</option>";
+        }
+        else
+        {
+            echo "<option>$temptime</option>";
+        }
+        
+        $temptime = str_pad($i, 2,'0',STR_PAD_LEFT) . ':15';
+        if ($temptime == substr($time,0,5))
+        {
+            echo "<option checked>$temptime</option>";
+        }
+        else
+        {
+            echo "<option>$temptime</option>";
+        }
+        
+        $temptime = str_pad($i, 2,'0',STR_PAD_LEFT) . ':30';
+        if ($temptime == substr($time,0,5))
+        {
+            echo "<option checked>$temptime</option>";
+        }
+        else
+        {
+            echo "<option>$temptime</option>";
+        }
+        
+        $temptime = str_pad($i, 2,'0',STR_PAD_LEFT) . ':45';
+        if ($temptime == substr($time,0,5))
+        {
+            echo "<option checked>$temptime</option>";
+        }
+        else
+        {
+            echo "<option>$temptime</option>";
+        }
+    }
+}
+
+function isChecked($row,$index,$compare=null)
+{
+    if ($row <> "")
+    {
+        $value = preg_split ('/\|/',$row);
+        if (isset($compare))
+        {
+            foreach ($value as $val)
+            {
+                if ($val == $compare)
+                {
+                    echo 'checked';
+                }
+            }
+        }
+        else
+        {
+            echo $value[$index];
+        }
     }
 }
 
@@ -83,8 +172,7 @@ function createTimesDD()
             dataurl: 
             {
                 required: true,
-                url: true,
-                remote: ""
+                url: true
             },
             metadataurl: 
             {
@@ -103,6 +191,10 @@ function createTimesDD()
             {
                 required: true,
                 dateISO: true
+            },
+            regbutton: 
+            {
+				required: "#registry_id:minlength:16",
             }
         },
         messages: {
@@ -197,6 +289,11 @@ function createTimesDD()
         $("#qtip_doi").qtip({
             content: $("#doi_tip")
         });
+        
+        $("#qtip_regid").qtip({
+            content: $("#regid_tip")
+        });
+        
     });
 })(jQuery);
 
@@ -266,7 +363,34 @@ function getTimeZone()
     document.getElementById('timezone').value = timezone;
 };
 
+function checkDOIFields(gourl)
+{
+    
+    if (document.getElementById('title').value.length > 0 && document.getElementById('pocname').value.length > 0 && document.getElementById('dataurl').value.length > 0 && document.getElementById('availdate').value.length > 0)
+    {
+        document.getElementById('doibutton').disabled = false;
+        if (gourl==true)
+        {
+            doiurl="http://<?php echo $_SERVER['SERVER_NAME'];?>/doi?dataurl=" + escape(document.getElementById('dataurl').value) + "&title=" + escape(document.getElementById('title').value) + "&creator=" + escape(document.getElementById('pocname').value) + "&date=" + escape(document.getElementById('availdate').value);
+            window.open(doiurl);
+        }
+        
+    }
+    else
+    {   
+        document.getElementById('doibutton').disabled = true;
+    }
+    
+}
+
 </script>
+
+<div id="regid_tip" style="display:none;">
+    <img src="/dif/images/info.png" style="float:right;" />
+    <p>
+        <strong>Registation Identifier:</strong><p/>  The ID
+    </p>
+</div>
 
 <div id="title_tip" style="display:none;">
     <img src="/dif/images/info.png" style="float:right;" />
@@ -379,7 +503,14 @@ function getTimeZone()
 
     <h1>Dataset Information Header</h1>
     <fieldset>
-    <h2><?php if (isset($row['dataset_udi'])) {echo 'Unique Dataset Indentifier: '.$row['dataset_udi'];};?></h2>
+        <p><fieldset>
+            <span id="qtip_regid" style="float:right;">
+                <img src="/dif/images/info.png">
+            </span>
+            <label for="registry_id"><b>Registry Identifier: </b></label>
+            <input onkeyup="if (this.value.length > 16) {document.getElementById('regbutton').disabled=false;};" <?php if (isset($dif_id)) {echo ' disabled ';};?>type="text" id="registry_id" name="registry_id" size="80" value="<?php if (isset($row['registry_id'])) {echo $row['registry_id'];};?>">
+            <button disabled name="regbutton" id="regbutton" onclick="window.location.href='http://<?php echo $_SERVER['SERVER_NAME'];?>/reg?regid='+document.getElementById('registry_id').value;" type="button">Retrieve Registration</button>
+        </fieldset></p>
         
         <input type="hidden" id="task" name="task" value="<?php if (isset($row['task_uid'])) {echo $row['task_uid'];};?>">
     
@@ -388,7 +519,7 @@ function getTimeZone()
             <img src="/dif/images/info.png">
         </span>
         <label for="title"><b>Dataset Title: </b></label>
-        <textarea name="title" id="title" rows="2" cols="110"><?php if (isset($row['title'])) {echo $row['title'];};?></textarea>
+        <input onchange="checkDOIFields();" type="text" name="title" id="title" size="120" value="<?php if (isset($row['title'])) {echo $row['title'];};?>"/>
     </fieldset></p>
     
     <p><fieldset>
@@ -396,18 +527,18 @@ function getTimeZone()
             <img src="/dif/images/info.png">
         </span>
         <label for="abstrct"><b>Dataset Abstract: </b></label>
-        <textarea name="abstrct" id="abstrct" rows="5" cols="110"><?php if (isset($row['abstract'])) {echo $row['abstract'];};?></textarea> 
+        <textarea name="abstrct" id="abstrct" rows="5" cols="100"><?php if (isset($row['abstract'])) {echo $row['abstract'];};?></textarea> 
     </fieldset></p>
     
-    <p><fieldset id="poc">
+    <p><fieldset>
     <legend>Point of Contact</legend>
         <table WIDTH="100%"><tr><td> 
        
             <span id="qtip_poc" style="float:right;">
                 <img src="/dif/images/info.png">
             </span>
-            <label for="poc"><b>Name: </b></label>
-            <input type="text" name="poc" id="poc" size="60" value="<?php if (isset($row['primary_poc'])) {echo $row['primary_poc'];};?>">
+            <label for="pocname"><b>Name: </b></label>
+            <input onchange="checkDOIFields();" type="text" name="pocname" id="pocname" size="60" value="<?php if (isset($row['primary_poc'])) {echo $row['primary_poc'];};?>">
         
         </td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
         
@@ -451,15 +582,15 @@ function getTimeZone()
                 <span id="qtip_dataurl" style="float:right;">
                     <img src="/dif/images/info.png">
                 </span>
-                <label for="dataurl">Data File Location/URL:</label>
-                <input name="dataurl" id="dataurl" type="text" size="120"/>
+                <label for="dataurl">Datasert URL:</label>
+                <input onchange="checkDOIFields();" name="dataurl" id="dataurl" type="text" size="120" value="<?php if (isset($row['url_data'])) {echo $row['url_data'];};?>"/>
             </p>
             <p>
                 <span id="qtip_metadataurl" style="float:right;">
                     <img src="/dif/images/info.png">
                 </span>
-                <label for="metadataurl">Metadata File Location/URL:</label>
-                <input name="metadataurl" id="metadataurl" type="text" size="120"/>
+                <label for="metadataurl">Metadata URL:</label>
+                <input name="metadataurl" id="metadataurl" type="text" size="120" value="<?php if (isset($row['url_metadata'])) {echo $row['url_metadata'];};?>"/>
             </p>
             </fieldset>
             
@@ -470,8 +601,8 @@ function getTimeZone()
                     <img src="/dif/images/info.png">
                 </span>
                 <label for="auth">Requires Authentication:</label>
-                <input onclick="showCreds(this,'creds','Yes');" name="auth" id="auth" type="radio" value="Yes"/>Yes
-                <input checked onclick="showCreds(this,'creds','Yes');" name="auth" id="auth" type="radio" value="No"/>No
+                <input <?PHP if (isset($row['authentication'])){isChecked($row['authentication'],0,true);};?> onclick="showCreds(this,'creds','Yes');" name="auth" id="auth" type="radio" value="Yes"/>Yes
+                <input <?PHP if (isset($row['authentication'])){isChecked($row['authentication'],0,false);}; if(!isset($reg_id)){echo 'checked';};?> onclick="showCreds(this,'creds','Yes');" name="auth" id="auth" type="radio" value="No"/>No
             </p>
             </fieldset>
             </td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
@@ -481,8 +612,8 @@ function getTimeZone()
                         <img src="/dif/images/info.png">
                     </span>
                     <label for="pullds">Pull Source Data:</label>
-                    <input checked onclick="showCreds(this,'pulldiv','No');" name="pullds" id="pullds" type="radio" value="Yes"/>Yes
-                    <input onclick="showCreds(this,'pulldiv','No');" name="pullds" id="pullds" type="radio" value="No"/>No
+                    <input <?PHP if (isset($row['data_source_pull'])){isChecked($row['data_source_pull'],0,true);}; if(!isset($reg_id)){echo 'checked';};?>  onclick="showCreds(this,'pulldiv','No');" name="pullds" id="pullds" type="radio" value="Yes"/>Yes
+                    <input <?PHP if (isset($row['data_source_pull'])){isChecked($row['data_source_pull'],0,false);};?> onclick="showCreds(this,'pulldiv','No');" name="pullds" id="pullds" type="radio" value="No"/>No
                 </p>
             
             </fieldset>
@@ -493,12 +624,12 @@ function getTimeZone()
                         <img src="/dif/images/info.png">
                     </span>
                     <label for="whendl">Download Certain Times Only</label>
-                    <input onclick="showCreds(this,'whendiv','Yes');getTimeZone();weekDays();" name="whendl" id="whendl" type="radio" value="Yes"/>Yes
-                    <input checked onclick="showCreds(this,'whendiv','Yes');getTimeZone();weekDays();" name="whendl" id="whendl" type="radio" value="No"/>No
+                    <input <?PHP if (isset($row['access_period'])){isChecked($row['access_period'],0,true);};?> onclick="showCreds(this,'whendiv','Yes');getTimeZone();weekDays();" name="whendl" id="whendl" type="radio" value="Yes"/>Yes
+                    <input <?PHP if (isset($row['access_period'])){isChecked($row['access_period'],0,false);}; if(!isset($reg_id)){echo 'checked';};?> onclick="showCreds(this,'whendiv','Yes');getTimeZone();weekDays();" name="whendl" id="whendl" type="radio" value="No"/>No
                 </p>
             </fieldset>
            </td></tr></table>
-            <div id="creds" style="display:none;">
+            <div id="creds" style="display:<?php if (isset($row['authentication'])){ if ($row['authentication']==true){echo 'block';};}else{ echo 'none';};?>;">
                 <fieldset>
                 <legend>Credentials:</legend>
                     
@@ -508,20 +639,20 @@ function getTimeZone()
                     <img src="/dif/images/info.png">
                 </span>
                 <label for="uname">User Name:</label>
-                <input name="uname" id="uname" type="text" size="60"/>
+                <input name="uname" id="uname" type="text" size="60" value="<?php if (isset($row['username'])) {echo $row['username'];};?>"/>
                 </td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
                 <span id="qtip_pword" style="float:right;">
                     <img src="/dif/images/info.png">
                 </span> 
                 <label for="pword">Password:</label>
-                <input name="pword" id="pword" type="password" size="60"/>
+                <input name="pword" id="pword" type="password" size="60" value="<?php if (isset($row['password'])) {echo $row['password'];};?>"/>
                </td></tr></table>
                 
                 
                 </fieldset>
             </div>
             
-          <div id="whendiv" style="display:none;">
+          <div id="whendiv" style="display:<?php if (isset($row['access_period'])){if ($row['access_period']==true){echo 'block';};}else{ echo 'none';};?>;">
               <fieldset>
                   <span id="qtip_times" style="float:right;">
                       <img src="/dif/images/info.png">
@@ -531,19 +662,20 @@ function getTimeZone()
                                  
                   <label for="dlstart">Start Time:</label>
                    <select name="dlstart" id="dlstart">
-                  <?php createTimesDD();?>
+                  <?php if (isset($row['access_period_start'])){createTimesDD($row['access_period_start']);}else{createTimesDD();};?>
                   </select>
                   
                </td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
                  
                   <label for="weekdays">Weekdays:</label>
-                  <input onchange="weekDays();" checked name="weekdays" id="weekdays" type="checkbox" value="Sunday"/>Sunday&nbsp;
-                  <input onchange="weekDays();" checked name="weekdays" id="weekdays" type="checkbox" value="Monday"/>Monday&nbsp;
-                  <input onchange="weekDays();" checked name="weekdays" id="weekdays" type="checkbox" value="Tuesday"/>Tuesday&nbsp;
-                  <input onchange="weekDays();" checked name="weekdays" id="weekdays" type="checkbox" value="Wednesday"/>Wednesday&nbsp;
-                  <input onchange="weekDays();" checked name="weekdays" id="weekdays" type="checkbox" value="Thursday"/>Thursday&nbsp;
-                  <input onchange="weekDays();" checked name="weekdays" id="weekdays" type="checkbox" value="Friday"/>Friday&nbsp;
-                  <input onchange="weekDays();" checked name="weekdays" id="weekdays" type="checkbox" value="Saturday"/>Saturday&nbsp;
+                  <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Sunday");}; if(!isset($reg_id)){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Sunday"/>Sunday&nbsp;
+                  <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Monday");}; if(!isset($reg_id)){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Monday"/>Monday&nbsp;
+                  <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Tuesday");}; if(!isset($reg_id)){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Tuesday"/>Tuesday&nbsp;
+                  <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Wednesday");}; if(!isset($reg_id)){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Wednesday"/>Wednesday&nbsp;
+                  <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Thursday");}; if(!isset($reg_id)){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Thursday"/>Thursday&nbsp;
+                  <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Friday");}; if(!isset($reg_id)){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Friday"/>Friday&nbsp;
+                  <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Saturday");}; if(!isset($reg_id)){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Saturday"/>Saturday&nbsp;
+                  
                   </td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
                     <button style="width:100px" type="button" onclick="selDays(true);">Weekends</button><br \>
                     <button style="width:100px" type="button" onclick="selDays(false);">Workdays</button>
@@ -560,7 +692,7 @@ function getTimeZone()
                 <img src="/dif/images/info.png">
             </span>
             <label for="availdate">Availability Date:</label>
-            <input type="text" name="availdate" id="availdate" size="120"/>
+            <input onchange="checkDOIFields();" value="<?php if (isset($row['availability_date'])) {echo $row['availability_date'];};?>" type="text" name="availdate" id="availdate" size="40"/>
             <br />
         </fieldset>
         </td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
@@ -569,26 +701,29 @@ function getTimeZone()
                     <img src="/dif/images/info.png">
                 </span>
                 <label for="avail">Restrictions:</label>
-                    <input checked name="avail" id="avail" type="radio" value="None"/>None
-                    <input name="avail" id="avail" type="radio" value="Approval"/>Requires Authors Approval
-                    <input name="avail" id="avail" type="radio" value="Private"/>Private
+                    <input <?PHP if (isset($row['access_status'])){isChecked($row['access_status'],0,"None");}; if(!isset($reg_id)){echo 'checked';};?> name="avail" id="avail" type="radio" value="None"/>None
+                    <input <?PHP if (isset($row['access_period'])){isChecked($row['access_status'],0,"Approval");};?>  name="avail" id="avail" type="radio" value="Approval"/>Requires Authors Approval
+                    <input <?PHP if (isset($row['access_period'])){isChecked($row['access_status'],0,"Restricted");};?>  name="avail" id="avail" type="radio" value="Restricted"/>Restricted
                 <br />
             </fieldset>
         </td></tr></table>
 
+
         <fieldset>
-            <legend>DOI</legend>
+            <legend>DOI:</legend>
             <span id="qtip_doi" style="float:right;">
                 <img src="/dif/images/info.png">
             </span>
             <label for="doi">Digital Object Identifier:</label>
-            <input type="text" name="doi" id="doi" size="80"/>&nbsp;&nbsp;&nbsp;&nbsp;
-            <button type="button" onclick="window.open('http://<?php echo $_SERVER['SERVER_NAME'];?>/doi')">Digital Object Indentifier Request Form</button>
+            <input type="text" name="doi" id="doi" size="60"/ value="<?php if (isset($row['doi'])) {echo $row['doi'];};?>">&nbsp;&nbsp;&nbsp;&nbsp;
+            <button disabled id="doibutton" name="doibutton" type="button" onclick="checkDOIFields(true);">Digital Object Indentifier Request Form</button>
         
         </fieldset> 
         
         
         <input type="hidden" name="udi" id="udi" value="<?php if (isset($row['dataset_udi'])) {echo $row['dataset_udi'];};?>"/>
+        
+        <input type="hidden" name="regid" id="regid" value="<?php if (isset($row['registry_id'])) {echo $row['registry_id'];};?>"/>
         
         <input type="hidden" name="urlvalidate" id="urlvalidate"/>
         
@@ -601,7 +736,7 @@ function getTimeZone()
     </div>
     <p/>
    
-    <input type="submit" value="Submit"/>
+    <input onclick="weekDays();getTimeZone();" type="submit" value="Submit"/>
 </form>  
 
 </div>

@@ -16,6 +16,7 @@ function pdoDBQuery($connection,$queryString) {
     
     $query = $connection->query($queryString);
     $i = 0;
+    $queryReturn = false;
     if ($query != false)
     {
         foreach ($query as $query2) {

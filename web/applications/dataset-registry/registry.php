@@ -130,6 +130,8 @@ if ($_POST)
         $title = pg_escape_string($title);
         $abstrct = pg_escape_string($abstrct);
         
+        //$data_server_type = preg_split('/\:/',$dataurl);
+        //$data_server_type = $data_server_type[0];
         
         $query = "INSERT INTO registry 
         (
@@ -145,6 +147,7 @@ if ($_POST)
         username, 
         password, 
         availability_date,
+        authentication,
         access_status,
         access_period,
         access_period_start,
@@ -160,13 +163,14 @@ if ($_POST)
         '$udi',
         '$title', 
         '$abstrct', 
-        '$poc', 
+        '$pocname', 
         '$pocemail', 
         '$dataurl', 
         '$metadataurl', 
         '$uname', 
         '$pword',
         '$availdate',
+        '$auth', 
         '$avail', 
         '$whendl',
         '$dlstart$timezone',
