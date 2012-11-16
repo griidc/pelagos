@@ -270,6 +270,14 @@ if ($_GET)
         $drDate = $result[4];
         $drUrlValidate = $result[5];
     }
+    
+    if (isset($_GET['dataurl']) AND isset($_GET['creator']) AND isset($_GET['title']) AND isset($_GET['date']))
+    {
+        $drURL = $_GET['dataurl'];
+        $drCreator = $_GET['creator'];
+        $drTitle = $_GET['title'];
+        $drDate = $_GET['date'];
+    }
 }
 
 if ($_POST)
@@ -370,35 +378,35 @@ if ($userId == "")
 <div id="url_tip" style="display:none;">
     <img src="/dif/images/info.png" style="float:right;" />
     <p>
-        <strong>Location (URL):</strong> Please fill with the persistent location (URL) of the identified object.<br><em>(e.g. http://harteresearchinstitute.org/)</em>
+        <strong>Location (URL):</strong> This is the Uniform Resource Locator (URL) that resolves to the dataset.<br><em>(e.g. http://www.nodc.noaa.gov/cgi-bin/OAS/prd/download/65725.11.11.tar.gz)</em>
     </p>
 </div>
 
 <div id="creator_tip" style="display:none;">
     <img src="/dif/images/info.png" style="float:right;" />
     <p>
-        <strong>Creator:</strong> The main researchers involved in producing the data, or the authors of the publication in priority order. Each name may be a corporate, institutional, or personal name, in personal names list family name before given name, as in Darwin, Charles. Non-roman names should be transliterated according to the ALA-LC schemes <em>(http://www.loc.gov/catdir/cpso/roman.html)</em>. 
+        <strong>Creator(s):</strong> The primary scientist or researcher in producing the data, or the authors of the publication in priority order. The names may include a corporate, institutions, or personal name. In personal names, list family name before given name, as in Darwin, Charles. Non-roman names should be transliterated according to the ALA-LC schemes. <a href="http://www.loc.gov/catdir/cpso/roman.html" target="_blank"><em>(http://www.loc.gov/catdir/cpso/roman.html)</em></a>. 
     </p>
 </div>
 
 <div id="title_tip" style="display:none;">
     <img src="/dif/images/info.png" style="float:right;" />
     <p>
-        <strong>Title:</strong> A name or title by which the data or publication is known <em>(e.g. Multibeam bathymetry data for east Flower Garden Bank)</em>
+        <strong>Title:</strong> A label by which the data or publication is known. <em>(e.g. Multibeam bathymetry data for east Flower Garden Bank)</em>
     </p>
 </div>
 
 <div id="publisher_tip" style="display:none;">
     <img src="/dif/images/info.png" style="float:right;" />
     <p>
-        <strong>Publisher:</strong> A holder of the data (e.g., GRIIDC) or the institution which submitted the work. In the case of datasets, the publisher is the entity primarily responsible for making the data available to the research community. 
+        <strong>Publisher:</strong> A holder of the data (e.g., GRIIDC) or the institution responsible for making the data available to the public. 
     </p>
 </div>
 
 <div id="txtDate_tip" style="display:none;">
     <img src="/dif/images/info.png" style="float:right;" />
     <p>
-        <strong>Date:</strong> A valid ISO 8601 date.<br \><em>e.g. (2012-12-23)</em>
+        <strong>Publication Date:</strong> A valid ISO 8601 date <em>e.g. (2012-12-23)</em>
     </p>
 </div>
 
@@ -406,7 +414,7 @@ if ($userId == "")
 <tr>
 <td class="cleair cmxform">
 <fieldset>
-    <p><STRONG> NOTE: </STRONG><FONT COLOR="grey">A Digital Object Identifier (DOI) is a character string used to identify an electronic dataset (or document). The DOI is a permanent marker that is linked to metadata about the dataset. The metadata will include important information about the dataset including items as to when the data was collected, who is responsible for the data and a URL to the given dataset. Since the information included in the metadata is not always permanent (ex. URL changes) DOI's provide a way to permanently "stamp" the data so it can be easily searched and referenced. The following form will allow you to submit the appropriate information to receive a DOI for your dataset or document. Once you have filled out this form your information will be sent to GRIIDC for approval, and once approved a DOI will be sent to you.</font></p>
+    <p><STRONG> NOTE: </STRONG><FONT COLOR="grey">A <em>Digital Object Identifier</em> (DOI) is a persistent unique identifier of an electronic dataset or document and recognized internationally. The DOI is used by GRIIDC as an alternate to dataset registration identifiers and can be used to resolve back to the data itself. The following form will allow you to submit the appropriate information to receive a DOI for your dataset or document. Once you have completed this form, your information will be sent to GRIIDC for approval, and once approved a DOI will be sent to you.<font></p>
 </fieldset>
 
 <strong>NOTICE:</strong> Fields preceded by an asterisk (<em>*</em>) are required inputs.<hr />
@@ -417,7 +425,7 @@ if ($userId == "")
     <span id="qtip_url" style="float:right;">
         <img src="/dif/images/info.png">
     </span>
-    <label for="txtURL"><em>*</em>Dataset URL:</label>
+    <label for="txtURL"><em>*</em>Digital Object URL:</label>
     <br />
     <input <?php if ($formReadOnly) {echo 'disabled';};?> value="<?php if (isset($drURL)){echo $drURL;}?>" name="txtURL" id="txtURL" type="url" onblur="this.value=checkURL(this.value)" onkeyup="this.value=checkURL(this.value)" size="120"/>
 </fieldset>
@@ -426,7 +434,7 @@ if ($userId == "")
     <span id="qtip_creator" style="float:right;">
         <img src="/dif/images/info.png">
     </span>
-    <label for="txtWho"><em>*</em>Dataset Creator:</label>
+    <label for="txtWho"><em>*</em>Digital Object Creator(s):</label>
     <br />
     <input <?php if ($formReadOnly) {echo 'disabled';};?> value="<?php if (isset($drCreator)){echo $drCreator;}?>" class="popWho" type="text" name="txtWho" id="txtWho" size="120"/>
 </fieldset>
@@ -435,7 +443,7 @@ if ($userId == "")
     <span id="qtip_title" style="float:right;">
         <img src="/dif/images/info.png">
     </span>
-    <label for="txtWhat"><em>*</em>Dataset Title:</label>
+    <label for="txtWhat"><em>*</em>Digital Object Title:</label>
     <br />
     <input <?php if ($formReadOnly) {echo 'disabled';};?> value="<?php if (isset($drTitle)){echo $drTitle;}?>" class="popWhat" type="text" name="txtWhat" id="txtWhat" size="120"/>
     <br />
@@ -455,7 +463,7 @@ if ($userId == "")
     <span id="qtip_date" style="float:right;">
         <img src="/dif/images/info.png">
     </span>
-    <label for="txtDate"><em>*</em>Dataset Date:</label>
+    <label for="txtDate"><em>*</em>Digital Object Publication Date:</label>
     <br />
     <input <?php if ($formReadOnly) {echo 'disabled';};?> value="<?php if (isset($drDate)){echo $drDate;}?>" class="popDate" type="text" name="txtDate" id="txtDate" size="120"/>
     <br />
