@@ -453,7 +453,7 @@ if ($userId == "")
     <span id="qtip_pub" style="float:right;">
         <img src="/dif/images/info.png">
     </span>
-    <label for="txtWhere"><em>*</em>Dataset Publisher:</label>
+    <label for="txtWhere"><em>*</em>Digital Object Publisher:</label>
     <br />
     <input <?php if ($formReadOnly) {echo 'disabled';};?> value="<?php if (isset($drPublisher)){echo $drPublisher;}else{echo 'Harte Research Institute';}?>" class="popWhere" type="text" name="txtWhere" id="txtWhere" size="120"/>
     <br />
