@@ -161,9 +161,17 @@ function isChecked($row,$index,$compare=null)
     $(document).ready(function(){
         $("#regForm").validate({
         rules: {
-            title: "required",
-            abstrct: "required",
-            poc: "required",
+            title:
+            {
+                required: true,
+                maxlength: 200
+            },
+            abstrct:
+            {
+                required: true,
+                maxlength: 4000
+            },
+            pocname: "required",
             pocemail:
             {
                 required: true,
@@ -383,117 +391,135 @@ function checkDOIFields(gourl)
     
 }
 
+function showDOIbutton(show)
+{
+    if (show.value == "No")
+    {
+        document.getElementById('doibuttondiv').style.display = "inline-block";
+        document.getElementById('generatedoidiv').style.display = "none";
+        document.getElementById('doi').disabled=false;
+    }
+    
+    else
+    {
+        document.getElementById('doibuttondiv').style.display = "none";
+        document.getElementById('generatedoidiv').style.display = "inline-block";
+    }
+}
+
 </script>
 
 <div id="regid_tip" style="display:none;">
     <img src="/dif/images/info.png" style="float:right;" />
     <p>
-        <strong>Registation Identifier:</strong><p/>  The ID
+        <strong>Registation Identifier:</strong><p/> This identifier is generated once the dataset is registered. However, you may enter a Dataset Registration Identifier to extract previously submitted data. 
     </p>
 </div>
 
 <div id="title_tip" style="display:none;">
     <img src="/dif/images/info.png" style="float:right;" />
     <p>
-        <strong>Title:</strong><p/>  The Dataset Title
+        <strong>Title:</strong><p/><p>It is in the discretion of the researcher to define the level of data aggregation to define a dataset. If this level of data aggregation has not been identified, it is recommended to start by answering the ‘what, how, when, where’. It is also not recommended to aggregate data too much that the data attributes can no longer be segregated and discoverable.</p><p>Example Input: Hydrodynamics: ADCP Data for June – July 2012 in Station 42001</p>
+        <p>200 Characters Max</p>
     </p>
 </div>
 
 <div id="abstract_tip" style="display:none;">
     <img src="/dif/images/info.png" style="float:right;" />
     <p>
-        <strong>Abstract:</strong><p/>  Abstract
+        <strong>Abstract:</strong><p/><p>This field should describe the rationale of collecting the dataset, procedure/process how this dataset will be created, period o
+        f data collection and what it will contain. Note that some of the fields that follow in this form are or may be components of this field.</p><br /><p>4000 Characters Max</p>
     </p>
 </div>
 
 <div id="poc_tip" style="display:none;">
     <img src="/dif/images/info.png" style="float:right;" />
     <p>
-        <strong>Point Of Contact:</strong><p/>  A Name
+        <strong>Point Of Contact:</strong><p/> This is the person responsible for answering questions associated with this dataset.
     </p>
 </div>
 
 <div id="pocemail_tip" style="display:none;">
     <img src="/dif/images/info.png" style="float:right;" />
     <p>
-        <strong>Point Of Contact E-Mail:</strong><p/> Valid e-mail <em>someone@here.org</em>
+        <strong>Point Of Contact E-Mail:</strong><p/> This is the primary email of the POC.
     </p>
 </div>
 
 <div id="dataurl_tip" style="display:none;">
     <img src="/dif/images/info.png" style="float:right;" />
     <p>
-        <strong>Data File Location/URL:</strong><p/> Valid URL <em>http://www.somehere.org/filename.dat</em>
+        <strong>Dataset URL:</strong><p/> This is the URL that leads to the data being registered. Package the components of the datasets (if applicable) to form a single file (e.g. ZIP, TAR).
     </p>
 </div>
 
 <div id="metadataurl_tip" style="display:none;">
     <img src="/dif/images/info.png" style="float:right;" />
     <p>
-        <strong>Data File Location/URL:</strong><p/> Valid URL <em>http://www.somehere.org/filename.dat</em>
+        <strong>Metadata URL:</strong><p/> This is the URL that leads to the metadata of the data being registered. The ISO 19115/19115-2 is recommended but a link to a form-based system and other XML or TXT formatted files are also acceptable.
     </p>
 </div>
 
 <div id="auth_tip" style="display:none;">
     <img src="/dif/images/info.png" style="float:right;" />
     <p>
-        <strong>Requires Authentication:</strong><p/> Needs username password to get in?
+        <strong>Requires Authentication:</strong><p/> If accessing the files requires user authentication, please click ‘Yes’ (default is ‘No’).
     </p>
 </div>
 
 <div id="pull_tip" style="display:none;">
     <img src="/dif/images/info.png" style="float:right;" />
     <p>
-        <strong>Pull Source Data::</strong><p/> Do we need pull this data?
+        <strong>Pull Source Data::</strong><p/> If the source data is archived in a cyber-infrastructure that can be maintained in the next decade, select ‘No’. If unsure, select ‘Yes’.
     </p>
 </div>
 
 <div id="when_tip" style="display:none;">
     <img src="/dif/images/info.png" style="float:right;" />
     <p>
-        <strong>Download Certain Times Only:</strong><p/> Download data after a certain time or day of the week?
+        <strong>Download Certain Times Only:</strong><p/> If you prefer for GRIIDC to download the time only on specified start period, click ‘Yes’ (default is ‘No’).
     </p>
 </div>
 
 <div id="uname_tip" style="display:none;">
     <img src="/dif/images/info.png" style="float:right;" />
     <p>
-        <strong>Username:</strong><p/> Username needed for access
+        <strong>Username:</strong><p/> Enter the username required to access the data.
     </p>
 </div>
 
 <div id="pword_tip" style="display:none;">
     <img src="/dif/images/info.png" style="float:right;" />
     <p>
-        <strong>Password:</strong><p/> Password <em> e.g ***********</em>
+        <strong>Password:</strong><p/> Enter the password needed to access the data.
     </p>
 </div>
 
 <div id="times_tip" style="display:none;">
     <img src="/dif/images/info.png" style="float:right;" />
     <p>
-        <strong>Pull Times:</strong><p/> Start Time (local time) + day of week
+        <strong>Pull Times:</strong><p/> Select the appropriate start period when GRIIDC can start downloading or reading the dataset.
     </p>
 </div>
 
-<div id="availdate_tip" style="display:none;">
+<div id="date_tip" style="display:none;">
     <img src="/dif/images/info.png" style="float:right;" />
     <p>
-        <strong>Date:</strong><p/> A valid ISO 8601 date.<br \><em>e.g. (2012-12-23)</em>
+        <strong>Date:</strong><p/> In some cases, registration is made prior to moving the data onto a space that it can be harvested or read by GRIIDC. In such cases, enter the appropriate date when data is ready for downloading or reading. Enter the current date (date of registration) if data is ready for downloading or reading.
     </p>
 </div>
 
 <div id="avail_tip" style="display:none;">
     <img src="/dif/images/info.png" style="float:right;" />
     <p>
-        <strong>Restrictions:</strong><p/> Any restrictions?
+        <strong>Restrictions:</strong><p/> ): If data is available to the general public, select ‘None’. Select ‘Restricted’ if data cannot be shared to anyone. Select ‘Requires Author’s Approval’ if you can share the data but prefer to control the sharing of the dataset. In the later case, GRIIDC will maintain a list of users associated to a dataset.
     </p>
 </div>
 
 <div id="doi_tip" style="display:none;">
     <img src="/dif/images/info.png" style="float:right;" />
     <p>
-        <strong>Digital Object Identifier:</strong><p/> A DOI or get one.
+        <strong>Digital Object Identifier:</strong><p/> Enter the DOI tag if available. Note that GRIIDC can also run an automated process to supply the DOI once the data has been downloaded. The DOI Request Form is enable only if data is not to be pulled.
     </p>
 </div>
 
@@ -502,6 +528,11 @@ function checkDOIFields(gourl)
 <form  id="regForm" name="regForm" action="" method="post">
 
     <h1>Dataset Information Header</h1>
+    <fieldset>
+        <p><STRONG> NOTE: </STRONG><FONT COLOR="grey">If you have a Dataset Information Form record submitted, click on the dataset in the right panel to extract the information needed for dataset registration.  If you require assistance in completing
+        this form, do not hesitate to contact GRIIDC (email: <A HREF=mailto:griidc@gomri.org>griidc@gomri.org</A>).</FONT></p>
+    </fieldset>
+    
     <fieldset>
         <p><fieldset>
             <span id="qtip_regid" style="float:right;">
@@ -519,7 +550,7 @@ function checkDOIFields(gourl)
             <img src="/dif/images/info.png">
         </span>
         <label for="title"><b>Dataset Title: </b></label>
-        <input onchange="checkDOIFields();" type="text" name="title" id="title" size="120" value="<?php if (isset($row['title'])) {echo $row['title'];};?>"/>
+        <input onchange="checkDOIFields();" maxlength="200" type="text" name="title" id="title" size="120" value="<?php if (isset($row['title'])) {echo $row['title'];};?>"/>
     </fieldset></p>
     
     <p><fieldset>
@@ -527,7 +558,7 @@ function checkDOIFields(gourl)
             <img src="/dif/images/info.png">
         </span>
         <label for="abstrct"><b>Dataset Abstract: </b></label>
-        <textarea name="abstrct" id="abstrct" rows="5" cols="100"><?php if (isset($row['abstract'])) {echo $row['abstract'];};?></textarea> 
+        <textarea name="abstrct" id="abstrct" maxlength="4000" rows="5" cols="100"><?php if (isset($row['abstract'])) {echo $row['abstract'];};?></textarea> 
     </fieldset></p>
     
     <p><fieldset>
@@ -582,7 +613,7 @@ function checkDOIFields(gourl)
                 <span id="qtip_dataurl" style="float:right;">
                     <img src="/dif/images/info.png">
                 </span>
-                <label for="dataurl">Datasert URL:</label>
+                <label for="dataurl">Dataset URL:</label>
                 <input onchange="checkDOIFields();" name="dataurl" id="dataurl" type="text" size="120" value="<?php if (isset($row['url_data'])) {echo $row['url_data'];};?>"/>
             </p>
             <p>
@@ -612,8 +643,8 @@ function checkDOIFields(gourl)
                         <img src="/dif/images/info.png">
                     </span>
                     <label for="pullds">Pull Source Data:</label>
-                    <input <?PHP if (isset($row['data_source_pull'])){isChecked($row['data_source_pull'],0,true);}; if(!isset($reg_id)){echo 'checked';};?>  onclick="showCreds(this,'pulldiv','No');" name="pullds" id="pullds" type="radio" value="Yes"/>Yes
-                    <input <?PHP if (isset($row['data_source_pull'])){isChecked($row['data_source_pull'],0,false);};?> onclick="showCreds(this,'pulldiv','No');" name="pullds" id="pullds" type="radio" value="No"/>No
+                    <input <?PHP if (isset($row['data_source_pull'])){isChecked($row['data_source_pull'],0,true);}; if(!isset($reg_id)){echo 'checked';};?>  onclick="showCreds(this,'pulldiv','No');" onchange="showDOIbutton(this);" name="pullds" id="pullds" type="radio" value="Yes"/>Yes
+                    <input <?PHP if (isset($row['data_source_pull'])){isChecked($row['data_source_pull'],0,false);};?> onclick="showCreds(this,'pulldiv','No');" onchange="showDOIbutton(this);" name="pullds" id="pullds" type="radio" value="No"/>No
                 </p>
             
             </fieldset>
@@ -638,7 +669,7 @@ function checkDOIFields(gourl)
                 <span id="qtip_uname" style="float:right;">
                     <img src="/dif/images/info.png">
                 </span>
-                <label for="uname">User Name:</label>
+                <label for="uname">Username:</label>
                 <input name="uname" id="uname" type="text" size="60" value="<?php if (isset($row['username'])) {echo $row['username'];};?>"/>
                 </td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
                 <span id="qtip_pword" style="float:right;">
@@ -702,7 +733,7 @@ function checkDOIFields(gourl)
                 </span>
                 <label for="avail">Restrictions:</label>
                     <input <?PHP if (isset($row['access_status'])){isChecked($row['access_status'],0,"None");}; if(!isset($reg_id)){echo 'checked';};?> name="avail" id="avail" type="radio" value="None"/>None
-                    <input <?PHP if (isset($row['access_period'])){isChecked($row['access_status'],0,"Approval");};?>  name="avail" id="avail" type="radio" value="Approval"/>Requires Authors Approval
+                    <input <?PHP if (isset($row['access_period'])){isChecked($row['access_status'],0,"Approval");};?>  name="avail" id="avail" type="radio" value="Approval"/>Requires Author&apos;s Approval
                     <input <?PHP if (isset($row['access_period'])){isChecked($row['access_status'],0,"Restricted");};?>  name="avail" id="avail" type="radio" value="Restricted"/>Restricted
                 <br />
             </fieldset>
@@ -715,8 +746,9 @@ function checkDOIFields(gourl)
                 <img src="/dif/images/info.png">
             </span>
             <label for="doi">Digital Object Identifier:</label>
-            <input type="text" name="doi" id="doi" size="60"/ value="<?php if (isset($row['doi'])) {echo $row['doi'];};?>">&nbsp;&nbsp;&nbsp;&nbsp;
-            <button disabled id="doibutton" name="doibutton" type="button" onclick="checkDOIFields(true);">Digital Object Indentifier Request Form</button>
+            <input disabled type="text" name="doi" id="doi" size="60"/ value="<?php if (isset($row['doi'])) {echo $row['doi'];};?>">&nbsp;&nbsp;&nbsp;&nbsp;
+            <span style="display:none" id="doibuttondiv"><button disabled  id="doibutton" name="doibutton" type="button" onclick="checkDOIFields(true);">Digital Object Indentifier Request Form</button></span>
+            <span id="generatedoidiv"><input checked onchange="document.getElementById('doi').disabled=this.checked;" type="checkbox" name="generatedoi" id="generatedoi">Auto-Generate DOI when data is available</span>
         
         </fieldset> 
         

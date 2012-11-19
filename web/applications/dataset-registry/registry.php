@@ -82,7 +82,10 @@ if ($_GET)
 
 if ($_POST)
 {
+    
     $formHash = sha1(serialize($_POST));
+    
+    $doi = '';
     
     extract($_POST);
     
@@ -154,6 +157,7 @@ if ($_POST)
         access_period_weekdays,
         data_source_pull,
         doi,
+        generatedoi,
         submittimestamp,
         userid
         ) 
@@ -177,6 +181,7 @@ if ($_POST)
         '$weekdayslst',
         '$pullds', 
         '$doi',
+        '$generatedoi',
         '$now',
         '$uid'
         );";
