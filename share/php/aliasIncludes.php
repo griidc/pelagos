@@ -1,29 +1,14 @@
 <?php
 
+require_once 'dumpIncludesFile.php';
+
 $file = preg_replace('/^\/[^\/]+$/','',$_SERVER['REQUEST_URI']);
 $file = preg_replace('/^\/[^\/]+\//','',$file);
 $file = str_replace('//','/',$file);
 $file = str_replace('../','',$file);
 if (preg_match('/^includes\//',$file))
 {
-    $info = finfo_open(FILEINFO_MIME_TYPE);
-    $mime = finfo_file($info, $file);
-
-    if ($mime === false)
-    {
-        header("HTTP/1.0 403 Not Found");
-        flush();
-        ob_clean();
-        exit;
-    }
-    header('Content-Length: ' . filesize($file));
-    header('Content-Disposition: inline; filename=' . basename($file));
-    header('Content-Transfer-Encoding: binary');
-    header('Content-type: '.$mime);
-    flush();
-    ob_clean();
-    readfile ($file);
-    exit;
+    dumpIncludesFile($file);
 }
 
 $URI = preg_split('/\?/',$_SERVER['REQUEST_URI']);
