@@ -48,7 +48,7 @@ if ($_GET)
     if (isset($_GET['regid']))
     {
         $reg_id = $_GET['regid'];
-        $query = "select * from registry where registry_id='$reg_id'";
+        $query = "select * from registry where registry_id like '".substr($reg_id,0,16)."%' order by registry_id desc limit 1";
         
         $row = pdoDBQuery($conn,$query);
                 
@@ -66,6 +66,12 @@ if ($_GET)
             $row['abstract'] = $row['dataset_abstract'];
             $row['primary_poc'] = $row['dataset_poc_name'];
             $poc_email = $row['dataset_poc_email'];
+        }
+        
+        if ($row['registry_id'] <> $reg_id)
+        {
+            $dMessage= "Registation Identifier <b>'$reg_id'</b> has been superseded by a newer version. The latest version has been retrieved instead.";
+            drupal_set_message($dMessage,'warning');
         }
     }
 }
