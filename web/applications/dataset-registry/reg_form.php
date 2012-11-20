@@ -70,8 +70,6 @@ if ($_GET)
     }
 }
 
-var_dump($row['authentication']);
-
 function createTimesDD($time="")
 {
     for ($i = 0; $i <= 23; $i++) {
