@@ -1,9 +1,8 @@
 <?php
 
-
 echo '<fieldset>';
 echo '<table border="1" width="1500px,*" class="cccc" border="0">';
-echo "<tr><td width=\"500px\" align=\"top\"><b>Registry Identifier:</b></td><td><h2><a href=\"http://".$_SERVER['SERVER_NAME']."/reg?regid=$reg_id\">$reg_id</h2></td></tr>";
+echo "<tr><td width=\"500px\" align=\"top\"><b>Registry Identifier:</b></td><td><h2><a href=\"http://".$_SERVER['SERVER_NAME'].$_SERVER['SCRIPT_NAME']."?regid=$reg_id\">$reg_id</h2></td></tr>";
 echo "<tr rowspan=2><td><b>Dataset Title:</b></td><td>$title</td></tr>";
 echo "<tr rowspan=3><td><b>Dataset Abstract:</b></td><td>$abstrct</td></tr>";
 echo "<tr><td><b>Point of Contact Name:</b></td><td>$pocname</td></tr>";
@@ -31,27 +30,10 @@ echo "<tr><td><b>DOI:</b></td><td>$doi</td></tr>";
 echo "<tr><td><b>Submitted by User:</b></td><td>$uid</td></tr>";
 echo "<tr><td><b>Submitted On:</b></td><td>$now</td></tr>";
 
-/*
-
-
-
-
-'$dlstart$timezone',
-'$weekdayslst',
-'$pullds',
-
-    '$now',
-    '$uid'
-
-
-*/
-
-
 echo '</td>';
 echo '</tr>';
 echo '</table><p/>';
-echo '<button type="button" onclick="window.location.href=\'http://'.$_SERVER['SERVER_NAME'].'/reg\'">Fill out another Registration Form</button>';
+echo '<button type="button" onclick="window.location.href=\'http://'.$_SERVER['SERVER_NAME'].$_SERVER['SCRIPT_NAME'].'\'">Fill out another Registration Form</button>';
 echo '</fieldset>';
-
 
 ?>

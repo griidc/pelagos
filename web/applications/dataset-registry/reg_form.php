@@ -20,7 +20,7 @@ if (isset($dif_id))
     $row = pdoDBQuery($conn,$query);
     $status = $row['status'];
 
-    $xml = 'http://proteus.tamucc.edu/services/RPIS/getTaskDetails.php?maxresults=-1&taskid=' . $row['task_uid'] . '&projectid=' . $row['project_id'];
+    $xml = RPIS_TASK_BASEURL.'?maxresults=-1&taskid=' . $row['task_uid'] . '&projectid=' . $row['project_id'];
     $doc = simplexml_load_file($xml);
     $row['task_uid'] = $doc->Task->Title;
 
@@ -51,8 +51,7 @@ if ($_GET)
         $query = "select * from registry where registry_id='$reg_id'";
         
         $row = pdoDBQuery($conn,$query);
-        //var_dump($row);
-        
+                
         if ($row == false)
         {
         
@@ -69,13 +68,11 @@ if ($_GET)
             $poc_email = $row['dataset_poc_email'];
         }
     }
-    
 }
 
 function createTimesDD($time="")
 {
     for ($i = 0; $i <= 23; $i++) {
-        
         
         $temptime = str_pad($i, 2,'0',STR_PAD_LEFT) . ':00';
         if ($temptime == substr($time,0,5))
@@ -330,7 +327,6 @@ function showCreds(from,what,when)
     }
 }
 
-
 function selDays(weeknds)
 {
     document.forms['regForm'].elements['weekdays'][1].checked = !weeknds;
@@ -373,7 +369,6 @@ function getTimeZone()
 
 function checkDOIFields(gourl)
 {
-    
     if (document.getElementById('title').value.length > 0 && document.getElementById('pocname').value.length > 0 && document.getElementById('dataurl').value.length > 0 && document.getElementById('availdate').value.length > 0)
     {
         document.getElementById('doibutton').disabled = false;
@@ -382,13 +377,11 @@ function checkDOIFields(gourl)
             doiurl="http://<?php echo $_SERVER['SERVER_NAME'];?>/doi?dataurl=" + escape(document.getElementById('dataurl').value) + "&title=" + escape(document.getElementById('title').value) + "&creator=" + escape(document.getElementById('pocname').value) + "&date=" + escape(document.getElementById('availdate').value);
             window.open(doiurl);
         }
-        
     }
     else
     {   
         document.getElementById('doibutton').disabled = true;
     }
-    
 }
 
 function showDOIbutton(show)
@@ -399,7 +392,6 @@ function showDOIbutton(show)
         document.getElementById('generatedoidiv').style.display = "none";
         document.getElementById('doi').disabled=false;
     }
-    
     else
     {
         document.getElementById('doibuttondiv').style.display = "none";
@@ -427,8 +419,7 @@ function showDOIbutton(show)
 <div id="abstract_tip" style="display:none;">
     <img src="/dif/images/info.png" style="float:right;" />
     <p>
-        <strong>Abstract:</strong><p/><p>This field should describe the rationale of collecting the dataset, procedure/process how this dataset will be created, period o
-        f data collection and what it will contain. Note that some of the fields that follow in this form are or may be components of this field.</p><br /><p>4000 Characters Max</p>
+        <strong>Abstract:</strong><p/><p>This field should describe the rationale of collecting the dataset, procedure/process how this dataset will be created, period of data collection and what it will contain. Note that some of the fields that follow in this form are or may be components of this field.</p><br /><p>4000 Characters Max</p>
     </p>
 </div>
 
@@ -540,7 +531,7 @@ function showDOIbutton(show)
             </span>
             <label for="registry_id"><b>Registry Identifier: </b></label>
             <input onkeyup="if (this.value.length > 16) {document.getElementById('regbutton').disabled=false;};" <?php if (isset($dif_id)) {echo ' disabled ';};?>type="text" id="registry_id" name="registry_id" size="80" value="<?php if (isset($row['registry_id'])) {echo $row['registry_id'];};?>">
-            <button disabled name="regbutton" id="regbutton" onclick="window.location.href='http://<?php echo $_SERVER['SERVER_NAME'];?>/reg?regid='+document.getElementById('registry_id').value;" type="button">Retrieve Registration</button>
+            <button disabled name="regbutton" id="regbutton" onclick="window.location.href='http://<?php echo $_SERVER['SERVER_NAME'].$_SERVER['SCRIPT_NAME'];?>?regid='+document.getElementById('registry_id').value;" type="button">Retrieve Registration</button>
         </fieldset></p>
         
         <input type="hidden" id="task" name="task" value="<?php if (isset($row['task_uid'])) {echo $row['task_uid'];};?>">
@@ -606,9 +597,7 @@ function showDOIbutton(show)
         </ul>
         
       <div id="tabs-1">  
-      
         <fieldset>
-           
             <p>
                 <span id="qtip_dataurl" style="float:right;">
                     <img src="/dif/images/info.png">
@@ -678,8 +667,6 @@ function showDOIbutton(show)
                 <label for="pword">Password:</label>
                 <input name="pword" id="pword" type="password" size="60" value="<?php if (isset($row['password'])) {echo $row['password'];};?>"/>
                </td></tr></table>
-                
-                
                 </fieldset>
             </div>
             
@@ -739,7 +726,6 @@ function showDOIbutton(show)
             </fieldset>
         </td></tr></table>
 
-
         <fieldset>
             <legend>DOI:</legend>
             <span id="qtip_doi" style="float:right;">
@@ -752,15 +738,10 @@ function showDOIbutton(show)
         
         </fieldset> 
         
-        
         <input type="hidden" name="udi" id="udi" value="<?php if (isset($row['dataset_udi'])) {echo $row['dataset_udi'];};?>"/>
-        
         <input type="hidden" name="regid" id="regid" value="<?php if (isset($row['registry_id'])) {echo $row['registry_id'];};?>"/>
-        
         <input type="hidden" name="urlvalidate" id="urlvalidate"/>
-        
         <input type="hidden" name="weekdayslst" id="weekdayslst"/>
-    
         <input type="hidden" name="timezone" id="timezone"/>
             
         </div>

@@ -105,9 +105,6 @@ if ($_POST)
     
     $newserial = str_pad($newserial, 4,'0',STR_PAD_LEFT);
     $newsub = str_pad($newsub, 3,'0',STR_PAD_LEFT);
-    
-    //echo "newserial:$newserial<br>";
-    //echo "newsub:$newsub<br>";
    
     if ($udi == "")
     {
@@ -133,57 +130,55 @@ if ($_POST)
         $title = pg_escape_string($title);
         $abstrct = pg_escape_string($abstrct);
         
-        //$data_server_type = preg_split('/\:/',$dataurl);
-        //$data_server_type = $data_server_type[0];
-        
         $query = "INSERT INTO registry 
         (
-        registry_id,
-        data_server_type,
-        dataset_udi,
-        dataset_title, 
-        dataset_abstract, 
-        dataset_poc_name, 
-        dataset_poc_email, 
-        url_data, 
-        url_metadata, 
-        username, 
-        password, 
-        availability_date,
-        authentication,
-        access_status,
-        access_period,
-        access_period_start,
-        access_period_weekdays,
-        data_source_pull,
-        doi,
-        generatedoi,
-        submittimestamp,
-        userid
+            registry_id,
+            data_server_type,
+            dataset_udi,
+            dataset_title, 
+            dataset_abstract, 
+            dataset_poc_name, 
+            dataset_poc_email, 
+            url_data, 
+            url_metadata, 
+            username, 
+            password, 
+            availability_date,
+            authentication,
+            access_status,
+            access_period,
+            access_period_start,
+            access_period_weekdays,
+            data_source_pull,
+            doi,
+            generatedoi,
+            submittimestamp,
+            userid
         ) 
-        VALUES (
-        '$reg_id',
-        'HTTP',
-        '$udi',
-        '$title', 
-        '$abstrct', 
-        '$pocname', 
-        '$pocemail', 
-        '$dataurl', 
-        '$metadataurl', 
-        '$uname', 
-        '$pword',
-        '$availdate',
-        '$auth', 
-        '$avail', 
-        '$whendl',
-        '$dlstart$timezone',
-        '$weekdayslst',
-        '$pullds', 
-        '$doi',
-        '$generatedoi',
-        '$now',
-        '$uid'
+        VALUES 
+        (
+            '$reg_id',
+            'HTTP',
+            '$udi',
+            '$title', 
+            '$abstrct', 
+            '$pocname', 
+            '$pocemail', 
+            '$dataurl', 
+            '$metadataurl', 
+            '$uname', 
+            '$pword',
+            '$availdate',
+            '$auth', 
+            '$avail', 
+            '$whendl',
+            '$dlstart$timezone',
+            '$weekdayslst',
+            '$pullds', 
+            '$doi',
+            '$generatedoi',
+            '$now',
+            '$uid'
         );";
       
         if (!$_SESSION['submitok'])
@@ -223,7 +218,6 @@ if ($_SESSION['submitok'])
 }
 else
 {
-
     echo '<table  border="0">';
     echo '<tr>';
     echo '<td width="45%" style="vertical-align: top; background: transparent;">';
