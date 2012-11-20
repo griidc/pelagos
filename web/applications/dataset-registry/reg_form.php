@@ -70,6 +70,8 @@ if ($_GET)
     }
 }
 
+var_dump($row['authentication']);
+
 function createTimesDD($time="")
 {
     for ($i = 0; $i <= 23; $i++) {
@@ -118,7 +120,7 @@ function createTimesDD($time="")
 
 function isChecked($row,$index,$compare=null)
 {
-    if ($row <> "")
+    if ($row <> "" AND gettype($row) == "string")
     {
         $value = preg_split ('/\|/',$row);
         if (isset($compare))
@@ -134,6 +136,13 @@ function isChecked($row,$index,$compare=null)
         else
         {
             echo $value[$index];
+        }
+    }
+    else
+    {
+        if ($row == $compare)
+        {
+            echo 'checked';
         }
     }
 }
@@ -169,6 +178,9 @@ function isChecked($row,$index,$compare=null)
                 maxlength: 4000
             },
             pocname: "required",
+            auth: "required",
+            whendl: "required",
+            pullds: "required",
             pocemail:
             {
                 required: true,
@@ -541,7 +553,7 @@ function showDOIbutton(show)
             <img src="/dif/images/info.png">
         </span>
         <label for="title"><b>Dataset Title: </b></label>
-        <input onchange="checkDOIFields();" maxlength="200" type="text" name="title" id="title" size="120" value="<?php if (isset($row['title'])) {echo $row['title'];};?>"/>
+        <input onchange="checkDOIFields();" type="text" name="title" id="title" size="120" value="<?php if (isset($row['title'])) {echo $row['title'];};?>"/>
     </fieldset></p>
     
     <p><fieldset>
@@ -549,7 +561,7 @@ function showDOIbutton(show)
             <img src="/dif/images/info.png">
         </span>
         <label for="abstrct"><b>Dataset Abstract: </b></label>
-        <textarea name="abstrct" id="abstrct" maxlength="4000" rows="5" cols="100"><?php if (isset($row['abstract'])) {echo $row['abstract'];};?></textarea> 
+        <textarea name="abstrct" id="abstrct" rows="5" cols="100"><?php if (isset($row['abstract'])) {echo $row['abstract'];};?></textarea> 
     </fieldset></p>
     
     <p><fieldset>
