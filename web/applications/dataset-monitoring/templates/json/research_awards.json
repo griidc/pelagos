@@ -1,0 +1,34 @@
+[
+    {
+        "data": {
+            "title": "Year-One Block Grants",
+            "attr": {
+                "style": "color:#00A",
+                "href": "javascript:showProjects(\"Year-One Block Grants\",\"YR1\",1);"
+            }
+        },
+        "attr": {
+            "id": "YR1"
+        },
+        "state": "closed"
+    }
+    {% for RFP in RFPS %}
+    ,
+    {
+        "data": {
+            "title": "{{RFP.Name}}",
+            "attr": {
+                "style": "color:#00A",
+                "href": "javascript:showProjects(\"{{RFP.Name}}\",\"fundSrc\",{{RFP.ID}});"
+            }
+        },
+        "attr": {
+            "id": "projects/fundSrc/{{RFP.ID}}"
+        }
+        {% if RFP.ID == 7 %}
+        ,
+        "state": "closed"
+        {% endif %}
+    }
+    {% endfor %}
+]

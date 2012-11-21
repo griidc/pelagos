@@ -1,0 +1,30 @@
+<div id="container" style="width:100%; background-color:white; padding:0; margin:0;">
+    <div id="left" style="float:left; width:40%; height:500px;">
+        <div id="menu">
+            <div class="scrollbar"><div class="track"><div class="thumb"><div class="end"></div></div></div></div>
+            <div class="viewport">
+                <div class="overview">
+                    <select onchange="updateTree(this.value);">
+                        <option value="ra">Research Awards</option>
+                        <option value="re">Researchers</option>
+                        <option value="in">Institutions</option>
+                    </select>
+                    <div id="tree"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="right" style="float:left; width:60%; height:500px;">
+        <div id="content">
+            <div class="scrollbar"><div class="track"><div class="thumb"><div class="end"></div></div></div></div>
+            <div class="viewport">
+                <div class="overview"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="dataset_details">
+    <div id="dataset_details_close"><input type="image" src="{{baseUrl}}/includes/images/close.gif" onclick="jQuery('#dataset_details').hide();"></div>
+    <div id="dataset_details_content"></div>
+</div>

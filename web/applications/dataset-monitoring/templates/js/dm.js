@@ -1,0 +1,71 @@
+var $ = jQuery.noConflict();
+
+$(document).ready(function() {
+    $('#menu .overview').width($('#menu .viewport').width() - 15);
+    h = $(window).height() - $('#left').position().top - 130;
+    $('#left').height(h);
+    $('#right').height(h);
+    $('#menu').tinyscrollbar();
+    $('#content').tinyscrollbar();
+    $('#menu .overview').mutate('height', function(el,info) {
+        $('#menu').tinyscrollbar_update('relative');
+    });
+    updateTree('ra');
+});
+
+function updateTree(type) {
+    $("#tree").jstree({
+        "core": {
+            "html_titles": true
+        },
+        "themes": {
+            "theme": "classic",
+            "dots": true,
+            "icons": false
+        },
+        "json_data": {
+            "ajax": {
+                "url": function (node) {
+                    var nodeId = "";
+                    var url = "";
+                    if (node == -1) {
+                        url = "{{baseUrl}}/json/"+type+".json";
+                    }
+                    else {
+                        nodeId = node.attr('id');
+                        url = "{{baseUrl}}/json/"+type+"/"+nodeId+".json";
+                    }
+                    return url;
+                },
+                "success": function (new_data) {
+                    return new_data;
+                }
+            }
+        },
+        "plugins": [ "json_data", "types", "themes" ]
+    });
+}
+
+function showProjects(dfor,by,id) {
+    $('#content .overview').html('<div class="spinner"><div><img src="{{baseUrl}}/includes/images/spinner.gif"></div></div>');
+    $('div.spinner').height($('#content .viewport').height()-12);
+    $('#content').tinyscrollbar_update('relative');
+    $.ajax({
+        "url": "{{baseUrl}}/projects/" + by + "/" + id,
+        "success": function(data) {
+            html = "<span class='title2'>Datasets for " + dfor + "</span>" + data;
+            $('#content .overview').html(html);
+            setTimeout(function () { jQuery('#content').tinyscrollbar_update('relative'); }, 100);
+        }
+    });
+}
+
+function showDatasetDetails(udi) {
+    $.ajax({
+        "url": "{{baseUrl}}/dataset_details/" + udi,
+        "success": function(data) {
+            $('#dataset_details_content').html(data);
+            $('#dataset_details').show();
+        }
+    });
+}

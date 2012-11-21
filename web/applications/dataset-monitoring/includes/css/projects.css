@@ -1,0 +1,108 @@
+ul.projects {
+    width: 100%;
+    margin-top: 0.75em;
+    list-style: none;
+    margin-left: 0;
+    padding-left: 0;
+}
+
+li.project {
+    width: 100%;
+}
+
+ul.projects div.title1 {
+    font-weight: bold;
+    color: #050;
+    font-size: 110%;
+    margin-bottom: 5px;
+}
+
+ul.projects div.container {
+    margin-left: 1em;
+}
+
+ul.tasks {
+    list-style: none;
+    width: auto;
+    margin-top: 0.75em;
+    padding-left: 0px;
+    margin-left: 0em;
+}
+
+li.task {
+    width: 100%;
+}
+
+ul.tasks span.title1 {
+    color: #005;
+    font-size: 100%;
+    font-weight: bold;
+}
+
+span.title2 {
+    color: black;
+    font-weight: bold;
+    font-size: 125%;
+}
+
+span.attr {
+    font-weight: bold;
+}
+
+div.pi {
+    font-size: 95%;
+    padding-bottom: .15em;
+}
+
+div.institutions {
+    font-size: 85%;
+}
+
+table.datasets {
+    width: 100%;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+table.datasets th {
+    border: 1px solid black;
+    font-weight: bold;
+    padding: 2px 5px;
+    text-align: center;
+}
+
+table.datasets td {
+    border: 1px solid black;
+    padding: 2px 5px;
+}
+
+table.datasets tr:hover td {
+    background-color: #DFD;
+}
+
+table.datasets .udi {
+    width: 8em;
+    text-align: center;
+    vertical-align: top;
+}
+
+table.datasets .status {
+    width: 6em;
+    text-align: center;
+}
+
+table.datasets .status img {
+    vertical-align: middle;
+}
+
+div.spinner div {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -30px 0 0 -30px;
+}
+
+.titleInstName {
+    color: #555;
+    font-size: 85%;
+}

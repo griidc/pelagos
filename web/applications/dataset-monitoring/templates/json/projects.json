@@ -1,0 +1,19 @@
+[
+{% for project in projects %}
+    {
+        "data": {
+            "title": "{{project.Title | raw}}",
+            "attr": {
+                "style": "color:#00A",
+                "href": "javascript:showProjects(\"{{project.Title}}\",\"projectId\",{{project.ID}});"
+            }
+        },
+        "attr": {
+            "id": "tasks/projectId/{{project.ID}}"
+        }
+    }
+    {% if not loop.last %}
+    ,
+    {% endif %}
+{% endfor %}
+]

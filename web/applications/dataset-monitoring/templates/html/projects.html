@@ -1,0 +1,41 @@
+<ul class="projects">
+{% for project in projects %}
+    <li class="project">
+        <div class="title1">{{project.Title}}</div>
+        <div class="container">
+        <div class="pi">
+            <span class="attr">Principal Investigator:</span> <a href="http://research.gulfresearchinitiative.org/gomri-funded-researchers/person-overview.php?pid={{project.PI.ID}}" target="_blank">{{project.PI.FirstName | raw}} {{project.PI.LastName}}</a> -- <a href="http://research.gulfresearchinitiative.org/gomri-funded-institutions/institution-overview.php?instid={{project.PI.Institution_ID}}" target="_blank">{{project.PI.Institution_Name}}</a>
+        </div>
+        <div class="institutions">
+            <span class="attr">Member Institutions:</span>
+            {% for inst in project.Institutions %}
+                <a href="http://research.gulfresearchinitiative.org/gomri-funded-institutions/institution-overview.php?instid={{inst.ID}}" target="_blank">{{inst.Name}}</a>{% if not loop.last %}, {% endif %}
+            {% endfor %}
+        </div>
+        <ul class="tasks">
+        {% for task in project.tasks %}
+            <li class="task">
+                <span class="title1">{{task.Title}}</span>
+                <div class="container">
+                {% if task.datasets %}
+                    {% set datasets = task.datasets %}
+                    {% include 'html/datasets.html' %}
+                {% else %}
+                    <p style='color:red'><em>{no dataset identified}</em></p>
+                {% endif %}
+                </div>
+            </li>
+        {% endfor %}
+        </ul>
+        {% if not project.tasks %}
+            {% if project.datasets %}
+                {% set datasets = project.datasets %}
+                {% include 'html/datasets.html' %}
+            {% else %}
+                <p style='color:red'><em>{no dataset identified}</em></p>
+            {% endif %}
+        {% endif %}
+        </div>
+    </li>
+{% endfor %}
+</ul>

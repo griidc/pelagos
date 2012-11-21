@@ -1,0 +1,16 @@
+[
+{% for institution in institutions %}
+    {
+        "data": {
+            "title": "{{institution.Name | raw}}",
+            "attr": {
+                "style": "color:#00A",
+                "href": "javascript:showProjects(\"{{institution.Name | raw}}\",\"institutionId\",{{institution.ID}});"
+            }
+        }
+    }
+    {% if not loop.last %}
+    ,
+    {% endif %}
+{% endfor %}
+]
