@@ -1,5 +1,10 @@
 <?php
 
+if (!isset($auth)){$auth="N/A";};
+if (!isset($whendl)){$whendl="N/A";};
+if (!isset($pullds)){$pullds="N/A";};
+
+
 echo '<fieldset>';
 echo '<table border="1" width="1500px,*" class="cccc" border="0">';
 echo "<tr><td width=\"500px\" align=\"top\"><b>Registry Identifier:</b></td><td><h2><a href=\"http://".$_SERVER['SERVER_NAME'].$_SERVER['SCRIPT_NAME']."?regid=$reg_id\">$reg_id</h2></td></tr>";

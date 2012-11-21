@@ -115,7 +115,7 @@ if ($_POST)
         $reg_id = $udi.'.'.$newsub;    
     }
             
-    if ($title == "" OR $abstrct == "" OR $dataurl == "" OR $pocname == "")
+    if ($title == "" OR $abstrct == "" OR $pocemail == "" OR $pocname == "")
     {
         $dMessage = 'Not all required fields where filled out!';
         drupal_set_message($dMessage,'warning');
@@ -130,56 +130,39 @@ if ($_POST)
         $title = pg_escape_string($title);
         $abstrct = pg_escape_string($abstrct);
         
-        $query = "INSERT INTO registry 
-        (
-            registry_id,
-            data_server_type,
-            dataset_udi,
-            dataset_title, 
-            dataset_abstract, 
-            dataset_poc_name, 
-            dataset_poc_email, 
-            url_data, 
-            url_metadata, 
-            username, 
-            password, 
-            availability_date,
-            authentication,
-            access_status,
-            access_period,
-            access_period_start,
-            access_period_weekdays,
-            data_source_pull,
-            doi,
-            generatedoi,
-            submittimestamp,
-            userid
-        ) 
-        VALUES 
-        (
-            '$reg_id',
-            'HTTP',
-            '$udi',
-            '$title', 
-            '$abstrct', 
-            '$pocname', 
-            '$pocemail', 
-            '$dataurl', 
-            '$metadataurl', 
-            '$uname', 
-            '$pword',
-            '$availdate',
-            '$auth', 
-            '$avail', 
-            '$whendl',
-            '$dlstart$timezone',
-            '$weekdayslst',
-            '$pullds', 
-            '$doi',
-            '$generatedoi',
-            '$now',
-            '$uid'
-        );";
+        if ($servertype == "HTTP")
+        {
+            $query = "INSERT INTO registry 
+            (
+                registry_id, data_server_type, dataset_udi, dataset_title, dataset_abstract, dataset_poc_name, dataset_poc_email, url_data, url_metadata, 
+                username, password, availability_date,authentication,access_status,access_period,access_period_start,access_period_weekdays,
+                data_source_pull,doi,generatedoi,submittimestamp,userid
+            ) 
+            VALUES 
+            (
+                '$reg_id','$servertype','$udi','$title', '$abstrct', '$pocname', '$pocemail', '$dataurl', '$metadataurl', '$uname', '$pword','$availdate','$auth', 
+                '$avail', '$whendl','$dlstart$timezone','$weekdayslst','$pullds', '$doi','$generatedoi','$now','$uid'
+            );";
+        }
+        
+        if ($servertype == "SFTP")
+        {
+            $query = "INSERT INTO registry 
+            (
+            registry_id, data_server_type, dataset_udi, dataset_title, dataset_abstract, dataset_poc_name, dataset_poc_email, url_data, url_metadata, 
+            access_status,data_source_pull,doi,generatedoi,submittimestamp,userid
+            ) 
+            VALUES 
+            (
+            '$reg_id','$servertype','$udi','$title', '$abstrct', '$pocname', '$pocemail', '$sshdatapath', '$sshmetadatapath', 
+            '$sshavail', 'Yes', '$sshdoi','$sshgeneratedoi','$now','$uid'
+            );"; 
+            $dataurl = $sshdatapath;
+            $metadataurl = $sshmetadatapath;
+            $avail = $sshavail;
+            $doi = $sshdoi;
+            $generatedoi = $sshgeneratedoi;
+        }                
       
         if (!$_SESSION['submitok'])
         {
@@ -201,7 +184,7 @@ if ($_POST)
         else
         {
             $dMessage= "Sorry, the data was already succesfully submitted. Please email <a href=\"mailto:griidc@gomri.org?subject=REG Form\">griidc@gomri.org</a> if you have any questions.";
-            drupal_set_message($dMessage,'warning');
+            drupal_set_message($dMessage,'warning',false);
             $_SESSION['submitok'] = true;
         }
         

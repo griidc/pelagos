@@ -157,7 +157,8 @@ function isChecked($row,$index,$compare=null)
 (function ($) {
     $(function() {
         $( "#tabs" ).tabs({
-            heightStyleType: "fill"
+            heightStyleType: "fill",
+            active: 1
         });
         
         $( "#availdate" ).datepicker({
@@ -181,8 +182,11 @@ function isChecked($row,$index,$compare=null)
                 required: true,
                 maxlength: 4000
             },
-            pocname: "required",
+            sshdatapath: "required",
+            sshmetadatapath: "required",
             auth: "required",
+            sshauth: "required",
+            pocname: "required",
             whendl: "required",
             pullds: "required",
             pocemail:
@@ -606,7 +610,8 @@ function showDOIbutton(show)
     
     <div style="background: transparent;" id="tabs">
         <ul>
-            <li><a href="#tabs-1">HTTP/FTP Server</a></li>
+            <li><a onclick="document.getElementById('servertype').value='HTTP'" href="#tabs-1">HTTP/FTP Server</a></li>
+            <li><a onclick="document.getElementById('servertype').value='SFTP'" href="#tabs-2">SFTP</a></li>
             <li><a href="">TDS</a></li>
             <li><a href="">ERDDAP</a></li>
             <li><a href="">...</a></li>
@@ -751,19 +756,60 @@ function showDOIbutton(show)
             <input disabled type="text" name="doi" id="doi" size="60"/ value="<?php if (isset($row['doi'])) {echo $row['doi'];};?>">&nbsp;&nbsp;&nbsp;&nbsp;
             <span style="display:none" id="doibuttondiv"><button disabled  id="doibutton" name="doibutton" type="button" onclick="checkDOIFields(true);">Digital Object Indentifier Request Form</button></span>
             <span id="generatedoidiv"><input checked onchange="document.getElementById('doi').disabled=this.checked;" type="checkbox" name="generatedoi" id="generatedoi">Auto-Generate DOI when data is available</span>
-        
         </fieldset> 
-        
-        <input type="hidden" name="udi" id="udi" value="<?php if (isset($row['dataset_udi'])) {echo $row['dataset_udi'];};?>"/>
-        <input type="hidden" name="regid" id="regid" value="<?php if (isset($row['registry_id'])) {echo $row['registry_id'];};?>"/>
-        <input type="hidden" name="urlvalidate" id="urlvalidate"/>
-        <input type="hidden" name="weekdayslst" id="weekdayslst"/>
-        <input type="hidden" name="timezone" id="timezone"/>
-            
-        </div>
         
     </div>
     <p/>
+    
+    <div id="tabs-2">  
+ 
+        <fieldset> 
+        <p>
+            <span id="qtip_dataurl" style="float:right;">
+                <img src="/dif/images/info.png">
+            </span>
+            <label for="sshdatapath">Dataset File Path:</label>
+            <input name="sshdatapath" id="sshdatapath" type="text" size="120" value="<?php if (isset($row['url_data'])) {echo $row['url_data'];};?>"/>
+        </p>
+        
+            <p>
+                <span id="qtip_dataurl" style="float:right;">
+                    <img src="/dif/images/info.png">
+                </span>
+                <label for="sshmetadatapath">Metadata File Path:</label>
+                <input name="sshmetadatapath" id="sshmetadatapath" type="text" size="120" value="<?php if (isset($row['url_data'])) {echo $row['url_data'];};?>"/>
+            </p>
+         </fieldset> 
+         
+         
+        <fieldset>
+            <span id="qtip_avail" style="float:right;">
+                <img src="/dif/images/info.png">
+            </span>
+            <label for="avail">Restrictions:</label>
+            <input <?PHP if (isset($row['access_status'])){isChecked($row['access_status'],0,"None");}; if(!isset($reg_id)){echo 'checked';};?> name="sshavail" id="sshavail" type="radio" value="None"/>None
+            <input <?PHP if (isset($row['access_period'])){isChecked($row['access_status'],0,"Approval");};?>  name="sshavail" id="sshavail" type="radio" value="Approval"/>Requires Author&apos;s Approval
+            <input <?PHP if (isset($row['access_period'])){isChecked($row['access_status'],0,"Restricted");};?>  name="sshavail" id="sshavail" type="radio" value="Restricted"/>Restricted
+            <br />
+        </fieldset>
+    
+        <fieldset>
+            <legend>DOI:</legend>
+            <span id="qtip_doi" style="float:right;">
+                <img src="/dif/images/info.png">
+            </span>
+            <label for="doi">Digital Object Identifier:</label>
+            <input type="text" name="sshdoi" id="sshdoi" size="60"/ value="<?php if (isset($row['doi'])) {echo $row['doi'];};?>">&nbsp;&nbsp;&nbsp;&nbsp;
+            <span id="generatedoidiv"><input checked onchange="document.getElementById('sshdoi').disabled=this.checked;" type="checkbox" name="sshgeneratedoi" id="sshgeneratedoi">Auto-Generate DOI when data is available</span>
+        </fieldset> 
+    </div>
+    
+    <input type="hidden" name="udi" id="udi" value="<?php if (isset($row['dataset_udi'])) {echo $row['dataset_udi'];};?>"/>
+    <input type="hidden" name="regid" id="regid" value="<?php if (isset($row['registry_id'])) {echo $row['registry_id'];};?>"/>
+    <input type="hidden" name="urlvalidate" id="urlvalidate"/>
+    <input type="hidden" name="weekdayslst" id="weekdayslst"/>
+    <input type="hidden" name="timezone" id="timezone"/>
+    <input type="hidden" name="servertype" id="servertype" value="HTTP"/>
    
     <input onclick="weekDays();getTimeZone();" type="submit" value="Submit"/>
 </form>  
