@@ -27,6 +27,8 @@ if (isset($dif_id))
     $poc_email = "";
     
     $reg_id = $row['dataset_udi'];
+    
+    //var_dump($row);
 
     if ($row['primary_poc'] > 0)
     { 
@@ -50,17 +52,21 @@ if (isset($reg_id))
 {
     $query = "select * from registry where registry_id like '".substr($reg_id,0,16)."%' order by registry_id desc limit 1";
     
-    $row = pdoDBQuery($conn,$query);
-            
-    if ($row == false)
+    $regrow = pdoDBQuery($conn,$query);
+              
+    if ($regrow == false OR is_null($regrow))
     {
-    
-        $dMessage= "Sorry, the registration with ID: $reg_id could not be found. Please email <a href=\"mailto:griidc@gomri.org?subject=REG Form\">griidc@gomri.org</a> if you have any questions.";
-        drupal_set_message($dMessage,'warning');
+        if (isset($_GET['regid']))
+        {
+            $dMessage= "Sorry, the registration with ID: $reg_id could not be found. Please email <a href=\"mailto:griidc@gomri.org?subject=REG Form\">griidc@gomri.org</a> if you have any questions.";
+            drupal_set_message($dMessage,'warning');
+        }
     }
     else
     {
-        $dif_id = true;        
+        $dif_id = true;  
+
+        $row = $regrow;
         
         $row['title'] = $row['dataset_title'];
         $row['abstract'] = $row['dataset_abstract'];
@@ -68,7 +74,7 @@ if (isset($reg_id))
         $poc_email = $row['dataset_poc_email'];
     }
     
-    if ($row['registry_id'] <> $reg_id)
+    if ($regrow['registry_id'] <> $reg_id AND $regrow != false)
     {
         $dMessage= "Registation Identifier <b>'$reg_id'</b> has been superseded by a newer version. The latest version has been retrieved instead.";
         drupal_set_message($dMessage,'warning');
