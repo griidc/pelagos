@@ -398,7 +398,7 @@ function checkDOIFields(gourl)
         document.getElementById('doibutton').disabled = false;
         if (gourl==true)
         {
-            doiurl="http://<?php echo $_SERVER['SERVER_NAME'];?>/doi?dataurl=" + escape(document.getElementById('dataurl').value) + "&title=" + escape(document.getElementById('title').value) + "&creator=" + escape(document.getElementById('pocname').value) + "&date=" + escape(document.getElementById('availdate').value);
+            doiurl="/doi?dataurl=" + escape(document.getElementById('dataurl').value) + "&title=" + escape(document.getElementById('title').value) + "&creator=" + escape(document.getElementById('pocname').value) + "&date=" + escape(document.getElementById('availdate').value);
             window.open(doiurl);
         }
     }
@@ -555,7 +555,7 @@ function showDOIbutton(show)
             </span>
             <label for="registry_id"><b>Registry Identifier: </b></label>
             <input onkeyup="if (this.value.length > 16) {document.getElementById('regbutton').disabled=false;};" <?php if (isset($dif_id)) {echo ' disabled ';};?>type="text" id="registry_id" name="registry_id" size="80" value="<?php if (isset($row['registry_id'])) {echo $row['registry_id'];};?>">
-            <button disabled name="regbutton" id="regbutton" onclick="window.location.href='http://<?php echo $_SERVER['SERVER_NAME'].$_SERVER['SCRIPT_NAME'];?>?regid='+document.getElementById('registry_id').value;" type="button">Retrieve Registration</button>
+            <button disabled name="regbutton" id="regbutton" onclick="window.location.href='/<?php echo $_SERVER['SCRIPT_NAME'];?>?regid='+document.getElementById('registry_id').value;" type="button">Retrieve Registration</button>
         </fieldset></p>
         
         <input type="hidden" id="task" name="task" value="<?php if (isset($row['task_uid'])) {echo $row['task_uid'];};?>">
@@ -674,7 +674,7 @@ function showDOIbutton(show)
                 </p>
             </fieldset>
            </td></tr></table>
-            <div id="creds" style="display:<?php if (isset($row['authentication'])){ if ($row['authentication']==true){echo 'block';};}else{ echo 'none';};?>;">
+            <div id="creds" style="display:<?php if (isset($row['authentication'])){ if ($row['authentication']==true){echo 'block';}else{echo 'none';};}else{ echo 'none';};?>;">
                 <fieldset>
                 <legend>Credentials:</legend>
                     
@@ -695,7 +695,7 @@ function showDOIbutton(show)
                 </fieldset>
             </div>
             
-          <div id="whendiv" style="display:<?php if (isset($row['access_period'])){if ($row['access_period']==true){echo 'block';};}else{ echo 'none';};?>;">
+          <div id="whendiv" style="display:<?php if (isset($row['access_period'])){if ($row['access_period']==true){echo 'block';}else{echo 'none';};}else{ echo 'none';};?>;">
               <fieldset>
                   <span id="qtip_times" style="float:right;">
                       <img src="/dif/images/info.png">
