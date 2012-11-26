@@ -192,57 +192,65 @@ function displayTaskStatus($tasks,$update=null,$personid=null)
         $taskTitle = $task->Title;
         $projectID = $task->Project['ID'];
 
-        echo "d.add($nodeCount,0,'".addslashes($taskTitle)."','javascript: d.o($nodeCount);','".addslashes($taskTitle)."','','','',true);\n";
-        $nodeCount++;
+        
         
         if ($taskID > 0)
         {
-            $query = "select title,status,dataset_uid,dataset_udi from datasets where task_uid=$taskID ";//and status=2";
+            $query = "select title,status,dataset_uid,dataset_udi from datasets where task_uid=$taskID and status=2";
         }
         else
         {
-            $query = "select title,status,dataset_uid,dataset_udi from datasets where project_id=$projectID ";//and status=2";
+            $query = "select title,status,dataset_uid,dataset_udi from datasets where project_id=$projectID and status=2";
 
         }   	
         
         $results = dbexecute($query);
         
-        while ($row = pg_fetch_row($results)) 
+        $rnum = pg_num_rows($results);
+        
+        if ($rnum > 0)
         {
-            $status = $row[1];
-            $title = $row[0];
-            $datasetid = $row[2];
-            $dataset_udi = $row[3];
-            
-            if (isset($personid))
-            {
-                echo "d.add($nodeCount,$folderCount,'".addslashes("[$dataset_udi] $title")."','?uid=$datasetid&prsid=$personid','".addslashes("[$dataset_udi] $title")."','_self'";
-            }
-            else
-            {
-                echo "d.add($nodeCount,$folderCount,'".addslashes("[$dataset_udi] $title")."','?uid=$datasetid','".addslashes("[$dataset_udi] $title")."','_self'";
-            }
-            
-            
-            switch ($status)
-            {
-                case null:
-                echo ",'/dif/images/red_bobble.png');\n";
-                break;
-                case 0:
-                echo ",'/dif/images/red_bobble.png');\n";
-                break;
-                case 1:
-                echo ",'/dif/images/yellow_bobble.png');\n";
-                break;
-                case 2:
-                echo ",'/dif/images/green_bobble.png');\n";
-                break;
-                default:
-                echo ");\n";
-                break;
-            }
+                
+            echo "d.add($nodeCount,0,'".addslashes($taskTitle)."','javascript: d.o($nodeCount);','".addslashes($taskTitle)."','','','',true);\n";
             $nodeCount++;
+            
+            while ($row = pg_fetch_row($results)) 
+            {
+                $status = $row[1];
+                $title = $row[0];
+                $datasetid = $row[2];
+                $dataset_udi = $row[3];
+                
+                if (isset($personid))
+                {
+                    echo "d.add($nodeCount,$folderCount,'".addslashes("[$dataset_udi] $title")."','?uid=$datasetid&prsid=$personid','".addslashes("[$dataset_udi] $title")."','_self'";
+                }
+                else
+                {
+                    echo "d.add($nodeCount,$folderCount,'".addslashes("[$dataset_udi] $title")."','?uid=$datasetid','".addslashes("[$dataset_udi] $title")."','_self'";
+                }
+                
+                
+                switch ($status)
+                {
+                    case null:
+                    echo ",'/dif/images/red_bobble.png');\n";
+                    break;
+                    case 0:
+                    echo ",'/dif/images/red_bobble.png');\n";
+                    break;
+                    case 1:
+                    echo ",'/dif/images/yellow_bobble.png');\n";
+                    break;
+                    case 2:
+                    echo ",'/dif/images/green_bobble.png');\n";
+                    break;
+                    default:
+                    echo ");\n";
+                    break;
+                }
+                $nodeCount++;
+            }
         }
         $folderCount=$nodeCount;
     }
@@ -316,6 +324,7 @@ function filterTasks($tasks, $person)
     
     return $filteredTasks;
 }
+
 
 function helps($for, $ht, $tip){ echo "\n<label for=\"$for\"><b>$ht: </b><span id=\"$tip\" style=\"float:right;\"> <IMG SRC=\"/dif/images/info.png\"></span></label>\n"; }
 ?>

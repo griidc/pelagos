@@ -10,9 +10,9 @@ require_once 'config.php';
 include_once '/usr/local/share/GRIIDC/php/ldap.php';
 include_once '/usr/local/share/GRIIDC/php/drupal.php';
 
-include_once 'lib/functions.php';
-
 include_once 'pdo_functions.php';
+
+include_once 'lib/functions.php';
 
 $alltasks="";
 
@@ -35,6 +35,7 @@ if (isset($uid)) {
     }
 }
 $tasks = getTasks($ldap,$baseDN,$userDN,$firstName,$lastName);
+
 $GLOBALS['personid'] ="";
 if ($_GET) 
 {
