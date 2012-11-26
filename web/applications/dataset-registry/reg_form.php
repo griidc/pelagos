@@ -597,7 +597,7 @@ function showDOIbutton(show)
         </td></tr></table>
     </fieldset></p>
 </fieldset>
-    <h1>File Details</h1>
+    <h1>Data Server Details</h1>
     
     <style>
     label
