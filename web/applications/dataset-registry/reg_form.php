@@ -647,7 +647,7 @@ function showDOIbutton(show)
                 </span>
                 <label for="auth">Requires Authentication:</label>
                 <input <?PHP if (isset($row['authentication'])){isChecked($row['authentication'],0,true);};?> onclick="showCreds(this,'creds','Yes');" name="auth" id="auth" type="radio" value="Yes"/>Yes
-                <input <?PHP if (isset($row['authentication'])){isChecked($row['authentication'],0,false);}; if(!isset($reg_id)){echo 'checked';};?> onclick="showCreds(this,'creds','Yes');" name="auth" id="auth" type="radio" value="No"/>No
+                <input <?PHP if (isset($row['authentication'])){isChecked($row['authentication'],0,false);}; if(!isset($_GET['regid'])){echo 'checked';};?> onclick="showCreds(this,'creds','Yes');" name="auth" id="auth" type="radio" value="No"/>No
             </p>
             </fieldset>
             </td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
@@ -657,7 +657,7 @@ function showDOIbutton(show)
                         <img src="/dif/images/info.png">
                     </span>
                     <label for="pullds">Pull Source Data:</label>
-                    <input <?PHP if (isset($row['data_source_pull'])){isChecked($row['data_source_pull'],0,true);}; if(!isset($reg_id)){echo 'checked';};?>  onclick="showCreds(this,'pulldiv','No');" onchange="showDOIbutton(this);" name="pullds" id="pullds" type="radio" value="Yes"/>Yes
+                    <input <?PHP if (isset($row['data_source_pull'])){isChecked($row['data_source_pull'],0,true);}; if(!isset($_GET['regid'])){echo 'checked';};?>  onclick="showCreds(this,'pulldiv','No');" onchange="showDOIbutton(this);" name="pullds" id="pullds" type="radio" value="Yes"/>Yes
                     <input <?PHP if (isset($row['data_source_pull'])){isChecked($row['data_source_pull'],0,false);};?> onclick="showCreds(this,'pulldiv','No');" onchange="showDOIbutton(this);" name="pullds" id="pullds" type="radio" value="No"/>No
                 </p>
             
@@ -670,7 +670,7 @@ function showDOIbutton(show)
                     </span>
                     <label for="whendl">Download Certain Times Only</label>
                     <input <?PHP if (isset($row['access_period'])){isChecked($row['access_period'],0,true);};?> onclick="showCreds(this,'whendiv','Yes');getTimeZone();weekDays();" name="whendl" id="whendl" type="radio" value="Yes"/>Yes
-                    <input <?PHP if (isset($row['access_period'])){isChecked($row['access_period'],0,false);}; if(!isset($reg_id)){echo 'checked';};?> onclick="showCreds(this,'whendiv','Yes');getTimeZone();weekDays();" name="whendl" id="whendl" type="radio" value="No"/>No
+                    <input <?PHP if (isset($row['access_period'])){isChecked($row['access_period'],0,false);}; if(!isset($_GET['regid'])){echo 'checked';};?> onclick="showCreds(this,'whendiv','Yes');getTimeZone();weekDays();" name="whendl" id="whendl" type="radio" value="No"/>No
                 </p>
             </fieldset>
            </td></tr></table>
@@ -711,13 +711,13 @@ function showDOIbutton(show)
                </td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
                  
                   <label for="weekdays">Weekdays:</label>
-                  <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Sunday");}; if(!isset($reg_id)){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Sunday"/>Sunday&nbsp;
-                  <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Monday");}; if(!isset($reg_id)){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Monday"/>Monday&nbsp;
-                  <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Tuesday");}; if(!isset($reg_id)){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Tuesday"/>Tuesday&nbsp;
-                  <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Wednesday");}; if(!isset($reg_id)){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Wednesday"/>Wednesday&nbsp;
-                  <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Thursday");}; if(!isset($reg_id)){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Thursday"/>Thursday&nbsp;
-                  <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Friday");}; if(!isset($reg_id)){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Friday"/>Friday&nbsp;
-                  <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Saturday");}; if(!isset($reg_id)){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Saturday"/>Saturday&nbsp;
+                  <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Sunday");}; if(!isset($_GET['regid'])){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Sunday"/>Sunday&nbsp;
+                  <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Monday");}; if(!isset($_GET['regid'])){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Monday"/>Monday&nbsp;
+                  <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Tuesday");}; if(!isset($_GET['regid'])){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Tuesday"/>Tuesday&nbsp;
+                  <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Wednesday");}; if(!isset($_GET['regid'])){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Wednesday"/>Wednesday&nbsp;
+                  <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Thursday");}; if(!isset($_GET['regid'])){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Thursday"/>Thursday&nbsp;
+                  <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Friday");}; if(!isset($_GET['regid'])){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Friday"/>Friday&nbsp;
+                  <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Saturday");}; if(!isset($_GET['regid'])){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Saturday"/>Saturday&nbsp;
                   
                   </td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
                     <button style="width:100px" type="button" onclick="selDays(true);">Weekends</button><br \>
@@ -744,7 +744,7 @@ function showDOIbutton(show)
                     <img src="/dif/images/info.png">
                 </span>
                 <label for="avail">Restrictions:</label>
-                    <input <?PHP if (isset($row['access_status'])){isChecked($row['access_status'],0,"None");}; if(!isset($reg_id)){echo 'checked';};?> name="avail" id="avail" type="radio" value="None"/>None
+                    <input <?PHP if (isset($row['access_status'])){isChecked($row['access_status'],0,"None");}; if(!isset($_GET['regid'])){echo 'checked';};?> name="avail" id="avail" type="radio" value="None"/>None
                     <input <?PHP if (isset($row['access_period'])){isChecked($row['access_status'],0,"Approval");};?>  name="avail" id="avail" type="radio" value="Approval"/>Requires Author&apos;s Approval
                     <input <?PHP if (isset($row['access_period'])){isChecked($row['access_status'],0,"Restricted");};?>  name="avail" id="avail" type="radio" value="Restricted"/>Restricted
                 <br />
@@ -791,7 +791,7 @@ function showDOIbutton(show)
                 <img src="/dif/images/info.png">
             </span>
             <label for="avail">Restrictions:</label>
-            <input <?PHP if (isset($row['access_status'])){isChecked($row['access_status'],0,"None");}; if(!isset($reg_id)){echo 'checked';};?> name="sshavail" id="sshavail" type="radio" value="None"/>None
+            <input checked <?PHP if (isset($row['access_status'])){isChecked($row['access_status'],0,"None");}; if(!isset($_GET['regid'])){echo 'checked';};?> name="sshavail" id="sshavail" type="radio" value="None"/>None
             <input <?PHP if (isset($row['access_period'])){isChecked($row['access_status'],0,"Approval");};?>  name="sshavail" id="sshavail" type="radio" value="Approval"/>Requires Author&apos;s Approval
             <input <?PHP if (isset($row['access_period'])){isChecked($row['access_status'],0,"Restricted");};?>  name="sshavail" id="sshavail" type="radio" value="Restricted"/>Restricted
             <br />
@@ -803,7 +803,7 @@ function showDOIbutton(show)
                 <img src="/dif/images/info.png">
             </span>
             <label for="doi">Digital Object Identifier:</label>
-            <input type="text" name="sshdoi" id="sshdoi" size="60"/ value="<?php if (isset($row['doi'])) {echo $row['doi'];};?>">&nbsp;&nbsp;&nbsp;&nbsp;
+            <input disabled type="text" name="sshdoi" id="sshdoi" size="60"/ value="<?php if (isset($row['doi'])) {echo $row['doi'];};?>">&nbsp;&nbsp;&nbsp;&nbsp;
             <span id="generatedoidiv"><input checked onchange="document.getElementById('sshdoi').disabled=this.checked;" type="checkbox" name="sshgeneratedoi" id="sshgeneratedoi">Auto-Generate DOI when data is available</span>
         </fieldset> 
     </div>
