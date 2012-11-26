@@ -47,7 +47,6 @@ else
     $row = "";
 }
 
-
 if (isset($reg_id))
 {
     $query = "select * from registry where registry_id like '".substr($reg_id,0,16)."%' order by registry_id desc limit 1";
@@ -80,7 +79,6 @@ if (isset($reg_id))
         drupal_set_message($dMessage,'warning');
     }
 }
-
 
 function createTimesDD($time="")
 {

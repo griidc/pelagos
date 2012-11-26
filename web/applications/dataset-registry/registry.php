@@ -87,7 +87,6 @@ if ($_GET)
 
 if ($_POST)
 {
-    
     $formHash = sha1(serialize($_POST));
     
     $doi = '';
