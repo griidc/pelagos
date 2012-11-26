@@ -51,6 +51,11 @@ if ($_GET)
         $dif_id = $_GET['uid'];
     }
     
+    if (isset($_GET['regid']))
+    {
+        $reg_id = $_GET['regid'];
+    }
+    
     if (isset($_GET['personID'])) 
     {
         $personid = $_GET['personID'];

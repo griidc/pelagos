@@ -25,6 +25,8 @@ if (isset($dif_id))
     $row['task_uid'] = $doc->Task->Title;
 
     $poc_email = "";
+    
+    $reg_id = $row['dataset_udi'];
 
     if ($row['primary_poc'] > 0)
     { 
@@ -43,38 +45,36 @@ else
     $row = "";
 }
 
-if ($_GET) 
+
+if (isset($reg_id))
 {
-    if (isset($_GET['regid']))
-    {
-        $reg_id = $_GET['regid'];
-        $query = "select * from registry where registry_id like '".substr($reg_id,0,16)."%' order by registry_id desc limit 1";
-        
-        $row = pdoDBQuery($conn,$query);
-                
-        if ($row == false)
-        {
-        
-            $dMessage= "Sorry, the registration with ID: $reg_id could not be found. Please email <a href=\"mailto:griidc@gomri.org?subject=REG Form\">griidc@gomri.org</a> if you have any questions.";
-            drupal_set_message($dMessage,'warning');
-        }
-        else
-        {
-            $dif_id = true;        
+    $query = "select * from registry where registry_id like '".substr($reg_id,0,16)."%' order by registry_id desc limit 1";
+    
+    $row = pdoDBQuery($conn,$query);
             
-            $row['title'] = $row['dataset_title'];
-            $row['abstract'] = $row['dataset_abstract'];
-            $row['primary_poc'] = $row['dataset_poc_name'];
-            $poc_email = $row['dataset_poc_email'];
-        }
+    if ($row == false)
+    {
+    
+        $dMessage= "Sorry, the registration with ID: $reg_id could not be found. Please email <a href=\"mailto:griidc@gomri.org?subject=REG Form\">griidc@gomri.org</a> if you have any questions.";
+        drupal_set_message($dMessage,'warning');
+    }
+    else
+    {
+        $dif_id = true;        
         
-        if ($row['registry_id'] <> $reg_id)
-        {
-            $dMessage= "Registation Identifier <b>'$reg_id'</b> has been superseded by a newer version. The latest version has been retrieved instead.";
-            drupal_set_message($dMessage,'warning');
-        }
+        $row['title'] = $row['dataset_title'];
+        $row['abstract'] = $row['dataset_abstract'];
+        $row['primary_poc'] = $row['dataset_poc_name'];
+        $poc_email = $row['dataset_poc_email'];
+    }
+    
+    if ($row['registry_id'] <> $reg_id)
+    {
+        $dMessage= "Registation Identifier <b>'$reg_id'</b> has been superseded by a newer version. The latest version has been retrieved instead.";
+        drupal_set_message($dMessage,'warning');
     }
 }
+
 
 function createTimesDD($time="")
 {
