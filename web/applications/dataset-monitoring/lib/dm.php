@@ -24,7 +24,7 @@ function getTasksAndDatasets($projects) {
         $pi = getPeopleDetails(getDBH('RPIS'),array('projectId='.$projects[$i]['ID'],'roleId=1'));
         $projects[$i]['PI'] = $pi[0];
         $projects[$i]['Institutions'] = getInstitutionDetails(getDBH('RPIS'),array('projectId='.$projects[$i]['ID']));
-        $tasks = getTaskDetails(getDBH('RPIS'),array('projectId='.$projects[$i]['ID']));
+        $tasks = getTaskDetails(getDBH('RPIS'),array('projectId='.$projects[$i]['ID'],'title!=administration','title!=management','title!=data management'));
         if (count($tasks) > 0) {
             for ($j=0;$j<count($tasks);$j++) {
                 $stmt = $dbh->prepare("$SELECT $FROM WHERE task_uid=".$tasks[$j]['ID'].' ORDER BY udi;');

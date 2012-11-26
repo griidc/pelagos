@@ -1,5 +1,10 @@
 <?php
 
+$GLOBALS['LIKEMAP'] = array(
+    '=' => 'LIKE',
+    '!=' => 'NOT LIKE'
+);
+
 function getProjectDetails($dbh, $filters = array()) {
     $SELECT = 'SELECT DISTINCT
                pg.Program_ID as ID,
@@ -56,11 +61,15 @@ function getTaskDetails($dbh, $filters = array()) {
     $WHERE = 'WHERE 1';
 
     foreach ($filters as $filter) {
-        $filt = preg_split('/=/',$filter);
-        switch ($filt[0]) {
-            case 'projectId':
-                $WHERE .= " AND pj.Program_ID=$filt[1]";
-                break;
+        if (preg_match('/^(.*?)\s*(!?=)\s*(.*?)$/',$filter,$matches)) {
+            switch ($matches[1]) {
+                case 'projectId':
+                    $WHERE .= " AND pj.Program_ID $matches[2] $matches[3]";
+                    break;
+                case 'title':
+                    $WHERE .= " AND pj.Project_Title " . $GLOBALS['LIKEMAP'][$matches[2]] . " '$matches[3]'";
+                    break;
+            }
         }
     }
 
