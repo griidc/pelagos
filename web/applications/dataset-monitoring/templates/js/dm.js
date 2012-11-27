@@ -2,9 +2,14 @@ var $ = jQuery.noConflict();
 
 $(document).ready(function() {
     $('#menu .overview').width($('#menu .viewport').width() - 15);
-    h = $(window).height() - $('#left').position().top - 130;
-    $('#left').height(h);
-    $('#right').height(h);
+    $('#left').height(0);
+    $('#right').height(0);
+    setTimeout(function() { resizeLeftRight(); }, 500);
+    $(window).resize(function() {
+        resizeLeftRight()
+        $('#menu').tinyscrollbar_update('relative');
+        $('#content').tinyscrollbar_update('relative');
+    });
     $('#menu').tinyscrollbar();
     $('#content').tinyscrollbar();
     $('#menu .overview').mutate('height', function(el,info) {
@@ -12,6 +17,14 @@ $(document).ready(function() {
     });
     updateTree('ra');
 });
+
+function resizeLeftRight() {
+    $('#left').height(0);
+    $('#right').height(0);
+    h = $('#main').height() - $('#squeeze-wrapper').height() - 20;
+    $('#left').height(h);
+    $('#right').height(h);
+}
 
 function updateTree(type) {
     $("#tree").jstree({
@@ -44,6 +57,7 @@ function updateTree(type) {
         },
         "plugins": [ "json_data", "types", "themes" ]
     });
+    $.vakata.css.add_sheet({ str : '.jstree a { height: auto; }', title : "jstree_override" });
 }
 
 function showProjects(dfor,by,id) {
@@ -55,7 +69,7 @@ function showProjects(dfor,by,id) {
         "success": function(data) {
             html = "<span class='title2'>Datasets for " + dfor + "</span>" + data;
             $('#content .overview').html(html);
-            setTimeout(function () { jQuery('#content').tinyscrollbar_update('relative'); }, 100);
+            setTimeout(function () { jQuery('#content').tinyscrollbar_update('relative'); }, 200);
         }
     });
 }

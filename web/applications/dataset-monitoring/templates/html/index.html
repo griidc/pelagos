@@ -4,11 +4,16 @@
             <div class="scrollbar"><div class="track"><div class="thumb"><div class="end"></div></div></div></div>
             <div class="viewport">
                 <div class="overview">
-                    <select onchange="updateTree(this.value);">
-                        <option value="ra">Research Awards</option>
-                        <option value="re">Researchers</option>
-                        <option value="in">Institutions</option>
+                    <div class="treetype-wrapper">
+                    <span class="treetype">
+                    <strong>List by:</strong>
+                    <select id="treetype-selector" onchange="updateTree(this.value);">
+                        <option value="ra">Research Award</option>
+                        <option value="re">Researcher</option>
+                        <option value="in">Institution</option>
                     </select>
+                    </span>
+                    </div>
                     <div id="tree"></div>
                 </div>
             </div>

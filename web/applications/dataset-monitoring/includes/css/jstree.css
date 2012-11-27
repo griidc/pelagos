@@ -19,3 +19,16 @@
     color: #555;
     font-size: 85%;
 }
+
+.treetype-wrapper {
+    margin-bottom: 5px;
+}
+
+.treetype {
+    border: 1px dotted #AAA;
+    padding: 5px;
+}
+
+#treetype-selector {
+    font-weight: bold;
+}
