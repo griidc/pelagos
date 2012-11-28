@@ -327,6 +327,14 @@ $app->post('/approve/create', $GLOBALS['AUTH_FOR_ROLE']('admin'), function () us
         $ldifFile = SPOOL_DIR . "/incoming/$uid.ldif";
         $ldif = read_ldif($ldifFile);
         $ldif = check_person($app,'a',$ldif);
+
+        $ldif['applications'] = array();
+        foreach ($GLOBALS['APPLICATIONS'] as $application) {
+            if ($app->request()->post($application)) {
+                $ldif['applications'][$application] = 'users';
+            }
+        }
+
         if (in_array('posixAccount',$ldif['objectClasses'])) {
             $ldif['person'] = add_posix_fields($ldif['person']);
         }
