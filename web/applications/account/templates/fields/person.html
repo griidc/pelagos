@@ -1,3 +1,9 @@
+        {% if person.employeeNumber.value %}
+        <tr>
+            <td><span class=account_required>RPIS ID:</span></td>
+            <td style='height:25px'>{{person.employeeNumber.value}}<input type=hidden name=employeeNumber value='{{person.employeeNumber.value}}'></td>
+        </tr>
+        {% endif %}
         <tr>
             <td><span class=account_required>E-mail:</span></td>
             <td style='height:25px'>{{person.mail.value}}<input type=hidden name=mail value='{{person.mail.value}}'></td>

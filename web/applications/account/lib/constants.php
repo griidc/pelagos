@@ -43,6 +43,10 @@ $GLOBALS['PERSON_FIELDS'] = array(
                                 'userPassword' => array(
                                     'name' => 'Password',
                                     'attrs' => array('r','u')
+                                ),
+                                'employeeNumber' => array(
+                                    'name' => 'RPIS ID',
+                                    'attrs' => array('a')
                                 )
                             );
 

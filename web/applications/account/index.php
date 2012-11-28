@@ -164,6 +164,8 @@ $app->post('/request', function () use ($app) {
     else {
         $stash = check_person($app,'u');
         $stash['person']['mail']['value'] = $email;
+        $person = $verify['person']['Person'];
+        if (isset($person['ID']) and !is_array($person['ID']) and $person['ID'] != '') $stash['person']['employeeNumber']['value'] = $person['ID'];
 
         $confirmPassword = $app->request()->post('confirmPassword');
         $stash['person']['confirmPassword']['value'] = $confirmPassword;
