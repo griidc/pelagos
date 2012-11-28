@@ -128,17 +128,23 @@ $app->get('/request', function () use ($app) {
     }
     else {
         $person = $verify['person']['Person'];
-        $stash['person']['givenName']['value'] = $person['FirstName'];
-        $stash['person']['sn']['value'] = $person['LastName'];
-        $stash['person']['cn']['value'] = '';
-        if (isset($person['Title']) and !is_array($person['Title']) and $person['Title'] != '') $stash['person']['cn']['value'] .= $person['Title'] . ' ';
-        $stash['person']['cn']['value'] .= $person['FirstName'];
-        if (isset($person['MiddleName']) and !is_array($person['MiddleName']) and $person['MiddleName'] != '') $stash['person']['cn']['value'] .= ' ' . $person['MiddleName'];
-        $stash['person']['cn']['value'] .= ' ' .$person['LastName'];
-        if (isset($person['Suffix']) and !is_array($person['Suffix']) and $person['Suffix'] != '') $stash['person']['cn']['value'] .= ', ' . $person['Suffix'];
-        $stash['person']['mail']['value'] = $email;
-        $stash['person']['telephoneNumber']['value'] = $person['PhoneNum'];
-        if (isset($person['JobTitle']) and !is_array($person['JobTitle']) and $person['JobTitle'] != '') $stash['person']['title']['value'] = $person['JobTitle'];
+        foreach ($GLOBALS['PERSON_FIELDS'] as $field => $details) {
+            if (isset($details['rpis'])) {
+                $rpisval = '';
+                foreach ($details['rpis'] as $rpis) {
+                    $separator = '';
+                    if (preg_match('/{([^}]+)}/',$rpis,$matches)) {
+                        $separator = $matches[1];
+                        $rpis = preg_replace('/{[^}]+}/','',$rpis);
+                    }
+                    if (isset($person[$rpis]) and !is_array($person[$rpis]) and $person[$rpis] != '') {
+                        if (!empty($rpisval)) $rpisval .= "$separator ";
+                        $rpisval .= $person[$rpis];
+                    }
+                }
+                if (!empty($rpisval)) $stash['person'][$field]['value'] = $rpisval;
+            }
+        }
 
         $stash['person']['sshPublicKey']['value'] = PASTE_PUB_KEY;
         $stash['affiliations'] = get_affiliations(null);
