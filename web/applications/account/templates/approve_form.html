@@ -1,7 +1,7 @@
 <h3>Approve Account Request</h3>
 <p>Please review and make any necessary changes:</p>
 
-<form method=post action="{{BASE}}/approve?uid={{uid}}">
+<form method=post action="{{baseUrl}}/approve?uid={{uid}}">
     <table>
         <tr>
             <td><span class=account_required>uid:</span></td>
@@ -24,9 +24,9 @@
     </table>
 
     <p>
-        <input type=submit value='Create Account' onclick='document.forms[0].action="{{BASE}}/approve/create?uid={{uid}}"'>
-        <input type=submit value="Update Account Request (but don't create)" onclick='document.forms[0].action="{{BASE}}/approve?uid={{uid}}"'>
-        <input type=submit value='Delete Account Request' onclick='document.forms[0].action="{{BASE}}/approve/delete?uid={{uid}}"'>
+        <input type=submit value='Create Account' onclick='document.forms[0].action="{{baseUrl}}/approve/create?uid={{uid}}"'>
+        <input type=submit value="Update Account Request (but don't create)" onclick='document.forms[0].action="{{baseUrl}}/approve?uid={{uid}}"'>
+        <input type=submit value='Delete Account Request' onclick='document.forms[0].action="{{baseUrl}}/approve/delete?uid={{uid}}"'>
     </p>
 
     <input type=hidden name=do value=create>

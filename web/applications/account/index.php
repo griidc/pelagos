@@ -16,10 +16,10 @@ $app = new Slim(array(
                         'log.enabled' => true
                      ));
 
-$GLOBALS['BASE'] = '';
-if (preg_match('/^(\/[^\/]+)/',$app->request()->getResourceUri(),$matches)) {
-    $GLOBALS['BASE'] = $matches[1];
-}
+$app->hook('slim.before', function () use ($app) {
+    $env = $app->environment();
+    $app->view()->appendData(array('baseUrl' => $env['SCRIPT_NAME']));
+});
 
 $GLOBALS['HOST'] = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : $_SERVER['SERVER_NAME'];
 
@@ -56,22 +56,19 @@ $GLOBALS['AUTH_FOR_ROLE'] = function ($role = 'user') use ($app) {
     };
 };
 
-$app->get("$GLOBALS[BASE]/", function () use ($app) {
-    $stash['BASE'] = $GLOBALS['BASE'];
-    return $app->render('index.html',$stash);
+$app->get('/', function () use ($app) {
+    return $app->render('index.html');
 });
 
-$app->get("$GLOBALS[BASE]/new", function () use ($app) {
-    $stash['BASE'] = $GLOBALS['BASE'];
-    return $app->render('verify_form.html',$stash);
+$app->get('/new', function () use ($app) {
+    return $app->render('verify_form.html');
 });
 
-$app->post("$GLOBALS[BASE]/new", function () use ($app) {
+$app->post('/new', function () use ($app) {
     $email = $app->request()->post('email');
     if (empty($email)) {
         drupal_set_message("You must enter an email address.",'error');
-        $stash['BASE'] = $GLOBALS['BASE'];
-        return $app->render('verify_form.html',$stash);
+        return $app->render('verify_form.html');
     }
     $personsResult = ldap_search($GLOBALS['LDAP'], "dc=griidc,dc=org", "(mail=$email)", array("uid"));
     $persons = ldap_get_entries($GLOBALS['LDAP'], $personsResult);
@@ -112,7 +109,8 @@ $app->post("$GLOBALS[BASE]/new", function () use ($app) {
         $from = 'GRIIDC Account Management Portal <griidc@gomri.org>';
         $to = $person['Person']['FirstName'] . ' ' . $person['Person']['LastName'] . " <$email>";
         $subject = "GRIIDC Account Request";
-        $message = "Please visit the following link to verify your identity and complete your GRIIDC account request: https://$GLOBALS[HOST]$GLOBALS[BASE]/request?email=$email&hash=$person[hash]";
+        $env = $app->environment();
+        $message = "Please visit the following link to verify your identity and complete your GRIIDC account request: https://$GLOBALS[HOST]$env[SCRIPT_NAME]/request?email=$email&hash=$person[hash]";
 
         mail($email,$subject,$message,"From: $from\nTo: $to");
 
@@ -120,7 +118,7 @@ $app->post("$GLOBALS[BASE]/new", function () use ($app) {
     }
 });
 
-$app->get("$GLOBALS[BASE]/request", function () use ($app) {
+$app->get('/request', function () use ($app) {
     $email = $app->request()->get('email');
     $hash = $app->request()->get('hash');
     $verify = verify_email($email,$hash);
@@ -147,15 +145,15 @@ $app->get("$GLOBALS[BASE]/request", function () use ($app) {
         $stash['hash'] = $hash;
         $stash['checked'] = array('Drupal' => 1, 'pkiNone' => 1);
         $stash['PASTE_PUB_KEY'] = PASTE_PUB_KEY;
-        $stash['BASE'] = $GLOBALS['BASE'];
 
         drupal_set_message("Thank you, $email has been verified.",'status');
-        drupal_add_css("$GLOBALS[BASE]/css/account-form.css",'external');
+        $env = $app->environment();
+        drupal_add_css("$env[SCRIPT_NAME]/includes/css/account-form.css",'external');
         return $app->render('request_form.html',$stash);
     }
 });
 
-$app->post("$GLOBALS[BASE]/request", function () use ($app) {
+$app->post('/request', function () use ($app) {
     $email = $app->request()->get('email');
     $hash = $app->request()->get('hash');
     $verify = verify_email($email,$hash);
@@ -206,9 +204,10 @@ $app->post("$GLOBALS[BASE]/request", function () use ($app) {
             $stash['affiliations'] = get_affiliations($app->request()->post('affiliation'));
             $stash['hash'] = $hash;
             $stash['PASTE_PUB_KEY'] = PASTE_PUB_KEY;
-            $stash['BASE'] = $GLOBALS['BASE'];
 
-            drupal_add_css("$GLOBALS[BASE]/css/account-form.css",'external');
+            $env = $app->environment();
+            drupal_add_css("$env[SCRIPT_NAME]/includes/css/account-form.css",'external');
+
             return $app->render('request_form.html',$stash);
         }
         else {
@@ -245,20 +244,20 @@ $app->post("$GLOBALS[BASE]/request", function () use ($app) {
 
             $fromAddress = 'GRIIDC Account Request <griidc@gomri.org>';
             $subject = "GRIIDC Account Request: $uid";
-            $message = "An account request has been submitted.\n\nTo review and approve this request, please visit: https://$GLOBALS[HOST]$GLOBALS[BASE]/approve?uid=$uid";
+            $env = $app->environment();
+            $message = "An account request has been submitted.\n\nTo review and approve this request, please visit: https://$GLOBALS[HOST]$env[SCRIPT_NAME]/approve?uid=$uid";
 
             foreach (get_notify_to() as $toAddress) {
                 mail($toAddress,$subject,$message,"From: $fromAddress");
             }
 
-            $stash['BASE'] = $GLOBALS['BASE'];
             return $app->render('request_submitted.html',$stash);
         }
 
     }
 });
 
-$app->get("$GLOBALS[BASE]/approve", $GLOBALS['AUTH_FOR_ROLE']('admin'), function () use ($app) {
+$app->get('/approve', $GLOBALS['AUTH_FOR_ROLE']('admin'), function () use ($app) {
     $env = $app->environment();
     if  (isset($env['authorized']) and $env['authorized']) {
         $uid = $app->request()->get('uid');
@@ -271,20 +270,20 @@ $app->get("$GLOBALS[BASE]/approve", $GLOBALS['AUTH_FOR_ROLE']('admin'), function
         }
         else {
             $stash = read_ldif($ldifFile);
-            $stash['BASE'] = $GLOBALS['BASE'];
             $stash['uid'] = $uid;
             $stash['affiliations'] = get_affiliations($stash['affiliation']);
             $stash['checked']['Shell'] = in_array('posixAccount',$stash['objectClasses']);
             foreach ($GLOBALS['APPLICATIONS'] as $application) {
                 $stash['checked'][$application] = isset($stash['applications'][$application]);
             }
-            drupal_add_css("$GLOBALS[BASE]/css/account-form.css",'external');
+            $env = $app->environment();
+            drupal_add_css("$env[SCRIPT_NAME]/includes/css/account-form.css",'external');
             return $app->render('approve_form.html',$stash);
         }
     }
 });
 
-$app->post("$GLOBALS[BASE]/approve", $GLOBALS['AUTH_FOR_ROLE']('admin'), function () use ($app) {
+$app->post('/approve', $GLOBALS['AUTH_FOR_ROLE']('admin'), function () use ($app) {
     global $user;
     $env = $app->environment();
     if (isset($env['authorized']) and $env['authorized']) {
@@ -299,29 +298,28 @@ $app->post("$GLOBALS[BASE]/approve", $GLOBALS['AUTH_FOR_ROLE']('admin'), functio
             drupal_set_message("Account request $uid updated.",'status');
         }
 
-        $stash['BASE'] = $GLOBALS['BASE'];
         $stash['uid'] = $uid;
         $stash['affiliation'] = $app->request()->post('affiliation');
         $stash['affiliations'] = get_affiliations($stash['affiliation']);
-        foreach (array_merge($GLOBALS['APPLICATIONS'],array('Shell')) as $application) {
+
+        $stash['applications'] = array();
+        foreach ($GLOBALS['APPLICATIONS'] as $application) {
             $stash['checked'][$application] = $app->request()->post($application) ? 1 : 0;
+            if ($app->request()->post($application)) {
+                $stash['applications'][$application] = 'users';
+            }
         }
+        $stash['checked']['Shell'] = $app->request()->post('Shell') ? 1 : 0;
 
         write_ldif($ldifFile,$stash);
 
-        drupal_add_css("$GLOBALS[BASE]/css/account-form.css",'external');
+        $env = $app->environment();
+        drupal_add_css("$env[SCRIPT_NAME]/includes/css/account-form.css",'external');
         return $app->render('approve_form.html',$stash);
-
-        $subject = "GRIIDC Account Request: $uid";
-        $message = "The account request for $uid has been updated by " . $user->name . ".";
-
-        foreach (get_notify_to() as $toAddress) {
-            mail($toAddress,$subject,$message,"From: $fromAddress");
-        }
     }
 });
 
-$app->post("$GLOBALS[BASE]/approve/create", $GLOBALS['AUTH_FOR_ROLE']('admin'), function () use ($app) {
+$app->post('/approve/create', $GLOBALS['AUTH_FOR_ROLE']('admin'), function () use ($app) {
     global $user;
     $env = $app->environment();
     if  (isset($env['authorized']) and $env['authorized']) {
@@ -366,7 +364,7 @@ $app->post("$GLOBALS[BASE]/approve/create", $GLOBALS['AUTH_FOR_ROLE']('admin'), 
     }
 });
 
-$app->post("$GLOBALS[BASE]/approve/delete", $GLOBALS['AUTH_FOR_ROLE']('admin'), function () use ($app) {
+$app->post('/approve/delete', $GLOBALS['AUTH_FOR_ROLE']('admin'), function () use ($app) {
     global $user;
     $env = $app->environment();
     if  (isset($env['authorized']) and $env['authorized']) {
@@ -375,6 +373,7 @@ $app->post("$GLOBALS[BASE]/approve/delete", $GLOBALS['AUTH_FOR_ROLE']('admin'), 
         rename($ldifFile,SPOOL_DIR . "/trash/$uid.ldif");
         drupal_set_message("Account request $uid deleted.",'status');
 
+        $fromAddress = 'GRIIDC Account Request <griidc@gomri.org>';
         $subject = "GRIIDC Account Request: $uid";
         $message = "The account request for $uid has been deleted by " . $user->name . ".";
 
@@ -384,7 +383,7 @@ $app->post("$GLOBALS[BASE]/approve/delete", $GLOBALS['AUTH_FOR_ROLE']('admin'), 
     }
 });
 
-$app->post("$GLOBALS[BASE]/dlkey", function () use ($app) {
+$app->post('/dlkey', function () use ($app) {
     header('Content-type: text/plain');
     $uid = $app->request()->post('uid');
     $type = $app->request()->post('type');
@@ -401,6 +400,32 @@ $app->post("$GLOBALS[BASE]/dlkey", function () use ($app) {
     echo $app->request()->post('key');
     exit;
 });
+
+$app->get('/includes/:file', function ($file) use ($app) {
+    $file = "includes/$file";
+    if (preg_match('/\.css$/',$file)) {
+        $mime = 'text/css';
+    }
+    else {
+        $info = finfo_open(FILEINFO_MIME_TYPE);
+        $mime = finfo_file($info, $file);
+    }
+
+    if ($mime === false) {
+        header("HTTP/1.0 403 Not Found");
+        flush();
+        ob_clean();
+        exit;
+    }
+    header('Content-Length: ' . filesize($file));
+    header('Content-Disposition: inline; filename=' . basename($file));
+    header('Content-Transfer-Encoding: binary');
+    header('Content-type: '.$mime);
+    flush();
+    ob_clean();
+    readfile ($file);
+    exit;
+})->conditions(array('file' => '.+'));
 
 $app->run();
 
