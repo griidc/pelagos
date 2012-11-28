@@ -208,11 +208,11 @@ else
 {
     echo '<table  border="0">';
     echo '<tr>';
-    echo '<td width="45%" style="vertical-align: top; background: transparent;">';
+    echo '<td width="55%" style="vertical-align: top; background: transparent;">';
     include 'reg_form.php';
     echo '</td>';
-    echo '<td width="5%">&nbsp;&nbsp;</td>';
-    echo '<td width="50%" style="vertical-align: top; background: transparent;">';
+    echo '<td width="*">&nbsp;&nbsp;</td>';
+    echo '<td width="45%" style="vertical-align: top; background: transparent;">';
     include 'sidebar.php';
     echo '</td>';
     echo '</tr>';

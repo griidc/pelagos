@@ -49,7 +49,7 @@ else
 
 if (isset($reg_id))
 {
-    $query = "select * from registry where registry_id like '".substr($reg_id,0,16)."%' order by registry_id desc limit 1";
+    $query = "select * from registry where registry_id like '".substr($reg_id,0,17)."%' order by registry_id desc limit 1";
     
     $regrow = pdoDBQuery($conn,$query);
               
@@ -555,7 +555,7 @@ function showDOIbutton(show)
             </span>
             <label for="registry_id"><b>Registry Identifier: </b></label>
             <input onkeyup="if (this.value.length > 16) {document.getElementById('regbutton').disabled=false;};" <?php if (isset($dif_id)) {echo ' disabled ';};?>type="text" id="registry_id" name="registry_id" size="80" value="<?php if (isset($row['registry_id'])) {echo $row['registry_id'];};?>">
-            <button disabled name="regbutton" id="regbutton" onclick="window.location.href='/<?php echo $_SERVER['SCRIPT_NAME'];?>?regid='+document.getElementById('registry_id').value;" type="button">Retrieve Registration</button>
+            <button disabled name="regbutton" id="regbutton" onclick="window.location.href='<?php echo $_SERVER['SCRIPT_NAME'];?>?regid='+document.getElementById('registry_id').value;" type="button">Retrieve Registration</button>
         </fieldset></p>
         
         <input type="hidden" id="task" name="task" value="<?php if (isset($row['task_uid'])) {echo $row['task_uid'];};?>">
@@ -769,7 +769,7 @@ function showDOIbutton(show)
  
         <fieldset> 
         <p>
-            <span id="qtip_dataurl" style="float:right;">
+            <span id="qtip_sshdataurl" style="float:right;">
                 <img src="/dif/images/info.png">
             </span>
             <label for="sshdatapath">Dataset File Path:</label>
@@ -777,7 +777,7 @@ function showDOIbutton(show)
         </p>
         
             <p>
-                <span id="qtip_dataurl" style="float:right;">
+                <span id="qtip_sshmetaurl" style="float:right;">
                     <img src="/dif/images/info.png">
                 </span>
                 <label for="sshmetadatapath">Metadata File Path:</label>
@@ -787,7 +787,7 @@ function showDOIbutton(show)
          
          
         <fieldset>
-            <span id="qtip_avail" style="float:right;">
+            <span id="qtip_sshavail" style="float:right;">
                 <img src="/dif/images/info.png">
             </span>
             <label for="avail">Restrictions:</label>
@@ -799,7 +799,7 @@ function showDOIbutton(show)
     
         <fieldset>
             <legend>DOI:</legend>
-            <span id="qtip_doi" style="float:right;">
+            <span id="qtip_sshdoi" style="float:right;">
                 <img src="/dif/images/info.png">
             </span>
             <label for="doi">Digital Object Identifier:</label>

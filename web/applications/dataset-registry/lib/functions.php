@@ -183,16 +183,88 @@ function displayTaskStatus($tasks,$update=null,$personid=null)
     $taskTitle="";
     $taskID ="";
     echo "d = new dTree('d');\n\n";
-    echo "d.add(0,-1,'Datasets','');\n\n";
-    $nodeCount = 1;
+    
     $folderCount =1;
+    $nodeCount = 0;
+    
+    global $user;
+    $uid = $user->name;
+    
+    $query = "
+    
+    SELECT registry_id, dataset_title FROM registry r
+    
+    INNER JOIN (
+        SELECT SUBSTR(registry_id,0,17) AS rid, MAX(registry_id) AS maxreg 
+        FROM registry 
+        GROUP BY rid
+        ORDER BY rid
+        ) m
+    
+    ON r.registry_id = m.maxreg
+    
+    WHERE userid='$uid'
+    ORDER BY registry_id
+    ;";
+    
+    $results = dbexecute($query);
+    
+    echo "d.add($nodeCount,-1,'My Registries','');\n\n";
+    $myNode = $nodeCount;
+    $nodeCount++;
+    
+    echo "d.add($nodeCount,$myNode,'Others','javascript: d.o($nodeCount);','Other Registrations','','','',true);\n";
+    $nodeCount++;
+        
+    while ($row = pg_fetch_row($results)) 
+    {
+        $status = 2;
+        $title = $row[1];
+        $registry_id = $row[0];
+        
+        if (isset($personid))
+        {
+            echo "d.add($nodeCount,$folderCount,'".addslashes("[$registry_id] $title")."','?regid=$registry_id&prsid=$personid','".addslashes("[$registry_id] $title")."','_self'";
+        }
+        else
+        {
+            echo "d.add($nodeCount,$folderCount,'".addslashes("[$registry_id] $title")."','?regid=$registry_id','".addslashes("[$registry_id] $title")."','_self'";
+        }
+        
+        
+        switch ($status)
+        {
+            case null:
+            echo ",'/dif/images/red_bobble.png');\n";
+            break;
+            case 0:
+            echo ",'/dif/images/red_bobble.png');\n";
+            break;
+            case 1:
+            echo ",'/dif/images/yellow_bobble.png');\n";
+            break;
+            case 2:
+            echo ",'/dif/images/green_bobble.png');\n";
+            break;
+            default:
+            echo ");\n";
+            break;
+        }
+        $nodeCount++;
+    }
+    
+    $folderCount=$nodeCount;
+    
+    // Datasets Folder Sub
+    echo "d.add($nodeCount,-1,'Datasets','');\n\n";
+    $dsNode = $nodeCount;
+    $nodeCount++;
+    
     foreach ($tasks as $task)
     {
         $taskID = $task['ID'];
         $taskTitle = $task->Title;
         $projectID = $task->Project['ID'];
-
-        
         
         if ($taskID > 0)
         {
@@ -211,7 +283,7 @@ function displayTaskStatus($tasks,$update=null,$personid=null)
         if ($rnum > 0)
         {
                 
-            echo "d.add($nodeCount,0,'".addslashes($taskTitle)."','javascript: d.o($nodeCount);','".addslashes($taskTitle)."','','','',true);\n";
+            echo "d.add($nodeCount,$dsNode,'".addslashes($taskTitle)."','javascript: d.o($nodeCount);','".addslashes($taskTitle)."','','','',true);\n";
             $nodeCount++;
             
             while ($row = pg_fetch_row($results)) 
