@@ -17,7 +17,7 @@ function getDBH($db) {
 }
 
 function getTasksAndDatasets($projects) {
-    $SELECT = 'SELECT title, status, dataset_uid, d.dataset_udi AS udi, CASE WHEN registry_id IS NULL THEN 0 ELSE 1 END AS registered';
+    $SELECT = 'SELECT DISTINCT title, status, dataset_uid, d.dataset_udi AS udi, CASE WHEN registry_id IS NULL THEN 0 ELSE 1 END AS registered';
     $FROM = 'FROM datasets d LEFT OUTER JOIN registry r ON r.dataset_udi = d.dataset_udi';
     $dbh = getDBH('GOMRI');
     for ($i=0;$i<count($projects);$i++) {
@@ -27,7 +27,7 @@ function getTasksAndDatasets($projects) {
         $tasks = getTaskDetails(getDBH('RPIS'),array('projectId='.$projects[$i]['ID'],'title!=administration','title!=management','title!=data management'));
         if (count($tasks) > 0) {
             for ($j=0;$j<count($tasks);$j++) {
-                $stmt = $dbh->prepare("$SELECT $FROM WHERE task_uid=".$tasks[$j]['ID'].' ORDER BY udi;');
+                $stmt = $dbh->prepare("$SELECT $FROM WHERE task_uid=".$tasks[$j]['ID'].' AND status=2 ORDER BY udi;');
                 $stmt->execute();
                 $datasets = $stmt->fetchAll();
                 if (is_array($datasets)) {
@@ -37,7 +37,7 @@ function getTasksAndDatasets($projects) {
             $projects[$i]['tasks'] = $tasks;
         }
         else {
-            $stmt = $dbh->prepare("$SELECT $FROM WHERE project_id=".$projects[$i]['ID'].' ORDER BY udi;');
+            $stmt = $dbh->prepare("$SELECT $FROM WHERE project_id=".$projects[$i]['ID'].' AND status=2 ORDER BY udi;');
             $stmt->execute();
             $datasets = $stmt->fetchAll();
             if (is_array($datasets)) {
