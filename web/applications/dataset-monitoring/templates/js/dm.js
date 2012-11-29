@@ -51,6 +51,7 @@ function updateTree(type) {
                     return url;
                 },
                 "success": function (new_data) {
+                    setTimeout(function() { $('#menu').tinyscrollbar_update('relative'); }, 500);
                     return new_data;
                 }
             }
