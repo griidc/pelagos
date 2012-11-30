@@ -372,7 +372,6 @@ if ($userId == "")
 
 ?>
 
-<div>
 <div id="dialog" style="font-size:smaller"></div>
 
 <div id="url_tip" style="display:none;">
