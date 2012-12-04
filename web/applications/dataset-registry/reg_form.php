@@ -13,6 +13,8 @@ drupal_add_library('system', 'ui.tabs');
 //})(jQuery);
 //',array('type'=>'inline'));
 
+$tabselect = 0;
+
 if (isset($dif_id))
 {
     $query = 'select * from datasets where dataset_uid='.$dif_id;
@@ -71,6 +73,17 @@ if (isset($reg_id))
         $row['abstract'] = $row['dataset_abstract'];
         $row['primary_poc'] = $row['dataset_poc_name'];
         $poc_email = $row['dataset_poc_email'];
+        
+        switch ($row['data_server_type'])
+        {
+            case "HTTP":
+                $tabselect = 0;
+                break;
+            case "SFTP":
+                $tabselect = 1;
+                break;
+        }
+        
     }
     
     if ($regrow['registry_id'] <> $reg_id AND $regrow != false)
@@ -162,7 +175,7 @@ function isChecked($row,$index,$compare=null)
     $(function() {
         $( "#tabs" ).tabs({
             heightStyleType: "fill",
-            active: 1
+            selected: <?php echo $tabselect;?>
         });
         
         $( "#availdate" ).datepicker({
@@ -187,7 +200,6 @@ function isChecked($row,$index,$compare=null)
                 maxlength: 4000
             },
             sshdatapath: "required",
-            sshmetadatapath: "required",
             auth: "required",
             sshauth: "required",
             pocname: "required",
@@ -205,7 +217,7 @@ function isChecked($row,$index,$compare=null)
             },
             metadataurl: 
             {
-                required: true,
+                required: false,
                 url: true
             },
             uname:

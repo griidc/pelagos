@@ -1,6 +1,7 @@
 <?php
+//$dsn = 'pgsql:host=server.somewhere.edu;port=5432;dbname=name_of_database;user=username;password=Pas5W0rd!';
 
-//$dsn = 'pgsql:host=proteus.tamucc.edu;port=5432;dbname=gomri;user=gomri_user;password=Sharkbait!';
+include_once '/usr/local/share/GRIIDC/php/drupal.php';
 
 function pdoDBConnect($dsn) {
     try {
@@ -53,15 +54,5 @@ function pdoGetErrors($connection)
     {
         return $errlist[0];
     }
-    
 }
-
-
-
-
-
-
-
-
-
 ?>
