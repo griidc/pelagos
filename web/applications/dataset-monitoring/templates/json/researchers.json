@@ -5,7 +5,7 @@
             "title": "{{person.LastName | raw}}, {{person.FirstName | raw}} <span class='treeInstName'>({{person.Institution_Name | raw}})</span>",
             "attr": {
                 "style": "color:#00A",
-                "href": "javascript:showProjects(\"{{person.FirstName | raw}} {{person.LastName | raw}} <span class='titleInstName'>({{person.Institution_Name | raw}})</span>\",\"peopleId\",{{person.ID}});"
+                "href": "javascript:showProjects(\"peopleId\",{{person.ID}});"
             }
         },
         "attr": {

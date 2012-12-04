@@ -1,0 +1,26 @@
+<html>
+    <head>
+        <style type='text/css'>
+            @import url('{{baseUrl}}/includes/css/projects.css');
+            @import url('{{baseUrl}}/includes/css/projects-pdf.css');
+        </style>
+        <style media='all'>
+            @page { margin: 48px; }
+            #header { position: relative; left: -10px; top: -10px; }
+            #footer-left { position: fixed; left: 0px; bottom: 20px; right: 0px; text-align: left; font-size: 85%; }
+            #footer-right { position: fixed; left: 0px; bottom: 20px; right: 0px; text-align: right; font-size: 85%; }
+            #footer-right .page:after { content: counter(page); }
+        </style>
+        <meta http-equiv='Content-Type' content='text/html; charset=utf-8'/>
+    </head>
+    <body style='font-family:'>
+        <div id='header'><img src='/opt/drupal/sites/all/themes/griidc/logo.png'></div>
+        <div id='footer-left'>
+            <p class='timestamp'>{{timestamp}}</p>
+        </div>
+        <div id='footer-right'>
+            <p class='page'>Page </p>
+        </div>
+        {% include 'html/projects.html' %}
+    </body>
+</html>

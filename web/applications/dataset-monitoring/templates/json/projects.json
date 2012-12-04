@@ -5,7 +5,7 @@
             "title": "{{project.Title | raw}}",
             "attr": {
                 "style": "color:#00A",
-                "href": "javascript:showProjects(\"{{project.Title}}\",\"projectId\",{{project.ID}});"
+                "href": "javascript:showProjects(\"projectId\",{{project.ID}});"
             }
         },
         "attr": {

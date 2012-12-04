@@ -1,0 +1,9 @@
+<div class='projects-header'>Datasets for Year-One Block Grants</div>
+{% for fund in funds %}
+    <hr style='margin-top:2em;'>
+    {% set projects = fund.projects %}
+    {% set header = fund.Name %}
+    {% set by = 'fundSrc' %}
+    {% set id = fund.ID %}
+    {% include 'html/projects.html' %}
+{% endfor %}

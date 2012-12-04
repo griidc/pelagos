@@ -24,7 +24,8 @@ $app = new Slim(array(
 
 $app->hook('slim.before', function () use ($app) {
     $env = $app->environment();
-    $app->view()->appendData(array('baseUrl' => $env['SCRIPT_NAME']));
+    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+    $app->view()->appendData(array('baseUrl' => "$protocol$env[SERVER_NAME]$env[SCRIPT_NAME]"));
 });
 
 $app->get('/includes/:file', 'dumpIncludesFile')->conditions(array('file' => '.+'));
@@ -87,17 +88,47 @@ $app->get('/json/:type/projects/fundSrc/:fundSrc.json', function ($type,$fundSrc
 });
 
 $app->get('/projects/:by/:id', function ($by,$id) use ($app) {
+    $stash['timestamp'] = date('Y-m-d g:ia T',time());
     if ($by == 'YR1') {
-        $funds = getFundingSources(getDBH('RPIS'),array('fundId>=2','fundId<=6'));
-        foreach ($funds as $fund) {
-            echo "<hr style='margin-top:2em;'><h3 style='margin-top:0; font-size=110%;'>$fund[Name]</h3>";
-            $stash['projects'] = getTasksAndDatasets(getProjectDetails(getDBH('RPIS'),array("fundSrc=$fund[ID]")));
-            $app->render('html/projects.html',$stash);
+        $stash['funds'] = getFundingSources(getDBH('RPIS'),array('fundId>=2','fundId<6'));
+        for ($i=0; $i<count($stash['funds']); $i++) {
+            $stash['funds'][$i]['projects'] = getTasksAndDatasets(getProjectDetails(getDBH('RPIS'),array('fundSrc='.$stash['funds'][$i]['ID'])));
         }
+        $app->render('html/YR1.html',$stash);
     }
     else {
+        $stash['header'] = 'Datasets for ';
+        switch ($by) {
+            case 'fundSrc':
+                $funds = getFundingSources(getDBH('RPIS'),array("fundId=$id"));
+                $stash['header'] .= $funds[0]['Name'];
+                break;
+            case 'peopleId':
+                $people = getPeopleDetails(getDBH('RPIS'),array("peopleId=$id"));
+                $stash['header'] .= $people[0]['FirstName'] . ' ' . $people[0]['LastName'];
+                $stash['instName'] = $people[0]['Institution_Name'];
+                break;
+            case 'institutionId':
+                $inst = getInstitutionDetails(getDBH('RPIS'),array("institutionId=$id"));
+                $stash['header'] .= $inst[0]['Name'];
+                break;
+            case 'projectId':
+                $proj = getProjectDetails(getDBH('RPIS'),array("projectId=$id"));
+                $stash['header'] .= $proj[0]['Title'];
+                break;
+        }
         $stash['projects'] = getTasksAndDatasets(getProjectDetails(getDBH('RPIS'),array("$by=$id")));
-        $app->render('html/projects.html',$stash);
+        if ($app->request()->get('pdf')) {
+            $env = $app->environment();
+            header("Content-Type: text/html; charset=utf-8");
+            $stash['pdf'] = true;
+            $app->render('html/pdf.html',$stash);
+        }
+        else {
+            $stash['by'] = $by;
+            $stash['id'] = $id;
+            $app->render('html/projects.html',$stash);
+        }
     }
     exit;
 });
@@ -123,6 +154,24 @@ $app->get('/dataset_details/:udi', function ($udi) use ($app) {
     $stash['datasets'] = $stmt->fetchAll();
 
     $app->render('html/dataset_details.html',$stash);
+    exit;
+});
+
+$app->get('/pdf/:by/:id/:name', function ($by,$id,$name) use ($app) {
+    if ($by == 'YR1') {
+        drupal_set_message("You cannot download a pdf for all Year One Block Grants. Please download each block grant individually.",'error');
+        return;
+    }
+    $content = file_get_contents("http://localhost/dm/projects/$by/$id?pdf=true");
+
+    require_once '/usr/local/share/dompdf/dompdf_config.inc.php';
+
+    $dompdf = new DOMPDF();
+    $dompdf->load_html($content);
+    $dompdf->set_paper('letter', 'portrait');
+    $dompdf->render();
+    $dompdf->stream($name, array("Attachment" => true));
+
     exit;
 });
 

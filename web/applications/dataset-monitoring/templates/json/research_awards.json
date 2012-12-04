@@ -4,7 +4,7 @@
             "title": "Year-One Block Grants",
             "attr": {
                 "style": "color:#00A",
-                "href": "javascript:showProjects(\"Year-One Block Grants\",\"YR1\",1);"
+                "href": "javascript:showProjects(\"YR1\",1);"
             }
         },
         "attr": {
@@ -19,7 +19,7 @@
             "title": "{{RFP.Name}}",
             "attr": {
                 "style": "color:#00A",
-                "href": "javascript:showProjects(\"{{RFP.Name}}\",\"fundSrc\",{{RFP.ID}});"
+                "href": "javascript:showProjects(\"fundSrc\",{{RFP.ID}});"
             }
         },
         "attr": {

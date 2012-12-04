@@ -61,15 +61,14 @@ function updateTree(type) {
     $.vakata.css.add_sheet({ str : '.jstree a { height: auto; }', title : "jstree_override" });
 }
 
-function showProjects(dfor,by,id) {
+function showProjects(by,id) {
     $('#content .overview').html('<div class="spinner"><div><img src="{{baseUrl}}/includes/images/spinner.gif"></div></div>');
     $('div.spinner').height($('#content .viewport').height()-12);
     $('#content').tinyscrollbar_update('relative');
     $.ajax({
         "url": "{{baseUrl}}/projects/" + by + "/" + id,
         "success": function(data) {
-            html = "<span class='title2'>Datasets for " + dfor + "</span>" + data;
-            $('#content .overview').html(html);
+            $('#content .overview').html(data);
             setTimeout(function () { jQuery('#content').tinyscrollbar_update('relative'); }, 200);
         }
     });

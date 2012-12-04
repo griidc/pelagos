@@ -5,7 +5,7 @@
             "title": "{{institution.Name | raw}}",
             "attr": {
                 "style": "color:#00A",
-                "href": "javascript:showProjects(\"{{institution.Name | raw}}\",\"institutionId\",{{institution.ID}});"
+                "href": "javascript:showProjects(\"institutionId\",{{institution.ID}});"
             }
         }
     }

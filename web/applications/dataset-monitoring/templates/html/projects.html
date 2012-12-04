@@ -1,41 +1,54 @@
-<ul class="projects">
+<div class="projects-header">
+    {{header}}
+    {% if instName %}
+        <span class="header-inst-name">({{instName}})</span>
+    {% endif %}
+    {% if not pdf %}
+        <a href="{{baseUrl}}/pdf/{{by}}/{{id}}/{{header}}{% if instName %} ({{instName}}){% endif %}.pdf" class="download-pdf" title="save as pdf"><img src="{{baseUrl}}/includes/images/pdf_icon.png"></a>
+    {% endif %}
+</div>
 {% for project in projects %}
-    <li class="project">
-        <div class="title1">{{project.Title}}</div>
-        <div class="container">
-        <div class="pi">
-            <span class="attr">Principal Investigator:</span> <a href="http://research.gulfresearchinitiative.org/gomri-funded-researchers/person-overview.php?pid={{project.PI.ID}}" target="_blank">{{project.PI.FirstName | raw}} {{project.PI.LastName}}</a> -- <a href="http://research.gulfresearchinitiative.org/gomri-funded-institutions/institution-overview.php?instid={{project.PI.Institution_ID}}" target="_blank">{{project.PI.Institution_Name}}</a>
+    <div class="project">
+        <div class="project-title">{{project.Title}}</div>
+        <div class="project-container">
+            <div class="fundSrc">
+                <span class="attr">Funding Source:</span> {{project.Fund_Name}}
+                {% if project.Fund_Src < 6 %}
+                    ({{project.Fund_Abbr}})
+                {% endif %}
+            </div>
+            <div class="pi">
+                <span class="attr">Principal Investigator:</span> <a href="http://research.gulfresearchinitiative.org/gomri-funded-researchers/person-overview.php?pid={{project.PI.ID}}" target="_blank">{{project.PI.FirstName | raw}} {{project.PI.LastName}}</a> - <a href="http://research.gulfresearchinitiative.org/gomri-funded-institutions/institution-overview.php?instid={{project.PI.Institution_ID}}" target="_blank">{{project.PI.Institution_Name}}</a>
+            </div>
+            <div class="institutions">
+                <span class="attr">Member Institutions:</span>
+                {% for inst in project.Institutions %}
+                    {% if inst.Name != '' %}
+                        <a href="http://research.gulfresearchinitiative.org/gomri-funded-institutions/institution-overview.php?instid={{inst.ID}}" target="_blank">{{inst.Name | trimws}}</a>{% if not loop.last %}, {% endif %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+            {% if not project.tasks %}
+                {% if project.datasets %}
+                    {% set datasets = project.datasets %}
+                    {% include 'html/datasets.html' %}
+                {% else %}
+                    <div class="nodata"><em>{no dataset identified}</em></div>
+                {% endif %}
+            {% endif %}
         </div>
-        <div class="institutions">
-            <span class="attr">Member Institutions:</span>
-            {% for inst in project.Institutions %}
-                <a href="http://research.gulfresearchinitiative.org/gomri-funded-institutions/institution-overview.php?instid={{inst.ID}}" target="_blank">{{inst.Name}}</a>{% if not loop.last %}, {% endif %}
-            {% endfor %}
-        </div>
-        <ul class="tasks">
-        {% for task in project.tasks %}
-            <li class="task">
-                <span class="title1">{{task.Title}}</span>
-                <div class="container">
+    </div>
+    {% for task in project.tasks %}
+        <div class="task">
+            <div class="task-title">{{task.Title}}</div>
+            <div class="task-container">
                 {% if task.datasets %}
                     {% set datasets = task.datasets %}
                     {% include 'html/datasets.html' %}
                 {% else %}
-                    <p style='color:red'><em>{no dataset identified}</em></p>
+                    <div class="nodata"><em>{no dataset identified}</em></div>
                 {% endif %}
-                </div>
-            </li>
-        {% endfor %}
-        </ul>
-        {% if not project.tasks %}
-            {% if project.datasets %}
-                {% set datasets = project.datasets %}
-                {% include 'html/datasets.html' %}
-            {% else %}
-                <p style='color:red'><em>{no dataset identified}</em></p>
-            {% endif %}
-        {% endif %}
+            </div>
         </div>
-    </li>
+    {% endfor %}
 {% endfor %}
-</ul>

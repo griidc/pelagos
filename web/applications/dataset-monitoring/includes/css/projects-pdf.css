@@ -1,0 +1,34 @@
+a {
+    text-decoration: none;
+    color: black;
+}
+
+div.projects-header {
+    font-size: 110%;
+}
+
+div.project-title {
+    font-size: 100%;
+}
+
+div.task-title {
+    font-size: 95%;
+}
+
+div.nodata {
+    font-size: 95%;
+}
+
+table.datasets th {
+    font-size: 65%;
+    padding: 1px 2px;
+}
+
+table.datasets td {
+    font-size: 85%;
+}
+
+table.datasets td.udi {
+    font-size: 75%;
+    width: 7em;
+}

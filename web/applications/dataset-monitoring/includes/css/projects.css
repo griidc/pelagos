@@ -1,67 +1,74 @@
-ul.projects {
-    width: 100%;
-    margin-top: 0.75em;
-    list-style: none;
-    margin-left: 0;
-    padding-left: 0;
+div.projects-header {
+    color: black;
+    font-weight: bold;
+    font-size: 125%;
 }
 
-li.project {
-    width: 100%;
+span.header-inst-name {
+    color: #555;
+    font-size: 85%;
 }
 
-ul.projects div.title1 {
+a.download-pdf {
+    font-size: 75%;
+}
+
+
+div.project {
+    margin-top: 1em;
+    page-break-inside: avoid;
+}
+
+div.project:first-child {
+    margin-top: 0.5em;
+}
+
+div.project-title {
     font-weight: bold;
     color: #050;
     font-size: 110%;
     margin-bottom: 5px;
 }
 
-ul.projects div.container {
+div.project-container {
     margin-left: 1em;
 }
 
-ul.tasks {
-    list-style: none;
-    width: auto;
-    margin-top: 0.75em;
-    padding-left: 0px;
-    margin-left: 0em;
-}
-
-li.task {
-    width: 100%;
-}
-
-ul.tasks span.title1 {
-    color: #005;
-    font-size: 100%;
-    font-weight: bold;
-}
-
-span.title2 {
-    color: black;
-    font-weight: bold;
-    font-size: 125%;
+div.fundSrc,
+div.pi,
+div.institutions {
+    margin-top: .15em;
+    font-size: 85%;
 }
 
 span.attr {
     font-weight: bold;
 }
 
-div.pi {
-    font-size: 95%;
-    padding-bottom: .15em;
+
+div.task {
+    margin-top: 1em;
+    margin-left: 2em;
+    page-break-inside: avoid;
 }
 
-div.institutions {
-    font-size: 85%;
+div.task-title {
+    color: #005;
+    font-size: 100%;
+    font-weight: bold;
 }
+
+div.task-container {
+    margin-left: 1em;
+}
+
+
 
 table.datasets {
     width: 100%;
     margin-top: 1em;
     margin-bottom: 1em;
+    border-collapse: collapse;
 }
 
 table.datasets th {
@@ -69,6 +76,7 @@ table.datasets th {
     font-weight: bold;
     padding: 2px 5px;
     text-align: center;
+    font-size: 85%;
 }
 
 table.datasets td {
@@ -87,13 +95,20 @@ table.datasets .udi {
 }
 
 table.datasets .status {
-    width: 6em;
+    width: 4em;
     text-align: center;
 }
 
 table.datasets .status img {
     vertical-align: middle;
 }
+
+
+div.nodata {
+    margin-top: 0.75em;
+    color: red;
+}
+
 
 div.spinner div {
     position: absolute;
@@ -102,7 +117,3 @@ div.spinner div {
     margin: -30px 0 0 -30px;
 }
 
-.titleInstName {
-    color: #555;
-    font-size: 85%;
-}
