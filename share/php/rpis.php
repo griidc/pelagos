@@ -12,12 +12,16 @@ function getProjectDetails($dbh, $filters = array()) {
                pg.Program_Abstract as Abstract,
                pg.Program_StartDate as StartDate,
                pg.Program_EndDate as EndDate,
-               pg.Program_Location as Location';
+               pg.Program_Location as Location,
+               pg.Program_FundSrc as Fund_Src,
+               f.Fund_Source as Fund_Abbr,
+               f.Fund_Name as Fund_Name';
 
     $FROM = 'FROM Programs pg
              LEFT OUTER JOIN ProjPeople ppg ON ppg.Program_ID = pg.Program_ID
              LEFT OUTER JOIN People p ON p.People_ID = ppg.People_ID
-             LEFT OUTER JOIN Institutions inst ON inst.Institution_ID = p.People_Institution';
+             LEFT OUTER JOIN Institutions inst ON inst.Institution_ID = p.People_Institution
+             LEFT OUTER JOIN FundingSource f ON f.Fund_ID = pg.Program_FundSrc';
 
     $WHERE = 'WHERE pg.Program_Completed=1';
 
