@@ -5,6 +5,8 @@ $GLOBALS['LIKEMAP'] = array(
     '!=' => 'NOT LIKE'
 );
 
+define('FILTER_REG','/^(.*?)\s*(>=|<=|>|<|!=|=)\s*(.*?)$/');
+
 function getProjectDetails($dbh, $filters = array()) {
     $SELECT = 'SELECT DISTINCT
                pg.Program_ID as ID,
@@ -26,18 +28,21 @@ function getProjectDetails($dbh, $filters = array()) {
     $WHERE = 'WHERE pg.Program_Completed=1';
 
     foreach ($filters as $filter) {
-        $filt = preg_split('/=/',$filter);
-        if ($filt[0] == 'projectId') {
-            $WHERE .= " AND pg.Program_ID=$filt[1]";
-        }
-        if ($filt[0] == 'fundSrc') {
-            $WHERE .= " AND pg.Program_FundSrc=$filt[1]";
-        }
-        if ($filt[0] == 'peopleId') {
-            $WHERE .= " AND ppg.People_ID=$filt[1]";
-        }
-        if ($filt[0] == 'institutionId') {
-            $WHERE .= " AND inst.Institution_ID=$filt[1]";
+        if (preg_match(FILTER_REG,$filter,$matches)) {
+            switch(strtolower($matches[1])) {
+                case 'projectid':
+                    $WHERE .= " AND pg.Program_ID $matches[2] $matches[3]";
+                    break;
+                case 'fundirc':
+                    $WHERE .= " AND pg.Program_FundSrc $matches[2] $matches[3]";
+                    break;
+                case 'peopleid':
+                    $WHERE .= " AND ppg.People_ID $matches[2] $matches[3]";
+                    break;
+                case 'institutionid':
+                    $WHERE .= " AND inst.Institution_ID $matches[2] $matches[3]";
+                    break;
+            }
         }
     }
 
@@ -65,13 +70,13 @@ function getTaskDetails($dbh, $filters = array()) {
     $WHERE = 'WHERE 1';
 
     foreach ($filters as $filter) {
-        if (preg_match('/^(.*?)\s*(!?=)\s*(.*?)$/',$filter,$matches)) {
-            switch ($matches[1]) {
-                case 'projectId':
+        if (preg_match(FILTER_REG,$filter,$matches)) {
+            switch (strtolower($matches[1])) {
+                case 'projectid':
                     $WHERE .= " AND pj.Program_ID $matches[2] $matches[3]";
                     break;
                 case 'title':
-                    $WHERE .= " AND pj.Project_Title " . $GLOBALS['LIKEMAP'][$matches[2]] . " '$matches[3]'";
+                    $WHERE .= " AND pj.Project_Title " . $GLOBALS['LIKEMAP'][$matches[2]] . " \"$matches[3]\"";
                     break;
             }
         }
@@ -100,26 +105,27 @@ function getPeopleDetails($dbh, $filters = array()) {
     $WHERE = 'WHERE 1';
 
     foreach ($filters as $filter) {
-        $filt = preg_split('/=/',$filter);
-        switch ($filt[0]) {
-            case 'peopleId':
-                $WHERE .= " AND p.People_ID=$filt[1]";
-                break;
-            case 'lastName':
-                $WHERE .= " AND p.People_LastName LIKE \"$filt[1]\"";
-                break;
-            case 'firstName':
-                $WHERE .= " AND p.People_FirstName LIKE \"$filt[1]\"";
-                break;
-            case 'projectId':
-                $WHERE .= " AND pp.Program_ID=$filt[1]";
-                break;
-            case 'taskId':
-                $WHERE .= " AND pp.Project_ID=$filt[1]";
-                break;
-            case 'roleId':
-                $WHERE .= " AND pp.Role_ID=$filt[1]";
-                break;
+        if (preg_match(FILTER_REG,$filter,$matches)) {
+            switch (strtolower($matches[1])) {
+                case 'peopleid':
+                    $WHERE .= " AND p.People_ID $matches[2] $matches[3]";
+                    break;
+                case 'lastname':
+                    $WHERE .= " AND p.People_LastName " . $GLOBALS['LIKEMAP'][$matches[2]] . " \"$matches[3]\"";
+                    break;
+                case 'firstname':
+                    $WHERE .= " AND p.People_FirstName " . $GLOBALS['LIKEMAP'][$matches[2]] . " \"$matches[3]\"";
+                    break;
+                case 'projectid':
+                    $WHERE .= " AND pp.Program_ID $matches[2] $matches[3]";
+                    break;
+                case 'taskid':
+                    $WHERE .= " AND pp.Project_ID $matches[2] $matches[3]";
+                    break;
+                case 'roleid':
+                    $WHERE .= " AND pp.Role_ID $matches[2] $matches[3]";
+                    break;
+            }
         }
     }
 
@@ -139,31 +145,34 @@ function getInstitutionDetails($dbh, $filters = array()) {
     $WHERE = 'WHERE 1';
 
     foreach ($filters as $filter) {
-        $filt = preg_split('/=/',$filter);
-        if ($filt[0] == 'institutionId') {
-            $WHERE .= " AND Institution_ID=$filt[1]";
-        }
-        if ($filt[0] == 'name') {
-            $WHERE .= " AND Institution_Name LIKE '$filt[1]'";
-        }
-        if ($filt[0] == 'projectId') {
-            $FROM = " FROM (
-                                (
-                                    SELECT People_ID
-                                    FROM Projects
-                                    LEFT JOIN ProjPeople ON Projects.Project_ID = ProjPeople.Project_ID
-                                    WHERE Projects.Program_ID = $filt[1]
-                                ) 
-                                UNION
-                                (
-                                    SELECT People_ID
-                                    FROM ProjPeople
-                                WHERE Program_ID = $filt[1]
-                                ) 
-                            )
-                            AS T
-                            LEFT JOIN People ON T.People_ID = People.People_ID
-                            LEFT JOIN Institutions ON People.People_Institution = Institutions.Institution_ID";
+        if (preg_match(FILTER_REG,$filter,$matches)) {
+            switch(strtolower($matches[1])) {
+                case 'institutionid':
+                    $WHERE .= " AND Institution_ID $matches[2] $matches[3]";
+                    break;
+                case 'name':
+                    $WHERE .= " AND Institution_Name " . $GLOBALS['LIKEMAP'][$matches[2]] . " \"$matches[3]\"";
+                    break;
+                case 'projectid':
+                    $FROM = " FROM (
+                                        (
+                                            SELECT People_ID
+                                            FROM Projects
+                                            LEFT JOIN ProjPeople ON Projects.Project_ID = ProjPeople.Project_ID
+                                            WHERE Projects.Program_ID $matches[2] $matches[3]
+                                        )
+                                        UNION
+                                        (
+                                            SELECT People_ID
+                                            FROM ProjPeople
+                                        WHERE Program_ID $matches[2] $matches[3]
+                                        )
+                                    )
+                                    AS T
+                                    LEFT JOIN People ON T.People_ID = People.People_ID
+                                    LEFT JOIN Institutions ON People.People_Institution = Institutions.Institution_ID";
+                    break;
+            }
         }
     }
 
@@ -183,13 +192,12 @@ function getFundingSources($dbh, $filters = array()) {
 
     $WHERE = 'WHERE 1';
 
-    if (is_array($filters)) {
-        foreach ($filters as $filter) {
-            if (preg_match('/(>=|<=|>|<|=)/',$filter,$matches)) {
-                $filt = preg_split('/>=|<=|>|<|=/',$filter);
-                if ($filt[0] == 'fundId') {
-                    $WHERE .= " AND Fund_ID$matches[1]$filt[1]";
-                }
+    foreach ($filters as $filter) {
+        if (preg_match(FILTER_REG,$filter,$matches)) {
+            switch(strtolower($matches[1])) {
+                case 'fundid':
+                    $WHERE .= " AND Fund_ID $matches[2] $matches[3]";
+                    break;
             }
         }
     }
