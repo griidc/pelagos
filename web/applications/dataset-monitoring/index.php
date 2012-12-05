@@ -106,7 +106,7 @@ $app->get('/json/:type/projects/fundSrc/:fundSrc.json', function ($type,$fundSrc
 });
 
 $app->get('/projects/:by/:id', function ($by,$id) use ($app) {
-    $stash['timestamp'] = date('Y-m-d g:ia T',time());
+    $stash['timestamp'] = date('Y-m-d g:i A (T)',time());
     if ($by == 'YR1') {
         $fundFilter = array('fundId>0','fundId<7');
         if (isset($GLOBALS['config']['exclude']['funds'])) {
@@ -127,7 +127,7 @@ $app->get('/projects/:by/:id', function ($by,$id) use ($app) {
         $app->render('html/YR1.html',$stash);
     }
     else {
-        $stash['header'] = 'Datasets for ';
+        $stash['header'] = 'Datasets for: ';
         switch ($by) {
             case 'fundSrc':
                 $funds = getFundingSources(getDBH('RPIS'),array("fundId=$id"));
