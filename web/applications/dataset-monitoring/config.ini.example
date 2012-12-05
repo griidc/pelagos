@@ -16,3 +16,13 @@ password = "********"
  0 = "x.png"
  1 = "check.png"
  2 = "triangle_yellow.png"
+
+[exclude]
+funds[] = 6
+
+projects[] = 135
+
+tasks[] = "administration"
+tasks[] = "management"
+tasks[] = "data management"
+tasks[] = "education and outreach"

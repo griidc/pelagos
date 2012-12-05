@@ -62,7 +62,13 @@ $app->get('/json/:type.json', function ($type) use ($app) {
             $app->render('json/letters.json',$stash);
             break;
         case 'ra':
-            $stash['RFPS'] = getFundingSources(getDBH('RPIS'),array('fundId>6'));
+            $fundFilter = array('fundId>6');
+            if (isset($GLOBALS['config']['exclude']['funds'])) {
+                foreach ($GLOBALS['config']['exclude']['funds'] as $exclude) {
+                    $fundFilter[] = "fundId!=$exclude";
+                }
+            }
+            $stash['RFPS'] = getFundingSources(getDBH('RPIS'),$fundFilter);
             $app->render('json/research_awards.json',$stash);
             break;
     }
@@ -70,7 +76,13 @@ $app->get('/json/:type.json', function ($type) use ($app) {
 });
 
 $app->get('/json/ra/YR1.json', function () use ($app) {
-    $stash['YR1'] = getFundingSources(getDBH('RPIS'),array('fundId>0','fundId<6'));
+    $fundFilter = array('fundId>0','fundId<7');
+    if (isset($GLOBALS['config']['exclude']['funds'])) {
+        foreach ($GLOBALS['config']['exclude']['funds'] as $exclude) {
+            $fundFilter[] = "fundId!=$exclude";
+        }
+    }
+    $stash['YR1'] = getFundingSources(getDBH('RPIS'),$fundFilter);
     $app->render('json/YR1.json',$stash);
     exit;
 });
@@ -82,7 +94,13 @@ $app->get('/json/re/:letter.json', function ($letter) use ($app) {
 });
 
 $app->get('/json/:type/projects/fundSrc/:fundSrc.json', function ($type,$fundSrc) use ($app) {
-    $stash['projects'] = getProjectDetails(getDBH('RPIS'),array("fundSrc=$fundSrc"));
+    $projectFilter = array("fundSrc=$fundSrc");
+    if (isset($GLOBALS['config']['exclude']['projects'])) {
+        foreach ($GLOBALS['config']['exclude']['projects'] as $exclude) {
+            $projectFilter[] = "projectId!=$exclude";
+        }
+    }
+    $stash['projects'] = getProjectDetails(getDBH('RPIS'),$projectFilter);
     $app->render('json/projects.json',$stash);
     exit;
 });
@@ -90,9 +108,21 @@ $app->get('/json/:type/projects/fundSrc/:fundSrc.json', function ($type,$fundSrc
 $app->get('/projects/:by/:id', function ($by,$id) use ($app) {
     $stash['timestamp'] = date('Y-m-d g:ia T',time());
     if ($by == 'YR1') {
-        $stash['funds'] = getFundingSources(getDBH('RPIS'),array('fundId>=2','fundId<6'));
+        $fundFilter = array('fundId>0','fundId<7');
+        if (isset($GLOBALS['config']['exclude']['funds'])) {
+            foreach ($GLOBALS['config']['exclude']['funds'] as $exclude) {
+                $fundFilter[] = "fundId!=$exclude";
+            }
+        }
+        $stash['funds'] = getFundingSources(getDBH('RPIS'),$fundFilter);
         for ($i=0; $i<count($stash['funds']); $i++) {
-            $stash['funds'][$i]['projects'] = getTasksAndDatasets(getProjectDetails(getDBH('RPIS'),array('fundSrc='.$stash['funds'][$i]['ID'])));
+            $projectFilter = array('fundSrc='.$stash['funds'][$i]['ID']);
+            if (isset($GLOBALS['config']['exclude']['projects'])) {
+                foreach ($GLOBALS['config']['exclude']['projects'] as $exclude) {
+                    $projectFilter[] = "projectId!=$exclude";
+                }
+            }
+            $stash['funds'][$i]['projects'] = getTasksAndDatasets(getProjectDetails(getDBH('RPIS'),$projectFilter));
         }
         $app->render('html/YR1.html',$stash);
     }
@@ -117,7 +147,13 @@ $app->get('/projects/:by/:id', function ($by,$id) use ($app) {
                 $stash['header'] .= $proj[0]['Title'];
                 break;
         }
-        $stash['projects'] = getTasksAndDatasets(getProjectDetails(getDBH('RPIS'),array("$by=$id")));
+        $projectFilter = array("$by=$id");
+        if (isset($GLOBALS['config']['exclude']['projects'])) {
+            foreach ($GLOBALS['config']['exclude']['projects'] as $exclude) {
+                $projectFilter[] = "projectId!=$exclude";
+            }
+        }
+        $stash['projects'] = getTasksAndDatasets(getProjectDetails(getDBH('RPIS'),$projectFilter));
         if ($app->request()->get('pdf')) {
             $env = $app->environment();
             header("Content-Type: text/html; charset=utf-8");
