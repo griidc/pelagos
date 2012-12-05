@@ -127,24 +127,23 @@ $app->get('/projects/:by/:id', function ($by,$id) use ($app) {
         $app->render('html/YR1.html',$stash);
     }
     else {
-        $stash['header'] = 'Datasets for: ';
         switch ($by) {
             case 'fundSrc':
                 $funds = getFundingSources(getDBH('RPIS'),array("fundId=$id"));
-                $stash['header'] .= $funds[0]['Name'];
+                $stash['header'] = $funds[0]['Name'];
                 break;
             case 'peopleId':
                 $people = getPeopleDetails(getDBH('RPIS'),array("peopleId=$id"));
-                $stash['header'] .= $people[0]['FirstName'] . ' ' . $people[0]['LastName'];
+                $stash['header'] = $people[0]['FirstName'] . ' ' . $people[0]['LastName'];
                 $stash['instName'] = $people[0]['Institution_Name'];
                 break;
             case 'institutionId':
                 $inst = getInstitutionDetails(getDBH('RPIS'),array("institutionId=$id"));
-                $stash['header'] .= $inst[0]['Name'];
+                $stash['header'] = $inst[0]['Name'];
                 break;
             case 'projectId':
                 $proj = getProjectDetails(getDBH('RPIS'),array("projectId=$id"));
-                $stash['header'] .= $proj[0]['Title'];
+                $stash['header'] = $proj[0]['Title'];
                 break;
         }
         $projectFilter = array("$by=$id");
