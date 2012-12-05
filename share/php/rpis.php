@@ -33,7 +33,7 @@ function getProjectDetails($dbh, $filters = array()) {
                 case 'projectid':
                     $WHERE .= " AND pg.Program_ID $matches[2] $matches[3]";
                     break;
-                case 'fundirc':
+                case 'fundsrc':
                     $WHERE .= " AND pg.Program_FundSrc $matches[2] $matches[3]";
                     break;
                 case 'peopleid':
