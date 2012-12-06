@@ -68,7 +68,8 @@ function getTaskDetails($dbh, $filters = array()) {
                pj.Project_Title as Title,
                pj.Project_Abstract as Abstract';
 
-    $FROM = 'FROM Projects pj';
+    $FROM = 'FROM Projects pj
+             LEFT OUTER JOIN ProjPeople pp ON pp.Project_ID = pj.Project_ID';
 
     $WHERE = 'WHERE 1';
 
@@ -80,6 +81,9 @@ function getTaskDetails($dbh, $filters = array()) {
                     break;
                 case 'title':
                     $WHERE .= " AND pj.Project_Title " . $GLOBALS['LIKEMAP'][$matches[2]] . " \"$matches[3]\"";
+                    break;
+                case 'peopleid':
+                    $WHERE .= " AND pp.People_ID $matches[2] $matches[3]";
                     break;
             }
         }
