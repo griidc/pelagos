@@ -39,6 +39,9 @@ function getProjectDetails($dbh, $filters = array()) {
                 case 'peopleid':
                     $WHERE .= " AND ppg.People_ID $matches[2] $matches[3]";
                     break;
+                case 'peopleid_strict':
+                    $WHERE .= " AND ppg.People_ID $matches[2] $matches[3] AND ppg.Project_ID = 0";
+                    break;
                 case 'institutionid':
                     $WHERE .= " AND inst.Institution_ID $matches[2] $matches[3]";
                     break;
