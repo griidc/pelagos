@@ -304,7 +304,7 @@ if ($_POST)
             
             if ($result[0] == "" || !$result[0])
             {
-                $input = "_target: $txtURL\n_profile: dc\ndc.creator:$txtWho\ndc.title:$txtWhat\ndc.publisher:$txtWhere\ndc.date:$txtDate";
+                $input = "_target: $txtURL\n_profile: dc\ndc.creator:$txtWho\ndc.title:$txtWhat\ndc.publisher:$txtWhere\ndc.date:$txtDate\ndc.type:Dataset";
                 
                 $doiResult = createDOI($input);
                 
