@@ -66,7 +66,8 @@ function getTaskDetails($dbh, $filters = array()) {
     $SELECT = 'SELECT DISTINCT
                pj.Project_ID as ID,
                pj.Project_Title as Title,
-               pj.Project_Abstract as Abstract';
+               pj.Project_Abstract as Abstract,
+               pj.Program_ID as Project_ID';
 
     $FROM = 'FROM Projects pj
              LEFT OUTER JOIN ProjPeople pp ON pp.Project_ID = pj.Project_ID';
