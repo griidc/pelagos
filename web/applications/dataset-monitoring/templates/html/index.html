@@ -4,17 +4,42 @@
             <div class="scrollbar"><div class="track"><div class="thumb"><div class="end"></div></div></div></div>
             <div class="viewport">
                 <div class="overview">
-                    <div class="treetype-wrapper">
-                    <span class="treetype">
-                    <strong>List by:</strong>
-                    <select id="treetype-selector" onchange="updateTree(this.value);">
-                        <option value="ra">Research Award</option>
-                        <option value="re">Researcher</option>
-                        <option value="in">Institution</option>
-                    </select>
-                    </span>
-                    </div>
-                    <div id="tree"></div>
+                    <script type="text/javascript" src="/tree/js/tree.js"></script>
+                    <script type="text/javascript">
+                        var tree = {
+                                    theme: "classic",
+                                    max_depth: 0,
+                                    expand_to_depth: 0,
+                                    animation: 250,
+                                    type: "ra",
+
+                                    yr1_folder_color: "#00A",
+                                    yr1_folder_link: "javascript:showProjects('YR1',1);",
+
+                                    yr1_color: "#00A",
+                                    yr1_link: "javascript:showProjects('fundSrc',\{\{inst.ID\}\});",
+
+                                    rfp_color: "#00A",
+                                    rfp_link: "javascript:showProjects('fundSrc',\{\{RFP.ID\}\});",
+
+                                    project_color: "#00A",
+                                    project_link: "javascript:showProjects('projectId',\{\{project.ID\}\});",
+
+                                    task_color: "#00A",
+                                    task_link: "javascript:showTask(\{\{task.ID\}\});",
+
+                                    dataset_color: "#00A",
+                                    dataset_link: "javascript:showDataset(\{\{dataset.ID\}\});",
+
+                                    researcher_color: "#00A",
+                                    researcher_link: "javascript:showProjects('peopleId',\{\{person.ID\}\});",
+
+                                    institution_color: "#00A",
+                                    institution_link: "javascript:showProjects('institutionId',\{\{institution.ID\}\});"
+                                   }
+
+                        insertTree(tree);
+                    </script>
                 </div>
             </div>
         </div>
