@@ -4,7 +4,7 @@ $(document).ready(function() {
     $('#menu .overview').width($('#menu .viewport').width() - 15);
     $('#left').height(0);
     $('#right').height(0);
-    resizeLeftRight();
+    setTimeout(function() { resizeLeftRight(); }, 100);
     $(window).resize(function() {
         resizeLeftRight()
         $('#menu').tinyscrollbar_update('relative');
