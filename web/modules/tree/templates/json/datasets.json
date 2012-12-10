@@ -2,16 +2,15 @@
 {% for dataset in datasets %}
     {
         "data": {
-            "title": "{{dataset.Title | raw}}",
+            "title": "{{dataset.title | raw}}",
             "attr": {
-                "style": "color:{{dataset_color}}",
-                "href": "{{dataset_link | evaluate}}",
-                "class": "foobar"
+                "style": "color:{{tree.dataset_color}}",
+                "href": "{{tree.dataset_link | evaluate}}"
             }
         }
         ,
         "attr": {
-            "id": "datasets_ID_{{dataset.ID}}"
+            "id": "datasets_ID_{{dataset.udi}}"
         }
     }
     {% if not loop.last %}

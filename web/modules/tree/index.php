@@ -8,6 +8,7 @@ require_once '/usr/local/share/GRIIDC/php/dumpIncludesFile.php';
 require_once '/usr/local/share/GRIIDC/php/rpis.php';
 
 require_once 'lib/tree.php';
+require_once 'lib/gomri_db.php';
 
 $GLOBALS['config'] = parse_ini_file('config.ini',true);
 
@@ -145,20 +146,14 @@ $app->get('/json/:type/tasks/projectId/peopleId/:projectId/:peopleId.json', func
 
 $app->get('/json/:type/datasets/projectId/:projectId.json', function ($type,$projectId) use ($app) {
     $stash['tree'] = array_merge($GLOBALS['config']['tree'],json_decode($app->request()->get('tree'),true));
-    $stash['datasets'] = array(
-                            array('Title'=>'Dataset 1','ID'=>'1'),
-                            array('Title'=>'Dataset 2','ID'=>'2')
-                         );
+    $stash['datasets'] = getDatasets(getDBH('GOMRI'),array("projectId=$projectId"));
     $app->render('json/datasets.json',$stash);
     exit;
 });
 
 $app->get('/json/:type/datasets/taskId/:taskId.json', function ($type,$taskId) use ($app) {
     $stash['tree'] = array_merge($GLOBALS['config']['tree'],json_decode($app->request()->get('tree'),true));
-    $stash['datasets'] = array(
-                            array('Title'=>'Dataset 1','ID'=>'1'),
-                            array('Title'=>'Dataset 2','ID'=>'2')
-                         );
+    $stash['datasets'] = getDatasets(getDBH('GOMRI'),array("taskId=$taskId"));
     $app->render('json/datasets.json',$stash);
     exit;
 });
