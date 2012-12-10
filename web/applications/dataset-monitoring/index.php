@@ -38,71 +38,15 @@ $app->get('/js/:name.js', function ($name) use ($app) {
 
 $app->get('/', function () use ($app) {
     $env = $app->environment();
-    drupal_add_js('/includes/jstree/jquery.jstree.js',array('type'=>'external'));
     drupal_add_js('/includes/tinyscrollbar/jquery.tinyscrollbar.min.js',array('type'=>'external'));
     drupal_add_js('/includes/mutate/mutate.events.js',array('type'=>'external'));
     drupal_add_js('/includes/mutate/mutate.min.js',array('type'=>'external'));
+    drupal_add_js('/tree/js/tree.js',array('type'=>'external'));
     drupal_add_js("$env[SCRIPT_NAME]/js/dm.js",array('type'=>'external'));
-    drupal_add_css("$env[SCRIPT_NAME]/includes/css/jstree.css",array('type'=>'external'));
     drupal_add_css("$env[SCRIPT_NAME]/includes/css/scrollbars.css",array('type'=>'external'));
     drupal_add_css("$env[SCRIPT_NAME]/includes/css/projects.css",array('type'=>'external'));
     drupal_add_css("$env[SCRIPT_NAME]/includes/css/dataset_details.css",array('type'=>'external'));
     return $app->render('html/index.html');
-});
-
-$app->get('/json/:type.json', function ($type) use ($app) {
-    switch ($type) {
-        case 'in':
-            $stash['institutions'] = getInstitutionDetails(getDBH('RPIS'));
-            $app->render('json/institutions.json',$stash);
-            break;
-        case 're':
-            $stash['letters'] = range('A','Z');
-            $stash['letters'][] = 'Ö';
-            $app->render('json/letters.json',$stash);
-            break;
-        case 'ra':
-            $fundFilter = array('fundId>6');
-            if (isset($GLOBALS['config']['exclude']['funds'])) {
-                foreach ($GLOBALS['config']['exclude']['funds'] as $exclude) {
-                    $fundFilter[] = "fundId!=$exclude";
-                }
-            }
-            $stash['RFPS'] = getFundingSources(getDBH('RPIS'),$fundFilter);
-            $app->render('json/research_awards.json',$stash);
-            break;
-    }
-    exit;
-});
-
-$app->get('/json/ra/YR1.json', function () use ($app) {
-    $fundFilter = array('fundId>0','fundId<7');
-    if (isset($GLOBALS['config']['exclude']['funds'])) {
-        foreach ($GLOBALS['config']['exclude']['funds'] as $exclude) {
-            $fundFilter[] = "fundId!=$exclude";
-        }
-    }
-    $stash['YR1'] = getFundingSources(getDBH('RPIS'),$fundFilter);
-    $app->render('json/YR1.json',$stash);
-    exit;
-});
-
-$app->get('/json/re/:letter.json', function ($letter) use ($app) {
-    $stash['people'] = getPeopleDetails(getDBH('RPIS'),array("lastName=$letter%"));
-    $app->render('json/researchers.json',$stash);
-    exit;
-});
-
-$app->get('/json/:type/projects/fundSrc/:fundSrc.json', function ($type,$fundSrc) use ($app) {
-    $projectFilter = array("fundSrc=$fundSrc");
-    if (isset($GLOBALS['config']['exclude']['projects'])) {
-        foreach ($GLOBALS['config']['exclude']['projects'] as $exclude) {
-            $projectFilter[] = "projectId!=$exclude";
-        }
-    }
-    $stash['projects'] = getProjectDetails(getDBH('RPIS'),$projectFilter);
-    $app->render('json/projects.json',$stash);
-    exit;
 });
 
 $app->get('/projects/:by/:id', function ($by,$id) use ($app) {

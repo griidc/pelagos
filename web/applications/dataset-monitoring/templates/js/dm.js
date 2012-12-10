@@ -15,7 +15,6 @@ $(document).ready(function() {
     $('#menu .overview').mutate('height', function(el,info) {
         $('#menu').tinyscrollbar_update('relative');
     });
-    updateTree('ra');
 });
 
 function resizeLeftRight() {
@@ -24,41 +23,6 @@ function resizeLeftRight() {
     h = $('#main').height() - $('#squeeze-wrapper').height() - 20;
     $('#left').height(h);
     $('#right').height(h);
-}
-
-function updateTree(type) {
-    $("#tree").jstree({
-        "core": {
-            "html_titles": true
-        },
-        "themes": {
-            "theme": "classic",
-            "dots": true,
-            "icons": false
-        },
-        "json_data": {
-            "ajax": {
-                "url": function (node) {
-                    var nodeId = "";
-                    var url = "";
-                    if (node == -1) {
-                        url = "{{baseUrl}}/json/"+type+".json";
-                    }
-                    else {
-                        nodeId = node.attr('id');
-                        url = "{{baseUrl}}/json/"+type+"/"+nodeId+".json";
-                    }
-                    return url;
-                },
-                "success": function (new_data) {
-                    setTimeout(function() { $('#menu').tinyscrollbar_update('relative'); }, 500);
-                    return new_data;
-                }
-            }
-        },
-        "plugins": [ "json_data", "types", "themes" ]
-    });
-    $.vakata.css.add_sheet({ str : '.jstree a { height: auto; }', title : "jstree_override" });
 }
 
 function showProjects(by,id) {
