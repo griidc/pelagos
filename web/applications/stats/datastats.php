@@ -1,3 +1,10 @@
+<div style="background: transparent;" id="cattabs">
+        <ul>
+            <li><a href="#_dataset_for_">Dataset For</a></li>
+            <li><a href="#_dataset_type_">Dataset Type</a></li>
+            <li><a href="#_dataset_procedure_">Dataset Procedure</a></li>
+        </ul>
+
 <?php
 
 $statq = array();
@@ -47,7 +54,7 @@ $statq[1][] = 'SELECT * FROM v_dataset_type_cdf_sizes_stat; ';
 $statq[1][] = 'SELECT * FROM v_dataset_type_gml_sizes_stat; ';
 $statq[1][] = 'SELECT * FROM v_dataset_type_others_sizes_stat;';
 
-
+$currentdiv = '';
 
 for ($i = 0; $i < count($statq[0]); $i++)
 {
@@ -59,6 +66,19 @@ for ($i = 0; $i < count($statq[0]); $i++)
     $statname = $row['field'];
     
     $sql = $statq[1][$i];
+    
+    preg_match("/_[^_]+_[^_]+_/", $sql,$matches);
+    
+    if ($matches[0] != $currentdiv)
+    {
+        if ($currentdiv !="")
+        {
+            echo '</div>';
+        }
+        $currentdiv = $matches[0];
+        echo '<div id="'.$currentdiv.'">';
+    }
+    
     
     $data = array();
     
@@ -79,11 +99,10 @@ for ($i = 0; $i < count($statq[0]); $i++)
     echo '<div id="result">';
     drawChart($data,300);
     echo '</div>';
-    echo '<div id="source">GRIIDC</div>';
     echo '</div><br/>';
 }
 
-
-
-
 ?>
+
+</div>
+</div>

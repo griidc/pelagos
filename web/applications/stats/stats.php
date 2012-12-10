@@ -185,10 +185,13 @@ $sdata[4]['value'] = Gbytes($row[4]);
 $sdata[5]['title'] = 'By non-GoMRI members';
 $sdata[5]['value'] = Gbytes($row[3]);
 
-$cdata[1]['title'] = 'GRIIDC System capacity ';
+$cdata[1]['title'] = 'GRIIDC system capacity ';
 $cdata[1]['value'] = Tbytes($syscapacity);
-$cdata[2]['title'] = 'GRIIDC Available space  ';
+$cdata[2]['title'] = 'GRIIDC available space  ';
 $cdata[2]['value'] = Tbytes($syscapacity-$row[1]);
+$cdata[3]['title'] = 'GRIIDC used space';
+$cdata[3]['value'] = Tbytes($row[1]);
+
 
 
 $wdata[1]['title'] = 'Total number of datasets served ';
@@ -318,10 +321,16 @@ $row2 = pdoDBQuery($conn2,$query);
     }
 </style>
 
+
+
 <script>
 (function ($) {
     $(function() {
         $( "#tabs" ).tabs({
+            heightStyleType: "fill"
+        });
+        
+        $( "#cattabs" ).tabs({
             heightStyleType: "fill"
         });
     });
@@ -336,7 +345,7 @@ $row2 = pdoDBQuery($conn2,$query);
 <div style="background: transparent;" id="tabs">
         <ul>
             <li><a href="#tabs-1">Overview</a></li>
-            <li><a href="#tabs-2">Categories</a></li>
+            <li><a href="#tabs-2">Categories (from DIF)</a></li>
         </ul>
         
       <div id="tabs-1"> 
@@ -346,15 +355,17 @@ $row2 = pdoDBQuery($conn2,$query);
       <div id="result">
          <?php drawChart($gdata,300); ?>
       </div>   
-	   <div id="source">GRIIDC</div>
+     
     </div>
+          <?php
+              /*
     <br/>
     <div id="main">
       <div class="caption">Datasets counts</div>
       <div id="result">
          <?php drawChart($ddata,1000); ?>
       </div>   
-	   <div id="source">GRIIDC</div>
+	   
     </div>
     <br/>
     <div id="main">
@@ -362,11 +373,10 @@ $row2 = pdoDBQuery($conn2,$query);
       <div id="result">
          <?php drawChart($sdata,1500); ?>
       </div>   
-	   <div id="source">GRIIDC</div>
+	   
     </div>
      <br/>
-     <?php
-     /*
+     
     <div id="main">
       <div class="caption">Datasets Served</div>
       <div id="result">
@@ -382,7 +392,7 @@ $row2 = pdoDBQuery($conn2,$query);
       <div id="result">
          <?php drawChart($cdata,1500); ?>
       </div>   
-	   <div id="source">GRIIDC</div>
+	   
     </div>
      <br/>
      <div id="main">
@@ -395,7 +405,7 @@ $row2 = pdoDBQuery($conn2,$query);
            </td>
            
            <td width="550px">
-                <?php echo $row2[0];?>
+                <?php echo number_format($row2[0]);?>
             </td>
         </tr>
         <tr>
@@ -404,7 +414,7 @@ $row2 = pdoDBQuery($conn2,$query);
             </td>
             
             <td>
-                <?php echo $row2[1];?>
+                <?php echo number_format($row2[1]);?>
             </td>
         </tr>
         <tr>
@@ -413,7 +423,7 @@ $row2 = pdoDBQuery($conn2,$query);
             </td>
             
             <td>
-                <?php echo $row2[2];?>
+                <?php echo number_format($row2[2]);?>
             </td>
         </tr>
         <tr>
@@ -422,7 +432,7 @@ $row2 = pdoDBQuery($conn2,$query);
             </td>
             
             <td>
-                <?php echo $row2[3];?>
+                <?php echo number_format($row2[3]);?>
             </td>
         </tr>
         <tr>
@@ -431,7 +441,7 @@ $row2 = pdoDBQuery($conn2,$query);
             </td>
             
             <td>
-                <?php echo $row2[4];?>
+                <?php echo number_format($row2[4]);?>
             </td>
         </tr>
         
@@ -439,7 +449,7 @@ $row2 = pdoDBQuery($conn2,$query);
 
    </table>
         </div>   
-         <div id="source">GRIIDC</div>
+         
      </div>
      <br/>
  </div>

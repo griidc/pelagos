@@ -37,9 +37,22 @@ function drawChart($chartData,$tableSize = 300){
    foreach ($chartData as $item) {
       $width = ceil($item['value']/$pxValue);
    	echo '<tr><td width="350px" style="white-space: nowrap">'.$item['title'].'</td>';
-   	echo '<td width="450px">
-   	     <img src="includes/images/barbg.gif" alt="'.$item['title'].'" width="'.$width.'" height="15" /></td>';
-   	echo '<td width="100px">'.$item['value'].'</td></tr>';
+   	if ($item['title'] == "Total")
+    {
+        echo '<td width="450px">
+   	     <img src="includes/images/barbr.gif" alt="'.$item['title'].'" width="'.$width.'" height="15" /></td>';
+    }
+    else
+    {
+        echo '<td width="450px">
+        <img src="includes/images/barbg.gif" alt="'.$item['title'].'" width="'.$width.'" height="15" /></td>';
+    }
+         $numberval = $item['value'];
+         if (is_numeric($numberval))
+         {
+            $numberval = number_format((int) $numberval);
+         }
+   	echo '<td width="100px">'.$numberval.'</td></tr>';
    }
    echo '</table>';
 
