@@ -38,7 +38,7 @@ function drawChart($chartData,$tableSize = 300){
       $width = ceil($item['value']/$pxValue);
    	echo '<tr><td width="350px" style="white-space: nowrap">'.$item['title'].'</td>';
    	echo '<td width="450px">
-   	     <img src="http://proteus.tamucc.edu/~mvandeneijnden/stats/barbg.gif" alt="'.$item['title'].'" width="'.$width.'" height="15" /></td>';
+   	     <img src="includes/images/barbg.gif" alt="'.$item['title'].'" width="'.$width.'" height="15" /></td>';
    	echo '<td width="100px">'.$item['value'].'</td></tr>';
    }
    echo '</table>';

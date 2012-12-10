@@ -1,6 +1,7 @@
 <?php
 
 include_once '/usr/local/share/GRIIDC/php/pdo.php';
+include_once '/usr/local/share/GRIIDC/php/aliasIncludes.php';
 
 require_once('chart.php');
 require_once 'config.php';
@@ -331,11 +332,11 @@ $row2 = pdoDBQuery($conn2,$query);
 <head>
    <link href="./style/style.css" rel="stylesheet" type="text/css" />
 </head>
-
+<h1>GRIIDC Summary Statistics (as of <?php echo date('m F Y');?>)</h1>
 <div style="background: transparent;" id="tabs">
         <ul>
             <li><a href="#tabs-1">Overview</a></li>
-            <li><a href="">Datasets</a></li>
+            <li><a href="#tabs-2">Categories</a></li>
         </ul>
         
       <div id="tabs-1"> 
@@ -443,10 +444,8 @@ $row2 = pdoDBQuery($conn2,$query);
      <br/>
  </div>
  
- 
       <div id="tabs-2"> 
-      &nbsp;
-      
+        <?php include 'datastats.php';?>
       </div>
   
   </div>
