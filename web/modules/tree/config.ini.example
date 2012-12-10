@@ -1,0 +1,61 @@
+[TwigView]
+twigDirectory = "/usr/share/pear/Twig"
+
+[GOMRI_DB]
+connstr = "pgsql:host=localhost;dbname=gomri;"
+username = "username"
+password = "password"
+
+[RPIS_DB]
+connstr = "mysql:host=localhost;dbname=gomri_rpis;"
+username = "username"
+password = "password"
+
+[exclude]
+funds[] = 6
+
+tasks[] = "administration"
+tasks[] = "management"
+tasks[] = "data management"
+tasks[] = "education and outreach"
+
+[tree]
+; Depth Levels
+;
+; 0 => Research Award (with RFP-I), Researcher, Institution
+; 1 => Project
+; 2 => Task
+; 3 => Dataset
+
+theme = "classic"
+dots = "true"
+icons = "false"
+animation = 250
+max_depth = 3
+expand_to_depth = 0
+init_type = "ra"
+init_open = "['YR1','projects_fundSrc_7']"
+
+yr1_folder_color = "black"
+yr1_folder_link = "javascript:void();"
+
+yr1_color = "black"
+yr1_link = "javascript:void();"
+
+rfp_color = "black"
+rfp_link = "javascript:void();"
+
+project_color = "black"
+project_link = "javascript:void();"
+
+task_color = "black"
+task_link = "javascript:void();"
+
+dataset_color = "black"
+dataset_link = "javascript:void();"
+
+researcher_color = "black"
+researcher_link = "javascript:void();"
+
+institution_color = "black"
+institution_link = "javascript:void();"

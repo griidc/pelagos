@@ -1,0 +1,21 @@
+[
+{% for dataset in datasets %}
+    {
+        "data": {
+            "title": "{{dataset.Title | raw}}",
+            "attr": {
+                "style": "color:{{dataset_color}}",
+                "href": "{{dataset_link | evaluate}}",
+                "class": "foobar"
+            }
+        }
+        ,
+        "attr": {
+            "id": "datasets_ID_{{dataset.ID}}"
+        }
+    }
+    {% if not loop.last %}
+    ,
+    {% endif %}
+{% endfor %}
+]

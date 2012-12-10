@@ -1,0 +1,27 @@
+[
+{% for institution in institutions %}
+    {
+        "data": {
+            "title": "{{institution.Name | raw}}",
+            "attr": {
+                "style": "color:{{tree.institution_color}}",
+                "href": "{{tree.institution_link | evaluate}}"
+            }
+        },
+        "attr": {
+            "id": "projects_institutionId_{{institution.ID}}"
+        }
+        {% if tree.max_depth > 0 %}
+            ,
+            {% if tree.expand_to_depth > 1 %}
+                "state": "open"
+            {% else %}
+                "state": "closed"
+            {% endif %}
+        {% endif %}
+    }
+    {% if not loop.last %}
+    ,
+    {% endif %}
+{% endfor %}
+]

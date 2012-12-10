@@ -1,0 +1,40 @@
+[
+    {
+        "data": {
+            "title": "Year-One Block Grants",
+            "attr": {
+                "style": "color:{{tree.yr1_folder_color}}"
+                ,
+                "href": "{{tree.yr1_folder_link | evaluate}}"
+            }
+        },
+        "attr": {
+            "id": "YR1"
+        },
+        "state": "closed"
+    }
+    {% for RFP in RFPS %}
+    ,
+    {
+        "data": {
+            "title": "{{RFP.Name}}",
+            "attr": {
+                "style": "color:{{tree.rfp_color}}"
+                ,
+                "href": "{{tree.rfp_link | evaluate}}"
+            }
+        },
+        "attr": {
+            "id": "projects_fundSrc_{{RFP.ID}}"
+        }
+        {% if RFP.ID == 7 or tree.max_depth > 0 %}
+            ,
+            {% if tree.expand_to_depth > 0 %}
+                "state": "open"
+            {% else %}
+                "state": "closed"
+            {% endif %}
+        {% endif %}
+    }
+    {% endfor %}
+]
