@@ -205,7 +205,11 @@ $conn2 = new PDO('mysql:'.RPIS_DB_CONN_STRING,RPIS_DB_USERNAME,RPIS_DB_PASSWORD)
 $query = "
 SELECT
 (select count(Program_ID) from Programs where Program_FundSrc > 0) as Total_Projects,
-(select count(Project_ID) from Projects where Project_Completed = 1) as Total_Tasks,
+(select count(Projects.Project_ID) from Projects where Projects.Project_Completed = 1) +
+(select distinct count(pg.Program_ID) from Programs pg
+where (not (pg.Program_ID in 
+(select Projects.Program_ID from Projects where
+(Projects.Project_SubTaskNum <> 0))))) as Total_Tasks,
 (select count(People_ID) from People) as Total_Researchers,
 (select count(Institution_ID) from Institutions) as Total_Institutions,
 (select count(distinct Institution_Country) from Institutions) as Total_Countries;
