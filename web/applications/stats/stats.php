@@ -345,7 +345,7 @@ $row2 = pdoDBQuery($conn2,$query);
 <div style="background: transparent;" id="tabs">
         <ul>
             <li><a href="#tabs-1">Overview</a></li>
-            <li><a href="#tabs-2">Categories (from DIF)</a></li>
+            <li><a href="#tabs-2">Categories (from Identified Datasets)</a></li>
         </ul>
         
       <div id="tabs-1"> 
