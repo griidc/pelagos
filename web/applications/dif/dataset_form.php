@@ -248,6 +248,7 @@ Video&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
 
     <p><fieldset>
         <?PHP helps("cgeoloc", "Geographic/Study Area", "igeoloc"); ?>
+           <a href="javascript:void(0);" onClick=window.open("/map/","","width=1050,height=740,left=400,top=400,toolbar=0,status=0,scollbars=1,resizable=0,location=0");><img src="/map/images/red-dot.png" height=15> click here to select points on a map</a>
            <textarea name="geoloc"<?PHP if ($status != 0){echo "disabled";} ?>  id="cgeoloc"  rows=3 cols=98 maxlength=200 onkeypress="return imposeMaxLength(this, 200);"><?PHP if ($flag=="update"){echo $m[11];} ?></textarea>
     </fieldset></p>
 
