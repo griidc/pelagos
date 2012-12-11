@@ -46,7 +46,7 @@ function Kbytes($bytes)
     $gb = round($bytes / $gigabyte, 2);
     
     // Calculate TB
-    $terabyte = $gigabyte * 1024;
+    $terabyte = $gigabyte * 1024;    /////
     $tb = round($bytes / $terabyte, 2);
     
     return $kb.'Kb';
@@ -341,7 +341,7 @@ $row2 = pdoDBQuery($conn2,$query);
 <head>
    <link href="./style/style.css" rel="stylesheet" type="text/css" />
 </head>
-<h1>GRIIDC Summary Statistics (as of <?php echo date('m F Y');?>)</h1>
+<h2><em>(as of <?php echo date('m F Y');?>)</em></h2>
 <div style="background: transparent;" id="tabs">
         <ul>
             <li><a href="#tabs-1">Overview</a></li>
