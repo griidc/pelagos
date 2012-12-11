@@ -12,9 +12,9 @@
         <td class="udi"><a href="javascript:showDatasetDetails('{{dataset.udi}}');">{{dataset.udi}}</a></td>
         <td><a href="javascript:showDatasetDetails('{{dataset.udi}}');">{{dataset.title}}</a></td>
         <td class="status"><img src="{{baseUrl}}/includes/images/{{dataset.registered | statusToImg}}"></td>
-        <td class="status"><img src="{{baseUrl}}/includes/images/{% if dataset.registered %}x.png{% else %}na.png{% endif %}"></td>
-        <td class="status"><img src="{{baseUrl}}/includes/images/{% if dataset.registered %}x.png{% else %}na.png{% endif %}"></td>
-        <td class="status"><img src="{{baseUrl}}/includes/images/{% if dataset.registered %}x.png{% else %}na.png{% endif %}"></td>
+        <td class="status"><img src="{{baseUrl}}/includes/images/{% if dataset.registered %}{{dataset.metadata | statusToImg}}{% else %}na.png{% endif %}"></td>
+        <td class="status"><img src="{{baseUrl}}/includes/images/{% if dataset.registered %}{{dataset.availability | statusToImg}}{% else %}na.png{% endif %}"></td>
+        <td class="status"><img src="{{baseUrl}}/includes/images/{% if dataset.registered %}{{dataset.accessibility | statusToImg}}{% else %}na.png{% endif %}"></td>
     </tr>
-    {% endfor%}
+    {% endfor %}
 </table>

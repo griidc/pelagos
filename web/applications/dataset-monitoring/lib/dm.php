@@ -17,7 +17,11 @@ function getDBH($db) {
 }
 
 function getTasksAndDatasets($projects) {
-    $SELECT = 'SELECT DISTINCT title, status, dataset_uid, d.dataset_udi AS udi, CASE WHEN registry_id IS NULL THEN 0 ELSE 1 END AS registered';
+    $SELECT = "SELECT DISTINCT title, status, dataset_uid, d.dataset_udi AS udi,
+               CASE WHEN registry_id IS NULL THEN 0 ELSE 1 END AS registered,
+               CASE WHEN dataset_metadata IS NULL THEN 0 ELSE 2 END AS metadata,
+               CASE WHEN dataset_download_status = 'done' THEN 1 ELSE 0 END AS availability,
+               CASE WHEN access_status = 'None' THEN 1 WHEN access_status = 'Requires Author''s Approval' THEN 2 ELSE 0 END AS accessibility";
     $FROM = 'FROM datasets d LEFT OUTER JOIN registry r ON r.dataset_udi = d.dataset_udi';
     $dbh = getDBH('GOMRI');
     for ($i=0;$i<count($projects);$i++) {
