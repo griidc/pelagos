@@ -341,11 +341,11 @@ $row2 = pdoDBQuery($conn2,$query);
 <head>
    <link href="./style/style.css" rel="stylesheet" type="text/css" />
 </head>
-<h2><em>(as of <?php echo date('m F Y');?>)</em></h2>
+<h2><em>(as of <?php echo date('d F Y');?>)</em></h2>
 <div style="background: transparent;" id="tabs">
         <ul>
             <li><a href="#tabs-1">Overview</a></li>
-            <li><a href="#tabs-2">Categories (from Identified Datasets)</a></li>
+            <li><a href="#tabs-2">Categories (from DIF)</a></li>
         </ul>
         
       <div id="tabs-1"> 
