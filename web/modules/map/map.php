@@ -5,11 +5,11 @@
         <meta name = "description" content = "GRIIDC Map"/>
         <title>GRIIDC Map</title>
         <link rel="stylesheet" type="text/css" href="includes/css/map.css">
-	   <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+	   <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
        <?PHP include('includes/js/map.js'); ?>
 	   <?PHP include('/includes/qTip2/jquery.qtip.min.css'); ?>
-       <script type="text/javascript" src="http://proteus.tamucc.edu/sites/all/modules/jquery_update/replace/jquery/jquery.min.js?v=1.5.2"></script>
-       <script type="text/javascript" src="https://proteus.tamucc.edu/includes/qTip2/jquery.qtip.min.js "></script>
+       <script type="text/javascript" src="/sites/all/modules/jquery_update/replace/jquery/jquery.min.js?v=1.5.2"></script>
+       <script type="text/javascript" src="/includes/qTip2/jquery.qtip.min.js"></script>
        <link rel="stylesheet" type="text/css" href="includes/css/jquery.qtip.css" />
 	   <script langauge="javascript">
             function post_value(){
@@ -59,7 +59,7 @@
 
       	$('#something').qtip({
             	content: {
-      		text: '"."$tip"."'
+      		text: \"$tip\"
       	}
       });
      });
