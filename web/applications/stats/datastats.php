@@ -82,17 +82,51 @@ for ($i = 0; $i < count($statq[0]); $i++)
     
     $data = array();
     
-    $j = 0;
+    
+    $data[0]['title'] = '< 1 Gb';
+    $data[1]['title'] = '1GB-10GB';
+    $data[2]['title'] = '10GB-200GB';
+    $data[3]['title'] = '200GB-1TB';
+    $data[4]['title'] = '1TB-5TB';
+    $data[5]['title'] = '>5TB';
+    $data[6]['title'] = 'Total';
+    
+    $data[0]['value'] = 0;
+    $data[1]['value'] = 0;
+    $data[2]['value'] = 0;
+    $data[3]['value'] = 0;
+    $data[4]['value'] = 0;
+    $data[5]['value'] = 0;
+    $data[6]['value'] = 0;
+       
     
     foreach ($conn->query($sql) as $row) 
     {
-        $data[$j]['title'] = $row['RANGE'];
-        $data[$j]['value'] = $row['total'];
-        $j++;
+        switch ($row['RANGE']) 
+        {
+            case "< 1 Gb":
+                $data[0]['value'] = $row['total'];
+                break;
+            case "1GB-10GB":
+                $data[1]['value'] = $row['total'];
+                break;
+            case "10GB-200GB":
+                $data[2]['value'] = $row['total'];
+                break;
+            case "200GB-1TB":
+                $data[3]['value'] = $row['total'];
+                break;
+            case "1TB-5TB":
+                $data[4]['value'] = $row['total'];
+                break;
+            case ">5TB":
+                $data[5]['value'] = $row['total'];
+                break;
+        }
     }
     
-    $data[$j]['title'] = 'Total';
-    $data[$j]['value'] = $totalstat;
+    $data[6]['title'] = 'Total';
+    $data[6]['value'] = $totalstat;
     
     echo '<div id="main">';
     echo '<div class="caption">'.$statname.'</div>';
