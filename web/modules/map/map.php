@@ -1,3 +1,7 @@
+<?php
+    $path_info = str_replace($_SERVER['SCRIPT_NAME'],'',$_SERVER['REQUEST_URI']);
+    if ($path_info == '/') {
+?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
@@ -7,9 +11,9 @@
         <link rel="stylesheet" type="text/css" href="includes/css/map.css">
 	   <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
        <?PHP include('includes/js/map.js'); ?>
-	   <?PHP include('/includes/qTip2/jquery.qtip.min.css'); ?>
        <script type="text/javascript" src="/sites/all/modules/jquery_update/replace/jquery/jquery.min.js?v=1.5.2"></script>
        <script type="text/javascript" src="/includes/qTip2/jquery.qtip.min.js"></script>
+       <link rel="stylesheet" type="text/css" href="/includes/qTip2/jquery.qtip.min.css" />
        <link rel="stylesheet" type="text/css" href="includes/css/jquery.qtip.css" />
 	   <script langauge="javascript">
             function post_value(){
@@ -111,3 +115,9 @@
 </body>
 </html>
 
+<?php
+
+    exit;
+}
+
+?>
