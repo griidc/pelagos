@@ -1,7 +1,8 @@
 [
+    {% if not YR1.hide %}
     {
         "data": {
-            "title": "Year-One Block Grants",
+            "title": "Year-One Block Grants{% if YR1.dataset_count %} <span style='color:black;font-weight:bold;'>({{YR1.dataset_count}})</span>{% endif %}",
             "attr": {
                 "style": "color:{{tree.yr1_folder_color}}"
                 ,
@@ -13,11 +14,12 @@
         },
         "state": "closed"
     }
-    {% for RFP in RFPS %}
     ,
+    {% endif %}
+    {% for RFP in RFPS %}
     {
         "data": {
-            "title": "{{RFP.Name}}",
+            "title": "{{RFP.Name}}{% if RFP.dataset_count %} <span style='color:black;font-weight:bold;'>({{RFP.dataset_count}})</span>{% endif %}",
             "attr": {
                 "style": "color:{{tree.rfp_color}}"
                 ,
@@ -36,5 +38,18 @@
             {% endif %}
         {% endif %}
     }
+    {% if not loop.last %}
+    ,
+    {% endif %}
     {% endfor %}
+    {% if YR1.hide and not RFPS %}
+    {
+        "data": {
+            "title": "no datasets found",
+            "attr": {
+                "style": "color:red"
+            }
+        }
+    }
+    {% endif %}
 ]

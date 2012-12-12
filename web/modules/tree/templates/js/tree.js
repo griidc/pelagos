@@ -102,6 +102,7 @@ function updateTree(tree) {
                         nodePath = nodeId.replace(/_/g,"/");
                         url = "{{baseUrl}}/json/"+tree.type+"/"+nodePath+".json" + "?tree=" + encodeURIComponent(JSON.stringify(tree));
                     }
+//                    alert(url);
                     return url;
                 },
                 "success": function (new_data) {

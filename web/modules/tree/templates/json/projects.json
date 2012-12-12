@@ -2,7 +2,7 @@
 {% for project in projects %}
     {
         "data": {
-            "title": "{{project.Title | raw}}",
+            "title": "{{project.Title | raw}}{% if project.dataset_count %} <span style='color:black;font-weight:bold;'>({{project.dataset_count}})</span>{% endif %}",
             "attr": {
                 "style": "color:{{tree.project_color}}",
                 "href": "{{tree.project_link | evaluate}}"

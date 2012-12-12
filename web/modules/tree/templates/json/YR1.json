@@ -2,7 +2,7 @@
     {% for inst in YR1 %}
     {
         "data": {
-            "title": "{{inst.Name | removeYR1BG}} ({{inst.Abbr}})",
+            "title": "{{inst.Name | removeYR1BG}} ({{inst.Abbr}}){% if inst.dataset_count %} <span style='color:black;font-weight:bold;'>({{inst.dataset_count}})</span>{% endif %}",
             "attr": {
                 "style": "color:{{tree.yr1_color}}"
                 ,

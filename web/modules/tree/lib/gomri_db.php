@@ -1,8 +1,8 @@
 <?php
 
-$GLOBALS['LIKEMAP'] = array(
-    '=' => 'LIKE',
-    '!=' => 'NOT LIKE'
+$GLOBALS['PGSQL_LIKE_MAP'] = array(
+    '=' => 'ILIKE',
+    '!=' => 'NOT ILIKE'
 );
 
 if (!defined('FILTER_REG')) define('FILTER_REG','/^(.*?)\s*(>=|<=|>|<|!=|=)\s*(.*?)$/');
@@ -34,10 +34,17 @@ function countDatasets($dbh, $filters = array()) {
                     $WHERE .= " AND project_id $matches[2] $matches[3]";
                     break;
                 case 'title':
-                    $WHERE .= " AND title " . $GLOBALS['LIKEMAP'][$matches[2]] . " \"$matches[3]\"";
+                    $WHERE .= " AND title " . $GLOBALS['PGSQL_LIKE_MAP'][$matches[2]] . " '$matches[3]'";
                     break;
                 case 'abstract':
-                    $WHERE .= " AND abstract " . $GLOBALS['LIKEMAP'][$matches[2]] . " \"$matches[3]\"";
+                    $WHERE .= " AND abstract " . $GLOBALS['PGSQL_LIKE_MAP'][$matches[2]] . " '$matches[3]'";
+                    break;
+                case 'status':
+                    $WHERE .= " AND status $matches[2] $matches[3]";
+                    break;
+                case 'filter':
+                    $WHERE .= " AND (title " . $GLOBALS['PGSQL_LIKE_MAP'][$matches[2]] . " '$matches[3]'";
+                    $WHERE .= " OR abstract " . $GLOBALS['PGSQL_LIKE_MAP'][$matches[2]] . " '$matches[3]')";
                     break;
             }
         }
@@ -131,10 +138,17 @@ function getDatasets($dbh, $filters = array()) {
                     $WHERE .= " AND project_id $matches[2] $matches[3]";
                     break;
                 case 'title':
-                    $WHERE .= " AND title " . $GLOBALS['LIKEMAP'][$matches[2]] . " \"$matches[3]\"";
+                    $WHERE .= " AND title " . $GLOBALS['PGSQL_LIKE_MAP'][$matches[2]] . " '$matches[3]'";
                     break;
                 case 'abstract':
-                    $WHERE .= " AND abstract " . $GLOBALS['LIKEMAP'][$matches[2]] . " \"$matches[3]\"";
+                    $WHERE .= " AND abstract " . $GLOBALS['PGSQL_LIKE_MAP'][$matches[2]] . " '$matches[3]'";
+                    break;
+                case 'status':
+                    $WHERE .= " AND status $matches[2] $matches[3]";
+                    break;
+                case 'filter':
+                    $WHERE .= " AND (title " . $GLOBALS['PGSQL_LIKE_MAP'][$matches[2]] . " '$matches[3]'";
+                    $WHERE .= " OR abstract " . $GLOBALS['PGSQL_LIKE_MAP'][$matches[2]] . " '$matches[3]')";
                     break;
             }
         }

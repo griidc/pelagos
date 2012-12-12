@@ -2,7 +2,7 @@
 {% for task in tasks %}
     {
         "data": {
-            "title": "{{task.Title | raw}}",
+            "title": "{{task.Title | raw}}{% if task.dataset_count %} <span style='color:black;font-weight:bold;'>({{task.dataset_count}})</span>{% endif %}",
             "attr": {
                 "style": "color:{{tree.task_color}}",
                 "href": "{{tree.task_link | evaluate}}"

@@ -2,7 +2,7 @@
 {% for institution in institutions %}
     {
         "data": {
-            "title": "{{institution.Name | raw}}",
+            "title": "{{institution.Name | raw}}{% if institution.dataset_count %} <span style='color:black;font-weight:bold;'>({{institution.dataset_count}})</span>{% endif %}",
             "attr": {
                 "style": "color:{{tree.institution_color}}",
                 "href": "{{tree.institution_link | evaluate}}"
@@ -24,4 +24,14 @@
     ,
     {% endif %}
 {% endfor %}
+{% if not institutions %}
+    {
+        "data": {
+            "title": "no datasets found",
+            "attr": {
+                "style": "color:red"
+            }
+        }
+    }
+{% endif %}
 ]

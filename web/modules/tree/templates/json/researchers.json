@@ -2,7 +2,7 @@
 {% for person in people %}
     {
         "data": {
-            "title": "{{person.LastName | raw}}, {{person.FirstName | raw}} <span class='treeInstName'>({{person.Institution_Name | raw}})</span>",
+            "title": "{{person.LastName | raw}}, {{person.FirstName | raw}} <span class='treeInstName'>({{person.Institution_Name | raw}})</span>{% if person.dataset_count %} <span style='color:black;font-weight:bold;'>({{person.dataset_count}})</span>{% endif %}",
             "attr": {
                 "style": "color:{{tree.researcher_color}}"
                 ,
