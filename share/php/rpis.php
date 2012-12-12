@@ -1,6 +1,6 @@
 <?php
 
-$GLOBALS['LIKEMAP'] = array(
+$GLOBALS['MYSQL_LIKE_MAP'] = array(
     '=' => 'LIKE',
     '!=' => 'NOT LIKE'
 );
@@ -93,7 +93,7 @@ function getTaskDetails($dbh, $filters = array()) {
                     $WHERE .= " AND pj.Program_ID $matches[2] $matches[3]";
                     break;
                 case 'title':
-                    $WHERE .= " AND pj.Project_Title " . $GLOBALS['LIKEMAP'][$matches[2]] . " \"$matches[3]\"";
+                    $WHERE .= " AND pj.Project_Title " . $GLOBALS['MYSQL_LIKE_MAP'][$matches[2]] . " \"$matches[3]\"";
                     break;
                 case 'peopleid':
                     $WHERE .= " AND pp.People_ID $matches[2] $matches[3]";
@@ -131,10 +131,10 @@ function getPeopleDetails($dbh, $filters = array()) {
                     $WHERE .= " AND p.People_ID $matches[2] $matches[3]";
                     break;
                 case 'lastname':
-                    $WHERE .= " AND p.People_LastName " . $GLOBALS['LIKEMAP'][$matches[2]] . " \"$matches[3]\"";
+                    $WHERE .= " AND p.People_LastName " . $GLOBALS['MYSQL_LIKE_MAP'][$matches[2]] . " \"$matches[3]\"";
                     break;
                 case 'firstname':
-                    $WHERE .= " AND p.People_FirstName " . $GLOBALS['LIKEMAP'][$matches[2]] . " \"$matches[3]\"";
+                    $WHERE .= " AND p.People_FirstName " . $GLOBALS['MYSQL_LIKE_MAP'][$matches[2]] . " \"$matches[3]\"";
                     break;
                 case 'projectid':
                     $WHERE .= " AND pp.Program_ID $matches[2] $matches[3]";
@@ -171,7 +171,7 @@ function getInstitutionDetails($dbh, $filters = array()) {
                     $WHERE .= " AND Institution_ID $matches[2] $matches[3]";
                     break;
                 case 'name':
-                    $WHERE .= " AND Institution_Name " . $GLOBALS['LIKEMAP'][$matches[2]] . " \"$matches[3]\"";
+                    $WHERE .= " AND Institution_Name " . $GLOBALS['MYSQL_LIKE_MAP'][$matches[2]] . " \"$matches[3]\"";
                     break;
                 case 'projectid':
                     $FROM = " FROM (
