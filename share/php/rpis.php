@@ -38,6 +38,7 @@ function getProjectDetails($dbh, $filters = array()) {
                     break;
                 case 'peopleid':
                     $WHERE .= " AND ppg.People_ID $matches[2] $matches[3]";
+                    $peopleId = $matches[3];
                     break;
                 case 'peopleid_strict':
                     $WHERE .= " AND ppg.People_ID $matches[2] $matches[3] AND ppg.Project_ID = 0";
@@ -57,6 +58,17 @@ function getProjectDetails($dbh, $filters = array()) {
         $stmt = $dbh->prepare("SELECT COUNT(DISTINCT Project_ID) FROM Projects WHERE Program_ID = ? AND Project_Completed = 1;");
         $stmt->execute(array($projects[$i]['ID']));
         $projects[$i]['SubTasks'] = $stmt->fetchColumn();
+
+        if (isset($peopleId)) {
+            $stmt = $dbh->prepare("SELECT COUNT(DISTINCT Project_ID) FROM ProjectPeople WHERE Program_ID = ? AND People_ID = ? AND Project_ID = 0 AND Project_Completed = 1;");
+            $stmt->execute(array($projects[$i]['ID'],$peopleId));
+            if ($stmt->fetchColumn() != 0) {
+                $projects[$i]['ProjectLevelAssoc'] = true;
+            }
+            else {
+                $projects[$i]['ProjectLevelAssoc'] = false;
+            }
+        }
     }
 
     return $projects;
