@@ -155,6 +155,45 @@ function getPeopleDetails($dbh, $filters = array()) {
     return $stmt->fetchAll();
 }
 
+function getPeopleLI($dbh, $filters = array()) {
+    $SELECT = 'SELECT DISTINCT UCASE(SUBSTR(p.People_LastName,1,1)) AS Letter';
+
+    $FROM = 'FROM People p
+             LEFT OUTER JOIN ProjPeople pp ON pp.People_ID = p.People_ID';
+
+    $WHERE = 'WHERE 1';
+
+    foreach ($filters as $filter) {
+        if (preg_match(FILTER_REG,$filter,$matches)) {
+            switch (strtolower($matches[1])) {
+                case 'peopleid':
+                    $WHERE .= " AND p.People_ID $matches[2] $matches[3]";
+                    break;
+                case 'lastname':
+                    $WHERE .= " AND p.People_LastName " . $GLOBALS['MYSQL_LIKE_MAP'][$matches[2]] . " \"$matches[3]\"";
+                    break;
+                case 'firstname':
+                    $WHERE .= " AND p.People_FirstName " . $GLOBALS['MYSQL_LIKE_MAP'][$matches[2]] . " \"$matches[3]\"";
+                    break;
+                case 'projectid':
+                    $WHERE .= " AND pp.Program_ID $matches[2] $matches[3]";
+                    break;
+                case 'taskid':
+                    $WHERE .= " AND pp.Project_ID $matches[2] $matches[3]";
+                    break;
+                case 'roleid':
+                    $WHERE .= " AND pp.Role_ID $matches[2] $matches[3]";
+                    break;
+            }
+        }
+    }
+
+    $stmt = $dbh->prepare("$SELECT $FROM $WHERE ORDER BY Letter;");
+    $stmt->execute();
+
+    return $stmt->fetchAll();
+}
+
 function getInstitutionDetails($dbh, $filters = array()) {
     $SELECT = 'SELECT DISTINCT
                Institution_ID as ID,
