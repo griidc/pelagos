@@ -102,10 +102,11 @@ $query = "
 SELECT 
     COUNT(datasets.dataset_uid) AS total_datasets,
     COUNT(registry.registry_id) AS total_datasets_registered,
-    (SELECT count(id) FROM doi_regs) as total_doi_requested
+    (SELECT count(id) FROM doi_regs where doi_regs.approved=true) as total_doi_requested
 FROM datasets 
 LEFT OUTER JOIN registry ON registry.dataset_udi = datasets.dataset_udi
-WHERE datasets.status > 0;
+WHERE datasets.status > 0
+;
 ";
 
 $row = pdoDBQuery($conn,$query);
