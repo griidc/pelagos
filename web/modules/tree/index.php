@@ -6,9 +6,9 @@ require_once '/usr/local/share/Slim-Extras/Views/TwigView.php';
 require_once '/usr/local/share/GRIIDC/php/drupal.php';
 require_once '/usr/local/share/GRIIDC/php/dumpIncludesFile.php';
 require_once '/usr/local/share/GRIIDC/php/rpis.php';
+require_once '/usr/local/share/GRIIDC/php/gomri_db.php';
 
 require_once 'lib/tree.php';
-require_once 'lib/gomri_db.php';
 
 $GLOBALS['config'] = parse_ini_file('config.ini',true);
 
