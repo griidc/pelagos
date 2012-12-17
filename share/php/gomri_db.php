@@ -131,6 +131,9 @@ function getDatasets($dbh, $filters = array()) {
     foreach ($filters as $filter) {
         if (preg_match(FILTER_REG,$filter,$matches)) {
             switch (strtolower($matches[1])) {
+                case 'udi':
+                    $WHERE .= " AND d.dataset_udi $matches[2] $matches[3]";
+                    break;
                 case 'taskid':
                     $WHERE .= " AND task_uid $matches[2] $matches[3]";
                     break;
