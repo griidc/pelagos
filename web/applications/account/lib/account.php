@@ -6,11 +6,10 @@ function find_unique_uid($firstName,$lastName) {
 
     $num = 1;
     $foundUnique = 0;
-    $searchUid = $uid;
 
     # search ldap
     while (!$foundUnique) {
-        $personsResult = ldap_search($GLOBALS['LDAP'], "dc=griidc,dc=org", "(uid=$searchUid)", array("uid"));
+        $personsResult = ldap_search($GLOBALS['LDAP'], 'dc=griidc,dc=org', "(uid=$uid" . ($num > 1 ? $num : '') . ')', array('uid'));
         $persons = ldap_get_entries($GLOBALS['LDAP'], $personsResult);
         if ($persons['count'] > 0) {
             $num++;
@@ -18,7 +17,6 @@ function find_unique_uid($firstName,$lastName) {
         else {
             $foundUnique = 1;
         }
-        $searchUid = $uid . $num;
     }
 
     # search pending account requests
@@ -26,14 +24,12 @@ function find_unique_uid($firstName,$lastName) {
     foreach ($ldifs as $ldifFile) {
         if (!preg_match('/\.ldif$/',$ldifFile)) continue;
         $ldif = read_ldif(SPOOL_DIR . "/incoming/$ldifFile");
-        if (isset($ldif['person']['uid']['value']) and $ldif['person']['uid']['value'] == $uid . $num) {
+        if (isset($ldif['person']['uid']['value']) and $ldif['person']['uid']['value'] == $uid . ($num > 1 ? $num : '')) {
             $num++;
         }
     }
 
-    if ($num > 1) { $uid .= $num; }
-
-    return $uid;
+    return $uid . ($num > 1 ? $num : '');
 }
 
 function find_free_uidNumber() {
