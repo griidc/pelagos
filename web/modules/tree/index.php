@@ -84,38 +84,7 @@ $app->get('/json/:type.json', function ($type) use ($app) {
             $app->render('json/institutions.json',$stash);
             break;
         case 're':
-            $letters = getPeopleLI(getDBH('RPIS'));
-
-            if (isset($stash['tree']['filter'])) {
-                $stash['letters'] = array();
-                foreach ($letters as $letter) {
-                    $data_count = 0;
-                    $people = getPeopleDetails(getDBH('RPIS'),array("lastName=$letter[Letter]%"));
-
-                    foreach ($people as $person) {
-                        $projectFilter = array("peopleId=$person[ID]");
-                        if (isset($GLOBALS['config']['exclude']['projects'])) {
-                            foreach ($GLOBALS['config']['exclude']['projects'] as $exclude) {
-                                $projectFilter[] = "projectId!=$exclude";
-                            }
-                        }
-                        $projects = getProjectDetails(getDBH('RPIS'),$projectFilter);
-                        foreach ($projects as $project) {
-                            $data_count += countDatasets(getDBH('GOMRI'),array("projectId=$project[ID]",
-                                                                               'filter=%' . $stash['tree']['filter'] . '%',
-                                                                               'status=2'));
-                        }
-                    }
-                    if ($data_count > 0) {
-                        $letter['dataset_count'] = $data_count;
-                        array_push($stash['letters'],$letter);
-                    }
-                }
-            }
-            else {
-                $stash['letters'] = $letters;
-            }
-
+            $stash['letters'] = getPeopleLI(getDBH('RPIS'));
             $app->render('json/letters.json',$stash);
             break;
         case 'ra':
