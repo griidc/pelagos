@@ -15,6 +15,7 @@ class Twig_Extensions_GRIIDC extends Twig_Extension
         return array(
             'removeYR1BG' => new Twig_Filter_Method($this,'removeYR1BG'),
             'statusToImg' => new Twig_Filter_Method($this,'statusToImg'),
+            'statusToTitle' => new Twig_Filter_Method($this,'statusToTitle'),
             'trimws' => new Twig_Filter_Method($this,'trimws')
         );
     }
@@ -29,6 +30,10 @@ class Twig_Extensions_GRIIDC extends Twig_Extension
 
     public function trimws($string) {
         return preg_replace('/^\s+|\s+$/','',$string);
+    }
+
+    public function statusToTitle($status_type) {
+        return $GLOBALS['config']['status_titles'][$status_type];
     }
 }
 

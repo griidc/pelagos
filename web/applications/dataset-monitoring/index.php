@@ -41,8 +41,10 @@ $app->get('/', function () use ($app) {
     drupal_add_js('/includes/tinyscrollbar/jquery.tinyscrollbar.min.js',array('type'=>'external'));
     drupal_add_js('/includes/mutate/mutate.events.js',array('type'=>'external'));
     drupal_add_js('/includes/mutate/mutate.min.js',array('type'=>'external'));
+    drupal_add_js('/includes/qTip2/jquery.qtip.min.js',array('type'=>'external'));
     drupal_add_js('/tree/js/tree.js',array('type'=>'external'));
     drupal_add_js("$env[SCRIPT_NAME]/js/dm.js",array('type'=>'external'));
+    drupal_add_css('/includes/qTip2/jquery.qtip.min.css',array('type'=>'external'));
     drupal_add_css("$env[SCRIPT_NAME]/includes/css/scrollbars.css",array('type'=>'external'));
     drupal_add_css("$env[SCRIPT_NAME]/includes/css/projects.css",array('type'=>'external'));
     drupal_add_css("$env[SCRIPT_NAME]/includes/css/dataset_details.css",array('type'=>'external'));

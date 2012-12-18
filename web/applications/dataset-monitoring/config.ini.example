@@ -17,6 +17,27 @@ password = "********"
  1 = "check.png"
  2 = "triangle_yellow.png"
 
+[status_titles]
+-1_registered = ""
+ 0_registered = "This dataset has been identified but has yet to be registered."
+ 1_registered = "This dataset has been registered successfully."
+ 2_registered = ""
+
+-1_metadata = "This dataset has been identified but has yet to be registered."
+ 0_metadata = "No metadata is available."
+ 1_metadata = "Metadata is available and ISO compliant."
+ 2_metadata = "Metadata is available but has not been validated for ISO compliance."
+
+-1_availability = "This dataset has been identified but has yet to be registered."
+ 0_availability = "This dataset has been registered but the data is not yet available."
+ 1_availability = "This dataset is available for download (check accessibility)."
+ 2_availability = ""
+
+-1_accessibility = "This dataset has been identified but has yet to be registered."
+ 0_accessibility = "This dataset is restricted to author(s) use only."
+ 1_accessibility = "This dataset is available for public use."
+ 2_accessibility = "This dataset is available but requires author’s approval for download."
+
 [exclude]
 funds[] = 6
 

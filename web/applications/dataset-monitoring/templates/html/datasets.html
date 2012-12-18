@@ -11,10 +11,22 @@
     <tr>
         <td class="udi"><a href="javascript:showDatasetDetails('{{dataset.udi}}');">{{dataset.udi}}</a></td>
         <td><a href="javascript:showDatasetDetails('{{dataset.udi}}');">{{dataset.title}}</a></td>
-        <td class="status"><img src="{{baseUrl}}/includes/images/{{dataset.registered | statusToImg}}"></td>
-        <td class="status"><img src="{{baseUrl}}/includes/images/{% if dataset.registered %}{{dataset.metadata | statusToImg}}{% else %}{{'-1' | statusToImg}}{% endif %}"></td>
-        <td class="status"><img src="{{baseUrl}}/includes/images/{% if dataset.registered %}{{dataset.availability | statusToImg}}{% else %}{{'-1' | statusToImg}}{% endif %}"></td>
-        <td class="status"><img src="{{baseUrl}}/includes/images/{% if dataset.registered and dataset.availability %}{{dataset.accessibility | statusToImg}}{% else %}{{'-1' | statusToImg}}{% endif %}"></td>
+        <td class="status">
+            <img src="{{baseUrl}}/includes/images/{{dataset.registered | statusToImg}}"
+                 title="{{(dataset.registered ~ '_registered') | statusToTitle}}">
+        </td>
+        <td class="status">
+            <img src="{{baseUrl}}/includes/images/{% if dataset.registered %}{{dataset.metadata | statusToImg}}{% else %}{{'-1' | statusToImg}}{% endif %}"
+                 title="{% if dataset.registered %}{{(dataset.metadata ~ '_metadata') | statusToTitle}}{% else %}{{'-1_metadata' | statusToTitle}}{% endif %}">
+        </td>
+        <td class="status">
+            <img src="{{baseUrl}}/includes/images/{% if dataset.registered %}{{dataset.availability | statusToImg}}{% else %}{{'-1' | statusToImg}}{% endif %}"
+                 title="{% if dataset.registered %}{{(dataset.availability ~ '_availability') | statusToTitle}}{% else %}{{'-1_availability' | statusToTitle}}{% endif %}">
+        </td>
+        <td class="status">
+            <img src="{{baseUrl}}/includes/images/{% if dataset.registered and dataset.availability %}{{dataset.accessibility | statusToImg}}{% else %}{{'-1' | statusToImg}}{% endif %}"
+                 title="{% if dataset.registered and dataset.availability %}{{(dataset.accessibility ~ '_accessibility') | statusToTitle}}{% else %}{{'-1_accessibility' | statusToTitle}}{% endif %}">
+        </td>
     </tr>
     {% endfor %}
 </table>

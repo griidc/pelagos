@@ -33,6 +33,12 @@ function showProjects(by,id) {
         "url": "{{baseUrl}}/projects/" + by + "/" + id,
         "success": function(data) {
             $('#content .overview').html(data);
+            $('#content .overview img[title]').qtip({
+                position: {
+                    my: 'middle right',
+                    at: 'middle left'
+                }
+            });
             setTimeout(function () { jQuery('#content').tinyscrollbar_update('relative'); }, 200);
         }
     });
