@@ -26,6 +26,7 @@ function getConfig($app) {
         $config = parse_ini_file($stash['config'],true);
     }
     $config_attrs = array(
+        'label',
         'theme',
         'dots',
         'icons',

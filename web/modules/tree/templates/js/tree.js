@@ -11,6 +11,9 @@ function insertTree(tree) {
     if (typeof tree.name === 'undefined') {
         tree.name = 'tree';
     }
+    if (typeof tree.label === 'undefined') {
+        tree.label = "{{tree.label}}";
+    }
     if (typeof tree.type === 'undefined') {
         tree.type = "{{tree.init_type}}";
     }
@@ -42,7 +45,7 @@ function insertTree(tree) {
     document.write('        <span class="treetype">');
 
     if (typeof tree === 'undefined' || typeof tree.start === 'undefined') {
-        document.write('            <strong>List by:</strong>');
+        document.write('            <strong>' + tree.label + '</strong>');
         document.write('            <select id="treetype-selector" onchange="trees[\'' + tree.name + '\'].type=this.value;updateTree(trees[\'' + tree.name + '\']);">');
         document.write('                <option value="ra"');
         if (tree.type == "ra") document.write(' selected');
