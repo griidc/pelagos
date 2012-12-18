@@ -123,3 +123,6 @@ div.spinner div {
     margin: -30px 0 0 -30px;
 }
 
+.ui-tooltip-default {
+    border: none;
+}

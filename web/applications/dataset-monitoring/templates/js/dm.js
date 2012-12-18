@@ -36,7 +36,19 @@ function showProjects(by,id) {
             $('#content .overview img[title]').qtip({
                 position: {
                     my: 'middle right',
-                    at: 'middle left'
+                    at: 'middle left',
+                    viewport: $(window)
+                },
+                show: {
+                    event: "mouseenter focus",
+                    solo: true
+                },
+                hide: {
+                    event: "mouseleave blur",
+                    delay: 100
+                },
+                style: {
+                    classes: "ui-tooltip-shadow ui-tooltip-tipped"
                 }
             });
             setTimeout(function () { jQuery('#content').tinyscrollbar_update('relative'); }, 200);
