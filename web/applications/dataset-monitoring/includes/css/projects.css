@@ -126,3 +126,7 @@ div.spinner div {
 .ui-tooltip-default {
     border: none;
 }
+
+.ui-tooltip-tipped .ui-tooltip-content {
+    color: #222;
+}
