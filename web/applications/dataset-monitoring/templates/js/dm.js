@@ -17,11 +17,12 @@ $(document).ready(function() {
     });
     $('.thumb').mousedown(function() {
         $('body').addClass('noselect');
-        $('#container').prop('onselectstart','return false;');
+        document.getElementById('container').setAttribute('onselectstart','return false;');
     });
+
     $(window).mouseup(function() {
         $('body').removeClass('noselect');
-        $('#container').prop('onselectstart','');
+        document.getElementById('container').setAttribute('onselectstart','');
     });
 });
 
