@@ -32,3 +32,10 @@
 #treetype-selector {
     font-weight: bold;
 }
+
+.jstree-classic .jstree-clicked {
+    background: #bfd3dd;
+    border: none;
+    border-radius: 3px;
+    padding: 0 2px 0 2px;
+}

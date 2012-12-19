@@ -43,9 +43,7 @@ $app->get('/js/:name.js', function ($name) use ($app) {
 
 $app->get('/', function () use ($app) {
     $env = $app->environment();
-    drupal_add_js('/includes/jstree/jquery.jstree.js',array('type'=>'external'));
     drupal_add_js("$env[SCRIPT_NAME]/js/tree.js",array('type'=>'external'));
-    drupal_add_css("$env[SCRIPT_NAME]/includes/css/jstree.css",array('type'=>'external'));
     return $app->render('index.html');
 });
 

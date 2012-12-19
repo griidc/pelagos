@@ -4,13 +4,13 @@
         "data": {
             "title": "{{task.Title | raw}}{% if task.dataset_count %} <span style='color:black;font-weight:bold;'>({{task.dataset_count}})</span>{% endif %}",
             "attr": {
-                "style": "color:{{tree.task_color}}",
-                "href": "{{tree.task_link | evaluate}}"
+                "style": "color:{{tree.task_color}}"
             }
         }
         ,
         "attr": {
-            "id": "datasets_taskId_{{task.ID}}"
+            "id": "datasets_taskId_{{task.ID}}",
+            "action": "{{tree.task_action | evaluate}}"
         }
         {% if tree.max_depth > 2 %}
             ,

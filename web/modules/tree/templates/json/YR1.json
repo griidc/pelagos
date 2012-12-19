@@ -5,12 +5,11 @@
             "title": "{{inst.Name | removeYR1BG}} ({{inst.Abbr}}){% if inst.dataset_count %} <span style='color:black;font-weight:bold;'>({{inst.dataset_count}})</span>{% endif %}",
             "attr": {
                 "style": "color:{{tree.yr1_color}}"
-                ,
-                "href": "{{tree.yr1_link | evaluate}}"
             }
         },
         "attr": {
-            "id": "projects_fundSrc_{{inst.ID}}"
+            "id": "projects_fundSrc_{{inst.ID}}",
+            "action": "{{tree.yr1_action | evaluate}}"
         }
         {% if tree.max_depth > 0 %}
         ,

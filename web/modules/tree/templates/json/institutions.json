@@ -4,12 +4,12 @@
         "data": {
             "title": "{{institution.Name | raw}}{% if institution.dataset_count %} <span style='color:black;font-weight:bold;'>({{institution.dataset_count}})</span>{% endif %}",
             "attr": {
-                "style": "color:{{tree.institution_color}}",
-                "href": "{{tree.institution_link | evaluate}}"
+                "style": "color:{{tree.institution_color}}"
             }
         },
         "attr": {
-            "id": "projects_institutionId_{{institution.ID}}"
+            "id": "projects_institutionId_{{institution.ID}}",
+            "action": "{{tree.institution_action | evaluate}}"
         }
         {% if tree.max_depth > 0 %}
             ,

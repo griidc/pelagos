@@ -4,13 +4,13 @@
         "data": {
             "title": "{{dataset.title | raw}}",
             "attr": {
-                "style": "color:{{tree.dataset_color}}",
-                "href": "{{tree.dataset_link | evaluate}}"
+                "style": "color:{{tree.dataset_color}}"
             }
         }
         ,
         "attr": {
-            "id": "datasets_ID_{{dataset.udi}}"
+            "id": "datasets_ID_{{dataset.udi}}",
+            "action": "{{tree.dataset_action | evaluate}}"
         }
     }
     {% if not loop.last %}

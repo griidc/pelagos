@@ -5,12 +5,11 @@
             "title": "Year-One Block Grants{% if YR1.dataset_count %} <span style='color:black;font-weight:bold;'>({{YR1.dataset_count}})</span>{% endif %}",
             "attr": {
                 "style": "color:{{tree.yr1_folder_color}}"
-                ,
-                "href": "{{tree.yr1_folder_link | evaluate}}"
             }
         },
         "attr": {
-            "id": "YR1"
+            "id": "YR1",
+            "action": "{{tree.yr1_folder_action | evaluate}}"
         },
         "state": "closed"
     }
@@ -22,12 +21,11 @@
             "title": "{{RFP.Name}}{% if RFP.dataset_count %} <span style='color:black;font-weight:bold;'>({{RFP.dataset_count}})</span>{% endif %}",
             "attr": {
                 "style": "color:{{tree.rfp_color}}"
-                ,
-                "href": "{{tree.rfp_link | evaluate}}"
             }
         },
         "attr": {
-            "id": "projects_fundSrc_{{RFP.ID}}"
+            "id": "projects_fundSrc_{{RFP.ID}}",
+            "action": "{{tree.rfp_action | evaluate}}"
         }
         {% if RFP.ID == 7 or tree.max_depth > 0 %}
             ,

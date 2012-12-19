@@ -37,21 +37,21 @@ function getConfig($app) {
         'init_open',
         'onload',
         'yr1_folder_color',
-        'yr1_folder_link',
+        'yr1_folder_action',
         'yr1_color',
-        'yr1_link',
+        'yr1_action',
         'rfp_color',
-        'rfp_link',
+        'rfp_action',
         'project_color',
-        'project_link',
+        'project_action',
         'task_color',
-        'task_link',
+        'task_action',
         'dataset_color',
-        'dataset_link',
+        'dataset_action',
         'researcher_color',
-        'researcher_link',
+        'researcher_action',
         'institution_color',
-        'institution_link'
+        'institution_action'
     );
     $treename = $app->request()->get('treename');
     if (isset($treename)) {

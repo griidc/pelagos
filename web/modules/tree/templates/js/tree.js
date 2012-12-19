@@ -34,11 +34,13 @@ function insertTree(tree) {
     }
     trees[tree.name] = tree;
 
+/*
     var css = document.createElement("link")
     css.setAttribute("rel", "stylesheet")
     css.setAttribute("type", "text/css")
     css.setAttribute("href", "/tree/includes/css/jstree.css")
     document.getElementsByTagName("head")[0].appendChild(css);
+*/
 
     document.write('<div class="treecontainer">');
     document.write('    <div class="treetype-wrapper">');
@@ -105,7 +107,6 @@ function updateTree(tree) {
                         nodePath = nodeId.replace(/_/g,"/");
                         url = "{{baseUrl}}/json/"+tree.type+"/"+nodePath+".json" + "?tree=" + encodeURIComponent(JSON.stringify(tree));
                     }
-//                    alert(url);
                     return url;
                 },
                 "success": function (new_data) {
@@ -113,7 +114,8 @@ function updateTree(tree) {
                 }
             }
         },
-        "plugins": [ "json_data", "types", "themes" ]
+        "ui": { "select_limit": 1 },
+        "plugins": [ "json_data", "types", "themes", "ui" ]
     });
 
     $("#" + tree.name).bind("after_open.jstree", function(event, data) {
@@ -129,10 +131,16 @@ function updateTree(tree) {
     });
 
     $("#" + tree.name).bind("loaded.jstree", function(event, data) {
+        cssUrl = '/tree/includes/css/jstree.css';
+        if ($('link[rel*=style][href="' + cssUrl + '"]').length==0) {
+            $('head').append('<link rel="stylesheet" type="text/css" media="all" href="' + cssUrl + '" />');
+        }
         loadOpenChildren(data.inst,-1);
     });
 
-    $.vakata.css.add_sheet({ str : '.jstree a { height: auto; }', title : "jstree_override" });
+    $("#" + tree.name).bind("select_node.jstree", function(event, data) {
+        eval($('#tree').jstree('get_selected').attr('action'));
+    });
 }
 
 function loadOpenChildren(tree,node) {
