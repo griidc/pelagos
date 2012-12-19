@@ -15,6 +15,14 @@ $(document).ready(function() {
     $('#menu .overview').mutate('height', function(el,info) {
         $('#menu').tinyscrollbar_update('relative');
     });
+    $('.thumb').mousedown(function() {
+        $('body').addClass('noselect');
+        $('#container').prop('onselectstart','return false;');
+    });
+    $(window).mouseup(function() {
+        $('body').removeClass('noselect');
+        $('#container').prop('onselectstart','');
+    });
 });
 
 function resizeLeftRight() {
