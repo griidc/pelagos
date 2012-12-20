@@ -63,7 +63,7 @@ function getDatasets($dbh, $filters = array()) {
 
                dataset_uid,
                task_uid,
-               project_id
+               project_id,
                dataset_type,
                dataset_for,
                size,
@@ -132,7 +132,7 @@ function getDatasets($dbh, $filters = array()) {
         if (preg_match(FILTER_REG,$filter,$matches)) {
             switch (strtolower($matches[1])) {
                 case 'udi':
-                    $WHERE .= " AND d.dataset_udi $matches[2] $matches[3]";
+                    $WHERE .= " AND d.dataset_udi " . $GLOBALS['PGSQL_LIKE_MAP'][$matches[2]] . " '$matches[3]'";
                     break;
                 case 'taskid':
                     $WHERE .= " AND task_uid $matches[2] $matches[3]";
