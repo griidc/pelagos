@@ -120,7 +120,8 @@ function getPeopleDetails($dbh, $filters = array(), $order_by = 'LastName, First
 
     $FROM = 'FROM People p
              LEFT OUTER JOIN ProjPeople pp ON pp.People_ID = p.People_ID
-             LEFT OUTER JOIN Institutions inst ON inst.Institution_ID = p.People_Institution';
+             LEFT OUTER JOIN Institutions inst ON inst.Institution_ID = p.People_Institution
+             LEFT OUTER JOIN Roles r ON r.Role_ID = pp.Role_ID';
 
     $WHERE = 'WHERE 1';
 
