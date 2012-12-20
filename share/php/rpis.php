@@ -109,7 +109,7 @@ function getTaskDetails($dbh, $filters = array()) {
     return $tasks;
 }
 
-function getPeopleDetails($dbh, $filters = array()) {
+function getPeopleDetails($dbh, $filters = array(), $order_by = 'LastName, FirstName') {
     $SELECT = 'SELECT DISTINCT
                p.People_ID AS ID,
                p.People_Title AS Title,
@@ -149,7 +149,7 @@ function getPeopleDetails($dbh, $filters = array()) {
         }
     }
 
-    $stmt = $dbh->prepare("$SELECT $FROM $WHERE ORDER BY LastName, FirstName;");
+    $stmt = $dbh->prepare("$SELECT $FROM $WHERE ORDER BY $order_by;");
     $stmt->execute();
 
     return $stmt->fetchAll();
