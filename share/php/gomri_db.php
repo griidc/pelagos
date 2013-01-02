@@ -5,6 +5,18 @@ $GLOBALS['PGSQL_LIKE_MAP'] = array(
     '!=' => 'NOT ILIKE'
 );
 
+$GLOBALS['IS_MAP'] = array(
+    '=' => 'IS',
+    '!=' => 'IS NOT'
+);
+
+$GLOBALS['NULL_MAP'] = array(
+    'null' => 'NULL',
+    'NULL' => 'NULL',
+    '0' => 'NULL',
+    'false' => 'NULL'
+);
+
 if (!defined('FILTER_REG')) define('FILTER_REG','/^(.*?)\s*(>=|<=|>|<|!=|=)\s*(.*?)$/');
 
 function countDatasets($dbh, $filters = array()) {
@@ -33,6 +45,20 @@ function countDatasets($dbh, $filters = array()) {
                 case 'projectid':
                     $WHERE .= " AND project_id $matches[2] $matches[3]";
                     break;
+                case 'projectids':
+                    $projectIds = preg_split('/,/',$matches[3]);
+                    $projects = array();
+                    foreach ($projectIds as $projectId) {
+                        $projects[] = "project_id $matches[2] $projectId";
+                    }
+                    if ($matches[2] == '!=') {
+                        $glue = ' AND ';
+                    }
+                    else {
+                        $glue = ' OR ';
+                    }
+                    $WHERE .= " AND (" . implode($glue,$projects) . ")";
+                    break;
                 case 'title':
                     $WHERE .= " AND title " . $GLOBALS['PGSQL_LIKE_MAP'][$matches[2]] . " '$matches[3]'";
                     break;
@@ -41,6 +67,9 @@ function countDatasets($dbh, $filters = array()) {
                     break;
                 case 'status':
                     $WHERE .= " AND status $matches[2] $matches[3]";
+                    break;
+                case 'registered':
+                    $WHERE .= " AND registry_id " . $GLOBALS['IS_MAP'][$matches[2]] . ' ' . $GLOBALS['NULL_MAP'][$matches[3]];
                     break;
                 case 'filter':
                     $WHERE .= " AND (title " . $GLOBALS['PGSQL_LIKE_MAP'][$matches[2]] . " '$matches[3]'";
@@ -140,6 +169,20 @@ function getDatasets($dbh, $filters = array()) {
                 case 'projectid':
                     $WHERE .= " AND project_id $matches[2] $matches[3]";
                     break;
+                case 'projectids':
+                    $projectIds = preg_split('/,/',$matches[3]);
+                    $projects = array();
+                    foreach ($projectIds as $projectId) {
+                        $projects[] = "project_id $matches[2] $projectId";
+                    }
+                    if ($matches[2] == '!=') {
+                        $glue = ' AND ';
+                    }
+                    else {
+                        $glue = ' OR ';
+                    }
+                    $WHERE .= " AND (" . implode($glue,$projects) . ")";
+                    break;
                 case 'title':
                     $WHERE .= " AND title " . $GLOBALS['PGSQL_LIKE_MAP'][$matches[2]] . " '$matches[3]'";
                     break;
@@ -148,6 +191,9 @@ function getDatasets($dbh, $filters = array()) {
                     break;
                 case 'status':
                     $WHERE .= " AND status $matches[2] $matches[3]";
+                    break;
+                case 'registered':
+                    $WHERE .= " AND registry_id " . $GLOBALS['IS_MAP'][$matches[2]] . ' ' . $GLOBALS['NULL_MAP'][$matches[3]];
                     break;
                 case 'filter':
                     $WHERE .= " AND (title " . $GLOBALS['PGSQL_LIKE_MAP'][$matches[2]] . " '$matches[3]'";
