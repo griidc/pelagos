@@ -54,6 +54,7 @@ $app->get('/json/:type.json', function ($type) use ($app) {
             $institutions = getInstitutionDetails(getDBH('RPIS'));
 
             if (isset($stash['tree']['filter'])) {
+                $dataset_filters = getDatasetFilters($stash['tree']);
                 $stash['institutions'] = array();
                 foreach ($institutions as $inst) {
                     $data_count = 0;
@@ -65,9 +66,7 @@ $app->get('/json/:type.json', function ($type) use ($app) {
                     }
                     $projects = getProjectDetails(getDBH('RPIS'),$projectFilter);
                     foreach ($projects as $project) {
-                        $data_count += countDatasets(getDBH('GOMRI'),array("projectId=$project[ID]",
-                                                                           'filter=%' . $stash['tree']['filter'] . '%',
-                                                                           'status=2'));
+                        $data_count += countDatasets(getDBH('GOMRI'),array_merge($dataset_filters,array("projectId=$project[ID]")));
                     }
                     if ($data_count > 0) {
                         $inst['dataset_count'] = $data_count;
@@ -96,6 +95,8 @@ $app->get('/json/:type.json', function ($type) use ($app) {
             $RFPS = getFundingSources(getDBH('RPIS'),$fundFilter);
 
             if (isset($stash['tree']['filter'])) {
+                $dataset_filters = getDatasetFilters($stash['tree']);
+                error_log(json_encode($dataset_filters));
 
                 $fundFilter = array('fundId>0','fundId<7');
                 if (isset($GLOBALS['config']['exclude']['funds'])) {
@@ -115,9 +116,8 @@ $app->get('/json/:type.json', function ($type) use ($app) {
                     }
                     $projects = getProjectDetails(getDBH('RPIS'),$projectFilter);
                     foreach ($projects as $project) {
-                        $data_count += countDatasets(getDBH('GOMRI'),array("projectId=$project[ID]",
-                                                                           'filter=%' . $stash['tree']['filter'] . '%',
-                                                                           'status=2'));
+                        error_log(json_encode(array_merge($dataset_filters,array("projectId=$project[ID]"))));
+                        $data_count += countDatasets(getDBH('GOMRI'),array_merge($dataset_filters,array("projectId=$project[ID]")));
                     }
                 }
                 if ($data_count > 0) {
@@ -138,9 +138,7 @@ $app->get('/json/:type.json', function ($type) use ($app) {
                     }
                     $projects = getProjectDetails(getDBH('RPIS'),$projectFilter);
                     foreach ($projects as $project) {
-                        $data_count += countDatasets(getDBH('GOMRI'),array("projectId=$project[ID]",
-                                                                           'filter=%' . $stash['tree']['filter'] . '%',
-                                                                           'status=2'));
+                        $data_count += countDatasets(getDBH('GOMRI'),array_merge($dataset_filters,array("projectId=$project[ID]")));
                     }
                     if ($data_count > 0) {
                         $RFP['dataset_count'] = $data_count;
@@ -168,6 +166,7 @@ $app->get('/json/ra/YR1.json', function () use ($app) {
     $YR1S = getFundingSources(getDBH('RPIS'),$fundFilter);
 
     if (isset($stash['tree']['filter'])) {
+        $dataset_filters = getDatasetFilters($stash['tree']);
         $stash['YR1'] = array();
         foreach ($YR1S as $YR1) {
             $data_count = 0;
@@ -179,9 +178,7 @@ $app->get('/json/ra/YR1.json', function () use ($app) {
             }
             $projects = getProjectDetails(getDBH('RPIS'),$projectFilter);
             foreach ($projects as $project) {
-                $data_count += countDatasets(getDBH('GOMRI'),array("projectId=$project[ID]",
-                                                                   'filter=%' . $stash['tree']['filter'] . '%',
-                                                                   'status=2'));
+                $data_count += countDatasets(getDBH('GOMRI'),array_merge($dataset_filters,array("projectId=$project[ID]")));
             }
             if ($data_count > 0) {
                 $YR1['dataset_count'] = $data_count;
@@ -202,6 +199,7 @@ $app->get('/json/re/:letter.json', function ($letter) use ($app) {
     $people = getPeopleDetails(getDBH('RPIS'),array("lastName=$letter%"));
 
     if (isset($stash['tree']['filter'])) {
+        $dataset_filters = getDatasetFilters($stash['tree']);
         $stash['people'] = array();
         foreach ($people as $person) {
             $data_count = 0;
@@ -213,9 +211,7 @@ $app->get('/json/re/:letter.json', function ($letter) use ($app) {
             }
             $projects = getProjectDetails(getDBH('RPIS'),$projectFilter);
             foreach ($projects as $project) {
-                $data_count += countDatasets(getDBH('GOMRI'),array("projectId=$project[ID]",
-                                                                   'filter=%' . $stash['tree']['filter'] . '%',
-                                                                   'status=2'));
+                $data_count += countDatasets(getDBH('GOMRI'),array_merge($dataset_filters,array("projectId=$project[ID]")));
             }
             if ($data_count > 0) {
                 $person['dataset_count'] = $data_count;
@@ -236,6 +232,7 @@ $app->get('/json/in/:letter.json', function ($letter) use ($app) {
     $institutions = getInstitutionDetails(getDBH('RPIS'),array("name=$letter%"));
 
     if (isset($stash['tree']['filter'])) {
+        $dataset_filters = getDatasetFilters($stash['tree']);
         $stash['institutions'] = array();
         foreach ($institutions as $inst) {
             $data_count = 0;
@@ -247,9 +244,7 @@ $app->get('/json/in/:letter.json', function ($letter) use ($app) {
             }
             $projects = getProjectDetails(getDBH('RPIS'),$projectFilter);
             foreach ($projects as $project) {
-                $data_count += countDatasets(getDBH('GOMRI'),array("projectId=$project[ID]",
-                                                                   'filter=%' . $stash['tree']['filter'] . '%',
-                                                                   'status=2'));
+                $data_count += countDatasets(getDBH('GOMRI'),array_merge($dataset_filters,array("projectId=$project[ID]")));
             }
             if ($data_count > 0) {
                 $inst['dataset_count'] = $data_count;
@@ -276,11 +271,10 @@ $app->get('/json/:type/projects/fundSrc/:fundSrc.json', function ($type,$fundSrc
     $projects = getProjectDetails(getDBH('RPIS'),$projectFilter);
 
     if (isset($stash['tree']['filter'])) {
+        $dataset_filters = getDatasetFilters($stash['tree']);
         $stash['projects'] = array();
         foreach ($projects as $project) {
-            $data_count = countDatasets(getDBH('GOMRI'),array("projectId=$project[ID]",
-                                                              'filter=%' . $stash['tree']['filter'] . '%',
-                                                              'status=2'));
+            $data_count = countDatasets(getDBH('GOMRI'),array_merge($dataset_filters,array("projectId=$project[ID]")));
             if ($data_count > 0) {
                 $project['dataset_count'] = $data_count;
                 array_push($stash['projects'],$project);
@@ -307,11 +301,10 @@ $app->get('/json/:type/projects/peopleId/:peopleId.json', function ($type,$peopl
 
 
     if (isset($stash['tree']['filter'])) {
+        $dataset_filters = getDatasetFilters($stash['tree']);
         $stash['projects'] = array();
         foreach ($projects as $project) {
-            $data_count = countDatasets(getDBH('GOMRI'),array("projectId=$project[ID]",
-                                                              'filter=%' . $stash['tree']['filter'] . '%',
-                                                              'status=2'));
+            $data_count = countDatasets(getDBH('GOMRI'),array_merge($dataset_filters,array("projectId=$project[ID]")));
             if ($data_count > 0) {
                 $project['dataset_count'] = $data_count;
                 array_push($stash['projects'],$project);
@@ -339,11 +332,10 @@ $app->get('/json/:type/projects/institutionId/:institutionId.json', function ($t
     $projects = getProjectDetails(getDBH('RPIS'),$projectFilter);
 
     if (isset($stash['tree']['filter'])) {
+        $dataset_filters = getDatasetFilters($stash['tree']);
         $stash['projects'] = array();
         foreach ($projects as $project) {
-            $data_count = countDatasets(getDBH('GOMRI'),array("projectId=$project[ID]",
-                                                              'filter=%' . $stash['tree']['filter'] . '%',
-                                                              'status=2'));
+            $data_count = countDatasets(getDBH('GOMRI'),array_merge($dataset_filters,array("projectId=$project[ID]")));
             if ($data_count > 0) {
                 $project['dataset_count'] = $data_count;
                 array_push($stash['projects'],$project);
@@ -363,11 +355,10 @@ $app->get('/json/:type/tasks/projectId/:projectId.json', function ($type,$projec
     $filters = array("projectID=$projectId");
     $tasks = getTaskDetails(getDBH('RPIS'),$filters);
     if (isset($stash['tree']['filter'])) {
+        $dataset_filters = getDatasetFilters($stash['tree']);
         $stash['tasks'] = array();
         foreach ($tasks as $task) {
-            $data_count = countDatasets(getDBH('GOMRI'),array("taskId=$task[ID]",
-                                                              'filter=%' . $stash['tree']['filter'] . '%',
-                                                              'status=2'));
+            $data_count = countDatasets(getDBH('GOMRI'),array_merge($dataset_filters,array("taskId=$task[ID]")));
             if ($data_count > 0) {
                 $task['dataset_count'] = $data_count;
                 array_push($stash['tasks'],$task);
@@ -386,11 +377,10 @@ $app->get('/json/:type/tasks/projectId/peopleId/:projectId/:peopleId.json', func
     $filters = array("projectID=$projectId","peopleId=$peopleId");
     $tasks = getTaskDetails(getDBH('RPIS'),$filters);
     if (isset($stash['tree']['filter'])) {
+        $dataset_filters = getDatasetFilters($stash['tree']);
         $stash['tasks'] = array();
         foreach ($tasks as $task) {
-            $data_count = countDatasets(getDBH('GOMRI'),array("taskId=$task[ID]",
-                                                              'filter=%' . $stash['tree']['filter'] . '%',
-                                                              'status=2'));
+            $data_count = countDatasets(getDBH('GOMRI'),array_merge($dataset_filters,array("taskId=$task[ID]")));
             if ($data_count > 0) {
                 $task['dataset_count'] = $data_count;
                 array_push($stash['tasks'],$task);
@@ -406,24 +396,16 @@ $app->get('/json/:type/tasks/projectId/peopleId/:projectId/:peopleId.json', func
 
 $app->get('/json/:type/datasets/projectId/:projectId.json', function ($type,$projectId) use ($app) {
     $stash['tree'] = array_merge($GLOBALS['config']['tree'],json_decode($app->request()->get('tree'),true));
-    $filters = array("projectId=$projectId");
-    if (isset($stash['tree']['filter']) and !empty($stash['tree']['filter'])) {
-        $filters[] = 'filter=%' . $stash['tree']['filter'] . '%';
-    }
-    $filters[] = 'status=2';
-    $stash['datasets'] = getDatasets(getDBH('GOMRI'),$filters);
+    $dataset_filters = getDatasetFilters($stash['tree']);
+    $stash['datasets'] = getDatasets(getDBH('GOMRI'),array_merge($dataset_filters,array("projectId=$projectId")));
     $app->render('json/datasets.json',$stash);
     exit;
 });
 
 $app->get('/json/:type/datasets/taskId/:taskId.json', function ($type,$taskId) use ($app) {
     $stash['tree'] = array_merge($GLOBALS['config']['tree'],json_decode($app->request()->get('tree'),true));
-    $filters = array("taskId=$taskId");
-    if (isset($stash['tree']['filter']) and !empty($stash['tree']['filter'])) {
-        $filters[] = 'filter=%' . $stash['tree']['filter'] . '%';
-    }
-    $filters[] = 'status=2';
-    $stash['datasets'] = getDatasets(getDBH('GOMRI'),$filters);
+    $dataset_filters = getDatasetFilters($stash['tree']);
+    $stash['datasets'] = getDatasets(getDBH('GOMRI'),array_merge($dataset_filters,array("taskId=$taskId")));
     $app->render('json/datasets.json',$stash);
     exit;
 });

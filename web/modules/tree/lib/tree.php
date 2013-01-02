@@ -35,6 +35,7 @@ function getConfig($app) {
         'expand_to_depth',
         'init_type',
         'init_open',
+        'include_datasets',
         'onload',
         'yr1_folder_color',
         'yr1_folder_action',
@@ -69,6 +70,28 @@ function getConfig($app) {
         }
     }
     return $stash;
+}
+
+function getDatasetFilters($tree) {
+    $filters = array();
+    if (isset($tree['filter'])) {
+        $filters[] = "filter=%$tree[filter]%";
+    }
+    switch ($tree['include_datasets']) {
+        case 'identified':
+            $filters[] = 'status=2';
+            break;
+        case 'registered':
+            $filters[] = 'registered!=null';
+            break;
+        case 'available':
+            $filters[] = 'dataset_download_status=done';
+            break;
+        case 'unrestricted':
+            $filters[] = 'access_status=None';
+            break;
+    }
+    return $filters;
 }
 
 ?>

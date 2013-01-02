@@ -114,7 +114,7 @@ function updateTree(tree) {
                 }
             }
         },
-        "ui": { "select_limit": 1 },
+        "ui": { "select_limit": 1, "initially_select": [ trees[tree.name].selected ] },
         "plugins": [ "json_data", "types", "themes", "ui" ]
     });
 
@@ -139,7 +139,13 @@ function updateTree(tree) {
     });
 
     $("#" + tree.name).bind("select_node.jstree", function(event, data) {
-        eval($('#tree').jstree('get_selected').attr('action'));
+        trees[tree.name].selected = $('#' + tree.name).jstree('get_selected').attr('id');
+        eval($('#' + tree.name).jstree('get_selected').attr('action'));
+    });
+
+    $("#" + tree.name).bind("deselect_node.jstree", function(event, data) {
+        trees[tree.name].selected = null;
+        eval(trees[tree.name].deselect_action);
     });
 }
 
