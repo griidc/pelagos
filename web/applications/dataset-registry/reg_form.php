@@ -793,7 +793,7 @@ function showDOIbutton(show)
                     <img src="/dif/images/info.png">
                 </span>
                 <label for="sshmetadatapath">Metadata File Path:</label>
-                <input name="sshmetadatapath" id="sshmetadatapath" type="text" size="120" value="<?php if (isset($row['url_data'])) {echo $row['url_data'];};?>"/>
+                <input name="sshmetadatapath" id="sshmetadatapath" type="text" size="120" value="<?php if (isset($row['url_metadata'])) {echo $row['url_metadata'];};?>"/>
             </p>
          </fieldset> 
          
