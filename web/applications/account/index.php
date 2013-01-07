@@ -443,6 +443,103 @@ $app->get('/includes/:file', function ($file) use ($app) {
     exit;
 })->conditions(array('file' => '.+'));
 
+$app->get('/password', function () use ($app) {
+    global $user;
+    if (isset($user->name)) {
+        $env = $app->environment();
+        $app->redirect("$env[SCRIPT_NAME]/password/reset");
+    }
+    return $app->render('password_form.html');
+});
+
+$app->post('/password', function () use ($app) {
+    global $user;
+    if (isset($user->name)) {
+        $env = $app->environment();
+        $app->redirect("$env[SCRIPT_NAME]/password/reset");
+    }
+    $email = $app->request()->post('email');
+    if (empty($email)) {
+        drupal_set_message("You must enter an email address.",'error');
+        return $app->render('password_form.html');
+    }
+
+    $person = get_ldap_user("mail=$email");
+
+    if (is_null($person)) {
+        echo '<p>Please make sure you enter the email address associated with your account. If you need assistance, please contact: <a href="mailto:griidc@gomri.org">griidc@gomri.org</a> for help.</p>';
+        return $app->render('password_form.html');
+    }
+
+    $uid = $person['uid'][0];
+
+    $from = 'GRIIDC Account Management Portal <griidc@gomri.org>';
+    $to = $person['givenname'][0] . ' ' . $person['sn'][0] . " <$email>";
+    $subject = "GRIIDC Password Reset";
+    $env = $app->environment();
+    $message = "Please visit the following link to verify your identity and complete your GRIIDC account request: https://$GLOBALS[HOST]$env[SCRIPT_NAME]/password/reset?uid=$uid&hash=$person[hash]";
+
+    mail($email,$subject,$message,"From: $from\nTo: $to");
+
+    $stash['email'] = $email;
+    return $app->render('password_reset_email_sent.html',$stash);
+});
+
+$app->get('/password/reset', function () use ($app) {
+    global $user;
+    $person = get_verified_user($app);
+
+    if (is_null($person)) {
+        echo "<p>Please make sure you copied the entire link correcly from the password reset email. If you need assistance, please contact: <a href='mailto:griidc@gomri.org'>griidc@gomri.org</a> for help.";
+        return;
+    }
+
+    $stash['uid'] = $person['uid'][0];
+    $stash['hash'] = $person['hash'];
+    return $app->render('password_reset_form.html',$stash);
+});
+
+$app->post('/password/reset', function () use ($app) {
+    global $user;
+    $person = get_verified_user($app);
+
+    if (is_null($person)) {
+        echo "<p>Please make sure you copied the entire link correcly from the password reset email. If you need assistance, please contact: <a href='mailto:griidc@gomri.org'>griidc@gomri.org</a> for help.";
+        return;
+    }
+
+    $password = $app->request()->post('password');
+
+    if (empty($password)) {
+        drupal_set_message("You must enter a password.",'error');
+        $stash['uid'] = $person['uid'][0];
+        $stash['hash'] = $person['hash'];
+        return $app->render('password_reset_form.html',$stash);
+    }
+
+    if ($app->request()->post('verify_password') != $password) {
+        drupal_set_message("Passwords do not match.",'error');
+        $stash['uid'] = $person['uid'][0];
+        $stash['hash'] = $person['hash'];
+        return $app->render('password_reset_form.html',$stash);
+    }
+
+    if (!ldap_bind($GLOBALS['LDAP'], LDAP_BIND_DN, LDAP_BIND_PW)) {
+        drupal_set_message("Error binding to LDAP.",'error');
+        echo "<p>Please contact: <a href='mailto:griidc@gomri.org'>griidc@gomri.org</a> for help.";
+        return;
+    }
+
+    if (!ldap_mod_replace ($GLOBALS['LDAP'], $person['dn'], array('userpassword' => make_ssha_password($password)))) {
+        drupal_set_message("Error updating password.",'error');
+        echo "<p>Please contact: <a href='mailto:griidc@gomri.org'>griidc@gomri.org</a> for help.";
+        return;
+    }
+
+    drupal_set_message('Password changed.','status');
+    echo "<p>Your password has been updated. Please use this new password to log in to GRIIDC systems. If you need assistance, please contact: <a href='mailto:griidc@gomri.org'>griidc@gomri.org</a> for help.</p>";
+});
+
 $app->run();
 
 ?>

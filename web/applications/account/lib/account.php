@@ -384,4 +384,51 @@ function get_notify_to() {
     return $notify_to;
 }
 
+function get_ldap_user($search) {
+    $personsResult = ldap_search($GLOBALS['LDAP'], "dc=griidc,dc=org", "($search)", array('uid','givenName','sn','cn','email'));
+    $persons = ldap_get_entries($GLOBALS['LDAP'], $personsResult);
+
+    if ($persons['count'] == 0) {
+        drupal_set_message("No account exists for \"$search\".",'error');
+        return null;
+    }
+
+    $person = $persons[0];
+    $person['hash'] = md5(json_encode($person));
+    return $person;
+}
+
+function get_verified_user($app) {
+    global $user;
+
+    if (isset($user->name)) {
+        return get_ldap_user("uid=$user->name");
+    }
+
+    $uid = $app->request()->params('uid');
+
+    if (!isset($uid)) {
+        drupal_set_message("Missing uid.",'error');
+        return null;
+    }
+
+    $hash = $app->request()->params('hash');
+
+    if (!isset($hash)) {
+        drupal_set_message("Missing hash.",'error');
+        return null;
+    }
+
+    $person = get_ldap_user("uid=$uid");
+
+    if (is_null($person)) { return null; }
+
+    if ($hash != $person['hash']) {
+        drupal_set_message("Hash does not match.",'error');
+        return null;
+    }
+
+    return $person;
+}
+
 ?>
