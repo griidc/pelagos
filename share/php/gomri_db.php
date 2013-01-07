@@ -163,6 +163,20 @@ function getDatasets($dbh, $filters = array()) {
                 case 'udi':
                     $WHERE .= " AND d.dataset_udi " . $GLOBALS['PGSQL_LIKE_MAP'][$matches[2]] . " '$matches[3]'";
                     break;
+                case 'udis':
+                    $udis = preg_split('/,/',$matches[3]);
+                    $udiFilters = array();
+                    foreach ($udis as $udi) {
+                        $udiFilters[] = "d.dataset_udi " . $GLOBALS['PGSQL_LIKE_MAP'][$matches[2]] . " '$udi'";
+                    }
+                    if ($matches[2] == '!=') {
+                        $glue = ' AND ';
+                    }
+                    else {
+                        $glue = ' OR ';
+                    }
+                    $WHERE .= " AND (" . implode($glue,$udiFilters) . ")";
+                    break;
                 case 'taskid':
                     $WHERE .= " AND task_uid $matches[2] $matches[3]";
                     break;
