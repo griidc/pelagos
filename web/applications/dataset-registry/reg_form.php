@@ -814,7 +814,7 @@ function showDOIbutton(show)
             <span id="qtip_sshdoi" style="float:right;">
                 <img src="/dif/images/info.png">
             </span>
-            <label for="doi">Digital Object Identifier:</label>
+            <label for="sshdoi">Digital Object Identifier:</label>
             <input disabled type="text" name="sshdoi" id="sshdoi" size="60"/ value="<?php if (isset($row['doi'])) {echo $row['doi'];};?>">&nbsp;&nbsp;&nbsp;&nbsp;
             <span id="generatedoidiv"><input checked onchange="document.getElementById('sshdoi').disabled=this.checked;" type="checkbox" name="sshgeneratedoi" id="sshgeneratedoi">Auto-Generate DOI when data is available</span>
         </fieldset> 
@@ -825,7 +825,7 @@ function showDOIbutton(show)
     <input type="hidden" name="urlvalidate" id="urlvalidate"/>
     <input type="hidden" name="weekdayslst" id="weekdayslst"/>
     <input type="hidden" name="timezone" id="timezone"/>
-    <input type="hidden" name="servertype" id="servertype" value="HTTP"/>
+    <input type="hidden" name="servertype" id="servertype" value="<?php if ($tabselect==0){echo 'HTTP';};if ($tabselect==1){echo 'SFTP';};?>"/>
    
     <input onclick="weekDays();getTimeZone();" type="submit" value="Submit"/>
 </form>  
