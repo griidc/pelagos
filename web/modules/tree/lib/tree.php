@@ -36,7 +36,9 @@ function getConfig($app) {
         'init_type',
         'init_open',
         'include_datasets',
+        'afteropen',
         'onload',
+        'show_other_sources',
         'yr1_folder_color',
         'yr1_folder_action',
         'yr1_color',
@@ -52,7 +54,11 @@ function getConfig($app) {
         'researcher_color',
         'researcher_action',
         'institution_color',
-        'institution_action'
+        'institution_action',
+        'other_sources_folder_color',
+        'other_sources_folder_action',
+        'other_sources_color',
+        'other_sources_action'
     );
     $treename = $app->request()->get('treename');
     if (isset($treename)) {

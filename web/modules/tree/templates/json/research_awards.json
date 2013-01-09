@@ -36,10 +36,25 @@
             {% endif %}
         {% endif %}
     }
-    {% if not loop.last %}
+    {% if not loop.last or tree.show_other_sources %}
     ,
     {% endif %}
     {% endfor %}
+    {% if tree.show_other_sources %}
+    {
+        "data": {
+            "title": "Other Sources{% if other_sources.dataset_count %} <span style='color:black;font-weight:bold;'>({{other_sources.dataset_count}})</span>{% endif %}",
+            "attr": {
+                "style": "color:{{tree.other_sources_folder_color}}"
+            }
+        },
+        "attr": {
+            "id": "otherSources",
+            "action": "{{tree.other_sources_folder_action | evaluate}}"
+        },
+        "state": "open"
+    }
+    {% endif %}
     {% if YR1.hide and not RFPS %}
     {
         "data": {

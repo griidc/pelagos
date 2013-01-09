@@ -48,7 +48,7 @@ function insertTree(tree) {
 
     if (typeof tree === 'undefined' || typeof tree.start === 'undefined') {
         document.write('            <strong>' + tree.label + '</strong>');
-        document.write('            <select id="treetype-selector" onchange="trees[\'' + tree.name + '\'].type=this.value;updateTree(trees[\'' + tree.name + '\']);">');
+        document.write('            <select id="treetype-selector" onchange="trees[\'' + tree.name + '\'].selected=null;trees[\'' + tree.name + '\'].type=this.value;updateTree(trees[\'' + tree.name + '\']);">');
         document.write('                <option value="ra"');
         if (tree.type == "ra") document.write(' selected');
         document.write('>Research Award</option>');
@@ -124,8 +124,8 @@ function updateTree(tree) {
         var settings = data.inst._get_settings();
         if (childrenLoading < 1) {
             settings.core.animation = tree.animation;
-            if (typeof tree.onload !== 'undefined') {
-                eval(tree.onload);
+            if (typeof tree.afteropen !== 'undefined') {
+                eval(tree.afteropen);
             }
         }
     });
@@ -136,6 +136,9 @@ function updateTree(tree) {
             $('head').append('<link rel="stylesheet" type="text/css" media="all" href="' + cssUrl + '" />');
         }
         loadOpenChildren(data.inst,-1);
+        if (typeof tree.onload !== 'undefined') {
+            eval(tree.onload);
+        }
     });
 
     $("#" + tree.name).bind("select_node.jstree", function(event, data) {
