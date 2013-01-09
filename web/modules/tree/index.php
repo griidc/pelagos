@@ -6,7 +6,7 @@ require_once '/usr/local/share/Slim-Extras/Views/TwigView.php';
 require_once '/usr/local/share/GRIIDC/php/drupal.php';
 require_once '/usr/local/share/GRIIDC/php/dumpIncludesFile.php';
 require_once '/usr/local/share/GRIIDC/php/rpis.php';
-require_once '/usr/local/share/GRIIDC/php/gomri_db.php';
+require_once '/usr/local/share/GRIIDC/php/datasets.php';
 
 require_once 'lib/tree.php';
 
