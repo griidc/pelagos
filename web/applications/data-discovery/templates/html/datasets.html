@@ -1,3 +1,4 @@
+{% if registered_datasets or other_datasets %}
 <div class="dataset_header">
 {% if package %}
 Datasets in Download Package
@@ -53,8 +54,9 @@ Datasets Available at GRIIDC
     </tr>
     {% endfor %}
 </table>
+{% endif %}
 
-{% if not package %}
+{% if identified_datasets and not package %}
 <div class="dataset_header">
 Datasets Expected to be Available Soon at GRIIDC
 </div>
@@ -76,4 +78,8 @@ Datasets Expected to be Available Soon at GRIIDC
     </tr>
     {% endfor %}
 </table>
+{% endif %}
+
+{% if not registered_datasets and not other_datasets and not identified_datasets %}
+<span style="color:red;">no datasets found</span>
 {% endif %}
