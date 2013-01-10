@@ -1,4 +1,8 @@
-<div style="float:right;margin-right: 2px;"><a href="{{baseUrl}}/package" title="view/download package"><img src="{{baseUrl}}/includes/images/download-package.png" align="absmiddle"> Items in download package: <span id="package-count">0</span></a></div>
+<div style="float:right;margin-right: 2px;">
+    {% if uid %}
+        <a href="{{baseUrl}}/package" title="view/download package"><img src="{{baseUrl}}/includes/images/download-package.png" align="absmiddle"> Items in download package: <span id="package-count">0</span></a>
+    {% endif %}
+</div>
 <div id="filter" style="text-align: center">
     <input id="filter-input" type="text" size=100>
     <input type="button" value="Filter" onclick="applyFilter();">

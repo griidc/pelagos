@@ -23,9 +23,14 @@ $app = new Slim(array(
                      ));
 
 $app->hook('slim.before', function () use ($app) {
+    global $user;
     $env = $app->environment();
     $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
     $app->view()->appendData(array('baseUrl' => "$protocol$env[SERVER_NAME]$env[SCRIPT_NAME]"));
+    $app->view()->appendData(array('currentPage' => urlencode(preg_replace('/^\//','',$_SERVER['REQUEST_URI']))));
+    if (!empty($user->name)) {
+        $app->view()->appendData(array('uid' => $user->name));
+    }
 });
 
 $app->get('/includes/:file', 'dumpIncludesFile')->conditions(array('file' => '.+'));
@@ -128,6 +133,15 @@ $app->get('/dataset_details/:udi', function ($udi) use ($app) {
 
     $app->render('html/dataset_details.html',$stash);
     exit;
+});
+
+$app->get('/package.*', function () use ($app) {
+    global $user;
+    if (empty($user->name)) {
+        drupal_set_message("You must be logged in to download data.",'error');
+        return $app->render('html/not_logged_in.html');
+    }
+    $app->pass();
 });
 
 $app->get('/package', function () use ($app) {

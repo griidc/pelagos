@@ -9,7 +9,10 @@ Datasets Available at GRIIDC
     {% for dataset in registered_datasets %}
     <tr>
         <td valign="top" class="checkbox">
-            <input id="{{dataset.udi}}_checkbox" type="checkbox" onclick="addRemoveID(this,'{{dataset.udi}}');"{% if dataset.registry_id and dataset.access_status != "None" %} disabled{% endif %}>
+            <input id="{{dataset.udi}}_checkbox" type="checkbox"
+                onclick="addRemoveID(this,'{{dataset.udi}}');"
+                {% if dataset.registry_id and dataset.access_status != "None" %} disabled{% endif %}
+                {% if not uid %} style="visibility: hidden;"{% endif %}>
         </td>
         <td>
             {{dataset.pi.LastName | trim}}, {{dataset.pi.FirstName | trim}}, et al.
@@ -36,7 +39,10 @@ Datasets Available at GRIIDC
     {% for dataset in other_datasets %}
     <tr>
         <td valign="top" class="checkbox">
-            <input id="{{dataset.udi}}_checkbox" type="checkbox" onclick="addRemoveID(this,'{{dataset.udi}}');"{% if dataset.registry_id and dataset.access_status != "None" %} disabled{% endif %}>
+            <input id="{{dataset.udi}}_checkbox" type="checkbox"
+                onclick="addRemoveID(this,'{{dataset.udi}}');"
+                {% if dataset.registry_id and dataset.access_status != "None" %} disabled{% endif %}
+                {% if not uid %} style="visibility: hidden;"{% endif %}>
         </td>
         <td>
             {{dataset.organization}}.
