@@ -8,7 +8,7 @@ function showPackageItems($conn,$username)
     $return = array();
     if ($inpackage > 0)
     {
-        $query = "SELECT udi from basket where user_id = '$username' AND downloaded = FALSE";
+        $query = "SELECT udi from package where user_id = '$username' AND downloaded = FALSE";
         $rows = pdoDBQuery($conn,$query);
         foreach ($rows as $row)
         {
@@ -24,7 +24,7 @@ function addToPackage($conn,$username,$udi)
     $inpackage = (int) isInPackage($conn,$username,$udi);
     if ($inpackage <= 0)
     {
-        $query = "INSERT INTO basket (udi,user_id,added_timestamp) VALUES ('$udi', '$username', '$now')";
+        $query = "INSERT INTO package (udi,user_id,added_timestamp) VALUES ('$udi', '$username', '$now')";
         $row = pdoDBQuery($conn,$query);
         if ($row != false AND isset($row[0][0]) AND $row[0][0] <> 0)
         {
@@ -42,11 +42,11 @@ function removeFromPackage($conn,$username,$udi,$all=false)
     {
         if (!$all)
         {
-            $query = "DELETE FROM basket where user_id = '$username' AND udi='$udi' AND downloaded = FALSE";  
+            $query = "DELETE FROM package where user_id = '$username' AND udi='$udi' AND downloaded = FALSE";
         }
         else
         {
-            $query = "DELETE FROM basket where user_id = '$username' AND downloaded = FALSE";  
+            $query = "DELETE FROM package where user_id = '$username' AND downloaded = FALSE";
         }
         $row = pdoDBQuery($conn,$query);
         if ($row != false AND isset($row[0][0]) AND $row[0][0] <> 0)
@@ -67,11 +67,11 @@ function isInPackage($conn,$username,$udi=null)
 {
     if ($udi!=null)
     {
-        $query = "SELECT COUNT(basket_id) as count from basket where user_id = '$username' AND udi='$udi' AND downloaded = FALSE";
+        $query = "SELECT COUNT(package_id) as count from package where user_id = '$username' AND udi='$udi' AND downloaded = FALSE";
     }
     else
     {
-        $query = "SELECT COUNT(basket_id) AS count from basket where user_id = '$username' AND downloaded = FALSE";
+        $query = "SELECT COUNT(package_id) AS count from package where user_id = '$username' AND downloaded = FALSE";
     }
     $row = pdoDBQuery($conn,$query);
     if ($row != false)
