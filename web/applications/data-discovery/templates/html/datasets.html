@@ -26,7 +26,7 @@ Datasets Available at GRIIDC
             <div class="attributes">
                 [<a href="javascript:showDatasetDetails('{{dataset.udi}}');">Abstract</a>]
                 [Size: {{dataset.sizeMB}} MB]
-                {% if dataset.metadata_filename and dataset.access_status == "None" %}
+                {% if dataset.metadata_filename %}
                     [<a href="{{baseUrl}}/metadata/{{dataset.udi}}">Metadata</a>]
                 {% else %}
                     <span class="disabled">[Metadata]</span>
