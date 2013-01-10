@@ -1,0 +1,83 @@
+<div style="float:right;margin-right: 2px;"><a href="{{baseUrl}}/package" title="view/download package"><img src="{{baseUrl}}/includes/images/download-package.png" align="absmiddle"> Items in download package: <span id="package-count">0</span></a></div>
+<div id="filter" style="text-align: center">
+    <input id="filter-input" type="text" size=100>
+    <input type="button" value="Filter" onclick="applyFilter();">
+    <input type="button" value="Clear/Show All" onclick="clearAll();">
+</div>
+
+<input id="by-input" type="hidden">
+<input id="id-input" type="hidden">
+
+<div id="container" style="position: relative; width:100%; background-color:white; padding:0; margin:0;">
+    <div id="left" style="position: absolute; width:40%; height:500px;">
+        <div id="expand-collapse" style="position: absolute; bottom: 50%; right: 0px; width:7px; height:25px;"><div style="height:50px;"></div></div>
+        <div id="menu">
+            <div class="scrollbar"><div class="track"><div class="thumb"><div class="end"></div></div></div></div>
+            <div class="viewport">
+                <div class="overview">
+                    <script type="text/javascript">
+                        var tree = {
+                                    label: "Filter by:",
+                                    theme: "classic",
+                                    max_depth: 1,
+                                    expand_to_depth: 0,
+                                    include_datasets: "identified",
+                                    animation: 250,
+                                    type: "ra",
+                                    filter: "",
+                                    onload: "if(!tree.selected){showDatasets($('#by-input').val(),$('#id-input').val(),'');}",
+                                    show_other_sources: true,
+
+                                    yr1_folder_color: "#00A",
+                                    yr1_folder_action: "$('#by-input').val('YR1'); $('#id-input').val('1'); showDatasets('YR1',1);",
+
+                                    yr1_color: "#00A",
+                                    yr1_action: "$('#by-input').val('fundSrc'); $('#id-input').val('\{\{fundSrc.ID\}\}'); showDatasets('fundSrc',\{\{fundSrc.ID\}\});",
+
+                                    rfp_color: "#00A",
+                                    rfp_action: "$('#by-input').val('fundSrc'); $('#id-input').val('\{\{fundSrc.ID\}\}'); showDatasets('fundSrc',\{\{fundSrc.ID\}\});",
+
+                                    project_color: "#00A",
+                                    project_action: "$('#by-input').val('projectId'); $('#id-input').val('\{\{project.ID\}\}'); showDatasets('projectId',\{\{project.ID\}\},'\{\{peopleId\}\}');",
+
+                                    task_color: "#00A",
+                                    task_action: "showTask(\{\{task.ID\}\});",
+
+                                    dataset_color: "#00A",
+                                    dataset_action: "showDataset(\{\{dataset.udi\}\});",
+
+                                    researcher_color: "#00A",
+                                    researcher_action: "$('#by-input').val('peopleId'); $('#id-input').val('\{\{person.ID\}\}'); showDatasets('peopleId',\{\{person.ID\}\});",
+
+                                    institution_color: "#00A",
+                                    institution_action: "$('#by-input').val('institutionId'); $('#id-input').val('\{\{institution.ID\}\}'); showDatasets('institutionId',\{\{institution.ID\}\});",
+
+                                    other_sources_folder_color: "#00A",
+                                    other_sources_folder_action: "$('#by-input').val('otherSources'); $('#id-input').val('1'); showDatasets('otherSources',1);",
+
+                                    other_sources_color: "#00A",
+                                    other_sources_action: "$('#by-input').val('otherSource'); $('#id-input').val('\{\{source.ID\}\}'); showDatasets('otherSource','\{\{source.ID\}\}');",
+
+                                    deselect_action: "$('#by-input').val(''); $('#id-input').val(''); showDatasets('','');"
+                                   }
+
+                        insertTree(tree);
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="right" style="position: absolute; left: 40%; width: 60%; height:500px;">
+        <div id="content">
+            <div class="scrollbar"><div class="track"><div class="thumb"><div class="end"></div></div></div></div>
+            <div class="viewport">
+                <div class="overview"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="dataset_details">
+    <div id="dataset_details_close"><input type="image" src="{{baseUrl}}/includes/images/close.gif" onclick="jQuery('#dataset_details').hide();"></div>
+    <div id="dataset_details_content"></div>
+</div>

@@ -1,0 +1,22 @@
+#filter {
+    margin-bottom: 10px;
+}
+
+/*
+#tree li.selected a {
+    background-color: #bfd3dd;
+    border-radius: 3px;
+}
+*/
+
+#expand-collapse {
+    overflow: visible;
+}
+
+#expand-collapse div {
+    background: url({{baseUrl}}/includes/images/CollapseLeft.gif) no-repeat;
+}
+
+#expand-collapse div.collapsed {
+    background: url({{baseUrl}}/includes/images/CollapseRight.gif) no-repeat;
+}

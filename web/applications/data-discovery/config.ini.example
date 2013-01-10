@@ -1,0 +1,12 @@
+[TwigView]
+twigDirectory = "/usr/share/pear/Twig"
+
+[GOMRI_DB]
+connstr = "pgsql:host=localhost;dbname=gomri;"
+username = "username"
+password = "password"
+
+[RPIS_DB]
+connstr = "mysql:host=localhost;dbname=gomri_rpis;"
+username = "username"
+password = "password"

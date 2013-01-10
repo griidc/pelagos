@@ -1,0 +1,8 @@
+{% for dataset in datasets %}
+    <div class="attr"><span class="attr">Dataset Title:</span> {{dataset.title}}</div>
+    <div class="attr"><span class="attr">UDI:</span> {{dataset.udi}}</div>
+    <div class="abstract">
+        <div><span class="attr">Abstract:</span></div>
+        <div>{{dataset.abstract}}</div>
+    </div>
+{% endfor %}

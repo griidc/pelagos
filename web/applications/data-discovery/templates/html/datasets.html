@@ -1,0 +1,73 @@
+<div class="dataset_header">
+{% if package %}
+Datasets in Download Package
+{% else %}
+Datasets Available at GRIIDC
+{% endif %}
+</div>
+<table class="datasets">
+    {% for dataset in registered_datasets %}
+    <tr>
+        <td valign="top" class="checkbox">
+            <input id="{{dataset.udi}}_checkbox" type="checkbox" onclick="addRemoveID(this,'{{dataset.udi}}');"{% if dataset.registry_id and dataset.access_status != "None" %} disabled{% endif %}>
+        </td>
+        <td>
+            {{dataset.pi.LastName | trim}}, {{dataset.pi.FirstName | trim}}, et al.
+            {{dataset.year}}.
+            <a href="javascript:showDatasetDetails('{{dataset.udi}}');">{{dataset.title}}</a>.
+            {{dataset.project.Title | trim}}.
+            Gulf of Mexico Research Intitiative Information and Data Cooperative, Harte Research Institute for Gulf of Mexico Studies, Texas A&amp;M University-Corpus Christi.
+            {% if dataset.doi %}
+                DOI: <a href="http://dx.doi.org/{{dataset.doi}}" target="_blank">{{dataset.doi}}</a>
+            {% endif %}
+            <div class="attributes">
+                [<a href="javascript:showDatasetDetails('{{dataset.udi}}');">Abstract</a>]
+                [Size: {{dataset.sizeMB}} MB]
+                {% if dataset.metadata_filename and dataset.access_status == "None" %}
+                    [<a href="{{baseUrl}}/metadata/{{dataset.udi}}">Metadata</a>]
+                {% else %}
+                    <span class="disabled">[Metadata]</span>
+                {% endif %}
+                [Restrictions: {{dataset.access_status}}]
+            </div>
+        </td>
+    </tr>
+    {% endfor %}
+    {% for dataset in other_datasets %}
+    <tr>
+        <td valign="top" class="checkbox">
+            <input id="{{dataset.udi}}_checkbox" type="checkbox" onclick="addRemoveID(this,'{{dataset.udi}}');"{% if dataset.registry_id and dataset.access_status != "None" %} disabled{% endif %}>
+        </td>
+        <td>
+            {{dataset.organization}}.
+            {{dataset.year}}.
+            <a href="javascript:showDatasetDetails('{{dataset.udi}}');">{{dataset.title}}</a>. Gulf of Mexico Research Intitiative Information and Data Cooperative, Harte Research Institute for Gulf of Mexico Studies, Texas A&amp;M University-Corpus Christi.{% if dataset.doi %} DOI: <a href="http://dx.doi.org/{{dataset.doi}}" target="_blank">{{dataset.doi}}</a>{% endif %}
+            <div class="attributes">[<a href="javascript:showDatasetDetails('{{dataset.udi}}');">Abstract</a>] [Size: {{dataset.sizeMB}} MB] [<a href="{{baseUrl}}/metadata/{{dataset.udi}}">Metadata</a>] [Restrictions: {{dataset.access_status}}]</div>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% if not package %}
+<div class="dataset_header">
+Datasets Expected to be Available Soon at GRIIDC
+</div>
+<table class="datasets">
+    {% for dataset in identified_datasets %}
+    <tr>
+        <td valign="top" class="checkbox">
+            <input id="{{dataset.udi}}_checkbox" type="checkbox" style="visibility:hidden;">
+        </td>
+        <td>
+            <a href="javascript:showDatasetDetails('{{dataset.udi}}');">{{dataset.title}}</a>. {{dataset.project.Title | trim}}. Gulf of Mexico Research Intitiative Information and Data Cooperative, Harte Research Institute for Gulf of Mexico Studies, Texas A&amp;M University-Corpus Christi.{% if dataset.doi %} DOI: <a href="http://dx.doi.org/{{dataset.doi}}" target="_blank">{{dataset.doi}}</a>{% endif %}<br>
+                <div class="attributes">
+                    [<a href="javascript:showDatasetDetails('{{dataset.udi}}');">Abstract</a>]
+                    <span class="disabled">[Size: ? MB]</span>
+                    <span class="disabled">[Metadata]</span>
+                    <span class="disabled">[Restrictions: ?]</span>
+                </div>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
