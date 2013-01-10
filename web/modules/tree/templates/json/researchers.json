@@ -24,4 +24,17 @@
     ,
     {% endif %}
 {% endfor %}
+{% if not people %}
+    {
+        "data": {
+            "title": "no datasets found",
+            "attr": {
+                "style": "color:red"
+            }
+        },
+        "attr": {
+            "id": "noDatasetsFound"
+        }
+    }
+{% endif %}
 ]

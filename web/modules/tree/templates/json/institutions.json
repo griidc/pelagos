@@ -31,6 +31,9 @@
             "attr": {
                 "style": "color:red"
             }
+        },
+        "attr": {
+            "id": "noDatasetsFound"
         }
     }
 {% endif %}

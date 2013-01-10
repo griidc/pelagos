@@ -148,7 +148,13 @@ $app->get('/json/:type.json', function ($type) use ($app) {
                 if (isset($stash['tree']['filter'])) {
                     $filters[] = 'filter=%' . $stash['tree']['filter'] . '%';
                 }
-                $stash['other_sources']['dataset_count'] = count_registered_datasets(getDBH('GOMRI'),array_merge($filters,array('registry_id=00%','dataset_download_status=done')));
+                $data_count = count_registered_datasets(getDBH('GOMRI'),array_merge($filters,array('registry_id=00%','dataset_download_status=done')));
+                if ($data_count > 0) {
+                    $stash['other_sources']['dataset_count'] = $data_count;
+                }
+                else {
+                    $stash['tree']['show_other_sources'] = false;
+                }
             }
             else {
                 $stash['RFPS'] = $RFPS;

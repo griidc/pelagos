@@ -55,13 +55,16 @@
         "state": "open"
     }
     {% endif %}
-    {% if YR1.hide and not RFPS %}
+    {% if YR1.hide and not RFPS and not tree.show_other_sources %}
     {
         "data": {
             "title": "no datasets found",
             "attr": {
                 "style": "color:red"
             }
+        },
+        "attr": {
+            "id": "noDatasetsFound"
         }
     }
     {% endif %}
