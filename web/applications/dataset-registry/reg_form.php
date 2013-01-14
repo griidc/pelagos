@@ -804,8 +804,8 @@ function showDOIbutton(show)
             </span>
             <label for="avail">Restrictions:</label>
             <input checked <?PHP if (isset($row['access_status'])){isChecked($row['access_status'],0,"None");}; if(!isset($_GET['regid'])){echo 'checked';};?> name="sshavail" id="sshavail" type="radio" value="None"/>None
-            <input <?PHP if (isset($row['access_period'])){isChecked($row['access_status'],0,"Approval");};?>  name="sshavail" id="sshavail" type="radio" value="Approval"/>Requires Author&apos;s Approval
-            <input <?PHP if (isset($row['access_period'])){isChecked($row['access_status'],0,"Restricted");};?>  name="sshavail" id="sshavail" type="radio" value="Restricted"/>Restricted
+            <input <?PHP if (isset($row['access_status'])){isChecked($row['access_status'],0,"Approval");};?>  name="sshavail" id="sshavail" type="radio" value="Approval"/>Requires Author&apos;s Approval
+            <input <?PHP if (isset($row['access_status'])){isChecked($row['access_status'],0,"Restricted");};?>  name="sshavail" id="sshavail" type="radio" value="Restricted"/>Restricted
             <br />
         </fieldset>
     
