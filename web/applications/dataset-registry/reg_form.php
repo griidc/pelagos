@@ -88,8 +88,17 @@ if (isset($reg_id))
     
     if ($regrow['registry_id'] <> $reg_id AND $regrow != false)
     {
-        $dMessage= "Registation Identifier <b>'$reg_id'</b> has been superseded by a newer version. The latest version has been retrieved instead.";
-        drupal_set_message($dMessage,'warning');
+        if (substr($regrow['registry_id'],0,16) == $reg_id)
+        {
+            $dMessage= "Dataset Identifier <b>'$reg_id'</b> was found. The latest version has been loaded.";
+            drupal_set_message($dMessage,'status');
+        }
+        else
+        {
+            $dMessage= "Registration Identifier <b>'$reg_id'</b> has been superseded by a newer version. The latest version has been retrieved instead.";
+            drupal_set_message($dMessage,'warning');
+        }
+        
     }
 }
 
