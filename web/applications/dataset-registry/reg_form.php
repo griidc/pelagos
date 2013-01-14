@@ -235,7 +235,7 @@ function isChecked($row,$index,$compare=null)
             },
             regbutton: 
             {
-				required: "#registry_id:minlength:16",
+				required: "#registry_id:minlength:15",
             }
         },
         messages: {
@@ -566,7 +566,7 @@ function showDOIbutton(show)
                 <img src="/dif/images/info.png">
             </span>
             <label for="registry_id"><b>Registry Identifier: </b></label>
-            <input onkeyup="if (this.value.length > 16) {document.getElementById('regbutton').disabled=false;};" <?php if (isset($dif_id)) {echo ' disabled ';};?>type="text" id="registry_id" name="registry_id" size="80" value="<?php if (isset($row['registry_id'])) {echo $row['registry_id'];};?>">
+            <input onkeyup="if (this.value.length > 15) {document.getElementById('regbutton').disabled=false;};" <?php if (isset($dif_id)) {echo ' disabled ';};?>type="text" id="registry_id" name="registry_id" size="80" value="<?php if (isset($row['registry_id'])) {echo $row['registry_id'];};?>">
             <button disabled name="regbutton" id="regbutton" onclick="window.location.href='<?php echo $_SERVER['SCRIPT_NAME'];?>?regid='+document.getElementById('registry_id').value;" type="button">Retrieve Registration</button>
         </fieldset></p>
         
