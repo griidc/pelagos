@@ -22,7 +22,17 @@ function getTasksAndDatasets($projects) {
                CASE WHEN dataset_metadata IS NULL THEN 0 ELSE 2 END AS metadata,
                CASE WHEN dataset_download_status = 'done' THEN 1 ELSE 0 END AS availability,
                CASE WHEN access_status = 'None' THEN 1 WHEN access_status = 'Requires Author''s Approval' THEN 2 ELSE 0 END AS accessibility";
-    $FROM = 'FROM datasets d LEFT OUTER JOIN registry r ON r.dataset_udi = d.dataset_udi';
+    $FROM = 'FROM datasets d
+             LEFT JOIN (
+                 registry r2
+                 INNER JOIN (
+                     SELECT MAX(registry_id) AS MaxID
+                     FROM registry
+                     GROUP BY dataset_udi
+                 ) m
+             ON r2.registry_id = m.MaxID
+             ) r
+             ON r.dataset_udi = d.dataset_udi';
     $dbh = getDBH('GOMRI');
     for ($i=0;$i<count($projects);$i++) {
         $pi = getPeopleDetails(getDBH('RPIS'),array('projectId='.$projects[$i]['ID'],'roleId=1'));
