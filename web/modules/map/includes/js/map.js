@@ -83,7 +83,8 @@ function showAddress(address) {//DONE
             //});
             //drawnShapes.push(tinyMarker);
             //if(toolID == 5) drawMarkers(pos);
-        } else {alert("Request Not Found. Please check ");}
+        } else {alert("Request Not Found. Please check ");
+		}
     });
 }
 function linestyle() {//DONE
@@ -251,20 +252,15 @@ function preparePolyline(){
  
 }
 function preparePolygon(){
-
-
-
-
     var polyOptions = {
         path: polyPoints,
-		
-        strokeColor: polygonstyles[pcur].color,
+		strokeColor: polygonstyles[pcur].color,
         strokeOpacity: polygonstyles[pcur].lineopac,
         strokeWeight: polygonstyles[pcur].width,
         fillColor: polygonstyles[pcur].fill,
         fillOpacity: polygonstyles[pcur].fillopac};
         polyShape = new google.maps.Polygon(polyOptions);
-    polyShape.setMap(map);
+        polyShape.setMap(map);
 }
 function activateMarker() {
     markerShape = new google.maps.Marker({
@@ -339,20 +335,14 @@ function drawMarkers(point) {
     if(codeID == 1) logCode9();
 }
 function setTool(){
-    //if(polyPoints.length == 0 && text_for_box == "") {
-     //   newstart();
-    //}else{
+    if(polyPoints.length == 0 && text_for_box != "") {
+        newstart();
+    }else{
         if(toolID == 2){ // polygon
-					
-				newstart();
-            //if(markerShape) {
-             //   toolID = 5;
-             //   nextshape();
-             //   toolID = 2;
-             //   newstart();
-             //   return;
-           // }
-            placemarks[plmcur].style = polygonstyles[polygonstyles.length-1].name;
+			newstart();
+            //if(markerShape) {   toolID = 5;       nextshape();        toolID = 2;          newstart();          return;       }
+            
+			placemarks[plmcur].style = polygonstyles[polygonstyles.length-1].name;
             placemarks[plmcur].stylecur = polygonstyles.length-1;
             if(polyShape) polyShape.setMap(null);
 
@@ -361,9 +351,13 @@ function setTool(){
         }
         if(toolID == 5){
             if(polyShape) polyShape.setMap(null);
-            newstart();
+			gob('coords1').value = "";
+            newstart();			
+			//placemarks[plmcur].style = polygonstyles[polygonstyles.length-1].name;
+            //placemarks[plmcur].stylecur = polygonstyles.length-1;
+			
         }
-//    }
+    }
 }
 function newstart() {
 
@@ -400,8 +394,6 @@ function newstart() {
     text_for_box = "";
 
 }
-
-
 //]]>
 </script>
 

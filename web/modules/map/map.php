@@ -1,4 +1,12 @@
 <?php
+// Module: map.php
+// Author(s): Jew-Lee Irena Lann
+// Last Updated: 11 Feb. 2013
+// Parameters: Paramenter return Geo-Locations in the form of Long/Lats.
+// Returns: Interactive Map
+// Purpose: Captures the LONGs/LATS and returns them to the DIF Form [LAWSONITE]
+//MAP
+
     $path_info = str_replace($_SERVER['SCRIPT_NAME'],'',$_SERVER['REQUEST_URI']);
     if ($path_info == '/') {
 ?>
@@ -8,7 +16,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <meta name = "description" content = "GRIIDC Map"/>
         <title>GRIIDC Map</title>
-        <link rel="stylesheet" type="text/css" href="includes/css/map.css">
+        <link rel="stylesheet" type="text/css" href="http://proteus.tamucc.edu/~jlann/luzonite/includes/css/map.css">
 	   <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
        <?PHP include('includes/js/map.js'); ?>
        <script type="text/javascript" src="/sites/all/modules/jquery_update/replace/jquery/jquery.min.js?v=1.5.2"></script>
@@ -32,8 +40,6 @@
       $result3 = pg_exec($connection, "SELECT comments FROM form_info WHERE id=27");
       if (!$result3) { die("Error in SQL query: " . pg_last_error()); } 
       while($row = pg_fetch_row($result3)){$tip=$row[0];}
-	  #echo "$tip<-------------------";
-      #$tip = "<p>This user interactive map is to assist in defining coordinates of the geographical or study area. The control panel on the upper-left corner allows for zooming and panning. The drop-down on the upper-right is to toggle map types to use and the panel below the map contains tools to generate the coordinates. The first button is used to create polygon, the second is to get the coordinates of a point in the map and the third button is to delete inputs and start over.</p><p>Click the Submit button to complete the process.</p>";
       echo"	
        <script type=\"text/javascript\">
       $(document).ready(function()
@@ -86,38 +92,35 @@
       </form>
    </div>
    <div id="presenter"> 
-     <table border=0><tr><td>
-       <div class="topbutton cleair">
-          <table border=0 width="100%"><tr><td><div style="padding:7px 0px 0px 7px;"><strong>Tools:</strong></div></td><td><div style="float:right"><img id="something" src="/dif/images/info.png"></div></td></tr></table>
-           <form id="tools" style="padding:0px;" action="./" method="post" onsubmit="return false">
-		   <table border=0 width="80%"><tr><td>
-			  <div class="topbutton"><input type="image" src="images/polygon_icon.png" onclick="toolID=parseInt(this.value);setTool();" value="2"/></div></td><td>
-					 <div class="topbutton"><input type="image" src="images/marker_icon.png"  onclick="toolID=parseInt(this.value);setTool();" value="5"/></div></td><td>
-					 <div class="topbutton"><input type="image" src="images/clear_all.png"  onclick="toolID=parseInt(this.value);setTool();getfocus(this.value);" alt="Clear Screen" value="5"/></div></td></tr></table>
-           </form>   
-       </div>  
-     </td><td>
-        <form name="frm" style="float:right;text-align:right;padding-top:0px;" action="#"> 
-        <textarea name="mc" id="coords1"  maxlength="20" cols="57" rows="4"> </textarea>
-     </td><td>
-         <select id="over" style="width:180px; border:0px solid #000000;">
-           <option>LngLat mousemove</option>
-           <option  selected="selected">LatLng mousemove</option>
-        </select>
-		<br /><hr /><br />
-        <input type=button value='Submit' onclick="post_value();"> 
-	    
-        </form>
-	</td></tr></table>
-    </div>
-    <div id="bottom"></div>
+       <table width="95%" border=0><tr><td>
+           <div class="topbutton cleair">
+               <table border=0 width="100%"><tr><td><div style="padding:7px 0px 0px 7px;"><strong>Tools:</strong></div></td><td><div style="float:right"><img id="something" src="/dif/images/info.png"></div></td></tr></table>
+                    <form id="tools" style="padding:0px;" action="./" method="post" onsubmit="return false">
+	  	        <table border=0 width="80%"><tr><td>
+		 	      <div class="topbutton"><input type="image" src="images/polygon_icon.png"  alt="Create a Polygon" onclick="toolID=parseInt(this.value);setTool();" value="2"/></div></td><td>
+                              <div class="topbutton"><input type="image" src="images/marker_icon.png"  alt="Create a Point" onclick="toolID=parseInt(this.value);setTool();" value="5"/></div></td><td>
+                              <div class="topbutton"><input type="image" src="images/clear_all.png"  alt="Clear the Map" onclick="toolID=parseInt(this.value);setTool();getfocus(this.value);"  value="5"/></div></td></tr>
+                        </table>
+                   </form>   
+          </div>  
+       </td><td>
+           <form name="frm" style="float:right;text-align:right;padding-top:0px;" action="#"> 
+               <textarea name="mc" id="coords1"  maxlength="20" cols="75" rows="4"> </textarea>
+       </td><td>
+               <select id="over" style="width:180px; border:0px solid #000000;">
+                    <option>LngLat mousemove</option>
+                    <option  selected="selected">LatLng mousemove</option>
+               </select>
+               <br /><hr /><br />
+               <input type=button value='Submit' onclick="post_value();"> 
+          </form>
+       </td></tr></table>
+   </div>
+   <div id="bottom"></div>
 </div>
 </body>
 </html>
-
 <?php
-
-    exit;
+exit;
 }
-
 ?>
