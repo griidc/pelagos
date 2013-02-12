@@ -421,7 +421,7 @@ $app->get('/json/:type/tasks/projectId/peopleId/:projectId/:peopleId.json', func
 $app->get('/json/:type/datasets/projectId/:projectId.json', function ($type,$projectId) use ($app) {
     $stash['tree'] = array_merge($GLOBALS['config']['tree'],json_decode($app->request()->get('tree'),true));
     $dataset_filters = getDatasetFilters($stash['tree']);
-    $stash['datasets'] = getDatasets(getDBH('GOMRI'),array_merge($dataset_filters,array("projectId=$projectId")));
+    $stash['datasets'] = get_identified_datasets(getDBH('GOMRI'),array_merge($dataset_filters,array("projectId=$projectId")));
     $app->render('json/datasets.json',$stash);
     exit;
 });
@@ -429,7 +429,7 @@ $app->get('/json/:type/datasets/projectId/:projectId.json', function ($type,$pro
 $app->get('/json/:type/datasets/taskId/:taskId.json', function ($type,$taskId) use ($app) {
     $stash['tree'] = array_merge($GLOBALS['config']['tree'],json_decode($app->request()->get('tree'),true));
     $dataset_filters = getDatasetFilters($stash['tree']);
-    $stash['datasets'] = getDatasets(getDBH('GOMRI'),array_merge($dataset_filters,array("taskId=$taskId")));
+    $stash['datasets'] = get_identified_datasets(getDBH('GOMRI'),array_merge($dataset_filters,array("taskId=$taskId")));
     $app->render('json/datasets.json',$stash);
     exit;
 });
