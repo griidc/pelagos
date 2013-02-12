@@ -19,10 +19,10 @@
         <link rel="stylesheet" type="text/css" href="http://proteus.tamucc.edu/~jlann/luzonite/includes/css/map.css">
 	   <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
        <?PHP include('includes/js/map.js'); ?>
-       <script type="text/javascript" src="/sites/all/modules/jquery_update/replace/jquery/jquery.min.js?v=1.5.2"></script>
-       <script type="text/javascript" src="/includes/qTip2/jquery.qtip.min.js"></script>
-       <link rel="stylesheet" type="text/css" href="/includes/qTip2/jquery.qtip.min.css" />
-       <link rel="stylesheet" type="text/css" href="includes/css/jquery.qtip.css" />
+       <script type="text/javascript" src="http://griidc.tamucc.edu/sites/all/modules/jquery_update/replace/jquery/jquery.min.js?v=1.5.2"></script>
+       <script type="text/javascript" src="http://griidc.tamucc.edu/includes/qTip2/jquery.qtip.min.js"></script>
+       <link rel="stylesheet" type="text/css" href="http://griidc.tamucc.edu/includes/qTip2/jquery.qtip.min.css" />
+       <link rel="stylesheet" type="text/css" href="http://griidc.tamucc.edu/map/includes/css/jquery.qtip.css" />
 	   <script langauge="javascript">
             function post_value(){
                opener.document.ed.geoloc.value = document.frm.mc.value;
@@ -36,11 +36,16 @@
       }
       require_once 'config.php';
       $connection = pg_connect(GOMRI_DB_CONN_STRING) or die ("ERROR: " . pg_last_error($connection)); 
-      if (!$connection) { die("Error in connection: " . pg_last_error()); } 
-      $result3 = pg_exec($connection, "SELECT comments FROM form_info WHERE id=27");
-      if (!$result3) { die("Error in SQL query: " . pg_last_error()); } 
-      while($row = pg_fetch_row($result3)){$tip=$row[0];}
-      echo"	
+      if (!$connection) { die("Error in connection: " . pg_last_error()); } else{$h="DB OPEN";}
+      $result3 = pg_exec($connection, "SELECT comments FROM form_info WHERE id>=27 and id<=30  ORDER BY id ASC") ;
+      if (!$result3) { die("Error in SQL query: " . pg_last_error()); }
+      $build=array();	  
+      while($row = pg_fetch_row($result3)){array_push($build, $row[0]);}
+//      echo"	$build[0] <hr /> $build[1] <hr /> $build[2] <hr /> $build[3]"; exit(); 
+
+
+
+echo " 
        <script type=\"text/javascript\">
       $(document).ready(function()
       {
@@ -65,13 +70,9 @@
                           style: {
                       classes: \"ui-tooltip-shadow ui-tooltip-tipped\"
                       }
-                  });
-
-      	$('#something').qtip({
-            	content: {
-      		text: \"$tip\"
-      	}
-      });
+                  });";
+		  for($t=0;$t<4;$t++){ echo " $('#info$t').qtip({ content: { text: \"$build[$t]\" } });"; }
+               echo"
      });
  </script>";
 	   ?>
@@ -94,12 +95,12 @@
    <div id="presenter"> 
        <table width="95%" border=0><tr><td>
            <div class="topbutton cleair">
-               <table border=0 width="100%"><tr><td><div style="padding:7px 0px 0px 7px;"><strong>Tools:</strong></div></td><td><div style="float:right"><img id="something" src="/dif/images/info.png"></div></td></tr></table>
+               <table border=0 width="100%"><tr><td><div style="padding:7px 0px 0px 7px;"><strong>Tools:</strong></div></td><td><div style="float:right"><img id="info0" src="/dif/images/info.png"></div></td></tr></table>
                     <form id="tools" style="padding:0px;" action="./" method="post" onsubmit="return false">
 	  	        <table border=0 width="80%"><tr><td>
-		 	      <div class="topbutton"><input type="image" src="images/polygon_icon.png"  alt="Create a Polygon" onclick="toolID=parseInt(this.value);setTool();" value="2"/></div></td><td>
-                              <div class="topbutton"><input type="image" src="images/marker_icon.png"  alt="Create a Point" onclick="toolID=parseInt(this.value);setTool();" value="5"/></div></td><td>
-                              <div class="topbutton"><input type="image" src="images/clear_all.png"  alt="Clear the Map" onclick="toolID=parseInt(this.value);setTool();getfocus(this.value);"  value="5"/></div></td></tr>
+		 	      <div class="topbutton"><input type="image" src="images/polygon_icon.png"  id="info1" onclick="toolID=parseInt(this.value);setTool();" value="2"/></div></td><td>
+                              <div class="topbutton"><input type="image" src="images/marker_icon.png"  id="info2" onclick="toolID=parseInt(this.value);setTool();" value="5"/></div></td><td>
+                              <div class="topbutton"><input type="image" src="images/clear_all.png"  id="info3" onclick="toolID=parseInt(this.value);setTool();getfocus(this.value);"  value="5"/></div></td></tr>
                         </table>
                    </form>   
           </div>  
