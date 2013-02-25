@@ -15,6 +15,9 @@ $(document).ready(function() {
     $('#menu .overview').mutate('height', function(el,info) {
         $('#menu').tinyscrollbar_update('relative');
     });
+    $('#content .overview').mutate('height', function(el,info) {
+        $('#content').tinyscrollbar_update('relative');
+    });
     $('.thumb').mousedown(function() {
         $('body').addClass('noselect');
         document.getElementById('container').setAttribute('onselectstart','return false;');
@@ -60,7 +63,6 @@ function showProjects(by,id) {
                     classes: "ui-tooltip-shadow ui-tooltip-tipped"
                 }
             });
-            setTimeout(function () { jQuery('#content').tinyscrollbar_update('relative'); }, 200);
         }
     });
 }
