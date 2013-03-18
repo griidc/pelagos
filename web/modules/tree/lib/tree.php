@@ -80,9 +80,6 @@ function getConfig($app) {
 
 function getDatasetFilters($tree) {
     $filters = array();
-    if (isset($tree['filter'])) {
-        $filters[] = "filter=%$tree[filter]%";
-    }
     switch ($tree['include_datasets']) {
         case 'identified':
             $filters[] = 'status=2';
