@@ -128,7 +128,10 @@ JOIN
     (
         SELECT
             registry_id,
-            dataset_title || ' ' || dataset_abstract AS search_field
+                CASE WHEN dataset_udi IS NULL THEN substr(registry_id,1,16) ELSE dataset_udi END  || ' ' ||
+                dataset_title || ' ' ||
+                dataset_abstract
+            AS search_field
         FROM registry r3
         INNER JOIN
         (
