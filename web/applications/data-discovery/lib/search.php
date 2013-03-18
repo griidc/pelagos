@@ -38,10 +38,6 @@ function gen_uuid() {
     );
 }
 
-function sort_by_pi_year_title($a, $b) {
-    return strcmp($a['pi']['LastName'].$a['pi']['FirstName'].$a['year'].$a['title'], $b['pi']['LastName'].$b['pi']['FirstName'].$b['year'].$b['title']);
-}
-
 function add_download_size(&$dataset) {
     if ($dataset['dataset_download_size']) {
         $dataset['sizeMB'] = round($dataset['dataset_download_size'] / 1000 / 1000, 1);

@@ -65,57 +65,52 @@ $app->get('/', function () use ($app) {
 $app->get('/datasets/:filter/:by/:id', function ($filter,$by,$id) use ($app) {
     $stash = array();
     $stash['registered_datasets'] = array();
-    $stash['other_datasets'] = array();
     $stash['identified_datasets'] = array();
-    
-    if (empty($by) or $by == 'otherSources' or $by == 'otherSource') {
-        if ($by == 'otherSource') {
-            $other_datasets = get_registered_datasets(getDBH('GOMRI'),array("filter=%$filter%","registry_id=00.x$id%",'dataset_download_status=done'),'year,title');
+
+    if (empty($by)) {
+        $registered_datasets = get_registered_datasets(getDBH('GOMRI'),array('dataset_download_status=done'),$filter,'year DESC, title');
+    }
+    else {
+        if ($by == 'otherSources') {
+            $registered_datasets = get_registered_datasets(getDBH('GOMRI'),array('registry_id=00%','dataset_download_status=done'),$filter,'year DESC, title');
+        }
+        elseif ($by == 'otherSource') {
+            $registered_datasets = get_registered_datasets(getDBH('GOMRI'),array("registry_id=00.x$id%",'dataset_download_status=done'),$filter,'year DESC ,title');
         }
         else {
-            $other_datasets = get_registered_datasets(getDBH('GOMRI'),array("filter=%$filter%",'registry_id=00%','dataset_download_status=done'),'year,title');
-        }
-        foreach ($other_datasets as $dataset) {
-            add_download_size($dataset);
-            // hard-coded kluge for NODC data (needs refactoring once we have a table of organizations for other datasets)
-            if (preg_match('/^00.x000/',$dataset['registry_id'])) {
-                $dataset['organization'] = 'National Oceanographic Data Center';
+            if ($by != 'projectId') {
+                if ($by == 'YR1') {
+                    $filters = array("fundSrc>0","fundSrc<6");
+                }
+                else {
+                    $filters = array("$by=$id");
+                }
+                $projects = getProjectDetails(getDBH('RPIS'),$filters);
+                $projectIds = array();
+                foreach ($projects as $project) {
+                    $projectIds[] = $project['ID'];
+                }
+                $by = 'projectIds';
+                $id = implode(',', $projectIds);
             }
-            $stash['other_datasets'][] = $dataset;
+            $registered_datasets = get_registered_datasets(getDBH('GOMRI'),array("$by=$id",'registry_id!=00%','dataset_download_status=done'),$filter,'year DESC, title');
         }
     }
 
-    if ($by != 'otherSources' and $by != 'otherSource') {
-        if ($by != 'projectId') {
-            if ($by == 'YR1') {
-                $filters = array("fundSrc>0","fundSrc<6");
-            }
-            else {
-                $filters = array("$by=$id");
-            }
-            $projects = getProjectDetails(getDBH('RPIS'),$filters);
-            $projectIds = array();
-            foreach ($projects as $project) {
-                $projectIds[] = $project['ID'];
-            }
-            $by = 'projectIds';
-            $id = implode(',', $projectIds);
+    foreach ($registered_datasets as $dataset) {
+        add_download_size($dataset);
+        add_project_info($dataset);
+        // hard-coded kluge for NODC data (needs refactoring once we have a table of organizations for other datasets)
+        if (preg_match('/^00.x000/',$dataset['registry_id'])) {
+            $dataset['organization'] = 'National Oceanographic Data Center';
         }
+        $stash['registered_datasets'][] = $dataset;
+    }
 
-        $registered_datasets = get_registered_datasets(getDBH('GOMRI'),array("filter=%$filter%","$by=$id",'registry_id!=00%','dataset_download_status=done'));
-        foreach ($registered_datasets as $dataset) {
-            add_project_info($dataset);
-            add_download_size($dataset);
-            $stash['registered_datasets'][] = $dataset;
-        }
-
-        usort($stash['registered_datasets'],'sort_by_pi_year_title');
-
-        $identified_datasets = get_identified_datasets(getDBH('GOMRI'),array("filter=%$filter%","$by=$id",'registered=0','status=2'));
-        foreach ($identified_datasets as $dataset) {
-            add_project_info($dataset);
-            $stash['identified_datasets'][] = $dataset;
-        }
+    $identified_datasets = get_identified_datasets(getDBH('GOMRI'),array("$by=$id",'dataset_download_status!=done','status=2'),$filter,'title');
+    foreach ($identified_datasets as $dataset) {
+        add_project_info($dataset);
+        $stash['identified_datasets'][] = $dataset;
     }
 
     $app->render('html/datasets.html',$stash);
@@ -188,32 +183,17 @@ $app->get('/package/items', function () use ($app) {
 $app->get('/package/datasets/:udis', function ($udis) use ($app) {
     $stash = array();
     $stash['registered_datasets'] = array();
-    $stash['other_datasets'] = array();
 
-    $udi_list = preg_split('/,/',$udis);
-    $datasets_udis = implode(',',preg_grep('/^00/',$udi_list,PREG_GREP_INVERT));
-    $other_datasets_udis = implode(',',preg_grep('/^00/',$udi_list));
-
-    if ($datasets_udis != '') {
-        $datasets = get_registered_datasets(getDBH('GOMRI'),array("registry_ids=$datasets_udis"));
+    if ($udis != '') {
+        $datasets = get_registered_datasets(getDBH('GOMRI'),array("registry_ids=$udis"),'','year DESC, title');
         foreach ($datasets as $dataset) {
+            add_download_size($dataset);
             add_project_info($dataset);
-            add_download_size($dataset);
-            $stash['registered_datasets'][] = $dataset;
-        }
-    }
-
-    usort($stash['registered_datasets'],'sort_by_pi_year_title');
-
-    if ($other_datasets_udis != '') {
-        $other_datasets = get_registered_datasets(getDBH('GOMRI'),array("registry_ids=$other_datasets_udis"));
-        foreach ($other_datasets as $dataset) {
-            add_download_size($dataset);
             // hard-coded kluge for NODC data (needs refactoring once we have a table of organizations for other datasets)
             if (preg_match('/^00.x000/',$dataset['registry_id'])) {
                 $dataset['organization'] = 'National Oceanographic Data Center';
             }
-            $stash['other_datasets'][] = $dataset;
+            $stash['registered_datasets'][] = $dataset;
         }
     }
 
