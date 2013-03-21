@@ -256,6 +256,11 @@ function formDisabled($isDisabled)
             regbutton: 
             {
 				required: "#registry_id:minlength:15",
+            },
+            dataset_originator:
+            {
+                required: true,
+                maxlength: 200
             }
         },
         messages: {
@@ -299,6 +304,10 @@ function formDisabled($isDisabled)
             content: $("#abstract_tip")
         });
         
+        $("#qtip_dataset_originator").qtip({
+            content: $("#dataset_originator_tip")
+        });
+
         $("#qtip_poc").qtip({
             content: $("#poc_tip")
         });
@@ -479,6 +488,13 @@ function showDOIbutton(show)
     </p>
 </div>
 
+<div id="dataset_originator_tip" style="display:none;">
+    <img src="/dif/images/info.png" style="float:right;" />
+    <p>
+        <strong>Dataset Originator:</strong><p/><p>This is the person or organization that generated the dataset. It is preferable to specify an individual, rather than an organization, whenever possible. Please specify individuals using the following format: Lastname, Firstname</p><p>For multiple originators, please use the MLA citation style, eg.:</p><p>Two originators:<br/>Cross, Susan, and Christine Hoffman</p><p>Three originators:<br/>Lowi, Theodore, Benjamin Ginsberg, and Steve Jackson</p><p>More than three originators:<br/> Gilman, Sander, et al</p><br /><p>200 Characters Max</p>
+    </p>
+</div>
+
 <div id="poc_tip" style="display:none;">
     <img src="/dif/images/info.png" style="float:right;" />
     <p>
@@ -606,6 +622,14 @@ function showDOIbutton(show)
         </span>
         <label for="abstrct"><b>Dataset Abstract: </b></label>
         <textarea <?php formDisabled($formDisabled)?> name="abstrct" id="abstrct" rows="5" cols="100"><?php if (isset($row['abstract'])) {echo $row['abstract'];};?></textarea> 
+    </fieldset></p>
+
+    <p><fieldset>
+        <span id="qtip_dataset_originator" style="float:right;">
+            <img src="/dif/images/info.png">
+        </span>
+        <label for="dataset_originator"><b>Dataset Originator: </b></label>
+        <input <?php formDisabled($formDisabled)?> type="text" name="dataset_originator" id="dataset_originator" size="120" value="<?php if (isset($row['dataset_originator'])) {echo $row['dataset_originator'];};?>"/>
     </fieldset></p>
     
     <p><fieldset>

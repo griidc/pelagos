@@ -121,7 +121,7 @@ if ($_POST)
         $reg_id = $udi.'.'.$newsub;    
     }
             
-    if ($title == "" OR $abstrct == "" OR $pocemail == "" OR $pocname == "")
+    if ($title == "" OR $abstrct == "" OR $pocemail == "" OR $pocname == "" OR $dataset_originator == "")
     {
         $dMessage = 'Not all required fields where filled out!';
         drupal_set_message($dMessage,'warning');
@@ -142,12 +142,12 @@ if ($_POST)
             (
                 registry_id, data_server_type, dataset_udi, dataset_title, dataset_abstract, dataset_poc_name, dataset_poc_email, url_data, url_metadata, 
                 username, password, availability_date,authentication,access_status,access_period,access_period_start,access_period_weekdays,
-                data_source_pull,doi,generatedoi,submittimestamp,userid
+                data_source_pull,doi,generatedoi,submittimestamp,userid,dataset_originator
             ) 
             VALUES 
             (
                 '$reg_id','$servertype','$udi','$title', '$abstrct', '$pocname', '$pocemail', '$dataurl', '$metadataurl', '$uname', '$pword','$availdate','$auth', 
-                '$avail', '$whendl','$dlstart$timezone','$weekdayslst','$pullds', '$doi','$generatedoi','$now','$uid'
+                '$avail', '$whendl','$dlstart$timezone','$weekdayslst','$pullds', '$doi','$generatedoi','$now','$uid','$dataset_originator'
             );";
         }
         
@@ -156,12 +156,12 @@ if ($_POST)
             $query = "INSERT INTO registry 
             (
             registry_id, data_server_type, dataset_udi, dataset_title, dataset_abstract, dataset_poc_name, dataset_poc_email, url_data, url_metadata, 
-            access_status,data_source_pull,doi,generatedoi,submittimestamp,userid
+            access_status,data_source_pull,doi,generatedoi,submittimestamp,userid,dataset_originator
             ) 
             VALUES 
             (
             '$reg_id','$servertype','$udi','$title', '$abstrct', '$pocname', '$pocemail', '$sshdatapath', '$sshmetadatapath', 
-            '$sshavail', 'Yes', '$sshdoi','$sshgeneratedoi','$now','$uid'
+            '$sshavail', 'Yes', '$sshdoi','$sshgeneratedoi','$now','$uid','$dataset_originator'
             );"; 
             $dataurl = $sshdatapath;
             $metadataurl = $sshmetadatapath;
