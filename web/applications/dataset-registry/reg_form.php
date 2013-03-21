@@ -14,9 +14,12 @@ drupal_add_library('system', 'ui.tabs');
 //',array('type'=>'inline'));
 
 $tabselect = 0;
+$formDisabled = true;
 
 if (isset($dif_id))
 {
+	$formDisabled = false;
+	
     $query = 'select * from datasets where dataset_uid='.$dif_id;
 
     $row = pdoDBQuery($conn,$query);
@@ -175,6 +178,14 @@ function isChecked($row,$index,$compare=null)
             echo 'checked';
         }
     }
+}
+
+function formDisabled($isDisabled)
+{
+	if ($isDisabled)
+	{
+		echo 'disabled';
+	}
 }
 
 ?>
@@ -586,7 +597,7 @@ function showDOIbutton(show)
             <img src="/dif/images/info.png">
         </span>
         <label for="title"><b>Dataset Title: </b></label>
-        <input onchange="checkDOIFields();" type="text" name="title" id="title" size="120" value="<?php if (isset($row['title'])) {echo $row['title'];};?>"/>
+        <input <?php formDisabled($formDisabled)?> onchange="checkDOIFields();" type="text" name="title" id="title" size="120" value="<?php if (isset($row['title'])) {echo $row['title'];};?>"/>
     </fieldset></p>
     
     <p><fieldset>
@@ -594,7 +605,7 @@ function showDOIbutton(show)
             <img src="/dif/images/info.png">
         </span>
         <label for="abstrct"><b>Dataset Abstract: </b></label>
-        <textarea name="abstrct" id="abstrct" rows="5" cols="100"><?php if (isset($row['abstract'])) {echo $row['abstract'];};?></textarea> 
+        <textarea <?php formDisabled($formDisabled)?> name="abstrct" id="abstrct" rows="5" cols="100"><?php if (isset($row['abstract'])) {echo $row['abstract'];};?></textarea> 
     </fieldset></p>
     
     <p><fieldset>
@@ -605,7 +616,7 @@ function showDOIbutton(show)
                 <img src="/dif/images/info.png">
             </span>
             <label for="pocname"><b>Name: </b></label>
-            <input onchange="checkDOIFields();" type="text" name="pocname" id="pocname" size="60" value="<?php if (isset($row['primary_poc'])) {echo $row['primary_poc'];};?>">
+            <input <?php formDisabled($formDisabled)?> onchange="checkDOIFields();" type="text" name="pocname" id="pocname" size="60" value="<?php if (isset($row['primary_poc'])) {echo $row['primary_poc'];};?>">
         
         </td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
         
@@ -613,7 +624,7 @@ function showDOIbutton(show)
                 <img src="/dif/images/info.png">
             </span>
             <label for="pocemail"><b>E-Mail: </b></label>
-            <input type="text" name="pocemail" id="pocemail" size="60" value="<?php echo $poc_email;?>">
+            <input <?php formDisabled($formDisabled)?> type="text" name="pocemail" id="pocemail" size="60" value="<?php echo $poc_email;?>">
         
         </td></tr></table>
     </fieldset></p>
@@ -649,14 +660,14 @@ function showDOIbutton(show)
                     <img src="/dif/images/info.png">
                 </span>
                 <label for="dataurl">Dataset URL:</label>
-                <input onchange="checkDOIFields();" name="dataurl" id="dataurl" type="text" size="120" value="<?php if (isset($row['url_data'])) {echo $row['url_data'];};?>"/>
+                <input <?php formDisabled($formDisabled)?> onchange="checkDOIFields();" name="dataurl" id="dataurl" type="text" size="120" value="<?php if (isset($row['url_data'])) {echo $row['url_data'];};?>"/>
             </p>
             <p>
                 <span id="qtip_metadataurl" style="float:right;">
                     <img src="/dif/images/info.png">
                 </span>
                 <label for="metadataurl">Metadata URL:</label>
-                <input name="metadataurl" id="metadataurl" type="text" size="120" value="<?php if (isset($row['url_metadata'])) {echo $row['url_metadata'];};?>"/>
+                <input <?php formDisabled($formDisabled)?> name="metadataurl" id="metadataurl" type="text" size="120" value="<?php if (isset($row['url_metadata'])) {echo $row['url_metadata'];};?>"/>
             </p>
             </fieldset>
             
@@ -667,8 +678,8 @@ function showDOIbutton(show)
                     <img src="/dif/images/info.png">
                 </span>
                 <label for="auth">Requires Authentication:</label>
-                <input <?PHP if (isset($row['authentication'])){isChecked($row['authentication'],0,true);};?> onclick="showCreds(this,'creds','Yes');" name="auth" id="auth" type="radio" value="Yes"/>Yes
-                <input <?PHP if (isset($row['authentication'])){isChecked($row['authentication'],0,false);}; if(!isset($_GET['regid'])){echo 'checked';};?> onclick="showCreds(this,'creds','Yes');" name="auth" id="auth" type="radio" value="No"/>No
+                <input <?php formDisabled($formDisabled)?> <?PHP if (isset($row['authentication'])){isChecked($row['authentication'],0,true);};?> onclick="showCreds(this,'creds','Yes');" name="auth" id="auth" type="radio" value="Yes"/>Yes
+                <input <?php formDisabled($formDisabled)?> <?PHP if (isset($row['authentication'])){isChecked($row['authentication'],0,false);}; if(!isset($_GET['regid'])){echo 'checked';};?> onclick="showCreds(this,'creds','Yes');" name="auth" id="auth" type="radio" value="No"/>No
             </p>
             </fieldset>
             </td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
@@ -678,8 +689,8 @@ function showDOIbutton(show)
                         <img src="/dif/images/info.png">
                     </span>
                     <label for="pullds">Pull Source Data:</label>
-                    <input <?PHP if (isset($row['data_source_pull'])){isChecked($row['data_source_pull'],0,true);}; if(!isset($_GET['regid'])){echo 'checked';};?>  onclick="showCreds(this,'pulldiv','No');" onchange="showDOIbutton(this);" name="pullds" id="pullds" type="radio" value="Yes"/>Yes
-                    <input <?PHP if (isset($row['data_source_pull'])){isChecked($row['data_source_pull'],0,false);};?> onclick="showCreds(this,'pulldiv','No');" onchange="showDOIbutton(this);" name="pullds" id="pullds" type="radio" value="No"/>No
+                    <input <?php formDisabled($formDisabled)?> <?PHP if (isset($row['data_source_pull'])){isChecked($row['data_source_pull'],0,true);}; if(!isset($_GET['regid'])){echo 'checked';};?>  onclick="showCreds(this,'pulldiv','No');" onchange="showDOIbutton(this);" name="pullds" id="pullds" type="radio" value="Yes"/>Yes
+                    <input <?php formDisabled($formDisabled)?> <?PHP if (isset($row['data_source_pull'])){isChecked($row['data_source_pull'],0,false);};?> onclick="showCreds(this,'pulldiv','No');" onchange="showDOIbutton(this);" name="pullds" id="pullds" type="radio" value="No"/>No
                 </p>
             
             </fieldset>
@@ -690,8 +701,8 @@ function showDOIbutton(show)
                         <img src="/dif/images/info.png">
                     </span>
                     <label for="whendl">Download Certain Times Only</label>
-                    <input <?PHP if (isset($row['access_period'])){isChecked($row['access_period'],0,true);};?> onclick="showCreds(this,'whendiv','Yes');getTimeZone();weekDays();" name="whendl" id="whendl" type="radio" value="Yes"/>Yes
-                    <input <?PHP if (isset($row['access_period'])){isChecked($row['access_period'],0,false);}; if(!isset($_GET['regid'])){echo 'checked';};?> onclick="showCreds(this,'whendiv','Yes');getTimeZone();weekDays();" name="whendl" id="whendl" type="radio" value="No"/>No
+                    <input <?php formDisabled($formDisabled)?> <?PHP if (isset($row['access_period'])){isChecked($row['access_period'],0,true);};?> onclick="showCreds(this,'whendiv','Yes');getTimeZone();weekDays();" name="whendl" id="whendl" type="radio" value="Yes"/>Yes
+                    <input <?php formDisabled($formDisabled)?> <?PHP if (isset($row['access_period'])){isChecked($row['access_period'],0,false);}; if(!isset($_GET['regid'])){echo 'checked';};?> onclick="showCreds(this,'whendiv','Yes');getTimeZone();weekDays();" name="whendl" id="whendl" type="radio" value="No"/>No
                 </p>
             </fieldset>
            </td></tr></table>
@@ -756,7 +767,7 @@ function showDOIbutton(show)
                 <img src="/dif/images/info.png">
             </span>
             <label for="availdate">Availability Date:</label>
-            <input onchange="checkDOIFields();" value="<?php if (isset($row['availability_date'])) {echo $row['availability_date'];};?>" type="text" name="availdate" id="availdate" size="40"/>
+            <input <?php formDisabled($formDisabled)?> onchange="checkDOIFields();" value="<?php if (isset($row['availability_date'])) {echo $row['availability_date'];};?>" type="text" name="availdate" id="availdate" size="40"/>
             <br />
         </fieldset>
         </td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
@@ -765,9 +776,9 @@ function showDOIbutton(show)
                     <img src="/dif/images/info.png">
                 </span>
                 <label for="avail">Restrictions:</label>
-                    <input <?PHP if (isset($row['access_status'])){isChecked($row['access_status'],0,"None");}; if(!isset($_GET['regid'])){echo 'checked';};?> name="avail" id="avail" type="radio" value="None"/>None
-                    <input <?PHP if (isset($row['access_period'])){isChecked($row['access_status'],0,"Approval");};?>  name="avail" id="avail" type="radio" value="Approval"/>Requires Author&apos;s Approval
-                    <input <?PHP if (isset($row['access_period'])){isChecked($row['access_status'],0,"Restricted");};?>  name="avail" id="avail" type="radio" value="Restricted"/>Restricted
+                    <input <?php formDisabled($formDisabled)?> <?PHP if (isset($row['access_status'])){isChecked($row['access_status'],0,"None");}; if(!isset($_GET['regid'])){echo 'checked';};?> name="avail" id="avail" type="radio" value="None"/>None
+                    <input <?php formDisabled($formDisabled)?> <?PHP if (isset($row['access_period'])){isChecked($row['access_status'],0,"Approval");};?>  name="avail" id="avail" type="radio" value="Approval"/>Requires Author&apos;s Approval
+                    <input <?php formDisabled($formDisabled)?> <?PHP if (isset($row['access_period'])){isChecked($row['access_status'],0,"Restricted");};?>  name="avail" id="avail" type="radio" value="Restricted"/>Restricted
                 <br />
             </fieldset>
         </td></tr></table>
@@ -780,7 +791,7 @@ function showDOIbutton(show)
             <label for="doi">Digital Object Identifier:</label>
             <input disabled type="text" name="doi" id="doi" size="60"/ value="<?php if (isset($row['doi'])) {echo $row['doi'];};?>">&nbsp;&nbsp;&nbsp;&nbsp;
             <span style="display:none" id="doibuttondiv"><button disabled  id="doibutton" name="doibutton" type="button" onclick="checkDOIFields(true);">Digital Object Indentifier Request Form</button></span>
-            <span id="generatedoidiv"><input checked onchange="document.getElementById('doi').disabled=this.checked;" type="checkbox" name="generatedoi" id="generatedoi">Auto-Generate DOI when data is available</span>
+            <span id="generatedoidiv"><input <?php formDisabled($formDisabled)?> checked onchange="document.getElementById('doi').disabled=this.checked;" type="checkbox" name="generatedoi" id="generatedoi">Auto-Generate DOI when data is available</span>
         </fieldset> 
         
     </div>
@@ -794,7 +805,7 @@ function showDOIbutton(show)
                 <img src="/dif/images/info.png">
             </span>
             <label for="sshdatapath">Dataset File Path:</label>
-            <input name="sshdatapath" id="sshdatapath" type="text" size="120" value="<?php if (isset($row['url_data'])) {echo $row['url_data'];};?>"/>
+            <input <?php formDisabled($formDisabled)?> name="sshdatapath" id="sshdatapath" type="text" size="120" value="<?php if (isset($row['url_data'])) {echo $row['url_data'];};?>"/>
         </p>
         
             <p>
@@ -802,7 +813,7 @@ function showDOIbutton(show)
                     <img src="/dif/images/info.png">
                 </span>
                 <label for="sshmetadatapath">Metadata File Path:</label>
-                <input name="sshmetadatapath" id="sshmetadatapath" type="text" size="120" value="<?php if (isset($row['url_metadata'])) {echo $row['url_metadata'];};?>"/>
+                <input <?php formDisabled($formDisabled)?> name="sshmetadatapath" id="sshmetadatapath" type="text" size="120" value="<?php if (isset($row['url_metadata'])) {echo $row['url_metadata'];};?>"/>
             </p>
          </fieldset> 
          
@@ -812,9 +823,9 @@ function showDOIbutton(show)
                 <img src="/dif/images/info.png">
             </span>
             <label for="avail">Restrictions:</label>
-            <input checked <?PHP if (isset($row['access_status'])){isChecked($row['access_status'],0,"None");}; if(!isset($_GET['regid'])){echo 'checked';};?> name="sshavail" id="sshavail" type="radio" value="None"/>None
-            <input <?PHP if (isset($row['access_status'])){isChecked($row['access_status'],0,"Approval");};?>  name="sshavail" id="sshavail" type="radio" value="Approval"/>Requires Author&apos;s Approval
-            <input <?PHP if (isset($row['access_status'])){isChecked($row['access_status'],0,"Restricted");};?>  name="sshavail" id="sshavail" type="radio" value="Restricted"/>Restricted
+            <input <?php formDisabled($formDisabled)?> checked <?PHP if (isset($row['access_status'])){isChecked($row['access_status'],0,"None");}; if(!isset($_GET['regid'])){echo 'checked';};?> name="sshavail" id="sshavail" type="radio" value="None"/>None
+            <input <?php formDisabled($formDisabled)?> <?PHP if (isset($row['access_status'])){isChecked($row['access_status'],0,"Approval");};?>  name="sshavail" id="sshavail" type="radio" value="Approval"/>Requires Author&apos;s Approval
+            <input <?php formDisabled($formDisabled)?> <?PHP if (isset($row['access_status'])){isChecked($row['access_status'],0,"Restricted");};?>  name="sshavail" id="sshavail" type="radio" value="Restricted"/>Restricted
             <br />
         </fieldset>
     
@@ -825,7 +836,10 @@ function showDOIbutton(show)
             </span>
             <label for="sshdoi">Digital Object Identifier:</label>
             <input disabled type="text" name="sshdoi" id="sshdoi" size="60"/ value="<?php if (isset($row['doi'])) {echo $row['doi'];};?>">&nbsp;&nbsp;&nbsp;&nbsp;
-            <span id="generatedoidiv"><input checked onchange="document.getElementById('sshdoi').disabled=this.checked;" type="checkbox" name="sshgeneratedoi" id="sshgeneratedoi">Auto-Generate DOI when data is available</span>
+            <span id="generatedoidiv">
+				<input <?php formDisabled($formDisabled)?> checked onchange="document.getElementById('sshdoi').disabled=this.checked;" type="checkbox" name="sshgeneratedoi" id="sshgeneratedoi">
+					Auto-Generate DOI when data is available
+			</span>
         </fieldset> 
     </div>
     
@@ -836,7 +850,7 @@ function showDOIbutton(show)
     <input type="hidden" name="timezone" id="timezone"/>
     <input type="hidden" name="servertype" id="servertype" value="<?php if ($tabselect==0){echo 'HTTP';};if ($tabselect==1){echo 'SFTP';};?>"/>
    
-    <input onclick="weekDays();getTimeZone();" type="submit" value="Submit"/>
+    <input <?php formDisabled($formDisabled)?> onclick="weekDays();getTimeZone();" type="submit" value="Submit"/>
 </form>  
 
 </div>
