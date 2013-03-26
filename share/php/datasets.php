@@ -47,6 +47,7 @@ $GLOBALS['REGISTRY_FIELDS'] = array(
     "r.dataset_metadata metadata_filename",
     "r.dataset_download_error_log",
     "r.dataset_download_status",
+    "r.dataset_originator",
     "to_char(r.submittimestamp,'YYYY') as year"
 );
 
@@ -111,8 +112,21 @@ JOIN
     (
         SELECT
             dataset_uid,
-            title || ' ' || abstract AS search_field
+                d3.dataset_udi || ' ' ||
+                title || ' ' ||
+                abstract || ' ' ||
+                CASE WHEN dataset_originator IS NULL THEN '' ELSE dataset_originator END AS search_field
         FROM datasets d3
+        LEFT JOIN (
+            registry r4
+            INNER JOIN (
+                SELECT MAX(registry_id) AS MaxID
+                FROM registry
+                GROUP BY dataset_udi
+            ) m
+        ON r4.registry_id = m.MaxID
+        ) r3
+        ON r3.dataset_udi = d3.dataset_udi
     ) AS d2
 
     JOIN search_temp ON d2.search_field ~* ('\\y' || search_temp.search_word || '\\y')
@@ -130,7 +144,9 @@ JOIN
             registry_id,
                 CASE WHEN dataset_udi IS NULL THEN substr(registry_id,1,16) ELSE dataset_udi END  || ' ' ||
                 dataset_title || ' ' ||
-                dataset_abstract
+                dataset_abstract || ' ' ||
+                dataset_originator || ' ' ||
+                to_char(submittimestamp,'YYYY')
             AS search_field
         FROM registry r3
         INNER JOIN
