@@ -10,3 +10,7 @@ password = "password"
 connstr = "mysql:host=localhost;dbname=gomri_rpis;"
 username = "username"
 password = "password"
+
+[DataDiscovery]
+registeredOrderBy = "year DESC, dataset_originator, title"
+identifiedOrderBy = "title"

@@ -68,14 +68,14 @@ $app->get('/datasets/:filter/:by/:id', function ($filter,$by,$id) use ($app) {
     $stash['identified_datasets'] = array();
 
     if (empty($by)) {
-        $registered_datasets = get_registered_datasets(getDBH('GOMRI'),array('dataset_download_status=done'),$filter,'year DESC, title');
+        $registered_datasets = get_registered_datasets(getDBH('GOMRI'),array('dataset_download_status=done'),$filter,$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
     }
     else {
         if ($by == 'otherSources') {
-            $registered_datasets = get_registered_datasets(getDBH('GOMRI'),array('registry_id=00%','dataset_download_status=done'),$filter,'year DESC, title');
+            $registered_datasets = get_registered_datasets(getDBH('GOMRI'),array('registry_id=00%','dataset_download_status=done'),$filter,$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
         }
         elseif ($by == 'otherSource') {
-            $registered_datasets = get_registered_datasets(getDBH('GOMRI'),array("registry_id=00.x$id%",'dataset_download_status=done'),$filter,'year DESC ,title');
+            $registered_datasets = get_registered_datasets(getDBH('GOMRI'),array("registry_id=00.x$id%",'dataset_download_status=done'),$filter,$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
         }
         else {
             if ($by != 'projectId') {
@@ -93,21 +93,17 @@ $app->get('/datasets/:filter/:by/:id', function ($filter,$by,$id) use ($app) {
                 $by = 'projectIds';
                 $id = implode(',', $projectIds);
             }
-            $registered_datasets = get_registered_datasets(getDBH('GOMRI'),array("$by=$id",'registry_id!=00%','dataset_download_status=done'),$filter,'year DESC, title');
+            $registered_datasets = get_registered_datasets(getDBH('GOMRI'),array("$by=$id",'registry_id!=00%','dataset_download_status=done'),$filter,$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
         }
     }
 
     foreach ($registered_datasets as $dataset) {
         add_download_size($dataset);
         add_project_info($dataset);
-        // hard-coded kluge for NODC data (needs refactoring once we have a table of organizations for other datasets)
-        if (preg_match('/^00.x000/',$dataset['registry_id'])) {
-            $dataset['organization'] = 'National Oceanographic Data Center';
-        }
         $stash['registered_datasets'][] = $dataset;
     }
 
-    $identified_datasets = get_identified_datasets(getDBH('GOMRI'),array("$by=$id",'dataset_download_status!=done','status=2'),$filter,'title');
+    $identified_datasets = get_identified_datasets(getDBH('GOMRI'),array("$by=$id",'dataset_download_status!=done','status=2'),$filter,$GLOBALS['config']['DataDiscovery']['identifiedOrderBy']);
     foreach ($identified_datasets as $dataset) {
         add_project_info($dataset);
         $stash['identified_datasets'][] = $dataset;
@@ -185,14 +181,10 @@ $app->get('/package/datasets/:udis', function ($udis) use ($app) {
     $stash['registered_datasets'] = array();
 
     if ($udis != '') {
-        $datasets = get_registered_datasets(getDBH('GOMRI'),array("registry_ids=$udis"),'','year DESC, title');
+        $datasets = get_registered_datasets(getDBH('GOMRI'),array("registry_ids=$udis"),'',$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
         foreach ($datasets as $dataset) {
             add_download_size($dataset);
             add_project_info($dataset);
-            // hard-coded kluge for NODC data (needs refactoring once we have a table of organizations for other datasets)
-            if (preg_match('/^00.x000/',$dataset['registry_id'])) {
-                $dataset['organization'] = 'National Oceanographic Data Center';
-            }
             $stash['registered_datasets'][] = $dataset;
         }
     }

@@ -16,11 +16,7 @@ Datasets Available at GRIIDC
                 {% if not uid %} style="visibility: hidden;"{% endif %}>
         </td>
         <td>
-            {% if dataset.pi %}
-                {{dataset.pi.LastName | trim}}, {{dataset.pi.FirstName | trim}}, et al.
-            {% else %}
-                {{dataset.organization}}.
-            {% endif %}
+            {{dataset.dataset_originator}}.
             {{dataset.year}}.
             <a href="javascript:showDatasetDetails('{{dataset.udi}}');">{{dataset.title}}</a>.
             {% if dataset.project %}

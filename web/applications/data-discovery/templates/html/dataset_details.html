@@ -1,6 +1,17 @@
 {% for dataset in datasets %}
     <div class="attr"><span class="attr">Dataset Title:</span> {{dataset.title}}</div>
     <div class="attr"><span class="attr">UDI:</span> {{dataset.udi}}</div>
+{% if dataset.dataset_originator %}
+    <div class="attr"><span class="attr">Dataset Originator:</span> {{dataset.dataset_originator}}</div>
+{% endif %}
+{% if dataset.dataset_poc_name %}
+    <div class="attr">
+        <span class="attr">Point of Contact:</span> {{dataset.dataset_poc_name}}
+{% if dataset.dataset_poc_email %}
+        (<a href="mailto:dataset.dataset_poc_email">{{dataset.dataset_poc_email}}</a>)
+{% endif %}
+    </div>
+{% endif %}
     <div class="abstract">
         <div><span class="attr">Abstract:</span></div>
         <div>{{dataset.abstract}}</div>
