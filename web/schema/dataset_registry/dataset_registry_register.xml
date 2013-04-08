@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset_registry xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://data.gulfresearchinitiative.org/schema/dataset_registry/dataset_registry.xsd">
+    <entry>
+        <registration_user id="1"/>
+        <dataset>
+            <source type="gomri">
+                <funding_cycle reference="R01">
+                    <project sequence="1">
+                        <task sequence="1">
+                            <dif sequence="1"/>
+                            <originator id="2"/>
+                            <point_of_contact id="3"/>
+                        </task>
+                    </project>
+                </funding_cycle>
+            </source>
+            <title>My Dataset Title</title>
+            <abstract>My Dataset Abstract</abstract>
+            <doi autogenerate="true"/>
+        </dataset>
+        <access_control restricted="true">
+            <authorized_users>
+                <user id="4"/>
+                <user id="5"/>
+                <user id="6"/>
+            </authorized_users>
+        </access_control>
+        <transport method="http" pull="true">
+            <data_url>http://www.myserver.org/path/to/data_file</data_url>
+            <metadata_url>http://www.myserver.org/path/to/metadata_file</metadata_url>
+            <pull>
+                <available_date>2013-03-28</available_date>
+                <start_time>01:00:00-06:00</start_time>
+                <start_days>
+                    <Monday pull="false"/>
+                    <Tuesday pull="false"/>
+                    <Wednesday pull="false"/>
+                    <Thursday pull="false"/>
+                    <Friday pull="false"/>
+                    <Saturday pull="true"/>
+                    <Sunday pull="true"/>
+                </start_days>
+            </pull>
+        </transport>
+    </entry>
+</dataset_registry>
