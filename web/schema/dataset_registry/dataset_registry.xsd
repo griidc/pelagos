@@ -247,7 +247,7 @@
                 <xs:element ref="metadata_url"/>
                 <xs:element ref="pull" minOccurs="0"/>
             </xs:sequence>
-            <xs:attribute name="method" use="required" type="xs:NCName">
+            <xs:attribute name="method" use="required" type="transport_method_TYPE">
                 <xs:annotation>
                     <xs:documentation>This is the method that will be used for transport, e.g., http, ftp, sftp, etc.</xs:documentation>
                 </xs:annotation>
@@ -259,6 +259,18 @@
             </xs:attribute>
         </xs:complexType>
     </xs:element>
+    <xs:simpleType name="transport_method_TYPE">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="http"/>
+            <xs:enumeration value="ftp"/>
+            <xs:enumeration value="sftp"/>
+            <!--
+            these methods are not yet available
+            <xs:enumeration value="tds"/>
+            <xs:enumeration value="erdap"/>
+            -->
+        </xs:restriction>
+    </xs:simpleType>
     <xs:element name="data_url" type="xs:anyURI">
         <xs:annotation>
             <xs:documentation>This is the URL pointing to the data file for this dataset. For "push" methods, this is a file URL (e.g. file:///sftp/path/to/data/file).</xs:documentation>
