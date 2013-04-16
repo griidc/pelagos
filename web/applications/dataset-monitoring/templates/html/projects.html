@@ -40,7 +40,7 @@
     </div>
     {% for task in project.tasks %}
         <div class="task">
-            <div class="task-title">{{task.Title}}</div>
+            <div class="task-title">{{task.SubTaskNum}}. {{task.Title}}</div>
             <div class="task-container">
                 {% if task.datasets %}
                     {% set datasets = task.datasets %}
