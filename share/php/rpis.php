@@ -79,7 +79,8 @@ function getTaskDetails($dbh, $filters = array()) {
                pj.Project_ID as ID,
                pj.Project_Title as Title,
                pj.Project_Abstract as Abstract,
-               pj.Program_ID as Project_ID';
+               pj.Program_ID as Project_ID,
+               pj.Project_SubTaskNum as SubTaskNum';
 
     $FROM = 'FROM Projects pj
              LEFT OUTER JOIN ProjPeople pp ON pp.Project_ID = pj.Project_ID';
@@ -102,7 +103,7 @@ function getTaskDetails($dbh, $filters = array()) {
         }
     }
 
-    $stmt = $dbh->prepare("$SELECT $FROM $WHERE ORDER BY Title;");
+    $stmt = $dbh->prepare("$SELECT $FROM $WHERE ORDER BY SubTaskNum;");
     $stmt->execute();
     $tasks = $stmt->fetchAll();
 
