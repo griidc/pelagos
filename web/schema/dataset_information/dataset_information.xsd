@@ -13,6 +13,17 @@
     </xs:element>
     <xs:element name="entry">
         <xs:annotation>
+            <xs:documentation>This element represents a set of dataset information entries.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="dif"/>
+            </xs:sequence>
+            <xs:attribute name="id" use="optional" type="xs:NMTOKEN"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="dif">
+        <xs:annotation>
             <xs:documentation>This element represents one dataset information entry.</xs:documentation>
         </xs:annotation>
         <xs:complexType>
