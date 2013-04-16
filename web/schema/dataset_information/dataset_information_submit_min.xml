@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<dataset_information xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="dataset_information.xsd">
+<dataset_information xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://data.gulfresearchinitiative.org/schema/dataset_information/dataset_information.xsd">
     <entry>
         <dif_user id="1"/>
         <funding_cycle reference="R01">
