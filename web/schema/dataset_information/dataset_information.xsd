@@ -40,14 +40,25 @@
             <xs:attribute name="sequence" use="optional" type="xs:integer"/>
         </xs:complexType>
     </xs:element>
-    <xs:element name="dif_user">
+    <xs:element name="dif_user" type="user_TYPE">
         <xs:annotation>
             <xs:documentation>This is the user who is taking responsibility for this dataset information entry. This is not necessarily the owner or originator of the dataset, but the individual responsible for identifying the dataset to GRIIDC.</xs:documentation>
         </xs:annotation>
-        <xs:complexType>
-            <xs:attribute name="id" use="required" type="xs:integer"/>
-        </xs:complexType>
     </xs:element>
+    <xs:complexType name="user_TYPE">
+        <xs:annotation>
+            <xs:documentation>Additional identifying information (e.g. first and last name) may be included within the element, but the id attribute is what will be used to identify the user.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="id" use="required" type="xs:positiveInteger">
+                    <xs:annotation>
+                        <xs:documentation>This is the user's id number from RPIS.</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
     <xs:element name="funding_cycle">
         <xs:annotation>
             <xs:documentation>This element represents a funding cycle, e.g. RFPI, RFPII, etc.</xs:documentation>
@@ -115,21 +126,15 @@
             </xs:restriction>
         </xs:simpleType>
     </xs:element>
-    <xs:element name="primary_point_of_contact">
+    <xs:element name="primary_point_of_contact" type="user_TYPE">
         <xs:annotation>
             <xs:documentation>This is the individual who will serve as the primary point of contact for requests for information about this dataset.</xs:documentation>
         </xs:annotation>
-        <xs:complexType>
-            <xs:attribute name="id" use="required" type="xs:integer"/>
-        </xs:complexType>
     </xs:element>
-    <xs:element name="secondary_point_of_contact">
+    <xs:element name="secondary_point_of_contact" type="user_TYPE">
         <xs:annotation>
             <xs:documentation>This is the individual who will serve as an alternate point of contact for requests for information about this dataset.</xs:documentation>
         </xs:annotation>
-        <xs:complexType>
-            <xs:attribute name="id" use="required" type="xs:integer"/>
-        </xs:complexType>
     </xs:element>
     <xs:element name="format">
         <xs:annotation>
