@@ -195,6 +195,7 @@ function formDisabled($isDisabled)
     $(function() {
         $( "#tabs" ).tabs({
             heightStyleType: "fill",
+            disabled: [2,3,4],
             selected: <?php echo $tabselect;?>
         });
         
@@ -464,7 +465,41 @@ function showDOIbutton(show)
     }
 }
 
+function fileBrowser(type,dir)
+{
+    jQuery.ajax({
+        "url": "/file_browser?type=" + type + "&dir=" + dir,
+        "success": function(data) {
+            jQuery("#fileBrowser").html(data);
+            jQuery("#fileBrowser").show();
+        }
+    });
+}
+
+function setPath(type,path)
+{
+    jQuery("#ssh" + type + "path").val("file://" + path);
+}
+
 </script>
+
+<style>
+#fileBrowser {
+    display: none;
+    position: fixed;
+    width: 600px;
+    height: 400px;
+    top: 50%;
+    left: 50%;
+    margin-left: -300px;
+    margin-top: -200px;
+    z-index: 1000;
+    border: 1px solid black;
+    background-color: white;
+}
+</style>
+
+<div id="fileBrowser"></div>
 
 <div id="regid_tip" style="display:none;">
     <img src="/dif/images/info.png" style="float:right;" />
@@ -672,9 +707,9 @@ function showDOIbutton(show)
         <ul>
             <li><a onclick="document.getElementById('servertype').value='HTTP'" href="#tabs-1">HTTP/FTP Server</a></li>
             <li><a onclick="document.getElementById('servertype').value='SFTP'" href="#tabs-2">SFTP</a></li>
-            <li><a href="">TDS</a></li>
-            <li><a href="">ERDDAP</a></li>
-            <li><a href="">...</a></li>
+            <li><a href="#tabs-3">TDS</a></li>
+            <li><a href="#tabs-4">ERDDAP</a></li>
+            <li><a href="#tabs-5">...</a></li>
         </ul>
         
       <div id="tabs-1">  
@@ -830,6 +865,7 @@ function showDOIbutton(show)
             </span>
             <label for="sshdatapath">Dataset File Path:</label>
             <input <?php formDisabled($formDisabled)?> name="sshdatapath" id="sshdatapath" type="text" size="120" value="<?php if (isset($row['url_data'])) {echo $row['url_data'];};?>"/>
+            <input type="button" value="Browse..." onclick="fileBrowser('data','%home%');">
         </p>
         
             <p>
@@ -838,6 +874,7 @@ function showDOIbutton(show)
                 </span>
                 <label for="sshmetadatapath">Metadata File Path:</label>
                 <input <?php formDisabled($formDisabled)?> name="sshmetadatapath" id="sshmetadatapath" type="text" size="120" value="<?php if (isset($row['url_metadata'])) {echo $row['url_metadata'];};?>"/>
+                <input type="button" value="Browse..." onclick="fileBrowser('metadata','%home%');">
             </p>
          </fieldset> 
          
