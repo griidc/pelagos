@@ -470,7 +470,7 @@ function fileBrowser(type,dir)
     jQuery.ajax({
         "url": "/file_browser?type=" + type + "&dir=" + dir,
         "success": function(data) {
-            jQuery("#fileBrowser").html(data);
+            jQuery("#fileBrowserContent").html(data);
             jQuery("#fileBrowser").show();
         }
     });
@@ -487,19 +487,29 @@ function setPath(type,path)
 #fileBrowser {
     display: none;
     position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    background: transparent url(/modules/overlay/images/background.png) repeat;
+}
+#fileBrowserContent {
+    position: absolute;
     width: 600px;
     height: 400px;
     top: 50%;
     left: 50%;
     margin-left: -300px;
     margin-top: -200px;
-    z-index: 1000;
     border: 1px solid black;
     background-color: white;
 }
 </style>
 
-<div id="fileBrowser"></div>
+<div id="fileBrowser">
+    <div id="fileBrowserContent"/></div>
+</div>
 
 <div id="regid_tip" style="display:none;">
     <img src="/dif/images/info.png" style="float:right;" />
