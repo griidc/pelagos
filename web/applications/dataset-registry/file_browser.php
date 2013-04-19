@@ -156,6 +156,7 @@ EOT;
                 }
                 #fileBox div.size {
                     width: 70px;
+                    text-align: right;
                 }
             </style>
             <div style="padding:10px; height:100%">
@@ -211,12 +212,12 @@ EOT;
         
         foreach ($dirs as $dir) {
             if ($dir == '..') {
-                echo "<div onclick=\"javascript:fileBrowser('$type','$parent_dir')\" class='dir'><div class='name'>$dir</div></div>";
+                echo "<div onclick=\"javascript:showFileBrowser('$type','$parent_dir')\" class='dir'><div class='name'>$dir</div></div>";
             }
             else {
                 if ($browseDir != '') { $linkDir = "$browseDir/$dir"; }
                 else { $linkDir = $dir; }
-                echo "<div onclick=\"javascript:fileBrowser('$type','$linkDir')\" class='dir'><div class='name'>$dir</div></div>";
+                echo "<div onclick=\"javascript:showFileBrowser('$type','$linkDir')\" class='dir'><div class='name'>$dir</div></div>";
             }
         }
         
@@ -228,7 +229,7 @@ EOT;
             }
             if (!preg_match('/\/$/',$path)) { $path .= '/'; }
             $path .= $file;
-            $mod_time = date("n/j/Y g:i A", filemtime($path));
+            $mod_time = date("Y-m-d h:i A", filemtime($path));
             $size_bytes = filesize($path);
             $size_kb = $size_bytes / 1000;
             $size = sprintf("%.1f KB",$size_kb);
@@ -245,7 +246,7 @@ EOT;
                     }
             }
             echo <<<EOT
-                    <div onclick="setPath('$type','$path');jQuery('#fileBrowser').hide();" class="file">
+                    <div onclick="setPath('$type','$path'); hideFileBrowser();" class="file">
                         <div class="name">$file</div>
                         <div class="mod">$mod_time</div>
                         <div class="size">$size</div>
@@ -256,7 +257,7 @@ EOT;
         echo <<<EOT
                 </div>
                 <div style="height:40px; margin-top: 10px; overflow:hidden;">
-                    <input type="button" value="Cancel" onclick="jQuery('#fileBrowser').hide();">
+                    <input type="button" value="Cancel" onclick="hideFileBrowser();">
                 </div>
             </div>
 EOT;

@@ -465,15 +465,21 @@ function showDOIbutton(show)
     }
 }
 
-function fileBrowser(type,dir)
+function showFileBrowser(type,dir)
 {
     jQuery.ajax({
         "url": "/file_browser?type=" + type + "&dir=" + dir,
         "success": function(data) {
             jQuery("#fileBrowserContent").html(data);
+            jQuery("body").addClass("noscroll");
             jQuery("#fileBrowser").show();
         }
     });
+}
+
+function hideFileBrowser() {
+    jQuery("#fileBrowser").hide();
+    jQuery("body").removeClass("noscroll");
 }
 
 function setPath(type,path)
@@ -484,6 +490,9 @@ function setPath(type,path)
 </script>
 
 <style>
+.noscroll {
+    overflow: hidden;
+}
 #fileBrowser {
     display: none;
     position: fixed;
@@ -875,7 +884,7 @@ function setPath(type,path)
             </span>
             <label for="sshdatapath">Dataset File Path:</label>
             <input <?php formDisabled($formDisabled)?> name="sshdatapath" id="sshdatapath" type="text" size="120" value="<?php if (isset($row['url_data'])) {echo $row['url_data'];};?>"/><br>
-            <input type="button" value="Browse..." onclick="fileBrowser('data','%home%');">
+            <input type="button" value="Browse..." onclick="showFileBrowser('data','%home%');">
         </p>
         
             <p>
@@ -884,7 +893,7 @@ function setPath(type,path)
                 </span>
                 <label for="sshmetadatapath">Metadata File Path:</label>
                 <input <?php formDisabled($formDisabled)?> name="sshmetadatapath" id="sshmetadatapath" type="text" size="120" value="<?php if (isset($row['url_metadata'])) {echo $row['url_metadata'];};?>"/><br>
-                <input type="button" value="Browse..." onclick="fileBrowser('metadata','%home%');">
+                <input type="button" value="Browse..." onclick="showFileBrowser('metadata','%home%');">
             </p>
          </fieldset> 
          
