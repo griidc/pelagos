@@ -112,12 +112,50 @@ EOT;
                     color: red;
                     text-decoration: none;
                 }
-                div#middlecontainer a.file {
-                    color: blue;
+                #fileBox {
+                    overflow-x:hidden;
+                    overflow-y:auto;
+                    height:285px;
+                    border:1px solid black;
+                    padding-top: 21px;
+                    top: 0px;
                 }
-                div#middlecontainer a.file:hover {
-                    color: red;
-                    text-decoration: none;
+                #fileBox > div {
+                    color: black;
+                    cursor: default;
+                    padding-left: 2px;
+                    border: 1px solid transparent;
+                }
+                #fileBox > div:hover {
+                    border: 1px solid #b8d6fb;
+                    background-color: #f2f7fd;
+                }
+                #fileBox > div.header {
+                    color: #4c6091;
+                    position: absolute;
+                    top: 51px;
+                    height: 18px;
+                    background-color: white;
+                }
+                #fileBox > div.header:hover {
+                    border: 1px solid transparent;
+                    background-color: white;
+                }
+                #fileBox > div.dir {
+                    font-weight: bold;
+                }
+                #fileBox > div > div {
+                    display: inline-block;
+                    overflow-x: hidden;
+                }
+                #fileBox div.name {
+                    width: 340px;
+                }
+                #fileBox div.mod {
+                    width: 130px;
+                }
+                #fileBox div.size {
+                    width: 70px;
                 }
             </style>
             <div style="padding:10px; height:100%">
@@ -143,7 +181,12 @@ EOT;
         
         echo <<<EOT
                 </div>
-                <div style="overflow:auto; height:300px; border:1px solid black; padding:2px;">
+                <div id="fileBox">
+                    <div class="header">
+                        <div class="name">Name</div>
+                        <div class="mod">Date modified</div>
+                        <div class="size">Size</div>
+                    </div>
 EOT;
         
         $dirs = array();
@@ -168,14 +211,13 @@ EOT;
         
         foreach ($dirs as $dir) {
             if ($dir == '..') {
-                echo "<a href=\"javascript:fileBrowser('$type','$parent_dir')\" class='dir'>$dir</a>";
+                echo "<div onclick=\"javascript:fileBrowser('$type','$parent_dir')\" class='dir'><div class='name'>$dir</div></div>";
             }
             else {
                 if ($browseDir != '') { $linkDir = "$browseDir/$dir"; }
                 else { $linkDir = $dir; }
-                echo "<a href=\"javascript:fileBrowser('$type','$linkDir')\" class='dir'>$dir</a>";
+                echo "<div onclick=\"javascript:fileBrowser('$type','$linkDir')\" class='dir'><div class='name'>$dir</div></div>";
             }
-            echo "<br>";
         }
         
         foreach ($files as $file) {
@@ -186,11 +228,33 @@ EOT;
             }
             if (!preg_match('/\/$/',$path)) { $path .= '/'; }
             $path .= $file;
-            echo "<a href=\"javascript:setPath('$type','$path');jQuery('#fileBrowser').hide();\" class='file'>$file</a><br>";
+            $mod_time = date("n/j/Y g:i A", filemtime($path));
+            $size_bytes = filesize($path);
+            $size_kb = $size_bytes / 1000;
+            $size = sprintf("%.1f KB",$size_kb);
+            if ($size_kb >= 1000) {
+                $size_mb = $size_kb / 1000;
+                $size = sprintf("%.1f MB",$size_mb);
+                if ($size_mb >= 1000) {
+                    $size_gb = $size_mb / 1000;
+                    $size = sprintf("%.1f GB",$size_gb);
+                }
+                    if ($size_gb >= 1000) {
+                        $size_tb = $size_gb / 1000;
+                        $size = "$size_tb TB";
+                    }
+            }
+            echo <<<EOT
+                    <div onclick="setPath('$type','$path');jQuery('#fileBrowser').hide();" class="file">
+                        <div class="name">$file</div>
+                        <div class="mod">$mod_time</div>
+                        <div class="size">$size</div>
+                    </div>
+EOT;
         }
         
         echo <<<EOT
-               </div>
+                </div>
                 <div style="height:40px; margin-top: 10px; overflow:hidden;">
                     <input type="button" value="Cancel" onclick="jQuery('#fileBrowser').hide();">
                 </div>
