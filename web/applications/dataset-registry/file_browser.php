@@ -121,7 +121,11 @@ EOT;
                 }
             </style>
             <div style="padding:10px; height:100%">
-            <strong>Directory:</strong> <a href="javascript:fileBrowser('$type','')" class="dir">$chrootDir
+                <div style="height:20px; overflow:hidden; font-weight:bold; font-size:120%;">
+                    Select $type file:
+                </div>
+                <div style="height:20px; overflow:hidden;">
+                    <strong>Directory:</strong> <a href="javascript:fileBrowser('$type','')" class="dir">$chrootDir
 EOT;
         
         if (!preg_match('/\/$/',$chrootDir)) { echo '/'; }
@@ -138,8 +142,8 @@ EOT;
         }
         
         echo <<<EOT
-            <br><br>
-            <div style="overflow:auto; height:300px; border:1px solid black; padding:2px;">
+                </div>
+                <div style="overflow:auto; height:300px; border:1px solid black; padding:2px;">
 EOT;
         
         $dirs = array();
@@ -186,8 +190,10 @@ EOT;
         }
         
         echo <<<EOT
-            </div><br>
-            <input type="button" value="Cancel" onclick="jQuery('#fileBrowser').hide();">
+               </div>
+                <div style="height:40px; margin-top: 10px; overflow:hidden;">
+                    <input type="button" value="Cancel" onclick="jQuery('#fileBrowser').hide();">
+                </div>
             </div>
 EOT;
         
