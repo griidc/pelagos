@@ -54,6 +54,8 @@ else
 
 if (isset($reg_id))
 {
+	$formDisabled = false;
+	
     $query = "select * from registry where registry_id like '".substr($reg_id,0,17)."%' order by registry_id desc limit 1";
     
     $regrow = pdoDBQuery($conn,$query);
