@@ -81,11 +81,14 @@ if (isset($reg_id))
         
         switch ($row['data_server_type'])
         {
-            case "HTTP":
+            case "upload":
                 $tabselect = 0;
                 break;
-            case "SFTP":
+            case "HTTP":
                 $tabselect = 1;
+                break;
+            case "SFTP":
+                $tabselect = 2;
                 break;
         }
         
@@ -197,8 +200,8 @@ function formDisabled($isDisabled)
     $(function() {
         $( "#tabs" ).tabs({
             heightStyleType: "fill",
-            disabled: [2,3,4],
-            selected: <?php echo $tabselect;?>
+            disabled: [3,4,5],
+            active: <?php echo $tabselect;?>
         });
         
         $( "#availdate" ).datepicker({
@@ -322,9 +325,25 @@ function formDisabled($isDisabled)
         $("#qtip_dataurl").qtip({
             content: $("#dataurl_tip")
         });
+
+        $("#qtip_sshdataurl").qtip({
+            content: $("#sshdataurl_tip")
+        });
+
+        $("#qtip_uploaddataurl").qtip({
+            content: $("#uploaddataurl_tip")
+        });
         
         $("#qtip_metadataurl").qtip({
             content: $("#metadataurl_tip")
+        });
+
+        $("#qtip_sshmetadataurl").qtip({
+            content: $("#sshmetadataurl_tip")
+        });
+        
+        $("#qtip_uploadmetadataurl").qtip({
+            content: $("#uploadmetadataurl_tip")
         });
         
         $("#qtip_auth").qtip({
@@ -365,6 +384,22 @@ function formDisabled($isDisabled)
         
         $("#qtip_regid").qtip({
             content: $("#regid_tip")
+        });
+
+        $('#datafile').bind('change', function() {
+            max = Math.pow(2,30); // 1GB
+            if (this.files[0].size > max) {
+                alert('This file is larger than the maximum allowable file size of 1GB.');
+                this.value = null;
+            }
+        });
+
+        $('#metadatafile').bind('change', function() {
+            max = 100 * Math.pow(2,20); // 100 MB
+            if (this.files[0].size > max) {
+                alert('This file is larger than the maximum allowable file size of 100MB.');
+                this.value = null;
+            }
         });
         
     });
@@ -489,6 +524,55 @@ function setPath(type,path)
     jQuery("#ssh" + type + "path").val("file://" + path);
 }
 
+var progressBarInt;
+
+function showProgressBar() {
+    jQuery("body").addClass("noscroll");
+    jQuery("#progressBar").show();
+
+    progressBarInt = window.setInterval(function() {
+        jQuery.ajax({
+            "url": "/registry_upload_progress?key=" + jQuery("#APC_UPLOAD_PROGRESS").val(),
+            "success": function(data) {
+                jQuery("#progressBarBar").html(data);
+            }
+        });
+    },1000);
+}
+
+function hideProgressBar() {
+    jQuery("#progressBar").hide();
+    jQuery("#progressBarBar").html('<div id="progressBarBar" style="width:0px;"><div id="progressBarPercent">0%</div></div>');
+    jQuery("body").removeClass("noscroll");
+}
+
+function cancelUpload() {
+    if (typeof(window.stop) == 'undefined') {
+        document.execCommand('Stop');
+        window.frames[0].document.execCommand('Stop');
+    }
+    else {
+        window.stop();
+    }
+    
+    hideProgressBar();
+    window.clearInterval(progressBarInt);
+}
+
+function submitRegistry() {
+    weekDays();
+    getTimeZone();
+    if (jQuery('#servertype').val() == 'upload') {
+        showProgressBar();
+    }
+    jQuery('#post_frame').load(function() {
+        response = jQuery('#post_frame').contents().find("#main").html();
+        jQuery("#main").html(response);
+        
+    });
+    jQuery("#regForm").submit();
+}
+
 </script>
 
 <style>
@@ -516,10 +600,72 @@ function setPath(type,path)
     border: 1px solid black;
     background-color: white;
 }
+
+#progressBar {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    background: transparent url(/modules/overlay/images/background.png) repeat;
+}
+#progressBarContent {
+    position: absolute;
+    width: 600px;
+    height: 110px;
+    top: 50%;
+    left: 50%;
+    margin-left: -300px;
+    margin-top: -55px;
+    border: 1px solid black;
+    background-color: white;
+    padding: 10px;
+}
+
+#progressBarMessage {
+    font-weight: bold;
+}
+
+#progressBarContainer {
+    margin-top: 10px;
+}
+
+#progressBarBar {
+    height:20px;
+    background-color:#aaf;
+    font-weight:bold;
+}
+#progressBarPercent {
+    padding-left:2px;
+    padding-top:2px;
+}
+
+#progressBarCancel {
+    margin-top: 10px;
+    text-align: center;
+    width: 100%;
+}
+
 </style>
 
 <div id="fileBrowser">
-    <div id="fileBrowserContent"/></div>
+    <div id="fileBrowserContent"></div>
+</div>
+
+<div id="progressBar">
+    <div id="progressBarContent">
+        <div id="progressBarMessage">Upload progress:</div>
+
+        <div id="progressBarContainer" style="width:580px; border: 1px solid black;">
+            <div id="progressBarBar" style="width:0px;"><div id="progressBarPercent">0%</div></div>
+        </div>
+
+        <div id="progressBarCancel">
+            <input type="button" value="Cancel" onclick="cancelUpload();">
+        </div>
+    </div>
 </div>
 
 <div id="regid_tip" style="display:none;">
@@ -568,14 +714,42 @@ function setPath(type,path)
 <div id="dataurl_tip" style="display:none;">
     <img src="/dif/images/info.png" style="float:right;" />
     <p>
-        <strong>Dataset URL:</strong><p/> This is the URL that leads to the data being registered. Package the components of the datasets (if applicable) to form a single file (e.g. ZIP, TAR).
+        <strong>Dataset File URL:</strong><p/> This is the URL that leads to the data being registered. Package the components of the datasets (if applicable) to form a single file (e.g. ZIP, TAR).
+    </p>
+</div>
+
+<div id="sshdataurl_tip" style="display:none;">
+    <img src="/dif/images/info.png" style="float:right;" />
+    <p>
+        <strong>Dataset File Path:</strong><p/>This is the path on the server to the data file being registered. Click "Browse..." to find and select the data file you uploaded via SFTP.
+    </p>
+</div>
+
+<div id="uploaddataurl_tip" style="display:none;">
+    <img src="/dif/images/info.png" style="float:right;" />
+    <p>
+        <strong>Dataset File:</strong><p/>Please select from your local machine the data file for the dataset you are registering.
     </p>
 </div>
 
 <div id="metadataurl_tip" style="display:none;">
     <img src="/dif/images/info.png" style="float:right;" />
     <p>
-        <strong>Metadata URL:</strong><p/> This is the URL that leads to the metadata of the data being registered. The ISO 19115/19115-2 is recommended but a link to a form-based system and other XML or TXT formatted files are also acceptable.
+        <strong>Metadata File URL:</strong><p/> This is the URL that leads to the metadata of the data being registered. The ISO 19115/19115-2 is recommended but a link to a form-based system and other XML or TXT formatted files are also acceptable.
+    </p>
+</div>
+
+<div id="sshmetadataurl_tip" style="display:none;">
+    <img src="/dif/images/info.png" style="float:right;" />
+    <p>
+        <strong>Metadata File Path:</strong><p/>This is the path on the server to the metadata file for the data being registered. Click "Browse..." to find and select the data file you uploaded via SFTP.
+    </p>
+</div>
+
+<div id="uploadmetadataurl_tip" style="display:none;">
+    <img src="/dif/images/info.png" style="float:right;" />
+    <p>
+        <strong>Metadata File:</strong><p/>Please select from your local machine the metadata file for the dataset you are registering.
     </p>
 </div>
 
@@ -631,7 +805,7 @@ function setPath(type,path)
 <div id="avail_tip" style="display:none;">
     <img src="/dif/images/info.png" style="float:right;" />
     <p>
-        <strong>Restrictions:</strong><p/> ): If data is available to the general public, select ‘None’. Select ‘Restricted’ if data cannot be shared to anyone. Select ‘Requires Author’s Approval’ if you can share the data but prefer to control the sharing of the dataset. In the later case, GRIIDC will maintain a list of users associated to a dataset.
+        <strong>Restrictions:</strong><p/> If data is available to the general public, select ‘None’. Select ‘Restricted’ if data cannot be shared to anyone. Select ‘Requires Author’s Approval’ if you can share the data but prefer to control the sharing of the dataset. In the later case, GRIIDC will maintain a list of users associated to a dataset.
     </p>
 </div>
 
@@ -644,7 +818,7 @@ function setPath(type,path)
 
 <div class="cleair">
 
-<form  id="regForm" name="regForm" action="" method="post">
+<form id="regForm" name="regForm" action="" method="post" enctype="multipart/form-data" target="post_frame">
 
     <h1>Dataset Information Header</h1>
     <fieldset>
@@ -708,8 +882,31 @@ function setPath(type,path)
         
         </td></tr></table>
     </fieldset></p>
+
+    <p><fieldset>
+                <span id="qtip_avail" style="float:right;">
+                    <img src="/dif/images/info.png">
+                </span>
+                <label for="avail">Restrictions:</label>
+                    <input <?php formDisabled($formDisabled)?> <?PHP if (isset($row['access_status'])){isChecked($row['access_status'],0,"None");} elseif(!isset($_GET['regid'])){echo 'checked';};?> name="avail" id="avail" type="radio" value="None"/>None
+                    <input <?php formDisabled($formDisabled)?> <?PHP if (isset($row['access_status'])){isChecked($row['access_status'],0,"Approval");};?>  name="avail" id="avail" type="radio" value="Approval"/>Requires Author&apos;s Approval
+                    <input <?php formDisabled($formDisabled)?> <?PHP if (isset($row['access_status'])){isChecked($row['access_status'],0,"Restricted");};?>  name="avail" id="avail" type="radio" value="Restricted"/>Restricted
+                <br />
+    </fieldset></p>
+
+    <p><fieldset>
+            <legend>DOI:</legend>
+            <span id="qtip_doi" style="float:right;">
+                <img src="/dif/images/info.png">
+            </span>
+            <label for="doi">Digital Object Identifier:</label>
+            <input disabled type="text" name="doi" id="doi" size="60"/ value="<?php if (isset($row['doi'])) {echo $row['doi'];};?>">&nbsp;&nbsp;&nbsp;&nbsp;
+            <span style="display:none" id="doibuttondiv"><button disabled  id="doibutton" name="doibutton" type="button" onclick="checkDOIFields(true);">Digital Object Indentifier Request Form</button></span>
+            <span id="generatedoidiv"><input <?php formDisabled($formDisabled)?> checked onchange="document.getElementById('doi').disabled=this.checked;" type="checkbox" name="generatedoi" id="generatedoi">Auto-Generate DOI when data is available</span>
+    </fieldset></p>
+
 </fieldset>
-    <h1>Data Server Details</h1>
+    <h1>Dataset File Transfer Details</h1>
     
     <style>
     label
@@ -726,43 +923,87 @@ function setPath(type,path)
     
     <div style="background: transparent;" id="tabs">
         <ul>
-            <li><a onclick="document.getElementById('servertype').value='HTTP'" href="#tabs-1">HTTP/FTP Server</a></li>
-            <li><a onclick="document.getElementById('servertype').value='SFTP'" href="#tabs-2">SFTP</a></li>
-            <li><a href="#tabs-3">TDS</a></li>
-            <li><a href="#tabs-4">ERDDAP</a></li>
-            <li><a href="#tabs-5">...</a></li>
+            <li><a onclick="document.getElementById('servertype').value='upload'" href="#tabs-1">Direct Upload</a></li>
+            <li><a onclick="document.getElementById('servertype').value='HTTP'" href="#tabs-2">HTTP/FTP Server</a></li>
+            <li><a onclick="document.getElementById('servertype').value='SFTP'" href="#tabs-3">SFTP</a></li>
+            <li><a href="#tabs-4">TDS</a></li>
+            <li><a href="#tabs-5">ERDDAP</a></li>
+            <li><a href="#tabs-6">...</a></li>
         </ul>
+
+        <div id="tabs-1">
+            For small datasets (&lt;1 GB), you may upload the dataset and metadata files directly. Depending on the size of your files, this may take several minutes. The maximum time the system will wait for your files to upload is 10 minutes. <!--If the script times out after you click "Register" below, your files are too big and you must use an alternate method such as HTTP/FTP or SFTP.-->
+            <fieldset>
+                <?php 
+                    $upload_progress_key = md5(mt_rand());
+                    echo "<input type='hidden' id='APC_UPLOAD_PROGRESS' name='APC_UPLOAD_PROGRESS' value='$upload_progress_key' />";
+                ?>
+            <p>
+                <span id="qtip_uploaddataurl" style="float:right;">
+                    <img src="/dif/images/info.png">
+                </span>
+                <label for="datafile">Dataset File:</label>
+                <?php
+                    if (isset($row['data_server_type']) and $row['data_server_type'] == 'upload' and isset($row['url_data']) and $row['url_data'] != '') {
+                        echo "<input disabled size=100 type='text' value='$row[url_data]' style='color:black; background-color:transparent; padding:2px;'><br>";
+                        echo "<input type='hidden' name='upload_dataurl' value='$row[url_data]'>";
+                        echo "To replace the dataset file: ";
+                    }
+                ?>
+                <input <?php formDisabled($formDisabled)?> name="datafile" id="datafile" type="file"/>
+            </p>
+            </fieldset>
+            <fieldset>
+            <p>
+                <span id="qtip_uploadmetadataurl" style="float:right;">
+                    <img src="/dif/images/info.png">
+                </span>
+                <label for="metadatafile">Metadata File:</label>
+                <?php
+                    if (isset($row['data_server_type']) and $row['data_server_type'] == 'upload' and isset($row['url_metadata']) and $row['url_metadata'] != '') {
+                        echo "<input disabled size=100 type='text' value='$row[url_metadata]' style='color:black; background-color:transparent; padding:2px;'><br>";
+                        echo "<input type='hidden' name='upload_metadataurl' value='$row[url_metadata]'>";
+                        echo "To replace the metadata file: ";
+                    }
+                ?>
+                <input <?php formDisabled($formDisabled)?> name="metadatafile" id="metadatafile" type="file"/>
+            </p>
+            </fieldset>
+        </div>
         
-      <div id="tabs-1">  
+      <div id="tabs-2">
+        Use this method when you can place your dataset and metadata files on a web or FTP server at your institution.
         <fieldset>
             <p>
                 <span id="qtip_dataurl" style="float:right;">
                     <img src="/dif/images/info.png">
                 </span>
-                <label for="dataurl">Dataset URL:</label>
-                <input <?php formDisabled($formDisabled)?> onchange="checkDOIFields();" name="dataurl" id="dataurl" type="text" size="120" value="<?php if (isset($row['url_data'])) {echo $row['url_data'];};?>"/>
+                <label for="dataurl">Dataset File URL:</label>
+                <input <?php formDisabled($formDisabled)?> onchange="checkDOIFields();" name="dataurl" id="dataurl" type="text" size="120" value="<?php if (isset($row['data_server_type']) and $row['data_server_type'] == 'HTTP' and isset($row['url_data'])) {echo $row['url_data'];};?>"/>
             </p>
+            </fieldset>
+            <fieldset>
             <p>
                 <span id="qtip_metadataurl" style="float:right;">
                     <img src="/dif/images/info.png">
                 </span>
-                <label for="metadataurl">Metadata URL:</label>
-                <input <?php formDisabled($formDisabled)?> name="metadataurl" id="metadataurl" type="text" size="120" value="<?php if (isset($row['url_metadata'])) {echo $row['url_metadata'];};?>"/>
+                <label for="metadataurl">Metadata File URL:</label>
+                <input <?php formDisabled($formDisabled)?> name="metadataurl" id="metadataurl" type="text" size="120" value="<?php if (isset($row['data_server_type']) and $row['data_server_type'] == 'HTTP' and isset($row['url_metadata'])) {echo $row['url_metadata'];};?>"/>
             </p>
             </fieldset>
             
             <table WIDTH="100%"><tr><td>
             <fieldset>
             <p>
-                <span id="qtip_auth" style="float:right;">
-                    <img src="/dif/images/info.png">
-                </span>
-                <label for="auth">Requires Authentication:</label>
-                <input <?php formDisabled($formDisabled)?> <?PHP if (isset($row['authentication'])){isChecked($row['authentication'],0,true);};?> onclick="showCreds(this,'creds','Yes');" name="auth" id="auth" type="radio" value="Yes"/>Yes
-                <input <?php formDisabled($formDisabled)?> <?PHP if (isset($row['authentication'])){isChecked($row['authentication'],0,false);}; if(!isset($_GET['regid'])){echo 'checked';};?> onclick="showCreds(this,'creds','Yes');" name="auth" id="auth" type="radio" value="No"/>No
+            <span id="qtip_date" style="float:right;">
+                <img src="/dif/images/info.png">
+            </span>
+            <label for="availdate">Availability Date:</label>
+            <input <?php formDisabled($formDisabled)?> onchange="checkDOIFields();" value="<?php if (isset($row['availability_date'])) {echo $row['availability_date'];};?>" type="text" name="availdate" id="availdate" size="40"/>
+            </td>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <td>
             </p>
-            </fieldset>
-            </td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
             <fieldset>
                 <p>
                     <span id="qtip_pull" style="float:right;">
@@ -774,18 +1015,33 @@ function setPath(type,path)
                 </p>
             
             </fieldset>
-            </td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
+            </td>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+<td>
+            <fieldset>
+            <p>
+                <span id="qtip_auth" style="float:right;">
+                    <img src="/dif/images/info.png">
+                </span>
+                <label for="auth">Requires Authentication:</label>
+                <input <?php formDisabled($formDisabled)?> <?PHP if (isset($row['authentication'])){isChecked($row['authentication'],0,true);};?> onclick="showCreds(this,'creds','Yes');" name="auth" id="auth" type="radio" value="Yes"/>Yes
+                <input <?php formDisabled($formDisabled)?> <?PHP if (isset($row['authentication'])){isChecked($row['authentication'],0,false);}; if(!isset($_GET['regid'])){echo 'checked';};?> onclick="showCreds(this,'creds','Yes');" name="auth" id="auth" type="radio" value="No"/>No
+            </p>
+            </fieldset>
+            </td>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
             <fieldset>
                 <p>
                     <span id="qtip_when" style="float:right;">
                         <img src="/dif/images/info.png">
                     </span>
-                    <label for="whendl">Download Certain Times Only</label>
+                    <label for="whendl">Download Certain Times Only:</label>
                     <input <?php formDisabled($formDisabled)?> <?PHP if (isset($row['access_period'])){isChecked($row['access_period'],0,true);};?> onclick="showCreds(this,'whendiv','Yes');getTimeZone();weekDays();" name="whendl" id="whendl" type="radio" value="Yes"/>Yes
                     <input <?php formDisabled($formDisabled)?> <?PHP if (isset($row['access_period'])){isChecked($row['access_period'],0,false);}; if(!isset($_GET['regid'])){echo 'checked';};?> onclick="showCreds(this,'whendiv','Yes');getTimeZone();weekDays();" name="whendl" id="whendl" type="radio" value="No"/>No
                 </p>
             </fieldset>
            </td></tr></table>
+
             <div id="creds" style="display:<?php if (isset($row['authentication'])){ if ($row['authentication']==true){echo 'block';}else{echo 'none';};}else{ echo 'none';};?>;">
                 <fieldset>
                 <legend>Credentials:</legend>
@@ -841,43 +1097,10 @@ function setPath(type,path)
             
         </fieldset>
         
-        <table WIDTH="100%"><tr><td>
-        <fieldset>
-            <span id="qtip_date" style="float:right;">
-                <img src="/dif/images/info.png">
-            </span>
-            <label for="availdate">Availability Date:</label>
-            <input <?php formDisabled($formDisabled)?> onchange="checkDOIFields();" value="<?php if (isset($row['availability_date'])) {echo $row['availability_date'];};?>" type="text" name="availdate" id="availdate" size="40"/>
-            <br />
-        </fieldset>
-        </td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
-            <fieldset>
-                <span id="qtip_avail" style="float:right;">
-                    <img src="/dif/images/info.png">
-                </span>
-                <label for="avail">Restrictions:</label>
-                    <input <?php formDisabled($formDisabled)?> <?PHP if (isset($row['access_status'])){isChecked($row['access_status'],0,"None");}; if(!isset($_GET['regid'])){echo 'checked';};?> name="avail" id="avail" type="radio" value="None"/>None
-                    <input <?php formDisabled($formDisabled)?> <?PHP if (isset($row['access_period'])){isChecked($row['access_status'],0,"Approval");};?>  name="avail" id="avail" type="radio" value="Approval"/>Requires Author&apos;s Approval
-                    <input <?php formDisabled($formDisabled)?> <?PHP if (isset($row['access_period'])){isChecked($row['access_status'],0,"Restricted");};?>  name="avail" id="avail" type="radio" value="Restricted"/>Restricted
-                <br />
-            </fieldset>
-        </td></tr></table>
-
-        <fieldset>
-            <legend>DOI:</legend>
-            <span id="qtip_doi" style="float:right;">
-                <img src="/dif/images/info.png">
-            </span>
-            <label for="doi">Digital Object Identifier:</label>
-            <input disabled type="text" name="doi" id="doi" size="60"/ value="<?php if (isset($row['doi'])) {echo $row['doi'];};?>">&nbsp;&nbsp;&nbsp;&nbsp;
-            <span style="display:none" id="doibuttondiv"><button disabled  id="doibutton" name="doibutton" type="button" onclick="checkDOIFields(true);">Digital Object Indentifier Request Form</button></span>
-            <span id="generatedoidiv"><input <?php formDisabled($formDisabled)?> checked onchange="document.getElementById('doi').disabled=this.checked;" type="checkbox" name="generatedoi" id="generatedoi">Auto-Generate DOI when data is available</span>
-        </fieldset> 
-        
     </div>
     <p/>
     
-    <div id="tabs-2">  
+    <div id="tabs-3">
  
         <fieldset> 
         <p>
@@ -885,44 +1108,23 @@ function setPath(type,path)
                 <img src="/dif/images/info.png">
             </span>
             <label for="sshdatapath">Dataset File Path:</label>
-            <input <?php formDisabled($formDisabled)?> name="sshdatapath" id="sshdatapath" type="text" size="120" value="<?php if (isset($row['url_data'])) {echo $row['url_data'];};?>"/><br>
+            <input <?php formDisabled($formDisabled)?> name="sshdatapath" id="sshdatapath" type="text" size="120" value="<?php if (isset($row['data_server_type']) and $row['data_server_type'] == 'SFTP' and isset($row['url_data'])) {echo $row['url_data'];};?>"/><br>
             <input type="button" value="Browse..." onclick="showFileBrowser('data','%home%');">
         </p>
+            </fieldset>
+            <fieldset>
         
             <p>
-                <span id="qtip_sshmetaurl" style="float:right;">
+                <span id="qtip_sshmetadataurl" style="float:right;">
                     <img src="/dif/images/info.png">
                 </span>
                 <label for="sshmetadatapath">Metadata File Path:</label>
-                <input <?php formDisabled($formDisabled)?> name="sshmetadatapath" id="sshmetadatapath" type="text" size="120" value="<?php if (isset($row['url_metadata'])) {echo $row['url_metadata'];};?>"/><br>
+                <input <?php formDisabled($formDisabled)?> name="sshmetadatapath" id="sshmetadatapath" type="text" size="120" value="<?php if (isset($row['data_server_type']) and $row['data_server_type'] == 'SFTP' and isset($row['url_metadata'])) {echo $row['url_metadata'];};?>"/><br>
                 <input type="button" value="Browse..." onclick="showFileBrowser('metadata','%home%');">
             </p>
          </fieldset> 
          
-         
-        <fieldset>
-            <span id="qtip_sshavail" style="float:right;">
-                <img src="/dif/images/info.png">
-            </span>
-            <label for="avail">Restrictions:</label>
-            <input <?php formDisabled($formDisabled)?> checked <?PHP if (isset($row['access_status'])){isChecked($row['access_status'],0,"None");}; if(!isset($_GET['regid'])){echo 'checked';};?> name="sshavail" id="sshavail" type="radio" value="None"/>None
-            <input <?php formDisabled($formDisabled)?> <?PHP if (isset($row['access_status'])){isChecked($row['access_status'],0,"Approval");};?>  name="sshavail" id="sshavail" type="radio" value="Approval"/>Requires Author&apos;s Approval
-            <input <?php formDisabled($formDisabled)?> <?PHP if (isset($row['access_status'])){isChecked($row['access_status'],0,"Restricted");};?>  name="sshavail" id="sshavail" type="radio" value="Restricted"/>Restricted
-            <br />
-        </fieldset>
-    
-        <fieldset>
-            <legend>DOI:</legend>
-            <span id="qtip_sshdoi" style="float:right;">
-                <img src="/dif/images/info.png">
-            </span>
-            <label for="sshdoi">Digital Object Identifier:</label>
-            <input disabled type="text" name="sshdoi" id="sshdoi" size="60"/ value="<?php if (isset($row['doi'])) {echo $row['doi'];};?>">&nbsp;&nbsp;&nbsp;&nbsp;
-            <span id="generatedoidiv">
-				<input <?php formDisabled($formDisabled)?> checked onchange="document.getElementById('sshdoi').disabled=this.checked;" type="checkbox" name="sshgeneratedoi" id="sshgeneratedoi">
-					Auto-Generate DOI when data is available
-			</span>
-        </fieldset> 
+    </div>
     </div>
     
     <input type="hidden" name="udi" id="udi" value="<?php if (isset($row['dataset_udi'])) {echo $row['dataset_udi'];};?>"/>
@@ -930,9 +1132,14 @@ function setPath(type,path)
     <input type="hidden" name="urlvalidate" id="urlvalidate"/>
     <input type="hidden" name="weekdayslst" id="weekdayslst"/>
     <input type="hidden" name="timezone" id="timezone"/>
-    <input type="hidden" name="servertype" id="servertype" value="<?php if ($tabselect==0){echo 'HTTP';};if ($tabselect==1){echo 'SFTP';};?>"/>
+    <input type="hidden" name="servertype" id="servertype" value="<?php if ($tabselect==0){echo 'upload';};if ($tabselect==1){echo 'HTTP';};if ($tabselect==2){echo 'SFTP';};?>"/>
    
-    <input <?php formDisabled($formDisabled)?> onclick="weekDays();getTimeZone();" type="submit" value="Submit"/>
+    <br>
+    <div style="text-align:center;">
+        <input <?php formDisabled($formDisabled)?> onclick="submitRegistry();" type="button" value="Register" style="font-size:120%; font-weight:bold;"/>
+    </div>
 </form>  
 
 </div>
+
+<iframe id="post_frame" name="post_frame" style="display:none;"></iframe>

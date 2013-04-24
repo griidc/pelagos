@@ -56,7 +56,7 @@ if (array_key_exists('dir',$_GET)) {
                 Please contact <a href='mailto:griidc@gomri.org'>griidc@gomri.org</a> to request SFTP access.
                 <br>
                 <br>
-                <input type="button" value="Cancel" onclick="jQuery('#fileBrowser').hide();">
+                <input type="button" value="Cancel" onclick="hideFileBrowser();">
                 </div>
 EOT;
             exit;
@@ -89,7 +89,7 @@ EOT;
                 Please contact <a href='mailto:griidc@gomri.org'>griidc@gomri.org</a> for assistance.
                 <br>
                 <br>
-                <input type="button" value="Cancel" onclick="jQuery('#fileBrowser').hide();">
+                <input type="button" value="Cancel" onclick="hideFileBrowser();">
                 </div>
 EOT;
             exit;

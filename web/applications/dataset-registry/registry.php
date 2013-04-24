@@ -91,7 +91,6 @@ if ($_POST)
     $formHash = sha1(serialize($_POST));
     
     $doi = '';
-    $sshdoi = '';
    
     extract($_POST);
     
@@ -135,6 +134,61 @@ if ($_POST)
         
         $title = pg_escape_string($title);
         $abstrct = pg_escape_string($abstrct);
+
+        if ($servertype == "upload")
+        {
+            if (!file_exists("/sftp/upload/$uid")) {
+                mkdir("/sftp/upload/$uid");
+            }
+            if (!file_exists("/sftp/upload/$uid/incoming")) {
+                mkdir("/sftp/upload/$uid/incoming");
+            }
+
+            $data_file_path = '';
+            if (array_key_exists('upload_dataurl',$_POST)) {
+                $data_file_path = $_POST['upload_dataurl'];
+            }
+            if (array_key_exists('datafile',$_FILES) and !empty($_FILES["datafile"]["name"])) {
+                if ($_FILES['datafile']['error'] > 0)
+                {
+                    echo "Error uploading data file: " . $_FILES['datafile']['error'] . "<br>";
+                }
+                else
+                {
+                    move_uploaded_file($_FILES["datafile"]["tmp_name"],"/sftp/upload/$uid/incoming/" . $_FILES["datafile"]["name"]);
+                    $data_file_path = "file:///sftp/upload/$uid/incoming/" . $_FILES["datafile"]["name"];
+                }
+            }
+
+            $metadata_file_path = '';
+            if (array_key_exists('upload_metadataurl',$_POST)) {
+                $metadata_file_path = $_POST['upload_metadataurl'];
+            }
+            if (array_key_exists('metadatafile',$_FILES) and !empty($_FILES["metadatafile"]["name"])) {
+                if ($_FILES['metadatafile']['error'] > 0)
+                {
+                    echo "Error upload metadata file: " . $_FILES['metadatafile']['error'] . "<br>";
+                }
+                else
+                {
+                    move_uploaded_file($_FILES["metadatafile"]["tmp_name"],"/sftp/upload/$uid/incoming/" . $_FILES["metadatafile"]["name"]);
+                    $metadata_file_path = "file:///sftp/upload/$uid/incoming/" . $_FILES["metadatafile"]["name"];
+                }
+            }
+
+            $query = "INSERT INTO registry 
+            (
+            registry_id, data_server_type, dataset_udi, dataset_title, dataset_abstract, dataset_poc_name, dataset_poc_email, url_data, url_metadata, 
+            access_status,data_source_pull,doi,generatedoi,submittimestamp,userid,dataset_originator
+            ) 
+            VALUES 
+            (
+            '$reg_id','$servertype','$udi','$title', '$abstrct', '$pocname', '$pocemail', '$data_file_path', '$metadata_file_path',
+            '$avail', 'Yes', '$doi','$generatedoi','$now','$uid','$dataset_originator'
+            );"; 
+            $dataurl = $data_file_path;
+            $metadataurl = $metadata_file_path;
+        }
         
         if ($servertype == "HTTP")
         {
@@ -161,13 +215,10 @@ if ($_POST)
             VALUES 
             (
             '$reg_id','$servertype','$udi','$title', '$abstrct', '$pocname', '$pocemail', '$sshdatapath', '$sshmetadatapath', 
-            '$sshavail', 'Yes', '$sshdoi','$sshgeneratedoi','$now','$uid','$dataset_originator'
+            '$avail', 'Yes', '$doi','$generatedoi','$now','$uid','$dataset_originator'
             );"; 
             $dataurl = $sshdatapath;
             $metadataurl = $sshmetadatapath;
-            $avail = $sshavail;
-            $doi = $sshdoi;
-            $generatedoi = $sshgeneratedoi;
         }                
       
         if (!$_SESSION['submitok'])
