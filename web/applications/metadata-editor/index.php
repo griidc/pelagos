@@ -7,7 +7,9 @@ if (isset($_GET))
 
 
 {
-	if (count($_GET)>0)
+	
+	//var_dump ($_GET);
+	if (count($_GET)>1)
 	{
 		include 'makeXML.php';
 		
@@ -44,9 +46,9 @@ select {width:400px}
 button {width:50px}
 </style>
 
+<fieldset>
 <table width="40%,*">
 <tr ><td>
-
 <form method="get">
 
 <?php
@@ -57,9 +59,9 @@ button {width:50px}
 <input type="reset"/>
 
 </form>
-
 </td>
 <td></td></tr></table>
+</fieldset>
 
 
 <!--

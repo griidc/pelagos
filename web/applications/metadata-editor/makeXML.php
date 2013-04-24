@@ -28,6 +28,8 @@ function makeXML($xml)
 {
 		//array_walk($xml,'createNodes');
 		
+		array_shift($xml); #To get rid of the Q from Drupal
+		
 		createNodesXML($xml);
 }
 
