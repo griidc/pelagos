@@ -970,6 +970,7 @@ function submitRegistry() {
             <!--
             <span id="generatedoidiv"><input <?php formDisabled($formDisabled)?> checked onchange="document.getElementById('doi').disabled=this.checked;" type="checkbox" name="generatedoi" id="generatedoi">Auto-Generate DOI when data is available</span>
             -->
+            <input type="hidden" name="generatedoi" id="generatedoi" value="No">
     </fieldset></p>
 
 </fieldset>
