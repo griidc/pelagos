@@ -273,7 +273,7 @@ function formDisabled($isDisabled)
             txtMetaURL: "Please enter a valid URL.",
             radAuth: "Please select one.",
             dataurl: { 
-                required: "Please enter a valid URLress", 
+                required: "Please enter a valid URL", 
                 remote: jQuery.format("Please check the URL, it may not exist!") 
             }, 
         }
@@ -562,14 +562,15 @@ function cancelUpload() {
 function submitRegistry() {
     weekDays();
     getTimeZone();
-    if (jQuery('#servertype').val() == 'upload') {
-        showProgressBar();
+    if (jQuery("#regForm").valid()) {
+        if (jQuery('#servertype').val() == 'upload') {
+            showProgressBar();
+        }
+        jQuery('#post_frame').load(function() {
+            response = jQuery('#post_frame').contents().find("#main").html();
+            jQuery("#main").html(response);
+        });
     }
-    jQuery('#post_frame').load(function() {
-        response = jQuery('#post_frame').contents().find("#main").html();
-        jQuery("#main").html(response);
-        
-    });
     jQuery("#regForm").submit();
 }
 
