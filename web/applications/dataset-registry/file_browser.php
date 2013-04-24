@@ -63,7 +63,12 @@ EOT;
         }
         
         $chrootDir = "/sftp/chroot";
-        if ($matches[1] != '') { $chrootDir .= "/$matches[1]"; }
+        if ($matches[1] == '') {
+            $chrootDir .= "/pub";
+        }
+        else {
+            $chrootDir .= "/$matches[1]";
+        }
         $chrootDir .= "/$user";
         
         if (array_key_exists('dir',$_GET) and !preg_match('/^[\.\/]/',$_GET['dir'])) {
