@@ -1098,10 +1098,11 @@ function submitRegistry() {
             
         </fieldset>
         
+    </p>
     </div>
-    <p/>
     
     <div id="tabs-3">
+        Use this method when your dataset is &gt;1GB and you wish to push your data to GRIIDC (rather than place your dataset and metadata files on a web or FTP server at your institution).
  
         <fieldset> 
         <p>
