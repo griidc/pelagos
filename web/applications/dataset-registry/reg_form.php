@@ -1142,4 +1142,4 @@ function submitRegistry() {
 
 </div>
 
-<iframe id="post_frame" name="post_frame" style="display:none;"></iframe>
+<iframe id="post_frame" name="post_frame" style="width:0px; height:0px; border:none;"></iframe>
