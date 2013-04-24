@@ -16,6 +16,70 @@ drupal_add_library('system', 'ui.tabs');
 $tabselect = 0;
 $formDisabled = true;
 
+
+$user = getDrupalUserName();
+
+$sftpuser = false;
+$sftpdir = false;
+
+if ($user) {
+
+    $homeDir = NULL;
+    $gidNumber = NULL;
+    $sftpGroup = NULL;
+        
+    $ldap = ldap_connect('ldap://triton.tamucc.edu');
+        
+    $userResult = ldap_search($ldap, "ou=people,dc=griidc,dc=org", "(&(uid=$user)(objectClass=posixAccount))", array("gidNumber","homeDirectory"));
+        
+    if (ldap_count_entries($ldap, $userResult) > 0) {
+        $userEntries = ldap_get_entries($ldap, $userResult);
+        $userEntry = $userEntries[0];
+        if (array_key_exists('homedirectory',$userEntry)) {
+            $homeDir = preg_replace('/^\//','',$userEntry['homedirectory'][0]);
+        }
+        if (array_key_exists('gidnumber',$userEntry)) {
+            $gidNumber = $userEntry['gidnumber'][0];
+        }
+        
+        $groupResult = ldap_search($ldap, "ou=SFTP,ou=applications,dc=griidc,dc=org", "(objectClass=posixGroup)", array("cn","gidNumber","memberUid"));
+        
+        if (ldap_count_entries($ldap, $groupResult) > 0) {
+            $groupEntries = ldap_get_entries($ldap, $groupResult);
+            foreach ($groupEntries as $group) {
+                if (is_array($group)) {
+                    if (!is_null($gidNumber) and array_key_exists('gidnumber',$group) and $group['gidnumber'][0] == $gidNumber) {
+                        $sftpGroup = $group['cn'][0];
+                        break;
+                    }
+                    if (array_key_exists('memberuid',$group) and is_array($group['memberuid'])) {
+                        foreach ($group['memberuid'] as $uid) {
+                            if ($uid == $user) {
+                                $sftpGroup = $group['cn'][0];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    if (!is_null($sftpGroup) and preg_match('/^(?:(.*)-)?sftp-users$/',$sftpGroup,$matches)) {
+        $sftpuser = true;
+        $chrootDir = "/sftp/chroot";
+        if (count($matches)) {
+            $chrootDir .= "/pub";
+        }
+        else {
+            $chrootDir .= "/$matches[1]";
+        }
+        $chrootDir .= "/$user";
+        if (is_dir($chrootDir)) { $sftpdir = true; }
+    }
+
+}
+
+
 if (isset($dif_id))
 {
 	$formDisabled = false;
@@ -491,14 +555,14 @@ function showDOIbutton(show)
 {
     if (show.value == "No")
     {
-        document.getElementById('doibuttondiv').style.display = "inline-block";
-        document.getElementById('generatedoidiv').style.display = "none";
-        document.getElementById('doi').disabled=false;
+//        document.getElementById('doibuttondiv').style.display = "inline-block";
+//        document.getElementById('generatedoidiv').style.display = "none";
+//        document.getElementById('doi').disabled=false;
     }
     else
     {
-        document.getElementById('doibuttondiv').style.display = "none";
-        document.getElementById('generatedoidiv').style.display = "inline-block";
+//        document.getElementById('doibuttondiv').style.display = "none";
+//        document.getElementById('generatedoidiv').style.display = "inline-block";
     }
 }
 
@@ -901,9 +965,11 @@ function submitRegistry() {
                 <img src="/dif/images/info.png">
             </span>
             <label for="doi">Digital Object Identifier:</label>
-            <input disabled type="text" name="doi" id="doi" size="60"/ value="<?php if (isset($row['doi'])) {echo $row['doi'];};?>">&nbsp;&nbsp;&nbsp;&nbsp;
+            <input <?php formDisabled($formDisabled)?> type="text" name="doi" id="doi" size="60"/ value="<?php if (isset($row['doi'])) {echo $row['doi'];};?>">&nbsp;&nbsp;&nbsp;&nbsp;
             <span style="display:none" id="doibuttondiv"><button disabled  id="doibutton" name="doibutton" type="button" onclick="checkDOIFields(true);">Digital Object Indentifier Request Form</button></span>
+            <!--
             <span id="generatedoidiv"><input <?php formDisabled($formDisabled)?> checked onchange="document.getElementById('doi').disabled=this.checked;" type="checkbox" name="generatedoi" id="generatedoi">Auto-Generate DOI when data is available</span>
+            -->
     </fieldset></p>
 
 </fieldset>
@@ -927,8 +993,8 @@ function submitRegistry() {
             <li><a onclick="document.getElementById('servertype').value='upload'" href="#tabs-1">Direct Upload</a></li>
             <li><a onclick="document.getElementById('servertype').value='HTTP'" href="#tabs-2">HTTP/FTP Server</a></li>
             <li><a onclick="document.getElementById('servertype').value='SFTP'" href="#tabs-3">SFTP</a></li>
-            <li><a href="#tabs-4">TDS</a></li>
-            <li><a href="#tabs-5">ERDDAP</a></li>
+            <li><a href="#tabs-4">ERDDAP</a></li>
+            <li><a href="#tabs-5">TDS</a></li>
             <li><a href="#tabs-6">...</a></li>
         </ul>
 
@@ -973,7 +1039,7 @@ function submitRegistry() {
         </div>
         
       <div id="tabs-2">
-        Use this method when you can place your dataset and metadata files on a web or FTP server at your institution.
+        Use this method when you can place your dataset and metadata files on an HTTP (web) or FTP server at your institution.
         <fieldset>
             <p>
                 <span id="qtip_dataurl" style="float:right;">
@@ -1102,7 +1168,26 @@ function submitRegistry() {
     </div>
     
     <div id="tabs-3">
-        Use this method when your dataset is &gt;1GB and you wish to push your data to GRIIDC (rather than place your dataset and metadata files on a web or FTP server at your institution).
+        Use this method when your dataset is &gt;1GB and you wish to push your data to GRIIDC (rather than place your dataset and metadata files on an HTTP (web) or FTP server at your institution).
+
+        <?php 
+            if (!$sftpuser) {
+                echo <<<EOT
+                    <div style='color:red;'>
+                        Your account has not been configured for SFTP access.<br>
+                        If you wish to use SFTP, please contact <a href='mailto:griidc@gomri.org'>griidc@gomri.org</a> to request SFTP access.
+                    </div>
+EOT;
+            }
+            elseif (!$sftpdir) {
+                echo <<<EOT
+                    <div style="color:red;">
+                        Your SFTP directory has not been set up.<br>
+                        Please contact <a href='mailto:griidc@gomri.org'>griidc@gomri.org</a> for assistance.
+                    </div>
+EOT;
+            }
+        ?>
  
         <fieldset> 
         <p>

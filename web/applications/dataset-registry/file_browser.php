@@ -50,10 +50,10 @@ if (array_key_exists('dir',$_GET)) {
         
         if (is_null($sftpGroup) or !preg_match('/^(?:(.*)-)?sftp-users$/',$sftpGroup,$matches)) {
             echo <<<EOT
-                <div style="padding:10px;">
-                You are not an SFTP user.<br>
+                <div style="padding:10px; color:red;">
+                Your account has not been configured for SFTP access.<br>
                 <br>
-                Please contact <a href='mailto:griidc@gomri.org'>griidc@gomri.org</a> to request SFTP access.
+                If you wish to use SFTP, please contact <a href='mailto:griidc@gomri.org'>griidc@gomri.org</a> to request SFTP access.
                 <br>
                 <br>
                 <input type="button" value="Cancel" onclick="hideFileBrowser();">
@@ -63,7 +63,7 @@ EOT;
         }
         
         $chrootDir = "/sftp/chroot";
-        if ($matches[1] == '') {
+        if (count($matches) < 2) {
             $chrootDir .= "/pub";
         }
         else {
@@ -88,7 +88,7 @@ EOT;
         
         if (!is_dir($chrootDir)) {
             echo <<<EOT
-                <div style="padding:10px;">
+                <div style="padding:10px; color:red;">
                 Your SFTP directory has not been set up.<br>
                 <br>
                 Please contact <a href='mailto:griidc@gomri.org'>griidc@gomri.org</a> for assistance.
