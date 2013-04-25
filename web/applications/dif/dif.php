@@ -132,8 +132,8 @@ document.ed.video.value = "";
    </script>
    <style type="text/css">
      p { clear: both; }
-     .submit { margin-left: 12em; }
      em.form { font-weight: bold; padding-right: 1em; vertical-align: top; color:#FF0000;}
+     .submit { font-weight: bold; font-size: 120%; }
    </style>
   <script>
      $(document).ready(function(){
@@ -294,7 +294,16 @@ if ((isset($_POST['submit']) and $_POST['submit'])||(isset($_POST['later']) and 
         }
     }
     $result = pg_query($connection, $sql); 
-    if (!$result) { $mymesg="error"; $yn= "Something Went Wrong!!!" . pg_last_error(); } else { $mymesg= "status"; $yn= "Data successfully inserted"; } 
+    if (!$result) { $mymesg="error"; $yn= "Something Went Wrong!!!" . pg_last_error(); } else {
+        if ($status == 0) {
+            $mymesg= "warning";
+            $yn= "DIF saved but not submitted.</li><li>Please make sure you come back later and click \"Submit &amp; Done\" when you are ready to submit your DIF.";
+        }
+        else {
+            $mymesg= "status";
+            $yn= "DIF saved and submitted for approval.";
+        }
+    }
     echo " <div class=\"messages ". $mymesg."\"> <h2 class=\"element-invisible\">". $mymesg."message</h2> <ul> <li>$yn</li> </ul> </div> <br /> "; 
     pg_free_result($result); 
 
@@ -326,6 +335,7 @@ elseif (isset($_GET['uid']) and $uid=$_GET['uid']) {
 //CLOSE CONNECTIONS AND FREE RESOURCES
 pg_close($connection); 
 //FORM
+
 include("dataset_form.php");
 
 ?>

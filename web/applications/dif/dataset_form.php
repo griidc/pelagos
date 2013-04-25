@@ -75,7 +75,20 @@ drupal_add_js("$js",array('type'=>'inline'));
         height: 50px;
     }
 </style>
-<form class="cleair cmxform" style="width:auto; padding:10px;" id="commentForm" name="ed" action="" method="post"> 
+
+<?php
+
+if (!isset($_POST['submit']) and $status == 0) {
+    $message = "This record has not yet been submitted for approval. Please click \"Submit &amp; Done\" when you are ready to submit this DIF.";
+    drupal_set_message($message,'warning');
+}
+
+?>
+
+
+<form class="cmxform" id="commentForm" name="ed" action="" method="post">
+
+<div class="cleair" style="width:auto; padding:10px;">
     <input type="hidden" name=flag value=<?PHP echo "$flag"; ?>>
     <input type="hidden" name=modts VALUE=<?PHP echo "$m[0]";?> >
     <input type="hidden" name="dataset_udi" VALUE="<?PHP echo "$m[25]";?>">
@@ -353,24 +366,35 @@ Video&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
             </div>
     </fieldset></p>
 
-    <p><strong>NOTE:</strong> Clicking the <i>Save & Continue Later</i> or the <i>Submit &amp; Done</i> buttons will clear the form and ready to accept new inputs. Please be reminded that clicking the 
-    <i>Submit &amp; Done</i> button will lock the record for review but it can be unlocked for modification by contacting GRIIDC (<a HREF="mailto:griidc@gomri.org">griidc@gomri.org</a>).</p>
+</div>
+
     <?PHP
         if ((isAdmin())&&(($status ==1)||($status==2))){
     ?>
-    <input class="submit" type="submit" name="accept" value="Accept" size="30">  <input class="submit" type="submit" name="reject" value="Reject" size="30"> 
+    <div style="text-align:center;">
+        <input class="submit" type="submit" name="accept" value="Accept">
+        <input class="submit" type="submit" name="reject" value="Reject">
+    </div>
     <?PHP }else{ ?>
 
     <?PHP if ($status==2){
 
-echo " <div class=\"messages status\"> <h2>This record has been approved and locked.</h2> <ul> <li>Contact <A HREF=\"mailto:griidc@gomri.org?subject=[DIFF-Web Request] Record Request To Be Unlocked: ".$_GET['uid']."\">GRIIDC</a> if this record needs to be unlocked.</li> </ul> </div> <br /> ";
+            $message = "This record has been approved and locked. Please contact <A HREF=\"mailto:griidc@gomri.org?subject=[DIF-Web Request] Record Request To Be Unlocked: ".$_GET['uid']."\">GRIIDC</a> if this record needs to be unlocked.";
+            drupal_set_message($message,'status');
           }elseif ($status==1){
 
-echo " <div class=\"messages warning\"> <h2>This record has been locked and is awaiting approval.</h2> <ul> <li>Contact <A HREF=\"mailto:griidc@gomri.org?subject=[DIFF-Web Request] Record Request To Be Unlocked: ".$_GET['uid']."\">GRIIDC</a> if this record needs to be unlocked.</li> </ul> </div> <br /> ";
+            $message = "This record has been locked and is awaiting approval. Please contact <A HREF=\"mailto:griidc@gomri.org?subject=[DIF-Web Request] Record Request To Be Unlocked: ".$_GET['uid']."\">GRIIDC</a> if this record needs to be unlocked.";
+            drupal_set_message($message,'warning');
 
 
 }else{ ?>
-    <br /> <input class="submit" type="submit" name="later" value="Save &amp; Continue Later" size="30">  <input class="submit" type="submit" name="submit" value="Submit &amp; Done" size="30"> 
+    <div style="padding:10px; margin-top:10px;">
+        <strong>NOTE:</strong> Clicking the <i>Save & Continue Later</i> or the <i>Submit &amp; Done</i> buttons will save the DIF and clear the form so that you may submit an additional DIF. Please be reminded that clicking the <i>Submit &amp; Done</i> button will lock the record for review, but it can be unlocked for modification by contacting GRIIDC (<a HREF="mailto:griidc@gomri.org">griidc@gomri.org</a>).
+    </div>
+    <div style="text-align:center;">
+        <input class="submit" type="submit" name="later" value="Save &amp; Continue Later">
+        <input class="submit" type="submit" name="submit" value="Submit &amp; Done">
+    </div>
 <?PHP }} ?>
 </form>
 
