@@ -63,7 +63,19 @@ drupal_add_js("$js",array('type'=>'inline'));
 <script type="text/javascript">
    $("#commentForm").validate();
 </script>
-<form class="cleair cmxform" id="commentForm" name="ed" action="" method="post"> 
+<style>
+    #commentForm .textareacontainer {
+        position: relative;
+        height: 60px;
+    }
+    #commentForm textarea {
+        position: absolute;
+        left: 0px;
+        right: 0px;
+        height: 50px;
+    }
+</style>
+<form class="cleair cmxform" style="width:auto; padding:10px;" id="commentForm" name="ed" action="" method="post"> 
     <input type="hidden" name=flag value=<?PHP echo "$flag"; ?>>
     <input type="hidden" name=modts VALUE=<?PHP echo "$m[0]";?> >
     <input type="hidden" name="dataset_udi" VALUE="<?PHP echo "$m[25]";?>">
@@ -86,14 +98,14 @@ drupal_add_js("$js",array('type'=>'inline'));
        <?PHP helps("ctask", "<em class='form'>*</em>Task Title", "itask"); ?>
        <?PHP  if (!$flag){ ?>
            <span id="span1"> 
-                <select id="ctask" name="task" style="width:800px;" size="1" onchange="setOptions(document.ed.task.options[document.ed.task.selectedIndex].value);" class="required" >
+                <select id="ctask" name="task" style="width:100%;" size="1" onchange="setOptions(document.ed.task.options[document.ed.task.selectedIndex].value);" class="required" >
                     <option value="" selected="selected">[SELECT A TASK]</option>
                     <?PHP getTaskOptionList($tasks); ?>
                 </select>
            </span>
        <?PHP }else{ ?>
            <span id="span1">
-               <select id="ctask" name="task" style="width:800px;" size="1" onchange="setOptions(document.ed.task.options[document.ed.task.selectedIndex].value);" class="required" <?PHP if ($status != 0){echo "disabled";} ?>  >
+               <select id="ctask" name="task" style="width:100%;" size="1" onchange="setOptions(document.ed.task.options[document.ed.task.selectedIndex].value);" class="required" <?PHP if ($status != 0){echo "disabled";} ?>  >
                    <option value=' '>[SELECT A TASK]</option>
                    <?PHP getTaskOptionList($tasks, $mtask); ?>
                </select>
@@ -109,13 +121,15 @@ drupal_add_js("$js",array('type'=>'inline'));
  
     <p><fieldset id="qtitle">
         <?PHP helps("ctitle", "<em class='form'>*</em>Dataset Title", "ititle"); ?>
-        <textarea <?PHP if ($status != 0){echo "disabled";} ?> name="title" id="ctitle" class="required" maxlength="200" rows=3 cols=98  onkeypress="return imposeMaxLength(this, 200);" ><?PHP if ($flag=="update"){echo $m[2];} ?></textarea>
+        <div class="textareacontainer">
+        <textarea <?PHP if ($status != 0){echo "disabled";} ?> name="title" id="ctitle" class="required" maxlength="200" rows=3 cols=70 onkeypress="return imposeMaxLength(this, 200);" ><?PHP if ($flag=="update"){echo $m[2];} ?></textarea>
+        </div>
     </fieldset></p>
 
     <table WIDTH="100%"><tr><td> 
     <p><fieldset id="qppoc">
        <?PHP helps("cppoc", "<em class='form'>*</em>Primary Point of Contact", "ippoc"); ?>
-           <select name="ppoc" id="cppoc" <?PHP if ($status != 0) echo "disabled"; ?> class="required" style="width:385px;">
+           <select name="ppoc" id="cppoc" <?PHP if ($status != 0) echo "disabled"; ?> class="required" style="width:300px;">
                <?PHP if (!$flag) { ?>
                    <option value="">Please Choose a Task First</option>
                <?PHP } else getPersonOptionList($m[19],$m[1],$m[24]); ?>
@@ -124,7 +138,7 @@ drupal_add_js("$js",array('type'=>'inline'));
     </td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
     <p><fieldset id="qspoc">
        <?PHP helps("cspoc", "Secondary Point of Contact", "ispoc"); ?>
-           <select name="spoc" id="cspoc" style="width:385px;" <?PHP if ($status != 0){echo "disabled";} ?> >
+           <select name="spoc" id="cspoc" style="width:300px;" <?PHP if ($status != 0){echo "disabled";} ?> >
                <?PHP if (!$flag) { ?>
                    <option value="">Please Choose a Task First</option>
                <?PHP } else getPersonOptionList($m[20],$m[1],$m[24]); ?>
@@ -134,7 +148,9 @@ drupal_add_js("$js",array('type'=>'inline'));
 
     <p><fieldset id="qabstract">
         <?PHP helps("cabstract", "<em class='form'>*</em>Dataset Abstract", "iabstract"); ?>
-           <textarea <?PHP if ($status != 0){echo "disabled";} ?> name="abstract" id="cabstract" class="required" maxlength="4000" rows=3 cols=98 onkeypress="return imposeMaxLength(this, 4000);" ><?PHP if ($flag=="update"){echo $m[3];} ?></textarea> 
+            <div class="textareacontainer">
+           <textarea <?PHP if ($status != 0){echo "disabled";} ?> name="abstract" id="cabstract" class="required" maxlength="4000" rows=3 cols=70 onkeypress="return imposeMaxLength(this, 4000);" ><?PHP if ($flag=="update"){echo $m[3];} ?></textarea> 
+            </div>
     </fieldset></p>
 
     <p><fieldset>
@@ -159,7 +175,10 @@ Video&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
 <tr><td COLSPAN="3"> 
 <p id="qvideo">
         <?PHP helps("cvideo", "Video Attributes (if applicable)", "ivideo"); ?>
-        <textarea name="video" <?PHP if ($status != 0){echo "disabled";} ?> id="cvideo" maxlength="200" rows=3 cols=98  onkeypress="return imposeMaxLength(this, 200);"><?PHP if ($flag=="update"){echo "$dtt[5]";} ?></textarea></p>
+        <div class="textareacontainer">
+            <textarea name="video" <?PHP if ($status != 0){echo "disabled";} ?> id="cvideo" maxlength="200" rows=3 cols=70  onkeypress="return imposeMaxLength(this, 200);"><?PHP if ($flag=="update"){echo "$dtt[5]";} ?></textarea>
+        </div>
+    </p>
 </td></tr></table>
 </fieldset></p>
 
@@ -211,7 +230,9 @@ Video&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
 
     <p><fieldset> 
         <?PHP helps("coberservations", "Phenomenon/Variables Observed or Generated", "iobservation"); ?>
-            <textarea  name="observation" <?PHP if ($status != 0){echo "disabled";} ?> id="coberservations" rows=3 cols=98  maxlength="300"   onkeypress="return imposeMaxLength(this, 300);"><?PHP if ($flag=="update"){echo $m[7];} ?></textarea>
+            <div class="textareacontainer">
+                <textarea  name="observation" <?PHP if ($status != 0){echo "disabled";} ?> id="coberservations" rows=3 cols=70  maxlength="300"   onkeypress="return imposeMaxLength(this, 300);"><?PHP if ($flag=="update"){echo $m[7];} ?></textarea>
+            </div>
     </fieldset></p>
 
     <p><fieldset>
@@ -249,17 +270,23 @@ Video&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
     <p><fieldset>
         <?PHP helps("cgeoloc", "Geographic/Study Area", "igeoloc"); ?>
            <a href="javascript:void(0);" onClick=window.open("/map/","","width=1050,height=740,left=400,top=400,toolbar=0,status=0,scollbars=1,resizable=0,location=0");><img src="/map/images/red-dot.png" height=15> click here to select points on a map</a>
-           <textarea name="geoloc"<?PHP if ($status != 0){echo "disabled";} ?>  id="cgeoloc"  rows=3 cols=98 maxlength=200 onkeypress="return imposeMaxLength(this, 200);"><?PHP if ($flag=="update"){echo $m[11];} ?></textarea>
+            <div class="textareacontainer">
+               <textarea name="geoloc"<?PHP if ($status != 0){echo "disabled";} ?>  id="cgeoloc"  rows=3 cols=70 maxlength=200 onkeypress="return imposeMaxLength(this, 200);"><?PHP if ($flag=="update"){echo $m[11];} ?></textarea>
+            </div>
     </fieldset></p>
 
     <p><fieldset>
         <?PHP helps("chistorical", "Historical Data References (if applicable)", "ihistorical"); ?>
-            <textarea name="historical" <?PHP if ($status != 0){echo "disabled";} ?> id="chistoric" rows=3 cols=98 maxlength=300 onkeypress="return imposeMaxLength(this, 300);"><?PHP if ($flag=="update"){echo $m[12];} ?></textarea>
+            <div class="textareacontainer">
+                <textarea name="historical" <?PHP if ($status != 0){echo "disabled";} ?> id="chistoric" rows=3 cols=70 maxlength=300 onkeypress="return imposeMaxLength(this, 300);"><?PHP if ($flag=="update"){echo $m[12];} ?></textarea>
+            </div>
     </fieldset></p>
 
     <p><fieldset>
         <?PHP helps("ced", "Metadata Editor to  Use", "ied"); ?>
-             <textarea name="ed" <?PHP if ($status != 0){echo "disabled";} ?> id="ced" rows=3 cols=98 maxlength=300 onkeypress="return imposeMaxLength(this, 300);"><?PHP  if ($flag=="update"){echo $m[13];} ?></textarea>
+            <div class="textareacontainer">
+                <textarea name="ed" <?PHP if ($status != 0){echo "disabled";} ?> id="ced" rows=3 cols=70 maxlength=300 onkeypress="return imposeMaxLength(this, 300);"><?PHP  if ($flag=="update"){echo $m[13];} ?></textarea>
+            </div>
     </fieldset></p>
 
 <?PHP if (isset($m[14]) and !empty($m[14])) { list($stand[0], $stand[1], $stand[2], $stand[3], $stand[4])=explode("|", $m[14] ); } ?>
@@ -321,7 +348,9 @@ Video&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
 
     <p><fieldset>
         <?PHP helps("cremarks", "Remarks", "iremarks"); ?>
-            <textarea name="remarks" <?PHP if ($status != 0){echo "disabled";} ?> id="cremarks"  rows=3 cols=98 maxlength=200 onkeypress="return imposeMaxLength(this, 200);"><?PHP if ($flag =="update"){echo $m[18];} ?></textarea>
+            <div class="textareacontainer">
+                <textarea name="remarks" <?PHP if ($status != 0){echo "disabled";} ?> id="cremarks"  rows=3 cols=70 maxlength=200 onkeypress="return imposeMaxLength(this, 200);"><?PHP if ($flag =="update"){echo $m[18];} ?></textarea>
+            </div>
     </fieldset></p>
 
     <p><strong>NOTE:</strong> Clicking the <i>Save & Continue Later</i> or the <i>Submit &amp; Done</i> buttons will clear the form and ready to accept new inputs. Please be reminded that clicking the 

@@ -2,6 +2,7 @@
 
 require_once '/usr/local/share/GRIIDC/php/ldap.php';
 require_once '/usr/local/share/GRIIDC/php/drupal.php';
+require_once '/usr/local/share/GRIIDC/php/aliasIncludes.php';
 require_once 'lib/functions.php';
 
 if (!file_exists('config.php')) {
@@ -20,11 +21,15 @@ else {
 
 <table style="margin: 0; padding: 20; border: 5; outline: 0; font-size: 100%; vertical-align: top; width:100%;">
     <tr>
-        <td style="vertical-align: top; width:50%" >
+        <td style="vertical-align: top; width:60%" >
             <?php require_once 'dif.php'; ?>
         </td>
-        <td style="vertical-align: top; width:50%; height:2500px;" >
-            <?php require_once 'sidebar.php'; ?>
+        <td style="vertical-align: top; width:40%; height:2500px;" >
+            <div style="position:relative;">
+                <div style="position:absolute; left:0px; right:10px;">
+                    <?php require_once 'sidebar.php'; ?>
+                </div>
+            </div>
         </td>
     </tr>
 </table>
