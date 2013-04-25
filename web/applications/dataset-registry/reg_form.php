@@ -713,6 +713,27 @@ function submitRegistry() {
     width: 100%;
 }
 
+#regForm .textareacontainer {
+    position: relative;
+    height: 60px;
+}
+#regForm textarea {
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    height: 50px;
+}
+
+#regForm .fwtextboxcont {
+    position: relative;
+    height: 25px;
+}
+#regForm .fwtextboxcont input {
+    position: absolute;
+    left: 0px;
+    right: 0px;
+}
+
 </style>
 
 <div id="fileBrowser">
@@ -908,7 +929,9 @@ function submitRegistry() {
             <img src="/dif/images/info.png">
         </span>
         <label for="title"><b>Dataset Title: </b></label>
-        <input <?php formDisabled($formDisabled)?> onchange="checkDOIFields();" type="text" name="title" id="title" size="80" value="<?php if (isset($row['title'])) {echo $row['title'];};?>"/>
+        <div class="fwtextboxcont">
+            <input <?php formDisabled($formDisabled)?> onchange="checkDOIFields();" type="text" name="title" id="title" size="80" value="<?php if (isset($row['title'])) {echo $row['title'];};?>"/>
+        </div>
     </fieldset></p>
     
     <p><fieldset>
@@ -916,7 +939,9 @@ function submitRegistry() {
             <img src="/dif/images/info.png">
         </span>
         <label for="abstrct"><b>Dataset Abstract: </b></label>
-        <textarea <?php formDisabled($formDisabled)?> name="abstrct" id="abstrct" rows="5" cols="65"><?php if (isset($row['abstract'])) {echo $row['abstract'];};?></textarea> 
+        <div class="textareacontainer">
+            <textarea <?php formDisabled($formDisabled)?> name="abstrct" id="abstrct" rows="5" cols="65"><?php if (isset($row['abstract'])) {echo $row['abstract'];};?></textarea>
+        </div>
     </fieldset></p>
 
     <p><fieldset>
@@ -924,27 +949,31 @@ function submitRegistry() {
             <img src="/dif/images/info.png">
         </span>
         <label for="dataset_originator"><b>Dataset Originator: </b></label>
-        <input <?php formDisabled($formDisabled)?> type="text" name="dataset_originator" id="dataset_originator" size="80" value="<?php if (isset($row['dataset_originator'])) {echo $row['dataset_originator'];};?>"/>
+        <div class="fwtextboxcont">
+            <input <?php formDisabled($formDisabled)?> type="text" name="dataset_originator" id="dataset_originator" size="80" value="<?php if (isset($row['dataset_originator'])) {echo $row['dataset_originator'];};?>"/>
+        </div>
     </fieldset></p>
     
     <p><fieldset>
     <legend>Point of Contact</legend>
-        <table WIDTH="100%"><tr><td> 
+        <table WIDTH="100%"><tr><td width="50%"> 
        
             <span id="qtip_poc" style="float:right;">
                 <img src="/dif/images/info.png">
             </span>
             <label for="pocname"><b>Name: </b></label>
-            <input <?php formDisabled($formDisabled)?> onchange="checkDOIFields();" type="text" name="pocname" id="pocname" size="40" value="<?php if (isset($row['primary_poc'])) {echo $row['primary_poc'];};?>">
-        
-        </td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
+            <div class="fwtextboxcont">
+                <input <?php formDisabled($formDisabled)?> onchange="checkDOIFields();" type="text" name="pocname" id="pocname" size="40" value="<?php if (isset($row['primary_poc'])) {echo $row['primary_poc'];};?>">
+            </div>
+        </td><td width="50%" style="padding-left:10px;">
         
             <span id="qtip_pocemail" style="float:right;">
                 <img src="/dif/images/info.png">
             </span>
             <label for="pocemail"><b>E-Mail: </b></label>
-            <input <?php formDisabled($formDisabled)?> type="text" name="pocemail" id="pocemail" size="40" value="<?php echo $poc_email;?>">
-        
+            <div class="fwtextboxcont">
+                <input <?php formDisabled($formDisabled)?> type="text" name="pocemail" id="pocemail" size="40" value="<?php echo $poc_email;?>">
+            </div>
         </td></tr></table>
     </fieldset></p>
 
@@ -965,7 +994,9 @@ function submitRegistry() {
                 <img src="/dif/images/info.png">
             </span>
             <label for="doi">Digital Object Identifier:</label>
-            <input <?php formDisabled($formDisabled)?> type="text" name="doi" id="doi" size="60"/ value="<?php if (isset($row['doi'])) {echo $row['doi'];};?>">&nbsp;&nbsp;&nbsp;&nbsp;
+            <div class="fwtextboxcont">
+                <input <?php formDisabled($formDisabled)?> type="text" name="doi" id="doi" size="60"/ value="<?php if (isset($row['doi'])) {echo $row['doi'];};?>">
+            </div>
             <span style="display:none" id="doibuttondiv"><button disabled  id="doibutton" name="doibutton" type="button" onclick="checkDOIFields(true);">Digital Object Indentifier Request Form</button></span>
             <!--
             <span id="generatedoidiv"><input <?php formDisabled($formDisabled)?> checked onchange="document.getElementById('doi').disabled=this.checked;" type="checkbox" name="generatedoi" id="generatedoi">Auto-Generate DOI when data is available</span>
@@ -1013,7 +1044,8 @@ function submitRegistry() {
                 <label for="datafile">Dataset File:</label>
                 <?php
                     if (isset($row['data_server_type']) and $row['data_server_type'] == 'upload' and isset($row['url_data']) and $row['url_data'] != '') {
-                        echo "<input disabled size=80 type='text' value='$row[url_data]' style='color:black; background-color:transparent; padding:2px;'><br>";
+                        echo "<div class='fwtextboxcont'>";
+                        echo "<input disabled size=80 type='text' value='$row[url_data]' style='color:black; background-color:transparent; padding:2px;'></div>";
                         echo "<input type='hidden' name='upload_dataurl' value='$row[url_data]'>";
                         echo "To replace the dataset file: ";
                     }
@@ -1029,7 +1061,8 @@ function submitRegistry() {
                 <label for="metadatafile">Metadata File:</label>
                 <?php
                     if (isset($row['data_server_type']) and $row['data_server_type'] == 'upload' and isset($row['url_metadata']) and $row['url_metadata'] != '') {
-                        echo "<input disabled size=80 type='text' value='$row[url_metadata]' style='color:black; background-color:transparent; padding:2px;'><br>";
+                        echo "<div class='fwtextboxcont'>";
+                        echo "<input disabled size=80 type='text' value='$row[url_metadata]' style='color:black; background-color:transparent; padding:2px;'></div>";
                         echo "<input type='hidden' name='upload_metadataurl' value='$row[url_metadata]'>";
                         echo "To replace the metadata file: ";
                     }
@@ -1047,7 +1080,9 @@ function submitRegistry() {
                     <img src="/dif/images/info.png">
                 </span>
                 <label for="dataurl">Dataset File URL:</label>
-                <input <?php formDisabled($formDisabled)?> onchange="checkDOIFields();" name="dataurl" id="dataurl" type="text" size="80" value="<?php if (isset($row['data_server_type']) and $row['data_server_type'] == 'HTTP' and isset($row['url_data'])) {echo $row['url_data'];};?>"/>
+                <div class="fwtextboxcont">
+                    <input <?php formDisabled($formDisabled)?> onchange="checkDOIFields();" name="dataurl" id="dataurl" type="text" size="80" value="<?php if (isset($row['data_server_type']) and $row['data_server_type'] == 'HTTP' and isset($row['url_data'])) {echo $row['url_data'];};?>"/>
+                </div>
             </p>
             </fieldset>
             <fieldset>
@@ -1056,7 +1091,9 @@ function submitRegistry() {
                     <img src="/dif/images/info.png">
                 </span>
                 <label for="metadataurl">Metadata File URL:</label>
-                <input <?php formDisabled($formDisabled)?> name="metadataurl" id="metadataurl" type="text" size="80" value="<?php if (isset($row['data_server_type']) and $row['data_server_type'] == 'HTTP' and isset($row['url_metadata'])) {echo $row['url_metadata'];};?>"/>
+                <div class="fwtextboxcont">
+                    <input <?php formDisabled($formDisabled)?> name="metadataurl" id="metadataurl" type="text" size="80" value="<?php if (isset($row['data_server_type']) and $row['data_server_type'] == 'HTTP' and isset($row['url_metadata'])) {echo $row['url_metadata'];};?>"/>
+                </div>
             </p>
             </fieldset>
             
@@ -1067,7 +1104,7 @@ function submitRegistry() {
                 <img src="/dif/images/info.png">
             </span>
             <label for="availdate">Availability Date:</label>
-            <input <?php formDisabled($formDisabled)?> onchange="checkDOIFields();" value="<?php if (isset($row['availability_date'])) {echo $row['availability_date'];};?>" type="text" name="availdate" id="availdate" size="40"/>
+            <input <?php formDisabled($formDisabled)?> onchange="checkDOIFields();" value="<?php if (isset($row['availability_date'])) {echo $row['availability_date'];};?>" type="text" name="availdate" id="availdate" size="40" style="width:100px;"/>
             </td>
             <td>
             </p>
@@ -1114,18 +1151,22 @@ function submitRegistry() {
                 <legend>Credentials:</legend>
                     
                 <table WIDTH="100%">
-                <tr><td> 
+                <tr><td width="50%"> 
                 <span id="qtip_uname" style="float:right;">
                     <img src="/dif/images/info.png">
                 </span>
                 <label for="uname">Username:</label>
-                <input name="uname" id="uname" type="text" size="40" value="<?php if (isset($row['username'])) {echo $row['username'];};?>"/>
-                </td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
+                <div class="fwtextboxcont">
+                    <input name="uname" id="uname" type="text" size="40" value="<?php if (isset($row['username'])) {echo $row['username'];};?>"/>
+                </div>
+                </td><td width="50%" style="padding-left:10px;">
                 <span id="qtip_pword" style="float:right;">
                     <img src="/dif/images/info.png">
                 </span> 
                 <label for="pword">Password:</label>
-                <input name="pword" id="pword" type="password" size="40" value="<?php if (isset($row['password'])) {echo $row['password'];};?>"/>
+                <div class="fwtextboxcont">
+                    <input name="pword" id="pword" type="password" size="40" value="<?php if (isset($row['password'])) {echo $row['password'];};?>"/>
+                </div>
                </td></tr></table>
                 </fieldset>
             </div>
@@ -1195,7 +1236,9 @@ EOT;
                 <img src="/dif/images/info.png">
             </span>
             <label for="sshdatapath">Dataset File Path:</label>
-            <input <?php formDisabled($formDisabled)?> name="sshdatapath" id="sshdatapath" type="text" size="80" value="<?php if (isset($row['data_server_type']) and $row['data_server_type'] == 'SFTP' and isset($row['url_data'])) {echo $row['url_data'];};?>"/><br>
+                <div class="fwtextboxcont">
+                    <input <?php formDisabled($formDisabled)?> name="sshdatapath" id="sshdatapath" type="text" size="80" value="<?php if (isset($row['data_server_type']) and $row['data_server_type'] == 'SFTP' and isset($row['url_data'])) {echo $row['url_data'];};?>"/>
+                </div>
             <input type="button" value="Browse..." onclick="showFileBrowser('data','%home%');">
         </p>
             </fieldset>
@@ -1206,7 +1249,9 @@ EOT;
                     <img src="/dif/images/info.png">
                 </span>
                 <label for="sshmetadatapath">Metadata File Path:</label>
-                <input <?php formDisabled($formDisabled)?> name="sshmetadatapath" id="sshmetadatapath" type="text" size="80" value="<?php if (isset($row['data_server_type']) and $row['data_server_type'] == 'SFTP' and isset($row['url_metadata'])) {echo $row['url_metadata'];};?>"/><br>
+                <div class="fwtextboxcont">
+                    <input <?php formDisabled($formDisabled)?> name="sshmetadatapath" id="sshmetadatapath" type="text" size="80" value="<?php if (isset($row['data_server_type']) and $row['data_server_type'] == 'SFTP' and isset($row['url_metadata'])) {echo $row['url_metadata'];};?>"/>
+                </div>
                 <input type="button" value="Browse..." onclick="showFileBrowser('metadata','%home%');">
             </p>
          </fieldset> 
