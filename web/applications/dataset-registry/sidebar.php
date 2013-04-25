@@ -88,7 +88,7 @@ if ($GLOBALS['isGroupAdmin'] OR isAdmin())
     //echo '<h2>Dataset Filter</h2>';
     echo '<form id="filter" name="filter">';
     echo '<label for="name">Filter by Researcher:</label>';
-    echo '<select id="name" onchange="updateSidebar(this.value);">';
+    echo '<select id="name" style="width:100%" onchange="updateSidebar(this.value);">';
     
     buildFilter($tasks,$GLOBALS['personid'],$alltasks);
     
@@ -102,7 +102,7 @@ echo "<h2 class=\"title\" align=center>Tasks and datasets for ".$firstName." ".$
 echo "</h2></td></tr><tr><td>";
 
 
-echo '<div id="dstree" style="width:100%;height:1000px;overflow:auto;" BGCOLOR="#efefef">';
+echo '<div id="dstree" style="width:100%;height:1200px;overflow:auto;" BGCOLOR="#efefef">';
 echo "<div class=\"dtree\">\n";
 echo "<script type=\"text/javascript\">\n\n";
 displayTaskStatus($tasks,null,$GLOBALS['personid']);
