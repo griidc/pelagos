@@ -31,8 +31,6 @@ drupal_add_js('/dif/includes/js/dtree.js',array('type'=>'external'));
             {
                 //alert(xmlhttp.responseText);
                 eval(xmlhttp.responseText);
-                var doalso="updateTaskList("+personID+");";
-                eval(doalso);
                 //document.getElementById("dstree").innerHTML=xmlhttp.responseText;
             }
         }
