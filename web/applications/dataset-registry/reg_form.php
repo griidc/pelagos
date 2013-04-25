@@ -496,13 +496,13 @@ function showCreds(from,what,when)
 
 function selDays(weeknds)
 {
+    document.forms['regForm'].elements['weekdays'][0].checked = !weeknds;
     document.forms['regForm'].elements['weekdays'][1].checked = !weeknds;
     document.forms['regForm'].elements['weekdays'][2].checked = !weeknds;
     document.forms['regForm'].elements['weekdays'][3].checked = !weeknds;
     document.forms['regForm'].elements['weekdays'][4].checked = !weeknds;
-    document.forms['regForm'].elements['weekdays'][5].checked = !weeknds;
     
-    document.forms['regForm'].elements['weekdays'][0].checked = weeknds;
+    document.forms['regForm'].elements['weekdays'][5].checked = weeknds;
     document.forms['regForm'].elements['weekdays'][6].checked = weeknds;
     
     weekDays();
@@ -881,7 +881,7 @@ function submitRegistry() {
     </p>
 </div>
 
-<div class="cleair">
+<div class="cleair" style="width:auto; padding:10px;">
 
 <form id="regForm" name="regForm" action="" method="post" enctype="multipart/form-data" target="post_frame">
 
@@ -908,7 +908,7 @@ function submitRegistry() {
             <img src="/dif/images/info.png">
         </span>
         <label for="title"><b>Dataset Title: </b></label>
-        <input <?php formDisabled($formDisabled)?> onchange="checkDOIFields();" type="text" name="title" id="title" size="120" value="<?php if (isset($row['title'])) {echo $row['title'];};?>"/>
+        <input <?php formDisabled($formDisabled)?> onchange="checkDOIFields();" type="text" name="title" id="title" size="80" value="<?php if (isset($row['title'])) {echo $row['title'];};?>"/>
     </fieldset></p>
     
     <p><fieldset>
@@ -916,7 +916,7 @@ function submitRegistry() {
             <img src="/dif/images/info.png">
         </span>
         <label for="abstrct"><b>Dataset Abstract: </b></label>
-        <textarea <?php formDisabled($formDisabled)?> name="abstrct" id="abstrct" rows="5" cols="100"><?php if (isset($row['abstract'])) {echo $row['abstract'];};?></textarea> 
+        <textarea <?php formDisabled($formDisabled)?> name="abstrct" id="abstrct" rows="5" cols="65"><?php if (isset($row['abstract'])) {echo $row['abstract'];};?></textarea> 
     </fieldset></p>
 
     <p><fieldset>
@@ -924,7 +924,7 @@ function submitRegistry() {
             <img src="/dif/images/info.png">
         </span>
         <label for="dataset_originator"><b>Dataset Originator: </b></label>
-        <input <?php formDisabled($formDisabled)?> type="text" name="dataset_originator" id="dataset_originator" size="120" value="<?php if (isset($row['dataset_originator'])) {echo $row['dataset_originator'];};?>"/>
+        <input <?php formDisabled($formDisabled)?> type="text" name="dataset_originator" id="dataset_originator" size="80" value="<?php if (isset($row['dataset_originator'])) {echo $row['dataset_originator'];};?>"/>
     </fieldset></p>
     
     <p><fieldset>
@@ -935,7 +935,7 @@ function submitRegistry() {
                 <img src="/dif/images/info.png">
             </span>
             <label for="pocname"><b>Name: </b></label>
-            <input <?php formDisabled($formDisabled)?> onchange="checkDOIFields();" type="text" name="pocname" id="pocname" size="60" value="<?php if (isset($row['primary_poc'])) {echo $row['primary_poc'];};?>">
+            <input <?php formDisabled($formDisabled)?> onchange="checkDOIFields();" type="text" name="pocname" id="pocname" size="40" value="<?php if (isset($row['primary_poc'])) {echo $row['primary_poc'];};?>">
         
         </td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
         
@@ -943,7 +943,7 @@ function submitRegistry() {
                 <img src="/dif/images/info.png">
             </span>
             <label for="pocemail"><b>E-Mail: </b></label>
-            <input <?php formDisabled($formDisabled)?> type="text" name="pocemail" id="pocemail" size="60" value="<?php echo $poc_email;?>">
+            <input <?php formDisabled($formDisabled)?> type="text" name="pocemail" id="pocemail" size="40" value="<?php echo $poc_email;?>">
         
         </td></tr></table>
     </fieldset></p>
@@ -1013,7 +1013,7 @@ function submitRegistry() {
                 <label for="datafile">Dataset File:</label>
                 <?php
                     if (isset($row['data_server_type']) and $row['data_server_type'] == 'upload' and isset($row['url_data']) and $row['url_data'] != '') {
-                        echo "<input disabled size=100 type='text' value='$row[url_data]' style='color:black; background-color:transparent; padding:2px;'><br>";
+                        echo "<input disabled size=80 type='text' value='$row[url_data]' style='color:black; background-color:transparent; padding:2px;'><br>";
                         echo "<input type='hidden' name='upload_dataurl' value='$row[url_data]'>";
                         echo "To replace the dataset file: ";
                     }
@@ -1029,7 +1029,7 @@ function submitRegistry() {
                 <label for="metadatafile">Metadata File:</label>
                 <?php
                     if (isset($row['data_server_type']) and $row['data_server_type'] == 'upload' and isset($row['url_metadata']) and $row['url_metadata'] != '') {
-                        echo "<input disabled size=100 type='text' value='$row[url_metadata]' style='color:black; background-color:transparent; padding:2px;'><br>";
+                        echo "<input disabled size=80 type='text' value='$row[url_metadata]' style='color:black; background-color:transparent; padding:2px;'><br>";
                         echo "<input type='hidden' name='upload_metadataurl' value='$row[url_metadata]'>";
                         echo "To replace the metadata file: ";
                     }
@@ -1047,7 +1047,7 @@ function submitRegistry() {
                     <img src="/dif/images/info.png">
                 </span>
                 <label for="dataurl">Dataset File URL:</label>
-                <input <?php formDisabled($formDisabled)?> onchange="checkDOIFields();" name="dataurl" id="dataurl" type="text" size="120" value="<?php if (isset($row['data_server_type']) and $row['data_server_type'] == 'HTTP' and isset($row['url_data'])) {echo $row['url_data'];};?>"/>
+                <input <?php formDisabled($formDisabled)?> onchange="checkDOIFields();" name="dataurl" id="dataurl" type="text" size="80" value="<?php if (isset($row['data_server_type']) and $row['data_server_type'] == 'HTTP' and isset($row['url_data'])) {echo $row['url_data'];};?>"/>
             </p>
             </fieldset>
             <fieldset>
@@ -1056,7 +1056,7 @@ function submitRegistry() {
                     <img src="/dif/images/info.png">
                 </span>
                 <label for="metadataurl">Metadata File URL:</label>
-                <input <?php formDisabled($formDisabled)?> name="metadataurl" id="metadataurl" type="text" size="120" value="<?php if (isset($row['data_server_type']) and $row['data_server_type'] == 'HTTP' and isset($row['url_metadata'])) {echo $row['url_metadata'];};?>"/>
+                <input <?php formDisabled($formDisabled)?> name="metadataurl" id="metadataurl" type="text" size="80" value="<?php if (isset($row['data_server_type']) and $row['data_server_type'] == 'HTTP' and isset($row['url_metadata'])) {echo $row['url_metadata'];};?>"/>
             </p>
             </fieldset>
             
@@ -1069,7 +1069,6 @@ function submitRegistry() {
             <label for="availdate">Availability Date:</label>
             <input <?php formDisabled($formDisabled)?> onchange="checkDOIFields();" value="<?php if (isset($row['availability_date'])) {echo $row['availability_date'];};?>" type="text" name="availdate" id="availdate" size="40"/>
             </td>
-            <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
             <td>
             </p>
             <fieldset>
@@ -1084,7 +1083,7 @@ function submitRegistry() {
             
             </fieldset>
             </td>
-            <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+</tr><tr>
 <td>
             <fieldset>
             <p>
@@ -1097,7 +1096,7 @@ function submitRegistry() {
             </p>
             </fieldset>
             </td>
-            <td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
+<td>
             <fieldset>
                 <p>
                     <span id="qtip_when" style="float:right;">
@@ -1120,13 +1119,13 @@ function submitRegistry() {
                     <img src="/dif/images/info.png">
                 </span>
                 <label for="uname">Username:</label>
-                <input name="uname" id="uname" type="text" size="60" value="<?php if (isset($row['username'])) {echo $row['username'];};?>"/>
+                <input name="uname" id="uname" type="text" size="40" value="<?php if (isset($row['username'])) {echo $row['username'];};?>"/>
                 </td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
                 <span id="qtip_pword" style="float:right;">
                     <img src="/dif/images/info.png">
                 </span> 
                 <label for="pword">Password:</label>
-                <input name="pword" id="pword" type="password" size="60" value="<?php if (isset($row['password'])) {echo $row['password'];};?>"/>
+                <input name="pword" id="pword" type="password" size="40" value="<?php if (isset($row['password'])) {echo $row['password'];};?>"/>
                </td></tr></table>
                 </fieldset>
             </div>
@@ -1137,7 +1136,7 @@ function submitRegistry() {
                       <img src="/dif/images/info.png">
                   </span>
               <legend>Pull Times:</legend>
-              <table WIDTH="100%"><tr><td>
+              <table WIDTH="100%"><tr><td valign="top">
                                  
                   <label for="dlstart">Start Time:</label>
                    <select name="dlstart" id="dlstart">
@@ -1147,16 +1146,16 @@ function submitRegistry() {
                </td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
                  
                   <label for="weekdays">Weekdays:</label>
-                  <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Sunday");}; if(!isset($_GET['regid'])){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Sunday"/>Sunday&nbsp;
-                  <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Monday");}; if(!isset($_GET['regid'])){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Monday"/>Monday&nbsp;
-                  <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Tuesday");}; if(!isset($_GET['regid'])){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Tuesday"/>Tuesday&nbsp;
-                  <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Wednesday");}; if(!isset($_GET['regid'])){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Wednesday"/>Wednesday&nbsp;
-                  <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Thursday");}; if(!isset($_GET['regid'])){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Thursday"/>Thursday&nbsp;
-                  <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Friday");}; if(!isset($_GET['regid'])){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Friday"/>Friday&nbsp;
-                  <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Saturday");}; if(!isset($_GET['regid'])){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Saturday"/>Saturday&nbsp;
+                  <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Monday");}; if(!isset($_GET['regid'])){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Monday"/>Monday<br>
+                  <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Tuesday");}; if(!isset($_GET['regid'])){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Tuesday"/>Tuesday<br>
+                  <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Wednesday");}; if(!isset($_GET['regid'])){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Wednesday"/>Wednesday<br>
+                  <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Thursday");}; if(!isset($_GET['regid'])){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Thursday"/>Thursday<br>
+                  <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Friday");}; if(!isset($_GET['regid'])){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Friday"/>Friday<br>
+                  <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Saturday");}; if(!isset($_GET['regid'])){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Saturday"/>Saturday<br>
+                  <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Sunday");}; if(!isset($_GET['regid'])){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Sunday"/>Sunday
                   
-                  </td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
-                    <button style="width:100px" type="button" onclick="selDays(true);">Weekends</button><br \>
+                  </td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="top">
+                  <button style="width:100px" type="button" onclick="selDays(true);">Weekends</button><br \>
                     <button style="width:100px" type="button" onclick="selDays(false);">Workdays</button>
                   </td></tr></table>
               </fieldset>
@@ -1196,7 +1195,7 @@ EOT;
                 <img src="/dif/images/info.png">
             </span>
             <label for="sshdatapath">Dataset File Path:</label>
-            <input <?php formDisabled($formDisabled)?> name="sshdatapath" id="sshdatapath" type="text" size="120" value="<?php if (isset($row['data_server_type']) and $row['data_server_type'] == 'SFTP' and isset($row['url_data'])) {echo $row['url_data'];};?>"/><br>
+            <input <?php formDisabled($formDisabled)?> name="sshdatapath" id="sshdatapath" type="text" size="80" value="<?php if (isset($row['data_server_type']) and $row['data_server_type'] == 'SFTP' and isset($row['url_data'])) {echo $row['url_data'];};?>"/><br>
             <input type="button" value="Browse..." onclick="showFileBrowser('data','%home%');">
         </p>
             </fieldset>
@@ -1207,7 +1206,7 @@ EOT;
                     <img src="/dif/images/info.png">
                 </span>
                 <label for="sshmetadatapath">Metadata File Path:</label>
-                <input <?php formDisabled($formDisabled)?> name="sshmetadatapath" id="sshmetadatapath" type="text" size="120" value="<?php if (isset($row['data_server_type']) and $row['data_server_type'] == 'SFTP' and isset($row['url_metadata'])) {echo $row['url_metadata'];};?>"/><br>
+                <input <?php formDisabled($formDisabled)?> name="sshmetadatapath" id="sshmetadatapath" type="text" size="80" value="<?php if (isset($row['data_server_type']) and $row['data_server_type'] == 'SFTP' and isset($row['url_metadata'])) {echo $row['url_metadata'];};?>"/><br>
                 <input type="button" value="Browse..." onclick="showFileBrowser('metadata','%home%');">
             </p>
          </fieldset> 
