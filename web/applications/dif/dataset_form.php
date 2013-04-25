@@ -78,7 +78,7 @@ drupal_add_js("$js",array('type'=>'inline'));
 
 <?php
 
-if (!isset($_POST['submit']) and $status == 0) {
+if (!isset($_POST['submit']) and isset($_GET['uid']) and $status == 0) {
     $message = "This record has not yet been submitted for approval. Please click \"Submit &amp; Done\" when you are ready to submit this DIF.";
     drupal_set_message($message,'warning');
 }
