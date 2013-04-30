@@ -6,9 +6,22 @@
     {% endif %}
 </div>
 <div id="filter" style="text-align: center">
-    <input id="filter-input" type="text" size=100>
-    <input type="button" value="Filter" onclick="applyFilter();">
-    <input type="button" value="Clear/Show All" onclick="clearAll();">
+    <table style="margin-left:auto; margin-right:auto;">
+        <tr>
+            <td valign="top">
+                <input id="filter-input" type="text" size=100>
+                {% if treePaneCollapsed %}
+                    <div style="font-size:70%;">To filter by research award, researcher, or institution, please expand the pane using the arrow tab on the left.</div>
+                {% endif %}
+            </td>
+            <td valign="top">
+                <input type="button" value="Filter" onclick="applyFilter();">
+            </td>
+            <td valign="top">
+                <input type="button" value="Clear/Show All" onclick="clearAll();">
+            </td>
+        </tr>
+    </table>
 </div>
 
 <input id="by-input" type="hidden">
