@@ -7,7 +7,7 @@ class EX_Extent
 {
 	public function __construct($instanceType,$instanceName)
 	{
-		$instanceType .= '-gmd:EX_Extent';
+		$instanceType .= "-gmd:EX_Extent!$instanceName";
 		
 		echo '<fieldset>';
 		echo '<legend>Extent_'.$instanceName.'</legend>';

@@ -2,14 +2,15 @@
 
 include_once 'CI_ResponsibleParty.php';
 
+$now = substr(date('c'),0,10);
 
 echo <<<MI1
 
 <label for="MI1">fileidentifier</label>
-<input type="text" id="MI1" name="gmd:fileidentifier-gco:characterString"/><br/>
+<input type="text" id="MI1" name="gmd:fileIdentifier-gco:CharacterString"/><br/>
 
 <label for="MI2">language</label>
-<input type="text" id="MI2" name="gmd:language-gco:characterString"/ value="eng; USA"><br/>
+<input type="text" id="MI2" name="gmd:language-gco:CharacterString"/ value="eng; USA"><br/>
 
 <label for="MI3">characterSet</label>
 <input type="text" id="MI3" name="gmd:characterSet-gmd:MD_CharacterSetCode" value="utf8"/><br/>
@@ -24,13 +25,13 @@ $mypi = new CI_ResponsibleParty('gmd:contact','contactPI',false,'CI_RoleCode_pri
 echo <<<MI2
 
 <label for="MI5">*dateStamp</label>
-<input type="text" id="MI5" name="gmd:dateStamp-gco:Date"/><br/>
+<input type="text" id="MI5" name="gmd:dateStamp-gco:Date" value="$now"/><br/>
 
 <label for="MI6">metadataStandardName</label>
-<input type="text" id="MI6" name="gmd:metadataStandardName-gco:characterString" value="ISO 19115-2 Geographic Information - Metadata - Part 2: Extensions for Imagery and Gridded Data"/><br/>
+<input type="text" id="MI6" name="gmd:metadataStandardName-gco:CharacterString" value="ISO 19115-2 Geographic Information - Metadata - Part 2: Extensions for Imagery and Gridded Data"/><br/>
 
 <label for="MI7">metadataStandardVersion</label>
-<input type="text" id="MI7" name="gmd:metadataStandardVersion-gco:characterString" value="ISO 19115-2:2009(E)"/><br/>
+<input type="text" id="MI7" name="gmd:metadataStandardVersion-gco:CharacterString" value="ISO 19115-2:2009(E)"/><br/>
 
 <!--label for="MI8">dataSetURI</label>
 <input type="text" id="MI8" name="gmd:dataSetURI"/><br/-->

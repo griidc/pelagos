@@ -6,7 +6,7 @@ class MD_Keywords
 	public function __construct($instanceType, $instanceName,$type)
 	{
 		
-		//$instanceType .= '-gmd:CI_Citation';
+		$instanceType .= '-gmd:MD_Keywords';
 		
 	echo <<<KW
 
@@ -82,9 +82,9 @@ class MD_Keywords
 	</td></tr>
 	</table>
 	<label for="kws$instanceName">keywords</label>
-	<input type="text" id="kws$instanceName" name="$instanceType-gmd:descriptiveKeywords-gmd:MD_Keywords"/><br/>
+	<input type="text" id="kws$instanceName" name="$instanceType-gmd:keyword"/><br/>
 	<label for="kwtype$instanceName">type</label>
-	<input type="text" id="kwtype$instanceName" name="$instanceType-gmd:descriptiveKeywords-gmd:type-gmd:MD_KeywordTypeCode" value="$type"/><br/>
+	<input type="text" id="kwtype$instanceName" name="$instanceType-gmd:type-gmd:MD_KeywordTypeCode" value="$type"/><br/>
 	</fieldset>
 
 KW;

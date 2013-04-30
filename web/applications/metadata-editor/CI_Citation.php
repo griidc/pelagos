@@ -18,8 +18,8 @@ class CI_Citation
 		<label for="CIT1_$instanceName">title</label>
 		<input type="text" id="CIT1_$instanceName" name="$instanceType-gmd:title-gco:CharacterString"/><br/>
 
-		<label for="CIT2_$instanceName"">alternatetitle</label>
-		<input type="text" id="CIT2_$instanceName" name="$instanceType-gmd:alternatetitle-gco:CharacterString"/><br/>
+		<label for="CIT2_$instanceName"">alternateTitle</label>
+		<input type="text" id="CIT2_$instanceName" name="$instanceType-gmd:alternateTitle-gco:CharacterString"/><br/>
 CIT;
 		
 		$mycidate = new CI_Date($instanceType.'-gmd:date',$instanceName,'publication');

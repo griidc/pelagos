@@ -8,7 +8,7 @@ class CI_ResponsibleParty
 	
 	public function __construct($instanceType, $instanceName, $onlineresource=false, $role='')
 	{
-		$instanceType .= '-gmd:CI_ResponsibleParty';
+		$instanceType .= "-gmd:CI_ResponsibleParty!$instanceName";
 		
 		echo '<fieldset>';
 		echo '<legend>Responsible Party_'.$instanceName.'</legend>';
