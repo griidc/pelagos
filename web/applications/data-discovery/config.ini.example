@@ -14,3 +14,4 @@ password = "password"
 [DataDiscovery]
 registeredOrderBy = "year DESC, dataset_originator, title"
 identifiedOrderBy = "title"
+treePaneCollapsed = 1

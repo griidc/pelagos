@@ -35,7 +35,6 @@ $(document).ready(function() {
     $("#expand-collapse").click(function(){
         if ($('#expand-collapse div').hasClass('collapsed')) {
             $('#right').animate({'left' : "40%", 'width' : "60%"}, {duration: 'slow'});
-            $('#left #menu').toggle();
             $('#menu').tinyscrollbar_update('relative');
             $('#left').animate({'width' : "40%"}, {duration: 'slow', complete: function() {
                 $('#expand-collapse div').removeClass('collapsed');
@@ -47,7 +46,6 @@ $(document).ready(function() {
             $('#left').animate({'width' : "0%"}, {duration: 'slow', complete: function() {
                 $('#expand-collapse div').addClass('collapsed');
                 $('#content').tinyscrollbar_update('relative');
-                $('#left #menu').toggle();
             }});
         }
     });

@@ -59,7 +59,13 @@ $app->get('/', function () use ($app) {
     drupal_add_css("$env[SCRIPT_NAME]/includes/css/scrollbars.css",array('type'=>'external'));
     drupal_add_css("$env[SCRIPT_NAME]/includes/css/datasets.css",array('type'=>'external'));
     drupal_add_css("$env[SCRIPT_NAME]/includes/css/dataset_details.css",array('type'=>'external'));
-    return $app->render('html/index.html');
+    if (array_key_exists('treePaneCollapsed',$GLOBALS['config']['DataDiscovery'])) {
+        $stash['treePaneCollapsed'] = $GLOBALS['config']['DataDiscovery']['treePaneCollapsed'];
+    }
+    else {
+        $stash['treePaneCollapsed'] = 0;
+    }
+    return $app->render('html/index.html',$stash);
 });
 
 $app->get('/datasets/:filter/:by/:id', function ($filter,$by,$id) use ($app) {

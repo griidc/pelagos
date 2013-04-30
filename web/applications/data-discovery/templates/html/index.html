@@ -16,7 +16,6 @@
 
 <div id="container" style="position: relative; width:100%; background-color:white; padding:0; margin:0;">
     <div id="left" style="position: absolute; width:40%; height:500px;">
-        <div id="expand-collapse" style="position: absolute; bottom: 50%; right: 0px; width:7px; height:25px;"><div style="height:50px;"></div></div>
         <div id="menu">
             <div class="scrollbar"><div class="track"><div class="thumb"><div class="end"></div></div></div></div>
             <div class="viewport">
@@ -73,7 +72,8 @@
             </div>
         </div>
     </div>
-    <div id="right" style="position: absolute; left: 40%; width: 60%; height:500px;">
+    <div id="right" style="position: absolute; {% if treePaneCollapsed %} left: 0%; width: 100%; {% else %} left: 40%; width: 60%; {% endif %} height:500px; background-color:white;">
+        <div id="expand-collapse" style="position: absolute; bottom: 50%; left: -7px; width:7px; height:25px;"><div {% if treePaneCollapsed %} class="collapsed" {% endif %} style="height:50px;"></div></div>
         <div id="content">
             <div class="scrollbar"><div class="track"><div class="thumb"><div class="end"></div></div></div></div>
             <div class="viewport">
