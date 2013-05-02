@@ -123,12 +123,29 @@ function addNodeAttributes($doc,$parent,&$node,$fieldname,$fieldvalue="")
 			}
 			break;
 		}
+		
+		case 'gmd:MD_TopicCategoryCode':
+		{
+			$parent->removeChild($node);
+			
+			$arrkeywords = preg_split("/\;/",$fieldvalue);
+			
+			foreach ($arrkeywords as $myKeywords)
+			{
+				$child = $doc->createElement('gmd:MD_TopicCategoryCode');
+				$child = $parent->appendChild($child);
+				$value = $doc->createTextNode($myKeywords);
+				$value = $child->appendChild($value);
+			}
+			break;
+			
+			
+		}
 	}
 }
 
 function addXMLChildValue($doc,$parent,$fieldname,$fieldvalue)
 {
-
 	$child = $doc->createElement($fieldname);
 	$child = $parent->appendChild($child);
 	$value = $doc->createTextNode($fieldvalue);
@@ -220,7 +237,10 @@ function createNodesXML($xml)
 		
 	$doc->normalizeDocument();
 	$doc->formatOutput = true;
+	ob_clean();
+	flush();
 	echo $doc->saveXML();
+	exit;
 }
 
 function removeFromArray($array,$position)

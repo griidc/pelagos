@@ -1,0 +1,92 @@
+<script>
+function addTopicKWItem{{instanceName}}()
+{
+	var tpkList=document.getElementById("TOPKlist_{{instanceName}}");
+	var tpkSel=document.getElementById("TOPKselect_{{instanceName}}");
+	//var tpkTxt=document.getElementById("TOPK_{{instanceName}}");
+		
+	var option=document.createElement("option");
+	option.text=tpkList.options[tpkList.selectedIndex].text;
+	tpkSel.add(option,null);
+	
+	tpkList.remove(tpkList.selectedIndex);
+	
+	makeTopiclist{{instanceName}}();
+}
+
+function removeTopicKWItem{{instanceName}}()
+{
+	var tpkList=document.getElementById("TOPKlist_{{instanceName}}");
+	var tpkSel=document.getElementById("TOPKselect_{{instanceName}}");
+	//var tpkTxt=document.getElementById("TOPK_{{instanceName}}");
+	
+	var option=document.createElement("option");
+	option.text=tpkSel.options[tpkSel.selectedIndex].text;
+	tpkList.add(option,null);
+	
+	tpkSel.remove(tpkSel.selectedIndex);
+	
+	makeTopiclist{{instanceName}}();
+}
+
+function makeTopiclist{{instanceName}}()
+{
+	var tpkSel=document.getElementById("TOPKselect_{{instanceName}}");
+	var tpkTxt=document.getElementById("TOPK_{{instanceName}}");
+	var txt="";
+	var i;
+	for (i=0;i<tpkSel.length;i++)
+	{
+		if (txt=="")
+		{
+			txt=txt + tpkSel.options[i].text;
+		}
+		else
+		{
+			txt=txt + ";" + tpkSel.options[i].text;
+		}
+	}
+	tpkTxt.value = txt;
+}
+
+</script>
+
+<fieldset>
+<legend>Topic Keywords</legend>
+<table><td><td>
+<label>Topic Keyword List</label>
+	<select size=10 id="TOPKlist_{{instanceName}}" >
+		<option value="farming">farming</option>
+		<option value="biota">biota</option>
+		<option value="boundaries">boundaries</option>
+		<option value="economy">economy</option>
+		<option value="elevation">elevation</option>
+		<option value="environment">environment</option>
+		<option value="geoscientificInformation">geoscientificInformation</option>
+		<option value="health">health</option>
+		<option value="imageryBaseMapsEarthCover">imageryBaseMapsEarthCover</option>
+		<option value="intelligenceMilitary">intelligenceMilitary</option>
+		<option value="inlandWaters">inlandWaters</option>
+		<option value="location">location</option>
+		<option value="oceans">oceans</option>
+		<option value="planningCadastre">planningCadastre</option>
+		<option value="society">society</option>
+		<option value="structure">structure</option>
+		<option value="transportation">transportation</option>
+		<option value="utilitiesCommunication">utilitiesCommunication</option>
+	</select>
+	</td>
+	<td>
+	<button type="button" onclick="addTopicKWItem{{instanceName}}();">&gt;&gt;&gt;</button>
+	<button type="button" onclick="removeTopicKWItem{{instanceName}}();">&lt;&lt;&lt;</button>
+	</td>
+	<td>
+	<label>Selected Topic Keyword</label>
+	<select size=10 id="TOPKselect_{{instanceName}}" >
+	</select>
+	</td>
+	</tr>
+	</table>
+	<label>Topic Keywords</label>
+	<input type="text" id="TOPK_{{instanceName}}" name="{{instanceType}}-gmd:MD_TopicCategoryCode">
+</fieldset>

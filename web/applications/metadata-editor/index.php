@@ -5,29 +5,26 @@ ini_set('display_errors', '1');
 
 drupal_add_library('system', 'ui.datepicker');
 
+drupal_add_js('/includes/jquery-validation/jquery.validate.js',array('type'=>'external'));
+
 if (isset($_POST))
 
-
 {
-	
-	
+
 	if (count($_POST)>1)
 	{
+		
+		
 		include 'makeXML.php';
 		
 		makeXML($_POST);
-		exit;
+		//exit;
 	}
 	
-	//exit;
-	
-	echo '<pre>';
+	//echo '<pre>';
 	//var_dump($_POST);
-	
-	echo '</pre>';
+	//echo '</pre>';
 }
-
-
 
 
 
@@ -46,11 +43,10 @@ label:after {content:": "}
 select {width:400px}
 
 button {width:50px}
-
-
 </style>
 
 <!--
+<style>
 legend 
 {
 	text-shadow: 2px 2px 3px rgba(150, 150, 150, 0.75);
@@ -76,24 +72,51 @@ fieldset
 	-moz-box-shadow: 4px 4px 5px rgba(50, 50, 50, 0.75);
 	box-shadow: 4px 4px 5px rgba(50, 50, 50, 0.75);
 }
--->
+</style>
+ -->
 
-<fieldset>
 <table width="40%,*">
-<tr ><td>
+<tr><td>
+<fieldset>
+<legend>Metadata</legend>
 <form method="post">
 
 <?php
+
+	$htmlString;
+	$jsString;
+	$validateRules;
+	$validateMessages;
+	$qtipS;
+	
+	//echo "<script>\n";
+	//echo $twig->render('js/base.js', array('jqueryString' => $jqueryString,'validateString' => $validateString));
+	//echo "<script>\n";
+
 	include 'MI_Metadata.php';
+	$myMImeta = new MI_Metadata('MIMeta',uniqid());
+	$myMImeta->getHTML();
+
+	
+	
+	require_once '/usr/share/pear/Twig/Autoloader.php';
+	Twig_Autoloader::register();
+	
+	$loader = new Twig_Loader_Filesystem('./templates');
+	$twig = new Twig_Environment($loader);
+	
+
+	
 ?>
 
 <input type="submit"/>
 <input type="reset"/>
 
 </form>
+</fieldset>
 </td>
 <td></td></tr></table>
-</fieldset>
+
 
 
 <!--

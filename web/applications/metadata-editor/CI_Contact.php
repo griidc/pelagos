@@ -15,6 +15,8 @@ class CI_Contact
 		${'mytelephone'.$instanceName} = new CI_Telephone($instanceType.'-gmd:phone',$instanceName);
 		${'myaddress'.$instanceName} = new CI_Address($instanceType.'-gmd:address', $instanceName, $onlineresource);
 		
+		echo ${'myaddress'.$instanceName}->getHTML();
+		
 		//echo '<label for="gmd:hoursOfService_'.$instanceName.'">hoursOfService</label>';
 		//echo '<input type="text" name="gmd:hoursOfService_'.$instanceName.'" xmlclass="gmd:hoursOfService" xmltype="gco:CharacterString"/><br/>';
 		

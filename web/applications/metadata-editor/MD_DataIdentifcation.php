@@ -1,6 +1,7 @@
 <?php
 include_once 'CI_Citation.php';
 include_once 'MD_Keywords.php';
+include_once 'MD_TopicCategoryCode.php';
 
 
 class MD_DataIdentification
@@ -34,7 +35,8 @@ class MD_DataIdentification
 		echo '<input type="text" id="MDD2_'.$instanceName.'" name="'.$instanceType.'-gmd:language-gco:CharacterString"/><br/>';
 		
 		#Topic Keywords MD_TopicCategoryCode
-		#${'mykwplace'.$instanceName} = new MD_Keywords($instanceType.'-gmd:topicCategory', $instanceName.'Place','place');
+		${'mytopickw'.$instanceName} = new MD_TopicCategoryCode($instanceType.'-gmd:topicCategory', $instanceName);
+		echo ${'mytopickw'.$instanceName}->getHTML();
 		
 		include_once 'EX_Extent.php';
 		$myext = new EX_Extent($instanceType.'-gmd:extent',$instanceName);
