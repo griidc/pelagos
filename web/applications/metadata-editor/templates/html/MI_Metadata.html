@@ -1,0 +1,38 @@
+<div id="fileidentifier_tip" style="display:none;">
+    <p>
+        This is the File Identifier!
+    </p>
+</div>
+
+<div id="language_tip" style="display:none;position:absolute top:200 left:700">
+    <p>
+        This is the Language!
+    </p>
+</div>
+
+<label for="MI1">fileidentifier</label>
+<input type="text" id="MI1" name="gmd:fileIdentifier-gco:CharacterString" value="{{fileIdentifier}}"/><br/>
+
+<label for="MI2">language</label>
+<input type="text" id="MI2" name="gmd:language-gco:CharacterString" value="eng; USA"><br/>
+
+<label for="MI3">characterSet</label>
+<input type="text" id="MI3" name="gmd:characterSet-gmd:MD_CharacterSetCode" value="utf8"/><br/>
+
+<label for="MI4">hierarchyLevel</label>
+<input type="text" id="MI4" name="gmd:hierarchyLevel-gmd:MD_ScopeCode" value="dataset"/><br/>
+
+{{ResponsibleParty}}
+
+<label for="MI5">dateStamp</label>
+<input type="text" id="MI5" name="gmd:dateStamp-gco:Date" value="{{now}}"/><br/>
+
+<label for="MI6">metadataStandardName</label>
+<input type="text" id="MI6" name="gmd:metadataStandardName-gco:CharacterString" value="ISO 19115-2 Geographic Information - Metadata - Part 2: Extensions for Imagery and Gridded Data"/><br/>
+
+<label for="MI7">metadataStandardVersion</label>
+<input type="text" id="MI7" name="gmd:metadataStandardVersion-gco:CharacterString" value="ISO 19115-2:2009(E)"/><br/>
+
+<hr>
+
+{{DataIdentification}}

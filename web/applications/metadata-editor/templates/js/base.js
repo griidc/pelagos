@@ -1,17 +1,8 @@
+{% autoescape false %}
+
 (function ($) {
     $(function() {
-        $( "#tabs" ).tabs({
-            heightStyleType: "fill",
-            disabled: [2,3,4],
-            selected: <?php echo $tabselect;?>
-        });
-        
-        $( "#availdate" ).datepicker({
-            showOn: "button",
-            buttonImageOnly: false,
-            dateFormat: "yy-mm-dd",
-            autoSize:true
-        });
+		{{jqUIs}}
     });
     
     $(document).ready(function(){
@@ -22,54 +13,7 @@
                 required: true,
                 maxlength: 200
             },
-            abstrct:
-            {
-                required: true,
-                maxlength: 4000
-            },
-            sshdatapath: "required",
-            auth: "required",
-            sshauth: "required",
-            pocname: "required",
-            whendl: "required",
-            pullds: "required",
-            pocemail:
-            {
-                required: true,
-                email: true
-            },
-            dataurl: 
-            {
-                required: true,
-                url: true
-            },
-            metadataurl: 
-            {
-                required: false,
-                url: true
-            },
-            uname:
-            {
-                required: "#auth:checked"
-            },
-            pword:
-            {
-                required: "#auth:checked"
-            },
-            availdate:
-            {
-                required: true,
-                dateISO: true
-            },
-            regbutton: 
-            {
-				required: "#registry_id:minlength:15",
-            },
-            dataset_originator:
-            {
-                required: true,
-                maxlength: 200
-            }
+            
         },
         messages: {
             txtMetaURL: "Please enter a valid URL.",
@@ -91,24 +35,30 @@
                 viewport: $(window)
             },
             show: {
-                event: "mouseenter focus",
+                event: "mouseover focus",
                 solo: true
             },
             hide: {
-                event: "mouseleave blur",
+                event: "blur",
                 delay: 100,
                 fixed: true
             },
             style: {
-                classes: "ui-tooltip-shadow ui-tooltip-tipped"
+                classes: "ui-tooltip-shadow ui-tooltip-tipped ui-tooltip-youtube"
             }
         });
         
-        $("#qtip_title").qtip({
-            content: $("#title_tip")
+        $("#MI1").qtip({
+            content: $("#fileidentifier_tip")
         });
         
+		$("#MI2").qtip({
+            content: $("#language_tip")
+        });
         
         
     });
 })(jQuery);
+
+
+{% endautoescape %}

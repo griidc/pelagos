@@ -1,42 +1,23 @@
 <?php
-#include 'CI_Telephone_DL.php';
-
 
 class CI_Telephone
 {
+	private $htmlString;
 	
-	public function __construct($instanceType, $instanceName)
+	public function __construct($mMD, $instanceType, $instanceName)
 	{
 		$instanceType .= '-gmd:CI_Telephone';
 		
-		echo '<fieldset>';
-		echo '<legend>Telephone_'.$instanceName.'</legend>';
+		$twigArr = array('instanceName' => $instanceName,'instanceType' => $instanceType);
 		
-		echo '<label for="CITP1_'.$instanceName.'">voice</label>';
-		echo '<input type="text" id="CITP1_'.$instanceName.'" name="'.$instanceType.'-gmd:voice-gco:CharacterString"/><br/>';
+		$this->htmlString .= $mMD->twig->render('html/CI_Telephone.html', $twigArr);
 		
-		echo '<label for="CITP2_'.$instanceName.'">facsimile</label>';
-		echo '<input type="text" id="CITP2_'.$instanceName.'" name="'.$instanceType.'-gmd:facsimile-gco:CharacterString"/><br/>';
-		
-		echo '</fieldset>';
+		return true;
 	}
 	
+	public function getHTML()
+	{
+		return $this->htmlString;
+	}
 }
-
-
-
-
-/*
-				
-	<fieldset>
-	<legend>Telephone</legend>
-	
-		<label for="gmd:voice">voice</label>
-		<input type="text" name="gmd:voice" xmltype="gco:CharacterString"/><br/>
-
-		<label for="gmd:facsimilee">facsimile</label>
-		<input type="text" name="gmd:facsimile" xmltype="gco:CharacterString"/><br/>
-	
-	</fieldset>
-*/
-	?>			
+?>			

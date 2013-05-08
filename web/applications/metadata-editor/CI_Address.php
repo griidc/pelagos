@@ -1,49 +1,33 @@
 <?php
-#include 'CI_Address_DL.php';
 include_once 'CI_OnlineResource.php';
-
-
 
 class CI_Address
 {
 	private $htmlString;
-	private $jsString;
 
-	public function __construct($instanceType, $instanceName, $onlineresource)
+	public function __construct($mMD, $instanceType, $instanceName, $onlineresource=false)
 	{
-		require_once '/usr/share/pear/Twig/Autoloader.php';
-		Twig_Autoloader::register();
-		
-		$loader = new Twig_Loader_Filesystem('./templates');
-		$twig = new Twig_Environment($loader);
-		
 		$instanceType .= '-gmd:CI_Address';
-								
-		$this->htmlString .= "<fieldset>\n";
 		
-		$this->htmlString .= "<legend>Address_$instanceName</legend>\n";
-				
-		$this->htmlString .= $twig->render('html/CI_Address.html', array('instanceName' => $instanceName, 'instanceType' => $instanceType));
+		$OnlineResource = '';
 		
 		if ($onlineresource==true)
 		{
 			$myonlr = new CI_OnlineResource($instanceName);
+			//$OnlineResource = $myonlr->getHTML(); #TODO:Finish CI_OnlineResource Class
 		}
 		
-		$this->htmlString .= "</fieldset>\n";
+		$twigArr = array('instanceName' => $instanceName, 'instanceType' => $instanceType, 'OnlineResource' => $OnlineResource);
 		
-		//echo $this->htmlstring;
+		$this->htmlString .= $mMD->twig->render('html/CI_Address.html', $twigArr);
+		
+		return true;
 	}
 	
 	public function getHTML()
 	{
 		return $this->htmlString;
 	}
-	
-	public function getJS()
-	{
-		return $this->jsString;
-	}
-	
+
 }
 ?>	

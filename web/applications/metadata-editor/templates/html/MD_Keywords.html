@@ -1,0 +1,21 @@
+<fieldset>
+<legend>Keywords_{{instanceName}} ({{type}})</legend>
+<table>
+<tr><td>
+<label for="kwtxt{{instanceName}}">Keyword</label>
+<input type="text" id="kwtxt{{instanceName}}">
+<td>
+<button type="button" size="10" onclick="javascript:additem{{instanceName}}();">add</button>
+<br>
+<button type="button" size="10" onclick="javascript:removeitem{{instanceName}}();">delete</button>
+</td>
+<td>
+	<select size="5" id="kwlist{{instanceName}}">
+	</select>
+</td></tr>
+</table>
+<label for="kws{{instanceName}}">keywords</label>
+<input disabled type="text" id="kws{{instanceName}}" name="{{instanceType}}-gmd:keyword"/><br/>
+<label for="kwtype{{instanceName}}">type</label>
+<input type="text" id="kwtype{{instanceName}}" name="{{instanceType}}-gmd:type-gmd:MD_KeywordTypeCode" value="{{type}}"/><br/>
+</fieldset>

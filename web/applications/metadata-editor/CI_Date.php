@@ -4,55 +4,22 @@
 
 class CI_Date
 {
+	private $htmlString;
 	
-	public function __construct($instanceType,$instanceName,$dateType)
+	public function __construct($mMD, $instanceType,$instanceName,$dateType)
 	{
 		$instanceType .= "-gmd:CI_Date!$instanceName".'newdate';
 
-		echo <<<scrpt
+		$this->htmlString .= $mMD->twig->render('html/CI_Date.html', array('instanceName' => $instanceName, 'instanceType' => $instanceType,'dateType' => $dateType));
 		
-		<script>
-		(function ($) {
-			$(function() {
-				$( "#DATE1_$instanceName" ).datepicker({
-					showOn: "button",
-					buttonImageOnly: false,
-					dateFormat: "yy-mm-dd",
-					autoSize:true
-				});
-			});
-		})(jQuery);
-		</script>
-scrpt;
+		$mMD->jqUIs .= $mMD->twig->render('js/CI_Date_UI.js', array('instanceName' => $instanceName));
 		
-		
-		echo '<fieldset>';
-		echo '<legend>Date_'.$instanceName.'</legend>';
-		
-		echo '<label for="DATE1_'.$instanceName.'">date</label>';
-		echo '<input type="text" id="DATE1_'.$instanceName.'" name="'.$instanceType.'-gmd:date-gco:Date" value="2012-01-01"/><br/>';
-		
-		echo '<label for="DATE2_'.$instanceName.'">dateType</label>';
-		echo '<input type="text" id="DATE2_'.$instanceName.'" name="'.$instanceType.'-gmd:dateType-gmd:CI_DateTypeCode" value="'.$dateType.'"/><br/>';
-		
-		echo '</fieldset>';
+		return true;
 	}
 	
+	public function getHTML()
+	{
+		return $this->htmlString;
+	}
 }
-
-/*
-		
-				
-	<fieldset>
-	<legend>Date</legend>
-		
-		<label for="gmd:date">date</label>
-		<input type="text" name="gmd:date"/><br/>
-		
-		<label for="gmd:dateType">dateType</label>
-		<input type="text" name="gmd:dateType"/><br/>
-
-	
-	</fieldset>
-	*/
-	?>	
+?>	

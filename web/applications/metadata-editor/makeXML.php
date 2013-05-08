@@ -2,9 +2,13 @@
 
 function makeXML($xml)
 {
-		#array_shift($xml); #To get rid of the Q from Drupal (_GET ONLY!)
+	echo '<pre>';
+	var_dump($_POST);
+	echo '</pre>';
+	
+	#array_shift($xml); #To get rid of the Q from Drupal (_GET ONLY!)
 		
-		createNodesXML($xml);
+	createNodesXML($xml);
 }
 
 function createXmlNode($doc,$parent,$nodeName)
@@ -194,7 +198,7 @@ function createNodesXML($xml)
 			$splitlevel = $nodelevel;
 			$splitnodelevel = preg_split("/\!/",$splitlevel);
 			
-			//var_dump($splitnodelevel);
+			var_dump($splitnodelevel);
 			
 			if (isset($splitnodelevel[1]))
 			{
@@ -210,7 +214,14 @@ function createNodesXML($xml)
 			{
 				#makechild
 				$nodename = str_replace(":","_",$nodelevels[$nodecnt-2]);
-				$nodevar = 'node'.$nodeinstance.'_'.$nodename;
+				if (isset($nodeinstance))
+				{
+					$nodevar = 'node'.$nodeinstance.'_'.$nodename;
+				}
+				else
+				{
+					$nodevar = 'node_'.$nodename;
+				}
 				//var_dump($nodevar);
 				$thisparent = ${$nodevar};
 				addXMLChildValue($doc,$thisparent,$nodelevel,$val);
@@ -219,7 +230,14 @@ function createNodesXML($xml)
 			{
 				#makenode
 				$nodename = str_replace(":","_",$nodelevel);
-				$nodevar = 'node'.$nodeinstance.'_'.$nodename;
+				if (isset($nodeinstance))
+				{
+					$nodevar = 'node'.$nodeinstance.'_'.$nodename;
+				}
+				else
+				{
+					$nodevar = 'node_'.$nodename;
+				}
 				//var_dump($nodevar);
 				if (!isset(${$nodevar}))
 				{

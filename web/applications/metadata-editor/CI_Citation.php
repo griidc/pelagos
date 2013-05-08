@@ -6,79 +6,38 @@ include_once 'MD_Identifier.php';
 
 class CI_Citation
 {
+	private $htmlString;
 	
-	public function __construct($instanceType, $instanceName,$complex=false,$responsibleparty=false,$iscomplexcitation=false)
+	public function __construct($mMD, $instanceType, $instanceName,$complex=false,$responsibleparty=false,$iscomplexcitation=false)
 	{
 		$instanceType .= '-gmd:CI_Citation';
 		
-		echo <<<CIT
-		<fieldset>
-		<legend>Citation_$instanceName</legend>
+		$mycidate = new CI_Date($mMD, $instanceType.'-gmd:date',$instanceName,'publication');
 		
-		<label for="CIT1_$instanceName">title</label>
-		<input type="text" id="CIT1_$instanceName" name="$instanceType-gmd:title-gco:CharacterString"/><br/>
-
-		<label for="CIT2_$instanceName"">alternateTitle</label>
-		<input type="text" id="CIT2_$instanceName" name="$instanceType-gmd:alternateTitle-gco:CharacterString"/><br/>
-CIT;
+		$Date = $mycidate->getHTML();
 		
-		$mycidate = new CI_Date($instanceType.'-gmd:date',$instanceName,'publication');
-		
-		if ($complex==true)
-		{
-		
-			//echo '<label for="gmd:edition">edition</label>';
-			//echo '<input type="text" name="gmd:edition" xmltype="gco:CharacterString"/><br/>';
-			
-			//echo '<label for="gmd:editionData">editionData</label>';
-			//echo '<input type="text" name="gmd:editionData" xmltype="gco:CharacterString"/><br/>';
-		}
-		
+		#Citation COULD have an Identifier - NOT BEING USED : TODO
 		if ($iscomplexcitation==true)
 		{
 			$myidentifier = new MD_Identifier($instanceName);
 		}
 		
+		#Citation COULD have an ResponsibleParty - NOT BEING USED : TODO
 		if ($responsibleparty == true)
 		{
 			$myresp = new CI_ResponsibleParty($instanceName,true);
 		}
 		
-		echo '</fieldset>';
+		$twigArr = array('instanceName' => $instanceName, 'instanceType' => $instanceType,'Date' => $Date,'complex' => $complex);
+		
+		$mMD->htmlString .= $mMD->twig->render('html/CI_Citation.html', $twigArr);
+		
+		return true;
 	}
 	
+	public function getHTML()
+	{
+		return $this->htmlString;
+	}
 }
-
-/*
-
-	<fieldset>
-	<legend>Citation</legend>
-	
-		<label for="gmd:title">title</label>
-		<input type="text" name="gmd:deliveryPoint" xmltype="gco:CharacterString"/><br/>
-		
-		<label for="gmd:alternatetitle">alternatetitle</label>
-		<input type="text" name="gmd:alternatetitle" xmltype="gco:CharacterString"/><br/>
-		
-		<?php
-			$mycidate = new CI_Date('citation_date');
-			
-		
-			$mypi = new CI_ResponsibleParty('DOI_Issuer',true);
-		?>
-		
-		<label for="gmd:edition">edition</label>
-		<input type="text" name="gmd:edition" xmltype="gco:CharacterString"/><br/>
-		
-		<label for="gmd:editionData">editionData</label>
-		<input type="text" name="gmd:editionData" xmltype="gco:CharacterString"/><br/>
-		
-		
-		
-		
-	
-	</fieldset>
-	
-	*/
-
-	?>
+?>

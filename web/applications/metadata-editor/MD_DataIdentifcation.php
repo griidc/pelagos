@@ -1,59 +1,50 @@
 <?php
 include_once 'CI_Citation.php';
+include_once 'CI_ResponsibleParty.php';
 include_once 'MD_Keywords.php';
 include_once 'MD_TopicCategoryCode.php';
 
-
 class MD_DataIdentification
 {
+	private $htmlString;
 	
-	public function __construct($instanceType, $instanceName)
+	public function __construct($mMD, $instanceType, $instanceName)
 	{
 		$instanceType .= "-gmd:MD_DataIdentification!$instanceName";
-		
-		echo '<fieldset>';
-		echo '<legend>Data_Identification_'.$instanceName.'</legend>';
 			
-		${'myci'.$instanceName} = new CI_Citation($instanceType.'-gmd:citation', $instanceName,'Authority');
+		${'myci'.$instanceName} = new CI_Citation($mMD, $instanceType.'-gmd:citation', $instanceName);
+		$Citation = ${'myci'.$instanceName}->getHTML();
 		
-		echo '<label for="MDD1_'.$instanceName.'">abstract</label>';
-		echo '<input type="text" id="MDD1_'.$instanceName.'" name="'.$instanceType.'-gmd:abstract-gco:CharacterString"/><br/>';
+		$mydataic = new CI_ResponsibleParty($mMD,$instanceType.'-gmd:pointOfContact',$instanceName,false,'CI_RoleCode_principalInvestigator');
 		
-		echo '<label for="MDD2_'.$instanceName.'">purpose</label>';
-		echo '<input type="text" id="MDD2_'.$instanceName.'" name="'.$instanceType.'-gmd:purpose-gco:CharacterString"/><br/>';
-		
-		echo '<label for="MDD3_'.$instanceName.'">status</label>';
-		echo '<input type="text" id="MDD3_'.$instanceName.'" name="'.$instanceType.'-gmd:status-gmd:MD_ProgressCode" value="completed"/><br/>';
-		
-		include_once 'CI_ResponsibleParty.php';
-		$mydataic = new CI_ResponsibleParty($instanceType.'-gmd:pointOfContact',$instanceName,false,'CI_RoleCode_principalInvestigator');
+		$ResponsibleParty = $mydataic->getHTML();
 			
-		${'mykwtheme'.$instanceName} = new MD_Keywords($instanceType.'-gmd:descriptiveKeywords!theme', $instanceName.'Theme','theme');
-		${'mykwplace'.$instanceName} = new MD_Keywords($instanceType.'-gmd:descriptiveKeywords!place', $instanceName.'Place','place');
+		${'mykwtheme'.$instanceName} = new MD_Keywords($mMD, $instanceType.'-gmd:descriptiveKeywords!theme', $instanceName.'Theme','theme');
+		${'mykwplace'.$instanceName} = new MD_Keywords($mMD, $instanceType.'-gmd:descriptiveKeywords!place', $instanceName.'Place','place');
 		
-		echo '<label for="MDD4_'.$instanceName.'">language</label>';
-		echo '<input type="text" id="MDD2_'.$instanceName.'" name="'.$instanceType.'-gmd:language-gco:CharacterString"/><br/>';
+		$ThemeKeywords = ${'mykwtheme'.$instanceName}->getHTML();
+		$PlaceKeywords = ${'mykwplace'.$instanceName}->getHTML();
 		
 		#Topic Keywords MD_TopicCategoryCode
-		${'mytopickw'.$instanceName} = new MD_TopicCategoryCode($instanceType.'-gmd:topicCategory', $instanceName);
-		echo ${'mytopickw'.$instanceName}->getHTML();
+		${'mytopickw'.$instanceName} = new MD_TopicCategoryCode($mMD, $instanceType.'-gmd:topicCategory', $instanceName);
+		$TopicCategory =  ${'mytopickw'.$instanceName}->getHTML();
 		
 		include_once 'EX_Extent.php';
-		$myext = new EX_Extent($instanceType.'-gmd:extent',$instanceName);
+		$myext = new EX_Extent($mMD, $instanceType.'-gmd:extent',$instanceName);
 		
-		echo '<label for="MDD4_'.$instanceName.'">supplementalInformation</label>';
-		echo '<input type="text" id="MDD4_'.$instanceName.'" name="'.$instanceType.'-gmd:supplementalInformation-gco:CharacterString"/><br/>';
+		$Extent = $myext->getHTML();
 		
+		$twigArr = array('instanceName' => $instanceName,'instanceType' => $instanceType,'ResponsibleParty' => $ResponsibleParty,'ThemeKeywords' => $ThemeKeywords,'PlaceKeywords' => $PlaceKeywords,'TopicCategory' => $TopicCategory,'Extent' => $Extent);
 		
+		$this->htmlString .= $mMD->twig->render('html/MD_DataIdentification.html', $twigArr);
 		
-		
-		echo '</fieldset>';
-
+		return true;
+	}
+	
+	public function getHTML()
+	{
+		return $this->htmlString;
 	}
 
 }
-
-
-
-
 ?>

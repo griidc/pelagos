@@ -1,48 +1,32 @@
 <?php
-#include 'CI_Contact_DL.php';
 include_once 'CI_Telephone.php';
 include_once 'CI_Address.php';
 
 class CI_Contact
 {
-	public function __construct($instanceType, $instanceName, $onlineresource)
+	private $htmlString;
+	
+	public function __construct($mMD, $instanceType, $instanceName, $onlineresource, $operationHours=false)
 	{
 		$instanceType .= '-gmd:CI_Contact';
 		
-		echo '<fieldset>';
-		echo '<legend>Contact_'.$instanceName.'</legend>';
+		${'mytelephone'.$instanceName} = new CI_Telephone($mMD, $instanceType.'-gmd:phone',$instanceName);
+		${'myaddress'.$instanceName} = new CI_Address($mMD, $instanceType.'-gmd:address', $instanceName, $onlineresource);
 		
-		${'mytelephone'.$instanceName} = new CI_Telephone($instanceType.'-gmd:phone',$instanceName);
-		${'myaddress'.$instanceName} = new CI_Address($instanceType.'-gmd:address', $instanceName, $onlineresource);
+		$Telephone = ${'mytelephone'.$instanceName}->getHTML();
+		$Address = ${'myaddress'.$instanceName}->getHTML();
 		
-		echo ${'myaddress'.$instanceName}->getHTML();
+		$twigArr = array('instanceName' => $instanceName,'Telephone' => $Telephone,'Address' => $Address,'operationHours' => $operationHours);
 		
-		//echo '<label for="gmd:hoursOfService_'.$instanceName.'">hoursOfService</label>';
-		//echo '<input type="text" name="gmd:hoursOfService_'.$instanceName.'" xmlclass="gmd:hoursOfService" xmltype="gco:CharacterString"/><br/>';
-		
-		//echo '<label for="gmd:contactInstructions_'.$instanceName.'">contactInstructions</label>';
-		//echo '<input type="text" name="gmd:contactInstructions_'.$instanceName.'" xmlclass="gmd:contactInstructions" xmltype="gco:CharacterString"/><br/>';
-		
-		echo '</fieldset>';
+		$this->htmlString .= $mMD->twig->render('html/CI_Contact.html', $twigArr);
+
+		return true;
 	}
 	
+	public function getHTML()
+	{
+		return $this->htmlString;
+	}
 }
-
-
-	/*		
-				
-	<fieldset>
-	<legend>Contact</legend>
-		
-	
-		<label for="gmd:hoursOfService">hoursOfService</label>
-		<input type="text" name="gmd:hoursOfService" xmltype="gco:CharacterString"/><br/>
-		
-		<label for="gmd:contactInstructions">contactInstructions</label>
-		<input type="text" name="gmd:contactInstructions" xmltype="gco:CharacterString"/><br/>
-
-	
-	</fieldset>
-	*/
 ?>
 	

@@ -1,0 +1,17 @@
+<fieldset>
+<legend>Responsible Party_{{instanceName}}</legend>
+
+<label for="CRIP1_$instanceName">individualName</label>
+<input type="text" id="CRIP1_{{instanceName}}" name="{{instanceType}}-gmd:individualName-gco:CharacterString"/><br/>
+		
+<label for="CRIP2_$instanceName">organisationName</label>
+<input type="text" id="CRIP2_{{instanceName}}" name="{{instanceType}}-gmd:organisationName-gco:CharacterString"/><br/>
+		
+<label for="CRIP3_{{instanceName}}">positionName</label>
+<input type="text" id="CRIP3_{{instanceName}}" name="{{instanceType}}-gmd:positionName-gco:CharacterString"/><br/>
+
+{{Contact}}
+
+<label for="CRIP4_{{instanceName}}">role</label>
+<input type="text" id="CRIP4_{{instanceName}}" name="{{instanceType}}-gmd:role-gmd:CI_RoleCode" value="{{role}}"/><br/>
+</fieldset>

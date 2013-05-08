@@ -5,28 +5,38 @@ include 'TimeInstant.php';
 
 class EX_TemporalExtent
 {
-	public function __construct($instanceType, $instanceName,$alttype=false)
+	private $htmlString;
+	
+	public function __construct($mMD, $instanceType, $instanceName,$alttype=false)
 	{
 		
-		#$instanceType .= "-gmd:EX_TemporalExtent!$instanceName";
+		//$instanceType .= "-gmd:EX_TemporalExtent!$instanceName";
 		$instanceType .= "-gmd:EX_TemporalExtent!$instanceName".'time';
 		
-		echo '<fieldset>';
-		echo '<legend>TemporalExtent_'.$instanceName.'</legend>';
-
 		if ($alttype==true)
 		{
-			$mytimep = new TimeInstant($instanceType, $instanceName.'timeperiod');
+			$mytimep = new TimeInstant($mMD, $instanceType.'-gmd:extent-gml:TimeInstant', $instanceName.'timeperiod');
+			
 		}
 		else
 		{
-			$mytimep = new TimePeriod($instanceType.'-gmd:extent-gml:TimePeriod', $instanceName.'extent');
+			$mytimep = new TimePeriod($mMD, $instanceType.'-gmd:extent-gml:TimePeriod', $instanceName.'extent');
 		}
 		
-		echo '</fieldset>';
+		$Time = $mytimep->getHTML();
+		
+		$twigArr = array('instanceName' => $instanceName, 'instanceType' => $instanceType,'Time' => $Time);
+		
+		$this->htmlString = $mMD->twig->render('html/EX_GeographicBoundingBox.html', $twigArr);
+		
+		return true;
 		
 	}
 	
+	public function getHTML()
+	{
+		return $this->htmlString;
+	}
 	
 }
 

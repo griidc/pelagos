@@ -5,24 +5,28 @@ include 'EX_TemporalExtent.php';
 
 class EX_Extent
 {
-	public function __construct($instanceType,$instanceName)
+	public function __construct($mMD, $instanceType,$instanceName)
 	{
 		$instanceType .= "-gmd:EX_Extent!$instanceName";
-		
-		echo '<fieldset>';
-		echo '<legend>Extent_'.$instanceName.'</legend>';
-		
-		echo '<label for="EX1_'.$instanceName.'">description</label>';
-		echo '<input type="text" id="EX1_'.$instanceName.'" name="'.$instanceType.'-gmd:description-gco:CharacterString"/><br/>';
 
-		$myggbb = new EX_GeographicBoundingBox($instanceType.'-gmd:geographicElement',$instanceName);
-		$mytmpext = new EX_TemporalExtent($instanceType.'-gmd:temporalElement',$instanceName);
+		$myggbb = new EX_GeographicBoundingBox($mMD, $instanceType.'-gmd:geographicElement',$instanceName);
+		$mytmpext = new EX_TemporalExtent($mMD, $instanceType.'-gmd:temporalElement',$instanceName);
 		
+		$GeographicBoundingBox = $myggbb->getHTML();
 		
-		echo '</fieldset>';
+		$TemporalExtent = $mytmpext->getHTML();
 		
+		$twigArr = array('instanceName' => $instanceName, 'instanceType' => $instanceType,'GeographicBoundingBox' => $GeographicBoundingBox,'TemporalExtent' => $TemporalExtent);
+		
+		$this->htmlString = $mMD->twig->render('html/EX_Extent.html', $twigArr);
+
+		return true;
 	}
 	
+	public function getHTML()
+	{
+		return $this->htmlString;
+	}
 	
 }
 
