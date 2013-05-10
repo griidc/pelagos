@@ -101,7 +101,7 @@ if (!isset($_POST['submit']) and isset($_GET['uid']) and $status == 0) {
         <p align="right"><img src="/dif/images/pdf.png" width="27" height="32" alt="PDF" /> <a href="/dif/docs/DIF_User_Ref.pdf" target="_blank">Download a User Guide</a></p>
     </fieldset>
 
-    <h1>Dataset Information&nbsp&nbsp&nbsp&nbsp;<?PHP echo "<span  style=float:right; ><img src=\"/dif/images/$status.png\"></SPAN>"; ?> </h1>
+    <h1>Dataset Information&nbsp&nbsp&nbsp&nbsp;<?PHP echo "<span  style=float:right; ><img style=\"width:24px;height:24px;\" src=\"/dif/images/$status.png\"></SPAN>"; ?> </h1>
     <strong>NOTICE:</strong> Fields that are preceded by an asterisk (<em style="font-weight: bold; vertical-align: top; color:#FF0000;">*</em>) are required inputs. Note that only records that have not been submitted can be edited. Also, <i>Tasks</i> may have more than one 
     <i>Dataset</i>. Submitting a record with the same <i>Task Title</i>, but with a different <i>Dataset Title</i>, produces several <i>Dataset</i> records for that <i>Task</i>.<hr /><br />
 

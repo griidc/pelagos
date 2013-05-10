@@ -231,16 +231,16 @@ function displayTaskStatus($tasks,$update=null,$personid=null)
             switch ($status)
             {
                 case null:
-                echo ",'/dif/images/red_bobble.png');\n";
+                echo ",'/dm/includes/images/x.png');\n";
                 break;
                 case 0:
-                echo ",'/dif/images/red_bobble.png');\n";
+                echo ",'/dm/includes/images/x.png');\n";
                 break;
                 case 1:
-                echo ",'/dif/images/yellow_bobble.png');\n";
+                echo ",'/dm/includes/images/triangle_yellow.png');\n";
                 break;
                 case 2:
-                echo ",'/dif/images/green_bobble.png');\n";
+                echo ",'/dm/includes/images/check.png');\n";
                 break;
                 default:
                 echo ");\n";
