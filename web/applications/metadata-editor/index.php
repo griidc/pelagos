@@ -1,11 +1,59 @@
+<script type="text/javascript">
+function altRows(id){
+	if(document.getElementsByTagName){  
+		
+		var table = document.getElementById(id);  
+		var rows = table.getElementsByTagName("tr"); 
+		 
+		for(i = 0; i < rows.length; i++){          
+			if(i % 2 == 0){
+				rows[i].className = "evenrowcolor";
+			}else{
+				rows[i].className = "oddrowcolor";
+			}      
+		}
+	}
+}
+window.onload=function(){
+	altRows('alternatecolor');
+}
+</script>
+
+<style type="text/css">
+table.altrowstable {
+	font-family: verdana,arial,sans-serif;
+	font-size:11px;
+	color:#333333;
+	border-width: 1px;
+	border-color: #a9c6c9;
+	border-collapse: collapse;
+}
+table.altrowstable th {
+	border-width: 1px;
+	padding: 8px;
+	border-style: solid;
+	border-color: #a9c6c9;
+}
+table.altrowstable td {
+	border-width: 1px;
+	padding: 8px;
+	border-style: solid;
+	border-color: #a9c6c9;
+}
+.oddrowcolor{
+	background-color:#98AAAF;
+}
+.evenrowcolor{
+	background-color:#C6D0D2;
+}
+</style>
+
 <style>
 	input[type=text] {width:400px}
 	label 
 	{
 	font-weight: bold;
 	display: block;
-	width: 200px;
-	float: left;
 	}
 	label:after {content:": "}
 	
@@ -13,12 +61,15 @@
 	
 	button {width:50px}
 	
-	helptext:
+	#helptext:
 	{
 		text-align:center;
 		color:red;
 	}
+
+
 </style>
+
 
 <?php
 //Show Errors (debug only)
@@ -76,8 +127,8 @@ echo "</script>\n";
 
 ?>
 
-<table width="40%,*">
-<tr><td>
+<table class="altrowstable" id="alternatecolor" width="60%" border="0">
+<tr><td width="100%">
 <fieldset>
 <legend>Metadata</legend>
 <form method="post">
@@ -85,11 +136,15 @@ echo "</script>\n";
 <?php
 	echo $myMImeta->getHTML();
 ?>
-
-<input type="submit"/>
-<input type="reset"/>
-
 </form>
-</fieldset>
 </td>
-<td></td></tr></table>
+</tr>
+<tr><td>
+	<input type="submit"/>
+	<input type="reset"/>
+</td></tr>
+
+</fieldset>
+
+</table>
+

@@ -27,7 +27,7 @@ class EX_TemporalExtent
 		
 		$twigArr = array('instanceName' => $instanceName, 'instanceType' => $instanceType,'Time' => $Time);
 		
-		$this->htmlString = $mMD->twig->render('html/EX_GeographicBoundingBox.html', $twigArr);
+		$this->htmlString = $mMD->twig->render('html/EX_TemporalExtent.html', $twigArr);
 		
 		return true;
 		

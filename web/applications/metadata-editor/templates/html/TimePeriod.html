@@ -1,22 +1,22 @@
 <fieldset>
-<legend>TimePeriod_{{instanceName}}</legend>';
+<legend>TimePeriod_{{instanceName}}</legend>
 	
-<label for="TM1_{{instanceName}}">description</label>';
-<input type="text" id="TM1_{{instanceName}}" name="{{instanceType}}-gml:description"/><br/>';
+<label for="TM1_{{instanceName}}">description</label>
+<input type="text" id="TM1_{{instanceName}}" name="{{instanceType}}-gml:description"/><br/>
 
-<label for="TM2_{{instanceName}}">beginPosition</label>';
-<input type="text" id="TM2_{{instanceName}}" name="{{instanceType}}-gml:beginPosition"/><br/>';
+<label for="TM2_{{instanceName}}">beginPosition</label>
+<input type="text" id="TM2_{{instanceName}}" name="{{instanceType}}-gml:beginPosition"/><br/>
 	
-<label for="TM3_{{instanceName}}">endPosition</label>';
-<input type="text" id="TM3_'.$instanceName.'" name="{{instanceType}}-gml:endPosition"/><br/>';
+<label for="TM3_{{instanceName}}">endPosition</label>
+<input type="text" id="TM3_'.$instanceName.'" name="{{instanceType}}-gml:endPosition"/><br/>
 		
 {% if duration == true %}
 		
-<label for="TM4_{{instanceName}}">duration</label>';
-<input type="text" id="TM4_{{instanceName}}" name="{{instanceType}}-gml:duration-gco:date"/><br/>';
+<label for="TM4_{{instanceName}}">duration</label>
+<input type="text" id="TM4_{{instanceName}}" name="{{instanceType}}-gml:duration-gco:date"/><br/>
 		
-<label for="TM5_{{instanceName}}">timeInterval</label>';
-<input type="text" id="TM5_{{instanceName}}" name="{{instanceType}}-gml:timeInterval-gco:float"/><br/>';
+<label for="TM5_{{instanceName}}">timeInterval</label>
+<input type="text" id="TM5_{{instanceName}}" name="{{instanceType}}-gml:timeInterval-gco:float"/><br/>
 		
 {% endif %}
 		

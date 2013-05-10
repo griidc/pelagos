@@ -1,9 +1,14 @@
 <fieldset>
 <legend>Contact_{{instanceName}}</legend>
+<table width="100%">
 
+<tr><td  colspan="3">
 {{Telephone}}
+</td></tr>
 
+<tr><td  colspan="3">
 {{Address}}
+</td></tr>
 
 {% if operationHours == true %}
 <label for="CONTACT1_{{instanceName}}">hoursOfService</label>
@@ -13,4 +18,5 @@
 <input type="text" id="CONTACT1_{{instanceName}}" name="{{instanceName}}-gmd:contactInstructions-gco:CharacterString"/><br/>
 {% endif %}
 
+</table>
 </fieldset>
