@@ -34,7 +34,7 @@ class MD_DataIdentification
 		
 		$Extent = $myext->getHTML();
 		
-		$twigArr = array('instanceName' => $instanceName,'instanceType' => $instanceType,'ResponsibleParty' => $ResponsibleParty,'ThemeKeywords' => $ThemeKeywords,'PlaceKeywords' => $PlaceKeywords,'TopicCategory' => $TopicCategory,'Extent' => $Extent);
+		$twigArr = array('instanceName' => $instanceName,'instanceType' => $instanceType,'Citation' => $Citation, 'ResponsibleParty' => $ResponsibleParty,'ThemeKeywords' => $ThemeKeywords,'PlaceKeywords' => $PlaceKeywords,'TopicCategory' => $TopicCategory,'Extent' => $Extent);
 		
 		$this->htmlString .= $mMD->twig->render('html/MD_DataIdentification.html', $twigArr);
 		

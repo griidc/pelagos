@@ -30,7 +30,7 @@ class CI_Citation
 		
 		$twigArr = array('instanceName' => $instanceName, 'instanceType' => $instanceType,'Date' => $Date,'complex' => $complex);
 		
-		$mMD->htmlString .= $mMD->twig->render('html/CI_Citation.html', $twigArr);
+		$this->htmlString .= $mMD->twig->render('html/CI_Citation.html', $twigArr);
 		
 		return true;
 	}

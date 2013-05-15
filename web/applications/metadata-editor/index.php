@@ -49,7 +49,7 @@ table.altrowstable td {
 </style>
 
 <style>
-	input[type=text] {width:400px}
+	input[type=text] {width:300px}
 	label 
 	{
 	font-weight: bold;
@@ -67,6 +67,24 @@ table.altrowstable td {
 		color:red;
 	}
 
+	legend 
+	{
+		text-shadow: 2px 2px 3px rgba(150, 150, 150, 0.75);
+		font-family:Verdana, Geneva, sans-serif;
+		font-size:1.4em;
+		padding: 3px;
+		border-top: 1px solid #000;
+		border-left: 1px solid #000;
+		border-right:  1px solid #000;
+		border-bottom:  1px solid #000;
+		background-color: white;
+	}
+	
+	fieldset 
+	{
+		border: 1px dotted #eee;
+	}
+	
 
 </style>
 
@@ -77,6 +95,7 @@ error_reporting(-1);
 ini_set('display_errors', '1');
 
 drupal_add_library('system', 'ui.datepicker');
+drupal_add_library('system', 'ui.tabs');
 
 //drupal_add_css('/metadata/metadata.css',array('type'=>'external'));
 
@@ -114,7 +133,6 @@ class metaData
 	}
 }
 
-
 $mMD = new metaData();
 
 include 'MI_Metadata.php';
@@ -131,17 +149,18 @@ echo "</script>\n";
 <tr><td width="100%">
 <fieldset>
 <legend>Metadata</legend>
-<form method="post">
+<form name="metadata" id="metadata" method="post">
 
 <?php
 	echo $myMImeta->getHTML();
 ?>
-</form>
+
 </td>
 </tr>
 <tr><td>
 	<input type="submit"/>
 	<input type="reset"/>
+	</form>
 </td></tr>
 
 </fieldset>

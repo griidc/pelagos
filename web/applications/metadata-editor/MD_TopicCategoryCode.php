@@ -12,6 +12,8 @@ class MD_TopicCategoryCode
 		
 		$this->htmlString = $mMD->twig->render('html/MD_TopicCategoryCode.html', $twigArr);
 		
+		$mMD->jsString .= $mMD->twig->render('js/MD_TopicCategoryCode.js', array('instanceName' => $instanceName));
+		
 		return true;
 	}
 	

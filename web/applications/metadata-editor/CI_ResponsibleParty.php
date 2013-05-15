@@ -14,6 +14,8 @@ class CI_ResponsibleParty
 		$Contact = $mycontact->getHTML();
 		//$myrolecode = new CI_RoleCode($instanceName.'-ROLE');
 		
+		$mMD->validateRules .= $mMD->twig->render('js/CI_ResponsibleParty_Rules.js', array('instanceName' => $instanceName));
+		
 		$twigArr = array('instanceName' => $instanceName,'instanceType' => $instanceType,'role' => $role,'Contact' => $Contact);
 		
 		$this->htmlString .= $mMD->twig->render('html/CI_ResponsibleParty.html', $twigArr);
