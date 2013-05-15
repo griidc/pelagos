@@ -10,7 +10,7 @@ class MI_Metadata
 	{
 		$now = substr(date('c'),0,10);
 		
-		$mypi = new CI_ResponsibleParty($mMD,'gmd:contact','contactPI',false,'CI_RoleCode_principalInvestigator');
+		$mypi = new CI_ResponsibleParty($mMD,'gmd:contact','contactPI',false,'CI_RoleCode_principalInvestigator','Principal Investigator');
 		$mydi = new MD_DataIdentification($mMD,'gmd:identificationInfo','DataIdent');
 		
 		$ResponsibleParty = $mypi->getHTML();

@@ -1,5 +1,5 @@
 <fieldset>
-<legend>Keywords_{{instanceName}} ({{type}})</legend>
+<legend>{{Legend}}</legend>
 <table>
 <tr><td>
 <label for="kwtxt{{instanceName}}">Keyword</label>
@@ -12,10 +12,11 @@
 <td>
 	<select size="5" id="kwlist{{instanceName}}">
 	</select>
-</td></tr>
+</td>
+<td><pre>Description</pre></td>
+</tr>
 </table>
-<label for="kws{{instanceName}}">keywords</label>
-<input disabled type="text" id="kws{{instanceName}}" name="{{instanceType}}-gmd:keyword"/><br/>
-<label for="kwtype{{instanceName}}">type</label>
-<input type="text" id="kwtype{{instanceName}}" name="{{instanceType}}-gmd:type-gmd:MD_KeywordTypeCode" value="{{type}}"/><br/>
+
+<input type="hidden" id="kws{{instanceName}}" name="{{instanceType}}-gmd:keyword"/>
+<input type="hidden" id="kwtype{{instanceName}}" name="{{instanceType}}-gmd:type-gmd:MD_KeywordTypeCode" value="{{type}}"/>
 </fieldset>

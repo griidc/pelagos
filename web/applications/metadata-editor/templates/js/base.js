@@ -1,7 +1,10 @@
 
 (function ($) {
     $(function() {
-		$( "#tabs" ).tabs({
+		$( "#mitabs" ).tabs({
+            heightStyleType: "fill"
+        });
+		$( "#dtabs" ).tabs({
             heightStyleType: "fill"
         });
 		{{jqUIs}}

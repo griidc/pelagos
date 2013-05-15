@@ -6,6 +6,8 @@ function makeXML($xml)
 	var_dump($_POST);
 	echo '</pre>';
 	
+	//exit;
+	
 	#array_shift($xml); #To get rid of the Q from Drupal (_GET ONLY!)
 		
 	createNodesXML($xml);

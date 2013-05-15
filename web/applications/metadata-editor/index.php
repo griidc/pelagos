@@ -23,20 +23,11 @@ window.onload=function(){
 table.altrowstable {
 	font-family: verdana,arial,sans-serif;
 	font-size:11px;
-	color:#333333;
-	border-width: 1px;
-	border-color: #a9c6c9;
-	border-collapse: collapse;
 }
-table.altrowstable th {
-	border-width: 1px;
-	padding: 8px;
-	border-style: solid;
-	border-color: #a9c6c9;
-}
+
 table.altrowstable td {
 	border-width: 1px;
-	padding: 8px;
+	padding: 6px;
 	border-style: solid;
 	border-color: #a9c6c9;
 }
@@ -49,7 +40,30 @@ table.altrowstable td {
 </style>
 
 <style>
-	input[type=text] {width:300px}
+	input[type=text] 
+	{
+		
+	}
+	input[type=text]:focus
+	{
+		background-color: #FFFFCC;
+	}
+	
+	textarea:focus
+	{
+	background-color: #FFFFCC;
+	}
+	
+	pre
+	{
+		width:400px;
+	}
+	
+	select:focus
+	{
+	background-color: #FFFFCC;
+	}
+	
 	label 
 	{
 	font-weight: bold;
@@ -57,7 +71,7 @@ table.altrowstable td {
 	}
 	label:after {content:": "}
 	
-	select {width:400px}
+	select {width:300px}
 	
 	button {width:50px}
 	

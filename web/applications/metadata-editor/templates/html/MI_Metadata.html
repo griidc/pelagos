@@ -1,61 +1,36 @@
-<div style="background: transparent;" id="tabs">
+<div style="background: transparent;" id="mitabs">
         <ul>
-            <li><a href="#tabs-1">Principal investigator</a></li>
-			<li><a href="#tabs-2">Data Identification</a></li>
+            <li><a href="#mitabs-1">Personal Information</a></li>
+			<li><a href="#mitabs-2">Dataset Information</a></li>
         </ul>
 
  	<table width="100%">
 
-	<tr>
-	<td><label for="MI1">fileidentifier</label>
-	<input type="hidden" id="MI1" name="gmd:fileIdentifier-gco:CharacterString" value="{{fileIdentifier}}"/></td>
-	<td><pre>PRE-FILLED</pre></td>
-	</tr>
 
-	<tr>
-	<td><label for="MI2">language</label>
-	<input type="hidden" id="MI2" name="gmd:language-gco:CharacterString" value="eng; USA"></td>
-	<td><pre>PRE-FILLED</pre></td>
-	</tr>
+	<input type="hidden" id="MI1" name="gmd:fileIdentifier-gco:CharacterString" value="{{fileIdentifier}}"/>
 
-	<tr>
-	<td><label for="MI3">characterSet</label>
-	<input type="hidden" id="MI3" name="gmd:characterSet-gmd:MD_CharacterSetCode" value="utf8"/></td>
-	<td><pre>PRE-FILLED</pre></td>
-	</tr>
+	<input type="hidden" id="MI2" name="gmd:language-gco:CharacterString" value="eng; USA">
 
-	<tr>
-	<td><label for="MI4">hierarchyLevel</label>
-	<input type="hidden" id="MI4" name="gmd:hierarchyLevel-gmd:MD_ScopeCode" value="dataset"/></td>
-	<td><pre>PRE-FILLED</pre></td>
-	</tr>
+	<input type="hidden" id="MI3" name="gmd:characterSet-gmd:MD_CharacterSetCode" value="utf8"/>
+
+	<input type="hidden" id="MI4" name="gmd:hierarchyLevel-gmd:MD_ScopeCode" value="dataset"/>
+
 
 	<tr><td colspan="2">
 		{{ResponsibleParty}}
 	</td></tr>
 
-	<tr>
-	<td><label for="MI5">dateStamp</label>
-	<input type="hidden" id="MI5" name="gmd:dateStamp-gco:Date" value="{{now}}"/></td>
-	<td><pre>PRE-FILLED</pre></td>
-	</tr>
 
-	<tr>
-	<td><label for="MI6">metadataStandardName</label>
-	<input type="hidden" id="MI6" name="gmd:metadataStandardName-gco:CharacterString" value="ISO 19115-2 Geographic Information - Metadata - Part 2: Extensions for Imagery and Gridded Data"/></td>
-	<td><pre>PRE-FILLED</pre></td>
-	</tr>
+	<input type="hidden" id="MI5" name="gmd:dateStamp-gco:Date" value="{{now}}"/>
 
-	<tr>
-	<td><label for="MI7">metadataStandardVersion</label>
-	<input type="hidden" id="MI7" name="gmd:metadataStandardVersion-gco:CharacterString" value="ISO 19115-2:2009(E)"/></td>
-	<td><pre>PRE-FILLED</pre></td>
-	</tr>
+	<input type="hidden" id="MI6" name="gmd:metadataStandardName-gco:CharacterString" value="ISO 19115-2 Geographic Information - Metadata - Part 2: Extensions for Imagery and Gridded Data"/>
+
+	<input type="hidden" id="MI7" name="gmd:metadataStandardVersion-gco:CharacterString" value="ISO 19115-2:2009(E)"/>
 
 	</table>
 
-	<hr>
-	<div id="tabs-2">
+
+	<div id="mitabs-2">
 		{{DataIdentification}}
 	</div>
 </div>

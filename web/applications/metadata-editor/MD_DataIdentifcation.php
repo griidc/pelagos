@@ -19,8 +19,8 @@ class MD_DataIdentification
 		
 		$ResponsibleParty = $mydataic->getHTML();
 			
-		${'mykwtheme'.$instanceName} = new MD_Keywords($mMD, $instanceType.'-gmd:descriptiveKeywords!theme', $instanceName.'Theme','theme');
-		${'mykwplace'.$instanceName} = new MD_Keywords($mMD, $instanceType.'-gmd:descriptiveKeywords!place', $instanceName.'Place','place');
+		${'mykwtheme'.$instanceName} = new MD_Keywords($mMD, $instanceType.'-gmd:descriptiveKeywords!theme', $instanceName.'Theme','theme','Theme Keywords');
+		${'mykwplace'.$instanceName} = new MD_Keywords($mMD, $instanceType.'-gmd:descriptiveKeywords!place', $instanceName.'Place','place','Place Keywords');
 		
 		$ThemeKeywords = ${'mykwtheme'.$instanceName}->getHTML();
 		$PlaceKeywords = ${'mykwplace'.$instanceName}->getHTML();

@@ -2,35 +2,37 @@
 
 <tr><td>
 <label for="CIAD1_{{instanceName}}">deliveryPoint</label>
-<input type="text" id="CIAD1_{{instanceName}}" name="{{instanceType}}-gmd:deliveryPoint-gco:CharacterString"/><br/>
+<input type="text" id="CIAD1_{{instanceName}}" size="80" name="{{instanceType}}-gmd:deliveryPoint-gco:CharacterString"/></td>
 <td><pre>The same thing as your address</pre></td></tr>
 
 <tr><td>
 <label for="CIAD2_{{instanceName}}">city</label>
-<input type="text" id="CIAD2_{{instanceName}}" name="{{instanceType}}-gmd:city-gco:CharacterString"/><br/>
+<input type="text" id="CIAD2_{{instanceName}}" size="80" name="{{instanceType}}-gmd:city-gco:CharacterString"/></td>
 <td><pre>The City</pre></td></tr>
 
 <tr><td>
 <label for="CIAD3_{{instanceName}}">administrativeArea</label>
-<input type="text" id="CIAD3_{{instanceName}}" name="{{instanceType}}-gmd:administrativeArea-gco:CharacterString"/><br/>
+<input type="text" id="CIAD3_{{instanceName}}" size="80" name="{{instanceType}}-gmd:administrativeArea-gco:CharacterString"/></td>
 <td><pre>The uhh, dunno actually</pre></td></tr>
 
 <tr><td>
 <label for="CIAD4_{{instanceName}}">postalCode</label>
-<input type="text" id="CIAD4_{{instanceName}}" name="{{instanceType}}-gmd:postalCode-gco:CharacterString"/><br/>
+<input type="text" id="CIAD4_{{instanceName}}" size="80" name="{{instanceType}}-gmd:postalCode-gco:CharacterString"/></td>
 <td><pre>The Postal or Zip Code</pre></td></tr>
 
 <tr><td>
 <label for="CIAD5_{{instanceName}}">country</label>
-<input type="text" id="CIAD5_{{instanceName}}" name="{{instanceType}}-gmd:country-gco:CharacterString"/><br/>
+<input type="text" id="CIAD5_{{instanceName}}" size="80" name="{{instanceType}}-gmd:country-gco:CharacterString"/></td>
 <td><pre>The Country</pre></td></tr>
 
 <tr><td>
 <label for="CIAD6_{{instanceName}}">electronicMailAddress</label>
-<input type="text" id="CIAD6_{{instanceName}}" name="{{instanceType}}-gmd:electronicMailAddress-gco:CharacterString"/><br/>
+<input type="text" id="CIAD6_{{instanceName}}" size="80" name="{{instanceType}}-gmd:electronicMailAddress-gco:CharacterString"/></td>
 <td><pre>The E-mail Address</pre></td></tr>
 
-<tr><td colspan="3">
+{% if OnlineResource != "" %}
+<tr><td colspan="2">
 {{OnlineResource}}
 </td></tr>
+{% endif %}
 

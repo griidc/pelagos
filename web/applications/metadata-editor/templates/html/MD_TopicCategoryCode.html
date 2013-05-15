@@ -1,5 +1,6 @@
 <fieldset>
 <legend>Topic Keywords</legend>
+
 <table><td><td>
 <label>Topic Keyword List</label>
 	<select size=10 id="TOPKlist_{{instanceName}}" >
@@ -32,8 +33,9 @@
 	<select size=10 id="TOPKselect_{{instanceName}}" >
 	</select>
 	</td>
+	<td><pre>Description</pre></td>
 	</tr>
 	</table>
-	<label>Topic Keywords</label>
-	<input type="text" id="TOPK_{{instanceName}}" name="{{instanceType}}-gmd:MD_TopicCategoryCode">
+	
+	<input type="hidden" id="TOPK_{{instanceName}}" name="{{instanceType}}-gmd:MD_TopicCategoryCode">
 </fieldset>

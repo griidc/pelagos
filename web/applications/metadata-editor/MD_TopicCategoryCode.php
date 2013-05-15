@@ -4,11 +4,11 @@ class MD_TopicCategoryCode
 {
 	private $htmlString;
 	
-	public function __construct($mMD, $instanceType, $instanceName)
+	public function __construct($mMD, $instanceType, $instanceName, $Legend='Keywords')
 	{
 		//$instanceType .= '-gmd:MD_TopicCategoryCode';
 		
-		$twigArr = array('instanceName' => $instanceName, 'instanceType' => $instanceType);
+		$twigArr = array('instanceName' => $instanceName, 'instanceType' => $instanceType, 'Legend' => $Legend);
 		
 		$this->htmlString = $mMD->twig->render('html/MD_TopicCategoryCode.html', $twigArr);
 		

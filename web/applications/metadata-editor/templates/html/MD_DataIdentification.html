@@ -1,31 +1,91 @@
-<fieldset>
-<legend>Data_Identification_{{instanceName}}</legend>
+<script>
 
-{{Citation}}
+function copyValue(what,to)
+{
+	document.getElementById(to).value = what.value;
+}
 
-<label for="MDD1_{{instanceName}}">abstract</label>
-<input type="text" id="MDD1_{{instanceName}}" name="{{instanceType}}-gmd:abstract-gco:CharacterString"/><br/>
+</script>
 
-<label for="MDD2_{{instanceName}}">purpose</label>
-<input type="text" id="MDD2_{{instanceName}}" name="{{instanceType}}-gmd:purpose-gco:CharacterString"/><br/>
+<div style="background: transparent;" id="dtabs">
+        <ul>
+            <li><a href="#dtabs-1">Citation</a></li>
+			<li><a href="#dtabs-2">Data Manager</a></li>
+			<li><a href="#dtabs-3">Keywords</a></li>
+			<li><a href="#dtabs-4">Topic Category</a></li>
+			<li><a href="#dtabs-5">Data Extent</a></li>
+        </ul>
+	
+	<div id="dtabs-1">  
+	
+	<table width="100%">
+	
+		<fieldset>
+			<legend>Data_Identification_{{instanceName}}</legend>
+		{{Citation}}
+		
+		<tr><td>
+		<label for="MDD1_{{instanceName}}">abstract</label>
+		<textarea rows="5" cols="80" onchange="copyValue(this,'MDD1h_{{instanceName}}');" type="text" id="MDD1_{{instanceName}}"></textarea></td>
+		<td><pre>The City</pre></td></tr>
+		
+		<tr><td>
+		<label for="MDD2_{{instanceName}}">purpose</label>
+		<textarea rows="5" cols="80" onchange="copyValue(this,'MDD2h_{{instanceName}}');" type="text" id="MDD2_{{instanceName}}"></textarea></td>
+		<td><pre>The City</pre></td></tr>
+		
+		<!--
+		<label for="MDD3_{instanceName}}">status</label>
+		<input onchange="copyValue(this,'MDD3h_{{instanceName}}');" type="text" id="MDD3_{{instanceName}}"/><br/>
+		-->
+		
+		<tr><td>
+		<label for="MDD4_{{instanceName}}">language</label>
+		<input size="80" onchange="copyValue(this,'MDD4h_{{instanceName}}');" type="text" id="MDD4_{{instanceName}}"/></td>
+		<td><pre>The City</pre></td></tr>
+		
+		<tr><td>
+		<label for="MDD5_{{instanceName}}">supplementalInformation</label>
+		<textarea size="80" onchange="copyValue(this,'MDD5h_{{instanceName}}');" rows="5" cols="80" id="MDD5_{{instanceName}}"></textarea></td>
+		<td><pre>The City</pre></td></tr>
+		
+		
+		</fieldset>
+		
+	</table>
+		
+	</div>
 
-<label for="MDD3_{instanceName}}">status</label>
-<input type="text" id="MDD3_{{instanceName}}" name="{{instanceType}}-gmd:status-gmd:MD_ProgressCode" value="completed"/><br/>
+	<input type="hidden" id="MDD1h_{{instanceName}}" name="{{instanceType}}-gmd:abstract-gco:CharacterString"/>
 
-{{ResponsibleParty}}
+	<input type="hidden" id="MDD2h_{{instanceName}}" name="{{instanceType}}-gmd:purpose-gco:CharacterString"/>
 
-{{ThemeKeywords}}
-{{PlaceKeywords}}
+	<input type="hidden" id="MDD3h_{{instanceName}}" name="{{instanceType}}-gmd:status-gmd:MD_ProgressCode" value="completed"/>
 
-<label for="MDD4_{{instanceName}}">language</label>
-<input type="text" id="MDD2_{{instanceName}}" name="{{instanceType}}-gmd:language-gco:CharacterString"/><br/>
+	<div id="dtabs-2">  
+	{{ResponsibleParty}}
+	</div>
 
-{{TopicCategory}}
+	<div id="dtabs-3">  
+	{{ThemeKeywords}}
+	<hr/>  
+	{{PlaceKeywords}}
+	</div>
 
-{{Extent}}
+	<input type="hidden" id="MDD4h_{{instanceName}}" name="{{instanceType}}-gmd:language-gco:CharacterString"/>
 
-<label for="MDD5_{{instanceName}}">supplementalInformation</label>
-<textarea rows="5" cols="80" id="MDD5_{{instanceName}}" name="{{instanceType}}-gmd:supplementalInformation-gco:CharacterString"></textarea>
+	<div id="dtabs-4">  
+	{{TopicCategory}}
+	</div>
 
-</fieldset>
+	<div id="dtabs-5">  
+	{{Extent}}
+	</div>
+	
+	<input type="hidden" id="MDD5h_{{instanceName}}" name="{{instanceType}}-gmd:supplementalInformation-gco:CharacterString"/>
+
+	
+	
+
+</div>
 

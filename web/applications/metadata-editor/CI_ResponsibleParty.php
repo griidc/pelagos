@@ -6,7 +6,7 @@ class CI_ResponsibleParty
 {
 	private $htmlString;
 	
-	public function __construct($mMD, $instanceType, $instanceName, $onlineresource=false, $role='')
+	public function __construct($mMD, $instanceType, $instanceName, $onlineresource=false, $role='', $Legend='Responsible Party')
 	{
 		$instanceType .= "-gmd:CI_ResponsibleParty!$instanceName";
 		
@@ -16,7 +16,7 @@ class CI_ResponsibleParty
 		
 		$mMD->validateRules .= $mMD->twig->render('js/CI_ResponsibleParty_Rules.js', array('instanceName' => $instanceName));
 		
-		$twigArr = array('instanceName' => $instanceName,'instanceType' => $instanceType,'role' => $role,'Contact' => $Contact);
+		$twigArr = array('instanceName' => $instanceName,'instanceType' => $instanceType,'role' => $role,'Contact' => $Contact, 'Legend' => $Legend);
 		
 		$this->htmlString .= $mMD->twig->render('html/CI_ResponsibleParty.html', $twigArr);
 		
