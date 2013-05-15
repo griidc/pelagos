@@ -16,13 +16,13 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <meta name = "description" content = "GRIIDC Map"/>
         <title>GRIIDC Map</title>
-        <link rel="stylesheet" type="text/css" href="http://proteus.tamucc.edu/~jlann/luzonite/includes/css/map.css">
+        <link rel="stylesheet" type="text/css" href="includes/css/map.css">
 	   <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
        <?PHP include('includes/js/map.js'); ?>
-       <script type="text/javascript" src="http://griidc.tamucc.edu/sites/all/modules/jquery_update/replace/jquery/jquery.min.js?v=1.5.2"></script>
-       <script type="text/javascript" src="http://griidc.tamucc.edu/includes/qTip2/jquery.qtip.min.js"></script>
-       <link rel="stylesheet" type="text/css" href="http://griidc.tamucc.edu/includes/qTip2/jquery.qtip.min.css" />
-       <link rel="stylesheet" type="text/css" href="http://griidc.tamucc.edu/map/includes/css/jquery.qtip.css" />
+       <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+       <script type="text/javascript" src="/includes/qTip2/jquery.qtip.min.js"></script>
+       <link rel="stylesheet" type="text/css" href="/includes/qTip2/jquery.qtip.min.css" />
+       <link rel="stylesheet" type="text/css" href="includes/css/jquery.qtip.css" />
 	   <script langauge="javascript">
             function post_value(){
                opener.document.ed.geoloc.value = document.frm.mc.value;
