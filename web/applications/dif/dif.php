@@ -268,6 +268,7 @@ if ((isset($_POST['submit']) and $_POST['submit'])||(isset($_POST['later']) and 
     }
     else
     {
+        global $user;
         if ($flag== "update") {
             $uid = $modts;
             $sql = "UPDATE datasets SET dataset_uid='".$uid."', task_uid='".$task."', title='".$title."', abstract='".$abstract."', dataset_type='".$datatype."', dataset_for='".$datafor."', size='".$size."', observation='".$observation ."', approach='".$approach ."', historic_links='".$historical."', meta_editor='".$ed ."', meta_standards='".$standards."', point='".$point."', national='".$national ."', ethical='".$privacy."', remarks='".$remarks ."', primary_poc=";
@@ -280,17 +281,18 @@ if ((isset($_POST['submit']) and $_POST['submit'])||(isset($_POST['later']) and 
             if (sprintf('%s.x%03d.%03d',$fundSrc,$project,$task) != substr($dataset_udi,0,11)) {
                 $sql .= ", dataset_udi = nextudi($project,$task,'$fundSrc')";
             }
+            $sql .= ", editor='$user->name'";
             $sql .= " WHERE dataset_uid='".$uid."'";
         }
         else {
             $uid = time();
-            $sql = "INSERT INTO datasets(dataset_uid, task_uid, title, abstract, dataset_type, dataset_for, size, observation, approach, start_date, end_date, geo_location, historic_links, meta_editor, meta_standards, point, national, ethical, remarks, primary_poc, secondary_poc, logname, status, project_id, dataset_udi) VALUES('$uid', '$task', '$title', '$abstract', '$datatype', '$datafor', '$size', '$observation', '$approach', '$sdate', '$edate','$geoloc', '$historical', '$ed', '$standards', '$point', '$national', '$privacy', '$remarks', ";
+            $sql = "INSERT INTO datasets(dataset_uid, task_uid, title, abstract, dataset_type, dataset_for, size, observation, approach, start_date, end_date, geo_location, historic_links, meta_editor, meta_standards, point, national, ethical, remarks, primary_poc, secondary_poc, logname, status, project_id, dataset_udi, editor) VALUES('$uid', '$task', '$title', '$abstract', '$datatype', '$datafor', '$size', '$observation', '$approach', '$sdate', '$edate','$geoloc', '$historical', '$ed', '$standards', '$point', '$national', '$privacy', '$remarks', ";
             if ($ppoc ==""){$sql .="null";}else{ $sql.="'".$ppoc."'";}
             $sql.=", ";
             if ($spoc ==""){$sql .="null";}else{ $sql.="'".$spoc."'";}
             $sql .=", '$submittedby','$status', ";
             if ($project ==""){$sql .="null";}else{ $sql.="'".$project."'";}
-            $sql .=", nextudi($project,$task,'$fundSrc'))";
+            $sql .=", nextudi($project,$task,'$fundSrc'), '$user->name')";
         }
     }
     $result = pg_query($connection, $sql); 
