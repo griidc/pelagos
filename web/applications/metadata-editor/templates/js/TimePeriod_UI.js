@@ -5,7 +5,7 @@
 		dateFormat: "yy-mm-dd",
 		autoSize:true,
 		changeYear: true
-	}).datepicker("setDate", "-1y");
+	});//.datepicker("setDate", "-1y");
 	
 	$("#TM3_{{instanceName}}").datepicker({
 		showOn: "button",
@@ -13,4 +13,4 @@
 		dateFormat: "yy-mm-dd",
 		autoSize:true,
 		changeYear: true
-	}).datepicker("setDate", "0");
+	});//.datepicker("setDate", "0");

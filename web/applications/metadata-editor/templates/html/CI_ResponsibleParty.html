@@ -3,26 +3,26 @@
 <legend>{{Legend}}</legend>
 <table width="100%">
 <tr>
-<td><label for="CRIP1_{{instanceName}}">individualName</label>
-<input type="text" id="CRIP1_{{instanceName}}" size="80" name="{{instanceType}}-gmd:individualName-gco:CharacterString"/></td>
-<td><pre>The name of the researcher</pre></td>
+<td><label for="CRIP1_{{instanceName}}">Individual name</label>
+<input class="required" type="text" id="CRIP1_{{instanceName}}" size="80" name="{{instanceType}}-gmd:individualName-gco:CharacterString"/></td>
+<td><pre>Name of the Point of Contact (POC) for this dataset</pre></td>
 </tr>
 
 <tr>		
-<td><label for="CRIP2_{{instanceName}}">organisationName</label>
-<input type="text" id="CRIP2_{{instanceName}}" size="80" name="{{instanceType}}-gmd:organisationName-gco:CharacterString"/></td>
-<td><pre>The name of the Organisation</pre></td>
+<td><label for="CRIP2_{{instanceName}}">Institution name</label>
+<input class="required" type="text" id="CRIP2_{{instanceName}}" size="80" name="{{instanceType}}-gmd:organisationName-gco:CharacterString"/></td>
+<td><pre>Affiliation of the Party</pre></td>
 </tr>
 	
 <tr>	
-<td><label for="CRIP3_{{instanceName}}">positionName</label>
-<input type="text" id="CRIP3_{{instanceName}}" size="80" name="{{instanceType}}-gmd:positionName-gco:CharacterString"/></td>
-<td><pre>The name of the Position</pre></td>
+<td><label for="CRIP3_{{instanceName}}">Job title of Party</label>
+<input class="required" type="text" id="CRIP3_{{instanceName}}" size="80" name="{{instanceType}}-gmd:positionName-gco:CharacterString"/></td>
+<td><pre>Job title of the Party</pre></td>
 </tr>
 
 {{Contact}}
 
-<input type="hidden" id="CRIP4_{{instanceName}}" size="80" name="{{instanceType}}-gmd:role-gmd:CI_RoleCode" value="{{role}}"/></td>
+<input class="required" type="hidden" id="CRIP4_{{instanceName}}" size="80" name="{{instanceType}}-gmd:role-gmd:CI_RoleCode" value="{{role}}"/></td>
 
 </table>
 </fieldset>

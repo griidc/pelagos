@@ -144,14 +144,13 @@ function addNodeAttributes($doc,$parent,&$node,$fieldname,$fieldvalue="")
 				$value = $child->appendChild($value);
 			}
 			break;
-			
-			
 		}
 	}
 }
 
 function addXMLChildValue($doc,$parent,$fieldname,$fieldvalue)
 {
+	$fieldvalue = htmlspecialchars($fieldvalue, ENT_QUOTES | 'ENT_XML1', 'UTF-8');
 	$child = $doc->createElement($fieldname);
 	$child = $parent->appendChild($child);
 	$value = $doc->createTextNode($fieldvalue);
@@ -200,7 +199,7 @@ function createNodesXML($xml)
 			$splitlevel = $nodelevel;
 			$splitnodelevel = preg_split("/\!/",$splitlevel);
 			
-			var_dump($splitnodelevel);
+			//var_dump($splitnodelevel);
 			
 			if (isset($splitnodelevel[1]))
 			{
@@ -218,7 +217,7 @@ function createNodesXML($xml)
 				$nodename = str_replace(":","_",$nodelevels[$nodecnt-2]);
 				if (isset($nodeinstance))
 				{
-					$nodevar = 'node'.$nodeinstance.'_'.$nodename;
+					$nodevar = 'node_'.$nodeinstance.'_'.$nodename;
 				}
 				else
 				{
@@ -234,7 +233,7 @@ function createNodesXML($xml)
 				$nodename = str_replace(":","_",$nodelevel);
 				if (isset($nodeinstance))
 				{
-					$nodevar = 'node'.$nodeinstance.'_'.$nodename;
+					$nodevar = 'node_'.$nodeinstance.'_'.$nodename;
 				}
 				else
 				{

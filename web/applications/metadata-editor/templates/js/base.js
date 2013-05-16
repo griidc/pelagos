@@ -1,4 +1,25 @@
 
+function copyValue(what,to)
+{
+	document.getElementById(to).value = what.value;
+}
+
+function altRows(id){
+	if(document.getElementsByTagName){  
+		
+		var table = document.getElementById(id);  
+		var rows = table.getElementsByTagName("tr"); 
+		 
+		for(i = 0; i < rows.length; i++){          
+			if(i % 2 == 0){
+				rows[i].className = "evenrowcolor";
+			}else{
+				rows[i].className = "oddrowcolor";
+			}      
+		}
+	}
+}
+
 (function ($) {
     $(function() {
 		$( "#mitabs" ).tabs({
@@ -9,57 +30,28 @@
         });
 		{{jqUIs}}
     });
-    
+	
     $(document).ready(function(){
-        $("#metadata").validate({
-        rules: {
-            example:
-            {
-                required: true,
-                maxlength: 200
-            }
-			{{validateRules}}
-            
-        },
-        messages: {
-            example: "Please enter a valid URL."
-            {{validateMessages}}
-			}
-        });
-    
 		
-        // $.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
-            // position: {
-                // adjust: {
-                    // method: "flip flip"
-                // },
-                // my: "middle left",
-                // at: "middle right",
-                // viewport: $(window)
-            // },
-            // show: {
-                // event: "mouseover focus",
-                // solo: true
-            // },
-            // hide: {
-                // event: "mouseout blur",
-                // delay: 100,
-                // fixed: true
-            // },
-            // style: {
-                // classes: "ui-tooltip-shadow ui-tooltip-tipped ui-tooltip-youtube"
-            // }
-        // });
-        
-        // $("#MI1").qtip({
-            // content: $("#fileidentifier_tip")
-        // });
-        
-		// $("#MI2").qtip({
-            // content: $("#language_tip")
-        // });
-        
-        
+		$.validator.addClassRules({
+			phone: {
+				digits: false,
+				minlength: 2,
+				maxlength: 15
+			},
+			coord: {
+				range: [-90,90]
+			},
+			zip: {
+				required: true,
+				digits: true,
+				minlength: 5,
+				maxlength: 5
+			}				
+		});
+		
+		$("#metadata").validate();
+       
     });
 })(jQuery);
 

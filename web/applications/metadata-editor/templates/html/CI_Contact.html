@@ -5,9 +5,9 @@
 
 {% if operationHours == true %}
 <label for="CONTACT1_{{instanceName}}">hoursOfService</label>
-<input type="text" id="CONTACT1_{{instanceName}}" name="{{instanceName}}-gmd:hoursOfService-gco:CharacterString"/><br/>
+<input class="required" type="text" id="CONTACT1_{{instanceName}}" name="{{instanceName}}-gmd:hoursOfService-gco:CharacterString"/><br/>
 
 <label for="CONTACT2_{{instanceName}}">contactInstructions</label>
-<input type="text" id="CONTACT1_{{instanceName}}" name="{{instanceName}}-gmd:contactInstructions-gco:CharacterString"/><br/>
+<input class="required" type="text" id="CONTACT2_{{instanceName}}" name="{{instanceName}}-gmd:contactInstructions-gco:CharacterString"/><br/>
 {% endif %}
 

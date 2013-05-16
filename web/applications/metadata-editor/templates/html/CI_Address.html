@@ -1,34 +1,34 @@
 
 
 <tr><td>
-<label for="CIAD1_{{instanceName}}">deliveryPoint</label>
-<input type="text" id="CIAD1_{{instanceName}}" size="80" name="{{instanceType}}-gmd:deliveryPoint-gco:CharacterString"/></td>
+<label for="CIAD1_{{instanceName}}">Street address</label>
+<input class="required" type="text" id="CIAD1_{{instanceName}}" size="80" name="{{instanceType}}-gmd:deliveryPoint-gco:CharacterString"/></td>
 <td><pre>The same thing as your address</pre></td></tr>
 
 <tr><td>
-<label for="CIAD2_{{instanceName}}">city</label>
-<input type="text" id="CIAD2_{{instanceName}}" size="80" name="{{instanceType}}-gmd:city-gco:CharacterString"/></td>
+<label for="CIAD2_{{instanceName}}">City</label>
+<input class="required" type="text" id="CIAD2_{{instanceName}}" size="80" name="{{instanceType}}-gmd:city-gco:CharacterString"/></td>
 <td><pre>The City</pre></td></tr>
 
 <tr><td>
-<label for="CIAD3_{{instanceName}}">administrativeArea</label>
-<input type="text" id="CIAD3_{{instanceName}}" size="80" name="{{instanceType}}-gmd:administrativeArea-gco:CharacterString"/></td>
-<td><pre>The uhh, dunno actually</pre></td></tr>
+<label for="CIAD3_{{instanceName}}">State/Province/Region</label>
+<input class="required" type="text" id="CIAD3_{{instanceName}}" size="80" name="{{instanceType}}-gmd:administrativeArea-gco:CharacterString"/></td>
+<td><pre>State, province or region</pre></td></tr>
 
 <tr><td>
-<label for="CIAD4_{{instanceName}}">postalCode</label>
-<input type="text" id="CIAD4_{{instanceName}}" size="80" name="{{instanceType}}-gmd:postalCode-gco:CharacterString"/></td>
-<td><pre>The Postal or Zip Code</pre></td></tr>
+<label for="CIAD4_{{instanceName}}">ZIP Code/Postal code</label>
+<input class="required" type="text" id="CIAD4_{{instanceName}}" size="80" name="{{instanceType}}-gmd:postalCode-gco:CharacterString"/></td>
+<td><pre>Postal code or ZIP code</pre></td></tr>
 
 <tr><td>
-<label for="CIAD5_{{instanceName}}">country</label>
-<input type="text" id="CIAD5_{{instanceName}}" size="80" name="{{instanceType}}-gmd:country-gco:CharacterString"/></td>
-<td><pre>The Country</pre></td></tr>
+<label for="CIAD5_{{instanceName}}">Country</label>
+<input class="required" type="text" id="CIAD5_{{instanceName}}" size="80" name="{{instanceType}}-gmd:country-gco:CharacterString"/></td>
+<td><pre>Country of the Party</pre></td></tr>
 
 <tr><td>
-<label for="CIAD6_{{instanceName}}">electronicMailAddress</label>
-<input type="text" id="CIAD6_{{instanceName}}" size="80" name="{{instanceType}}-gmd:electronicMailAddress-gco:CharacterString"/></td>
-<td><pre>The E-mail Address</pre></td></tr>
+<label for="CIAD6_{{instanceName}}">E-mail Adress</label>
+<input class="required email" type="text" id="CIAD6_{{instanceName}}" size="80" name="{{instanceType}}-gmd:electronicMailAddress-gco:CharacterString"/></td>
+<td><pre>E-mail Address</pre></td></tr>
 
 {% if OnlineResource != "" %}
 <tr><td colspan="2">

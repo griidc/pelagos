@@ -5,4 +5,4 @@
 		dateFormat: "yy-mm-dd",
 		autoSize:true,
 		changeYear: true
-	}).datepicker("setDate", "0");
+	});//.datepicker("setDate", "0");

@@ -1,45 +1,29 @@
 <script type="text/javascript">
-function altRows(id){
-	if(document.getElementsByTagName){  
-		
-		var table = document.getElementById(id);  
-		var rows = table.getElementsByTagName("tr"); 
-		 
-		for(i = 0; i < rows.length; i++){          
-			if(i % 2 == 0){
-				rows[i].className = "evenrowcolor";
-			}else{
-				rows[i].className = "oddrowcolor";
-			}      
-		}
+	window.onload=function()
+	{
+		altRows('alternatecolor');
 	}
-}
-window.onload=function(){
-	altRows('alternatecolor');
-}
 </script>
 
 <style type="text/css">
-table.altrowstable {
-	font-family: verdana,arial,sans-serif;
-	font-size:11px;
-}
+	table.altrowstable {
+		font-family: verdana,arial,sans-serif;
+		font-size:11px;
+	}
 
-table.altrowstable td {
-	border-width: 1px;
-	padding: 6px;
-	border-style: solid;
-	border-color: #a9c6c9;
-}
-.oddrowcolor{
-	background-color:#98AAAF;
-}
-.evenrowcolor{
-	background-color:#C6D0D2;
-}
-</style>
+	table.altrowstable td {
+		border-width: 1px;
+		padding: 5px;
+		border-style: solid;
+		border-color: #a9c6c9;
+	}
+	.oddrowcolor{
+		background-color:#98AAAF;
+	}
+	.evenrowcolor{
+		background-color:#C6D0D2;
+	}
 
-<style>
 	input[type=text] 
 	{
 		
@@ -152,7 +136,7 @@ $mMD = new metaData();
 include 'MI_Metadata.php';
 $myMImeta = new MI_Metadata($mMD,'MIMeta',uniqid());
 
-echo "\n\n<script>\n";
+echo "\n\n<script type=\"text/javascript\">\n";
 $mMD->jsString .= $mMD->twig->render('js/base.js', array('jqUIs' => $mMD->jqUIs,'validateRules' => $mMD->validateRules, 'validateMessages' => $mMD->validateMessages));
 echo $mMD->jsString;
 echo "</script>\n";

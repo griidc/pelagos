@@ -1,17 +1,17 @@
 	
 <tr><td>
-<label for="TM1_{{instanceName}}">description</label>
-<input type="text" id="TM1_{{instanceName}}" size="80" name="{{instanceType}}-gml:description"/></td>
+<label for="TM1_{{instanceName}}">Time Period Description</label>
+<input class="required" type="text" id="TM1_{{instanceName}}" size="80" name="{{instanceType}}-gml:description"/></td>
 <td><pre>A description</pre></td></tr>
 
 <tr><td>
-<label for="TM2_{{instanceName}}">beginPosition</label>
-<input type="text" id="TM2_{{instanceName}}" name="{{instanceType}}-gml:beginPosition"/></td>
+<label for="TM2_{{instanceName}}">Start date</label>
+<input class="required dateISO" type="text" id="TM2_{{instanceName}}" name="{{instanceType}}-gml:beginPosition"/></td>
 <td><pre>A description</pre></td></tr>
 
 <tr><td>
-<label for="TM3_{{instanceName}}">endPosition</label>
-<input type="text" id="TM3_{{instanceName}}" name="{{instanceType}}-gml:endPosition"/></td>
+<label for="TM3_{{instanceName}}">End date</label>
+<input class="required dateISO" type="text" id="TM3_{{instanceName}}" name="{{instanceType}}-gml:endPosition"/></td>
 <td><pre>A description</pre></td></tr>
 		
 {% if duration == true %}

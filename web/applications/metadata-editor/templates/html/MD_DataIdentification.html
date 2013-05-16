@@ -1,11 +1,3 @@
-<script>
-
-function copyValue(what,to)
-{
-	document.getElementById(to).value = what.value;
-}
-
-</script>
 
 <div style="background: transparent;" id="dtabs">
         <ul>
@@ -26,12 +18,12 @@ function copyValue(what,to)
 		
 		<tr><td>
 		<label for="MDD1_{{instanceName}}">abstract</label>
-		<textarea rows="5" cols="80" onchange="copyValue(this,'MDD1h_{{instanceName}}');" type="text" id="MDD1_{{instanceName}}"></textarea></td>
+		<textarea class="required" rows="5" cols="80" onchange="copyValue(this,'MDD1h_{{instanceName}}');" id="MDD1_{{instanceName}}"></textarea></td>
 		<td><pre>The City</pre></td></tr>
 		
 		<tr><td>
 		<label for="MDD2_{{instanceName}}">purpose</label>
-		<textarea rows="5" cols="80" onchange="copyValue(this,'MDD2h_{{instanceName}}');" type="text" id="MDD2_{{instanceName}}"></textarea></td>
+		<textarea class="required" rows="5" cols="80" onchange="copyValue(this,'MDD2h_{{instanceName}}');" id="MDD2_{{instanceName}}"></textarea></td>
 		<td><pre>The City</pre></td></tr>
 		
 		<!--
@@ -41,12 +33,12 @@ function copyValue(what,to)
 		
 		<tr><td>
 		<label for="MDD4_{{instanceName}}">language</label>
-		<input size="80" onchange="copyValue(this,'MDD4h_{{instanceName}}');" type="text" id="MDD4_{{instanceName}}"/></td>
+		<input class="required" size="80" onchange="copyValue(this,'MDD4h_{{instanceName}}');" id="MDD4_{{instanceName}}"/></td>
 		<td><pre>The City</pre></td></tr>
 		
 		<tr><td>
 		<label for="MDD5_{{instanceName}}">supplementalInformation</label>
-		<textarea size="80" onchange="copyValue(this,'MDD5h_{{instanceName}}');" rows="5" cols="80" id="MDD5_{{instanceName}}"></textarea></td>
+		<textarea class="required" size="80" onchange="copyValue(this,'MDD5h_{{instanceName}}');" rows="5" cols="80" id="MDD5_{{instanceName}}"></textarea></td>
 		<td><pre>The City</pre></td></tr>
 		
 		

@@ -1,21 +1,21 @@
 
 <tr><td>
 <label for="CIT1_{{instanceName}}">title</label>
-<input type="text" id="CIT1_{{instanceName}}" size="80" name="{{instanceType}}-gmd:title-gco:CharacterString"/></td>
+<input class="required" type="text" id="CIT1_{{instanceName}}" size="80" name="{{instanceType}}-gmd:title-gco:CharacterString"/></td>
 <td><pre>The City</pre></td></tr>
 
 <tr><td>
 <label for="CIT2_{{instanceName}}">alternateTitle</label>
-<input type="text" id="CIT2_{{instanceName}}" size="80" name="{{instanceType}}-gmd:alternateTitle-gco:CharacterString"/></td>
+<input class="required" type="text" id="CIT2_{{instanceName}}" size="80" name="{{instanceType}}-gmd:alternateTitle-gco:CharacterString"/></td>
 <td><pre>The City</pre></td></tr>
 
 {{Date}}
 
 {% if complex == true %}
 <label for="CIT3_{{instanceName}}">edition</label>';
-<input type="text" id="CIT3_{{instanceName}}" name="{{instanceType}}-gmd:edition-gco:CharacterString"/><br/>
+<input class="required" type="text" id="CIT3_{{instanceName}}" name="{{instanceType}}-gmd:edition-gco:CharacterString"/><br/>
 
 <label for="CIT4_{{instanceName}}">editionData</label>
-<input type="text" id="CIT4_{{instanceName}}" name="{{instanceType}}-gmd:editionData-gco:CharacterString"/><br/>
+<input class="required" type="text" id="CIT4_{{instanceName}}" name="{{instanceType}}-gmd:editionData-gco:CharacterString"/><br/>
 {% endif %}
 
