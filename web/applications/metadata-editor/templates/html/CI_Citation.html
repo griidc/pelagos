@@ -1,13 +1,13 @@
 
 <tr><td>
-<label for="CIT1_{{instanceName}}">title</label>
-<input class="required" type="text" id="CIT1_{{instanceName}}" size="80" name="{{instanceType}}-gmd:title-gco:CharacterString"/></td>
-<td><pre>The City</pre></td></tr>
+<label for="CIT1_{{instanceName}}">Title</label>
+<input value="{{xmlArray["gmd:title"]["gco:CharacterString"]}}" class="required" type="text" id="CIT1_{{instanceName}}" size="80" name="{{instanceType}}-gmd:title-gco:CharacterString"/></td>
+<td><pre>Dataset title</pre></td></tr>
 
 <tr><td>
-<label for="CIT2_{{instanceName}}">alternateTitle</label>
-<input class="required" type="text" id="CIT2_{{instanceName}}" size="80" name="{{instanceType}}-gmd:alternateTitle-gco:CharacterString"/></td>
-<td><pre>The City</pre></td></tr>
+<label for="CIT2_{{instanceName}}">Alternate title</label>
+<input value="{{xmlArray["gmd:alternateTitle"]["gco:CharacterString"]}}" class="required" type="text" id="CIT2_{{instanceName}}" size="80" name="{{instanceType}}-gmd:alternateTitle-gco:CharacterString"/></td>
+<td><pre>Alternate title for the dataset</pre></td></tr>
 
 {{Date}}
 

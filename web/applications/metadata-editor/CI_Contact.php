@@ -6,12 +6,15 @@ class CI_Contact
 {
 	private $htmlString;
 	
-	public function __construct($mMD, $instanceType, $instanceName, $onlineresource, $operationHours=false)
+	public function __construct($mMD, $instanceType, $instanceName, $xmlArray, $onlineresource, $operationHours=false)
 	{
 		$instanceType .= '-gmd:CI_Contact';
 		
-		${'mytelephone'.$instanceName} = new CI_Telephone($mMD, $instanceType.'-gmd:phone',$instanceName);
-		${'myaddress'.$instanceName} = new CI_Address($mMD, $instanceType.'-gmd:address', $instanceName, $onlineresource);
+		$phoneArray = $xmlArray["gmd:phone"];
+		$addressArray = $xmlArray["gmd:address"];
+		
+		${'mytelephone'.$instanceName} = new CI_Telephone($mMD, $instanceType.'-gmd:phone',$instanceName, $phoneArray);
+		${'myaddress'.$instanceName} = new CI_Address($mMD, $instanceType.'-gmd:address', $instanceName, $addressArray, $onlineresource);
 		
 		$Telephone = ${'mytelephone'.$instanceName}->getHTML();
 		$Address = ${'myaddress'.$instanceName}->getHTML();

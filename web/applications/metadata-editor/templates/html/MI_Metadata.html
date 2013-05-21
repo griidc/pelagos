@@ -1,13 +1,13 @@
-<div style="background: transparent;" id="mitabs">
+<div style="background: transparent;" id="dtabs">
         <ul>
-            <li><a href="#mitabs-1">Personal Information</a></li>
-			<li><a href="#mitabs-2">Dataset Information</a></li>
+            <li><a href="#dtabs-0">Principal Investigator</a></li>
+			<li><a href="#dtabs-1">Citation</a></li>
+			<li><a href="#dtabs-2">Data Manager</a></li>
+			<li><a href="#dtabs-3">Keywords</a></li>
+			<li><a href="#dtabs-4">Data Extent</a></li>
         </ul>
 
- 	<table width="100%">
-
-
-	<input type="hidden" id="MI1" name="gmd:fileIdentifier-gco:CharacterString" value="{{fileIdentifier}}"/>
+	<input type="hidden" id="MI1" name="gmd:fileIdentifier-gco:CharacterString" value="{{fileIdentifier}}" value"{{xml.test}}"/>
 
 	<input type="hidden" id="MI2" name="gmd:language-gco:CharacterString" value="eng; USA">
 
@@ -15,22 +15,16 @@
 
 	<input type="hidden" id="MI4" name="gmd:hierarchyLevel-gmd:MD_ScopeCode" value="dataset"/>
 
-
-	<tr><td colspan="2">
+	<div id="dtabs-0" style="background-color:#BAC6BF;">
 		{{ResponsibleParty}}
-	</td></tr>
-
+	</div>
 
 	<input type="hidden" id="MI5" name="gmd:dateStamp-gco:Date" value="{{now}}"/>
 
 	<input type="hidden" id="MI6" name="gmd:metadataStandardName-gco:CharacterString" value="ISO 19115-2 Geographic Information - Metadata - Part 2: Extensions for Imagery and Gridded Data"/>
 
 	<input type="hidden" id="MI7" name="gmd:metadataStandardVersion-gco:CharacterString" value="ISO 19115-2:2009(E)"/>
-
-	</table>
-
-
-	<div id="mitabs-2">
-		{{DataIdentification}}
-	</div>
+	
+	{{DataIdentification}}
+	
 </div>

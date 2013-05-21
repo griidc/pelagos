@@ -4,19 +4,19 @@
 <table width="100%">
 <tr>
 <td><label for="CRIP1_{{instanceName}}">Individual name</label>
-<input class="required" type="text" id="CRIP1_{{instanceName}}" size="80" name="{{instanceType}}-gmd:individualName-gco:CharacterString"/></td>
+<input value="{{xmlArray["gmd:individualName"]["gco:CharacterString"]}}" class="required" type="text" id="CRIP1_{{instanceName}}" size="80" name="{{instanceType}}-gmd:individualName-gco:CharacterString"/></td>
 <td><pre>Name of the Point of Contact (POC) for this dataset</pre></td>
 </tr>
 
 <tr>		
 <td><label for="CRIP2_{{instanceName}}">Institution name</label>
-<input class="required" type="text" id="CRIP2_{{instanceName}}" size="80" name="{{instanceType}}-gmd:organisationName-gco:CharacterString"/></td>
+<input value="{{xmlArray["gmd:organisationName"]["gco:CharacterString"]}}"class="required" type="text" id="CRIP2_{{instanceName}}" size="80" name="{{instanceType}}-gmd:organisationName-gco:CharacterString"/></td>
 <td><pre>Affiliation of the Party</pre></td>
 </tr>
 	
 <tr>	
 <td><label for="CRIP3_{{instanceName}}">Job title of Party</label>
-<input class="required" type="text" id="CRIP3_{{instanceName}}" size="80" name="{{instanceType}}-gmd:positionName-gco:CharacterString"/></td>
+<input value="{{xmlArray["gmd:positionName"]["gco:CharacterString"]}}"class="required" type="text" id="CRIP3_{{instanceName}}" size="80" name="{{instanceType}}-gmd:positionName-gco:CharacterString"/></td>
 <td><pre>Job title of the Party</pre></td>
 </tr>
 

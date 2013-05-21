@@ -8,14 +8,16 @@ class MD_DataIdentification
 {
 	private $htmlString;
 	
-	public function __construct($mMD, $instanceType, $instanceName)
+	public function __construct($mMD, $instanceType, $instanceName,$Legend='Data Identification')
 	{
+		$xmlArray = $mMD->returnPath($instanceType);
+		
 		$instanceType .= "-gmd:MD_DataIdentification!$instanceName";
 			
 		${'myci'.$instanceName} = new CI_Citation($mMD, $instanceType.'-gmd:citation', $instanceName);
 		$Citation = ${'myci'.$instanceName}->getHTML();
 		
-		$mydataic = new CI_ResponsibleParty($mMD,$instanceType.'-gmd:pointOfContact',$instanceName,false,'CI_RoleCode_principalInvestigator');
+		$mydataic = new CI_ResponsibleParty($mMD,$instanceType.'-gmd:pointOfContact',$instanceName,false,'CI_RoleCode_principalInvestigator','Data Manager');
 		
 		$ResponsibleParty = $mydataic->getHTML();
 			
@@ -34,7 +36,7 @@ class MD_DataIdentification
 		
 		$Extent = $myext->getHTML();
 		
-		$twigArr = array('instanceName' => $instanceName,'instanceType' => $instanceType,'Citation' => $Citation, 'ResponsibleParty' => $ResponsibleParty,'ThemeKeywords' => $ThemeKeywords,'PlaceKeywords' => $PlaceKeywords,'TopicCategory' => $TopicCategory,'Extent' => $Extent);
+		$twigArr = array('instanceName' => $instanceName,'instanceType' => $instanceType,'Citation' => $Citation, 'ResponsibleParty' => $ResponsibleParty,'ThemeKeywords' => $ThemeKeywords,'PlaceKeywords' => $PlaceKeywords,'TopicCategory' => $TopicCategory,'Extent' => $Extent, 'Legend' => $Legend, 'xmlArray' => $xmlArray[0]);
 		
 		$this->htmlString .= $mMD->twig->render('html/MD_DataIdentification.html', $twigArr);
 		

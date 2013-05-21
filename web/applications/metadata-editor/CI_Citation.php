@@ -10,9 +10,13 @@ class CI_Citation
 	
 	public function __construct($mMD, $instanceType, $instanceName,$complex=false,$responsibleparty=false,$iscomplexcitation=false)
 	{
+		$xmlArray = $mMD->returnPath($instanceType);
+		
+		$dateArray = $xmlArray[0]["gmd:date"];
+		
 		$instanceType .= '-gmd:CI_Citation';
 		
-		$mycidate = new CI_Date($mMD, $instanceType.'-gmd:date',$instanceName,'publication');
+		$mycidate = new CI_Date($mMD, $instanceType.'-gmd:date',$instanceName, $dateArray, 'publication');
 		
 		$Date = $mycidate->getHTML();
 		
@@ -28,7 +32,7 @@ class CI_Citation
 			$myresp = new CI_ResponsibleParty($instanceName,true);
 		}
 		
-		$twigArr = array('instanceName' => $instanceName, 'instanceType' => $instanceType,'Date' => $Date,'complex' => $complex);
+		$twigArr = array('instanceName' => $instanceName, 'instanceType' => $instanceType,'Date' => $Date,'complex' => $complex, 'xmlArray' => $xmlArray[0]);
 		
 		$this->htmlString .= $mMD->twig->render('html/CI_Citation.html', $twigArr);
 		

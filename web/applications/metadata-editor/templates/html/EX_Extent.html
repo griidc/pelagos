@@ -5,9 +5,8 @@
 
 <tr><td>
 <label for="EX1_{{instanceName}}">Extent Description</label>
-<textarea class="required" rows="5" cols="80" id="EX1_{{instanceName}}" name="{{instanceType}}-gmd:description-gco:CharacterString"></textarea></td>
+<textarea class="required" rows="5" cols="80" id="EX1_{{instanceName}}" name="{{instanceType}}-gmd:description-gco:CharacterString">{{xmlArray["gmd:description"]["gco:CharacterString"]}}</textarea></td>
 <td><pre>Description of the Extent</pre></td></tr>
-
 
 {{GeographicBoundingBox}}
 

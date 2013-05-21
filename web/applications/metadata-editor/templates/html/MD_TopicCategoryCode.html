@@ -3,25 +3,25 @@
 
 <table><td><td>
 <label>Topic Keyword List</label>
-	<select size=10 id="TOPKlist_{{instanceName}}" >
-		<option value="farming">farming</option>
-		<option value="biota">biota</option>
-		<option value="boundaries">boundaries</option>
-		<option value="economy">economy</option>
-		<option value="elevation">elevation</option>
-		<option value="environment">environment</option>
-		<option value="geoscientificInformation">geoscientificInformation</option>
-		<option value="health">health</option>
-		<option value="imageryBaseMapsEarthCover">imageryBaseMapsEarthCover</option>
-		<option value="intelligenceMilitary">intelligenceMilitary</option>
-		<option value="inlandWaters">inlandWaters</option>
-		<option value="location">location</option>
-		<option value="oceans">oceans</option>
-		<option value="planningCadastre">planningCadastre</option>
-		<option value="society">society</option>
-		<option value="structure">structure</option>
-		<option value="transportation">transportation</option>
-		<option value="utilitiesCommunication">utilitiesCommunication</option>
+	<select ondblclick="addTopicKWItem{{instanceName}}();" size=10 id="TOPKlist_{{instanceName}}" >
+		<option value="biota">Biota</option>
+		<option value="boundaries">Boundaries</option>
+		<option value="economy">Economy</option>
+		<option value="elevation">Elevation</option>
+		<option value="environment">Environment</option>
+		<option value="farming">Farming</option>
+		<option value="geoscientificInformation">Geoscientific Information</option>
+		<option value="health">Health</option>
+		<option value="imageryBaseMapsEarthCover">Imagery/Base Maps/Earth Cover</option>
+		<option value="inlandWaters">Inland Waters</option>
+		<option value="location">Location</option>
+		<option value="intelligenceMilitary">Military Intelligence</option>
+		<option value="oceans">Oceans</option>
+		<option value="planningCadastre">Planning/Cadastre</option>
+		<option value="society">Society</option>
+		<option value="structure">Structure</option>
+		<option value="transportation">Transportation</option>
+		<option value="utilitiesCommunication">Utilities/Communication</option>
 	</select>
 	</td>
 	<td>
@@ -30,10 +30,10 @@
 	</td>
 	<td>
 	<label>Selected Topic Keyword</label>
-	<select class="required" size=10 id="TOPKselect_{{instanceName}}" >
+	<select ondblclick="removeTopicKWItem{{instanceName}}();" class="required" size=10 id="TOPKselect_{{instanceName}}" >
 	</select>
 	</td>
-	<td><pre>Description</pre></td>
+	<td><pre>Topic Keywords<br><i>(Hint: Double click to add or remove)<i></pre></td>
 	</tr>
 	</table>
 	

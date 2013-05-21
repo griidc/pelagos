@@ -8,15 +8,24 @@ class CI_ResponsibleParty
 	
 	public function __construct($mMD, $instanceType, $instanceName, $onlineresource=false, $role='', $Legend='Responsible Party')
 	{
+		
+		$xmlArray = $mMD->returnPath($instanceType);
+		
+		//echo "<pre>";
+		//var_dump($xmlArray);
+		//echo "</pre>";
+		
 		$instanceType .= "-gmd:CI_ResponsibleParty!$instanceName";
 		
-		$mycontact = new CI_Contact($mMD, $instanceType.'-gmd:contactInfo', $instanceName, $onlineresource);
+		$contactArray = $xmlArray[0]["gmd:contactInfo"]["gmd:CI_Contact"];
+		
+		$mycontact = new CI_Contact($mMD, $instanceType.'-gmd:contactInfo', $instanceName, $contactArray, $onlineresource);
 		$Contact = $mycontact->getHTML();
 		//$myrolecode = new CI_RoleCode($instanceName.'-ROLE');
 		
-		$mMD->validateRules .= $mMD->twig->render('js/CI_ResponsibleParty_Rules.js', array('instanceName' => $instanceName));
+		//$mMD->validateRules .= $mMD->twig->render('js/CI_ResponsibleParty_Rules.js', array('instanceName' => $instanceName));
 		
-		$twigArr = array('instanceName' => $instanceName,'instanceType' => $instanceType,'role' => $role,'Contact' => $Contact, 'Legend' => $Legend);
+		$twigArr = array('instanceName' => $instanceName,'instanceType' => $instanceType,'role' => $role,'Contact' => $Contact, 'Legend' => $Legend,'xmlArray' => $xmlArray[0]);
 		
 		$this->htmlString .= $mMD->twig->render('html/CI_ResponsibleParty.html', $twigArr);
 		
@@ -27,5 +36,6 @@ class CI_ResponsibleParty
 	{
 		return $this->htmlString;
 	}
+
 }
 ?>	

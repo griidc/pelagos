@@ -5,7 +5,7 @@ class CI_Address
 {
 	private $htmlString;
 
-	public function __construct($mMD, $instanceType, $instanceName, $onlineresource=false)
+	public function __construct($mMD, $instanceType, $instanceName, $xmlArray, $onlineresource=false)
 	{
 		$instanceType .= '-gmd:CI_Address';
 		
@@ -17,7 +17,7 @@ class CI_Address
 			//$OnlineResource = $myonlr->getHTML(); #TODO:Finish CI_OnlineResource Class
 		}
 		
-		$twigArr = array('instanceName' => $instanceName, 'instanceType' => $instanceType, 'OnlineResource' => $OnlineResource);
+		$twigArr = array('instanceName' => $instanceName, 'instanceType' => $instanceType, 'OnlineResource' => $OnlineResource, 'xmlArray' => $xmlArray["gmd:CI_Address"]);
 		
 		$this->htmlString .= $mMD->twig->render('html/CI_Address.html', $twigArr);
 		

@@ -1,18 +1,18 @@
 	
 <tr><td>
 <label for="TM1_{{instanceName}}">Time Period Description</label>
-<input class="required" type="text" id="TM1_{{instanceName}}" size="80" name="{{instanceType}}-gml:description"/></td>
-<td><pre>A description</pre></td></tr>
+<input value="{{xmlArray["gml:description"]}}" class="required" type="text" id="TM1_{{instanceName}}" size="80" name="{{instanceType}}-gml:description"/></td>
+<td><pre>Description of the time period</pre></td></tr>
 
 <tr><td>
 <label for="TM2_{{instanceName}}">Start date</label>
-<input class="required dateISO" type="text" id="TM2_{{instanceName}}" name="{{instanceType}}-gml:beginPosition"/></td>
-<td><pre>A description</pre></td></tr>
+<input value="{{xmlArray["gml:beginPosition"]}}" class="required starttime" type="text" id="TM2_{{instanceName}}" name="{{instanceType}}-gml:beginPosition"/></td>
+<td><pre>Start date (Must to ISO date)</pre></td></tr>
 
 <tr><td>
 <label for="TM3_{{instanceName}}">End date</label>
-<input class="required dateISO" type="text" id="TM3_{{instanceName}}" name="{{instanceType}}-gml:endPosition"/></td>
-<td><pre>A description</pre></td></tr>
+<input value="{{xmlArray["gml:endPosition"]}}" class="required endtime" type="text" id="TM3_{{instanceName}}" name="{{instanceType}}-gml:endPosition"/></td>
+<td><pre>End date (Must to ISO date)</pre></td></tr>
 		
 {% if duration == true %}
 		

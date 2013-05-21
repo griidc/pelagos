@@ -7,11 +7,15 @@ function addTopicKWItem{{instanceName}}()
 		
 	var option=document.createElement("option");
 	option.text=tpkList.options[tpkList.selectedIndex].text;
+	option.value=tpkList.options[tpkList.selectedIndex].value;
 	tpkSel.add(option,null);
 	
 	tpkList.remove(tpkList.selectedIndex);
 	
 	makeTopiclist{{instanceName}}();
+	sortSelect(tpkList);
+	sortSelect(tpkSel);
+	
 }
 
 function removeTopicKWItem{{instanceName}}()
@@ -22,11 +26,15 @@ function removeTopicKWItem{{instanceName}}()
 	
 	var option=document.createElement("option");
 	option.text=tpkSel.options[tpkSel.selectedIndex].text;
+	option.value=tpkSel.options[tpkSel.selectedIndex].value;
 	tpkList.add(option,null);
 	
 	tpkSel.remove(tpkSel.selectedIndex);
 	
 	makeTopiclist{{instanceName}}();
+	
+	sortSelect(tpkList);
+	sortSelect(tpkSel);
 }
 
 function makeTopiclist{{instanceName}}()
@@ -39,11 +47,11 @@ function makeTopiclist{{instanceName}}()
 	{
 		if (txt=="")
 		{
-			txt=txt + tpkSel.options[i].text;
+			txt=txt + tpkSel.options[i].value;
 		}
 		else
 		{
-			txt=txt + ";" + tpkSel.options[i].text;
+			txt=txt + ";" + tpkSel.options[i].value;
 		}
 	}
 	tpkTxt.value = txt;

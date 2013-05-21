@@ -252,7 +252,7 @@ function createNodesXML($xml)
 	}
 	
 	header("Content-type: text/xml; charset=utf-8"); 
-	//header('Content-Disposition: attachment; filename=metadata.xml');
+	header('Content-Disposition: attachment; filename=metadata.xml');
 		
 	$doc->normalizeDocument();
 	$doc->formatOutput = true;

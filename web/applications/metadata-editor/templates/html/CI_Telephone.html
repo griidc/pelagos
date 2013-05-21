@@ -2,12 +2,12 @@
 		
 <tr><td>
 <label for="CITP1_{{instanceName}}">Telephone number</label>
-<input class="required phone" type="text" id="CITP1_{{instanceName}}" size="80" name="{{instanceType}}-gmd:voice-gco:CharacterString"/></td>
+<input value="{{xmlArray["gmd:voice"]["gco:CharacterString"]}}" class="required phone" type="text" id="CITP1_{{instanceName}}" size="80" name="{{instanceType}}-gmd:voice-gco:CharacterString"/></td>
 <td><pre>Phone number (with country and area code)
 <i>Example: +1-361-555-1212</i></pre></td></tr>
 
 <tr><td>		
 <label for="CITP2_{{instanceName}}">Fax number</label>
-<input class="phone" type="text" id="CITP2_{{instanceName}}" size="80" name="{{instanceType}}-gmd:facsimile-gco:CharacterString"/></td>
+<input value="{{xmlArray["gmd:facsimile"]["gco:CharacterString"]}}" class="phone" type="text" id="CITP2_{{instanceName}}" size="80" name="{{instanceType}}-gmd:facsimile-gco:CharacterString"/></td>
 <td><pre>Fax number (with country and area code)</pre></td></tr>
 			
