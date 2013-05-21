@@ -116,6 +116,13 @@ function getPeopleDetails($dbh, $filters = array(), $order_by = 'LastName, First
                p.People_Title AS Title,
                p.People_LastName AS LastName,
                p.People_FirstName AS FirstName,
+               p.People_AdrStreet1 AS Street1,
+               p.People_AdrStreet2 AS Street2,
+               p.People_AdrCity AS City,
+               p.People_AdrState AS State,
+               p.People_AdrZip AS PostalCode,
+               p.People_Email AS Email,
+               p.People_PhoneNum AS Phone,
                inst.Institution_ID AS Institution_ID,
                inst.Institution_Name AS Institution_Name';
 
