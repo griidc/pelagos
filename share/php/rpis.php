@@ -124,7 +124,8 @@ function getPeopleDetails($dbh, $filters = array(), $order_by = 'LastName, First
                p.People_Email AS Email,
                p.People_PhoneNum AS Phone,
                inst.Institution_ID AS Institution_ID,
-               inst.Institution_Name AS Institution_Name';
+               inst.Institution_Name AS Institution_Name,
+               r.Role_Name AS Role';
 
     $FROM = 'FROM People p
              LEFT OUTER JOIN ProjPeople pp ON pp.People_ID = p.People_ID
