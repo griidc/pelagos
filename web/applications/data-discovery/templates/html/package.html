@@ -6,7 +6,7 @@
 <input id="empty-button" type="button" value="Empty Package" onclick="emptyPackage();">
 <br>
 <br>
-<a href="{{baseUrl}}">Back to Data Discovery</a>
+<a href="{{baseUrl}}{% if defaultFilter %}?filter={{defaultFilter}}{% endif %}">Back to Data Discovery</a>
 
 <script type="text/javascript">
 

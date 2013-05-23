@@ -65,6 +65,7 @@ $app->get('/', function () use ($app) {
     else {
         $stash['treePaneCollapsed'] = 0;
     }
+    $stash['defaultFilter'] = $app->request()->get('filter');
     return $app->render('html/index.html',$stash);
 });
 
@@ -147,7 +148,7 @@ $app->get('/package', function () use ($app) {
     drupal_add_js("$env[SCRIPT_NAME]/js/package.js",array('type'=>'external'));
     drupal_add_css("$env[SCRIPT_NAME]/includes/css/datasets.css",array('type'=>'external'));
     drupal_add_css("$env[SCRIPT_NAME]/includes/css/dataset_details.css",array('type'=>'external'));
-
+    $stash['defaultFilter'] = $app->request()->get('filter');
     $app->render('html/package.html',$stash);
 });
 

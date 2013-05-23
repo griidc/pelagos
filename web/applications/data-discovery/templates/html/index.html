@@ -1,6 +1,6 @@
 <div style="float:right;margin-right: 2px;">
     {% if uid %}
-        <a href="{{baseUrl}}/package" title="view/download package"><img src="{{baseUrl}}/includes/images/download-package.png" align="absmiddle"> Items in download package: <span id="package-count">0</span></a>
+        <a id="packageLink" href="{{baseUrl}}/package" title="view/download package"><img src="{{baseUrl}}/includes/images/download-package.png" align="absmiddle"> Items in download package: <span id="package-count">0</span></a>
     {% else %}
         <a href="/cas?destination={{currentPage}}"><img src="{{baseUrl}}/includes/images/download-package.png" align="absmiddle"> Please log in to enable dataset downloading.</a>
     {% endif %}
@@ -9,7 +9,7 @@
     <table style="margin-left:auto; margin-right:auto;">
         <tr>
             <td valign="top">
-                <input id="filter-input" type="text" size=100>
+                <input id="filter-input" type="text" size="100" value="{{defaultFilter}}">
                 {% if treePaneCollapsed %}
                     <div style="font-size:70%; font-weight:bold;">NOTE: To filter by research award, researcher, or institution, please expand the pane using the arrow tab on the left.</div>
                 {% endif %}
