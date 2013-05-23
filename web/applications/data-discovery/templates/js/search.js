@@ -61,11 +61,13 @@ function resizeLeftRight() {
 
 function showDatasets(by,id,peopleId) {
     currentlink = $('#packageLink').attr('href');
-    newlink = currentlink.replace(/\?filter=[^&]*(&|$)/,'');
-    if ($('#filter-input').val() != '') {
-        newlink += '?filter=' + $('#filter-input').val();
+    if (currentlink) {
+        newlink = currentlink.replace(/\?filter=[^&]*(&|$)/,'');
+        if ($('#filter-input').val() != '') {
+            newlink += '?filter=' + $('#filter-input').val();
+        }
+        $('#packageLink').attr('href',newlink);
     }
-    $('#packageLink').attr('href',newlink);
     $('#content .overview').html('<div class="spinner"><div><img src="{{baseUrl}}/includes/images/spinner.gif"></div></div>');
     $('div.spinner').height($('#content .viewport').height()-12);
     $('#content').tinyscrollbar_update('relative');
