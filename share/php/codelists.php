@@ -13,7 +13,7 @@ foreach ($codelists->codelistItem as $codelistItem) {
         $entry = $codeEntry->CodeDefinition->children('gml',true);
         $GLOBALS['CodeLists'][(string) $codelist->id][(string) $entry->identifier]['Name'] = (string) $entry->identifier;
         $GLOBALS['CodeLists'][(string) $codelist->id][(string) $entry->identifier]['DomainCode'] = sprintf('%03d',$count);
-        $GLOBALS['CodeLists'][(string) $codelist->id][(string) $entry->identifier]['Definition'] = (string) $children->description;
+        $GLOBALS['CodeLists'][(string) $codelist->id][(string) $entry->identifier]['Definition'] = (string) $entry->description;
         $count++;
     }
 }
