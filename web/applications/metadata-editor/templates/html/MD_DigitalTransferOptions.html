@@ -1,0 +1,24 @@
+<fieldset>
+<legend>{{Legend}}</legend>
+
+<table>
+
+<tr><td colspan="2">
+{{OnlineResource}}
+</td></tr>
+
+{% if complex == true %}
+<tr><td>
+<label for="DTO1_{{instanceName}}">unitsOfDistribution</label>
+<input value="{{xmlArray["gmd:unitsOfDistribution"]["gco:CharacterString"]}}" type="text" id="MDF1_{{instanceName}}" size="80" name="{{instanceType}}-gmd:unitsOfDistribution-gco:CharacterString"/></td>
+<td><pre>Units of distribution</pre></td></tr>
+{% endif %}
+
+<tr><td>
+<label for="DTO2_{{instanceName}}">transferSize</label>
+<input value="{{xmlArray["gmd:transferSize"]["gco:Real"]}}" class="required" type="text" id="MDF2_{{instanceName}}" size="80" name="{{instanceType}}-gmd:version-gco:Real"/></td>
+<td><pre>Number of Bytes of file transfer</pre></td></tr>
+
+</table>
+
+</fieldset>

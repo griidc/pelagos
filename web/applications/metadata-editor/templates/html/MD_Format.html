@@ -1,0 +1,26 @@
+<fieldset>
+<legend>{{Legend}}</legend>
+
+<table>
+
+<tr><td>
+<label for="MDF1_{{instanceName}}">Name</label>
+<input value="{{xmlArray["gmd:name"]["gco:CharacterString"]}}" class="required" type="text" id="MDF1_{{instanceName}}" size="80" name="{{instanceType}}-gmd:name-gco:CharacterString"/></td>
+<td><pre>Name of the data transfer format<br>e.g. CSV, Excel Spreadsheet, ASCII TXT, etc</pre></td></tr>
+
+<tr><td>
+<label for="MDF2_{{instanceName}}">Version</label>
+<input value="{{xmlArray["gmd:version"]["gco:CharacterString"]}}" class="required" type="text" id="MDF2_{{instanceName}}" size="80" name="{{instanceType}}-gmd:version-gco:CharacterString"/></td>
+<td><pre>Version of the format</pre></td></tr>
+
+<tr><td>
+<label for="MDF2_{{instanceName}}">fileDecompressionTechnique</label>
+<input value="{{xmlArray["gmd:fileDecompressionTechnique"]["gco:CharacterString"]}}" class="required" type="text" id="MDF2_{{instanceName}}" size="80" name="{{instanceType}}-gmd:fileDecompressionTechnique-gco:CharacterString"/></td>
+<td><pre>ZIP/TAR/RAR/GZip etc...</pre></td></tr>
+
+
+
+
+</table>
+
+</fieldset>

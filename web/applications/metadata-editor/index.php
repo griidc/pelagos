@@ -95,27 +95,29 @@ ini_set('display_errors', '1');
 drupal_add_library('system', 'ui.datepicker');
 drupal_add_library('system', 'ui.tabs');
 
+include 'loadXML.php';
+include 'makeXML.php';
+
 //drupal_add_css('/metadata/metadata.css',array('type'=>'external'));
 
 drupal_add_js('/includes/jquery-validation/jquery.validate.js',array('type'=>'external'));
+
+if (isset($_GET["dataUrl"]))
+{
+	$xmlURL = $_GET["dataUrl"];
+	$xmldoc = loadXML($xmlURL);
+	//$xmldoc->loadXML($xmlString);
+}
 
 if (isset($_POST))
 {
 	if (count($_POST)>1)
 	{
-		include 'makeXML.php';
-		makeXML($_POST);
+		makeXML($_POST,$xmldoc);
 	}
 }
 
-if (isset($_GET["dataUrl"]))
-{
-	$xmlURL = $_GET["dataUrl"];
-	
-	include 'loadXML.php';
-	$xmldoc = loadXML($xmlURL);
-	//$xmldoc->loadXML($xmlString);
-}
+
 
 class metaData
 {
@@ -154,7 +156,8 @@ class metaData
 		}
 		
 		
-		$xpath = "/gmi:MI_Metadata";
+		//$xpath = "/gmi:MI_Metadata";
+		$xpath = "";
 		
 		$xpathdoc = new DOMXpath($this->xmldoc);
 		

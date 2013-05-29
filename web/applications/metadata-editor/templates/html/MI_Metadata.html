@@ -1,10 +1,12 @@
 <div style="background: transparent;" id="dtabs">
         <ul>
-            <li><a href="#dtabs-0">Principal Investigator</a></li>
+            <li><a href="#dtabs-0">Metadata Contact</a></li>
 			<li><a href="#dtabs-1">Citation</a></li>
-			<li><a href="#dtabs-2">Data Manager</a></li>
+			<li><a href="#dtabs-2">Data Contact</a></li>
 			<li><a href="#dtabs-3">Keywords</a></li>
 			<li><a href="#dtabs-4">Data Extent</a></li>
+			<li><a href="#dtabs-5">Distribution Contact</a></li>
+			<li><a href="#dtabs-6">Distribution Info</a></li>
         </ul>
 
 	<input type="hidden" id="MI1" name="gmd:fileIdentifier-gco:CharacterString" value="{{fileIdentifier}}" value"{{xml.test}}"/>
@@ -26,5 +28,7 @@
 	<input type="hidden" id="MI7" name="gmd:metadataStandardVersion-gco:CharacterString" value="ISO 19115-2:2009(E)"/>
 	
 	{{DataIdentification}}
-	
+		
+	{{DistributionInfo}}
+		
 </div>

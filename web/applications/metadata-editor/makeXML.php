@@ -13,6 +13,39 @@ function makeXML($xml)
 	createNodesXML($xml);
 }
 
+function createBlankXML()
+{
+	$doc = new DomDocument('1.0','UTF-8');
+	
+	$root = createXmlNode($doc,$doc,'gmi:MI_Metadata');
+	
+	$root->setAttribute('xmlns','http://www.isotc211.org/2005/gmi');
+	$root->setAttribute('xmlns:gco','http://www.isotc211.org/2005/gco');
+	$root->setAttribute('xmlns:gmd','http://www.isotc211.org/2005/gmd');
+	$root->setAttribute('xmlns:gmi','http://www.isotc211.org/2005/gmi');
+	$root->setAttribute('xmlns:gml','http://www.opengis.net/gml/3.2');
+	$root->setAttribute('xmlns:gmx','http://www.isotc211.org/2005/gmx');
+	$root->setAttribute('xmlns:gsr','http://www.isotc211.org/2005/gsr');
+	$root->setAttribute('xmlns:gss','http://www.isotc211.org/2005/gss');
+	$root->setAttribute('xmlns:gts','http://www.isotc211.org/2005/gts');
+	$root->setAttribute('xmlns:xlink','http://www.w3.org/1999/xlink');
+	$root->setAttribute('xmlns:xsi','http://www.w3.org/2001/XMLSchema-instance');
+	$root->setAttribute('xsi:schemaLocation','http://www.isotc211.org/2005/gmi http://www.ngdc.noaa.gov/metadata/published/xsd/schema.xsd');
+	
+	return $doc;
+}
+
+function createNodesXML($doc,$xml)
+{
+	
+	foreach ($xml as $key=>$val)
+	{
+
+	
+	}
+	
+}
+
 function createXmlNode($doc,$parent,$nodeName)
 {
 	//echo $nodeName;
@@ -161,7 +194,9 @@ function addXMLChildValue($doc,$parent,$fieldname,$fieldvalue)
 	return $child;
 }
 
-function createNodesXML($xml)
+
+
+function createNodesXML_old($xml)
 {
 	$doc = new DomDocument('1.0','UTF-8');
 	
