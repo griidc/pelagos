@@ -2,7 +2,7 @@
 
 <tr><td>
 <label for="CIAD1_{{instanceName}}">Street address</label>
-<input value="{{xmlArray["gmd:deliveryPoint"]["gco:CharacterString"]}}" class="required" type="text" id="CIAD1_{{instanceName}}" size="80" name="{{instanceType}}-gmd:deliveryPoint-gco:CharacterString"/></td>
+<textarea class="required" rows="3" cols="80" id="CIAD1_{{instanceName}}" name="{{instanceType}}-gmd:deliveryPoint-gco:CharacterString">{{xmlArray["gmd:deliveryPoint"]["gco:CharacterString"]}}</textarea></td>
 <td><pre>The same thing as your address</pre></td></tr>
 
 <tr><td>
