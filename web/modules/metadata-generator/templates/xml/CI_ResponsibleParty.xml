@@ -1,0 +1,100 @@
+<gmd:CI_ResponsibleParty>
+    {% if RP[RPType].FirstName or RP[RPType].LastName %}
+        <gmd:individualName>
+            <gco:CharacterString>{{RP[RPType].FirstName}} {{RP[RPType].LastName}}</gco:CharacterString>
+        </gmd:individualName>
+    {% endif %}
+    {% if RP[RPType].Institution_Name %}
+        <gmd:organisationName>
+            <gco:CharacterString>{{RP[RPType].Institution_Name}}</gco:CharacterString>
+        </gmd:organisationName>
+    {% endif %}
+    {% if RP[RPType].Role %}
+        <gmd:positionName>
+            <gco:CharacterString>{{RP[RPType].Role}}</gco:CharacterString>
+        </gmd:positionName>
+    {% endif %}
+    <gmd:contactInfo>
+        <gmd:CI_Contact>
+            {% if RP[RPType].Phone or RP[RPType].Fax %}
+                <gmd:phone>
+                    <gmd:CI_Telephone>
+                        {% if RP[RPType].Phone %}
+                            <gmd:voice>
+                                <gco:CharacterString>{{RP[RPType].Phone}}</gco:CharacterString>
+                            </gmd:voice>
+                        {% endif %}
+                        {% if RP[RPType].Fax %}
+                            <gmd:facsimile>
+                                <gco:CharacterString>{{RP[RPType].Fax}}</gco:CharacterString>
+                            </gmd:facsimile>
+                        {% endif %}
+                    </gmd:CI_Telephone>
+                </gmd:phone>
+            {% endif %}
+            <gmd:address>
+                <gmd:CI_Address>
+                    {% if RP[RPType].Street1 or RP[RPType].Street2 %}
+                        <gmd:deliveryPoint>
+                            <gco:CharacterString><![CDATA[{{RP[RPType].Street1}}{% if RP[RPType].Street2 %}
+
+{{RP[RPType].Street2}}{% endif %}]]></gco:CharacterString>
+                        </gmd:deliveryPoint>
+                    {% elseif RP[RPType].Department_Addr1 or RP[RPType].Department_Addr2 %}
+                        <gmd:deliveryPoint>
+                            <gco:CharacterString><![CDATA[{{RP[RPType].Department_Addr1}}{% if RP[RPType].Department_Addr2 %}
+
+{{RP[RPType].Department_Addr2}}{% endif %}]]></gco:CharacterString>
+                        </gmd:deliveryPoint>
+                    {% endif %}
+                    {% if RP[RPType].City %}
+                        <gmd:city>
+                            <gco:CharacterString>{{RP[RPType].City}}</gco:CharacterString>
+                        </gmd:city>
+                    {% elseif RP[RPType].Department_City %}
+                        <gmd:city>
+                            <gco:CharacterString>{{RP[RPType].Department_City}}</gco:CharacterString>
+                        </gmd:city>
+                    {% endif %}
+                    {% if RP[RPType].State %}
+                        <gmd:administrativeArea>
+                            <gco:CharacterString>{{RP[RPType].State}}</gco:CharacterString>
+                        </gmd:administrativeArea>
+                    {% elseif RP[RPType].Department_State %}
+                        <gmd:administrativeArea>
+                            <gco:CharacterString>{{RP[RPType].Department_State}}</gco:CharacterString>
+                        </gmd:administrativeArea>
+                    {% endif %}
+                    {% if RP[RPType].PostalCode %}
+                        <gmd:postalCode>
+                            <gco:CharacterString>{{RP[RPType].PostalCode}}</gco:CharacterString>
+                        </gmd:postalCode>
+                    {% elseif RP[RPType].Department_Zip %}
+                        <gmd:postalCode>
+                            <gco:CharacterString>{{RP[RPType].Department_Zip}}</gco:CharacterString>
+                        </gmd:postalCode>
+                    {% endif %}
+                    {% if RP[RPType].Country %}
+                        <gmd:country>
+                            <gco:CharacterString>{{RP[RPType].Country}}</gco:CharacterString>
+                        </gmd:country>
+                    {% elseif RP[RPType].Department_Country %}
+                        <gmd:country>
+                            <gco:CharacterString>{{RP[RPType].Department_Country}}</gco:CharacterString>
+                        </gmd:country>
+                    {% endif %}
+                    {% if RP[RPType].Email %}
+                        <gmd:electronicMailAddress>
+                            <gco:CharacterString>{{RP[RPType].Email}}</gco:CharacterString>
+                        </gmd:electronicMailAddress>
+                    {% endif %}
+                </gmd:CI_Address>
+            </gmd:address>
+        </gmd:CI_Contact>
+    </gmd:contactInfo>
+    <gmd:role>
+        {% if RP[RPType].RoleCode %}
+            <gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="{{RP[RPType].RoleCode.Name}}" codeSpace="{{RP[RPType].RoleCode.DomainCode}}">{{RP[RPType].RoleCode.Name}}</gmd:CI_RoleCode>
+        {% endif %}
+    </gmd:role>
+</gmd:CI_ResponsibleParty>

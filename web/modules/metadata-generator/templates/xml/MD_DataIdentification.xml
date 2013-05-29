@@ -1,0 +1,43 @@
+<gmd:MD_DataIdentification>
+    <gmd:citation>
+        <gmd:CI_Citation>
+            <gmd:title>
+                <gco:CharacterString>{{dataset.title}}</gco:CharacterString>
+            </gmd:title>
+            <gmd:date>
+                <gmd:CI_Date>
+                    <gmd:date>
+                        <gco:Date>{{ "now" | date("Y-m-d") }}</gco:Date>
+                    </gmd:date>
+                    <gmd:dateType></gmd:dateType>
+                </gmd:CI_Date>
+            </gmd:date>
+        </gmd:CI_Citation>
+    </gmd:citation>
+    <gmd:abstract>
+        <gco:CharacterString><![CDATA[{{dataset.abstract}}]]></gco:CharacterString>
+    </gmd:abstract>
+    <gmd:status>
+        <gmd:MD_ProgressCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_ProgressCode" codeListValue="completed" codeSpace="001">completed</gmd:MD_ProgressCode>
+    </gmd:status>
+    <gmd:pointOfContact>
+        {% set RPType = 'PPOC' %}
+        {% include "xml/CI_ResponsibleParty.xml" %}
+    </gmd:pointOfContact>
+    <gmd:pointOfContact>
+        {% set RPType = 'DM' %}
+        {% include "xml/CI_ResponsibleParty.xml" %}
+    </gmd:pointOfContact>
+    <gmd:language>
+        <gco:CharacterString>eng; USA</gco:CharacterString>
+    </gmd:language>
+    {% if dataset.geo_location %}
+        <gmd:extent>
+           <gmd:EX_Extent id="boundingExtent">
+               <gmd:description>
+                   <gco:CharacterString><![CDATA[{{dataset.geo_location}}]]></gco:CharacterString>
+               </gmd:description>
+           </gmd:EX_Extent>
+       </gmd:extent>
+    {% endif %}
+</gmd:MD_DataIdentification>
