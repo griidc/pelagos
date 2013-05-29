@@ -125,12 +125,23 @@ function getPeopleDetails($dbh, $filters = array(), $order_by = 'LastName, First
                p.People_PhoneNum AS Phone,
                inst.Institution_ID AS Institution_ID,
                inst.Institution_Name AS Institution_Name,
-               r.Role_Name AS Role';
+               r.Role_Name AS Role,
+               Department_Name,
+               Department_Addr1,
+               Department_Addr2,
+               Department_City,
+               Department_State,
+               Department_Zip,
+               Department_Country,
+               Department_URL,
+               Department_Lat,
+               Department_Long';
 
     $FROM = 'FROM People p
              LEFT OUTER JOIN ProjPeople pp ON pp.People_ID = p.People_ID
              LEFT OUTER JOIN Institutions inst ON inst.Institution_ID = p.People_Institution
-             LEFT OUTER JOIN Roles r ON r.Role_ID = pp.Role_ID';
+             LEFT OUTER JOIN Roles r ON r.Role_ID = pp.Role_ID
+             LEFT OUTER JOIN Departments d ON d.Department_ID = p.People_Department';
 
     $WHERE = 'WHERE 1';
 
