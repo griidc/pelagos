@@ -10,11 +10,11 @@ class MI_Metadata
 	public function __construct($mMD, $instanceName,$fileIdentifier)
 	{
 		
-		$instanceType = "/gmi:MI_Metadata";
+		$instanceType = "gmi:MI_Metadata";
 				
 		$now = substr(date('c'),0,10);
 		
-		$mypi = new CI_ResponsibleParty($mMD,$instanceType.'-gmd:contact','contactPI',false,'CI_RoleCode_principalInvestigator','Principal Investigator');
+		$mypi = new CI_ResponsibleParty($mMD,$instanceType.'-gmd:contact','contactPI',false,'CI_RoleCode_principalInvestigator','Principal Investigator','The name of the individual responsible for maintaining the metadata, typically the Data Manager.');
 		$mydi = new MD_DataIdentification($mMD,$instanceType.'-gmd:identificationInfo','DataIdent');
 		$mydisinfo = new MD_Distribution($mMD,$instanceType.'-gmd:distributionInfo','DistroInfo');
 		
@@ -22,7 +22,7 @@ class MI_Metadata
 		$DataIdentification = $mydi->getHTML();
 		$DistributionInfo = $mydisinfo->getHTML();
 		
-		$twigArr = array('instanceName' => $instanceName,'fileIdentifier' => $fileIdentifier,'now' => $now,'ResponsibleParty' => $ResponsibleParty,'DataIdentification' => $DataIdentification, 'DistributionInfo' => $DistributionInfo);
+		$twigArr = array('instanceType' => $instanceType,'instanceName' => $instanceName,'fileIdentifier' => $fileIdentifier,'now' => $now,'ResponsibleParty' => $ResponsibleParty,'DataIdentification' => $DataIdentification, 'DistributionInfo' => $DistributionInfo);
 		
 		$this->htmlString .= $mMD->twig->render('html/MI_Metadata.html', $twigArr);
 		

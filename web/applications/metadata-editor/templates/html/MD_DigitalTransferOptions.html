@@ -15,9 +15,9 @@
 {% endif %}
 
 <tr><td>
-<label for="DTO2_{{instanceName}}">transferSize</label>
+<label for="DTO2_{{instanceName}}"><em>*</em>Transfer Size</label>
 <input value="{{xmlArray["gmd:transferSize"]["gco:Real"]}}" class="required" type="text" id="MDF2_{{instanceName}}" size="80" name="{{instanceType}}-gmd:version-gco:Real"/></td>
-<td><pre>Number of Bytes of file transfer</pre></td></tr>
+	<td><pre>Estimated size of the transfer unit in the specified format, expressed in megabytes.</pre></td></tr>
 
 </table>
 

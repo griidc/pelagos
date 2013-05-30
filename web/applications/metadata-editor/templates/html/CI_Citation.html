@@ -1,13 +1,13 @@
 
 <tr><td>
-<label for="CIT1_{{instanceName}}">Title</label>
-<input value="{{xmlArray["gmd:title"]["gco:CharacterString"]}}" class="required" type="text" id="CIT1_{{instanceName}}" size="80" name="{{instanceType}}-gmd:title-gco:CharacterString"/></td>
-<td><pre>Dataset title</pre></td></tr>
+<label for="CIT1_{{instanceName}}"><em>*</em>Title</label>
+<textarea rows="5" cols="80" class="required" type="text" id="CIT1_{{instanceName}}" size="80" name="{{instanceType}}-gmd:title-gco:CharacterString">{{xmlArray["gmd:title"]["gco:CharacterString"]}}</textarea></td>
+<td><pre>Name by which the cited resource is known. This name should include (where applicable) a description, date, geographic area, originator, and other elements.</pre></td></tr>
 
 <tr><td>
-<label for="CIT2_{{instanceName}}">Alternate title</label>
+<label for="CIT2_{{instanceName}}">Short Title</label>
 <input value="{{xmlArray["gmd:alternateTitle"]["gco:CharacterString"]}}" class="required" type="text" id="CIT2_{{instanceName}}" size="80" name="{{instanceType}}-gmd:alternateTitle-gco:CharacterString"/></td>
-<td><pre>Alternate title for the dataset</pre></td></tr>
+	<td><pre>Short name or other language name by which the cited information is known.</pre></td></tr>
 
 {{Date}}
 

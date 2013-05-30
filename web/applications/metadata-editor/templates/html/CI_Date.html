@@ -1,7 +1,7 @@
 
 <tr><td width="100%">
-<label for="DATE1_{{instanceName}}">date</label>
+<label for="DATE1_{{instanceName}}"><em>*</em>Date</label>
 <input value="{{xmlArray["gmd:date"]["gco:Date"]}}" class="required dateISO" type="text" id="DATE1_{{instanceName}}" name="{{instanceType}}-gmd:date-gco:Date"/></td>
-<td><pre>The City</pre></td></tr>
+	<td><pre>Reference date for the cited dataset. This date can refer to dataset creation, publication, or revision. Format should be YYYY-MM-DD</pre></td></tr>
 
 <input type="hidden" id="DATE2_{{instanceName}}" name="{{instanceType}}-gmd:dateType-gmd:CI_DateTypeCode" value="{{dateType}}"/>

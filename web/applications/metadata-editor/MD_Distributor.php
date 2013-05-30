@@ -13,7 +13,8 @@ class MD_Distributor
 		
 		$instanceType .= "-gmd:MD_Distributor!$instanceName";
 		
-		$mydistrp = new CI_ResponsibleParty($mMD,'gmd:distributorContact','contactDist',false,'CI_RoleCode_distributor','Distribution Contact');
+		$mydistrp = new CI_ResponsibleParty($mMD,$instanceType.'-gmd:distributorContact','contactDist',true,'CI_RoleCode_distributor','Distribution Contact');
+				
 		$ResponsibleParty = $mydistrp->getHTML();
 		
 		$transferOpt = new MD_DigitalTransferOptions($mMD, $instanceType.'-gmd:distributorTransferOptions', $instanceName, $xmlArray['gmd-distributorTransferOptions']);

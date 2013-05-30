@@ -1,12 +1,22 @@
 <fieldset>
+<pre>
+If your data has a geographic component (i.e. coordinates could be used to describe where the data or samples were captured), provide the 4 bounding coordinates.
+
+If your data has a temporal component (i.e. was collected at certain time, represents modeled conditions at a certain point in time, etc.) provide the starting and end dates and/or times, and description on what the time period represents (ground condition, sample date, simulation date).
+	
+Some data may not have geographic or temporal elements, such as some laboratory experiment data.  For these datasets provide a short statement such as 'No relevant geographic or temporal extents'.
+</pre>
+</fieldset>
+
+<fieldset>
 <legend>Data Extent</legend>
 
 <table width="100%">
 
 <tr><td>
-<label for="EX1_{{instanceName}}">Extent Description</label>
+<label for="EX1_{{instanceName}}">Description</label>
 <textarea class="required" rows="5" cols="80" id="EX1_{{instanceName}}" name="{{instanceType}}-gmd:description-gco:CharacterString">{{xmlArray["gmd:description"]["gco:CharacterString"]}}</textarea></td>
-<td><pre>Description of the Extent</pre></td></tr>
+	<td><pre>Textual information about horizontal, vertical, and temporal extent.  This field should only be used if the dataset has no geographic or temporal elements to describe.</pre></td></tr>
 
 {{GeographicBoundingBox}}
 

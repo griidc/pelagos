@@ -1,18 +1,15 @@
-
-<fieldset>
-	<legend>{{Legend}}</legend>
 	
-	<table>
+
 	
 	<tr><td>
-	<label for="OLR1_{{instanceName}}">URL</label>
-	<input type="text" class="requierd url" size=80" id="OLR1_{{instanceName}}" name="{{instanceType}}-gmd:linkage-gmd:URL"/></td>
-	<td><pre>Dataset URL</pre></td></tr>
+		<label for="OLR1_{{instanceName}}"><em>*</em>URL</label>
+	<input type="text" class="required url" size=80" id="OLR1_{{instanceName}}" name="{{instanceType}}-gmd:linkage-gmd:URL"/></td>
+		<td><pre>Direct URL.  Should be formatted ' protocol://domain ' , eg. http://gomri.org</pre></td></tr>
 	
 	<tr><td>
 	<label for="OLR2_{{instanceName}}">Protocol</label>
 	<input type="text" size=80" id="OLR2_{{instanceName}}" name="{{instanceType}}-gmd:protocol-gco:CharacterString"/></td>
-	<td><pre>Dataset URL Protocol</pre></td></tr>
+	<td><pre>URL Protocol</pre></td></tr>
 
 <!--	
 	<tr><td>
@@ -43,5 +40,5 @@
 	<td><pre>URL Role</pre></td></tr>
 -->
 	
-	</table>
-</fieldset>
+
+

@@ -8,14 +8,14 @@
 		{{Citation}}
 		
 		<tr><td>
-		<label for="MDD1_{{instanceName}}">Abstract</label>
+		<label for="MDD1_{{instanceName}}"><em>*</em>Abstract</label>
 		<textarea class="required" rows="5" cols="80" onchange="copyValue(this,'MDD1h_{{instanceName}}');" id="MDD1_{{instanceName}}">{{xmlArray["gmd:abstract"]["gco:CharacterString"]}}</textarea></td>
-		<td><pre>Abstract</pre></td></tr>
+			<td><pre>Brief narrative summary of the dataset's contents.</pre></td></tr>
 		
 		<tr><td>
-		<label for="MDD2_{{instanceName}}">Purpose</label>
+		<label for="MDD2_{{instanceName}}"><em>*</em>Purpose</label>
 		<textarea class="required" rows="5" cols="80" onchange="copyValue(this,'MDD2h_{{instanceName}}');" id="MDD2_{{instanceName}}">{{xmlArray["gmd:purpose"]["gco:CharacterString"]}}</textarea></td>
-		<td><pre>Purpose</pre></td></tr>
+			<td><pre>Summary of the intentions for which the dataset was developed.</pre></td></tr>
 		
 		<!--
 		<label for="MDD3_{instanceName}}">status</label>
@@ -25,7 +25,7 @@
 		<tr><td>
 		<label for="MDD5_{{instanceName}}">Supplemental Information</label>
 		<textarea size="80" onchange="copyValue(this,'MDD5h_{{instanceName}}');" rows="5" cols="80" id="MDD5_{{instanceName}}">{{xmlArray["gmd:supplementalInformation"]["gco:CharacterString"]}}</textarea></td>
-		<td><pre>Suplemental Information</pre></td></tr>
+			<td><pre>Other descriptive information about the dataset.  This field is broken out in to several sections to gather specific information would normally be captured in ISO metadata elements that the Metadata Editor does not currently support.</pre></td></tr>
 		
 		
 		</fieldset>

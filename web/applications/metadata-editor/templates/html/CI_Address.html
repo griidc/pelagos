@@ -1,38 +1,31 @@
 
 
 <tr><td>
-<label for="CIAD1_{{instanceName}}">Street address</label>
-<input value="{{xmlArray["gmd:deliveryPoint"]["gco:CharacterString"]}}" class="required" type="text" id="CIAD1_{{instanceName}}" size="80" name="{{instanceType}}-gmd:deliveryPoint-gco:CharacterString"/></td>
-<td><pre>The same thing as your address</pre></td></tr>
+<label for="CIAD1_{{instanceName}}"><em>*</em>Address</label>
+<textarea class="required" type="text" id="CIAD1_{{instanceName}}" rows="3" cols="80" name="{{instanceType}}-gmd:deliveryPoint-gco:CharacterString">{{xmlArray["gmd:deliveryPoint"]["gco:CharacterString"]}}</textarea></td>
+<td><pre>Address line for the location</pre></td></tr>
 
 <tr><td>
-<label for="CIAD2_{{instanceName}}">City</label>
+<label for="CIAD2_{{instanceName}}"><em>*</em>City</label>
 <input value="{{xmlArray["gmd:city"]["gco:CharacterString"]}}" class="required" type="text" id="CIAD2_{{instanceName}}" size="80" name="{{instanceType}}-gmd:city-gco:CharacterString"/></td>
-<td><pre>The City</pre></td></tr>
+<td><pre>City of the address</pre></td></tr>
 
 <tr><td>
-<label for="CIAD3_{{instanceName}}">State/Province/Region</label>
+<label for="CIAD3_{{instanceName}}"><em>*</em>State/Province/Region</label>
 <input value="{{xmlArray["gmd:administrativeArea"]["gco:CharacterString"]}}" class="required" type="text" id="CIAD3_{{instanceName}}" size="80" name="{{instanceType}}-gmd:administrativeArea-gco:CharacterString"/></td>
-<td><pre>State, province or region</pre></td></tr>
+<td><pre>State, province, or adminstrative area of the address.</pre></td></tr>
 
 <tr><td>
-<label for="CIAD4_{{instanceName}}">ZIP Code/Postal code</label>
+<label for="CIAD4_{{instanceName}}"><em>*</em>ZIP/Postal code</label>
 <input value="{{xmlArray["gmd:postalCode"]["gco:CharacterString"]}}" class="required" type="text" id="CIAD4_{{instanceName}}" size="80" name="{{instanceType}}-gmd:postalCode-gco:CharacterString"/></td>
-<td><pre>Postal code or ZIP code</pre></td></tr>
+	<td><pre>Administrative spatial code which assists mail and parcel delivery.</pre></td></tr>
 
 <tr><td>
-<label for="CIAD5_{{instanceName}}">Country</label>
+<label for="CIAD5_{{instanceName}}"><em>*</em>Country</label>
 <input value="{{xmlArray["gmd:country"]["gco:CharacterString"]}}" class="required" type="text" id="CIAD5_{{instanceName}}" size="80" name="{{instanceType}}-gmd:country-gco:CharacterString"/></td>
-<td><pre>Country of the Party</pre></td></tr>
+<td><pre>3 Letter country code of the physical address (using ISO 3166, e.g. USA)</pre></td></tr>
 
 <tr><td>
-<label for="CIAD6_{{instanceName}}">E-mail Adress</label>
+<label for="CIAD6_{{instanceName}}"><em>*</em>Email Address</label>
 <input value="{{xmlArray["gmd:electronicMailAddress"]["gco:CharacterString"]}}" class="required email" type="text" id="CIAD6_{{instanceName}}" size="80" name="{{instanceType}}-gmd:electronicMailAddress-gco:CharacterString"/></td>
 <td><pre>E-mail Address</pre></td></tr>
-
-{% if OnlineResource != "" %}
-<tr><td colspan="2">
-{{OnlineResource}}
-</td></tr>
-{% endif %}
-

@@ -98,6 +98,26 @@ function sortSelect(selectToSort) {
 			focusCleanup: false,
 			invalidHandler: function(event, validator) {
 				
+				$('#dtabs-6 input').each(function() {
+					if ($(this).hasClass('error')) {
+						// hilight tab 6
+						//alert('error in tab 6');
+						$( "#dtabs" ).tabs({
+							active: 6
+						});
+						//break;
+					}
+				});
+				$('#dtabs-5 input').each(function() {
+					if ($(this).hasClass('error')) {
+						// hilight tab 5
+						//alert('error in tab 5');
+						$( "#dtabs" ).tabs({
+							active: 5
+						});
+						//break;
+					}
+				});
 				$('#dtabs-4 input').each(function() {
 					if ($(this).hasClass('error')) {
 						// hilight tab 4

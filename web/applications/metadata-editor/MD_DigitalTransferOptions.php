@@ -12,7 +12,9 @@ class MD_DigitalTransferOptions
 	
 		$instanceType .= '-gmd:MD_DigitalTransferOptions';
 		
-		$onlineResc = new CI_OnlineResource($mMD, $instanceType.'-gmd:onLine', $instanceName);
+		
+		
+		$onlineResc = new CI_OnlineResource($mMD, $instanceName, $instanceType.'-gmd:onLine');
 		$OnlineResource = $onlineResc->getHTML();
 		
 		$twigArr = array('instanceName' => $instanceName,'instanceType' => $instanceType, 'OnlineResource' => $OnlineResource, 'Legend' => $Legend, 'xmlArray' => $xmlArray[0]);

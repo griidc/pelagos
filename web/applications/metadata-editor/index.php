@@ -41,6 +41,14 @@
 	pre
 	{
 		width:400px;
+		white-space: pre-wrap; 
+	}
+	
+	em
+	{
+		color:red;
+		font-weight:bold;
+		font-style:italic;
 	}
 	
 	select:focus
@@ -102,6 +110,8 @@ include 'makeXML.php';
 
 drupal_add_js('/includes/jquery-validation/jquery.validate.js',array('type'=>'external'));
 
+$xmldoc = null;
+
 if (isset($_GET["dataUrl"]))
 {
 	$xmlURL = $_GET["dataUrl"];
@@ -157,7 +167,7 @@ class metaData
 		
 		
 		//$xpath = "/gmi:MI_Metadata";
-		$xpath = "";
+		$xpath = "/";
 		
 		$xpathdoc = new DOMXpath($this->xmldoc);
 		

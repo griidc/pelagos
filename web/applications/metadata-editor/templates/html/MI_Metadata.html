@@ -1,31 +1,36 @@
+
 <div style="background: transparent;" id="dtabs">
         <ul>
-            <li><a href="#dtabs-0">Metadata Contact</a></li>
-			<li><a href="#dtabs-1">Citation</a></li>
-			<li><a href="#dtabs-2">Data Contact</a></li>
+            
+			
+			<li><a href="#dtabs-2">Dataset Contact</a></li>
+			<li><a href="#dtabs-1">Dataset Information</a></li>
 			<li><a href="#dtabs-3">Keywords</a></li>
-			<li><a href="#dtabs-4">Data Extent</a></li>
-			<li><a href="#dtabs-5">Distribution Contact</a></li>
+			<li><a href="#dtabs-4">Extent</a></li>
 			<li><a href="#dtabs-6">Distribution Info</a></li>
+			<li><a href="#dtabs-5">Distribution Contact</a></li>
+			<li><a href="#dtabs-0">Metadata Contact</a></li>
         </ul>
 
-	<input type="hidden" id="MI1" name="gmd:fileIdentifier-gco:CharacterString" value="{{fileIdentifier}}" value"{{xml.test}}"/>
+		<fieldset><i><b>NOTE:</b> Fields with <em>*</em> are required.</i></fieldset>
+		
+	<input type="hidden" id="MI1" name="{{instanceType}}-gmd:fileIdentifier-gco:CharacterString" value="{{fileIdentifier}}" value"{{xml.test}}"/>
 
-	<input type="hidden" id="MI2" name="gmd:language-gco:CharacterString" value="eng; USA">
+	<input type="hidden" id="MI2" name="{{instanceType}}-gmd:language-gco:CharacterString" value="eng; USA">
 
-	<input type="hidden" id="MI3" name="gmd:characterSet-gmd:MD_CharacterSetCode" value="utf8"/>
+	<input type="hidden" id="MI3" name="{{instanceType}}-gmd:characterSet-gmd:MD_CharacterSetCode" value="utf8"/>
 
-	<input type="hidden" id="MI4" name="gmd:hierarchyLevel-gmd:MD_ScopeCode" value="dataset"/>
+	<input type="hidden" id="MI4" name="{{instanceType}}-gmd:hierarchyLevel-gmd:MD_ScopeCode" value="dataset"/>
 
 	<div id="dtabs-0" style="background-color:#BAC6BF;">
 		{{ResponsibleParty}}
 	</div>
 
-	<input type="hidden" id="MI5" name="gmd:dateStamp-gco:Date" value="{{now}}"/>
+	<input type="hidden" id="MI5" name="{{instanceType}}-gmd:dateStamp-gco:Date" value="{{now}}"/>
 
-	<input type="hidden" id="MI6" name="gmd:metadataStandardName-gco:CharacterString" value="ISO 19115-2 Geographic Information - Metadata - Part 2: Extensions for Imagery and Gridded Data"/>
+	<input type="hidden" id="MI6" name="{{instanceType}}-gmd:metadataStandardName-gco:CharacterString" value="ISO 19115-2 Geographic Information - Metadata - Part 2: Extensions for Imagery and Gridded Data"/>
 
-	<input type="hidden" id="MI7" name="gmd:metadataStandardVersion-gco:CharacterString" value="ISO 19115-2:2009(E)"/>
+	<input type="hidden" id="MI7" name="{{instanceType}}-gmd:metadataStandardVersion-gco:CharacterString" value="ISO 19115-2:2009(E)"/>
 	
 	{{DataIdentification}}
 		

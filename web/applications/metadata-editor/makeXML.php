@@ -1,16 +1,25 @@
 <?php
 
-function makeXML($xml)
+function makeXML($xml,$doc)
 {
 	echo '<pre>';
-	var_dump($_POST);
-	echo '</pre>';
+	//var_dump($_POST);
+	
 	
 	//exit;
 	
 	#array_shift($xml); #To get rid of the Q from Drupal (_GET ONLY!)
-		
-	createNodesXML($xml);
+	
+	if (is_null($doc))
+	{
+		createNodesXML_blank($xml);
+	}
+	else
+	{
+		createNodesXML($xml,$doc);
+	}
+	
+	echo '</pre>';
 }
 
 function createBlankXML()
@@ -32,18 +41,130 @@ function createBlankXML()
 	$root->setAttribute('xmlns:xsi','http://www.w3.org/2001/XMLSchema-instance');
 	$root->setAttribute('xsi:schemaLocation','http://www.isotc211.org/2005/gmi http://www.ngdc.noaa.gov/metadata/published/xsd/schema.xsd');
 	
-	return $doc;
+	$doc->normalizeDocument();
+	
+	$xmlString = $doc->saveXML();
+	
+	$newdoc = new DomDocument('1.0','UTF-8');
+	$newdoc->loadXML($xmlString);
+	
+	return $newdoc;
 }
 
-function createNodesXML($doc,$xml)
+function createNodesXML($xml,$doc)
 {
+	
+	if (is_null($doc))
+	{
+		$doc = createBlankXML();
+	}
+		
+	$root = $doc->firstChild;
+	$parent = $doc;
+	
+	$xpathdoc = new DOMXpath($doc);
 	
 	foreach ($xml as $key=>$val)
 	{
+		$xpath = "";
+		
+		$nodelevels = preg_split("/-/",$key);
+		
+		foreach ($nodelevels as $nodelevel)
+		{
+			$splitnodelevel = preg_split("/\!/",$nodelevel);
+			
+			$xpath .= "/" . $splitnodelevel[0];
+		}
+		
+		//echo $xpath . '<br>';
+		
+		$elements = $xpathdoc->query($xpath);
+		
+		//var_dump($elements);
+		
+		if ($elements->length > 0)
+		{
+			$node = $elements->item(0);
+			$val = htmlspecialchars($val, ENT_QUOTES | 'ENT_XML1', 'UTF-8');
+			$node->nodeValue = $val;
+			$parent = $node->parentNode;
+			//echo $parent->nodeName .'<br>';
+		}
+		else
+		{
+			$nodelevels = preg_split("/\//",$xpath);
+			
+			$xpath = "";
+			
+			//var_dump($nodelevels);
+			
+			$parent = $doc;
+			
+			foreach ($nodelevels as $nodelevel)
+			{
+				if($nodelevel <> "" AND $val<>"!")
+				{
+					$xpath .= "/" . $nodelevel;
+					$elements = $xpathdoc->query($xpath);
+													
+					echo $xpath . '<br>';
+					
+					//var_dump($elements);
+					
+					
 
-	
+					if($elements->length > 0)
+					{
+						$node = $elements->item(0);
+						//$val = htmlspecialchars($val, ENT_QUOTES | 'ENT_XML1', 'UTF-8');
+						//$node->nodeValue = $val;
+						$parent = $node->parentNode;
+						$parentname = $parent->nodeName;
+						echo "Found path: $xpath. Parent is: " . $parentname . "<br>";
+					}
+					else
+					{
+						$node = $doc->createElement($nodelevel);
+						$node = $parent->appendChild($node);
+												
+						$parent = $node;
+						
+						echo "Addded Node: $nodelevel<br>";
+						
+						//addNodeAttributes($doc,$parent,$node,$nodelevel);
+						
+						
+					
+					}
+				}
+				
+				//$doc->normalizeDocument();
+				//$xmlString = $doc->saveXML();
+				//$doc->loadXML($xmlString);
+				///$parent = $doc;
+			}
+			
+			$val = htmlspecialchars($val, ENT_QUOTES | 'ENT_XML1', 'UTF-8');
+			$node->nodeValue = $val;
+		}
+		
+		//$parent = $doc;
+		
+		
 	}
 	
+	
+	header("Content-type: text/xml; charset=utf-8"); 
+	//header('Content-Disposition: attachment; filename=metadata.xml');
+	$doc->normalizeDocument();
+	$doc->formatOutput = true;
+	ob_clean();
+	flush();
+	echo $doc->saveXML();
+	exit;
+		
+	//*/
 }
 
 function createXmlNode($doc,$parent,$nodeName)
@@ -196,7 +317,7 @@ function addXMLChildValue($doc,$parent,$fieldname,$fieldvalue)
 
 
 
-function createNodesXML_old($xml)
+function createNodesXML_blank($xml)
 {
 	$doc = new DomDocument('1.0','UTF-8');
 	
@@ -228,6 +349,9 @@ function createNodesXML_old($xml)
 		$icnt=0;
 		
 		//var_dump($nodelevels);
+		
+		array_shift($nodelevels); #Due to the new structure, this old function is still being used for now.
+		
 		
 		foreach ($nodelevels as $nodelevel)
 		{
@@ -287,7 +411,7 @@ function createNodesXML_old($xml)
 	}
 	
 	header("Content-type: text/xml; charset=utf-8"); 
-	header('Content-Disposition: attachment; filename=metadata.xml');
+	//header('Content-Disposition: attachment; filename=metadata.xml');
 		
 	$doc->normalizeDocument();
 	$doc->formatOutput = true;
