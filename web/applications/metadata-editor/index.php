@@ -96,7 +96,7 @@
 
 
 <?php
-//Show Errors (debug only)
+#Show Errors (debug only)
 error_reporting(-1);
 ini_set('display_errors', '1');
 

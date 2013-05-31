@@ -3,7 +3,7 @@
 function makeXML($xml,$doc)
 {
 	echo '<pre>';
-	//var_dump($_POST);
+	var_dump($_POST);
 	
 	
 	//exit;
@@ -12,7 +12,8 @@ function makeXML($xml,$doc)
 	
 	if (is_null($doc))
 	{
-		createNodesXML_blank($xml);
+		//createNodesXML_blank($xml);
+		createNodesXML($xml,$doc);
 	}
 	else
 	{
@@ -79,6 +80,7 @@ function createNodesXML($xml,$doc)
 		
 		//echo $xpath . '<br>';
 		
+		$xpathdoc = new DOMXpath($doc);
 		$elements = $xpathdoc->query($xpath);
 		
 		//var_dump($elements);
@@ -108,6 +110,7 @@ function createNodesXML($xml,$doc)
 					$xpath .= "/" . $nodelevel;
 					$elements = $xpathdoc->query($xpath);
 													
+					echo 'now working: ';
 					echo $xpath . '<br>';
 					
 					//var_dump($elements);
@@ -116,37 +119,63 @@ function createNodesXML($xml,$doc)
 
 					if($elements->length > 0)
 					{
-						$node = $elements->item(0);
+						$xpathdocsub = new DOMXpath($doc);
+						$subelements = $xpathdocsub->query($xpath);
+						$node = $subelements->item(0);
 						//$val = htmlspecialchars($val, ENT_QUOTES | 'ENT_XML1', 'UTF-8');
 						//$node->nodeValue = $val;
 						$parent = $node->parentNode;
 						$parentname = $parent->nodeName;
+						$parentXpath = $xpath;
 						echo "Found path: $xpath. Parent is: " . $parentname . "<br>";
 					}
 					else
 					{
+						$xpathdocsub = new DOMXpath($doc);
+						$subelements = $xpathdocsub->query($parentXpath);
+						$node = $subelements->item(0);
+						$parent = $node;
+						$parentname = $parent->nodeName;
+												
+						echo "Found last path: $parentXpath. Old parent is: " . $parentname . "<br>";
+						
 						$node = $doc->createElement($nodelevel);
 						$node = $parent->appendChild($node);
-												
-						$parent = $node;
+						
 						
 						echo "Addded Node: $nodelevel<br>";
 						
-						//addNodeAttributes($doc,$parent,$node,$nodelevel);
+						$parentXpath = $xpath;
+						
+						
+						
+						
 						
 						
 					
 					}
 				}
 				
-				//$doc->normalizeDocument();
-				//$xmlString = $doc->saveXML();
-				//$doc->loadXML($xmlString);
-				///$parent = $doc;
+				
+				
+				$doc->normalizeDocument();
+				$xmlString = $doc->saveXML();
+				$doc->loadXML($xmlString);
 			}
+			
+			$xpathdocsub = new DOMXpath($doc);
+			$subelements = $xpathdocsub->query($parentXpath);
+			$node = $subelements->item(0);
+			$nodelevel = $node->nodeName;
+			$parent = $node->parentNode;
+			
 			
 			$val = htmlspecialchars($val, ENT_QUOTES | 'ENT_XML1', 'UTF-8');
 			$node->nodeValue = $val;
+			
+			addNodeAttributes($doc,$parent,$node,$nodelevel);
+			
+			$parent = $doc;
 		}
 		
 		//$parent = $doc;
