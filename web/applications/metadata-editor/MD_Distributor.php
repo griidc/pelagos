@@ -17,7 +17,17 @@ class MD_Distributor
 				
 		$ResponsibleParty = $mydistrp->getHTML();
 		
-		$transferOpt = new MD_DigitalTransferOptions($mMD, $instanceType.'-gmd:distributorTransferOptions', $instanceName, $xmlArray['gmd-distributorTransferOptions']);
+		$distArray = false;
+		
+		if (is_array($xmlArray))
+		{
+			if (array_key_exists("gmd:distributorTransferOptions",$xmlArray))
+			{
+				$distArray = $xmlArray[0]["gmd:distributorTransferOptions"];
+			}
+		}
+		
+		$transferOpt = new MD_DigitalTransferOptions($mMD, $instanceType.'-gmd:distributorTransferOptions', $instanceName, $distArray);
 		$DigitalTransferOptions = $transferOpt->getHTML();
 		
 		$myFormat = new MD_Format($mMD, $instanceType.'-gmd:distributorFormat', $instanceName);

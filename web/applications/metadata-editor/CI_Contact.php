@@ -10,8 +10,6 @@ class CI_Contact
 	{
 		$instanceType .= '-gmd:CI_Contact';
 		
-		
-		
 		$phoneArray = $xmlArray["gmd:phone"];
 		$addressArray = $xmlArray["gmd:address"];
 				

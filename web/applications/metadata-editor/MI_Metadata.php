@@ -11,6 +11,13 @@ class MI_Metadata
 	{
 		
 		$instanceType = "gmi:MI_Metadata";
+		
+		$xmlArray = $mMD->returnPath("gmi:MI_Metadata/gmd:fileIdentifier");
+
+		if (isset($xmlArray[0]))
+		{
+			$fileIdentifier = $xmlArray[0];
+		}
 				
 		$now = substr(date('c'),0,10);
 		

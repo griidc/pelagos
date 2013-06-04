@@ -1,17 +1,12 @@
 	
-
-	
 	<tr><td>
-		<label for="OLR1_{{instanceName}}"><em>*</em>URL</label>
-	<input type="text" class="required url" size=80" id="OLR1_{{instanceName}}" name="{{instanceType}}-gmd:linkage-gmd:URL"/></td>
-		<td><pre>Direct URL.  Should be formatted ' protocol://domain ' , eg. http://gomri.org</pre></td></tr>
+	<label for="OLR1_{{instanceName}}"><em>*</em>URL</label>
+	<input onblur="popProtocol{{instanceName}}();" type="text" class="required url" size=80" id="OLR1_{{instanceName}}" name="{{instanceType}}-gmd:linkage-gmd:URL"/></td>
+	<td><pre>Direct URL.  Should be formatted ' protocol://domain ' , eg. http://gomri.org</pre></td></tr>
 	
-	<tr><td>
-	<label for="OLR2_{{instanceName}}">Protocol</label>
-	<input type="text" size=80" id="OLR2_{{instanceName}}" name="{{instanceType}}-gmd:protocol-gco:CharacterString"/></td>
-	<td><pre>URL Protocol</pre></td></tr>
+	<input type="hidden" size=80" id="OLR2_{{instanceName}}" name="{{instanceType}}-gmd:protocol-gco:CharacterString"/></td>
 
-<!--	
+{% if complex == true %}
 	<tr><td>
 	<label for="OLR3_{{instanceName}}">applicationProfile</label>
 	<input type="text" id="OLR3_{{instanceName}}" name="{{instanceType}}-gmd:applicationProfile-gco:CharacterString"/></td>
@@ -38,7 +33,7 @@
 	</select>
 	</td>
 	<td><pre>URL Role</pre></td></tr>
--->
+{% endif %}
 	
 
 

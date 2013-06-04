@@ -5,20 +5,7 @@ function makeXML($xml,$doc)
 	echo '<pre>';
 	var_dump($_POST);
 	
-	
-	//exit;
-	
-	#array_shift($xml); #To get rid of the Q from Drupal (_GET ONLY!)
-	
-	if (is_null($doc))
-	{
-		//createNodesXML_blank($xml);
-		createNodesXML($xml,$doc);
-	}
-	else
-	{
-		createNodesXML($xml,$doc);
-	}
+	createNodesXML($xml,$doc);
 	
 	echo '</pre>';
 }
@@ -59,9 +46,17 @@ function createNodesXML($xml,$doc)
 	{
 		$doc = createBlankXML();
 	}
+	
+	
 		
 	$root = $doc->firstChild;
 	$parent = $doc;
+	
+	$now = date('c');
+	
+	$xmlComment = "Created with GRIIDC Metadata Editor V1.0 on $now";
+	$commentNode = $doc->createComment($xmlComment);
+	$commentNode = $doc->appendChild($commentNode);
 	
 	$xpathdoc = new DOMXpath($doc);
 	
@@ -115,8 +110,6 @@ function createNodesXML($xml,$doc)
 					
 					//var_dump($elements);
 					
-					
-
 					if($elements->length > 0)
 					{
 						$xpathdocsub = new DOMXpath($doc);
@@ -142,21 +135,14 @@ function createNodesXML($xml,$doc)
 						$node = $doc->createElement($nodelevel);
 						$node = $parent->appendChild($node);
 						
+						addNodeAttributes($doc,$parent,$node,$nodelevel,$val);
+						
 						
 						echo "Addded Node: $nodelevel<br>";
 						
 						$parentXpath = $xpath;
-						
-						
-						
-						
-						
-						
-					
 					}
 				}
-				
-				
 				
 				$doc->normalizeDocument();
 				$xmlString = $doc->saveXML();
@@ -165,25 +151,25 @@ function createNodesXML($xml,$doc)
 			
 			$xpathdocsub = new DOMXpath($doc);
 			$subelements = $xpathdocsub->query($parentXpath);
-			$node = $subelements->item(0);
-			$nodelevel = $node->nodeName;
-			$parent = $node->parentNode;
-			
-			
-			$val = htmlspecialchars($val, ENT_QUOTES | 'ENT_XML1', 'UTF-8');
-			$node->nodeValue = $val;
-			
-			addNodeAttributes($doc,$parent,$node,$nodelevel);
+			if ($subelements <> false)
+			{
+				$node = $subelements->item(0);
+				$parent = $node->parentNode;
+				$grandparent = $parent->parentNode;
+				$nodelevel = $parent->nodeName;
+				
+				$val = htmlspecialchars($val, ENT_QUOTES | 'ENT_XML1', 'UTF-8');
+				$node->nodeValue = $val;
+				
+				addNodeAttributes($doc,$grandparent,$parent,$nodelevel,$val);
+			}
 			
 			$parent = $doc;
 		}
-		
-		//$parent = $doc;
-		
-		
 	}
 	
 	
+		
 	header("Content-type: text/xml; charset=utf-8"); 
 	//header('Content-Disposition: attachment; filename=metadata.xml');
 	$doc->normalizeDocument();
@@ -214,7 +200,7 @@ function codeLookup($codeList,$codeListValue)
 	
 }
 
-function addNodeAttributes($doc,$parent,&$node,$fieldname,$fieldvalue="")
+function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
 {
 	switch ($fieldname)
 	{
@@ -289,6 +275,17 @@ function addNodeAttributes($doc,$parent,&$node,$fieldname,$fieldvalue="")
 			$node->setAttribute('gml:id','boundingTemporalExtent');
 			break;
 		}
+		case 'gmd:version':
+		{
+			$node->setAttribute('nilReason','Unknown');
+			$child = $node->firstChild;
+			if (isset($child))
+			{
+				$node->removeChild($child);
+			}
+
+			break;
+		}
 		case 'gmd:CI_DateTypeCode':
 		{
 			$node->setAttribute('codeList','http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode');
@@ -297,8 +294,7 @@ function addNodeAttributes($doc,$parent,&$node,$fieldname,$fieldvalue="")
 			$node->setAttribute('codeSpace',$codeSpace);
 			break;
 		}
-		
-		case 'gmd:keyword':
+		case 'gmd:keywordtheme':
 		{
 			$parent->removeChild($node);
 			
@@ -306,14 +302,49 @@ function addNodeAttributes($doc,$parent,&$node,$fieldname,$fieldvalue="")
 			
 			foreach ($arrkeywords as $myKeywords)
 			{
-				$mdkwrd = $doc->createElement($fieldname);
+				$mdkwrd = $doc->createElement('gmd:keyword');
 				$mdkwrd = $parent->appendChild($mdkwrd);
 				$addnode = addXMLChildValue($doc,$mdkwrd,"gco:CharacterString",$myKeywords);
 			}
+			
+			$tpkwrd = $doc->createElement('gmd:type');
+			$tpkwrd = $parent->appendChild($tpkwrd);
+			
+			$addnode = addXMLChildValue($doc,$tpkwrd,"gmd:MD_KeywordTypeCode",'theme');
 			break;
 		}
-		
-		case 'gmd:MD_TopicCategoryCode':
+		case 'gmd:keywordplace':
+		{
+			$parent->removeChild($node);
+			
+			#go back two nodes
+			$newparent = $parent->parentNode;
+			$parent = $newparent->parentNode;
+			
+			#make another descriptiveKeywords node
+			$dsckwrd = $doc->createElement('gmd:descriptiveKeywords');
+			$dsckwrd = $parent->appendChild($dsckwrd);
+			#make another MD_Keywords node
+			$parent = $doc->createElement('gmd:MD_Keywords');
+			$parent = $dsckwrd->appendChild($parent);
+			
+			$arrkeywords = preg_split("/\;/",$fieldvalue);
+			
+			foreach ($arrkeywords as $myKeywords)
+			{
+				$mdkwrd = $doc->createElement('gmd:keyword');
+				$mdkwrd = $parent->appendChild($mdkwrd);
+				$addnode = addXMLChildValue($doc,$mdkwrd,"gco:CharacterString",$myKeywords);
+			}
+			
+			$tpkwrd = $doc->createElement('gmd:type');
+			$tpkwrd = $parent->appendChild($tpkwrd);
+			
+			$addnode = addXMLChildValue($doc,$tpkwrd,"gmd:MD_KeywordTypeCode",'place');
+			
+			break;
+		}
+		case 'gmd:topicCategory':
 		{
 			$parent->removeChild($node);
 			
@@ -321,10 +352,13 @@ function addNodeAttributes($doc,$parent,&$node,$fieldname,$fieldvalue="")
 			
 			foreach ($arrkeywords as $myKeywords)
 			{
-				$child = $doc->createElement('gmd:MD_TopicCategoryCode');
-				$child = $parent->appendChild($child);
-				$value = $doc->createTextNode($myKeywords);
-				$value = $child->appendChild($value);
+				$mdkwrd = $doc->createElement('gmd:topicCategory');
+				$mdkwrd = $parent->appendChild($mdkwrd);
+				$addnode = addXMLChildValue($doc,$mdkwrd,"gmd:MD_TopicCategoryCode",$myKeywords);
+				//$child = $doc->createElement('gmd:MD_TopicCategoryCode');
+				//$child = $parent->appendChild($child);
+				//$value = $doc->createTextNode($myKeywords);
+				//$value = $child->appendChild($value);
 			}
 			break;
 		}
@@ -346,7 +380,7 @@ function addXMLChildValue($doc,$parent,$fieldname,$fieldvalue)
 
 
 
-function createNodesXML_blank($xml)
+function createNodesXML_old($xml)
 {
 	$doc = new DomDocument('1.0','UTF-8');
 	
@@ -448,6 +482,24 @@ function createNodesXML_blank($xml)
 	flush();
 	echo $doc->saveXML();
 	exit;
+}
+
+function guid(){
+	if (function_exists('com_create_guid')){
+		return com_create_guid();
+		}else{
+		mt_srand((double)microtime()*10000);//optional for php 4.2.0 and up.
+		$charid = strtoupper(md5(uniqid(rand(), true)));
+		$hyphen = chr(45);// "-"
+		$uuid = chr(123)// "{"
+		.substr($charid, 0, 8).$hyphen
+		.substr($charid, 8, 4).$hyphen
+		.substr($charid,12, 4).$hyphen
+		.substr($charid,16, 4).$hyphen
+		.substr($charid,20,12)
+		.chr(125);// "}"
+		return $uuid;
+	}
 }
 
 function removeFromArray($array,$position)

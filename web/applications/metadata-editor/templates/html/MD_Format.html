@@ -3,17 +3,12 @@
 
 <table>
 
-{% if complex == true %}
 <tr><td>
-<label for="MDF1_{{instanceName}}">Name</label>
-<input value="{{xmlArray["gmd:name"]["gco:CharacterString"]}}" type="hidden" id="MDF1_{{instanceName}}" size="80" name="{{instanceType}}-gmd:name-gco:CharacterString"/></td>
+<label for="MDF1_{{instanceName}}">Data Transfer Format</label>
+<input value="{{xmlArray["gmd:name"]["gco:CharacterString"]}}" type="text" id="MDF1_{{instanceName}}" size="80" name="{{instanceType}}-gmd:name-gco:CharacterString"/></td>
 <td><pre>Name of the data transfer format<br>e.g. CSV, Excel Spreadsheet, ASCII TXT, etc</pre></td></tr>
-{% endif %}
 
-<tr><td>
-<label for="MDF2_{{instanceName}}"><em>*</em>Data Transfer Format</label>
-<input value="{{xmlArray["gmd:version"]["gco:CharacterString"]}}" class="required" type="text" id="MDF2_{{instanceName}}" size="80" name="{{instanceType}}-gmd:version-gco:CharacterString"/></td>
-<td><pre>Name of the data transfer format, e.g. CSV, Excel Spreadsheet, ASCII TXT, etc.</pre></td></tr>
+<input value="{{xmlArray["gmd:version"]["gco:CharacterString"]}}" type="hidden" id="MDF2_{{instanceName}}" size="80" name="{{instanceType}}-gmd:version-gco:CharacterString"/></td>
 
 <tr><td>
 <label for="MDF2_{{instanceName}}"><em>*</em>File Decompression Technique</label>

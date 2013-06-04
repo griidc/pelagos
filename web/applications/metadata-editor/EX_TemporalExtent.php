@@ -15,12 +15,25 @@ class EX_TemporalExtent
 		
 		if ($alttype==true)
 		{
+			if (is_array($xmlArray))
+			{
 			$mytimep = new TimeInstant($mMD, $instanceType.'-gmd:extent-gml:TimeInstant', $instanceName.'timeperiod', $xmlArray["gmd:EX_TemporalExtent"]["gmd:extent"]);
-			
+			}
+			else
+			{
+				$mytimep = new TimeInstant($mMD, $instanceType.'-gmd:extent-gml:TimeInstant', $instanceName.'timeperiod', $xmlArray[0]);
+			}
 		}
 		else
 		{
-			$mytimep = new TimePeriod($mMD, $instanceType.'-gmd:extent-gml:TimePeriod', $instanceName.'extent', $xmlArray["gmd:EX_TemporalExtent"]["gmd:extent"]);
+			if (is_array($xmlArray))
+			{
+				$mytimep = new TimePeriod($mMD, $instanceType.'-gmd:extent-gml:TimePeriod', $instanceName.'extent', $xmlArray["gmd:EX_TemporalExtent"]["gmd:extent"]);
+			}
+			else
+			{
+				$mytimep = new TimePeriod($mMD, $instanceType.'-gmd:extent-gml:TimePeriod', $instanceName.'extent', $xmlArray[0]);
+			}
 		}
 		
 		$Time = $mytimep->getHTML();

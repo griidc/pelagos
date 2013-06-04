@@ -108,7 +108,7 @@ include 'makeXML.php';
 
 //drupal_add_css('/metadata/metadata.css',array('type'=>'external'));
 
-drupal_add_js('/includes/jquery-validation/jquery.validate.js',array('type'=>'external'));
+//drupal_add_js('/includes/jquery-validation/jquery.validate.js',array('type'=>'external'));
 
 $xmldoc = null;
 
@@ -157,8 +157,6 @@ class metaData
 	
 	public function returnPath($path)
 	{
-		
-		
 		
 		if (is_null($this->xmldoc))
 		{
@@ -214,7 +212,14 @@ class metaData
 		
 		//$xmlArray = domnode_to_array($element->childNodes);
 		
-		return $xmlArray;
+		if (count($xmlArray) > 0)
+		{
+			return $xmlArray;
+		}
+		else
+		{
+			return false;
+		}
 	}
 }
 
@@ -226,7 +231,7 @@ if (isset($xmldoc))
 }
 
 include 'MI_Metadata.php';
-$myMImeta = new MI_Metadata($mMD,'MIMeta',uniqid());
+$myMImeta = new MI_Metadata($mMD,'MIMeta',guid());
 
 echo "\n\n<script type=\"text/javascript\">\n";
 $mMD->jsString .= $mMD->twig->render('js/base.js', array('jqUIs' => $mMD->jqUIs,'validateRules' => $mMD->validateRules, 'validateMessages' => $mMD->validateMessages));
@@ -248,8 +253,8 @@ echo "</script>\n";
 </td>
 </tr>
 <tr><td>
-	<input type="submit"/>
-	<input type="reset"/>
+	<input type="submit" value="Generate Metadata File"/>
+	<!input type="reset"/>
 	</form>
 </td></tr>
 

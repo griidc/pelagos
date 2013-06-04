@@ -8,7 +8,9 @@ class EX_GeographicBoundingBox
 	{
 		$instanceType .= '-gmd:EX_GeographicBoundingBox';
 		
-		$twigArr = array('instanceName' => $instanceName, 'instanceType' => $instanceType, 'xmlArray' => $xmlArray["gmd:EX_GeographicBoundingBox"]);
+		$xmlArray = $mMD->returnPath($instanceType);
+		
+		$twigArr = array('instanceName' => $instanceName, 'instanceType' => $instanceType, 'xmlArray' => $xmlArray[0]);
 		
 		$this->htmlString = $mMD->twig->render('html/EX_GeographicBoundingBox.html', $twigArr);
 		

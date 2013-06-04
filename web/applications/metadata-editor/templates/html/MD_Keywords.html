@@ -18,6 +18,7 @@
 </tr>
 </table>
 
-<input type="hidden" id="kws{{instanceName}}" name="{{instanceType}}-gmd:keyword"/>
-<input type="hidden" id="kwtype{{instanceName}}" name="{{instanceType}}-gmd:type-gmd:MD_KeywordTypeCode" value="{{type}}"/>
+<input type="hidden" id="kws{{instanceName}}" name="{{instanceType}}-gmd:keyword{{type}}"/>
+<!--<input type="text" id="kwtype{{instanceName}}" name="{{instanceType}}-gmd:type-gmd:MD_KeywordTypeCode" value="{{type}}"/>-->
+<input type="hidden" id="kwtype{{instanceName}}" value="{{type}}"/>
 </fieldset>
