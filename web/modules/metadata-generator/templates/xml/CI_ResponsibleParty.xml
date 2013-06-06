@@ -73,6 +73,8 @@
                         <gmd:postalCode>
                             <gco:CharacterString>{{RP[RPType].Department_Zip}}</gco:CharacterString>
                         </gmd:postalCode>
+					{% else %}
+						<gmd:postalCode/>
                     {% endif %}
                     {% if RP[RPType].Country %}
                         <gmd:country>

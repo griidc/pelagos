@@ -4,6 +4,7 @@
             <gmd:title>
                 <gco:CharacterString>{{dataset.title}}</gco:CharacterString>
             </gmd:title>
+			<gmd:alternateTitle/>
             <gmd:date>
                 <gmd:CI_Date>
                     <gmd:date>
@@ -17,20 +18,22 @@
     <gmd:abstract>
         <gco:CharacterString><![CDATA[{{dataset.abstract}}]]></gco:CharacterString>
     </gmd:abstract>
+	<gmd:purpose/>
     <gmd:status>
         <gmd:MD_ProgressCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_ProgressCode" codeListValue="completed" codeSpace="001">completed</gmd:MD_ProgressCode>
     </gmd:status>
+	<gmd:pointOfContact>
+		{% set RPType = 'DM' %}
+		{% include "xml/CI_ResponsibleParty.xml" %}
+	</gmd:pointOfContact>
     <gmd:pointOfContact>
         {% set RPType = 'PPOC' %}
         {% include "xml/CI_ResponsibleParty.xml" %}
     </gmd:pointOfContact>
-    <gmd:pointOfContact>
-        {% set RPType = 'DM' %}
-        {% include "xml/CI_ResponsibleParty.xml" %}
-    </gmd:pointOfContact>
-    <gmd:language>
+	<gmd:language>
         <gco:CharacterString>eng; USA</gco:CharacterString>
     </gmd:language>
+	{#
     {% if dataset.geo_location %}
         <gmd:extent>
            <gmd:EX_Extent id="boundingExtent">
@@ -40,4 +43,5 @@
            </gmd:EX_Extent>
        </gmd:extent>
     {% endif %}
+	#}
 </gmd:MD_DataIdentification>
