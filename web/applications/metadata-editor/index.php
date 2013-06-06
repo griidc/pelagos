@@ -108,7 +108,7 @@ include 'makeXML.php';
 
 //drupal_add_css('/metadata/metadata.css',array('type'=>'external'));
 
-//drupal_add_js('/includes/jquery-validation/jquery.validate.js',array('type'=>'external'));
+drupal_add_js('/includes/jquery-validation/jquery.validate.js',array('type'=>'external'));
 
 $xmldoc = null;
 
@@ -243,7 +243,7 @@ echo "</script>\n";
 <table class="altrowstable" id="alternatecolor" width="60%" border="0">
 <tr><td width="100%">
 <fieldset>
-<legend>Metadata</legend>
+
 <form name="metadata" id="metadata" method="post">
 
 <?php

@@ -98,16 +98,17 @@ function sortSelect(selectToSort) {
 			focusCleanup: false,
 			invalidHandler: function(event, validator) {
 				
-				$('#dtabs-6 input').each(function() {
+				$('#dtabs-0 input').each(function() {
 					if ($(this).hasClass('error')) {
-						// hilight tab 6
-						//alert('error in tab 6');
+						// hilight tab 0
+						//alert('error in tab 0');
 						$( "#dtabs" ).tabs({
-							active: 6
+							active: 0
 						});
 						//break;
 					}
 				});
+				
 				$('#dtabs-5 input').each(function() {
 					if ($(this).hasClass('error')) {
 						// hilight tab 5
@@ -118,6 +119,18 @@ function sortSelect(selectToSort) {
 						//break;
 					}
 				});
+				
+				$('#dtabs-6 input').each(function() {
+					if ($(this).hasClass('error')) {
+						// hilight tab 6
+						//alert('error in tab 6');
+						$( "#dtabs" ).tabs({
+							active: 6
+						});
+						//break;
+					}
+				});
+				
 				$('#dtabs-4 input').each(function() {
 					if ($(this).hasClass('error')) {
 						// hilight tab 4
@@ -128,6 +141,7 @@ function sortSelect(selectToSort) {
 						//break;
 					}
 				});
+				
 				$('#dtabs-3 input').each(function() {
 					if ($(this).hasClass('error')) {
 						// hilight tab 3
@@ -138,16 +152,7 @@ function sortSelect(selectToSort) {
 						//break;
 					}
 				});
-				$('#dtabs-2 input').each(function() {
-					if ($(this).hasClass('error')) {
-						// hilight tab 2
-						//alert('error in tab 2');
-						$( "#dtabs" ).tabs({
-							active: 2
-						});
-						//break;
-					}
-				});
+				
 				$('#dtabs-1 input').each(function() {
 					if ($(this).hasClass('error')) {
 						// hilight tab 1
@@ -158,12 +163,13 @@ function sortSelect(selectToSort) {
 						//break;
 					}
 				});
-				$('#dtabs-0 input').each(function() {
+				
+				$('#dtabs-2 input').each(function() {
 					if ($(this).hasClass('error')) {
-						// hilight tab 0
-						//alert('error in tab 0');
+						// hilight tab 2
+						//alert('error in tab 2');
 						$( "#dtabs" ).tabs({
-							active: 0
+							active: 2
 						});
 						//break;
 					}

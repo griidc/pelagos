@@ -6,14 +6,18 @@
 <tr><td>
 <label for="MDF1_{{instanceName}}">Data Transfer Format</label>
 <input value="{{xmlArray["gmd:name"]["gco:CharacterString"]}}" type="text" id="MDF1_{{instanceName}}" size="80" name="{{instanceType}}-gmd:name-gco:CharacterString"/></td>
-<td><pre>Name of the data transfer format<br>e.g. CSV, Excel Spreadsheet, ASCII TXT, etc</pre></td></tr>
+<td><pre>Name of the data transfer format, e.g. CSV, Excel Spreadsheet, ASCII TXT, netCDF, GRIB, HDF5, TIFF, etc</pre></td></tr>
 
-<input value="{{xmlArray["gmd:version"]["gco:CharacterString"]}}" type="hidden" id="MDF2_{{instanceName}}" size="80" name="{{instanceType}}-gmd:version-gco:CharacterString"/></td>
+{% if xmlArray["gmd:version"]["gco:CharacterString"] != "" %}
+<input value="{{xmlArray["gmd:version"]["gco:CharacterString"]}}" type="hidden" id="MDF2_{{instanceName}}" size="80" name="{{instanceType}}-gmd:version-gco:CharacterString"/>
+{% else %}
+<input value="" type="hidden" id="MDF2_{{instanceName}}" size="80" name="{{instanceType}}-gmd:version-gco:CharacterString"/>
+{% endif %}
 
 <tr><td>
-<label for="MDF2_{{instanceName}}"><em>*</em>File Decompression Technique</label>
-<input value="{{xmlArray["gmd:fileDecompressionTechnique"]["gco:CharacterString"]}}" class="required" type="text" id="MDF2_{{instanceName}}" size="80" name="{{instanceType}}-gmd:fileDecompressionTechnique-gco:CharacterString"/></td>
-<td><pre>Description of recommended processes or algorithms to apply to the compressed resource. If this is not known, put 'nilReason=unknown'</pre></td></tr>
+<label for="MDF2_{{instanceName}}">File Decompression Technique</label>
+<input value="{{xmlArray["gmd:fileDecompressionTechnique"]["gco:CharacterString"]}}" type="text" id="MDF2_{{instanceName}}" size="80" name="{{instanceType}}-gmd:fileDecompressionTechnique-gco:CharacterString"/></td>
+<td><pre>Description of recommended processes or algorithms to apply to the compressed resource.</pre></td></tr>
 
 
 

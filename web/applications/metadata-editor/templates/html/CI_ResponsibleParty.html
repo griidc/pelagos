@@ -2,25 +2,33 @@
 <fieldset>
 <legend>{{Legend}}</legend>
 <table width="100%">
-{% if role != "CI_RoleCode_distributor" %}
+{% if role == "CI_RoleCode_distributor" %}
+<!-- no name need -->
+{% elseif role == "CI_RoleCode_pointOfContact" %}
 <tr>
 <td><label for="CRIP1_{{instanceName}}"><em>*</em>Name</label>
 <input value="{{xmlArray["gmd:individualName"]["gco:CharacterString"]}}" class="required" type="text" id="CRIP1_{{instanceName}}" size="80" name="{{instanceType}}-gmd:individualName-gco:CharacterString"/></td>
 <td><pre>{{poc}}</pre></td>
 </tr>
+{% elseif role == "CI_RoleCode_principalInvestigator" %}
+	<tr>
+		<td><label for="CRIP1_{{instanceName}}"><em>*</em>Name</label>
+		<input value="{{xmlArray["gmd:individualName"]["gco:CharacterString"]}}" class="required" type="text" id="CRIP1_{{instanceName}}" size="80" name="{{instanceType}}-gmd:individualName-gco:CharacterString"/></td>
+		<td><pre>The name of the individual responsible for the creation of the dataset or majority of it in cases wherein a dataset is a compilation of data files.</pre></td>
+	</tr>
 {% endif %}
 
 <tr>		
-<td><label for="CRIP2_{{instanceName}}"><em>*</em>Organisation</label>
+<td><label for="CRIP2_{{instanceName}}"><em>*</em>Organization</label>
 <input value="{{xmlArray["gmd:organisationName"]["gco:CharacterString"]}}"class="required" type="text" id="CRIP2_{{instanceName}}" size="80" name="{{instanceType}}-gmd:organisationName-gco:CharacterString"/></td>
-	<td><pre>Organisation the responsible individual is attached to, usually the University and Department.  This information can be found via research.gomri.org.</pre></td>
+	<td><pre>Organization the responsible individual is associated to, usually the University and Department.  This information can be found at research.gomri.org.</pre></td>
 </tr>
 	
 {% if role != "CI_RoleCode_distributor" %}
 <tr>	
 <td><label for="CRIP3_{{instanceName}}"><em>*</em>Position</label>
 <input value="{{xmlArray["gmd:positionName"]["gco:CharacterString"]}}"class="required" type="text" id="CRIP3_{{instanceName}}" size="80" name="{{instanceType}}-gmd:positionName-gco:CharacterString"/></td>
-	<td><pre>Position of the responsible person, e.g. Assistant Professor</pre></td>
+	<td><pre>Position of the responsible person in the organization and not the functional position on a project, e.g. Assistant Professor.</pre></td>
 </tr>
 {% endif %}
 

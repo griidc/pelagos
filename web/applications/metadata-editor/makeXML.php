@@ -30,14 +30,16 @@ function createBlankXML()
 	$root->setAttribute('xsi:schemaLocation','http://www.isotc211.org/2005/gmi http://www.ngdc.noaa.gov/metadata/published/xsd/schema.xsd');
 	
 	$doc->normalizeDocument();
+	$doc->formatOutput = true;
 	
 	$xmlString = $doc->saveXML();
-	
 	$newdoc = new DomDocument('1.0','UTF-8');
+	
 	$newdoc->loadXML($xmlString);
 	
 	return $newdoc;
 }
+
 
 function createNodesXML($xml,$doc)
 {
@@ -46,8 +48,6 @@ function createNodesXML($xml,$doc)
 	{
 		$doc = createBlankXML();
 	}
-	
-	
 		
 	$root = $doc->firstChild;
 	$parent = $doc;
@@ -77,16 +77,14 @@ function createNodesXML($xml,$doc)
 		
 		$xpathdoc = new DOMXpath($doc);
 		$elements = $xpathdoc->query($xpath);
-		
-		//var_dump($elements);
-		
+	
 		if ($elements->length > 0)
 		{
 			$node = $elements->item(0);
 			$val = htmlspecialchars($val, ENT_QUOTES | 'ENT_XML1', 'UTF-8');
 			$node->nodeValue = $val;
 			$parent = $node->parentNode;
-			//echo $parent->nodeName .'<br>';
+			echo 'Existing Parent:' . $parent->nodeName .'<br>';
 		}
 		else
 		{
@@ -100,7 +98,7 @@ function createNodesXML($xml,$doc)
 			
 			foreach ($nodelevels as $nodelevel)
 			{
-				if($nodelevel <> "" AND $val<>"!")
+				if($nodelevel <> "")
 				{
 					$xpath .= "/" . $nodelevel;
 					$elements = $xpathdoc->query($xpath);
@@ -121,6 +119,8 @@ function createNodesXML($xml,$doc)
 						$parentname = $parent->nodeName;
 						$parentXpath = $xpath;
 						echo "Found path: $xpath. Parent is: " . $parentname . "<br>";
+						
+						addNodeAttributes($doc,$parent,$node,$nodelevel,$val);
 					}
 					else
 					{
@@ -132,21 +132,65 @@ function createNodesXML($xml,$doc)
 												
 						echo "Found last path: $parentXpath. Old parent is: " . $parentname . "<br>";
 						
-						$node = $doc->createElement($nodelevel);
-						$node = $parent->appendChild($node);
+						## This section Abadoned for now!!!!
 						
-						addNodeAttributes($doc,$parent,$node,$nodelevel,$val);
+						#find parent by previous xpath:
+						$thisPath = substr(str_replace("/","-",$xpath),1);
+						//$thosePaths = preg_split("/-/",$thisPath,2	);
+						//$thePath = $thosePaths[1];
+						//var_dump(array_keys($xml));
+						$thisIndex =  array_search($thisPath,array_keys($xml));
+						/*
+						if ($thisIndex > 0)
+						{
+							$keylist = array_keys($xml);
+							$prevkey = $keylist[$thisIndex-1];
+							$previousXpath = "";
+							$nodelevels = preg_split("/-/",$prevkey);
+							foreach ($nodelevels as $nodelevel)
+							{
+								$previousXpath .= "/" . $nodelevel;
+							}
+							
+							echo "###$previousXpath";
+							$subelements = $xpathdocsub->query($previousXpath);
+							$prevnode = $subelements->item(0);
+							echo "Will it go into node:" . $prevnode->nodeName;
+						}
+						*/
+						##
+						
+						//echo "!!!$thisPath:nowpath:$thisIndex Result:";
+						
+						
+						if ($thisIndex > 0)
+						{
+							$node = addXMLChildValue($doc,$parent,$nodelevel,$val);
+						}
+						else
+						{
+							$node = $doc->createElement($nodelevel);
+							$node = $parent->appendChild($node);
+							addNodeAttributes($doc,$parent,$node,$nodelevel,$val);
+						}
+						
 						
 						
 						echo "Addded Node: $nodelevel<br>";
 						
 						$parentXpath = $xpath;
+						
+						$doc->formatOutput = true;
+						$doc->normalizeDocument();
+						$xmlString = $doc->saveXML();
+						
+						$doc->loadXML($xmlString);
 					}
+										
+					//addNodeAttributes($doc,$parent,$node,$nodelevel,$val);
 				}
 				
-				$doc->normalizeDocument();
-				$xmlString = $doc->saveXML();
-				$doc->loadXML($xmlString);
+				
 			}
 			
 			$xpathdocsub = new DOMXpath($doc);
@@ -161,25 +205,42 @@ function createNodesXML($xml,$doc)
 				$val = htmlspecialchars($val, ENT_QUOTES | 'ENT_XML1', 'UTF-8');
 				$node->nodeValue = $val;
 				
-				addNodeAttributes($doc,$grandparent,$parent,$nodelevel,$val);
+				//addNodeAttributes($doc,$parent,$node,$nodelevel,$val);
+				//addNodeAttributes($doc,$grandparent,$parent,$nodelevel,$val);
 			}
 			
 			$parent = $doc;
 		}
 	}
 	
+	$filename = substr($xml["gmi:MI_Metadata-gmd:fileIdentifier-gco:CharacterString"],0,-4);
 	
 		
+		
+		
 	header("Content-type: text/xml; charset=utf-8"); 
-	//header('Content-Disposition: attachment; filename=metadata.xml');
-	$doc->normalizeDocument();
+	header("Content-Disposition: attachment; filename=$filename.xml");
 	$doc->formatOutput = true;
+	$doc->normalizeDocument();
 	ob_clean();
 	flush();
 	echo $doc->saveXML();
 	exit;
 		
 	//*/
+}
+
+function addXMLChildValue($doc,$parent,$fieldname,$fieldvalue)
+{
+	$fieldvalue = htmlspecialchars($fieldvalue, ENT_QUOTES | 'ENT_XML1', 'UTF-8');
+	$child = $doc->createElement($fieldname);
+	$child = $parent->appendChild($child);
+	$value = $doc->createTextNode($fieldvalue);
+	$value = $child->appendChild($value);
+	
+	addNodeAttributes($doc,$parent,$child,$fieldname,$fieldvalue);
+	
+	return $child;
 }
 
 function createXmlNode($doc,$parent,$nodeName)
@@ -252,14 +313,6 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
 			$node->setAttribute('codeSpace',$codeSpace);
 			break;
 		}
-		case 'gmd:MD_KeywordTypeCode':
-		{
-			$node->setAttribute('codeList','http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_KeywordTypeCode');
-			$node->setAttribute('codeListValue',$fieldvalue);
-			$codeSpace = codeLookup($fieldname,$fieldvalue);
-			$node->setAttribute('codeSpace',$codeSpace);
-			break;
-		}
 		case 'gmd:EX_Extent':
 		{
 			$node->setAttribute('id','boundingExtent');
@@ -275,7 +328,7 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
 			$node->setAttribute('gml:id','boundingTemporalExtent');
 			break;
 		}
-		case 'gmd:version':
+		case '!gmd:version': #temporary disabled
 		{
 			$node->setAttribute('nilReason','Unknown');
 			$child = $node->firstChild;
@@ -294,6 +347,42 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
 			$node->setAttribute('codeSpace',$codeSpace);
 			break;
 		}
+		
+		case 'gmd:descriptiveKeywords':
+		{
+			
+			
+			$beforeXpath = "/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:language";
+			$xpathdoc2 = new DOMXpath($doc);
+			$elements2 = $xpathdoc2->query($beforeXpath);
+			$beforeNode = $elements2->item(0);
+			if ($element2->length > 0)
+			{
+				$parent->removeChild($node);
+				$parent = $beforeNode->parentNode;
+				
+				$node = $doc->createElement('gmd:descriptiveKeywords');
+				$node = $parent->insertBefore($node,$beforeNode);
+			}
+			break;
+		}
+		case 'gmd:topicCategory':
+		{
+			$beforeXpath = "/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent";
+			$xpathdoc2 = new DOMXpath($doc);
+			$elements2 = $xpathdoc2->query($beforeXpath);
+			$beforeNode = $elements2->item(0);
+			if ($element2->length > 0)
+			{
+				$parent->removeChild($node);
+				
+				$parent = $beforeNode->parentNode;
+				
+				$node = $doc->createElement('gmd:topicCategory');
+				$node = $parent->insertBefore($node,$beforeNode);
+			}
+			break;
+		}
 		case 'gmd:keywordtheme':
 		{
 			$parent->removeChild($node);
@@ -304,6 +393,7 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
 			{
 				$mdkwrd = $doc->createElement('gmd:keyword');
 				$mdkwrd = $parent->appendChild($mdkwrd);
+				
 				$addnode = addXMLChildValue($doc,$mdkwrd,"gco:CharacterString",$myKeywords);
 			}
 			
@@ -344,7 +434,7 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
 			
 			break;
 		}
-		case 'gmd:topicCategory':
+		case 'gmd:topicCategorys':
 		{
 			$parent->removeChild($node);
 			
@@ -363,19 +453,6 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
 			break;
 		}
 	}
-}
-
-function addXMLChildValue($doc,$parent,$fieldname,$fieldvalue)
-{
-	$fieldvalue = htmlspecialchars($fieldvalue, ENT_QUOTES | 'ENT_XML1', 'UTF-8');
-	$child = $doc->createElement($fieldname);
-	$child = $parent->appendChild($child);
-	$value = $doc->createTextNode($fieldvalue);
-	$value = $child->appendChild($value);
-	
-	addNodeAttributes($doc,$parent,$child,$fieldname,$fieldvalue);
-	
-	return $child;
 }
 
 

@@ -1,5 +1,5 @@
-	
-	<div id="dtabs-1" style="background-color:#CFDCD4;">  
+
+	<div id="dtabs-1">  
 	
 	<table width="100%">
 	
@@ -22,16 +22,66 @@
 		<input onchange="copyValue(this,'MDD3h_{{instanceName}}');" type="text" id="MDD3_{{instanceName}}"/><br/>
 		-->
 		
-		<tr><td>
-		<label for="MDD5_{{instanceName}}">Supplemental Information</label>
-		<textarea size="80" onchange="copyValue(this,'MDD5h_{{instanceName}}');" rows="5" cols="80" id="MDD5_{{instanceName}}">{{xmlArray["gmd:supplementalInformation"]["gco:CharacterString"]}}</textarea></td>
-			<td><pre>Other descriptive information about the dataset.  This field is broken out in to several sections to gather specific information would normally be captured in ISO metadata elements that the Metadata Editor does not currently support.</pre></td></tr>
-		
-		
-		</fieldset>
+		</td></tr>
+<!--			
+	</fieldset>
 		
 	</table>
 		
+	</div>
+	
+
+	<div id="dtabs-7"> 
+	
+	<fieldset>
+	<legend>Supplemental Information</legend>
+	
+	<span>
+	Other descriptive information about the dataset.  These fields is broken out in to several sections to gather specific information would normally be captured in ISO metadata elements that the Metadata Editor does not currently support.
+	</span>
+	
+	<table width="100%">
+	
+-->
+	<tr><td>
+		<label for="MDD5a_{{instanceName}}"><em>*</em>Supplemental Information - Data Parameters and Units</label>
+		<textarea class="required" size="80" onchange="addFields{{instanceName}}('MDD5h_{{instanceName}}');" rows="3" cols="80" id="MDD5a_{{instanceName}}"></textarea>
+		</td><td>
+			<pre>Descriptive Information about the Data Parameters and Units.</pre>
+		</td></tr>
+		
+		<tr><td>
+		<label for="MDD5b_{{instanceName}}">Supplemental Information - Methods</label>
+		<textarea size="80" onchange="addFields{{instanceName}}('MDD5h_{{instanceName}}');" rows="3" cols="80" id="MDD5b_{{instanceName}}"></textarea>
+		</td>
+		<td><pre>Descriptive Information about the methods used..</pre></td></tr>
+		
+		<tr><td>
+			<label for="MDD5c_{{instanceName}}">Supplemental Information - Instruments</label>
+			<textarea size="80" onchange="addFields{{instanceName}}('MDD5h_{{instanceName}}');" rows="3" cols="80" id="MDD5c_{{instanceName}}"></textarea>
+			</td>
+		<td><pre>Descriptive Information about the instruments and equipment used.</pre></td></tr>
+		
+		<tr><td>
+			<label for="MDD5d_{{instanceName}}">Supplemental Information - Sampling Scales and Rates</label>
+			<textarea size="80" onchange="addFields{{instanceName}}('MDD5h_{{instanceName}}');" rows="3" cols="80" id="MDD5d_{{instanceName}}"></textarea>
+			</td>
+		<td><pre>Descriptive Information about the sampling spatial and temporal scales and rates.</pre></td></tr>
+		
+		<tr><td>
+			<label for="MDD5e_{{instanceName}}">Supplemental Information - Error Analysis</label>
+			<textarea size="80" onchange="addFields{{instanceName}}('MDD5h_{{instanceName}}');" rows="3" cols="80" id="MDD5e_{{instanceName}}"></textarea>
+			</td>
+		<td><pre>Descriptive Information about the error analysis.</pre></td></tr>
+
+		<tr><td>
+			<label for="MDD5f_{{instanceName}}">Supplemental Information - Provenance and Historical References</label>
+			<textarea size="80" onchange="addFields{{instanceName}}('MDD5h_{{instanceName}}');" rows="3" cols="80" id="MDD5f_{{instanceName}}"></textarea>
+			</td>
+		<td><pre>Descriptive Information about the provenance, historical data, key information packaged elsewhere.</pre></td></tr>
+		
+	</table>
+	<!--/fieldset-->
 	</div>
 
 	<input type="hidden" id="MDD1h_{{instanceName}}" name="{{instanceType}}-gmd:abstract-gco:CharacterString"/>
@@ -44,20 +94,21 @@
 	{{ResponsibleParty}}
 	</div>
 	
-	<input type="hidden" id="MDD4h_{{instanceName}}" name="{{instanceType}}-gmd:language-gco:CharacterString" value="ISO 639-2"/>
-
 	<div id="dtabs-3">  
 	{{ThemeKeywords}}
 	<hr/>  
 	{{PlaceKeywords}}
 	<hr/>
+	<input type="hidden" id="MDD4h_{{instanceName}}" name="{{instanceType}}-gmd:language-gco:CharacterString" value="ISO 639-2"/>
 	{{TopicCategory}}
 	</div>
+	
+	
 
 	<div id="dtabs-4">  
 	{{Extent}}
 	</div>
 	
-	<input type="hidden" id="MDD5h_{{instanceName}}" name="{{instanceType}}-gmd:supplementalInformation-gco:CharacterString"/>
+	<input type="hidden" id="MDD5h_{{instanceName}}" name="{{instanceType}}-gmd:supplementalInformation-gco:CharacterString" value="{{xmlArray["gmd:supplementalInformation"]["gco:CharacterString"]}}"/>
 
 

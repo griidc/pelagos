@@ -2,7 +2,7 @@
 <tr><td>
 <label for="CIAD1_{{instanceName}}"><em>*</em>Address</label>
 <textarea class="required" type="text" id="CIAD1_{{instanceName}}" rows="3" cols="80" name="{{instanceType}}-gmd:deliveryPoint-gco:CharacterString">{{xmlArray["gmd:deliveryPoint"]["gco:CharacterString"]}}</textarea></td>
-<td><pre>Address line for the location</pre></td></tr>
+<td><pre>Address line for the organization.</pre></td></tr>
 
 <tr><td>
 <label for="CIAD2_{{instanceName}}"><em>*</em>City</label>
@@ -27,4 +27,4 @@
 <tr><td>
 <label for="CIAD6_{{instanceName}}"><em>*</em>Email Address</label>
 <input value="{{xmlArray["gmd:electronicMailAddress"]["gco:CharacterString"]}}" class="required email" type="text" id="CIAD6_{{instanceName}}" size="80" name="{{instanceType}}-gmd:electronicMailAddress-gco:CharacterString"/></td>
-<td><pre>E-mail Address</pre></td></tr>
+	<td><pre>Email address of the individual or organization responsible.</pre></td></tr>

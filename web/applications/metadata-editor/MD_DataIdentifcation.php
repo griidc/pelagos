@@ -17,7 +17,7 @@ class MD_DataIdentification
 		${'myci'.$instanceName} = new CI_Citation($mMD, $instanceType.'-gmd:citation', $instanceName);
 		$Citation = ${'myci'.$instanceName}->getHTML();
 		
-		$mydataic = new CI_ResponsibleParty($mMD,$instanceType.'-gmd:pointOfContact',$instanceName,false,'CI_RoleCode_principalInvestigator','Data Manager');
+		$mydataic = new CI_ResponsibleParty($mMD,$instanceType.'-gmd:pointOfContact',$instanceName,false,'CI_RoleCode_pointOfContact','Dataset Contact','The name of the individual responsible for the creation of the dataset or majority of it in cases wherein a dataset is a compilation of data files.');
 		
 		$ResponsibleParty = $mydataic->getHTML();
 			
@@ -39,6 +39,8 @@ class MD_DataIdentification
 		$twigArr = array('instanceName' => $instanceName,'instanceType' => $instanceType,'Citation' => $Citation, 'ResponsibleParty' => $ResponsibleParty,'ThemeKeywords' => $ThemeKeywords,'PlaceKeywords' => $PlaceKeywords,'TopicCategory' => $TopicCategory,'Extent' => $Extent, 'Legend' => $Legend, 'xmlArray' => $xmlArray[0]);
 		
 		$this->htmlString .= $mMD->twig->render('html/MD_DataIdentification.html', $twigArr);
+		
+		$mMD->jsString .= $mMD->twig->render('js/MD_DataIdentification.js', array('instanceName' => $instanceName));
 		
 		return true;
 	}

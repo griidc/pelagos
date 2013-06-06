@@ -15,7 +15,7 @@ class CI_ResponsibleParty
 		//var_dump($xmlArray);
 		//echo "</pre>";
 		
-		$instanceType .= "-gmd:CI_ResponsibleParty!$instanceName";
+		$instanceType .= "-gmd:CI_ResponsibleParty";
 		
 		$contactArray = $xmlArray[0]["gmd:contactInfo"]["gmd:CI_Contact"];
 		
