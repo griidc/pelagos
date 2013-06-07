@@ -6,91 +6,7 @@
 </script>
 
 <style type="text/css">
-	table.altrowstable {
-		font-family: verdana,arial,sans-serif;
-		font-size:11px;
-	}
 
-	table.altrowstable td {
-		border-width: 1px;
-		padding: 5px;
-		border-style: solid;
-		border-color: #a9c6c9;
-	}
-	.oddrowcolor{
-		background-color:#98AAAF;
-	}
-	.evenrowcolor{
-		background-color:#C6D0D2;
-	}
-
-	input[type=text] 
-	{
-		
-	}
-	input[type=text]:focus
-	{
-		background-color: #FFFFCC;
-	}
-	
-	textarea:focus
-	{
-	background-color: #FFFFCC;
-	}
-	
-	pre
-	{
-		width:400px;
-		white-space: pre-wrap; 
-	}
-	
-	em
-	{
-		color:red;
-		font-weight:bold;
-		font-style:italic;
-	}
-	
-	select:focus
-	{
-	background-color: #FFFFCC;
-	}
-	
-	label 
-	{
-	font-weight: bold;
-	display: block;
-	}
-	label:after {content:": "}
-	
-	select {width:300px}
-	
-	button {width:50px}
-	
-	#helptext:
-	{
-		text-align:center;
-		color:red;
-	}
-
-	legend 
-	{
-		text-shadow: 2px 2px 3px rgba(150, 150, 150, 0.75);
-		font-family:Verdana, Geneva, sans-serif;
-		font-size:1.4em;
-		padding: 3px;
-		border-top: 1px solid #000;
-		border-left: 1px solid #000;
-		border-right:  1px solid #000;
-		border-bottom:  1px solid #000;
-		background-color: white;
-	}
-	
-	fieldset 
-	{
-		border: 1px dotted #eee;
-	}
-	
 
 </style>
 
@@ -100,13 +16,15 @@
 error_reporting(-1);
 ini_set('display_errors', '1');
 
+include_once '/usr/local/share/GRIIDC/php/aliasIncludes.php';
+
 drupal_add_library('system', 'ui.datepicker');
 drupal_add_library('system', 'ui.tabs');
 
 include 'loadXML.php';
 include 'makeXML.php';
 
-//drupal_add_css('/metadata/metadata.css',array('type'=>'external'));
+drupal_add_css('/metadata/includes/css/metadata.css',array('type'=>'external'));
 
 drupal_add_js('/includes/jquery-validation/jquery.validate.js',array('type'=>'external'));
 
