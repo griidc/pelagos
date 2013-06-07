@@ -30,10 +30,11 @@
         {% set RPType = 'PPOC' %}
         {% include "xml/CI_ResponsibleParty.xml" %}
     </gmd:pointOfContact>
+	{#
 	<gmd:language>
         <gco:CharacterString>eng; USA</gco:CharacterString>
     </gmd:language>
-	{#
+	
     {% if dataset.geo_location %}
         <gmd:extent>
            <gmd:EX_Extent id="boundingExtent">
