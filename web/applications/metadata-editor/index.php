@@ -24,7 +24,7 @@ drupal_add_library('system', 'ui.tabs');
 include 'loadXML.php';
 include 'makeXML.php';
 
-drupal_add_css('/metadata/includes/css/metadata.css',array('type'=>'external'));
+drupal_add_css('includes/css/metadata.css',array('type'=>'external'));
 
 drupal_add_js('/includes/jquery-validation/jquery.validate.js',array('type'=>'external'));
 
