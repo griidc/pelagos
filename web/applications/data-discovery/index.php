@@ -235,10 +235,6 @@ $app->get('/package/download/:udis', function ($udis) use ($app) {
             if (file_exists($met_file)) {
                 $zip->addFile($met_file,"$dataset[udi]/$dataset[metadata_filename]");
             }
-            else {
-                drupal_set_message("Error creating zip: metadata file not found: $met_file",'error');
-                $error = true;
-            }
         }
     
         $zip->close();
