@@ -13,7 +13,9 @@
         },
         "state": "closed"
     }
+    {% if RFPS or tree.show_other_sources %}
     ,
+    {% endif %}
     {% endif %}
     {% for fundSrc in RFPS %}
     {
