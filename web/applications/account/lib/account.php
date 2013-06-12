@@ -402,6 +402,9 @@ function get_notify_to() {
         $adminEmail = ldap_get_entries($GLOBALS['LDAP'], $adminEmailResult);
         $notify_to[] = $adminEmail[0]['mail'][0];
     }
+    if (array_key_exists('ADDITIONAL_NOTIFY',$GLOBALS)) {
+         $notify_to = array_merge($notify_to,$GLOBALS['ADDITIONAL_NOTIFY']);
+    }
     return $notify_to;
 }
 
