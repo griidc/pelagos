@@ -336,6 +336,8 @@ $app->post('/approve/create', $GLOBALS['AUTH_FOR_ROLE']('admin'), function () us
         $ldif = read_ldif($ldifFile);
         $ldif = check_person($app,'a',$ldif);
 
+        $ldif['affiliation'] = $app->request()->post('affiliation');
+
         $ldif['applications'] = array();
         foreach ($GLOBALS['APPLICATIONS'] as $application) {
             if ($app->request()->post($application)) {
