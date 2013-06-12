@@ -455,4 +455,30 @@ function get_verified_user($app) {
     return $person;
 }
 
+function ldif_to_message($ldif) {
+    $message = "Name: " . $ldif['person']['cn']['value'];
+    if (array_key_exists('title',$ldif['person'])) {
+        $message .= "\nTitle: " . $ldif['person']['title']['value'];
+    }
+    if (array_key_exists('mail',$ldif['person'])) {
+        $message .= "\nEmail: " . $ldif['person']['mail']['value'];
+    }
+    if (array_key_exists('telephoneNumber',$ldif['person'])) {
+        $message .= "\nPhone: " . $ldif['person']['telephoneNumber']['value'];
+    }
+    if (array_key_exists('affiliation',$ldif)) {
+        $message .= "\n\nAffiliation: $ldif[affiliation]";
+    }
+    if (array_key_exists('applications',$ldif)) {
+        $message .= "\n\nAccess:";
+        foreach ($ldif['applications'] as $application => $group) {
+            $message .= "\n    $application: $group";
+        }
+    }
+    if (in_array('posixAccount',$ldif['objectClasses'])) {
+        $message .= "\n    SSH";
+    }
+    return $message;
+}
+
 ?>

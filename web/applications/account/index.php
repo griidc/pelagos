@@ -248,12 +248,13 @@ $app->post('/request', function () use ($app) {
 
             $ldifFile = SPOOL_DIR . "/incoming/$uid.ldif";
 
-            write_ldif($ldifFile,$stash);
+            $ldif = write_ldif($ldifFile,$stash);
 
             $fromAddress = 'GRIIDC Account Request <griidc@gomri.org>';
             $subject = "GRIIDC Account Request: $uid";
             $env = $app->environment();
             $message = "An account request has been submitted.\n\nTo review and approve this request, please visit: https://$GLOBALS[HOST]$env[SCRIPT_NAME]/approve?uid=$uid";
+            $message .= "\n\n\nRequest details:\n\n" . ldif_to_message($ldif);
 
             foreach (get_notify_to() as $toAddress) {
                 mail($toAddress,$subject,$message,"From: $fromAddress");
@@ -348,7 +349,7 @@ $app->post('/approve/create', $GLOBALS['AUTH_FOR_ROLE']('admin'), function () us
         if (in_array('posixAccount',$ldif['objectClasses'])) {
             $ldif['person'] = add_posix_fields($ldif['person']);
         }
-        write_ldif($ldifFile,$ldif);
+        $ldif = write_ldif($ldifFile,$ldif);
         $return_val = 0;
         $cmd = sprintf('/usr/bin/ldapadd -h "%s" -D "%s" -w "%s" -f "%s" 2>&1',LDAP_HOST,LDAP_BIND_DN,LDAP_BIND_PW,$ldifFile);
         exec($cmd,$output,$return_val);
@@ -374,6 +375,7 @@ $app->post('/approve/create', $GLOBALS['AUTH_FOR_ROLE']('admin'), function () us
 
             $subject = "GRIIDC Account Request: $uid";
             $message = "The account request for $uid has been approved by " . $user->name . ".";
+            $message .= "\n\n\nRequest details:\n\n" . ldif_to_message($ldif);
 
             foreach (get_notify_to() as $toAddress) {
                 mail($toAddress,$subject,$message,"From: $fromAddress");
@@ -388,12 +390,14 @@ $app->post('/approve/delete', $GLOBALS['AUTH_FOR_ROLE']('admin'), function () us
     if  (isset($env['authorized']) and $env['authorized']) {
         $uid = $app->request()->get('uid');
         $ldifFile = SPOOL_DIR . "/incoming/$uid.ldif";
+        $ldif = read_ldif($ldifFile);
         rename($ldifFile,SPOOL_DIR . "/trash/$uid.ldif");
         drupal_set_message("Account request $uid deleted.",'status');
 
         $fromAddress = 'GRIIDC Account Request <griidc@gomri.org>';
         $subject = "GRIIDC Account Request: $uid";
         $message = "The account request for $uid has been deleted by " . $user->name . ".";
+        $message .= "\n\n\nRequest details:\n\n" . ldif_to_message($ldif);
 
         foreach (get_notify_to() as $toAddress) {
             mail($toAddress,$subject,$message,"From: $fromAddress");
