@@ -232,17 +232,38 @@ function write_ldif($ldifFile,$ldif) {
     }
 
     if (isset($ldif['affiliation']) and $ldif['affiliation'] != '' and $ldif['affiliation'] != 'other' and $ldif['affiliation'] != 'select') {
-        $contents .= "\n\ndn: $ldif[affiliation]";
-        $contents .= "\nchangetype: modify";
-        $result = ldap_read($GLOBALS['LDAP'],$ldif['affiliation'],'(objectClass=*)',array('objectClass'));
-        $entry = ldap_get_entries($GLOBALS['LDAP'], $result);
-        if ($entry[0]['objectclass'][0] == 'posixGroup') {
-            $contents .= "\nadd: memberUid";
-            $contents .= "\nmemberUid: " . $ldif['person']['uid']['value'];
+
+        $result = ldap_search($GLOBALS['LDAP'],'ou=groups,dc=griidc,dc=org','(objectClass=*)',array('dn'));
+        $groups = ldap_get_entries($GLOBALS['LDAP'], $result);
+        $groupExists = false;
+        foreach ($groups as $group) {
+            if ($group['dn'] == $ldif['affiliation']) {
+                $groupExists = true;
+            }
+        }
+        if ($groupExists) {
+            $contents .= "\n\ndn: $ldif[affiliation]";
+            $contents .= "\nchangetype: modify";
+            $result = ldap_read($GLOBALS['LDAP'],$ldif['affiliation'],'(objectClass=*)',array('objectClass'));
+            $entry = ldap_get_entries($GLOBALS['LDAP'], $result);
+            if ($entry[0]['objectclass'][0] == 'posixGroup') {
+                $contents .= "\nadd: memberUid";
+                $contents .= "\nmemberUid: " . $ldif['person']['uid']['value'];
+            }
+            else {
+                $contents .= "\nadd: member";
+                $contents .= "\nmember: " . $ldif['person']['dn']['value'];
+            }
         }
         else {
-            $contents .= "\nadd: member";
-            $contents .= "\nmember: " . $ldif['person']['dn']['value'];
+            if (preg_match('/cn=([^,]+)/',$ldif['affiliation'],$matches)) {
+                $contents .= "\n\ndn: $ldif[affiliation]";
+                $contents .= "\nchangetype: add";
+                $contents .= "\nobjectClass: top";
+                $contents .= "\nobjectClass: groupOfNames";
+                $contents .= "\ncn: $matches[1]";
+                $contents .= "\nmember: " . $ldif['person']['dn']['value'];
+            }
         }
     }
 
