@@ -1,4 +1,6 @@
 
+var $ = jQuery.noConflict();
+
 function copyValue(what,to)
 {
 	document.getElementById(to).value = what.value;
@@ -39,6 +41,118 @@ function sortSelect(selectToSort) {
     }
 }
 
+function validateTabs()
+	{
+	tab0HasErrors = false;
+	tab1HasErrors = false;
+	tab2HasErrors = false;
+	tab3HasErrors = false;
+	tab4HasErrors = false;
+	tab5HasErrors = false;
+	tab6HasErrors = false;
+	
+	$('#dtabs-0 input').each(function() {
+		if ($(this).hasClass('error')) {
+			// hilight tab 0
+			//alert('error in tab 0');
+			$( "#dtabs" ).tabs({
+				active: 6
+			});
+			$('#chkimgtab0').attr("src","/dm/includes/images/x.png");
+			tab0HasErrors = true;
+			//break;
+		}
+	});
+	
+	$('#dtabs-5 input').each(function() {
+		if ($(this).hasClass('error')) {
+			// hilight tab 5
+			//alert('error in tab 5');
+			$( "#dtabs" ).tabs({
+				active: 5
+			});
+			$('#chkimgtab5').attr("src","/dm/includes/images/x.png");
+			tab5HasErrors = true;
+			//break;
+		}
+	});
+	
+	$('#dtabs-6 input').each(function() {
+		if ($(this).hasClass('error')) {
+			// hilight tab 6
+			//alert('error in tab 6');
+			$( "#dtabs" ).tabs({
+				active: 4
+			});
+			$('#chkimgtab6').attr("src","/dm/includes/images/x.png");
+			tab6HasErrors = true;
+			//break;
+		}
+	});
+	
+	$('#dtabs-4 input').each(function() {
+		if ($(this).hasClass('error')) {
+			// hilight tab 4
+			//alert('error in tab 4');
+			$( "#dtabs" ).tabs({
+				active: 3
+			});
+			$('#chkimgtab4').attr("src","/dm/includes/images/x.png");
+			tab4HasErrors = true;
+			//break;
+		}
+	});
+	
+	$('#dtabs-3 select').each(function() {
+		if ($(this).hasClass('error')) {
+			// hilight tab 3
+			//alert('error in tab 3');
+			$( "#dtabs" ).tabs({
+				active: 2
+			});
+			$('#chkimgtab3').attr("src","/dm/includes/images/x.png");
+			tab3HasErrors = true;
+			//break;
+		}
+	});
+	
+	$('#dtabs-1 input').each(function() {
+		if ($(this).hasClass('error')) {
+			// hilight tab 1
+			//alert('error in tab 1');
+			$( "#dtabs" ).tabs({
+				active: 1
+			});
+			$('#chkimgtab1').attr("src","/dm/includes/images/x.png");
+			tab1HasErrors = true;
+			//break;
+		}
+	});
+	
+	$('#dtabs-2 input').each(function() {
+		if ($(this).hasClass('error')) {
+			// hilight tab 2
+			//alert('error in tab 2');
+			$( "#dtabs" ).tabs({
+				active: 0
+			});
+			//$("#metadata").validate();
+			$('#chkimgtab2').attr("src","/dm/includes/images/x.png");
+			tab2HasErrors = true;
+			//break;
+		}
+	});
+	
+	if (!tab0HasErrors){$('#chkimgtab0').attr("src","/dm/includes/images/check.png");};
+	if (!tab1HasErrors){$('#chkimgtab1').attr("src","/dm/includes/images/check.png");};
+	if (!tab2HasErrors){$('#chkimgtab2').attr("src","/dm/includes/images/check.png");};
+	if (!tab3HasErrors){$('#chkimgtab3').attr("src","/dm/includes/images/check.png");};
+	if (!tab4HasErrors){$('#chkimgtab4').attr("src","/dm/includes/images/check.png");};
+	if (!tab5HasErrors){$('#chkimgtab5').attr("src","/dm/includes/images/check.png");};
+	if (!tab6HasErrors){$('#chkimgtab6').attr("src","/dm/includes/images/check.png");};
+	
+}
+
 (function ($) {
     $(function() {
 		$( "#dtabs" ).tabs({
@@ -46,6 +160,8 @@ function sortSelect(selectToSort) {
         });
 		{{jqUIs}}
     });
+	
+	
 	
     $(document).ready(function(){
 		
@@ -97,85 +213,23 @@ function sortSelect(selectToSort) {
 			focusInvalid: true,
 			focusCleanup: false,
 			invalidHandler: function(event, validator) {
+
+			
+			
+			//validateTabs();
+			//$("#metadata").valid();
 				
-				$('#dtabs-0 input').each(function() {
-					if ($(this).hasClass('error')) {
-						// hilight tab 0
-						//alert('error in tab 0');
-						$( "#dtabs" ).tabs({
-							active: 0
-						});
-						//break;
-					}
-				});
-				
-				$('#dtabs-5 input').each(function() {
-					if ($(this).hasClass('error')) {
-						// hilight tab 5
-						//alert('error in tab 5');
-						$( "#dtabs" ).tabs({
-							active: 5
-						});
-						//break;
-					}
-				});
-				
-				$('#dtabs-6 input').each(function() {
-					if ($(this).hasClass('error')) {
-						// hilight tab 6
-						//alert('error in tab 6');
-						$( "#dtabs" ).tabs({
-							active: 6
-						});
-						//break;
-					}
-				});
-				
-				$('#dtabs-4 input').each(function() {
-					if ($(this).hasClass('error')) {
-						// hilight tab 4
-						//alert('error in tab 4');
-						$( "#dtabs" ).tabs({
-							active: 4
-						});
-						//break;
-					}
-				});
-				
-				$('#dtabs-3 input').each(function() {
-					if ($(this).hasClass('error')) {
-						// hilight tab 3
-						//alert('error in tab 3');
-						$( "#dtabs" ).tabs({
-							active: 3
-						});
-						//break;
-					}
-				});
-				
-				$('#dtabs-1 input').each(function() {
-					if ($(this).hasClass('error')) {
-						// hilight tab 1
-						//alert('error in tab 1');
-						$( "#dtabs" ).tabs({
-							active: 1
-						});
-						//break;
-					}
-				});
-				
-				$('#dtabs-2 input').each(function() {
-					if ($(this).hasClass('error')) {
-						// hilight tab 2
-						//alert('error in tab 2');
-						$( "#dtabs" ).tabs({
-							active: 2
-						});
-						//break;
-					}
-				});
-			}
+			}//,
+			//submitHandler: function(form) {
+				//alert('me');
+				//form.submit();
+			//}
+			
 		});
+		
+		//$("#metadata").valid();
+		//validateTabs();
+		//$("#metadata").valid();
     });
 })(jQuery);
 

@@ -171,7 +171,7 @@ echo "</script>\n";
 </td>
 </tr>
 <tr><td>
-	<input type="submit" value="Generate Metadata File"/>
+	<input onclick="jQuery('#metadata').valid();validateTabs();" type="submit" value="Generate Metadata File"/>
 	<!input type="reset"/>
 	</form>
 </td></tr>
