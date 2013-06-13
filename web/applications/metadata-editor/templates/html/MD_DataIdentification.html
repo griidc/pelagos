@@ -99,16 +99,16 @@
 	<hr/>  
 	{{PlaceKeywords}}
 	<hr/>
-	<input type="hidden" id="MDD4h_{{instanceName}}" name="{{instanceType}}-gmd:language-gco:CharacterString" value="ISO 639-2"/>
+	{% if xmlArray["gmd:language"]["gco:CharacterString"] != "" %}
+	<input type="hidden" id="MDD4h_{{instanceName}}" name="{{instanceType}}-gmd:language-gco:CharacterString" value="{{xmlArray["gmd:language"]["gco:CharacterString"]}}"/>
+	{% else %}
+	<input type="hidden" id="MDD4h_{{instanceName}}" name="{{instanceType}}-gmd:language-gco:CharacterString" value="eng;USA"/>
+	{% endif %}
 	{{TopicCategory}}
 	</div>
-	
-	
 
 	<div id="dtabs-4">  
 	{{Extent}}
 	</div>
 	
 	<input type="hidden" id="MDD5h_{{instanceName}}" name="{{instanceType}}-gmd:supplementalInformation-gco:CharacterString" value="{{xmlArray["gmd:supplementalInformation"]["gco:CharacterString"]}}"/>
-
-
