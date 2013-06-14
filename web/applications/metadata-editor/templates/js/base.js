@@ -190,8 +190,6 @@ isBad = false;
 		}
 	})
 	
-	
-	
     $(document).ready(function(){
 		
 		$.validator.addClassRules({
