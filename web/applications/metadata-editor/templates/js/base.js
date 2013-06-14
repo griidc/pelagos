@@ -41,7 +41,7 @@ function sortSelect(selectToSort) {
     }
 }
 
-function validateTabs()
+function validateTabs(shouldTabFocus)
 	{
 	tab0HasErrors = false;
 	tab1HasErrors = false;
@@ -55,9 +55,12 @@ function validateTabs()
 		if ($(this).hasClass('error')) {
 			// hilight tab 0
 			//alert('error in tab 0');
-			$( "#dtabs" ).tabs({
-				active: 6
-			});
+			if (shouldTabFocus != false)
+			{ 
+				$( "#dtabs" ).tabs({
+					active: 6
+				});
+			}
 			$('#chkimgtab0').attr("src","/dm/includes/images/x.png");
 			tab0HasErrors = true;
 			//break;
@@ -68,9 +71,12 @@ function validateTabs()
 		if ($(this).hasClass('error')) {
 			// hilight tab 5
 			//alert('error in tab 5');
-			$( "#dtabs" ).tabs({
-				active: 5
-			});
+			if (shouldTabFocus != false)
+			{ 
+				$( "#dtabs" ).tabs({
+					active: 5
+				});
+			}
 			$('#chkimgtab5').attr("src","/dm/includes/images/x.png");
 			tab5HasErrors = true;
 			//break;
@@ -81,9 +87,12 @@ function validateTabs()
 		if ($(this).hasClass('error')) {
 			// hilight tab 6
 			//alert('error in tab 6');
-			$( "#dtabs" ).tabs({
+			if (shouldTabFocus != false)
+			{ 
+				$( "#dtabs" ).tabs({
 				active: 4
-			});
+				});
+			}
 			$('#chkimgtab6').attr("src","/dm/includes/images/x.png");
 			tab6HasErrors = true;
 			//break;
@@ -94,9 +103,12 @@ function validateTabs()
 		if ($(this).hasClass('error')) {
 			// hilight tab 4
 			//alert('error in tab 4');
-			$( "#dtabs" ).tabs({
-				active: 3
-			});
+			if (shouldTabFocus != false)
+			{ 
+				$( "#dtabs" ).tabs({
+					active: 3
+				});
+			}
 			$('#chkimgtab4').attr("src","/dm/includes/images/x.png");
 			tab4HasErrors = true;
 			//break;
@@ -107,9 +119,12 @@ function validateTabs()
 		if ($(this).hasClass('error')) {
 			// hilight tab 3
 			//alert('error in tab 3');
-			$( "#dtabs" ).tabs({
-				active: 2
-			});
+			if (shouldTabFocus != false)
+			{ 
+				$( "#dtabs" ).tabs({
+					active: 2
+				});
+			}
 			$('#chkimgtab3').attr("src","/dm/includes/images/x.png");
 			tab3HasErrors = true;
 			//break;
@@ -120,9 +135,12 @@ function validateTabs()
 		if ($(this).hasClass('error')) {
 			// hilight tab 1
 			//alert('error in tab 1');
-			$( "#dtabs" ).tabs({
-				active: 1
-			});
+			if (shouldTabFocus != false)
+			{ 
+				$( "#dtabs" ).tabs({
+					active: 1
+				});
+			}
 			$('#chkimgtab1').attr("src","/dm/includes/images/x.png");
 			tab1HasErrors = true;
 			//break;
@@ -133,9 +151,12 @@ function validateTabs()
 		if ($(this).hasClass('error')) {
 			// hilight tab 2
 			//alert('error in tab 2');
-			$( "#dtabs" ).tabs({
-				active: 0
-			});
+			if (shouldTabFocus != false)
+			{ 
+				$( "#dtabs" ).tabs({
+					active: 0
+				});
+			}
 			//$("#metadata").validate();
 			$('#chkimgtab2').attr("src","/dm/includes/images/x.png");
 			tab2HasErrors = true;
@@ -153,6 +174,8 @@ function validateTabs()
 	
 }
 
+isBad = false;
+
 (function ($) {
     $(function() {
 		$( "#dtabs" ).tabs({
@@ -160,6 +183,12 @@ function validateTabs()
         });
 		{{jqUIs}}
     });
+		
+	$("#metadata :checkbox").change(function(){
+		if(this.checked) {
+			$(this).parent("div").removeClass("error");
+		}
+	})
 	
 	
 	
@@ -202,9 +231,13 @@ function validateTabs()
 			|| (Number(value) > Number($(params).val())); 
 		},'Must be greater than {0}.');
 		
+		
 				
 		$("#metadata").validate({
 			ignore: ".ignore",
+			onfocusout: function(event, validator) {
+				if (this.numberOfInvalids() > 0){validateTabs(false);}
+				},
 			rules:
 			{
 				example: {}
@@ -214,7 +247,7 @@ function validateTabs()
 			focusCleanup: false,
 			invalidHandler: function(event, validator) {
 
-			
+			isbad = true;
 			
 			//validateTabs();
 			//$("#metadata").valid();
