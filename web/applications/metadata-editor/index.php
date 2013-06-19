@@ -16,10 +16,32 @@
 error_reporting(-1);
 ini_set('display_errors', '1');
 
+if (isset($_FILES["file"]))
+{
+
+	if ($_FILES["file"]["error"] > 0)
+	{
+		//echo "Error: " . $_FILES["file"]["error"] . "<br>";
+		$dMessage = 'Error while loading file: ' .  $_FILES["file"]["error"];
+		drupal_set_message($dMessage,'error',false);
+	}
+	else
+	{
+		//echo "Upload: " . $_FILES["file"]["name"] . "<br>";
+		//echo "Type: " . $_FILES["file"]["type"] . "<br>";
+		//echo "Size: " . ($_FILES["file"]["size"] / 1024) . " kB<br>";
+		//echo "Stored in: " . $_FILES["file"]["tmp_name"];
+		$thefile = $_FILES["file"]["tmp_name"];
+		$dMessage = 'Succesfully loaded file: ' .  $_FILES["file"]["name"];
+		drupal_set_message($dMessage,'status');
+	}
+}
+
 include_once '/usr/local/share/GRIIDC/php/aliasIncludes.php';
 
 drupal_add_library('system', 'ui.datepicker');
 drupal_add_library('system', 'ui.tabs');
+drupal_add_library('system', 'ui');
 
 include 'loadXML.php';
 include 'makeXML.php';
@@ -37,6 +59,11 @@ if (isset($_GET["dataUrl"]))
 	//$xmldoc->loadXML($xmlString);
 }
 
+if (isset($thefile))
+{
+	$xmldoc = loadXML($thefile);
+}
+
 if (isset($_POST))
 {
 	if (count($_POST)>1)
@@ -44,8 +71,6 @@ if (isset($_POST))
 		makeXML($_POST,$xmldoc);
 	}
 }
-
-
 
 class metaData
 {
@@ -126,7 +151,6 @@ class metaData
 				}
 			}
 		}
-
 		
 		//$xmlArray = domnode_to_array($element->childNodes);
 		
@@ -160,21 +184,29 @@ echo "</script>\n";
 
 <table class="altrowstable" id="alternatecolor" width="60%" border="0">
 <tr><td width="100%">
-<fieldset>
-
+	<div id="toolbar" class="ui-widget-header ui-corner-all toolbarbutton">
+		<button id="generate">Generate Metadata File</button>
+		<button id="upload">Load Metadata File</button>
+		<button id="forcesave">Save without Validating</button>
+		
+		
+		<!--button id="reset">Clear Current Tab</button-->
+	</div>
+<form id="uploadfrm" method="post" enctype="multipart/form-data">
+	<input style="display:none;" onchange="uploadFile();" id="file" name="file" type="file" />
+</form>
 <form name="metadata" id="metadata" method="post">
+	
 
+<fieldset>
 <?php
 	echo $myMImeta->getHTML();
 ?>
 
 </td>
 </tr>
-<tr><td>
-	<input onclick="jQuery('#metadata').valid();validateTabs();" type="submit" value="Generate Metadata File"/>
-	<!input type="reset"/>
-	</form>
-</td></tr>
+	
+</form>
 
 </fieldset>
 

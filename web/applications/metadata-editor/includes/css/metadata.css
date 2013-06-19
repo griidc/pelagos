@@ -57,7 +57,7 @@
 	
 	select {width:300px}
 	
-	button {width:50px}
+	.toolbarbutton{font-size:16px;}
 	
 	#helptext:
 	{
@@ -81,5 +81,22 @@
 	fieldset 
 	{
 		border: 1px dotted #eee;
+	}
+	
+	.fancybuttton{
+	-webkit-box-shadow:rgba(0,0,0,0.0.1) 0 1px 0 0;
+	-moz-box-shadow:rgba(0,0,0,0.0.1) 0 1px 0 0;
+	box-shadow:rgba(0,0,0,0.0.1) 0 1px 0 0;
+	background-color:#5B74A8;
+	border:1px solid #29447E;
+	font-family:'Lucida Grande',Tahoma,Verdana,Arial,sans-serif;
+	font-size:12px;
+	font-weight:700;
+	padding:2px 6px;
+	height:28px;
+	color:#fff;
+	border-radius:5px;
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px
 	}
 	

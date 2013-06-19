@@ -6,9 +6,11 @@ class CI_Telephone
 	
 	public function __construct($mMD, $instanceType, $instanceName, $xmlArray)
 	{
+		$xmlArray = $mMD->returnPath($instanceType);
+		
 		$instanceType .= '-gmd:CI_Telephone';
 		
-		$twigArr = array('instanceName' => $instanceName,'instanceType' => $instanceType, 'xmlArray' => $xmlArray["gmd:CI_Telephone"]);
+		$twigArr = array('instanceName' => $instanceName,'instanceType' => $instanceType, 'xmlArray' => $xmlArray[0]);
 		
 		$this->htmlString .= $mMD->twig->render('html/CI_Telephone.html', $twigArr);
 		

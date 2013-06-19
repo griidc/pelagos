@@ -176,13 +176,49 @@ function validateTabs(shouldTabFocus)
 
 isBad = false;
 
+function uploadFile()
+{
+	$("#uploadfrm").submit();
+	//document.getElementById("uploadfrm").submit();
+}
+
+
 (function ($) {
     $(function() {
 		$( "#dtabs" ).tabs({
             heightStyleType: "fill"
         });
 		{{jqUIs}}
-    });
+	
+		$( "#generate" )
+			.button()
+			.click(function( event ) {
+				$('#metadata').valid();
+				validateTabs();
+				$("#metadata").submit();
+			});
+		$( "#upload" )
+		.button()
+		.click(function( event ) {
+			$("#file").click();
+		});
+		$( "#reset" ).button()
+		.click(function( event ) {
+			$(':input','#metadata')
+			.not(':button, :submit, :reset, :hidden')
+			.val('')
+			.removeAttr('checked')
+			.removeAttr('selected');
+		});
+		
+		$( "#forcesave" ).button()
+			.click(function( event ) {
+			$("#metadata").validate().cancelSubmit = true;
+			$("#metadata").submit();
+		});
+		
+		
+	 });
 		
 	$("#metadata :checkbox").change(function(){
 		if(this.checked) {

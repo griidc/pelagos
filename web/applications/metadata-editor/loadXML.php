@@ -20,7 +20,9 @@ function xmlstr_to_array($xmlstr) {
 }
 
 function domnode_to_array($node) {
-	$output = array();
+	
+	$output = null;
+	
 	switch ($node->nodeType) {
 		
 		case XML_CDATA_SECTION_NODE:
@@ -72,7 +74,6 @@ function loadXML($url)
 	
 	return $doc;
 }
-
 
 function getNodeValue($nodeName,$doc)
 {

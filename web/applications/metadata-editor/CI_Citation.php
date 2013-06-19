@@ -11,7 +11,7 @@ class CI_Citation
 	public function __construct($mMD, $instanceType, $instanceName,$complex=false,$responsibleparty=false,$iscomplexcitation=false)
 	{
 		$xmlArray = $mMD->returnPath($instanceType);
-		
+				
 		$dateArray = $xmlArray[0]["gmd:date"];
 		
 		$instanceType .= '-gmd:CI_Citation';
