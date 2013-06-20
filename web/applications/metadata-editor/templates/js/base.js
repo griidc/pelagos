@@ -1,3 +1,7 @@
+window.onload=function()
+{
+	altRows('alternatecolor');
+}
 
 var $ = jQuery.noConflict();
 

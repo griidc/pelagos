@@ -1,5 +1,5 @@
 <fieldset>
-<legend>{{Legend}}</legend>
+<legend>{{instanceVars["name"]}}</legend>
 <table>
 <tr><td>
 <label for="kwtxt{{instanceName}}">Keyword</label>
@@ -10,11 +10,11 @@
 <button style="width:60px;" type="button" size="10" onclick="javascript:removeitem{{instanceName}}();">delete</button>
 </td>
 <td>
-	<label><em>*</em>{{Legend}}</label>
+	<label><em>*</em>{{instanceVars["name"]}}</label>
 	<select class="required" size="5" id="kwlist{{instanceName}}">
 	</select>
 </td>
-	<td><pre>Commonly used words or phrases which describe the themes or subjects related to the dataset. This element can repeat.</pre></td>
+	<td><pre>{{instanceVars["description"]}}</pre></td>
 </tr>
 </table>
 
