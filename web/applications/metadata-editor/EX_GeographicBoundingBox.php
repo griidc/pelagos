@@ -6,9 +6,9 @@ class EX_GeographicBoundingBox
 	
 	public function __construct($mMD, $instanceType, $instanceName, $xmlArray)
 	{
-		$instanceType .= '-gmd:EX_GeographicBoundingBox';
-		
 		$xmlArray = $mMD->returnPath($instanceType);
+		
+		$instanceType .= '-gmd:EX_GeographicBoundingBox';
 		
 		$twigArr = array('instanceName' => $instanceName, 'instanceType' => $instanceType, 'xmlArray' => $xmlArray[0]);
 		

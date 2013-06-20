@@ -22,24 +22,21 @@ class metaData
 		
 		$this->loader = new Twig_Loader_Filesystem('./templates');
 		$this->twig = new Twig_Environment($this->loader,array('autoescape' => false));
-		
-		
 	}
 	
 	public function loadINI($filename)
 	{
+		#todo: Should support default values, and overwrite with instance values (use: array_merge)
 		$ini_path = "config/$filename";
 		return parse_ini_file($ini_path,true);
 	}
 	
 	public function returnPath($path)
 	{
-		
 		if (is_null($this->xmldoc))
 		{
 			return false;
 		}
-		
 		
 		//$xpath = "/gmi:MI_Metadata";
 		$xpath = "/";
