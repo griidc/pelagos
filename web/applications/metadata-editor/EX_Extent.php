@@ -16,12 +16,12 @@ class EX_Extent
 		
 		if (is_array($xmlArray))
 		{
-			if (array_key_exists("gmd:geographicElement",$xmlArray))
+			if (array_key_exists("gmd:geographicElement",$xmlArray[0]))
 			{
 				$geoArray = $xmlArray[0]["gmd:geographicElement"];
 			}
 			
-			if (array_key_exists("gmd:temporalElement",$xmlArray))
+			if (array_key_exists("gmd:temporalElement",$xmlArray[0]))
 			{
 				$tempArray = $xmlArray[0]["gmd:temporalElement"];
 			}
