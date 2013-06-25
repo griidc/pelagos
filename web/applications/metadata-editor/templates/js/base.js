@@ -223,7 +223,7 @@ function uploadFile()
 		
 		$( "#startover" ).button()
 			.click(function( event ) {
-			location.reload();
+			location.href="/metadata";
 		});
 		
 		
