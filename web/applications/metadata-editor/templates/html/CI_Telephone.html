@@ -1,11 +1,11 @@
 		
 <tr><td>
-<label for="CITP1_{{instanceName}}"><em>*</em>Telephone number</label>
+<label for="CITP1_{{instanceName}}"><em>*</em>{{instanceVars.voice_name}}</label>
 <input value="{{xmlArray["gmd:voice"]["gco:CharacterString"]}}" class="required phone" type="text" id="CITP1_{{instanceName}}" size="80" name="{{instanceType}}-gmd:voice-gco:CharacterString"/></td>
-<td><pre>Telephone number of an organisation or individual.</pre></td></tr>
+<td><pre>{{instanceVars.voice_description}}</pre></td></tr>
 
 <tr><td>		
-<label for="CITP2_{{instanceName}}">Fax number</label>
+<label for="CITP2_{{instanceName}}">{{instanceVars.facsimile_name}}</label>
 <input value="{{xmlArray["gmd:facsimile"]["gco:CharacterString"]}}" class="phone" type="text" id="CITP2_{{instanceName}}" size="80" name="{{instanceType}}-gmd:facsimile-gco:CharacterString"/></td>
-<td><pre>Facsimile telephone number of an organisation or individual.</pre></td></tr>
+<td><pre>{{instanceVars.facsimile_description}}</pre></td></tr>
 			

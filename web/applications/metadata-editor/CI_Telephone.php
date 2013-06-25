@@ -6,11 +6,15 @@ class CI_Telephone
 	
 	public function __construct($mMD, $instanceType, $instanceName, $xmlArray)
 	{
+		$myIni = $mMD->loadINI('CI_Telephone.ini');
+		
+		$instanceVars = $myIni["default"];
+		
 		$xmlArray = $mMD->returnPath($instanceType);
 		
 		$instanceType .= '-gmd:CI_Telephone';
 		
-		$twigArr = array('instanceName' => $instanceName,'instanceType' => $instanceType, 'xmlArray' => $xmlArray[0]);
+		$twigArr = array('instanceName' => $instanceName,'instanceType' => $instanceType, 'instanceVars' => $instanceVars, 'xmlArray' => $xmlArray[0]);
 		
 		$this->htmlString .= $mMD->twig->render('html/CI_Telephone.html', $twigArr);
 		
