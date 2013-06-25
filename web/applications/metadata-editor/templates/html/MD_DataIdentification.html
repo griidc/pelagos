@@ -9,12 +9,12 @@
 		
 		<tr><td>
 		<label for="MDD1_{{instanceName}}"><em>*</em>Abstract</label>
-		<textarea class="required" rows="5" cols="80" onchange="copyValue(this,'MDD1h_{{instanceName}}');" id="MDD1_{{instanceName}}">{{xmlArray["gmd:abstract"]["gco:CharacterString"]}}</textarea></td>
+		<textarea class="required" rows="5" cols="80" onchange="copyValue(this,'MDD1h_{{instanceName}}');" name="__abstract" id="MDD1_{{instanceName}}">{{xmlArray["gmd:abstract"]["gco:CharacterString"]}}</textarea></td>
 			<td><pre>Brief narrative summary of the dataset's contents.</pre></td></tr>
 		
 		<tr><td>
 		<label for="MDD2_{{instanceName}}"><em>*</em>Purpose</label>
-		<textarea class="required" rows="5" cols="80" onchange="copyValue(this,'MDD2h_{{instanceName}}');" id="MDD2_{{instanceName}}">{{xmlArray["gmd:purpose"]["gco:CharacterString"]}}</textarea></td>
+		<textarea class="required" rows="5" cols="80" onchange="copyValue(this,'MDD2h_{{instanceName}}');" name="__purpose" id="MDD2_{{instanceName}}">{{xmlArray["gmd:purpose"]["gco:CharacterString"]}}</textarea></td>
 			<td><pre>Summary of the intentions for which the dataset was developed.</pre></td></tr>
 		
 		<!--
@@ -84,9 +84,9 @@
 	<!--/fieldset-->
 	</div>
 
-	<input type="hidden" id="MDD1h_{{instanceName}}" name="{{instanceType}}-gmd:abstract-gco:CharacterString"/>
+	<input type="hidden" id="MDD1h_{{instanceName}}" name="{{instanceType}}-gmd:abstract-gco:CharacterString" value="{{xmlArray["gmd:abstract"]["gco:CharacterString"]}}"/>
 
-	<input type="hidden" id="MDD2h_{{instanceName}}" name="{{instanceType}}-gmd:purpose-gco:CharacterString"/>
+	<input type="hidden" id="MDD2h_{{instanceName}}" name="{{instanceType}}-gmd:purpose-gco:CharacterString" value="{{xmlArray["gmd:purpose"]["gco:CharacterString"]}}"/>
 
 	<input type="hidden" id="MDD3h_{{instanceName}}" name="{{instanceType}}-gmd:status-gmd:MD_ProgressCode" value="completed"/>
 

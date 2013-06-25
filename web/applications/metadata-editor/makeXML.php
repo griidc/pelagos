@@ -8,6 +8,9 @@ function makeXML($xml,$doc)
 	createNodesXML($xml,$doc);
 	
 	echo '</pre>';
+	
+	$dMessage = 'Succesfully Created XML file:';
+	drupal_set_message($dMessage,'status');
 }
 
 function createBlankXML()
@@ -54,7 +57,7 @@ function createNodesXML($xml,$doc)
 	
 	$now = date('c');
 	
-	$xmlComment = "Created with GRIIDC Metadata Editor V1.0 on $now";
+	$xmlComment = "Created with GRIIDC Metadata Editor V1.0 Beta 4 on $now";
 	$commentNode = $doc->createComment($xmlComment);
 	$commentNode = $doc->appendChild($commentNode);
 	
@@ -64,158 +67,161 @@ function createNodesXML($xml,$doc)
 	{
 		$xpath = "";
 		
-		$nodelevels = preg_split("/-/",$key);
-		
-		foreach ($nodelevels as $nodelevel)
+		if (substr($key,0,2) != "__")
 		{
-			$splitnodelevel = preg_split("/\!/",$nodelevel);
-			
-			$xpath .= "/" . $splitnodelevel[0];
-		}
 		
-		//echo $xpath . '<br>';
-		
-		$xpathdoc = new DOMXpath($doc);
-		$elements = $xpathdoc->query($xpath);
-	
-		if ($elements->length > 0)
-		{
-			$node = $elements->item(0);
-			$val = htmlspecialchars($val, ENT_QUOTES | 'ENT_XML1', 'UTF-8');
-			$node->nodeValue = $val;
-			$parent = $node->parentNode;
-			echo 'Existing Parent:' . $parent->nodeName .'<br>';
-		}
-		else
-		{
-			$nodelevels = preg_split("/\//",$xpath);
-			
-			$xpath = "";
-			
-			//var_dump($nodelevels);
-			
-			$parent = $doc;
+			$nodelevels = preg_split("/-/",$key);
 			
 			foreach ($nodelevels as $nodelevel)
 			{
-				if($nodelevel <> "")
+				$splitnodelevel = preg_split("/\!/",$nodelevel);
+				
+				$xpath .= "/" . $splitnodelevel[0];
+			}
+			
+			//echo $xpath . '<br>';
+			
+			$xpathdoc = new DOMXpath($doc);
+			$elements = $xpathdoc->query($xpath);
+		
+			if ($elements->length > 0)
+			{
+				$node = $elements->item(0);
+				$val = htmlspecialchars($val, ENT_QUOTES | 'ENT_XML1', 'UTF-8');
+				$node->nodeValue = $val;
+				$parent = $node->parentNode;
+				echo 'Existing Parent:' . $parent->nodeName .'<br>';
+			}
+			else
+			{
+				$nodelevels = preg_split("/\//",$xpath);
+				
+				$xpath = "";
+				
+				//var_dump($nodelevels);
+				
+				$parent = $doc;
+				
+				foreach ($nodelevels as $nodelevel)
 				{
-					$xpath .= "/" . $nodelevel;
-					$elements = $xpathdoc->query($xpath);
-													
-					echo 'now working: ';
-					echo $xpath . '<br>';
-					
-					//var_dump($elements);
-					
-					if($elements->length > 0)
+					if($nodelevel <> "")
 					{
-						$xpathdocsub = new DOMXpath($doc);
-						$subelements = $xpathdocsub->query($xpath);
-						$node = $subelements->item(0);
-						//$val = htmlspecialchars($val, ENT_QUOTES | 'ENT_XML1', 'UTF-8');
-						//$node->nodeValue = $val;
-						$parent = $node->parentNode;
-						$parentname = $parent->nodeName;
-						$parentXpath = $xpath;
-						echo "Found path: $xpath. Parent is: " . $parentname . "<br>";
+						$xpath .= "/" . $nodelevel;
+						$elements = $xpathdoc->query($xpath);
+														
+						echo 'now working: ';
+						echo $xpath . '<br>';
 						
-						addNodeAttributes($doc,$parent,$node,$nodelevel,$val);
-					}
-					else
-					{
-						$xpathdocsub = new DOMXpath($doc);
-						$subelements = $xpathdocsub->query($parentXpath);
-						$node = $subelements->item(0);
-						$parent = $node;
-						$parentname = $parent->nodeName;
-												
-						echo "Found last path: $parentXpath. Old parent is: " . $parentname . "<br>";
+						//var_dump($elements);
 						
-						## This section Abadoned for now!!!!
-						
-						#find parent by previous xpath:
-						$thisPath = substr(str_replace("/","-",$xpath),1);
-						//$thosePaths = preg_split("/-/",$thisPath,2	);
-						//$thePath = $thosePaths[1];
-						//var_dump(array_keys($xml));
-						$thisIndex =  array_search($thisPath,array_keys($xml));
-						/*
-						if ($thisIndex > 0)
+						if($elements->length > 0)
 						{
-							$keylist = array_keys($xml);
-							$prevkey = $keylist[$thisIndex-1];
-							$previousXpath = "";
-							$nodelevels = preg_split("/-/",$prevkey);
-							foreach ($nodelevels as $nodelevel)
-							{
-								$previousXpath .= "/" . $nodelevel;
-							}
+							$xpathdocsub = new DOMXpath($doc);
+							$subelements = $xpathdocsub->query($xpath);
+							$node = $subelements->item(0);
+							//$val = htmlspecialchars($val, ENT_QUOTES | 'ENT_XML1', 'UTF-8');
+							//$node->nodeValue = $val;
+							$parent = $node->parentNode;
+							$parentname = $parent->nodeName;
+							$parentXpath = $xpath;
+							echo "Found path: $xpath. Parent is: " . $parentname . "<br>";
 							
-							echo "###$previousXpath";
-							$subelements = $xpathdocsub->query($previousXpath);
-							$prevnode = $subelements->item(0);
-							echo "Will it go into node:" . $prevnode->nodeName;
-						}
-						*/
-						##
-						
-						//echo "!!!$thisPath:nowpath:$thisIndex Result:";
-						
-						
-						if ($thisIndex > 0)
-						{
-							$node = addXMLChildValue($doc,$parent,$nodelevel,$val);
+							addNodeAttributes($doc,$parent,$node,$nodelevel,$val);
 						}
 						else
 						{
-							$node = $doc->createElement($nodelevel);
-							$node = $parent->appendChild($node);
-							addNodeAttributes($doc,$parent,$node,$nodelevel,$val);
+							$xpathdocsub = new DOMXpath($doc);
+							$subelements = $xpathdocsub->query($parentXpath);
+							$node = $subelements->item(0);
+							$parent = $node;
+							$parentname = $parent->nodeName;
+													
+							echo "Found last path: $parentXpath. Old parent is: " . $parentname . "<br>";
+							
+							## This section Abadoned for now!!!!
+							
+							#find parent by previous xpath:
+							$thisPath = substr(str_replace("/","-",$xpath),1);
+							//$thosePaths = preg_split("/-/",$thisPath,2	);
+							//$thePath = $thosePaths[1];
+							//var_dump(array_keys($xml));
+							$thisIndex =  array_search($thisPath,array_keys($xml));
+							/*
+							if ($thisIndex > 0)
+							{
+								$keylist = array_keys($xml);
+								$prevkey = $keylist[$thisIndex-1];
+								$previousXpath = "";
+								$nodelevels = preg_split("/-/",$prevkey);
+								foreach ($nodelevels as $nodelevel)
+								{
+									$previousXpath .= "/" . $nodelevel;
+								}
+								
+								echo "###$previousXpath";
+								$subelements = $xpathdocsub->query($previousXpath);
+								$prevnode = $subelements->item(0);
+								echo "Will it go into node:" . $prevnode->nodeName;
+							}
+							*/
+							##
+							
+							//echo "!!!$thisPath:nowpath:$thisIndex Result:";
+							
+							
+							if ($thisIndex > 0)
+							{
+								$node = addXMLChildValue($doc,$parent,$nodelevel,$val);
+							}
+							else
+							{
+								$node = $doc->createElement($nodelevel);
+								$node = $parent->appendChild($node);
+								addNodeAttributes($doc,$parent,$node,$nodelevel,$val);
+							}
+							
+							
+							
+							echo "Addded Node: $nodelevel<br>";
+							
+							$parentXpath = $xpath;
+							
+							$doc->formatOutput = true;
+							$doc->normalizeDocument();
+							$xmlString = $doc->saveXML();
+							
+							$doc->loadXML($xmlString);
 						}
-						
-						
-						
-						echo "Addded Node: $nodelevel<br>";
-						
-						$parentXpath = $xpath;
-						
-						$doc->formatOutput = true;
-						$doc->normalizeDocument();
-						$xmlString = $doc->saveXML();
-						
-						$doc->loadXML($xmlString);
+											
+						//addNodeAttributes($doc,$parent,$node,$nodelevel,$val);
 					}
-										
-					//addNodeAttributes($doc,$parent,$node,$nodelevel,$val);
+					
+					
 				}
 				
+				$xpathdocsub = new DOMXpath($doc);
+				$subelements = $xpathdocsub->query($parentXpath);
+				if ($subelements <> false)
+				{
+					$node = $subelements->item(0);
+					$parent = $node->parentNode;
+					$grandparent = $parent->parentNode;
+					$nodelevel = $parent->nodeName;
+					
+					$val = htmlspecialchars($val, ENT_QUOTES | 'ENT_XML1', 'UTF-8');
+					$node->nodeValue = $val;
+					
+					//addNodeAttributes($doc,$parent,$node,$nodelevel,$val);
+					//addNodeAttributes($doc,$grandparent,$parent,$nodelevel,$val);
+				}
 				
+				$parent = $doc;
 			}
-			
-			$xpathdocsub = new DOMXpath($doc);
-			$subelements = $xpathdocsub->query($parentXpath);
-			if ($subelements <> false)
-			{
-				$node = $subelements->item(0);
-				$parent = $node->parentNode;
-				$grandparent = $parent->parentNode;
-				$nodelevel = $parent->nodeName;
-				
-				$val = htmlspecialchars($val, ENT_QUOTES | 'ENT_XML1', 'UTF-8');
-				$node->nodeValue = $val;
-				
-				//addNodeAttributes($doc,$parent,$node,$nodelevel,$val);
-				//addNodeAttributes($doc,$grandparent,$parent,$nodelevel,$val);
-			}
-			
-			$parent = $doc;
 		}
-	}
-	
-	$filename = substr($xml["gmi:MI_Metadata-gmd:fileIdentifier-gco:CharacterString"],0,-4);
-	
 		
+		$filename = substr($xml["gmi:MI_Metadata-gmd:fileIdentifier-gco:CharacterString"],0,-4);
+	
+	}	
 		
 		
 	header("Content-type: text/xml; charset=utf-8"); 
