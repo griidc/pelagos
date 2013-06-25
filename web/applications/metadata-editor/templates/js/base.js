@@ -221,6 +221,11 @@ function uploadFile()
 			$("#metadata").submit();
 		});
 		
+		$( "#startover" ).button()
+			.click(function( event ) {
+			location.reload();
+		});
+		
 		
 	 });
 		

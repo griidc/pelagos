@@ -81,6 +81,7 @@ echo "</script>\n";
 				<button id="generate">Generate Metadata File</button>
 				<button id="upload">Load Metadata File</button>
 				<button id="forcesave">Save without Validating</button>
+				<button id="startover">Reload the Form</button>
 				<!--button id="reset">Clear Current Tab</button-->
 			</div>
 			<form id="uploadfrm" method="post" enctype="multipart/form-data">
