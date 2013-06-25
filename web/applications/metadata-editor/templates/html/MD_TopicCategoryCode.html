@@ -1,9 +1,9 @@
 <fieldset>
 <legend>Topic Keywords</legend>
 
-<table><td><td>
+<table><td>
 <label>Topic Keyword List</label>
-	<select ondblclick="addTopicKWItem{{instanceName}}();" size=10 id="TOPKlist_{{instanceName}}" >
+	<select ondblclick="addTopicKWItem{{instanceName}}();" size="10" id="TOPKlist_{{instanceName}}" >
 		<option value="biota">Biota</option>
 		<option value="boundaries">Boundaries</option>
 		<option value="economy">Economy</option>
@@ -25,12 +25,12 @@
 	</select>
 	</td>
 	<td>
-	<button type="button" onclick="addTopicKWItem{{instanceName}}();">&gt;&gt;&gt;</button><br/>
-	<button type="button" onclick="removeTopicKWItem{{instanceName}}();">&lt;&lt;&lt;</button>
+	<button style="width:60px;" type="button" onclick="addTopicKWItem{{instanceName}}();">&gt;&gt;&gt;</button><br/>
+	<button style="width:60px;" type="button" onclick="removeTopicKWItem{{instanceName}}();">&lt;&lt;&lt;</button>
 	</td>
 	<td>
 	<label><em>*</em>Selected Topic Keyword</label>
-	<select ondblclick="removeTopicKWItem{{instanceName}}();" class="required" size=10 id="TOPKselect_{{instanceName}}" >
+	<select ondblclick="removeTopicKWItem{{instanceName}}();" class="required" size="10" name="__TOPKselect{{instanceName}}" id="TOPKselect_{{instanceName}}" >
 	</select>
 	</td>
 	<td><pre>The main theme(s) of the dataset. Pick from the codelist. These keywords are defined by ISO and may not be very applicable.<br><i>(Hint: Double click to add or remove)<i></pre></td>
