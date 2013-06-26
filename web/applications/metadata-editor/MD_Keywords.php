@@ -9,10 +9,25 @@ class MD_Keywords
 		$myIni = $mMD->loadINI('MD_Keywords.ini');
 		
 		$instanceVars = $myIni[$type];
+		
+		$xmlArray = $mMD->returnPath($instanceType);
+				
+		$keyWordList = null;
+		foreach ($xmlArray as $sub)
+		{
+			$keywordTypeCode = $sub["gmd:type"]["gmd:MD_KeywordTypeCode"]["@content"];
+			if ($keywordTypeCode == $type)
+			{
+				foreach ($sub["gmd:keyword"] as $keyWords)
+				{
+					$keyWordList[] = $keyWords["gco:CharacterString"];
+				}
+			}
+		}
 				
 		$instanceType .= '-gmd:MD_Keywords';
 		
-		$this->htmlString .= $mMD->twig->render('html/MD_Keywords.html', array('instanceName' => $instanceName, 'instanceType' => $instanceType, 'type' => $type, 'instanceVars' => $instanceVars));
+		$this->htmlString .= $mMD->twig->render('html/MD_Keywords.html', array('instanceName' => $instanceName, 'instanceType' => $instanceType, 'type' => $type, 'keyWordList' => $keyWordList, 'instanceVars' => $instanceVars));
 		
 		$mMD->jsString .= $mMD->twig->render('js/MD_Keywords.js', array('instanceName' => $instanceName));
 	}

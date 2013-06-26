@@ -12,6 +12,9 @@
 <td>
 	<label><em>*</em>{{instanceVars["name"]}}</label>
 	<select class="required" name="__kwlist{{instanceName}}" size="5" id="kwlist{{instanceName}}">
+	{% for keyword in keyWordList %}
+		<option value="{{keyword}}">{{keyword}}</option>
+	{% endfor %}
 	</select>
 </td>
 	<td><pre>{{instanceVars["description"]}}</pre></td>
