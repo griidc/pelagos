@@ -91,7 +91,7 @@ class metaData
 		}
 		else
 		{
-			return null;
+			return false;
 		}
 	}
 }

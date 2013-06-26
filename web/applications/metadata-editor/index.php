@@ -10,9 +10,13 @@ include 'makeXML.php';
 
 drupal_add_library('system', 'ui.datepicker');
 drupal_add_library('system', 'ui.tabs');
-drupal_add_library('system', 'ui');
+drupal_add_library('system', 'ui.widget');
+
 drupal_add_css('includes/css/metadata.css',array('type'=>'external'));
 drupal_add_js('/includes/jquery-validation/jquery.validate.js',array('type'=>'external'));
+drupal_add_css('misc/ui/jquery.ui.button.css');
+drupal_add_css('misc/ui/jquery.ui.datepicker.css');
+drupal_add_css('misc/ui/jquery.ui.tabs.css');
 
 $xmldoc = null;
 
@@ -77,7 +81,7 @@ echo "</script>\n";
 <table class="altrowstable" id="alternatecolor" width="60%" border="0">
 	<tr>
 		<td width="100%">
-			<div id="toolbar" class="ui-widget-header ui-corner-all toolbarbutton">
+			<div id="metatoolbar" class="ui-widget-header ui-corner-all toolbarbutton">
 				<button id="generate">Generate Metadata File</button>
 				<button id="upload">Load Metadata File</button>
 				<button id="forcesave">Save without Validating</button>

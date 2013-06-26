@@ -193,7 +193,7 @@ function uploadFile()
             heightStyleType: "fill"
         });
 		{{jqUIs}}
-	
+		
 		$( "#generate" )
 			.button()
 			.click(function( event ) {
