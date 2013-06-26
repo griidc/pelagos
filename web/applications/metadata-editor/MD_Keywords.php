@@ -11,20 +11,24 @@ class MD_Keywords
 		$instanceVars = $myIni[$type];
 		
 		$xmlArray = $mMD->returnPath($instanceType);
-				
+		
 		$keyWordList = null;
-		foreach ($xmlArray as $sub)
+				
+		if ($xmlArray)
 		{
-			$keywordTypeCode = $sub["gmd:type"]["gmd:MD_KeywordTypeCode"]["@content"];
-			if ($keywordTypeCode == $type)
+			foreach ($xmlArray as $sub)
 			{
-				foreach ($sub["gmd:keyword"] as $keyWords)
+				$keywordTypeCode = $sub["gmd:type"]["gmd:MD_KeywordTypeCode"]["@content"];
+				if ($keywordTypeCode == $type)
 				{
-					$keyWordList[] = $keyWords["gco:CharacterString"];
+					foreach ($sub["gmd:keyword"] as $keyWords)
+					{
+						$keyWordList[] = $keyWords["gco:CharacterString"];
+					}
 				}
 			}
 		}
-				
+		
 		$instanceType .= '-gmd:MD_Keywords';
 		
 		$this->htmlString .= $mMD->twig->render('html/MD_Keywords.html', array('instanceName' => $instanceName, 'instanceType' => $instanceType, 'type' => $type, 'keyWordList' => $keyWordList, 'instanceVars' => $instanceVars));
