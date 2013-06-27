@@ -194,6 +194,20 @@ function uploadFile()
         });
 		{{jqUIs}}
 		
+		$( "#metadialog" ).dialog({
+			modal: true,
+			autoOpen: false,
+			
+			buttons: {
+				Ok: function() {
+					$( this ).dialog( "close" );
+				}
+			},
+			close: function( event, ui ) {
+				alert('ok');
+			}
+		});
+		
 		$( "#generate" )
 			.button()
 			.click(function( event ) {

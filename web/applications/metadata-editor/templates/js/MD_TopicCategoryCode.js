@@ -12,6 +12,8 @@ function addTopicKWItem{{instanceName}}()
 	
 	tpkList.remove(tpkList.selectedIndex);
 	
+	tpkSel.selectedIndex = tpkSel.length-1;
+	
 	makeTopiclist{{instanceName}}();
 	sortSelect(tpkList);
 	sortSelect(tpkSel);

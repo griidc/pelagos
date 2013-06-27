@@ -17,6 +17,9 @@ drupal_add_js('/includes/jquery-validation/jquery.validate.js',array('type'=>'ex
 drupal_add_css('misc/ui/jquery.ui.button.css');
 drupal_add_css('misc/ui/jquery.ui.datepicker.css');
 drupal_add_css('misc/ui/jquery.ui.tabs.css');
+drupal_add_css('misc/ui/jquery.ui.dialog.css');
+
+
 
 $xmldoc = null;
 
@@ -77,6 +80,10 @@ echo $mMD->jsString;
 echo "</script>\n";
 
 ?>
+
+<div style="font-size:15px;" id="metadialog" title="Information:">
+  <p>The form has been filled out completely, your metadata file is ready for download.</p>
+</div>
 
 <table class="altrowstable" id="alternatecolor" width="60%" border="0">
 	<tr>

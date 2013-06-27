@@ -17,7 +17,7 @@
 	<label><em>*</em>Selected Topic Keyword</label>
 	<select ondblclick="removeTopicKWItem{{instanceName}}();" class="required" size="10" name="__TOPKselect{{instanceName}}" id="TOPKselect_{{instanceName}}" >
 		{% for key, keyword in selectedTopicKeyword %}
-		<option value="{{key}}">{{keyword}}</option>
+		<option selected value="{{key}}">{{keyword}}</option>
 		{% endfor %}
 	</select>
 	</td>
