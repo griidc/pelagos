@@ -21,7 +21,19 @@
 
 <tr><td>
 <label for="CIAD5_{{instanceName}}"><em>*</em>{{instanceVars.country_name}}</label>
-<input value="{{xmlArray["gmd:country"]["gco:CharacterString"]}}" class="required" type="text" id="CIAD5_{{instanceName}}" size="80" name="{{instanceType}}-gmd:country-gco:CharacterString"/></td>
+<!--<input value="{{xmlArray["gmd:country"]["gco:CharacterString"]}}" class="required" type="text" id="CIAD5_{{instanceName}}" size="80" name="{{instanceType}}-gmd:country-gco:CharacterString"/></td>-->
+<select class="required" id="CIAD5_{{instanceName}}" name="{{instanceType}}-gmd:country-gco:CharacterString">
+	{% for key, country in isoCountries %}
+		{% if key == xmlArray["gmd:country"]["gco:CharacterString"]%}
+			<option selected value="{{key}}">{{country}}</option>
+		{% elseif key == "USA" and xmlArray["gmd:country"]["gco:CharacterString"] == "" %}
+			<option selected value="{{key}}">{{country}}</option>
+		{% else %}
+			<option value="{{key}}">{{country}}</option>
+		{% endif %}
+	{% endfor %}
+</select>
+</td>
 
 <td><pre>{{instanceVars.country_description}}</pre></td></tr>
 

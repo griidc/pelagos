@@ -186,7 +186,7 @@ function createNodesXML($xml,$doc)
 							
 							$parentXpath = $xpath;
 							
-							$doc->formatOutput = true;
+							//$doc->formatOutput = true;
 							$doc->normalizeDocument();
 							$xmlString = $doc->saveXML();
 							
@@ -222,8 +222,7 @@ function createNodesXML($xml,$doc)
 		$filename = substr($xml["gmi:MI_Metadata-gmd:fileIdentifier-gco:CharacterString"],0,-4);
 	
 	}	
-		
-		
+			
 	header("Content-type: text/xml; charset=utf-8"); 
 	header("Content-Disposition: attachment; filename=$filename.xml");
 	$doc->formatOutput = true;

@@ -32,8 +32,8 @@ class MD_TopicCategoryCode
 		$xmlArray = $mMD->returnPath($instanceType);
 		
 		$selectedTopicKeyword = null;
-		
-		if ($xmlArray)
+			
+		if ($xmlArray AND $xmlArray[0] != null)
 		{
 			asort($xmlArray);
 							
