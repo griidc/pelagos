@@ -55,7 +55,7 @@ function validateTabs(shouldTabFocus)
 	tab5HasErrors = false;
 	tab6HasErrors = false;
 	
-	$('#dtabs-0 input').each(function() {
+	$('#dtabs-0 input,#dtabs-0 textarea,#dtabs-0 select').each(function() {
 		if ($(this).hasClass('error')) {
 			// hilight tab 0
 			//alert('error in tab 0');
@@ -71,7 +71,7 @@ function validateTabs(shouldTabFocus)
 		}
 	});
 	
-	$('#dtabs-5 input').each(function() {
+	$('#dtabs-5 input,#dtabs-5 textarea,#dtabs-5 select').each(function() {
 		if ($(this).hasClass('error')) {
 			// hilight tab 5
 			//alert('error in tab 5');
@@ -87,7 +87,7 @@ function validateTabs(shouldTabFocus)
 		}
 	});
 	
-	$('#dtabs-6 input').each(function() {
+	$('#dtabs-6 input,#dtabs-6 textarea,#dtabs-6 select').each(function() {
 		if ($(this).hasClass('error')) {
 			// hilight tab 6
 			//alert('error in tab 6');
@@ -103,7 +103,7 @@ function validateTabs(shouldTabFocus)
 		}
 	});
 	
-	$('#dtabs-4 input').each(function() {
+	$('#dtabs-4 input,#dtabs-4 textarea,#dtabs-4 select').each(function() {
 		if ($(this).hasClass('error')) {
 			// hilight tab 4
 			//alert('error in tab 4');
@@ -119,7 +119,7 @@ function validateTabs(shouldTabFocus)
 		}
 	});
 	
-	$('#dtabs-3 select').each(function() {
+	$('#dtabs-3 input,#dtabs-3 textarea,#dtabs-3 select').each(function() {
 		if ($(this).hasClass('error')) {
 			// hilight tab 3
 			//alert('error in tab 3');
@@ -135,7 +135,7 @@ function validateTabs(shouldTabFocus)
 		}
 	});
 	
-	$('#dtabs-1 input').each(function() {
+	$('#dtabs-1 input,#dtabs-1 textarea,#dtabs-1 select').each(function() {
 		if ($(this).hasClass('error')) {
 			// hilight tab 1
 			//alert('error in tab 1');
@@ -151,7 +151,7 @@ function validateTabs(shouldTabFocus)
 		}
 	});
 	
-	$('#dtabs-2 input').each(function() {
+	$('#dtabs-2 input,#dtabs-2 textarea,#dtabs-2 select').each(function() {
 		if ($(this).hasClass('error')) {
 			// hilight tab 2
 			//alert('error in tab 2');
@@ -186,7 +186,6 @@ function uploadFile()
 	//document.getElementById("uploadfrm").submit();
 }
 
-
 (function ($) {
     $(function() {
 		$( "#dtabs" ).tabs({
@@ -204,7 +203,8 @@ function uploadFile()
 				}
 			},
 			close: function( event, ui ) {
-				alert('ok');
+				$("#metadata").validate().cancelSubmit = true;
+				$("#metadata").submit();
 			}
 		});
 		
@@ -287,8 +287,6 @@ function uploadFile()
 			return isNaN(value) && isNaN($(params).val()) 
 			|| (Number(value) > Number($(params).val())); 
 		},'Must be greater than {0}.');
-		
-		
 				
 		$("#metadata").validate({
 			ignore: ".ignore",
@@ -311,6 +309,7 @@ function uploadFile()
 				
 			}//,
 			//submitHandler: function(form) {
+				//$("#metadialog").dialog( "open" );
 				//alert('me');
 				//form.submit();
 			//}
