@@ -10,6 +10,7 @@ class metaData
 	public $qtipS;
 	public $xmlArray;
 	public $xmldoc;
+	public $onReady;
 	
 	public $twig;
 	

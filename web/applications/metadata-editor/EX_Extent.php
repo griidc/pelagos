@@ -26,6 +26,13 @@ class EX_Extent
 				$tempArray = $xmlArray[0]["gmd:temporalElement"];
 			}
 		}
+		
+		$extDescText = $xmlArray[0]["gmd:description"]["gco:CharacterString"];
+		
+		if ($extDescText != null and $extDescText != "")
+		{
+			$mMD->onReady .= "changeExtent$instanceName(true);";
+		}
 
 		$myggbb = new EX_GeographicBoundingBox($mMD, $instanceType.'-gmd:geographicElement',$instanceName, $geoArray);
 		$mytmpext = new EX_TemporalExtent($mMD, $instanceType.'-gmd:temporalElement',$instanceName, $tempArray);

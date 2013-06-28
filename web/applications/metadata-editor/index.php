@@ -19,8 +19,6 @@ drupal_add_css('misc/ui/jquery.ui.datepicker.css');
 drupal_add_css('misc/ui/jquery.ui.tabs.css');
 drupal_add_css('misc/ui/jquery.ui.dialog.css');
 
-
-
 $xmldoc = null;
 
 if (isset($_FILES["file"]))
@@ -75,14 +73,15 @@ include 'MI_Metadata.php';
 $myMImeta = new MI_Metadata($mMD,'MIMeta',guid());
 
 echo "\n\n<script type=\"text/javascript\">\n";
-$mMD->jsString .= $mMD->twig->render('js/base.js', array('jqUIs' => $mMD->jqUIs,'validateRules' => $mMD->validateRules, 'validateMessages' => $mMD->validateMessages));
+$mMD->jsString .= $mMD->twig->render('js/base.js', array('onReady' => $mMD->onReady,'jqUIs' => $mMD->jqUIs,'validateRules' => $mMD->validateRules, 'validateMessages' => $mMD->validateMessages));
 echo $mMD->jsString;
 echo "</script>\n";
 
 ?>
 
-<div style="font-size:15px;" id="metadialog" title="Information:">
-  <p>The form has been filled out completely, your metadata file is ready for download.</p>
+<div style="font-size:smaller;" id="metadialog" title="Metadata Editor:">
+  <p>Your metadata file is ready for download.<p/>
+	Click OK to download the file.</p>
 </div>
 
 <table class="altrowstable" id="alternatecolor" width="60%" border="0">

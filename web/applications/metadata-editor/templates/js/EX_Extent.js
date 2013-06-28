@@ -1,12 +1,14 @@
 
 function changeExtent{{instanceName}}(what)
 {
-	document.getElementById("EX1_{{instanceName}}").disabled = !what.checked;
+	document.getElementById("EX1_{{instanceName}}").disabled = !what;
+	
+	document.getElementById("EX0_{{instanceName}}").checked = what;
 	
 	var checkStyle = "table-row";
 	
 	
-	if (what.checked)
+	if (what)
 	{
 		document.getElementById("EX1_{{instanceName}}row").style.display = "table-row";
 	}
@@ -15,7 +17,7 @@ function changeExtent{{instanceName}}(what)
 		document.getElementById("EX1_{{instanceName}}row").style.display = "none";
 	}
 	
-	if (what.checked)
+	if (what)
 	{
 		checkStyle = "none";
 	}
@@ -33,15 +35,15 @@ function changeExtent{{instanceName}}(what)
 	document.getElementById("TM2_{{instanceName}}extentrow").style.display = checkStyle;
 	document.getElementById("TM3_{{instanceName}}extentrow").style.display = checkStyle;
 	
-	document.getElementById("GDD1_{{instanceName}}").disabled = what.checked;
-	document.getElementById("GDD2_{{instanceName}}").disabled = what.checked;
-	document.getElementById("GDD3_{{instanceName}}").disabled = what.checked;
-	document.getElementById("GDD4_{{instanceName}}").disabled = what.checked;
-	document.getElementById("GDD5_{{instanceName}}").disabled = what.checked;
+	document.getElementById("GDD1_{{instanceName}}").disabled = what;
+	document.getElementById("GDD2_{{instanceName}}").disabled = what;
+	document.getElementById("GDD3_{{instanceName}}").disabled = what;
+	document.getElementById("GDD4_{{instanceName}}").disabled = what;
+	document.getElementById("GDD5_{{instanceName}}").disabled = what;
 	
-	document.getElementById("TM1_{{instanceName}}extent").disabled = what.checked;
-	document.getElementById("TM2_{{instanceName}}extent").disabled = what.checked;
-	document.getElementById("TM3_{{instanceName}}extent").disabled = what.checked;
+	document.getElementById("TM1_{{instanceName}}extent").disabled = what;
+	document.getElementById("TM2_{{instanceName}}extent").disabled = what;
+	document.getElementById("TM3_{{instanceName}}extent").disabled = what;
 
 	//
 	
@@ -52,7 +54,7 @@ function changeExtent{{instanceName}}(what)
 		$("#metadata").valid();
 	}
 	
-	if (!what.checked)
+	if (!what)
 	{
 		$("#EX1_{{instanceName}}").removeClass("error");
 	}

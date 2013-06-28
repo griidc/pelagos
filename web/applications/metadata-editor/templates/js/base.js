@@ -1,3 +1,4 @@
+
 window.onload=function()
 {
 	altRows('alternatecolor');
@@ -175,7 +176,6 @@ function validateTabs(shouldTabFocus)
 	if (!tab4HasErrors){$('#chkimgtab4').attr("src","/dm/includes/images/check.png");};
 	if (!tab5HasErrors){$('#chkimgtab5').attr("src","/dm/includes/images/check.png");};
 	if (!tab6HasErrors){$('#chkimgtab6').attr("src","/dm/includes/images/check.png");};
-	
 }
 
 isBad = false;
@@ -183,11 +183,15 @@ isBad = false;
 function uploadFile()
 {
 	$("#uploadfrm").submit();
-	//document.getElementById("uploadfrm").submit();
 }
 
 (function ($) {
     $(function() {
+		$(document).ready(function() 
+		{
+			{{onReady}}
+		});
+		
 		$( "#dtabs" ).tabs({
             heightStyleType: "fill"
         });
@@ -199,13 +203,11 @@ function uploadFile()
 			
 			buttons: {
 				Ok: function() {
+					//$("#metadata").validate().cancelSubmit = true;
+					$("#metadata").submit();
 					$( this ).dialog( "close" );
 				}
 			},
-			close: function( event, ui ) {
-				$("#metadata").validate().cancelSubmit = true;
-				$("#metadata").submit();
-			}
 		});
 		
 		$( "#generate" )
@@ -239,8 +241,6 @@ function uploadFile()
 			.click(function( event ) {
 			location.href="/metadata";
 		});
-		
-		
 	 });
 		
 	$("#metadata :checkbox").change(function(){
@@ -302,23 +302,19 @@ function uploadFile()
 			focusCleanup: false,
 			invalidHandler: function(event, validator) {
 
-			isbad = true;
-			
-			//validateTabs();
-			//$("#metadata").valid();
+				isbad = true;
 				
-			}//,
-			//submitHandler: function(form) {
-				//$("#metadialog").dialog( "open" );
-				//alert('me');
-				//form.submit();
-			//}
-			
+			},
+			submitHandler: function(form) {
+				if ($("#metadialog").dialog( "isOpen" )== false)
+				{
+					$("#metadialog").dialog( "open" );
+				}
+				else
+				{
+					form.submit();
+				}
+			}
 		});
-		
-		//$("#metadata").valid();
-		//validateTabs();
-		//$("#metadata").valid();
     });
 })(jQuery);
-
