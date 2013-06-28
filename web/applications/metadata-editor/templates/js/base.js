@@ -207,7 +207,7 @@ function uploadFile()
 			resizable: false,
 			buttons: {
 				Ok: function() {
-					//$("#metadata").validate().cancelSubmit = true;
+					$("#metadata").validate().cancelSubmit = true;
 					$("#metadata").submit();
 					$( this ).dialog( "close" );
 				}
