@@ -24,7 +24,7 @@ function removeitem{{instanceName}}()
 	var lst=document.getElementById("kwlist{{instanceName}}");
 	lst.remove(lst.selectedIndex);
 	lst.selectedIndex = lst.length-1;
-	makelist$instanceName();
+	makelist{{instanceName}}();
 }
 	
 function makelist{{instanceName}}()

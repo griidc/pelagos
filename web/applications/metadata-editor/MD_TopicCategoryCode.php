@@ -32,10 +32,13 @@ class MD_TopicCategoryCode
 		$xmlArray = $mMD->returnPath($instanceType);
 		
 		$selectedTopicKeyword = null;
-			
+		$sTopiclist = null;
+					
 		if ($xmlArray AND $xmlArray[0] != null)
 		{
 			asort($xmlArray);
+			
+			$sTopiclist = implode(";", $xmlArray);
 							
 			foreach ($xmlArray as $topicKeyword)
 			{
@@ -44,7 +47,7 @@ class MD_TopicCategoryCode
 			}
 		}
 			
-		$twigArr = array('instanceName' => $instanceName, 'instanceType' => $instanceType, 'selectedTopicKeyword' => $selectedTopicKeyword,  'topicKeywords' => $this->topicKeywords, 'Legend' => $Legend);
+		$twigArr = array('instanceName' => $instanceName, 'instanceType' => $instanceType, 'sTopiclist' => $sTopiclist,'selectedTopicKeyword' => $selectedTopicKeyword,  'topicKeywords' => $this->topicKeywords, 'Legend' => $Legend);
 		
 		$this->htmlString = $mMD->twig->render('html/MD_TopicCategoryCode.html', $twigArr);
 		

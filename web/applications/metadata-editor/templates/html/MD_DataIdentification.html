@@ -9,12 +9,12 @@
 		
 		<tr><td>
 		<label for="MDD1_{{instanceName}}"><em>*</em>Abstract</label>
-		<textarea class="required" rows="5" cols="80" onchange="copyValue(this,'MDD1h_{{instanceName}}');" name="__abstract" id="MDD1_{{instanceName}}">{{xmlArray["gmd:abstract"]["gco:CharacterString"]}}</textarea></td>
+		<textarea id="MDD1_{{instanceName}}" class="required" rows="5" cols="80" onchange="copyValue(this,'MDD1h_{{instanceName}}');"  name="__abstract">{{xmlArray["gmd:abstract"]["gco:CharacterString"]}}</textarea></td>
 			<td><pre>Brief narrative summary of the dataset's contents.</pre></td></tr>
 		
 		<tr><td>
 		<label for="MDD2_{{instanceName}}"><em>*</em>Purpose</label>
-		<textarea class="required" rows="5" cols="80" onchange="copyValue(this,'MDD2h_{{instanceName}}');" name="__purpose" id="MDD2_{{instanceName}}">{{xmlArray["gmd:purpose"]["gco:CharacterString"]}}</textarea></td>
+		<textarea name="__purpose" class="required" rows="5" cols="80" onchange="copyValue(this,'MDD2h_{{instanceName}}');" id="MDD2_{{instanceName}}">{{xmlArray["gmd:purpose"]["gco:CharacterString"]}}</textarea></td>
 			<td><pre>Summary of the intentions for which the dataset was developed.</pre></td></tr>
 		
 		<!--
@@ -45,38 +45,38 @@
 -->
 	<tr><td>
 		<label for="MDD5a_{{instanceName}}"><em>*</em>Supplemental Information - Data Parameters and Units</label>
-		<textarea class="required" size="80" onchange="addFields{{instanceName}}('MDD5h_{{instanceName}}');" rows="3" cols="80" id="MDD5a_{{instanceName}}"></textarea>
+		<textarea class="required" name="__suplemental" size="80" onchange="addFields{{instanceName}}('MDD5h_{{instanceName}}');" rows="3" cols="80" id="MDD5a_{{instanceName}}">{{suplemental[0]}}</textarea>
 		</td><td>
 			<pre>Descriptive Information about the Data Parameters and Units.</pre>
 		</td></tr>
 		
 		<tr><td>
 		<label for="MDD5b_{{instanceName}}">Supplemental Information - Methods</label>
-		<textarea size="80" onchange="addFields{{instanceName}}('MDD5h_{{instanceName}}');" rows="3" cols="80" id="MDD5b_{{instanceName}}"></textarea>
+		<textarea size="80" onchange="addFields{{instanceName}}('MDD5h_{{instanceName}}');" rows="3" cols="80" id="MDD5b_{{instanceName}}">{{suplemental[1]}}</textarea>
 		</td>
 		<td><pre>Descriptive Information about the methods used.</pre></td></tr>
 		
 		<tr><td>
 			<label for="MDD5c_{{instanceName}}">Supplemental Information - Instruments</label>
-			<textarea size="80" onchange="addFields{{instanceName}}('MDD5h_{{instanceName}}');" rows="3" cols="80" id="MDD5c_{{instanceName}}"></textarea>
+			<textarea size="80" onchange="addFields{{instanceName}}('MDD5h_{{instanceName}}');" rows="3" cols="80" id="MDD5c_{{instanceName}}">{{suplemental[2]}}</textarea>
 			</td>
 		<td><pre>Descriptive Information about the instruments and equipment used.</pre></td></tr>
 		
 		<tr><td>
 			<label for="MDD5d_{{instanceName}}">Supplemental Information - Sampling Scales and Rates</label>
-			<textarea size="80" onchange="addFields{{instanceName}}('MDD5h_{{instanceName}}');" rows="3" cols="80" id="MDD5d_{{instanceName}}"></textarea>
+			<textarea size="80" onchange="addFields{{instanceName}}('MDD5h_{{instanceName}}');" rows="3" cols="80" id="MDD5d_{{instanceName}}">{{suplemental[3]}}</textarea>
 			</td>
 		<td><pre>Descriptive Information about the sampling spatial and temporal scales and rates.</pre></td></tr>
 		
 		<tr><td>
 			<label for="MDD5e_{{instanceName}}">Supplemental Information - Error Analysis</label>
-			<textarea size="80" onchange="addFields{{instanceName}}('MDD5h_{{instanceName}}');" rows="3" cols="80" id="MDD5e_{{instanceName}}"></textarea>
+			<textarea size="80" onchange="addFields{{instanceName}}('MDD5h_{{instanceName}}');" rows="3" cols="80" id="MDD5e_{{instanceName}}">{{suplemental[4]}}</textarea>
 			</td>
 		<td><pre>Descriptive Information about the error analysis.</pre></td></tr>
 
 		<tr><td>
 			<label for="MDD5f_{{instanceName}}">Supplemental Information - Provenance and Historical References</label>
-			<textarea size="80" onchange="addFields{{instanceName}}('MDD5h_{{instanceName}}');" rows="3" cols="80" id="MDD5f_{{instanceName}}"></textarea>
+			<textarea size="80" onchange="addFields{{instanceName}}('MDD5h_{{instanceName}}');" rows="3" cols="80" id="MDD5f_{{instanceName}}">{{suplemental[5]}}</textarea>
 			</td>
 		<td><pre>Descriptive Information about the provenance, historical data, key information packaged elsewhere.</pre></td></tr>
 		
