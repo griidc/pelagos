@@ -192,6 +192,10 @@ function uploadFile()
 			{{onReady}}
 		});
 		
+		$("#file").change(function() { 
+			uploadFile();
+		});
+		
 		$( "#dtabs" ).tabs({
             heightStyleType: "fill"
         });
@@ -200,7 +204,7 @@ function uploadFile()
 		$( "#metadialog" ).dialog({
 			modal: true,
 			autoOpen: false,
-			
+			resizable: false,
 			buttons: {
 				Ok: function() {
 					//$("#metadata").validate().cancelSubmit = true;
@@ -220,7 +224,14 @@ function uploadFile()
 		$( "#upload" )
 		.button()
 		.click(function( event ) {
-			$("#file").click();
+			if ($.browser.msie)
+			{
+				$("#loadfrm").css('display', 'inline');
+			}
+			else
+			{
+				$("#file").click();
+			}
 		});
 		$( "#reset" ).button()
 		.click(function( event ) {

@@ -13,6 +13,7 @@ class EX_Extent
 		
 		$geoArray  = false;
 		$tempArray = false;
+		$extDescText = null;
 		
 		if (is_array($xmlArray))
 		{
@@ -25,9 +26,12 @@ class EX_Extent
 			{
 				$tempArray = $xmlArray[0]["gmd:temporalElement"];
 			}
+			
+			if (array_key_exists("gmd:description",$xmlArray[0]))
+			{
+				$extDescText = $xmlArray[0]["gmd:description"]["gco:CharacterString"];
+			}
 		}
-		
-		$extDescText = $xmlArray[0]["gmd:description"]["gco:CharacterString"];
 		
 		if ($extDescText != null and $extDescText != "")
 		{

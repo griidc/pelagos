@@ -84,6 +84,25 @@ echo "</script>\n";
 	Click OK to download the file.</p>
 </div>
 
+<style>
+	#loadfrm {
+	position:fixed;
+    top: 50%;
+    left: 50%;
+    width:auto;
+    height:auto;
+	float: left;
+	font-size:larger;
+	box-shadow: 10px 10px 5px #c8c8c8;
+	padding: 8px 8px 8px 8px;
+	margin-top: -9em; /*set to a negative number 1/2 of your height*/
+    margin-left: -15em; /*set to a negative number 1/2 of your width*/
+    border: 3px solid;
+    background-color: #f3f3f3;
+    z-index:99;
+}
+</style>
+
 <table class="altrowstable" id="alternatecolor" width="60%" border="0">
 	<tr>
 		<td width="100%">
@@ -94,9 +113,16 @@ echo "</script>\n";
 				<button id="startover">Reload the Form</button>
 				<!--button id="reset">Clear Current Tab</button-->
 			</div>
-			<form id="uploadfrm" method="post" enctype="multipart/form-data">
-				<input style="display:none;" onchange="uploadFile();" id="file" name="file" type="file" />
-			</form>
+			<div id="loadfrm" style="display:none;">
+			<frameset>
+					Please select a file...
+				<form id="uploadfrm" method="post" enctype="multipart/form-data">
+					<input onfocus="uploadFile();"  id="file" name="file" type="file" />
+
+				</form>
+				
+				</frameset>
+			</div>
 			<form name="metadata" id="metadata" method="post">
 			<fieldset>
 				<?php echo $myMImeta->getHTML(); ?>
