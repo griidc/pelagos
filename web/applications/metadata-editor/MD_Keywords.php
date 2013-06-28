@@ -13,6 +13,7 @@ class MD_Keywords
 		$xmlArray = $mMD->returnPath($instanceType);
 		
 		$keyWordList = null;
+		$skwlist = null;
 				
 		if ($xmlArray)
 		{
@@ -25,13 +26,14 @@ class MD_Keywords
 					{
 						$keyWordList[] = $keyWords["gco:CharacterString"];
 					}
+					$skwlist = implode(";", $keyWordList);
 				}
 			}
 		}
 		
 		$instanceType .= '-gmd:MD_Keywords';
 		
-		$this->htmlString .= $mMD->twig->render('html/MD_Keywords.html', array('instanceName' => $instanceName, 'instanceType' => $instanceType, 'type' => $type, 'keyWordList' => $keyWordList, 'instanceVars' => $instanceVars));
+		$this->htmlString .= $mMD->twig->render('html/MD_Keywords.html', array('instanceName' => $instanceName, 'instanceType' => $instanceType, 'type' => $type,'skwlist' => $skwlist, 'keyWordList' => $keyWordList, 'instanceVars' => $instanceVars));
 		
 		$mMD->jsString .= $mMD->twig->render('js/MD_Keywords.js', array('instanceName' => $instanceName));
 	}

@@ -3,6 +3,7 @@ include_once 'CI_Citation.php';
 include_once 'CI_ResponsibleParty.php';
 include_once 'MD_Keywords.php';
 include_once 'MD_TopicCategoryCode.php';
+include_once 'EX_Extent.php';
 
 class MD_DataIdentification
 {
@@ -31,12 +32,13 @@ class MD_DataIdentification
 		${'mytopickw'.$instanceName} = new MD_TopicCategoryCode($mMD, $instanceType.'-gmd:topicCategory', $instanceName);
 		$TopicCategory =  ${'mytopickw'.$instanceName}->getHTML();
 		
-		include_once 'EX_Extent.php';
+		$suplemental = explode('|',$xmlArray[0]["gmd:supplementalInformation"]["gco:CharacterString"]);
+				
 		$myext = new EX_Extent($mMD, $instanceType.'-gmd:extent',$instanceName);
 		
 		$Extent = $myext->getHTML();
 		
-		$twigArr = array('instanceName' => $instanceName,'instanceType' => $instanceType,'Citation' => $Citation, 'ResponsibleParty' => $ResponsibleParty,'ThemeKeywords' => $ThemeKeywords,'PlaceKeywords' => $PlaceKeywords,'TopicCategory' => $TopicCategory,'Extent' => $Extent, 'Legend' => $Legend, 'xmlArray' => $xmlArray[0]);
+		$twigArr = array('instanceName' => $instanceName,'instanceType' => $instanceType,'Citation' => $Citation, 'ResponsibleParty' => $ResponsibleParty,'ThemeKeywords' => $ThemeKeywords,'PlaceKeywords' => $PlaceKeywords,'TopicCategory' => $TopicCategory,'Extent' => $Extent,'suplemental' => $suplemental, 'Legend' => $Legend, 'xmlArray' => $xmlArray[0]);
 		
 		$this->htmlString .= $mMD->twig->render('html/MD_DataIdentification.html', $twigArr);
 		
