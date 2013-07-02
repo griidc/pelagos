@@ -202,6 +202,7 @@ function uploadFile()
 		{{jqUIs}}
 		
 		$( "#metadialog" ).dialog({
+			title: "Metadata Editor:",
 			modal: true,
 			autoOpen: false,
 			resizable: false,
@@ -214,9 +215,22 @@ function uploadFile()
 			},
 		});
 		
+		$( "#errordialog" ).dialog({
+			title: "Warning:",
+			autoOpen: false,
+			modal: true,
+			width: 500,
+			buttons: {
+				"OK": function() {
+					$( this ).dialog( "close" );
+				}
+			},
+		});    
+		
 		$( "#generate" )
 			.button()
 			.click(function( event ) {
+				$('#metadialog').html("The Metadata Form has been correctly filled out and valid.<br>Your metadata file is ready for download.<p/>Click OK to download.");
 				$('#metadata').valid();
 				validateTabs();
 				$("#metadata").submit();
@@ -244,6 +258,7 @@ function uploadFile()
 		
 		$( "#forcesave" ).button()
 			.click(function( event ) {
+			$('#metadialog').html("Your metadata file is ready for download.<br/>Your file has NOT been validated.<p/>Click OK to download.");
 			$("#metadata").validate().cancelSubmit = true;
 			$("#metadata").submit();
 		});
@@ -312,7 +327,12 @@ function uploadFile()
 			focusInvalid: true,
 			focusCleanup: false,
 			invalidHandler: function(event, validator) {
-
+				if ($("#errordialog").dialog( "isOpen" )== false)
+				{
+					var altText = validator.numberOfInvalids() + " field(s) are still required.<p/>Please fill them out.";
+					 $('#errordialog').html(altText); 
+					 $("#errordialog").dialog( "open" );
+				}
 				isbad = true;
 				
 			},

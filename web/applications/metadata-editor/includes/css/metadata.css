@@ -59,10 +59,28 @@
 	
 	.toolbarbutton{font-size:1.4em;}
 	
-	#helptext:
+	#helptext
 	{
 		text-align:center;
 		color:red;
+	}
+	
+	#loadfrm 
+	{
+		position:fixed;
+		top: 50%;
+		left: 50%;
+		width:auto;
+		height:auto;
+		float: left;
+		font-size:larger;
+		box-shadow: 10px 10px 5px #c8c8c8;
+		padding: 8px 8px 8px 8px;
+		margin-top: -9em; /*set to a negative number 1/2 of your height*/
+		margin-left: -15em; /*set to a negative number 1/2 of your width*/
+		border: 3px solid;
+		background-color: #f3f3f3;
+		z-index:99;
 	}
 
 	legend 

@@ -79,29 +79,8 @@ echo "</script>\n";
 
 ?>
 
-<div style="font-size:smaller;" id="metadialog" title="Metadata Editor:">
-  <p>Your metadata file is ready for download.<p/>
-	Click OK to download the file.</p>
-</div>
-
-<style>
-	#loadfrm {
-	position:fixed;
-    top: 50%;
-    left: 50%;
-    width:auto;
-    height:auto;
-	float: left;
-	font-size:larger;
-	box-shadow: 10px 10px 5px #c8c8c8;
-	padding: 8px 8px 8px 8px;
-	margin-top: -9em; /*set to a negative number 1/2 of your height*/
-    margin-left: -15em; /*set to a negative number 1/2 of your width*/
-    border: 3px solid;
-    background-color: #f3f3f3;
-    z-index:99;
-}
-</style>
+<div style="font-size:smaller;" id="metadialog"></div>
+<div style="font-size:smaller;" id="errordialog"></div>
 
 <table class="altrowstable" id="alternatecolor" width="60%" border="0">
 	<tr>
@@ -118,10 +97,8 @@ echo "</script>\n";
 					Please select a file...
 				<form id="uploadfrm" method="post" enctype="multipart/form-data">
 					<input onfocus="uploadFile();"  id="file" name="file" type="file" />
-
 				</form>
-				
-				</frameset>
+			</frameset>
 			</div>
 			<form name="metadata" id="metadata" method="post">
 			<fieldset>
