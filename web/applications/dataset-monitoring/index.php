@@ -130,7 +130,7 @@ $app->get('/dataset_details/:udi', function ($udi) use ($app) {
 
     $WHERE = "WHERE d.dataset_udi='$udi'";
 
-    $stmt = $dbh->prepare("$SELECT $FROM $WHERE;");
+    $stmt = $dbh->prepare("$SELECT $FROM $WHERE ORDER BY CAST(SUBSTRING(registry_id from 18 for 3) AS INTEGER) DESC LIMIT 1;");
     $stmt->execute();
     $stash['datasets'] = $stmt->fetchAll();
 
