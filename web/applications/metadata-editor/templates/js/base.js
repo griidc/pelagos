@@ -204,6 +204,7 @@ function uploadFile()
 		$( "#metadialog" ).dialog({
 			title: "Metadata Editor:",
 			modal: true,
+			width: 500,
 			autoOpen: false,
 			resizable: false,
 			buttons: {
