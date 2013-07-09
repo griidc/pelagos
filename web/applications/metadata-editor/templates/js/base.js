@@ -266,7 +266,8 @@ function uploadFile()
 		
 		$( "#startover" ).button()
 			.click(function( event ) {
-			location.href="/metadata";
+			var urls = location.href.split("?");
+			location.href=urls[0];
 		});
 	 });
 		
