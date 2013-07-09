@@ -1,0 +1,82 @@
+<script>
+function getURLbyUDI()
+{
+	var udival = document.getElementById("udi").value;
+	alert(udival);
+	if (udival != "")
+	{
+		document.location.href = "http://data.gomri.org/metadata-editor?dataUrl=" + udival;
+	}
+
+}
+</script>
+
+<frameset>
+<table width="700px">
+<tr>
+<td><b><u>GRIIDC Metadata Editor</u></b></td>
+</tr>
+<tr><td>
+The GRIIDC Metadata Editor is a web application that can generate ISO 19115-2 compliant metadata files in XML format. To generate a valid Metadata file, several fields in various sections have to be completed on the Metadata Editor form.
+</td></tr>
+
+<tr><td>
+<dl>
+<u>The form also contains various tabs/sections and buttons, in the forms’ toolbar.<br></u>
+</td></tr>
+<tr><td>
+
+<dt>Toolbar buttons:</dt>
+<dd>
+	Generate Metadata File:
+<li>
+	This button will generate a correct but un-validated ISO 19115-2 metadata file. The file will be saved locally on the user machine in XML format.
+</li></dd>
+<dd>Load Metadata File:
+<li>This button will load a previous generated file. Either from a full metadata file, a temporary saved file, or a template. The Metadata Editor expect a file with XML content.
+</li>
+</dd>
+<dd>Save without Validating:
+<li>This button will save the form a temporary metadata file, it is not fully compliant metadata file, and it is not expected to validate. This feature is useful for saving the data on the form, to continue on a later date. Or it can be used to fill out common information to the temporary file can be used as a template. The file will be saved locally on the user machine in XML format.
+</li></dd>
+<dd>Reload the Form:
+<li>This button will reload a blank form.
+</li></dd>
+</dt>
+</dl>
+</td>
+</tr>
+<tr>
+<td>
+<dl>
+<dt>Tabs/Sections:</dt>
+<dd>Dataset Contact:
+<li>Contains the dataset contact.
+</li></dd>
+<dd>Dataset Information:
+<li>Information about the dataset.
+</li></dd>
+<dd>Keywords:
+<li>This section contains the Theme, Place and Topic keywords. The add keywords to the theme and place keyword sections, simply type a keyword in the keyword field and click the add button, and simply press enter after each entry. To delete a keyword from the list, select and highlight the keyword in the list, and click delete. The topic keywords are ISO defined, and one must be selected from the Topic Keyword List. Select a topic keyword, and click on the &quot;&gt;&gt;&gt;&quot; button to add, or double click on a keyword in the list. To delete select the keyword in the Selected Topic Keyword list and click on the &quot;&lt;&lt;&lt;&quot; button, or double click it to remove it. When keywords are added to the Select Topic Keyword list, the keyword will disappear from the original keyword list.
+</li></dd>
+<dd>Data Extent:
+<li>Data Extent Information. Preferably a bounding box coordinates are giving (longitude, latitude), together with a time period. If this is not applicable, click on the checkbox: “This dataset does not have any relevant spatial or temporal components” and fill out an appropriate description for the data.
+</li></dd>
+<dd>Distribution Info:
+<li>Information about the file(s) in the dataset, size, compression technique and it’s location.
+</li></dd>
+</dl>
+</td>
+</tr>
+<tr>
+<td>
+<b>http://data.gomri.org/metadata-editor?dataUrl=<b><input type="text" id="udi"><button onclick="getURLbyUDI();" type="button">Create from UDI</button>
+</td>
+</tr>
+<tr>
+<td>
+<a href="/metadata-editor">To The Metadata Editor!!!</a>
+</td>
+</tr>
+</table>
+</frameset>
