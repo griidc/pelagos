@@ -33,10 +33,12 @@ class MD_DataIdentification
 		$TopicCategory =  ${'mytopickw'.$instanceName}->getHTML();
 		
 		$suplemental = null;
-		
-		if (array_key_exists("gmd:supplementalInformation",$xmlArray[0]))
+		if (is_array($xmlArray))
 		{
-			$suplemental = explode('|',$xmlArray[0]["gmd:supplementalInformation"]["gco:CharacterString"]);
+			if (array_key_exists("gmd:supplementalInformation",$xmlArray[0]))
+			{
+				$suplemental = explode('|',$xmlArray[0]["gmd:supplementalInformation"]["gco:CharacterString"]);
+			}
 		}
 				
 		$myext = new EX_Extent($mMD, $instanceType.'-gmd:extent',$instanceName);
