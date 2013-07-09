@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml" elementFormDefault="qualified">
-    <xs:import namespace="http://www.opengis.net/gml" schemaLocation="http://www.opengis.net/gml"/>
+    <xs:import namespace="http://www.opengis.net/gml" schemaLocation="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd"/>
     <xs:element name="dataset_information">
         <xs:annotation>
             <xs:documentation>This element represents a set of dataset information entries.</xs:documentation>
