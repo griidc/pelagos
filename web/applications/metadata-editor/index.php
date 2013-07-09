@@ -38,8 +38,6 @@ if (isset($_FILES["file"]))
 		//echo "Size: " . ($_FILES["file"]["size"] / 1024) . " kB<br>";
 		//echo "Stored in: " . $_FILES["file"]["tmp_name"];
 		$thefile = $_FILES["file"]["tmp_name"];
-		$dMessage = 'Succesfully loaded file: ' .  $_FILES["file"]["name"];
-		drupal_set_message($dMessage,'status');
 	}
 }
 
@@ -60,7 +58,17 @@ if (isset($_POST))
 
 if (isset($thefile))
 {
-	$xmldoc = loadXML($thefile);
+	if ($_FILES["file"]["type"] == "text/xml")
+	{
+		$xmldoc = loadXML($thefile);
+		$dMessage = 'Succesfully loaded file: ' .  $_FILES["file"]["name"];
+		drupal_set_message($dMessage,'status');
+	}
+	else
+	{
+		$dMessage = 'Sorry.' .  $_FILES["file"]["name"] . ', is not an XML file!';
+		drupal_set_message($dMessage,'warning');
+	}
 }
 
 $mMD = new metaData();
