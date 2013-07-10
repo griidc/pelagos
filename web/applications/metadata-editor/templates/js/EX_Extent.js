@@ -51,7 +51,7 @@ function changeExtent{{instanceName}}(what)
 	
 	if (validator.numberOfInvalids() > 0)
 	{
-		$("#metadata").valid();
+		//$("#metadata").valid();
 	}
 	
 	if (!what)
