@@ -197,7 +197,17 @@ function uploadFile()
 		});
 		
 		$( "#dtabs" ).tabs({
-            heightStyleType: "fill"
+            heightStyleType: "fill",
+			activate: function(event, ui) {
+				var validator = $("#metadata").validate();
+				
+				if (validator.numberOfInvalids() > 0)
+				{
+					//$("#metadata").validate();
+					$("#metadata").valid();
+					validateTabs(false);
+				}
+			}
         });
 		{{jqUIs}}
 		
@@ -230,7 +240,17 @@ function uploadFile()
 		
 		$( "#generate" )
 			.button()
-			.click(function( event ) {
+			.click(function(event) {
+				$('#metadata').valid();
+				var validator = $("#metadata").validate();
+				var errText = validator.numberOfInvalids() + " field(s) are still required.<p/>Please fill them out.";
+				
+				if (validator.numberOfInvalids() > 0)
+				{
+					$('#errordialog').html(errText); 
+					$("#errordialog").dialog( "open" );
+				}
+				
 				$('#metadialog').html("The Metadata Form has been correctly filled out and valid.<br>Your metadata file is ready for download.<p/>Click OK to download.");
 				$('#metadata').valid();
 				validateTabs();
@@ -331,9 +351,7 @@ function uploadFile()
 			invalidHandler: function(event, validator) {
 				if ($("#errordialog").dialog( "isOpen" )== false)
 				{
-					var altText = validator.numberOfInvalids() + " field(s) are still required.<p/>Please fill them out.";
-					 $('#errordialog').html(altText); 
-					 $("#errordialog").dialog( "open" );
+					
 				}
 				isbad = true;
 				
