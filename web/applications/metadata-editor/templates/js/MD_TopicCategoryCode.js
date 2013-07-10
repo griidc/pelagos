@@ -33,6 +33,8 @@ function removeTopicKWItem{{instanceName}}()
 	
 	tpkSel.remove(tpkSel.selectedIndex);
 	
+	tpkSel.selectedIndex = tpkSel.length-1;
+	
 	makeTopiclist{{instanceName}}();
 	
 	sortSelect(tpkList);
