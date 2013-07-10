@@ -24,7 +24,14 @@ class MD_Keywords
 				{
 					foreach ($sub["gmd:keyword"] as $keyWords)
 					{
-						$keyWordList[] = $keyWords["gco:CharacterString"];
+						if (is_array($keyWords))
+						{
+							$keyWordList[] = $keyWords["gco:CharacterString"];
+						}
+						else
+						{
+							$keyWordList[] = $keyWords;
+						}
 					}
 					$skwlist = implode(";", $keyWordList);
 				}
