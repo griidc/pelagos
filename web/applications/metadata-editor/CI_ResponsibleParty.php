@@ -10,14 +10,18 @@ class CI_ResponsibleParty
 	{
 		
 		$xmlArray = $mMD->returnPath($instanceType);
-		
-		//echo "<pre>";
-		//var_dump($xmlArray);
-		//echo "</pre>";
-		
+	
 		$instanceType .= "-gmd:CI_ResponsibleParty";
 		
-		$contactArray = $xmlArray[0]["gmd:contactInfo"]["gmd:CI_Contact"];
+		$contactArray = null;
+		
+		if (is_array($xmlArray))
+		{
+			if (array_key_exists("gmd:contactInfo",$xmlArray[0]))
+			{
+				$contactArray = $xmlArray[0]["gmd:contactInfo"]["gmd:CI_Contact"];
+			}
+		}
 		
 		$mycontact = new CI_Contact($mMD, $instanceType.'-gmd:contactInfo', $instanceName, $contactArray, $online);
 		$Contact = $mycontact->getHTML();
