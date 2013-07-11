@@ -36,15 +36,15 @@
                 <gmd:CI_Address>
                     {% if RP[RPType].Street1 or RP[RPType].Street2 %}
                         <gmd:deliveryPoint>
-                            <gco:CharacterString><![CDATA[{{RP[RPType].Street1}}{% if RP[RPType].Street2 %}
+                            <gco:CharacterString><![CDATA[{{RP[RPType].Street1 | trim}}{% if RP[RPType].Street2 %}
 
-{{RP[RPType].Street2}}{% endif %}]]></gco:CharacterString>
+{{RP[RPType].Street2 | trim}}{% endif %}]]></gco:CharacterString>
                         </gmd:deliveryPoint>
                     {% elseif RP[RPType].Department_Addr1 or RP[RPType].Department_Addr2 %}
                         <gmd:deliveryPoint>
-                            <gco:CharacterString><![CDATA[{{RP[RPType].Department_Addr1}}{% if RP[RPType].Department_Addr2 %}
+                            <gco:CharacterString><![CDATA[{{RP[RPType].Department_Addr1 | trim}}{% if RP[RPType].Department_Addr2 %}
 
-{{RP[RPType].Department_Addr2}}{% endif %}]]></gco:CharacterString>
+{{RP[RPType].Department_Addr2 | trim}}{% endif %}]]></gco:CharacterString>
                         </gmd:deliveryPoint>
                     {% endif %}
                     {% if RP[RPType].City %}

@@ -16,7 +16,7 @@
         </gmd:CI_Citation>
     </gmd:citation>
     <gmd:abstract>
-        <gco:CharacterString><![CDATA[{{dataset.abstract}}]]></gco:CharacterString>
+        <gco:CharacterString><![CDATA[{{dataset.abstract | trim}}]]></gco:CharacterString>
     </gmd:abstract>
 	<gmd:purpose/>
     <gmd:status>
