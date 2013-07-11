@@ -15,9 +15,9 @@ drupal_add_library('system', 'ui.dialog');
 
 drupal_add_css('includes/css/metadata.css',array('type'=>'external'));
 drupal_add_js('/includes/jquery-validation/jquery.validate.js',array('type'=>'external'));
-drupal_add_css('misc/ui/jquery.ui.button.css');
-drupal_add_css('misc/ui/jquery.ui.datepicker.css');
-drupal_add_css('misc/ui/jquery.ui.tabs.css');
+//drupal_add_css('misc/ui/jquery.ui.button.css');
+//drupal_add_css('misc/ui/jquery.ui.datepicker.css');
+//drupal_add_css('misc/ui/jquery.ui.tabs.css');
 //drupal_add_css('misc/ui/jquery.ui.dialog.css');
 
 $xmldoc = null;
