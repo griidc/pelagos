@@ -13,9 +13,13 @@
 function xmlstr_to_array($xmlstr) {
 	$doc = new DOMDocument();
 	$doc->loadXML($xmlstr);
-	$root = $doc->documentElement;
-	$output = domnode_to_array($root);
-	$output['@root'] = $root->tagName;
+	$output=null;
+	if (isset($doc))
+	{
+		$root = $doc->documentElement;
+		$output = domnode_to_array($root);
+		$output['@root'] = $root->tagName;
+	}
 	return $output;
 }
 
@@ -70,7 +74,14 @@ function domnode_to_array($node) {
 function loadXML($url)
 {
 	$doc = new DomDocument('1.0','UTF-8');
-	$doc->load($url);
+
+	if(!@$doc->load($url))
+	{
+		$loadok = false;
+		$doc = null;
+		$dMessage = 'Error while loading loading: ' .  $url;
+		drupal_set_message($dMessage,'error',false);
+	}
 	
 	return $doc;
 }
