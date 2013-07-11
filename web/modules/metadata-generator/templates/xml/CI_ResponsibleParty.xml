@@ -9,9 +9,9 @@
             <gco:CharacterString>{{RP[RPType].Institution_Name}}</gco:CharacterString>
         </gmd:organisationName>
     {% endif %}
-    {% if RP[RPType].Role %}
+    {% if RP[RPType].Position %}
         <gmd:positionName>
-            <gco:CharacterString>{{RP[RPType].Role}}</gco:CharacterString>
+            <gco:CharacterString>{{RP[RPType].Position}}</gco:CharacterString>
         </gmd:positionName>
     {% endif %}
     <gmd:contactInfo>
