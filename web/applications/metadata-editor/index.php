@@ -95,10 +95,10 @@ echo "</script>\n";
 	<tr>
 		<td width="100%">
 			<div id="metatoolbar" class="ui-widget-header ui-corner-all toolbarbutton">
-				<button id="generate">Generate Metadata File</button>
 				<button id="upload">Load Metadata File</button>
 				<button id="forcesave">Save without Validating</button>
-				<button id="startover">Reload the Form</button>
+				<button id="startover">Clear Form</button>
+				<button id="generate">Generate Metadata File</button>
 				<!--button id="reset">Clear Current Tab</button-->
 			</div>
 			<div id="loadfrm" style="display:none;">
