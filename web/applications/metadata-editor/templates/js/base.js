@@ -239,7 +239,11 @@ function uploadFile()
 		});    
 		
 		$( "#generate" )
-			.button()
+			.button({
+					icons: {
+						primary: "ui-icon-check"
+					}
+				})
 			.click(function(event) {
 				$('#metadata').valid();
 				var validator = $("#metadata").validate();
@@ -257,7 +261,13 @@ function uploadFile()
 				$("#metadata").submit();
 			});
 		$( "#upload" )
-		.button()
+		.button({
+			icons: {
+				primary: "ui-icon-folder-open"
+			}
+			
+			
+			})
 		.click(function( event ) {
 			if ($.browser.msie)
 			{
@@ -277,17 +287,35 @@ function uploadFile()
 			.removeAttr('selected');
 		});
 		
-		$( "#forcesave" ).button()
+		$( "#forcesave" ).button({
+				icons: {
+					primary: "ui-icon-disk"
+				}
+			})
 			.click(function( event ) {
 			$('#metadialog').html("Your metadata file is ready for download.<br/>Your file has NOT been validated.<p/>Click OK to download.");
 			$("#metadata").validate().cancelSubmit = true;
 			$("#metadata").submit();
 		});
 		
-		$( "#startover" ).button()
+		$( "#startover" ).button({
+			icons: {
+				primary: "ui-icon-arrowrefresh-1-n"
+			}
+		})
 			.click(function( event ) {
 			var urls = location.href.split("?");
 			location.href=urls[0];
+		});
+		
+		$( "#helpscreen" ).button({
+		icons: {
+			primary: "ui-icon-help"
+		}
+		})
+		
+		.click(function( event ) {
+			location.href='/metadata';
 		});
 	 });
 		

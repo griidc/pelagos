@@ -99,6 +99,7 @@ echo "</script>\n";
 				<button id="forcesave">Save without Validating</button>
 				<button id="startover">Clear Form</button>
 				<button id="generate">Generate Metadata File</button>
+				<button id="helpscreen">Help</button>
 				<!--button id="reset">Clear Current Tab</button-->
 			</div>
 			<div id="loadfrm" style="display:none;">

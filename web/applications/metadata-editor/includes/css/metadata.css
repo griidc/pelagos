@@ -57,8 +57,14 @@
 	
 	select {width:300px}
 	
-	.toolbarbutton{font-size:1.4em;}
+	.toolbarbutton{font-size:1.2em;}
 	
+	#metatoolbar 
+	{
+    padding: 4px;
+    display: inline-block;
+	}
+  
 	#helptext
 	{
 		text-align:center;
