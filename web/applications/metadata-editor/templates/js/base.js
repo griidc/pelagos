@@ -260,6 +260,19 @@ function uploadFile()
 				}
 			},
 		});    
+
+		$( "#helpdialog" ).dialog({
+			title: "Metadata Generator Help:",
+			autoOpen: false,
+			modal: true,
+			width: 750,
+            open: function() {
+                if ($(this).parent().height() > $(window).height()) {
+                    $(this).height($(window).height()*0.8);
+                    $(this).parent().css({top:'40px'});
+                }
+            }
+		});    
 		
 		$( "#generate" )
 			.button({
@@ -337,7 +350,8 @@ function uploadFile()
 		})
 		
 		.click(function( event ) {
-			location.href='/metadata';
+			$("#helpdialog").dialog("open");
+//			location.href='/metadata';
 		});
 	 });
 		

@@ -99,6 +99,10 @@ echo "</script>\n";
   </fieldset>
   </form>
 </div>
+            
+<div id="helpdialog">
+    <?php require "help.html" ?>
+</div>
 
 <table class="altrowstable" id="alternatecolor" width="60%" border="0">
 	<tr>
@@ -128,3 +132,13 @@ echo "</script>\n";
 	</tr>
 </table>
 
+<!--
+<div style="position:absolute; left:50%; top:100px;">
+    <div style="position:relative; left:-50%; background-color:rgba(0,0,0,0.5);">
+        <div style="position:relative; left:-2px; top:-2px; border: 1px solid black; background-color: white; padding:10px;">
+            x
+            <?php require "help.html" ?>
+        </div>
+    </div>
+</div>
+-->
