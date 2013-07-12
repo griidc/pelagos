@@ -79,7 +79,7 @@ if (isset($xmldoc))
 }
 
 include 'MI_Metadata.php';
-$myMImeta = new MI_Metadata($mMD,'MIMeta',guid());
+$myMImeta = new MI_Metadata($mMD,'MIMeta',"metadata.xml");
 
 echo "\n\n<script type=\"text/javascript\">\n";
 $mMD->jsString .= $mMD->twig->render('js/base.js', array('onReady' => $mMD->onReady,'jqUIs' => $mMD->jqUIs,'validateRules' => $mMD->validateRules, 'validateMessages' => $mMD->validateMessages));
@@ -89,7 +89,15 @@ echo "</script>\n";
 ?>
 
 <div style="font-size:smaller;" id="metadialog"></div>
+<div style="font-size:smaller;display:none;" id="savedialog">
+<span id="dialogtxt">All required fields are complete.<br/>
+Your metadata file is ready for download.<br/></span>
+Please enter a filename:<input type="text" id="filename"><br/>
+<p/>
+Click OK to download.
+</div>
 <div style="font-size:smaller;" id="errordialog"></div>
+
 <div id="udidialog" title="Load from UDI">
   <p>Please enter your UDI/Registration ID.</p>
   <form>

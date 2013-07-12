@@ -57,7 +57,7 @@ function createNodesXML($xml,$doc)
 	
 	$now = date('c');
 	
-	$xmlComment = "Created with GRIIDC Metadata Editor V1.0 Beta 4 on $now";
+	$xmlComment = "Created with GRIIDC Metadata Editor 13.07 on $now";
 	$commentNode = $doc->createComment($xmlComment);
 	$commentNode = $doc->appendChild($commentNode);
 	
@@ -219,12 +219,12 @@ function createNodesXML($xml,$doc)
 			}
 		}
 		
-		$filename = substr($xml["gmi:MI_Metadata-gmd:fileIdentifier-gco:CharacterString"],0,-4);
+		$filename = $xml["gmi:MI_Metadata-gmd:fileIdentifier-gco:CharacterString"];
 	
 	}	
 	
 	header("Content-type: text/xml; charset=utf-8"); 
-	header("Content-Disposition: attachment; filename=$filename.xml");
+	header("Content-Disposition: attachment; filename=$filename");
 	$doc->formatOutput = true;
 	$doc->normalizeDocument();
 	ob_clean();

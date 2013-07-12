@@ -265,14 +265,48 @@ function uploadFile()
 			title: "Metadata Generator Help:",
 			autoOpen: false,
 			modal: true,
+			resizable: true,
 			width: 750,
             open: function() {
                 if ($(this).parent().height() > $(window).height()) {
                     $(this).height($(window).height()*0.8);
                     $(this).parent().css({top:'40px'});
                 }
-            }
+            },
+			buttons: {
+				"OK": function() {
+					$( this ).dialog( "close" );
+				}
+			},
 		});    
+		
+		$( "#savedialog" ).dialog({
+			title: "Metadata Editor:",
+			autoOpen: false,
+			modal: true,
+			resizable: true,
+			width: 500,
+            open: function() {
+                if ($(this).parent().height() > $(window).height()) {
+                    $(this).height($(window).height()*0.8);
+                    $(this).parent().css({top:'40px'});
+                }
+            },
+			buttons: {
+				Ok: function() {
+					var filenamefld = $("#filename").val();
+					$("#MI1").val(filenamefld);
+					$("#metadata").validate().cancelSubmit = true;
+					$("#metadata").submit();
+					$( this ).dialog( "close" );
+					
+				},
+				Cancel: function() {
+					$( this ).dialog( "close" );
+				}
+			},
+		});    
+		
 		
 		$( "#generate" )
 			.button({
@@ -284,7 +318,12 @@ function uploadFile()
 			.click(function(event) {
 				$('#metadata').valid();
 				var validator = $("#metadata").validate();
-				var errText = validator.numberOfInvalids() + " field(s) are still required.<p/>Please fill them out.";
+				var numOfInvalids = validator.numberOfInvalids();
+				var errText =  "The Metadata form has " + numOfInvalids + " incomplete field(s).<br>Please review fields prior to download.<p/>Please click OK to continue.";
+				
+				
+				var filenamefld = $("#MI1").val();
+				$("#filename").val(filenamefld);
 				
 				if (validator.numberOfInvalids() > 0)
 				{
@@ -292,7 +331,7 @@ function uploadFile()
 					$("#errordialog").dialog( "open" );
 				}
 				
-				$('#metadialog').html("The Metadata Form has been correctly filled out and valid.<br>Your metadata file is ready for download.<p/>Click OK to download.");
+				//$('#metadialog').html("All required fields are complete.<br>Please enter a filename:.");
 				$('#metadata').valid();
 				validateTabs();
 				$("#metadata").submit();
@@ -328,7 +367,11 @@ function uploadFile()
 				}
 			})
 			.click(function( event ) {
-			$('#metadialog').html("Your metadata file is ready for download.<br/>Your file has NOT been validated.<p/>Click OK to download.");
+			var spntxt = "Your metadata file is ready for download.<br/>Your file has NOT been validated.<br/>";
+			$("#dialogtxt").html = spntxt;
+			var filenamefld = $("#MI1").val();
+			$("#filename").val(filenamefld);
+			
 			$("#metadata").validate().cancelSubmit = true;
 			$("#metadata").submit();
 		});
@@ -421,9 +464,9 @@ function uploadFile()
 				
 			},
 			submitHandler: function(form) {
-				if ($("#metadialog").dialog( "isOpen" )== false)
+				if ($("#savedialog").dialog( "isOpen" )== false)
 				{
-					$("#metadialog").dialog( "open" );
+					$("#savedialog").dialog( "open" );
 				}
 				else
 				{
