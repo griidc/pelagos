@@ -92,7 +92,7 @@ echo "</script>\n";
 <div style="font-size:smaller;display:none;" id="savedialog">
 <span id="dialogtxt">All required fields are complete.<br/>
 Your metadata file is ready for download.<br/></span>
-Please enter a filename:<input type="text" id="filename"><br/>
+Please enter a filename: <input type="text" id="filename" size="50"><br/>
 <p/>
 Click OK to download.
 </div>
