@@ -90,17 +90,26 @@ echo "</script>\n";
 
 <div style="font-size:smaller;" id="metadialog"></div>
 <div style="font-size:smaller;" id="errordialog"></div>
+<div id="udidialog" title="Load from UDI">
+  <p>Please enter your UDI/Registration ID.</p>
+  <form>
+  <fieldset>
+    <label for="name">UDI</label>
+    <input size="40" type="text" name="udifld" id="udifld" class="text ui-widget-content ui-corner-all" />
+  </fieldset>
+  </form>
+</div>
 
 <table class="altrowstable" id="alternatecolor" width="60%" border="0">
 	<tr>
 		<td width="100%">
 			<div id="metatoolbar" class="ui-widget-header ui-corner-all toolbarbutton">
-				<button id="upload">Load Metadata File</button>
-				<button id="forcesave">Save without Validating</button>
+				<button id="upload">Load from File</button>
+				<button id="fromudi">Fill From UDI</button>
+				<button id="forcesave">Save to File</button>
 				<button id="startover">Clear Form</button>
-				<button id="generate">Generate Metadata File</button>
+				<button id="generate">Check and Save to File</button>
 				<button id="helpscreen">Help</button>
-				<!--button id="reset">Clear Current Tab</button-->
 			</div>
 			<div id="loadfrm" style="display:none;">
 			<frameset>

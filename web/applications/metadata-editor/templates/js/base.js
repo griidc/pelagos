@@ -222,6 +222,29 @@ function uploadFile()
 					$("#metadata").validate().cancelSubmit = true;
 					$("#metadata").submit();
 					$( this ).dialog( "close" );
+				},
+				Cancel: function() {
+					$( this ).dialog( "close" );
+				}
+			},
+		});
+		
+		$( "#udidialog" ).dialog({
+			title: "Metadata Editor:",
+			modal: true,
+			width: 500,
+			autoOpen: false,
+			resizable: false,
+			buttons: {
+				Ok: function() {
+					$( this ).dialog( "close" );
+					var urls = location.href.split("?");
+					var baseurls = location.href.split("/");
+					var udiurl = urls[0] + "?dataUrl=http://" + baseurls[2] + "/metadata-generator/" + $('#udifld').val();
+					location.href = udiurl;
+				},
+				Cancel: function() {
+					$( this ).dialog( "close" );
 				}
 			},
 		});
@@ -241,7 +264,8 @@ function uploadFile()
 		$( "#generate" )
 			.button({
 					icons: {
-						primary: "ui-icon-check"
+						primary: "ui-icon-check",
+						secondary: "ui-icon-disk"
 					}
 				})
 			.click(function(event) {
@@ -264,9 +288,7 @@ function uploadFile()
 		.button({
 			icons: {
 				primary: "ui-icon-folder-open"
-			}
-			
-			
+				}
 			})
 		.click(function( event ) {
 			if ($.browser.msie)
@@ -278,13 +300,13 @@ function uploadFile()
 				$("#file").click();
 			}
 		});
-		$( "#reset" ).button()
+		$( "#fromudi" ).button({
+			icons: {
+				primary: "ui-icon-link"
+			}
+		})
 		.click(function( event ) {
-			$(':input','#metadata')
-			.not(':button, :submit, :reset, :hidden')
-			.val('')
-			.removeAttr('checked')
-			.removeAttr('selected');
+			$("#udidialog").dialog("open");
 		});
 		
 		$( "#forcesave" ).button({
@@ -300,7 +322,7 @@ function uploadFile()
 		
 		$( "#startover" ).button({
 			icons: {
-				primary: "ui-icon-arrowrefresh-1-n"
+				primary: "ui-icon-refresh"
 			}
 		})
 			.click(function( event ) {
