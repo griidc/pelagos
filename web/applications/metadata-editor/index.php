@@ -139,14 +139,3 @@ Click OK to download.
 		</td>
 	</tr>
 </table>
-
-<!--
-<div style="position:absolute; left:50%; top:100px;">
-    <div style="position:relative; left:-50%; background-color:rgba(0,0,0,0.5);">
-        <div style="position:relative; left:-2px; top:-2px; border: 1px solid black; background-color: white; padding:10px;">
-            x
-            <?php require "help.html" ?>
-        </div>
-    </div>
-</div>
--->
