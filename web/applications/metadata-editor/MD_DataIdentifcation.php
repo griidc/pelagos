@@ -9,7 +9,7 @@ class MD_DataIdentification
 {
 	private $htmlString;
 	
-	public function __construct($mMD, $instanceType, $instanceName,$Legend='Data Identification')
+	public function __construct($mMD, $instanceType, $instanceName,$Legend='Dataset Information')
 	{
 		$xmlArray = $mMD->returnPath($instanceType);
 		

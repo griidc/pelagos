@@ -1,12 +1,12 @@
 
 	<div id="dtabs-1">  
 	
-	<table width="100%">
 	
-		<fieldset>
-			<legend>{{Legend}}</legend>
-		{{Citation}}
-		
+	
+	<fieldset>
+		<legend>{{Legend}}</legend>
+	{{Citation}}
+	<table width="100%">	
 		<tr><td>
 		<label for="MDD1_{{instanceName}}"><em>*</em>Abstract</label>
 		<textarea id="MDD1_{{instanceName}}" class="required" rows="5" cols="80" onchange="copyValue(this,'MDD1h_{{instanceName}}');"  name="__abstract">{{xmlArray["gmd:abstract"]["gco:CharacterString"]}}</textarea></td>
@@ -23,26 +23,7 @@
 		-->
 		
 		</td></tr>
-<!--			
-	</fieldset>
-		
-	</table>
-		
-	</div>
-	
 
-	<div id="dtabs-7"> 
-	
-	<fieldset>
-	<legend>Supplemental Information</legend>
-	
-	<span>
-	Other descriptive information about the dataset.  These fields is broken out in to several sections to gather specific information would normally be captured in ISO metadata elements that the Metadata Editor does not currently support.
-	</span>
-	
-	<table width="100%">
-	
--->
 	<tr><td>
 		<label for="MDD5a_{{instanceName}}"><em>*</em>Supplemental Information - Data Parameters and Units</label>
 		<textarea class="required" name="__suplemental" size="80" onchange="addFields{{instanceName}}('MDD5h_{{instanceName}}');" rows="3" cols="80" id="MDD5a_{{instanceName}}">{{suplemental[0]}}</textarea>
@@ -81,7 +62,7 @@
 		<td><pre>Descriptive Information about the provenance, historical data, key information packaged elsewhere.</pre></td></tr>
 		
 	</table>
-	<!--/fieldset-->
+	</fieldset>
 	</div>
 
 	<input type="hidden" id="MDD1h_{{instanceName}}" name="{{instanceType}}-gmd:abstract-gco:CharacterString" value="{{xmlArray["gmd:abstract"]["gco:CharacterString"]}}"/>
