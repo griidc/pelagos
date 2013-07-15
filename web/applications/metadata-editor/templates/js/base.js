@@ -330,8 +330,8 @@ function uploadFile()
 					$('#errordialog').html(errText); 
 					$("#errordialog").dialog( "open" );
 				}
-				
-				//$('#metadialog').html("All required fields are complete.<br>Please enter a filename:.");
+				var spnhtml = "All required fields are complete.<br/>Your metadata file is ready for download.<br/>";
+				$("#dialogtxt").html(spnhtml);
 				$('#metadata').valid();
 				validateTabs();
 				$("#metadata").submit();
@@ -367,8 +367,8 @@ function uploadFile()
 				}
 			})
 			.click(function( event ) {
-			var spntxt = "Your metadata file is ready for download.<br/>Your file has NOT been validated.<br/>";
-			$("#dialogtxt").html = spntxt;
+			var spnhtml = "Your metadata file is ready for download.<br/>Your input has <b><u>not</u></b> been checked!<p/>";
+			$("#dialogtxt").html(spnhtml);
 			var filenamefld = $("#MI1").val();
 			$("#filename").val(filenamefld);
 			
