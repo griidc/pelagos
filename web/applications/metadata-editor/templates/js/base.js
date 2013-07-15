@@ -273,11 +273,15 @@ function uploadFile()
                     $(this).parent().css({top:'40px'});
                 }
             },
-			buttons: {
-				"OK": function() {
-					$( this ).dialog( "close" );
+			buttons: [
+                {
+				    text: "Close",
+                    click: function() {
+					    $( this ).dialog( "close" );
+                    },
+                    tabIndex: -1
 				}
-			},
+			]
 		});    
 		
 		$( "#savedialog" ).dialog({
