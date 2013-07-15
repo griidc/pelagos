@@ -15,7 +15,7 @@ class CI_Contact
 				
 		${'mytelephone'.$instanceName} = new CI_Telephone($mMD, $instanceType.'-gmd:phone',$instanceName, $phoneArray);
 		${'myaddress'.$instanceName} = new CI_Address($mMD, $instanceType.'-gmd:address', $instanceName, $addressArray, $online);
-		${'myonline'.$instanceName} = new CI_OnlineResource($mMD, $instanceName, $instanceType.'-gmd:onlineResource');
+		${'myonline'.$instanceName} = new CI_OnlineResource($mMD, $instanceName, $instanceType.'-gmd:onlineResource',true);
 				
 		$Telephone = ${'mytelephone'.$instanceName}->getHTML();
 		$Address = ${'myaddress'.$instanceName}->getHTML();

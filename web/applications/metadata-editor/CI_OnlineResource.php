@@ -4,13 +4,13 @@ class CI_OnlineResource
 {
 	private $htmlString;
 	
-	public function __construct($mMD, $instanceName, $instanceType)
+	public function __construct($mMD, $instanceName, $instanceType, $forContact = false)
 	{
 		$instanceType .= "-gmd:CI_OnlineResource";
 				
 		$xmlArray = $mMD->returnPath($instanceType);
 		
-		$twigArr = array('instanceName' => $instanceName,'instanceType' => $instanceType,'xmlArray' => $xmlArray[0]);
+		$twigArr = array('instanceName' => $instanceName,'instanceType' => $instanceType, 'forContact' => $forContact, 'xmlArray' => $xmlArray[0]);
 		
 		$this->htmlString .= $mMD->twig->render('html/CI_OnlineResource.html', $twigArr);
 		
