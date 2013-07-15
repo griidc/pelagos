@@ -20,6 +20,11 @@ drupal_add_js('/includes/jquery-validation/jquery.validate.js',array('type'=>'ex
 //drupal_add_css('misc/ui/jquery.ui.tabs.css');
 //drupal_add_css('misc/ui/jquery.ui.dialog.css');
 
+if (array_key_exists('action',$_GET) and $_GET['action'] == 'help') {
+    require 'help.html';
+    exit;
+}
+
 $xmldoc = null;
 
 if (isset($_FILES["file"]))

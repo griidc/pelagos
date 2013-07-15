@@ -397,8 +397,11 @@ function uploadFile()
 		})
 		
 		.click(function( event ) {
-			$("#helpdialog").dialog("open");
-//			location.href='/metadata';
+            var width = 730;
+            var height = 500;
+            var left = (screen.width/2)-(width/2);
+            var top = (screen.height/2)-(height/2);
+            window.open('?action=help','help','width='+width+',height='+height+',top='+top+',left='+left+',toolbar=0,scrollbars=1,location=0,resizable=1');
 		});
 	 });
 		
