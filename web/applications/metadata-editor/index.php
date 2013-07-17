@@ -110,10 +110,6 @@ Click OK to download.
   </fieldset>
   </form>
 </div>
-            
-<div id="helpdialog">
-    <?php require "help.html" ?>
-</div>
 
 <table class="altrowstable" id="alternatecolor" width="60%" border="0">
 	<tr>
