@@ -67,7 +67,7 @@ if ($user) {
     if (!is_null($sftpGroup) and preg_match('/^(?:(.*)-)?sftp-users$/',$sftpGroup,$matches)) {
         $sftpuser = true;
         $chrootDir = "/sftp/chroot";
-        if (count($matches) < 1) {
+        if (count($matches) < 2) {
             $chrootDir .= "/pub";
         }
         else {
