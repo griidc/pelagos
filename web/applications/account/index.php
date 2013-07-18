@@ -201,7 +201,7 @@ $app->post('/request', function () use ($app) {
         if (count($stash['err']) > 0) {
             output_errors($stash['err']);
 
-            foreach (array_merge($GLOBALS['APPLICATIONS'],array('Shell')) as $application) {
+            foreach (array_merge($GLOBALS['APPLICATIONS'],array('Shell'=>'users')) as $application => $default_group) {
                 $stash['checked'][$application] = $app->request()->post($application) ? 1 : 0;
             }
 
@@ -236,9 +236,9 @@ $app->post('/request', function () use ($app) {
             }
 
             $stash['applications'] = array();
-            foreach ($GLOBALS['APPLICATIONS'] as $application) {
+            foreach ($GLOBALS['APPLICATIONS'] as $application => $default_group) {
                 if ($app->request()->post($application)) {
-                    $stash['applications'][$application] = 'users';
+                    $stash['applications'][$application] = $default_group;
                 }
             }
 
@@ -282,7 +282,7 @@ $app->get('/approve', $GLOBALS['AUTH_FOR_ROLE']('admin'), function () use ($app)
             $stash['uid'] = $uid;
             $stash['affiliations'] = get_affiliations($stash['affiliation']);
             $stash['checked']['Shell'] = in_array('posixAccount',$stash['objectClasses']);
-            foreach ($GLOBALS['APPLICATIONS'] as $application) {
+            foreach ($GLOBALS['APPLICATIONS'] as $application => $default_group) {
                 $stash['checked'][$application] = isset($stash['applications'][$application]);
             }
             $env = $app->environment();
@@ -312,10 +312,10 @@ $app->post('/approve', $GLOBALS['AUTH_FOR_ROLE']('admin'), function () use ($app
         $stash['affiliations'] = get_affiliations($stash['affiliation']);
 
         $stash['applications'] = array();
-        foreach ($GLOBALS['APPLICATIONS'] as $application) {
+        foreach ($GLOBALS['APPLICATIONS'] as $application => $default_group) {
             $stash['checked'][$application] = $app->request()->post($application) ? 1 : 0;
             if ($app->request()->post($application)) {
-                $stash['applications'][$application] = 'users';
+                $stash['applications'][$application] = $default_group;
             }
         }
         $stash['checked']['Shell'] = $app->request()->post('Shell') ? 1 : 0;
@@ -340,9 +340,9 @@ $app->post('/approve/create', $GLOBALS['AUTH_FOR_ROLE']('admin'), function () us
         $ldif['affiliation'] = $app->request()->post('affiliation');
 
         $ldif['applications'] = array();
-        foreach ($GLOBALS['APPLICATIONS'] as $application) {
+        foreach ($GLOBALS['APPLICATIONS'] as $application => $default_group) {
             if ($app->request()->post($application)) {
-                $ldif['applications'][$application] = 'users';
+                $ldif['applications'][$application] = $default_group;
             }
         }
 

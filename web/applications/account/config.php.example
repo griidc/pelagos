@@ -14,7 +14,7 @@ define('GRIIDC_PEOPLE_PASSWORD','changeme');
 
 define('SPOOL_DIR','/var/spool/account_requests');
 
-$GLOBALS['APPLICATIONS'] = array('Drupal','JIRA','Mercurial');
+$GLOBALS['APPLICATIONS'] = array('Drupal'=>'user','JIRA'=>'users','Mercurial'=>'users');
 
 $GLOBALS['LDAP_AFFILIATIONS'] = array(
                                     array('ou'=>'GoMRI','objectClass'=>'groupOfNames'),
