@@ -1,7 +1,6 @@
-<style type="text/css">
 * {margin:0;padding:0;border:0;outline:0}
-BODY { font-family: "Trebuchet MS", Arial,Helvetica,Sans Serif; font-size: 10pt; }
-a  { text-decoration : none; }
+BODY { font-family: "Trebuchet MS", Arial,Helvetica,"Sans Serif"; font-size: 10pt; }
+a  { text-decoration:none; }
 a:hover  { text-decoration: underline; }
 p { padding-bottom: 8px; }
 #map_canvas { height: 600px; width:100%; }
@@ -48,7 +47,6 @@ p { padding-bottom: 8px; }
 }
 #top {
     width: 100%;
-    //background-color: #D8C6AE;
     background-color: #ffffff;
     position: absolute;
     top: 0px;
@@ -242,9 +240,9 @@ h1 {
    color: #40626b;
    vertical-align: middle;
    text-decoration: none;
-   -webkit-border-radius: 10px;
-   -moz-border-radius: 10px;
-   border-radius: 10px;
+   -webkit-border-radius:10px;
+   -moz-border-radius:10px;
+   border-radius:10px;
    padding:2px;
    -webkit-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
    -moz-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
@@ -296,5 +294,5 @@ h1 {
      border: none;
      background: url('images/marker_icon.png') no-repeat top left;
      padding: 10px;
- }
- </style>
+} 
+
