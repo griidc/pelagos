@@ -66,7 +66,7 @@ function validateTabs(shouldTabFocus)
 					active: 6
 				});
 			}
-			$('#chkimgtab0').attr("src","/dm/includes/images/x.png");
+			$('#chkimgtab0').attr("src","includes/images/warning.png");
 			tab0HasErrors = true;
 			//break;
 		}
@@ -82,7 +82,7 @@ function validateTabs(shouldTabFocus)
 					active: 5
 				});
 			}
-			$('#chkimgtab5').attr("src","/dm/includes/images/x.png");
+			$('#chkimgtab5').attr("src","includes/images/warning.png");
 			tab5HasErrors = true;
 			//break;
 		}
@@ -98,7 +98,7 @@ function validateTabs(shouldTabFocus)
 				active: 4
 				});
 			}
-			$('#chkimgtab6').attr("src","/dm/includes/images/x.png");
+			$('#chkimgtab6').attr("src","includes/images/warning.png");
 			tab6HasErrors = true;
 			//break;
 		}
@@ -114,7 +114,7 @@ function validateTabs(shouldTabFocus)
 					active: 3
 				});
 			}
-			$('#chkimgtab4').attr("src","/dm/includes/images/x.png");
+			$('#chkimgtab4').attr("src","includes/images/warning.png");
 			tab4HasErrors = true;
 			//break;
 		}
@@ -130,7 +130,7 @@ function validateTabs(shouldTabFocus)
 					active: 2
 				});
 			}
-			$('#chkimgtab3').attr("src","/dm/includes/images/x.png");
+			$('#chkimgtab3').attr("src","includes/images/warning.png");
 			tab3HasErrors = true;
 			//break;
 		}
@@ -146,7 +146,7 @@ function validateTabs(shouldTabFocus)
 					active: 1
 				});
 			}
-			$('#chkimgtab1').attr("src","/dm/includes/images/x.png");
+			$('#chkimgtab1').attr("src","includes/images/warning.png");
 			tab1HasErrors = true;
 			//break;
 		}
@@ -163,19 +163,19 @@ function validateTabs(shouldTabFocus)
 				});
 			}
 			//$("#metadata").validate();
-			$('#chkimgtab2').attr("src","/dm/includes/images/x.png");
+			$('#chkimgtab2').attr("src","includes/images/warning.png");
 			tab2HasErrors = true;
 			//break;
 		}
 	});
 	
-	if (!tab0HasErrors){$('#chkimgtab0').attr("src","/dm/includes/images/check.png");};
-	if (!tab1HasErrors){$('#chkimgtab1').attr("src","/dm/includes/images/check.png");};
-	if (!tab2HasErrors){$('#chkimgtab2').attr("src","/dm/includes/images/check.png");};
-	if (!tab3HasErrors){$('#chkimgtab3').attr("src","/dm/includes/images/check.png");};
-	if (!tab4HasErrors){$('#chkimgtab4').attr("src","/dm/includes/images/check.png");};
-	if (!tab5HasErrors){$('#chkimgtab5').attr("src","/dm/includes/images/check.png");};
-	if (!tab6HasErrors){$('#chkimgtab6').attr("src","/dm/includes/images/check.png");};
+	if (!tab0HasErrors){$('#chkimgtab0').attr("src","includes/images/check.png");};
+	if (!tab1HasErrors){$('#chkimgtab1').attr("src","includes/images/check.png");};
+	if (!tab2HasErrors){$('#chkimgtab2').attr("src","includes/images/check.png");};
+	if (!tab3HasErrors){$('#chkimgtab3').attr("src","includes/images/check.png");};
+	if (!tab4HasErrors){$('#chkimgtab4').attr("src","includes/images/check.png");};
+	if (!tab5HasErrors){$('#chkimgtab5').attr("src","includes/images/check.png");};
+	if (!tab6HasErrors){$('#chkimgtab6').attr("src","includes/images/check.png");};
 }
 
 isBad = false;
