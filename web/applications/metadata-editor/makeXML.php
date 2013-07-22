@@ -1,10 +1,19 @@
 <?php
 
-function makeXML($xml,$doc)
+function makeXML($xml)
 {
 	echo '<pre>';
-	var_dump($_POST);
+	//var_dump($_POST);
 	
+	$xmldocstring = base64_decode($_POST["__ldxmldoc"]);
+	$doc = null;
+	
+	if ($xmldocstring <> false)
+	{
+		$doc = new DomDocument('1.0','UTF-8');
+		$doc->loadXML($xmldocstring);
+	}
+		
 	createNodesXML($xml,$doc);
 	
 	echo '</pre>';

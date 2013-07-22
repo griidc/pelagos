@@ -54,7 +54,7 @@ if (isset($_POST))
 {
 	if (count($_POST)>1)
 	{
-		makeXML($_POST,$xmldoc);
+		makeXML($_POST);
 	}
 }
 
@@ -131,6 +131,7 @@ Click OK to download.
 			</frameset>
 			</div>
 			<form name="metadata" id="metadata" method="post">
+			<input type="hidden" id="__ldxmldoc" name="__ldxmldoc" value="<?php if(isset($mMD->xmldoc)){echo base64_encode($mMD->xmldoc->saveXML());};?>">
 			<fieldset>
 				<?php echo $myMImeta->getHTML(); ?>
 			</fieldset>
