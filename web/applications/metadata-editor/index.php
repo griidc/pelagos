@@ -63,7 +63,7 @@ if (isset($thefile))
 	if ($_FILES["file"]["type"] == "text/xml")
 	{
 		$xmldoc = loadXML($thefile);
-		$dMessage = 'Succesfully loaded file: ' .  $_FILES["file"]["name"];
+		$dMessage = 'Successfully  loaded file: ' .  $_FILES["file"]["name"];
 		drupal_set_message($dMessage,'status');
 	}
 	else
