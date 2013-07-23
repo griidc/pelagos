@@ -213,12 +213,16 @@ function createNodesXML($xml,$doc)
 				if ($subelements <> false)
 				{
 					$node = $subelements->item(0);
-					$parent = $node->parentNode;
-					$grandparent = $parent->parentNode;
-					$nodelevel = $parent->nodeName;
+					if ($node != null)
+					{
+						$parent = $node->parentNode;
+						$grandparent = $parent->parentNode;
+						$nodelevel = $parent->nodeName;
 					
-					$val = htmlspecialchars($val, ENT_QUOTES | 'ENT_XML1', 'UTF-8');
-					$node->nodeValue = $val;
+					
+						$val = htmlspecialchars($val, ENT_QUOTES | 'ENT_XML1', 'UTF-8');
+						$node->nodeValue = $val;
+					}
 					
 					//addNodeAttributes($doc,$parent,$node,$nodelevel,$val);
 					//addNodeAttributes($doc,$grandparent,$parent,$nodelevel,$val);
@@ -270,8 +274,15 @@ function createXmlNode($doc,$parent,$nodeName)
 function codeLookup($codeList,$codeListValue)
 {
 	#TODO
-	return '000'; 
 	
+	$mMD = new metaData();
+	
+	$myIni = $mMD->loadINI('codeSpace.ini');
+	
+	return $myIni[$codeList][$codeListValue];
+	
+	//return '000'; 
+		
 }
 
 function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
@@ -364,18 +375,22 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
 		case 'gmd:descriptiveKeywords':
 		{
 			
-			
+			$elements2 = null;
 			$beforeXpath = "/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:language";
-			$xpathdoc2 = new DOMXpath($doc);
-			$elements2 = $xpathdoc2->query($beforeXpath);
-			$beforeNode = $elements2->item(0);
-			if ($element2->length > 0)
+			if ($doc != null)
 			{
-				$parent->removeChild($node);
-				$parent = $beforeNode->parentNode;
-				
-				$node = $doc->createElement('gmd:descriptiveKeywords');
-				$node = $parent->insertBefore($node,$beforeNode);
+				$xpathdoc2 = new DOMXpath($doc);
+				$elements2 = $xpathdoc2->query($beforeXpath);
+				$beforeNode = $elements2->item(0);
+			
+				if ($element2->length > 0)
+				{
+					$parent->removeChild($node);
+					$parent = $beforeNode->parentNode;
+					
+					$node = $doc->createElement('gmd:descriptiveKeywords');
+					$node = $parent->insertBefore($node,$beforeNode);
+				}
 			}
 			break;
 		}

@@ -21,7 +21,7 @@ class MI_Metadata
 				
 		$now = substr(date('c'),0,10);
 		
-		$mypi = new CI_ResponsibleParty($mMD,$instanceType.'-gmd:contact','contactPI',false,'CI_RoleCode_pointOfContact','Metadata Contact','The name of the individual responsible for maintaining the metadata, typically the scientists or researcher who created the dataset.');
+		$mypi = new CI_ResponsibleParty($mMD,$instanceType.'-gmd:contact','contactPI',false,'pointOfContact','Metadata Contact','The name of the individual responsible for maintaining the metadata, typically the scientists or researcher who created the dataset.');
 		$mydi = new MD_DataIdentification($mMD,$instanceType.'-gmd:identificationInfo','DataIdent');
 		$mydisinfo = new MD_Distribution($mMD,$instanceType.'-gmd:distributionInfo','DistroInfo');
 		

@@ -18,7 +18,7 @@ class MD_DataIdentification
 		${'myci'.$instanceName} = new CI_Citation($mMD, $instanceType.'-gmd:citation', $instanceName);
 		$Citation = ${'myci'.$instanceName}->getHTML();
 		
-		$mydataic = new CI_ResponsibleParty($mMD,$instanceType.'-gmd:pointOfContact',$instanceName,false,'CI_RoleCode_pointOfContact','Dataset Contact','The name of the individual responsible for the creation of the dataset or majority of it in cases wherein a dataset is a compilation of data files.');
+		$mydataic = new CI_ResponsibleParty($mMD,$instanceType.'-gmd:pointOfContact',$instanceName,false,'pointOfContact','Dataset Contact','The name of the individual responsible for the creation of the dataset or majority of it in cases wherein a dataset is a compilation of data files.');
 		
 		$ResponsibleParty = $mydataic->getHTML();
 			
