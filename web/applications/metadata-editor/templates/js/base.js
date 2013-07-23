@@ -312,7 +312,57 @@ function uploadFile()
 		});    
 		
 		
+		//$( "#generate" ).tooltip({ content: "Awesome title!" });
+		
+		$.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
+            position: {
+                adjust: {
+                    method: "flip flip"
+                },
+                my: "bottom left",
+                at: "top right",
+                viewport: $(window)
+            },
+            show: {
+                event: "mouseenter focus",
+                solo: true
+            },
+            hide: {
+                event: "mouseleave blur",
+                delay: 100,
+                fixed: true
+            },
+            style: {
+                classes: "ui-tooltip-shadow ui-tooltip-tipped"
+            }
+        });
+		
+		$("#generate").qtip({
+            content: "This button will check that all required fields are completed then save the contents of the form to an ISO 19115-2 XML metadata file on your local computer.  This file is correctly formed XML adhering to the ISO 19115-2 Metadata standard but it is NOT validated at this stage."
+        });
+		
+		$("#upload").qtip({
+            content: "This button will load the form with information from a previously generated file stored on your local computer."
+        });
+		
+		$("#fromudi").qtip({
+            content: "This button will pre-populate the form with information about a dataset from the GRIIDC Registry."
+        });
+		
+		$("#forcesave").qtip({
+            content: "This button will save the contents of the form to an ISO 19115-2 XML metadata file on your local computer. The file will be correctly formed XML, but it is not checked for completion of all required elements."
+        });
+		
+		$("#startover").qtip({
+            content: "This button will reload a blank form."
+        });
+		
+		$("#helpscreen").qtip({
+            content: "Show help in a separate window."
+        });
+		
 		$( "#generate" )
+			
 			.button({
 					icons: {
 						primary: "ui-icon-check",

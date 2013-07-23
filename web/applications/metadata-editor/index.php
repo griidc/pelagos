@@ -9,6 +9,7 @@ drupal_add_library('system', 'ui.datepicker');
 drupal_add_library('system', 'ui.tabs');
 drupal_add_library('system', 'ui.widget');
 drupal_add_library('system', 'ui.dialog');
+drupal_add_library('system', 'ui.tooltip');
 
 drupal_add_css('includes/css/metadata.css',array('type'=>'external'));
 drupal_add_js('/includes/jquery-validation/jquery.validate.js',array('type'=>'external'));
