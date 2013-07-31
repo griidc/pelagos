@@ -300,11 +300,30 @@ function filterTasks($tasks, $person)
     $filteredTasks = array();
     foreach ($tasks as $task)
     {
+        if ($task['ID'] == 0)
+        {
+            $leadRoles = array(1,2,3,8,9,10);
+        }
+        else
+        {
+            $leadRoles = array(4,5,6);
+        }
+
         if (isset($person) and $person>0)
         {
             $peoples = $task->xpath('Researchers/Person');
             foreach ($peoples as $people) 
             {
+                $roles = $people->xpath('Roles/Role/Name');
+                $taskLead = false;
+                foreach ($roles as $role)
+                {
+                    if (in_array($role['ID'],$leadRoles))
+                    {
+                        $taskLead = true;
+                    }
+                }
+                if (!$taskLead) continue;
                 $personid = $people['ID'];
                 if ($personid == $person) 
                 {
