@@ -55,9 +55,6 @@ function makeTaskGrouping($tasks, $which) {
 		 echo" }\n\n";
 	}
 }
-		
-
-
 
 function callPeople($w, $task) {
     $bb=array();
@@ -80,14 +77,6 @@ function callPeople($w, $task) {
     foreach($result as $ribbit){ echo $ribbit; }
 }
 
-
-
-
-
-
-
-
-   	
 function sortByName($node1, $node2) {
     return strcmp($node1->LastName.$node1->FirstName, $node2->LastName.$node2->FirstName);
 }
@@ -150,31 +139,74 @@ function getTaskOptionList($tasks, $what = null) {
 function getTasks($ldap,$baseDN,$userDN,$firstName,$lastName) {
     global $isGroupAdmin;
     $switch = '?'.'maxResults=-1';
-    $tasks = array();
+
+    # if we're a DIF admin, just return all the tasks
     if (isAdmin())
     {
         $doc = simplexml_load_file(RPIS_TASK_BASEURL.$switch.'&cached=true');
-        $tasks = array_merge($tasks,$doc->xpath('Task'));
+        return $doc->xpath('Task');
     }
-    else
-    {
-        $groupDNs = getDNs($ldap,'ou=groups,'.$baseDN,"(&(member=$userDN)(cn=administrators))");
 
+    $groupDNs = getDNs($ldap,'ou=groups,'.$baseDN,"(&(member=$userDN)(cn=administrators))");
+
+    $tasks = array();
+
+    # is we're a group admin, for each group add all the tasks for that group
+    if (count($groupDNs) > 0)
+    {
         foreach ($groupDNs as $group)
         {
             if (!is_array($group)) continue;
             preg_match('/ou=([^,]+)/',$group['dn'],$matches);
             $filters = "&projectTitle=$matches[1]";
             $doc = simplexml_load_file(RPIS_TASK_BASEURL.$switch.$filters);
-            $tasks = array_merge($tasks,$doc->xpath('Task'));
             $GLOBALS['isGroupAdmin'] = true;
+            $tasks = array_merge($tasks,$doc->xpath('Task'));
+        }
+    }
+
+    # get all tasks based on reseacher name
+    $filters = "&lastName=$lastName&firstName=$firstName";
+    $doc = simplexml_load_file(RPIS_TASK_BASEURL.$switch.$filters);
+    $my_tasks = $doc->xpath('Task');
+
+    foreach ($my_tasks as $task)
+    {
+        # for projects with no tasks just add the ficticious project task
+        if ($task['ID'] == 0)
+        {
+            $tasks[] = $task;
+            continue;
         }
 
-        if (count($groupDNs) == 0)
+        $currentPerson = null;
+        $people = $task->xpath('Researchers/Person');
+        foreach ($people as $person)
         {
-            $filters = "&lastName=$lastName&firstName=$firstName";
-            $doc = simplexml_load_file(RPIS_TASK_BASEURL.$switch.$filters);
-            $tasks = array_merge($tasks,$doc->xpath('Task'));
+            $personArray = (array)$person;
+
+            if ($personArray['LastName'] == $lastName and $personArray['FirstName'] == $firstName)
+            {
+                $currentPerson = $person;
+                break;
+            }
+        }
+
+        # for projects with tasks only include tasks for which we have a task role
+        if ($currentPerson)
+        {
+            $roles = $currentPerson->xpath('Roles/Role/Name');
+            $taskLead = false;
+            foreach ($roles as $role)
+            {
+                if (in_array($role['ID'],array(4,5,6)))
+                {
+                    $taskLead = true;
+                }
+            }
+            if ($taskLead) {
+                $tasks[] = $task;
+            }
         }
     }
 
