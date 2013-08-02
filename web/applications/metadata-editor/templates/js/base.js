@@ -196,6 +196,37 @@ function uploadFile()
 			uploadFile();
 		});
 		
+		$.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
+            position: {
+                adjust: {
+                    method: "flip flip",
+					mouse: false
+                },
+				viewport: $(window)
+            },
+            show: {
+                event: "mouseenter focus",
+                solo: true
+            },
+            hide: {
+                event: "mouseleave blur",
+                delay: 100,
+                fixed: true
+            },
+            style: {
+                classes: "ui-tooltip-shadow ui-tooltip-tipped",
+				tip: {
+					corner: true,
+					offset: 10
+				},
+				'font-size': 12
+            }
+        });
+		
+		$("select option").hover(function(){
+			$(this).toggleClass('option_hover');
+		});
+		
 		$( "#dtabs" ).tabs({
             heightStyleType: "fill",
 			activate: function(event, ui) {
@@ -314,51 +345,73 @@ function uploadFile()
 		
 		//$( "#generate" ).tooltip({ content: "Awesome title!" });
 		
-		$.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
-            position: {
-                adjust: {
-                    method: "flip flip"
-                },
-                my: "bottom left",
-                at: "top right",
-                viewport: $(window)
-            },
-            show: {
-                event: "mouseenter focus",
-                solo: true
-            },
-            hide: {
-                event: "mouseleave blur",
-                delay: 100,
-                fixed: true
-            },
-            style: {
-                classes: "ui-tooltip-shadow ui-tooltip-tipped"
-            }
-        });
+	
 		
 		$("#generate").qtip({
-            content: "This button will check that all required fields are completed then save the contents of the form to an ISO 19115-2 XML metadata file on your local computer.  This file is correctly formed XML adhering to the ISO 19115-2 Metadata standard but it is NOT validated at this stage."
+            content: {
+				text: "This button will check that all required fields are completed then save the contents of the form to an ISO 19115-2 XML metadata file on your local computer.  This file is correctly formed XML adhering to the ISO 19115-2 Metadata standard but it is NOT validated at this stage."
+			},
+			position: {
+				my: "bottom left",
+                at: "top right",
+				viewport: $(window)
+			}
+			
         });
 		
 		$("#upload").qtip({
-            content: "This button will load the form with information from a previously generated file stored on your local computer."
+            content: {
+				text: "This button will load the form with information from a previously generated file stored on your local computer."
+			},
+			position: {
+				my: "bottom left",
+                at: "top right",
+				viewport: $(window)
+			}
         });
 		
 		$("#fromudi").qtip({
-            content: "This button will pre-populate the form with information about a dataset from the GRIIDC Registry."
+            content: {
+				text: "This button will pre-populate the form with information about a dataset from the GRIIDC Registry."
+			},
+			position: {
+				my: "bottom left",
+				at: "top right",
+				viewport: $(window)
+			}
         });
 		
 		$("#forcesave").qtip({
-            content: "This button will save the contents of the form to an ISO 19115-2 XML metadata file on your local computer. The file will be correctly formed XML, but it is not checked for completion of all required elements."
+            content: {
+				text: "This button will save the contents of the form to an ISO 19115-2 XML metadata file on your local computer. The file will be correctly formed XML, but it is not checked for completion of all required elements."
+			},
+			position: {
+				my: "bottom left",
+				at: "top right",
+				viewport: $(window)
+			}
         });
 		
 		$("#startover").qtip({
-            content: "This button will reload a blank form."
+            content: {
+				text: "This button will reload a blank form."
+		},
+		position: {
+			my: "bottom left",
+			at: "top right",
+			viewport: $(window)
+			}
         });
 		
 		$("#helpscreen").qtip({
-            content: "Show help in a separate window."
+            content: {
+				text: "Show help in a separate window."
+			},
+			position: {
+				my: "bottom left",
+				at: "top right",
+				viewport: $(window)
+			}
         });
 		
 		$( "#generate" )

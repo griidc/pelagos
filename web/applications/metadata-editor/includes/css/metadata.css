@@ -71,6 +71,8 @@
 		color:red;
 	}
 	
+	.option_hover { background-color: #c8c8c8; }
+	
 	#loadfrm 
 	{
 		position:fixed;

@@ -3,31 +3,39 @@
 class MD_TopicCategoryCode
 {
 	private $htmlString;
-	
-	private $topicKeywords = 
-		array(	"biota" => "Biota",
-				"boundaries" => "Boundaries",
-				"economy" => "Economy",
-				"elevation" => "Elevation",
-				"environment" => "Environment",
-				"farming" => "Farming",
-				"geoscientificInformation" => "Geoscientific Information",
-				"health" => "Health",
-				"imageryBaseMapsEarthCover" => "Imagery/Base Maps/Earth Cover",
-				"inlandWaters" => "Inland Waters",
-				"location" => "Location",
-				"intelligenceMilitary" => "Military Intelligence",
-				"oceans" => "Oceans",
-				"planningCadastre" => "Planning/Cadastre",
-				"society" => "Society",
-				"structure" => "Structure",
-				"transportation" => "Transportation",
-				"utilitiesCommunication" => "Utilities/Communication"
-				);
-	
+
 	public function __construct($mMD, $instanceType, $instanceName, $Legend='Keywords')
 	{
 		//$instanceType .= '-gmd:MD_TopicCategoryCode';
+		
+		$myIni = $mMD->loadINI('MD_TopicCategoryCode.ini');
+		
+		uasort($myIni, array(&$this, "cmp"));
+		
+		$topicKeywords = array();
+		
+		foreach ($myIni as $key => $value)
+		{
+			$topicKeywords[$key] = $value["title"];
+		}
+		
+		$topicTooltips = array();
+		
+		foreach ($myIni as $key => $value)
+		{
+			$topicTooltips[$key] = $value["tooltip"];
+		}
+		
+		$topicOrder = array();
+		
+		foreach ($myIni as $key => $value)
+		{
+			$topicOrder[$key] = $value["order"];
+		}
+		
+		//echo '<pre>';
+		//var_dump($myIni);
+		//echo '</pre>';
 		
 		$xmlArray = $mMD->returnPath($instanceType);
 		
@@ -42,16 +50,18 @@ class MD_TopicCategoryCode
 							
 			foreach ($xmlArray as $topicKeyword)
 			{
-				$selectedTopicKeyword[$topicKeyword] = $this->topicKeywords[$topicKeyword];
-				unset($this->topicKeywords[$topicKeyword]);
+				$selectedTopicKeyword[$topicKeyword] = $topicKeywords[$topicKeyword];
+				unset($topicKeywords[$topicKeyword]);
 			}
 		}
+		
+		$mMD->jqUIs .= $mMD->twig->render('js/MD_TopicCategoryCode_UI.js', array('instanceName' => $instanceName, 'topicTooltips' => $topicTooltips));
 			
-		$twigArr = array('instanceName' => $instanceName, 'instanceType' => $instanceType, 'sTopiclist' => $sTopiclist,'selectedTopicKeyword' => $selectedTopicKeyword,  'topicKeywords' => $this->topicKeywords, 'Legend' => $Legend);
+		$twigArr = array('instanceName' => $instanceName, 'instanceType' => $instanceType, 'sTopiclist' => $sTopiclist,'selectedTopicKeyword' => $selectedTopicKeyword,  'topicKeywords' => $topicKeywords, 'Legend' => $Legend);
 		
 		$this->htmlString = $mMD->twig->render('html/MD_TopicCategoryCode.html', $twigArr);
 		
-		$mMD->jsString .= $mMD->twig->render('js/MD_TopicCategoryCode.js', array('instanceName' => $instanceName));
+		$mMD->jsString .= $mMD->twig->render('js/MD_TopicCategoryCode.js', array('instanceName' => $instanceName, 'topicOrder' => $topicOrder));
 		
 		return true;
 	}
@@ -59,5 +69,13 @@ class MD_TopicCategoryCode
 	public function getHTML()
 	{
 		return $this->htmlString;
+	}
+	
+	static function cmp($a, $b)
+	{
+		if ($a['order'] == $b['order']) {
+			return 0;
+		}
+		return ($a['order'] < $b['order']) ? -1 : 1;
 	}
 }

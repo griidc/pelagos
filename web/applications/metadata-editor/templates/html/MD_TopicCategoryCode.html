@@ -5,7 +5,7 @@
 <label>Topic Category Keyword List</label>
 	<select ondblclick="addTopicKWItem{{instanceName}}();" size="10" id="TOPKlist_{{instanceName}}" >
 		{% for key, keyword in topicKeywords %}
-			<option value="{{key}}">{{keyword}}</option>
+			<option id="topicKW{{instanceName}}{{key}}" value="{{key}}">{{keyword}}</option>
 		{% endfor %}
 	</select>
 	</td>
@@ -17,7 +17,7 @@
 	<label><em>*</em>Selected Topic Category Keywords</label>
 	<select ondblclick="removeTopicKWItem{{instanceName}}();" class="required" size="10" name="__TOPKselect{{instanceName}}" id="TOPKselect_{{instanceName}}" >
 		{% for key, keyword in selectedTopicKeyword %}
-		<option selected value="{{key}}">{{keyword}}</option>
+		<option id="topicKW{{instanceName}}{{key}}" selected value="{{key}}">{{keyword}}</option>
 		{% endfor %}
 	</select>
 	</td>
