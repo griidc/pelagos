@@ -25,8 +25,8 @@ password = "********"
 
 -1_metadata = "This dataset has been identified but has yet to be registered."
  0_metadata = "No metadata is available."
- 1_metadata = "Metadata is available and ISO compliant."
- 2_metadata = "Metadata is available but has not been validated for ISO compliance."
+ 1_metadata = "Metadata is available, ISO compliant, and has been reviewed and accepted."
+ 2_metadata = "Metadata is available, but has not been validated for ISO compliance or reviewed and accepted."
 
 -1_availability = "This dataset has been identified but has yet to be registered."
  0_availability = "This dataset has been registered but the data is not yet available."
