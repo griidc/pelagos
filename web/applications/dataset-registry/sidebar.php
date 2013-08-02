@@ -53,16 +53,35 @@ $email = "";
     $buildarray=array();
     foreach ($tasks as $task) 
     {
+        if ($task['ID'] == 0)
+        {
+            $leadRoles = array(1,2,3,8,9,10);
+        }
+        else
+        {
+            $leadRoles = array(4,5,6);
+        }
+
         $peops = $task->xpath('Researchers/Person');
         
         foreach ($peops as $peoples) 
         {
+            $roles = $peoples->xpath('Roles/Role/Name');
+            $taskLead = false;
+            foreach ($roles as $role)
+            {
+                if (in_array($role['ID'],$leadRoles))
+                {
+                    $taskLead = true;
+                }
+            }
+            if (!$taskLead) continue;
             $personID = $peoples['ID'];
             $email = $peoples->Email;
             $personName = "$peoples->LastName, $peoples->FirstName ";
-              if ($peoples->Email !=""){$personName .= "< ";}
+              if ($peoples->Email !=""){$personName .= "&lt;";}
                $personName .= "$email";
-              if ($peoples->Email !=""){$personName .= " >";}
+              if ($peoples->Email !=""){$personName .= "&gt;";}
             array_push($buildarray, "$personName|$personID");
         }
     }
