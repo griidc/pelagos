@@ -2,6 +2,7 @@
     <tr>
         <th class="udi">UDI</th>
         <th>Title</th>
+        <th class="status">Identified</th>
         <th class="status">Registered</th>
         <th class="status">Metadata</th>
         <th class="status">Availability</th>
@@ -11,6 +12,9 @@
     <tr>
         <td class="udi"><a href="javascript:showDatasetDetails('{{dataset.udi}}');">{{dataset.udi}}</a></td>
         <td><a href="javascript:showDatasetDetails('{{dataset.udi}}');">{{dataset.title}}</a></td>
+        <td class="status">
+            <img src="{{baseUrl}}/includes/images/{{1 | statusToImg}}">
+        </td>
         <td class="status">
             <img src="{{baseUrl}}/includes/images/{{dataset.registered | statusToImg}}"
                  title="{{(dataset.registered ~ '_registered') | statusToTitle}}">
