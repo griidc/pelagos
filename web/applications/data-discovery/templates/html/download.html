@@ -15,15 +15,16 @@
                 bytes = msg.length;
                 speed = (bytes / diff);
                 time = {{filesize}} / speed;
-                unit = "seconds";
+                unit = "second";
                 if (time > 60) {
                     time = time / 60;
-                    unit = "minutes";
+                    unit = "minute";
                 }
                 if (time > 60) {
                     time = time / 60;
-                    unit = "hours";
+                    unit = "hour";
                 }
+                if (Math.round(time) > 1) unit += "s";
                 $('#dl_time').html(Math.round(time) + " " + unit);
             }
         });
