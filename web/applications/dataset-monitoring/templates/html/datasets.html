@@ -13,7 +13,8 @@
         <td class="udi"><a href="javascript:showDatasetDetails('{{dataset.udi}}');">{{dataset.udi}}</a></td>
         <td><a href="javascript:showDatasetDetails('{{dataset.udi}}');">{{dataset.title}}</a></td>
         <td class="status">
-            <img src="{{baseUrl}}/includes/images/{{1 | statusToImg}}">
+            <img src="{{baseUrl}}/includes/images/{{dataset.identified | statusToImg}}"
+                 title="{{(dataset.identified ~ '_identified') | statusToTitle}}">
         </td>
         <td class="status">
             <img src="{{baseUrl}}/includes/images/{{dataset.registered | statusToImg}}"
