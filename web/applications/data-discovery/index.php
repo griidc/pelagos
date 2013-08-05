@@ -301,6 +301,17 @@ $app->get('/download/:udi', function ($udi) use ($app) {
         $datasets = get_identified_datasets(getDBH('GOMRI'),array("udi=$udi"));
     }
     $dataset = $datasets[0];
+
+    if ($dataset['access_status'] == "Restricted") {
+        drupal_set_message("this dataset is restricted for author use only",'error');
+        return;
+    }
+
+    if ($dataset['access_status'] == "Approval") {
+        drupal_set_message("this dataset can only be downloaded with author approval",'error');
+        return;
+    }
+
     $dat_file = "/sftp/data/$dataset[udi]/$dataset[udi].dat";
     if (file_exists($dat_file)) {
         $env = $app->environment();
