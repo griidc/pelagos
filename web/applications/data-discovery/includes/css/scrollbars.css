@@ -1,3 +1,7 @@
+body {
+    overflow-x: hidden;
+}
+
 body.noselect {
     -webkit-touch-callout: none;
     -webkit-user-select: none;
