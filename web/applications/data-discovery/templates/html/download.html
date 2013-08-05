@@ -36,7 +36,7 @@
 
 </script>
 
-<h3>Your file is ready for download.</h3>
+<h3>The dataset you selected is ready for download.</h3>
 
 <p><strong>Dataset UDI:</strong> {{dataset.udi}}</p>
 
@@ -52,6 +52,6 @@
 
 <p><strong>Approximate Download Time:</strong> <span id="dl_time">calculating...</span></p>
 
-<button onclick="location.href='http://{{server}}/download/{{uid}}/{{dataset.dataset_filename}}'">Download Now</button>
+<button onclick="location.href='http://{{server}}/download/{{uid}}/{{dataset.dataset_filename}}'" style="font-weight:bold;margin:10px;">Download Now</button>
 
-<p><a href="{{baseUrl}}{% if filt %}?filter={{filt}}{% endif %}">Return to Data Discovery</a></p>
+<p style="margin-top:10px;"><a href="{{baseUrl}}{% if filt %}?filter={{filt}}{% endif %}">Return to Data Discovery</a></p>
