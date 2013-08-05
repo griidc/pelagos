@@ -116,6 +116,8 @@ $app->get('/datasets/:filter/:by/:id', function ($filter,$by,$id) use ($app) {
         $stash['identified_datasets'][] = $dataset;
     }
 
+    $stash['filt'] = $filter;
+
     $app->render('html/datasets.html',$stash);
     exit;
 })->conditions(array('filter' => '.*', 'by' => '.*', 'id' => '.*'));
@@ -283,6 +285,61 @@ $app->get('/metadata/:udi', function ($udi) use ($app) {
     }
     else {
         drupal_set_message("Error retrieving metadata file: file not found: $met_file",'error');
+    }
+});
+
+$app->get('/download/:udi', function ($udi) use ($app) {
+    global $user;
+    if (!user_is_logged_in()) {
+        $env = $app->environment();
+        $page = preg_replace('/^\//','',$env['SCRIPT_NAME']);
+        header("Location: /cas?destination=$page/download/$udi%3Ffilter%3D" . $app->request()->get('filter'));
+        exit;
+    }
+    if (preg_match('/^00/',$udi)) {
+        $datasets = get_registered_datasets(getDBH('GOMRI'),array("registry_id=$udi%"));
+    }
+    else {
+        $datasets = get_identified_datasets(getDBH('GOMRI'),array("udi=$udi"));
+    }
+    $dataset = $datasets[0];
+    $dat_file = "/sftp/data/$dataset[udi]/$dataset[udi].dat";
+    if (file_exists($dat_file)) {
+        $env = $app->environment();
+        $uid = uniqid($user->name . '_');
+        mkdir("/sftp/download/$uid/");
+        symlink($dat_file,"/sftp/download/$uid/$dataset[dataset_filename]");
+        $stash = array();
+        $stash['server'] = $env['SERVER_NAME'];
+        $stash['uid'] = $uid;
+        $stash['dataset'] = $dataset;
+        $filesize = filesize($dat_file);
+        $stash['filesize'] = $filesize;
+        if ($filesize >= pow(1024,4)) {
+            $stash['size'] = round($filesize / pow(1024,4),1);
+            $stash['size_unit'] = 'TB';
+        }
+        elseif ($filesize >= pow(1024,3)) {
+            $stash['size'] = round($filesize / pow(1024,3),1);
+            $stash['size_unit'] = 'GB';
+        }
+        elseif ($filesize >= pow(1024,2)) {
+            $stash['size'] = round($filesize / pow(1024,2),1);
+            $stash['size_unit'] = 'MB';
+        }
+        elseif ($filesize >= 1024) {
+            $stash['size'] = round($filesize / 1024,1);
+            $stash['size_unit'] = 'KB';
+        }
+        else {
+            $stash['size'] = $filesize;
+            $stash['size_unit'] = 'B';
+        }
+        $stash['filt'] = $app->request()->get('filter');
+        return $app->render('html/download.html',$stash);
+    }
+    else {
+        drupal_set_message("Error retrieving data file: file not found: $dat_file",'error');
     }
 });
 
