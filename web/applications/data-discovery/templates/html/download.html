@@ -1,0 +1,56 @@
+<script type="text/javascript">
+    var $ = jQuery.noConflict();
+
+    var start = 0;
+    var end = 0;
+
+    function TestDownload() {
+        start = new Date().getTime();
+        $.ajax({
+            type: "GET",
+            url: "/download/testfile.bin?id=" + start,
+            success: function(msg) {
+                end = new Date().getTime();
+                diff = (end - start) / 1000;
+                bytes = msg.length;
+                speed = (bytes / diff);
+                time = {{filesize}} / speed;
+                unit = "seconds";
+                if (time > 60) {
+                    time = time / 60;
+                    unit = "minutes";
+                }
+                if (time > 60) {
+                    time = time / 60;
+                    unit = "hours";
+                }
+                $('#dl_time').html(Math.round(time) + " " + unit);
+            }
+        });
+    }
+
+    $(document).ready(function() {
+        TestDownload();
+    });
+
+</script>
+
+<h3>Your file is ready for download.</h3>
+
+<p><strong>Dataset UDI:</strong> {{dataset.udi}}</p>
+
+<p><strong>Dataset Title:</strong> {{dataset.title}}</p>
+
+{% if dataset.metadata_filename %}
+<p><strong>Dataset Metadata:</strong> <a href="/metadata/{{dataset.udi}}">{{dataset.metadata_filename}}</a></p>
+{% endif %}
+
+<p><strong>Dataset Filename:</strong> {{dataset.dataset_filename}}</p>
+
+<p><strong>Dataset Size:</strong> {{size}} {{size_unit}}</p>
+
+<p><strong>Approximate Download Time:</strong> <span id="dl_time">calculating...</span></p>
+
+<button onclick="location.href='http://{{server}}/download/{{uid}}/{{dataset.dataset_filename}}'">Download Now</button>
+
+<p><a href="{{baseUrl}}{% if filt %}?filter={{filt}}{% endif %}">Return to Data Discovery</a></p>
