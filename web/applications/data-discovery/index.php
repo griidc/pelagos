@@ -26,7 +26,7 @@ $app->hook('slim.before', function () use ($app) {
     global $user;
     $env = $app->environment();
     $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
-    $app->view()->appendData(array('baseUrl' => "$protocol$env[SERVER_NAME]$env[SCRIPT_NAME]"));
+    $app->view()->appendData(array('baseUrl' => "$protocol$env[SERVER_NAME]/$GLOBALS[PAGE_NAME]"));
     $app->view()->appendData(array('currentPage' => urlencode(preg_replace('/^\//','',$_SERVER['REQUEST_URI']))));
     if (!empty($user->name)) {
         $app->view()->appendData(array('uid' => $user->name));
@@ -53,12 +53,12 @@ $app->get('/', function () use ($app) {
     drupal_add_js('/includes/mutate/mutate.events.js',array('type'=>'external'));
     drupal_add_js('/includes/mutate/mutate.min.js',array('type'=>'external'));
     drupal_add_js('/tree/js/tree.js',array('type'=>'external'));
-    drupal_add_js("$env[SCRIPT_NAME]/js/search.js",array('type'=>'external'));
-    drupal_add_js("$env[SCRIPT_NAME]/js/package.js",array('type'=>'external'));
-    drupal_add_css("$env[SCRIPT_NAME]/css/search.css",array('type'=>'external'));
-    drupal_add_css("$env[SCRIPT_NAME]/includes/css/scrollbars.css",array('type'=>'external'));
-    drupal_add_css("$env[SCRIPT_NAME]/includes/css/datasets.css",array('type'=>'external'));
-    drupal_add_css("$env[SCRIPT_NAME]/includes/css/dataset_details.css",array('type'=>'external'));
+    drupal_add_js("/$GLOBALS[PAGE_NAME]/js/search.js",array('type'=>'external'));
+    drupal_add_js("/$GLOBALS[PAGE_NAME]/js/package.js",array('type'=>'external'));
+    drupal_add_css("/$GLOBALS[PAGE_NAME]/css/search.css",array('type'=>'external'));
+    drupal_add_css("/$GLOBALS[PAGE_NAME]/includes/css/scrollbars.css",array('type'=>'external'));
+    drupal_add_css("/$GLOBALS[PAGE_NAME]/includes/css/datasets.css",array('type'=>'external'));
+    drupal_add_css("/$GLOBALS[PAGE_NAME]/includes/css/dataset_details.css",array('type'=>'external'));
     if (array_key_exists('treePaneCollapsed',$GLOBALS['config']['DataDiscovery'])) {
         $stash['treePaneCollapsed'] = $GLOBALS['config']['DataDiscovery']['treePaneCollapsed'];
     }
@@ -147,9 +147,9 @@ $app->get('/package.*', function () use ($app) {
 $app->get('/package', function () use ($app) {
     $stash = array();
     $env = $app->environment();
-    drupal_add_js("$env[SCRIPT_NAME]/js/package.js",array('type'=>'external'));
-    drupal_add_css("$env[SCRIPT_NAME]/includes/css/datasets.css",array('type'=>'external'));
-    drupal_add_css("$env[SCRIPT_NAME]/includes/css/dataset_details.css",array('type'=>'external'));
+    drupal_add_js("/$GLOBALS[PAGE_NAME]/js/package.js",array('type'=>'external'));
+    drupal_add_css("/$GLOBALS[PAGE_NAME]/includes/css/datasets.css",array('type'=>'external'));
+    drupal_add_css("/$GLOBALS[PAGE_NAME]/includes/css/dataset_details.css",array('type'=>'external'));
     $stash['defaultFilter'] = $app->request()->get('filter');
     $app->render('html/package.html',$stash);
 });
@@ -291,9 +291,7 @@ $app->get('/metadata/:udi', function ($udi) use ($app) {
 $app->get('/download/:udi', function ($udi) use ($app) {
     global $user;
     if (!user_is_logged_in()) {
-        $env = $app->environment();
-        $page = preg_replace('/^\//','',$env['SCRIPT_NAME']);
-        header("Location: /cas?destination=$page/download/$udi%3Ffilter%3D" . $app->request()->get('filter'));
+        header("Location: /cas?destination=$GLOBALS[PAGE_NAME]/download/$udi%3Ffilter%3D" . $app->request()->get('filter'));
         exit;
     }
     if (preg_match('/^00/',$udi)) {
