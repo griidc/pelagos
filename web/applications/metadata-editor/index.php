@@ -44,11 +44,22 @@ if (isset($_FILES["file"]))
 	}
 }
 
-if (isset($_GET["dataUrl"]))
+if (isset($_GET["dataUrl"]) and !isset($_FILES["file"]))
 {
 	$xmlURL = $_GET["dataUrl"];
 	$xmldoc = loadXML($xmlURL);
 	//$xmldoc->loadXML($xmlString);
+
+	if ($xmldoc != null)
+	{
+		$dMessage = 'Successfully  loaded XML from URL: ' .  $xmlURL;
+		drupal_set_message($dMessage,'status');
+	}
+	else
+	{
+		$dMessage = 'Error while loading data from: ' .  $xmlURL;
+		drupal_set_message($dMessage,'error');
+	}
 }
 
 if (isset($_POST))
@@ -65,7 +76,7 @@ if (isset($thefile))
 	{
 		$xmldoc = loadXML($thefile);
 		$dMessage = 'Successfully  loaded file: ' .  $_FILES["file"]["name"];
-		drupal_set_message($dMessage,'status');
+		drupal_set_message($dMessage,'status',false);
 	}
 	else
 	{

@@ -77,17 +77,9 @@ function loadXML($url)
 
 	if(!@$doc->load($url))
 	{
-		$loadok = false;
 		$doc = null;
-		$dMessage = 'Error while loading loading: ' .  $url;
-		drupal_set_message($dMessage,'error',false);
 	}
-	else
-	{
-		$dMessage = 'Successfully  loaded XML from URL: ' .  $url;
-		drupal_set_message($dMessage,'status',false);
-	}
-	
+
 	return $doc;
 }
 
