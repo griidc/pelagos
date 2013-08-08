@@ -8,7 +8,7 @@
 <tr>
 <td><label for="CRIP1_{{instanceName}}"><em>*</em>Name</label>
 <input value="{{xmlArray["gmd:individualName"]["gco:CharacterString"]}}" class="required" type="text" id="CRIP1_{{instanceName}}" size="80" name="{{instanceType}}-gmd:individualName-gco:CharacterString"/></td>
-<td><pre>{{poc}}</pre></td>
+<td><pre>The name of the individual responsible for maintaining the metadata, typically the scientists or researcher who created the dataset.</pre></td>
 </tr>
 {% elseif role == "principalInvestigator" %}
 	<tr>
@@ -18,11 +18,19 @@
 	</tr>
 {% endif %}
 
+{% if role != "distributor" %}
 <tr>		
 <td><label for="CRIP2_{{instanceName}}"><em>*</em>Organization</label>
 <input value="{{xmlArray["gmd:organisationName"]["gco:CharacterString"]}}"class="required" type="text" id="CRIP2_{{instanceName}}" size="80" name="{{instanceType}}-gmd:organisationName-gco:CharacterString"/></td>
 	<td><pre>Responsible individual's organization, generally this is the University and Department where this person resides. This information can be found at research.gomri.org</pre></td>
 </tr>
+{% else %}
+<tr>		
+	<td><label for="CRIP2_{{instanceName}}"><em>*</em>Organization</label>
+	<input value="{{xmlArray["gmd:organisationName"]["gco:CharacterString"]}}"class="required" type="text" id="CRIP2_{{instanceName}}" size="80" name="{{instanceType}}-gmd:organisationName-gco:CharacterString"/></td>
+	<td><pre>Name of organisation responsible for distribution.  If your data is hosted with GRIIDC, this should be 'Gulf of Mexico Research Initative'.</pre></td>
+</tr>
+{% endif %}
 	
 {% if role != "distributor" %}
 <tr>	
