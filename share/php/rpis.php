@@ -176,6 +176,54 @@ function getPeopleDetails($dbh, $filters = array(), $order_by = 'LastName, First
     return $stmt->fetchAll();
 }
 
+function getPeopleList($dbh, $filters = array(), $order_by = 'LastName, FirstName') {
+    $SELECT = 'SELECT DISTINCT
+               p.People_ID AS ID,
+               p.People_Title AS Title,
+               p.People_LastName AS LastName,
+               p.People_FirstName AS FirstName,
+               inst.Institution_ID AS Institution_ID,
+               inst.Institution_Name AS Institution_Name';
+
+    $FROM = 'FROM People p
+             LEFT OUTER JOIN ProjPeople pp ON pp.People_ID = p.People_ID
+             LEFT OUTER JOIN Institutions inst ON inst.Institution_ID = p.People_Institution
+             LEFT OUTER JOIN Roles r ON r.Role_ID = pp.Role_ID
+             LEFT OUTER JOIN Departments d ON d.Department_ID = p.People_Department';
+
+    $WHERE = 'WHERE 1';
+
+    foreach ($filters as $filter) {
+        if (preg_match(FILTER_REG,$filter,$matches)) {
+            switch (strtolower($matches[1])) {
+                case 'peopleid':
+                    $WHERE .= " AND p.People_ID $matches[2] $matches[3]";
+                    break;
+                case 'lastname':
+                    $WHERE .= " AND p.People_LastName " . $GLOBALS['MYSQL_LIKE_MAP'][$matches[2]] . " \"$matches[3]\"";
+                    break;
+                case 'firstname':
+                    $WHERE .= " AND p.People_FirstName " . $GLOBALS['MYSQL_LIKE_MAP'][$matches[2]] . " \"$matches[3]\"";
+                    break;
+                case 'projectid':
+                    $WHERE .= " AND pp.Program_ID $matches[2] $matches[3]";
+                    break;
+                case 'taskid':
+                    $WHERE .= " AND pp.Project_ID $matches[2] $matches[3]";
+                    break;
+                case 'roleid':
+                    $WHERE .= " AND pp.Role_ID $matches[2] $matches[3]";
+                    break;
+            }
+        }
+    }
+
+    $stmt = $dbh->prepare("$SELECT $FROM $WHERE ORDER BY $order_by;");
+    $stmt->execute();
+
+    return $stmt->fetchAll();
+}
+
 function getPeopleLI($dbh, $filters = array()) {
     $SELECT = 'SELECT DISTINCT UCASE(SUBSTR(p.People_LastName,1,1)) AS Letter';
 
