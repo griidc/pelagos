@@ -212,7 +212,7 @@ $app->get('/json/ra/otherSources.json', function () use ($app) {
 
 $app->get('/json/re/:letter.json', function ($letter) use ($app) {
     $stash['tree'] = array_merge($GLOBALS['config']['tree'],json_decode($app->request()->get('tree'),true));
-    $people = getPeopleDetails(getDBH('RPIS'),array("lastName=$letter%"));
+    $people = getPeopleList(getDBH('RPIS'),array("lastName=$letter%"));
 
     if (isset($stash['tree']['filter'])) {
         $dataset_filters = getDatasetFilters($stash['tree']);
