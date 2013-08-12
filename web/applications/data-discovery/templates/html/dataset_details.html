@@ -12,6 +12,32 @@
 {% endif %}
     </div>
 {% endif %}
+
+{% if dataset.access_status != "None" %}
+    <div class="attr">
+        <span class="attr">Restrictions:</span>
+        {% if dataset.access_status == "Restricted" %}
+            This dataset is restricted for author use only.
+        {% elseif dataset.access_status == "Approval" %}
+            This dataset can only be downloaded with author approval. Please contact the dataset Point of Contact to access this dataset.
+        {% else %}
+            unknown
+        {% endif %}
+    </div>
+{% endif %}
+
+{% if not dataset.registry_id %}
+    {% if dataset.start_date %}
+        <div class="attr">
+            <span class="attr">Start Date:</span> {{dataset.start_date}}
+        </div>
+    {% endif %}
+    {% if dataset.end_date %}
+        <div class="attr">
+            <span class="attr">End Date:</span> {{dataset.end_date}}
+        </div>
+    {% endif %}
+{% endif %}
     <div class="abstract">
         <div><span class="attr">Abstract:</span></div>
         <div>{{dataset.abstract}}</div>
