@@ -66,7 +66,7 @@ function createNodesXML($xml,$doc)
 	
 	$now = date('c');
 	
-	$xmlComment = "Created with GRIIDC Metadata Editor 13.07 on $now";
+	$xmlComment = "Created with GRIIDC Metadata Editor 13.08 on $now";
 	$commentNode = $doc->createComment($xmlComment);
 	$commentNode = $doc->appendChild($commentNode);
 	
