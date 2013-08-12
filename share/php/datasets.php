@@ -347,6 +347,16 @@ function build_where($filters,$registered = false) {
                     }
                     $WHERE .= ")";
                     break;
+                case 'restricted':
+                    if ($registered) {
+                        if (preg_match('/^1|t(?:rue)?|y(?:es)?$/',$matches[3])) {
+                            $WHERE .= " AND (access_status = 'Restricted' OR access_status = 'Approval')";
+                        }
+                        elseif (preg_match('/^0|f(?:alse)?|no?$/',$matches[3])) {
+                            $WHERE .= " AND access_status = 'None'";
+                        }
+                    }
+                    break;
             }
         }
     }
