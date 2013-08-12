@@ -8,8 +8,12 @@ require_once '/usr/local/share/GRIIDC/php/dumpIncludesFile.php';
 require_once '/usr/local/share/GRIIDC/php/rpis.php';
 require_once '/usr/local/share/GRIIDC/php/datasets.php';
 
+require_once '/usr/local/share/GRIIDC/php/utils.php';
+
 require_once 'lib/search.php';
 require_once 'lib/package.php';
+
+drupal_add_library('system', 'ui.tabs');
 
 $GLOBALS['config'] = parse_ini_file('config.ini',true);
 
@@ -74,15 +78,14 @@ $app->get('/datasets/:filter/:by/:id', function ($filter,$by,$id) use ($app) {
     $stash['registered_datasets'] = array();
     $stash['identified_datasets'] = array();
 
-    if (empty($by)) {
-        $registered_datasets = get_registered_datasets(getDBH('GOMRI'),array('dataset_download_status=done'),$filter,$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
-    }
-    else {
+    $reg_filters = array('dataset_download_status=done');
+
+    if (!empty($by)) {
         if ($by == 'otherSources') {
-            $registered_datasets = get_registered_datasets(getDBH('GOMRI'),array('registry_id=00%','dataset_download_status=done'),$filter,$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
+            $reg_filters[] = 'registry_id=00%';
         }
         elseif ($by == 'otherSource') {
-            $registered_datasets = get_registered_datasets(getDBH('GOMRI'),array("registry_id=00.x$id%",'dataset_download_status=done'),$filter,$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
+            $reg_filters[] = "registry_id=00.x$id%";
         }
         else {
             if ($by != 'projectId') {
@@ -100,14 +103,25 @@ $app->get('/datasets/:filter/:by/:id', function ($filter,$by,$id) use ($app) {
                 $by = 'projectIds';
                 $id = implode(',', $projectIds);
             }
-            $registered_datasets = get_registered_datasets(getDBH('GOMRI'),array("$by=$id",'registry_id!=00%','dataset_download_status=done'),$filter,$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
+            $reg_filters[] = "$by=$id";
+            $reg_filters[] = 'registry_id!=00%';
         }
     }
 
-    foreach ($registered_datasets as $dataset) {
+    $unrestricted_datasets = get_registered_datasets(getDBH('GOMRI'),array_merge($reg_filters,array('restricted=0')),$filter,$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
+
+    foreach ($unrestricted_datasets as $dataset) {
         add_download_size($dataset);
         add_project_info($dataset);
-        $stash['registered_datasets'][] = $dataset;
+        $stash['unrestricted_datasets'][] = $dataset;
+    }
+
+    $restricted_datasets = get_registered_datasets(getDBH('GOMRI'),array_merge($reg_filters,array('restricted=1')),$filter,$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
+
+    foreach ($restricted_datasets as $dataset) {
+        add_download_size($dataset);
+        add_project_info($dataset);
+        $stash['restricted_datasets'][] = $dataset;
     }
 
     $identified_datasets = get_identified_datasets(getDBH('GOMRI'),array("$by=$id",'dataset_download_status!=done','status=2'),$filter,$GLOBALS['config']['DataDiscovery']['identifiedOrderBy']);
@@ -322,28 +336,8 @@ $app->get('/download/:udi', function ($udi) use ($app) {
         $stash['server'] = $env['SERVER_NAME'];
         $stash['uid'] = $uid;
         $stash['dataset'] = $dataset;
-        $filesize = filesize($dat_file);
-        $stash['filesize'] = $filesize;
-        if ($filesize >= pow(1024,4)) {
-            $stash['size'] = round($filesize / pow(1024,4),1);
-            $stash['size_unit'] = 'TB';
-        }
-        elseif ($filesize >= pow(1024,3)) {
-            $stash['size'] = round($filesize / pow(1024,3),1);
-            $stash['size_unit'] = 'GB';
-        }
-        elseif ($filesize >= pow(1024,2)) {
-            $stash['size'] = round($filesize / pow(1024,2),1);
-            $stash['size_unit'] = 'MB';
-        }
-        elseif ($filesize >= 1024) {
-            $stash['size'] = round($filesize / 1024,1);
-            $stash['size_unit'] = 'KB';
-        }
-        else {
-            $stash['size'] = $filesize;
-            $stash['size_unit'] = 'B';
-        }
+        $stash['bytes'] = filesize($dat_file);
+        $stash['filesize'] = bytes2filesize($stash['bytes'],1);
         $stash['filt'] = $app->request()->get('filter');
         return $app->render('html/download.html',$stash);
     }

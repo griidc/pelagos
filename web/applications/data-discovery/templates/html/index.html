@@ -1,26 +1,17 @@
-<!--
-<div style="float:right;margin-right: 2px;">
-    {% if uid %}
-        <a id="packageLink" href="{{baseUrl}}/package" title="view/download package"><img src="{{baseUrl}}/includes/images/download-package.png" align="absmiddle"> Items in download package: <span id="package-count">0</span></a>
-    {% else %}
-        <a href="/cas?destination={{currentPage}}"><img src="{{baseUrl}}/includes/images/download-package.png" align="absmiddle"> Please log in to enable dataset downloading.</a>
-    {% endif %}
-</div>
--->
-<div id="filter" style="text-align: center">
+<div id="filter" style="text-align: center;">
     <table style="margin-left:auto; margin-right:auto;">
         <tr>
             <td valign="top">
-                <input id="filter-input" type="text" size="100" value="{{defaultFilter}}">
+                <input id="filter-input" type="text" size="85" style="font-size:130%;" value="{{defaultFilter}}">
                 {% if treePaneCollapsed %}
-                    <div style="font-size:70%; font-weight:bold;">NOTE: To filter by research award, researcher, or institution, please expand the pane using the arrow tab on the left.</div>
+                    <div>NOTE: To filter by research award, researcher, or institution, please expand the pane using the arrow tab on the left.</div>
                 {% endif %}
             </td>
             <td valign="top">
-                <input type="button" value="Filter" onclick="applyFilter();">
+                <input type="button" style="font-size:130%;" value="Filter" onclick="applyFilter();">
             </td>
             <td valign="top">
-                <input type="button" value="Clear/Show All" onclick="clearAll();">
+                <input type="button" style="font-size:130%;" value="Clear/Show All" onclick="clearAll();">
             </td>
         </tr>
     </table>
@@ -89,12 +80,7 @@
     </div>
     <div id="right" style="position: absolute; {% if treePaneCollapsed %} left: 0%; width: 100%; {% else %} left: 40%; width: 60%; {% endif %} height:500px; background-color:white;">
         <div id="expand-collapse" style="position: absolute; bottom: 50%; left: -7px; width:7px; height:25px;"><div {% if treePaneCollapsed %} class="collapsed" {% endif %} style="height:50px;"></div></div>
-        <div id="content">
-            <div class="scrollbar"><div class="track"><div class="thumb"><div class="end"></div></div></div></div>
-            <div class="viewport">
-                <div class="overview"></div>
-            </div>
-        </div>
+        <div id="content"></div>
     </div>
 </div>
 

@@ -40,7 +40,7 @@ function gen_uuid() {
 
 function add_download_size(&$dataset) {
     if ($dataset['dataset_download_size']) {
-        $dataset['sizeMB'] = round($dataset['dataset_download_size'] / 1000 / 1000, 1);
+        $dataset['filesize'] = bytes2filesize($dataset['dataset_download_size'],1);
     }
 }
 

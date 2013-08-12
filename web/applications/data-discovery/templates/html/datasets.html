@@ -1,87 +1,188 @@
-{% if registered_datasets %}
-<div class="dataset_header">
-{% if package %}
-Datasets in Download Package
-{% else %}
-Datasets Available from GRIIDC
-{% endif %}
-</div>
-<table class="datasets">
-    {% for dataset in registered_datasets %}
-    <tr>
-        <!--
-        <td valign="top" class="checkbox">
-            <input id="{{dataset.udi}}_checkbox" type="checkbox"
-                onclick="addRemoveID(this,'{{dataset.udi}}');"
-                {% if dataset.registry_id and dataset.access_status != "None" %} disabled{% endif %}
-                {% if not uid %} style="visibility: hidden;"{% endif %}>
-        </td>
-        -->
-        <td valign="top" class="direct-download">
-            {% if dataset.access_status == "Restricted" %}
-                <img src="{{baseUrl}}/includes/images/download-package-grey.png" title="this dataset is restricted for author use only">
-            {% elseif dataset.access_status == "Approval" %}
-                <img src="{{baseUrl}}/includes/images/download-package-grey.png" title="this dataset can only be downloaded with author approval">
-            {% else %}
-                <a href="{{baseUrl}}/download/{{dataset.udi}}?filter={{filt}}"><img src="{{baseUrl}}/includes/images/download-package.png" title="download dataset"></a>
-            {% endif %}
-        </td>
-        <td>
-            {{dataset.dataset_originator}}.
-            {{dataset.year}}.
-            <a href="javascript:showDatasetDetails('{{dataset.udi}}');">{{dataset.title}}</a>.
-            {% if dataset.project %}
-                {{dataset.project.Title | trim}}.
-            {% endif %}
-            Gulf of Mexico Research Intitiative Information and Data Cooperative, Harte Research Institute for Gulf of Mexico Studies, Texas A&amp;M University-Corpus Christi.
-            {% if dataset.doi %}
-                DOI: <a href="http://dx.doi.org/{{dataset.doi}}" target="_blank">{{dataset.doi}}</a>
-            {% endif %}
-            <div class="attributes">
-                [<a href="javascript:showDatasetDetails('{{dataset.udi}}');">Abstract</a>]
-                [Size: {{dataset.sizeMB}} MB]
-                {% if dataset.metadata_filename %}
-                    [<a href="/metadata/{{dataset.udi}}">Metadata</a>]
-                {% else %}
-                    <span class="disabled">[Metadata]</span>
-                {% endif %}
-                [Restrictions: {{dataset.access_status}}]
-            </div>
-        </td>
-    </tr>
-    {% endfor %}
-</table>
-{% endif %}
+<div style="background: transparent; padding:0px; height:100%" id="tabs">
 
-{% if identified_datasets and not package %}
-<div class="dataset_header">
-Datasets Expected to be Available Soon from GRIIDC
-</div>
-<table class="datasets">
-    {% for dataset in identified_datasets %}
-    <tr>
-        <!--
-        <td valign="top" class="checkbox">
-            <input id="{{dataset.udi}}_checkbox" type="checkbox" style="visibility:hidden;">
-        </td>
-        -->
-        <td valign="top" class="direct-download">
-            <img src="{{baseUrl}}/includes/images/download-package.png" style="visibility:hidden;">
-        </td>
-        <td>
-            <a href="javascript:showDatasetDetails('{{dataset.udi}}');">{{dataset.title}}</a>. {{dataset.project.Title | trim}}. Gulf of Mexico Research Intitiative Information and Data Cooperative, Harte Research Institute for Gulf of Mexico Studies, Texas A&amp;M University-Corpus Christi.{% if dataset.doi %} DOI: <a href="http://dx.doi.org/{{dataset.doi}}" target="_blank">{{dataset.doi}}</a>{% endif %}<br>
-                <div class="attributes">
-                    [<a href="javascript:showDatasetDetails('{{dataset.udi}}');">Abstract</a>]
-                    <span class="disabled">[Size: ? MB]</span>
-                    <span class="disabled">[Metadata]</span>
-                    <span class="disabled">[Restrictions: ?]</span>
+    <ul>
+        {% if unrestricted_datasets %}
+            <li style="text-align:center"><a href="#tab-1">Datasets Available<br>from GRIIDC</a></li>
+        {% endif %}
+        {% if restricted_datasets %}
+            <li style="text-align:center"><a href="#tab-2">Datasets Available from<br>GRIIDC (with restrictions)</a></li>
+        {% endif %}
+        {% if identified_datasets %}
+            <li style="text-align:center"><a href="#tab-3">Datasets Expected to be<br>Available Soon from GRIIDC</a></li>
+        {% endif %}
+    </ul>
+
+    {% if unrestricted_datasets %}
+        <div id="tab-1" class="tab" style="height:100%; padding:0">
+            <div class="scrollbar"><div class="track"><div class="thumb"><div class="end"></div></div></div></div>
+            <div class="viewport">
+                <div class="overview">
+                    <!--
+                    <div class="dataset_header">
+                    {% if package %}
+                    Datasets in Download Package
+                    {% else %}
+                    Datasets Available from GRIIDC
+                    {% endif %}
+                    </div>
+                    -->
+                    <table class="datasets">
+                        {% for dataset in unrestricted_datasets %}
+                            <tr>
+                                <!--
+                                <td valign="top" class="checkbox">
+                                    <input id="{{dataset.udi}}_checkbox" type="checkbox"
+                                        onclick="addRemoveID(this,'{{dataset.udi}}');"
+                                        {% if dataset.registry_id and dataset.access_status != "None" %} disabled{% endif %}
+                                        {% if not uid %} style="visibility: hidden;"{% endif %}>
+                                </td>
+                                -->
+                                <td valign="top" class="direct-download">
+                                    {% if dataset.access_status == "Restricted" %}
+                                        <img src="{{baseUrl}}/includes/images/download-package-grey.png" title="This dataset is restricted for author use only.">
+                                    {% elseif dataset.access_status == "Approval" %}
+                                        <img src="{{baseUrl}}/includes/images/download-package-grey.png" title="This dataset can only be downloaded with author approval.">
+                                    {% else %}
+                                        <a href="{{baseUrl}}/download/{{dataset.udi}}?filter={{filt}}"><img src="{{baseUrl}}/includes/images/download-package.png" title="download dataset"></a>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {{dataset.dataset_originator}}.
+                                    {{dataset.year}}.
+                                    <a href="javascript:showDatasetDetails('{{dataset.udi}}');">{{dataset.title}}</a>.
+                                    {% if dataset.project %}
+                                        {{dataset.project.Title | trim}}.
+                                    {% endif %}
+                                    Gulf of Mexico Research Intitiative Information and Data Cooperative, Harte Research Institute for Gulf of Mexico Studies, Texas A&amp;M University-Corpus Christi.
+                                    {% if dataset.doi %}
+                                        DOI: <a href="http://dx.doi.org/{{dataset.doi}}" target="_blank">{{dataset.doi}}</a>
+                                    {% endif %}
+                                    <div class="attributes">
+                                        [<a href="javascript:showDatasetDetails('{{dataset.udi}}');">Abstract</a>]
+                                        [Size: <span style="{% if dataset.dataset_download_size > 1073741824 %}color:red;{% endif %}">{{dataset.filesize}}</span>]
+                                        {% if dataset.metadata_filename %}
+                                            [<a href="/metadata/{{dataset.udi}}">Metadata</a>]
+                                        {% else %}
+                                            <span class="disabled">[Metadata]</span>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
                 </div>
-        </td>
-    </tr>
-    {% endfor %}
-</table>
-{% endif %}
+            </div>
+        </div>
+    {% endif %}
 
-{% if not registered_datasets and not identified_datasets %}
-<span style="color:red;">no datasets found</span>
-{% endif %}
+    {% if restricted_datasets %}
+        <div id="tab-2" class="tab" style="height:100%; padding:0">
+            <div class="scrollbar"><div class="track"><div class="thumb"><div class="end"></div></div></div></div>
+            <div class="viewport">
+                <div class="overview">
+                    <table class="datasets">
+                        {% for dataset in restricted_datasets %}
+                            <tr>
+                                <!--
+                                <td valign="top" class="checkbox">
+                                    <input id="{{dataset.udi}}_checkbox" type="checkbox"
+                                        onclick="addRemoveID(this,'{{dataset.udi}}');"
+                                        {% if dataset.registry_id and dataset.access_status != "None" %} disabled{% endif %}
+                                        {% if not uid %} style="visibility: hidden;"{% endif %}>
+                                </td>
+                                -->
+                                <td valign="top" class="direct-download">
+                                    {% if dataset.access_status == "Restricted" %}
+                                        <img src="{{baseUrl}}/includes/images/download-package-grey.png" title="This dataset is restricted for author use only.">
+                                    {% elseif dataset.access_status == "Approval" %}
+                                        <img src="{{baseUrl}}/includes/images/download-package-grey.png" title="This dataset can only be downloaded with author approval.">
+                                    {% else %}
+                                        <a href="{{baseUrl}}/download/{{dataset.udi}}?filter={{filt}}"><img src="{{baseUrl}}/includes/images/download-package.png" title="download dataset"></a>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {{dataset.dataset_originator}}.
+                                    {{dataset.year}}.
+                                    <a href="javascript:showDatasetDetails('{{dataset.udi}}');">{{dataset.title}}</a>.
+                                    {% if dataset.project %}
+                                        {{dataset.project.Title | trim}}.
+                                    {% endif %}
+                                    Gulf of Mexico Research Intitiative Information and Data Cooperative, Harte Research Institute for Gulf of Mexico Studies, Texas A&amp;M University-Corpus Christi.
+                                    {% if dataset.doi %}
+                                        DOI: <a href="http://dx.doi.org/{{dataset.doi}}" target="_blank">{{dataset.doi}}</a>
+                                    {% endif %}
+                                    <div class="attributes">
+                                        [<a href="javascript:showDatasetDetails('{{dataset.udi}}');">Abstract</a>]
+                                        [Size: <span style="{% if dataset.dataset_download_size > 1073741824 %}color:red;{% endif %}">{{dataset.filesize}}</span>]
+                                        {% if dataset.metadata_filename %}
+                                            [<a href="/metadata/{{dataset.udi}}">Metadata</a>]
+                                        {% else %}
+                                            <span class="disabled">[Metadata]</span>
+                                        {% endif %}
+                                        [Restrictions:
+                                        {% if dataset.access_status == "Restricted" %}
+                                            Author Use Only]
+                                        {% elseif dataset.access_status == "Approval" %}
+                                            Author Approval Required]
+                                        {% else %}
+                                            Unknown]
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if identified_datasets %}
+        <div id="tab-3" class="tab" style="height:100%; padding:0">
+            <div class="scrollbar"><div class="track"><div class="thumb"><div class="end"></div></div></div></div>
+            <div class="viewport">
+                <div class="overview">
+                    {% if identified_datasets and not package %}
+                        <!--
+                        <div class="dataset_header">
+                        Datasets Expected to be Available Soon from GRIIDC
+                        </div>
+                        -->
+                        <table class="datasets">
+                            {% for dataset in identified_datasets %}
+                                <tr>
+                                    <!--
+                                    <td valign="top" class="checkbox">
+                                        <input id="{{dataset.udi}}_checkbox" type="checkbox" style="visibility:hidden;">
+                                    </td>
+                                    -->
+                                   <!--
+                                    <td valign="top" class="direct-download">
+                                        <img src="{{baseUrl}}/includes/images/download-package.png" style="visibility:hidden;">
+                                    </td>
+                                    -->
+                                    <td>
+                                        <a href="javascript:showDatasetDetails('{{dataset.udi}}');">{{dataset.title}}</a>. {{dataset.project.Title | trim}}. Gulf of Mexico Research Intitiative Information and Data Cooperative, Harte Research Institute for Gulf of Mexico Studies, Texas A&amp;M University-Corpus Christi.{% if dataset.doi %} DOI: <a href="http://dx.doi.org/{{dataset.doi}}" target="_blank">{{dataset.doi}}</a>{% endif %}<br>
+                                        <div class="attributes">
+                                            {% if dataset.start_date or dataset.end_date %}
+                                                [Data Acquisition Period: {{dataset.start_date}} - {{dataset.end_date}}]
+                                            {% endif %}
+                                            [<a href="javascript:showDatasetDetails('{{dataset.udi}}');">Abstract</a>]
+                                            <span class="disabled">[Size: ? MB]</span>
+                                            <span class="disabled">[Metadata]</span>
+                                            <span class="disabled">[Restrictions: ?]</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if not unrestricted_datasets and not restricted_datasets and not identified_datasets %}
+        <div style="color:red; padding:10px; text-align:center; font-weight:bold; font-size:150%;">no datasets found</div>
+    {% endif %}
+</div>
