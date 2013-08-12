@@ -8,9 +8,7 @@ $(document).ready(function() {
         resizeLeftRight()
         $('#menu').tinyscrollbar_update('relative');
         $('#tabs .tab').height($('#tabs').height() - $('#tabs .ui-tabs-nav').height() - 10);
-        $('#tab-1').tinyscrollbar_update('relative');
-        $('#tab-2').tinyscrollbar_update('relative');
-        $('#tab-3').tinyscrollbar_update('relative');
+        $('#tabs .tab').each(function() { $(this).tinyscrollbar_update('relative'); });
     });
     $('#menu').tinyscrollbar();
     $('#menu .overview').mutate('height', function(el,info) {
@@ -39,18 +37,14 @@ $(document).ready(function() {
             $('#menu').tinyscrollbar_update('relative');
             $('#left').animate({'width' : "40%"}, {duration: 'slow', complete: function() {
                 $('#expand-collapse div').removeClass('collapsed');
-                $('#tab-1').tinyscrollbar_update('relative');
-                $('#tab-2').tinyscrollbar_update('relative');
-                $('#tab-3').tinyscrollbar_update('relative');
+                $('#tabs .tab').each(function() { $(this).tinyscrollbar_update('relative'); });
             }});
         }
         else {
             $('#right').animate({'left' : "0%", 'width' : "100%"}, {duration: 'slow'});
             $('#left').animate({'width' : "0%"}, {duration: 'slow', complete: function() {
                 $('#expand-collapse div').addClass('collapsed');
-                $('#tab-1').tinyscrollbar_update('relative');
-                $('#tab-2').tinyscrollbar_update('relative');
-                $('#tab-3').tinyscrollbar_update('relative');
+                $('#tabs .tab').each(function() { $(this).tinyscrollbar_update('relative'); });
             }});
         }
     });
