@@ -14,9 +14,9 @@
 }
 
 #expand-collapse div {
-    background: url({{baseUrl}}/includes/images/CollapseLeft.gif) no-repeat;
+    background: url({{baseUrl}}/includes/images/CollapseLeft-12.gif) no-repeat;
 }
 
 #expand-collapse div.collapsed {
-    background: url({{baseUrl}}/includes/images/CollapseRight.gif) no-repeat;
+    background: url({{baseUrl}}/includes/images/CollapseRight-12.gif) no-repeat;
 }

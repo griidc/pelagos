@@ -13,7 +13,7 @@ body.noselect {
 
 #menu {
     clear: both;
-    margin: 0 7px 0 0;
+    margin: 0 10px 0 0;
     height: 100%;
     border: 1px solid #888;
     background: transparent url(/includes/tinyscrollbar/images/bg-scrollbar-track-y.png) no-repeat 0 0;
