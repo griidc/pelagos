@@ -88,3 +88,14 @@
     <div id="dataset_details_close"><input type="image" src="{{baseUrl}}/includes/images/close.gif" onclick="jQuery('#dataset_details').hide();"></div>
     <div id="dataset_details_content"></div>
 </div>
+
+<div id="dataset_download">
+    <div id="dataset_download_close"><input type="image" src="{{baseUrl}}/includes/images/close.gif" onclick="jQuery('#dataset_download').hide();"></div>
+    <div id="dataset_download_content"></div>
+</div>
+
+{% if download %}
+    <script type="text/javascript">
+        showDatasetDownload('{{download}}');
+    </script>
+{% endif %}

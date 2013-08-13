@@ -122,6 +122,19 @@ function showDatasetDetails(udi) {
     });
 }
 
+function showDatasetDownload(udi) {
+    {% if not logged_in %}
+        location.href = "/cas?destination=" + escape("{{pageName}}/download_redirect/" + udi + "?final_destination=" + location.pathname);
+    {% endif %}
+    $.ajax({
+        "url": "{{baseUrl}}/download/" + udi,
+        "success": function(data) {
+            $('#dataset_download_content').html(data);
+            $('#dataset_download').show();
+        }
+    });
+}
+
 function applyFilter() {
     trees['tree'].filter=jQuery('#filter-input').val();
     updateTree(trees['tree']);

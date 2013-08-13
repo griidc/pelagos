@@ -43,7 +43,7 @@
                                     {% elseif dataset.access_status == "Approval" %}
                                         <img src="{{baseUrl}}/includes/images/download-package-grey.png" title="This dataset can only be downloaded with author approval.">
                                     {% else %}
-                                        <a href="{{baseUrl}}/download/{{dataset.udi}}?filter={{filt}}"><img src="{{baseUrl}}/includes/images/download-package.png" title="download dataset"></a>
+                                        <a href="javascript:showDatasetDownload('{{dataset.udi}}');"><img src="{{baseUrl}}/includes/images/download-package.png" title="download dataset"></a>
                                     {% endif %}
                                 </td>
                                 <td>

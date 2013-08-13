@@ -31,6 +31,7 @@ $app->hook('slim.before', function () use ($app) {
     $env = $app->environment();
     $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
     $app->view()->appendData(array('baseUrl' => "$protocol$env[SERVER_NAME]/$GLOBALS[PAGE_NAME]"));
+    $app->view()->appendData(array('pageName' => $GLOBALS['PAGE_NAME']));
     $app->view()->appendData(array('currentPage' => urlencode(preg_replace('/^\//','',$_SERVER['REQUEST_URI']))));
     if (!empty($user->name)) {
         $app->view()->appendData(array('uid' => $user->name));
@@ -41,7 +42,8 @@ $app->get('/includes/:file', 'dumpIncludesFile')->conditions(array('file' => '.+
 
 $app->get('/js/:name.js', function ($name) use ($app) {
     header('Content-type: text/javascript');
-    $app->render("js/$name.js");
+    $stash['logged_in'] = user_is_logged_in();
+    $app->render("js/$name.js",$stash);
     exit;
 });
 
@@ -52,7 +54,18 @@ $app->get('/css/:name.css', function ($name) use ($app) {
 });
 
 $app->get('/', function () use ($app) {
-    $env = $app->environment();
+    return $app->render('html/index.html',index($app));
+});
+
+$app->post('/', function () use ($app) {
+    $stash = index($app);
+    if (user_is_logged_in()) {
+        $stash['download'] = $app->request()->post('download');
+    }
+    return $app->render('html/index.html',$stash);
+});
+
+function index($app) {
     drupal_add_js('/includes/tinyscrollbar/jquery.tinyscrollbar.min.js',array('type'=>'external'));
     drupal_add_js('/includes/mutate/mutate.events.js',array('type'=>'external'));
     drupal_add_js('/includes/mutate/mutate.min.js',array('type'=>'external'));
@@ -63,6 +76,7 @@ $app->get('/', function () use ($app) {
     drupal_add_css("/$GLOBALS[PAGE_NAME]/includes/css/scrollbars.css",array('type'=>'external'));
     drupal_add_css("/$GLOBALS[PAGE_NAME]/includes/css/datasets.css",array('type'=>'external'));
     drupal_add_css("/$GLOBALS[PAGE_NAME]/includes/css/dataset_details.css",array('type'=>'external'));
+    drupal_add_css("/$GLOBALS[PAGE_NAME]/includes/css/dataset_download.css",array('type'=>'external'));
     if (array_key_exists('treePaneCollapsed',$GLOBALS['config']['DataDiscovery'])) {
         $stash['treePaneCollapsed'] = $GLOBALS['config']['DataDiscovery']['treePaneCollapsed'];
     }
@@ -70,8 +84,8 @@ $app->get('/', function () use ($app) {
         $stash['treePaneCollapsed'] = 0;
     }
     $stash['defaultFilter'] = $app->request()->get('filter');
-    return $app->render('html/index.html',$stash);
-});
+    return $stash;
+}
 
 $app->get('/datasets/:filter/:by/:id', function ($filter,$by,$id) use ($app) {
     $stash = array();
@@ -305,7 +319,8 @@ $app->get('/metadata/:udi', function ($udi) use ($app) {
 $app->get('/download/:udi', function ($udi) use ($app) {
     global $user;
     if (!user_is_logged_in()) {
-        header("Location: /cas?destination=$GLOBALS[PAGE_NAME]/download/$udi%3Ffilter%3D" . $app->request()->get('filter'));
+        $stash['error_message'] = "You must be logged in to download datasets.";
+        $app->render('html/download_error.html',$stash);
         exit;
     }
     if (preg_match('/^00/',$udi)) {
@@ -317,13 +332,15 @@ $app->get('/download/:udi', function ($udi) use ($app) {
     $dataset = $datasets[0];
 
     if ($dataset['access_status'] == "Restricted") {
-        drupal_set_message("this dataset is restricted for author use only",'error');
-        return;
+        $stash['error_message'] = "This dataset is restricted for author use only.";
+        $app->render('html/download_error.html',$stash);
+        exit;
     }
 
     if ($dataset['access_status'] == "Approval") {
-        drupal_set_message("this dataset can only be downloaded with author approval",'error');
-        return;
+        $stash['error_message'] = "This dataset can only be downloaded with author approval.";
+        $app->render('html/download_error.html',$stash);
+        exit;
     }
 
     $dat_file = "/sftp/data/$dataset[udi]/$dataset[udi].dat";
@@ -339,11 +356,21 @@ $app->get('/download/:udi', function ($udi) use ($app) {
         $stash['bytes'] = filesize($dat_file);
         $stash['filesize'] = bytes2filesize($stash['bytes'],1);
         $stash['filt'] = $app->request()->get('filter');
-        return $app->render('html/download.html',$stash);
+        $app->render('html/download.html',$stash);
+        exit;
     }
     else {
-        drupal_set_message("Error retrieving data file: file not found: $dat_file",'error');
+        $stash['error_message'] = "Error retrieving data file: file not found: $dat_file";
+        $app->render('html/download_error.html',$stash);
+        exit;
     }
+});
+
+$app->get('/download_redirect/:udi', function ($udi) use ($app) {
+    $stash['udi'] = $udi;
+    $stash['final_destination'] = $app->request()->get('final_destination');
+    $app->render('html/download_redirect.html',$stash);
+    exit;
 });
 
 $app->run();
