@@ -3,7 +3,14 @@ var $ = jQuery.noConflict();
 $(document).ready(function() {
     $('#left').height(0);
     $('#right').height(0);
-    setTimeout(function() { resizeLeftRight(); }, 500);
+    setTimeout(function() {
+        resizeLeftRight();
+        $('#tabs .tab').height($('#tabs').height() - $('#tabs .ui-tabs-nav').height() - 10);
+        $('#tabs .tab').each(function() { $(this).tinyscrollbar_update('relative'); });
+        if($.cookie("expanded") == 1) {
+            expand();
+        }
+    }, 500);
     $(window).resize(function() {
         resizeLeftRight()
         $('#menu').tinyscrollbar_update('relative');
@@ -33,22 +40,32 @@ $(document).ready(function() {
 
     $("#expand-collapse").click(function(){
         if ($('#expand-collapse div').hasClass('collapsed')) {
-            $('#right').animate({'left' : "40%", 'width' : "60%"}, {duration: 'slow'});
-            $('#menu').tinyscrollbar_update('relative');
-            $('#left').animate({'width' : "40%"}, {duration: 'slow', complete: function() {
-                $('#expand-collapse div').removeClass('collapsed');
-                $('#tabs .tab').each(function() { $(this).tinyscrollbar_update('relative'); });
-            }});
+            expand();
         }
         else {
-            $('#right').animate({'left' : "0%", 'width' : "100%"}, {duration: 'slow'});
-            $('#left').animate({'width' : "0%"}, {duration: 'slow', complete: function() {
-                $('#expand-collapse div').addClass('collapsed');
-                $('#tabs .tab').each(function() { $(this).tinyscrollbar_update('relative'); });
-            }});
+            collapse();
         }
     });
 });
+
+function expand() {
+    $('#right').animate({'left' : "40%", 'width' : "60%"}, {duration: 'slow'});
+    $('#menu').tinyscrollbar_update('relative');
+    $('#left').animate({'width' : "40%"}, {duration: 'slow', complete: function() {
+        $('#expand-collapse div').removeClass('collapsed');
+        $('#tabs .tab').each(function() { $(this).tinyscrollbar_update('relative'); });
+    }});
+    $.cookie("expanded", 1);
+}
+
+function collapse() {
+    $('#right').animate({'left' : "0%", 'width' : "100%"}, {duration: 'slow'});
+    $('#left').animate({'width' : "0%"}, {duration: 'slow', complete: function() {
+        $('#expand-collapse div').addClass('collapsed');
+        $('#tabs .tab').each(function() { $(this).tinyscrollbar_update('relative'); });
+    }});
+    $.cookie("expanded", 0);
+}
 
 function resizeLeftRight() {
     $('#left').height(0);
