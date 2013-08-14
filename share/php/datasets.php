@@ -94,9 +94,10 @@ $GLOBALS['IDENTIFIED_FROM'] = 'FROM datasets d
                                        FROM registry
                                        GROUP BY dataset_udi
                                    ) m
-                               ON r2.registry_id = m.MaxID
+                                   ON r2.registry_id = m.MaxID
                                ) r
-                               ON r.dataset_udi = d.dataset_udi';
+                               ON r.dataset_udi = d.dataset_udi
+                               LEFT JOIN projects p on p."ID" = d.project_id';
 
 $GLOBALS['REGISTERED_FROM'] = 'FROM registry r
                                INNER JOIN (
@@ -106,7 +107,8 @@ $GLOBALS['REGISTERED_FROM'] = 'FROM registry r
                                ) m
                                ON r.registry_id = m.MaxID
                                LEFT JOIN datasets d
-                               ON d.dataset_udi = r.dataset_udi';
+                               ON d.dataset_udi = r.dataset_udi
+                               LEFT JOIN projects p on p."ID" = d.project_id';
 
 $GLOBALS['IDENTIFIED_SEARCH_RANK'] = "
 JOIN
@@ -119,7 +121,9 @@ JOIN
                 d3.dataset_udi || ' ' ||
                 title || ' ' ||
                 abstract || ' ' ||
-                CASE WHEN dataset_originator IS NULL THEN '' ELSE dataset_originator END AS search_field
+                p2.\"Title\" || ' ' ||
+                CASE WHEN dataset_originator IS NULL THEN '' ELSE dataset_originator END 
+            AS search_field
         FROM datasets d3
         LEFT JOIN (
             registry r4
@@ -128,9 +132,10 @@ JOIN
                 FROM registry
                 GROUP BY dataset_udi
             ) m
-        ON r4.registry_id = m.MaxID
+            ON r4.registry_id = m.MaxID
         ) r3
         ON r3.dataset_udi = d3.dataset_udi
+        LEFT JOIN projects p2 ON p2.\"ID\" = d3.project_id
     ) AS d2
 
     JOIN search_temp ON d2.search_field ~* ('\\y' || search_temp.search_word || '\\y')
@@ -349,7 +354,7 @@ function build_where($filters,$registered = false) {
                         $WHERE .= "title " . $GLOBALS['PGSQL_LIKE_MAP'][$matches[2]] . " '$matches[3]'";
                         $WHERE .= " OR abstract " . $GLOBALS['PGSQL_LIKE_MAP'][$matches[2]] . " '$matches[3]'";
                     }
-                    $WHERE .= ")";
+                    $WHERE .= ' OR p."Title" ' . $GLOBALS['PGSQL_LIKE_MAP'][$matches[2]] . " '$matches[3]')";
                     break;
                 case 'restricted':
                     if ($registered) {
