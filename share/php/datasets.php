@@ -14,7 +14,11 @@ $GLOBALS['NULL_MAP'] = array(
     'null' => 'NULL',
     'NULL' => 'NULL',
     '0' => 'NULL',
-    'false' => 'NULL'
+    'f' => 'NULL',
+    'false' => 'NULL',
+    '1' => 'NOT NULL',
+    't' => 'NOT NULL',
+    'true' => 'NOT NULL'
 );
 
 if (!defined('FILTER_REG')) define('FILTER_REG','/^(.*?)\s*(>=|<=|>|<|!=|=)\s*(.*?)$/');
@@ -356,6 +360,9 @@ function build_where($filters,$registered = false) {
                             $WHERE .= " AND access_status = 'None'";
                         }
                     }
+                    break;
+                case 'hasproject':
+                    $WHERE .= " AND project_id " . $GLOBALS['IS_MAP'][$matches[2]] . ' ' . $GLOBALS['NULL_MAP'][$matches[3]];
                     break;
             }
         }
