@@ -84,12 +84,7 @@ $app->get('/datasets/by_fund/:fund_id', function ($fund_id) use ($app) {
         $projects[$i]['PI'] = $pi[0];
         $projects[$i]['identified_count'] = count_identified_datasets(getDBH('GOMRI'),array('status>0','projectid='.$projects[$i]['ID']));
         $projects[$i]['registered_count'] = count_registered_datasets(getDBH('GOMRI'),array('projectid='.$projects[$i]['ID']));
-        if ($fund_id == 7) {
-            $projects[$i]['tree_node_id'] = 'tasks_projectId_'.$projects[$i]['ID'];
-        }
-        else {
-            $projects[$i]['tree_node_id'] = "projects_fundSrc_$fund_id/datasets_projectId_".$projects[$i]['ID'];
-        }
+        $projects[$i]['tree_node_id'] = "$fund_id/".$projects[$i]['ID'];
     }
     usort($projects, 'cmp_registered_identified');
     $stash['projects'] = $projects;
