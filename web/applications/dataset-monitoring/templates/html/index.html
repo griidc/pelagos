@@ -7,7 +7,7 @@
                     <script type="text/javascript">
                         var tree = {
                                     theme: "classic",
-                                    max_depth: 0,
+                                    max_depth: 1,
                                     expand_to_depth: 0,
                                     animation: 250,
                                     type: "ra",
@@ -34,7 +34,9 @@
                                     researcher_action: "showProjects('peopleId',\{\{person.ID\}\});",
 
                                     institution_color: "#00A",
-                                    institution_action: "showProjects('institutionId',\{\{institution.ID\}\});"
+                                    institution_action: "showProjects('institutionId',\{\{institution.ID\}\});",
+
+                                    afteropen: "$(window).hashchange();"
                                    }
 
                         insertTree(tree);

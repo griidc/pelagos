@@ -27,6 +27,22 @@ $(document).ready(function() {
         $('body').removeClass('noselect');
         document.getElementById('container').setAttribute('onselectstart','');
     });
+
+    $(window).hashchange( function(){
+        var m = location.hash.match(/^#([^\/]+)\/?([^\/]+)?/);
+        if (m) {
+            if (typeof m[1] !== 'undefined') {
+                if (typeof m[2] === 'undefined') {
+                    $("#tree").jstree("select_node", $('#' + m[1]), true);
+                }
+                else {
+                    $("#tree").jstree("open_node", $('#' + m[1]));
+                    $("#tree").jstree("select_node", $('#' + m[2]), true);
+                }
+            }
+        }
+    })
+
 });
 
 function resizeLeftRight() {
