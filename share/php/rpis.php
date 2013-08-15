@@ -5,7 +5,7 @@ $GLOBALS['MYSQL_LIKE_MAP'] = array(
     '!=' => 'NOT LIKE'
 );
 
-define('FILTER_REG','/^(.*?)\s*(>=|<=|>|<|!=|=)\s*(.*?)$/');
+if (!defined('FILTER_REG')) define('FILTER_REG','/^(.*?)\s*(>=|<=|>|<|!=|=)\s*(.*?)$/');
 
 function getProjectDetails($dbh, $filters = array()) {
     $SELECT = 'SELECT DISTINCT
