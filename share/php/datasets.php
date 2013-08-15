@@ -369,6 +369,9 @@ function build_where($filters,$registered = false) {
                 case 'hasproject':
                     $WHERE .= " AND project_id " . $GLOBALS['IS_MAP'][$matches[2]] . ' ' . $GLOBALS['NULL_MAP'][$matches[3]];
                     break;
+                case 'funding_envelope':
+                    $WHERE .= " AND p.\"FundSrc\" $matches[2] $matches[3]";
+                    break;
             }
         }
     }
