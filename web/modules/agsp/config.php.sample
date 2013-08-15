@@ -1,6 +1,0 @@
-<?php
-
-# GoMRI Database
-define('GOMRI_DB_CONN_STRING','host=localhost port=1234 dbname=db user=user password=password');
-
-?>

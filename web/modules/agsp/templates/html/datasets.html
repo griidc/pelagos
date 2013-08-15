@@ -1,0 +1,37 @@
+<div class="colsection group">
+	<h2>Datasets</h2>
+	<div class="widget grid">
+		<h3><br/>System Statistics<em>*</em></h3>
+
+		<table>
+			<tr>
+				<th>Count</th>
+				<th>Type</th>
+			</tr>
+			<tr>
+				<td colspan="2">&nbsp;</td>
+				</tr>
+			<tr>
+				<td>{{identified_count}}</td>
+				<td class="txt">Total number of datasets identified</td>
+			</tr>
+			<tr>
+				<td>{{registered_count}}</td>
+				<td class="txt">Total number of datasets registered</td>
+			</tr>
+			<tr>
+				<td>{{avail_storage_space}}</td>
+				<td class="txt">GRIIDC available storage space</td>
+				</tr>
+			<tr>
+				<td>{{used_storage_space}}</td>
+				<td class="txt">GRIIDC used space</td>
+			</tr>
+		</table>
+
+        <p class="note">* as of {{ "now" | date("Y-m-d") }}</p>
+
+	</div>
+
+			{% include 'html/funding_summary.html' %}
+</div>

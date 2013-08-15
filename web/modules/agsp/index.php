@@ -1,174 +1,103 @@
 <?php
 
-error_reporting(E_ALL); 
+error_reporting(E_ALL);
 ini_set( 'display_errors','1');
 
-include_once '/usr/local/share/GRIIDC/php/pdo.php';
-require_once 'config.php';
+require_once '/usr/local/share/Slim/Slim/Slim.php';
+require_once '/usr/local/share/Slim-Extras/Views/TwigView.php';
 
+require_once '/usr/local/share/GRIIDC/php/pdo.php';
+require_once '/usr/local/share/GRIIDC/php/datasets.php';
+require_once '/usr/local/share/GRIIDC/php/rpis.php';
+require_once '/usr/local/share/GRIIDC/php/utils.php';
 
+require_once 'lib/agsp.php';
 
-$syscapacity = 109951162777600;
+$GLOBALS['config'] = parse_ini_file('config.ini',true);
 
-function Mbytes($bytes)
-{
-    // Calculate KB
-    $kilobyte = 1024;
-    $kb = round($bytes / $kilobyte, 2);
-    
-    // Calculate MB
-    $megabyte = $kilobyte * 1024;
-    $mb = round($bytes / $megabyte, 2);
-    
-    // Calculate GB
-    $gigabyte = $megabyte * 1024;
-    $gb = round($bytes / $gigabyte, 2);
-    
-    // Calculate TB
-    $terabyte = $gigabyte * 1024;
-    $tb = round($bytes / $terabyte, 2);
-    
-    return $mb.'Mb';
-}
+TwigView::$twigDirectory = $GLOBALS['config']['TwigView']['twigDirectory'];
 
-function Kbytes($bytes)
-{
-    // Calculate KB
-    $kilobyte = 1024;
-    $kb = round($bytes / $kilobyte, 2);
-    
-    // Calculate MB
-    $megabyte = $kilobyte * 1024;
-    $mb = round($bytes / $megabyte, 2);
-    
-    // Calculate GB
-    $gigabyte = $megabyte * 1024;
-    $gb = round($bytes / $gigabyte, 2);
-    
-    // Calculate TB
-    $terabyte = $gigabyte * 1024;    /////
-    $tb = round($bytes / $terabyte, 2);
-    
-    return $kb.'Kb';
-}
+$app = new Slim(array(
+                        'view' => new TwigView,
+                        'debug' => true,
+                        'log.level' => Slim_Log::DEBUG,
+                        'log.enabled' => true
+                     ));
 
-function Gbytes($bytes)
-{
-    // Calculate KB
-    $kilobyte = 1024;
-    $kb = round($bytes / $kilobyte, 2);
-    
-    // Calculate MB
-    $megabyte = $kilobyte * 1024;
-    $mb = round($bytes / $megabyte, 2);
-    
-    // Calculate GB
-    $gigabyte = $megabyte * 1024;
-    $gb = round($bytes / $gigabyte, 2);
-    
-    // Calculate TB
-    $terabyte = $gigabyte * 1024;
-    $tb = round($bytes / $terabyte, 2);
-    
-    return $gb.'Gb';
-}
+$app->get('/', function () use ($app) {
+});
 
-function Tbytes($bytes)
-{
-    // Calculate KB
-    $kilobyte = 1024;
-    $kb = round($bytes / $kilobyte, 2);
-    
-    // Calculate MB
-    $megabyte = $kilobyte * 1024;
-    $mb = round($bytes / $megabyte, 2);
-    
-    // Calculate GB
-    $gigabyte = $megabyte * 1024;
-    $gb = round($bytes / $gigabyte, 2);
-    
-    // Calculate TB
-    $terabyte = $gigabyte * 1024;
-    $tb = round($bytes / $terabyte, 2);
-    
-    return $tb.'Tb';
-}
+$app->get('/datasets', function () use ($app) {
 
-$conn = pdoDBConnect('pgsql:'.GOMRI_DB_CONN_STRING);
+    $query = "SELECT COUNT(downloads.registry_id) as total_number_of_downloads,
+                     (SELECT SUM(dataset_download_size) FROM registry) AS total_file_size,
+                     (SELECT COALESCE(SUM(dataset_download_size),0) FROM registry WHERE substr(registry.registry_id,0,17) = dataset_udi AND dataset_download_status = 'done') AS total_file_size_by_gomri
+                     FROM registry
+                     LEFT OUTER JOIN datasets on registry.dataset_udi = datasets.dataset_udi
+                     LEFT OUTER JOIN downloads on downloads.registry_id = substr(registry.registry_id,0,17);";
 
-$query = "
-SELECT 
-COUNT(datasets.dataset_uid) AS total_datasets,
-COUNT(registry.registry_id) AS total_datasets_registered,
-(SELECT count(id) FROM doi_regs where doi_regs.approved=true) as total_doi_requested
-FROM datasets 
-LEFT OUTER JOIN registry ON registry.dataset_udi = datasets.dataset_udi
-WHERE datasets.status > 0
-;
-";
+    $fsrow = pdoDBQuery(getDBH('GOMRI'),$query);
+    $stash['avail_storage_space'] = bytes2filesize($GLOBALS['config']['misc']['system_capacity'] - $fsrow["total_file_size"],1);
+    $stash['used_storage_space'] = bytes2filesize($fsrow["total_file_size"],1);
 
-$dsrow = pdoDBQuery($conn,$query);
+    $stash['identified_count'] = count_identified_datasets(getDBH('GOMRI'),array('status>0'));
+    $stash['registered_count'] = count_registered_datasets(getDBH('GOMRI'),array('hasproject=true'));
 
-$query = "SELECT
-COUNT(downloads.registry_id) as total_number_of_downloads,
-(SELECT SUM(dataset_download_size) FROM registry) AS total_file_size,
-(SELECT COALESCE(SUM(dataset_download_size),0) FROM registry WHERE substr(registry.registry_id,0,17) = dataset_udi AND dataset_download_status = 'done') AS total_file_size_by_gomri
-FROM registry
-LEFT OUTER JOIN datasets on registry.dataset_udi = datasets.dataset_udi
-LEFT OUTER JOIN downloads on downloads.registry_id = substr(registry.registry_id,0,17)
-;
-";
+    $fundFilter = array('fundId>0');
+    if (isset($GLOBALS['config']['exclude']['funds'])) {
+    	foreach ($GLOBALS['config']['exclude']['funds'] as $exclude) {
+    		$fundFilter[] = "fundId!=$exclude";
+    	}
+    }
 
-$fsrow = pdoDBQuery($conn,$query);
+    $FUNDS = getFundingSources(getDBH('RPIS'),$fundFilter);
+
+    $resultArr = array();
+    $resultSet = 0;
+
+    foreach ($FUNDS as $FUND) {
+        $identified_count = count_identified_datasets(getDBH('GOMRI'),array('status>0',"funding_envelope=$FUND[ID]"));
+    	$registered_count = count_registered_datasets(getDBH('GOMRI'),array("funding_envelope=$FUND[ID]"));
+        $resultArr[$resultSet] = $FUND;
+    	$resultArr[$resultSet]['identified_count'] = $identified_count;
+    	$resultArr[$resultSet]['registered_count'] = $registered_count;
+    	$resultSet++;
+    }
+
+    usort($resultArr, 'cmp_registered_identified');
+
+    $stash['funds'] = $resultArr;
+
+    $app->render('html/datasets.html',$stash);
+
+    exit;
+});
+
+$app->get('/datasets/by_fund/:fund_id', function ($fund_id) use ($app) {
+    $funds = getFundingSources(getDBH('RPIS'),array("fundId=$fund_id"));
+    $stash['fund'] = $funds[0];
+
+    $projects = getProjectDetails(getDBH('RPIS'),array("fundsrc=$fund_id"));
+
+    for ($i=0; $i<count($projects); $i++) {
+        $pi = getPeopleDetails(getDBH('RPIS'),array('projectId='.$projects[$i]['ID'],'roleId=1'));
+        $projects[$i]['PI'] = $pi[0];
+        $projects[$i]['identified_count'] = count_identified_datasets(getDBH('GOMRI'),array('status>0','projectid='.$projects[$i]['ID']));
+        $projects[$i]['registered_count'] = count_registered_datasets(getDBH('GOMRI'),array('projectid='.$projects[$i]['ID']));
+        if ($fund_id == 7) {
+            $projects[$i]['tree_node_id'] = 'tasks_projectId_'.$projects[$i]['ID'];
+        }
+        else {
+            $projects[$i]['tree_node_id'] = "projects_fundSrc_$fund_id/datasets_projectId_".$projects[$i]['ID'];
+        }
+    }
+    usort($projects, 'cmp_registered_identified');
+    $stash['projects'] = $projects;
+
+    $app->render('html/funding.html',$stash);
+    exit;
+});
+
+$app->run();
 
 ?>
-<link rel="stylesheet" href="dashboard-style.css">
-
-<div class="colsection group">
-	<h2>GRIIDC Statistics</h2>
-	<div class="widget grid">
-		<h3><br/>System Statistics <i>(as of <em>2013-08-01</em>)</i></h3>
-
-		<table>
-			<tr>
-				<th>Count</th>
-				<th>Type</th>
-			</tr>
-			<tr>
-				<td colspan="2">&nbsp;</td>
-				</tr>
-			<tr>
-				<td><?php echo $dsrow["total_datasets"];?></td>
-				<td class="txt">Total number of datasets identified</td>
-			</tr>
-			<tr>
-				<td><?php echo $dsrow["total_datasets_registered"];?></td>
-				<td class="txt">Total number of datasets registered</td>
-			</tr>
-			<tr>
-				<td><?php echo Tbytes($syscapacity-$fsrow["total_file_size"]);?></td>
-				<td class="txt">GRIIDC available storage space</td>
-				</tr>
-			<tr>
-				<td><?php echo Tbytes($fsrow["total_file_size"]);?></td>
-				<td class="txt">GRIIDC used space</td>
-			</tr>
-		</table>
-		
-	</div>
-	
-	<div class="widget grid">
-		<h3><br/>Summary Statistics by Funding Source<em>*</em></h3>
-
-		<table>
-			<tr>
-				<th>Datasets<br>Identified</th>
-				<th>Datasets<br>Registered</th>
-				<th>Funding<br>Source</th>
-			</tr>
-			<?php include 'dataset_counts.php';?>
-		</table>
-		<p class="note">* ordered by total datasets identified and submitted</p>		
-	</div>
-</div>
-		
