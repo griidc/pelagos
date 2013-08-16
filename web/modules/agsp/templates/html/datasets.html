@@ -10,14 +10,14 @@
 			</tr>
 			<tr>
 				<td colspan="2">&nbsp;</td>
-				</tr>
-			<tr>
-				<td>{{identified_count}}</td>
-				<td class="txt">Total number of datasets identified</td>
-			</tr>
+            </tr>
 			<tr>
 				<td>{{registered_count}}</td>
 				<td class="txt">Total number of datasets registered</td>
+			</tr>
+			<tr>
+				<td>{{identified_count}}</td>
+				<td class="txt">Total number of datasets identified</td>
 			</tr>
 			<tr>
 				<td>{{avail_storage_space}}</td>
@@ -31,7 +31,10 @@
 
         <p class="note">* as of {{ "now" | date("Y-m-d") }}</p>
 
+	    {% include 'html/provided_by_griidc.html' %}
+
 	</div>
 
-			{% include 'html/funding_summary.html' %}
+	{% include 'html/funding_summary.html' %}
+
 </div>
