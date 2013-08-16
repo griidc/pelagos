@@ -151,10 +151,11 @@ JOIN
     (
         SELECT
             registry_id,
-                CASE WHEN dataset_udi IS NULL THEN substr(registry_id,1,16) ELSE dataset_udi END  || ' ' ||
+                CASE WHEN r3.dataset_udi IS NULL THEN substr(registry_id,1,16) ELSE r3.dataset_udi END  || ' ' ||
                 dataset_title || ' ' ||
                 dataset_abstract || ' ' ||
                 dataset_originator || ' ' ||
+                p2.\"Title\" || ' ' ||
                 to_char(submittimestamp,'YYYY')
             AS search_field
         FROM registry r3
@@ -165,6 +166,8 @@ JOIN
             GROUP BY substr(registry_id,1,16)
         ) m
         ON r3.registry_id = m.MaxID
+        LEFT JOIN datasets d2 ON d2.dataset_udi = r3.dataset_udi
+        LEFT JOIN projects p2 ON p2.\"ID\" = d2.project_id
 
     ) AS r2
 
