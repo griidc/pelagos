@@ -1,3 +1,4 @@
+<div style="float:right; margin-right:5px; margin-bottom:3px; font-size:8pt;">place your mouse over each icon for a description</div>
 <table class="datasets">
     <tr>
         <th class="udi">UDI</th>
@@ -5,8 +6,7 @@
         <th class="status">Identified</th>
         <th class="status">Registered</th>
         <th class="status">Metadata</th>
-        <th class="status">Availability</th>
-        <th class="status">Accessibility</th>
+        <th class="status">Available</th>
     </tr>
     {% for dataset in datasets %}
     <tr>
@@ -25,12 +25,8 @@
                  title="{% if dataset.registered %}{{(dataset.metadata ~ '_metadata') | statusToTitle}}{% else %}{{'-1_metadata' | statusToTitle}}{% endif %}">
         </td>
         <td class="status">
-            <img src="{{baseUrl}}/includes/images/{% if dataset.registered %}{{dataset.availability | statusToImg}}{% else %}{{'-1' | statusToImg}}{% endif %}"
-                 title="{% if dataset.registered %}{{(dataset.availability ~ '_availability') | statusToTitle}}{% else %}{{'-1_availability' | statusToTitle}}{% endif %}">
-        </td>
-        <td class="status">
-            <img src="{{baseUrl}}/includes/images/{% if dataset.registered and dataset.availability %}{{dataset.accessibility | statusToImg}}{% else %}{{'-1' | statusToImg}}{% endif %}"
-                 title="{% if dataset.registered and dataset.availability %}{{(dataset.accessibility ~ '_accessibility') | statusToTitle}}{% else %}{{'-1_accessibility' | statusToTitle}}{% endif %}">
+            <img src="{{baseUrl}}/includes/images/{% if dataset.registered %}{{dataset.available | statusToImg}}{% else %}{{'-1' | statusToImg}}{% endif %}"
+                 title="{% if dataset.registered %}{{(dataset.available ~ '_available') | statusToTitle}}{% else %}{{'-1_available' | statusToTitle}}{% endif %}">
         </td>
     </tr>
     {% endfor %}

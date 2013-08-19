@@ -29,19 +29,14 @@ password = "********"
  2_registered = ""
 
 -1_metadata = "This dataset has not yet been registered, therefore no metadata is available."
- 0_metadata = "No metadata has been provided for this dataset."
- 1_metadata = "Metadata is available, ISO compliant, and has been reviewed and accepted."
- 2_metadata = "Metadata is available, but has not been validated for ISO compliance or reviewed and accepted."
+ 0_metadata = "This dataset has been registered, but no metadata has been provided."
+ 1_metadata = "Metadata for this dataset is available, ISO compliant, and has been reviewed and accepted."
+ 2_metadata = "Metadata for this dataset is available, but has not been validated for ISO compliance or reviewed and accepted."
 
--1_availability = "This dataset has not yet been registered, therefore it is not yet available."
- 0_availability = "This dataset has been registered, but the data is not yet available."
- 1_availability = "This dataset is available for download (check accessibility)."
- 2_availability = ""
-
--1_accessibility = "This dataset has not yet been registered, therefore accessibility status has not been set."
- 0_accessibility = "This dataset is available, but restricted to author(s) use only."
- 1_accessibility = "This dataset is available for public use."
- 2_accessibility = "This dataset is available, but requires author’s approval for download."
+-1_available = "This dataset has not yet been registered, therefore it is not yet available."
+ 0_available = "This dataset has been registered, but the data is not yet available."
+ 1_available = "This dataset is available for all users to download."
+ 2_available = "This dataset is available, but download is restricted to certain users."
 
 [exclude]
 funds[] = 6

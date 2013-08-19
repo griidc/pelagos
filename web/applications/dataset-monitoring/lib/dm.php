@@ -21,8 +21,7 @@ function getTasksAndDatasets($projects) {
                CASE WHEN status = 2 THEN 1 WHEN status = 1 THEN 2 ELSE 0 END AS identified,
                CASE WHEN registry_id IS NULL THEN 0 ELSE 1 END AS registered,
                CASE WHEN metadata_dl_status IS NULL OR metadata_dl_status != 'Completed' THEN 0 WHEN metadata_status = 'Accepted' THEN 1 ELSE 2 END AS metadata,
-               CASE WHEN dataset_download_status = 'done' THEN 1 ELSE 0 END AS availability,
-               CASE WHEN access_status = 'None' THEN 1 WHEN access_status = 'Requires Author''s Approval' THEN 2 ELSE 0 END AS accessibility";
+               CASE WHEN dataset_download_status = 'done' THEN (CASE WHEN access_status = 'None' THEN 1 ELSE 2 END) ELSE 0 END AS available";
     $FROM = 'FROM datasets d
              LEFT JOIN (
                  registry r2
