@@ -1,10 +1,21 @@
-<h3>Datasets by Funding Source<em>*</em></h3>
+<h3>Datasets by Funding Source</h3>
 <form action="funding-datasets-view.php" method="POST">
     <table>
         <tr>
             <th>Registered</th>
             <th>Identified</th>
             <th>Funding Source</th>
+        </tr>
+        <tr>
+            <td colspan="3">&nbsp;</td>
+        </tr>
+        <tr>
+            <td><strong>{{registered_total}}</strong></td>
+            <td><strong>{{identified_total}}</strong></td>
+            <td><strong>GoMRI Total</strong></td>
+        </tr>
+        <tr>
+            <td colspan="3">&nbsp;</td>
         </tr>
         {% for fund in funds %}
             <tr>
@@ -13,21 +24,10 @@
                 <td><button type="submit" name="fundsrc" value="{{fund.ID}}">{{fund.Abbr}}</button></td>
             </tr>
         {% endfor %}
-        <tr>
-            <td><strong>{{registered_total}}</strong></td>
-            <td><strong>{{identified_total}}</strong></td>
-            <td><strong>Total</strong></td>
-        </tr>
     </table>
 </form>
-<p class="note">* ordered by number of datasets registered then datasets identified</p>
-<table>
-    <tr>
-        <td>Storage space used:</td>
-        <td>{{used_storage_space}}</td>
-    </tr>
-    <tr>
-        <td>Storage space available:</td>
-        <td>{{avail_storage_space}}</td>
-    </tr>
-</table>
+<p class="note">ordered by number of datasets registered then datasets identified</p>
+<div style="margin-top:20px; margin-right:20px; text-align:right;">
+    Total storage space used: {{used_storage_space}}<br />
+    Total storage space available: {{avail_storage_space}}
+</div>
