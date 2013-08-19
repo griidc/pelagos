@@ -40,9 +40,6 @@ $app->get('/datasets', function () use ($app) {
     $stash['avail_storage_space'] = bytes2filesize($GLOBALS['config']['misc']['system_capacity'] - $fsrow["total_file_size"],1);
     $stash['used_storage_space'] = bytes2filesize($fsrow["total_file_size"],1);
 
-    $stash['identified_count'] = count_identified_datasets(getDBH('GOMRI'),array('status>0'));
-    $stash['registered_count'] = count_registered_datasets(getDBH('GOMRI'),array('hasproject=true'));
-
     $fundFilter = array('fundId>0');
     if (isset($GLOBALS['config']['exclude']['funds'])) {
     	foreach ($GLOBALS['config']['exclude']['funds'] as $exclude) {
@@ -55,12 +52,17 @@ $app->get('/datasets', function () use ($app) {
     $resultArr = array();
     $resultSet = 0;
 
+    $stash['identified_total'] = 0;
+    $stash['registered_total'] = 0;
+
     foreach ($FUNDS as $FUND) {
         $identified_count = count_identified_datasets(getDBH('GOMRI'),array('status>0',"funding_envelope=$FUND[ID]"));
     	$registered_count = count_registered_datasets(getDBH('GOMRI'),array("funding_envelope=$FUND[ID]"));
         $resultArr[$resultSet] = $FUND;
     	$resultArr[$resultSet]['identified_count'] = $identified_count;
+        $stash['identified_total'] += $identified_count;
     	$resultArr[$resultSet]['registered_count'] = $registered_count;
+        $stash['registered_total'] += $registered_count;
     	$resultSet++;
     }
 
