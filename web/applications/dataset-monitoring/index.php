@@ -144,7 +144,7 @@ $app->get('/pdf/:by/:id/:name', function ($by,$id,$name) use ($app) {
         drupal_set_message("You cannot download a pdf for all Year One Block Grants. Please download each block grant individually.",'error');
         return;
     }
-    $content = file_get_contents("http://localhost/dm/projects/$by/$id?pdf=true");
+    $content = file_get_contents("http://localhost$_SERVER[SCRIPT_NAME]/projects/$by/$id?pdf=true");
 
     require_once '/usr/local/share/dompdf/dompdf_config.inc.php';
 

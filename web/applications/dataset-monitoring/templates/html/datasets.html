@@ -1,4 +1,4 @@
-<div style="float:right; margin-right:5px; margin-bottom:3px; font-size:8pt;">place your mouse over each icon for a description</div>
+<div class="tooltip-note" style="float:right; margin-right:5px; margin-bottom:3px; font-size:8pt;">place your mouse over each icon for a description</div>
 <table class="datasets">
     <tr>
         <th class="udi">UDI</th>
@@ -12,21 +12,17 @@
     <tr>
         <td class="udi"><a href="javascript:showDatasetDetails('{{dataset.udi}}');">{{dataset.udi}}</a></td>
         <td><a href="javascript:showDatasetDetails('{{dataset.udi}}');">{{dataset.title}}</a></td>
-        <td class="status">
-            <img src="{{baseUrl}}/includes/images/{{dataset.identified | statusToImg}}"
-                 title="{{(dataset.identified ~ '_identified') | statusToTitle}}">
+        <td class="status" title="{{(dataset.identified ~ '_identified') | statusToTitle}}">
+            <img src="{{baseUrl}}/includes/images/{{dataset.identified | statusToImg}}">
         </td>
-        <td class="status">
-            <img src="{{baseUrl}}/includes/images/{{dataset.registered | statusToImg}}"
-                 title="{{(dataset.registered ~ '_registered') | statusToTitle}}">
+        <td class="status" title="{{(dataset.registered ~ '_registered') | statusToTitle}}">
+            <img src="{{baseUrl}}/includes/images/{{dataset.registered | statusToImg}}">
         </td>
-        <td class="status">
-            <img src="{{baseUrl}}/includes/images/{% if dataset.registered %}{{dataset.metadata | statusToImg}}{% else %}{{'-1' | statusToImg}}{% endif %}"
-                 title="{% if dataset.registered %}{{(dataset.metadata ~ '_metadata') | statusToTitle}}{% else %}{{'-1_metadata' | statusToTitle}}{% endif %}">
+        <td class="status" title="{% if dataset.registered %}{{(dataset.metadata ~ '_metadata') | statusToTitle}}{% else %}{{'-1_metadata' | statusToTitle}}{% endif %}">
+            <img src="{{baseUrl}}/includes/images/{% if dataset.registered %}{{dataset.metadata | statusToImg}}{% else %}{{'-1' | statusToImg}}{% endif %}">
         </td>
-        <td class="status">
-            <img src="{{baseUrl}}/includes/images/{% if dataset.registered %}{{dataset.available | statusToImg}}{% else %}{{'-1' | statusToImg}}{% endif %}"
-                 title="{% if dataset.registered %}{{(dataset.available ~ '_available') | statusToTitle}}{% else %}{{'-1_available' | statusToTitle}}{% endif %}">
+        <td class="status" title="{% if dataset.registered %}{{(dataset.available ~ '_available') | statusToTitle}}{% else %}{{'-1_available' | statusToTitle}}{% endif %}">
+            <img src="{{baseUrl}}/includes/images/{% if dataset.registered %}{{dataset.available | statusToImg}}{% else %}{{'-1' | statusToImg}}{% endif %}">
         </td>
     </tr>
     {% endfor %}

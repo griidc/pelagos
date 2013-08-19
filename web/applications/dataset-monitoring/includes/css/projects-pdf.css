@@ -41,3 +41,7 @@ table.datasets td.udi {
     font-size: 75%;
     width: 7em;
 }
+
+div.tooltip-note {
+    display: none;
+}
