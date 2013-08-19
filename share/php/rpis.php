@@ -69,6 +69,10 @@ function getProjectDetails($dbh, $filters = array()) {
                 $projects[$i]['ProjectLevelAssoc'] = false;
             }
         }
+
+        if (preg_match('/\(([^\)]+)\)$/',$projects[$i]['Title'],$matches)) {
+            $projects[$i]['Abbr'] = $matches[1];
+        }
     }
 
     return $projects;
