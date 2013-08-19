@@ -77,7 +77,7 @@ function showProjects(by,id) {
                     solo: true
                 },
                 hide: {
-                    event: "mouseleave blur",
+                    fixed: true,
                     delay: 100
                 },
                 style: {
