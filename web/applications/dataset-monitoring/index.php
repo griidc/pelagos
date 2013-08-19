@@ -31,8 +31,10 @@ $app->hook('slim.before', function () use ($app) {
 $app->get('/includes/:file', 'dumpIncludesFile')->conditions(array('file' => '.+'));
 
 $app->get('/js/:name.js', function ($name) use ($app) {
+    $stash['funds'] = getFundingSources(getDBH('RPIS'));
+    $stash['projects'] = getProjectDetails(getDBH('RPIS'),array("fundsrc=7"));
     header('Content-type: text/javascript');
-    $app->render("js/$name.js");
+    $app->render("js/$name.js",$stash);
     exit;
 });
 

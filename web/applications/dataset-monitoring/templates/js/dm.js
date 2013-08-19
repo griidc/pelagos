@@ -1,3 +1,27 @@
+var fund_src_map = {
+    {% for fund in funds %}
+        '{{fund.Abbr}}': '{{fund.ID}}',
+    {% endfor %}
+};
+
+var rev_fund_src_map = {
+    {% for fund in funds %}
+        '{{fund.ID}}': '{{fund.Abbr}}',
+    {% endfor %}
+};
+
+var project_map = {
+    {% for project in projects %}
+        '{{project.Abbr}}': '{{project.ID}}',
+    {% endfor %}
+}
+
+var rev_project_map = {
+    {% for project in projects %}
+        '{{project.ID}}': '{{project.Abbr}}',
+    {% endfor %}
+}
+
 var $ = jQuery.noConflict();
 
 $(document).ready(function() {
@@ -37,9 +61,9 @@ $(document).ready(function() {
                     $("#tree").jstree("select_node", $('#tasks_projectId_' + m[1]), true);
                 }
                 else {
-                    $("#tree").jstree("open_node", $('#projects_fundSrc_' + m[1]));
-                    $("#tree").jstree("select_node", $('#datasets_projectId_' + m[2]), true);
-                    $("#tree").jstree("select_node", $('#tasks_projectId_' + m[2]), true);
+                    $("#tree").jstree("open_node", $('#projects_fundSrc_' + map_fund_src(m[1])));
+                    $("#tree").jstree("select_node", $('#datasets_projectId_' + map_project(m[2])), true);
+                    $("#tree").jstree("select_node", $('#tasks_projectId_' + map_project(m[2])), true);
                 }
             }
         }
@@ -96,4 +120,28 @@ function showDatasetDetails(udi) {
             $('#dataset_details').show();
         }
     });
+}
+
+function updateHash(fund_src,project_id) {
+    location.href = '#' + rev_map_fund_src(fund_src) + '/' + rev_map_project(project_id);
+}
+
+function map_fund_src(name) {
+    if (name in fund_src_map) return fund_src_map[name];
+    return name;
+}
+
+function rev_map_fund_src(name) {
+    if (name in rev_fund_src_map) return rev_fund_src_map[name];
+    return name;
+}
+
+function map_project(name) {
+    if (name in project_map) return project_map[name];
+    return name;
+}
+
+function rev_map_project(name) {
+    if (name in rev_project_map) return rev_project_map[name];
+    return name;
 }
