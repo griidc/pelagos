@@ -1,9 +1,12 @@
 
 <fieldset>
+
 <legend>{{Legend}}</legend>
 <table width="100%">
 {% if role == "distributor" %}
-<!-- no name need -->
+<input type="hidden" id="lastdata_{{instanceName}}">
+<tr><td><input onchange="prefill_{{instanceName}}(this);" type="checkbox"><b>This data is hosted with GRIIDC.</b></td>
+<td><pre>Check this box if your data is hosted with GRIIDC, this will fill the following fields with GRIIDC contact information.</pre></td></tr>
 {% elseif role == "pointOfContact" %}
 <tr>
 <td><label for="CRIP1_{{instanceName}}"><em>*</em>Name</label>

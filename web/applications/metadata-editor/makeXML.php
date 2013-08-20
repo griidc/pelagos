@@ -18,6 +18,8 @@ function makeXML($xml)
 	
 	echo '</pre>';
 	
+	
+	
 	$dMessage = 'Succesfully Created XML file:';
 	drupal_set_message($dMessage,'status');
 }

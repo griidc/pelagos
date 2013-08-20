@@ -31,6 +31,11 @@ class CI_ResponsibleParty
 		
 		$twigArr = array('instanceName' => $instanceName,'instanceType' => $instanceType,'role' => $role,'Contact' => $Contact,'poc' => $poc, 'Legend' => $Legend,'xmlArray' => $xmlArray[0]);
 		
+		if ($role == "distributor")
+		{
+			$mMD->jsString .= $mMD->twig->render('js/CI_ResponsibleParty.js', array('instanceName' => $instanceName));
+		}
+		
 		$this->htmlString .= $mMD->twig->render('html/CI_ResponsibleParty.html', $twigArr);
 		
 		return true;
