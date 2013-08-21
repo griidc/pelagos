@@ -143,7 +143,7 @@ function getTaskOptionList($tasks, $what = null) {
 	unset($doc);
 }
 
-function getTasks($ldap,$baseDN,$userDN,$firstName,$lastName) {
+function getTasks($ldap,$baseDN,$userDN,$peopleid,$restrict_to_task_roles=false) {
     global $isGroupAdmin;
     $switch = '?'.'maxResults=-1';
 
@@ -172,8 +172,8 @@ function getTasks($ldap,$baseDN,$userDN,$firstName,$lastName) {
         }
     }
 
-    # get all tasks based on reseacher name
-    $filters = "&lastName=$lastName&firstName=$firstName";
+    # get all tasks based on reseacher RIS ID
+    $filters = "&peopleid=$peopleid";
     $doc = simplexml_load_file(RPIS_TASK_BASEURL.$switch.$filters);
     $my_tasks = $doc->xpath('Task');
 
@@ -192,28 +192,37 @@ function getTasks($ldap,$baseDN,$userDN,$firstName,$lastName) {
         {
             $personArray = (array)$person;
 
-            if ($personArray['LastName'] == $lastName and $personArray['FirstName'] == $firstName)
+            if ($personArray['@attributes']['ID'] == $peopleid)
             {
                 $currentPerson = $person;
                 break;
             }
         }
 
-        # for projects with tasks only include tasks for which we have a task role
-        if ($currentPerson)
+
+        # if we want to restrict the task list to tasks for which we have a task role
+        if ($restrict_to_task_roles)
         {
-            $roles = $currentPerson->xpath('Roles/Role/Name');
-            $taskLead = false;
-            foreach ($roles as $role)
+            if ($currentPerson)
             {
-                if (in_array($role['ID'],array(4,5,6)))
+                $roles = $currentPerson->xpath('Roles/Role/Name');
+                $taskLead = false;
+                foreach ($roles as $role)
                 {
-                    $taskLead = true;
+                    if (in_array($role['ID'],array(4,5,6)))
+                    {
+                        $taskLead = true;
+                    }
+                }
+                if ($taskLead) {
+                    $tasks[] = $task;
                 }
             }
-            if ($taskLead) {
-                $tasks[] = $task;
-            }
+        }
+        # otherwise just return all the tasks for which we have any role
+        else
+        {
+            $tasks[] = $task;
         }
     }
 
