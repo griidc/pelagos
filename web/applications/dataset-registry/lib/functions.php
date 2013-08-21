@@ -172,58 +172,64 @@ function getTasks($ldap,$baseDN,$userDN,$peopleid,$restrict_to_task_roles=false)
         }
     }
 
-    # get all tasks based on reseacher RIS ID
-    $filters = "&peopleid=$peopleid";
-    $doc = simplexml_load_file(RPIS_TASK_BASEURL.$switch.$filters);
-    $my_tasks = $doc->xpath('Task');
-
-    foreach ($my_tasks as $task)
+    # only search by peopleid if we have one
+    if (!empty($peopleid))
     {
-        # for projects with no tasks just add the ficticious project task
-        if ($task['ID'] == 0)
-        {
-            $tasks[] = $task;
-            continue;
-        }
 
-        $currentPerson = null;
-        $people = $task->xpath('Researchers/Person');
-        foreach ($people as $person)
-        {
-            $personArray = (array)$person;
+        # get all tasks based on reseacher RIS ID
+        $filters = "&peopleid=$peopleid";
+        $doc = simplexml_load_file(RPIS_TASK_BASEURL.$switch.$filters);
+        $my_tasks = $doc->xpath('Task');
 
-            if ($personArray['@attributes']['ID'] == $peopleid)
+        foreach ($my_tasks as $task)
+        {
+            # for projects with no tasks just add the ficticious project task
+            if ($task['ID'] == 0)
             {
-                $currentPerson = $person;
-                break;
+                $tasks[] = $task;
+                continue;
             }
-        }
 
-
-        # if we want to restrict the task list to tasks for which we have a task role
-        if ($restrict_to_task_roles)
-        {
-            if ($currentPerson)
+            $currentPerson = null;
+            $people = $task->xpath('Researchers/Person');
+            foreach ($people as $person)
             {
-                $roles = $currentPerson->xpath('Roles/Role/Name');
-                $taskLead = false;
-                foreach ($roles as $role)
+                $personArray = (array)$person;
+
+                if ($personArray['@attributes']['ID'] == $peopleid)
                 {
-                    if (in_array($role['ID'],array(4,5,6)))
+                    $currentPerson = $person;
+                    break;
+                }
+            }
+
+
+            # if we want to restrict the task list to tasks for which we have a task role
+            if ($restrict_to_task_roles)
+            {
+                if ($currentPerson)
+                {
+                    $roles = $currentPerson->xpath('Roles/Role/Name');
+                    $taskLead = false;
+                    foreach ($roles as $role)
                     {
-                        $taskLead = true;
+                        if (in_array($role['ID'],array(4,5,6)))
+                        {
+                            $taskLead = true;
+                        }
+                    }
+                    if ($taskLead) {
+                        $tasks[] = $task;
                     }
                 }
-                if ($taskLead) {
-                    $tasks[] = $task;
-                }
+            }
+            # otherwise just return all the tasks for which we have any role
+            else
+            {
+                $tasks[] = $task;
             }
         }
-        # otherwise just return all the tasks for which we have any role
-        else
-        {
-            $tasks[] = $task;
-        }
+
     }
 
     return $tasks;
