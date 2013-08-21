@@ -116,6 +116,8 @@ else
     $row = "";
 }
 
+$registered = false;
+
 if (isset($reg_id))
 {
 	$formDisabled = false;
@@ -134,6 +136,7 @@ if (isset($reg_id))
     }
     else
     {
+        $registered = true;
         $dif_id = true;  
 
         $row = $regrow;
@@ -1268,7 +1271,7 @@ EOT;
    
     <br>
     <div style="text-align:center;">
-        <input <?php formDisabled($formDisabled)?> onclick="submitRegistry();" type="button" value="Register" style="font-size:120%; font-weight:bold;"/>
+        <input <?php formDisabled($formDisabled)?> onclick="submitRegistry();" type="button" value="<?php if ($registered) echo "Update"; else echo "Register"; ?>" style="font-size:120%; font-weight:bold;"/>
     </div>
 </form>  
 
