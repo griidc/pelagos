@@ -17,7 +17,8 @@ function getDBH($db) {
 }
 
 function getTasksAndDatasets($projects) {
-    $SELECT = "SELECT DISTINCT title, status, dataset_uid, d.dataset_udi AS udi,
+    $SELECT = "SELECT DISTINCT status, dataset_uid, d.dataset_udi AS udi,
+               CASE WHEN r.dataset_title IS NULL THEN title ELSE r.dataset_title END AS title,
                CASE WHEN status = 2 THEN 1 WHEN status = 1 THEN 2 ELSE 0 END AS identified,
                CASE WHEN registry_id IS NULL THEN 0 ELSE 1 END AS registered,
                CASE WHEN metadata_dl_status IS NULL OR metadata_dl_status != 'Completed' THEN 0 WHEN metadata_status = 'Accepted' THEN 1 ELSE 2 END AS metadata,

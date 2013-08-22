@@ -121,11 +121,11 @@ $app->get('/dataset_details/:udi', function ($udi) use ($app) {
     $dbh = getDBH('GOMRI');
 
     $SELECT = 'SELECT
-               title,
+               CASE WHEN r.dataset_title IS NULL THEN title ELSE r.dataset_title END AS title,
                status,
                dataset_uid,
                d.dataset_udi AS udi,
-               abstract,
+               CASE WHEN r.dataset_abstract IS NULL THEN abstract ELSE r.dataset_abstract END AS abstract,
                CASE WHEN registry_id IS NULL THEN 0 ELSE 1 END AS registered';
 
     $FROM = 'FROM datasets d
