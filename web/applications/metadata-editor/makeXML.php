@@ -240,7 +240,7 @@ function createNodesXML($xml,$doc)
 	}	
 			
 	header("Content-type: text/xml; charset=utf-8"); 
-	//header("Content-Disposition: attachment; filename=$filename");
+	header("Content-Disposition: attachment; filename=$filename");
 	$doc->formatOutput = true;
 	$doc->normalizeDocument();
 	ob_clean();
