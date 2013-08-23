@@ -25,7 +25,16 @@
        <link rel="stylesheet" type="text/css" href="includes/css/jquery.qtip.css" />
 	   <script langauge="javascript">
             function post_value(){
-               opener.document.ed.geoloc.value = document.frm.mc.value;
+				if (opener.document.metadata.name == 'metadata')
+				{
+					opener.document.metadata.BPL1_DataIdent.value = document.frm.mc.value;
+				}
+				else
+				{
+					opener.document.ed.geoloc.value = document.frm.mc.value;
+				}
+			   
+			   
                self.close();
             }
        </script>
@@ -49,6 +58,7 @@ echo "
        <script type=\"text/javascript\">
       $(document).ready(function()
       {
+		
       $.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
                   position: {
                           adjust: {
