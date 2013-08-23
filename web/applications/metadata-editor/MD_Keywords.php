@@ -10,8 +10,8 @@ class MD_Keywords
 		
 		$instanceVars = $myIni[$type];
 		
-		$xmlArray = $mMD->returnPath($instanceType);
-		
+		$xmlArray = $mMD->returnPath($instanceType.'-gmd:descriptiveKeywords');
+						
 		$keyWordList = null;
 		$skwlist = null;
 				
@@ -38,7 +38,7 @@ class MD_Keywords
 			}
 		}
 		
-		$instanceType .= '-gmd:MD_Keywords';
+		//$instanceType .= '-gmd:MD_Keywords';
 		
 		$this->htmlString .= $mMD->twig->render('html/MD_Keywords.html', array('instanceName' => $instanceName, 'instanceType' => $instanceType, 'type' => $type,'skwlist' => $skwlist, 'keyWordList' => $keyWordList, 'instanceVars' => $instanceVars));
 		

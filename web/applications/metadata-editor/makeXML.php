@@ -198,10 +198,11 @@ function createNodesXML($xml,$doc)
 							$parentXpath = $xpath;
 							
 							//$doc->formatOutput = true;
-							$doc->normalizeDocument();
+							//$doc->normalizeDocument();
 							$xmlString = $doc->saveXML();
 							
 							$doc->loadXML($xmlString);
+							$doc->normalizeDocument();
 						}
 											
 						//addNodeAttributes($doc,$parent,$node,$nodelevel,$val);
@@ -237,9 +238,9 @@ function createNodesXML($xml,$doc)
 		$filename = $xml["gmi:MI_Metadata-gmd:fileIdentifier-gco:CharacterString"];
 	
 	}	
-	
+			
 	header("Content-type: text/xml; charset=utf-8"); 
-	header("Content-Disposition: attachment; filename=$filename");
+	//header("Content-Disposition: attachment; filename=$filename");
 	$doc->formatOutput = true;
 	$doc->normalizeDocument();
 	ob_clean();
@@ -310,7 +311,7 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
 		case 'gmd:CI_RoleCode':
 		{
 			$node->setAttribute('codeList','http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode');
-			$node->setAttribute('codeListValue',$fieldvalue);
+			$node->setAttribute('codeListValue',$fieldvalue.'a');
 			$codeSpace = codeLookup($fieldname,$fieldvalue);
 			$node->setAttribute('codeSpace',$codeSpace);
 			break;
@@ -344,6 +345,11 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
 			$node->setAttribute('id','boundingExtent');
 			break;
 		}
+		case 'gml:Polygon':
+		{
+			$node->setAttribute('gml:id','Polygon');
+			break;
+		}
 		case 'gmd:EX_GeographicBoundingBox':
 		{
 			$node->setAttribute('id','boundingGeographicBoundingBox');
@@ -373,10 +379,8 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
 			$node->setAttribute('codeSpace',$codeSpace);
 			break;
 		}
-		
-		case 'gmd:descriptiveKeywords':
+		case '!gmd:descriptiveKeywords':
 		{
-			
 			$elements2 = null;
 			$beforeXpath = "/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:language";
 			if ($doc != null)
@@ -415,10 +419,86 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
 		}
 		case 'gmd:keywordtheme':
 		{
+			
+			echo "<br>!!theme!!<br>";
+			
 			$parent->removeChild($node);
 			
-			$arrkeywords = preg_split("/\;/",$fieldvalue);
+			$elements2 = null;
+			$beforeXpath = "/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:descriptiveKeywords[1]/gmd:MD_Keywords[1]/gmd:type[1]/gmd:MD_KeywordTypeCode[1]";
 			
+			if ($doc != null)
+			{
+				$xpathdoc2 = new DOMXpath($doc);
+				$elements2 = $xpathdoc2->query($beforeXpath);
+				$beforeNode = $elements2->item(0);
+				
+				var_dump($beforeNode->nodeName);
+				var_dump($elements2->length);
+				
+				var_dump($beforeNode->textContent);
+				
+				if ($elements2->length > 0 AND $beforeNode->textContent == "theme")
+				{
+					$parent = $beforeNode->parentNode;
+					$parent = $parent->parentNode;
+					$node = $parent->parentNode;
+					$parent = $node->parentNode;
+					
+					echo $node->nodeName.'!!<br>';
+					$parent->removeChild($node);
+					
+					$xmlString = $doc->saveXML();
+					
+					$doc->loadXML($xmlString);
+					//$doc->normalizeDocument();
+					
+				}
+				else
+				{
+					//echo $parent->nodeName;
+				}
+			}
+			
+			
+			$elements2 = null;
+			$beforeXpath = "/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:language";
+			if ($doc != null)
+			{
+				$xpathdoc2 = new DOMXpath($doc);
+				$elements2 = $xpathdoc2->query($beforeXpath);
+				$beforeNode = $elements2->item(0);
+				
+				var_dump($beforeNode->nodeName);
+				
+				if ($elements2->length > 0)
+				{
+					//$parent->removeChild($node);
+					$parent = $beforeNode->parentNode;
+					
+					$node = $doc->createElement('gmd:descriptiveKeywords');
+					$node = $parent->insertBefore($node,$beforeNode);
+				}
+				else
+				{
+					$node = $doc->createElement('gmd:descriptiveKeywords');
+					$node = $parent->appendChild($node);
+				}
+			}
+						
+			#go back two nodes
+			//$newparent = $parent->parentNode;
+			//$parent = $newparent->parentNode;
+			
+			#make another descriptiveKeywords node
+			//$node = $doc->createElement('gmd:descriptiveKeywords');
+			//$node = $parent->appendChild($node);
+			#make another MD_Keywords node
+			$parent = $doc->createElement('gmd:MD_Keywords');
+			$parent = $node->appendChild($parent);
+			
+			$arrkeywords = preg_split("/\;/",$fieldvalue);
+				
 			foreach ($arrkeywords as $myKeywords)
 			{
 				$mdkwrd = $doc->createElement('gmd:keyword');
@@ -435,18 +515,84 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
 		}
 		case 'gmd:keywordplace':
 		{
+			//var_dump($node->nodeName);
+		//	exit;
+			
 			$parent->removeChild($node);
 			
+			$elements2 = null;
+			$beforeXpath = "/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:descriptiveKeywords[1]/gmd:MD_Keywords[1]/gmd:type[1]/gmd:MD_KeywordTypeCode[1]";
+			
+			if ($doc != null)
+			{
+				$xpathdoc2 = new DOMXpath($doc);
+				$elements2 = $xpathdoc2->query($beforeXpath);
+				$beforeNode = $elements2->item(0);
+				
+				var_dump($beforeNode->nodeName);
+				var_dump($elements2->length);
+				
+				var_dump($beforeNode->textContent);
+				
+				if ($elements2->length > 0 AND $beforeNode->textContent == "place")
+				{
+					$parent = $beforeNode->parentNode;
+					$parent = $parent->parentNode;
+					$node = $parent->parentNode;
+					$parent = $node->parentNode;
+					
+					echo $node->nodeName.'!!<br>';
+					$parent->removeChild($node);
+					
+					$xmlString = $doc->saveXML();
+					
+					$doc->loadXML($xmlString);
+					//$doc->normalizeDocument();
+				}
+				else
+				{
+					//echo $parent->nodeName;
+				}
+				
+			}
+			
+			
+			
+			$elements2 = null;
+			$beforeXpath = "/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:language";
+			if ($doc != null)
+			{
+				$xpathdoc2 = new DOMXpath($doc);
+				$elements2 = $xpathdoc2->query($beforeXpath);
+				$beforeNode = $elements2->item(0);
+				
+				var_dump($beforeNode->nodeName);
+				
+				if ($elements2->length > 0)
+				{
+					//$parent->removeChild($node);
+					$parent = $beforeNode->parentNode;
+					
+					$node = $doc->createElement('gmd:descriptiveKeywords');
+					$node = $parent->insertBefore($node,$beforeNode);
+				}
+				else
+				{
+					$node = $doc->createElement('gmd:descriptiveKeywords');
+					$node = $parent->appendChild($node);
+				}
+			}
+			
 			#go back two nodes
-			$newparent = $parent->parentNode;
-			$parent = $newparent->parentNode;
+			//$newparent = $parent->parentNode;
+			//$parent = $newparent->parentNode;
 			
 			#make another descriptiveKeywords node
-			$dsckwrd = $doc->createElement('gmd:descriptiveKeywords');
-			$dsckwrd = $parent->appendChild($dsckwrd);
+			//$dsckwrd = $doc->createElement('gmd:descriptiveKeywords');
+			//$dsckwrd = $parent->appendChild($dsckwrd);
 			#make another MD_Keywords node
 			$parent = $doc->createElement('gmd:MD_Keywords');
-			$parent = $dsckwrd->appendChild($parent);
+			$parent = $node->appendChild($parent);
 			
 			$arrkeywords = preg_split("/\;/",$fieldvalue);
 			
