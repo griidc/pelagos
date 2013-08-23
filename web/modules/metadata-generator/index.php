@@ -44,7 +44,7 @@ $app->get('/:udi', function ($udi) use ($app) {
         if (array_key_exists('primary_poc',$stash['dataset'])) {
             $people = getPeopleDetails(getDBH('RPIS'),array('peopleId='.$stash['dataset']['primary_poc']));
             $stash['RP']['PPOC'] = $people[0];
-            $stash['RP']['PPOC']['RoleCode'] = $GLOBALS['CodeLists']['CI_RoleCode']['principalInvestigator'];
+            $stash['RP']['PPOC']['RoleCode'] = $GLOBALS['CodeLists']['CI_RoleCode']['pointOfContact'];
         }
     
         if (array_key_exists('project_id',$stash['dataset'])) {

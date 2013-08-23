@@ -13,6 +13,8 @@
         <gmd:positionName>
             <gco:CharacterString>{{RP[RPType].Position}}</gco:CharacterString>
         </gmd:positionName>
+	{% else %}
+		<gmd:positionName/>
     {% endif %}
     <gmd:contactInfo>
         <gmd:CI_Contact>
