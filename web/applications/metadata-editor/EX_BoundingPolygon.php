@@ -10,13 +10,18 @@ class EX_BoundingPolygon
              
         $geoArray = $xmlArray[0];
         
+        echo '<pre>';
+        var_dump($xmlArray);
+        echo '</pre>';
+        
+        $polyCoordinates = '';
+        
         if (isset($geoArray['gmd:polygon']['gml:Polygon']['gml:interior']['gml:LinearRing']['gml:coordinates']))
         {
             $polyCoordinates = $geoArray['gmd:polygon']['gml:Polygon']['gml:interior']['gml:LinearRing']['gml:coordinates'];
         }
-        else
+        elseif (isset($geoArray['gmd:extentTypeCode']))
         {
-            $polyCoordinates = '';
             $polyCoordinates .= $geoArray['gmd:northBoundLatitude']['gco:Decimal'] . ',' . $geoArray['gmd:westBoundLongitude']['gco:Decimal'] . ' '; 
             $polyCoordinates .= $geoArray['gmd:northBoundLatitude']['gco:Decimal'] . ',' . $geoArray['gmd:eastBoundLongitude']['gco:Decimal'] . ' '; 
             $polyCoordinates .= $geoArray['gmd:southBoundLatitude']['gco:Decimal'] . ',' . $geoArray['gmd:eastBoundLongitude']['gco:Decimal'] . ' '; 
