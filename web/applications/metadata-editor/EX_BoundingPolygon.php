@@ -9,11 +9,7 @@ class EX_BoundingPolygon
         $xmlArray = $mMD->returnPath($instanceType);
              
         $geoArray = $xmlArray[0];
-        
-        echo '<pre>';
-        var_dump($xmlArray);
-        echo '</pre>';
-        
+              
         $polyCoordinates = '';
         
         if (isset($geoArray['gmd:polygon']['gml:Polygon']['gml:interior']['gml:LinearRing']['gml:coordinates']))
