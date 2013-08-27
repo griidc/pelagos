@@ -541,6 +541,8 @@ function uploadFile()
 				//greaterThan: "starttime"
 			}
 		});
+        
+        //var isbad = false;
 		
 		jQuery.validator.addMethod("greaterThan", 
 		function(value, element, params) {
@@ -556,7 +558,8 @@ function uploadFile()
 		$("#metadata").validate({
 			ignore: ".ignore",
 			onfocusout: function(event, validator) {
-				if (this.numberOfInvalids() > 0){validateTabs(false);}
+				//alert(isbad);
+                if (this.numberOfInvalids() > 0){validateTabs(false);}
 				},
 			rules:
 			{

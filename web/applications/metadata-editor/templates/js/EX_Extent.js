@@ -6,8 +6,7 @@ function changeExtent{{instanceName}}(what)
 	document.getElementById("EX0_{{instanceName}}").checked = what;
 	
 	var checkStyle = "table-row";
-	
-	
+    
 	if (what)
 	{
 		document.getElementById("EX1_{{instanceName}}row").style.display = "table-row";
@@ -26,20 +25,52 @@ function changeExtent{{instanceName}}(what)
 		checkStyle = "table-row";
 	}
 	
-	document.getElementById("GDD2_{{instanceName}}row").style.display = checkStyle;
-	document.getElementById("GDD3_{{instanceName}}row").style.display = checkStyle;
-	document.getElementById("GDD4_{{instanceName}}row").style.display = checkStyle;
-	document.getElementById("GDD5_{{instanceName}}row").style.display = checkStyle;
+    try
+    {
+        document.getElementById("GDD2_{{instanceName}}row").style.display = checkStyle;
+        document.getElementById("GDD3_{{instanceName}}row").style.display = checkStyle;
+        document.getElementById("GDD4_{{instanceName}}row").style.display = checkStyle;
+        document.getElementById("GDD5_{{instanceName}}row").style.display = checkStyle;
+    }
+    catch(err)
+    {
+        //Handle errors here
+    }
+    
+    try
+    {
+        document.getElementById("BPL1_{{instanceName}}").style.display = checkStyle;
+    }
+    catch(err)
+    {
+        //Handle errors here
+    }    
 	
 	document.getElementById("TM1_{{instanceName}}extentrow").style.display = checkStyle;
 	document.getElementById("TM2_{{instanceName}}extentrow").style.display = checkStyle;
 	document.getElementById("TM3_{{instanceName}}extentrow").style.display = checkStyle;
 	
-	document.getElementById("GDD1_{{instanceName}}").disabled = what;
-	document.getElementById("GDD2_{{instanceName}}").disabled = what;
-	document.getElementById("GDD3_{{instanceName}}").disabled = what;
-	document.getElementById("GDD4_{{instanceName}}").disabled = what;
-	document.getElementById("GDD5_{{instanceName}}").disabled = what;
+    try
+    {
+        document.getElementById("GDD1_{{instanceName}}").disabled = what;
+        document.getElementById("GDD2_{{instanceName}}").disabled = what;
+        document.getElementById("GDD3_{{instanceName}}").disabled = what;
+        document.getElementById("GDD4_{{instanceName}}").disabled = what;
+        document.getElementById("GDD5_{{instanceName}}").disabled = what;
+    }
+    catch(err)
+    {
+        //Handle errors here
+    }
+    
+    try
+    {
+        document.getElementById("BPL1_{{instanceName}}").disabled = what;
+    }
+    catch(err)
+    {
+        //Handle errors here
+    }
 	
 	document.getElementById("TM1_{{instanceName}}extent").disabled = what;
 	document.getElementById("TM2_{{instanceName}}extent").disabled = what;
