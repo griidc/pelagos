@@ -630,15 +630,44 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
         {
             
             #todo: remove all old gmd:topicCategory
+            # insert before <gmd:extent>
             $parent->removeChild($node);
             
+            $elements2 = null;
+            $beforeXpath = "/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:topicCategory";
+            $xpathdoc2 = new DOMXpath($doc);
+            $elements2 = $xpathdoc2->query($beforeXpath);
+            
+            foreach($elements2 as $node)
+            {
+                $parent = $node->parentNode;
+                $parent->removeChild($node);
+            }
+                        
             $arrkeywords = preg_split("/\;/",$fieldvalue);
+            
+            $elements2 = null;
+            $beforeXpath = "/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification[1]/gmd:extent";
+            $xpathdoc2 = new DOMXpath($doc);
+            $elements2 = $xpathdoc2->query($beforeXpath);
             
             foreach ($arrkeywords as $myKeywords)
             {
-                $mdkwrd = $doc->createElement('gmd:topicCategory');
-                $mdkwrd = $parent->appendChild($mdkwrd);
-                $addnode = addXMLChildValue($doc,$mdkwrd,"gmd:MD_TopicCategoryCode",$myKeywords);
+                if ($elements2->length > 0)
+                {
+                    $beforeNode = $elements2->item(0);
+                    $parent = $beforeNode->parentNode;
+                    
+                    $node = $doc->createElement('gmd:topicCategory');
+                    $node = $parent->insertBefore($node,$beforeNode);
+                }
+                else
+                {
+                    $node = $doc->createElement('gmd:topicCategory');
+                    $node = $parent->appendChild($node);
+                }
+               
+                $addnode = addXMLChildValue($doc,$node,"gmd:MD_TopicCategoryCode",$myKeywords);
                 //$child = $doc->createElement('gmd:MD_TopicCategoryCode');
                 //$child = $parent->appendChild($child);
                 //$value = $doc->createTextNode($myKeywords);
