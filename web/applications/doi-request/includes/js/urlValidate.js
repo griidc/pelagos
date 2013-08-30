@@ -1,6 +1,8 @@
 //
 // URL Validation and php Ajax script for form.
 //
+
+var $ = jQuery.noConflict();
     
 function checkURL(url)
 {

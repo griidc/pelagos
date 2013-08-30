@@ -34,7 +34,7 @@ drupal_add_js('
                             "This URL is OK anyway! Let me submit the form.": function() {
                                 document.getElementById("urlValidate").value += " [200 OVERWRITE]";
                                 $( this ).dialog( "close" );
-                                form.submit();
+                                //form.submit();
                             }
                         },
                     });            
@@ -50,25 +50,49 @@ drupal_add_js('
             // validate doi form on submit
             $("#doiForm").validate({
                 rules: {
-                    txtWho: "required",
-                    txtWhat: "required",
-                    txtWhere: "required",
-                    txtURL: 
-                    {
+                    txtWho: {
                         required: true,
-                        url: true
+                        maxlength: 200
                     },
-                    txtDate: 
-                    {
+                    txtWhat:{
+                        required: true,
+                        maxlength: 200
+                    },
+                    txtWhere: {
+                        required: true,
+                        maxlength: 200
+                    },
+                    txtURL: {
+                        required: true,
+                        url: true,
+						maxlength: 200
+                    },
+                    txtDate: {
                         required: true,
                         dateISO: true
                     }
                 },
                 messages: {
-                    txtWho: "Please enter the Creator Name.",
-                    txtURL: "Please enter a valid URL.",
-                    txtWhat: "Please enter a Title.",
-                    txtDate: "Please enter a Date [YYYY-MM-DD]."
+                    txtWho: {
+						required: "Please enter the Creator Name.",
+						maxlength: jQuery.format("Please enter no more than {0} characters!")
+					},
+                    txtURL: {
+						required: "Please enter a valid URL.",
+						maxlength: jQuery.format("Please enter no more than {0} characters!")
+					},
+                    txtWhat: {
+						required: "Please enter a Title.",
+						maxlength: jQuery.format("Please enter no more than {0} characters!")
+					},
+					txtWhere: {
+						required: "Please enter a Publisher.",
+						maxlength: jQuery.format("Please enter no more than {0} characters!")
+					},
+                    txtDate: {
+						required: "Please enter a Date [YYYY-MM-DD].",
+						maxlength: jQuery.format("Please enter no more than {0} characters!")
+					}
                 }
             });
             
@@ -129,9 +153,9 @@ drupal_add_js('
         });
         
         $( "#opener" ).click(function() {
-			$( "#dialog" ).dialog( "open" );
-			return false;
-		});
+            $( "#dialog" ).dialog( "open" );
+            return false;
+        });
         
         })(jQuery);
 ',array('type'=>'inline'));
@@ -372,7 +396,7 @@ if ($userId == "")
 
 ?>
 
-<div id="dialog" style="font-size:smaller"></div>
+<div id="dialog" style=""></div>
 
 <div id="url_tip" style="display:none;">
     <img src="/dif/images/info.png" style="float:right;" />
