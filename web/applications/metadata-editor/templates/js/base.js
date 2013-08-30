@@ -239,8 +239,11 @@ function uploadFile()
                 if (validator.numberOfInvalids() > 0)
                 {
                     //$("#metadata").validate();
-                    $("#metadata").valid();
-                    if (onceValidated){validateTabs(false);}
+                    if (onceValidated)
+					{
+						validateTabs(false);
+						$("#metadata").valid();
+					}
                 }
             }
         });
