@@ -59,6 +59,8 @@ echo "
       $(document).ready(function()
       {
 		
+		//$(\"#info1\").click();
+		
       $.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
                   position: {
                           adjust: {
@@ -87,7 +89,7 @@ echo "
  </script>";
 	   ?>
  </head>
-<body id="body" onload="initmap()">
+<body id="body" onload="initmap();toolID=2;setTool();">
    <div id="top"> 
        <div id="map_canvas"></div> 
    </div>
