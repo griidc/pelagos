@@ -1,9 +1,10 @@
 
 <tr id="BPL1_{{instanceName}}"><td>
 <img src="/map/images/red-dot.png" height="15">
-<a href="javascript:void(0);" onclick="window.open('/map/','map','width=1150,height=840,toolbar=0,status=0,scrollbars=0,resizable=0,location=0');">Click here for a map</a>
+<a href="javascript:void(0);" onclick="window.open('/map/','map','width=1150,height=840,toolbar=0,status=0,scrollbars=0,resizable=0,location=0');">Click here for a mapping tool to help find coordinates.</a>
 
 <br>
 <label for="BPL1_{{instanceName}}"><em>*</em>Coordinate List</label>
-<textarea value="" class="required" type="text" id="BPL1_{{instanceName}}" rows="3" cols="80" name="{{instanceType}}-gmd:polygon-gml:Polygon-gml:interior-gml:LinearRing-gml:coordinates"/>{{polyCoordinates}}</textarea></td>
-	<td><pre>Coordinates defining the outline of an area covered by a dataset.</pre></td></tr>
+<textarea value="" class="required" type="text" id="BPL1_{{instanceName}}" rows="5" cols="80" name="{{instanceType}}-gmd:polygon-gml:Polygon-gml:interior-gml:LinearRing-gml:coordinates"/>{{polyCoordinates}}</textarea></td>
+	<td><pre>Coordinates of points (vertices of a polygon) defining the outline of the area covered by this dataset.
+The coordinates are in +/- decimal degrees.</pre></td></tr>
