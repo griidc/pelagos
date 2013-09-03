@@ -433,8 +433,11 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
             $xpathdoc2 = new DOMXpath($doc);
             $elements2 = $xpathdoc2->query($searchXpath);
             $node = $elements2->item(0);
-            $parent = $node->parentNode;
-            $parent->removeChild($node);
+			if ($elements2->length > 0)
+			{
+				$parent = $node->parentNode;
+				$parent->removeChild($node);
+			}
             
             break;
         }

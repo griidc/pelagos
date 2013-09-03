@@ -559,7 +559,7 @@ function uploadFile()
         $("#metadata").validate({
             ignore: ".ignore",
             onfocusout: function(event, validator) {
-                if (this.numberOfInvalids() > 0 && onceValidated){validateTabs(false);}
+                if (onceValidated){validateTabs(false);}
                 },
             rules:
             {
