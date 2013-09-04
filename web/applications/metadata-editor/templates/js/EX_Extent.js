@@ -39,7 +39,7 @@ function changeExtent{{instanceName}}(what)
     
     try
     {
-        document.getElementById("BPL1_{{instanceName}}").style.display = checkStyle;
+        document.getElementById("BPL1_{{instanceName}}row").style.display = checkStyle;
     }
     catch(err)
     {
@@ -91,6 +91,7 @@ function changeExtent{{instanceName}}(what)
 	}
 	else
 	{
+		$("#BPL1_{{instanceName}}").removeClass("error");
 		$("#GDD2_{{instanceName}}").removeClass("error");
 		$("#GDD3_{{instanceName}}").removeClass("error");
 		$("#GDD4_{{instanceName}}").removeClass("error");
