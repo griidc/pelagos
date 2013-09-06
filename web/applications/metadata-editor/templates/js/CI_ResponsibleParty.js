@@ -33,12 +33,12 @@ function prefill_{{instanceName}}(what)
 	if (what.checked)
 	{
 		addHiddenElement_{{instanceName}}("CRIP2_{{instanceName}}","Gulf of Mexico Research Initiative");
-		addHiddenElement_{{instanceName}}("CITP1_{{instanceName}}","1 361-825-3604");
-		addHiddenElement_{{instanceName}}("CITP2_{{instanceName}}","1 361-825-2050");
-		addHiddenElement_{{instanceName}}("CIAD1_{{instanceName}}","6300 Ocean Drive.\nUnit 5869");
+		addHiddenElement_{{instanceName}}("CITP1_{{instanceName}}","+1-361-825-3604");
+		addHiddenElement_{{instanceName}}("CITP2_{{instanceName}}","+1-361-825-2050");
+		addHiddenElement_{{instanceName}}("CIAD1_{{instanceName}}","6300 Ocean Drive Unit 5869");
 		addHiddenElement_{{instanceName}}("CIAD2_{{instanceName}}","Corpus Christi");
 		addHiddenElement_{{instanceName}}("CIAD3_{{instanceName}}","Texas");
-		addHiddenElement_{{instanceName}}("CIAD4_{{instanceName}}","78413");
+		addHiddenElement_{{instanceName}}("CIAD4_{{instanceName}}","78412-5869");
 		addHiddenElement_{{instanceName}}("CIAD5_{{instanceName}}","USA");
 		addHiddenElement_{{instanceName}}("CIAD6_{{instanceName}}","griidc@gomri.org");
 		addHiddenElement_{{instanceName}}("OLR1_{{instanceName}}","http://data.gomri.org");
