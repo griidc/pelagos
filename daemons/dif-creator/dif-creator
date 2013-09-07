@@ -1,0 +1,223 @@
+#!/usr/bin/perl
+
+use Config::Tiny;
+use XML::Simple;
+use DBI;
+use Data::Dumper;
+
+my $config = Config::Tiny->read('config.ini');
+
+my $xml = XML::Simple->new(ForceArray => ['entry','format','category','procedure','transport','national_data_center'], KeyAttr =>[]);
+
+$data = $xml->XMLin($ARGV[0]);
+
+my $griidc_dbh = DBI->connect('DBI:Pg:dbname=gomri',$config->{'griidc'}->{'username'},$config->{'griidc'}->{'password'}) or die "Couldn't connect to database: " . DBI->errstr;
+
+my @difCols = ('dataset_uid','task_uid','title','abstract','dataset_type','dataset_for','size','observation','approach','start_date','end_date','geo_location','historic_links','meta_editor','meta_standards','point','national','ethical','remarks','primary_poc','secondary_poc','logname','status','datafor','project_id','dataset_udi');
+
+my $format_map = {
+                     structured_text => { 'pos' => 0, 'label' => 'Structured, Generic Text/ASCII File (CSV, TSV)' },
+                   unstructured_text => { 'pos' => 1, 'label' => 'Unstructured, Generic Text/ASCII File (TXT)' },
+                              images => { 'pos' => 2, 'label' => 'Images' },
+                                 cdf => { 'pos' => 3, 'label' => 'CDF/netCDF' },
+                               video => { 'pos' => 4, 'label' => 'Video' },
+                    video_attributes => { 'pos' => 5 },
+                                 xml => { 'pos' => 6, 'label' => 'GML/XML Structured'}
+                 };
+
+my $category_map = {
+                         ecological_biological => { 'pos' => '0', 'label' => 'Ecological/Biological' },
+                         physical_oceanography => { 'pos' => '1', 'label' => 'Physical Oceanographical' },
+                                   atmospheric => { 'pos' => '2', 'label' => 'Atmospheric' },
+                                      chemical => { 'pos' => '3', 'label' => 'Chemical' },
+                                  human_health => { 'pos' => '4', 'label' => 'Human Health' },
+                     social_cultural_political => { 'pos' => '5', 'label' => 'Social/Cultural/Political' },
+                                     economics => { 'pos' => '6', 'label' => 'Economics' }
+                   };
+
+my $procedure_map = {
+                           field_sampling => { 'pos' => '0', 'label' => 'Field Sampling' },
+                      simulated_generated => { 'pos' => '1', 'label' => 'Simulated or Generated' },
+                               laboratory => { 'pos' => '2', 'label' => 'Labratory' },
+                         literature_based => { 'pos' => '3', 'label' => 'Literature Based' },
+                           remote_sensing => { 'pos' => '4', 'label' => 'Remote Sensing' }
+                    };
+
+my $transport_map = {
+                        ftp => { 'pos' => '0', 'label' => 'FTP' },
+                       http => { 'pos' => '0', 'label' => 'FTP' },
+                        tds => { 'pos' => '1', 'label' => 'TDS' },
+                      erdap => { 'pos' => '2', 'label' => 'ERDAP' }
+                    };
+
+my $national_data_center_map = {
+                                   NODC => { 'pos' => '0', 'label' => 'National Oceanographic Data Center' },
+                                 STORET => { 'pos' => '1', 'label' => 'US EPA Storet' },
+                                   GBIF => { 'pos' => '2', 'label' => 'Global Biodiversity Information Facility' },
+                                   NCBI => { 'pos' => '3', 'label' => 'National Center for Biotechnology Information' },
+                                    DMS => { 'pos' => '4', 'label' => 'Data.gov Dataset Management System' },
+                                 GRIIDC => { 'pos' => '5', 'label' => 'Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC)' }
+                               };
+
+my $metadata_standard_map = {
+                                       ISO_19115 => { 'pos' => '0', 'label' => 'ISO19115' },
+                                    'FGDC-CSDGM' => { 'pos' => '1', 'label' => 'CSDGM' },
+                              dublin_darwin_core => { 'pos' => '2', 'label' => 'DUBLIN' },
+                                             EML => { 'pos' => '3', 'label' => 'EML' }
+                            };
+
+my $ethical_or_privacy_map = { yes => 'Yes', no => 'No', uncertain => 'Uncertain' };
+
+my $dataset_size_map = {
+                            'less_than_1_gb' => '< 1 Gb',
+                             '1_gb_to_10_gb' => '1GB-10GB',
+                           '10_gb_to_200_gb' => '10GB-200GB',
+                            '200_gb_to_1_tb' => '200GB-1TB',
+                              '1_tb_to_5_tb' => '1TB-5TB',
+                         'greater_than_5_tb' => '>5TB'
+                       };
+
+my $count = 0;
+my $dataset_uid = time;
+
+for my $entry (@{$data->{'entry'}}) {
+    my %dif;
+
+    $dif{'title'} = $entry->{'dif'}->{'title'} if (defined $entry->{'dif'}->{'title'} and length $entry->{'dif'}->{'title'});
+
+    $dif{'abstract'} = $entry->{'dif'}->{'abstract'} if (defined $entry->{'dif'}->{'abstract'} and length $entry->{'dif'}->{'abstract'});
+
+    # format - repeatable
+    my @dataset_type = ('') x 8;
+    for my $format (@{$entry->{'dif'}->{'format'}}) {
+        if (defined $format->{'name'} and length $format->{'name'}) {
+            if ($format->{'name'} eq 'other') {
+                $dataset_type[7] = $format->{'other'};
+            }
+            else {
+                $dataset_type[$format_map->{$format->{'name'}}->{'pos'}] = $format_map->{$format->{'name'}}->{'label'};
+            }
+        }
+    }
+    $dif{'dataset_type'} = join('|',@dataset_type);
+
+    # category - repeatable
+    my @dataset_for = ('') x 9;
+    for my $category (@{$entry->{'dif'}->{'category'}}) {
+        if (defined $category->{'name'} and length $category->{'name'}) {
+            if ($category->{'name'} eq 'other') {
+                $dataset_for[8] = $category->{'other'};
+            }
+            else {
+                $dataset_for[$category_map->{$category->{'name'}}->{'pos'}] = $category_map->{$category->{'name'}}->{'label'};
+            }
+        }
+    }
+    $dif{'dataset_for'} = join('|',@dataset_for);
+
+    $dif{'size'} = $dataset_size_map->{$entry->{'dif'}->{'approximate_size'}} if (defined $entry->{'dif'}->{'approximate_size'} and length $entry->{'dif'}->{'approximate_size'});
+
+    $dif{'observation'} = $entry->{'dif'}->{'observed_or_generated'} if (defined $entry->{'dif'}->{'observed_or_generated'} and length $entry->{'dif'}->{'observed_or_generated'});
+
+    # procedure - repeatable
+    my @approach = ('') x 6;
+    for my $procedure (@{$entry->{'dif'}->{'procedure'}}) {
+        if (defined $procedure->{'name'} and length $procedure->{'name'}) {
+            if ($procedure->{'name'} eq 'other') {
+                $approach[5] = $procedure->{'other'};
+            }
+            else {
+                $approach[$procedure_map->{$procedure->{'name'}}->{'pos'}] = $procedure_map->{$procedure->{'name'}}->{'label'};
+            }
+        }
+    }
+    $dif{'approach'} = join('|',@approach);
+
+    $dif{'start_date'} = $entry->{'dif'}->{'period'}->{'start_date'} if (defined $entry->{'dif'}->{'period'}->{'start_date'} and length $entry->{'dif'}->{'period'}->{'start_date'});
+
+    $dif{'end_date'} = $entry->{'dif'}->{'period'}->{'end_date'} if (defined $entry->{'dif'}->{'period'}->{'end_date'} and length $entry->{'dif'}->{'period'}->{'end_date'});
+
+    $dif{'geo_location'} = $entry->{'dif'}->{'geographic_study_area'}->{'extent'}->{'gml:Polygon'}->{'gml:exterior'}->{'gml:LinearRing'}->{'gml:posList'}->{'content'} if (defined $entry->{'dif'}->{'geographic_study_area'}->{'extent'}->{'gml:Polygon'}->{'gml:exterior'}->{'gml:LinearRing'}->{'gml:posList'}->{'content'} and length $entry->{'dif'}->{'geographic_study_area'}->{'extent'}->{'gml:Polygon'}->{'gml:exterior'}->{'gml:LinearRing'}->{'gml:posList'}->{'content'});
+
+    $dif{'historic_links'} = $entry->{'dif'}->{'historical_data_references'} if (defined $entry->{'dif'}->{'historical_data_references'} and length $entry->{'dif'}->{'historical_data_references'});
+
+    # metadata - not currently repeatable
+    my @meta_standards = ('') x 5;
+    my $metadata = $entry->{'dif'}->{'metadata'};
+    if (defined $metadata->{'standard'} and length $metadata->{'standard'}) {
+        if ($metadata->{'standard'} eq 'other') {
+            $meta_standards[4] = $metadata->{'other'};
+        }
+        else {
+            $meta_standards[$metadata_standard_map->{$metadata->{'standard'}}->{'pos'}] = $metadata_standard_map->{$metadata->{'standard'}}->{'label'};
+        }
+    }
+    $dif{'meta_standards'} = join('|',@meta_standards);
+
+    $dif{'meta_editor'} = $entry->{'dif'}->{'metadata'}->{'editor'} if (defined $entry->{'dif'}->{'metadata'}->{'editor'} and length $entry->{'dif'}->{'metadata'}->{'editor'});
+
+    # transport - repeatable
+    my @point = ('') x 4;
+    for my $transport (@{$entry->{'dif'}->{'transport'}}) {
+        if (defined $transport->{'method'} and length $transport->{'method'}) {
+            if ($transport->{'method'} eq 'other') {
+                $point[3] = $transport->{'other'};
+            }
+            else {
+                $point[$transport_map->{$transport->{'method'}}->{'pos'}] = $transport_map->{$transport->{'method'}}->{'label'};
+            }
+        }
+    }
+    $dif{'point'} = join('|',@point);
+
+    # national_data_center - repeatable
+    my @national = ('') x 7;
+    for my $national_data_center (@{$entry->{'dif'}->{'national_data_center'}}) {
+        if (defined $national_data_center->{'data_center'} and length $national_data_center->{'data_center'}) {
+            if ($national_data_center->{'data_center'} eq 'other') {
+                $national[6] = $national_data_center->{'other'};
+            }
+            else {
+                $national[$national_data_center_map->{$national_data_center->{'data_center'}}->{'pos'}] = $national_data_center_map->{$national_data_center->{'data_center'}}->{'label'};
+            }
+        }
+    }
+    $dif{'national'} = join('|',@national);
+
+    $dif{'ethical'} = $ethical_or_privacy_map->{$entry->{'dif'}->{'ethical_or_privacy'}->{'issues'}} .'|';
+    $dif{'ethical'} .= $entry->{'dif'}->{'ethical_or_privacy'}->{'explain'} if defined $entry->{'dif'}->{'ethical_or_privacy'}->{'explain'};
+
+    $dif{'remarks'} = $entry->{'dif'}->{'remarks'} if (defined $entry->{'dif'}->{'remarks'} and length $entry->{'dif'}->{'remarks'});
+
+    $dif{'primary_poc'} = $entry->{'dif'}->{'primary_point_of_contact'}->{'id'} if (defined $entry->{'dif'}->{'primary_point_of_contact'}->{'id'} and length $entry->{'dif'}->{'primary_point_of_contact'}->{'id'});
+
+    $dif{'secondary_poc'} = $entry->{'dif'}->{'secondary_point_of_contact'}->{'id'} if (defined $entry->{'dif'}->{'primary_point_of_contact'}->{'id'} and length $entry->{'dif'}->{'primary_point_of_contact'}->{'id'});
+
+    $dif{'logname'} = $entry->{'dif'}->{'dif_user'}->{'id'} if (defined $entry->{'dif'}->{'dif_user'}->{'id'} and length $entry->{'dif'}->{'dif_user'}->{'id'});
+
+    $dif{'project_id'} = $entry->{'dif'}->{'funding_cycle'}->{'project'}->{'sequence'};
+
+    my $fs = $entry->{'dif'}->{'funding_cycle'}->{'reference'};
+    $fs =~ s/0//;
+    my $project = $entry->{'dif'}->{'funding_cycle'}->{'project'}->{'sequence'};
+    my $task = $entry->{'dif'}->{'funding_cycle'}->{'project'}->{'task'}->{'sequence'};
+
+    $dif{'editor'} = $entry->{'dif'}->{'dif_user'}->{'id'};
+
+    $dif{'status'} = 1;
+    $dif{'dataset_uid'} = $dataset_uid;
+    $dif{'task_uid'} = $entry->{'dif'}->{'funding_cycle'}->{'project'}->{'task'}->{'sequence'};
+
+    my $SQL = 'INSERT INTO datasets(' . join(',',@difCols) . ') VALUES (' . join(',',('?') x (@difCols-1)) . ",nextudi($project,$task,'$fs'));";
+    my $sth = $griidc_dbh->prepare($SQL) or die "Couldn't prepare statement: " . $dbh->errstr;
+   
+    $sth->execute(map { $dif{$_} } @difCols[0..(@difCols-2)])
+          or die "Couldn't execute statement: " . $sth->errstr;
+
+    $count++;
+    $dataset_uid++;
+}
+
+$griidc_dbh->disconnect;
+
+print "Created $count DIFs\n";
