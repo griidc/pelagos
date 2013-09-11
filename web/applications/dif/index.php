@@ -11,7 +11,7 @@ if (!file_exists('config.php')) {
 }
 require_once 'config.php';
 
-$uid = getDrupalUserName();
+$uid = getUID();
 if (!isset($uid)) {
     $currentpage = urlencode(preg_replace('/^\//','',$_SERVER['REQUEST_URI']));
     drupal_set_message("You must be logged in to access the Dataset Information Form.<p><a href='/cas?destination=$currentpage' style='font-weight:bold;'>Log In</a></p>",'error');

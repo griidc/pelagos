@@ -141,7 +141,7 @@ function getTasks($ldap,$baseDN,$userDN,$firstName,$lastName) {
     $switch = '?'.'maxResults=-1';
 
     # if we're a DIF admin, just return all the tasks
-    if (isAdmin())
+    if (isAdmin() and !array_key_exists('as_user',$_GET))
     {
         $doc = simplexml_load_file(RPIS_TASK_BASEURL.$switch.'&cached=true');
         return $doc->xpath('Task');
@@ -249,16 +249,11 @@ function displayTaskStatus($tasks,$update=null,$personid=null)
             $title = $row[0];
             $datasetid = $row[2];
             $dataset_udi = $row[3];
-            
-            if (isset($personid))
-            {
-                echo "d.add($nodeCount,$folderCount,'".addslashes("[$dataset_udi] $title")."','?uid=$datasetid&prsid=$personid','".addslashes("[$dataset_udi] $title")."','_self'";
-            }
-            else
-            {
-                echo "d.add($nodeCount,$folderCount,'".addslashes("[$dataset_udi] $title")."','?uid=$datasetid','".addslashes("[$dataset_udi] $title")."','_self'";
-            }
-            
+
+            $qs = "uid=$datasetid";
+            if (isset($personid)) { $qs .= "&prsid=$personid"; }
+            if (array_key_exists('as_user',$_GET)) { $qs .= "&as_user=$_GET[as_user]"; }
+            echo "d.add($nodeCount,$folderCount,'".addslashes("[$dataset_udi] $title")."','?$qs','".addslashes("[$dataset_udi] $title")."','_self'";
             
             switch ($status)
             {
@@ -373,5 +368,13 @@ function filterTasks($tasks, $person)
 }
 
 function helps($for, $ht, $tip){ echo "\n<label for=\"$for\"><b>$ht: </b><span id=\"$tip\" style=\"float:right;\"> <IMG SRC=\"/dif/images/info.png\"></span></label>\n"; }
-?>
 
+function getUID() {
+    global $user;
+    if (array_key_exists('as_user',$_GET) and isAdmin()) {
+        return $_GET['as_user'];
+    }
+    return $user->name;
+}
+
+?>

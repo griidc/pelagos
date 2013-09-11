@@ -97,7 +97,7 @@ $email = "";
     
 }
 
-if ($GLOBALS['isGroupAdmin'] OR isAdmin())
+if ($GLOBALS['isGroupAdmin'] OR (isAdmin() and !array_key_exists('as_user',$_GET)))
 {
     echo '<table class=cleair style="width:100%; margin-left:10px;"><tbody class=tbody><tr><td style="padding:10px;">';
     //echo '<h2>Dataset Filter</h2>';

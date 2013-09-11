@@ -11,7 +11,7 @@ $alltasks="";
 
 $ldap = connectLDAP('triton.tamucc.edu');
 $baseDN = 'dc=griidc,dc=org';
-$uid = getDrupalUserName();
+$uid = getUID();
 if (isset($uid)) {
     $submittedby ="";
     $userDNs = getDNs($ldap,$baseDN,"uid=$uid");
@@ -268,7 +268,6 @@ if ((isset($_POST['submit']) and $_POST['submit'])||(isset($_POST['later']) and 
     }
     else
     {
-        global $user;
         if ($flag== "update") {
             $uid = $modts;
             $sql = "UPDATE datasets SET dataset_uid='".$uid."', task_uid='".$task."', title='".$title."', abstract='".$abstract."', dataset_type='".$datatype."', dataset_for='".$datafor."', size='".$size."', observation='".$observation ."', approach='".$approach ."', historic_links='".$historical."', meta_editor='".$ed ."', meta_standards='".$standards."', point='".$point."', national='".$national ."', ethical='".$privacy."', remarks='".$remarks ."', primary_poc=";
@@ -281,7 +280,7 @@ if ((isset($_POST['submit']) and $_POST['submit'])||(isset($_POST['later']) and 
             if (sprintf('%s.x%03d.%03d',$fundSrc,$project,$task) != substr($dataset_udi,0,11)) {
                 $sql .= ", dataset_udi = nextudi($project,$task,'$fundSrc')";
             }
-            $sql .= ", editor='$user->name'";
+            $sql .= ", editor='" . getUID() . "'";
             $sql .= " WHERE dataset_uid='".$uid."'";
         }
         else {
@@ -292,7 +291,7 @@ if ((isset($_POST['submit']) and $_POST['submit'])||(isset($_POST['later']) and 
             if ($spoc ==""){$sql .="null";}else{ $sql.="'".$spoc."'";}
             $sql .=", '$submittedby','$status', ";
             if ($project ==""){$sql .="null";}else{ $sql.="'".$project."'";}
-            $sql .=", nextudi($project,$task,'$fundSrc'), '$user->name')";
+            $sql .=", nextudi($project,$task,'$fundSrc'), '" . getUID() . "')";
         }
     }
     $result = pg_query($connection, $sql); 

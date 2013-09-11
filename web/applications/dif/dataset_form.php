@@ -369,7 +369,7 @@ Video&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
 </div>
 
     <?PHP
-        if ((isAdmin())&&(($status ==1)||($status==2))){
+        if ((isAdmin() and !array_key_exists('as_user',$_GET))&&(($status ==1)||($status==2))){
     ?>
     <div style="text-align:center;">
         <input class="submit" type="submit" name="accept" value="Accept">
