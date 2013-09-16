@@ -10,7 +10,7 @@ echo '<table border="1" width="100%" style="background-color:transparent; color:
 echo "<tr><td width=\"200px\" align=\"top\"><b>Registry Identifier:</b></td><td><h2><a href=\"".$_SERVER['SCRIPT_NAME']."?regid=$reg_id\">$reg_id</h2></td></tr>";
 echo "<tr rowspan=2><td><b>Dataset Title:</b></td><td>$title</td></tr>";
 echo "<tr rowspan=3><td><b>Dataset Abstract:</b></td><td>$abstrct</td></tr>";
-echo "<tr><td><b>Dataset Originator:</b></td><td>$dataset_originator</td></tr>";
+echo "<tr><td><b>Dataset Originator(s):</b></td><td>$dataset_originator</td></tr>";
 echo "<tr><td><b>Point of Contact Name:</b></td><td>$pocname</td></tr>";
 echo "<tr><td><b>Point of Contact E-Mail:</b></td><td>$pocemail</td></tr>";
 echo "<tr><td><b>Restrictions:</b></td><td>$avail</td></tr>";

@@ -782,7 +782,7 @@ function submitRegistry() {
 <div id="dataset_originator_tip" style="display:none;">
     <img src="/dif/images/info.png" style="float:right;" />
     <p>
-        <strong>Dataset Originator:</strong><p/><p>This is the person or organization that generated the dataset. It is preferable to specify an individual, rather than an organization, whenever possible. Please specify individuals using the following format: Lastname, Firstname</p><p>For multiple originators, please use the MLA citation style, eg.:</p><p>Two originators:<br/>Cross, Susan, and Christine Hoffman</p><p>Three originators:<br/>Lowi, Theodore, Benjamin Ginsberg, and Steve Jackson</p><p>More than three originators:<br/> Gilman, Sander, et al</p><br /><p>200 Characters Max</p>
+        <strong>Dataset Originator(s):</strong><p/><p>This is the person (or people) or organization that generated the dataset. It is preferable to specify an individual, rather than an organization, whenever possible. Please specify individuals using the following format: Lastname, Firstname</p><p>For multiple originators, please use the MLA citation style, eg.:</p><p>Two originators:<br/>Cross, Susan, and Christine Hoffman</p><p>Three originators:<br/>Lowi, Theodore, Benjamin Ginsberg, and Steve Jackson</p><p>More than three originators:<br/> Gilman, Sander, et al</p><br /><p>200 Characters Max</p>
     </p>
 </div>
 
@@ -951,7 +951,7 @@ function submitRegistry() {
         <span id="qtip_dataset_originator" style="float:right;">
             <img src="/dif/images/info.png">
         </span>
-        <label for="dataset_originator"><b>Dataset Originator: </b></label>
+        <label for="dataset_originator"><b>Dataset Originator(s): </b></label>
         <div class="fwtextboxcont">
             <input <?php formDisabled($formDisabled)?> type="text" name="dataset_originator" id="dataset_originator" size="60" value="<?php if (isset($row['dataset_originator'])) {echo $row['dataset_originator'];};?>"/>
         </div>
