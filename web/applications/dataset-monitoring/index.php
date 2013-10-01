@@ -125,6 +125,9 @@ $app->get('/dataset_details/:udi', function ($udi) use ($app) {
                status,
                dataset_uid,
                d.dataset_udi AS udi,
+               d.primary_poc AS ppoc_ris_id,
+               d.secondary_poc AS spoc_ris_id,
+               dataset_originator,
                CASE WHEN r.dataset_abstract IS NULL THEN abstract ELSE r.dataset_abstract END AS abstract,
                CASE WHEN registry_id IS NULL THEN 0 ELSE 1 END AS registered';
 
@@ -136,6 +139,15 @@ $app->get('/dataset_details/:udi', function ($udi) use ($app) {
     $stmt = $dbh->prepare("$SELECT $FROM $WHERE ORDER BY CAST(SUBSTRING(registry_id from 18 for 3) AS INTEGER) DESC LIMIT 1;");
     $stmt->execute();
     $stash['datasets'] = $stmt->fetchAll();
+
+    for ($i=0; $i<count($stash['datasets']); $i++) {
+        $ppoc = getPeopleDetails(getDBH('RPIS'),array('peopleId=' . $stash['datasets'][$i]['ppoc_ris_id']));
+        $stash['datasets'][$i]['ppoc'] = $ppoc[0];
+        if ($stash['datasets'][$i]['spoc_ris_id']) {
+            $spoc = getPeopleDetails(getDBH('RPIS'),array('peopleId=' . $stash['datasets'][$i]['spoc_ris_id']));
+            $stash['datasets'][$i]['spoc'] = $spoc[0];
+        }
+    }
 
     $app->render('html/dataset_details.html',$stash);
     exit;

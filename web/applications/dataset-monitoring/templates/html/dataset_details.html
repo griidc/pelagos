@@ -1,6 +1,13 @@
 {% for dataset in datasets %}
     <div class="attr"><span class="attr">Dataset Title:</span> {{dataset.title}}</div>
     <div class="attr"><span class="attr">UDI:</span> {{dataset.udi}}</div>
+    {% if dataset.dataset_originator %}
+        <div class="attr"><span class="attr">Dataset Originator:</span> {{dataset.dataset_originator}}</div>
+    {% endif %}
+    <div class="attr"><span class="attr">Primary Point of Contact:</span> <a href="http://research.gulfresearchinitiative.org/gomri-funded-researchers/person/?pid={{dataset.ppoc_ris_id}}" target="_blank">{{dataset.ppoc.LastName}}, {{dataset.ppoc.FirstName}}</a></div>
+    {% if dataset.spoc_ris_id %}
+        <div class="attr"><span class="attr">Secondary Point of Contact:</span> <a href="http://research.gulfresearchinitiative.org/gomri-funded-researchers/person/?pid={{dataset.spoc_ris_id}}" target="_blank">{{dataset.spoc.LastName}}, {{dataset.spoc.FirstName}}</a></div>
+    {% endif %}
     <div class="abstract">
         <div><span class="attr">Abstract:</span></div>
         <div>{{dataset.abstract}}</div>
