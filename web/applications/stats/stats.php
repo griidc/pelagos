@@ -358,7 +358,7 @@ $row2 = pdoDBQuery($conn2,$query);
     <div id="main">
       <div class="caption">Summary of records</div>
       <div id="result">
-         <?php drawChart($gdata,300); ?>
+         <?php drawChart($gdata,600); ?>
       </div>   
      
     </div>

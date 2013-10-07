@@ -131,7 +131,7 @@ for ($i = 0; $i < count($statq[0]); $i++)
     echo '<div id="main">';
     echo '<div class="caption">'.$statname.'</div>';
     echo '<div id="result">';
-    drawChart($data,300);
+    drawChart($data,1000);
     echo '</div>';
     echo '</div><br/>';
 }

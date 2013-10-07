@@ -29,7 +29,7 @@ function drawChart($chartData,$tableSize = 300){
    // Calculate 1px value as the table is 300px
    $pxValue = ceil($maxBar/$tableSize);
    
-   $pxValue = .5;
+   //$pxValue = .5;
 
    // Now display the table with bars
    echo '<table><tr>';
