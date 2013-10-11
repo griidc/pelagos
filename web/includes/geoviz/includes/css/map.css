@@ -1,20 +1,68 @@
-div#branding
+.twolines
+ {
+	width:4em;
+	display: inline-block;
+	position: relative;
+	padding: 0;
+	word-wrap:normal;
+	margin-right: .1em;
+	vertical-align: middle;
+	text-align: center;
+	overflow: visible;
+ }
+ 
+.placeholder
+ {
+	 display: inline-block;
+	 position: relative;
+	 padding: 0;
+	 margin-right: .1em;
+	 vertical-align: middle;
+	 overflow: visible;
+	 filter:progid:DXImageTransform.Microsoft.Alpha(opacity=50);
+	 -moz-opacity: 0.5;
+	 opacity: 0.5;
+ }
+ 
+.dsstats
+ {
+	 display: inline-block;
+	 position: relative;
+	 padding: 5px;
+	 margin-right: .1em;
+	 vertical-align: middle;
+	 overflow: visible;
+ }
+ 
+.minitoolbar
 {
-	display:none;
-}
-
-.minitool
-{
-	
-	text-align:right
-}
-
-.mpktoolbar
-{
-	background-color: gray;
-	color: white;
+	text-align:right;
 	padding: 5px;
-	
+}
+
+.minitool 
+{
+	cursor: pointer; cursor: hand;
+}
+
+.minitool img
+{
+	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=50);
+	-moz-opacity: 0.5;
+	opacity: 0.5;
+}
+
+.minitool:hover img
+{
+  filter:progid:DXImageTransform.Microsoft.Alpha(opacity=100);
+  -moz-opacity: 1;
+  opacity: 1;
+ }
+
+.mptoolbar
+{
+	color: #555;
+	padding: 5px;
 }
 
 .mptool img
@@ -29,12 +77,12 @@ div#branding
 {
   filter:progid:DXImageTransform.Microsoft.Alpha(opacity=100);
   -moz-opacity: 1;
+  cursor: pointer; cursor: hand;
   opacity: 1;
   border: 2px solid red;
   padding: 0px;
   
- }
-
+}
 
 .grmap 
 {
@@ -68,11 +116,6 @@ tr:hover.dsrow
 	height:100%;
 	overflow-y:scroll;
 	overflow-x:hidden;
-}
-
-tr.dsrow
-{
-	width:100%;
 }
 
 .dsdetails

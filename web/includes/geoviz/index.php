@@ -48,7 +48,7 @@
 	function resizeMap()
 	{
 		$('#olmap').height(0);
-		h = $('#main').height() - $('#squeeze-wrapper').height() - 20;
+		h = $('#main').height() - $('#squeeze-wrapper').height() - 22;
 		$('#olmap').height(h);
 	}
 	
@@ -82,9 +82,10 @@
 				//$( this ).addClass( "done" );
 				
 				$('div[id="'+udi+'"] .dataset_details').html(html)
-				.show();
-				
-				$("#morearrow").attr("src","includes/images/collapse_arrow.png");
+				.show()
+				//.closest(".dsdetails #morearrow").attr("src","includes/images/093.png");
+				.siblings(".minitoolbar").children(".minitool").children("#morearrow")
+				.attr("src","includes/images/093.png");
 				
 				//$("div#"+udi).append('<p>'+html+'</p>');
 				//gotoFeature(udi);
@@ -94,20 +95,19 @@
 		{
 			if ($('div[id="'+udi+'"]').has(".dataset_details:hidden").length == 1)
 			{
-				$('div[id="'+udi+'"] > .dataset_details').show();
-				$("#morearrow").attr("src","includes/images/collapse_arrow.png");
+				$('div[id="'+udi+'"] > .dataset_details').show()
+				.siblings(".minitoolbar").children(".minitool").children("#morearrow")
+				.attr("src","includes/images/093.png");
 				//gotoFeature(udi);
 			}
 			else
 			{
-				$('div[id="'+udi+'"] > .dataset_details').hide();
-				$("#morearrow").attr("src","includes/images/expand_arrow.png");
-				gotoAllFeatures();
+				$('div[id="'+udi+'"] > .dataset_details').hide()
+				.siblings(".minitoolbar").children(".minitool").children("#morearrow")
+				.attr("src","includes/images/092.png");
+				//gotoAllFeatures();
 			}
 		}
-		
-		
-		
 	}
 	
 	function showList(features)
@@ -122,15 +122,14 @@
 			var title = features[i].attributes.title;
 			html = '<div class="dsdetails"  id="'+udi+'">';
 			//html += '<img src="/data-discovery/includes/images/download-package.png" title="download dataset">';
-			html += '<label for="morearrow">'+title+'...</label>';
+			html += '<span class="minitool" id="dstitle"><b>'+title+'...</b></span >';
 			html += '<div style="display:none;" class="dataset_details"></div>';
-			html += '<div class="minitool">';
-			html += '<div><img width="24px" height="24px" id="downloadds" src="includes/images/019.png">';
-			html += '<img width="24px" height="24px" id="detailsds" src="includes/images/022.png">';
-			html += '<img width="24px" height="24px" id="zoomds" src="includes/images/040.png">';
-			html += '<img style="display:none;" width="24px" height="24px" id="zoombackds" src="includes/images/041.png">';
-			html += '<img id="morearrow" src="includes/images/expand_arrow.png">';
-			html += '</div></div>'
+			html += '<div class="minitoolbar">';
+			html += '<span class="minitool"><img width="24px" height="24px" id="downloadds" src="includes/images/019.png"></span>';
+			html += '<span class="minitool"><img width="24px" height="24px"  src="includes/images/022.png"></span>';
+			html += '<span class="minitool"><img width="24px" height="24px" id="zoomds" src="includes/images/040.png"></span>';
+			html += '<span class="minitool"><img id="morearrow" width="24px" height="24px" src="includes/images/092.png"></span>';
+			html += '</div>'
 			
 			$("#dsdata")
 			.append('<tr class="dsrow"><td>'+html+'</td></tr>');
@@ -162,31 +161,30 @@
 		
 		$('.dsdetails #zoomds').click(function() {
 			console.debug($(this).closest('.dsdetails').attr('id'));
-			gotoFeature($(this).closest('.dsdetails').attr('id'));
-			$('.dsdetails #zoomds').toggle();
-			$('.dsdetails #zoombackds').toggle();
-		});
-		
-		$('.dsdetails #zoombackds').click(function() {
-			console.debug($(this).closest('.dsdetails').attr('id'));
-			//gotoFeature($(this).closest('.dsdetails').attr('id'));
-			gotoAllFeatures();
-			$('.dsdetails #zoomds').toggle();
-			$('.dsdetails #zoombackds').toggle();
+			if ($(this).attr("src") == "includes/images/041.png")
+			{
+				$(this).attr("src","includes/images/040.png");
+				gotoAllFeatures();
+			}
+			else
+			{
+				$(".dsdetails #zoomds").attr("src","includes/images/040.png");
+				//gotoAllFeatures();
+				$(this).attr("src","includes/images/041.png");
+				gotoFeature($(this).closest('.dsdetails').attr('id'));
+			}
 		});
 		
 		$(".dsdetails")
 		.hover(function(){highlightFeature(this.id)},function(){unhighlightFeature(this.id)});
 		
-		$(".dsdetails #morearrow").click(function() {
+		$("#dstitle, .dsdetails #morearrow").click(function() {
 			loadDetails($(this).closest('.dsdetails').attr('id'));
 		});
 		
 		loadStats();
 		
 		//gotoAllFeatures();
-		
-		
 	}
 	
 	function gotoAllFeatures()
@@ -232,13 +230,13 @@
 		
 		map = new OpenLayers.Map( 
 		{
-			allbaselayers: true,
 			div: "olmap",
 			projection: 'EPSG:4326',
 			displayProjection: 'EPSG:900913',
 			minResolution: "auto",
 			maxResolution: "auto",
-			//buffer: 2,
+			numZoomLevels: 12,
+			buffer: 2,
 			//zoomDuration: 100,
 			controls: [
 				new OpenLayers.Control.Navigation(),
@@ -328,7 +326,7 @@
 			{
 				//strokeColor: "white",
 				strokeOpacity: 1,
-				fillOpacity: .5,
+				fillOpacity: .3,
 				strokeWidth: 5,
 				label: "${udi}",
 				fontColor: "white",
@@ -341,7 +339,7 @@
 		google_hybrid = new OpenLayers.Layer.Google('Google', 
 		{
 			type: google.maps.MapTypeId.HYBRID,
-			numZoomLevels: 20,
+			//numZoomLevels: 20,
 			sphericalMercator: true
 		});
 
@@ -382,8 +380,6 @@
         });
         map.addControl(overview1);
 		
-		
-		
 		map.setCenter(new OpenLayers.LonLat(lon, lat).transform('EPSG:4326', 'EPSG:3857'), zoom);
 		
 		selectControl = new OpenLayers.Control.SelectFeature(vector);
@@ -395,17 +391,17 @@
 			"default": new OpenLayers.Style(
 			{
 				strokeColor: "#66CCCC",
-				strokeOpacity: 0.3,
+				strokeOpacity: 1,
 				strokeWidth: 3,
-				fillOpacity: 0.1,
+				fillOpacity: 0.0,
 				fillColor: "#66CCCC",
 				strokeDashstyle: "dash",
 				label: "FILTER AREA",
-				fontColor: "black",
-				labelOutlineColor: "white",
-				labelOutlineOpacity: 0.5,
-				fontOpacity: 0.5,
-				labelOutlineWidth: 1,
+				fontColor: "white",
+				labelOutlineColor: "black",
+				labelOutlineOpacity: 1,
+				fontOpacity: 1,
+				labelOutlineWidth: .5,
 				graphicZIndex: -2
 			})
 		});
@@ -433,16 +429,18 @@
 				$("#dnav").click();
 			}
 		});
-		
-		go64();
 	}
 	
 	function loadStats()
 	{
-		$("#dsstats").html("Showing <b>" + vector.features.length + "</b> Records<br/>");
-		$("#dsstats").append("RFP-I: <b>" + R1 + "</b>");
-		$("#dsstats").append(", RFP-II: <b>" + R2 + "</b>");
-		$("#dsstats").append(", Year One: <b>" + Y1 + "</b>");
+		var html = '<table>';
+		html += "<tr><td>Showing <b>" + vector.features.length + "</b> Records</td></tr>";
+		html += "<tr><td>RFP-I: <b>" + R1 + "</b>";
+		html += ", RFP-II: <b>" + R2 + "</b>";
+		html += ", Year One: <b>" + Y1 + "</b>";
+		html +=  "</td><tr></table>";
+		
+		$("#dsstats").html(html);
 	}
 	
 	function showLikeUDI(udi)
@@ -526,19 +524,11 @@
 		
 		$("#zoomhome").button()
 		.click(function() {
-			map.zoomToExtent(vector.getDataExtent());
+			//map.zoomToExtent(vector.getDataExtent());
+			map.setCenter(new OpenLayers.LonLat(lon, lat).transform('EPSG:4326', 'EPSG:3857'), zoom);
 		});
-		
-
-	}
 	
-	function go64()
-	{
-		console.debug("   **** COMMODORE 64 BASIC V2 ****");
-		console.debug(" 64 K SYSTEM  38911 BASIC BYTES FREE");
-		console.debug("READY.");
 	}
-	
 	
 	function loadQtip()
 	{
@@ -647,10 +637,21 @@
             }
         });
 		
+		$("#showall").qtip({
+            content: {
+                text: "Show everything."
+            },
+            position: {
+                my: "bottom left",
+                at: "top right",
+                viewport: $(window)
+            }
+        });
+		
+		
+		
 		
 	}
-	
-	
 </script>
 
 <body>
@@ -659,17 +660,27 @@
 	<tr>
 		<td colspan="2" width="100%">
 		<div class="mptoolbar">
-			GEOTOOL
+			<span width="" class="twolines">
+			Spatial Filter
+			</span>
 			<span class="mptool"><img id="ndraw" src="includes/images/083.png"></span>
 			<span class="mptool"><img id="dnav" style="display:none;" src="includes/images/012.png"></span>
 			<span class="mptool"><img id="filtclr" src="includes/images/031.png"></span>
 			<!--<span class="mptool"><img id="zoomout" src="includes/images/i_zoomfull.png"></span>-->
 			<span class="mptool"><img id="zoomhome" src="includes/images/040a.png"></span>
+			<img class="placeholder" src="includes/images/bar.png">
+			<span class="twolines">Funding Cycle:</span>
 			<span class="mptool"><img id="showy1" src="includes/images/year_one.png"></span>
 			<span class="mptool"><img id="showr1" src="includes/images/rfp_i.png"></span>
 			<span class="mptool"><img id="showr2" src="includes/images/rfp_ii.png"></span>
-			
-			Filter: <input id="filtertxt" size="100" type="text">
+			<span class="mptool"><img id="showall" src="includes/images/002.png"></span>
+			<img class="placeholder" src="includes/images/bar.png">
+			<span class="twolines">Text Filter:</span> 
+			<input id="filtertxt" size="60" type="text">
+			<img class="placeholder" src="includes/images/bar.png">
+			<span class="dsstats" id="dsstats">
+				Loading...
+			</span>
 		</div>
 		</td>
 	</tr>
@@ -681,18 +692,7 @@
 		<div class="datasets">
 			<table width="100%">
 				<tr>
-					<td width="100%">
-					<fieldset>
-					<div id="dsstats">
-						Loading...
-					</div>
-					
-					</fieldset>
-					</td>
-				</tr>
-			
-				<tr>
-					<td width="100%">
+					<td valign="top" width="100%">
 						<div>
 							<!--this is the table that contains all the datasets rows-->
 							<table width="100%" >
