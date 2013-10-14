@@ -3,7 +3,12 @@
 require_once '/usr/local/share/GRIIDC/php/ldap.php';
 require_once '/usr/local/share/GRIIDC/php/drupal.php';
 require_once '/usr/local/share/GRIIDC/php/aliasIncludes.php';
+require_once '/usr/local/share/GRIIDC/php/dif-registry.php';
 require_once 'lib/functions.php';
+
+$isGroupAdmin = false;
+
+$GLOBALS['DIF'] = true;
 
 if (!file_exists('config.php')) {
     echo 'Error: config.php is missing. Please see config.php.example for an example config file.';
@@ -24,10 +29,11 @@ else {
         <td style="vertical-align: top; width:60%" >
             <?php require_once 'dif.php'; ?>
         </td>
+        <td>&nbsp;&nbsp;</td>
         <td style="vertical-align: top; width:40%; height:2500px;" >
             <div style="position:relative;">
                 <div style="position:absolute; left:0px; right:10px;">
-                    <?php require_once 'sidebar.php'; ?>
+                    <?php require_once '/usr/local/share/GRIIDC/php/sidebar.php'; ?>
                 </div>
             </div>
         </td>

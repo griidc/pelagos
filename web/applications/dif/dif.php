@@ -25,7 +25,20 @@ if (isset($uid)) {
         }
     }
 }
-$tasks = getTasks($ldap,$baseDN,$userDN,$firstName,$lastName);
+
+# first try to get tasks for which we have a task role
+$tasks = getTasks($ldap,$baseDN,$userDN,$submittedby,true);
+
+# if we have no task roles, try to get tasks for which we have any role
+if (count($tasks) == 0) {
+    $tasks = getTasks($ldap,$baseDN,$userDN,$submittedby,false);
+}
+
+# if we still have no tasks, show a warning
+if (count($tasks) == 0) {
+    drupal_set_message("No projects/tasks found for $firstName $lastName.<br>Please contact GRIIDC at <a href='mailto:griidc@gomri.org'>griidc@gomri.org</a>",'warning');
+}
+
 $GLOBALS['personid'] ="";
 if ($_GET) 
 {
