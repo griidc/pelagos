@@ -17,7 +17,7 @@ $tabselect = 0;
 $formDisabled = true;
 
 
-$user = getDrupalUserName();
+$user = getUID();
 
 $sftpuser = false;
 $sftpdir = false;
@@ -572,7 +572,7 @@ function showDOIbutton(show)
 function showFileBrowser(type,dir)
 {
     jQuery.ajax({
-        "url": "/file_browser?type=" + type + "&dir=" + dir,
+        "url": "/file_browser?type=" + type + "&dir=" + dir <?php if (array_key_exists('as_user',$_GET)) echo " + \"&as_user=$_GET[as_user]\""; ?>,
         "success": function(data) {
             jQuery("#fileBrowserContent").html(data);
             jQuery("body").addClass("noscroll");

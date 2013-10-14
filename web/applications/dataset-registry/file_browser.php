@@ -1,10 +1,11 @@
 <?php
 
 require_once '/usr/local/share/GRIIDC/php/drupal.php';
+require_once '/usr/local/share/GRIIDC/php/dif-registry.php';
 
 if (array_key_exists('dir',$_GET)) {
 
-    $user = getDrupalUserName();
+    $user = getUID();
 
     if ($user) {
 

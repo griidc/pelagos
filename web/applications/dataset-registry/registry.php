@@ -9,10 +9,13 @@ require_once 'config.php';
 
 include_once '/usr/local/share/GRIIDC/php/ldap.php';
 include_once '/usr/local/share/GRIIDC/php/drupal.php';
+require_once '/usr/local/share/GRIIDC/php/dif-registry.php';
 
 include_once 'pdo_functions.php';
 
 include_once 'lib/functions.php';
+
+$isGroupAdmin = false;
 
 $alltasks="";
 
@@ -20,7 +23,7 @@ $conn = pdoDBConnect('pgsql:'.GOMRI_DB_CONN_STRING);
 
 $ldap = connectLDAP('triton.tamucc.edu');
 $baseDN = 'dc=griidc,dc=org';
-$uid = getDrupalUserName();
+$uid = getUID();
 if (isset($uid)) {
     $submittedby ="";
     $userDNs = getDNs($ldap,$baseDN,"uid=$uid");
@@ -277,7 +280,7 @@ else
     echo '</td>';
     echo '<td width="*">&nbsp;&nbsp;</td>';
     echo '<td width="40%" style="vertical-align: top; background: transparent;">';
-    include 'sidebar.php';
+    include '/usr/local/share/GRIIDC/php/sidebar.php';
     echo '</td>';
     echo '</tr>';
     echo '</table>';
