@@ -119,8 +119,8 @@ echo "<h2 class=\"title\" align=center>Tasks and datasets for ".$firstName." ".$
 echo "</h2></td></tr><tr><td>";
 
 
-echo '<div id="dstree" style="width:100%;max-height:1200px;overflow:auto;" BGCOLOR="#efefef">';
-echo "<div class=\"dtree\" style=\"padding-left:10px;padding-bottom:10px;padding-right:10px;\">\n";
+echo '<div id="dstree" style="width:100%;max-height:1200px;overflow:auto;padding-left:10px;padding-bottom:10px;padding-right:10px;" BGCOLOR="#efefef">';
+echo "<div class=\"dtree\">\n";
 echo "<script type=\"text/javascript\">\n\n";
 displayTaskStatus($tasks,null,$GLOBALS['personid']);
 echo "</script>\n</div>\n";
