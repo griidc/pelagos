@@ -803,21 +803,27 @@ function submitRegistry() {
 <div id="dataurl_tip" style="display:none;">
     <img src="/dif/images/info.png" style="float:right;" />
     <p>
-        <strong>Dataset File URL:</strong><p/> This is the URL that leads to the data being registered. Package the components of the datasets (if applicable) to form a single file (e.g. ZIP, TAR).
+        <p><strong>Dataset File URL:</strong></p>
+        <p>This is the URL that leads to the data being registered. Package the components of the datasets (if applicable) to form a single file (e.g. ZIP, TAR).</p>
+        <p style="color:red">Do not include copyrighted materials (e.g. published journal articles) in your data package.</p>
     </p>
 </div>
 
 <div id="sshdataurl_tip" style="display:none;">
     <img src="/dif/images/info.png" style="float:right;" />
     <p>
-        <strong>Dataset File Path:</strong><p/>This is the path on the server to the data file being registered. Click "Browse..." to find and select the data file you uploaded via SFTP.
+        <p><strong>Dataset File Path:</strong></p>
+        <p>This is the path on the server to the data file being registered. Click "Browse..." to find and select the data file you uploaded via SFTP.</p>
+        <p style="color:red">Do not include copyrighted materials (e.g. published journal articles) in your data package.</p>
     </p>
 </div>
 
 <div id="uploaddataurl_tip" style="display:none;">
     <img src="/dif/images/info.png" style="float:right;" />
     <p>
-        <strong>Dataset File:</strong><p/>Please select from your local machine the data file for the dataset you are registering.
+        <p><strong>Dataset File:</strong></p>
+        <p>Please select from your local machine the data file for the dataset you are registering.</p>
+        <p style="color:red">Do not include copyrighted materials (e.g. published journal articles) in your data package.</p>
     </p>
 </div>
 
