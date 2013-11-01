@@ -1,17 +1,18 @@
 <?php
 
-require_once '/usr/local/share/Slim/Slim/Slim.php';
-require_once '/usr/local/share/Slim-Extras/Views/TwigView.php';
+$GLOBALS['libraries'] = parse_ini_file('/etc/griidc/libraries.ini',true);
 
-require_once '/usr/local/share/GRIIDC/php/drupal.php';
-require_once '/usr/local/share/GRIIDC/php/dumpIncludesFile.php';
-require_once '/usr/local/share/GRIIDC/php/rpis.php';
+require_once $GLOBALS['libraries']['Slim']['include'];
+require_once $GLOBALS['libraries']['TwigView']['include'];
+TwigView::$twigDirectory = $GLOBALS['libraries']['Twig']['directory'];
+
+require_once $GLOBALS['libraries']['GRIIDC']['directory'].'/php/drupal.php';
+require_once $GLOBALS['libraries']['GRIIDC']['directory'].'/php/dumpIncludesFile.php';
+require_once $GLOBALS['libraries']['GRIIDC']['directory'].'/php/rpis.php';
 
 require_once 'lib/dm.php';
 
 $GLOBALS['config'] = parse_ini_file('config.ini',true);
-
-TwigView::$twigDirectory = $GLOBALS['config']['TwigView']['twigDirectory'];
 
 require_once 'lib/Twig_Extensions_GRIIDC.php';
 
