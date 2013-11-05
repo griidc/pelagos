@@ -2,9 +2,9 @@
 
 $GLOBALS['libraries'] = parse_ini_file('/etc/griidc/libraries.ini',true);
 
-require_once $GLOBALS['libraries']['Slim']['include'];
-require_once $GLOBALS['libraries']['TwigView']['include'];
-TwigView::$twigDirectory = $GLOBALS['libraries']['Twig']['directory'];
+require_once $GLOBALS['libraries']['Slim2']['include'];
+\Slim\Slim::registerAutoloader();
+require_once $GLOBALS['libraries']['Slim-Views']['include_Twig'];
 
 require_once $GLOBALS['libraries']['GRIIDC']['directory'].'/php/drupal.php';
 require_once $GLOBALS['libraries']['GRIIDC']['directory'].'/php/dumpIncludesFile.php';
@@ -16,12 +16,17 @@ $GLOBALS['config'] = parse_ini_file('config.ini',true);
 
 require_once 'lib/Twig_Extensions_GRIIDC.php';
 
-$app = new Slim(array(
-                        'view' => new TwigView,
+$app = new \Slim\Slim(array(
+                        'view' => new \Slim\Views\Twig(),
                         'debug' => true,
-                        'log.level' => Slim_Log::DEBUG,
+                        'log.level' => \Slim\Log::DEBUG,
                         'log.enabled' => true
                      ));
+
+$app->view->parserDirectory = $GLOBALS['libraries']['Twig']['directory'];
+$app->view->parserExtensions = array(
+    new \Slim\Views\Twig_Extensions_GRIIDC(),
+);
 
 $app->hook('slim.before', function () use ($app) {
     $env = $app->environment();
@@ -55,7 +60,7 @@ $app->get('/', function () use ($app) {
     return $app->render('html/index.html');
 });
 
-$app->get('/projects/:by/:id', function ($by,$id) use ($app) {
+$app->get('/projects/:by/:id(/:renderer)', function ($by,$id,$renderer='browser') use ($app) {
     $stash['timestamp'] = date('Y-m-d g:i A (T)',time());
     if ($by == 'YR1') {
         $fundFilter = array('fundId>0','fundId<7');
@@ -103,7 +108,7 @@ $app->get('/projects/:by/:id', function ($by,$id) use ($app) {
             }
         }
         $stash['projects'] = getTasksAndDatasets(getProjectDetails(getDBH('RPIS'),$projectFilter));
-        if ($app->request()->get('pdf')) {
+        if ($renderer == 'dompdf') {
             $env = $app->environment();
             header("Content-Type: text/html; charset=utf-8");
             $stash['pdf'] = true;
@@ -159,7 +164,7 @@ $app->get('/pdf/:by/:id/:name', function ($by,$id,$name) use ($app) {
         drupal_set_message("You cannot download a pdf for all Year One Block Grants. Please download each block grant individually.",'error');
         return;
     }
-    $content = file_get_contents("http://localhost$_SERVER[SCRIPT_NAME]/projects/$by/$id?pdf=true");
+    $content = file_get_contents("http://localhost$_SERVER[SCRIPT_NAME]/projects/$by/$id/dompdf");
 
     require_once '/usr/local/share/dompdf/dompdf_config.inc.php';
 

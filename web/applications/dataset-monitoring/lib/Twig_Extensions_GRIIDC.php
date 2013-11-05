@@ -1,22 +1,23 @@
 <?php
 
-require_once TwigView::$twigDirectory.'/ExtensionInterface.php';
-require_once TwigView::$twigDirectory.'/Extension.php';
+namespace Slim\Views;
 
-class Twig_Extensions_GRIIDC extends Twig_Extension
-{
-    public function getName()
-    {
+use Slim\Slim;
+
+require_once 'Twig/ExtensionInterface.php';
+require_once 'Twig/Extension.php';
+
+class Twig_Extensions_GRIIDC extends \Twig_Extension {
+    public function getName() {
         return 'GRIIDC';
     }
 
-    public function getFilters()
-    {
+    public function getFilters() {
         return array(
-            'removeYR1BG' => new Twig_Filter_Method($this,'removeYR1BG'),
-            'statusToImg' => new Twig_Filter_Method($this,'statusToImg'),
-            'statusToTitle' => new Twig_Filter_Method($this,'statusToTitle'),
-            'trimws' => new Twig_Filter_Method($this,'trimws')
+            'removeYR1BG' => new \Twig_Filter_Method($this,'removeYR1BG'),
+            'statusToImg' => new \Twig_Filter_Method($this,'statusToImg'),
+            'statusToTitle' => new \Twig_Filter_Method($this,'statusToTitle'),
+            'trimws' => new \Twig_Filter_Method($this,'trimws')
         );
     }
 
@@ -36,10 +37,5 @@ class Twig_Extensions_GRIIDC extends Twig_Extension
         return $GLOBALS['config']['status_titles'][$status_type];
     }
 }
-
-TwigView::$twigExtensions = array(
-    'Twig_Extensions_Slim',
-    'Twig_Extensions_GRIIDC'
-);
 
 ?>
