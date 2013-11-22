@@ -9,6 +9,8 @@
 
 <?php
 
+	//var_dump($_GET);
+
 	error_reporting(E_ALL);
 	ini_set("display_errors", 1);
 
@@ -25,9 +27,25 @@
 
 	$conn = pdoDBConnect($dbconnstr);
 	
-	$query = 'SELECT "udi", "title", "poi1", "poi2", ST_AsText(the_geom) as "the_geom" FROM "public"."datasets_test";';
+	//$query = 'SELECT "udi", "title", "poi1", "poi2", ST_AsText(the_geom) as "the_geom" FROM "public"."datasets_test";';
+	$query = '
+	SELECT registry."registry_id" AS "udi", datasets.project_id AS "pid", registry."dataset_title" as "title", registry."dataset_poc_name", ST_AsText(metadata.geom) as "the_geom" FROM "public"."registry" 
+	LEFT OUTER JOIN datasets ON substr(registry.registry_id,0,17) = datasets.dataset_udi
+	LEFT OUTER JOIN metadata ON registry."registry_id" = metadata."registry_id"
+	WHERE metadata.geom <> \'\'';
 	
+	if (isset($_GET["project_id"]))
+	{
+		$query .= ' AND datasets.project_id = ' . $_GET["project_id"];
+	}
+	
+	$query .= ';';
+	
+	//echo $query;
+		
 	$rows = pdoDBQuery($conn,$query);
+	
+	//var_dump($rows);
 	
 	$dsdata = "";
 	$dsscript = "function renderMe(){";
@@ -36,7 +54,7 @@
 	foreach ($rows as $row)
 	{
 		$dsdata .= '<tr id="'.$row['udi'].'"><td>'.$row['title'].'</td></tr>';
-		$dsscript .= 'addFeatureFromWKT("'. $row['the_geom'] .'",{"udi":"'.$row['udi'].'"});';
+		$dsscript .= 'addFeatureFromWKT("'. $row['the_geom'] .'",{"udi":"'.$row['udi'].'","pid":"'.$row['pid'].'"});';
 		
 	}
 	$dsscript .="};"
@@ -48,13 +66,28 @@
 <script>
 	$(document).ready(function() 
 	{
-		initMap('olmap');
-		initToolbar('maptoolbar');
+		initMap('olmap',{'onlyOneFeature':false,'allowModify':false,'allowDelete':true});
+		initToolbar('maptoolbar',{'showDrawTools':true,'showExit':true});
 	});
+	
+	
+	function newMap()
+	{
+		window.open('https://proteus.tamucc.edu/~mvandeneijnden/map/metamap.php', 'window name', '');
+		return false;
+		
+	}
 	
 	<?php echo $dsscript;?>
 	
+	$(document).on('imready', function(e) {
+		//renderMe();
+		//gotoAllFeatures();
+	});
+	
 </script>
+
+
 
 <table width="100%" height="100%" border="1">
 	<tr>
@@ -67,13 +100,13 @@
 			<!--Make sure the width and height of the map are 100%-->
 			<div id="olmap" style="width: 100%;height: 100%;"></div>
 		</td>
-		<td width="30%" valign="top">
-		<div id="datasets">
+		<td style="width:100%;overflow-y:scroll;" width="30%" valign="top">
+		<div id="datasets" >
 			<!--this is the table that contains all the datasets rows-->
 			<table width="100%" >
 				<tbody id="dsdata">
 					<!-- Placeholder for datasets -->
-					<?php echo $dsdata ?>
+					<?php //echo $dsdata ?>
 				</tbody>
 			</table>
 		</div>
