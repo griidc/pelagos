@@ -1,0 +1,23 @@
+<font size="3">
+<div style="float:right;" class="minitoolbar">
+	<span class="minitool"><img width="24px" height="24px" id="downloadds" src="/data/includes/images/download.png"></span>
+	<span class="minitool"><img width="24px" height="24px" id="metadatadl" src="/data/includes/images/xml.png"></span>
+</div>
+
+<h2>{{pdata.dataset_title}}</h2>
+
+<h3>{{mdata.Program_Title}}</h3>
+
+<p><b>UDI:</b><br/> {{pdata.dataset_udi}}</p>
+<p><b>Dataset Originator:</b><br/> {{pdata.dataset_poc_name}}</p>
+<p><b>Point of Contact:</b><br/> {{mpdata.People_LastName}}, {{mpdata.People_FirstName}}<br/>
+{{mpdata.Institution_Name}}<br/><a href="{{mpdata.Department_URL}}" title="Link to Department" target="_blank">{{mpdata.Department_Name}}</a></span> <br>{{mpdata.Department_Addr1}}<br>{{mpdata.Department_Addr2}}<br>{{mpdata.Department_City}}, {{mpdata.Department_State}}&nbsp;&nbsp;{{mpdata.Department_Zip}}<br>{{mpdata.Department_Country}}<br><a href="mailto:{{mpdata.People_Email}}">{{mpdata.People_Email}}</a>
+</p>
+<p>
+<b>Program Start Date:</b> {{mdata.Program_StartDate}}<br>
+<b>Program End Date:</b> {{mdata.Program_EndDate}}<br>
+</p>
+<p>
+<b>Funding Source:</b> {{mdata.Fund_Source}}<br>
+</p>
+</font>
