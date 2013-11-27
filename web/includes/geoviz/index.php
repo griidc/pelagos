@@ -81,8 +81,8 @@
 	<?php echo $dsscript;?>
 	
 	$(document).on('imready', function(e) {
-		//renderMe();
-		//gotoAllFeatures();
+		renderMe();
+		gotoAllFeatures();
 	});
 	
 </script>
@@ -106,7 +106,7 @@
 			<table width="100%" >
 				<tbody id="dsdata">
 					<!-- Placeholder for datasets -->
-					<?php //echo $dsdata ?>
+					<?php echo $dsdata ?>
 				</tbody>
 			</table>
 		</div>

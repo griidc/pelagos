@@ -8,7 +8,7 @@
 	var lastBounds;
 	
 	var lon = -90, lat = 25, //Gulf of Mexico
-	zoom = 6,
+	zoom = 4,
 	epsg4326 = new OpenLayers.Projection('EPSG:4326'),
 	epsg900913 = new OpenLayers.Projection('EPSG:900913');
 	
@@ -22,6 +22,8 @@
 			projection: new OpenLayers.Projection('EPSG:900913'),
 			displayProjection: new OpenLayers.Projection('EPSG:4326'),
 			zoomDuration: 10,
+			//allOverlays:true,
+			//controls: [],
 			eventListeners: {
 				featureover: function(e) 
 				{
@@ -45,6 +47,22 @@
 			}
 		});
 		
+		if (Options.staticMap)
+		{
+			Controls = map.getControlsByClass('OpenLayers.Control.Navigation');
+			Controls[0].destroy();
+			
+			Controls = map.getControlsByClass('OpenLayers.Control.Zoom');
+			Controls[0].destroy();
+			
+			// map.addControl(new OpenLayers.Control.Navigation());
+			// map.addControl(new OpenLayers.Control.TouchNavigation());
+			// map.addControl(new OpenLayers.Control.Zoom());
+			// map.addControl(new OpenLayers.Control.ArgParser());
+			// map.addControl(new OpenLayers.Control.Attribution());
+			
+		}
+		
 		style = OpenLayers.Util.extend({}, OpenLayers.Feature.Vector.style["default"]);
 		style.graphicZIndex = 1;
 		style.fillOpacity = 0;
@@ -61,8 +79,6 @@
 			strokeWidth: 4,
 			graphicZIndex: 2
 		});
-		
-	
 			
 		defaultStyleMap = new OpenLayers.StyleMap(
 		{
@@ -70,7 +86,7 @@
 			"select": selectStyle
 		});
 		
-		addUniqueStyle();
+		//addUniqueStyle();
 		
 		//addRule('a','a',defaultStyle);
 		
@@ -78,7 +94,7 @@
 		var google_hybrid = new OpenLayers.Layer.Google('Google Hybrid Map', 
 		{
 			type: google.maps.MapTypeId.HYBRID,
-			numZoomLevels: 11,
+			numZoomLevels: 7, //max 11 on hybrid in ocean.
 			sphericalMercator: true
 		});
 		
@@ -108,7 +124,7 @@
 		
 		map.events.register('updatesize', map, function () {
 			console.log('Window Resized');
-			map.zoomToExtent(lastBounds);
+			//map.zoomToExtent(lastBounds);
 			lastBounds = map.getExtent();
 			
 		});
@@ -167,6 +183,22 @@
 		$(document).trigger('imready');
 		
 		lastBounds = map.getExtent();
+	}
+	
+	function addImage(Img,Opacity)
+	{
+		var graphic = new OpenLayers.Layer.Image(
+		'Image',
+		Img,
+		map.getExtent(),
+		new OpenLayers.Size(0,0),
+			{
+            isBaseLayer:false, 
+            visibility:true,
+			opacity: Opacity
+			}
+		);
+		map.addLayers([graphic]);
 	}
 	
 	function addUniqueStyle()
