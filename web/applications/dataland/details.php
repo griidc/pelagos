@@ -136,11 +136,11 @@ function transform($xml, $xsl) {
 <script type="text/javascript" src="//code.jquery.com/jquery-1.9.1.js"></script>
 <script type="text/javascript" src="//code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
-<link type="text/css" rel="stylesheet" href="includes/css/details.css" type="text/css">
+<link type="text/css" rel="stylesheet" href="/data/includes/css/details.css" type="text/css">
 <script type="text/javascript" src="/includes/openlayers/lib/OpenLayers.js"></script>
 <script type="text/javascript" src="//maps.google.com/maps/api/js?v=3&sensor=false"></script>
 
-<script src="/~mvandeneijnden/map/geoviz.js"></script>
+<script src="/includes/geoviz/geoviz.js"></script>
 
 <style>
 
@@ -207,7 +207,7 @@ function transform($xml, $xsl) {
 			
 			//$xml = "/sftp/data/$udi/$udi.met";
 			$xml = '';
-			$xsl = '/home/users/mvandeneijnden/public_html/mapmockup/xsl/xml-to-html-ISO.xsl';
+			$xsl = 'xsl/xml-to-html-ISO.xsl';
 			
 			if ($prow <>'')
 			{
