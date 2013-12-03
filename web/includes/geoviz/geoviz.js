@@ -117,7 +117,36 @@
 		modify.createVertices = true;
 		map.addControl(modify);
 		
-		map.addLayers([google_hybrid, vlayer]);
+		var filterStyles = new OpenLayers.StyleMap(
+		{
+			"default": new OpenLayers.Style(
+			{
+				strokeColor: "#66CCCC",
+				strokeOpacity: 1,
+				strokeWidth: 3,
+				fillOpacity: 0.0,
+				fillColor: "#66CCCC",
+				strokeDashstyle: "dash",
+				label: "FILTER AREA",
+				fontColor: "white",
+				labelOutlineColor: "black",
+				labelOutlineOpacity: 1,
+				fontOpacity: 1,
+				labelOutlineWidth: .5,
+				graphicZIndex: -2
+			})
+		});
+		
+		flayer = new OpenLayers.Layer.Vector("Filter", {
+			styleMap: filterStyles,
+			rendererOptions: {zIndexing: true},
+			displayInLayerSwitcher: false
+		});
+		
+		filter = new OpenLayers.Control.DrawFeature(flayer, OpenLayers.Handler.Polygon);
+		map.addControl(filter);
+		
+		map.addLayers([google_hybrid, vlayer, flayer]);
 		
 		draw = new OpenLayers.Control.DrawFeature(vlayer, OpenLayers.Handler.Polygon);
 		map.addControl(draw);
@@ -171,6 +200,16 @@
 				console.log('Done Drawing?');
 			}
 		});
+		
+		flayer.events.on({
+			beforefeatureadded: function(event) {
+				var geo = event.feature.geometry;
+				console.debug(wkt.write(event.feature));
+				//return false;
+				flayer.removeAllFeatures();
+				filter.deactivate();
+			}
+		});
 				
 		map.setCenter(new OpenLayers.LonLat(lon, lat).transform('EPSG:4326', 'EPSG:900913'), zoom);
 		
@@ -183,6 +222,21 @@
 		$(document).trigger('imready');
 		
 		lastBounds = map.getExtent();
+	}
+	
+	function drawFilter()
+	{
+		filter.activate();
+	}
+	
+	function getFilter()
+	{
+		return wktTransformToWGS84(wkt.write(flayer.features[0]));
+	}
+	
+	function clearFilter()
+	{
+		flayer.removeAllFeatures();
 	}
 	
 	function addImage(Img,Opacity)
@@ -239,7 +293,8 @@
 		toolbardiv = '#'+DIV;
 		$(toolbardiv)
 		.append('<img id="homeTool" src="includes/images/home.png">')
-		.append('<img id="drawTool" src="includes/images/draw.png">');
+		.append('<img id="filterTool" src="includes/images/filter.png">')
+		.append('<img id="drawTool" src="includes/images/paint.png">');
 		
 		$(toolbardiv).append('<span id="drawtools"></span>');
 
@@ -260,7 +315,6 @@
 		{
 			$(toolbardiv)
 			.append('<img id="exitTool" src="includes/images/exit.png">');
-			
 		}
 		
 		$("#exitTool").button()
@@ -300,6 +354,11 @@
 		$("#panTool").button()
 		.click(function() {
 			stopDrawing();
+		});
+		
+		$("#filterTool").button()
+		.click(function() {
+			drawFilter();
 		});
 				
 		$("#eraseTool").button()
