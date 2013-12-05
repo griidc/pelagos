@@ -1,23 +1,48 @@
 <?php
 
+# Framework (model/view)
 require_once '/usr/local/share/Slim/Slim/Slim.php';
+# templating engine - views
 require_once '/usr/local/share/Slim-Extras/Views/TwigView.php';
-
+# GRIIDC drupal extensions to allow use of drupal-intended code outside of drupal
 require_once '/usr/local/share/GRIIDC/php/drupal.php';
+# PHP streams anything in an includes/ directory.  This is for use WITH slim.
+# if not using slim, use aliasIncludes.php instead.
 require_once '/usr/local/share/GRIIDC/php/dumpIncludesFile.php';
+# various functions for accessing the RIS database
 require_once '/usr/local/share/GRIIDC/php/rpis.php';
+# various functions for accessing GRIIDC datasets
 require_once '/usr/local/share/GRIIDC/php/datasets.php';
-
+# misc utilities and stuff...
 require_once '/usr/local/share/GRIIDC/php/utils.php';
-
+# local functions for data-discovery module
 require_once 'lib/search.php';
+# local functions for the packaging sub-module to the data-discovery module
 require_once 'lib/package.php';
+# facebook API/SDK for PHP
+require_once '/usr/local/share/facebook-php-sdk/src/facebook.php';
 
+# add js library - informs drupal to add these standard js libraries upstream.  
+# can also use drupal_add_js to specify a full path to a js library to include.
+# similarly, there is a drupal_add_css function.  These js includes are sent
+# to the browser at the time drupal sends its own.  "system" is the main
+# drupal module. 
 drupal_add_library('system', 'ui.tabs');
 
 $GLOBALS['config'] = parse_ini_file('config.ini',true);
 
 TwigView::$twigDirectory = $GLOBALS['config']['TwigView']['twigDirectory'];
+
+$config = array(
+      'appId' => $GLOBALS['config']['FacebookAPI']['AppID'],
+      'secret' => $GLOBALS['config']['FacebookAPI']['AppSecret'],
+      'fileUpload' => false,         // optional
+      'allowSignedRequest' => false, // optional, but should be set to false for non-canvas apps
+ );
+
+
+$facebook = new Facebook($config);
+$fb_user = $facebook->getUser();
 
 $app = new Slim(array(
                         'view' => new TwigView,
@@ -42,7 +67,7 @@ $app->get('/includes/:file', 'dumpIncludesFile')->conditions(array('file' => '.+
 
 $app->get('/js/:name.js', function ($name) use ($app) {
     header('Content-type: text/javascript');
-    $stash['logged_in'] = user_is_logged_in();
+    $stash['logged_in'] = (isset($fb_user) or user_is_logged_in());
     $app->render("js/$name.js",$stash);
     exit;
 });
