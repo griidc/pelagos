@@ -5,8 +5,8 @@
         <dataset>
             <source type="gomri">
                 <funding_cycle reference="R01">
-                    <project sequence="1">
-                        <task sequence="1">
+                    <project id="1">
+                        <task id="1">
                             <dif sequence="1"/>
                             <originator id="2"/>
                             <point_of_contact id="3"/>
