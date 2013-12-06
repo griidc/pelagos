@@ -118,10 +118,14 @@ function transform($xml, $xsl) {
 		$xsl_doc = new DOMDocument();
 		$xsl_doc->load($xsl);
 		
+		//var_dump($xsl_doc);
+		
 		// Proc
 		$proc = new XSLTProcessor();
 		$proc->importStylesheet($xsl_doc);
 		$newdom = $proc->transformToDoc($xml_doc);
+		
+		//var_dump($newdom);
 		
 		return $newdom->saveXML();
 	}
@@ -148,8 +152,12 @@ function transform($xml, $xsl) {
 
 <script>
 	$(function() {
-	$( "#tabs" ).tabs();
+	
+		$( "#tabs" ).tabs();
+		$( "#stabs" ).tabs();
+	
 	});
+	
   
 	$(document).ready(function() 
 	{
@@ -208,6 +216,7 @@ function transform($xml, $xsl) {
 			//$xml = "/sftp/data/$udi/$udi.met";
 			$xml = '';
 			$xsl = 'xsl/xml-to-html-ISO.xsl';
+			//$xsl = 'xsl/xmlverbatimwrapper.xsl';
 			
 			if ($prow <>'')
 			{
@@ -219,7 +228,6 @@ function transform($xml, $xsl) {
 			//echo $xml;
 						
 			?>
-			</div>
 		</div>
 		<!--
 		<div class="tabb" id="tabs-3">
