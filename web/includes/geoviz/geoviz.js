@@ -1,19 +1,26 @@
 	var wkt = new OpenLayers.Format.WKT();
 	var mxml = new OpenLayers.Format.XML();
-	var map,draw,modify,vlayer;
+	var map,draw,modify,vlayer,google_hybrid,flayer;
 	var mapOptions, toolbarOptions;
 	var mapdiv, toolbardiv;
 	var defaultStyle, selectStyle, temporaryStyle;
 	var defaultStyleMap;
 	var lastBounds;
+	var firstLoad;
 	
 	var lon = -90, lat = 25, //Gulf of Mexico
 	zoom = 4,
 	epsg4326 = new OpenLayers.Projection('EPSG:4326'),
 	epsg900913 = new OpenLayers.Projection('EPSG:900913');
 	
+	//$.when(firstLoad==true).then(function(){console.debug('I DID IT');});
+			
 	function initMap(DIV,Options)
 	{
+		googleZoomLevel = 11, //max 11 on hybrid in ocean.
+		
+		firstLoad = false;
+		
 		mapDiv = "#"+DIV;
 		mapOptions = Options;
 		map = new OpenLayers.Map( 
@@ -55,6 +62,8 @@
 			Controls = map.getControlsByClass('OpenLayers.Control.Zoom');
 			Controls[0].destroy();
 			
+			googleZoomLevel = 7;
+			
 			// map.addControl(new OpenLayers.Control.Navigation());
 			// map.addControl(new OpenLayers.Control.TouchNavigation());
 			// map.addControl(new OpenLayers.Control.Zoom());
@@ -91,10 +100,10 @@
 		//addRule('a','a',defaultStyle);
 		
 		
-		var google_hybrid = new OpenLayers.Layer.Google('Google Hybrid Map', 
+		google_hybrid = new OpenLayers.Layer.Google('Google Hybrid Map', 
 		{
 			type: google.maps.MapTypeId.HYBRID,
-			numZoomLevels: 7, //max 11 on hybrid in ocean.
+			numZoomLevels: googleZoomLevel,
 			sphericalMercator: true
 		});
 		
@@ -148,12 +157,48 @@
 		
 		map.addLayers([google_hybrid, vlayer, flayer]);
 		
+		
+		function get_my_url (bounds) {
+			var res = this.map.getResolution();
+			var x = Math.round ((bounds.left - this.maxExtent.left) / (res * this.tileSize.w));
+			var y = Math.round ((this.maxExtent.top - bounds.top) / (res * this.tileSize.h));
+			var z = this.map.getZoom();
+			
+			var path = z + "/" + x + "/" + y + "." + this.type +"?"+ parseInt(Math.random()*9999);
+			var url = this.url;
+			if (url instanceof Array) {
+				url = this.selectUrl(path, url);
+			}
+			return url + this.service +"/"+ this.layername +"/"+ path;
+			
+		}
+		
+		if (Options.showRadar)
+		{
+			var n0q = new OpenLayers.Layer.TMS(
+			'NEXRAD Base Reflectivity',
+			'https://mesonet.agron.iastate.edu/cache/tile.py/',
+			{layername      : 'nexrad-n0q-900913',
+				service         : '1.0.0',
+				type            : 'png',
+				visibility      : true,
+				getURL          : get_my_url,
+			isBaseLayer     : false}
+			);
+			
+			map.addLayers([n0q]);
+		}
+		
 		draw = new OpenLayers.Control.DrawFeature(vlayer, OpenLayers.Handler.Polygon);
 		map.addControl(draw);
 		
 		map.events.register('updatesize', map, function () {
 			console.log('Window Resized');
-			//map.zoomToExtent(lastBounds);
+			setTimeout( function() { 
+				//map.zoomToExtent(lastBounds);
+				}
+				, 200)
+			
 			lastBounds = map.getExtent();
 			
 		});
@@ -210,19 +255,33 @@
 				filter.deactivate();
 			}
 		});
+		
+		google.maps.event.addListener(google_hybrid.mapObject, "tilesloaded", function() {
+			console.log("Tiles loaded");
+			if (!firstLoad)
+			{
+				console.log('done with map');
+				firstLoad = true;
+				setTimeout( function() { 
+					//map.updateSize();
+					$(document).trigger('imready');
+				}
+				, 100)
+			};
+		});
 				
 		map.setCenter(new OpenLayers.LonLat(lon, lat).transform('EPSG:4326', 'EPSG:900913'), zoom);
 		
 		//Add map selector for highlighting
+		mapOptions.allowModify
 		selectControl = new OpenLayers.Control.SelectFeature(vlayer);
 		map.addControls([selectControl]);
 		//selectControl.activate();
 		
-		console.log('done with map');
-		$(document).trigger('imready');
-		
 		lastBounds = map.getExtent();
 	}
+	
+	
 	
 	function drawFilter()
 	{
@@ -401,25 +460,37 @@
 	function highlightFeature(attrName,attrValue)
 	{
 		var myFeature=vlayer.getFeaturesByAttribute(attrName,attrValue)[0];
-		selectControl.highlight(myFeature);
+		if (myFeature)
+		{
+			selectControl.highlight(myFeature);
+		}
 	}
 	
 	function unhighlightFeature(attrName,attrValue)
 	{
 		var myFeature=vlayer.getFeaturesByAttribute(attrName,attrValue)[0];
-		selectControl.unhighlight(myFeature);
+		if (myFeature)
+		{
+			selectControl.unhighlight(myFeature);
+		}
 	}
 	
 	function selectFeature(attrName,attrValue)
 	{
 		var myFeature=vlayer.getFeaturesByAttribute(attrName,attrValue)[0];
-		selectControl.highlight(myFeature);
+		if (myFeature)
+		{
+			selectControl.highlight(myFeature);
+		}
 	}
 	
 	function unselectFeature(attrName,attrValue)
 	{
 		var myFeature=vlayer.getFeaturesByAttribute(attrName,attrValue)[0];
-		selectControl.unselect(myFeature);
+		if (myFeature)
+		{
+			selectControl.unselect(myFeature);
+		}
 	}
 	
 	function checkAllowModify(On)
@@ -474,7 +545,8 @@
 			context: document.body
 			}).done(function(html) {
 				$(document).trigger('featureChecked',html);
-				console.log(html);
+				//console.log(html);
+				return html;
 		});
 	}
 	
@@ -535,13 +607,22 @@
 	function transformLayers(Layer)
 	{
 		var tLayer = Layer.clone();
-		for (var i=0;i<layer.features.length;i++)
+		for (var i=0;i<tLayer.features.length;i++)
 		{
 			var tFeature = tLayer.features[i];
 			tFeature.geometry.transform(map.getProjectionObject(),'EPSG:4326');
 		}
 		return tLayer;
 		
+	}
+	
+	function unhighlightAll()
+	{
+		for (var i=0;i<vlayer.features.length;i++)
+		{
+			var Feature = vlayer.features[i];
+			selectControl.unhighlight(Feature);
+		}
 	}
 	
 	function getCoordinateList(Feature)
@@ -608,6 +689,7 @@
 		$("#drawtools").fadeOut();
 		//$("#drawtools").hide();
 		draw.deactivate();
+		filter.deactivate();
 	}
 	
 	function goHome()
