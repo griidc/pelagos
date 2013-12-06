@@ -9,7 +9,7 @@
 </div>
 {% for project in projects %}
     <div class="project">
-        <div class="project-title">{{project.Title}}</div>
+        <div class="project-title"><a href="http://research.gulfresearchinitiative.org/research-awards/projects/?pid={{project.ID}}" target="_blank">{{project.Title}}<span style="font-size:85%; margin-left:1em;">Project ID: {{project.ID}}</span></a></div>
         <div class="project-container">
             <div class="fundSrc">
                 <span class="attr">Funding Source:</span> {{project.Fund_Name}}
@@ -40,7 +40,7 @@
     </div>
     {% for task in project.tasks %}
         <div class="task">
-            <div class="task-title">{{task.SubTaskNum}}. {{task.Title}}</div>
+            <div class="task-title">{{task.SubTaskNum}}. {{task.Title}}<span style="font-size:85%; margin-left:1em;">Task ID: {{task.ID}}</span></div>
             <div class="task-container">
                 {% if task.datasets %}
                     {% set datasets = task.datasets %}
