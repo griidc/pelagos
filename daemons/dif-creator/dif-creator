@@ -3,17 +3,37 @@
 use Config::Tiny;
 use XML::Simple;
 use DBI;
+use LWP::Simple;
+use Getopt::Std;
+use POSIX;
 
 my $logfile  = '/var/log/griidc/dif-creator';
 open(my $log,'>>',$logfile) or die "cannot open log file $logfile: $!";
 
-my $dbconf = Config::Tiny->read('/etc/griidc/db.ini');
-
-my %dbi_map = ( postgresql => 'Pg:dbname', mysql => 'mysql:database' );
+my %opts;
+getopts('f:',\%opts);
 
 my $xml = XML::Simple->new(ForceArray => ['entry','format','category','procedure','transport','national_data_center'], KeyAttr =>[]);
 
-$data = $xml->XMLin($ARGV[0]);
+my $data;
+my $source;
+
+if (defined $opts{'f'}) {
+    $source = $opts{'f'};
+    $data = $xml->XMLin($opts{'f'});
+}
+else {
+    $source = $ARGV[0];
+    writelog($log,"retrieving: $ARGV[0]");
+    my $dif_xml = get $ARGV[0];
+    $data = $xml->XMLin($dif_xml);
+}
+
+writelog($log,"processing: $source");
+
+my $dbconf = Config::Tiny->read('/etc/griidc/db.ini');
+
+my %dbi_map = ( postgresql => 'Pg:dbname', mysql => 'mysql:database' );
 
 my $griidc_dbh = DBI->connect('DBI:'.$dbi_map{$dbconf->{'GOMRI_RW'}->{'type'}}.'='.$dbconf->{'GOMRI_RW'}->{'dbname'},
                               $dbconf->{'GOMRI_RW'}->{'username'},
@@ -238,9 +258,7 @@ for my $entry (@{$data->{'entry'}}) {
 $griidc_dbh->disconnect;
 $ris_dbh->disconnect;
 
-writelog($log,"processed $count DIF entries") if $count;
-writelog($log,"updated $update_count DIFs") if $update_count;
-writelog($log,"created $create_count DIFs") if $create_count;
+writelog($log,"processed $count DIF entries (updated $update_count, created $create_count) in $source");
 
 close($log);
 
