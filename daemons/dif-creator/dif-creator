@@ -3,221 +3,279 @@
 use Config::Tiny;
 use XML::Simple;
 use DBI;
-use Data::Dumper;
 
-my $config = Config::Tiny->read('config.ini');
+my $logfile  = '/var/log/griidc/dif-creator';
+open(my $log,'>>',$logfile) or die "cannot open log file $logfile: $!";
+
+my $dbconf = Config::Tiny->read('/etc/griidc/db.ini');
+
+my %dbi_map = ( postgresql => 'Pg:dbname', mysql => 'mysql:database' );
 
 my $xml = XML::Simple->new(ForceArray => ['entry','format','category','procedure','transport','national_data_center'], KeyAttr =>[]);
 
 $data = $xml->XMLin($ARGV[0]);
 
-my $griidc_dbh = DBI->connect('DBI:Pg:dbname=gomri',$config->{'griidc'}->{'username'},$config->{'griidc'}->{'password'}) or die "Couldn't connect to database: " . DBI->errstr;
+my $griidc_dbh = DBI->connect('DBI:'.$dbi_map{$dbconf->{'GOMRI_RW'}->{'type'}}.'='.$dbconf->{'GOMRI_RW'}->{'dbname'},
+                              $dbconf->{'GOMRI_RW'}->{'username'},
+                              $dbconf->{'GOMRI_RW'}->{'password'})
+                      or die "Couldn't connect to database: " . DBI->errstr;
+
+my $ris_dbh = DBI->connect('DBI:'.$dbi_map{$dbconf->{'RIS_RO'}->{'type'}}.'='.$dbconf->{'RIS_RO'}->{'dbname'},
+                           $dbconf->{'RIS_RO'}->{'username'},
+                           $dbconf->{'RIS_RO'}->{'password'})
+                   or die "Couldn't connect to database: " . DBI->errstr;
 
 my @difCols = ('dataset_uid','task_uid','title','abstract','dataset_type','dataset_for','size','observation','approach','start_date','end_date','geo_location','historic_links','meta_editor','meta_standards','point','national','ethical','remarks','primary_poc','secondary_poc','logname','status','datafor','project_id','dataset_udi');
 
-my $format_map = {
-                     structured_text => { 'pos' => 0, 'label' => 'Structured, Generic Text/ASCII File (CSV, TSV)' },
-                   unstructured_text => { 'pos' => 1, 'label' => 'Unstructured, Generic Text/ASCII File (TXT)' },
-                              images => { 'pos' => 2, 'label' => 'Images' },
-                                 cdf => { 'pos' => 3, 'label' => 'CDF/netCDF' },
-                               video => { 'pos' => 4, 'label' => 'Video' },
-                    video_attributes => { 'pos' => 5 },
-                                 xml => { 'pos' => 6, 'label' => 'GML/XML Structured'}
-                 };
+my $map = Config::Tiny->read('/etc/griidc/dif/misc_map.ini');
+$map->{'format'} = Config::Tiny->read('/etc/griidc/dif/format_map.ini');
+$map->{'category'} = Config::Tiny->read('/etc/griidc/dif/category_map.ini');
+$map->{'procedure'} = Config::Tiny->read('/etc/griidc/dif/procedure_map.ini');
+$map->{'transport'} = Config::Tiny->read('/etc/griidc/dif/transport_map.ini');
+$map->{'national_data_center'} = Config::Tiny->read('/etc/griidc/dif/national_data_center_map.ini');
+$map->{'metadata_standard'} = Config::Tiny->read('/etc/griidc/dif/metadata_standard_map.ini');
 
-my $category_map = {
-                         ecological_biological => { 'pos' => '0', 'label' => 'Ecological/Biological' },
-                         physical_oceanography => { 'pos' => '1', 'label' => 'Physical Oceanographical' },
-                                   atmospheric => { 'pos' => '2', 'label' => 'Atmospheric' },
-                                      chemical => { 'pos' => '3', 'label' => 'Chemical' },
-                                  human_health => { 'pos' => '4', 'label' => 'Human Health' },
-                     social_cultural_political => { 'pos' => '5', 'label' => 'Social/Cultural/Political' },
-                                     economics => { 'pos' => '6', 'label' => 'Economics' }
-                   };
-
-my $procedure_map = {
-                           field_sampling => { 'pos' => '0', 'label' => 'Field Sampling' },
-                      simulated_generated => { 'pos' => '1', 'label' => 'Simulated or Generated' },
-                               laboratory => { 'pos' => '2', 'label' => 'Labratory' },
-                         literature_based => { 'pos' => '3', 'label' => 'Literature Based' },
-                           remote_sensing => { 'pos' => '4', 'label' => 'Remote Sensing' }
-                    };
-
-my $transport_map = {
-                        ftp => { 'pos' => '0', 'label' => 'FTP' },
-                       http => { 'pos' => '0', 'label' => 'FTP' },
-                        tds => { 'pos' => '1', 'label' => 'TDS' },
-                      erdap => { 'pos' => '2', 'label' => 'ERDAP' }
-                    };
-
-my $national_data_center_map = {
-                                   NODC => { 'pos' => '0', 'label' => 'National Oceanographic Data Center' },
-                                 STORET => { 'pos' => '1', 'label' => 'US EPA Storet' },
-                                   GBIF => { 'pos' => '2', 'label' => 'Global Biodiversity Information Facility' },
-                                   NCBI => { 'pos' => '3', 'label' => 'National Center for Biotechnology Information' },
-                                    DMS => { 'pos' => '4', 'label' => 'Data.gov Dataset Management System' },
-                                 GRIIDC => { 'pos' => '5', 'label' => 'Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC)' }
-                               };
-
-my $metadata_standard_map = {
-                                       ISO_19115 => { 'pos' => '0', 'label' => 'ISO19115' },
-                                    'FGDC-CSDGM' => { 'pos' => '1', 'label' => 'CSDGM' },
-                              dublin_darwin_core => { 'pos' => '2', 'label' => 'DUBLIN' },
-                                             EML => { 'pos' => '3', 'label' => 'EML' }
-                            };
-
-my $ethical_or_privacy_map = { yes => 'Yes', no => 'No', uncertain => 'Uncertain' };
-
-my $dataset_size_map = {
-                            'less_than_1_gb' => '< 1 Gb',
-                             '1_gb_to_10_gb' => '1GB-10GB',
-                           '10_gb_to_200_gb' => '10GB-200GB',
-                            '200_gb_to_1_tb' => '200GB-1TB',
-                              '1_tb_to_5_tb' => '1TB-5TB',
-                         'greater_than_5_tb' => '>5TB'
-                       };
+my $fc_map = Config::Tiny->read('/etc/griidc/funding_cycles.ini');
 
 my $count = 0;
+my $update_count = 0;
+my $create_count = 0;
 my $dataset_uid = time;
 
 for my $entry (@{$data->{'entry'}}) {
-    my %dif;
-
-    $dif{'title'} = $entry->{'dif'}->{'title'} if (defined $entry->{'dif'}->{'title'} and length $entry->{'dif'}->{'title'});
-
-    $dif{'abstract'} = $entry->{'dif'}->{'abstract'} if (defined $entry->{'dif'}->{'abstract'} and length $entry->{'dif'}->{'abstract'});
-
-    # format - repeatable
-    my @dataset_type = ('') x 8;
-    for my $format (@{$entry->{'dif'}->{'format'}}) {
-        if (defined $format->{'name'} and length $format->{'name'}) {
-            if ($format->{'name'} eq 'other') {
-                $dataset_type[7] = $format->{'other'};
-            }
-            else {
-                $dataset_type[$format_map->{$format->{'name'}}->{'pos'}] = $format_map->{$format->{'name'}}->{'label'};
-            }
-        }
-    }
-    $dif{'dataset_type'} = join('|',@dataset_type);
-
-    # category - repeatable
-    my @dataset_for = ('') x 9;
-    for my $category (@{$entry->{'dif'}->{'category'}}) {
-        if (defined $category->{'name'} and length $category->{'name'}) {
-            if ($category->{'name'} eq 'other') {
-                $dataset_for[8] = $category->{'other'};
-            }
-            else {
-                $dataset_for[$category_map->{$category->{'name'}}->{'pos'}] = $category_map->{$category->{'name'}}->{'label'};
-            }
-        }
-    }
-    $dif{'dataset_for'} = join('|',@dataset_for);
-
-    $dif{'size'} = $dataset_size_map->{$entry->{'dif'}->{'approximate_size'}} if (defined $entry->{'dif'}->{'approximate_size'} and length $entry->{'dif'}->{'approximate_size'});
-
-    $dif{'observation'} = $entry->{'dif'}->{'observed_or_generated'} if (defined $entry->{'dif'}->{'observed_or_generated'} and length $entry->{'dif'}->{'observed_or_generated'});
-
-    # procedure - repeatable
-    my @approach = ('') x 6;
-    for my $procedure (@{$entry->{'dif'}->{'procedure'}}) {
-        if (defined $procedure->{'name'} and length $procedure->{'name'}) {
-            if ($procedure->{'name'} eq 'other') {
-                $approach[5] = $procedure->{'other'};
-            }
-            else {
-                $approach[$procedure_map->{$procedure->{'name'}}->{'pos'}] = $procedure_map->{$procedure->{'name'}}->{'label'};
-            }
-        }
-    }
-    $dif{'approach'} = join('|',@approach);
-
-    $dif{'start_date'} = $entry->{'dif'}->{'period'}->{'start_date'} if (defined $entry->{'dif'}->{'period'}->{'start_date'} and length $entry->{'dif'}->{'period'}->{'start_date'});
-
-    $dif{'end_date'} = $entry->{'dif'}->{'period'}->{'end_date'} if (defined $entry->{'dif'}->{'period'}->{'end_date'} and length $entry->{'dif'}->{'period'}->{'end_date'});
-
-    $dif{'geo_location'} = $entry->{'dif'}->{'geographic_study_area'}->{'extent'}->{'gml:Polygon'}->{'gml:exterior'}->{'gml:LinearRing'}->{'gml:posList'}->{'content'} if (defined $entry->{'dif'}->{'geographic_study_area'}->{'extent'}->{'gml:Polygon'}->{'gml:exterior'}->{'gml:LinearRing'}->{'gml:posList'}->{'content'} and length $entry->{'dif'}->{'geographic_study_area'}->{'extent'}->{'gml:Polygon'}->{'gml:exterior'}->{'gml:LinearRing'}->{'gml:posList'}->{'content'});
-
-    $dif{'historic_links'} = $entry->{'dif'}->{'historical_data_references'} if (defined $entry->{'dif'}->{'historical_data_references'} and length $entry->{'dif'}->{'historical_data_references'});
-
-    # metadata - not currently repeatable
-    my @meta_standards = ('') x 5;
-    my $metadata = $entry->{'dif'}->{'metadata'};
-    if (defined $metadata->{'standard'} and length $metadata->{'standard'}) {
-        if ($metadata->{'standard'} eq 'other') {
-            $meta_standards[4] = $metadata->{'other'};
-        }
-        else {
-            $meta_standards[$metadata_standard_map->{$metadata->{'standard'}}->{'pos'}] = $metadata_standard_map->{$metadata->{'standard'}}->{'label'};
-        }
-    }
-    $dif{'meta_standards'} = join('|',@meta_standards);
-
-    $dif{'meta_editor'} = $entry->{'dif'}->{'metadata'}->{'editor'} if (defined $entry->{'dif'}->{'metadata'}->{'editor'} and length $entry->{'dif'}->{'metadata'}->{'editor'});
-
-    # transport - repeatable
-    my @point = ('') x 4;
-    for my $transport (@{$entry->{'dif'}->{'transport'}}) {
-        if (defined $transport->{'method'} and length $transport->{'method'}) {
-            if ($transport->{'method'} eq 'other') {
-                $point[3] = $transport->{'other'};
-            }
-            else {
-                $point[$transport_map->{$transport->{'method'}}->{'pos'}] = $transport_map->{$transport->{'method'}}->{'label'};
-            }
-        }
-    }
-    $dif{'point'} = join('|',@point);
-
-    # national_data_center - repeatable
-    my @national = ('') x 7;
-    for my $national_data_center (@{$entry->{'dif'}->{'national_data_center'}}) {
-        if (defined $national_data_center->{'data_center'} and length $national_data_center->{'data_center'}) {
-            if ($national_data_center->{'data_center'} eq 'other') {
-                $national[6] = $national_data_center->{'other'};
-            }
-            else {
-                $national[$national_data_center_map->{$national_data_center->{'data_center'}}->{'pos'}] = $national_data_center_map->{$national_data_center->{'data_center'}}->{'label'};
-            }
-        }
-    }
-    $dif{'national'} = join('|',@national);
-
-    $dif{'ethical'} = $ethical_or_privacy_map->{$entry->{'dif'}->{'ethical_or_privacy'}->{'issues'}} .'|';
-    $dif{'ethical'} .= $entry->{'dif'}->{'ethical_or_privacy'}->{'explain'} if defined $entry->{'dif'}->{'ethical_or_privacy'}->{'explain'};
-
-    $dif{'remarks'} = $entry->{'dif'}->{'remarks'} if (defined $entry->{'dif'}->{'remarks'} and length $entry->{'dif'}->{'remarks'});
-
-    $dif{'primary_poc'} = $entry->{'dif'}->{'primary_point_of_contact'}->{'id'} if (defined $entry->{'dif'}->{'primary_point_of_contact'}->{'id'} and length $entry->{'dif'}->{'primary_point_of_contact'}->{'id'});
-
-    $dif{'secondary_poc'} = $entry->{'dif'}->{'secondary_point_of_contact'}->{'id'} if (defined $entry->{'dif'}->{'primary_point_of_contact'}->{'id'} and length $entry->{'dif'}->{'primary_point_of_contact'}->{'id'});
-
-    $dif{'logname'} = $entry->{'dif'}->{'dif_user'}->{'id'} if (defined $entry->{'dif'}->{'dif_user'}->{'id'} and length $entry->{'dif'}->{'dif_user'}->{'id'});
-
-    $dif{'project_id'} = $entry->{'dif'}->{'funding_cycle'}->{'project'}->{'sequence'};
-
-    my $fs = $entry->{'dif'}->{'funding_cycle'}->{'reference'};
-    $fs =~ s/0//;
-    my $project = $entry->{'dif'}->{'funding_cycle'}->{'project'}->{'sequence'};
-    my $task = $entry->{'dif'}->{'funding_cycle'}->{'project'}->{'task'}->{'sequence'};
-
-    $dif{'editor'} = $entry->{'dif'}->{'dif_user'}->{'id'};
-
-    $dif{'status'} = 1;
-    $dif{'dataset_uid'} = $dataset_uid;
-    $dif{'task_uid'} = $entry->{'dif'}->{'funding_cycle'}->{'project'}->{'task'}->{'sequence'};
-
-    my $SQL = 'INSERT INTO datasets(' . join(',',@difCols) . ') VALUES (' . join(',',('?') x (@difCols-1)) . ",nextudi($project,$task,'$fs'));";
-    my $sth = $griidc_dbh->prepare($SQL) or die "Couldn't prepare statement: " . $dbh->errstr;
-   
-    $sth->execute(map { $dif{$_} } @difCols[0..(@difCols-2)])
-          or die "Couldn't execute statement: " . $sth->errstr;
-
+    my $dif = {};
     $count++;
-    $dataset_uid++;
+
+    # build DIF
+
+    set($dif,'title',$entry->{'dif'}->{'title'});
+
+    set($dif,'abstract',$entry->{'dif'}->{'abstract'});
+
+    setPipeDelimited($dif,'dataset_type',8,$entry->{'dif'}->{'format'},'name',$map,'format');
+
+    setPipeDelimited($dif,'dataset_for',9,$entry->{'dif'}->{'category'},'name',$map,'category');
+
+    set($dif,'size',$map->{'dataset_size'}->{$entry->{'dif'}->{'approximate_size'}});
+
+    set($dif,'observation',$entry->{'dif'}->{'observed_or_generated'});
+
+    setPipeDelimited($dif,'approach',6,$entry->{'dif'}->{'procedure'},'name',$map,'procedure');
+
+    set($dif,'start_date',$entry->{'dif'}->{'period'}->{'start_date'});
+
+    set($dif,'end_date',$entry->{'dif'}->{'period'}->{'end_date'});
+
+    set($dif,'geo_location',$entry->{'dif'}->{'geographic_study_area'}->{'extent'}->{'gml:Polygon'}->{'gml:exterior'}->{'gml:LinearRing'}->{'gml:posList'}->{'content'});
+    # change format from poslist to lat,long
+    $dif->{'geo_location'} =~ s/(\S+)\s+(\S+)\s+/$1,$2 /g;
+    $dif->{'geo_location'} =~ s/(\S+)\s+(\S+)$/$1,$2/g;
+
+    set($dif,'historic_links',$entry->{'dif'}->{'historical_data_references'});
+
+    setPipeDelimited($dif,'meta_standards',5,$entry->{'dif'}->{'metadata'},'standard',$map,'metadata_standard');
+
+    set($dif,'meta_editor',$entry->{'dif'}->{'metadata'}->{'editor'});
+
+    setPipeDelimited($dif,'point',4,$entry->{'dif'}->{'transport'},'method',$map,'transport');
+
+    setPipeDelimited($dif,'national',7,$entry->{'dif'}->{'national_data_center'},'data_center',$map,'national_data_center');
+
+    $dif->{'ethical'} = $map->{'ethical_or_privacy'}->{$entry->{'dif'}->{'ethical_or_privacy'}->{'issues'}} .'|';
+    $dif->{'ethical'} .= $entry->{'dif'}->{'ethical_or_privacy'}->{'explain'} if defined $entry->{'dif'}->{'ethical_or_privacy'}->{'explain'};
+
+    set($dif,'remarks',$entry->{'dif'}->{'remarks'});
+
+    set($dif,'primary_poc',$entry->{'dif'}->{'primary_point_of_contact'}->{'id'});
+
+    set($dif,'secondary_poc',$entry->{'dif'}->{'secondary_point_of_contact'}->{'id'});
+
+    set($dif,'logname',$entry->{'dif'}->{'dif_user'}->{'id'});
+
+    set($dif,'editor',$entry->{'dif'}->{'dif_user'}->{'id'});
+
+    # get funding cycle
+    # bail out if funding cycle is not set
+    unless (defined $entry->{'dif'}->{'funding_cycle'}->{'reference'} and
+            length $entry->{'dif'}->{'funding_cycle'}->{'reference'}) {
+        writelog($log,"Entry $count: funding cycle reference not defined!");
+        next;
+    }
+    my $fc = $entry->{'dif'}->{'funding_cycle'}->{'reference'};
+    # bail out if funding cycle reference is missing
+    unless (defined $fc) {
+        writelog($log,"Entry $count: missing funding cycle reference!");
+        next;
+    }
+    # can't continue processing this DIF entry unless we have a valid funding cycle
+    unless (defined $fc_map->{$fc}) {
+        writelog($log,"Entry $count: invalid funding cycle reference: $fc");
+        next;
+    }
+
+    # get project id directly or by sequence
+    $dif->{'project_id'} = $entry->{'dif'}->{'funding_cycle'}->{'project'}->{'id'};
+    if (!defined $dif->{'project_id'} or !length $dif->{'project_id'}) {
+        # bail out if neither project id nor sequence is set
+        unless (defined $entry->{'dif'}->{'funding_cycle'}->{'project'}->{'sequence'} and
+                length $entry->{'dif'}->{'funding_cycle'}->{'project'}->{'sequence'}) {
+            writelog($log,"Entry $count: no project id or sequence found!");
+            next;
+        }
+        # look up project id for provided project sequence
+        my $pseq = $entry->{'dif'}->{'funding_cycle'}->{'project'}->{'sequence'};
+        my $sth = $ris_dbh->prepare('SET @seq=0;');
+        $sth->execute();
+        my $SQL = 'SELECT Programs_Seq.Program_ID FROM (select @seq:=@seq+1 AS seq,Program_ID FROM Programs WHERE Program_FundSrc = ? ORDER BY Program_ID) AS Programs_Seq WHERE seq = ?;';
+        my $sth = $ris_dbh->prepare($SQL) or die "Couldn't prepare statement: " . $ris_dbh->errstr;
+        $sth->execute($fc_map->{$fc}->{'RIS_ID'},$pseq);
+        my $ref = $sth->fetchrow_hashref();
+        $sth->finish();
+        # can't continue processing this DIF entry unless we have a project id
+        unless ($ref) {
+            writelog($log,"Entry $count: couldn't find project for Funding Cycle: $fc, Project Sequence: $pseq");
+            next;
+        }
+        $dif->{'project_id'} = $ref->{'Program_ID'};
+    }
+
+    # get task id directly or by seqeunce
+    $dif->{'task_uid'} = $entry->{'dif'}->{'funding_cycle'}->{'project'}->{'task'}->{'id'};
+    if (!defined $dif->{'task_uid'} or !length $dif->{'task_uid'}) {
+        # bail out if neither task id nor sequence is set
+        unless (defined $entry->{'dif'}->{'funding_cycle'}->{'project'}->{'task'}->{'sequence'} and
+                length $entry->{'dif'}->{'funding_cycle'}->{'project'}->{'task'}->{'sequence'}) {
+            writelog($log,"Entry $count: no task id or sequence found!");
+            next;
+        }
+        # look up task id for provided task sequence
+        my $tseq = $entry->{'dif'}->{'funding_cycle'}->{'project'}->{'task'}->{'sequence'};
+        my $SQL = 'SELECT Project_ID FROM Projects WHERE Program_ID = ? AND Project_SubTaskNum = ?;';
+        my $sth = $ris_dbh->prepare($SQL) or die "Couldn't prepare statement: " . $ris_dbh->errstr;
+        $sth->execute($dif->{'project_id'},$tseq);
+        my $ref = $sth->fetchrow_hashref();
+        $sth->finish();
+        # can't continue processing this DIF entry unless we have a task id
+        unless ($ref) {
+            writelog($log,"Entry $count: couldn't find task for Project ID: $dif->{project_id}, Task Sequence: $tseq");
+            next;
+        }
+        $dif->{'task_uid'} = $ref->{'Project_ID'};
+    }
+
+    # can't continue processing this DIF entry unless DIF sequence is set
+    unless (defined $entry->{'dif'}->{'sequence'} and length $entry->{'dif'}->{'sequence'}) {
+        writelog($log,"Entry $count: Missing DIF sequence!");
+        next;
+    };
+
+    # build UDI
+    $fc =~ s/^R0/R/;
+    $dif->{'dataset_udi'} = sprintf("%s.x%03d.%03d:%04d",$fc,$dif->{'project_id'},$dif->{'task_uid'},$entry->{'dif'}->{'sequence'});
+
+    # check for existing DIF
+    my $SQL = 'SELECT * FROM datasets WHERE dataset_udi = ?;';
+    my $sth = $griidc_dbh->prepare($SQL) or die "Couldn't prepare statement: " . $griidc_dbh->errstr;
+    $sth->execute($dif->{'dataset_udi'});
+    my $found = $sth->rows;
+
+    if ($found) {
+        # this is an existing DIF
+        # get existing values from DB
+        my $ref = $sth->fetchrow_hashref();
+        $sth->finish();
+
+        # find updates
+        my %updates;
+        for my $col (@difCols) {
+            next if $col eq 'dataset_uid' or $col eq 'status';
+            if ($dif->{$col} ne $ref->{$col}) {
+                # save update
+                $updates{$col} = $dif->{$col};
+            }
+        }
+
+        # if there are updates
+        if (%updates) {
+            if ($ref->{'status'} != 0) {
+                # if DIF is locked, log attemped update
+                writelog($log,"attempted update of locked DIF: $dif->{dataset_udi}");
+            }
+            else {
+                # otherwise, proceed with update
+                # change status to submitted, but unapproved
+                $updates{'status'} = 1;
+                for my $col (keys %updates) {
+                    my $SQL = "UPDATE datasets SET $col = ? WHERE dataset_udi = ?;";
+                    my $sth2 = $griidc_dbh->prepare($SQL) or die "Couldn't prepare statement: " . $griidc_dbh->errstr;
+                    $sth2->execute($updates{$col},$dif->{'dataset_udi'}) or die "Couldn't update $dif->{dataset_udi}!";
+                    $sth2->finish();
+                }
+                $update_count++;
+            }
+        }
+        # if nothing has changed, do nothing
+    }
+    else {
+        # if this is a new DIF, insert it
+
+        $dif->{'dataset_uid'} = $dataset_uid;
+        $dif->{'status'} = 1;
+
+        my $SQL = 'INSERT INTO datasets(' . join(',',@difCols) . ') VALUES (' . join(',',('?') x (@difCols)) . ");";
+        my $sth2 = $griidc_dbh->prepare($SQL) or die "Couldn't prepare statement: " . $griidc_dbh->errstr;
+        $sth2->execute(map { $dif->{$_} } @difCols[0..(@difCols-1)])
+               or die "Couldn't execute statement: " . $sth->errstr;
+        $sth2->finish();
+
+        $dataset_uid++;
+        $create_count++;
+    }
+
+    $sth->finish();
 }
 
 $griidc_dbh->disconnect;
+$ris_dbh->disconnect;
 
-print "Created $count DIFs\n";
+writelog($log,"processed $count DIF entries") if $count;
+writelog($log,"updated $update_count DIFs") if $update_count;
+writelog($log,"created $create_count DIFs") if $create_count;
+
+close($log);
+
+sub set {
+    my ($dif,$key,$val) = @_;
+    if (defined $val and length $val) {
+        $dif->{$key} = $val;
+    }
+}
+
+sub setPipeDelimited {
+    my ($dif,$key,$length,$element,$namekey,$map,$type) = @_;
+    my @ret = ('') x $length;
+    my @element;
+    if (ref $element eq 'ARRAY') {
+        @element = @{$element};
+    }
+    else {
+        @element = ($element);
+    }
+    for my $val (@element) {
+        if (defined $val->{$namekey} and length $val->{$namekey}) {
+            if ($val->{$namekey} eq 'other') {
+                $ret[$length-1] = $val->{'other'};
+            }
+            else {
+                $ret[$map->{$type}->{$val->{$namekey}}->{'pos'}] = $map->{$type}->{$val->{$namekey}}->{'label'};
+            }
+        }
+    }
+    $dif->{$key} = join('|',@ret);
+}
+
+sub writelog {
+    my ($log,$message) = @_;
+    my $ts = POSIX::strftime("%Y-%m-%d %H:%M:%S", localtime);
+    print $log "[$ts] $message\n";
+}
