@@ -6,6 +6,9 @@ use DBI;
 use LWP::Simple;
 use Getopt::Std;
 use POSIX;
+use Mail::Sendmail;
+
+my $config = Config::Tiny->read('/etc/griidc/dif-creator.ini');
 
 my $logfile  = '/var/log/griidc/dif-creator';
 open(my $log,'>>',$logfile) or die "cannot open log file $logfile: $!";
@@ -61,6 +64,12 @@ my $count = 0;
 my $update_count = 0;
 my $create_count = 0;
 my $dataset_uid = time;
+
+my @create_udis;
+my @update_udis;
+my @locked_udis;
+my @errors;
+my $diffs = {};
 
 for my $entry (@{$data->{'entry'}}) {
     my $dif = {};
@@ -118,18 +127,24 @@ for my $entry (@{$data->{'entry'}}) {
     # bail out if funding cycle is not set
     unless (defined $entry->{'dif'}->{'funding_cycle'}->{'reference'} and
             length $entry->{'dif'}->{'funding_cycle'}->{'reference'}) {
-        writelog($log,"Entry $count: funding cycle reference not defined!");
+        my $msg = "Entry $count: funding cycle reference not defined!";
+        writelog($log,$msg);
+        push @errors, $msg;
         next;
     }
     my $fc = $entry->{'dif'}->{'funding_cycle'}->{'reference'};
     # bail out if funding cycle reference is missing
     unless (defined $fc) {
-        writelog($log,"Entry $count: missing funding cycle reference!");
+        my $msg = "Entry $count: missing funding cycle reference!";
+        writelog($log,$msg);
+        push @errors, $msg;
         next;
     }
     # can't continue processing this DIF entry unless we have a valid funding cycle
     unless (defined $fc_map->{$fc}) {
-        writelog($log,"Entry $count: invalid funding cycle reference: $fc");
+        my $msg = "Entry $count: invalid funding cycle reference: $fc";
+        writelog($log,$msg);
+        push @errors, $msg;
         next;
     }
 
@@ -139,7 +154,9 @@ for my $entry (@{$data->{'entry'}}) {
         # bail out if neither project id nor sequence is set
         unless (defined $entry->{'dif'}->{'funding_cycle'}->{'project'}->{'sequence'} and
                 length $entry->{'dif'}->{'funding_cycle'}->{'project'}->{'sequence'}) {
-            writelog($log,"Entry $count: no project id or sequence found!");
+            my $msg = "Entry $count: no project id or sequence found!";
+            writelog($log,$msg);
+            push @errors, $msg;
             next;
         }
         # look up project id for provided project sequence
@@ -153,7 +170,9 @@ for my $entry (@{$data->{'entry'}}) {
         $sth->finish();
         # can't continue processing this DIF entry unless we have a project id
         unless ($ref) {
-            writelog($log,"Entry $count: couldn't find project for Funding Cycle: $fc, Project Sequence: $pseq");
+            my $msg = "Entry $count: couldn't find project for Funding Cycle: $fc, Project Sequence: $pseq";
+            writelog($log,$msg);
+            push @errors, $msg;
             next;
         }
         $dif->{'project_id'} = $ref->{'Program_ID'};
@@ -165,7 +184,9 @@ for my $entry (@{$data->{'entry'}}) {
         # bail out if neither task id nor sequence is set
         unless (defined $entry->{'dif'}->{'funding_cycle'}->{'project'}->{'task'}->{'sequence'} and
                 length $entry->{'dif'}->{'funding_cycle'}->{'project'}->{'task'}->{'sequence'}) {
-            writelog($log,"Entry $count: no task id or sequence found!");
+            my $msg = "Entry $count: no task id or sequence found!";
+            writelog($log,$msg);
+            push @errors, $msg;
             next;
         }
         # look up task id for provided task sequence
@@ -177,7 +198,9 @@ for my $entry (@{$data->{'entry'}}) {
         $sth->finish();
         # can't continue processing this DIF entry unless we have a task id
         unless ($ref) {
-            writelog($log,"Entry $count: couldn't find task for Project ID: $dif->{project_id}, Task Sequence: $tseq");
+            my $msg = "Entry $count: couldn't find task for Project ID: $dif->{project_id}, Task Sequence: $tseq";
+            writelog($log,$msg);
+            push @errors, $msg;
             next;
         }
         $dif->{'task_uid'} = $ref->{'Project_ID'};
@@ -185,7 +208,9 @@ for my $entry (@{$data->{'entry'}}) {
 
     # can't continue processing this DIF entry unless DIF sequence is set
     unless (defined $entry->{'dif'}->{'sequence'} and length $entry->{'dif'}->{'sequence'}) {
-        writelog($log,"Entry $count: Missing DIF sequence!");
+        my $msg  = "Entry $count: Missing DIF sequence!";
+        writelog($log,$msg);
+        push @errors, $msg;
         next;
     };
 
@@ -208,10 +233,12 @@ for my $entry (@{$data->{'entry'}}) {
         # find updates
         my %updates;
         for my $col (@difCols) {
-            next if $col eq 'dataset_uid' or $col eq 'status';
+            next if $col eq 'dataset_uid' or $col eq 'status' or $col eq 'logname';
             if ($dif->{$col} ne $ref->{$col}) {
                 # save update
                 $updates{$col} = $dif->{$col};
+                $diffs->{$dif->{'dataset_udi'}}->{$col}->{'griidc'} = $ref->{$col};
+                $diffs->{$dif->{'dataset_udi'}}->{$col}->{'published'} = $dif->{$col};
             }
         }
 
@@ -220,6 +247,7 @@ for my $entry (@{$data->{'entry'}}) {
             if ($ref->{'status'} != 0) {
                 # if DIF is locked, log attemped update
                 writelog($log,"attempted update of locked DIF: $dif->{dataset_udi}");
+                push @locked_udis, $dif->{'dataset_udi'};
             }
             else {
                 # otherwise, proceed with update
@@ -232,6 +260,7 @@ for my $entry (@{$data->{'entry'}}) {
                     $sth2->finish();
                 }
                 $update_count++;
+                push @update_udis, $dif->{'dataset_udi'};
             }
         }
         # if nothing has changed, do nothing
@@ -244,12 +273,12 @@ for my $entry (@{$data->{'entry'}}) {
 
         my $SQL = 'INSERT INTO datasets(' . join(',',@difCols) . ') VALUES (' . join(',',('?') x (@difCols)) . ");";
         my $sth2 = $griidc_dbh->prepare($SQL) or die "Couldn't prepare statement: " . $griidc_dbh->errstr;
-        $sth2->execute(map { $dif->{$_} } @difCols[0..(@difCols-1)])
-               or die "Couldn't execute statement: " . $sth->errstr;
+        $sth2->execute(map { $dif->{$_} } @difCols[0..(@difCols-1)]) or die "Couldn't execute statement: " . $sth->errstr;
         $sth2->finish();
 
         $dataset_uid++;
         $create_count++;
+        push @create_udis, $dif->{'dataset_udi'};
     }
 
     $sth->finish();
@@ -261,6 +290,87 @@ $ris_dbh->disconnect;
 writelog($log,"processed $count DIF entries (updated $update_count, created $create_count) in $source");
 
 close($log);
+
+for my $email (keys %{$config->{'notifications'}}) {
+    my @types = split /[, ]/, $config->{'notifications'}->{$email};
+    my $msg;
+
+    my %mail = ( To      => $email,
+                 From    => 'dif-creator@poseidon.tamucc.edu',
+                 Subject => "Automated DIF Creator Summary for: $source",
+                 Message => '',
+                 'content-type' => 'text/html; charset="iso-8859-1"'
+               );
+
+
+    for my $type (@types) {
+        if ($type eq 'create' and @create_udis) {
+            $mail{'Message'} .= "<h3>Found and Created $create_count new DIF(s):</h3>\n<table>\n";
+            for my $udi (@create_udis) {
+                $mail{'Message'} .= "  <tr><th colspan='3' style='padding:3px; text-align:left;'>$udi:</th></tr>\n";
+            }
+            $mail{'Message'} .= "</table>\n";
+        }
+        if ($type eq 'update' and @update_udis) {
+            $mail{'Message'} .= "<h3>Found differences between GRIIDC and Published and updated $update_count DIF(s):</h3>\n\n";
+            $mail{'Message'} .= "<table style='border-collapse:collapse;'>\n";
+            for my $udi (@update_udis) {
+                $mail{'Message'} .= "  <tr><th colspan='3' style='padding:3px; text-align:left;'>$udi:</th></tr>\n";
+                $mail{'Message'} .= "  <tr>\n";
+                $mail{'Message'} .= "    <th width='6%' style='border: 1px solid black; padding:3px; text-align:center;'></th>\n";
+                $mail{'Message'} .= "    <th width='47%' style='border: 1px solid black; padding:3px; text-align:center;'>GRIIDC</th>\n";
+                $mail{'Message'} .= "    <th width='47%' style='border: 1px solid black; padding:3px; text-align:center;'>Published</th>\n";
+                $mail{'Message'} .= "  </tr>\n";
+                for my $col (keys %{$diffs->{$udi}}) {
+                    $diffs->{$udi}->{$col}->{'griidc'} =~ s/[\r\n]/<br>\n/g;
+                    $diffs->{$udi}->{$col}->{'published'} =~ s/[\r\n]/<br>\n/g;
+                    $mail{'Message'} .= "  <tr>\n";
+                    $mail{'Message'} .= "    <td style='border: 1px solid black; padding:3px; font-weight:bold; text-align:right;'>$col:</td>\n";
+                    $mail{'Message'} .= "    <td style='border: 1px solid black; padding:3px; text-align:left;' valign='top'>$diffs->{$udi}->{$col}->{griidc}</td>\n";
+                    $mail{'Message'} .= "    <td style='border: 1px solid black; padding:3px; text-align:left;' valign='top'>$diffs->{$udi}->{$col}->{published}</td>\n";
+                    $mail{'Message'} .= "  </tr>\n";
+                }
+                $mail{'Message'} .= "  <tr><td colspan='3'>&nbsp;</td></tr>\n";
+            }
+            $mail{'Message'} .= "</table>\n";
+        }
+        if ($type eq 'locked' and @locked_udis) {
+            $mail{'Message'} .= "<h3>Found differences between GRIIDC and Published, but could not update ".scalar(@locked_udis)." locked DIF(s):</h3>\n\n";
+            $mail{'Message'} .= "<table style='border-collapse:collapse;'>\n";
+            for my $udi (@locked_udis) {
+                $mail{'Message'} .= "  <tr><th colspan='3' style='padding:3px; text-align:left;'>$udi:</th></tr>\n";
+                $mail{'Message'} .= "  <tr>\n";
+                $mail{'Message'} .= "    <th width='6%' style='border: 1px solid black; padding:3px; text-align:center;'></th>\n";
+                $mail{'Message'} .= "    <th width='47%' style='border: 1px solid black; padding:3px; text-align:center;'>GRIIDC</th>\n";
+                $mail{'Message'} .= "    <th width='47%' style='border: 1px solid black; padding:3px; text-align:center;'>Published</th>\n";
+                $mail{'Message'} .= "  </tr>\n";
+                for my $col (keys %{$diffs->{$udi}}) {
+                    $diffs->{$udi}->{$col}->{'griidc'} =~ s/[\r\n]/<br>\n/g;
+                    $diffs->{$udi}->{$col}->{'published'} =~ s/[\r\n]/<br>\n/g;
+                    $mail{'Message'} .= "  <tr>\n";
+                    $mail{'Message'} .= "    <td style='border: 1px solid black; padding:3px; font-weight:bold; text-align:right;'>$col:</td>\n";
+                    $mail{'Message'} .= "    <td style='border: 1px solid black; padding:3px; text-align:left;' valign='top'>$diffs->{$udi}->{$col}->{griidc}</td>\n";
+                    $mail{'Message'} .= "    <td style='border: 1px solid black; padding:3px; text-align:left;' valign='top'>$diffs->{$udi}->{$col}->{published}</td>\n";
+                    $mail{'Message'} .= "  </tr>\n";
+                }
+                $mail{'Message'} .= "  <tr><td colspan='3'>&nbsp;</td></tr>\n";
+            }
+            $mail{'Message'} .= "</table>\n";
+        }
+        if ($type eq 'error' and @errors) {
+            $mail{'Message'} .= "<h3>Errors encountered:</h3><table>";
+            for my $error (@errors) {
+                $mail{'Message'} .= "  <tr><th colspan='3' style='padding:3px; text-align:left;'>$error:</th></tr>\n";
+            }
+            $mail{'Message'} .= "</table>\n";
+        }
+    }
+    if (length $mail{'Message'}) {
+        my $subject = "Automated DIF Creator Summary for: $source";
+        $mail{'Message'} = "<h2>$subject</h2>\n$mail{Message}";
+        sendmail(%mail) or die $Mail::Sendmail::error;
+    }
+}
 
 sub set {
     my ($dif,$key,$val) = @_;
