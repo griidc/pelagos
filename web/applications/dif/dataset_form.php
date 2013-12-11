@@ -274,8 +274,10 @@ Video&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
         <?PHP helps("cdate", "Data Sampling/Generation Period", "idate"); ?>
        <center> <STRONG>Start Date</STRONG> 
            <select name=smo size=1 <?PHP if ($status != 0){echo "disabled";} ?> class=required><?PHP array_walk($change, 'test_print', $l[1]);?> </select>
+           <select name=sda size=1 <?PHP if ($status != 0){echo "disabled";} ?> class=required> <?PHP for ($z = 1; $z <= 31; $z++) {echo "<option value=$z"; if ($l[2] == $z){echo " SELECTED";} echo ">$z</option>\n\r";}?> </select>
            <select name=sye size=1 <?PHP if ($status != 0){echo "disabled";} ?> class=required> <?PHP for ($z = 2009; $z <= 2022; $z++) {echo "<option value=$z";  if ($l[0] == $z){echo " SELECTED";} echo">$z\n\r";}?> </SELECT> &nbsp;&nbsp; to&nbsp;&nbsp; 
            <select name=emo size=1 <?PHP if ($status != 0){echo "disabled";} ?> class=required> <?PHP array_walk($change, 'test_print', $n[1]);?> </select>
+           <select name=eda size=1 <?PHP if ($status != 0){echo "disabled";} ?> class=required> <?PHP for ($z = 1; $z <= 31; $z++) {echo "<option value=$z"; if ($n[2] == $z){echo " SELECTED";} echo ">$z</option>\n\r";}?> </select>
            <select name=eye size=1 <?PHP if ($status != 0){echo "disabled";} ?> class=required> <?PHP for ($z = 2009; $z <= 2022; $z++) {echo "<option value=$z";  if ($n[0] == $z){echo " SELECTED";} echo">$z\n\r";}?> </SELECT><STRONG> End Date</STRONG>
       </center> 
     </fieldset> </p>
