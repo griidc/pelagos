@@ -322,12 +322,14 @@ for my $email (keys %{$config->{'notifications'}}) {
                 $mail{'Message'} .= "    <th width='47%' style='border: 1px solid black; padding:3px; text-align:center;'>Published</th>\n";
                 $mail{'Message'} .= "  </tr>\n";
                 for my $col (keys %{$diffs->{$udi}}) {
-                    $diffs->{$udi}->{$col}->{'griidc'} =~ s/[\r\n]/<br>\n/g;
-                    $diffs->{$udi}->{$col}->{'published'} =~ s/[\r\n]/<br>\n/g;
+                    my $griidc = $diffs->{$udi}->{$col}->{'griidc'};
+                    my $published = $diffs->{$udi}->{$col}->{'published'};
+                    $griidc =~ s/[\r\n]/<br>\n/g;
+                    $published =~ s/[\r\n]/<br>\n/g;
                     $mail{'Message'} .= "  <tr>\n";
                     $mail{'Message'} .= "    <td style='border: 1px solid black; padding:3px; font-weight:bold; text-align:right;'>$col:</td>\n";
-                    $mail{'Message'} .= "    <td style='border: 1px solid black; padding:3px; text-align:left;' valign='top'>$diffs->{$udi}->{$col}->{griidc}</td>\n";
-                    $mail{'Message'} .= "    <td style='border: 1px solid black; padding:3px; text-align:left;' valign='top'>$diffs->{$udi}->{$col}->{published}</td>\n";
+                    $mail{'Message'} .= "    <td style='border: 1px solid black; padding:3px; text-align:left;' valign='top'>$griidc</td>\n";
+                    $mail{'Message'} .= "    <td style='border: 1px solid black; padding:3px; text-align:left;' valign='top'>$published</td>\n";
                     $mail{'Message'} .= "  </tr>\n";
                 }
                 $mail{'Message'} .= "  <tr><td colspan='3'>&nbsp;</td></tr>\n";
@@ -345,12 +347,14 @@ for my $email (keys %{$config->{'notifications'}}) {
                 $mail{'Message'} .= "    <th width='47%' style='border: 1px solid black; padding:3px; text-align:center;'>Published</th>\n";
                 $mail{'Message'} .= "  </tr>\n";
                 for my $col (keys %{$diffs->{$udi}}) {
-                    $diffs->{$udi}->{$col}->{'griidc'} =~ s/[\r\n]/<br>\n/g;
-                    $diffs->{$udi}->{$col}->{'published'} =~ s/[\r\n]/<br>\n/g;
+                    my $griidc = $diffs->{$udi}->{$col}->{'griidc'};
+                    my $published = $diffs->{$udi}->{$col}->{'published'};
+                    $griidc =~ s/[\r\n]/<br>\n/g;
+                    $published =~ s/[\r\n]/<br>\n/g;
                     $mail{'Message'} .= "  <tr>\n";
                     $mail{'Message'} .= "    <td style='border: 1px solid black; padding:3px; font-weight:bold; text-align:right;'>$col:</td>\n";
-                    $mail{'Message'} .= "    <td style='border: 1px solid black; padding:3px; text-align:left;' valign='top'>$diffs->{$udi}->{$col}->{griidc}</td>\n";
-                    $mail{'Message'} .= "    <td style='border: 1px solid black; padding:3px; text-align:left;' valign='top'>$diffs->{$udi}->{$col}->{published}</td>\n";
+                    $mail{'Message'} .= "    <td style='border: 1px solid black; padding:3px; text-align:left;' valign='top'>$griidc</td>\n";
+                    $mail{'Message'} .= "    <td style='border: 1px solid black; padding:3px; text-align:left;' valign='top'>$published</td>\n";
                     $mail{'Message'} .= "  </tr>\n";
                 }
                 $mail{'Message'} .= "  <tr><td colspan='3'>&nbsp;</td></tr>\n";
