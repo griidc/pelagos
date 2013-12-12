@@ -72,23 +72,34 @@
 			
 		}
 		
-		style = OpenLayers.Util.extend({}, OpenLayers.Feature.Vector.style["default"]);
-		style.graphicZIndex = 1;
-		style.fillOpacity = 0;
-		style.strokeWidth = 2;
-				
-		defaultStyle = new OpenLayers.Style(style);
+		dstyle = OpenLayers.Util.extend({}, OpenLayers.Feature.Vector.style["default"]);
+		dstyle.graphicZIndex = 1;
+		dstyle.fillOpacity = 0;
+		dstyle.strokeOpacity = 0.5;
+		dstyle.strokeWidth = 2;
 		
-		selectStyle = new OpenLayers.Style(
+		defaultStyle = new OpenLayers.Style(dstyle);
+		
+		sstyle = OpenLayers.Util.extend({}, OpenLayers.Feature.Vector.style[dstyle]);
+		
+		sstyle.fillOpacity = 0.0;
+		sstyle.strokeWidth = 4;
+		sstyle.strokeOpacity = 1.0;
+		sstyle.graphicZIndex = 2;
+		//sstyle.strokeColor = "#FFFFFF";
+		
+		if (Options.labelAttr)
 		{
-			//strokeColor: "blue",
-			//strokeDashstyle: "dashdot",
-			label: "${udi}",
-			fillOpacity: 0.0,
-			strokeWidth: 4,
-			graphicZIndex: 2
-		});
-			
+			sstyle.label = "${" + Options.labelAttr + "}";
+			console.log("label set");
+		}
+		
+		tstyle = OpenLayers.Util.extend({}, OpenLayers.Feature.Vector.style["temporary"]);
+		
+		selectStyle = new OpenLayers.Style(sstyle);
+		
+		temporaryStyle = new OpenLayers.Style(tstyle);
+		
 		defaultStyleMap = new OpenLayers.StyleMap(
 		{
 			"default": defaultStyle,
@@ -104,7 +115,16 @@
 		{
 			type: google.maps.MapTypeId.HYBRID,
 			numZoomLevels: googleZoomLevel,
-			sphericalMercator: true
+			sphericalMercator: true,
+			displayInLayerSwitcher: true
+		});
+		
+		google_terain = new OpenLayers.Layer.Google('Google Terrain Map', 
+		{
+			type: google.maps.MapTypeId.TERRAIN,
+			numZoomLevels: googleZoomLevel,
+			sphericalMercator: true,
+			displayInLayerSwitcher: true
 		});
 		
 		vlayer = new OpenLayers.Layer.Vector("Datasets",{
@@ -143,7 +163,23 @@
 				fontOpacity: 1,
 				labelOutlineWidth: .5,
 				graphicZIndex: -2
-			})
+			}),
+			"select": new OpenLayers.Style(
+			{
+				strokeColor: "#66CCCC",
+				strokeOpacity: 1,
+				strokeWidth: 3,
+				fillOpacity: 0.0,
+				fillColor: "#66CCCC",
+				strokeDashstyle: "dash",
+				label: "FILTER AREA",
+				fontColor: "white",
+				labelOutlineColor: "black",
+				labelOutlineOpacity: 1,
+				fontOpacity: 1,
+				labelOutlineWidth: .5,
+				graphicZIndex: -2
+			})			
 		});
 		
 		flayer = new OpenLayers.Layer.Vector("Filter", {
@@ -152,11 +188,19 @@
 			displayInLayerSwitcher: false
 		});
 		
-		filter = new OpenLayers.Control.DrawFeature(flayer, OpenLayers.Handler.Polygon);
+		filter = new OpenLayers.Control.DrawFeature(flayer, OpenLayers.Handler.RegularPolygon, {
+                            handlerOptions: {
+                                sides: 4,
+                                irregular: true
+                            }
+			});
 		map.addControl(filter);
 		
-		map.addLayers([google_hybrid, vlayer, flayer]);
+		//TODO: if Options.BaseMapTerainDefault == true then add terain layer first.
 		
+		map.addLayers([google_hybrid, google_terain, vlayer, flayer]);
+		
+		//map.addControl( new OpenLayers.Control.LayerSwitcher());
 		
 		function get_my_url (bounds) {
 			var res = this.map.getResolution();
@@ -195,11 +239,12 @@
 		map.events.register('updatesize', map, function () {
 			console.log('Window Resized');
 			setTimeout( function() { 
-				//map.zoomToExtent(lastBounds);
+				lastBounds = map.getExtent()
+				}, 200);
+				if (lastBounds)
+				{
+					//map.zoomToExtent(lastBounds,true);
 				}
-				, 200)
-			
-			lastBounds = map.getExtent();
 			
 		});
 		
@@ -248,11 +293,12 @@
 		
 		flayer.events.on({
 			beforefeatureadded: function(event) {
-				var geo = event.feature.geometry;
 				console.debug(wkt.write(event.feature));
-				//return false;
 				flayer.removeAllFeatures();
 				filter.deactivate();
+			},
+			featureadded: function(event) {
+				$(document).trigger('filterDrawn');
 			}
 		});
 		
@@ -271,6 +317,7 @@
 		});
 				
 		map.setCenter(new OpenLayers.LonLat(lon, lat).transform('EPSG:4326', 'EPSG:900913'), zoom);
+		map.render(DIV);
 		
 		//Add map selector for highlighting
 		mapOptions.allowModify
@@ -281,8 +328,18 @@
 		lastBounds = map.getExtent();
 	}
 	
+	function showTerrainMap()
+	{
+		map.setBaseLayer(map.layers[1]);
+		//map.setBaseLayer(map.getLayersByName('Google Terrain Map'));
+	}
 	
-	
+	function showHybridMap()
+	{
+		map.setBaseLayer(map.layers[0]);
+		//map.setBaseLayer(map.getLayersByName('Google Hybrid Map'));
+	}
+		
 	function drawFilter()
 	{
 		filter.activate();
@@ -318,12 +375,16 @@
 	{
 		var lookup = {
 			"137": {strokeColor: "#FF00FF"},
-			"140": {strokeColor: "#00FF00"},
-			"135": {strokeColor: "#FFFF00"},
-			"134": {strokeColor: "#00FFFF"}
+			"135": {strokeColor: "#00FF00"},
+			"131": {strokeColor: "#FFFF00"},
 		}
 		
 		defaultStyleMap.addUniqueValueRules("default", "pid", lookup);
+		defaultStyleMap.styles.default.rules.push(new OpenLayers.Rule({
+			elseFilter: true,
+			symbolizer: defaultStyleMap.styles.default.defaultStyle
+		}));
+		vlayer.redraw();
 	}
 	
 	function addRule(attrName,attrValue,Style)
@@ -339,10 +400,14 @@
 				symbolizer: {
 					strokeColor: "#FF9700",
 					fillColor: "#FF9700"
-				}
+				},
+			elseFilter: true,
+			symbolizer: defaultStyleMap.styles.default.defaultStyle
 		});
 		
-		Style.addRules([newRule]);
+		//Style.addRules([newRule]);
+		defaultStyleMap.styles.default.rules.push(newRule);
+		
 	}
 	
 	function initToolbar(DIV,Options)
