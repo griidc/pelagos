@@ -94,6 +94,9 @@ function getDatasetFilters($tree) {
             $filters[] = 'access_status=None';
             break;
     }
+    if (array_key_exists('geo_filter',$tree) and $tree['geo_filter']) {
+        $filters[] = "geo_filter=$tree[geo_filter]";
+    }
     return $filters;
 }
 
