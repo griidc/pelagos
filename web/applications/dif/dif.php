@@ -289,7 +289,7 @@ if ((isset($_POST['submit']) and $_POST['submit'])||(isset($_POST['later']) and 
             if ($ppoc ==""){$sql .="null";}else{ $sql.="'".$ppoc."'";}
             $sql .=", secondary_poc=";
             if ($spoc ==""){$sql .="null";}else{ $sql.="'".$spoc."'";}
-            $sql.=", logname='".$submittedby."', status='".$status."', project_id=";
+            $sql.=", status='".$status."', project_id=";
             if ($project == "") { $sql .= "null";}else{ $sql.="'".$project."'";}
             $sql.=", start_date='".$sdate."', end_date='".$edate."', geo_location='".$geoloc ."'";
             if (sprintf('%s.x%03d.%03d',$fundSrc,$project,$task) != substr($dataset_udi,0,11)) {
