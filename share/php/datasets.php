@@ -52,7 +52,8 @@ $GLOBALS['REGISTRY_FIELDS'] = array(
     "r.dataset_download_error_log",
     "r.dataset_download_status",
     "r.dataset_originator",
-    "to_char(r.submittimestamp,'YYYY') as year"
+    "to_char(r.submittimestamp,'YYYY') as year",
+    "ST_AsText(md.geom) as \"the_geom\""
 );
 
 $GLOBALS['DIF_FIELDS'] = array(
@@ -97,7 +98,8 @@ $GLOBALS['IDENTIFIED_FROM'] = 'FROM datasets d
                                    ON r2.registry_id = m.MaxID
                                ) r
                                ON r.dataset_udi = d.dataset_udi
-                               LEFT JOIN projects p on p."ID" = d.project_id';
+                               LEFT JOIN projects p on p."ID" = d.project_id
+                               LEFT JOIN metadata md ON r."registry_id" = md."registry_id"';
 
 $GLOBALS['REGISTERED_FROM'] = 'FROM registry r
                                INNER JOIN (
@@ -108,7 +110,8 @@ $GLOBALS['REGISTERED_FROM'] = 'FROM registry r
                                ON r.registry_id = m.MaxID
                                LEFT JOIN datasets d
                                ON d.dataset_udi = r.dataset_udi
-                               LEFT JOIN projects p on p."ID" = d.project_id';
+                               LEFT JOIN projects p on p."ID" = d.project_id
+                               LEFT JOIN metadata md ON r."registry_id" = md."registry_id"';
 
 $GLOBALS['IDENTIFIED_SEARCH_RANK'] = "
 JOIN
@@ -374,6 +377,9 @@ function build_where($filters,$registered = false) {
                     break;
                 case 'funding_envelope':
                     $WHERE .= " AND p.\"FundSrc\" $matches[2] $matches[3]";
+                    break;
+                case 'geo_filter':
+                    $WHERE .= " AND ST_Intersects('SRID=4326;$matches[3]'::geometry,geom)";
                     break;
             }
         }
