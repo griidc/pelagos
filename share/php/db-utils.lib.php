@@ -34,7 +34,8 @@ function OpenDB($database = "unspecified") {
     }
     
     if ($config["type"] == 'mysql') {
-        $dbconnstr  = $config["type"].":host=".$config["host"].';';
+        # driver used: mysql
+        $dbconnstr  = "mysql:host=".$config["host"].';';
         $dbconnstr .= 'port='.$config["port"].';';
         $dbconnstr .= 'dbname='.$config["dbname"];
         $user       = $config["username"];
@@ -46,15 +47,13 @@ function OpenDB($database = "unspecified") {
             drupal_set_message($dMessage,'error');
         }
     } elseif ($config["type"] == 'postgresql') {
-        $dbconnstr  = "pgsql:host=".$config["host"].';';  # Grrr!
+        # driver used: pgsql
+        $dbconnstr  = "pgsql:host=".$config["host"].';';
         $dbconnstr .= 'port='.$config["port"].';';
         $dbconnstr .= 'dbname='.$config["dbname"].';';
-        #$dbconnstr .= 'user='.$config["username"].';';
-        #$dbconnstr .= 'password='.$config["password"];
         $user       = $config["username"];
         $password   = $config["password"];
         try {
-            #$pdoconnection = new PDO($dbconnstr,array(PDO::ATTR_PERSISTENT => true));
             $pdoconnection = new PDO($dbconnstr,$user,$password,array(PDO::ATTR_PERSISTENT => true));
         } catch (PDOException $e) {
             $dMessage = 'Connection failed: ' . $e->getMessage();
