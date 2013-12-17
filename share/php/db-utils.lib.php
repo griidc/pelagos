@@ -49,10 +49,13 @@ function OpenDB($database = "unspecified") {
         $dbconnstr  = "pgsql:host=".$config["host"].';';  # Grrr!
         $dbconnstr .= 'port='.$config["port"].';';
         $dbconnstr .= 'dbname='.$config["dbname"].';';
-        $dbconnstr .= 'user='.$config["username"].';';
-        $dbconnstr .= 'password='.$config["password"];
+        #$dbconnstr .= 'user='.$config["username"].';';
+        #$dbconnstr .= 'password='.$config["password"];
+        $user       = $config["username"];
+        $password   = $config["password"];
         try {
-            $pdoconnection = new PDO($dbconnstr,array(PDO::ATTR_PERSISTENT => true));
+            #$pdoconnection = new PDO($dbconnstr,array(PDO::ATTR_PERSISTENT => true));
+            $pdoconnection = new PDO($dbconnstr,$user,$password,array(PDO::ATTR_PERSISTENT => true));
         } catch (PDOException $e) {
             $dMessage = 'Connection failed: ' . $e->getMessage();
             drupal_set_message($dMessage,'error');
