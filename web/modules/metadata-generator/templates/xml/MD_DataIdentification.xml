@@ -30,19 +30,52 @@
         {% set RPType = 'PPOC' %}
         {% include "xml/CI_ResponsibleParty.xml" %}
     </gmd:pointOfContact>
-	{#
 	<gmd:language>
         <gco:CharacterString>eng; USA</gco:CharacterString>
     </gmd:language>
-	
-    {% if dataset.geo_location %}
+    <gmd:topicCategory>
+        <gmd:MD_TopicCategoryCode />
+    </gmd:topicCategory>
+    {% if dataset.geo_location or dataset.start_date or dataset.end_date %}
         <gmd:extent>
-           <gmd:EX_Extent id="boundingExtent">
-               <gmd:description>
-                   <gco:CharacterString><![CDATA[{{dataset.geo_location}}]]></gco:CharacterString>
-               </gmd:description>
+            <gmd:EX_Extent id="boundingExtent">
+                {% if dataset.geo_location %}
+                    <gmd:geographicElement>
+                        <gmd:EX_BoundingPolygon>
+                            <gmd:polygon>
+                                <gml:Polygon gml:id="Polygon">
+                                    <gml:interior>
+                                        <gml:LinearRing>
+                                            <gml:coordinates>{{dataset.geo_location}}</gml:coordinates>
+                                        </gml:LinearRing>
+                                    </gml:interior>
+                                </gml:Polygon>
+                            </gmd:polygon>
+                        </gmd:EX_BoundingPolygon>
+                    </gmd:geographicElement>
+                {% endif %}
+                {% if dataset.start_date or dataset.end_date %}
+                    <gmd:temporalElement>
+                        <gmd:EX_TemporalExtent>
+                            <gmd:extent>
+                                <gml:TimePeriod gml:id="boundingTemporalExtent">
+                                    <gml:description />
+                                    {% if dataset.start_date %}
+                                        <gml:beginPosition>{{dataset.start_date}}</gml:beginPosition>
+                                    {% else %}
+                                        <gml:beginPosition />
+                                    {% endif %}
+                                    {% if dataset.start_date %}
+                                        <gml:endPosition>{{dataset.end_date}}</gml:endPosition>
+                                    {% else %}
+                                        <gml:endPosition />
+                                    {% endif %}
+                                </gml:TimePeriod>
+                           </gmd:extent>
+                       </gmd:EX_TemporalExtent>
+                   </gmd:temporalElement>
+                {% endif %}
            </gmd:EX_Extent>
        </gmd:extent>
     {% endif %}
-	#}
 </gmd:MD_DataIdentification>
