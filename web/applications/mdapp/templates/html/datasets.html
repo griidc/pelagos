@@ -1,0 +1,36 @@
+<div style="background: transparent; padding:0px; height:100%" id="tabs">
+    <ul>
+        {% if m_dataset.notaccepted %}
+            <li style="text-align:center"><a href="#notaccepted">({{ m_dataset.notaccepted|length }}) Not Accepted</a></li>
+        {% endif %}
+        {% if m_dataset.accepted %}
+            <li style="text-align:center"><a href="#accepted">({{ m_dataset.accepted|length }}) Accepted</a></li>
+        {% endif %}
+        {% if m_dataset.submitted %}
+            <li style="text-align:center"><a href="#submitted">({{ m_dataset.submitted|length }}) Submitted</a></li>
+        {% endif %}
+        {% if m_dataset.none %}
+            <li style="text-align:center"><a href="#none">({{ m_dataset.none|length }}) None</a></li>
+        {% endif %}
+    </ul>
+    {% for sname,section in m_dataset %} <!-- allows key,value iteration -->
+        <div id="{{sname}}" class="tab" style="height:100%; padding:0">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Status</th>
+                        <th>Filename</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for dta in section %}
+                        <tr>
+                            <td valign="top">{{dta.metadata_status}}</td>
+                            <td valign="top"><a href=metadata-editor/?dataUrl={{srvr}}/metadata-generator/{{dta.dataset_udi}}>{{dta.url_metadata}}</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endfor %}
+</div>
