@@ -14,8 +14,8 @@
                     </project>
                 </funding_cycle>
             </source>
-            <title>My Dataset Title</title>
-            <abstract>My Dataset Abstract</abstract>
+            <title>My First Dataset Title</title>
+            <abstract>My First Dataset Abstract</abstract>
             <doi autogenerate="true"/>
         </dataset>
         <access_control restricted="true">
@@ -26,8 +26,82 @@
             </authorized_users>
         </access_control>
         <transport method="http" pull="true">
-            <data_url>http://www.myserver.org/path/to/data_file</data_url>
-            <metadata_url>http://www.myserver.org/path/to/metadata_file</metadata_url>
+            <data_url>http://www.myserver.org/path/to/data_file_1</data_url>
+            <metadata_url>http://www.myserver.org/path/to/metadata_file_1</metadata_url>
+            <pull>
+                <available_date>2013-03-28</available_date>
+                <start_time>01:00:00-06:00</start_time>
+                <start_days>
+                    <Monday pull="false"/>
+                    <Tuesday pull="false"/>
+                    <Wednesday pull="false"/>
+                    <Thursday pull="false"/>
+                    <Friday pull="false"/>
+                    <Saturday pull="true"/>
+                    <Sunday pull="true"/>
+                </start_days>
+            </pull>
+        </transport>
+    </entry>
+    <entry>
+        <registration_user id="1"/>
+        <dataset>
+            <source type="gomri">
+                <funding_cycle reference="R01">
+                    <project id="1">
+                        <task id="1">
+                            <dif sequence="2"/>
+                            <originator id="2"/>
+                            <point_of_contact id="3"/>
+                        </task>
+                    </project>
+                </funding_cycle>
+            </source>
+            <title>My Second Dataset Title</title>
+            <abstract>My Second Dataset Abstract</abstract>
+            <doi autogenerate="true"/>
+        </dataset>
+        <access_control restricted="true"/>
+        <transport method="http" pull="true">
+            <data_url>http://www.myserver.org/path/to/data_file_2</data_url>
+            <metadata_url>http://www.myserver.org/path/to/metadata_file_2</metadata_url>
+            <pull>
+                <available_date>2013-03-28</available_date>
+                <start_time>01:00:00-06:00</start_time>
+                <start_days>
+                    <Monday pull="false"/>
+                    <Tuesday pull="false"/>
+                    <Wednesday pull="false"/>
+                    <Thursday pull="false"/>
+                    <Friday pull="false"/>
+                    <Saturday pull="true"/>
+                    <Sunday pull="true"/>
+                </start_days>
+            </pull>
+        </transport>
+    </entry>
+    <entry>
+        <registration_user id="1"/>
+        <dataset>
+            <source type="gomri">
+                <funding_cycle reference="R01">
+                    <project id="1">
+                        <task id="1">
+                            <dif sequence="3"/>
+                            <originator id="2"/>
+                            <point_of_contact id="3"/>
+                        </task>
+                    </project>
+                </funding_cycle>
+            </source>
+            <title>My Third Dataset Title</title>
+            <abstract>My Third Dataset Abstract</abstract>
+            <doi autogenerate="true"/>
+        </dataset>
+        <access_control restricted="false"/>
+        <transport method="http" pull="true">
+            <data_url>http://www.myserver.org/path/to/data_file_3</data_url>
+            <metadata_url>http://www.myserver.org/path/to/metadata_file_3</metadata_url>
             <pull>
                 <available_date>2013-03-28</available_date>
                 <start_time>01:00:00-06:00</start_time>
