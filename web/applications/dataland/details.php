@@ -1,6 +1,21 @@
-<?php include_once '/usr/local/share/GRIIDC/php/aliasIncludes.php';
+<?php 
 error_reporting(E_ALL);
 ini_set("display_errors", 1);
+
+include_once '/usr/local/share/GRIIDC/php/aliasIncludes.php';
+
+drupal_add_css('/dif/includes/css/overwrite.css',array('type'=>'external'));
+drupal_add_js('/includes/jquery-validation/jquery.validate.js',array('type'=>'external'));
+
+drupal_add_css('/data/includes/css/xmlverbatim.css',array('type'=>'external'));
+
+drupal_add_library('system', 'ui.tabs');
+drupal_add_library('system', 'ui.button');
+
+drupal_add_css('/data/includes/css/details.css',array('type'=>'external'));
+drupal_add_js('/includes/openlayers/lib/OpenLayers.js',array('type'=>'external'));
+drupal_add_js('//maps.google.com/maps/api/js?v=3&sensor=false',array('type'=>'external'));
+drupal_add_js('//proteus.tamucc.edu/~mvandeneijnden/map/geoviz.js',array('type'=>'external'));
 
 include_once '/usr/local/share/GRIIDC/php/pdo.php';
 
@@ -56,7 +71,7 @@ if ($udi <> '')
 
 	if ($prow["the_geom"] == null OR $prow == null)
 	{
-		if ($prow == null)
+		if ($prow["metadata_xml"] == "")
 		{
 			$dsscript = "addImage('/data/includes/images/nodata.png',0.4);";
 		}
@@ -137,32 +152,45 @@ function transform($xml, $xsl) {
 
 ?>
 
-<script type="text/javascript" src="//code.jquery.com/jquery-1.9.1.js"></script>
+<!--
+<script type="text/javascript" src="//code.jquery.com/jquery-1.8.2.js"></script>
 <script type="text/javascript" src="//code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<link rel="stylesheet" href="/includes/qTip2/jquery.qtip.min.css" />
+<link rel="stylesheet" href="/data/includes/css/xmlverbatim.css" />
 <link rel="stylesheet" href="//code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 <link type="text/css" rel="stylesheet" href="/data/includes/css/details.css" type="text/css">
 <script type="text/javascript" src="/includes/openlayers/lib/OpenLayers.js"></script>
 <script type="text/javascript" src="//maps.google.com/maps/api/js?v=3&sensor=false"></script>
+<script type="text/javascript" src="/includes/qTip2/jquery.qtip.min.js"></script>
 
 <script src="/includes/geoviz/geoviz.js"></script>
 
-<style>
-
-</style>
+-->
 
 <script>
+(function ($) {
 	$(function() {
-	
-		$( "#tabs" ).tabs();
-		$( "#stabs" ).tabs();
-	
-	});
-	
-  
-	$(document).ready(function() 
-	{
 		
-		initMap('olmap',{'onlyOneFeature':false,'allowModify':false,'allowDelete':false,'staticMap':true});
+		$("#olmap").width($(document).width()/2.5);
+		$("#olmap").height($("#olmap").width()/4*3);
+				
+		$("#rawxml").width($(document).width()-650);
+	
+		$("#tabs").tabs({ heightStyle: "content" });
+		
+		$("#xmlradio").buttonset();
+		
+		$("#xmlraw").click(function() {
+			$("#formatedxml").hide();
+			$("#rawxml").show();
+		});
+		
+		$("#xmlformated").click(function() {
+			$("#formatedxml").show();
+			$("#rawxml").hide();
+		});
+
+		initMap('olmap',{'onlyOneFeature':false,'allowModify':false,'allowDelete':false,'staticMap':true,'labelAttr':'udi'});
   
 		$("#downloadds").click(function() {
 			window.location = 'https://data.gulfresearchinitiative.org/data-discovery?filter=<?php echo $udi;?>';
@@ -172,30 +200,68 @@ function transform($xml, $xsl) {
 			window.location = 'https://data.gulfresearchinitiative.org/metadata/<?php echo $udi;?>';
 		});
 		
+		$.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
+            position: {
+                adjust: {
+                    method: "flip flip"
+                },
+                my: "middle right",
+                at: "middle left",
+                viewport: $(window)
+            },
+            show: {
+                event: "mouseenter focus",
+                solo: true
+            },
+            hide: {
+                event: "mouseleave blur",
+                delay: 100,
+                fixed: true
+            },
+            style: {
+                classes: "ui-tooltip-shadow ui-tooltip-tipped"
+            }
+        });
+        
+        $("#downloadds").qtip({
+            content: {
+				text: 'Download Dataset'
+			}
+        });
+		
+		$("#metadatadl").qtip({
+            content: {
+				text: 'Download Metadata'
+			}
+        });
+		
+		$( document ).tooltip();
+		
 	});
 	
 	$(document).on('imready', function(e) {
 		<?php echo $dsscript;?>
 		console.log("added");
 	});
-  
+})(jQuery);
 </script>
   
-<table border="1" width="100%">
+<table border="0" width="100%">
 <tr>
 <td width="30%">
 
-<div id="olmap" style="width: 640px;height: 480px;"></div>
+<div id="olmap" styale="width: 640px;height: 480px;"></div>
 
 </td>
 <td style="padding:10px;" width="70%" valign="top">
 <?php echo $twig->render('summary.html', array('pdata' => $prow,'mdata' => $mrow,'mpdata' => $mprow)); ?>
 </td>
 </tr>
-
-<tr>
-<td colspan="2">
-	<div id="tabs">
+</table>
+<!--<table width="100%">
+<tr height="100%">
+<td colspan="2"> -->
+	<div id="tabs" style="width:100%">
 		<ul>
 			<li><a href="#tabs-1">Details</a></li>
 			<li><a href="#tabs-2">Metadata</a></li>
@@ -207,16 +273,20 @@ function transform($xml, $xsl) {
 		<div class="tabb" id="tabs-1">
 			<?php echo $twig->render('details.html', array('pdata' => $prow,'mdata' => $mrow,'mpdata' => $mprow)); ?>
 		</div>
-		<div class="tabb" id="tabs-2">
-		<div>
+		<div class="tabb" id="tabs-2" style="overflow:auto;word-wrap:break-word;height:100%;">
+			<div id="xmlradio">
+				<input type="radio" id="xmlformated" name="radio" checked="checked"><label for="xmlformated">Formatted</label>
+				<input type="radio" id="xmlraw" name="radio" ><label for="xmlraw">Raw</label>
+			</div>
+			<p>
+			<div id="formatedxml">
 			<?php 
 			//$xml = file_get_contents("/sftp/data/$udi/$udi.met");
-			//$xsl = file_get_contents('/home/users/mvandeneijnden/public_html/mapmockup/xsl/xml-to-html-ISO.xsl');
-			
+				
 			//$xml = "/sftp/data/$udi/$udi.met";
 			$xml = '';
 			$xsl = 'xsl/xml-to-html-ISO.xsl';
-			//$xsl = 'xsl/xmlverbatimwrapper.xsl';
+			//$xsl = 'xsl/xmlverbatim.xsl';
 			
 			if ($prow <>'')
 			{
@@ -224,20 +294,27 @@ function transform($xml, $xsl) {
 			}
 			
 			echo transform($xml,$xsl);
-			
-			//echo $xml;
-						
+									
 			?>
-		</div>
-		<!--
-		<div class="tabb" id="tabs-3">
-			<?php //include "pubs.html"; ?>
-		</div>
-		<div class="tabb" id="tabs-4">
-			<?php //include "manifest.html"; ?>
-		</div>
-		-->
+			</div>
+			<div id="rawxml" style="display:none;">
+				<?php 
+					$xml = '';
+			
+					$xsl = 'xsl/xmlverbatim.xsl';
+					
+					if ($prow <>'')
+					{
+						$xml = $prow["metadata_xml"];
+					}
+					
+					echo transform($xml,$xsl);
+					
+				?>
+			</div>
+		</p>
 	</div>
-</td>
+</div>
+<!--</td>
 </tr>
-</table>
+</table>-->
