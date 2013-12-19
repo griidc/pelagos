@@ -48,7 +48,7 @@
                 <xs:element ref="ethical_or_privacy" minOccurs="0"/>
                 <xs:element ref="remarks" minOccurs="0"/>
             </xs:sequence>
-            <xs:attribute name="sequence" use="optional" type="xs:integer"/>
+            <xs:attribute name="sequence" use="required" type="xs:integer"/>
         </xs:complexType>
     </xs:element>
     <xs:element name="dif_user" type="user_TYPE">
