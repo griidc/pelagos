@@ -19,8 +19,14 @@ require_once '/usr/local/share/GRIIDC/php/utils.php';
 require_once 'lib/search.php';
 # local functions for the packaging sub-module to the data-discovery module
 require_once 'lib/package.php';
-# facebook API/SDK for PHP
-require_once '/usr/local/share/facebook-php-sdk/src/facebook.php';
+# OpenID API for PHP
+require_once '/usr/local/share/lightopenid-lightopenid/openid.php';
+
+function user_is_logged_in_somehow() {
+    $drupal_login = user_is_logged_in();
+    $alternate_login = (isset($_SESSION['gAuthLogin']) and $_SESSION['gAuthLogin']);
+    if ($drupal_login or $alternate_login ) { return true; } else { return false; }
+}
 
 # add js library - informs drupal to add these standard js libraries upstream.  
 # can also use drupal_add_js to specify a full path to a js library to include.
@@ -33,16 +39,6 @@ $GLOBALS['config'] = parse_ini_file('config.ini',true);
 
 TwigView::$twigDirectory = $GLOBALS['config']['TwigView']['twigDirectory'];
 
-$config = array(
-      'appId' => $GLOBALS['config']['FacebookAPI']['AppID'],
-      'secret' => $GLOBALS['config']['FacebookAPI']['AppSecret'],
-      'fileUpload' => false,         // optional
-      'allowSignedRequest' => false, // optional, but should be set to false for non-canvas apps
- );
-
-
-$facebook = new Facebook($config);
-$fb_user = $facebook->getUser();
 
 $app = new Slim(array(
                         'view' => new TwigView,
@@ -67,7 +63,7 @@ $app->get('/includes/:file', 'dumpIncludesFile')->conditions(array('file' => '.+
 
 $app->get('/js/:name.js', function ($name) use ($app) {
     header('Content-type: text/javascript');
-    $stash['logged_in'] = (isset($fb_user) or user_is_logged_in());
+    $stash['logged_in'] = (user_is_logged_in_somehow());
     $app->render("js/$name.js",$stash);
     exit;
 });
@@ -79,12 +75,53 @@ $app->get('/css/:name.css', function ($name) use ($app) {
 });
 
 $app->get('/', function () use ($app) {
+    if(isset($_SESSION['gAuthUser'])) {
+        drupal_set_message("guest access for enabled: ".$_SESSION['gAuthUser'],'message');
+    }
     return $app->render('html/index.html',index($app));
+});
+
+$app->get('/oid', function () use ($app) {
+    try {
+        $openid = new LightOpenID('proteus.tamucc.edu');
+        if(!$openid->mode) {
+            if(isset($_GET['login'])) {
+                $openid->identity = 'https://www.google.com/accounts/o8/id';
+                header('Location: ' . $openid->authUrl());
+            }
+            return $app->render('html/oid.html',index($app));
+        } else {
+            # store login information in drupal session
+            # redirect back to data discovery
+            $openid->validate();
+            $info=$openid->getAttributes();
+            $_SESSION['gAuthUser'] = $info["contact/email"];
+            $_SESSION['gAuthLogin']=true;
+            drupal_goto("data-discovery-mw");
+        }
+    } catch(ErrorException $e) {
+        drupal_set_message($e->getMessage(),'error');
+    }
+});
+$app->post('/oid', function () use ($app) {
+    try {
+        $openid = new LightOpenID('proteus.tamucc.edu');
+        if(!$openid->mode) {
+            if(isset($_GET['login'])) {
+                $openid->identity = 'https://www.google.com/accounts/o8/id';
+                $openid->required = array('contact/email', 'contact/country/home', 'namePerson/first', 'namePerson/last');
+                drupal_goto($openid->authUrl());
+            }
+            return $app->render('html/oid.html',index($app));
+        }
+    } catch(ErrorException $e) {
+        drupal_set_message($e->getMessage(),'error');
+    }
 });
 
 $app->post('/', function () use ($app) {
     $stash = index($app);
-    if (user_is_logged_in()) {
+    if (user_is_logged_in_somehow()) {
         $stash['download'] = $app->request()->post('download');
     }
     return $app->render('html/index.html',$stash);
@@ -97,6 +134,7 @@ function index($app) {
     drupal_add_js('/tree/js/tree.js',array('type'=>'external'));
     drupal_add_js("/$GLOBALS[PAGE_NAME]/js/search.js",array('type'=>'external'));
     drupal_add_js("/$GLOBALS[PAGE_NAME]/js/package.js",array('type'=>'external'));
+    drupal_add_js("/$GLOBALS[PAGE_NAME]/js/logins.js",array('type'=>'external'));
     drupal_add_css("/$GLOBALS[PAGE_NAME]/css/search.css",array('type'=>'external'));
     drupal_add_css("/$GLOBALS[PAGE_NAME]/includes/css/scrollbars.css",array('type'=>'external'));
     drupal_add_css("/$GLOBALS[PAGE_NAME]/includes/css/datasets.css",array('type'=>'external'));
@@ -185,7 +223,7 @@ $app->get('/dataset_details/:udi', function ($udi) use ($app) {
     }
 
     $app->render('html/dataset_details.html',$stash);
-    exit;
+    exit;  # prevents Drupal wrapper in output
 });
 
 $app->get('/package.*', function () use ($app) {
@@ -343,7 +381,7 @@ $app->get('/metadata/:udi', function ($udi) use ($app) {
 
 $app->get('/download/:udi', function ($udi) use ($app) {
     global $user;
-    if (!user_is_logged_in()) {
+    if (!user_is_logged_in_somehow()) {
         $stash['error_message'] = "You must be logged in to download datasets.";
         $app->render('html/download_error.html',$stash);
         exit;
@@ -371,7 +409,12 @@ $app->get('/download/:udi', function ($udi) use ($app) {
     $dat_file = "/sftp/data/$dataset[udi]/$dataset[udi].dat";
     if (file_exists($dat_file)) {
         $env = $app->environment();
-        $uid = uniqid($user->name . '_');
+        $uid = 0;
+        if(empty($user->name)) {
+            $uid = uniqid($_SESSION['gAuthUser'] . '_');
+        } else {
+            $uid = uniqid($user->name . '_');
+        }
         mkdir("/sftp/download/$uid/");
         symlink($dat_file,"/sftp/download/$uid/$dataset[dataset_filename]");
         $stash = array();
