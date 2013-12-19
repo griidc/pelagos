@@ -4,8 +4,8 @@
         <dif>
             <dif_user id="1"/>
             <funding_cycle reference="R01">
-                <project sequence="1">
-                    <task sequence="1"/>
+                <project id="1">
+                    <task id="1"/>
                 </project>
             </funding_cycle>
             <title>My Dataset Title</title>

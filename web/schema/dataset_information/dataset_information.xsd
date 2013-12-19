@@ -98,9 +98,9 @@
             <xs:sequence>
                 <xs:element ref="task"/>
             </xs:sequence>
-            <xs:attribute name="sequence" use="required" type="xs:positiveInteger">
+            <xs:attribute name="id" use="required" type="xs:positiveInteger">
                 <xs:annotation>
-                    <xs:documentation>This is the sequence number of the project for this dataset within the funding cycle.</xs:documentation>
+                    <xs:documentation>This is the id number in RIS (http://research.gulfresearchinitiative.org) of the project this dataset is associated with.</xs:documentation>
                 </xs:annotation>
             </xs:attribute>
         </xs:complexType>
@@ -110,9 +110,9 @@
             <xs:documentation>This element represents a GoMRI task.</xs:documentation>
         </xs:annotation>
         <xs:complexType>
-            <xs:attribute name="sequence" use="required" type="xs:nonNegativeInteger">
+            <xs:attribute name="id" use="required" type="xs:nonNegativeInteger">
                 <xs:annotation>
-                    <xs:documentation>This is the sequence number of the task for this dataset within the project.</xs:documentation>
+                    <xs:documentation>This is the id number in RIS (http://research.gulfresearchinitiative.org) of the task this dataset is associated with.</xs:documentation>
                 </xs:annotation>
             </xs:attribute>
         </xs:complexType>
