@@ -12,9 +12,7 @@
 	zoom = 4,
 	epsg4326 = new OpenLayers.Projection('EPSG:4326'),
 	epsg900913 = new OpenLayers.Projection('EPSG:900913');
-	
-	//$.when(firstLoad==true).then(function(){console.debug('I DID IT');});
-			
+				
 	function initMap(DIV,Options)
 	{
 		googleZoomLevel = 11, //max 11 on hybrid in ocean.
@@ -37,19 +35,19 @@
 					e.feature.renderIntent = "select";
 					e.feature.layer.drawFeature(e.feature);
 					//console.log("Map says: " + e.feature.id + " mouse over " + e.feature.layer.name);
-					$(document).trigger('overFeature',{"featureID":e.feature.id,"attributes":e.feature.attributes});
+					jQuery(document).trigger('overFeature',{"featureID":e.feature.id,"attributes":e.feature.attributes});
 				},
 				featureout: function(e) 
 				{
 					e.feature.renderIntent = "default";
 					e.feature.layer.drawFeature(e.feature);
 					//console.log("Map says: " + e.feature.id + " mouse out " + e.feature.layer.name);
-					$(document).trigger('outFeature',{"featureID":e.feature.id,"attributes":e.feature.attributes});
+					jQuery(document).trigger('outFeature',{"featureID":e.feature.id,"attributes":e.feature.attributes});
 				},
 				featureclick: function(e) 
 				{
 					console.log("Map says: " + e.feature.id + " clicked on " + e.feature.layer.name + " udi:" + e.feature.attributes["udi"]);
-					$(document).trigger('clickFeature',{"featureID":e.feature.id,"attributes":e.feature.attributes});
+					jQuery(document).trigger('clickFeature',{"featureID":e.feature.id,"attributes":e.feature.attributes});
 				}
 			}
 		});
@@ -105,11 +103,6 @@
 			"default": defaultStyle,
 			"select": selectStyle
 		});
-		
-		//addUniqueStyle();
-		
-		//addRule('a','a',defaultStyle);
-		
 		
 		google_hybrid = new OpenLayers.Layer.Google('Google Hybrid Map', 
 		{
@@ -261,7 +254,7 @@
 		vlayer.events.on({
 			'beforefeaturemodified': function(event) {
 				//console.log("Selected " + event.feature.id  + " for modification");
-				$("#eraseTool").button("enable");
+				jQuery("#eraseTool").button("enable");
 				if (typeof event.feature == 'object')
 				{
 					checkPolygon(event.feature.id);
@@ -269,7 +262,7 @@
 			},
 			'afterfeaturemodified': function(event) {
 				//console.log("Finished with " + event.feature.id);
-				$("#eraseTool").button("disable");
+				jQuery("#eraseTool").button("disable");
 				
 			},
 			'beforefeatureadded': function(event) {
@@ -279,7 +272,7 @@
 			'featureadded': function(event) {
 				checkPolygon(event.feature.id);
 				checkOnlyOnePolygon();
-				$(document).trigger('featureAdded',getCoordinateList(event.feature));
+				jQuery(document).trigger('featureAdded',getCoordinateList(event.feature));
 			},
 			'loadend': function(event) {
 				console.log('Done loading vlayer layer');
@@ -298,7 +291,7 @@
 				filter.deactivate();
 			},
 			featureadded: function(event) {
-				$(document).trigger('filterDrawn');
+				jQuery(document).trigger('filterDrawn');
 			}
 		});
 		
@@ -310,7 +303,7 @@
 				firstLoad = true;
 				setTimeout( function() { 
 					//map.updateSize();
-					$(document).trigger('imready');
+					jQuery(document).trigger('imready');
 				}
 				, 100)
 			};
@@ -415,20 +408,20 @@
 		toolbarOptions = Options;
 		
 		toolbardiv = '#'+DIV;
-		$(toolbardiv)
+		jQuery(toolbardiv)
 		.append('<img id="homeTool" src="includes/images/home.png">')
 		.append('<img id="filterTool" src="includes/images/filter.png">')
 		.append('<img id="drawTool" src="includes/images/paint.png">');
 		
-		$(toolbardiv).append('<span id="drawtools"></span>');
+		jQuery(toolbardiv).append('<span id="drawtools"></span>');
 
-		$("#drawtools")
+		jQuery("#drawtools")
 		.append('<img id="polygonTool" src="includes/images/polygon.png">')
 		.append('<img id="lineTool" src="includes/images/line.png">')
 		.append('<img id="circleTool" src="includes/images/circle.png">')
 		.append('<img id="squareTool" src="includes/images/square.png">');
 		
-		$(toolbardiv)
+		jQuery(toolbardiv)
 		.append('<img id="eraseTool" src="includes/images/delete.png">')
 		//.append('<img id="panTool" src="includes/images/pan.png">')
 		.append('<img id="worldTool" src="includes/images/world.png">')
@@ -437,31 +430,28 @@
 		
 		if (toolbarOptions.showExit)
 		{
-			$(toolbardiv)
+			jQuery(toolbardiv)
 			.append('<img id="exitTool" src="includes/images/exit.png">');
 		}
 		
-		$("#exitTool").button()
+		jQuery("#exitTool").button()
 		.click(function() {
 			window.close();
 		});
 		
-		$("#drawtools").hide();
+		jQuery("#drawtools").hide();
 		
-		$("#polygonTool").button();
-		$("#lineTool").button();
-		$("#circleTool").button();
-		$("#squareTool").button();
-		//$("#panTool").button();
-		//$("#panTool").button();
+		jQuery("#polygonTool").button();
+		jQuery("#lineTool").button();
+		jQuery("#circleTool").button();
+		jQuery("#squareTool").button();
 		
-		
-		$("#homeTool").button()
+		jQuery("#homeTool").button()
 		.click(function() {
 			goHome();
 		});
 		
-		$("#drawTool").button()
+		jQuery("#drawTool").button()
 		.click(function() {
 			if (draw.active)
 			{
@@ -475,42 +465,42 @@
 			}
 		});
 		
-		$("#panTool").button()
+		jQuery("#panTool").button()
 		.click(function() {
 			stopDrawing();
 		});
 		
-		$("#filterTool").button()
+		jQuery("#filterTool").button()
 		.click(function() {
 			drawFilter();
 		});
 				
-		$("#eraseTool").button()
+		jQuery("#eraseTool").button()
 		.click(function() {
 			deleteSelected();
 		});
 		
-		$("#worldTool").button()
+		jQuery("#worldTool").button()
 		.click(function() {
 			zoomToMaxExtent();
 		});
 		
-		$("#zoominTool").button()
+		jQuery("#zoominTool").button()
 		.click(function() {
 			zoomIn();
 		});
 		
-		$("#zoomoutTool").button()
+		jQuery("#zoomoutTool").button()
 		.click(function() {
 			zoomOut();
 		});
 		
-		$("#eraseTool").button("disable");
+		jQuery("#eraseTool").button("disable");
 		
 	}
 	
 	//TODO: Zoom/Pan/Select/Highlight Feature Function
-	
+		
 	function gotoAllFeatures()
 	{
 		map.zoomToExtent(vlayer.getDataExtent());
@@ -576,12 +566,12 @@
 		{
 			if (vlayer.features.length > 0)
 			{
-				$("#drawTool").button("disable");
+				jQuery("#drawTool").button("disable");
 				return true;
 			}
 			else
 			{
-				$("#drawTool").button("enable");
+				jQuery("#drawTool").button("enable");
 				return false;
 			}
 		}
@@ -603,13 +593,13 @@
 		var Feature = vlayer.getFeatureById(FeatureID);
 		var featureID = Feature.id;
 		var WKT = wkt.write(Feature);
-		$.ajax({
+		jQuery.ajax({
 			url: "//proteus.tamucc.edu/~mvandeneijnden/map/geocheck.php", // replace this url with geoviz lib
 			type: "POST",
 			data: {wkt: WKT, featureid: featureID},
 			context: document.body
 			}).done(function(html) {
-				$(document).trigger('featureChecked',html);
+				jQuery(document).trigger('featureChecked',html);
 				//console.log(html);
 				return html;
 		});
@@ -739,7 +729,7 @@
 	{
 		if (toolbarOptions.showDrawTools)
 		{
-			$("#drawtools").fadeIn();
+			jQuery("#drawtools").fadeIn();
 			//$("#drawtools").show();
 		}
 		
@@ -751,7 +741,7 @@
 	
 	function stopDrawing()
 	{
-		$("#drawtools").fadeOut();
+		jQuery("#drawtools").fadeOut();
 		//$("#drawtools").hide();
 		draw.deactivate();
 		filter.deactivate();
@@ -792,5 +782,4 @@
 		}
 		checkOnlyOnePolygon();
 	}
-	
 	
