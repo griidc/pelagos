@@ -1,3 +1,5 @@
+var datasets = new Array();
+
 var $ = jQuery.noConflict();
 
 $(document).ready(function() {
@@ -5,14 +7,26 @@ $(document).ready(function() {
     $('#right').height(0);
     setTimeout(function() {
         resizeLeftRight();
+        $('#map_pane').height(($('#left').height()-5)/2);
+        $('#menu').height($('#left').height()-$('#map_pane').height()-10);
         $('#tabs .tab').height($('#tabs').height() - $('#tabs .ui-tabs-nav').height() - 5);
         $('#tabs .tab').each(function() { $(this).tinyscrollbar_update('relative'); });
-        if($.cookie("expanded") == 1) {
+        if (typeof($.cookie) == 'function' && $.cookie("expanded") == 1) {
             expand();
         }
+        initMap('olmap',{'onlyOneFeature':false,'allowModify':false,'allowDelete':true,'labelAttr':'udi'});
+        $(document).on('overFeature',function(e,eventVariables) {
+            $('table.datasets tr[udi="' + eventVariables.attributes.udi + '"] td').addClass('highlight');
+        });
+        $(document).on('outFeature',function(e,eventVariables) {
+            $('table.datasets tr[udi="' + eventVariables.attributes.udi + '"] td').removeClass('highlight');
+        });
+        $('#content').html('<div class="spinner"><div><img src="{{baseUrl}}/includes/images/spinner.gif"></div></div>');
     }, 500);
     $(window).resize(function() {
         resizeLeftRight()
+        $('#map_pane').height(($('#left').height()-5)/2);
+        $('#menu').height($('#left').height()-$('#map_pane').height()-10);
         $('#menu').tinyscrollbar_update('relative');
         $('#tabs .tab').height($('#tabs').height() - $('#tabs .ui-tabs-nav').height() - 5);
         $('#tabs .tab').each(function() { $(this).tinyscrollbar_update('relative'); });
@@ -46,6 +60,22 @@ $(document).ready(function() {
             collapse();
         }
     });
+
+    $('#map_pane').mouseleave(function() {
+        unhighlightAll();
+    });
+
+    $(document).on('filterDrawn',function() {
+        console.log('DRAWN!');
+        $('#drawGeoFilterButton').removeAttr("disabled");
+        $('body').css('cursor','');
+        $('#olmap').css('cursor','');
+        $('input').css('cursor','');
+        console.log(getFilter());
+        trees['tree'].geo_filter=getFilter();
+        applyFilter();
+        $('#clearGeoFilterButton').removeAttr('disabled');
+    });
 });
 
 function expand() {
@@ -55,7 +85,7 @@ function expand() {
         $('#expand-collapse div').removeClass('collapsed');
         $('#tabs .tab').each(function() { $(this).tinyscrollbar_update('relative'); });
     }});
-    $.cookie("expanded", 1);
+    if (typeof($.cookie) == 'function') $.cookie("expanded", 1);
 }
 
 function collapse() {
@@ -64,7 +94,7 @@ function collapse() {
         $('#expand-collapse div').addClass('collapsed');
         $('#tabs .tab').each(function() { $(this).tinyscrollbar_update('relative'); });
     }});
-    $.cookie("expanded", 0);
+    if (typeof($.cookie) == 'function') $.cookie("expanded", 0);
 }
 
 function resizeLeftRight() {
@@ -76,6 +106,7 @@ function resizeLeftRight() {
 }
 
 function showDatasets(by,id,peopleId) {
+    removeAllFeaturesFromMap();
     currentlink = $('#packageLink').attr('href');
     if (currentlink) {
         newlink = currentlink.replace(/\?filter=[^&]*(&|$)/,'');
@@ -86,8 +117,12 @@ function showDatasets(by,id,peopleId) {
     }
     $('#content').html('<div class="spinner"><div><img src="{{baseUrl}}/includes/images/spinner.gif"></div></div>');
     $('div.spinner').height($('#content').height()-12);
+    geo_filter = '';
+    if (trees['tree'].geo_filter) {
+        geo_filter = trees['tree'].geo_filter;
+    }
     $.ajax({
-        "url": "{{baseUrl}}/datasets/" + jQuery('#filter-input').val() + "/" + by + "/" + id,
+        "url": "{{baseUrl}}/datasets/" + jQuery('#filter-input').val() + "/" + by + "/" + id + "/" + geo_filter,
         "success": function(data) {
             $('#content').html(data);
             $('#tabs').tabs({
@@ -98,6 +133,15 @@ function showDatasets(by,id,peopleId) {
                         $('body').addClass('noselect');
                         document.getElementById('container').setAttribute('onselectstart','return false;');
                     });
+                    if ($('#showAllFeatures').attr('checked')) {
+                        var selectedTab = $("#tabs").tabs('option','active');
+                        removeAllFeaturesFromMap();
+                        if (datasets[selectedTab]) {
+                            for (var i=0; i<datasets[selectedTab].length; i++) {
+                                addFeatureFromWKT(datasets[selectedTab][i].geom,{'udi':datasets[selectedTab][i].udi});
+                            }
+                        }
+                    }
                 }
             }
             );
@@ -113,13 +157,26 @@ function showDatasets(by,id,peopleId) {
 }
 
 function showDatasetDetails(udi) {
-    $.ajax({
-        "url": "{{baseUrl}}/dataset_details/" + udi,
-        "success": function(data) {
-            $('#dataset_details_content').html(data);
-            $('#dataset_details').show();
+    if ($('tr[udi="' + udi + '"] td.info').has("div.details:empty").length == 1) {
+        $.ajax({
+            "url": "{{baseUrl}}/dataset_details/" + udi,
+            "success": function(data) {
+                $('tr[udi="' + udi + '"] td.info div.details').html(data);
+                $('tr[udi="' + udi + '"] td.info div.details').show();
+                $('tr[udi="' + udi + '"] td.info div.attributes a.details_link').html('Hide Details');
+            }
+        });
+    }
+    else {
+        if ($('tr[udi="' + udi + '"] td.info div.details:visible').length == 1) {
+            $('tr[udi="' + udi + '"] td.info div.details').hide();
+            $('tr[udi="' + udi + '"] td.info div.attributes a.details_link').html('Show Details');
         }
-    });
+        else {
+            $('tr[udi="' + udi + '"] td.info div.details').show();
+            $('tr[udi="' + udi + '"] td.info div.attributes a.details_link').html('Hide Details');
+        }
+    }
 }
 
 function showDatasetDownload(udi) {
@@ -136,14 +193,34 @@ function showDatasetDownload(udi) {
 }
 
 function applyFilter() {
+    removeAllFeaturesFromMap();
+    $('#content').html('<div class="spinner"><div><img src="{{baseUrl}}/includes/images/spinner.gif"></div></div>');
     trees['tree'].filter=jQuery('#filter-input').val();
     updateTree(trees['tree']);
 }
 
 function clearAll() {
+    goHome();
     $('#by-input').val('');
     $('#id-input').val('');
     $('#filter-input').val('');
     trees['tree'].selected = null;
+    clearFilter();
+    trees['tree'].geo_filter = null;
     applyFilter();
+}
+
+function showAllFeatures() {
+    if ($('#showAllFeatures').attr('checked')) {
+        var selectedTab = $("#tabs").tabs('option','active');
+        removeAllFeaturesFromMap();
+        if (datasets[selectedTab]) {
+            for (var i=0; i<datasets[selectedTab].length; i++) {
+                addFeatureFromWKT(datasets[selectedTab][i].geom,{'udi':datasets[selectedTab][i].udi});
+            }
+        }
+    }
+    else {
+        removeAllFeaturesFromMap();
+    }
 }

@@ -18,6 +18,10 @@ table.datasets tr:hover td {
     background-color: #DFD;
 }
 
+table.datasets tr td.highlight {
+    background-color: #DFD;
+}
+
 table.datasets .checkbox {
     width: 1em;
     text-align: center;

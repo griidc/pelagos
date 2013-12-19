@@ -54,6 +54,9 @@ $app->get('/css/:name.css', function ($name) use ($app) {
 });
 
 $app->get('/', function () use ($app) {
+    drupal_add_js('/includes/openlayers/lib/OpenLayers.js',array('type'=>'external'));
+    drupal_add_js('//maps.google.com/maps/api/js?v=3&sensor=false',array('type'=>'external'));
+    drupal_add_js('/~mvandeneijnden/map/geoviz.js',array('type'=>'external'));
     return $app->render('html/index.html',index($app));
 });
 
@@ -87,7 +90,7 @@ function index($app) {
     return $stash;
 }
 
-$app->get('/datasets/:filter/:by/:id', function ($filter,$by,$id) use ($app) {
+$app->get('/datasets/:filter/:by/:id/:geo_filter', function ($filter,$by,$id,$geo_filter) use ($app) {
     $stash = array();
     $stash['registered_datasets'] = array();
     $stash['identified_datasets'] = array();
@@ -122,6 +125,10 @@ $app->get('/datasets/:filter/:by/:id', function ($filter,$by,$id) use ($app) {
         }
     }
 
+    if (!empty($geo_filter) and $geo_filter != 'undefined') {
+        $reg_filters[] = "geo_filter=$geo_filter";
+    }
+
     $unrestricted_datasets = get_registered_datasets(getDBH('GOMRI'),array_merge($reg_filters,array('restricted=0')),$filter,$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
 
     foreach ($unrestricted_datasets as $dataset) {
@@ -138,17 +145,19 @@ $app->get('/datasets/:filter/:by/:id', function ($filter,$by,$id) use ($app) {
         $stash['restricted_datasets'][] = $dataset;
     }
 
-    $identified_datasets = get_identified_datasets(getDBH('GOMRI'),array("$by=$id",'dataset_download_status!=done','status=2'),$filter,$GLOBALS['config']['DataDiscovery']['identifiedOrderBy']);
-    foreach ($identified_datasets as $dataset) {
-        add_project_info($dataset);
-        $stash['identified_datasets'][] = $dataset;
+    if (empty($geo_filter) or $geo_filter == 'undefined') {
+        $identified_datasets = get_identified_datasets(getDBH('GOMRI'),array("$by=$id",'dataset_download_status!=done','status=2'),$filter,$GLOBALS['config']['DataDiscovery']['identifiedOrderBy']);
+        foreach ($identified_datasets as $dataset) {
+            add_project_info($dataset);
+            $stash['identified_datasets'][] = $dataset;
+        }
     }
 
     $stash['filt'] = $filter;
 
     $app->render('html/datasets.html',$stash);
     exit;
-})->conditions(array('filter' => '.*', 'by' => '.*', 'id' => '.*'));
+})->conditions(array('filter' => '.*', 'by' => '.*', 'id' => '.*', 'geo_filter' => '.*'));
 
 $app->get('/dataset_details/:udi', function ($udi) use ($app) {
 

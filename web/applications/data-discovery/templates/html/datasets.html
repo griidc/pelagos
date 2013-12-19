@@ -1,3 +1,8 @@
+<script>
+removeAllFeaturesFromMap();
+datasets = new Array();
+var tabIndex = 0;
+</script>
 <div style="background: transparent; padding:0px; height:100%" id="tabs">
 
     <ul>
@@ -13,6 +18,7 @@
     </ul>
 
     {% if unrestricted_datasets %}
+        <script>datasets[tabIndex] = new Array();</script>
         <div id="tab-1" class="tab" style="height:100%; padding:0">
             <div class="scrollbar"><div class="track"><div class="thumb"><div class="end"></div></div></div></div>
             <div class="viewport">
@@ -28,7 +34,13 @@
                     -->
                     <table class="datasets">
                         {% for dataset in unrestricted_datasets %}
-                            <tr>
+                            {% if dataset.the_geom %}
+                                <script>
+                                    var ds = { 'udi': '{{dataset.udi}}', 'geom': '{{dataset.the_geom}}' };
+                                    datasets[tabIndex].push(ds);
+                                </script>
+                            {% endif %}
+                            <tr udi="{{dataset.udi}}">
                                 <!--
                                 <td valign="top" class="checkbox">
                                     <input id="{{dataset.udi}}_checkbox" type="checkbox"
@@ -46,25 +58,27 @@
                                         <a href="javascript:showDatasetDownload('{{dataset.udi}}');"><img src="{{baseUrl}}/includes/images/download-package.png" title="download dataset"></a>
                                     {% endif %}
                                 </td>
-                                <td>
+                                <td class="info">
                                     {{dataset.dataset_originator}}.
                                     {{dataset.year}}.
                                     <a href="javascript:showDatasetDetails('{{dataset.udi}}');">{{dataset.title}}</a>.
                                     {% if dataset.project %}
                                         {{dataset.project.Title | trim}}.
                                     {% endif %}
-                                    Gulf of Mexico Research Intitiative Information and Data Cooperative, Harte Research Institute for Gulf of Mexico Studies, Texas A&amp;M University-Corpus Christi.
                                     {% if dataset.doi %}
                                         DOI: <a href="http://dx.doi.org/{{dataset.doi}}" target="_blank">{{dataset.doi}}</a>
                                     {% endif %}
+                                    <div class="details" style="display:none;"/>
                                     <div class="attributes">
-                                        [<a href="javascript:showDatasetDetails('{{dataset.udi}}');">Abstract</a>]
+                                        [<a href="javascript:showDatasetDetails('{{dataset.udi}}');" class="details_link">Show Details</a>]
                                         [Size: <span style="{% if dataset.dataset_download_size > 1073741824 %}color:red;{% endif %}">{{dataset.filesize}}</span>]
+<!--
                                         {% if dataset.metadata_filename %}
                                             [<a href="/metadata/{{dataset.udi}}">Metadata</a>]
                                         {% else %}
                                             <span class="disabled">[Metadata]</span>
                                         {% endif %}
+-->
                                     </div>
                                 </td>
                             </tr>
@@ -73,16 +87,24 @@
                 </div>
             </div>
         </div>
+        <script>tabIndex++</script>
     {% endif %}
 
     {% if restricted_datasets %}
+        <script>datasets[tabIndex] = new Array();</script>
         <div id="tab-2" class="tab" style="height:100%; padding:0">
             <div class="scrollbar"><div class="track"><div class="thumb"><div class="end"></div></div></div></div>
             <div class="viewport">
                 <div class="overview">
                     <table class="datasets">
                         {% for dataset in restricted_datasets %}
-                            <tr>
+                            {% if dataset.the_geom %}
+                                <script>
+                                    var ds = { 'udi': '{{dataset.udi}}', 'geom': '{{dataset.the_geom}}' };
+                                    datasets[tabIndex].push(ds);
+                                </script>
+                            {% endif %}
+                            <tr udi="{{dataset.udi}}">
                                 <!--
                                 <td valign="top" class="checkbox">
                                     <input id="{{dataset.udi}}_checkbox" type="checkbox"
@@ -135,6 +157,7 @@
                 </div>
             </div>
         </div>
+        <script>tabIndex++</script>
     {% endif %}
 
     {% if identified_datasets %}
@@ -186,3 +209,33 @@
         <div style="color:red; padding:10px; text-align:center; font-weight:bold; font-size:150%;">no datasets found</div>
     {% endif %}
 </div>
+
+<script>
+
+if ($('#showAllFeatures').attr('checked')) {
+    if (datasets[0]) {
+        for (var i=0; i<datasets[0].length; i++) {
+            addFeatureFromWKT(datasets[0][i].geom,{'udi':datasets[0][i].udi});
+        }
+    }
+}
+
+$('table.datasets tr').hover(function() {
+    if (!$('#showAllFeatures').attr('checked')) {
+        for (var j=0; j<datasets.length; j++) {
+            for (var i=0; i<datasets[j].length; i++) {
+                if (datasets[j][i].udi == $(this).attr('udi')) {
+                    addFeatureFromWKT(datasets[j][i].geom,{'udi':datasets[j][i].udi});
+                }
+            }
+        }
+    }
+    highlightFeature('udi',$(this).attr('udi'));
+},function() {
+    unhighlightFeature('udi',$(this).attr('udi'));
+    if (!$('#showAllFeatures').attr('checked')) {
+        removeAllFeaturesFromMap();
+    }
+});
+
+</script>
