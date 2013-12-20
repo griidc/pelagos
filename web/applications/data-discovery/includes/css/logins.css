@@ -1,4 +1,4 @@
-#dataset_details {
+#pre_login {
     position: absolute;
     background-color: white;
     display: none;
@@ -9,17 +9,17 @@
     margin-top: 10px;
 }
 
-#dataset_details_close {
+#pre_login_close {
     float: right;
     margin-top: -3px;
     margin-right: -3px;
     margin-left: 5px;
 }
 
-#dataset_details div.attr {
+#pre_login div.attr {
     margin-bottom: .5em;
 }
 
-#dataset_details span.attr {
+#pre_login span.attr {
     font-weight: bold;
 }

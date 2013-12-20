@@ -52,6 +52,7 @@ $app->hook('slim.before', function () use ($app) {
     $env = $app->environment();
     $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
     $app->view()->appendData(array('baseUrl' => "$protocol$env[SERVER_NAME]/$GLOBALS[PAGE_NAME]"));
+    $app->view()->appendData(array('hostname' => $env['SERVER_NAME']));
     $app->view()->appendData(array('pageName' => $GLOBALS['PAGE_NAME']));
     $app->view()->appendData(array('currentPage' => urlencode(preg_replace('/^\//','',$_SERVER['REQUEST_URI']))));
     if (!empty($user->name)) {
@@ -75,44 +76,40 @@ $app->get('/css/:name.css', function ($name) use ($app) {
 });
 
 $app->get('/', function () use ($app) {
-    if(isset($_SESSION['gAuthUser'])) {
-        drupal_set_message("guest access for enabled: ".$_SESSION['gAuthUser'],'message');
+    $stash=index($app);
+    # for now, only do this for guestAuthUser people, GoMRI auto-download is handled elsewhere.
+    if( (isset($_COOKIE['dl_attempt_udi_cookie'])) and (isset($_SESSION['guestAuthUser'])) ) {
+        $udi =  $_COOKIE['dl_attempt_udi_cookie'];
+        unset($_COOKIE['dl_attempt_udi_cookie']);
+        # remove cookie
+        setcookie('dl_attempt_udi_cookie', "", time() - 3600, '/', $_SERVER['SERVER_NAME']);
+        $env = $app->environment();
+        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+        # this is wrong here...  I need to load the main html then inject this into the div as used by gomri login    
+        $stash['download']=$udi;
+        drupal_set_message("Guest access enabled for ".$_SESSION['guestAuthUser'],'status');
     }
-    return $app->render('html/index.html',index($app));
+    return $app->render('html/index.html',$stash);
 });
 
-$app->get('/oid', function () use ($app) {
+$app->get('/google-auth', function () use ($app) {
     try {
-        $openid = new LightOpenID('proteus.tamucc.edu');
+        $hostname = gethostname();
+        $openid = new LightOpenID($hostname);
         if(!$openid->mode) {
             if(isset($_GET['login'])) {
                 $openid->identity = 'https://www.google.com/accounts/o8/id';
                 header('Location: ' . $openid->authUrl());
             }
-            return $app->render('html/oid.html',index($app));
+            $openid->identity = 'https://www.google.com/accounts/o8/id';
+            $openid->required = array('contact/email', 'contact/country/home', 'namePerson/first', 'namePerson/last');
+            drupal_goto($openid->authUrl());
         } else {
-            # store login information in drupal session
-            # redirect back to data discovery
             $openid->validate();
             $info=$openid->getAttributes();
-            $_SESSION['gAuthUser'] = $info["contact/email"];
+            $_SESSION['guestAuthUser'] = $info["contact/email"];
             $_SESSION['gAuthLogin']=true;
             drupal_goto("data-discovery-mw");
-        }
-    } catch(ErrorException $e) {
-        drupal_set_message($e->getMessage(),'error');
-    }
-});
-$app->post('/oid', function () use ($app) {
-    try {
-        $openid = new LightOpenID('proteus.tamucc.edu');
-        if(!$openid->mode) {
-            if(isset($_GET['login'])) {
-                $openid->identity = 'https://www.google.com/accounts/o8/id';
-                $openid->required = array('contact/email', 'contact/country/home', 'namePerson/first', 'namePerson/last');
-                drupal_goto($openid->authUrl());
-            }
-            return $app->render('html/oid.html',index($app));
         }
     } catch(ErrorException $e) {
         drupal_set_message($e->getMessage(),'error');
@@ -123,6 +120,7 @@ $app->post('/', function () use ($app) {
     $stash = index($app);
     if (user_is_logged_in_somehow()) {
         $stash['download'] = $app->request()->post('download');
+        $stash['srvr'] = "https://$_SERVER[HTTP_HOST]";
     }
     return $app->render('html/index.html',$stash);
 });
@@ -135,11 +133,13 @@ function index($app) {
     drupal_add_js("/$GLOBALS[PAGE_NAME]/js/search.js",array('type'=>'external'));
     drupal_add_js("/$GLOBALS[PAGE_NAME]/js/package.js",array('type'=>'external'));
     drupal_add_js("/$GLOBALS[PAGE_NAME]/js/logins.js",array('type'=>'external'));
+    drupal_add_library('system', 'jquery.cookie');
     drupal_add_css("/$GLOBALS[PAGE_NAME]/css/search.css",array('type'=>'external'));
     drupal_add_css("/$GLOBALS[PAGE_NAME]/includes/css/scrollbars.css",array('type'=>'external'));
     drupal_add_css("/$GLOBALS[PAGE_NAME]/includes/css/datasets.css",array('type'=>'external'));
     drupal_add_css("/$GLOBALS[PAGE_NAME]/includes/css/dataset_details.css",array('type'=>'external'));
     drupal_add_css("/$GLOBALS[PAGE_NAME]/includes/css/dataset_download.css",array('type'=>'external'));
+    drupal_add_css("/$GLOBALS[PAGE_NAME]/includes/css/logins.css",array('type'=>'external'));
     if (array_key_exists('treePaneCollapsed',$GLOBALS['config']['DataDiscovery'])) {
         $stash['treePaneCollapsed'] = $GLOBALS['config']['DataDiscovery']['treePaneCollapsed'];
     }
@@ -382,9 +382,9 @@ $app->get('/metadata/:udi', function ($udi) use ($app) {
 $app->get('/download/:udi', function ($udi) use ($app) {
     global $user;
     if (!user_is_logged_in_somehow()) {
-        $stash['error_message'] = "You must be logged in to download datasets.";
-        $app->render('html/download_error.html',$stash);
-        exit;
+        #$stash['error_message'] = "You must be logged in to download datasets.";
+        #$app->render('html/download_error.html',$stash);
+        drupal_exit();
     }
     if (preg_match('/^00/',$udi)) {
         $datasets = get_registered_datasets(getDBH('GOMRI'),array("registry_id=$udi%"));
@@ -411,7 +411,7 @@ $app->get('/download/:udi', function ($udi) use ($app) {
         $env = $app->environment();
         $uid = 0;
         if(empty($user->name)) {
-            $uid = uniqid($_SESSION['gAuthUser'] . '_');
+            $uid = uniqid($_SESSION['guestAuthUser'] . '_');
         } else {
             $uid = uniqid($user->name . '_');
         }
