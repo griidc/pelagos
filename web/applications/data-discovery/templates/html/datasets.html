@@ -61,7 +61,7 @@ var tabIndex = 0;
                                 <td class="info">
                                     {{dataset.dataset_originator}}.
                                     {{dataset.year}}.
-                                    <a href="javascript:showDatasetDetails('{{dataset.udi}}');">{{dataset.title}}</a>.
+                                    <a href="/data/{{dataset.udi}}" target="_blank">{{dataset.title}}</a>.
                                     {% if dataset.project %}
                                         {{dataset.project.Title | trim}}.
                                     {% endif %}
@@ -125,7 +125,7 @@ var tabIndex = 0;
                                 <td class="info">
                                     {{dataset.dataset_originator}}.
                                     {{dataset.year}}.
-                                    <a href="javascript:showDatasetDetails('{{dataset.udi}}');">{{dataset.title}}</a>.
+                                    <a href="/data/{{dataset.udi}}" target="_blank">{{dataset.title}}</a>.
                                     {% if dataset.project %}
                                         {{dataset.project.Title | trim}}.
                                     {% endif %}
@@ -187,7 +187,7 @@ var tabIndex = 0;
                                     </td>
                                     -->
                                     <td class="info">
-                                        <a href="javascript:showDatasetDetails('{{dataset.udi}}');">{{dataset.title}}</a>.
+                                        <a href="/data/{{dataset.udi}}" target="_blank">{{dataset.title}}</a>.
                                         {{dataset.project.Title | trim}}.
                                         {% if dataset.doi %}
                                             DOI: <a href="http://dx.doi.org/{{dataset.doi}}" target="_blank">{{dataset.doi}}</a>
