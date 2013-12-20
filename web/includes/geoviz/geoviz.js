@@ -257,7 +257,7 @@
 				jQuery("#eraseTool").button("enable");
 				if (typeof event.feature == 'object')
 				{
-					checkPolygon(event.feature.id);
+					//checkPolygon(event.feature.id);
 				}
 			},
 			'afterfeaturemodified': function(event) {
@@ -270,7 +270,7 @@
 				checkAllowModify(true);
 			},
 			'featureadded': function(event) {
-				checkPolygon(event.feature.id);
+				//checkPolygon(event.feature.id);
 				checkOnlyOnePolygon();
 				jQuery(document).trigger('featureAdded',getCoordinateList(event.feature));
 			},
@@ -594,7 +594,7 @@
 		var featureID = Feature.id;
 		var WKT = wkt.write(Feature);
 		jQuery.ajax({
-			url: "//proteus.tamucc.edu/~mvandeneijnden/map/geocheck.php", // replace this url with geoviz lib
+			url: "/includes/geoviz/geocheck.php", // replace this url with geoviz lib
 			type: "POST",
 			data: {wkt: WKT, featureid: featureID},
 			context: document.body
@@ -613,7 +613,7 @@
 		if (typeof Style == 'object')
 		{
 			var style = OpenLayers.Util.extend({}, OpenLayers.Feature.Vector.style['default']);
-			style.fillColor = Style.fillColor;
+			//style.fillColor = Style.fillColor;
 			//style.fillOpacity = Style.fillOpacity;
 			//style.strokeColor = Style.strokeColor;
 			//style.strokeWidth = Style.strokeWidth;
