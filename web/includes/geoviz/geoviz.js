@@ -409,29 +409,29 @@
 		
 		toolbardiv = '#'+DIV;
 		jQuery(toolbardiv)
-		.append('<img id="homeTool" src="includes/images/home.png">')
-		.append('<img id="filterTool" src="includes/images/filter.png">')
-		.append('<img id="drawTool" src="includes/images/paint.png">');
+		.append('<img id="homeTool" src="/images/geoviz/includes/images/home.png">')
+		.append('<img id="filterTool" src="/images/geoviz/includes/images/filter.png">')
+		.append('<img id="drawTool" src="/images/geoviz/includes/images/paint.png">');
 		
 		jQuery(toolbardiv).append('<span id="drawtools"></span>');
 
 		jQuery("#drawtools")
-		.append('<img id="polygonTool" src="includes/images/polygon.png">')
-		.append('<img id="lineTool" src="includes/images/line.png">')
-		.append('<img id="circleTool" src="includes/images/circle.png">')
-		.append('<img id="squareTool" src="includes/images/square.png">');
+		.append('<img id="polygonTool" src="/images/geoviz/includes/images/polygon.png">')
+		.append('<img id="lineTool" src="/images/geoviz/includes/images/line.png">')
+		.append('<img id="circleTool" src="/images/geoviz/includes/images/circle.png">')
+		.append('<img id="squareTool" src="/images/geoviz/includes/images/square.png">');
 		
 		jQuery(toolbardiv)
-		.append('<img id="eraseTool" src="includes/images/delete.png">')
-		//.append('<img id="panTool" src="includes/images/pan.png">')
-		.append('<img id="worldTool" src="includes/images/world.png">')
-		.append('<img id="zoominTool" src="includes/images/zoomin.png">')
-		.append('<img id="zoomoutTool" src="includes/images/zoomout.png">');
+		.append('<img id="eraseTool" src="/images/geoviz/includes/images/delete.png">')
+		//.append('<img id="panTool" src="/images/geoviz/includes/images/pan.png">')
+		.append('<img id="worldTool" src="/images/geoviz/includes/images/world.png">')
+		.append('<img id="zoominTool" src="/images/geoviz/includes/images/zoomin.png">')
+		.append('<img id="zoomoutTool" src="/images/geoviz/includes/images/zoomout.png">');
 		
 		if (toolbarOptions.showExit)
 		{
 			jQuery(toolbardiv)
-			.append('<img id="exitTool" src="includes/images/exit.png">');
+			.append('<img id="exitTool" src="/images/geoviz/includes/images/exit.png">');
 		}
 		
 		jQuery("#exitTool").button()
@@ -456,12 +456,12 @@
 			if (draw.active)
 			{
 				stopDrawing();
-				//$(this).attr("src","includes/images/draw.png");
+				//$(this).attr("src","/images/geoviz/includes/images/draw.png");
 			}
 			else
 			{
 				startDrawing();
-				//$(this).attr("src","includes/images/pan.png");
+				//$(this).attr("src","/images/geoviz/includes/images/pan.png");
 			}
 		});
 		
