@@ -15,7 +15,7 @@ drupal_add_library('system', 'ui.button');
 drupal_add_css('/data/includes/css/details.css',array('type'=>'external'));
 drupal_add_js('/includes/openlayers/lib/OpenLayers.js',array('type'=>'external'));
 drupal_add_js('//maps.google.com/maps/api/js?v=3&sensor=false',array('type'=>'external'));
-drupal_add_js('//proteus.tamucc.edu/~mvandeneijnden/map/geoviz.js',array('type'=>'external'));
+drupal_add_js('/includes/geoviz/geoviz.js',array('type'=>'external'));
 
 include_once '/usr/local/share/GRIIDC/php/pdo.php';
 
