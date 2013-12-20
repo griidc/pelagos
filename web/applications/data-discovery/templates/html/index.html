@@ -87,9 +87,21 @@
 <div id="pre_login">
     <div id="pre_login_close"><input type="image" src="{{baseUrl}}/includes/images/close.gif" onclick="jQuery('#pre_login').hide();"></div>
     <div id="pre_login_content">
-        You must Log in to download data<br />
-        GOMRI Users - Please use your <div id="redir_url"></div> to log in.<br />
-        Public Users - Please use your <a href={{baseUrl}}/google-auth>Google Login (OpenID)</a>
+        <table cellpadding=10>
+            <tr>
+                <td colspan=2 align=center>
+                    Please log in for access to this data.
+                </td>
+            </tr>
+            <tr>
+                <td align="center"><a class="redir_url"><img src="{{baseUrl}}/includes/images/GoMRI.png" alt="gomri logo"></a></td>
+                <td align="center"><a href="{{baseUrl}}/google-auth"><img src="{{baseUrl}}/includes/images/googleauth.png" alt="google auth logo"></a></td>
+            </tr>
+            <tr>
+                <td>GOMRI Users, please use your <a class="redir_url">GRIIDC Login</a> for access to download data.</td>
+                <td>Public Access:  Please use your <a href="{{baseUrl}}/google-auth">Google Login</a> for access to download data.</td>
+            </tr>
+        </table>
     </div>
 </div>
 

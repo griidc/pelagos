@@ -424,6 +424,10 @@ $app->get('/download/:udi', function ($udi) use ($app) {
         $stash['bytes'] = filesize($dat_file);
         $stash['filesize'] = bytes2filesize($stash['bytes'],1);
         $stash['filt'] = $app->request()->get('filter');
+        $tstamp=date('YmdHis');
+        # this simplistic logging in place until proper logging into database
+        # is implemented
+        `echo "$tstamp\t$dat_file\t$uid" >> downloadlog.txt`;
         $app->render('html/download.html',$stash);
         exit;
     }

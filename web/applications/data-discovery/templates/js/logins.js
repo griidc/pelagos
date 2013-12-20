@@ -1,5 +1,5 @@
 function showLoginOptions(udi) {
-    var url_redir = "<a href=\"/cas?destination=" + escape("{{pageName}}/download_redirect/" + udi + "?final_destination=" + location.pathname) + "\"> GoMRI Login </a>";
-    $('#redir_url').replaceWith(url_redir);
+    var url_redir = "/cas?destination=" + escape("{{pageName}}/download_redirect/" + udi + "?final_destination=" + location.pathname);
+    $('a.redir_url').attr("href",url_redir);
     $('#pre_login').show();
 }
