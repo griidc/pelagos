@@ -181,15 +181,18 @@ function showDatasetDetails(udi) {
 
 function showDatasetDownload(udi) {
     {% if not logged_in %}
-        location.href = "/cas?destination=" + escape("{{pageName}}/download_redirect/" + udi + "?final_destination=" + location.pathname);
+        $.cookie('dl_attempt_udi_cookie', udi, { expires: 1, path: '/', domain: '{{hostname}}' });
+        //location.href = "/cas?destination=" + escape("{{pageName}}/download_redirect/" + udi + "?final_destination=" + location.pathname);
+        showLoginOptions(udi);
+    {% else %}
+        $.ajax({
+            "url": "{{baseUrl}}/download/" + udi,
+            "success": function(data) {
+                $('#dataset_download_content').html(data);
+                $  ('#dataset_download').show();
+            }
+        });
     {% endif %}
-    $.ajax({
-        "url": "{{baseUrl}}/download/" + udi,
-        "success": function(data) {
-            $('#dataset_download_content').html(data);
-            $('#dataset_download').show();
-        }
-    });
 }
 
 function applyFilter() {

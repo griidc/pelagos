@@ -1,0 +1,25 @@
+#pre_login {
+    position: absolute;
+    background-color: white;
+    display: none;
+    border: 2px solid black;
+    padding: 5px;
+    width: 80%;
+    left: 10%;
+    margin-top: 10px;
+}
+
+#pre_login_close {
+    float: right;
+    margin-top: -3px;
+    margin-right: -3px;
+    margin-left: 5px;
+}
+
+#pre_login div.attr {
+    margin-bottom: .5em;
+}
+
+#pre_login span.attr {
+    font-weight: bold;
+}
