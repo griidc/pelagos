@@ -355,9 +355,15 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
             $node->setAttribute('id','boundingExtent');
             break;
         }
+		case 'gml:posList':
+        {
+            $node->setAttribute('srsDimension','2');
+            break;
+        }
         case 'gml:Polygon':
         {
             $node->setAttribute('gml:id','Polygon');
+			$node->setAttribute('srsName','EPSG:4326');
             break;
         }
         case 'gmd:EX_GeographicBoundingBox':

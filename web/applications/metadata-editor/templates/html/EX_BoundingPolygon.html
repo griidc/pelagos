@@ -3,6 +3,6 @@
 <img src="/map/images/red-dot.png" height="15">
 <a href="javascript:void(0);" onclick="window.open('includes/metamap.php','map','width=1150,height=840,toolbar=0,status=0,scrollbars=0,resizable=0,location=0');">Click here for a mapping tool to help find coordinates.</a>
 <label for="BPL1_{{instanceName}}"><em>*</em>Coordinate List</label>
-<textarea class="required" id="BPL1_{{instanceName}}" rows="5" cols="80" name="{{instanceType}}-gmd:polygon-gml:Polygon-gml:interior-gml:LinearRing-gml:coordinates"/>{{polyCoordinates}}</textarea></td>
+<textarea class="required" id="BPL1_{{instanceName}}" rows="5" cols="80" name="{{instanceType}}-gmd:polygon-gml:Polygon-gml:exterior-gml:LinearRing-gml:coordinates"/>{{polyCoordinates}}</textarea></td>
 <td><pre>Coordinates of points (vertices of a polygon) defining the outline of the area covered by this dataset. The coordinates are in +/- decimal degrees and should be formatted as Latitude,Longitude with a space between coordinate pairs.  The first coordinate should also be repeated as the last coordinate, meaning that a four point polygon will have five coordinates in its list.
 Ex.  25,-80 25,-95 30,-95 30,-80 25,-80</pre></td></tr>

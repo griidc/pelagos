@@ -12,11 +12,11 @@ class EX_BoundingPolygon
               
         $polyCoordinates = '';
         
-        if (isset($geoArray['gmd:polygon']['gml:Polygon']['gml:interior']['gml:LinearRing']['gml:coordinates']))
+        if (isset($geoArray['gmd:polygon']['gml:Polygon']['gml:exterior']['gml:LinearRing']['gml:coordinates']))
         {
-            $polyCoordinates = $geoArray['gmd:polygon']['gml:Polygon']['gml:interior']['gml:LinearRing']['gml:coordinates'];
+            $polyCoordinates = $geoArray['gmd:polygon']['gml:Polygon']['gml:exterior']['gml:LinearRing']['gml:coordinates'];
         }
-        elseif (isset($geoArray['gmd:extentTypeCode']))
+		elseif (isset($geoArray['gmd:extentTypeCode']))
         {
             $polyCoordinates .= $geoArray['gmd:northBoundLatitude']['gco:Decimal'] . ',' . $geoArray['gmd:westBoundLongitude']['gco:Decimal'] . ' '; 
             $polyCoordinates .= $geoArray['gmd:northBoundLatitude']['gco:Decimal'] . ',' . $geoArray['gmd:eastBoundLongitude']['gco:Decimal'] . ' '; 
