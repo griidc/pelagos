@@ -1,5 +1,19 @@
 <?php
 
+include '/usr/local/share/GRIIDC/php/griidcMailer.php';
+
+$mytest = new griidcMailer(true);
+
+$message = "Congratulations $mytest->currentUserFirstName $mytest->currentUserLastName!<br /><br />";
+$message .= "Your registration has been received!<br \>";
+$message .= "If you have any questions regarding your DOI please contact griidc@gomri.org.<br \><br \>";
+$message .= "<em>The GRIIDC Team.</em><br \>";
+
+$mytest->mailMessage = $message;
+$mytest->mailSubject = 'TEST ONLY!';
+
+$mytest->sendMail();
+
 if (!isset($auth)){$auth="N/A";};
 if (!isset($whendl)){$whendl="N/A";};
 if (!isset($pullds)){$pullds="N/A";};
