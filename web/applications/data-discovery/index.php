@@ -95,6 +95,20 @@ $app->get('/', function () use ($app) {
     return $app->render('html/index.html',$stash);
 });
 
+/*
+// currently a work in progress...
+$app->get('/guest-logout', function () use ($app) {
+    try {
+        $_SESSION['guestAuthUser'] = null;
+        unset($_SESSION['guestAuthUser']);
+        drupal_set_message("Guess access has been logged out.",'status');
+        drupal_goto($GLOBALS['PAGE_NAME']);
+    } catch(ErrorException $e) {
+        drupal_set_message($e->getMessage(),'error');
+    }
+});
+*/
+
 $app->get('/google-auth', function () use ($app) {
     try {
         $hostname = gethostname();
@@ -119,8 +133,38 @@ $app->get('/google-auth', function () use ($app) {
     }
 });
 
+/*
+// currently a work in progress...
+$app->get('/symantec-auth', function () use ($app) {
+    try {
+        $hostname = gethostname();
+        $openid = new LightOpenID($hostname);
+        if(!$openid->mode) {
+            if(isset($_GET['login'])) {
+                $openid->identity = 'https://pip.verisignlabs.com/login.do';
+                header('Location: ' . $openid->authUrl());
+            }
+            $openid->identity = 'https://pip.verisignlabs.com/login.do';
+            $openid->required = array('contact/email', 'contact/country/home', 'namePerson/first', 'namePerson/last');
+            drupal_goto($openid->authUrl());
+        } else {
+            $openid->validate();
+            $info=$openid->getAttributes();
+            $_SESSION['guestAuthUser'] = $info["contact/email"];
+            $_SESSION['gAuthLogin']=true;
+            drupal_goto($GLOBALS['PAGE_NAME']);
+        }
+    } catch(ErrorException $e) {
+        drupal_set_message($e->getMessage(),'error');
+    }
+});
+*/
+
+
 $app->post('/', function () use ($app) {
     $stash = index($app);
+    # regardless of user-friendly javascript warning elsewhere, this will disallow 
+    # unauthorized downloads server-side with a silent fail and reflow of the page.
     if (user_is_logged_in_somehow()) {
         $stash['download'] = $app->request()->post('download');
         $stash['srvr'] = "https://$_SERVER[HTTP_HOST]";
