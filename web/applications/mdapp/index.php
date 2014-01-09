@@ -57,7 +57,7 @@ $app->get('/', function () use ($app) {
     $stash['m_dataset']['accepted']    = GetMetaData('accepted');
     $stash['m_dataset']['submitted']   = GetMetaData('submitted');
     $stash['srvr'] = "https://$_SERVER[HTTP_HOST]";
-    return $app->render('html/datasets.html',$stash);
+    return $app->render('html/main.html',$stash);
 });
 
 
@@ -69,7 +69,6 @@ $app->get('/download-metadata/:udi', function ($udi) use ($app) {
         $datasets = get_identified_datasets(getDBH('GOMRI'),array("udi=$udi"));
     }
     $dataset = $datasets[0]; 
-    #print "<pre>"; var_dump($dataset); die(); 
     $met_file = "/sftp/data/$dataset[udi]/$dataset[udi].met";
     if (file_exists($met_file)) {
         $info = finfo_open(FILEINFO_MIME_TYPE);
@@ -82,9 +81,41 @@ $app->get('/download-metadata/:udi', function ($udi) use ($app) {
         header("Content-Disposition: attachment; filename=$dataset[metadata_filename]");
         readfile($met_file);
         exit;
-    }
-    else {
+    } else {
         drupal_set_message("Error retrieving metadata file: file not found: $met_file",'error');
+        drupal_goto($GLOBALS['PAGE_NAME']); # reload calling page (is there a better way to do this?
+    }
+});
+
+$app->get('/download-metadata-db/:udi', function ($udi) use ($app) {
+    # This SQL uses a subselect to resolve the newest registry_id
+    # associated with the passed in UDI.
+    $sql = "select metadata_xml from metadata 
+            where registry_id = (   select registry_id 
+                                    from curr_reg_view 
+                                    where dataset_udi = ?
+                                )";
+
+    $dbms = OpenDB("GOMRI_RO");
+    $data = $dbms->prepare($sql);
+    $data->execute(array($udi));
+    $raw_data = $data->fetch(); 
+    if ($raw_data) {
+        $filename = "$udi-metadata.xml";
+        # colons aren't allowed in filenames so substitute dash '-' character instead.
+        $filename = preg_replace("/:/",'-',$filename); 
+        header($_SERVER["SERVER_PROTOCOL"] . " 200 OK");
+        header("Cache-Control: public"); // needed for i.e.
+        header("Content-Type: text/xml");
+        header("Content-Transfer-Encoding: Binary");
+        header("Content-Length:" . strlen($raw_data['metadata_xml']));
+        header("Content-Disposition: attachment; filename=$filename");
+        ob_clean();
+        flush();
+        print $raw_data['metadata_xml'];
+        exit;
+    } else {
+        drupal_set_message("Error retrieving metadata from database.",'error');
         drupal_goto($GLOBALS['PAGE_NAME']); # reload calling page (is there a better way to do this?
     }
 });
@@ -173,6 +204,7 @@ function GetMetadata($type) {
     $type=strtolower($type);
     switch($type) {
         case "accepted":
+            /*
             $sql = "SELECT metadata_status, url_metadata, dataset_udi, dataset_metadata
                     FROM 
                     registry r2
@@ -185,17 +217,18 @@ function GetMetadata($type) {
                     where metadata_status = 'Accepted' 
                     and url_metadata like '/sftp/data/%.met' 
                     order by registry_id";
+            */
+            # per Patrick, the curr_reg_view shows this same information, that being
+            # the most current version of the metadata.
+            $sql = "SELECT metadata_status, url_metadata, dataset_udi, dataset_metadata
+                    FROM curr_reg_view 
+                    where metadata_status = 'Accepted' 
+                    and url_metadata like '/sftp/data/%.met' 
+                    order by registry_id";
             break;
         case "submitted":
             $sql = "SELECT metadata_status, url_metadata, dataset_udi, dataset_metadata
-                    FROM 
-                    registry r2
-                    INNER JOIN (
-                        SELECT MAX(registry_id) AS MaxID
-                        FROM registry
-                        GROUP BY substr(registry_id,1,16)
-                    ) m
-                    ON r2.registry_id = m.MaxID
+                    FROM curr_reg_view 
                     where metadata_status = 'Submitted' 
                     and url_metadata like '/sftp/data/%.met' 
                     order by registry_id";

@@ -26,8 +26,7 @@
                     {% for dta in section %}
                         <tr>
                             <td valign="top">{{dta.dataset_udi}}</td>
-                            <td valign="top"><a href={{baseUrl}}/download-metadata/{{dta.dataset_udi}}>
-                                <img src="{{baseUrl}}/includes/images/download.png"></a> {{dta.dataset_metadata}}</td>
+                            <td valign="top"><a href={{baseUrl}}/download-metadata/{{dta.dataset_udi}}><img src="{{baseUrl}}/includes/images/download.png"></a>&nbsp;<a href={{baseUrl}}/download-metadata-db/{{dta.dataset_udi}}><img src="{{baseUrl}}/includes/images/download-from-db.png"></a> {{dta.dataset_metadata}}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -44,6 +43,6 @@
                 Send this file: <input name="newMetadataFile" type="file" />
                 <input type="submit" value="Send File" />
             </form>
-        <div>
+        </div>
 
 </div>
