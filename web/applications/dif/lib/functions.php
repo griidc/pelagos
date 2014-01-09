@@ -48,7 +48,7 @@ function displayTaskStatus($tasks,$update=null,$personid=null,$filterstatus=null
             if (isset($personid)) { $qs .= "&prsid=$personid"; }
 			if (array_key_exists('as_user',$_GET)) { $qs .= "&as_user=$_GET[as_user]"; }
             
-			if ((isset($filterstatus) AND $filterstatus==$status) OR (!isset($filterstatus)))
+			if ($filterstatus==$status OR $filterstatus==null OR $filterstatus=="")
 			{
 			
 				echo "d.add($nodeCount,$folderCount,'".addslashes("[$dataset_udi] $title")."','?$qs','".addslashes("[$dataset_udi] $title")."','_self'";
