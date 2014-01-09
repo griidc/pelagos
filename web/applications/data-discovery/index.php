@@ -95,19 +95,20 @@ $app->get('/', function () use ($app) {
     return $app->render('html/index.html',$stash);
 });
 
-/*
 // currently a work in progress...
 $app->get('/guest-logout', function () use ($app) {
     try {
         $_SESSION['guestAuthUser'] = null;
         unset($_SESSION['guestAuthUser']);
         drupal_set_message("Guess access has been logged out.",'status');
-        drupal_goto($GLOBALS['PAGE_NAME']);
+        $env = $app->environment();
+        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+        $baseUrl  = "$protocol$env[SERVER_NAME]/$GLOBALS[PAGE_NAME]";
+        drupal_goto($baseUrl);
     } catch(ErrorException $e) {
         drupal_set_message($e->getMessage(),'error');
     }
 });
-*/
 
 $app->get('/google-auth', function () use ($app) {
     try {
@@ -126,7 +127,10 @@ $app->get('/google-auth', function () use ($app) {
             $info=$openid->getAttributes();
             $_SESSION['guestAuthUser'] = $info["contact/email"];
             $_SESSION['gAuthLogin']=true;
-            drupal_goto($GLOBALS['PAGE_NAME']);
+            $env = $app->environment();
+            $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+            $baseUrl  = "$protocol$env[SERVER_NAME]/$GLOBALS[PAGE_NAME]";
+            drupal_goto($baseUrl);
         }
     } catch(ErrorException $e) {
         drupal_set_message($e->getMessage(),'error');
