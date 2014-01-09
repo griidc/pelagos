@@ -43,13 +43,14 @@ $GLOBALS['personid'] ="";
 if ($_GET) 
 {
 
-    if (isset($_GET['personID'])) 
+    if (isset($_GET['personID']) OR isset($_GET['status'])) 
     {
         $personid = $_GET['personID'];
+		$fstatus = $_GET['status'];
         ob_clean();
         ob_flush();
         $tasks = filterTasks($tasks,$personid);
-        echo displayTaskStatus($tasks,true,$personid);
+        echo displayTaskStatus($tasks,true,$personid,$fstatus);
         exit;
     }
     

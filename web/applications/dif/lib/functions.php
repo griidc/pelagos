@@ -7,7 +7,7 @@ function test_print($item2, $key, $prefix) {
     if ($prefix==$key){echo " SELECTED";} echo ">".$item2."</option>\n";
 }
 
-function displayTaskStatus($tasks,$update=null,$personid=null)
+function displayTaskStatus($tasks,$update=null,$personid=null,$filterstatus=null)
 {
     $projectID ="";
     $taskTitle="";
@@ -46,28 +46,34 @@ function displayTaskStatus($tasks,$update=null,$personid=null)
 
             $qs = "uid=$datasetid";
             if (isset($personid)) { $qs .= "&prsid=$personid"; }
-            if (array_key_exists('as_user',$_GET)) { $qs .= "&as_user=$_GET[as_user]"; }
-            echo "d.add($nodeCount,$folderCount,'".addslashes("[$dataset_udi] $title")."','?$qs','".addslashes("[$dataset_udi] $title")."','_self'";
+			if (array_key_exists('as_user',$_GET)) { $qs .= "&as_user=$_GET[as_user]"; }
             
-            switch ($status)
-            {
-                case null:
-                echo ",'/dataset-monitoring/includes/images/x.png');\n";
-                break;
-                case 0:
-                echo ",'/dataset-monitoring/includes/images/x.png');\n";
-                break;
-                case 1:
-                echo ",'/dataset-monitoring/includes/images/triangle_yellow.png');\n";
-                break;
-                case 2:
-                echo ",'/dataset-monitoring/includes/images/check.png');\n";
-                break;
-                default:
-                echo ");\n";
-                break;
-            }
-            $nodeCount++;
+			if ((isset($filterstatus) AND $filterstatus==$status) OR (!isset($filterstatus)))
+			{
+			
+				echo "d.add($nodeCount,$folderCount,'".addslashes("[$dataset_udi] $title")."','?$qs','".addslashes("[$dataset_udi] $title")."','_self'";
+				
+				switch ($status)
+				{
+					case null:
+					echo ",'/dataset-monitoring/includes/images/x.png');\n";
+					break;
+					case 0:
+					echo ",'/dataset-monitoring/includes/images/x.png');\n";
+					break;
+					case 1:
+					echo ",'/dataset-monitoring/includes/images/triangle_yellow.png');\n";
+					break;
+					case 2:
+					echo ",'/dataset-monitoring/includes/images/check.png');\n";
+					break;
+					default:
+					echo ");\n";
+					break;
+				}
+				$nodeCount++;
+			
+			}
         }
         $folderCount=$nodeCount;
     }
