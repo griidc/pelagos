@@ -115,7 +115,7 @@ if ($GLOBALS['isGroupAdmin'] OR (isAdmin() and !array_key_exists('as_user',$_GET
 	
 	echo '<label for="filterstatus">Filter by Status:</label>';
 	echo '<select id="filterstatus" style="width:100%" onchange="updateSidebar();">';
-	echo '<option selected>[Show All]</option>';
+	echo '<option value="" selected>[Show All]</option>';
 	echo '<option value="0">Unsubmitted</option>';
 	echo '<option value="1">Submitted</option>';
 	echo '<option value="2">Approved</option>';
