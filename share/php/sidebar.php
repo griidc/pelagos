@@ -14,8 +14,10 @@ drupal_add_js('/dif/includes/js/dtree.js',array('type'=>'external'));
 
 ?>
 <script type="text/javascript">
-    function updateSidebar(personID)
+    function updateSidebar()
     {
+		personID = document.getElementById("filtername").value;
+		fStatus = document.getElementById("filterstatus").value;
         //alert(personID);
         if (window.XMLHttpRequest)
         {// code for IE7+, Firefox, Chrome, Opera, Safari
@@ -36,7 +38,7 @@ drupal_add_js('/dif/includes/js/dtree.js',array('type'=>'external'));
                 <?php } ?>
             }
         }
-        xmlhttp.open("GET","?personID="+personID<?php if (array_key_exists('as_user',$_GET)) echo "+\"&as_user=$_GET[as_user]\""; ?>,true);
+        xmlhttp.open("GET","?status="+fStatus+"&personID="+personID<?php if (array_key_exists('as_user',$_GET)) echo "+\"&as_user=$_GET[as_user]\""; ?>,true);
         xmlhttp.send();
     }
 </script>
@@ -104,12 +106,21 @@ if ($GLOBALS['isGroupAdmin'] OR (isAdmin() and !array_key_exists('as_user',$_GET
 {
     echo '<table class=cleair style="width:100%;"><tbody class=tbody><tr><td style="padding:10px;">';
     echo '<form id="filter" name="filter">';
-    echo '<label for="name">Filter by Researcher:</label>';
-    echo '<select id="name" style="width:100%" onchange="updateSidebar(this.value);">';
+    echo '<label for="filtername">Filter by Researcher:</label>';
+    echo '<select id="filtername" style="width:100%" onchange="updateSidebar();">';
 
     buildFilter($tasks,$GLOBALS['personid'],$alltasks);
 
     echo '</select>';
+	
+	echo '<label for="filterstatus">Filter by Status:</label>';
+	echo '<select id="filterstatus" style="width:100%" onchange="updateSidebar();">';
+	echo '<option selected>[Show All]</option>';
+	echo '<option value="0">Unsubmitted</option>';
+	echo '<option value="1">Submitted</option>';
+	echo '<option value="2">Approved</option>';
+	echo '</select>';
+	
     echo '</form>';
     echo '</tbody></td></td></table><p \>';
 }
