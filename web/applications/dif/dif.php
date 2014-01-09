@@ -311,14 +311,59 @@ if ((isset($_POST['submit']) and $_POST['submit'])||(isset($_POST['later']) and 
         }
     }
     $result = pg_query($connection, $sql); 
+	
     if (!$result) { $mymesg="error"; $yn= "Something Went Wrong!!!" . pg_last_error(); } else {
         if ($status == 0) {
             $mymesg= "warning";
             $yn= "DIF saved but not submitted.</li><li>Please make sure you come back later and click \"Submit &amp; Done\" when you are ready to submit your DIF.";
         }
         else {
+			
+			$result = pg_query($connection, "select * from datasets where dataset_uid=$uid");
+			$row = pg_fetch_array($result);
+			
+			$datasetUDI = $row['dataset_udi'];
+			//echo "<pre>";
+			//var_dump($row);
+			//echo "</pre>";
             $mymesg= "status";
             $yn= "DIF saved and submitted for approval.";
+			
+			//send e-mail for submit
+			
+			$difMailer = new griidcMailer(true);
+			
+			$difMailer->donotBCC = true;
+			
+			if (isset($_POST['accept']))
+			{
+				$message = "Congratulations $difMailer->currentUserFirstName $difMailer->currentUserLastName,<br /><br />";
+				$message .= 'Your Dataset Information Form (DIF) <a href="' . "https://$_SERVER[HTTP_HOST]" .'/dif/?uid='.$uid.'">'.$datasetUDI.'</a> has been approved by the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC). You will now be able to register the associated dataset at https://data.gulfresearchinitiative.org/dataset-registration. <br \>';
+				$message .= "If you have any questions regarding your DIF please contact griidc@gomri.org.<br \><br \>";
+				$message .= "Thank you,<br \>The GRIIDC Team.<br \>";
+				
+				$difMailer->mailSubject = 'GRIIDC DIF Accepted';
+				
+				//TODO: Add BCC for approvers.
+			}
+			else
+			{
+				$message = "Dear $difMailer->currentUserFirstName $difMailer->currentUserLastName,<br /><br />";
+				$message .= 'Thank you for submitting your Dataset Information Form (DIF) <a href="' . "https://$_SERVER[HTTP_HOST]" .'/dif/?uid='.$uid.'">'.$datasetUDI.'</a>. ';
+				$message .= "Your DIF is now being reviewed by staff at the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC). You will receive an e-mail notification once your DIF has been approved.<br \><br \>";
+				$message .= "Thank you,<br \>The GRIIDC Team.<br \>";
+				
+				$difMailer->mailSubject = 'GRIIDC DIF Submitted';
+			}
+			
+			$difMailer->mailMessage = $message;
+			
+			// echo "<code>";
+			// echo $message;
+			// echo "</code>";
+			
+			$difMailer->sendMail();
+			
         }
     }
     echo " <div class=\"messages ". $mymesg."\"> <h2 class=\"element-invisible\">". $mymesg."message</h2> <ul> <li>$yn</li> </ul> </div> <br /> "; 
