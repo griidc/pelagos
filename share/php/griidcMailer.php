@@ -12,6 +12,8 @@ class griidcMailer
 	public $mailMessage;
 	
 	private $toUsers;
+	private $ccUsers;
+	private $bccUsers;
 	
 	public $donotBCC;
 	
@@ -42,8 +44,19 @@ class griidcMailer
 	public function addToUser($firstName, $lastName, $eMail)
 	{
 		$newUser = array('userFirstName' => $firstName, 'userLastName' => $lastName, 'userEmail' => $eMail);
-		
 		$this->toUsers[] = $newUser;
+	}
+	
+	public function addCCUser($firstName, $lastName, $eMail)
+	{
+		$newUser = array('userFirstName' => $firstName, 'userLastName' => $lastName, 'userEmail' => $eMail);
+		$this->ccUsers[] = $newUser;
+	}
+	
+	public function addBCCUser($firstName, $lastName, $eMail)
+	{
+		$newUser = array('userFirstName' => $firstName, 'userLastName' => $lastName, 'userEmail' => $eMail);
+		$this->bccUsers[] = $newUser;
 	}
 	
 	public function sendMail()
@@ -54,15 +67,43 @@ class griidcMailer
 
 		$headers  = 'MIME-Version: 1.0' . "\r\n";
 		$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+		
+		//TO:
 		$headers .= "To: ";
-		foreach ($this->toUsers as $toUser) {
-			$userLastName = $toUser['userLastName'];
-			$userFirstName = $toUser['userFirstName'];
-			$userEmail = $toUser['userEmail'];
+		foreach ($this->toUsers as $User) {
+			$userLastName = $User['userLastName'];
+			$userFirstName = $User['userFirstName'];
+			$userEmail = $User['userEmail'];
 			$headers .= "\"$userLastName, $userFirstName\" <$userEmail>, ";
 			//$to .= $userEmail . ', '; ;
 		}
 		$headers .= "\r\n";
+		
+		if (sizeof($ccUsers) > 1)
+		{
+			$headers .= "CC: ";
+			foreach ($this->ccUsers as $User) {
+				$userLastName = $User['userLastName'];
+				$userFirstName = $User['userFirstName'];
+				$userEmail = $User['userEmail'];
+				$headers .= "\"$userLastName, $userFirstName\" <$userEmail>, ";
+				//$to .= $userEmail . ', '; ;
+			}
+			$headers .= "\r\n";
+		}
+		
+		if (sizeof($bccUsers) > 1)
+		{
+			$headers .= "BCC: ";
+			foreach ($this->bccUsers as $User) {
+				$userLastName = $User['userLastName'];
+				$userFirstName = $User['userFirstName'];
+				$userEmail = $User['userEmail'];
+				$headers .= "\"$userLastName, $userFirstName\" <$userEmail>, ";
+				//$to .= $userEmail . ', '; ;
+			}
+			$headers .= "\r\n";
+		}
 		
 		if (!$this->donotBCC)
 		{
