@@ -55,7 +55,6 @@ $app->get('/includes/:file', 'dumpIncludesFile')->conditions(array('file' => '.+
 $app->get('/', function () use ($app) {
     $stash=index($app);
     $stash['m_dataset']['accepted']    = GetMetaData('accepted');
-    $stash['m_dataset']['none']        = GetMetaData('none');
     $stash['m_dataset']['submitted']   = GetMetaData('submitted');
     $stash['srvr'] = "https://$_SERVER[HTTP_HOST]";
     return $app->render('html/datasets.html',$stash);
@@ -91,17 +90,16 @@ $app->get('/download-metadata/:udi', function ($udi) use ($app) {
 });
 
 $app->post('/upload-new-metadata-file', function () use ($app) {
-    #print "<pre>"; var_dump($_FILES); print "</pre>";
     $debug_st = print_r($_FILES,true);
     try {
         if (
-            !isset($_FILES['upfile']['error']) ||
-            is_array($_FILES['upfile']['error'])
+            !isset($_FILES['newMetadataFile']['error']) ||
+            is_array($_FILES['newMetadataFile']['error'])
         ) {
             throw new RuntimeException('Invalid parameters.');
         }
 
-        switch ($_FILES['upfile']['error']) {
+        switch ($_FILES['newMetadataFile']['error']) {
             case UPLOAD_ERR_OK:
                 break;
             case UPLOAD_ERR_NO_FILE:
@@ -113,26 +111,40 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                 throw new RuntimeException('Unknown errors.');
         }
 
-        if ($_FILES['upfile']['size'] > 1000000) {
+        if ($_FILES['newMetadataFile']['size'] > 1000000) {
             throw new RuntimeException('Exceeded filesize limit.');
         }
 
+        /*
         $finfo = new finfo(FILEINFO_MIME_TYPE);
         if (false === $ext = array_search(
-            $finfo->file($_FILES['upfile']['tmp_name']),
+            $finfo->file($_FILES['newMetadataFile']['tmp_name']['type']),
             array(
-                'txt' => 'text/txt',
                 'xml' => 'text/xml',
             ),
             true
         )) {
             throw new RuntimeException('Invalid file format detected. Please only attempt to upload XML metadata files.');
         }
+        */
+
+
+        $filename = $_FILES['newMetadataFile']['tmp_name'];
+        $fhandle = fopen($filename,"r");
+        $raw_xml = fread($fhandle,filesize($filename));
+        fclose($fhandle);
+        $xml = new SimpleXMLElement($raw_xml);
+        $result = $xml->xpath('/gmd:geographicElement');
+        if ($result === false) {
+            throw new RuntimeException("Geolocation information required in xml.");
+        } else {
+            drupal_set_message("Geographic information detected in XML.",'status');
+        }
 
         if (!move_uploaded_file(
-            $_FILES['upfile']['tmp_name'],
+            $_FILES['newMetadataFile']['tmp_name'],
             sprintf('./uploads/%s.%s',
-                sha1_file($_FILES['upfile']['tmp_name']),
+                sha1_file($_FILES['newMetadataFile']['tmp_name']),
                 $ext
             )
         )) {
@@ -161,22 +173,32 @@ function GetMetadata($type) {
     $type=strtolower($type);
     switch($type) {
         case "accepted":
-            $sql = "select metadata_status, url_metadata, dataset_udi, dataset_metadata from registry where ";
-            #$sql = "select metadata_status, url_metadata, dataset_udi from curr_reg_view where ";
-            $sql .= "metadata_status = 'Accepted' and url_metadata like '/sftp/data/%.met' ";
-            $sql .= "order by url_metadata asc";
-            break;
-        case "none":
-            $sql = "select metadata_status, url_metadata, dataset_udi, dataset_metadata from registry where ";
-            #$sql = "select metadata_status, url_metadata, dataset_udi from curr_reg_view where ";
-            $sql .= "metadata_status = 'None' and url_metadata like '/sftp/data/%.met' ";
-            $sql .= "order by url_metadata asc";
+            $sql = "SELECT metadata_status, url_metadata, dataset_udi, dataset_metadata
+                    FROM 
+                    registry r2
+                    INNER JOIN (
+                        SELECT MAX(registry_id) AS MaxID
+                        FROM registry
+                        GROUP BY substr(registry_id,1,16)
+                    ) m
+                    ON r2.registry_id = m.MaxID
+                    where metadata_status = 'Accepted' 
+                    and url_metadata like '/sftp/data/%.met' 
+                    order by registry_id";
             break;
         case "submitted":
-            $sql = "select metadata_status, url_metadata, dataset_udi, dataset_metadata from registry where ";
-            #$sql = "select metadata_status, url_metadata, dataset_udi from curr_reg_view where ";
-            $sql .= "metadata_status = 'Submitted' and url_metadata like '/sftp/data/%.met' ";
-            $sql .= "order by url_metadata asc";
+            $sql = "SELECT metadata_status, url_metadata, dataset_udi, dataset_metadata
+                    FROM 
+                    registry r2
+                    INNER JOIN (
+                        SELECT MAX(registry_id) AS MaxID
+                        FROM registry
+                        GROUP BY substr(registry_id,1,16)
+                    ) m
+                    ON r2.registry_id = m.MaxID
+                    where metadata_status = 'Submitted' 
+                    and url_metadata like '/sftp/data/%.met' 
+                    order by registry_id";
             break;
     }
     if(isset($sql)) {       
