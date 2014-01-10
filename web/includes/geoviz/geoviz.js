@@ -27,6 +27,9 @@
 			projection: new OpenLayers.Projection('EPSG:900913'),
 			displayProjection: new OpenLayers.Projection('EPSG:4326'),
 			zoomDuration: 10,
+			maxResolution: "auto",
+			maxExtent: new OpenLayers.Bounds(-180, -90, 180, 90),
+			minResolution: "auto",
 			//allOverlays:true,
 			//controls: [],
 			eventListeners: {
@@ -191,7 +194,7 @@
 		
 		//TODO: if Options.BaseMapTerainDefault == true then add terain layer first.
 		
-		map.addLayers([google_hybrid, google_terain, vlayer, flayer]);
+		map.addLayers([google_hybrid, vlayer, flayer]);
 		
 		//map.addControl( new OpenLayers.Control.LayerSwitcher());
 		
@@ -302,14 +305,17 @@
 				console.log('done with map');
 				firstLoad = true;
 				setTimeout( function() { 
-					//map.updateSize();
+					map.removeLayer(google_hybrid);
+					map.updateSize();
+					map.addLayer(google_hybrid);
+						
 					jQuery(document).trigger('imready');
 				}
 				, 100)
 			};
 		});
 				
-		map.setCenter(new OpenLayers.LonLat(lon, lat).transform('EPSG:4326', 'EPSG:900913'), zoom);
+		map.setCenter(new OpenLayers.LonLat(lon, lat).transform('EPSG:4326', 'EPSG:900913'), zoom, true, true);
 		map.render(DIV);
 		
 		//Add map selector for highlighting
@@ -323,8 +329,9 @@
 	
 	function showTerrainMap()
 	{
-		map.setBaseLayer(map.layers[1]);
-		//map.setBaseLayer(map.getLayersByName('Google Terrain Map'));
+		map.addLayers([google_terain]);
+		//map.setBaseLayer(map.layers[1]);
+		map.setBaseLayer(map.getLayersByName('Google Terrain Map'));
 	}
 	
 	function showHybridMap()
