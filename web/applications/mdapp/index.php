@@ -147,6 +147,7 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
         }
 
         /*
+        // I don't know why this is failing...fix later.
         $finfo = new finfo(FILEINFO_MIME_TYPE);
         if (false === $ext = array_search(
             $finfo->file($_FILES['newMetadataFile']['tmp_name']['type']),
@@ -159,7 +160,9 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
         }
         */
 
-
+        /*
+        // Check for presence of geographic information, or disclaimer 
+        // that there is none.
         $filename = $_FILES['newMetadataFile']['tmp_name'];
         $fhandle = fopen($filename,"r");
         $raw_xml = fread($fhandle,filesize($filename));
@@ -169,20 +172,60 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
         if ($result === false) {
             throw new RuntimeException("Geolocation information required in xml.");
         } else {
-            drupal_set_message("Geographic information detected in XML.",'status');
+            drupal_set_message("Geographic information detected in XML.".print_r($result),'status');
         }
+        */
 
-        if (!move_uploaded_file(
-            $_FILES['newMetadataFile']['tmp_name'],
-            sprintf('./uploads/%s.%s',
-                sha1_file($_FILES['newMetadataFile']['tmp_name']),
-                $ext
-            )
-        )) {
-            throw new RuntimeException('Failed to move uploaded file.');
+        // Check to see if filename matches existing UDI.
+
+        // Check to see if filename matches XML internal filename reference 
+        // in the 3 places 
+
+        // Check to see if the geography is valid, if any
+        function isValidGeo($geography) {
+            return true;
         }
+        
+        // load file into database
+        $filename = $_FILES['newMetadataFile']['tmp_name'];
+        $orig_filename = $_FILES['newMetadataFile']['name'];
+        $fhandle = fopen($filename,"r");
+        $raw_xml = fread($fhandle,filesize($filename));
+        fclose($fhandle);
+        // attempt to extract geographic coordinates:
+        $xml = new SimpleXMLElement($raw_xml);
+        #if ($geo = $xml->xpath('/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:geographicElement[1]/gmd:EX_BoundingPolygon[1]/gmd:polygon[1]/gml:Polygon[1]/gml:exterior[1]/gml:LinearRing[1]/gml:coordinates[1]')) {$geoflag='yes';} else {$geoflag='no';}
+        if ($geo = $xml->xpath('/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:geographicElement[1]/gmd:EX_BoundingPolygon[1]/gmd:polygon[1]/gml:Polygon[1]')) {$geoflag='yes';} else {$geoflag='no';}
 
-        drupal_set_message("File uploaded successfully.",'status');
+        $dbms = OpenDB("GOMRI_RO");
+        try {
+            $dbms->beginTransaction();
+            $sql = "select max(registry_id) as newest_reg from registry where substring(registry_id, 1, 16) = 'R1.x134.073:0004'";
+            $data = $dbms->prepare($sql);
+            $data->execute();
+            $tmp=$data->fetchAll(); $reg_id=$tmp[0]['newest_reg']; // Why can't $reg_id=($data->fetchAll())[0]['newest_reg'] instead?
+
+
+
+
+
+            $thanks_msg = "Thank you.  The metadata file for registry ID $reg_id has been recorded into the database.< br/>
+<p>
+Details:
+<ul>
+    <li> Registry ID: $reg_id</li>
+    <li> Uploaded filename: $orig_filename</li>
+    <li> Polygon Geometry Detected: $geoflag</li>
+    <li> GML:<pre> ".$geo[0]->asXML()."</pre></li>
+</ul
+</p>";
+
+            drupal_set_message($thanks_msg,'status');
+            $dbms->commit();
+        } catch (RuntimeException $ee){
+            $dbms->rollBack();
+            throw new RuntimeException("Database transaction error $ee->getMessage");
+        }
 
     } catch (RuntimeException $e) {
         drupal_set_message("File upload error: ".$e->getMessage()."<br /><pre>$debug_st</pre>",'error');
@@ -199,27 +242,10 @@ function index($app) {
 
 $app->run();
 
-
 function GetMetadata($type) {
     $type=strtolower($type);
     switch($type) {
         case "accepted":
-            /*
-            $sql = "SELECT metadata_status, url_metadata, dataset_udi, dataset_metadata
-                    FROM 
-                    registry r2
-                    INNER JOIN (
-                        SELECT MAX(registry_id) AS MaxID
-                        FROM registry
-                        GROUP BY substr(registry_id,1,16)
-                    ) m
-                    ON r2.registry_id = m.MaxID
-                    where metadata_status = 'Accepted' 
-                    and url_metadata like '/sftp/data/%.met' 
-                    order by registry_id";
-            */
-            # per Patrick, the curr_reg_view shows this same information, that being
-            # the most current version of the metadata.
             $sql = "SELECT metadata_status, url_metadata, dataset_udi, dataset_metadata
                     FROM curr_reg_view 
                     where metadata_status = 'Accepted' 
