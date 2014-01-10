@@ -335,12 +335,14 @@ if ((isset($_POST['submit']) and $_POST['submit'])||(isset($_POST['later']) and 
 			
 			$difMailer->donotBCC = true;
 			
+			
+			
 			if (isset($_POST['accept']))
 			{
 				$message = "Congratulations $difMailer->currentUserFirstName $difMailer->currentUserLastName,<br /><br />";
 				$message .= 'Your Dataset Information Form (DIF) <a href="' . "https://$_SERVER[HTTP_HOST]" .'/dif/?uid='.$uid.'">'.$datasetUDI.'</a> has been approved by the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC). You will now be able to register the associated dataset at https://data.gulfresearchinitiative.org/dataset-registration. <br \>';
 				$message .= "If you have any questions regarding your DIF please contact griidc@gomri.org.<br \><br \>";
-				$message .= "Thank you,<br \>The GRIIDC Team.<br \>";
+				$message .= "Thank you,<br \>The GRIIDC Team<br \>";
 				
 				$difMailer->mailSubject = 'GRIIDC DIF Accepted';
 				
@@ -351,7 +353,7 @@ if ((isset($_POST['submit']) and $_POST['submit'])||(isset($_POST['later']) and 
 				$message = "Dear $difMailer->currentUserFirstName $difMailer->currentUserLastName,<br /><br />";
 				$message .= 'Thank you for submitting your Dataset Information Form (DIF) <a href="' . "https://$_SERVER[HTTP_HOST]" .'/dif/?uid='.$uid.'">'.$datasetUDI.'</a>. ';
 				$message .= "Your DIF is now being reviewed by staff at the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC). You will receive an e-mail notification once your DIF has been approved.<br \><br \>";
-				$message .= "Thank you,<br \>The GRIIDC Team.<br \>";
+				$message .= "Thank you,<br \>The GRIIDC Team<br \>";
 				
 				$difMailer->mailSubject = 'GRIIDC DIF Submitted';
 			}
