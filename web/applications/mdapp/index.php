@@ -194,8 +194,26 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
         fclose($fhandle);
         // attempt to extract geographic coordinates:
         $xml = new SimpleXMLElement($raw_xml);
-        #if ($geo = $xml->xpath('/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:geographicElement[1]/gmd:EX_BoundingPolygon[1]/gmd:polygon[1]/gml:Polygon[1]/gml:exterior[1]/gml:LinearRing[1]/gml:coordinates[1]')) {$geoflag='yes';} else {$geoflag='no';}
-        if ($geo = $xml->xpath('/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:geographicElement[1]/gmd:EX_BoundingPolygon[1]/gmd:polygon[1]/gml:Polygon[1]')) {$geoflag='yes';} else {$geoflag='no';}
+        // Polygon - Ideally case
+        if ($geo = $xml->xpath('/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:geographicElement[1]/gmd:EX_BoundingPolygon[1]/gmd:polygon[1]/gml:Polygon[1]')) {
+            $geoflag='yes';
+        // If bounding box, represent as polygon.
+        } elseif ($geo = $xml->xpath('/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:geographicElement[1]/gmd:EX_GeographicBoundBox') {
+            $coords=array();
+            $bounds=array('westBoundLongitude','eastBoundLongitude','southBoundLatitude','northBoundLatitude');
+            foreach ($bounds as $boundry) {
+                $coords[$boundry] = $xml->xpath("/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:geographicElement[1]/gmd:EX_GeographicBoundBox/gmd:$boundry/gco:Decimal/");
+            }
+            $coord_list  = $coords['westBoundLongitude'].','.$coords['northBoundLatitude'].' ';
+            $coord_list .= $coords['eastBoundLongitude'].','.$coords['northBoundLatitude'].' ';
+            $coord_list .= $coords['westBoundLongitude'].','.$coords['southBoundLatitude'].' ';
+            $coord_list .= $coords['westBoundLongitude'].','.$coords['southBoundLatitude'].' '
+            $coord_list  = $coords['westBoundLongitude'].','.$coords['northBoundLatitude'];
+            $new_child = "<gmd:EX_BoundingPolygon><gmd:polygon><gml:Polygon gml:id=\"Polygon\"><gml:interior><gml:LinearRing><gml:coordinates>$coord_list</gml:coordinates></gml:LinearRing></gml:interior></gml:Polygon></gmd:polygon></gmd:EX_BoundingPolygon>";
+            // somehow replace this
+        } else {
+            $geoflag='no';
+        }
 
         $dbms = OpenDB("GOMRI_RO");
         try {
