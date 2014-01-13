@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-use Config::Tiny;
+use Config::PHPINI;
 use XML::Simple;
 use DBI;
 use LWP::Simple;
@@ -8,7 +8,7 @@ use Getopt::Std;
 use POSIX;
 use Mail::Sendmail;
 
-my $config = Config::Tiny->read('/etc/griidc/dif-creator.ini');
+my $config = Config::PHPINI->read('/etc/griidc/dif-creator.ini');
 
 my $logfile  = '/var/log/griidc/dif-creator';
 open(my $log,'>>',$logfile) or die "cannot open log file $logfile: $!";
@@ -34,7 +34,7 @@ else {
 
 writelog($log,"processing: $source");
 
-my $dbconf = Config::Tiny->read('/etc/griidc/db.ini');
+my $dbconf = Config::PHPINI->read('/etc/griidc/db.ini');
 
 my %dbi_map = ( postgresql => 'Pg:dbname', mysql => 'mysql:database' );
 
@@ -50,15 +50,15 @@ my $ris_dbh = DBI->connect('DBI:'.$dbi_map{$dbconf->{'RIS_RO'}->{'type'}}.'='.$d
 
 my @difCols = ('dataset_uid','task_uid','title','abstract','dataset_type','dataset_for','size','observation','approach','start_date','end_date','geo_location','historic_links','meta_editor','meta_standards','point','national','ethical','remarks','primary_poc','secondary_poc','logname','status','datafor','project_id','dataset_udi');
 
-my $map = Config::Tiny->read('/etc/griidc/dif/misc_map.ini');
-$map->{'format'} = Config::Tiny->read('/etc/griidc/dif/format_map.ini');
-$map->{'category'} = Config::Tiny->read('/etc/griidc/dif/category_map.ini');
-$map->{'procedure'} = Config::Tiny->read('/etc/griidc/dif/procedure_map.ini');
-$map->{'transport'} = Config::Tiny->read('/etc/griidc/dif/transport_map.ini');
-$map->{'national_data_center'} = Config::Tiny->read('/etc/griidc/dif/national_data_center_map.ini');
-$map->{'metadata_standard'} = Config::Tiny->read('/etc/griidc/dif/metadata_standard_map.ini');
+my $map = Config::PHPINI->read('/etc/griidc/dif/misc_map.ini');
+$map->{'format'} = Config::PHPINI->read('/etc/griidc/dif/format_map.ini');
+$map->{'category'} = Config::PHPINI->read('/etc/griidc/dif/category_map.ini');
+$map->{'procedure'} = Config::PHPINI->read('/etc/griidc/dif/procedure_map.ini');
+$map->{'transport'} = Config::PHPINI->read('/etc/griidc/dif/transport_map.ini');
+$map->{'national_data_center'} = Config::PHPINI->read('/etc/griidc/dif/national_data_center_map.ini');
+$map->{'metadata_standard'} = Config::PHPINI->read('/etc/griidc/dif/metadata_standard_map.ini');
 
-my $fc_map = Config::Tiny->read('/etc/griidc/funding_cycles.ini');
+my $fc_map = Config::PHPINI->read('/etc/griidc/funding_cycles.ini');
 
 my $count = 0;
 my $update_count = 0;
