@@ -4,13 +4,13 @@ include '/usr/local/share/GRIIDC/php/griidcMailer.php';
 
 $mytest = new griidcMailer(true);
 
-$message = "Congratulations $mytest->currentUserFirstName $mytest->currentUserLastName!<br /><br />";
-$message .= "Your registration has been received!<br \>";
-$message .= "If you have any questions regarding your DOI please contact griidc@gomri.org.<br \><br \>";
-$message .= "<em>The GRIIDC Team.</em><br \>";
+$message = "Dear $mytest->currentUserFirstName $mytest->currentUserLastName,<br /><br />";
+$message .= 'Thank you for registering your dataset <a href="' . "https://$_SERVER[HTTP_HOST]" .'/registry/?regid='.$reg_id.'">'.$reg_id.'</a>. ';
+$message .= "with the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC). Your dataset will now be marked as registered at https://data.gulfresearchinitiative.org/dataset-monitoring. If you have any questions regarding this dataset please email griidc@gomri.org.<br \><br \>";
+$message .= "Thank you,<br \>The GRIIDC Team<br \>";
 
 $mytest->mailMessage = $message;
-$mytest->mailSubject = 'TEST ONLY!';
+$mytest->mailSubject = 'GRIIDC Dataset Registration Submitted';
 
 $mytest->sendMail();
 
