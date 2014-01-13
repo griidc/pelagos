@@ -74,12 +74,19 @@ class griidcMailer
 			$userLastName = $User['userLastName'];
 			$userFirstName = $User['userFirstName'];
 			$userEmail = $User['userEmail'];
-			$headers .= "\"$userLastName, $userFirstName\" <$userEmail>, ";
+			if ($userFirstName <> "" AND $userLastName <> "")
+			{
+				$headers .= "\"$userLastName, $userFirstName\" <$userEmail>, ";
+			}
+			else
+			{
+				$headers .= " $userEmail, ";
+			}
 			//$to .= $userEmail . ', '; ;
 		}
 		$headers .= "\r\n";
 		
-		if (sizeof($ccUsers) > 1)
+		if (sizeof($this->ccUsers) > 1)
 		{
 			$headers .= "CC: ";
 			foreach ($this->ccUsers as $User) {
@@ -92,15 +99,21 @@ class griidcMailer
 			$headers .= "\r\n";
 		}
 		
-		if (sizeof($bccUsers) > 1)
+		if (sizeof($this->bccUsers) > 1)
 		{
 			$headers .= "BCC: ";
 			foreach ($this->bccUsers as $User) {
 				$userLastName = $User['userLastName'];
 				$userFirstName = $User['userFirstName'];
 				$userEmail = $User['userEmail'];
-				$headers .= "\"$userLastName, $userFirstName\" <$userEmail>, ";
-				//$to .= $userEmail . ', '; ;
+				if ($userFirstName <> "" AND $userLastName <> "")
+				{
+					$headers .= "\"$userLastName, $userFirstName\" <$userEmail>, ";
+				}
+				else
+				{
+					$headers .= " $userEmail, ";
+				}
 			}
 			$headers .= "\r\n";
 		}
@@ -113,6 +126,12 @@ class griidcMailer
 		$headers .= "From: \"GRIIDC\" <griidc@gomri.org>" . "\r\n";
 		$headers .= 'X-Mailer: PHP/' . phpversion();
 		$parameters = '-ODeliveryMode=d'; 
+		
+		echo '<code>';
+		echo $headers;
+		echo $message;
+		echo '</code>';
+		
 				
 		return mail($to, $subject, $message, $headers, $parameters);
 	}
