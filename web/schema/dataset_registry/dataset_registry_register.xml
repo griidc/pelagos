@@ -16,7 +16,7 @@
             </source>
             <title>My First Dataset Title</title>
             <abstract>My First Dataset Abstract</abstract>
-            <doi autogenerate="true"/>
+            <doi autogenerate="false">10.1000/182</doi>
         </dataset>
         <access_control restricted="true">
             <authorized_users>
