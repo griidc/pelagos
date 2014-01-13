@@ -264,7 +264,7 @@ if ((isset($_POST['submit']) and $_POST['submit'])||(isset($_POST['later']) and 
 
     $$k = pg_escape_string($v);}
 
-    list($task,$project,$fundSrc)=explode("|", $task);
+	@list($task,$project,$fundSrc)=explode("|", $task);
     $title = str_replace(array("\r\n", "\n\r", "\r", "\n", "\t"), " ", $title);
     $datafor = $eco.'|'.$phys.'|'.$atm.'|'.$ch.'|'.$geog.'|'.$scpe.'|'.$econom.'|'.$geop.'|'.$dtother;
     $approach = $field."|".$sim."|".$lab."|".$lit."|".$remote."|".$approachother;
@@ -333,10 +333,6 @@ if ((isset($_POST['submit']) and $_POST['submit'])||(isset($_POST['later']) and 
 			
 			$difMailer = new griidcMailer(true);
 			
-			$difMailer->donotBCC = true;
-			
-			
-			
 			if (isset($_POST['accept']))
 			{
 				$message = "Congratulations $difMailer->currentUserFirstName $difMailer->currentUserLastName,<br /><br />";
@@ -346,7 +342,9 @@ if ((isset($_POST['submit']) and $_POST['submit'])||(isset($_POST['later']) and 
 				
 				$difMailer->mailSubject = 'GRIIDC DIF Accepted';
 				
-				//TODO: Add BCC for approvers.
+				
+				
+				
 			}
 			else
 			{
@@ -356,13 +354,28 @@ if ((isset($_POST['submit']) and $_POST['submit'])||(isset($_POST['later']) and 
 				$message .= "Thank you,<br \>The GRIIDC Team<br \>";
 				
 				$difMailer->mailSubject = 'GRIIDC DIF Submitted';
+				
+				$members = getAttributes($ldap,"cn=approvers,ou=DIF,ou=applications,dc=griidc,dc=org",array('member'));
+				
+				$difMailer->donotBCC = true;
+				
+				$difMailer->addBCCUser('', '', 'griidc@gomri.org');
+				
+				foreach ($members['member'] as $member)
+				{
+					$attributes = getAttributes($ldap,$member,array('givenName','sn','mail'));
+					if (count($attributes) > 0) {
+					
+						if (array_key_exists('givenName',$attributes)) $firstName = $attributes['givenName'][0];
+						if (array_key_exists('sn',$attributes)) $lastName = $attributes['sn'][0];
+						if (array_key_exists('mail',$attributes)) $eMail = $attributes['mail'][0];
+						
+						$difMailer->addBCCUser($firstName, $lastName, $eMail);
+					}
+				}
 			}
 			
 			$difMailer->mailMessage = $message;
-			
-			// echo "<code>";
-			// echo $message;
-			// echo "</code>";
 			
 			$difMailer->sendMail();
 			
