@@ -122,7 +122,7 @@ function showDatasets(by,id,peopleId) {
         geo_filter = trees['tree'].geo_filter;
     }
     $.ajax({
-        "url": "{{baseUrl}}/datasets/" + jQuery('#filter-input').val() + "/" + by + "/" + id + "/" + geo_filter,
+        "url": "{{baseUrl}}/datasets/" + encodeURIComponent(jQuery('#filter-input').val().replace(/\//g,"")) + "/" + by + "/" + id + "/" + geo_filter,
         "success": function(data) {
             $('#content').html(data);
             $('#tabs').tabs({
