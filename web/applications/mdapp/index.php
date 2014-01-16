@@ -1,6 +1,8 @@
 <?php
 # METADATA APPROVAL APPLICATION
-# Author: Williamson, DEC 2013
+# Author: Michael Scott Williamson  DEC 2013-JAN 2014
+
+# Note: hardcoded smtp.tamucc.edu, triton.tamucc.edu (ldap) in file.
 
 # LOGFILE - SET THIS ACCORDINGLY
 $GLOBALS['logfile_location'] = '/home/users/mwilliamson/hg/mdapp/log/logfile.txt';
@@ -24,7 +26,8 @@ require_once '/usr/local/share/GRIIDC/php/datasets.php';
 require_once '/usr/local/share/GRIIDC/php/utils.php';
 # local functions for data-discovery module
 require_once 'lib/search.php';
-
+# LDAP functionality
+require_once '/usr/local/share/GRIIDC/php/ldap.php';
 
 # add js library - informs drupal to add these standard js libraries upstream.  
 # can also use drupal_add_js to specify a full path to a js library to include.
@@ -32,6 +35,8 @@ require_once 'lib/search.php';
 # to the browser at the time drupal sends its own.  "system" is the main
 # drupal module. 
 drupal_add_library('system', 'ui.tabs');
+
+global $user;
 
 $GLOBALS['config'] = parse_ini_file('config.ini',true);
 
@@ -44,7 +49,6 @@ $app = new Slim(array(
                         'log.enabled' => true
                      ));
 
-
 $app->hook('slim.before', function () use ($app) {
     $env = $app->environment();
     $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
@@ -52,18 +56,15 @@ $app->hook('slim.before', function () use ($app) {
     $app->view()->appendData(array('pageName' => $GLOBALS['PAGE_NAME']));
 });
 
-
-
 $app->get('/includes/:file', 'dumpIncludesFile')->conditions(array('file' => '.+'));
 
 $app->get('/', function () use ($app) {
     $stash=index($app);
-    $stash['m_dataset']['accepted']    = GetMetaData('accepted');
-    $stash['m_dataset']['submitted']   = GetMetaData('submitted');
+    $stash['m_dataset']['accepted']    = GetMetadata('accepted');
+    $stash['m_dataset']['submitted']   = GetMetadata('submitted');
     $stash['srvr'] = "https://$_SERVER[HTTP_HOST]";
     return $app->render('html/main.html',$stash);
 });
-
 
 $app->get('/download-metadata/:udi', function ($udi) use ($app) {
     if (preg_match('/^00/',$udi)) {
@@ -125,6 +126,7 @@ $app->get('/download-metadata-db/:udi', function ($udi) use ($app) {
 });
 
 $app->post('/upload-new-metadata-file', function () use ($app) {
+    global $user;
     $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
     $env = $app->environment();
     $baseUrl = "$protocol$env[SERVER_NAME]/$GLOBALS[PAGE_NAME]";
@@ -321,6 +323,58 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
             $has_metadata_in_db=false;
             $has_metadata_in_db = ($tmp[0]['cnt'] ==  1);
 
+            // if user has opted to submit GML override data, (checkbox and content)
+            // remove the polygon (if any) from the GML and replace with this one.
+            // If the original data had a bounding box, it will already be a polygon
+            // by this point.
+            $flagged_gmloverride=false;
+            if (isset($_POST['overrideGML']) and $_POST['overrideGML']=='on' and isset($_POST['GMLOverride'])) {
+                $coordinate_list=$_POST['GMLOverride'];
+                $flagged_gmloverride=true;
+                // xpath locate/remove polygon
+    
+                $doc2 = new DomDocument('1.0','UTF-8');
+                $tmpp = @$doc2->loadXML($tidy);
+                if (!$tmpp) {
+                    $err = libxml_get_last_error();
+                    $err_str = $err->message;
+                    throw new RuntimeException("Malformed XML: The XML file supplied could not be parsed. ($err_str)");
+                }
+    
+                $xpathdoc = new DOMXpath($doc2);
+                $searchXpath = "/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:geographicElement/gmd:EX_BoundingPolygon";
+                $elements = $xpathdoc->query($searchXpath);
+                $node = $elements->item(0);
+
+                if ($elements->length > 0) {
+                    $parent = $node->parentNode;
+                    $parent->removeChild($node);
+
+                    $newnode = createXmlNode($doc2,$parent,'gmd:EX_BoundingPolygon');
+                    $parent = $newnode;
+                    $newnode = createXmlNode($doc2,$parent,'gmd:polygon');
+                    $parent = $newnode;
+                    $newnode = createXmlNode($doc2,$parent,'gml:Polygon');
+                    $attr = $doc2->createAttribute('gml:id');
+                    $attr->value = "Polygon";
+                    $newnode->appendChild($attr);
+                    $parent = $newnode;
+                    $newnode = createXmlNode($doc2,$parent,'gml:exterior');
+                    $parent = $newnode;
+                    $newnode = createXmlNode($doc2,$parent,'gml:LinearRing');
+                    $parent = $newnode;
+                    addXMLChildValue($doc2,$parent,'gml:coordinates',$coordinate_list);
+            
+                    $doc2->normalizeDocument();
+                    $doc2->formatOutput=true;
+                    $tidy=$doc2->saveXML(); // should still be clean without a 2nd run through tidy 
+
+                    $geoflag='yes';
+                    $msg = "The GML from file has been overridden by user.";
+                    drupal_set_message($msg,'warning');
+                }
+            }
+
             $geo_status='Nothing to verify';
             $geometery=null;
             if ($geoflag=='yes') {
@@ -336,7 +390,7 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                 } else {
                     $dbErr = $data2->errorInfo();
                     $geo_status = "<font color=red>Rejected by PostGIS - ".$dbErr[2]."</font>";
-                    throw new RuntimeException("PostGIS rejected geometry supplied - $sql2");
+                    throw new RuntimeException("PostGIS rejected geometry supplied");
                 }
             }
                 
@@ -351,10 +405,34 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
             if(!$data3->execute(array($tidy,$geometry,$reg_id,))) {
                 $err=$data3->errorInfo();
                 $err_str=$err[2];
-                throw new RuntimeException("Error saving to database: $err_str (p2=$geometry");
+                throw new RuntimeException("Error saving to database: $err_str (p2=$geometry)");
             }
- 
-            $thanks_msg = "Thank you.  The metadata file for registry ID $reg_id has been recorded into the database.
+            
+            // update approved flag, if selected
+            $flagged_accepted=false;
+            $sql = '';
+            if (isset($_POST['approveMetadata']) and $_POST['approveMetadata']=='on') {
+                $flagged_accepted=true;
+                $sql = "update registry set metadata_status = 'Accepted' where registry_id = ?";
+            $data4 = $dbms->prepare($sql);
+                if(!$data4->execute(array($reg_id,))) {
+                    $err=$data4->errorInfo();
+                    $err_str=$err[2];
+                    throw new RuntimeException("Error saving to database: $err_str");
+                }
+            }
+
+            // send email if approved and mail flag is set
+            $dm_contacted=false;
+            $dataManager=getDataManager($udi); #array  ('full name', 'email')
+            $dataManager['email']='fightingtexasaggie@gmail.com';
+            $userMail=getUserMail($user->name); #array  ('full name', 'email')
+            if (isset($_POST['approveMetadata']) and $_POST['approveMetadata']=='on' and isset($_POST['contactOwner']) and $_POST['contactOwner']=='on') {
+                $dm_contacted=true;
+                sendEmail($dataManager['email'],$userMail['email'],"$udi metadata","The metadata for $udi has been approved by GRIIDC.  Thank you!");
+            }
+             
+            $thanks_msg = "Thank you ".$user->name.".  The metadata file for registry ID $reg_id has been recorded into the database.
                             <p>
                             Details:
                                 <ul>
@@ -367,17 +445,25 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                             </p>";
 
             drupal_set_message($thanks_msg,'status');
+            $loginfo=$user->name." successfully uploaded metadata for $reg_id";
+            if($flagged_gmloverride){ $loginfo .= " and GML was overridden via interface"; }
+            if($flagged_accepted) {$loginfo .= " and data was flagged as accepted";}
+            if($dm_contacted) { $loginfo .= " and data manager was emailed"; }
+            $loginfo .= '.'; // Punctuation is important.
+            writeLog($loginfo);
+
             $dbms->commit();
+
         } catch (RuntimeException $ee){
             $dbms->rollBack();
             throw $ee;
         }
     } catch (RuntimeException $e) {
         $err_str=$e->getMessage();
-        drupal_set_message("File upload error: $err_str",'error');
-        writeLog($err_str);
-        echo "<a href=.>Continue</a>";
+        drupal_set_message($user->name.": File upload error: $err_str",'error');
+        writeLog($user->name." ".$err_str);
     }
+    echo "<a href=.>Continue</a>";
 });
 
 function index($app) {
@@ -412,6 +498,64 @@ function checkForUDI($udi) {
     $result = $data->fetchAll();
     $count = $result[0]['count'];
     return ($count==1);
+}
+            
+function getDataManager($udi) {
+    // returns: array  ('full name', 'email')
+    $sql = 'SELECT 
+    "EmailInfo_Address", coalesce("Person_HonorificTitle",\'\')||
+    \' \'||"Person_FirstName"||\' \'||coalesce("Person_MiddleName",\'\')||
+    \' \'||"Person_LastName"||\' \'||coalesce("Person_NameSuffix",\'\') as fullname
+    FROM 
+    "HRI"."Dept-GoMRIPerson-Project-Role", 
+    "HRI"."EmailInfo", 
+    "HRI"."Person",
+    "HRI"."Project"
+    WHERE 
+    "EmailInfo"."Person_Number" = "Person"."Person_Number" AND
+    "Person"."Person_Number" = "Dept-GoMRIPerson-Project-Role"."Person_Number"
+    AND "Dept-GoMRIPerson-Project-Role"."ProjRole_Number" = 3
+    AND "Dept-GoMRIPerson-Project-Role"."Project_Sequence" = "Project"."Project_Sequence"
+    AND "Project"."FundingEnvelope_Cycle" = ? and "Project"."Project_Sequence" = ?';
+
+    $dbms = OpenDB("GRIIDC_RO");
+    $data = $dbms->prepare($sql);
+
+    $fundingCycle=substr($udi,0,1).'0'.substr($udi,1,1);
+    $fundingCycle=preg_replace('/Y01/','B01',$fundingCycle);
+    $projSec=substr($udi,4,3);
+    $data->execute(array($fundingCycle,$projSec));
+    $result = $data->fetchAll();
+    // will only have one
+    $email = $result[0]['EmailInfo_Address'];
+    $fullname = $result[0]['fullname'];
+    $ret['fullname']=$fullname;
+    $ret['email']=$email;
+    return $ret;
+}
+
+function getUserMail($gomri_userid) {
+    $ldap = connectLDAP('triton.tamucc.edu');
+    $baseDN = 'dc=griidc,dc=org';
+    $userDNs = getDNs($ldap,$baseDN,"uid=$gomri_userid");
+    if (count($userDNs) > 0) {
+        $userDN = $userDNs[0]['dn'];
+        $attributes = getAttributes($ldap,$userDN,array('cn','mail'));
+        if (count($attributes) > 0) {
+            if (array_key_exists('cn',$attributes)) $cn = $attributes['cn'][0];
+            if (array_key_exists('mail',$attributes)) $mail = $attributes['mail'][0];
+            $ret['fullname']=$cn;
+            $ret['email']=$mail;
+            return $ret;
+        }
+    }
+}
+
+function sendEmail($to,$from,$sub,$message) {
+    ini_set("SMTP","smtp.tamucc.edu" );
+    $header = "From: <$from>\r\n";
+    $header .= "CC: $from\r\n";
+    mail($to,$sub,$message,$header); 
 }
 
 function GetMetadata($type) {
@@ -449,8 +593,5 @@ function writeLog($message) {
     $dstamp = date('YmdHis');
     file_put_contents($logfile_location,"$dstamp:$message\n", FILE_APPEND);
 }
-
-
-
 
 ?>
