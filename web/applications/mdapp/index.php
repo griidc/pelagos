@@ -2,6 +2,9 @@
 # METADATA APPROVAL APPLICATION
 # Author: Williamson, DEC 2013
 
+# LOGFILE - SET THIS ACCORDINGLY
+$GLOBALS['logfile_location'] = '/home/users/mwilliamson/hg/mdapp/log/logfile.txt';
+
 # database utilities
 require_once("../quartz/php/db-utils.lib.php");
 # Framework (model/view)
@@ -21,6 +24,7 @@ require_once '/usr/local/share/GRIIDC/php/datasets.php';
 require_once '/usr/local/share/GRIIDC/php/utils.php';
 # local functions for data-discovery module
 require_once 'lib/search.php';
+
 
 # add js library - informs drupal to add these standard js libraries upstream.  
 # can also use drupal_add_js to specify a full path to a js library to include.
@@ -121,7 +125,9 @@ $app->get('/download-metadata-db/:udi', function ($udi) use ($app) {
 });
 
 $app->post('/upload-new-metadata-file', function () use ($app) {
-    $debug_st = print_r($_FILES,true);
+    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+    $env = $app->environment();
+    $baseUrl = "$protocol$env[SERVER_NAME]/$GLOBALS[PAGE_NAME]";
     try {
         if (
             !isset($_FILES['newMetadataFile']['error']) ||
@@ -142,111 +148,234 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                 throw new RuntimeException('Unknown errors.');
         }
 
+        /*
         if ($_FILES['newMetadataFile']['size'] > 1000000) {
             throw new RuntimeException('Exceeded filesize limit.');
         }
-
-        /*
-        // I don't know why this is failing...fix later.
-        $finfo = new finfo(FILEINFO_MIME_TYPE);
-        if (false === $ext = array_search(
-            $finfo->file($_FILES['newMetadataFile']['tmp_name']['type']),
-            array(
-                'xml' => 'text/xml',
-            ),
-            true
-        )) {
-            throw new RuntimeException('Invalid file format detected. Please only attempt to upload XML metadata files.');
-        }
         */
 
-        /*
-        // Check for presence of geographic information, or disclaimer 
-        // that there is none.
-        $filename = $_FILES['newMetadataFile']['tmp_name'];
-        $fhandle = fopen($filename,"r");
-        $raw_xml = fread($fhandle,filesize($filename));
-        fclose($fhandle);
-        $xml = new SimpleXMLElement($raw_xml);
-        $result = $xml->xpath('/gmd:geographicElement');
-        if ($result === false) {
-            throw new RuntimeException("Geolocation information required in xml.");
-        } else {
-            drupal_set_message("Geographic information detected in XML.".print_r($result),'status');
-        }
-        */
-
-        // Check to see if filename matches existing UDI.
-
-        // Check to see if filename matches XML internal filename reference 
-        // in the 3 places 
-
-        // Check to see if the geography is valid, if any
-        function isValidGeo($geography) {
-            return true;
-        }
-        
-        // load file into database
+        // read file into string
         $filename = $_FILES['newMetadataFile']['tmp_name'];
         $orig_filename = $_FILES['newMetadataFile']['name'];
+
+        // pattern match check file       
+        if(!preg_match('/-metadata.xml$/',$orig_filename)) {
+            throw new RuntimeException('Bad filename: Filename must be "UDI-metadata.xml"');
+        } 
+
+        $udi = preg_replace('/-metadata.xml$/','',$orig_filename); # need to verify this!
+        $udi = preg_replace('/-/',':',$udi);
+
         $fhandle = fopen($filename,"r");
         $raw_xml = fread($fhandle,filesize($filename));
         fclose($fhandle);
-        // attempt to extract geographic coordinates:
-        $xml = new SimpleXMLElement($raw_xml);
-        // Polygon - Ideally case
+
+        // load XML into DOM
+        $doc = new DomDocument('1.0','UTF-8');
+        $tmpp = @$doc->loadXML($raw_xml);
+        if (!$tmpp) {
+            $err = libxml_get_last_error();
+            $err_str = $err->message;
+            throw new RuntimeException("Malformed XML: The XML file supplied could not be parsed. ($err_str)");
+        }
+   
+        // also load as simplxml object for quick xpath tests
+        $xml = simplexml_import_dom($doc);
+        
+        // Check to see if filename matches existing UDI.
+        if(!checkForUDI($udi)) {
+            throw new RuntimeException("The UDI $udi is not found in the registry.");
+        }
+
+        // Check to see if filename matches XML internal filename reference 
+        $loc_1_xpath = "/gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1]"; # as filename
+        $loc_1 = $xml->xpath($loc_1_xpath);
+        $loc_1_val = $loc_1[0][0];
+        if(!preg_match("/^$orig_filename$/",$loc_1_val)) {
+                throw new RuntimeException('xpath test failed:  Filename uploaded does not match filename referenced in XML.');
+        }
+
+        // Check to see if filename matches XML internal UDI reference #1
+        $loc_2_xpath = "/gmi:MI_Metadata/gmd:dataSetURI[1]/gco:CharacterString[1]"; # as UDI
+        $loc_2 = $xml->xpath($loc_2_xpath);
+        $loc_2_val = $loc_2[0][0];
+        if(!preg_match("/$udi$/",$loc_2_val)) { # URL must end with UDI
+                throw new RuntimeException('xpath test failed:  UDI in filename uploaded does not match UDI referenced in XML.');
+        }
+        
+        // Check to see if filename matches XML internal UDI reference #2 
+        $loc_3_xpath = "/gmi:MI_Metadata/gmd:distributionInfo[1]/gmd:MD_Distribution[1]/gmd:distributor[1]/gmd:MD_Distributor[1]/gmd:distributorTransferOptions[1]/gmd:MD_DigitalTransferOptions[1]/gmd:onLine[1]/gmd:CI_OnlineResource[1]/gmd:linkage[1]/gmd:URL[1]";
+        $loc_3 = $xml->xpath($loc_3_xpath);
+        $loc_3_val = $loc_3[0][0];
+        if(!preg_match("/$udi$/",$loc_3_val)) { # URL must end with UDI
+                throw new RuntimeException('xpath test failed:  UDI in filename uploaded does not match UDI referenced in XML.');
+        }
+        
+        // Check keyword element(s) to verify there aren't commas included. 
+        $check_4_xpath = "/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:descriptiveKeywords[1]/gmd:MD_Keywords[1]/gmd:keyword/gco:CharacterString";
+        $check_4 = $xml->xpath($check_4_xpath);
+        foreach ($check_4 as $node) {
+            if(preg_match("/,/",$node)) { # URL must end with UDI
+                throw new RuntimeException("GRIIDC XML check failed: XML contains commas in keyword element. ($node)");
+            } 
+        }
+        
+        // Check that time period description contains either the phase 'ground condition' or 'modeled period'
+        $check_5_xpath = "/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:temporalElement[1]/gmd:EX_TemporalExtent[1]/gmd:extent[1]/gml:TimePeriod[1]/gml:description";
+        $check_5 = $xml->xpath($check_5_xpath);
+        $ok=0;
+        foreach ($check_5 as $node) {
+            if(preg_match("/ground condition/i",$node)) { # URL must end with UDI
+                $ok++;
+            } 
+            if(preg_match("/modeled period/i",$node)) { # URL must end with UDI
+                $ok++;
+            }
+        }
+        if ($ok != 1) {
+            throw new RuntimeException("GRIIDC XML check failed: XML time period description needs to indicate 'ground condition' xor 'modeled period'");
+        }
+
+        // Determine geometry type
         if ($geo = $xml->xpath('/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:geographicElement[1]/gmd:EX_BoundingPolygon[1]/gmd:polygon[1]/gml:Polygon[1]')) {
+            // Polygon - Ideally this is case
             $geoflag='yes';
-        // If bounding box, represent as polygon.
-        } elseif ($geo = $xml->xpath('/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:geographicElement[1]/gmd:EX_GeographicBoundBox') {
+        } elseif ($geo = $xml->xpath('/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:geographicElement[1]/gmd:EX_GeographicBoundingBox')) {
+            // If metadata has a bounding box, convert it to a polygon.
             $coords=array();
             $bounds=array('westBoundLongitude','eastBoundLongitude','southBoundLatitude','northBoundLatitude');
             foreach ($bounds as $boundry) {
-                $coords[$boundry] = $xml->xpath("/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:geographicElement[1]/gmd:EX_GeographicBoundBox/gmd:$boundry/gco:Decimal/");
+                $coords[$boundry] = $xml->xpath("/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:geographicElement[1]/gmd:EX_GeographicBoundingBox/gmd:$boundry/gco:Decimal");
             }
-            $coord_list  = $coords['westBoundLongitude'].','.$coords['northBoundLatitude'].' ';
-            $coord_list .= $coords['eastBoundLongitude'].','.$coords['northBoundLatitude'].' ';
-            $coord_list .= $coords['westBoundLongitude'].','.$coords['southBoundLatitude'].' ';
-            $coord_list .= $coords['westBoundLongitude'].','.$coords['southBoundLatitude'].' '
-            $coord_list  = $coords['westBoundLongitude'].','.$coords['northBoundLatitude'];
-            $new_child = "<gmd:EX_BoundingPolygon><gmd:polygon><gml:Polygon gml:id=\"Polygon\"><gml:interior><gml:LinearRing><gml:coordinates>$coord_list</gml:coordinates></gml:LinearRing></gml:interior></gml:Polygon></gmd:polygon></gmd:EX_BoundingPolygon>";
-            // somehow replace this
+            // enumerate polygons clockwise & repeat first point as last
+            $coord_list  = $coords['northBoundLatitude'][0].','.$coords['westBoundLongitude'][0].' ';
+            $coord_list .= $coords['northBoundLatitude'][0].','.$coords['eastBoundLongitude'][0].' ';
+            $coord_list .= $coords['southBoundLatitude'][0].','.$coords['eastBoundLongitude'][0].' ';
+            $coord_list .= $coords['southBoundLatitude'][0].','.$coords['westBoundLongitude'][0].' ';
+            $coord_list .= $coords['northBoundLatitude'][0].','.$coords['westBoundLongitude'][0];
+
+            $xpathdoc = new DOMXpath($doc);
+            $searchXpath = "/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:geographicElement/gmd:EX_GeographicBoundingBox";
+            $elements = $xpathdoc->query($searchXpath);
+            $node = $elements->item(0);
+
+            if ($elements->length > 0) {
+                $parent = $node->parentNode;
+                $parent->removeChild($node);
+
+                $newnode = createXmlNode($doc,$parent,'gmd:EX_BoundingPolygon');
+                $parent = $newnode;
+                $newnode = createXmlNode($doc,$parent,'gmd:polygon');
+                $parent = $newnode;
+                $newnode = createXmlNode($doc,$parent,'gml:Polygon');
+                $attr = $doc->createAttribute('gml:id');
+                $attr->value = "Polygon";
+                $newnode->appendChild($attr);
+                $parent = $newnode;
+                $newnode = createXmlNode($doc,$parent,'gml:exterior');
+                $parent = $newnode;
+                $newnode = createXmlNode($doc,$parent,'gml:LinearRing');
+                $parent = $newnode;
+
+                addXMLChildValue($doc,$parent,'gml:coordinates',$coord_list);
+                $geoflag='yes';
+                $msg = "A bounding box was detected.  This has been converted into a polygon.";
+                drupal_set_message($msg,'warning');
+            }
         } else {
             $geoflag='no';
         }
 
-        $dbms = OpenDB("GOMRI_RO");
+        $dbms = OpenDB("GOMRI_RW");
         try {
+            $doc->normalizeDocument();
+            $doc->formatOutput=true;
+            $xml_save=$doc->saveXML(); 
+
+            // clean up formatting via tidy 
+            $tidy_config = array('indent' => true,'indent-spaces' => 4,'input-xml' => true,'output-xml' => true,'wrap' => 0);
+            $tidy = new tidy;
+            $tidy->parseString($xml_save, $tidy_config, 'utf8');
+            $tidy->cleanRepair();
+
+            // substitute exterior for interior (always)
+            if (preg_match('/gml:interior>/',$tidy)) {
+                $tidy = preg_replace('/gml:interior>/','gml:exterior>',$tidy);
+                drupal_set_message('Exterior polygon boundries assumed','warning');
+            }
+
             $dbms->beginTransaction();
-            $sql = "select max(registry_id) as newest_reg from registry where substring(registry_id, 1, 16) = 'R1.x134.073:0004'";
+
+            // query database for current (highest) registry_id for particular UDI
+            $sql = "select max(registry_id) as newest_reg from registry where substring(registry_id, 1, 16) = ?";
             $data = $dbms->prepare($sql);
-            $data->execute();
-            $tmp=$data->fetchAll(); $reg_id=$tmp[0]['newest_reg']; // Why can't $reg_id=($data->fetchAll())[0]['newest_reg'] instead?
+            $data->execute(array($udi));
+            $tmp=$data->fetchAll(); $reg_id=$tmp[0]['newest_reg'];
+            
+            // query database to deteremine if metadata table is populated for this
+            // registry ID, set bool variable.
+            $sql = "SELECT COUNT(*) as cnt FROM metadata where registry_id = ?";
+            $data = $dbms->prepare($sql);
+            $data->execute(array($reg_id));
+            $tmp=$data->fetchAll(); 
+            $has_metadata_in_db=false;
+            $has_metadata_in_db = ($tmp[0]['cnt'] ==  1);
 
-
-
-
-
-            $thanks_msg = "Thank you.  The metadata file for registry ID $reg_id has been recorded into the database.< br/>
-<p>
-Details:
-<ul>
-    <li> Registry ID: $reg_id</li>
-    <li> Uploaded filename: $orig_filename</li>
-    <li> Polygon Geometry Detected: $geoflag</li>
-    <li> GML:<pre> ".$geo[0]->asXML()."</pre></li>
-</ul
-</p>";
+            $geo_status='Nothing to verify';
+            $geometery=null;
+            if ($geoflag=='yes') {
+            // attempt to have PostGIS validate any geometry, if found.
+                $xml = simplexml_load_string($tidy);
+                $geo = $xml->xpath('/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:geographicElement[1]/gmd:EX_BoundingPolygon[1]/gmd:polygon[1]/gml:Polygon[1]');
+                $sql2="select ST_GeomFromGML('".$geo[0]->asXML()."', 4326) as geometry";
+                $data2 = $dbms->prepare($sql2);
+                if ($data2->execute()) {
+                    $geo_status = 'Verified by PostGIS as OK';
+                    $tmp=$data2->fetchAll();
+                    $geometry=$tmp[0]['geometry'];
+                } else {
+                    $dbErr = $data2->errorInfo();
+                    $geo_status = "<font color=red>Rejected by PostGIS - ".$dbErr[2]."</font>";
+                    throw new RuntimeException("PostGIS rejected geometry supplied - $sql2");
+                }
+            }
+                
+            // insert (or update) data in metadata table
+            $sql = '';
+            if ($has_metadata_in_db) {
+                $sql = "update metadata set metadata_xml=?, geom=?where  registry_id = ?";
+            } else {
+                $sql = "insert into metadata ( metadata_xml, geom, registry_id ) values (?,?,?)";
+            }
+            $data3 = $dbms->prepare($sql);
+            if(!$data3->execute(array($tidy,$geometry,$reg_id,))) {
+                $err=$data3->errorInfo();
+                $err_str=$err[2];
+                throw new RuntimeException("Error saving to database: $err_str (p2=$geometry");
+            }
+ 
+            $thanks_msg = "Thank you.  The metadata file for registry ID $reg_id has been recorded into the database.
+                            <p>
+                            Details:
+                                <ul>
+                                    <li> Registry ID: <a href=\"$protocol$env[SERVER_NAME]/data/$udi/\" target=0>$reg_id</a></li>
+                                    <li> UDI: $udi</a></li>
+                                    <li> Uploaded filename: $orig_filename</li>
+                                    <li> Geometry Detected: $geoflag</li>
+                                    <li> Geometry Status: $geo_status </li>
+                                </ul>
+                            </p>";
 
             drupal_set_message($thanks_msg,'status');
             $dbms->commit();
         } catch (RuntimeException $ee){
             $dbms->rollBack();
-            throw new RuntimeException("Database transaction error $ee->getMessage");
+            throw $ee;
         }
-
     } catch (RuntimeException $e) {
-        drupal_set_message("File upload error: ".$e->getMessage()."<br /><pre>$debug_st</pre>",'error');
+        $err_str=$e->getMessage();
+        drupal_set_message("File upload error: $err_str",'error');
+        writeLog($err_str);
         echo "<a href=.>Continue</a>";
     }
 });
@@ -259,6 +388,31 @@ function index($app) {
 }
 
 $app->run();
+
+function addXMLChildValue($doc,$parent,$fieldname,$fieldvalue) {
+    $fieldvalue = htmlspecialchars($fieldvalue, ENT_QUOTES | 'ENT_XML1', 'UTF-8');
+    $child = $doc->createElement($fieldname);
+    $child = $parent->appendChild($child);
+    $value = $doc->createTextNode($fieldvalue);
+    $value = $child->appendChild($value);
+    return $child;
+}
+
+function createXmlNode($doc,$parent,$nodeName) {
+    $node = $doc->createElement($nodeName);
+    $node = $parent->appendChild($node);
+    return $node;
+}
+
+function checkForUDI($udi) {
+    $sql = "SELECT COUNT(*) FROM curr_reg_view where dataset_udi = ?";
+    $dbms = OpenDB("GOMRI_RO");
+    $data = $dbms->prepare($sql);
+    $data->execute(array($udi));
+    $result = $data->fetchAll();
+    $count = $result[0]['count'];
+    return ($count==1);
+}
 
 function GetMetadata($type) {
     $type=strtolower($type);
@@ -287,6 +441,16 @@ function GetMetadata($type) {
         return;
     }
 }
+
+// Eventually this really needs to go into the database in
+// some official capacity
+function writeLog($message) {
+    $logfile_location = $GLOBALS['logfile_location'];
+    $dstamp = date('YmdHis');
+    file_put_contents($logfile_location,"$dstamp:$message\n", FILE_APPEND);
+}
+
+
 
 
 ?>
