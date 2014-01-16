@@ -1,12 +1,14 @@
 #dataset_details {
-    position: absolute;
+    position: fixed;
     background-color: white;
     display: none;
     border: 2px solid black;
     padding: 5px;
     width: 50%;
+    top: 30%;
     left: 25%;
     margin-top: 10px;
+    z-index: 1000;
 }
 
 #dataset_details_close {
