@@ -292,9 +292,8 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                 $newnode = createXmlNode($doc,$parent,'gmd:polygon');
                 $parent = $newnode;
                 $newnode = createXmlNode($doc,$parent,'gml:Polygon');
-                $attr = $doc->createAttribute('gml:id');
-                $attr->value = "Polygon";
-                $newnode->appendChild($attr);
+                $newnode->setAttribute('gml:id',"Polygon");
+                $newnode->setAttribute('srsName',"urn:ogc:def:crs:EPSG::4326");
                 $parent = $newnode;
                 $newnode = createXmlNode($doc,$parent,'gml:exterior');
                 $parent = $newnode;
@@ -377,9 +376,8 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                     $newnode = createXmlNode($doc2,$parent,'gmd:polygon');
                     $parent = $newnode;
                     $newnode = createXmlNode($doc2,$parent,'gml:Polygon');
-                    $attr = $doc2->createAttribute('gml:id');
-                    $attr->value = "Polygon";
-                    $newnode->appendChild($attr);
+                    $newnode->setAttribute('gml:id',"Polygon");
+                    $newnode->setAttribute('srsName',"urn:ogc:def:crs:EPSG::4326");
                     $parent = $newnode;
                     $newnode = createXmlNode($doc2,$parent,'gml:exterior');
                     $parent = $newnode;
