@@ -37,19 +37,19 @@
 				{
 					e.feature.renderIntent = "select";
 					e.feature.layer.drawFeature(e.feature);
-					//console.log("Map says: " + e.feature.id + " mouse over " + e.feature.layer.name);
+					////console.log("Map says: " + e.feature.id + " mouse over " + e.feature.layer.name);
 					jQuery(document).trigger('overFeature',{"featureID":e.feature.id,"attributes":e.feature.attributes});
 				},
 				featureout: function(e) 
 				{
 					e.feature.renderIntent = "default";
 					e.feature.layer.drawFeature(e.feature);
-					//console.log("Map says: " + e.feature.id + " mouse out " + e.feature.layer.name);
+					////console.log("Map says: " + e.feature.id + " mouse out " + e.feature.layer.name);
 					jQuery(document).trigger('outFeature',{"featureID":e.feature.id,"attributes":e.feature.attributes});
 				},
 				featureclick: function(e) 
 				{
-					console.log("Map says: " + e.feature.id + " clicked on " + e.feature.layer.name + " udi:" + e.feature.attributes["udi"]);
+					//console.log("Map says: " + e.feature.id + " clicked on " + e.feature.layer.name + " udi:" + e.feature.attributes["udi"]);
 					jQuery(document).trigger('clickFeature',{"featureID":e.feature.id,"attributes":e.feature.attributes});
 				}
 			}
@@ -92,7 +92,7 @@
 		if (Options.labelAttr)
 		{
 			sstyle.label = "${" + Options.labelAttr + "}";
-			console.log("label set");
+			//console.log("label set");
 		}
 		
 		tstyle = OpenLayers.Util.extend({}, OpenLayers.Feature.Vector.style["temporary"]);
@@ -129,7 +129,7 @@
 			rendererOptions: {zIndexing: true},
 			afterAdd: function() 
 			{
-				console.log('layer ready');
+				//console.log('layer ready');
 				// if (typeof renderMe == 'function') { 
 					// renderMe(); 
 				// }
@@ -233,7 +233,7 @@
 		map.addControl(draw);
 		
 		map.events.register('updatesize', map, function () {
-			console.log('Window Resized');
+			//console.log('Window Resized');
 			setTimeout( function() { 
 				lastBounds = map.getExtent()
 				}, 200);
@@ -245,18 +245,18 @@
 		});
 		
 		map.events.register('preaddlayer', map, function () {
-			//console.log('Adding something?');
+			////console.log('Adding something?');
 		});
 		
 		checkAllowModify(false);
 		
 		vlayer.events.register('loadstart', vlayer, function () {
-			console.log("loading");
+			//console.log("loading");
 		});
 		
 		vlayer.events.on({
 			'beforefeaturemodified': function(event) {
-				//console.log("Selected " + event.feature.id  + " for modification");
+				////console.log("Selected " + event.feature.id  + " for modification");
 				jQuery("#eraseTool").button("enable");
 				if (typeof event.feature == 'object')
 				{
@@ -264,7 +264,7 @@
 				}
 			},
 			'afterfeaturemodified': function(event) {
-				//console.log("Finished with " + event.feature.id);
+				////console.log("Finished with " + event.feature.id);
 				jQuery("#eraseTool").button("disable");
 				
 			},
@@ -278,18 +278,18 @@
 				jQuery(document).trigger('featureAdded',getCoordinateList(event.feature));
 			},
 			'loadend': function(event) {
-				console.log('Done loading vlayer layer');
+				//console.log('Done loading vlayer layer');
 				map.updateSize();
 				vlayer.redraw();
 			},
 			'loadstart': function(event) {
-				console.log('Done Drawing?');
+				//console.log('Done Drawing?');
 			}
 		});
 		
 		flayer.events.on({
 			beforefeatureadded: function(event) {
-				console.debug(wkt.write(event.feature));
+				//console.debug(wkt.write(event.feature));
 				flayer.removeAllFeatures();
 				filter.deactivate();
 			},
@@ -299,10 +299,10 @@
 		});
 		
 		google.maps.event.addListener(google_hybrid.mapObject, "tilesloaded", function() {
-			console.log("Tiles loaded");
+			//console.log("Tiles loaded");
 			if (!firstLoad)
 			{
-				console.log('done with map');
+				//console.log('done with map');
 				firstLoad = true;
 				setTimeout( function() { 
 					map.removeLayer(google_hybrid);
@@ -369,45 +369,6 @@
 			}
 		);
 		map.addLayers([graphic]);
-	}
-	
-	function addUniqueStyle()
-	{
-		var lookup = {
-			"137": {strokeColor: "#FF00FF"},
-			"135": {strokeColor: "#00FF00"},
-			"131": {strokeColor: "#FFFF00"},
-		}
-		
-		defaultStyleMap.addUniqueValueRules("default", "pid", lookup);
-		defaultStyleMap.styles.default.rules.push(new OpenLayers.Rule({
-			elseFilter: true,
-			symbolizer: defaultStyleMap.styles.default.defaultStyle
-		}));
-		vlayer.redraw();
-	}
-	
-	function addRule(attrName,attrValue,Style)
-	{
-		var newRule = new OpenLayers.Rule({
-				// a rule contains an optional filter
-				filter: new OpenLayers.Filter.Comparison({
-					type: OpenLayers.Filter.Comparison.LIKE,
-					property: "pid", // the "foo" feature attribute
-					value: "137"
-				}),
-					// if a feature matches the above filter, use this symbolizer
-				symbolizer: {
-					strokeColor: "#FF9700",
-					fillColor: "#FF9700"
-				},
-			elseFilter: true,
-			symbolizer: defaultStyleMap.styles.default.defaultStyle
-		});
-		
-		//Style.addRules([newRule]);
-		defaultStyleMap.styles.default.rules.push(newRule);
-		
 	}
 	
 	function initToolbar(DIV,Options)
@@ -607,7 +568,7 @@
 			context: document.body
 			}).done(function(html) {
 				jQuery(document).trigger('featureChecked',html);
-				//console.log(html);
+				////console.log(html);
 				return html;
 		});
 	}
@@ -721,7 +682,7 @@
 			}
 		}
 		var WKT = "POLYGON((" + points.substring(0,(points.length)-1) + "))";
-		console.debug(WKT);
+		//console.debug(WKT);
 		var Feature = wkt.read(wktTransformToSperMerc(WKT));
 		modify.activate();
 		vlayer.addFeatures([Feature]);
