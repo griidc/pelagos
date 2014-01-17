@@ -5,7 +5,7 @@
 # Note: hardcoded smtp.tamucc.edu, triton.tamucc.edu (ldap) in file.
 
 # LOGFILE - SET THIS ACCORDINGLY
-$GLOBALS['logfile_location'] = '/home/users/mwilliamson/hg/mdapp/log/logfile.txt';
+$GLOBALS['logfile_name']='mdapp.log';
 
 # database utilities
 require_once("/usr/local/share/GRIIDC/php/db-utils.lib.php");
@@ -39,6 +39,8 @@ drupal_add_library('system', 'ui.tabs');
 global $user;
 
 $GLOBALS['config'] = parse_ini_file('config.ini',true);
+
+$GLOBALS['logfile_location'] = $GLOBALS['config']['Logfiles']['logfilePath'].'/'.$GLOBALS['logfile_name'];
 
 TwigView::$twigDirectory = $GLOBALS['config']['TwigView']['twigDirectory'];
 
@@ -235,6 +237,7 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                 throw new RuntimeException('xpath test failed:  UDI in filename uploaded does not match UDI referenced in XML.');
         }
         
+/*
         // Check keyword element(s) to verify there aren't commas included. 
         $check_4_xpath = "/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:descriptiveKeywords[1]/gmd:MD_Keywords[1]/gmd:keyword/gco:CharacterString";
         $check_4 = $xml->xpath($check_4_xpath);
@@ -243,7 +246,10 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                 throw new RuntimeException("GRIIDC XML check failed: XML contains commas in keyword element. ($node)");
             } 
         }
-        
+       
+*/
+
+/* 
         // Check that time period description contains either the phase 'ground condition' or 'modeled period'
         $check_5_xpath = "/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:temporalElement[1]/gmd:EX_TemporalExtent[1]/gmd:extent[1]/gml:TimePeriod[1]/gml:description";
         $check_5 = $xml->xpath($check_5_xpath);
@@ -259,6 +265,7 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
         if ($ok != 1) {
             throw new RuntimeException("GRIIDC XML check failed: XML time period description needs to indicate 'ground condition' xor 'modeled period'");
         }
+*/
 
         // Determine geometry type
         if ($geo = $xml->xpath('/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:geographicElement[1]/gmd:EX_BoundingPolygon[1]/gmd:polygon[1]/gml:Polygon[1]')) {
