@@ -1,4 +1,4 @@
-<div style="background: transparent; padding:0px; height:100%" id="tabs">
+<div style="background: transparent; padding:0px;" id="tabs">
 
     <ul>
         {% if m_dataset.accepted %}
@@ -14,7 +14,8 @@
 
 
     {% for sname,section in m_dataset %} <!-- allows key,value iteration -->
-        <div id="{{sname}}" class="tab" style="height:100%; padding:0">
+      {% if section|length %}
+        <div id="{{sname}}" class="tab" style="padding:0">
           <fieldset>
             <table>
                 <thead>
@@ -27,14 +28,15 @@
                     {% for dta in section %}
                         <tr>
                             <td valign="top">{{dta.dataset_udi}}</td>
-                            <td valign="top"><a href={{baseUrl}}/download-metadata/{{dta.dataset_udi}}><img src="{{baseUrl}}/includes/images/download.png"></a>&nbsp;<a href={{baseUrl}}/download-metadata-db/{{dta.dataset_udi}}><img src="{{baseUrl}}/includes/images/download-from-db.png"></a> {{dta.dataset_metadata}}</td>
+                            <td valign="top"><a href={{baseUrl}}/download-metadata/{{dta.dataset_udi}}><img src="{{baseUrl}}/includes/images/download.png"></a>&nbsp;{% if dta.hasxml == true %}<a href={{baseUrl}}/download-metadata-db/{{dta.dataset_udi}}><img src="{{baseUrl}}/includes/images/download-from-db.png"></a>&nbsp;{% endif %}{{dta.dataset_metadata}}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
             </table>
           </fieldset>
         </div>
-        {% endfor %}
+       {% endif %}
+     {% endfor %}
 
         <div id="uploadnewmetadata">
             <div>

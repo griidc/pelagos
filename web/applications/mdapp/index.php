@@ -66,6 +66,7 @@ $app->get('/', function () use ($app) {
     return $app->render('html/main.html',$stash);
 });
 
+// Download from file on disk - probably going away
 $app->get('/download-metadata/:udi', function ($udi) use ($app) {
     if (preg_match('/^00/',$udi)) {
         $datasets = get_registered_datasets(getDBH('GOMRI'),array("registry_id=$udi%"));
@@ -92,11 +93,19 @@ $app->get('/download-metadata/:udi', function ($udi) use ($app) {
     }
 });
 
+// Download from XML in database
 $app->get('/download-metadata-db/:udi', function ($udi) use ($app) {
     # This SQL uses a subselect to resolve the newest registry_id
     # associated with the passed in UDI.
-    $sql = "select metadata_xml from metadata 
-            where registry_id = (   select registry_id 
+    $sql = "select metadata_xml, xpath('/gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1]/text()',metadata_xml,
+    ARRAY[
+        ARRAY['gmi', 'http://www.isotc211.org/2005/gmi'],
+        ARRAY['gmd', 'http://www.isotc211.org/2005/gmd'],
+        ARRAY['gco', 'http://www.isotc211.org/2005/gco']
+    ]) as filename  
+    FROM metadata 
+    WHERE 
+        registry_id = (   select registry_id 
                                     from curr_reg_view 
                                     where dataset_udi = ?
                                 )";
@@ -106,7 +115,9 @@ $app->get('/download-metadata-db/:udi', function ($udi) use ($app) {
     $data->execute(array($udi));
     $raw_data = $data->fetch(); 
     if ($raw_data) {
-        $filename = "$udi-metadata.xml";
+        // We changed from generating a filename to using the filename referenced in the XML.
+        //$filename = "$udi-metadata.xml";
+        $filename = preg_replace(array('/{/','/}/'),array('',''),$raw_data['filename']);
         # colons aren't allowed in filenames so substitute dash '-' character instead.
         $filename = preg_replace("/:/",'-',$filename); 
         header($_SERVER["SERVER_PROTOCOL"] . " 200 OK");
@@ -562,18 +573,21 @@ function GetMetadata($type) {
     $type=strtolower($type);
     switch($type) {
         case "accepted":
-            $sql = "SELECT metadata_status, url_metadata, dataset_udi, dataset_metadata
-                    FROM curr_reg_view 
+            $sql = "SELECT metadata_status, url_metadata, dataset_udi, dataset_metadata, (metadata_xml is not null) as hasxml
+                    FROM curr_reg_view left join metadata
+                    ON curr_reg_view.registry_id = metadata.registry_id 
                     where metadata_status = 'Accepted' 
                     and url_metadata like '/sftp/data/%.met' 
-                    order by registry_id";
+                    order by curr_reg_view.registry_id";
             break;
         case "submitted":
-            $sql = "SELECT metadata_status, url_metadata, dataset_udi, dataset_metadata
-                    FROM curr_reg_view 
+            #$sql = "SELECT metadata_status, url_metadata, dataset_udi, dataset_metadata
+            $sql = "SELECT metadata_status, url_metadata, dataset_udi, dataset_metadata, (metadata_xml is not null) as hasxml
+                    FROM curr_reg_view left join metadata
+                    ON curr_reg_view.registry_id = metadata.registry_id 
                     where metadata_status = 'Submitted' 
                     and url_metadata like '/sftp/data/%.met' 
-                    order by registry_id";
+                    order by curr_reg_view.registry_id";
             break;
     }
     if(isset($sql)) {       
