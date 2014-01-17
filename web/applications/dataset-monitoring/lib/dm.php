@@ -53,7 +53,9 @@ function getTasksAndDatasets($projects) {
     $dbh = getDBH('GOMRI');
     for ($i=0;$i<count($projects);$i++) {
         $pi = getPeopleDetails(getDBH('RPIS'),array('projectId='.$projects[$i]['ID'],'roleId=1'));
-        $projects[$i]['PI'] = $pi[0];
+        if ($pi) {
+            $projects[$i]['PI'] = $pi[0];
+        }
         $projects[$i]['Institutions'] = getInstitutionDetails(getDBH('RPIS'),array('projectId='.$projects[$i]['ID']));
         $taskFilter = array('projectId='.$projects[$i]['ID']);
         if (isset($GLOBALS['config']['exclude']['tasks'])) {
