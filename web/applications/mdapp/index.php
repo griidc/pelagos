@@ -8,7 +8,7 @@
 $GLOBALS['logfile_location'] = '/home/users/mwilliamson/hg/mdapp/log/logfile.txt';
 
 # database utilities
-require_once("../quartz/php/db-utils.lib.php");
+require_once("/usr/local/share/GRIIDC/php/db-utils.lib.php");
 # Framework (model/view)
 require_once '/usr/local/share/Slim/Slim/Slim.php';
 # templating engine - views
@@ -97,15 +97,26 @@ $app->get('/download-metadata/:udi', function ($udi) use ($app) {
 $app->get('/download-metadata-db/:udi', function ($udi) use ($app) {
     # This SQL uses a subselect to resolve the newest registry_id
     # associated with the passed in UDI.
-    $sql = "select metadata_xml, xpath('/gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1]/text()',metadata_xml,
-    ARRAY[
-        ARRAY['gmi', 'http://www.isotc211.org/2005/gmi'],
-        ARRAY['gmd', 'http://www.isotc211.org/2005/gmd'],
-        ARRAY['gco', 'http://www.isotc211.org/2005/gco']
-    ]) as filename  
-    FROM metadata 
+    $sql = "
+    select 
+        metadata_xml, 
+        coalesce(
+            cast(
+                xpath('/gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1]/text()',metadata_xml,
+                    ARRAY[
+                    ARRAY['gmi', 'http://www.isotc211.org/2005/gmi'],
+                    ARRAY['gmd', 'http://www.isotc211.org/2005/gmd'],
+                    ARRAY['gco', 'http://www.isotc211.org/2005/gco']
+                    ]
+                ) as character varying
+            ), 
+            dataset_metadata
+        ) 
+
+    as filename  
+    FROM metadata left join registry on registry.registry_id = metadata.registry_id
     WHERE 
-        registry_id = (   select registry_id 
+        metadata.registry_id = (   select registry_id 
                                     from curr_reg_view 
                                     where dataset_udi = ?
                                 )";
