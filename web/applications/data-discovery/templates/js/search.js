@@ -3,14 +3,7 @@ var datasets = new Array();
 var $ = jQuery.noConflict();
 
 $(document).ready(function() {
-    $('#left').height(0);
-    $('#right').height(0);
     setTimeout(function() {
-        resizeLeftRight();
-        $('#map_pane').height(($('#left').height()-5)/2);
-        $('#menu').height($('#left').height()-$('#map_pane').height()-10);
-        $('#tabs .tab').height($('#tabs').height() - $('#tabs .ui-tabs-nav').height() - 5);
-        $('#tabs .tab').each(function() { $(this).tinyscrollbar_update('relative'); });
         if (typeof($.cookie) == 'function' && $.cookie("expanded") == 1) {
             expand();
         }
@@ -21,30 +14,8 @@ $(document).ready(function() {
         $(document).on('outFeature',function(e,eventVariables) {
             $('table.datasets tr[udi="' + eventVariables.attributes.udi + '"] td').removeClass('highlight');
         });
-        $('#content').html('<div class="spinner"><div><img src="{{baseUrl}}/includes/images/spinner.gif"></div></div>');
+        $('#dataset_listing').html('<div class="spinner"><div><img src="{{baseUrl}}/includes/images/spinner.gif"></div></div>');
     }, 500);
-    $(window).resize(function() {
-        resizeLeftRight()
-        $('#map_pane').height(($('#left').height()-5)/2);
-        $('#menu').height($('#left').height()-$('#map_pane').height()-10);
-        $('#menu').tinyscrollbar_update('relative');
-        $('#tabs .tab').height($('#tabs').height() - $('#tabs .ui-tabs-nav').height() - 5);
-        $('#tabs .tab').each(function() { $(this).tinyscrollbar_update('relative'); });
-    });
-    $('#menu').tinyscrollbar();
-    $('#menu .overview').mutate('height', function(el,info) {
-        $('#menu').tinyscrollbar_update('relative');
-    });
-
-    $('.thumb').mousedown(function() {
-        $('body').addClass('noselect');
-        document.getElementById('container').setAttribute('onselectstart','return false;');
-    });
-
-    $(window).mouseup(function() {
-        $('body').removeClass('noselect');
-        document.getElementById('container').setAttribute('onselectstart','');
-    });
 
     $('#filter-input').bind('keypress', function(e) {
         if(e.keyCode==13){
@@ -53,7 +24,7 @@ $(document).ready(function() {
     });
 
     $("#expand-collapse").click(function(){
-        if ($('#expand-collapse div').hasClass('collapsed')) {
+        if ($('#expand-collapse').hasClass('collapsed')) {
             expand();
         }
         else {
@@ -67,23 +38,28 @@ $(document).ready(function() {
 
     $(document).on('filterDrawn',function() {
         console.log('DRAWN!');
-        $('#drawGeoFilterButton').removeAttr("disabled");
+        $('#drawGeoFilterButton').button("enable");
         $('body').css('cursor','');
         $('#olmap').css('cursor','');
         $('input').css('cursor','');
         console.log(getFilter());
         trees['tree'].geo_filter=getFilter();
         applyFilter();
-        $('#clearGeoFilterButton').removeAttr('disabled');
+        $('#clearGeoFilterButton').button('enable');
     });
+
+    $("#show_all_extents_checkbox").button();
+    $(".map_button").button();
+    $("#filter-button").button();
+    $("#clear-button").button();
 });
 
 function expand() {
-    $('#right').animate({'left' : "40%", 'width' : "60%"}, {duration: 'slow'});
-    $('#menu').tinyscrollbar_update('relative');
-    $('#left').animate({'width' : "40%"}, {duration: 'slow', complete: function() {
-        $('#expand-collapse div').removeClass('collapsed');
-        $('#tabs .tab').each(function() { $(this).tinyscrollbar_update('relative'); });
+    $('#left').show();
+    $('#right').animate({'left' : "45%", 'width' : "55%"}, {duration: 'slow'});
+    $('#left').animate({'width' : "45%"}, {duration: 'slow', complete: function() {
+        $('#expand-collapse').removeClass('collapsed');
+        $('.right-panel').removeClass('right-panel-collapsed');
     }});
     if (typeof($.cookie) == 'function') $.cookie("expanded", 1);
 }
@@ -91,8 +67,9 @@ function expand() {
 function collapse() {
     $('#right').animate({'left' : "0%", 'width' : "100%"}, {duration: 'slow'});
     $('#left').animate({'width' : "0%"}, {duration: 'slow', complete: function() {
-        $('#expand-collapse div').addClass('collapsed');
-        $('#tabs .tab').each(function() { $(this).tinyscrollbar_update('relative'); });
+        $('#expand-collapse').addClass('collapsed');
+        $('#left').hide();
+        $('.right-panel').addClass('right-panel-collapsed');
     }});
     if (typeof($.cookie) == 'function') $.cookie("expanded", 0);
 }
@@ -100,9 +77,10 @@ function collapse() {
 function resizeLeftRight() {
     $('#left').height(0);
     $('#right').height(0);
-    h = $('#main').height() - $('#squeeze-wrapper').height() - 20;
-    $('#left').height(h);
-    $('#right').height(h);
+    rh = $('#main').height() - $('#filter').height() - $('.tabs').height() - 15;
+    lh = $('#main').height() - $('.tabs').height() - 15;
+    $('#left').height(lh);
+    $('#right').height(rh);
 }
 
 function showDatasets(by,id,peopleId) {
@@ -115,8 +93,7 @@ function showDatasets(by,id,peopleId) {
         }
         $('#packageLink').attr('href',newlink);
     }
-    $('#content').html('<div class="spinner"><div><img src="{{baseUrl}}/includes/images/spinner.gif"></div></div>');
-    $('div.spinner').height($('#content').height()-12);
+    $('#dataset_listing').html('<div class="spinner"><div><img src="{{baseUrl}}/includes/images/spinner.gif"></div></div>');
     geo_filter = '';
     if (trees['tree'].geo_filter) {
         geo_filter = trees['tree'].geo_filter;
@@ -124,16 +101,10 @@ function showDatasets(by,id,peopleId) {
     $.ajax({
         "url": "{{baseUrl}}/datasets/" + encodeURIComponent(jQuery('#filter-input').val().replace(/\//g,"")) + "/" + by + "/" + id + "/" + geo_filter,
         "success": function(data) {
-            $('#content').html(data);
+            $('#dataset_listing').html(data);
             $('#tabs').tabs({
                 activate: function(event, ui) {
-                    $('#tabs .tab').height($('#tabs').height() - $('#tabs .ui-tabs-nav').height() - 5);
-                    $('#tabs .tab').tinyscrollbar();
-                    $('#tabs .thumb').mousedown(function() {
-                        $('body').addClass('noselect');
-                        document.getElementById('container').setAttribute('onselectstart','return false;');
-                    });
-                    if ($('#showAllFeatures').attr('checked')) {
+                    if ($('#show_all_extents_checkbox').attr('checked')) {
                         var selectedTab = $("#tabs").tabs('option','active');
                         removeAllFeaturesFromMap();
                         if (datasets[selectedTab]) {
@@ -145,13 +116,9 @@ function showDatasets(by,id,peopleId) {
                 }
             }
             );
-            $('#tabs .tab').height($('#tabs').height() - $('#tabs .ui-tabs-nav').height() - 5);
-            $('#tabs .tab').tinyscrollbar();
-            $('#tabs .thumb').mousedown(function() {
-                $('body').addClass('noselect');
-                document.getElementById('container').setAttribute('onselectstart','return false;');
-            });
-            setTimeout(function () { jQuery('#tabs .tab').tinyscrollbar_update('relative'); }, 200);
+        },
+        "error": function(jqXHR, textStatus, errorThrown) {
+            alert("Fail: " + textStatus + " " + errorThrown + jqXHR.getResponseHeader());
         }
     });
 }
@@ -182,7 +149,6 @@ function showDatasetDetails(udi) {
 function showDatasetDownload(udi) {
     {% if not logged_in %}
         $.cookie('dl_attempt_udi_cookie', udi, { expires: 1, path: '/', domain: '{{hostname}}' });
-        //location.href = "/cas?destination=" + escape("{{pageName}}/download_redirect/" + udi + "?final_destination=" + location.pathname);
         showLoginOptions(udi);
     {% else %}
         $.ajax({
@@ -197,7 +163,7 @@ function showDatasetDownload(udi) {
 
 function applyFilter() {
     removeAllFeaturesFromMap();
-    $('#content').html('<div class="spinner"><div><img src="{{baseUrl}}/includes/images/spinner.gif"></div></div>');
+    $('#dataset_listing').html('<div class="spinner"><div><img src="{{baseUrl}}/includes/images/spinner.gif"></div></div>');
     trees['tree'].filter=jQuery('#filter-input').val();
     updateTree(trees['tree']);
 }
@@ -213,8 +179,9 @@ function clearAll() {
     applyFilter();
 }
 
-function showAllFeatures() {
-    if ($('#showAllFeatures').attr('checked')) {
+function showAllExtents() {
+    if ($('#show_all_extents_checkbox').attr('checked')) {
+        $('#show_all_extents_label').html('Hide All Extents');
         var selectedTab = $("#tabs").tabs('option','active');
         removeAllFeaturesFromMap();
         if (datasets[selectedTab]) {
@@ -224,6 +191,54 @@ function showAllFeatures() {
         }
     }
     else {
+        $('#show_all_extents_label').html('Show All Extents');
         removeAllFeaturesFromMap();
     }
+}
+
+function addTree() {
+    insertTree({
+        label: "Filter by:",
+        theme: "classic",
+        max_depth: 1,
+        expand_to_depth: 0,
+        include_datasets: "identified",
+        animation: 250,
+        type: "ra",
+        filter: "",
+        onload: "if(!tree.selected){showDatasets($('#by-input').val(),$('#id-input').val(),'');}",
+        show_other_sources: true,
+
+        yr1_folder_color: "#00A",
+        yr1_folder_action: "$('#by-input').val('YR1'); $('#id-input').val('1'); showDatasets('YR1',1);",
+
+        yr1_color: "#00A",
+        yr1_action: "$('#by-input').val('fundSrc'); $('#id-input').val('\{\{fundSrc.ID\}\}'); showDatasets('fundSrc',\{\{fundSrc.ID\}\});",
+
+        rfp_color: "#00A",
+        rfp_action: "$('#by-input').val('fundSrc'); $('#id-input').val('\{\{fundSrc.ID\}\}'); showDatasets('fundSrc',\{\{fundSrc.ID\}\});",
+
+        project_color: "#00A",
+        project_action: "$('#by-input').val('projectId'); $('#id-input').val('\{\{project.ID\}\}'); showDatasets('projectId',\{\{project.ID\}\},'\{\{peopleId\}\}');",
+
+        task_color: "#00A",
+        task_action: "showTask(\{\{task.ID\}\});",
+
+        dataset_color: "#00A",
+        dataset_action: "showDataset(\{\{dataset.udi\}\});",
+
+        researcher_color: "#00A",
+        researcher_action: "$('#by-input').val('peopleId'); $('#id-input').val('\{\{person.ID\}\}'); showDatasets('peopleId',\{\{person.ID\}\});",
+
+        institution_color: "#00A",
+        institution_action: "$('#by-input').val('institutionId'); $('#id-input').val('\{\{institution.ID\}\}'); showDatasets('institutionId',\{\{institution.ID\}\});",
+
+        other_sources_folder_color: "#00A",
+        other_sources_folder_action: "$('#by-input').val('otherSources'); $('#id-input').val('1'); showDatasets('otherSources',1);",
+
+        other_sources_color: "#00A",
+        other_sources_action: "$('#by-input').val('otherSource'); $('#id-input').val('\{\{source.ID\}\}'); showDatasets('otherSource','\{\{source.ID\}\}');",
+
+        deselect_action: "$('#by-input').val(''); $('#id-input').val(''); showDatasets('','');"
+    });
 }
