@@ -363,7 +363,7 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
         case 'gml:Polygon':
         {
             $node->setAttribute('gml:id','Polygon');
-			$node->setAttribute('srsName','EPSG:4326');
+			$node->setAttribute('srsName','urn:ogc:def:crs:EPSG::4326');
             break;
         }
         case 'gmd:EX_GeographicBoundingBox':
