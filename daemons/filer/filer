@@ -35,9 +35,7 @@ $sth = $dbh->prepare("SELECT registry_id,dataset_udi,url_data
                       ORDER BY dataset_udi");
 $sth->execute();
 
-my (%data_remote, %data_unknown, %data_missing);
-
-print "Data\n";
+my (%data_remote, %data_unknown, %data_missing, %data_filed);
 
 # loop through all entries that need processing for data
 while (my $r = $sth->fetchrow_hashref()) {
@@ -68,7 +66,14 @@ while (my $r = $sth->fetchrow_hashref()) {
         next;
     }
 
-    print "$reg_id - $url_data\n";
+    # check if data store directory exists for this udi
+    if (! -d "$config->{paths}->{data_store}/$udi") {
+        mkdir("$config->{paths}->{data_store}/$udi") or die "Error: could not create directory: $config->{paths}->{data_store}/$udi ($!)\n";
+    }
+
+    # copy data file to data store
+    copy($filepath,"$config->{paths}->{data_store}/$udi/$udi.dat") or die "Error: could not copy file ($!)\n";
+    $data_filed{$reg_id} = "$config->{paths}->{data_store}/$udi/$udi.dat";
 
 }
 
@@ -90,9 +95,7 @@ $sth = $dbh->prepare("SELECT registry_id,dataset_udi,url_metadata
                       ORDER BY dataset_udi");
 $sth->execute();
 
-my (%md_remote, %md_unknown, %md_missing);
-
-print "\nMetadata\n";
+my (%md_remote, %md_unknown, %md_missing, %md_filed);
 
 # loop through all entries that need processing for metadata
 while (my $r = $sth->fetchrow_hashref()) {
@@ -123,7 +126,14 @@ while (my $r = $sth->fetchrow_hashref()) {
         next;
     }
 
-    print "$reg_id - $url_metadata\n";
+    # check if data store directory exists for this udi
+    if (! -d "$config->{paths}->{data_store}/$udi") {
+        mkdir("$config->{paths}->{data_store}/$udi") or die "Error: could not create directory: $config->{paths}->{data_store}/$udi ($!)\n";
+    }
+
+    # copy metadata file to data store
+    copy($filepath,"$config->{paths}->{data_store}/$udi/$udi.met") or die "Error: could not copy file ($!)\n";
+    $md_filed{$reg_id} = "$config->{paths}->{data_store}/$udi/$udi.met";
 
 }
 
@@ -141,15 +151,29 @@ for my $email (keys %{$config->{'notifications'}}) {
                );
 
     for my $type (@types) {
+        if ($type eq 'filed') {
+            if (%data_filed) {
+                $mail{'Message'} .= "\nFiled Data Files:\n\n";
+                for my $reg_id (sort(keys(%data_filed))) {
+                    $mail{'Message'} .= "$reg_id $data_filed{$reg_id}\n";
+                }
+            }
+            if (%md_filed) {
+                $mail{'Message'} .= "\nFiled Metadata Files:\n\n";
+                for my $reg_id (sort(keys(%md_filed))) {
+                    $mail{'Message'} .= "$reg_id $md_filed{$reg_id}\n";
+                }
+            }
+        }
         if ($type eq 'remote') {
             if (%data_remote) {
-                $mail{'Message'} .= "\nRemote Data Files:\n\n";
+                $mail{'Message'} .= "\nRemote Data Files (manual retrieval required):\n\n";
                 for my $reg_id (sort(keys(%data_remote))) {
                     $mail{'Message'} .= "$reg_id $data_remote{$reg_id}\n";
                 }
             }
             if (%md_remote) {
-                $mail{'Message'} .= "\nRemote Metadata Files:\n\n";
+                $mail{'Message'} .= "\nRemote Metadata Files (manual retrieval required):\n\n";
                 for my $reg_id (sort(keys(%md_remote))) {
                     $mail{'Message'} .= "$reg_id $md_remote{$reg_id}\n";
                 }
