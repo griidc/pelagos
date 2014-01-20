@@ -1,3 +1,10 @@
+<style>
+.sumry td
+{padding:5px;}
+#header { position: relative; }
+#header-content { position: absolute; bottom: 0; left: 0; }
+</style>
+<div style="position: relative;">
 <font size="3">
 <div style="float:right;" class="minitoolbar">
 	<span ><img width="40px" height="40px" id="downloadds" src="/data-discovery/includes/images/download-package.png"></span>
@@ -9,15 +16,47 @@
 <h3>{{mdata.Program_Title}}</h3>
 
 <p><b>UDI:</b><br/> {{pdata.dataset_udi}}</p>
-<p><b>Dataset Originator:</b><br/> {{pdata.dataset_poc_name}}</p>
-<p><b>Point of Contact:</b><br/> {{mpdata.People_LastName}}, {{mpdata.People_FirstName}}<br/>
+<table class="sumry"><tr>
+<td valign="top"><b>Dataset Originator:</b><br/> {{pdata.dataset_poc_name}}</td>
+<td valign="top"><b>Point of Contact:</b><br/> {{mpdata.People_LastName}}, {{mpdata.People_FirstName}}<br/>
 {{mpdata.Institution_Name}}<br/><a href="{{mpdata.Department_URL}}" title="Link to Department" target="_blank">{{mpdata.Department_Name}}</a></span> <br>{{mpdata.Department_Addr1}}<br>{{mpdata.Department_Addr2}}<br>{{mpdata.Department_City}}, {{mpdata.Department_State}}&nbsp;&nbsp;{{mpdata.Department_Zip}}<br>{{mpdata.Department_Country}}<br><a href="mailto:{{mpdata.People_Email}}">{{mpdata.People_Email}}</a>
-</p>
-<p>
-<b>Program Start Date:</b> {{mdata.Program_StartDate}}<br>
-<b>Program End Date:</b> {{mdata.Program_EndDate}}<br>
-</p>
-<p>
+</td>
+</tr><tr>
+<td valign="top">
+<b>Program Start Date:</b> {{mdata.Program_StartDate}}</td><td>
+<b>Program End Date:</b> {{mdata.Program_EndDate}}</td>
+</td></tr><tr>
+<td valign="top">
 <b>Funding Source:</b> {{mdata.Fund_Source}}<br>
-</p>
+</td>
+</tr>
+</table>
 </font>
+<p/>
+<table !style="position: absolute; bottom: 0; left: 0; " border="1">
+	<tr>
+        <th class="udi">UDI</th>
+        <th>Title</th>
+        <th class="status">Identified</th>
+        <th class="status">Registered</th>
+        <th class="status">Metadata</th>
+        <th class="status">Available</th>
+    </tr>
+	<tr>
+        <td class="udi">{{pdata.dataset_udi}}</td>
+        <td>{{pdata.title}}</td>
+        <td class="status" title="{{(pdata.identified ~ '_identified') | statusToTitle}}">
+            <img src="/data/includes/images/{{pdata.identified | statusToImg}}">
+        </td>
+        <td class="status" title="{{(pdata.registered ~ '_registered') | statusToTitle}}">
+            <img src="/data/includes/images/{{pdata.registered | statusToImg}}">
+        </td>
+        <td class="status" title="{% if pdata.registered %}{{(pdata.metadata ~ '_metadata') | statusToTitle}}{% else %}{{'-1_metadata' | statusToTitle}}{% endif %}">
+            <img src="/data/includes/images/{% if pdata.registered %}{{pdata.metadata | statusToImg}}{% else %}{{'-1' | statusToImg}}{% endif %}">
+        </td>
+        <td class="status" title="{% if pdata.registered %}{{(pdata.available ~ '_available') | statusToTitle}}{% else %}{{'-1_available' | statusToTitle}}{% endif %}">
+            <img src="/data/includes/images/{% if pdata.registered %}{{pdata.available | statusToImg}}{% else %}{{'-1' | statusToImg}}{% endif %}">
+        </td>
+    </tr>
+	</table>
+</div>
