@@ -5,8 +5,8 @@ include '/usr/local/share/GRIIDC/php/griidcMailer.php';
 $mytest = new griidcMailer(true);
 
 $message = "Dear $mytest->currentUserFirstName $mytest->currentUserLastName,<br /><br />";
-$message .= 'The Gulf of Mexico Research Initiative Information and Data Cooperative(GRIIDC)has received your dataset <a href="' . "https://$_SERVER[HTTP_HOST]" .'/registry/?regid='.$reg_id.'">'.$reg_id.'</a>. ';
-$message .= "If you have any questions regarding this dataset please email griidc@gomri.org.<br \><br \>";
+$message .= 'The Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) has received your dataset registration <a href="' . "https://$_SERVER[HTTP_HOST]" .'/registry/?regid='.$reg_id.'">'.$reg_id.'</a>. ';
+$message .= "If you have any questions regarding this dataset registration please email griidc@gomri.org.<br \><br \>";
 $message .= "Thank you,<br \>The GRIIDC Team<br \>";
 
 $mytest->mailMessage = $message;
