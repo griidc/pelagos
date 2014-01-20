@@ -96,6 +96,36 @@ $app->get('/download-metadata/:udi', function ($udi) use ($app) {
     }
 });
 
+// Un-accept
+$app->get('/un-accept/:udi', function ($udi) use ($app) {
+    global $user;
+    $sql = "update registry set metadata_status = 'Submitted' where 
+            metadata_status = 'Accepted' and registry_id = 
+            ( select registry_id from curr_reg_view where dataset_udi = ?)
+            ";
+    $dbms = OpenDB("GOMRI_RW");
+    $data = $dbms->prepare($sql);
+    $data->execute(array($udi));
+    drupal_set_message($user->name." has un-approved metadata for $udi",'message');
+    writeLog($user->name." has un-approved metadata for $udi");
+    echo "<a href=../>Continue</a>";
+});
+
+// Accept
+$app->get('/accept/:udi', function ($udi) use ($app) {
+    global $user;
+    $sql = "update registry set metadata_status = 'Accepted' where 
+            metadata_status = 'Submitted' and registry_id = 
+            ( select registry_id from curr_reg_view where dataset_udi = ?)
+            ";
+    $dbms = OpenDB("GOMRI_RW");
+    $data = $dbms->prepare($sql);
+    $data->execute(array($udi));
+    drupal_set_message($user->name." has approved metadata for $udi",'message');
+    writeLog($user->name." has approved metadata for $udi");
+    echo "<a href=../>Continue</a>";
+});
+
 // Download from XML in database
 $app->get('/download-metadata-db/:udi', function ($udi) use ($app) {
     # This SQL uses a subselect to resolve the newest registry_id
