@@ -1,0 +1,160 @@
+#!/usr/bin/perl -w
+
+use strict;
+use Config::PHPINI;
+use DBI;
+use File::Copy;
+
+my $types = Config::PHPINI->read('/etc/griidc/filetypes.ini');
+
+my $db_conf = Config::PHPINI->read('/etc/griidc/db.ini');
+my %dbi_type_map = ('postgresql' => 'Pg');
+my %db = %{$db_conf->{'GOMRI_RW'}};
+
+my $dbh = DBI->connect("DBI:$dbi_type_map{$db{type}}:host=$db{host};port=$db{port};dbname=$db{dbname};",$db{'username'},$db{'password'},{'RaiseError' => 1});
+my $sth;
+
+# get all registry entries with url_data set, data_source_pull = true, and no download status
+$sth = $dbh->prepare("SELECT registry_id,dataset_udi,url_data
+                      FROM registry r
+                      INNER JOIN (
+                                  SELECT MAX(registry_id) AS MaxID
+                                  FROM registry
+                                  GROUP BY substr(registry_id,1,16)
+                                 ) m
+                      ON r.registry_id = m.MaxID
+                      WHERE
+                          substr(registry_id,1,2) != '00' AND
+                          data_source_pull = 'true' AND
+                          dataset_download_status = 'no_status' AND
+                          url_data IS NOT NULL AND
+                          url_data != ''
+                      ORDER BY dataset_udi");
+$sth->execute();
+
+my (%data_remote, %data_unknown, %data_missing);
+
+print "Data\n";
+
+# loop through all entries that need processing for data
+while (my $r = $sth->fetchrow_hashref()) {
+
+    my $udi = $r->{'dataset_udi'};
+    my $reg_id = $r->{'registry_id'};
+    my $url_data = $r->{'url_data'};
+
+    # check if url is remote
+    if ($url_data =~ /^(http|ftp):\/\//) {
+        $data_remote{$reg_id} = $url_data;
+        next;
+    }
+
+    # check if url is some unknown protocol (anything other than file://)
+    if ($url_data !~ /^file:\/\//) {
+        $data_unknown{$reg_id} = $url_data;
+        next;
+    }
+
+    # get filepath from url
+    my $filepath = $url_data;
+    $filepath =~ s/^file:\/\///;
+
+    # check if file exists
+    if (! -f $filepath) {
+        $data_missing{$reg_id} = $url_data;
+        next;
+    }
+
+    print "$reg_id - $url_data\n";
+
+}
+
+
+# get all registry entries with url_metadata set, and no metadata download status
+$sth = $dbh->prepare("SELECT registry_id,dataset_udi,url_metadata
+                      FROM registry r
+                      INNER JOIN (
+                                  SELECT MAX(registry_id) AS MaxID
+                                  FROM registry
+                                  GROUP BY substr(registry_id,1,16)
+                                 ) m
+                      ON r.registry_id = m.MaxID
+                      WHERE
+                          metadata_dl_status = 'None' AND
+                          url_metadata IS NOT NULL AND
+                          url_metadata != ''
+                      ORDER BY dataset_udi");
+$sth->execute();
+
+my (%md_remote, %md_unknown, %md_missing);
+
+print "\nMetadata\n";
+
+# loop through all entries that need processing for metadata
+while (my $r = $sth->fetchrow_hashref()) {
+
+    my $udi = $r->{'dataset_udi'};
+    my $reg_id = $r->{'registry_id'};
+    my $url_metadata = $r->{'url_metadata'};
+
+    # check if url is remote
+    if ($url_metadata =~ /^(http|ftp):\/\//) {
+        $md_remote{$reg_id} = $url_metadata;
+        next;
+    }
+
+    # check if url is some unknown protocol (anything other than file://)
+    if ($url_metadata !~ /^file:\/\//) {
+        $md_unknown{$reg_id} = $url_metadata;
+        next;
+    }
+
+    # get filepath from url
+    my $filepath = $url_metadata;
+    $filepath =~ s/^file:\/\///;
+
+    # check if file exists
+    if (! -f $filepath) {
+        $md_missing{$reg_id} = $url_metadata;
+        next;
+    }
+
+    print "$reg_id - $url_metadata\n";
+
+}
+
+$dbh->disconnect();
+
+print "\nData\n";
+
+print "Remote:\n";
+for my $reg_id (sort(keys(%data_remote))) {
+    print "$reg_id - $data_remote{$reg_id}\n";
+}
+
+print "Unknown:\n";
+for my $reg_id (sort(keys(%data_unknown))) {
+    print "$reg_id - $data_unknown{$reg_id}\n";
+}
+
+print "Missing:\n";
+for my $reg_id (sort(keys(%data_missing))) {
+    print "$reg_id - $data_missing{$reg_id}\n";
+}
+
+print "\nMetadata\n";
+
+print "Remote:\n";
+for my $reg_id (sort(keys(%md_remote))) {
+    print "$reg_id - $md_remote{$reg_id}\n";
+}
+
+print "Unknown:\n";
+for my $reg_id (sort(keys(%md_unknown))) {
+    print "$reg_id - $md_unknown{$reg_id}\n";
+}
+
+print "Missing:\n";
+for my $reg_id (sort(keys(%md_missing))) {
+    print "$reg_id - $md_missing{$reg_id}\n";
+}
