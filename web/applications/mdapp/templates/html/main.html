@@ -45,13 +45,13 @@
                     <!-- MAX_FILE_SIZE must precede the file input field -->
                     <input type="hidden" name="MAX_FILE_SIZE" value="60000" />
                     <!-- Name of input element determines name in $_FILES array -->
-                    <input name="newMetadataFile" type="file" />
+                    <input name="newMetadataFile" type="file" style="width:100%" />
                     <hr width=40% align=left>
                     <div>
                         <input type="checkbox" name="approveMetadata">Approve Metadata<br />
                         <input type="checkbox" name="contactOwner">Notify data manager of approval<br />
                         <input type="checkbox" name="overrideGML">Override GML with the following<br />
-                        <textarea name=GMLOverride cols=60 rows=2></textarea>
+                        <textarea name=GMLOverride cols=60 rows=4></textarea>
                         <p>options only performed on successful upload</p>
                     </div>
                     <hr width=40% align=left>

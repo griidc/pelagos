@@ -271,6 +271,15 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
         if ($geo = $xml->xpath('/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:geographicElement[1]/gmd:EX_BoundingPolygon[1]/gmd:polygon[1]/gml:Polygon[1]')) {
             // Polygon - Ideally this is case
             $geoflag='yes';
+            $xpathdoc = new DOMXpath($doc);
+            $searchXpath = "/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:geographicElement[1]/gmd:EX_BoundingPolygon[1]/gmd:polygon[1]/gml:Polygon[1]";
+            $elements = $xpathdoc->query($searchXpath);
+            // assuming the following attribute...  ;-)
+            $node = $elements->item(0);
+            $node->setAttribute('gml:id',"Polygon");
+            $node->setAttribute('srsName',"urn:ogc:def:crs:EPSG::4326");
+            $xml_save=$doc->saveXML(); 
+
         } elseif ($geo = $xml->xpath('/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:geographicElement[1]/gmd:EX_GeographicBoundingBox')) {
             // If metadata has a bounding box, convert it to a polygon.
             $coords=array();
