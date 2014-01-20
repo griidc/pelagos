@@ -3,7 +3,10 @@
 use strict;
 use Config::PHPINI;
 use DBI;
+use Mail::Sendmail;
 use File::Copy;
+
+my $config = Config::PHPINI->read('/etc/griidc/filer.ini');
 
 my $types = Config::PHPINI->read('/etc/griidc/filetypes.ini');
 
@@ -44,7 +47,7 @@ while (my $r = $sth->fetchrow_hashref()) {
     my $url_data = $r->{'url_data'};
 
     # check if url is remote
-    if ($url_data =~ /^(http|ftp):\/\//) {
+    if ($url_data =~ /^(https?|ftp):\/\//) {
         $data_remote{$reg_id} = $url_data;
         next;
     }
@@ -80,6 +83,7 @@ $sth = $dbh->prepare("SELECT registry_id,dataset_udi,url_metadata
                                  ) m
                       ON r.registry_id = m.MaxID
                       WHERE
+                          substr(registry_id,1,2) != '00' AND
                           metadata_dl_status = 'None' AND
                           url_metadata IS NOT NULL AND
                           url_metadata != ''
@@ -98,7 +102,7 @@ while (my $r = $sth->fetchrow_hashref()) {
     my $url_metadata = $r->{'url_metadata'};
 
     # check if url is remote
-    if ($url_metadata =~ /^(http|ftp):\/\//) {
+    if ($url_metadata =~ /^(https?|ftp):\/\//) {
         $md_remote{$reg_id} = $url_metadata;
         next;
     }
@@ -125,36 +129,65 @@ while (my $r = $sth->fetchrow_hashref()) {
 
 $dbh->disconnect();
 
-print "\nData\n";
+for my $email (keys %{$config->{'notifications'}}) {
+    my @types = split /[, ]/, $config->{'notifications'}->{$email};
+    my $msg;
 
-print "Remote:\n";
-for my $reg_id (sort(keys(%data_remote))) {
-    print "$reg_id - $data_remote{$reg_id}\n";
-}
+    my %mail = ( To      => $email,
+                 From    => 'GRIIDC Filer <filer@poseidon.tamucc.edu>',
+                 Subject => "Filer Summary",
+                 Message => '',
+                 'content-type' => 'text/plain; charset="iso-8859-1"'
+               );
 
-print "Unknown:\n";
-for my $reg_id (sort(keys(%data_unknown))) {
-    print "$reg_id - $data_unknown{$reg_id}\n";
-}
+    for my $type (@types) {
+        if ($type eq 'remote') {
+            if (%data_remote) {
+                $mail{'Message'} .= "\nRemote Data Files:\n\n";
+                for my $reg_id (sort(keys(%data_remote))) {
+                    $mail{'Message'} .= "$reg_id $data_remote{$reg_id}\n";
+                }
+            }
+            if (%md_remote) {
+                $mail{'Message'} .= "\nRemote Metadata Files:\n\n";
+                for my $reg_id (sort(keys(%md_remote))) {
+                    $mail{'Message'} .= "$reg_id $md_remote{$reg_id}\n";
+                }
+            }
+        }
+        if ($type eq 'unknown') {
+            if (%data_unknown) {
+                $mail{'Message'} .= "\nUnknown Protocol (Data Files):\n\n";
+                for my $reg_id (sort(keys(%data_unknown))) {
+                    $mail{'Message'} .= "$reg_id $data_unknown{$reg_id}\n";
+                }
+            }
+            if (%md_unknown) {
+                $mail{'Message'} .= "\nUnknown Protocol (Metadata Files):\n\n";
+                for my $reg_id (sort(keys(%md_unknown))) {
+                    $mail{'Message'} .= "$reg_id $md_unknown{$reg_id}\n";
+                }
+            }
+        }
+        if ($type eq 'missing') {
+            if (%data_missing) {
+                $mail{'Message'} .= "\nMissing Data Files:\n\n";
+                for my $reg_id (sort(keys(%data_missing))) {
+                    $mail{'Message'} .= "$reg_id $data_missing{$reg_id}\n";
+                }
+            }
+            if (%md_missing) {
+                $mail{'Message'} .= "\nMissing Metadata Files:\n\n";
+                for my $reg_id (sort(keys(%md_missing))) {
+                    $mail{'Message'} .= "$reg_id $md_missing{$reg_id}\n";
+                }
+            }
+        }
+    }
 
-print "Missing:\n";
-for my $reg_id (sort(keys(%data_missing))) {
-    print "$reg_id - $data_missing{$reg_id}\n";
-}
-
-print "\nMetadata\n";
-
-print "Remote:\n";
-for my $reg_id (sort(keys(%md_remote))) {
-    print "$reg_id - $md_remote{$reg_id}\n";
-}
-
-print "Unknown:\n";
-for my $reg_id (sort(keys(%md_unknown))) {
-    print "$reg_id - $md_unknown{$reg_id}\n";
-}
-
-print "Missing:\n";
-for my $reg_id (sort(keys(%md_missing))) {
-    print "$reg_id - $md_missing{$reg_id}\n";
+    if (length $mail{'Message'}) {
+        my $subject = "Filer Summary";
+        $mail{'Message'} = "Filer Summary\n$mail{Message}";
+        sendmail(%mail) or die $Mail::Sendmail::error;
+    }
 }
