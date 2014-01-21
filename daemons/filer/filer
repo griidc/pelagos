@@ -75,6 +75,13 @@ while (my $r = $sth->fetchrow_hashref()) {
     copy($filepath,"$config->{paths}->{data_store}/$udi/$udi.dat") or die "Error: could not copy file ($!)\n";
     $data_filed{$reg_id} = "$config->{paths}->{data_store}/$udi/$udi.dat";
 
+    # update dataset_filename (original filename), dataset_download_size, and dataset_download_status
+    my $filename = $url_data;
+    $filename =~ s/.*\///;
+    my $filesize = -s "$config->{paths}->{data_store}/$udi/$udi.dat";
+    my $sth2 = $dbh->prepare("UPDATE registry SET dataset_filename = ?, dataset_download_size = ?, dataset_download_status = ? WHERE registry_id = ?;");
+    $sth2->execute($filename,$filesize,'done',$reg_id) or die "Couldn't execute statement: " . $sth->errstr;
+
 }
 
 
@@ -134,6 +141,12 @@ while (my $r = $sth->fetchrow_hashref()) {
     # copy metadata file to data store
     copy($filepath,"$config->{paths}->{data_store}/$udi/$udi.met") or die "Error: could not copy file ($!)\n";
     $md_filed{$reg_id} = "$config->{paths}->{data_store}/$udi/$udi.met";
+
+    # update dataset_metadata (original filename), metadata_dl_status, and metadata_status
+    my $filename = $url_metadata;
+    $filename =~ s/.*\///;
+    my $sth2 = $dbh->prepare("UPDATE registry SET dataset_metadata = ?, metadata_dl_status = ?, metadata_status = ? WHERE registry_id = ?;");
+    $sth2->execute($filename,'Completed','Submitted',$reg_id) or die "Couldn't execute statement: " . $sth->errstr;
 
 }
 
