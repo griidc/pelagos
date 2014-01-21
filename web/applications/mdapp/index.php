@@ -24,8 +24,6 @@ require_once '/usr/local/share/GRIIDC/php/rpis.php';
 require_once '/usr/local/share/GRIIDC/php/datasets.php';
 # misc utilities and stuff...
 require_once '/usr/local/share/GRIIDC/php/utils.php';
-# local functions for data-discovery module
-require_once 'lib/search.php';
 # LDAP functionality
 require_once '/usr/local/share/GRIIDC/php/ldap.php';
 
@@ -72,10 +70,10 @@ $app->get('/', function () use ($app) {
 // Download from file on disk - probably going away
 $app->get('/download-metadata/:udi', function ($udi) use ($app) {
     if (preg_match('/^00/',$udi)) {
-        $datasets = get_registered_datasets(getDBH('GOMRI'),array("registry_id=$udi%"));
+        $datasets = get_registered_datasets(OpenDB('GOMRI_RO'),array("registry_id=$udi%"));
     }
     else {
-        $datasets = get_identified_datasets(getDBH('GOMRI'),array("udi=$udi"));
+        $datasets = get_identified_datasets(OpenDB('GOMRI_RO'),array("udi=$udi"));
     }
     $dataset = $datasets[0]; 
     $met_file = "/sftp/data/$dataset[udi]/$dataset[udi].met";
