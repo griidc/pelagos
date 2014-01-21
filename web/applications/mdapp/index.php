@@ -665,21 +665,54 @@ function GetMetadata($type) {
     $type=strtolower($type);
     switch($type) {
         case "accepted":
-            $sql = "SELECT metadata_status, url_metadata, dataset_udi, dataset_metadata, (metadata_xml is not null) as hasxml
-                    FROM curr_reg_view left join metadata
-                    ON curr_reg_view.registry_id = metadata.registry_id 
-                    where metadata_status = 'Accepted' 
-                    and metadata_dl_status = 'Completed'
-                    order by curr_reg_view.registry_id";
+            $sql = "SELECT 
+                        metadata_status, 
+                        url_metadata, 
+                        dataset_udi, 
+                        coalesce(trim(trailing '}' from trim(leading '{' from cast(
+                            xpath('/gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1]/text()',metadata_xml,
+                                ARRAY[
+                                    ARRAY['gmi', 'http://www.isotc211.org/2005/gmi'],
+                                    ARRAY['gmd', 'http://www.isotc211.org/2005/gmd'],
+                                    ARRAY['gco', 'http://www.isotc211.org/2005/gco']
+                                ]
+                            ) as character varying ))), dataset_metadata 
+                        ) as dataset_metadata,
+                        (metadata_xml is not null) as hasxml
+                    FROM 
+                        curr_reg_view left join metadata
+                        ON curr_reg_view.registry_id = metadata.registry_id 
+                    WHERE 
+                        metadata_status = 'Accepted' 
+                    AND 
+                        metadata_dl_status = 'Completed'
+                    ORDER BY 
+                        curr_reg_view.registry_id";
             break;
         case "submitted":
-            #$sql = "SELECT metadata_status, url_metadata, dataset_udi, dataset_metadata
-            $sql = "SELECT metadata_status, url_metadata, dataset_udi, dataset_metadata, (metadata_xml is not null) as hasxml
-                    FROM curr_reg_view left join metadata
-                    ON curr_reg_view.registry_id = metadata.registry_id 
-                    where metadata_status = 'Submitted' 
-                    and metadata_dl_status = 'Completed'
-                    order by curr_reg_view.registry_id";
+            $sql = "SELECT 
+                        metadata_status, 
+                        url_metadata, 
+                        dataset_udi, 
+                        coalesce(trim(trailing '}' from trim(leading '{' from cast(
+                            xpath('/gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1]/text()',metadata_xml,
+                                ARRAY[
+                                    ARRAY['gmi', 'http://www.isotc211.org/2005/gmi'],
+                                    ARRAY['gmd', 'http://www.isotc211.org/2005/gmd'],
+                                    ARRAY['gco', 'http://www.isotc211.org/2005/gco']
+                                ]
+                            ) as character varying ))), dataset_metadata 
+                        ) as dataset_metadata,
+                        (metadata_xml is not null) as hasxml
+                    FROM 
+                        curr_reg_view left join metadata
+                        ON curr_reg_view.registry_id = metadata.registry_id 
+                    WHERE 
+                        metadata_status = 'Submitted' 
+                    AND 
+                        metadata_dl_status = 'Completed'
+                    ORDER BY 
+                        curr_reg_view.registry_id";
             break;
     }
     if(isset($sql)) {       
