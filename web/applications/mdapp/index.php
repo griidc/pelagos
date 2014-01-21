@@ -180,6 +180,7 @@ $app->get('/download-metadata-db/:udi', function ($udi) use ($app) {
 
 $app->post('/upload-new-metadata-file', function () use ($app) {
     global $user;
+    $geoflag='no';
     $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
     $env = $app->environment();
     $baseUrl = "$protocol$env[SERVER_NAME]/$GLOBALS[PAGE_NAME]";
@@ -236,6 +237,14 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
    
         // also load as simplxml object for quick xpath tests
         $xml = simplexml_import_dom($doc);
+        
+        // Check for description field, save if found
+        $extent_description=null;
+        $check_desc_xpath = "/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:description[1]/gco:CharacterString[1]";
+        $check_desc = $xml->xpath($check_desc_xpath);
+        foreach ($check_desc as $node) { // only 1 possible 
+            $extent_description=$node;
+        }
         
         // Check to see if filename matches existing UDI.
         if(!checkForUDI($udi)) {
@@ -295,6 +304,7 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
             throw new RuntimeException("GRIIDC XML check failed: XML time period description needs to indicate 'ground condition' xor 'modeled period'");
         }
 */
+        
 
         // Determine geometry type
         if ($geo = $xml->xpath('/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:geographicElement[1]/gmd:EX_BoundingPolygon[1]/gmd:polygon[1]/gml:Polygon[1]')) {
@@ -461,18 +471,46 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                 
             // insert (or update) data in metadata table
             $sql = '';
-            if ($has_metadata_in_db) {
-                $sql = "update metadata set metadata_xml=?, geom=?where  registry_id = ?";
+            if ($geoflag == 'yes') {
+                if ($has_metadata_in_db) {
+                    $sql = "update metadata set metadata_xml=?, geom=? where  registry_id = ?";
+                } else {
+                    $sql = "insert into metadata ( metadata_xml, geom, registry_id ) values (?,?,?)";
+                }
+                $data3 = $dbms->prepare($sql);
+                if(!$data3->execute(array($tidy,$geometry,$reg_id,))) {
+                    $err=$data3->errorInfo();
+                    $err_str=$err[2];
+                    throw new RuntimeException("Error saving to database: $err_str (p2=$geometry)");
+                }
             } else {
-                $sql = "insert into metadata ( metadata_xml, geom, registry_id ) values (?,?,?)";
+                if ($has_metadata_in_db) {
+                    $sql = "update metadata set metadata_xml=? where  registry_id = ?";
+                } else {
+                    $sql = "insert into metadata ( metadata_xml, registry_id ) values (?,?)";
+                }
+                $data3 = $dbms->prepare($sql);
+                if(!$data3->execute(array($tidy,$reg_id,))) {
+                    $err=$data3->errorInfo();
+                    $err_str=$err[2];
+                    throw new RuntimeException("Error saving to database: $err_str");
+                }
             }
-            $data3 = $dbms->prepare($sql);
-            if(!$data3->execute(array($tidy,$geometry,$reg_id,))) {
-                $err=$data3->errorInfo();
-                $err_str=$err[2];
-                throw new RuntimeException("Error saving to database: $err_str (p2=$geometry)");
+
+            // check for description, if exists, insert into metadata table as well.
+            if($extent_description) {
+                $sql = "update metadata set extent_description = ? where registry_id = ?";
+                // this is an update only because the preceeding block guarantees
+                // that an entry exists in the metadata table.
+                $data4 = $dbms->prepare($sql);
+                if(!$data4->execute(array($extent_description,$reg_id,))) {
+                    $err=$data4->errorInfo();
+                    $err_str=$err[2];
+                    throw new RuntimeException("Error saving extent description to database: $err_str");
+                }
+                drupal_set_message("An extent description found and stored.",'status');
             }
-            
+ 
             // update approved flag, if selected
             $flagged_accepted=false;
             $sql = '';

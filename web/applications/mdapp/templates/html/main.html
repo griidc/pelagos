@@ -34,9 +34,9 @@
                         <tr>
                             <td valign="top"><a href="{{pagelessBaseUrl}}/data/{{dta.dataset_udi}}" target="0" >{{dta.dataset_udi}}</a></td>
                             {% if sname == 'accepted' %}
-                            <td valign="top"><a href="{{baseUrl}}/un-accept/{{dta.dataset_udi}}" target="0" >⯮</a></td>
+                            <td valign="top"><a href="{{baseUrl}}/un-accept/{{dta.dataset_udi}}" target="0" >U</a></td>
                             {% else %}
-                            <td valign="top"><a href="{{baseUrl}}/accept/{{dta.dataset_udi}}" target="0" >⯳</a></td>
+                            <td valign="top"><a href="{{baseUrl}}/accept/{{dta.dataset_udi}}" target="0" >A</a></td>
                             {% endif %}
                             <td valign="top"><a href="{{baseUrl}}/download-metadata/{{dta.dataset_udi}}"><img src="{{baseUrl}}/includes/images/download.png"></a>&nbsp;{% if dta.hasxml == true %}<a href="{{baseUrl}}/download-metadata-db/{{dta.dataset_udi}}"><img src="{{baseUrl}}/includes/images/download-from-db.png"></a>&nbsp;{% endif %}{{dta.dataset_metadata}}</td>
                         </tr>
