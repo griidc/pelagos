@@ -631,7 +631,7 @@ function GetMetadata($type) {
                     FROM curr_reg_view left join metadata
                     ON curr_reg_view.registry_id = metadata.registry_id 
                     where metadata_status = 'Accepted' 
-                    and url_metadata like '/sftp/data/%.met' 
+                    and metadata_dl_status = 'Completed'
                     order by curr_reg_view.registry_id";
             break;
         case "submitted":
@@ -640,7 +640,7 @@ function GetMetadata($type) {
                     FROM curr_reg_view left join metadata
                     ON curr_reg_view.registry_id = metadata.registry_id 
                     where metadata_status = 'Submitted' 
-                    and url_metadata like '/sftp/data/%.met' 
+                    and metadata_dl_status = 'Completed'
                     order by curr_reg_view.registry_id";
             break;
     }
