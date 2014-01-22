@@ -2,14 +2,14 @@
 
     <ul>
         {% if m_dataset.accepted %}
-            <li style="text-align:center"><a href="#accepted">({{ m_dataset.accepted|length }}) Accepted</a></li>
+            <li style="text-align:center"><a href="#accepted" onClick="clearStatusMessages()" >({{ m_dataset.accepted|length }}) Accepted</a></li>
         {% endif %}
 
         {% if m_dataset.submitted %}
-            <li style="text-align:center"><a href="#submitted">({{ m_dataset.submitted|length }}) Submitted</a></li>
+            <li style="text-align:center"><a href="#submitted" onClick="clearStatusMessages()">({{ m_dataset.submitted|length }}) Submitted</a></li>
         {% endif %}
 
-            <li style="text-align:center"><a href="#uploadnewmetadata">Upload New Metadata</a></li>
+            <li style="text-align:center"><a href="#uploadnewmetadata" onClick="clearStatusMessages()">Upload New Metadata</a></li>
             <li style="text-align:center"><a href="#GeoTester">Test a Geometry</a></li>
     </ul>
 
@@ -71,13 +71,10 @@
             </div>
         </div>
         <div id="GeoTester">
-            <p>
-                <button class="clearStatusMessages" onClick="clearStatusMessages()">Clear Status Messages</button>
-            </p>
             <form action="{{baseUrl}}/TestGeometry" method="POST">
             Polygon as (latitude,longitude) tuples separated by single space, no line breaks, clockwise, first point repeated as last point<br />
-            <textarea name="testPolygon" style="width:100%" rows="4">{{testPolygon}}</textarea><br />
-            <input type="submit" value="Test This Geometry" /><br />
+            <textarea name="testPolygon" style="width:100%" rows="4" id="testGeometry">{{testPolygon}}</textarea><br />
+            <input type="submit" value="Test This Geometry" />&nbsp; <button type="button" onClick="clearTestGeometry()">Clear This Geometery</button>
             </form>
         </div>
 

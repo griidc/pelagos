@@ -5,6 +5,10 @@ $(document).ready(function() {
 });
 
 function clearStatusMessages() {
-    $( "#messages" ).fadeOut( "slow", function() {
+    $( "#messages" ).fadeOut( "fast", function() {
     });
+}
+
+function clearTestGeometry() {
+    document.getElementById("testGeometry").value = "";
 }
