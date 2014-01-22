@@ -411,6 +411,7 @@ $app->get('/package/download/:udis', function ($udis) use ($app) {
 });
 
 $app->get('/metadata/:udi', function ($udi) use ($app) {
+    /*
     if (preg_match('/^00/',$udi)) {
         $datasets = get_registered_datasets(getDBH('GOMRI'),array("registry_id=$udi%"));
     }
@@ -433,6 +434,55 @@ $app->get('/metadata/:udi', function ($udi) use ($app) {
     }
     else {
         drupal_set_message("Error retrieving metadata file: file not found: $met_file",'error');
+    }
+    */
+    # This SQL uses a subselect to resolve the newest registry_id
+    # associated with the passed in UDI.
+    $sql = "
+    select 
+        metadata_xml, 
+        coalesce(
+            cast(
+                xpath('/gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1]/text()',metadata_xml,
+                    ARRAY[
+                    ARRAY['gmi', 'http://www.isotc211.org/2005/gmi'],
+                    ARRAY['gmd', 'http://www.isotc211.org/2005/gmd'],
+                    ARRAY['gco', 'http://www.isotc211.org/2005/gco']
+                    ]
+                ) as character varying
+            ), 
+            dataset_metadata
+        ) 
+
+    as filename  
+    FROM metadata left join registry on registry.registry_id = metadata.registry_id
+    WHERE 
+        metadata.registry_id = (   select registry_id 
+                                    from curr_reg_view 
+                                    where dataset_udi = ?
+                                )";
+
+    $dbms = OpenDB("GOMRI_RO");
+    $data = $dbms->prepare($sql);
+    $data->execute(array($udi));
+    $raw_data = $data->fetch();
+    if ($raw_data) {
+        # the following line is probably better done in SQL, so this will be changed in the near future
+        $filename = preg_replace(array('/{/','/}/'),array('',''),$raw_data['filename']);
+        $filename = preg_replace("/:/",'-',$filename);
+        header($_SERVER["SERVER_PROTOCOL"] . " 200 OK");
+        header("Cache-Control: public"); // needed for i.e.
+        header("Content-Type: text/xml");
+        header("Content-Transfer-Encoding: Binary");
+        header("Content-Length:" . strlen($raw_data['metadata_xml']));
+        header("Content-Disposition: attachment; filename=$filename");
+        ob_clean();
+        flush();
+        print $raw_data['metadata_xml'];
+        exit;
+    } else {
+        drupal_set_message("Error retrieving metadata from database.",'error');
+        drupal_goto($GLOBALS['PAGE_NAME']); # reload calling page (is there a better way to do this?)
     }
 });
 
