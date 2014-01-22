@@ -5,6 +5,7 @@ use Config::PHPINI;
 use DBI;
 use Mail::Sendmail;
 use File::Copy;
+use Net::LDAP;
 
 my $config = Config::PHPINI->read('/etc/griidc/filer.ini');
 
@@ -14,11 +15,13 @@ my $db_conf = Config::PHPINI->read('/etc/griidc/db.ini');
 my %dbi_type_map = ('postgresql' => 'Pg');
 my %db = %{$db_conf->{'GOMRI_RW'}};
 
+my %notify;
+
 my $dbh = DBI->connect("DBI:$dbi_type_map{$db{type}}:host=$db{host};port=$db{port};dbname=$db{dbname};",$db{'username'},$db{'password'},{'RaiseError' => 1});
 my $sth;
 
 # get all registry entries with url_data set, data_source_pull = true, and no download status
-$sth = $dbh->prepare("SELECT registry_id,dataset_udi,url_data
+$sth = $dbh->prepare("SELECT registry_id, dataset_udi, url_data, userid, dataset_title
                       FROM registry r
                       INNER JOIN (
                                   SELECT MAX(registry_id) AS MaxID
@@ -80,13 +83,17 @@ while (my $r = $sth->fetchrow_hashref()) {
     $filename =~ s/.*\///;
     my $filesize = -s "$config->{paths}->{data_store}/$udi/$udi.dat";
     my $sth2 = $dbh->prepare("UPDATE registry SET dataset_filename = ?, dataset_download_size = ?, dataset_download_status = ? WHERE registry_id = ?;");
-    $sth2->execute($filename,$filesize,'done',$reg_id) or die "Couldn't execute statement: " . $sth->errstr;
+    $sth2->execute($filename,$filesize,'done',$reg_id) or die "Couldn't execute statement: " . $sth2->errstr;
+
+    # set parameters for submitter notification
+    $notify{$r->{'userid'}}->{'data'} = [] unless exists $notify{$r->{'userid'}}->{'data'};
+    push(@{$notify{$r->{'userid'}}->{'data'}}, { udi => $udi, title => $r->{'dataset_title'}, filename => $filename });
 
 }
 
 
 # get all registry entries with url_metadata set, and no metadata download status
-$sth = $dbh->prepare("SELECT registry_id,dataset_udi,url_metadata
+$sth = $dbh->prepare("SELECT registry_id, dataset_udi, url_metadata, userid, dataset_title
                       FROM registry r
                       INNER JOIN (
                                   SELECT MAX(registry_id) AS MaxID
@@ -146,12 +153,159 @@ while (my $r = $sth->fetchrow_hashref()) {
     my $filename = $url_metadata;
     $filename =~ s/.*\///;
     my $sth2 = $dbh->prepare("UPDATE registry SET dataset_metadata = ?, metadata_dl_status = ?, metadata_status = ? WHERE registry_id = ?;");
-    $sth2->execute($filename,'Completed','Submitted',$reg_id) or die "Couldn't execute statement: " . $sth->errstr;
+    $sth2->execute($filename,'Completed','Submitted',$reg_id) or die "Couldn't execute statement: " . $sth2->errstr;
+
+    # set parameters for submitter notification
+    $notify{$r->{'userid'}}->{'metadata'} = [] unless exists $notify{$r->{'userid'}}->{'metadata'};
+    push(@{$notify{$r->{'userid'}}->{'metadata'}}, { udi => $udi, title => $r->{'dataset_title'}, filename => $filename });
 
 }
 
 $dbh->disconnect();
 
+my $ldap = Net::LDAP->new('triton.tamucc.edu') or die "$@";
+
+my $mesg = $ldap->bind;
+
+my $table_style = 'border-collapse: collapse;';
+my $th_style = 'padding: 3px; text-align: center;';
+my $td_style = 'border: 1px solid black; padding: 3px; vertical-align: top;';
+
+# notify submitters (FILER-5 and FILER-8)
+for my $uid (keys %notify) {
+
+    $mesg = $ldap->search(
+          base => "ou=members,ou=people,dc=griidc,dc=org",
+        filter => "(uid=$uid)",
+         attrs => ['mail','cn']
+    );
+
+    $mesg->code && die $mesg->error;
+
+    my ($email,$cn);
+
+    if ($mesg->entries) {
+        my @entries = $mesg->entries;
+        $email = $entries[0]->get_value('mail');
+        $cn = $entries[0]->get_value('cn');
+    }
+
+    next unless $email;
+
+    my %mail = (      To => $email,
+                    From => 'GRIIDC <griidc@gomri.org>',
+                 Subject => 'GRIIDC Registration Summary',
+                 Message => '',
+                 'content-type' => 'text/html; charset="iso-8859-1"'
+               );
+
+    $mail{'To'} = "$cn <$email>" if $cn;
+
+    $mail{'Message'} .= "<p>Dear $cn,</p>\n" if $cn;
+
+    $mail{'Message'} .= "<p>Thank you for registering your";
+
+    if (exists $notify{$uid}->{'data'}) {
+        if (@{$notify{$uid}->{'data'}} > 1) {
+            $mail{'Message'} .= ' datasets';
+        }
+        else {
+            $mail{'Message'} .= ' dataset';
+        }
+        $mail{'Message'} .= ' and' if exists $notify{$uid}->{'metadata'};
+    }
+
+    if (exists $notify{$uid}->{'metadata'}) {
+        $mail{'Message'} .= ' metadata';
+    }
+
+    $mail{'Message'} .= " with the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC).</p>",
+
+    $mail{'Message'} .= "\n\n<table style='$table_style'>";
+
+    # notify submitter about processed data files
+    if (exists $notify{$uid}->{'data'}) {
+        $mail{'Message'} .= "\n    <tr>";
+        $mail{'Message'} .= "\n        <td colspan='4' style='border:none; padding-bottom: 0.5em;'>The following";
+        if (@{$notify{$uid}->{'data'}} > 1) {
+            $mail{'Message'} .= ' datasets have';
+        }
+        else {
+            $mail{'Message'} .= ' dataset has';
+        }
+        $mail{'Message'} .= " been processed and can now be viewed:</td>";
+        $mail{'Message'} .= "\n    </tr>";
+        $mail{'Message'} .= "\n    <tr>";
+        $mail{'Message'} .= "\n        <th style='$th_style width: 400px;'>Dataset Title</th>";
+        $mail{'Message'} .= "\n        <th style='$th_style'>Dataset Filename</th>";
+        $mail{'Message'} .= "\n        <th style='$th_style'>UDI</th>";
+        $mail{'Message'} .= "\n        <th style='$th_style'>Link</th>";
+        $mail{'Message'} .= "\n    </tr>";
+        for my $ds (@{$notify{$uid}->{'data'}}) {
+            $mail{'Message'} .= "\n    <tr>";
+            $mail{'Message'} .= "\n        <td style='$td_style width: 400px;'>$ds->{title}</td>";
+            $mail{'Message'} .= "\n        <td style='$td_style'>$ds->{filename}</td>";
+            $mail{'Message'} .= "\n        <td style='$td_style'>$ds->{udi}</td>";
+            $mail{'Message'} .= "\n        <td style='$td_style'><a href='https://data.gulfresearchinitiative.org/data/$ds->{udi}'>https://data.gulfresearchinitiative.org/data/$ds->{udi}</a></td>";
+            $mail{'Message'} .= "\n    </tr>";
+        }
+    }
+
+    # notify submitter about processed metadata files
+    if (exists $notify{$uid}->{'metadata'}) {
+        $mail{'Message'} .= "\n    <tr>";
+        $mail{'Message'} .= "\n        <td colspan='4' style='border:none; padding-top: 1.5em; padding-bottom: 0.5em;'>The following";
+        if (@{$notify{$uid}->{'metadata'}} > 1) {
+            $mail{'Message'} .= ' metadata records have';
+        }
+        else {
+            $mail{'Message'} .= ' metadata record has';
+        }
+        $mail{'Message'} .= " been processed and can now be viewed:</td>";
+        $mail{'Message'} .= "\n    </tr>";
+        $mail{'Message'} .= "\n    <tr>";
+        $mail{'Message'} .= "\n        <th style='$th_style width: 400px;'>Dataset Title</th>";
+        $mail{'Message'} .= "\n        <th style='$th_style'>Metadata Filename</th>";
+        $mail{'Message'} .= "\n        <th style='$th_style'>UDI</th>";
+        $mail{'Message'} .= "\n        <th style='$th_style'>Link</th>";
+        $mail{'Message'} .= "\n    </tr>";
+        for my $ds (@{$notify{$uid}->{'metadata'}}) {
+            $mail{'Message'} .= "\n    <tr>";
+            $mail{'Message'} .= "\n        <td style='$td_style width: 400px;'>$ds->{title}</td>";
+            $mail{'Message'} .= "\n        <td style='$td_style'>$ds->{filename}</td>";
+            $mail{'Message'} .= "\n        <td style='$td_style'>$ds->{udi}</td>";
+            $mail{'Message'} .= "\n        <td style='$td_style'><a href='https://data.gulfresearchinitiative.org/data/$ds->{udi}'>https://data.gulfresearchinitiative.org/data/$ds->{udi}</a></td>";
+            $mail{'Message'} .= "\n    </tr>";
+        }
+        $mail{'Message'} .= "\n    <tr>";
+        $mail{'Message'} .= "\n        <td colspan='4' style='border:none; padding-top: 0.5em;'>";
+        if (@{$notify{$uid}->{'metadata'}} > 1) {
+            $mail{'Message'} .= 'These metadata records';
+        }
+        else {
+            $mail{'Message'} .= 'This metadata record';
+        }
+        $mail{'Message'} .= " will now go through the GRIIDC approval process and you will be notified once";
+        if (@{$notify{$uid}->{'metadata'}} > 1) {
+            $mail{'Message'} .= ' these records have';
+        }
+        else {
+            $mail{'Message'} .= ' this record has';
+        }
+        $mail{'Message'} .= " been approved.</td>";
+        $mail{'Message'} .= "\n    </tr>";
+    }
+
+    $mail{'Message'} .= "\n</table>";
+
+    $mail{'Message'} .= "\n\n<p>If you have any questions or concerns please contact GRIIDC at <a href='mailto:griidc\@gomri.org'>griidc\@gomri.org</a>.</p>";
+    $mail{'Message'} .= "\n\n<p>Thank you,<br>";
+    $mail{'Message'} .= "\nThe GRIIDC team</p>";
+
+    sendmail(%mail) or die $Mail::Sendmail::error;
+}
+
+# notify internal users
 for my $email (keys %{$config->{'notifications'}}) {
     my @types = split /[, ]/, $config->{'notifications'}->{$email};
     my $msg;
