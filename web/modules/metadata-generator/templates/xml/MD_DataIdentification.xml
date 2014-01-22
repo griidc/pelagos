@@ -44,11 +44,11 @@
                         <gmd:EX_BoundingPolygon>
                             <gmd:polygon>
                                 <gml:Polygon gml:id="Polygon">
-                                    <gml:interior>
+                                    <gml:exterior>
                                         <gml:LinearRing>
                                             <gml:coordinates>{{dataset.geo_location}}</gml:coordinates>
                                         </gml:LinearRing>
-                                    </gml:interior>
+                                    </gml:exterior>
                                 </gml:Polygon>
                             </gmd:polygon>
                         </gmd:EX_BoundingPolygon>
