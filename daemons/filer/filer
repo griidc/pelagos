@@ -6,6 +6,8 @@ use DBI;
 use Mail::Sendmail;
 use File::Copy;
 use Net::LDAP;
+use MIME::Lite;
+use MIME::Types qw(by_suffix);
 
 my $config = Config::PHPINI->read('/etc/griidc/filer.ini');
 
@@ -109,7 +111,7 @@ $sth = $dbh->prepare("SELECT registry_id, dataset_udi, url_metadata, userid, dat
                       ORDER BY dataset_udi");
 $sth->execute();
 
-my (%md_remote, %md_unknown, %md_missing, %md_filed);
+my (%md_remote, %md_unknown, %md_missing, %md_filed, @md_approve);
 
 # loop through all entries that need processing for metadata
 while (my $r = $sth->fetchrow_hashref()) {
@@ -158,6 +160,7 @@ while (my $r = $sth->fetchrow_hashref()) {
     # set parameters for submitter notification
     $notify{$r->{'userid'}}->{'metadata'} = [] unless exists $notify{$r->{'userid'}}->{'metadata'};
     push(@{$notify{$r->{'userid'}}->{'metadata'}}, { udi => $udi, title => $r->{'dataset_title'}, filename => $filename });
+    push(@md_approve, { udi => $udi, title => $r->{'dataset_title'}, filename => $filename });
 
 }
 
@@ -381,4 +384,66 @@ for my $email (keys %{$config->{'notifications'}}) {
         $mail{'Message'} = "Filer Summary\n$mail{Message}";
         sendmail(%mail) or die $Mail::Sendmail::error;
     }
+}
+
+# find all metadata reviewers
+$mesg = $ldap->search(
+      base => "ou=Metadata,ou=applications,dc=griidc,dc=org",
+    filter => "(cn=reviewers)",
+     attrs => ['member']
+);
+$mesg->code && die $mesg->error;
+my @members;
+if ($mesg->entries) {
+    my @entries = $mesg->entries;
+    @members = $entries[0]->get_value('member');
+}
+
+# get emails for all metadata reviewers
+my @md_approver_emails;
+for my $reviewer (@members) {
+    $mesg = $ldap->search(
+          base => $reviewer,
+        filter => '(objectClass=*)',
+         attrs => ['mail']
+    );
+    $mesg->code && die $mesg->error;
+    my $email;
+    if ($mesg->entries) {
+        my @entries = $mesg->entries;
+        $email = $entries[0]->get_value('mail');
+    }
+    push @md_approver_emails, $email if $email;
+}
+
+# send metadata to metadata approvers
+for my $md (@md_approve) {
+    my $msg = MIME::Lite->new(
+        From    => 'GRIIDC Filer <filer@poseidon.tamucc.edu>',
+        To      => join(',',@md_approver_emails),
+        Subject => "New metadata file for $md->{udi}",
+        Type    => 'multipart/mixed',
+    );
+
+    $msg->attach(
+        Type => 'TEXT',
+        Data => "A new metadata file for $md->{udi} has been submitted:
+
+Filename: $md->{filename}
+UDI: $md->{udi}
+
+The metadata file is attached."
+    );
+
+    my ($mime_type, $encoding) = by_suffix($md->{'filename'});
+
+    $mime_type = 'application/octet-stream' unless $mime_type;
+
+    $msg->attach(
+            Type => $mime_type,
+            Path => "$config->{paths}->{data_store}/$md->{udi}/$md->{udi}.met",
+        Filename => $md->{'filename'}
+    );
+
+    $msg->send;
 }
