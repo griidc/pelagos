@@ -64,6 +64,8 @@ $app->get('/', function () use ($app) {
     $stash['m_dataset']['accepted']    = GetMetadata('accepted');
     $stash['m_dataset']['submitted']   = GetMetadata('submitted');
     $stash['srvr'] = "https://$_SERVER[HTTP_HOST]";
+    # not sure why this does not work.
+    if(isset($GLOBALS['testPolygon'])) { $stash['testPolygon'] = $GLOBALS['testPolygon']; }
     return $app->render('html/main.html',$stash);
 });
 
@@ -122,6 +124,27 @@ $app->get('/accept/:udi', function ($udi) use ($app) {
     drupal_set_message($user->name." has approved metadata for $udi",'message');
     writeLog($user->name." has approved metadata for $udi");
     echo "<a href=../>Continue</a>";
+});
+
+// Test Geometry
+$app->post('/TestGeometry', function () use ($app) {
+    // attempt to have PostGIS validate any geometry, if found.
+    $coordinate_list = $app->request()->post('testPolygon');
+    $xml = "<gml:Polygon gml:id=\"Polygon\" srsName=\"urn:ogc:def:crs:EPSG::4326\"><gml:exterior><gml:LinearRing><gml:coordinates>$coordinate_list</gml:coordinates></gml:LinearRing></gml:exterior></gml:Polygon>";
+    $dbms = OpenDB("GOMRI_RO");
+    $sql="select ST_GeomFromGML('$xml', 4326) as geometry";
+    $data = $dbms->prepare($sql);
+    if ($data->execute()) {
+        drupal_set_message("Geometry verified by PostGIS as OK",'status');
+        $tmp=$data->fetchAll();
+        $geometry=$tmp[0]['geometry'];
+     } else {
+        $dbErr = $data->errorInfo();
+        drupal_set_message("Geometry supplied is not valid (PostGIS said: $dbErr[2] <br />SQL: $sql)",'error');
+      }
+    $GLOBALS['testPolygon'] = $_POST['testPolygon'];
+    $options['fragment']="GeoTester";
+    drupal_goto($GLOBALS['PAGE_NAME'].'/',$options,302); # reload calling page (is there a better way to do this?
 });
 
 // Download from XML in database
