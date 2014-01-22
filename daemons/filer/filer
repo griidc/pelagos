@@ -14,7 +14,7 @@ my $config = Config::PHPINI->read('/etc/griidc/filer.ini');
 my $types = Config::PHPINI->read('/etc/griidc/filetypes.ini');
 
 my $db_conf = Config::PHPINI->read('/etc/griidc/db.ini');
-my %dbi_type_map = ('postgresql' => 'Pg');
+my %dbi_type_map = ('postgresql' => 'Pg', 'mysql' => 'mysql');
 my %db = %{$db_conf->{'GOMRI_RW'}};
 
 my %notify;
@@ -416,8 +416,29 @@ for my $reviewer (@members) {
     push @md_approver_emails, $email if $email;
 }
 
+# connect to RIS
+my %ris_db = %{$db_conf->{'RIS_RO'}};
+my $ris_dbh = DBI->connect("DBI:$dbi_type_map{$ris_db{type}}:host=$ris_db{host};port=$ris_db{port};dbname=$ris_db{dbname};",$ris_db{'username'},$ris_db{'password'},{'RaiseError' => 1});
+my $ris_sth;
+
 # send metadata to metadata approvers
 for my $md (@md_approve) {
+    my $project_title;
+    my ($project_id) = $md->{'udi'} =~ /[^\.]+\.x(\d+)/;
+    $ris_sth = $ris_dbh->prepare("SELECT Program_Title FROM Programs WHERE Program_ID = $project_id;");
+    $ris_sth->execute();
+    my $proj = $ris_sth->fetchrow_hashref();
+    $project_title = $proj->{'Program_Title'};
+
+    my $task_title;
+    my ($task_id) = $md->{'udi'} =~ /[^\.]+\.x\d+\.(\d+)/;
+    if ($task_id ne '000') {
+        $ris_sth = $ris_dbh->prepare("SELECT Project_Title FROM Projects WHERE Project_ID = $task_id;");
+        $ris_sth->execute();
+        my $task = $ris_sth->fetchrow_hashref();
+        $task_title = $task->{'Project_Title'};
+    }
+
     my $msg = MIME::Lite->new(
         From    => 'GRIIDC Filer <filer@poseidon.tamucc.edu>',
         To      => join(',',@md_approver_emails),
@@ -425,14 +446,17 @@ for my $md (@md_approve) {
         Type    => 'multipart/mixed',
     );
 
+    my $text = "A new metadata file for $md->{udi} has been submitted:";
+    $text .= "\n\nFilename: $md->{filename}";
+    $text .= "\nUDI: $md->{udi}";
+    $text .= "\nDataset Title: $md->{title}";
+    $text .= "\nProject: $project_title";
+    $text .= "\nTask: $task_title" if $task_title;
+    $text .= "\n\nThe metadata file is attached.";
+
     $msg->attach(
         Type => 'TEXT',
-        Data => "A new metadata file for $md->{udi} has been submitted:
-
-Filename: $md->{filename}
-UDI: $md->{udi}
-
-The metadata file is attached."
+        Data => $text
     );
 
     my ($mime_type, $encoding) = by_suffix($md->{'filename'});
