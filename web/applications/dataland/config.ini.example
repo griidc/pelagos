@@ -1,0 +1,46 @@
+[GOMRI_DB]
+connstr = "pgsql:host=localhost;dbname=gomri;"
+username = "gomri_user"
+password = "********"
+
+[RPIS_DB]
+connstr = "mysql:host=localhost;dbname=gomri_rpis;"
+username = "rpis"
+password = "********"
+
+[status_icons]
+-1 = "na.png"
+ 0 = "x.png"
+ 1 = "check.png"
+ 2 = "triangle_yellow.png"
+
+[status_titles]
+-1_identified = ""
+ 0_identified = ""
+ 1_identified = "This dataset has been identified and the DIF has been approved."
+ 2_identified = "A DIF has been submitted for this dataset, but it has not yet been approved."
+
+-1_registered = ""
+ 0_registered = "This dataset has not yet been registered."
+ 1_registered = "This dataset has been registered successfully."
+ 2_registered = ""
+
+-1_metadata = "This dataset has not yet been registered, therefore no metadata is available."
+ 0_metadata = "This dataset has been registered, but no metadata has been provided."
+ 1_metadata = "Metadata for this dataset is available, ISO compliant, and has been reviewed and accepted."
+ 2_metadata = "Metadata for this dataset is available, but has not been validated for ISO compliance or reviewed and accepted."
+
+-1_available = "This dataset has not yet been registered, therefore it is not yet available."
+ 0_available = "This dataset has been registered, but the data is not yet available."
+ 1_available = "This dataset is available for all users to download."
+ 2_available = "This dataset is available, but download is restricted to certain users."
+
+[exclude]
+funds[] = 6
+
+projects[] = 135
+
+tasks[] = "administration"
+tasks[] = "management"
+tasks[] = "data management"
+tasks[] = "education and outreach"

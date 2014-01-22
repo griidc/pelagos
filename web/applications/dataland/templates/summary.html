@@ -1,9 +1,3 @@
-<style>
-.sumry td
-{padding:5px;}
-#header { position: relative; }
-#header-content { position: absolute; bottom: 0; left: 0; }
-</style>
 <div style="position: relative;">
 <font size="3">
 <div style="float:right;" class="minitoolbar">
@@ -15,25 +9,40 @@
 
 <h3>{{mdata.Program_Title}}</h3>
 
-<p><b>UDI:</b><br/> {{pdata.dataset_udi}}</p>
-<table class="sumry"><tr>
-<td valign="top"><b>Dataset Originator:</b><br/> {{pdata.dataset_poc_name}}</td>
-<td valign="top"><b>Point of Contact:</b><br/> {{mpdata.People_LastName}}, {{mpdata.People_FirstName}}<br/>
-{{mpdata.Institution_Name}}<br/><a href="{{mpdata.Department_URL}}" title="Link to Department" target="_blank">{{mpdata.Department_Name}}</a></span> <br>{{mpdata.Department_Addr1}}<br>{{mpdata.Department_Addr2}}<br>{{mpdata.Department_City}}, {{mpdata.Department_State}}&nbsp;&nbsp;{{mpdata.Department_Zip}}<br>{{mpdata.Department_Country}}<br><a href="mailto:{{mpdata.People_Email}}">{{mpdata.People_Email}}</a>
-</td>
-</tr><tr>
-<td valign="top">
-<b>Program Start Date:</b> {{mdata.Program_StartDate}}</td><td>
-<b>Program End Date:</b> {{mdata.Program_EndDate}}</td>
-</td></tr><tr>
-<td valign="top">
-<b>Funding Source:</b> {{mdata.Fund_Source}}<br>
+<table width="90%">
+<tr><td colspan="2"><b>UDI:</b><br/> {{pdata.dataset_udi}}</td></tr>
+<tr><td colspan="2">&nbsp;</td></tr>
+
+<tr><td valign="top"><b>Dataset Originator:</b><br/> {{pdata.dataset_poc_name}}</td>
+	<td rowspan="4" valign="top"><b>Point of Contact:</b><br/> {{mpdata.People_LastName}}, {{mpdata.People_FirstName}}<br/>
+	{{mpdata.Institution_Name}}<br/><a href="{{mpdata.Department_URL}}" title="Link to Department" target="_blank">{{mpdata.Department_Name}}</a></span> <br>{{mpdata.Department_Addr1}}<br>{{mpdata.Department_Addr2}}<br>{{mpdata.Department_City}}, {{mpdata.Department_State}}&nbsp;&nbsp;{{mpdata.Department_Zip}}<br>{{mpdata.Department_Country}}<br><a href="mailto:{{mpdata.People_Email}}">{{mpdata.People_Email}}</a>
 </td>
 </tr>
+
+<tr><td valign="top"><b>Funding Source:</b><br/> {{mdata.Fund_Source}}</td></tr>
+<tr><td valign="top"><b>Program Start Date:</b><br/> {{mdata.Program_StartDate}}</td></tr>
+	<tr><td><b>Program End Date:</b><br/> {{mdata.Program_EndDate}}</td></tr>
+</td></tr>
+
+
+
+</tr><tr>
+
+</td>
+	
+
+
+	{% if pdata.extent_description %}
+	
+	<tr><td colspan="2">&nbsp;</td></tr>
+	<tr><td colspan="2"><b>Extent Description:</b><br/> {{pdata.extent_description}}</td></tr>
+	{% endif %}
+	</tr>
 </table>
+
 </font>
 <p/>
-<table !style="position: absolute; bottom: 0; left: 0; " border="1">
+<table width="90%" !style="position: absolute; bottom: 0; left: 0; " border="1">
 	<tr>
         <th class="udi">UDI</th>
         <th>Title</th>

@@ -233,15 +233,9 @@ function transform($xml, $xsl) {
 			window.location = 'https://data.gulfresearchinitiative.org/metadata/<?php echo $udi;?>';
 		});
 		
+      
+		
 		$.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
-            position: {
-                adjust: {
-                    method: "flip flip"
-                },
-                my: "middle right",
-                at: "middle left",
-                viewport: $(window)
-            },
             show: {
                 event: "mouseenter focus",
                 solo: true
@@ -257,16 +251,54 @@ function transform($xml, $xsl) {
         });
         
         $("#downloadds").qtip({
-            content: {
+            position: {
+                adjust: {
+                    method: "flip flip"
+                },
+                my: "middle right",
+                at: "middle left",
+                viewport: $(window)
+            },
+			content: {
 				text: 'Download Dataset'
 			}
         });
 		
 		$("#metadatadl").qtip({
-            content: {
+            position: {
+                adjust: {
+                    method: "flip flip"
+                },
+                my: "middle right",
+                at: "middle left",
+                viewport: $(window)
+            },
+			content: {
 				text: 'Download Metadata'
 			}
         });
+		
+		 $('td[title]').qtip({
+			position: {
+				my: 'right bottom',
+				at: 'middle left',
+				adjust: {
+					x: -2
+				},
+				viewport: $(window)
+			},
+			show: {
+				event: "mouseenter focus",
+				solo: true
+			},
+			hide: {
+				fixed: true,
+				delay: 100
+			},
+			style: {
+				classes: "ui-tooltip-shadow ui-tooltip-tipped"
+			}
+		});
 		
 		$( document ).tooltip();
 		
