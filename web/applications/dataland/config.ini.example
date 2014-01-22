@@ -1,13 +1,3 @@
-[GOMRI_DB]
-connstr = "pgsql:host=localhost;dbname=gomri;"
-username = "gomri_user"
-password = "********"
-
-[RPIS_DB]
-connstr = "mysql:host=localhost;dbname=gomri_rpis;"
-username = "rpis"
-password = "********"
-
 [status_icons]
 -1 = "na.png"
  0 = "x.png"
@@ -34,13 +24,3 @@ password = "********"
  0_available = "This dataset has been registered, but the data is not yet available."
  1_available = "This dataset is available for all users to download."
  2_available = "This dataset is available, but download is restricted to certain users."
-
-[exclude]
-funds[] = 6
-
-projects[] = 135
-
-tasks[] = "administration"
-tasks[] = "management"
-tasks[] = "data management"
-tasks[] = "education and outreach"
