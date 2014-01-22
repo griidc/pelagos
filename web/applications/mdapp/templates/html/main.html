@@ -71,7 +71,9 @@
             </div>
         </div>
         <div id="GeoTester">
-        <h2>this feature under construction</h2>
+            <p>
+                <button class="clearStatusMessages" onClick="clearStatusMessages()">Clear Status Messages</button>
+            </p>
             <form action="{{baseUrl}}/TestGeometry" method="POST">
             Polygon as (latitude,longitude) tuples separated by single space, no line breaks, clockwise, first point repeated as last point<br />
             <textarea name="testPolygon" style="width:100%" rows="4">{{testPolygon}}</textarea><br />
