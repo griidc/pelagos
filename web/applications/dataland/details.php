@@ -32,6 +32,9 @@ $loader = new Twig_Loader_Filesystem('./templates');
 $twig = new Twig_Environment($loader,array('autoescape' => false));
 $twig->addExtension(new Twig_Extensions_GRIIDC());
 
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+$pageLessBaseUrl="$protocol$_SERVER[SERVER_NAME]";
+
 $udi='';
 $dsscript='';
 $prow ='';
@@ -226,11 +229,11 @@ function transform($xml, $xsl) {
 		initMap('olmap',{'onlyOneFeature':false,'allowModify':false,'allowDelete':false,'staticMap':true,'labelAttr':'udi'});
   
 		$("#downloadds").click(function() {
-			window.location = 'https://data.gulfresearchinitiative.org/data-discovery?filter=<?php echo $udi;?>';
+			window.location = '<?php echo "$pageLessBaseUrl/data-discovery?filter=$udi";?>';
 		});
 		
 		$("#metadatadl").click(function() {
-			window.location = 'https://data.gulfresearchinitiative.org/metadata/<?php echo $udi;?>';
+			window.location = '<?php echo "$pageLessBaseUrl/metadata/$udi"; ?>';
 		});
 		
       
