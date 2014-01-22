@@ -64,8 +64,7 @@ $app->get('/', function () use ($app) {
     $stash['m_dataset']['accepted']    = GetMetadata('accepted');
     $stash['m_dataset']['submitted']   = GetMetadata('submitted');
     $stash['srvr'] = "https://$_SERVER[HTTP_HOST]";
-    # not sure why this does not work.
-    if(isset($GLOBALS['testPolygon'])) { $stash['testPolygon'] = $GLOBALS['testPolygon']; }
+    if(isset($_SESSION['testPolygon'])) { $stash['testPolygon'] = $_SESSION['testPolygon']; }
     return $app->render('html/main.html',$stash);
 });
 
@@ -142,7 +141,7 @@ $app->post('/TestGeometry', function () use ($app) {
         $dbErr = $data->errorInfo();
         drupal_set_message("Geometry supplied is not valid (PostGIS said: $dbErr[2] <br />SQL: $sql)",'error');
       }
-    $GLOBALS['testPolygon'] = $_POST['testPolygon'];
+    $_SESSION['testPolygon'] = $_POST['testPolygon'];
     $options['fragment']="GeoTester";
     drupal_goto($GLOBALS['PAGE_NAME'].'/',$options,302); # reload calling page (is there a better way to do this?
 });
