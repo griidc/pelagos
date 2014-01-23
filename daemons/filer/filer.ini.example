@@ -1,0 +1,5 @@
+[paths]
+data_store = /sftp/data
+
+[notifications]
+first.last@tamucc.edu = filed,remote,unknown,missing

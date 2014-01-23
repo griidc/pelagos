@@ -1,14 +1,16 @@
 To set up filer:
 
-1. make sure trigger-filer is owned by root: chown root trigger-filer
+1. copy filer.ini.example to /etc/griidc/filer.ini and set configuration parameters in /etc/griidc/filer.ini
 
-2. setuid for trigger-filer: chmod 4755 trigger-filer
+2. make sure trigger-filer is owned by root: chown root trigger-filer
 
-3. copy filerd.init to /etc/init.d/filerd: cp filerd.init /etc/init.d/filerd
+3. setuid for trigger-filer: chmod 4755 trigger-filer
 
-4. start filer daemon: service filerd start
+4. copy filerd.init to /etc/init.d/filerd: cp filerd.init /etc/init.d/filerd
 
-5. set filerd to start automatically: chkconfig filerd on
+5. start filer daemon: service filerd start
+
+6. set filerd to start automatically: chkconfig filerd on
 
 
 Files:
