@@ -7,7 +7,7 @@ Proc::Daemon::Init;
 
 my $continue = 1;
 $SIG{'TERM'} = sub { $continue = 0 };
-$SIG{'INT'} = \&trigger_filer;
+$SIG{'HUP'} = \&trigger_filer;
 
 while ($continue) {
     sleep(10);
