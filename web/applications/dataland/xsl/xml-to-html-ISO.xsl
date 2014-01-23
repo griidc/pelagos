@@ -93,15 +93,15 @@
 	<xsl:template match="/">
 		<html>
 			<body>
-					<font size="+3">
-			        <xsl:element name="a">
+					<font size="+1">
+			        <xsl:element name="p">
 					<xsl:attribute name="name">
 					<xsl:value-of select="'title'" />
 					</xsl:attribute>
 						<xsl:value-of select="//gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:title/gco:CharacterString"/>
 					</xsl:element>		
 					</font>
-					<font size="+3">
+					<font size="+1">
 			        <xsl:element name="a">
 					<xsl:attribute name="name">
 					<xsl:value-of select="'title'" />

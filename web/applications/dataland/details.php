@@ -17,6 +17,7 @@ drupal_add_library('system', 'ui.button');
 drupal_add_css('/data/includes/css/details.css',array('type'=>'external'));
 drupal_add_js('/includes/openlayers/lib/OpenLayers.js',array('type'=>'external'));
 drupal_add_js('//maps.google.com/maps/api/js?v=3&sensor=false',array('type'=>'external'));
+//drupal_add_js('/includes/geoviz/geoviz.js',array('type'=>'external'));
 drupal_add_js('/includes/geoviz/geoviz.js',array('type'=>'external'));
 
 $GLOBALS['config'] = parse_ini_file('config.ini',true);
@@ -70,8 +71,7 @@ if ($udi <> '')
 	CASE WHEN registry.registry_id IS NULL THEN 0 ELSE 1 END AS registered,
 	CASE WHEN metadata_dl_status IS NULL OR
 		metadata_dl_status != 'Completed' OR
-		url_metadata IS NULL OR
-		url_metadata NOT SIMILAR TO '(file://)?/sftp/data/%.met'
+		url_metadata IS NULL
 	THEN 0
 	WHEN metadata_status = 'Accepted'
 		THEN 1
@@ -105,11 +105,11 @@ if ($udi <> '')
 	{
 		if ($prow["metadata_xml"] == "")
 		{
-			$dsscript = "addImage('/data/includes/images/nodata.png',0.4);";
+			$dsscript = "addImage('/data/includes/images/nodata.png',0.4);$('#metadatadl').button('disable');makeStatic();";
 		}
 		else
 		{
-			$dsscript = "addImage('/data/includes/images/labonly.png',0.4);";
+			$dsscript = "addImage('/data/includes/images/labonly.png',0.4);makeStatic();";
 		}
 	}
 	else
@@ -226,13 +226,13 @@ function transform($xml, $xsl) {
 			$("#rawxml").hide();
 		});
 
-		initMap('olmap',{'onlyOneFeature':false,'allowModify':false,'allowDelete':false,'staticMap':true,'labelAttr':'udi'});
+		initMap('olmap',{'onlyOneFeature':false,'allowModify':false,'allowDelete':false,'staticMap':false,'labelAttr':'udi'});
   
-		$("#downloadds").click(function() {
+		$("#downloadds").button().click(function() {
 			window.location = '<?php echo "$pageLessBaseUrl/data-discovery?filter=$udi";?>';
 		});
 		
-		$("#metadatadl").click(function() {
+		$("#metadatadl").button().click(function() {
 			window.location = '<?php echo "$pageLessBaseUrl/metadata/$udi"; ?>';
 		});
 		
@@ -258,8 +258,8 @@ function transform($xml, $xsl) {
                 adjust: {
                     method: "flip flip"
                 },
-                my: "middle right",
-                at: "middle left",
+                my: "bottom right",
+                at: "top left",
                 viewport: $(window)
             },
 			content: {
@@ -272,8 +272,8 @@ function transform($xml, $xsl) {
                 adjust: {
                     method: "flip flip"
                 },
-                my: "middle right",
-                at: "middle left",
+                my: "bottom right",
+                at: "top left",
                 viewport: $(window)
             },
 			content: {
