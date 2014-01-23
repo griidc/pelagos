@@ -1,0 +1,69 @@
+#!/bin/bash
+#
+# This starts and stops filerd
+#
+# chkconfig: 2345 12 88
+# description: filerd is the GRIIDC filerd daemon
+# processname: filerd
+# pidfile: /var/run/filerd.pid
+### BEGIN INIT INFO
+# Provides: $filerd
+### END INIT INFO
+
+# Source function library.
+. /etc/init.d/functions
+
+binary="/usr/local/griidc/filer/filerd"
+
+[ -x $binary ] || exit 0
+
+RETVAL=0
+
+start() {
+    echo -n "Starting filerd: "
+    daemon $binary
+    RETVAL=$?
+    PID=$!
+    echo
+    [ $RETVAL -eq 0 ] && touch /var/lock/subsys/filerd
+
+    echo $PID > /var/run/filerd.pid
+}
+
+stop() {
+    echo -n "Shutting down filerd: "
+    killproc filerd
+    RETVAL=$?
+    echo
+    if [ $RETVAL -eq 0 ]; then
+        rm -f /var/lock/subsys/filerd
+        rm -f /var/run/filerd.pid
+    fi
+}
+
+restart() {
+    echo -n "Restarting filerd: "
+    stop
+    sleep 2
+    start
+}
+
+case "$1" in
+    start)
+        start
+    ;;
+    stop)
+        stop
+    ;;
+    status)
+        status filerd
+    ;;
+    restart)
+        restart
+    ;;
+    *)
+        echo "Usage: $0 {start|stop|status|restart}"
+    ;;
+esac
+
+exit 0

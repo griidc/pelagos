@@ -1,0 +1,18 @@
+#!/usr/bin/perl -w
+
+use strict;
+use Proc::Daemon;
+
+Proc::Daemon::Init;
+
+my $continue = 1;
+$SIG{'TERM'} = sub { $continue = 0 };
+$SIG{'INT'} = \&trigger_filer;
+
+while ($continue) {
+    sleep(10);
+}
+
+sub trigger_filer {
+    system('/usr/local/griidc/filer/filer');
+}
