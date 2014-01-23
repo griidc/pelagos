@@ -549,12 +549,13 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
 
             // send email if approved and mail flag is set
             $dm_contacted=false;
-            $dataManager=getDataManager($udi); #array  ('full name', 'email')
-            $dataManager['email']='fightingtexasaggie@gmail.com';
+            $dataManager=getDataManagerOldDataModel($udi); #array  ('full name', 'email')
+            $to_address_string = $dataManager['fullname'].'<'.$dataManager['email'].'>';
             $userMail=getUserMail($user->name); #array  ('full name', 'email')
             if (isset($_POST['approveMetadata']) and $_POST['approveMetadata']=='on' and isset($_POST['contactOwner']) and $_POST['contactOwner']=='on') {
                 $dm_contacted=true;
-                sendEmail($dataManager['email'],$userMail['email'],"$udi metadata","The metadata for $udi has been approved by GRIIDC.  Thank you!");
+                sendEmail($to_address_string,$userMail['email'],"$udi metadata","The metadata for $udi has been approved by GRIIDC.  Thank you!");
+                drupal_set_message("An email of this approval has been sent to ".$dataManager['fullname'].'('.$dataManager['email'].')','status');
             }
              
             $thanks_msg = "Thank you ".$user->name.".  The metadata file for registry ID $reg_id has been recorded into the database.
@@ -657,6 +658,71 @@ function getDataManager($udi) {
     $ret['fullname']=$fullname;
     $ret['email']=$email;
     return $ret;
+}
+
+function getDataManagerOldDataModel($udi) {
+    // returns: array  ('full name', 'email')
+    $sql = "
+    SELECT
+        People.People_Email as EmailInfo_Address, 
+        concat(
+            coalesce(People.People_Title,''),
+            ' ',
+            People.People_FirstName,
+            ' ',
+            coalesce(People.People_MiddleName,''),
+            ' ',
+            People.People_LastName,
+            ' ',
+            coalesce(People.People_Suffix)
+        ) as fullname
+    FROM 
+        People  
+            JOIN ProjPeople 
+                ON People.People_ID = ProjPeople.People_ID
+            JOIN Programs
+                ON ProjPeople.Program_ID = Programs.Program_ID
+            JOIN FundingSource
+                ON Programs.Program_FundSrc = FundingSource.Fund_ID
+            JOIN Roles
+                ON ProjPeople.Role_ID = Roles.Role_ID
+    WHERE FundingSource.Fund_Name like ?
+    AND Programs.Program_ID = ?
+    AND Role_Name = 'Project Data Point of Contact'
+";
+
+    $dbms = OpenDB("RIS_RO");
+    $data = $dbms->prepare($sql);
+    
+    $projSec=substr($udi,4,3);
+
+    $fundingCycle=substr($udi,0,2);
+    switch ($fundingCycle) {
+        case "Y1":
+            $fc='Year One Block Grant';
+            break;
+        case "R1":
+            $fc='RFP-I';
+            break;
+        case "R2":
+            $fc='RFP-II';
+            break;
+        case "R3":
+            $fc='RFP-III';
+            break;
+    }
+
+    $data->execute(array("%$fc%",$projSec));
+    if ($result = $data->fetchAll()) {
+        // will only have one
+        $email = $result[0]['EmailInfo_Address'];
+        $fullname = $result[0]['fullname'];
+        $ret['fullname']=$fullname;
+        $ret['email']=$email;
+        return $ret;
+    } else {
+        return;
+    }
 }
 
 function getUserMail($gomri_userid) {
