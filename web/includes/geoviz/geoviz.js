@@ -57,11 +57,9 @@
 		
 		if (Options.staticMap)
 		{
-			Controls = map.getControlsByClass('OpenLayers.Control.Navigation');
-			Controls[0].destroy();
 			
-			Controls = map.getControlsByClass('OpenLayers.Control.Zoom');
-			Controls[0].destroy();
+			makeStatic();
+			
 			
 			googleZoomLevel = 7;
 			
@@ -325,6 +323,15 @@
 		//selectControl.activate();
 		
 		lastBounds = map.getExtent();
+	}
+	
+	function makeStatic()
+	{
+		Controls = map.getControlsByClass('OpenLayers.Control.Navigation');
+		Controls[0].destroy();
+		
+		Controls = map.getControlsByClass('OpenLayers.Control.Zoom');
+		Controls[0].destroy();
 	}
 	
 	function showTerrainMap()
