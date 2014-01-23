@@ -469,5 +469,6 @@ for my $md (@md_approve) {
         Filename => $md->{'filename'}
     );
 
+    $ENV{'PATH'} = '/usr/sbin';
     $msg->send;
 }
