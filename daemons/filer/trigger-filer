@@ -1,7 +1,0 @@
-#!/bin/bash
-
-# get pid of filerd
-pid=$(pidof -c -o $$ -o $PPID -o %PPID -x filerd)
-
-# send SIGHUP to filerd
-kill -HUP $pid

@@ -2,8 +2,15 @@
 
 use strict;
 use Proc::Daemon;
+use Getopt::Long;
 
-Proc::Daemon::Init;
+my $pidfile = '/var/run/filerd.pid';
+GetOptions("pidfile=s" => \$pidfile);
+
+my $daemon = Proc::Daemon->new( pid_file => $pidfile );
+
+$daemon->Init;
+chmod 0644, $pidfile;
 
 my $continue = 1;
 $SIG{'TERM'} = sub { $continue = 0 };
@@ -14,5 +21,8 @@ while ($continue) {
 }
 
 sub trigger_filer {
-    system('/usr/local/griidc/filer/filer');
+    my $child_pid = $daemon->Init;
+    unless($child_pid) {
+        exec('/usr/local/griidc/filer/filer');
+    }
 }

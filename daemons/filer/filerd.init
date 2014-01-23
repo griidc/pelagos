@@ -17,53 +17,58 @@ binary="/usr/local/griidc/filer/filerd"
 
 [ -x $binary ] || exit 0
 
+pidfile="/var/run/filerd.pid"
+lockfile="/var/lock/subsys/filerd"
+
 RETVAL=0
 
-start() {
+function start() {
     echo -n "Starting filerd: "
-    daemon $binary
+    daemon $binary --pidfile=$pidfile
     RETVAL=$?
-    PID=$!
+    [ $RETVAL -eq 0 ] && touch $lockfile
     echo
-    [ $RETVAL -eq 0 ] && touch /var/lock/subsys/filerd
-
-    echo $PID > /var/run/filerd.pid
+    return $RETVAL
 }
 
-stop() {
+function stop() {
     echo -n "Shutting down filerd: "
-    killproc filerd
+    killproc -p $pidfile
     RETVAL=$?
+    [ $RETVAL -eq 0 ] && rm -f $lockfile
     echo
-    if [ $RETVAL -eq 0 ]; then
-        rm -f /var/lock/subsys/filerd
-        rm -f /var/run/filerd.pid
-    fi
+    return $RETVAL
 }
 
-restart() {
+function restart() {
     echo -n "Restarting filerd: "
     stop
-    sleep 2
     start
+    RETVAL=$?
+    return $RETVAL
 }
 
 case "$1" in
     start)
         start
-    ;;
+        RETVAL=$?
+        ;;
     stop)
         stop
-    ;;
+        RETVAL=$?
+        ;;
     status)
-        status filerd
-    ;;
+        status -p $pidfile filerd
+        RETVAL=$?
+        ;;
     restart)
         restart
-    ;;
+        RETVAL=$?
+        ;;
     *)
         echo "Usage: $0 {start|stop|status|restart}"
-    ;;
+        RETVAL=2
+        ;;
 esac
 
-exit 0
+exit $RETVAL
