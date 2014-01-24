@@ -10,19 +10,19 @@ GetOptions("pidfile=s" => \$pidfile);
 my $daemon = Proc::Daemon->new( pid_file => $pidfile );
 
 $daemon->Init;
+
 chmod 0644, $pidfile;
 
 my $continue = 1;
 $SIG{'TERM'} = sub { $continue = 0 };
-$SIG{'HUP'} = \&trigger_filer;
+
+my $run_filer = 0;
+$SIG{'HUP'} = sub { $run_filer = 1 };
 
 while ($continue) {
-    sleep(10);
-}
-
-sub trigger_filer {
-    my $child_pid = $daemon->Init;
-    unless($child_pid) {
-        exec('/usr/local/griidc/filer/filer');
+    while ($run_filer) {
+        $run_filer = 0;
+        system('/usr/local/griidc/filer/filer');
     }
+    sleep;
 }
