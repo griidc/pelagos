@@ -396,7 +396,7 @@ for my $email (keys %{$config->{'notifications'}}) {
     if (length $mail{'Message'}) {
         my $subject = "Filer Summary";
         $mail{'Message'} = "Filer Summary\n$mail{Message}";
-        writelog($log,"notifying $mail{To} - ".join(',',@types));
+        writelog($log,'sending filer summary (' . join(',',@types) . ") to: $mail{To}");
         sendmail(%mail) or die $Mail::Sendmail::error;
     }
 }
