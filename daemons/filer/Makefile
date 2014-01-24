@@ -2,6 +2,9 @@ all:
 	gcc src/trigger-filer.c -o trigger-filer
 	chmod 4755 trigger-filer
 
+install:
+	ln -sf `pwd`/trigger-filer /usr/local/bin/trigger-filer
+
 init:
 	ln -sf `pwd`/filerd.init /etc/init.d/filerd
 
