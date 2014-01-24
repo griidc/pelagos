@@ -8,6 +8,7 @@ use File::Copy;
 use Net::LDAP;
 use MIME::Lite;
 use MIME::Types qw(by_suffix);
+use POSIX qw(strftime);
 use IO::Handle;
 
 my $config = Config::PHPINI->read('/etc/griidc/filer.ini');
