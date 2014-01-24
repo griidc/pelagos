@@ -127,10 +127,10 @@ class griidcMailer
 		$headers .= 'X-Mailer: PHP/' . phpversion();
 		$parameters = '-ODeliveryMode=d'; 
 		
-		echo '<code>';
-		echo $headers;
-		echo $message;
-		echo '</code>';
+		// echo '<code>';
+		// echo $headers;
+		// echo $message;
+		// echo '</code>';
 		
 				
 		return mail($to, $subject, $message, $headers, $parameters);
