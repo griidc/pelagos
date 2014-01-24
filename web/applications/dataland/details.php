@@ -10,6 +10,9 @@ drupal_add_js('/includes/jquery-validation/jquery.validate.js',array('type'=>'ex
 
 drupal_add_css('/data/includes/css/xmlverbatim.css',array('type'=>'external'));
 drupal_add_css('/includes/qTip2/jquery.qtip.min.css',array('type'=>'external'));
+drupal_add_css('/data-discovery/includes/css/dataset_download.css',array('type'=>'external'));
+drupal_add_css('/data-discovery/includes/css/logins.css',array('type'=>'external'));
+drupal_add_library('system', 'jquery.cookie');
 
 drupal_add_library('system', 'ui.tabs');
 drupal_add_library('system', 'ui.button');
@@ -19,6 +22,9 @@ drupal_add_js('/includes/openlayers/lib/OpenLayers.js',array('type'=>'external')
 drupal_add_js('//maps.google.com/maps/api/js?v=3&sensor=false',array('type'=>'external'));
 //drupal_add_js('/includes/geoviz/geoviz.js',array('type'=>'external'));
 drupal_add_js('/includes/geoviz/geoviz.js',array('type'=>'external'));
+drupal_add_js('/data-discovery/js/search.js',array('type'=>'external'));
+drupal_add_js('/data-discovery/js/logins.js',array('type'=>'external'));
+
 
 $GLOBALS['config'] = parse_ini_file('config.ini',true);
 
@@ -229,7 +235,8 @@ function transform($xml, $xsl) {
 		initMap('olmap',{'onlyOneFeature':false,'allowModify':false,'allowDelete':false,'staticMap':false,'labelAttr':'udi'});
   
 		$("#downloadds").button().click(function() {
-			window.location = '<?php echo "$pageLessBaseUrl/data-discovery?filter=$udi";?>';
+			showDatasetDownload('<?php echo $udi;?>')
+			//window.location = '<?php echo "$pageLessBaseUrl/data-discovery?filter=$udi";?>';
 		});
 		
 		$("#metadatadl").button().click(function() {
@@ -328,6 +335,55 @@ function transform($xml, $xsl) {
 	});
 })(jQuery);
 </script>
+
+<div id="dataset_download" style="display: none;">
+    <div id="dataset_download_close"><input type="image" src="/data-discovery/includes/images/close.gif" onclick="jQuery('#dataset_download').hide();"></div>
+    <div id="dataset_download_content">
+
+<div id="dataset_download_content">
+
+</div>
+</div>
+</div>
+
+<div id="pre_login" style="display: none;">
+    <div id="pre_login_close"><input type="image" src="https://proteus.tamucc.edu/data-discovery/includes/images/close.gif" onclick="jQuery('#pre_login').hide();"></div>
+    <div id="pre_login_content">
+        <table cellpadding="10">
+            <tbody><tr>
+                <td colspan="3" align="center">
+                    <h3>Please log in for access to this data.</h3>
+                </td>
+            </tr>
+            <tr>
+                <td align="center">
+                    <div id="griidc-logo">
+                        <a class="redir_url" href="/cas?destination=data-discovery/download_redirect/R1.x140.125%3A0006%3Ffinal_destination%3D/data-discovery"><img src="https://proteus.tamucc.edu/data-discovery/includes/images/GRIIDC-logo.png" alt="GRIIDC logo"></a>
+                    </div>
+                    <div>
+                        GoMRI Users, please use your<br>
+                        <a class="redir_url" href="/cas?destination=data-discovery/download_redirect/R1.x140.125%3A0006%3Ffinal_destination%3D/data-discovery">GRIIDC login</a> to download data.
+                    </div>
+                </td>
+                <td><img src="https://proteus.tamucc.edu/data-discovery/includes/images/vbar.png"></td>
+                <td align="center">
+                    <div>
+                        <a href="https://proteus.tamucc.edu/data-discovery/google-auth"><img src="https://proteus.tamucc.edu/data-discovery/includes/images/googleauth.png" alt="google auth logo"></a>
+                    </div>
+                    <div>
+                        Members of the public may use their<br>
+                        <a href="https://proteus.tamucc.edu/data-discovery/google-auth">Google login</a> to download data.
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3" align="center">
+                    <button onclick="jQuery('#pre_login').hide();" style="font-weight:bold;">Cancel</button>
+                </td>
+            </tr>
+        </tbody></table>
+    </div>
+</div>
   
 <table border="0" width="100%">
 <tr>
