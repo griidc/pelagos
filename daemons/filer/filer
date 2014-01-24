@@ -320,7 +320,7 @@ for my $uid (keys %notify) {
 # notify internal users
 for my $email (keys %{$config->{'notifications'}}) {
     my @types = split /[, ]/, $config->{'notifications'}->{$email};
-    writelog($log,"notifying $email - ",join(',',@types));
+    writelog($log,"notifying $email - ".join(',',@types));
     my $msg;
 
     my %mail = ( To      => $email,
