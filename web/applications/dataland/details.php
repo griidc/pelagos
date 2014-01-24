@@ -386,7 +386,7 @@ function transform($xml, $xsl) {
 <tr>
 <td width="40%">
 
-<div id="olmap" styale="width: 640px;height: 480px;"></div>
+<div id="olmap"></div>
 
 </td>
 <td style="padding:10px;" width="60%" valign="top">
