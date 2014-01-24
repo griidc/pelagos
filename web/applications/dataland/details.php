@@ -339,11 +339,8 @@ function transform($xml, $xsl) {
 <div id="dataset_download" style="display: none;">
     <div id="dataset_download_close"><input type="image" src="/data-discovery/includes/images/close.gif" onclick="jQuery('#dataset_download').hide();"></div>
     <div id="dataset_download_content">
-
-<div id="dataset_download_content">
-
-</div>
-</div>
+	
+	</div>
 </div>
 
 <div id="pre_login" style="display: none;">
