@@ -485,7 +485,7 @@ for my $md (@md_approve) {
     );
 
     $ENV{'PATH'} = '/usr/sbin';
-    writelog($log,"sending metadata file for $md->{udi} to: " . join(',',@md_approver_emails));
+    writelog($log,"[$md->{udi}] sending metadata file to: " . join(',',@md_approver_emails));
     $msg->send;
 }
 
