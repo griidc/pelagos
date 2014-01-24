@@ -86,7 +86,7 @@ while (my $r = $sth->fetchrow_hashref()) {
     }
 
     # copy data file to data store
-    writelog($log,"copying data file for $udi to data store (cp \"$filepath\" \"$config->{paths}->{data_store}/$udi/$udi.dat\")");
+    writelog($log,"[$udi] copying data file to data store (cp \"$filepath\" \"$config->{paths}->{data_store}/$udi/$udi.dat\")");
     copy($filepath,"$config->{paths}->{data_store}/$udi/$udi.dat") or die "Error: could not copy file ($!)\n";
     $data_filed{$reg_id} = "$config->{paths}->{data_store}/$udi/$udi.dat";
 
@@ -95,6 +95,7 @@ while (my $r = $sth->fetchrow_hashref()) {
     $filename =~ s/.*\///;
     my $filesize = -s "$config->{paths}->{data_store}/$udi/$udi.dat";
     my $sth2 = $dbh->prepare("UPDATE registry SET dataset_filename = ?, dataset_download_size = ?, dataset_download_status = ? WHERE registry_id = ?;");
+    writelog($log,"[$udi] updating dataset_filename, dataset_download_size, and dataset_download_status for");
     $sth2->execute($filename,$filesize,'done',$reg_id) or die "Couldn't execute statement: " . $sth2->errstr;
 
     # set parameters for submitter notification
@@ -158,7 +159,7 @@ while (my $r = $sth->fetchrow_hashref()) {
     }
 
     # copy metadata file to data store
-    writelog($log,"copying metadata file for $udi to data store (cp \"$filepath\" \"$config->{paths}->{data_store}/$udi/$udi.met\")");
+    writelog($log,"[$udi] copying metadata file to data store (cp \"$filepath\" \"$config->{paths}->{data_store}/$udi/$udi.met\")");
     copy($filepath,"$config->{paths}->{data_store}/$udi/$udi.met") or die "Error: could not copy file ($!)\n";
     $md_filed{$reg_id} = "$config->{paths}->{data_store}/$udi/$udi.met";
 
@@ -166,6 +167,7 @@ while (my $r = $sth->fetchrow_hashref()) {
     my $filename = $url_metadata;
     $filename =~ s/.*\///;
     my $sth2 = $dbh->prepare("UPDATE registry SET dataset_metadata = ?, metadata_dl_status = ?, metadata_status = ? WHERE registry_id = ?;");
+    writelog($log,"[$udi] updating dataset_metadata, metadata_dl_status, and metadata_status");
     $sth2->execute($filename,'Completed','Submitted',$reg_id) or die "Couldn't execute statement: " . $sth2->errstr;
 
     # set parameters for submitter notification
