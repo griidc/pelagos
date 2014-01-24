@@ -8,8 +8,16 @@ use File::Copy;
 use Net::LDAP;
 use MIME::Lite;
 use MIME::Types qw(by_suffix);
+use IO::Handle;
 
 my $config = Config::PHPINI->read('/etc/griidc/filer.ini');
+
+my $logfile  = '/var/log/griidc/filer';
+open(my $log,'>>',$logfile) or die "cannot open log file $logfile: $!";
+chmod 0644, $logfile;
+$log->autoflush(1);
+
+writelog($log,"filer starting");
 
 my $types = Config::PHPINI->read('/etc/griidc/filetypes.ini');
 
@@ -311,6 +319,7 @@ for my $uid (keys %notify) {
 # notify internal users
 for my $email (keys %{$config->{'notifications'}}) {
     my @types = split /[, ]/, $config->{'notifications'}->{$email};
+    writelog($log,"notifying $email - ",join(',',@types));
     my $msg;
 
     my %mail = ( To      => $email,
@@ -471,4 +480,13 @@ for my $md (@md_approve) {
 
     $ENV{'PATH'} = '/usr/sbin';
     $msg->send;
+}
+
+writelog($log,"filer finished");
+close $log;
+
+sub writelog {
+    my ($log,$message) = @_;
+    my $ts = POSIX::strftime("%Y-%m-%d %H:%M:%S", localtime);
+    print $log "[$ts] $message\n";
 }
