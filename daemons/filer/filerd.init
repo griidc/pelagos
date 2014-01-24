@@ -24,7 +24,7 @@ RETVAL=0
 
 function start() {
     echo -n "Starting filerd: "
-    $binary --pidfile=$pidfile
+    $binary --pidfile=$pidfile && success || failure
     RETVAL=$?
     [ $RETVAL -eq 0 ] && touch $lockfile
     echo
