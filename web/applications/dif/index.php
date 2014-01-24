@@ -4,6 +4,10 @@ require_once '/usr/local/share/GRIIDC/php/ldap.php';
 require_once '/usr/local/share/GRIIDC/php/drupal.php';
 require_once '/usr/local/share/GRIIDC/php/aliasIncludes.php';
 require_once '/usr/local/share/GRIIDC/php/dif-registry.php';
+require_once '/usr/local/share/GRIIDC/php/griidcMailer.php';
+
+
+
 require_once 'lib/functions.php';
 
 $isGroupAdmin = false;
