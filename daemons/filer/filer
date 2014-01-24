@@ -314,13 +314,13 @@ for my $uid (keys %notify) {
     $mail{'Message'} .= "\n\n<p>Thank you,<br>";
     $mail{'Message'} .= "\nThe GRIIDC team</p>";
 
+    writelog($log,"sending confirmation of processed files to submitter ($mail{To})");
     sendmail(%mail) or die $Mail::Sendmail::error;
 }
 
 # notify internal users
 for my $email (keys %{$config->{'notifications'}}) {
     my @types = split /[, ]/, $config->{'notifications'}->{$email};
-    writelog($log,"notifying $email - ".join(',',@types));
     my $msg;
 
     my %mail = ( To      => $email,
@@ -392,6 +392,7 @@ for my $email (keys %{$config->{'notifications'}}) {
     if (length $mail{'Message'}) {
         my $subject = "Filer Summary";
         $mail{'Message'} = "Filer Summary\n$mail{Message}";
+        writelog($log,"notifying $mail{To} - ".join(',',@types));
         sendmail(%mail) or die $Mail::Sendmail::error;
     }
 }
