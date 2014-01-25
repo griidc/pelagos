@@ -232,7 +232,7 @@ function transform($xml, $xsl) {
 			$("#rawxml").hide();
 		});
 
-		initMap('olmap',{'onlyOneFeature':false,'allowModify':false,'allowDelete':false,'staticMap':false,'labelAttr':'udi'});
+		initMap('dlolmap',{'onlyOneFeature':false,'allowModify':false,'allowDelete':false,'staticMap':true,'labelAttr':'udi'});
   
 		$("#downloadds").button().click(function() {
 			showDatasetDownload('<?php echo $udi;?>')
@@ -316,16 +316,16 @@ function transform($xml, $xsl) {
 	
 	function resizeMap()
 	{
-		$("#olmap").width($(document).width()*.40);
-		mapscreenhgt = $("#olmap").width()/4*3;
+		$("#dlolmap").width($(document).width()*.40);
+		mapscreenhgt = $("#dlolmap").width()/4*3;
 		summaryhgt = $("#summary").height()
 		if (mapscreenhgt > summaryhgt)
 		{
-			$("#olmap").height(mapscreenhgt)
+			$("#dlolmap").height(mapscreenhgt)
 		}
 		else
 		{
-			$("#olmap").height(summaryhgt)
+			$("#dlolmap").height(summaryhgt)
 		}
 	};
 	
@@ -386,7 +386,7 @@ function transform($xml, $xsl) {
 <tr>
 <td width="40%">
 
-<div id="olmap"></div>
+<div id="dlolmap" style="width: 640px;height: 480px;"></div>
 
 </td>
 <td style="padding:10px;" width="60%" valign="top">
