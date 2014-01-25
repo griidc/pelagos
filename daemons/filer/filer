@@ -11,11 +11,12 @@ use MIME::Types qw(by_suffix);
 use POSIX qw(strftime);
 use IO::Handle;
 
+umask 0022;
+
 my $config = Config::PHPINI->read('/etc/griidc/filer.ini');
 
 my $logfile  = '/var/log/griidc/filer';
 open(my $log,'>>',$logfile) or die "cannot open log file $logfile: $!";
-chmod 0644, $logfile;
 $log->autoflush(1);
 
 writelog($log,"filer starting");

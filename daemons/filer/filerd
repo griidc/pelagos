@@ -14,10 +14,10 @@ my $daemon = Proc::Daemon->new( pid_file => $pidfile );
 $daemon->Init;
 
 chmod 0644, $pidfile;
+umask 0022;
 
 my $logfile  = '/var/log/griidc/filerd';
 open(my $log,'>>',$logfile) or die "cannot open log file $logfile: $!";
-chmod 0644, $logfile;
 $log->autoflush(1);
 
 writelog($log,"filerd starting");
