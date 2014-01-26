@@ -25,7 +25,7 @@
        <link rel="stylesheet" type="text/css" href="includes/css/jquery.qtip.css" />
 	   <script langauge="javascript">
             function post_value(){
-				if (opener.document.metadata.name == 'metadata')
+				if (typeof(opener.document.metadata) == 'object')
 				{
 					opener.document.metadata.BPL1_DataIdent.value = document.frm.mc.value;
 				}
