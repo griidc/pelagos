@@ -99,13 +99,20 @@ function createNodesXML($xml,$doc)
             {
                 $node = $elements->item(0);
                 $val = htmlspecialchars($val, ENT_QUOTES | 'ENT_XML1', 'UTF-8');
+				
                 $node->nodeValue = $val;
                 $parent = $node->parentNode;
-                echo 'Existing Parent:' . $parent->nodeName .'<br>';
-            }
+				if ($parent->nodeName == 'gmd:fileIdentifier')
+				{
+					$val = str_replace(":","-",$val);
+				}
+                echo "($val) Existing Parent:" . $parent->nodeName .'<br>';
+			}
             else
             {
                 $nodelevels = preg_split("/\//",$xpath);
+				
+				
                 
                 $xpath = "";
                 
@@ -302,6 +309,11 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
 {
     switch ($fieldname)
     {
+		case 'gmd:fileIdentifier':
+        {
+            $node->nodeValue = str_replace(':','-',fieldvalue);
+            break;
+        }
         case 'gmd:MD_CharacterSetCode':
         {
             $node->setAttribute('codeList','http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_CharacterSetCode');
