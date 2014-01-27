@@ -1,6 +1,6 @@
 <?php
 
-require_once('drupal.php');
+require_once('/usr/local/share/GRIIDC/php/drupal.php');
 
 function connectLDAP($ldaphost) {
     $ldapconnect = ldap_connect("ldap://$ldaphost");
@@ -38,6 +38,35 @@ function isMember($ldap,$userDN,$groupDN) {
         $entries = ldap_get_entries($ldap, $result);
         if ($entries['count'] > 0) { return TRUE; }else{ return false; };
     }
+}
+
+function memberHasApplicationRole($username,$applicationName,$applicationRole) {
+    $allowAccess=false;
+    $ldap=connectLDAP('triton.tamucc.edu');
+    // check for group membership
+    $attributes = array('dn');
+    $groupDN = "cn=$applicationRole,ou=$applicationName,ou=applications,dc=griidc,dc=org";
+    $result = ldap_read($ldap, "$groupDN", "(member=uid=$username,ou=members,ou=people,dc=griidc,dc=org)", $attributes);
+    if ($result === false) {
+        return false; 
+    }
+    else {
+        $entries = ldap_get_entries($ldap, $result);
+        if ($entries['count'] > 0) { $allowAccess=true; }
+    }
+    // check for admin group membership
+    $attributes = array('dn');
+    $groupDN = "cn=administrators,ou=applications,dc=griidc,dc=org";
+    $result = ldap_read($ldap, "$groupDN", "(member=uid=$username,ou=members,ou=people,dc=griidc,dc=org)", $attributes);
+    if ($result === false) {
+        return false; 
+    }
+    else {
+        $entries = ldap_get_entries($ldap, $result);
+        if ($entries['count'] > 0) { $allowAccess=true; }
+    }
+    ldap_unbind($ldap);
+    return $allowAccess;
 }
 
 function getAttributes($ldap,$dn,$attributes) {
