@@ -25,7 +25,8 @@ require_once '/usr/local/share/GRIIDC/php/datasets.php';
 # misc utilities and stuff...
 require_once '/usr/local/share/GRIIDC/php/utils.php';
 # LDAP functionality
-require_once '/usr/local/share/GRIIDC/php/ldap.php';
+#require_once '/usr/local/share/GRIIDC/php/ldap.php';
+require_once '../quartz/php/ldap.php';
 
 # add js library - informs drupal to add these standard js libraries upstream.  
 # can also use drupal_add_js to specify a full path to a js library to include.
@@ -42,6 +43,7 @@ $GLOBALS['logfile_location'] = $GLOBALS['config']['Logfiles']['logfilePath'].'/'
 
 TwigView::$twigDirectory = $GLOBALS['config']['TwigView']['twigDirectory'];
 
+
 $app = new Slim(array(
                         'view' => new TwigView,
                         'debug' => true,
@@ -55,6 +57,22 @@ $app->hook('slim.before', function () use ($app) {
     $app->view()->appendData(array('baseUrl' => "$protocol$env[SERVER_NAME]/$GLOBALS[PAGE_NAME]"));
     $app->view()->appendData(array('pagelessBaseUrl' => "$protocol$env[SERVER_NAME]"));
     $app->view()->appendData(array('pageName' => $GLOBALS['PAGE_NAME']));
+});
+
+$app->hook('slim.before.router', function () use ($app) {
+    global $user;
+    if(isset($user->name)){
+        $username = $user->name;
+    } else {
+        $username = '';
+    }
+    $applicationName="Metadata";
+    $applicationRole="reviewers";
+    if (memberHasApplicationRole($username,$applicationName,$applicationRole) == false) {
+        drupal_set_message("Access Restricted",'error');
+        print "The role of metadata reviewer is required for access.  Please contact GRIIDC for access.";
+        $app->stop();
+    }
 });
 
 $app->get('/includes/:file', 'dumpIncludesFile')->conditions(array('file' => '.+'));
