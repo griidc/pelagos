@@ -25,8 +25,7 @@ require_once '/usr/local/share/GRIIDC/php/datasets.php';
 # misc utilities and stuff...
 require_once '/usr/local/share/GRIIDC/php/utils.php';
 # LDAP functionality
-#require_once '/usr/local/share/GRIIDC/php/ldap.php';
-require_once '../quartz/php/ldap.php';
+require_once '/usr/local/share/GRIIDC/php/ldap.php';
 
 # add js library - informs drupal to add these standard js libraries upstream.  
 # can also use drupal_add_js to specify a full path to a js library to include.
