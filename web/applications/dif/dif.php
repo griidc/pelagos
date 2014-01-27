@@ -331,10 +331,28 @@ if ((isset($_POST['submit']) and $_POST['submit'])||(isset($_POST['later']) and 
 			
 			//send e-mail for submit
 			
-			$difMailer = new griidcMailer(true);
+			
 			
 			if (isset($_POST['accept']))
 			{
+				$eMail = "";
+				$difMailer = new griidcMailer(false);
+				$submitUser = $_POST['submitUser'];
+				if (isset($submitUser)) {
+					$userDNs = getDNs($ldap,$baseDN,"uid=$submitUser");
+					$userDN = $userDNs[0]['dn'];
+					if (count($userDNs) > 0) {
+						$attributes = getAttributes($ldap,$userDN,array('givenName','sn','mail'));
+						if (count($attributes) > 0) {
+							if (array_key_exists('givenName',$attributes)) $firstName = $attributes['givenName'][0];
+							if (array_key_exists('sn',$attributes)) $lastName = $attributes['sn'][0];
+							if (array_key_exists('mail',$attributes)) $eMail = $attributes['mail'][0];
+						}
+					}
+				}
+				
+				$difMailer->addToUser($firstName, $lastName, $eMail);
+				
 				$message = "Congratulations $difMailer->currentUserFirstName $difMailer->currentUserLastName,<br /><br />";
 				$message .= 'Your Dataset Information Form (DIF) <a href="' . "https://$_SERVER[HTTP_HOST]" .'/dif/?uid='.$uid.'">'.$datasetUDI.'</a> has been approved by the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC). You will now be able to register the associated dataset at https://data.gulfresearchinitiative.org/dataset-registration. <br \>';
 				$message .= "If you have any questions regarding your DIF please contact griidc@gomri.org.<br \><br \>";
@@ -342,12 +360,11 @@ if ((isset($_POST['submit']) and $_POST['submit'])||(isset($_POST['later']) and 
 				
 				$difMailer->mailSubject = 'GRIIDC DIF Accepted';
 				
-				
-				
-				
 			}
 			else
 			{
+				$difMailer = new griidcMailer(true);
+				$eMail = "";
 				$message = "Dear $difMailer->currentUserFirstName $difMailer->currentUserLastName,<br /><br />";
 				$message .= 'Thank you for submitting your Dataset Information Form (DIF) <a href="' . "https://$_SERVER[HTTP_HOST]" .'/dif/?uid='.$uid.'">'.$datasetUDI.'</a>. ';
 				$message .= "Your DIF is now being reviewed by staff at the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC). You will receive an e-mail notification once your DIF has been approved.<br \><br \>";
@@ -407,6 +424,8 @@ elseif (isset($_GET['uid']) and $uid=$_GET['uid']) {
     $mtask = $m[1]."|".$m[24].'|'.substr($m[25],0,2);
 
     $flag="update";
+	
+	$submitUser = $m[26];
 }
 
 //CLOSE CONNECTIONS AND FREE RESOURCES
