@@ -98,6 +98,7 @@ $app->get('/', function () use ($app) {
 // currently a work in progress...
 $app->get('/guest-logout', function () use ($app) {
     try {
+        $env = $app->environment();
         $_SESSION['guestAuthUser'] = null;
         unset($_SESSION['guestAuthUser']);
         drupal_set_message("Guess access has been logged out.",'status');
@@ -112,8 +113,8 @@ $app->get('/guest-logout', function () use ($app) {
 
 $app->get('/google-auth', function () use ($app) {
     try {
-        $hostname = gethostname();
-        $openid = new LightOpenID($hostname);
+        $env = $app->environment();
+        $openid = new LightOpenID($env["SERVER_NAME"]);
         if(!$openid->mode) {
             if(isset($_GET['login'])) {
                 $openid->identity = 'https://www.google.com/accounts/o8/id';
@@ -127,7 +128,6 @@ $app->get('/google-auth', function () use ($app) {
             $info=$openid->getAttributes();
             $_SESSION['guestAuthUser'] = $info["contact/email"];
             $_SESSION['gAuthLogin']=true;
-            $env = $app->environment();
             $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
             $baseUrl  = "$protocol$env[SERVER_NAME]/$GLOBALS[PAGE_NAME]";
             drupal_goto($baseUrl);
