@@ -100,10 +100,14 @@ if ($udi <> '')
 	LIMIT 1
 	;
 	";
+	
+	
 
 	$prow = pdoDBQuery($pconn,$pquery);
 	//echo $pquery;
 	//var_dump($prow);
+	
+	
 
 	//echo "</pre>";
 
@@ -160,6 +164,9 @@ if ($udi <> '')
 	// var_dump($prow);
 	// echo "</pre>";
 }
+
+
+
 function transform($xml, $xsl) { 
 	if ($xml <> "" AND $xml != null)
 	{
@@ -187,6 +194,11 @@ function transform($xml, $xsl) {
 		return "No Metadata Available";
 	}
 }
+
+
+if ($prow != null)
+{
+	
 
 ?>
 
@@ -457,3 +469,15 @@ function transform($xml, $xsl) {
 <!--</td>
 </tr>
 </table>-->
+
+<?php
+}
+else
+{
+?>
+<p>
+<h1>Dataset not found</h1>
+If you are experiencing difficulties, please contact <a href="mailto:griidc@gomri.org">GRIIDC</a>.
+</p>
+
+<?php };?>
