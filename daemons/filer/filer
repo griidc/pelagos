@@ -50,7 +50,7 @@ $sth = $dbh->prepare("SELECT registry_id, dataset_udi, url_data, userid, dataset
                       ORDER BY dataset_udi");
 $sth->execute();
 
-my (%data_remote, %data_unknown, %data_missing, %data_filed);
+my (%data_remote, %data_unknown, %data_missing, %data_filed, %data_bad_reg_id, %data_bad_udi);
 
 # loop through all entries that need processing for data
 while (my $r = $sth->fetchrow_hashref()) {
@@ -58,6 +58,18 @@ while (my $r = $sth->fetchrow_hashref()) {
     my $udi = $r->{'dataset_udi'};
     my $reg_id = $r->{'registry_id'};
     my $url_data = $r->{'url_data'};
+
+    # check if we have a valid registry id
+    if ($reg_id !~ /^[YR]\d\.x\d\d\d.\d\d\d:\d\d\d\d\.\d\d\d$/) {
+        $data_bad_reg_id{$reg_id} = $reg_id;
+        next;
+    }
+
+    # check if we have a valid udi
+    if ($udi !~ /^[YR]\d\.x\d\d\d.\d\d\d:\d\d\d\d$/) {
+        $data_bad_udi{$reg_id} = $udi;
+        next;
+    }
 
     # check if url is remote
     if ($url_data =~ /^(https?|ftp):\/\//) {
@@ -123,7 +135,7 @@ $sth = $dbh->prepare("SELECT registry_id, dataset_udi, url_metadata, userid, dat
                       ORDER BY dataset_udi");
 $sth->execute();
 
-my (%md_remote, %md_unknown, %md_missing, %md_filed, @md_approve);
+my (%md_remote, %md_unknown, %md_missing, %md_filed, @md_approve, %md_bad_reg_id, %md_bad_udi);
 
 # loop through all entries that need processing for metadata
 while (my $r = $sth->fetchrow_hashref()) {
@@ -131,6 +143,18 @@ while (my $r = $sth->fetchrow_hashref()) {
     my $udi = $r->{'dataset_udi'};
     my $reg_id = $r->{'registry_id'};
     my $url_metadata = $r->{'url_metadata'};
+
+    # check if we have a valid registry id
+    if ($reg_id !~ /^[YR]\d\.x\d\d\d.\d\d\d:\d\d\d\d\.\d\d\d$/) {
+        $md_bad_reg_id{$reg_id} = $reg_id;
+        next;
+    }
+
+    # check if we have a valid udi
+    if ($udi !~ /^[YR]\d\.x\d\d\d.\d\d\d:\d\d\d\d$/) {
+        $md_bad_udi{$reg_id} = $udi;
+        next;
+    }
 
     # check if url is remote
     if ($url_metadata =~ /^(https?|ftp):\/\//) {
@@ -389,6 +413,32 @@ for my $email (keys %{$config->{'notifications'}}) {
                 $mail{'Message'} .= "\nMissing Metadata Files:\n\n";
                 for my $reg_id (sort(keys(%md_missing))) {
                     $mail{'Message'} .= "$reg_id $md_missing{$reg_id}\n";
+                }
+            }
+        }
+        if ($type eq 'bad') {
+            if (%data_bad_reg_id) {
+                $mail{'Message'} .= "\nBad Registry IDs (data):\n\n";
+                for my $reg_id (sort(keys(%data_bad_reg_id))) {
+                    $mail{'Message'} .= "$reg_id\n";
+                }
+            }
+            if (%md_bad_reg_id) {
+                $mail{'Message'} .= "\nBad Registry IDs (metadata):\n\n";
+                for my $reg_id (sort(keys(%md_bad_reg_id))) {
+                    $mail{'Message'} .= "$reg_id\n";
+                }
+            }
+            if (%data_bad_udi) {
+                $mail{'Message'} .= "\nBad UDIs (data):\n\n";
+                for my $reg_id (sort(keys(%data_bad_udi))) {
+                    $mail{'Message'} .= "$reg_id $data_bad_udi{$reg_id}\n";
+                }
+            }
+            if (%md_bad_reg_id) {
+                $mail{'Message'} .= "\nBad UDIs (metadata):\n\n";
+                for my $reg_id (sort(keys(%md_bad_udi))) {
+                    $mail{'Message'} .= "$reg_id $md_bad_udi{$reg_id}\n";
                 }
             }
         }
