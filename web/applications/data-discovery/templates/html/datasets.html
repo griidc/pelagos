@@ -142,7 +142,7 @@ var tabIndex = 0;
                                     {% for dataset in identified_datasets %}
                                         <tr udi="{{dataset.udi}}">
                                             <td class="info">
-                                                <a href="/data/{{dataset.udi}}" target="_blank">{{dataset.title}}</a>.
+                                                {{dataset.title}}.
                                                 {{dataset.project.Title | trim}}.
                                                 {% if dataset.doi %}
                                                     DOI: <a href="http://dx.doi.org/{{dataset.doi}}" target="_blank">{{dataset.doi}}</a>
