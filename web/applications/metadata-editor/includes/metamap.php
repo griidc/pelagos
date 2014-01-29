@@ -5,7 +5,7 @@
 <script type="text/javascript" src="/includes/openlayers/lib/OpenLayers.js"></script>
 <script type="text/javascript" src="//maps.google.com/maps/api/js?v=3&sensor=false"></script>
 
-<script src="/~mvandeneijnden/map/geoviz.js"></script>
+<script src="/includes/geoviz/geoviz.js"></script>
 
 <script>
 	$(document).ready(function() 
