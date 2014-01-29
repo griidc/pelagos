@@ -384,29 +384,29 @@
 		
 		toolbardiv = '#'+DIV;
 		jQuery(toolbardiv)
-		.append('<img id="homeTool" src="/images/geoviz/includes/images/home.png">')
-		.append('<img id="filterTool" src="/images/geoviz/includes/images/filter.png">')
-		.append('<img id="drawTool" src="/images/geoviz/includes/images/paint.png">');
+		.append('<img id="homeTool" src="/images/geoviz/home.png">')
+		//.append('<img id="filterTool" src="/images/geoviz/filter.png">')
+		.append('<img id="drawTool" src="/images/geoviz/paint.png">');
 		
 		jQuery(toolbardiv).append('<span id="drawtools"></span>');
 
 		jQuery("#drawtools")
-		.append('<img id="polygonTool" src="/images/geoviz/includes/images/polygon.png">')
-		.append('<img id="lineTool" src="/images/geoviz/includes/images/line.png">')
-		.append('<img id="circleTool" src="/images/geoviz/includes/images/circle.png">')
-		.append('<img id="squareTool" src="/images/geoviz/includes/images/square.png">');
+		.append('<img id="polygonTool" src="/images/geoviz/polygon.png">')
+		.append('<img id="lineTool" src="/images/geoviz/line.png">')
+		.append('<img id="circleTool" src="/images/geoviz/circle.png">')
+		.append('<img id="squareTool" src="/images/geoviz/square.png">');
 		
 		jQuery(toolbardiv)
-		.append('<img id="eraseTool" src="/images/geoviz/includes/images/delete.png">')
-		//.append('<img id="panTool" src="/images/geoviz/includes/images/pan.png">')
-		.append('<img id="worldTool" src="/images/geoviz/includes/images/world.png">')
-		.append('<img id="zoominTool" src="/images/geoviz/includes/images/zoomin.png">')
-		.append('<img id="zoomoutTool" src="/images/geoviz/includes/images/zoomout.png">');
+		.append('<img id="eraseTool" src="/images/geoviz/delete.png">')
+		//.append('<img id="panTool" src="/images/geoviz/pan.png">')
+		.append('<img id="worldTool" src="/images/geoviz/world.png">')
+		.append('<img id="zoominTool" src="/images/geoviz/zoomin.png">')
+		.append('<img id="zoomoutTool" src="/images/geoviz/zoomout.png">');
 		
 		if (toolbarOptions.showExit)
 		{
 			jQuery(toolbardiv)
-			.append('<img id="exitTool" src="/images/geoviz/includes/images/exit.png">');
+			.append('<img id="exitTool" src="/images/geoviz/exit.png">');
 		}
 		
 		jQuery("#exitTool").button()
@@ -431,12 +431,12 @@
 			if (draw.active)
 			{
 				stopDrawing();
-				//$(this).attr("src","/images/geoviz/includes/images/draw.png");
+				//$(this).attr("src","/images/geoviz/draw.png");
 			}
 			else
 			{
 				startDrawing();
-				//$(this).attr("src","/images/geoviz/includes/images/pan.png");
+				//$(this).attr("src","/images/geoviz/pan.png");
 			}
 		});
 		
@@ -664,17 +664,31 @@
 		
 		for (var i=0;i<pointList.length;i++)
 		{
-			points += pointList[i].y + ","+pointList[i].x+" ";
+			points += pointList[i].y.toPrecision(8) + ","+pointList[i].x.toPrecision(8)+" ";
 		}
 		
-		points += pointList[0].y + ","+pointList[0].x;
+		points += pointList[0].y.toPrecision(8) + ","+pointList[0].x.toPrecision(8);
 		return points;
 		
 	}
 	
+	function checkPointList(List)
+	{
+		var pointList = "";
+		var points = List.match(/(-?\d+\.\d+|-?\d+)/g); //-?\d+(\.\d+)?
+		for (var i=0;i<points.length;i+=2)
+		{
+			if (i!=0) {pointList += " "};
+			pointList += points[i] + "," + points[i+1];
+		}
+		return pointList;
+	}
+	
 	function addFeatureFromcoordinateList(List,NoFlip)
 	{
-		var pointList = List.split(" ");
+		
+		var pointList = checkPointList(List);
+		pointList = pointList.split(" ");
 		var points = "";
 		for (var i=0;i<pointList.length;i++)
 		{
