@@ -21,6 +21,8 @@ require_once 'lib/search.php';
 require_once 'lib/package.php';
 # OpenID API for PHP
 require_once '/usr/local/share/lightopenid-lightopenid/openid.php';
+# GRIIDC database utilities
+require_once '/usr/local/share/GRIIDC/php/db-utils.lib.php';
 
 function user_is_logged_in_somehow() {
     $drupal_login = user_is_logged_in();
