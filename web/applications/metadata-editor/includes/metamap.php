@@ -8,8 +8,7 @@
 <script type="text/javascript" src="/includes/qTip2/jquery.qtip.min.js"></script>
 
 
-<!--<script src="/includes/geoviz/geoviz.js"></script>-->
-<script src="/~mvandeneijnden/map/geoviz.js"></script>
+<script src="/includes/geoviz/geoviz.js"></script>
 
 <script>
 	$(document).ready(function() 
