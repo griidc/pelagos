@@ -356,7 +356,7 @@ if ($prow != null)
 </div>
 
 <div id="pre_login" style="display: none;">
-    <div id="pre_login_close"><input type="image" src="https://proteus.tamucc.edu/data-discovery/includes/images/close.gif" onclick="jQuery('#pre_login').hide();"></div>
+    <div id="pre_login_close"><input type="image" src="/data-discovery/includes/images/close.gif" onclick="jQuery('#pre_login').hide();"></div>
     <div id="pre_login_content">
         <table cellpadding="10">
             <tbody><tr>
@@ -367,21 +367,21 @@ if ($prow != null)
             <tr>
                 <td align="center">
                     <div id="griidc-logo">
-                        <a class="redir_url" href="/cas?destination=data-discovery/download_redirect/R1.x140.125%3A0006%3Ffinal_destination%3D/data-discovery"><img src="https://proteus.tamucc.edu/data-discovery/includes/images/GRIIDC-logo.png" alt="GRIIDC logo"></a>
+                        <a class="redir_url" href="/cas?destination=data-discovery/download_redirect/R1.x140.125%3A0006%3Ffinal_destination%3D/data-discovery"><img src="/data-discovery/includes/images/GRIIDC-logo.png" alt="GRIIDC logo"></a>
                     </div>
                     <div>
                         GoMRI Users, please use your<br>
                         <a class="redir_url" href="/cas?destination=data-discovery/download_redirect/R1.x140.125%3A0006%3Ffinal_destination%3D/data-discovery">GRIIDC login</a> to download data.
                     </div>
                 </td>
-                <td><img src="https://proteus.tamucc.edu/data-discovery/includes/images/vbar.png"></td>
+                <td><img src="/data-discovery/includes/images/vbar.png"></td>
                 <td align="center">
                     <div>
-                        <a href="https://proteus.tamucc.edu/data-discovery/google-auth"><img src="https://proteus.tamucc.edu/data-discovery/includes/images/googleauth.png" alt="google auth logo"></a>
+                        <a href="/data-discovery/google-auth"><img src="/data-discovery/includes/images/googleauth.png" alt="google auth logo"></a>
                     </div>
                     <div>
                         Members of the public may use their<br>
-                        <a href="https://proteus.tamucc.edu/data-discovery/google-auth">Google login</a> to download data.
+                        <a href="/data-discovery/google-auth">Google login</a> to download data.
                     </div>
                 </td>
             </tr>
