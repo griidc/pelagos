@@ -260,11 +260,17 @@
 				{
 					//checkPolygon(event.feature.id);
 				}
+				jQuery("#helptext").html('Modify Mode<br>(Drag points to modify feature)');
 			},
 			'afterfeaturemodified': function(event) {
 				////console.log("Finished with " + event.feature.id);
 				jQuery("#eraseTool").button("disable");
-				
+				checkOnlyOnePolygon();
+				if (typeof event.feature == 'object')
+				{
+					jQuery(document).trigger('featureAdded',getCoordinateList(event.feature));
+				}
+				jQuery("#helptext").text('Navigation Mode');
 			},
 			'beforefeatureadded': function(event) {
 				stopDrawing();
@@ -411,10 +417,17 @@
 		
 		jQuery("#exitTool").button()
 		.click(function() {
+			stopDrawing();
 			window.close();
-		});
+			}).qtip({
+			content: {
+				text: 'Exit the Map'
+			}
+		})
 		
 		jQuery("#drawtools").hide();
+		
+		jQuery("#homeTool")
 		
 		jQuery("#polygonTool").button();
 		jQuery("#lineTool").button();
@@ -424,9 +437,13 @@
 		jQuery("#homeTool").button()
 		.click(function() {
 			goHome();
+			}).qtip({
+			content: {
+				text: 'Go Home'
+			}
 		});
 		
-		jQuery("#drawTool").button()
+		jQuery("#drawTool").button().qtip({content: {text: 'Draw a Polygon'}})
 		.click(function() {
 			if (draw.active)
 			{
@@ -453,24 +470,28 @@
 		jQuery("#eraseTool").button()
 		.click(function() {
 			deleteSelected();
-		});
+		}).qtip({content: {text: 'Delete a Feature'}});
 		
-		jQuery("#worldTool").button()
+		jQuery("#worldTool").button().qtip({content: {text: 'Maximum Zoom Out'}})
 		.click(function() {
 			zoomToMaxExtent();
 		});
 		
-		jQuery("#zoominTool").button()
+		jQuery("#zoominTool").button().qtip({content: {text: 'Zoom In'}})
 		.click(function() {
 			zoomIn();
 		});
 		
-		jQuery("#zoomoutTool").button()
+		jQuery("#zoomoutTool").button().qtip({content: {text: 'Zoom Out'}})
 		.click(function() {
 			zoomOut();
 		});
 		
 		jQuery("#eraseTool").button("disable");
+		
+		jQuery(toolbardiv).append('<span style="font-family:Arial, Verdana, sans-serif;text-align:right;float:right;font-size:20;" id="helptext"></span>');
+		
+		jQuery("#helptext").text('Navigation Mode');
 		
 	}
 	
@@ -724,7 +745,10 @@
 		
 		if (!checkOnlyOnePolygon())
 		{
+			checkAllowModify(true);
 			draw.activate();
+			jQuery("#helptext").html('Drawing Mode<br>(Double click to stop)');
+			
 		}
 	}
 	
@@ -732,8 +756,10 @@
 	{
 		jQuery("#drawtools").fadeOut();
 		//$("#drawtools").hide();
+		modify.deactivate();
 		draw.deactivate();
 		filter.deactivate();
+		jQuery("#helptext").text('Navigation Mode');
 	}
 	
 	function goHome()
