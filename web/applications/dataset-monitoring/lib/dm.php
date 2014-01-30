@@ -30,8 +30,7 @@ function getTasksAndDatasets($projects) {
                     ELSE 2
                END AS metadata,
                CASE WHEN dataset_download_status IS NULL OR
-                         dataset_download_status != 'done' OR
-                         url_data IS NULL
+                         dataset_download_status != 'done'
                         THEN 0
                     WHEN access_status = 'None'
                         THEN 1
