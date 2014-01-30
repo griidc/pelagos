@@ -670,8 +670,8 @@ function getDataManager($udi) {
     "EmailInfo"."Person_Number" = "Person"."Person_Number" AND
     "Person"."Person_Number" = "Dept-GoMRIPerson-Project-Role"."Person_Number"
     AND "Dept-GoMRIPerson-Project-Role"."ProjRole_Number" = 3
-    AND "Dept-GoMRIPerson-Project-Role"."Project_Sequence" = "Project"."Project_Sequence"
-    AND "Project"."FundingEnvelope_Cycle" = ? and "Project"."Project_Sequence" = ?';
+    AND "Dept-GoMRIPerson-Project-Role"."Project_Number" = "Project"."Project_Number"
+    AND "Project"."FundingEnvelope_Cycle" = ? and "Project"."Project_Number" = ?';
 
     $dbms = OpenDB("GRIIDC_RO");
     $data = $dbms->prepare($sql);
