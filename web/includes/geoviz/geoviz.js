@@ -271,6 +271,7 @@
 					jQuery(document).trigger('featureAdded',getCoordinateList(event.feature));
 				}
 				jQuery("#helptext").text('Navigation Mode');
+				
 			},
 			'beforefeatureadded': function(event) {
 				stopDrawing();
@@ -794,6 +795,7 @@
 			deleteFeatureID = modify.feature.id
 			modify.unselectFeature();
 			vlayer.removeFeatures(vlayer.getFeatureById(deleteFeatureID));
+			jQuery(document).trigger('featureAdded','');
 		}
 		checkOnlyOnePolygon();
 	}
