@@ -13,6 +13,7 @@ password = "********"
  0 = "x.png"
  1 = "check.png"
  2 = "triangle_yellow.png"
+ 3 = "r.png"
 
 [status_titles]
 -1_identified = ""
@@ -34,6 +35,7 @@ password = "********"
  0_available = "This dataset has been registered, but the data is not yet available."
  1_available = "This dataset is available for all users to download."
  2_available = "This dataset is available, but download is restricted to certain users."
+ 3_available = "This dataset is remotely hosted on a non-GRIIDC server, so its availability cannot be determined."
 
 [exclude]
 funds[] = 6
