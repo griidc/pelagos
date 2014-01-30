@@ -8,7 +8,7 @@ drupal_add_css('/dif/includes/css/overwrite.css',array('type'=>'external'));
 drupal_add_js('/includes/jquery-validation/jquery.validate.js',array('type'=>'external'));
 //drupal_add_js('/includes/qTip2/jquery.qtip.min.js',array('type'=>'external'));
 
-drupal_add_css('/data/includes/css/xmlverbatim.css',array('type'=>'external'));
+drupal_add_css("$_SERVER[SCRIPT_NAME]/includes/css/xmlverbatim.css",array('type'=>'external'));
 drupal_add_css('/includes/qTip2/jquery.qtip.min.css',array('type'=>'external'));
 drupal_add_css('/data-discovery/includes/css/dataset_download.css',array('type'=>'external'));
 drupal_add_css('/data-discovery/includes/css/logins.css',array('type'=>'external'));
@@ -17,7 +17,7 @@ drupal_add_library('system', 'jquery.cookie');
 drupal_add_library('system', 'ui.tabs');
 drupal_add_library('system', 'ui.button');
 
-drupal_add_css('/data/includes/css/details.css',array('type'=>'external'));
+drupal_add_css("$_SERVER[SCRIPT_NAME]/includes/css/details.css",array('type'=>'external'));
 drupal_add_js('/includes/openlayers/lib/OpenLayers.js',array('type'=>'external'));
 drupal_add_js('//maps.google.com/maps/api/js?v=3&sensor=false',array('type'=>'external'));
 //drupal_add_js('/includes/geoviz/geoviz.js',array('type'=>'external'));
@@ -115,11 +115,11 @@ if ($udi <> '')
 	{
 		if ($prow["metadata_xml"] == "")
 		{
-			$dsscript = "addImage('/data/includes/images/nodata.png',0.4);$('#metadatadl').button('disable');makeStatic();";
+			$dsscript = "addImage('$_SERVER[SCRIPT_NAME]/includes/images/nodata.png',0.4);$('#metadatadl').button('disable');makeStatic();";
 		}
 		else
 		{
-			$dsscript = "addImage('/data/includes/images/labonly.png',0.4);makeStatic();";
+			$dsscript = "addImage('$_SERVER[SCRIPT_NAME]/includes/images/labonly.png',0.4);makeStatic();";
 		}
 	}
 	else
