@@ -83,14 +83,14 @@ if ($udi <> '')
 		THEN 1
 	ELSE 2
 	END AS metadata,
-	CASE WHEN dataset_download_status IS NULL OR
-		dataset_download_status != 'done' OR
-		url_data IS NULL OR
-		(data_source_pull = 'f' AND url_data NOT SIMILAR TO '(file://)?/sftp/data/%.dat')
-	THEN 0
-	WHEN access_status = 'None'
-	THEN 1
-	ELSE 2
+    CASE WHEN dataset_download_status = 'RemotelyHosted'
+             THEN 3
+         WHEN dataset_download_status IS NULL OR
+              dataset_download_status != 'done'
+             THEN 0
+         WHEN access_status = 'None'
+             THEN 1
+         ELSE 2
 	END AS available
 	FROM registry
 	LEFT OUTER JOIN datasets ON substr(registry.registry_id,0,17) = datasets.dataset_udi
@@ -403,7 +403,7 @@ if ($prow != null)
 </td>
 <td style="padding:10px;" width="60%" valign="top">
 <div id="summary">
-<?php  echo $twig->render('summary.html', array('pdata' => $prow,'mdata' => $mrow,'mpdata' => $mprow)); ?>
+<?php  echo $twig->render('summary.html', array('pdata' => $prow,'mdata' => $mrow,'mpdata' => $mprow, 'baseurl' => $_SERVER['SCRIPT_NAME'])); ?>
 </div>
 </td>
 </tr>

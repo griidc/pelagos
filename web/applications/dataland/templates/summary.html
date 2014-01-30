@@ -2,7 +2,7 @@
 <font size="3">
 <div style="float:right;" class="minitoolbar">
 	<span ><img width="40px" height="40px" id="downloadds" src="/data-discovery/includes/images/download-package.png"></span>
-	<span ><img title="test" width="40px" height="40px" id="metadatadl" src="/data/includes/images/xmlc.png"></span>
+	<span ><img title="test" width="40px" height="40px" id="metadatadl" src="{{baseurl}}/includes/images/xmlc.png"></span>
 </div>
 
 <h2>{{pdata.dataset_title}}</h2>
@@ -55,16 +55,16 @@
         <td class="udi">{{pdata.dataset_udi}}</td>
         <td>{{pdata.title}}</td>
         <td class="status" title="{{(pdata.identified ~ '_identified') | statusToTitle}}">
-            <img src="/data/includes/images/{{pdata.identified | statusToImg}}">
+            <img src="{{baseurl}}/includes/images/{{pdata.identified | statusToImg}}">
         </td>
         <td class="status" title="{{(pdata.registered ~ '_registered') | statusToTitle}}">
-            <img src="/data/includes/images/{{pdata.registered | statusToImg}}">
+            <img src="{{baseurl}}/includes/images/{{pdata.registered | statusToImg}}">
         </td>
         <td class="status" title="{% if pdata.registered %}{{(pdata.metadata ~ '_metadata') | statusToTitle}}{% else %}{{'-1_metadata' | statusToTitle}}{% endif %}">
-            <img src="/data/includes/images/{% if pdata.registered %}{{pdata.metadata | statusToImg}}{% else %}{{'-1' | statusToImg}}{% endif %}">
+            <img src="{{baseurl}}/includes/images/{% if pdata.registered %}{{pdata.metadata | statusToImg}}{% else %}{{'-1' | statusToImg}}{% endif %}">
         </td>
         <td class="status" title="{% if pdata.registered %}{{(pdata.available ~ '_available') | statusToTitle}}{% else %}{{'-1_available' | statusToTitle}}{% endif %}">
-            <img src="/data/includes/images/{% if pdata.registered %}{{pdata.available | statusToImg}}{% else %}{{'-1' | statusToImg}}{% endif %}">
+            <img src="{{baseurl}}/includes/images/{% if pdata.registered %}{{pdata.available | statusToImg}}{% else %}{{'-1' | statusToImg}}{% endif %}">
         </td>
     </tr>
 	</table>
