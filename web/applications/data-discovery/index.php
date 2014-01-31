@@ -495,6 +495,19 @@ $app->get('/metadata/:udi', function ($udi) use ($app) {
     }
 });
 
+$app->get('/download-external/:udi', function ($udi) use ($app) {
+    if (preg_match('/^00/',$udi)) {
+        $datasets = get_registered_datasets(getDBH('GOMRI'),array("registry_id=$udi%"));
+    }
+    else {
+        $datasets = get_identified_datasets(getDBH('GOMRI'),array("udi=$udi"));
+    }
+    $dataset = $datasets[0];
+    $stash['dataset'] = $dataset;
+    $app->render('html/download-external.html',$stash);
+    exit;
+});
+
 $app->get('/download/:udi', function ($udi) use ($app) {
     global $user;
     if (!user_is_logged_in_somehow()) {

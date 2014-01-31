@@ -161,6 +161,16 @@ function showDatasetDownload(udi) {
     {% endif %}
 }
 
+function showDatasetDownloadExternal(udi) {
+    $.ajax({
+            "url": "{{baseUrl}}/download-external/" + udi,
+            "success": function(data) {
+                $('#dataset_download_content').html(data);
+                $  ('#dataset_download').show();
+            }
+    });
+}
+
 function applyFilter() {
     removeAllFeaturesFromMap();
     $('#dataset_listing').html('<div class="spinner"><div><img src="{{baseUrl}}/includes/images/spinner.gif"></div></div>');
