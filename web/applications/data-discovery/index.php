@@ -477,7 +477,7 @@ $app->get('/metadata/:udi', function ($udi) use ($app) {
         exit;
     } elseif(strlen($disk_metadata_file) > 0) {
         # Serve it out from the data in the filesystem if it wasn't in the database
-        $filename=$dataset[metadata_filename];
+        $filename=$dataset['metadata_filename'];
         
         header($_SERVER["SERVER_PROTOCOL"] . " 200 OK");
         header("Cache-Control: public"); // needed for i.e.
