@@ -413,7 +413,7 @@ $app->get('/package/download/:udis', function ($udis) use ($app) {
 });
 
 $app->get('/metadata/:udi', function ($udi) use ($app) {
-    /*
+    // if there is a file on disk, capture it
     if (preg_match('/^00/',$udi)) {
         $datasets = get_registered_datasets(getDBH('GOMRI'),array("registry_id=$udi%"));
     }
@@ -421,23 +421,15 @@ $app->get('/metadata/:udi', function ($udi) use ($app) {
         $datasets = get_identified_datasets(getDBH('GOMRI'),array("udi=$udi"));
     }
     $dataset = $datasets[0];
+    
+    $disk_metadata_file_mimetype = '';
+    $disk_metadata_file = '';
     $met_file = "/sftp/data/$dataset[udi]/$dataset[udi].met";
     if (file_exists($met_file)) {
         $info = finfo_open(FILEINFO_MIME_TYPE);
-        $mime = finfo_file($info, $met_file);
-        header($_SERVER["SERVER_PROTOCOL"] . " 200 OK");
-        header("Cache-Control: public"); // needed for i.e.
-        header("Content-Type: $mime");
-        header("Content-Transfer-Encoding: Binary");
-        header("Content-Length:" . filesize($met_file));
-        header("Content-Disposition: attachment; filename=$dataset[metadata_filename]");
-        readfile($met_file);
-        exit;
+        $disk_metadata_file_mimetype = finfo_file($info, $met_file);
+        $disk_metadata_file=file_get_contents($met_file);
     }
-    else {
-        drupal_set_message("Error retrieving metadata file: file not found: $met_file",'error');
-    }
-    */
     # This SQL uses a subselect to resolve the newest registry_id
     # associated with the passed in UDI.
     $sql = "
@@ -469,6 +461,7 @@ $app->get('/metadata/:udi', function ($udi) use ($app) {
     $data->execute(array($udi));
     $raw_data = $data->fetch();
     if ($raw_data) {
+        # Serve it out from the data in the database by default
         # the following line is probably better done in SQL, so this will be changed in the near future
         $filename = preg_replace(array('/{/','/}/'),array('',''),$raw_data['filename']);
         $filename = preg_replace("/:/",'-',$filename);
@@ -482,9 +475,23 @@ $app->get('/metadata/:udi', function ($udi) use ($app) {
         flush();
         print $raw_data['metadata_xml'];
         exit;
+    } elseif(strlen($disk_metadata_file) > 0) {
+        # Serve it out from the data in the filesystem if it wasn't in the database
+        $filename=$dataset[metadata_filename];
+        
+        header($_SERVER["SERVER_PROTOCOL"] . " 200 OK");
+        header("Cache-Control: public"); // needed for i.e.
+        header("Content-Type: $disk_metadata_file_mimetype");
+        header("Content-Transfer-Encoding: Binary");
+        header("Content-Length:" . filesize($met_file));
+        header("Content-Disposition: attachment; filename=$dataset[metadata_filename]");
+        ob_clean();
+        flush();
+        readfile($met_file);
+        exit;
     } else {
-        drupal_set_message("Error retrieving metadata from database.",'error');
-        drupal_goto($GLOBALS['PAGE_NAME']); # reload calling page (is there a better way to do this?)
+        drupal_set_message("Error retrieving metadata from database and filesystem.",'error');
+        drupal_goto($GLOBALS['PAGE_NAME']); # reload calling page
     }
 });
 
