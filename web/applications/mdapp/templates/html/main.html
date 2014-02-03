@@ -21,13 +21,14 @@
             <table>
                 <thead>
                     <tr>
-                        <th style="width:140px">UDI</th>
+                        <th style="width:125px">UDI</th>
                         {% if sname == 'accepted' %}
-                            <th style="width:75px">Un-accept</th>
+                            <th style="width:80px">Un-accept</th>
                         {% else %}
-                            <th style="width:75px">Accept</th>
+                            <th style="width:80px">Accept</th>
                         {% endif %}
-                        <th stile="width:50%">Filename</th>
+                        <th style="width:150px">Timestamp</th>
+                        <th style="width:50%">Filename</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -39,6 +40,7 @@
                             {% else %}
                             <td valign="top"><a href="{{baseUrl}}/accept/{{dta.dataset_udi}}" target="0" >A</a></td>
                             {% endif %}
+                            <td valign="top">{{dta.submittimestamp}}</td>
                             <td valign="top"><a href="{{baseUrl}}/download-metadata/{{dta.dataset_udi}}"><img src="{{baseUrl}}/includes/images/download.png"></a>&nbsp;{% if dta.hasxml == true %}<a href="{{baseUrl}}/download-metadata-db/{{dta.dataset_udi}}"><img src="{{baseUrl}}/includes/images/download-from-db.png"></a>&nbsp;{% endif %}{{dta.dataset_metadata}}</td>
                         </tr>
                     {% endfor %}

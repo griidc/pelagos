@@ -795,7 +795,8 @@ function GetMetadata($type) {
                                 ]
                             ) as character varying ))), dataset_metadata 
                         ) as dataset_metadata,
-                        (metadata_xml is not null) as hasxml
+                        (metadata_xml is not null) as hasxml,
+                        submittimestamp
                     FROM 
                         curr_reg_view left join metadata
                         ON curr_reg_view.registry_id = metadata.registry_id 
@@ -820,7 +821,8 @@ function GetMetadata($type) {
                                 ]
                             ) as character varying ))), dataset_metadata 
                         ) as dataset_metadata,
-                        (metadata_xml is not null) as hasxml
+                        (metadata_xml is not null) as hasxml,
+                        submittimestamp
                     FROM 
                         curr_reg_view left join metadata
                         ON curr_reg_view.registry_id = metadata.registry_id 
