@@ -51,6 +51,9 @@ $app = new Slim(array(
                      ));
 
 $app->hook('slim.before', function () use ($app) {
+    if(!isset($_SESSION['orderby'])) {
+        $_SESSION['orderby'] = "ORDER BY dataset_udi";
+    }
     $env = $app->environment();
     $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
     $app->view()->appendData(array('baseUrl' => "$protocol$env[SERVER_NAME]/$GLOBALS[PAGE_NAME]"));
@@ -78,8 +81,8 @@ $app->get('/includes/:file', 'dumpIncludesFile')->conditions(array('file' => '.+
 
 $app->get('/', function () use ($app) {
     $stash=index($app);
-    $stash['m_dataset']['accepted']    = GetMetadata('accepted');
-    $stash['m_dataset']['submitted']   = GetMetadata('submitted');
+    $stash['m_dataset']['accepted']    = GetMetadata('accepted',$_SESSION['orderby']);
+    $stash['m_dataset']['submitted']   = GetMetadata('submitted',$_SESSION['orderby']);
     $stash['srvr'] = "https://$_SERVER[HTTP_HOST]";
     if(isset($_SESSION['testPolygon'])) { $stash['testPolygon'] = $_SESSION['testPolygon']; }
     return $app->render('html/main.html',$stash);
@@ -141,6 +144,21 @@ $app->get('/accept/:udi', function ($udi) use ($app) {
     writeLog($user->name." has approved metadata for $udi");
     echo "<a href=../>Continue</a>";
 });
+
+// Sort Toggle
+$app->get('/sorter/:sort', function ($sort) use ($app) {
+    if($sort === 'udi') {
+        $_SESSION['orderby'] = 'ORDER BY dataset_udi';
+    } elseif ($sort === 'timestamp') {
+        $_SESSION['orderby'] = 'ORDER BY submittimestamp';
+    } else {
+        // default if unspecified or something else specified
+        $_SESSION['orderby'] = 'ORDER BY curr_reg_view.registry_id';
+    }
+    drupal_goto($GLOBALS['PAGE_NAME']); # reload calling page (is there a better way to do this?
+
+});
+
 
 // Test Geometry
 $app->post('/TestGeometry', function () use ($app) {
@@ -778,7 +796,7 @@ function sendEmail($to,$from,$sub,$message) {
     mail($to,$sub,$message,$header); 
 }
 
-function GetMetadata($type) {
+function GetMetadata($type,$sorter) {
     $type=strtolower($type);
     switch($type) {
         case "accepted":
@@ -804,8 +822,7 @@ function GetMetadata($type) {
                         metadata_status = 'Accepted' 
                     AND 
                         metadata_dl_status = 'Completed'
-                    ORDER BY 
-                        curr_reg_view.registry_id";
+                        $sorter";
             break;
         case "submitted":
             $sql = "SELECT 
@@ -830,8 +847,7 @@ function GetMetadata($type) {
                         metadata_status = 'Submitted' 
                     AND 
                         metadata_dl_status = 'Completed'
-                    ORDER BY 
-                        curr_reg_view.registry_id";
+                        $sorter";
             break;
     }
     if(isset($sql)) {       
