@@ -18,10 +18,8 @@ public class RisToGriidcMain {
 	private FundingEnvelopeSynchronizer fundingEnvelopeSynker = new FundingEnvelopeSynchronizer();
 	private ProjectSynchronizer projectSynker = new ProjectSynchronizer();
 
-	private static boolean RunEverything = true;
-
 	public RisToGriidcMain() {
-		// TODO Auto-generated constructor stub
+	  
 	}
 
 	public static void main(String[] args) {
