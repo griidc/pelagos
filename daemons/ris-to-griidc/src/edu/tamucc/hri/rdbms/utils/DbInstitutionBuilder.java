@@ -9,6 +9,7 @@ import edu.tamucc.hri.griidc.altrep.Institution;
 import edu.tamucc.hri.griidc.altrep.InstitutionCollection;
 import edu.tamucc.hri.griidc.exception.NoRecordFoundException;
 import edu.tamucc.hri.griidc.exception.PropertyNotFoundException;
+import edu.tamucc.hri.griidc.exception.TableNotInDatabaseException;
 
 public class DbInstitutionBuilder {
 
@@ -55,7 +56,7 @@ public class DbInstitutionBuilder {
 	}
 
 	public void buildInstitutionCollectionFromDb()
-			throws FileNotFoundException, SQLException, ClassNotFoundException {
+			throws FileNotFoundException, SQLException, ClassNotFoundException, TableNotInDatabaseException {
 
 		if (isDebug()) 
 			System.out.println("DbInstitutionBuilder.buildInstitutionCollectionFromDb() - " +this.toString()); 

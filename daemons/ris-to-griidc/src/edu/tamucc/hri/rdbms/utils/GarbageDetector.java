@@ -3,6 +3,8 @@ package edu.tamucc.hri.rdbms.utils;
 import java.io.BufferedReader;
 import java.io.IOException;
 
+import edu.tamucc.hri.griidc.support.MiscUtils;
+
 /**
  * This is an object that will read the contents of a string a detect the
  * presence of unwanted characters, strings and patterns. Specifically html
@@ -114,7 +116,7 @@ public class GarbageDetector {
 		try {
 			BufferedReader reader = MiscUtils.openInputFile(inFileName);
 			System.out.println("GarbageDetector.main() - input file is "
-					+ MiscUtils.getRisFileName(inFileName));
+					+ MiscUtils.getAbsoluteFileName(inFileName));
 
 			for (String line = reader.readLine(); line != null; line = reader
 					.readLine()) {

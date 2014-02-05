@@ -14,6 +14,7 @@ import java.util.Set;
 
 import edu.tamucc.hri.griidc.exception.NoRecordFoundException;
 import edu.tamucc.hri.griidc.exception.PropertyNotFoundException;
+import edu.tamucc.hri.griidc.exception.TableNotInDatabaseException;
 
 public class SqueezedStringIntDbCache {
 
@@ -95,7 +96,7 @@ public class SqueezedStringIntDbCache {
 	}
 
 	public void buildCacheFromDb() throws FileNotFoundException, SQLException,
-			ClassNotFoundException, PropertyNotFoundException {
+			ClassNotFoundException, PropertyNotFoundException, TableNotInDatabaseException {
 
 		if (isDebug())
 			System.out.println("\n" + this.getCacheDescription());

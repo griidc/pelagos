@@ -1,5 +1,7 @@
 package edu.tamucc.hri.rdbms.utils;
 
+import edu.tamucc.hri.griidc.support.MiscUtils;
+
 public class CompressedString  implements Comparable<CompressedString>  {
 
 	private String compressedString  = null;

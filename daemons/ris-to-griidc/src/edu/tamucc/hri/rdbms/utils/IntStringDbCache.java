@@ -9,6 +9,8 @@ import java.util.Map;
 
 import edu.tamucc.hri.griidc.exception.NoRecordFoundException;
 import edu.tamucc.hri.griidc.exception.PropertyNotFoundException;
+import edu.tamucc.hri.griidc.exception.TableNotInDatabaseException;
+import edu.tamucc.hri.griidc.support.MiscUtils;
 
 public class IntStringDbCache {
 
@@ -22,7 +24,20 @@ public class IntStringDbCache {
 	private String keyColName = null;
 	private String valueColName = null;
 	private boolean squeeze = false;
+	
+	private  boolean deBug = false;
 
+	/**
+	 * @param dbCon
+	 * @param tableName
+	 * @param keyColName
+	 * @param valueColName
+	 */
+	public IntStringDbCache(RdbmsConnection dbCon, String tableName,
+			String keyColName, String valueColName) {
+		this(dbCon,tableName,keyColName,valueColName,false);
+	}
+	
 	/**
 	 * @param dbCon
 	 * @param tableName
@@ -50,7 +65,7 @@ public class IntStringDbCache {
 		if (this.squeeze)
 			sv = MiscUtils.squeeze(value);
 		String oldV = this.cacheMap.put(key, sv);
-
+        if(this.isDeBug() ) System.err.println("IntStringDbCache:cacheValue() added " + key + "-" + sv);
 		return oldV;
 	}
 
@@ -64,12 +79,12 @@ public class IntStringDbCache {
 	public String getValue(int key) throws NoRecordFoundException {
 		String name = this.cacheMap.get(key);
 		if (name == null)
-			throw new NoRecordFoundException(" Key is " + key);
+			throw new NoRecordFoundException("No " + keyColName + " in table: " + this.tableName + " found with value: " + key);
 		return name;
 	}
 
 	public void buildCacheFromDb() throws FileNotFoundException, SQLException,
-			ClassNotFoundException, PropertyNotFoundException {
+			ClassNotFoundException, PropertyNotFoundException, TableNotInDatabaseException {
 
 		if (this.cacheMap.size() == 0) {
 
@@ -97,4 +112,13 @@ public class IntStringDbCache {
 	public int size() {
 		return this.cacheMap.size();
 	}
+
+	public boolean isDeBug() {
+		return this.deBug;
+	}
+
+	public void setDeBug(boolean db) {
+		this.deBug = db;
+	}
+	
 }
