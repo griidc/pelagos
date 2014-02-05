@@ -83,6 +83,7 @@ $app->get('/', function () use ($app) {
     $stash=index($app);
     $stash['m_dataset']['accepted']    = GetMetadata('accepted',$_SESSION['orderby']);
     $stash['m_dataset']['submitted']   = GetMetadata('submitted',$_SESSION['orderby']);
+    $stash['m_dataset']['inreview']   = GetMetadata('inreview',$_SESSION['orderby']);
     $stash['srvr'] = "https://$_SERVER[HTTP_HOST]";
     if(isset($_SESSION['testPolygon'])) { $stash['testPolygon'] = $_SESSION['testPolygon']; }
     return $app->render('html/main.html',$stash);
@@ -119,7 +120,7 @@ $app->get('/download-metadata/:udi', function ($udi) use ($app) {
 $app->get('/un-accept/:udi', function ($udi) use ($app) {
     global $user;
     $sql = "update registry set metadata_status = 'Submitted' where 
-            metadata_status = 'Accepted' and registry_id = 
+            metadata_status in ('Accepted','InReview') and registry_id = 
             ( select registry_id from curr_reg_view where dataset_udi = ?)
             ";
     $dbms = OpenDB("GOMRI_RW");
@@ -130,11 +131,26 @@ $app->get('/un-accept/:udi', function ($udi) use ($app) {
     echo "<a href=../>Continue</a>";
 });
 
+// Review
+$app->get('/review/:udi', function ($udi) use ($app) {
+    global $user;
+    $sql = "update registry set metadata_status = 'InReview' where 
+            metadata_status in ('Accepted','Submitted') and registry_id = 
+            ( select registry_id from curr_reg_view where dataset_udi = ?)
+            ";
+    $dbms = OpenDB("GOMRI_RW");
+    $data = $dbms->prepare($sql);
+    $data->execute(array($udi));
+    drupal_set_message($user->name." has set metadata for $udi into review status.",'message');
+    writeLog($user->name." has set metadata for $udi into review status.");
+    echo "<a href=../>Continue</a>";
+});
+
 // Accept
 $app->get('/accept/:udi', function ($udi) use ($app) {
     global $user;
     $sql = "update registry set metadata_status = 'Accepted' where 
-            metadata_status = 'Submitted' and registry_id = 
+            metadata_status in ('Submitted','InReview') and registry_id = 
             ( select registry_id from curr_reg_view where dataset_udi = ?)
             ";
     $dbms = OpenDB("GOMRI_RW");
@@ -849,6 +865,30 @@ function GetMetadata($type,$sorter) {
                         metadata_dl_status = 'Completed'
                         $sorter";
             break;
+        case "inreview":
+            $sql = "SELECT 
+                        metadata_status, 
+                        url_metadata, 
+                        dataset_udi, 
+                        coalesce(trim(trailing '}' from trim(leading '{' from cast(
+                            xpath('/gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1]/text()',metadata_xml,
+                                ARRAY[
+                                    ARRAY['gmi', 'http://www.isotc211.org/2005/gmi'],
+                                    ARRAY['gmd', 'http://www.isotc211.org/2005/gmd'],
+                                    ARRAY['gco', 'http://www.isotc211.org/2005/gco']
+                                ]
+                            ) as character varying ))), dataset_metadata 
+                        ) as dataset_metadata,
+                        (metadata_xml is not null) as hasxml,
+                        submittimestamp
+                    FROM 
+                        curr_reg_view left join metadata
+                        ON curr_reg_view.registry_id = metadata.registry_id 
+                    WHERE 
+                        metadata_status = 'InReview' 
+                    AND 
+                        metadata_dl_status = 'Completed'
+                        $sorter";
     }
     if(isset($sql)) {       
         $dbms = OpenDB("GOMRI_RO");
