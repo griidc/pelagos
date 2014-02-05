@@ -12,8 +12,8 @@ import java.util.TreeSet;
 import edu.tamucc.hri.griidc.RisPropertiesAccess;
 import edu.tamucc.hri.griidc.exception.DbMappingException;
 import edu.tamucc.hri.griidc.exception.PropertyNotFoundException;
+import edu.tamucc.hri.griidc.support.MiscUtils;
 import edu.tamucc.hri.rdbms.utils.GarbageDetector;
-import edu.tamucc.hri.rdbms.utils.MiscUtils;
 
 public class DbMappingCollection {
 
@@ -202,7 +202,7 @@ public class DbMappingCollection {
 			PropertyNotFoundException, SQLException {
 		String inFileName = RisPropertiesAccess.getInstance()
 				.getDatabaseMappingFileName();
-		if(isNoisy()) System.out.println("DbMappingCollection.initializeFromDataFile() " + MiscUtils.getRisFileName(inFileName));
+		if(isNoisy()) System.out.println("DbMappingCollection.initializeFromDataFile() " + MiscUtils.getAbsoluteFileName(inFileName));
 		
 		try {
 			BufferedReader reader = MiscUtils.openInputFile(inFileName);

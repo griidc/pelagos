@@ -4,14 +4,15 @@ import java.io.FileNotFoundException;
 import java.sql.SQLException;
 
 import edu.tamucc.hri.griidc.RisPropertiesAccess;
-import edu.tamucc.hri.griidc.DeadEndSyncGriidcToRis;
 import edu.tamucc.hri.griidc.exception.DuplicateRecordException;
 import edu.tamucc.hri.griidc.exception.GriidcExceptionService;
 import edu.tamucc.hri.griidc.exception.MissingArgumentsException;
 import edu.tamucc.hri.griidc.exception.NoRecordFoundException;
 import edu.tamucc.hri.griidc.exception.PropertyNotFoundException;
-import edu.tamucc.hri.rdbms.utils.MiscUtils;
+import edu.tamucc.hri.griidc.exception.TableNotInDatabaseException;
+import edu.tamucc.hri.griidc.support.MiscUtils;
 import edu.tamucc.hri.rdbms.utils.RdbmsConnection;
+import edu.tamucc.hri.rdbms.utils.RdbmsUtils;
 
 /**
  * A consolidation of test routines
@@ -64,7 +65,7 @@ public class RisToGriidcTest {
 		String msg = "SyncGriidcToRis - Could not connect to RIS database ";
 		RdbmsConnection con = null;
 		try {
-			con = MiscUtils.getRisDbConnection();
+			con = RdbmsUtils.getRisDbConnectionInstance();
 		} catch (FileNotFoundException e) {
 			GriidcExceptionService.fatalException(e, msg);
 		} catch (SQLException e) {
@@ -84,7 +85,7 @@ public class RisToGriidcTest {
 		RdbmsConnection con = null;
 		String msg = "SyncGriidcToRis - Could not connect to GRIIDC database ";
 		try {
-			con = MiscUtils.getGriidcDbConnection();
+			con = RdbmsUtils.getGriidcDbConnectionInstance();
 		} catch (FileNotFoundException e) {
 			GriidcExceptionService.fatalException(e, msg);
 		} catch (SQLException e) {
@@ -99,7 +100,7 @@ public class RisToGriidcTest {
 		return true;
 	}
 
-	public static boolean testGetGriidcTables(boolean tableNamesOnly) {
+	public static boolean testGetGriidcTables(boolean tableNamesOnly) throws TableNotInDatabaseException {
 		System.out
 				.println("\n\n-------------- testGetGriidcTables ------------------");
 		System.out.println("GRIIDC tables and their columns");
@@ -107,7 +108,7 @@ public class RisToGriidcTest {
 		String[] tableNames = null;
 		String[] colNames = null;
 		try {
-			con = MiscUtils.getGriidcDbConnection();
+			con = RdbmsUtils.getGriidcDbConnectionInstance();
 			tableNames = con.getTableNamesForDatabase();
 			for (String t : tableNames) {
 				if (tableNamesOnly) {
@@ -139,7 +140,7 @@ public class RisToGriidcTest {
 		}
 	}
 
-	public static boolean testGetRisTables(boolean tableNamesOnly) {
+	public static boolean testGetRisTables(boolean tableNamesOnly) throws TableNotInDatabaseException {
 		System.out
 				.println("\n\n------------- testGetRisTables --------------------");
 		System.out.println("RIS tables and their columns");
@@ -147,7 +148,7 @@ public class RisToGriidcTest {
 		String[] tableNames = null;
 		String[] colNames = null;
 		try {
-			con = MiscUtils.getRisDbConnection();
+			con = RdbmsUtils.getRisDbConnectionInstance();
 			tableNames = con.getTableNamesForDatabase();
 			for (String t : tableNames) {
 				if (tableNamesOnly) {
@@ -180,42 +181,7 @@ public class RisToGriidcTest {
 				{"Germany","Rheinland-Pfalz","Carlsberg","67316"},
 		};
 		
-		DeadEndSyncGriidcToRis synker = new DeadEndSyncGriidcToRis();
-		try {
-			
-			for(String[] z : zzz) {
-
-				String country = z[0];
-				String state = z[1];
-				String city = z[2];
-				String zip = z[3];
-				try {
-					 int countryCode =  synker.findCountryNumberFromName(country);
-					int key = synker.findGriidcPostalAreaNumber(countryCode,state,city,zip);
-					System.out.println("\nPostal Area Number :" + key + " found for " + country + ", " 
-							+ state + ", "  + city + ", "  + zip  + "\n");
-				} catch (DuplicateRecordException e) {
-					System.err.println("\n" + e.getMessage());
-				} catch (NoRecordFoundException e) {
-					System.err.println("\n" + e.getMessage());
-				} catch (MissingArgumentsException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (PropertyNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
+		
 	}
 
 	public static void testCountryNameToCountryCode() {
@@ -243,33 +209,8 @@ public class RisToGriidcTest {
 				"Vanuatu", "Wallis and Futuna", "Samoa", "Yemen", "Mayotte",
 				"South Africa", "Zambia", "Zimbabwe", "Serbia and Montenegro",
 				"Netherlands Antilles" };
+	
 		
-		DeadEndSyncGriidcToRis synker = new DeadEndSyncGriidcToRis();
-		try {
-			
-			for(String cn : countryNames) {
-				try {
-					int key = synker.findCountryNumberFromName(cn);
-					System.out.println("Key:" + key + " for country " + cn );
-				} catch (DuplicateRecordException e) {
-					System.err.println(e.getMessage());
-				} catch (NoRecordFoundException e) {
-					System.err.println(e.getMessage());
-				}
-			}
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (PropertyNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
 		
 	}
 
