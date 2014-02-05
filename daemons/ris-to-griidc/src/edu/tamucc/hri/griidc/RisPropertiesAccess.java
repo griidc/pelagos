@@ -16,7 +16,6 @@ public class RisPropertiesAccess {
 
 	private Properties propertiesInstance = null;
 	
-
 	private static final int FAILURE = -1;
 	private static boolean propertiesLoaded = false;
 
@@ -40,11 +39,11 @@ public class RisPropertiesAccess {
 		}
 		return risPropertiesAccessInstance;
 	}
+	
+	
 	private RisPropertiesAccess() {
 		super();
 		propertiesLoaded = false;
-		
-		
 	}
 
 	public static String getPropertiesSourceFile() {
@@ -86,9 +85,7 @@ public class RisPropertiesAccess {
 			throws FileNotFoundException, PropertyNotFoundException {
 		return this.getProperty(DatabaseMappingFileName);
 	}
-	private Properties getPropertiesInstance() {
-		File f = new File(RisPropertiesAccess.propertiesFilePath);
-
+	public Properties getPropertiesInstance() {
 		if (this.propertiesInstance == null) {
 
 			InputStream inputStream = null;
@@ -104,14 +101,14 @@ public class RisPropertiesAccess {
 				return this.propertiesInstance;
 			} catch (FileNotFoundException e1) {
 				System.err
-						.println("DatabaseAccess.getPropertiesInstance() properties file not found file : "
+						.println("RisPropertiesAccess.getPropertiesInstance() properties file not found file : "
 								+ this.propertiesFilePath
 								+ " "
 								+ e1.getMessage());
 				return null;
 			} catch (IOException e2) {
 				System.err
-						.println("DatabaseAccess.getPropertiesInstance() IOException on properties file : "
+						.println("RisPropertiesAccess.getPropertiesInstance() IOException on properties file : "
 								+ this.propertiesFilePath
 								+ " "
 								+ e2.getMessage());
@@ -124,14 +121,13 @@ public class RisPropertiesAccess {
 		return this.propertiesInstance;
 	}
 
-	
-
 	public static String getWorkingDirectory() {
 		return System.getProperty("user.dir");
 	}
 	
+	
 
-	public static void main(String[] args) throws FileNotFoundException  {
+	public static void main(String[] args) throws FileNotFoundException, PropertyNotFoundException  {
 
 		RisPropertiesAccess api = RisPropertiesAccess.getInstance();
 
@@ -143,5 +139,7 @@ public class RisPropertiesAccess {
 		for (int i = 0; i < properties.length; i++)
 			System.out.println(properties[i]);
 
+		
+		
 	}
 }
