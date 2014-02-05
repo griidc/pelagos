@@ -241,7 +241,7 @@ public class PersonSynchronizer {
 					continue; // branch back to while (rset.next())
 
 				} catch (DuplicateRecordException e2) {
-					// TODO Auto-generated catch block
+				
 					msg = "Error in RIS People - record id: " + risPeople_Id
 							+ ", institution: " + risPeople_InstitutionId
 							+ ", department: " + risPeople_DepartmentId + ".\n"
@@ -451,7 +451,7 @@ public class PersonSynchronizer {
 				} else if (count == 1) {
 
 					// Modify Person record
-					if (isRisPeopleEqualToGriidcPerson(tempPostalAreaNumber,
+					if (isCurrentRecordEqual(tempPostalAreaNumber,
 							tempDeliveryPoint, this.risPeople_LastName,
 							this.risPeople_MiddleName,
 							this.risPeople_FirstName, this.risPeople_Suffix,
@@ -772,7 +772,7 @@ public class PersonSynchronizer {
 	 * @param gLat
 	 * @return
 	 */
-	private boolean isRisPeopleEqualToGriidcPerson(int risPostalAreaNumber,
+	private boolean isCurrentRecordEqual(int risPostalAreaNumber,
 			String risDeliveryPoint, String risLastName, String risMiddleName,
 			String risFirstName, String risSuffix, String risTitle,
 

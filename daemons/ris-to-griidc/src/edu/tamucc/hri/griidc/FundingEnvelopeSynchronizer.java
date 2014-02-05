@@ -41,6 +41,10 @@ public class FundingEnvelopeSynchronizer {
 	private int griidcRecordsModified = 0;
 	private int griidcRecordDuplicates = 0;
 
+	private static String RisFundSourceColName = "Fund_Source";
+	private static String RisFundIdColName = "Fund_ID";
+	private static String RisFundNameColName = "Fund_Name";
+	
 	private String risFundSource = null;
 	private int risFundId = -1;
 	private String risFundName = null;
@@ -169,10 +173,8 @@ public class FundingEnvelopeSynchronizer {
 				this.risFundSource = rset.getString("Fund_Source").trim();
 				this.risFundName = rset.getString("Fund_Name").trim();
 
-				String msg = "\nRead RIS table: " + RisTableName
-						+ ", Fund_ID: " + this.risFundId + ", Fund_Source: "
-						+ this.risFundSource + ", Fund_Name : "
-						+ this.risFundName;
+				String msg = "Read RIS Fund record - " + this.risFundToString();
+				
 				if (FundingEnvelopeSynchronizer.isDebug())
 					System.out.println(msg);
 				try {
@@ -271,21 +273,26 @@ public class FundingEnvelopeSynchronizer {
 					}
 
 				} else if (count == 1) {
+					if (isCurrentRecordEqual()) {
+						if(isDebug()) System.out.println("RIS record is equal to GRIIDC record\n " + this.griidcFundingEnvelopeToString() + "\n" + this.risFundToString());
+						continue;  // the record found is the same as the one read from RIS
+					}
+					if(isDebug()) System.out.println("RIS record is NOT equal to GRIIDC record - modify it\n " + this.griidcFundingEnvelopeToString() + "\n" + this.risFundToString());
+					// if not equal then modify the record to match info in RIS
 					try {
-						if (!isCurrentRecordEqual()) {
-							this.griidcFundingEnvelopeName = this.risFundName;
-							this.griidcFundingEnvelopeCycle = RdbmsUtils
-									.convertRisFundingSourceToGriidcFormat(this.risFundSource);
-							RisProgramStartEnd rfspsec = this.startEndDatePrograms
-									.getFundSourceStartEndDate(this.risFundId);
-							this.griidcFundingEnvelopeStartDate = rfspsec
-									.getStartDate();
-							this.griidcFundingEnvelopeEndDate = rfspsec
-									.getEndDate();
-							this.modifyGriidcFundingEnvelopeRecord();
+						this.griidcFundingEnvelopeName = this.risFundName;
+						this.griidcFundingEnvelopeCycle = RdbmsUtils
+								.convertRisFundingSourceToGriidcFormat(this.risFundSource);
+						RisProgramStartEnd rfspsec = this.startEndDatePrograms
+								.getFundSourceStartEndDate(this.risFundId);
+						this.griidcFundingEnvelopeStartDate = rfspsec
+								.getStartDate();
+						this.griidcFundingEnvelopeEndDate = rfspsec
+								.getEndDate();
+						this.modifyGriidcFundingEnvelopeRecord();
 
-							this.griidcRecordsModified++;
-						}
+						this.griidcRecordsModified++;
+
 					} catch (IllegalFundingSourceCodeException e) {
 						msg = "In RIS FundingSource Table - Fund_ID "
 								+ this.risFundId + " - " + e.getMessage();
@@ -319,14 +326,31 @@ public class FundingEnvelopeSynchronizer {
 	}
 
 	/**
-	 * compare the current RIS record with the current GRIIDC record
-	 *If all possible updateable values are the same return true. (NO update needed)
-	 *else return false.
+	 * compare the current RIS record with the current GRIIDC record If all
+	 * possible updateable values are the same return true. (NO update needed)
+	 * else return false.
+	 * 
 	 * @return
+	 * @throws IllegalFundingSourceCodeException
 	 */
 	private boolean isCurrentRecordEqual() {
-		
+		String tempRisDerrivedFundingEnvelopeCycle = null;
+		try {
+			tempRisDerrivedFundingEnvelopeCycle = RdbmsUtils
+					.convertRisFundingSourceToGriidcFormat(this.risFundSource);
+		} catch (IllegalFundingSourceCodeException e) {
+			return false;
+		}
+		RisProgramStartEnd rfspsec = this.startEndDatePrograms
+				.getFundSourceStartEndDate(this.risFundId);
+		return (this.griidcFundingEnvelopeName.equals(this.risFundName)
+				&& this.griidcFundingEnvelopeCycle
+						.equals(tempRisDerrivedFundingEnvelopeCycle)
+				&& this.griidcFundingEnvelopeStartDate.equals(rfspsec
+						.getStartDate()) && this.griidcFundingEnvelopeEndDate
+					.equals(rfspsec.getEndDate()));
 	}
+
 	private String griidcFundingEnvelopeToString() {
 
 		return GriidcFundingEnvelope_CycleColName + ": "
@@ -334,6 +358,13 @@ public class FundingEnvelopeSynchronizer {
 				+ GriidcFundingOrganization_NumberColName + ": "
 				+ this.defaultFundingOrganizationNumber + ", "
 				+ GriidcFundingEnvelope_NameColName + ": " + this.risFundName;
+	}
+	
+	private String risFundToString() {
+
+	  return RisFundIdColName + ": " + this.risFundId + 
+				", " + RisFundSourceColName + ": " + this.risFundSource + 
+				", " +  RisFundNameColName + ": "+ this.risFundName;
 	}
 
 	private DbColumnInfo[] getWhereColumnInfo() {

@@ -1,3 +1,14 @@
 data
 bin
 .DS_Store
+.classpath
+.project
+.classpath
+.project
+.settings/org.eclipse.jdt.core.prefs
+gomri_rpisTablesAndColumnNamesOut.txt
+kainiteJvh
+kainiteLatest
+kainitePrev
+lib/javax.mail.jar
+mainPartial.sql

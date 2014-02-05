@@ -388,7 +388,7 @@ public class DepartmentSynchronizer {
 				} else if (count == 1) {
 
 					// Modify Department record
-					if (isRisDeptEqualToGriidcDept(this.risDeptId,
+					if (isCurrentRecordEqual(this.risDeptId,
 							this.risDeptInstId, tempPostalAreaNumber,
 							tempDeliveryPoint, this.risDeptName,
 							this.risDeptURL, this.griidcDeptNumber,
@@ -580,7 +580,7 @@ public class DepartmentSynchronizer {
 	 * @param gLat
 	 * @return
 	 */
-	private boolean isRisDeptEqualToGriidcDept(int rNumber, int rInstNumber,
+	private boolean isCurrentRecordEqual(int rNumber, int rInstNumber,
 			int rPostalAreaNumber, String rDeliveryPoint, String rName,
 			String rUrl, int gNumber, int gInstNumber, int gPostalAreaNumber,
 			String gDeliveryPoint, String gName, String gUrl) {// double

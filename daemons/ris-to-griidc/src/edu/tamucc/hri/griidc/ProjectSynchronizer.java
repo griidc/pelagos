@@ -48,8 +48,8 @@ public class ProjectSynchronizer {
 	private int risProgram_FundSrc = -1;
 	private int risProgram_LeadInstitution = -1;
 	private int risProgram_SubTasks = -1;
-	private String risProgram_StartDate = null;
-	private String risProgram_EndDate = null;
+	private java.sql.Date risProgram_StartDate = null;
+	private java.sql.Date risProgram_EndDate = null;
 	private String risProgram_Abstract = null;
 
 	// RIS Program column names
@@ -66,8 +66,8 @@ public class ProjectSynchronizer {
 	private int griidcProject_Number = -1;
 	private String griidcFundingEnvelope_Cycle = null;
 	private String griidcProject_Abstract = null;
-	private String griidcProject_EndDate = null; // was java.sql.Date
-	private String griidcProject_StartDate = null; // was java.sql.Date
+	private java.sql.Date griidcProject_EndDate = null; // was java.sql.Date
+	private java.sql.Date griidcProject_StartDate = null; // was java.sql.Date
 	private String griidcProject_Title = null;
 
 	// GRIIDC FundingEnvelope stuff
@@ -86,7 +86,6 @@ public class ProjectSynchronizer {
 
 	private static boolean Debug = false;
 	private boolean initialized = false;
-	private static boolean FullyFunctional = false;
 
 	private RisFundSrcProgramsStartEndCollection startEndDatePrograms = null;
 
@@ -159,10 +158,10 @@ public class ProjectSynchronizer {
 							+ RisProgram_SubTasks_ColName + ": "
 							+ this.risProgram_SubTasks);
 					
-					this.risProgram_StartDate = rset.getString(
-							RisProgram_StartDate_ColName).trim();
-					this.risProgram_EndDate = rset.getString(
-							RisProgram_EndDate_ColName).trim();
+					this.risProgram_StartDate = rset.getDate(
+							RisProgram_StartDate_ColName);
+					this.risProgram_EndDate = rset.getDate(
+							RisProgram_EndDate_ColName);
 					this.risProgram_Abstract = rset
 							.getString(RisProgram_Abstract_ColName);
 
@@ -205,9 +204,9 @@ public class ProjectSynchronizer {
 						this.griidcProject_Abstract = griidcRset
 								.getString(GriidcProject_Abstract_ColName);
 						this.griidcProject_EndDate = griidcRset
-								.getString(GriidcProject_EndDate_ColName);
+								.getDate(GriidcProject_EndDate_ColName);
 						this.griidcProject_StartDate = griidcRset
-								.getString(GriidcProject_StartDate_ColName);
+								.getDate(GriidcProject_StartDate_ColName);
 						this.griidcProject_Title = griidcRset
 								.getString(GriidcProject_Title_ColName);
 
@@ -236,10 +235,8 @@ public class ProjectSynchronizer {
 								.getFundSourceProgramStartEndDate(
 										this.risProgram_FundSrc,
 										this.griidcProject_Number);
-						this.griidcProject_StartDate = rfspsec.getStartDate()
-								.toString();
-						this.griidcProject_EndDate = rfspsec.getEndDate()
-								.toString();
+						this.griidcProject_StartDate = rfspsec.getStartDate();
+						this.griidcProject_EndDate = rfspsec.getEndDate();
 						this.griidcProject_Abstract = this.risProgram_Abstract;
 						this.addGriidcProjectRecord();
 						this.griidcRecordsAdded++;
@@ -265,8 +262,12 @@ public class ProjectSynchronizer {
 						continue; // back to next RIS record from resultSet
 					}
 
-				} else if (count == 1 && FullyFunctional) {
+				} else if (count == 1) {
 					try {
+						if(isCurrentRecordEqual()) {
+							
+							continue;  // back to next RIS
+						}
 						this.griidcProject_Number = this.risProgram_ID;
 						this.griidcProject_Title = this.risProgram_Title;
 						this.griidcFundingEnvelope_Cycle = MiscUtils
@@ -276,10 +277,8 @@ public class ProjectSynchronizer {
 								.getFundSourceProgramStartEndDate(
 										this.risProgram_FundSrc,
 										this.griidcProject_Number);
-						this.griidcProject_StartDate = rfspsec.getStartDate()
-								.toString();
-						this.griidcProject_EndDate = rfspsec.getEndDate()
-								.toString();
+						this.griidcProject_StartDate = rfspsec.getStartDate();
+						this.griidcProject_EndDate = rfspsec.getEndDate();
 						this.griidcProject_Abstract = this.risProgram_Abstract;
 						this.modifyGriidcProjectRecord();
 						this.griidcRecordsModified++;
@@ -293,7 +292,7 @@ public class ProjectSynchronizer {
 						this.risRecordErrors++;
 						continue; // back to next RIS record from resultSet
 					}
-				} else if (count > 1 && FullyFunctional) { // duplicates
+				} else if (count > 1) { // duplicates
 					this.griidcRecordDuplicates++;
 
 					msg = "There are " + count + " records in the  GRIIDC "
@@ -311,6 +310,29 @@ public class ProjectSynchronizer {
 		}
 		return;
 		// end of Project
+	}
+	
+	private boolean isCurrentRecordEqual() {
+		String risDerrivedFuncingCycle = null;
+		try {
+			risDerrivedFuncingCycle = MiscUtils
+					.getProjectNumberFundingCycleCache().getValue(
+							this.risProgram_FundSrc);
+		} catch (NoRecordFoundException e) {
+			return false;
+		}
+		RisProgramStartEnd rfspsec = this.startEndDatePrograms
+				.getFundSourceProgramStartEndDate(
+						this.risProgram_FundSrc,
+						this.griidcProject_Number);
+		
+		return (
+				this.griidcProject_Number == this.risProgram_ID &&
+		this.griidcProject_Title.equals(this.risProgram_Title) &&
+		this.griidcFundingEnvelope_Cycle.equals(risDerrivedFuncingCycle) && 
+		this.griidcProject_StartDate.equals(rfspsec.getStartDate()) && 
+		this.griidcProject_EndDate.equals(rfspsec.getEndDate()) && 
+		this.griidcProject_Abstract.equals(this.risProgram_Abstract));
 	}
 
 	private String griidcProjectToString() {

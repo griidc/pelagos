@@ -301,8 +301,9 @@ public class InstitutionSynchronizer {
 					}
 
 				} else if (count == 1) {
+					
 					// Modify Institution record
-					if (isRisInstEqualToGriidcInst(risInstId,
+					if (isCurrentRecordEqual(risInstId,
 							risInstName,
 							tempPostalAreaNumber,
 							tempDeliveryPoint,
@@ -470,7 +471,7 @@ public class InstitutionSynchronizer {
 	 * @param gLat
 	 * @return
 	 */
-	private boolean isRisInstEqualToGriidcInst(int rNumber, String rName,
+	private boolean isCurrentRecordEqual(int rNumber, String rName,
 			int rPostalAreaNumber, String rDeliveryPoint,
 			String rUrl, // double rLon,double rLat,
 
