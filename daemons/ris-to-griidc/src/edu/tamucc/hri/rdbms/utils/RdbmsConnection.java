@@ -1,16 +1,10 @@
 package edu.tamucc.hri.rdbms.utils;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.sql.Array;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -21,10 +15,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Vector;
 
-import com.mysql.jdbc.DatabaseMetaData;
-
-import edu.tamucc.hri.griidc.RisPropertiesAccess;
 import edu.tamucc.hri.griidc.exception.PropertyNotFoundException;
+import edu.tamucc.hri.griidc.exception.TableNotInDatabaseException;
+import edu.tamucc.hri.griidc.support.MiscUtils;
 
 public class RdbmsConnection {
 
@@ -51,6 +44,8 @@ public class RdbmsConnection {
 	private BufferedWriter mainOutput = null;
 	private BufferedWriter exceptionOutput = null;
 
+	private String[] allTablesInDatabase = null;
+
 	private GarbageDetector garbageDetector = new GarbageDetector();
 
 	public RdbmsConnection() {
@@ -67,7 +62,13 @@ public class RdbmsConnection {
 				+ ", rdbmsJdbcDriverName=" + rdbmsJdbcDriverName
 				+ ", rdbmsJdbcPrefix=" + rdbmsJdbcPrefix + "]";
 	}
-
+	public String getShortDescription() {
+		return "RdbmsConnection [rdbmsType=" + rdbmsType + ", rdbmsHost="
+				+ rdbmsHost + ", rdbmsUrl="
+				+ rdbmsUrl + ", rdbmsUser=" + rdbmsUser + ", rdbmsName=" + rdbmsName
+				+ ", rdbmsSchemaName=" + rdbmsSchemaName
+				+  "]";
+	}
 	public RdbmsConnection(String jdbcDriverName, String dbType, String host,
 			String port, String user, String password, String dbName,
 			String schemaName, String prefix) {
@@ -143,16 +144,18 @@ public class RdbmsConnection {
 			String dbSchema, String dbUser, String dbPassword)
 			throws SQLException, ClassNotFoundException {
 
-		errorMsg("RdbmsConnection.setConnection - dbType: " + dbType);
-		errorMsg("RdbmsConnection.setConnection - jdbcDriverName: "
-				+ driverName);
-		errorMsg("RdbmsConnection.setConnection - jdbcPrefix: " + jdbcPrefix);
-		errorMsg("RdbmsConnection.setConnection - host: " + host);
-		errorMsg("RdbmsConnection.setConnection - port: " + port);
-		errorMsg("RdbmsConnection.setConnection - dbName: " + dbName);
-		errorMsg("RdbmsConnection.setConnection - schema: " + dbSchema);
-		errorMsg("RdbmsConnection.setConnection - dbUser: " + dbUser);
-		errorMsg("RdbmsConnection.setConnection - dbPassword: " + dbPassword);
+		// debugMessage("RdbmsConnection.setConnection - dbType: " + dbType);
+		// debugMessage("RdbmsConnection.setConnection - jdbcDriverName: "
+		// + driverName);
+		// debugMessage("RdbmsConnection.setConnection - jdbcPrefix: " +
+		// jdbcPrefix);
+		// debugMessage("RdbmsConnection.setConnection - host: " + host);
+		// debugMessage("RdbmsConnection.setConnection - port: " + port);
+		// debugMessage("RdbmsConnection.setConnection - dbName: " + dbName);
+		// debugMessage("RdbmsConnection.setConnection - schema: " + dbSchema);
+		// debugMessage("RdbmsConnection.setConnection - dbUser: " + dbUser);
+		// debugMessage("RdbmsConnection.setConnection - dbPassword: " +
+		// dbPassword);
 
 		DriverManager dm = null;
 		this.rdbmsJdbcDriverName = driverName;
@@ -165,12 +168,11 @@ public class RdbmsConnection {
 		this.rdbmsPassword = dbPassword;
 		this.rdbmsType = dbType;
 
-		errorMsg("getConnection() Class.forName(" + this.rdbmsJdbcDriverName
-				+ ")");
 		Class.forName(this.rdbmsJdbcDriverName);
 		String url = RdbmsConnection.getDatabaseUrl(jdbcPrefix, host, port,
 				dbName);
-		errorMsg("\nThe database url: " + url + "," + dbUser + "," + dbPassword);
+		debugMessage("\nThe database url: " + url + "," + dbUser + ","
+				+ dbPassword);
 		this.connection = DriverManager.getConnection(url, dbUser, dbPassword);
 		getStatement();
 		return this.getConnection();
@@ -219,7 +221,7 @@ public class RdbmsConnection {
 			}
 
 		} catch (SQLException e) {
-			errorMsg("printProducts SQLException " + e.getMessage());
+			debugMessage("printProducts SQLException " + e.getMessage());
 			e.printStackTrace();
 		}
 		return status;
@@ -240,8 +242,8 @@ public class RdbmsConnection {
 	public ResultSet executeQueryResultSet(String query) throws SQLException,
 			ClassNotFoundException {
 
-		if (Debug)
-			errorMsg("\texecuteQueryResultSet() - query is >" + query + "<");
+		// if (Debug)
+		// debugMessage("\texecuteQueryResultSet() - query is >" + query + "<");
 		ResultSet resultSet = this.getStatement().executeQuery(query);
 		// statement.close();
 		return resultSet;
@@ -285,87 +287,19 @@ public class RdbmsConnection {
 	 */
 	public boolean executeQueryBoolean(String query) throws SQLException,
 			ClassNotFoundException {
-		if (Debug)
-			errorMsg(DebugPrefix + "\texecuteQueryBoolean() - query is "
-					+ query);
+		// if (Debug)
+		// debugMessage(DebugPrefix + "\texecuteQueryBoolean() - query is "
+		// + query);
 		boolean result = this.getStatement().execute(query);
 		return result;
 	}
 
 	public int executeUpdate(String query) throws SQLException,
 			ClassNotFoundException {
-		if (Debug)
-			errorMsg(DebugPrefix + "\texecuteUpdate() - query is " + query);
+		// if (Debug)
+		// debugMessage(DebugPrefix + "\texecuteUpdate() - query is " + query);
 		int updateCount = this.getStatement().executeUpdate(query);
 		return updateCount;
-	}
-
-	/**
-	 * A convenience function to wrap stings in single quotes for
-	 * 
-	 * @param token
-	 * @return
-	 */
-	public static String wrapInSingleQuotes(final String token) {
-		if (token == null)
-			return null;
-		if (Debug)
-			System.out.println("RdbmsConnection.wrapInSingleQuotes(" + token
-					+ ")");
-		if (token.contains("\'")) {
-			return wrapInDollarQuotes(token);
-		}
-		return "'" + token + "'";
-	}
-
-	public static String wrapInDollarQuotes(final String messyString) {
-		String dollarQuote = "$jvh$";
-		return dollarQuote + messyString + dollarQuote;
-	}
-
-	/**
-	 * find all the " ' " characters (single quote - Apostrophe ) and stuff an
-	 * escape character before it
-	 * 
-	 * @param s
-	 * @return
-	 */
-	public static String escapeApostrophe(final String uString) {
-		/*******
-		 * String pString = uString; String target = "\'"; String replacement =
-		 * "#"; String escapedString = "\\\'"; while(pString.contains("\'")) {
-		 * pString = pString.replace(target, replacement); }
-		 * 
-		 * while(pString.contains(replacement)) { pString =
-		 * pString.replace(replacement, escapedString); }
-		 *******/
-		return RdbmsConnection.escapeSpecialCharacter("\'", uString);
-	}
-
-	public static String escapeParens(final String uString) {
-		String pString = uString;
-		pString = RdbmsConnection.escapeSpecialCharacter("(", pString);
-		pString = RdbmsConnection.escapeSpecialCharacter(")", pString);
-		return pString;
-	}
-
-	public static String escapeSpecialCharacter(String specChar,
-			final String uString) {
-		String pString = uString;
-		String target = specChar;
-		String replacement = "#";
-		String escapedString = "\\\\" + specChar;
-		while (pString.contains(specChar)) {
-			pString = pString.replace(target, replacement);
-		}
-		while (pString.contains(replacement)) {
-			pString = pString.replace(replacement, escapedString);
-		}
-		return pString;
-	}
-
-	public static String wrapInDoubleQuotes(final String token) {
-		return "\"" + token + "\"";
 	}
 
 	public static String getFirstAlpha(String s) {
@@ -530,47 +464,135 @@ public class RdbmsConnection {
 
 	public String[] getTableNamesForDatabase() throws SQLException,
 			ClassNotFoundException, FileNotFoundException {
-		/****
-		 * old query - does not seem to work with mysql String query =
-		 * "select table_name from information_schema.tables " +
-		 * " where table_type = 'BASE TABLE' and table_schema = " +
-		 * RdbmsConnection.wrapInSingleQuotes(this.getDbSchemaName()) +
-		 * " order by table_name ASC";
-		 ***************************************/
-		String query = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES";
-		String[] output = null;
-		errorMsg("RdbmsConnection:getTableNamesForDatabase() - query: " + query);
-		ResultSet rs = this.executeQueryResultSet(query);
-		Vector<String> v = new Vector<String>();
+		if (this.allTablesInDatabase == null) {
+			String query = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES";
+			debugMessage("RdbmsConnection:getTableNamesForDatabase() - query: "
+					+ query);
+			ResultSet rs = this.executeQueryResultSet(query);
+			Vector<String> v = new Vector<String>();
 
-		while (rs.next()) {
-			v.add(rs.getString(1));
+			while (rs.next()) {
+				v.add(rs.getString(1).trim());
+			}
+			this.allTablesInDatabase = new String[v.size()];
+			this.allTablesInDatabase = v.toArray(this.allTablesInDatabase);
 		}
-		output = new String[v.size()];
-		v.toArray(output);
-		return output;
+		return this.allTablesInDatabase;
+	}
+	
+	public boolean isTableInDatabase(String tableName) throws FileNotFoundException, SQLException, ClassNotFoundException, TableNotInDatabaseException {
+		String[] tabNames = this.getTableNamesForDatabase();
+		for(String tn: tabNames) {
+			if(tableName.trim().equals(tn)) return true;
+		}
+		String msg = "In Database: " + this.getDbName() + " table: " + tableName + " does not exist.";
+		this.debugMessage(msg);
+		throw new TableNotInDatabaseException(msg);
 	}
 
 	public String[] getColumnNamesFromTable(String tableName)
-			throws FileNotFoundException, SQLException, ClassNotFoundException {
-		String querry = "select column_name from information_schema.columns where table_name="
+			throws FileNotFoundException, SQLException, ClassNotFoundException, TableNotInDatabaseException {
+
+		this.isTableInDatabase(tableName);
+		String query = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = "
 				+ RdbmsConnection.wrapInSingleQuotes(tableName);
 		String[] output = null;
 
-		errorMsg("getColumnNamesFromTable() - query: " + querry);
-		ResultSet rs = this.executeQueryResultSet(querry);
-		Vector<String> v = new Vector<String>();
+		debugMessage("getColumnNamesFromTable() - query: " + query);
+		ResultSet rs = this.executeQueryResultSet(query);
+		Vector<String> colName = new Vector<String>();
 
 		while (rs.next()) {
-			v.add(rs.getString(1));
+			colName.add(rs.getString(1));
 		}
-		output = new String[v.size()];
-		v.toArray(output);
+		output = new String[colName.size()];
+		output = colName.toArray(output);
 		return output;
 	}
 
+	/**
+	 * For a given table return a two D array (R) inwhich R[0][?] is the column
+	 * name and R[1][?] is the data type of the column. Return the 2D table
+	 * which could be empty but will not be null
+	 * 
+	 * @param tableName
+	 * @return
+	 * @throws FileNotFoundException
+	 * @throws SQLException
+	 * @throws ClassNotFoundException
+	 * @throws TableNotInDatabaseException 
+	 */
+	public String[][] getColumnNamesAndDataTypesFromTable(String tableName)
+			throws FileNotFoundException, SQLException, ClassNotFoundException, TableNotInDatabaseException {
+		this.isTableInDatabase(tableName);
+		String query = "SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = "
+				+ RdbmsConnection.wrapInSingleQuotes(tableName);
+		String[] colOut = null;
+		String[] typeOut = null;
+		debugMessage("getColumnNamesAndDataTypeFromTable() - query: " + query);
+		Vector<String> colName = new Vector<String>();
+		Vector<String> colDType = new Vector<String>();
+
+		int count = 0;
+		String cName = null;
+		String dType = null;
+		ResultSet rs = this.executeQueryResultSet(query);
+		while (rs.next()) {
+			cName = rs.getString(1);
+			dType = rs.getString(2);
+			colName.add(cName);
+			colDType.add(dType);
+			debugMessage("\trs[" + count + "] = " + cName + "  -  " + dType);
+			count++;
+		}
+		debugMessage("\tRS count: " + count);
+		colOut = new String[colName.size()];
+		typeOut = new String[colDType.size()];
+		colOut = colName.toArray(colOut);
+		typeOut = colDType.toArray(typeOut);
+		String[][] allOut = new String[2][];
+		allOut[0] = colOut;
+		allOut[1] = typeOut;
+		return allOut;
+	}
+
+	/**
+	 * interogate the database system to determine if there is a column in the
+	 * specified table (tableName) that has one or more columns that have
+	 * default values and if so what is the value. SELECT column_default FROM
+	 * information_schema.columns WHERE table_name = 'Institution-Telephone';
+	 * 
+	 * @param tableName
+	 * @return
+	 * @throws FileNotFoundException
+	 * @throws SQLException
+	 * @throws ClassNotFoundException
+	 * @throws PropertyNotFoundException
+	 * @throws TableNotInDatabaseException 
+	 */
+	public String[] getColumnDefaultValue(String tableName)
+			throws FileNotFoundException, SQLException, ClassNotFoundException,
+			PropertyNotFoundException, TableNotInDatabaseException {
+
+		this.isTableInDatabase(tableName);
+		String query = "SELECT column_default FROM information_schema.columns WHERE table_name = "
+				+ RdbmsConnection.wrapInSingleQuotes(tableName);
+		ResultSet rset = this.executeQueryResultSet(query);
+		Vector<String> v = new Vector<String>();
+		String s = null;
+		while (rset.next()) {
+			s = rset.getString(1);
+			v.add(s);
+		}
+		String[] tArray = new String[v.size()];
+		tArray = v.toArray(tArray);
+		return tArray;
+
+	}
+
 	public ResultSet selectAllValuesFromTable(String tableName)
-			throws SQLException, ClassNotFoundException, FileNotFoundException {
+			throws SQLException, ClassNotFoundException, FileNotFoundException, TableNotInDatabaseException {
+		this.isTableInDatabase(tableName);
 		StringBuffer query = new StringBuffer("select * from ");
 		if (this.getDbType().equals("postgres")) {
 
@@ -582,25 +604,25 @@ public class RdbmsConnection {
 			// query.append(RdbmsConnection.wrapInSingleQuotes(tableName));
 			query.append(tableName);
 		}
-		errorMsg("RdbmsConnection.selectAllValuesFromTable(" + tableName
+		debugMessage("RdbmsConnection.selectAllValuesFromTable(" + tableName
 				+ ") query is " + query.toString());
 		return this.executeQueryResultSet(query.toString());
 	}
 
 	public String[] processResultSet(ResultSet rset, String[] colNames) {
 
-		errorMsg(DebugPrefix + "\tprocessResultSet() ");
+		debugMessage(DebugPrefix + "\tprocessResultSet() ");
 
 		StringBuffer sb = null;
 		Vector<String> v = new Vector<String>();
 		try {
 			while (rset.next()) {
 				if (Debug)
-					errorMsg(DebugPrefix + "result set has next");
+					debugMessage(DebugPrefix + "result set has next");
 				sb = new StringBuffer();
 				for (String cname : colNames) {
 					if (Debug)
-						errorMsg(DebugPrefix + "colName: " + cname);
+						debugMessage(DebugPrefix + "colName: " + cname);
 
 					String temp;
 					try {
@@ -635,17 +657,17 @@ public class RdbmsConnection {
 	}
 
 	public void interogateResultSet(ResultSet rs) throws SQLException {
-		errorMsg("\ninterogateResultSet");
+		debugMessage("\ninterogateResultSet");
 		ResultSetMetaData rsmd = rs.getMetaData();
 		String tableName = rsmd.getTableName(1);
-		errorMsg("Table Name: " + tableName);
+		debugMessage("Table Name: " + tableName);
 		int colCount = rs.getMetaData().getColumnCount();
-		errorMsg("Column count: " + colCount);
+		debugMessage("Column count: " + colCount);
 		int ndx = 1;
 		for (int i = 0; i < colCount; i++) {
 			ndx = i + 1;
 			String colName = rs.getMetaData().getColumnName(ndx);
-			errorMsg("\tcol name: " + colName);
+			debugMessage("\tcol name: " + colName);
 		}
 
 		String value = null;
@@ -653,7 +675,7 @@ public class RdbmsConnection {
 			for (int i = 0; i < colCount; i++) {
 				ndx = i + 1;
 				value = rs.getString(ndx);
-				errorMsg("\t" + value);
+				debugMessage("\t" + value);
 			}
 		}
 	}
@@ -674,7 +696,7 @@ public class RdbmsConnection {
 	}
 
 	public void readDatabase(final String[] targetTables) throws SQLException,
-			ClassNotFoundException {
+			ClassNotFoundException, TableNotInDatabaseException {
 
 		System.out.println("\n" + getFormatedDbInfo());
 		try {
@@ -697,14 +719,14 @@ public class RdbmsConnection {
 						+ this.getDbName();
 				this.writeLineToFile(msg);
 				System.out.println(msg);
-				this.errorMsg(msg);
+				this.debugMessage(msg);
 
 			} else {
 				msg = "reading " + tableNames.length
 						+ " selected tables from database " + this.getDbName();
 				this.writeLineToFile(msg);
 				System.out.println(msg);
-				this.errorMsg(msg);
+				this.debugMessage(msg);
 			}
 
 			for (String t : tableNames) {
@@ -754,60 +776,123 @@ public class RdbmsConnection {
 		}
 	}
 
-	
 	public void reportTableAndColumnNames(final String[] targetTables)
-			throws SQLException, ClassNotFoundException, IOException {
-		reportTableAndColumnNames(targetTables,null);
-	}
-	public void reportTableAndColumnNames(final String[] targetTables, BufferedWriter bw)
-			throws SQLException, ClassNotFoundException, IOException {
-
-
-		MiscUtils.writeIt(bw,"\n" + getFormatedDbInfo());
-
+			throws SQLException, ClassNotFoundException, IOException, TableNotInDatabaseException {
+		String outputFileName = this.getDbName()
+				+ "TablesAndColumnNamesOut.txt";
 		try {
+			BufferedWriter localBw = MiscUtils.openOutputFile(outputFileName);
 
-			MiscUtils.writeIt(bw,"db connection: " + this.toString());
+			localBw.write("db connection: " + this.toString());
 
 			// MiscUtils.writeIt(bw,"\n\nenter to continue");
 			// /myint = keyboard.nextLine();
 
 			String msg = null;
 			String[] tableNames = targetTables;
-			String outputFileName = this.getDbName() + "TablesAndColumns";
-			this.mainOutput = MiscUtils.openOutputFile(outputFileName);
 
 			if (targetTables == null || targetTables.length == 0) {
 				tableNames = this.getTableNamesForDatabase();
 				msg = "reading all " + tableNames.length
 						+ " tables from database " + this.getDbName();
-				this.writeLineToFile(msg);
-				MiscUtils.writeIt(bw,msg);
-				this.errorMsg(msg);
+				localBw.write(msg);
+				this.debugMessage(msg);
 
 			} else {
 				msg = "reading " + tableNames.length
 						+ " selected tables from database " + this.getDbName();
-				this.writeLineToFile(msg);
-				MiscUtils.writeIt(bw,msg);
-				this.errorMsg(msg);
+				localBw.write(msg);
+				this.debugMessage(msg);
 			}
 
 			for (String t : tableNames) {
 				String[] colNames = this.getColumnNamesFromTable(t);
-				this.writeLineToFile("\nTable: " + t);
+				localBw.write("\nTable: " + t);
+
 				StringBuffer sb = new StringBuffer();
-				for (String colN : colNames) {
-					sb.append(colN + "\t");
+				for (String colNam : colNames) {
+					sb.append(colNam + "\t");
 				}
-				this.writeLineToFile(sb.toString());
+				localBw.write(sb.toString());
 
 			}
-			MiscUtils.writeIt(bw,"Output written to: " + outputFileName);
-			if (!(this.mainOutput == null)) {
-				this.mainOutput.close();
-				this.mainOutput = null;
+			System.out.println("Table And Column Names Output written to: "
+					+ MiscUtils.getAbsoluteFileName(outputFileName));
+			localBw.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return;
+	}
+
+	public void reportTableColumnNamesAndDataType(final String[] targetTables)
+			throws SQLException, ClassNotFoundException, IOException, TableNotInDatabaseException {
+
+		try {
+
+			String outputFileName = MiscUtils.getAbsoluteFileName(this
+					.getDbName() + "TablesColumnsAndDataTypesOut.txt");
+			BufferedWriter localBw = MiscUtils.openOutputFile(outputFileName);
+
+			localBw.write("\n" + this.getFormatedDbInfo());
+
+			localBw.write("db connection: " + this.toString());
+
+			// MiscUtils.writeIt(bw,"\n\nenter to continue");
+			// /myint = keyboard.nextLine();
+
+			String msg = null;
+			String[] tableNames = targetTables;
+
+			if (targetTables == null || targetTables.length == 0) {
+				tableNames = this.getTableNamesForDatabase();
+				msg = "reading all " + tableNames.length
+						+ " tables from database " + this.getDbName();
+				localBw.write(msg);
+				this.debugMessage(msg);
+
+			} else {
+				msg = "reading " + tableNames.length
+						+ " selected tables from database " + this.getDbName();
+				localBw.write(msg);
+				this.debugMessage(msg);
 			}
+
+			String formatString2 = "%-30s%-10s%n";
+			localBw.write("Database: " + this.rdbmsName);
+			System.out.println("Database: " + this.rdbmsName);
+			for (String t : tableNames) {
+				String[][] colNamesAndDataType = this
+						.getColumnNamesAndDataTypesFromTable(t);
+				localBw.write("\nTable: " + t + "\n");
+				System.out.println("\n" + " For Table: " + t + "\n");
+
+				String[] colNames = colNamesAndDataType[0];
+				String[] typeNames = colNamesAndDataType[1];
+
+				for (int i = 0; i < colNames.length; i++) {
+					localBw.write(String.format(formatString2,
+							colNames[i].trim(), typeNames[i].trim()));
+					System.out.format(formatString2, colNames[i].trim(),
+							typeNames[i].trim());
+				}
+			}
+
+			System.out
+					.println("Table Column Names And Data Type Output written to: "
+							+ outputFileName);
+			localBw.close();
 
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -839,9 +924,9 @@ public class RdbmsConnection {
 		// System.out.println(line);
 	}
 
-	private void errorMsg(String line) {
+	private void debugMessage(String line) {
 		if (Debug)
-			System.err.println("\n<><>" + line);
+			System.out.println("\nRdbmsConnection: " + line);
 	}
 
 	public String[] getSchemaNames() throws SQLException {
@@ -859,4 +944,129 @@ public class RdbmsConnection {
 		return sss;
 	}
 
+	public void closeConnection() throws SQLException {
+		this.connection.close();
+	}
+
+	/**
+	 * A convenience function to wrap stings in single quotes for
+	 * 
+	 * @param token
+	 * @return
+	 */
+	public static String wrapInSingleQuotes(final String token) {
+		if (token == null)
+			return null;
+		if (token.contains("\'")) {
+			return wrapInDollarQuotes(token);
+		}
+		return "'" + token + "'";
+	}
+
+	public static String wrapInDollarQuotes(final String messyString) {
+		String dollarQuote = "$jvh$";
+		return dollarQuote + messyString + dollarQuote;
+	}
+
+	public static String wrapInDoubleQuotes(final String token) {
+		return "\"" + token + "\"";
+	}
+
+	/**
+	 * find all the " ' " characters (single quote - Apostrophe ) and stuff an
+	 * escape character before it
+	 * 
+	 * @param s
+	 * @return
+	 */
+	public static String escapeApostrophe(final String uString) {
+		/*******
+		 * String pString = uString; String target = "\'"; String replacement =
+		 * "#"; String escapedString = "\\\'"; while(pString.contains("\'")) {
+		 * pString = pString.replace(target, replacement); }
+		 * 
+		 * while(pString.contains(replacement)) { pString =
+		 * pString.replace(replacement, escapedString); }
+		 *******/
+		return RdbmsConnection.escapeSpecialCharacter("\'", uString);
+	}
+
+	public static String escapeParens(final String uString) {
+		String pString = uString;
+		pString = RdbmsConnection.escapeSpecialCharacter("(", pString);
+		pString = RdbmsConnection.escapeSpecialCharacter(")", pString);
+		return pString;
+	}
+
+	public static String escapeSpecialCharacter(String specChar,
+			final String uString) {
+		String pString = uString;
+		String target = specChar;
+		String replacement = "#";
+		String escapedString = "\\\\" + specChar;
+		while (pString.contains(specChar)) {
+			pString = pString.replace(target, replacement);
+		}
+		while (pString.contains(replacement)) {
+			pString = pString.replace(replacement, escapedString);
+		}
+		return pString;
+	}
+
+	public static void main(String[] args) {
+		String[] risTableNames = { "Institutions", "Departments", "People" };
+		String[] griidcTableNames = { "Institution", "Department", "Person",
+				"Institution-Telephone" };
+		System.out.println("RdbmsConnection.main() - Start -");
+		GriidcPgsqlEnumType gpet = new GriidcPgsqlEnumType();
+		RdbmsConnection.setDebug(false);
+		try {
+			RdbmsUtils.setDebug(true);
+			String fileName = RdbmsUtils.getRisDbConnectionInstance()
+					.getDbName() + "TableColTypeReport.txt";
+			String s = RdbmsUtils.getColumnNamesAndDataTypesFromTables(
+					RdbmsUtils.getRisDbConnectionInstance(), risTableNames);
+			MiscUtils.writeStringToFile(fileName, s);
+
+			fileName = RdbmsUtils.getGriidcDbConnectionInstance().getDbName()
+					+ "TableColTypeReport.txt";
+			s = RdbmsUtils.getColumnNamesAndDataTypesFromTables(
+					RdbmsUtils.getGriidcDbConnectionInstance(),
+					griidcTableNames);
+			MiscUtils.writeStringToFile(fileName, s);
+
+			System.out.println("\nGRIIDC Table Names");
+
+			for (String tabName : griidcTableNames) {
+				System.out.println("\n" + tabName);
+				String[] defaults = RdbmsUtils.getGriidcDbConnectionInstance()
+						.getColumnDefaultValue(tabName);
+				String[] colNames = RdbmsUtils.getGriidcDbConnectionInstance()
+						.getColumnNamesFromTable(tabName);
+
+				for (int i = 0; i < defaults.length && i < colNames.length; i++) {
+					System.out.println("\tcol: " + colNames[i] + "\tdefault: "
+							+ defaults[i]);
+				}
+			}
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (PropertyNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TableNotInDatabaseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		System.out.println("Rdbmsutils.main() - END -");
+	}
 }
