@@ -53,6 +53,7 @@
                 <xs:element ref="title"/>
                 <xs:element ref="abstract"/>
                 <xs:element ref="doi" minOccurs="0"/>
+                <xs:element ref="hash" minOccurs="0"/>
             </xs:sequence>
             <xs:attribute name="sequence" use="optional" type="xs:integer">
                 <xs:annotation>
@@ -212,6 +213,30 @@
             </xs:simpleContent>
         </xs:complexType>
     </xs:element>
+    <xs:element name="hash">
+        <xs:annotation>
+            <xs:documentation>This element can be used to provide a hash of the dataset file.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:string">
+                    <xs:attribute name="algorithm" use="required" type="hash_algorithm_TYPE">
+                        <xs:annotation>
+                            <xs:documentation>This attribute is used to specify the algorithm used to calculate the hash. Possible values are: MD5, SHA-1, SHA-256, SHA-512</xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:simpleType name="hash_algorithm_TYPE">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="MD5"/>
+            <xs:enumeration value="SHA-1"/>
+            <xs:enumeration value="SHA-256"/>
+            <xs:enumeration value="SHA-512"/>
+        </xs:restriction>
+    </xs:simpleType>
     <xs:element name="access_control">
         <xs:annotation>
             <xs:documentation>This element represents the access control for a dataset.</xs:documentation>
