@@ -108,7 +108,7 @@ while (my $r = $sth->fetchrow_hashref()) {
     $filename =~ s/.*\///;
     my $filesize = -s "$config->{paths}->{data_store}/$udi/$udi.dat";
     my $sth2 = $dbh->prepare("UPDATE registry SET dataset_filename = ?, dataset_download_size = ?, dataset_download_status = ? WHERE registry_id = ?;");
-    writelog($log,"[$udi] updating dataset_filename, dataset_download_size, and dataset_download_status for");
+    writelog($log,"[$udi] updating dataset_filename, dataset_download_size, and dataset_download_status");
     $sth2->execute($filename,$filesize,'done',$reg_id) or die "Couldn't execute statement: " . $sth2->errstr;
 
     # set parameters for submitter notification
