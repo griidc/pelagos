@@ -419,7 +419,7 @@
 		jQuery("#exitTool").button()
 		.click(function() {
 			stopDrawing();
-			window.close();
+			closeMe();
 			}).qtip({
 			content: {
 				text: 'Exit the Map'
@@ -800,3 +800,7 @@
 		checkOnlyOnePolygon();
 	}
 	
+	 function closeMe()
+	 {
+		jQuery(document).trigger('closeMe');
+	 }
