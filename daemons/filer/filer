@@ -191,7 +191,7 @@ while (my $r = $sth->fetchrow_hashref()) {
     copy($filepath,"$config->{paths}->{data_store}/$udi/$udi.met") or die "Error: could not copy file ($!)\n";
     $md_filed{$reg_id} = {
                            from => $filepath,
-                             to => "$conf->{paths}->{data_store}/$udi/$udi.met"
+                             to => "$config->{paths}->{data_store}/$udi/$udi.met"
                          };
 
     # update dataset_metadata (original filename), metadata_dl_status, and metadata_status
