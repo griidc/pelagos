@@ -154,8 +154,6 @@ for my $uid (keys %notify) {
 
     next unless $email;
 
-    $email = 'jdavis.tamucc@gmail.com';
-
     my %mail = (      To => $email,
                     From => 'GRIIDC <griidc@gomri.org>',
                  Subject => 'GRIIDC Metadata Submission Summary',
