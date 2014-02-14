@@ -140,6 +140,8 @@ $sth->execute();
 
 my (%md_remote, %md_unknown, %md_missing, %md_filed, @md_approve, %md_bad_reg_id, %md_bad_udi);
 
+my $retriever_md = 0;
+
 # loop through all entries that need processing for metadata
 while (my $r = $sth->fetchrow_hashref()) {
 
@@ -161,7 +163,12 @@ while (my $r = $sth->fetchrow_hashref()) {
 
     # check if url is remote
     if ($url_metadata =~ /^(https?|ftp):\/\//) {
-        $md_remote{$reg_id} = $url_metadata;
+        if ($url_metadata =~ /^https?:\/\// and -x '/usr/local/griidc/retriever/retriever_md') {
+            $retriever_md = 1;
+        }
+        else {
+            $md_remote{$reg_id} = $url_metadata;
+        }
         next;
     }
 
@@ -209,6 +216,11 @@ while (my $r = $sth->fetchrow_hashref()) {
 }
 
 $dbh->disconnect();
+
+if ($retriever_md) {
+    writelog($log,"Remote metadata found, spawning retriever_md");
+    system('/usr/local/griidc/retriever/retriever_md &');
+}
 
 my $ldap = Net::LDAP->new('triton.tamucc.edu') or die "$@";
 
