@@ -19,12 +19,12 @@ my $conf = Config::PHPINI->read('/etc/griidc.ini');
 my $conf_notifications = Config::PHPINI->read('/etc/griidc/notifications.ini');
 $conf->{'notifications'} = $conf_notifications->{'retriever'} if exists $conf_notifications->{'retriever'};
 
-my $logfile  = "$conf->{paths}->{log}/retriever";
+my $logfile  = "$conf->{paths}->{log}/retriever_md";
 
 open(my $log,'>>',$logfile) or die "cannot open log file $logfile: $!";
 $log->autoflush(1);
 
-writelog($log,"retriever starting");
+writelog($log,"retriever_md starting");
 
 my $db_conf = Config::PHPINI->read('/etc/griidc/db.ini');
 my %dbi_type_map = ('postgresql' => 'Pg', 'mysql' => 'mysql');
@@ -85,7 +85,7 @@ while (my $r = $sth->fetchrow_hashref()) {
             my $cd = $response->header('content-disposition');
             ($filename) = $cd =~ /filename="([^"]+)"/ if $cd;
             my $ff = File::Fetch->new( uri => $url_metadata );
-            my $filepath = $ff->fetch( to => '/tmp/retriever' );
+            my $filepath = $ff->fetch( to => '/tmp/retriever_md' );
 
             # check if data store directory exists for this udi
             if (! -d "$conf->{paths}->{data_store}/$udi") {
@@ -358,7 +358,7 @@ for my $md (@md_approve) {
     $msg->send;
 }
 
-writelog($log,"retriever finished");
+writelog($log,"retriever_md finished");
 close $log;
 
 sub writelog {
