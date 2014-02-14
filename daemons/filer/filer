@@ -101,7 +101,10 @@ while (my $r = $sth->fetchrow_hashref()) {
     # copy data file to data store
     writelog($log,"[$udi] copying data file to data store (cp \"$filepath\" \"$config->{paths}->{data_store}/$udi/$udi.dat\")");
     copy($filepath,"$config->{paths}->{data_store}/$udi/$udi.dat") or die "Error: could not copy file ($!)\n";
-    $data_filed{$reg_id} = "$config->{paths}->{data_store}/$udi/$udi.dat";
+    $data_filed{$reg_id} = {
+                             from => $filepath,
+                               to => "$config->{paths}->{data_store}/$udi/$udi.dat"
+                           };
 
     # update dataset_filename (original filename), dataset_download_size, and dataset_download_status
     my $filename = $url_data;
@@ -186,7 +189,10 @@ while (my $r = $sth->fetchrow_hashref()) {
     # copy metadata file to data store
     writelog($log,"[$udi] copying metadata file to data store (cp \"$filepath\" \"$config->{paths}->{data_store}/$udi/$udi.met\")");
     copy($filepath,"$config->{paths}->{data_store}/$udi/$udi.met") or die "Error: could not copy file ($!)\n";
-    $md_filed{$reg_id} = "$config->{paths}->{data_store}/$udi/$udi.met";
+    $md_filed{$reg_id} = {
+                           from => $filepath,
+                             to => "$conf->{paths}->{data_store}/$udi/$udi.met"
+                         };
 
     # update dataset_metadata (original filename), metadata_dl_status, and metadata_status
     my $filename = $url_metadata;
@@ -364,13 +370,13 @@ for my $email (keys %{$config->{'notifications'}}) {
             if (%data_filed) {
                 $mail{'Message'} .= "\nFiled Data Files:\n\n";
                 for my $reg_id (sort(keys(%data_filed))) {
-                    $mail{'Message'} .= "$reg_id $data_filed{$reg_id}\n";
+                    $mail{'Message'} .= "$reg_id $data_filed{$reg_id}->{from} => $data_filed{$reg_id}->{to}\n";
                 }
             }
             if (%md_filed) {
                 $mail{'Message'} .= "\nFiled Metadata Files:\n\n";
                 for my $reg_id (sort(keys(%md_filed))) {
-                    $mail{'Message'} .= "$reg_id $md_filed{$reg_id}\n";
+                    $mail{'Message'} .= "$reg_id $md_filed{$reg_id}->{from} => $md_filed{$reg_id}->{to}\n";
                 }
             }
         }
