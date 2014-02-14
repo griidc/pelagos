@@ -26,8 +26,6 @@ $log->autoflush(1);
 
 writelog($log,"retriever starting");
 
-my $types = Config::PHPINI->read('/etc/griidc/filetypes.ini');
-
 my $db_conf = Config::PHPINI->read('/etc/griidc/db.ini');
 my %dbi_type_map = ('postgresql' => 'Pg', 'mysql' => 'mysql');
 my %db = %{$db_conf->{'GOMRI_RW'}};
