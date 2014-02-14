@@ -15,6 +15,16 @@ use File::Fetch;
 
 umask 0022;
 
+my $runfile = '/var/run/retriever_md.pid';
+
+# exit if retriever_md is already running
+exit if -f $runfile;
+
+# create run file
+open(my $run,'>',$runfile) or die "cannot open run file $runfile: $!";
+print $run $$;
+close($run);
+
 my $conf = Config::PHPINI->read('/etc/griidc.ini');
 my $conf_notifications = Config::PHPINI->read('/etc/griidc/notifications.ini');
 $conf->{'notifications'} = $conf_notifications->{'retriever'} if exists $conf_notifications->{'retriever'};
@@ -364,6 +374,10 @@ for my $md (@md_approve) {
 }
 
 writelog($log,"retriever_md finished");
+
+# remove run file
+unlink $runfile or die "could not remove run file $runfile: $!";
+
 close $log;
 
 sub writelog {
