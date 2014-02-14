@@ -84,6 +84,16 @@ while (my $r = $sth->fetchrow_hashref()) {
             my $filename;
             my $cd = $response->header('content-disposition');
             ($filename) = $cd =~ /filename="([^"]+)"/ if $cd;
+            unless ($filename) {
+                $filename = $url_metadata;
+                $filename =~ s/.*\///;
+            }
+
+            unless ($filename) {
+                writelog($log,"[$udi] could not determine filename from $url_metadata");
+                next;
+            }
+
             my $ff = File::Fetch->new( uri => $url_metadata );
             my $filepath = $ff->fetch( to => '/tmp/retriever_md' );
 
@@ -102,10 +112,6 @@ while (my $r = $sth->fetchrow_hashref()) {
                                  };
 
             # update dataset_metadata (original filename), metadata_dl_status, and metadata_status
-            unless ($filename) {
-                $filename = $url_metadata;
-                $filename =~ s/.*\///;
-            }
             my $sth2 = $dbh->prepare("UPDATE registry SET dataset_metadata = ?, metadata_dl_status = ?, metadata_status = ? WHERE registry_id = ?;");
             writelog($log,"[$udi] updating dataset_metadata, metadata_dl_status, and metadata_status");
             $sth2->execute($filename,'Completed','Submitted',$reg_id) or die "Couldn't execute statement: " . $sth2->errstr;
