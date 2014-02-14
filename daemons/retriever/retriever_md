@@ -1,0 +1,370 @@
+#!/usr/bin/perl -w
+
+use strict;
+use Config::PHPINI;
+use DBI;
+use Mail::Sendmail;
+use File::Copy;
+use Net::LDAP;
+use MIME::Lite;
+use MIME::Types qw(by_suffix);
+use POSIX qw(strftime);
+use IO::Handle;
+use LWP::UserAgent;
+use File::Fetch;
+
+umask 0022;
+
+my $conf = Config::PHPINI->read('/etc/griidc.ini');
+my $conf_notifications = Config::PHPINI->read('/etc/griidc/notifications.ini');
+$conf->{'notifications'} = $conf_notifications->{'retriever'} if exists $conf_notifications->{'retriever'};
+
+my $logfile  = "$conf->{paths}->{log}/retriever";
+
+open(my $log,'>>',$logfile) or die "cannot open log file $logfile: $!";
+$log->autoflush(1);
+
+writelog($log,"retriever starting");
+
+my $types = Config::PHPINI->read('/etc/griidc/filetypes.ini');
+
+my $db_conf = Config::PHPINI->read('/etc/griidc/db.ini');
+my %dbi_type_map = ('postgresql' => 'Pg', 'mysql' => 'mysql');
+my %db = %{$db_conf->{'GOMRI_RW'}};
+
+my %notify;
+
+my $dbh = DBI->connect("DBI:$dbi_type_map{$db{type}}:host=$db{host};port=$db{port};dbname=$db{dbname};",$db{'username'},$db{'password'},{'RaiseError' => 1});
+my $sth;
+
+# get all registry entries with url_metadata set, and no metadata download status
+$sth = $dbh->prepare("SELECT registry_id, dataset_udi, url_metadata, userid, dataset_title
+                      FROM registry r
+                      INNER JOIN (
+                                  SELECT MAX(registry_id) AS MaxID
+                                  FROM registry
+                                  GROUP BY substr(registry_id,1,16)
+                                 ) m
+                      ON r.registry_id = m.MaxID
+                      WHERE
+                          substr(registry_id,1,2) != '00' AND
+                          metadata_dl_status = 'None' AND
+                          url_metadata LIKE 'http://%' OR
+                          url_metadata LIKE 'https://%' OR
+                          url_metadata LIKE 'ftp://%'
+                      ORDER BY dataset_udi");
+$sth->execute();
+
+my (%md_remote, %md_unknown, %md_missing, %md_filed, @md_approve, %md_bad_reg_id, %md_bad_udi);
+
+my $ua = LWP::UserAgent->new;
+
+# loop through all entries that need processing for metadata
+while (my $r = $sth->fetchrow_hashref()) {
+
+    my $udi = $r->{'dataset_udi'};
+    my $reg_id = $r->{'registry_id'};
+    my $url_metadata = $r->{'url_metadata'};
+
+    # check if we have a valid registry id
+    if ($reg_id !~ /^[YR]\d\.x\d\d\d.\d\d\d:\d\d\d\d\.\d\d\d$/) {
+        $md_bad_reg_id{$reg_id} = $reg_id;
+        next;
+    }
+
+    # check if we have a valid udi
+    if ($udi !~ /^[YR]\d\.x\d\d\d.\d\d\d:\d\d\d\d$/) {
+        $md_bad_udi{$reg_id} = $udi;
+        next;
+    }
+
+    if ($url_metadata =~ /^http/) {
+
+        my $response = $ua->head($url_metadata);
+ 
+        if ($response->is_success) {
+            my $filename;
+            my $cd = $response->header('content-disposition');
+            ($filename) = $cd =~ /filename="([^"]+)"/ if $cd;
+            my $ff = File::Fetch->new( uri => $url_metadata );
+            my $filepath = $ff->fetch( to => '/tmp/retriever' );
+
+            # check if data store directory exists for this udi
+            if (! -d "$conf->{paths}->{data_store}/$udi") {
+                mkdir("$conf->{paths}->{data_store}/$udi") or die "Error: could not create directory: $conf->{paths}->{data_store}/$udi ($!)\n";
+            }
+
+            # copy metadata file to data store
+            writelog($log,"[$udi] copying metadata file to data store (cp \"$filepath\" \"$conf->{paths}->{data_store}/$udi/$udi.met\")");
+            copy($filepath,"$conf->{paths}->{data_store}/$udi/$udi.met") or die "Error: could not copy file ($!)\n";
+            $md_filed{$reg_id} = {
+                                   url => $url_metadata,
+                                   path => "$conf->{paths}->{data_store}/$udi/$udi.met"
+                                 };
+
+            # update dataset_metadata (original filename), metadata_dl_status, and metadata_status
+            unless ($filename) {
+                $filename = $url_metadata;
+                $filename =~ s/.*\///;
+            }
+            my $sth2 = $dbh->prepare("UPDATE registry SET dataset_metadata = ?, metadata_dl_status = ?, metadata_status = ? WHERE registry_id = ?;");
+            writelog($log,"[$udi] updating dataset_metadata, metadata_dl_status, and metadata_status");
+            $sth2->execute($filename,'Completed','Submitted',$reg_id) or die "Couldn't execute statement: " . $sth2->errstr;
+
+            # set parameters for submitter notification
+            $notify{$r->{'userid'}}->{'metadata'} = [] unless exists $notify{$r->{'userid'}}->{'metadata'};
+            push(@{$notify{$r->{'userid'}}->{'metadata'}}, { udi => $udi, title => $r->{'dataset_title'}, filename => $filename });
+            push(@md_approve, { udi => $udi, title => $r->{'dataset_title'}, filename => $filename });
+        }
+        else {
+            writelog($log,"[$udi] failed to download metadata file from $url_metadata (" . $response->status_line . ")");
+        }
+
+    }
+
+}
+
+$dbh->disconnect();
+
+my $ldap = Net::LDAP->new('triton.tamucc.edu') or die "$@";
+
+my $mesg = $ldap->bind;
+
+my $table_style = 'border-collapse: collapse;';
+my $th_style = 'padding: 3px; text-align: center;';
+my $td_style = 'border: 1px solid black; padding: 3px; vertical-align: top;';
+
+# notify submitters
+for my $uid (keys %notify) {
+
+    $mesg = $ldap->search(
+          base => "ou=members,ou=people,dc=griidc,dc=org",
+        filter => "(uid=$uid)",
+         attrs => ['mail','cn']
+    );
+
+    $mesg->code && die $mesg->error;
+
+    my ($email,$cn);
+
+    if ($mesg->entries) {
+        my @entries = $mesg->entries;
+        $email = $entries[0]->get_value('mail');
+        $cn = $entries[0]->get_value('cn');
+    }
+
+    next unless $email;
+
+    $email = 'jdavis.tamucc@gmail.com';
+
+    my %mail = (      To => $email,
+                    From => 'GRIIDC <griidc@gomri.org>',
+                 Subject => 'GRIIDC Metadata Submission Summary',
+                 Message => '',
+                 'content-type' => 'text/html; charset="iso-8859-1"'
+               );
+
+    $mail{'To'} = "$cn <$email>" if $cn;
+
+    $mail{'Message'} .= "<p>Dear $cn,</p>\n" if $cn;
+
+    $mail{'Message'} .= "<p>Thank you for submitting metadata to the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC).</p>",
+
+    $mail{'Message'} .= "\n\n<table style='$table_style'>";
+
+    # notify submitter about processed metadata files
+    if (exists $notify{$uid}->{'metadata'}) {
+        $mail{'Message'} .= "\n    <tr>";
+        $mail{'Message'} .= "\n        <td colspan='4' style='border:none; padding-top: 1.5em; padding-bottom: 0.5em;'>The following";
+        if (@{$notify{$uid}->{'metadata'}} > 1) {
+            $mail{'Message'} .= ' metadata records have';
+        }
+        else {
+            $mail{'Message'} .= ' metadata record has';
+        }
+        $mail{'Message'} .= " been processed and can now be viewed:</td>";
+        $mail{'Message'} .= "\n    </tr>";
+        $mail{'Message'} .= "\n    <tr>";
+        $mail{'Message'} .= "\n        <th style='$th_style width: 400px;'>Dataset Title</th>";
+        $mail{'Message'} .= "\n        <th style='$th_style'>Metadata Filename</th>";
+        $mail{'Message'} .= "\n        <th style='$th_style'>UDI</th>";
+        $mail{'Message'} .= "\n        <th style='$th_style'>Link</th>";
+        $mail{'Message'} .= "\n    </tr>";
+        for my $ds (@{$notify{$uid}->{'metadata'}}) {
+            $mail{'Message'} .= "\n    <tr>";
+            $mail{'Message'} .= "\n        <td style='$td_style width: 400px;'>$ds->{title}</td>";
+            $mail{'Message'} .= "\n        <td style='$td_style'>$ds->{filename}</td>";
+            $mail{'Message'} .= "\n        <td style='$td_style'>$ds->{udi}</td>";
+            $mail{'Message'} .= "\n        <td style='$td_style'><a href='https://data.gulfresearchinitiative.org/data/$ds->{udi}'>https://data.gulfresearchinitiative.org/data/$ds->{udi}</a></td>";
+            $mail{'Message'} .= "\n    </tr>";
+        }
+        $mail{'Message'} .= "\n    <tr>";
+        $mail{'Message'} .= "\n        <td colspan='4' style='border:none; padding-top: 0.5em;'>";
+        if (@{$notify{$uid}->{'metadata'}} > 1) {
+            $mail{'Message'} .= 'These metadata records';
+        }
+        else {
+            $mail{'Message'} .= 'This metadata record';
+        }
+        $mail{'Message'} .= " will now go through the GRIIDC approval process and you will be notified once";
+        if (@{$notify{$uid}->{'metadata'}} > 1) {
+            $mail{'Message'} .= ' these records have';
+        }
+        else {
+            $mail{'Message'} .= ' this record has';
+        }
+        $mail{'Message'} .= " been approved.</td>";
+        $mail{'Message'} .= "\n    </tr>";
+    }
+
+    $mail{'Message'} .= "\n</table>";
+
+    $mail{'Message'} .= "\n\n<p>If you have any questions or concerns please contact GRIIDC at <a href='mailto:griidc\@gomri.org'>griidc\@gomri.org</a>.</p>";
+    $mail{'Message'} .= "\n\n<p>Thank you,<br>";
+    $mail{'Message'} .= "\nThe GRIIDC team</p>";
+
+    writelog($log,"sending confirmation of processed files to submitter ($mail{To})");
+    sendmail(%mail) or die $Mail::Sendmail::error;
+}
+
+# notify internal users
+for my $email (keys %{$conf->{'notifications'}}) {
+    my @types = split /[, ]/, $conf->{'notifications'}->{$email};
+    my $msg;
+
+    my %mail = ( To      => $email,
+                 From    => 'GRIIDC Retriever <retriever@poseidon.tamucc.edu>',
+                 Subject => "Retriever Summary",
+                 Message => '',
+                 'content-type' => 'text/plain; charset="iso-8859-1"'
+               );
+
+    for my $type (@types) {
+        if ($type eq 'filed') {
+            if (%md_filed) {
+                $mail{'Message'} .= "\nRetrieved and Filed Metadata Files:\n\n";
+                for my $reg_id (sort(keys(%md_filed))) {
+                    $mail{'Message'} .= "$reg_id $md_filed{$reg_id}->{url} => $md_filed{$reg_id}->{path}\n";
+                }
+            }
+        }
+        if ($type eq 'bad') {
+            if (%md_bad_reg_id) {
+                $mail{'Message'} .= "\nBad Registry IDs (metadata):\n\n";
+                for my $reg_id (sort(keys(%md_bad_reg_id))) {
+                    $mail{'Message'} .= "$reg_id\n";
+                }
+            }
+            if (%md_bad_reg_id) {
+                $mail{'Message'} .= "\nBad UDIs (metadata):\n\n";
+                for my $reg_id (sort(keys(%md_bad_udi))) {
+                    $mail{'Message'} .= "$reg_id $md_bad_udi{$reg_id}\n";
+                }
+            }
+        }
+    }
+
+    if (length $mail{'Message'}) {
+        my $subject = "Retriever Summary";
+        $mail{'Message'} = "Retriever Summary\n$mail{Message}";
+        writelog($log,'sending retriever summary (' . join(',',@types) . ") to: $mail{To}");
+        sendmail(%mail) or die $Mail::Sendmail::error;
+    }
+}
+
+# find all metadata reviewers
+$mesg = $ldap->search(
+      base => "ou=Metadata,ou=applications,dc=griidc,dc=org",
+    filter => "(cn=reviewers)",
+     attrs => ['member']
+);
+$mesg->code && die $mesg->error;
+my @members;
+if ($mesg->entries) {
+    my @entries = $mesg->entries;
+    @members = $entries[0]->get_value('member');
+}
+
+# get emails for all metadata reviewers
+my @md_approver_emails;
+for my $reviewer (@members) {
+    $mesg = $ldap->search(
+          base => $reviewer,
+        filter => '(objectClass=*)',
+         attrs => ['mail']
+    );
+    $mesg->code && die $mesg->error;
+    my $email;
+    if ($mesg->entries) {
+        my @entries = $mesg->entries;
+        $email = $entries[0]->get_value('mail');
+    }
+    push @md_approver_emails, $email if $email;
+}
+
+# connect to RIS
+my %ris_db = %{$db_conf->{'RIS_RO'}};
+my $ris_dbh = DBI->connect("DBI:$dbi_type_map{$ris_db{type}}:host=$ris_db{host};port=$ris_db{port};dbname=$ris_db{dbname};",$ris_db{'username'},$ris_db{'password'},{'RaiseError' => 1});
+my $ris_sth;
+
+# send metadata to metadata approvers
+for my $md (@md_approve) {
+    my $project_title;
+    my ($project_id) = $md->{'udi'} =~ /[^\.]+\.x(\d+)/;
+    $ris_sth = $ris_dbh->prepare("SELECT Program_Title FROM Programs WHERE Program_ID = $project_id;");
+    $ris_sth->execute();
+    my $proj = $ris_sth->fetchrow_hashref();
+    $project_title = $proj->{'Program_Title'};
+
+    my $task_title;
+    my ($task_id) = $md->{'udi'} =~ /[^\.]+\.x\d+\.(\d+)/;
+    if ($task_id ne '000') {
+        $ris_sth = $ris_dbh->prepare("SELECT Project_Title FROM Projects WHERE Project_ID = $task_id;");
+        $ris_sth->execute();
+        my $task = $ris_sth->fetchrow_hashref();
+        $task_title = $task->{'Project_Title'};
+    }
+
+    my $msg = MIME::Lite->new(
+        From    => 'GRIIDC Retriever <retriever@poseidon.tamucc.edu>',
+        To      => join(',',@md_approver_emails),
+        Subject => "New metadata file for $md->{udi}",
+        Type    => 'multipart/mixed',
+    );
+
+    my $text = "A new metadata file for $md->{udi} has been submitted:";
+    $text .= "\n\nFilename: $md->{filename}";
+    $text .= "\nUDI: $md->{udi}";
+    $text .= "\nDataset Title: $md->{title}";
+    $text .= "\nProject: $project_title";
+    $text .= "\nTask: $task_title" if $task_title;
+    $text .= "\n\nThe metadata file is attached.";
+
+    $msg->attach(
+        Type => 'TEXT',
+        Data => $text
+    );
+
+    my ($mime_type, $encoding) = by_suffix($md->{'filename'});
+
+    $mime_type = 'application/octet-stream' unless $mime_type;
+
+    $msg->attach(
+            Type => $mime_type,
+            Path => "$conf->{paths}->{data_store}/$md->{udi}/$md->{udi}.met",
+        Filename => $md->{'filename'}
+    );
+
+    $ENV{'PATH'} = '/usr/sbin';
+    writelog($log,"[$md->{udi}] sending metadata file to: " . join(',',@md_approver_emails));
+    $msg->send;
+}
+
+writelog($log,"retriever finished");
+close $log;
+
+sub writelog {
+    my ($log,$message) = @_;
+    my $ts = POSIX::strftime("%Y-%m-%d %H:%M:%S", localtime);
+    print $log "[$ts] $message\n";
+}
