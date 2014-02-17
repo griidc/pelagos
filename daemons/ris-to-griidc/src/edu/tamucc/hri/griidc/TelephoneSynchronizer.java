@@ -11,20 +11,27 @@ import edu.tamucc.hri.griidc.exception.TelephoneNumberException;
 import edu.tamucc.hri.griidc.support.MiscUtils;
 import edu.tamucc.hri.rdbms.utils.DbColumnInfo;
 import edu.tamucc.hri.rdbms.utils.RdbmsUtils;
+import edu.tamucc.hri.rdbms.utils.TableColInfo;
 
 public class TelephoneSynchronizer {
 
 	private static final String TableName = "Telephone";
-	private static final String KeyColName = "Telephone_Key";
-	private static final String CountryNumColName = "Country_Number";
-	private static final String TelephoneNumColName = "Telephone_Number";
+	private static final String TelephoneKeyColName = "Telephone_Key";
+	private static final String CountryNumberColName = "Country_Number";
+	private static final String TelephoneNumberColName = "Telephone_Number";
 
-	private static boolean DeBug = false;
+	private static boolean Debug = false;
 
 	private String msg = null;
-	private TelephoneStruct tempTelephoneStruct = null;
-	public static TelephoneSynchronizer instance = null;
-	
+
+	private static TelephoneSynchronizer instance = null;
+
+	private int griidcRecordsAdded = 0;
+	private int griidcDuplicates = 0;
+	private int risTelephoneRecords = 0;
+	private int risTelephoneErrors = 0;
+	public static final int NotFound = -1;
+
 	private TelephoneSynchronizer() {
 
 	}
@@ -36,195 +43,225 @@ public class TelephoneSynchronizer {
 		return TelephoneSynchronizer.instance;
 	}
 
-	public boolean updateTelephoneTable(int targetCountry, String targetTelNum)
-			throws TelephoneNumberException, TableNotInDatabaseException {
-		this.tempTelephoneStruct = new TelephoneStruct(targetCountry,
-				targetTelNum);
-		boolean status = false;
+	/**
+	 * If the Telephone table does not contain a record with this country code
+	 * and telephone number, add it. There is no delete and there is not a
+	 * modify since a country can have lots of phone numbers.
+	 * 
+	 * @param targetCountry
+	 * @param targetTelNum
+	 * @return
+	 * @throws SQLException
+	 * @throws TelephoneNumberException
+	 * @throws PropertyNotFoundException
+	 * @throws ClassNotFoundException
+	 * @throws FileNotFoundException
+	 * @throws TableNotInDatabaseException
+	 */
+	public int updateTelephoneTable(int targetCountry, String targetTelNum)
+			throws SQLException, TelephoneNumberException,
+			PropertyNotFoundException, ClassNotFoundException,
+			FileNotFoundException {
+		this.risTelephoneRecords++;
+		// making the raw data from RIS into a TelephoneStruct does some
+		// processing
+		// on the strings. It removes the formating and the extension
+		TelephoneStruct tempTelephoneStruct = new TelephoneStruct(
+				targetCountry, targetTelNum);
+
+		int targetCountryNumber = tempTelephoneStruct.getCountryNumber();
+		String targetPhoneNumber = tempTelephoneStruct.getTelephoneNumber();
+		int telephoneRecordKey = NotFound;
+		String msg = "TelephoneSynchronizer.updateTelephoneTable() country: "
+				+ targetCountry + ", telNum: " + targetTelNum + "  \n";
 		try {
-			TelephoneStruct telStruct = this.findTelephoneTableRecord();
-			if (telStruct == null) {
-				this.addTelephoneTableRecord();
+			this.isValid(targetCountryNumber, targetPhoneNumber);
+			telephoneRecordKey = this.findTelephoneTableRecord(
+					targetCountryNumber, targetPhoneNumber);
+			if (telephoneRecordKey == NotFound) {
+				telephoneRecordKey = this.addTelephoneTableRecord(
+						targetCountryNumber, targetPhoneNumber);
+				this.griidcRecordsAdded++;
+			} else {
+
+				this.griidcDuplicates++;
+				throw new TelephoneNumberException(
+						"Error in RIS People duplicate Telephone Information -  country: "
+								+ targetCountryNumber + ", number: "
+								+ targetPhoneNumber);
 			}
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			return telephoneRecordKey;
+		} catch (TelephoneNumberException e) {
+			this.risTelephoneErrors++;
+			if (TelephoneSynchronizer.isDebug()) {
+				System.out.println(msg + e.getMessage());
+				e.printStackTrace();
+			}
+			throw e;
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			this.risTelephoneErrors++;
+			if (TelephoneSynchronizer.isDebug()) {
+				System.out.println(msg + e.getMessage());
+				e.printStackTrace();
+			}throw e;
+		} catch (FileNotFoundException e) {
+			this.risTelephoneErrors++;
+			if (TelephoneSynchronizer.isDebug()) {
+				System.out.println(msg + e.getMessage());
+				e.printStackTrace();
+			}throw e;
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			this.risTelephoneErrors++;
+			if (TelephoneSynchronizer.isDebug()) {
+				System.out.println(msg + e.getMessage());
+				e.printStackTrace();
+			}throw e;
 		} catch (PropertyNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			this.risTelephoneErrors++;
+			if (TelephoneSynchronizer.isDebug()) {
+				System.out.println(msg + e.getMessage());
+				e.printStackTrace();
+			}throw e;
 		}
-		return status;
 	}
 
-	private boolean isValid() throws TelephoneNumberException {
-		if (!MiscUtils.doesCountryExist(this.tempTelephoneStruct
-				.getCountryNumber())) {
-			msg = "Telephone number referes to a non existant country code: "
-					+ this.tempTelephoneStruct.getCountryNumber();
+	private boolean isValid(int targetCountry, String targetTelNum)
+			throws TelephoneNumberException {
+		if (!MiscUtils.doesCountryExist(targetCountry)) {
+			msg = "Telephone number referred to a non existant country code: "
+					+ targetCountry;
 			throw new TelephoneNumberException(msg);
 		}
-		MiscUtils.isValidPhoneNumber(this.tempTelephoneStruct
-				.getTelephoneNumber());
+		MiscUtils.isValidPhoneNumber(targetTelNum);
 		return true;
 	}
 
-	private boolean addTelephoneTableRecord() throws FileNotFoundException,
+	/**
+	 * add a new Telephone record. Return the key if successful. Throws
+	 * 
+	 * @param targetCountryNumber
+	 * @param targetPhoneNumber
+	 * @return
+	 * @throws FileNotFoundException
+	 * @throws SQLException
+	 * @throws ClassNotFoundException
+	 * @throws PropertyNotFoundException
+	 * @throws TelephoneNumberException
+	 */
+	private int addTelephoneTableRecord(int targetCountryNumber,
+			String targetPhoneNumber) throws FileNotFoundException,
 			SQLException, ClassNotFoundException, PropertyNotFoundException,
 			TelephoneNumberException {
-		boolean status = this.isValid();
-		DbColumnInfo info[] = new DbColumnInfo[2];
-		int ndx = 0;
-		info[ndx++] = new DbColumnInfo(CountryNumColName, RdbmsUtils.DbInteger,
-				String.valueOf(this.tempTelephoneStruct.getCountryNumber()),
-				null);
-		info[ndx++] = new DbColumnInfo(TelephoneNumColName,
-				RdbmsUtils.DbCharacter,
-				this.tempTelephoneStruct.getTelephoneNumber(), null);
+
+		DbColumnInfo info[] = getInsertClauseInfo(targetCountryNumber,
+				targetPhoneNumber);
+
 		String query = RdbmsUtils.formatInsertStatement(TableName, info);
-		if (TelephoneSynchronizer.isDeBug())
-			System.out.println("TelephoneSynchronizer.add() query: " + query);
-		status = RdbmsUtils.getGriidcDbConnectionInstance()
-				.executeQueryBoolean(query);
-		return status;
+		RdbmsUtils.getGriidcDbConnectionInstance().executeQueryBoolean(query);
+		return this.findTelephoneTableRecord(targetCountryNumber,
+				targetPhoneNumber);
 	}
 
-	private TelephoneStruct findTelephoneTableRecord() throws SQLException,
+	/**
+	 * using the TelephoneStruct temporary, find the phone number record and
+	 * return it as a new TelephoneStruct. Return null if nothing found that
+	 * matches.
+	 * 
+	 * @return
+	 * @throws SQLException
+	 * @throws FileNotFoundException
+	 * @throws ClassNotFoundException
+	 * @throws PropertyNotFoundException
+	 * @throws TableNotInDatabaseException
+	 */
+	private int findTelephoneTableRecord(int targetCountryNumber,
+			String targetPhoneNumber) throws SQLException,
 			FileNotFoundException, ClassNotFoundException,
-			PropertyNotFoundException, TableNotInDatabaseException {
+			PropertyNotFoundException {
+
+		String phoneNum = null;
+		int countryNum = -1;
+		int telephoneKey = NotFound;
+		DbColumnInfo[] wc = this.getWhereClauseInfo(targetCountryNumber,
+				targetPhoneNumber);
+		String selectQuery = RdbmsUtils.formatSelectStatement(TableName, wc);
 		ResultSet rs = RdbmsUtils.getGriidcDbConnectionInstance()
-				.selectAllValuesFromTable(TableName);
-		String targetPhoneNumber = this.tempTelephoneStruct
-				.getTelephoneNumber();
-		String tn = null;
-		int cn = -1;
-		int telephoneKey = -1;
+				.executeQueryResultSet(selectQuery);
 		while (rs.next()) {
-			telephoneKey = rs.getInt(KeyColName);
-			tn = rs.getString(TelephoneNumColName);
-			cn = rs.getInt(CountryNumColName);
-			if (targetPhoneNumber.equals(tn.trim())
-					&& cn == this.tempTelephoneStruct.getCountryNumber()) {
-				TelephoneStruct ts = new TelephoneStruct(telephoneKey, cn, tn);
-				return ts;
+			telephoneKey = rs.getInt(TelephoneKeyColName);
+			phoneNum = rs.getString(TelephoneNumberColName);
+			countryNum = rs.getInt(CountryNumberColName);
+			if (targetPhoneNumber.equals(phoneNum.trim())
+					&& targetCountryNumber == countryNum) {
+				if (TelephoneSynchronizer.isDebug()) {
+					System.out.println("Found matching key: " + telephoneKey
+							+ ", country: " + countryNum + ", phone number: "
+							+ phoneNum);
+				}
+				return telephoneKey;
 			}
 		}
-		return null;
+		return NotFound;
 	}
 
-	public TelephoneStruct getTempTelephoneStruct() {
-		return this.tempTelephoneStruct;
+	private DbColumnInfo[] getInsertClauseInfo(int targetCountryNumber,
+			String targetPhoneNumber) throws FileNotFoundException,
+			SQLException, ClassNotFoundException, PropertyNotFoundException {
+
+		TableColInfo tci = RdbmsUtils.getMetaDataForTable(
+				RdbmsUtils.getGriidcDbConnectionInstance(), TableName);
+
+		DbColumnInfo dci1 = tci.getDbColumnInfo(CountryNumberColName);
+		dci1.setColValue(String.valueOf(targetCountryNumber));
+
+		DbColumnInfo dci2 = tci.getDbColumnInfo(TelephoneNumberColName);
+		dci2.setColValue(String.valueOf(targetPhoneNumber));
+
+		DbColumnInfo[] dcia = { dci1, dci2 };
+		return dcia;
 	}
 
-	public static boolean isDeBug() {
-		return DeBug;
+	private DbColumnInfo[] getWhereClauseInfo(int targetCountryNumber,
+			String targetPhoneNumber) throws FileNotFoundException,
+			SQLException, ClassNotFoundException, PropertyNotFoundException {
+		TableColInfo tci = RdbmsUtils.getMetaDataForTable(
+				RdbmsUtils.getGriidcDbConnectionInstance(), TableName);
+
+		DbColumnInfo d1 = tci.getDbColumnInfo(CountryNumberColName);
+		d1.setColValue(String.valueOf(targetCountryNumber));
+
+		DbColumnInfo d2 = tci.getDbColumnInfo(TelephoneNumberColName);
+		d2.setColValue(String.valueOf(targetPhoneNumber));
+
+		DbColumnInfo[] info = { d1, d2 };
+		return info;
 	}
 
-	public static void setDeBug(boolean deBug) {
-		DeBug = deBug;
+	public static int getNotfound() {
+		return NotFound;
 	}
 
-	public TelephoneStruct createTelephoneStruct(int countryNumber,
-			String telephoneNumber) {
-		return new TelephoneStruct(countryNumber, telephoneNumber);
+	public static boolean isDebug() {
+		return Debug;
 	}
 
-	public class TelephoneStruct {
-		private int key = -1;
-		private int countryNumber = -1;
-		private String telephoneNumber = null;
-		private String extension = null;
-
-		public TelephoneStruct(int countryNumber, String telephoneNumber) {
-			this(-1, countryNumber, telephoneNumber);
-		}
-
-		/**
-		 * @param key
-		 * @param countryNumber
-		 * @param telephoneNumber
-		 */
-		public TelephoneStruct(int key, int countryNumber,
-				String telephoneNumber) {
-			super();
-			this.key = key;
-			this.countryNumber = countryNumber;
-			this.telephoneNumber = telephoneNumber.trim();
-			this.separateExtension();
-		}
-
-		public int getKey() {
-			return key;
-		}
-
-		public void setKey(int key) {
-			this.key = key;
-		}
-
-		public int getCountryNumber() {
-			return countryNumber;
-		}
-
-		public void setCountryNumber(int countryNumber) {
-			this.countryNumber = countryNumber;
-		}
-
-		public String getTelephoneNumber() {
-			return telephoneNumber;
-		}
-
-		public void setTelephoneNumber(String telephoneNumber) {
-			this.telephoneNumber = telephoneNumber;
-		}
-
-		/**
-		 * for phone number that has extension on the end The ' x' is used in
-		 * RIS records
-		 */
-		private String[] ExtensionPatterns = { " x", " ex", " EX", " X" };
-
-		public void separateExtension() {
-			String[] px = MiscUtils.separateTelephoneNumberExtension(
-					this.telephoneNumber.trim(), this.ExtensionPatterns);
-			this.telephoneNumber = px[0];
-			this.extension = px[1];
-		}
-
-		@Override
-		public String toString() {
-			return "TelephoneStruct [key=" + key + ", countryNumber="
-					+ countryNumber + ", telephoneNumber=" + telephoneNumber
-					+ ", extension=" + extension + ", ExtensionPatterns="
-					+ Arrays.toString(ExtensionPatterns) + "]";
-		}
-
+	public static void setDebug(boolean deBug) {
+		Debug = deBug;
 	}
 
-	public static void main(String[] args) {
-		TelephoneSynchronizer ts = TelephoneSynchronizer.getInstance();
-		int targetCountry = 42;
-		String[] targetTelNum = { "(505) 690-5673 x123", "123-456-7890",
-				"123-456-7890 ex123", "012-345-6789   EX 4567"
+	public int getGriidcRecordsAdded() {
+		return griidcRecordsAdded;
+	}
 
-		};
+	public int getGriidcDuplicates() {
+		return griidcDuplicates;
+	}
 
-		TelephoneSynchronizer.setDeBug(true);
-		try {
-			for (String telNum : targetTelNum) {
-				TelephoneStruct tst = ts.createTelephoneStruct(targetCountry,
-						telNum);
-				MiscUtils.isValidPhoneNumber(tst.getTelephoneNumber());
-				System.out.println("Number: " + telNum);
-				System.out.println("\t" + tst);
-			}
-		} catch (TelephoneNumberException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public int getRisTelephoneRecords() {
+		return risTelephoneRecords;
+	}
+
+	public int getRisTelephoneErrors() {
+		return risTelephoneErrors;
 	}
 }

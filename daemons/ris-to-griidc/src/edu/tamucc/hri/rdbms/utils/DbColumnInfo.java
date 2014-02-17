@@ -7,11 +7,7 @@ public class DbColumnInfo implements Comparable {
 	private String colValue = null;
 	private DefaultValue defaultValue = null;
 	
-	// database data types
-		public static final String DbInteger = RdbmsUtils.DbInteger;
-		public static final String DbCharacter = RdbmsUtils.DbCharacter;
-		public static final String DbBoolean = RdbmsUtils.DbBoolean;
-
+	// see RdbmsUtils database types
 	
 	public static final String NullString = DefaultValue.getNullstring();
 	
@@ -79,6 +75,9 @@ public class DbColumnInfo implements Comparable {
 		return defaultValue;
 	}
 
+	public void setColValue(String value) {
+		this.colValue = value;
+	}
 	public boolean isDefaultValueColumn() {
 		if(!this.getDefaultValue().equals(NullString))
 			return true;

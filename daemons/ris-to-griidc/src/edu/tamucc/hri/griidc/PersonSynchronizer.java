@@ -40,16 +40,15 @@ import edu.tamucc.hri.rdbms.utils.RdbmsUtils;
  * 
  */
 public class PersonSynchronizer {
+	// jvh jvh jvh work on this class
+	// How to compare for updates
+	// consider telephone, postal are,  delivery point
 
 	private static final String RisTableName = "People";
 	private static final String GriidcTableName = "Person";
-	
-	private static final String GriidcTelephoneTableName = "Telephone";
 
 	private RdbmsConnection risDbConnection = null;
 	private RdbmsConnection griidcDbConnection = null;
-	private RdbmsConnection griidcTempDbConnection = null;
-	private RdbmsUtils dbUtils = new RdbmsUtils();
 
 	private int risRecordCount = 0;
 	private int risRecordsSkipped = 0;
@@ -57,9 +56,6 @@ public class PersonSynchronizer {
 	private int griidcRecordsAdded = 0;
 	private int griidcRecordsModified = 0;
 	private int griidcRecordDuplicates = 0;
-	
-	private int griidcTelephoneAdded = 0;
-	private int risTelephoneErrors = 0;
 
 	private int risPeople_Id = -1;
 	private int risPeople_InstitutionId = -1;
@@ -75,7 +71,7 @@ public class PersonSynchronizer {
 	private String risPeople_AdrState = null;
 	private String risPeople_AdrZip = null;
 	private String risPeople_Email = null;
-	private String risPeople_PhoneNum  = null;
+	private String risPeople_PhoneNum = null;
 	private String risPeople_GulfBase = null;
 	private String risPeople_Comment = null;
 	/*****************************************
@@ -108,12 +104,14 @@ public class PersonSynchronizer {
 	private ResultSet griidcRset = null;
 
 	private static boolean debug = false;
-	private boolean noisy = false;
 	private boolean initialized = false;
 	private HeuristicMatching heuristics = new HeuristicMatching();
 	private IntStringDbCache griidcInstitutionNumberCache = null;
 	private RisInstDeptPeopleErrorCollection risErrorCollection = null;
-	
+
+	private String tempDeliveryPoint = null; // created from RIS info
+	private int tempPostalAreaNumber = -1; // created from RIS info
+
 	private EmailSynchronizer emailUpdater = new EmailSynchronizer();
 
 	public PersonSynchronizer() {
@@ -125,7 +123,8 @@ public class PersonSynchronizer {
 	}
 
 	public void initializeStartUp() throws IOException,
-			PropertyNotFoundException, SQLException, ClassNotFoundException, TableNotInDatabaseException {
+			PropertyNotFoundException, SQLException, ClassNotFoundException,
+			TableNotInDatabaseException {
 		if (!isInitialized()) {
 			MiscUtils.openPrimaryLogFile();
 			MiscUtils.openRisErrorLogFile();
@@ -148,7 +147,7 @@ public class PersonSynchronizer {
 	 * @throws ClassNotFoundException
 	 * @throws PropertyNotFoundException
 	 * @throws IOException
-	 * @throws TableNotInDatabaseException 
+	 * @throws TableNotInDatabaseException
 	 * @throws NoRecordFoundException
 	 * @throws DuplicateRecordException
 	 */
@@ -157,16 +156,14 @@ public class PersonSynchronizer {
 			RisInstDeptPeopleErrorCollection risErrorSet)
 			throws ClassNotFoundException, PropertyNotFoundException,
 			IOException, SQLException, TableNotInDatabaseException {
+		int countryNumber = -1;
 		if (isDebug())
 			System.out.println(MiscUtils.BreakLine);
 		this.risErrorCollection = risErrorSet;
 
 		this.initializeStartUp();
 
-		String tempDeliveryPoint = null; // created from RIS info
-		int tempPostalAreaNumber = -1; // created from RIS info
-		int countryNumber = -1;
-        String msg = null;
+		String msg = null;
 		// get all records from the RIS People table
 		try {
 			rset = this.risDbConnection.selectAllValuesFromTable(RisTableName);
@@ -195,27 +192,24 @@ public class PersonSynchronizer {
 				this.risPeople_Email = rset.getString("People_Email");
 				this.risPeople_PhoneNum = rset.getString("People_PhoneNum");
 				this.risPeople_GulfBase = rset.getString("People_GulfBase");
-				this.risPeople_Comment  = rset.getString("People_Comment");
-				
-				
-				if (isDebug() && noisy)
+				this.risPeople_Comment = rset.getString("People_Comment");
+
+				if (isDebug())
 					System.out.println("\n" + this.getFormatedRisPeople());
 
 				/****
 				 * find and update the GRIIDC Person table with these values
 				 */
-				tempPostalAreaNumber = -1;
+				this.tempPostalAreaNumber = -1;
 				/**
 				 * we must have a valid department and institution in the
 				 * database with which to associate this Person record
 				 */
 
 				try {
-					RdbmsUtils
-							.doesGriidcDepartmentExist(risPeople_InstitutionId,
-									risPeople_DepartmentId);
-						
-								
+					RdbmsUtils.doesGriidcDepartmentExist(
+							risPeople_InstitutionId, risPeople_DepartmentId);
+
 				} catch (NoRecordFoundException e2) {
 					// no Department/Institution found in the database
 					// add the people record to the error collection
@@ -225,12 +219,11 @@ public class PersonSynchronizer {
 							+ risPeople_InstitutionId
 							+ ", department: "
 							+ risPeople_DepartmentId
-							+ "\nThe referenced Institution and/or Department was not found in the database.\n" +
-							e2.getMessage();
-					if (isDebug() )
-						System.err.println("AA Skip this one: "
-								+ msg);
-                   
+							+ "\nThe referenced Institution and/or Department was not found in the database.\n"
+							+ e2.getMessage();
+					if (isDebug())
+						System.err.println("AA Skip this one: " + msg);
+
 					this.risErrorCollection.addPerson(
 							this.risPeople_InstitutionId,
 							this.risPeople_DepartmentId, this.risPeople_Id);
@@ -241,14 +234,13 @@ public class PersonSynchronizer {
 					continue; // branch back to while (rset.next())
 
 				} catch (DuplicateRecordException e2) {
-				
+
 					msg = "Error in RIS People - record id: " + risPeople_Id
 							+ ", institution: " + risPeople_InstitutionId
 							+ ", department: " + risPeople_DepartmentId + ".\n"
 							+ e2.getMessage();
-					if (isDebug() )
-						System.err.println("BB Skip this one: "
-								+ msg);
+					if (isDebug())
+						System.err.println("BB Skip this one: " + msg);
 					e2.printStackTrace();
 					MiscUtils.writeToPrimaryLogFile(msg);
 					MiscUtils.writeToRisErrorLogFile(msg);
@@ -258,28 +250,30 @@ public class PersonSynchronizer {
 				}
 
 				try {
-					// try and get a postal area number from the country, state, city, zip
-					//  but don't reject if not  possible
+					// try and get a postal area number from the country, state,
+					// city, zip
+					// but don't reject if not possible
 					// The Person record can be created without it
-					
+
 					countryNumber = RdbmsUtils
 							.getGriidcDepartmentCountryNumber(this.risPeople_DepartmentId);
-					tempPostalAreaNumber = RdbmsUtils.getGriidcDepartmentPostalNumber(countryNumber, 
-							this.risPeople_AdrState, this.risPeople_AdrCity,
-							this.risPeople_AdrZip);
-					
-					
+					this.tempPostalAreaNumber = RdbmsUtils
+							.getGriidcDepartmentPostalNumber(countryNumber,
+									this.risPeople_AdrState,
+									this.risPeople_AdrCity,
+									this.risPeople_AdrZip);
+
 				} catch (DuplicateRecordException e) {
 					MiscUtils.writeToPrimaryLogFile(e.getMessage());
-					if (isDebug() && noisy)
+					if (isDebug())
 						System.err.println("CC Skip this one: "
 								+ e.getMessage());
 					this.risRecordsSkipped++;
 					continue; // branch back to while (rset.next())
-				}  catch (SQLException e) {
+				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-					if (isDebug() && noisy)
+					if (isDebug())
 						System.err.println("EE Skip this one: "
 								+ e.getMessage());
 					this.risRecordsSkipped++;
@@ -287,33 +281,35 @@ public class PersonSynchronizer {
 				} catch (MissingArgumentsException e) {
 					// do nothing - Person is not required to have Postal Area
 					// Number
-				} catch (NoRecordFoundException e) {  
-					//  failed to find one of tempPostalAreaNumber or country code
-					//  fall through and try with just the department number
+				} catch (NoRecordFoundException e) {
+					// failed to find one of this.tempPostalAreaNumber or
+					// country code
+					// fall through and try with just the department number
 				}
 				try {
 					// try and get a postal area number from the department id
-					//  but don't reject if not  possible
+					// but don't reject if not possible
 					// The Person record can be created without it
-					tempPostalAreaNumber = -1;
-					tempPostalAreaNumber = RdbmsUtils.getGriidcDepartmentPostalNumber(this.risPeople_DepartmentId);
+					this.tempPostalAreaNumber = -1;
+					this.tempPostalAreaNumber = RdbmsUtils
+							.getGriidcDepartmentPostalNumber(this.risPeople_DepartmentId);
 				} catch (DuplicateRecordException e) {
 					MiscUtils.writeToPrimaryLogFile(e.getMessage());
-					if (isDebug() && noisy)
+					if (isDebug())
 						System.err.println("CC Skip this one: "
 								+ e.getMessage());
 					this.risRecordsSkipped++;
 					continue; // branch back to while (rset.next())
-				}  catch (SQLException e) {
+				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-					if (isDebug() && noisy)
+					if (isDebug())
 						System.err.println("EE Skip this one: "
 								+ e.getMessage());
 					this.risRecordsSkipped++;
 					continue; // branch back to while (rset.next())
-				}  catch (NoRecordFoundException e) {  
-					//  did not find tempPostalAreaNumber
+				} catch (NoRecordFoundException e) {
+					// did not find tempPostalAreaNumber
 				}
 
 				/*
@@ -321,7 +317,7 @@ public class PersonSynchronizer {
 				 * next record *
 				 */
 
-				tempDeliveryPoint = MiscUtils.makeDeliveryPoint(
+				this.tempDeliveryPoint = MiscUtils.makeDeliveryPoint(
 						this.risPeople_AdrStreet1, this.risPeople_AdrStreet2);
 				String query = null;
 				try {
@@ -381,38 +377,41 @@ public class PersonSynchronizer {
 
 				if (count == 0) {
 					// Add the Person
-					this.griidcRecordsAdded++;
 					/*************************************
-					if (PersonSynchronizer.isDebug()) {
-						
-						System.out.println(msg);
-					}  // end if(debug)
-					*******************************/
+					 * if (PersonSynchronizer.isDebug()) {
+					 * 
+					 * System.out.println(msg); } // end if(debug)
+					 *******************************/
 					String addQuery = null;
 					try {
 						addQuery = this.formatAddPersonQuery(this.risPeople_Id,
-								tempPostalAreaNumber, tempDeliveryPoint,
+								this.tempPostalAreaNumber,
+								this.tempDeliveryPoint,
 								this.risPeople_LastName,
 								this.risPeople_FirstName,
 								this.risPeople_MiddleName,
 								this.risPeople_Title, this.risPeople_Suffix);
 
-						if (PersonSynchronizer.isDebug() && noisy)
+						if (PersonSynchronizer.isDebug())
 							System.out.println("Query: " + addQuery);
 						this.griidcDbConnection.executeQueryBoolean(addQuery);
-						this.updateEmailTable(this.risPeople_Id, this.risPeople_Email, true);
+						this.updateEmailTable(this.risPeople_Id,
+								this.risPeople_Email, true);
+						this.griidcRecordsAdded++;
 						try {
-							this.updateTelephoneTable(countryNumber, this.risPeople_PhoneNum);
-							this.griidcTelephoneAdded++;
-							this.updatePersonTelephoneTable(this.risPeople_Id,countryNumber, this.risPeople_PhoneNum);
+							this.updateTelephoneTable(this.risPeople_Id,countryNumber,
+									this.risPeople_PhoneNum);
 						} catch (TelephoneNumberException e1) {
-							String pInfo = "" + this.risPeople_Id + " " +
-									this.risPeople_LastName + ", " +
-									this.risPeople_FirstName + " " +
-									this.risPeople_MiddleName;
-							msg = "When adding telephone number for Person: " + pInfo + "\n" + e1.getMessage();
+							String pInfo = "" + this.risPeople_Id + " "
+									+ this.risPeople_LastName + ", "
+									+ this.risPeople_FirstName + " "
+									+ this.risPeople_MiddleName;
+							msg = "TelephoneNumberException when adding telephone number for Person: "
+									+ pInfo + e1.getMessage();
+							if (PersonSynchronizer.isDebug())
+								System.out.println(msg);
 							MiscUtils.writeToPrimaryLogFile(msg);
-							this.risTelephoneErrors++;
+							MiscUtils.writeToRisErrorLogFile(msg);
 						}
 
 						//
@@ -425,8 +424,8 @@ public class PersonSynchronizer {
 								+ griidcPersonToString(this.risPeople_Id,
 										this.risPeople_InstitutionId,
 										this.risPeople_DepartmentId,
-										tempPostalAreaNumber,
-										tempDeliveryPoint,
+										this.tempPostalAreaNumber,
+										this.tempDeliveryPoint,
 										this.risPeople_LastName,
 										this.risPeople_FirstName,
 										this.risPeople_MiddleName);
@@ -434,85 +433,78 @@ public class PersonSynchronizer {
 						if (PersonSynchronizer.isDebug())
 							System.out.println(msg);
 					} catch (SQLException e) {
-						msg = "SQL Error: Add Department in GRIIDC - Query: "
+						msg = "SQL Error: Add Person in GRIIDC - Query: "
 								+ addQuery;
-						msg = msg + e.getMessage();
+						msg = msg + "\n" + e.getMessage();
 						System.err.println(msg);
 						MiscUtils.writeToPrimaryLogFile(msg);
 
 						// check here to see if the department and institution
 						// or are
 						// on the error set
-						this.risErrorCollection.addPerson(this.risPeople_InstitutionId,
-										this.risPeople_DepartmentId,this.risPeople_Id);
-						
+						this.risErrorCollection.addPerson(
+								this.risPeople_InstitutionId,
+								this.risPeople_DepartmentId, this.risPeople_Id);
+
 					}
 
 				} else if (count == 1) {
 
 					// Modify Person record
-					if (isCurrentRecordEqual(tempPostalAreaNumber,
-							tempDeliveryPoint, this.risPeople_LastName,
-							this.risPeople_MiddleName,
-							this.risPeople_FirstName, this.risPeople_Suffix,
-							this.risPeople_Title,
-							this.griidcPersonPostalArea_Number,
-							this.griidcPerson_DeliveryPoint,
-							this.griidcPerson_LastName,
-							this.griidcPerson_MiddleName,
-							this.griidcPerson_FirstName,
-							this.griidcPerson_NameSuffix,
-							this.griidcPerson_HonorificTitle)) {
+					if (isCurrentPersonRecordEqual()) {
 						continue; // branch back to while (rset.next())
 					}
 					this.griidcRecordsModified++;
-					if (PersonSynchronizer.isDebug() && noisy) {
+					if (PersonSynchronizer.isDebug()) {
 						msg = "Modify GRIIDC Person table matching "
 								+ ", Person_Name: " + risPeople_LastName + ", "
 								+ risPeople_FirstName + " "
 								+ risPeople_MiddleName
 								+ ", PostalArea_Number: "
-								+ tempPostalAreaNumber
+								+ this.tempPostalAreaNumber
 								+ ", Person_DeliveryPoint: "
-								+ tempDeliveryPoint;
+								+ this.tempDeliveryPoint;
 						System.out.println(msg);
 					}
 
 					String modifyQuery = null;
 					try {
 						modifyQuery = this.formatModifyPersonQuery(
-								this.risPeople_Id, tempPostalAreaNumber,
-								tempDeliveryPoint, this.risPeople_LastName,
+								this.risPeople_Id, this.tempPostalAreaNumber,
+								this.tempDeliveryPoint,
+								this.risPeople_LastName,
 								this.risPeople_FirstName,
 								this.risPeople_MiddleName,
 								this.risPeople_Title, this.risPeople_Suffix);
 
 						this.griidcDbConnection
 								.executeQueryBoolean(modifyQuery);
-						this.updateEmailTable(this.risPeople_Id, this.risPeople_Email, true);
+						this.updateEmailTable(this.risPeople_Id,
+								this.risPeople_Email, true);
 						try {
-							this.updateTelephoneTable(countryNumber, this.risPeople_PhoneNum);
-							this.griidcTelephoneAdded++;
+							this.updateTelephoneTable(this.risPeople_Id,countryNumber,
+									this.risPeople_PhoneNum);
 						} catch (TelephoneNumberException e1) {
-							String pInfo = "" + this.risPeople_Id + " " +
-									this.risPeople_LastName + ", " +
-									this.risPeople_FirstName + " " +
-									this.risPeople_MiddleName;
-							msg = "When modifying telephone number for Person: " + pInfo + "\n" + e1.getMessage();
+							String pInfo = "" + this.risPeople_Id + " "
+									+ this.risPeople_LastName + ", "
+									+ this.risPeople_FirstName + " "
+									+ this.risPeople_MiddleName;
+							msg = "When modifying telephone number for Person: "
+									+ pInfo + "\n" + e1.getMessage();
 							MiscUtils.writeToPrimaryLogFile(msg);
-							this.risTelephoneErrors++;
+							MiscUtils.writeToRisErrorLogFile(msg);
 						}
 						msg = "Modified GRIIDC Person: "
 								+ griidcPersonToString(this.risPeople_Id,
 										this.risPeople_InstitutionId,
 										this.risPeople_DepartmentId,
-										tempPostalAreaNumber,
-										tempDeliveryPoint,
+										this.tempPostalAreaNumber,
+										this.tempDeliveryPoint,
 										this.risPeople_LastName,
 										this.risPeople_FirstName,
 										this.risPeople_MiddleName);
 						MiscUtils.writeToPrimaryLogFile(msg);
-						if (PersonSynchronizer.isDebug() && noisy)
+						if (PersonSynchronizer.isDebug())
 							System.out.println(msg);
 					} catch (SQLException e) {
 						System.err
@@ -528,9 +520,11 @@ public class PersonSynchronizer {
 							+ " records in the  GRIIDC Person table matching "
 							+ ", Person_Name: " + risPeople_LastName + ", "
 							+ risPeople_FirstName + " " + risPeople_MiddleName
-							+ ", PostalArea_Number: " + tempPostalAreaNumber
-							+ ", Person_DeliveryPoint: " + tempDeliveryPoint;
-					if (PersonSynchronizer.isDebug() && noisy)
+							+ ", PostalArea_Number: "
+							+ this.tempPostalAreaNumber
+							+ ", Person_DeliveryPoint: "
+							+ this.tempDeliveryPoint;
+					if (PersonSynchronizer.isDebug())
 						System.out.println(msg);
 					MiscUtils.writeToPrimaryLogFile(msg);
 				}
@@ -544,8 +538,9 @@ public class PersonSynchronizer {
 	}
 
 	/**
-	 * modify or add an email address for the person Id provided.
-	 * validate the email and handle the exception
+	 * modify or add an email address for the person Id provided. validate the
+	 * email and handle the exception
+	 * 
 	 * @param pepId
 	 * @param emailAddr
 	 * @param primary
@@ -554,11 +549,13 @@ public class PersonSynchronizer {
 	 * @throws IOException
 	 * @throws PropertyNotFoundException
 	 */
-	private boolean updateEmailTable(int pepId, String emailAddr, boolean primary) 
-			              throws ClassNotFoundException, IOException, PropertyNotFoundException {
+	private boolean updateEmailTable(int pepId, String emailAddr,
+			boolean primary) throws ClassNotFoundException, IOException,
+			PropertyNotFoundException {
 		String msg = null;
-		String emailInfo = EmailSynchronizer.formatData(pepId, emailAddr, primary);
-		
+		String emailInfo = EmailSynchronizer.formatData(pepId, emailAddr,
+				primary);
+
 		try {
 			this.emailUpdater.update(pepId, emailAddr, primary);
 			return true;
@@ -569,32 +566,50 @@ public class PersonSynchronizer {
 		} catch (SQLException e) {
 			msg = "SQL Error: EmailInfo: " + e.getMessage();
 		} catch (AddressException e) {
-			msg = "Email Address Exception for : " + emailInfo + " " + e.getMessage();
+			msg = "Email Address Exception for : " + emailInfo + " "
+					+ e.getMessage();
 			MiscUtils.writeToRisErrorLogFile(msg);
 			MiscUtils.writeToPrimaryLogFile(msg);
 		}
 		return false;
 	}
-	
+
 	/**
 	 * @param countryNumber
 	 * @param telephoneNumber
 	 * @return
-	 * @throws TelephoneNumberException 
-	 * @throws TableNotInDatabaseException 
+	 * @throws TelephoneNumberException
+	 * @throws TableNotInDatabaseException
+	 * @throws SQLException 
+	 * @throws ClassNotFoundException 
+	 * @throws PropertyNotFoundException 
+	 * @throws FileNotFoundException 
 	 */
-	private boolean updateTelephoneTable(int countryNumber, String telephoneNumber) throws TelephoneNumberException, TableNotInDatabaseException {
-		//TelephoneSynchronizer.setDeBug(true);
-		TelephoneSynchronizer.getInstance().updateTelephoneTable(countryNumber, telephoneNumber);
+	private boolean updateTelephoneTable(int personNumber, int countryNumber,
+			String telephoneNumber) 
+					throws TableNotInDatabaseException, SQLException, TelephoneNumberException,
+					FileNotFoundException, PropertyNotFoundException, ClassNotFoundException {
+		if(PersonSynchronizer.isDebug()) System.out.println("PersonSynchronizer.updateTelephoneTable(" + personNumber + "," + countryNumber +
+			", " + telephoneNumber + ")");
+		TelephoneStruct ts = TelephoneStruct.createTelephoneStruct(countryNumber,telephoneNumber);
+		if(PersonSynchronizer.isDebug()) System.out.println("PersonSynchronizer.updateTelephoneTable() - past createTelephoneStruct");
+		int telephoneKey = TelephoneSynchronizer.getInstance().updateTelephoneTable(countryNumber,
+				telephoneNumber);
+		if(PersonSynchronizer.isDebug()) System.out.println("PersonSynchronizer.updateTelephoneTable() - past TelephoneSynchronizer.getInstance().updateTelephoneTable()");
+		this.updatePersonTelephoneTable(personNumber, telephoneKey, ts.getExtension());
+		if(PersonSynchronizer.isDebug()) System.out.println("PersonSynchronizer.updateTelephoneTable() - past PersonSynchronizer.updatePersonTelephoneTable()");
+		
+	    PersonTelephoneSynchronizer.getInstance().updatePersonTelephoneTable(personNumber, telephoneKey, ts.getExtension(), null);
+	    if(PersonSynchronizer.isDebug()) System.out.println("PersonSynchronizer.updateTelephoneTable() - past PersonTelephoneSynchronizer.getInstance().updatePersonTelephoneTable");
+		
+		return false;
+	}
+
+	private boolean updatePersonTelephoneTable(int personNumber,
+			int telephoneTableRecordKey, String telephoneNumberExtension) throws TelephoneNumberException {
 		return true;
 	}
-	
-	private boolean updatePersonTelephoneTable(int personNumber,int countryNumber, String telephoneNumber) throws TelephoneNumberException {
-		//TelephoneSynchronizer.setDeBug(true);
-		//  jvh work here
-		// TelephoneSynchronizer.getInstance().updatePersonTelephoneTable(countryNumber, telephoneNumber);
-		return true;
-	}
+
 	/**
 	 * this builds the Insert code to put the person in the GRIIDC database.
 	 * Since much of the data could be missing, only insert the fields for which
@@ -687,25 +702,31 @@ public class PersonSynchronizer {
 				+ RdbmsUtils.SPACE + " SET ");
 
 		if (postalAreaNumber > -1) {
-			if(!firstValue) sb.append(RdbmsUtils.CommaSpace);
-			else sb.append(RdbmsUtils.SPACE);
+			if (!firstValue)
+				sb.append(RdbmsUtils.CommaSpace);
+			else
+				sb.append(RdbmsUtils.SPACE);
 			sb.append(RdbmsConnection.wrapInDoubleQuotes("PostalArea_Number")
 					+ RdbmsUtils.EqualSign + postalAreaNumber);
 			firstValue = false;
 		}
 		if (!MiscUtils.isStringEmpty(deliveryPoint)) {
-			if(!firstValue) sb.append(RdbmsUtils.CommaSpace);
-			else sb.append(RdbmsUtils.SPACE);
+			if (!firstValue)
+				sb.append(RdbmsUtils.CommaSpace);
+			else
+				sb.append(RdbmsUtils.SPACE);
 			sb.append(RdbmsConnection
-							.wrapInDoubleQuotes("Person_DeliveryPoint")
+					.wrapInDoubleQuotes("Person_DeliveryPoint")
 					+ RdbmsUtils.EqualSign
 					+ RdbmsConnection.wrapInSingleQuotes(deliveryPoint));
 
 			firstValue = false;
 		}
 
-		if(!firstValue) sb.append(RdbmsUtils.CommaSpace);
-		else sb.append(RdbmsUtils.SPACE);
+		if (!firstValue)
+			sb.append(RdbmsUtils.CommaSpace);
+		else
+			sb.append(RdbmsUtils.SPACE);
 		sb.append(RdbmsConnection.wrapInDoubleQuotes("Person_LastName")
 				+ RdbmsUtils.EqualSign
 				+ RdbmsConnection.wrapInSingleQuotes(lastName));
@@ -772,23 +793,49 @@ public class PersonSynchronizer {
 	 * @param gLat
 	 * @return
 	 */
-	private boolean isCurrentRecordEqual(int risPostalAreaNumber,
-			String risDeliveryPoint, String risLastName, String risMiddleName,
-			String risFirstName, String risSuffix, String risTitle,
+	private boolean isCurrentPersonRecordEqual() {
+		
+		if (!(this.tempPostalAreaNumber == this.griidcPersonPostalArea_Number))
+			return false;
+		if (!(this.tempDeliveryPoint == this.griidcPerson_DeliveryPoint))
+			return false;
+		if (!(areStringsEqual(this.risPeople_LastName,
+				this.griidcPerson_LastName)))
+			return false;
+		if (!(areStringsEqual(this.risPeople_MiddleName,
+				this.griidcPerson_MiddleName)))
+			return false;
+		if (!(areStringsEqual(this.risPeople_FirstName,
+				this.griidcPerson_FirstName)))
+			return false;
+		if (!(areStringsEqual(this.risPeople_Suffix,
+				this.griidcPerson_NameSuffix)))
+			return false;
+		if (!(areStringsEqual(this.risPeople_Title,
+				this.griidcPerson_HonorificTitle)))
+			return false;
+		return true;
+	}
 
-			int griidcPostalArea_Number, String griidcDeliveryPoint,
-			String griidcLastName, String griidcMiddleName,
-			String griidcFirstName, String griidcSuffix, String griidcTitle) {
+	/**
+	 * compare two strings either of which could be null or empty
+	 * 
+	 * @param s1
+	 * @param s2
+	 * @return true if they are equal
+	 */
+	private boolean areStringsEqual(String s1, String s2) {
+		if (s1 == null && s2 == null)
+			return true; // both are null return true
+		if (s1 == null || s2 == null) { // one is null but not both
+			return false;
+		}
 
-		if (risPostalAreaNumber == griidcPostalArea_Number
-				&& risDeliveryPoint == griidcDeliveryPoint
-				&& risLastName.equals(griidcLastName)
-				&& risMiddleName.equals(griidcMiddleName)
-				&& risFirstName.equals(griidcFirstName)
-				&& risSuffix.equals(griidcSuffix)
-				&& risTitle.equals(griidcTitle))
+		// both are non null
+		if (s1.trim().length() != s2.trim().length())
+			return false; // different lengths, can't be equal return false
+		if (s1.trim().equals(s2.trim()))
 			return true;
-
 		return false;
 	}
 
@@ -826,16 +873,22 @@ public class PersonSynchronizer {
 		return RdbmsUtils.getGriidcDepartmentPostalNumber(countryNumber, state,
 				city, zip);
 		//
-		// why not call RdbmsUtils.getGriidcDepartmentPostalNumber(dptNumber) ?????
+		// why not call RdbmsUtils.getGriidcDepartmentPostalNumber(dptNumber)
+		// ?????
 	}
 
-	public int getTelephoneRecordsAdded() { 
-		return this.griidcTelephoneAdded;
+	public int getTelephoneRecordsAdded() {
+		return TelephoneSynchronizer.getInstance().getGriidcRecordsAdded();
+	}
+
+	public int getRisTelephoneErrors() {
+		return TelephoneSynchronizer.getInstance().getRisTelephoneErrors();
 	}
 	
-	public int getRisTelephoneErrors() { 
-		return this.risTelephoneErrors;
+	public int getRisTelephoneRecordsRead() {
+		return TelephoneSynchronizer.getInstance().getRisTelephoneRecords();
 	}
+
 	public int getRisRecordCount() {
 		return risRecordCount;
 	}
@@ -859,47 +912,22 @@ public class PersonSynchronizer {
 	public int getRisRecordErrors() {
 		return risRecordErrors;
 	}
-	
+
 	private String getFormatedRisPeople() {
-		String msg = "Add GRIIDC Person table record "
-				+ "Person Number: "
-				+ this.risPeople_Id
-				+ ", Delivery Point: "
-				+ griidcPerson_DeliveryPoint
-				+ "InstId: "
-				+ this.risPeople_InstitutionId
-				+ ", "
-				+ "DeptId : "
-				+ this.risPeople_DepartmentId
-				+ ", "
-				+ "Title: "
-				+ this.risPeople_Title
-				+ ", "
-				+ "Last name: "
-				+ this.risPeople_LastName
-				+ ", "
-				+ "Firs: "
-				+ this.risPeople_FirstName
-				+ ", "
-				+ "Middle : "
-				+ this.risPeople_MiddleName
-				+ ", "
-				+ "Suffix: "
-				+ this.risPeople_Suffix
-				+ ", "
-				+ "Addr1: "
-				+ this.risPeople_AdrStreet1
-				+ ", "
-				+ "Addr2: "
-				+ this.risPeople_AdrStreet2
-				+ ", "
-				+ "City: "
-				+ this.risPeople_AdrCity
-				+ ", "
-				+ "State: "
-				+ this.risPeople_AdrState
-				+ ", "
-				+ "Zip: "
+		String msg = "Add GRIIDC Person table record " + "Person Number: "
+				+ this.risPeople_Id + ", Delivery Point: "
+				+ griidcPerson_DeliveryPoint + "InstId: "
+				+ this.risPeople_InstitutionId + ", " + "DeptId : "
+				+ this.risPeople_DepartmentId + ", " + "Title: "
+				+ this.risPeople_Title + ", " + "Last name: "
+				+ this.risPeople_LastName + ", " + "Firs: "
+				+ this.risPeople_FirstName + ", " + "Middle : "
+				+ this.risPeople_MiddleName + ", " + "Suffix: "
+				+ this.risPeople_Suffix + ", " + "Addr1: "
+				+ this.risPeople_AdrStreet1 + ", " + "Addr2: "
+				+ this.risPeople_AdrStreet2 + ", " + "City: "
+				+ this.risPeople_AdrCity + ", " + "State: "
+				+ this.risPeople_AdrState + ", " + "Zip: "
 				+ this.risPeople_AdrZip;
 		return msg;
 	}

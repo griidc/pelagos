@@ -33,8 +33,12 @@ public class RdbmsUtils {
 
 	// database data types
 	public static final String DbInteger = "integer";
-	public static final String DbCharacter = "character";
+	public static final String DbNumeric = "numeric";
 	public static final String DbBoolean = "boolean";
+	public static final String DbDate = "date";
+	public static final String DbCharacter = "character";
+	public static final String DbText = "text";
+	
 
 	public static boolean Debug = false;
 
@@ -49,6 +53,15 @@ public class RdbmsUtils {
 	public static TableColInfoCollection GriidcDefaultValueTableColInfoCollection = null;
 	public static TableColInfoCollection GriidcTableColInfoCollection = null;
 
+	/**
+	 * make an insert statment for the tableName supplied with the info/data in
+	 * the colInfo DbColumnInfo array
+	 * 
+	 * @param tableName
+	 * @param colInfo
+	 * @see RdbmsUtils.getMetaDataForTable()
+	 * @return
+	 */
 	public static String formatInsertStatement(String tableName,
 			DbColumnInfo[] colInfo) {
 		StringBuffer sb = new StringBuffer("INSERT INTO ");
@@ -82,12 +95,8 @@ public class RdbmsUtils {
 			if (colValue != null) { // there is a value here
 				if (notTheFirstTime)
 					sb.append(RdbmsUtils.CommaSpace);
-
-				if (colType.equals(DbBoolean) || colType.equals(DbInteger)) {
-					sb.append(colValue);
-				} else { // colType is some sort of String thing
-					sb.append(RdbmsConnection.wrapInSingleQuotes(colValue));
-				}
+				sb.append(RdbmsUtils.wrapDbValue(colType,colValue));
+				
 				notTheFirstTime = true;
 			}
 		}
@@ -95,39 +104,41 @@ public class RdbmsUtils {
 
 		return sb.toString();
 	}
+	private static String wrapDbValue(String colType, String colValue) {
+		if (colType.equals(DbBoolean) || colType.equals(DbInteger) || colType.equals(DbNumeric)) {
+			return colValue;
+		} // else colType is some sort of String thing
+		return RdbmsConnection.wrapInSingleQuotes(colValue);
+	}
 
+	/**
+	 * make a SELECT statement from Column information stored in the
+	 * DbColumnInfo array
+	 * 
+	 * @param tableName
+	 * @param whereColInfo
+	 * @see RdbmsUtils.getMetaDataForTable()
+	 * @return
+	 */
 	public static String formatSelectStatement(String tableName,
 			DbColumnInfo[] whereColInfo) {
 		StringBuffer sb = new StringBuffer("SELECT * FROM  ");
-
-		sb.append(RdbmsConnection.wrapInDoubleQuotes(tableName) + "  WHERE  ");
-
-		// format the column name part
-		boolean notTheFirstTime = false;
-		String colName = null;
-		String colType = null;
-		String colValue = null;
-		for (DbColumnInfo dbColInfo : whereColInfo) {
-			colName = dbColInfo.getColName();
-			colValue = dbColInfo.getColValue();
-			colType = dbColInfo.getColType();
-			if (colValue != null) { // there is a value here
-				if (notTheFirstTime)
-					sb.append(RdbmsUtils.And);
-				sb.append(RdbmsConnection.wrapInDoubleQuotes(colName));
-				sb.append(EqualSign);
-				if (colType.equals(DbBoolean) || colType.equals(DbInteger)) {
-					sb.append(colValue);
-				} else { // colType is some sort of String thing
-					sb.append(RdbmsConnection.wrapInSingleQuotes(colValue));
-				}
-				notTheFirstTime = true;
-			}
-		}
+		sb.append(RdbmsConnection.wrapInDoubleQuotes(tableName));
+		sb.append(formatWhereClause(whereColInfo));
 		return sb.toString();
 	}
 
-	public static String formatUpdateQuery(String tableName,
+	/**
+	 * 
+	 * @param tableName
+	 * @param updateColInfo
+	 * @param whereColInfo
+	 * @see RdbmsUtils.getMetaDataForTable()
+	 * @return
+	 * @throws SQLException
+	 * @throws ClassNotFoundException
+	 */
+	public static String formatUpdateStatement(String tableName,
 			DbColumnInfo[] updateColInfo, DbColumnInfo[] whereColInfo)
 			throws SQLException, ClassNotFoundException {
 
@@ -149,36 +160,49 @@ public class RdbmsUtils {
 				sb.append(RdbmsConnection.wrapInDoubleQuotes(colName));
 				sb.append(RdbmsUtils.EqualSign);
 
-				// don't single quote numeric values or boolean
-				if (colType.equals(RdbmsUtils.DbCharacter)) {
-					sb.append(RdbmsConnection.wrapInSingleQuotes(colValue));
-				} else { // not character - must be int or boolean
-					sb.append(colValue);
-				}
+				sb.append(RdbmsUtils.wrapDbValue(colType,colValue));
 				notTheFirstTime = true;
 			}
 		}
-		sb.append(" WHERE ");
+		sb.append(formatWhereClause(whereColInfo));
+		if (RdbmsUtils.isDebug())
+			System.out.println("RdbmsUtils.formatModifyQuery() "
+					+ sb.toString());
+		return sb.toString();
+	}
 
-		notTheFirstTime = false;
+	/**
+	 * Using DbColumnInfo array format the where statement for use in Select and
+	 * Update queries.
+	 * 
+	 * @see RdbmsUtils.getMetaDataForTable()
+	 * 
+	 * @param whereColInfo
+	 * @return
+	 */
+	public static String formatWhereClause(DbColumnInfo[] whereColInfo) {
+		String colName = null;
+		String colType = null;
+		String colValue = null;
+		StringBuffer sb = new StringBuffer(" WHERE ");
+
+		boolean notTheFirstTime = false;
 		for (DbColumnInfo dbColInfo : whereColInfo) {
 			colType = dbColInfo.getColType();
 			colName = dbColInfo.getColName();
 			colValue = dbColInfo.getColValue();
-			if (notTheFirstTime) {
-				sb.append(RdbmsUtils.And);
-			}
-			sb.append(RdbmsConnection.wrapInDoubleQuotes(colName));
-			sb.append(RdbmsUtils.EqualSign);
-			// don't single quote numeric values or boolean
-			if (colType.equals(RdbmsUtils.DbCharacter)) {
-				sb.append(RdbmsConnection.wrapInSingleQuotes(colValue));
-			} else { // not character - must be int or boolean
-				sb.append(colValue);
+			if (colValue != null) { // there is a value here
+				if (notTheFirstTime) {
+					sb.append(RdbmsUtils.And);
+				}
+				sb.append(RdbmsConnection.wrapInDoubleQuotes(colName));
+				sb.append(RdbmsUtils.EqualSign);
+				sb.append(RdbmsUtils.wrapDbValue(colType,colValue));
+				notTheFirstTime = true;
 			}
 		}
 		if (RdbmsUtils.isDebug())
-			System.out.println("RdbmsUtils.formatModifyQuery() "
+			System.out.println("RdbmsUtils.formatWhereClause() "
 					+ sb.toString());
 		return sb.toString();
 	}
@@ -655,6 +679,13 @@ public class RdbmsUtils {
 		return tciCollection;
 	}
 
+	public static TableColInfo getMetaDataForTable(
+			RdbmsConnection dbConnection, String tableName)
+			throws SQLException, ClassNotFoundException {
+		// metaData is a set of descriptions for the columns in the table
+		return createTableColInfo(dbConnection, tableName);
+	}
+
 	/**
 	 * For a given table return a two D array (R) inwhich R[0][?] is the column
 	 * name and R[1][?] is the data type of the column. Return the 2D table
@@ -818,6 +849,15 @@ public class RdbmsUtils {
 		return RdbmsUtils.progFundSrcCollection;
 	}
 
+	public static String stripDefaultValue(String s) {
+		int start = s.indexOf('\'');
+		start++;
+		int end = s.indexOf('\'', start);
+		String ts = s.substring(start, end);
+		System.out.println(s + " turns into " + ts);
+		return ts;
+	}
+
 	public static void main(String[] args) {
 
 		System.out.println("Rdbmsutils.main() - Start -");
@@ -864,6 +904,12 @@ public class RdbmsUtils {
 							+ progId[j] + " min/max " + msg);
 				}
 			}
+			String TableName = "Person-Telephone";
+			TableColInfo tci = RdbmsUtils.createTableColInfo(
+					RdbmsUtils.getGriidcDbConnectionInstance(), TableName);
+			System.out.println(tci);
+			stripDefaultValue(tci.getDbColumnInfo("Telephone_Type")
+					.getDefaultValue().getValue());
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -880,7 +926,6 @@ public class RdbmsUtils {
 		} catch (TableNotInDatabaseException e) {
 			System.err.println(e.getMessage());
 		}
-
 		System.out.println("Rdbmsutils.main() - END -");
 	}
 }

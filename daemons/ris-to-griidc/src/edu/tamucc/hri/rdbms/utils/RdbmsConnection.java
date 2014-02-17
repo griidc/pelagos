@@ -954,15 +954,27 @@ public class RdbmsConnection {
 	 * @param token
 	 * @return
 	 */
-	public static String wrapInSingleQuotes(final String token) {
-		if (token == null)
+	public static String wrapInSingleQuotes(final String str) {
+		if (str == null)
 			return null;
-		if (token.contains("\'")) {
-			return wrapInDollarQuotes(token);
+		if (needsDollarQuotes(str)) {
+			return wrapInDollarQuotes(str);
 		}
-		return "'" + token + "'";
+		return "'" + str + "'";
 	}
-
+    private static boolean needsDollarQuotes(final String str) {
+    	for(String tkn: badTokens) {
+    		if (str.contains(tkn)) return true;
+    	}
+    	return false;
+    }
+	//  if the data contains any of these characters wrap the string in dollar quotes
+	public static String[] badTokens = {
+		"\'",  // single quote
+		"/",
+		"<",
+		">"
+	};
 	public static String wrapInDollarQuotes(final String messyString) {
 		String dollarQuote = "$jvh$";
 		return dollarQuote + messyString + dollarQuote;

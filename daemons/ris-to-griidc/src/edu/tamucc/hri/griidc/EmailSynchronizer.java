@@ -15,9 +15,11 @@ import javax.mail.internet.InternetAddress;
 
 /**
  * Create or update a the EmailInfo table in GRIIDC
+ * This is not run directly from the main
+ * but is called as a delegate from PersonSynchronizer
  * 
  * @author jvh
- * 
+ * @see PersonSynchronizer
  */
 public class EmailSynchronizer {
 

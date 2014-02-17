@@ -35,6 +35,11 @@ public class TableColInfo implements Comparable {
 		return addDbColumnInfo(new DbColumnInfo(colName, colType, defaultValue));
 	}
 
+	public DbColumnInfo[] getDbColumnInfo() {
+		DbColumnInfo[] colInfo = new DbColumnInfo[columnInfoSet.size()];
+		colInfo = this.columnInfoSet.toArray(colInfo);
+		return colInfo;
+	}
 	/**
 	 * find the object that matches colName and return it.
 	 * If not found return null;

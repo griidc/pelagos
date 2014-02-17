@@ -16,6 +16,7 @@ import edu.tamucc.hri.rdbms.utils.RdbmsConnection;
 import edu.tamucc.hri.rdbms.utils.RdbmsUtils;
 import edu.tamucc.hri.rdbms.utils.RisFundSrcProgramsStartEndCollection;
 import edu.tamucc.hri.rdbms.utils.RisProgramStartEnd;
+import edu.tamucc.hri.rdbms.utils.TableColInfo;
 
 /**
  * read the RIS Programs Table and create the GRIIDC Project table
@@ -42,7 +43,7 @@ public class ProjectSynchronizer {
 	private int griidcRecordsModified = 0;
 	private int griidcRecordDuplicates = 0;
 
-	// RIS Program fields
+	// RIS Programs fields
 	private int risProgram_ID = -1;
 	private String risProgram_Title = null;
 	private int risProgram_FundSrc = -1;
@@ -52,7 +53,7 @@ public class ProjectSynchronizer {
 	private java.sql.Date risProgram_EndDate = null;
 	private String risProgram_Abstract = null;
 
-	// RIS Program column names
+	// RIS Programs column names
 	private static String RisProgram_ID_ColName = "Program_ID";
 	private static String RisProgram_Title_ColName = "Program_Title";
 	private static String RisProgram_FundSrc_ColName = "Program_FundSrc";
@@ -70,8 +71,7 @@ public class ProjectSynchronizer {
 	private java.sql.Date griidcProject_StartDate = null; // was java.sql.Date
 	private String griidcProject_Title = null;
 
-	// GRIIDC FundingEnvelope stuff
-	private String griidcFundingEnvelopeCycle = null;
+	
 
 	// GRIIDC column Names
 	private static String GriidcProject_Number_ColName = "Project_Number";
@@ -167,7 +167,7 @@ public class ProjectSynchronizer {
 
 				
 				} catch (SQLException e1) {
-					msg = "In RIS Program record " + xtraInfo.toString() + "\nSQL Exception " + e1.getMessage();
+					msg = "In RIS Programs record " + xtraInfo.toString() + "\nSQL Exception " + e1.getMessage();
 					if (ProjectSynchronizer.isDebug())
 						System.err.println(msg);
 					MiscUtils.writeToPrimaryLogFile(msg);
@@ -313,9 +313,9 @@ public class ProjectSynchronizer {
 	}
 	
 	private boolean isCurrentRecordEqual() {
-		String risDerrivedFuncingCycle = null;
+		String risDerrivedFundingCycle = null;
 		try {
-			risDerrivedFuncingCycle = MiscUtils
+			risDerrivedFundingCycle = MiscUtils
 					.getProjectNumberFundingCycleCache().getValue(
 							this.risProgram_FundSrc);
 		} catch (NoRecordFoundException e) {
@@ -329,7 +329,7 @@ public class ProjectSynchronizer {
 		return (
 				this.griidcProject_Number == this.risProgram_ID &&
 		this.griidcProject_Title.equals(this.risProgram_Title) &&
-		this.griidcFundingEnvelope_Cycle.equals(risDerrivedFuncingCycle) && 
+		this.griidcFundingEnvelope_Cycle.equals(risDerrivedFundingCycle) && 
 		this.griidcProject_StartDate.equals(rfspsec.getStartDate()) && 
 		this.griidcProject_EndDate.equals(rfspsec.getEndDate()) && 
 		this.griidcProject_Abstract.equals(this.risProgram_Abstract));
@@ -369,16 +369,17 @@ public class ProjectSynchronizer {
 	}
 
 	private String formatModifyQuery() throws SQLException,
-			ClassNotFoundException {
+			ClassNotFoundException, FileNotFoundException, PropertyNotFoundException {
 
 		DbColumnInfo[] info = this.getDbColumnInfo();
+		
+		
 		DbColumnInfo[] whereInfo = new DbColumnInfo[1];
-		DbColumnInfo dbci = new DbColumnInfo(
-				ProjectSynchronizer.GriidcProject_Number_ColName,
-				DbColumnInfo.DbInteger,
-				String.valueOf(this.griidcProject_Number));
-		whereInfo[0] = dbci;
-		String query = RdbmsUtils.formatUpdateQuery(
+		TableColInfo tci = RdbmsUtils.getMetaDataForTable(RdbmsUtils.getGriidcDbConnectionInstance(), GriidcTableName);
+		
+		tci.getDbColumnInfo(ProjectSynchronizer.GriidcProject_Number_ColName).setColValue(String.valueOf(this.griidcProject_Number));
+		whereInfo[0] = tci.getDbColumnInfo(ProjectSynchronizer.GriidcProject_Number_ColName);
+		String query = RdbmsUtils.formatUpdateStatement(
 				ProjectSynchronizer.GriidcTableName, info, whereInfo);
 
 		if (ProjectSynchronizer.isDebug())
@@ -403,36 +404,16 @@ public class ProjectSynchronizer {
 		return;
 	}
 
-	private DbColumnInfo[] getDbColumnInfo() {
-		String[] colName = { ProjectSynchronizer.GriidcProject_Number_ColName,
-				ProjectSynchronizer.GriidcFundingEnvelope_Cycle_ColName,
-				ProjectSynchronizer.GriidcProject_Abstract_ColName,
-				ProjectSynchronizer.GriidcProject_EndDate_ColName,
-				ProjectSynchronizer.GriidcProject_StartDate_ColName,
-				ProjectSynchronizer.GriidcProject_Title_ColName };
-
-		String[] colType = { RdbmsUtils.DbInteger, RdbmsUtils.DbCharacter,
-				RdbmsUtils.DbCharacter, RdbmsUtils.DbCharacter,
-				RdbmsUtils.DbCharacter, RdbmsUtils.DbCharacter };
-
-		String[] colValue = null;
-		DefaultValue defaultValue = null;
-
-		colValue = new String[colName.length];
-		int ndx = 0;
-		colValue[ndx++] = String.valueOf(this.griidcProject_Number);
-		colValue[ndx++] = this.griidcFundingEnvelope_Cycle;
-		colValue[ndx++] = this.griidcProject_Abstract;
-		colValue[ndx++] = this.griidcProject_EndDate.toString();
-		colValue[ndx++] = this.griidcProject_StartDate.toString();
-		colValue[ndx++] = this.griidcProject_Title;
-
-		DbColumnInfo[] info = new DbColumnInfo[colName.length];
-		for (int i = 0; i < colName.length; i++) {
-			info[i] = new DbColumnInfo(colName[i], colType[i], colValue[i],
-					defaultValue);
-		}
-		return info;
+	private DbColumnInfo[] getDbColumnInfo() throws FileNotFoundException, SQLException, ClassNotFoundException, PropertyNotFoundException {
+		TableColInfo tci = RdbmsUtils.getMetaDataForTable(RdbmsUtils.getGriidcDbConnectionInstance(), GriidcTableName);
+		
+		tci.getDbColumnInfo(ProjectSynchronizer.GriidcProject_Number_ColName).setColValue(String.valueOf(this.griidcProject_Number));
+		tci.getDbColumnInfo(ProjectSynchronizer.GriidcFundingEnvelope_Cycle_ColName).setColValue(this.griidcFundingEnvelope_Cycle);
+		tci.getDbColumnInfo(ProjectSynchronizer.GriidcProject_Abstract_ColName).setColValue(this.griidcProject_Abstract);
+		tci.getDbColumnInfo(ProjectSynchronizer.GriidcProject_EndDate_ColName).setColValue(this.griidcProject_EndDate.toString());
+		tci.getDbColumnInfo(ProjectSynchronizer.GriidcProject_StartDate_ColName).setColValue(this.griidcProject_StartDate.toString());
+		tci.getDbColumnInfo(ProjectSynchronizer.GriidcProject_Title_ColName).setColValue(String.valueOf(this.griidcProject_Title));
+		return tci.getDbColumnInfo();
 	}
 
 	private String formatAddQuery() throws SQLException,
