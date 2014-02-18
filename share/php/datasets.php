@@ -383,6 +383,33 @@ function build_where($filters,$registered = false) {
                         $WHERE .= " AND (r.dataset_download_status IS NOT NULL AND r.dataset_download_status = '$matches[3]')";
                     }
                     break;
+                case 'dataset_download_statuses':
+                    $matchNULL = false;
+                    $NULLcomp = 'IS';
+                    $glue = ' OR ';
+                    if ($matches[2] == '!=') {
+                        $glue = ' AND ';
+                        $NULLcomp = 'IS NOT';
+                        $matchNULL = true;
+                    }
+                    $statuses = preg_split('/,/',$matches[3]);
+                    $statusArray = array();
+                    foreach ($statuses as $status) {
+                        if ($status == 'NULL') {
+                            $comp = $NULLcomp;
+                            if ($matches[2] == '!=') $matchNULL = false;
+                        }
+                        else {
+                            $comp = $matches[2];
+                            $status = "'$status'";
+                        }
+                        $statusArray[] = "dataset_download_status $comp $status";
+                    }
+                    $WHERE .= " AND ";
+                    if ($matchNULL) $WHERE .= '( dataset_download_status IS NULL OR ';
+                    $WHERE .= "(" . implode($glue,$statusArray) . ")";
+                    if ($matchNULL) $WHERE .= ')';
+                    break;
                 case 'registered':
                     $WHERE .= " AND r.registry_id " . $GLOBALS['IS_MAP'][$matches[2]] . ' ' . $GLOBALS['NULL_MAP'][$matches[3]];
                     break;
