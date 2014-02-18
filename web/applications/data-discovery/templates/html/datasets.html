@@ -141,12 +141,7 @@ var tabIndex = 0;
                                 <table class="datasets">
                                     {% for dataset in identified_datasets %}
                                         <tr udi="{{dataset.udi}}">
-                                                <td>
-                                                {% if dataset.dataset_download_status == 'RemotelyHosted' %}
-                                                <a href="javascript:showDatasetDownloadExternal('{{dataset.udi}}');"><img src="{{baseUrl}}/includes/images/download-package.png" title="download dataset external"></a>
-                                                {% endif %}
-                                                </td>
-                                                <td class="info">
+                                            <td class="info">
                                                 {{dataset.title}}.
                                                 {{dataset.project.Title | trim}}.
                                                 {% if dataset.doi %}

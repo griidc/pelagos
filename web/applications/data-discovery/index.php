@@ -259,7 +259,7 @@ $app->get('/datasets/:filter/:by/:id/:geo_filter', function ($filter,$by,$id,$ge
     }
 
     if (empty($geo_filter) or $geo_filter == 'undefined') {
-        $identified_datasets = get_identified_datasets(getDBH('GOMRI'),array("$by=$id",'dataset_download_status!=done','status=2'),$filter,$GLOBALS['config']['DataDiscovery']['identifiedOrderBy']);
+        $identified_datasets = get_identified_datasets(getDBH('GOMRI'),array("$by=$id",'dataset_download_statuses!=done,RemotelyHosted','status=2'),$filter,$GLOBALS['config']['DataDiscovery']['identifiedOrderBy']);
         foreach ($identified_datasets as $dataset) {
             add_project_info($dataset);
             $stash['identified_datasets'][] = $dataset;
