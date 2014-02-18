@@ -217,7 +217,7 @@ function addTree() {
         type: "ra",
         filter: "",
         onload: "if(!tree.selected){showDatasets($('#by-input').val(),$('#id-input').val(),'');}",
-        show_other_sources: true,
+        show_other_sources: false,
 
         yr1_folder_color: "#00A",
         yr1_folder_action: "$('#by-input').val('YR1'); $('#id-input').val('1'); showDatasets('YR1',1);",
