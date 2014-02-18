@@ -180,13 +180,20 @@ JOIN
 ) ranked ON ranked.registry_id = r.registry_id";
 
 function count_identified_datasets($dbh, $filters = array(), $search = '') {
-    create_search_temp($dbh,$search);
+    if (isset($search) and $search != '') {
+        create_search_temp($dbh,$search);
+    }
 
     $SELECT = 'SELECT COUNT(d.dataset_udi)';
 
     $WHERE = build_where($filters);
 
-    $stmt = $dbh->prepare("$SELECT $GLOBALS[IDENTIFIED_FROM] $GLOBALS[IDENTIFIED_SEARCH_RANK] $WHERE;");
+    if (isset($search) and $search != '') {
+        $stmt = $dbh->prepare("$SELECT $GLOBALS[IDENTIFIED_FROM] $GLOBALS[IDENTIFIED_SEARCH_RANK] $WHERE;");
+    }
+    else {
+        $stmt = $dbh->prepare("$SELECT $GLOBALS[IDENTIFIED_FROM] $WHERE;");
+    }
 
     if (!$stmt->execute()) {
         $arr = $stmt->errorInfo();
@@ -195,19 +202,28 @@ function count_identified_datasets($dbh, $filters = array(), $search = '') {
 
     $retval = $stmt->fetchColumn();
 
-    drop_search_temp($dbh);
+    if (isset($search) and $search != '') {
+        drop_search_temp($dbh);
+    }
 
     return $retval;
 }
 
 function count_registered_datasets($dbh, $filters = array(), $search = '') {
-    create_search_temp($dbh,$search);
+    if (isset($search) and $search != '') {
+        create_search_temp($dbh,$search);
+    }
 
     $SELECT = 'SELECT COUNT(r.registry_id)';
 
     $WHERE = build_where($filters,true);
 
-    $stmt = $dbh->prepare("$SELECT $GLOBALS[REGISTERED_FROM] $GLOBALS[REGISTRY_SEARCH_RANK] $WHERE;");
+    if (isset($search) and $search != '') {
+        $stmt = $dbh->prepare("$SELECT $GLOBALS[REGISTERED_FROM] $GLOBALS[REGISTRY_SEARCH_RANK] $WHERE;");
+    }
+    else {
+        $stmt = $dbh->prepare("$SELECT $GLOBALS[REGISTERED_FROM] $WHERE;");
+    }
 
     if (!$stmt->execute()) {
         $arr = $stmt->errorInfo();
@@ -216,13 +232,17 @@ function count_registered_datasets($dbh, $filters = array(), $search = '') {
 
     $retval = $stmt->fetchColumn();
 
-    drop_search_temp($dbh);
+    if (isset($search) and $search != '') {
+        drop_search_temp($dbh);
+    }
 
     return $retval;
 }
 
 function get_identified_datasets($dbh, $filters = array(), $search = '', $order_by = 'udi') {
-    create_search_temp($dbh,$search);
+    if (isset($search) and $search != '') {
+        create_search_temp($dbh,$search);
+    }
 
     $SELECT = 'SELECT ' . 
               implode(',',$GLOBALS['DIF_FIELDS']) . ',' .
@@ -232,7 +252,12 @@ function get_identified_datasets($dbh, $filters = array(), $search = '', $order_
 
     $WHERE = build_where($filters);
 
-    $stmt = $dbh->prepare("$SELECT $GLOBALS[IDENTIFIED_FROM] $GLOBALS[IDENTIFIED_SEARCH_RANK] $WHERE ORDER BY search_rank DESC, $order_by;");
+    if (isset($search) and $search != '') {
+        $stmt = $dbh->prepare("$SELECT $GLOBALS[IDENTIFIED_FROM] $GLOBALS[IDENTIFIED_SEARCH_RANK] $WHERE ORDER BY search_rank DESC, $order_by;");
+    }
+    else {
+        $stmt = $dbh->prepare("$SELECT $GLOBALS[IDENTIFIED_FROM] $WHERE ORDER BY $order_by;");
+    }
 
     if (!$stmt->execute()) {
         $arr = $stmt->errorInfo();
@@ -241,13 +266,17 @@ function get_identified_datasets($dbh, $filters = array(), $search = '', $order_
 
     $retval = $stmt->fetchAll();
 
-    drop_search_temp($dbh);
+    if (isset($search) and $search != '') {
+        drop_search_temp($dbh);
+    }
 
     return $retval;
 }
 
 function get_registered_datasets($dbh, $filters = array(), $search = '', $order_by = 'registry_id') {
-    create_search_temp($dbh,$search);
+    if (isset($search) and $search != '') {
+        create_search_temp($dbh,$search);
+    }
 
     $SELECT = 'SELECT ' . 
               implode(',',$GLOBALS['REGISTRY_FIELDS']) . ',' .
@@ -257,7 +286,12 @@ function get_registered_datasets($dbh, $filters = array(), $search = '', $order_
 
     $WHERE = build_where($filters,true);
 
-    $stmt = $dbh->prepare("$SELECT $GLOBALS[REGISTERED_FROM] $GLOBALS[REGISTRY_SEARCH_RANK] $WHERE ORDER BY search_rank DESC, $order_by;");
+    if (isset($search) and $search != '') {
+        $stmt = $dbh->prepare("$SELECT $GLOBALS[REGISTERED_FROM] $GLOBALS[REGISTRY_SEARCH_RANK] $WHERE ORDER BY search_rank DESC, $order_by;");
+    }
+    else {
+        $stmt = $dbh->prepare("$SELECT $GLOBALS[REGISTERED_FROM] $WHERE ORDER BY $order_by;");
+    }
 
     if (!$stmt->execute()) {
         $arr = $stmt->errorInfo();
@@ -266,7 +300,9 @@ function get_registered_datasets($dbh, $filters = array(), $search = '', $order_
 
     $retval = $stmt->fetchAll();
 
-    drop_search_temp($dbh);
+    if (isset($search) and $search != '') {
+        drop_search_temp($dbh);
+    }
 
     return $retval;
 }
