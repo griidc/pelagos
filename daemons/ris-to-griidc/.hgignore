@@ -1,4 +1,5 @@
 data
+lib
 bin
 .DS_Store
 .classpath
@@ -10,5 +11,4 @@ gomri_rpisTablesAndColumnNamesOut.txt
 kainiteJvh
 kainiteLatest
 kainitePrev
-lib/javax.mail.jar
 mainPartial.sql

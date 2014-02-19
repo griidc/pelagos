@@ -373,7 +373,6 @@ public class ProjectSynchronizer {
 
 		DbColumnInfo[] info = this.getDbColumnInfo();
 		
-		
 		DbColumnInfo[] whereInfo = new DbColumnInfo[1];
 		TableColInfo tci = RdbmsUtils.getMetaDataForTable(RdbmsUtils.getGriidcDbConnectionInstance(), GriidcTableName);
 		

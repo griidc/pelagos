@@ -12,20 +12,25 @@ import edu.tamucc.hri.griidc.exception.PropertyNotFoundException;
 
 public class RisPropertiesAccess {
 
-	public static String propertiesFilePath = "/etc/griidc/db.ini";
+	private static String dbIniFileName = "/etc/griidc/db.ini";
+	private static String notificationsFileName = "/etc/griidc/notifications.ini";
+	private static String appIniFileName = "/etc/griidc/ris-to-griidc.ini";
+	private static String PropertiesFilePath = dbIniFileName;
+	
+	private static String[] fileName = { dbIniFileName, notificationsFileName,appIniFileName };
+	
+
+	private static String RisIniSection = "RIS_RO";
+	private static String GriidcIniSection = "GRIIDC_RW";
+	private static String RisToGriidcNotifications = "ris-to-griidc";
+	
 
 	private Properties propertiesInstance = null;
-	
-	private static final int FAILURE = -1;
-	private static boolean propertiesLoaded = false;
-
+	private boolean propertiesLoaded = false;
 	private static boolean Debug = false;
-	private static String DebugPrefix = ">>>>>  ";
-	private static String DeamServiceHost = null;
 	
     private static RisPropertiesAccess risPropertiesAccessInstance = null;
     
-    public static final String DatabaseMappingFileName = "database.mapping.specification.file";
     
     /**
      * singleton implementation
@@ -35,7 +40,6 @@ public class RisPropertiesAccess {
 	public static RisPropertiesAccess getInstance() throws FileNotFoundException {
 		if(risPropertiesAccessInstance == null) {
 			risPropertiesAccessInstance = new RisPropertiesAccess();
-		    //risPropertiesAccessInstance.init();
 		}
 		return risPropertiesAccessInstance;
 	}
@@ -46,14 +50,11 @@ public class RisPropertiesAccess {
 		propertiesLoaded = false;
 	}
 
-	public static String getPropertiesSourceFile() {
-		return RisPropertiesAccess.propertiesFilePath;
-	}
 	public static void setDebug(boolean trueOrFalse) {
 		Debug = trueOrFalse;
 	}
 
-	public String[] getProperties() throws FileNotFoundException {
+	private String[] getProperties() throws FileNotFoundException {
 		// loadProperties();
 		String[] props = new String[this.propertiesInstance.size()];
 		Enumeration<Object> es = this.propertiesInstance.keys();
@@ -77,14 +78,10 @@ public class RisPropertiesAccess {
 		Properties p = this.getPropertiesInstance();
 		String prop = p.getProperty(propertyName);
 		if(prop == null)
-			throw new PropertyNotFoundException("No property: " + propertyName + " found in file: " + propertiesFilePath);
+			throw new PropertyNotFoundException("No property: " + propertyName + " found in file: " + PropertiesFilePath);
 		return prop;
 	}
 
-	public String getDatabaseMappingFileName() 
-			throws FileNotFoundException, PropertyNotFoundException {
-		return this.getProperty(DatabaseMappingFileName);
-	}
 	public Properties getPropertiesInstance() {
 		if (this.propertiesInstance == null) {
 
@@ -93,7 +90,7 @@ public class RisPropertiesAccess {
 			try {
 
 				inputStream = new FileInputStream(
-						RisPropertiesAccess.propertiesFilePath);
+						RisPropertiesAccess.PropertiesFilePath);
 				this.propertiesInstance = new Properties();
 				String s = (this.propertiesInstance == null) ? " properties is null "
 						: "propertie is allocated";
@@ -102,14 +99,14 @@ public class RisPropertiesAccess {
 			} catch (FileNotFoundException e1) {
 				System.err
 						.println("RisPropertiesAccess.getPropertiesInstance() properties file not found file : "
-								+ this.propertiesFilePath
+								+ this.PropertiesFilePath
 								+ " "
 								+ e1.getMessage());
 				return null;
 			} catch (IOException e2) {
 				System.err
 						.println("RisPropertiesAccess.getPropertiesInstance() IOException on properties file : "
-								+ this.propertiesFilePath
+								+ this.PropertiesFilePath
 								+ " "
 								+ e2.getMessage());
 				return null;
@@ -123,6 +120,24 @@ public class RisPropertiesAccess {
 
 	public static String getWorkingDirectory() {
 		return System.getProperty("user.dir");
+	}
+	
+	public void saveEmailProperties() {
+
+    	/***
+	    try {
+	        Properties props = new Properties();
+	        props.setProperty("ServerAddress", serverAddr);
+	        props.setProperty("ServerPort", ""+serverPort);
+	        props.setProperty("ThreadCount", ""+threadCnt);
+	        File f = new File("server.properties");
+	        OutputStream out = new FileOutputStream( f );
+	        props.store(out, "This is an optional header comment string");
+	    }
+	    catch (Exception e ) {
+	        e.printStackTrace();
+	    }
+	    ***/
 	}
 	
 	

@@ -36,28 +36,6 @@ public class RisToGriidcTest {
 		return true;
 	}
 
-	public static boolean testPropertiesAccess() {
-		System.out.println("--- testPropertiesAccess ---");
-		msg = "SyncGriidcToRis - Could not get RIS Properties - "
-				+ "\nfile should be "
-				+ RisPropertiesAccess.getPropertiesSourceFile()
-				+ "\nin directory " + RisPropertiesAccess.getWorkingDirectory();
-		// create the properties instance and instantiate this object
-		RisToGriidcTest.getRisPropertiesAccess();
-		return true;
-	}
-
-	public static RisPropertiesAccess getRisPropertiesAccess() {
-		System.out.println("--- getRisPropertiesAccess ---");
-		RisPropertiesAccess.getPropertiesSourceFile();
-		try {
-			propsAccess = RisPropertiesAccess.getInstance();
-		} catch (FileNotFoundException e) {
-			GriidcExceptionService.fatalException(e, msg);
-		} 
-		return propsAccess;
-	}
-
 	public static boolean testRisDbConnection() {
 		System.out.println("--- testRisDbConnection ---");
 
