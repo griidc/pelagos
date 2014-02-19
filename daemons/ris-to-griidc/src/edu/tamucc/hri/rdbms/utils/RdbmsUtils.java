@@ -6,8 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Vector;
 
-import edu.tamucc.hri.griidc.ProjectSynchronizer;
-import edu.tamucc.hri.griidc.RisPropertiesAccess;
 import edu.tamucc.hri.griidc.exception.DuplicateRecordException;
 import edu.tamucc.hri.griidc.exception.IllegalFundingSourceCodeException;
 import edu.tamucc.hri.griidc.exception.MissingArgumentsException;

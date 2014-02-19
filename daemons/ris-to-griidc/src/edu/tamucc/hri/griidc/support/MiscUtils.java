@@ -7,8 +7,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,10 +18,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import edu.tamucc.hri.griidc.CountryTableCache;
-import edu.tamucc.hri.griidc.RisPropertiesAccess;
-import edu.tamucc.hri.griidc.exception.DuplicateRecordException;
 import edu.tamucc.hri.griidc.exception.MissingArgumentsException;
-import edu.tamucc.hri.griidc.exception.NoRecordFoundException;
 import edu.tamucc.hri.griidc.exception.PropertyNotFoundException;
 import edu.tamucc.hri.griidc.exception.TelephoneNumberException;
 

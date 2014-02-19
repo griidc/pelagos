@@ -11,6 +11,7 @@ import edu.tamucc.hri.griidc.exception.PropertyNotFoundException;
 import edu.tamucc.hri.griidc.exception.TableNotInDatabaseException;
 import edu.tamucc.hri.griidc.support.MiscUtils;
 import edu.tamucc.hri.griidc.support.RisInstDeptPeopleErrorCollection;
+import edu.tamucc.hri.griidc.support.RisPropertiesAccess;
 import edu.tamucc.hri.rdbms.utils.RdbmsConnection;
 import edu.tamucc.hri.rdbms.utils.RdbmsUtils;
 

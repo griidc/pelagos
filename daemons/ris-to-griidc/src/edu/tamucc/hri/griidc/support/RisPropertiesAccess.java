@@ -1,4 +1,4 @@
-package edu.tamucc.hri.griidc;
+package edu.tamucc.hri.griidc.support;
 
 import java.io.File;
 import java.io.FileInputStream;

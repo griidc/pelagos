@@ -2,7 +2,6 @@ package edu.tamucc.hri.griidc.support;
 
 import java.io.FileNotFoundException;
 
-import edu.tamucc.hri.griidc.RisPropertiesAccess;
 import edu.tamucc.hri.griidc.exception.PropertyNotFoundException;
 
 public class HeuristicMatching {

@@ -3,7 +3,7 @@ package edu.tamucc.hri.griidc.test;
 import java.io.FileNotFoundException;
 import java.sql.SQLException;
 
-import edu.tamucc.hri.griidc.RisPropertiesAccess;
+import edu.tamucc.hri.griidc.support.RisPropertiesAccess;
 import edu.tamucc.hri.griidc.exception.DuplicateRecordException;
 import edu.tamucc.hri.griidc.exception.GriidcExceptionService;
 import edu.tamucc.hri.griidc.exception.MissingArgumentsException;
