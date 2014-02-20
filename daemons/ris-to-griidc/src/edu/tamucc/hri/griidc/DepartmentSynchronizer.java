@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.SortedSet;
 
+import org.ini4j.InvalidFileFormatException;
+
 import edu.tamucc.hri.griidc.exception.DuplicateRecordException;
 import edu.tamucc.hri.griidc.exception.MissingArgumentsException;
 import edu.tamucc.hri.griidc.exception.NoRecordFoundException;
@@ -16,6 +18,7 @@ import edu.tamucc.hri.griidc.support.HeuristicMatching;
 import edu.tamucc.hri.griidc.support.InstitutionDepartmentRep;
 import edu.tamucc.hri.griidc.support.MiscUtils;
 import edu.tamucc.hri.griidc.support.RisInstDeptPeopleErrorCollection;
+import edu.tamucc.hri.griidc.support.RisToGriidcConfiguration;
 import edu.tamucc.hri.rdbms.utils.IntStringDbCache;
 import edu.tamucc.hri.rdbms.utils.RdbmsConnection;
 import edu.tamucc.hri.rdbms.utils.RdbmsUtils;
@@ -597,14 +600,12 @@ public class DepartmentSynchronizer {
 		return false;
 	}
 
-	public String getPrimaryLogFileName() throws FileNotFoundException,
-			PropertyNotFoundException {
-		return MiscUtils.getPrimaryLogFileName();
+	public String getPrimaryLogFileName() throws PropertyNotFoundException, InvalidFileFormatException, IOException {
+		return RisToGriidcConfiguration.getPrimaryLogFileName();
 	}
 
-	public String getRisErrorLogFileName() throws FileNotFoundException,
-			PropertyNotFoundException {
-		return MiscUtils.getRisErrorLogFileName();
+	public String getRisErrorLogFileName() throws PropertyNotFoundException, InvalidFileFormatException, IOException {
+		return RisToGriidcConfiguration.getRisErrorLogFileName();
 	}
 
 	public static boolean isDebug() {

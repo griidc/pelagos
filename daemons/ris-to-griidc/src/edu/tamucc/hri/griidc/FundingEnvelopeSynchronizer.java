@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.ini4j.InvalidFileFormatException;
 import org.postgresql.util.PSQLException;
 
 import edu.tamucc.hri.griidc.exception.DuplicateRecordException;
@@ -13,6 +14,7 @@ import edu.tamucc.hri.griidc.exception.NoRecordFoundException;
 import edu.tamucc.hri.griidc.exception.PropertyNotFoundException;
 import edu.tamucc.hri.griidc.exception.TableNotInDatabaseException;
 import edu.tamucc.hri.griidc.support.MiscUtils;
+import edu.tamucc.hri.griidc.support.RisToGriidcConfiguration;
 import edu.tamucc.hri.rdbms.utils.DbColumnInfo;
 import edu.tamucc.hri.rdbms.utils.DefaultValue;
 import edu.tamucc.hri.rdbms.utils.RdbmsConnection;
@@ -113,8 +115,8 @@ public class FundingEnvelopeSynchronizer {
 	// get the FundingOrganization info - should be only one - GOMRI
 
 	private void initializeFundingOrganizationData()
-			throws FileNotFoundException, SQLException, ClassNotFoundException,
-			TableNotInDatabaseException, PropertyNotFoundException {
+			throws SQLException, ClassNotFoundException,
+			TableNotInDatabaseException, PropertyNotFoundException, InvalidFileFormatException, IOException {
 		if (this.defaultFundingOrganizationNumber == null
 				|| this.defaultFundingOrganizationDescription == null
 				|| this.defaultFundingOrganizationName == null) {
@@ -459,12 +461,12 @@ public class FundingEnvelopeSynchronizer {
 
 	public String getPrimaryLogFileName() throws FileNotFoundException,
 			PropertyNotFoundException {
-		return MiscUtils.getPrimaryLogFileName();
+		return RisToGriidcConfiguration.getPrimaryLogFileName();
 	}
 
 	public String getRisErrorLogFileName() throws FileNotFoundException,
 			PropertyNotFoundException {
-		return MiscUtils.getRisErrorLogFileName();
+		return RisToGriidcConfiguration.getRisErrorLogFileName();
 	}
 
 	public static boolean isDebug() {

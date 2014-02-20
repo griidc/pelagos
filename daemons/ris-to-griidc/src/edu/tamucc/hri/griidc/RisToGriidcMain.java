@@ -4,11 +4,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 
+import org.ini4j.InvalidFileFormatException;
+
 import edu.tamucc.hri.griidc.exception.PropertyNotFoundException;
 import edu.tamucc.hri.griidc.exception.TableNotInDatabaseException;
 import edu.tamucc.hri.griidc.support.Emailer;
 import edu.tamucc.hri.griidc.support.MiscUtils;
 import edu.tamucc.hri.griidc.support.RisInstDeptPeopleErrorCollection;
+import edu.tamucc.hri.griidc.support.RisToGriidcConfiguration;
 import edu.tamucc.hri.rdbms.utils.RdbmsUtils;
 
 public class RisToGriidcMain {
@@ -121,23 +124,22 @@ public class RisToGriidcMain {
 
 	public void emailLogs() throws PropertyNotFoundException, IOException {
 		Emailer emailer = new Emailer();
-		String from = MiscUtils.getGriidcMailSender();
-		String[] tos = MiscUtils.getPrimaryMsgLogRecipients();
+		String from = RisToGriidcConfiguration.getGriidcMailSender();
+		String[] tos = RisToGriidcConfiguration.getPrimaryMsgLogRecipients();
 		String subject = "Primary Log File for RIS to GRIIDC - "
 				+ MiscUtils.getDateAndTime();
-		String absoluteFileName = MiscUtils.getPrimaryLogFileName();
+		String absoluteFileName = RisToGriidcConfiguration.getPrimaryLogFileName();
 		String msg = MiscUtils.readFileToBuffer(absoluteFileName);
 		emailer.sendEmail(from, tos, subject, msg);
 
-		tos = MiscUtils.getRisErrorMsgLogRecipients();
+		tos = RisToGriidcConfiguration.getRisErrorMsgLogRecipients();
 		subject = "RIS Error Log File for RIS to GRIIDC - "
 				+ MiscUtils.getDateAndTime();
-		msg = MiscUtils.readFileToBuffer(MiscUtils.getRisErrorLogFileName());
+		msg = MiscUtils.readFileToBuffer(RisToGriidcConfiguration.getRisErrorLogFileName());
 		emailer.sendEmail(from, tos, subject, msg);
 	}
 
-	public void report() throws FileNotFoundException,
-			PropertyNotFoundException {
+	public void report() throws PropertyNotFoundException, InvalidFileFormatException, IOException {
 
 		String pFormat = "%-44s %10d%n";
 		String titleFormat = "%n*****************************  %-40s  ********************************%n";
@@ -301,12 +303,12 @@ public class RisToGriidcMain {
 				.printf(titleFormat,title);
 
 		System.out.println("All Activity reported to log file: "
-				+ MiscUtils.getPrimaryLogFileName());
+				+ RisToGriidcConfiguration.getPrimaryLogFileName());
 		System.out.println(MiscUtils.getRisErrorLogCount()
 				+ " RIS Data Errors reported to log file: "
-				+ MiscUtils.getRisErrorLogFileName());
+				+ RisToGriidcConfiguration.getRisErrorLogFileName());
 		System.out.println("Institution/Deptartment/People error Tree reported in file: " + 
-				MiscUtils.getAbsoluteFileName(InstDeptPeopleDetailFileName));
+				MiscUtils.getUserDirDataFileName(InstDeptPeopleDetailFileName));
 	}
 
 }

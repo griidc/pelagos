@@ -463,7 +463,7 @@ public class RdbmsConnection {
 	}
 
 	public String[] getTableNamesForDatabase() throws SQLException,
-			ClassNotFoundException, FileNotFoundException {
+			ClassNotFoundException {
 		if (this.allTablesInDatabase == null) {
 			String query = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES";
 			debugMessage("RdbmsConnection:getTableNamesForDatabase() - query: "
@@ -480,7 +480,7 @@ public class RdbmsConnection {
 		return this.allTablesInDatabase;
 	}
 	
-	public boolean isTableInDatabase(String tableName) throws FileNotFoundException, SQLException, ClassNotFoundException, TableNotInDatabaseException {
+	public boolean isTableInDatabase(String tableName) throws SQLException, ClassNotFoundException, TableNotInDatabaseException {
 		String[] tabNames = this.getTableNamesForDatabase();
 		for(String tn: tabNames) {
 			if(tableName.trim().equals(tn)) return true;
@@ -491,7 +491,7 @@ public class RdbmsConnection {
 	}
 
 	public String[] getColumnNamesFromTable(String tableName)
-			throws FileNotFoundException, SQLException, ClassNotFoundException, TableNotInDatabaseException {
+			throws  SQLException, ClassNotFoundException, TableNotInDatabaseException {
 
 		this.isTableInDatabase(tableName);
 		String query = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = "
@@ -517,13 +517,12 @@ public class RdbmsConnection {
 	 * 
 	 * @param tableName
 	 * @return
-	 * @throws FileNotFoundException
 	 * @throws SQLException
 	 * @throws ClassNotFoundException
 	 * @throws TableNotInDatabaseException 
 	 */
 	public String[][] getColumnNamesAndDataTypesFromTable(String tableName)
-			throws FileNotFoundException, SQLException, ClassNotFoundException, TableNotInDatabaseException {
+			throws SQLException, ClassNotFoundException, TableNotInDatabaseException {
 		this.isTableInDatabase(tableName);
 		String query = "SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = "
 				+ RdbmsConnection.wrapInSingleQuotes(tableName);
@@ -564,14 +563,13 @@ public class RdbmsConnection {
 	 * 
 	 * @param tableName
 	 * @return
-	 * @throws FileNotFoundException
 	 * @throws SQLException
 	 * @throws ClassNotFoundException
 	 * @throws PropertyNotFoundException
 	 * @throws TableNotInDatabaseException 
 	 */
 	public String[] getColumnDefaultValue(String tableName)
-			throws FileNotFoundException, SQLException, ClassNotFoundException,
+			throws SQLException, ClassNotFoundException,
 			PropertyNotFoundException, TableNotInDatabaseException {
 
 		this.isTableInDatabase(tableName);
@@ -591,7 +589,7 @@ public class RdbmsConnection {
 	}
 
 	public ResultSet selectAllValuesFromTable(String tableName)
-			throws SQLException, ClassNotFoundException, FileNotFoundException, TableNotInDatabaseException {
+			throws SQLException, ClassNotFoundException, TableNotInDatabaseException {
 		this.isTableInDatabase(tableName);
 		StringBuffer query = new StringBuffer("select * from ");
 		if (this.getDbType().equals("postgres")) {
@@ -646,7 +644,7 @@ public class RdbmsConnection {
 	}
 
 	public boolean doesTableExist(String targetTableName)
-			throws FileNotFoundException, SQLException, ClassNotFoundException {
+			throws SQLException, ClassNotFoundException {
 		String[] tableNames = this.getTableNamesForDatabase();
 		String target = targetTableName.trim();
 		for (String tName : tableNames) {
@@ -761,9 +759,6 @@ public class RdbmsConnection {
 				}
 			}
 
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -817,11 +812,8 @@ public class RdbmsConnection {
 
 			}
 			System.out.println("Table And Column Names Output written to: "
-					+ MiscUtils.getAbsoluteFileName(outputFileName));
+					+ MiscUtils.getUserDirDataFileName(outputFileName));
 			localBw.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -841,7 +833,7 @@ public class RdbmsConnection {
 
 		try {
 
-			String outputFileName = MiscUtils.getAbsoluteFileName(this
+			String outputFileName = MiscUtils.getUserDirDataFileName(this
 					.getDbName() + "TablesColumnsAndDataTypesOut.txt");
 			BufferedWriter localBw = MiscUtils.openOutputFile(outputFileName);
 
@@ -894,10 +886,7 @@ public class RdbmsConnection {
 							+ outputFileName);
 			localBw.close();
 
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SQLException e) {
+		}  catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {

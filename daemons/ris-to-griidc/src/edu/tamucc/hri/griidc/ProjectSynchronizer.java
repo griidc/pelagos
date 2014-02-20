@@ -10,6 +10,7 @@ import edu.tamucc.hri.griidc.exception.NoRecordFoundException;
 import edu.tamucc.hri.griidc.exception.PropertyNotFoundException;
 import edu.tamucc.hri.griidc.exception.TableNotInDatabaseException;
 import edu.tamucc.hri.griidc.support.MiscUtils;
+import edu.tamucc.hri.griidc.support.RisToGriidcConfiguration;
 import edu.tamucc.hri.rdbms.utils.DbColumnInfo;
 import edu.tamucc.hri.rdbms.utils.DefaultValue;
 import edu.tamucc.hri.rdbms.utils.RdbmsConnection;
@@ -443,12 +444,12 @@ public class ProjectSynchronizer {
 
 	public String getPrimaryLogFileName() throws FileNotFoundException,
 			PropertyNotFoundException {
-		return MiscUtils.getPrimaryLogFileName();
+		return RisToGriidcConfiguration.getPrimaryLogFileName();
 	}
 
 	public String getRisErrorLogFileName() throws FileNotFoundException,
 			PropertyNotFoundException {
-		return MiscUtils.getRisErrorLogFileName();
+		return RisToGriidcConfiguration.getRisErrorLogFileName();
 	}
 
 	public static boolean isDebug() {

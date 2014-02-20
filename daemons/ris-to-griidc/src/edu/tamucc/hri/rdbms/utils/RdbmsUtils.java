@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Vector;
 
+import org.ini4j.InvalidFileFormatException;
+
 import edu.tamucc.hri.griidc.exception.DuplicateRecordException;
 import edu.tamucc.hri.griidc.exception.IllegalFundingSourceCodeException;
 import edu.tamucc.hri.griidc.exception.MissingArgumentsException;
@@ -222,7 +224,7 @@ public class RdbmsUtils {
 	public static final int Country_ISO3166Code_Length2 = 2;
 
 	public static int getCountryNumberFromName(String countryCode)
-			throws FileNotFoundException, SQLException, ClassNotFoundException,
+			throws SQLException, ClassNotFoundException,
 			PropertyNotFoundException, DuplicateRecordException,
 			NoRecordFoundException {
 
@@ -272,8 +274,7 @@ public class RdbmsUtils {
 	}
 
 	public static boolean doesGriidcDepartmentExist(int institutionNumber,
-			int departmentNumber) throws SQLException, FileNotFoundException,
-			ClassNotFoundException, PropertyNotFoundException,
+			int departmentNumber) throws SQLException, ClassNotFoundException, PropertyNotFoundException,
 			NoRecordFoundException, DuplicateRecordException {
 
 		String query = "SELECT * FROM  "
@@ -309,8 +310,7 @@ public class RdbmsUtils {
 
 	public static int getGriidcDepartmentCountryNumber(int departmentNumber)
 			throws SQLException, NoRecordFoundException,
-			DuplicateRecordException, FileNotFoundException,
-			ClassNotFoundException, PropertyNotFoundException {
+			DuplicateRecordException, ClassNotFoundException, PropertyNotFoundException {
 		int postalCode = RdbmsUtils
 				.getGriidcDepartmentPostalNumber(departmentNumber);
 		// get the country code from the PostalArea table using the postalCode
@@ -322,8 +322,7 @@ public class RdbmsUtils {
 
 	public static int getGriidcDepartmentPostalNumber(int departmentNumber)
 			throws SQLException, NoRecordFoundException,
-			DuplicateRecordException, FileNotFoundException,
-			ClassNotFoundException, PropertyNotFoundException {
+			DuplicateRecordException, ClassNotFoundException, PropertyNotFoundException {
 		return RdbmsUtils.getIntValueFromTable(
 				RdbmsUtils.getGriidcDbConnectionInstance(), "Department",
 				"Department_Number", departmentNumber, "PostalArea_Number");
@@ -507,19 +506,19 @@ public class RdbmsUtils {
 	}
 
 	public static RdbmsConnection getRisDbConnectionInstance()
-			throws FileNotFoundException, SQLException, ClassNotFoundException,
+			throws SQLException, ClassNotFoundException,
 			PropertyNotFoundException {
 		return RdbmsConnectionFactory.getRisDbConnectionInstance();
 	}
 
 	public static RdbmsConnection getGriidcDbConnectionInstance()
-			throws FileNotFoundException, SQLException, ClassNotFoundException,
+			throws SQLException, ClassNotFoundException,
 			PropertyNotFoundException {
 		return RdbmsConnectionFactory.getGriidcDbConnectionInstance();
 	}
 
 	public static RdbmsConnection getGriidcSecondaryDbConnectionInstance()
-			throws FileNotFoundException, SQLException, ClassNotFoundException,
+			throws SQLException, ClassNotFoundException,
 			PropertyNotFoundException {
 		return RdbmsConnectionFactory.getGriidcSecondaryDbConnectionInstance();
 	}
@@ -716,7 +715,7 @@ public class RdbmsUtils {
 	}
 
 	public static TableColInfoCollection getGriidcTableColInfoCollection()
-			throws FileNotFoundException, SQLException, ClassNotFoundException,
+			throws SQLException, ClassNotFoundException,
 			PropertyNotFoundException {
 		if (RdbmsUtils.GriidcTableColInfoCollection == null) {
 			RdbmsUtils.createTableColInfoCollection(
@@ -727,7 +726,7 @@ public class RdbmsUtils {
 	}
 
 	public static TableColInfoCollection getGriidcDefaultValueTableColInfoCollection()
-			throws FileNotFoundException, SQLException, ClassNotFoundException,
+			throws SQLException, ClassNotFoundException,
 			PropertyNotFoundException {
 		if (RdbmsUtils.GriidcDefaultValueTableColInfoCollection == null) {
 			RdbmsUtils.GriidcDefaultValueTableColInfoCollection = RdbmsUtils
@@ -739,7 +738,7 @@ public class RdbmsUtils {
 
 	public static TableColInfoCollection getAllDataFromTable(
 			RdbmsConnection dbConnection, String tableName)
-			throws FileNotFoundException, SQLException, ClassNotFoundException,
+			throws SQLException, ClassNotFoundException,
 			TableNotInDatabaseException, PropertyNotFoundException {
 		TableColInfoCollection dataSet = new TableColInfoCollection();
 		// metaData is a set of descriptions for the columns in the table

@@ -17,6 +17,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
+import org.ini4j.InvalidFileFormatException;
+
 import edu.tamucc.hri.griidc.CountryTableCache;
 import edu.tamucc.hri.griidc.exception.MissingArgumentsException;
 import edu.tamucc.hri.griidc.exception.PropertyNotFoundException;
@@ -36,10 +38,7 @@ public class MiscUtils {
 	public static int primaryLogMsgCount = 0;
 	public static int risErrorLogCount = 0;
 
-	private static String RisErrorMsgLogRecipients = "ris.error.msg.log.recipients";
-	private static String PrimaryMsgLogRecipients = "primary.msg.log.recipients";
-	private static String GriidcMailSender = "mail.from";
-
+	
 	private static boolean Debug = false;
 	public static String BreakLine = "\n\n************************************************************************\n";
 
@@ -130,38 +129,9 @@ public class MiscUtils {
 		return bw;
 	}
 
-	public static String getPrimaryLogFileName() throws FileNotFoundException,
-			PropertyNotFoundException {
-		String fileName = RisPropertiesAccess.getInstance().getProperty(
-				"log.file.name");
-		return MiscUtils.getAbsoluteFileName(fileName);
-	}
+	
 
-	public static String getRisErrorLogFileName() throws FileNotFoundException,
-			PropertyNotFoundException {
-		String fileName = RisPropertiesAccess.getInstance().getProperty(
-				"ris.data.error.log.name");
-		MiscUtils.debugOut("getRisErrorLogFileName() - " + fileName);
-		return MiscUtils.getAbsoluteFileName(fileName);
-	}
-
-	public static String getDeveloperReportFileName()
-			throws FileNotFoundException, PropertyNotFoundException {
-		String fileName = RisPropertiesAccess.getInstance().getProperty(
-				"dev.report.file.name");
-		return MiscUtils.getAbsoluteFileName(fileName);
-	}
-
-	/**
-	 * the email properties are in the application properties file
-	 * 
-	 * @return
-	 * @throws FileNotFoundException
-	 */
-	public static Properties getEmailConfigProperties()
-			throws FileNotFoundException {
-		return RisPropertiesAccess.getInstance().getPropertiesInstance();
-	}
+	
 
 	private static BufferedWriter primarylogFileWriter = null;
 
@@ -233,8 +203,7 @@ public class MiscUtils {
 
 		if (MiscUtils.primarylogFileWriter == null) {
 
-			MiscUtils.primarylogFileWriter = MiscUtils.openOutputFile(MiscUtils
-					.getPrimaryLogFileName());
+			MiscUtils.primarylogFileWriter = MiscUtils.openOutputFile(RisToGriidcConfiguration.getPrimaryLogFileName());
 			MiscUtils.primarylogFileWriter
 					.write("**********************************************************\n");
 			MiscUtils.primarylogFileWriter
@@ -318,7 +287,7 @@ public class MiscUtils {
 			PropertyNotFoundException {
 
 		if (MiscUtils.risErrorLogFileWriter == null) {
-			String relogFileName = MiscUtils.getRisErrorLogFileName();
+			String relogFileName = RisToGriidcConfiguration.getRisErrorLogFileName();
 			debugOut("ris error log file name = " + relogFileName);
 			MiscUtils.risErrorLogFileWriter = MiscUtils
 					.openOutputFile(relogFileName);
@@ -364,7 +333,7 @@ public class MiscUtils {
 
 		if (MiscUtils.developerReportWriter == null) {
 			MiscUtils.developerReportWriter = MiscUtils
-					.openOutputFile(MiscUtils.getDeveloperReportFileName());
+					.openOutputFile(RisToGriidcConfiguration.getDeveloperReportFileName());
 			MiscUtils.developerReportWriter
 					.write("**********************************************************\n");
 			MiscUtils.developerReportWriter
@@ -382,7 +351,7 @@ public class MiscUtils {
 	public static void writeStringToFile(String fileName, String msg)
 			throws IOException {
 		BufferedWriter br = MiscUtils.openOutputFile(MiscUtils
-				.getAbsoluteFileName(fileName));
+				.getUserDirDataFileName(fileName));
 		br.write(msg);
 		;
 		br.close();
@@ -416,14 +385,14 @@ public class MiscUtils {
 	}
 
 	public static BufferedReader openInputFile(String fName) throws IOException {
-		String fileName = MiscUtils.getAbsoluteFileName(fName);
+		String fileName = MiscUtils.getUserDirDataFileName(fName);
 		FileReader fr = new FileReader(new File(fileName));
 		BufferedReader br = new BufferedReader(fr);
 		return br;
 	}
 
-	public static String getAbsoluteFileName(final String fName) {
-		return RisPropertiesAccess.getWorkingDirectory() + "/data/" + fName;
+	public static String getUserDirDataFileName(final String fName) {
+		return RisToGriidcConfiguration.getWorkingDirectory() + "/data/" + fName;
 	}
 
 	public static void printStringArray(String[] sa) {
@@ -467,14 +436,14 @@ public class MiscUtils {
 			}
 			MiscUtils.closePrimaryLogFile();
 			MiscUtils.closeRisErrorLogFile();
-			String[] rec = MiscUtils.getRisErrorMsgLogRecipients();
+			String[] rec = RisToGriidcConfiguration.getRisErrorMsgLogRecipients();
 
 			System.out.println("RIS Error recipients:");
 			for (String s : rec) {
 				System.out.println("\t" + s);
 			}
 
-			rec = MiscUtils.getPrimaryMsgLogRecipients();
+			rec = RisToGriidcConfiguration.getPrimaryMsgLogRecipients();
 
 			System.out.println("Primary Log recipients:");
 			for (String s : rec) {
@@ -619,27 +588,7 @@ public class MiscUtils {
 		return s.trim();
 	}
 
-	public static String[] getRisErrorMsgLogRecipients()
-			throws FileNotFoundException, PropertyNotFoundException {
-		String rs = RisPropertiesAccess.getInstance().getProperty(
-				MiscUtils.RisErrorMsgLogRecipients);
-		String[] splits = rs.split(" ");
-		return splits;
-	}
-
-	public static String[] getPrimaryMsgLogRecipients()
-			throws FileNotFoundException, PropertyNotFoundException {
-		String rs = RisPropertiesAccess.getInstance().getProperty(
-				MiscUtils.PrimaryMsgLogRecipients);
-		String[] splits = rs.split(" ");
-		return splits;
-	}
-
-	public static String getGriidcMailSender() throws FileNotFoundException,
-			PropertyNotFoundException {
-		return RisPropertiesAccess.getInstance().getProperty(
-				MiscUtils.GriidcMailSender);
-	}
+	
 
 	public static String readFileToBuffer(String fileName) throws IOException {
 

@@ -9,6 +9,8 @@ import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.ini4j.InvalidFileFormatException;
+
 import edu.tamucc.hri.griidc.exception.PropertyNotFoundException;
 import edu.tamucc.hri.griidc.exception.TableNotInDatabaseException;
 import edu.tamucc.hri.rdbms.utils.RdbmsConnection;
@@ -31,7 +33,7 @@ public class ParseForCountry {
 
 	}
 
-	private void loadCountryReferenceData() {
+	private void loadCountryReferenceData() throws InvalidFileFormatException, IOException {
 
 		if (this.countrySet == null) {
 			this.countrySet = Collections
@@ -69,9 +71,6 @@ public class ParseForCountry {
 					}
 
 				}
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -174,7 +173,7 @@ public class ParseForCountry {
 		System.out.println("\nFinished RIS address 2 fields");
 	}
 
-	public String[] readRisPeopleAddr2() {
+	public String[] readRisPeopleAddr2() throws InvalidFileFormatException, IOException {
 
 		// RdbmsConnection.setDebug(true);
 		SortedSet<String> sSet = Collections
@@ -242,9 +241,6 @@ public class ParseForCountry {
 			}
 			return addrs;
 
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

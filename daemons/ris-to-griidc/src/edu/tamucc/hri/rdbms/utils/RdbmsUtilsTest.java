@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.ini4j.InvalidFileFormatException;
+
 import edu.tamucc.hri.griidc.exception.PropertyNotFoundException;
 import edu.tamucc.hri.griidc.exception.TableNotInDatabaseException;
 import edu.tamucc.hri.griidc.support.MiscUtils;
@@ -21,12 +23,11 @@ public class RdbmsUtilsTest {
 	public static final String GriidcProjectRolesSelect = 
 			     "SELECT DISTINCT R.Role_ID,Role_Name FROM Roles R JOIN ProjPeople PP ON R.Role_ID = PP.Role_ID WHERE PP.Project_ID = 0";
 	
-	public static void readGriidcRoles(String query) throws FileNotFoundException, SQLException, ClassNotFoundException, PropertyNotFoundException {
+	public static void readGriidcRoles(String query) throws SQLException, ClassNotFoundException, PropertyNotFoundException, InvalidFileFormatException, IOException {
 		
 		int role_ID = -1;                                     
 		String role_Name = null;
 		  
-		
 		String format = "%2d  %-40s%n";
 		ResultSet rs = RdbmsUtils.getRisDbConnectionInstance().executeQueryResultSet(query);
 		while (rs.next()) {
@@ -61,7 +62,7 @@ public class RdbmsUtilsTest {
 					.getDbName() + "RisTableColTypeReport.txt";
 			MiscUtils.writeStringToFile(fileName, s);
 			System.out
-			.println("Report written to: " + MiscUtils.getAbsoluteFileName(fileName));
+			.println("Report written to: " + MiscUtils.getUserDirDataFileName(fileName));
 			
 			s = RdbmsUtils.getColumnNamesAndDataTypesFromTables(
 					RdbmsUtils.getGriidcDbConnectionInstance(),griidcTableNames);
@@ -69,7 +70,7 @@ public class RdbmsUtilsTest {
 					.getDbName() + "GriidcTableColTypeReport.txt";
 			MiscUtils.writeStringToFile(fileName, s);
 			System.out
-			.println("Report written to: " + MiscUtils.getAbsoluteFileName(fileName));
+			.println("Report written to: " + MiscUtils.getUserDirDataFileName(fileName));
 			
 			System.out.println("\nGriidc Task Roles\n");
 			readGriidcRoles(GriidcTaskRolesSelect);

@@ -1,9 +1,12 @@
 package edu.tamucc.hri.rdbms.utils;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.SQLException;
 
-import edu.tamucc.hri.griidc.support.RisPropertiesAccess;
+import org.ini4j.InvalidFileFormatException;
+
+import edu.tamucc.hri.griidc.support.RisToGriidcConfiguration;
 import edu.tamucc.hri.griidc.exception.PropertyNotFoundException;
 
 public class RdbmsConnectionFactory {
@@ -19,7 +22,7 @@ public class RdbmsConnectionFactory {
 	}
 	
 	public static RdbmsConnection getRisDbConnectionInstance()
-			throws FileNotFoundException, SQLException, ClassNotFoundException,
+			throws SQLException, ClassNotFoundException,
 			PropertyNotFoundException {
 		if (RdbmsConnectionFactory.RisDbConnectionInstance == null) {
 			RdbmsConnectionFactory.RisDbConnectionInstance = RdbmsConnectionFactory.createNewRisDbConnection();
@@ -28,7 +31,7 @@ public class RdbmsConnectionFactory {
 	}
 
 	public static  RdbmsConnection getGriidcDbConnectionInstance()
-			throws FileNotFoundException, SQLException, ClassNotFoundException,
+			throws SQLException, ClassNotFoundException,
 			PropertyNotFoundException {
 		if (RdbmsConnectionFactory.GriidcDbConnectionInstance == null) {
 			RdbmsConnectionFactory.GriidcDbConnectionInstance = RdbmsConnectionFactory.createNewGriidcDbConnection();
@@ -37,7 +40,7 @@ public class RdbmsConnectionFactory {
 	}
 
 	public static  RdbmsConnection getGriidcSecondaryDbConnectionInstance()
-			throws FileNotFoundException, SQLException, ClassNotFoundException,
+			throws SQLException, ClassNotFoundException,
 			PropertyNotFoundException {
 		if (RdbmsConnectionFactory.GriidcSecondaryDbConnection == null) {
 			RdbmsConnectionFactory.GriidcSecondaryDbConnection = RdbmsConnectionFactory.createNewGriidcDbConnection();
@@ -57,20 +60,19 @@ public class RdbmsConnectionFactory {
 	private  static int risInstanceCount = 0;
 
 	private static RdbmsConnection createNewGriidcDbConnection()
-			throws FileNotFoundException, SQLException, ClassNotFoundException,
+			throws SQLException, ClassNotFoundException,
 			PropertyNotFoundException {
-		RisPropertiesAccess risProperties = RisPropertiesAccess.getInstance();
-		String jdbcDriverName = risProperties
-				.getProperty("griidc.db.driver.name");
-		String jdbcPrefix = risProperties.getProperty("griidc.db.jdbcPrefix");
-
-		String dbType = risProperties.getProperty("griidc.db.type");
-		String dbHost = risProperties.getProperty("griidc.db.host");
-		String dbPort = risProperties.getProperty("griidc.db.port");
-		String dbName = risProperties.getProperty("griidc.db.name");
-		String dbSchema = risProperties.getProperty("griidc.db.schema");
-		String dbUser = risProperties.getProperty("griidc.db.user");
-		String dbPassword = risProperties.getProperty("griidc.db.password");
+		String jdbcDriverName = RisToGriidcConfiguration.getRisToGriiidcIniProp(RisToGriidcConfiguration.getRisToGriidcGriidcDbSection(),"driverName");
+		String jdbcPrefix = RisToGriidcConfiguration.getRisToGriiidcIniProp(RisToGriidcConfiguration.getRisToGriidcGriidcDbSection(),"jdbcPrefix");
+		String dbSchema = RisToGriidcConfiguration.getRisToGriiidcIniProp(RisToGriidcConfiguration.getRisToGriidcGriidcDbSection(),"schema");
+		
+		String sectionName = RisToGriidcConfiguration.getGriidcDbIniSection();
+		String dbType = RisToGriidcConfiguration.getDbIniProp(sectionName,"type");
+		String dbHost = RisToGriidcConfiguration.getDbIniProp(sectionName,"host");
+		String dbPort = RisToGriidcConfiguration.getDbIniProp(sectionName,"port");
+		String dbName = RisToGriidcConfiguration.getDbIniProp(sectionName,"dbname");
+		String dbUser = RisToGriidcConfiguration.getDbIniProp(sectionName,"username");
+		String dbPassword = RisToGriidcConfiguration.getDbIniProp(sectionName,"password");
 
 		RdbmsConnection con = new RdbmsConnection();
 		con.setConnection(dbType, jdbcDriverName, jdbcPrefix, dbHost, dbPort,
@@ -80,18 +82,20 @@ public class RdbmsConnectionFactory {
 	}
 
 	private static RdbmsConnection createNewRisDbConnection()
-			throws FileNotFoundException, SQLException, ClassNotFoundException,
+			throws SQLException, ClassNotFoundException,
 			PropertyNotFoundException {
-		RisPropertiesAccess risProperties = RisPropertiesAccess.getInstance();
-		String jdbcDriverName = risProperties.getProperty("ris.db.driver.name");
-		String jdbcPrefix = risProperties.getProperty("ris.db.jdbcPrefix");
-		String dbType = risProperties.getProperty("ris.db.type");
-		String dbHost = risProperties.getProperty("ris.db.host");
-		String dbPort = risProperties.getProperty("ris.db.port");
-		String dbName = risProperties.getProperty("ris.db.name");
-		String dbSchema = risProperties.getProperty("ris.db.schema");
-		String dbUser = risProperties.getProperty("ris.db.user");
-		String dbPassword = risProperties.getProperty("ris.db.password");
+		String jdbcDriverName = RisToGriidcConfiguration.getRisToGriiidcIniProp(RisToGriidcConfiguration.getRisToGriidcRisDbSection(),"driverName");
+		String jdbcPrefix = RisToGriidcConfiguration.getRisToGriiidcIniProp(RisToGriidcConfiguration.getRisToGriidcRisDbSection(),"jdbcPrefix");
+		
+		
+		String sectionName = RisToGriidcConfiguration.getRisDbIniSection();
+		String dbType = RisToGriidcConfiguration.getDbIniProp(sectionName,"type");
+		String dbHost = RisToGriidcConfiguration.getDbIniProp(sectionName,"host");
+		String dbPort = RisToGriidcConfiguration.getDbIniProp(sectionName,"port");
+		String dbName = RisToGriidcConfiguration.getDbIniProp(sectionName,"dbname");
+		String dbUser = RisToGriidcConfiguration.getDbIniProp(sectionName,"username");
+		String dbPassword = RisToGriidcConfiguration.getDbIniProp(sectionName,"password");
+		String dbSchema = null;
 
 		RdbmsConnection con = new RdbmsConnection();
 		con.setConnection(dbType, jdbcDriverName, jdbcPrefix, dbHost, dbPort,

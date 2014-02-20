@@ -1,9 +1,12 @@
 package edu.tamucc.hri.griidc.test;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.SQLException;
 
-import edu.tamucc.hri.griidc.support.RisPropertiesAccess;
+import org.ini4j.InvalidFileFormatException;
+
+import edu.tamucc.hri.griidc.support.RisToGriidcConfiguration;
 import edu.tamucc.hri.griidc.exception.DuplicateRecordException;
 import edu.tamucc.hri.griidc.exception.GriidcExceptionService;
 import edu.tamucc.hri.griidc.exception.MissingArgumentsException;
@@ -21,7 +24,7 @@ import edu.tamucc.hri.rdbms.utils.RdbmsUtils;
  * 
  */
 public class RisToGriidcTest {
-	public static RisPropertiesAccess propsAccess = null;
+	public static RisToGriidcConfiguration propsAccess = null;
 	public static String msg = null;
 
 	public static boolean testApostropheEscape() {
@@ -36,7 +39,7 @@ public class RisToGriidcTest {
 		return true;
 	}
 
-	public static boolean testRisDbConnection() {
+	public static boolean testRisDbConnection() throws InvalidFileFormatException, IOException {
 		System.out.println("--- testRisDbConnection ---");
 
 		// connect to the databases
@@ -44,8 +47,6 @@ public class RisToGriidcTest {
 		RdbmsConnection con = null;
 		try {
 			con = RdbmsUtils.getRisDbConnectionInstance();
-		} catch (FileNotFoundException e) {
-			GriidcExceptionService.fatalException(e, msg);
 		} catch (SQLException e) {
 			GriidcExceptionService.fatalException(e, msg);
 		} catch (ClassNotFoundException e) {
@@ -58,14 +59,12 @@ public class RisToGriidcTest {
 		return true;
 	}
 
-	public static boolean testGriidcDbConnection() {
+	public static boolean testGriidcDbConnection() throws InvalidFileFormatException, IOException {
 		System.out.println("--- testGriidcDbConnection ---");
 		RdbmsConnection con = null;
 		String msg = "SyncGriidcToRis - Could not connect to GRIIDC database ";
 		try {
 			con = RdbmsUtils.getGriidcDbConnectionInstance();
-		} catch (FileNotFoundException e) {
-			GriidcExceptionService.fatalException(e, msg);
 		} catch (SQLException e) {
 			GriidcExceptionService.fatalException(e, msg);
 		} catch (ClassNotFoundException e) {
@@ -78,7 +77,7 @@ public class RisToGriidcTest {
 		return true;
 	}
 
-	public static boolean testGetGriidcTables(boolean tableNamesOnly) throws TableNotInDatabaseException {
+	public static boolean testGetGriidcTables(boolean tableNamesOnly) throws TableNotInDatabaseException, InvalidFileFormatException, IOException {
 		System.out
 				.println("\n\n-------------- testGetGriidcTables ------------------");
 		System.out.println("GRIIDC tables and their columns");
@@ -96,8 +95,6 @@ public class RisToGriidcTest {
 					tableReport(t, colNames);
 				}
 			}
-		} catch (FileNotFoundException e1) {
-			e1.printStackTrace();
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -118,7 +115,7 @@ public class RisToGriidcTest {
 		}
 	}
 
-	public static boolean testGetRisTables(boolean tableNamesOnly) throws TableNotInDatabaseException {
+	public static boolean testGetRisTables(boolean tableNamesOnly) throws TableNotInDatabaseException, InvalidFileFormatException, IOException {
 		System.out
 				.println("\n\n------------- testGetRisTables --------------------");
 		System.out.println("RIS tables and their columns");
@@ -136,8 +133,6 @@ public class RisToGriidcTest {
 					tableReport(t, colNames);
 				}
 			}
-		} catch (FileNotFoundException e1) {
-			e1.printStackTrace();
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

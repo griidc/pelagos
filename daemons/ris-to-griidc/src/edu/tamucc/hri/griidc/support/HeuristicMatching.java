@@ -1,6 +1,9 @@
 package edu.tamucc.hri.griidc.support;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import org.ini4j.InvalidFileFormatException;
 
 import edu.tamucc.hri.griidc.exception.PropertyNotFoundException;
 
@@ -22,16 +25,10 @@ public class HeuristicMatching {
 		// TODO Auto-generated constructor stub
 	}
 
-	private void initialize() throws FileNotFoundException,
-			PropertyNotFoundException {
+	private void initialize() throws PropertyNotFoundException, InvalidFileFormatException, IOException {
 		if (initialized)
 			return;
-		// Postal Code heuristics trigger
-		String fuzzyPostalCodeTrue = RisPropertiesAccess.getInstance()
-				.getProperty("heuristic.postal.code.fuzzy.true");
-		String fuzzyPostalCode = RisPropertiesAccess.getInstance().getProperty(
-				"heuristic.postal.code.fuzzy");
-		if (fuzzyPostalCode.equals(fuzzyPostalCodeTrue))
+		if(RisToGriidcConfiguration.isFuzzyPostalCodeTrue())
 			this.setFuzzyPostalCode(true);
 		initialized = true;
 	}
@@ -40,7 +37,7 @@ public class HeuristicMatching {
 	private static int CountryCodeCanada = 38; // change to format "A1A 1A1"
 
 	public String fuzzyPostalCode(int countryCode, String postalCode)
-			throws FileNotFoundException, PropertyNotFoundException {
+			throws PropertyNotFoundException, InvalidFileFormatException, IOException {
 		String modifiedPostalCode = postalCode.trim();
 		this.initialize();
 		if (this.isFuzzyPostalCode()) {

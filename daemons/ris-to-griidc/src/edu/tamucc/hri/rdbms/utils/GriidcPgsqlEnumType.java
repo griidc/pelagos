@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Vector;
 
+import org.ini4j.InvalidFileFormatException;
+
 import edu.tamucc.hri.griidc.exception.PropertyNotFoundException;
 import edu.tamucc.hri.griidc.support.MiscUtils;
 
@@ -25,49 +27,47 @@ public class GriidcPgsqlEnumType {
 			MetadataStatus, Restriction, XferProtocol };
 
 	public String[] getGriidcTelephoneTypeEnumValues()
-			throws FileNotFoundException, SQLException, ClassNotFoundException,
-			PropertyNotFoundException {
+			throws SQLException, ClassNotFoundException,
+			PropertyNotFoundException, InvalidFileFormatException, IOException {
 		return this.getGriidcPgEnum(TelephoneTypeName);
 	}
 
 	public String[] getAccessStatus() throws FileNotFoundException,
-			SQLException, ClassNotFoundException, PropertyNotFoundException {
+			SQLException, ClassNotFoundException, PropertyNotFoundException , InvalidFileFormatException, IOException {
 		return this.getGriidcPgEnum(AccessStatus);
 	}
 
 	public String[] getEthicalIssues() throws FileNotFoundException,
-			SQLException, ClassNotFoundException, PropertyNotFoundException {
+			SQLException, ClassNotFoundException, PropertyNotFoundException, InvalidFileFormatException, IOException {
 		return this.getGriidcPgEnum(EthicalIssues);
 	}
 
 	public String[] getFileDlStatus() throws FileNotFoundException,
-			SQLException, ClassNotFoundException, PropertyNotFoundException {
+			SQLException, ClassNotFoundException, PropertyNotFoundException, InvalidFileFormatException, IOException {
 		return this.getGriidcPgEnum(FileDlStatus);
 	}
 
 	public String[] getMediaCreator() throws FileNotFoundException,
-			SQLException, ClassNotFoundException, PropertyNotFoundException {
+			SQLException, ClassNotFoundException, PropertyNotFoundException, InvalidFileFormatException, IOException {
 		return this.getGriidcPgEnum(MediaCreator);
 	}
 
 	public String[] getMetadataStatus() throws FileNotFoundException,
-			SQLException, ClassNotFoundException, PropertyNotFoundException {
+			SQLException, ClassNotFoundException, PropertyNotFoundException, InvalidFileFormatException, IOException {
 		return this.getGriidcPgEnum(MetadataStatus);
 	}
 
-	public String[] getRestriction() throws FileNotFoundException,
-			SQLException, ClassNotFoundException, PropertyNotFoundException {
+	public String[] getRestriction() throws SQLException, ClassNotFoundException, PropertyNotFoundException, InvalidFileFormatException, IOException {
 		return this.getGriidcPgEnum(Restriction);
 	}
 
-	public String[] getXferProtocol() throws FileNotFoundException,
-			SQLException, ClassNotFoundException, PropertyNotFoundException {
+	public String[] getXferProtocol() throws SQLException, ClassNotFoundException, PropertyNotFoundException, InvalidFileFormatException, IOException {
 		return this.getGriidcPgEnum(XferProtocol);
 	}
 
 	public String[] getGriidcPgEnum(String typeName)
-			throws FileNotFoundException, SQLException, ClassNotFoundException,
-			PropertyNotFoundException {
+			throws SQLException, ClassNotFoundException,
+			PropertyNotFoundException, InvalidFileFormatException, IOException {
 		String query = "SELECT unnest(enum_range(NULL::"
 				+ RdbmsConnection.wrapInDoubleQuotes(typeName) + "))";
 		ResultSet rset = RdbmsUtils.getGriidcSecondaryDbConnectionInstance()
@@ -112,6 +112,12 @@ public class GriidcPgsqlEnumType {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvalidFileFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

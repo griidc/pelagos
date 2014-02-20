@@ -116,7 +116,7 @@ public class GarbageDetector {
 		try {
 			BufferedReader reader = MiscUtils.openInputFile(inFileName);
 			System.out.println("GarbageDetector.main() - input file is "
-					+ MiscUtils.getAbsoluteFileName(inFileName));
+					+ MiscUtils.getUserDirDataFileName(inFileName));
 
 			for (String line = reader.readLine(); line != null; line = reader
 					.readLine()) {

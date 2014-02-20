@@ -1,12 +1,13 @@
 package edu.tamucc.hri.griidc;
 
-import java.io.FileNotFoundException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
+import org.ini4j.InvalidFileFormatException;
 
 import edu.tamucc.hri.griidc.exception.PropertyNotFoundException;
 import edu.tamucc.hri.rdbms.utils.RdbmsConnection;
@@ -39,6 +40,7 @@ public class CountryTableCache {
 
 	/**
 	 * lazy instantiation of the cache.
+	 * 
 	 * @return
 	 */
 	private SortedSet<CountryTableStruct> getCountryCacheInstance() {
@@ -76,9 +78,6 @@ public class CountryTableCache {
 						callingCode, isO3166Code2, isO3166Code3, countryName);
 				countryCache.add(countryTemp);
 			}
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -229,14 +228,17 @@ public class CountryTableCache {
 
 	public static void main(String[] args) {
 		CountryTableCache ctc = CountryTableCache.getInstance();
-		Iterator<CountryTableStruct> it = ctc.iterator();
+		Iterator<CountryTableStruct> it;
+		it = ctc.iterator();
+
 		while (it.hasNext()) {
 			System.out.println(it.next().toString());
 		}
 		int[] code = { 555, 320, 20, 40, 100, 251, 1, 3000, 253 };
 		for (int c : code) {
-			boolean exists = CountryTableCache.getInstance()
-					.doesCountryExist(c);
+			boolean exists;
+
+			exists = CountryTableCache.getInstance().doesCountryExist(c);
 			System.out.println("Country with code: " + c
 					+ ((exists) ? " Exists " : " Does Not Exist"));
 		}

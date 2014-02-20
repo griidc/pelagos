@@ -11,7 +11,7 @@ import edu.tamucc.hri.griidc.exception.PropertyNotFoundException;
 import edu.tamucc.hri.griidc.exception.TableNotInDatabaseException;
 import edu.tamucc.hri.griidc.support.MiscUtils;
 import edu.tamucc.hri.griidc.support.RisInstDeptPeopleErrorCollection;
-import edu.tamucc.hri.griidc.support.RisPropertiesAccess;
+import edu.tamucc.hri.griidc.support.RisToGriidcConfiguration;
 import edu.tamucc.hri.rdbms.utils.RdbmsConnection;
 import edu.tamucc.hri.rdbms.utils.RdbmsUtils;
 
@@ -79,11 +79,7 @@ public class InstitutionSynchronizer {
 		MiscUtils.openDeveloperReportFile();
 		this.risDbConnection = RdbmsUtils.getRisDbConnectionInstance();
 		this.griidcDbConnection = RdbmsUtils.getGriidcDbConnectionInstance();
-		String fuzzyPostalCodeTrue = RisPropertiesAccess.getInstance()
-				.getProperty("heuristic.postal.code.fuzzy.true");
-		String fuzzyPostalCode = RisPropertiesAccess.getInstance().getProperty(
-				"heuristic.postal.code.fuzzy");
-		if (fuzzyPostalCode.equals(fuzzyPostalCodeTrue))
+		if (RisToGriidcConfiguration.isFuzzyPostalCodeTrue())
 			InstitutionSynchronizer.setFuzzyPostalCode(true);
 	}
 

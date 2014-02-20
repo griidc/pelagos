@@ -20,8 +20,8 @@ public final class Emailer {
 		// the domains of these email addresses should be valid,
 		// or the example will fail:
 		try {
-			String[] risErrorLogRecipients = MiscUtils.getRisErrorMsgLogRecipients();
-			String[] primaryLogRecipients = MiscUtils.getPrimaryMsgLogRecipients();
+			String[] risErrorLogRecipients = RisToGriidcConfiguration.getRisErrorMsgLogRecipients();
+			String[] primaryLogRecipients = RisToGriidcConfiguration.getPrimaryMsgLogRecipients();
 			String subject = "GRIIDC email RIS errors test - " + MiscUtils.getDateAndTime();
 			emailer.sendEmail("joe.holland@tamucc.edu", risErrorLogRecipients,
 					subject, "RIS errors go here");
@@ -30,9 +30,6 @@ public final class Emailer {
 					subject, "GRIIDC log messages go here");
 			
 			System.out.println("IT worked!!!");
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (PropertyNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -45,18 +42,20 @@ public final class Emailer {
 	/**
 	 * Send a single email.
 	 * @throws FileNotFoundException 
+	 * @throws PropertyNotFoundException 
 	 */
 	public void sendEmail(String fromEmailAddr, String[] toEmailAddr,
-			String subject, String msgBody) throws FileNotFoundException {
+			String subject, String msgBody) throws PropertyNotFoundException {
 		// Here, no Authenticator argument is used (it is null).
 		// Authenticators are used to prompt the user for user
 		// name and password.
-		Properties emailConfigProperties = MiscUtils.getEmailConfigProperties();
+		Properties emailConfigProperties = RisToGriidcConfiguration.getEmailProperties();
 		Session session = Session.getDefaultInstance(emailConfigProperties, null);
 		MimeMessage message = new MimeMessage(session);
 		try {
 			// the "from" address may be set in code, or set in the
-			// config file under "mail.from" ; here, the latter style is used
+			// config file under "mail.from" ;
+			//  if you use message.setFrom() then the config definition is used
 			// message.setFrom(new InternetAddress(fromEmailAddr));
 			for(String addr : toEmailAddr) {
 			message.addRecipient(Message.RecipientType.TO, new InternetAddress(

@@ -16,6 +16,7 @@ import edu.tamucc.hri.griidc.exception.TelephoneNumberException;
 import edu.tamucc.hri.griidc.support.HeuristicMatching;
 import edu.tamucc.hri.griidc.support.MiscUtils;
 import edu.tamucc.hri.griidc.support.RisInstDeptPeopleErrorCollection;
+import edu.tamucc.hri.griidc.support.RisToGriidcConfiguration;
 import edu.tamucc.hri.rdbms.utils.IntStringDbCache;
 import edu.tamucc.hri.rdbms.utils.RdbmsConnection;
 import edu.tamucc.hri.rdbms.utils.RdbmsUtils;
@@ -841,12 +842,12 @@ public class PersonSynchronizer {
 
 	public String getPrimaryLogFileName() throws FileNotFoundException,
 			PropertyNotFoundException {
-		return MiscUtils.getPrimaryLogFileName();
+		return RisToGriidcConfiguration.getPrimaryLogFileName();
 	}
 
 	public String getRisErrorLogFileName() throws FileNotFoundException,
 			PropertyNotFoundException {
-		return MiscUtils.getRisErrorLogFileName();
+		return RisToGriidcConfiguration.getRisErrorLogFileName();
 	}
 
 	public static boolean isDebug() {
