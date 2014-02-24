@@ -76,22 +76,21 @@ if ($udi <> '')
 	CASE WHEN status = 2 THEN 1 WHEN status = 1 THEN 2 ELSE 0 END AS identified,
 	CASE WHEN status = 2 THEN 1 WHEN status = 1 THEN 2 ELSE 0 END AS identified,
 	CASE WHEN registry.registry_id IS NULL THEN 0 ELSE 1 END AS registered,
-	CASE WHEN metadata_dl_status IS NULL OR
-		metadata_dl_status != 'Completed' OR
-		url_metadata IS NULL
-	THEN 0
-	WHEN metadata_status = 'Accepted'
-		THEN 1
-	ELSE 2
-	END AS metadata,
-    CASE WHEN dataset_download_status = 'RemotelyHosted'
-             THEN 3
-         WHEN dataset_download_status IS NULL OR
-              dataset_download_status != 'done'
-             THEN 0
-         WHEN access_status = 'None'
+    CASE WHEN metadata_dl_status = 'Completed' AND metadata_status = 'Accepted'
              THEN 1
-         ELSE 2
+         WHEN metadata_dl_status = 'Completed' AND metadata_status != 'Accepted'
+             THEN 2
+         ELSE 0
+	END AS metadata,
+    CASE WHEN dataset_download_status = 'done' AND access_status = 'None'
+             THEN 1
+         WHEN dataset_download_status = 'done' AND access_status != 'None'
+             THEN 2
+         WHEN dataset_download_status = 'RemotelyHosted' AND access_status = 'None'
+             THEN 3
+         WHEN dataset_download_status = 'RemotelyHosted' AND access_status != 'None'
+             THEN 4
+         ELSE 0
 	END AS available
 	FROM registry
 	LEFT OUTER JOIN datasets ON substr(registry.registry_id,0,17) = datasets.dataset_udi
