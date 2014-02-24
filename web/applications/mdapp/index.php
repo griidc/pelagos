@@ -122,7 +122,7 @@ $app->get('/un-accept/:udi', function ($udi) use ($app) {
     $data->execute(array($udi));
     drupal_set_message("Metadata for $udi un-accepted and marked as \"In Review\".",'status');
     writeLog($user->name." has un-accepted metadata for $udi.");
-    return $app->render('html/main.html',index($app));
+    drupal_goto($GLOBALS['PAGE_NAME']);
 });
 
 // Start Review
@@ -137,7 +137,7 @@ $app->get('/start-review/:udi', function ($udi) use ($app) {
     $data->execute(array($udi));
     drupal_set_message("Metadata for $udi marked as \"In Review\".",'status');
     writeLog($user->name." has marked metadata for $udi as \"In Review\".");
-    return $app->render('html/main.html',index($app));
+    drupal_goto($GLOBALS['PAGE_NAME']);
 });
 
 // End Review
@@ -152,7 +152,7 @@ $app->get('/end-review/:udi', function ($udi) use ($app) {
     $data->execute(array($udi));
     drupal_set_message("Metadata for $udi un-marked as \"In Review\" and moved back to \"Submitted\".",'status');
     writeLog($user->name." has un-marked metadata for $udi as \"In Review\".");
-    return $app->render('html/main.html',index($app));
+    drupal_goto($GLOBALS['PAGE_NAME']);
 });
 
 // Accept
@@ -167,7 +167,7 @@ $app->get('/accept/:udi', function ($udi) use ($app) {
     $data->execute(array($udi));
     drupal_set_message("Metadata for $udi accepted.",'status');
     writeLog($user->name." has accepted metadata for $udi.");
-    return $app->render('html/main.html',index($app));
+    drupal_goto($GLOBALS['PAGE_NAME']);
 });
 
 // Sort Toggle
