@@ -20,7 +20,7 @@
 -1_metadata = "This dataset has not yet been registered, therefore no metadata is available."
  0_metadata = "This dataset has been registered, but no metadata has been provided."
  1_metadata = "Metadata for this dataset is available, ISO compliant, and has been reviewed and accepted."
- 2_metadata = "Metadata for this dataset has been provided, but has not been validated for ISO compliance or reviewed and accepted."
+ 2_metadata = "Metadata for this dataset has been submitted and is in review."
 
 -1_available = "This dataset has not yet been registered, therefore it is not yet available."
  0_available = "This dataset has been registered, but the data is not yet available."
