@@ -80,13 +80,7 @@ $app->hook('slim.before.router', function () use ($app) {
 $app->get('/includes/:file', 'dumpIncludesFile')->conditions(array('file' => '.+'));
 
 $app->get('/', function () use ($app) {
-    $stash=index($app);
-    $stash['m_dataset']['accepted']    = GetMetadata('accepted',$_SESSION['orderby']);
-    $stash['m_dataset']['submitted']   = GetMetadata('submitted',$_SESSION['orderby']);
-    $stash['m_dataset']['inreview']   = GetMetadata('inreview',$_SESSION['orderby']);
-    $stash['srvr'] = "https://$_SERVER[HTTP_HOST]";
-    if(isset($_SESSION['testPolygon'])) { $stash['testPolygon'] = $_SESSION['testPolygon']; }
-    return $app->render('html/main.html',$stash);
+    return $app->render('html/main.html',index($app));
 });
 
 // Download from file on disk - probably going away
@@ -119,46 +113,61 @@ $app->get('/download-metadata/:udi', function ($udi) use ($app) {
 // Un-accept
 $app->get('/un-accept/:udi', function ($udi) use ($app) {
     global $user;
-    $sql = "update registry set metadata_status = 'Submitted' where
-            metadata_status in ('Accepted','InReview') and registry_id =
-            ( select registry_id from curr_reg_view where dataset_udi = ?)
+    $sql = "update registry set metadata_status = 'InReview' where
+            metadata_status = 'Accepted' and registry_id =
+            ( select MAX(registry_id) from registry where dataset_udi = ?)
             ";
     $dbms = OpenDB("GOMRI_RW");
     $data = $dbms->prepare($sql);
     $data->execute(array($udi));
-    drupal_set_message($user->name." has un-approved metadata for $udi",'message');
-    writeLog($user->name." has un-approved metadata for $udi");
-    echo "<a href=../>Continue</a>";
+    drupal_set_message("Metadata for $udi un-accepted and marked as \"In Review\".",'status');
+    writeLog($user->name." has un-accepted metadata for $udi.");
+    return $app->render('html/main.html',index($app));
 });
 
-// Review
-$app->get('/review/:udi', function ($udi) use ($app) {
+// Start Review
+$app->get('/start-review/:udi', function ($udi) use ($app) {
     global $user;
     $sql = "update registry set metadata_status = 'InReview' where
-            metadata_status in ('Accepted','Submitted') and registry_id =
-            ( select registry_id from curr_reg_view where dataset_udi = ?)
+            metadata_status = 'Submitted' and registry_id =
+            ( select MAX(registry_id) from registry where dataset_udi = ?)
             ";
     $dbms = OpenDB("GOMRI_RW");
     $data = $dbms->prepare($sql);
     $data->execute(array($udi));
-    drupal_set_message($user->name." has set metadata for $udi into review status.",'message');
-    writeLog($user->name." has set metadata for $udi into review status.");
-    echo "<a href=../>Continue</a>";
+    drupal_set_message("Metadata for $udi marked as \"In Review\".",'status');
+    writeLog($user->name." has marked metadata for $udi as \"In Review\".");
+    return $app->render('html/main.html',index($app));
+});
+
+// End Review
+$app->get('/end-review/:udi', function ($udi) use ($app) {
+    global $user;
+    $sql = "update registry set metadata_status = 'Submitted' where
+            metadata_status = 'InReview' and registry_id =
+            ( select MAX(registry_id) from registry where dataset_udi = ?)
+            ";
+    $dbms = OpenDB("GOMRI_RW");
+    $data = $dbms->prepare($sql);
+    $data->execute(array($udi));
+    drupal_set_message("Metadata for $udi un-marked as \"In Review\" and moved back to \"Submitted\".",'status');
+    writeLog($user->name." has un-marked metadata for $udi as \"In Review\".");
+    return $app->render('html/main.html',index($app));
 });
 
 // Accept
 $app->get('/accept/:udi', function ($udi) use ($app) {
     global $user;
     $sql = "update registry set metadata_status = 'Accepted' where
-            metadata_status in ('Submitted','InReview') and registry_id =
-            ( select registry_id from curr_reg_view where dataset_udi = ?)
+            metadata_status = 'InReview' and registry_id =
+            ( select MAX(registry_id) from registry where dataset_udi = ?)
             ";
     $dbms = OpenDB("GOMRI_RW");
     $data = $dbms->prepare($sql);
     $data->execute(array($udi));
-    drupal_set_message($user->name." has approved metadata for $udi",'message');
-    writeLog($user->name." has approved metadata for $udi");
-    echo "<a href=../>Continue</a>";
+    drupal_set_message("Metadata for $udi accepted.",'status');
+    writeLog($user->name." has accepted metadata for $udi.");
+    return $app->render('html/main.html',index($app));
 });
 
 // Sort Toggle
@@ -659,6 +668,11 @@ function index($app) {
     drupal_add_js("/$GLOBALS[PAGE_NAME]/includes/js/mdapp.js",array('type'=>'external'));
     drupal_add_css("/$GLOBALS[PAGE_NAME]/includes/css/mdapp.css",array('type'=>'external'));
     $stash['defaultFilter'] = $app->request()->get('filter');
+    $stash['m_dataset']['accepted'] = GetMetadata('accepted',$_SESSION['orderby']);
+    $stash['m_dataset']['submitted'] = GetMetadata('submitted',$_SESSION['orderby']);
+    $stash['m_dataset']['inreview'] = GetMetadata('inreview',$_SESSION['orderby']);
+    $stash['srvr'] = "https://$_SERVER[HTTP_HOST]";
+    if(isset($_SESSION['testPolygon'])) { $stash['testPolygon'] = $_SESSION['testPolygon']; }
     return $stash;
 }
 
