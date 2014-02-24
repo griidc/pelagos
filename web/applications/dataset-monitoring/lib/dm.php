@@ -21,13 +21,11 @@ function getTasksAndDatasets($projects) {
                CASE WHEN r.dataset_title IS NULL THEN title ELSE r.dataset_title END AS title,
                CASE WHEN status = 2 THEN 1 WHEN status = 1 THEN 2 ELSE 0 END AS identified,
                CASE WHEN registry_id IS NULL THEN 0 ELSE 1 END AS registered,
-               CASE WHEN metadata_dl_status IS NULL OR
-                         metadata_dl_status != 'Completed' OR
-                         url_metadata IS NULL
-                        THEN 0
-                    WHEN metadata_status = 'Accepted'
+               CASE WHEN metadata_dl_status = 'Completed' AND metadata_status = 'Accepted'
                         THEN 1
-                    ELSE 2
+                    WHEN metadata_dl_status = 'Completed' AND metadata_status != 'Accepted'
+                        THEN 2
+                    ELSE 0
                END AS metadata,
                CASE WHEN dataset_download_status = 'done' AND access_status = 'None'
                         THEN 1
