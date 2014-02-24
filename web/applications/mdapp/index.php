@@ -172,10 +172,27 @@ $app->get('/accept/:udi', function ($udi) use ($app) {
 
 // Sort Toggle
 $app->get('/sorter/:sort', function ($sort) use ($app) {
-    if($sort === 'udi') {
-        $_SESSION['orderby'] = 'ORDER BY dataset_udi';
+    if ($sort === 'udi') {
+        if ($_SESSION['orderby'] == 'ORDER BY dataset_udi ASC') {
+            $_SESSION['orderby'] = 'ORDER BY dataset_udi DESC';
+        }
+        else {
+            $_SESSION['orderby'] = 'ORDER BY dataset_udi ASC';
+        }
     } elseif ($sort === 'timestamp') {
-        $_SESSION['orderby'] = 'ORDER BY submittimestamp';
+        if ($_SESSION['orderby'] == 'ORDER BY submittimestamp ASC') {
+            $_SESSION['orderby'] = 'ORDER BY submittimestamp DESC';
+        }
+        else {
+            $_SESSION['orderby'] = 'ORDER BY submittimestamp ASC';
+        }
+    } elseif ($sort === 'filename') {
+        if ($_SESSION['orderby'] == 'ORDER BY dataset_metadata ASC') {
+            $_SESSION['orderby'] = 'ORDER BY dataset_metadata DESC';
+        }
+        else {
+            $_SESSION['orderby'] = 'ORDER BY dataset_metadata ASC';
+        }
     } else {
         // default if unspecified or something else specified
         $_SESSION['orderby'] = 'ORDER BY curr_reg_view.registry_id';
