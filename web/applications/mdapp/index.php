@@ -33,6 +33,7 @@ require_once '/usr/local/share/GRIIDC/php/ldap.php';
 # to the browser at the time drupal sends its own.  "system" is the main
 # drupal module.
 drupal_add_library('system', 'ui.tabs');
+drupal_add_library('system', 'jquery.cookie');
 
 global $user;
 
