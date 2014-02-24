@@ -23,7 +23,7 @@ function getTasksAndDatasets($projects) {
                CASE WHEN registry_id IS NULL THEN 0 ELSE 1 END AS registered,
                CASE WHEN metadata_dl_status = 'Completed' AND metadata_status = 'Accepted'
                         THEN 1
-                    WHEN metadata_dl_status = 'Completed' AND metadata_status != 'Accepted'
+                    WHEN metadata_dl_status = 'Completed' AND metadata_status != 'None'
                         THEN 2
                     ELSE 0
                END AS metadata,
