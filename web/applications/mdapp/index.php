@@ -53,7 +53,7 @@ $app = new Slim(array(
 
 $app->hook('slim.before', function () use ($app) {
     if(!isset($_SESSION['orderby'])) {
-        $_SESSION['orderby'] = "ORDER BY dataset_udi";
+        $_SESSION['orderby'] = "ORDER BY submittimestamp ASC";
     }
     $env = $app->environment();
     $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
@@ -685,6 +685,11 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
 function index($app) {
     drupal_add_js("/$GLOBALS[PAGE_NAME]/includes/js/mdapp.js",array('type'=>'external'));
     drupal_add_css("/$GLOBALS[PAGE_NAME]/includes/css/mdapp.css",array('type'=>'external'));
+    if (preg_match('/^ORDER BY (\w+) (\w+)$/',$_SESSION['orderby'],$matches)) {
+        $stash['sort_by'] = $matches[1];
+        if ($matches[2] == 'DESC') $stash['sort_order'] = 'descending';
+        else $stash['sort_order'] = 'ascending';
+    }
     $stash['defaultFilter'] = $app->request()->get('filter');
     $stash['m_dataset']['accepted'] = GetMetadata('accepted',$_SESSION['orderby']);
     $stash['m_dataset']['submitted'] = GetMetadata('submitted',$_SESSION['orderby']);
