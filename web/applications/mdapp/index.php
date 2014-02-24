@@ -27,11 +27,11 @@ require_once '/usr/local/share/GRIIDC/php/utils.php';
 # LDAP functionality
 require_once '/usr/local/share/GRIIDC/php/ldap.php';
 
-# add js library - informs drupal to add these standard js libraries upstream.  
+# add js library - informs drupal to add these standard js libraries upstream.
 # can also use drupal_add_js to specify a full path to a js library to include.
 # similarly, there is a drupal_add_css function.  These js includes are sent
 # to the browser at the time drupal sends its own.  "system" is the main
-# drupal module. 
+# drupal module.
 drupal_add_library('system', 'ui.tabs');
 
 global $user;
@@ -97,7 +97,7 @@ $app->get('/download-metadata/:udi', function ($udi) use ($app) {
     else {
         $datasets = get_identified_datasets(OpenDB('GOMRI_RO'),array("udi=$udi"));
     }
-    $dataset = $datasets[0]; 
+    $dataset = $datasets[0];
     $met_file = "/sftp/data/$dataset[udi]/$dataset[udi].met";
     if (file_exists($met_file)) {
         $info = finfo_open(FILEINFO_MIME_TYPE);
@@ -119,8 +119,8 @@ $app->get('/download-metadata/:udi', function ($udi) use ($app) {
 // Un-accept
 $app->get('/un-accept/:udi', function ($udi) use ($app) {
     global $user;
-    $sql = "update registry set metadata_status = 'Submitted' where 
-            metadata_status in ('Accepted','InReview') and registry_id = 
+    $sql = "update registry set metadata_status = 'Submitted' where
+            metadata_status in ('Accepted','InReview') and registry_id =
             ( select registry_id from curr_reg_view where dataset_udi = ?)
             ";
     $dbms = OpenDB("GOMRI_RW");
@@ -134,8 +134,8 @@ $app->get('/un-accept/:udi', function ($udi) use ($app) {
 // Review
 $app->get('/review/:udi', function ($udi) use ($app) {
     global $user;
-    $sql = "update registry set metadata_status = 'InReview' where 
-            metadata_status in ('Accepted','Submitted') and registry_id = 
+    $sql = "update registry set metadata_status = 'InReview' where
+            metadata_status in ('Accepted','Submitted') and registry_id =
             ( select registry_id from curr_reg_view where dataset_udi = ?)
             ";
     $dbms = OpenDB("GOMRI_RW");
@@ -149,8 +149,8 @@ $app->get('/review/:udi', function ($udi) use ($app) {
 // Accept
 $app->get('/accept/:udi', function ($udi) use ($app) {
     global $user;
-    $sql = "update registry set metadata_status = 'Accepted' where 
-            metadata_status in ('Submitted','InReview') and registry_id = 
+    $sql = "update registry set metadata_status = 'Accepted' where
+            metadata_status in ('Submitted','InReview') and registry_id =
             ( select registry_id from curr_reg_view where dataset_udi = ?)
             ";
     $dbms = OpenDB("GOMRI_RW");
@@ -202,8 +202,8 @@ $app->get('/download-metadata-db/:udi', function ($udi) use ($app) {
     # This SQL uses a subselect to resolve the newest registry_id
     # associated with the passed in UDI.
     $sql = "
-    select 
-        metadata_xml, 
+    select
+        metadata_xml,
         coalesce(
             cast(
                 xpath('/gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1]/text()',metadata_xml,
@@ -213,28 +213,28 @@ $app->get('/download-metadata-db/:udi', function ($udi) use ($app) {
                     ARRAY['gco', 'http://www.isotc211.org/2005/gco']
                     ]
                 ) as character varying
-            ), 
+            ),
             dataset_metadata
-        ) 
+        )
 
-    as filename  
+    as filename
     FROM metadata left join registry on registry.registry_id = metadata.registry_id
-    WHERE 
-        metadata.registry_id = (   select registry_id 
-                                    from curr_reg_view 
+    WHERE
+        metadata.registry_id = (   select registry_id
+                                    from curr_reg_view
                                     where dataset_udi = ?
                                 )";
 
     $dbms = OpenDB("GOMRI_RO");
     $data = $dbms->prepare($sql);
     $data->execute(array($udi));
-    $raw_data = $data->fetch(); 
+    $raw_data = $data->fetch();
     if ($raw_data) {
         // We changed from generating a filename to using the filename referenced in the XML.
         //$filename = "$udi-metadata.xml";
         $filename = preg_replace(array('/{/','/}/'),array('',''),$raw_data['filename']);
         # colons aren't allowed in filenames so substitute dash '-' character instead.
-        $filename = preg_replace("/:/",'-',$filename); 
+        $filename = preg_replace("/:/",'-',$filename);
         header($_SERVER["SERVER_PROTOCOL"] . " 200 OK");
         header("Cache-Control: public"); // needed for i.e.
         header("Content-Type: text/xml");
@@ -287,10 +287,10 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
         $filename = $_FILES['newMetadataFile']['tmp_name'];
         $orig_filename = $_FILES['newMetadataFile']['name'];
 
-        // pattern match check file       
+        // pattern match check file
         if(!preg_match('/-metadata.xml$/',$orig_filename)) {
             throw new RuntimeException('Bad filename: Filename must be "UDI-metadata.xml"');
-        } 
+        }
 
         $udi = preg_replace('/-metadata.xml$/','',$orig_filename); # need to verify this!
         $udi = preg_replace('/-/',':',$udi);
@@ -307,24 +307,24 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
             $err_str = $err->message;
             throw new RuntimeException("Malformed XML: The XML file supplied could not be parsed. ($err_str)");
         }
-   
+
         // also load as simplxml object for quick xpath tests
         $xml = simplexml_import_dom($doc);
-        
+
         // Check for description field, save if found
         $extent_description=null;
         $check_desc_xpath = "/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:description[1]/gco:CharacterString[1]";
         $check_desc = $xml->xpath($check_desc_xpath);
-        foreach ($check_desc as $node) { // only 1 possible 
+        foreach ($check_desc as $node) { // only 1 possible
             $extent_description=$node;
         }
-        
+
         // Check to see if filename matches existing UDI.
         if(!checkForUDI($udi)) {
             throw new RuntimeException("The UDI $udi is not found in the registry.");
         }
 
-        // Check to see if filename matches XML internal filename reference 
+        // Check to see if filename matches XML internal filename reference
         $loc_1_xpath = "/gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1]"; # as filename
         $loc_1 = $xml->xpath($loc_1_xpath);
         if(isset($loc_1[0][0])) {
@@ -347,8 +347,8 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
         } else {
             throw new RuntimeException('GRIIDC standard failed:  UDI must be referenced in /gmi:MI_Metadata/gmd:dataSetURI/gco:CharacterString');
         }
-        
-        // Check to see if filename matches XML internal UDI reference #2 
+
+        // Check to see if filename matches XML internal UDI reference #2
         $loc_3_xpath = "/gmi:MI_Metadata/gmd:distributionInfo[1]/gmd:MD_Distribution[1]/gmd:distributor[1]/gmd:MD_Distributor[1]/gmd:distributorTransferOptions[1]/gmd:MD_DigitalTransferOptions[1]/gmd:onLine[1]/gmd:CI_OnlineResource[1]/gmd:linkage[1]/gmd:URL[1]";
         $loc_3 = $xml->xpath($loc_3_xpath);
         if(isset($loc_3[0][0])) {
@@ -359,20 +359,20 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
         } else {
             throw new RuntimeException('GRIIDC standard failed:  UDI must be referenced in /gmi:MI_Metadata/gmd:distributionInfo[1]/gmd:MD_Distribution[1]/gmd:distributor[1]/gmd:MD_Distributor[1]/gmd:distributorTransferOptions[1]/gmd:MD_DigitalTransferOptions[1]/gmd:onLine[1]/gmd:CI_OnlineResource[1]/gmd:linkage[1]/gmd:URL[1]');
         }
-        
+
 /*
-        // Check keyword element(s) to verify there aren't commas included. 
+        // Check keyword element(s) to verify there aren't commas included.
         $check_4_xpath = "/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:descriptiveKeywords[1]/gmd:MD_Keywords[1]/gmd:keyword/gco:CharacterString";
         $check_4 = $xml->xpath($check_4_xpath);
         foreach ($check_4 as $node) {
             if(preg_match("/,/",$node)) { # URL must end with UDI
                 throw new RuntimeException("GRIIDC XML check failed: XML contains commas in keyword element. ($node)");
-            } 
+            }
         }
-       
+
 */
 
-/* 
+/*
         // Check that time period description contains either the phase 'ground condition' or 'modeled period'
         $check_5_xpath = "/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:temporalElement[1]/gmd:EX_TemporalExtent[1]/gmd:extent[1]/gml:TimePeriod[1]/gml:description";
         $check_5 = $xml->xpath($check_5_xpath);
@@ -380,7 +380,7 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
         foreach ($check_5 as $node) {
             if(preg_match("/ground condition/i",$node)) { # URL must end with UDI
                 $ok++;
-            } 
+            }
             if(preg_match("/modeled period/i",$node)) { # URL must end with UDI
                 $ok++;
             }
@@ -389,7 +389,7 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
             throw new RuntimeException("GRIIDC XML check failed: XML time period description needs to indicate 'ground condition' xor 'modeled period'");
         }
 */
-        
+
 
         // Determine geometry type
         if ($geo = $xml->xpath('/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:geographicElement[1]/gmd:EX_BoundingPolygon[1]/gmd:polygon[1]/gml:Polygon[1]')) {
@@ -402,7 +402,7 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
             $node = $elements->item(0);
             $node->setAttribute('gml:id',"Polygon");
             $node->setAttribute('srsName',"urn:ogc:def:crs:EPSG::4326");
-            $xml_save=$doc->saveXML(); 
+            $xml_save=$doc->saveXML();
 
         } elseif ($geo = $xml->xpath('/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:geographicElement[1]/gmd:EX_GeographicBoundingBox')) {
             // If metadata has a bounding box, convert it to a polygon.
@@ -453,9 +453,9 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
         try {
             $doc->normalizeDocument();
             $doc->formatOutput=true;
-            $xml_save=$doc->saveXML(); 
+            $xml_save=$doc->saveXML();
 
-            // clean up formatting via tidy 
+            // clean up formatting via tidy
             $tidy_config = array('indent' => true,'indent-spaces' => 4,'input-xml' => true,'output-xml' => true,'wrap' => 0);
             $tidy = new tidy;
             $tidy->parseString($xml_save, $tidy_config, 'utf8');
@@ -474,13 +474,13 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
             $data = $dbms->prepare($sql);
             $data->execute(array($udi));
             $tmp=$data->fetchAll(); $reg_id=$tmp[0]['newest_reg'];
-            
+
             // query database to deteremine if metadata table is populated for this
             // registry ID, set bool variable.
             $sql = "SELECT COUNT(*) as cnt FROM metadata where registry_id = ?";
             $data = $dbms->prepare($sql);
             $data->execute(array($reg_id));
-            $tmp=$data->fetchAll(); 
+            $tmp=$data->fetchAll();
             $has_metadata_in_db=false;
             $has_metadata_in_db = ($tmp[0]['cnt'] ==  1);
 
@@ -493,7 +493,7 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                 $coordinate_list=$_POST['GMLOverride'];
                 $flagged_gmloverride=true;
                 // xpath locate/remove polygon
-    
+
                 $doc2 = new DomDocument('1.0','UTF-8');
                 $tmpp = @$doc2->loadXML($tidy);
                 if (!$tmpp) {
@@ -501,7 +501,7 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                     $err_str = $err->message;
                     throw new RuntimeException("Malformed XML: The XML file supplied could not be parsed. ($err_str)");
                 }
-    
+
                 $xpathdoc = new DOMXpath($doc2);
                 $searchXpath = "/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:geographicElement/gmd:EX_BoundingPolygon";
                 $elements = $xpathdoc->query($searchXpath);
@@ -524,10 +524,10 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                     $newnode = createXmlNode($doc2,$parent,'gml:LinearRing');
                     $parent = $newnode;
                     addXMLChildValue($doc2,$parent,'gml:coordinates',$coordinate_list);
-            
+
                     $doc2->normalizeDocument();
                     $doc2->formatOutput=true;
-                    $tidy=$doc2->saveXML(); // should still be clean without a 2nd run through tidy 
+                    $tidy=$doc2->saveXML(); // should still be clean without a 2nd run through tidy
 
                     $geoflag='yes';
                     $msg = "The GML from file has been overridden by user.";
@@ -553,7 +553,7 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                     throw new RuntimeException("PostGIS rejected geometry supplied");
                 }
             }
-                
+
             // insert (or update) data in metadata table
             $sql = '';
             if ($geoflag == 'yes') {
@@ -595,7 +595,7 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                 }
                 drupal_set_message("An extent description found and stored.",'status');
             }
- 
+
             // update approved flag, if selected
             $flagged_accepted=false;
             $sql = '';
@@ -620,7 +620,7 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                 sendEmail($to_address_string,$userMail['email'],"$udi metadata","The metadata for $udi has been approved by GRIIDC.  Thank you!");
                 drupal_set_message("An email of this approval has been sent to ".$dataManager['fullname'].'('.$dataManager['email'].')','status');
             }
-             
+
             $thanks_msg = "Thank you ".$user->name.".  The metadata file for registry ID $reg_id has been recorded into the database.
                             <p>
                             Details:
@@ -688,19 +688,19 @@ function checkForUDI($udi) {
     $count = $result[0]['count'];
     return ($count==1);
 }
-            
+
 function getDataManager($udi) {
     // returns: array  ('full name', 'email')
-    $sql = 'SELECT 
+    $sql = 'SELECT
     "EmailInfo_Address", coalesce("Person_HonorificTitle",\'\')||
     \' \'||"Person_FirstName"||\' \'||coalesce("Person_MiddleName",\'\')||
     \' \'||"Person_LastName"||\' \'||coalesce("Person_NameSuffix",\'\') as fullname
-    FROM 
-    "HRI"."Dept-GoMRIPerson-Project-Role", 
-    "HRI"."EmailInfo", 
+    FROM
+    "HRI"."Dept-GoMRIPerson-Project-Role",
+    "HRI"."EmailInfo",
     "HRI"."Person",
     "HRI"."Project"
-    WHERE 
+    WHERE
     "EmailInfo"."Person_Number" = "Person"."Person_Number" AND
     "Person"."Person_Number" = "Dept-GoMRIPerson-Project-Role"."Person_Number"
     AND "Dept-GoMRIPerson-Project-Role"."ProjRole_Number" = 3
@@ -727,7 +727,7 @@ function getDataManagerOldDataModel($udi) {
     // returns: array  ('full name', 'email')
     $sql = "
     SELECT
-        People.People_Email as EmailInfo_Address, 
+        People.People_Email as EmailInfo_Address,
         concat(
             coalesce(People.People_Title,''),
             ' ',
@@ -739,9 +739,9 @@ function getDataManagerOldDataModel($udi) {
             ' ',
             coalesce(People.People_Suffix)
         ) as fullname
-    FROM 
-        People  
-            JOIN ProjPeople 
+    FROM
+        People
+            JOIN ProjPeople
                 ON People.People_ID = ProjPeople.People_ID
             JOIN Programs
                 ON ProjPeople.Program_ID = Programs.Program_ID
@@ -756,7 +756,7 @@ function getDataManagerOldDataModel($udi) {
 
     $dbms = OpenDB("RIS_RO");
     $data = $dbms->prepare($sql);
-    
+
     $projSec=substr($udi,4,3);
 
     $fundingCycle=substr($udi,0,2);
@@ -809,17 +809,17 @@ function sendEmail($to,$from,$sub,$message) {
     ini_set("SMTP","smtp.tamucc.edu" );
     $header = "From: <$from>\r\n";
     $header .= "CC: $from\r\n";
-    mail($to,$sub,$message,$header); 
+    mail($to,$sub,$message,$header);
 }
 
 function GetMetadata($type,$sorter) {
     $type=strtolower($type);
     switch($type) {
         case "accepted":
-            $sql = "SELECT 
-                        metadata_status, 
-                        url_metadata, 
-                        dataset_udi, 
+            $sql = "SELECT
+                        metadata_status,
+                        url_metadata,
+                        dataset_udi,
                         coalesce(trim(trailing '}' from trim(leading '{' from cast(
                             xpath('/gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1]/text()',metadata_xml,
                                 ARRAY[
@@ -827,24 +827,24 @@ function GetMetadata($type,$sorter) {
                                     ARRAY['gmd', 'http://www.isotc211.org/2005/gmd'],
                                     ARRAY['gco', 'http://www.isotc211.org/2005/gco']
                                 ]
-                            ) as character varying ))), dataset_metadata 
+                            ) as character varying ))), dataset_metadata
                         ) as dataset_metadata,
                         (metadata_xml is not null) as hasxml,
                         submittimestamp
-                    FROM 
+                    FROM
                         curr_reg_view left join metadata
-                        ON curr_reg_view.registry_id = metadata.registry_id 
-                    WHERE 
-                        metadata_status = 'Accepted' 
-                    AND 
+                        ON curr_reg_view.registry_id = metadata.registry_id
+                    WHERE
+                        metadata_status = 'Accepted'
+                    AND
                         metadata_dl_status = 'Completed'
                         $sorter";
             break;
         case "submitted":
-            $sql = "SELECT 
-                        metadata_status, 
-                        url_metadata, 
-                        dataset_udi, 
+            $sql = "SELECT
+                        metadata_status,
+                        url_metadata,
+                        dataset_udi,
                         coalesce(trim(trailing '}' from trim(leading '{' from cast(
                             xpath('/gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1]/text()',metadata_xml,
                                 ARRAY[
@@ -852,24 +852,24 @@ function GetMetadata($type,$sorter) {
                                     ARRAY['gmd', 'http://www.isotc211.org/2005/gmd'],
                                     ARRAY['gco', 'http://www.isotc211.org/2005/gco']
                                 ]
-                            ) as character varying ))), dataset_metadata 
+                            ) as character varying ))), dataset_metadata
                         ) as dataset_metadata,
                         (metadata_xml is not null) as hasxml,
                         submittimestamp
-                    FROM 
+                    FROM
                         curr_reg_view left join metadata
-                        ON curr_reg_view.registry_id = metadata.registry_id 
-                    WHERE 
-                        metadata_status = 'Submitted' 
-                    AND 
+                        ON curr_reg_view.registry_id = metadata.registry_id
+                    WHERE
+                        metadata_status = 'Submitted'
+                    AND
                         metadata_dl_status = 'Completed'
                         $sorter";
             break;
         case "inreview":
-            $sql = "SELECT 
-                        metadata_status, 
-                        url_metadata, 
-                        dataset_udi, 
+            $sql = "SELECT
+                        metadata_status,
+                        url_metadata,
+                        dataset_udi,
                         coalesce(trim(trailing '}' from trim(leading '{' from cast(
                             xpath('/gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1]/text()',metadata_xml,
                                 ARRAY[
@@ -877,20 +877,20 @@ function GetMetadata($type,$sorter) {
                                     ARRAY['gmd', 'http://www.isotc211.org/2005/gmd'],
                                     ARRAY['gco', 'http://www.isotc211.org/2005/gco']
                                 ]
-                            ) as character varying ))), dataset_metadata 
+                            ) as character varying ))), dataset_metadata
                         ) as dataset_metadata,
                         (metadata_xml is not null) as hasxml,
                         submittimestamp
-                    FROM 
+                    FROM
                         curr_reg_view left join metadata
-                        ON curr_reg_view.registry_id = metadata.registry_id 
-                    WHERE 
-                        metadata_status = 'InReview' 
-                    AND 
+                        ON curr_reg_view.registry_id = metadata.registry_id
+                    WHERE
+                        metadata_status = 'InReview'
+                    AND
                         metadata_dl_status = 'Completed'
                         $sorter";
     }
-    if(isset($sql)) {       
+    if(isset($sql)) {
         $dbms = OpenDB("GOMRI_RO");
         $data = $dbms->prepare($sql);
         $data->execute();
