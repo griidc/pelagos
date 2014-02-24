@@ -29,14 +29,15 @@ function getTasksAndDatasets($projects) {
                         THEN 1
                     ELSE 2
                END AS metadata,
-               CASE WHEN dataset_download_status = 'RemotelyHosted'
-                        THEN 3
-                    WHEN dataset_download_status IS NULL OR
-                         dataset_download_status != 'done'
-                        THEN 0
-                    WHEN access_status = 'None'
+               CASE WHEN dataset_download_status = 'done' AND access_status = 'None'
                         THEN 1
-                    ELSE 2
+                    WHEN dataset_download_status = 'done' AND access_status != 'None'
+                        THEN 2
+                    WHEN dataset_download_status = 'RemotelyHosted' AND access_status = 'None'
+                        THEN 3
+                    WHEN dataset_download_status = 'RemotelyHosted' AND access_status != 'None'
+                        THEN 4
+                    ELSE 0
                END AS available";
     $FROM = 'FROM datasets d
              LEFT JOIN (
