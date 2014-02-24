@@ -72,6 +72,7 @@ if ($udi <> '')
 
 	$pquery = "
 	SELECT * , ST_AsText(metadata.geom) AS \"the_geom\",
+    CASE WHEN datasets.dataset_udi IS NULL THEN registry.dataset_udi ELSE datasets.dataset_udi END AS dataset_udi,
 	CASE WHEN registry.dataset_title IS NULL THEN title ELSE registry.dataset_title END AS title,
 	CASE WHEN status = 2 THEN 1 WHEN status = 1 THEN 2 ELSE 0 END AS identified,
 	CASE WHEN status = 2 THEN 1 WHEN status = 1 THEN 2 ELSE 0 END AS identified,

@@ -7,52 +7,81 @@
 
 <h2>{{pdata.dataset_title}}</h2>
 
-<h3>{{mdata.Program_Title}}</h3>
+{% if mdata.Program_Title %}
+    <h3>{{mdata.Program_Title}}</h3>
+{% endif %}
 
 <table width="90%">
-<tr><td colspan="2"><b>UDI:</b><br/> {{pdata.dataset_udi}}</td></tr>
-<tr><td colspan="2">&nbsp;</td></tr>
+    <tr><td colspan="2"><b>UDI:</b><br/> {{pdata.dataset_udi}}</td></tr>
+    <tr><td colspan="2">&nbsp;</td></tr>
 
-<tr><td valign="top"><b>Dataset Originator:</b><br/> {{pdata.dataset_poc_name}}</td>
-	<td rowspan="4" valign="top"><b>Point of Contact:</b><br/> {{mpdata.People_LastName}}, {{mpdata.People_FirstName}}<br/>
-	{{mpdata.Institution_Name}}<br/><a href="{{mpdata.Department_URL}}" title="Link to Department" target="_blank">{{mpdata.Department_Name}}</a></span> <br>{{mpdata.Department_Addr1}}<br>{{mpdata.Department_Addr2}}<br>{{mpdata.Department_City}}, {{mpdata.Department_State}}&nbsp;&nbsp;{{mpdata.Department_Zip}}<br>{{mpdata.Department_Country}}<br><a href="mailto:{{mpdata.People_Email}}">{{mpdata.People_Email}}</a>
-</td>
-</tr>
+    <tr><td valign="top"><b>Dataset Originator:</b><br/> {{pdata.dataset_originator}}</td>
+    	<td rowspan="4" valign="top">
+            {% if mpdata %}
+                <b>Point of Contact:</b><br/>
+                {{mpdata.People_LastName}}, {{mpdata.People_FirstName}}<br/>
+    	        {{mpdata.Institution_Name}}<br/>
+                <a href="{{mpdata.Department_URL}}" title="Link to Department" target="_blank">{{mpdata.Department_Name}}</a></span> <br>
+                {{mpdata.Department_Addr1}}<br>
+                {{mpdata.Department_Addr2}}<br>
+                {{mpdata.Department_City}}, {{mpdata.Department_State}}&nbsp;&nbsp;{{mpdata.Department_Zip}}<br>
+                {{mpdata.Department_Country}}<br>
+                <a href="mailto:{{mpdata.People_Email}}">{{mpdata.People_Email}}</a>
+            {% endif %}
+        </td>
+    </tr>
 
-<tr><td valign="top"><b>Funding Source:</b><br/> {{mdata.Fund_Source}}</td></tr>
-<tr><td valign="top"><b>Program Start Date:</b><br/> {{mdata.Program_StartDate}}</td></tr>
-	<tr><td><b>Program End Date:</b><br/> {{mdata.Program_EndDate}}</td></tr>
-</td></tr>
+    <tr>
+        <td valign="top">
+            {% if mdata.Fund_Source %}
+                <b>Funding Source:</b><br/>
+                {{mdata.Fund_Source}}
+            {% endif %}
+        </td>
+    </tr>
 
+    <tr>
+        <td valign="top">
+            {% if mdata.Program_StartDate %}
+                <b>Program Start Date:</b><br/>
+                {{mdata.Program_StartDate}}
+            {% endif %}
+        </td>
+    </tr>
 
-
-</tr><tr>
-
-</td>
-	
-
+    <tr>
+        <td>
+            {% if mdata.Program_EndDate %}
+                <b>Program End Date:</b><br/>
+                {{mdata.Program_EndDate}}
+            {% endif %}
+        </td>
+    </tr>
 
 	{% if pdata.extent_description %}
-	
-	<tr><td colspan="2">&nbsp;</td></tr>
-	<tr><td colspan="2"><b>Extent Description:</b><br/> {{pdata.extent_description}}</td></tr>
+    	<tr><td colspan="2">&nbsp;</td></tr>
+    	<tr><td colspan="2"><b>Extent Description:</b><br/> {{pdata.extent_description}}</td></tr>
 	{% endif %}
-	</tr>
+
 </table>
 
 </font>
 <p/>
 <table class="status">
 	<tr>
-        <th>Identified</th>
+        {% if pdata.identified %}
+            <th>Identified</th>
+        {% endif %}
         <th>Registered</th>
         <th>Metadata</th>
         <th>Available</th>
     </tr>
 	<tr>
-        <td title="{{(pdata.identified ~ '_identified') | statusToTitle}}">
-            <img src="{{baseurl}}/includes/images/{{pdata.identified | statusToImg}}">
-        </td>
+        {% if pdata.identified %}
+            <td title="{{(pdata.identified ~ '_identified') | statusToTitle}}">
+                <img src="{{baseurl}}/includes/images/{{pdata.identified | statusToImg}}">
+            </td>
+        {% endif %}
         <td title="{{(pdata.registered ~ '_registered') | statusToTitle}}">
             <img src="{{baseurl}}/includes/images/{{pdata.registered | statusToImg}}">
         </td>
