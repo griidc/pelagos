@@ -1,13 +1,16 @@
 <div class="tooltip-note" style="float:right; margin-right:5px; margin-bottom:3px; font-size:8pt;">place your mouse over each icon for a description</div>
-<table class="datasets">
+<table class="datasets tablesorter">
+    <thead>
     <tr>
-        <th class="udi">UDI</th>
-        <th>Title</th>
+        <th class="udi" title="click to sort by UDI">UDI</th>
+        <th title="click to sort by Title">Title</th>
         <th class="status">Identified</th>
         <th class="status">Registered</th>
         <th class="status">Metadata</th>
         <th class="status">Available</th>
     </tr>
+    </thead>
+    <tbody>
     {% for dataset in datasets %}
     <tr udi="{{dataset.udi}}">
         <td class="udi details" onclick="window.open('/data/{{dataset.udi}}');"><a href="/data/{{dataset.udi}}" target="_blank">{{dataset.udi}}</a></td>
@@ -26,4 +29,5 @@
         </td>
     </tr>
     {% endfor %}
+    </tbody>
 </table>

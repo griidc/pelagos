@@ -118,6 +118,26 @@ table.datasets a {
     text-decoration: none;
 }
 
+table.datasets .tablesorter-header {
+    cursor: pointer;
+}
+
+table.datasets .sorter-false {
+    cursor: default;
+}
+
+table.datasets .tablesorter-headerAsc {
+    background-image: url({{baseUrl}}/includes/images/ascending-ltgrey.png);
+    background-repeat: no-repeat;
+    background-position: right center;
+}
+
+table.datasets .tablesorter-headerDesc {
+    background-image: url({{baseUrl}}/includes/images/descending-ltgrey.png);
+    background-repeat: no-repeat;
+    background-position: right center;
+}
+
 div.nodata {
     margin-top: 0.75em;
     color: red;

@@ -74,6 +74,24 @@ function showProjects(by,id) {
                     classes: "ui-tooltip-shadow ui-tooltip-tipped"
                 }
             });
+            $('#content .overview th[title]').qtip({
+                position: {
+                    my: 'bottom center',
+                    at: 'top center',
+                    viewport: $(window)
+                },
+                show: {
+                    event: "mouseenter focus",
+                    solo: true
+                },
+                hide: {
+                    fixed: true,
+                    delay: 100
+                },
+                style: {
+                    classes: "ui-tooltip-shadow ui-tooltip-tipped"
+                }
+            });
             $('#content .overview td.details').each(function() {
                 $(this).qtip({
                     content: {
@@ -85,7 +103,7 @@ function showProjects(by,id) {
                     },
                     position: {
                         my: 'right bottom',
-                        at: 'left middle',
+                        at: 'middle left',
                         viewport: $(window),
                         effect: false,
                         target: $(this).parent()
@@ -102,6 +120,17 @@ function showProjects(by,id) {
                         classes: "ui-tooltip-shadow ui-tooltip-tipped"
                     }
                 });
+            });
+            $('#content .overview table.tablesorter').tablesorter({
+                sortList: [[0,0]],
+                sortRestart : true,
+                sortInitialOrder: 'asc',
+                headers: {
+                    2: { sorter: false },
+                    3: { sorter: false },
+                    4: { sorter: false },
+                    5: { sorter: false }
+                }
             });
         }
     });
