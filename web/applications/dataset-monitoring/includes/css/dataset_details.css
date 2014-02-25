@@ -25,3 +25,7 @@
 #dataset_details span.attr {
     font-weight: bold;
 }
+
+.ui-tooltip-content .attr {
+    margin-bottom: .5em;
+}

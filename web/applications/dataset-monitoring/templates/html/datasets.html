@@ -9,9 +9,9 @@
         <th class="status">Available</th>
     </tr>
     {% for dataset in datasets %}
-    <tr>
-        <td class="udi"><a href="javascript:showDatasetDetails('{{dataset.udi}}');">{{dataset.udi}}</a></td>
-        <td><a href="javascript:showDatasetDetails('{{dataset.udi}}');">{{dataset.title}}</a></td>
+    <tr udi="{{dataset.udi}}">
+        <td class="udi details" onclick="window.open('/data/{{dataset.udi}}');"><a href="/data/{{dataset.udi}}" target="_blank">{{dataset.udi}}</a></td>
+        <td class="details" onclick="window.open('/data/{{dataset.udi}}');"><a href="/data/{{dataset.udi}}" target="_blank">{{dataset.title}}</a></td>
         <td class="status" title="{{(dataset.identified ~ '_identified') | statusToTitle}}">
             <img src="{{baseUrl}}/includes/images/{{dataset.identified | statusToImg}}">
         </td>

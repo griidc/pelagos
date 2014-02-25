@@ -110,6 +110,13 @@ table.datasets .status img {
     vertical-align: middle;
 }
 
+table.datasets .details {
+    cursor: pointer;
+}
+
+table.datasets a {
+    text-decoration: none;
+}
 
 div.nodata {
     margin-top: 0.75em;

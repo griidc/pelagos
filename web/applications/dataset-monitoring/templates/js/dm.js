@@ -74,16 +74,35 @@ function showProjects(by,id) {
                     classes: "ui-tooltip-shadow ui-tooltip-tipped"
                 }
             });
-        }
-    });
-}
-
-function showDatasetDetails(udi) {
-    $.ajax({
-        "url": "{{baseUrl}}/dataset_details/" + udi,
-        "success": function(data) {
-            $('#dataset_details_content').html(data);
-            $('#dataset_details').show();
+            $('#content .overview td.details').each(function() {
+                $(this).qtip({
+                    content: {
+                        text: "loading...",
+                        ajax: {
+                            url: "{{baseUrl}}/dataset_details/" + escape($(this).parent().attr('udi')),
+                            loading: false
+                        }
+                    },
+                    position: {
+                        my: 'right bottom',
+                        at: 'left middle',
+                        viewport: $(window),
+                        effect: false,
+                        target: $(this).parent()
+                    },
+                    show: {
+                        event: "mouseenter focus",
+                        solo: true
+                    },
+                    hide: {
+                        fixed: true,
+                        delay: 100
+                    },
+                    style: {
+                        classes: "ui-tooltip-shadow ui-tooltip-tipped"
+                    }
+                });
+            });
         }
     });
 }
