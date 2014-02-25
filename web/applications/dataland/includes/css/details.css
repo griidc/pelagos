@@ -149,4 +149,6 @@ span.attr {
 	
 }
 
-
+.ui-tooltip-default {
+    border: none;
+}
