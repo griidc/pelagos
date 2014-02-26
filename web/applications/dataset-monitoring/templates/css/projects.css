@@ -138,6 +138,18 @@ table.datasets .tablesorter-headerDesc {
     background-position: right center;
 }
 
+table.datasets .tablesorter-headerAsc.status {
+    background-image: url({{baseUrl}}/includes/images/ascending-ltgrey-small.png);
+    background-repeat: no-repeat;
+    background-position: right top;
+}
+
+table.datasets .tablesorter-headerDesc.status {
+    background-image: url({{baseUrl}}/includes/images/descending-ltgrey-small.png);
+    background-repeat: no-repeat;
+    background-position: right top;
+}
+
 div.nodata {
     margin-top: 0.75em;
     color: red;

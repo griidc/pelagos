@@ -2,12 +2,12 @@
 <table class="datasets tablesorter">
     <thead>
     <tr>
-        <th class="udi" title="click to sort by UDI">UDI</th>
-        <th title="click to sort by Title">Title</th>
-        <th class="status">Identified</th>
-        <th class="status">Registered</th>
-        <th class="status">Metadata</th>
-        <th class="status">Available</th>
+        <th class="udi" title="sort by UDI">UDI</th>
+        <th title="sort by Title">Title</th>
+        <th class="status" title="sort by Identified status">Identified</th>
+        <th class="status" title="sort by Registered status">Registered</th>
+        <th class="status" title="sort by Metadata status">Metadata</th>
+        <th class="status" title="sort by Available status">Available</th>
     </tr>
     </thead>
     <tbody>
@@ -16,15 +16,19 @@
         <td class="udi details" onclick="window.open('/data/{{dataset.udi}}');"><a href="/data/{{dataset.udi}}" target="_blank">{{dataset.udi}}</a></td>
         <td class="details" onclick="window.open('/data/{{dataset.udi}}');"><a href="/data/{{dataset.udi}}" target="_blank">{{dataset.title}}</a></td>
         <td class="status" title="{{(dataset.identified ~ '_identified') | statusToTitle}}">
+            <span style="display:none;">{{dataset.identified}}</span>
             <img src="{{baseUrl}}/includes/images/{{dataset.identified | statusToImg}}">
         </td>
         <td class="status" title="{{(dataset.registered ~ '_registered') | statusToTitle}}">
+            <span style="display:none;">{{dataset.registered}}</span>
             <img src="{{baseUrl}}/includes/images/{{dataset.registered | statusToImg}}">
         </td>
         <td class="status" title="{% if dataset.registered %}{{(dataset.metadata ~ '_metadata') | statusToTitle}}{% else %}{{'-1_metadata' | statusToTitle}}{% endif %}">
+            <span style="display:none;">{% if dataset.registered %}{{dataset.metadata}}{% else %}-1{% endif %}</span>
             <img src="{{baseUrl}}/includes/images/{% if dataset.registered %}{{dataset.metadata | statusToImg}}{% else %}{{'-1' | statusToImg}}{% endif %}">
         </td>
         <td class="status" title="{% if dataset.registered %}{{(dataset.available ~ '_available') | statusToTitle}}{% else %}{{'-1_available' | statusToTitle}}{% endif %}">
+            <span style="display:none;">{% if dataset.registered %}{{dataset.available}}{% else %}-1{% endif %}</span>
             <img src="{{baseUrl}}/includes/images/{% if dataset.registered %}{{dataset.available | statusToImg}}{% else %}{{'-1' | statusToImg}}{% endif %}">
         </td>
     </tr>

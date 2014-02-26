@@ -19,24 +19,39 @@ function getDBH($db) {
 function getTasksAndDatasets($projects) {
     $SELECT = "SELECT DISTINCT status, dataset_uid, d.dataset_udi AS udi,
                CASE WHEN r.dataset_title IS NULL THEN title ELSE r.dataset_title END AS title,
-               CASE WHEN status = 2 THEN 1 WHEN status = 1 THEN 2 ELSE 0 END AS identified,
-               CASE WHEN registry_id IS NULL THEN 0 ELSE 1 END AS registered,
-               CASE WHEN metadata_dl_status = 'Completed' AND metadata_status = 'Accepted'
-                        THEN 1
-                    WHEN metadata_dl_status = 'Completed' AND metadata_status != 'None'
-                        THEN 2
+
+               CASE WHEN status = 2 THEN 10
+                    WHEN status = 1 THEN 1
+                    ELSE 0
+               END AS identified,
+
+               CASE WHEN registry_id IS NULL THEN 0
+                    ELSE 10
+               END AS registered,
+
+               CASE WHEN metadata_dl_status = 'Completed' THEN
+                        CASE WHEN metadata_status = 'Accepted' THEN 10
+                             WHEN metadata_status = 'InReview' THEN 2
+                             ELSE 1
+                        END
                     ELSE 0
                END AS metadata,
-               CASE WHEN dataset_download_status = 'done' AND access_status = 'None'
-                        THEN 1
-                    WHEN dataset_download_status = 'done' AND access_status != 'None'
-                        THEN 2
-                    WHEN dataset_download_status = 'RemotelyHosted' AND access_status = 'None'
-                        THEN 3
-                    WHEN dataset_download_status = 'RemotelyHosted' AND access_status != 'None'
-                        THEN 4
+
+               CASE WHEN dataset_download_status = 'done' THEN
+                        CASE WHEN access_status = 'None' THEN 10
+                             WHEN access_status = 'Approval' THEN 9
+                             WHEN access_status = 'Restricted' THEN 8
+                             ELSE 0
+                        END
+                    WHEN dataset_download_status = 'RemotelyHosted' THEN
+                        CASE WHEN access_status = 'None' THEN 7
+                             WHEN access_status = 'Approval' THEN 6
+                             WHEN access_status = 'Restricted' THEN 5
+                             ELSE 0
+                        END
                     ELSE 0
                END AS available";
+
     $FROM = 'FROM datasets d
              LEFT JOIN (
                  registry r2
