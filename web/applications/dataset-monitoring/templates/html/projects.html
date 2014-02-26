@@ -18,13 +18,13 @@
                 {% endif %}
             </div>
             <div class="pi">
-                <span class="attr">Principal Investigator:</span> <a href="http://research.gulfresearchinitiative.org/gomri-funded-researchers/person-overview.php?pid={{project.PI.ID}}" target="_blank">{{project.PI.FirstName | raw}} {{project.PI.LastName}}</a> - <a href="http://research.gulfresearchinitiative.org/gomri-funded-institutions/institution-overview.php?instid={{project.PI.Institution_ID}}" target="_blank">{{project.PI.Institution_Name}}</a>
+                <span class="attr">Principal Investigator:</span> <a href="http://research.gulfresearchinitiative.org/gomri-funded-researchers/person/?pid={{project.PI.ID}}" target="_blank">{{project.PI.FirstName | raw}} {{project.PI.LastName}}</a> - <a href="http://research.gulfresearchinitiative.org/gomri-funded-institutions/institution/?instid={{project.PI.Institution_ID}}" target="_blank">{{project.PI.Institution_Name}}</a>
             </div>
             <div class="institutions">
                 <span class="attr">Member Institutions:</span>
                 {% for inst in project.Institutions %}
                     {% if inst.Name != '' %}
-                        <a href="http://research.gulfresearchinitiative.org/gomri-funded-institutions/institution-overview.php?instid={{inst.ID}}" target="_blank">{{inst.Name | trimws}}</a>{% if not loop.last %}, {% endif %}
+                        <a href="http://research.gulfresearchinitiative.org/gomri-funded-institutions/institution/?instid={{inst.ID}}" target="_blank">{{inst.Name | trimws}}</a>{% if not loop.last %}, {% endif %}
                     {% endif %}
                 {% endfor %}
             </div>
