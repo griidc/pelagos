@@ -242,8 +242,9 @@ public class RdbmsConnection {
 	public ResultSet executeQueryResultSet(String query) throws SQLException,
 			ClassNotFoundException {
 
-		// if (Debug)
-		// debugMessage("\texecuteQueryResultSet() - query is >" + query + "<");
+		if(Debug) System.out.println("Rdbms connection: " + this.toString());
+		if (Debug)
+		    debugMessage("\texecuteQueryResultSet() - query is >" + query + "<");
 		ResultSet resultSet = this.getStatement().executeQuery(query);
 		// statement.close();
 		return resultSet;
@@ -287,9 +288,9 @@ public class RdbmsConnection {
 	 */
 	public boolean executeQueryBoolean(String query) throws SQLException,
 			ClassNotFoundException {
-		// if (Debug)
-		// debugMessage(DebugPrefix + "\texecuteQueryBoolean() - query is "
-		// + query);
+		if (Debug)
+		debugMessage(DebugPrefix + "\texecuteQueryBoolean() - query is "
+		 + query);
 		boolean result = this.getStatement().execute(query);
 		return result;
 	}
@@ -592,7 +593,7 @@ public class RdbmsConnection {
 			throws SQLException, ClassNotFoundException, TableNotInDatabaseException {
 		this.isTableInDatabase(tableName);
 		StringBuffer query = new StringBuffer("select * from ");
-		if (this.getDbType().equals("postgres")) {
+		if (this.getDbType().equals(RdbmsConstants.DbTypePostgres)) {
 
 			query.append(RdbmsConnection.wrapInDoubleQuotes(this
 					.getDbSchemaName()));

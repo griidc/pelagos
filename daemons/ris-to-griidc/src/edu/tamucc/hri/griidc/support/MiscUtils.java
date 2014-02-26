@@ -392,7 +392,7 @@ public class MiscUtils {
 	}
 
 	public static String getUserDirDataFileName(final String fName) {
-		return RisToGriidcConfiguration.getWorkingDirectory() + "/data/" + fName;
+		return RisToGriidcConfiguration.getWorkingDirectory() + File.separator + fName;
 	}
 
 	public static void printStringArray(String[] sa) {

@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import edu.tamucc.hri.griidc.exception.DuplicateRecordException;
 import edu.tamucc.hri.griidc.exception.PropertyNotFoundException;
 import edu.tamucc.hri.rdbms.utils.RdbmsConnection;
+import edu.tamucc.hri.rdbms.utils.RdbmsConstants;
 import edu.tamucc.hri.rdbms.utils.RdbmsUtils;
 
 import javax.mail.*;
@@ -103,7 +104,7 @@ public class EmailSynchronizer {
 				+ RdbmsConnection.wrapInDoubleQuotes(GriidcTableName)
 				+ " WHERE "
 				+ RdbmsConnection.wrapInDoubleQuotes(GriidcPersonNumberCol)
-				+ RdbmsUtils.EqualSign + personNumber;
+				+ RdbmsConstants.EqualSign + personNumber;
 		return query;
 	}
 
@@ -127,15 +128,15 @@ public class EmailSynchronizer {
 			boolean primary) {
 		String query = "INSERT INTO "
 				+ RdbmsConnection.wrapInDoubleQuotes(GriidcTableName)
-				+ RdbmsUtils.SPACE + "("
+				+ RdbmsConstants.SPACE + "("
 				+ RdbmsConnection.wrapInDoubleQuotes(GriidcPersonNumberCol)
-				+ RdbmsUtils.CommaSpace
+				+ RdbmsConstants.CommaSpace
 				+ RdbmsConnection.wrapInDoubleQuotes(EmailCol)
-				+ RdbmsUtils.CommaSpace
+				+ RdbmsConstants.CommaSpace
 				+ RdbmsConnection.wrapInDoubleQuotes(EmailPrimaryCol)
-				+ ") VALUES (" + personNumber + RdbmsUtils.CommaSpace
+				+ ") VALUES (" + personNumber + RdbmsConstants.CommaSpace
 				+ RdbmsConnection.wrapInSingleQuotes(email1)
-				+ RdbmsUtils.CommaSpace + RdbmsUtils.getPgBoolean(primary)
+				+ RdbmsConstants.CommaSpace + RdbmsUtils.getPgBoolean(primary)
 				+ " )";
 		return query;
 	}
@@ -154,16 +155,16 @@ public class EmailSynchronizer {
 			boolean primary) {
 		String query = "UPDATE  "
 				+ RdbmsConnection.wrapInDoubleQuotes(GriidcTableName)
-				+ RdbmsUtils.SPACE + " SET "
+				+ RdbmsConstants.SPACE + " SET "
 				+ RdbmsConnection.wrapInDoubleQuotes(EmailCol)
-				+ RdbmsUtils.EqualSign
+				+ RdbmsConstants.EqualSign
 				+ RdbmsConnection.wrapInSingleQuotes(email1)
-				+ RdbmsUtils.CommaSpace
+				+ RdbmsConstants.CommaSpace
 				+ RdbmsConnection.wrapInDoubleQuotes(EmailPrimaryCol)
-				+ RdbmsUtils.EqualSign + RdbmsUtils.getPgBoolean(primary)
+				+ RdbmsConstants.EqualSign + RdbmsUtils.getPgBoolean(primary)
 				+ " WHERE "
 				+ RdbmsConnection.wrapInDoubleQuotes(GriidcPersonNumberCol)
-				+ RdbmsUtils.EqualSign + personNumber;
+				+ RdbmsConstants.EqualSign + personNumber;
 		return query;
 	}
 

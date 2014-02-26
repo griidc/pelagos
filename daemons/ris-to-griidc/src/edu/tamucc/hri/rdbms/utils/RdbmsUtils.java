@@ -18,32 +18,12 @@ import edu.tamucc.hri.griidc.support.MiscUtils;
 
 public class RdbmsUtils {
 
-	public static final String And = " AND ";
-	public static final String SPACE = " ";
-	public static final String CommaSpace = ", ";
-	public static final String EqualSign = " = ";
-
-	public static final String GRIIDC = "GRIIDC";
-	public static final String RIS = "RIS";
-	public static final String TRUE = "TRUE";
-	public static final String FALSE = "FALSE";
-
-	public static final String NewLine = "\n";
-	public static final String Tab = "\t";
-
-	// database data types
-	public static final String DbInteger = "integer";
-	public static final String DbNumeric = "numeric";
-	public static final String DbBoolean = "boolean";
-	public static final String DbDate = "date";
-	public static final String DbCharacter = "character";
-	public static final String DbText = "text";
 	
 
 	public static boolean Debug = false;
 
 	public static String getPgBoolean(boolean flag) {
-		return (flag) ? RdbmsUtils.TRUE : RdbmsUtils.FALSE;
+		return (flag) ? RdbmsConstants.TRUE : RdbmsConstants.FALSE;
 	}
 
 	public RdbmsUtils() {
@@ -66,7 +46,7 @@ public class RdbmsUtils {
 			DbColumnInfo[] colInfo) {
 		StringBuffer sb = new StringBuffer("INSERT INTO ");
 		sb.append(RdbmsConnection.wrapInDoubleQuotes(tableName)
-				+ RdbmsUtils.SPACE + "(");
+				+ RdbmsConstants.SPACE + "(");
 
 		String colName = null;
 		String colType = null;
@@ -80,7 +60,7 @@ public class RdbmsUtils {
 			colValue = dbColInfo.getColValue();
 			if (colValue != null) { // there is a value here
 				if (notTheFirstTime)
-					sb.append(RdbmsUtils.CommaSpace);
+					sb.append(RdbmsConstants.CommaSpace);
 				sb.append(RdbmsConnection.wrapInDoubleQuotes(colName));
 				notTheFirstTime = true;
 			}
@@ -94,7 +74,7 @@ public class RdbmsUtils {
 			colValue = dbColInfo.getColValue();
 			if (colValue != null) { // there is a value here
 				if (notTheFirstTime)
-					sb.append(RdbmsUtils.CommaSpace);
+					sb.append(RdbmsConstants.CommaSpace);
 				sb.append(RdbmsUtils.wrapDbValue(colType,colValue));
 				
 				notTheFirstTime = true;
@@ -105,7 +85,7 @@ public class RdbmsUtils {
 		return sb.toString();
 	}
 	private static String wrapDbValue(String colType, String colValue) {
-		if (colType.equals(DbBoolean) || colType.equals(DbInteger) || colType.equals(DbNumeric)) {
+		if (colType.equals(RdbmsConstants.DbBoolean) || colType.equals(RdbmsConstants.DbInteger) || colType.equals(RdbmsConstants.DbNumeric)) {
 			return colValue;
 		} // else colType is some sort of String thing
 		return RdbmsConnection.wrapInSingleQuotes(colValue);
@@ -149,16 +129,16 @@ public class RdbmsUtils {
 		String colValue = null;
 		StringBuffer sb = new StringBuffer("UPDATE  ");
 		sb.append(RdbmsConnection.wrapInDoubleQuotes(tableName)
-				+ RdbmsUtils.SPACE + " SET ");
+				+ RdbmsConstants.SPACE + " SET ");
 		for (DbColumnInfo dbColInfo : updateColInfo) {
 			colType = dbColInfo.getColType();
 			colName = dbColInfo.getColName();
 			colValue = dbColInfo.getColValue();
 			if (colValue != null) { // there is a value here
 				if (notTheFirstTime)
-					sb.append(RdbmsUtils.CommaSpace);
+					sb.append(RdbmsConstants.CommaSpace);
 				sb.append(RdbmsConnection.wrapInDoubleQuotes(colName));
-				sb.append(RdbmsUtils.EqualSign);
+				sb.append(RdbmsConstants.EqualSign);
 
 				sb.append(RdbmsUtils.wrapDbValue(colType,colValue));
 				notTheFirstTime = true;
@@ -175,7 +155,7 @@ public class RdbmsUtils {
 	 * Using DbColumnInfo array format the where statement for use in Select and
 	 * Update queries.
 	 * 
-	 * @see RdbmsUtils.getMetaDataForTable()
+	 * @see RdbmsConstants.getMetaDataForTable()
 	 * 
 	 * @param whereColInfo
 	 * @return
@@ -193,10 +173,10 @@ public class RdbmsUtils {
 			colValue = dbColInfo.getColValue();
 			if (colValue != null) { // there is a value here
 				if (notTheFirstTime) {
-					sb.append(RdbmsUtils.And);
+					sb.append(RdbmsConstants.And);
 				}
 				sb.append(RdbmsConnection.wrapInDoubleQuotes(colName));
-				sb.append(RdbmsUtils.EqualSign);
+				sb.append(RdbmsConstants.EqualSign);
 				sb.append(RdbmsUtils.wrapDbValue(colType,colValue));
 				notTheFirstTime = true;
 			}
@@ -248,7 +228,7 @@ public class RdbmsUtils {
 				// + getWrappedGriidcShemaName() + "."
 				+ RdbmsConnection.wrapInDoubleQuotes("Country") + "  WHERE  "
 				+ RdbmsConnection.wrapInDoubleQuotes(countryColumnName)
-				+ EqualSign + RdbmsConnection.wrapInSingleQuotes(countryCode);
+				+ RdbmsConstants.EqualSign + RdbmsConnection.wrapInSingleQuotes(countryCode);
 
 		// System.out.println("Query: " + query);
 		ResultSet rset = RdbmsUtils.getGriidcSecondaryDbConnectionInstance()
@@ -282,9 +262,9 @@ public class RdbmsUtils {
 				+ RdbmsConnection.wrapInDoubleQuotes("Department")
 				+ "  WHERE  "
 				+ RdbmsConnection.wrapInDoubleQuotes("Department_Number")
-				+ EqualSign + departmentNumber + RdbmsUtils.And
+				+ RdbmsConstants.EqualSign + departmentNumber + RdbmsConstants.And
 				+ RdbmsConnection.wrapInDoubleQuotes("Institution_Number")
-				+ EqualSign + institutionNumber;
+				+ RdbmsConstants.EqualSign + institutionNumber;
 		ResultSet rset = RdbmsUtils.getGriidcSecondaryDbConnectionInstance()
 				.executeQueryResultSet(query);
 
@@ -357,16 +337,16 @@ public class RdbmsUtils {
 				+ RdbmsConnection.wrapInDoubleQuotes("PostalArea")
 				+ " WHERE "
 				+ RdbmsConnection.wrapInDoubleQuotes("Country_Number")
-				+ EqualSign
+				+ RdbmsConstants.EqualSign
 				+ countryNumber
-				+ And
+				+ RdbmsConstants.And
 				+ RdbmsConnection
 						.wrapInDoubleQuotes("PostalArea_AdministrativeAreaAbbr")
-				+ EqualSign + RdbmsConnection.wrapInSingleQuotes(state) + And
+				+ RdbmsConstants.EqualSign + RdbmsConnection.wrapInSingleQuotes(state) + RdbmsConstants.And
 				+ RdbmsConnection.wrapInDoubleQuotes("PostalArea_City")
-				+ EqualSign + RdbmsConnection.wrapInSingleQuotes(city) + And
+				+ RdbmsConstants.EqualSign + RdbmsConnection.wrapInSingleQuotes(city) + RdbmsConstants.And
 				+ RdbmsConnection.wrapInDoubleQuotes("PostalArea_PostalCode")
-				+ EqualSign + RdbmsConnection.wrapInSingleQuotes(zip);
+				+ RdbmsConstants.EqualSign + RdbmsConnection.wrapInSingleQuotes(zip);
 
 		ResultSet rset = null;
 		try {
@@ -413,7 +393,7 @@ public class RdbmsUtils {
 		String query = "SELECT * FROM  "
 				// + getWrappedGriidcShemaName() + "."
 				+ RdbmsConnection.wrapInDoubleQuotes(tableName) + "  WHERE  "
-				+ RdbmsConnection.wrapInDoubleQuotes(keyColumnName) + EqualSign
+				+ RdbmsConnection.wrapInDoubleQuotes(keyColumnName) + RdbmsConstants.EqualSign
 				+ keyValue;
 
 		ResultSet rset = null;
@@ -583,21 +563,21 @@ public class RdbmsUtils {
 		final int COL = 0;
 		final int DT = 1; // data type
 		StringBuffer sb = new StringBuffer();
-		sb.append(dbcon.getShortDescription() + NewLine + NewLine);
+		sb.append(dbcon.getShortDescription() + RdbmsConstants.NewLine + RdbmsConstants.NewLine);
 		for (String t : tableName) {
 			if (isDebug())
 				System.out.println(t);
-			sb.append(t + NewLine);
+			sb.append(t + RdbmsConstants.NewLine);
 			colAndType = dbcon.getColumnNamesAndDataTypesFromTable(t);
 			for (int i = 0; i < colAndType[COL].length; i++) {
 				String col = colAndType[COL][i];
 				String type = colAndType[DT][i];
-				sb.append(Tab
+				sb.append(RdbmsConstants.Tab
 						+ String.format(formatString, col.trim(), type.trim())
-						+ NewLine);
+						+ RdbmsConstants.NewLine);
 			}
 			sb.append("--------------------------------------------------"
-					+ NewLine);
+					+ RdbmsConstants.NewLine);
 		}
 		return sb.toString();
 	}

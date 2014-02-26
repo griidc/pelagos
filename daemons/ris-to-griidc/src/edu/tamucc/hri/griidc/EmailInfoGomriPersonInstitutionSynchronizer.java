@@ -10,6 +10,7 @@ import javax.mail.internet.InternetAddress;
 import edu.tamucc.hri.griidc.exception.DuplicateRecordException;
 import edu.tamucc.hri.griidc.exception.PropertyNotFoundException;
 import edu.tamucc.hri.rdbms.utils.RdbmsConnection;
+import edu.tamucc.hri.rdbms.utils.RdbmsConstants;
 import edu.tamucc.hri.rdbms.utils.RdbmsUtils;
 
 /***
@@ -84,7 +85,7 @@ public class EmailInfoGomriPersonInstitutionSynchronizer {
 				+ RdbmsConnection.wrapInDoubleQuotes(GriidcTableName)
 				+ " WHERE "
 				+ RdbmsConnection.wrapInDoubleQuotes(PersonNumberCol)
-				+ RdbmsUtils.EqualSign + personNumber;
+				+ RdbmsConstants.EqualSign + personNumber;
 		return query;
 	}
 
@@ -106,16 +107,16 @@ public class EmailInfoGomriPersonInstitutionSynchronizer {
 	private String formatInsertStatement(int emailInfoNumber,int institutionNumber, int personNumber) {
 		String query = "INSERT INTO "
 				+ RdbmsConnection.wrapInDoubleQuotes(GriidcTableName)
-				+ RdbmsUtils.SPACE + "("
+				+ RdbmsConstants.SPACE + "("
 				+ RdbmsConnection.wrapInDoubleQuotes(EmailInfoNumberCol)
-				+ RdbmsUtils.CommaSpace
+				+ RdbmsConstants.CommaSpace
 				+ RdbmsConnection.wrapInDoubleQuotes(InstitutionNumberCol)
-				+ RdbmsUtils.CommaSpace
+				+ RdbmsConstants.CommaSpace
 				+ RdbmsConnection.wrapInDoubleQuotes(PersonNumberCol)
 				
 				+ ") VALUES (" 
-				+ emailInfoNumber + RdbmsUtils.CommaSpace
-				+ institutionNumber + RdbmsUtils.CommaSpace
+				+ emailInfoNumber + RdbmsConstants.CommaSpace
+				+ institutionNumber + RdbmsConstants.CommaSpace
 				+ personNumber
 				+ " )";
 		return query;
@@ -134,20 +135,20 @@ public class EmailInfoGomriPersonInstitutionSynchronizer {
 	private String formatModifyStatement(int emailInfoNumber,int institutionNumber, int personNumber) {
 		String query = "UPDATE  "
 				+ RdbmsConnection.wrapInDoubleQuotes(GriidcTableName)
-				+ RdbmsUtils.SPACE + " SET "
+				+ RdbmsConstants.SPACE + " SET "
 				+ RdbmsConnection.wrapInDoubleQuotes(EmailInfoNumberCol)
-				+ RdbmsUtils.EqualSign + emailInfoNumber
+				+ RdbmsConstants.EqualSign + emailInfoNumber
 				
-				+ RdbmsUtils.CommaSpace
+				+ RdbmsConstants.CommaSpace
 				+ RdbmsConnection.wrapInDoubleQuotes(InstitutionNumberCol)
-				+ RdbmsUtils.EqualSign + institutionNumber
+				+ RdbmsConstants.EqualSign + institutionNumber
 				
-				+ RdbmsUtils.CommaSpace
+				+ RdbmsConstants.CommaSpace
 				+ RdbmsConnection.wrapInDoubleQuotes(PersonNumberCol)
-				+ RdbmsUtils.EqualSign + personNumber
+				+ RdbmsConstants.EqualSign + personNumber
 				+ " WHERE "
 				+ RdbmsConnection.wrapInDoubleQuotes(PersonNumberCol)
-				+ RdbmsUtils.EqualSign + personNumber;
+				+ RdbmsConstants.EqualSign + personNumber;
 		return query;
 	}
 

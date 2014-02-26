@@ -64,8 +64,7 @@ public class TelephoneSynchronizer {
 			FileNotFoundException {
 		this.risTelephoneRecords++;
 		// making the raw data from RIS into a TelephoneStruct does some
-		// processing
-		// on the strings. It removes the formating and the extension
+		// processing on the strings. It removes the formating and the extension
 		TelephoneStruct tempTelephoneStruct = new TelephoneStruct(
 				targetCountry, targetTelNum);
 
@@ -103,25 +102,31 @@ public class TelephoneSynchronizer {
 			if (TelephoneSynchronizer.isDebug()) {
 				System.out.println(msg + e.getMessage());
 				e.printStackTrace();
-			}throw e;
+			}
+			throw new TelephoneNumberException(
+					"\nCan't update or add GRIIDC Telephone number - "
+							+ e.getMessage());
 		} catch (FileNotFoundException e) {
 			this.risTelephoneErrors++;
 			if (TelephoneSynchronizer.isDebug()) {
 				System.out.println(msg + e.getMessage());
 				e.printStackTrace();
-			}throw e;
+			}
+			throw e;
 		} catch (ClassNotFoundException e) {
 			this.risTelephoneErrors++;
 			if (TelephoneSynchronizer.isDebug()) {
 				System.out.println(msg + e.getMessage());
 				e.printStackTrace();
-			}throw e;
+			}
+			throw e;
 		} catch (PropertyNotFoundException e) {
 			this.risTelephoneErrors++;
 			if (TelephoneSynchronizer.isDebug()) {
 				System.out.println(msg + e.getMessage());
 				e.printStackTrace();
-			}throw e;
+			}
+			throw e;
 		}
 	}
 
@@ -150,16 +155,30 @@ public class TelephoneSynchronizer {
 	 */
 	private int addTelephoneTableRecord(int targetCountryNumber,
 			String targetPhoneNumber) throws FileNotFoundException,
-			SQLException, ClassNotFoundException, PropertyNotFoundException,
-			TelephoneNumberException {
-
+			SQLException, ClassNotFoundException, PropertyNotFoundException {
+		int rtn = -1;
 		DbColumnInfo info[] = getInsertClauseInfo(targetCountryNumber,
 				targetPhoneNumber);
+		try {
+			String query = RdbmsUtils.formatInsertStatement(TableName, info);
+			RdbmsUtils.getGriidcDbConnectionInstance().executeQueryBoolean(
+					query);
 
-		String query = RdbmsUtils.formatInsertStatement(TableName, info);
-		RdbmsUtils.getGriidcDbConnectionInstance().executeQueryBoolean(query);
-		return this.findTelephoneTableRecord(targetCountryNumber,
-				targetPhoneNumber);
+			rtn = this.findTelephoneTableRecord(targetCountryNumber,
+					targetPhoneNumber);
+		} catch (FileNotFoundException e) {
+			throw new FileNotFoundException("GRIIDC Telephone: "
+					+ e.getMessage());
+		} catch (SQLException e) {
+			throw new SQLException("GRIIDC Telephone: " + e.getMessage());
+		} catch (ClassNotFoundException e) {
+			throw new ClassNotFoundException("GRIIDC Telephone: "
+					+ e.getMessage());
+		} catch (PropertyNotFoundException e) {
+			throw new PropertyNotFoundException("GRIIDC Telephone: "
+					+ e.getMessage());
+		}
+		return rtn;
 	}
 
 	/**

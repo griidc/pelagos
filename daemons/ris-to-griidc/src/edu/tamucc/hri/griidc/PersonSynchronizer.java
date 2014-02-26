@@ -19,6 +19,7 @@ import edu.tamucc.hri.griidc.support.RisInstDeptPeopleErrorCollection;
 import edu.tamucc.hri.griidc.support.RisToGriidcConfiguration;
 import edu.tamucc.hri.rdbms.utils.IntStringDbCache;
 import edu.tamucc.hri.rdbms.utils.RdbmsConnection;
+import edu.tamucc.hri.rdbms.utils.RdbmsConstants;
 import edu.tamucc.hri.rdbms.utils.RdbmsUtils;
 
 /**
@@ -329,7 +330,7 @@ public class PersonSynchronizer {
 							+ " WHERE "
 							+ RdbmsConnection
 									.wrapInDoubleQuotes("Person_Number")
-							+ RdbmsUtils.EqualSign + this.risPeople_Id;
+							+ RdbmsConstants.EqualSign + this.risPeople_Id;
 					/***
 					 * + RdbmsUtils.And + RdbmsConnection
 					 * .wrapInDoubleQuotes("Person_FirstName") +
@@ -590,18 +591,28 @@ public class PersonSynchronizer {
 			String telephoneNumber) 
 					throws TableNotInDatabaseException, SQLException, TelephoneNumberException,
 					FileNotFoundException, PropertyNotFoundException, ClassNotFoundException {
-		if(PersonSynchronizer.isDebug()) System.out.println("PersonSynchronizer.updateTelephoneTable(" + personNumber + "," + countryNumber +
+		if(PersonSynchronizer.isDebug()) System.out.println("PersonSynchronizer.updateTelephoneTable(" + personNumber + ", " + countryNumber +
 			", " + telephoneNumber + ")");
+		
+       if(PersonSynchronizer.isDebug()) System.out.println("PersonSynchronizer.updateTelephoneTable() actions: \n\t1. createTelephoneStruct" + 
+		                         "\n\t2. TelephoneSynchronizer.getInstance().updateTelephoneTable()" + 
+		                         "\n\t3. PersonSynchronizer.updatePersonTelephoneTable()" + 
+		                         "\n\t4. PersonTelephoneSynchronizer.getInstance().updatePersonTelephoneTable");
+		
+
 		TelephoneStruct ts = TelephoneStruct.createTelephoneStruct(countryNumber,telephoneNumber);
-		if(PersonSynchronizer.isDebug()) System.out.println("PersonSynchronizer.updateTelephoneTable() - past createTelephoneStruct");
+		if(PersonSynchronizer.isDebug()) System.out.println("PersonSynchronizer.updateTelephoneTable() - after  1. createTelephoneStruct");
+		
 		int telephoneKey = TelephoneSynchronizer.getInstance().updateTelephoneTable(countryNumber,
 				telephoneNumber);
-		if(PersonSynchronizer.isDebug()) System.out.println("PersonSynchronizer.updateTelephoneTable() - past TelephoneSynchronizer.getInstance().updateTelephoneTable()");
+		if(PersonSynchronizer.isDebug()) System.out.println("PersonSynchronizer.updateTelephoneTable() - after 2. TelephoneSynchronizer.getInstance().updateTelephoneTable()");
+		
 		this.updatePersonTelephoneTable(personNumber, telephoneKey, ts.getExtension());
-		if(PersonSynchronizer.isDebug()) System.out.println("PersonSynchronizer.updateTelephoneTable() - past PersonSynchronizer.updatePersonTelephoneTable()");
+		if(PersonSynchronizer.isDebug()) System.out.println("PersonSynchronizer.updateTelephoneTable() - after 3. PersonSynchronizer.updatePersonTelephoneTable()");
+		
 		
 	    PersonTelephoneSynchronizer.getInstance().updatePersonTelephoneTable(personNumber, telephoneKey, ts.getExtension(), null);
-	    if(PersonSynchronizer.isDebug()) System.out.println("PersonSynchronizer.updateTelephoneTable() - past PersonTelephoneSynchronizer.getInstance().updatePersonTelephoneTable");
+	    if(PersonSynchronizer.isDebug()) System.out.println("PersonSynchronizer.updateTelephoneTable() - after  4. PersonTelephoneSynchronizer.getInstance().updatePersonTelephoneTable");
 		
 		return false;
 	}
@@ -634,59 +645,59 @@ public class PersonSynchronizer {
 			throws SQLException, ClassNotFoundException {
 		StringBuffer sb = new StringBuffer("INSERT INTO ");
 		sb.append(RdbmsConnection.wrapInDoubleQuotes(GriidcTableName)
-				+ RdbmsUtils.SPACE + "(");
+				+ RdbmsConstants.SPACE + "(");
 		sb.append(RdbmsConnection.wrapInDoubleQuotes("Person_Number"));
 		if (postalAreaNumber > -1) {
-			sb.append(RdbmsUtils.CommaSpace
+			sb.append(RdbmsConstants.CommaSpace
 					+ RdbmsConnection.wrapInDoubleQuotes("PostalArea_Number"));
 		}
 		if (!MiscUtils.isStringEmpty(deliveryPoint)) {
-			sb.append(RdbmsUtils.CommaSpace
+			sb.append(RdbmsConstants.CommaSpace
 					+ RdbmsConnection
 							.wrapInDoubleQuotes("Person_DeliveryPoint"));
 		}
-		sb.append(RdbmsUtils.CommaSpace
+		sb.append(RdbmsConstants.CommaSpace
 				+ RdbmsConnection.wrapInDoubleQuotes("Person_LastName"));
-		sb.append(RdbmsUtils.CommaSpace
+		sb.append(RdbmsConstants.CommaSpace
 				+ RdbmsConnection.wrapInDoubleQuotes("Person_FirstName"));
 		if (!MiscUtils.isStringEmpty(middleName)) {
-			sb.append(RdbmsUtils.CommaSpace
+			sb.append(RdbmsConstants.CommaSpace
 					+ RdbmsConnection.wrapInDoubleQuotes("Person_MiddleName"));
 		}
 
 		if (!MiscUtils.isStringEmpty(honorificTitle)) {
-			sb.append(RdbmsUtils.CommaSpace
+			sb.append(RdbmsConstants.CommaSpace
 					+ RdbmsConnection
 							.wrapInDoubleQuotes("Person_HonorificTitle"));
 		}
 		if (!MiscUtils.isStringEmpty(nameSuffix)) {
-			sb.append(RdbmsUtils.CommaSpace
+			sb.append(RdbmsConstants.CommaSpace
 					+ RdbmsConnection.wrapInDoubleQuotes("Person_NameSuffix"));
 		}
 		sb.append(") VALUES (");
 		// the values are here
 		sb.append(personNumber);
 		if (postalAreaNumber > -1) {
-			sb.append(RdbmsUtils.CommaSpace + postalAreaNumber);
+			sb.append(RdbmsConstants.CommaSpace + postalAreaNumber);
 		}
 		if (!MiscUtils.isStringEmpty(deliveryPoint)) {
-			sb.append(RdbmsUtils.CommaSpace
+			sb.append(RdbmsConstants.CommaSpace
 					+ RdbmsConnection.wrapInSingleQuotes(deliveryPoint));
 		}
-		sb.append(RdbmsUtils.CommaSpace
+		sb.append(RdbmsConstants.CommaSpace
 				+ RdbmsConnection.wrapInSingleQuotes(lastName));
-		sb.append(RdbmsUtils.CommaSpace
+		sb.append(RdbmsConstants.CommaSpace
 				+ RdbmsConnection.wrapInSingleQuotes(firstName));
 		if (!MiscUtils.isStringEmpty(middleName)) {
-			sb.append(RdbmsUtils.CommaSpace
+			sb.append(RdbmsConstants.CommaSpace
 					+ RdbmsConnection.wrapInSingleQuotes(middleName));
 		}
 		if (!MiscUtils.isStringEmpty(honorificTitle)) {
-			sb.append(RdbmsUtils.CommaSpace
+			sb.append(RdbmsConstants.CommaSpace
 					+ RdbmsConnection.wrapInSingleQuotes(honorificTitle));
 		}
 		if (!MiscUtils.isStringEmpty(nameSuffix)) {
-			sb.append(RdbmsUtils.CommaSpace
+			sb.append(RdbmsConstants.CommaSpace
 					+ RdbmsConnection.wrapInSingleQuotes(nameSuffix));
 		}
 		sb.append(" )");
@@ -700,67 +711,67 @@ public class PersonSynchronizer {
 		boolean firstValue = true;
 		StringBuffer sb = new StringBuffer("UPDATE  ");
 		sb.append(RdbmsConnection.wrapInDoubleQuotes(GriidcTableName)
-				+ RdbmsUtils.SPACE + " SET ");
+				+ RdbmsConstants.SPACE + " SET ");
 
 		if (postalAreaNumber > -1) {
 			if (!firstValue)
-				sb.append(RdbmsUtils.CommaSpace);
+				sb.append(RdbmsConstants.CommaSpace);
 			else
-				sb.append(RdbmsUtils.SPACE);
+				sb.append(RdbmsConstants.SPACE);
 			sb.append(RdbmsConnection.wrapInDoubleQuotes("PostalArea_Number")
-					+ RdbmsUtils.EqualSign + postalAreaNumber);
+					+ RdbmsConstants.EqualSign + postalAreaNumber);
 			firstValue = false;
 		}
 		if (!MiscUtils.isStringEmpty(deliveryPoint)) {
 			if (!firstValue)
-				sb.append(RdbmsUtils.CommaSpace);
+				sb.append(RdbmsConstants.CommaSpace);
 			else
-				sb.append(RdbmsUtils.SPACE);
+				sb.append(RdbmsConstants.SPACE);
 			sb.append(RdbmsConnection
 					.wrapInDoubleQuotes("Person_DeliveryPoint")
-					+ RdbmsUtils.EqualSign
+					+ RdbmsConstants.EqualSign
 					+ RdbmsConnection.wrapInSingleQuotes(deliveryPoint));
 
 			firstValue = false;
 		}
 
 		if (!firstValue)
-			sb.append(RdbmsUtils.CommaSpace);
+			sb.append(RdbmsConstants.CommaSpace);
 		else
-			sb.append(RdbmsUtils.SPACE);
+			sb.append(RdbmsConstants.SPACE);
 		sb.append(RdbmsConnection.wrapInDoubleQuotes("Person_LastName")
-				+ RdbmsUtils.EqualSign
+				+ RdbmsConstants.EqualSign
 				+ RdbmsConnection.wrapInSingleQuotes(lastName));
 		firstValue = false;
 
-		sb.append(RdbmsUtils.CommaSpace
+		sb.append(RdbmsConstants.CommaSpace
 				+ RdbmsConnection.wrapInDoubleQuotes("Person_FirstName")
-				+ RdbmsUtils.EqualSign
+				+ RdbmsConstants.EqualSign
 				+ RdbmsConnection.wrapInSingleQuotes(firstName));
 
 		if (!MiscUtils.isStringEmpty(middleName)) {
-			sb.append(RdbmsUtils.CommaSpace
+			sb.append(RdbmsConstants.CommaSpace
 					+ RdbmsConnection.wrapInDoubleQuotes("Person_MiddleName")
-					+ RdbmsUtils.EqualSign
+					+ RdbmsConstants.EqualSign
 					+ RdbmsConnection.wrapInSingleQuotes(middleName));
 		}
 		if (!MiscUtils.isStringEmpty(honorificTitle)) {
-			sb.append(RdbmsUtils.CommaSpace
+			sb.append(RdbmsConstants.CommaSpace
 					+ RdbmsConnection
 							.wrapInDoubleQuotes("Person_HonorificTitle")
-					+ RdbmsUtils.EqualSign
+					+ RdbmsConstants.EqualSign
 					+ RdbmsConnection.wrapInSingleQuotes(honorificTitle));
 		}
 		if (!MiscUtils.isStringEmpty(nameSuffix)) {
-			sb.append(RdbmsUtils.CommaSpace
+			sb.append(RdbmsConstants.CommaSpace
 					+ RdbmsConnection.wrapInDoubleQuotes("Person_NameSuffix")
-					+ RdbmsUtils.EqualSign
+					+ RdbmsConstants.EqualSign
 					+ RdbmsConnection.wrapInSingleQuotes(nameSuffix));
 		}
 
 		sb.append(" WHERE "
 				+ RdbmsConnection.wrapInDoubleQuotes("Person_Number")
-				+ RdbmsUtils.EqualSign + personNumber);
+				+ RdbmsConstants.EqualSign + personNumber);
 		return sb.toString();
 	}
 
@@ -874,7 +885,7 @@ public class PersonSynchronizer {
 		return RdbmsUtils.getGriidcDepartmentPostalNumber(countryNumber, state,
 				city, zip);
 		//
-		// why not call RdbmsUtils.getGriidcDepartmentPostalNumber(dptNumber)
+		// why not call RdbmsConstants.getGriidcDepartmentPostalNumber(dptNumber)
 		// ?????
 	}
 

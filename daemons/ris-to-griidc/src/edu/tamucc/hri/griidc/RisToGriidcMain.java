@@ -12,6 +12,7 @@ import edu.tamucc.hri.griidc.support.Emailer;
 import edu.tamucc.hri.griidc.support.MiscUtils;
 import edu.tamucc.hri.griidc.support.RisInstDeptPeopleErrorCollection;
 import edu.tamucc.hri.griidc.support.RisToGriidcConfiguration;
+import edu.tamucc.hri.rdbms.utils.RdbmsConnection;
 import edu.tamucc.hri.rdbms.utils.RdbmsUtils;
 
 public class RisToGriidcMain {
@@ -43,6 +44,7 @@ public class RisToGriidcMain {
 		RisToGriidcMain risToGriidcMain = new RisToGriidcMain();
 		System.out.println("-- Start risToGriidcMain --");
 		RdbmsUtils.setDebug(false);
+		RdbmsConnection.setDebug(false);
 		InstitutionSynchronizer.setDebug(false);
 		DepartmentSynchronizer.setDebug(false);
 		PersonSynchronizer.setDebug(false);
@@ -53,22 +55,7 @@ public class RisToGriidcMain {
 		FundingEnvelopeSynchronizer.setDebug(false);
 		ProjectSynchronizer.setDebug(false);
 		RolesSynchronizer.setDebug(false);
-
-		/**
-		TaskSynchronizer.setDebug(true);
-		RdbmsUtils.setDebug(true);
-		InstitutionSynchronizer.setDebug(true);
-		DepartmentSynchronizer.setDebug(true);
-		PersonSynchronizer.setDebug(true);
-		TaskSynchronizer.setDebug(true);
-		TelephoneSynchronizer.setDebug(true);
-		PersonTelephoneSynchronizer.setDebug(true);
-		EmailSynchronizer.setDebug(true);
-		FundingEnvelopeSynchronizer.setDebug(true);
-		ProjectSynchronizer.setDebug(true);
-		**/
-	
-
+		
 		RisInstDeptPeopleErrorCollection risInstitutionWithErrors = null;
 		boolean debug = true;
 		try {
@@ -79,6 +66,13 @@ public class RisToGriidcMain {
 			risInstitutionWithErrors = risToGriidcMain.deptSynker
 					.syncGriidcDepartmentFromRisDepartment(risInstitutionWithErrors);
 			if(debug) System.out.println("Person");
+			
+			/**
+			PersonSynchronizer.setDebug(true);
+			TelephoneSynchronizer.setDebug(true);
+			RdbmsConnection.setDebug(true);
+			**/
+			
 			risInstitutionWithErrors = risToGriidcMain.personSynker
 					.syncGriidcPersonFromRisPeople(risInstitutionWithErrors);
 			if(debug) System.out.println("Funding Envelope");

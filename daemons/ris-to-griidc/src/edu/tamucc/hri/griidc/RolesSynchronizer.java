@@ -11,6 +11,7 @@ import edu.tamucc.hri.griidc.support.MiscUtils;
 import edu.tamucc.hri.griidc.support.RandomBoolean;
 import edu.tamucc.hri.rdbms.utils.DbColumnInfo;
 import edu.tamucc.hri.rdbms.utils.RdbmsConnection;
+import edu.tamucc.hri.rdbms.utils.RdbmsConstants;
 import edu.tamucc.hri.rdbms.utils.RdbmsUtils;
 import edu.tamucc.hri.rdbms.utils.TableColInfo;
 
@@ -281,7 +282,7 @@ public class RolesSynchronizer {
 				+ " WHERE "
 				+ RdbmsConnection
 						.wrapInDoubleQuotes(prefix + GriidcRole_Number_ColName_Suffix)
-				+ RdbmsUtils.EqualSign + taskKey;
+				+ RdbmsConstants.EqualSign + taskKey;
 
 		return query;
 	}

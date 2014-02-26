@@ -12,6 +12,7 @@ import edu.tamucc.hri.griidc.support.MiscUtils;
 import edu.tamucc.hri.rdbms.utils.DbColumnInfo;
 import edu.tamucc.hri.rdbms.utils.DefaultValue;
 import edu.tamucc.hri.rdbms.utils.RdbmsConnection;
+import edu.tamucc.hri.rdbms.utils.RdbmsConstants;
 import edu.tamucc.hri.rdbms.utils.RdbmsUtils;
 import edu.tamucc.hri.rdbms.utils.RisFundSrcProgramsStartEndCollection;
 import edu.tamucc.hri.rdbms.utils.RisProgramStartEnd;
@@ -439,7 +440,7 @@ public class TaskSynchronizer {
 				+ " WHERE "
 				+ RdbmsConnection
 						.wrapInDoubleQuotes(TaskSynchronizer.GriidcTask_Number_ColName)
-				+ RdbmsUtils.EqualSign + taskKey;
+				+ RdbmsConstants.EqualSign + taskKey;
 
 		return query;
 	}
@@ -500,7 +501,7 @@ public class TaskSynchronizer {
 				+ " WHERE "
 				+ RdbmsConnection
 						.wrapInDoubleQuotes(TaskSynchronizer.GriidcProject_Number_ColName)
-				+ RdbmsUtils.EqualSign + griidcProjectNumber;
+				+ RdbmsConstants.EqualSign + griidcProjectNumber;
 
 		return query;
 	}

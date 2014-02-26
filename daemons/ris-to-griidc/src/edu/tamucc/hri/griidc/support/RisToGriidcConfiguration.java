@@ -40,7 +40,7 @@ public class RisToGriidcConfiguration {
 
 	// section names found in files
 	private static final String RisDbIniSection = "RIS_RO"; // db.ini
-	private static final String GriidcDbIniSection = "GRIIDC_RW"; // db.ini
+	private static final String GriidcDbIniSection = "GRIIDC_ADMIN"; // "GRIIDC_RW"; // db.ini
 	private static final String RisToGriidcNotificationsSection = "ris-to-griidc"; // notifications.ini
 	private static final String RisErrorsType = "riserrors";
 	private static final String PrimaryLogType = "primarylog";
@@ -131,10 +131,13 @@ public class RisToGriidcConfiguration {
 			String propertyName) throws PropertyNotFoundException {
 		String prop = ini.get(sectionName).get(propertyName);
 
-		if (prop == null)
+		if (prop == null) {
+			System.err.println("RisToGriidcConfiguration.getIniProp(Ini," + sectionName + ",  " + 
+			propertyName + ") - property not found");
 			throw new PropertyNotFoundException("No property: " + propertyName
 					+ " found in file: "
 					+ DbIniInstance.getFile().getAbsolutePath());
+		}
 		return prop;
 	}
 

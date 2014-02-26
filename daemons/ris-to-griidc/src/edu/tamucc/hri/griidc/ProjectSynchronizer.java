@@ -14,6 +14,7 @@ import edu.tamucc.hri.griidc.support.RisToGriidcConfiguration;
 import edu.tamucc.hri.rdbms.utils.DbColumnInfo;
 import edu.tamucc.hri.rdbms.utils.DefaultValue;
 import edu.tamucc.hri.rdbms.utils.RdbmsConnection;
+import edu.tamucc.hri.rdbms.utils.RdbmsConstants;
 import edu.tamucc.hri.rdbms.utils.RdbmsUtils;
 import edu.tamucc.hri.rdbms.utils.RisFundSrcProgramsStartEndCollection;
 import edu.tamucc.hri.rdbms.utils.RisProgramStartEnd;
@@ -354,7 +355,7 @@ public class ProjectSynchronizer {
 	private String getGriidcSearchTermString() {
 		return RdbmsConnection
 				.wrapInDoubleQuotes(ProjectSynchronizer.GriidcProject_Number_ColName)
-				+ RdbmsUtils.EqualSign + this.risProgram_ID;
+				+ RdbmsConstants.EqualSign + this.risProgram_ID;
 	}
 
 	private String formatGriidcFindQuery() {
@@ -364,7 +365,7 @@ public class ProjectSynchronizer {
 				+ " WHERE "
 				+ RdbmsConnection
 						.wrapInDoubleQuotes(ProjectSynchronizer.GriidcProject_Number_ColName)
-				+ RdbmsUtils.EqualSign + this.risProgram_ID;
+				+ RdbmsConstants.EqualSign + this.risProgram_ID;
 
 		return query;
 	}

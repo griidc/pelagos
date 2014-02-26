@@ -13,6 +13,7 @@ import edu.tamucc.hri.griidc.support.MiscUtils;
 import edu.tamucc.hri.griidc.support.RisInstDeptPeopleErrorCollection;
 import edu.tamucc.hri.griidc.support.RisToGriidcConfiguration;
 import edu.tamucc.hri.rdbms.utils.RdbmsConnection;
+import edu.tamucc.hri.rdbms.utils.RdbmsConstants;
 import edu.tamucc.hri.rdbms.utils.RdbmsUtils;
 
 public class InstitutionSynchronizer {
@@ -73,7 +74,7 @@ public class InstitutionSynchronizer {
 	}
 
 	public void initializeStartUp() throws IOException,
-			PropertyNotFoundException, SQLException, ClassNotFoundException {
+			SQLException, ClassNotFoundException, PropertyNotFoundException {
 		MiscUtils.openPrimaryLogFile();
 		MiscUtils.openRisErrorLogFile();
 		MiscUtils.openDeveloperReportFile();
@@ -93,8 +94,8 @@ public class InstitutionSynchronizer {
 	 * @throws DuplicateRecordException
 	 */
 	public RisInstDeptPeopleErrorCollection syncGriidcInstitutionFromRisInstitution()
-			throws ClassNotFoundException, PropertyNotFoundException,
-			IOException, SQLException, TableNotInDatabaseException {
+			throws ClassNotFoundException,
+			IOException, SQLException, TableNotInDatabaseException, PropertyNotFoundException {
 		if (isDebug()) System.out.println(MiscUtils.BreakLine);
 		
 		this.initializeStartUp();
@@ -226,7 +227,7 @@ public class InstitutionSynchronizer {
 							+ " WHERE "
 							+ RdbmsConnection
 									.wrapInDoubleQuotes("Institution_Number")
-							+ RdbmsUtils.EqualSign + risInstId;
+							+ RdbmsConstants.EqualSign + risInstId;
 
 					griidcRset = this.griidcDbConnection
 							.executeQueryResultSet(query);
@@ -382,31 +383,31 @@ public class InstitutionSynchronizer {
 			double risInstLat) throws SQLException, ClassNotFoundException {
 		StringBuffer sb = new StringBuffer("INSERT INTO ");
 		sb.append(RdbmsConnection.wrapInDoubleQuotes("Institution")
-				+ RdbmsUtils.SPACE + "(");
+				+ RdbmsConstants.SPACE + "(");
 		sb.append(RdbmsConnection.wrapInDoubleQuotes("Institution_Number"));
-		sb.append(RdbmsUtils.CommaSpace
+		sb.append(RdbmsConstants.CommaSpace
 				+ RdbmsConnection.wrapInDoubleQuotes("Institution_Name"));
-		sb.append(RdbmsUtils.CommaSpace
+		sb.append(RdbmsConstants.CommaSpace
 				+ RdbmsConnection.wrapInDoubleQuotes("PostalArea_Number"));
-		sb.append(RdbmsUtils.CommaSpace
+		sb.append(RdbmsConstants.CommaSpace
 				+ RdbmsConnection
 						.wrapInDoubleQuotes("Institution_DeliveryPoint"));
-		sb.append(RdbmsUtils.CommaSpace
+		sb.append(RdbmsConstants.CommaSpace
 				+ RdbmsConnection.wrapInDoubleQuotes("Institution_URL"));
-		sb.append(RdbmsUtils.CommaSpace
+		sb.append(RdbmsConstants.CommaSpace
 				+ RdbmsConnection
 						.wrapInDoubleQuotes("Institution_GeoCoordinate"));
 		sb.append(") VALUES (");
 		// the values are here
 		sb.append(risInstNumber);
-		sb.append(RdbmsUtils.CommaSpace
+		sb.append(RdbmsConstants.CommaSpace
 				+ RdbmsConnection.wrapInSingleQuotes(risInstName));
-		sb.append(RdbmsUtils.CommaSpace + griidcPostalAreaNumber);
-		sb.append(RdbmsUtils.CommaSpace
+		sb.append(RdbmsConstants.CommaSpace + griidcPostalAreaNumber);
+		sb.append(RdbmsConstants.CommaSpace
 				+ RdbmsConnection.wrapInSingleQuotes(deliveryPoint));
-		sb.append(RdbmsUtils.CommaSpace
+		sb.append(RdbmsConstants.CommaSpace
 				+ RdbmsConnection.wrapInSingleQuotes(risInstURL));
-		sb.append(RdbmsUtils.CommaSpace
+		sb.append(RdbmsConstants.CommaSpace
 				+ makeSqlGeometryPointString(risInstLon, risInstLat));
 		sb.append(" )");
 		return sb.toString();
@@ -422,30 +423,30 @@ public class InstitutionSynchronizer {
 			throws SQLException, ClassNotFoundException {
 		StringBuffer sb = new StringBuffer("UPDATE  ");
 		sb.append(RdbmsConnection.wrapInDoubleQuotes("Institution")
-				+ RdbmsUtils.SPACE + " SET ");
+				+ RdbmsConstants.SPACE + " SET ");
 		sb.append(RdbmsConnection.wrapInDoubleQuotes("Institution_Name")
-				+ RdbmsUtils.EqualSign
+				+ RdbmsConstants.EqualSign
 				+ RdbmsConnection.wrapInSingleQuotes(risInstName));
-		sb.append(RdbmsUtils.CommaSpace
+		sb.append(RdbmsConstants.CommaSpace
 				+ RdbmsConnection.wrapInDoubleQuotes("PostalArea_Number")
-				+ RdbmsUtils.EqualSign + postalAreaNumber);
-		sb.append(RdbmsUtils.CommaSpace
+				+ RdbmsConstants.EqualSign + postalAreaNumber);
+		sb.append(RdbmsConstants.CommaSpace
 				+ RdbmsConnection
 						.wrapInDoubleQuotes("Institution_DeliveryPoint")
-				+ RdbmsUtils.EqualSign
+				+ RdbmsConstants.EqualSign
 				+ RdbmsConnection.wrapInSingleQuotes(deliveryPoint));
-		sb.append(RdbmsUtils.CommaSpace
+		sb.append(RdbmsConstants.CommaSpace
 				+ RdbmsConnection.wrapInDoubleQuotes("Institution_URL")
-				+ RdbmsUtils.EqualSign
+				+ RdbmsConstants.EqualSign
 				+ RdbmsConnection.wrapInSingleQuotes(instURL));
-		sb.append(RdbmsUtils.CommaSpace
+		sb.append(RdbmsConstants.CommaSpace
 				+ RdbmsConnection
 						.wrapInDoubleQuotes("Institution_GeoCoordinate")
-				+ RdbmsUtils.EqualSign
+				+ RdbmsConstants.EqualSign
 				+ makeSqlGeometryPointString(instLon, instLat));
 		sb.append(" WHERE "
 				+ RdbmsConnection.wrapInDoubleQuotes("Institution_Number")
-				+ RdbmsUtils.EqualSign + instNumber);
+				+ RdbmsConstants.EqualSign + instNumber);
 		return sb.toString();
 	}
 
