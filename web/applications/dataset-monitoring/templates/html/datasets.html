@@ -13,8 +13,8 @@
     <tbody>
     {% for dataset in datasets %}
     <tr udi="{{dataset.udi}}">
-        <td class="udi details" onclick="window.open('/data/{{dataset.udi}}');"><a href="/data/{{dataset.udi}}" target="_blank">{{dataset.udi}}</a></td>
-        <td class="details" onclick="window.open('/data/{{dataset.udi}}');"><a href="/data/{{dataset.udi}}" target="_blank">{{dataset.title}}</a></td>
+        <td class="udi details" onclick="window.open('{{hostUrl}}/data/{{dataset.udi}}');"><a href="{{hostUrl}}/data/{{dataset.udi}}" target="_blank">{{dataset.udi}}</a></td>
+        <td class="details" onclick="window.open('{{hostUrl}}/data/{{dataset.udi}}');"><a href="{{hostUrl}}/data/{{dataset.udi}}" target="_blank">{{dataset.title}}</a></td>
         <td class="status" title="{{(dataset.identified ~ '_identified') | statusToTitle}}">
             <span style="display:none;">{{dataset.identified}}</span>
             <img src="{{baseUrl}}/includes/images/{{dataset.identified | statusToImg}}">

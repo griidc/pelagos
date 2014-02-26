@@ -117,6 +117,7 @@ $app->get('/projects/:by/:id(/:renderer)', function ($by,$id,$renderer='browser'
             $env = $app->environment();
             header("Content-Type: text/html; charset=utf-8");
             $stash['pdf'] = true;
+            $stash['hostUrl'] = 'https://data.gulfresearchinitiative.org';
             $app->render('html/pdf.html',$stash);
         }
         else {
