@@ -40,7 +40,7 @@ public class RisToGriidcConfiguration {
 
 	// section names found in files
 	private static final String RisDbIniSection = "RIS_RO"; // db.ini
-	private static final String GriidcDbIniSection = "GRIIDC_ADMIN"; // "GRIIDC_RW"; // db.ini
+	private static final String GriidcDbIniSection =  "GRIIDC_RW"; // db.ini
 	private static final String RisToGriidcNotificationsSection = "ris-to-griidc"; // notifications.ini
 	private static final String RisErrorsType = "riserrors";
 	private static final String PrimaryLogType = "primarylog";
