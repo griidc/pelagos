@@ -91,7 +91,7 @@ if (!isset($_POST['submit']) and isset($_GET['uid']) and $status == 0) {
 <div class="cleair" style="width:auto; padding:10px;">
     <input type="hidden" name=flag value=<?PHP echo "$flag"; ?>>
     <input type="hidden" name=modts VALUE=<?PHP echo "$m[0]";?> >
-	<input type="hidden" name="submitUser" VALUE=<?PHP echo $submitUser;?> >
+	<input type="hidden" name="submitUser" VALUE=<?PHP if (isset($submitUser)){echo $submitUser;}?> >
 	
     <input type="hidden" name="dataset_udi" VALUE="<?PHP echo "$m[25]";?>">
 
