@@ -384,11 +384,11 @@ if ((isset($_POST['submit']) and $_POST['submit'])||(isset($_POST['later']) and 
 					$attributes = getAttributes($ldap,$member,array('givenName','sn','mail'));
 					if (count($attributes) > 0) {
 					
-						if (array_key_exists('givenName',$attributes)) $firstName = $attributes['givenName'][0];
-						if (array_key_exists('sn',$attributes)) $lastName = $attributes['sn'][0];
+						if (array_key_exists('givenName',$attributes)) $mailFirstName = $attributes['givenName'][0];
+						if (array_key_exists('sn',$attributes)) $mailLastName = $attributes['sn'][0];
 						if (array_key_exists('mail',$attributes)) $eMail = $attributes['mail'][0];
 						
-						$difMailer->addBCCUser($firstName, $lastName, $eMail);
+						$difMailer->addBCCUser($mailFirstName, $mailLastName, $eMail);
 					}
 				}
 			}
