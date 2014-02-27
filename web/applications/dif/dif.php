@@ -345,16 +345,16 @@ if ((isset($_POST['submit']) and $_POST['submit'])||(isset($_POST['later']) and 
 					if (count($userDNs) > 0) {
 						$attributes = getAttributes($ldap,$userDN,array('givenName','sn','mail'));
 						if (count($attributes) > 0) {
-							if (array_key_exists('givenName',$attributes)) $firstName = $attributes['givenName'][0];
-							if (array_key_exists('sn',$attributes)) $lastName = $attributes['sn'][0];
+							if (array_key_exists('givenName',$attributes)) $mailFirstName = $attributes['givenName'][0];
+							if (array_key_exists('sn',$attributes)) $mailLastName = $attributes['sn'][0];
 							if (array_key_exists('mail',$attributes)) $eMail = $attributes['mail'][0];
 						}
 					}
 				}
 				
-				$difMailer->addToUser($firstName, $lastName, $eMail);
+				$difMailer->addToUser($mailLastName, $mailLastName, $eMail);
 				
-				$message = "Congratulations $firstName $lastName,<br /><br />";
+				$message = "Congratulations $mailFirstName $mailLastName,<br /><br />";
 				$message .= 'Your Dataset Information Form (DIF) <a href="' . "https://$_SERVER[HTTP_HOST]" .'/dif/?uid='.$uid.'">'.$datasetUDI.'</a> has been approved by the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC). You will now be able to register the associated dataset at https://data.gulfresearchinitiative.org/dataset-registration. <br \>';
 				$message .= "If you have any questions regarding your DIF please contact griidc@gomri.org.<br \><br \>";
 				$message .= "Thank you,<br \>The GRIIDC Team<br \>";
