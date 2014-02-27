@@ -1,12 +1,8 @@
 package edu.tamucc.hri.griidc.support;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
@@ -21,7 +17,11 @@ import edu.tamucc.hri.griidc.exception.PropertyNotFoundException;
 /**
  * This class manages the configuration files in the ini format. There are three
  * ini files of interest all to be found in the base directory /etc/griidc
+ * "db.ini", "notifications.ini",  "ris-to-griidc.ini"
  * 
+ * RdbmsConstants also has a bunch of constants that are used for database connections
+ * 
+ * @see edu.tamucc.hri.rdbms.utils.RdbmsConstants
  * @author jvh
  * 
  */
@@ -33,11 +33,7 @@ public class RisToGriidcConfiguration {
 			+ "notifications.ini";
 	private static final String RisToGriidcIniFileName = IniBaseDir
 			+ "ris-to-griidc.ini";
-	// private static String PropertiesFilePath = DbIniFileName;
-
-	private static final String[] fileName = { DbIniFileName,
-			NotificationsFileName, RisToGriidcIniFileName };
-
+	
 	// section names found in files
 	private static final String RisDbIniSection = "RIS_RO"; // db.ini
 	private static final String GriidcDbIniSection =  "GRIIDC_RW"; // db.ini
