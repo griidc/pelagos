@@ -14,13 +14,12 @@
         <pathelement location="../../griidcJavaLibraary/mysql-connector-java-5.1.26-bin.jar"/>
         <pathelement location="../../griidcJavaLibraary/postgresql-9.1-903.jdbc4.jar"/>
         <pathelement location="../../griidcJavaLibraary/javax.mail.jar"/>
-        <pathelement location="lib/ini4j-0.5.2.jar"/>
+        <pathelement location="../../griidcJavaLibraary/ini4j-0.5.2.jar"/>
     </path>
     <target name="init">
         <mkdir dir="bin"/>
         <copy includeemptydirs="false" todir="bin">
             <fileset dir="src">
-                <exclude name="**/*.launch"/>
                 <exclude name="**/*.java"/>
             </fileset>
         </copy>
