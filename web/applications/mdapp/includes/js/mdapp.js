@@ -9,6 +9,14 @@ $(document).ready(function() {
             });
         }
     });
+    $('#tabs table.metadata').tablesorter({
+        sortList: [[2,0]],
+        sortRestart : true,
+        sortInitialOrder: 'asc',
+        headers: {
+            1: { sorter: false }
+        }
+    });
 });
 
 function clearStatusMessages() {

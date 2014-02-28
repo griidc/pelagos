@@ -13,13 +13,13 @@
       {% if section|length %}
         <div id="{{sname}}" class="tab" style="padding:0">
           <fieldset>
-            <table>
+            <table class="metadata">
                 <thead>
                     <tr>
-                        <th style="width:125px"><a href={{baseUrl}}/sorter/udi>UDI{% if sort_by == 'dataset_udi' %} <img src="{{baseUrl}}/includes/images/{{sort_order}}.png" align="absmiddle">{% endif %}</a></th>
-                        <th style="width:80px">Action</th>
-                        <th style="width:150px"><a href={{baseUrl}}/sorter/timestamp>Timestamp{% if sort_by == 'submittimestamp' %} <img src="{{baseUrl}}/includes/images/{{sort_order}}.png" align="absmiddle">{% endif %}</a></th>
-                        <th style="width:50%"><a href={{baseUrl}}/sorter/filename>Filename{% if sort_by == 'dataset_metadata' %} <img src="{{baseUrl}}/includes/images/{{sort_order}}.png" align="absmiddle">{% endif %}</a></th>
+                        <th style="width:125px"><div class="title">UDI</div><div class="sorticon"></div></th>
+                        <th style="width:80px"><div class="title">Action</div></th>
+                        <th style="width:150px"><div class="title">Timestamp</div><div class="sorticon"></div></th>
+                        <th style="width:50%"><div class="title">Filename</div><div class="sorticon"></div></th>
                     </tr>
                 </thead>
                 <tbody>

@@ -52,9 +52,6 @@ $app = new Slim(array(
                      ));
 
 $app->hook('slim.before', function () use ($app) {
-    if(!isset($_SESSION['orderby'])) {
-        $_SESSION['orderby'] = "ORDER BY submittimestamp ASC";
-    }
     $env = $app->environment();
     $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
     $app->view()->appendData(array('baseUrl' => "$protocol$env[SERVER_NAME]/$GLOBALS[PAGE_NAME]"));
@@ -80,7 +77,14 @@ $app->hook('slim.before.router', function () use ($app) {
 
 $app->get('/includes/:file', 'dumpIncludesFile')->conditions(array('file' => '.+'));
 
+$app->get('/css/:name.css', function ($name) use ($app) {
+    header('Content-type: text/css');
+    $app->render("css/$name.css");
+    exit;
+});
+
 $app->get('/', function () use ($app) {
+    drupal_add_js('/includes/tablesorter/js/jquery.tablesorter.min.js',array('type'=>'external'));
     return $app->render('html/main.html',index($app));
 });
 
@@ -170,38 +174,6 @@ $app->get('/accept/:udi', function ($udi) use ($app) {
     writeLog($user->name." has accepted metadata for $udi.");
     drupal_goto($GLOBALS['PAGE_NAME']);
 });
-
-// Sort Toggle
-$app->get('/sorter/:sort', function ($sort) use ($app) {
-    if ($sort === 'udi') {
-        if ($_SESSION['orderby'] == 'ORDER BY dataset_udi ASC') {
-            $_SESSION['orderby'] = 'ORDER BY dataset_udi DESC';
-        }
-        else {
-            $_SESSION['orderby'] = 'ORDER BY dataset_udi ASC';
-        }
-    } elseif ($sort === 'timestamp') {
-        if ($_SESSION['orderby'] == 'ORDER BY submittimestamp ASC') {
-            $_SESSION['orderby'] = 'ORDER BY submittimestamp DESC';
-        }
-        else {
-            $_SESSION['orderby'] = 'ORDER BY submittimestamp ASC';
-        }
-    } elseif ($sort === 'filename') {
-        if ($_SESSION['orderby'] == 'ORDER BY dataset_metadata ASC') {
-            $_SESSION['orderby'] = 'ORDER BY dataset_metadata DESC';
-        }
-        else {
-            $_SESSION['orderby'] = 'ORDER BY dataset_metadata ASC';
-        }
-    } else {
-        // default if unspecified or something else specified
-        $_SESSION['orderby'] = 'ORDER BY curr_reg_view.registry_id';
-    }
-    drupal_goto($GLOBALS['PAGE_NAME']); # reload calling page (is there a better way to do this?
-
-});
-
 
 // Test Geometry
 $app->post('/TestGeometry', function () use ($app) {
@@ -684,16 +656,11 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
 
 function index($app) {
     drupal_add_js("/$GLOBALS[PAGE_NAME]/includes/js/mdapp.js",array('type'=>'external'));
-    drupal_add_css("/$GLOBALS[PAGE_NAME]/includes/css/mdapp.css",array('type'=>'external'));
-    if (preg_match('/^ORDER BY (\w+) (\w+)$/',$_SESSION['orderby'],$matches)) {
-        $stash['sort_by'] = $matches[1];
-        if ($matches[2] == 'DESC') $stash['sort_order'] = 'descending';
-        else $stash['sort_order'] = 'ascending';
-    }
+    drupal_add_css("/$GLOBALS[PAGE_NAME]/css/mdapp.css",array('type'=>'external'));
     $stash['defaultFilter'] = $app->request()->get('filter');
-    $stash['m_dataset']['accepted'] = GetMetadata('accepted',$_SESSION['orderby']);
-    $stash['m_dataset']['submitted'] = GetMetadata('submitted',$_SESSION['orderby']);
-    $stash['m_dataset']['inreview'] = GetMetadata('inreview',$_SESSION['orderby']);
+    $stash['m_dataset']['accepted'] = GetMetadata('accepted');
+    $stash['m_dataset']['submitted'] = GetMetadata('submitted');
+    $stash['m_dataset']['inreview'] = GetMetadata('inreview');
     $stash['srvr'] = "https://$_SERVER[HTTP_HOST]";
     if(isset($_SESSION['testPolygon'])) { $stash['testPolygon'] = $_SESSION['testPolygon']; }
     return $stash;
@@ -849,7 +816,7 @@ function sendEmail($to,$from,$sub,$message) {
     mail($to,$sub,$message,$header);
 }
 
-function GetMetadata($type,$sorter) {
+function GetMetadata($type) {
     $type=strtolower($type);
     switch($type) {
         case "accepted":
@@ -874,8 +841,7 @@ function GetMetadata($type,$sorter) {
                     WHERE
                         metadata_status = 'Accepted'
                     AND
-                        metadata_dl_status = 'Completed'
-                        $sorter";
+                        metadata_dl_status = 'Completed'";
             break;
         case "submitted":
             $sql = "SELECT
@@ -899,8 +865,7 @@ function GetMetadata($type,$sorter) {
                     WHERE
                         metadata_status = 'Submitted'
                     AND
-                        metadata_dl_status = 'Completed'
-                        $sorter";
+                        metadata_dl_status = 'Completed'";
             break;
         case "inreview":
             $sql = "SELECT
@@ -924,8 +889,7 @@ function GetMetadata($type,$sorter) {
                     WHERE
                         metadata_status = 'InReview'
                     AND
-                        metadata_dl_status = 'Completed'
-                        $sorter";
+                        metadata_dl_status = 'Completed'";
     }
     if(isset($sql)) {
         $dbms = OpenDB("GOMRI_RO");
