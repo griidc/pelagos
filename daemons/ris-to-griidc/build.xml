@@ -19,7 +19,7 @@
 		<pathelement location="${bin.dir}" />
 		<pathelement location="${user.share.lib.dir}/mysql-connector-java.jar" />
 		<pathelement location="${user.share.lib.dir}/postgresql91.jar" />
-		<pathelement location="${user.share.lib.dir}/javax.mail.jar" />
+		<pathelement location="${user.share.lib.dir}/javamail.jar" />
 		<pathelement location="${user.share.lib.dir}/ini4j.jar" />
 	</path>
 
@@ -41,7 +41,7 @@
 		<echo message="classpath element ${bin.dir}" />
 		<echo message="classpath element ${user.share.lib.dir}/mysql-connector-java.jar" />
 		<echo message="classpath element ${user.share.lib.dir}/postgresql91.jar" />
-		<echo message="classpath element ${user.share.lib.dir}/javax.mail.jar" />
+		<echo message="classpath element ${user.share.lib.dir}/javamail.jar" />
 		<echo message="classpath element ${user.share.lib.dir}/ini4j.jar" />
 	</target>
 	<!--  init creates directories and  -->
