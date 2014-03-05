@@ -15,7 +15,7 @@
 	<property name="target" value="1.6" />
 	<property name="source" value="1.6" />
 
-	<path id="RisToGriidc.classpath">
+	<path id="build.compile.classpath">
 		<pathelement location="${bin.dir}" />
 		<pathelement location="${user.share.lib.dir}/mysql-connector-java.jar" />
 		<pathelement location="${user.share.lib.dir}/postgresql91.jar" />
@@ -68,7 +68,7 @@
 		<echo message="Build   ${ant.project.name}: ${ant.file}" />
 		<javac debug="true" debuglevel="${debuglevel}" destdir="${bin.dir}" includeantruntime="false" source="${source}" target="${target}">
 			<src path="${src.dir}" />
-			<classpath refid="RisToGriidc.classpath" />
+			<classpath refid="build.compile.classpath" />
 		</javac>
 	</target>
 	<!--  Generate a jar file to run -->
@@ -85,13 +85,13 @@
 	<target name="build-java-docs" depends="build" description="generate JavaDoc documentation">
 		<echo message="Generate javadocs source dir: ${src.dir} Document dir: ${doc.dir}" />
 		<javadoc sourcepath="${src.dir}" destdir="${doc.dir}">
-			<classpath refid="RisToGriidc.classpath" />
+			<classpath refid="build.compile.classpath" />
 		</javadoc>
 	</target>
 	<!-- RisToGriidcMain -->
 	<target name="RisToGriidcMain">
 		<java classname="edu.tamucc.hri.griidc.RisToGriidcMain" failonerror="true" fork="yes">
-			<classpath refid="RisToGriidc.classpath" />
+			<classpath refid="build.compile.classpath" />
 		</java>
 	</target>
 </project>
