@@ -1,210 +1,79 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- WARNING: Eclipse auto-generated file.
-              Any modifications will be overwritten.
-              To include a user specific buildfile here, simply create one in the same
-              directory with the processing instruction <?eclipse.ant.import?>
-              as the first entry and export the buildfile again. --><project basedir="." default="build" name="RisToGriidc">
-    <property environment="env"/>
-    <property name="ECLIPSE_HOME" value="../../../../../Applications/eclipseKepler"/>
-    <property name="debuglevel" value="source,lines,vars"/>
-    <property name="target" value="1.6"/>
-    <property name="source" value="1.6"/>
-    <path id="RisToGriidc.classpath">
-        <pathelement location="bin"/>
-        <pathelement location="../../griidcJavaLibraary/mysql-connector-java-5.1.26-bin.jar"/>
-        <pathelement location="../../griidcJavaLibraary/postgresql-9.1-903.jdbc4.jar"/>
-        <pathelement location="../../griidcJavaLibraary/javax.mail.jar"/>
-        <pathelement location="../../griidcJavaLibraary/ini4j-0.5.2.jar"/>
-    </path>
-    <target name="init">
-        <mkdir dir="bin"/>
-        <copy includeemptydirs="false" todir="bin">
-            <fileset dir="src">
-                <exclude name="**/*.java"/>
-            </fileset>
-        </copy>
-    </target>
-    <target name="clean">
-        <delete dir="bin"/>
-    </target>
-    <target depends="clean" name="cleanall"/>
-    <target depends="build-subprojects,build-project" name="build"/>
-    <target name="build-subprojects"/>
-    <target depends="init" name="build-project">
-        <echo message="${ant.project.name}: ${ant.file}"/>
-        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
-            <src path="src"/>
-            <classpath refid="RisToGriidc.classpath"/>
-        </javac>
-    </target>
-    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
-    <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
-        <copy todir="${ant.library.dir}">
-            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
-        </copy>
-        <unzip dest="${ant.library.dir}">
-            <patternset includes="jdtCompilerAdapter.jar"/>
-            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
-        </unzip>
-    </target>
-    <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
-        <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
-        <antcall target="build"/>
-    </target>
-    <target name="CountryTableCache">
-        <java classname="edu.tamucc.hri.griidc.CountryTableCache" failonerror="true" fork="yes">
-            <classpath refid="RisToGriidc.classpath"/>
-        </java>
-    </target>
-    <target name="DbMapping">
-        <java classname="edu.tamucc.hri.griidc.mapping.intake.DbMapping" failonerror="true" fork="yes">
-            <classpath refid="RisToGriidc.classpath"/>
-        </java>
-    </target>
-    <target name="DbMappingCollection">
-        <java classname="edu.tamucc.hri.griidc.mapping.intake.DbMappingCollection" failonerror="true" fork="yes">
-            <classpath refid="RisToGriidc.classpath"/>
-        </java>
-    </target>
-    <target name="DbMappingSpecCollection">
-        <java classname="edu.tamucc.hri.griidc.mapping.specs.DbMappingSpecCollection" failonerror="true" fork="yes">
-            <classpath refid="RisToGriidc.classpath"/>
-        </java>
-    </target>
-    <target name="DeadEndSyncGriidcToRis">
-        <java classname="edu.tamucc.hri.griidc.DeadEndSyncGriidcToRis" failonerror="true" fork="yes">
-            <classpath refid="RisToGriidc.classpath"/>
-        </java>
-    </target>
-    <target name="Emailer">
-        <java classname="edu.tamucc.hri.griidc.support.Emailer" failonerror="true" fork="yes">
-            <classpath refid="RisToGriidc.classpath"/>
-        </java>
-    </target>
-    <target name="EmailSynchronizer">
-        <java classname="edu.tamucc.hri.griidc.EmailSynchronizer" failonerror="true" fork="yes">
-            <classpath refid="RisToGriidc.classpath"/>
-        </java>
-    </target>
-    <target name="EncodeAlpha">
-        <java classname="ziggy.EncodeAlpha" failonerror="true" fork="yes">
-            <classpath refid="RisToGriidc.classpath"/>
-        </java>
-    </target>
-    <target name="GarbageDetector">
-        <java classname="edu.tamucc.hri.rdbms.utils.GarbageDetector" failonerror="true" fork="yes">
-            <classpath refid="RisToGriidc.classpath"/>
-        </java>
-    </target>
-    <target name="GomriDbInit">
-        <java classname="edu.tamucc.hri.griidc.dbinit.GomriDbInit" failonerror="true" fork="yes">
-            <classpath refid="RisToGriidc.classpath"/>
-        </java>
-    </target>
-    <target name="GriidcExceptionService">
-        <java classname="edu.tamucc.hri.griidc.exception.GriidcExceptionService" failonerror="true" fork="yes">
-            <classpath refid="RisToGriidc.classpath"/>
-        </java>
-    </target>
-    <target name="GriidcPgsqlEnumType">
-        <java classname="edu.tamucc.hri.rdbms.utils.GriidcPgsqlEnumType" failonerror="true" fork="yes">
-            <classpath refid="RisToGriidc.classpath"/>
-        </java>
-    </target>
-    <target name="GriidcReader">
-        <java classname="edu.tamucc.hri.griidc.GriidcReader" failonerror="true" fork="yes">
-            <classpath refid="RisToGriidc.classpath"/>
-        </java>
-    </target>
-    <target name="Ini4jTest">
-        <java classname="edu.tamucc.hri.griidc.test.Ini4jTest" failonerror="true" fork="yes">
-            <classpath refid="RisToGriidc.classpath"/>
-        </java>
-    </target>
-    <target name="InstitutionSynchronizer">
-        <java classname="edu.tamucc.hri.griidc.InstitutionSynchronizer" failonerror="true" fork="yes">
-            <classpath refid="RisToGriidc.classpath"/>
-        </java>
-    </target>
-    <target name="MiscUtils">
-        <java classname="edu.tamucc.hri.griidc.support.MiscUtils" failonerror="true" fork="yes">
-            <classpath refid="RisToGriidc.classpath"/>
-        </java>
-    </target>
-    <target name="New_configuration">
-        <java classname="" failonerror="true" fork="yes">
-            <classpath refid="RisToGriidc.classpath"/>
-        </java>
-    </target>
-    <target name="ParseForCountry">
-        <java classname="edu.tamucc.hri.griidc.support.ParseForCountry" failonerror="true" fork="yes">
-            <classpath refid="RisToGriidc.classpath"/>
-        </java>
-    </target>
-    <target name="RandomBoolean">
-        <java classname="edu.tamucc.hri.griidc.support.RandomBoolean" failonerror="true" fork="yes">
-            <classpath refid="RisToGriidc.classpath"/>
-        </java>
-    </target>
-    <target name="RdbmsConnection">
-        <java classname="edu.tamucc.hri.rdbms.utils.RdbmsConnection" failonerror="true" fork="yes">
-            <classpath refid="RisToGriidc.classpath"/>
-        </java>
-    </target>
-    <target name="RdbmsUtils">
-        <java classname="edu.tamucc.hri.rdbms.utils.RdbmsUtils" failonerror="true" fork="yes">
-            <classpath refid="RisToGriidc.classpath"/>
-        </java>
-    </target>
-    <target name="RdbmsUtilsTest">
-        <java classname="edu.tamucc.hri.rdbms.utils.RdbmsUtilsTest" failonerror="true" fork="yes">
-            <classpath refid="RisToGriidc.classpath"/>
-        </java>
-    </target>
-    <target name="RisPropertiesAccess">
-        <java classname="edu.tamucc.hri.griidc.support.RisPropertiesAccess" failonerror="true" fork="yes">
-            <classpath refid="RisToGriidc.classpath"/>
-        </java>
-    </target>
-    <target name="RisReader">
-        <java classname="edu.tamucc.hri.griidc.RisReader" failonerror="true" fork="yes">
-            <classpath refid="RisToGriidc.classpath"/>
-        </java>
-    </target>
-    <target name="RisToGriidcConfiguration">
-        <java classname="edu.tamucc.hri.griidc.support.RisToGriidcConfiguration" failonerror="true" fork="yes">
-            <classpath refid="RisToGriidc.classpath"/>
-        </java>
-    </target>
-    <target name="RisToGriidcMain">
-        <java classname="edu.tamucc.hri.griidc.RisToGriidcMain" failonerror="true" fork="yes">
-            <classpath refid="RisToGriidc.classpath"/>
-        </java>
-    </target>
-    <target name="RisToGriidcTest">
-        <java classname="edu.tamucc.hri.griidc.test.RisToGriidcTest" failonerror="true" fork="yes">
-            <arg line="&gt; ./data/test.out"/>
-            <classpath refid="RisToGriidc.classpath"/>
-        </java>
-    </target>
-    <target name="RolesSynchronizer">
-        <java classname="edu.tamucc.hri.griidc.RolesSynchronizer" failonerror="true" fork="yes">
-            <classpath refid="RisToGriidc.classpath"/>
-        </java>
-    </target>
-    <target name="StringArrayResultSet">
-        <java classname="edu.tamucc.hri.rdbms.utils.StringArrayResultSet" failonerror="true" fork="yes">
-            <classpath refid="RisToGriidc.classpath"/>
-        </java>
-    </target>
-    <target name="TelephoneStruct">
-        <java classname="edu.tamucc.hri.griidc.TelephoneStruct" failonerror="true" fork="yes">
-            <classpath refid="RisToGriidc.classpath"/>
-        </java>
-    </target>
-    <target name="TelephoneSynchronizer">
-        <java classname="edu.tamucc.hri.griidc.TelephoneSynchronizer" failonerror="true" fork="yes">
-            <classpath refid="RisToGriidc.classpath"/>
-        </java>
-    </target>
+<?eclipse.ant.import?>
+
+<project basedir="." default="build.all" name="RisToGriidc">
+	<!-- set global properties for this build -->
+	<property name="project.name" value="RisToGriidc" />
+	<property name="src.dir" location="src" />
+	<property name="base.dir" location="." />
+	<property name="build.dir" location="build" />
+	<property name="dist.dir" location="dist" />
+	<property name="bin.dir" location="bin" />
+	<property name="lib.dir" location="lib" />
+	<property name="doc.dir" value="doc" />
+	<property name="user.share.lib.dir" value="/usr/share/java" />
+	<property environment="env" />
+	<property name="debuglevel" value="source,lines,vars" />
+	<property name="target" value="1.6" />
+	<property name="source" value="1.6" />
+
+	<path id="RisToGriidc.classpath">
+		<pathelement location="${bin.dir}" />
+		<pathelement location="${user.share.lib.dir}/mysql-connector-java.jar" />
+		<pathelement location="${user.share.lib.dir}/postgresql91.jar" />
+		<pathelement location="${user.share.lib.dir}/javax.mail.jar" />
+		<pathelement location="${user.share.lib.dir}/ini4j.jar" />
+	</path>
+
+
+
+	<!--  init creates directories and  -->
+	<target name="init"  description="create necessary directories, set options">
+		<mkdir dir="${bin.dir}" />
+		<mkdir dir="${lib.dir}" />
+		<copy includeemptydirs="false" todir="${bin.dir}">
+			<fileset dir="src">
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+	</target>
+	<!--  Clean - delete build out  -->
+	<target name="clean"  description="delete the bin and lib directory">
+		<echo message="Clean  ${ant.project.name}: ${ant.file}" />
+		<delete dir="${bin.dir}" />
+		<delete dir="${lib.dir}" />
+	</target>
+	<!--  build.all - clean, init, build and jar  -->
+	<target name="build.all" depends="clean, init, build, jar"  description="do clean, init, build and jar">
+	</target>
+	<!--  build - compile   -->
+	<target name="build" depends="init"  description="build the class files">
+		<echo message="Build   ${ant.project.name}: ${ant.file}" />
+		<javac debug="true" debuglevel="${debuglevel}" destdir="${bin.dir}" includeantruntime="false" source="${source}" target="${target}">
+			<src path="${src.dir}" />
+			<classpath refid="RisToGriidc.classpath" />
+		</javac>
+	</target>
+	<!--  Generate a jar file to run -->
+	<target name="jar" depends="build" description="make a java archive .jar file ">
+		<mkdir dir="${lib.dir}" />
+		<echo message="generate a java archive: ${lib.dir}/${project.name}.jar" />
+		<jar destfile="${lib.dir}/${project.name}.jar" basedir="${bin.dir}">
+			<manifest>
+				<attribute name="Main-Class" value="edu.tamucc.hri.griidc.RisToGriidcMain" />
+			</manifest>
+		</jar>
+	</target>
+	<!-- Generate javadocs for current project into ${doc.dir} -->
+	<target name="build-java-docs" depends="build" description="generate JavaDoc documentation">
+		<echo message="Generate javadocs source dir: ${src.dir} Document dir: ${doc.dir}" />
+		<javadoc sourcepath="${src.dir}" destdir="${doc.dir}">
+			<classpath refid="RisToGriidc.classpath" />
+		</javadoc>
+	</target>
+	<!-- RisToGriidcMain -->
+	<target name="RisToGriidcMain">
+		<java classname="edu.tamucc.hri.griidc.RisToGriidcMain" failonerror="true" fork="yes">
+			<classpath refid="RisToGriidc.classpath" />
+		</java>
+	</target>
 </project>
