@@ -11,7 +11,6 @@
 	<property name="lib.dir" location="lib" />
 	<property name="doc.dir" value="doc" />
 	<property name="user.share.lib.dir" value="/usr/share/java" />
-	<property environment="env" />
 	<property name="debuglevel" value="source,lines,vars" />
 	<property name="target" value="1.6" />
 	<property name="source" value="1.6" />
@@ -25,9 +24,28 @@
 	</path>
 
 
-
+	<!-- env  environment  - display the environment  -->
+	<target name="env" description="show the pathelements etc">
+		<echo message="Project name: ${project.name}" />
+		<echo message="src dir: ${src.dir}" />
+		<echo message="base dir: ${base.dir}" />
+		<echo message="build dir: ${build.dir}" />
+		<echo message="dist dir: ${dist.dir}" />
+		<echo message="bin dir: ${bin.dir}" />
+		<echo message="lib dir: ${lib.dir}" />
+		<echo message="doc dir: ${doc.dir}" />
+		<echo message="user.share.lib.dir: ${user.share.lib.dir}" />
+		<echo message="debuglevel: ${debuglevel}" />
+		<echo message="java version target: ${target}" />
+		<echo message="java version source: ${source}" />
+		<echo message="classpath element ${bin.dir}" />
+		<echo message="classpath element ${user.share.lib.dir}/mysql-connector-java.jar" />
+		<echo message="classpath element ${user.share.lib.dir}/postgresql91.jar" />
+		<echo message="classpath element ${user.share.lib.dir}/javax.mail.jar" />
+		<echo message="classpath element ${user.share.lib.dir}/ini4j.jar" />
+	</target>
 	<!--  init creates directories and  -->
-	<target name="init"  description="create necessary directories, set options">
+	<target name="init" description="create necessary directories, set options">
 		<mkdir dir="${bin.dir}" />
 		<mkdir dir="${lib.dir}" />
 		<copy includeemptydirs="false" todir="${bin.dir}">
@@ -37,16 +55,16 @@
 		</copy>
 	</target>
 	<!--  Clean - delete build out  -->
-	<target name="clean"  description="delete the bin and lib directory">
+	<target name="clean" description="delete the bin and lib directory">
 		<echo message="Clean  ${ant.project.name}: ${ant.file}" />
 		<delete dir="${bin.dir}" />
 		<delete dir="${lib.dir}" />
 	</target>
 	<!--  build.all - clean, init, build and jar  -->
-	<target name="build.all" depends="clean, init, build, jar"  description="do clean, init, build and jar">
+	<target name="build.all" depends="clean, init, build, jar" description="do clean, init, build and jar">
 	</target>
 	<!--  build - compile   -->
-	<target name="build" depends="init"  description="build the class files">
+	<target name="build" depends="init" description="build the class files">
 		<echo message="Build   ${ant.project.name}: ${ant.file}" />
 		<javac debug="true" debuglevel="${debuglevel}" destdir="${bin.dir}" includeantruntime="false" source="${source}" target="${target}">
 			<src path="${src.dir}" />
