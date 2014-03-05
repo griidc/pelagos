@@ -18,7 +18,7 @@
 	<path id="build.compile.classpath">
 		<pathelement location="${bin.dir}" />
 		<pathelement location="${user.share.lib.dir}/mysql-connector-java.jar" />
-		<pathelement location="${user.share.lib.dir}/postgresql91.jar" />
+		<pathelement location="${user.share.lib.dir}/postgresql91-jdbc.jar" />
 		<pathelement location="${user.share.lib.dir}/javamail.jar" />
 		<pathelement location="${user.share.lib.dir}/ini4j.jar" />
 	</path>
@@ -40,7 +40,7 @@
 		<echo message="java version source: ${source}" />
 		<echo message="classpath element ${bin.dir}" />
 		<echo message="classpath element ${user.share.lib.dir}/mysql-connector-java.jar" />
-		<echo message="classpath element ${user.share.lib.dir}/postgresql91.jar" />
+		<echo message="classpath element ${user.share.lib.dir}/postgresql91-jdbc.jar" />
 		<echo message="classpath element ${user.share.lib.dir}/javamail.jar" />
 		<echo message="classpath element ${user.share.lib.dir}/ini4j.jar" />
 	</target>
