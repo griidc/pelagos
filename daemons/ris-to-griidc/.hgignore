@@ -1,6 +1,7 @@
 data
 lib
 bin
+doc
 .DS_Store
 .classpath
 .project
