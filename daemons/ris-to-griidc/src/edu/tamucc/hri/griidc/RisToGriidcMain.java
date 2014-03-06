@@ -89,14 +89,13 @@ public class RisToGriidcMain {
 			MiscUtils.closeRisErrorLogFile();
 
 			risToGriidcMain.report();
-			// risToGriidcMain.emailLogs();
+			risToGriidcMain.emailLogs();
 			MiscUtils.writeStringToFile(InstDeptPeopleDetailFileName,
 					risInstitutionWithErrors.toString());
             
             
 			System.out.println("END of risToGriidcMain");
-			System.out.println(MiscUtils.getProjectNumberFundingCycleCache()
-					.toString());
+			// System.out.println(MiscUtils.getProjectNumberFundingCycleCache().toString());
 
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -118,6 +117,7 @@ public class RisToGriidcMain {
 
 	public void emailLogs() throws PropertyNotFoundException, IOException {
 		Emailer emailer = new Emailer();
+		String rFormat = "\t%-40s%n";
 		String from = RisToGriidcConfiguration.getGriidcMailSender();
 		String[] tos = RisToGriidcConfiguration.getPrimaryMsgLogRecipients();
 		String subject = "Primary Log File for RIS to GRIIDC - "
@@ -125,12 +125,21 @@ public class RisToGriidcMain {
 		String absoluteFileName = RisToGriidcConfiguration.getPrimaryLogFileName();
 		String msg = MiscUtils.readFileToBuffer(absoluteFileName);
 		emailer.sendEmail(from, tos, subject, msg);
+		System.out.println("\n" + subject + " : " + absoluteFileName + " emailed to the following addresses:");
+		for(String t : tos) {
+			System.out.printf(rFormat,t);
+		}
 
 		tos = RisToGriidcConfiguration.getRisErrorMsgLogRecipients();
 		subject = "RIS Error Log File for RIS to GRIIDC - "
 				+ MiscUtils.getDateAndTime();
-		msg = MiscUtils.readFileToBuffer(RisToGriidcConfiguration.getRisErrorLogFileName());
+		absoluteFileName = RisToGriidcConfiguration.getRisErrorLogFileName();
+		msg = MiscUtils.readFileToBuffer(absoluteFileName);
 		emailer.sendEmail(from, tos, subject, msg);
+		System.out.println("\n" + subject + " : " + absoluteFileName + " emailed to the following addresses:");
+		for(String t : tos) {
+			System.out.printf(rFormat,t);
+		}
 	}
 
 	public void report() throws PropertyNotFoundException, InvalidFileFormatException, IOException {
