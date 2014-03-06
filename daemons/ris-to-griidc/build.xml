@@ -14,6 +14,7 @@
 	<property name="debuglevel" value="source,lines,vars" />
 	<property name="target" value="1.6" />
 	<property name="source" value="1.6" />
+	<property name="jar.file.name" value="${lib.dir}/${project.name}.jar" />
 
 	<path id="build.compile.classpath">
 		<pathelement location="${bin.dir}" />
@@ -27,6 +28,7 @@
 	<!-- env  environment  - display the environment  -->
 	<target name="env" description="show the pathelements etc">
 		<echo message="Project name: ${project.name}" />
+		<echo message="User home: ${user.home}" />
 		<echo message="src dir: ${src.dir}" />
 		<echo message="base dir: ${base.dir}" />
 		<echo message="build dir: ${build.dir}" />
@@ -43,6 +45,7 @@
 		<echo message="classpath element ${user.share.lib.dir}/postgresql91-jdbc.jar" />
 		<echo message="classpath element ${user.share.lib.dir}/javamail.jar" />
 		<echo message="classpath element ${user.share.lib.dir}/ini4j.jar" />
+		<echo message="jar file name ${jar.file.name}" />
 	</target>
 	<!--  init creates directories and  -->
 	<target name="init" description="create necessary directories, set options">
@@ -75,11 +78,16 @@
 	<target name="jar" depends="build" description="make a java archive .jar file ">
 		<mkdir dir="${lib.dir}" />
 		<echo message="generate a java archive: ${lib.dir}/${project.name}.jar" />
-		<jar destfile="${lib.dir}/${project.name}.jar" basedir="${bin.dir}">
+		<jar destfile="${jar.file.name}" basedir="${bin.dir}">
 			<manifest>
 				<attribute name="Main-Class" value="edu.tamucc.hri.griidc.RisToGriidcMain" />
 			</manifest>
 		</jar>
+		<echo message="copy ${jar.file.name} to ${user.home}/griidcProjects/lib " />
+		<copy file="${jar.file.name}" todir="${user.home}/griidcProjects/lib"/>	
+	<!--	
+	    <copyfile src="${jar.file.name}" dest="${user.home}/griidcProjects/lib"/>  
+	 -->
 	</target>
 	<!-- Generate javadocs for current project into ${doc.dir} -->
 	<target name="build-java-docs" depends="build" description="generate JavaDoc documentation">
