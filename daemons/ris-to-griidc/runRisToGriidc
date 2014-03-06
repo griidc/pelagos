@@ -2,6 +2,7 @@
 #  jvh
 # 
 # run the   RisToGriidcMain.class
+#   set the class path to include postgresql jdbc connector,mysql connector, ini4j and javamail
 #
 export JAVA_APPLIB=/usr/share/java
 CLASSPATH=$JAVA_APPLIB/ini4j.jar:$JAVA_APPLIB/javamail.jar:$JAVA_APPLIB/mysql-connector-java.jar:$JAVA_APPLIB/postgresql91-jdbc.jar 
