@@ -2,7 +2,7 @@
 function getDOIMetaData($doi)
 {
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, "http://n2t.net/ezid/id/$doi");
+    curl_setopt($ch, CURLOPT_URL, "https://ezid.cdlib.org/id/$doi");
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     $output = curl_exec($ch);
     print curl_getinfo($ch, CURLINFO_HTTP_CODE) . "\n";
@@ -15,7 +15,7 @@ function createDOI($input)
     include 'doiConfig.php';
     utf8_encode($input);
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, "https://n2t.net/ezid/shoulder/$doishoulder");
+    curl_setopt($ch, CURLOPT_URL, "https://ezid.cdlib.org/shoulder/$doishoulder");
     curl_setopt($ch, CURLOPT_USERPWD, "$doiusername:$doipassword");
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_HTTPHEADER,

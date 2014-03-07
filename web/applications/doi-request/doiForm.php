@@ -273,7 +273,7 @@ function sendMailApprove($formHash)
     $parameters = '-ODeliveryMode=d'; 
     
     $message = "Congratulations $userFirstName $userLastName!<br /><br />";
-    $message .= "Your information has been approved and a DOI has been assigned. The link to your DOI is <a href=\"http://n2t.net/ezid/id/$doi\">$doi</a>.<br \>";
+    $message .= "Your information has been approved and a DOI has been assigned. The link to your DOI is <a href=\"http://ezid.cdlib.org/id/$doi\">$doi</a>.<br \>";
     $message .= "If you have any questions regarding your DOI please contact griidc@gomri.org.<br \><br \>";
     $message .= "<em>The GRIIDC Team.</em><br \>";
     
