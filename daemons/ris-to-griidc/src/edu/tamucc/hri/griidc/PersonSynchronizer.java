@@ -453,7 +453,7 @@ public class PersonSynchronizer {
 				} else if (count == 1) {
 
 					// Modify Person record
-					if (isCurrentPersonRecordEqual()) {
+					if (isCurrentRecordEqual()) {
 						continue; // branch back to while (rset.next())
 					}
 					this.griidcRecordsModified++;
@@ -805,7 +805,7 @@ public class PersonSynchronizer {
 	 * @param gLat
 	 * @return
 	 */
-	private boolean isCurrentPersonRecordEqual() {
+	private boolean isCurrentRecordEqual() {
 		
 		if (!(this.tempPostalAreaNumber == this.griidcPersonPostalArea_Number))
 			return false;
