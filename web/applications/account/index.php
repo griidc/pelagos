@@ -351,7 +351,7 @@ $app->post('/approve/create', $GLOBALS['AUTH_FOR_ROLE']('admin'), function () us
         }
         $ldif = write_ldif($ldifFile,$ldif);
         $return_val = 0;
-        $cmd = sprintf('/usr/bin/ldapadd -h "%s" -D "%s" -w "%s" -f "%s" 2>&1',LDAP_HOST,LDAP_BIND_DN,LDAP_BIND_PW,$ldifFile);
+        $cmd = sprintf("/usr/bin/ldapadd -h '%s' -D '%s' -w '%s' -f '%s' 2>&1",LDAP_HOST,LDAP_BIND_DN,LDAP_BIND_PW,$ldifFile);
         exec($cmd,$output,$return_val);
         if ($return_val) {
             drupal_set_message("An error occurred creating account $uid.",'error');
