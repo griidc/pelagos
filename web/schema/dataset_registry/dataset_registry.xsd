@@ -239,6 +239,11 @@
                         <xs:documentation>This attribute is used to specify the algorithm used to calculate the hash. Possible values are: MD5, SHA-1, SHA-256, SHA-512</xs:documentation>
                     </xs:annotation>
                 </xs:attribute>
+                <xs:attribute name="representation" use="required" type="hash_representation_TYPE">
+                    <xs:annotation>
+                        <xs:documentation>This attribute is used to specify the textual represntation of the hash. Possible values are: hexadecimal, octal, base64</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
@@ -248,6 +253,13 @@
             <xs:enumeration value="SHA-1"/>
             <xs:enumeration value="SHA-256"/>
             <xs:enumeration value="SHA-512"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="hash_representation_TYPE">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="hexadecimal"/>
+            <xs:enumeration value="octal"/>
+            <xs:enumeration value="base64"/>
         </xs:restriction>
     </xs:simpleType>
     <xs:element name="access_control">
