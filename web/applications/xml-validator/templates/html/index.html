@@ -1,0 +1,42 @@
+{% if schema %}
+<h3>Validate against {{schema}} schema (<a href="{{xsdurl}}" target="_blank">{{xsdurl}}</a>)</h3>
+{% endif %}
+
+<form method="get">
+    XML URL: <input name="xmlurl" type="text" size="150" value="{{xmlurl}}">
+    {% if schema_field %}
+        <p>
+        XSD URL: <input name="xsdurl" type="text" size="150" value="{{xsdurl}}">
+    {% endif %}
+    <p>
+    <input type="submit" value="Validate">
+    {% if validated %}
+        {% if errors %}
+            <div style="background-color:#fddfde; border: 1px solid #fbc7c6; padding:5px;">
+                <div style="font-weight:bold; margin-bottom:10px;">This document contains errors:</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="text-align:center;">Count</th>
+                            <th>Line</th>
+                            <th>Error</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for error in errors %}
+                            <tr>
+                                <td style="text-align:right; font-weight:bold; padding-right:10px;">{{loop.index}}</td>
+                                <td style="text-align:right; padding-right:10px;">{{error.line}}</td>
+                                <td>{{error.levelName}} {{error.code}}: {{error.message}}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div style="background-color:#dffdde; border: 1px solid #c7fbc6; padding:5px; font-weight:bold;">
+                This document is valid.
+            </div>
+        {% endif %}
+    {% endif %}
+</form>
