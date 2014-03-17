@@ -16,6 +16,7 @@
             </source>
             <title>My First Dataset Title</title>
             <abstract>My First Dataset Abstract</abstract>
+            <filename>my_first_dataset_file.dat</filename>
         </dataset>
         <access_control restricted="false"/>
         <transport method="http" pull="true">
@@ -39,6 +40,7 @@
             </source>
             <title>My Second Dataset Title</title>
             <abstract>My Second Dataset Abstract</abstract>
+            <filename>my_second_dataset_file.dat</filename>
         </dataset>
         <access_control restricted="true"/>
         <transport method="http" pull="true">

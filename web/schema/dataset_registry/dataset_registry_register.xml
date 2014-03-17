@@ -16,6 +16,7 @@
             </source>
             <title>My First Dataset Title</title>
             <abstract>My First Dataset Abstract</abstract>
+            <filename>my_first_dataset_file.dat</filename>
             <doi autogenerate="false">10.1000/182</doi>
             <hash algorithm="SHA-256">a8b7fff5db4b54dc6fd4d37dda33618c37734eaf3259cd8bcd1ef5955f875bbc</hash>
         </dataset>
@@ -60,6 +61,7 @@
             </source>
             <title>My Second Dataset Title</title>
             <abstract>My Second Dataset Abstract</abstract>
+            <filename>my_second_dataset_file.dat</filename>
             <doi autogenerate="true"/>
         </dataset>
         <access_control restricted="true"/>
@@ -97,6 +99,7 @@
             </source>
             <title>My Third Dataset Title</title>
             <abstract>My Third Dataset Abstract</abstract>
+            <filename>my_third_dataset_file.dat</filename>
             <doi autogenerate="true"/>
         </dataset>
         <access_control restricted="false"/>
