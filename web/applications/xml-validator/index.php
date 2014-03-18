@@ -15,36 +15,35 @@ $app = new \Slim\Slim(array(
 
 $app->view->parserDirectory = $GLOBALS['libraries']['Twig']['directory'];
 
-$app->get('/:schema_name', function ($schema_name) use ($app) {
+$app->get('/', function () use ($app) {
 
-    $stash['schema_field'] = true;
     $stash['validated'] = false;
 
-    if (isset($schema_name) and $schema_name != '') {
-        switch ($schema_name) {
+    if ($app->request()->get('schema')) {
+        $stash['schema'] = $app->request()->get('schema');
+        switch ($app->request()->get('schema')) {
             case 'dataset_information':
                 $schema = '/var/www/schema/dataset_information/dataset_information.xsd';
-                $stash['schema'] = 'GRIIDC Dataset Information';
-                $stash['xsdurl'] = 'http://data.gulfresearchinitiative.org/schema/dataset_information/dataset_information.xsd';
+                $stash['xsd_url'] = 'http://data.gulfresearchinitiative.org/schema/dataset_information/dataset_information.xsd';
                 break;
             case 'dataset_registry':
                 $schema = '/var/www/schema/dataset_registry/dataset_registry.xsd';
-                $stash['schema'] = 'GRIIDC Dataset Registry';
-                $stash['xsdurl'] = 'http://data.gulfresearchinitiative.org/schema/dataset_registry/dataset_registry.xsd';
+                $stash['xsd_url'] = 'http://data.gulfresearchinitiative.org/schema/dataset_registry/dataset_registry.xsd';
+                break;
+            case 'url':
+                if ($app->request()->get('xsd_url')) {
+                    $schema = $app->request()->get('xsd_url');
+                    $stash['xsd_url'] = $app->request()->get('xsd_url');
+                }
                 break;
         }
-        $stash['schema_field'] = false;
-    }
-    elseif ($app->request()->get('xsdurl')) {
-        $schema = $app->request()->get('xsdurl');
-        $stash['xsdurl'] = $app->request()->get('xsdurl');
     }
 
-    if ($app->request()->get('xmlurl')) {
+    if ($app->request()->get('xml_url')) {
         if (isset($schema)) {
             libxml_use_internal_errors(true);
             $domdoc = new DOMDocument();
-            $domdoc->load($app->request()->get('xmlurl'));
+            $domdoc->load($app->request()->get('xml_url'));
             if (!$domdoc->schemaValidate($schema)) {
                 $errors = libxml_get_errors();
                 libxml_clear_errors();
@@ -67,10 +66,10 @@ $app->get('/:schema_name', function ($schema_name) use ($app) {
         }
     }
 
-    $stash['xmlurl'] = $app->request()->get('xmlurl');
+    $stash['xml_url'] = $app->request()->get('xml_url');
 
     return $app->render('html/index.html',$stash);
-})->conditions(array('schema_name' => '.*'));
+});
 
 $app->run();
 
