@@ -100,17 +100,16 @@ $conn = pdoDBConnect('pgsql:'.GOMRI_DB_CONN_STRING);
 
 $query = "
 SELECT 
-    COUNT(datasets.dataset_uid) AS total_datasets,
-    COUNT(registry.registry_id) AS total_datasets_registered,
-    (SELECT count(id) FROM doi_regs where doi_regs.approved=true) as total_doi_requested
-FROM datasets 
-LEFT OUTER JOIN registry ON registry.dataset_udi = datasets.dataset_udi
-WHERE datasets.status > 0
+
+(SELECT COUNT(datasets.dataset_uid)  from datasets WHERE datasets.status > 0) AS total_datasets,
+(SELECT COUNT(*) from curr_reg_view WHERE curr_reg_view.registry_id NOT LIKE '00%') as total_datasets_registered,
+(SELECT COUNT(id) FROM doi_regs where doi_regs.approved=true) as total_doi_requested
 ;
+
+
 ";
 
 $row = pdoDBQuery($conn,$query);
-//var_dump($row);
 
 $gdata = array();
 
@@ -120,10 +119,6 @@ $gdata[1]['title'] = 'Total number of datasets registered';
 $gdata[1]['value'] = $row[1];
 $gdata[2]['title'] = 'Total number of DOIs issued by GRIIDC';
 $gdata[2]['value'] = $row[2];
-//$data[3]['title'] = 'Thursday';
-//$data[3]['value'] = $row[0];
-//$data[4]['title'] = 'Friday';
-///$data[4]['value'] = $row[0];
 
 $query = "
 SELECT 
