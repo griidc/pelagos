@@ -1,0 +1,645 @@
+<script>
+
+	var featureSend = false;
+	var drawTheMap = false;
+	var startOffDrawing = true;
+	var orderEnum;
+	
+	var wizGeoViz;
+	
+	$(document).ready(function()
+	{
+		
+		$.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
+            show: {
+                event: "mouseenter focus",
+                solo: true
+            },
+            hide: {
+                event: "mouseleave blur",
+                delay: 100,
+                fixed: true
+            },
+            style: {
+                classes: "ui-tooltip-shadow ui-tooltip-tipped"
+            },
+			position: {
+                adjust: {
+                    method: "flip flip"
+                },
+                my: "top left",
+                at: "bottom right",
+                viewport: $(window)
+			}
+        });
+		
+		wizGeoViz = new GeoViz();
+		
+		orderEnum = wizGeoViz.orderEnum;
+		
+		wizGeoViz.initMap('olmap',{'onlyOneFeature':true,'allowModify':true,'allowDelete':true});
+		//initToolbar('maptoolbar',{'showDrawTools':true,'showExit':true});
+	
+		$("#geoWizard").dialog({
+			close: function(event, ui) { closeDialog() },
+			resizeStop: function(){
+				wizGeoViz.updateMap();
+			},
+			dragStop: function(){
+				wizGeoViz.updateMap();
+			}
+		});
+		
+		$("#helpinfo").dialog({
+			autoOpen: false,
+			width: 400,
+			modal: true,
+			buttons: {
+				OK: function() {
+					if ($("#drawPolygon:checked").length){$("#drawPolygon:checked").click();}
+					if ($("#drawLine:checked").length){$("#drawLine:checked").click();}
+					if ($("#drawPoint:checked").length){$("#drawPoint:checked").click();}
+					if ($("#drawBox:checked").length){$("#drawBox:checked").click();}
+					if ($("#featDraw:checked").length){$("#featDraw:checked").click();}
+					if ($("#featPaste:checked").length){$("#featPaste:checked").click();}
+					$(this).dialog('close');
+					if (startOffDrawing)
+					{wizGeoViz.startDrawing();}
+					else
+					{$('#coordlist').focus();}
+					wizGeoViz.updateMap();
+				}
+				//'Polygon': function() {
+					//$(this).dialog('close');
+					//setDrawMode('polygon');
+					//startDrawing();
+				//},
+				//'Box': function() {
+				//	$(this).dialog('close');
+				//	setDrawMode('box');
+				//	startDrawing();
+				//},
+				//'Line': function() {
+				//	$(this).dialog('close');
+				//	setDrawMode('line');
+				//	startDrawing();
+				//},
+				//'Point': function() {
+				//	$(this).dialog('close');
+				//	setDrawMode('point');
+				//	startDrawing();
+				//}//,
+				//Cancel: function() {
+					//$(this).dialog('close');
+				//}
+			}
+		});
+		
+		$(document).on('imready', function(e,who) {
+			if (who == '#olmap')
+			{
+				console.log('Map Ready');
+				if (drawTheMap)
+				{
+					drawMap();
+					setTimeout( function() { 
+						wizGeoViz.updateMap();
+						try{setButtonEvents()}
+						catch(err)
+						{console.debug(err.message)}
+					}, 300);
+				}
+			}
+		});
+		
+		
+		
+		if ($('#BPL1_DataIdent').val() != "")
+		{
+			//$("#geoWizard").dialog( "option", "width", $(window).width()*.8);
+			//$("#geoWizard").dialog( "option", "height", $(window).height()*.8);
+			//$("#geoWizard").load('includes/metamap.html');
+			//$("#geoWizard").html("");
+			$("#geoWizard").dialog("open");
+			drawTheMap =  true;
+
+		}
+		else
+		{
+			$("#wizard").fadeIn();
+			//$(":button").button().click(function(){showMain($(this));});
+			$("#mainStuff").html($("#hasSpatial").clone(true).fadeIn());
+			
+			$("#geoWizard").dialog( "option", "width", 550);
+			$("#geoWizard").dialog( "option", "height", 200);
+			$("#geoWizard").dialog("open");
+			
+		}
+
+	});
+
+	/*
+	function showMain(what)
+	{
+		if (what != "")
+		{
+			currentDiv = $("#mainStuff div").attr('id');
+			breadCrumbs.push(currentDiv);
+			breadCrumb++;
+			DIV = $("#"+what.val());
+			$("#mainStuff").html(DIV.clone(true).fadeIn());
+		}
+		//$("#mainStuff :button").button().click(function(){showMain($(this));});
+	}
+	
+	function backBread()
+	{
+		if (breadCrumb > -1)
+		{
+			DIV = $("#"+breadCrumbs[breadCrumb]);
+			console.debug(DIV);
+			$("#mainStuff").html(DIV.clone(true).fadeIn());
+			breadCrumb--;
+			breadCrumbs.pop();
+		}
+	}
+	*/
+	
+	function animateTo(Width, Height)
+	{
+		var dlg = $("#geoWizard").parents(".ui-dialog:first");
+		var dlgTop = dlg.position().top;
+		var dlgHeight = dlg.height();
+		var newTop = ($(window).height()-Height)/2;
+		var newLeft = ($(window).width()-Width)/2;
+		var topDiff = (Height - dlgHeight)/2;
+		newTop = ((dlgTop-topDiff)+newTop)/2;
+		
+		dlg.animate({ width: Width, height: Height, left: newLeft, top: newTop});
+		$("#geoWizard").height(Height-50);
+		$("#geoWizard").dialog("option", "position", "center");
+	}
+	
+	function drawMap()
+	{
+		var diaWidth = $(window).width()*.8;
+		var diaHeight = $(window).height()*.8;
+		
+		$("#mapwiz").height(diaHeight-50);
+		
+		animateTo(diaWidth,diaHeight);
+		
+		if ($('#BPL1_DataIdent').val() != "" && !featureSend)
+		{
+			//addFeatureFromcoordinateList($('#BPL1_DataIdent').val());
+			
+			wizGeoViz.gmlToWKT($('#BPL1_DataIdent').val());
+			
+			$('#olmap').on('gmlConverted', function(e, eventObj) {
+				var addedFeature = wizGeoViz.addFeatureFromWKT(eventObj);
+				$('#coordlist').val(wizGeoViz.getCoordinateList(addedFeature.id));
+			});
+			
+			console.log('Initial Pop');
+			featureSend = true;
+		}
+		else if ($('#BPL1_DataIdent').val() == "")
+		{
+			$("#helpinfo").dialog('open');
+		}
+
+		setTimeout( function() { 
+			$("#geoWizard").html($("#mapwiz").fadeIn());
+			wizGeoViz.updateMap();
+			setEvents();
+		}, 300);
+	}
+	
+	function convertToConvexHull()
+	{
+		wizGeoViz.convexHull(wizGeoViz.getSingleFeature());
+		
+		$('#olmap').on('featureConverted', function(e, eventObj) {
+			wizGeoViz.removeAllFeaturesFromMap();
+			wizGeoViz.addFeatureFromWKT(wizGeoViz.wktTransformToWGS84(eventObj.wkt));
+		});
+		
+		return true;
+	}
+	
+	function convertToConcaveHull()
+	{
+		wizGeoViz.concaveHull(wizGeoViz.getSingleFeature());
+		
+		$('#olmap').on('featureConverted', function(e, eventObj) {
+			wizGeoViz.removeAllFeaturesFromMap();
+			wizGeoViz.addFeatureFromWKT(wizGeoViz.wktTransformToWGS84(eventObj.wkt));
+		});
+		
+		return true;
+	}
+	
+	function whatIsCoordinateOrder()
+	{
+		//debugger;
+		
+		var whatOrder = wizGeoViz.determineOrder($('#coordlist').val());
+		var diaMessage = '';
+		var diaButtons = [ {text:"Yes",click:function(){$(this).dialog("close");}},{text:"No",click:function(){$(this).dialog("close");}} ];
+		var realOrder = 0;
+		
+		
+		if (whatOrder == orderEnum.LATLONG)
+		{
+			diaMessage = 'This is Latitude, Longitude order, right?';
+			diaButtons = [ {text:"Yes",click:function(){$(this).dialog("close");wizAddFeature(orderEnum.LATLONG);}},{text:"No, it\'s Longitude,Latitude",click:function(){wizAddFeature(orderEnum.LONGLAT);$(this).dialog("close");}} ];
+		}
+		else if (whatOrder == orderEnum.LATLONGML)
+		{
+			diaMessage = 'Most likely this is Latitude, Longitude order, is this correct?';
+			diaButtons = [ {text:"Yes",click:function(){wizAddFeature(orderEnum.LATLONG);$(this).dialog("close");}},{text:"No, it\'s Longitude,Latitude",click:function(){wizAddFeature(orderEnum.LONGLAT);$(this).dialog("close");}} ];
+		}
+		else if (whatOrder == orderEnum.LONGLAT)
+		{
+			diaMessage = 'This is Longitude, Latitude order, right?';
+			diaButtons = [ {text:"Yes",click:function(){wizAddFeature(orderEnum.LONGLAT);$(this).dialog("close");}},{text:"No, it\'s Latitude,Longitude",click:function(){wizAddFeature(orderEnum.LATLONG);$(this).dialog("close");}} ];
+		}
+		else if (whatOrder == orderEnum.LONGLATML)
+		{
+			diaMessage = 'Most likely this is Longitude, Latitude order, is this correct?';
+			diaButtons = [ {text:"Yes",click:function(){wizAddFeature(orderEnum.LONGLAT);$(this).dialog("close");}},{text:"No, it\'s Latitude,Longitude",click:function(){wizAddFeature(orderEnum.LATLONG);$(this).dialog("close");}} ];
+		}
+		else if (whatOrder == orderEnum.UNKNOWN)
+		{
+			diaMessage = 'What is the coordinate order?';
+			diaButtons = [ {text:"Latitude,Longitude",click:function(){wizAddFeature(orderEnum.LATLONG);$(this).dialog("close");}},{text:"Longitude,Latitude",click:function(){wizAddFeature(orderEnum.LONGLAT);$(this).dialog("close");}} ];
+		}
+		else if (whatOrder == orderEnum.MIXED)
+		{
+			diaMessage = 'The coordinate order seems to be mixed!';
+			diaButtons = [ {text:"I'll fix it!",click:function(){wizAddFeature(orderEnum.MIXED);$(this).dialog("close");}},{text:"No, it\'s Latitude,Longitude",click:function(){wizAddFeature(orderEnum.LATLONG);$(this).dialog("close");}},{text:"No, it\'s Longitude,Latitude",click:function(){wizAddFeature(orderEnum.LONGLAT);$(this).dialog("close");}} ];
+		}
+		
+		
+		$("<div>"+diaMessage+"</div>").dialog({
+			autoOpen: true,
+			title: 'Coordinate Order?',
+			height: 200,
+			width: 500,
+			buttons: diaButtons,
+			modal: true,
+			close: function( event, ui ) {
+				$(this).dialog("destroy").remove();
+				$(document).trigger('coordinateOrder',realOrder);
+				realOrder = 0;
+				
+			}
+		}); 
+		
+		
+	}
+	
+	function wizAddFeature(llOrder)
+	{
+		//debugger;
+		var flipOrder = false;
+		
+		if (llOrder == orderEnum.LONGLAT)
+		{
+			flipOrder = true;
+			console.log('I AM FLIPPING IT!');
+		}	
+		wizGeoViz.removeAllFeaturesFromMap();
+				
+		var wktVal = $('#coordlist').val();
+		
+		var triedAdd = wizGeoViz.addFeatureFromcoordinateList(wktVal,flipOrder);
+		
+		if (!triedAdd)
+		{
+			$("<div>Those coordinates couldn't been made into a valid feature!</div>").dialog({
+				autoOpen: true,
+				title: 'WARNING!',
+				//height: 140,
+				buttons: {
+					OK: function() {
+						$(this).dialog('close');
+					}},
+				modal: true,
+				close: function( event, ui ) {
+					$(this).dialog("destroy").remove();
+				}
+			}); 
+		}
+		else
+		{
+			wizGeoViz.gotoAllFeatures();
+			
+		}
+	}
+	
+	function renderOnMap()
+	{
+		wizGeoViz.stopDrawing();
+		wizGeoViz.removeAllFeaturesFromMap();
+		
+		whatIsCoordinateOrder();
+		
+	}
+	
+	function saveFeature()
+	{
+		var myWKT = wizGeoViz.getWKT(wizGeoViz.getSingleFeature());
+		var wgsWKT = wizGeoViz.wktTransformToWGS84(myWKT);
+		wizGeoViz.wktToGML(wgsWKT);
+		
+		$('#olmap').on('wktConverted', function(e, eventObj) {
+			
+			$('#BPL1_DataIdent').val(eventObj);
+			$('#BPL1_DataIdent').trigger('change');
+			
+			closeDialog();
+		});
+	}
+	
+	function setEvents()
+	{
+		$('#olmap').on('closeMe', function(e, eventInfo) {
+			//$('#BPL1_DataIdent').val(getCoordinateList(vlayer.features[0]));
+			//$('#BPL1_DataIdent').val(eventInfo);
+			closeDialog();
+		});
+		
+		$('#olmap').on('featureAdded', function(e, eventInfo) { 
+			$('#coordlist').val(eventInfo);
+		});
+		
+		$('#olmap').on('vectorChanged', function(e, eventInfo) { 
+			$('#coordlist').val(eventInfo);
+			//console.log(eventInfo);
+			//console.log(e);
+		});
+		
+		$('#olmap').on('coordinateError', function(e, eventInfo) { 
+			$("<div>"+eventInfo+"</div>").dialog({
+				autoOpen: true,
+				title: 'WARNING!',
+				//height: 140,
+				buttons: {
+					OK: function() {
+					$(this).dialog('close');
+					}},
+				modal: true,
+				close: function( event, ui ) {
+					$(this).dialog("destroy").remove();
+				}
+			}); 
+		});
+		
+		
+	
+		$(document).keyup(function(e){
+			if (e.keyCode == 46)
+			{
+				//deleteSelected();
+				
+			}
+		});
+				
+		$("#coordlist").click(function()
+		{
+			wizGeoViz.stopDrawing();
+			//selectNone();
+		});
+		
+		$("#coordlist").keydown(function()
+		{
+			wizGeoViz.stopDrawing();
+			//selectNone();
+		});
+	
+		$("#saveFeature").button({ icons: { primary: "ui-icon ui-icon-disk"}}).click(function()
+		{
+			//debugger;
+			saveFeature();
+			//$('#BPL1_DataIdent').val(getCoordinateList(vlayer.features[0]));
+			//closeDialog();
+		});
+		
+		$("#drawOnMap").button({ icons: { primary: "ui-icon ui-icon-check"}}).click(function()
+		{
+		
+			renderOnMap();
+			
+		});
+		
+		$("#startDrawing").button({ icons: { primary: "ui-icon ui-icon-pencil"}}).click(function()
+		{
+			wizGeoViz.startDrawing();
+			
+		});
+		
+		$("#deleteFeature").button({ icons: { primary: "ui-icon ui-icon-trash"}}).click(function()
+		{
+			wizGeoViz.deleteSelected();
+			
+		});
+		
+		$("#exitDialog").button({ icons: { primary: "ui-icon ui-icon-close"}}).click(function()
+		{
+			closeDialog();
+			
+		});
+		
+		$("#startOver").button({ icons: { primary: "ui-icon ui-icon-refresh"}}).click(function()
+		{
+			wizGeoViz.stopDrawing();
+			$('#coordlist').val('');
+			wizGeoViz.removeAllFeaturesFromMap();
+			wizGeoViz.goHome();
+			$("#helpinfo").dialog('open');
+			
+		});
+		
+		
+		$("#drawPolygon").button().click(function()
+		{wizGeoViz.setDrawMode('polygon');});
+		
+		$("#drawLine").button().click(function()
+		{wizGeoViz.setDrawMode('line');});
+		
+		$("#drawPoint").button().click(function()
+		{wizGeoViz.setDrawMode('point');});
+		
+		$("#drawBox").button().click(function()
+		{wizGeoViz.setDrawMode('box');});
+		
+		$("#featDraw").button().click(function()
+		{console.log('draw');startOffDrawing=true;});
+		
+		$("#featPaste").button().click(function()
+		{console.log('paste');startOffDrawing=false;});
+		
+		
+	}
+	
+	function verifyMap()
+	{
+		$('#BPL1_DataIdent').val($('#wizCoordChk').val());
+		drawMap();
+	}
+	
+	function noSpatial()
+	{
+		animateTo(700,300);
+		//$("#provideDesc").height(300);
+		$("#EX0_DataIdent").click();
+		changeExtentDataIdent(true);
+		$("#mainStuff").html($("#provideDesc").clone(true).fadeIn());
+		
+	}
+	
+	function noSpatialClose()
+	{
+		closeDialog();
+		$("#EX1_DataIdent").focus();
+		$("#EX1_DataIdent").val($("#wizDesc").val());
+	}
+	
+	function closeDialog()
+	{
+		$("#geoWizard").fadeOut();
+		$("#geoWizard").dialog("close");
+		//$("#geoWizard").dialog("destroy").remove();
+	}
+	
+	function validateCoords(Unchecked, Checked)
+	{
+		//debugger;
+		$('#'+Checked).text(wizGeoViz.checkPointList($("#"+Unchecked).val()));
+		var retval = wizGeoViz.determineOrder($('#'+Checked).val());
+	}
+</script>
+
+<div id="wizard" style="display:none;">
+	<fieldset>
+		<div id="mainStuff"></div>
+		<!--button style="position:absolute;bottom:0;"	onclick="backBread();">BACK</button></div-->
+	</fieldset>
+</div>
+	
+<div id="hasSpatial" style="display:none;">
+	<h2>Does your data have any spatial content?</h2>
+	<button id="yesSpatial" onclick="drawMap();" type="button">Yes</button>
+	<button id="noSpatial" onclick="noSpatial();" value="provideDesc" type="button">No</button>
+</div>
+
+<!--
+<div id="howProvide" style="display:none;">
+	<h2>How would you like to provide the extent?</h2>
+	<button id="hasCoord" value="provideCoord" onclick="animateTo(650, 300);" type="button">I have the coordinates as Text</button>
+	<button id="drawOnMap" value="then" onclick="drawMap();" type="button">I would like to draw on a Map</button>
+</div>
+
+	<div id="provideCoord" style="display:none;heigth:100%;">
+	<h2>Please provide the coordinates</h2>
+	<textarea id="wizCoord" cols="80" rows="5"></textarea><br/>
+	<button id="coordCont" value="checkCoord" onclick="validateCoords('wizCoord','wizCoordChk');" type="button">Continue</button>
+	</div>
+	
+	<div id="checkCoord" style="display:none;heigth:100%;">
+	<h2>Does this look ok?</h2>
+	<textarea disabled id="wizCoordChk" cols="80" rows="5"></textarea><br/>
+	<button id="coordOk" onclick="verifyMap();" type="button">Yes</button>
+	<button id="coordOk" value="provideCoord" type="button">No</button>
+	</div>
+
+-->
+
+<div id="provideDesc" style="display:none;">
+	<h2>Please provide a description</h2>
+	<textarea id="wizDesc" cols="80" rows="5">No relevant geographic or temporal extents.</textarea><br/>
+	<button id="provideOk" onclick="noSpatialClose();" type="button">Done!</button>
+</div>
+
+
+
+<div id="mapwiz" style="display:none;">
+	<table width="100%" height="100%" border="0">
+		<!--<tr>
+			<td colspan="2" height="50px" width="100%">
+			<div id="maptoolbar" style="background: #ffffff url('/sites/all/themes/griidc/images/green/body-bg.png') 0 0 repeat-x; padding: 10px;"></div>
+			</td>
+		</tr>-->
+		<tr valign="top">
+			<td width="80%" >
+				<!--Make sure the width and height of the map are 100%-->
+				<div id="olmap" style="width: 100%;height: 100%;"></div>
+			</td>
+			<td width="20%">
+				<table width="100%" height="100%" border="0">
+					<tr>
+						<td align="center" valign="top" height="90%" style="position:relative;">
+							<label for="coordlist">Coordinate List</label>
+							<textarea id="coordlist" style="width:95%;position:absolute;left:5px;right:5px;top:20px;bottom:5px;"></textarea>
+						</td>
+					<tr>
+						<td>
+						<div id="wiztoolbar" class="ui-widget-header ui-corner-all">
+							<!--
+								<div id="drawMode">
+									<input type="radio" id="drawPolygon" name="drawMode" checked="checked"><label for="drawPolygon">Polygon</label>
+									<input type="radio" id="drawLine" name="drawMode" ><label for="drawLine">Line</label>
+									<input type="radio" id="drawPoint" name="drawMode"><label for="drawPoint">Point</label>
+									<input type="radio" id="drawBox" name="drawMode"><label for="drawBox">Box</label>
+								</div>
+							-->
+							<button class="button" style="width: 100%;" id="drawOnMap">Render on Map</button>
+							<button class="button" style="width: 100%;" id="saveFeature">Save Feature</button>
+							<button class="button" style="width: 100%;" id="startDrawing">Start Drawing</button>
+							<button class="button" style="width: 100%;" id="deleteFeature">Delete</button>
+							<button class="button" style="width: 100%;" id="startOver">Start Over</button>
+							<button class="button" style="width: 100%;" id="exitDialog">Close Dialog</button>
+						</div>
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</table>
+</div>
+
+<div id="helpinfo" title="Help" style="display:none;width:1000px">
+	You are about to draw a feature on a map.<br>
+	To stop drawing the map double click on the last vector of the feature.
+	
+	<div id="helptoolbar" style="font-size:100%;" class="ui-widget-header ui-corner-all">
+		<div style="display:table;width:100%;">
+			<div id="drawMode" style="display:table-row;">
+				<div style="display:table-cell;">
+					<input class="button" type="radio" id="drawPolygon" name="drawMode" checked="checked"><label for="drawPolygon">Polygon</label>		
+				</div>
+				<div style="display:table-cell;">
+					<input type="radio" id="drawLine" name="drawMode" ><label for="drawLine">Line</label>		
+				</div>
+				<div style="display:table-cell;">
+					<input type="radio" id="drawPoint" name="drawMode"><label for="drawPoint">Point</label>		
+				</div>
+				<div style="display:table-cell;">
+					<input type="radio" id="drawBox" name="drawMode"><label for="drawBox">Box</label>
+				</div>
+			</div>
+		</div>
+		
+		<div style="display:table;width:100%;">
+			<div id="featMode" style="display:table-row;">
+				<div style="display:table-cell;">
+					<input type="radio" id="featDraw" name="featMode" checked="checked"><label for="featDraw">Draw on the Map</label>
+				</div>
+				<div style="display:table-cell;">	
+					<input type="radio" id="featPaste" name="featMode" ><label for="featPaste">Paste in Coordinates</label>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
