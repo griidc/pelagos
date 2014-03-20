@@ -36,7 +36,7 @@ my $dbh = DBI->connect("DBI:$dbi_type_map{$db{type}}:host=$db{host};port=$db{por
 my $sth;
 
 # get all registry entries with url_data set, data_source_pull = true, and no download status
-$sth = $dbh->prepare("SELECT registry_id, dataset_udi, url_data, userid, dataset_title, access_status
+$sth = $dbh->prepare("SELECT registry_id, dataset_udi, url_data, userid, dataset_title, access_status, dataset_filename
                       FROM registry r
                       INNER JOIN (
                                   SELECT MAX(registry_id) AS MaxID
@@ -92,13 +92,23 @@ while (my $r = $sth->fetchrow_hashref()) {
             }
 
             my $filename;
-            my $cd = $response->header('content-disposition');
-            ($filename) = $cd =~ /filename="([^"]+)"/ if $cd;
+
+            # if filename is already set in DB, use it
+            $filename = $r->{'dataset_filename'} if $r->{'dataset_filename'};
+
+            # if we don't have a filename, try to get it from the HTTP header
+            unless ($filename) {
+                my $cd = $response->header('content-disposition');
+                ($filename) = $cd =~ /filename="([^"]+)"/ if $cd;
+            }
+
+            # if we still don't have a filename, try to get it from the URL
             unless ($filename) {
                 $filename = $url_data;
                 $filename =~ s/.*\///;
             }
 
+            # if we still don't have a filename, give up and report it
             unless ($filename) {
                 writelog($log,"[$udi] could not determine filename from $url_data");
                 $data_notify->{'error'}->{$reg_id} = { url => $url_data, status => 'could not determine filename' };
