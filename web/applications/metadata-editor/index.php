@@ -18,6 +18,22 @@ drupal_add_js('/includes/jquery-validation/jquery.validate.js',array('type'=>'ex
 //drupal_add_css('misc/ui/jquery.ui.tabs.css');
 //drupal_add_css('misc/ui/jquery.ui.dialog.css');
 
+drupal_add_js('/includes/openlayers/lib/OpenLayers.js',array('type'=>'external'));
+drupal_add_js('//maps.google.com/maps/api/js?v=3&sensor=false',array('type'=>'external'));
+# <script type="text/javascript" src="//maps.google.com/maps/api/js?v=3&sensor=false"></script>
+//drupal_add_js('/includes/geoviz/geoviz.js',array('type'=>'external'));
+drupal_add_js('/~mvandeneijnden/map/geoviz.js',array('type'=>'external'));
+
+
+/*
+<link type="text/css" rel="stylesheet" href="/includes/qTip2/jquery.qtip.min.css" />
+<script type="text/javascript" src="//code.jquery.com/jquery-1.8.2.js"></script>
+<script type="text/javascript" src="//code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<script type="text/javascript" src="/includes/openlayers/lib/OpenLayers.js"></script>
+<script type="text/javascript" src="//maps.google.com/maps/api/js?v=3&sensor=false"></script>
+<script type="text/javascript" src="/includes/qTip2/jquery.qtip.min.js"></script>
+*/
+
 if (array_key_exists('action',$_GET) and $_GET['action'] == 'help') {
     require 'help.html';
     exit;
