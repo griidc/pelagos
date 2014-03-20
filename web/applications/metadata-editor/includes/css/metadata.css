@@ -48,12 +48,13 @@
 	background-color: #FFFFCC;
 	}
 			
-	label 
-	{
-	font-weight: bold;
-	display: block;
-	}
-	label:after {content:": "}
+	label:not(.button) 
+    	{
+		font-weight: bold;
+		display: block;
+    }
+    /*label:not(.button):after {content:": "}*/
+	
 	
 	select {width:250px}
 	
@@ -125,4 +126,6 @@
 	-moz-border-radius:5px;
 	-webkit-border-radius:5px
 	}
+	
+
 	
