@@ -20,7 +20,7 @@ if (!@ARGV) {
     print "Usage: registry-harvester [OPTIONS] url\n";
     print "Options:\n";
     print "    -f    file mode, process url argument as a local file\n";
-    print "    -t    test mode, do everything except don't modify database\n";
+    print "    -t    test mode, don't actually create or update registry entries or send summary email\n";
     print "    -v    verbose, output information on what's happening\n";
     print "    -c    continue even if validation fails\n";
     exit;
