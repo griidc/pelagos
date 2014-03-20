@@ -21,8 +21,8 @@ drupal_add_js('/includes/jquery-validation/jquery.validate.js',array('type'=>'ex
 drupal_add_js('/includes/openlayers/lib/OpenLayers.js',array('type'=>'external'));
 drupal_add_js('//maps.google.com/maps/api/js?v=3&sensor=false',array('type'=>'external'));
 # <script type="text/javascript" src="//maps.google.com/maps/api/js?v=3&sensor=false"></script>
-//drupal_add_js('/includes/geoviz/geoviz.js',array('type'=>'external'));
-drupal_add_js('/~mvandeneijnden/map/geoviz.js',array('type'=>'external'));
+drupal_add_js('/includes/geoviz/geoviz.js',array('type'=>'external'));
+//drupal_add_js('/~mvandeneijnden/map/geoviz.js',array('type'=>'external'));
 
 
 /*
