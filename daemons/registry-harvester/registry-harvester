@@ -125,10 +125,7 @@ my @regCols = (
     'dataset_originator',
     'user_supplied_hash',
     'hash_algorithm',
-    'dataset_filename'
-);
-
-my @regColsURL = (
+    'dataset_filename',
     'url_data',
     'url_metadata'
 );
@@ -412,10 +409,9 @@ for my $entry (@{$data->{'entry'}}) {
         # if there is no existing registration, create initial entry
         writelog($log,"Creating initial registry entry for: $reg->{dataset_udi}",'action');
         if (!$opts{'t'}) {
-            @regColsAll = (@regCols,@regColsURL);
-            my $SQL = 'INSERT INTO registry(' . join(',',@regColsAll) . ') VALUES (' . join(',',('?') x (@regColsAll)) . ");";
+            my $SQL = 'INSERT INTO registry(' . join(',',@regCols) . ') VALUES (' . join(',',('?') x (@regCols)) . ");";
             my $sth2 = $griidc_dbh->prepare($SQL) or die "Couldn't prepare statement: " . $griidc_dbh->errstr;
-            $sth2->execute(map { $reg->{$_} } @regColsAll[0..(@regColsAll-1)]) or die "Couldn't execute statement: " . $sth2->errstr;
+            $sth2->execute(map { $reg->{$_} } @regCols[0..(@regCols-1)]) or die "Couldn't execute statement: " . $sth2->errstr;
             $sth2->finish();
         }
         push(@create_regids,$reg->{'registry_id'});
