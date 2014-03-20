@@ -32,6 +32,20 @@ class metaData
 		return parse_ini_file($ini_path,true);
 	}
 	
+	public function returnXmlString($NameSpace,$NodeName)
+	{
+		if ($this->xmldoc != null)
+		{
+			$mynodes = $this->xmldoc->getElementsByTagNameNS($NameSpace, $NodeName);
+			
+			if( $mynodes->length > 0 )
+			{
+				$mynode = $mynodes->item(0);
+				return $this->xmldoc->saveXML($mynode);
+			}
+		}
+	}
+	
 	public function returnPath($path)
 	{
 		if (is_null($this->xmldoc))
