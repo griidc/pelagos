@@ -229,8 +229,10 @@ function createNodesXML($xml,$doc)
                         $grandparent = $parent->parentNode;
                         $nodelevel = $parent->nodeName;
                     
-                    
-                        $val = htmlspecialchars($val, ENT_QUOTES | 'ENT_XML1', 'UTF-8');
+						if ($node->nodeName == 'gmd:polygon')
+						{ echo "it here $val"; }
+						
+                        //$val = htmlspecialchars($val, ENT_QUOTES | 'ENT_XML1', 'UTF-8');
                         $node->nodeValue = $val;
                     }
                     
@@ -269,10 +271,11 @@ function createNodesXML($xml,$doc)
 
 function addXMLChildValue($doc,$parent,$fieldname,$fieldvalue)
 {
-    $fieldvalue = htmlspecialchars($fieldvalue, ENT_QUOTES | 'ENT_XML1', 'UTF-8');
+	echo "Doing $fieldname";
+    $escfieldvalue = htmlspecialchars($fieldvalue, ENT_QUOTES | 'ENT_XML1', 'UTF-8');
     $child = $doc->createElement($fieldname);
     $child = $parent->appendChild($child);
-    $value = $doc->createTextNode($fieldvalue);
+    $value = $doc->createTextNode($escfieldvalue);
     $value = $child->appendChild($value);
     
     addNodeAttributes($doc,$parent,$child,$fieldname,$fieldvalue);
@@ -365,6 +368,46 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
         case 'gmd:EX_Extent':
         {
             $node->setAttribute('id','boundingExtent');
+            break;
+        }
+		case 'gmd:polygons':
+        {
+			
+			$parent->removeChild($node);
+			
+			$node = $doc->createElement('gmd:polygon');
+			$node = $parent->appendChild($node);
+			
+			$fieldvalue = htmlspecialchars_decode($fieldvalue, ENT_NOQUOTES | 'ENT_XML1');
+			$polygonDoc = new DomDocument('1.0','UTF-8');
+			$polygonDoc->loadXML($fieldvalue);
+			
+			$polygonNode = $polygonDoc->documentElement;
+			
+			if ($polygonNode->getAttribute ='gml:id' == "")
+			{	
+				$polygonNode->setAttribute('gml:id','Geometry1');
+			}
+			
+			//$one = new DOMDocument;
+			//$two = new DOMDocument;
+			//$one->loadXml('<root><foo>one</foo></root>');
+			//$two->loadXml('<root><bar><sub>two</sub></bar></root>');
+			//$bar = $two->documentElement->firstChild; // we want to import the bar tree
+			//$one->documentElement->appendChild($one->importNode($polygonNode, TRUE));
+			//echo $one->saveXml();
+			
+			$node->appendChild($doc->importNode($polygonNode, TRUE));
+			
+			/*
+			# b-method
+			$doc->validate();
+				
+			$fragment = $doc->createDocumentFragment();
+			$fragment->appendXML($fieldvalue);
+			$node->appendChild($fragment);
+			*/
+
             break;
         }
 		case 'gml:posList':
