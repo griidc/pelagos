@@ -9,12 +9,17 @@ class EX_BoundingPolygon
         $xmlArray = $mMD->returnPath($instanceType);
              
         $geoArray = $xmlArray[0];
+		
+		//var_dump($geoArray);
+		
+		$gmlCoordinates = '';
+		
+		$gmlCoordinates = $mMD->returnXmlString('http://www.opengis.net/gml/3.2','Polygon');
               
-        $polyCoordinates = '';
-        
-        if (isset($geoArray['gmd:polygon']['gml:Polygon']['gml:exterior']['gml:LinearRing']['gml:coordinates']))
+        /* 
+        if (isset ($geoArray['gmd:polygon']))
         {
-            $polyCoordinates = $geoArray['gmd:polygon']['gml:Polygon']['gml:exterior']['gml:LinearRing']['gml:coordinates'];
+            $gmlCoordinates = $geoArray['gmd:polygon'];
         }
 		elseif (isset($geoArray['gmd:extentTypeCode']))
         {
@@ -22,14 +27,17 @@ class EX_BoundingPolygon
             $polyCoordinates .= $geoArray['gmd:northBoundLatitude']['gco:Decimal'] . ',' . $geoArray['gmd:eastBoundLongitude']['gco:Decimal'] . ' '; 
             $polyCoordinates .= $geoArray['gmd:southBoundLatitude']['gco:Decimal'] . ',' . $geoArray['gmd:eastBoundLongitude']['gco:Decimal'] . ' '; 
             $polyCoordinates .= $geoArray['gmd:southBoundLatitude']['gco:Decimal'] . ',' . $geoArray['gmd:westBoundLongitude']['gco:Decimal'] . ' '; 
-            $polyCoordinates .= $geoArray['gmd:northBoundLatitude']['gco:Decimal'] . ',' . $geoArray['gmd:westBoundLongitude']['gco:Decimal']; 
+            $polyCoordinates .= $geoArray['gmd:northBoundLatitude']['gco:Decimal'] . ',' . $geoArray['gmd:west BoundLongitude']['gco:Decimal']; 
         }   
-    
+		*/
+	
         $instanceType .= '-gmd:EX_BoundingPolygon';
         
-        $twigArr = array('instanceName' => $instanceName, 'instanceType' => $instanceType, 'xmlArray' => $xmlArray[0], 'polyCoordinates' => $polyCoordinates);
+        $twigArr = array('instanceName' => $instanceName, 'instanceType' => $instanceType, 'xmlArray' => $xmlArray[0], 'gmlCoordinates' => $gmlCoordinates);
         
         $this->htmlString = $mMD->twig->render('html/EX_BoundingPolygon.html', $twigArr);
+		
+		$mMD->onReady .= $mMD->twig->render('js/EX_BoundingPolygon.js', array('instanceName' => $instanceName));
         
         return true;
     }
