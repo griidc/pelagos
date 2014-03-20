@@ -11,6 +11,7 @@ use Mail::Sendmail;
 use Net::LDAP;
 use Switch;
 use MIME::Base64 qw/decode_base64/;
+use Term::ANSIColor;
 
 my %opts;
 getopts('ftvc',\%opts);
@@ -57,7 +58,7 @@ else {
         $doc = XML::LibXML->load_xml(string => $response->decoded_content);
     }
     else {
-        writelog($log,"could not retrieve: $source (" . $response->status_line . "), exiting");
+        writelog($log,"could not retrieve: $source (" . $response->status_line . "), exiting",'error');
         exit;
     }
 }
@@ -67,7 +68,7 @@ my $xmlschema = XML::LibXML::Schema->new( location => '/var/www/schema/dataset_r
 writelog($log,"validating: $source");
 eval { $xmlschema->validate( $doc ); };
 if ($@) {
-    writelog($log,"validation failed for: $source");
+    writelog($log,"validation failed for: $source",'error');
     unless ($opts{'c'}) {
         writelog($log,"Registry Harvestor finished for: $source");
         exit;
@@ -262,7 +263,7 @@ for my $entry (@{$data->{'entry'}}) {
 
     # skip duplicate entries for the same dataset
     if ($seen{$reg->{'dataset_udi'}}) {
-        writelog($log,"Duplicate entry for $reg->{dataset_udi}, skipping");
+        writelog($log,"Duplicate entry for $reg->{dataset_udi}, skipping",'error');
         $duplicate_count++;
         print "\n" if $opts{'v'};
         next;
@@ -275,7 +276,7 @@ for my $entry (@{$data->{'entry'}}) {
     my $sth = $ris_dbh->prepare($SQL) or die "Couldn't prepare statement: " . $ris_dbh->errstr;
     $sth->execute($originator_id);
     unless ($sth->rows) {
-        writelog($log,"Invalid originator ID: $originator_id in entry for $reg->{dataset_udi}, skipping");
+        writelog($log,"Invalid originator ID: $originator_id in entry for $reg->{dataset_udi}, skipping",'error');
         $invalid_count++;
         print "\n" if $opts{'v'};
         next;
@@ -288,7 +289,7 @@ for my $entry (@{$data->{'entry'}}) {
     my $sth = $ris_dbh->prepare($SQL) or die "Couldn't prepare statement: " . $ris_dbh->errstr;
     $sth->execute($point_of_contact_id);
     unless ($sth->rows) {
-        writelog($log,"Invalid Point of Contact ID: $point_of_contact_id in entry for $reg->{dataset_udi}, skipping");
+        writelog($log,"Invalid Point of Contact ID: $point_of_contact_id in entry for $reg->{dataset_udi}, skipping",'error');
         $invalid_count++;
         print "\n" if $opts{'v'};
         next;
@@ -340,7 +341,7 @@ for my $entry (@{$data->{'entry'}}) {
     $sth->finish;
 
     unless ($dif_found) {
-        writelog($log,"No approved DIF found for $reg->{dataset_udi}, skipping");
+        writelog($log,"No approved DIF found for $reg->{dataset_udi}, skipping",'error');
         print "\n" if $opts{'v'};
         next;
     }
@@ -389,8 +390,8 @@ for my $entry (@{$data->{'entry'}}) {
             ($reg_seq) = $ref->{'registry_id'} =~ /\.(\d{3})$/;
             $reg_seq++;
             $reg->{'registry_id'} = sprintf('%s.%03d',$reg->{'dataset_udi'},$reg_seq);
+            writelog($log,"Updating registry entry for: $reg->{dataset_udi} (Registry ID: $reg->{registry_id})",'action');
             if (!$opts{'t'}) {
-                writelog($log,"Updating registry entry for: $reg->{dataset_udi} (New registry ID: $reg->{registry_id})");
                 my $SQL = 'INSERT INTO registry(' . join(',',@regCols) . ') VALUES (' . join(',',('?') x (@regCols)) . ");";
                 my $sth2 = $griidc_dbh->prepare($SQL) or die "Couldn't prepare statement: " . $griidc_dbh->errstr;
                 $sth2->execute(map { $reg->{$_} } @regCols[0..(@regCols-1)]) or die "Couldn't execute statement: " . $sth2->errstr;
@@ -408,8 +409,8 @@ for my $entry (@{$data->{'entry'}}) {
         print "New registration: $reg->{dataset_udi}\n" if $opts{'v'};
         $reg->{'registry_id'} = "$reg->{dataset_udi}.001";
         # if there is no existing registration, create initial entry
+        writelog($log,"Creating initial registry entry for: $reg->{dataset_udi}",'action');
         if (!$opts{'t'}) {
-            writelog($log,"Creating intial registry entry for: $reg->{dataset_udi}");
             @regColsAll = (@regCols,@regColsURL);
             my $SQL = 'INSERT INTO registry(' . join(',',@regColsAll) . ') VALUES (' . join(',',('?') x (@regColsAll)) . ");";
             my $sth2 = $griidc_dbh->prepare($SQL) or die "Couldn't prepare statement: " . $griidc_dbh->errstr;
@@ -448,28 +449,34 @@ for my $reg_id (@create_regids) {
 
 # print summary if verbose flag is set
 if ($opts{'v'}) {
-    print "------------------------------\n";
-    print "$summary";
-    print "------------------------------\n";
+    my $divider = '------------------------------';
+    print colored("$divider\n$summary$divider\n",'blue');
 }
 
-if ($update_count or $create_count) {
+if (!$opts{'t'} and ($duplicate_count or $invalid_count or $update_count or $create_count)) {
     $email = 'James.Davis@tamucc.edu';
     my %mail = ( To      => $email,
-                 From    => 'registry-creator@poseidon.tamucc.edu',
-                 Subject => "Automated Registry Creator Summary for: $source",
+                 From    => 'registry-harvester@poseidon.tamucc.edu',
+                 Subject => "Registry Harvester Summary for: $source",
                  Message => '',
                  'content-type' => 'text/plain; charset="iso-8859-1"'
                );
-    $mail{'Message'} = "Regsitry Creator Summary:\n\n$summary";
+    $mail{'Message'} = "Registry Harvester Summary:\n\n$summary";
     sendmail(%mail) or die $Mail::Sendmail::error;
 }
 
 writelog($log,"Registry Harvestor finished for: $source");
 
 sub writelog {
-    my ($log,$message) = @_;
+    my ($log,$message,$type) = @_;
     my $ts = POSIX::strftime("%Y-%m-%d %H:%M:%S", localtime);
-    print "$message\n" if $opts{'t'} or $opts{'v'}; 
+    if ($opts{'t'} or $opts{'v'}) {
+        my $color = 'white';
+        switch($type) {
+            case 'error' { $color = 'red' }
+            case 'action' { $color = 'green' }
+        }
+        print colored($message,$color),"\n";
+    }
     print $log "[$ts] $message\n" unless $opts{'t'};
 }
