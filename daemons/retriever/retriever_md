@@ -133,6 +133,8 @@ while (my $r = $sth->fetchrow_hashref()) {
         }
         else {
             writelog($log,"[$udi] failed to download metadata file from $url_metadata (" . $response->status_line . ")");
+            my $sth2 = $dbh->prepare("UPDATE registry SET metadata_dl_status = ? WHERE registry_id = ?;");
+            $sth2->execute('Error',$reg_id) or die "Couldn't execute statement: " . $sth2->errstr;
         }
 
     }
