@@ -1,19 +1,47 @@
-	var wkt = new OpenLayers.Format.WKT();
-	var mxml = new OpenLayers.Format.XML();
-	var map,draw,modify,vlayer,google_hybrid,flayer;
+function GeoViz()
+{
+	
+	//var mxml = new OpenLayers.Format.XML();
+	//var gml = new OpenLayers.Format.GML();
+	var map,modify,vlayer,google_hybrid,flayer;
 	var mapOptions, toolbarOptions;
-	var mapdiv, toolbardiv;
+	var drawControls;
+	
 	var defaultStyle, selectStyle, temporaryStyle;
 	var defaultStyleMap;
 	var lastBounds;
 	var firstLoad;
+	var drawMode = 'polygon';
+	
+	this.drawMode = drawMode;
+	
+	var mapDiv;
+	this.mapDiv = mapDiv;
+	
+	this.toolbardiv;
+	
+	this.orderEnum = 
+	{
+		OK : 0,
+		LONGLAT : 1,
+		LATLONG : 2,
+		UNKNOWN : 3,
+		MIXED: 4,
+		LATLONGML : 5,
+		LONGLATML : 6
+	}
+	
+	this.wkt = new OpenLayers.Format.WKT();
+	this.gml = new OpenLayers.Format.GML.v3({ 
+             srsName: "urn:x-ogc:def:crs:EPSG:4326"
+         }); 
 	
 	var lon = -90, lat = 25, //Gulf of Mexico
 	zoom = 4,
 	epsg4326 = new OpenLayers.Projection('EPSG:4326'),
 	epsg900913 = new OpenLayers.Projection('EPSG:900913');
 				
-	function initMap(DIV,Options)
+	this.initMap = function(DIV,Options)
 	{
 		googleZoomLevel = 11, //max 11 on hybrid in ocean.
 		
@@ -31,44 +59,33 @@
 			maxExtent: new OpenLayers.Bounds(-180, -90, 180, 90),
 			minResolution: "auto",
 			//allOverlays:true,
-			//controls: [],
 			eventListeners: {
 				featureover: function(e) 
 				{
 					e.feature.renderIntent = "select";
 					e.feature.layer.drawFeature(e.feature);
 					////console.log("Map says: " + e.feature.id + " mouse over " + e.feature.layer.name);
-					jQuery(document).trigger('overFeature',{"featureID":e.feature.id,"attributes":e.feature.attributes});
+					jQuery(mapDiv).trigger('overFeature',{"featureID":e.feature.id,"attributes":e.feature.attributes});
 				},
 				featureout: function(e) 
 				{
 					e.feature.renderIntent = "default";
 					e.feature.layer.drawFeature(e.feature);
 					////console.log("Map says: " + e.feature.id + " mouse out " + e.feature.layer.name);
-					jQuery(document).trigger('outFeature',{"featureID":e.feature.id,"attributes":e.feature.attributes});
+					jQuery(mapDiv).trigger('outFeature',{"featureID":e.feature.id,"attributes":e.feature.attributes});
 				},
 				featureclick: function(e) 
 				{
 					//console.log("Map says: " + e.feature.id + " clicked on " + e.feature.layer.name + " udi:" + e.feature.attributes["udi"]);
-					jQuery(document).trigger('clickFeature',{"featureID":e.feature.id,"attributes":e.feature.attributes});
+					jQuery(mapDiv).trigger('clickFeature',{"featureID":e.feature.id,"attributes":e.feature.attributes});
 				}
 			}
 		});
 		
 		if (Options.staticMap)
 		{
-			
 			makeStatic();
-			
-			
 			googleZoomLevel = 7;
-			
-			// map.addControl(new OpenLayers.Control.Navigation());
-			// map.addControl(new OpenLayers.Control.TouchNavigation());
-			// map.addControl(new OpenLayers.Control.Zoom());
-			// map.addControl(new OpenLayers.Control.ArgParser());
-			// map.addControl(new OpenLayers.Control.Attribution());
-			
 		}
 		
 		dstyle = OpenLayers.Util.extend({}, OpenLayers.Feature.Vector.style["default"]);
@@ -76,6 +93,7 @@
 		dstyle.fillOpacity = 0;
 		dstyle.strokeOpacity = 0.5;
 		dstyle.strokeWidth = 2;
+		dstyle.pointRadius = 10;
 		
 		defaultStyle = new OpenLayers.Style(dstyle);
 		
@@ -84,7 +102,8 @@
 		sstyle.fillOpacity = 0.0;
 		sstyle.strokeWidth = 4;
 		sstyle.strokeOpacity = 1.0;
-		sstyle.graphicZIndex = 2;
+		//sstyle.graphicZIndex = 2;
+		sstyle.pointRadius = 12;
 		//sstyle.strokeColor = "#FFFFFF";
 		
 		if (Options.labelAttr)
@@ -128,9 +147,6 @@
 			afterAdd: function() 
 			{
 				//console.log('layer ready');
-				// if (typeof renderMe == 'function') { 
-					// renderMe(); 
-				// }
 			},
 			displayInLayerSwitcher: false
 		});
@@ -194,8 +210,6 @@
 		
 		map.addLayers([google_hybrid, vlayer, flayer]);
 		
-		//map.addControl( new OpenLayers.Control.LayerSwitcher());
-		
 		function get_my_url (bounds) {
 			var res = this.map.getResolution();
 			var x = Math.round ((bounds.left - this.maxExtent.left) / (res * this.tileSize.w));
@@ -227,8 +241,27 @@
 			map.addLayers([n0q]);
 		}
 		
-		draw = new OpenLayers.Control.DrawFeature(vlayer, OpenLayers.Handler.Polygon);
-		map.addControl(draw);
+		//draw = new OpenLayers.Control.DrawFeature(vlayer, OpenLayers.Handler.Polygon);
+		//map.addControl(draw);
+		
+		drawControls = {
+			point: new OpenLayers.Control.DrawFeature(vlayer,OpenLayers.Handler.Point),
+			line: new OpenLayers.Control.DrawFeature(vlayer,OpenLayers.Handler.Path),
+			polygon: new OpenLayers.Control.DrawFeature(vlayer,OpenLayers.Handler.Polygon),
+			box: new OpenLayers.Control.DrawFeature(vlayer,OpenLayers.Handler.RegularPolygon, {
+				handlerOptions: {
+					sides: 4,
+					irregular: true
+				}
+			}
+			)
+		};
+		
+		for(var key in drawControls) {
+			map.addControl(drawControls[key]);
+		}
+		
+		this.setDrawMode('polygon');
 		
 		map.events.register('updatesize', map, function () {
 			//console.log('Window Resized');
@@ -268,7 +301,7 @@
 				checkOnlyOnePolygon();
 				if (typeof event.feature == 'object')
 				{
-					jQuery(document).trigger('featureAdded',getCoordinateList(event.feature));
+					jQuery(mapDiv).trigger('featureAdded',getCoordinateList(event.feature));
 				}
 				jQuery("#helptext").text('Navigation Mode');
 				
@@ -280,7 +313,7 @@
 			'featureadded': function(event) {
 				//checkPolygon(event.feature.id);
 				checkOnlyOnePolygon();
-				jQuery(document).trigger('featureAdded',getCoordinateList(event.feature));
+				jQuery(mapDiv).trigger('featureAdded',getCoordinateList(event.feature));
 			},
 			'loadend': function(event) {
 				//console.log('Done loading vlayer layer');
@@ -289,6 +322,13 @@
 			},
 			'loadstart': function(event) {
 				//console.log('Done Drawing?');
+			},
+			'vertexmodified': function(event) {
+				jQuery(mapDiv).trigger('vectorChanged',getCoordinateList(event.feature));
+			},
+			'sketchmodified': function(event) {
+				jQuery(mapDiv).trigger('vectorChanged',getCoordinateList(event.feature));
+				//jQuery(mapDiv).trigger('vectorChanged',event.feature.getCoordinateList());
 			}
 		});
 		
@@ -299,7 +339,7 @@
 				filter.deactivate();
 			},
 			featureadded: function(event) {
-				jQuery(document).trigger('filterDrawn');
+				jQuery(mapDiv).trigger('filterDrawn');
 			}
 		});
 		
@@ -314,7 +354,7 @@
 					map.updateSize();
 					map.addLayer(google_hybrid);
 						
-					jQuery(document).trigger('imready');
+					jQuery(mapDiv).trigger('imready',mapDiv);
 				}
 				, 100)
 			};
@@ -332,6 +372,42 @@
 		lastBounds = map.getExtent();
 	}
 	
+	this.flashMap = function ()
+	{
+		
+		setTimeout( function() { 
+			map.removeLayer(google_hybrid);
+			map.updateSize();
+			map.addLayer(google_hybrid);
+			
+		}
+		, 100)
+		
+	}
+	
+	this.setDrawMode = function(handlerType) 
+	{
+		for(key in drawControls) {
+			var control = drawControls[key];
+			if (handlerType == key) 
+			{
+				//control.activate();
+				drawMode = handlerType;
+				control.deactivate();
+			} 
+			else 
+			{
+				
+				control.deactivate();
+			}
+		}
+	}
+	
+	this.updateMap = function ()
+	{
+		map.updateSize();
+	}
+	
 	function makeStatic()
 	{
 		Controls = map.getControlsByClass('OpenLayers.Control.Navigation');
@@ -341,30 +417,30 @@
 		Controls[0].destroy();
 	}
 	
-	function showTerrainMap()
+	this.showTerrainMap = function ()
 	{
 		map.addLayers([google_terain]);
 		//map.setBaseLayer(map.layers[1]);
 		map.setBaseLayer(map.getLayersByName('Google Terrain Map'));
 	}
 	
-	function showHybridMap()
+	this.showHybridMap = function ()
 	{
-		map.setBaseLayer(map.layers[0]);
-		//map.setBaseLayer(map.getLayersByName('Google Hybrid Map'));
+		//map.setBaseLayer(map.layers[0]);
+		map.setBaseLayer(map.getLayersByName('Google Hybrid Map'));
 	}
 		
-	function drawFilter()
+	this.drawFilter = function ()
 	{
 		filter.activate();
 	}
 	
-	function getFilter()
+	this.getFilter = function ()
 	{
 		return wktTransformToWGS84(wkt.write(flayer.features[0]));
 	}
 	
-	function clearFilter()
+	this.clearFilter = function ()
 	{
 		flayer.removeAllFeatures();
 	}
@@ -385,17 +461,17 @@
 		map.addLayers([graphic]);
 	}
 	
-	function initToolbar(DIV,Options)
+	this.initToolbar = function (DIV,Options)
 	{
 		toolbarOptions = Options;
 		
-		toolbardiv = '#'+DIV;
-		jQuery(toolbardiv)
+		this.toolbardiv = '#'+DIV;
+		jQuery(this.toolbardiv)
 		.append('<img id="homeTool" src="/images/geoviz/home.png">')
 		//.append('<img id="filterTool" src="/images/geoviz/filter.png">')
 		.append('<img id="drawTool" src="/images/geoviz/paint.png">');
 		
-		jQuery(toolbardiv).append('<span id="drawtools"></span>');
+		jQuery(this.toolbardiv).append('<span id="drawtools"></span>');
 
 		jQuery("#drawtools")
 		.append('<img id="polygonTool" src="/images/geoviz/polygon.png">')
@@ -403,7 +479,7 @@
 		.append('<img id="circleTool" src="/images/geoviz/circle.png">')
 		.append('<img id="squareTool" src="/images/geoviz/square.png">');
 		
-		jQuery(toolbardiv)
+		jQuery(this.toolbardiv)
 		.append('<img id="eraseTool" src="/images/geoviz/delete.png">')
 		//.append('<img id="panTool" src="/images/geoviz/pan.png">')
 		.append('<img id="worldTool" src="/images/geoviz/world.png">')
@@ -412,7 +488,7 @@
 		
 		if (toolbarOptions.showExit)
 		{
-			jQuery(toolbardiv)
+			jQuery(this.toolbardiv)
 			.append('<img id="exitTool" src="/images/geoviz/exit.png">');
 		}
 		
@@ -446,7 +522,7 @@
 		
 		jQuery("#drawTool").button().qtip({content: {text: 'Draw a Polygon'}})
 		.click(function() {
-			if (draw.active)
+			if (drawControls[drawMode].active)
 			{
 				stopDrawing();
 				//$(this).attr("src","/images/geoviz/draw.png");
@@ -490,7 +566,7 @@
 		
 		jQuery("#eraseTool").button("disable");
 		
-		jQuery(toolbardiv).append('<span style="font-family:Arial, Verdana, sans-serif;text-align:right;float:right;font-size:20;" id="helptext"></span>');
+		jQuery(this.toolbardiv).append('<span style="font-family:Arial, Verdana, sans-serif;text-align:right;float:right;font-size:20;" id="helptext"></span>');
 		
 		jQuery("#helptext").text('Navigation Mode');
 		
@@ -498,18 +574,21 @@
 	
 	//TODO: Zoom/Pan/Select/Highlight Feature Function
 		
-	function gotoAllFeatures()
+	this.gotoAllFeatures = function ()
 	{
-		map.zoomToExtent(vlayer.getDataExtent());
+		if (vlayer.features.length > 0)
+		{
+			map.zoomToExtent(vlayer.getDataExtent());
+		}
 	}
 	
-	function gotoFeature(attrName,attrValue)
+	this.gotoFeature = function (attrName,attrValue)
 	{
 		var myFeature=vlayer.getFeaturesByAttribute(attrName,attrValue)[0];
 		map.zoomToExtent(myFeature.geometry.getBounds())
 	}
 	
-	function highlightFeature(attrName,attrValue)
+	this.highlightFeature = function (attrName,attrValue)
 	{
 		var myFeature=vlayer.getFeaturesByAttribute(attrName,attrValue)[0];
 		if (myFeature)
@@ -518,7 +597,7 @@
 		}
 	}
 	
-	function unhighlightFeature(attrName,attrValue)
+	this.unhighlightFeature = function (attrName,attrValue)
 	{
 		var myFeature=vlayer.getFeaturesByAttribute(attrName,attrValue)[0];
 		if (myFeature)
@@ -527,7 +606,7 @@
 		}
 	}
 	
-	function selectFeature(attrName,attrValue)
+	this.selectFeature = function (attrName,attrValue)
 	{
 		var myFeature=vlayer.getFeaturesByAttribute(attrName,attrValue)[0];
 		if (myFeature)
@@ -536,7 +615,12 @@
 		}
 	}
 	
-	function unselectFeature(attrName,attrValue)
+	this.selectNone = function ()
+	{
+		selectControl.unselectAll();
+	}
+	
+	this.selectNone = function unselectFeature(attrName,attrValue)
 	{
 		var myFeature=vlayer.getFeaturesByAttribute(attrName,attrValue)[0];
 		if (myFeature)
@@ -574,37 +658,86 @@
 		}
 	}
 	
-	function getFeatureById(FeatureID)
+	this.getFeatureById = function (FeatureID)
 	{
 		return Feature = vlayer.getFeatureById(FeatureID);
 	}
 	
-	function getFeatureIDFromAttr(attrName,attrValue)
+	this.getFeatureIDFromAttr = function (attrName,attrValue)
 	{
 		var myFeature=vlayer.getFeaturesByAttribute(attrName,attrValue)[0];
 		return myFeature.id;
 	}
 	
-	function checkPolygon(FeatureID)
+	this.concaveHull = function (FeatureID)
 	{
 		var Feature = vlayer.getFeatureById(FeatureID);
 		var featureID = Feature.id;
-		var WKT = wkt.write(Feature);
+		var WKT = this.wkt.write(Feature);
+		jQuery.ajax({
+			url: "/includes/geoviz/concavehull.php", // replace this url with geoviz lib
+			type: "POST",
+			data: {wkt: WKT, featureid: featureID},
+			context: document.body
+			}).done(function(html) {
+			eventObj = jQuery.parseJSON(html);
+			jQuery(mapDiv).trigger('featureConverted',eventObj);
+			//console.log(html);
+			return true;
+		});	
+	}
+	
+	this.gmlToWKT = function (GML)
+	{
+		jQuery.ajax({
+			url: "/includes/geoviz/gmltowkt.php", // replace this url with geoviz lib
+			type: "POST",
+			data: {gml: GML},
+			context: document.body
+			}).done(function(html) {
+				//eventObj = jQuery.parseJSON(html);
+				jQuery(mapDiv).trigger('gmlConverted',html);
+				//console.log(html);
+			return true;
+		});	
+	}
+	
+	this.wktToGML = function (WKT)
+	{
+		jQuery.ajax({
+			url: "/includes/geoviz/wkttogml.php", // replace this url with geoviz lib
+			type: "POST",
+			data: {wkt: WKT},
+			context: document.body
+			}).done(function(html) {
+				//eventObj = jQuery.parseJSON(html);
+				jQuery(mapDiv).trigger('wktConverted',html);
+				//console.log(html);
+			return true;
+		});	
+	}
+	
+	this.checkPolygon = function (FeatureID)
+	{
+		var Feature = vlayer.getFeatureById(FeatureID);
+		var featureID = Feature.id;
+		var WKT = this.wkt.write(Feature);
 		jQuery.ajax({
 			url: "/includes/geoviz/geocheck.php", // replace this url with geoviz lib
 			type: "POST",
 			data: {wkt: WKT, featureid: featureID},
 			context: document.body
 			}).done(function(html) {
-				jQuery(document).trigger('featureChecked',html);
-				////console.log(html);
+				eventObj = jQuery.parseJSON(html);
+				jQuery(mapDiv).trigger('featureConverted',eventObj);
+				//console.log(html);
 				return html;
 		});
 	}
 	
-	function addFeatureFromWKT(WKT,Attributes,Style)
+	this.addFeatureFromWKT = function (WKT,Attributes,Style)
 	{
-		var addFeature = wkt.read(wktTransformToSperMerc(WKT));
+		var addFeature = this.wkt.read(this.wktTransformToSperMerc(WKT));
 		
 		// Sample: {"strokeColor": "#ff00ff", "fillColor": "#ffffff"}
 		if (typeof Style == 'object')
@@ -626,6 +759,8 @@
 		}
 				
 		vlayer.addFeatures(addFeature);
+		
+		return addFeature;
 	}
 	
 	function featureTransformToWGS84(Feature)
@@ -642,18 +777,18 @@
 		return myFeature;
 	}
 	
-	function wktTransformToWGS84(WKT)
+	this.wktTransformToWGS84 = function (WKT)
 	{
-		var wktFeature = wkt.read(WKT);
+		var wktFeature = this.wkt.read(WKT);
 		wktFeature.geometry.transform(map.getProjectionObject(),'EPSG:4326');
-		return wkt.write(wktFeature);
+		return this.wkt.write(wktFeature);
 	}
 	
-	function wktTransformToSperMerc(WKT)
+	this.wktTransformToSperMerc = function (WKT)
 	{
-		var wktFeature = wkt.read(WKT);
+		var wktFeature = this.wkt.read(WKT);
 		wktFeature.geometry.transform('EPSG:4326',map.getProjectionObject());
-		return wkt.write(wktFeature);
+		return this.wkt.write(wktFeature);
 	}
 	
 	function transformLayers(Layer)
@@ -668,7 +803,7 @@
 		
 	}
 	
-	function unhighlightAll()
+	this.unhighlightAll = function ()
 	{
 		for (var i=0;i<vlayer.features.length;i++)
 		{
@@ -677,130 +812,379 @@
 		}
 	}
 	
-	function getCoordinateList(Feature)
+	this.determineOrder = function (List)
 	{
-		var myFeature = Feature.clone();
-		myFeature = featureTransformToWGS84(myFeature);
-		var pointList = myFeature.geometry.getVertices();
-		var points = "";
+		var pointList = this.checkPointList(List);
+		var orders = new Array();
+		var LongLat = 0;
+		var LatLong = 0;
+				
+		pointList = pointList.split(" ");
 		
 		for (var i=0;i<pointList.length;i++)
 		{
-			points += pointList[i].y.toPrecision(8) + ","+pointList[i].x.toPrecision(8)+" ";
+			var pointSplit = pointList[i].split(",");
+			
+			if (Math.abs(pointSplit[0]) > 90 && Math.abs(pointSplit[1]) <= 90)
+			{
+				//console.log ('LongLat');
+				orders.push('LongLat');
+				LongLat += 1;
+			}
+			else if (Math.abs(pointSplit[0]) <= 90 && Math.abs(pointSplit[1]) > 90)
+			{
+				//console.log('LatLong');
+				LatLong += 1;
+			}
+			else if (pointSplit[0] > pointSplit[1] && pointSplit[1] < 0 && (pointSplit[0] - (pointSplit[1])) > 90)
+			{
+				//console.log('Pos LatLong');
+				LatLong += .5;
+			}
+			else
+			{
+				//console.log('unknown');
+				LatLong += 0;
+			}
 		}
 		
-		points += pointList[0].y.toPrecision(8) + ","+pointList[0].x.toPrecision(8);
+		
+		if ((LatLong == pointList.length))
+		{
+			console.log('For Sure Lat:Long');
+			return orderEnum.LATLONG;
+		}
+		else if ((LongLat == pointList.length))
+		{
+			console.log('For Sure Long:Lat');
+			return orderEnum.LONGLAT;
+		}
+		else if (LongLat > 0 && LatLong > 0)
+		{
+			console.log('Unknown Mixed');
+			return orderEnum.MIXED;
+		}
+		else if ((LatLong / pointList.length) > (LongLat / pointList.length))
+		{
+			console.log('Most Likely Lat:Long');
+			return orderEnum.LATLONGML;
+		}
+		else if ((LatLong / pointList.length) < (LongLat / pointList.length))
+		{
+			console.log('Most Likely Long:Lat');
+			return orderEnum.LONGLATML;
+		}
+		else if (LongLat == 0 && LatLong == 0)
+		{
+			console.log('Really Unknown');
+			return orderEnum.UNKNOWN;
+		}
+	}
+	
+	function determineOrder2(List)
+	{
+		var pointList = checkPointList(List);
+		var lx = new Array();
+		var ry = new Array();
+		
+		pointList = pointList.split(" ");
+		
+		for (var i=0;i<pointList.length;i++)
+		{
+			var pointSplit = pointList[i].split(",");
+			lx.push(pointSplit[0]);
+			ry.push(pointSplit[1]);
+		}
+		lxMax = Math.max.apply(Math,lx);
+		lxMin = Math.min.apply(Math,lx);
+		ryMax = Math.max.apply(Math,ry);
+		ryMin = Math.min.apply(Math,ry);
+		
+		if (Math.abs(lxMax) > 90 || Math.abs(lxMin) > 90)
+		{
+			return 'LongLat';
+		}
+		else if (Math.abs(ryMax) > 90 || Math.abs(ryMin) > 90)
+		{
+			return 'LatLong';
+		}
+		else
+		{
+			return 'Unknown';
+		}
+	}
+	
+	this.checkCoordList = function (List)
+	{
+		var pointList = this.checkPointList(List);
+		var lx = 0;
+		var ry = 0;
+		var msg = new Array();
+		var msgTxt = 'OK';
+		
+		var superList = pointList.trim();
+		superList = superList.split(/[\s,]+/); // /^\s+(.*?)\s+$/
+		
+		pointList = pointList.split(" ");
+		
+		if (superList.length % 2 === 0)
+		{
+			for (var i=0;i<pointList.length;i++)
+			{
+				var pointSplit = pointList[i].split(",");
+				lx = pointSplit[0];
+				ry = pointSplit[1];
+				
+				if (Math.abs(lx) > 90 && Math.abs(ry) > 90)
+				{
+					msgTxt = 'Both coordinates over 90 in set '+(i+1);
+					msg.push(msgTxt);
+				}
+				
+				if (Math.abs(lx) > 180 || Math.abs(ry) > 180)
+				{
+					msgTxt = 'Some coordinates over 180 in set '+(i+1);
+					msg.push(msgTxt);
+				}
+				
+				// if (Math.abs(lx) > 90 && Math.abs(lx))
+				// {
+					// msgTxt = 'Suspected tuple in set '+(i+1);
+					// msg.push(msgTxt);
+					// console.log(msgTxt);
+				// }
+			}
+			
+			if (msgTxt == 'OK')
+			{
+				msg.push(msgTxt);
+			}
+		}
+		else
+		{
+			msg = 'Uneven tuples, only '+superList.length+' coordinates found';
+			msg.push(msgTxt);
+			//console.log(msg);
+		}
+		
+		console.debug(msg);
+		return msg;
+	}
+	
+	function getCoordinateList (Feature)
+	{
+		var points = "";
+		
+		if (typeof Feature != 'undefined')
+		{
+			var myFeature = Feature.clone();
+			myFeature = featureTransformToWGS84(myFeature);
+			var pointList = myFeature.geometry.getVertices();
+			
+			
+			for (var i=0;i<pointList.length;i++)
+			{
+				points += pointList[i].y.toPrecision(8) + ","+pointList[i].x.toPrecision(8)+" ";
+			}
+			
+			//points += pointList[0].y.toPrecision(8) + ","+pointList[0].x.toPrecision(8);
+		}
 		return points;
 		
 	}
 	
-	function checkPointList(List)
+	this.getCoordinateList = function (FeatureID)
+	{
+		var Feature = vlayer.getFeatureById(FeatureID);
+		return getCoordinateList(Feature);
+	}
+	
+	this.checkPointList = function (List)
 	{
 		var pointList = "";
 		var points = List.match(/(-?\d+\.\d+|-?\d+)/g); //-?\d+(\.\d+)?
 		for (var i=0;i<points.length;i+=2)
 		{
 			if (i!=0) {pointList += " "};
-			pointList += points[i] + "," + points[i+1];
+			pointList += points[i];
+			if (typeof points[i+1] !== 'undefined')
+			{
+				pointList += "," + points[i+1];
+			}
 		}
 		return pointList;
 	}
 	
-	function addFeatureFromcoordinateList(List,NoFlip)
+	this.addFeatureFromcoordinateList = function (List,NoFlip)
 	{
+		var pointList = this.checkPointList(List);
 		
-		var pointList = checkPointList(List);
-		pointList = pointList.split(" ");
-		var points = "";
-		for (var i=0;i<pointList.length;i++)
+		//console.log(determineOrder(List));
+		
+		checkMsg = this.checkCoordList(List);
+		if (checkMsg != 'OK')
 		{
-			var pointSplit = pointList[i].split(",");
-			if (!NoFlip)
+			jQuery(mapDiv).trigger('coordinateError',checkMsg);
+			console.debug(checkMsg);
+		}
+		else
+		{
+		
+			pointList = pointList.split(" ");
+			var points = "";
+			for (var i=0;i<pointList.length;i++)
 			{
-				points += pointSplit[1]+" "+pointSplit[0]+",";
+				var pointSplit = pointList[i].split(",");
+				if (!NoFlip)
+				{
+					points += pointSplit[1]+" "+pointSplit[0]+",";
+				}
+				else
+				{
+					points += pointSplit[0]+" "+pointSplit[1]+",";
+				}
+			}
+			if (drawMode == 'polygon' || drawMode == 'box')
+			{
+				var WKT = "POLYGON((" + points.substring(0,(points.length)-1) + "))";
+			}
+			else if (drawMode == 'point')
+			{
+				var WKT = "MULTIPOINT(" + points.substring(0,(points.length)-1) + ")";
+			}
+			else if (drawMode == 'line')
+			{
+				var WKT = "LINESTRING(" + points.substring(0,(points.length)-1) + ")";
+			}
+			//console.debug(WKT);
+			var sMwkt = this.wktTransformToSperMerc(WKT);
+			if (sMwkt.indexOf("NaN") == -1)
+			{
+				var Feature = this.wkt.read(this.wktTransformToSperMerc(WKT));
+				vlayer.addFeatures([Feature]);
+				modify.activate();
+				return true;
 			}
 			else
 			{
-				points += pointSplit[0]+" "+pointSplit[1]+",";
+				return false;
 			}
+			
 		}
-		var WKT = "POLYGON((" + points.substring(0,(points.length)-1) + "))";
-		//console.debug(WKT);
-		var Feature = wkt.read(wktTransformToSperMerc(WKT));
-		modify.activate();
-		vlayer.addFeatures([Feature]);
 	}
 	
-	function removeAllFeaturesFromMap()
+	this.removeAllFeaturesFromMap = function ()
 	{
 		vlayer.removeAllFeatures();
 	}
 	
-	function startDrawing()
+	function startDrawing ()
 	{
-		if (toolbarOptions.showDrawTools)
+		if (typeof toolbarOptions != 'undefined')
 		{
-			jQuery("#drawtools").fadeIn();
-			//$("#drawtools").show();
+			if (toolbarOptions.showDrawTools)
+			{
+				jQuery("#drawtools").fadeIn();
+				//$("#drawtools").show();
+			}
 		}
 		
 		if (!checkOnlyOnePolygon())
 		{
 			checkAllowModify(true);
-			draw.activate();
+			//draw.activate();
+			drawControls[drawMode].activate()
 			jQuery("#helptext").html('Drawing Mode<br>(Double click to stop)');
 			
 		}
 	}
 	
-	function stopDrawing()
+	this.startDrawing = function ()
+	{
+		startDrawing();
+	}
+	
+	function stopDrawing ()
 	{
 		jQuery("#drawtools").fadeOut();
 		//$("#drawtools").hide();
 		modify.deactivate();
-		draw.deactivate();
+		//draw.deactivate();
+		drawControls[drawMode].deactivate();
 		filter.deactivate();
+		modify.activate();
 		jQuery("#helptext").text('Navigation Mode');
 	}
 	
-	function goHome()
+	this.stopDrawing = function ()
+	{
+		stopDrawing ();
+	}
+	
+	this.goHome = function ()
 	{
 		map.setCenter(new OpenLayers.LonLat(lon, lat).transform('EPSG:4326', 'EPSG:900913'), zoom);
 	}	
 	
-	function zoomToMaxExtent()
+	this.zoomToMaxExtent = function ()
 	{
 		map.zoomToMaxExtent()
 	}
 	
-	function gotoAllFeatures()
+	this.panToFeature = function (FeatureID)
 	{
-		map.zoomToExtent(vlayer.getDataExtent());
+		var Feature = vlayer.getFeatureById(FeatureID);
+		map.panTo(Feature.geometry.getBounds().getCenterLonLat());
 	}
 	
-	function zoomIn()
+	this.getSingleFeature = function ()
+	{
+		var Feature = vlayer.features[0];
+		if (typeof Feature != 'undefined')
+		{
+			return Feature.id;
+		}
+	}
+	
+	this.zoomIn = function ()
 	{
 		map.zoomIn();
 	}
 	
-	function zoomOut()
+	this.zoomOut = function ()
 	{
 		map.zoomOut();
 	}
 	
-	function deleteSelected()
+	this.deleteSelected = function ()
 	{
 		if (modify.feature)
 		{
 			deleteFeatureID = modify.feature.id
 			modify.unselectFeature();
 			vlayer.removeFeatures(vlayer.getFeatureById(deleteFeatureID));
-			jQuery(document).trigger('featureAdded','');
+			jQuery(mapDiv).trigger('featureAdded','');
 		}
 		checkOnlyOnePolygon();
 	}
 	
-	 function closeMe()
-	 {
-		jQuery(document).trigger('closeMe');
-	 }
+	function closeMe()
+	{
+		coordlist = this.getCoordinateList(vlayer.features[0]);
+		jQuery(mapDiv).trigger('closeMe',coordlist);
+	}
+	
+	function writeGML(Feature)
+	{
+		Feature.geometry.transform('EPSG:900913','EPSG:4326');
+		return gml.write(Feature)
+		
+	}
+	
+	this.getWKT = function (FeatureID)
+	{
+		var Feature = vlayer.getFeatureById(FeatureID);
+		return this.wkt.write(Feature);
+	}
+
+}
