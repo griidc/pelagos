@@ -257,7 +257,12 @@ for my $entry (@{$data->{'entry'}}) {
     }
 
     $reg->{'dataset_udi'} = sprintf("%s.x%03d.%03d:%04d",$fs,$project_id,$task_id,$dif_seq);
-    print "Processing entry for: $reg->{dataset_udi}\n" if $opts{'v'};
+
+    # print information if verbose flag is set
+    if ($opts{'v'}) {
+        print "Processing entry for: $reg->{dataset_udi}\n";
+        print "Title: $reg->{dataset_title}\n";
+    }
 
     # skip duplicate entries for the same dataset
     if ($seen{$reg->{'dataset_udi'}}) {
@@ -347,7 +352,6 @@ for my $entry (@{$data->{'entry'}}) {
     if ($opts{'v'}) {
         print "DIF found for $reg->{dataset_udi}\n";
         print "DIF title: $dif->{title}\n";
-        print "Reg title: $reg->{dataset_title}\n";
     }
 
     # check for existing registration
@@ -466,7 +470,7 @@ for my $reg_id (@create_regids) {
 # print summary if verbose flag is set
 if ($opts{'v'}) {
     my $divider = '------------------------------';
-    print colored("$divider\n$summary$divider\n",'blue');
+    print colored("$divider\n$summary$divider\n",'cyan');
 }
 
 if (!$opts{'t'} and ($duplicate_count or $invalid_count or $update_count or $create_count)) {
