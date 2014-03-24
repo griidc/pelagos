@@ -11,6 +11,8 @@ use IO::Handle;
 use LWP::UserAgent;
 use File::Fetch;
 
+$File::Fetch::BLACKLIST = [qw|lwp httplite|];
+
 umask 0022;
 
 my $conf = Config::PHPINI->read('/etc/griidc.ini');
@@ -56,6 +58,7 @@ $sth->execute();
 my $data_notify = {};
 
 my $ua = LWP::UserAgent->new;
+$ua->cookie_jar({});
 
 # loop through all entries that have remote data
 while (my $r = $sth->fetchrow_hashref()) {
