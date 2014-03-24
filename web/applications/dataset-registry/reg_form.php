@@ -998,7 +998,7 @@ function submitRegistry() {
     </fieldset></p>
 
     <p><fieldset>
-            <legend>DOI:</legend>
+            <legend>DOI for dataset (if available):</legend>
             <span id="qtip_doi" style="float:right;">
                 <img src="/dif/images/info.png">
             </span>
