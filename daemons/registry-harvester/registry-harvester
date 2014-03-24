@@ -264,15 +264,6 @@ for my $entry (@{$data->{'entry'}}) {
         print "Title: $reg->{dataset_title}\n";
     }
 
-    # skip duplicate entries for the same dataset
-    if ($seen{$reg->{'dataset_udi'}}) {
-        writelog($log,"Duplicate entry for $reg->{dataset_udi}, skipping",'error');
-        $duplicate_count++;
-        print "\n" if $opts{'v'};
-        next;
-    }
-    $seen{$reg->{'dataset_udi'}} = 1;
-
     my $SQL = 'SELECT People_LastName, People_FirstName, People_Email FROM People WHERE People_ID = ?;';
 
     # look up dataset originator
@@ -353,6 +344,15 @@ for my $entry (@{$data->{'entry'}}) {
         print "DIF found for $reg->{dataset_udi}\n";
         print "DIF title: $dif->{title}\n";
     }
+
+    # skip duplicate entries for the same dataset
+    if ($seen{$reg->{'dataset_udi'}}) {
+        writelog($log,"Duplicate entry for $reg->{dataset_udi}, skipping",'error');
+        $duplicate_count++;
+        print "\n" if $opts{'v'};
+        next;
+    }
+    $seen{$reg->{'dataset_udi'}} = 1;
 
     # check for existing registration
     my $SQL = 'SELECT * FROM registry WHERE registry_id LIKE ? ORDER BY registry_id DESC;';
