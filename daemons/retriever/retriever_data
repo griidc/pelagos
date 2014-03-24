@@ -133,6 +133,10 @@ while (my $r = $sth->fetchrow_hashref()) {
             copy($filepath,"$conf->{paths}->{data_store}/$udi/$udi.dat") or die "Error: could not copy file ($!)\n";
             $data_notify->{'filed'}->{$reg_id} = { url => $url_data, path => "$conf->{paths}->{data_store}/$udi/$udi.dat" };
 
+            # delete temp file
+            writelog($log,"[$udi] deleting temp file ($filepath)");
+            unlink $filepath or die "Error: could not delete temp file: $filepath ($!)\n";
+
             # update dataset_filename (original filename), dataset_download_size, and dataset_download_status
             my $filesize = -s "$conf->{paths}->{data_store}/$udi/$udi.dat";
             my $sth2 = $dbh->prepare("UPDATE registry SET dataset_filename = ?, dataset_download_size = ?, dataset_download_status = ? WHERE registry_id = ?;");
