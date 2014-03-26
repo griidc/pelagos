@@ -84,7 +84,7 @@ function GeoViz()
 		
 		if (Options.staticMap)
 		{
-			makeStatic();
+			this.makeStatic();
 			googleZoomLevel = 7;
 		}
 		
@@ -688,13 +688,13 @@ function GeoViz()
 		return myFeature.id;
 	}
 	
-	this.concaveHull = function (FeatureID)
+	this.convexHull = function (FeatureID)
 	{
 		var Feature = vlayer.getFeatureById(FeatureID);
 		var featureID = Feature.id;
 		var WKT = this.wkt.write(Feature);
 		jQuery.ajax({
-			url: "/includes/geoviz/concavehull.php", // replace this url with geoviz lib
+			url: "/includes/geoviz/convexhull.php", // replace this url with geoviz lib
 			type: "POST",
 			data: {wkt: WKT, featureid: featureID},
 			context: document.body
