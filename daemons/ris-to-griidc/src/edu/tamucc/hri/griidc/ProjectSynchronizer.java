@@ -428,7 +428,8 @@ public class ProjectSynchronizer extends SynchronizerBase {
 		String modifyQuery = null;
 
 		modifyQuery = this.formatModifyQuery();
-		System.out.println("Query: " + modifyQuery);
+		if (ProjectSynchronizer.isDebug()) 
+			  System.out.println("Query: " + modifyQuery);
 		this.griidcDbConnection.executeQueryBoolean(modifyQuery);
 		msg = "Modified GRIIDC " + GriidcTableName + ": "
 				+ griidcProjectToString();
