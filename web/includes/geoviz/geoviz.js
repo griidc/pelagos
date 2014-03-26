@@ -293,7 +293,8 @@ function GeoViz()
 				{
 					//checkPolygon(event.feature.id);
 				}
-				jQuery("#helptext").html('Modify Mode<br>(Drag points to modify feature)');
+				//jQuery("#helptext").html('Modify Mode<br>(Drag points to modify feature)');
+				jQuery(mapDiv).trigger('modeChange','Modify');
 			},
 			'afterfeaturemodified': function(event) {
 				////console.log("Finished with " + event.feature.id);
@@ -303,12 +304,19 @@ function GeoViz()
 				{
 					jQuery(mapDiv).trigger('featureAdded',getCoordinateList(event.feature));
 				}
-				jQuery("#helptext").text('Navigation Mode');
+				//jQuery("#helptext").text('Navigation Mode');
+				jQuery(mapDiv).trigger('modeChange','Navigation');
 				
 			},
 			'beforefeatureadded': function(event) {
 				stopDrawing();
 				checkAllowModify(true);
+			},
+			'sketchstarted': function(event) {
+				jQuery(mapDiv).trigger('modeChange','Drawing');
+			},
+			'sketchcomplete': function(event) {
+				jQuery(mapDiv).trigger('modeChange','Navigation');
 			},
 			'featureadded': function(event) {
 				//checkPolygon(event.feature.id);
@@ -408,7 +416,7 @@ function GeoViz()
 		map.updateSize();
 	}
 	
-	function makeStatic()
+	this.makeStatic = function ()
 	{
 		Controls = map.getControlsByClass('OpenLayers.Control.Navigation');
 		Controls[0].destroy();
@@ -437,7 +445,7 @@ function GeoViz()
 	
 	this.getFilter = function ()
 	{
-		return wktTransformToWGS84(wkt.write(flayer.features[0]));
+		return wktTransformToWGS84(this.wkt.write(flayer.features[0]));
 	}
 	
 	this.clearFilter = function ()
@@ -445,8 +453,9 @@ function GeoViz()
 		flayer.removeAllFeatures();
 	}
 	
-	function addImage(Img,Opacity)
+	this.addImage = function (Img,Opacity)
 	{
+		console.log(map.getMaxExtent());
 		var graphic = new OpenLayers.Layer.Image(
 		'Image',
 		Img,
@@ -459,6 +468,16 @@ function GeoViz()
 			}
 		);
 		map.addLayers([graphic]);
+	}
+	
+	this.removeImage = function ()
+	{
+		var graphic = map.getLayersByName('Image');
+		for (var i=0;i<graphic.length;i++)
+		{
+			map.removeLayer(graphic[i]);
+		}
+		
 	}
 	
 	this.initToolbar = function (DIV,Options)
@@ -779,16 +798,22 @@ function GeoViz()
 	
 	this.wktTransformToWGS84 = function (WKT)
 	{
-		var wktFeature = this.wkt.read(WKT);
-		wktFeature.geometry.transform(map.getProjectionObject(),'EPSG:4326');
-		return this.wkt.write(wktFeature);
+		if (WKT != "")
+		{
+			var wktFeature = this.wkt.read(WKT);
+			wktFeature.geometry.transform(map.getProjectionObject(),'EPSG:4326');
+			return this.wkt.write(wktFeature);
+		}
 	}
 	
 	this.wktTransformToSperMerc = function (WKT)
 	{
-		var wktFeature = this.wkt.read(WKT);
-		wktFeature.geometry.transform('EPSG:4326',map.getProjectionObject());
-		return this.wkt.write(wktFeature);
+		if (WKT != "")
+		{
+			var wktFeature = this.wkt.read(WKT);
+			wktFeature.geometry.transform('EPSG:4326',map.getProjectionObject());
+			return this.wkt.write(wktFeature);
+		}
 	}
 	
 	function transformLayers(Layer)
@@ -1002,14 +1027,17 @@ function GeoViz()
 	this.checkPointList = function (List)
 	{
 		var pointList = "";
-		var points = List.match(/(-?\d+\.\d+|-?\d+)/g); //-?\d+(\.\d+)?
-		for (var i=0;i<points.length;i+=2)
+		if (List != "")
 		{
-			if (i!=0) {pointList += " "};
-			pointList += points[i];
-			if (typeof points[i+1] !== 'undefined')
+			var points = List.match(/(-?\d+\.\d+|-?\d+)/g); //-?\d+(\.\d+)?
+			for (var i=0;i<points.length;i+=2)
 			{
-				pointList += "," + points[i+1];
+				if (i!=0) {pointList += " "};
+				pointList += points[i];
+				if (typeof points[i+1] !== 'undefined')
+				{
+					pointList += "," + points[i+1];
+				}
 			}
 		}
 		return pointList;
