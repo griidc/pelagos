@@ -17,3 +17,6 @@ mainPartial.sql
 notifications.ini
 ris-to-griidc.ini
 db.ini
+gomri_rpisRisTableColTypeReport.txt
+griidcGriidcTableColTypeReport.txt
+griidcTablesColumnsAndDataTypesOut.txt
