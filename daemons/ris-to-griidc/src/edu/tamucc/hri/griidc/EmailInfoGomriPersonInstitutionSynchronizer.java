@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
-import edu.tamucc.hri.griidc.exception.DuplicateRecordException;
+import edu.tamucc.hri.griidc.exception.MultipleRecordsFoundException;
 import edu.tamucc.hri.griidc.exception.PropertyNotFoundException;
 import edu.tamucc.hri.rdbms.utils.RdbmsConnection;
 import edu.tamucc.hri.rdbms.utils.RdbmsConstants;
@@ -19,7 +19,7 @@ import edu.tamucc.hri.rdbms.utils.RdbmsUtils;
  * @author jvh
  *
  */
-public class EmailInfoGomriPersonInstitutionSynchronizer {
+public class EmailInfoGomriPersonInstitutionSynchronizer extends SynchronizerBase {
 
 	public EmailInfoGomriPersonInstitutionSynchronizer() {
 		// TODO Auto-generated constructor stub
@@ -29,21 +29,14 @@ public class EmailInfoGomriPersonInstitutionSynchronizer {
 	private static final String PersonNumberCol = "Person_Number";
 	private static final String EmailInfoNumberCol = "EmailInfo_Number";
 	private static final String InstitutionNumberCol = "Institution_Number";
-	private RdbmsConnection griidcDbConnection = null;
-	private boolean initialized = false;
 	private static boolean Debug = false;
 
-	public void initializeStartUp() throws IOException,
-			PropertyNotFoundException, SQLException, ClassNotFoundException {
-		if (!initialized) {
-			this.griidcDbConnection = RdbmsUtils
-					.getGriidcDbConnectionInstance();
-			initialized = true;
-		}
+	public void initialize()  {
+		this.commonInitialize();
 	}
 
 	public boolean update(int emailInfoNumber,
-			int institutionNumber, int personNumber ) throws DuplicateRecordException, SQLException,
+			int institutionNumber, int personNumber ) throws MultipleRecordsFoundException, SQLException,
 			ClassNotFoundException {
 
 		int count = 0;
@@ -53,7 +46,7 @@ public class EmailInfoGomriPersonInstitutionSynchronizer {
 		}
 		this.validate( );
 		if (count > 1) {
-			throw new DuplicateRecordException(
+			throw new MultipleRecordsFoundException(
 					"ERROR updateing GRIIDC - there are " + count + " "
 							+ GriidcTableName + " records with "
 							+ PersonNumberCol + " equal to " + personNumber);

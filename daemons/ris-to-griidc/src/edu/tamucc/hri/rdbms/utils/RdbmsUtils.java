@@ -4,11 +4,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.Vector;
 
 import org.ini4j.InvalidFileFormatException;
 
-import edu.tamucc.hri.griidc.exception.DuplicateRecordException;
+import edu.tamucc.hri.griidc.exception.MultipleRecordsFoundException;
 import edu.tamucc.hri.griidc.exception.IllegalFundingSourceCodeException;
 import edu.tamucc.hri.griidc.exception.MissingArgumentsException;
 import edu.tamucc.hri.griidc.exception.NoRecordFoundException;
@@ -17,8 +20,6 @@ import edu.tamucc.hri.griidc.exception.TableNotInDatabaseException;
 import edu.tamucc.hri.griidc.support.MiscUtils;
 
 public class RdbmsUtils {
-
-	
 
 	public static boolean Debug = false;
 
@@ -75,8 +76,8 @@ public class RdbmsUtils {
 			if (colValue != null) { // there is a value here
 				if (notTheFirstTime)
 					sb.append(RdbmsConstants.CommaSpace);
-				sb.append(RdbmsUtils.wrapDbValue(colType,colValue));
-				
+				sb.append(RdbmsUtils.wrapDbValue(colName,colType, colValue));
+
 				notTheFirstTime = true;
 			}
 		}
@@ -84,11 +85,42 @@ public class RdbmsUtils {
 
 		return sb.toString();
 	}
-	private static String wrapDbValue(String colType, String colValue) {
-		if (colType.equals(RdbmsConstants.DbBoolean) || colType.equals(RdbmsConstants.DbInteger) || colType.equals(RdbmsConstants.DbNumeric)) {
-			return colValue;
-		} // else colType is some sort of String thing
-		return RdbmsConnection.wrapInSingleQuotes(colValue);
+
+	/**
+	 * For storage in the database all values must be wrapped in either
+	 * single quotes, double quotes or left un wrapped.
+	 * USER-DEFINED types are a special case. Currently this handles 
+	 * two USER-DEFINED types, GeoCoordinate and Telephone-Type. These
+	 * are detected by examining the column name. If other types are added
+	 * this code will break.  JVH
+	 * @param colName
+	 * @param colType
+	 * @param colValue
+	 * @return
+	 */
+	private static String wrapDbValue(String colName, String colType, String colValue) {
+	
+		if(RdbmsUtils.isDebug()) System.out.println("RdbmsUtils.wrapDbValue(" + colName + ", " 
+                + colType + ", " + colValue + ")");
+		
+		String rtnValue = colValue;
+		if (colType.equals(RdbmsConstants.DbBoolean)
+				|| colType.equals(RdbmsConstants.DbInteger)
+				|| colType.equals(RdbmsConstants.DbNumeric)) {
+			rtnValue =  colValue;
+		} else if(colType.equals(RdbmsConstants.DbUserDefined)) {
+			
+			if(colName.toUpperCase().contains("GeoCoordinate".toUpperCase())) {
+				rtnValue =  colValue;
+			}
+			else if(colName.toUpperCase().contains("Telephone_Type".toUpperCase())) {
+				rtnValue =  RdbmsConnection.wrapInSingleQuotes(colValue);
+			}
+		} else  { // else colType is some sort of String thing
+			rtnValue = RdbmsConnection.wrapInSingleQuotes(colValue);
+		}
+		if(RdbmsUtils.isDebug()) System.out.println("RdbmsUtils.wrapDbValue() returning " + rtnValue); 
+		return rtnValue;
 	}
 
 	/**
@@ -116,11 +148,11 @@ public class RdbmsUtils {
 	 * @see RdbmsUtils.getMetaDataForTable()
 	 * @return
 	 * @throws SQLException
-	 * @throws ClassNotFoundException
+
 	 */
 	public static String formatUpdateStatement(String tableName,
 			DbColumnInfo[] updateColInfo, DbColumnInfo[] whereColInfo)
-			throws SQLException, ClassNotFoundException {
+			throws SQLException {
 
 		// format the column name part
 		boolean notTheFirstTime = false;
@@ -140,7 +172,7 @@ public class RdbmsUtils {
 				sb.append(RdbmsConnection.wrapInDoubleQuotes(colName));
 				sb.append(RdbmsConstants.EqualSign);
 
-				sb.append(RdbmsUtils.wrapDbValue(colType,colValue));
+				sb.append(RdbmsUtils.wrapDbValue(colName,colType, colValue));
 				notTheFirstTime = true;
 			}
 		}
@@ -177,7 +209,7 @@ public class RdbmsUtils {
 				}
 				sb.append(RdbmsConnection.wrapInDoubleQuotes(colName));
 				sb.append(RdbmsConstants.EqualSign);
-				sb.append(RdbmsUtils.wrapDbValue(colType,colValue));
+				sb.append(RdbmsUtils.wrapDbValue(colName,colType, colValue));
 				notTheFirstTime = true;
 			}
 		}
@@ -195,17 +227,16 @@ public class RdbmsUtils {
 	 * @return
 	 * @throws FileNotFoundException
 	 * @throws SQLException
-	 * @throws ClassNotFoundException
+
 	 * @throws PropertyNotFoundException
-	 * @throws DuplicateRecordException
+	 * @throws MultipleRecordsFoundException
 	 * @throws NoRecordFoundException
 	 */
 	public static final int Country_ISO3166Code_Length3 = 3;
 	public static final int Country_ISO3166Code_Length2 = 2;
 
 	public static int getCountryNumberFromName(String countryCode)
-			throws SQLException, ClassNotFoundException,
-			PropertyNotFoundException, DuplicateRecordException,
+			throws SQLException, MultipleRecordsFoundException,
 			NoRecordFoundException {
 
 		int codeLength = countryCode.trim().length();
@@ -228,7 +259,8 @@ public class RdbmsUtils {
 				// + getWrappedGriidcShemaName() + "."
 				+ RdbmsConnection.wrapInDoubleQuotes("Country") + "  WHERE  "
 				+ RdbmsConnection.wrapInDoubleQuotes(countryColumnName)
-				+ RdbmsConstants.EqualSign + RdbmsConnection.wrapInSingleQuotes(countryCode);
+				+ RdbmsConstants.EqualSign
+				+ RdbmsConnection.wrapInSingleQuotes(countryCode);
 
 		// System.out.println("Query: " + query);
 		ResultSet rset = RdbmsUtils.getGriidcSecondaryDbConnectionInstance()
@@ -248,21 +280,22 @@ public class RdbmsUtils {
 					+ count
 					+ " records in the GRIIDC Country table with the Country_Name: "
 					+ countryCode;
-			throw new DuplicateRecordException(msg);
+			throw new MultipleRecordsFoundException(msg);
 		}
 		return num;
 	}
 
 	public static boolean doesGriidcDepartmentExist(int institutionNumber,
-			int departmentNumber) throws SQLException, ClassNotFoundException, PropertyNotFoundException,
-			NoRecordFoundException, DuplicateRecordException {
+			int departmentNumber) throws SQLException,NoRecordFoundException,
+			 MultipleRecordsFoundException {
 
 		String query = "SELECT * FROM  "
 				// + getWrappedGriidcShemaName() + "."
 				+ RdbmsConnection.wrapInDoubleQuotes("Department")
 				+ "  WHERE  "
 				+ RdbmsConnection.wrapInDoubleQuotes("Department_Number")
-				+ RdbmsConstants.EqualSign + departmentNumber + RdbmsConstants.And
+				+ RdbmsConstants.EqualSign + departmentNumber
+				+ RdbmsConstants.And
 				+ RdbmsConnection.wrapInDoubleQuotes("Institution_Number")
 				+ RdbmsConstants.EqualSign + institutionNumber;
 		ResultSet rset = RdbmsUtils.getGriidcSecondaryDbConnectionInstance()
@@ -281,7 +314,7 @@ public class RdbmsUtils {
 			return true;
 
 		if (count > 1)
-			throw new DuplicateRecordException("In Department table - " + count
+			throw new MultipleRecordsFoundException("In Department table - " + count
 					+ " records match Department_Number: " + departmentNumber
 					+ ", Institution_Number: " + institutionNumber);
 		return false;
@@ -290,7 +323,7 @@ public class RdbmsUtils {
 
 	public static int getGriidcDepartmentCountryNumber(int departmentNumber)
 			throws SQLException, NoRecordFoundException,
-			DuplicateRecordException, ClassNotFoundException, PropertyNotFoundException {
+			MultipleRecordsFoundException {
 		int postalCode = RdbmsUtils
 				.getGriidcDepartmentPostalNumber(departmentNumber);
 		// get the country code from the PostalArea table using the postalCode
@@ -302,7 +335,7 @@ public class RdbmsUtils {
 
 	public static int getGriidcDepartmentPostalNumber(int departmentNumber)
 			throws SQLException, NoRecordFoundException,
-			DuplicateRecordException, ClassNotFoundException, PropertyNotFoundException {
+			MultipleRecordsFoundException {
 		return RdbmsUtils.getIntValueFromTable(
 				RdbmsUtils.getGriidcDbConnectionInstance(), "Department",
 				"Department_Number", departmentNumber, "PostalArea_Number");
@@ -318,16 +351,15 @@ public class RdbmsUtils {
 	 * @return
 	 * @throws FileNotFoundException
 	 * @throws SQLException
-	 * @throws ClassNotFoundException
+
 	 * @throws PropertyNotFoundException
-	 * @throws DuplicateRecordException
+	 * @throws MultipleRecordsFoundException
 	 * @throws NoRecordFoundException
 	 * @throws MissingArgumentsException
 	 */
 	public static int getGriidcDepartmentPostalNumber(int countryNumber,
 			String state, String city, String zip)
-			throws FileNotFoundException, SQLException, ClassNotFoundException,
-			PropertyNotFoundException, DuplicateRecordException,
+			throws FileNotFoundException, SQLException, MultipleRecordsFoundException,
 			NoRecordFoundException, MissingArgumentsException {
 
 		MiscUtils.isValidPostalAreaData(state, city, zip);
@@ -342,11 +374,15 @@ public class RdbmsUtils {
 				+ RdbmsConstants.And
 				+ RdbmsConnection
 						.wrapInDoubleQuotes("PostalArea_AdministrativeAreaAbbr")
-				+ RdbmsConstants.EqualSign + RdbmsConnection.wrapInSingleQuotes(state) + RdbmsConstants.And
+				+ RdbmsConstants.EqualSign
+				+ RdbmsConnection.wrapInSingleQuotes(state)
+				+ RdbmsConstants.And
 				+ RdbmsConnection.wrapInDoubleQuotes("PostalArea_City")
-				+ RdbmsConstants.EqualSign + RdbmsConnection.wrapInSingleQuotes(city) + RdbmsConstants.And
+				+ RdbmsConstants.EqualSign
+				+ RdbmsConnection.wrapInSingleQuotes(city) + RdbmsConstants.And
 				+ RdbmsConnection.wrapInDoubleQuotes("PostalArea_PostalCode")
-				+ RdbmsConstants.EqualSign + RdbmsConnection.wrapInSingleQuotes(zip);
+				+ RdbmsConstants.EqualSign
+				+ RdbmsConnection.wrapInSingleQuotes(zip);
 
 		ResultSet rset = null;
 		try {
@@ -377,7 +413,7 @@ public class RdbmsUtils {
 					+ " records in the  GRIIDC PostalArea table which match  country number: "
 					+ countryNumber + ",  state: " + state + ", city: " + city
 					+ ". zip: " + zip;
-			throw new DuplicateRecordException(msg);
+			throw new MultipleRecordsFoundException(msg);
 		}
 		//
 		// only one match found - return the number
@@ -388,13 +424,13 @@ public class RdbmsUtils {
 	public static int getIntValueFromTable(RdbmsConnection con,
 			String tableName, String keyColumnName, int keyValue,
 			String targetColName) throws SQLException, NoRecordFoundException,
-			DuplicateRecordException {
+			MultipleRecordsFoundException {
 
 		String query = "SELECT * FROM  "
 				// + getWrappedGriidcShemaName() + "."
 				+ RdbmsConnection.wrapInDoubleQuotes(tableName) + "  WHERE  "
-				+ RdbmsConnection.wrapInDoubleQuotes(keyColumnName) + RdbmsConstants.EqualSign
-				+ keyValue;
+				+ RdbmsConnection.wrapInDoubleQuotes(keyColumnName)
+				+ RdbmsConstants.EqualSign + keyValue;
 
 		ResultSet rset = null;
 		try {
@@ -418,7 +454,7 @@ public class RdbmsUtils {
 			String msg = "There are " + count + " records in the  GRIIDC "
 					+ tableName + " table which match " + keyColumnName + ": "
 					+ keyValue;
-			throw new DuplicateRecordException(msg);
+			throw new MultipleRecordsFoundException(msg);
 		}
 		//
 		// only one match found - return the number
@@ -433,14 +469,12 @@ public class RdbmsUtils {
 	 * @throws IOException
 	 * @throws PropertyNotFoundException
 	 * @throws SQLException
-	 * @throws ClassNotFoundException
+
 	 *             TODO: this function gets reports a different path for the
 	 *             file than it is using
 	 * @throws TableNotInDatabaseException
 	 */
-	public static void reportPeopleTableData() throws IOException,
-			PropertyNotFoundException, SQLException, ClassNotFoundException,
-			TableNotInDatabaseException {
+	public static void reportPeopleTableData() throws IOException,SQLException, TableNotInDatabaseException {
 		ResultSet rset = RdbmsUtils.getRisDbConnectionInstance()
 				.selectAllValuesFromTable("People");
 		int id = -1;
@@ -468,14 +502,12 @@ public class RdbmsUtils {
 	 * @throws IOException
 	 * @throws PropertyNotFoundException
 	 * @throws SQLException
-	 * @throws ClassNotFoundException
-	 *             TODO: this function gets reports a different path for the
-	 *             file than it is using
+
 	 * @throws TableNotInDatabaseException
 	 */
 	public static void reportTables(String risTableName, String griidcTableName)
-			throws IOException, PropertyNotFoundException, SQLException,
-			ClassNotFoundException, TableNotInDatabaseException {
+			throws IOException, SQLException,
+			TableNotInDatabaseException {
 		String[] tableNames = { risTableName };
 		RdbmsUtils.getRisDbConnectionInstance()
 				.reportTableColumnNamesAndDataType(tableNames);
@@ -486,20 +518,17 @@ public class RdbmsUtils {
 	}
 
 	public static RdbmsConnection getRisDbConnectionInstance()
-			throws SQLException, ClassNotFoundException,
-			PropertyNotFoundException {
+			throws SQLException {
 		return RdbmsConnectionFactory.getRisDbConnectionInstance();
 	}
 
 	public static RdbmsConnection getGriidcDbConnectionInstance()
-			throws SQLException, ClassNotFoundException,
-			PropertyNotFoundException {
+			throws SQLException {
 		return RdbmsConnectionFactory.getGriidcDbConnectionInstance();
 	}
 
 	public static RdbmsConnection getGriidcSecondaryDbConnectionInstance()
-			throws SQLException, ClassNotFoundException,
-			PropertyNotFoundException {
+			throws SQLException {
 		return RdbmsConnectionFactory.getGriidcSecondaryDbConnectionInstance();
 	}
 
@@ -517,12 +546,11 @@ public class RdbmsUtils {
 	 * @return
 	 * @throws FileNotFoundException
 	 * @throws SQLException
-	 * @throws ClassNotFoundException
+
 	 * @throws PropertyNotFoundException
 	 */
 	public static String[] getColumnDefaultValue(RdbmsConnection connection,
-			String tableName) throws FileNotFoundException, SQLException,
-			ClassNotFoundException, PropertyNotFoundException {
+			String tableName) throws FileNotFoundException, SQLException {
 		String query = "SELECT column_default FROM information_schema.columns WHERE table_name = "
 				+ RdbmsConnection.wrapInSingleQuotes(tableName);
 		ResultSet rset = connection.executeQueryResultSet(query);
@@ -546,12 +574,12 @@ public class RdbmsUtils {
 	 * @return
 	 * @throws FileNotFoundException
 	 * @throws SQLException
-	 * @throws ClassNotFoundException
+
 	 * @throws TableNotInDatabaseException
 	 */
 	public static String getColumnNamesAndDataTypesFromTables(
 			RdbmsConnection dbcon, String[] targetTables)
-			throws FileNotFoundException, SQLException, ClassNotFoundException,
+			throws FileNotFoundException, SQLException,
 			TableNotInDatabaseException {
 		String formatString = "%-30s  %-40s";
 		String[] tableName = null;
@@ -563,7 +591,8 @@ public class RdbmsUtils {
 		final int COL = 0;
 		final int DT = 1; // data type
 		StringBuffer sb = new StringBuffer();
-		sb.append(dbcon.getShortDescription() + RdbmsConstants.NewLine + RdbmsConstants.NewLine);
+		sb.append(dbcon.getShortDescription() + RdbmsConstants.NewLine
+				+ RdbmsConstants.NewLine);
 		for (String t : tableName) {
 			if (isDebug())
 				System.out.println(t);
@@ -582,10 +611,36 @@ public class RdbmsUtils {
 		return sb.toString();
 	}
 
+	public static String[] getUniqueDataTypes(RdbmsConnection dbcon, String[] targetTables) throws SQLException, TableNotInDatabaseException {
+
+		String formatString = "%-30s  %-40s";
+		String[][] colAndType = null;
+		final int COL = 0;
+		final int DT = 1; // data type
+		SortedSet<String> unique = Collections.synchronizedSortedSet(new TreeSet<String>());
+		for (String t : targetTables) {
+			if (isDebug())
+				System.out.println(t);
+			colAndType = dbcon.getColumnNamesAndDataTypesFromTable(t);
+			for (int i = 0; i < colAndType[COL].length; i++) {
+				String col = colAndType[COL][i];
+				String type = colAndType[DT][i];
+				unique.add(type.trim());
+				if(isDebug()) { 
+					System.out.println(RdbmsConstants.Tab
+						+ String.format(formatString, col.trim(), type.trim())
+						+ RdbmsConstants.NewLine);
+				}
+			}
+		}
+		String[] solitary = new String[unique.size()];
+		solitary = unique.toArray(solitary);
+		return solitary;
+	}
+
 	public static void reportColumnNamesAndDataTypesFromTables(
 			RdbmsConnection dbcon, String[] tables)
-			throws FileNotFoundException, SQLException, ClassNotFoundException,
-			TableNotInDatabaseException {
+			throws FileNotFoundException, SQLException, TableNotInDatabaseException {
 		System.out.println(RdbmsUtils.getColumnNamesAndDataTypesFromTables(
 				dbcon, tables));
 	}
@@ -646,8 +701,7 @@ public class RdbmsUtils {
 	};
 
 	public static TableColInfoCollection createTableColInfoCollection(
-			RdbmsConnection conn, String[] tableNames) throws SQLException,
-			ClassNotFoundException {
+			RdbmsConnection conn, String[] tableNames) throws SQLException {
 		TableColInfoCollection tciCollection = new TableColInfoCollection();
 		for (String tName : tableNames) {
 			TableColInfo tci = RdbmsUtils.createTableColInfo(conn, tName);
@@ -658,7 +712,7 @@ public class RdbmsUtils {
 
 	public static TableColInfo getMetaDataForTable(
 			RdbmsConnection dbConnection, String tableName)
-			throws SQLException, ClassNotFoundException {
+			throws SQLException {
 		// metaData is a set of descriptions for the columns in the table
 		return createTableColInfo(dbConnection, tableName);
 	}
@@ -672,10 +726,10 @@ public class RdbmsUtils {
 	 * @return
 	 * @throws FileNotFoundException
 	 * @throws SQLException
-	 * @throws ClassNotFoundException
+
 	 */
 	public static TableColInfo createTableColInfo(RdbmsConnection conn,
-			String tableName) throws SQLException, ClassNotFoundException {
+			String tableName) throws SQLException {
 		String querry = "SELECT COLUMN_NAME, DATA_TYPE, COLUMN_DEFAULT FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = "
 				+ RdbmsConnection.wrapInSingleQuotes(tableName);
 
@@ -695,8 +749,7 @@ public class RdbmsUtils {
 	}
 
 	public static TableColInfoCollection getGriidcTableColInfoCollection()
-			throws SQLException, ClassNotFoundException,
-			PropertyNotFoundException {
+			throws SQLException {
 		if (RdbmsUtils.GriidcTableColInfoCollection == null) {
 			RdbmsUtils.createTableColInfoCollection(
 					RdbmsUtils.getGriidcDbConnectionInstance(),
@@ -706,8 +759,7 @@ public class RdbmsUtils {
 	}
 
 	public static TableColInfoCollection getGriidcDefaultValueTableColInfoCollection()
-			throws SQLException, ClassNotFoundException,
-			PropertyNotFoundException {
+			throws SQLException {
 		if (RdbmsUtils.GriidcDefaultValueTableColInfoCollection == null) {
 			RdbmsUtils.GriidcDefaultValueTableColInfoCollection = RdbmsUtils
 					.getGriidcTableColInfoCollection()
@@ -718,8 +770,8 @@ public class RdbmsUtils {
 
 	public static TableColInfoCollection getAllDataFromTable(
 			RdbmsConnection dbConnection, String tableName)
-			throws SQLException, ClassNotFoundException,
-			TableNotInDatabaseException, PropertyNotFoundException {
+			throws SQLException,
+			TableNotInDatabaseException {
 		TableColInfoCollection dataSet = new TableColInfoCollection();
 		// metaData is a set of descriptions for the columns in the table
 		TableColInfo metaData = createTableColInfo(dbConnection, tableName);
@@ -779,14 +831,11 @@ public class RdbmsUtils {
 	public static RisFundSrcProgramsStartEndCollection progFundSrcCollection = null;
 
 	public static RisFundSrcProgramsStartEndCollection getRisFundSrcProgramsStartEndCollection()
-			throws SQLException, ClassNotFoundException,
-			TableNotInDatabaseException, PropertyNotFoundException, IOException {
+			throws SQLException {
 		return RdbmsUtils.startEndDateInRisPrograms();
 	}
 
-	private static RisFundSrcProgramsStartEndCollection startEndDateInRisPrograms()
-			throws SQLException, ClassNotFoundException,
-			TableNotInDatabaseException, PropertyNotFoundException, IOException {
+	private static RisFundSrcProgramsStartEndCollection startEndDateInRisPrograms() throws SQLException {
 		if (RdbmsUtils.progFundSrcCollection == null) {
 			String tableName = "Programs";
 			String startCol = "Program_StartDate";
@@ -798,29 +847,35 @@ public class RdbmsUtils {
 			int programId = -1;
 			int fundSrc = -1;
 			RdbmsUtils.progFundSrcCollection = new RisFundSrcProgramsStartEndCollection();
-			ResultSet rs = RdbmsUtils.getRisDbConnectionInstance()
-					.selectAllValuesFromTable(tableName);
-			while (rs.next()) {
-				try {
-					fundSrc = rs.getInt(fundSrcCol);
-					programId = rs.getInt(idCol);
-					startDate = rs.getDate(startCol);
-					endDate = rs.getDate(endCol);
-					progFundSrcCollection.addRisProgramStartEnd(fundSrc,
-							programId, startDate, endDate);
-					if (RdbmsUtils.isDebug())
-						System.out.println("Fund_Src: " + fundSrc
-								+ ", Program ID: " + programId + ", start: "
-								+ startDate + ", end: " + endDate);
-				} catch (SQLException e) {
-					String msg = "RIS Error: Fund Src: " + fundSrc
-							+ ", Program ID: " + programId + " - "
-							+ e.getMessage();
-					if (RdbmsUtils.isDebug())
-						System.err.println(msg);
-					MiscUtils.writeToRisErrorLogFile(msg);
-					continue;
+			try {
+				ResultSet rs = RdbmsUtils.getRisDbConnectionInstance()
+						.selectAllValuesFromTable(tableName);
+				while (rs.next()) {
+					try {
+						fundSrc = rs.getInt(fundSrcCol);
+						programId = rs.getInt(idCol);
+						startDate = rs.getDate(startCol);
+						endDate = rs.getDate(endCol);
+						progFundSrcCollection.addRisProgramStartEnd(fundSrc,
+								programId, startDate, endDate);
+						if (RdbmsUtils.isDebug())
+							System.out.println("Fund_Src: " + fundSrc
+									+ ", Program ID: " + programId + ", start: "
+									+ startDate + ", end: " + endDate);
+					} catch (SQLException e) {
+						String msg = "RIS Error: Fund Src: " + fundSrc
+								+ ", Program ID: " + programId + " - "
+								+ e.getMessage();
+						if (RdbmsUtils.isDebug())
+							System.err.println(msg);
+						MiscUtils.writeToRisErrorLogFile(msg);
+						continue;
+					}
 				}
+			} catch (TableNotInDatabaseException e) {
+				System.err.println("TableNotInDatabaseException in RdbmsUtils.startEndDateInRisPrograms() table name: " + tableName);
+				System.err.println("exception: " + e.getMessage());
+				System.exit(-1);
 			}
 		}
 		return RdbmsUtils.progFundSrcCollection;
@@ -833,6 +888,18 @@ public class RdbmsUtils {
 		String ts = s.substring(start, end);
 		System.out.println(s + " turns into " + ts);
 		return ts;
+	}
+
+	/**
+	 * turn a longitude and lattitude (in decimal degrees) into a proper
+	 * Postgresql geometry point
+	 * 
+	 * @param lon
+	 * @param lat
+	 * @return
+	 */
+	public static String makeSqlGeometryPointString(double lon, double lat) {
+		return "ST_SetSRID(ST_MakePoint(" + lon + "," + lat + "), 4326)";
 	}
 
 	public static void main(String[] args) {
@@ -888,21 +955,10 @@ public class RdbmsUtils {
 			stripDefaultValue(tci.getDbColumnInfo("Telephone_Type")
 					.getDefaultValue().getValue());
 
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (PropertyNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (TableNotInDatabaseException e) {
-			System.err.println(e.getMessage());
-		}
+		} 
 		System.out.println("Rdbmsutils.main() - END -");
 	}
 }

@@ -83,16 +83,21 @@ public class IntStringDbCache {
 		return name;
 	}
 
-	public void buildCacheFromDb() throws FileNotFoundException, SQLException,
-			ClassNotFoundException, PropertyNotFoundException, TableNotInDatabaseException {
+	public void buildCacheFromDb()  {
 
 		if (this.cacheMap.size() == 0) {
 
-			ResultSet results = this.dbCon.selectAllValuesFromTable(tableName);
-			while (results.next()) {
-				String value = results.getString(valueColName);
-				int key = results.getInt(keyColName);
-				this.cacheValue(key, value);
+			try {
+				ResultSet results = this.dbCon.selectAllValuesFromTable(tableName);
+				while (results.next()) {
+					String value = results.getString(valueColName);
+					int key = results.getInt(keyColName);
+					this.cacheValue(key, value);
+				}
+			} catch (SQLException e) {
+				MiscUtils.fatalError("IntStringDbCache", "buildCacheFromDb", e.getMessage());
+			} catch (TableNotInDatabaseException e) {
+				MiscUtils.fatalError("IntStringDbCache", "buildCacheFromDb", "TableNotInDatabaseException: " + e.getMessage());
 			}
 		}
 	}

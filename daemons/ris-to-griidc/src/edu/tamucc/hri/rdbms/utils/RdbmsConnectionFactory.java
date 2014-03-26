@@ -22,8 +22,7 @@ public class RdbmsConnectionFactory {
 	}
 	
 	public static RdbmsConnection getRisDbConnectionInstance()
-			throws SQLException, ClassNotFoundException,
-			PropertyNotFoundException {
+			throws SQLException {
 		if (RdbmsConnectionFactory.RisDbConnectionInstance == null) {
 			RdbmsConnectionFactory.RisDbConnectionInstance = RdbmsConnectionFactory.createNewRisDbConnection();
 		}
@@ -31,8 +30,7 @@ public class RdbmsConnectionFactory {
 	}
 
 	public static  RdbmsConnection getGriidcDbConnectionInstance()
-			throws SQLException, ClassNotFoundException,
-			PropertyNotFoundException {
+			throws SQLException {
 		if (RdbmsConnectionFactory.GriidcDbConnectionInstance == null) {
 			RdbmsConnectionFactory.GriidcDbConnectionInstance = RdbmsConnectionFactory.createNewGriidcDbConnection();
 		}
@@ -40,8 +38,7 @@ public class RdbmsConnectionFactory {
 	}
 
 	public static  RdbmsConnection getGriidcSecondaryDbConnectionInstance()
-			throws SQLException, ClassNotFoundException,
-			PropertyNotFoundException {
+			throws SQLException {
 		if (RdbmsConnectionFactory.GriidcSecondaryDbConnection == null) {
 			RdbmsConnectionFactory.GriidcSecondaryDbConnection = RdbmsConnectionFactory.createNewGriidcDbConnection();
 		}
@@ -60,47 +57,61 @@ public class RdbmsConnectionFactory {
 	private  static int risInstanceCount = 0;
 
 	private static RdbmsConnection createNewGriidcDbConnection()
-			throws SQLException, ClassNotFoundException,
-			PropertyNotFoundException {
-		String jdbcDriverName = RisToGriidcConfiguration.getRisToGriiidcIniProp(RisToGriidcConfiguration.getRisToGriidcGriidcDbSection(),"driverName");
-		String jdbcPrefix = RisToGriidcConfiguration.getRisToGriiidcIniProp(RisToGriidcConfiguration.getRisToGriidcGriidcDbSection(),"jdbcPrefix");
-		String dbSchema = RisToGriidcConfiguration.getRisToGriiidcIniProp(RisToGriidcConfiguration.getRisToGriidcGriidcDbSection(),"schema");
-		
-		String sectionName = RisToGriidcConfiguration.getGriidcDbIniSection();
-		String dbType = RisToGriidcConfiguration.getDbIniProp(sectionName,"type");
-		String dbHost = RisToGriidcConfiguration.getDbIniProp(sectionName,"host");
-		String dbPort = RisToGriidcConfiguration.getDbIniProp(sectionName,"port");
-		String dbName = RisToGriidcConfiguration.getDbIniProp(sectionName,"dbname");
-		String dbUser = RisToGriidcConfiguration.getDbIniProp(sectionName,"username");
-		String dbPassword = RisToGriidcConfiguration.getDbIniProp(sectionName,"password");
+			throws SQLException {
+		RdbmsConnection con = null;
+		try {
+			String jdbcDriverName = RisToGriidcConfiguration.getRisToGriiidcIniProp(RisToGriidcConfiguration.getRisToGriidcGriidcDbSection(),"driverName");
+			String jdbcPrefix = RisToGriidcConfiguration.getRisToGriiidcIniProp(RisToGriidcConfiguration.getRisToGriidcGriidcDbSection(),"jdbcPrefix");
+			String dbSchema = RisToGriidcConfiguration.getRisToGriiidcIniProp(RisToGriidcConfiguration.getRisToGriidcGriidcDbSection(),"schema");
+			
+			String sectionName = RisToGriidcConfiguration.getGriidcDbIniSection();
+			String dbType = RisToGriidcConfiguration.getDbIniProp(sectionName,"type");
+			String dbHost = RisToGriidcConfiguration.getDbIniProp(sectionName,"host");
+			String dbPort = RisToGriidcConfiguration.getDbIniProp(sectionName,"port");
+			String dbName = RisToGriidcConfiguration.getDbIniProp(sectionName,"dbname");
+			String dbUser = RisToGriidcConfiguration.getDbIniProp(sectionName,"username");
+			String dbPassword = RisToGriidcConfiguration.getDbIniProp(sectionName,"password");
 
-		RdbmsConnection con = new RdbmsConnection();
-		con.setConnection(dbType, jdbcDriverName, jdbcPrefix, dbHost, dbPort,
-				dbName, dbSchema, dbUser, dbPassword);
-		RdbmsConnectionFactory.griidcInstanceCount++;
+			con = new RdbmsConnection();
+			con.setConnection(dbType, jdbcDriverName, jdbcPrefix, dbHost, dbPort,
+					dbName, dbSchema, dbUser, dbPassword);
+			RdbmsConnectionFactory.griidcInstanceCount++;
+			return con;
+		} catch (PropertyNotFoundException e) {
+			System.err.println("RdbmsConnection.createNewGriidcDbConnection() " + e.getMessage());
+			e.printStackTrace();
+			System.exit(-1);
+		} 
 		return con;
 	}
 
 	private static RdbmsConnection createNewRisDbConnection()
-			throws SQLException, ClassNotFoundException,
-			PropertyNotFoundException {
-		String jdbcDriverName = RisToGriidcConfiguration.getRisToGriiidcIniProp(RisToGriidcConfiguration.getRisToGriidcRisDbSection(),"driverName");
-		String jdbcPrefix = RisToGriidcConfiguration.getRisToGriiidcIniProp(RisToGriidcConfiguration.getRisToGriidcRisDbSection(),"jdbcPrefix");
-		
-		
-		String sectionName = RisToGriidcConfiguration.getRisDbIniSection();
-		String dbType = RisToGriidcConfiguration.getDbIniProp(sectionName,"type");
-		String dbHost = RisToGriidcConfiguration.getDbIniProp(sectionName,"host");
-		String dbPort = RisToGriidcConfiguration.getDbIniProp(sectionName,"port");
-		String dbName = RisToGriidcConfiguration.getDbIniProp(sectionName,"dbname");
-		String dbUser = RisToGriidcConfiguration.getDbIniProp(sectionName,"username");
-		String dbPassword = RisToGriidcConfiguration.getDbIniProp(sectionName,"password");
-		String dbSchema = null;
+			throws SQLException {
+		RdbmsConnection con = null;
+		try {
+			String jdbcDriverName = RisToGriidcConfiguration.getRisToGriiidcIniProp(RisToGriidcConfiguration.getRisToGriidcRisDbSection(),"driverName");
+			String jdbcPrefix = RisToGriidcConfiguration.getRisToGriiidcIniProp(RisToGriidcConfiguration.getRisToGriidcRisDbSection(),"jdbcPrefix");
+			
+			
+			String sectionName = RisToGriidcConfiguration.getRisDbIniSection();
+			String dbType = RisToGriidcConfiguration.getDbIniProp(sectionName,"type");
+			String dbHost = RisToGriidcConfiguration.getDbIniProp(sectionName,"host");
+			String dbPort = RisToGriidcConfiguration.getDbIniProp(sectionName,"port");
+			String dbName = RisToGriidcConfiguration.getDbIniProp(sectionName,"dbname");
+			String dbUser = RisToGriidcConfiguration.getDbIniProp(sectionName,"username");
+			String dbPassword = RisToGriidcConfiguration.getDbIniProp(sectionName,"password");
+			String dbSchema = null;
 
-		RdbmsConnection con = new RdbmsConnection();
-		con.setConnection(dbType, jdbcDriverName, jdbcPrefix, dbHost, dbPort,
-				dbName, dbSchema, dbUser, dbPassword);
-		RdbmsConnectionFactory.risInstanceCount++;
+			con = new RdbmsConnection();
+			con.setConnection(dbType, jdbcDriverName, jdbcPrefix, dbHost, dbPort,
+					dbName, dbSchema, dbUser, dbPassword);
+			RdbmsConnectionFactory.risInstanceCount++;
+			return con;
+		} catch (PropertyNotFoundException e) {
+			System.err.println("RdbmsConnection.createNewRisDbConnection() " + e.getMessage());
+			e.printStackTrace();
+			System.exit(-1);
+		} 
 		return con;
 	}
 

@@ -13,7 +13,7 @@ import edu.tamucc.hri.rdbms.utils.DbColumnInfo;
 import edu.tamucc.hri.rdbms.utils.RdbmsUtils;
 import edu.tamucc.hri.rdbms.utils.TableColInfo;
 
-public class TelephoneSynchronizer {
+public class TelephoneSynchronizer extends SynchronizerBase {
 
 	private static final String TableName = "Telephone";
 	private static final String TelephoneKeyColName = "Telephone_Key";
@@ -43,6 +43,10 @@ public class TelephoneSynchronizer {
 		return TelephoneSynchronizer.instance;
 	}
 
+	public void initialize() {
+		this.commonInitialize();
+	}
+
 	/**
 	 * If the Telephone table does not contain a record with this country code
 	 * and telephone number, add it. There is no delete and there is not a
@@ -53,15 +57,12 @@ public class TelephoneSynchronizer {
 	 * @return
 	 * @throws SQLException
 	 * @throws TelephoneNumberException
-	 * @throws PropertyNotFoundException
-	 * @throws ClassNotFoundException
 	 * @throws FileNotFoundException
 	 * @throws TableNotInDatabaseException
 	 */
 	public int updateTelephoneTable(int targetCountry, String targetTelNum)
-			throws SQLException, TelephoneNumberException,
-			PropertyNotFoundException, ClassNotFoundException,
-			FileNotFoundException {
+			throws TelephoneNumberException {
+		this.initialize();
 		this.risTelephoneRecords++;
 		// making the raw data from RIS into a TelephoneStruct does some
 		// processing on the strings. It removes the formating and the extension
@@ -78,58 +79,37 @@ public class TelephoneSynchronizer {
 			telephoneRecordKey = this.findTelephoneTableRecord(
 					targetCountryNumber, targetPhoneNumber);
 			if (telephoneRecordKey == NotFound) {
-				telephoneRecordKey = this.addTelephoneTableRecord(
-						targetCountryNumber, targetPhoneNumber);
-				this.griidcRecordsAdded++;
+				try {
+					telephoneRecordKey = this.addTelephoneTableRecord(
+							targetCountryNumber, targetPhoneNumber);
+					this.griidcRecordsAdded++;
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			} else {
-
 				this.griidcDuplicates++;
-				throw new TelephoneNumberException(
-						"Error in RIS People duplicate Telephone Information -  country: "
-								+ targetCountryNumber + ", number: "
-								+ targetPhoneNumber);
 			}
+			
 			return telephoneRecordKey;
+
 		} catch (TelephoneNumberException e) {
 			this.risTelephoneErrors++;
 			if (TelephoneSynchronizer.isDebug()) {
 				System.out.println(msg + e.getMessage());
-				e.printStackTrace();
 			}
 			throw e;
 		} catch (SQLException e) {
 			this.risTelephoneErrors++;
 			if (TelephoneSynchronizer.isDebug()) {
 				System.out.println(msg + e.getMessage());
-				e.printStackTrace();
 			}
 			throw new TelephoneNumberException(
 					"\nCan't update or add GRIIDC Telephone number - "
 							+ e.getMessage());
-		} catch (FileNotFoundException e) {
-			this.risTelephoneErrors++;
-			if (TelephoneSynchronizer.isDebug()) {
-				System.out.println(msg + e.getMessage());
-				e.printStackTrace();
-			}
-			throw e;
-		} catch (ClassNotFoundException e) {
-			this.risTelephoneErrors++;
-			if (TelephoneSynchronizer.isDebug()) {
-				System.out.println(msg + e.getMessage());
-				e.printStackTrace();
-			}
-			throw e;
-		} catch (PropertyNotFoundException e) {
-			this.risTelephoneErrors++;
-			if (TelephoneSynchronizer.isDebug()) {
-				System.out.println(msg + e.getMessage());
-				e.printStackTrace();
-			}
-			throw e;
 		}
 	}
-
+	
 	private boolean isValid(int targetCountry, String targetTelNum)
 			throws TelephoneNumberException {
 		if (!MiscUtils.doesCountryExist(targetCountry)) {
@@ -149,35 +129,20 @@ public class TelephoneSynchronizer {
 	 * @return
 	 * @throws FileNotFoundException
 	 * @throws SQLException
-	 * @throws ClassNotFoundException
-	 * @throws PropertyNotFoundException
 	 * @throws TelephoneNumberException
 	 */
 	private int addTelephoneTableRecord(int targetCountryNumber,
-			String targetPhoneNumber) throws FileNotFoundException,
-			SQLException, ClassNotFoundException, PropertyNotFoundException {
+			String targetPhoneNumber) throws SQLException {
 		int rtn = -1;
 		DbColumnInfo info[] = getInsertClauseInfo(targetCountryNumber,
 				targetPhoneNumber);
-		try {
-			String query = RdbmsUtils.formatInsertStatement(TableName, info);
-			RdbmsUtils.getGriidcDbConnectionInstance().executeQueryBoolean(
-					query);
 
-			rtn = this.findTelephoneTableRecord(targetCountryNumber,
-					targetPhoneNumber);
-		} catch (FileNotFoundException e) {
-			throw new FileNotFoundException("GRIIDC Telephone: "
-					+ e.getMessage());
-		} catch (SQLException e) {
-			throw new SQLException("GRIIDC Telephone: " + e.getMessage());
-		} catch (ClassNotFoundException e) {
-			throw new ClassNotFoundException("GRIIDC Telephone: "
-					+ e.getMessage());
-		} catch (PropertyNotFoundException e) {
-			throw new PropertyNotFoundException("GRIIDC Telephone: "
-					+ e.getMessage());
-		}
+		String query = RdbmsUtils.formatInsertStatement(TableName, info);
+		RdbmsUtils.getGriidcDbConnectionInstance().executeQueryBoolean(query);
+
+		rtn = this.findTelephoneTableRecord(targetCountryNumber,
+				targetPhoneNumber);
+
 		return rtn;
 	}
 
@@ -189,14 +154,10 @@ public class TelephoneSynchronizer {
 	 * @return
 	 * @throws SQLException
 	 * @throws FileNotFoundException
-	 * @throws ClassNotFoundException
-	 * @throws PropertyNotFoundException
 	 * @throws TableNotInDatabaseException
 	 */
 	private int findTelephoneTableRecord(int targetCountryNumber,
-			String targetPhoneNumber) throws SQLException,
-			FileNotFoundException, ClassNotFoundException,
-			PropertyNotFoundException {
+			String targetPhoneNumber) throws SQLException {
 
 		String phoneNum = null;
 		int countryNum = -1;
@@ -224,8 +185,7 @@ public class TelephoneSynchronizer {
 	}
 
 	private DbColumnInfo[] getInsertClauseInfo(int targetCountryNumber,
-			String targetPhoneNumber) throws FileNotFoundException,
-			SQLException, ClassNotFoundException, PropertyNotFoundException {
+			String targetPhoneNumber) throws SQLException {
 
 		TableColInfo tci = RdbmsUtils.getMetaDataForTable(
 				RdbmsUtils.getGriidcDbConnectionInstance(), TableName);
@@ -241,8 +201,7 @@ public class TelephoneSynchronizer {
 	}
 
 	private DbColumnInfo[] getWhereClauseInfo(int targetCountryNumber,
-			String targetPhoneNumber) throws FileNotFoundException,
-			SQLException, ClassNotFoundException, PropertyNotFoundException {
+			String targetPhoneNumber) throws SQLException {
 		TableColInfo tci = RdbmsUtils.getMetaDataForTable(
 				RdbmsUtils.getGriidcDbConnectionInstance(), TableName);
 

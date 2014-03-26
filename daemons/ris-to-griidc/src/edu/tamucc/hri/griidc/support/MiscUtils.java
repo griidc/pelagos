@@ -15,14 +15,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Properties;
-
-import org.ini4j.InvalidFileFormatException;
 
 import edu.tamucc.hri.griidc.CountryTableCache;
 import edu.tamucc.hri.griidc.exception.MissingArgumentsException;
-import edu.tamucc.hri.griidc.exception.PropertyNotFoundException;
 import edu.tamucc.hri.griidc.exception.TelephoneNumberException;
+import edu.tamucc.hri.rdbms.utils.RdbmsConstants;
 
 public class MiscUtils {
 
@@ -139,18 +136,15 @@ public class MiscUtils {
 
 	private static BufferedWriter developerReportWriter = null;
 
-	public static void closePrimaryLogFile() throws IOException,
-			PropertyNotFoundException {
+	public static void closePrimaryLogFile() throws IOException {
 		MiscUtils.getPrimaryLogFileWriter().close();
 	}
 
-	public static void closeRisErrorLogFile() throws IOException,
-			PropertyNotFoundException {
+	public static void closeRisErrorLogFile() throws IOException {
 		MiscUtils.getRisErrorLogFileWriter().close();
 	}
 
-	public static void closeDeveloperReportFile() throws IOException,
-			PropertyNotFoundException {
+	public static void closeDeveloperReportFile() throws IOException {
 		MiscUtils.getRisErrorLogFileWriter().close();
 	}
 
@@ -164,42 +158,49 @@ public class MiscUtils {
 		return msg;
 	}
 
-	public static int writeToPrimaryLogFile(String msg) throws IOException,
-			PropertyNotFoundException {
-		MiscUtils.getPrimaryLogFileWriter().write(
-				"\n   " + incrementMain() + "\t" + msg);
-		MiscUtils.getPrimaryLogFileWriter().write("\n" + DashLine);
+	public static int writeToPrimaryLogFile(String msg) {
+		try {
+			MiscUtils.getPrimaryLogFileWriter().write(
+					"\n   " + incrementMain() + "\t" + msg + "\n" + DashLine);
+		} catch (IOException e) {
+			System.err.println("MiscUtils.writeToPrimaryLogFile() " + e.getMessage());
+			e.printStackTrace();
+			System.exit(-1);
+		} 
 		MiscUtils.primaryLogMsgCount++;
 		return MiscUtils.primaryLogMsgCount;
 	}
 
-	public static int writeToPrimaryLogFile(Collection<String> msgs)
-			throws IOException, PropertyNotFoundException {
+	public static int writeToPrimaryLogFile(Collection<String> msgs) {
 
 		Iterator<String> it = msgs.iterator();
 		boolean firstLine = true;
-		while (it.hasNext()) {
-			String msg = it.next();
-			if (firstLine) {
-				MiscUtils.getPrimaryLogFileWriter().write(
-						"\n   " + incrementMain() + "\t" + msg);
-			} else {
-				MiscUtils.getPrimaryLogFileWriter().write("\n\t" + msg);
+		try {
+			while (it.hasNext()) {
+				String msg = it.next();
+				if (firstLine) {
+					MiscUtils.getPrimaryLogFileWriter().write(
+							"\n   " + incrementMain() + "\t" + msg);
+				} else {
+					MiscUtils.getPrimaryLogFileWriter().write("\n\t" + msg);
+				}
+				firstLine = false;
 			}
-			firstLine = false;
-		}
-		MiscUtils.getPrimaryLogFileWriter().write("\n" + DashLine);
+			MiscUtils.getPrimaryLogFileWriter().write("\n" + DashLine);
+		} catch (IOException e) {
+			System.err.println("MiscUtils.writeToPrimaryLogFile() " + e.getMessage());
+			e.printStackTrace();
+			System.exit(-1);
+		} 
 		MiscUtils.primaryLogMsgCount++;
 		return MiscUtils.primaryLogMsgCount;
 	}
 
-	public static BufferedWriter openPrimaryLogFile() throws IOException,
-			PropertyNotFoundException {
+	public static BufferedWriter openPrimaryLogFile() throws IOException {
 		return MiscUtils.getPrimaryLogFileWriter();
 	}
 
-	public static BufferedWriter getPrimaryLogFileWriter() throws IOException,
-			PropertyNotFoundException {
+	public static BufferedWriter getPrimaryLogFileWriter() throws IOException {
 
 		if (MiscUtils.primarylogFileWriter == null) {
 
@@ -226,11 +227,15 @@ public class MiscUtils {
 		return msg;
 	}
 
-	public static int writeToRisErrorLogFile(String msg) throws IOException,
-			PropertyNotFoundException {
-		MiscUtils.getRisErrorLogFileWriter().write(
-				"\n" + incrementRisEntryNumber() + "\t" + msg);
-		MiscUtils.getRisErrorLogFileWriter().write("\n" + DashLine);
+	public static int writeToRisErrorLogFile(String msg) {
+		try {
+			MiscUtils.getRisErrorLogFileWriter().write(
+					"\n" + incrementRisEntryNumber() + "\t" + msg + "\n" + DashLine);
+		} catch (IOException e) {
+			System.err.println("MiscUtils.writeToRisErrorLogFile() " + e.getMessage());
+			e.printStackTrace();
+			System.exit(-1);
+		} 
 		MiscUtils.risErrorLogCount++;
 		return MiscUtils.risErrorLogCount;
 	}
@@ -251,29 +256,33 @@ public class MiscUtils {
 		MiscUtils.risErrorLogCount = 0;
 	}
 
-	public static int writeToRisErrorLogFile(Collection<String> msgs)
-			throws IOException, PropertyNotFoundException {
+	public static int writeToRisErrorLogFile(Collection<String> msgs) {
 
 		Iterator<String> it = msgs.iterator();
 		boolean firstLine = true;
-		while (it.hasNext()) {
+		try {
+			while (it.hasNext()) {
 
-			String msg = it.next();
-			if (firstLine) {
-				MiscUtils.getRisErrorLogFileWriter().write(
-						"\n" + incrementRisEntryNumber() + "\t" + msg);
-			} else {
-				MiscUtils.getRisErrorLogFileWriter().write("\n\t" + msg);
+				String msg = it.next();
+				if (firstLine) {
+					MiscUtils.getRisErrorLogFileWriter().write(
+							"\n" + incrementRisEntryNumber() + "\t" + msg);
+				} else {
+					MiscUtils.getRisErrorLogFileWriter().write("\n\t" + msg);
+				}
+				firstLine = false;
 			}
-			firstLine = false;
-		}
-		MiscUtils.getRisErrorLogFileWriter().write("\n" + DashLine);
+			MiscUtils.getRisErrorLogFileWriter().write("\n" + DashLine);
+		} catch (IOException e) {
+			System.err.println("MiscUtils.writeToRisErrorLogFile() " + e.getMessage());
+			e.printStackTrace();
+			System.exit(-1);
+		} 
 		MiscUtils.risErrorLogCount++;
 		return MiscUtils.risErrorLogCount;
 	}
 
-	public static BufferedWriter openRisErrorLogFile() throws IOException,
-			PropertyNotFoundException {
+	public static BufferedWriter openRisErrorLogFile() throws IOException {
 		return getRisErrorLogFileWriter();
 	}
 
@@ -283,8 +292,7 @@ public class MiscUtils {
 		}
 	}
 
-	public static BufferedWriter getRisErrorLogFileWriter() throws IOException,
-			PropertyNotFoundException {
+	public static BufferedWriter getRisErrorLogFileWriter() throws IOException {
 
 		if (MiscUtils.risErrorLogFileWriter == null) {
 			String relogFileName = RisToGriidcConfiguration.getRisErrorLogFileName();
@@ -317,19 +325,22 @@ public class MiscUtils {
 		return al;
 	}
 
-	public static void writeToDeveloperReport(String msg) throws IOException,
-			PropertyNotFoundException {
-		MiscUtils.getDeveloperReportFileWriter().write("\n" + msg);
-		MiscUtils.getDeveloperReportFileWriter().write("\n" + DashLine);
+	public static void writeToDeveloperReport(String msg) {
+		try {
+			MiscUtils.getDeveloperReportFileWriter().write("\n" + msg + "\n" + DashLine);
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		} 
+		
 	}
 
-	public static BufferedWriter openDeveloperReportFile() throws IOException,
-			PropertyNotFoundException {
+	public static BufferedWriter openDeveloperReportFile() throws IOException {
 		return getDeveloperReportFileWriter();
 	}
 
 	public static BufferedWriter getDeveloperReportFileWriter()
-			throws IOException, PropertyNotFoundException {
+			throws IOException {
 
 		if (MiscUtils.developerReportWriter == null) {
 			MiscUtils.developerReportWriter = MiscUtils
@@ -353,7 +364,6 @@ public class MiscUtils {
 		BufferedWriter br = MiscUtils.openOutputFile(MiscUtils
 				.getUserDirDataFileName(fileName));
 		br.write(msg);
-		;
 		br.close();
 	}
 
@@ -419,45 +429,7 @@ public class MiscUtils {
 			"mediterraneaninstituteforadvancedstudies",
 			"universidadefederaldocearabrazil", "stgeorgehighschool" };
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		String[] tables = null;
-		try {
-			for (String s : testMessages) {
-
-				MiscUtils.writeToRisErrorLogFile(s);
-				MiscUtils.writeToPrimaryLogFile(s);
-				System.out.println("Before squeeze: " + s);
-				String sq = squeeze(s);
-				System.out.println("After   squeeze: " + sq);
-
-			}
-			MiscUtils.closePrimaryLogFile();
-			MiscUtils.closeRisErrorLogFile();
-			String[] rec = RisToGriidcConfiguration.getRisErrorMsgLogRecipients();
-
-			System.out.println("RIS Error recipients:");
-			for (String s : rec) {
-				System.out.println("\t" + s);
-			}
-
-			rec = RisToGriidcConfiguration.getPrimaryMsgLogRecipients();
-
-			System.out.println("Primary Log recipients:");
-			for (String s : rec) {
-				System.out.println("\t" + s);
-			}
-		} catch (PropertyNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	}
+	
 
 	public static Map<String, String> countryMap = Collections
 			.synchronizedMap(new HashMap());
@@ -487,17 +459,7 @@ public class MiscUtils {
 		return correction;
 	}
 
-	/**
-	 * return true if the string is null or length zero
-	 * 
-	 **/
-	public static boolean isStringEmpty(String s) {
-		if (s == null)
-			return true;
-		else if (s.length() == 0)
-			return true;
-		return false;
-	}
+	
 
 	public static final String[] PhoneNumberValidationPatterns = { "\\d{10}",
 			"\\d{3}[-\\.\\s]\\d{3}[-\\.\\s]\\d{4}",
@@ -621,5 +583,119 @@ public class MiscUtils {
 	public static void setDebug(boolean debug) {
 		Debug = debug;
 	}
+	
+	/**
+	 * compare two strings either of which could be null or empty
+	 * 
+	 * @param s1
+	 * @param s2
+	 * @return true if they are equal
+	 */
+	public static boolean areStringsEqual(String s1, String s2) {
+		//  if both are empty they match
+		if(isEmpty(s1) && isEmpty(s2)) return true;
+		//  if one is empty  and the other not they can't match
+		if(logicalXOR(isEmpty(s1), isEmpty(s2)))
+			return false;
+		// both are non null
+		if (s1.trim().length() != s2.trim().length())
+			return false; // different lengths, can't be equal return false
+		if (s1.trim().equals(s2.trim()))
+			return true;
+		return false;
+	}
+	//  return true if and only if x or y is true
+	public static boolean logicalXOR(boolean x, boolean y) {
+	    return ( ( x || y ) // at least one is true
+	    		&& 
+	    		! ( x && y ) ); // at least one is false
+	}
+	
 
+	public static boolean isEmpty(String s) {
+		if(isStringEmpty(s)) return true;
+		if(s.trim().equals(RdbmsConstants.DbNull)) return true;
+		return false;
+	}
+	/**
+	 * return true if the string is null or length zero
+	 * 
+	 **/
+	public static boolean isStringEmpty(String s) {
+		if (s == null)
+			return true;
+		else if (s.length() == 0)
+			return true;
+		return false;
+	}
+	public static void fatalError(String callingObjectClassName, String callingFunctionName, String message ) {
+		String format = "%10s: %253";
+		System.err.printf("%20s","Fatal Error");
+		System.err.printf(format,"Class",callingObjectClassName);
+		System.err.printf(format,"Function",callingFunctionName);
+		System.err.printf(format,"Error",message);
+		System.exit(-1);
+	}
+
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		
+		String[] sss = {null, "", "   ", "null", "abc" , "xyz"};
+		String form = "%5s and %5s are equal? %6s%n";
+        boolean b = false;
+		for(String s1 : sss) {
+			for(String s2 : sss) {
+				System.out.println("\nCompare >" + s1 + "< and >" + s2 + "<");
+				//b = MiscUtils.logicalXOR(MiscUtils.isEmpty(s1), MiscUtils.isEmpty(s2));
+				b = MiscUtils.areStringsEqual(s1, s2);
+				System.out.printf(form, s1, s2, b);
+			}
+		}
+		
+		System.out.println("\n\n-------------------------");
+		String[] ss1 = {"","Cordell",null,"David","   ","\t"};                             
+	    String[] ss2 = {"null","Cordell","null","David","null","null"};
+	    for(int i = 0; i< ss1.length;i++) {
+	    	String s1 = ss1[i];
+	    	String s2 = ss2[i];
+			System.out.println("\nCompare >" + s1 + "< and >" + s2 + "<");
+			//b = MiscUtils.logicalXOR(MiscUtils.isEmpty(s1), MiscUtils.isEmpty(s2));
+			b = MiscUtils.areStringsEqual(s1, s2);
+			System.out.printf(form, s1, s2, b);
+		}
+		/***
+		String[] tables = null;
+		try {
+			for (String s : testMessages) {
+
+				MiscUtils.writeToRisErrorLogFile(s);
+				MiscUtils.writeToPrimaryLogFile(s);
+				System.out.println("Before squeeze: " + s);
+				String sq = squeeze(s);
+				System.out.println("After   squeeze: " + sq);
+
+			}
+			MiscUtils.closePrimaryLogFile();
+			MiscUtils.closeRisErrorLogFile();
+			String[] rec = RisToGriidcConfiguration.getRisErrorMsgLogRecipients();
+
+			System.out.println("RIS Error recipients:");
+			for (String s : rec) {
+				System.out.println("\t" + s);
+			}
+
+			rec = RisToGriidcConfiguration.getPrimaryMsgLogRecipients();
+
+			System.out.println("Primary Log recipients:");
+			for (String s : rec) {
+				System.out.println("\t" + s);
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+****/
+	}
 }

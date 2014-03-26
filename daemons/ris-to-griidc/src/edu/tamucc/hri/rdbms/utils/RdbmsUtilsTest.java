@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 
 import org.ini4j.InvalidFileFormatException;
 
@@ -37,13 +38,16 @@ public class RdbmsUtilsTest {
 			System.out.printf(format,role_ID, role_Name);	
 		}
 	}
+	
+	
 	public static void main(String[] args) {
 		String[] risTableNames = {  
 				// "FundingSource", "Programs" ,"Projects", 
 				"Roles"};
-		String[] griidcTableNames = { 
-				//"FundingOrganization", "FundingEnvelope", "Project",'Task",
-				"ProjRole", "TaskRole" };
+		String[] griidcTableNames = { "FundingEnvelope", "Institution", "Department", "Person","PostalArea",
+				"FundingOrganization", "FundingEnvelope", "Project","Task",
+				"ProjRole", "TaskRole",
+				"Institution-Telephone", "Person-Telephone", "Department-Telephone", "EmailInfo", "Telephone"};
 		// or
 		//griidcTableNames = RdbmsUtils.GriidcShortListTables;
 		//risTableNames = RdbmsUtils.RisShortListTables;
@@ -63,7 +67,7 @@ public class RdbmsUtilsTest {
 			MiscUtils.writeStringToFile(fileName, s);
 			System.out
 			.println("Report written to: " + MiscUtils.getUserDirDataFileName(fileName));
-			
+			Arrays.sort(griidcTableNames);
 			s = RdbmsUtils.getColumnNamesAndDataTypesFromTables(
 					RdbmsUtils.getGriidcDbConnectionInstance(),griidcTableNames);
 			fileName = RdbmsUtils.getGriidcDbConnectionInstance()
@@ -82,6 +86,16 @@ public class RdbmsUtilsTest {
 			System.out.println("RIS ProjPeople\n" + tci.toString());
 			System.out.println("\nRIS ProjPeople\n");
 			
+			RdbmsUtils.setDebug(true);
+			String[] uniqueTypes = RdbmsUtils.getUniqueDataTypes(RdbmsUtils.getGriidcDbConnectionInstance(),griidcTableNames);
+			
+			Arrays.sort(uniqueTypes);
+			System.out.println("\nUnique types");
+			for(String t: uniqueTypes) {
+				System.out.println("\t" + t);
+			}
+			RdbmsConnection.setDebug(true);
+			RdbmsUtils.getGriidcDbConnectionInstance().reportTableColumnNamesAndDataType(griidcTableNames);
 			
 			
 		} catch (IOException e) {

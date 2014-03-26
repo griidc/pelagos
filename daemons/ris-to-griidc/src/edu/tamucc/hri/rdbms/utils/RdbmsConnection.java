@@ -137,26 +137,11 @@ public class RdbmsConnection {
 	 * geoserver.password=Hydr@ geoserver.store=ExtendedHydraOutput
 	 * 
 	 * @throws SQLException
-	 * @throws ClassNotFoundException
 	 */
 	public Connection setConnection(String dbType, String driverName,
 			String jdbcPrefix, String host, String port, String dbName,
 			String dbSchema, String dbUser, String dbPassword)
-			throws SQLException, ClassNotFoundException {
-
-		// debugMessage("RdbmsConnection.setConnection - dbType: " + dbType);
-		// debugMessage("RdbmsConnection.setConnection - jdbcDriverName: "
-		// + driverName);
-		// debugMessage("RdbmsConnection.setConnection - jdbcPrefix: " +
-		// jdbcPrefix);
-		// debugMessage("RdbmsConnection.setConnection - host: " + host);
-		// debugMessage("RdbmsConnection.setConnection - port: " + port);
-		// debugMessage("RdbmsConnection.setConnection - dbName: " + dbName);
-		// debugMessage("RdbmsConnection.setConnection - schema: " + dbSchema);
-		// debugMessage("RdbmsConnection.setConnection - dbUser: " + dbUser);
-		// debugMessage("RdbmsConnection.setConnection - dbPassword: " +
-		// dbPassword);
-
+			throws SQLException {
 		DriverManager dm = null;
 		this.rdbmsJdbcDriverName = driverName;
 		this.rdbmsJdbcPrefix = jdbcPrefix;
@@ -168,7 +153,13 @@ public class RdbmsConnection {
 		this.rdbmsPassword = dbPassword;
 		this.rdbmsType = dbType;
 
-		Class.forName(this.rdbmsJdbcDriverName);
+		try {
+			Class.forName(this.rdbmsJdbcDriverName);
+		} catch (ClassNotFoundException e) {
+			System.err.println("RdbmsConnection.setConnection() driver Name" + this.rdbmsJdbcDriverName + " " + e.getMessage());
+			e.printStackTrace();
+			System.exit(-1);
+		}
 		String url = RdbmsConnection.getDatabaseUrl(jdbcPrefix, host, port,
 				dbName);
 		debugMessage("\nThe database url: " + url + "," + dbUser + ","
@@ -178,8 +169,7 @@ public class RdbmsConnection {
 		return this.getConnection();
 	}
 
-	public Connection getConnection() throws SQLException,
-			ClassNotFoundException {
+	public Connection getConnection() throws SQLException {
 		if (this.connection == null)
 			this.connection = this.setConnection(this.rdbmsType,
 					this.rdbmsJdbcDriverName, this.rdbmsJdbcPrefix,
@@ -193,15 +183,13 @@ public class RdbmsConnection {
 		return prefix + "://" + host + ":" + port + "/" + dbName;
 	}
 
-	private Statement getStatement() throws SQLException,
-			ClassNotFoundException {
+	private Statement getStatement() throws SQLException {
 		if (this.statement == null)
 			this.statement = this.getConnection().createStatement();
 		return this.statement;
 	}
 
-	public int executeSql(String queryString) throws SQLException,
-			ClassNotFoundException {
+	public int executeSql(String queryString) throws SQLException {
 		int status = 0;
 		ResultSet resultSet = null;
 		try {
@@ -239,8 +227,7 @@ public class RdbmsConnection {
 	 * @throws SQLException
 	 * @throws ClassNotFoundException
 	 */
-	public ResultSet executeQueryResultSet(String query) throws SQLException,
-			ClassNotFoundException {
+	public ResultSet executeQueryResultSet(String query) throws SQLException {
 
 		if(Debug) System.out.println("Rdbms connection: " + this.toString());
 		if (Debug)
@@ -251,13 +238,13 @@ public class RdbmsConnection {
 	}
 
 	public String[] executeQueryResultSetAsStringArray(String query)
-			throws SQLException, ClassNotFoundException {
+			throws SQLException {
 		StringArrayResultSet sars = executeQueryReturnStringArrayResultSet(query);
 		return sars.getTable();
 	}
 
 	public StringArrayResultSet executeQueryReturnStringArrayResultSet(
-			String query) throws SQLException, ClassNotFoundException {
+			String query) throws SQLException {
 		ResultSet rs = executeQueryResultSet(query);
 		ResultSetMetaData metaData = rs.getMetaData();
 		int colCount = metaData.getColumnCount();
@@ -284,10 +271,8 @@ public class RdbmsConnection {
 	 * @param query
 	 * @return
 	 * @throws SQLException
-	 * @throws ClassNotFoundException
 	 */
-	public boolean executeQueryBoolean(String query) throws SQLException,
-			ClassNotFoundException {
+	public boolean executeQueryBoolean(String query) throws SQLException {
 		if (Debug)
 		debugMessage(DebugPrefix + "\texecuteQueryBoolean() - query is "
 		 + query);
@@ -295,8 +280,7 @@ public class RdbmsConnection {
 		return result;
 	}
 
-	public int executeUpdate(String query) throws SQLException,
-			ClassNotFoundException {
+	public int executeUpdate(String query) throws SQLException {
 		// if (Debug)
 		// debugMessage(DebugPrefix + "\texecuteUpdate() - query is " + query);
 		int updateCount = this.getStatement().executeUpdate(query);
@@ -339,9 +323,8 @@ public class RdbmsConnection {
 	/**
 	 * start a transaction and lock all the tables that are to be modified
 	 * 
-	 * @throws ClassNotFoundException
 	 */
-	public void beginTransaction() throws SQLException, ClassNotFoundException {
+	public void beginTransaction() throws SQLException {
 		String query = "BEGIN TRANSACTION;";
 		this.executeQueryBoolean(query);
 	}
@@ -351,8 +334,7 @@ public class RdbmsConnection {
 	 * 
 	 * @throws ClassNotFoundException
 	 */
-	public void lockTable(String tableName) throws SQLException,
-			ClassNotFoundException {
+	public void lockTable(String tableName) throws SQLException {
 		final String prefix = "LOCK TABLE ";
 		final String sufix = "  IN SHARE ROW EXCLUSIVE MODE; ";
 
@@ -367,7 +349,7 @@ public class RdbmsConnection {
 	 * @throws ClassNotFoundException
 	 */
 	public void crateTable(String tableName, String[] columnNames, String[] type)
-			throws SQLException, ClassNotFoundException {
+			throws SQLException {
 
 		StringBuffer query = new StringBuffer("CREATE TABLE " + tableName + "(");
 
@@ -385,13 +367,12 @@ public class RdbmsConnection {
 	 * 
 	 * @throws ClassNotFoundException
 	 */
-	public void dropTable(String tableName) throws SQLException,
-			ClassNotFoundException {
+	public void dropTable(String tableName) throws SQLException {
 		String query = "DROP TABLE " + tableName;
 		this.executeQueryBoolean(query);
 	}
 
-	public void commitTransaction() throws SQLException, ClassNotFoundException {
+	public void commitTransaction() throws SQLException {
 
 		String query = "COMMIT TRANSACTION;";
 		this.executeQueryBoolean(query);
@@ -402,7 +383,7 @@ public class RdbmsConnection {
 	 * 
 	 * @throws ClassNotFoundException
 	 */
-	public void abortTransaction() throws SQLException, ClassNotFoundException {
+	public void abortTransaction() throws SQLException {
 
 		String query = "ABORT TRANSACTION;";
 		this.executeQueryBoolean(query);
@@ -463,8 +444,7 @@ public class RdbmsConnection {
 		return System.getProperty("user.dir");
 	}
 
-	public String[] getTableNamesForDatabase() throws SQLException,
-			ClassNotFoundException {
+	public String[] getTableNamesForDatabase() throws SQLException {
 		if (this.allTablesInDatabase == null) {
 			String query = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES";
 			debugMessage("RdbmsConnection:getTableNamesForDatabase() - query: "
@@ -481,7 +461,7 @@ public class RdbmsConnection {
 		return this.allTablesInDatabase;
 	}
 	
-	public boolean isTableInDatabase(String tableName) throws SQLException, ClassNotFoundException, TableNotInDatabaseException {
+	public boolean isTableInDatabase(String tableName) throws SQLException, TableNotInDatabaseException {
 		String[] tabNames = this.getTableNamesForDatabase();
 		for(String tn: tabNames) {
 			if(tableName.trim().equals(tn)) return true;
@@ -492,7 +472,7 @@ public class RdbmsConnection {
 	}
 
 	public String[] getColumnNamesFromTable(String tableName)
-			throws  SQLException, ClassNotFoundException, TableNotInDatabaseException {
+			throws  SQLException, TableNotInDatabaseException {
 
 		this.isTableInDatabase(tableName);
 		String query = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = "
@@ -523,7 +503,7 @@ public class RdbmsConnection {
 	 * @throws TableNotInDatabaseException 
 	 */
 	public String[][] getColumnNamesAndDataTypesFromTable(String tableName)
-			throws SQLException, ClassNotFoundException, TableNotInDatabaseException {
+			throws SQLException, TableNotInDatabaseException {
 		this.isTableInDatabase(tableName);
 		String query = "SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = "
 				+ RdbmsConnection.wrapInSingleQuotes(tableName);
@@ -570,8 +550,7 @@ public class RdbmsConnection {
 	 * @throws TableNotInDatabaseException 
 	 */
 	public String[] getColumnDefaultValue(String tableName)
-			throws SQLException, ClassNotFoundException,
-			PropertyNotFoundException, TableNotInDatabaseException {
+			throws SQLException, TableNotInDatabaseException {
 
 		this.isTableInDatabase(tableName);
 		String query = "SELECT column_default FROM information_schema.columns WHERE table_name = "
@@ -590,7 +569,7 @@ public class RdbmsConnection {
 	}
 
 	public ResultSet selectAllValuesFromTable(String tableName)
-			throws SQLException, ClassNotFoundException, TableNotInDatabaseException {
+			throws SQLException, TableNotInDatabaseException {
 		this.isTableInDatabase(tableName);
 		StringBuffer query = new StringBuffer("select * from ");
 		if (this.getDbType().equals(RdbmsConstants.DbTypePostgres)) {
@@ -645,7 +624,7 @@ public class RdbmsConnection {
 	}
 
 	public boolean doesTableExist(String targetTableName)
-			throws SQLException, ClassNotFoundException {
+			throws SQLException {
 		String[] tableNames = this.getTableNamesForDatabase();
 		String target = targetTableName.trim();
 		for (String tName : tableNames) {
@@ -694,8 +673,7 @@ public class RdbmsConnection {
 		return sb.toString();
 	}
 
-	public void readDatabase(final String[] targetTables) throws SQLException,
-			ClassNotFoundException, TableNotInDatabaseException {
+	public void readDatabase(final String[] targetTables) throws SQLException, TableNotInDatabaseException {
 
 		System.out.println("\n" + getFormatedDbInfo());
 		try {
@@ -763,9 +741,6 @@ public class RdbmsConnection {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -773,7 +748,7 @@ public class RdbmsConnection {
 	}
 
 	public void reportTableAndColumnNames(final String[] targetTables)
-			throws SQLException, ClassNotFoundException, IOException, TableNotInDatabaseException {
+			throws SQLException, IOException, TableNotInDatabaseException {
 		String outputFileName = this.getDbName()
 				+ "TablesAndColumnNamesOut.txt";
 		try {
@@ -818,9 +793,6 @@ public class RdbmsConnection {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -830,7 +802,7 @@ public class RdbmsConnection {
 	}
 
 	public void reportTableColumnNamesAndDataType(final String[] targetTables)
-			throws SQLException, ClassNotFoundException, IOException, TableNotInDatabaseException {
+			throws SQLException, IOException, TableNotInDatabaseException {
 
 		try {
 
@@ -840,7 +812,7 @@ public class RdbmsConnection {
 
 			localBw.write("\n" + this.getFormatedDbInfo());
 
-			localBw.write("db connection: " + this.toString());
+			localBw.write("db connection: " + this.toString() +"\n\n");
 
 			// MiscUtils.writeIt(bw,"\n\nenter to continue");
 			// /myint = keyboard.nextLine();
@@ -862,7 +834,7 @@ public class RdbmsConnection {
 				this.debugMessage(msg);
 			}
 
-			String formatString2 = "%-30s%-10s%n";
+			String formatString2 = "%-40s%-10s%n";
 			localBw.write("Database: " + this.rdbmsName);
 			System.out.println("Database: " + this.rdbmsName);
 			for (String t : tableNames) {
@@ -888,9 +860,6 @@ public class RdbmsConnection {
 			localBw.close();
 
 		}  catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -1055,13 +1024,7 @@ public class RdbmsConnection {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (PropertyNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (TableNotInDatabaseException e) {

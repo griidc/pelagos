@@ -5,26 +5,20 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.ini4j.InvalidFileFormatException;
-import org.postgresql.util.PSQLException;
-
-import edu.tamucc.hri.griidc.exception.DuplicateRecordException;
 import edu.tamucc.hri.griidc.exception.IllegalFundingSourceCodeException;
-import edu.tamucc.hri.griidc.exception.NoRecordFoundException;
 import edu.tamucc.hri.griidc.exception.PropertyNotFoundException;
 import edu.tamucc.hri.griidc.exception.TableNotInDatabaseException;
 import edu.tamucc.hri.griidc.support.MiscUtils;
 import edu.tamucc.hri.griidc.support.RisToGriidcConfiguration;
 import edu.tamucc.hri.rdbms.utils.DbColumnInfo;
-import edu.tamucc.hri.rdbms.utils.DefaultValue;
-import edu.tamucc.hri.rdbms.utils.RdbmsConnection;
 import edu.tamucc.hri.rdbms.utils.RdbmsUtils;
 import edu.tamucc.hri.rdbms.utils.RisFundSrcProgramsStartEndCollection;
 import edu.tamucc.hri.rdbms.utils.RisProgramStartEnd;
 import edu.tamucc.hri.rdbms.utils.TableColInfo;
 import edu.tamucc.hri.rdbms.utils.TableColInfoCollection;
 
-public class FundingEnvelopeSynchronizer {
+
+public class FundingEnvelopeSynchronizer extends SynchronizerBase {
 
 	public FundingEnvelopeSynchronizer() {
 		// TODO Auto-generated constructor stub
@@ -32,9 +26,6 @@ public class FundingEnvelopeSynchronizer {
 
 	private static final String RisTableName = "FundingSource";
 	private static final String GriidcTableName = "FundingEnvelope";
-
-	private RdbmsConnection risDbConnection = null;
-	private RdbmsConnection griidcDbConnection = null;
 
 	private int risRecordCount = 0;
 	private int risRecordsSkipped = 0;
@@ -65,14 +56,14 @@ public class FundingEnvelopeSynchronizer {
 	// GRIIDC FundingEnvelope values
 	private String griidcFundingEnvelopeCycle = null;
 	private String griidcFundingEnvelopeName = null;
-	// private int griidcFundingOrganization_Number =
+	private int griidcFundingEnvelopeOrganizationNumber = -1;
 	private String griidcFundingEnvelopeDescription = null;
 	private java.sql.Date griidcFundingEnvelopeStartDate = null;
 	private java.sql.Date griidcFundingEnvelopeEndDate = null;
 
 	// in GRIIDC FundingEnvelope table column names
 	private static String GriidcFundingEnvelope_CycleColName = "FundingEnvelope_Cycle";
-	private static String GriidcFundingEnvelope_FundingOrganization_Number = GriidcFundingOrganization_NumberColName;
+	private static String GriidcFundingEnvelope_FundingOrganization_NumberColName = GriidcFundingOrganization_NumberColName;
 	private static String GriidcFundingEnvelope_NameColName = "FundingEnvelope_Name";
 	private static String GriidcFundingEnvelope_DescriptionColName = "FundingEnvelope_Description";
 	private static String GriidcFundingEnvelope_EndDateColName = "FundingEnvelope_EndDate";
@@ -84,7 +75,7 @@ public class FundingEnvelopeSynchronizer {
 	private static boolean Debug = false;
 	private boolean initialized = false;
 
-	private RisFundSrcProgramsStartEndCollection startEndDatePrograms = null;
+	private RisFundSrcProgramsStartEndCollection programStartEndDateCollection = null;
 
 	/**
 	 * this.risFundId this.risFundSource this.risFundName cycle
@@ -95,35 +86,39 @@ public class FundingEnvelopeSynchronizer {
 		return initialized;
 	}
 
-	public void initializeStartUp() throws IOException,
-			PropertyNotFoundException, SQLException, ClassNotFoundException,
-			TableNotInDatabaseException {
+	public void initialize() {
+		super.commonInitialize();
 		if (!isInitialized()) {
-			MiscUtils.openPrimaryLogFile();
-			MiscUtils.openRisErrorLogFile();
-			MiscUtils.openDeveloperReportFile();
-			this.risDbConnection = RdbmsUtils.getRisDbConnectionInstance();
-			this.griidcDbConnection = RdbmsUtils
-					.getGriidcDbConnectionInstance();
 			this.initializeFundingOrganizationData();
-			this.startEndDatePrograms = RdbmsUtils
-					.getRisFundSrcProgramsStartEndCollection();
+			try {
+				this.programStartEndDateCollection = RdbmsUtils
+						.getRisFundSrcProgramsStartEndCollection();
+			} catch (SQLException e) {
+				MiscUtils.fatalError(this.getClass().getName(), "initialize",
+						e.getMessage());
+			}
 			initialized = true;
 		}
 	}
 
 	// get the FundingOrganization info - should be only one - GOMRI
 
-	private void initializeFundingOrganizationData()
-			throws SQLException, ClassNotFoundException,
-			TableNotInDatabaseException, PropertyNotFoundException, InvalidFileFormatException, IOException {
+	private void initializeFundingOrganizationData() {
 		if (this.defaultFundingOrganizationNumber == null
 				|| this.defaultFundingOrganizationDescription == null
 				|| this.defaultFundingOrganizationName == null) {
 
-			this.griidcFundingOrganizationColInfo = RdbmsUtils
-					.getAllDataFromTable(this.griidcDbConnection,
-							GriidcFundingOrganizationTableName);
+			try {
+				this.griidcFundingOrganizationColInfo = RdbmsUtils
+						.getAllDataFromTable(this.griidcDbConnection,
+								GriidcFundingOrganizationTableName);
+			} catch (SQLException e) {
+				MiscUtils.fatalError("FundingEnvelopeSynchronizer",
+						"initializeFundingOrganizationData", e.getMessage());
+			} catch (TableNotInDatabaseException e) {
+				MiscUtils.fatalError("FundingEnvelopeSynchronizer",
+						"initializeFundingOrganizationData", e.getMessage());
+			}
 			TableColInfo[] tciArray = this.griidcFundingOrganizationColInfo
 					.getTableColInfoArray();
 
@@ -147,7 +142,7 @@ public class FundingEnvelopeSynchronizer {
 	 * @throws IOException
 	 * @throws TableNotInDatabaseException
 	 * @throws NoRecordFoundException
-	 * @throws DuplicateRecordException
+	 * @throws MultipleRecordsFoundException
 	 */
 	public void syncGriidcFundingEnvelopeFromRisFundingSource()
 			throws ClassNotFoundException, PropertyNotFoundException,
@@ -155,21 +150,17 @@ public class FundingEnvelopeSynchronizer {
 		if (FundingEnvelopeSynchronizer.isDebug())
 			System.out.println(MiscUtils.BreakLine);
 
-		this.initializeStartUp();
+		this.initialize();
 
 		// get all records from the RIS FundingEnvelope table
 		try {
 			rset = this.risDbConnection.selectAllValuesFromTable(RisTableName);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		try {
+
 			/**
 			 * funEnvCycle = -1; funEnvFundingOrg = -1; funEnvName = null;
 			 * funEnvStartDate = null; funEnvEndDate
 			 */
-			while (rset.next()) { // continue statements branch back to here
+			while (rset.next()) {
 				this.risRecordCount++;
 				this.risFundId = rset.getInt("Fund_ID");
 				this.risFundSource = rset.getString("Fund_Source").trim();
@@ -199,8 +190,8 @@ public class FundingEnvelopeSynchronizer {
 					continue; // back to next RIS record from resultSet
 				}
 
-				String query = RdbmsUtils.formatSelectStatement(GriidcTableName,
-						this.getWhereColumnInfo());
+				String query = RdbmsUtils.formatSelectStatement(
+						GriidcTableName, this.getWhereColumnInfo());
 				if (FundingEnvelopeSynchronizer.isDebug())
 					System.out.println("formatGriidcFindQuery() " + query);
 				try {
@@ -222,9 +213,16 @@ public class FundingEnvelopeSynchronizer {
 						count++;
 						this.griidcFundingEnvelopeCycle = griidcRset
 								.getString(GriidcFundingEnvelope_CycleColName);
-
 						this.griidcFundingEnvelopeName = griidcRset
-								.getString(GriidcFundingOrganization_NumberColName);
+								.getString(GriidcFundingEnvelope_NameColName);
+						this.griidcFundingEnvelopeOrganizationNumber = griidcRset
+								.getInt(GriidcFundingEnvelope_FundingOrganization_NumberColName);
+						this.griidcFundingEnvelopeDescription = griidcRset
+								.getString(GriidcFundingEnvelope_DescriptionColName);
+						this.griidcFundingEnvelopeStartDate = griidcRset
+								.getDate(GriidcFundingEnvelope_StartDateColName);
+						this.griidcFundingEnvelopeEndDate = griidcRset
+								.getDate(GriidcFundingEnvelope_EndDateColName);
 						if (FundingEnvelopeSynchronizer.isDebug())
 							System.out.println("Found " + count + " GRIIDC "
 									+ GriidcFundingEnvelope_CycleColName + ": "
@@ -242,17 +240,10 @@ public class FundingEnvelopeSynchronizer {
 				// zero records found means ADD this record
 				// one record found means UPDATE
 				// more than ONE record found.. maybe an error???
+
 				if (count == 0) { // Add the FundingEnvelope
 					try {
-						this.griidcFundingEnvelopeName = this.risFundName;
-						this.griidcFundingEnvelopeCycle = RdbmsUtils
-								.convertRisFundingSourceToGriidcFormat(this.risFundSource);
-						RisProgramStartEnd rfspsec = this.startEndDatePrograms
-								.getFundSourceStartEndDate(this.risFundId);
-						this.griidcFundingEnvelopeStartDate = rfspsec
-								.getStartDate();
-						this.griidcFundingEnvelopeEndDate = rfspsec
-								.getEndDate();
+						convertRisToGriidcData();
 						this.addGriidcFundingEnvelopeRecord();
 						this.griidcRecordsAdded++;
 					} catch (SQLException e) {
@@ -264,7 +255,6 @@ public class FundingEnvelopeSynchronizer {
 						MiscUtils.writeToPrimaryLogFile(msg);
 						MiscUtils.writeToRisErrorLogFile(msg);
 						this.risRecordErrors++;
-						continue; // back to next RIS record from resultSet
 					} catch (IllegalFundingSourceCodeException e) {
 						msg = "In RIS FundingSource Table - Fund_ID "
 								+ this.risFundId + " - " + e.getMessage();
@@ -272,38 +262,20 @@ public class FundingEnvelopeSynchronizer {
 						if (FundingEnvelopeSynchronizer.isDebug())
 							System.err.println(msg);
 						this.risRecordErrors++;
-						continue; // back to next RIS record from resultSet
 					}
 
 				} else if (count == 1) {
-					if (isCurrentRecordEqual()) {
-						if (isDebug())
-							System.out
-									.println("RIS record is equal to GRIIDC record\n "
-											+ this.griidcFundingEnvelopeToString()
-											+ "\n" + this.risFundToString());
-						continue; // the record found is the same as the one
-									// read from RIS
-					}
-					if (isDebug())
-						System.out
-								.println("RIS record is NOT equal to GRIIDC record - modify it\n "
-										+ this.griidcFundingEnvelopeToString()
-										+ "\n" + this.risFundToString());
-					// if not equal then modify the record to match info in RIS
-					try {
-						this.griidcFundingEnvelopeName = this.risFundName;
-						this.griidcFundingEnvelopeCycle = RdbmsUtils
-								.convertRisFundingSourceToGriidcFormat(this.risFundSource);
-						RisProgramStartEnd rfspsec = this.startEndDatePrograms
-								.getFundSourceStartEndDate(this.risFundId);
-						this.griidcFundingEnvelopeStartDate = rfspsec
-								.getStartDate();
-						this.griidcFundingEnvelopeEndDate = rfspsec
-								.getEndDate();
-						this.modifyGriidcFundingEnvelopeRecord();
 
-						this.griidcRecordsModified++;
+					try {
+						if (isCurrentRecordEqual()) {
+							this.griidcRecordDuplicates++;
+						} else {
+							// if not equal then modify the record to match info
+							// in RIS
+							convertRisToGriidcData();
+							this.modifyGriidcFundingEnvelopeRecord();
+							this.griidcRecordsModified++;
+						}
 
 					} catch (IllegalFundingSourceCodeException e) {
 						msg = "In RIS FundingSource Table - Fund_ID "
@@ -312,11 +284,9 @@ public class FundingEnvelopeSynchronizer {
 						if (FundingEnvelopeSynchronizer.isDebug())
 							System.err.println(msg);
 						this.risRecordErrors++;
-						continue; // back to next RIS record from resultSet
 					}
 
 				} else if (count > 1) { // duplicates
-					this.griidcRecordDuplicates++;
 
 					msg = "There are " + count + " records in the  GRIIDC "
 							+ GriidcTableName + " table matching "
@@ -337,6 +307,17 @@ public class FundingEnvelopeSynchronizer {
 		// end of FundingEnvelope
 	}
 
+	private void convertRisToGriidcData()
+			throws IllegalFundingSourceCodeException {
+		this.griidcFundingEnvelopeName = this.risFundName;
+		this.griidcFundingEnvelopeCycle = RdbmsUtils
+				.convertRisFundingSourceToGriidcFormat(this.risFundSource);
+		RisProgramStartEnd rfspsec = this.programStartEndDateCollection
+				.getFundSourceStartEndDate(this.risFundId);
+		this.griidcFundingEnvelopeStartDate = rfspsec.getStartDate();
+		this.griidcFundingEnvelopeEndDate = rfspsec.getEndDate();
+	}
+
 	/**
 	 * compare the current RIS record with the current GRIIDC record If all
 	 * possible updateable values are the same return true. (NO update needed)
@@ -345,22 +326,35 @@ public class FundingEnvelopeSynchronizer {
 	 * @return
 	 * @throws IllegalFundingSourceCodeException
 	 */
+	String format = "%nCompare - %6s name: %-10s cycle: %-5s, start: %-10s, end: %-10s";
+
 	private boolean isCurrentRecordEqual() {
-		String tempRisDerrivedFundingEnvelopeCycle = null;
+
 		try {
-			tempRisDerrivedFundingEnvelopeCycle = RdbmsUtils
-					.convertRisFundingSourceToGriidcFormat(this.risFundSource);
+			String tempRisDerrivedFundingEnvelopeCycle  = RdbmsUtils.convertRisFundingSourceToGriidcFormat(this.risFundSource);
+			RisProgramStartEnd rfspsec = this.programStartEndDateCollection.getFundSourceStartEndDate(this.risFundId);
+
+
+			boolean status =  (this.griidcFundingEnvelopeName.equals(this.risFundName)
+					&& this.griidcFundingEnvelopeCycle.equals(tempRisDerrivedFundingEnvelopeCycle)
+					&& this.griidcFundingEnvelopeStartDate.equals(rfspsec.getStartDate()) 
+					&& this.griidcFundingEnvelopeEndDate.equals(rfspsec.getEndDate()));
+
+			if (FundingEnvelopeSynchronizer.isDebug()) {
+				System.out.printf(format, "RIS",this.risFundName,
+						tempRisDerrivedFundingEnvelopeCycle,
+						rfspsec.getStartDate(), rfspsec.getEndDate());
+				System.out.printf(format, "GRIIDC",this.griidcFundingEnvelopeName,
+						this.griidcFundingEnvelopeCycle,
+						this.griidcFundingEnvelopeStartDate,
+						this.griidcFundingEnvelopeEndDate);
+				System.out.printf("%nEqual???  - %b", status);
+				System.out.println("\n");
+			}
+			return status;
 		} catch (IllegalFundingSourceCodeException e) {
 			return false;
 		}
-		RisProgramStartEnd rfspsec = this.startEndDatePrograms
-				.getFundSourceStartEndDate(this.risFundId);
-		return (this.griidcFundingEnvelopeName.equals(this.risFundName)
-				&& this.griidcFundingEnvelopeCycle
-						.equals(tempRisDerrivedFundingEnvelopeCycle)
-				&& this.griidcFundingEnvelopeStartDate.equals(rfspsec
-						.getStartDate()) && this.griidcFundingEnvelopeEndDate
-					.equals(rfspsec.getEndDate()));
 	}
 
 	private String griidcFundingEnvelopeToString() {
@@ -379,22 +373,25 @@ public class FundingEnvelopeSynchronizer {
 				+ RisFundNameColName + ": " + this.risFundName;
 	}
 
-	private DbColumnInfo[] getWhereColumnInfo() throws FileNotFoundException, SQLException, ClassNotFoundException, PropertyNotFoundException {
+	private DbColumnInfo[] getWhereColumnInfo() throws FileNotFoundException,
+			SQLException, ClassNotFoundException, PropertyNotFoundException {
 		TableColInfo tci = RdbmsUtils.getMetaDataForTable(
 				RdbmsUtils.getGriidcDbConnectionInstance(), GriidcTableName);
-		tci.getDbColumnInfo(GriidcFundingEnvelope_CycleColName).setColValue(this.griidcFundingEnvelopeCycle);
+		tci.getDbColumnInfo(GriidcFundingEnvelope_CycleColName).setColValue(
+				this.griidcFundingEnvelopeCycle);
 
 		DbColumnInfo[] whereColInfo = new DbColumnInfo[1];
-		whereColInfo[0] = tci.getDbColumnInfo(GriidcFundingEnvelope_CycleColName);
+		whereColInfo[0] = tci
+				.getDbColumnInfo(GriidcFundingEnvelope_CycleColName);
 		return whereColInfo;
 	}
-
 
 	private void addGriidcFundingEnvelopeRecord() throws SQLException,
 			ClassNotFoundException, IOException, PropertyNotFoundException {
 		String msg = null;
 
-		String addQuery = RdbmsUtils.formatInsertStatement(GriidcTableName, this.getDbColumnInfo());
+		String addQuery = RdbmsUtils.formatInsertStatement(GriidcTableName,
+				this.getDbColumnInfo());
 		if (FundingEnvelopeSynchronizer.isDebug())
 			System.out.println("Query: " + addQuery);
 		this.griidcDbConnection.executeQueryBoolean(addQuery);
@@ -405,8 +402,6 @@ public class FundingEnvelopeSynchronizer {
 			System.out.println(msg);
 		return;
 	}
-
-	
 
 	private void modifyGriidcFundingEnvelopeRecord()
 			throws ClassNotFoundException, IOException,
@@ -441,7 +436,7 @@ public class FundingEnvelopeSynchronizer {
 				FundingEnvelopeSynchronizer.GriidcFundingEnvelope_CycleColName)
 				.setColValue(this.griidcFundingEnvelopeCycle);
 		tci.getDbColumnInfo(
-				FundingEnvelopeSynchronizer.GriidcFundingEnvelope_FundingOrganization_Number)
+				FundingEnvelopeSynchronizer.GriidcFundingEnvelope_FundingOrganization_NumberColName)
 				.setColValue(
 						String.valueOf(this.defaultFundingOrganizationNumber));
 		tci.getDbColumnInfo(

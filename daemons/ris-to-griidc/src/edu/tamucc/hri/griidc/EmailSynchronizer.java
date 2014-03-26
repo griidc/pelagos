@@ -4,8 +4,9 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import edu.tamucc.hri.griidc.exception.DuplicateRecordException;
+import edu.tamucc.hri.griidc.exception.MultipleRecordsFoundException;
 import edu.tamucc.hri.griidc.exception.PropertyNotFoundException;
+import edu.tamucc.hri.griidc.support.MiscUtils;
 import edu.tamucc.hri.rdbms.utils.RdbmsConnection;
 import edu.tamucc.hri.rdbms.utils.RdbmsConstants;
 import edu.tamucc.hri.rdbms.utils.RdbmsUtils;
@@ -14,86 +15,136 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
 /**
- * Create or update a the EmailInfo table in GRIIDC
- * This is not run directly from the main
- * but is called as a delegate from PersonSynchronizer
+ * Create or update a the EmailInfo table in GRIIDC This is not run directly
+ * from the main but is called as a delegate from PersonSynchronizer
  * 
  * @author jvh
  * @see PersonSynchronizer
  */
-public class EmailSynchronizer {
+public class EmailSynchronizer extends SynchronizerBase {
 
 	private static final String GriidcTableName = "EmailInfo";
-	private static final String GriidcPersonNumberCol = "Person_Number";
-	private static final String EmailCol = "EmailInfo_Address";
-	private static final String EmailPrimaryCol = "EmailInfo_PrimaryEmail";
-	private RdbmsConnection griidcDbConnection = null;
-	private boolean initialized = false;
+	private static final String GriidcPersonNumberColName = "Person_Number";
+	private static final String GriidcEmailColName = "EmailInfo_Address";
+	private static final String GriidcEmailPrimaryColName = "EmailInfo_PrimaryEmail";
+
 	private static boolean Debug = false;
 
-	public EmailSynchronizer() {
-		// TODO Auto-generated constructor stub
-	}
+	private int emailRecordsAdded = 0;
+	private int emailRecordsModified = 0;
+	private int emailRecordsDuplicates = 0;
+	private int emailRecordsRead = 0;
+	private int emailRecordsErrors = 0;
 
-	public void initializeStartUp() throws IOException,
-			PropertyNotFoundException, SQLException, ClassNotFoundException {
-		if (!initialized) {
-			this.griidcDbConnection = RdbmsUtils
-					.getGriidcDbConnectionInstance();
-			initialized = true;
+	private int griidcPersonNum = -1;
+	private String griidcEmailAddress = null;
+	private boolean griidcPrimaryTag = false;
+
+	private static EmailSynchronizer instance = null;
+
+	public static EmailSynchronizer getInstance() {
+		if (EmailSynchronizer.instance == null) {
+			EmailSynchronizer.instance = new EmailSynchronizer();
 		}
+		return EmailSynchronizer.instance;
 	}
 
-	public boolean update(int personNumber, String emailAddr,
-			boolean primary) throws DuplicateRecordException, SQLException,
-			ClassNotFoundException, AddressException {
+	private EmailSynchronizer() {
+	}
 
+	public void initialize() {
+		super.commonInitialize();
+	}
+
+	/**
+	 * this is the entry point for all email record modifications. It is called
+	 * from PersonSynchronizer. This function can result in add, modify, errors
+	 * or no action
+	 * 
+	 * @param risPeopleId
+	 * @param risEmailAddr
+	 * @param risPrimaryTag
+	 * @return
+	 * @throws MultipleRecordsFoundException
+	 * @throws SQLException
+	 * @throws AddressException
+	 */
+	public boolean update(int risPeopleId, String risEmailAddr,
+			boolean risPrimaryTag) throws AddressException, SQLException,
+			MultipleRecordsFoundException {
+
+		this.emailRecordsRead++;
 		int count = 0;
-		String tempEmailAddr = emailAddr.trim();
-		ResultSet rs = this.find(personNumber);
+		String tempEmailAddr = risEmailAddr.trim();
+
+		this.validate(tempEmailAddr);
+		ResultSet rs = this.find(risPeopleId);
 		while (rs.next()) {
 			count++;
+			this.griidcPersonNum = rs.getInt(GriidcPersonNumberColName);
+			this.griidcEmailAddress = rs.getString(GriidcEmailColName);
+			this.griidcPrimaryTag = rs.getBoolean(GriidcEmailPrimaryColName);
 		}
-		this.validate(tempEmailAddr);
-		if (count > 1) {
-			throw new DuplicateRecordException(
+		if (count == 0) { // no match found - add it
+			this.add(risPeopleId, tempEmailAddr, risPrimaryTag);
+			emailRecordsAdded++;
+		} else if (count == 1) { // one match - if not equal modify
+			if (this.isMatch(risPeopleId, tempEmailAddr, risPrimaryTag)) {
+				this.emailRecordsDuplicates++;
+			} else {
+				this.modify(risPeopleId, tempEmailAddr, risPrimaryTag);
+				this.emailRecordsModified++;
+			}
+		} else { // count > 1)
+			throw new MultipleRecordsFoundException(
 					"ERROR updateing GRIIDC - there are " + count + " "
 							+ GriidcTableName + " records with "
-							+ GriidcPersonNumberCol + " equal to " + personNumber);
-
+							+ GriidcPersonNumberColName + " equal to "
+							+ risPeopleId);
 		}
-		if (count == 0) {
-			this.add(personNumber, tempEmailAddr, primary);
-		} else if (count == 1) {
-			this.modify(personNumber, tempEmailAddr, primary);
-		} 
-
 		return true;
+	}
+
+	private boolean isMatch(int risPeopleId, String risEmailAddr,
+			boolean risPrimaryTag) {
+		return ((this.griidcPersonNum == risPeopleId)
+				&& (MiscUtils.areStringsEqual(this.griidcEmailAddress,
+						risEmailAddr)) && (this.griidcPrimaryTag == risPrimaryTag));
 	}
 
 	private boolean validate(String addr) throws AddressException {
 		return isValidEmailAddress(addr.trim());
 	}
+
 	/**
 	 * look for a valid email address. For now just make sure it is not blank
 	 * 
 	 * @param addr
 	 * @return
-	 * @throws AddressException 
+	 * @throws AddressException
 	 */
 	public boolean isValidEmailAddress(String addr) throws AddressException {
-		if(addr == null) throw new AddressException("Email address is blank");
-		if(addr.trim().length() == 0) throw new AddressException("Email address is blank");
+		if (addr == null) {
+			this.emailRecordsErrors++;
+			throw new AddressException("Email address is blank");
+		}
+		if (addr.trim().length() == 0) {
+			this.emailRecordsErrors++;
+			throw new AddressException("Email address is blank");
+		}
 		boolean result = true;
 		InternetAddress emailAddr = new InternetAddress(addr.trim());
-		emailAddr.validate();
+		try {
+			emailAddr.validate();
+		} catch (AddressException e) {
+			this.emailRecordsErrors++;
+			throw e;
+		}
 		return result;
 
 	}
 
-	public ResultSet find(int personNumber) throws SQLException,
-			ClassNotFoundException {
-
+	public ResultSet find(int personNumber) throws SQLException {
 		String query = this.formatSelect(personNumber);
 		return griidcDbConnection.executeQueryResultSet(query);
 	}
@@ -102,13 +153,13 @@ public class EmailSynchronizer {
 		String query = "SELECT * FROM "
 				+ RdbmsConnection.wrapInDoubleQuotes(GriidcTableName)
 				+ " WHERE "
-				+ RdbmsConnection.wrapInDoubleQuotes(GriidcPersonNumberCol)
+				+ RdbmsConnection.wrapInDoubleQuotes(GriidcPersonNumberColName)
 				+ RdbmsConstants.EqualSign + personNumber;
 		return query;
 	}
 
 	public boolean add(int personNumber, String email1, boolean primary)
-			throws SQLException, ClassNotFoundException {
+			throws SQLException {
 		String query = formatInsertStatement(personNumber, email1, primary);
 		boolean status = this.griidcDbConnection.executeQueryBoolean(query);
 		if (EmailSynchronizer.isDebug())
@@ -128,11 +179,11 @@ public class EmailSynchronizer {
 		String query = "INSERT INTO "
 				+ RdbmsConnection.wrapInDoubleQuotes(GriidcTableName)
 				+ RdbmsConstants.SPACE + "("
-				+ RdbmsConnection.wrapInDoubleQuotes(GriidcPersonNumberCol)
+				+ RdbmsConnection.wrapInDoubleQuotes(GriidcPersonNumberColName)
 				+ RdbmsConstants.CommaSpace
-				+ RdbmsConnection.wrapInDoubleQuotes(EmailCol)
+				+ RdbmsConnection.wrapInDoubleQuotes(GriidcEmailColName)
 				+ RdbmsConstants.CommaSpace
-				+ RdbmsConnection.wrapInDoubleQuotes(EmailPrimaryCol)
+				+ RdbmsConnection.wrapInDoubleQuotes(GriidcEmailPrimaryColName)
 				+ ") VALUES (" + personNumber + RdbmsConstants.CommaSpace
 				+ RdbmsConnection.wrapInSingleQuotes(email1)
 				+ RdbmsConstants.CommaSpace + RdbmsUtils.getPgBoolean(primary)
@@ -141,7 +192,7 @@ public class EmailSynchronizer {
 	}
 
 	public boolean modify(int personNumber, String email1, boolean primary)
-			throws SQLException, ClassNotFoundException {
+			throws SQLException {
 		String query = formatUpdateStatement(personNumber, email1, primary);
 		boolean status = this.griidcDbConnection.executeQueryBoolean(query);
 		if (EmailSynchronizer.isDebug())
@@ -155,16 +206,36 @@ public class EmailSynchronizer {
 		String query = "UPDATE  "
 				+ RdbmsConnection.wrapInDoubleQuotes(GriidcTableName)
 				+ RdbmsConstants.SPACE + " SET "
-				+ RdbmsConnection.wrapInDoubleQuotes(EmailCol)
+				+ RdbmsConnection.wrapInDoubleQuotes(GriidcEmailColName)
 				+ RdbmsConstants.EqualSign
 				+ RdbmsConnection.wrapInSingleQuotes(email1)
 				+ RdbmsConstants.CommaSpace
-				+ RdbmsConnection.wrapInDoubleQuotes(EmailPrimaryCol)
+				+ RdbmsConnection.wrapInDoubleQuotes(GriidcEmailPrimaryColName)
 				+ RdbmsConstants.EqualSign + RdbmsUtils.getPgBoolean(primary)
 				+ " WHERE "
-				+ RdbmsConnection.wrapInDoubleQuotes(GriidcPersonNumberCol)
+				+ RdbmsConnection.wrapInDoubleQuotes(GriidcPersonNumberColName)
 				+ RdbmsConstants.EqualSign + personNumber;
 		return query;
+	}
+
+	public int getEmailRecordsAdded() {
+		return emailRecordsAdded;
+	}
+
+	public int getEmailRecordsModified() {
+		return emailRecordsModified;
+	}
+
+	public int getEmailRecordsDuplicates() {
+		return emailRecordsDuplicates;
+	}
+
+	public int getEmailRecordsRead() {
+		return emailRecordsRead;
+	}
+
+	public int getEmailRecordsErrors() {
+		return emailRecordsErrors;
 	}
 
 	public static boolean isDebug() {
@@ -181,26 +252,12 @@ public class EmailSynchronizer {
 		String email1 = "joe.holland@tamucc.edu";
 		boolean primary = true;
 		EmailSynchronizer emu = new EmailSynchronizer();
-		try {
-			emu.initializeStartUp();
-			System.out.println("\n" + emu.formatSelect(personNumber));
-			System.out.println("\n"
-					+ emu.formatInsertStatement(personNumber, email1, primary));
-			System.out.println("\n"
-					+ emu.formatUpdateStatement(personNumber, email1, primary));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (PropertyNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		emu.initialize();
+		System.out.println("\n" + emu.formatSelect(personNumber));
+		System.out.println("\n"
+				+ emu.formatInsertStatement(personNumber, email1, primary));
+		System.out.println("\n"
+				+ emu.formatUpdateStatement(personNumber, email1, primary));
 
 	}
 

@@ -1,6 +1,5 @@
 package edu.tamucc.hri.griidc;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,8 +14,7 @@ import edu.tamucc.hri.rdbms.utils.RdbmsConstants;
 import edu.tamucc.hri.rdbms.utils.RdbmsUtils;
 import edu.tamucc.hri.rdbms.utils.TableColInfo;
 
-
-public class RolesSynchronizer {
+public class RolesSynchronizer extends SynchronizerBase {
 
 	private static final String RisTableName = "Roles";
 	private static final String GriidcTaskRolePrefix = "Task";
@@ -25,10 +23,7 @@ public class RolesSynchronizer {
 	private static final String GriidcTaskRoleTableName = GriidcTaskRolePrefix
 			+ GriidcRoleTableNameSuffix;
 	private static final String GriidcProjRoleTableName = GriidcProjRolePrefix
-			+ GriidcRoleTableNameSuffix;;
-
-	private RdbmsConnection risDbConnection = null;
-	private RdbmsConnection griidcDbConnection = null;
+			+ GriidcRoleTableNameSuffix;
 	private ResultSet risRS = null;
 	private ResultSet griidcRS = null;
 
@@ -65,31 +60,23 @@ public class RolesSynchronizer {
 	private int risRecordErrors = 0;
 	private int griidcTaskRoleAdded = 0;
 	private int griidcTaskRoleModified = 0;
+	private int griidcTaskRoleDuplicates = 0;
 	private int griidcProjRoleAdded = 0;
 	private int griidcProjRoleModified = 0;
-	private int griidcRecordDuplicates = 0;
+	private int griidcProjRoleDuplicates = 0;
 
-	
-	public static String[] RoleDescription = {
-		"We are the hollow men",
-		"We are the stuffed men",
-		"Leaning together",
-		"Headpiece filled with straw. Alas!",
-		"Our dried voices, when",
-		"We whisper together",
-		"Are quiet and meaningless",
-		"As wind in dry grass",
-		"Or rats' feet over broken glass",
-		"In our dry cellar",
-		"Shape without form, shade without colour",
-		"Paralysed force, gesture without motion",
-		"Those who have crossed",
-		"With direct eyes, to death's other Kingdom",
-		"Remember us-if at all-not as lost",
-		"Violent souls, but only",
-		"As the hollow men",
-		"The stuffed men."
-	};
+	public static String[] RoleDescription = { "We are the hollow men",
+			"We are the stuffed men", "Leaning together",
+			"Headpiece filled with straw. Alas!", "Our dried voices, when",
+			"We whisper together", "Are quiet and meaningless",
+			"As wind in dry grass", "Or rats' feet over broken glass",
+			"In our dry cellar", "Shape without form, shade without colour",
+			"Paralysed force, gesture without motion",
+			"Those who have crossed",
+			"With direct eyes, to death's other Kingdom",
+			"Remember us-if at all-not as lost", "Violent souls, but only",
+			"As the hollow men", "The stuffed men." };
+
 	public RolesSynchronizer() {
 		// TODO Auto-generated constructor stub
 	}
@@ -98,16 +85,9 @@ public class RolesSynchronizer {
 		return initialized;
 	}
 
-	public void initializeStartUp() throws IOException,
-			PropertyNotFoundException, SQLException, ClassNotFoundException,
-			TableNotInDatabaseException {
+	public void initialize() {
+		super.commonInitialize();
 		if (!isInitialized()) {
-			MiscUtils.openPrimaryLogFile();
-			MiscUtils.openRisErrorLogFile();
-			MiscUtils.openDeveloperReportFile();
-			this.risDbConnection = RdbmsUtils.getRisDbConnectionInstance();
-			this.griidcDbConnection = RdbmsUtils
-					.getGriidcDbConnectionInstance();
 			initialized = true;
 		}
 	}
@@ -116,32 +96,37 @@ public class RolesSynchronizer {
 			PropertyNotFoundException, IOException, SQLException,
 			TableNotInDatabaseException {
 		if (RolesSynchronizer.isDebug())
-			System.out.println("RoleSynchronizer.syncGriidcRolesFromRisRoles() -- starting --");
-		this.initializeStartUp();
+			System.out
+					.println("RoleSynchronizer.syncGriidcRolesFromRisRoles() -- starting --");
+		this.initialize();
 		syncGriidcRoles(GriidcProjRolePrefix);
 		syncGriidcRoles(GriidcTaskRolePrefix);
 	}
 
-
 	public String getSelectStatement(String prefix) {
-		
-		String query = RolesSynchronizer.GriidcProjRolesSelect + RolesSynchronizer.ProjSelectSuffix;
+
+		String query = RolesSynchronizer.GriidcProjRolesSelect
+				+ RolesSynchronizer.ProjSelectSuffix;
 		if (prefix.equals(RolesSynchronizer.GriidcTaskRolePrefix)) {
-			query =  RolesSynchronizer.GriidcProjRolesSelect + RolesSynchronizer.TaskSelectSuffix;
+			query = RolesSynchronizer.GriidcProjRolesSelect
+					+ RolesSynchronizer.TaskSelectSuffix;
 		}
-	    return query;
+		return query;
 	}
+
 	public void syncGriidcRoles(String prefix) throws ClassNotFoundException,
 			PropertyNotFoundException, IOException, SQLException,
 			TableNotInDatabaseException {
 		String msg = null;
 		if (RolesSynchronizer.isDebug())
-			System.out.println("RoleSynchronizer.syncGriidcRoles(" + prefix + ") starting");
-		
+			System.out.println("RoleSynchronizer.syncGriidcRoles(" + prefix
+					+ ") starting");
+
 		String griidcTableName = this.getGriidcTableNameFromPrefix(prefix);
-		
+
 		try {
-			risRS = this.risDbConnection.executeQueryResultSet(this.getSelectStatement(prefix));
+			risRS = this.risDbConnection.executeQueryResultSet(this
+					.getSelectStatement(prefix));
 
 			while (risRS.next()) { // continue statements branch back to here
 				risRecordCount++;
@@ -150,8 +135,12 @@ public class RolesSynchronizer {
 					this.risRoleId = risRS.getInt(RisRole_ID_ColName);
 					this.risRoleName = risRS.getString(RisRole_Name_ColName);
 					if (RolesSynchronizer.isDebug())
-						System.out.println("\n\nRoleSynchronizer.syncGriidcRoles(" + prefix + ") read RIS Roles record\n" + this.risRoleToString());
-					
+						System.out
+								.println("\n\nRoleSynchronizer.syncGriidcRoles("
+										+ prefix
+										+ ") read RIS Roles record\n"
+										+ this.risRoleToString());
+
 				} catch (SQLException e1) {
 					msg = "In RIS " + RisTableName + " record SQL Exception "
 							+ e1.getMessage();
@@ -165,30 +154,30 @@ public class RolesSynchronizer {
 				}
 				String query = null;
 				// find the matching GRIIDC record(s) - if any
-				
+
 				try {
 					query = formatGriidcFindRoleQuery(prefix, this.risRoleId);
 					if (RolesSynchronizer.isDebug())
-						System.out.println("formatGriidcFindRoleQuery() " + query);
+						System.out.println("formatGriidcFindRoleQuery() "
+								+ query);
 					griidcRS = this.griidcDbConnection
 							.executeQueryResultSet(query);
 
 				} catch (SQLException e1) {
-					System.err
-							.println("SQL Error: Find Role in GRIIDC " + griidcTableName + " - Query: "
-									+ query);
+					System.err.println("SQL Error: Find Role in GRIIDC "
+							+ griidcTableName + " - Query: " + query);
 					e1.printStackTrace();
 				}
 
 				int count = 0;
-                //  count the number of matches
+				// count the number of matches
 				try {
 					while (griidcRS.next()) {
 						count++;
-						this.griidcRoleNumber= griidcRS
-								.getInt(prefix + GriidcRole_Number_ColName_Suffix);
-						this.griidcRoleName = griidcRS
-								.getString(prefix + GriidcRoleDescription_ColName_Suffix);
+						this.griidcRoleNumber = griidcRS.getInt(prefix
+								+ GriidcRole_Number_ColName_Suffix);
+						this.griidcRoleName = griidcRS.getString(prefix
+								+ GriidcRoleDescription_ColName_Suffix);
 
 						if (isDebug())
 							System.out.println("Found GRIIDC "
@@ -200,9 +189,10 @@ public class RolesSynchronizer {
 					e.printStackTrace();
 				}
 
-				if (isDebug()) 
-					System.out.println("-- Found " + count + " matching GRIIDC records");
-				
+				if (isDebug())
+					System.out.println("-- Found " + count
+							+ " matching GRIIDC records");
+
 				// are there matching GRIIDC records?
 				// zero records found means ADD this record
 				// one record found means UPDATE
@@ -210,12 +200,13 @@ public class RolesSynchronizer {
 				this.setGriidcFromRis();
 				if (count == 0) { // Add the Task
 					try {
-						
-     					if (isDebug()) {
-     						System.out.println("Zero matches found - add the record");
-	    					System.out.println(this.griidcRoleToString(prefix));
-		    				System.out.println(this.risRoleToString());
-			    		}	
+
+						if (isDebug()) {
+							System.out
+									.println("Zero matches found - add the record");
+							System.out.println(this.griidcRoleToString(prefix));
+							System.out.println(this.risRoleToString());
+						}
 						this.addGriidcRoleRecord(prefix);
 						this.incrementAdded(prefix);
 					} catch (SQLException e) {
@@ -231,27 +222,29 @@ public class RolesSynchronizer {
 					}
 
 				} else if (count == 1) {
-					if (isDebug()) System.out.println("Found a matching key: " + this.griidcRoleToString(prefix));
+					if (isDebug())
+						System.out.println("Found a matching key: "
+								+ this.griidcRoleToString(prefix));
 					if (isCurrentRecordEqual()) {
-						continue; // back to next RIS
-					}
+						this.incrementDuplicate(prefix);
+					} else {  // not equal but matches the find
 
-					try {
-						this.modifyGriidcRoleRecord(prefix);
-						this.incrementModified(prefix);
-						// back to next RIS record from resultSet
-					} catch (Exception e) {
-						msg = "Error modifying GRIIDC " + griidcTableName + " record : "
-								+ e.getMessage();
-						if (RolesSynchronizer.isDebug()) System.out.println(msg);
-						MiscUtils.writeToPrimaryLogFile(msg);
-						MiscUtils.writeToRisErrorLogFile(msg);
-						this.risRecordErrors++;
-						this.risRecordsSkipped++;
+						try {
+							this.modifyGriidcRoleRecord(prefix);
+							this.incrementModified(prefix);
+							// back to next RIS record from resultSet
+						} catch (Exception e) {
+							msg = "Error modifying GRIIDC " + griidcTableName
+									+ " record : " + e.getMessage();
+							if (RolesSynchronizer.isDebug())
+								System.out.println(msg);
+							MiscUtils.writeToPrimaryLogFile(msg);
+							MiscUtils.writeToRisErrorLogFile(msg);
+							this.risRecordErrors++;
+							this.risRecordsSkipped++;
+						}
 					}
-
 				} else if (count > 1) { // duplicates
-					this.griidcRecordDuplicates++;
 
 					msg = "There are "
 							+ count
@@ -260,7 +253,8 @@ public class RolesSynchronizer {
 							+ " table "
 							+ RdbmsUtils.formatWhereClause(this
 									.getWhereColumnInfo(prefix));
-					if (RolesSynchronizer.isDebug()) System.out.println(msg);
+					if (RolesSynchronizer.isDebug())
+						System.out.println(msg);
 					MiscUtils.writeToPrimaryLogFile(msg);
 					MiscUtils.writeToRisErrorLogFile(msg);
 					// back to next RIS record from resultSet
@@ -274,34 +268,39 @@ public class RolesSynchronizer {
 		return;
 		// end of Project
 	}
+
 	private String formatGriidcFindRoleQuery(String prefix, int taskKey) {
 		String query = null;
 		String tableName = getGriidcTableNameFromPrefix(prefix);
 		query = "SELECT * FROM "
 				+ RdbmsConnection.wrapInDoubleQuotes(tableName)
 				+ " WHERE "
-				+ RdbmsConnection
-						.wrapInDoubleQuotes(prefix + GriidcRole_Number_ColName_Suffix)
+				+ RdbmsConnection.wrapInDoubleQuotes(prefix
+						+ GriidcRole_Number_ColName_Suffix)
 				+ RdbmsConstants.EqualSign + taskKey;
 
 		return query;
 	}
+
 	private boolean isCurrentRecordEqual() {
 		if (isDebug()) {
-				System.out.println("is CurrentRecordEqual " + this.risRoleToString() + this.griidcRoleToString());
-	     }
-	    boolean eq = (this.griidcRoleNumber == this.risRoleId
-				&& this.griidcRoleName.equals(this.risRoleName));
-	    eq = (eq && RandomBoolean.getInstance().getRandomBoolean());
-	    if (isDebug()) {
+			System.out.println("is CurrentRecordEqual "
+					+ this.risRoleToString() + this.griidcRoleToString());
+		}
+		boolean eq = (this.griidcRoleNumber == this.risRoleId 
+				        && this.griidcRoleName.equals(this.risRoleName));
+		eq = (eq && RandomBoolean.getInstance().getRandomBoolean());
+		if (isDebug()) {
 			System.out.println("is CurrentRecordEqual returning: " + eq);
-         }
-	    return eq;	
+		}
+		return eq;
 	}
+
 	/**
-	 * IF RandomBoolean.isOn() (flag set to true) rollTheDice the return true about
-	 * half the time, false about half.
-	 * IF RandomBoolean.isOff() roolTheDice will always return true;
+	 * IF RandomBoolean.isOn() (flag set to true) rollTheDice the return true
+	 * about half the time, false about half. IF RandomBoolean.isOff()
+	 * roolTheDice will always return true;
+	 * 
 	 * @return
 	 */
 	private boolean rollTheDice() {
@@ -313,8 +312,9 @@ public class RolesSynchronizer {
 		String msg = null;
 		String tableName = getGriidcTableNameFromPrefix(prefix);
 		if (RolesSynchronizer.isDebug())
-			System.out.println("RoleSynchronizer.addGriidcRoleRecord(" + prefix + ")");
-		
+			System.out.println("RoleSynchronizer.addGriidcRoleRecord(" + prefix
+					+ ")");
+
 		String query = RdbmsUtils.formatInsertStatement(tableName,
 				this.getDbColumnInfo(prefix));
 		if (RolesSynchronizer.isDebug())
@@ -341,8 +341,9 @@ public class RolesSynchronizer {
 		DbColumnInfo[] whereColInfo = this.getWhereColumnInfo(prefix);
 		if (RolesSynchronizer.isDebug())
 			System.out.println("\tRdbmsUtils.formatUpdateStatement");
-		modifyQuery = RdbmsUtils.formatUpdateStatement(tableName,modColInfo,whereColInfo);
-	
+		modifyQuery = RdbmsUtils.formatUpdateStatement(tableName, modColInfo,
+				whereColInfo);
+
 		if (RolesSynchronizer.isDebug())
 			System.out.println("\t modify query " + modifyQuery);
 		this.griidcDbConnection.executeQueryBoolean(modifyQuery);
@@ -355,10 +356,12 @@ public class RolesSynchronizer {
 	}
 
 	private void setGriidcFromRis() {
-        this.griidcRoleNumber = this.risRoleId;
+		this.griidcRoleNumber = this.risRoleId;
 		this.griidcRoleName = this.risRoleName;
-		this.griidcRoleDescription = this.getRoleDescription();;
+		this.griidcRoleDescription = this.risRoleName; // =
+														// this.getRoleDescription();;
 	}
+
 	private String getGriidcTableNameFromPrefix(String prefix) {
 		String tableName = GriidcProjRoleTableName;
 		if (prefix.equals(RolesSynchronizer.GriidcTaskRolePrefix)) {
@@ -366,51 +369,65 @@ public class RolesSynchronizer {
 		}
 		return tableName;
 	}
+
 	private void incrementAdded(String prefix) {
-		if(prefix.equals(RolesSynchronizer.GriidcTaskRolePrefix)) {
+		if (prefix.equals(RolesSynchronizer.GriidcTaskRolePrefix)) {
 			this.griidcTaskRoleAdded++;
-		} else this.griidcProjRoleAdded++;
-		return;
-	}
-	
-	private void incrementModified(String prefix) {
-		if(prefix.equals(RolesSynchronizer.GriidcTaskRolePrefix)) {
-			this.griidcTaskRoleModified++;
-		} else this.griidcProjRoleModified++;
+		} else
+			this.griidcProjRoleAdded++;
 		return;
 	}
 
+	private void incrementModified(String prefix) {
+		if (prefix.equals(RolesSynchronizer.GriidcTaskRolePrefix)) {
+			this.griidcTaskRoleModified++;
+		} else
+			this.griidcProjRoleModified++;
+		return;
+	}
+	private void incrementDuplicate(String prefix) {
+		if (prefix.equals(RolesSynchronizer.GriidcTaskRolePrefix)) {
+			this.griidcTaskRoleAdded++;
+		} else
+			this.griidcProjRoleAdded++;
+		return;
+	}
 	private DbColumnInfo[] getDbColumnInfo(String prefix) throws SQLException,
 			ClassNotFoundException {
 
 		String tableName = getGriidcTableNameFromPrefix(prefix);
 
 		if (RolesSynchronizer.isDebug()) {
-			System.out.println("RolesSynchronizer.getDbColumnInfo(" + prefix +") tableName: " + tableName);
+			System.out.println("RolesSynchronizer.getDbColumnInfo(" + prefix
+					+ ") tableName: " + tableName);
 			System.out.println("\t" + this.griidcRoleToString(prefix));
 		}
-		
+
 		TableColInfo tci = RdbmsUtils.getMetaDataForTable(
 				this.griidcDbConnection, tableName);
 
 		if (RolesSynchronizer.isDebug())
-			System.out.println("\tCol: " + prefix + GriidcRole_Number_ColName_Suffix);
+			System.out.println("\tCol: " + prefix
+					+ GriidcRole_Number_ColName_Suffix);
 		tci.getDbColumnInfo(prefix + GriidcRole_Number_ColName_Suffix)
 				.setColValue(String.valueOf(this.griidcRoleNumber));
-		
+
 		if (RolesSynchronizer.isDebug())
-			System.out.println("\tCol: " + prefix + GriidcRoleName_ColName_Suffix);
+			System.out.println("\tCol: " + prefix
+					+ GriidcRoleName_ColName_Suffix);
 		tci.getDbColumnInfo(prefix + GriidcRoleName_ColName_Suffix)
 				.setColValue(this.griidcRoleName);
-		
+
 		if (RolesSynchronizer.isDebug())
-			System.out.println("\tCol: " + prefix + GriidcRoleDescription_ColName_Suffix);
-		
+			System.out.println("\tCol: " + prefix
+					+ GriidcRoleDescription_ColName_Suffix);
+
 		tci.getDbColumnInfo(prefix + GriidcRoleDescription_ColName_Suffix)
 				.setColValue(this.griidcRoleDescription);
-		
-		if (RolesSynchronizer.isDebug())  
-			System.out.println("\tRolesSynchronizer.getDbColumnInfo returning " + tci.toString());
+
+		if (RolesSynchronizer.isDebug())
+			System.out.println("\tRolesSynchronizer.getDbColumnInfo returning "
+					+ tci.toString());
 		return tci.getDbColumnInfo();
 	}
 
@@ -422,29 +439,37 @@ public class RolesSynchronizer {
 		TableColInfo tci = RdbmsUtils.getMetaDataForTable(
 				this.griidcDbConnection, tableName);
 
-		DbColumnInfo dbci = tci.getDbColumnInfo(prefix + GriidcRole_Number_ColName_Suffix);
+		DbColumnInfo dbci = tci.getDbColumnInfo(prefix
+				+ GriidcRole_Number_ColName_Suffix);
 
 		dbci.setColValue(String.valueOf(this.griidcRoleNumber));
 		DbColumnInfo[] whereColInfo = new DbColumnInfo[1];
 		whereColInfo[0] = dbci;
-		if (RolesSynchronizer.isDebug())  
-			System.out.println("\tRolesSynchronizer.getWhereColumnInfo returning " + dbci.toString());
+		if (RolesSynchronizer.isDebug())
+			System.out
+					.println("\tRolesSynchronizer.getWhereColumnInfo returning "
+							+ dbci.toString());
 		return whereColInfo;
 	}
+
 	public String griidcRoleToString() {
 		return this.griidcRoleToString("XXX");
 	}
+
 	private static int rdNdx = 0;
 	private static int rdNdxMax = RoleDescription.length;
+
 	private String getRoleDescription() {
 		String s = RoleDescription[rdNdx++];
-		if(rdNdx >= rdNdxMax) rdNdx = 0;
+		if (rdNdx >= rdNdxMax)
+			rdNdx = 0;
 		return s;
 	}
+
 	public String griidcRoleToString(String prefix) {
 		return "GRIIDC " + prefix + "Role [roleNumber=" + griidcRoleNumber
-				+ ", roleName=" + griidcRoleName
-				+ ", griidcRoleDescription=" + griidcRoleDescription + "]";
+				+ ", roleName=" + griidcRoleName + ", griidcRoleDescription="
+				+ griidcRoleDescription + "]";
 
 	}
 
@@ -473,10 +498,14 @@ public class RolesSynchronizer {
 	public int getRisRecordErrors() {
 		return risRecordErrors;
 	}
-	public int getGriidcRecordDuplicates() {
-		return griidcRecordDuplicates;
+
+	public int getGriidcTaskRoleDuplicates() {
+		return griidcTaskRoleDuplicates;
 	}
-	
+
+	public int getGriidcProjRoleDuplicates() {
+		return griidcProjRoleDuplicates;
+	}
 
 	public int getGriidcTaskRoleAdded() {
 		return griidcTaskRoleAdded;
@@ -523,27 +552,30 @@ public class RolesSynchronizer {
 
 		System.out.println("RisToGriidcMain finished");
 
-		System.out.printf(titleFormat,title);
-		
+		System.out.printf(titleFormat, title);
+
 		System.out.printf(pFormat, "RIS Roles records read:",
 				roleSynchronizer.getRisRecordCount());
 		System.out.printf(pFormat, "RIS Role errors:",
 				roleSynchronizer.getRisRecordErrors());
-		
+
 		System.out
 				.println("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -");
-		
+
 		System.out.printf(pFormat, "GRIIDC TaskRole added:",
 				roleSynchronizer.getGriidcTaskRoleAdded());
 		System.out.printf(pFormat, "GRIIDC TaskRole modified:",
 				roleSynchronizer.getGriidcTaskRoleModified());
+		System.out.printf(pFormat, "GRIIDC TaskRole duplicates:",
+				roleSynchronizer.getGriidcTaskRoleDuplicates());
 		System.out.printf(pFormat, "GRIIDC ProjRole added:",
 				roleSynchronizer.getGriidcProjRoleAdded());
 		System.out.printf(pFormat, "GRIIDC ProjRole modified:",
 				roleSynchronizer.getGriidcProjRoleModified());
-		System.out.printf(pFormat, "GRIIDC Role duplicates:",
-				roleSynchronizer.getGriidcRecordDuplicates());
+		System.out.printf(pFormat, "GRIIDC ProjRole duplicates:",
+				roleSynchronizer.getGriidcProjRoleDuplicates());
 		
+
 		System.out.println("RolesSynchronizer.main() - END -");
 	}
 }

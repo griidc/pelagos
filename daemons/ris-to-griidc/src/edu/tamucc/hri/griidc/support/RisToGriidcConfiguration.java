@@ -45,10 +45,19 @@ public class RisToGriidcConfiguration {
 	private static final String RisToGriidcLogFilesSection = "LOG_FILES"; // ris-to-griidc.ini
 	private static final String RisToGriidcOtherSection = "OTHER"; // ris-to-griidc.ini
 	private static final String RisToGriidcEmailSection = "EMAIL"; // ris-to-griidc.ini
+	
+	//  email properties
 	private static final String GriidcMailSender = "mail.from"; // ris-to-griidc.ini
 	private static final String GriidcMailHost = "mail.host"; // ris-to-griidc.ini
 	private static final String GriidcMailUser = "mail.user"; // ris-to-griidc.ini
 
+	//  property names
+	private static final String PrimayLogFileNameProperty = "primaryLogName";
+	private static final String PrimayLogFileDirectoryProperty = "logFileDir";
+	private static final String RisErrorLogNameProperty = "risErrorLogName";
+	private static final String DeveloperLogFileNameProperty = "developerLogName";
+	private static final String FuzzyHeuristicPostalCodeMatchingProperty = "fuzzyHeuristicPostalCodeMatching";
+	
 	private static Ini DbIniInstance = null;
 	private static Ini NotificationsIniInstance = null;
 	private static Ini RisToGriidcIniInstance = null;
@@ -60,6 +69,10 @@ public class RisToGriidcConfiguration {
 			IOException {
 		Ini ini = new Ini(new FileReader(fileName));
 		return ini;
+	}
+
+	public static String getNotificationsFileName() {
+		return NotificationsFileName;
 	}
 
 	private RisToGriidcConfiguration() {
@@ -203,20 +216,20 @@ public class RisToGriidcConfiguration {
 	public static Ini getNotificationsIniInstance() {
 		if (NotificationsIniInstance == null) {
 			try {
-				NotificationsIniInstance = loadIniFile(NotificationsFileName);
+				NotificationsIniInstance = loadIniFile(RisToGriidcConfiguration.getNotificationsFileName());
 			} catch (InvalidFileFormatException e) {
 				System.err.println("InvalidFileFormatException for file "
-						+ NotificationsFileName);
+						+ RisToGriidcConfiguration.getNotificationsFileName());
 				e.printStackTrace();
 				System.exit(-1);
 			} catch (FileNotFoundException e) {
 				System.err.println("FileNotFoundException for file "
-						+ NotificationsFileName);
+						+ RisToGriidcConfiguration.getNotificationsFileName());
 				e.printStackTrace();
 				System.exit(-1);
 			} catch (IOException e) {
 				System.err.println("IOException for file "
-						+ NotificationsFileName);
+						+ RisToGriidcConfiguration.getNotificationsFileName());
 				e.printStackTrace();
 				System.exit(-1);
 			}
@@ -253,45 +266,87 @@ public class RisToGriidcConfiguration {
 	public static String getWorkingDirectory() {
 		return System.getProperty("user.dir");
 	}
-
-	public static String getLogFileDirectory() throws PropertyNotFoundException {
-		return RisToGriidcConfiguration.getRisToGriiidcIniProp(
+	private static void propertyNotFoundError(String functionName, String propName) {
+		System.err.println("PropertyNotFoundException: RisToGriidcConfiguration." + functionName + "()  - no property found matching " + propName);
+	}
+	public static String getLogFileDirectory() {
+		String result = null;
+		try {
+			result =  RisToGriidcConfiguration.getRisToGriiidcIniProp(
 				RisToGriidcConfiguration.getRisToGriidcLogFilesSection(),
-				"logFileDir");
+				PrimayLogFileDirectoryProperty);
+		} catch (PropertyNotFoundException e) {
+			propertyNotFoundError("getLogFileDirectory", PrimayLogFileDirectoryProperty);
+			System.exit(-1);
+		}
+		return result;
 	}
 
-	public static String getPrimaryLogFileName()
-			throws PropertyNotFoundException {
-		return getLogFileDirectory()
+	public static String getPrimaryLogFileName() {
+		String result = null;
+		try {
+			result =  getLogFileDirectory()
+					+ RisToGriidcConfiguration.getRisToGriiidcIniProp(
+							RisToGriidcConfiguration
+									.getRisToGriidcLogFilesSection(),
+									PrimayLogFileNameProperty);
+		} catch (PropertyNotFoundException e) {
+			propertyNotFoundError("getPrimaryLogFileName", PrimayLogFileNameProperty);
+			System.exit(-1);
+		}
+		return result;
+	}
+
+	
+	public static String getRisErrorLogFileName() {
+		String result = null;
+		try {
+			result = getLogFileDirectory()
 				+ RisToGriidcConfiguration.getRisToGriiidcIniProp(
 						RisToGriidcConfiguration
 								.getRisToGriidcLogFilesSection(),
-						"primaryLogName");
+								RisErrorLogNameProperty);
+		} catch (PropertyNotFoundException e) {
+			propertyNotFoundError("getRisErrorLogFileName", RisErrorLogNameProperty);
+			System.exit(-1);
+		}
+		return result;
 	}
 
-	public static String getRisErrorLogFileName()
-			throws PropertyNotFoundException {
-		return getLogFileDirectory()
+	
+	/*********
+	 *  } catch (PropertyNotFoundException e) {
+			propertyNotFoundError(FFFFF, XXXXX);
+			System.exit(-1);
+		}
+		return result;
+	*************/
+	public static String getDeveloperReportFileName() {
+		String result = null;
+		try {
+			result =  getLogFileDirectory()
 				+ RisToGriidcConfiguration.getRisToGriiidcIniProp(
 						RisToGriidcConfiguration
 								.getRisToGriidcLogFilesSection(),
-						"risErrorLogName");
+								DeveloperLogFileNameProperty);
+		} catch (PropertyNotFoundException e) {
+			propertyNotFoundError("getDeveloperReportFileName", DeveloperLogFileNameProperty);
+			System.exit(-1);
+		}
+		return result;
 	}
 
-	public static String getDeveloperReportFileName()
-			throws PropertyNotFoundException {
-		return getLogFileDirectory()
-				+ RisToGriidcConfiguration.getRisToGriiidcIniProp(
-						RisToGriidcConfiguration
-								.getRisToGriidcLogFilesSection(),
-						"developerLogName");
-	}
-
-	public static boolean isFuzzyPostalCodeTrue()
-			throws PropertyNotFoundException {
-		String s = RisToGriidcConfiguration.getRisToGriiidcIniProp(
+	public static boolean isFuzzyPostalCodeTrue() {
+		String s = null;
+		try {
+			s  = RisToGriidcConfiguration.getRisToGriiidcIniProp(
 				RisToGriidcConfiguration.getRisToGriidcOtherSection(),
-				"fuzzyHeuristicPostalCodeMatching");
+				FuzzyHeuristicPostalCodeMatchingProperty);
+			return Boolean.getBoolean(s);
+		} catch (PropertyNotFoundException e) {
+			propertyNotFoundError("isFuzzyPostalCodeTrue", FuzzyHeuristicPostalCodeMatchingProperty);
+			System.exit(-1);
+		}
 		return Boolean.getBoolean(s);
 	}
 
@@ -316,8 +371,7 @@ public class RisToGriidcConfiguration {
 	 * @return
 	 * @throws PropertyNotFoundException
 	 */
-	public static String[] getRisErrorMsgLogRecipients()
-			throws PropertyNotFoundException {
+	public static String[] getRisErrorMsgLogRecipients() {
 		return getRecipients(RisErrorsType);
 	}
 
@@ -326,8 +380,7 @@ public class RisToGriidcConfiguration {
 		return getRecipients(PrimaryLogType);
 	}
 
-	private static String[] getRecipients(String type)
-			throws PropertyNotFoundException {
+	private static String[] getRecipients(String type) {
 		Vector<String> addrs = new Vector<String>();
 		Ini ini = getNotificationsIniInstance();
 		Section section = ini.get(RisToGriidcNotificationsSection);

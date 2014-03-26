@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import org.ini4j.InvalidFileFormatException;
 
 import edu.tamucc.hri.griidc.support.RisToGriidcConfiguration;
-import edu.tamucc.hri.griidc.exception.DuplicateRecordException;
+import edu.tamucc.hri.griidc.exception.MultipleRecordsFoundException;
 import edu.tamucc.hri.griidc.exception.GriidcExceptionService;
 import edu.tamucc.hri.griidc.exception.MissingArgumentsException;
 import edu.tamucc.hri.griidc.exception.NoRecordFoundException;
@@ -49,12 +49,7 @@ public class RisToGriidcTest {
 			con = RdbmsUtils.getRisDbConnectionInstance();
 		} catch (SQLException e) {
 			GriidcExceptionService.fatalException(e, msg);
-		} catch (ClassNotFoundException e) {
-			GriidcExceptionService.fatalException(e, msg);
-		} catch (PropertyNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} 
 		System.out.println("RIS connection\n" + con.toString());
 		return true;
 	}
@@ -67,12 +62,7 @@ public class RisToGriidcTest {
 			con = RdbmsUtils.getGriidcDbConnectionInstance();
 		} catch (SQLException e) {
 			GriidcExceptionService.fatalException(e, msg);
-		} catch (ClassNotFoundException e) {
-			GriidcExceptionService.fatalException(e, msg);
-		} catch (PropertyNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} 
 		System.out.println("GRIIDC connection\n" + con.toString());
 		return true;
 	}
@@ -98,13 +88,7 @@ public class RisToGriidcTest {
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
-		} catch (PropertyNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} 
 		return true;
 	}
 
@@ -136,13 +120,7 @@ public class RisToGriidcTest {
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
-		} catch (PropertyNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} 
 		return true;
 	}
 	public static void testFindGriidcPostalAreaNumber() {

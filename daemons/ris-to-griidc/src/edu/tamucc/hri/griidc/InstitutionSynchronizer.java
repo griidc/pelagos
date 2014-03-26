@@ -1,10 +1,11 @@
 package edu.tamucc.hri.griidc;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import edu.tamucc.hri.griidc.exception.DuplicateRecordException;
+import edu.tamucc.hri.griidc.exception.MultipleRecordsFoundException;
 import edu.tamucc.hri.griidc.exception.MissingArgumentsException;
 import edu.tamucc.hri.griidc.exception.NoRecordFoundException;
 import edu.tamucc.hri.griidc.exception.PropertyNotFoundException;
@@ -12,18 +13,17 @@ import edu.tamucc.hri.griidc.exception.TableNotInDatabaseException;
 import edu.tamucc.hri.griidc.support.MiscUtils;
 import edu.tamucc.hri.griidc.support.RisInstDeptPeopleErrorCollection;
 import edu.tamucc.hri.griidc.support.RisToGriidcConfiguration;
+import edu.tamucc.hri.rdbms.utils.DbColumnInfo;
 import edu.tamucc.hri.rdbms.utils.RdbmsConnection;
 import edu.tamucc.hri.rdbms.utils.RdbmsConstants;
 import edu.tamucc.hri.rdbms.utils.RdbmsUtils;
+import edu.tamucc.hri.rdbms.utils.TableColInfo;
 
-public class InstitutionSynchronizer {
+public class InstitutionSynchronizer extends SynchronizerBase {
 
 	private static final String RisTableName = "Institutions";
 	private static final String GriidcTableName = "Institution";
 
-	private RdbmsConnection risDbConnection = null;
-	private RdbmsConnection griidcDbConnection = null;
-	private RdbmsConnection griidcTempDbConnection = null;
 
 	private int risRecordCount = 0;
 	private int risRecordsSkipped = 0;
@@ -66,20 +66,15 @@ public class InstitutionSynchronizer {
 	private static boolean debug = false;
 
 	private static boolean FuzzyPostalCode = false;
-
+	
 	private RisInstDeptPeopleErrorCollection risInstitutionWithErrors = new RisInstDeptPeopleErrorCollection();
 
 	public InstitutionSynchronizer() {
 
 	}
 
-	public void initializeStartUp() throws IOException,
-			SQLException, ClassNotFoundException, PropertyNotFoundException {
-		MiscUtils.openPrimaryLogFile();
-		MiscUtils.openRisErrorLogFile();
-		MiscUtils.openDeveloperReportFile();
-		this.risDbConnection = RdbmsUtils.getRisDbConnectionInstance();
-		this.griidcDbConnection = RdbmsUtils.getGriidcDbConnectionInstance();
+	public void initialize()  {
+		super.commonInitialize();
 		if (RisToGriidcConfiguration.isFuzzyPostalCodeTrue())
 			InstitutionSynchronizer.setFuzzyPostalCode(true);
 	}
@@ -91,14 +86,14 @@ public class InstitutionSynchronizer {
 	 * @throws IOException
 	 * @throws TableNotInDatabaseException 
 	 * @throws NoRecordFoundException
-	 * @throws DuplicateRecordException
+	 * @throws MultipleRecordsFoundException
 	 */
 	public RisInstDeptPeopleErrorCollection syncGriidcInstitutionFromRisInstitution()
 			throws ClassNotFoundException,
 			IOException, SQLException, TableNotInDatabaseException, PropertyNotFoundException {
 		if (isDebug()) System.out.println(MiscUtils.BreakLine);
 		
-		this.initializeStartUp();
+		this.initialize();
 
 		String tempDeliveryPoint = null; // created from RIS info
 		int tempPostalAreaNumber = -1; // created from RIS info
@@ -143,7 +138,7 @@ public class InstitutionSynchronizer {
 				try {
 					countryNumber = RdbmsUtils
 							.getCountryNumberFromName(risInstCountry);
-				} catch (DuplicateRecordException e) {
+				} catch (MultipleRecordsFoundException e) {
 					MiscUtils.writeToPrimaryLogFile(e.getMessage());
 					if (isDebug())
 						System.err.println("AA Skip this one: "
@@ -173,7 +168,7 @@ public class InstitutionSynchronizer {
 					tempPostalAreaNumber = RdbmsUtils.getGriidcDepartmentPostalNumber(
 							countryNumber, risInstState, risInstCity,
 							risInstZip);
-				} catch (DuplicateRecordException e) {
+				} catch (MultipleRecordsFoundException e) {
 					MiscUtils.writeToPrimaryLogFile(e.getMessage());
 					if (isDebug())
 						System.err.println("CC Skip this one: "
@@ -265,7 +260,7 @@ public class InstitutionSynchronizer {
 				if (count == 0) {
 					// Add the Institution
 					this.griidcRecordsAdded++;
-					if (this.isDebug()) {
+					if (InstitutionSynchronizer.isDebug()) {
 						String msg = "Add GRIIDC Institution table record "
 								+ "Institution_Name: " + risInstName
 								+ ", PostalArea_Number: "
@@ -276,11 +271,11 @@ public class InstitutionSynchronizer {
 					}
 					String addQuery = null;
 					try {
-						addQuery = this.formatAddInstitutionQuery(risInstId,
+						addQuery = this.formatAddQuery(risInstId,
 								risInstName, tempPostalAreaNumber,
 								tempDeliveryPoint, risInstURL, risInstLong,
 								risInstLat);
-						if (this.isDebug())
+						if (InstitutionSynchronizer.isDebug())
 							System.out.println("Query: " + addQuery);
 						this.griidcDbConnection.executeQueryBoolean(addQuery);
 						String msg = "Added Institution record: "
@@ -308,14 +303,12 @@ public class InstitutionSynchronizer {
 							risInstURL, // risInstLong, risInstLat,
 							griidcInstNumber, griidcInstName,
 							griidcInstPostalAreaNumber,
-							griidcInstDeliveryPoint, griidcInstUrl)) { // ,
-																		// griidcInstLongitude,
-																		// griidcInstLatitude))
-																		// {
+							griidcInstDeliveryPoint, griidcInstUrl)) {
+						this.griidcRecordDuplicates++;
 						continue; // branch back to while (rset.next())
 					}
 					this.griidcRecordsModified++;
-					if (this.isDebug()) {
+					if (InstitutionSynchronizer.isDebug()) {
 						String msg = "Modify GRIIDC Institution table matching "
 								+ "griidcInstNumber: "
 								+ risInstId
@@ -330,7 +323,7 @@ public class InstitutionSynchronizer {
 
 					String modifyQuery = null;
 					try {
-						modifyQuery = this.formatModifyInstitutionQuery(
+						modifyQuery = this.formatModifyQuery(
 								risInstId, risInstName,
 								griidcInstPostalAreaNumber, tempDeliveryPoint,
 								risInstURL, risInstLong, risInstLat);
@@ -364,7 +357,7 @@ public class InstitutionSynchronizer {
 							+ griidcInstPostalAreaNumber
 							+ ", Institution_DeliveryPoint: "
 							+ tempDeliveryPoint;
-					if (this.isDebug())
+					if (InstitutionSynchronizer.isDebug())
 						System.out.println(msg);
 					MiscUtils.writeToPrimaryLogFile(msg);
 				}
@@ -377,10 +370,33 @@ public class InstitutionSynchronizer {
 		return this.risInstitutionWithErrors;
 	}
 
-	private String formatAddInstitutionQuery(int risInstNumber,
+	private DbColumnInfo[] getDbColumnInfo(int risInstNumber,
 			String risInstName, int griidcPostalAreaNumber,
 			String deliveryPoint, String risInstURL, double risInstLon,
-			double risInstLat) throws SQLException, ClassNotFoundException {
+			double risInstLat) throws FileNotFoundException, SQLException, ClassNotFoundException, PropertyNotFoundException {
+		TableColInfo tci = RdbmsUtils.getMetaDataForTable(RdbmsUtils.getGriidcDbConnectionInstance(), GriidcTableName);
+		
+		tci.getDbColumnInfo("Institution_Number").setColValue(String.valueOf(this.risInstId));
+		tci.getDbColumnInfo("Institution_Name").setColValue(this.risInstName);
+		tci.getDbColumnInfo("PostalArea_Number").setColValue(String.valueOf(griidcPostalAreaNumber));
+		tci.getDbColumnInfo("Institution_DeliveryPoint").setColValue(deliveryPoint);
+		tci.getDbColumnInfo("Institution_URL").setColValue(risInstURL);
+		tci.getDbColumnInfo("Institution_GeoCoordinate").setColValue(String.valueOf(RdbmsUtils.makeSqlGeometryPointString(risInstLon, risInstLat)));
+		return tci.getDbColumnInfo();
+	}
+	private String formatAddQuery(int risInstNumber,
+			String risInstName, int griidcPostalAreaNumber,
+			String deliveryPoint, String risInstURL, double risInstLon,
+			double risInstLat) throws SQLException, ClassNotFoundException, FileNotFoundException, PropertyNotFoundException {
+		
+		DbColumnInfo[] info = getDbColumnInfo(risInstNumber,
+				risInstName, griidcPostalAreaNumber,
+				deliveryPoint, risInstURL, risInstLon,risInstLat);
+		String query = RdbmsUtils.formatInsertStatement(InstitutionSynchronizer.GriidcTableName, info);
+		if (InstitutionSynchronizer.isDebug())
+			System.out.println("formatAddQuery() " + query);
+		return query;
+		/***
 		StringBuffer sb = new StringBuffer("INSERT INTO ");
 		sb.append(RdbmsConnection.wrapInDoubleQuotes("Institution")
 				+ RdbmsConstants.SPACE + "(");
@@ -411,16 +427,35 @@ public class InstitutionSynchronizer {
 				+ makeSqlGeometryPointString(risInstLon, risInstLat));
 		sb.append(" )");
 		return sb.toString();
+		***/
 	}
 
-	private String makeSqlGeometryPointString(double lon, double lat) {
-		return " " + "ST_SetSRID(ST_MakePoint(" + lon + "," + lat + "), 4326)";
-	}
 
-	private String formatModifyInstitutionQuery(int instNumber,
+	private String formatModifyQuery(int risInstNumber,
 			String risInstName, int postalAreaNumber, String deliveryPoint,
 			String instURL, double instLon, double instLat)
-			throws SQLException, ClassNotFoundException {
+			throws SQLException, ClassNotFoundException, FileNotFoundException, PropertyNotFoundException {
+		
+		DbColumnInfo[] info = getDbColumnInfo(risInstNumber,
+				risInstName, postalAreaNumber,
+				deliveryPoint, instURL, instLon,instLat);
+		
+		DbColumnInfo[] whereInfo = new DbColumnInfo[1];
+		
+        TableColInfo tci = RdbmsUtils.getMetaDataForTable(RdbmsUtils.getGriidcDbConnectionInstance(), GriidcTableName);
+		
+		tci.getDbColumnInfo("Institution_Number").setColValue(String.valueOf(risInstNumber));
+		
+		whereInfo[0] = tci.getDbColumnInfo("Institution_Number");
+		
+		String query = RdbmsUtils.formatUpdateStatement(
+				InstitutionSynchronizer.GriidcTableName, info, whereInfo);
+		
+		if (InstitutionSynchronizer.isDebug())
+			System.out.println("formatModifyQuery() " + query);
+		return query;
+		
+		/*****
 		StringBuffer sb = new StringBuffer("UPDATE  ");
 		sb.append(RdbmsConnection.wrapInDoubleQuotes("Institution")
 				+ RdbmsConstants.SPACE + " SET ");
@@ -448,6 +483,7 @@ public class InstitutionSynchronizer {
 				+ RdbmsConnection.wrapInDoubleQuotes("Institution_Number")
 				+ RdbmsConstants.EqualSign + instNumber);
 		return sb.toString();
+		*****/
 	}
 
 	/**

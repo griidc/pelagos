@@ -5,17 +5,14 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import edu.tamucc.hri.griidc.exception.NoRecordFoundException;
 import edu.tamucc.hri.griidc.exception.PropertyNotFoundException;
 import edu.tamucc.hri.griidc.exception.TableNotInDatabaseException;
 import edu.tamucc.hri.griidc.support.MiscUtils;
 import edu.tamucc.hri.rdbms.utils.DbColumnInfo;
-import edu.tamucc.hri.rdbms.utils.DefaultValue;
 import edu.tamucc.hri.rdbms.utils.RdbmsConnection;
 import edu.tamucc.hri.rdbms.utils.RdbmsConstants;
 import edu.tamucc.hri.rdbms.utils.RdbmsUtils;
 import edu.tamucc.hri.rdbms.utils.RisFundSrcProgramsStartEndCollection;
-import edu.tamucc.hri.rdbms.utils.RisProgramStartEnd;
 import edu.tamucc.hri.rdbms.utils.TableColInfo;
 
 /**
@@ -24,7 +21,7 @@ import edu.tamucc.hri.rdbms.utils.TableColInfo;
  * @author jvh
  * 
  */
-public class TaskSynchronizer {
+public class TaskSynchronizer extends SynchronizerBase {
 
 	public TaskSynchronizer() {
 		// TODO Auto-generated constructor stub
@@ -34,9 +31,6 @@ public class TaskSynchronizer {
 	private static final String GriidcTaskTableName = "Task";
 
 	private static final String GriidcProjectTableName = "Project";
-
-	private RdbmsConnection risDbConnection = null;
-	private RdbmsConnection griidcDbConnection = null;
 
 	private int risRecordCount = 0;
 	private int risRecordsSkipped = 0;
@@ -65,7 +59,7 @@ public class TaskSynchronizer {
 	// RIS Projects column names
 
 	private static String RisProject_ID_ColName = "Project_ID";
-	private static String RisProgram_ID_ColName = "Program_ID"; 
+	private static String RisProgram_ID_ColName = "Program_ID";
 	private static String RisProject_SubTaskNum_ColName = "Project_SubTaskNum";
 	private static String RisProject_Title_ColName = "Project_Title";
 	private static String RisProject_LeadInstitution_ColName = "Project_LeadInstitution";
@@ -110,105 +104,83 @@ public class TaskSynchronizer {
 	private static boolean Debug = false;
 	private boolean initialized = false;
 
+	private static final String[] shortColumnNameList = {
+			GriidcTask_Number_ColName, GriidcFundingEnvelope_Cycle_ColName,
+			GriidcProject_Number_ColName, GriidcTask_EndDate_ColName,
+			GriidcTask_StartDate_ColName, GriidcTask_Title_ColName };
+
 	private RisFundSrcProgramsStartEndCollection startEndDatePrograms = null;
 
 	public boolean isInitialized() {
 		return initialized;
 	}
 
-	public void initializeStartUp() throws IOException,
-			PropertyNotFoundException, SQLException, ClassNotFoundException,
-			TableNotInDatabaseException {
+	public void initialize() {
+		this.commonInitialize();
 		if (!isInitialized()) {
-			MiscUtils.openPrimaryLogFile();
-			MiscUtils.openRisErrorLogFile();
-			MiscUtils.openDeveloperReportFile();
-			this.risDbConnection = RdbmsUtils.getRisDbConnectionInstance();
-			this.griidcDbConnection = RdbmsUtils
-					.getGriidcDbConnectionInstance();
-			this.startEndDatePrograms = RdbmsUtils
-					.getRisFundSrcProgramsStartEndCollection();
-			this.startEndDatePrograms = RdbmsUtils
-					.getRisFundSrcProgramsStartEndCollection();
+			try {
+				this.startEndDatePrograms = RdbmsUtils
+						.getRisFundSrcProgramsStartEndCollection();
+			} catch (SQLException e) {
+				MiscUtils.fatalError(this.getClass().getName(), "initialize",
+						e.getMessage());
+			}
 			initialized = true;
 		}
 	}
 
-	public void syncGriidcTaskFromProjects() throws ClassNotFoundException,
-			PropertyNotFoundException, IOException, SQLException,
-			TableNotInDatabaseException {
+	public void syncGriidcTaskFromProjects() {
+		this.initialize();
 		String msg = null;
 		if (isDebug())
 			System.out.println(MiscUtils.BreakLine);
 
-		this.initializeStartUp();
-
-		// get all records from the RIS Project table
 		try {
+			// get all records from the RIS Project table
 			risRS = this.risDbConnection.selectAllValuesFromTable(RisTableName);
-
+			// read each record retrieved from RIS
 			while (risRS.next()) { // continue statements branch back to here
 				risRecordCount++;
-				try {
 
-					this.risProject_ID = risRS.getInt(RisProject_ID_ColName);
-					this.risProgram_ID = risRS.getInt(RisProgram_ID_ColName);
-					this.risProject_SubTaskNum = risRS
-							.getInt(RisProject_SubTaskNum_ColName);
-					this.risProject_Title = risRS
-							.getString(RisProject_Title_ColName);
-					this.risProject_LeadInstitution = risRS
-							.getInt(RisProject_LeadInstitution_ColName);
-					this.risProject_Goals = risRS
-							.getString(RisProject_Goals_ColName);
-					this.risProject_Purpose = risRS
-							.getString(RisProject_Purpose_ColName);
-					this.risProject_Objective = risRS
-							.getString(RisProject_Objective_ColName);
-					this.risProject_Abstract = risRS
-							.getString(RisProject_Abstract_ColName);
-					this.risProject_WebAddr = risRS
-							.getString(RisProject_WebAddr_ColName);
-					this.risProject_Location = risRS
-							.getString(RisProject_Location_ColName);
-					this.risProject_SGLink = risRS
-							.getString(RisProject_SGLink_ColName);
-					this.risProject_SGRecID = risRS
-							.getInt(RisProject_SGRecID_ColName);
-					this.risProject_Comment = risRS
-							.getString(RisProject_Comment_ColName);
-					this.risProject_Completed = risRS
-							.getInt(RisProject_Completed_ColName);
-				} catch (SQLException e1) {
-					msg = "In RIS " + RisTableName + " record SQL Exception "
-							+ e1.getMessage();
-					if (TaskSynchronizer.isDebug())
-						System.err.println(msg);
-					MiscUtils.writeToPrimaryLogFile(msg);
-					MiscUtils.writeToRisErrorLogFile(msg);
-					this.risRecordErrors++;
-					this.risRecordsSkipped++;
-					continue; // back to next RIS record from resultSet
-				}
-				String query = null;
-				try {
-					query = formatGriidcFindTaskQuery(this.risProgram_ID);
-					if (TaskSynchronizer.isDebug())
-						System.out.println("formatGriidcFindQuery() " + query);
-					griidcRS = this.griidcDbConnection
-							.executeQueryResultSet(query);
+				this.risProject_ID = risRS.getInt(RisProject_ID_ColName);
+				this.risProgram_ID = risRS.getInt(RisProgram_ID_ColName);
+				this.risProject_SubTaskNum = risRS
+						.getInt(RisProject_SubTaskNum_ColName);
+				this.risProject_Title = risRS.getString(RisProject_Title_ColName);
+				this.risProject_LeadInstitution = risRS
+						.getInt(RisProject_LeadInstitution_ColName);
+				this.risProject_Goals = risRS.getString(RisProject_Goals_ColName);
+				this.risProject_Purpose = risRS
+						.getString(RisProject_Purpose_ColName);
+				this.risProject_Objective = risRS
+						.getString(RisProject_Objective_ColName);
+				this.risProject_Abstract = risRS
+						.getString(RisProject_Abstract_ColName);
+				this.risProject_WebAddr = risRS
+						.getString(RisProject_WebAddr_ColName);
+				this.risProject_Location = risRS
+						.getString(RisProject_Location_ColName);
+				this.risProject_SGLink = risRS.getString(RisProject_SGLink_ColName);
+				this.risProject_SGRecID = risRS.getInt(RisProject_SGRecID_ColName);
+				this.risProject_Comment = risRS
+						.getString(RisProject_Comment_ColName);
+				this.risProject_Completed = risRS
+						.getInt(RisProject_Completed_ColName);
+				
+				// find the corresponding GRIIDC record(s)
+				
+				DbColumnInfo[] whereColInfo = getWhereClauseInfo(this.risProject_ID,this.risProgram_ID);
+				String query = RdbmsUtils.formatSelectStatement(GriidcTaskTableName, whereColInfo);
 
-				} catch (SQLException e1) {
-					System.err
-							.println("SQL Error: Find Project in GRIIDC - Query: "
-									+ query);
-					e1.printStackTrace();
-				}
+			
+				if (TaskSynchronizer.isDebug())
+					System.out.println("formatGriidcFindQuery() " + query);
 
 				int count = 0;
-
-				// find the corresponding GRIIDC record(s)
-				try {
+				String shortGriidcRecord = null;
+				String whereClauseMessage = RdbmsUtils.formatWhereClause(whereColInfo);
+				try { // find matching GRIIDC records - at most there should be one
+					griidcRS = this.griidcDbConnection.executeQueryResultSet(query);
 					while (griidcRS.next()) {
 						count++;
 						this.griidcTask_Number = griidcRS
@@ -225,16 +197,15 @@ public class TaskSynchronizer {
 								.getDate(GriidcTask_StartDate_ColName);
 						this.griidcTask_Title = griidcRS
 								.getString(GriidcTask_Title_ColName);
-
-						if (isDebug())
-							System.out.println("Found GRIIDC "
-									+ this.griidcTaskToString());
 					}
-
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					shortGriidcRecord = this.shortTaskTableColInfoToString();
+					
+				} catch (SQLException e1) {
+					// TODO jvh catch the find matching GRIIDC records
+					e1.printStackTrace();
 				}
+				if (isDebug())
+					System.out.println("Found GRIIDC " + shortGriidcRecord);
 
 				// are there matching GRIIDC records?
 				// zero records found means ADD this record
@@ -246,8 +217,8 @@ public class TaskSynchronizer {
 						this.addGriidcTaskRecord();
 						this.griidcRecordsAdded++;
 					} catch (SQLException e) {
-						msg = "Error adding GRIIDC " + GriidcTaskTableName + " record : "
-								+ e.getMessage();
+						msg = "Error adding GRIIDC " + GriidcTaskTableName
+								+ " record : " + shortGriidcRecord;
 						if (TaskSynchronizer.isDebug())
 							System.err.println(msg);
 						MiscUtils.writeToPrimaryLogFile(msg);
@@ -257,12 +228,12 @@ public class TaskSynchronizer {
 						// back to next RIS record from resultSet
 					}
 
-				} else if (count == 1) {
-					
-						if (isCurrentRecordEqual()) {
-							continue; // back to next RIS
-						}
-					
+				} else if (count == 1) { // modify the Task
+					//System.out.println("\nCount == " + count + " query used: " + query);
+					if (isCurrentRecordEqual()) {
+						this.griidcRecordDuplicates++;
+					} else { // not equal but keys match
+
 						try {
 							this.assignGriidcTaskFromRisProject();
 							this.modifyGriidcTaskRecord();
@@ -270,7 +241,7 @@ public class TaskSynchronizer {
 							// back to next RIS record from resultSet
 						} catch (Exception e) {
 							msg = "Error modifying GRIIDC Task record : "
-									+ e.getMessage();
+									+ shortGriidcRecord;
 							if (TaskSynchronizer.isDebug())
 								System.err.println(msg);
 							MiscUtils.writeToPrimaryLogFile(msg);
@@ -278,55 +249,78 @@ public class TaskSynchronizer {
 							this.risRecordErrors++;
 							this.risRecordsSkipped++;
 						}
-					 
-				} else if (count > 1) { // duplicates
-					this.griidcRecordDuplicates++;
+					}
 
+				} else if (count > 1) { // multiple task records???
 					msg = "There are " + count + " records in the  GRIIDC "
-							+ GriidcTaskTableName + " table "
-							+ RdbmsUtils.formatWhereClause(this.getWhereColumnInfo());
+							+ GriidcTaskTableName + " table " + whereClauseMessage;
 					if (TaskSynchronizer.isDebug())
 						System.out.println(msg);
 					MiscUtils.writeToPrimaryLogFile(msg);
 					MiscUtils.writeToRisErrorLogFile(msg);
 					// back to next RIS record from resultSet
 				}
-
-			} // end of main while loop
+			} // end of while (risRS.next())
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (TableNotInDatabaseException e) {
+				MiscUtils.fatalError(this.getClass().getName(),"TaskSynchronizer", "TableNotInDatabaseException: " + e.getMessage());
 		}
-		return;
-		// end of Project
 	}
+	private DbColumnInfo[] getWhereClauseInfo(int taskNumber, int taskProjNumber) throws SQLException  {
+		TableColInfo tci = RdbmsUtils.getMetaDataForTable(
+				RdbmsUtils.getGriidcDbConnectionInstance(), GriidcTaskTableName);
 
+		DbColumnInfo dbciTemp1 = tci.getDbColumnInfo(GriidcTask_Number_ColName);
+		dbciTemp1.setColValue(String.valueOf(taskNumber));
+
+		DbColumnInfo dbciTemp2 = tci.getDbColumnInfo(GriidcProject_Number_ColName);
+		dbciTemp2.setColValue(String.valueOf(taskProjNumber));
+
+		DbColumnInfo[] info = { dbciTemp1, dbciTemp2 };
+		return info;
+	}
+	/**
+	 * RIS  vs GRIIDC
+	 * RIS.Program    is GRIIDC.Project
+	 * RIS.Project    is GRIIDC.Task
+	 * @return
+	 */
 	private boolean isCurrentRecordEqual() {
-		return (this.griidcTask_Number == this.risProject_ID
+		//
+		//String format = "%n%15s: %10s to %10s %10s";
+		//System.out.println("TaskSynchronizer.isCurrentRecordEqual()");
+		//System.out.printf(format, "GRIIDC task #",this.griidcTask_Number,"RIS Project ID", this.risProject_ID);
+		//System.out.printf(format, "GRIIDC project #",this.griidcTaskProject_Number,"RIS Program ID",this.risProgram_ID);
+		//System.out.printf(format, "GRIIDC task title",this.griidcTask_Title,"RIS Prject ID", this.risProject_Title);
+        //
+		boolean eq = (this.griidcTask_Number == this.risProject_ID
 				&& this.griidcTaskProject_Number == this.risProgram_ID
-				&& this.griidcTask_Abstract.equals(this.risProject_Abstract) && this.griidcTask_Title
-					.equals(this.risProject_Title));
+				&& this.griidcTask_Title.equals(this.risProject_Title) 
+				// && this.griidcTask_Abstract.equals(this.risProject_Abstract)
+				);
+		// System.out.println("\tresult is " + ((eq) ? "EQUAL" : "NOT EQUAL"));
+		return eq;
 	}
 
-	private void addGriidcTaskRecord() throws SQLException,
-			ClassNotFoundException, IOException, PropertyNotFoundException {
+	private void addGriidcTaskRecord() throws SQLException {
 		String msg = null;
 
 		String query = RdbmsUtils.formatInsertStatement(GriidcTaskTableName,
 				this.getDbColumnInfo());
-		if (TaskSynchronizer.isDebug())
-			System.out.println("Query: " + query);
+		// if (TaskSynchronizer.isDebug())
+		// System.out.println("Query: " + query);
 		this.griidcDbConnection.executeQueryBoolean(query);
 		msg = "Added GRIIDC " + GriidcTaskTableName + ": "
-				+ griidcTaskToString();
+				+ shortTaskTableColInfoToString();
 		MiscUtils.writeToPrimaryLogFile(msg);
 		if (TaskSynchronizer.isDebug())
 			System.out.println(msg);
 		return;
 	}
 
-	private void modifyGriidcTaskRecord() throws ClassNotFoundException,
-			IOException, PropertyNotFoundException, SQLException {
+	private void modifyGriidcTaskRecord() throws SQLException {
 		String msg = null;
 		String modifyQuery = null;
 
@@ -334,64 +328,86 @@ public class TaskSynchronizer {
 				this.getDbColumnInfo(), this.getWhereColumnInfo());
 		this.griidcDbConnection.executeQueryBoolean(modifyQuery);
 		msg = "Modified GRIIDC " + GriidcTaskTableName + ": "
-				+ griidcTaskToString();
+				+ shortTaskTableColInfoToString();
 		MiscUtils.writeToPrimaryLogFile(msg);
 		if (TaskSynchronizer.isDebug())
 			System.out.println(msg);
 		return;
 	}
 
+	private DbColumnInfo[] getDbColumnInfo() throws SQLException {
+		return getGriidcTaskTableColInfo().getDbColumnInfo();
+	}
 
-	private DbColumnInfo[] getDbColumnInfo() throws SQLException,
-			ClassNotFoundException {
+	private TableColInfo getGriidcTaskTableColInfo() throws SQLException {
 		TableColInfo tci = RdbmsUtils.getMetaDataForTable(
 				this.griidcDbConnection, GriidcTaskTableName);
 
 		String tempValue = null;
 		tci.getDbColumnInfo(GriidcTask_Number_ColName).setColValue(
 				String.valueOf(this.griidcTask_Number));
-		
+
 		tempValue = null;
-		if(this.griidcFundingEnvelope_Cycle != null) {
+		if (this.griidcFundingEnvelope_Cycle != null) {
 			tempValue = this.griidcFundingEnvelope_Cycle.toString();
 		}
-		tci.getDbColumnInfo(GriidcFundingEnvelope_Cycle_ColName).setColValue(tempValue);
-		
+		tci.getDbColumnInfo(GriidcFundingEnvelope_Cycle_ColName).setColValue(
+				tempValue);
+
 		tci.getDbColumnInfo(GriidcProject_Number_ColName).setColValue(
 				String.valueOf(this.griidcTaskProject_Number));
-		
+
 		tempValue = null;
-		if(this.griidcTask_Abstract != null) {
+		if (this.griidcTask_Abstract != null) {
 			tempValue = this.griidcTask_Abstract.toString();
 		}
 		tci.getDbColumnInfo(GriidcTask_Abstract_ColName).setColValue(tempValue);
-		
+
 		tempValue = null;
-		if(this.griidcTask_EndDate != null) {
+		if (this.griidcTask_EndDate != null) {
 			tempValue = this.griidcTask_EndDate.toString();
 		}
 		tci.getDbColumnInfo(GriidcTask_EndDate_ColName).setColValue(tempValue);
-		
+
 		tempValue = null;
-		if(this.griidcTask_StartDate != null) {
+		if (this.griidcTask_StartDate != null) {
 			tempValue = this.griidcTask_StartDate.toString();
 		}
-		tci.getDbColumnInfo(GriidcTask_StartDate_ColName).setColValue(tempValue);
-		
+		tci.getDbColumnInfo(GriidcTask_StartDate_ColName)
+				.setColValue(tempValue);
+
 		tempValue = null;
-		if(this.griidcTask_Title != null) {
+		if (this.griidcTask_Title != null) {
 			tempValue = this.griidcTask_Title.toString();
 		}
 		tci.getDbColumnInfo(GriidcTask_Title_ColName).setColValue(tempValue);
-		if(TaskSynchronizer.isDebug()) {
-			System.out.println("TaskSynchronizer.getDbColumnInfo() TCI: " + tci.toString());
+		if (TaskSynchronizer.isDebug()) {
+			System.out.println("TaskSynchronizer.getDbColumnInfo() TCI: "
+					+ shortTaskTableColInfoToString(tci));
 		}
-		return tci.getDbColumnInfo();
+		return tci;
 	}
 
-	private DbColumnInfo[] getWhereColumnInfo() throws SQLException,
-			ClassNotFoundException {
+	private String shortTaskTableColInfoToString() throws SQLException {
+		TableColInfo tci = getGriidcTaskTableColInfo();
+		return shortTaskTableColInfoToString(tci);
+	}
 
+	private String shortTaskTableColInfoToString(TableColInfo tci) {
+		StringBuffer sb = new StringBuffer();
+		boolean notFirstTime = false;
+		for (String colName : shortColumnNameList) {
+			if (notFirstTime)
+				sb.append(", ");
+			notFirstTime = true;
+			sb.append(colName);
+			sb.append(": ");
+			sb.append(tci.getDbColumnInfo(colName).getColValue());
+		}
+		return sb.toString();
+	}
+
+	private DbColumnInfo[] getWhereColumnInfo() throws SQLException {
 		TableColInfo tci = RdbmsUtils.getMetaDataForTable(
 				this.griidcDbConnection, GriidcTaskTableName);
 
@@ -453,8 +469,7 @@ public class TaskSynchronizer {
 	 * @throws ClassNotFoundException
 	 * @throws SQLException
 	 */
-	private void assignGriidcTaskFromRisProject() throws SQLException,
-			ClassNotFoundException {
+	private void assignGriidcTaskFromRisProject() throws SQLException {
 		this.griidcTask_Number = this.risProject_ID;
 		this.griidcTaskProject_Number = this.risProgram_ID;
 		this.getGriidcTaskValuesFromGriidcProject(this.risProgram_ID);
@@ -463,16 +478,16 @@ public class TaskSynchronizer {
 	}
 
 	/**
-	 * there are some values in the Task record that are not in the
-	 * RIS Projects record. Get these values from the associated GRIIDC.Project
-	 * table record.
+	 * there are some values in the Task record that are not in the RIS Projects
+	 * record. Get these values from the associated GRIIDC.Project table record.
+	 * 
 	 * @param griidcProjectNumber
 	 * @return
 	 * @throws SQLException
 	 * @throws ClassNotFoundException
 	 */
 	private boolean getGriidcTaskValuesFromGriidcProject(int griidcProjectNumber)
-			throws SQLException, ClassNotFoundException {
+			throws SQLException {
 		String cycleName = null;
 		java.sql.Date sDate = null;
 		java.sql.Date eDate = null;
@@ -537,5 +552,5 @@ public class TaskSynchronizer {
 	public int getGriidcRecordDuplicates() {
 		return griidcRecordDuplicates;
 	}
-	
+
 }

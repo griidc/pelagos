@@ -8,17 +8,23 @@ import java.sql.SQLException;
 import edu.tamucc.hri.griidc.exception.PropertyNotFoundException;
 import edu.tamucc.hri.griidc.exception.TelephoneNumberException;
 import edu.tamucc.hri.griidc.support.MiscUtils;
+import edu.tamucc.hri.griidc.support.RisToGriidcConfiguration;
 import edu.tamucc.hri.rdbms.utils.DbColumnInfo;
 import edu.tamucc.hri.rdbms.utils.DefaultValue;
 import edu.tamucc.hri.rdbms.utils.RdbmsUtils;
 import edu.tamucc.hri.rdbms.utils.TableColInfo;
 
-public class PersonTelephoneSynchronizer {
+public class PersonTelephoneSynchronizer extends SynchronizerBase {
 	private static final String TableName = "Person-Telephone";
 	private static final String PersonNumberColName = "Person_Number";
 	private static final String TelephoneKeyColName = "Telephone_Key";
 	private static final String TelephoneExtensionColName = "Telephone_Extension";
 	private static final String TelephoneTypeColName = "Telephone_Type";
+	
+	private int griidcPersonNumber = -1;
+	private int griidcTelephoneKey = -1;
+	private String griidcTelephoneExt = null;
+	private String griidcTelephoneType = null;
 
 	private static final String[] ColNameArray = { PersonNumberColName,
 			TelephoneKeyColName, TelephoneExtensionColName,
@@ -27,12 +33,18 @@ public class PersonTelephoneSynchronizer {
 	private static boolean Debug = false;
 	private int griidcPersonTelephoneRecordsAdded = 0;
 	private int griidcPersonTelephoneRecordsModified = 0;
+	private int griidcPersonTelephoneRecordDuplicates = 0;
 	private int risPersonTelephoneRecords = 0;
 	private int risPersonTelephoneErrors = 0;
 
 	private static PersonTelephoneSynchronizer instance = null;
 
 	private PersonTelephoneSynchronizer() {
+
+	}
+
+	public void initialize() {
+		super.commonInitialize();
 
 	}
 
@@ -44,57 +56,59 @@ public class PersonTelephoneSynchronizer {
 	}
 
 	/**
+	 * @throws
 	 * @throws TelephoneNumberException
 	 * 
 	 */
-	public boolean updatePersonTelephoneTable(int personNumber,
+	public void updatePersonTelephoneTable(int personNumber,
 			int telephoneTableRecordKey, String telephoneNumberExtension,
-			String phoneType) throws TelephoneNumberException {
+			String phoneType) {
+		this.initialize();
 		this.risPersonTelephoneRecords++;
-		boolean status = false;
+		String format = "%nPersonTelephoneSync.update() person Num: %3d, telKey: %4d, ext: %-6s type: %s";
+		if (PersonTelephoneSynchronizer.isDebug())
+			System.out.printf(format,  personNumber,telephoneTableRecordKey, telephoneNumberExtension,phoneType);
+		
 		String tempPhoneType = phoneType;
-		if(phoneType == null || phoneType.length() == 0)
-			tempPhoneType = PersonTelephoneSynchronizer.getDefaultValueForTelephoneTypeColName();
+		if (phoneType == null || phoneType.length() == 0)
+			tempPhoneType = PersonTelephoneSynchronizer
+					.getDefaultValueForTelephoneTypeColName();
 		try {
 			boolean found = false;
 			found = this.findPersonTelephoneTableRecord(personNumber,
-					telephoneTableRecordKey, telephoneNumberExtension,
-					tempPhoneType);
-			if (found) { // modify
-
-				status = this.modifyPersonTelephoneTableRecord(personNumber,
+					telephoneTableRecordKey);
+			if (found) { 
+                if(isExactMatch(telephoneNumberExtension,tempPhoneType)) { // duplicate
+                	this.griidcPersonTelephoneRecordDuplicates++;
+                	return;
+                } else { // modify
+				this.modifyPersonTelephoneTableRecord(personNumber,
 						telephoneTableRecordKey, telephoneNumberExtension,
 						tempPhoneType);
-				return status;
-			} // else add the record
-			status = this.addPersonTelephoneTableRecord(personNumber,
-					telephoneTableRecordKey, telephoneNumberExtension,
-					tempPhoneType);
-			return status;
+                }
+				return;
+			} else {     // else add the record
+				this.addPersonTelephoneTableRecord(personNumber,
+						telephoneTableRecordKey, 
+						telephoneNumberExtension,
+						tempPhoneType);
+				this.griidcPersonTelephoneRecordsAdded++;
+				return;
+			}
 
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (PropertyNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			if (PersonTelephoneSynchronizer.isDebug())
+				System.out
+						.println("\nPersonTelephoneSynchronizer.updatePersonTelephoneTable() Sql error: "
+								+ e.getMessage());
+			this.risPersonTelephoneErrors++;
 		}
-		this.risPersonTelephoneErrors++;
-		
-		return false;
+		return;
 	}
 
-	private boolean modifyPersonTelephoneTableRecord(int personNumber,
+	private void modifyPersonTelephoneTableRecord(int personNumber,
 			int telephoneTableRecordKey, String telephoneNumberExtension,
-			String phoneType) throws FileNotFoundException, SQLException,
-			ClassNotFoundException, PropertyNotFoundException,
-			TelephoneNumberException {
+			String phoneType) throws SQLException {
 
 		DbColumnInfo[] updateClauseInfo = getUpdateClauseInfo(
 				telephoneNumberExtension, phoneType);
@@ -106,20 +120,16 @@ public class PersonTelephoneSynchronizer {
 				updateClauseInfo, whereClauseInfo);
 		if (PersonTelephoneSynchronizer.isDebug())
 			System.out
-					.println("PersonTelephoneSynchronizer.modifyPersonTelephoneTableRecord() query: "
+					.println("\nPersonTelephoneSynchronizer.modifyPersonTelephoneTableRecord() query: "
 							+ query);
 		boolean status = RdbmsUtils.getGriidcDbConnectionInstance()
 				.executeQueryBoolean(query);
-		this.griidcPersonTelephoneRecordsModified++;
-		return status;
+		return ;
 	}
 
-	private boolean addPersonTelephoneTableRecord(int personNumber,
+	private void addPersonTelephoneTableRecord(int personNumber,
 			int telephoneTableRecordKey, String telephoneNumberExtension,
-			String phoneType) throws FileNotFoundException, SQLException,
-			ClassNotFoundException, PropertyNotFoundException,
-			TelephoneNumberException {
-		boolean status = false;
+			String phoneType) throws SQLException {
 
 		DbColumnInfo[] insertClauseInfo = getInsertClauseInfo(personNumber,
 				telephoneTableRecordKey, telephoneNumberExtension, phoneType);
@@ -127,18 +137,16 @@ public class PersonTelephoneSynchronizer {
 				insertClauseInfo);
 		if (PersonTelephoneSynchronizer.isDebug())
 			System.out
-					.println("PersonTelephoneSynchronizer.addPersonTelephoneTableRecord() query: "
+					.println("\nPersonTelephoneSynchronizer.addPersonTelephoneTableRecord() query: "
 							+ query);
-		status = RdbmsUtils.getGriidcDbConnectionInstance()
+		RdbmsUtils.getGriidcDbConnectionInstance()
 				.executeQueryBoolean(query);
-		this.griidcPersonTelephoneRecordsAdded++;
-		return status;
+		return;
 	}
 
 	private DbColumnInfo[] getInsertClauseInfo(int personNumber,
 			int telephoneTableRecordKey, String telephoneNumberExtension,
-			String phoneType) throws FileNotFoundException, SQLException,
-			ClassNotFoundException, PropertyNotFoundException {
+			String phoneType) throws SQLException {
 
 		TableColInfo tci = RdbmsUtils.getMetaDataForTable(
 				RdbmsUtils.getGriidcDbConnectionInstance(), TableName);
@@ -155,8 +163,7 @@ public class PersonTelephoneSynchronizer {
 	}
 
 	private DbColumnInfo[] getUpdateClauseInfo(String extension,
-			String telephoneType) throws FileNotFoundException, SQLException,
-			ClassNotFoundException, PropertyNotFoundException {
+			String telephoneType) throws SQLException {
 		TableColInfo tci = RdbmsUtils.getMetaDataForTable(
 				RdbmsUtils.getGriidcDbConnectionInstance(), TableName);
 
@@ -171,8 +178,7 @@ public class PersonTelephoneSynchronizer {
 	}
 
 	private DbColumnInfo[] getWhereClauseInfo(int personNumber,
-			int telephoneTableRecordKey) throws FileNotFoundException,
-			SQLException, ClassNotFoundException, PropertyNotFoundException {
+			int telephoneTableRecordKey) throws SQLException {
 		TableColInfo tci = RdbmsUtils.getMetaDataForTable(
 				RdbmsUtils.getGriidcDbConnectionInstance(), TableName);
 
@@ -186,68 +192,77 @@ public class PersonTelephoneSynchronizer {
 		return info;
 	}
 
-	private boolean findPersonTelephoneTableRecord(int targetPersonNumber,
-			int targetTelephoneTableRecordKey,
-			String targetTelephoneNumberExtension, String targetPhoneType)
-			throws PropertyNotFoundException, SQLException {
+	private boolean findPersonTelephoneTableRecord(int targetPersonNumber,int targetTelephoneTableRecordKey)
+			throws SQLException {
+		int count = 0;
 		ResultSet rs = null;
-		
+
 		String query = null;
 		String msg = "Fatal error in PersonTelephoneSynchronizer - table name "
 				+ TableName + " ";
-		String tempExtension = null;
-		String tempType = null;
-		boolean fatalError = false;
-		try {
-			DbColumnInfo[] whereColInfo = getWhereClauseInfo(targetPersonNumber,
-					targetTelephoneTableRecordKey);
-			query = RdbmsUtils.formatSelectStatement(TableName, whereColInfo);
 
-			rs = RdbmsUtils.getGriidcDbConnectionInstance()
-					.executeQueryResultSet(query);
-			while (rs.next()) {
-				tempExtension = rs.getString(TelephoneExtensionColName);
-				tempType = rs.getString(TelephoneTypeColName);
-				if (targetTelephoneNumberExtension.equals(tempExtension)
-						&& targetPhoneType.equals(tempType)) {
-					if (TelephoneSynchronizer.isDebug()) {
-						System.out.println("Found matching " + TableName
-								+ " record: Person# " + targetPersonNumber
-								+ ", Telephone# "
-								+ targetTelephoneTableRecordKey);
-					}
-					return true;
-				}
-			}
-		} catch (FileNotFoundException e) {
-			fatalError = true;
-			msg = msg + e.getMessage();
-		} catch (ClassNotFoundException e) {
-			fatalError = true;
-			msg = msg + e.getMessage();
-		}
+		
+		DbColumnInfo[] whereColInfo = getWhereClauseInfo(targetPersonNumber,
+				targetTelephoneTableRecordKey);
+		query = RdbmsUtils.formatSelectStatement(TableName, whereColInfo);
 
-		if (fatalError) {
-			System.err.println(msg);
-			try {
-				MiscUtils.writeToPrimaryLogFile(msg);
-				System.exit(-1);
-			} catch (IOException e1) {
-				e1.printStackTrace();
-				System.exit(-1);
-			}
+		rs = RdbmsUtils.getGriidcDbConnectionInstance().executeQueryResultSet(
+				query);
+		while (rs.next()) {
+			count++;
+			this.griidcPersonNumber = rs.getInt(PersonNumberColName);
+			this.griidcTelephoneKey = rs.getInt(TelephoneKeyColName);
+			this.griidcTelephoneExt = rs.getString(TelephoneExtensionColName);
+			this.griidcTelephoneType = rs.getString(TelephoneTypeColName);
 		}
+		if(count > 0) return true;
 		return false;
+	}
+
+	/**
+	 * At this point The Person Number and Telephone Table Record Key match a 
+	 * record found in the database. Do the details match?
+	 * If the type is null or blank then we presume it is the default type of primary
+	 * @param personNumber
+	 * @param telephoneTableRecordKey
+	 * @param telephoneNumberExtension
+	 * @param phoneType
+	 * @return
+	 */
+	private boolean isExactMatch(
+			String telephoneNumberExtension,
+			String phoneType) {
+		// presume that person number and telephone key are equal
+		return (extensionsMatch(telephoneNumberExtension) && phoneTypesMatch(phoneType));
+	}
+	public boolean extensionsMatch(String ext) {
+		if(MiscUtils.isStringEmpty(ext) && MiscUtils.isStringEmpty(this.griidcTelephoneExt)) return true;
+		if(MiscUtils.logicalXOR(MiscUtils.isStringEmpty(ext), MiscUtils.isStringEmpty(this.griidcTelephoneExt))) {
+			// only one is empty
+			return false;
+		}
+		return ext.equals(this.griidcTelephoneExt);
+	}
+	
+	public boolean phoneTypesMatch(String type) {
+		if(MiscUtils.isStringEmpty(type) && MiscUtils.isStringEmpty(this.griidcTelephoneType)) return true;
+		if(MiscUtils.logicalXOR(MiscUtils.isStringEmpty(type), MiscUtils.isStringEmpty(this.griidcTelephoneType))) {
+			// only one is empty
+			return false;
+		}
+		return type.equals(this.griidcTelephoneType);
 	}
 	public static String getDefaultValueForTelephoneTypeColName() {
 		DefaultValue dv = null;
 		String msg = null;
 		try {
-			TableColInfo tci = RdbmsUtils.createTableColInfo(RdbmsUtils.getGriidcDbConnectionInstance(), TableName);
+			TableColInfo tci = RdbmsUtils.createTableColInfo(
+					RdbmsUtils.getGriidcDbConnectionInstance(), TableName);
 			dv = tci.getDbColumnInfo(TelephoneTypeColName).getDefaultValue();
 			return dv.getPrettyStringValue();
 		} catch (Exception e) {
-			msg = "PersonTelephoneSynchronizer.getDefaultValueForTelephoneTypeColName() fatal error: " + e.getMessage();
+			msg = "PersonTelephoneSynchronizer.getDefaultValueForTelephoneTypeColName() fatal error: "
+					+ e.getMessage();
 			e.printStackTrace();
 			System.err.println(msg);
 			try {
@@ -257,16 +272,20 @@ public class PersonTelephoneSynchronizer {
 				e1.printStackTrace();
 				System.exit(-1);
 			}
-		} 
+		}
 		return null;
 	}
-	
+
 	public int getGriidcPersonTelephoneRecordsAdded() {
 		return griidcPersonTelephoneRecordsAdded;
 	}
 
 	public int getGriidcPersonTelephoneRecordsModified() {
 		return griidcPersonTelephoneRecordsModified;
+	}
+
+	public int getGriidcPersonTelephoneRecordDuplicates() {
+		return griidcPersonTelephoneRecordDuplicates;
 	}
 
 	public int getRisPersonTelephoneRecords() {
@@ -276,6 +295,7 @@ public class PersonTelephoneSynchronizer {
 	public int getRisPersonTelephoneErrors() {
 		return risPersonTelephoneErrors;
 	}
+
 	public static boolean isDebug() {
 		return Debug;
 	}
