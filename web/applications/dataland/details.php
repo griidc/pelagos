@@ -116,16 +116,16 @@ if ($udi <> '')
 	{
 		if ($prow["metadata_xml"] == "")
 		{
-			$dsscript = "addImage('$_SERVER[SCRIPT_NAME]/includes/images/nodata.png',0.4);$('#metadatadl').button('disable');makeStatic();";
+			$dsscript = "addImage('$_SERVER[SCRIPT_NAME]/includes/images/nodata.png',0.4);$('#metadatadl').button('disable');dlmap.makeStatic();";
 		}
 		else
 		{
-			$dsscript = "addImage('$_SERVER[SCRIPT_NAME]/includes/images/labonly.png',0.4);makeStatic();";
+			$dsscript = "dlmap.addImage('$_SERVER[SCRIPT_NAME]/includes/images/labonly.png',0.4);makeStatic();";
 		}
 	}
 	else
 	{
-		$dsscript = 'addFeatureFromWKT("'. $prow['the_geom'] .'",{"udi":"'.$prow['dataset_udi'].'"});gotoAllFeatures();';
+		$dsscript = 'dlmap.addFeatureFromWKT("'. $prow['the_geom'] .'",{"udi":"'.$prow['dataset_udi'].'"});dlmap.gotoAllFeatures();';
 	}
 
 	$dbconnstr = 'mysql:host='. $mconfig["host"];
@@ -219,9 +219,12 @@ if ($prow != null)
 -->
 
 <script>
+
+var dlmap = new GeoViz();
+
 (function ($) {
 	$(function() {
-		
+
 		resizeMap();
 		
 		$( window ).resize(function()
@@ -245,7 +248,7 @@ if ($prow != null)
 			$("#rawxml").hide();
 		});
 
-		initMap('dlolmap',{'onlyOneFeature':false,'allowModify':false,'allowDelete':false,'staticMap':true,'labelAttr':'udi'});
+		dlmap.initMap('dlolmap',{'onlyOneFeature':false,'allowModify':false,'allowDelete':false,'staticMap':true,'labelAttr':'udi'});
   
 		$("#downloadds").button().click(function() {
 			showDatasetDownload('<?php echo $udi;?>')
