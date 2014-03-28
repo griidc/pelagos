@@ -907,7 +907,7 @@ function submitRegistry() {
 <div id="doi_tip" style="display:none;">
     <img src="/dif/images/info.png" style="float:right;" />
     <p>
-        <strong>Digital Object Identifier:</strong><p/> Enter the DOI tag if available. Note that GRIIDC can also run an automated process to supply the DOI once the data has been downloaded. The DOI Request Form is enable only if data is not to be pulled.
+        <strong>Digital Object Identifier:</strong><p/> If your dataset has been issued a DOI from another repository or archive, please provide it here. Please note that this field is for <strong>dataset</strong> DOIs only, as publication DOIs are recorded elsewhere.
     </p>
 </div>
 
