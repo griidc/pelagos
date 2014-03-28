@@ -1,11 +1,14 @@
 
 <tr id="BPL1_{{instanceName}}row"><td>
 
-<label for="BPL1_{{instanceName}}"><em>*</em>Geometry</label>
+<label for="BPLmap_{{instanceName}}"><em>*</em>Spatial Extent</label>
 <div style="width:100%;height:300px;padding:10px;" id="BPLmap_{{instanceName}}"></div>
 
 <textarea hidden readonly class="required" id="BPL1_{{instanceName}}" rows="5" cols="80" name="{{instanceType}}-gmd:polygons"/>{{gmlCoordinates}}</textarea></td>
-<td><pre>Coordinates of points (vertices of a polygon) defining the outline of the area covered by this dataset. The coordinates are in +/- decimal degrees and should be formatted as Latitude,Longitude with a space between coordinate pairs.  The first coordinate should also be repeated as the last coordinate, meaning that a four point polygon will have five coordinates in its list.
-Ex.  25,-80 25,-95 30,-95 30,-80 25,-80</pre></td></tr>
+<td>
+	
+<pre>
+	<div id="spatwizbtn" class="ui-widget-header ui-corner-all"><button style="color:#039203;font-size:larger;width:100%;" id="BPLbtn_{{instanceName}}" type="button">Define Spatial Extent</button></div>
+The Spatial Extent Wizard provides users with guided instruction and tools to describe the Spatial Extent of their dataset. Users can 1) indicate that their data has no spatial or temporal extent, or 2) Create a spatial extent geometry by either providing a list of coordinates or drawing a geometry using a map.</pre></td></tr>
 
 <div id="geoWizard" style="width:100%;height:100%;"></div>

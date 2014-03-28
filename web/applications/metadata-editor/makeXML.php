@@ -397,7 +397,13 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
 			//$one->documentElement->appendChild($one->importNode($polygonNode, TRUE));
 			//echo $one->saveXml();
 			
-			$node->appendChild($doc->importNode($polygonNode, TRUE));
+			
+			if($polygonNode instanceof DOMNode == true)
+			{
+				$node->appendChild($doc->importNode($polygonNode, TRUE));
+			}
+			
+			
 			
 			/*
 			# b-method

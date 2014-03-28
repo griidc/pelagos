@@ -218,7 +218,7 @@ function uploadFile()
                 fixed: true
             },
             style: {
-                classes: "ui-tooltip-shadow ui-tooltip-tipped",
+                classes: "qtip-default qtip-shadow qtip-tipped",
                 tip: {
                     corner: true,
                     offset: 10
@@ -233,8 +233,10 @@ function uploadFile()
         
         $( "#dtabs" ).tabs({
             heightStyleType: "fill",
-            activate: function(event, ui) {
+			activate: function(event, ui) {
                 var validator = $("#metadata").validate();
+				
+				$(ui.newTab.context.hash).trigger('active');
                 
                 if (validator.numberOfInvalids() > 0)
                 {
@@ -451,14 +453,14 @@ function uploadFile()
                 }
             })
         .click(function( event ) {
-            if ($.browser.msie)
-            {
-                $("#loadfrm").css('display', 'inline');
-            }
-            else
-            {
+            //if ($.browser.msie)
+            //{
+                //$("#loadfrm").css('display', 'inline');
+            //}
+            //else
+            //{
                 $("#file").click();
-            }
+			//}
         });
         $( "#fromudi" ).button({
             icons: {

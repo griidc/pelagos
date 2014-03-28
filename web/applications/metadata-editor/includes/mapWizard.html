@@ -21,24 +21,30 @@
                 fixed: true
             },
             style: {
-                classes: "ui-tooltip-shadow ui-tooltip-tipped"
+                classes: "qtip-default qtip-shadow qtip-tipped"
             },
 			position: {
                 adjust: {
                     method: "flip flip"
                 },
-                my: "top left",
-                at: "bottom right",
+                my: "bottom right",
+                at: "top left",
                 viewport: $(window)
 			}
         });
+		
+		$("#geoWizard").dialog({
+			title: 'Spatial Extent Wizard',
+			autoOpen: false,
+			modal: true,
+			resizable: false
+		});
 		
 		wizGeoViz = new GeoViz();
 		
 		orderEnum = wizGeoViz.orderEnum;
 		
 		wizGeoViz.initMap('olmap',{'onlyOneFeature':true,'allowModify':true,'allowDelete':true});
-		//initToolbar('maptoolbar',{'showDrawTools':true,'showExit':true});
 	
 		$("#geoWizard").dialog({
 			close: function(event, ui) { closeDialog() },
@@ -62,11 +68,15 @@
 					if ($("#drawBox:checked").length){$("#drawBox:checked").click();}
 					if ($("#featDraw:checked").length){$("#featDraw:checked").click();}
 					if ($("#featPaste:checked").length){$("#featPaste:checked").click();}
-					$(this).dialog('close');
+					
 					if (startOffDrawing)
 					{wizGeoViz.startDrawing();}
 					else
 					{$('#coordlist').focus();}
+					
+					if (!$("#drawPolygon:checked").length && !$("#drawLine:checked").length && !$("#drawPoint:checked").length && !$("#drawBox:checked").length && !$("#featDraw:checked").length && !$("#featPaste:checked").length)
+					{alert('Please make a selection!');}
+					$(this).dialog('close');
 					wizGeoViz.updateMap();
 				}
 				//'Polygon': function() {
@@ -98,7 +108,7 @@
 		$(document).on('imready', function(e,who) {
 			if (who == '#olmap')
 			{
-				console.log('Map Ready');
+				//console.log('Map Ready');
 				if (drawTheMap)
 				{
 					drawMap();
@@ -112,9 +122,16 @@
 			}
 		});
 		
+		$("#wizard").fadeIn();
+		//$(":button").button().click(function(){showMain($(this));});
+		$("#mainStuff").html($("#hasSpatial").clone(true).fadeIn());
+		$("#geoWizard").dialog( "option", "title", "Spatial Extent Wizard - 1" );
 		
+		$("#geoWizard").dialog( "option", "width", 700);
+		$("#geoWizard").dialog( "option", "height", 250);
+		$("#geoWizard").dialog("open");
 		
-		if ($('#BPL1_DataIdent').val() != "")
+		if ($('#BPL1_DataIdent').val() == "!")
 		{
 			//$("#geoWizard").dialog( "option", "width", $(window).width()*.8);
 			//$("#geoWizard").dialog( "option", "height", $(window).height()*.8);
@@ -122,17 +139,10 @@
 			//$("#geoWizard").html("");
 			$("#geoWizard").dialog("open");
 			drawTheMap =  true;
-
 		}
 		else
 		{
-			$("#wizard").fadeIn();
-			//$(":button").button().click(function(){showMain($(this));});
-			$("#mainStuff").html($("#hasSpatial").clone(true).fadeIn());
 			
-			$("#geoWizard").dialog( "option", "width", 550);
-			$("#geoWizard").dialog( "option", "height", 200);
-			$("#geoWizard").dialog("open");
 			
 		}
 
@@ -185,9 +195,15 @@
 		var diaWidth = $(window).width()*.8;
 		var diaHeight = $(window).height()*.8;
 		
+		changeExtentDataIdent(false);
+		
 		$("#mapwiz").height(diaHeight-50);
 		
 		animateTo(diaWidth,diaHeight);
+		
+		$("#geoWizard").dialog( "option", "title", "Spatial Extent Wizard - 3" );
+		
+		
 		
 		if ($('#BPL1_DataIdent').val() != "" && !featureSend)
 		{
@@ -202,6 +218,7 @@
 			
 			console.log('Initial Pop');
 			featureSend = true;
+			
 		}
 		else if ($('#BPL1_DataIdent').val() == "")
 		{
@@ -212,24 +229,13 @@
 			$("#geoWizard").html($("#mapwiz").fadeIn());
 			wizGeoViz.updateMap();
 			setEvents();
+			fixMapToolHeight();
 		}, 300);
 	}
 	
 	function convertToConvexHull()
 	{
 		wizGeoViz.convexHull(wizGeoViz.getSingleFeature());
-		
-		$('#olmap').on('featureConverted', function(e, eventObj) {
-			wizGeoViz.removeAllFeaturesFromMap();
-			wizGeoViz.addFeatureFromWKT(wizGeoViz.wktTransformToWGS84(eventObj.wkt));
-		});
-		
-		return true;
-	}
-	
-	function convertToConcaveHull()
-	{
-		wizGeoViz.concaveHull(wizGeoViz.getSingleFeature());
 		
 		$('#olmap').on('featureConverted', function(e, eventObj) {
 			wizGeoViz.removeAllFeaturesFromMap();
@@ -307,7 +313,7 @@
 		if (llOrder == orderEnum.LONGLAT)
 		{
 			flipOrder = true;
-			console.log('I AM FLIPPING IT!');
+			//console.log('I AM FLIPPING IT!');
 		}	
 		wizGeoViz.removeAllFeaturesFromMap();
 				
@@ -349,17 +355,30 @@
 	
 	function saveFeature()
 	{
-		var myWKT = wizGeoViz.getWKT(wizGeoViz.getSingleFeature());
-		var wgsWKT = wizGeoViz.wktTransformToWGS84(myWKT);
-		wizGeoViz.wktToGML(wgsWKT);
+		//debugger;
 		
-		$('#olmap').on('wktConverted', function(e, eventObj) {
+		var myWKTid = wizGeoViz.getSingleFeature();
+		console.log(myWKTid);
+		if (typeof myWKTid != "undefined")
+		{
+			var myWKT = wizGeoViz.getWKT(myWKTid);
+			var wgsWKT = wizGeoViz.wktTransformToWGS84(myWKT);
+			wizGeoViz.wktToGML(wgsWKT);
 			
-			$('#BPL1_DataIdent').val(eventObj);
-			$('#BPL1_DataIdent').trigger('change');
-			
+			$('#olmap').on('wktConverted', function(e, eventObj) {
+				//console.log(eventObj);
+				$('#BPL1_DataIdent').val(eventObj);
+				$('#BPL1_DataIdent').trigger('change');
+				
+				closeDialog();
+			});
+		}
+		else
+		{
+			$('#BPL1_DataIdent').val("");
 			closeDialog();
-		});
+			$('#BPL1_DataIdent').trigger('change');
+		}
 	}
 	
 	function setEvents()
@@ -372,6 +391,12 @@
 		
 		$('#olmap').on('featureAdded', function(e, eventInfo) { 
 			$('#coordlist').val(eventInfo);
+		});
+		
+		$('#olmap').on('modeChange', function(e, eventInfo) { 
+			$('#wizDrawMode').html(eventInfo);
+			//console.debug(eventInfo);
+			showNavMode();
 		});
 		
 		$('#olmap').on('vectorChanged', function(e, eventInfo) { 
@@ -406,52 +431,54 @@
 			}
 		});
 				
-		$("#coordlist").click(function()
-		{
-			wizGeoViz.stopDrawing();
-			//selectNone();
-		});
 		
-		$("#coordlist").keydown(function()
-		{
-			wizGeoViz.stopDrawing();
-			//selectNone();
-		});
 	
 		$("#saveFeature").button({ icons: { primary: "ui-icon ui-icon-disk"}}).click(function()
 		{
-			//debugger;
 			saveFeature();
-			//$('#BPL1_DataIdent').val(getCoordinateList(vlayer.features[0]));
-			//closeDialog();
-		});
+		})
+		.qtip({	content: {
+			text: 'Saves extent to the metadata editor and closes wizard'
+		}});
 		
 		$("#drawOnMap").button({ icons: { primary: "ui-icon ui-icon-check"}}).click(function()
-		{
-		
-			renderOnMap();
-			
-		});
+		{renderOnMap();})
+		.qtip({	content: {
+				text: 'Re-renders to the exent on the map after changes to the coordinate list'
+			}});
 		
 		$("#startDrawing").button({ icons: { primary: "ui-icon ui-icon-pencil"}}).click(function()
 		{
 			wizGeoViz.startDrawing();
-			
-		});
+			wizGeoViz.updateMap();
+		})
+		.qtip({	content: {
+			text: 'Puts map in drawing mode, only one feature can be drawn on the map at a time'
+		}});
 		
 		$("#deleteFeature").button({ icons: { primary: "ui-icon ui-icon-trash"}}).click(function()
 		{
 			wizGeoViz.deleteSelected();
-			
-		});
+		})
+		.qtip({	content: {
+			text: 'Deletes selected feature'
+		}});
 		
-		$("#exitDialog").button({ icons: { primary: "ui-icon ui-icon-close"}}).click(function()
+		$("#exitDialog").button({ icons: { primary: "ui-icon ui-icon-refresh"}}).click(function()
 		{
-			closeDialog();
-			
-		});
+			//closeDialog();
+			$("#geoWizard").html("");
+			$("#coordlist").empty();
+			wizGeoViz.removeAllFeaturesFromMap();
+			$('#BPL1_DataIdent').val("");
+			animateTo(700,250);
+			$("#BPLbtn_DataIdent").click();
+		})
+		.qtip({	content: {
+			text: 'Restart wizard from beginning'
+		}});
 		
-		$("#startOver").button({ icons: { primary: "ui-icon ui-icon-refresh"}}).click(function()
+		$("#startOver").button({ icons: { primary: "ui-icon ui-icon-wrench"}}).click(function()
 		{
 			wizGeoViz.stopDrawing();
 			$('#coordlist').val('');
@@ -459,7 +486,10 @@
 			wizGeoViz.goHome();
 			$("#helpinfo").dialog('open');
 			
-		});
+		})
+		.qtip({	content: {
+			text: 'Reselect geometry type and mode'
+		}});
 		
 		
 		$("#drawPolygon").button().click(function()
@@ -475,12 +505,39 @@
 		{wizGeoViz.setDrawMode('box');});
 		
 		$("#featDraw").button().click(function()
-		{console.log('draw');startOffDrawing=true;});
+		{startOffDrawing=true;});
 		
 		$("#featPaste").button().click(function()
-		{console.log('paste');startOffDrawing=false;});
+		{startOffDrawing=false;});
 		
+		$('#coordlist').focus(function () {
+			showTextMode();
+		});
 		
+		$("#coordlist").click(function()
+		{
+			wizGeoViz.stopDrawing();
+			showTextMode();
+		});
+		
+		$("#coordlist").keydown(function()
+		{
+			wizGeoViz.stopDrawing();
+			showTextMode();
+		});
+		
+		function showTextMode()
+		{
+			$('#wizDrawMode').html("Text");
+			var mapHelpText = "Coordinates should be latitude, longitude, but the wizard reverse your coordinate in alternate order. Coordinates can be modified in the list, click Render on Map to update feature";
+			$("#maphelptxt").html(mapHelpText);
+		}
+		
+		function showNavMode ()
+		{
+			var mapHelpText = "Double-click to finish drawing feature. Click feature to edit or edit Coordinate List directly. Drag hollow circles to move vertexes, draw solid midpoint circles to create new vertexes. Select feature and click Delete button to delete feature";
+			$("#maphelptxt").html(mapHelpText);
+		}
 	}
 	
 	function verifyMap()
@@ -491,16 +548,17 @@
 	
 	function noSpatial()
 	{
-		animateTo(700,300);
-		//$("#provideDesc").height(300);
-		$("#EX0_DataIdent").click();
+		animateTo(700,350);
 		changeExtentDataIdent(true);
+		$("#geoWizard").dialog( "option", "title", "Spatial Extent Wizard - 2" );
 		$("#mainStuff").html($("#provideDesc").clone(true).fadeIn());
-		
+		$("#wizDesc").focus();
+		//$("#wizDescForm").validate();
 	}
 	
 	function noSpatialClose()
 	{
+		//$("#wizDescForm").validate();
 		closeDialog();
 		$("#EX1_DataIdent").focus();
 		$("#EX1_DataIdent").val($("#wizDesc").val());
@@ -510,14 +568,27 @@
 	{
 		$("#geoWizard").fadeOut();
 		$("#geoWizard").dialog("close");
-		//$("#geoWizard").dialog("destroy").remove();
+		//$("#geoWizard").dialog("destroy");
 	}
 	
 	function validateCoords(Unchecked, Checked)
 	{
-		//debugger;
 		$('#'+Checked).text(wizGeoViz.checkPointList($("#"+Unchecked).val()));
 		var retval = wizGeoViz.determineOrder($('#'+Checked).val());
+	}
+	
+	function fixMapToolHeight()
+	{
+		var tblHgt = $("#maptoolstbl").height();
+		tblHgt = tblHgt - $("#wiztoolbar").height();
+		tblHgt = tblHgt - $("#coordlistLbl").height();
+		tblHgt = tblHgt - 50; //padding
+	
+		$("#coordlist").height((tblHgt*.4));
+		$("#maphelptxt").height((tblHgt*.4));
+		//$("#wiztoolbar").height();
+		$("#coordlist").css("max-width:"+$("#coordlist").width()+"px;")
+	
 	}
 </script>
 
@@ -529,48 +600,23 @@
 </div>
 	
 <div id="hasSpatial" style="display:none;">
-	<h2>Does your data have any spatial content?</h2>
-	<button id="yesSpatial" onclick="drawMap();" type="button">Yes</button>
-	<button id="noSpatial" onclick="noSpatial();" value="provideDesc" type="button">No</button>
+	<h2>Would you characterize your dataset as Spatial or Non-Spatial?</h2>
+	<p>Many datasets have an obvious spatial component (samples taken at a location or model results that describe an area). However, for some datasets, a location may not be relevant or even recorded (chemical analysis datasets wholly performed in the lab, data describing synthesis of new dispersants, etc.)</p>
+	<button id="yesSpatial" onclick="drawMap();" type="button">Spatial</button>
+	<button id="noSpatial" onclick="noSpatial();" value="provideDesc" type="button">Non-Spatial</button>
 </div>
-
-<!--
-<div id="howProvide" style="display:none;">
-	<h2>How would you like to provide the extent?</h2>
-	<button id="hasCoord" value="provideCoord" onclick="animateTo(650, 300);" type="button">I have the coordinates as Text</button>
-	<button id="drawOnMap" value="then" onclick="drawMap();" type="button">I would like to draw on a Map</button>
-</div>
-
-	<div id="provideCoord" style="display:none;heigth:100%;">
-	<h2>Please provide the coordinates</h2>
-	<textarea id="wizCoord" cols="80" rows="5"></textarea><br/>
-	<button id="coordCont" value="checkCoord" onclick="validateCoords('wizCoord','wizCoordChk');" type="button">Continue</button>
-	</div>
-	
-	<div id="checkCoord" style="display:none;heigth:100%;">
-	<h2>Does this look ok?</h2>
-	<textarea disabled id="wizCoordChk" cols="80" rows="5"></textarea><br/>
-	<button id="coordOk" onclick="verifyMap();" type="button">Yes</button>
-	<button id="coordOk" value="provideCoord" type="button">No</button>
-	</div>
-
--->
 
 <div id="provideDesc" style="display:none;">
-	<h2>Please provide a description</h2>
-	<textarea id="wizDesc" cols="80" rows="5">No relevant geographic or temporal extents.</textarea><br/>
-	<button id="provideOk" onclick="noSpatialClose();" type="button">Done!</button>
+	<h2>Please provide a short statement describing why this dataset does not have a spatial component.</h2>
+	<p><i>Example - "Dataset contains laboratory measurements of oil degradation, no field sampling involved"</i></p>
+	<form id="wizDescForm">
+		<textarea class="required" id="wizDesc" cols="80" rows="5"></textarea><br/>
+		<button id="provideOk" onclick="noSpatialClose();" type="button">Done</button>
+	</form>
 </div>
 
-
-
 <div id="mapwiz" style="display:none;">
-	<table width="100%" height="100%" border="0">
-		<!--<tr>
-			<td colspan="2" height="50px" width="100%">
-			<div id="maptoolbar" style="background: #ffffff url('/sites/all/themes/griidc/images/green/body-bg.png') 0 0 repeat-x; padding: 10px;"></div>
-			</td>
-		</tr>-->
+	<table id="maptoolstbl" width="100%" height="100%" border="0">
 		<tr valign="top">
 			<td width="80%" >
 				<!--Make sure the width and height of the map are 100%-->
@@ -579,10 +625,33 @@
 			<td width="20%">
 				<table width="100%" height="100%" border="0">
 					<tr>
+						<!--
 						<td align="center" valign="top" height="90%" style="position:relative;">
 							<label for="coordlist">Coordinate List</label>
 							<textarea id="coordlist" style="width:95%;position:absolute;left:5px;right:5px;top:20px;bottom:5px;"></textarea>
 						</td>
+						-->
+						<td align="center" valign="top">
+							<div id="coordtoolbar" class="ui-widget-header ui-corner-all">
+								<label id="coordlistLbl" for="coordlist">Coordinate List</label>
+								<textarea id="coordlist" style="width:95%;"></textarea>
+								<button style="width: 100%;" id="drawOnMap">Render on Map</button>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td width="100%">
+							<h3>
+							<span id="wizDrawMode">Navigation</span> Mode</h3>
+							<fieldset>
+							<div id="maphelptxt" style="position:relative;overflow-x:hidden;overflow-y:auto;">
+							
+								
+							</div>
+							</fieldset>
+						</td>
+					
+					</tr>
 					<tr>
 						<td>
 						<div id="wiztoolbar" class="ui-widget-header ui-corner-all">
@@ -594,12 +663,12 @@
 									<input type="radio" id="drawBox" name="drawMode"><label for="drawBox">Box</label>
 								</div>
 							-->
-							<button class="button" style="width: 100%;" id="drawOnMap">Render on Map</button>
-							<button class="button" style="width: 100%;" id="saveFeature">Save Feature</button>
-							<button class="button" style="width: 100%;" id="startDrawing">Start Drawing</button>
-							<button class="button" style="width: 100%;" id="deleteFeature">Delete</button>
-							<button class="button" style="width: 100%;" id="startOver">Start Over</button>
-							<button class="button" style="width: 100%;" id="exitDialog">Close Dialog</button>
+							
+							<button style="width: 100%;font-weight:bold;" id="saveFeature">Save and Finish</button>
+							<button style="width: 100%;" id="startDrawing">Start Drawing</button>
+							<button style="width: 100%;" id="deleteFeature">Delete</button>
+							<button style="width: 100%;" id="startOver">Change Mode</button>
+							<button style="width: 100%;" id="exitDialog">Restart Wizard</button>
 						</div>
 						</td>
 					</tr>
@@ -609,37 +678,40 @@
 	</table>
 </div>
 
-<div id="helpinfo" title="Help" style="display:none;width:1000px">
-	You are about to draw a feature on a map.<br>
-	To stop drawing the map double click on the last vector of the feature.
+<div id="helpinfo" title="Spatial Extent Wizard - 4" style="display:none;width:1000px">
+	<p>Define the spatial extent of your dataset by providing a list of coordinates or drawing on the map. Select the method and then the geometry type that best represents the spatial extent of your dataset.</p>
 	
 	<div id="helptoolbar" style="font-size:100%;" class="ui-widget-header ui-corner-all">
-		<div style="display:table;width:100%;">
-			<div id="drawMode" style="display:table-row;">
-				<div style="display:table-cell;">
-					<input class="button" type="radio" id="drawPolygon" name="drawMode" checked="checked"><label for="drawPolygon">Polygon</label>		
-				</div>
-				<div style="display:table-cell;">
-					<input type="radio" id="drawLine" name="drawMode" ><label for="drawLine">Line</label>		
-				</div>
-				<div style="display:table-cell;">
-					<input type="radio" id="drawPoint" name="drawMode"><label for="drawPoint">Point</label>		
-				</div>
-				<div style="display:table-cell;">
-					<input type="radio" id="drawBox" name="drawMode"><label for="drawBox">Box</label>
-				</div>
-			</div>
-		</div>
 		
 		<div style="display:table;width:100%;">
 			<div id="featMode" style="display:table-row;">
+				<div style="display:table-cell;">	
+					<input type="radio" id="featPaste" name="featMode"><label for="featPaste">Insert Coordinate Text</label>
+				</div>
 				<div style="display:table-cell;">
 					<input type="radio" id="featDraw" name="featMode" checked="checked"><label for="featDraw">Draw on the Map</label>
 				</div>
-				<div style="display:table-cell;">	
-					<input type="radio" id="featPaste" name="featMode" ><label for="featPaste">Paste in Coordinates</label>
-				</div>
 			</div>
 		</div>
+			
+		<div style="display:table;width:100%;">
+			<div id="drawType" style="display:table-row;">
+				<div style="display:table-cell;">
+					<input type="radio" id="drawBox" name="drawType"><label for="drawBox">Box</label>
+				</div>
+				<div style="display:table-cell;">
+					<input class="button" type="radio" id="drawPolygon" name="drawType" checked="checked"><label for="drawPolygon">Polygon</label>		
+				</div>
+				<div style="display:table-cell;">
+					<input type="radio" id="drawLine" name="drawType"><label for="drawLine">Line</label>
+				</div>
+				<div style="display:table-cell;">
+					<input type="radio" id="drawPoint" name="drawType"><label for="drawPoint">Point</label>
+				</div>
+				
+			</div>
+		</div>
+		
+		
 	</div>
 </div>
