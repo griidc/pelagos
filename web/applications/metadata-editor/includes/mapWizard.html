@@ -43,8 +43,6 @@
 		wizGeoViz = new GeoViz();
 		
 		orderEnum = wizGeoViz.orderEnum;
-		
-		wizGeoViz.initMap('olmap',{'onlyOneFeature':true,'allowModify':true,'allowDelete':true});
 	
 		$("#geoWizard").dialog({
 			close: function(event, ui) { closeDialog() },
@@ -59,7 +57,7 @@
 		$("#helpinfo").dialog({
 			autoOpen: false,
 			width: 400,
-			modal: true,
+			modal: false,
 			buttons: {
 				OK: function() {
 					if ($("#drawPolygon:checked").length){$("#drawPolygon:checked").click();}
@@ -76,8 +74,11 @@
 					
 					if (!$("#drawPolygon:checked").length && !$("#drawLine:checked").length && !$("#drawPoint:checked").length && !$("#drawBox:checked").length && !$("#featDraw:checked").length && !$("#featPaste:checked").length)
 					{alert('Please make a selection!');}
-					$(this).dialog('close');
-					wizGeoViz.updateMap();
+					else
+					{
+						$(this).dialog('close');
+						wizGeoViz.updateMap();
+					}
 				}
 				//'Polygon': function() {
 					//$(this).dialog('close');
@@ -112,12 +113,6 @@
 				if (drawTheMap)
 				{
 					drawMap();
-					setTimeout( function() { 
-						wizGeoViz.updateMap();
-						try{setButtonEvents()}
-						catch(err)
-						{console.debug(err.message)}
-					}, 300);
 				}
 			}
 		});
@@ -148,34 +143,7 @@
 
 	});
 
-	/*
-	function showMain(what)
-	{
-		if (what != "")
-		{
-			currentDiv = $("#mainStuff div").attr('id');
-			breadCrumbs.push(currentDiv);
-			breadCrumb++;
-			DIV = $("#"+what.val());
-			$("#mainStuff").html(DIV.clone(true).fadeIn());
-		}
-		//$("#mainStuff :button").button().click(function(){showMain($(this));});
-	}
-	
-	function backBread()
-	{
-		if (breadCrumb > -1)
-		{
-			DIV = $("#"+breadCrumbs[breadCrumb]);
-			console.debug(DIV);
-			$("#mainStuff").html(DIV.clone(true).fadeIn());
-			breadCrumb--;
-			breadCrumbs.pop();
-		}
-	}
-	*/
-	
-	function animateTo(Width, Height)
+	function animateTo(Width, Height, Complete)
 	{
 		var dlg = $("#geoWizard").parents(".ui-dialog:first");
 		var dlgTop = dlg.position().top;
@@ -185,7 +153,7 @@
 		var topDiff = (Height - dlgHeight)/2;
 		newTop = ((dlgTop-topDiff)+newTop)/2;
 		
-		dlg.animate({ width: Width, height: Height, left: newLeft, top: newTop});
+		dlg.animate({ width: Width, height: Height, left: newLeft, top: newTop},{complete: Complete});
 		$("#geoWizard").height(Height-50);
 		$("#geoWizard").dialog("option", "position", "center");
 	}
@@ -199,11 +167,9 @@
 		
 		$("#mapwiz").height(diaHeight-50);
 		
-		animateTo(diaWidth,diaHeight);
+		animateTo(diaWidth,diaHeight,finalizeMap);
 		
 		$("#geoWizard").dialog( "option", "title", "Spatial Extent Wizard - 3" );
-		
-		
 		
 		if ($('#BPL1_DataIdent').val() != "" && !featureSend)
 		{
@@ -224,14 +190,17 @@
 		{
 			$("#helpinfo").dialog('open');
 		}
-
-		setTimeout( function() { 
-			$("#geoWizard").html($("#mapwiz").fadeIn());
-			wizGeoViz.updateMap();
-			setEvents();
-			fixMapToolHeight();
-		}, 300);
 	}
+	
+	function finalizeMap()
+	{
+		wizGeoViz.initMap('olmap',{'onlyOneFeature':true,'allowModify':true,'allowDelete':true});
+		$("#geoWizard").html($("#mapwiz").fadeIn());
+		//wizGeoViz.updateMap();
+		setEvents();
+		fixMapToolHeight();
+	}
+	
 	
 	function convertToConvexHull()
 	{
@@ -301,8 +270,6 @@
 				
 			}
 		}); 
-		
-		
 	}
 	
 	function wizAddFeature(llOrder)
