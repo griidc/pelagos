@@ -270,6 +270,8 @@ else
 if ($_SESSION['submitok'])
 {
     include 'submit.php';
+    # trigger filer
+    system('/usr/local/griidc/filer/trigger-filer');
 }
 else
 {
