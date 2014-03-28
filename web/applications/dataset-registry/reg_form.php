@@ -365,7 +365,7 @@ function formDisabled($isDisabled)
                 fixed: true
             },
             style: {
-                classes: "ui-tooltip-shadow ui-tooltip-tipped"
+                classes: "qtip-default qtip-shadow qtip-tipped"
             }
         });
         
