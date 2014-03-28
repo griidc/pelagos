@@ -210,6 +210,12 @@ function GeoViz()
 		
 		map.addLayers([google_hybrid, vlayer, flayer]);
 		
+		map.events.register("click", map , function(e){
+			var vpxy = map.getLayerPxFromViewPortPx(e.xy) ;
+			console.debug('clicked on'+vpxy);
+			jQuery(mapDiv).trigger('mapClick',vpxy);
+		});
+		
 		function get_my_url (bounds) {
 			var res = this.map.getResolution();
 			var x = Math.round ((bounds.left - this.maxExtent.left) / (res * this.tileSize.w));
