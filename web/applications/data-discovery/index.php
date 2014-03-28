@@ -19,30 +19,28 @@ require_once '/usr/local/share/GRIIDC/php/utils.php';
 require_once 'lib/search.php';
 # local functions for the packaging sub-module to the data-discovery module
 require_once 'lib/package.php';
-# facebook API/SDK for PHP
-require_once '/usr/local/share/facebook-php-sdk/src/facebook.php';
+# OpenID API for PHP
+require_once '/usr/local/share/lightopenid-lightopenid/openid.php';
+# GRIIDC database utilities
+require_once '/usr/local/share/GRIIDC/php/db-utils.lib.php';
 
-# add js library - informs drupal to add these standard js libraries upstream.  
+function user_is_logged_in_somehow() {
+    $drupal_login = user_is_logged_in();
+    $alternate_login = (isset($_SESSION['gAuthLogin']) and $_SESSION['gAuthLogin']);
+    if ($drupal_login or $alternate_login ) { return true; } else { return false; }
+}
+
+# add js library - informs drupal to add these standard js libraries upstream.
 # can also use drupal_add_js to specify a full path to a js library to include.
 # similarly, there is a drupal_add_css function.  These js includes are sent
 # to the browser at the time drupal sends its own.  "system" is the main
-# drupal module. 
+# drupal module.
 drupal_add_library('system', 'ui.tabs');
 
 $GLOBALS['config'] = parse_ini_file('config.ini',true);
 
 TwigView::$twigDirectory = $GLOBALS['config']['TwigView']['twigDirectory'];
 
-$config = array(
-      'appId' => $GLOBALS['config']['FacebookAPI']['AppID'],
-      'secret' => $GLOBALS['config']['FacebookAPI']['AppSecret'],
-      'fileUpload' => false,         // optional
-      'allowSignedRequest' => false, // optional, but should be set to false for non-canvas apps
- );
-
-
-$facebook = new Facebook($config);
-$fb_user = $facebook->getUser();
 
 $app = new Slim(array(
                         'view' => new TwigView,
@@ -56,6 +54,7 @@ $app->hook('slim.before', function () use ($app) {
     $env = $app->environment();
     $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
     $app->view()->appendData(array('baseUrl' => "$protocol$env[SERVER_NAME]/$GLOBALS[PAGE_NAME]"));
+    $app->view()->appendData(array('hostname' => $env['SERVER_NAME']));
     $app->view()->appendData(array('pageName' => $GLOBALS['PAGE_NAME']));
     $app->view()->appendData(array('currentPage' => urlencode(preg_replace('/^\//','',$_SERVER['REQUEST_URI']))));
     if (!empty($user->name)) {
@@ -67,7 +66,7 @@ $app->get('/includes/:file', 'dumpIncludesFile')->conditions(array('file' => '.+
 
 $app->get('/js/:name.js', function ($name) use ($app) {
     header('Content-type: text/javascript');
-    $stash['logged_in'] = (isset($fb_user) or user_is_logged_in());
+    $stash['logged_in'] = (user_is_logged_in_somehow());
     $app->render("js/$name.js",$stash);
     exit;
 });
@@ -79,13 +78,102 @@ $app->get('/css/:name.css', function ($name) use ($app) {
 });
 
 $app->get('/', function () use ($app) {
-    return $app->render('html/index.html',index($app));
+    drupal_add_js('/includes/openlayers/lib/OpenLayers.js',array('type'=>'external'));
+    drupal_add_js('//maps.google.com/maps/api/js?v=3&sensor=false',array('type'=>'external'));
+    drupal_add_js('/includes/geoviz/geoviz.js',array('type'=>'external'));
+    $stash=index($app);
+    # for now, only do this for guestAuthUser people, GoMRI auto-download is handled elsewhere.
+    if( (isset($_COOKIE['dl_attempt_udi_cookie'])) and (isset($_SESSION['guestAuthUser'])) ) {
+        $udi =  $_COOKIE['dl_attempt_udi_cookie'];
+        unset($_COOKIE['dl_attempt_udi_cookie']);
+        # remove cookie
+        setcookie('dl_attempt_udi_cookie', "", time() - 3600, '/', $_SERVER['SERVER_NAME']);
+        $env = $app->environment();
+        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+        # this is wrong here...  I need to load the main html then inject this into the div as used by gomri login
+        $stash['download']=$udi;
+        drupal_set_message("Guest access enabled for ".$_SESSION['guestAuthUser'],'status');
+    }
+    return $app->render('html/index.html',$stash);
 });
+
+// currently a work in progress...
+$app->get('/guest-logout', function () use ($app) {
+    try {
+        $env = $app->environment();
+        $_SESSION['guestAuthUser'] = null;
+        unset($_SESSION['guestAuthUser']);
+        drupal_set_message("Guess access has been logged out.",'status');
+        $env = $app->environment();
+        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+        $baseUrl  = "$protocol$env[SERVER_NAME]/$GLOBALS[PAGE_NAME]";
+        drupal_goto($baseUrl);
+    } catch(ErrorException $e) {
+        drupal_set_message($e->getMessage(),'error');
+    }
+});
+
+$app->get('/google-auth', function () use ($app) {
+    try {
+        $env = $app->environment();
+        $openid = new LightOpenID($env["SERVER_NAME"]);
+        if(!$openid->mode) {
+            if(isset($_GET['login'])) {
+                $openid->identity = 'https://www.google.com/accounts/o8/id';
+                header('Location: ' . $openid->authUrl());
+            }
+            $openid->identity = 'https://www.google.com/accounts/o8/id';
+            $openid->required = array('contact/email', 'contact/country/home', 'namePerson/first', 'namePerson/last');
+            drupal_goto($openid->authUrl());
+        } else {
+            $openid->validate();
+            $info=$openid->getAttributes();
+            $_SESSION['guestAuthUser'] = $info["contact/email"];
+            $_SESSION['gAuthLogin']=true;
+            $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+            $baseUrl  = "$protocol$env[SERVER_NAME]/$GLOBALS[PAGE_NAME]";
+            drupal_goto($baseUrl);
+        }
+    } catch(ErrorException $e) {
+        drupal_set_message($e->getMessage(),'error');
+    }
+});
+
+/*
+// currently a work in progress...
+$app->get('/symantec-auth', function () use ($app) {
+    try {
+        $hostname = gethostname();
+        $openid = new LightOpenID($hostname);
+        if(!$openid->mode) {
+            if(isset($_GET['login'])) {
+                $openid->identity = 'https://pip.verisignlabs.com/login.do';
+                header('Location: ' . $openid->authUrl());
+            }
+            $openid->identity = 'https://pip.verisignlabs.com/login.do';
+            $openid->required = array('contact/email', 'contact/country/home', 'namePerson/first', 'namePerson/last');
+            drupal_goto($openid->authUrl());
+        } else {
+            $openid->validate();
+            $info=$openid->getAttributes();
+            $_SESSION['guestAuthUser'] = $info["contact/email"];
+            $_SESSION['gAuthLogin']=true;
+            drupal_goto($GLOBALS['PAGE_NAME']);
+        }
+    } catch(ErrorException $e) {
+        drupal_set_message($e->getMessage(),'error');
+    }
+});
+*/
+
 
 $app->post('/', function () use ($app) {
     $stash = index($app);
-    if (user_is_logged_in()) {
+    # regardless of user-friendly javascript warning elsewhere, this will disallow 
+    # unauthorized downloads server-side with a silent fail and reflow of the page.
+    if (user_is_logged_in_somehow()) {
         $stash['download'] = $app->request()->post('download');
+        $stash['srvr'] = "https://$_SERVER[HTTP_HOST]";
     }
     return $app->render('html/index.html',$stash);
 });
@@ -97,11 +185,14 @@ function index($app) {
     drupal_add_js('/tree/js/tree.js',array('type'=>'external'));
     drupal_add_js("/$GLOBALS[PAGE_NAME]/js/search.js",array('type'=>'external'));
     drupal_add_js("/$GLOBALS[PAGE_NAME]/js/package.js",array('type'=>'external'));
+    drupal_add_js("/$GLOBALS[PAGE_NAME]/js/logins.js",array('type'=>'external'));
+    drupal_add_library('system', 'jquery.cookie');
     drupal_add_css("/$GLOBALS[PAGE_NAME]/css/search.css",array('type'=>'external'));
     drupal_add_css("/$GLOBALS[PAGE_NAME]/includes/css/scrollbars.css",array('type'=>'external'));
     drupal_add_css("/$GLOBALS[PAGE_NAME]/includes/css/datasets.css",array('type'=>'external'));
     drupal_add_css("/$GLOBALS[PAGE_NAME]/includes/css/dataset_details.css",array('type'=>'external'));
     drupal_add_css("/$GLOBALS[PAGE_NAME]/includes/css/dataset_download.css",array('type'=>'external'));
+    drupal_add_css("/$GLOBALS[PAGE_NAME]/includes/css/logins.css",array('type'=>'external'));
     if (array_key_exists('treePaneCollapsed',$GLOBALS['config']['DataDiscovery'])) {
         $stash['treePaneCollapsed'] = $GLOBALS['config']['DataDiscovery']['treePaneCollapsed'];
     }
@@ -112,12 +203,12 @@ function index($app) {
     return $stash;
 }
 
-$app->get('/datasets/:filter/:by/:id', function ($filter,$by,$id) use ($app) {
+$app->get('/datasets/:filter/:by/:id/:geo_filter', function ($filter,$by,$id,$geo_filter) use ($app) {
     $stash = array();
     $stash['registered_datasets'] = array();
     $stash['identified_datasets'] = array();
 
-    $reg_filters = array('dataset_download_status=done');
+    $reg_filters = array('dataset_download_status=done','registry_id!=00%');
 
     if (!empty($by)) {
         if ($by == 'otherSources') {
@@ -147,6 +238,10 @@ $app->get('/datasets/:filter/:by/:id', function ($filter,$by,$id) use ($app) {
         }
     }
 
+    if (!empty($geo_filter) and $geo_filter != 'undefined') {
+        $reg_filters[] = "geo_filter=$geo_filter";
+    }
+
     $unrestricted_datasets = get_registered_datasets(getDBH('GOMRI'),array_merge($reg_filters,array('restricted=0')),$filter,$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
 
     foreach ($unrestricted_datasets as $dataset) {
@@ -163,17 +258,19 @@ $app->get('/datasets/:filter/:by/:id', function ($filter,$by,$id) use ($app) {
         $stash['restricted_datasets'][] = $dataset;
     }
 
-    $identified_datasets = get_identified_datasets(getDBH('GOMRI'),array("$by=$id",'dataset_download_status!=done','status=2'),$filter,$GLOBALS['config']['DataDiscovery']['identifiedOrderBy']);
-    foreach ($identified_datasets as $dataset) {
-        add_project_info($dataset);
-        $stash['identified_datasets'][] = $dataset;
+    if (empty($geo_filter) or $geo_filter == 'undefined') {
+        $identified_datasets = get_identified_datasets(getDBH('GOMRI'),array("$by=$id",'dataset_download_statuses!=done,RemotelyHosted','status=2'),$filter,$GLOBALS['config']['DataDiscovery']['identifiedOrderBy']);
+        foreach ($identified_datasets as $dataset) {
+            add_project_info($dataset);
+            $stash['identified_datasets'][] = $dataset;
+        }
     }
 
     $stash['filt'] = $filter;
 
     $app->render('html/datasets.html',$stash);
     exit;
-})->conditions(array('filter' => '.*', 'by' => '.*', 'id' => '.*'));
+})->conditions(array('filter' => '.*', 'by' => '.*', 'id' => '.*', 'geo_filter' => '.*'));
 
 $app->get('/dataset_details/:udi', function ($udi) use ($app) {
 
@@ -185,7 +282,7 @@ $app->get('/dataset_details/:udi', function ($udi) use ($app) {
     }
 
     $app->render('html/dataset_details.html',$stash);
-    exit;
+    exit;  # prevents Drupal wrapper in output
 });
 
 $app->get('/package.*', function () use ($app) {
@@ -291,11 +388,11 @@ $app->get('/package/download/:udis', function ($udis) use ($app) {
                 $zip->addFile($met_file,"$dataset[udi]/$dataset[metadata_filename]");
             }
         }
-    
+
         $zip->close();
 
         if ($error) { exit; };
-    
+
         if (file_exists("$zippath/$zipfile")) {
             header($_SERVER["SERVER_PROTOCOL"] . " 200 OK");
             header("Cache-Control: public"); // needed for i.e.
@@ -316,6 +413,7 @@ $app->get('/package/download/:udis', function ($udis) use ($app) {
 });
 
 $app->get('/metadata/:udi', function ($udi) use ($app) {
+    // if there is a file on disk, capture it
     if (preg_match('/^00/',$udi)) {
         $datasets = get_registered_datasets(getDBH('GOMRI'),array("registry_id=$udi%"));
     }
@@ -323,30 +421,99 @@ $app->get('/metadata/:udi', function ($udi) use ($app) {
         $datasets = get_identified_datasets(getDBH('GOMRI'),array("udi=$udi"));
     }
     $dataset = $datasets[0];
+    
+    $disk_metadata_file_mimetype = '';
+    $disk_metadata_file = '';
     $met_file = "/sftp/data/$dataset[udi]/$dataset[udi].met";
     if (file_exists($met_file)) {
         $info = finfo_open(FILEINFO_MIME_TYPE);
-        $mime = finfo_file($info, $met_file);
+        $disk_metadata_file_mimetype = finfo_file($info, $met_file);
+        $disk_metadata_file=file_get_contents($met_file);
+    }
+    # This SQL uses a subselect to resolve the newest registry_id
+    # associated with the passed in UDI.
+    $sql = "
+    select 
+        metadata_xml, 
+        coalesce(
+            cast(
+                xpath('/gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1]/text()',metadata_xml,
+                    ARRAY[
+                    ARRAY['gmi', 'http://www.isotc211.org/2005/gmi'],
+                    ARRAY['gmd', 'http://www.isotc211.org/2005/gmd'],
+                    ARRAY['gco', 'http://www.isotc211.org/2005/gco']
+                    ]
+                ) as character varying
+            ), 
+            dataset_metadata
+        ) 
+
+    as filename  
+    FROM metadata left join registry on registry.registry_id = metadata.registry_id
+    WHERE 
+        metadata.registry_id = (   select registry_id 
+                                    from curr_reg_view 
+                                    where dataset_udi = ?
+                                )";
+
+    $dbms = OpenDB("GOMRI_RO");
+    $data = $dbms->prepare($sql);
+    $data->execute(array($udi));
+    $raw_data = $data->fetch();
+    if ($raw_data) {
+        # Serve it out from the data in the database by default
+        # the following line is probably better done in SQL, so this will be changed in the near future
+        $filename = preg_replace(array('/{/','/}/'),array('',''),$raw_data['filename']);
+        $filename = preg_replace("/:/",'-',$filename);
         header($_SERVER["SERVER_PROTOCOL"] . " 200 OK");
         header("Cache-Control: public"); // needed for i.e.
-        header("Content-Type: $mime");
+        header("Content-Type: text/xml");
+        header("Content-Transfer-Encoding: Binary");
+        header("Content-Length:" . strlen($raw_data['metadata_xml']));
+        header("Content-Disposition: attachment; filename=$filename");
+        ob_clean();
+        flush();
+        print $raw_data['metadata_xml'];
+        exit;
+    } elseif(strlen($disk_metadata_file) > 0) {
+        # Serve it out from the data in the filesystem if it wasn't in the database
+        $filename=$dataset['metadata_filename'];
+        
+        header($_SERVER["SERVER_PROTOCOL"] . " 200 OK");
+        header("Cache-Control: public"); // needed for i.e.
+        header("Content-Type: $disk_metadata_file_mimetype");
         header("Content-Transfer-Encoding: Binary");
         header("Content-Length:" . filesize($met_file));
         header("Content-Disposition: attachment; filename=$dataset[metadata_filename]");
+        ob_clean();
+        flush();
         readfile($met_file);
         exit;
+    } else {
+        drupal_set_message("Error retrieving metadata from database and filesystem.",'error');
+        drupal_goto($GLOBALS['PAGE_NAME']); # reload calling page
+    }
+});
+
+$app->get('/download-external/:udi', function ($udi) use ($app) {
+    if (preg_match('/^00/',$udi)) {
+        $datasets = get_registered_datasets(getDBH('GOMRI'),array("registry_id=$udi%"));
     }
     else {
-        drupal_set_message("Error retrieving metadata file: file not found: $met_file",'error');
+        $datasets = get_identified_datasets(getDBH('GOMRI'),array("udi=$udi"));
     }
+    $dataset = $datasets[0];
+    $stash['dataset'] = $dataset;
+    $app->render('html/download-external.html',$stash);
+    exit;
 });
 
 $app->get('/download/:udi', function ($udi) use ($app) {
     global $user;
-    if (!user_is_logged_in()) {
-        $stash['error_message'] = "You must be logged in to download datasets.";
-        $app->render('html/download_error.html',$stash);
-        exit;
+    if (!user_is_logged_in_somehow()) {
+        #$stash['error_message'] = "You must be logged in to download datasets.";
+        #$app->render('html/download_error.html',$stash);
+        drupal_exit();
     }
     if (preg_match('/^00/',$udi)) {
         $datasets = get_registered_datasets(getDBH('GOMRI'),array("registry_id=$udi%"));
@@ -371,7 +538,12 @@ $app->get('/download/:udi', function ($udi) use ($app) {
     $dat_file = "/sftp/data/$dataset[udi]/$dataset[udi].dat";
     if (file_exists($dat_file)) {
         $env = $app->environment();
-        $uid = uniqid($user->name . '_');
+        $uid = 0;
+        if(empty($user->name)) {
+            $uid = uniqid($_SESSION['guestAuthUser'] . '_');
+        } else {
+            $uid = uniqid($user->name . '_');
+        }
         mkdir("/sftp/download/$uid/");
         symlink($dat_file,"/sftp/download/$uid/$dataset[dataset_filename]");
         $stash = array();
@@ -381,6 +553,10 @@ $app->get('/download/:udi', function ($udi) use ($app) {
         $stash['bytes'] = filesize($dat_file);
         $stash['filesize'] = bytes2filesize($stash['bytes'],1);
         $stash['filt'] = $app->request()->get('filter');
+        $tstamp=date('YmdHis');
+        # this simplistic logging in place until proper logging into database
+        # is implemented
+        `echo "$tstamp\t$dat_file\t$uid" >> downloadlog.txt`;
         $app->render('html/download.html',$stash);
         exit;
     }

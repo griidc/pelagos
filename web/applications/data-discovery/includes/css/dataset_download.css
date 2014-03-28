@@ -1,5 +1,5 @@
 #dataset_download {
-    position: absolute;
+    position: fixed;
     background-color: white;
     display: none;
     border: 2px solid black;
@@ -7,6 +7,9 @@
     width: 50%;
     left: 25%;
     margin-top: 10px;
+    top: 25%;
+    z-index: 1000;
+    border-radius: 8px;
 }
 
 #dataset_download_close {

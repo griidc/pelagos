@@ -1,92 +1,118 @@
-<div id="filter" style="text-align: center;">
-    <table style="margin-left:auto; margin-right:auto;">
-        <tr>
-            <td valign="top">
-                <input id="filter-input" type="text" size="90" style="font-size:130%;" value="{{defaultFilter}}">
-                {% if treePaneCollapsed %}
-                    <div>NOTE: To filter by consortia, research award, researcher, or institution, please expand the pane using the arrow tab on the left.</div>
-                {% endif %}
-            </td>
-            <td valign="top">
-                <input type="button" style="font-size:130%;" value="Filter" onclick="applyFilter();">
-            </td>
-            <td valign="top">
-                <input type="button" style="font-size:130%;" value="Clear/Show All" onclick="clearAll();">
-            </td>
-        </tr>
-    </table>
-</div>
 
 <input id="by-input" type="hidden">
 <input id="id-input" type="hidden">
 
-<div id="container" style="position: relative; width:100%; background-color:white; padding:0; margin:0;">
-    <div id="left" style="position: absolute; width:40%; height:500px;">
-        <div id="menu">
-            <div class="scrollbar"><div class="track"><div class="thumb"><div class="end"></div></div></div></div>
-            <div class="viewport">
-                <div class="overview">
-                    <script type="text/javascript">
-                        var tree = {
-                                    label: "Filter by:",
-                                    theme: "classic",
-                                    max_depth: 1,
-                                    expand_to_depth: 0,
-                                    include_datasets: "identified",
-                                    animation: 250,
-                                    type: "ra",
-                                    filter: "",
-                                    onload: "if(!tree.selected){showDatasets($('#by-input').val(),$('#id-input').val(),'');}",
-                                    show_other_sources: true,
+<div id="container">
 
-                                    yr1_folder_color: "#00A",
-                                    yr1_folder_action: "$('#by-input').val('YR1'); $('#id-input').val('1'); showDatasets('YR1',1);",
-
-                                    yr1_color: "#00A",
-                                    yr1_action: "$('#by-input').val('fundSrc'); $('#id-input').val('\{\{fundSrc.ID\}\}'); showDatasets('fundSrc',\{\{fundSrc.ID\}\});",
-
-                                    rfp_color: "#00A",
-                                    rfp_action: "$('#by-input').val('fundSrc'); $('#id-input').val('\{\{fundSrc.ID\}\}'); showDatasets('fundSrc',\{\{fundSrc.ID\}\});",
-
-                                    project_color: "#00A",
-                                    project_action: "$('#by-input').val('projectId'); $('#id-input').val('\{\{project.ID\}\}'); showDatasets('projectId',\{\{project.ID\}\},'\{\{peopleId\}\}');",
-
-                                    task_color: "#00A",
-                                    task_action: "showTask(\{\{task.ID\}\});",
-
-                                    dataset_color: "#00A",
-                                    dataset_action: "showDataset(\{\{dataset.udi\}\});",
-
-                                    researcher_color: "#00A",
-                                    researcher_action: "$('#by-input').val('peopleId'); $('#id-input').val('\{\{person.ID\}\}'); showDatasets('peopleId',\{\{person.ID\}\});",
-
-                                    institution_color: "#00A",
-                                    institution_action: "$('#by-input').val('institutionId'); $('#id-input').val('\{\{institution.ID\}\}'); showDatasets('institutionId',\{\{institution.ID\}\});",
-
-                                    other_sources_folder_color: "#00A",
-                                    other_sources_folder_action: "$('#by-input').val('otherSources'); $('#id-input').val('1'); showDatasets('otherSources',1);",
-
-                                    other_sources_color: "#00A",
-                                    other_sources_action: "$('#by-input').val('otherSource'); $('#id-input').val('\{\{source.ID\}\}'); showDatasets('otherSource','\{\{source.ID\}\}');",
-
-                                    deselect_action: "$('#by-input').val(''); $('#id-input').val(''); showDatasets('','');"
-                                   }
-
-                        insertTree(tree);
-                    </script>
+    <div id="left">
+        <div>
+            <div id="map_pane">
+                <div id="olmap"></div>
+                <div id="map_buttons">
+                    <div class="map_button_container">
+                        <label for="show_all_extents_checkbox" id="show_all_extents_label">Show All Extents</label>
+                        <input type="checkbox" id="show_all_extents_checkbox" class="map_button" onclick="showAllExtents();">
+                    </div>
+                    <div class="map_button_container">
+                        <input type="button" id="clearGeoFilterButton" class="map_button" value="Clear Filter" disabled onclick="$(this).button('disable');clearFilter();trees['tree'].geo_filter = null;applyFilter();">
+                    </div>
+                    <div class="map_button_container">
+                        <input type="button" id="drawGeoFilterButton" class="map_button" value="Draw Filter" onclick="drawFilter();$(this).button('disable');$('body').css('cursor','crosshair');$('#olmap').css('cursor','crosshair');$('input').css('cursor','crosshair');">
+                    </div>
+                </div>
+                <div class="map_border map_border_top_bottom map_border_top map_border_top_bg"></div>
+                <div class="map_border map_border_top_bottom map_border_top map_border_top_fg"></div>
+                <div class="map_border map_border_top_bottom map_border_bottom map_border_bottom_bg"></div>
+                <div class="map_border map_border_top_bottom map_border_bottom map_border_bottom_fg"></div>
+                <div class="map_border map_border_left_right map_border_left map_border_left_bg"></div>
+                <div class="map_border map_border_left_right map_border_left map_border_left_fg"></div>
+                <div class="map_border map_border_left_right map_border_right map_border_right_bg"></div>
+                <div class="map_border map_border_left_right map_border_right map_border_right_fg"></div>
+            </div>
+        </div>
+        <div>
+            <div id="menu-wrapper">
+                <div id="menu">
+                    <div class="viewport">
+                        <div class="overview">
+                            <script type="text/javascript">addTree();</script>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <div id="right" style="position: absolute; {% if treePaneCollapsed %} left: 0%; width: 100%; {% else %} left: 40%; width: 60%; {% endif %} height:500px; background-color:white;">
-        <div id="expand-collapse" style="position: absolute; bottom: 50%; left: -12px; width:12px; height:25px;"><div {% if treePaneCollapsed %} class="collapsed" {% endif %} style="height:50px;"></div></div>
-        <div id="content"></div>
+
+    <div id="right" style="{% if treePaneCollapsed %} left: 0%; width: 100%; {% else %} left: 45%; width: 55%; {% endif %}">
+        <div>
+            <div id="filter" class="right-panel">
+                <table>
+                    <tr>
+                        <td valign="top" style="width:100%; padding-right:10px;">
+                            <input id="filter-input" class="textbox" type="text" size="50" value="{{defaultFilter}}">
+                            {% if treePaneCollapsed %}
+                                <div>NOTE: To filter by consortia, research award, researcher, or institution, please expand the pane using the arrow tab on the left.</div>
+                            {% endif %}
+                        </td>
+                        <td valign="top">
+                            <input type="button" id="filter-button" class="button" value="Filter" onclick="applyFilter();">
+                        </td>
+                        <td valign="top">
+                            <input type="button" id="clear-button" class="button" value="Clear/Show All" onclick="clearAll();">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div>
+            <div id="dataset_listing_wrapper" class="right-panel">
+                <div id="dataset_listing"></div>
+            </div>
+        </div>
+        <div id="expand-collapse" {% if treePaneCollapsed %} class="collapsed" {% endif %}>
+            <div style="height:50px; width:12px"></div>
+        </div>
     </div>
+
 </div>
 
-<div id="dataset_details">
-    <div id="dataset_details_close"><input type="image" src="{{baseUrl}}/includes/images/close.gif" onclick="jQuery('#dataset_details').hide();"></div>
-    <div id="dataset_details_content"></div>
+<div id="pre_login">
+    <div id="pre_login_close"><input type="image" src="{{baseUrl}}/includes/images/close.gif" onclick="jQuery('#pre_login').hide();"></div>
+    <div id="pre_login_content">
+        <table cellpadding=10>
+            <tr>
+                <td colspan=3 align=center>
+                    <h3>Please log in for access to this data.</h3>
+                </td>
+            </tr>
+            <tr>
+                <td align="center">
+                    <div id="griidc-logo">
+                        <a class="redir_url"><img src="{{baseUrl}}/includes/images/GRIIDC-logo.png" alt="GRIIDC logo"></a>
+                    </div>
+                    <div>
+                        GoMRI Users, please use your<br />
+                        <a class="redir_url">GRIIDC login</a> to download data.
+                    </div>
+                </td>
+                <td><img src="{{baseUrl}}/includes/images/vbar.png"></td>
+                <td align="center">
+                    <div>
+                        <a href="{{baseUrl}}/google-auth"><img src="{{baseUrl}}/includes/images/googleauth.png" alt="google auth logo"></a>
+                    </div>
+                    <div>
+                        Members of the public may use their<br />
+                        <a href="{{baseUrl}}/google-auth">Google login</a> to download data.
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan=3 align=center>
+                    <button onclick="jQuery('#pre_login').hide();" style="font-weight:bold;">Cancel</button>
+                </td>
+            </tr>
+        </table>
+    </div>
 </div>
 
 <div id="dataset_download">

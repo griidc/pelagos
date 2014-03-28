@@ -1,35 +1,19 @@
-body {
-    overflow-x: hidden;
-}
-
-body.noselect {
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-
 #menu {
     clear: both;
-    margin: 0 10px 0 0;
     height: 100%;
     border: 1px solid #aaa;
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
     border-bottom-left-radius: 4px;
     border-bottom-right-radius: 4px;
-    background: transparent url(/includes/tinyscrollbar/images/bg-scrollbar-track-y.png) no-repeat 0 0;
 }
 
 #menu .viewport {
     height: 100%;
-    overflow: hidden;
+    overflow: auto;
     position: relative;
-    margin-left: 20px;
-    margin-right: 5px;
-    padding-right: 5px;
+    margin-left: 3px;
+    padding-right: 10px;
 }
 
 #menu .overview {
@@ -43,100 +27,24 @@ body.noselect {
 
 }
 
-#menu .scrollbar {
-    background: transparent url(/includes/tinyscrollbar/images/bg-scrollbar-track-y.png) no-repeat 0 0;
-    background-position: 0 0;
-    float: left; 
-    position: relative;
-    width: 15px;
-}
 
-#menu .track {
-    background: transparent url(/includes/tinyscrollbar/images/bg-scrollbar-trackend-y.png) no-repeat 0 100%;
-    height: 100%;
-    padding: 0 1px;
-    position: relative;
-    width: 15px;
-}
-
-#menu .thumb {
-    background: transparent url(/includes/tinyscrollbar/images/bg-scrollbar-thumb-y.png) no-repeat 50% 100%;
-    cursor: pointer;
-    height: 20px;
-    overflow: hidden;
-    position: absolute;
-    top: 0;
-    left: -5px;
-    width: 25px;
-}
-
-#menu .thumb .end {
-    background: transparent url(/includes/tinyscrollbar/images/bg-scrollbar-thumb-y.png) no-repeat 50% 0;
-    height: 5px;
-    overflow: hidden;
-    width: 25px;
-}
-
-#menu .disable {
-    display: none;
-}
-
-#content {
+#dataset_listing {
     clear: both;
     height: 100%;
 }
 
-#content .viewport {
+#dataset_listing .viewport {
     height: 100%;
-    overflow: hidden;
+    overflow: auto;
     position: relative;
-    margin-right: 15px;
 }
 
-#content .overview {
+#dataset_listing .overview {
     list-style: none;
     position: absolute;
     left: 0;
     top: 0;
-    padding: 10px;
+    padding: 5px 0px;
     margin: 0;
     right: 0;
-}
-
-#content .scrollbar {
-    background: transparent url(/includes/tinyscrollbar/images/bg-scrollbar-track-y.png) no-repeat 0 0;
-    background-position: 0 0;
-    float: right; 
-    position: relative;
-    width: 15px;
-}
-
-#content .track {
-    background: transparent url(/includes/tinyscrollbar/images/bg-scrollbar-trackend-y.png) no-repeat 0 100%;
-    height: 100%;
-    padding: 0 1px;
-    position: relative;
-    width: 15px;
-}
-
-#content .thumb {
-    background: transparent url(/includes/tinyscrollbar/images/bg-scrollbar-thumb-y.png) no-repeat 50% 100%;
-    cursor: pointer;
-    height: 20px;
-    overflow: hidden;
-    position: absolute;
-    top: 0;
-    left: -5px;
-    width: 25px;
-}
-
-#content .thumb .end {
-    background: transparent url(/includes/tinyscrollbar/images/bg-scrollbar-thumb-y.png) no-repeat 50% 0;
-    height: 5px;
-    overflow: hidden;
-    width: 25px;
-}
-
-#content .disable {
-    display: none;
 }
