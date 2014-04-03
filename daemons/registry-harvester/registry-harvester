@@ -14,7 +14,7 @@ use MIME::Base64 qw/decode_base64/;
 use Term::ANSIColor;
 
 my %opts;
-getopts('ftvc',\%opts);
+getopts('ftvcd',\%opts);
 
 if (!@ARGV) {
     print "Usage: registry-harvester [OPTIONS] url\n";
@@ -23,6 +23,7 @@ if (!@ARGV) {
     print "    -t    test mode, don't actually create or update registry entries or send summary email\n";
     print "    -v    verbose, output information on what's happening\n";
     print "    -c    continue even if validation fails\n";
+    print "    -d    print summary of registry to DIF matching (including duplicate registry entries)\n";
     exit;
 }
 
@@ -80,7 +81,7 @@ else {
 
 # process XML
 writelog($log,"processing: $source");
-print "\n" if $opts{'v'} or $opts{'t'};
+print "\n" if $opts{'v'};
 
 my $dbconf = Config::PHPINI->read('/etc/griidc/db.ini');
 
@@ -141,9 +142,13 @@ my @create_udis;
 
 my %seen = {};
 
+my %DIFs;
+
 # loop through all entries found in XML
 for my $entry (@{$data->{'entry'}}) {
     my $reg = {};
+
+    $reg->{'id'} = $entry->{'id'} if defined $entry->{'id'};
 
     # registration user
     if (defined $entry->{'registration_user'}->{'id'} and $entry->{'registration_user'}->{'id'}) {
@@ -345,6 +350,9 @@ for my $entry (@{$data->{'entry'}}) {
         print "DIF title: $dif->{title}\n";
     }
 
+    $DIFs{$reg->{'dataset_udi'}}->{'title'} = $dif->{'title'};
+    push(@{$DIFs{$reg->{'dataset_udi'}}->{'registries'}},$reg);
+
     # skip duplicate entries for the same dataset
     if ($seen{$reg->{'dataset_udi'}}) {
         writelog($log,"Duplicate entry for $reg->{dataset_udi}, skipping",'error');
@@ -486,6 +494,19 @@ if (!$opts{'t'} and ($duplicate_count or $invalid_count or $update_count or $cre
 }
 
 writelog($log,"Registry Harvestor finished for: $source");
+
+if ($opts{'d'}) {
+    print "\nDIF to Registry Summary\n";
+    for my $udi (sort keys %DIFs) {
+        print "\nDIF: $udi: $DIFs{$udi}->{title}\n";
+        for my $reg (sort {$a->{'dataset_title'} cmp $b->{'dataset_title'}} @{$DIFs{$udi}->{'registries'}}) {
+            print "  Registry Entry:\n";
+            print "    ID: $reg->{id}\n" if defined  $reg->{id};
+            print "    Title: $reg->{dataset_title}\n";
+            print "    Filename: $reg->{dataset_filename}\n";
+        }
+    }
+}
 
 sub writelog {
     my ($log,$message,$type) = @_;
