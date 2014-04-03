@@ -62,19 +62,23 @@ public class RdbmsConnectionFactory {
 	private static RdbmsConnection createNewGriidcDbConnection()
 			throws SQLException {
 		String dbIniSectionName = RisToGriidcConfiguration.getGriidcDbIniSection();
+		String risToGriidcIniSectionName = RisToGriidcConfiguration.getRisToGriidcGriidcDbSection();
+		
 		debugMsg(" createDbConnection(" + dbIniSectionName +")");
 		RdbmsConnection con = null;
 		String dbConnectionDescription = null;
 		try {
 			String dbType =         RisToGriidcConfiguration.getDbIniProp(dbIniSectionName,"type");
-			String jdbcDriverName = RisToGriidcConfiguration.getDbIniProp(dbIniSectionName,"driverName");
-			String jdbcPrefix =     RisToGriidcConfiguration.getDbIniProp(dbIniSectionName,"jdbcPrefix");
 			String dbHost =         RisToGriidcConfiguration.getDbIniProp(dbIniSectionName,"host");
 			String dbPort =         RisToGriidcConfiguration.getDbIniProp(dbIniSectionName,"port");
 			String dbName =         RisToGriidcConfiguration.getDbIniProp(dbIniSectionName,"dbname");
-			String dbSchema =       RisToGriidcConfiguration.getDbIniProp(dbIniSectionName,"schema");
 			String dbUser =         RisToGriidcConfiguration.getDbIniProp(dbIniSectionName,"username");
 			String dbPassword =     RisToGriidcConfiguration.getDbIniProp(dbIniSectionName,"password");
+			
+		//  these properties are in the RisToGriidc ini 
+			String dbSchema =       RisToGriidcConfiguration.getRisToGriiidcIniProp(risToGriidcIniSectionName,"schema");
+			String jdbcDriverName = RisToGriidcConfiguration.getRisToGriiidcIniProp(risToGriidcIniSectionName,"driverName");
+			String jdbcPrefix =     RisToGriidcConfiguration.getRisToGriiidcIniProp(risToGriidcIniSectionName,"jdbcPrefix");
 
 			con = new RdbmsConnection(dbType, jdbcDriverName, jdbcPrefix, dbHost, dbPort,
 					dbName, dbSchema, dbUser, dbPassword);
@@ -102,19 +106,22 @@ public class RdbmsConnectionFactory {
 	private static RdbmsConnection createNewRisDbConnection()
 			throws SQLException {
 		String dbIniSectionName =  RisToGriidcConfiguration.getRisDbIniSection();
+		String risToGriidcIniSectionName = RisToGriidcConfiguration.getRisToGriidcRisDbSection();
 		debugMsg(" createDbConnection(" + dbIniSectionName +")");
 		RdbmsConnection con = null;
 		String dbConnectionDescription = null;
 		try {
 			String dbType =         RisToGriidcConfiguration.getDbIniProp(dbIniSectionName,"type");
-			String jdbcDriverName = RisToGriidcConfiguration.getDbIniProp(dbIniSectionName,"driverName");
-			String jdbcPrefix =     RisToGriidcConfiguration.getDbIniProp(dbIniSectionName,"jdbcPrefix");
 			String dbHost =         RisToGriidcConfiguration.getDbIniProp(dbIniSectionName,"host");
 			String dbPort =         RisToGriidcConfiguration.getDbIniProp(dbIniSectionName,"port");
 			String dbName =         RisToGriidcConfiguration.getDbIniProp(dbIniSectionName,"dbname");
-			String dbSchema =       null; // RisToGriidcConfiguration.getDbIniProp(dbIniSectionName,"schema");
 			String dbUser =         RisToGriidcConfiguration.getDbIniProp(dbIniSectionName,"username");
 			String dbPassword =     RisToGriidcConfiguration.getDbIniProp(dbIniSectionName,"password");
+			//  these properties are in the RisToGriidc ini 
+			String dbSchema =       null; // RisToGriidcConfiguration.getRisToGriiidcIniProp(risToGriidcIniSectionName,"schema");
+			String jdbcDriverName = RisToGriidcConfiguration.getRisToGriiidcIniProp(risToGriidcIniSectionName,"driverName");
+			String jdbcPrefix =     RisToGriidcConfiguration.getRisToGriiidcIniProp(risToGriidcIniSectionName,"jdbcPrefix");
+			
 
 			con = new RdbmsConnection(dbType, jdbcDriverName, jdbcPrefix, dbHost, dbPort,
 					dbName, dbSchema, dbUser, dbPassword);
