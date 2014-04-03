@@ -5,6 +5,8 @@ import java.io.*;
 
 import javax.mail.*;
 import javax.mail.internet.*;
+
+import edu.tamucc.hri.griidc.exception.IniSectionNotFoundException;
 import edu.tamucc.hri.griidc.exception.PropertyNotFoundException;
 
 /**
@@ -33,6 +35,9 @@ public final class Emailer {
 		} catch (PropertyNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (IniSectionNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 	}
@@ -43,9 +48,10 @@ public final class Emailer {
 	 * Send a single email.
 	 * @throws FileNotFoundException 
 	 * @throws PropertyNotFoundException 
+	 * @throws IniSectionNotFoundException 
 	 */
 	public void sendEmail(String fromEmailAddr, String[] toEmailAddr,
-			String subject, String msgBody) throws PropertyNotFoundException {
+			String subject, String msgBody) throws PropertyNotFoundException, IniSectionNotFoundException {
 		// Here, no Authenticator argument is used (it is null).
 		// Authenticators are used to prompt the user for user
 		// name and password.

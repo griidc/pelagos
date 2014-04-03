@@ -221,14 +221,14 @@ public class RolesSynchronizer extends SynchronizerBase {
 						// back to next RIS record from resultSet
 					}
 
-				} else if (count == 1) {
+				} else if (count == 1) { // modify if keys match but content has
+											// changed
 					if (isDebug())
 						System.out.println("Found a matching key: "
 								+ this.griidcRoleToString(prefix));
-					if (isCurrentRecordEqual()) {
+					if (isCurrentRecordEqual(prefix)) {
 						this.incrementDuplicate(prefix);
-					} else {  // not equal but matches the find
-
+					} else { // not equal but matches the keys in GRIIDC
 						try {
 							this.modifyGriidcRoleRecord(prefix);
 							this.incrementModified(prefix);
@@ -259,7 +259,7 @@ public class RolesSynchronizer extends SynchronizerBase {
 					MiscUtils.writeToRisErrorLogFile(msg);
 					// back to next RIS record from resultSet
 				}
-
+				reportTheCounts();
 			} // end of main while loop
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -282,13 +282,13 @@ public class RolesSynchronizer extends SynchronizerBase {
 		return query;
 	}
 
-	private boolean isCurrentRecordEqual() {
+	private boolean isCurrentRecordEqual(String prefix) {
 		if (isDebug()) {
 			System.out.println("is CurrentRecordEqual "
-					+ this.risRoleToString() + this.griidcRoleToString());
+					+ this.risRoleToString() + this.griidcRoleToString(prefix));
 		}
-		boolean eq = (this.griidcRoleNumber == this.risRoleId 
-				        && this.griidcRoleName.equals(this.risRoleName));
+		boolean eq = (this.griidcRoleNumber == this.risRoleId && this.griidcRoleName
+				.equals(this.risRoleName));
 		eq = (eq && RandomBoolean.getInstance().getRandomBoolean());
 		if (isDebug()) {
 			System.out.println("is CurrentRecordEqual returning: " + eq);
@@ -373,8 +373,9 @@ public class RolesSynchronizer extends SynchronizerBase {
 	private void incrementAdded(String prefix) {
 		if (prefix.equals(RolesSynchronizer.GriidcTaskRolePrefix)) {
 			this.griidcTaskRoleAdded++;
-		} else
+		} else {
 			this.griidcProjRoleAdded++;
+		}
 		return;
 	}
 
@@ -385,13 +386,15 @@ public class RolesSynchronizer extends SynchronizerBase {
 			this.griidcProjRoleModified++;
 		return;
 	}
+
 	private void incrementDuplicate(String prefix) {
 		if (prefix.equals(RolesSynchronizer.GriidcTaskRolePrefix)) {
-			this.griidcTaskRoleAdded++;
+			this.griidcTaskRoleDuplicates++;
 		} else
-			this.griidcProjRoleAdded++;
+			this.griidcProjRoleDuplicates++;
 		return;
 	}
+
 	private DbColumnInfo[] getDbColumnInfo(String prefix) throws SQLException,
 			ClassNotFoundException {
 
@@ -450,10 +453,6 @@ public class RolesSynchronizer extends SynchronizerBase {
 					.println("\tRolesSynchronizer.getWhereColumnInfo returning "
 							+ dbci.toString());
 		return whereColInfo;
-	}
-
-	public String griidcRoleToString() {
-		return this.griidcRoleToString("XXX");
 	}
 
 	private static int rdNdx = 0;
@@ -523,6 +522,30 @@ public class RolesSynchronizer extends SynchronizerBase {
 		return griidcProjRoleModified;
 	}
 
+	private String countFormat = "%n %6d %6d %6d %6d %6d %6d %6d %6d %6d %6d";
+	private String countHeaderFormat = "%n %6s %6s %6s %6s %6s %6s %6s %6s %6s %6s";
+	private boolean firstTime = true;
+
+	private void reportTheCounts() {
+		if (RolesSynchronizer.isDebug()) {
+			if (firstTime) {
+				System.out
+						.printf(countHeaderFormat, "read", "skip", "err",
+								"tadd", "tmod", "tdup", "radd", "rmod", "rdup",
+								"total");
+				firstTime = false;
+			}
+			int total = griidcTaskRoleAdded + griidcTaskRoleModified
+					+ griidcTaskRoleDuplicates + griidcProjRoleAdded
+					+ griidcProjRoleModified + griidcProjRoleDuplicates;
+			System.out.printf(countFormat, risRecordCount, risRecordsSkipped,
+					risRecordErrors, griidcTaskRoleAdded,
+					griidcTaskRoleModified, griidcTaskRoleDuplicates,
+					griidcProjRoleAdded, griidcProjRoleModified,
+					griidcProjRoleDuplicates, total);
+		}
+	}
+
 	public static void main(String[] args) {
 		System.out.println("RolesSynchronizer.main() - Start -");
 		RolesSynchronizer.setDebug(false);
@@ -550,7 +573,7 @@ public class RolesSynchronizer extends SynchronizerBase {
 		String titleFormat = "%n*****************************  %-40s  ********************************%n";
 		String title = "RIS Institutions to GRIIDC Institution";
 
-		System.out.println("RisToGriidcMain finished");
+		System.out.println("\n\nRisToGriidcMain finished");
 
 		System.out.printf(titleFormat, title);
 
@@ -574,7 +597,6 @@ public class RolesSynchronizer extends SynchronizerBase {
 				roleSynchronizer.getGriidcProjRoleModified());
 		System.out.printf(pFormat, "GRIIDC ProjRole duplicates:",
 				roleSynchronizer.getGriidcProjRoleDuplicates());
-		
 
 		System.out.println("RolesSynchronizer.main() - END -");
 	}

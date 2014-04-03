@@ -6,6 +6,7 @@ import java.sql.SQLException;
 
 import org.ini4j.InvalidFileFormatException;
 
+import edu.tamucc.hri.griidc.exception.IniSectionNotFoundException;
 import edu.tamucc.hri.griidc.exception.PropertyNotFoundException;
 import edu.tamucc.hri.griidc.exception.TableNotInDatabaseException;
 import edu.tamucc.hri.griidc.support.Emailer;
@@ -13,6 +14,7 @@ import edu.tamucc.hri.griidc.support.MiscUtils;
 import edu.tamucc.hri.griidc.support.RisInstDeptPeopleErrorCollection;
 import edu.tamucc.hri.griidc.support.RisToGriidcConfiguration;
 import edu.tamucc.hri.rdbms.utils.RdbmsConnection;
+import edu.tamucc.hri.rdbms.utils.RdbmsConnectionFactory;
 import edu.tamucc.hri.rdbms.utils.RdbmsUtils;
 
 public class RisToGriidcMain {
@@ -74,6 +76,7 @@ public class RisToGriidcMain {
 		
 		System.out.println("-- Start risToGriidcMain --");
 		RdbmsUtils.setDebug(false);
+		RdbmsConnectionFactory.setDeBug(false);
 		RdbmsConnection.setDebug(false);
 		InstitutionSynchronizer.setDebug(false);
 		DepartmentSynchronizer.setDebug(false);
@@ -162,10 +165,13 @@ public class RisToGriidcMain {
 		} catch (TableNotInDatabaseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (IniSectionNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
-	public void emailLogs() throws PropertyNotFoundException, IOException {
+	public void emailLogs() throws PropertyNotFoundException, IOException, IniSectionNotFoundException {
 		Emailer emailer = new Emailer();
 		String rFormat = "\t%-40s%n";
 		String from = RisToGriidcConfiguration.getGriidcMailSender();

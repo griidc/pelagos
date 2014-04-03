@@ -69,19 +69,19 @@ public class RdbmsConnection {
 				+ ", rdbmsSchemaName=" + rdbmsSchemaName
 				+  "]";
 	}
-	public RdbmsConnection(String jdbcDriverName, String dbType, String host,
-			String port, String user, String password, String dbName,
-			String schemaName, String prefix) {
+	public RdbmsConnection(String dbType, String jdbcDriverName,
+			String jdbcPrefix, String host, String port, String dbName,
+			String dbSchema, String dbUser, String dbPassword) {
 		super();
 		this.rdbmsType = dbType;
 		this.rdbmsHost = host;
 		this.rdbmsPort = port;
-		this.rdbmsUser = user;
-		this.rdbmsPassword = password;
+		this.rdbmsUser = dbUser;
+		this.rdbmsPassword = dbPassword;
 		this.rdbmsName = dbName;
-		this.rdbmsSchemaName = schemaName;
+		this.rdbmsSchemaName = dbSchema;
 		this.rdbmsJdbcDriverName = jdbcDriverName;
-		this.rdbmsJdbcPrefix = prefix;
+		this.rdbmsJdbcPrefix = jdbcPrefix;
 	}
 
 	public String getDbType() {
@@ -152,7 +152,11 @@ public class RdbmsConnection {
 		this.rdbmsUser = dbUser;
 		this.rdbmsPassword = dbPassword;
 		this.rdbmsType = dbType;
+		return this.setConnection();
+	}
 
+  public Connection setConnection() 
+			throws SQLException {
 		try {
 			Class.forName(this.rdbmsJdbcDriverName);
 		} catch (ClassNotFoundException e) {
@@ -160,11 +164,11 @@ public class RdbmsConnection {
 			e.printStackTrace();
 			System.exit(-1);
 		}
-		String url = RdbmsConnection.getDatabaseUrl(jdbcPrefix, host, port,
-				dbName);
-		debugMessage("\nThe database url: " + url + "," + dbUser + ","
-				+ dbPassword);
-		this.connection = DriverManager.getConnection(url, dbUser, dbPassword);
+		String url = RdbmsConnection.getDatabaseUrl(this.rdbmsJdbcPrefix, this.rdbmsHost, this.rdbmsPort,
+				this.rdbmsName);
+		debugMessage("\nThe database url: " + url + "," + this.rdbmsUser + ","
+				+ this.rdbmsPassword);
+		this.connection = DriverManager.getConnection(url, this.rdbmsUser, this.rdbmsPassword);
 		getStatement();
 		return this.getConnection();
 	}

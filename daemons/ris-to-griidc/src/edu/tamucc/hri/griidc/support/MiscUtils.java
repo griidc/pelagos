@@ -629,8 +629,8 @@ public class MiscUtils {
 		return false;
 	}
 	public static void fatalError(String callingObjectClassName, String callingFunctionName, String message ) {
-		String format = "%10s: %253";
-		System.err.printf("%20s","Fatal Error");
+		String format = "%n%20s: %-25s";
+		System.err.printf("%n%20s","Fatal Error");
 		System.err.printf(format,"Class",callingObjectClassName);
 		System.err.printf(format,"Function",callingFunctionName);
 		System.err.printf(format,"Error",message);

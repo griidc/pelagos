@@ -12,7 +12,9 @@ import org.ini4j.Ini;
 import org.ini4j.InvalidFileFormatException;
 import org.ini4j.Profile.Section;
 
+import edu.tamucc.hri.griidc.exception.IniSectionNotFoundException;
 import edu.tamucc.hri.griidc.exception.PropertyNotFoundException;
+import edu.tamucc.hri.rdbms.utils.RdbmsConstants;
 
 /**
  * This class manages the configuration files in the ini format. There are three
@@ -34,22 +36,28 @@ public class RisToGriidcConfiguration {
 	private static final String RisToGriidcIniFileName = IniBaseDir
 			+ "ris-to-griidc.ini";
 	
+	private static final String RisType = RdbmsConstants.RIS;
+	private static final String GriidcType = RdbmsConstants.GRIIDC;
 	// section names found in files
-	private static final String RisDbIniSection = "RIS_RO"; // db.ini
-	private static final String GriidcDbIniSection =  "GRIIDC_RW"; // db.ini
-	private static final String RisToGriidcNotificationsSection = "ris-to-griidc"; // notifications.ini
-	private static final String RisErrorsType = "riserrors";
-	private static final String PrimaryLogType = "primarylog";
-	private static final String RisToGriidcRisDbSection = "RIS_DB"; // ris-to-griidc.ini
-	private static final String RisToGriidcGriidcDbSection = "GRIIDC_DB"; // ris-to-griidc.ini
-	private static final String RisToGriidcLogFilesSection = "LOG_FILES"; // ris-to-griidc.ini
-	private static final String RisToGriidcOtherSection = "OTHER"; // ris-to-griidc.ini
-	private static final String RisToGriidcEmailSection = "EMAIL"; // ris-to-griidc.ini
+	private static final String RisDbIniSectionName = "RIS_RO"; // db.ini
+	private static final String GriidcDbIniSectionName =  "GRIIDC_RW"; // db.ini
+	
+	
+	private static final String RisDbSectionName = "RIS_DB"; // ris-to-griidc.ini
+	private static final String GriidcDbSectionName = "GRIIDC_DB"; // ris-to-griidc.ini
+	private static final String LogFilesSectionName = "LOG_FILES"; // ris-to-griidc.ini
+	private static final String OtherSectionName = "OTHER"; // ris-to-griidc.ini
+	private static final String EmailSectionName = "EMAIL"; // ris-to-griidc.ini
 	
 	//  email properties
 	private static final String GriidcMailSender = "mail.from"; // ris-to-griidc.ini
 	private static final String GriidcMailHost = "mail.host"; // ris-to-griidc.ini
 	private static final String GriidcMailUser = "mail.user"; // ris-to-griidc.ini
+	
+
+	private static final String RisToGriidcNotificationsSection = "ris-to-griidc"; // notifications.ini
+	private static final String RisErrorsType = "riserrors";  // notifications.ini
+	private static final String PrimaryLogType = "primarylog";  // notifications.ini
 
 	//  property names
 	private static final String PrimayLogFileNameProperty = "primaryLogName";
@@ -58,18 +66,13 @@ public class RisToGriidcConfiguration {
 	private static final String DeveloperLogFileNameProperty = "developerLogName";
 	private static final String FuzzyHeuristicPostalCodeMatchingProperty = "fuzzyHeuristicPostalCodeMatching";
 	
-	private static Ini DbIniInstance = null;
-	private static Ini NotificationsIniInstance = null;
-	private static Ini RisToGriidcIniInstance = null;
+	private static IniPropertyHandler DbIniHandlerInstance = null;
+	private static IniPropertyHandler NotificationsIniHandlerInstance = null;
+	private static IniPropertyHandler RisToGriidcIniHandlerInstance = null;
 
 	private static boolean Debug = false;
 
-	private static Ini loadIniFile(String fileName)
-			throws InvalidFileFormatException, FileNotFoundException,
-			IOException {
-		Ini ini = new Ini(new FileReader(fileName));
-		return ini;
-	}
+	
 
 	public static String getNotificationsFileName() {
 		return NotificationsFileName;
@@ -90,9 +93,10 @@ public class RisToGriidcConfiguration {
 	 * @param propertyName
 	 * @return
 	 * @throws PropertyNotFoundException
+	 * @throws IniSectionNotFoundException 
 	 */
 	public static String getDbIniProp(String sectionName, String propertyName)
-			throws PropertyNotFoundException {
+			throws PropertyNotFoundException, IniSectionNotFoundException {
 
 		return RisToGriidcConfiguration.getIniProp(getDbIniInstance(),
 				sectionName, propertyName);
@@ -105,9 +109,10 @@ public class RisToGriidcConfiguration {
 	 * @param propertyName
 	 * @return
 	 * @throws PropertyNotFoundException
+	 * @throws IniSectionNotFoundException 
 	 */
 	public static String getNotificationIniProp(String sectionName,
-			String propertyName) throws PropertyNotFoundException {
+			String propertyName) throws PropertyNotFoundException, IniSectionNotFoundException {
 
 		return RisToGriidcConfiguration.getIniProp(
 				getNotificationsIniInstance(), sectionName, propertyName);
@@ -120,9 +125,10 @@ public class RisToGriidcConfiguration {
 	 * @param propertyName
 	 * @return
 	 * @throws PropertyNotFoundException
+	 * @throws IniSectionNotFoundException 
 	 */
 	public static String getRisToGriiidcIniProp(String sectionName,
-			String propertyName) throws PropertyNotFoundException {
+			String propertyName) throws PropertyNotFoundException, IniSectionNotFoundException {
 		return RisToGriidcConfiguration.getIniProp(getRisToGriidcIniInstance(),
 				sectionName, propertyName);
 	}
@@ -135,18 +141,11 @@ public class RisToGriidcConfiguration {
 	 * @param propertyName
 	 * @return
 	 * @throws PropertyNotFoundException
+	 * @throws IniSectionNotFoundException 
 	 */
-	public static String getIniProp(Ini ini, String sectionName,
-			String propertyName) throws PropertyNotFoundException {
-		String prop = ini.get(sectionName).get(propertyName);
-
-		if (prop == null) {
-			System.err.println("RisToGriidcConfiguration.getIniProp(Ini," + sectionName + ",  " + 
-			propertyName + ") - property not found");
-			throw new PropertyNotFoundException("No property: " + propertyName
-					+ " found in file: "
-					+ DbIniInstance.getFile().getAbsolutePath());
-		}
+	public static String getIniProp(IniPropertyHandler ini, String sectionName,
+			String propertyName) throws PropertyNotFoundException, IniSectionNotFoundException {
+		String prop = ini.getProp(sectionName,propertyName);
 		return prop;
 	}
 
@@ -159,11 +158,11 @@ public class RisToGriidcConfiguration {
 	}
 
 	public static String getRisDbIniSection() {
-		return RisDbIniSection;
+		return RisDbIniSectionName;
 	}
 
 	public static String getGriidcDbIniSection() {
-		return GriidcDbIniSection;
+		return GriidcDbIniSectionName;
 	}
 
 	public static String getRisToGriidcNotificationsSection() {
@@ -171,52 +170,54 @@ public class RisToGriidcConfiguration {
 	}
 
 	public static String getRisToGriidcRisDbSection() {
-		return RisToGriidcRisDbSection;
+		return RisDbSectionName;
 	}
 
 	public static String getRisToGriidcGriidcDbSection() {
-		return RisToGriidcGriidcDbSection;
+		return GriidcDbSectionName;
 	}
 
 	public static String getRisToGriidcLogFilesSection() {
-		return RisToGriidcLogFilesSection;
+		return LogFilesSectionName;
 	}
 
 	public static String getRisToGriidcOtherSection() {
-		return RisToGriidcOtherSection;
+		return OtherSectionName;
 	}
 
 	public static String getRisToGriidcEmailSection() {
-		return RisToGriidcEmailSection;
+		return EmailSectionName;
 	}
 
-	public static Ini getDbIniInstance() {
-		if (DbIniInstance == null) {
+	public static IniPropertyHandler getDbIniInstance() {
+		if (DbIniHandlerInstance == null) {
 			try {
-				DbIniInstance = loadIniFile(DbIniFileName);
+				DbIniHandlerInstance = new IniPropertyHandler();
+				DbIniHandlerInstance.init(RisToGriidcConfiguration.getDbIniFileName());
 			} catch (InvalidFileFormatException e) {
 				System.err.println("InvalidFileFormatException for file "
-						+ DbIniFileName);
+						+ RisToGriidcConfiguration.getDbIniFileName());
 				e.printStackTrace();
 				System.exit(-1);
 			} catch (FileNotFoundException e) {
 				System.err.println("FileNotFoundException for file "
-						+ DbIniFileName);
+						+ RisToGriidcConfiguration.getDbIniFileName());
 				e.printStackTrace();
 				System.exit(-1);
 			} catch (IOException e) {
-				System.err.println("IOException for file " + DbIniFileName);
+				System.err.println("IOException for file " + RisToGriidcConfiguration.getDbIniFileName());
 				e.printStackTrace();
 				System.exit(-1);
 			}
 		}
-		return DbIniInstance;
+		return DbIniHandlerInstance;
 	}
 
-	public static Ini getNotificationsIniInstance() {
-		if (NotificationsIniInstance == null) {
+	public static IniPropertyHandler getNotificationsIniInstance() {
+		if (NotificationsIniHandlerInstance == null) {
 			try {
-				NotificationsIniInstance = loadIniFile(RisToGriidcConfiguration.getNotificationsFileName());
+				NotificationsIniHandlerInstance = new IniPropertyHandler();
+				NotificationsIniHandlerInstance.init(RisToGriidcConfiguration.getNotificationsFileName());
 			} catch (InvalidFileFormatException e) {
 				System.err.println("InvalidFileFormatException for file "
 						+ RisToGriidcConfiguration.getNotificationsFileName());
@@ -235,82 +236,65 @@ public class RisToGriidcConfiguration {
 			}
 		}
 
-		return NotificationsIniInstance;
+		return NotificationsIniHandlerInstance;
 	}
 
-	public static Ini getRisToGriidcIniInstance() {
-		if (RisToGriidcIniInstance == null) {
+	public static IniPropertyHandler getRisToGriidcIniInstance() {
+		if (RisToGriidcIniHandlerInstance == null) {
 			try {
-				RisToGriidcIniInstance = loadIniFile(RisToGriidcIniFileName);
+				RisToGriidcIniHandlerInstance = new IniPropertyHandler();
+				RisToGriidcIniHandlerInstance.init(RisToGriidcConfiguration.getRisToGriidcIniFileName());
 
 			} catch (InvalidFileFormatException e) {
 				System.err.println("InvalidFileFormatException for file "
-						+ RisToGriidcIniFileName);
+						+ RisToGriidcConfiguration.getRisToGriidcIniFileName());
 				e.printStackTrace();
 				System.exit(-1);
 			} catch (FileNotFoundException e) {
 				System.err.println("FileNotFoundException for file "
-						+ RisToGriidcIniFileName);
+						+ RisToGriidcConfiguration.getRisToGriidcIniFileName());
 				e.printStackTrace();
 				System.exit(-1);
 			} catch (IOException e) {
 				System.err.println("IOException for file "
-						+ RisToGriidcIniFileName);
+						+ RisToGriidcConfiguration.getRisToGriidcIniFileName());
 				e.printStackTrace();
 				System.exit(-1);
 			}
 		}
-		return RisToGriidcIniInstance;
+		return RisToGriidcIniHandlerInstance;
 	}
 
 	public static String getWorkingDirectory() {
 		return System.getProperty("user.dir");
 	}
-	private static void propertyNotFoundError(String functionName, String propName) {
-		System.err.println("PropertyNotFoundException: RisToGriidcConfiguration." + functionName + "()  - no property found matching " + propName);
-	}
-	public static String getLogFileDirectory() {
+	
+	
+	private static String getCriticalRisToGriidcProperty(String property) {
 		String result = null;
 		try {
 			result =  RisToGriidcConfiguration.getRisToGriiidcIniProp(
 				RisToGriidcConfiguration.getRisToGriidcLogFilesSection(),
-				PrimayLogFileDirectoryProperty);
+				property);
 		} catch (PropertyNotFoundException e) {
-			propertyNotFoundError("getLogFileDirectory", PrimayLogFileDirectoryProperty);
+			
+		} catch (IniSectionNotFoundException e) {
+			System.err.println(e.getMessage());
 			System.exit(-1);
 		}
 		return result;
 	}
+	public static String getLogFileDirectory() {
+		return getCriticalRisToGriidcProperty(PrimayLogFileDirectoryProperty);
+	}
 
 	public static String getPrimaryLogFileName() {
-		String result = null;
-		try {
-			result =  getLogFileDirectory()
-					+ RisToGriidcConfiguration.getRisToGriiidcIniProp(
-							RisToGriidcConfiguration
-									.getRisToGriidcLogFilesSection(),
-									PrimayLogFileNameProperty);
-		} catch (PropertyNotFoundException e) {
-			propertyNotFoundError("getPrimaryLogFileName", PrimayLogFileNameProperty);
-			System.exit(-1);
-		}
-		return result;
+		return getCriticalRisToGriidcProperty(PrimayLogFileNameProperty);
 	}
 
 	
 	public static String getRisErrorLogFileName() {
-		String result = null;
-		try {
-			result = getLogFileDirectory()
-				+ RisToGriidcConfiguration.getRisToGriiidcIniProp(
-						RisToGriidcConfiguration
-								.getRisToGriidcLogFilesSection(),
-								RisErrorLogNameProperty);
-		} catch (PropertyNotFoundException e) {
-			propertyNotFoundError("getRisErrorLogFileName", RisErrorLogNameProperty);
-			System.exit(-1);
-		}
-		return result;
+		return getCriticalRisToGriidcProperty(RisErrorLogNameProperty);
 	}
 
 	
@@ -322,36 +306,15 @@ public class RisToGriidcConfiguration {
 		return result;
 	*************/
 	public static String getDeveloperReportFileName() {
-		String result = null;
-		try {
-			result =  getLogFileDirectory()
-				+ RisToGriidcConfiguration.getRisToGriiidcIniProp(
-						RisToGriidcConfiguration
-								.getRisToGriidcLogFilesSection(),
-								DeveloperLogFileNameProperty);
-		} catch (PropertyNotFoundException e) {
-			propertyNotFoundError("getDeveloperReportFileName", DeveloperLogFileNameProperty);
-			System.exit(-1);
-		}
-		return result;
+		return getCriticalRisToGriidcProperty(DeveloperLogFileNameProperty);
 	}
 
 	public static boolean isFuzzyPostalCodeTrue() {
-		String s = null;
-		try {
-			s  = RisToGriidcConfiguration.getRisToGriiidcIniProp(
-				RisToGriidcConfiguration.getRisToGriidcOtherSection(),
-				FuzzyHeuristicPostalCodeMatchingProperty);
-			return Boolean.getBoolean(s);
-		} catch (PropertyNotFoundException e) {
-			propertyNotFoundError("isFuzzyPostalCodeTrue", FuzzyHeuristicPostalCodeMatchingProperty);
-			System.exit(-1);
-		}
+		String s = getCriticalRisToGriidcProperty(DeveloperLogFileNameProperty);
 		return Boolean.getBoolean(s);
 	}
 
-	public static Properties getEmailProperties()
-			throws PropertyNotFoundException {
+	public static Properties getEmailProperties() throws IniSectionNotFoundException, PropertyNotFoundException {
 
 		Properties props = new Properties();
 		props = new Properties();
@@ -369,7 +332,7 @@ public class RisToGriidcConfiguration {
 	 * /etc/griidc/notifications.ini file
 	 * 
 	 * @return
-	 * @throws PropertyNotFoundException
+
 	 */
 	public static String[] getRisErrorMsgLogRecipients() {
 		return getRecipients(RisErrorsType);
@@ -380,34 +343,24 @@ public class RisToGriidcConfiguration {
 		return getRecipients(PrimaryLogType);
 	}
 
-	private static String[] getRecipients(String type) {
-		Vector<String> addrs = new Vector<String>();
-		Ini ini = getNotificationsIniInstance();
-		Section section = ini.get(RisToGriidcNotificationsSection);
-		for (String emailAddr : section.keySet()) {
-			String types = section.get(emailAddr);
-			if (types.contains(type)) {
-				addrs.add(emailAddr);
-			}
-
-		}
-		String[] s = new String[addrs.size()];
-		return addrs.toArray(s);
+	private static String[] getRecipients(String messageType) {
+		return getNotificationsIniInstance().
+				getPropertiesWithinSectionThatContainValue(RisToGriidcNotificationsSection,messageType);
 	}
 
-	public static String getGriidcMailSender() throws PropertyNotFoundException {
+	public static String getGriidcMailSender() throws IniSectionNotFoundException, PropertyNotFoundException {
 		return RisToGriidcConfiguration
 				.getRisToGriiidcEmailIniProp(GriidcMailSender);
 	}
 
 	public static String getRisToGriiidcEmailIniProp(String property)
-			throws PropertyNotFoundException {
+			throws PropertyNotFoundException, IniSectionNotFoundException {
 		return RisToGriidcConfiguration.getRisToGriiidcIniProp(
-				RisToGriidcConfiguration.RisToGriidcEmailSection, property);
+				RisToGriidcConfiguration.EmailSectionName, property);
 	}
 
 	public static void main(String[] args) throws PropertyNotFoundException,
-			InvalidFileFormatException, IOException {
+			InvalidFileFormatException, IOException, IniSectionNotFoundException {
 
 		RisToGriidcConfiguration.setDebug(true);
 		String[] addrs = RisToGriidcConfiguration.getPrimaryMsgLogRecipients();
@@ -447,6 +400,29 @@ public class RisToGriidcConfiguration {
 
 		System.out.println("\nisFuzzyPostalCodeTrue - "
 				+ RisToGriidcConfiguration.isFuzzyPostalCodeTrue());
+		
+		
+		String dbIniSectionName = RisDbIniSectionName;
+		String risToGriidcSectionName = RisDbSectionName;
+		System.out.println("\nDB Ini Section Name: " + dbIniSectionName + ", risToGriidcSectionName: " + risToGriidcSectionName);
+		String rdbmsType = RisToGriidcConfiguration.getDbIniProp(dbIniSectionName,"type");
+		String rdbmsJdbcDriverName = RisToGriidcConfiguration.getDbIniProp(dbIniSectionName,"driverName");
+		String rdbmsJdbcPrefix = RisToGriidcConfiguration.getRisToGriiidcIniProp(dbIniSectionName,"jdbcPrefix");
+		String rdbmsHost = RisToGriidcConfiguration.getDbIniProp(dbIniSectionName,"host");
+		String rdbmsPort = RisToGriidcConfiguration.getDbIniProp(dbIniSectionName,"port");
+		String rdbmsName = RisToGriidcConfiguration.getDbIniProp(dbIniSectionName,"dbname");
+		//String rdbmsSchemaName = RisToGriidcConfiguration.getRisToGriiidcIniProp(dbIniSectionName,"schema");
+		String rdbmsUser = RisToGriidcConfiguration.getDbIniProp(dbIniSectionName,"username");
+		String rdbmsPassword = RisToGriidcConfiguration.getDbIniProp(dbIniSectionName,"password");
+		String rdbmsUrl = "joe.com";
+		
+		System.out.println("\nRdbmsConnection [rdbmsType=" + rdbmsType + ", rdbmsHost="
+		+ rdbmsHost + ", rdbmsPort=" + rdbmsPort + ", rdbmsUrl="
+		+ rdbmsUrl + ", rdbmsUser=" + rdbmsUser + ", rdbmsPassword="
+		+ rdbmsPassword + ", rdbmsName=" + rdbmsName
+		// + ", rdbmsSchemaName=" + rdbmsSchemaName
+		+ ", rdbmsJdbcDriverName=" + rdbmsJdbcDriverName
+		+ ", rdbmsJdbcPrefix=" + rdbmsJdbcPrefix + "]");
 
 	}
 }

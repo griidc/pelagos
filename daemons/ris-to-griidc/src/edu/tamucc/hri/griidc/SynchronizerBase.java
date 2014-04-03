@@ -35,6 +35,8 @@ abstract public class SynchronizerBase {
 	abstract protected void initialize();
 	
 	public void commonInitialize()  {
+		
+		String rdbmsDescription = null;
 		String cName = this.getClass().getName();
 		if (!baseInitialized) {
 			try {
@@ -48,6 +50,13 @@ abstract public class SynchronizerBase {
 			}
 			try {
 				this.risDbConnection = RdbmsUtils.getRisDbConnectionInstance();
+			} catch (SQLException e) {
+				System.err.println("SQLException in class: " + cName + " function: commonInitialize()");
+				System.err.println("exception: " + e.getMessage());
+				System.exit(-1);
+			}
+			
+			try {
 				this.griidcDbConnection = RdbmsUtils
 						.getGriidcDbConnectionInstance();
 			} catch (SQLException e) {
