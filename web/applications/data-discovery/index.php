@@ -1,5 +1,4 @@
 <?php
-
 # Framework (model/view)
 require_once '/usr/local/share/Slim/Slim/Slim.php';
 # templating engine - views
@@ -80,7 +79,8 @@ $app->get('/css/:name.css', function ($name) use ($app) {
 $app->get('/', function () use ($app) {
     drupal_add_js('/includes/openlayers/lib/OpenLayers.js',array('type'=>'external'));
     drupal_add_js('//maps.google.com/maps/api/js?v=3&sensor=false',array('type'=>'external'));
-    drupal_add_js('/includes/geoviz/geoviz.js',array('type'=>'external'));
+    #drupal_add_js('/includes/geoviz/geoviz.js',array('type'=>'external'));
+    drupal_add_js('includes/js/geoviz.js',array('type'=>'external'));
     $stash=index($app);
     # for now, only do this for guestAuthUser people, GoMRI auto-download is handled elsewhere.
     if( (isset($_COOKIE['dl_attempt_udi_cookie'])) and (isset($_SESSION['guestAuthUser'])) ) {
@@ -546,6 +546,14 @@ $app->get('/download/:udi', function ($udi) use ($app) {
         }
         mkdir("/sftp/download/$uid/");
         symlink($dat_file,"/sftp/download/$uid/$dataset[dataset_filename]");
+        # remove any existing potential stale hardlink with the same name.
+        # WARNING: (limitation) If files requested by have the same name, the last one wins
+        # because there is no requirement for uniqueness of user-named files.  We are
+        # serving back the file with the name it was uploaded with.
+        if(file_exists("/sftp/data/GridFTP/$user->name/$dataset[dataset_filename]")) {
+            unlink("/sftp/data/GridFTP/$user->name/$dataset[dataset_filename]");
+        }
+        link($dat_file,"/sftp/data/GridFTP/$user->name/$dataset[dataset_filename]");
         $stash = array();
         $stash['server'] = $env['SERVER_NAME'];
         $stash['uid'] = $uid;

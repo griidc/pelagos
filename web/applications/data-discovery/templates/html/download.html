@@ -55,7 +55,8 @@
 
     <p><strong>Size:</strong> {{filesize}}</p>
 
-    <p style="margin-bottom:0"><strong>Estimated Download Time:</strong> <span id="dl_time">calculating...</span></p>
+    <p><strong>Estimated Download Time:</strong> <span id="dl_time">calculating...</span></p>
+    <p style="margin-bottom:0"><strong>GridFTP (for GoMRI Users): </strong>This file has been made available on the gomri#griidc endpoint.  Non-GoMRI users (and public users) please contact us if you wish to download this file via GridFTP and we will set up a temporary account for access.</p>
 </div>
 
 <div style="border: 1px solid #aaa; padding: 10px; margin-top: 20px; border-radius: 4px;">
@@ -64,7 +65,7 @@
     </p>
     <div style="text-align:center;">
         <p>
-            By clicking "Agree &amp; Download Now" you agree to the above disclaimer.
+            By clicking "Agree &amp; Download Now" or by using a GoMRI GridFTP endpoint, you agree to the above disclaimer.
         </p>
         <p style="margin-bottom:0">
             <button onclick="location.href='http://{{server}}/download/{{uid}}/{{dataset.dataset_filename}}';jQuery('#dataset_download').hide();" style="font-weight:bold;margin:10px;">Agree &amp; Download Now</button>
