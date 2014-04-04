@@ -681,14 +681,23 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
             $parent = $node->appendChild($parent);
             
             $arrkeywords = preg_split("/\;/",$fieldvalue);
-            
-            foreach ($arrkeywords as $myKeywords)
-            {
-                $mdkwrd = $doc->createElement('gmd:keyword');
+			
+			if ($fieldvalue == "")
+			{
+				$mdkwrd = $doc->createElement('gmd:keyword');
                 $mdkwrd = $parent->appendChild($mdkwrd);
-                $addnode = addXMLChildValue($doc,$mdkwrd,"gco:CharacterString",$myKeywords);
-            }
-            
+                $mdkwrd->setAttribute('nilReason','inapplicable');
+			}
+            else
+			{
+				foreach ($arrkeywords as $myKeywords)
+				{
+					$mdkwrd = $doc->createElement('gmd:keyword');
+					$mdkwrd = $parent->appendChild($mdkwrd);
+					$addnode = addXMLChildValue($doc,$mdkwrd,"gco:CharacterString",$myKeywords);
+				}
+			}
+			
             $tpkwrd = $doc->createElement('gmd:type');
             $tpkwrd = $parent->appendChild($tpkwrd);
             

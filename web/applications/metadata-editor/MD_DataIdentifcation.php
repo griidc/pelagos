@@ -24,8 +24,8 @@ class MD_DataIdentification
 			
 		//${'mykwtheme'.$instanceName} = new MD_Keywords($mMD, $instanceType.'-gmd:descriptiveKeywords!theme', $instanceName.'Theme','theme');
 		//${'mykwplace'.$instanceName} = new MD_Keywords($mMD, $instanceType.'-gmd:descriptiveKeywords!place', $instanceName.'Place','place');
-		${'mykwtheme'.$instanceName} = new MD_Keywords($mMD, $instanceType, $instanceName.'Theme','theme');
-		${'mykwplace'.$instanceName} = new MD_Keywords($mMD, $instanceType, $instanceName.'Place','place');
+		${'mykwtheme'.$instanceName} = new MD_Keywords($mMD, $instanceType, $instanceName.'Theme','theme',true);
+		${'mykwplace'.$instanceName} = new MD_Keywords($mMD, $instanceType, $instanceName.'Place','place',false);
 		
 		$ThemeKeywords = ${'mykwtheme'.$instanceName}->getHTML();
 		$PlaceKeywords = ${'mykwplace'.$instanceName}->getHTML();

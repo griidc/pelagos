@@ -10,8 +10,8 @@
 <button style="width:60px;" type="button" size="10" onclick="javascript:removeitem{{instanceName}}();">remove</button>
 </td>
 <td>
-	<label><em>*</em>{{instanceVars["name"]}}</label>
-	<select class="required" name="__kwlist{{instanceName}}" size="5" id="kwlist{{instanceName}}">
+	<label>{% if required == true %}<em>*</em>{% endif %}{{instanceVars["name"]}}</label>
+	<select {% if required == true %}required{% endif %} name="__kwlist{{instanceName}}" size="5" id="kwlist{{instanceName}}">
 	{% for keyword in keyWordList %}
 		<option selected value="{{keyword}}">{{keyword}}</option>
 	{% endfor %}

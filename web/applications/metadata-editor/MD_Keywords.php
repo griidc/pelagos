@@ -4,7 +4,7 @@ class MD_Keywords
 {
 	private $htmlString;
 	
-	public function __construct($mMD, $instanceType, $instanceName, $type='default')
+	public function __construct($mMD, $instanceType, $instanceName, $type='default',$required=true)
 	{
 		$myIni = $mMD->loadINI('MD_Keywords.ini');
 		
@@ -40,7 +40,7 @@ class MD_Keywords
 		
 		//$instanceType .= '-gmd:MD_Keywords';
 		
-		$this->htmlString .= $mMD->twig->render('html/MD_Keywords.html', array('instanceName' => $instanceName, 'instanceType' => $instanceType, 'type' => $type,'skwlist' => $skwlist, 'keyWordList' => $keyWordList, 'instanceVars' => $instanceVars));
+		$this->htmlString .= $mMD->twig->render('html/MD_Keywords.html', array('instanceName' => $instanceName, 'instanceType' => $instanceType, 'type' => $type,'skwlist' => $skwlist, 'keyWordList' => $keyWordList, 'instanceVars' => $instanceVars, 'required' => $required));
 		
 		$mMD->jsString .= $mMD->twig->render('js/MD_Keywords.js', array('instanceName' => $instanceName));
 	}
