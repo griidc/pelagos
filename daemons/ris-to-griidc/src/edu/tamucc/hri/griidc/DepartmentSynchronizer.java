@@ -218,7 +218,6 @@ public class DepartmentSynchronizer extends SynchronizerBase {
 				 * if the data in RIS is unusable - skip this record - go to the
 				 * next record *
 				 */
-				/**                                                            **/
 				tempDeliveryPoint = MiscUtils.makeDeliveryPoint(
 						this.risDeptAddr1, this.risDeptAddr2);
 				int count = readGriidcDepartmentRecords();
@@ -394,7 +393,6 @@ public class DepartmentSynchronizer extends SynchronizerBase {
 				this.griidcDeptDeliveryPoint, this.griidcDeptName,
 				this.griidcDeptUrl)) {
 			this.griidcRecordDuplicates++;
-			return;
 		} else {
 			if (DepartmentSynchronizer.isDebug()) {
 				msg = "Modify GRIIDC Department table matching "
@@ -414,7 +412,6 @@ public class DepartmentSynchronizer extends SynchronizerBase {
 
 				if (DepartmentSynchronizer.isDebug()) System.out.println("Query: " + modifyQuery);
 				this.griidcDbConnection.executeQueryBoolean(modifyQuery);
-				this.griidcRecordsModified++;
 
 				msg = "Modified GRIIDC Department: "
 						+ griidcDepartmentToString(this.risDeptId,
@@ -423,7 +420,7 @@ public class DepartmentSynchronizer extends SynchronizerBase {
 								risDeptURL, risDeptLong, risDeptLat);
 				MiscUtils.writeToPrimaryLogFile(msg);
 				if (DepartmentSynchronizer.isDebug()) System.out.println(msg);
-				return;
+				this.griidcRecordsModified++;
 			} catch (SQLException e) {
 				System.err
 						.println("SQL Error: Modify Department in GRIIDC - Query: "
@@ -538,25 +535,16 @@ public class DepartmentSynchronizer extends SynchronizerBase {
 																// gLat)
 
 		String dformat = "%n%10d %10d %10d %30s %30s %50s";
-		boolean rtnStatus = false;
+		
 
-		if (rNumber == gNumber && rInstNumber == gInstNumber
-				&& rPostalAreaNumber == gPostalAreaNumber
-				&& rName.equals(gName) && rDeliveryPoint.equals(gDeliveryPoint)
-				&& rUrl.equals(gUrl)) {
-			rtnStatus = true;
-		} else {
-			rtnStatus = false;
-		}
-		if (DepartmentSynchronizer.isDebug()) {
-			System.out.println("Compare RIS record to GRIIDC department");
-			System.out.printf(dformat, rNumber, rInstNumber, rPostalAreaNumber,
-					rDeliveryPoint, rName, rUrl);
-			System.out.printf(dformat, gNumber, gInstNumber, gPostalAreaNumber,
-					gDeliveryPoint, gName, gUrl);
-			System.out.println("\nreturning " + rtnStatus + "\n");
-		}
-		return rtnStatus;
+		if (!(rNumber == gNumber)) return false;
+		if(!(rInstNumber == gInstNumber)) return false;
+		if(!(rName.equals(gName))) return false;
+		if(!(rDeliveryPoint.equals(gDeliveryPoint))) return false;
+		if(!(rPostalAreaNumber == gPostalAreaNumber)) return false;
+		if(!(rUrl.equals(gUrl))) return false;
+		return true;
+		
 	}
 
 	public String getPrimaryLogFileName() throws PropertyNotFoundException,
