@@ -4,56 +4,39 @@
 
 class CI_RoleCode
 {
+	private $htmlString;
 	
-	public function __construct($instanceName)
+	private $RoleCodes =
+	array (
+		"" => "[Please Select a Role]",
+		"resourceProvider" => "Resource Provider",
+		"custodian" => "Custodian",
+		"owner" => "Owner",
+		"distributor" => "Distributor",
+		"originator" => "Originator",
+		"pointOfContact" => "Point of Contact",
+		"principalInvestigator" => "Principal Investigator",
+		"processor" => "Processor",
+		"publisher" => "Publisher",
+		"author" => "Author",
+	);
+	
+	public function __construct($mMD, $instanceType, $instanceName, $selrole = "", $disabledCtrl)
 	{
-		echo '<fieldset>';
-		echo '<legend>Role_'.$instanceName.'</legend>';
+		$xmlArray = $mMD->returnPath($instanceType);
 		
-		echo '<label for="gmd:role_'.$instanceName.'">role</label>';
-		echo '<select name="gmd:role_'.$instanceName.'" xmlclass="gmd:role" xmltype="<gmd:CI_RoleCode>"</select>';
-		echo '<option>CI_RoleCode_resourceProvider</option>';
-		echo '<option>CI_RoleCode_custodian</option>';
-		echo '<option>CI_RoleCode_owner</option>';
-		echo '<option>CI_RoleCode_user</option>';
-		echo '<option>CI_RoleCode_distributor</option>';
-		echo '<option>CI_RoleCode_originator</option>';
-		echo '<option>CI_RoleCode_pointOfContact</option>';
-		echo '<option selected>CI_RoleCode_principalInvestigator</option>';
-		echo '<option>CI_RoleCode_processor</option>';
-		echo '<option>CI_RoleCode_publisher</option>';
-		echo '<option>CI_RoleCode_author</option>';
-		echo '</select>';
+		$twigArr = array('instanceName' => $instanceName, 'instanceType' => $instanceType,'RoleCodes' => $this-> RoleCodes, 'selrole' => $selrole, 'disabledCtrl' => $disabledCtrl);
 		
-		echo '</fieldset>';
+		$this->htmlString .= $mMD->twig->render('html/CI_RoleCode.html', $twigArr);
+		
+		return true;
+	}
+	
+	public function getHTML()
+	{
+		return $this->htmlString;
 	}
 	
 }
 
-
-		
-		/*		
-	<fieldset>
-	<legend>Role</legend>
-	
-		<label for="gmd:role">role</label>
-		<select name="gmd:role" xmltype="<gmd:CI_RoleCode>"</select>
-			<option>CI_RoleCode_resourceProvider</option>
-			<option>CI_RoleCode_custodian</option>
-			<option>CI_RoleCode_owner</option>
-			<option>CI_RoleCode_user</option>
-			<option>CI_RoleCode_distributor</option>
-			<option>CI_RoleCode_originator</option>
-			<option>CI_RoleCode_pointOfContact</option>
-			<option selected>CI_RoleCode_principalInvestigator</option>
-			<option>CI_RoleCode_processor</option>
-			<option>CI_RoleCode_publisher</option>
-			<option>CI_RoleCode_author</option>
-		</select>
-		
-		
-
-	
-	</fieldset>
-	*/
 ?>	

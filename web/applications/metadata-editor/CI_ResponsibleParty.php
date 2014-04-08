@@ -6,13 +6,13 @@ class CI_ResponsibleParty
 {
 	private $htmlString;
 	
-	public function __construct($mMD, $instanceType, $instanceName, $online=false, $role='', $Legend='Responsible Party', $poc='Individual Name')
+	public function __construct($mMD, $instanceType, $instanceName, $online=false, $role='', $Legend='Responsible Party', $poc='Individual Name', $disabledCtrl = false)
 	{
 		
 		$xmlArray = $mMD->returnPath($instanceType);
 	
 		$instanceType .= "-gmd:CI_ResponsibleParty";
-		
+	
 		$contactArray = null;
 		
 		if (is_array($xmlArray))
@@ -23,13 +23,23 @@ class CI_ResponsibleParty
 			}
 		}
 		
+		$selrole = $xmlArray[0]["gmd:role"]["gmd:CI_RoleCode"]["@content"];
+		
+		if ($selrole == null)
+		{
+			$selrole = $role;
+		}
+		
 		$mycontact = new CI_Contact($mMD, $instanceType.'-gmd:contactInfo', $instanceName, $contactArray, $online);
 		$Contact = $mycontact->getHTML();
 		//$myrolecode = new CI_RoleCode($instanceName.'-ROLE');
 		
 		//$mMD->validateRules .= $mMD->twig->render('js/CI_ResponsibleParty_Rules.js', array('instanceName' => $instanceName));
 		
-		$twigArr = array('instanceName' => $instanceName,'instanceType' => $instanceType,'role' => $role,'Contact' => $Contact,'poc' => $poc, 'Legend' => $Legend,'xmlArray' => $xmlArray[0]);
+		$myrolecode = new CI_RoleCode($mMD, $instanceType.'-gmd:role', $instanceName, $selrole, $disabledCtrl);
+		$Roles = $myrolecode->getHTML();
+		
+		$twigArr = array('instanceName' => $instanceName,'instanceType' => $instanceType,'Roles' => $Roles,'Contact' => $Contact, 'selrole' => $selrole, 'role' => $role,'poc' => $poc, 'Legend' => $Legend,'xmlArray' => $xmlArray[0]);
 		
 		if ($role == "distributor")
 		{

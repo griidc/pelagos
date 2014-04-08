@@ -13,7 +13,7 @@ class MD_Distributor
 		
 		$instanceType .= "-gmd:MD_Distributor!$instanceName";
 		
-		$mydistrp = new CI_ResponsibleParty($mMD,$instanceType.'-gmd:distributorContact','contactDist',true,'distributor','Distribution Contact');
+		$mydistrp = new CI_ResponsibleParty($mMD,$instanceType.'-gmd:distributorContact','contactDist',true,'distributor','Distribution Contact','Individual Name',true);
 				
 		$ResponsibleParty = $mydistrp->getHTML();
 		

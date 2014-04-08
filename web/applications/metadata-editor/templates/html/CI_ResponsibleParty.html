@@ -43,9 +43,11 @@
 </tr>
 {% endif %}
 
+{{Roles}}
+
 {{Contact}}
 
-<input class="required" type="hidden" id="CRIP4_{{instanceName}}" size="80" name="{{instanceType}}-gmd:role-gmd:CI_RoleCode" value="{{role}}"/></td>
+<input class="required" type="hidden" id="CRIP4_{{instanceName}}" size="80" name="{{instanceType}}-gmd:role-gmd:CI_RoleCode" value="{{selrole}}"/>
 
 </table>
 </fieldset>
