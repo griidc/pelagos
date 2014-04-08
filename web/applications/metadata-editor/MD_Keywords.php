@@ -26,7 +26,10 @@ class MD_Keywords
 					{
 						if (is_array($keyWords))
 						{
-							$keyWordList[] = $keyWords["gco:CharacterString"];
+							if (isset($keyWords["gco:CharacterString"]))
+							{
+								$keyWordList[] = $keyWords["gco:CharacterString"];
+							}
 						}
 						else
 						{
