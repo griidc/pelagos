@@ -2,10 +2,13 @@
 
 require_once '/usr/local/share/Slim/Slim/Slim.php';
 require_once '/usr/local/share/Slim-Extras/Views/TwigView.php';
+require_once("/usr/local/share/GRIIDC/php/db-utils.lib.php");
 
 require_once 'lib/constants.php';
 require_once 'lib/account.php';
 require_once 'config.php';
+
+$GLOBALS['DB'] = parse_ini_file('/etc/griidc/db.ini',true);
 
 $GLOBALS['LDAP'] = ldap_connect('ldap://'.LDAP_HOST);
 
@@ -57,7 +60,118 @@ $GLOBALS['AUTH_FOR_ROLE'] = function ($role = 'user') use ($app) {
 };
 
 $app->get('/', function () use ($app) {
-    return $app->render('index.html');
+    global $user;
+    $env = $app->environment();
+    drupal_add_css("$env[SCRIPT_NAME]/includes/css/index.css",'external');
+    if ($user->name) {
+        $uid = $user->name;
+        $stash['username'] = $uid;
+
+        if ($GLOBALS['AUTH_FOR_ROLE']('admin')) {
+            if ($app->request()->get('as_user')) {
+                $uid = $app->request()->get('as_user');
+
+                if (preg_match('/^\d+$/',$uid)) {
+                    $ris_id = $uid;
+                    $result = ldap_search($GLOBALS['LDAP'], "ou=people,dc=griidc,dc=org", "(employeeNumber=$uid)", array('uid'));
+                    $entries = ldap_get_entries($GLOBALS['LDAP'], $result);
+                    if ($entries['count'] and array_key_exists('uid',$entries[0])) {
+                        $uid = $entries[0]['uid'][0];
+                        $stash['effective_user'] = $uid;
+                    }
+                    else {
+                        $stash['effective_user'] = '<no GRIIDC account>';
+                    }
+                }
+                else {
+                    $stash['effective_user'] = $uid;
+                }
+
+            }
+        }
+
+        if (!isset($ris_id)) {
+            $result = ldap_search($GLOBALS['LDAP'], "ou=people,dc=griidc,dc=org", "(uid=$uid)", array('employeeNumber'));
+            $entries = ldap_get_entries($GLOBALS['LDAP'], $result);
+            if ($entries['count'] and array_key_exists('employeenumber',$entries[0])) {
+                $ris_id = $entries[0]['employeenumber'][0];
+            }
+        }
+
+        if (isset($ris_id)) {
+            $stash['ris_id'] = $ris_id;
+            $ris_dbh = OpenDB('RIS_RO');
+
+            $ris_sth = $ris_dbh->prepare('SELECT People_Firstname AS first_name, People_Lastname AS last_name
+                                          FROM People
+                                          WHERE People.People_ID = ?');
+            $ris_sth->execute(array($ris_id));
+            $stash['person'] = $ris_sth->fetch();
+
+            $ris_sth = $ris_dbh->prepare('SELECT DISTINCT FundingSource.Fund_Name AS name, FundingSource.Fund_ID AS ID, FundingSource.Fund_sort AS sort
+                                          FROM FundingSource
+                                          JOIN Programs
+                                              ON Programs.Program_FundSrc = FundingSource.Fund_ID
+                                          JOIN ProjPeople
+                                              ON Programs.Program_ID = ProjPeople.Program_ID
+                                          WHERE ProjPeople.People_ID = ?
+                                          ORDER BY sort DESC');
+            $ris_sth->execute(array($ris_id));
+            $funds = $ris_sth->fetchAll();
+
+            for ($f=0; $f<count($funds); $f++) {
+
+                $ris_sth = $ris_dbh->prepare('SELECT DISTINCT Program_Title AS title, Programs.Program_ID AS ID
+                                              FROM Programs
+                                              JOIN ProjPeople
+                                                  ON Programs.Program_ID = ProjPeople.Program_ID
+                                              WHERE Programs.Program_FundSrc = ? AND
+                                                  ProjPeople.People_ID = ?
+                                              ORDER BY title');
+                $ris_sth->execute(array($funds[$f]['ID'],$ris_id));
+                $funds[$f]['projects'] = $ris_sth->fetchAll();
+
+                for ($i=0; $i<count($funds[$f]['projects']); $i++) {
+
+                    $ris_sth = $ris_dbh->prepare('SELECT DISTINCT Role_Name AS name, Roles.Role_ID AS ID
+                                                  FROM Roles
+                                                  JOIN ProjPeople
+                                                      ON Roles.Role_ID = ProjPeople.Role_ID
+                                                  WHERE ProjPeople.People_ID = ? AND
+                                                        ProjPeople.Program_ID = ? AND
+                                                        ProjPeople.Project_ID = 0
+                                                  ORDER BY name');
+                    $ris_sth->execute(array($ris_id,$funds[$f]['projects'][$i]['ID']));
+                    $funds[$f]['projects'][$i]['roles'] = $ris_sth->fetchAll();
+
+                    $ris_sth = $ris_dbh->prepare('SELECT DISTINCT Project_Title AS title, Projects.Project_ID AS ID, Project_SubTaskNum AS num
+                                                  FROM Projects
+                                                  JOIN ProjPeople
+                                                      ON Projects.Project_ID = ProjPeople.Project_ID
+                                                  WHERE ProjPeople.People_ID = ? AND
+                                                        ProjPeople.Program_ID = ?
+                                                  ORDER BY num');
+                    $ris_sth->execute(array($ris_id,$funds[$f]['projects'][$i]['ID']));
+                    $funds[$f]['projects'][$i]['tasks'] = $ris_sth->fetchAll();
+                    for ($j=0; $j<count($funds[$f]['projects'][$i]['tasks']); $j++) {
+                        $ris_sth = $ris_dbh->prepare('SELECT DISTINCT Role_Name as name, Roles.Role_ID AS ID
+                                                      FROM Roles
+                                                      JOIN ProjPeople
+                                                          ON Roles.Role_ID = ProjPeople.Role_ID
+                                                      WHERE ProjPeople.People_ID = ? AND
+                                                            ProjPeople.Program_ID = ? AND
+                                                            ProjPeople.Project_ID = ?
+                                                      ORDER BY name');
+                        $ris_sth->execute(array($ris_id,$funds[$f]['projects'][$i]['ID'],$funds[$f]['projects'][$i]['tasks'][$j]['ID']));
+                        $funds[$f]['projects'][$i]['tasks'][$j]['roles'] = $ris_sth->fetchAll();
+                    }
+                }
+            }
+            $stash['funds'] = $funds;
+        }
+
+    }
+    return $app->render('index.html',$stash);
 });
 
 $app->get('/new', function () use ($app) {
