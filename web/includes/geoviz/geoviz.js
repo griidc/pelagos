@@ -370,7 +370,7 @@ function GeoViz()
 						
 					jQuery(mapDiv).trigger('imready',mapDiv);
 				}
-				, 100)
+				, 300)
 			};
 		});
 				
