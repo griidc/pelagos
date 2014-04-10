@@ -18,7 +18,7 @@ class CI_RoleCode
 		"principalInvestigator" => "Principal Investigator",
 		"processor" => "Processor",
 		"publisher" => "Publisher",
-		"author" => "Author",
+		"author" => "Author"
 	);
 	
 	public function __construct($mMD, $instanceType, $instanceName, $selrole = "", $disabledCtrl)
