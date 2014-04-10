@@ -5,7 +5,7 @@ function getURLbyUDI()
 
 	if (udival != "")
 	{
-		location.href = "/metadata-editor/?dataUrl=http://" + location.hostname + "/metadata-generator/" + udival;
+		location.href = "/metadata-editor/?dataUrl=http://" + location.hostname + "/metadata-generator/" + udival.substring(0,16);;
 	}
 
 }
