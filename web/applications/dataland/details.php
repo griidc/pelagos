@@ -119,7 +119,7 @@ if ($udi <> '')
 		}
 		else
 		{
-			$dsscript = "dlmap.addImage('$_SERVER[SCRIPT_NAME]/includes/images/labonly.png',0.4);makeStatic();";
+			$dsscript = "dlmap.addImage('$_SERVER[SCRIPT_NAME]/includes/images/labonly.png',0.4);dlmap.makeStatic();";
 		}
 	}
 	else
@@ -138,6 +138,8 @@ if ($udi <> '')
 	//$mconn = pdoDBConnect($dbconnstr);
 
 	$mquery = "
+	SET character_set_client = utf8;
+	SET character_set_results = utf8;
 	SELECT * FROM Projects
 	JOIN Programs ON Projects.Program_ID = Programs.Program_ID
 	LEFT OUTER JOIN FundingSource ON  FundingSource.Fund_ID = Programs.Program_FundSrc
