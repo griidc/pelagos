@@ -6,11 +6,19 @@ class CI_Date
 {
 	private $htmlString;
 	
+	private $dateTypes =
+	array (
+		"" => "[Please Date Type]",
+		"creation" => "Creation",
+		"publication" => "Publication",
+		"revision" => "Revision"
+	);
+	
 	public function __construct($mMD, $instanceType,$instanceName,$xmlArray, $dateType)
 	{
 		$instanceType .= "-gmd:CI_Date!$instanceName".'newdate';
 		
-		$twigArr = array('instanceName' => $instanceName, 'instanceType' => $instanceType,'dateType' => $dateType, 'xmlArray' => $xmlArray["gmd:CI_Date"]);
+		$twigArr = array('instanceName' => $instanceName, 'instanceType' => $instanceType,'dateType' => $dateType, 'xmlArray' => $xmlArray["gmd:CI_Date"], 'dateTypes' => $this->dateTypes);
 
 		$this->htmlString .= $mMD->twig->render('html/CI_Date.html', $twigArr);
 		
