@@ -1,6 +1,5 @@
 function GeoViz()
 {
-	
 	//var mxml = new OpenLayers.Format.XML();
 	//var gml = new OpenLayers.Format.GML();
 	var map,modify,vlayer,google_hybrid,flayer;
@@ -64,14 +63,14 @@ function GeoViz()
 				{
 					e.feature.renderIntent = "select";
 					e.feature.layer.drawFeature(e.feature);
-					////console.log("Map says: " + e.feature.id + " mouse over " + e.feature.layer.name);
+					//console.log("Map says: " + e.feature.id + " mouse over " + e.feature.layer.name);
 					jQuery(mapDiv).trigger('overFeature',{"featureID":e.feature.id,"attributes":e.feature.attributes});
 				},
 				featureout: function(e) 
 				{
 					e.feature.renderIntent = "default";
 					e.feature.layer.drawFeature(e.feature);
-					////console.log("Map says: " + e.feature.id + " mouse out " + e.feature.layer.name);
+					//console.log("Map says: " + e.feature.id + " mouse out " + e.feature.layer.name);
 					jQuery(mapDiv).trigger('outFeature',{"featureID":e.feature.id,"attributes":e.feature.attributes});
 				},
 				featureclick: function(e) 
@@ -212,7 +211,7 @@ function GeoViz()
 		
 		map.events.register("click", map , function(e){
 			var vpxy = map.getLayerPxFromViewPortPx(e.xy) ;
-			console.debug('clicked on'+vpxy);
+			//console.debug('clicked on'+vpxy);
 			jQuery(mapDiv).trigger('mapClick',vpxy);
 		});
 		
@@ -282,7 +281,7 @@ function GeoViz()
 		});
 		
 		map.events.register('preaddlayer', map, function () {
-			////console.log('Adding something?');
+			//console.log('Adding something?');
 		});
 		
 		checkAllowModify(false);
@@ -293,7 +292,7 @@ function GeoViz()
 		
 		vlayer.events.on({
 			'beforefeaturemodified': function(event) {
-				////console.log("Selected " + event.feature.id  + " for modification");
+				//console.log("Selected " + event.feature.id  + " for modification");
 				jQuery("#eraseTool").button("enable");
 				if (typeof event.feature == 'object')
 				{
@@ -303,7 +302,7 @@ function GeoViz()
 				jQuery(mapDiv).trigger('modeChange','Modify');
 			},
 			'afterfeaturemodified': function(event) {
-				////console.log("Finished with " + event.feature.id);
+				//console.log("Finished with " + event.feature.id);
 				jQuery("#eraseTool").button("disable");
 				checkOnlyOnePolygon();
 				if (typeof event.feature == 'object')
@@ -367,6 +366,7 @@ function GeoViz()
 					map.removeLayer(google_hybrid);
 					map.updateSize();
 					map.addLayer(google_hybrid);
+					map.updateSize();
 						
 					jQuery(mapDiv).trigger('imready',mapDiv);
 				}
@@ -375,7 +375,7 @@ function GeoViz()
 		});
 				
 		map.setCenter(new OpenLayers.LonLat(lon, lat).transform('EPSG:4326', 'EPSG:900913'), zoom, true, true);
-		map.render(DIV);
+		//map.render(DIV);
 		
 		//Add map selector for highlighting
 		mapOptions.allowModify
@@ -388,12 +388,11 @@ function GeoViz()
 	
 	this.flashMap = function ()
 	{
-		
 		setTimeout( function() { 
 			map.removeLayer(google_hybrid);
 			map.updateSize();
 			map.addLayer(google_hybrid);
-			
+			map.updateSize();
 		}
 		, 100)
 		
@@ -406,12 +405,12 @@ function GeoViz()
 			if (handlerType == key) 
 			{
 				//control.activate();
+				this.drawMode = handlerType;
 				drawMode = handlerType;
 				control.deactivate();
 			} 
 			else 
 			{
-				
 				control.deactivate();
 			}
 		}
@@ -425,10 +424,12 @@ function GeoViz()
 	this.makeStatic = function ()
 	{
 		Controls = map.getControlsByClass('OpenLayers.Control.Navigation');
-		Controls[0].destroy();
+		if (Controls.length > 0)
+		{Controls[0].destroy();}
 		
 		Controls = map.getControlsByClass('OpenLayers.Control.Zoom');
-		Controls[0].destroy();
+		if (Controls.length > 0)
+		{Controls[0].destroy();}
 	}
 	
 	this.showTerrainMap = function ()
@@ -461,7 +462,6 @@ function GeoViz()
 	
 	this.addImage = function (Img,Opacity)
 	{
-		console.log(map.getMaxExtent());
 		var graphic = new OpenLayers.Layer.Image(
 		'Image',
 		Img,
@@ -831,7 +831,6 @@ function GeoViz()
 			tFeature.geometry.transform(map.getProjectionObject(),'EPSG:4326');
 		}
 		return tLayer;
-		
 	}
 	
 	this.unhighlightAll = function ()
@@ -882,32 +881,32 @@ function GeoViz()
 		
 		if ((LatLong == pointList.length))
 		{
-			console.log('For Sure Lat:Long');
+			//console.log('For Sure Lat:Long');
 			return orderEnum.LATLONG;
 		}
 		else if ((LongLat == pointList.length))
 		{
-			console.log('For Sure Long:Lat');
+			//console.log('For Sure Long:Lat');
 			return orderEnum.LONGLAT;
 		}
 		else if (LongLat > 0 && LatLong > 0)
 		{
-			console.log('Unknown Mixed');
+			//console.log('Unknown Mixed');
 			return orderEnum.MIXED;
 		}
 		else if ((LatLong / pointList.length) > (LongLat / pointList.length))
 		{
-			console.log('Most Likely Lat:Long');
+			//console.log('Most Likely Lat:Long');
 			return orderEnum.LATLONGML;
 		}
 		else if ((LatLong / pointList.length) < (LongLat / pointList.length))
 		{
-			console.log('Most Likely Long:Lat');
+			//console.log('Most Likely Long:Lat');
 			return orderEnum.LONGLATML;
 		}
 		else if (LongLat == 0 && LatLong == 0)
 		{
-			console.log('Really Unknown');
+			//console.log('Really Unknown');
 			return orderEnum.UNKNOWN;
 		}
 	}
@@ -982,7 +981,7 @@ function GeoViz()
 				// {
 					// msgTxt = 'Suspected tuple in set '+(i+1);
 					// msg.push(msgTxt);
-					// console.log(msgTxt);
+					// //console.log(msgTxt);
 				// }
 			}
 			
@@ -998,7 +997,7 @@ function GeoViz()
 			//console.log(msg);
 		}
 		
-		console.debug(msg);
+		//console.debug(msg);
 		return msg;
 	}
 	
@@ -1059,7 +1058,7 @@ function GeoViz()
 		if (checkMsg != 'OK')
 		{
 			jQuery(mapDiv).trigger('coordinateError',checkMsg);
-			console.debug(checkMsg);
+			//console.debug(checkMsg);
 		}
 		else
 		{
