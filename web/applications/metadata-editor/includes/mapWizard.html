@@ -171,25 +171,7 @@
 		
 		$("#geoWizard").dialog( "option", "title", "Spatial Extent Wizard - 3" );
 		
-		if ($('#BPL1_DataIdent').val() != "" && !featureSend)
-		{
-			//addFeatureFromcoordinateList($('#BPL1_DataIdent').val());
-			
-			wizGeoViz.gmlToWKT($('#BPL1_DataIdent').val());
-			
-			$('#olmap').on('gmlConverted', function(e, eventObj) {
-				var addedFeature = wizGeoViz.addFeatureFromWKT(eventObj);
-				$('#coordlist').val(wizGeoViz.getCoordinateList(addedFeature.id));
-			});
-			
-			console.log('Initial Pop');
-			featureSend = true;
-			
-		}
-		else if ($('#BPL1_DataIdent').val() == "")
-		{
-			$("#helpinfo").dialog('open');
-		}
+		
 	}
 	
 	function finalizeMap()
@@ -199,6 +181,25 @@
 		//wizGeoViz.updateMap();
 		setEvents();
 		fixMapToolHeight();
+		
+		if ($('#BPL1_DataIdent').val() != "" && !featureSend)
+		{
+			//addFeatureFromcoordinateList($('#BPL1_DataIdent').val());
+			
+			wizGeoViz.gmlToWKT($('#BPL1_DataIdent').val());
+			
+			$('#olmap').on('gmlConverted', function(e, eventObj) {
+				var addedFeature = wizGeoViz.addFeatureFromWKT(eventObj);
+				$('#coordlist').val(wizGeoViz.getCoordinateList(addedFeature.id));
+				
+			});
+			//console.log('Initial Pop');
+			featureSend = true;
+		}
+		else if ($('#BPL1_DataIdent').val() == "")
+		{
+			$("#helpinfo").dialog('open');
+		}
 	}
 	
 	
@@ -216,8 +217,6 @@
 	
 	function whatIsCoordinateOrder()
 	{
-		//debugger;
-		
 		var whatOrder = wizGeoViz.determineOrder($('#coordlist').val());
 		var diaMessage = '';
 		var diaButtons = [ {text:"Yes",click:function(){$(this).dialog("close");}},{text:"No",click:function(){$(this).dialog("close");}} ];
@@ -254,7 +253,6 @@
 			diaMessage = 'The coordinate order seems to be mixed!';
 			diaButtons = [ {text:"I'll fix it!",click:function(){wizAddFeature(orderEnum.MIXED);$(this).dialog("close");}},{text:"No, it\'s Latitude,Longitude",click:function(){wizAddFeature(orderEnum.LATLONG);$(this).dialog("close");}},{text:"No, it\'s Longitude,Latitude",click:function(){wizAddFeature(orderEnum.LONGLAT);$(this).dialog("close");}} ];
 		}
-		
 		
 		$("<div>"+diaMessage+"</div>").dialog({
 			autoOpen: true,
@@ -322,10 +320,8 @@
 	
 	function saveFeature()
 	{
-		//debugger;
-		
 		var myWKTid = wizGeoViz.getSingleFeature();
-		console.log(myWKTid);
+		//console.log(myWKTid);
 		if (typeof myWKTid != "undefined")
 		{
 			var myWKT = wizGeoViz.getWKT(myWKTid);
