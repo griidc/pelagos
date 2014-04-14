@@ -107,7 +107,11 @@ if ($udi <> '')
 	//echo $pquery;
 	//var_dump($prow);
 	
+	$dquery = "select * from datatest where dataset udi='$udi';";
 	
+	$drow = pdoDBQuery($pconn,$pquery);
+	//echo $pquery;
+	//var_dump($prow);
 
 	//echo "</pre>";
 
@@ -477,11 +481,24 @@ var dlmap = new GeoViz();
 
 <?php
 }
-else
+elseif ($drow != null)
 {
+	#Has DIF, but NO registry
 ?>
 <p>
 <h1>Dataset not found</h1>
+	This dataset has been identified, but has not yet been registered.<br/>
+	If you are experiencing difficulties, please contact <a href="mailto:griidc@gomri.org">GRIIDC</a>.
+</p>
+<?php
+}
+else
+{	
+	#Has NO DIF, and NO registry
+?>
+<p>
+<h1>Dataset not found</h1>
+No dataset has been identified or registered with the UDI: <?php echo "$udi";?><br/>
 If you are experiencing difficulties, please contact <a href="mailto:griidc@gomri.org">GRIIDC</a>.
 </p>
 
