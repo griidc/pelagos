@@ -101,15 +101,13 @@ if ($udi <> '')
 	;
 	";
 	
-	
-
 	$prow = pdoDBQuery($pconn,$pquery);
 	//echo $pquery;
 	//var_dump($prow);
 	
-	$dquery = "select * from datatest where dataset udi='$udi';";
+	$dquery = "select * from datasets where dataset_udi='$udi';";
 	
-	$drow = pdoDBQuery($pconn,$pquery);
+	$drow = pdoDBQuery($pconn,$dquery);
 	//echo $pquery;
 	//var_dump($prow);
 
