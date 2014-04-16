@@ -19,7 +19,7 @@ class MI_Metadata
 			$fileIdentifier = $xmlArray[0];
 		}
 				
-		$now = substr(date('c'),0,10);
+		$now = date('c');
 		
 		$mypi = new CI_ResponsibleParty($mMD,$instanceType.'-gmd:contact','contactPI',false,'pointOfContact','Metadata Contact','The name of the individual responsible for maintaining the metadata, typically the scientists or researcher who created the dataset.');
 		$mydi = new MD_DataIdentification($mMD,$instanceType.'-gmd:identificationInfo','DataIdent');
