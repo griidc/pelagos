@@ -6,6 +6,7 @@
 
 # LOGFILE - SET THIS ACCORDINGLY
 $GLOBALS['logfile_name']='mdapp.log';
+date_default_timezone_set('America/Chicago');
 
 # database utilities
 require_once("/usr/local/share/GRIIDC/php/db-utils.lib.php");
@@ -341,7 +342,7 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
         if(isset($loc_2[0][0])) {
             $loc_2_val = $loc_2[0][0];
             if(!preg_match("/$udi$/",$loc_2_val)) { # URL must end with UDI
-                throw new RuntimeException('xpath test failed:  UDI in filename uploaded does not match UDI referenced in XML.');
+                throw new RuntimeException('xpath test failed:  UDI in filename uploaded does not match UDI referenced in XML. (1)');
             }
         } else {
             throw new RuntimeException('GRIIDC standard failed:  UDI must be referenced in /gmi:MI_Metadata/gmd:dataSetURI/gco:CharacterString');
@@ -353,7 +354,7 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
         if(isset($loc_3[0][0])) {
             $loc_3_val = $loc_3[0][0];
             if(!preg_match("/$udi$/",$loc_3_val)) { # URL must end with UDI
-                throw new RuntimeException('xpath test failed:  UDI in filename uploaded does not match UDI referenced in XML.');
+                throw new RuntimeException('xpath test failed:  UDI in filename uploaded does not match UDI referenced in XML. (2)');
             }
         } else {
             throw new RuntimeException('GRIIDC standard failed:  UDI must be referenced in /gmi:MI_Metadata/gmd:distributionInfo[1]/gmd:MD_Distribution[1]/gmd:distributor[1]/gmd:MD_Distributor[1]/gmd:distributorTransferOptions[1]/gmd:MD_DigitalTransferOptions[1]/gmd:onLine[1]/gmd:CI_OnlineResource[1]/gmd:linkage[1]/gmd:URL[1]');
@@ -454,15 +455,9 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
             $doc->formatOutput=true;
             $xml_save=$doc->saveXML();
 
-            // clean up formatting via tidy
-            $tidy_config = array('indent' => true,'indent-spaces' => 4,'input-xml' => true,'output-xml' => true,'wrap' => 0);
-            $tidy = new tidy;
-            $tidy->parseString($xml_save, $tidy_config, 'utf8');
-            $tidy->cleanRepair();
-
             // substitute exterior for interior (always)
-            if (preg_match('/gml:interior>/',$tidy)) {
-                $tidy = preg_replace('/gml:interior>/','gml:exterior>',$tidy);
+            if (preg_match('/gml:interior>/',$xml_save)) {
+                $xml_save = preg_replace('/gml:interior>/','gml:exterior>',$xml_save);
                 drupal_set_message('Exterior polygon boundries assumed','warning');
             }
 
@@ -494,7 +489,7 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                 // xpath locate/remove polygon
 
                 $doc2 = new DomDocument('1.0','UTF-8');
-                $tmpp = @$doc2->loadXML($tidy);
+                $tmpp = @$doc2->loadXML($xml_save);
                 if (!$tmpp) {
                     $err = libxml_get_last_error();
                     $err_str = $err->message;
@@ -526,19 +521,44 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
 
                     $doc2->normalizeDocument();
                     $doc2->formatOutput=true;
-                    $tidy=$doc2->saveXML(); // should still be clean without a 2nd run through tidy
+                    $xml_save=$doc2->saveXML(); // should still be clean without a 2nd run through tidy
 
                     $geoflag='yes';
                     $msg = "The GML from file has been overridden by user.";
                     drupal_set_message($msg,'warning');
                 }
             }
+            
+            // override datestamp in XML
+            if (isset($_POST['overrideDatestamp']) and $_POST['overrideDatestamp']=='on') {
+                    $doc3 = new DomDocument('1.0','UTF-8');
+                    $tmpp = @$doc3->loadXML($xml_save);
+                    if (!$tmpp) {
+                        $err = libxml_get_last_error();
+                        $err_str = $err->message;
+                        throw new RuntimeException("Malformed XML: The XML file supplied could not be parsed. ($err_str)");
+                    }
 
+                    $xpathdoc = new DOMXpath($doc3);
+                    $searchXpath = "/gmi:MI_Metadata/gmd:dateStamp/gco:Date";
+                    $elements = $xpathdoc->query($searchXpath);
+                    $node = $elements->item(0);
+                    if ($elements->length > 0) {
+                        $parent = $node->parentNode;
+                        $parent->removeChild($node);
+                    }
+                    addXMLChildValue($doc3,$parent,'gco:DateTime',date("c"));
+                    $doc3->normalizeDocument();
+                    $doc3->formatOutput=true;
+                    $xml_save=$doc3->saveXML();
+            }
+
+            
             $geo_status='Nothing to verify';
             $geometery=null;
             if ($geoflag=='yes') {
             // attempt to have PostGIS validate any geometry, if found.
-                $xml = simplexml_load_string($tidy);
+                $xml = simplexml_load_string($xml_save);
                 $geo = $xml->xpath('/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:geographicElement[1]/gmd:EX_BoundingPolygon[1]/gmd:polygon[1]/gml:Polygon[1]');
                 $sql2="select ST_GeomFromGML('".$geo[0]->asXML()."', 4326) as geometry";
                 $data2 = $dbms->prepare($sql2);
@@ -554,6 +574,13 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
             }
 
             // insert (or update) data in metadata table
+            
+            // clean up formatting via tidy
+            $tidy_config = array('indent' => true,'indent-spaces' => 4,'input-xml' => true,'output-xml' => true,'wrap' => 0);
+            $tidy = new tidy;
+            $tidy->parseString($xml_save, $tidy_config, 'utf8');
+            $tidy->cleanRepair();
+
             $sql = '';
             if ($geoflag == 'yes') {
                 if ($has_metadata_in_db) {
