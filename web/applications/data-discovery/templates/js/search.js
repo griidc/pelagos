@@ -164,6 +164,15 @@ function showDatasetDownload(udi) {
     {% endif %}
 }
 
+function showGridFTPDetails(udi) {
+    $.ajax({
+            "url": "{{baseUrl}}/enableGridFTP/" + udi,
+            "success": function(data) {
+                $('#dataset_download_content').html(data);
+            }
+    });
+}
+
 function showDatasetDownloadExternal(udi) {
     $.ajax({
             "url": "{{baseUrl}}/download-external/" + udi,

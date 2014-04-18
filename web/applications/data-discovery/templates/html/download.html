@@ -69,7 +69,7 @@
         </p>
            <div>
             <button onclick="location.href='http://{{server}}/download/{{uid}}/{{dataset.dataset_filename}}';jQuery('#dataset_download').hide();" style="padding: 0px 0px;"><img src={{baseUrl}}/includes/images/select-arrow.png></button> Download File directy via web <br />
-                <button onclick="location.href='{{baseUrl}}/enableGridFTP/{{dataset.udi}}' ;jQuery('#dataset_download').hide();" style="padding: 0px 0px;"><img src={{baseUrl}}/includes/images/select-arrow.png></button> Place file on "gomri#griidc" GridFTP endpoint.  (Ideal for very large files) <br />
+                <button onclick="showGridFTPDetails('{{dataset.udi}}');" style="padding: 0px 0px;"><img src={{baseUrl}}/includes/images/select-arrow.png></button> Place file on "gomri#griidc" GridFTP endpoint.  (Ideal for very large files) <br />
             <button onclick="jQuery('#dataset_download').hide();" style="padding: 0px 0px;"><img src={{baseUrl}}/includes/images/select-arrow.png border=0></button> Cancel Download<br />
         </div>
     </div>

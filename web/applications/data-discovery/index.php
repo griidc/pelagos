@@ -583,10 +583,11 @@ $app->get('/enableGridFTP/:udi', function ($udi) use ($app) {
         $user_name = $user->name;
         # logging
         `echo "$tstamp\t$dat_file\t$user_name-GRIDFTP" >> downloadlog.txt`;
-        echo "File has been enabled on GridFTP";
-    } else {
-        echo "It was not possible to enable this file on GridFTP";
     }
+    $stash['udi']=$dataset['udi'];
+    $stash['dataset_filename']=$dataset['dataset_filename'];
+    $app->render('html/gridftp.html',$stash);
+    exit;
 });
 
 $app->get('/download_redirect/:udi', function ($udi) use ($app) {
