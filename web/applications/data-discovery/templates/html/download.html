@@ -56,21 +56,22 @@
     <p><strong>Size:</strong> {{filesize}}</p>
 
     <p><strong>Estimated Download Time:</strong> <span id="dl_time">calculating...</span></p>
-    <p style="margin-bottom:0"><strong>GridFTP (for GoMRI Users): </strong>This file has been made available on the gomri#griidc endpoint.  Non-GoMRI users (and public users) please contact us if you wish to download this file via GridFTP and we will set up a temporary account for access.</p>
+    <p style="margin-bottom:0"><strong>GridFTP: </strong>This file has been made available on the gomri#griidc endpoint.  Non-GoMRI users, including general public users, please <a href="mailto:griidc@gomri.org">contact us</a> for access.  If you need to establish GridFTP endpoint, please visit <a href="http://globus.org" target="new">Globus.org</a>.</p>
 </div>
 
 <div style="border: 1px solid #aaa; padding: 10px; margin-top: 20px; border-radius: 4px;">
     <p style="margin-top:0">
         <strong>DISCLAIMER:</strong> Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) aggregates data from researchers funded by the Gulf of Mexico Initiative and other scientists working in the region. These data are furnished "as is" for the convenience of all data users. GRIIDC makes no warranties (including no warranties as to merchantability, timeliness or fitness) either expressed or implied with respect to the data or their fitness for any specific application.
     </p>
-    <div style="text-align:center;">
+    <div style="text-align:left;">
         <p>
-            By clicking "Agree &amp; Download Now" or by using a GoMRI GridFTP endpoint, you agree to the above disclaimer.
+            By downloading data you are expressing agreement with the disclaimer.
         </p>
-        <p style="margin-bottom:0">
-            <button onclick="location.href='http://{{server}}/download/{{uid}}/{{dataset.dataset_filename}}';jQuery('#dataset_download').hide();" style="font-weight:bold;margin:10px;">Agree &amp; Download Now</button>
-            <button onclick="jQuery('#dataset_download').hide();" style="font-weight:bold;margin:10px 10px 10px 0px;">Cancel</button>
-        </p>
+           <div>
+            <button onclick="location.href='http://{{server}}/download/{{uid}}/{{dataset.dataset_filename}}';jQuery('#dataset_download').hide();" style="padding: 0px 0px;"><img src={{baseUrl}}/includes/images/select-arrow.png></button> Download File directy via web <br />
+                <button onclick="location.href='{{baseUrl}}/enableGridFTP/{{dataset.udi}}' ;jQuery('#dataset_download').hide();" style="padding: 0px 0px;"><img src={{baseUrl}}/includes/images/select-arrow.png></button> Place file on "gomri#griidc" GridFTP endpoint.  (Ideal for very large files) <br />
+            <button onclick="jQuery('#dataset_download').hide();" style="padding: 0px 0px;"><img src={{baseUrl}}/includes/images/select-arrow.png border=0></button> Cancel Download<br />
+        </div>
     </div>
 </div>
 

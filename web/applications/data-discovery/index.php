@@ -23,6 +23,8 @@ require_once '/usr/local/share/lightopenid-lightopenid/openid.php';
 # GRIIDC database utilities
 require_once '/usr/local/share/GRIIDC/php/db-utils.lib.php';
 
+date_default_timezone_set('UTC');
+
 function user_is_logged_in_somehow() {
     $drupal_login = user_is_logged_in();
     $alternate_login = (isset($_SESSION['gAuthLogin']) and $_SESSION['gAuthLogin']);
@@ -138,34 +140,6 @@ $app->get('/google-auth', function () use ($app) {
         drupal_set_message($e->getMessage(),'error');
     }
 });
-
-/*
-// currently a work in progress...
-$app->get('/symantec-auth', function () use ($app) {
-    try {
-        $hostname = gethostname();
-        $openid = new LightOpenID($hostname);
-        if(!$openid->mode) {
-            if(isset($_GET['login'])) {
-                $openid->identity = 'https://pip.verisignlabs.com/login.do';
-                header('Location: ' . $openid->authUrl());
-            }
-            $openid->identity = 'https://pip.verisignlabs.com/login.do';
-            $openid->required = array('contact/email', 'contact/country/home', 'namePerson/first', 'namePerson/last');
-            drupal_goto($openid->authUrl());
-        } else {
-            $openid->validate();
-            $info=$openid->getAttributes();
-            $_SESSION['guestAuthUser'] = $info["contact/email"];
-            $_SESSION['gAuthLogin']=true;
-            drupal_goto($GLOBALS['PAGE_NAME']);
-        }
-    } catch(ErrorException $e) {
-        drupal_set_message($e->getMessage(),'error');
-    }
-});
-*/
-
 
 $app->post('/', function () use ($app) {
     $stash = index($app);
@@ -546,14 +520,26 @@ $app->get('/download/:udi', function ($udi) use ($app) {
         }
         mkdir("/sftp/download/$uid/");
         symlink($dat_file,"/sftp/download/$uid/$dataset[dataset_filename]");
+        
+        /*
         # remove any existing potential stale hardlink with the same name.
         # WARNING: (limitation) If files requested by have the same name, the last one wins
         # because there is no requirement for uniqueness of user-named files.  We are
         # serving back the file with the name it was uploaded with.
-        if(file_exists("/sftp/data/GridFTP/$user->name/$dataset[dataset_filename]")) {
-            unlink("/sftp/data/GridFTP/$user->name/$dataset[dataset_filename]");
+        $ds_hardlink="/sftp/data/GridFTP/$user->name/$dataset[dataset_filename]";
+        if(file_exists($ds_hardlink)) {
+            unlink($ds_hardlink);
         }
-        link($dat_file,"/sftp/data/GridFTP/$user->name/$dataset[dataset_filename]");
+        link($dat_file, $ds_hardlink);
+        # Write a file dating this hardlink for later removal  (UNIX timestamp)
+        $date = date("U"); 
+        if (!(is_dir("/sftp/data/GridFTP-Status/$user->name"))) {
+            mkdir("/sftp/data/GridFTP-Status/$user->name/");
+        }
+        $ds_hardlink_createdon="/sftp/data/GridFTP-Status/$user->name/$dataset[dataset_filename].createdon";
+        file_put_contents($ds_hardlink_createdon,"$ds_hardlink|$date|".filesize($dat_file)."\n");
+        */
+    
         $stash = array();
         $stash['server'] = $env['SERVER_NAME'];
         $stash['uid'] = $uid;
@@ -561,7 +547,7 @@ $app->get('/download/:udi', function ($udi) use ($app) {
         $stash['bytes'] = filesize($dat_file);
         $stash['filesize'] = bytes2filesize($stash['bytes'],1);
         $stash['filt'] = $app->request()->get('filter');
-        $tstamp=date('YmdHis');
+        $tstamp=date('c');
         # this simplistic logging in place until proper logging into database
         # is implemented
         `echo "$tstamp\t$dat_file\t$uid" >> downloadlog.txt`;
@@ -572,6 +558,55 @@ $app->get('/download/:udi', function ($udi) use ($app) {
         $stash['error_message'] = "Error retrieving data file: file not found: $dat_file";
         $app->render('html/download_error.html',$stash);
         exit;
+    }
+});
+
+$app->get('/enableGridFTP/:udi', function ($udi) use ($app) {
+    global $user;
+    if (!user_is_logged_in_somehow()) {
+        #$stash['error_message'] = "You must be logged in to download datasets.";
+        #$app->render('html/download_error.html',$stash);
+        drupal_exit();
+    }
+    if (preg_match('/^00/',$udi)) {
+        $datasets = get_registered_datasets(getDBH('GOMRI'),array("registry_id=$udi%"));
+    }
+    else {
+        $datasets = get_identified_datasets(getDBH('GOMRI'),array("udi=$udi"));
+    }
+    $dataset = $datasets[0];
+
+    if ($dataset['access_status'] != "Restricted" and $dataset['access_status'] != "Approval") {
+           
+    }
+
+    $dat_file = "/sftp/data/$dataset[udi]/$dataset[udi].dat";
+    if (file_exists($dat_file)) {
+        $env = $app->environment();
+       
+        # remove any existing potential stale hardlink with the same name.
+        # WARNING: (limitation) If files requested by have the same name, the last one wins
+        # because there is no requirement for uniqueness of user-named files.  We are
+        # serving back the file with the name it was uploaded with.
+        $ds_hardlink="/sftp/data/GridFTP/$user->name/$dataset[dataset_filename]";
+        if(file_exists($ds_hardlink)) {
+            unlink($ds_hardlink);
+        }
+        
+        link($dat_file, $ds_hardlink);
+        # Write a file dating this hardlink for later removal  (UNIX timestamp)
+        $date = date("U"); # UNIXTIME 
+        if (!(is_dir("/sftp/data/GridFTP-Status/$user->name"))) {
+            mkdir("/sftp/data/GridFTP-Status/$user->name/");
+        }
+        $ds_hardlink_createdon="/sftp/data/GridFTP-Status/$user->name/$dataset[dataset_filename].createdon";
+        file_put_contents($ds_hardlink_createdon,"$ds_hardlink|$date|".filesize($dat_file)."\n");
+        $tstamp=date('c');
+        $user_name = $user->name;
+        `echo "$tstamp\t$dat_file\t$user_name-GRIDFTP" >> downloadlog.txt`;
+        echo "File has been enabled on GridFTP";
+    } else {
+        echo "It was not possible to enable this file on GridFTP";
     }
 });
 
