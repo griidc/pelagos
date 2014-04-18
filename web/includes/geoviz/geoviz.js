@@ -452,7 +452,7 @@ function GeoViz()
 	
 	this.getFilter = function ()
 	{
-		return wktTransformToWGS84(this.wkt.write(flayer.features[0]));
+		return this.wktTransformToWGS84(this.wkt.write(flayer.features[0]));
 	}
 	
 	this.clearFilter = function ()
