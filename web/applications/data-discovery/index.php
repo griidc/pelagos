@@ -521,25 +521,6 @@ $app->get('/download/:udi', function ($udi) use ($app) {
         mkdir("/sftp/download/$uid/");
         symlink($dat_file,"/sftp/download/$uid/$dataset[dataset_filename]");
         
-        /*
-        # remove any existing potential stale hardlink with the same name.
-        # WARNING: (limitation) If files requested by have the same name, the last one wins
-        # because there is no requirement for uniqueness of user-named files.  We are
-        # serving back the file with the name it was uploaded with.
-        $ds_hardlink="/sftp/data/GridFTP/$user->name/$dataset[dataset_filename]";
-        if(file_exists($ds_hardlink)) {
-            unlink($ds_hardlink);
-        }
-        link($dat_file, $ds_hardlink);
-        # Write a file dating this hardlink for later removal  (UNIX timestamp)
-        $date = date("U"); 
-        if (!(is_dir("/sftp/data/GridFTP-Status/$user->name"))) {
-            mkdir("/sftp/data/GridFTP-Status/$user->name/");
-        }
-        $ds_hardlink_createdon="/sftp/data/GridFTP-Status/$user->name/$dataset[dataset_filename].createdon";
-        file_put_contents($ds_hardlink_createdon,"$ds_hardlink|$date|".filesize($dat_file)."\n");
-        */
-    
         $stash = array();
         $stash['server'] = $env['SERVER_NAME'];
         $stash['uid'] = $uid;
@@ -548,8 +529,7 @@ $app->get('/download/:udi', function ($udi) use ($app) {
         $stash['filesize'] = bytes2filesize($stash['bytes'],1);
         $stash['filt'] = $app->request()->get('filter');
         $tstamp=date('c');
-        # this simplistic logging in place until proper logging into database
-        # is implemented
+        # logging
         `echo "$tstamp\t$dat_file\t$uid" >> downloadlog.txt`;
         $app->render('html/download.html',$stash);
         exit;
@@ -564,8 +544,6 @@ $app->get('/download/:udi', function ($udi) use ($app) {
 $app->get('/enableGridFTP/:udi', function ($udi) use ($app) {
     global $user;
     if (!user_is_logged_in_somehow()) {
-        #$stash['error_message'] = "You must be logged in to download datasets.";
-        #$app->render('html/download_error.html',$stash);
         drupal_exit();
     }
     if (preg_match('/^00/',$udi)) {
@@ -603,6 +581,7 @@ $app->get('/enableGridFTP/:udi', function ($udi) use ($app) {
         file_put_contents($ds_hardlink_createdon,"$ds_hardlink|$date|".filesize($dat_file)."\n");
         $tstamp=date('c');
         $user_name = $user->name;
+        # logging
         `echo "$tstamp\t$dat_file\t$user_name-GRIDFTP" >> downloadlog.txt`;
         echo "File has been enabled on GridFTP";
     } else {
