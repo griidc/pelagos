@@ -6,7 +6,7 @@
 
 # LOGFILE - SET THIS ACCORDINGLY
 $GLOBALS['logfile_name']='mdapp.log';
-date_default_timezone_set('America/Chicago');
+date_default_timezone_set('UTC');
 
 # database utilities
 require_once("/usr/local/share/GRIIDC/php/db-utils.lib.php");
