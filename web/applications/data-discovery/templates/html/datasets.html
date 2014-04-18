@@ -143,6 +143,7 @@ var tabIndex = 0;
         {% endif %}
 
         {% if identified_datasets %}
+            <script>datasets[tabIndex] = new Array();</script>
             <div id="tab-3" class="tab row" style="height:100%; padding:0">
                 <div class="cell">
                     <div class="viewport">
@@ -150,6 +151,12 @@ var tabIndex = 0;
                             {% if identified_datasets and not package %}
                                 <table class="datasets">
                                     {% for dataset in identified_datasets %}
+                                        {% if dataset.the_geom %}
+                                            <script>
+                                                var ds = { 'udi': '{{dataset.udi}}', 'geom': '{{dataset.the_geom}}' };
+                                                datasets[tabIndex].push(ds);
+                                            </script>
+                                        {% endif %}
                                         <tr udi="{{dataset.udi}}">
                                             <td class="info">
                                                 {{dataset.title}}.
@@ -175,6 +182,7 @@ var tabIndex = 0;
                     </div> <!-- viewport -->
                 </div> <!-- cell -->
             </div> <!-- tab3 -->
+            <script>tabIndex++</script>
         {% endif %}
 
     {% else %}

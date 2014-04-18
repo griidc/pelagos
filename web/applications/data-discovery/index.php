@@ -215,6 +215,7 @@ $app->get('/datasets/:filter/:by/:id/:geo_filter', function ($filter,$by,$id,$ge
 
     if (!empty($geo_filter) and $geo_filter != 'undefined') {
         $reg_filters[] = "geo_filter=$geo_filter";
+        $dif_filters[] = "geo_filter=$geo_filter";
     }
 
     $unrestricted_datasets = get_registered_datasets(getDBH('GOMRI'),array_merge($reg_filters,array('restricted=0')),$filter,$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
@@ -233,12 +234,10 @@ $app->get('/datasets/:filter/:by/:id/:geo_filter', function ($filter,$by,$id,$ge
         $stash['restricted_datasets'][] = $dataset;
     }
 
-    if (empty($geo_filter) or $geo_filter == 'undefined') {
-        $identified_datasets = get_identified_datasets(getDBH('GOMRI'),$dif_filters,$filter,$GLOBALS['config']['DataDiscovery']['identifiedOrderBy']);
-        foreach ($identified_datasets as $dataset) {
-            add_project_info($dataset);
-            $stash['identified_datasets'][] = $dataset;
-        }
+    $identified_datasets = get_identified_datasets(getDBH('GOMRI'),$dif_filters,$filter,$GLOBALS['config']['DataDiscovery']['identifiedOrderBy']);
+    foreach ($identified_datasets as $dataset) {
+        add_project_info($dataset);
+        $stash['identified_datasets'][] = $dataset;
     }
 
     $stash['filt'] = $filter;
