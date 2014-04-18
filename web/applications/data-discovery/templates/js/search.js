@@ -2,12 +2,16 @@ var datasets = new Array();
 
 var $ = jQuery.noConflict();
 
+var myGeoViz = new GeoViz();
+
 $(document).ready(function() {
     setTimeout(function() {
         if (typeof($.cookie) == 'function' && $.cookie("expanded") == 1) {
             expand();
         }
-        initMap('olmap',{'onlyOneFeature':false,'allowModify':false,'allowDelete':true,'labelAttr':'udi'});
+
+        myGeoViz.initMap('olmap',{'onlyOneFeature':false,'allowModify':false,'allowDelete':true,'labelAttr':'udi'});
+
         $(document).on('overFeature',function(e,eventVariables) {
             $('table.datasets tr[udi="' + eventVariables.attributes.udi + '"] td').addClass('highlight');
         });
@@ -33,17 +37,15 @@ $(document).ready(function() {
     });
 
     $('#map_pane').mouseleave(function() {
-        unhighlightAll();
+        myGeoViz.unhighlightAll();
     });
 
     $(document).on('filterDrawn',function() {
-        console.log('DRAWN!');
         $('#drawGeoFilterButton').button("enable");
         $('body').css('cursor','');
         $('#olmap').css('cursor','');
         $('input').css('cursor','');
-        console.log(getFilter());
-        trees['tree'].geo_filter=getFilter();
+        trees['tree'].geo_filter=myGeoViz.getFilter();
         applyFilter();
         $('#clearGeoFilterButton').button('enable');
     });
@@ -84,7 +86,8 @@ function resizeLeftRight() {
 }
 
 function showDatasets(by,id,peopleId) {
-    removeAllFeaturesFromMap();
+    //removeAllFeaturesFromMap();
+    myGeoViz.removeAllFeaturesFromMap();
     currentlink = $('#packageLink').attr('href');
     if (currentlink) {
         newlink = currentlink.replace(/\?filter=[^&]*(&|$)/,'');
@@ -106,10 +109,10 @@ function showDatasets(by,id,peopleId) {
                 activate: function(event, ui) {
                     if ($('#show_all_extents_checkbox').attr('checked')) {
                         var selectedTab = $("#tabs").tabs('option','active');
-                        removeAllFeaturesFromMap();
+                        myGeoViz.removeAllFeaturesFromMap();
                         if (datasets[selectedTab]) {
                             for (var i=0; i<datasets[selectedTab].length; i++) {
-                                addFeatureFromWKT(datasets[selectedTab][i].geom,{'udi':datasets[selectedTab][i].udi});
+                                myGeoViz.addFeatureFromWKT(datasets[selectedTab][i].geom,{'udi':datasets[selectedTab][i].udi});
                             }
                         }
                     }
@@ -172,37 +175,37 @@ function showDatasetDownloadExternal(udi) {
 }
 
 function applyFilter() {
-    removeAllFeaturesFromMap();
+    myGeoViz.removeAllFeaturesFromMap();
     $('#dataset_listing').html('<div class="spinner"><div><img src="{{baseUrl}}/includes/images/spinner.gif"></div></div>');
     trees['tree'].filter=jQuery('#filter-input').val();
     updateTree(trees['tree']);
 }
 
 function clearAll() {
-    goHome();
+    myGeoViz.goHome();
     $('#by-input').val('');
     $('#id-input').val('');
     $('#filter-input').val('');
     trees['tree'].selected = null;
-    clearFilter();
+    myGeoViz.clearFilter();
     trees['tree'].geo_filter = null;
     applyFilter();
 }
 
 function showAllExtents() {
-    if ($('#show_all_extents_checkbox').attr('checked')) {
+    if ($('#show_all_extents_checkbox').is(':checked')) {
         $('#show_all_extents_label').html('Hide All Extents');
         var selectedTab = $("#tabs").tabs('option','active');
-        removeAllFeaturesFromMap();
+        myGeoViz.removeAllFeaturesFromMap();
         if (datasets[selectedTab]) {
             for (var i=0; i<datasets[selectedTab].length; i++) {
-                addFeatureFromWKT(datasets[selectedTab][i].geom,{'udi':datasets[selectedTab][i].udi});
+                myGeoViz.addFeatureFromWKT(datasets[selectedTab][i].geom,{'udi':datasets[selectedTab][i].udi});
             }
         }
     }
     else {
         $('#show_all_extents_label').html('Show All Extents');
-        removeAllFeaturesFromMap();
+        myGeoViz.removeAllFeaturesFromMap();
     }
 }
 

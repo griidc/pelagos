@@ -14,10 +14,10 @@
                         <input type="checkbox" id="show_all_extents_checkbox" class="map_button" onclick="showAllExtents();">
                     </div>
                     <div class="map_button_container">
-                        <input type="button" id="clearGeoFilterButton" class="map_button" value="Clear Filter" disabled onclick="$(this).button('disable');clearFilter();trees['tree'].geo_filter = null;applyFilter();">
+                        <input type="button" id="clearGeoFilterButton" class="map_button" value="Clear Filter" disabled onclick="$(this).button('disable');myGeoViz.clearFilter();trees['tree'].geo_filter = null;applyFilter();">
                     </div>
                     <div class="map_button_container">
-                        <input type="button" id="drawGeoFilterButton" class="map_button" value="Draw Filter" onclick="drawFilter();$(this).button('disable');$('body').css('cursor','crosshair');$('#olmap').css('cursor','crosshair');$('input').css('cursor','crosshair');">
+                        <input type="button" id="drawGeoFilterButton" class="map_button" value="Draw Filter" onclick="myGeoViz.drawFilter();$(this).button('disable');$('body').css('cursor','crosshair');$('#olmap').css('cursor','crosshair');$('input').css('cursor','crosshair');">
                     </div>
                 </div>
                 <div class="map_border map_border_top_bottom map_border_top map_border_top_bg"></div>
