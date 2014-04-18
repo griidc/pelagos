@@ -181,7 +181,7 @@ $app->get('/datasets/:filter/:by/:id/:geo_filter', function ($filter,$by,$id,$ge
     $stash['registered_datasets'] = array();
     $stash['identified_datasets'] = array();
 
-    $reg_filters = array('dataset_download_status=done','registry_id!=00%');
+    $reg_filters = array('dataset_download_statuses=done,RemotelyHosted','registry_id!=00%');
 
     if (!empty($by)) {
         if ($by == 'otherSources') {
@@ -211,6 +211,8 @@ $app->get('/datasets/:filter/:by/:id/:geo_filter', function ($filter,$by,$id,$ge
         }
     }
 
+    $dif_filters = array("$by=$id",'dataset_download_statuses!=done,RemotelyHosted','status=2');
+
     if (!empty($geo_filter) and $geo_filter != 'undefined') {
         $reg_filters[] = "geo_filter=$geo_filter";
     }
@@ -232,7 +234,7 @@ $app->get('/datasets/:filter/:by/:id/:geo_filter', function ($filter,$by,$id,$ge
     }
 
     if (empty($geo_filter) or $geo_filter == 'undefined') {
-        $identified_datasets = get_identified_datasets(getDBH('GOMRI'),array("$by=$id",'dataset_download_statuses!=done,RemotelyHosted','status=2'),$filter,$GLOBALS['config']['DataDiscovery']['identifiedOrderBy']);
+        $identified_datasets = get_identified_datasets(getDBH('GOMRI'),$dif_filters,$filter,$GLOBALS['config']['DataDiscovery']['identifiedOrderBy']);
         foreach ($identified_datasets as $dataset) {
             add_project_info($dataset);
             $stash['identified_datasets'][] = $dataset;

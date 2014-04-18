@@ -1,6 +1,6 @@
 <div id="dataset_download_content">
 
-<h3 style="text-align:center;">The dataset you selected is hosted externally.</h3>
+<h3 style="text-align:center;">The dataset you selected is hosted by an external repository.</h3>
 
 <div style="border: 1px solid #aaa; padding: 10px; border-radius: 4px;">
     <p style="margin-top:0"><strong>UDI:</strong> {{dataset.udi}}</p>
@@ -14,6 +14,14 @@
     {% endif %}
 
     <p><strong>Location:</strong> <a href="{{dataset.url_data}}" target=_BLANK>{{dataset.url_data}}</a></p>
+
+    {% if dataset.access_status == 'Restricted' %}
+        <p style="color:#A00">This dataset has been marked as restricted for author use only.<br>To obtain access to this dataset, please click the location link above and follow any instructions provided.</p>
+    {% elseif dataset.access_status == 'Approval' %}
+        <p style="color:#A00">This dataset has been marked as requiring author approval for download.<br>To obtain access to this dataset, please click the location link above and follow any instructions provided.</p>
+    {% else %}
+        <p>To download this dataset, please use the location link above.</p>
+    {% endif %}
 
 </div>
 

@@ -11,3 +11,8 @@ div.details div.attr {
 div.details span.attr {
     font-weight: bold;
 }
+
+div.details span.remote {
+    font-weight: bold;
+    color: #A00;
+}

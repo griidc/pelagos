@@ -1,4 +1,8 @@
 {% for dataset in datasets %}
+{% if dataset.dataset_download_status == 'RemotelyHosted' %}
+    <div class="attr"><span class="remote">Note: This dataset is not hosted by GRIIDC.</span></div>
+    <div class="attr"><span class="attr">Dataset Location:</span> <a href="{{dataset.url_data}}" target="_blank">{{dataset.url_data}}</a></div>
+{% endif %}
     <div class="attr"><span class="attr">Dataset Title:</span> {{dataset.title}}</div>
     <div class="attr"><span class="attr">UDI:</span> {{dataset.udi}}</div>
 {% if dataset.dataset_originator %}
@@ -17,9 +21,17 @@
     <div class="attr">
         <span class="attr">Restrictions:</span>
         {% if dataset.access_status == "Restricted" %}
-            This dataset is restricted for author use only.
+            {% if dataset.dataset_download_status == 'RemotelyHosted' %}
+                This dataset is hosted by an external repository and has been marked as restricted for author use only. Please contact the external repository for access to this dataset.
+            {% else %}
+                This dataset is restricted for author use only.
+            {% endif %}
         {% elseif dataset.access_status == "Approval" %}
-            This dataset can only be downloaded with author approval. Please contact the dataset Point of Contact to access this dataset.
+            {% if dataset.dataset_download_status == 'RemotelyHosted' %}
+                This dataset is hosted by an external repository and has been marked as requiring author approval for download. Please contact the external repository for access to this dataset.
+            {% else %}
+                This dataset can only be downloaded with author approval. Please contact the dataset Point of Contact to access this dataset.
+            {% endif %}
         {% else %}
             unknown
         {% endif %}
