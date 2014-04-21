@@ -8,7 +8,7 @@ class CI_Date
 	
 	private $dateTypes =
 	array (
-		"" => "[Please Date Type]",
+		"" => "[Please Select Date Type]",
 		"creation" => "Creation",
 		"publication" => "Publication",
 		"revision" => "Revision"
