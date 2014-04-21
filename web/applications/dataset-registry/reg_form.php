@@ -82,8 +82,8 @@ if ($user) {
 
 if (isset($dif_id))
 {
-	$formDisabled = false;
-	
+    $formDisabled = false;
+    
     $query = 'select * from datasets where dataset_uid='.$dif_id;
 
     $row = pdoDBQuery($conn,$query);
@@ -120,8 +120,6 @@ $registered = false;
 
 if (isset($reg_id))
 {
-	$formDisabled = false;
-	
     $query = "select * from registry where registry_id like '".substr($reg_id,0,17)."%' order by registry_id desc limit 1";
     
     $regrow = pdoDBQuery($conn,$query);
@@ -136,6 +134,8 @@ if (isset($reg_id))
     }
     else
     {
+        $formDisabled = false;
+        
         $registered = true;
         $dif_id = true;  
 
@@ -254,10 +254,10 @@ function isChecked($row,$index,$compare=null)
 
 function formDisabled($isDisabled)
 {
-	if ($isDisabled)
-	{
-		echo 'disabled';
-	}
+    if ($isDisabled)
+    {
+        echo 'disabled';
+    }
 }
 
 ?>
@@ -328,7 +328,7 @@ function formDisabled($isDisabled)
             },
             regbutton: 
             {
-				required: "#registry_id:minlength:15",
+                required: "#registry_id:minlength:15",
             },
             dataset_originator:
             {
