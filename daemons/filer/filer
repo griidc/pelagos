@@ -393,12 +393,6 @@ for my $email (keys %{$config->{'notifications'}}) {
             }
         }
         if ($type eq 'remote') {
-            if (%data_remote) {
-                $mail{'Message'} .= "\nRemote Data Files (manual retrieval required):\n\n";
-                for my $reg_id (sort(keys(%data_remote))) {
-                    $mail{'Message'} .= "$reg_id $data_remote{$reg_id}\n";
-                }
-            }
             if (%md_remote) {
                 $mail{'Message'} .= "\nRemote Metadata Files (manual retrieval required):\n\n";
                 for my $reg_id (sort(keys(%md_remote))) {
