@@ -1,6 +1,37 @@
 <?php
 
 include_once '/usr/local/share/GRIIDC/php/aliasIncludes.php';
+
+if (isset($_GET["udi"]))
+{
+	include_once '/usr/local/share/GRIIDC/php/pdo.php';
+	
+	$udi = $_GET["udi"];
+	
+	$configini = parse_ini_file("/etc/griidc/db.ini",true);
+	$config = $configini["GOMRI_RW"];
+	
+	$dbconnstr = 'pgsql:host='. $config["host"];
+	$dbconnstr .= ' port=' . $config["port"];
+	$dbconnstr .= ' dbname=' . $config["dbname"];
+	$dbconnstr .= ' user=' . $config["username"];
+	$dbconnstr .= ' password=' . $config["password"];
+	
+	$conn = pdoDBConnect($dbconnstr);
+	
+	$query = "SELECT EXISTS(SELECT 1 FROM registry WHERE registry_id LIKE '$udi%' LIMIT 1) as \"UDIexists\";";
+	
+	$row = pdoDBQuery($conn,$query);
+	
+	$returnexist = $row["UDIexists"];
+	
+	ob_clean();
+    flush();
+	
+	echo "{\"UDIexists\":\"$returnexist\",\"udi\":\"$udi\"}";
+	drupal_exit();
+}
+
 include 'metaData.php';
 include 'loadXML.php';
 include 'makeXML.php';
@@ -56,7 +87,7 @@ if (isset($_GET["dataUrl"]) and !isset($_FILES["file"]))
 	$xmlURL = $_GET["dataUrl"];
 	$xmldoc = loadXML($xmlURL);
 	//$xmldoc->loadXML($xmlString);
-
+	
 	if ($xmldoc != null)
 	{
 		$dMessage = 'Successfully  loaded XML from URL: ' .  $xmlURL;

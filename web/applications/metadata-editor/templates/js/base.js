@@ -278,10 +278,27 @@ function uploadFile()
             buttons: {
                 Ok: function() {
                     $( this ).dialog( "close" );
-                    var urls = location.href.split("?");
-                    var baseurls = location.href.split("/");
-                    var udiurl = urls[0] + "?dataUrl=http://" + baseurls[2] + "/metadata-generator/" + $('#udifld').val();
-                    location.href = udiurl;
+					var udival = $('#udifld').val();
+                    jQuery.ajax({
+						url: "/metadata-editor/", 
+						type: "GET",
+						data: {udi: udival},
+						context: document.body
+						}).done(function(html) {
+						console.log(html);
+						eventObj = jQuery.parseJSON(html);
+						var udi = eventObj.udi;
+						if (eventObj.UDIexists == true)
+						{
+							location.href = "/metadata-editor/?dataUrl=http://" + location.hostname + "/metadata-generator/" + udival.substring(0,16);;
+						}
+						else
+						{
+							alert('Sorry that UDI:'+ udi +' does not exist');
+							$('#udifld').val('');
+						}
+						return true;
+					});	
                 },
                 Cancel: function() {
                     $( this ).dialog( "close" );
