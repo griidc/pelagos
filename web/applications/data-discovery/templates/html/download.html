@@ -55,8 +55,7 @@
 
     <p><strong>Size:</strong> {{filesize}}</p>
 
-    <p><strong>Estimated Download Time:</strong> <span id="dl_time">calculating...</span></p>
-    <p style="margin-bottom:0"><strong>GridFTP: </strong>This file has been made available on the gomri#griidc endpoint.  Non-GoMRI users, including general public users, please <a href="mailto:griidc@gomri.org">contact us</a> for access.  If you need to establish GridFTP endpoint, please visit <a href="http://globus.org" target="new">Globus.org</a>.</p>
+    <p style="margin-bottom:0"><strong>Estimated Download Time:</strong> <span id="dl_time">calculating...</span></p>
 </div>
 
 <div style="border: 1px solid #aaa; padding: 10px; margin-top: 20px; border-radius: 4px;">
@@ -68,7 +67,8 @@
             By downloading data you are expressing agreement with the disclaimer.
         </p>
            <div>
-            <button onclick="location.href='http://{{server}}/download/{{uid}}/{{dataset.dataset_filename}}';jQuery('#dataset_download').hide();" style="padding: 0px 0px;"><img src={{baseUrl}}/includes/images/select-arrow.png></button> Download File directy via web <br />
+            <!-- <button onclick="location.href='http://{{server}}/download/{{uid}}/{{dataset.dataset_filename}}';jQuery('#dataset_download').hide();" style="padding: 0px 0px;"><img src={{baseUrl}}/includes/images/select-arrow.png></button> Download File directy via web <br /> -->
+                <button onclick="showWebDownloadDetails('{{dataset.udi}}');" style="padding: 0px 0px;"><img src={{baseUrl}}/includes/images/select-arrow.png></button> Download via Web browser<br />
                 <button onclick="showGridFTPDetails('{{dataset.udi}}');" style="padding: 0px 0px;"><img src={{baseUrl}}/includes/images/select-arrow.png></button> Place file on "gomri#griidc" GridFTP endpoint.  (Ideal for very large files) <br />
             <button onclick="jQuery('#dataset_download').hide();" style="padding: 0px 0px;"><img src={{baseUrl}}/includes/images/select-arrow.png border=0></button> Cancel Download<br />
         </div>

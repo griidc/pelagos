@@ -481,7 +481,7 @@ $app->get('/download-external/:udi', function ($udi) use ($app) {
     $app->render('html/download-external.html',$stash);
     exit;
 });
-
+/*
 $app->get('/download/:udi', function ($udi) use ($app) {
     global $user;
     if (!user_is_logged_in_somehow()) {
@@ -540,6 +540,93 @@ $app->get('/download/:udi', function ($udi) use ($app) {
         exit;
     }
 });
+*/
+
+$app->get('/download/:udi', function ($udi) use ($app) {
+    global $user;
+    if (!user_is_logged_in_somehow()) {
+        #$stash['error_message'] = "You must be logged in to download datasets.";
+        #$app->render('html/download_error.html',$stash);
+        drupal_exit();
+    }
+    if (preg_match('/^00/',$udi)) {
+        $datasets = get_registered_datasets(getDBH('GOMRI'),array("registry_id=$udi%"));
+    }
+    else {
+        $datasets = get_identified_datasets(getDBH('GOMRI'),array("udi=$udi"));
+    }
+    $dataset = $datasets[0];
+
+    if ($dataset['access_status'] == "Restricted") {
+        $stash['error_message'] = "This dataset is restricted for author use only.";
+        $app->render('html/download_error.html',$stash);
+        exit;
+    }
+
+    if ($dataset['access_status'] == "Approval") {
+        $stash['error_message'] = "This dataset can only be downloaded with author approval.";
+        $app->render('html/download_error.html',$stash);
+        exit;
+    }
+    $dat_file = "/sftp/data/$dataset[udi]/$dataset[udi].dat";
+    if (file_exists($dat_file)) {
+        
+        $env = $app->environment();
+        $stash = array();
+        $stash['server'] = $env['SERVER_NAME'];
+        $stash['dataset'] = $dataset;
+        $stash['bytes'] = filesize($dat_file);
+        $stash['filesize'] = bytes2filesize($stash['bytes'],1);
+        $stash['filt'] = $app->request()->get('filter');
+        $app->render('html/download.html',$stash);
+        exit;
+    } else {
+        $stash['error_message'] = "Error retrieving data file: file not found: $dat_file";
+        $app->render('html/download_error.html',$stash);
+        exit;
+    }
+
+});
+
+$app->get('/initiateWebDownload/:udi', function ($udi) use ($app) {
+    global $user;
+    if (!user_is_logged_in_somehow()) {
+        drupal_exit();
+    }
+    if (preg_match('/^00/',$udi)) {
+        $datasets = get_registered_datasets(getDBH('GOMRI'),array("registry_id=$udi%"));
+    }
+    else {
+        $datasets = get_identified_datasets(getDBH('GOMRI'),array("udi=$udi"));
+    }
+    $dataset = $datasets[0];
+
+    if ($dataset['access_status'] != "Restricted" and $dataset['access_status'] != "Approval") {
+        $dat_file = "/sftp/data/$dataset[udi]/$dataset[udi].dat";
+        if (file_exists($dat_file)) {
+            $env = $app->environment();
+            $uid = 0;
+            if(empty($user->name)) {
+                $uid = uniqid($_SESSION['guestAuthUser'] . '_');
+            } else {
+                $uid = uniqid($user->name . '_');
+            }
+            mkdir("/sftp/download/$uid/");
+            symlink($dat_file,"/sftp/download/$uid/$dataset[dataset_filename]");
+        
+            $stash = array();
+            $stash['server'] = $env['SERVER_NAME'];
+            $stash['uid'] = $uid;
+            $stash["dataset_filename"]=$dataset['dataset_filename'];
+            $tstamp=date('c');
+            # logging
+            `echo "$tstamp\t$dat_file\t$uid" >> /var/log/griidc/downloads.log`;
+            $app->render('html/download-file.html',$stash);
+            exit;
+        }
+    }
+});
+
 
 $app->get('/enableGridFTP/:udi', function ($udi) use ($app) {
     global $user;
@@ -582,7 +669,7 @@ $app->get('/enableGridFTP/:udi', function ($udi) use ($app) {
         $tstamp=date('c');
         $user_name = $user->name;
         # logging
-        `echo "$tstamp\t$dat_file\t$user_name-GRIDFTP" >> downloadlog.txt`;
+        `echo "$tstamp\t$dat_file\t$user_name-GRIDFTP" >> /var/log/griidc/downloads.log`;
     }
     $stash['udi']=$dataset['udi'];
     $stash['dataset_filename']=$dataset['dataset_filename'];
