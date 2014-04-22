@@ -247,7 +247,8 @@ $app->get('/datasets/:filter/:by/:id/:geo_filter', function ($filter,$by,$id,$ge
 })->conditions(array('filter' => '.*', 'by' => '.*', 'id' => '.*', 'geo_filter' => '.*'));
 
 $app->get('/dataset_details/:udi', function ($udi) use ($app) {
-
+    # used by a javascript that displays details on each
+    # of the datasets in an expandable/collapsable manner
     if (preg_match('/^00/',$udi)) {
         $stash['datasets'] = get_registered_datasets(getDBH('GOMRI'),array("registry_id=$udi%"));
     }
@@ -259,6 +260,251 @@ $app->get('/dataset_details/:udi', function ($udi) use ($app) {
     exit;  # prevents Drupal wrapper in output
 });
 
+
+$app->get('/metadata/:udi', function ($udi) use ($app) {
+    // if there is a file on disk, capture it
+    if (preg_match('/^00/',$udi)) {
+        $datasets = get_registered_datasets(getDBH('GOMRI'),array("registry_id=$udi%"));
+    }
+    else {
+        $datasets = get_identified_datasets(getDBH('GOMRI'),array("udi=$udi"));
+    }
+    $dataset = $datasets[0];
+    
+    $disk_metadata_file_mimetype = '';
+    $disk_metadata_file = '';
+    $met_file = "/sftp/data/$dataset[udi]/$dataset[udi].met";
+    if (file_exists($met_file)) {
+        $info = finfo_open(FILEINFO_MIME_TYPE);
+        $disk_metadata_file_mimetype = finfo_file($info, $met_file);
+        $disk_metadata_file=file_get_contents($met_file);
+    }
+    # This SQL uses a subselect to resolve the newest registry_id
+    # associated with the passed in UDI.
+    $sql = "
+    select 
+        metadata_xml, 
+        coalesce(
+            cast(
+                xpath('/gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1]/text()',metadata_xml,
+                    ARRAY[
+                    ARRAY['gmi', 'http://www.isotc211.org/2005/gmi'],
+                    ARRAY['gmd', 'http://www.isotc211.org/2005/gmd'],
+                    ARRAY['gco', 'http://www.isotc211.org/2005/gco']
+                    ]
+                ) as character varying
+            ), 
+            dataset_metadata
+        ) 
+
+    as filename  
+    FROM metadata left join registry on registry.registry_id = metadata.registry_id
+    WHERE 
+        metadata.registry_id = (   select registry_id 
+                                    from curr_reg_view 
+                                    where dataset_udi = ?
+                                )";
+
+    $dbms = OpenDB("GOMRI_RO");
+    $data = $dbms->prepare($sql);
+    $data->execute(array($udi));
+    $raw_data = $data->fetch();
+    if ($raw_data) {
+        # Serve it out from the data in the database by default
+        # the following line is probably better done in SQL, so this will be changed in the near future
+        $filename = preg_replace(array('/{/','/}/'),array('',''),$raw_data['filename']);
+        $filename = preg_replace("/:/",'-',$filename);
+        header($_SERVER["SERVER_PROTOCOL"] . " 200 OK");
+        header("Cache-Control: public"); // needed for i.e.
+        header("Content-Type: text/xml");
+        header("Content-Transfer-Encoding: Binary");
+        header("Content-Length:" . strlen($raw_data['metadata_xml']));
+        header("Content-Disposition: attachment; filename=$filename");
+        ob_clean();
+        flush();
+        print $raw_data['metadata_xml'];
+        exit;
+    } elseif(strlen($disk_metadata_file) > 0) {
+        # Serve it out from the data in the filesystem if it wasn't in the database
+        $filename=$dataset['metadata_filename'];
+        
+        header($_SERVER["SERVER_PROTOCOL"] . " 200 OK");
+        header("Cache-Control: public"); // needed for i.e.
+        header("Content-Type: $disk_metadata_file_mimetype");
+        header("Content-Transfer-Encoding: Binary");
+        header("Content-Length:" . filesize($met_file));
+        header("Content-Disposition: attachment; filename=$dataset[metadata_filename]");
+        ob_clean();
+        flush();
+        readfile($met_file);
+        exit;
+    } else {
+        drupal_set_message("Error retrieving metadata from database and filesystem.",'error');
+        drupal_goto($GLOBALS['PAGE_NAME']); # reload calling page
+    }
+});
+
+$app->get('/download-external/:udi', function ($udi) use ($app) {
+    if (preg_match('/^00/',$udi)) {
+        $datasets = get_registered_datasets(getDBH('GOMRI'),array("registry_id=$udi%"));
+    }
+    else {
+        $datasets = get_identified_datasets(getDBH('GOMRI'),array("udi=$udi"));
+    }
+    $dataset = $datasets[0];
+    $stash['dataset'] = $dataset;
+    $app->render('html/download-external.html',$stash);
+    exit;
+});
+
+$app->get('/download/:udi', function ($udi) use ($app) {
+    # This is used in an ajax call to populate a div
+    # that displays when an authenticated user clicks
+    # the box icon on the right-hand pane of the data
+    # discovery module.
+    global $user;
+    if (!user_is_logged_in_somehow()) {
+        #$stash['error_message'] = "You must be logged in to download datasets.";
+        #$app->render('html/download_error.html',$stash);
+        drupal_exit();
+    }
+    if (preg_match('/^00/',$udi)) {
+        $datasets = get_registered_datasets(getDBH('GOMRI'),array("registry_id=$udi%"));
+    }
+    else {
+        $datasets = get_identified_datasets(getDBH('GOMRI'),array("udi=$udi"));
+    }
+    $dataset = $datasets[0];
+
+    if ($dataset['access_status'] == "Restricted") {
+        $stash['error_message'] = "This dataset is restricted for author use only.";
+        $app->render('html/download_error.html',$stash);
+        exit;
+    }
+
+    if ($dataset['access_status'] == "Approval") {
+        $stash['error_message'] = "This dataset can only be downloaded with author approval.";
+        $app->render('html/download_error.html',$stash);
+        exit;
+    }
+    $dat_file = "/sftp/data/$dataset[udi]/$dataset[udi].dat";
+    if (file_exists($dat_file)) {
+        
+        $env = $app->environment();
+        $stash = array();
+        $stash['server'] = $env['SERVER_NAME'];
+        $stash['dataset'] = $dataset;
+        $stash['bytes'] = filesize($dat_file);
+        $stash['filesize'] = bytes2filesize($stash['bytes'],1);
+        $stash['filt'] = $app->request()->get('filter');
+        $app->render('html/download.html',$stash);
+        exit;
+    } else {
+        $stash['error_message'] = "Error retrieving data file: file not found: $dat_file";
+        $app->render('html/download_error.html',$stash);
+        exit;
+    }
+
+});
+
+$app->get('/initiateWebDownload/:udi', function ($udi) use ($app) {
+    # this is called by a javascript function.  This route
+    # sets up a symlink then produces output that replaces
+    # the content of the "The dataset you selected is ready for download"
+    # div with a download link (button) to the generated symlink.
+    global $user;
+    if (!user_is_logged_in_somehow()) {
+        drupal_exit();
+    }
+    if (preg_match('/^00/',$udi)) {
+        $datasets = get_registered_datasets(getDBH('GOMRI'),array("registry_id=$udi%"));
+    }
+    else {
+        $datasets = get_identified_datasets(getDBH('GOMRI'),array("udi=$udi"));
+    }
+    $dataset = $datasets[0];
+
+    if ($dataset['access_status'] != "Restricted" and $dataset['access_status'] != "Approval") {
+        $dat_file = "/sftp/data/$dataset[udi]/$dataset[udi].dat";
+        if (file_exists($dat_file)) {
+            $env = $app->environment();
+            $uid = 0;
+            if(empty($user->name)) {
+                $uid = uniqid($_SESSION['guestAuthUser'] . '_');
+            } else {
+                $uid = uniqid($user->name . '_');
+            }
+            mkdir("/sftp/download/$uid/");
+            symlink($dat_file,"/sftp/download/$uid/$dataset[dataset_filename]");
+        
+            $stash = array();
+            $stash['server'] = $env['SERVER_NAME'];
+            $stash['uid'] = $uid;
+            $stash["dataset_filename"]=$dataset['dataset_filename'];
+            $tstamp=date('c');
+            # logging
+            `echo "$tstamp\t$dat_file\t$uid" >> /var/log/griidc/downloads.log`;
+            $app->render('html/download-file.html',$stash);
+            exit;
+        }
+    }
+});
+
+
+$app->get('/enableGridFTP/:udi', function ($udi) use ($app) {
+    # this is called by a javascript function.  This route
+    # sets up a hardlink for GridFTP then produces output that replaces
+    # the content of the "The dataset you selected is ready for download"
+    # div with GridFTP instructions. 
+    global $user;
+    if (!user_is_logged_in_somehow()) {
+        drupal_exit();
+    }
+    if (preg_match('/^00/',$udi)) {
+        $datasets = get_registered_datasets(getDBH('GOMRI'),array("registry_id=$udi%"));
+    }
+    else {
+        $datasets = get_identified_datasets(getDBH('GOMRI'),array("udi=$udi"));
+    }
+    $dataset = $datasets[0];
+
+    if ($dataset['access_status'] != "Restricted" and $dataset['access_status'] != "Approval") {
+           
+    }
+
+    $dat_file = "/sftp/data/$dataset[udi]/$dataset[udi].dat";
+    if (file_exists($dat_file)) {
+        $env = $app->environment();
+       
+        # remove any existing potential stale hardlink with the same name.
+        # WARNING: (limitation) If files requested by have the same name, the last one wins
+        # because there is no requirement for uniqueness of user-named files.  We are
+        # serving back the file with the name it was uploaded with.
+        $ds_hardlink="/sftp/data/GridFTP/$user->name/$dataset[dataset_filename]";
+        if(file_exists($ds_hardlink)) {
+            unlink($ds_hardlink);
+        }
+        
+        link($dat_file, $ds_hardlink);
+        # Write a file dating this hardlink for later removal  (UNIX timestamp)
+        $date = date("U"); # UNIXTIME 
+        if (!(is_dir("/sftp/data/GridFTP-Status/$user->name"))) {
+            mkdir("/sftp/data/GridFTP-Status/$user->name/");
+        }
+        $ds_hardlink_createdon="/sftp/data/GridFTP-Status/$user->name/$dataset[dataset_filename].createdon";
+        file_put_contents($ds_hardlink_createdon,"$ds_hardlink|$date|".filesize($dat_file)."\n");
+        $tstamp=date('c');
+        $user_name = $user->name;
+        # logging
+        `echo "$tstamp\t$dat_file\t$user_name-GRIDFTP" >> /var/log/griidc/downloads.log`;
+    }
+    $stash['udi']=$dataset['udi'];
+    $stash['dataset_filename']=$dataset['dataset_filename'];
+    $app->render('html/gridftp.html',$stash);
+    exit;
+});
+
+/*
 $app->get('/package.*', function () use ($app) {
     global $user;
     if (empty($user->name)) {
@@ -267,7 +513,6 @@ $app->get('/package.*', function () use ($app) {
     }
     $app->pass();
 });
-
 $app->get('/package', function () use ($app) {
     $stash = array();
     $env = $app->environment();
@@ -385,304 +630,7 @@ $app->get('/package/download/:udis', function ($udis) use ($app) {
         drupal_set_message("Error opening zip file.",'error');
     }
 });
-
-$app->get('/metadata/:udi', function ($udi) use ($app) {
-    // if there is a file on disk, capture it
-    if (preg_match('/^00/',$udi)) {
-        $datasets = get_registered_datasets(getDBH('GOMRI'),array("registry_id=$udi%"));
-    }
-    else {
-        $datasets = get_identified_datasets(getDBH('GOMRI'),array("udi=$udi"));
-    }
-    $dataset = $datasets[0];
-    
-    $disk_metadata_file_mimetype = '';
-    $disk_metadata_file = '';
-    $met_file = "/sftp/data/$dataset[udi]/$dataset[udi].met";
-    if (file_exists($met_file)) {
-        $info = finfo_open(FILEINFO_MIME_TYPE);
-        $disk_metadata_file_mimetype = finfo_file($info, $met_file);
-        $disk_metadata_file=file_get_contents($met_file);
-    }
-    # This SQL uses a subselect to resolve the newest registry_id
-    # associated with the passed in UDI.
-    $sql = "
-    select 
-        metadata_xml, 
-        coalesce(
-            cast(
-                xpath('/gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1]/text()',metadata_xml,
-                    ARRAY[
-                    ARRAY['gmi', 'http://www.isotc211.org/2005/gmi'],
-                    ARRAY['gmd', 'http://www.isotc211.org/2005/gmd'],
-                    ARRAY['gco', 'http://www.isotc211.org/2005/gco']
-                    ]
-                ) as character varying
-            ), 
-            dataset_metadata
-        ) 
-
-    as filename  
-    FROM metadata left join registry on registry.registry_id = metadata.registry_id
-    WHERE 
-        metadata.registry_id = (   select registry_id 
-                                    from curr_reg_view 
-                                    where dataset_udi = ?
-                                )";
-
-    $dbms = OpenDB("GOMRI_RO");
-    $data = $dbms->prepare($sql);
-    $data->execute(array($udi));
-    $raw_data = $data->fetch();
-    if ($raw_data) {
-        # Serve it out from the data in the database by default
-        # the following line is probably better done in SQL, so this will be changed in the near future
-        $filename = preg_replace(array('/{/','/}/'),array('',''),$raw_data['filename']);
-        $filename = preg_replace("/:/",'-',$filename);
-        header($_SERVER["SERVER_PROTOCOL"] . " 200 OK");
-        header("Cache-Control: public"); // needed for i.e.
-        header("Content-Type: text/xml");
-        header("Content-Transfer-Encoding: Binary");
-        header("Content-Length:" . strlen($raw_data['metadata_xml']));
-        header("Content-Disposition: attachment; filename=$filename");
-        ob_clean();
-        flush();
-        print $raw_data['metadata_xml'];
-        exit;
-    } elseif(strlen($disk_metadata_file) > 0) {
-        # Serve it out from the data in the filesystem if it wasn't in the database
-        $filename=$dataset['metadata_filename'];
-        
-        header($_SERVER["SERVER_PROTOCOL"] . " 200 OK");
-        header("Cache-Control: public"); // needed for i.e.
-        header("Content-Type: $disk_metadata_file_mimetype");
-        header("Content-Transfer-Encoding: Binary");
-        header("Content-Length:" . filesize($met_file));
-        header("Content-Disposition: attachment; filename=$dataset[metadata_filename]");
-        ob_clean();
-        flush();
-        readfile($met_file);
-        exit;
-    } else {
-        drupal_set_message("Error retrieving metadata from database and filesystem.",'error');
-        drupal_goto($GLOBALS['PAGE_NAME']); # reload calling page
-    }
-});
-
-$app->get('/download-external/:udi', function ($udi) use ($app) {
-    if (preg_match('/^00/',$udi)) {
-        $datasets = get_registered_datasets(getDBH('GOMRI'),array("registry_id=$udi%"));
-    }
-    else {
-        $datasets = get_identified_datasets(getDBH('GOMRI'),array("udi=$udi"));
-    }
-    $dataset = $datasets[0];
-    $stash['dataset'] = $dataset;
-    $app->render('html/download-external.html',$stash);
-    exit;
-});
-/*
-$app->get('/download/:udi', function ($udi) use ($app) {
-    global $user;
-    if (!user_is_logged_in_somehow()) {
-        #$stash['error_message'] = "You must be logged in to download datasets.";
-        #$app->render('html/download_error.html',$stash);
-        drupal_exit();
-    }
-    if (preg_match('/^00/',$udi)) {
-        $datasets = get_registered_datasets(getDBH('GOMRI'),array("registry_id=$udi%"));
-    }
-    else {
-        $datasets = get_identified_datasets(getDBH('GOMRI'),array("udi=$udi"));
-    }
-    $dataset = $datasets[0];
-
-    if ($dataset['access_status'] == "Restricted") {
-        $stash['error_message'] = "This dataset is restricted for author use only.";
-        $app->render('html/download_error.html',$stash);
-        exit;
-    }
-
-    if ($dataset['access_status'] == "Approval") {
-        $stash['error_message'] = "This dataset can only be downloaded with author approval.";
-        $app->render('html/download_error.html',$stash);
-        exit;
-    }
-
-    $dat_file = "/sftp/data/$dataset[udi]/$dataset[udi].dat";
-    if (file_exists($dat_file)) {
-        $env = $app->environment();
-        $uid = 0;
-        if(empty($user->name)) {
-            $uid = uniqid($_SESSION['guestAuthUser'] . '_');
-        } else {
-            $uid = uniqid($user->name . '_');
-        }
-        mkdir("/sftp/download/$uid/");
-        symlink($dat_file,"/sftp/download/$uid/$dataset[dataset_filename]");
-        
-        $stash = array();
-        $stash['server'] = $env['SERVER_NAME'];
-        $stash['uid'] = $uid;
-        $stash['dataset'] = $dataset;
-        $stash['bytes'] = filesize($dat_file);
-        $stash['filesize'] = bytes2filesize($stash['bytes'],1);
-        $stash['filt'] = $app->request()->get('filter');
-        $tstamp=date('c');
-        # logging
-        `echo "$tstamp\t$dat_file\t$uid" >> downloadlog.txt`;
-        $app->render('html/download.html',$stash);
-        exit;
-    }
-    else {
-        $stash['error_message'] = "Error retrieving data file: file not found: $dat_file";
-        $app->render('html/download_error.html',$stash);
-        exit;
-    }
-});
 */
-
-$app->get('/download/:udi', function ($udi) use ($app) {
-    global $user;
-    if (!user_is_logged_in_somehow()) {
-        #$stash['error_message'] = "You must be logged in to download datasets.";
-        #$app->render('html/download_error.html',$stash);
-        drupal_exit();
-    }
-    if (preg_match('/^00/',$udi)) {
-        $datasets = get_registered_datasets(getDBH('GOMRI'),array("registry_id=$udi%"));
-    }
-    else {
-        $datasets = get_identified_datasets(getDBH('GOMRI'),array("udi=$udi"));
-    }
-    $dataset = $datasets[0];
-
-    if ($dataset['access_status'] == "Restricted") {
-        $stash['error_message'] = "This dataset is restricted for author use only.";
-        $app->render('html/download_error.html',$stash);
-        exit;
-    }
-
-    if ($dataset['access_status'] == "Approval") {
-        $stash['error_message'] = "This dataset can only be downloaded with author approval.";
-        $app->render('html/download_error.html',$stash);
-        exit;
-    }
-    $dat_file = "/sftp/data/$dataset[udi]/$dataset[udi].dat";
-    if (file_exists($dat_file)) {
-        
-        $env = $app->environment();
-        $stash = array();
-        $stash['server'] = $env['SERVER_NAME'];
-        $stash['dataset'] = $dataset;
-        $stash['bytes'] = filesize($dat_file);
-        $stash['filesize'] = bytes2filesize($stash['bytes'],1);
-        $stash['filt'] = $app->request()->get('filter');
-        $app->render('html/download.html',$stash);
-        exit;
-    } else {
-        $stash['error_message'] = "Error retrieving data file: file not found: $dat_file";
-        $app->render('html/download_error.html',$stash);
-        exit;
-    }
-
-});
-
-$app->get('/initiateWebDownload/:udi', function ($udi) use ($app) {
-    global $user;
-    if (!user_is_logged_in_somehow()) {
-        drupal_exit();
-    }
-    if (preg_match('/^00/',$udi)) {
-        $datasets = get_registered_datasets(getDBH('GOMRI'),array("registry_id=$udi%"));
-    }
-    else {
-        $datasets = get_identified_datasets(getDBH('GOMRI'),array("udi=$udi"));
-    }
-    $dataset = $datasets[0];
-
-    if ($dataset['access_status'] != "Restricted" and $dataset['access_status'] != "Approval") {
-        $dat_file = "/sftp/data/$dataset[udi]/$dataset[udi].dat";
-        if (file_exists($dat_file)) {
-            $env = $app->environment();
-            $uid = 0;
-            if(empty($user->name)) {
-                $uid = uniqid($_SESSION['guestAuthUser'] . '_');
-            } else {
-                $uid = uniqid($user->name . '_');
-            }
-            mkdir("/sftp/download/$uid/");
-            symlink($dat_file,"/sftp/download/$uid/$dataset[dataset_filename]");
-        
-            $stash = array();
-            $stash['server'] = $env['SERVER_NAME'];
-            $stash['uid'] = $uid;
-            $stash["dataset_filename"]=$dataset['dataset_filename'];
-            $tstamp=date('c');
-            # logging
-            `echo "$tstamp\t$dat_file\t$uid" >> /var/log/griidc/downloads.log`;
-            $app->render('html/download-file.html',$stash);
-            exit;
-        }
-    }
-});
-
-
-$app->get('/enableGridFTP/:udi', function ($udi) use ($app) {
-    global $user;
-    if (!user_is_logged_in_somehow()) {
-        drupal_exit();
-    }
-    if (preg_match('/^00/',$udi)) {
-        $datasets = get_registered_datasets(getDBH('GOMRI'),array("registry_id=$udi%"));
-    }
-    else {
-        $datasets = get_identified_datasets(getDBH('GOMRI'),array("udi=$udi"));
-    }
-    $dataset = $datasets[0];
-
-    if ($dataset['access_status'] != "Restricted" and $dataset['access_status'] != "Approval") {
-           
-    }
-
-    $dat_file = "/sftp/data/$dataset[udi]/$dataset[udi].dat";
-    if (file_exists($dat_file)) {
-        $env = $app->environment();
-       
-        # remove any existing potential stale hardlink with the same name.
-        # WARNING: (limitation) If files requested by have the same name, the last one wins
-        # because there is no requirement for uniqueness of user-named files.  We are
-        # serving back the file with the name it was uploaded with.
-        $ds_hardlink="/sftp/data/GridFTP/$user->name/$dataset[dataset_filename]";
-        if(file_exists($ds_hardlink)) {
-            unlink($ds_hardlink);
-        }
-        
-        link($dat_file, $ds_hardlink);
-        # Write a file dating this hardlink for later removal  (UNIX timestamp)
-        $date = date("U"); # UNIXTIME 
-        if (!(is_dir("/sftp/data/GridFTP-Status/$user->name"))) {
-            mkdir("/sftp/data/GridFTP-Status/$user->name/");
-        }
-        $ds_hardlink_createdon="/sftp/data/GridFTP-Status/$user->name/$dataset[dataset_filename].createdon";
-        file_put_contents($ds_hardlink_createdon,"$ds_hardlink|$date|".filesize($dat_file)."\n");
-        $tstamp=date('c');
-        $user_name = $user->name;
-        # logging
-        `echo "$tstamp\t$dat_file\t$user_name-GRIDFTP" >> /var/log/griidc/downloads.log`;
-    }
-    $stash['udi']=$dataset['udi'];
-    $stash['dataset_filename']=$dataset['dataset_filename'];
-    $app->render('html/gridftp.html',$stash);
-    exit;
-});
-
-$app->get('/download_redirect/:udi', function ($udi) use ($app) {
-    $stash['udi'] = $udi;
-    $stash['final_destination'] = $app->request()->get('final_destination');
-    $app->render('html/download_redirect.html',$stash);
-    exit;
-});
 
 $app->run();
 
