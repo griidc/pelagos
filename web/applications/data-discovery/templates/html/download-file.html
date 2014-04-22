@@ -1,7 +1,9 @@
 <div id="main">
-    <p><h1>The dataset for <font color='red'>{{udi}}</font> is available for direct download as <font color='red'>{{dataset_filename}}</font>.</h1>
+    <p>
+        <h2>The dataset for {{udi}} is available for direct download as:</h2>
+        <a href=http://{{server}}/download/{{uid}}/{{dataset_filename}}>http://{{server}}/download/{{uid}}/{{dataset_filename}}</a>
     </p>
     <p>
-    <a href=http://{{server}}/download/{{uid}}/{{dataset_filename}}><button>Start Download</button></a>
+        <a href=http://{{server}}/download/{{uid}}/{{dataset_filename}}><button onclick="jQuery('#dataset_download').hide();">Start Download</button></a>
     </p>
 </div>

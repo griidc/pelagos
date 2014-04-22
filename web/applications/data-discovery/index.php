@@ -397,6 +397,11 @@ $app->get('/download/:udi', function ($udi) use ($app) {
         $stash['bytes'] = filesize($dat_file);
         $stash['filesize'] = bytes2filesize($stash['bytes'],1);
         $stash['filt'] = $app->request()->get('filter');
+        if((isset($_SESSION['guestAuthUser']) and ($_SESSION['guestAuthUser'] == true))) {
+            $stash['guest']=1;
+        } else {
+            $stash['guest']=0;
+        }
         $app->render('html/download.html',$stash);
         exit;
     } else {
@@ -440,6 +445,7 @@ $app->get('/initiateWebDownload/:udi', function ($udi) use ($app) {
             $stash = array();
             $stash['server'] = $env['SERVER_NAME'];
             $stash['uid'] = $uid;
+            $stash['udi'] = $udi;
             $stash["dataset_filename"]=$dataset['dataset_filename'];
             $tstamp=date('c');
             # logging
@@ -449,7 +455,6 @@ $app->get('/initiateWebDownload/:udi', function ($udi) use ($app) {
         }
     }
 });
-
 
 $app->get('/enableGridFTP/:udi', function ($udi) use ($app) {
     # this is called by a javascript function.  This route
@@ -503,6 +508,14 @@ $app->get('/enableGridFTP/:udi', function ($udi) use ($app) {
     $app->render('html/gridftp.html',$stash);
     exit;
 });
+
+$app->get('/download_redirect/:udi', function ($udi) use ($app) {
+    $stash['udi'] = $udi;
+    $stash['final_destination'] = $app->request()->get('final_destination');
+    $app->render('html/download_redirect.html',$stash);
+    exit;
+});
+
 
 /*
 $app->get('/package.*', function () use ($app) {

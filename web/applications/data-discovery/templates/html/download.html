@@ -67,9 +67,10 @@
             By downloading data you are expressing agreement with the disclaimer.
         </p>
            <div>
-            <!-- <button onclick="location.href='http://{{server}}/download/{{uid}}/{{dataset.dataset_filename}}';jQuery('#dataset_download').hide();" style="padding: 0px 0px;"><img src={{baseUrl}}/includes/images/select-arrow.png></button> Download File directy via web <br /> -->
                 <button onclick="showWebDownloadDetails('{{dataset.udi}}');" style="padding: 0px 0px;"><img src={{baseUrl}}/includes/images/select-arrow.png></button> Download via Web browser<br />
+{% if guest == false %}
                 <button onclick="showGridFTPDetails('{{dataset.udi}}');" style="padding: 0px 0px;"><img src={{baseUrl}}/includes/images/select-arrow.png></button> Place file on "gomri#griidc" GridFTP endpoint.  (Ideal for very large files) <br />
+{% endif %}
             <button onclick="jQuery('#dataset_download').hide();" style="padding: 0px 0px;"><img src={{baseUrl}}/includes/images/select-arrow.png border=0></button> Cancel Download<br />
         </div>
     </div>
