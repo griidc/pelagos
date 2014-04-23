@@ -18,7 +18,9 @@ class MI_Metadata
 		{
 			$fileIdentifier = $xmlArray[0];
 		}
-				
+        
+        date_default_timezone_set('UTC');
+        
 		$now = date('c');
 		
 		$mypi = new CI_ResponsibleParty($mMD,$instanceType.'-gmd:contact','contactPI',false,'pointOfContact','Metadata Contact','The name of the individual responsible for maintaining the metadata, typically the scientists or researcher who created the dataset.');
