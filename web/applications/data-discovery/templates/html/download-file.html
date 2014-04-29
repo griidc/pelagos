@@ -1,9 +1,21 @@
+{% if alternateDownloadSite == 1 %}
 <div id="main">
     <p>
         <h2>The dataset for {{udi}} is available for direct download as:</h2>
-        <a href=http://{{server}}/download/{{uid}}/{{dataset_filename}}>http://{{server}}/download/{{uid}}/{{dataset_filename}}</a>
+        <a href=https://poseidon-cs.tamu.edu/download/{{uid}}/{{dataset_filename}}>https://poseidon-cs.tamu.edu/download/{{uid}}/{{dataset_filename}}</a>
     </p>
     <p>
-        <a href=http://{{server}}/download/{{uid}}/{{dataset_filename}}><button onclick="jQuery('#dataset_download').hide();">Start Download</button></a>
+        <a href=https://poseidon-cs.tamu.edu/download/{{uid}}/{{dataset_filename}}><button onclick="jQuery('#dataset_download').hide();">Start Download</button></a>
     </p>
 </div>
+{% else %}
+<div id="main">
+    <p>
+        <h2>The dataset for {{udi}} is available for direct download as:</h2>
+        <a href=https://{{server}}/download/{{uid}}/{{dataset_filename}}>https://{{server}}/download/{{uid}}/{{dataset_filename}}</a>
+    </p>
+    <p>
+        <a href=https://{{server}}/download/{{uid}}/{{dataset_filename}}><button onclick="jQuery('#dataset_download').hide();">Start Download</button></a>
+    </p>
+</div>
+{% endif %}

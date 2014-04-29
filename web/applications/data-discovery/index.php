@@ -441,15 +441,24 @@ $app->get('/initiateWebDownload/:udi', function ($udi) use ($app) {
             }
             mkdir("/sftp/download/$uid/");
             symlink($dat_file,"/sftp/download/$uid/$dataset[dataset_filename]");
-        
+
             $stash = array();
             $stash['server'] = $env['SERVER_NAME'];
             $stash['uid'] = $uid;
             $stash['udi'] = $udi;
             $stash["dataset_filename"]=$dataset['dataset_filename'];
             $tstamp=date('c');
+            $altTag = '';
+            
+            if ($GLOBALS['config']['DataDiscovery']['alternateDownloadSite'] == 1) {
+                $return = system("ssh apache@poseidon-cs.tamu.edu -C mkdir /sftp/download/$uid/"); 
+                $return = system("ssh apache@poseidon-cs.tamu.edu -C ln -s $dat_file /sftp/download/$uid/$dataset[dataset_filename]");
+                $stash['alternateDownloadSite']=1;
+                $altTag = " (ALT-SITE)";
+            }
+
             # logging
-            `echo "$tstamp\t$dat_file\t$uid" >> /var/log/griidc/downloads.log`;
+            `echo "$tstamp\t$dat_file\t$uid$altTag" >> /var/log/griidc/downloads.log`;
             $app->render('html/download-file.html',$stash);
             exit;
         }
@@ -489,7 +498,7 @@ $app->get('/enableGridFTP/:udi', function ($udi) use ($app) {
         if(file_exists($ds_hardlink)) {
             unlink($ds_hardlink);
         }
-        
+    
         link($dat_file, $ds_hardlink);
         # Write a file dating this hardlink for later removal  (UNIX timestamp)
         $date = date("U"); # UNIXTIME 
