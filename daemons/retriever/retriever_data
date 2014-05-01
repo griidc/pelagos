@@ -328,7 +328,9 @@ sub getdata {
     if ($type =~ /^text\/html/) {
         # mark as html for further review
         $data_notify->{'html'}->{$reg_id} = $url_data;
+        my $sth2 = $dbh->prepare("UPDATE registry SET dataset_download_status = ? WHERE registry_id = ?;");
         writelog("[$udi] remote file at $url_data resolves to HTML page.");
+        $sth2->execute('dl_error',$reg_id) or die "Couldn't execute statement: " . $sth2->errstr;
         return;
     }
 
