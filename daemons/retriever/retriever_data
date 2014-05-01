@@ -49,9 +49,7 @@ $sth = $dbh->prepare("SELECT registry_id, dataset_udi, url_data, userid, dataset
                       WHERE
                           substr(registry_id,1,2) != '00' AND
                           (dataset_download_status = 'no_status' OR
-                           dataset_download_status = 'None' OR
-                           dataset_download_status = 'dl_error' OR
-                           dataset_download_status = 'Error') AND
+                           dataset_download_status = 'None') AND
                           (url_data LIKE 'http://%' OR
                            url_data LIKE 'https://%' OR
                            url_data LIKE 'ftp://%')
