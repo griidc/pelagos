@@ -61,6 +61,7 @@ $sth->execute();
 my $data_notify = {};
 
 my $ua = LWP::UserAgent->new;
+$ua->agent('Retriever/1.0');
 $ua->cookie_jar({});
 
 # loop through all entries that have remote data
