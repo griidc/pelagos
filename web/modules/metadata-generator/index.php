@@ -43,14 +43,18 @@ $app->get('/:udi', function ($udi) use ($app) {
 
         if (array_key_exists('primary_poc',$stash['dataset'])) {
             $people = getPeopleDetails(getDBH('RPIS'),array('peopleId='.$stash['dataset']['primary_poc']));
-            $stash['RP']['PPOC'] = $people[0];
-            $stash['RP']['PPOC']['RoleCode'] = $GLOBALS['CodeLists']['CI_RoleCode']['pointOfContact'];
+            if (count($people)) {
+                $stash['RP']['PPOC'] = $people[0];
+                $stash['RP']['PPOC']['RoleCode'] = $GLOBALS['CodeLists']['CI_RoleCode']['pointOfContact'];
+            }
         }
     
         if (array_key_exists('project_id',$stash['dataset'])) {
             $people = getPeopleDetails(getDBH('RPIS'),array('projectId='.$stash['dataset']['project_id'],'RoleId=3'));
-            $stash['RP']['DM'] = $people[0];
-            $stash['RP']['DM']['RoleCode'] = $GLOBALS['CodeLists']['CI_RoleCode']['pointOfContact'];
+            if (count($people)) {
+                $stash['RP']['DM'] = $people[0];
+                $stash['RP']['DM']['RoleCode'] = $GLOBALS['CodeLists']['CI_RoleCode']['pointOfContact'];
+            }
         }
 
         $stash['RP']['DIST'] = $GLOBALS['config']['Distributor'];
