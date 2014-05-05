@@ -13,8 +13,8 @@
         <gmd:positionName>
             <gco:CharacterString>{{RP[RPType].Position}}</gco:CharacterString>
         </gmd:positionName>
-	{% else %}
-		<gmd:positionName/>
+    {% else %}
+        <gmd:positionName/>
     {% endif %}
     <gmd:contactInfo>
         <gmd:CI_Contact>
@@ -75,8 +75,8 @@
                         <gmd:postalCode>
                             <gco:CharacterString>{{RP[RPType].Department_Zip}}</gco:CharacterString>
                         </gmd:postalCode>
-					{% else %}
-						<gmd:postalCode/>
+                    {% else %}
+                        <gmd:postalCode/>
                     {% endif %}
                     {% if RP[RPType].Country %}
                         <gmd:country>

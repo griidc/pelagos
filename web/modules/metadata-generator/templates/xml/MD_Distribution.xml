@@ -25,8 +25,8 @@
                         {% endif %}
                     </gmd:MD_Format>
                 </gmd:distributorFormat>
-			{% else %}
-				<gmd:distributorFormat/>
+            {% else %}
+                <gmd:distributorFormat/>
             {% endif %}
             <gmd:distributorTransferOptions>
                 <gmd:MD_DigitalTransferOptions>
@@ -34,8 +34,8 @@
                         <gmd:transferSize>
                             <gco:Real>{{dataset.size}}</gco:Real>
                         </gmd:transferSize>
-					{% else %}
-						<gmd:transferSize/>
+                    {% else %}
+                        <gmd:transferSize/>
                     {% endif %}
                     <gmd:onLine>
                         <gmd:CI_OnlineResource>
