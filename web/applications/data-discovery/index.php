@@ -298,24 +298,26 @@ $app->get('/metadata/:udi', function ($udi) use ($app) {
 })->conditions(array('udi' => '(00|Y1|R\d)\.x\d{3}\.\d{3}:\d{4}'));
 
 $app->get('/metadata/', function () use ($app) {
-    $files = get_accepted_metadata('GoMRI');
-    $max_last_modified_ts = 0;
-    foreach ($files as $file) {
-        if ($file['last_modified_datetime'] != '{}') {
-            $last_modified_ts = strtotime(preg_replace(array('/{/','/}/'),array('',''),$file['last_modified_datetime']));
+    $files = array();
+    $directories = array('GoMRI','Others');
+    foreach ($directories as $directory) {
+        $dir_files = get_accepted_metadata($directory);
+        $max_last_modified_ts = strtotime('2010-04-20');
+        foreach ($dir_files as $file) {
+            if ($file['last_modified_datetime'] != '{}') {
+                $last_modified_ts = strtotime(preg_replace(array('/{/','/}/'),array('',''),$file['last_modified_datetime']));
+            }
+            else {
+                $last_modified_ts = strtotime(preg_replace(array('/{/','/}/'),array('',''),$file['last_modified_date']));
+            }
+            if ($last_modified_ts > $max_last_modified_ts) $max_last_modified_ts = $last_modified_ts;
         }
-        else {
-            $last_modified_ts = strtotime(preg_replace(array('/{/','/}/'),array('',''),$file['last_modified_date']));
-        }
-        if ($last_modified_ts > $max_last_modified_ts) $max_last_modified_ts = $last_modified_ts;
+        array_push($files,array('name' => "$directory/", 'type' => 'folder', 'last_modified' => strftime('%d-%b-%Y %H:%M',$max_last_modified_ts)));
     }
     $stash = array('directory' => 'metadata',
                    'parent' => '',
                    'filename_max_len' => 24,
-                   'files' => array(
-                                  array('name' => 'GoMRI/', 'type' => 'folder', 'last_modified' => strftime('%d-%b-%Y %H:%M',$max_last_modified_ts)),
-                                  array('name' => 'Others/', 'type' => 'folder', 'last_modified' => '05-May-2014 13:00')
-                              )
+                   'files' => $files
              );
     $app->render('html/waf.html',$stash);
     drupal_exit();
