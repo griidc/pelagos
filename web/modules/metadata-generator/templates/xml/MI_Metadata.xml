@@ -13,11 +13,11 @@
         <gmd:MD_ScopeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_ScopeCode" codeListValue="dataset" codeSpace="005">dataset</gmd:MD_ScopeCode>
     </gmd:hierarchyLevel>
     <gmd:contact>
-        {% set RPType = 'PPOC' %}
+        {% set RPType = 'DM' %}
         {% include "xml/CI_ResponsibleParty.xml" %}
     </gmd:contact>
     <gmd:contact>
-        {% set RPType = 'DM' %}
+        {% set RPType = 'PPOC' %}
         {% include "xml/CI_ResponsibleParty.xml" %}
     </gmd:contact>
     <gmd:dateStamp>
