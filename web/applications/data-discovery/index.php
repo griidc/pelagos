@@ -372,6 +372,7 @@ $app->get('/metadata/:directory/:file', function ($directory,$file) use ($app) {
         header("Content-Type: text/xml");
         header("Content-Transfer-Encoding: Binary");
         header("Content-Length:" . strlen($raw_data['metadata_xml']));
+        header("Content-Disposition: inline; filename=$file");
         print $raw_data['metadata_xml'];
         drupal_exit();
     }
