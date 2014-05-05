@@ -295,6 +295,86 @@ $app->get('/metadata/:udi', function ($udi) use ($app) {
         drupal_set_message("Error retrieving metadata from database and filesystem.",'error');
         drupal_goto($GLOBALS['PAGE_NAME']); # reload calling page
     }
+})->conditions(array('udi' => '(00|Y1|R\d)\.x\d{3}\.\d{3}:\d{4}'));
+
+$app->get('/metadata/', function () use ($app) {
+    $files = get_accepted_metadata('GoMRI');
+    $max_last_modified_ts = 0;
+    foreach ($files as $file) {
+        if ($file['last_modified_datetime'] != '{}') {
+            $last_modified_ts = strtotime(preg_replace(array('/{/','/}/'),array('',''),$file['last_modified_datetime']));
+        }
+        else {
+            $last_modified_ts = strtotime(preg_replace(array('/{/','/}/'),array('',''),$file['last_modified_date']));
+        }
+        if ($last_modified_ts > $max_last_modified_ts) $max_last_modified_ts = $last_modified_ts;
+    }
+    $stash = array('directory' => 'metadata',
+                   'parent' => '',
+                   'filename_max_len' => 24,
+                   'files' => array(
+                                  array('name' => 'GoMRI/', 'type' => 'folder', 'last_modified' => strftime('%d-%b-%Y %H:%M',$max_last_modified_ts)),
+                                  array('name' => 'Others/', 'type' => 'folder', 'last_modified' => '05-May-2014 13:00')
+                              )
+             );
+    $app->render('html/waf.html',$stash);
+    drupal_exit();
+});
+
+$app->get('/metadata/:directory/', function ($directory) use ($app) {
+    $files = get_accepted_metadata($directory);
+    $filename_max_len = 0;
+    for ($i=0; $i<count($files); $i++) {
+        $files[$i]['name'] = preg_replace('/:/','-',$files[$i]['dataset_udi']) . '-metadata.xml';
+        $files[$i]['type'] = 'text';
+        $size = strlen($files[$i]['metadata_xml']);
+        if ($size > 1024000) {
+            $size = round($size / 1024 / 1024);
+            $size .= 'M';
+        }
+        elseif ($size > 999) {
+            $size = round($size / 1024);
+            $size .= 'K';
+        }
+        else {
+            $size .= ' ';
+        }
+        $files[$i]['size'] = sprintf('% 4s',$size);
+        if ($files[$i]['last_modified_datetime'] != '{}') {
+            $last_modified_ts = strtotime(preg_replace(array('/{/','/}/'),array('',''),$files[$i]['last_modified_datetime']));
+        }
+        else {
+            $last_modified_ts = strtotime(preg_replace(array('/{/','/}/'),array('',''),$files[$i]['last_modified_date']));
+        }
+        $files[$i]['last_modified'] = strftime('%d-%b-%Y %H:%M',$last_modified_ts);
+        if (strlen($files[$i]['name']) > $filename_max_len) $filename_max_len = strlen($files[$i]['name']) + 1;
+    }
+    if ($filename_max_len < 24) $filename_max_len = 24;
+    $stash = array('directory' => "metadata/$directory",
+                   'parent' => '/metadata',
+                   'filename_max_len' => $filename_max_len,
+                   'files' => $files
+             );
+    $app->render('html/waf.html',$stash);
+    drupal_exit();
+})->conditions(array('directory' => 'GoMRI|Others'));
+
+$app->get('/metadata/:directory/:file', function ($directory,$file) use ($app) {
+    $udi = preg_replace('/-metadata.xml$/','',$file);
+    $udi = preg_replace('/-/',':',$udi);
+    $dbms = OpenDB("GOMRI_RO");
+    $SQL = "SELECT dataset_udi,metadata_xml FROM curr_reg_view JOIN metadata on metadata.registry_id = curr_reg_view.registry_id WHERE metadata_status = 'Accepted' AND dataset_udi = ?";
+    $data = $dbms->prepare($SQL);
+    $data->execute(array($udi));
+    $raw_data = $data->fetch();
+    if ($raw_data) {
+        header("Cache-Control: public"); // needed for i.e.
+        header("Content-Type: text/xml");
+        header("Content-Transfer-Encoding: Binary");
+        header("Content-Length:" . strlen($raw_data['metadata_xml']));
+        print $raw_data['metadata_xml'];
+        drupal_exit();
+    }
 });
 
 $app->get('/download-external/:udi', function ($udi) use ($app) {

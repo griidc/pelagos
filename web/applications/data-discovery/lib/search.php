@@ -53,4 +53,40 @@ function add_project_info(&$dataset) {
     }
 }
 
+function get_accepted_metadata($category) {
+    if ($category == 'GoMRI') {
+        $others = 'NOT';
+    }
+    else {
+        $others = '';
+    }
+    $SQL = "SELECT dataset_udi,
+            metadata_xml,
+            CAST(
+                xpath('/gmi:MI_Metadata/gmd:dateStamp[1]/gco:DateTime/text()',metadata_xml,
+                    ARRAY[
+                    ARRAY['gmi', 'http://www.isotc211.org/2005/gmi'],
+                    ARRAY['gmd', 'http://www.isotc211.org/2005/gmd'],
+                    ARRAY['gco', 'http://www.isotc211.org/2005/gco']
+                    ]
+                ) AS character varying
+            ) AS last_modified_datetime,
+            CAST(
+                xpath('/gmi:MI_Metadata/gmd:dateStamp[1]/gco:Date/text()',metadata_xml,
+                    ARRAY[
+                    ARRAY['gmi', 'http://www.isotc211.org/2005/gmi'],
+                    ARRAY['gmd', 'http://www.isotc211.org/2005/gmd'],
+                    ARRAY['gco', 'http://www.isotc211.org/2005/gco']
+                    ]
+                ) AS character varying
+            ) AS last_modified_date
+            FROM curr_reg_view
+            JOIN metadata on metadata.registry_id = curr_reg_view.registry_id
+            WHERE metadata_status = 'Accepted' AND curr_reg_view.registry_id $others LIKE '00%' ORDER BY dataset_udi";
+    $dbms = OpenDB("GOMRI_RO");
+    $data = $dbms->prepare($SQL);
+    $data->execute();
+    return $data->fetchAll();
+}
+
 ?>
