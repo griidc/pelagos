@@ -43,3 +43,29 @@ table.metadata .tablesorter-headerAsc .sorticon {
 table.metadata .tablesorter-headerDesc .sorticon {
     background-image: url({{baseUrl}}/includes/images/descending.png);
 }
+
+#log{
+    z-index: 1000;
+    border-radius: 8px;
+    position: fixed;
+    left: 10%;
+    top: 25%;
+    width: 80%;
+    background-color: beige;
+    display: none;
+    border: 2px solid black;
+}
+
+#log_content{
+    height: 400px;
+    overflow: auto;
+    margin-right: 2px;
+    margin-bottom: 2px;
+}
+
+#log_close {
+    text-align: right;
+    padding-top: 2px;
+    padding-right: 2px;
+}
+

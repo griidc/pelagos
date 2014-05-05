@@ -37,7 +37,7 @@
                                 <td valign="top"><input type="button" value="Start Review" onclick="location.href='{{baseUrl}}/start-review/{{dta.dataset_udi}}';" title='Mark {{dta.dataset_udi}} as "In Review".'></td>
                             {% endif %}
                             <td valign="top">{{dta.submittimestamp}}</td>
-                            <td valign="top"><a href="{{baseUrl}}/download-metadata/{{dta.dataset_udi}}"><img src="{{baseUrl}}/includes/images/download.png"></a>&nbsp;{% if dta.hasxml == true %}<a href="{{baseUrl}}/download-metadata-db/{{dta.dataset_udi}}"><img src="{{baseUrl}}/includes/images/download-from-db.png"></a>&nbsp;{% endif %}{{dta.dataset_metadata}}</td>
+                            <td valign="top"><button style="font-size:66%" onclick="javascript:showLogEntries('{{dta.dataset_udi}}')">Log</button> <a href="{{baseUrl}}/download-metadata/{{dta.dataset_udi}}"><img src="{{baseUrl}}/includes/images/download.png"></a>&nbsp;{% if dta.hasxml == true %}<a href="{{baseUrl}}/download-metadata-db/{{dta.dataset_udi}}"><img src="{{baseUrl}}/includes/images/download-from-db.png"></a>&nbsp;{% endif %}{{dta.dataset_metadata}}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -77,4 +77,10 @@
             </form>
         </div>
 
+</div>
+<div id='log'>
+    <div id="log_close"><input type="image" src="{{baseUrl}}/includes/images/close.gif" onclick="jQuery('#log').hide();"></div>
+    <div id='log_content'>
+        Log contents go here, replaced by AJAX call to /getlog/:udi
+    </div>
 </div>

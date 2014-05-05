@@ -27,3 +27,14 @@ function clearStatusMessages() {
 function clearTestGeometry() {
     document.getElementById("testGeometry").value = "";
 }
+
+function showLogEntries(udi) {
+    $.ajax({
+            "url": "{{baseUrl}}/getlog/" + udi,
+            "success": function(data) {
+                $('#log_content').html(data);
+                $('#log').show();
+            }
+    });
+
+}

@@ -77,6 +77,11 @@ $app->hook('slim.before.router', function () use ($app) {
 });
 
 $app->get('/includes/:file', 'dumpIncludesFile')->conditions(array('file' => '.+'));
+$app->get('/js/:name.js', function ($name) use ($app) {
+    header('Content-type: text/javascript');
+    $app->render("js/$name.js");
+    exit;
+});
 
 $app->get('/css/:name.css', function ($name) use ($app) {
     header('Content-type: text/css');
@@ -359,37 +364,6 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
         } else {
             throw new RuntimeException('GRIIDC standard failed:  UDI must be referenced in /gmi:MI_Metadata/gmd:distributionInfo[1]/gmd:MD_Distribution[1]/gmd:distributor[1]/gmd:MD_Distributor[1]/gmd:distributorTransferOptions[1]/gmd:MD_DigitalTransferOptions[1]/gmd:onLine[1]/gmd:CI_OnlineResource[1]/gmd:linkage[1]/gmd:URL[1]');
         }
-
-/*
-        // Check keyword element(s) to verify there aren't commas included.
-        $check_4_xpath = "/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:descriptiveKeywords[1]/gmd:MD_Keywords[1]/gmd:keyword/gco:CharacterString";
-        $check_4 = $xml->xpath($check_4_xpath);
-        foreach ($check_4 as $node) {
-            if(preg_match("/,/",$node)) { # URL must end with UDI
-                throw new RuntimeException("GRIIDC XML check failed: XML contains commas in keyword element. ($node)");
-            }
-        }
-
-*/
-
-/*
-        // Check that time period description contains either the phase 'ground condition' or 'modeled period'
-        $check_5_xpath = "/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:temporalElement[1]/gmd:EX_TemporalExtent[1]/gmd:extent[1]/gml:TimePeriod[1]/gml:description";
-        $check_5 = $xml->xpath($check_5_xpath);
-        $ok=0;
-        foreach ($check_5 as $node) {
-            if(preg_match("/ground condition/i",$node)) { # URL must end with UDI
-                $ok++;
-            }
-            if(preg_match("/modeled period/i",$node)) { # URL must end with UDI
-                $ok++;
-            }
-        }
-        if ($ok != 1) {
-            throw new RuntimeException("GRIIDC XML check failed: XML time period description needs to indicate 'ground condition' xor 'modeled period'");
-        }
-*/
-
 
         // Determine geometry type
         if ($geo = $xml->xpath('/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:geographicElement[1]/gmd:EX_BoundingPolygon[1]/gmd:polygon[1]/gml:Polygon[1]')) {
@@ -681,8 +655,26 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
     echo "<a href=.>Continue</a>";
 });
 
+// Get log entries (per UDI, or get them all
+$app->get('/getlog(/)(:udi/?)', function ( $udi = '' ) {
+    print "&nbsp; &nbsp; Log Entries for $udi<br />"; # (This belongs in its own div...will move later)
+    print "<ul>";
+    $rawlog = file($GLOBALS['logfile_location']);
+    if ($udi != '') {
+        $entries = array_values(preg_grep("/$udi/",$rawlog));
+    } else {
+        $entries = $rawlog;
+    }
+    foreach ($entries as $entry) {
+        print "<li>$entry</li>\n";
+    }
+    print "</ul>";
+    drupal_exit();
+});
+
+
 function index($app) {
-    drupal_add_js("/$GLOBALS[PAGE_NAME]/includes/js/mdapp.js",array('type'=>'external'));
+    drupal_add_js("/$GLOBALS[PAGE_NAME]/js/mdapp.js",array('type'=>'external'));
     drupal_add_css("/$GLOBALS[PAGE_NAME]/css/mdapp.css",array('type'=>'external'));
     $stash['defaultFilter'] = $app->request()->get('filter');
     $stash['m_dataset']['accepted'] = GetMetadata('accepted');
