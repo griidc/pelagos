@@ -12,15 +12,15 @@
     <gmd:hierarchyLevel>
         <gmd:MD_ScopeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_ScopeCode" codeListValue="dataset" codeSpace="005">dataset</gmd:MD_ScopeCode>
     </gmd:hierarchyLevel>
-{% if RP.DM %}
-    <gmd:contact>
-        {% set RPType = 'DM' %}
-        {% include "xml/CI_ResponsibleParty.xml" %}
-    </gmd:contact>
-{% endif %}
 {% if RP.PPOC %}
     <gmd:contact>
         {% set RPType = 'PPOC' %}
+        {% include "xml/CI_ResponsibleParty.xml" %}
+    </gmd:contact>
+{% endif %}
+{% if RP.DM %}
+    <gmd:contact>
+        {% set RPType = 'DM' %}
         {% include "xml/CI_ResponsibleParty.xml" %}
     </gmd:contact>
 {% endif %}
