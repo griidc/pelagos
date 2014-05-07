@@ -39,4 +39,12 @@
     <gmd:distributionInfo>
         {% include "xml/MD_Distribution.xml" %}
     </gmd:distributionInfo>
+    <gmd:metadataMaintenance>
+        <gmd:MD_MaintenanceInformation>
+            <gmd:maintenanceAndUpdateFrequency gco:nilReason="unknown"/>
+            <gmd:maintenanceNote>
+                <gco:CharacterString>This ISO metadata record was automatically generated from information provided to GRIIDC for dataset: {{dataset.udi}}</gco:CharacterString>
+            </gmd:maintenanceNote>
+        </gmd:MD_MaintenanceInformation>
+    </gmd:metadataMaintenance>
 </gmi:MI_Metadata>
