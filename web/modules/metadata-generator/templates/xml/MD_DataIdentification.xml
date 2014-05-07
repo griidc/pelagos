@@ -38,7 +38,7 @@
         <gco:CharacterString>eng; USA</gco:CharacterString>
     </gmd:language>
     <gmd:topicCategory>
-        <gmd:MD_TopicCategoryCode />
+        <gmd:MD_TopicCategoryCode>oceans</gmd:MD_TopicCategoryCode>
     </gmd:topicCategory>
     {% if dataset.geo_location or dataset.start_date or dataset.end_date %}
         <gmd:extent>
