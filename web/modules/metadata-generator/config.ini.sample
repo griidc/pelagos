@@ -1,16 +1,6 @@
 [Twig]
 twigDirectory = "/usr/share/pear/Twig"
 
-[GOMRI_DB]
-connstr = "pgsql:host=localhost;dbname=gomri;"
-username = "my_username"
-password = "my_password"
-
-[RPIS_DB]
-connstr = "mysql:host=localhost;dbname=gomri_rpis;"
-username = "my_username"
-password = "my_password7"
-
 [Distributor]
 Institution_Name = "Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC)"
 Email = "griidc@gomri.org"

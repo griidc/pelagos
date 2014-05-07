@@ -3,11 +3,10 @@
 require_once '/usr/local/share/Slim/Slim/Slim.php';
 require_once '/usr/local/share/Slim-Extras/Views/TwigView.php';
 
+require_once '/usr/local/share/GRIIDC/php/db-utils.lib.php';
 require_once '/usr/local/share/GRIIDC/php/rpis.php';
 require_once '/usr/local/share/GRIIDC/php/datasets.php';
 require_once '/usr/local/share/GRIIDC/php/codelists.php';
-
-require_once 'lib/md.php';
 
 $GLOBALS['config'] = parse_ini_file('config.ini',true);
 
@@ -29,7 +28,9 @@ EOT;
 
 $app->get('/:udi', function ($udi) use ($app) {
     $stash = array();
-    $datasets = get_identified_datasets(getDBH('GOMRI'),array("udi=$udi"));
+    $GOMRI_DBH = OpenDB('GOMRI_RO');
+    $RIS_DBH = OpenDB('RIS_RO');
+    $datasets = get_identified_datasets($GOMRI_DBH,array("udi=$udi"));
 
     if (count($datasets) > 0) {
         $stash['dataset'] = $datasets[0];
@@ -42,7 +43,7 @@ $app->get('/:udi', function ($udi) use ($app) {
         }
 
         if (array_key_exists('primary_poc',$stash['dataset'])) {
-            $people = getPeopleDetails(getDBH('RPIS'),array('peopleId='.$stash['dataset']['primary_poc']));
+            $people = getPeopleDetails($RIS_DBH,array('peopleId='.$stash['dataset']['primary_poc']));
             if (count($people)) {
                 $stash['RP']['PPOC'] = $people[0];
                 $stash['RP']['PPOC']['RoleCode'] = $GLOBALS['CodeLists']['CI_RoleCode']['pointOfContact'];
@@ -50,7 +51,7 @@ $app->get('/:udi', function ($udi) use ($app) {
         }
     
         if (array_key_exists('project_id',$stash['dataset'])) {
-            $people = getPeopleDetails(getDBH('RPIS'),array('projectId='.$stash['dataset']['project_id'],'RoleId=3'));
+            $people = getPeopleDetails($RIS_DBH,array('projectId='.$stash['dataset']['project_id'],'RoleId=3'));
             if (count($people)) {
                 $stash['RP']['DM'] = $people[0];
                 $stash['RP']['DM']['RoleCode'] = $GLOBALS['CodeLists']['CI_RoleCode']['pointOfContact'];
