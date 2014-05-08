@@ -106,9 +106,9 @@ while (my $r = $sth->fetchrow_hashref()) {
 
             my $ff = File::Fetch->new( uri => $url_metadata );
             mkdir('/tmp/retriever/') or die $! if !-d '/tmp/retriever/';
-            my $filepath = $ff->fetch( to => "/tmp/retriever/$udi.met" );
+            my $filepath = $ff->fetch( to => '/tmp/retriever/' );
             if (!defined $filepath) {
-                writelog("[$udi] unable to fetch $url_metadata to /tmp/retriever/$udi.met");
+                writelog("[$udi] unable to fetch $url_metadata to /tmp/retriever/$filename");
                 return;
             }
 

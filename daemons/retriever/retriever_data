@@ -351,9 +351,9 @@ sub getdata {
     writelog("[$udi] fetching $url_data as $filename");
     my $ff = File::Fetch->new( uri => $url_data );
     mkdir('/tmp/retriever/') or die $! if !-d '/tmp/retriever/';
-    my $filepath = $ff->fetch( to => "/tmp/retriever/$udi.dat" );
+    my $filepath = $ff->fetch( to => '/tmp/retriever/' );
     if (!defined $filepath) {
-        writelog("[$udi] unable to fetch $url_data to /tmp/retriever/$udi.dat");
+        writelog("[$udi] unable to fetch $url_data to /tmp/retriever/$filename");
         return;
     }
 
