@@ -9,9 +9,8 @@ use Net::LDAP;
 use POSIX qw(strftime);
 use IO::Handle;
 use LWP::UserAgent;
-use File::Fetch;
-
-$File::Fetch::BLACKLIST = [qw|lwp httplite|];
+use LWP::Simple qw(getstore);
+use LWP::Simple::Cookies;
 
 umask 0022;
 
@@ -348,12 +347,22 @@ sub getdata {
         return;
     }
 
+    # fetch the file
     writelog("[$udi] fetching $url_data as $filename");
-    my $ff = File::Fetch->new( uri => $url_data );
-    mkdir('/tmp/retriever/') or die $! if !-d '/tmp/retriever/';
-    my $filepath = $ff->fetch( to => '/tmp/retriever/' );
-    if (!defined $filepath) {
-        writelog("[$udi] unable to fetch $url_data to /tmp/retriever/$filename");
+    my $retriever_temp_dir = '/tmp/retriever';
+    mkdir($retriever_temp_dir) or die $! if !-d $retriever_temp_dir;
+    my $filepath = "$retriever_temp_dir/$udi.dat";
+    my $resp_code = getstore($url_data,$filepath);
+    if ($!) {
+        my $errmsg = "[$udi] unable to fetch $url_data to $filepath ($!)";
+        print STDERR "$errmsg\n";
+        writelog($errmsg);
+        return;
+    }
+    if ($resp_code != 200) {
+        my $errmsg = "[$udi] unable to fetch $url_data to $filepath ($resp_code)";
+        print STDERR "$errmsg\n";
+        writelog($errmsg);
         return;
     }
 

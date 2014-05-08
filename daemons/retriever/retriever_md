@@ -11,7 +11,8 @@ use MIME::Types qw(by_suffix);
 use POSIX qw(strftime);
 use IO::Handle;
 use LWP::UserAgent;
-use File::Fetch;
+use LWP::Simple qw(getstore);
+use LWP::Simple::Cookies;
 
 umask 0022;
 
@@ -104,11 +105,22 @@ while (my $r = $sth->fetchrow_hashref()) {
                 next;
             }
 
-            my $ff = File::Fetch->new( uri => $url_metadata );
-            mkdir('/tmp/retriever/') or die $! if !-d '/tmp/retriever/';
-            my $filepath = $ff->fetch( to => '/tmp/retriever/' );
-            if (!defined $filepath) {
-                writelog("[$udi] unable to fetch $url_metadata to /tmp/retriever/$filename");
+            # fetch the file
+            writelog("[$udi] fetching $url_metadata as $filename");
+            my $retriever_temp_dir = '/tmp/retriever';
+            mkdir($retriever_temp_dir) or die $! if !-d $retriever_temp_dir;
+            my $filepath = "$retriever_temp_dir/$udi.met";
+            my $resp_code = getstore($url_metadata,$filepath);
+            if ($!) {
+                my $errmsg = "[$udi] unable to fetch $url_metadata to $filepath ($!)";
+                print STDERR "$errmsg\n";
+                writelog($errmsg);
+                return;
+            }
+            if ($resp_code != 200) {
+                my $errmsg = "[$udi] unable to fetch $url_metadata to $filepath ($resp_code)";
+                print STDERR "$errmsg\n";
+                writelog($errmsg);
                 return;
             }
 
