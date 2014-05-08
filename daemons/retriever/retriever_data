@@ -352,6 +352,10 @@ sub getdata {
     my $ff = File::Fetch->new( uri => $url_data );
     mkdir('/tmp/retriever/') or die $! if !-d '/tmp/retriever/';
     my $filepath = $ff->fetch( to => "/tmp/retriever/$udi.dat" );
+    if (!defined $filepath) {
+        writelog("[$udi] unable to fetch $url_data to /tmp/retriever/$udi.dat");
+        return;
+    }
 
     # check if data store directory exists for this udi
     if (! -d "$conf->{paths}->{data_store}/$udi") {

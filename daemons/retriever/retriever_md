@@ -107,6 +107,10 @@ while (my $r = $sth->fetchrow_hashref()) {
             my $ff = File::Fetch->new( uri => $url_metadata );
             mkdir('/tmp/retriever/') or die $! if !-d '/tmp/retriever/';
             my $filepath = $ff->fetch( to => "/tmp/retriever/$udi.met" );
+            if (!defined $filepath) {
+                writelog("[$udi] unable to fetch $url_metadata to /tmp/retriever/$udi.met");
+                return;
+            }
 
             # check if data store directory exists for this udi
             if (! -d "$conf->{paths}->{data_store}/$udi") {
