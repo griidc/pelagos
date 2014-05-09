@@ -54,13 +54,7 @@ table.metadata .tablesorter-headerDesc .sorticon {
     background-color: beige;
     display: none;
     border: 2px solid black;
-}
-
-#log_content{
-    height: 400px;
-    overflow: auto;
-    margin-right: 2px;
-    margin-bottom: 2px;
+    background-image: url({{baseUrl}}/includes/images/paper-seamless-background.jpg);
 }
 
 #log_close {
@@ -68,4 +62,15 @@ table.metadata .tablesorter-headerDesc .sorticon {
     padding-top: 2px;
     padding-right: 2px;
 }
+
+#log_title{
+}
+
+#log_content{
+    height: 400px;
+    overflow: auto;
+    margin-right: 3px;
+    margin-bottom: 2px;
+}
+
 

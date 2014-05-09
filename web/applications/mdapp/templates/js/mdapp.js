@@ -33,6 +33,7 @@ function showLogEntries(udi) {
             "url": "{{baseUrl}}/getlog/" + udi,
             "success": function(data) {
                 $('#log_content').html(data);
+                $('#log_title').html("&nbsp; &nbsp; Log Entries For: " + udi);
                 $('#log').show();
             }
     });

@@ -3,7 +3,9 @@
     <ul>
         <li style="text-align:center"><a href="#submitted" onClick="clearStatusMessages()">Submitted ({{ m_dataset.submitted|length }})</a></li>
         <li style="text-align:center"><a href="#inreview" onClick="clearStatusMessages()">In Review ({{ m_dataset.inreview|length }})</a></li>
+        <li style="text-align:center"><a href="#secondcheck" onClick="clearStatusMessages()" >2nd Chk ({{ m_dataset.secondcheck|length }})</a></li>
         <li style="text-align:center"><a href="#accepted" onClick="clearStatusMessages()" >Accepted ({{ m_dataset.accepted|length }})</a></li>
+        <li style="text-align:center"><a href="#backtosubmitter" onClick="clearStatusMessages()" >Bk to Sub ({{ m_dataset.backtosubmitter|length }})</a></li>
         <li style="text-align:center"><a href="#uploadnewmetadata" onClick="clearStatusMessages()">Upload New Metadata</a></li>
         <li style="text-align:center"><a href="#GeoTester">Test a Geometry</a></li>
     </ul>
@@ -27,14 +29,49 @@
                         <tr>
                             <td valign="top"><a href="{{pagelessBaseUrl}}/data/{{dta.dataset_udi}}" target="0" >{{dta.dataset_udi}}</a></td>
                             {% if sname == 'accepted' %}
-                                <td valign="top"><input type="button" value="Un-accept" onclick="location.href='{{baseUrl}}/un-accept/{{dta.dataset_udi}}';" title='Un-accept {{dta.dataset_udi}} and mark it as "In Review".'></td>
+                                <td valign="top"><form name="AcceptedState" action="{{baseUrl}}/change_status/{{dta.dataset_udi}}" method="post">
+                                <input type="submit" name="go" value="move-to:">
+                                <select name="to">
+                                    <option value=InReview>InReview</option>
+                                </select>
+                                </form>
+                                </td>
                             {% elseif sname == 'inreview' %}
-                                <td valign="top">
-                                    <input type="button" value="Accept" onclick="location.href='{{baseUrl}}/accept/{{dta.dataset_udi}}';" title="Accept {{dta.dataset_udi}}.">
-                                    <input type="button" value="End Review" onclick="location.href='{{baseUrl}}/end-review/{{dta.dataset_udi}}';" title='Un-mark {{dta.dataset_udi}} as "In Review".'>
+                                <td valign="top"><form name="InReviewState" action="{{baseUrl}}/change_status/{{dta.dataset_udi}}" method="post">
+                                <input type="submit" name="go" value="move-to:">
+                                <select name="to">
+                                    <option value="BackToSubmitter">BackToSubmitter</option>
+                                    <option value="SecondCheck" SELECTED>SecondCheck</option>
+                                </select>
+                                </form>
+                                </td>
+                            {% elseif sname == 'secondcheck' %}
+                                <td valign="top"><form name="SecondCheckState" action="{{baseUrl}}/change_status/{{dta.dataset_udi}}" method="post">
+                                <input type="submit" name="go" value="move-to:">
+                                <select name="to">
+                                    <option value="Accepted" SELECTED>Accepted</option>
+                                    <option value="BackToSubmitter">BackToSubmitter</option>
+                                </select>
+                                </form>
+                                </td>
+                            {% elseif sname == 'submitted' %}
+                                <td valign="top"><form name="SubmittedState" action="{{baseUrl}}/change_status/{{dta.dataset_udi}}" method="post">
+                                <input type="submit" name="go" value="move-to:">
+                                <select name="to">
+                                    <option value=InReview>InReview</option>
+                                </select>
+                                </form>
+                                </td>
+                            {% elseif sname == 'backtosubmitter' %}
+                                <td valign="top"><form name="BackToSubmitterState" action="{{baseUrl}}/change_status/{{dta.dataset_udi}}" method="post">
+                                <input type="submit" name="go" value="move-to:">
+                                <select name="to">
+                                    <option value=InReview>InReview</option>
+                                </select>
+                                </form>
                                 </td>
                             {% else %}
-                                <td valign="top"><input type="button" value="Start Review" onclick="location.href='{{baseUrl}}/start-review/{{dta.dataset_udi}}';" title='Mark {{dta.dataset_udi}} as "In Review".'></td>
+                                error case.
                             {% endif %}
                             <td valign="top">{{dta.submittimestamp}}</td>
                             <td valign="top"><button style="font-size:66%" onclick="javascript:showLogEntries('{{dta.dataset_udi}}')">Log</button> <a href="{{baseUrl}}/download-metadata/{{dta.dataset_udi}}"><img src="{{baseUrl}}/includes/images/download.png"></a>&nbsp;{% if dta.hasxml == true %}<a href="{{baseUrl}}/download-metadata-db/{{dta.dataset_udi}}"><img src="{{baseUrl}}/includes/images/download-from-db.png"></a>&nbsp;{% endif %}{{dta.dataset_metadata}}</td>
@@ -80,7 +117,8 @@
 </div>
 <div id='log'>
     <div id="log_close"><input type="image" src="{{baseUrl}}/includes/images/close.gif" onclick="jQuery('#log').hide();"></div>
+    <div id='log_title'>Log replaces by js</div>
     <div id='log_content'>
-        Log contents go here, replaced by AJAX call to /getlog/:udi
+        Log replaced by AJAX call to /getlog/:udi
     </div>
 </div>

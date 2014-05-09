@@ -1,6 +1,6 @@
 <?php
 # METADATA APPROVAL APPLICATION
-# Author: Michael Scott Williamson  DEC 2013-JAN 2014
+# Author: Michael Scott Williamson  DEC 2013, Updated May 2014
 
 # Note: hardcoded smtp.tamucc.edu, triton.tamucc.edu (ldap) in file.
 
@@ -121,6 +121,66 @@ $app->get('/download-metadata/:udi', function ($udi) use ($app) {
     }
 });
 
+// change metadata_status field
+$app->post('/change_status/:udi', function ($udi) use ($app) {
+    global $user;
+    $to = $app->request()->post('to');
+    $from = getCurrentState($udi);
+    $allowed = getTransitions($from);
+    if (in_array(strtolower($to),$allowed)) {
+
+        /*   
+            BackToSubmitter
+            AwaitingChangeApproval
+            Submitted
+            InReview
+            SecondCheck
+            Accepted
+
+            Held
+            Validated
+            None
+            ChangesApproved
+            NeedsRevision
+        */
+ 
+        // State Transitions
+
+        // Submitted -> InReview                    ( normal flow )
+
+        // InReview -> SecondCheck                  ( normal flow )
+        // InReview -> BackToSubmitter              ( Reviewer rejects )        
+        // InReview -> AwaitingChangeApproval       ( Reviewer makes changes )
+        
+        // SecondCheck -> Accepted                  ( normal flow )
+        // SecondCheck -> BackToSubmitter           ( Reviewer rejects )
+        // SecondCheck -> AwaitingChangeApproval    ( Reviewer makes changes )
+
+        // BackToSubmitter -> InReview              ( User made changes, restart review process )
+        
+        // AwaitingChangeApproval -> Accepted       ( User accepts reviwer's changes )
+        // AwaitingChangeApproval -> InReview       ( User rejects reviewer's changes )
+        
+        $sql = "update registry set metadata_status = :to where
+                metadata_status = :from and registry_id =
+                ( select MAX(registry_id) from registry where dataset_udi = :udi)"; 
+
+        $dbms = OpenDB("GOMRI_RW");
+        $data = $dbms->prepare($sql);
+
+        $data->bindParam(':to',$to);            # Bindparams are our friends.
+        $data->bindParam(':from',$from);
+        $data->bindParam(':udi',$udi);
+
+        $data->execute();
+        
+        drupal_set_message("Metadata status for $udi has been changed from $from to $to.",'status');
+        writeLog($user->name." has changed metedata status for $udi ($from -> $to)");
+    } 
+    drupal_goto($GLOBALS['PAGE_NAME']);
+    drupal_exit();
+});
+/*
 // Un-accept
 $app->get('/un-accept/:udi', function ($udi) use ($app) {
     global $user;
@@ -180,7 +240,7 @@ $app->get('/accept/:udi', function ($udi) use ($app) {
     writeLog($user->name." has accepted metadata for $udi.");
     drupal_goto($GLOBALS['PAGE_NAME']);
 });
-
+*/
 // Test Geometry
 $app->post('/TestGeometry', function () use ($app) {
     // attempt to have PostGIS validate any geometry, if found.
@@ -657,7 +717,6 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
 
 // Get log entries (per UDI, or get them all
 $app->get('/getlog(/)(:udi/?)', function ( $udi = '' ) {
-    print "&nbsp; &nbsp; Log Entries for $udi<br />"; # (This belongs in its own div...will move later)
     print "<ul>";
     $rawlog = file($GLOBALS['logfile_location']);
     if ($udi != '') {
@@ -680,6 +739,9 @@ function index($app) {
     $stash['m_dataset']['accepted'] = GetMetadata('accepted');
     $stash['m_dataset']['submitted'] = GetMetadata('submitted');
     $stash['m_dataset']['inreview'] = GetMetadata('inreview');
+    $stash['m_dataset']['secondcheck'] = GetMetadata('secondcheck');
+    $stash['m_dataset']['backtosubmitter'] = GetMetadata('backtosubmitter');
+    $stash['m_dataset']['awaitingchangeapproval'] = GetMetadata('awaitingchangeapproval');
     $stash['srvr'] = "https://$_SERVER[HTTP_HOST]";
     if(isset($_SESSION['testPolygon'])) { $stash['testPolygon'] = $_SESSION['testPolygon']; }
     return $stash;
@@ -909,6 +971,79 @@ function GetMetadata($type) {
                         metadata_status = 'InReview'
                     AND
                         metadata_dl_status = 'Completed'";
+            break;
+        case "secondcheck":
+            $sql = "SELECT
+                        metadata_status,
+                        url_metadata,
+                        dataset_udi,
+                        coalesce(trim(trailing '}' from trim(leading '{' from cast(
+                            xpath('/gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1]/text()',metadata_xml,
+                                ARRAY[
+                                    ARRAY['gmi', 'http://www.isotc211.org/2005/gmi'],
+                                    ARRAY['gmd', 'http://www.isotc211.org/2005/gmd'],
+                                    ARRAY['gco', 'http://www.isotc211.org/2005/gco']
+                                ]
+                            ) as character varying ))), dataset_metadata
+                        ) as dataset_metadata,
+                        (metadata_xml is not null) as hasxml,
+                        submittimestamp
+                    FROM
+                        curr_reg_view left join metadata
+                        ON curr_reg_view.registry_id = metadata.registry_id
+                    WHERE
+                        metadata_status = 'SecondCheck'
+                    AND
+                        metadata_dl_status = 'Completed'";
+            break;
+        case "backtosubmitter":
+            $sql = "SELECT
+                        metadata_status,
+                        url_metadata,
+                        dataset_udi,
+                        coalesce(trim(trailing '}' from trim(leading '{' from cast(
+                            xpath('/gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1]/text()',metadata_xml,
+                                ARRAY[
+                                    ARRAY['gmi', 'http://www.isotc211.org/2005/gmi'],
+                                    ARRAY['gmd', 'http://www.isotc211.org/2005/gmd'],
+                                    ARRAY['gco', 'http://www.isotc211.org/2005/gco']
+                                ]
+                            ) as character varying ))), dataset_metadata
+                        ) as dataset_metadata,
+                        (metadata_xml is not null) as hasxml,
+                        submittimestamp
+                    FROM
+                        curr_reg_view left join metadata
+                        ON curr_reg_view.registry_id = metadata.registry_id
+                    WHERE
+                        metadata_status = 'BackToSubmitter'
+                    AND
+                        metadata_dl_status = 'Completed'";
+            break;
+        case "awaitingchangeapproval":
+            $sql = "SELECT
+                        metadata_status,
+                        url_metadata,
+                        dataset_udi,
+                        coalesce(trim(trailing '}' from trim(leading '{' from cast(
+                            xpath('/gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1]/text()',metadata_xml,
+                                ARRAY[
+                                    ARRAY['gmi', 'http://www.isotc211.org/2005/gmi'],
+                                    ARRAY['gmd', 'http://www.isotc211.org/2005/gmd'],
+                                    ARRAY['gco', 'http://www.isotc211.org/2005/gco']
+                                ]
+                            ) as character varying ))), dataset_metadata
+                        ) as dataset_metadata,
+                        (metadata_xml is not null) as hasxml,
+                        submittimestamp
+                    FROM
+                        curr_reg_view left join metadata
+                        ON curr_reg_view.registry_id = metadata.registry_id
+                    WHERE
+                        metadata_status = 'AwaitingChangeApproval'
+                    AND
+                        metadata_dl_status = 'Completed'";
+            break;
     }
     if(isset($sql)) {
         $dbms = OpenDB("GOMRI_RO");
@@ -926,6 +1061,36 @@ function writeLog($message) {
     $logfile_location = $GLOBALS['logfile_location'];
     $dstamp = date('YmdHis');
     file_put_contents($logfile_location,"$dstamp:$message\n", FILE_APPEND);
+}
+
+function getTransitions($currentstate) {
+    $currentstate=strtolower($currentstate);
+    $possible_states = array();
+    if ($currentstate == 'accepted') {
+        $possible_states = array('inreview');
+    } elseif ($currentstate == 'submitted') {
+        $possible_states = array('inreview');
+    } elseif ($currentstate == 'inreview') {
+        $possible_states = array('secondcheck','backtosubmitter','awaitingchangeapproval');
+    } elseif ($currentstate == 'secondcheck') {
+        $possible_states = array('accepted','backtosubmitter','awaitingchangeapproval');
+    } elseif ($currentstate == 'backtosubmitter') {
+        $possible_states = array('inreview');
+    } elseif ($currentstate == 'awaitingchangeapproval') {
+        $possible_states = array('accepted','inreview');
+    }
+    return $possible_states;
+}
+
+function getCurrentState($udi) {
+    $sql  = "select metadata_status from curr_reg_view where dataset_udi = :udi";
+    $dbms = OpenDB("GOMRI_RO");
+    $data = $dbms->prepare($sql);
+    $data->bindParam(":udi",$udi);
+    $data->execute();
+    $raw_data = $data->fetch();
+    $state = $raw_data['metadata_status'];
+    return $state;
 }
 
 ?>
