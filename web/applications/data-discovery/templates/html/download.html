@@ -41,21 +41,28 @@
 <h3 style="text-align:center;">The dataset you selected is ready for download.</h3>
 
 <div style="border: 1px solid #aaa; padding: 10px; border-radius: 4px;">
-    <p style="margin-top:0"><strong>UDI:</strong> {{dataset.udi}}</p>
-
-    <p><strong>Title:</strong> {{dataset.title}}</p>
-
-    <p><strong>Originator:</strong> {{dataset.dataset_originator}}</p>
-
+    <p><strong>UDI:</strong> {{dataset.udi}}<br />
+    <strong>Title:</strong> {{dataset.title}}<br />
+    <strong>Originator:</strong> {{dataset.dataset_originator}}<br />
     {% if dataset.metadata_filename %}
-        <p><strong>Metadata:</strong> <a href="/metadata/{{dataset.udi}}">{{dataset.metadata_filename}}</a></p>
+        <strong>Metadata:</strong> <a href="/metadata/{{dataset.udi}}">{{dataset.metadata_filename}}</a><br />
     {% endif %}
-
-    <p><strong>Filename:</strong> {{dataset.dataset_filename}}</p>
-
-    <p><strong>Size:</strong> {{filesize}}</p>
-
-    <p style="margin-bottom:0"><strong>Estimated Download Time:</strong> <span id="dl_time">calculating...</span></p>
+    <strong>Filename:</strong> {{dataset.dataset_filename}}<br />
+    <strong>Size:</strong> {{filesize}}<br />
+    <strong>Estimated Download Time:</strong> <span id="dl_time">calculating...</span></p>
+</div>
+<div style="border: 1px solid #aaa; padding: 10px; border-radius: 4px; margin-top: 20px">
+<p>
+To cite a data on GRIIDC repository, you may wish to use the following format:<br />
+</p>
+<p>
+{{dataset.dataset_originator}},
+{{dataset.title}},
+{{dataset.year}}.
+Distributed by: Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC), Harte Research Institute, Texas A&amp;M
+University-Corpus Christi.
+griidc:{{dataset.udi}}</font>
+</p>
 </div>
 
 <div style="border: 1px solid #aaa; padding: 10px; margin-top: 20px; border-radius: 4px;">
