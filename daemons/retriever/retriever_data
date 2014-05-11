@@ -349,9 +349,8 @@ sub getdata {
 
     # fetch the file
     writelog("[$udi] fetching $url_data as $filename");
-    my $retriever_temp_dir = '/tmp/retriever';
-    mkdir($retriever_temp_dir) or die $! if !-d $retriever_temp_dir;
-    my $filepath = "$retriever_temp_dir/$udi.dat";
+    mkdir($conf->{'paths'}->{'retriever'}) or die $! if !-d $conf->{'paths'}->{'retriever'};
+    my $filepath = "$conf->{paths}->{retriever}/$udi.dat";
     my $resp_code = getstore($url_data,$filepath);
     if ($!) {
         my $errmsg = "[$udi] unable to fetch $url_data to $filepath ($!)";

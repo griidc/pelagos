@@ -107,9 +107,8 @@ while (my $r = $sth->fetchrow_hashref()) {
 
             # fetch the file
             writelog("[$udi] fetching $url_metadata as $filename");
-            my $retriever_temp_dir = '/tmp/retriever';
-            mkdir($retriever_temp_dir) or die $! if !-d $retriever_temp_dir;
-            my $filepath = "$retriever_temp_dir/$udi.met";
+            mkdir($conf->{'paths'}->{'retriever'}) or die $! if !-d $conf->{'paths'}->{'retriever'};
+            my $filepath = "$conf->{paths}->{retriever}/$udi.met";
             my $resp_code = getstore($url_metadata,$filepath);
             if ($!) {
                 my $errmsg = "[$udi] unable to fetch $url_metadata to $filepath ($!)";
