@@ -152,7 +152,7 @@ function showDatasetDetails(udi) {
 function showDatasetDownload(udi) {
     {% if not logged_in %}
         $.cookie('dl_attempt_udi_cookie', udi, { expires: 1, path: '/', domain: '{{hostname}}' });
-        showLoginOptions(udi);
+        $('#pre_login').show();
     {% else %}
         $.ajax({
             "url": "{{baseUrl}}/download/" + udi,

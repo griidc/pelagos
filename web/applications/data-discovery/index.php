@@ -22,14 +22,10 @@ require_once 'lib/package.php';
 require_once '/usr/local/share/lightopenid-lightopenid/openid.php';
 # GRIIDC database utilities
 require_once '/usr/local/share/GRIIDC/php/db-utils.lib.php';
+# Auth library
+require_once '/usr/local/share/GRIIDC/php/auth.php';
 
 date_default_timezone_set('UTC');
-
-function user_is_logged_in_somehow() {
-    $drupal_login = user_is_logged_in();
-    $alternate_login = (isset($_SESSION['gAuthLogin']) and $_SESSION['gAuthLogin']);
-    if ($drupal_login or $alternate_login ) { return true; } else { return false; }
-}
 
 # add js library - informs drupal to add these standard js libraries upstream.
 # can also use drupal_add_js to specify a full path to a js library to include.
@@ -84,60 +80,17 @@ $app->get('/', function () use ($app) {
     drupal_add_js('/includes/geoviz/geoviz.js',array('type'=>'external'));
     $stash=index($app);
     # for now, only do this for guestAuthUser people, GoMRI auto-download is handled elsewhere.
-    if( (isset($_COOKIE['dl_attempt_udi_cookie'])) and (isset($_SESSION['guestAuthUser'])) ) {
+    if( (isset($_COOKIE['dl_attempt_udi_cookie'])) and user_is_logged_in_somehow() ) {
         $udi =  $_COOKIE['dl_attempt_udi_cookie'];
         unset($_COOKIE['dl_attempt_udi_cookie']);
         # remove cookie
         setcookie('dl_attempt_udi_cookie', "", time() - 3600, '/', $_SERVER['SERVER_NAME']);
         $env = $app->environment();
         $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
-        # this is wrong here...  I need to load the main html then inject this into the div as used by gomri login
         $stash['download']=$udi;
-        drupal_set_message("Guest access enabled for ".$_SESSION['guestAuthUser'],'status');
+        if (isset($_SESSION['guestAuthUser'])) drupal_set_message("Guest access enabled for ".$_SESSION['guestAuthUser'],'status');
     }
     return $app->render('html/index.html',$stash);
-});
-
-// currently a work in progress...
-$app->get('/guest-logout', function () use ($app) {
-    try {
-        $env = $app->environment();
-        $_SESSION['guestAuthUser'] = null;
-        unset($_SESSION['guestAuthUser']);
-        drupal_set_message("Guess access has been logged out.",'status');
-        $env = $app->environment();
-        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
-        $baseUrl  = "$protocol$env[SERVER_NAME]/$GLOBALS[PAGE_NAME]";
-        drupal_goto($baseUrl);
-    } catch(ErrorException $e) {
-        drupal_set_message($e->getMessage(),'error');
-    }
-});
-
-$app->get('/google-auth', function () use ($app) {
-    try {
-        $env = $app->environment();
-        $openid = new LightOpenID($env["SERVER_NAME"]);
-        if(!$openid->mode) {
-            if(isset($_GET['login'])) {
-                $openid->identity = 'https://www.google.com/accounts/o8/id';
-                header('Location: ' . $openid->authUrl());
-            }
-            $openid->identity = 'https://www.google.com/accounts/o8/id';
-            $openid->required = array('contact/email', 'contact/country/home', 'namePerson/first', 'namePerson/last');
-            drupal_goto($openid->authUrl());
-        } else {
-            $openid->validate();
-            $info=$openid->getAttributes();
-            $_SESSION['guestAuthUser'] = $info["contact/email"];
-            $_SESSION['gAuthLogin']=true;
-            $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
-            $baseUrl  = "$protocol$env[SERVER_NAME]/$GLOBALS[PAGE_NAME]";
-            drupal_goto($baseUrl);
-        }
-    } catch(ErrorException $e) {
-        drupal_set_message($e->getMessage(),'error');
-    }
 });
 
 $app->post('/', function () use ($app) {
