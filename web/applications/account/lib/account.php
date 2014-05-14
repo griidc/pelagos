@@ -432,7 +432,7 @@ function get_verified_user($app) {
     $uid = $app->request()->params('uid');
 
     if (!isset($uid)) {
-        drupal_set_message("Missing uid.",'error');
+        drupal_set_message("Not logged in.",'error');
         return null;
     }
 

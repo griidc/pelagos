@@ -610,7 +610,8 @@ $app->get('/password/reset', function () use ($app) {
     $person = get_verified_user($app);
 
     if (is_null($person)) {
-        echo "<p>Please make sure you copied the entire link correcly from the password reset email. If you need assistance, please contact: <a href='mailto:griidc@gomri.org'>griidc@gomri.org</a> for help.";
+        echo "<p>Please <a href='https://data.gulfresearchinitiative.org/cas?destination=account/password/reset'>login</a> first to change your password.</p>";
+        echo "<p>If you have forgotten you password, you may <a href='/account/password'>reset it</a>.</p>";
         return;
     }
 
