@@ -44,9 +44,9 @@ public class RdbmsUtilsTest {
 		String[] risTableNames = {  
 				// "FundingSource", "Programs" ,"Projects", 
 				"Roles"};
-		String[] griidcTableNames = { "FundingEnvelope", "Institution", "Department", "Person","PostalArea",
+		String[] griidcTableNames = { "FundingEnvelope", "Institution", "Department", "Person","GoMRIPerson-Department-RIS_ID","PostalArea",
 				"FundingOrganization", "FundingEnvelope", "Project","Task",
-				"ProjRole", "TaskRole",
+				"ProjRole", "TaskRole","Dept-GoMRIPerson-Role-Task", "Dept-GoMRIPerson-Project-Role",
 				"Institution-Telephone", "Person-Telephone", "Department-Telephone", "EmailInfo", "Telephone"};
 		// or
 		//griidcTableNames = RdbmsUtils.GriidcShortListTables;
@@ -67,7 +67,7 @@ public class RdbmsUtilsTest {
 			MiscUtils.writeStringToFile(fileName, s);
 			System.out
 			.println("Report written to: " + MiscUtils.getUserDirDataFileName(fileName));
-			Arrays.sort(griidcTableNames);
+			// Arrays.sort(griidcTableNames);
 			s = RdbmsUtils.getColumnNamesAndDataTypesFromTables(
 					RdbmsUtils.getGriidcDbConnectionInstance(),griidcTableNames);
 			fileName = RdbmsUtils.getGriidcDbConnectionInstance()

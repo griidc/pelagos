@@ -1,6 +1,5 @@
 package edu.tamucc.hri.griidc;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -30,15 +29,14 @@ public class RisToGriidcMain {
 	private static boolean Debug = false;
 
 	private static String InstDeptPeopleDetailFileName = "InstDeptPeopleDetail.txt";
-	//  command line args switches
+	// command line args switches
 	public static final String EmailLogsParm = "Email".toUpperCase();
 	public static final String HelpParm = "Help".toUpperCase();
 
-
-	private static boolean AllTurnedOnFlag = true;
 	private static boolean MainDebugOn = true;
 	private static boolean EmailLogsOn = false;
-	
+	private static boolean RunThis = true;
+
 	public RisToGriidcMain() {
 
 	}
@@ -58,22 +56,25 @@ public class RisToGriidcMain {
 	 */
 	public static void processCommandLineArgs(String[] args) {
 
-		for(String arg : args) {
+		for (String arg : args) {
 			String argTemp = arg.toUpperCase();
-			if(argTemp.startsWith(EmailLogsParm)) {
+			if (argTemp.startsWith(EmailLogsParm)) {
 				EmailLogsOn = true;
 			}
-			if(argTemp.startsWith(HelpParm)) {
-				System.out.println("Supply paramater \"Email\" to turn on email of logs to recepiants found in ini file " + RisToGriidcConfiguration.getNotificationsFileName());
-                System.exit(1);
-			}		
+			if (argTemp.startsWith(HelpParm)) {
+				System.out
+						.println("Supply paramater \"Email\" to turn on email of logs to recepiants found in ini file "
+								+ RisToGriidcConfiguration
+										.getNotificationsFileName());
+				System.exit(1);
+			}
 		}
 	}
 
 	public static void main(String[] args) {
 		RisToGriidcMain risToGriidcMain = new RisToGriidcMain();
 		RisToGriidcMain.processCommandLineArgs(args);
-		
+
 		System.out.println("-- Start risToGriidcMain --");
 		RdbmsUtils.setDebug(false);
 		RdbmsConnectionFactory.setDeBug(false);
@@ -89,49 +90,51 @@ public class RisToGriidcMain {
 		ProjectSynchronizer.setDebug(false);
 		RolesSynchronizer.setDebug(false);
 
-		RisInstDeptPeopleErrorCollection risInstitutionWithErrors = null;
+		// InstitutionSynchronizer.setDebug(true);
+		// DepartmentSynchronizer.setDebug(true);
+		// PersonSynchronizer.setDebug(true);
+		// TelephoneSynchronizer.setDebug(true);
+		// FundingEnvelopeSynchronizer.setDebug(true);
+		// RolesSynchronizer.setDebug(true);
 
+        risToGriidcMain.instSynker.setWarningsOn(false);
+		RisInstDeptPeopleErrorCollection risInstitutionWithErrors = null;
 
 		try {
 			String emailMessage = "Email of logs not turned on. To do so supply \"Email\" on command line";
-			if(EmailLogsOn) emailMessage = "Email Logs to recepients specified in " + RisToGriidcConfiguration.getNotificationsFileName();
+			if (EmailLogsOn)
+				emailMessage = "Email Logs to recepients specified in "
+						+ RisToGriidcConfiguration.getNotificationsFileName();
 			System.out.println(emailMessage);
-			if (RisToGriidcMain.MainDebugOn)
-				System.out.println("Institutuions");
-			risInstitutionWithErrors = risToGriidcMain.instSynker
-					.syncGriidcInstitutionFromRisInstitution();
+			if (RunThis) {
+				if (RisToGriidcMain.MainDebugOn)
+					System.out.println("Institutuion");
+				risInstitutionWithErrors = risToGriidcMain.instSynker
+						.syncGriidcInstitutionFromRisInstitution();
 
-			if (RisToGriidcMain.MainDebugOn)
-				System.out.println("Department");
-			risInstitutionWithErrors = risToGriidcMain.deptSynker
-					.syncGriidcDepartmentFromRisDepartment(risInstitutionWithErrors);
-
-			if (RisToGriidcMain.AllTurnedOnFlag) {
+				if (RisToGriidcMain.MainDebugOn)
+					System.out.println("Department");
+				risInstitutionWithErrors = risToGriidcMain.deptSynker
+						.syncGriidcDepartmentFromRisDepartment(risInstitutionWithErrors);
+			
 				if (RisToGriidcMain.MainDebugOn)
 					System.out.println("Person");
 				risInstitutionWithErrors = risToGriidcMain.personSynker
 						.syncGriidcPersonFromRisPeople(risInstitutionWithErrors);
-			}
-
-			if (RisToGriidcMain.AllTurnedOnFlag) {
+				
 				if (RisToGriidcMain.MainDebugOn)
 					System.out.println("Funding Envelope");
 				risToGriidcMain.fundingEnvelopeSynker
 						.syncGriidcFundingEnvelopeFromRisFundingSource();
-			}
-
-			if (RisToGriidcMain.AllTurnedOnFlag) {
 				if (RisToGriidcMain.MainDebugOn)
 					System.out.println("Project");
 				risToGriidcMain.projectSynker
 						.syncGriidcProjectFromRisPrograms();
-			}
-			if (RisToGriidcMain.AllTurnedOnFlag) {
+			
 				if (RisToGriidcMain.MainDebugOn)
 					System.out.println("Task");
 				risToGriidcMain.taskSynker.syncGriidcTaskFromProjects();
-			}
-			if (RisToGriidcMain.AllTurnedOnFlag) {
+
 				if (RisToGriidcMain.MainDebugOn)
 					System.out.println("TaskRole and ProjRole");
 				risToGriidcMain.roleSynker.syncGriidcRolesFromRisRoles();
@@ -171,7 +174,8 @@ public class RisToGriidcMain {
 		}
 	}
 
-	public void emailLogs() throws PropertyNotFoundException, IOException, IniSectionNotFoundException {
+	public void emailLogs() throws PropertyNotFoundException, IOException,
+			IniSectionNotFoundException {
 		Emailer emailer = new Emailer();
 		String rFormat = "\t%-40s%n";
 		String from = RisToGriidcConfiguration.getGriidcMailSender();
@@ -216,6 +220,8 @@ public class RisToGriidcMain {
 				instSynker.getRisRecordCount());
 		System.out.printf(pFormat, "RIS Institutions errors:",
 				instSynker.getRisRecordErrors());
+		System.out.printf(pFormat, "RIS Institutions warnings:",
+				instSynker.getRisRecordWarnings());
 
 		System.out
 				.println("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -");
@@ -252,12 +258,25 @@ public class RisToGriidcMain {
 		System.out
 				.println("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -");
 		System.out.printf(pFormat, "GRIIDC Person added:",
-				personSynker.getGriidcRecordsAdded());
+				personSynker.getGriidcPersonRecordsAdded());
 		System.out.printf(pFormat, "GRIIDC Person modified:",
-				personSynker.getGriidcRecordsModified());
+				personSynker.getGriidcPersonRecordsModified());
 		System.out.printf(pFormat, "GRIIDC Person duplicates:",
-				personSynker.getGriidcRecordDuplicates());
+				personSynker.getGriidcPersonRecordDuplicates());
+		
+		title = "GoMRIPerson-Department-RIS_ID relationship ";
+		System.out.printf(titleFormat, title);
+		System.out.printf(pFormat, "GoMRIPerson-Department-RIS_ID added:",
+				personSynker.getGriidcPersonDepartmentPeopleRecordsAdded());
+		System.out.printf(pFormat, "GoMRIPerson-Department-RIS_ID modified:",
+		        personSynker.getGriidcPersonDepartmentPeopleRecordsModified());
 
+		title = "GoMRIPerson relationship ";
+		System.out.printf(titleFormat, title);
+		System.out.printf(pFormat, "GoMRIPerson added:",
+				personSynker.getGomriPersonRecordsAdded());
+		
+		
 		title = "RIS People to GRIIDC Telephone";
 		System.out.printf(titleFormat, title);
 		System.out.printf(pFormat, "RIS Telephone items read:",
@@ -270,21 +289,6 @@ public class RisToGriidcMain {
 				TelephoneSynchronizer.getInstance().getGriidcRecordsAdded());
 		System.out.printf(pFormat, "GRIIDC duplicate Telephone records",
 				TelephoneSynchronizer.getInstance().getGriidcDuplicates());
-
-		title = "RIS People to GRIIDC Email";
-		System.out.printf(titleFormat, title);
-		System.out.printf(pFormat, "RIS Email items read:", EmailSynchronizer
-				.getInstance().getEmailRecordsRead());
-		System.out.printf(pFormat, "RIS Email information errors:",
-				EmailSynchronizer.getInstance().getEmailRecordsErrors());
-		System.out
-				.println("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -");
-		System.out.printf(pFormat, "GRIIDC Email records added ",
-				EmailSynchronizer.getInstance().getEmailRecordsAdded());
-		System.out.printf(pFormat, "GRIIDC Email records modified ",
-				EmailSynchronizer.getInstance().getEmailRecordsModified());
-		System.out.printf(pFormat, "GRIIDC Email record duplicates ",
-				EmailSynchronizer.getInstance().getEmailRecordsDuplicates());
 
 		title = "RIS People to GRIIDC Person-Telephone";
 		System.out.printf(titleFormat, title);
@@ -306,6 +310,22 @@ public class RisToGriidcMain {
 				PersonTelephoneSynchronizer.getInstance()
 						.getGriidcPersonTelephoneRecordDuplicates());
 
+		title = "RIS People to GRIIDC Email";
+		System.out.printf(titleFormat, title);
+		System.out.printf(pFormat, "RIS Email items read:", EmailSynchronizer
+				.getInstance().getEmailRecordsRead());
+		System.out.printf(pFormat, "RIS Email information errors:",
+				EmailSynchronizer.getInstance().getEmailRecordsErrors());
+		System.out
+				.println("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -");
+		System.out.printf(pFormat, "GRIIDC Email records added ",
+				EmailSynchronizer.getInstance().getEmailRecordsAdded());
+		System.out.printf(pFormat, "GRIIDC Email records modified ",
+				EmailSynchronizer.getInstance().getEmailRecordsModified());
+		System.out.printf(pFormat, "GRIIDC Email record duplicates ",
+				EmailSynchronizer.getInstance().getEmailRecordsDuplicates());
+
+		
 		title = "RIS Funding Source to GRIIDC Funding Envelope";
 		System.out.printf(titleFormat, title);
 		System.out.printf(pFormat, "RIS Funding Source records read:",

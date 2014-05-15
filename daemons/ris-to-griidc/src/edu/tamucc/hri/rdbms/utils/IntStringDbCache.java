@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import edu.tamucc.hri.griidc.exception.NoRecordFoundException;
 import edu.tamucc.hri.griidc.exception.PropertyNotFoundException;
@@ -16,7 +17,7 @@ public class IntStringDbCache {
 
 	// cache a value from the database
 	private Map<Integer, String> cacheMap = Collections
-			.synchronizedMap(new HashMap<Integer, String>());
+			.synchronizedMap(new TreeMap<Integer, String>());
 
 	private RdbmsConnection dbCon = null;
 

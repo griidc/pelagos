@@ -74,6 +74,4 @@ public final class Emailer {
 			System.err.println("Cannot send email. " + ex);
 		}
 	}
-
-
 }

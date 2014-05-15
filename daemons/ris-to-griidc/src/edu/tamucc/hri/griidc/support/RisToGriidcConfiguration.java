@@ -64,6 +64,7 @@ public class RisToGriidcConfiguration {
 	private static final String PrimayLogFileDirectoryProperty = "logFileDir";
 	private static final String RisErrorLogNameProperty = "risErrorLogName";
 	private static final String DeveloperLogFileNameProperty = "developerLogName";
+	private static final String RisWarningLogNameProperty = "risWarningLogName";
 	private static final String FuzzyHeuristicPostalCodeMatchingProperty = "fuzzyHeuristicPostalCodeMatching";
 	
 	private static IniPropertyHandler DbIniHandlerInstance = null;
@@ -296,7 +297,9 @@ public class RisToGriidcConfiguration {
 	public static String getRisErrorLogFileName() {
 		return getCriticalRisToGriidcProperty(RisErrorLogNameProperty);
 	}
-
+	public static String getRisWarningLogFileName() {
+		return getCriticalRisToGriidcProperty(RisWarningLogNameProperty);
+	}
 	
 	/*********
 	 *  } catch (PropertyNotFoundException e) {

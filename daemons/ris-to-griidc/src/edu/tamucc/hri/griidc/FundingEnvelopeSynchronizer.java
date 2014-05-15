@@ -57,6 +57,7 @@ public class FundingEnvelopeSynchronizer extends SynchronizerBase {
 	private String griidcFundingEnvelopeCycle = null;
 	private String griidcFundingEnvelopeName = null;
 	private int griidcFundingEnvelopeOrganizationNumber = -1;
+	private int griidcFundingEnvelopeRisId = -1;
 	private String griidcFundingEnvelopeDescription = null;
 	private java.sql.Date griidcFundingEnvelopeStartDate = null;
 	private java.sql.Date griidcFundingEnvelopeEndDate = null;
@@ -68,6 +69,7 @@ public class FundingEnvelopeSynchronizer extends SynchronizerBase {
 	private static String GriidcFundingEnvelope_DescriptionColName = "FundingEnvelope_Description";
 	private static String GriidcFundingEnvelope_EndDateColName = "FundingEnvelope_EndDate";
 	private static String GriidcFundingEnvelope_StartDateColName = "FundingEnvelope_StartDate";
+	private static String GriidcFundingEnvelope_RIS_IDColName = "FundingEnvelope_RIS_ID";
 
 	private ResultSet rset = null;
 	private ResultSet griidcRset = null;
@@ -77,11 +79,7 @@ public class FundingEnvelopeSynchronizer extends SynchronizerBase {
 
 	private RisFundSrcProgramsStartEndCollection programStartEndDateCollection = null;
 
-	/**
-	 * this.risFundId this.risFundSource this.risFundName cycle
-	 * defaultFundingOrganizationNumber Name
-	 */
-
+	
 	public boolean isInitialized() {
 		return initialized;
 	}
@@ -223,6 +221,8 @@ public class FundingEnvelopeSynchronizer extends SynchronizerBase {
 								.getDate(GriidcFundingEnvelope_StartDateColName);
 						this.griidcFundingEnvelopeEndDate = griidcRset
 								.getDate(GriidcFundingEnvelope_EndDateColName);
+						this.griidcFundingEnvelopeRisId = griidcRset
+								.getInt(GriidcFundingEnvelope_RIS_IDColName);
 						if (FundingEnvelopeSynchronizer.isDebug())
 							System.out.println("Found " + count + " GRIIDC "
 									+ GriidcFundingEnvelope_CycleColName + ": "
@@ -316,6 +316,7 @@ public class FundingEnvelopeSynchronizer extends SynchronizerBase {
 				.getFundSourceStartEndDate(this.risFundId);
 		this.griidcFundingEnvelopeStartDate = rfspsec.getStartDate();
 		this.griidcFundingEnvelopeEndDate = rfspsec.getEndDate();
+		this.griidcFundingEnvelopeRisId = this.risFundId;
 	}
 
 	/**
@@ -336,6 +337,7 @@ public class FundingEnvelopeSynchronizer extends SynchronizerBase {
 
 
 			boolean status =  (this.griidcFundingEnvelopeName.equals(this.risFundName)
+					&& this.griidcFundingEnvelopeRisId == this.risFundId 
 					&& this.griidcFundingEnvelopeCycle.equals(tempRisDerrivedFundingEnvelopeCycle)
 					&& this.griidcFundingEnvelopeStartDate.equals(rfspsec.getStartDate()) 
 					&& this.griidcFundingEnvelopeEndDate.equals(rfspsec.getEndDate()));
@@ -363,7 +365,8 @@ public class FundingEnvelopeSynchronizer extends SynchronizerBase {
 				+ this.griidcFundingEnvelopeCycle + ", "
 				+ GriidcFundingOrganization_NumberColName + ": "
 				+ this.defaultFundingOrganizationNumber + ", "
-				+ GriidcFundingEnvelope_NameColName + ": " + this.risFundName;
+				+ GriidcFundingEnvelope_NameColName + ": " + this.griidcFundingEnvelopeName + ", " 
+		        + GriidcFundingEnvelope_RIS_IDColName + ": " + this.griidcFundingEnvelopeRisId;
 	}
 
 	private String risFundToString() {
@@ -375,14 +378,20 @@ public class FundingEnvelopeSynchronizer extends SynchronizerBase {
 
 	private DbColumnInfo[] getWhereColumnInfo() throws FileNotFoundException,
 			SQLException, ClassNotFoundException, PropertyNotFoundException {
+		
 		TableColInfo tci = RdbmsUtils.getMetaDataForTable(
 				RdbmsUtils.getGriidcDbConnectionInstance(), GriidcTableName);
+		
 		tci.getDbColumnInfo(GriidcFundingEnvelope_CycleColName).setColValue(
 				this.griidcFundingEnvelopeCycle);
+		tci.getDbColumnInfo(GriidcFundingEnvelope_RIS_IDColName).setColValue(String.valueOf(this.risFundId));
 
-		DbColumnInfo[] whereColInfo = new DbColumnInfo[1];
-		whereColInfo[0] = tci
+		int i = 0;
+		DbColumnInfo[] whereColInfo = new DbColumnInfo[2];
+		whereColInfo[i++] = tci
 				.getDbColumnInfo(GriidcFundingEnvelope_CycleColName);
+		whereColInfo[i++] = tci
+				.getDbColumnInfo(GriidcFundingEnvelope_RIS_IDColName);
 		return whereColInfo;
 	}
 
@@ -451,6 +460,10 @@ public class FundingEnvelopeSynchronizer extends SynchronizerBase {
 		tci.getDbColumnInfo(
 				FundingEnvelopeSynchronizer.GriidcFundingEnvelope_EndDateColName)
 				.setColValue(this.griidcFundingEnvelopeEndDate.toString());
+		tci.getDbColumnInfo(
+				FundingEnvelopeSynchronizer.GriidcFundingEnvelope_RIS_IDColName)
+				.setColValue(String.valueOf(this.risFundId));
+		
 		return tci.getDbColumnInfo();
 	}
 

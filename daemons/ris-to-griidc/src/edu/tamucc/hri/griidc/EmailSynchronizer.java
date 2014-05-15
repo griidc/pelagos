@@ -41,6 +41,7 @@ public class EmailSynchronizer extends SynchronizerBase {
 	private boolean griidcPrimaryTag = false;
 
 	private static EmailSynchronizer instance = null;
+	private boolean initialized = false;
 
 	public static EmailSynchronizer getInstance() {
 		if (EmailSynchronizer.instance == null) {
@@ -53,7 +54,9 @@ public class EmailSynchronizer extends SynchronizerBase {
 	}
 
 	public void initialize() {
+		if(initialized) return;
 		super.commonInitialize();
+		initialized = true;
 	}
 
 	/**
@@ -61,24 +64,24 @@ public class EmailSynchronizer extends SynchronizerBase {
 	 * from PersonSynchronizer. This function can result in add, modify, errors
 	 * or no action
 	 * 
-	 * @param risPeopleId
-	 * @param risEmailAddr
-	 * @param risPrimaryTag
+	 * @param personNumber
+	 * @param emailAddr
+	 * @param primaryTag
 	 * @return
 	 * @throws MultipleRecordsFoundException
 	 * @throws SQLException
 	 * @throws AddressException
 	 */
-	public boolean update(int risPeopleId, String risEmailAddr,
-			boolean risPrimaryTag) throws AddressException, SQLException,
+	public boolean update(int personNumber, String emailAddr,
+			boolean primaryTag) throws AddressException, SQLException,
 			MultipleRecordsFoundException {
-
+		initialize();
 		this.emailRecordsRead++;
 		int count = 0;
-		String tempEmailAddr = risEmailAddr.trim();
+		String tempEmailAddr = emailAddr.trim();
 
 		this.validate(tempEmailAddr);
-		ResultSet rs = this.find(risPeopleId);
+		ResultSet rs = this.find(personNumber);
 		while (rs.next()) {
 			count++;
 			this.griidcPersonNum = rs.getInt(GriidcPersonNumberColName);
@@ -86,13 +89,13 @@ public class EmailSynchronizer extends SynchronizerBase {
 			this.griidcPrimaryTag = rs.getBoolean(GriidcEmailPrimaryColName);
 		}
 		if (count == 0) { // no match found - add it
-			this.add(risPeopleId, tempEmailAddr, risPrimaryTag);
+			this.add(personNumber, tempEmailAddr, primaryTag);
 			emailRecordsAdded++;
 		} else if (count == 1) { // one match - if not equal modify
-			if (this.isMatch(risPeopleId, tempEmailAddr, risPrimaryTag)) {
+			if (this.isMatch(personNumber, tempEmailAddr, primaryTag)) {
 				this.emailRecordsDuplicates++;
 			} else {
-				this.modify(risPeopleId, tempEmailAddr, risPrimaryTag);
+				this.modify(personNumber, tempEmailAddr, primaryTag);
 				this.emailRecordsModified++;
 			}
 		} else { // count > 1)
@@ -100,16 +103,16 @@ public class EmailSynchronizer extends SynchronizerBase {
 					"ERROR updateing GRIIDC - there are " + count + " "
 							+ GriidcTableName + " records with "
 							+ GriidcPersonNumberColName + " equal to "
-							+ risPeopleId);
+							+ personNumber);
 		}
 		return true;
 	}
 
-	private boolean isMatch(int risPeopleId, String risEmailAddr,
-			boolean risPrimaryTag) {
-		return ((this.griidcPersonNum == risPeopleId)
+	private boolean isMatch(int personNumber, String emailAddr,
+			boolean primaryTag) {
+		return ((this.griidcPersonNum == personNumber)
 				&& (MiscUtils.areStringsEqual(this.griidcEmailAddress,
-						risEmailAddr)) && (this.griidcPrimaryTag == risPrimaryTag));
+						emailAddr)) && (this.griidcPrimaryTag == primaryTag));
 	}
 
 	private boolean validate(String addr) throws AddressException {

@@ -2,14 +2,15 @@ package edu.tamucc.hri.rdbms.utils;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.Vector;
-
-import org.ini4j.InvalidFileFormatException;
 
 import edu.tamucc.hri.griidc.exception.MultipleRecordsFoundException;
 import edu.tamucc.hri.griidc.exception.IllegalFundingSourceCodeException;
@@ -17,6 +18,8 @@ import edu.tamucc.hri.griidc.exception.MissingArgumentsException;
 import edu.tamucc.hri.griidc.exception.NoRecordFoundException;
 import edu.tamucc.hri.griidc.exception.PropertyNotFoundException;
 import edu.tamucc.hri.griidc.exception.TableNotInDatabaseException;
+import edu.tamucc.hri.griidc.support.GriidcRisDepartmentMap;
+import edu.tamucc.hri.griidc.support.GriidcRisInstitutionMap;
 import edu.tamucc.hri.griidc.support.MiscUtils;
 
 public class RdbmsUtils {
@@ -28,7 +31,7 @@ public class RdbmsUtils {
 	}
 
 	public RdbmsUtils() {
-		// TODO Auto-generated constructor stub
+
 	}
 
 	public static TableColInfoCollection GriidcDefaultValueTableColInfoCollection = null;
@@ -76,7 +79,7 @@ public class RdbmsUtils {
 			if (colValue != null) { // there is a value here
 				if (notTheFirstTime)
 					sb.append(RdbmsConstants.CommaSpace);
-				sb.append(RdbmsUtils.wrapDbValue(colName,colType, colValue));
+				sb.append(RdbmsUtils.wrapDbValue(colName, colType, colValue));
 
 				notTheFirstTime = true;
 			}
@@ -87,39 +90,43 @@ public class RdbmsUtils {
 	}
 
 	/**
-	 * For storage in the database all values must be wrapped in either
-	 * single quotes, double quotes or left un wrapped.
-	 * USER-DEFINED types are a special case. Currently this handles 
-	 * two USER-DEFINED types, GeoCoordinate and Telephone-Type. These
-	 * are detected by examining the column name. If other types are added
-	 * this code will break.  JVH
+	 * For storage in the database all values must be wrapped in either single
+	 * quotes, double quotes or left un wrapped. USER-DEFINED types are a
+	 * special case. Currently this handles two USER-DEFINED types,
+	 * GeoCoordinate and Telephone-Type. These are detected by examining the
+	 * column name. If other types are added this code will break. JVH
+	 * 
 	 * @param colName
 	 * @param colType
 	 * @param colValue
 	 * @return
 	 */
-	private static String wrapDbValue(String colName, String colType, String colValue) {
-	
-		if(RdbmsUtils.isDebug()) System.out.println("RdbmsUtils.wrapDbValue(" + colName + ", " 
-                + colType + ", " + colValue + ")");
-		
+	private static String wrapDbValue(String colName, String colType,
+			String colValue) {
+
+		if (RdbmsUtils.isDebug())
+			System.out.println("RdbmsUtils.wrapDbValue(" + colName + ", "
+					+ colType + ", " + colValue + ")");
+
 		String rtnValue = colValue;
 		if (colType.equals(RdbmsConstants.DbBoolean)
 				|| colType.equals(RdbmsConstants.DbInteger)
 				|| colType.equals(RdbmsConstants.DbNumeric)) {
-			rtnValue =  colValue;
-		} else if(colType.equals(RdbmsConstants.DbUserDefined)) {
-			
-			if(colName.toUpperCase().contains("GeoCoordinate".toUpperCase())) {
-				rtnValue =  colValue;
+			rtnValue = colValue;
+		} else if (colType.equals(RdbmsConstants.DbUserDefined)) {
+
+			if (colName.toUpperCase().contains("GeoCoordinate".toUpperCase())) {
+				rtnValue = colValue;
+			} else if (colName.toUpperCase().contains(
+					"Telephone_Type".toUpperCase())) {
+				rtnValue = RdbmsConnection.wrapInSingleQuotes(colValue);
 			}
-			else if(colName.toUpperCase().contains("Telephone_Type".toUpperCase())) {
-				rtnValue =  RdbmsConnection.wrapInSingleQuotes(colValue);
-			}
-		} else  { // else colType is some sort of String thing
+		} else { // else colType is some sort of String thing
 			rtnValue = RdbmsConnection.wrapInSingleQuotes(colValue);
 		}
-		if(RdbmsUtils.isDebug()) System.out.println("RdbmsUtils.wrapDbValue() returning " + rtnValue); 
+		if (RdbmsUtils.isDebug())
+			System.out
+					.println("RdbmsUtils.wrapDbValue() returning " + rtnValue);
 		return rtnValue;
 	}
 
@@ -148,7 +155,6 @@ public class RdbmsUtils {
 	 * @see RdbmsUtils.getMetaDataForTable()
 	 * @return
 	 * @throws SQLException
-
 	 */
 	public static String formatUpdateStatement(String tableName,
 			DbColumnInfo[] updateColInfo, DbColumnInfo[] whereColInfo)
@@ -172,7 +178,7 @@ public class RdbmsUtils {
 				sb.append(RdbmsConnection.wrapInDoubleQuotes(colName));
 				sb.append(RdbmsConstants.EqualSign);
 
-				sb.append(RdbmsUtils.wrapDbValue(colName,colType, colValue));
+				sb.append(RdbmsUtils.wrapDbValue(colName, colType, colValue));
 				notTheFirstTime = true;
 			}
 		}
@@ -209,7 +215,7 @@ public class RdbmsUtils {
 				}
 				sb.append(RdbmsConnection.wrapInDoubleQuotes(colName));
 				sb.append(RdbmsConstants.EqualSign);
-				sb.append(RdbmsUtils.wrapDbValue(colName,colType, colValue));
+				sb.append(RdbmsUtils.wrapDbValue(colName, colType, colValue));
 				notTheFirstTime = true;
 			}
 		}
@@ -227,7 +233,7 @@ public class RdbmsUtils {
 	 * @return
 	 * @throws FileNotFoundException
 	 * @throws SQLException
-
+	 * 
 	 * @throws PropertyNotFoundException
 	 * @throws MultipleRecordsFoundException
 	 * @throws NoRecordFoundException
@@ -285,13 +291,67 @@ public class RdbmsUtils {
 		return num;
 	}
 
+	public static GriidcRisDepartmentMap getGriidcRisDepartmentMap() {
+		GriidcRisDepartmentMap grdm = GriidcRisDepartmentMap.getInstance();
+		grdm.initialize();
+		String query = "SELECT * FROM  "
+		// + getWrappedGriidcShemaName() + "."
+				+ RdbmsConnection
+						.wrapInDoubleQuotes(RdbmsConstants.GriidcDeptTableName);
+
+		ResultSet rset;
+		try {
+			rset = RdbmsUtils.getGriidcSecondaryDbConnectionInstance()
+					.executeQueryResultSet(query);
+
+			int risDptId = -1;
+			int griidcDptNum = -1;
+			while (rset.next()) {
+				griidcDptNum = rset.getInt("Department_Number");
+				risDptId = rset.getInt("Department_RIS_ID");
+				grdm.put(risDptId, griidcDptNum);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return grdm;
+	}
+
+	public static GriidcRisInstitutionMap getGriidcRisInstitutionMap() {
+		GriidcRisInstitutionMap grim = GriidcRisInstitutionMap.getInstance();
+		grim.initialize();
+		String query = "SELECT * FROM  "
+		// + getWrappedGriidcShemaName() + "."
+				+ RdbmsConnection
+						.wrapInDoubleQuotes(RdbmsConstants.GriidcInstTableName);
+		try {
+			ResultSet rset = RdbmsUtils
+					.getGriidcSecondaryDbConnectionInstance()
+					.executeQueryResultSet(query);
+
+			int risIntsId = -1;
+			int griidcIntsNum = -1;
+			while (rset.next()) {
+				griidcIntsNum = rset.getInt("Institution_Number");
+				risIntsId = rset.getInt("Institution_RIS_ID");
+				grim.put(risIntsId, griidcIntsNum);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return grim;
+	}
+
 	public static boolean doesGriidcDepartmentExist(int institutionNumber,
-			int departmentNumber) throws SQLException,NoRecordFoundException,
-			 MultipleRecordsFoundException {
+			int departmentNumber) throws SQLException, NoRecordFoundException,
+			MultipleRecordsFoundException {
 
 		String query = "SELECT * FROM  "
 				// + getWrappedGriidcShemaName() + "."
-				+ RdbmsConnection.wrapInDoubleQuotes("Department")
+				+ RdbmsConnection
+						.wrapInDoubleQuotes(RdbmsConstants.GriidcDeptTableName)
 				+ "  WHERE  "
 				+ RdbmsConnection.wrapInDoubleQuotes("Department_Number")
 				+ RdbmsConstants.EqualSign + departmentNumber
@@ -314,11 +374,67 @@ public class RdbmsUtils {
 			return true;
 
 		if (count > 1)
-			throw new MultipleRecordsFoundException("In Department table - " + count
-					+ " records match Department_Number: " + departmentNumber
-					+ ", Institution_Number: " + institutionNumber);
+			throw new MultipleRecordsFoundException("In Department table - "
+					+ count + " records match Department_Number: "
+					+ departmentNumber + ", Institution_Number: "
+					+ institutionNumber);
 		return false;
 
+	}
+
+	public static int getGriidcPersonNumberMatchingRisPeopleId(int risPeopleId)
+			throws SQLException, NoRecordFoundException,
+			MultipleRecordsFoundException {
+
+		return getGriidcNumMatchingRisId(
+				RdbmsConstants.GriidcPersonDepartmentRisPeopleIdTableName,
+				"RIS_People_ID", risPeopleId);
+	}
+
+	public static int getGriidcInstitutionNumberMatchingRisInstitutionId(
+			int risInstId) throws SQLException, NoRecordFoundException,
+			MultipleRecordsFoundException {
+
+		return getGriidcNumMatchingRisId(RdbmsConstants.GriidcInstTableName,
+				"Institution_RIS_ID", risInstId);
+	}
+
+	public static int getGriidcDepartmentNumberMatchingRisDepartmentsId(
+			int risDeptId) throws SQLException, NoRecordFoundException,
+			MultipleRecordsFoundException {
+
+		return getGriidcNumMatchingRisId(RdbmsConstants.GriidcDeptTableName,
+				"Department_RIS_ID", risDeptId);
+	}
+
+	public static int getGriidcNumMatchingRisId(String tableName,
+			String risIdColName, int id) throws SQLException,
+			NoRecordFoundException, MultipleRecordsFoundException {
+
+		String query = "SELECT * FROM  "
+				// + getWrappedGriidcShemaName() + "."
+				+ RdbmsConnection.wrapInDoubleQuotes(tableName) + "  WHERE  "
+				+ RdbmsConnection.wrapInDoubleQuotes(risIdColName)
+				+ RdbmsConstants.EqualSign + id;
+		ResultSet rset = RdbmsUtils.getGriidcSecondaryDbConnectionInstance()
+				.executeQueryResultSet(query);
+
+		int num = -1;
+		int count = 0;
+		while (rset.next()) {
+			count++;
+			num = rset.getInt(risIdColName);
+		}
+		if (count <= 0) {
+			throw new NoRecordFoundException("In GRIIDC " + tableName
+					+ " table - no records match " + risIdColName + ": " + id);
+		} else if (count > 1) {
+			throw new MultipleRecordsFoundException("In GRIIDC " + tableName
+					+ " table  - " + count + " records match " + risIdColName
+					+ ": " + id);
+		}
+
+		return num;
 	}
 
 	public static int getGriidcDepartmentCountryNumber(int departmentNumber)
@@ -337,8 +453,9 @@ public class RdbmsUtils {
 			throws SQLException, NoRecordFoundException,
 			MultipleRecordsFoundException {
 		return RdbmsUtils.getIntValueFromTable(
-				RdbmsUtils.getGriidcDbConnectionInstance(), "Department",
-				"Department_Number", departmentNumber, "PostalArea_Number");
+				RdbmsUtils.getGriidcDbConnectionInstance(),
+				RdbmsConstants.GriidcDeptTableName, "Department_Number",
+				departmentNumber, "PostalArea_Number");
 	}
 
 	/**
@@ -351,7 +468,7 @@ public class RdbmsUtils {
 	 * @return
 	 * @throws FileNotFoundException
 	 * @throws SQLException
-
+	 * 
 	 * @throws PropertyNotFoundException
 	 * @throws MultipleRecordsFoundException
 	 * @throws NoRecordFoundException
@@ -359,8 +476,9 @@ public class RdbmsUtils {
 	 */
 	public static int getGriidcDepartmentPostalNumber(int countryNumber,
 			String state, String city, String zip)
-			throws FileNotFoundException, SQLException, MultipleRecordsFoundException,
-			NoRecordFoundException, MissingArgumentsException {
+			throws FileNotFoundException, SQLException,
+			MultipleRecordsFoundException, NoRecordFoundException,
+			MissingArgumentsException {
 
 		MiscUtils.isValidPostalAreaData(state, city, zip);
 
@@ -469,12 +587,13 @@ public class RdbmsUtils {
 	 * @throws IOException
 	 * @throws PropertyNotFoundException
 	 * @throws SQLException
-
+	 * 
 	 *             TODO: this function gets reports a different path for the
 	 *             file than it is using
 	 * @throws TableNotInDatabaseException
 	 */
-	public static void reportPeopleTableData() throws IOException,SQLException, TableNotInDatabaseException {
+	public static void reportPeopleTableData() throws IOException,
+			SQLException, TableNotInDatabaseException {
 		ResultSet rset = RdbmsUtils.getRisDbConnectionInstance()
 				.selectAllValuesFromTable("People");
 		int id = -1;
@@ -502,12 +621,11 @@ public class RdbmsUtils {
 	 * @throws IOException
 	 * @throws PropertyNotFoundException
 	 * @throws SQLException
-
+	 * 
 	 * @throws TableNotInDatabaseException
 	 */
 	public static void reportTables(String risTableName, String griidcTableName)
-			throws IOException, SQLException,
-			TableNotInDatabaseException {
+			throws IOException, SQLException, TableNotInDatabaseException {
 		String[] tableNames = { risTableName };
 		RdbmsUtils.getRisDbConnectionInstance()
 				.reportTableColumnNamesAndDataType(tableNames);
@@ -546,7 +664,7 @@ public class RdbmsUtils {
 	 * @return
 	 * @throws FileNotFoundException
 	 * @throws SQLException
-
+	 * 
 	 * @throws PropertyNotFoundException
 	 */
 	public static String[] getColumnDefaultValue(RdbmsConnection connection,
@@ -574,7 +692,7 @@ public class RdbmsUtils {
 	 * @return
 	 * @throws FileNotFoundException
 	 * @throws SQLException
-
+	 * 
 	 * @throws TableNotInDatabaseException
 	 */
 	public static String getColumnNamesAndDataTypesFromTables(
@@ -611,13 +729,16 @@ public class RdbmsUtils {
 		return sb.toString();
 	}
 
-	public static String[] getUniqueDataTypes(RdbmsConnection dbcon, String[] targetTables) throws SQLException, TableNotInDatabaseException {
+	public static String[] getUniqueDataTypes(RdbmsConnection dbcon,
+			String[] targetTables) throws SQLException,
+			TableNotInDatabaseException {
 
 		String formatString = "%-30s  %-40s";
 		String[][] colAndType = null;
 		final int COL = 0;
 		final int DT = 1; // data type
-		SortedSet<String> unique = Collections.synchronizedSortedSet(new TreeSet<String>());
+		SortedSet<String> unique = Collections
+				.synchronizedSortedSet(new TreeSet<String>());
 		for (String t : targetTables) {
 			if (isDebug())
 				System.out.println(t);
@@ -626,10 +747,10 @@ public class RdbmsUtils {
 				String col = colAndType[COL][i];
 				String type = colAndType[DT][i];
 				unique.add(type.trim());
-				if(isDebug()) { 
+				if (isDebug()) {
 					System.out.println(RdbmsConstants.Tab
-						+ String.format(formatString, col.trim(), type.trim())
-						+ RdbmsConstants.NewLine);
+							+ String.format(formatString, col.trim(),
+									type.trim()) + RdbmsConstants.NewLine);
 				}
 			}
 		}
@@ -640,7 +761,8 @@ public class RdbmsUtils {
 
 	public static void reportColumnNamesAndDataTypesFromTables(
 			RdbmsConnection dbcon, String[] tables)
-			throws FileNotFoundException, SQLException, TableNotInDatabaseException {
+			throws FileNotFoundException, SQLException,
+			TableNotInDatabaseException {
 		System.out.println(RdbmsUtils.getColumnNamesAndDataTypesFromTables(
 				dbcon, tables));
 	}
@@ -711,8 +833,7 @@ public class RdbmsUtils {
 	}
 
 	public static TableColInfo getMetaDataForTable(
-			RdbmsConnection dbConnection, String tableName)
-			throws SQLException {
+			RdbmsConnection dbConnection, String tableName) throws SQLException {
 		// metaData is a set of descriptions for the columns in the table
 		return createTableColInfo(dbConnection, tableName);
 	}
@@ -726,7 +847,6 @@ public class RdbmsUtils {
 	 * @return
 	 * @throws FileNotFoundException
 	 * @throws SQLException
-
 	 */
 	public static TableColInfo createTableColInfo(RdbmsConnection conn,
 			String tableName) throws SQLException {
@@ -770,8 +890,7 @@ public class RdbmsUtils {
 
 	public static TableColInfoCollection getAllDataFromTable(
 			RdbmsConnection dbConnection, String tableName)
-			throws SQLException,
-			TableNotInDatabaseException {
+			throws SQLException, TableNotInDatabaseException {
 		TableColInfoCollection dataSet = new TableColInfoCollection();
 		// metaData is a set of descriptions for the columns in the table
 		TableColInfo metaData = createTableColInfo(dbConnection, tableName);
@@ -835,7 +954,8 @@ public class RdbmsUtils {
 		return RdbmsUtils.startEndDateInRisPrograms();
 	}
 
-	private static RisFundSrcProgramsStartEndCollection startEndDateInRisPrograms() throws SQLException {
+	private static RisFundSrcProgramsStartEndCollection startEndDateInRisPrograms()
+			throws SQLException {
 		if (RdbmsUtils.progFundSrcCollection == null) {
 			String tableName = "Programs";
 			String startCol = "Program_StartDate";
@@ -860,8 +980,9 @@ public class RdbmsUtils {
 								programId, startDate, endDate);
 						if (RdbmsUtils.isDebug())
 							System.out.println("Fund_Src: " + fundSrc
-									+ ", Program ID: " + programId + ", start: "
-									+ startDate + ", end: " + endDate);
+									+ ", Program ID: " + programId
+									+ ", start: " + startDate + ", end: "
+									+ endDate);
 					} catch (SQLException e) {
 						String msg = "RIS Error: Fund Src: " + fundSrc
 								+ ", Program ID: " + programId + " - "
@@ -873,7 +994,9 @@ public class RdbmsUtils {
 					}
 				}
 			} catch (TableNotInDatabaseException e) {
-				System.err.println("TableNotInDatabaseException in RdbmsUtils.startEndDateInRisPrograms() table name: " + tableName);
+				System.err
+						.println("TableNotInDatabaseException in RdbmsUtils.startEndDateInRisPrograms() table name: "
+								+ tableName);
 				System.err.println("exception: " + e.getMessage());
 				System.exit(-1);
 			}
@@ -900,6 +1023,61 @@ public class RdbmsUtils {
 	 */
 	public static String makeSqlGeometryPointString(double lon, double lat) {
 		return "ST_SetSRID(ST_MakePoint(" + lon + "," + lat + "), 4326)";
+	}
+
+	/**
+	 * get the text description of a constraint clause. Used to provide a human
+	 * readable error message.
+	 * 
+	 * @param args
+	 * @throws SQLException 
+	 */
+	/* <><><><>
+	 * 
+	 * BROKEN dont use. Returns zero rows in the result set.
+	 <><><><><>*/
+	public static String getCheckClause(String tableName, String constraintName) throws SQLException {
+		String q1 = "SELECT  " +
+				// table_name, column_name, 
+				// " check_clause " +
+				"count(*) " + 
+				" FROM information_schema.check_constraints "
+				//+ " INNER JOIN "
+				//+ " information_schema.constraint_column_usage on "
+				//+ " information_schema.check_constraints.constraint_name = information_schema.constraint_column_usage.constraint_name "
+				// + " where TABLE_NAME = "
+			//	+ RdbmsConnection.wrapInSingleQuotes(tableName)
+				//+ " AND "
+				//+ " information_schema.constraint_column_usage.constraint_name = "
+				//+ RdbmsConnection.wrapInSingleQuotes(constraintName)
+				;
+
+		System.out.println("getCheckClause() query: " + q1);
+		ResultSet rset = RdbmsUtils.getGriidcSecondaryDbConnectionInstance().executeQueryResultSet(q1);
+		
+		String cn = null;
+		String tn = null;
+		String cc = null;
+		
+        int rows = 0;
+        ResultSetMetaData rsmd = rset.getMetaData();
+        int colCount = rsmd.getColumnCount();
+        System.out.println("meta data column count: " + colCount);
+        for(int i = 0; i < colCount;i++) {
+        	int j = i+1;
+        	String n = rsmd.getColumnName(j);
+        	String t = rsmd.getColumnTypeName(j);
+        	System.out.println("Col: " + j + " name: " + n +  ", type: " + t);
+        }
+		while (rset.next()) {
+			rows++;
+		//	tn = rset.getString("table_name");
+		//	cn = rset.getString("column_name");
+		//	cc = rset.getString("check_clause");
+			System.out.println(rset.getInt(1));
+		}
+		System.out.println("getCheckClause() rows: " + rows);
+		return cc;
 	}
 
 	public static void main(String[] args) {
@@ -958,7 +1136,17 @@ public class RdbmsUtils {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
+		}
+		String tableName = "FundingEnvelope";
+		String constraintName = "chk_FundingEnvelope_StartDate";
+		try {
+			String cl = RdbmsUtils.getCheckClause(tableName, constraintName);
+			System.out.println("Table: " + tableName + ", constraint: "
+					+ constraintName + ", text: " + cl);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		System.out.println("Rdbmsutils.main() - END -");
 	}
 }

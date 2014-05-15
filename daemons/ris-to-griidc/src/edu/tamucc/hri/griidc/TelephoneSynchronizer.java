@@ -173,11 +173,11 @@ public class TelephoneSynchronizer extends SynchronizerBase {
 			countryNum = rs.getInt(CountryNumberColName);
 			if (targetPhoneNumber.equals(phoneNum.trim())
 					&& targetCountryNumber == countryNum) {
-				if (TelephoneSynchronizer.isDebug()) {
-					System.out.println("Found matching key: " + telephoneKey
-							+ ", country: " + countryNum + ", phone number: "
-							+ phoneNum);
-				}
+			//	if (TelephoneSynchronizer.isDebug()) {
+			//		System.out.println("Found matching key: " + telephoneKey
+			//				+ ", country: " + countryNum + ", phone number: "
+			//				+ phoneNum);
+			//	}
 				return telephoneKey;
 			}
 		}

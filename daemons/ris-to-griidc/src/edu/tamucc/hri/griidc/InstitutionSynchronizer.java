@@ -11,6 +11,7 @@ import edu.tamucc.hri.griidc.exception.NoRecordFoundException;
 import edu.tamucc.hri.griidc.exception.PropertyNotFoundException;
 import edu.tamucc.hri.griidc.exception.TableNotInDatabaseException;
 import edu.tamucc.hri.griidc.support.MiscUtils;
+import edu.tamucc.hri.griidc.support.GriidcRisInstitutionMap;
 import edu.tamucc.hri.griidc.support.RisInstDeptPeopleErrorCollection;
 import edu.tamucc.hri.griidc.support.RisToGriidcConfiguration;
 import edu.tamucc.hri.rdbms.utils.DbColumnInfo;
@@ -19,14 +20,22 @@ import edu.tamucc.hri.rdbms.utils.RdbmsConstants;
 import edu.tamucc.hri.rdbms.utils.RdbmsUtils;
 import edu.tamucc.hri.rdbms.utils.TableColInfo;
 
+/**
+ * reads RIS Institutions records and converts to GRIIDC Institution. Store the
+ * RIS id and use it for future updates from RIS.
+ * 
+ * @author jvh
+ * 
+ */
 public class InstitutionSynchronizer extends SynchronizerBase {
 
-	private static final String RisTableName = "Institutions";
-	private static final String GriidcTableName = "Institution";
+	public static final String RisTableName = RdbmsConstants.RisInstTableName;
+	public static final String GriidcTableName = RdbmsConstants.GriidcInstTableName;
 
 	private int risRecordCount = 0;
-	private int risRecordsSkipped = 0;
+	//private int risRecordsSkipped = 0;
 	private int risRecordErrors = 0;
+	private int risRecordWarnings = 0;
 	private int griidcRecordsAdded = 0;
 	private int griidcRecordsModified = 0;
 	private int griidcRecordDuplicates = 0;
@@ -47,15 +56,13 @@ public class InstitutionSynchronizer extends SynchronizerBase {
 
 	// GRIIDC Institution stuff
 	private int griidcInstNumber = -1;
+	private int griidcInstRisId = -1;
 	private int griidcInstPostalAreaNumber = -1;
 	private String griidcInstAbbr = null;
 	private String griidcInstDeliveryPoint = null;
 	private String griidcInstName = null;
 	private String griidcInstUrl = null;
 	private String griidcInstGeoCoordinate = null;
-	private double griidcInstLongitude = 0.0;
-	private double griidcInstLatitude = 0.0;
-	private String query = null;
 
 	// get all the values from the RIS Departments table
 
@@ -66,6 +73,13 @@ public class InstitutionSynchronizer extends SynchronizerBase {
 
 	private static boolean FuzzyPostalCode = false;
 
+	private boolean initialized = false;
+
+	private boolean warningsOn = false; // true is more tolerant of missing data
+										// in RIS
+	private static final String Error = "Error ";
+	private static final String Warning = "Warning ";
+
 	private RisInstDeptPeopleErrorCollection risInstitutionWithErrors = new RisInstDeptPeopleErrorCollection();
 
 	public InstitutionSynchronizer() {
@@ -73,9 +87,16 @@ public class InstitutionSynchronizer extends SynchronizerBase {
 	}
 
 	public void initialize() {
-		super.commonInitialize();
-		if (RisToGriidcConfiguration.isFuzzyPostalCodeTrue())
-			InstitutionSynchronizer.setFuzzyPostalCode(true);
+		if (!isInitialized()) {
+			super.commonInitialize();
+			if (RisToGriidcConfiguration.isFuzzyPostalCodeTrue())
+				InstitutionSynchronizer.setFuzzyPostalCode(true);
+			initialized = true;
+		}
+	}
+
+	public boolean isInitialized() {
+		return initialized;
 	}
 
 	/*****
@@ -98,40 +119,23 @@ public class InstitutionSynchronizer extends SynchronizerBase {
 		String tempDeliveryPoint = null; // created from RIS info
 		int tempPostalAreaNumber = -1; // created from RIS info
 
+		String errorOrWarning = Error;
 		try {
 			rset = this.risDbConnection.selectAllValuesFromTable(RisTableName);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		try {
 
 			while (rset.next()) { // continue statements branch back to here
-				risRecordCount++;
-				risInstId = rset.getInt("Institution_ID");
-				risInstName = rset.getString("Institution_Name").trim();
-				risInstAddr1 = rset.getString("Institution_Addr1").trim();
-				risInstAddr2 = rset.getString("Institution_Addr2").trim();
-				risInstCity = rset.getString("Institution_City").trim();
-				risInstState = rset.getString("Institution_State").trim();
-				risInstZip = rset.getString("Institution_Zip").trim();
-				risInstCountry = rset.getString("Institution_Country").trim();
-				risInstURL = rset.getString("Institution_URL").trim();
-				risInstLat = rset.getDouble("Institution_Lat");
-				risInstLong = rset.getDouble("Institution_Long");
-				// risInstKeywords = rset.getString("Institution_Keywords");
-				// risInstVerified = rset.getString("Institution_Verified");
+				this.readRisRecord();
 
 				int countryNumber = -1;
 				if (MiscUtils.isStringEmpty(risInstCountry)) {
 					MiscUtils
-							.writeToRisErrorLogFile("Error In RIS Institutions record: "
+							.writeToRisErrorLogFile("Error I-A In RIS Institutions record: "
 									+ risInstId
 									+ " - Institution_Country is "
 									+ ((risInstCountry == null) ? "null"
 											: " lenght zero"));
 					this.risRecordErrors++;
-					this.risRecordsSkipped++;
+					//this.risRecordsSkipped++;
 					this.risInstitutionWithErrors.addInstitution(risInstId);
 					continue; // skip to while (rset.next())
 				}
@@ -140,23 +144,30 @@ public class InstitutionSynchronizer extends SynchronizerBase {
 							.getCountryNumberFromName(risInstCountry);
 				} catch (MultipleRecordsFoundException e) {
 					MiscUtils.writeToPrimaryLogFile(e.getMessage());
-					if (isDebug())
-						System.err.println("AA Skip this one: "
-								+ e.getMessage());
-					this.risRecordsSkipped++;
+					MiscUtils
+							.writeToRisErrorLogFile("Error I-B In RIS Institutions record: "
+									+ risInstId + e.getMessage());
+					//this.risRecordsSkipped++;
+					this.risRecordErrors++;
 					continue; // branch back to while (rset.next())
 				} catch (NoRecordFoundException e) {
-					String msg = "Error in RIS Institutions record id: "
+					errorOrWarning = Error;
+					if (this.isWarningsOn())
+						errorOrWarning = Warning;
+					String msg = errorOrWarning
+							+ " I-C in RIS Institutions record id: "
 							+ risInstId + ": " + e.getMessage();
-					MiscUtils.writeToRisErrorLogFile(msg);
 					MiscUtils.writeToPrimaryLogFile(msg);
-					if (isDebug())
-						System.err.println("BB Skip this one: "
-								+ e.getMessage());
-					this.risRecordsSkipped++;
-					this.risRecordErrors++;
-					this.risInstitutionWithErrors.addInstitution(risInstId);
-					continue; // branch back to while (rset.next())
+
+					if (this.isWarningsOn()) {
+						this.risRecordWarnings++;
+						MiscUtils.writeToRisWarningLogFile(msg);
+					} else {
+						this.risRecordErrors++;
+						MiscUtils.writeToRisErrorLogFile(msg);
+						this.risInstitutionWithErrors.addInstitution(risInstId);
+						continue; // branch back to while (rset.next())
+					}
 				}
 
 				/****
@@ -171,42 +182,52 @@ public class InstitutionSynchronizer extends SynchronizerBase {
 									risInstState, risInstCity, risInstZip);
 				} catch (MultipleRecordsFoundException e) {
 					MiscUtils.writeToPrimaryLogFile(e.getMessage());
-					if (isDebug())
-						System.err.println("CC Skip this one: "
-								+ e.getMessage());
-					this.risRecordsSkipped++;
+					String msg = "Error I-D in RIS Institutions record id: "
+							+ risInstId + ": " + e.getMessage();
+					//this.risRecordsSkipped++;
+					this.risRecordErrors++;
 					continue; // branch back to while (rset.next())
 				} catch (NoRecordFoundException e) {
-					String msg = "Error in RIS Institutions record id: "
+					errorOrWarning = Error;
+					if (this.isWarningsOn())
+						errorOrWarning = Warning;
+					String msg = errorOrWarning
+							+ " I-E in RIS Institutions record id: "
 							+ risInstId + ": " + e.getMessage();
-					MiscUtils.writeToRisErrorLogFile(msg);
 					MiscUtils.writeToPrimaryLogFile(msg);
-					if (isDebug())
-						System.err.println("DD Skip this one: "
-								+ e.getMessage());
-					this.risRecordsSkipped++;
-					this.risRecordErrors++;
-					this.risInstitutionWithErrors.addInstitution(risInstId);
-					continue; // branch back to while (rset.next())
+					if (this.isWarningsOn()) {
+						MiscUtils.writeToRisWarningLogFile(msg);
+						this.risRecordWarnings++;
+					} else {
+						MiscUtils.writeToRisErrorLogFile(msg);
+						this.risRecordErrors++;
+						this.risInstitutionWithErrors.addInstitution(risInstId);
+						continue; // branch back to while (rset.next())
+					}
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-					if (isDebug())
-						System.err.println("EE Skip this one: "
-								+ e.getMessage());
-					this.risRecordsSkipped++;
+					String msg = "Error I-F in RIS Institutions record id: "
+							+ risInstId + ": " + e.getMessage();
+					//this.risRecordsSkipped++;
+					this.risRecordErrors++;
 					continue; // branch back to while (rset.next())
 				} catch (MissingArgumentsException e) {
-					MiscUtils
-							.writeToRisErrorLogFile("Error In RIS Institutions record: "
-									+ risInstId + " - " + e.getMessage());
-					if (isDebug())
-						System.err.println("FF Skip this one: "
-								+ e.getMessage());
-					this.risRecordsSkipped++;
-					this.risRecordErrors++;
-					this.risInstitutionWithErrors.addInstitution(risInstId);
-					continue; // branch back to while (rset.next())
+					if (this.isWarningsOn())
+						errorOrWarning = Warning;
+					String msg = errorOrWarning
+							+ "I-G In RIS Institutions record: "
+									+ risInstId + " - " + e.getMessage();
+					if (this.isWarningsOn()) {
+						MiscUtils.writeToRisWarningLogFile(msg);
+						this.risRecordWarnings++;
+					} else {
+						MiscUtils.writeToRisErrorLogFile(msg);
+						this.risRecordErrors++;
+						MiscUtils.writeToRisErrorLogFile(msg);
+						this.risInstitutionWithErrors.addInstitution(risInstId);
+						continue; // branch back to while (rset.next())
+					}
 				}
 				/*
 				 * if the data in RIS is unusable - skip this record - go to the
@@ -216,54 +237,19 @@ public class InstitutionSynchronizer extends SynchronizerBase {
 				tempDeliveryPoint = MiscUtils.makeDeliveryPoint(risInstAddr1,
 						risInstAddr2);
 
-				try {
-					query = "SELECT * FROM "
-							// + this.getWrappedGriidcShemaName() + "."
-							+ RdbmsConnection
-									.wrapInDoubleQuotes(GriidcTableName)
-							+ " WHERE "
-							+ RdbmsConnection
-									.wrapInDoubleQuotes("Institution_Number")
-							+ RdbmsConstants.EqualSign + risInstId;
+				//
+				// find matching GRIIDC record
+				//
 
-					griidcRset = this.griidcDbConnection
-							.executeQueryResultSet(query);
+				int count = this.findMatchingGriidcInstitution();
 
-				} catch (SQLException e1) {
-					System.err
-							.println("SQL Error: Find Institution in GRIIDC - Query: "
-									+ query);
-					e1.printStackTrace();
-				}
-
-				int count = 0;
-				try {
-					while (griidcRset.next()) {
-						count++;
-						griidcInstName = griidcRset
-								.getString("Institution_Name");
-						griidcInstNumber = griidcRset
-								.getInt("Institution_Number");
-						griidcInstPostalAreaNumber = griidcRset
-								.getInt("PostalArea_Number");
-						griidcInstAbbr = griidcRset
-								.getString("Institution_Abbr");
-						griidcInstDeliveryPoint = griidcRset
-								.getString("Institution_DeliveryPoint");
-						griidcInstUrl = griidcRset.getString("Institution_URL");
-						griidcInstGeoCoordinate = griidcRset
-								.getString("Institution_GeoCoordinate");
-					}
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
+				// if a matching record is not found - add a record
 				if (count == 0) {
 					// Add the Institution
 					if (InstitutionSynchronizer.isDebug()) {
 						String msg = "Add GRIIDC Institution table record "
-								+ "Institution_Name: " + risInstName
+								+ "RIS Institution ID: " + risInstId
+								+ ", Institution_Name: " + risInstName
 								+ ", PostalArea_Number: "
 								+ griidcInstPostalAreaNumber
 								+ ", Institution_DeliveryPoint: "
@@ -286,7 +272,9 @@ public class InstitutionSynchronizer extends SynchronizerBase {
 						MiscUtils.writeToPrimaryLogFile(msg);
 						if (isDebug())
 							System.out.println(msg);
-
+						// read again to get the assigned key
+						// (Institution_Number)
+						this.findMatchingGriidcInstitution();
 						this.griidcRecordsAdded++;
 					} catch (SQLException e) {
 						System.err
@@ -295,7 +283,8 @@ public class InstitutionSynchronizer extends SynchronizerBase {
 						e.printStackTrace();
 					}
 
-				} else if (count == 1) {
+				} else if (count == 1) { // found a match - modify the record if
+											// needed
 
 					// Modify Institution record
 					if (isCurrentRecordEqual(risInstId,
@@ -303,14 +292,14 @@ public class InstitutionSynchronizer extends SynchronizerBase {
 							tempPostalAreaNumber,
 							tempDeliveryPoint,
 							risInstURL, // risInstLong, risInstLat,
-							griidcInstNumber, griidcInstName,
+							griidcInstRisId, griidcInstName,
 							griidcInstPostalAreaNumber,
 							griidcInstDeliveryPoint, griidcInstUrl)) {
 						this.griidcRecordDuplicates++;
-					} else { // identity is the but data has changed
+					} else { // the data has changed - must modify
 						if (InstitutionSynchronizer.isDebug()) {
 							String msg = "Modify GRIIDC Institution table matching "
-									+ "griidcInstNumber: "
+									+ "Institution_RIS_ID: "
 									+ risInstId
 									+ ", Institution_Name: "
 									+ risInstName
@@ -347,7 +336,8 @@ public class InstitutionSynchronizer extends SynchronizerBase {
 						}
 						this.griidcRecordsModified++;
 					}
-				} else if (count > 1) { // duplicates in the database - should not happen
+				} else if (count > 1) { // duplicates in the database - should
+										// not happen
 
 					String msg = "There are "
 							+ count
@@ -370,17 +360,34 @@ public class InstitutionSynchronizer extends SynchronizerBase {
 		return this.risInstitutionWithErrors;
 	}
 
-	private DbColumnInfo[] getDbColumnInfo(int risInstNumber,
-			String risInstName, int griidcPostalAreaNumber,
-			String deliveryPoint, String risInstURL, double risInstLon,
-			double risInstLat) throws FileNotFoundException, SQLException,
-			ClassNotFoundException, PropertyNotFoundException {
+	private void readRisRecord() throws SQLException {
+		this.risRecordCount++;
+		this.risInstId = rset.getInt("Institution_ID");
+		this.risInstName = rset.getString("Institution_Name").trim();
+		this.risInstAddr1 = rset.getString("Institution_Addr1").trim();
+		this.risInstAddr2 = rset.getString("Institution_Addr2").trim();
+		this.risInstCity = rset.getString("Institution_City").trim();
+		this.risInstState = rset.getString("Institution_State").trim();
+		this.risInstZip = rset.getString("Institution_Zip").trim();
+		this.risInstCountry = rset.getString("Institution_Country").trim();
+		this.risInstURL = rset.getString("Institution_URL").trim();
+		this.risInstLat = rset.getDouble("Institution_Lat");
+		this.risInstLong = rset.getDouble("Institution_Long");
+		// risInstKeywords = rset.getString("Institution_Keywords");
+		// risInstVerified = rset.getString("Institution_Verified");
+	}
+
+	private DbColumnInfo[] getDbColumnInfo(int risInstId, String risInstName,
+			int griidcPostalAreaNumber, String deliveryPoint,
+			String risInstURL, double risInstLon, double risInstLat)
+			throws FileNotFoundException, SQLException, ClassNotFoundException,
+			PropertyNotFoundException {
 		TableColInfo tci = RdbmsUtils.getMetaDataForTable(
 				RdbmsUtils.getGriidcDbConnectionInstance(), GriidcTableName);
 
-		tci.getDbColumnInfo("Institution_Number").setColValue(
-				String.valueOf(this.risInstId));
-		tci.getDbColumnInfo("Institution_Name").setColValue(this.risInstName);
+		tci.getDbColumnInfo("Institution_RIS_ID").setColValue(
+				String.valueOf(risInstId));
+		tci.getDbColumnInfo("Institution_Name").setColValue(risInstName);
 		tci.getDbColumnInfo("PostalArea_Number").setColValue(
 				String.valueOf(griidcPostalAreaNumber));
 		tci.getDbColumnInfo("Institution_DeliveryPoint").setColValue(
@@ -392,13 +399,62 @@ public class InstitutionSynchronizer extends SynchronizerBase {
 		return tci.getDbColumnInfo();
 	}
 
-	private String formatAddQuery(int risInstNumber, String risInstName,
+	/**
+	 * read the database for the Griidc Institution that corresponds to the RIS
+	 * Institutions record. The RIS Institution ID is stored in the Griidc
+	 * Institution record
+	 * 
+	 * @return
+	 */
+	private int findMatchingGriidcInstitution() {
+		//
+		// find matching GRIIDC record
+		//
+		int count = 0;
+		String query = null;
+		try {
+			query = this.formatFindQuery();
+
+			this.griidcRset = this.griidcDbConnection
+					.executeQueryResultSet(query);
+
+			while (griidcRset.next()) {
+				count++;
+				griidcInstRisId = griidcRset.getInt("Institution_RIS_ID");
+				griidcInstName = griidcRset.getString("Institution_Name");
+				griidcInstNumber = griidcRset.getInt("Institution_Number");
+				griidcInstPostalAreaNumber = griidcRset
+						.getInt("PostalArea_Number");
+				griidcInstAbbr = griidcRset.getString("Institution_Abbr");
+				griidcInstDeliveryPoint = griidcRset
+						.getString("Institution_DeliveryPoint");
+				griidcInstUrl = griidcRset.getString("Institution_URL");
+				griidcInstGeoCoordinate = griidcRset
+						.getString("Institution_GeoCoordinate");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return count;
+	}
+
+	private String formatFindQuery() {
+		String query = "SELECT * FROM "
+				+ RdbmsConnection.wrapInDoubleQuotes(GriidcTableName)
+				+ " WHERE "
+				+ RdbmsConnection.wrapInDoubleQuotes("Institution_RIS_ID")
+				+ RdbmsConstants.EqualSign + risInstId;
+		return query;
+	}
+
+	private String formatAddQuery(int risInstId, String risInstName,
 			int griidcPostalAreaNumber, String deliveryPoint,
 			String risInstURL, double risInstLon, double risInstLat)
 			throws SQLException, ClassNotFoundException, FileNotFoundException,
 			PropertyNotFoundException {
 
-		DbColumnInfo[] info = getDbColumnInfo(risInstNumber, risInstName,
+		DbColumnInfo[] info = getDbColumnInfo(risInstId, risInstName,
 				griidcPostalAreaNumber, deliveryPoint, risInstURL, risInstLon,
 				risInstLat);
 		String query = RdbmsUtils.formatInsertStatement(
@@ -406,42 +462,15 @@ public class InstitutionSynchronizer extends SynchronizerBase {
 		if (InstitutionSynchronizer.isDebug())
 			System.out.println("formatAddQuery() " + query);
 		return query;
-		/***
-		 * StringBuffer sb = new StringBuffer("INSERT INTO ");
-		 * sb.append(RdbmsConnection.wrapInDoubleQuotes("Institution") +
-		 * RdbmsConstants.SPACE + "(");
-		 * sb.append(RdbmsConnection.wrapInDoubleQuotes("Institution_Number"));
-		 * sb.append(RdbmsConstants.CommaSpace +
-		 * RdbmsConnection.wrapInDoubleQuotes("Institution_Name"));
-		 * sb.append(RdbmsConstants.CommaSpace +
-		 * RdbmsConnection.wrapInDoubleQuotes("PostalArea_Number"));
-		 * sb.append(RdbmsConstants.CommaSpace + RdbmsConnection
-		 * .wrapInDoubleQuotes("Institution_DeliveryPoint"));
-		 * sb.append(RdbmsConstants.CommaSpace +
-		 * RdbmsConnection.wrapInDoubleQuotes("Institution_URL"));
-		 * sb.append(RdbmsConstants.CommaSpace + RdbmsConnection
-		 * .wrapInDoubleQuotes("Institution_GeoCoordinate"));
-		 * sb.append(") VALUES ("); // the values are here
-		 * sb.append(risInstNumber); sb.append(RdbmsConstants.CommaSpace +
-		 * RdbmsConnection.wrapInSingleQuotes(risInstName));
-		 * sb.append(RdbmsConstants.CommaSpace + griidcPostalAreaNumber);
-		 * sb.append(RdbmsConstants.CommaSpace +
-		 * RdbmsConnection.wrapInSingleQuotes(deliveryPoint));
-		 * sb.append(RdbmsConstants.CommaSpace +
-		 * RdbmsConnection.wrapInSingleQuotes(risInstURL));
-		 * sb.append(RdbmsConstants.CommaSpace +
-		 * makeSqlGeometryPointString(risInstLon, risInstLat)); sb.append(" )");
-		 * return sb.toString();
-		 ***/
 	}
 
-	private String formatModifyQuery(int risInstNumber, String risInstName,
+	private String formatModifyQuery(int risInstId, String risInstName,
 			int postalAreaNumber, String deliveryPoint, String instURL,
 			double instLon, double instLat) throws SQLException,
 			ClassNotFoundException, FileNotFoundException,
 			PropertyNotFoundException {
 
-		DbColumnInfo[] info = getDbColumnInfo(risInstNumber, risInstName,
+		DbColumnInfo[] info = getDbColumnInfo(risInstId, risInstName,
 				postalAreaNumber, deliveryPoint, instURL, instLon, instLat);
 
 		DbColumnInfo[] whereInfo = new DbColumnInfo[1];
@@ -449,10 +478,10 @@ public class InstitutionSynchronizer extends SynchronizerBase {
 		TableColInfo tci = RdbmsUtils.getMetaDataForTable(
 				RdbmsUtils.getGriidcDbConnectionInstance(), GriidcTableName);
 
-		tci.getDbColumnInfo("Institution_Number").setColValue(
-				String.valueOf(risInstNumber));
+		tci.getDbColumnInfo("Institution_RIS_ID").setColValue(
+				String.valueOf(risInstId));
 
-		whereInfo[0] = tci.getDbColumnInfo("Institution_Number");
+		whereInfo[0] = tci.getDbColumnInfo("Institution_RIS_ID");
 
 		String query = RdbmsUtils.formatUpdateStatement(
 				InstitutionSynchronizer.GriidcTableName, info, whereInfo);
@@ -460,32 +489,6 @@ public class InstitutionSynchronizer extends SynchronizerBase {
 		if (InstitutionSynchronizer.isDebug())
 			System.out.println("formatModifyQuery() " + query);
 		return query;
-
-		/*****
-		 * StringBuffer sb = new StringBuffer("UPDATE  ");
-		 * sb.append(RdbmsConnection.wrapInDoubleQuotes("Institution") +
-		 * RdbmsConstants.SPACE + " SET ");
-		 * sb.append(RdbmsConnection.wrapInDoubleQuotes("Institution_Name") +
-		 * RdbmsConstants.EqualSign +
-		 * RdbmsConnection.wrapInSingleQuotes(risInstName));
-		 * sb.append(RdbmsConstants.CommaSpace +
-		 * RdbmsConnection.wrapInDoubleQuotes("PostalArea_Number") +
-		 * RdbmsConstants.EqualSign + postalAreaNumber);
-		 * sb.append(RdbmsConstants.CommaSpace + RdbmsConnection
-		 * .wrapInDoubleQuotes("Institution_DeliveryPoint") +
-		 * RdbmsConstants.EqualSign +
-		 * RdbmsConnection.wrapInSingleQuotes(deliveryPoint));
-		 * sb.append(RdbmsConstants.CommaSpace +
-		 * RdbmsConnection.wrapInDoubleQuotes("Institution_URL") +
-		 * RdbmsConstants.EqualSign +
-		 * RdbmsConnection.wrapInSingleQuotes(instURL));
-		 * sb.append(RdbmsConstants.CommaSpace + RdbmsConnection
-		 * .wrapInDoubleQuotes("Institution_GeoCoordinate") +
-		 * RdbmsConstants.EqualSign + makeSqlGeometryPointString(instLon,
-		 * instLat)); sb.append(" WHERE " +
-		 * RdbmsConnection.wrapInDoubleQuotes("Institution_Number") +
-		 * RdbmsConstants.EqualSign + instNumber); return sb.toString();
-		 *****/
 	}
 
 	/**
@@ -507,22 +510,27 @@ public class InstitutionSynchronizer extends SynchronizerBase {
 	 * @param gLat
 	 * @return
 	 */
-	private boolean isCurrentRecordEqual(int rNumber, String rName,
-			int rPostalAreaNumber, String rDeliveryPoint,
-			String rUrl, // , double rLon,double rLat,
+	private boolean isCurrentRecordEqual(int risInstId, String risInstName,
+			int risPostalAreaNumber, String risDeliveryPoint,
+			String risUrl, // , double rLon,double rLat,
 
-			int gNumber, String gName, int gPostalAreaNumber,
-			String gDeliveryPoint, String gUrl) { // , double gLon,double gLat) {
+			int gInstRisId, String gInstName, int gInstPostalAreaNumber,
+			String gInstDeliveryPoint, String gInstUrl) { // , double
+															// gLon,double gLat)
+															// {
 
-		if (rNumber != gNumber)
+		if (risInstId != gInstRisId)
 			return false;
-		if (!rName.equals(gName))
+		if (!risInstName.equals(gInstName))
 			return false;
-		if (rPostalAreaNumber != gPostalAreaNumber) return false;
-		if (!rDeliveryPoint.equals(gDeliveryPoint)) return false;
-		if (!rUrl.equals(gUrl)) return false;
-		//if(rLon != gLon) return false;
-		//if(rLat != gLat) return false;
+		if (risPostalAreaNumber != gInstPostalAreaNumber)
+			return false;
+		if (!risDeliveryPoint.equals(gInstDeliveryPoint))
+			return false;
+		if (!risUrl.equals(gInstUrl))
+			return false;
+		// if(rLon != gLon) return false;
+		// if(rLat != gLat) return false;
 		return true;
 	}
 
@@ -559,10 +567,9 @@ public class InstitutionSynchronizer extends SynchronizerBase {
 		return risRecordErrors;
 	}
 
-	public int getRisRecordsSkipped() {
-		return risRecordsSkipped;
+	public int getRisRecordWarnings() {
+		return risRecordWarnings;
 	}
-
 	public int getRisRecordCount() {
 		return risRecordCount;
 	}
@@ -581,6 +588,14 @@ public class InstitutionSynchronizer extends SynchronizerBase {
 
 	public static void setFuzzyPostalCode(boolean fuzzyPostalCode) {
 		FuzzyPostalCode = fuzzyPostalCode;
+	}
+
+	public boolean isWarningsOn() {
+		return warningsOn;
+	}
+
+	public void setWarningsOn(boolean warningsOn) {
+		this.warningsOn = warningsOn;
 	}
 
 }

@@ -2,6 +2,9 @@ package edu.tamucc.hri.rdbms.utils;
 
 public class RdbmsConstants {
 
+	public static final int NotFound = -1;
+	public static final int MultipleFound = -99;
+	public static final int IgnoreValue = -99999;
 	public static final String And = " AND ";
 	public static final String SPACE = " ";
 	public static final String CommaSpace = ", ";
@@ -31,6 +34,17 @@ public class RdbmsConstants {
 	public static final String DbTypePostgres = "postgresql";
 	public static final String DbTypeMysql = "mysql";
 	
+	//  RIS database table names
+	public static final String RisInstTableName = "Institutions";
+	public static final String RisDeptTableName = "Departments";
+	public static final String RisPeopleTableName = "People";
+	
+	//  GRIIDC database table names
+	public static final String GriidcInstTableName = "Institution";
+	public static final String GriidcDeptTableName = "Department";
+	public static final String GriidcPersonTableName = "Person";
+	public static final String GriidcPersonDepartmentRisPeopleIdTableName = "GoMRIPerson-Department-RIS_ID";
+	public static final String GriidcGomriPersonTableName = "GoMRIPerson";
 	
 	private RdbmsConstants() {
 	}

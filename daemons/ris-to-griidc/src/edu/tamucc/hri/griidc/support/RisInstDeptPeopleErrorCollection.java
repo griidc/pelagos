@@ -252,7 +252,7 @@ public class RisInstDeptPeopleErrorCollection {
 				di = "" + lastInstNum;
 			}
 			if(instDept.getDepartmentSize() == 0) {
-				sb.append(tab + di + tab + dd +  tab + pepId.intValue()
+				sb.append(tab + di + tab + dd +  tab + ((pepId == null) ? "0" : pepId.intValue())
 						+ newLine);
 			}
 			lastDeptNum = -1;

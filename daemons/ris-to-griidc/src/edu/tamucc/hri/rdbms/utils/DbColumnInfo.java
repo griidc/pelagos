@@ -89,6 +89,18 @@ public class DbColumnInfo implements Comparable {
 		return String.format(formatString, this.colName , this.colType , this.colValue, this.defaultValue);
 	}
 
+	public static String toString(DbColumnInfo[] dbci) {
+		StringBuffer sb = new StringBuffer();
+		boolean firstTime = true;
+		for(DbColumnInfo dci : dbci) {
+			if(!firstTime) {
+				sb.append("\n");
+			}
+			sb.append(dci.toString());
+			firstTime = false;
+		}
+		return sb.toString();
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;

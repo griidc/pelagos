@@ -34,6 +34,7 @@ public class MiscUtils {
 
 	public static int primaryLogMsgCount = 0;
 	public static int risErrorLogCount = 0;
+	public static int risWarningLogCount = 0;
 
 	
 	private static boolean Debug = false;
@@ -135,6 +136,8 @@ public class MiscUtils {
 	private static BufferedWriter risErrorLogFileWriter = null;
 
 	private static BufferedWriter developerReportWriter = null;
+	
+	private static BufferedWriter risWarningLogFileWriter = null;
 
 	public static void closePrimaryLogFile() throws IOException {
 		MiscUtils.getPrimaryLogFileWriter().close();
@@ -147,7 +150,9 @@ public class MiscUtils {
 	public static void closeDeveloperReportFile() throws IOException {
 		MiscUtils.getRisErrorLogFileWriter().close();
 	}
-
+	public static void closeWarningReportFile() throws IOException {
+		MiscUtils.getRisWarningLogFileWriter().close();
+	}
 	public static final String DashLine = "--------------------------------------------------";
 
 	public static int mainLogEntryNumber = 1;
@@ -239,7 +244,18 @@ public class MiscUtils {
 		MiscUtils.risErrorLogCount++;
 		return MiscUtils.risErrorLogCount;
 	}
-
+	public static int writeToRisWarningLogFile(String msg) {
+		try {
+			MiscUtils.getRisWarningLogFileWriter().write(
+					"\n" + incrementRisEntryNumber() + "\t" + msg + "\n" + DashLine);
+		} catch (IOException e) {
+			System.err.println("MiscUtils.writeToRisWarningLogFile() " + e.getMessage());
+			e.printStackTrace();
+			System.exit(-1);
+		} 
+		MiscUtils.risWarningLogCount++;
+		return MiscUtils.risWarningLogCount;
+	}
 	public static int getPrimaryLogMsgCount() {
 		return MiscUtils.primaryLogMsgCount;
 	}
@@ -254,6 +270,14 @@ public class MiscUtils {
 
 	public static void resetRisErrorLogCount() {
 		MiscUtils.risErrorLogCount = 0;
+	}
+	
+	public static int getRisWarningLogCount() {
+		return risWarningLogCount;
+	}
+
+	public static void resetRisWarningLogCount() {
+		MiscUtils.risWarningLogCount = 0;
 	}
 
 	public static int writeToRisErrorLogFile(Collection<String> msgs) {
@@ -291,7 +315,7 @@ public class MiscUtils {
 			System.out.println("MiscUtils: " + s);
 		}
 	}
-
+	
 	public static BufferedWriter getRisErrorLogFileWriter() throws IOException {
 
 		if (MiscUtils.risErrorLogFileWriter == null) {
@@ -311,6 +335,29 @@ public class MiscUtils {
 					.write("**********************************************************");
 		}
 		return MiscUtils.risErrorLogFileWriter;
+	}
+	public static BufferedWriter openRisWarningLogFile() throws IOException {
+		return getRisWarningLogFileWriter();
+	}
+	public static BufferedWriter getRisWarningLogFileWriter() throws IOException {
+
+		if (MiscUtils.risWarningLogFileWriter == null) {
+			String warningLogFileName = RisToGriidcConfiguration.getRisWarningLogFileName();
+			debugOut("ris Warning log file name = " + warningLogFileName);
+			MiscUtils.risWarningLogFileWriter = MiscUtils
+					.openOutputFile(warningLogFileName);
+			MiscUtils.risWarningLogFileWriter
+					.write("**********************************************************\n");
+			MiscUtils.risWarningLogFileWriter
+					.write("** RIS Data Warning Log file\n");
+			MiscUtils.risWarningLogFileWriter.write("** File opened: "
+					+ MiscUtils.getDateAndTime());
+			MiscUtils.risWarningLogFileWriter.write("  ** \n");
+			MiscUtils.risWarningLogFileWriter.write("** \n");
+			MiscUtils.risWarningLogFileWriter
+					.write("**********************************************************");
+		}
+		return MiscUtils.risWarningLogFileWriter;
 	}
 
 	/**
