@@ -36,7 +36,7 @@ if ($user) {
         $userEntries = ldap_get_entries($ldap, $userResult);
         $userEntry = $userEntries[0];
         if (array_key_exists('homedirectory',$userEntry)) {
-            $homeDir = preg_replace('/^\//','',$userEntry['homedirectory'][0]);
+            $homeDir = $userEntry['homedirectory'][0];
         }
         if (array_key_exists('gidnumber',$userEntry)) {
             $gidNumber = $userEntry['gidnumber'][0];
@@ -74,6 +74,11 @@ if ($user) {
             $chrootDir .= "/$matches[1]";
         }
         $chrootDir .= "/$user";
+        if (is_dir($chrootDir)) { $sftpdir = true; }
+    }
+    elseif (isset($homeDir)) {
+        $sftpuser = true;
+        $chrootDir = $homeDir;
         if (is_dir($chrootDir)) { $sftpdir = true; }
     }
 

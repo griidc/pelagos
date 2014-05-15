@@ -48,8 +48,21 @@ if (array_key_exists('dir',$_GET)) {
                 }
             }
         }
-        
-        if (is_null($sftpGroup) or !preg_match('/^(?:(.*)-)?sftp-users$/',$sftpGroup,$matches)) {
+
+        if (!is_null($sftpGroup) and preg_match('/^(?:(.*)-)?sftp-users$/',$sftpGroup,$matches)) {
+            $chrootDir = "/sftp/chroot";
+            if (count($matches) < 2) {
+                $chrootDir .= "/pub";
+            }
+            else {
+                $chrootDir .= "/$matches[1]";
+            }
+            $chrootDir .= "/$user";
+        }
+        elseif (isset($homeDir)) {
+            $chrootDir = "/$homeDir";
+        }
+        else {
             echo <<<EOT
                 <div style="padding:10px; color:red;">
                 Your account has not been configured for SFTP access.<br>
@@ -63,14 +76,6 @@ EOT;
             exit;
         }
         
-        $chrootDir = "/sftp/chroot";
-        if (count($matches) < 2) {
-            $chrootDir .= "/pub";
-        }
-        else {
-            $chrootDir .= "/$matches[1]";
-        }
-        $chrootDir .= "/$user";
         
         if (array_key_exists('dir',$_GET) and !preg_match('/^[\.\/]/',$_GET['dir'])) {
             $browseDir = $_GET['dir'];
