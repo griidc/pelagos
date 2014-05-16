@@ -817,7 +817,7 @@ function submitRegistry() {
     <img src="/dif/images/info.png" style="float:right;" />
     <p>
         <p><strong>Dataset File Path:</strong></p>
-        <p>This is the path on the server to the data file being registered. Click "Browse..." to find and select the data file you uploaded via SFTP.</p>
+        <p>This is the path on the server to the data file being registered. Click "Browse..." to find and select the data file you uploaded via SFTP/GridFTP.</p>
         <p style="color:red">Do not include copyrighted materials (e.g. published journal articles) in your data package.</p>
     </p>
 </div>
@@ -841,7 +841,7 @@ function submitRegistry() {
 <div id="sshmetadataurl_tip" style="display:none;">
     <img src="/dif/images/info.png" style="float:right;" />
     <p>
-        <strong>Metadata File Path:</strong><p/>This is the path on the server to the metadata file for the data being registered. Click "Browse..." to find and select the data file you uploaded via SFTP.
+        <strong>Metadata File Path:</strong><p/>This is the path on the server to the metadata file for the data being registered. Click "Browse..." to find and select the data file you uploaded via SFTP/GridFTP.
     </p>
 </div>
 
@@ -1037,14 +1037,14 @@ function submitRegistry() {
         <ul>
             <li><a onclick="document.getElementById('servertype').value='upload'" href="#tabs-1">Direct Upload</a></li>
             <li><a onclick="document.getElementById('servertype').value='HTTP'" href="#tabs-2">HTTP/FTP Server</a></li>
-            <li><a onclick="document.getElementById('servertype').value='SFTP'" href="#tabs-3">SFTP</a></li>
+            <li><a onclick="document.getElementById('servertype').value='SFTP'" href="#tabs-3">SFTP/GridFTP</a></li>
             <li><a href="#tabs-4">ERDDAP</a></li>
             <li><a href="#tabs-5">TDS</a></li>
             <li><a href="#tabs-6">...</a></li>
         </ul>
 
         <div id="tabs-1">
-            For small datasets (&lt;1 GB), you may upload the dataset and metadata files directly. Depending on the size of your files, this may take several minutes. The maximum time the system will wait for your files to upload is 10 minutes. <!--If the script times out after you click "Register" below, your files are too big and you must use an alternate method such as HTTP/FTP or SFTP.-->
+            For small datasets (&lt;1 GB), you may upload the dataset and metadata files directly. Depending on the size of your files, this may take several minutes. The maximum time the system will wait for your files to upload is 10 minutes.  For larger files, please consider using SFTP or GridFTP.<!--If the script times out after you click "Register" below, your files are too big and you must use an alternate method such as HTTP/FTP or SFTP.-->
             <fieldset>
                 <?php 
                     $upload_progress_key = md5(mt_rand());
@@ -1222,21 +1222,21 @@ function submitRegistry() {
     </div>
     
     <div id="tabs-3">
-        Use this method when your dataset is &gt;1GB and you wish to push your data to GRIIDC (rather than place your dataset and metadata files on an HTTP (web) or FTP server at your institution).
+        Use this method when your dataset is &gt;1GB and you wish to push your data to GRIIDC (rather than place your dataset and metadata files on an HTTP (web) or FTP server at your institution).  <i>Using these methods requires that you have first uploaded your file via SFTP or GridFTP.</i>
 
         <?php 
             if (!$sftpuser) {
                 echo <<<EOT
                     <div style='color:red;'>
-                        Your account has not been configured for SFTP access.<br>
-                        If you wish to use SFTP, please contact <a href='mailto:griidc@gomri.org'>griidc@gomri.org</a> to request SFTP access.
+                        Your account has not been configured for SFTP/GridFTP access.<br>
+                        If you wish to use SFTP/GridFTP, please contact <a href='mailto:griidc@gomri.org'>griidc@gomri.org</a> to request SFTP/GridFTP access.
                     </div>
 EOT;
             }
             elseif (!$sftpdir) {
                 echo <<<EOT
                     <div style="color:red;">
-                        Your SFTP directory has not been set up.<br>
+                        Your SFTP/GridFTP directory has not been set up.<br>
                         Please contact <a href='mailto:griidc@gomri.org'>griidc@gomri.org</a> for assistance.
                     </div>
 EOT;
