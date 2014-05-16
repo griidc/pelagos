@@ -218,34 +218,34 @@ public class RisToGriidcMain {
 
 		System.out.printf(pFormat, "RIS Institutions records read:",
 				instSynker.getRisRecordCount());
-		System.out.printf(pFormat, "RIS Institutions errors:",
+		System.out.printf(pFormat, "RIS Institutions records with errors:",
 				instSynker.getRisRecordErrors());
-		System.out.printf(pFormat, "RIS Institutions warnings:",
-				instSynker.getRisRecordWarnings());
+		//System.out.printf(pFormat, "RIS Institutions warnings:",
+		//		instSynker.getRisRecordWarnings());
 
 		System.out
 				.println("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -");
-		System.out.printf(pFormat, "GRIIDC Institution added:",
+		System.out.printf(pFormat, "GRIIDC Institution records added:",
 				instSynker.getGriidcRecordsAdded());
-		System.out.printf(pFormat, "GRIIDC Institution modified:",
+		System.out.printf(pFormat, "GRIIDC Institution records modified:",
 				instSynker.getGriidcRecordsModified());
-		System.out.printf(pFormat, "GRIIDC Institution duplicates:",
+		System.out.printf(pFormat, "duplicate GRIIDC Institution records ignored:",
 				instSynker.getGriidcRecordDuplicates());
 
 		title = "RIS Departments to GRIIDC Department";
 		System.out.printf(titleFormat, title);
 		System.out.printf(pFormat, "RIS Departments records read:",
 				deptSynker.getRisRecordCount());
-		System.out.printf(pFormat, "RIS Departments errors:",
+		System.out.printf(pFormat, "RIS Departments records with errors:",
 				deptSynker.getRisRecordErrors());
 
 		System.out
 				.println("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -");
-		System.out.printf(pFormat, "GRIIDC Department added:",
+		System.out.printf(pFormat, "GRIIDC Department records added:",
 				deptSynker.getGriidcRecordsAdded());
-		System.out.printf(pFormat, "GRIIDC Department modified:",
+		System.out.printf(pFormat, "GRIIDC Department records modified:",
 				deptSynker.getGriidcRecordsModified());
-		System.out.printf(pFormat, "GRIIDC Department duplicates:",
+		System.out.printf(pFormat, "duplicate GRIIDC Department records ignored:",
 				deptSynker.getGriidcRecordDuplicates());
 
 		title = "RIS People to GRIIDC Person";
@@ -253,27 +253,27 @@ public class RisToGriidcMain {
 		System.out.printf(titleFormat, title);
 		System.out.printf(pFormat, "RIS People records read:",
 				personSynker.getRisRecordCount());
-		System.out.printf(pFormat, "RIS People errors:",
+		System.out.printf(pFormat, "RIS People records with errors:",
 				personSynker.getRisRecordErrors());
 		System.out
 				.println("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -");
-		System.out.printf(pFormat, "GRIIDC Person added:",
+		System.out.printf(pFormat, "GRIIDC Person records added:",
 				personSynker.getGriidcPersonRecordsAdded());
-		System.out.printf(pFormat, "GRIIDC Person modified:",
+		System.out.printf(pFormat, "GRIIDC Person records modified:",
 				personSynker.getGriidcPersonRecordsModified());
-		System.out.printf(pFormat, "GRIIDC Person duplicates:",
+		System.out.printf(pFormat, "duplicate GRIIDC Person records ignored:",
 				personSynker.getGriidcPersonRecordDuplicates());
 		
 		title = "GoMRIPerson-Department-RIS_ID relationship ";
 		System.out.printf(titleFormat, title);
-		System.out.printf(pFormat, "GoMRIPerson-Department-RIS_ID added:",
+		System.out.printf(pFormat, "GoMRIPerson-Department-RIS_ID records added:",
 				personSynker.getGriidcPersonDepartmentPeopleRecordsAdded());
-		System.out.printf(pFormat, "GoMRIPerson-Department-RIS_ID modified:",
+		System.out.printf(pFormat, "GoMRIPerson-Department-RIS_ID records modified:",
 		        personSynker.getGriidcPersonDepartmentPeopleRecordsModified());
 
 		title = "GoMRIPerson relationship ";
 		System.out.printf(titleFormat, title);
-		System.out.printf(pFormat, "GoMRIPerson added:",
+		System.out.printf(pFormat, "GoMRIPerson records added:",
 				personSynker.getGomriPersonRecordsAdded());
 		
 		
@@ -283,6 +283,10 @@ public class RisToGriidcMain {
 				TelephoneSynchronizer.getInstance().getRisTelephoneRecords());
 		System.out.printf(pFormat, "RIS Telephone information errors:",
 				TelephoneSynchronizer.getInstance().getRisTelephoneErrors());
+		System.out.printf(pFormat, "records with blank or empty phone numbers:",
+				TelephoneSynchronizer.getInstance().getMissingPhoneNumbers());
+		System.out.printf(pFormat, "phone numbers with unrecongnized formats:",
+				TelephoneSynchronizer.getInstance().getUnrecognizedFormatNumbers());
 		System.out
 				.println("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -");
 		System.out.printf(pFormat, "GRIIDC Telephone records added ",
@@ -306,7 +310,7 @@ public class RisToGriidcMain {
 		System.out.printf(pFormat, "GRIIDC Person-Telephone records modified ",
 				PersonTelephoneSynchronizer.getInstance()
 						.getGriidcPersonTelephoneRecordsModified());
-		System.out.printf(pFormat, "GRIIDC Person-Telephone duplicates ",
+		System.out.printf(pFormat, "duplicate GRIIDC Person-Telephone records ",
 				PersonTelephoneSynchronizer.getInstance()
 						.getGriidcPersonTelephoneRecordDuplicates());
 
@@ -322,7 +326,7 @@ public class RisToGriidcMain {
 				EmailSynchronizer.getInstance().getEmailRecordsAdded());
 		System.out.printf(pFormat, "GRIIDC Email records modified ",
 				EmailSynchronizer.getInstance().getEmailRecordsModified());
-		System.out.printf(pFormat, "GRIIDC Email record duplicates ",
+		System.out.printf(pFormat, "duplicate GRIIDC Email records ignored",
 				EmailSynchronizer.getInstance().getEmailRecordsDuplicates());
 
 		
@@ -330,7 +334,7 @@ public class RisToGriidcMain {
 		System.out.printf(titleFormat, title);
 		System.out.printf(pFormat, "RIS Funding Source records read:",
 				fundingEnvelopeSynker.getRisRecordCount());
-		System.out.printf(pFormat, "RIS Funding Source errors:",
+		System.out.printf(pFormat, "RIS Funding Source records with errors:",
 				fundingEnvelopeSynker.getRisRecordErrors());
 		System.out
 				.println("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -");
@@ -338,14 +342,14 @@ public class RisToGriidcMain {
 				fundingEnvelopeSynker.getGriidcRecordsAdded());
 		System.out.printf(pFormat, "GRIIDC Funding Envelope records modified:",
 				fundingEnvelopeSynker.getGriidcRecordsModified());
-		System.out.printf(pFormat, "GRIIDC Funding Envelope duplicates:",
+		System.out.printf(pFormat, "duplicate GRIIDC Funding Envelope records ignored:",
 				fundingEnvelopeSynker.getGriidcRecordDuplicates());
 
 		title = "RIS Programs to GRIIDC Project";
 		System.out.printf(titleFormat, title);
 		System.out.printf(pFormat, "RIS Programs records read:",
 				projectSynker.getRisRecordCount());
-		System.out.printf(pFormat, "RIS Programs errors:",
+		System.out.printf(pFormat, "RIS Programs records with errors:",
 				projectSynker.getRisRecordErrors());
 		System.out
 				.println("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -");
@@ -353,14 +357,14 @@ public class RisToGriidcMain {
 				projectSynker.getGriidcRecordsAdded());
 		System.out.printf(pFormat, "GRIIDC Project records modified:",
 				projectSynker.getGriidcRecordsModified());
-		System.out.printf(pFormat, "GRIIDC Project records duplicates:",
+		System.out.printf(pFormat, "duplicate GRIIDC Project records ignored:",
 				projectSynker.getGriidcRecordDuplicates());
 
 		title = "RIS Projects to GRIIDC Task";
 		System.out.printf(titleFormat, title);
 		System.out.printf(pFormat, "RIS Projects records read:",
 				taskSynker.getRisRecordCount());
-		System.out.printf(pFormat, "RIS Projects errors:",
+		System.out.printf(pFormat, "RIS Projects records with errors:",
 				taskSynker.getRisRecordErrors());
 		System.out
 				.println("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -");
@@ -368,30 +372,30 @@ public class RisToGriidcMain {
 				taskSynker.getGriidcRecordsAdded());
 		System.out.printf(pFormat, "GRIIDC Task records modified:",
 				taskSynker.getGriidcRecordsModified());
-		System.out.printf(pFormat, "GRIIDC Task records duplicates:",
+		System.out.printf(pFormat, "duplicate GRIIDC Task records ignored:",
 				taskSynker.getGriidcRecordDuplicates());
 
 		title = "RIS Roles to GRIIDC TaskRole and ProjRole";
 		System.out.printf(titleFormat, title);
 		System.out.printf(pFormat, "RIS Roles records read:",
 				roleSynker.getRisRecordCount());
-		System.out.printf(pFormat, "RIS Role errors:",
+		System.out.printf(pFormat, "RIS Role records with errors:",
 				roleSynker.getRisRecordErrors());
 
 		System.out
 				.println("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -");
 
-		System.out.printf(pFormat, "GRIIDC TaskRole added:",
+		System.out.printf(pFormat, "GRIIDC TaskRole records added:",
 				roleSynker.getGriidcTaskRoleAdded());
-		System.out.printf(pFormat, "GRIIDC TaskRole modified:",
+		System.out.printf(pFormat, "GRIIDC TaskRole records modified:",
 				roleSynker.getGriidcTaskRoleModified());
-		System.out.printf(pFormat, "GRIIDC TaskRole duplicates:",
+		System.out.printf(pFormat, "duplicate GRIIDC TaskRole records ignored:",
 				roleSynker.getGriidcTaskRoleDuplicates());
-		System.out.printf(pFormat, "GRIIDC ProjRole added:",
+		System.out.printf(pFormat, "GRIIDC ProjRole records added:",
 				roleSynker.getGriidcProjRoleAdded());
-		System.out.printf(pFormat, "GRIIDC ProjRole modified:",
+		System.out.printf(pFormat, "GRIIDC ProjRole records modified:",
 				roleSynker.getGriidcProjRoleModified());
-		System.out.printf(pFormat, "GRIIDC ProjRole duplicates:",
+		System.out.printf(pFormat, "duplicate GRIIDC ProjRole records ignored:",
 				roleSynker.getGriidcProjRoleDuplicates());
 
 		title = "**************************************************";

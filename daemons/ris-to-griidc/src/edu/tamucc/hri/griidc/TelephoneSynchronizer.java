@@ -3,11 +3,11 @@ package edu.tamucc.hri.griidc;
 import java.io.FileNotFoundException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
 
-import edu.tamucc.hri.griidc.exception.PropertyNotFoundException;
 import edu.tamucc.hri.griidc.exception.TableNotInDatabaseException;
+import edu.tamucc.hri.griidc.exception.TelephoneNumberMissingException;
 import edu.tamucc.hri.griidc.exception.TelephoneNumberException;
+import edu.tamucc.hri.griidc.exception.TelephoneNumberWrongFormatException;
 import edu.tamucc.hri.griidc.support.MiscUtils;
 import edu.tamucc.hri.rdbms.utils.DbColumnInfo;
 import edu.tamucc.hri.rdbms.utils.RdbmsUtils;
@@ -30,6 +30,8 @@ public class TelephoneSynchronizer extends SynchronizerBase {
 	private int griidcDuplicates = 0;
 	private int risTelephoneRecords = 0;
 	private int risTelephoneErrors = 0;
+	private int missingPhoneNumbers = 0;
+	private int unrecognizedFormatNumbers = 0;
 	public static final int NotFound = -1;
 
 	private TelephoneSynchronizer() {
@@ -93,6 +95,20 @@ public class TelephoneSynchronizer extends SynchronizerBase {
 			
 			return telephoneRecordKey;
 
+		} catch (TelephoneNumberMissingException e) {
+			this.risTelephoneErrors++;
+			this.missingPhoneNumbers++;
+			if (TelephoneSynchronizer.isDebug()) {
+				System.out.println(msg + e.getMessage());
+			}
+			throw e;
+		} catch (TelephoneNumberWrongFormatException e) {
+			this.risTelephoneErrors++;
+			this.unrecognizedFormatNumbers++;
+			if (TelephoneSynchronizer.isDebug()) {
+				System.out.println(msg + e.getMessage());
+			}
+			throw e;
 		} catch (TelephoneNumberException e) {
 			this.risTelephoneErrors++;
 			if (TelephoneSynchronizer.isDebug()) {
@@ -242,4 +258,13 @@ public class TelephoneSynchronizer extends SynchronizerBase {
 	public int getRisTelephoneErrors() {
 		return risTelephoneErrors;
 	}
+
+	public int getMissingPhoneNumbers() {
+		return missingPhoneNumbers;
+	}
+
+	public int getUnrecognizedFormatNumbers() {
+		return unrecognizedFormatNumbers;
+	}
+	
 }
