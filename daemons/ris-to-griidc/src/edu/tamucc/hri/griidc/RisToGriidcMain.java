@@ -90,7 +90,7 @@ public class RisToGriidcMain {
 		ProjectSynchronizer.setDebug(false);
 		RolesSynchronizer.setDebug(false);
 
-		// InstitutionSynchronizer.setDebug(true);
+		//InstitutionSynchronizer.setDebug(true);
 		// DepartmentSynchronizer.setDebug(true);
 		// PersonSynchronizer.setDebug(true);
 		// TelephoneSynchronizer.setDebug(true);
@@ -121,7 +121,7 @@ public class RisToGriidcMain {
 					System.out.println("Person");
 				risInstitutionWithErrors = risToGriidcMain.personSynker
 						.syncGriidcPersonFromRisPeople(risInstitutionWithErrors);
-				
+			
 				if (RisToGriidcMain.MainDebugOn)
 					System.out.println("Funding Envelope");
 				risToGriidcMain.fundingEnvelopeSynker
@@ -208,7 +208,7 @@ public class RisToGriidcMain {
 	public void report() throws PropertyNotFoundException,
 			InvalidFileFormatException, IOException {
 
-		String pFormat = "%-44s %10d%n";
+		String pFormat = "%-50s %10d%n";
 		String titleFormat = "%n*****************************  %-40s  ********************************%n";
 		String title = "RIS Institutions to GRIIDC Institution";
 
@@ -283,6 +283,8 @@ public class RisToGriidcMain {
 				TelephoneSynchronizer.getInstance().getRisTelephoneRecords());
 		System.out.printf(pFormat, "RIS Telephone information errors:",
 				TelephoneSynchronizer.getInstance().getRisTelephoneErrors());
+		System.out
+		.println(".............................................................");
 		System.out.printf(pFormat, "records with blank or empty phone numbers:",
 				TelephoneSynchronizer.getInstance().getMissingPhoneNumbers());
 		System.out.printf(pFormat, "phone numbers with unrecongnized formats:",

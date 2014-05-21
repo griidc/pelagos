@@ -222,7 +222,6 @@ public class InstitutionSynchronizer extends SynchronizerBase {
 						MiscUtils.writeToRisWarningLogFile(msg);
 						this.risRecordWarnings++;
 					} else {
-						MiscUtils.writeToRisErrorLogFile(msg);
 						this.risRecordErrors++;
 						MiscUtils.writeToRisErrorLogFile(msg);
 						this.risInstitutionWithErrors.addInstitution(risInstId);
@@ -236,6 +235,15 @@ public class InstitutionSynchronizer extends SynchronizerBase {
 				/**                                                            **/
 				tempDeliveryPoint = MiscUtils.makeDeliveryPoint(risInstAddr1,
 						risInstAddr2);
+				if(tempDeliveryPoint == null) {
+					String msg = errorOrWarning
+							+ "I-H In RIS Institutions record: "
+									+ risInstId + " - " + " Address 1 AND Address 2 are null or blank";
+					MiscUtils.writeToRisErrorLogFile(msg);
+					this.risRecordErrors++;
+					this.risInstitutionWithErrors.addInstitution(risInstId);
+					continue; // branch back to while (rset.next())
+				}
 
 				//
 				// find matching GRIIDC record

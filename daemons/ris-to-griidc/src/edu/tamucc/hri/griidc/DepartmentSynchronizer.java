@@ -156,7 +156,7 @@ public class DepartmentSynchronizer extends SynchronizerBase {
 				int mappedGriidcDepartmentNum = RdbmsConstants.NotFound;
 				
 				if (MiscUtils.isStringEmpty(risDeptCountry)) {
-					msg = "Error In RIS Departments - record id: "
+					msg = "Error D-1 In RIS Departments - record id: "
 							+ risDeptId
 							+ " - Department_Country is "
 							+ ((risDeptCountry == null) ? "null"
@@ -188,7 +188,7 @@ public class DepartmentSynchronizer extends SynchronizerBase {
 					this.risRecordsSkipped++;
 					continue; // branch back to while (rset.next())
 				} catch (NoRecordFoundException e) {
-					msg = "Error in RIS Departments - record id: "
+					msg = "Error D-2 in RIS Departments - record id: "
 							+ this.risDeptId + ": " + e.getMessage();
 					MiscUtils.writeToRisErrorLogFile(msg);
 					MiscUtils.writeToPrimaryLogFile(msg);
@@ -222,7 +222,7 @@ public class DepartmentSynchronizer extends SynchronizerBase {
 					this.risRecordsSkipped++;
 					continue; // branch back to while (rset.next())
 				} catch (NoRecordFoundException e) {
-					msg = "Error in RIS Departments - record id: "
+					msg = "Error D-3 in RIS Departments - record id: "
 							+ this.risDeptId + ": " + e.getMessage();
 					MiscUtils.writeToRisErrorLogFile(msg);
 					MiscUtils.writeToPrimaryLogFile(msg);
@@ -238,7 +238,7 @@ public class DepartmentSynchronizer extends SynchronizerBase {
 					this.risRecordsSkipped++;
 					continue; // branch back to while (rset.next())
 				} catch (MissingArgumentsException e) {
-					msg = "Error In RIS Departments - record: " + risDeptId
+					msg = "Error D-4 In RIS Departments - record: " + risDeptId
 							+ " - " + e.getMessage();
 					MiscUtils.writeToRisErrorLogFile(msg);
 					errorMessageOut(msg);
@@ -258,7 +258,7 @@ public class DepartmentSynchronizer extends SynchronizerBase {
 					this.addGriidcDepartment(mappedGriidcInstitutionNum,
 							tempDeliveryPoint, tempPostalAreaNumber);
 				} catch (MultipleRecordsFoundException e) {
-					msg = "Error In RIS Departments - record RIS Department ID: " + risDeptId
+					msg = "Error D-5 In RIS Departments - record RIS Department ID: " + risDeptId
 							+ " - " + e.getMessage();
 					MiscUtils.writeToRisErrorLogFile(msg);
 					errorMessageOut(msg);
@@ -303,7 +303,7 @@ public class DepartmentSynchronizer extends SynchronizerBase {
 	}
 
 	private void invalidInstitutionReference(String exMessage) {
-		String msg = "Error in RIS Departments - record id: " + this.risDeptId
+		String msg = "Error D-6 in RIS Departments - record id: " + this.risDeptId
 				+ " references an Institution that does not exist: "
 				+ risDeptInstId;
 		if (this.isInstitutionOnRisErrorsList(this.risDeptInstId)) {
@@ -507,7 +507,7 @@ public class DepartmentSynchronizer extends SynchronizerBase {
 			return false;
 		if (!(rName.equals(gName)))
 			return false;
-		if (!(rDeliveryPoint.equals(gDeliveryPoint)))
+		if (!areDeliveryPointsEqual(rDeliveryPoint,gDeliveryPoint))
 			return false;
 		if (!(rPostalAreaNumber == gPostalAreaNumber))
 			return false;
@@ -515,6 +515,25 @@ public class DepartmentSynchronizer extends SynchronizerBase {
 			return false;
 		return true;
 
+	}
+	/**
+	 * compare for equal 
+	 * if both are null return true;
+	 * if neither are null compare trimmed values
+	 * if one is null other not return false;
+	 * both blank (empty not null) will return true
+	 * @param rdp
+	 * @param gdp
+	 * @return
+	 */
+	private boolean areDeliveryPointsEqual(String rdp, String gdp) {
+		if(rdp == null && gdp == null) return true;
+		if(rdp != null && gdp != null) {
+			//  both are empty but non null
+			if(MiscUtils.isEmpty(rdp) && MiscUtils.isEmpty(gdp)) return true;
+			return rdp.trim().equals(gdp.trim());
+		}
+		return false;
 	}
 	private boolean isInstitutionOnRisErrorsList(int risDeptInstId) {
 		return this.risInstitutionWithErrors.containsInstitution(risDeptInstId);

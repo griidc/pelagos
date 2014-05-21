@@ -604,8 +604,26 @@ public class MiscUtils {
 	 * @return
 	 */
 	public static String makeDeliveryPoint(String addr1, String addr2) {
-		String s = addr1 + " " + addr2;
-		return s.trim();
+		boolean a1Empty = MiscUtils.isEmpty(addr1);
+		boolean a2Empty = MiscUtils.isEmpty(addr2);
+		String result = null;
+
+		if(a1Empty && a2Empty) {
+			result = null;
+		}
+		else if(!a1Empty && !a2Empty) {
+			result =   addr1.trim() + ", " + addr2.trim();
+		}
+		else if(a2Empty) {
+			result =  addr1.trim();
+		}
+		else {
+			result =  addr2.trim();
+		}
+		if(result != null && result.contains(RdbmsConstants.DbNull)) {
+			System.out.println("MiscUtils.makeDeliveryPoint() NULL in Delivery Point : " + result);
+		}
+		return result;
 	}
 
 	public static String readFileToBuffer(String fileName) throws IOException {
@@ -654,7 +672,7 @@ public class MiscUtils {
 		// if one is empty and the other not they can't match
 		if (logicalXOR(isEmpty(s1), isEmpty(s2)))
 			return false;
-		// both are non null
+		// at this point we know that both are non null
 		if (s1.trim().length() != s2.trim().length())
 			return false; // different lengths, can't be equal return false
 		if (s1.trim().equals(s2.trim()))
@@ -681,12 +699,19 @@ public class MiscUtils {
 	 * 
 	 **/
 	public static boolean isStringEmpty(String s) {
+		return MiscUtils.isStringEmptyOrBlank(s);
+	}
+	/**
+	 * if a string is null, length zero or contains only white space return true
+	 */
+	public static boolean isStringEmptyOrBlank(String s) {
 		if (s == null)
 			return true;
-		else if (s.length() == 0)
+		else if (s.trim().length() == 0)
 			return true;
 		return false;
 	}
+	
 
 	public static void fatalError(String callingObjectClassName,
 			String callingFunctionName, String message) {

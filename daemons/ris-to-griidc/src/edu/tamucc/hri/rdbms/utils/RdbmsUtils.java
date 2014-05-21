@@ -510,7 +510,7 @@ public class RdbmsUtils {
 			System.out.println("SQL Exception on query" + query
 					+ "\n message: " + query);
 		}
-		int postalAreaNumber = -1; // this is the key
+		int postalAreaNumber = RdbmsConstants.NotFound; // this is the key
 		int count = 0;
 		while (rset.next()) {
 			count++;

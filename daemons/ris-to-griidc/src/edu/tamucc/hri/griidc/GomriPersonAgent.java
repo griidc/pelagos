@@ -12,14 +12,12 @@ public class GomriPersonAgent  extends SynchronizerBase {
 	public static final String TableName = RdbmsConstants.GriidcGomriPersonTableName;
 	private static final String Person_NumberColName = "Person_Number";
 	private static final String GoMRIPerson_DisplayNameColName = "GoMRIPerson_DisplayName";
-	private static final String GoMRIPerson_ImageColName = "GoMRIPerson_Image";
 	private static final String GoMRIPerson_ResearchInterestColName = "GoMRIPerson_ResearchInterest";
 	private static final String GoMRIPerson_TitleColName = "GoMRIPerson_Title";
 	
 	
 	private int gpPerson_Number = -1;
 	private String gpDisplayName = null;
-	private String gpImage  = null;
 	private String gpResearchInterest  = null;
 	private String gpTitle  = null;
 	
@@ -69,7 +67,6 @@ public class GomriPersonAgent  extends SynchronizerBase {
 			count++;
 			this.gpPerson_Number = crs.getInt(Person_NumberColName);
 			this.gpDisplayName = crs.getString(GoMRIPerson_DisplayNameColName);
-			this.gpImage = crs.getString(GoMRIPerson_ImageColName);
 			this.gpResearchInterest = crs.getString(GoMRIPerson_ResearchInterestColName);
 			this.gpTitle = crs.getString(GoMRIPerson_TitleColName);
 		}
@@ -79,15 +76,13 @@ public class GomriPersonAgent  extends SynchronizerBase {
 	}
 	
 	
-	private String formatInsertStatement(int personNumber,String displayName, String image,String researchInterest, String title) {
+	private String formatInsertStatement(int personNumber,String displayName, String researchInterest, String title) {
 		String query = "INSERT INTO "
 				+ RdbmsConnection.wrapInDoubleQuotes(GomriPersonAgent.TableName)
 				+ RdbmsConstants.SPACE + "("
 				+ RdbmsConnection.wrapInDoubleQuotes(Person_NumberColName)
 				+ RdbmsConstants.CommaSpace
 				+ RdbmsConnection.wrapInDoubleQuotes(GoMRIPerson_DisplayNameColName)
-				+ RdbmsConstants.CommaSpace
-				+ RdbmsConnection.wrapInDoubleQuotes(GoMRIPerson_ImageColName)
 				+ RdbmsConstants.CommaSpace
 				+ RdbmsConnection.wrapInDoubleQuotes(GoMRIPerson_ResearchInterestColName)
 				+ RdbmsConstants.CommaSpace
@@ -96,25 +91,24 @@ public class GomriPersonAgent  extends SynchronizerBase {
 				+ ") VALUES (" 
 				+ personNumber + RdbmsConstants.CommaSpace
 				+ RdbmsConnection.wrapInSingleQuotes(displayName) + RdbmsConstants.CommaSpace
-				+ RdbmsConnection.wrapInSingleQuotes(image) + RdbmsConstants.CommaSpace
 				+ RdbmsConnection.wrapInSingleQuotes(researchInterest) + RdbmsConstants.CommaSpace
 				+ RdbmsConnection.wrapInSingleQuotes(title)
 				+ " )";
 		return query;
 	}
 	
-	public boolean updateGoMRIPerson(int personNumber,String firstName, String middleName, String lastName, String image,String researchInterest, String title) throws SQLException {
+	public boolean updateGoMRIPerson(int personNumber,String firstName, String middleName, String lastName, String researchInterest, String title) throws SQLException {
 		this.initialize();
 		boolean status = false;
 		try {
 			this.readGomriPerson(personNumber);
 			return true;
 		}  catch (NoRecordFoundException e) {
-			status = this.addGoMRIPerson(personNumber, firstName, middleName, lastName, image, researchInterest, title);
+			status = this.addGoMRIPerson(personNumber, firstName, middleName, lastName, researchInterest, title);
 		}
 		return status;
 	}
-	private boolean addGoMRIPerson(int personNumber,String firstName, String middleName, String lastName, String image,String researchInterest, String title)
+	private boolean addGoMRIPerson(int personNumber,String firstName, String middleName, String lastName, String researchInterest, String title)
 			throws SQLException {
 		String displayName = firstName;
 		if(middleName != null && middleName.length() > 0) {
@@ -125,7 +119,7 @@ public class GomriPersonAgent  extends SynchronizerBase {
 		if(title == null || title.length() > 0) {
 			lTitle = " ";
 		}
-        String addQuery = this.formatInsertStatement(personNumber, displayName, image, researchInterest, lTitle);
+        String addQuery = this.formatInsertStatement(personNumber, displayName, researchInterest, lTitle);
 		
 	    boolean status = this.griidcDbConnection.executeQueryBoolean(addQuery);
 	    this.recordsAdded++;
@@ -140,10 +134,6 @@ public class GomriPersonAgent  extends SynchronizerBase {
 		return gpDisplayName;
 	}
 
-	public String getGpImage() {
-		return gpImage;
-	}
-
 	public String getGpResearchInterest() {
 		return gpResearchInterest;
 	}
@@ -155,9 +145,4 @@ public class GomriPersonAgent  extends SynchronizerBase {
 	public int getRecordsAdded() {
 		return recordsAdded;
 	}
-
-	//public int getRecordsModified() {
-	//	return recordsModified;
-	//}
-	
 }
