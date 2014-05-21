@@ -72,6 +72,7 @@ public class RisToGriidcMain {
 	}
 
 	public static void main(String[] args) {
+		long start = System.currentTimeMillis();
 		RisToGriidcMain risToGriidcMain = new RisToGriidcMain();
 		RisToGriidcMain.processCommandLineArgs(args);
 
@@ -90,7 +91,7 @@ public class RisToGriidcMain {
 		ProjectSynchronizer.setDebug(false);
 		RolesSynchronizer.setDebug(false);
 
-		//InstitutionSynchronizer.setDebug(true);
+		// InstitutionSynchronizer.setDebug(true);
 		// DepartmentSynchronizer.setDebug(true);
 		// PersonSynchronizer.setDebug(true);
 		// TelephoneSynchronizer.setDebug(true);
@@ -152,6 +153,7 @@ public class RisToGriidcMain {
 
 			System.out.println("END of risToGriidcMain");
 			// System.out.println(MiscUtils.getProjectNumberFundingCycleCache().toString());
+			System.out.println("Elapsed time:" + MiscUtils.formatElapsedTime(start,System.currentTimeMillis()));
 
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block

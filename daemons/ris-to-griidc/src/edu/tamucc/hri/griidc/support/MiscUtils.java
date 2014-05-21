@@ -723,6 +723,13 @@ public class MiscUtils {
 		System.exit(-1);
 	}
 
+	public static String formatElapsedTime(long start, long finish) {
+		long eTime = Math.abs(finish - start);
+		return formatTimeMinSecMilSec(eTime);
+	}
+	public static String formatTimeMinSecMilSec(long t) {
+		return new SimpleDateFormat("mm:ss:SSS").format(t);
+	}
 	/**
 	 * @param args
 	 */
@@ -753,26 +760,18 @@ public class MiscUtils {
 			b = MiscUtils.areStringsEqual(s1, s2);
 			System.out.printf(form, s1, s2, b);
 		}
-		/***
-		 * String[] tables = null; try { for (String s : testMessages) {
-		 * 
-		 * MiscUtils.writeToRisErrorLogFile(s);
-		 * MiscUtils.writeToPrimaryLogFile(s);
-		 * System.out.println("Before squeeze: " + s); String sq = squeeze(s);
-		 * System.out.println("After   squeeze: " + sq);
-		 * 
-		 * } MiscUtils.closePrimaryLogFile(); MiscUtils.closeRisErrorLogFile();
-		 * String[] rec =
-		 * RisToGriidcConfiguration.getRisErrorMsgLogRecipients();
-		 * 
-		 * System.out.println("RIS Error recipients:"); for (String s : rec) {
-		 * System.out.println("\t" + s); }
-		 * 
-		 * rec = RisToGriidcConfiguration.getPrimaryMsgLogRecipients();
-		 * 
-		 * System.out.println("Primary Log recipients:"); for (String s : rec) {
-		 * System.out.println("\t" + s); } } catch (IOException e) { // TODO
-		 * Auto-generated catch block e.printStackTrace(); }
-		 ****/
+		long start = System.currentTimeMillis();
+		double waitInSecs = 6.527;
+		long waitMS = (long) (waitInSecs * 1000);
+		System.out.println("Waiting: " + MiscUtils.formatTimeMinSecMilSec(waitMS));
+		long now = System.currentTimeMillis();
+		long duration = 0;
+		for(;duration  < waitMS; ) {
+			now = System.currentTimeMillis();
+			duration = now - start;
+		}
+		long finish = System.currentTimeMillis();
+		System.out.println("Elapsed time: " + MiscUtils.formatElapsedTime(start,finish));
+		
 	}
 }
