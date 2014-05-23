@@ -1,6 +1,6 @@
 <div style="background: transparent; padding:0px;" id="tabs">
-
-    <ul>
+  <div class="ui-tabs">
+    <ul class="ui-tabs-nav">
         <li style="text-align:center"><a href="#submitted" onClick="clearStatusMessages()">Submitted ({{ m_dataset.submitted|length }})</a></li>
         <li style="text-align:center"><a href="#inreview" onClick="clearStatusMessages()">In Review ({{ m_dataset.inreview|length }})</a></li>
         <li style="text-align:center"><a href="#secondcheck" onClick="clearStatusMessages()" >2nd Chk ({{ m_dataset.secondcheck|length }})</a></li>
@@ -9,6 +9,7 @@
         <li style="text-align:center"><a href="#uploadnewmetadata" onClick="clearStatusMessages()">Upload New Metadata</a></li>
         <li style="text-align:center"><a href="#GeoTester">Test a Geometry</a></li>
     </ul>
+  </div>
 
 
     {% for sname,section in m_dataset %} <!-- allows key,value iteration -->
@@ -18,10 +19,11 @@
             <table id="metadata_fancy" class="display">
                 <thead>
                     <tr>
-                        <th style="width:125px"><div class="title">UDI</div><div class="sorticon"></div></th>
-                        <th style="width:80px"><div class="title">Action</div></th>
-                        <th style="width:150px"><div class="title">Timestamp</div><div class="sorticon"></div></th>
-                        <th style="width:50%"><div class="title">Filename</div><div class="sorticon"></div></th>
+                        <th><div class="title">UDI</div></th>
+                        <th><div class="title">Action</div></th>
+                        <th><div class="title">Approval</div></th>
+                        <th><div class="title">Timestamp</div></th>
+                        <th><div class="title">Filename</div></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -29,8 +31,7 @@
                         <tr>
                             <td valign="top"><a href="{{pagelessBaseUrl}}/data/{{dta.dataset_udi}}" target="0" >{{dta.dataset_udi}}</a></td>
                             <td valign="top"><form name="AcceptedState" action="{{baseUrl}}/change_status/{{dta.dataset_udi}}" method="post">
-                            <noscript><input type="submit" name="go" value="move-to:"></noscript>
-                            <select name="to" onchange='this.form.submit();'>
+                            <select name="to">
                                     {% if sname == 'submitted' %}
                                         <option value="Submitted">Submitted</option>
                                         <option value="InReview" style="background-color: yellow;">InReview</option>
@@ -65,7 +66,30 @@
                                     {% endif %}
                                         
                             </select>
+                            <input type="image" src="{{baseUrl}}/includes/images/runningman.png" alt="Submit">
                             </form>
+                            </td>
+                            <td>
+                                <form name="setApprovalForm" action="{{baseUrl}}/change_appr_status/{{dta.dataset_udi}}" method="post">
+                                    <select name="approval">
+                                        {% if dta.approval == 'Approved' %}
+                                        <option value='Approved' SELECTED>Approved</option>
+                                        <option value='NotRequired'>Not Required</option>
+                                        <option value='ApprovalRequired'>Apr Required</option>
+                                        {% elseif dta.approval == 'NotRequired' %}
+                                        <option value='Approved'>Approved</option>
+                                        <option value='NotRequired' SELECTED>Not Required</option>
+                                        <option value='ApprovalRequired'>Apr Required</option>
+                                        {% elseif  dta.approval == 'ApprovalRequired' %}
+                                        <option value='Approved'>Approved</option>
+                                        <option value='NotRequired'>Not Required</option>
+                                        <option value='ApprovalRequired' SELECTED>Apr Required</option>
+                                        {% else %}
+                                        <option value=''>Error</option>
+                                        {% endif %}
+                                    </select>
+                                    <input type="image" src="{{baseUrl}}/includes/images/runningman.png" alt="Submit">
+                                </form>
                             </td>
                             <td valign="top">{{dta.submittimestamp}}</td>
                             <td valign="top"><button style="font-size:66%" onclick="javascript:showLogEntries('{{dta.dataset_udi}}')">Log</button> <a href="{{baseUrl}}/download-metadata/{{dta.dataset_udi}}"><img src="{{baseUrl}}/includes/images/download.png"></a>&nbsp;{% if dta.hasxml == true %}<a href="{{baseUrl}}/download-metadata-db/{{dta.dataset_udi}}"><img src="{{baseUrl}}/includes/images/download-from-db.png"></a>&nbsp;{% endif %}{{dta.dataset_metadata}}</td>

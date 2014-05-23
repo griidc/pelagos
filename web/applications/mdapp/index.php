@@ -141,14 +141,39 @@ $app->post('/change_status/:udi', function ($udi) use ($app) {
     $dbms = OpenDB("GOMRI_RW");
     $data = $dbms->prepare($sql);
 
-    $data->bindParam(':to',$to);            # Bindparams are our friends.
+    $data->bindParam(':to',$to); 
     $data->bindParam(':from',$from);
     $data->bindParam(':udi',$udi);
 
     $data->execute();
-        
+
     drupal_set_message("Metadata status for $udi has been changed from $from to $to.",'status');
     writeLog($user->name." has changed metedata status for $udi ($from -> $to)");
+    drupal_goto($GLOBALS['PAGE_NAME']);
+    drupal_exit();
+});
+
+// change approval flag status
+$app->post('/change_appr_status/:udi', function ($udi) use ($app) {
+    global $user;
+    $approval = $app->request()->post('approval');
+
+    $sql = "update registry set approval_status = :to
+            where registry_id =
+            ( select MAX(registry_id) from registry where dataset_udi = :udi)";
+
+    if (in_array($approval,array('NotRequired','ApprovalRequired','Approved'))) {
+        $dbms = OpenDB("GOMRI_RW");
+        $data = $dbms->prepare($sql);
+
+        $data->bindParam(':to',$approval);            # Bindparams are our friends.
+        $data->bindParam(':udi',$udi);
+
+        $data->execute();
+
+        drupal_set_message("Metadata approval status for $udi has been changed to $approval.",'status');
+        writeLog($user->name." has changed metedata approval status for $udi (to $approval)");
+    }
     drupal_goto($GLOBALS['PAGE_NAME']);
     drupal_exit();
 });
@@ -650,16 +675,16 @@ function index($app) {
     drupal_add_js('https://cdn.datatables.net/1.10.0/js/jquery.dataTables.js',array('type'=>'external'));
     drupal_add_css('https://cdn.datatables.net/1.10.0/css/jquery.dataTables.css',array('type'=>'external'));
     $stash['defaultFilter'] = $app->request()->get('filter');
-    $stash['m_dataset']['accepted'] = GetMetadata('accepted','as_array');
-    $stash['m_dataset']['submitted'] = GetMetadata('submitted','as_array');
-    $stash['m_dataset']['inreview'] = GetMetadata('inreview','as_array');
-    $stash['m_dataset']['secondcheck'] = GetMetadata('secondcheck','as_array');
-    $stash['m_dataset']['backtosubmitter'] = GetMetadata('backtosubmitter','as_array');
-    $stash['m_dataset_json']['accepted'] = GetMetadata('accepted','as_json');
-    $stash['m_dataset_json']['submitted'] = GetMetadata('submitted','as_json');
-    $stash['m_dataset_json']['inreview'] = GetMetadata('inreview','as_json');
-    $stash['m_dataset_json']['secondcheck'] = GetMetadata('secondcheck','as_json');
-    $stash['m_dataset_json']['backtosubmitter'] = GetMetadata('backtosubmitter','as_json');
+    $stash['m_dataset']['accepted'] = GetMetadata('Accepted','as_array');
+    $stash['m_dataset']['submitted'] = GetMetadata('Submitted','as_array');
+    $stash['m_dataset']['inreview'] = GetMetadata('InReview','as_array');
+    $stash['m_dataset']['secondcheck'] = GetMetadata('SecondCheck','as_array');
+    $stash['m_dataset']['backtosubmitter'] = GetMetadata('BackToSubmitter','as_array');
+    $stash['m_dataset_json']['accepted'] = GetMetadata('Accepted','as_json');
+    $stash['m_dataset_json']['submitted'] = GetMetadata('Submitted','as_json');
+    $stash['m_dataset_json']['inreview'] = GetMetadata('InReview','as_json');
+    $stash['m_dataset_json']['secondcheck'] = GetMetadata('SecondCheck','as_json');
+    $stash['m_dataset_json']['backtosubmitter'] = GetMetadata('BackToSubmitter','as_json');
     $stash['srvr'] = "https://$_SERVER[HTTP_HOST]";
     if(isset($_SESSION['testPolygon'])) { $stash['testPolygon'] = $_SESSION['testPolygon']; }
     return $stash;
@@ -816,156 +841,34 @@ function sendEmail($to,$from,$sub,$message) {
 }
 
 function GetMetadata($type,$format) {
-    $type=strtolower($type);
-    switch($type) {
-        case "accepted":
-            $sql = "SELECT
-                        metadata_status,
-                        url_metadata,
-                        dataset_udi,
-                        coalesce(trim(trailing '}' from trim(leading '{' from cast(
-                            xpath('/gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1]/text()',metadata_xml,
-                                ARRAY[
-                                    ARRAY['gmi', 'http://www.isotc211.org/2005/gmi'],
-                                    ARRAY['gmd', 'http://www.isotc211.org/2005/gmd'],
-                                    ARRAY['gco', 'http://www.isotc211.org/2005/gco']
-                                ]
-                            ) as character varying ))), dataset_metadata
-                        ) as dataset_metadata,
-                        (metadata_xml is not null) as hasxml,
-                        submittimestamp
-                    FROM
-                        curr_reg_view left join metadata
-                        ON curr_reg_view.registry_id = metadata.registry_id
-                    WHERE
-                        metadata_status = 'Accepted'
-                    AND
-                        metadata_dl_status = 'Completed'";
-            break;
-        case "submitted":
-            $sql = "SELECT
-                        metadata_status,
-                        url_metadata,
-                        dataset_udi,
-                        coalesce(trim(trailing '}' from trim(leading '{' from cast(
-                            xpath('/gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1]/text()',metadata_xml,
-                                ARRAY[
-                                    ARRAY['gmi', 'http://www.isotc211.org/2005/gmi'],
-                                    ARRAY['gmd', 'http://www.isotc211.org/2005/gmd'],
-                                    ARRAY['gco', 'http://www.isotc211.org/2005/gco']
-                                ]
-                            ) as character varying ))), dataset_metadata
-                        ) as dataset_metadata,
-                        (metadata_xml is not null) as hasxml,
-                        submittimestamp
-                    FROM
-                        curr_reg_view left join metadata
-                        ON curr_reg_view.registry_id = metadata.registry_id
-                    WHERE
-                        metadata_status = 'Submitted'
-                    AND
-                        metadata_dl_status = 'Completed'";
-            break;
-        case "inreview":
-            $sql = "SELECT
-                        metadata_status,
-                        url_metadata,
-                        dataset_udi,
-                        coalesce(trim(trailing '}' from trim(leading '{' from cast(
-                            xpath('/gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1]/text()',metadata_xml,
-                                ARRAY[
-                                    ARRAY['gmi', 'http://www.isotc211.org/2005/gmi'],
-                                    ARRAY['gmd', 'http://www.isotc211.org/2005/gmd'],
-                                    ARRAY['gco', 'http://www.isotc211.org/2005/gco']
-                                ]
-                            ) as character varying ))), dataset_metadata
-                        ) as dataset_metadata,
-                        (metadata_xml is not null) as hasxml,
-                        submittimestamp
-                    FROM
-                        curr_reg_view left join metadata
-                        ON curr_reg_view.registry_id = metadata.registry_id
-                    WHERE
-                        metadata_status = 'InReview'
-                    AND
-                        metadata_dl_status = 'Completed'";
-            break;
-        case "secondcheck":
-            $sql = "SELECT
-                        metadata_status,
-                        url_metadata,
-                        dataset_udi,
-                        coalesce(trim(trailing '}' from trim(leading '{' from cast(
-                            xpath('/gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1]/text()',metadata_xml,
-                                ARRAY[
-                                    ARRAY['gmi', 'http://www.isotc211.org/2005/gmi'],
-                                    ARRAY['gmd', 'http://www.isotc211.org/2005/gmd'],
-                                    ARRAY['gco', 'http://www.isotc211.org/2005/gco']
-                                ]
-                            ) as character varying ))), dataset_metadata
-                        ) as dataset_metadata,
-                        (metadata_xml is not null) as hasxml,
-                        submittimestamp
-                    FROM
-                        curr_reg_view left join metadata
-                        ON curr_reg_view.registry_id = metadata.registry_id
-                    WHERE
-                        metadata_status = 'SecondCheck'
-                    AND
-                        metadata_dl_status = 'Completed'";
-            break;
-        case "backtosubmitter":
-            $sql = "SELECT
-                        metadata_status,
-                        url_metadata,
-                        dataset_udi,
-                        coalesce(trim(trailing '}' from trim(leading '{' from cast(
-                            xpath('/gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1]/text()',metadata_xml,
-                                ARRAY[
-                                    ARRAY['gmi', 'http://www.isotc211.org/2005/gmi'],
-                                    ARRAY['gmd', 'http://www.isotc211.org/2005/gmd'],
-                                    ARRAY['gco', 'http://www.isotc211.org/2005/gco']
-                                ]
-                            ) as character varying ))), dataset_metadata
-                        ) as dataset_metadata,
-                        (metadata_xml is not null) as hasxml,
-                        submittimestamp
-                    FROM
-                        curr_reg_view left join metadata
-                        ON curr_reg_view.registry_id = metadata.registry_id
-                    WHERE
-                        metadata_status = 'BackToSubmitter'
-                    AND
-                        metadata_dl_status = 'Completed'";
-            break;
-        case "awaitingchangeapproval":
-            $sql = "SELECT
-                        metadata_status,
-                        url_metadata,
-                        dataset_udi,
-                        coalesce(trim(trailing '}' from trim(leading '{' from cast(
-                            xpath('/gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1]/text()',metadata_xml,
-                                ARRAY[
-                                    ARRAY['gmi', 'http://www.isotc211.org/2005/gmi'],
-                                    ARRAY['gmd', 'http://www.isotc211.org/2005/gmd'],
-                                    ARRAY['gco', 'http://www.isotc211.org/2005/gco']
-                                ]
-                            ) as character varying ))), dataset_metadata
-                        ) as dataset_metadata,
-                        (metadata_xml is not null) as hasxml,
-                        submittimestamp
-                    FROM
-                        curr_reg_view left join metadata
-                        ON curr_reg_view.registry_id = metadata.registry_id
-                    WHERE
-                        metadata_status = 'AwaitingChangeApproval'
-                    AND
-                        metadata_dl_status = 'Completed'";
-            break;
-    }
-    if(isset($sql)) {
+    if(in_array($type,array('Accepted','Submitted','InReview','SecondCheck','BackToSubmitter'))) {
+        $sql = "SELECT
+                    curr_reg_view.metadata_status, curr_reg_view.url_metadata, curr_reg_view.dataset_udi,
+                    coalesce(trim(trailing '}' from trim(leading '{' from cast(
+                        xpath('/gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1]/text()',metadata_xml,
+                            ARRAY[
+                                ARRAY['gmi', 'http://www.isotc211.org/2005/gmi'],
+                                ARRAY['gmd', 'http://www.isotc211.org/2005/gmd'],
+                                ARRAY['gco', 'http://www.isotc211.org/2005/gco']
+                            ]
+                        ) as character varying ))), curr_reg_view.dataset_metadata
+                    ) as dataset_metadata,
+                    (metadata_xml is not null) as hasxml,
+                    curr_reg_view.submittimestamp,
+                    registry.approval_status as approval
+                FROM
+                    curr_reg_view left join metadata
+                    ON curr_reg_view.registry_id = metadata.registry_id
+                    left join registry
+                    ON curr_reg_view.registry_id = registry.registry_id
+                WHERE
+                    curr_reg_view.metadata_status = :status
+                AND
+                    curr_reg_view.metadata_dl_status = 'Completed'";
+        
         $dbms = OpenDB("GOMRI_RO");
         $data = $dbms->prepare($sql);
+        $data->bindParam(":status",$type);
         $data->execute();
         if ($format == 'as_json') {
             return json_encode($data->fetchAll());
