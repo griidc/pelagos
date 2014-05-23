@@ -90,7 +90,7 @@ $app->get('/css/:name.css', function ($name) use ($app) {
 });
 
 $app->get('/', function () use ($app) {
-    drupal_add_js('/includes/tablesorter/js/jquery.tablesorter.min.js',array('type'=>'external'));
+    #drupal_add_js('/includes/tablesorter/js/jquery.tablesorter.min.js',array('type'=>'external'));
     return $app->render('html/main.html',index($app));
 });
 
@@ -126,121 +126,33 @@ $app->post('/change_status/:udi', function ($udi) use ($app) {
     global $user;
     $to = $app->request()->post('to');
     $from = getCurrentState($udi);
-    $allowed = getTransitions($from);
-    if (in_array(strtolower($to),$allowed)) {
-
-        /*   
-            BackToSubmitter
-            AwaitingChangeApproval
-            Submitted
-            InReview
-            SecondCheck
-            Accepted
-
-            Held
-            Validated
-            None
-            ChangesApproved
-            NeedsRevision
-        */
+    /*   
+        BackToSubmitter
+        Submitted
+        InReview
+        SecondCheck
+        Accepted
+    */
  
-        // State Transitions
+    $sql = "update registry set metadata_status = :to where
+            metadata_status = :from and registry_id =
+            ( select MAX(registry_id) from registry where dataset_udi = :udi)";
 
-        // Submitted -> InReview                    ( normal flow )
+    $dbms = OpenDB("GOMRI_RW");
+    $data = $dbms->prepare($sql);
 
-        // InReview -> SecondCheck                  ( normal flow )
-        // InReview -> BackToSubmitter              ( Reviewer rejects )        
-        // InReview -> AwaitingChangeApproval       ( Reviewer makes changes )
+    $data->bindParam(':to',$to);            # Bindparams are our friends.
+    $data->bindParam(':from',$from);
+    $data->bindParam(':udi',$udi);
+
+    $data->execute();
         
-        // SecondCheck -> Accepted                  ( normal flow )
-        // SecondCheck -> BackToSubmitter           ( Reviewer rejects )
-        // SecondCheck -> AwaitingChangeApproval    ( Reviewer makes changes )
-
-        // BackToSubmitter -> InReview              ( User made changes, restart review process )
-        
-        // AwaitingChangeApproval -> Accepted       ( User accepts reviwer's changes )
-        // AwaitingChangeApproval -> InReview       ( User rejects reviewer's changes )
-        
-        $sql = "update registry set metadata_status = :to where
-                metadata_status = :from and registry_id =
-                ( select MAX(registry_id) from registry where dataset_udi = :udi)"; 
-
-        $dbms = OpenDB("GOMRI_RW");
-        $data = $dbms->prepare($sql);
-
-        $data->bindParam(':to',$to);            # Bindparams are our friends.
-        $data->bindParam(':from',$from);
-        $data->bindParam(':udi',$udi);
-
-        $data->execute();
-        
-        drupal_set_message("Metadata status for $udi has been changed from $from to $to.",'status');
-        writeLog($user->name." has changed metedata status for $udi ($from -> $to)");
-    } 
+    drupal_set_message("Metadata status for $udi has been changed from $from to $to.",'status');
+    writeLog($user->name." has changed metedata status for $udi ($from -> $to)");
     drupal_goto($GLOBALS['PAGE_NAME']);
     drupal_exit();
 });
-/*
-// Un-accept
-$app->get('/un-accept/:udi', function ($udi) use ($app) {
-    global $user;
-    $sql = "update registry set metadata_status = 'InReview' where
-            metadata_status = 'Accepted' and registry_id =
-            ( select MAX(registry_id) from registry where dataset_udi = ?)
-            ";
-    $dbms = OpenDB("GOMRI_RW");
-    $data = $dbms->prepare($sql);
-    $data->execute(array($udi));
-    drupal_set_message("Metadata for $udi un-accepted and marked as \"In Review\".",'status');
-    writeLog($user->name." has un-accepted metadata for $udi.");
-    drupal_goto($GLOBALS['PAGE_NAME']);
-});
 
-// Start Review
-$app->get('/start-review/:udi', function ($udi) use ($app) {
-    global $user;
-    $sql = "update registry set metadata_status = 'InReview' where
-            metadata_status = 'Submitted' and registry_id =
-            ( select MAX(registry_id) from registry where dataset_udi = ?)
-            ";
-    $dbms = OpenDB("GOMRI_RW");
-    $data = $dbms->prepare($sql);
-    $data->execute(array($udi));
-    drupal_set_message("Metadata for $udi marked as \"In Review\".",'status');
-    writeLog($user->name." has marked metadata for $udi as \"In Review\".");
-    drupal_goto($GLOBALS['PAGE_NAME']);
-});
-
-// End Review
-$app->get('/end-review/:udi', function ($udi) use ($app) {
-    global $user;
-    $sql = "update registry set metadata_status = 'Submitted' where
-            metadata_status = 'InReview' and registry_id =
-            ( select MAX(registry_id) from registry where dataset_udi = ?)
-            ";
-    $dbms = OpenDB("GOMRI_RW");
-    $data = $dbms->prepare($sql);
-    $data->execute(array($udi));
-    drupal_set_message("Metadata for $udi un-marked as \"In Review\" and moved back to \"Submitted\".",'status');
-    writeLog($user->name." has un-marked metadata for $udi as \"In Review\".");
-    drupal_goto($GLOBALS['PAGE_NAME']);
-});
-
-// Accept
-$app->get('/accept/:udi', function ($udi) use ($app) {
-    global $user;
-    $sql = "update registry set metadata_status = 'Accepted' where
-            metadata_status = 'InReview' and registry_id =
-            ( select MAX(registry_id) from registry where dataset_udi = ?)
-            ";
-    $dbms = OpenDB("GOMRI_RW");
-    $data = $dbms->prepare($sql);
-    $data->execute(array($udi));
-    drupal_set_message("Metadata for $udi accepted.",'status');
-    writeLog($user->name." has accepted metadata for $udi.");
-    drupal_goto($GLOBALS['PAGE_NAME']);
-});
-*/
 // Test Geometry
 $app->post('/TestGeometry', function () use ($app) {
     // attempt to have PostGIS validate any geometry, if found.
@@ -735,13 +647,19 @@ $app->get('/getlog(/)(:udi/?)', function ( $udi = '' ) {
 function index($app) {
     drupal_add_js("/$GLOBALS[PAGE_NAME]/js/mdapp.js",array('type'=>'external'));
     drupal_add_css("/$GLOBALS[PAGE_NAME]/css/mdapp.css",array('type'=>'external'));
+    drupal_add_js('https://cdn.datatables.net/1.10.0/js/jquery.dataTables.js',array('type'=>'external'));
+    drupal_add_css('https://cdn.datatables.net/1.10.0/css/jquery.dataTables.css',array('type'=>'external'));
     $stash['defaultFilter'] = $app->request()->get('filter');
-    $stash['m_dataset']['accepted'] = GetMetadata('accepted');
-    $stash['m_dataset']['submitted'] = GetMetadata('submitted');
-    $stash['m_dataset']['inreview'] = GetMetadata('inreview');
-    $stash['m_dataset']['secondcheck'] = GetMetadata('secondcheck');
-    $stash['m_dataset']['backtosubmitter'] = GetMetadata('backtosubmitter');
-    $stash['m_dataset']['awaitingchangeapproval'] = GetMetadata('awaitingchangeapproval');
+    $stash['m_dataset']['accepted'] = GetMetadata('accepted','as_array');
+    $stash['m_dataset']['submitted'] = GetMetadata('submitted','as_array');
+    $stash['m_dataset']['inreview'] = GetMetadata('inreview','as_array');
+    $stash['m_dataset']['secondcheck'] = GetMetadata('secondcheck','as_array');
+    $stash['m_dataset']['backtosubmitter'] = GetMetadata('backtosubmitter','as_array');
+    $stash['m_dataset_json']['accepted'] = GetMetadata('accepted','as_json');
+    $stash['m_dataset_json']['submitted'] = GetMetadata('submitted','as_json');
+    $stash['m_dataset_json']['inreview'] = GetMetadata('inreview','as_json');
+    $stash['m_dataset_json']['secondcheck'] = GetMetadata('secondcheck','as_json');
+    $stash['m_dataset_json']['backtosubmitter'] = GetMetadata('backtosubmitter','as_json');
     $stash['srvr'] = "https://$_SERVER[HTTP_HOST]";
     if(isset($_SESSION['testPolygon'])) { $stash['testPolygon'] = $_SESSION['testPolygon']; }
     return $stash;
@@ -897,7 +815,7 @@ function sendEmail($to,$from,$sub,$message) {
     mail($to,$sub,$message,$header);
 }
 
-function GetMetadata($type) {
+function GetMetadata($type,$format) {
     $type=strtolower($type);
     switch($type) {
         case "accepted":
@@ -1049,7 +967,12 @@ function GetMetadata($type) {
         $dbms = OpenDB("GOMRI_RO");
         $data = $dbms->prepare($sql);
         $data->execute();
-        return $data->fetchAll();
+        if ($format == 'as_json') {
+            return json_encode($data->fetchAll());
+            
+        } else {
+            return $data->fetchAll();
+        }
     } else {
         return;
     }
@@ -1063,25 +986,6 @@ function writeLog($message) {
     file_put_contents($logfile_location,"$dstamp:$message\n", FILE_APPEND);
 }
 
-function getTransitions($currentstate) {
-    $currentstate=strtolower($currentstate);
-    $possible_states = array();
-    if ($currentstate == 'accepted') {
-        $possible_states = array('inreview');
-    } elseif ($currentstate == 'submitted') {
-        $possible_states = array('inreview');
-    } elseif ($currentstate == 'inreview') {
-        $possible_states = array('secondcheck','backtosubmitter','awaitingchangeapproval');
-    } elseif ($currentstate == 'secondcheck') {
-        $possible_states = array('accepted','backtosubmitter','awaitingchangeapproval');
-    } elseif ($currentstate == 'backtosubmitter') {
-        $possible_states = array('inreview');
-    } elseif ($currentstate == 'awaitingchangeapproval') {
-        $possible_states = array('accepted','inreview');
-    }
-    return $possible_states;
-}
-
 function getCurrentState($udi) {
     $sql  = "select metadata_status from curr_reg_view where dataset_udi = :udi";
     $dbms = OpenDB("GOMRI_RO");
@@ -1092,5 +996,4 @@ function getCurrentState($udi) {
     $state = $raw_data['metadata_status'];
     return $state;
 }
-
 ?>

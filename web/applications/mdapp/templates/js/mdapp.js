@@ -1,23 +1,21 @@
 var $ = jQuery.noConflict();
 
-$(document).ready(function() {
+$(document).ready( function () {
     $('#tabs').tabs({
         active: $.cookie('activetab'),
         activate : function( event, ui ) {
             $.cookie( 'activetab', ui.newTab.index(),{
                 expires : 10
             });
+        $( $.fn.dataTable.tables( true ) ).DataTable().columns.adjust();
         }
     });
-    $('#tabs table.metadata').tablesorter({
-        sortList: [[2,0]],
-        sortRestart : true,
-        sortInitialOrder: 'asc',
-        headers: {
-            1: { sorter: false }
-        }
-    });
-});
+
+    $('table.display').dataTable( {
+        "paging": true,
+        "jQueryUI": true
+    } );
+} );
 
 function clearStatusMessages() {
     $( "#messages" ).fadeOut( "fast", function() {

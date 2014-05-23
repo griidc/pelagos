@@ -15,7 +15,7 @@
       {% if section|length %}
         <div id="{{sname}}" class="tab" style="padding:0">
           <fieldset>
-            <table class="metadata">
+            <table id="metadata_fancy" class="display">
                 <thead>
                     <tr>
                         <th style="width:125px"><div class="title">UDI</div><div class="sorticon"></div></th>
@@ -28,51 +28,45 @@
                     {% for dta in section %}
                         <tr>
                             <td valign="top"><a href="{{pagelessBaseUrl}}/data/{{dta.dataset_udi}}" target="0" >{{dta.dataset_udi}}</a></td>
-                            {% if sname == 'accepted' %}
-                                <td valign="top"><form name="AcceptedState" action="{{baseUrl}}/change_status/{{dta.dataset_udi}}" method="post">
-                                <input type="submit" name="go" value="move-to:">
-                                <select name="to">
-                                    <option value=InReview>InReview</option>
-                                </select>
-                                </form>
-                                </td>
-                            {% elseif sname == 'inreview' %}
-                                <td valign="top"><form name="InReviewState" action="{{baseUrl}}/change_status/{{dta.dataset_udi}}" method="post">
-                                <input type="submit" name="go" value="move-to:">
-                                <select name="to">
-                                    <option value="BackToSubmitter">BackToSubmitter</option>
-                                    <option value="SecondCheck" SELECTED>SecondCheck</option>
-                                </select>
-                                </form>
-                                </td>
-                            {% elseif sname == 'secondcheck' %}
-                                <td valign="top"><form name="SecondCheckState" action="{{baseUrl}}/change_status/{{dta.dataset_udi}}" method="post">
-                                <input type="submit" name="go" value="move-to:">
-                                <select name="to">
-                                    <option value="Accepted" SELECTED>Accepted</option>
-                                    <option value="BackToSubmitter">BackToSubmitter</option>
-                                </select>
-                                </form>
-                                </td>
-                            {% elseif sname == 'submitted' %}
-                                <td valign="top"><form name="SubmittedState" action="{{baseUrl}}/change_status/{{dta.dataset_udi}}" method="post">
-                                <input type="submit" name="go" value="move-to:">
-                                <select name="to">
-                                    <option value=InReview>InReview</option>
-                                </select>
-                                </form>
-                                </td>
-                            {% elseif sname == 'backtosubmitter' %}
-                                <td valign="top"><form name="BackToSubmitterState" action="{{baseUrl}}/change_status/{{dta.dataset_udi}}" method="post">
-                                <input type="submit" name="go" value="move-to:">
-                                <select name="to">
-                                    <option value=InReview>InReview</option>
-                                </select>
-                                </form>
-                                </td>
-                            {% else %}
-                                error case.
-                            {% endif %}
+                            <td valign="top"><form name="AcceptedState" action="{{baseUrl}}/change_status/{{dta.dataset_udi}}" method="post">
+                            <noscript><input type="submit" name="go" value="move-to:"></noscript>
+                            <select name="to" onchange='this.form.submit();'>
+                                    {% if sname == 'submitted' %}
+                                        <option value="Submitted">Submitted</option>
+                                        <option value="InReview" style="background-color: yellow;">InReview</option>
+                                        <option value="SecondCheck">SecondCheck</option>
+                                        <option value="Accepted">Accepted</option>
+                                        <option value="BackToSubmitter">BackToSubmitter</option>
+                                    {% elseif sname == 'inreview' %}
+                                        <option value="InReview">InReview</option>
+                                        <option value="SecondCheck" style="background-color: yellow;">SecondCheck</option>
+                                        <option value="Accepted">Accepted</option>
+                                        <option value="BackToSubmitter">BackToSubmitter</option>
+                                    {% elseif sname == 'secondcheck' %}
+                                        <option value="SecondCheck">SecondCheck</option>
+                                        <option value="InReview">InReview</option>
+                                        <option value="Accepted" style="background-color: yellow;">Accepted</option>
+                                        <option value="BackToSubmitter">BackToSubmitter</option>
+                                    {% elseif sname == 'accepted' %}
+                                        <option value="Accepted">Accepted</option>
+                                        <option value="InReview">InReview</option>
+                                        <option value="SecondCheck">SecondCheck</option>
+                                        <option value="BackToSubmitter">BackToSubmitter</option>
+                                    {% elseif sname == 'backtosubmitter' %}
+                                        <option value="BackToSubmitter">BackToSubmitter</option>
+                                        <option value="InReview" style="background-color: yellow;">InReview</option>
+                                        <option value="SecondCheck">SecondCheck</option>
+                                        <option value="Accepted">Accepted</option>
+                                    {% else %}
+                                        <option value="InReview">InReview</option>
+                                        <option value="SecondCheck">SecondCheck</option>
+                                        <option value="Accepted">Accepted</option>
+                                        <option value="BackToSubmitter">BackToSubmitter</option>
+                                    {% endif %}
+                                        
+                            </select>
+                            </form>
+                            </td>
                             <td valign="top">{{dta.submittimestamp}}</td>
                             <td valign="top"><button style="font-size:66%" onclick="javascript:showLogEntries('{{dta.dataset_udi}}')">Log</button> <a href="{{baseUrl}}/download-metadata/{{dta.dataset_udi}}"><img src="{{baseUrl}}/includes/images/download.png"></a>&nbsp;{% if dta.hasxml == true %}<a href="{{baseUrl}}/download-metadata-db/{{dta.dataset_udi}}"><img src="{{baseUrl}}/includes/images/download-from-db.png"></a>&nbsp;{% endif %}{{dta.dataset_metadata}}</td>
                         </tr>
