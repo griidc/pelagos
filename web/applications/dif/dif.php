@@ -258,9 +258,6 @@ if ((isset($_POST['submit']) and $_POST['submit'])||(isset($_POST['later']) and 
     if (isset($_POST['later']) and $_POST['later']) { $status = 0;}else{$status = 1;}
        //CONCAT TO FIT DB
        foreach ($_POST as $k=>$v) { 
-    //if (!$v){$v="NULL";}
-    //echo "$k and $v<HR>";
-    //array_push($ssa, "$k|$v"); 
 
     $$k = pg_escape_string($v);}
 
@@ -285,7 +282,6 @@ if ((isset($_POST['submit']) and $_POST['submit'])||(isset($_POST['later']) and 
     else
     {
         if ($flag== "update") {
-			
             $uid = $modts;
             $sql = "UPDATE datasets SET dataset_uid='".$uid."', task_uid='".$task."', title='".$title."', abstract='".$abstract."', dataset_type='".$datatype."', dataset_for='".$datafor."', size='".$size."', observation='".$observation ."', approach='".$approach ."', historic_links='".$historical."', meta_editor='".$ed ."', meta_standards='".$standards."', point='".$point."', national='".$national ."', ethical='".$privacy."', remarks='".$remarks ."', primary_poc=";
             if ($ppoc ==""){$sql .="null";}else{ $sql.="'".$ppoc."'";}
@@ -327,9 +323,6 @@ if ((isset($_POST['submit']) and $_POST['submit'])||(isset($_POST['later']) and 
 			$row = pg_fetch_array($result);
 			
 			$datasetUDI = $row['dataset_udi'];
-			//echo "<pre>";
-			//var_dump($row);
-			//echo "</pre>";
             $mymesg= "status";
             $yn= "DIF saved and submitted for approval.";
 			
@@ -342,7 +335,6 @@ if ((isset($_POST['submit']) and $_POST['submit'])||(isset($_POST['later']) and 
 				$eMail = "";
 				$difMailer = new griidcMailer(false);
 				$submitUser = $row['editor'];
-				var_dump($submitUser);
 				if (isset($submitUser)) {
 					$userDNs = getDNs($ldap,$baseDN,"uid=$submitUser");
 					$userDN = $userDNs[0]['dn'];
@@ -399,7 +391,7 @@ if ((isset($_POST['submit']) and $_POST['submit'])||(isset($_POST['later']) and 
 			
 			$difMailer->mailMessage = $message;
 			
-			//$difMailer->sendMail();
+			$difMailer->sendMail();
 			
         }
     }
