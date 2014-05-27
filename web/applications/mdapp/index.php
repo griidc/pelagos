@@ -162,7 +162,30 @@ $app->post('/change_appr_status/:udi', function ($udi) use ($app) {
             where registry_id =
             ( select MAX(registry_id) from registry where dataset_udi = :udi)";
 
-    if (in_array($approval,array('NotRequired','ApprovalRequired','Approved'))) {
+    if (in_array($approval,array('NotRequired','ApprovalRequired','Approved','ApprovalRequiredEmail'))) {
+        if ($approval == 'ApprovalRequiredEmail') {
+            $approval = 'ApprovalRequired';
+            # get submitter's email address
+            $poc = getUDIPOC($udi);
+            # get current user's mail  (for from:)
+            $userMail=getUserMail($user->name); #array  ('fullname', 'email')
+            # get Metadata Approver's addresses - CONVERT THIS TO A PROPER LDAP LOOKUP ASAP
+            $approvers = array();
+            array_push($approvers,'William Nichols <william.nichols@tamucc.edu');
+            array_push($approvers,'Susan Rogers <susan.rogers@tamucc.edu');
+
+            # message content            
+            $message =  "The metadata associated with dataset $udi has been changed.  Your approval is ";
+            $message .= "needed.  Please reply to this email with your decision.";
+            $subject = "Approval requested for changes made to metadata registered with GRIIDC as $udi";    
+
+            $userMailAddress=$userMail['fullname'].'" <'.$userMail['email'].'>';
+            # send email to submitter, CC all Metadata Approvers group members
+            #sendEmail($to,$from,$sub,$message,$cc_array=null);
+            sendEmail($poc,$userMailAddress,$subject,$message,$approvers);
+            drupal_set_message("Metadata POC has been emailed.",'status');
+        }
+
         $dbms = OpenDB("GOMRI_RW");
         $data = $dbms->prepare($sql);
 
@@ -609,9 +632,9 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
 
             // send email if approved and mail flag is set
             $dm_contacted=false;
-            $dataManager=getDataManagerOldDataModel($udi); #array  ('full name', 'email')
+            $dataManager=getDataManagerOldDataModel($udi); #array  ('fullname', 'email')
             $to_address_string = $dataManager['fullname'].'<'.$dataManager['email'].'>';
-            $userMail=getUserMail($user->name); #array  ('full name', 'email')
+            $userMail=getUserMail($user->name); #array  ('fullname', 'email')
             if (isset($_POST['approveMetadata']) and $_POST['approveMetadata']=='on' and isset($_POST['contactOwner']) and $_POST['contactOwner']=='on') {
                 $dm_contacted=true;
                 sendEmail($to_address_string,$userMail['email'],"$udi metadata","The metadata for $udi has been approved by GRIIDC.  Thank you!");
@@ -719,7 +742,7 @@ function checkForUDI($udi) {
 }
 
 function getDataManager($udi) {
-    // returns: array  ('full name', 'email')
+    // returns: array  ('fullname', 'email')
     $sql = 'SELECT
     "EmailInfo_Address", coalesce("Person_HonorificTitle",\'\')||
     \' \'||"Person_FirstName"||\' \'||coalesce("Person_MiddleName",\'\')||
@@ -753,7 +776,7 @@ function getDataManager($udi) {
 }
 
 function getDataManagerOldDataModel($udi) {
-    // returns: array  ('full name', 'email')
+    // returns: array  ('fullname', 'email')
     $sql = "
     SELECT
         People.People_Email as EmailInfo_Address,
@@ -834,10 +857,14 @@ function getUserMail($gomri_userid) {
     }
 }
 
-function sendEmail($to,$from,$sub,$message) {
+function sendEmail($to,$from,$sub,$message,$cc=null) {
     ini_set("SMTP","smtp.tamucc.edu" );
     $header = "From: <$from>\r\n";
-    $header .= "CC: $from\r\n";
+    $header .= "CC: ";
+    foreach ($cc as $cc_line) {
+        $header .= "$cc_line,";
+    }
+    $header .= "$from\r\n";
     mail($to,$sub,$message,$header);
 }
 
@@ -937,5 +964,17 @@ function getCurrentState($udi) {
     $raw_data = $data->fetch();
     $state = $raw_data['metadata_status'];
     return $state;
+}
+
+function getUDIPOC($udi) {
+    $sql  = "select dataset_poc_email, dataset_poc_name from curr_reg_view where dataset_udi = :udi";
+    $dbms = OpenDB("GOMRI_RO");
+    $data = $dbms->prepare($sql);
+    $data->bindParam(":udi",$udi);
+    $data->execute();
+    $raw_data = $data->fetch();
+    $email = $raw_data['dataset_poc_email'];
+    $name = $raw_data['dataset_poc_name'];
+    return "$name <$email>";
 }
 ?>
