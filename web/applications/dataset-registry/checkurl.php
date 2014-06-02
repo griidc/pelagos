@@ -10,7 +10,7 @@ if (isset($_GET['url'])) {
 function checkURL($url)
 {
     $urlScheme = parse_url($url,PHP_URL_SCHEME);
-        
+
     $validhost = filter_var(gethostbyname(parse_url($url,PHP_URL_HOST)), FILTER_VALIDATE_IP);
     if($validhost)
     {
@@ -52,14 +52,14 @@ function checkHTTPURL($url)
 {
     $headers = array();
     $headers = get_headers($url, 1);
-    
+
     $httpCodeP = substr($headers[0], 9, 1);
     $httpCode = substr($headers[0], 9, 3);
     if (array_key_exists('Location',$headers))
     {
         $altLocation = $headers["Location"];
     }
-    
+
     switch ($httpCodeP)
     {
         case "2":

@@ -12,11 +12,11 @@ if (array_key_exists('dir',$_GET)) {
         $homeDir = NULL;
         $gidNumber = NULL;
         $sftpGroup = NULL;
-        
+
         $ldap = ldap_connect('ldap://triton.tamucc.edu');
-        
+
         $userResult = ldap_search($ldap, "ou=people,dc=griidc,dc=org", "(&(uid=$user)(objectClass=posixAccount))", array("gidNumber","homeDirectory"));
-        
+
         if (ldap_count_entries($ldap, $userResult) > 0) {
             $userEntries = ldap_get_entries($ldap, $userResult);
             $userEntry = $userEntries[0];
@@ -26,9 +26,9 @@ if (array_key_exists('dir',$_GET)) {
             if (array_key_exists('gidnumber',$userEntry)) {
                 $gidNumber = $userEntry['gidnumber'][0];
             }
-        
+
             $groupResult = ldap_search($ldap, "ou=SFTP,ou=applications,dc=griidc,dc=org", "(objectClass=posixGroup)", array("cn","gidNumber","memberUid"));
-        
+
             if (ldap_count_entries($ldap, $groupResult) > 0) {
                 $groupEntries = ldap_get_entries($ldap, $groupResult);
                 foreach ($groupEntries as $group) {
@@ -75,8 +75,8 @@ if (array_key_exists('dir',$_GET)) {
 EOT;
             exit;
         }
-        
-        
+
+
         if (array_key_exists('dir',$_GET) and !preg_match('/^[\.\/]/',$_GET['dir'])) {
             $browseDir = $_GET['dir'];
             if ($browseDir == '%home%') {
@@ -91,7 +91,7 @@ EOT;
             preg_match('/(.*)\//',$browseDir,$matches);
             $parent_dir = $matches[1];
         }
-        
+
         if (!is_dir($chrootDir)) {
             echo <<<EOT
                 <div style="padding:10px; color:red;">
@@ -105,14 +105,14 @@ EOT;
 EOT;
             exit;
         }
-        
+
         $type = 'data';
         if (array_key_exists('type',$_GET)) {
             $type = $_GET['type'];
         }
-        
+
         $dir = opendir("$chrootDir/$browseDir");
-        
+
         echo <<<EOT
             <style media="all">
                 div#middlecontainer a.dir {
@@ -177,11 +177,11 @@ EOT;
                 <div style="height:20px; overflow:hidden;">
                     <strong>Directory:</strong> <a href="javascript:fileBrowser('$type','')" class="dir">$chrootDir
 EOT;
-        
+
         if (!preg_match('/\/$/',$chrootDir)) { echo '/'; }
-        
+
         echo "</a>";
-        
+
         if ($browseDirs and is_array($browseDirs) and count($browseDirs) > 0) {
             $linkDir = '';
             foreach ($browseDirs as $currDir) {
@@ -190,7 +190,7 @@ EOT;
                 echo "<a href=\"javascript:fileBrowser('$type','$linkDir')\" class=\"dir\">$currDir/</a>";
             }
         }
-        
+
         echo <<<EOT
                 </div>
                 <div id="fileBox">
@@ -200,10 +200,10 @@ EOT;
                         <div class="size">Size</div>
                     </div>
 EOT;
-        
+
         $dirs = array();
         $files = array();
-        
+
         while (false !== ($entry = readdir($dir))) {
             if (preg_match('/^\./',$entry)) {
                 continue;
@@ -215,12 +215,12 @@ EOT;
                 $files[] = $entry;
             }
         }
-        
+
         if ($browseDir != '') { $dirs[] = '..'; }
-        
+
         sort($dirs);
         sort($files);
-        
+
         foreach ($dirs as $dir) {
             if ($dir == '..') {
                 echo "<div onclick=\"javascript:showFileBrowser('$type','$parent_dir')\" class='dir'><div class='name'>$dir</div></div>";
@@ -231,7 +231,7 @@ EOT;
                 echo "<div onclick=\"javascript:showFileBrowser('$type','$linkDir')\" class='dir'><div class='name'>$dir</div></div>";
             }
         }
-        
+
         foreach ($files as $file) {
             $path = $chrootDir;
             if ($browseDir != '') {
@@ -264,7 +264,7 @@ EOT;
                     </div>
 EOT;
         }
-        
+
         echo <<<EOT
                 </div>
                 <div style="height:40px; margin-top: 10px; overflow:hidden;">
@@ -272,7 +272,7 @@ EOT;
                 </div>
             </div>
 EOT;
-        
+
         exit;
 
     }

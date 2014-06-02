@@ -14,7 +14,7 @@ function pdoDBConnect($dsn) {
 }
 
 function pdoDBQuery($connection,$queryString) {
-    
+
     $query = $connection->query($queryString);
     $i = 0;
     $queryReturn = false;
@@ -45,7 +45,7 @@ function pdoGetErrors($connection)
         array_push($errlist,$errmsg);
         var_dump($error);
     }
-    
+
     if (count($errlist>1))
     {
         return $errlist;

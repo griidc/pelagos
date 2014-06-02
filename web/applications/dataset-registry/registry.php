@@ -54,27 +54,27 @@ if (count($tasks) == 0) {
 }
 
 $GLOBALS['personid'] ="";
-if ($_GET) 
+if ($_GET)
 {
     if (isset($_GET['dataurl']))
     {
         include 'checkurl.php';
         echo checkURL($_GET['dataurl']);
-        
+
         exit;
     }
-    
+
     if (isset($_GET['uid']))
     {
         $dif_id = $_GET['uid'];
     }
-    
+
     if (isset($_GET['regid']))
     {
         $reg_id = $_GET['regid'];
     }
-    
-    if (isset($_GET['personID'])) 
+
+    if (isset($_GET['personID']))
     {
         $personid = $_GET['personID'];
         ob_clean();
@@ -83,8 +83,8 @@ if ($_GET)
         echo displayTaskStatus($tasks,true,$personid);
         exit;
     }
-    
-    if (isset($_GET['persontask'])) 
+
+    if (isset($_GET['persontask']))
     {
         $personid = $_GET['persontask'];
         ob_clean();
@@ -94,8 +94,8 @@ if ($_GET)
         echo getTaskOptionList($tasks, null);
         exit;
     }
-    
-    if (isset($_GET['prsid'])) 
+
+    if (isset($_GET['prsid']))
     {
         $GLOBALS['personid'] = $_GET['prsid'];
         $alltasks = $tasks;
@@ -106,11 +106,11 @@ if ($_GET)
 if ($_POST)
 {
     $formHash = sha1(serialize($_POST));
-    
+
     $doi = '';
-   
+
     extract($_POST);
-    
+
     $SQL = "SELECT MAX(registry_id) AS maxregid FROM registry WHERE registry_id LIKE ?;";
     $sth = $DBH->prepare($SQL);
     if ($udi == "") $sth->execute(array('00.x000.000:%'));
@@ -119,19 +119,19 @@ if ($_POST)
 
     $newserial = (int) substr($result['maxregid'],13,4) + 1;
     $newsub = (int) substr($result['maxregid'],17,3) + 1;
-    
+
     $newserial = str_pad($newserial, 4,'0',STR_PAD_LEFT);
     $newsub = str_pad($newsub, 3,'0',STR_PAD_LEFT);
-   
+
     if ($udi == "")
     {
         $reg_id = '00.x000.000:' . $newserial . '.001';
     }
     else
     {
-        $reg_id = $udi.'.'.$newsub;    
+        $reg_id = $udi.'.'.$newsub;
     }
-            
+
     if ($title == "" OR $abstrct == "" OR $pocemail == "" OR $pocname == "" OR $dataset_originator == "")
     {
         $dMessage = 'Not all required fields where filled out!';
@@ -142,8 +142,8 @@ if ($_POST)
         //date_default_timezone_set('UTC');
         $now = date('c');
         $ip = $_SERVER['REMOTE_ADDR'];
-        
-        
+
+
         $title = pg_escape_string($title);
         $abstrct = pg_escape_string($abstrct);
 
@@ -237,9 +237,9 @@ if ($_POST)
             drupal_set_message($dMessage,'warning',false);
             $_SESSION['submitok'] = true;
         }
-        
+
     }
-}   
+}
 else
 {
     $_SESSION['submitok'] = false;

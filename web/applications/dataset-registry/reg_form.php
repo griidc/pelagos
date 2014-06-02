@@ -9,7 +9,7 @@ drupal_add_library('system', 'ui.tabs');
 
 //drupal_add_js('
 //(function ($) {
-//    
+//
 //})(jQuery);
 //',array('type'=>'inline'));
 
@@ -27,11 +27,11 @@ if ($user) {
     $homeDir = NULL;
     $gidNumber = NULL;
     $sftpGroup = NULL;
-        
+
     $ldap = ldap_connect('ldap://triton.tamucc.edu');
-        
+
     $userResult = ldap_search($ldap, "ou=people,dc=griidc,dc=org", "(&(uid=$user)(objectClass=posixAccount))", array("gidNumber","homeDirectory"));
-        
+
     if (ldap_count_entries($ldap, $userResult) > 0) {
         $userEntries = ldap_get_entries($ldap, $userResult);
         $userEntry = $userEntries[0];
@@ -41,9 +41,9 @@ if ($user) {
         if (array_key_exists('gidnumber',$userEntry)) {
             $gidNumber = $userEntry['gidnumber'][0];
         }
-        
+
         $groupResult = ldap_search($ldap, "ou=SFTP,ou=applications,dc=griidc,dc=org", "(objectClass=posixGroup)", array("cn","gidNumber","memberUid"));
-        
+
         if (ldap_count_entries($ldap, $groupResult) > 0) {
             $groupEntries = ldap_get_entries($ldap, $groupResult);
             foreach ($groupEntries as $group) {
@@ -88,7 +88,7 @@ if ($user) {
 if (isset($dif_id))
 {
     $formDisabled = false;
-    
+
     $query = 'select * from datasets where dataset_uid='.$dif_id;
 
     $row = pdoDBQuery($conn,$query);
@@ -99,13 +99,13 @@ if (isset($dif_id))
     $row['task_uid'] = $doc->Task->Title;
 
     $poc_email = "";
-    
+
     $reg_id = $row['dataset_udi'];
-    
+
     //var_dump($row);
 
     if ($row['primary_poc'] > 0)
-    { 
+    {
         $pocpath = '/gomri/Task/Researchers/Person[@ID='.$row['primary_poc'] . ']';
         $pocnode = $doc->xpath($pocpath);
         if ($pocnode != false)
@@ -126,9 +126,9 @@ $registered = false;
 if (isset($reg_id))
 {
     $query = "select * from registry where registry_id like '".substr($reg_id,0,17)."%' order by registry_id desc limit 1";
-    
+
     $regrow = pdoDBQuery($conn,$query);
-              
+
     if ($regrow == false OR is_null($regrow))
     {
         if (isset($_GET['regid']))
@@ -140,17 +140,17 @@ if (isset($reg_id))
     else
     {
         $formDisabled = false;
-        
+
         $registered = true;
-        $dif_id = true;  
+        $dif_id = true;
 
         $row = $regrow;
-        
+
         $row['title'] = $row['dataset_title'];
         $row['abstract'] = $row['dataset_abstract'];
         $row['primary_poc'] = $row['dataset_poc_name'];
         $poc_email = $row['dataset_poc_email'];
-        
+
         switch ($row['data_server_type'])
         {
             case "upload":
@@ -163,9 +163,9 @@ if (isset($reg_id))
                 $tabselect = 2;
                 break;
         }
-        
+
     }
-    
+
     if ($regrow['registry_id'] <> $reg_id AND $regrow != false)
     {
         if (substr($regrow['registry_id'],0,16) == $reg_id)
@@ -178,14 +178,14 @@ if (isset($reg_id))
             $dMessage= "Registration Identifier <b>'$reg_id'</b> has been superseded by a newer version. The latest version has been retrieved instead.";
             drupal_set_message($dMessage,'warning');
         }
-        
+
     }
 }
 
 function createTimesDD($time="")
 {
     for ($i = 0; $i <= 23; $i++) {
-        
+
         $temptime = str_pad($i, 2,'0',STR_PAD_LEFT) . ':00';
         if ($temptime == substr($time,0,5))
         {
@@ -195,7 +195,7 @@ function createTimesDD($time="")
         {
             echo "<option>$temptime</option>";
         }
-        
+
         $temptime = str_pad($i, 2,'0',STR_PAD_LEFT) . ':15';
         if ($temptime == substr($time,0,5))
         {
@@ -205,7 +205,7 @@ function createTimesDD($time="")
         {
             echo "<option>$temptime</option>";
         }
-        
+
         $temptime = str_pad($i, 2,'0',STR_PAD_LEFT) . ':30';
         if ($temptime == substr($time,0,5))
         {
@@ -215,7 +215,7 @@ function createTimesDD($time="")
         {
             echo "<option>$temptime</option>";
         }
-        
+
         $temptime = str_pad($i, 2,'0',STR_PAD_LEFT) . ':45';
         if ($temptime == substr($time,0,5))
         {
@@ -275,7 +275,7 @@ function formDisabled($isDisabled)
             disabled: [3,4,5],
             active: <?php echo $tabselect;?>
         });
-        
+
         $( "#availdate" ).datepicker({
             showOn: "button",
             buttonImageOnly: false,
@@ -283,7 +283,7 @@ function formDisabled($isDisabled)
             autoSize:true
         });
     });
-    
+
     $(document).ready(function(){
         $("#regForm").validate({
         rules: {
@@ -308,12 +308,12 @@ function formDisabled($isDisabled)
                 required: true,
                 email: true
             },
-            dataurl: 
+            dataurl:
             {
                 required: true,
                 url: true
             },
-            metadataurl: 
+            metadataurl:
             {
                 required: false,
                 url: true
@@ -331,7 +331,7 @@ function formDisabled($isDisabled)
                 required: true,
                 dateISO: true
             },
-            regbutton: 
+            regbutton:
             {
                 required: "#registry_id:minlength:15",
             },
@@ -343,13 +343,13 @@ function formDisabled($isDisabled)
         messages: {
             txtMetaURL: "Please enter a valid URL.",
             radAuth: "Please select one.",
-            dataurl: { 
-                required: "Please enter a valid URL", 
-                remote: jQuery.format("Please check the URL, it may not exist!") 
-            }, 
+            dataurl: {
+                required: "Please enter a valid URL",
+                remote: jQuery.format("Please check the URL, it may not exist!")
+            },
         }
         });
-    
+
         $.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
             position: {
                 adjust: {
@@ -372,15 +372,15 @@ function formDisabled($isDisabled)
                 classes: "qtip-default qtip-shadow qtip-tipped"
             }
         });
-        
+
         $("#qtip_title").qtip({
             content: $("#title_tip")
         });
-        
+
         $("#qtip_abstrct").qtip({
             content: $("#abstract_tip")
         });
-        
+
         $("#qtip_dataset_originator").qtip({
             content: $("#dataset_originator_tip")
         });
@@ -388,11 +388,11 @@ function formDisabled($isDisabled)
         $("#qtip_poc").qtip({
             content: $("#poc_tip")
         });
-        
+
         $("#qtip_pocemail").qtip({
             content: $("#pocemail_tip")
         });
-        
+
         $("#qtip_dataurl").qtip({
             content: $("#dataurl_tip")
         });
@@ -404,7 +404,7 @@ function formDisabled($isDisabled)
         $("#qtip_uploaddataurl").qtip({
             content: $("#uploaddataurl_tip")
         });
-        
+
         $("#qtip_metadataurl").qtip({
             content: $("#metadataurl_tip")
         });
@@ -412,47 +412,47 @@ function formDisabled($isDisabled)
         $("#qtip_sshmetadataurl").qtip({
             content: $("#sshmetadataurl_tip")
         });
-        
+
         $("#qtip_uploadmetadataurl").qtip({
             content: $("#uploadmetadataurl_tip")
         });
-        
+
         $("#qtip_auth").qtip({
             content: $("#auth_tip")
         });
-        
+
         $("#qtip_pull").qtip({
             content: $("#pull_tip")
         });
-        
+
         $("#qtip_when").qtip({
             content: $("#when_tip")
         });
-        
+
         $("#qtip_uname").qtip({
             content: $("#uname_tip")
         });
-        
+
         $("#qtip_pword").qtip({
             content: $("#pword_tip")
         });
-        
+
         $("#qtip_times").qtip({
             content: $("#times_tip")
         });
-        
+
         $("#qtip_date").qtip({
             content: $("#date_tip")
         });
-        
+
         $("#qtip_avail").qtip({
             content: $("#avail_tip")
         });
-        
+
         $("#qtip_doi").qtip({
             content: $("#doi_tip")
         });
-        
+
         $("#qtip_regid").qtip({
             content: $("#regid_tip")
         });
@@ -472,7 +472,7 @@ function formDisabled($isDisabled)
                 this.value = null;
             }
         });
-        
+
     });
 })(jQuery);
 
@@ -488,7 +488,7 @@ function addToFiles()
         alert("No URL specified");
     }
 }
-    
+
 function showCreds(from,what,when)
 {
     if (from.value == when)
@@ -508,10 +508,10 @@ function selDays(weeknds)
     document.forms['regForm'].elements['weekdays'][2].checked = !weeknds;
     document.forms['regForm'].elements['weekdays'][3].checked = !weeknds;
     document.forms['regForm'].elements['weekdays'][4].checked = !weeknds;
-    
+
     document.forms['regForm'].elements['weekdays'][5].checked = weeknds;
     document.forms['regForm'].elements['weekdays'][6].checked = weeknds;
-    
+
     weekDays();
 }
 
@@ -522,7 +522,7 @@ function weekDays()
     for(var i=0,cbLen=cbs.length;i<cbLen;i++){
         if(cbs[i].checked){
             values.push(cbs[i].value);
-        } 
+        }
     }
     document.getElementById("weekdayslst").value = values.join('|');
 }
@@ -537,7 +537,7 @@ function getTimeZone()
         timezone = '+'+(tminutes / 60);
     else
         timezone = '-'+(tminutes / 60);
-        
+
     document.getElementById('timezone').value = timezone;
 };
 
@@ -553,7 +553,7 @@ function checkDOIFields(gourl)
         }
     }
     else
-    {   
+    {
         document.getElementById('doibutton').disabled = true;
     }
 }
@@ -625,7 +625,7 @@ function cancelUpload() {
     else {
         window.stop();
     }
-    
+
     hideProgressBar();
     window.clearInterval(progressBarInt);
 }
@@ -764,7 +764,7 @@ function submitRegistry() {
 <div id="regid_tip" style="display:none;">
     <img src="/dif/images/info.png" style="float:right;" />
     <p>
-        <strong>Registation Identifier:</strong><p/> This identifier is generated once the dataset is registered. However, you may enter a Dataset Registration Identifier to extract previously submitted data. 
+        <strong>Registation Identifier:</strong><p/> This identifier is generated once the dataset is registered. However, you may enter a Dataset Registration Identifier to extract previously submitted data.
     </p>
 </div>
 
@@ -924,7 +924,7 @@ function submitRegistry() {
         <p><STRONG> NOTE: </STRONG><FONT COLOR="grey">If you have a Dataset Information Form record submitted, click on the dataset in the right panel to extract the information needed for dataset registration.  If you require assistance in completing
         this form, do not hesitate to contact GRIIDC (email: <A HREF=mailto:griidc@gomri.org>griidc@gomri.org</A>).</FONT></p>
     </fieldset>
-    
+
     <fieldset>
         <p><fieldset>
             <span id="qtip_regid" style="float:right;">
@@ -934,9 +934,9 @@ function submitRegistry() {
             <input onkeyup="if (this.value.length > 15) {document.getElementById('regbutton').disabled=false;};" <?php if (isset($dif_id)) {echo ' disabled ';};?>type="text" id="registry_id" name="registry_id" size="60" value="<?php if (isset($row['registry_id'])) {echo $row['registry_id'];};?>">
             <button disabled name="regbutton" id="regbutton" onclick="window.location.href='<?php echo $_SERVER['SCRIPT_NAME'];?>?regid='+document.getElementById('registry_id').value;" type="button">Retrieve Registration</button>
         </fieldset></p>
-        
+
         <input type="hidden" id="task" name="task" value="<?php if (isset($row['task_uid'])) {echo $row['task_uid'];};?>">
-    
+
         <p><fieldset>
         <span id="qtip_title" style="float:right;">
             <img src="/dif/images/info.png">
@@ -946,7 +946,7 @@ function submitRegistry() {
             <input <?php formDisabled($formDisabled)?> onchange="checkDOIFields();" type="text" name="title" id="title" size="60" value="<?php if (isset($row['title'])) {echo $row['title'];};?>"/>
         </div>
     </fieldset></p>
-    
+
     <p><fieldset>
         <span id="qtip_abstrct" style="float:right;">
             <img src="/dif/images/info.png">
@@ -966,11 +966,11 @@ function submitRegistry() {
             <input <?php formDisabled($formDisabled)?> type="text" name="dataset_originator" id="dataset_originator" size="60" value="<?php if (isset($row['dataset_originator'])) {echo $row['dataset_originator'];};?>"/>
         </div>
     </fieldset></p>
-    
+
     <p><fieldset>
     <legend>Point of Contact</legend>
-        <table WIDTH="100%"><tr><td width="50%"> 
-       
+        <table WIDTH="100%"><tr><td width="50%">
+
             <span id="qtip_poc" style="float:right;">
                 <img src="/dif/images/info.png">
             </span>
@@ -979,7 +979,7 @@ function submitRegistry() {
                 <input <?php formDisabled($formDisabled)?> onchange="checkDOIFields();" type="text" name="pocname" id="pocname" size="25" value="<?php if (isset($row['primary_poc'])) {echo $row['primary_poc'];};?>">
             </div>
         </td><td width="50%" style="padding-left:10px;">
-        
+
             <span id="qtip_pocemail" style="float:right;">
                 <img src="/dif/images/info.png">
             </span>
@@ -1019,7 +1019,7 @@ function submitRegistry() {
 
 </fieldset>
     <h1>Dataset File Transfer Details</h1>
-    
+
     <style>
     label
     {
@@ -1032,7 +1032,7 @@ function submitRegistry() {
         font-size: 12px;
     }
     </style>
-    
+
     <div style="background: transparent;" id="tabs">
         <ul>
             <li><a onclick="document.getElementById('servertype').value='upload'" href="#tabs-1">Direct Upload</a></li>
@@ -1046,7 +1046,7 @@ function submitRegistry() {
         <div id="tabs-1">
             For small datasets (&lt;1 GB), you may upload the dataset and metadata files directly. Depending on the size of your files, this may take several minutes. The maximum time the system will wait for your files to upload is 10 minutes.  For larger files, please consider using SFTP or GridFTP.<!--If the script times out after you click "Register" below, your files are too big and you must use an alternate method such as HTTP/FTP or SFTP.-->
             <fieldset>
-                <?php 
+                <?php
                     $upload_progress_key = md5(mt_rand());
                     echo "<input type='hidden' id='APC_UPLOAD_PROGRESS' name='APC_UPLOAD_PROGRESS' value='$upload_progress_key' />";
                 ?>
@@ -1084,7 +1084,7 @@ function submitRegistry() {
             </p>
             </fieldset>
         </div>
-        
+
       <div id="tabs-2">
         Use this method when you can place your dataset and metadata files on an HTTP (web) or FTP server at your institution.
         <fieldset>
@@ -1109,7 +1109,7 @@ function submitRegistry() {
                 </div>
             </p>
             </fieldset>
-            
+
             <table WIDTH="100%"><tr><td>
             <fieldset>
             <p>
@@ -1130,7 +1130,7 @@ function submitRegistry() {
                     <input <?php formDisabled($formDisabled)?> <?PHP if (isset($row['data_source_pull'])){isChecked($row['data_source_pull'],0,true);}; if(!isset($_GET['regid'])){echo 'checked';};?>  onclick="showCreds(this,'pulldiv','No');" onchange="showDOIbutton(this);" name="pullds" id="pullds" type="radio" value="Yes"/>Yes
                     <input <?php formDisabled($formDisabled)?> <?PHP if (isset($row['data_source_pull'])){isChecked($row['data_source_pull'],0,false);};?> onclick="showCreds(this,'pulldiv','No');" onchange="showDOIbutton(this);" name="pullds" id="pullds" type="radio" value="No"/>No
                 </p>
-            
+
             </fieldset>
             </td>
 </tr><tr>
@@ -1162,9 +1162,9 @@ function submitRegistry() {
             <div id="creds" style="display:<?php if (isset($row['authentication'])){ if ($row['authentication']==true){echo 'block';}else{echo 'none';};}else{ echo 'none';};?>;">
                 <fieldset>
                 <legend>Credentials:</legend>
-                    
+
                 <table WIDTH="100%">
-                <tr><td width="50%"> 
+                <tr><td width="50%">
                 <span id="qtip_uname" style="float:right;">
                     <img src="/dif/images/info.png">
                 </span>
@@ -1175,7 +1175,7 @@ function submitRegistry() {
                 </td><td width="50%" style="padding-left:10px;">
                 <span id="qtip_pword" style="float:right;">
                     <img src="/dif/images/info.png">
-                </span> 
+                </span>
                 <label for="pword">Password:</label>
                 <div class="fwtextboxcont">
                     <input name="pword" id="pword" type="password" size="40" value="<?php if (isset($row['password'])) {echo $row['password'];};?>"/>
@@ -1183,7 +1183,7 @@ function submitRegistry() {
                </td></tr></table>
                 </fieldset>
             </div>
-            
+
           <div id="whendiv" style="display:<?php if (isset($row['access_period'])){if ($row['access_period']==true){echo 'block';}else{echo 'none';};}else{ echo 'none';};?>;">
               <fieldset>
                   <span id="qtip_times" style="float:right;">
@@ -1191,14 +1191,14 @@ function submitRegistry() {
                   </span>
               <legend>Pull Times:</legend>
               <table WIDTH="100%"><tr><td valign="top">
-                                 
+
                   <label for="dlstart">Start Time:</label>
                    <select name="dlstart" id="dlstart">
                   <?php if (isset($row['access_period_start'])){createTimesDD($row['access_period_start']);}else{createTimesDD();};?>
                   </select>
-                  
+
                </td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
-                 
+
                   <label for="weekdays">Weekdays:</label>
                   <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Monday");}; if(!isset($_GET['regid'])){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Monday"/>Monday<br>
                   <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Tuesday");}; if(!isset($_GET['regid'])){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Tuesday"/>Tuesday<br>
@@ -1207,7 +1207,7 @@ function submitRegistry() {
                   <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Friday");}; if(!isset($_GET['regid'])){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Friday"/>Friday<br>
                   <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Saturday");}; if(!isset($_GET['regid'])){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Saturday"/>Saturday<br>
                   <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Sunday");}; if(!isset($_GET['regid'])){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Sunday"/>Sunday
-                  
+
                   </td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="top">
                   <button style="width:100px" type="button" onclick="selDays(true);">Weekends</button><br \>
                     <button style="width:100px" type="button" onclick="selDays(false);">Workdays</button>
@@ -1215,16 +1215,16 @@ function submitRegistry() {
               </fieldset>
           </div>
             </fieldset>
-            
+
         </fieldset>
-        
+
     </p>
     </div>
-    
+
     <div id="tabs-3">
         Use this method when your dataset is &gt;1GB and you wish to push your data to GRIIDC (rather than place your dataset and metadata files on an HTTP (web) or FTP server at your institution).  <i>Using these methods requires that you have first uploaded your file via SFTP or GridFTP.</i>
 
-        <?php 
+        <?php
             if (!$sftpuser) {
                 echo <<<EOT
                     <div style='color:red;'>
@@ -1242,8 +1242,8 @@ EOT;
 EOT;
             }
         ?>
- 
-        <fieldset> 
+
+        <fieldset>
         <p>
             <span id="qtip_sshdataurl" style="float:right;">
                 <img src="/dif/images/info.png">
@@ -1256,7 +1256,7 @@ EOT;
         </p>
             </fieldset>
             <fieldset>
-        
+
             <p>
                 <span id="qtip_sshmetadataurl" style="float:right;">
                     <img src="/dif/images/info.png">
@@ -1267,23 +1267,23 @@ EOT;
                 </div>
                 <input type="button" value="Browse..." onclick="showFileBrowser('metadata','%home%');">
             </p>
-         </fieldset> 
-         
+         </fieldset>
+
     </div>
     </div>
-    
+
     <input type="hidden" name="udi" id="udi" value="<?php if (isset($row['dataset_udi'])) {echo $row['dataset_udi'];};?>"/>
     <input type="hidden" name="regid" id="regid" value="<?php if (isset($row['registry_id'])) {echo $row['registry_id'];};?>"/>
     <input type="hidden" name="urlvalidate" id="urlvalidate"/>
     <input type="hidden" name="weekdayslst" id="weekdayslst"/>
     <input type="hidden" name="timezone" id="timezone"/>
     <input type="hidden" name="servertype" id="servertype" value="<?php if ($tabselect==0){echo 'upload';};if ($tabselect==1){echo 'HTTP';};if ($tabselect==2){echo 'SFTP';};?>"/>
-   
+
     <br>
     <div style="text-align:center;">
         <input <?php formDisabled($formDisabled)?> onclick="submitRegistry();" type="button" value="<?php if ($registered) echo "Update"; else echo "Register"; ?>" style="font-size:120%; font-weight:bold;"/>
     </div>
-</form>  
+</form>
 
 </div>
 
