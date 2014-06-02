@@ -55,6 +55,7 @@
                 <xs:element ref="filename"/>
                 <xs:element ref="doi" minOccurs="0"/>
                 <xs:element ref="hash" minOccurs="0"/>
+                <xs:element ref="metadata_hash" minOccurs="0"/>
             </xs:sequence>
             <xs:attribute name="sequence" use="optional" type="xs:integer">
                 <xs:annotation>
@@ -222,6 +223,18 @@
     <xs:element name="hash">
         <xs:annotation>
             <xs:documentation>This element can be used to provide a hash of the dataset file.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:restriction base="hash_TYPE">
+                    <xs:minLength value="24"/>
+                </xs:restriction>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="metadata_hash">
+        <xs:annotation>
+            <xs:documentation>This element can be used to provide a hash of the metadata file associated with a dataset.</xs:documentation>
         </xs:annotation>
         <xs:complexType>
             <xs:simpleContent>
