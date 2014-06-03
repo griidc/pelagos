@@ -1,5 +1,8 @@
 #!/usr/bin/perl
 
+use strict;
+use warnings;
+
 use Config::PHPINI;
 use XML::Simple;
 use XML::LibXML;
@@ -29,7 +32,7 @@ if (!@ARGV) {
 
 my $log;
 if ($opts{'t'}) {
-    $log = STDOUT;
+    $log = *STDOUT;
 }
 else {
     my $logfile  = '/var/log/griidc/registry-harvester';
@@ -100,9 +103,9 @@ my $ris_dbh = DBI->connect('DBI:'.$dbi_map{$dbconf->{'RIS_RO'}->{'type'}}.'='.$d
                            $dbconf->{'RIS_RO'}->{'password'})
                    or die "Couldn't connect to database: " . DBI->errstr;
 
-$ldap = Net::LDAP->new('triton.tamucc.edu') or die "$@";
+my $ldap = Net::LDAP->new('triton.tamucc.edu') or die "$@";
 
-$mesg = $ldap->bind;
+my $mesg = $ldap->bind;
 
 my @regCols = (
     'registry_id',
@@ -141,7 +144,10 @@ my $no_dif_count = 0;
 my @update_udis;
 my @create_udis;
 
-my %seen = {};
+my @update_regids;
+my @create_regids;
+
+my %seen;
 
 my %DIFs;
 
@@ -286,7 +292,7 @@ for my $entry (@{$data->{'entry'}}) {
     $sth->finish();
 
     # look up dataset point of contact
-    my $sth = $ris_dbh->prepare($SQL) or die "Couldn't prepare statement: " . $ris_dbh->errstr;
+    $sth = $ris_dbh->prepare($SQL) or die "Couldn't prepare statement: " . $ris_dbh->errstr;
     $sth->execute($point_of_contact_id);
     unless ($sth->rows) {
         writelog($log,"Invalid Point of Contact ID: $point_of_contact_id in entry for $reg->{dataset_udi}, skipping",'error');
@@ -294,7 +300,7 @@ for my $entry (@{$data->{'entry'}}) {
         print "\n" if $opts{'v'};
         next;
     }
-    my $ref = $sth->fetchrow_hashref();
+    $ref = $sth->fetchrow_hashref();
     $reg->{'dataset_poc_name'} = "$ref->{People_LastName}, $ref->{People_FirstName}";
     $reg->{'dataset_poc_email'} = $ref->{'People_Email'};
     $sth->finish();
@@ -333,8 +339,8 @@ for my $entry (@{$data->{'entry'}}) {
     $count++;
 
     # make sure we have an approved DIF
-    my $SQL = 'SELECT dataset_uid,title FROM datasets WHERE dataset_udi = ? AND status = 2;';
-    my $sth = $griidc_dbh->prepare($SQL) or die "Couldn't prepare statement: " . $griidc_dbh->errstr;
+    $SQL = 'SELECT dataset_uid,title FROM datasets WHERE dataset_udi = ? AND status = 2;';
+    $sth = $griidc_dbh->prepare($SQL) or die "Couldn't prepare statement: " . $griidc_dbh->errstr;
     $sth->execute($reg->{'dataset_udi'});
     my $dif_found = $sth->rows;
     my $dif = $sth->fetchrow_hashref();
@@ -365,8 +371,8 @@ for my $entry (@{$data->{'entry'}}) {
     $seen{$reg->{'dataset_udi'}} = 1;
 
     # check for existing registration
-    my $SQL = 'SELECT * FROM registry WHERE registry_id LIKE ? ORDER BY registry_id DESC;';
-    my $sth = $griidc_dbh->prepare($SQL) or die "Couldn't prepare statement: " . $griidc_dbh->errstr;
+    $SQL = 'SELECT * FROM registry WHERE registry_id LIKE ? ORDER BY registry_id DESC;';
+    $sth = $griidc_dbh->prepare($SQL) or die "Couldn't prepare statement: " . $griidc_dbh->errstr;
     $sth->execute("$reg->{dataset_udi}.%");
     my $found = $sth->rows;
 
@@ -399,6 +405,7 @@ for my $entry (@{$data->{'entry'}}) {
         # if there are updates
         if (%updates) {
             print "Updates found for $reg->{dataset_udi}\n" if $opts{'v'};
+            my $reg_seq;
             ($reg_seq) = $ref->{'registry_id'} =~ /\.(\d{3})$/;
             $reg_seq++;
             $reg->{'registry_id'} = sprintf('%s.%03d',$reg->{'dataset_udi'},$reg_seq);
@@ -487,7 +494,7 @@ if ($opts{'v'}) {
 }
 
 if (!$opts{'t'} and ($duplicate_count or $invalid_count or $update_count or $create_count)) {
-    $email = 'James.Davis@tamucc.edu';
+    my $email = 'James.Davis@tamucc.edu';
     my %mail = ( To      => $email,
                  From    => 'registry-harvester@poseidon.tamucc.edu',
                  Subject => "Registry Harvester Summary for: $source",
