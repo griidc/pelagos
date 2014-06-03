@@ -136,6 +136,7 @@ my $update_count = 0;
 my $create_count = 0;
 my $duplicate_count = 0;
 my $invalid_count = 0;
+my $no_dif_count = 0;
 
 my @update_udis;
 my @create_udis;
@@ -341,6 +342,7 @@ for my $entry (@{$data->{'entry'}}) {
 
     unless ($dif_found) {
         writelog($log,"No approved DIF found for $reg->{dataset_udi}, skipping",'error');
+        $no_dif_count++;
         print "\n" if $opts{'v'};
         next;
     }
@@ -464,6 +466,9 @@ if ($duplicate_count) {
 }
 if ($invalid_count) {
     $summary .= "Skipped $invalid_count registry entr" . ($invalid_count == 1 ? 'y' : 'ies') . " with invalid data\n\n";
+}
+if ($no_dif_count) {
+    $summary .= "Skipped $no_dif_count registry entr" . ($no_dif_count == 1 ? 'y' : 'ies') . " with no approved DIF\n\n";
 }
 $summary .= "Processed $count registry entr" . ($count == 1 ? 'y' : 'ies') . "\n";
 $summary .= "\nUpdated $update_count registry entr" . ($update_count == 1 ? 'y' : 'ies') . "\n";
