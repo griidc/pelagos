@@ -420,24 +420,6 @@ for my $entry (@{$data->{'entry'}}) {
                 $sth2->execute(map { $reg->{$_} } @regCols[0..(@regCols-1)]) or die "Couldn't execute statement: " . $sth2->errstr;
                 $sth2->finish();
             }
-            if (exists $updates{'user_supplied_hash'} or exists $updates{'url_data'}) {
-                writelog($log,"Change to hash or url_data detected, setting dataset_download_status = 'no_status' for $reg->{dataset_udi} to trigger re-download of data");
-                if (!$opts{'t'}) {
-                    my $SQL = 'UPDATE registry SET dataset_download_status = ? WHERE registry_id = ?;';
-                    my $sth2 = $griidc_dbh->prepare($SQL) or die "Couldn't prepare statement: " . $griidc_dbh->errstr;
-                    $sth2->execute('no_status',$reg->{'registry_id'}) or die "Couldn't execute statement: " . $sth2->errstr;
-                    $sth2->finish();
-                }
-            }
-            if (exists $updates{'url_metadata'}) {
-                writelog($log,"Change to url_metadata detected, setting metadata_dl_status = 'None' and metadata_status = 'None' for $reg->{dataset_udi} to trigger re-download of metadata");
-                if (!$opts{'t'}) {
-                    my $SQL = 'UPDATE registry SET metadata_dl_status = ?, metadata_status = ? WHERE registry_id = ?;';
-                    my $sth2 = $griidc_dbh->prepare($SQL) or die "Couldn't prepare statement: " . $griidc_dbh->errstr;
-                    $sth2->execute('None','None',$reg->{'registry_id'}) or die "Couldn't execute statement: " . $sth2->errstr;
-                    $sth2->finish();
-                }
-            }
             push(@update_regids,$reg->{'registry_id'});
             $update_count++;
         }
