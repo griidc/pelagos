@@ -1,4 +1,4 @@
-<?php 
+<?php
 error_reporting(E_ALL);
 ini_set("display_errors", 1);
 
@@ -56,32 +56,32 @@ $udi = $URIs[2];
 
 if ($udi <> '')
 {
-	$configini = parse_ini_file("/etc/griidc/db.ini",true);
-	$pconfig = $configini["GOMRI_RW"];
+    $configini = parse_ini_file("/etc/griidc/db.ini",true);
+    $pconfig = $configini["GOMRI_RW"];
 
-	$mconfig = $configini["RIS_RO"];
+    $mconfig = $configini["RIS_RO"];
 
-	$dbconnstr = 'pgsql:host='. $pconfig["host"];
-	$dbconnstr .= ' port=' . $pconfig["port"];
-	$dbconnstr .= ' dbname=' . $pconfig["dbname"];
-	$dbconnstr .= ' user=' . $pconfig["username"];
-	$dbconnstr .= ' password=' . $pconfig["password"];
+    $dbconnstr = 'pgsql:host='. $pconfig["host"];
+    $dbconnstr .= ' port=' . $pconfig["port"];
+    $dbconnstr .= ' dbname=' . $pconfig["dbname"];
+    $dbconnstr .= ' user=' . $pconfig["username"];
+    $dbconnstr .= ' password=' . $pconfig["password"];
 
-	$pconn = pdoDBConnect($dbconnstr);
+    $pconn = pdoDBConnect($dbconnstr);
 
-	$pquery = "
-	SELECT * , ST_AsText(metadata.geom) AS \"the_geom\",
+    $pquery = "
+    SELECT * , ST_AsText(metadata.geom) AS \"the_geom\",
     CASE WHEN datasets.dataset_udi IS NULL THEN registry.dataset_udi ELSE datasets.dataset_udi END AS dataset_udi,
-	CASE WHEN registry.dataset_title IS NULL THEN title ELSE registry.dataset_title END AS title,
-	CASE WHEN status = 2 THEN 1 WHEN status = 1 THEN 2 ELSE 0 END AS identified,
-	CASE WHEN status = 2 THEN 1 WHEN status = 1 THEN 2 ELSE 0 END AS identified,
-	CASE WHEN registry.registry_id IS NULL THEN 0 ELSE 1 END AS registered,
+    CASE WHEN registry.dataset_title IS NULL THEN title ELSE registry.dataset_title END AS title,
+    CASE WHEN status = 2 THEN 1 WHEN status = 1 THEN 2 ELSE 0 END AS identified,
+    CASE WHEN status = 2 THEN 1 WHEN status = 1 THEN 2 ELSE 0 END AS identified,
+    CASE WHEN registry.registry_id IS NULL THEN 0 ELSE 1 END AS registered,
     CASE WHEN metadata_dl_status = 'Completed' AND metadata_status = 'Accepted'
              THEN 1
          WHEN metadata_dl_status = 'Completed' AND metadata_status != 'None'
              THEN 2
          ELSE 0
-	END AS metadata,
+    END AS metadata,
     CASE WHEN dataset_download_status = 'done' AND access_status = 'None'
              THEN 1
          WHEN dataset_download_status = 'done' AND access_status != 'None'
@@ -91,118 +91,118 @@ if ($udi <> '')
          WHEN dataset_download_status = 'RemotelyHosted' AND access_status != 'None'
              THEN 4
          ELSE 0
-	END AS available
-	FROM registry
-	LEFT OUTER JOIN datasets ON substr(registry.registry_id,0,17) = datasets.dataset_udi
-	LEFT OUTER JOIN metadata on registry.registry_id = metadata.registry_id
-	WHERE registry.registry_id LIKE '$udi%'
-	ORDER BY registry.registry_id DESC
-	LIMIT 1
-	;
-	";
-	
-	$prow = pdoDBQuery($pconn,$pquery);
-	//echo $pquery;
-	//var_dump($prow);
-	
-	$dquery = "select * from datasets where dataset_udi='$udi';";
-	
-	$drow = pdoDBQuery($pconn,$dquery);
-	//echo $pquery;
-	//var_dump($prow);
+    END AS available
+    FROM registry
+    LEFT OUTER JOIN datasets ON substr(registry.registry_id,0,17) = datasets.dataset_udi
+    LEFT OUTER JOIN metadata on registry.registry_id = metadata.registry_id
+    WHERE registry.registry_id LIKE '$udi%'
+    ORDER BY registry.registry_id DESC
+    LIMIT 1
+    ;
+    ";
 
-	//echo "</pre>";
+    $prow = pdoDBQuery($pconn,$pquery);
+    //echo $pquery;
+    //var_dump($prow);
 
-	if ($prow["the_geom"] == null OR $prow == null)
-	{
-		if ($prow["metadata_xml"] == "")
-		{
-			$dsscript = "addImage('$_SERVER[SCRIPT_NAME]/includes/images/nodata.png',0.4);$('#metadatadl').button('disable');dlmap.makeStatic();";
-		}
-		else
-		{
-			$dsscript = "dlmap.addImage('$_SERVER[SCRIPT_NAME]/includes/images/labonly.png',0.4);dlmap.makeStatic();";
-		}
-	}
-	else
-	{
-		$dsscript = 'dlmap.addFeatureFromWKT("'. $prow['the_geom'] .'",{"udi":"'.$prow['dataset_udi'].'"});dlmap.gotoAllFeatures();';
-	}
+    $dquery = "select * from datasets where dataset_udi='$udi';";
 
-	$dbconnstr = 'mysql:host='. $mconfig["host"];
-	$dbconnstr .= ';port=' . $mconfig["port"];
-	$dbconnstr .= ';dbname=' . $mconfig["dbname"];
-	$mconn = new PDO($dbconnstr,
-		$mconfig["username"],
-		$mconfig["password"],
-		array(PDO::ATTR_PERSISTENT => true));
+    $drow = pdoDBQuery($pconn,$dquery);
+    //echo $pquery;
+    //var_dump($prow);
 
-	//$mconn = pdoDBConnect($dbconnstr);
+    //echo "</pre>";
 
-	$mquery = "
-	SET character_set_client = utf8;
-	SET character_set_results = utf8;
-	SELECT * FROM Projects
-	JOIN Programs ON Projects.Program_ID = Programs.Program_ID
-	LEFT OUTER JOIN FundingSource ON  FundingSource.Fund_ID = Programs.Program_FundSrc
-	WHERE Programs.Program_ID = '".$prow["project_id"]."'
-	AND Projects.Project_ID = '".$prow["task_uid"]."'
-	;
-	";
+    if ($prow["the_geom"] == null OR $prow == null)
+    {
+        if ($prow["metadata_xml"] == "")
+        {
+            $dsscript = "addImage('$_SERVER[SCRIPT_NAME]/includes/images/nodata.png',0.4);$('#metadatadl').button('disable');dlmap.makeStatic();";
+        }
+        else
+        {
+            $dsscript = "dlmap.addImage('$_SERVER[SCRIPT_NAME]/includes/images/labonly.png',0.4);dlmap.makeStatic();";
+        }
+    }
+    else
+    {
+        $dsscript = 'dlmap.addFeatureFromWKT("'. $prow['the_geom'] .'",{"udi":"'.$prow['dataset_udi'].'"});dlmap.gotoAllFeatures();';
+    }
 
-	$mrow = pdoDBQuery($mconn,$mquery);
+    $dbconnstr = 'mysql:host='. $mconfig["host"];
+    $dbconnstr .= ';port=' . $mconfig["port"];
+    $dbconnstr .= ';dbname=' . $mconfig["dbname"];
+    $mconn = new PDO($dbconnstr,
+        $mconfig["username"],
+        $mconfig["password"],
+        array(PDO::ATTR_PERSISTENT => true));
 
-	$mquery = "
-	SELECT * FROM People
-	LEFT OUTER JOIN Institutions ON Institutions.Institution_ID = People.People_Institution
-	LEFT OUTER JOIN Departments ON Departments.Department_ID = People.People_Department
-	WHERE People_ID = ".$prow["primary_poc"]."
-	;
-	";
+    //$mconn = pdoDBConnect($dbconnstr);
 
-	//echo $mquery;
+    $mquery = "
+    SET character_set_client = utf8;
+    SET character_set_results = utf8;
+    SELECT * FROM Projects
+    JOIN Programs ON Projects.Program_ID = Programs.Program_ID
+    LEFT OUTER JOIN FundingSource ON  FundingSource.Fund_ID = Programs.Program_FundSrc
+    WHERE Programs.Program_ID = '".$prow["project_id"]."'
+    AND Projects.Project_ID = '".$prow["task_uid"]."'
+    ;
+    ";
 
-	$mprow = pdoDBQuery($mconn,$mquery);
+    $mrow = pdoDBQuery($mconn,$mquery);
 
-	// echo "<pre>";
-	// var_dump($prow);
-	// echo "</pre>";
+    $mquery = "
+    SELECT * FROM People
+    LEFT OUTER JOIN Institutions ON Institutions.Institution_ID = People.People_Institution
+    LEFT OUTER JOIN Departments ON Departments.Department_ID = People.People_Department
+    WHERE People_ID = ".$prow["primary_poc"]."
+    ;
+    ";
+
+    //echo $mquery;
+
+    $mprow = pdoDBQuery($mconn,$mquery);
+
+    // echo "<pre>";
+    // var_dump($prow);
+    // echo "</pre>";
 }
 
 
 
-function transform($xml, $xsl) { 
-	if ($xml <> "" AND $xml != null)
-	{
-	
-		$xml_doc = new DOMDocument();
-		$xml_doc->loadXML($xml);
-		
-		// XSL
-		$xsl_doc = new DOMDocument();
-		$xsl_doc->load($xsl);
-		
-		//var_dump($xsl_doc);
-		
-		// Proc
-		$proc = new XSLTProcessor();
-		$proc->importStylesheet($xsl_doc);
-		$newdom = $proc->transformToDoc($xml_doc);
-		
-		//var_dump($newdom);
-		
-		return $newdom->saveXML();
-	}
-	else
-	{
-		return "No Metadata Available";
-	}
+function transform($xml, $xsl) {
+    if ($xml <> "" AND $xml != null)
+    {
+
+        $xml_doc = new DOMDocument();
+        $xml_doc->loadXML($xml);
+
+        // XSL
+        $xsl_doc = new DOMDocument();
+        $xsl_doc->load($xsl);
+
+        //var_dump($xsl_doc);
+
+        // Proc
+        $proc = new XSLTProcessor();
+        $proc->importStylesheet($xsl_doc);
+        $newdom = $proc->transformToDoc($xml_doc);
+
+        //var_dump($newdom);
+
+        return $newdom->saveXML();
+    }
+    else
+    {
+        return "No Metadata Available";
+    }
 }
 
 
 if ($prow != null)
 {
-	
+
 
 ?>
 
@@ -226,45 +226,45 @@ if ($prow != null)
 var dlmap = new GeoViz();
 
 (function ($) {
-	$(function() {
+    $(function() {
 
-		resizeMap();
-		
-		$( window ).resize(function()
-		{
-			resizeMap();
-		});
-				
-		$("#rawxml").width($(document).width()*.90);
-	
-		$("#tabs").tabs({ heightStyle: "content" });
-		
-		$("#xmlradio").buttonset();
-		
-		$("#xmlraw").click(function() {
-			$("#formatedxml").hide();
-			$("#rawxml").show();
-		});
-		
-		$("#xmlformated").click(function() {
-			$("#formatedxml").show();
-			$("#rawxml").hide();
-		});
+        resizeMap();
 
-		dlmap.initMap('dlolmap',{'onlyOneFeature':false,'allowModify':false,'allowDelete':false,'staticMap':true,'labelAttr':'udi'});
-  
-		$("#downloadds").button().click(function() {
-			showDatasetDownload('<?php echo $udi;?>')
-			//window.location = '<?php echo "$pageLessBaseUrl/data-discovery?filter=$udi";?>';
-		});
-		
-		$("#metadatadl").button().click(function() {
-			window.location = '<?php echo "$pageLessBaseUrl/metadata/$udi"; ?>';
-		});
-		
+        $( window ).resize(function()
+        {
+            resizeMap();
+        });
+
+        $("#rawxml").width($(document).width()*.90);
+
+        $("#tabs").tabs({ heightStyle: "content" });
+
+        $("#xmlradio").buttonset();
+
+        $("#xmlraw").click(function() {
+            $("#formatedxml").hide();
+            $("#rawxml").show();
+        });
+
+        $("#xmlformated").click(function() {
+            $("#formatedxml").show();
+            $("#rawxml").hide();
+        });
+
+        dlmap.initMap('dlolmap',{'onlyOneFeature':false,'allowModify':false,'allowDelete':false,'staticMap':true,'labelAttr':'udi'});
+
+        $("#downloadds").button().click(function() {
+            showDatasetDownload('<?php echo $udi;?>')
+            //window.location = '<?php echo "$pageLessBaseUrl/data-discovery?filter=$udi";?>';
+        });
+
+        $("#metadatadl").button().click(function() {
+            window.location = '<?php echo "$pageLessBaseUrl/metadata/$udi"; ?>';
+        });
+
       
-		
-		$.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
+
+        $.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
             show: {
                 event: "mouseenter focus",
                 solo: true
@@ -278,7 +278,7 @@ var dlmap = new GeoViz();
                 classes: "qtip-default qtip-shadow qtip-tipped"
             }
         });
-        
+
         $("#downloadds").qtip({
             position: {
                 adjust: {
@@ -288,12 +288,12 @@ var dlmap = new GeoViz();
                 at: "top left",
                 viewport: $(window)
             },
-			content: {
-				text: 'Download Dataset'
-			}
+            content: {
+                text: 'Download Dataset'
+            }
         });
-		
-		$("#metadatadl").qtip({
+
+        $("#metadatadl").qtip({
             position: {
                 adjust: {
                     method: "flip flip"
@@ -302,64 +302,59 @@ var dlmap = new GeoViz();
                 at: "top left",
                 viewport: $(window)
             },
-			content: {
-				text: 'Download Metadata'
-			}
+            content: {
+                text: 'Download Metadata'
+            }
         });
-		
-		 $('td[title]').qtip({
-			position: {
-				my: 'right bottom',
-				at: 'middle left',
-				adjust: {
-					x: -2
-				},
-				viewport: $(window)
-			},
-			show: {
-				event: "mouseenter focus",
-				solo: true
-			},
-			hide: {
-				fixed: true,
-				delay: 100
-			},
-			style: {
-				classes: "ui-tooltip-shadow ui-tooltip-tipped"
-			}
-		});
-		
-		$( document ).tooltip();
-		
-	});
-	
-	function resizeMap()
-	{
-		$("#dlolmap").width($(document).width()*.40);
-		mapscreenhgt = $("#dlolmap").width()/4*3;
-		summaryhgt = $("#summary").height()
-		if (mapscreenhgt > summaryhgt)
-		{
-			$("#dlolmap").height(mapscreenhgt)
-		}
-		else
-		{
-			$("#dlolmap").height(summaryhgt)
-		}
-	};
-	
-	$(document).on('imready', function(e) {
-		<?php echo $dsscript;?>
-		//console.log("added");
-	});
+
+        $('td[title]').qtip({
+            position: {
+                my: 'right bottom',
+                at: 'middle left',
+                adjust: {
+                    x: -2
+                },
+                viewport: $(window)
+            },
+            show: {
+                event: "mouseenter focus",
+                solo: true
+            },
+            hide: {
+                fixed: true,
+                delay: 100
+            }
+        });
+
+    });
+
+    function resizeMap()
+    {
+        $("#dlolmap").width($(document).width()*.40);
+        mapscreenhgt = $("#dlolmap").width()/4*3;
+        summaryhgt = $("#summary").height()
+        if (mapscreenhgt > summaryhgt)
+        {
+            $("#dlolmap").height(mapscreenhgt)
+        }
+        else
+        {
+            $("#dlolmap").height(summaryhgt)
+        }
+    };
+
+    $(document).on('imready', function(e) {
+        <?php echo $dsscript;?>
+        //console.log("added");
+    });
 })(jQuery);
 </script>
 
 <div id="dataset_download" style="display: none;">
     <div id="dataset_download_close"><input type="image" src="/data-discovery/includes/images/close.gif" onclick="jQuery('#dataset_download').hide();"></div>
     <div id="dataset_download_content">
-	
-	</div>
+
+    </div>
 </div>
 
 <div id="pre_login" style="display: none;">
@@ -384,11 +379,11 @@ var dlmap = new GeoViz();
                 <td><img src="/data-discovery/includes/images/vbar.png"></td>
                 <td align="center">
                     <div>
-                        <a href="/data-discovery/google-auth"><img src="/data-discovery/includes/images/googleauth.png" alt="google auth logo"></a>
+                        <a href="/auth/openid/google?dest=<?php echo "$_SERVER[REQUEST_URI]";?>"><img src="/data-discovery/includes/images/googleauth.png" alt="google auth logo"></a>
                     </div>
                     <div>
                         Members of the public may use their<br>
-                        <a href="/data-discovery/google-auth">Google login</a> to download data.
+                        <a href="/auth/openid/google?dest=<?php echo "$_SERVER[REQUEST_URI]";?>">Google login</a> to download data.
                     </div>
                 </td>
             </tr>
@@ -400,7 +395,7 @@ var dlmap = new GeoViz();
         </tbody></table>
     </div>
 </div>
-  
+
 <table border="0" width="100%">
 <tr>
 <td width="40%">
@@ -418,60 +413,60 @@ var dlmap = new GeoViz();
 <!--<table width="100%">
 <tr height="100%">
 <td colspan="2"> -->
-	<div id="tabs" style="width:100%">
-		<ul>
-			<li><a href="#tabs-1">Details</a></li>
-			<li><a href="#tabs-2">Metadata</a></li>
-			<!--
-			<li><a href="#tabs-3">Publications</a></li>
-			<li><a href="#tabs-4">Manifest</a></li>
-			-->
-		</ul>
-		<div class="tabb" id="tabs-1">
-		
-			<?php echo $twig->render('details.html', array('pdata' => $prow,'mdata' => $mrow,'mpdata' => $mprow)); ?>
-		</div>
-		<div class="tabb" id="tabs-2" style="overflow:auto;word-wrap:break-word;height:100%;">
-			<div id="xmlradio">
-				<input type="radio" id="xmlformated" name="radio" checked="checked"><label for="xmlformated">Formatted</label>
-				<input type="radio" id="xmlraw" name="radio" ><label for="xmlraw">Raw</label>
-			</div>
-			<p>
-			<div id="formatedxml">
-			<?php 
-			//$xml = file_get_contents("/sftp/data/$udi/$udi.met");
-				
-			//$xml = "/sftp/data/$udi/$udi.met";
-			$xml = '';
-			$xsl = 'xsl/xml-to-html-ISO.xsl';
-			//$xsl = 'xsl/xmlverbatim.xsl';
-			
-			if ($prow <>'')
-			{
-				$xml = $prow["metadata_xml"];
-			}
-			
-			echo transform($xml,$xsl);
-									
-			?>
-			</div>
-			<div id="rawxml" style="display:none;">
-				<?php 
-					$xml = '';
-			
-					$xsl = 'xsl/xmlverbatim.xsl';
-					
-					if ($prow <>'')
-					{
-						$xml = $prow["metadata_xml"];
-					}
-					
-					echo transform($xml,$xsl);
-					
-				?>
-			</div>
-		</p>
-	</div>
+    <div id="tabs" style="width:100%">
+        <ul>
+            <li><a href="#tabs-1">Details</a></li>
+            <li><a href="#tabs-2">Metadata</a></li>
+            <!--
+            <li><a href="#tabs-3">Publications</a></li>
+            <li><a href="#tabs-4">Manifest</a></li>
+            -->
+        </ul>
+        <div class="tabb" id="tabs-1">
+
+            <?php echo $twig->render('details.html', array('pdata' => $prow,'mdata' => $mrow,'mpdata' => $mprow)); ?>
+        </div>
+        <div class="tabb" id="tabs-2" style="overflow:auto;word-wrap:break-word;height:100%;">
+            <div id="xmlradio">
+                <input type="radio" id="xmlformated" name="radio" checked="checked"><label for="xmlformated">Formatted</label>
+                <input type="radio" id="xmlraw" name="radio" ><label for="xmlraw">Raw</label>
+            </div>
+            <p>
+            <div id="formatedxml">
+            <?php
+            //$xml = file_get_contents("/sftp/data/$udi/$udi.met");
+
+            //$xml = "/sftp/data/$udi/$udi.met";
+            $xml = '';
+            $xsl = 'xsl/xml-to-html-ISO.xsl';
+            //$xsl = 'xsl/xmlverbatim.xsl';
+
+            if ($prow <>'')
+            {
+                $xml = $prow["metadata_xml"];
+            }
+
+            echo transform($xml,$xsl);
+
+            ?>
+            </div>
+            <div id="rawxml" style="display:none;">
+                <?php
+                    $xml = '';
+
+                    $xsl = 'xsl/xmlverbatim.xsl';
+
+                    if ($prow <>'')
+                    {
+                        $xml = $prow["metadata_xml"];
+                    }
+
+                    echo transform($xml,$xsl);
+
+                ?>
+            </div>
+        </p>
+    </div>
 </div>
 <!--</td>
 </tr>
@@ -481,18 +476,18 @@ var dlmap = new GeoViz();
 }
 elseif ($drow != null)
 {
-	#Has DIF, but NO registry
+    #Has DIF, but NO registry
 ?>
 <p>
 <h1>Dataset not found</h1>
-	This dataset has been identified, but has not yet been registered.<br/>
-	If you are experiencing difficulties, please contact <a href="mailto:griidc@gomri.org">GRIIDC</a>.
+    This dataset has been identified, but has not yet been registered.<br/>
+    If you are experiencing difficulties, please contact <a href="mailto:griidc@gomri.org">GRIIDC</a>.
 </p>
 <?php
 }
 else
-{	
-	#Has NO DIF, and NO registry
+{
+    #Has NO DIF, and NO registry
 ?>
 <p>
 <h1>Dataset not found</h1>
