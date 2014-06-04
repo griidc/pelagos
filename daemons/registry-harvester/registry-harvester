@@ -336,6 +336,8 @@ for my $entry (@{$data->{'entry'}}) {
     # set timestamp
     $reg->{'submittimestamp'} = strftime '%Y-%m-%dT%H:%M:%S', localtime;
 
+    for my $col (@regCols) { $reg->{$col} = undef if ref $reg->{$col}; }
+
     $count++;
 
     # make sure we have an approved DIF
