@@ -390,9 +390,12 @@ for my $entry (@{$data->{'entry'}}) {
         for my $col (@regCols) {
             next if $col eq 'registry_id' or $col eq 'submittimestamp';
 
-            $ref->{$col} =~ s/[\r]//g;
-            $reg->{$col} =~ s/[\r]//g;
-            if ($reg->{$col} ne $ref->{$col}) {
+            $ref->{$col} =~ s/[\r]//g if $ref->{$col};
+            $reg->{$col} =~ s/[\r]//g if $reg->{$col};
+            if (not defined $reg->{$col} and defined$ref->{$col} or
+                defined $reg->{$col} and not defined$ref->{$col} or
+                defined $reg->{$col} and defined$ref->{$col} and
+                $reg->{$col} ne $ref->{$col}) {
                 # save update
                 $updates{$col} = $reg->{$col};
                 if ($opts{'v'}) {
