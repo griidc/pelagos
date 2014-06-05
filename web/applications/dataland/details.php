@@ -369,11 +369,11 @@ var dlmap = new GeoViz();
             <tr>
                 <td align="center">
                     <div id="griidc-logo">
-                        <a class="redir_url" href="/cas?destination=data-discovery/download_redirect/R1.x140.125%3A0006%3Ffinal_destination%3D/data-discovery"><img src="/data-discovery/includes/images/GRIIDC-logo.png" alt="GRIIDC logo"></a>
+                        <a class="redir_url" href="/auth/cas?dest=<?php echo "$_SERVER[REQUEST_URI]";?>"><img src="/data-discovery/includes/images/GRIIDC-logo.png" alt="GRIIDC logo"></a>
                     </div>
                     <div>
                         GoMRI Users, please use your<br>
-                        <a class="redir_url" href="/cas?destination=data-discovery/download_redirect/R1.x140.125%3A0006%3Ffinal_destination%3D/data-discovery">GRIIDC login</a> to download data.
+                        <a class="redir_url" href="/auth/cas?dest=<?php echo "$_SERVER[REQUEST_URI]";?>">GRIIDC login</a> to download data.
                     </div>
                 </td>
                 <td><img src="/data-discovery/includes/images/vbar.png"></td>
