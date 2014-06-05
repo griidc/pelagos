@@ -108,7 +108,7 @@ while (my $r = $sth->fetchrow_hashref()) {
                 else {
                     my $sth2 = $dbh->prepare("UPDATE registry SET dataset_download_status = ? WHERE registry_id = ?;");
                     writelog("[$udi] failed to download data file from $url_data (" . $response->status_line . ")");
-                    $sth2->execute('dl_error',$reg_id) or die "Couldn't execute statement: " . $sth2->errstr;
+                    $sth2->execute('Error',$reg_id) or die "Couldn't execute statement: " . $sth2->errstr;
                     $data_notify->{'error'}->{$reg_id} = { url => $url_data, status => $response->status_line };
                 }
             }
