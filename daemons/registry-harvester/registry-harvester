@@ -401,8 +401,12 @@ for my $entry (@{$data->{'entry'}}) {
                 # save update
                 $updates{$col} = $reg->{$col};
                 if ($opts{'v'}) {
-                    print "     $col (db): |$ref->{$col}|\n";
-                    print "    $col (xml): |$reg->{$col}|\n";
+                    my $db_val = $ref->{$col};
+                    $db_val = '<NULL>' if not defined $db_val;
+                    my $xml_val = $reg->{$col};
+                    $xml_val = '<NULL>' if not defined $xml_val;
+                    print "     $col (db): |$db_val|\n";
+                    print "    $col (xml): |$xml_val|\n";
                 }
             }
         }
