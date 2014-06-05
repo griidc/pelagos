@@ -82,9 +82,9 @@ if ($udi <> '')
              THEN 2
          ELSE 0
     END AS metadata,
-    CASE WHEN dataset_download_status = 'done' AND access_status = 'None'
+    CASE WHEN dataset_download_status = 'Completed' AND access_status = 'None'
              THEN 1
-         WHEN dataset_download_status = 'done' AND access_status != 'None'
+         WHEN dataset_download_status = 'Completed' AND access_status != 'None'
              THEN 2
          WHEN dataset_download_status = 'RemotelyHosted' AND access_status = 'None'
              THEN 3
