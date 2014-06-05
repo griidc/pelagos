@@ -37,7 +37,7 @@ function getTasksAndDatasets($projects) {
                     ELSE 0
                END AS metadata,
 
-               CASE WHEN dataset_download_status = 'done' THEN
+               CASE WHEN dataset_download_status = 'Completed' THEN
                         CASE WHEN access_status = 'None' THEN 10
                              WHEN access_status = 'Approval' THEN 9
                              WHEN access_status = 'Restricted' THEN 8
