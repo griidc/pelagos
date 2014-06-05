@@ -1,49 +1,31 @@
 <?php
 
-require_once '/usr/local/share/GRIIDC/php/ldap.php';
-require_once '/usr/local/share/GRIIDC/php/drupal.php';
-require_once '/usr/local/share/GRIIDC/php/aliasIncludes.php';
-require_once '/usr/local/share/GRIIDC/php/dif-registry.php';
-require_once '/usr/local/share/GRIIDC/php/griidcMailer.php';
+include_once '/usr/local/share/GRIIDC/php/aliasIncludes.php';
 
+drupal_add_js('/includes/jquery-validation/jquery.validate.js',array('type'=>'external'));
+drupal_add_js('includes/js/dif.js',array('type'=>'external'));
+drupal_add_js('includes/js/spin.min.js',array('type'=>'external'));
+drupal_add_css('includes/css/dif.css',array('type'=>'external'));
+drupal_add_js('//cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js',array('type'=>'external'));
+drupal_add_js('//maps.google.com/maps/api/js?v=3&sensor=false',array('type'=>'external'));
+drupal_add_js('/includes/geoviz/geoviz.js',array('type'=>'external'));
+drupal_add_js('/~mvandeneijnden/jquery/vakata-jstree-b446e66/dist/jstree.min.js',array('type'=>'external'));
+drupal_add_css('/~mvandeneijnden/jquery/vakata-jstree-b446e66/dist/themes/default/style.min.css',array('type'=>'external'));
+drupal_add_library('system', 'ui.datepicker');
+drupal_add_library('system', 'ui.widget');
+drupal_add_library('system', 'ui.dialog');
+drupal_add_library('system', 'ui.tooltip');
+//drupal_add_library('system', 'ui.draggable');
+drupal_add_library('system', 'ui.autocomplete');
 
+include 'dif.php';
 
-require_once 'lib/functions.php';
-
-$isGroupAdmin = false;
-
-$GLOBALS['DIF'] = true;
-
-if (!file_exists('config.php')) {
-    echo 'Error: config.php is missing. Please see config.php.example for an example config file.';
-    exit;
+if (getUID() == "")
+{
+    drupal_set_message('Please log in first!','warning',false);
+    echo '<h1>Please login in first to use this form!</h1>';
 }
-require_once 'config.php';
-
-$uid = getUID();
-if (!isset($uid)) {
-    $currentpage = urlencode(preg_replace('/^\//','',$_SERVER['REQUEST_URI']));
-    drupal_set_message("You must be logged in to access the Dataset Information Form.<p><a href='/cas?destination=$currentpage' style='font-weight:bold;'>Log In</a></p>",'error');
-}
-else {
+else
+{showDIFForm();}
 ?>
-
-<table style="margin: 0; padding: 20; border: 5; outline: 0; font-size: 100%; vertical-align: top; width:100%;">
-    <tr>
-        <td style="vertical-align: top; width:60%" >
-            <?php require_once 'dif.php'; ?>
-        </td>
-        <td>&nbsp;&nbsp;</td>
-        <td style="vertical-align: top; width:40%; height:2500px;" >
-            <div style="position:relative;">
-                <div style="position:absolute; left:0px; right:10px;">
-                    <?php require_once '/usr/local/share/GRIIDC/php/sidebar.php'; ?>
-                </div>
-            </div>
-        </td>
-    </tr>
-</table>
-
-<?php
-}
-?>
+<div class="modal" id="spinner"></div>
