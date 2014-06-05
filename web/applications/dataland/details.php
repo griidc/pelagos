@@ -52,7 +52,7 @@ $URI = preg_split('/\?/',$_SERVER['REQUEST_URI']);
 
 $URIs = preg_split('/\//',$_SERVER['REQUEST_URI']);
 
-$udi = $URIs[2];
+$udi = urldecode($URIs[2]);
 
 if ($udi <> '')
 {
