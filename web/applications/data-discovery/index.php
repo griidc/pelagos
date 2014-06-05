@@ -134,7 +134,7 @@ $app->get('/datasets/:filter/:by/:id/:geo_filter', function ($filter,$by,$id,$ge
     $stash['registered_datasets'] = array();
     $stash['identified_datasets'] = array();
 
-    $reg_filters = array('dataset_download_statuses=done,RemotelyHosted','registry_id!=00%');
+    $reg_filters = array('dataset_download_statuses=Completed,RemotelyHosted','registry_id!=00%');
 
     if (!empty($by)) {
         if ($by == 'otherSources') {
@@ -164,7 +164,7 @@ $app->get('/datasets/:filter/:by/:id/:geo_filter', function ($filter,$by,$id,$ge
         }
     }
 
-    $dif_filters = array("$by=$id",'dataset_download_statuses!=done,RemotelyHosted','status=2');
+    $dif_filters = array("$by=$id",'dataset_download_statuses!=Completed,RemotelyHosted','status=2');
 
     if (!empty($geo_filter) and $geo_filter != 'undefined') {
         $reg_filters[] = "geo_filter=$geo_filter";
