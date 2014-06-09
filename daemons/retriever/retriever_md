@@ -12,7 +12,7 @@ use POSIX qw(strftime);
 use LWP::UserAgent;
 use LWP::Simple qw(getstore);
 use LWP::Simple::Cookies;
-use FileHandle;
+use IO::File;
 
 umask 0022;
 
@@ -30,11 +30,10 @@ my $conf = Config::PHPINI->read('/etc/griidc.ini');
 my $conf_notifications = Config::PHPINI->read('/etc/griidc/notifications.ini');
 $conf->{'notifications'} = $conf_notifications->{'retriever'} if exists $conf_notifications->{'retriever'};
 
-my $log = FileHandle->new;
-
 my $logfile  = "$conf->{paths}->{log}/retriever_md";
 
-$log->open(">>$logfile") or die "cannot open log file $logfile: $!";
+my $log = IO::File->new;
+$log->open($logfile,'>>') or die "cannot open log file $logfile: $!";
 $log->autoflush(1);
 
 writelog("retriever_md starting");
@@ -50,19 +49,13 @@ my $sth;
 
 # get all registry entries with url_metadata set, and no metadata download status
 $sth = $dbh->prepare("SELECT registry_id, dataset_udi, url_metadata, userid, dataset_title
-                      FROM registry r
-                      INNER JOIN (
-                                  SELECT MAX(registry_id) AS MaxID
-                                  FROM registry
-                                  GROUP BY substr(registry_id,1,16)
-                                 ) m
-                      ON r.registry_id = m.MaxID
+                      FROM registry_view
                       WHERE
                           substr(registry_id,1,2) != '00' AND
                           metadata_dl_status = 'None' AND
-                          url_metadata LIKE 'http://%' OR
-                          url_metadata LIKE 'https://%' OR
-                          url_metadata LIKE 'ftp://%'
+                          (url_metadata LIKE 'http://%' OR
+                           url_metadata LIKE 'https://%' OR
+                           url_metadata LIKE 'ftp://%')
                       ORDER BY dataset_udi");
 $sth->execute();
 
@@ -398,7 +391,7 @@ writelog("retriever_md finished");
 # remove run file
 unlink $runfile or die "could not remove run file $runfile: $!";
 
-$log->close;
+undef $log;
 
 sub writelog {
     my $message = shift;
