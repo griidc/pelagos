@@ -26,7 +26,7 @@ if ($user) {
 
     $homeDir = NULL;
     $gidNumber = NULL;
-    $sftpGroup = NULL;
+    $groupName = NULL;
 
     $ldap = ldap_connect('ldap://triton.tamucc.edu');
 
@@ -36,26 +36,26 @@ if ($user) {
         $userEntries = ldap_get_entries($ldap, $userResult);
         $userEntry = $userEntries[0];
         if (array_key_exists('homedirectory',$userEntry)) {
-            $homeDir = $userEntry['homedirectory'][0];
+            $homeDir = preg_replace('/^\//','',$userEntry['homedirectory'][0]);
         }
         if (array_key_exists('gidnumber',$userEntry)) {
             $gidNumber = $userEntry['gidnumber'][0];
         }
 
-        $groupResult = ldap_search($ldap, "ou=SFTP,ou=applications,dc=griidc,dc=org", "(objectClass=posixGroup)", array("cn","gidNumber","memberUid"));
+        $groupResult = ldap_search($ldap, "ou=posixGroups,dc=griidc,dc=org", "(objectClass=posixGroup)", array("cn","gidNumber","memberUid"));
 
         if (ldap_count_entries($ldap, $groupResult) > 0) {
             $groupEntries = ldap_get_entries($ldap, $groupResult);
             foreach ($groupEntries as $group) {
                 if (is_array($group)) {
                     if (!is_null($gidNumber) and array_key_exists('gidnumber',$group) and $group['gidnumber'][0] == $gidNumber) {
-                        $sftpGroup = $group['cn'][0];
+                        $groupName = $group['cn'][0];
                         break;
                     }
                     if (array_key_exists('memberuid',$group) and is_array($group['memberuid'])) {
                         foreach ($group['memberuid'] as $uid) {
                             if ($uid == $user) {
-                                $sftpGroup = $group['cn'][0];
+                                $groupName = $group['cn'][0];
                             }
                         }
                     }
@@ -64,21 +64,14 @@ if ($user) {
         }
     }
 
-    if (!is_null($sftpGroup) and preg_match('/^(?:(.*)-)?sftp-users$/',$sftpGroup,$matches)) {
+    if (!is_null($groupName) and $groupName == 'external-users') {
         $sftpuser = true;
-        $chrootDir = "/sftp/chroot";
-        if (count($matches) < 2) {
-            $chrootDir .= "/pub";
-        }
-        else {
-            $chrootDir .= "/$matches[1]";
-        }
-        $chrootDir .= "/$user";
+        $chrootDir = "/home/incoming/chroot/$user";
         if (is_dir($chrootDir)) { $sftpdir = true; }
     }
     elseif (isset($homeDir)) {
         $sftpuser = true;
-        $chrootDir = $homeDir;
+        $chrootDir = "/$homeDir";
         if (is_dir($chrootDir)) { $sftpdir = true; }
     }
 
