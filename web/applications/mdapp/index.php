@@ -379,12 +379,12 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
         if(isset($loc_3[0][0])) {
             $loc_3_val = $loc_3[0][0];
             if(!preg_match("/$udi$/",$loc_3_val)) { # URL must end with UDI
-                throw new RuntimeException('xpath test failed:  UDI in filename uploaded does not match UDI referenced in XML. (2)');
+                $msg = 'GRIIDC standards:  UDI in filename uploaded does not match UDI referenced in XML at /gmi:MI_Metadata/gmd:distributionInfo[1]/gmd:MD_Distribution[1]/gmd:distributor[1]/gmd:MD_Distributor[1]/gmd:distributorTransferOptions[1]/gmd:MD_DigitalTransferOptions[1]/gmd:onLine[1]/gmd:CI_OnlineResource[1]/gmd:linkage[1]/gmd:URL[1]';
+                drupal_set_message($msg,'warning');
             }
         } else {
-            throw new RuntimeException('GRIIDC standard failed:  UDI must be referenced in /gmi:MI_Metadata/gmd:distributionInfo[1]/gmd:MD_Distribution[1]/gmd:distributor[1]/gmd:MD_Distributor[1]/gmd:distributorTransferOptions[1]/gmd:MD_DigitalTransferOptions[1]/gmd:onLine[1]/gmd:CI_OnlineResource[1]/gmd:linkage[1]/gmd:URL[1]');
-        }
-
+            $msg = 'GRIIDC standards:  UDI not found referenced at /gmi:MI_Metadata/gmd:distributionInfo[1]/gmd:MD_Distribution[1]/gmd:distributor[1]/gmd:MD_Distributor[1]/gmd:distributorTransferOptions[1]/gmd:MD_DigitalTransferOptions[1]/gmd:onLine[1]/gmd:CI_OnlineResource[1]/gmd:linkage[1]/gmd:URL[1]';
+            drupal_set_message($msg,'warning');
         // Determine geometry type
         if ($geo = $xml->xpath('/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:geographicElement[1]/gmd:EX_BoundingPolygon[1]/gmd:polygon[1]/gml:Polygon[1]')) {
             // Polygon - Ideally this is case
