@@ -149,8 +149,8 @@ if ($_POST)
 
         if (!$_SESSION['submitok']) {
             if ($servertype == "upload") {
-                if (!file_exists("/sftp/upload/$uid")) mkdir("/sftp/upload/$uid");
-                if (!file_exists("/sftp/upload/$uid/incoming")) mkdir("/sftp/upload/$uid/incoming");
+                if (!file_exists("/home/incoming/upload/$uid")) mkdir("/home/incoming/upload/$uid");
+                if (!file_exists("/home/incoming/upload/$uid/incoming")) mkdir("/home/incoming/upload/$uid/incoming");
 
                 $data_file_path = '';
                 if (array_key_exists('upload_dataurl',$_POST)) $data_file_path = $_POST['upload_dataurl'];
@@ -159,8 +159,8 @@ if ($_POST)
                         echo "Error uploading data file: " . $_FILES['datafile']['error'] . "<br>";
                     }
                     else {
-                        move_uploaded_file($_FILES["datafile"]["tmp_name"],"/sftp/upload/$uid/incoming/" . $_FILES["datafile"]["name"]);
-                        $data_file_path = "file:///sftp/upload/$uid/incoming/" . $_FILES["datafile"]["name"];
+                        move_uploaded_file($_FILES["datafile"]["tmp_name"],"/home/incoming/upload/$uid/incoming/" . $_FILES["datafile"]["name"]);
+                        $data_file_path = "file:///home/incoming/upload/$uid/incoming/" . $_FILES["datafile"]["name"];
                     }
                 }
 
@@ -173,8 +173,8 @@ if ($_POST)
                         echo "Error upload metadata file: " . $_FILES['metadatafile']['error'] . "<br>";
                     }
                     else {
-                        move_uploaded_file($_FILES["metadatafile"]["tmp_name"],"/sftp/upload/$uid/incoming/" . $_FILES["metadatafile"]["name"]);
-                        $metadata_file_path = "file:///sftp/upload/$uid/incoming/" . $_FILES["metadatafile"]["name"];
+                        move_uploaded_file($_FILES["metadatafile"]["tmp_name"],"/home/incoming/upload/$uid/incoming/" . $_FILES["metadatafile"]["name"]);
+                        $metadata_file_path = "file:///home/incoming/upload/$uid/incoming/" . $_FILES["metadatafile"]["name"];
                     }
                 }
 
