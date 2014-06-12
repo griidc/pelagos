@@ -783,7 +783,12 @@ function GeoViz()
 			addFeature.attributes = Attributes;
 		}
 				
-		vlayer.addFeatures(addFeature);
+		try {
+            vlayer.addFeatures(addFeature);
+        }
+        catch (err) {
+            console.debug(err);
+        }
 		
 		return addFeature;
 	}
