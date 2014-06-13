@@ -353,7 +353,10 @@ sub getdata {
     mkdir($conf->{'paths'}->{'retriever'}) or die $! if !-d $conf->{'paths'}->{'retriever'};
     my $filepath = "$conf->{paths}->{retriever}/$udi.dat";
     my $resp_code = getstore($url_data,$filepath);
-    if ($!) {
+    if ($!
+        # workaround for getstore bug (https://rt.cpan.org/Public/Bug/Display.html?id=96429)
+        and not ($! eq 'Inappropriate ioctl for device' and -f $filepath and -s $filepath < 760)
+       ) {
         my $errmsg = "[$udi] unable to fetch $url_data to $filepath ($!)";
         print STDERR "$errmsg\n";
         writelog($errmsg);
