@@ -7,10 +7,10 @@ use Mail::Sendmail;
 use File::Copy;
 use Net::LDAP;
 use POSIX qw(strftime);
-use IO::Handle;
 use LWP::UserAgent;
 use LWP::Simple qw(getstore);
 use LWP::Simple::Cookies;
+use IO::File;
 
 umask 0022;
 
@@ -20,7 +20,8 @@ $conf->{'notifications'} = $conf_notifications->{'retriever'} if exists $conf_no
 
 my $logfile  = "$conf->{paths}->{log}/retriever_data";
 
-open(my $log,'>>',$logfile) or die "cannot open log file $logfile: $!";
+my $log = IO::File->new;
+$log->open($logfile,'>>') or die "cannot open log file $logfile: $!";
 $log->autoflush(1);
 
 writelog("retriever starting");
@@ -288,7 +289,7 @@ for my $email (keys %{$conf->{'notifications'}}) {
 }
 
 writelog("retriever finished");
-close $log;
+undef $log;
 
 sub writelog {
     my $message = shift;
