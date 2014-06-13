@@ -173,20 +173,6 @@ function MapWizard(json)
             noSpatial();
         });
         
-        if ($(gmlField).val() == "!")
-        {
-            //$("#geoWizard").dialog( "option", "width", $(window).width()*.8);
-            //$("#geoWizard").dialog( "option", "height", $(window).height()*.8);
-            //$("#geoWizard").load('includes/metamap.html');
-            //$("#geoWizard").html("");
-            $("#geoWizard").dialog("open");
-            drawTheMap =  true;
-        }
-        else
-        {
-            
-            
-        }
     }
     
     function hasSpatial(Spatial)
@@ -262,7 +248,7 @@ function MapWizard(json)
         setEvents();
         fixMapToolHeight();
         
-        if ($(gmlField).val() != "" && !featureSend)
+        if ($(gmlField).val() != "")// && !featureSend)
         {
             //addFeatureFromcoordinateList($(gmlField).val());
             
