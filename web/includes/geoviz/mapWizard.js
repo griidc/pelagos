@@ -269,7 +269,7 @@ function MapWizard(json)
             wizGeoViz.gmlToWKT($(gmlField).val());
             
             $('#olmap').on('gmlConverted', function(e, eventObj) {
-                debugger;
+                //debugger;
                 var addedFeature = wizGeoViz.addFeatureFromWKT(eventObj);
                 $('#geoWizard #coordlist').val(wizGeoViz.getCoordinateList(addedFeature.id));
             });
@@ -597,8 +597,8 @@ function MapWizard(json)
     
     function noSpatialClose()
     {
-        //$("#wizDescForm").validate();
-        debugger;
+        $("#wizDescForm").validate();
+        //debugger;
         
         
     }

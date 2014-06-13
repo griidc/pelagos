@@ -887,32 +887,32 @@ function GeoViz()
 		if ((LatLong == pointList.length))
 		{
 			//console.log('For Sure Lat:Long');
-			return orderEnum.LATLONG;
+			return this.orderEnum.LATLONG;
 		}
 		else if ((LongLat == pointList.length))
 		{
 			//console.log('For Sure Long:Lat');
-			return orderEnum.LONGLAT;
+			return this.orderEnum.LONGLAT;
 		}
 		else if (LongLat > 0 && LatLong > 0)
 		{
 			//console.log('Unknown Mixed');
-			return orderEnum.MIXED;
+			return this.orderEnum.MIXED;
 		}
 		else if ((LatLong / pointList.length) > (LongLat / pointList.length))
 		{
 			//console.log('Most Likely Lat:Long');
-			return orderEnum.LATLONGML;
+			return this.orderEnum.LATLONGML;
 		}
 		else if ((LatLong / pointList.length) < (LongLat / pointList.length))
 		{
 			//console.log('Most Likely Long:Lat');
-			return orderEnum.LONGLATML;
+			return this.orderEnum.LONGLATML;
 		}
 		else if (LongLat == 0 && LatLong == 0)
 		{
 			//console.log('Really Unknown');
-			return orderEnum.UNKNOWN;
+			return this.orderEnum.UNKNOWN;
 		}
 	}
 	
