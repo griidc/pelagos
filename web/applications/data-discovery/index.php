@@ -697,7 +697,7 @@ $app->get('/package/download/:udis', function ($udis) use ($app) {
 $app->run();
 
 function getHashes($udi) {
-    $sql = "select fs_hash_md5, fs_hash_sha1, fs_hash_sha256 from registry_view where 
+    $sql = "select fs_md5_hash, fs_sha1_hash, fs_sha256_hash from registry_view where 
             dataset_udi = ?";
     $dbms = OpenDB("GOMRI_RO");
     $data = $dbms->prepare($sql);
