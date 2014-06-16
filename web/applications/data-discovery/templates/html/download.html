@@ -50,19 +50,29 @@
     <strong>Filename:</strong> {{dataset.dataset_filename}}<br />
     <strong>Size:</strong> {{filesize}}<br />
     <strong>Estimated Download Time:</strong> <span id="dl_time">calculating...</span></p>
+    <table border='0'>
+    <tr>
+        <th colspan='2'>Datafile Checksums</th>
+    </tr>
+    <tr>
+        <td>md5</td><td>&nbsp; {{fs_hash_md5}}</td>
+    </tr>
+    <tr>
+        <td>sha1</td><td>&nbsp; {{fs_hash_sha1}}</td>
+    </tr>
+    <tr>
+        <td>sha256</td><td>&nbsp; {{fs_hash_sha256}}</td>
+    </tr>
+    </table>
 </div>
 <div style="border: 1px solid #aaa; padding: 10px; border-radius: 4px; margin-top: 20px">
-<p>
-To cite a data on GRIIDC repository, you may wish to use the following format:<br />
-</p>
-<p>
+<strong><i>Citation suggestion:</i></strong><br />
 {{dataset.dataset_originator}},
 {{dataset.title}},
 {{dataset.year}}.
 Distributed by: Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC), Harte Research Institute, Texas A&amp;M
 University-Corpus Christi.
-griidc:{{dataset.udi}}</font>
-</p>
+griidc:{{dataset.udi}}
 </div>
 
 <div style="border: 1px solid #aaa; padding: 10px; margin-top: 20px; border-radius: 4px;">

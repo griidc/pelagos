@@ -411,6 +411,7 @@ $app->get('/download/:udi', function ($udi) use ($app) {
         $datasets = get_identified_datasets(getDBH('GOMRI'),array("udi=$udi"));
     }
     $dataset = $datasets[0];
+    list($fs_hash_md5,$fs_hash_sha1,$fs_hash_sha256) = preg_split("/\|/",getHashes($udi));
 
     if ($dataset['access_status'] == "Restricted") {
         $stash['error_message'] = "This dataset is restricted for author use only.";
@@ -433,6 +434,9 @@ $app->get('/download/:udi', function ($udi) use ($app) {
         $stash['bytes'] = filesize($dat_file);
         $stash['filesize'] = bytes2filesize($stash['bytes'],1);
         $stash['filt'] = $app->request()->get('filter');
+        $stash['fs_hash_md5'] = $fs_hash_md5;
+        $stash['fs_hash_sha1'] = $fs_hash_sha1;
+        $stash['fs_hash_sha256'] = $fs_hash_sha256;
         if((isset($_SESSION['guestAuthUser']) and ($_SESSION['guestAuthUser'] == true))) {
             $stash['guest']=1;
         } else {
@@ -692,4 +696,21 @@ $app->get('/package/download/:udis', function ($udis) use ($app) {
 
 $app->run();
 
+function getHashes($udi) {
+    $sql = "select fs_hash_md5, fs_hash_sha1, fs_hash_sha256 from registry_view where 
+            dataset_udi = ?";
+    $dbms = OpenDB("GOMRI_RO");
+    $data = $dbms->prepare($sql);
+    $data->execute(array($udi));
+    $raw_data = $data->fetch();
+    $md5    = '';
+    $sha1   = '';
+    $sha256 = '';
+    if ($raw_data) {
+        $md5    = $raw_data[0];
+        $sha1   = $raw_data[1];
+        $sha256 = $raw_data[2];
+    }
+    return "$md5|$sha1|$sha256";
+}
 ?>
