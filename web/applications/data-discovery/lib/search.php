@@ -47,9 +47,13 @@ function add_download_size(&$dataset) {
 function add_project_info(&$dataset) {
     if ($dataset['project_id']) {
         $project = getProjectDetails(getDBH('RPIS'),array("projectId=$dataset[project_id]"));
-        $dataset['project'] = $project[0];
+        if (count($project) > 0) {
+            $dataset['project'] = $project[0];
+        }
         $pi = getPeopleDetails(getDBH('RPIS'),array("projectId=$dataset[project_id]",'roleId=1'));
-        $dataset['pi'] = $pi[0];
+        if (count($pi) > 0) {
+            $dataset['pi'] = $pi[0];
+        }
     }
 }
 
