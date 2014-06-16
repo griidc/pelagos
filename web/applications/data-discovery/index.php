@@ -111,7 +111,6 @@ function index($app) {
     drupal_add_js('/tree/js/tree.js',array('type'=>'external'));
     drupal_add_js("/$GLOBALS[PAGE_NAME]/js/search.js",array('type'=>'external'));
     drupal_add_js("/$GLOBALS[PAGE_NAME]/js/package.js",array('type'=>'external'));
-    drupal_add_js("/$GLOBALS[PAGE_NAME]/js/logins.js",array('type'=>'external'));
     drupal_add_library('system', 'jquery.cookie');
     drupal_add_css("/$GLOBALS[PAGE_NAME]/css/search.css",array('type'=>'external'));
     drupal_add_css("/$GLOBALS[PAGE_NAME]/includes/css/scrollbars.css",array('type'=>'external'));
