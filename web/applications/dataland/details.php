@@ -20,9 +20,8 @@ drupal_add_library('system', 'ui.button');
 drupal_add_css("$_SERVER[SCRIPT_NAME]/includes/css/details.css",array('type'=>'external'));
 drupal_add_js('/includes/openlayers/lib/OpenLayers.js',array('type'=>'external'));
 drupal_add_js('//maps.google.com/maps/api/js?v=3&sensor=false',array('type'=>'external'));
-drupal_add_js('/includes/geoviz/geoviz.js',array('type'=>'external'));
+drupal_add_js('/geoviz/js/geoviz.js','external');
 drupal_add_js('/data-discovery/js/search.js',array('type'=>'external'));
-drupal_add_js('/data-discovery/js/logins.js',array('type'=>'external'));
 
 drupal_add_css("$_SERVER[SCRIPT_NAME]/includes/css/status.css",array('type'=>'external'));
 
