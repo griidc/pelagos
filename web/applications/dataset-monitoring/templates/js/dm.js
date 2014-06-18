@@ -71,7 +71,7 @@ function showProjects(by,id) {
                     delay: 100
                 },
                 style: {
-                    classes: "ui-tooltip-shadow ui-tooltip-tipped"
+                    classes: "qtip-default qtip-tipped"
                 }
             });
             $('#content .overview th[title]').qtip({
@@ -89,7 +89,7 @@ function showProjects(by,id) {
                     delay: 100
                 },
                 style: {
-                    classes: "ui-tooltip-shadow ui-tooltip-tipped"
+                    classes: "qtip-default qtip-tipped"
                 }
             });
             $('#content .overview td.details').each(function() {
@@ -117,7 +117,7 @@ function showProjects(by,id) {
                         delay: 100
                     },
                     style: {
-                        classes: "ui-tooltip-shadow ui-tooltip-tipped"
+                        classes: "qtip-default qtip-tipped"
                     }
                 });
             });
