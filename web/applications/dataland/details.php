@@ -4,9 +4,7 @@ ini_set("display_errors", 1);
 
 include_once '/usr/local/share/GRIIDC/php/aliasIncludes.php';
 
-drupal_add_css('/dif/includes/css/overwrite.css',array('type'=>'external'));
 drupal_add_js('/includes/jquery-validation/jquery.validate.js',array('type'=>'external'));
-//drupal_add_js('/includes/qTip2/jquery.qtip.min.js',array('type'=>'external'));
 
 drupal_add_css("$_SERVER[SCRIPT_NAME]/includes/css/xmlverbatim.css",array('type'=>'external'));
 drupal_add_css('/includes/qTip2/jquery.qtip.min.css',array('type'=>'external'));
@@ -72,31 +70,43 @@ if ($udi <> '')
     SELECT * , ST_AsText(metadata.geom) AS \"the_geom\",
     CASE WHEN datasets.dataset_udi IS NULL THEN registry.dataset_udi ELSE datasets.dataset_udi END AS dataset_udi,
     CASE WHEN registry.dataset_title IS NULL THEN title ELSE registry.dataset_title END AS title,
-    CASE WHEN status = 2 THEN 1 WHEN status = 1 THEN 2 ELSE 0 END AS identified,
-    CASE WHEN status = 2 THEN 1 WHEN status = 1 THEN 2 ELSE 0 END AS identified,
-    CASE WHEN registry.registry_id IS NULL THEN 0 ELSE 1 END AS registered,
-    CASE WHEN metadata_dl_status = 'Completed' AND metadata_status = 'Accepted'
-             THEN 1
-         WHEN metadata_dl_status = 'Completed' AND metadata_status != 'None'
-             THEN 2
+
+    CASE WHEN status = 2 THEN 10
+         WHEN status = 1 THEN 1
+         ELSE 0
+    END AS identified,
+
+    CASE WHEN registry.registry_id IS NULL OR url_data IS NULL THEN 0
+         ELSE 10
+    END AS registered,
+
+    CASE WHEN metadata_dl_status = 'Completed' THEN
+             CASE WHEN metadata_status = 'Accepted' THEN 10
+                  WHEN metadata_status = 'InReview' THEN 2
+                  ELSE 1
+             END
          ELSE 0
     END AS metadata,
-    CASE WHEN dataset_download_status = 'Completed' AND access_status = 'None'
-             THEN 1
-         WHEN dataset_download_status = 'Completed' AND access_status != 'None'
-             THEN 2
-         WHEN dataset_download_status = 'RemotelyHosted' AND access_status = 'None'
-             THEN 3
-         WHEN dataset_download_status = 'RemotelyHosted' AND access_status != 'None'
-             THEN 4
+
+    CASE WHEN dataset_download_status = 'Completed' THEN
+             CASE WHEN access_status = 'None' THEN 10
+                  WHEN access_status = 'Approval' THEN 9
+                  WHEN access_status = 'Restricted' THEN 8
+                  ELSE 0
+             END
+         WHEN dataset_download_status = 'RemotelyHosted' THEN
+             CASE WHEN access_status = 'None' THEN 7
+                  WHEN access_status = 'Approval' THEN 6
+                  WHEN access_status = 'Restricted' THEN 5
+                  ELSE 0
+             END
          ELSE 0
     END AS available
-    FROM registry
+
+    FROM registry_view registry
     LEFT OUTER JOIN datasets ON substr(registry.registry_id,0,17) = datasets.dataset_udi
     LEFT OUTER JOIN metadata on registry.registry_id = metadata.registry_id
     WHERE registry.registry_id LIKE '$udi%'
-    ORDER BY registry.registry_id DESC
-    LIMIT 1
     ;
     ";
 
