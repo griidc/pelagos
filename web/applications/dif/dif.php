@@ -56,27 +56,124 @@ function postDIF($fielddata)
 {
     $formdata = array();
     
+    //var_dump($fielddata);
+    
+    //exit;
+    
     foreach ($fielddata as $field)
     {
-        $formdata[$field["name"]] = $field["value"];
+        $data[$field["name"]] = $field["value"];
     }
     
-    //var_dump($formdata);
+    $UDI = $data["udi"];
+    $status = (int)$data["status"];
+    $title = $data["title"];
+    $primarypoc = (int)$data["primarypoc"];
+    $secondarypoc = (int)$data["secondarypoc"];
+    $abstract = $data["abstract"];
+    $pseudoID = (int)($data["task"]);
+    $projectID = intval($pseudoID/1024);
+    $taskID = $pseudoID - ($projectID*1024);
+    $datasettype = $data["dtascii"].'|'.$data["dtuascii"].'|'.$data["dtimages"].'|'.$data["dtnetcdf"].'|'.$data["dtvideo"].'|'.$data["dtgml"].'|'.$data["dtvideoatt"].'|'.$data["dtother"];
+    $datasetfor = $data["dfeco"].'|'.$data["dfphys"].'|'.$data["dfatm"].'|'.$data["dfchem"].'|'.$data["dfhumn"].'|'.$data["dfscpe"].'|'.$data["dfeconom"].'|'.$data["dfother"];
+    $datasize = $data["size"];
+    $approach = $data["appField"].'|'.$data["appSim"].'|'.$data["appLab"].'|'.$data["appLit"].'|'.$data["appRemote"].'|'.$data["appOther"];
+    $observation = $data["observation"];
+    $startdate = $data["startdate"];
+    $enddate = $data["enddate"];
+    $geolocation = $data["spatialdesc"];
+    $submission = $data["accFtp"].'|'.$data["accTds"].'|'.$data["accErdap"].'|'.$data["accOther"];
+    $natarchive = $data["repoNodc"].'|'.$data["repoUsepa"].'|'.$data["repoGbif"].'|'.$data["repoNcbi"].'|'.$data["repoDatagov"].'|'.$data["repoGriidc"].'|'.$data["repoOther"];
+    $ethical = $data["privacy"].'|'.$data["privacyother"];
+    $remarks = $data["remarks"];
+    $datasetUID = time();
+    $fundingSourceID = (int)$data["fundsrcid"];
+    $gmlText = $data["geoloc"];
+    $frmButton = $data["button"];
     
-    $rc = saveDIF($formdata);
+    if ($status > 1) {$status = 1;}; #If this happened, someone fiddled with the form.
     
-    $success= is_null($rc[1]);
+    if (isDIFApprover(getUID()) OR isAdmin(getUID()))
+    {
+        if ($frmButton == 'approve' AND is) {$status = 2;};
+        if ($frmButton == 'reject') {$status = 0;};
+    }
+    
+    if ($frmButton == 'submit') {$status = 1;};
+    
+    
+    if ($fundingSourceID > 0 and $fundingSourceID < 7) {
+        $fundingSource = 'Y1';
+    }
+    else {
+        switch ($fundingSourceID) {
+            case 7: $fundingSource = 'R1'; break;
+            case 8: $fundingSource = 'R2'; break;
+            case 9: $fundingSource = 'R3'; break;
+            default: $fundingSource = '??';
+        }
+    }
+    
+    if (empty($startdate)){$startdate=null;};
+    
+    if (empty($enddate)){$enddate=null;};
+    
+    if (empty($gmlText)){$gmlText=null;};
+    
+    //$gmlText = '<gml:Point srsName="urn:ogc:def:crs:EPSG::4326"><gml:pos srsDimension="2">27.70323 -97.30042</gml:pos></gml:Point>';
+    $editor = getUID();
+    
+    $logname = getPersonID(getUID());
+    
+    $parameters = array($datasetUID,$UDI,$projectID,$taskID,$title,$primarypoc,$secondarypoc,$abstract,$datasettype,$datasetfor,$datasize,$observation,$approach,$startdate,$enddate,$geolocation,$submission,$natarchive,$ethical,$remarks,$logname,$status,$editor,$gmlText,$fundingSource);
+    
+    $rc = saveDIF($parameters);
+    
+    $success= is_null($rc[1]) AND ($rc[0]["save_dif"] == 't');
+    
+    //var_dump($rc);
     
     if ($success)
     {
-        $message = '<div><img src="includes/images/info32.png"><p>The form was submitted succesfully</p></div>';
+        if (isset($rc[0]["save_dif"]) AND $rc[0]["save_dif"] != 't')
+        {
+            $nudi = $rc[0]["save_dif"];
+            $message = '<div><img src="includes/images/info32.png"><p>The form was submitted succesfully!<br>Your new DIF ID is: <b>'.$nudi.'</b></p></div>';
+            $msgtitle = 'New DIF Submitted';
+        }
+        else if ($frmButton == 'approve')
+        {
+            $message = '<div><img src="includes/images/info32.png"><p>The application with DIF ID: '.$UDI.' was succesfully approved!</p></div>';
+            $msgtitle = 'DIF Approved';
+        }
+        else if ($frmButton == 'reject')
+        {
+            $message = '<div><img src="includes/images/info32.png"><p>The application with DIF ID: '.$UDI.' was succesfully rejected!</p></div>';
+            $msgtitle = 'DIF Rejected';
+        }
+        else if ($frmButton == 'save')
+        {
+            $message = '<div><img src="includes/images/info32.png"><p>Thank you for saving DIF with ID:  '.$UDI.'.<br>Before registering this dataset you must return to this page and submit the dataset information form.</p></div>';
+            $msgtitle = 'DIF Submitted';
+        }
+        else if ($frmButton == 'submit')
+        {
+            $message = '<div><img src="includes/images/info32.png"><p>Congratulations! You have successfully submitted a DIF to GRIIDC. The UDI for this dataset is '.$UDI.'.<br>The DIF will now be reviewed by GRIIDC staff and is locked to prevent editing.<br>To unlock your DIF to make changes, please email your request and the dataset UDI to GRIIDC (<a href="mailto:griidc@gomri.org&subject=DIF Unlock">griidc@gomri.org</a>)<br>Thank you.</p></div>';
+            $msgtitle = 'DIF Submitted';
+        }
+        else
+        {
+            $message = '<div><img src="includes/images/info32.png"><p>Thank you for saving DIF with ID:  '.$UDI.'.</p></div>';
+            $msgtitle = 'DIF Submitted';
+        }
     }
     else
     {
         $message = '<div><img src="includes/images/cancel.png"><p>There was an error! Form NOT submitted.<br>ERROR:'.$rc[0].'</p></div>';
+        $msgtitle = 'DIF ERROR';
     }
     
-    return json_encode(array('status'=>$rc,'success'=>$success,'message'=>$message));
+    return json_encode(array('status'=>$rc,'success'=>$success,'message'=>$message,'title'=>$msgtitle));
     
     
 }
@@ -158,6 +255,8 @@ function getFormData($difID)
     $formArr = array_merge($formArr,array("status"=>$data["status"]));
     $formArr = array_merge($formArr,array("spatialdesc"=>$data["geo_location"]));
     $formArr = array_merge($formArr,array("geoloc"=>$data["the_geom"]));
+    $formArr = array_merge($formArr,array("projectid"=>$data["project_id"]));
+    $formArr = array_merge($formArr,array("taskid"=>$data["task_uid"]));
     
     
     $dataSetType = preg_split ("/\|/",$data["dataset_type"]);

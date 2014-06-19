@@ -9,56 +9,11 @@ global $myDC;
 
 $myDC = new DataConnector('GOMRI_RO');
 
-function saveDIF($data)
+function saveDIF($parameters)
 {
     global $myDC;
     $conn = $myDC->connection;
-    
-    $UDI = $data["udi"];
-    $status = (int)$data["status"];
-    $title = $data["title"];
-    $primarypoc = (int)$data["primarypoc"];
-    $secondarypoc = (int)$data["secondarypoc"];
-    $abstract = $data["abstract"];
-    $pseudoID = (int)($data["task"]);
-    $projectID = intval($pseudoID/1024);
-    $taskID = $pseudoID - ($projectID*1024);
-    $datasettype = $data["dtascii"].'|'.$data["dtuascii"].'|'.$data["dtimages"].'|'.$data["dtnetcdf"].'|'.$data["dtvideo"].'|'.$data["dtgml"].'|'.$data["dtvideoatt"].'|'.$data["dtother"];
-    $datasetfor = $data["dfeco"].'|'.$data["dfphys"].'|'.$data["dfatm"].'|'.$data["dfchem"].'|'.$data["dfhumn"].'|'.$data["dfscpe"].'|'.$data["dfeconom"].'|'.$data["dfother"];
-    $datasize = $data["size"];
-    $approach = $data["appField"].'|'.$data["appSim"].'|'.$data["appLab"].'|'.$data["appLit"].'|'.$data["appRemote"].'|'.$data["appOther"];
-    $observation = $data["observation"];
-    $startdate = $data["startdate"];
-    $enddate = $data["enddate"];
-    $geolocation = $data["spatialdesc"];
-    $submission = $data["accFtp"].'|'.$data["accTds"].'|'.$data["accErdap"].'|'.$data["accOther"];
-    $natarchive = $data["repoNodc"].'|'.$data["repoUsepa"].'|'.$data["repoGbif"].'|'.$data["repoNcbi"].'|'.$data["repoDatagov"].'|'.$data["repoGriidc"].'|'.$data["repoOther"];
-    $ethical = $data["privacy"].'|'.$data["privacyother"];
-    $remarks = $data["remarks"];
-    $datasetUID = time();
-    $fundingSource = 'T1';
-    $gmlText = $data["geoloc"];
-    
-    if (empty($startdate)){$startdate=null;};
-    
-    if (empty($enddate)){$enddate=null;};
-    
-    if (empty($gmlText)){$gmlText=null;};
-    
-    //$gmlText = '<gml:Point srsName="urn:ogc:def:crs:EPSG::4326"><gml:pos srsDimension="2">27.70323 -97.30042</gml:pos></gml:Point>';
-    $editor = getUID();
-    
-    $logname = getPersonID(getUID());
-    
-    
-    
-    // echo "taskid";
-    // var_dump($taskID);
-    // echo "projectID";
-    // var_dump($projectID);
-    // echo "pseudoid";
-    // var_dump($pseudoid);
-    
+
 /*    
     -dataset_uid_i integer,
     -dataset_udi_t text,
@@ -88,15 +43,9 @@ function saveDIF($data)
 */    
     $query = 'select save_dif(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
     
-    //$query  = 'select 1=1;';
-    
     $myDC->prepare($query);
     
-    $parameters = array($datasetUID,$UDI,$projectID,$taskID,$title,$primarypoc,$secondarypoc,$abstract,$datasettype,$datasetfor,$datasize,$observation,$approach,$startdate,$enddate,$geolocation,$submission,$natarchive,$ethical,$remarks,$logname,$status,$editor,$gmlText,$fundingSource);
-    
     $rc = $myDC->execute($parameters);
-    
-    //var_dump($rc);
     
     return $rc;
     

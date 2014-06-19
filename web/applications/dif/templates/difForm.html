@@ -1,7 +1,7 @@
 <table width="100%">
     <tr>
     <td style="vertical-align: top; width:60%" >
-        <div class="cleair">
+    <div class="cleair">
     <fieldset>
         <fieldset>
             <p>
@@ -25,10 +25,13 @@
            
     <form id="difForm"> 
         <input type="hidden" id="status" name="status" value="Open">
+        <input type="hidden" id="projectid" name="projectid">
+        <input type="hidden" id="taskid" name="taskid">
+        <input type="hidden" id="fundsrcid" name="fundsrcid">
         <input type="hidden" id="udi" name="udi">
+        <input type="hidden" id="btn" name="button">
         {% if isadmin == true %}
         <input type="hidden" id="isadmin" name="isadmin" value="{{isadmin}}">
-        <input type="hidden" id="approve" name="approve">
         {% endif %}
         <div id="udidiv" style="display:none;"><h1>Unique Dataset Identifer (UDI): <span class="title" id="udilabel"></span></h1></div>
             <div class="frmSection">
@@ -293,32 +296,30 @@
                         </div>
                     </span>
                     <table>
-                    <tr><td valign="top">
-                <div id="spatial">
-                    <label for="cgeoloc"><b>Geographic/Study Area: </b></label>
-                    <div>
-                        <div style="width:500px;height:300px;" id="difMap"></div>
-                    </div>
-                    <textarea hidden name="geoloc" id="difGeoloc"></textarea>
-                    
-                </div>
-                <div id="nonspatial" style="display:none;width:500px;margin:15px;">
-                    <label for="cgeoloc"><b>Study Area Description: </b></label>
-                    <textarea name="spatialdesc" id="spatialdesc" rows="5" style="width:100%;"></textarea>
-                </div>
-                    </td>
+                    <tr>
+                        <td valign="top">
+                            <div id="spatial">
+                                <label for="cgeoloc"><b>Geographic/Study Area: </b></label>
+                                <div>
+                                    <div style="width:500px;height:300px;" id="difMap"></div>
+                                </div>
+                                <textarea hidden name="geoloc" id="difGeoloc"></textarea>
+                                
+                            </div>
+                            <div id="nonspatial" style="display:none;width:500px;margin:15px;">
+                                <label for="cgeoloc"><b>Study Area Description: </b></label>
+                                <textarea name="spatialdesc" id="spatialdesc" rows="5" style="width:100%;"></textarea>
+                            </div>
+                        </td>
                         <td>
                             <div id="spatwizbtn"></div>
                         </td>
                     </tr>
                     </table>
                     <div id="geoWizard" style="width:100%;height:100%;"></div>
-                </div>
-                
-            </fieldset>
+                </fieldset>
             </div>
 
-        <div>
         <div class="frmSection">
             <fieldset>
                 <span class="helpSection"> 
@@ -399,19 +400,20 @@
             <div id="diftoolbar" class="ui-widget-header ui-corner-all">
             <center>
             {% if (isadmin == true) or (isdifapprover == true) %}
-            <button type="button" id="btnApprove">Approve</button>
-            <button type="button" id="btnReject">Reject</button>
-            <button type="button" id="btnUpdate">Update</button>
+            <button type="button" id="btnApprove" value="approve">Approve</button>
+            <button type="button" id="btnReject" value="reject">Reject</button>
+            <button type="button" id="btnUpdate" value="update">Update</button>
             {% else %}
-            <button type="button" id="btnSave">Save and Continue Later</button>
-            <button type="button" id="btnSubmit">Save and Submit to GRIIDC</button>
+            <button type="button" id="btnSave" value="save">Save and Continue Later</button>
+            <button type="button" id="btnSubmit" value="submit">Save and Submit to GRIIDC</button>
             {% endif %}
             <button type="button" id="btnReset">Reset Form</button>
             <!--button type="button" id="btnTop">Top</button-->
             </center>
             </div>
-        </form>
-        </div>
+            </form>
+    </div>
+        
     </td>
     <td></td>
     <td class="cleair diftree">

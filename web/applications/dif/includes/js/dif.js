@@ -29,13 +29,15 @@ $(document).ready(function()
     });
     
     $('#btnSubmit').button().click(function() {
-        $('#status').val('Open');
-        $('form').submit();
+        $('#btn').val($(this).val());
+        //$('#status').val('Open');
+        $('#difForm').submit();
     });
     
     $('#btnSave').button().click(function() {
-        $('#status').val('Open');
-        $('form').submit();
+        $('#btn').val($(this).val());
+        //$('#status').val('Open');
+        $('#difForm').submit();
     });
     
     $('#btnReset').button().click(function() {
@@ -47,14 +49,17 @@ $(document).ready(function()
     });
     
     $('#btnApprove').button().click(function() {
-        alert('approve');
+        $('#btn').val($(this).val());
+        $('#difForm').submit();
     });
     
     $('#btnReject').button().click(function() {
-        alert('reject');
+        $('#btn').val($(this).val());
+        $('#difForm').submit();
     });
     
     $('#btnUpdate').button().click(function() {
+        $('#btn').val($(this).val())
         $('#difForm').submit();
     });
     
@@ -90,7 +95,10 @@ $(document).ready(function()
     });
     
     $("#difTasks").change(function(){
-        loadPOCs($("#difTasks").val());
+        $("#taskid").val($('#difTasks option:selected').attr("task"));
+        $("#projectid").val($('#difTasks option:selected').attr("project"));
+        $("#fundsrcid").val($('#difTasks option:selected').attr("fund"));
+        loadPOCs($(this).val());
     });
     
     $("#spatialdesc").change(function(){
@@ -100,46 +108,15 @@ $(document).ready(function()
     loadTasks();
     loadDIFS(null,null,true);
     
-    $.validator.addMethod("greaterThan", 
-    function(value, element, params) {
-        if (!/Invalid Date|NaN/.test(new Date(value))) {
-            return new Date(value) > new Date($(params).val());
-        }
-        return isNaN(value) && isNaN($(params).val()) 
-        || (Number(value) > Number($(params).val())); 
-    },'Must be greater than {0}.');
-    
     $("#difForm").validate({
         ignore: ".ignore",
         messages: {
             geoloc: "Click tha button!",
         },
         submitHandler: function(form) {
-           //alert('Submitting Form');
            saveDIF();
-        },
-        rules: {
-            //enddate: { greaterThan: "#startdate" }
         }
     });
-    
-    //$("#enddate").rules('add', { greaterThan: "#startdate" }); #Rule for dates
-    
-    
-    // difGeoViz = new GeoViz();
-   
-    // difGeoViz.initMap('difMap',{'onlyOneFeature':false,'allowModify':false,'allowDelete':false,'staticMap':true});
-    
-    // $("#geowizBtn").button().click(function()
-    // {
-        // $("#geoWizard").load("includes/mapWizard.html",{"instanceName":"{{instanceName}}"});
-    // });
-    
-    // $('#difMap').on('gmlConverted', function(e, eventObj) {
-        // difGeoViz.removeAllFeaturesFromMap();
-        // var addedFeature = difGeoViz.addFeatureFromWKT(eventObj);
-        // difGeoViz.gotoAllFeatures();
-    // });
     
     $('#difGeoloc').change(function() {
         geowizard.haveGML($(this).val());
@@ -219,13 +196,13 @@ function setFormStatus()
     //console.log('status changed to:'+Status);
     if (Status == "0")
     {
-        $('#difForm :input').prop('disabled',false);
+        $('form :input').prop('disabled',false);
         $('#btnSubmit').prop('disabled',false);
         $('#btnSave').prop('disabled',false);
     }
     else if (isAdmin != '1')
     {
-        $('#difForm :input').prop('disabled',true);
+        $('form :input').prop('disabled',true);
         $('#btnSubmit').prop('disabled',true);
         $('#btnSave').prop('disabled',true);
     }
@@ -256,7 +233,9 @@ function saveDIF()
                 formReset();
             }
                 $(json.message).dialog({
-                    title: "DIF Submitted",
+                    height: "auto",
+                    width: "auto",
+                    title: json.title,
                     resizable: false,
                     modal: true,
                     buttons: {
@@ -281,6 +260,9 @@ function formReset()
         $("#status").val('Open').change();
         formHash = $("#difForm").serialize();
         geowizard.cleanMap();
+        $('form :input').prop('disabled',false);
+        $('#btnSubmit').prop('disabled',false);
+        $('#btnSave').prop('disabled',false);
     });
 }
 
@@ -363,13 +345,6 @@ function makeTree(json)
             'fuzzy' : false
         },
     });
-    $('.jstree-icon[style*="x.png"]').qtip({
-        content: 'Open',
-        position: {
-            my: 'right top',
-            at: 'left bottom'
-        }
-    }); 
     var searchValue = $('#fltResults').val();
     $('#diftree').jstree(true).search(searchValue);
 }
@@ -387,10 +362,12 @@ function loadTasks()
         var element = $('[name="task"]');
         //console.debug(json);
         $.each(json, function(id,task) {
-            // var o = new Option(task.Title, task.ID);
-            // $(o).html(task.title);
+            var o = new Option(task.Title, task.ID);
+            $(o).attr("task",task.taskID);
+            $(o).attr("project",task.projectID);
+            $(o).attr("fund",task.fundSrcID);
             // element.append(o);
-            element.append(new Option(task.Title, task.ID));
+            element.append(o);
         });
         element.prop('disabled',false);
     });
@@ -419,7 +396,8 @@ function loadPOCs(PseudoID,ppoc,spoc)
                 if (person.isPrimary == true)
                 {selectedID = person.ID;}
             });
-            element.prop('disabled',false);
+            if ($("#status").val() == 0 || $("#isadmin").val() == '1')
+            {element.prop('disabled',false);};
             
             if (ppoc > 0)
             {
