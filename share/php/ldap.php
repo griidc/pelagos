@@ -86,4 +86,13 @@ function getAttributes($ldap,$dn,$attributes) {
     }
 }
 
+function getHomedir($user) {
+    $server = "triton.tamucc.edu"; # find way to use global config
+    $ldap = connectLDAP($server);
+    $dn_ary = getDNs($ldap,"ou=members,ou=people,dc=griidc,dc=org","uid=$user");
+    $attributes = getAttributes($ldap,$dn_ary[0]['dn'],array("homeDirectory"));
+    return $attributes["homeDirectory"][0];
+}
+
+
 ?>
