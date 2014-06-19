@@ -23,7 +23,7 @@
         <br>
         <p/>
            
-        <form id="difForm"> 
+    <form id="difForm"> 
         <input type="hidden" id="status" name="status" value="Open">
         <input type="hidden" id="udi" name="udi">
         {% if isadmin == true %}
@@ -226,7 +226,6 @@
                     </table>
                 </fieldset>
             </div>
-
             <div class="frmSection">
             <fieldset>
                 <span class="helpSection"> 
@@ -253,7 +252,7 @@
                 <table width="100%"><TR>
                      <td><input type="checkbox" name="appField" id="difApproach" value="Field Sampling">Field Sampling</td>
                      <td><input type="checkbox" name="appSim" id="difApproach" value="Simulated or Generated">Simulated/Generated</td>
-                     <td><input type="checkbox" name="appLab" id="difApproach" value="Laboratory">Laboratory</TD>
+                     <td><input type="checkbox" name="appLab" id="difApproach" value="Labratory">Laboratory</TD>
                 </tr><tr>
                      <td><input type="checkbox" name="appLit" id="difApproach" value="Literature Based">Literature Based</td>
                      <td><input type="checkbox" name="appRemote" id="difApproach" value="Remote Sensing">Remote Sensing</td>
@@ -308,13 +307,10 @@
                     <textarea name="spatialdesc" id="spatialdesc" rows="5" style="width:100%;"></textarea>
                 </div>
                     </td>
-                    
-                    <td>
-                    <fieldset>
-                        <div id="spatwizbtn" class="ui-widget-header ui-corner-all"><button style="color:#039203;font-size:larger;width:100%;" id="geowizBtn" type="button">Define Spatial Extent</button></div>
-                    <p>The Spatial Extent Wizard provides users with guided instruction and tools to describe the Spatial Extent of their dataset. Users can ceate a spatial extent geometry by either providing a list of coordinates or drawing a geometry using a map.</p>
-                    </fieldset>
-                    </td></tr>
+                        <td>
+                            <div id="spatwizbtn"></div>
+                        </td>
+                    </tr>
                     </table>
                     <div id="geoWizard" style="width:100%;height:100%;"></div>
                 </div>
@@ -332,9 +328,11 @@
                     </div>
                 </span>
                 <label for="difAccess"><b>Anticipated Dataset Submission Method: </b></label>
+                   <!-- 
                    <input type="checkbox"  name="accHttp" id="difAccess" value="FTP">Direct Upload (HTTP)<br>
                    <input type="checkbox"  name="accHttp" id="difAccess" value="FTP">Hosted (HTTP)<br>
                    <input type="checkbox"  name="accGridftp" id="difAccess" value="FTP">GridFTP<br>
+                   -->
                    <input type="checkbox"  name="accFtp" id="difAccess" value="FTP">File Transfer Protocol (FTP)<br>
                    <input type="checkbox"  name="accTds" id="difAccess" value="TDS">THREDDS Data Server (TDS)<br>
                    <input type="checkbox"  name="accErdap" id="difAccess" value="ERDAP">Environmental Research Division's Data Access Program (ERDDAP)<br>
@@ -398,7 +396,7 @@
             </fieldset>
             </div>
         </fieldset>
-            <div id="!diftoolbar" class="ui-widget-header ui-corner-all">
+            <div id="diftoolbar" class="ui-widget-header ui-corner-all">
             <center>
             {% if (isadmin == true) or (isdifapprover == true) %}
             <button type="button" id="btnApprove">Approve</button>
@@ -435,9 +433,9 @@
                     <label>Filter by Status:</label>
                     <select id="fltStatus" style="width:95%;">
                         <option value="">[SHOW ALL]</option>
-                        <option value="Open">Open</option>
-                        <option value="Locked">Locked</option>
-                        <option value="Approved">Approved</option>
+                        <option value="0">Open</option>
+                        <option value="1">Locked</option>
+                        <option value="2">Approved</option>
                     </select>
                 </td>
             <td>

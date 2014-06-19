@@ -55,7 +55,7 @@ $(document).ready(function()
     });
     
     $('#btnUpdate').button().click(function() {
-        $('form').submit();
+        $('#difForm').submit();
     });
     
     $('#btnSearch').button().click(function () {
@@ -93,7 +93,9 @@ $(document).ready(function()
         loadPOCs($("#difTasks").val());
     });
     
-    $("#diftoolbar").draggable();
+    $("#spatialdesc").change(function(){
+        $("#spatialdesc").show();
+    });
     
     loadTasks();
     loadDIFS(null,null,true);
@@ -123,33 +125,28 @@ $(document).ready(function()
     
     //$("#enddate").rules('add', { greaterThan: "#startdate" }); #Rule for dates
     
-    difGeoViz = new GeoViz();
+    
+    // difGeoViz = new GeoViz();
    
-    difGeoViz.initMap('difMap',{'onlyOneFeature':false,'allowModify':false,'allowDelete':false,'staticMap':true});
+    // difGeoViz.initMap('difMap',{'onlyOneFeature':false,'allowModify':false,'allowDelete':false,'staticMap':true});
     
-    $("#geowizBtn").button().click(function()
-    {
-        $("#geoWizard").load("includes/mapWizard.html",{"instanceName":"{{instanceName}}"});
-    });
+    // $("#geowizBtn").button().click(function()
+    // {
+        // $("#geoWizard").load("includes/mapWizard.html",{"instanceName":"{{instanceName}}"});
+    // });
     
-    $('#difMap').on('gmlConverted', function(e, eventObj) {
-        difGeoViz.removeAllFeaturesFromMap();
-        var addedFeature = difGeoViz.addFeatureFromWKT(eventObj);
-        difGeoViz.gotoAllFeatures();
-    });
+    // $('#difMap').on('gmlConverted', function(e, eventObj) {
+        // difGeoViz.removeAllFeaturesFromMap();
+        // var addedFeature = difGeoViz.addFeatureFromWKT(eventObj);
+        // difGeoViz.gotoAllFeatures();
+    // });
     
     $('#difGeoloc').change(function() {
-        difGeoViz.goHome();
-        difGeoViz.removeImage();
-        difGeoViz.removeAllFeaturesFromMap();
-        difGeoViz.gmlToWKT($('#difGeoloc').val());
-        if ($('#difGeoloc').val() == "")
-        {
-            //difGeoViz.addImage('includes/images/notdefined.png',1);
-        }
+        geowizard.haveGML($(this).val());
     });
     
-    $("form").change(function() {
+    
+    $("#difForm").change(function() {
         if (typeof formHash == 'undefined'){formHash = '';}
     });
     
@@ -202,6 +199,7 @@ $(document).ready(function()
         }
     });
     
+    geowizard = new MapWizard({"divSmallMap":"difMap","divSpatial":"spatial","divNonSpatial":"nonspatial","divSpatialWizard":"spatwizbtn","gmlField":"difGeoloc","descField":"spatialdesc","spatialFunction":""});
     
         
 });
@@ -214,26 +212,12 @@ function treeSearch()
     hideSpinner();
 }
 
-function hasSpatial(Spatial)
-{
-    if (Spatial)
-    { 
-        $("#nonspatial").show(); 
-        $("#spatial").hide(); 
-    }
-    else
-    { 
-        $("#spatial").show(); 
-        $("#nonspatial").hide(); 
-    }
-}
-
 function setFormStatus()
 {
     var Status = $("#status").val();
     var isAdmin =  $("#isadmin").val();
     //console.log('status changed to:'+Status);
-    if (Status == "Open")
+    if (Status == "0")
     {
         $('#difForm :input').prop('disabled',false);
         $('#btnSubmit').prop('disabled',false);
@@ -254,12 +238,12 @@ function scrollToTop()
 
 function saveDIF()
 {
-    var Form = $("form");
+    var Form = $("#difForm");
     var formID = Form.attr('id');
     var fields = Form.serializeArray();
     
     showSpinner();
-    formHash = $("form").serialize();
+    formHash = Form.serialize();
     $.ajax({
         type: 'POST',
         datatype: 'json',
@@ -281,6 +265,7 @@ function saveDIF()
                             if (json.success == true)
                             {
                                 scrollToTop();
+                                treeFilter();
                             }
                         }
                     }
@@ -294,7 +279,8 @@ function formReset()
         $("#difForm").trigger("reset");
         $("#udi").val('').change();
         $("#status").val('Open').change();
-        formHash = $("form").serialize();
+        formHash = $("#difForm").serialize();
+        geowizard.cleanMap();
     });
 }
 
@@ -339,7 +325,7 @@ function hideSpinner()
 
 function getNode(UDI)
 {
-    fillForm($("form"),UDI);
+    fillForm($("#difForm"),UDI);
 }
 
 function loadDIFS(Status,Person,ShowEmpty)
@@ -354,8 +340,8 @@ function loadDIFS(Status,Person,ShowEmpty)
             // hideSpinner();
     // });
     $.ajax({
-        //url: "/~mvandeneijnden/dif/getDIFS.php",
-        type: 'POST',
+        url: "/~mvandeneijnden/dif/getDIFS.php",
+        type: 'GET',
         datatype: 'json',
         data: {'function':'loadDIFS','status':Status,'person':Person,'showempty':ShowEmpty}
         }).done(function(json) {
@@ -391,10 +377,10 @@ function makeTree(json)
 function loadTasks()
 {
     $.ajax({
-        //url: "https://proteus.tamucc.edu/~mvandeneijnden/dif/getTasks.php",
+        url: "https://proteus.tamucc.edu/~mvandeneijnden/dif/getTasks.php",
         //context: document.body,
         datatype: 'JSON',
-        type: 'POST',
+        type: 'GET',
         data: {'function':'loadTasks'}
         }).done(function(json) {
         //var json = $.parseJSON(html);
@@ -413,7 +399,8 @@ function loadTasks()
 function loadPOCs(PseudoID,ppoc,spoc)
 {
     $.ajax({
-        type: "POST",
+        url: "https://proteus.tamucc.edu/~mvandeneijnden/dif/getPeople.php",
+        type: "GET",
         datatype: "JSON",
         data: {'function':'loadPOCs',pseudoid: PseudoID}
         }).done(function(json) {
@@ -437,13 +424,13 @@ function loadPOCs(PseudoID,ppoc,spoc)
             if (ppoc > 0)
             {
                $('[name="primarypoc"]').val(ppoc);
-               formHash = $("form").serialize();
+               formHash = $("#difForm").serialize();
             }
             else if (selectedID !=0){$('[name="primarypoc"]').val(selectedID);}
             if (spoc > 0)
             {
                 $('[name="secondarypoc"]').val(spoc);
-                formHash = $("form").serialize();
+                formHash = $("#difForm").serialize();
             }
             $('[name="primarypoc"]').addClass('required');
         }
@@ -462,7 +449,7 @@ function formChanged()
 {
     return $.Deferred(function() {
         var self = this;
-        if (formHash != $("form").serialize() && typeof formHash !='undefined')
+        if (formHash != $("#difForm").serialize() && typeof formHash !='undefined')
         {
             $('<div><img src="includes/images/warning.png"><p>You made changes, are you sure?</p></div>').dialog({
                 title: "Warning!",
@@ -471,7 +458,7 @@ function formChanged()
                 buttons: {
                     "Continue": function() {
                         $(this).dialog( "close" );
-                        formHash = $("form").serialize();
+                        formHash = $("#difForm").serialize();
                         self.resolve();  
                         //fillForm(Form,UDI);
                     },
@@ -527,7 +514,7 @@ function fillForm(Form,UDI)
                         break;
                 }
             });
-            formHash = $("form").serialize();
+            formHash = $("#difForm").serialize();
             setFormStatus();
             hideSpinner();
         });

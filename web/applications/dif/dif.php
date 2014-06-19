@@ -54,14 +54,30 @@ if (isset($_POST['function']))
 
 function postDIF($fielddata)
 {
+    $formdata = array();
+    
     foreach ($fielddata as $field)
     {
-        usleep(25000);
+        $formdata[$field["name"]] = $field["value"];
     }
     
-    //return json_encode(array('success'=>false,'message'=>'<img src="includes/images/cancel.png"><p>There was an error! Form NOT submitted.</p>'));
+    //var_dump($formdata);
     
-    return json_encode(array('success'=>true,'message'=>'<div><img src="includes/images/info32.png"><p>The form was submitted succesfully</p></div>'));
+    $rc = saveDIF($formdata);
+    
+    $success= is_null($rc[1]);
+    
+    if ($success)
+    {
+        $message = '<div><img src="includes/images/info32.png"><p>The form was submitted succesfully</p></div>';
+    }
+    else
+    {
+        $message = '<div><img src="includes/images/cancel.png"><p>There was an error! Form NOT submitted.<br>ERROR:'.$rc[0].'</p></div>';
+    }
+    
+    return json_encode(array('status'=>$rc,'success'=>$success,'message'=>$message));
+    
     
 }
 
@@ -127,19 +143,22 @@ function getFormData($difID)
 
     $formArr = array();
     
-    $formArr = array_merge($formArr,array("udi"=>$data["UDI"]));
-    $PseudoTaskNumber = ((int)$data["projectid"] * 1024) + ((int)$data["taskid"] );
+    $formArr = array_merge($formArr,array("udi"=>$data["dataset_udi"]));
+    $PseudoTaskNumber = ((int)$data["project_id"] * 1024) + ((int)$data["task_uid"] );
     $formArr = array_merge($formArr,array("task"=>$PseudoTaskNumber));
-    $formArr = array_merge($formArr,array("title"=>$data["Title"]));
+    $formArr = array_merge($formArr,array("title"=>$data["title"]));
     
-    $formArr = array_merge($formArr,array("primarypoc"=>$data["POC"]));
-    $formArr = array_merge($formArr,array("secondarypoc"=>$data["sPOC"]));
-    $formArr = array_merge($formArr,array("abstract"=>$data["Abstract"]));
+    $formArr = array_merge($formArr,array("primarypoc"=>$data["primary_poc"]));
+    $formArr = array_merge($formArr,array("secondarypoc"=>$data["secondary_poc"]));
+    $formArr = array_merge($formArr,array("abstract"=>$data["abstract"]));
     $formArr = array_merge($formArr,array("size"=>$data["size"]));
     $formArr = array_merge($formArr,array("observation"=>$data["observation"]));
     $formArr = array_merge($formArr,array("historical"=>$data["historic_links"]));
-    $formArr = array_merge($formArr,array("remarks"=>$data["Remarks"]));
-    $formArr = array_merge($formArr,array("status"=>$data["Access_Status"]));
+    $formArr = array_merge($formArr,array("remarks"=>$data["remarks"]));
+    $formArr = array_merge($formArr,array("status"=>$data["status"]));
+    $formArr = array_merge($formArr,array("spatialdesc"=>$data["geo_location"]));
+    $formArr = array_merge($formArr,array("geoloc"=>$data["the_geom"]));
+    
     
     $dataSetType = preg_split ("/\|/",$data["dataset_type"]);
 
@@ -152,28 +171,28 @@ function getFormData($difID)
     $formArr = array_merge($formArr,array("dtvideoatt"=>$dataSetType[5]));
     $formArr = array_merge($formArr,array("dtother"=>$dataSetType[7]));
     
-    //$dataSetFor = preg_split ("/\|/",$data["dataset_for"]);
+    $dataSetFor = preg_split ("/\|/",$data["dataset_for"]);
     
-    $formArr = array_merge($formArr,array("dfeco"=>$data["Class_Ecological"]));
-    $formArr = array_merge($formArr,array("dfphys"=>$data["Class_PhysOceanography"]));
-    $formArr = array_merge($formArr,array("dfatm"=>$data["Class_Athmospheric"]));
-    $formArr = array_merge($formArr,array("dfchem"=>$data["Class_Chemical"]));
-    $formArr = array_merge($formArr,array("dfhumn"=>$data["Class_Health"]));
-    $formArr = array_merge($formArr,array("dfscpe"=>$data["Class_Social"]));
-    $formArr = array_merge($formArr,array("dfeconom"=>$data["Class_Economic"]));
-    $formArr = array_merge($formArr,array("dfother"=>$data["Class_Other"]));
+    $formArr = array_merge($formArr,array("dfeco"=>($dataSetFor[0]=='Ecological/Biological')));
+    $formArr = array_merge($formArr,array("dfphys"=>($dataSetFor[1]=='Physical Oceanographical')));
+    $formArr = array_merge($formArr,array("dfatm"=>($dataSetFor[2]=='Atmospheric')));
+    $formArr = array_merge($formArr,array("dfchem"=>($dataSetFor[3]=='Chemical')));
+    $formArr = array_merge($formArr,array("dfhumn"=>($dataSetFor[4]=='Human Health')));
+    $formArr = array_merge($formArr,array("dfscpe"=>($dataSetFor[5]=='Social/Cultural/Political')));
+    $formArr = array_merge($formArr,array("dfeconom"=>($dataSetFor[6]=='Economics')));
+    $formArr = array_merge($formArr,array("dfother"=>$dataSetFor[7]));
     
-    //$dataSetProc = preg_split ("/\|/",$data["approach"]);
+    $dataSetProc = preg_split ("/\|/",$data["approach"]);
     
-    $formArr = array_merge($formArr,array("appField"=>$data["Acq_FieldSample"]));
-    $formArr = array_merge($formArr,array("appSim"=>$data["Acq_Simulated"]));
-    $formArr = array_merge($formArr,array("appLab"=>$data["Acq_Lab"]));
-    $formArr = array_merge($formArr,array("appLit"=>$data["Acq_Literature"]));
-    $formArr = array_merge($formArr,array("appRemote"=>$data["Acq_RemoteSense"]));
-    $formArr = array_merge($formArr,array("appOther"=>$data["Acq_Other"]));
+    $formArr = array_merge($formArr,array("appField"=>($dataSetProc[0]=='Field Sampling')));
+    $formArr = array_merge($formArr,array("appSim"=>($dataSetProc[1]=='Simulated or Generated')));
+    $formArr = array_merge($formArr,array("appLab"=>($dataSetProc[2]=='Labratory')));
+    $formArr = array_merge($formArr,array("appLit"=>($dataSetProc[3]=='Literature Based')));
+    $formArr = array_merge($formArr,array("appRemote"=>($dataSetProc[4]=='Remote Sensing')));
+    $formArr = array_merge($formArr,array("appOther"=>$dataSetFor[5]));
     
-    $formArr = array_merge($formArr,array("startdate"=>$data["Project_Start"])); 
-    $formArr = array_merge($formArr,array("enddate"=>$data["Project_End"])); 
+    $formArr = array_merge($formArr,array("startdate"=>$data["start_date"])); 
+    $formArr = array_merge($formArr,array("enddate"=>$data["end_date"])); 
     
     $formArr = array_merge($formArr,array("metaeditor"=>$data["meta_editor"])); 
     
@@ -185,7 +204,6 @@ function getFormData($difID)
     $formArr = array_merge($formArr,array("mseco"=>($metadataStandards[3]=='EML')));
     $formArr = array_merge($formArr,array("msother"=>$metadataStandards[4]));
     
-    
     $accessPoint = preg_split ("/\|/",$data["point"]);
     
     $formArr = array_merge($formArr,array("accFtp"=>($accessPoint[0]=='FTP')));
@@ -193,20 +211,23 @@ function getFormData($difID)
     $formArr = array_merge($formArr,array("accErdap"=>($accessPoint[2]=='ERDAP')));
     $formArr = array_merge($formArr,array("accOther"=>$accessPoint[3]));
     
-    //$dataCenter = preg_split ("/\|/",$data["national"]);
+    $dataCenter = preg_split ("/\|/",$data["national"]);
     
-    $formArr = array_merge($formArr,array("repoNodc"=>$data["Facility_NODC"]));
-    $formArr = array_merge($formArr,array("repoUsepa"=>$data["Facility_EPAStoret"]));
-    $formArr = array_merge($formArr,array("repoGbif"=>$data["Facility_GBIF"]));
-    $formArr = array_merge($formArr,array("repoNcbi"=>$data["Facility_NCBI"]));
-    $formArr = array_merge($formArr,array("repoDatagov"=>$data["Facility_DMS"]));
-    $formArr = array_merge($formArr,array("repoGriidc"=>$data["Facility_GRIIDC"]));
-    $formArr = array_merge($formArr,array("repoOther"=>$data["Facility_Other"]));
+    $formArr = array_merge($formArr,array("repoNodc"=>($dataCenter[0]=='National Oceanographic Data Center')));
+    $formArr = array_merge($formArr,array("repoUsepa"=>($dataCenter[1]=='US EPA Storet')));
+    $formArr = array_merge($formArr,array("repoGbif"=>($dataCenter[2]=='Global Biodiversity Information Facility')));
+    $formArr = array_merge($formArr,array("repoNcbi"=>($dataCenter[3]=='National Center for Biotechnology Information')));
+    $formArr = array_merge($formArr,array("repoDatagov"=>($dataCenter[4]=='Data.gov Dataset Management System')));
+    $formArr = array_merge($formArr,array("repoGriidc"=>($dataCenter[5]=='Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC)')));
+    $formArr = array_merge($formArr,array("repoOther"=>$dataCenter[6]));
     
     $ethical = preg_split ("/\|/",$data["ethical"]);
     
     $formArr = array_merge($formArr,array("privacy"=>$ethical[0]));
     $formArr = array_merge($formArr,array("privacyother"=>$ethical[1]));
+    
+    
+    
     
     //$formArr = array_merge($formArr,array("isadmin"=>$isadmin));
     
@@ -270,7 +291,7 @@ function getTaskList($Status=null,$PersonID=null,$ShowEmpty=true)
         {
             if ($ShowEmpty)
             {
-                $listArray[] = array("text"=>$taskTitle,"icon"=>"/dif/images/nofolder.png","li_attr"=>array("title"=>$taskTitle));       
+                $listArray[] = array("text"=>$taskTitle,"icon"=>"/dif/images/nofolder.png","children"=>array("text"=>""),"li_attr"=>array("title"=>$taskTitle));       
             }
         }
         
