@@ -7,7 +7,7 @@
         <strong>NOTE:</strong>
         The red asterisk (<span class="emRequired"/>) is used to indicate required fields. Once a DIF is submitted, it will be locked to prevent additional changes. Please contact <a href="mailto:griidc@gomri.org?subject=DIF">griidc@gomri.org</a> with the dataset Unique Dataset Identifier (UDI) if you would like to make any changes to your dataset or require additional assistance with the completion of this form.<br>
         <hr>
-        <div id="statustext"></div>  
+        <div id="statustext" class="statustext"></div>  
     <form id="difForm"> 
         <input type="hidden" id="status" name="status" value="0">
         <input type="hidden" id="projectid" name="projectid">
@@ -16,6 +16,7 @@
         <input type="hidden" id="udi" name="udi">
         <input type="hidden" id="btn" name="button">
         <input type="hidden" id="submitter" name="submitter">
+        <input type="hidden" id="personid" value="{{personid}}">
         {% if isadmin == true %}
         <input type="hidden" id="isadmin" name="isadmin" value="{{isadmin}}">
         {% endif %}
@@ -448,6 +449,16 @@
         <td>
         <div style="position:relative;">
             <div  style="position:absolute;">
+                <h3>Legend:&nbsp; 
+                <span id="statusicon" title="DIF is Open. DIF has been started and saved for this dataset, but has not yet been submitted to GRIIDC."><img src="/newdif/includes/images/cross.png">&nbsp;Open</span>&nbsp;- 
+                <span id="statusicon" title="DIF is locked and is in review. DIF has been completed and submitted to GRIIDC for review and approval."><img src="/newdif/includes/images/error.png">&nbsp;Submitted</span>&nbsp;- 
+                <span id="statusicon" title="DIF is locked and approved. DIF has been submitted to GRIIDC and reviewed and approved by GRIIDC. It is locked to prevent additional changes."><img src="/newdif/includes/images/tick.png">&nbsp;Approved</span>&nbsp;-
+                <span id="statusicon" title="This is a task that you are associated with through your GoMRI proposal or grant funding agreement that has datasets identified"><img src="/newdif/includes/images/folder.png">&nbsp;Task Folder</span>&nbsp;-
+                <span id="statusicon" title="This is a task that you are associated with through your GoMRI proposal or grant funding agreement that does not yet have datasets identified."><img style="-webkit-filter:grayscale(100%);" src="/newdif/includes/images/folder.png">&nbsp;Empty Folder</span>
+                
+                
+                
+                </h3>
                 <h1>Datasets</h1>
                 <hr width="100%">
                 <div id="diftree">

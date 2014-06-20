@@ -8,6 +8,8 @@ $(document).ready(function()
 {
     initSpinner();
     
+    personid = $('#personid').val();
+    
     //Setup qTip
     $.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
         position: {
@@ -27,6 +29,8 @@ $(document).ready(function()
             }
         });
     });
+    
+    $('#statusicon[title]').qtip(); 
     
     $('#btnSubmit').button().click(function() {
         $('#btn').val($(this).val());
@@ -106,7 +110,7 @@ $(document).ready(function()
     });
     
     loadTasks();
-    loadDIFS(null,null,true);
+    loadDIFS(null,personid,true);
     
     $("#difForm").validate({
         ignore: ".ignore",
@@ -161,7 +165,25 @@ $(document).ready(function()
     });
     
     $("#status").change(function(){
-        
+        if ($("[name='udi']").val() != '')
+        {
+            if ($(this).val() == '0')
+            {
+                $("#statustext").html('<fieldset><img src="/newdif/includes/images/cross.png">&nbsp;DIF saved but not yet submitted</fieldset>');
+            }
+            else if ($(this).val() == '1')
+            {
+                $("#statustext").html('<fieldset><img src="/newdif/includes/images/error.png">&nbsp;DIF submitted for review (locked)</fieldset>');
+            }
+            else if ($(this).val() == '2')
+            {
+                $("#statustext").html('<fieldset><img src="/newdif/includes/images/tick.png">&nbsp;DIF approved (locked)</fieldset>');
+            }
+        }
+        else
+        {
+            $("#statustext").html('');
+        }
     });
     
     //debugger;
@@ -351,12 +373,13 @@ function makeTree(json)
 
 function loadTasks()
 {
+    //debugger;
     $.ajax({
         url: "https://proteus.tamucc.edu/~mvandeneijnden/dif/getTasks.php",
         //context: document.body,
         datatype: 'JSON',
         type: 'GET',
-        data: {'function':'loadTasks'}
+        data: {'function':'loadTasks','person':personid}
         }).done(function(json) {
         //var json = $.parseJSON(html);
         var element = $('[name="task"]');

@@ -1,5 +1,10 @@
 .openlayers-map img{ margin:none }
 
+.statustext
+{
+   font-size:1.5em; 
+}
+
 .emRequired::before
 {
     font-weight: bold; color:#FF0000;

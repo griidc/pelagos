@@ -504,11 +504,13 @@ function showDIFForm()
     $isDManager = isDataManager(getUID());
     $isDIFApprover = isDIFApprover(getUID());
     
+    $personid = getPersonID(getUID());
+    
     // echo "isadmin:$isadmin<br>";
     // echo "isDManager:$isDManager<br>";
     // echo "isDIFApprover:$isDIFApprover<br>";
     
-    $twigdata = array('isadmin'=>$isadmin,'isdmanager'=>$isDManager,'isdifapprover'=>$isDIFApprover);
+    $twigdata = array('isadmin'=>$isadmin,'isdmanager'=>$isDManager,'isdifapprover'=>$isDIFApprover,'personid'=>$personid);
    
     echo $twig->render('difForm.html', $twigdata); 
 }
