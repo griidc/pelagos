@@ -66,7 +66,7 @@ if ($user) {
 
     if (!is_null($groupName) and $groupName == 'external-users') {
         $sftpuser = true;
-        $chrootDir = "/san/home/$user";
+        $chrootDir = "/san/home/$user/incoming";
         if (is_dir($chrootDir)) { $sftpdir = true; }
     }
     elseif (isset($homeDir)) {
