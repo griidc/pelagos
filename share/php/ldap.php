@@ -1,6 +1,8 @@
 <?php
 
 require_once('/usr/local/share/GRIIDC/php/drupal.php');
+$GLOBALS['config'] = parse_ini_file('/etc/griidc.ini',true);
+$GLOBALS['ldap'] = parse_ini_file($GLOBALS['config']['paths']['conf'].'/ldap.ini',true);
 
 function connectLDAP($ldaphost) {
     $ldapconnect = ldap_connect("ldap://$ldaphost");
@@ -87,7 +89,7 @@ function getAttributes($ldap,$dn,$attributes) {
 }
 
 function getHomedir($user) {
-    $server = "triton.tamucc.edu"; # find way to use global config
+    $server = $GLOBALS['ldap']['ldap']['server'];
     $ldap = connectLDAP($server);
     $dn_ary = getDNs($ldap,"ou=members,ou=people,dc=griidc,dc=org","uid=$user");
     $attributes = getAttributes($ldap,$dn_ary[0]['dn'],array("homeDirectory"));
