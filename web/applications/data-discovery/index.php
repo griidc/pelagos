@@ -24,6 +24,9 @@ require_once '/usr/local/share/lightopenid-lightopenid/openid.php';
 require_once '/usr/local/share/GRIIDC/php/db-utils.lib.php';
 # Auth library
 require_once '/usr/local/share/GRIIDC/php/auth.php';
+# LDAP
+#require_once '/usr/local/share/GRIIDC/php/ldap.php';
+require_once '../share/php/ldap.php';
 
 date_default_timezone_set('UTC');
 
@@ -35,9 +38,9 @@ date_default_timezone_set('UTC');
 drupal_add_library('system', 'ui.tabs');
 
 $GLOBALS['config'] = parse_ini_file('config.ini',true);
+$GLOBALS['storage'] = parse_ini_file('/etc/griidc/storage.ini',true);
 
 TwigView::$twigDirectory = $GLOBALS['config']['TwigView']['twigDirectory'];
-
 
 $app = new Slim(array(
                         'view' => new TwigView,
@@ -225,7 +228,7 @@ $app->get('/metadata/:udi', function ($udi) use ($app) {
     
     $disk_metadata_file_mimetype = '';
     $disk_metadata_file = '';
-    $met_file = "/sftp/data/$dataset[udi]/$dataset[udi].met";
+    $met_file = "/$GLOBALS[storage][storage][data_store]/$dataset[udi]/$dataset[udi].met";
     if (file_exists($met_file)) {
         $info = finfo_open(FILEINFO_MIME_TYPE);
         $disk_metadata_file_mimetype = finfo_file($info, $met_file);
@@ -423,7 +426,7 @@ $app->get('/download/:udi', function ($udi) use ($app) {
         $app->render('html/download_error.html',$stash);
         exit;
     }
-    $dat_file = "/sftp/data/$dataset[udi]/$dataset[udi].dat";
+    $dat_file = $GLOBALS['storage']['storage']['data_store']."/$dataset[udi]/$dataset[udi].dat";
     if (file_exists($dat_file)) {
         
         $env = $app->environment();
@@ -469,7 +472,7 @@ $app->get('/initiateWebDownload/:udi', function ($udi) use ($app) {
     $dataset = $datasets[0];
 
     if ($dataset['access_status'] != "Restricted" and $dataset['access_status'] != "Approval") {
-        $dat_file = "/sftp/data/$dataset[udi]/$dataset[udi].dat";
+        $dat_file = $GLOBALS['storage']['storage']['data_store']."/$dataset[udi]/$dataset[udi].dat";
         if (file_exists($dat_file)) {
             $env = $app->environment();
             $uid = 0;
@@ -478,8 +481,8 @@ $app->get('/initiateWebDownload/:udi', function ($udi) use ($app) {
             } else {
                 $uid = uniqid($user->name . '_');
             }
-            mkdir("/sftp/download/$uid/");
-            symlink($dat_file,"/sftp/download/$uid/$dataset[dataset_filename]");
+            mkdir($GLOBALS['config']['DataDiscovery']['downloadDir']."/$uid/");
+            symlink($dat_file,$GLOBALS['config']['DataDiscovery']['downloadDir']."/$uid/$dataset[dataset_filename]");
 
             $stash = array();
             $stash['server'] = $env['SERVER_NAME'];
@@ -490,8 +493,8 @@ $app->get('/initiateWebDownload/:udi', function ($udi) use ($app) {
             $altTag = '';
             
             if ($GLOBALS['config']['DataDiscovery']['alternateDownloadSite'] == 1) {
-                $return = system("ssh apache@poseidon-cs.tamu.edu -C mkdir /sftp/download/$uid/"); 
-                $return = system("ssh apache@poseidon-cs.tamu.edu -C ln -s $dat_file /sftp/download/$uid/$dataset[dataset_filename]");
+                $return = system("ssh apache@poseidon-cs.tamu.edu -C mkdir ".$GLOBALS['config']['DataDiscovery']['downloadDir']."/$uid/"); 
+                $return = system("ssh apache@poseidon-cs.tamu.edu -C ln -s $dat_file ".$GLOBALS['config']['DataDiscovery']['downloadDir']."/$uid/$dataset[dataset_filename]");
                 $stash['alternateDownloadSite']=1;
                 $altTag = " (ALT-SITE)";
             }
@@ -513,6 +516,7 @@ $app->get('/enableGridFTP/:udi', function ($udi) use ($app) {
     if (!user_is_logged_in_somehow()) {
         drupal_exit();
     }
+    $homedir = getHomedir($user->name);
     if (preg_match('/^00/',$udi)) {
         $datasets = get_registered_datasets(getDBH('GOMRI'),array("registry_id=$udi%"));
     }
