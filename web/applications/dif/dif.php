@@ -505,6 +505,7 @@ function showDIFForm()
     $isDIFApprover = isDIFApprover(getUID());
     
     $personid = getPersonID(getUID());
+    if ($personid == 0) {$personid='';};
     
     // echo "isadmin:$isadmin<br>";
     // echo "isDManager:$isDManager<br>";

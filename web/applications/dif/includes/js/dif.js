@@ -373,9 +373,8 @@ function makeTree(json)
 
 function loadTasks()
 {
-    //debugger;
     $.ajax({
-        url: "https://proteus.tamucc.edu/~mvandeneijnden/dif/getTasks.php",
+        url: "/~mvandeneijnden/dif/getTasks.php",
         //context: document.body,
         datatype: 'JSON',
         type: 'GET',
@@ -399,7 +398,7 @@ function loadTasks()
 function loadPOCs(PseudoID,ppoc,spoc)
 {
     $.ajax({
-        url: "https://proteus.tamucc.edu/~mvandeneijnden/dif/getPeople.php",
+        url: "/~mvandeneijnden/dif/getPeople.php",
         type: "GET",
         datatype: "JSON",
         data: {'function':'loadPOCs',pseudoid: PseudoID}
