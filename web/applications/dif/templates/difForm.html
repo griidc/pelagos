@@ -15,6 +15,7 @@
         <input type="hidden" id="fundsrcid" name="fundsrcid">
         <input type="hidden" id="udi" name="udi">
         <input type="hidden" id="btn" name="button">
+        <input type="hidden" id="submitter" name="submitter">
         {% if isadmin == true %}
         <input type="hidden" id="isadmin" name="isadmin" value="{{isadmin}}">
         {% endif %}
@@ -384,10 +385,16 @@
         </fieldset>
             <div id="diftoolbar" class="ui-widget-header ui-corner-all">
             <center>
-            {% if (isadmin == true) or (isdifapprover == true) %}
+            {% if isdifapprover %}
             <button type="button" id="btnApprove" value="approve">Approve</button>
             <button type="button" id="btnReject" value="reject">Reject</button>
             <button type="button" id="btnUpdate" value="update">Update</button>
+            {% elseif isadmin %}
+            <button type="button" id="btnApprove" value="approve">Approve</button>
+            <button type="button" id="btnReject" value="reject">Reject</button>
+            <button type="button" id="btnUpdate" value="update">Update</button>            
+            <button type="button" id="btnSave" value="save">Save and Continue Later</button>
+            <button type="button" id="btnSubmit" value="submit">Save and Submit to GRIIDC</button>
             {% else %}
             <button type="button" id="btnSave" value="save">Save and Continue Later</button>
             <button type="button" id="btnSubmit" value="submit">Save and Submit to GRIIDC</button>

@@ -3,6 +3,7 @@
 include 'difDL.php'; //dif DataLayer
 
 include_once '/home/users/mvandeneijnden/public_html/quartz/php/ldap.php'; 
+include_once '/home/users/mvandeneijnden/public_html/quartz/php/griidcMailer.php';
 
 //include_once 'getHelpText.php';
 
@@ -52,6 +53,84 @@ if (isset($_POST['function']))
     exit;
 }
 
+function sendSubmitMail($user,$udi,$title,$template)
+{
+   global $twig;
+   
+   $difMailer = new griidcMailer(false); 
+   
+   $userDetails = getUserDetails($user);
+   
+   $twigdata = $userDetails;
+   $twigdata["url"] = 'https://'.$_SERVER[HTTP_HOST].'/newdif/?id='.$udi;
+   $twigdata["udi"] = $udi;
+    
+   $message = $twig->render($template, $twigdata);
+   
+   $difMailer->addToUser($userDetails["firstName"], $userDetails["lastName"], $userDetails["eMail"]);
+   $difMailer->mailSubject = $title;
+
+   $difMailer->donotBCC = true;   #for debug only
+   
+   $difMailer->mailMessage = $message;
+   return $difMailer->sendMail();
+}
+
+function mailApprovers($udi,$title)
+{
+    global $twig;
+    $ldap = connectLDAP('triton.tamucc.edu');
+    
+    $difMailer = new griidcMailer(false); 
+    $difMailer->donotBCC = true;
+    
+    $twigdata = array();
+    
+    $twigdata["url"] = 'https://'.$_SERVER[HTTP_HOST].'/newdif/?id='.$udi;
+    $twigdata["udi"] = $udi;
+    
+    $message = $twig->render('reviewMail.html', $twigdata);
+    
+    $members = getAttributes($ldap,"cn=approvers,ou=DIF,ou=applications,dc=griidc,dc=org",array('member'));    
+    foreach ($members['member'] as $member)
+    {
+        $attributes = getAttributes($ldap,$member,array('givenName','sn','mail'));
+        if (count($attributes) > 0) {
+        			
+            if (array_key_exists('givenName',$attributes)) $mailFirstName = $attributes['givenName'][0];
+            if (array_key_exists('sn',$attributes)) $mailLastName = $attributes['sn'][0];
+            if (array_key_exists('mail',$attributes)) $eMail = $attributes['mail'][0];
+        					
+            $difMailer->addToUser($mailFirstName, $mailLastName, $eMail);
+        }
+    }
+    
+    $difMailer->mailMessage = $message;
+    //return $difMailer->sendMail();
+
+}
+
+function getUserDetails($userName)
+{
+    $firstName = '';
+    $lastName = '';
+    $eMail = '';
+    $ldap = connectLDAP('triton.tamucc.edu');
+    $baseDN = 'dc=griidc,dc=org';
+    $userDNs = getDNs($ldap,$baseDN,"uid=$userName");
+    $userDN = $userDNs[0]['dn'];
+    if (count($userDNs) > 0) {
+            $attributes = getAttributes($ldap,$userDN,array('givenName','sn','mail'));
+            if (count($attributes) > 0) {
+                    if (array_key_exists('givenName',$attributes)) $firstName = $attributes['givenName'][0];
+                    if (array_key_exists('sn',$attributes)) $lastName = $attributes['sn'][0];
+                    if (array_key_exists('mail',$attributes)) $eMail = $attributes['mail'][0];
+            }
+    }
+    
+    return array('firstName'=>$firstName,'lastName'=>$lastName,'eMail'=>$eMail);
+}
+
 function postDIF($fielddata)
 {
     $formdata = array();
@@ -90,6 +169,8 @@ function postDIF($fielddata)
     $fundingSourceID = (int)$data["fundsrcid"];
     $gmlText = $data["geoloc"];
     $frmButton = $data["button"];
+    $submitted = $data["submitter"];
+    $editor = getUID();
     
     if ($status > 1) {$status = 1;}; #If this happened, someone fiddled with the form.
     
@@ -120,12 +201,14 @@ function postDIF($fielddata)
     
     if (empty($gmlText)){$gmlText=null;};
     
+    if (empty($submitted) OR ($status < 2 AND $frmButton != 'reject'))
+    {$submitted=$editor;};
+    
     //$gmlText = '<gml:Point srsName="urn:ogc:def:crs:EPSG::4326"><gml:pos srsDimension="2">27.70323 -97.30042</gml:pos></gml:Point>';
-    $editor = getUID();
     
     $logname = getPersonID(getUID());
     
-    $parameters = array($datasetUID,$UDI,$projectID,$taskID,$title,$primarypoc,$secondarypoc,$abstract,$datasettype,$datasetfor,$datasize,$observation,$approach,$startdate,$enddate,$geolocation,$submission,$natarchive,$ethical,$remarks,$logname,$status,$editor,$gmlText,$fundingSource);
+    $parameters = array($datasetUID,$UDI,$projectID,$taskID,$title,$primarypoc,$secondarypoc,$abstract,$datasettype,$datasetfor,$datasize,$observation,$approach,$startdate,$enddate,$geolocation,$submission,$natarchive,$ethical,$remarks,$logname,$status,$editor,$gmlText,$fundingSource,$submitted);
     
     $rc = saveDIF($parameters);
     
@@ -133,10 +216,13 @@ function postDIF($fielddata)
     
     //var_dump($rc);
     
+    $sendMail = false;
+    
     if ($success)
     {
         if (isset($rc[0]["save_dif"]) AND $rc[0]["save_dif"] != 't')
         {
+            #new dif from scratch
             $nudi = $rc[0]["save_dif"];
             $message = '<div><img src="includes/images/info32.png"><p>The form was submitted succesfully!<br>Your new DIF ID is: <b>'.$nudi.'</b></p></div>';
             $msgtitle = 'New DIF Submitted';
@@ -145,6 +231,7 @@ function postDIF($fielddata)
         {
             $message = '<div><img src="includes/images/info32.png"><p>The application with DIF ID: '.$UDI.' was succesfully approved!</p></div>';
             $msgtitle = 'DIF Approved';
+            $sendMail = sendSubmitMail($submitted,$UDI,'GRIIDC DIF Approved','approveMail.html');
         }
         else if ($frmButton == 'reject')
         {
@@ -160,6 +247,10 @@ function postDIF($fielddata)
         {
             $message = '<div><img src="includes/images/info32.png"><p>Congratulations! You have successfully submitted a DIF to GRIIDC. The UDI for this dataset is '.$UDI.'.<br>The DIF will now be reviewed by GRIIDC staff and is locked to prevent editing.<br>To unlock your DIF to make changes, please email your request and the dataset UDI to GRIIDC (<a href="mailto:griidc@gomri.org&subject=DIF Unlock">griidc@gomri.org</a>)<br>Thank you.</p></div>';
             $msgtitle = 'DIF Submitted';
+            
+            $sendMail = sendSubmitMail($submitted,$UDI,'GRIIDC DIF Submitted','submitMail.html');
+            mailApprovers($UDI,'DIF Submitted for Approval');
+            
         }
         else
         {
@@ -173,7 +264,7 @@ function postDIF($fielddata)
         $msgtitle = 'DIF ERROR';
     }
     
-    return json_encode(array('status'=>$rc,'success'=>$success,'message'=>$message,'title'=>$msgtitle));
+    return json_encode(array('status'=>$rc,'success'=>$success,'message'=>$message,'title'=>$msgtitle,'sendmail'=>$sendMail));
     
     
 }
@@ -257,7 +348,7 @@ function getFormData($difID)
     $formArr = array_merge($formArr,array("geoloc"=>$data["the_geom"]));
     $formArr = array_merge($formArr,array("projectid"=>$data["project_id"]));
     $formArr = array_merge($formArr,array("taskid"=>$data["task_uid"]));
-    
+    $formArr = array_merge($formArr,array("submitter"=>$data["submitted_by"]));
     
     $dataSetType = preg_split ("/\|/",$data["dataset_type"]);
 
@@ -403,6 +494,8 @@ function getTaskList($Status=null,$PersonID=null,$ShowEmpty=true)
     
     return json_encode($listArray);
 }
+
+var_dump(isAdmin(getUID()));
 
 function showDIFForm()
 {
