@@ -50,7 +50,7 @@ if (array_key_exists('dir',$_GET)) {
         }
 
         if (!is_null($groupName) and $groupName == 'external-users') {
-            $chrootDir = "/home/incoming/chroot/$user";
+            $chrootDir = "/san/home/$user";
         }
         elseif (isset($homeDir)) {
             $chrootDir = "/$homeDir";
