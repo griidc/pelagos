@@ -106,7 +106,7 @@ function mailApprovers($udi,$title)
     }
     
     $difMailer->mailMessage = $message;
-    //return $difMailer->sendMail();
+    return $difMailer->sendMail();
 
 }
 
@@ -494,8 +494,6 @@ function getTaskList($Status=null,$PersonID=null,$ShowEmpty=true)
     
     return json_encode($listArray);
 }
-
-var_dump(isAdmin(getUID()));
 
 function showDIFForm()
 {
