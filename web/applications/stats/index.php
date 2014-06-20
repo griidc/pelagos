@@ -267,7 +267,7 @@ $app->get('/data/overview/summary-of-records', function () use ($app) {
 
     $bars = array( 'barWidth' => 0.8 );
 
-    $SQL = "SELECT COUNT(*) FROM datasets WHERE dataset_udi NOT LIKE '00%'";
+    $SQL = "SELECT COUNT(*) FROM datasets WHERE dataset_udi NOT LIKE '00%' AND status > 1";
     $sth = $dbh->prepare($SQL);
     $sth->execute();
     $count = $sth->fetchColumn();
@@ -321,7 +321,7 @@ $app->get('/data/overview/total-records-over-time', function () use ($app) {
     $dbh = OpenDB('GOMRI_RO');
 
     $identifications = array( 'label' => 'Total Datasets Identified', 'data' => array() );
-    $SQL = "SELECT row_number() OVER(ORDER BY dataset_uid) AS count, dataset_uid::INT8 * 1000 AS ts FROM datasets WHERE status > 0;";
+    $SQL = "SELECT row_number() OVER(ORDER BY dataset_uid) AS count, dataset_uid::INT8 * 1000 AS ts FROM datasets WHERE status > 1;";
     $sth = $dbh->prepare($SQL);
     $sth->execute();
     $rows = $sth->fetchAll();
