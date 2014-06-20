@@ -529,27 +529,21 @@ $app->get('/enableGridFTP/:udi', function ($udi) use ($app) {
            
     }
 
-    $dat_file = "/sftp/data/$dataset[udi]/$dataset[udi].dat";
+    $dat_file = $GLOBALS['storage']['storage']['data_store']."/$dataset[udi]/$dataset[udi].dat";
     if (file_exists($dat_file)) {
         $env = $app->environment();
        
-        # remove any existing potential stale hardlink with the same name.
-        # WARNING: (limitation) If files requested by have the same name, the last one wins
-        # because there is no requirement for uniqueness of user-named files.  We are
-        # serving back the file with the name it was uploaded with.
-        $ds_hardlink="/sftp/data/GridFTP/$user->name/$dataset[dataset_filename]";
-        if(file_exists($ds_hardlink)) {
-            unlink($ds_hardlink);
+        $ds_symlink=$homedir."/download/$dataset[udi]/$dataset[dataset_filename]";
+        # remove any existing potential stale symlink with the same name.
+        if(file_exists($ds_symlink)) {
+            unlink($ds_symlink);
+        }
+        
+        if(!file_exists($homedir."/download/$dataset[udi]")) {
+            mkdir ($homedir."/download/$dataset[udi]");
         }
     
-        link($dat_file, $ds_hardlink);
-        # Write a file dating this hardlink for later removal  (UNIX timestamp)
-        $date = date("U"); # UNIXTIME 
-        if (!(is_dir("/sftp/data/GridFTP-Status/$user->name"))) {
-            mkdir("/sftp/data/GridFTP-Status/$user->name/");
-        }
-        $ds_hardlink_createdon="/sftp/data/GridFTP-Status/$user->name/$dataset[dataset_filename].createdon";
-        file_put_contents($ds_hardlink_createdon,"$ds_hardlink|$date|".filesize($dat_file)."\n");
+        symlink($dat_file, $ds_symlink);
         $tstamp=date('c');
         $user_name = $user->name;
         # logging
