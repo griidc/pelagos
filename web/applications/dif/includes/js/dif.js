@@ -451,7 +451,7 @@ function formChanged()
         var self = this;
         if (formHash != $("#difForm").serialize() && typeof formHash !='undefined')
         {
-            $('<div><img src="includes/images/warning.png"><p>You made changes, are you sure?</p></div>').dialog({
+            $('<div><img src="includes/images/warning.png"><p>You will lose all changes. Do you wish to continue?</p></div>').dialog({
                 title: "Warning!",
                 resizable: false,
                 modal: true,

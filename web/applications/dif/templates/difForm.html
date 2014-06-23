@@ -26,7 +26,7 @@
                 <span class="helpSection"> 
                     <img class="info" src="includes/images/info32.png">
                     <div class="tooltiptext">
-                        <p>This is a required field. The task titles will be provided as a drop-down list from where you choose from. If your task is not listed, please email GRIIDC (griidc@gomri.org) for assistance.</p>
+                        <p>This is a required field. Task titles in the GRIIDC data management system have been obtained from GoMRI funding proposals and/or agreements. The drop-down menu will list all tasks that you are associated with in the proposal you, or your research group, submitted to GoMRI.</p>
                     </div>
                 </span>
                 <label class="emRequired" for="difTasks">
@@ -43,14 +43,12 @@
                     <span class="helpSection"> 
                         <img class="info" src="includes/images/info32.png">
                         <div class="tooltiptext">
-                            <p>It is in the discretion of the researcher to define the level of data aggregation to define a dataset. If this level of data aggregation has not been identified, it is recommended to start by answering the ‘what, how, when, where’. It is also not recommended to aggregate data too much that the data attributes can no longer be segregated and discoverable.</p>
-                            <p>Example Input: Hydrodynamics: ADCP Data for June – July 2012 in Station 42001</p>
-                            <p><strong><em>200 Characters Max.</em></strong></p>
+                            <p>This is a required field. Please provide a descriptive title that briefly explains the contents of your dataset. This will be similar to titles used in publications, and may include location where, and time period when the research was completed. It should be understandable by a user unfamiliar with your methods, site collections or research platforms.</p>
                         </div>
                     </span>
                     <label class="emRequired" for="difTitle">
                         <b>Dataset Title:</b></label>
-                    <textarea placeholder="Dataset Title" name="title" id="difTitle" rows="2" style="width:100%;" required maxlength="200"></textarea>
+                    <textarea placeholder="Dataset Title (200 Character Maximum" name="title" id="difTitle" rows="2" style="width:100%;" required maxlength="200"></textarea>
                 </fieldset>
             </div>
 
@@ -60,7 +58,7 @@
                 <span class="helpSection"> 
                     <img class="info" src="includes/images/info32.png">
                     <div class="tooltiptext">
-                        <p>This is the person responsible for answering questions associated with this dataset. Choose from the dropdown list, if name does not appear please contact GRIIDC (<a href="mail://griidc@gomri.org">griidc@gomri.org</a>).</p>
+                        <p>This is a required field. This is the person responsible for answering questions associated with this dataset and responding to requests for the dataset. Please select the appropriate person from the dropdown list.</p>
                     </div>
                 </span>
             <label class="emRequired" for="difPpoc">
@@ -75,7 +73,7 @@
                 <span class="helpSection"> 
                     <img class="info" src="includes/images/info32.png">
                     <div class="tooltiptext">
-                        <p>By default, the consortia director, if applicable, is the Secondary Point of Contact (sPOC). The sPOC will be contacted if the pPOC cannot be reached or is unable to respond to queries regarding the dataset. As with the pPOC, a list is provided. However, if the name of the person is not on the list, contact GRIIDC (griidc.help@gomri.org) for assistance.</p></div>
+                        <p>The secondary point of contact will be contacted if the primary point of contact cannot be reached or is unable to respond to questions about the dataset. Please select the appropriate person from the drop down list.</p></div>
                 </span>
             <label for="difPpoc">
                 <b>Secondary Point of Contact: </b></label>
@@ -92,8 +90,7 @@
                 <span class="helpSection"> 
                     <img class="info" src="includes/images/info32.png">
                     <div class="tooltiptext">
-                        <p>This field should describe the rationale of collecting the dataset, procedure/process how this dataset will be created, period o                f data collection and what it will contain. Note that some of the fields that follow in this form are or may be components of this field.</p>
-                        <p><strong><em>4000 Characters Max.</em></strong></p>
+                        <p>This is a required field. This field should summarize the rationale for collecting the dataset, methods that will be used to collect or generate the dataset, period of data collection and what the dataset will contain. This may be similar to a publication abstract, however, it does not need to include details about conclusions drawn or statistical analysis completed using the dataset.</p>
                     </div>
                 </span>
             <label class="emRequired" for="difAbstract"><b>Dataset Abstract: </b></label>
@@ -107,8 +104,7 @@
                 <span class="helpSection"> 
                     <img class="info" src="includes/images/info32.png">
                     <div class="tooltiptext">
-                        <p>This field should describe the rationale of collecting the dataset, procedure/process how this dataset will be created, period of data collection and what it will contain. Note that some of the fields that follow in this form are or may be components of this field.</p>
-                        <p><strong><em>4000 Characters Max.</em></strong></p>
+                        <p>A dataset can contain many file types. Please check off the boxes for all file types that best describe the file types that your dataset will include. If your dataset will include video files please provide details about the attributes (compression and decompression methods and file type) that will allow others to open the file. If your file type is not listed, please provide a file description in the field &ldquo;other&rdquo;.</p>
                     </div>
                 </span>
                 <label for="difDatatype"><b>Dataset File Type(s):</b></label>
@@ -135,23 +131,15 @@
                 </tr>
                 <tr>
                 <td colspan="3"> 
-                <input type="checkbox"  name="dtvideo" value="Video"/>Video</td>
+                <input type="checkbox" name="dtvideo" value="Video"/>Video</td>
              
                 </tr>
                 <tr><td colspan="3"> 
                 <div>
-                    <span class="helpSection"> 
-                        <img class="info" src="includes/images/info32.png">
-                        <div class="tooltiptext">
-                            <p>If your dataset contains video, what video attributes (e.g. compression and decompression and file type) that will allow others to open the file.</p>
-                            <p>Examples: MPEG Codec:H.264, QuickTime H.264</p>
-                        </div>
-                    </span>
-                        <label for="difVideo"><b>Video Attributes (if applicable): </b></label>
-                        <textarea name="dtvideoatt"  id="difVideo" maxlength="200" rows="2" style="width:100%;"></textarea>
+                    <label for="difVideo"><b>Video Attributes (if applicable): </b></label>
+                    <textarea placeholder="(200 Character Maximum)" name="dtvideoatt"  id="difVideo" maxlength="200" rows="2" style="width:100%;"></textarea>
                 </div>
                 </td>
-                
                 </tr>
                 </table>
                 </fieldset>
@@ -162,7 +150,7 @@
                     <span class="helpSection"> 
                         <img class="info" src="includes/images/info32.png">
                         <div class="tooltiptext">
-                            <p>Datasets are often classified or created for a field of science. Choices are provided and check all boxes that best classify the dataset to be generated. If the field is not presented, please provide an input the Others field.</p>
+                            <p>Datasets may be categorized based on the discipline for which they are collected. Please check all the boxes that categorize the discipline(s) for which your dataset will be created. Note that datasets can be multidisciplinary so select all disciplines that apply. If your field of study is not listed, please select  and specify additional details.</p>
                         </div>
                     </span>
                 <label for="difDatafor"><b>Field of Study:</b></label>
@@ -199,7 +187,7 @@
                     <span class="helpSection"> 
                         <img class="info" src="includes/images/info32.png">
                         <div class="tooltiptext">
-                            <p>Please provide an approximation as to the size of the dataset expected to be created. This field will help GRIIDC formulate strategies for the access or collection of the dataset.</p>
+                            <p>Please provide an estimate of the total size of the dataset files you expect will be created. This field can be estimated based on data files you have created in the past. This field will help GRIIDC formulate strategies to access and distribute your dataset.</p>
                         </div>
                     </span>
                     <label for="difSize"><b>Approximate Dataset Size: </b></label>
@@ -221,12 +209,11 @@
                 <span class="helpSection"> 
                     <img class="info" src="includes/images/info32.png">
                     <div class="tooltiptext">
-                        <p>This is a free-text field and you may list as much as possible all the variables or phenomena that will be measured, collected or generated. Separate list items using commas.</p>
-                        <p>Example: wind direction, wind speed, sea surface temperature</p>
+                        <p>Please expand on information you have provided in the abstract by giving more exact details about all variables or phenomena that you plan to measure, collect or generate. Please separate list items using a comma. </p>
                     </div>
                 </span>
-                <label for="difObservation"><b>Phenomenon/Variables Observed or Generated: </b></label>
-                <textarea  name="observation"  id="difObservation" rows="3" style="width:100%;"></textarea>
+                <label  for="difObservation"><b>Phenomenon/Variables Observed or Generated: </b></label>
+                <textarea placeholder="Examples: wind speed (km/hr), salinity (ppt), temperature (°C), PCB concentrations in eggs from a specified species (ng/g wet weight), Ionic Strength (mM)" name="observation"  id="difObservation" rows="3" style="width:100%;"></textarea>
             </fieldset>
             </div>
 
@@ -235,7 +222,7 @@
                     <span class="helpSection"> 
                         <img class="info" src="includes/images/info32.png">
                         <div class="tooltiptext">
-                            <p>This field should contain the procedure or method used to collect or generate the data in the dataset. Depending on the dataset being created, list all of the procedures expected to be used in acquiring the data. If not on the list, provide inputs in the Others field.</p>
+                            <p>Please select all the procedures or methods that you will use to collect or generate data in the dataset. If not available on the list, please provide additional information in the &ldquo;other&rdquo; field.</p>
                         </div>
                     </span>
                 <label for="difApproach"><b>Procedure for Acquiring or Creating the Data: </b></label>
@@ -260,7 +247,7 @@
                 <span class="helpSection"> 
                     <img class="info" src="includes/images/info32.png">
                     <div class="tooltiptext">
-                        <p>This is the approximate period that the data is expected to be collected as per the proposal. If these dates need to be modified, email GRIIDC (griidc.help@gomri.org) to unlock the file for modification after this form has been submitted.</p>
+                        <p>The approximate time period when the data is expected to be collected and generated based on the information provided in your GoMRI proposal. If these dates need to be modified after the form has been submitted.</p>
                     </div>
                 </span>
                <label><b>Estimated Data Sampling/Generation Period: </b></label>
@@ -279,7 +266,7 @@
                     <span class="helpSection"> 
                         <img class="info" src="includes/images/info32.png">
                         <div class="tooltiptext">
-                            <p>This is the relative geographical zone that the data will be collected or will be generated for. Although this form will allow descriptive inputs, the use of a point location in latitude and longitude (in decimal degrees) pair or a series to create a closed polygon are preferred. You may use online interactive maps for these inputs (e.g. http://www.birdtheme.org/useful/googletool.html) to get these coordinates.</p>
+                            <p>The approximate geographic area where the data will be collected. Alternatively, the geographic area the data will be generated for or about, for example the area to be included in a model. Please use the spatial extent wizard to provide the geographic area. If available, please provide location in latitude and longitude in decimal degrees to create a point or a series to create a closed polygon. Alternatively, the spatial extent tool allows you to create an approximate point or polygon of the area where you expect to collect data, or the area that your data will be generated for or about. If your research is purely lab-based, you can indicate this using the spatial extent wizard.</p>
                         </div>
                     </span>
                     <table>
@@ -312,7 +299,7 @@
                 <span class="helpSection"> 
                     <img class="info" src="includes/images/info32.png">
                     <div class="tooltiptext">
-                        <p>It is very important that GRIIDC is aware of how the data will be made accessible to the world (when it is ready). This field answers the question, ‘How will you make these data available?’ Options are provided based on the proposal submitted. Check all that apply. If the data transfer protocol is not on the list, please identify in the Others field.</p>
+                        <p>Please provide information about how you will submit or provide your dataset to GRIIDC. Small datasets can be uploaded directly to GRIIDC through the internet (http); however, large datasets may require specialized methods, such as FTP, GridFTP and THREDDS.  If the method or protocol you wish to use is not listed, please specify in the &ldquo;other&rdquo; field.</p>
                     </div>
                 </span>
                 <label for="difAccess"><b>Anticipated Dataset Submission Method: </b></label>
@@ -334,7 +321,7 @@
                 <span class="helpSection"> 
                     <img class="info" src="includes/images/info32.png">
                     <div class="tooltiptext">
-                        <p>As part of the contractual obligation of all projects of GoMRI, this dataset needs to be submitted to a recognized national data archival center. GRIIDC is recognized as an acceptable substitute to national centers if one can not be identified. If another center can be identified that is not on the list, identify the center and its URL in the Others field.</p>
+                        <p>All research projects funded by the Gulf of Mexico Research Initiative (GoMRI) are required to make data publically accessible. Datasets can be submitted directly to GRIIDC, however, your dataset may also be submitted to a national data archival center. If your dataset is submitted to a national data archive center you must still register your dataset with the GRIIDC system so that the dataset can be catalogued with other datasets produced by GoMRI research projects. If you will be submitting your dataset to a national data center not on the list provided, please specify the data center and associated URL in the &ldquo;other&rdquo; field.</p>
                     </div>
                 </span>
             <label for="difNatRepo"><b>Identify a National Data Archive for your Dataset, if applicable: </b></label>        
@@ -356,7 +343,7 @@
                 <span class="helpSection"> 
                     <img class="info" src="includes/images/info32.png">
                     <div class="tooltiptext">
-                        <p>Some of the data that will be collected may have ethical and/or privacy issues preventing it to be shared or distributed. If such conditions exist, check the ‘yes’ check box. If uncertain, check the ‘uncertain’ box, and provide a short description of the issue.</p>
+                        <p>Datasets that contain human health information or personal identifying information may have ethical and/or privacy issues that prevent the data from being shared or distributed. If such conditions exist, please select &ldquo;yes&rdquo;. If uncertain, please select &ldquo;uncertain&rdquo; and provide a short description of potential issues. GRIIDC staff will then follow up to help determine if privacy or ethical issues apply to your dataset.</p>
                     </div>
                 </span>
                 <label for="difPrivacy"><b>Anticipated Ethical or Privacy Issues: </b></label>        
@@ -376,7 +363,7 @@
                 <span class="helpSection"> 
                     <img class="info" src="includes/images/info32.png">
                     <div class="tooltiptext">
-                        <p> Provide general remarks that will help GRIIDC prepare itself for the downloading (if needed), use or distribution of the dataset being identified.</p>
+                        <p>Please provide any additional information that would help GRIIDC understand the contents or format of your dataset that would assist in GRIIDC obtaining, using or distributing your dataset.</p>
                     </div>
                 </span>
                     <label for="difRemarks"><b>Remarks: </b></label>        

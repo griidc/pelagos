@@ -224,7 +224,7 @@ function postDIF($fielddata)
         {
             #new dif from scratch
             $nudi = $rc[0]["save_dif"];
-            $message = '<div><img src="includes/images/info32.png"><p>The form was submitted succesfully!<br>Your new DIF ID is: <b>'.$nudi.'</b></p></div>';
+            $message = '<div><img src="includes/images/info32.png"><p>You have saved a DIF. This DIF has been given the ID: '.$nudi.'<br>In order to submit your dataset to GRIIDC you must return to this page and submit the DIF for review and approval.</p></div>';
             $msgtitle = 'New DIF Submitted';
         }
         else if ($frmButton == 'approve')
@@ -254,7 +254,7 @@ function postDIF($fielddata)
         }
         else
         {
-            $message = '<div><img src="includes/images/info32.png"><p>Thank you for saving DIF with ID:  '.$UDI.'.</p></div>';
+            $message = '<div><img src="includes/images/info32.png"><p>Succesfully saved DIF with ID: '.$UDI.'.</p></div>';
             $msgtitle = 'DIF Submitted';
         }
     }
