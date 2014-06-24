@@ -105,10 +105,6 @@ $(document).ready(function()
         loadPOCs($(this).val());
     });
     
-    $("#spatialdesc").change(function(){
-        $("#spatialdesc").show();
-    });
-    
     loadTasks();
     loadDIFS(null,personid,true);
     
@@ -199,8 +195,16 @@ $(document).ready(function()
     });
     
     geowizard = new MapWizard({"divSmallMap":"difMap","divSpatial":"spatial","divNonSpatial":"nonspatial","divSpatialWizard":"spatwizbtn","gmlField":"difGeoloc","descField":"spatialdesc","spatialFunction":""});
-    
+
+    $("#difGeoloc").change(function(){
+        if ($('#spatialdesc').val()!="" && $('#difGeoloc').val()=='')
+        { geowizard.haveSpatial(true);}
+        else
+        { geowizard.haveSpatial(false); }
         
+        if ($('#difGeoloc').val()!='')
+        { geowizard.haveSpatial(false); }
+    });
 });
 
 function treeSearch()
