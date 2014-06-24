@@ -1,6 +1,6 @@
 function MapWizard(json)
 {
-    var $ = jQuery.noConflict();
+    //var $ = jQuery.noConflict();
     
     var json;
     
@@ -22,6 +22,22 @@ function MapWizard(json)
     var descField = '#'+json.descField;
     
     init();
+    
+    this.cleanMap = function()
+    {
+        smlGeoViz.goHome();
+        smlGeoViz.removeImage();
+        smlGeoViz.removeAllFeaturesFromMap(); 
+    }
+    
+    //function haveGML(gml)
+    this.haveGML = function(gml)
+    {
+        smlGeoViz.goHome();
+        smlGeoViz.removeImage();
+        smlGeoViz.removeAllFeaturesFromMap();
+        smlGeoViz.gmlToWKT(gml);
+    }
 
     function init()
     {
@@ -34,13 +50,14 @@ function MapWizard(json)
         $(divNonSpatial).hide();
         
         $(document.body).append('<div id="divMapWizard"></div>');
+
+        $("#divMapWizard").append('<div id="hasSpatial" style="display:none;"><h2>Would you characterize your dataset as Spatial or Non-Spatial?</h2><p>Many datasets have an obvious spatial component (samples taken at a location or model results that describe an area). However, for some datasets, a location may not be relevant or even recorded (chemical analysis datasets wholly performed in the lab, data describing synthesis of new dispersants, etc.)</p></div>');
         
-         // $("#divMapWizard").load("mapWizard.html",function(){
-            // // $('body').append($(this).clone().html());
-            // // $(this).remove();
-         // });
+        $("#divMapWizard").append('<div id="provideDesc" style="display:none;"><h2>Please provide a short statement describing why this dataset does not have a spatial component.</h2><p><i>Example - "Dataset contains laboratory measurements of oil degradation, no field sampling involved"</i></p><textarea class="required" id="wizDesc" cols="80" rows="5"></textarea><br></div>')
+
+        $("#divMapWizard").append('<div id="mapwiz" style="display:none;">        <table id="maptoolstbl" width="100%" height="100%" border="0">        <tr valign="top">        <td width="80%" >        <!--Make sure the width and height of the map are 100%-->        <!--div id="olmap" style="width: 100%;height: 100%;"></div-->        </td>        <td width="20%">        <table width="100%" height="100%" border="0">        <tr>        <!--        <td align="center" valign="top" height="90%" style="position:relative;">        <label for="coordlist">Coordinate List</label>        <textarea id="coordlist" style="width:95%;position:absolute;left:5px;right:5px;top:20px;bottom:5px;"></textarea>        </td>        -->        <td align="center" valign="top">        <div id="coordtoolbar" class="ui-widget-header ui-corner-all">        <label id="coordlistLbl" for="coordlist">Coordinate List</label>        <textarea id="coordlist" style="width:95%;"></textarea>        <button style="width: 100%;" id="drawOnMap">Render on Map</button>        </div>        </td>        </tr>        <tr>        <td width="100%">        <h3>        <span id="wizDrawMode">Navigation</span> Mode</h3>        <fieldset>        <div id="maphelptxt" style="position:relative;overflow-x:hidden;overflow-y:auto;">                        </div>        </fieldset>        </td>                </tr>        <tr>        <td>        <div id="wiztoolbar" class="ui-widget-header ui-corner-all">        <button style="width: 100%;font-weight:bold;" id="saveFeature">Save and Finish</button>        <button style="width: 100%;" id="startDrawing">Start Drawing</button>        <button style="width: 100%;" id="deleteFeature">Delete</button>        <button style="width: 100%;" id="startOver">Change Mode</button>        <button style="width: 100%;" id="exitDialog">Restart Wizard</button>        </div>        </td>        </tr>        </table>        </td>        </tr>        </table>        </div>');               
         
-        $("#divMapWizard").append('<div id="geoWizard" style="width:100%;height:100%;"></div>                <div id="hasSpatial" style="display:none;">        <h2>Would you characterize your dataset as Spatial or Non-Spatial?</h2>        <p>Many datasets have an obvious spatial component (samples taken at a location or model results that describe an area). However, for some datasets, a location may not be relevant or even recorded (chemical analysis datasets wholly performed in the lab, data describing synthesis of new dispersants, etc.)</p>        <button id="yesSpatial" type="button">Spatial</button>        <button id="noSpatial" value="provideDesc" type="button">Non-Spatial</button>        </div>                <div id="provideDesc" style="display:none;">        <h2>Please provide a short statement describing why this dataset does not have a spatial component.</h2>        <p><i>Example - "Dataset contains laboratory measurements of oil degradation, no field sampling involved"</i></p>        <form id="wizDescForm">        <textarea class="required" id="wizDesc" cols="80" rows="5"></textarea><br/>        <button id="provideOk" type="button">Done</button>        </form>        </div>                <div id="mapwiz" style="display:none;">        <table id="maptoolstbl" width="100%" height="100%" border="0">        <tr valign="top">        <td width="80%" >        <!--Make sure the width and height of the map are 100%-->        <!--div id="olmap" style="width: 100%;height: 100%;"></div-->        </td>        <td width="20%">        <table width="100%" height="100%" border="0">        <tr>        <!--        <td align="center" valign="top" height="90%" style="position:relative;">        <label for="coordlist">Coordinate List</label>        <textarea id="coordlist" style="width:95%;position:absolute;left:5px;right:5px;top:20px;bottom:5px;"></textarea>        </td>        -->        <td align="center" valign="top">        <div id="coordtoolbar" class="ui-widget-header ui-corner-all">        <label id="coordlistLbl" for="coordlist">Coordinate List</label>        <textarea id="coordlist" style="width:95%;"></textarea>        <button style="width: 100%;" id="drawOnMap">Render on Map</button>        </div>        </td>        </tr>        <tr>        <td width="100%">        <h3>        <span id="wizDrawMode">Navigation</span> Mode</h3>        <fieldset>        <div id="maphelptxt" style="position:relative;overflow-x:hidden;overflow-y:auto;">                        </div>        </fieldset>        </td>                </tr>        <tr>        <td>        <div id="wiztoolbar" class="ui-widget-header ui-corner-all">        <button style="width: 100%;font-weight:bold;" id="saveFeature">Save and Finish</button>        <button style="width: 100%;" id="startDrawing">Start Drawing</button>        <button style="width: 100%;" id="deleteFeature">Delete</button>        <button style="width: 100%;" id="startOver">Change Mode</button>        <button style="width: 100%;" id="exitDialog">Restart Wizard</button>        </div>        </td>        </tr>        </table>        </td>        </tr>        </table>        </div>                <div id="helpinfo" title="Spatial Extent Wizard - 4" style="display:none;width:1000px">        <p>Define the spatial extent of your dataset by providing a list of coordinates or drawing on the map. Select the method and then the geometry type that best represents the spatial extent of your dataset.</p>                <div id="helptoolbar" style="font-size:100%;" class="ui-widget-header ui-corner-all">                <div style="display:table;width:100%;">        <div id="featMode" style="display:table-row;">        <div style="display:table-cell;">            <input type="radio" id="featPaste" name="featMode"><label for="featPaste">Insert Coordinate Text</label>        </div>        <div style="display:table-cell;">        <input type="radio" id="featDraw" name="featMode" checked="checked"><label for="featDraw">Draw on the Map</label>        </div>        </div>        </div>                <div style="display:table;width:100%;">        <div id="drawType" style="display:table-row;">        <div style="display:table-cell;">        <input type="radio" id="drawBox" name="drawType"><label for="drawBox">Box</label>        </div>        <div style="display:table-cell;">        <input class="button" type="radio" id="drawPolygon" name="drawType" checked="checked"><label for="drawPolygon">Polygon</label>                </div>        <div style="display:table-cell;">        <input type="radio" id="drawLine" name="drawType"><label for="drawLine">Line</label>        </div>        <div style="display:table-cell;">        <input type="radio" id="drawPoint" name="drawType"><label for="drawPoint">Point</label>        </div>                </div>        </div>                        </div>        </div>');
+        $("#divMapWizard").append('<div id="helpinfo" title="Spatial Extent Wizard - 4" style="display:none;width:1000px"><p>Define the spatial extent of your dataset by providing a list of coordinates or drawing on the map. Select the method and then the geometry type that best represents the spatial extent of your dataset.</p><div id="helptoolbar" style="font-size:100%;" class="ui-widget-header ui-corner-all"><div style="display:table;width:100%;"><div id="featMode" style="display:table-row;"><div style="display:table-cell;"><input type="radio" id="featPaste" name="featMode"><label for="featPaste">Insert Coordinate Text</label></div><div style="display:table-cell;"><input type="radio" id="featDraw" name="featMode" checked="checked"><label for="featDraw">Draw on the Map</label></div></div></div><div style="display:table;width:100%;"><div id="drawType" style="display:table-row;"><div style="display:table-cell;"><input type="radio" id="drawBox" name="drawType"><label for="drawBox">Box</label></div><div style="display:table-cell;"><input class="button" type="radio" id="drawPolygon" name="drawType" checked="checked"><label for="drawPolygon">Polygon</label></div><div style="display:table-cell;"><input type="radio" id="drawLine" name="drawType"><label for="drawLine">Line</label></div><div style="display:table-cell;"><input type="radio" id="drawPoint" name="drawType"><label for="drawPoint">Point</label></div></div></div></div></div>');
         
         wizGeoViz = new GeoViz();
         
@@ -72,18 +89,7 @@ function MapWizard(json)
     function showWizard()
     {
         $.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
-            show: {
-                event: "mouseenter focus",
-                solo: true
-            },
-            hide: {
-                event: "mouseleave blur",
-                delay: 100,
-                fixed: true
-            },
-            style: {
-                classes: "qtip-default qtip-shadow qtip-tipped"
-            },
+            
             position: {
                 adjust: {
                     method: "flip flip"
@@ -94,24 +100,7 @@ function MapWizard(json)
             }
         });
         
-        $("#geoWizard").dialog({
-            title: 'Spatial Extent Wizard',
-            autoOpen: false,
-            modal: true,
-            resizable: false
-        });
-        
         orderEnum = wizGeoViz.orderEnum;
-        
-        $("#geoWizard").dialog({
-            close: function(event, ui) { closeDialog() },
-            resizeStop: function(){
-                wizGeoViz.updateMap();
-            },
-            dragStop: function(){
-                wizGeoViz.updateMap();
-            }
-        });
         
         $("#helpinfo").dialog({
             autoOpen: false,
@@ -129,7 +118,7 @@ function MapWizard(json)
                     if (startOffDrawing)
                     {wizGeoViz.startDrawing();}
                     else
-                    {$('#geoWizard #coordlist').focus();}
+                    {$('#coordlist').focus();}
                     
                     if (!$("#drawPolygon:checked").length && !$("#drawLine:checked").length && !$("#drawPoint:checked").length && !$("#drawBox:checked").length && !$("#featDraw:checked").length && !$("#featPaste:checked").length)
                     {alert('Please make a selection!');}
@@ -139,7 +128,12 @@ function MapWizard(json)
                         wizGeoViz.updateMap();
                     }
                 }
-            }
+            }//,
+            // create:function () {
+                // $(this).closest(".ui-dialog")
+                // .find(".ui-button") // the first button
+                // .css("font-weight","bold");
+            // }
         });
         
         $(document).on('imready', function(e,who) {
@@ -152,27 +146,52 @@ function MapWizard(json)
             }
         });
         
-        
-        //$("#wizard").fadeIn();
-        //$(":button").button().click(function(){showMain($(this));});
-        $("#geoWizard").html($("#hasSpatial").clone(true).fadeIn());
-        //$("#geoWizard").html($("#mainStuff").html());
-        $("#geoWizard").dialog( "option", "title", "Spatial Extent Wizard - 1" );
-        $("#geoWizard").dialog( "option", "width", 700);
-        $("#geoWizard").dialog( "option", "height", 250);
-        $("#geoWizard").dialog("open");
-        
-        $("#geoWizard #yesSpatial").click(function()
-        {
-            drawMap();
+        showSpatialDialog();
+    }
+    
+    function showSpatialDialog()
+    {
+        $("#hasSpatial").dialog({
+            width: 700,
+            height: 250,
+            modal: true,
+            title: 'Spatial Extent Wizard - 1',
+            buttons: {
+                'Spatial': function() {
+                   $(this).dialog('close');
+                   drawMap();
+                },
+                'Non-Spatial': function() {
+                    $(this).dialog('close');
+                    noSpatial();
+                },
+            }
+        });
+    }
+    
+    function noSpatial()
+    {
+        hasSpatial(true);
+        $("#provideDesc").dialog({
+            width: 700,
+            height: 350,
+            modal: true,
+            title: 'Spatial Extent Wizard - 2',
+            buttons: {
+                'OK': function() {
+                    $(this).dialog('close');
+                    $(descField).val($("#wizDesc").val());
+                    $(descField).focus();
+                }
+            }
         });
         
-        $("#geoWizard #noSpatial").click(function()
-        {
-            console.log('click');
-            noSpatial();
-        });
-        
+        $("#wizDesc").focus();
+    }
+    
+    function noSpatialClose()
+    {
+        $("#wizDescForm").validate();
     }
     
     function hasSpatial(Spatial)
@@ -189,37 +208,6 @@ function MapWizard(json)
         }
     }
 
-    
-    function animateTo(Width, Height, Complete)
-    {
-        var dlg = $("#geoWizard").parents(".ui-dialog:first");
-        var dlgTop = dlg.position().top;
-        var dlgHeight = dlg.height();
-        var newTop = ($(window).height()-Height)/2;
-        var newLeft = ($(window).width()-Width)/2;
-        var topDiff = (Height - dlgHeight)/2;
-        newTop = ((dlgTop-topDiff)+newTop)/2;
-        
-        //dlg.animate({ width: Width, height: Height, left: newLeft, top: newTop},{complete: Complete});
-        //$("#geoWizard").height(Height-50);
-        //$("#geoWizard").dialog("option", "position", "center");
-        $("#geoWizard").dialog({
-            width: Width,
-            height: Height,
-            title: 'Spatial Extent Wizard',
-            autoOpen: false,
-            modal: true,
-            resizable: false,
-            position: {
-                my: "center",
-                at: "center",
-                of: window
-            }
-        });
-        
-        //Complete();
-    }
-    
     function drawMap()
     {
         var diaWidth = $(window).width()*.8;
@@ -227,39 +215,38 @@ function MapWizard(json)
         
         hasSpatial(false);
         
-        $("#mapwiz").height(diaHeight-50);
-        
-        animateTo(diaWidth,diaHeight);
+        $("#mapwiz").dialog({
+            height: diaHeight,
+            width: diaWidth,
+            modal: true,
+            title: 'Spatial Extent Wizard - 3',
+            close: function(event, ui) { closeDialog() },
+            resizeStop: function(){
+                wizGeoViz.updateMap();
+            },
+            dragStop: function(){
+                wizGeoViz.updateMap();
+            }
+        });
         
         finalizeMap();
-        
-        $("#geoWizard").dialog( "option", "title", "Spatial Extent Wizard - 3" );
-        
-        
     }
     
     function finalizeMap()
     {
-        $("#geoWizard").html($("#mapwiz").clone(true).show());
-        $('#geoWizard table#maptoolstbl tbody tr td').first().html('<div id="olmap" style="width: 100%;height: 100%;"></div>');
+        $('#mapwiz table#maptoolstbl tbody tr td').first().html('<div id="olmap" style="width: 100%;height: 100%;"></div>');
         wizGeoViz.initMap('olmap',{'onlyOneFeature':true,'allowModify':true,'allowDelete':true});
-        //$("#geoWizard").html($("#mapwiz").fadeIn());
-        //wizGeoViz.updateMap();
         setEvents();
         fixMapToolHeight();
         
         if ($(gmlField).val() != "")// && !featureSend)
         {
-            //addFeatureFromcoordinateList($(gmlField).val());
-            
             wizGeoViz.gmlToWKT($(gmlField).val());
             
             $('#olmap').on('gmlConverted', function(e, eventObj) {
-                //debugger;
                 var addedFeature = wizGeoViz.addFeatureFromWKT(eventObj);
-                $('#geoWizard #coordlist').val(wizGeoViz.getCoordinateList(addedFeature.id));
+                $('#coordlist').val(wizGeoViz.getCoordinateList(addedFeature.id));
             });
-            console.log('Initial Pop');
             featureSend = true;
         }
         else if ($(gmlField).val() == "")
@@ -283,7 +270,7 @@ function MapWizard(json)
     
     function whatIsCoordinateOrder()
     {
-        var whatOrder = wizGeoViz.determineOrder($('#geoWizard #coordlist').val());
+        var whatOrder = wizGeoViz.determineOrder($('#coordlist').val());
         var diaMessage = '';
         var diaButtons = [ {text:"Yes",click:function(){$(this).dialog("close");}},{text:"No",click:function(){$(this).dialog("close");}} ];
         var realOrder = 0;
@@ -343,11 +330,10 @@ function MapWizard(json)
         if (llOrder == orderEnum.LONGLAT)
         {
             flipOrder = true;
-            //console.log('I AM FLIPPING IT!');
         }    
         wizGeoViz.removeAllFeaturesFromMap();
                 
-        var wktVal = $('#geoWizard #coordlist').val();
+        var wktVal = $('#coordlist').val();
         
         var triedAdd = wizGeoViz.addFeatureFromcoordinateList(wktVal,flipOrder);
         
@@ -356,7 +342,6 @@ function MapWizard(json)
             $("<div>Those coordinates couldn't been made into a valid feature!</div>").dialog({
                 autoOpen: true,
                 title: 'WARNING!',
-                //height: 140,
                 buttons: {
                     OK: function() {
                         $(this).dialog('close');
@@ -370,7 +355,6 @@ function MapWizard(json)
         else
         {
             wizGeoViz.gotoAllFeatures();
-            
         }
     }
     
@@ -380,13 +364,12 @@ function MapWizard(json)
         wizGeoViz.removeAllFeaturesFromMap();
         
         whatIsCoordinateOrder();
-        
     }
     
     function saveFeature()
     {
         var myWKTid = wizGeoViz.getSingleFeature();
-        //console.log(myWKTid);
+
         if (typeof myWKTid != "undefined")
         {
             var myWKT = wizGeoViz.getWKT(myWKTid);
@@ -394,10 +377,8 @@ function MapWizard(json)
             wizGeoViz.wktToGML(wgsWKT);
             
             $('#olmap').on('wktConverted', function(e, eventObj) {
-                //console.log(eventObj);
                 $(gmlField).val(eventObj);
                 $(gmlField).trigger('change');
-                
                 closeDialog();
             });
         }
@@ -412,32 +393,26 @@ function MapWizard(json)
     function setEvents()
     {
         $('#olmap').on('closeMe', function(e, eventInfo) {
-            //$(gmlField).val(getCoordinateList(vlayer.features[0]));
-            //$(gmlField).val(eventInfo);
             closeDialog();
         });
             
         $('#olmap').on('featureAdded', function(e, eventInfo) { 
-            $('#geoWizard #coordlist').val(eventInfo);
+            $('#coordlist').val(eventInfo);
         });
         
         $('#olmap').on('modeChange', function(e, eventInfo) { 
             $('#wizDrawMode').html(eventInfo);
-            //console.debug(eventInfo);
             showNavMode();
         });
         
         $('#olmap').on('vectorChanged', function(e, eventInfo) { 
-            $('#geoWizard #coordlist').val(eventInfo);
-            //console.log(eventInfo);
-            //console.log(e);
+            $('#coordlist').val(eventInfo);
         });
         
         $('#olmap').on('coordinateError', function(e, eventInfo) { 
             $("<div>"+eventInfo+"</div>").dialog({
                 autoOpen: true,
                 title: 'WARNING!',
-                //height: 140,
                 buttons: {
                     OK: function() {
                     $(this).dialog('close');
@@ -449,7 +424,7 @@ function MapWizard(json)
             }); 
         });
   
-        $("#geoWizard #saveFeature").button({ icons: { primary: "ui-icon ui-icon-disk"}}).click(function()
+        $("#saveFeature").button({ icons: { primary: "ui-icon ui-icon-disk"}}).click(function()
         {
             saveFeature();
         })
@@ -457,13 +432,13 @@ function MapWizard(json)
             text: 'Saves extent to the metadata editor and closes wizard'
         }});
         
-        $("#geoWizard #drawOnMap").button({ icons: { primary: "ui-icon ui-icon-check"}}).click(function()
+        $("#drawOnMap").button({ icons: { primary: "ui-icon ui-icon-check"}}).click(function()
         {renderOnMap();})
         .qtip({    content: {
                 text: 'Re-renders to the exent on the map after changes to the coordinate list'
             }});
         
-        $("#geoWizard #startDrawing").button({ icons: { primary: "ui-icon ui-icon-pencil"}}).click(function()
+        $("#startDrawing").button({ icons: { primary: "ui-icon ui-icon-pencil"}}).click(function()
         {
             wizGeoViz.startDrawing();
             wizGeoViz.updateMap();
@@ -472,7 +447,7 @@ function MapWizard(json)
             text: 'Puts map in drawing mode, only one feature can be drawn on the map at a time'
         }});
         
-        $("#geoWizard #deleteFeature").button({ icons: { primary: "ui-icon ui-icon-trash"}}).click(function()
+        $("#deleteFeature").button({ icons: { primary: "ui-icon ui-icon-trash"}}).click(function()
         {
             wizGeoViz.deleteSelected();
         })
@@ -480,25 +455,22 @@ function MapWizard(json)
             text: 'Deletes selected feature'
         }});
         
-        $("#geoWizard #exitDialog").button({ icons: { primary: "ui-icon ui-icon-refresh"}}).click(function()
+        $("#exitDialog").button({ icons: { primary: "ui-icon ui-icon-refresh"}}).click(function()
         {
             closeDialog();
-            $("#geoWizard").html("");
-            $("#geoWizard #coordlist").empty();
+            $("#coordlist").empty();
             wizGeoViz.removeAllFeaturesFromMap();
             $(gmlField).val("");
-            //animateTo(700,250);
-            //$("#BPLbtn_DataIdent").click();
             showWizard();
         })
         .qtip({    content: {
             text: 'Restart wizard from beginning'
         }});
         
-        $("#geoWizard #startOver").button({ icons: { primary: "ui-icon ui-icon-wrench"}}).click(function()
+        $("#startOver").button({ icons: { primary: "ui-icon ui-icon-wrench"}}).click(function()
         {
             wizGeoViz.stopDrawing();
-            $('#geoWizard #coordlist').val('');
+            $('#coordlist').val('');
             $(gmlField).val('');
             wizGeoViz.removeAllFeaturesFromMap();
             wizGeoViz.goHome();
@@ -528,34 +500,34 @@ function MapWizard(json)
         $("#featPaste").button().click(function()
         {startOffDrawing=false;});
         
-        $('#geoWizard #coordlist').focus(function () {
+        $('#coordlist').focus(function () {
             showTextMode();
         });
         
-        $("#geoWizard #coordlist").click(function()
+        $("#coordlist").click(function()
         {
             wizGeoViz.stopDrawing();
             showTextMode();
         });
         
-        $("#geoWizard #coordlist").keydown(function()
+        $("#coordlist").keydown(function()
         {
             wizGeoViz.stopDrawing();
             showTextMode();
         });
-        
-        function showTextMode()
-        {
-            $('#geoWizard #wizDrawMode').html("Text");
-            var mapHelpText = "Coordinates should be latitude, longitude, but the wizard reverse your coordinate in alternate order. Coordinates can be modified in the list, click Render on Map to update feature";
-            $("#geoWizard #maphelptxt").html(mapHelpText);
-        }
-        
-        function showNavMode ()
-        {
-            var mapHelpText = "Double-click to finish drawing feature. Click feature to edit or edit Coordinate List directly. Drag hollow circles to move vertexes, draw solid midpoint circles to create new vertexes. Select feature and click Delete button to delete feature";
-            $("#geoWizard #maphelptxt").html(mapHelpText);
-        }
+    }
+    
+    function showTextMode()
+    {
+        $('#wizDrawMode').html("Text");
+        var mapHelpText = "Coordinates should be latitude, longitude, but the wizard reverse your coordinate in alternate order. Coordinates can be modified in the list, click Render on Map to update feature";
+        $("#maphelptxt").html(mapHelpText);
+    }
+    
+    function showNavMode ()
+    {
+        var mapHelpText = "Double-click to finish drawing feature. Click feature to edit or edit Coordinate List directly. Drag hollow circles to move vertexes, draw solid midpoint circles to create new vertexes. Select feature and click Delete button to delete feature";
+        $("#maphelptxt").html(mapHelpText);
     }
     
     function verifyMap()
@@ -564,36 +536,9 @@ function MapWizard(json)
         drawMap();
     }
     
-    function noSpatial()
-    {
-        animateTo(700,350);
-        hasSpatial(true);
-        $("#geoWizard").dialog( "option", "title", "Spatial Extent Wizard - 2" );
-        $("#geoWizard").html($("#provideDesc").clone(true).fadeIn());
-        $("#wizDesc").focus();
-        //$("#wizDescForm").validate();
-        
-        $('#geoWizard #provideOk').click(function()
-        {
-            $(descField).focus();
-            $(descField).val($("#geoWizard #wizDesc").val());
-            closeDialog(); 
-        });
-    }
-    
-    function noSpatialClose()
-    {
-        $("#wizDescForm").validate();
-        //debugger;
-        
-        
-    }
-    
     function closeDialog()
     {
-        //$("#geoWizard").fadeOut();
-        $("#geoWizard").dialog("close");
-        //$("#geoWizard").dialog("destroy");
+        $("#mapwiz").dialog("close");
     }
     
     function validateCoords(Unchecked, Checked)
@@ -604,15 +549,15 @@ function MapWizard(json)
     
     function fixMapToolHeight()
     {
-        var tblHgt = $("#geoWizard #maptoolstbl").height();
-        tblHgt = tblHgt - $("#geoWizard #wiztoolbar").height();
-        tblHgt = tblHgt - $("#geoWizard #coordlistLbl").height();
+        var tblHgt = $("#maptoolstbl").height();
+        tblHgt = tblHgt - $("#wiztoolbar").height();
+        tblHgt = tblHgt - $("#coordlistLbl").height();
         tblHgt = tblHgt - 50; //padding
     
-        $("#geoWizard #coordlist").height((tblHgt*.4));
-        $("#geoWizard #maphelptxt").height((tblHgt*.4));
+        $("#coordlist").height((tblHgt*.4));
+        $("#maphelptxt").height((tblHgt*.4));
         //$("#wiztoolbar").height();
-        $("#geoWizard #coordlist").css("max-width:"+$("#geoWizard #coordlist").width()+"px;")
+        $("#coordlist").css("max-width:"+$("#coordlist").width()+"px;")
     
     }
     
