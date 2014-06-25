@@ -172,7 +172,7 @@ function postDIF($fielddata)
     $submitted = $data["submitter"];
     $editor = getUID();
     
-    if ($status > 1) {$status = 1;}; #If this happened, someone fiddled with the form.
+    if (($status > 1) AND (!isAdmin(getUID()))) {$status = 1;}; #If this happened, someone fiddled with the form.
     
     if (isDIFApprover(getUID()) OR isAdmin(getUID()))
     {
@@ -224,28 +224,28 @@ function postDIF($fielddata)
         {
             #new dif from scratch
             $nudi = $rc[0]["save_dif"];
-            $message = '<div><img src="includes/images/info32.png"><p>You have saved a DIF. This DIF has been given the ID: '.$nudi.'<br>In order to submit your dataset to GRIIDC you must return to this page and submit the DIF for review and approval.</p></div>';
+            $message = '<div><img src="/images/icons/info32.png"><p>You have saved a DIF. This DIF has been given the ID: '.$nudi.'<br>In order to submit your dataset to GRIIDC you must return to this page and submit the DIF for review and approval.</p></div>';
             $msgtitle = 'New DIF Submitted';
         }
         else if ($frmButton == 'approve')
         {
-            $message = '<div><img src="includes/images/info32.png"><p>The application with DIF ID: '.$UDI.' was succesfully approved!</p></div>';
+            $message = '<div><img src="/images/icons/info32.png"><p>The application with DIF ID: '.$UDI.' was succesfully approved!</p></div>';
             $msgtitle = 'DIF Approved';
             $sendMail = sendSubmitMail($submitted,$UDI,'GRIIDC DIF Approved','approveMail.html');
         }
         else if ($frmButton == 'reject')
         {
-            $message = '<div><img src="includes/images/info32.png"><p>The application with DIF ID: '.$UDI.' was succesfully rejected!</p></div>';
+            $message = '<div><img src="/images/icons/info32.png"><p>The application with DIF ID: '.$UDI.' was succesfully rejected!</p></div>';
             $msgtitle = 'DIF Rejected';
         }
         else if ($frmButton == 'save')
         {
-            $message = '<div><img src="includes/images/info32.png"><p>Thank you for saving DIF with ID:  '.$UDI.'.<br>Before registering this dataset you must return to this page and submit the dataset information form.</p></div>';
+            $message = '<div><img src="/images/icons/info32.png"><p>Thank you for saving DIF with ID:  '.$UDI.'.<br>Before registering this dataset you must return to this page and submit the dataset information form.</p></div>';
             $msgtitle = 'DIF Submitted';
         }
         else if ($frmButton == 'submit')
         {
-            $message = '<div><img src="includes/images/info32.png"><p>Congratulations! You have successfully submitted a DIF to GRIIDC. The UDI for this dataset is '.$UDI.'.<br>The DIF will now be reviewed by GRIIDC staff and is locked to prevent editing.<br>To unlock your DIF to make changes, please email your request and the dataset UDI to GRIIDC (<a href="mailto:griidc@gomri.org&subject=DIF Unlock">griidc@gomri.org</a>)<br>Thank you.</p></div>';
+            $message = '<div><img src="/images/icons/info32.png"><p>Congratulations! You have successfully submitted a DIF to GRIIDC. The UDI for this dataset is '.$UDI.'.<br>The DIF will now be reviewed by GRIIDC staff and is locked to prevent editing.<br>To unlock your DIF to make changes, please email your request and the dataset UDI to GRIIDC (<a href="mailto:griidc@gomri.org&subject=DIF Unlock">griidc@gomri.org</a>)<br>Thank you.</p></div>';
             $msgtitle = 'DIF Submitted';
             
             $sendMail = sendSubmitMail($submitted,$UDI,'GRIIDC DIF Submitted','submitMail.html');
@@ -254,13 +254,13 @@ function postDIF($fielddata)
         }
         else
         {
-            $message = '<div><img src="includes/images/info32.png"><p>Succesfully saved DIF with ID: '.$UDI.'.</p></div>';
+            $message = '<div><img src="/images/icons/info32.png"><p>Succesfully saved DIF with ID: '.$UDI.'.</p></div>';
             $msgtitle = 'DIF Submitted';
         }
     }
     else
     {
-        $message = '<div><img src="includes/images/cancel.png"><p>There was an error! Form NOT submitted.<br>ERROR:'.$rc[0].'</p></div>';
+        $message = '<div><img src="/images/icons/cancel.png"><p>There was an error! Form NOT submitted.<br>ERROR:'.$rc[0].'</p></div>';
         $msgtitle = 'DIF ERROR';
     }
     
@@ -326,6 +326,13 @@ function getTasks()
 function getFormData($difID)
 {
     $data = loadDIFData($difID);
+    $success = true; 
+    if (!$data)
+    {
+        $message = '<div><img src="/images/icons/cancel.png"><p>Couldn\'t find that ID:'.$difID.', no data loaded!</p></div>';
+        $msgtitle = 'DIF ERROR';
+        $success = false;
+    }
     
     $data = $data[0];
 
@@ -416,12 +423,9 @@ function getFormData($difID)
     $formArr = array_merge($formArr,array("privacy"=>$ethical[0]));
     $formArr = array_merge($formArr,array("privacyother"=>$ethical[1]));
     
-    
-    
-    
     //$formArr = array_merge($formArr,array("isadmin"=>$isadmin));
     
-    return json_encode($formArr);
+    return json_encode(array('data'=>$formArr,'success'=>$success,'message'=>$message,'title'=>$msgtitle));
 }
 
 //echo getTaskList();

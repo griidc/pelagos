@@ -5,68 +5,57 @@
  
 include_once '/home/users/mvandeneijnden/public_html/quartz/php/db-utils.lib.php'; 
 
-global $myDC;
+//global $myDC;
 
-$myDC = new DataConnector('GOMRI_RO');
+//$myDC = new DataConnector('GOMRI_RO');
 
 function saveDIF($parameters)
 {
-    global $myDC;
-    $conn = $myDC->connection;
+    //global $myDC;
+    //$conn = $myDC->connection;
+    
+    $conn = OpenDB('GOMRI_RO');
+    
+    
 
 /*    
-    -dataset_uid_i integer,
-    -dataset_udi_t text,
-    -project_id_i integer,
-    -task_uid_i integer,
-    -title_t text,
-    -primary_poc_i integer,
-    -secondary_poc_i integer,
-    -abstract_t text,
-    -dataset_type_t text,
-    -dataset_for_t text,
-    -size_t text,
-    -observation_t text,
-    -approach_t text,
-    -start_date_d date,
-    -end_date_d date,
-    -geo_location_t text,
-    -point_t text,
-    -national_t text,
-    ethical_t text,
-    remarks_t text,
-    logname_i integer,
-    status_i integer,
-    editor_t text,
-    geom_gml text,
-    funding_source text,
-    submitted_t text
+    dataset_uid_i integer,    -dataset_udi_t text,    -project_id_i integer,    -task_uid_i integer,    -title_t text,    -primary_poc_i integer,    -secondary_poc_i integer,    -abstract_t text,    -dataset_type_t text,    -dataset_for_t text,    -size_t text,    -observation_t text,    approach_t text,    start_date_d date,    end_date_d date,    geo_location_t text,    point_t text,    national_t text,    ethical_t text,    remarks_t text,
+    logname_i integer,    status_i integer,    editor_t text,    geom_gml text,    funding_source text,    submitted_t text
 */    
     $query = 'select save_dif(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
     
-    $myDC->prepare($query);
-    
-    $rc = $myDC->execute($parameters);
-    
-    return $rc;
-    
+    $statementHandler = $conn->prepare($query);
+    //$myDC->prepare($query);
+    //$rc = $myDC->execute($parameters);
+    $rc = $statementHandler->execute($parameters);
+    if (!$rc) {return $statementHandler->errorInfo();};
+    //return $myDC->fetchAll();
+    return $statementHandler->fetchAll();
 }
  
 function loadDIFData($difID)
 {
-    global $myDC;
+    //global $myDC;
     //$conn = makeConn("GOMRI_RO");
     //$conn = makeConn("GRIIDC_RO");
-    $conn = $myDC->connection;
-    $query = "select *, st_AsGML(geom) as \"the_geom\" from datasets where dataset_uid='$difID';";
+    //$conn = $myDC->connection;
+    $conn = OpenDB('GOMRI_RO');
+    
+    $query = "select *, st_AsGML(geom) as \"the_geom\" from datasets where dataset_udi='$difID';";
     
     //$query = 'select * from "DataGroup_view" where "UDI"=\''.$difID.'\'';
     
     //echo $query;
     
-    $myDC->prepare($query);
+    // $myDC->prepare($query);
+    // $rc = $myDC->execute();
+    // if (!$rc) {return $false;};
+    // return $myDC->fetchAll();  
     
-    return $myDC->execute();   
+    $statementHandler = $conn->prepare($query);
+    $rc = $statementHandler->execute($parameters);
+    if (!$rc) {return $statementHandler->errorInfo();};
+    return $statementHandler->fetchAll();
 }
 
 function loadResearchers($PseudoID=null,$PersonID=null)

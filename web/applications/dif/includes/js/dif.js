@@ -134,7 +134,7 @@ $(document).ready(function()
         console.log( ui.item ?
           "Selected: " + ui.item.value + " aka " + ui.item.id :
           "Nothing selected, input was " + this.value );
-          $('#diftree').html('<a class="jstree-anchor" href="#"><img src="includes/images/throbber.gif"> Loading...</a>');
+          $('#diftree').html('<a class="jstree-anchor" href="#"><img src="/images/icons/throbber.gif"> Loading...</a>');
           $('#diftree').jstree("destroy");
           $("#fltResearcher").val(ui.item.id); 
           treeFilter();
@@ -165,15 +165,15 @@ $(document).ready(function()
         {
             if ($(this).val() == '0')
             {
-                $("#statustext").html('<fieldset><img src="/newdif/includes/images/cross.png">&nbsp;DIF saved but not yet submitted</fieldset>');
+                $("#statustext").html('<fieldset><img src="/images/icons/cross.png">&nbsp;DIF saved but not yet submitted</fieldset>');
             }
             else if ($(this).val() == '1')
             {
-                $("#statustext").html('<fieldset><img src="/newdif/includes/images/error.png">&nbsp;DIF submitted for review (locked)</fieldset>');
+                $("#statustext").html('<fieldset><img src="/images/icons/error.png">&nbsp;DIF submitted for review (locked)</fieldset>');
             }
             else if ($(this).val() == '2')
             {
-                $("#statustext").html('<fieldset><img src="/newdif/includes/images/tick.png">&nbsp;DIF approved (locked)</fieldset>');
+                $("#statustext").html('<fieldset><img src="/images/icons/tick.png">&nbsp;DIF approved (locked)</fieldset>');
             }
         }
         else
@@ -206,6 +206,20 @@ $(document).ready(function()
         { geowizard.haveSpatial(false); }
     });
 });
+
+function getQueryParams(qs) {
+    qs = qs.split("+").join(" ");
+    var params = {},
+        tokens,
+        re = /[?&]?([^=]+)=([^&]*)/g;
+
+    while (tokens = re.exec(qs)) {
+        params[decodeURIComponent(tokens[1])]
+            = decodeURIComponent(tokens[2]);
+    }
+
+    return params;
+}
 
 function treeSearch()
 {
@@ -294,7 +308,7 @@ function formReset()
 
 function treeFilter()
 {
-    $('#diftree').html('<a class="jstree-anchor" href="#"><img src="/~mvandeneijnden/jquery/vakata-jstree-b446e66/dist/themes/default/throbber.gif"> Loading...</a>');
+    $('#diftree').html('<a class="jstree-anchor" href="#"><img src="/images/icons/throbber.gif"> Loading...</a>');
     $('#diftree').jstree("destroy");
     //$('#acResearcher').val('');
     loadDIFS($("#fltStatus").val(),$("#fltResearcher").val(),$("[name='showempty']:checked").val());
@@ -396,6 +410,12 @@ function loadTasks()
             element.append(o);
         });
         element.prop('disabled',false);
+        
+        var $_GET = getQueryParams(document.location.search);
+        if (typeof $_GET["id"] != 'undefined')
+        {
+            getNode($_GET["id"]);
+        }
     });
 }
 
@@ -455,7 +475,7 @@ function formChanged()
         var self = this;
         if (formHash != $("#difForm").serialize() && typeof formHash !='undefined')
         {
-            $('<div><img src="includes/images/warning.png"><p>You will lose all changes. Do you wish to continue?</p></div>').dialog({
+            $('<div><img src="/images/icons/warning.png"><p>You will lose all changes. Do you wish to continue?</p></div>').dialog({
                 title: "Warning!",
                 resizable: false,
                 modal: true,
@@ -495,8 +515,32 @@ function fillForm(Form,UDI)
             data: {'function':'fillForm',udi:UDI}
             }).done(function(json) {
             //$('[name="primarypoc"],[name="secondarypoc"]').prop('disabled',false);
-            loadPOCs(json.task,json.primarypoc,json.secondarypoc);
-            $.each(json, function(name,value) {
+            
+            if (json.success == false)
+            {
+                $(json.message).dialog({
+                    height: "auto",
+                    width: "auto",
+                    title: json.title,
+                    resizable: false,
+                    modal: true,
+                    buttons: {
+                        OK: function() {
+                            $(this).dialog( "close" );
+                            if (json.success == true)
+                            {
+                                //scrollToTop();
+                                //treeFilter();
+                            }
+                        }
+                    }
+                });
+            }
+            
+           
+            
+            loadPOCs(json.data.task,json.data.primarypoc,json.data.secondarypoc);
+            $.each(json.data, function(name,value) {
                 var element = $("[name="+name+"]");
                 var elementType = element.prop("type");
                 switch (elementType)
