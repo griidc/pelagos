@@ -1,6 +1,9 @@
 <h3>Account Request</h3>
 <form method=post action='{{baseUrl}}/request?email={{person.mail.value}}&hash={{hash}}'>
     <table>
+        <tr>
+            <td colspan=2 style='padding-bottom:15px;'><span class=account_required style='font-size:75%'>(required fields are in bold)</span></td>
+        </tr>
         {% include "fields/person.html" %}
         <tr>
             <td><span class=account_required>Password:</span></td>
@@ -11,8 +14,13 @@
             <td><input type=password name=confirmPassword size=20 class="{{person.confirmPassword.class}}" value='{{person.confirmPassword.value}}'></td>
         </tr>
         <tr>
-            <td colspan=2 style='padding-bottom:15px;'><span class=account_required style='font-size:75%'>(required fields are in bold)</span></td>
-        </tr>
+            <td colspan=2>
+                The GRIIDC team suggests you use the following guidelines to create a strong password:
+                <ul>
+                    <li>Password should be a minimum of 8 characters long</li>
+                    <li>Use a combination of characters that includes at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character (!@#$%^&amp;*)</li>
+                </ul>
+            <td>
     </table>
 
     <h3 style='margin-top:0px; margin-bottom:10px;'>Access Requested</h3>
