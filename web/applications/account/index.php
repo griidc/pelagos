@@ -63,7 +63,8 @@ $app->get('/', function () use ($app) {
     global $user;
     $env = $app->environment();
     drupal_add_css("$env[SCRIPT_NAME]/includes/css/index.css",'external');
-    if ($user->name) {
+    $stash = array();
+    if (isset($user) and property_exists($user,'name') and $user->name) {
         $uid = $user->name;
         $stash['username'] = $uid;
 
