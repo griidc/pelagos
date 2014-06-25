@@ -194,6 +194,11 @@ function MapWizard(json)
         $("#wizDescForm").validate();
     }
     
+    this.haveSpatial = function(Spatial)
+    {
+        hasSpatial(Spatial);
+    }
+    
     function hasSpatial(Spatial)
     {
         if (Spatial)

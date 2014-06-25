@@ -762,32 +762,35 @@ function GeoViz()
 	
 	this.addFeatureFromWKT = function (WKT,Attributes,Style)
 	{
-		var addFeature = this.wkt.read(this.wktTransformToSperMerc(WKT));
-		
-		// Sample: {"strokeColor": "#ff00ff", "fillColor": "#ffffff"}
-		if (typeof Style == 'object')
-		{
-			var style = OpenLayers.Util.extend({}, OpenLayers.Feature.Vector.style['default']);
-			//style.fillColor = Style.fillColor;
-			//style.fillOpacity = Style.fillOpacity;
-			//style.strokeColor = Style.strokeColor;
-			//style.strokeWidth = Style.strokeWidth;
-			//style.strokeOpacity = Style.strokeOpacity;
-			
-			//addFeature.style = style;
-		}
-		
-		// Sample: {"attribute" : "value", "label": "text"}
-		if (typeof Attributes == 'object')
-		{
-			addFeature.attributes = Attributes;
-		}
-				
-		try {
-            vlayer.addFeatures(addFeature);
-        }
-        catch (err) {
-            console.debug(err);
+        if (WKT != "")
+        {
+            var addFeature = this.wkt.read(this.wktTransformToSperMerc(WKT));
+            
+            // Sample: {"strokeColor": "#ff00ff", "fillColor": "#ffffff"}
+            if (typeof Style == 'object')
+            {
+                var style = OpenLayers.Util.extend({}, OpenLayers.Feature.Vector.style['default']);
+                //style.fillColor = Style.fillColor;
+                //style.fillOpacity = Style.fillOpacity;
+                //style.strokeColor = Style.strokeColor;
+                //style.strokeWidth = Style.strokeWidth;
+                //style.strokeOpacity = Style.strokeOpacity;
+                
+                //addFeature.style = style;
+            }
+            
+            // Sample: {"attribute" : "value", "label": "text"}
+            if (typeof Attributes == 'object')
+            {
+                addFeature.attributes = Attributes;
+            }
+                    
+            try {
+                vlayer.addFeatures(addFeature);
+            }
+            catch (err) {
+                console.debug(err);
+            }
         }
 		
 		return addFeature;
