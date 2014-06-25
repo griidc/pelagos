@@ -28,7 +28,7 @@ $query = "SELECT ST_asGML(3,ST_GeomFromText('$wkt',4326),5,17)";
 
 $row = pdoDBQuery($conn,$query);
 
-$gml = $row["st_asgml"];
+$gml = $row[0]["st_asgml"];
 
 //echo "{\"featureid\":\"$featureid\",\"reason\":\"$reason\"}";
 echo $gml;

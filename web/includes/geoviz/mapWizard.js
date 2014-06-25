@@ -83,7 +83,7 @@ function MapWizard(json)
             showWizard();
         });
         
-        console.log('Spatial Wizard Ready');
+        //console.log('Spatial Wizard Ready');
     }
     
     function showWizard()

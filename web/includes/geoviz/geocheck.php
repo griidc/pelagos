@@ -29,7 +29,7 @@ $query = "SELECT ST_IsValidReason(ST_GeometryFromText('$wkt'));";
 
 $row = pdoDBQuery($conn,$query);
 
-$reason = $row["st_isvalidreason"];
+$reason = $row[0]["st_isvalidreason"];
 
 echo "{\"featureid\":\"$featureid\",\"reason\":\"$reason\"}";
 

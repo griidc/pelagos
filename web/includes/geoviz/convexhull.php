@@ -29,7 +29,7 @@ $query = "SELECT ST_AsText(ST_ConvexHull(ST_GeomFromText('$wkt')));";
 
 $row = pdoDBQuery($conn,$query);
 
-$returnwkt = $row["st_astext"];
+$returnwkt = $row[0]["st_astext"];
 
 echo "{\"featureid\":\"$featureid\",\"wkt\":\"$returnwkt\"}";
 
