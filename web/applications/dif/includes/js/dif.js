@@ -313,6 +313,7 @@ function formReset()
         $('form :input').prop('disabled',false);
         $('#btnSubmit').prop('disabled',false);
         $('#btnSave').prop('disabled',false);
+        geowizard.haveSpatial(false);
     });
 }
 
