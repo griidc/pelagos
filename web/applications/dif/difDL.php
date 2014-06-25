@@ -3,7 +3,7 @@
  * DATA LAYER *
  **************/
  
-include_once '/home/users/mvandeneijnden/public_html/quartz/php/db-utils.lib.php'; 
+include_once '/usr/local/share/GRIIDC/php/db-utils.lib.php'; 
 
 //global $myDC;
 

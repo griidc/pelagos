@@ -17,7 +17,6 @@ drupal_add_library('system', 'ui.datepicker');
 drupal_add_library('system', 'ui.widget');
 drupal_add_library('system', 'ui.dialog');
 drupal_add_library('system', 'ui.tooltip');
-//drupal_add_library('system', 'ui.draggable');
 drupal_add_library('system', 'ui.autocomplete');
 
 include 'dif.php';

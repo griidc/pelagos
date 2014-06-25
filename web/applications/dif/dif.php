@@ -2,10 +2,8 @@
 
 include 'difDL.php'; //dif DataLayer
 
-include_once '/home/users/mvandeneijnden/public_html/quartz/php/ldap.php'; 
-include_once '/home/users/mvandeneijnden/public_html/quartz/php/griidcMailer.php';
-
-//include_once 'getHelpText.php';
+include_once '/usr/local/share/GRIIDC/php//ldap.php'; 
+include_once '/usr/local/share/GRIIDC/php//griidcMailer.php';
 
 require_once '/usr/share/pear/Twig/Autoloader.php';
 
@@ -35,9 +33,9 @@ if (isset($_POST['function']))
             echo getTasks();
             break;
         case 'fillForm':
-            $difUID = $_POST["udi"];
+            $difUDI = $_POST["udi"];
             header('Content-Type: application/json');
-            echo getFormData($difUID);
+            echo getFormData($difUDI);
             break;
         case 'loadPOCs':
             $PseudoID = $_POST["pseudoid"];
@@ -335,7 +333,7 @@ function getFormData($difID)
     }
     
     $data = $data[0];
-
+    
     $formArr = array();
     
     $formArr = array_merge($formArr,array("udi"=>$data["dataset_udi"]));

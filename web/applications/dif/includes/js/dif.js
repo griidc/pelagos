@@ -10,6 +10,15 @@ $(document).ready(function()
     
     personid = $('#personid').val();
     
+    $(document).one("difReady", function()
+    {
+        var $_GET = getQueryParams(document.location.search);
+        if (typeof $_GET["id"] != 'undefined')
+        {
+            getNode($_GET["id"]);
+        }
+    });
+    
     //Setup qTip
     $.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
         position: {
@@ -131,9 +140,7 @@ $(document).ready(function()
       source: "https://proteus.tamucc.edu/~mvandeneijnden/dif/getResearchers.php",
       minLength: 2,
       select: function(event, ui) {
-        console.log( ui.item ?
-          "Selected: " + ui.item.value + " aka " + ui.item.id :
-          "Nothing selected, input was " + this.value );
+        //console.log( ui.item ? "Selected: " + ui.item.value + " aka " + ui.item.id : "Nothing selected, input was " + this.value );
           $('#diftree').html('<a class="jstree-anchor" href="#"><img src="/images/icons/throbber.gif"> Loading...</a>');
           $('#diftree').jstree("destroy");
           $("#fltResearcher").val(ui.item.id); 
@@ -205,6 +212,9 @@ $(document).ready(function()
         if ($('#difGeoloc').val()!='')
         { geowizard.haveSpatial(false); }
     });
+    
+    
+   
 });
 
 function getQueryParams(qs) {
@@ -233,7 +243,7 @@ function setFormStatus()
 {
     var Status = $("#status").val();
     var isAdmin =  $("#isadmin").val();
-    //console.log('status changed to:'+Status);
+
     if (Status == "0")
     {
         $('form :input').prop('disabled',false);
@@ -410,12 +420,7 @@ function loadTasks()
             element.append(o);
         });
         element.prop('disabled',false);
-        
-        var $_GET = getQueryParams(document.location.search);
-        if (typeof $_GET["id"] != 'undefined')
-        {
-            getNode($_GET["id"]);
-        }
+        $(document).trigger("difReady");
     });
 }
 
@@ -515,7 +520,6 @@ function fillForm(Form,UDI)
             data: {'function':'fillForm',udi:UDI}
             }).done(function(json) {
             //$('[name="primarypoc"],[name="secondarypoc"]').prop('disabled',false);
-            
             if (json.success == false)
             {
                 $(json.message).dialog({
@@ -527,17 +531,10 @@ function fillForm(Form,UDI)
                     buttons: {
                         OK: function() {
                             $(this).dialog( "close" );
-                            if (json.success == true)
-                            {
-                                //scrollToTop();
-                                //treeFilter();
-                            }
                         }
                     }
                 });
             }
-            
-           
             
             loadPOCs(json.data.task,json.data.primarypoc,json.data.secondarypoc);
             $.each(json.data, function(name,value) {
