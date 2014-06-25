@@ -137,7 +137,7 @@ $(document).ready(function()
     });
     
     $("#acResearcher").autocomplete({
-      source: "https://proteus.tamucc.edu/~mvandeneijnden/dif/getResearchers.php",
+      source: "/services/DIF/getResearchers.php",
       minLength: 2,
       select: function(event, ui) {
         //console.log( ui.item ? "Selected: " + ui.item.value + " aka " + ui.item.id : "Nothing selected, input was " + this.value );
@@ -372,7 +372,7 @@ function loadDIFS(Status,Person,ShowEmpty)
             // hideSpinner();
     // });
     $.ajax({
-        url: "/~mvandeneijnden/dif/getDIFS.php",
+        url: "/services/DIF/getDIFS.php",
         type: 'GET',
         datatype: 'json',
         data: {'function':'loadDIFS','status':Status,'person':Person,'showempty':ShowEmpty}
@@ -402,7 +402,7 @@ function makeTree(json)
 function loadTasks()
 {
     $.ajax({
-        url: "/~mvandeneijnden/dif/getTasks.php",
+        url: "/services/DIF/getTasks.php",
         //context: document.body,
         datatype: 'JSON',
         type: 'GET',
@@ -427,7 +427,7 @@ function loadTasks()
 function loadPOCs(PseudoID,ppoc,spoc)
 {
     $.ajax({
-        url: "/~mvandeneijnden/dif/getPeople.php",
+        url: "/services/DIF/getPeople.php",
         type: "GET",
         datatype: "JSON",
         data: {'function':'loadPOCs',pseudoid: PseudoID}
