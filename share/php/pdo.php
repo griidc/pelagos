@@ -27,7 +27,7 @@ function pdoDBQuery($connection,$queryString) {
         if($i > 1) {
             return $queryReturn;
         } else {
-            return $queryReturn[0];
+            return $queryReturn;
         }
     }
     else
