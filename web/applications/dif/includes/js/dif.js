@@ -362,25 +362,14 @@ function getNode(UDI)
 
 function loadDIFS(Status,Person,ShowEmpty)
 {
-    // $.getJSON("/~mvandeneijnden/dif/getDIFS.php", function(json) {
-        // debugger;
-        // $('#diftree').jstree({
-            // 'core' : {'data':json}
-        // })
-    // })
-        // .done(function() {
-            // hideSpinner();
-    // });
     $.ajax({
         url: "/services/DIF/getDIFS.php",
         type: 'GET',
         datatype: 'json',
         data: {'function':'loadDIFS','status':Status,'person':Person,'showempty':ShowEmpty}
         }).done(function(json) {
-        //console.debug(json);
         makeTree(json);
     });
-    
 }
 
 function makeTree(json)

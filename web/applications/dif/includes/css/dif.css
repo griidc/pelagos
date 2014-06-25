@@ -87,7 +87,7 @@ white-space: normal !important;
     height: 300px;
 }
 .ui-autocomplete-loading {
-    background: white url('/~mvandeneijnden/jquery/vakata-jstree-b446e66/dist/themes/default/throbber.gif') right center no-repeat;
+    background: white url('/images/icons/throbber.gif') right center no-repeat;
 }
 
 .diftoolbar
