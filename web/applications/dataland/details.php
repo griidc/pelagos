@@ -113,6 +113,8 @@ if ($udi <> '')
     $prow = pdoDBQuery($pconn,$pquery);
     //echo $pquery;
     //var_dump($prow);
+    
+    $prow = $prow[0];
 
     $dquery = "select * from datasets where dataset_udi='$udi';";
 
@@ -121,6 +123,8 @@ if ($udi <> '')
     //var_dump($prow);
 
     //echo "</pre>";
+    
+    $drow = $drow[0];
 
     if ($prow["the_geom"] == null OR $prow == null)
     {
@@ -148,10 +152,12 @@ if ($udi <> '')
 
     //$mconn = pdoDBConnect($dbconnstr);
 
-    $mquery = "
-    SET character_set_client = utf8;
-    SET character_set_results = utf8;
-    SELECT * FROM Projects
+    $mquery = "SET character_set_client = utf8;";
+    pdoDBQuery($mconn,$mquery);
+    $mquery =   "SET character_set_results = utf8;";
+    pdoDBQuery($mconn,$mquery);
+    
+    $mquery = "  SELECT * FROM Projects
     JOIN Programs ON Projects.Program_ID = Programs.Program_ID
     LEFT OUTER JOIN FundingSource ON  FundingSource.Fund_ID = Programs.Program_FundSrc
     WHERE Programs.Program_ID = '".$prow["project_id"]."'
@@ -160,6 +166,10 @@ if ($udi <> '')
     ";
 
     $mrow = pdoDBQuery($mconn,$mquery);
+    
+    $mrow = $mrow[0];
+    
+    //echo $mquery;
 
     $mquery = "
     SELECT * FROM People
@@ -176,6 +186,12 @@ if ($udi <> '')
     // echo "<pre>";
     // var_dump($prow);
     // echo "</pre>";
+    
+    $mprow = $mprow[0]; 
+
+    // echo '<pre>';
+    // var_dump($mrow);
+    // echo '</pre>';
 }
 
 
