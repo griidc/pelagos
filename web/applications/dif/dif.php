@@ -60,7 +60,7 @@ function sendSubmitMail($user,$udi,$title,$template)
    $userDetails = getUserDetails($user);
    
    $twigdata = $userDetails;
-   $twigdata["url"] = 'https://'.$_SERVER[HTTP_HOST].'/newdif/?id='.$udi;
+   $twigdata["url"] = 'https://'.$_SERVER[HTTP_HOST].'/dif/?id='.$udi;
    $twigdata["udi"] = $udi;
     
    $message = $twig->render($template, $twigdata);
@@ -68,7 +68,7 @@ function sendSubmitMail($user,$udi,$title,$template)
    $difMailer->addToUser($userDetails["firstName"], $userDetails["lastName"], $userDetails["eMail"]);
    $difMailer->mailSubject = $title;
 
-   $difMailer->donotBCC = true;   #for debug only
+   //$difMailer->donotBCC = true;   #for debug only
    
    $difMailer->mailMessage = $message;
    return $difMailer->sendMail();
@@ -80,11 +80,11 @@ function mailApprovers($udi,$title)
     $ldap = connectLDAP('triton.tamucc.edu');
     
     $difMailer = new griidcMailer(false); 
-    $difMailer->donotBCC = true;
+    //$difMailer->donotBCC = true;
     
     $twigdata = array();
     
-    $twigdata["url"] = 'https://'.$_SERVER[HTTP_HOST].'/newdif/?id='.$udi;
+    $twigdata["url"] = 'https://'.$_SERVER[HTTP_HOST].'/dif/?id='.$udi;
     $twigdata["udi"] = $udi;
     
     $message = $twig->render('reviewMail.html', $twigdata);
