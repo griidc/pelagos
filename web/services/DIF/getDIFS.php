@@ -2,7 +2,7 @@
 
 header('Content-Type: application/json');
 
-define('RPIS_TASK_BASEURL','http://proteus.tamucc.edu/services/RPIS/getTaskDetails.php');
+define('RPIS_TASK_BASEURL','http://data.gulfresearchinitiative.org/services/RPIS/getTaskDetails.php');
 
 include_once '/usr/local/share/GRIIDC/php/pdo.php';
 
