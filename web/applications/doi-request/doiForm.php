@@ -115,7 +115,7 @@ drupal_add_js('
                     fixed: true
                     },
                     style: {
-                classes: "ui-tooltip-shadow ui-tooltip-tipped"
+                classes: "qtip-default qtip-shadow qtip-tipped"
                 }
             });
             
