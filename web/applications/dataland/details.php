@@ -44,6 +44,7 @@ $dsscript='';
 $prow ='';
 $mrow ='';
 $mprow ='';
+$drow = '';
 
 $URI = preg_split('/\?/',$_SERVER['REQUEST_URI']);
 
@@ -422,19 +423,20 @@ var dlmap = new GeoViz();
 </div>
 
 <table border="0" width="100%">
-<tr>
-<td width="40%">
+    <tr>
+        <td width="40%">
+            <div id="dlolmap" style="width: 640px;height: 480px;"></div>
 
-<div id="dlolmap" style="width: 640px;height: 480px;"></div>
-
-</td>
-<td style="padding:10px;" width="60%" valign="top">
-<div id="summary">
-<?php  echo $twig->render('summary.html', array('pdata' => $prow,'mdata' => $mrow,'mpdata' => $mprow, 'baseurl' => $_SERVER['SCRIPT_NAME'])); ?>
-</div>
-</td>
-</tr>
+        </td>
+        <td style="padding:10px;" width="60%" valign="top">
+            <div id="summary">
+            <?php  echo $twig->render('summary.html', array('pdata' => $prow,'mdata' => $mrow,'mpdata' => $mprow, 'baseurl' => $_SERVER['SCRIPT_NAME'])); ?>
+            </div>
+        </td>
+        </tr>
 </table>
+
+<div>
 <!--<table width="100%">
 <tr height="100%">
 <td colspan="2"> -->
@@ -489,8 +491,9 @@ var dlmap = new GeoViz();
                     echo transform($xml,$xsl);
 
                 ?>
-            </div>
-        </p>
+                </div>
+            </p>
+        </div>
     </div>
 </div>
 <!--</td>
