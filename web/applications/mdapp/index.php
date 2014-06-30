@@ -352,39 +352,64 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
         // Check to see if filename matches XML internal filename reference
         $loc_1_xpath = "/gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1]"; # as filename
         $loc_1 = $xml->xpath($loc_1_xpath);
+        $errmsg = "GRIIDC standards: Filename uploaded does not match filename referenced in XML at /gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1] as UDI-metadata.xml (w/dash for colon)";
         if(isset($loc_1[0][0])) {
             $loc_1_val = $loc_1[0][0];
             if(!preg_match("/^$orig_filename$/",$loc_1_val)) {
-                throw new RuntimeException('xpath test failed:  Filename uploaded does not match filename referenced in XML.');
+                if (isset($_POST['test1']) and $_POST['test1']=='on') {
+                    throw new RuntimeException($errmsg);
+                } else {
+                    drupal_set_message($errmsg,'warning');
+                }
             }
         } else {
-            throw new RuntimeException('GRIIDC standard failed:  filename must be referenced in /gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1] as UDI-metadata.xls (w/dash for colon)');
+            if (isset($_POST['test1']) and $_POST['test1']=='on') {
+                throw new RuntimeException($errmsg);
+            } else {
+                drupal_set_message($errmsg,'warning');
+            }
         }
 
         // Check to see if filename matches XML internal UDI reference #1
         $loc_2_xpath = "/gmi:MI_Metadata/gmd:dataSetURI[1]/gco:CharacterString[1]"; # as UDI
         $loc_2 = $xml->xpath($loc_2_xpath);
+        $errmsg = "GRIIDC standards:  UDI must be referenced in /gmi:MI_Metadata/gmd:dataSetURI/gco:CharacterString";
         if(isset($loc_2[0][0])) {
             $loc_2_val = $loc_2[0][0];
             if(!preg_match("/$udi$/",$loc_2_val)) { # URL must end with UDI
-                throw new RuntimeException('xpath test failed:  UDI in filename uploaded does not match UDI referenced in XML. (1)');
+                if (isset($_POST['test2']) and $_POST['test2']=='on') {
+                    throw new RuntimeException($errmsg);
+                } else {
+                    drupal_set_message($errmsg,'warning');
+                }
             }
         } else {
-            throw new RuntimeException('GRIIDC standard failed:  UDI must be referenced in /gmi:MI_Metadata/gmd:dataSetURI/gco:CharacterString');
+            if (isset($_POST['test2']) and $_POST['test2']=='on') {
+                throw new RuntimeException($errmsg);
+            } else {
+                drupal_set_message($errmsg,'warning');
+            }
         }
 
         // Check to see if filename matches XML internal UDI reference #2
         $loc_3_xpath = "/gmi:MI_Metadata/gmd:distributionInfo[1]/gmd:MD_Distribution[1]/gmd:distributor[1]/gmd:MD_Distributor[1]/gmd:distributorTransferOptions[1]/gmd:MD_DigitalTransferOptions[1]/gmd:onLine[1]/gmd:CI_OnlineResource[1]/gmd:linkage[1]/gmd:URL[1]";
         $loc_3 = $xml->xpath($loc_3_xpath);
+        $errmsg = 'GRIIDC standards:  UDI not found referenced at /gmi:MI_Metadata/gmd:distributionInfo[1]/gmd:MD_Distribution[1]/gmd:distributor[1]/gmd:MD_Distributor[1]/gmd:distributorTransferOptions[1]/gmd:MD_DigitalTransferOptions[1]/gmd:onLine[1]/gmd:CI_OnlineResource[1]/gmd:linkage[1]/gmd:URL[1]';
         if(isset($loc_3[0][0])) {
             $loc_3_val = $loc_3[0][0];
             if(!preg_match("/$udi$/",$loc_3_val)) { # URL must end with UDI
-                $msg = 'GRIIDC standards:  UDI in filename uploaded does not match UDI referenced in XML at /gmi:MI_Metadata/gmd:distributionInfo[1]/gmd:MD_Distribution[1]/gmd:distributor[1]/gmd:MD_Distributor[1]/gmd:distributorTransferOptions[1]/gmd:MD_DigitalTransferOptions[1]/gmd:onLine[1]/gmd:CI_OnlineResource[1]/gmd:linkage[1]/gmd:URL[1]';
-                drupal_set_message($msg,'warning');
+                if (isset($_POST['test3']) and $_POST['test3']=='on') {
+                    throw new RuntimeException($errmsg);
+                } else {
+                    drupal_set_message($errmsg,'warning');
+                }
             }
         } else {
-            $msg = 'GRIIDC standards:  UDI not found referenced at /gmi:MI_Metadata/gmd:distributionInfo[1]/gmd:MD_Distribution[1]/gmd:distributor[1]/gmd:MD_Distributor[1]/gmd:distributorTransferOptions[1]/gmd:MD_DigitalTransferOptions[1]/gmd:onLine[1]/gmd:CI_OnlineResource[1]/gmd:linkage[1]/gmd:URL[1]';
-            drupal_set_message($msg,'warning');
+            if (isset($_POST['test3']) and $_POST['test3']=='on') {
+                throw new RuntimeException($errmsg);
+            } else {
+                drupal_set_message($errmsg,'warning');
+            }
         }
         // Determine geometry type
         if ($geo = $xml->xpath('/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:geographicElement[1]/gmd:EX_BoundingPolygon[1]/gmd:polygon[1]/gml:Polygon[1]')) {

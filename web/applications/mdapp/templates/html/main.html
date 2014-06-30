@@ -122,16 +122,22 @@
                     <input type="hidden" name="MAX_FILE_SIZE" value="1000000" />
                     <!-- Name of input element determines name in $_FILES array -->
                     <input name="newMetadataFile" type="file" style="width:100%" />
-                    <hr width=40% align=left>
+                    <hr>
                     <div>
+                        <h3>Additional Actions</h3>
                         <input type="checkbox" name="approveMetadata">Approve Metadata<br />
                         <input type="checkbox" name="contactOwner">Notify data manager of approval<br />
                         <input type="checkbox" name="overrideDatestamp">Override gmi:MI_Metadata/gmd:dateStamp with current timestamp<br />
                         <input type="checkbox" name="overrideGML">Override GML with the following<br />
-                        <textarea name=GMLOverride cols=60 rows=4></textarea>
-                        <p>options only performed on successful upload</p>
+                        <textarea name=GMLOverride cols=80 rows=4></textarea>
                     </div>
-                    <hr width=40% align=left>
+                    <hr>
+                    <h3>GRIIDC Metadata Standards Compliance Enforcement</h3>
+                    <p>If checked, failed tests will result in rejection of the upload.  If unchecked, failed tests will result in a non-blocking warning.</p>
+                    <input type="checkbox" name="test1" CHECKED>Uploaded filename must match XML at /gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1] as UDI-metadata.xml (w/dash instead of colon)<br />
+                    <input type="checkbox" name="test2" CHECKED>UDI must be referenced in /gmi:MI_Metadata/gmd:dataSetURI/gco:CharacterString<br />
+                    <input type="checkbox" name="test3" CHECKED>UDI must be referenced in /gmi:MI_Metadata/gmd:distributionInfo[1]/gmd:MD_Distribution[1]/ gmd:distributor[1]/gmd:MD_Distributor[1]/gmd:distributorTransferOptions[1]/ gmd:MD_DigitalTransferOptions[1]/gmd:onLine[1]/gmd:CI_OnlineResource[1]/gmd:linkage[1]/gmd:URL[1]<br />
+                    <hr>
                     <input type="submit" value="Upload File" /><br />
                 </form>
             </div>
