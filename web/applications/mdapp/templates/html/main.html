@@ -133,10 +133,14 @@
                     </div>
                     <hr>
                     <h3>GRIIDC Metadata Standards Compliance Enforcement</h3>
-                    <p>If checked, failed tests will result in rejection of the upload.  If unchecked, failed tests will result in a non-blocking warning.</p>
-                    <input type="checkbox" name="test1" CHECKED>Uploaded filename must match XML at /gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1] as UDI-metadata.xml (w/dash instead of colon)<br />
-                    <input type="checkbox" name="test2" CHECKED>UDI must be referenced in /gmi:MI_Metadata/gmd:dataSetURI/gco:CharacterString<br />
-                    <input type="checkbox" name="test3" CHECKED>UDI must be referenced in /gmi:MI_Metadata/gmd:distributionInfo[1]/gmd:MD_Distribution[1]/ gmd:distributor[1]/gmd:MD_Distributor[1]/gmd:distributorTransferOptions[1]/ gmd:MD_DigitalTransferOptions[1]/gmd:onLine[1]/gmd:CI_OnlineResource[1]/gmd:linkage[1]/gmd:URL[1]<br />
+                    <p>The following checks help ensure that the UDI references within
+                       a metadata record are consistent. The UDI is determined by reading
+                       the uploaded filename. If checked, failed tests will result in 
+                       rejection of the upload. If unchecked, failed tests will result in
+                       a non-blocking warning instead.</p>
+                    <input type="checkbox" name="test1" CHECKED>Filename matches file identifier (/gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1]) as UDI-metadata.xml (w/dash instead of colon)<br />
+                    <input type="checkbox" name="test2" CHECKED>UDI matches metadata URL (/gmi:MI_Metadata/gmd:dataSetURI/gco:CharacterString)<br />
+                    <input type="checkbox" name="test3" CHECKED>UDI matches distribution URL (/gmi:MI_Metadata/gmd:distributionInfo[1]/gmd:MD_Distribution[1]/gmd:distributor[1]/gmd:MD_Distributor[1]/gmd:distributorTransferOptions[1]/gmd:MD_DigitalTransferOptions[1]/gmd:onLine[1]/gmd:CI_OnlineResource[1]/gmd:linkage[1]/gmd:URL[1])<br />
                     <hr>
                     <input type="submit" value="Upload File" /><br />
                 </form>

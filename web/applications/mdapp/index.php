@@ -352,7 +352,7 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
         // Check to see if filename matches XML internal filename reference
         $loc_1_xpath = "/gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1]"; # as filename
         $loc_1 = $xml->xpath($loc_1_xpath);
-        $errmsg = "GRIIDC standards: Filename uploaded does not match filename referenced in XML at /gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1] as UDI-metadata.xml (w/dash for colon)";
+        $errmsg = "GRIIDC standards: Filename does not match file identifier. (/gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1]) as UDI-metadata.xml (w/dash for colon)";
         if(isset($loc_1[0][0])) {
             $loc_1_val = $loc_1[0][0];
             if(!preg_match("/^$orig_filename$/",$loc_1_val)) {
@@ -373,7 +373,7 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
         // Check to see if filename matches XML internal UDI reference #1
         $loc_2_xpath = "/gmi:MI_Metadata/gmd:dataSetURI[1]/gco:CharacterString[1]"; # as UDI
         $loc_2 = $xml->xpath($loc_2_xpath);
-        $errmsg = "GRIIDC standards:  UDI must be referenced in /gmi:MI_Metadata/gmd:dataSetURI/gco:CharacterString";
+        $errmsg = "GRIIDC standards:  UDI does not match metadata URL (/gmi:MI_Metadata/gmd:dataSetURI/gco:CharacterString)";
         if(isset($loc_2[0][0])) {
             $loc_2_val = $loc_2[0][0];
             if(!preg_match("/$udi$/",$loc_2_val)) { # URL must end with UDI
@@ -394,7 +394,7 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
         // Check to see if filename matches XML internal UDI reference #2
         $loc_3_xpath = "/gmi:MI_Metadata/gmd:distributionInfo[1]/gmd:MD_Distribution[1]/gmd:distributor[1]/gmd:MD_Distributor[1]/gmd:distributorTransferOptions[1]/gmd:MD_DigitalTransferOptions[1]/gmd:onLine[1]/gmd:CI_OnlineResource[1]/gmd:linkage[1]/gmd:URL[1]";
         $loc_3 = $xml->xpath($loc_3_xpath);
-        $errmsg = 'GRIIDC standards:  UDI not found referenced at /gmi:MI_Metadata/gmd:distributionInfo[1]/gmd:MD_Distribution[1]/gmd:distributor[1]/gmd:MD_Distributor[1]/gmd:distributorTransferOptions[1]/gmd:MD_DigitalTransferOptions[1]/gmd:onLine[1]/gmd:CI_OnlineResource[1]/gmd:linkage[1]/gmd:URL[1]';
+        $errmsg = 'GRIIDC standards:  UDI does not match distribution URL (/gmi:MI_Metadata/gmd:distributionInfo[1]/gmd:MD_Distribution[1]/gmd:distributor[1]/gmd:MD_Distributor[1]/gmd:distributorTransferOptions[1]/gmd:MD_DigitalTransferOptions[1]/gmd:onLine[1]/gmd:CI_OnlineResource[1]/gmd:linkage[1]/gmd:URL[1])';
         if(isset($loc_3[0][0])) {
             $loc_3_val = $loc_3[0][0];
             if(!preg_match("/$udi$/",$loc_3_val)) { # URL must end with UDI
