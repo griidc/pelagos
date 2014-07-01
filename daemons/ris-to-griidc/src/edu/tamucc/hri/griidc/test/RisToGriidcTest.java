@@ -6,16 +6,16 @@ import java.sql.SQLException;
 
 import org.ini4j.InvalidFileFormatException;
 
-import edu.tamucc.hri.griidc.support.RisToGriidcConfiguration;
 import edu.tamucc.hri.griidc.exception.MultipleRecordsFoundException;
 import edu.tamucc.hri.griidc.exception.GriidcExceptionService;
 import edu.tamucc.hri.griidc.exception.MissingArgumentsException;
 import edu.tamucc.hri.griidc.exception.NoRecordFoundException;
 import edu.tamucc.hri.griidc.exception.PropertyNotFoundException;
 import edu.tamucc.hri.griidc.exception.TableNotInDatabaseException;
-import edu.tamucc.hri.griidc.support.MiscUtils;
-import edu.tamucc.hri.rdbms.utils.RdbmsConnection;
-import edu.tamucc.hri.rdbms.utils.RdbmsUtils;
+import edu.tamucc.hri.griidc.rdbms.RdbmsConnection;
+import edu.tamucc.hri.griidc.rdbms.RdbmsUtils;
+import edu.tamucc.hri.griidc.utils.MiscUtils;
+import edu.tamucc.hri.griidc.utils.RisToGriidcConfiguration;
 
 /**
  * A consolidation of test routines

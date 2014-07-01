@@ -2,6 +2,8 @@ package edu.tamucc.hri.griidc.exception;
 
 public class TableDescriptionException extends Exception {
 
+	private static final long serialVersionUID = 1235774654941472482L;
+
 	public TableDescriptionException() {
 		// TODO Auto-generated constructor stub
 	}

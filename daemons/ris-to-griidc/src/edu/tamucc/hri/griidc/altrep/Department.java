@@ -1,6 +1,6 @@
 package edu.tamucc.hri.griidc.altrep;
 
-import edu.tamucc.hri.rdbms.utils.CompressedString;
+import edu.tamucc.hri.griidc.utils.CompressedString;
 
 /**
  * an alternate minimal representation of Department

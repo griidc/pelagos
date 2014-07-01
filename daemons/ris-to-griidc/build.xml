@@ -25,6 +25,11 @@
 	</path>
 
 
+	<!-- display identification  -->
+	<target name="whoAreYou">
+		<echo message="I am Ant file for  ${ant.project.name}" />
+	</target>
+
 	<!-- env  environment  - display the environment  -->
 	<target name="env" description="show the pathelements etc">
 		<echo message="Project name: ${project.name}" />
@@ -47,6 +52,7 @@
 		<echo message="classpath element ${user.share.lib.dir}/ini4j.jar" />
 		<echo message="jar file name ${jar.file.name}" />
 	</target>
+
 	<!--  init creates directories and  -->
 	<target name="init" description="create necessary directories, set options">
 		<mkdir dir="${bin.dir}" />
@@ -57,15 +63,18 @@
 			</fileset>
 		</copy>
 	</target>
+
 	<!--  Clean - delete build out  -->
 	<target name="clean" description="delete the bin and lib directory">
 		<echo message="Clean  ${ant.project.name}: ${ant.file}" />
 		<delete dir="${bin.dir}" />
 		<delete dir="${lib.dir}" />
 	</target>
+
 	<!--  build.all - clean, init, build and jar  -->
-	<target name="build.all" depends="clean, init, build, jar" description="do clean, init, build and jar">
+	<target name="build.all" depends="whoAreYou, clean, init, build, jar" description="do clean, init, build and jar">
 	</target>
+
 	<!--  build - compile   -->
 	<target name="build" depends="init" description="build the class files">
 		<echo message="Build   ${ant.project.name}: ${ant.file}" />
@@ -74,6 +83,7 @@
 			<classpath refid="build.compile.classpath" />
 		</javac>
 	</target>
+
 	<!--  Generate a jar file to run -->
 	<target name="jar" depends="build" description="make a java archive .jar file ">
 		<mkdir dir="${lib.dir}" />
@@ -84,11 +94,12 @@
 			</manifest>
 		</jar>
 		<echo message="copy ${jar.file.name} to ${user.home}/griidcProjects/lib " />
-		<copy file="${jar.file.name}" todir="${user.home}/griidcProjects/lib"/>	
-	<!--	
+		<copy file="${jar.file.name}" todir="${user.home}/griidcProjects/lib" />
+		<!--	
 	    <copyfile src="${jar.file.name}" dest="${user.home}/griidcProjects/lib"/>  
 	 -->
 	</target>
+	
 	<!-- Generate javadocs for current project into ${doc.dir} -->
 	<target name="build-java-docs" depends="build" description="generate JavaDoc documentation">
 		<echo message="Generate javadocs source dir: ${src.dir} Document dir: ${doc.dir}" />
@@ -96,9 +107,82 @@
 			<classpath refid="build.compile.classpath" />
 		</javadoc>
 	</target>
+	
 	<!-- RisToGriidcMain -->
 	<target name="RisToGriidcMain">
 		<java classname="edu.tamucc.hri.griidc.RisToGriidcMain" failonerror="true" fork="yes">
+			<classpath refid="build.compile.classpath" />
+		</java>
+	</target>
+
+	<!-- run main in class  PubsToGriidcMain -->
+	<target name="PubsToGriidcMain">
+		<java classname="edu.tamucc.hri.griidc.pubs.PubsToGriidcMain" failonerror="true" fork="yes">
+			<classpath refid="build.compile.classpath" />
+		</java>
+	</target>
+
+	<!-- run main in class  Publication -->
+	<target name="Publication">
+		<java classname="edu.tamucc.hri.griidc.pubs.Publication" failonerror="true" fork="yes">
+			<classpath refid="build.compile.classpath" />
+		</java>
+	</target>
+
+	<!-- run main in class  PubsJaxbHandler -->
+	<target name="PubsJaxbHandler">
+		<java classname="edu.tamucc.hri.griidc.xml.PubsJaxbHandler" failonerror="true" fork="yes">
+			<classpath refid="build.compile.classpath" />
+		</java>
+	</target>
+
+
+
+	<!-- run main in class  PubsToGriidcUtils -->
+	<target name="PubsToGriidcUtils">
+		<java classname="edu.tamucc.hri.griidc.support.PubsToGriidcUtils" failonerror="true" fork="yes">
+			<classpath refid="build.compile.classpath" />
+		</java>
+	</target>
+
+	<!-- run main in class  RdbmsPubsUtils (1) -->
+	<target name="RdbmsPubsUtils (1)">
+		<java classname="edu.tamucc.hri.griidc.rdbms.RdbmsPubsUtils" failonerror="true" fork="yes">
+			<classpath refid="build.compile.classpath" />
+		</java>
+	</target>
+
+	<!-- run main in class  RefBaseWebService -->
+	<target name="RefBaseWebService">
+		<java classname="edu.tamucc.hri.griidc.pubs.RefBaseWebService" failonerror="true" fork="yes">
+			<classpath refid="build.compile.classpath" />
+		</java>
+	</target>
+
+	<!-- run main in class  RefBaseXmlErrorProcessor -->
+	<target name="RefBaseXmlErrorProcessor">
+		<java classname="edu.tamucc.hri.griidc.xml.RefBaseXmlErrorProcessor" failonerror="true" fork="yes">
+			<classpath refid="build.compile.classpath" />
+		</java>
+	</target>
+
+	<!-- run main in class  RisPeopleGriidcPersonMap -->
+	<target name="RisPeopleGriidcPersonMap">
+		<java classname="edu.tamucc.hri.griidc.rdbms.RisPeopleGriidcPersonMap" failonerror="true" fork="yes">
+			<classpath refid="build.compile.classpath" />
+		</java>
+	</target>
+
+	<!-- run main in class  XmlPreprocessor -->
+	<target name="XmlPreprocessor">
+		<java classname="edu.tamucc.hri.griidc.pubs.XmlPreprocessor" failonerror="true" fork="yes">
+			<classpath refid="build.compile.classpath" />
+		</java>
+	</target>
+
+	<!-- run main in class  PublicationDbAgent -->
+	<target name="PublicationDbAgent">
+		<java classname="edu.tamucc.hri.griidc.pubs.PublicationDbAgent" failonerror="true" fork="yes">
 			<classpath refid="build.compile.classpath" />
 		</java>
 	</target>

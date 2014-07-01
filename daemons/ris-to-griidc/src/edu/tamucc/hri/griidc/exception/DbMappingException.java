@@ -2,9 +2,8 @@ package edu.tamucc.hri.griidc.exception;
 
 public class DbMappingException extends Exception {
 
-	/**
-	 * 
-	 */
+	private static final long serialVersionUID = -7640925907042003703L;
+
 	public DbMappingException() {
 		super();
 		// TODO Auto-generated constructor stub

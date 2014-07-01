@@ -20,3 +20,14 @@ db.ini
 gomri_rpisRisTableColTypeReport.txt
 griidcGriidcTableColTypeReport.txt
 griidcTablesColumnsAndDataTypesOut.txt
+SqlToShowDuplicateRISPeople
+developerReport.txt
+main.jvh.pubs.sql
+pubsDeveloperReport.txt
+pubsErrorLog.txt
+pubsPrimaryLog.txt
+refBase.xml
+risDataErrors.txt
+risDataErrorsAddRpt.txt
+risDataWarnings.txt
+risToGriidcLog.txt

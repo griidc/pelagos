@@ -2,6 +2,8 @@ package edu.tamucc.hri.griidc.exception;
 
 public class IllegalFundingSourceCodeException extends Exception {
 
+	private static final long serialVersionUID = 6768522782533065687L;
+
 	public IllegalFundingSourceCodeException() {
 		// TODO Auto-generated constructor stub
 	}

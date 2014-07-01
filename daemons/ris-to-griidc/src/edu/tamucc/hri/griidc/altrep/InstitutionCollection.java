@@ -10,7 +10,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import edu.tamucc.hri.griidc.exception.NoRecordFoundException;
-import edu.tamucc.hri.rdbms.utils.CompressedString;
+import edu.tamucc.hri.griidc.utils.CompressedString;
 
 /**
  * a way to collect allthe Institutions in one of the databases (GRIIDC RIS)

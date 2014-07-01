@@ -8,7 +8,7 @@ import java.util.Map;
 
 import edu.tamucc.hri.griidc.altrep.InstitutionCollection.InstitutionIdComparator;
 import edu.tamucc.hri.griidc.exception.NoRecordFoundException;
-import edu.tamucc.hri.rdbms.utils.CompressedString;
+import edu.tamucc.hri.griidc.utils.CompressedString;
 
 /**
  * an alternate minimal representation of Institution
