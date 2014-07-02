@@ -25,8 +25,7 @@ require_once '/usr/local/share/GRIIDC/php/db-utils.lib.php';
 # Auth library
 require_once '/usr/local/share/GRIIDC/php/auth.php';
 # LDAP
-#require_once '/usr/local/share/GRIIDC/php/ldap.php';
-require_once '../share/php/ldap.php';
+require_once '/usr/local/share/GRIIDC/php/ldap.php';
 
 date_default_timezone_set('UTC');
 

@@ -41,15 +41,14 @@
 <h3 style="text-align:center;">The dataset you selected is ready for download.</h3>
 
 <div style="border: 1px solid #aaa; padding: 10px; border-radius: 4px;">
-    <p><strong>UDI:</strong> {{dataset.udi}}<br />
+    <strong>UDI:</strong> {{dataset.udi}}<br />
     <strong>Title:</strong> {{dataset.title}}<br />
     <strong>Originator:</strong> {{dataset.dataset_originator}}<br />
     {% if dataset.metadata_filename %}
         <strong>Metadata:</strong> <a href="/metadata/{{dataset.udi}}">{{dataset.metadata_filename}}</a><br />
     {% endif %}
-    <strong>Filename:</strong> {{dataset.dataset_filename}}<br />
-    <strong>Size:</strong> {{filesize}}<br />
-    <strong>Estimated Download Time:</strong> <span id="dl_time">calculating...</span></p>
+    <strong>File name:</strong> {{dataset.dataset_filename}} &nbsp; <strong>File size:</strong>{{filesize}}<br />
+    <strong>Estimated Download Time:</strong> <span id="dl_time">calculating...</span>
     <table border='0'>
     <tr>
         <th colspan='2'>Datafile Checksums</th>
@@ -65,7 +64,7 @@
     </tr>
     </table>
 </div>
-<div style="border: 1px solid #aaa; padding: 10px; border-radius: 4px; margin-top: 20px">
+<div style="border: 1px solid #aaa; padding: 10px; border-radius: 4px; margin-top: 15px">
 <strong><i>Citation suggestion:</i></strong><br />
 {{dataset.dataset_originator}},
 {{dataset.title}},
@@ -75,7 +74,7 @@ University-Corpus Christi.
 griidc:{{dataset.udi}}
 </div>
 
-<div style="border: 1px solid #aaa; padding: 10px; margin-top: 20px; border-radius: 4px;">
+<div style="border: 1px solid #aaa; padding: 10px; margin-top: 15px; border-radius: 4px;">
     <p style="margin-top:0">
         <strong>DISCLAIMER:</strong> Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) aggregates data from researchers funded by the Gulf of Mexico Initiative and other scientists working in the region. These data are furnished "as is" for the convenience of all data users. GRIIDC makes no warranties (including no warranties as to merchantability, timeliness or fitness) either expressed or implied with respect to the data or their fitness for any specific application.
     </p>
