@@ -1000,7 +1000,7 @@ function GeoViz()
 		}
 		else
 		{
-			msg = 'Uneven tuples, only '+superList.length+' coordinates found';
+			msgTxt = 'Uneven/Missing tuples, only '+superList.length+' coordinates found';
 			msg.push(msgTxt);
 			//console.log(msg);
 		}
