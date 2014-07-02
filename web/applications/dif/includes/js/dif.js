@@ -76,6 +76,16 @@ $(document).ready(function()
         $('#difForm').submit();
     });
     
+    $('#btnUnlock').button().click(function() {
+        $('#btn').val($(this).val())
+        $('#difForm').submit();
+    });
+    
+    $('#btnReqUnlock').button().click(function() {
+        $('#btn').val($(this).val())
+        $('#difForm').submit();
+    });
+    
     $('#btnSearch').button().click(function () {
         treeSearch();
     });

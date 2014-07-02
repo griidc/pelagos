@@ -2,8 +2,8 @@
 
 include 'difDL.php'; //dif DataLayer
 
-include_once '/usr/local/share/GRIIDC/php//ldap.php'; 
-include_once '/usr/local/share/GRIIDC/php//griidcMailer.php';
+include_once '/usr/local/share/GRIIDC/php/ldap.php'; 
+include_once '/usr/local/share/GRIIDC/php/griidcMailer.php';
 
 require_once '/usr/share/pear/Twig/Autoloader.php';
 
@@ -74,7 +74,7 @@ function sendSubmitMail($user,$udi,$title,$template)
    return $difMailer->sendMail();
 }
 
-function mailApprovers($udi,$title)
+function mailApprovers($udi,$title,$template)
 {
     global $twig;
     $ldap = connectLDAP('triton.tamucc.edu');
@@ -87,7 +87,7 @@ function mailApprovers($udi,$title)
     $twigdata["url"] = 'https://'.$_SERVER[HTTP_HOST].'/dif/?id='.$udi;
     $twigdata["udi"] = $udi;
     
-    $message = $twig->render('reviewMail.html', $twigdata);
+    $message = $twig->render($template, $twigdata);
     
     $members = getAttributes($ldap,"cn=approvers,ou=DIF,ou=applications,dc=griidc,dc=org",array('member'));    
     foreach ($members['member'] as $member)
@@ -176,6 +176,7 @@ function postDIF($fielddata)
     {
         if ($frmButton == 'approve' AND is) {$status = 2;};
         if ($frmButton == 'reject') {$status = 0;};
+        if ($frmButton == 'unlock') {$status = 0;};
     }
     
     if ($frmButton == 'submit') {$status = 1;};
@@ -199,7 +200,7 @@ function postDIF($fielddata)
     
     if (empty($gmlText)){$gmlText=null;};
     
-    if (empty($submitted) OR ($status < 2 AND $frmButton != 'reject'))
+    if (empty($submitted) OR ($status < 2 AND ($frmButton != 'reject' AND $frmButton != 'unlock')))
     {$submitted=$editor;};
     
     //$gmlText = '<gml:Point srsName="urn:ogc:def:crs:EPSG::4326"><gml:pos srsDimension="2">27.70323 -97.30042</gml:pos></gml:Point>';
@@ -247,7 +248,22 @@ function postDIF($fielddata)
             $msgtitle = 'DIF Submitted';
             
             $sendMail = sendSubmitMail($submitted,$UDI,'GRIIDC DIF Submitted','submitMail.html');
-            mailApprovers($UDI,'DIF Submitted for Approval');
+            mailApprovers($UDI,'DIF Submitted for Approval','reviewMail.html');
+            
+        }
+        else if ($frmButton == 'unlock')
+        {
+            $message = '<div><img src="/images/icons/info32.png"><p>Succesfully unlocked DIF with ID: '.$UDI.'.</p></div>';
+            $msgtitle = 'DIF Unlocked';
+            $sendMail = sendSubmitMail($submitted,$UDI,'GRIIDC DIF Unlocked','unlocked.html');
+            
+        }
+        else if ($frmButton == 'requnlock')
+        {
+            $message = '<div><img src="/images/icons/info32.png"><p>Your unlock request has been submitted for ID: '.$UDI.'.<br>Your unlock request will be reviewed by GRIIDC staff.<br>You will receive an e-mail when the DIF is unlocked.</p></div>';
+            $msgtitle = 'DIF Submitted';
+            
+            mailApprovers($UDI,'DIF Unlock Request','unlockReq.html');
             
         }
         else

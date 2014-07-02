@@ -2,14 +2,16 @@
 
 include_once '/usr/local/share/GRIIDC/php/aliasIncludes.php';
 
-drupal_add_js('/includes/jquery-validation/jquery.validate.js',array('type'=>'external'));
+drupal_add_js('//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js',array('type'=>'external'));
 drupal_add_js('includes/js/dif.js',array('type'=>'external'));
 drupal_add_js('//cdnjs.cloudflare.com/ajax/libs/spin.js/2.0.1/spin.min.js',array('type'=>'external'));
 drupal_add_css('includes/css/dif.css',array('type'=>'external'));
 drupal_add_js('//cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js',array('type'=>'external'));
 drupal_add_js('//maps.google.com/maps/api/js?v=3&sensor=false',array('type'=>'external'));
 drupal_add_js('/includes/geoviz/geoviz.js',array('type'=>'external'));
-drupal_add_js('/includes/geoviz/mapWizard.js',array('type'=>'external'));
+//drupal_add_js('/includes/geoviz/mapWizard.js',array('type'=>'external'));
+drupal_add_js('/~mvandeneijnden/map/mapWizard.js',array('type'=>'external'));
+drupal_add_js('/~mvandeneijnden/map/geoviz.js',array('type'=>'external'));
 drupal_add_js('//cdnjs.cloudflare.com/ajax/libs/jstree/3.0.1/jstree.min.js',array('type'=>'external'));
 drupal_add_css('//cdnjs.cloudflare.com/ajax/libs/jstree/3.0.1/themes/default/style.min.css',array('type'=>'external'));
 drupal_add_library('system', 'ui.datepicker');
