@@ -259,13 +259,23 @@ function setFormStatus()
         $('form :input').prop('disabled',false);
         $('#btnSubmit').prop('disabled',false);
         $('#btnSave').prop('disabled',false);
+        
     }
     else if (isAdmin != '1')
     {
         $('form :input').prop('disabled',true);
         $('#btnSubmit').prop('disabled',true);
         $('#btnSave').prop('disabled',true);
+        if (Status == "2")
+        {
+          $('#btnReqUnlock').show();  
+        }
+        else
+        {
+          $('#btnReqUnlock').hide();  
+        }
     }
+    
 }
 
 function scrollToTop()
