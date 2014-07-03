@@ -504,57 +504,6 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
             $has_metadata_in_db=false;
             $has_metadata_in_db = ($tmp[0]['cnt'] ==  1);
 
-            // if user has opted to submit GML override data, (checkbox and content)
-            // remove the polygon (if any) from the GML and replace with this one.
-            // If the original data had a bounding box, it will already be a polygon
-            // by this point.
-            $flagged_gmloverride=false;
-            if (isset($_POST['overrideGML']) and $_POST['overrideGML']=='on' and isset($_POST['GMLOverride'])) {
-                $coordinate_list=$_POST['GMLOverride'];
-                $flagged_gmloverride=true;
-                // xpath locate/remove polygon
-
-                $doc2 = new DomDocument('1.0','UTF-8');
-                $tmpp = @$doc2->loadXML($xml_save);
-                if (!$tmpp) {
-                    $err = libxml_get_last_error();
-                    $err_str = $err->message;
-                    throw new RuntimeException("Malformed XML: The XML file supplied could not be parsed. ($err_str)");
-                }
-
-                $xpathdoc = new DOMXpath($doc2);
-                $searchXpath = "/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:geographicElement/gmd:EX_BoundingPolygon";
-                $elements = $xpathdoc->query($searchXpath);
-                $node = $elements->item(0);
-
-                if ($elements->length > 0) {
-                    $parent = $node->parentNode;
-                    $parent->removeChild($node);
-
-                    $newnode = createXmlNode($doc2,$parent,'gmd:EX_BoundingPolygon');
-                    $parent = $newnode;
-                    $newnode = createXmlNode($doc2,$parent,'gmd:polygon');
-                    $parent = $newnode;
-                    $newnode = createXmlNode($doc2,$parent,'gml:Polygon');
-                    $newnode->setAttribute('gml:id',"Polygon");
-                    $newnode->setAttribute('srsName',"urn:ogc:def:crs:EPSG::4326");
-                    $parent = $newnode;
-                    $newnode = createXmlNode($doc2,$parent,'gml:exterior');
-                    $parent = $newnode;
-                    $newnode = createXmlNode($doc2,$parent,'gml:LinearRing');
-                    $parent = $newnode;
-                    addXMLChildValue($doc2,$parent,'gml:coordinates',$coordinate_list);
-
-                    $doc2->normalizeDocument();
-                    $doc2->formatOutput=true;
-                    $xml_save=$doc2->saveXML(); // should still be clean without a 2nd run through tidy
-
-                    $geoflag='yes';
-                    $msg = "The polygon GML from file has been overridden by user.";
-                    drupal_set_message($msg,'warning');
-                }
-            }
-            
             // override datestamp in XML
             if (isset($_POST['overrideDatestamp']) and $_POST['overrideDatestamp']=='on') {
                     $doc3 = new DomDocument('1.0','UTF-8');
@@ -688,7 +637,6 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
 
             drupal_set_message($thanks_msg,'status');
             $loginfo=$user->name." successfully uploaded metadata for $reg_id";
-            if($flagged_gmloverride){ $loginfo .= " and GML was overridden via interface"; }
             if($flagged_accepted) {$loginfo .= " and data was flagged as accepted";}
             if($dm_contacted) { $loginfo .= " and data manager was emailed"; }
             $loginfo .= '.'; // Punctuation is important.
