@@ -279,6 +279,7 @@ $app->get('/download-metadata-db/:udi', function ($udi) use ($app) {
 $app->post('/upload-new-metadata-file', function () use ($app) {
     global $user;
     $geoflag='no';
+    $arbitraryGML = 'no';
     $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
     $env = $app->environment();
     $baseUrl = "$protocol$env[SERVER_NAME]/$GLOBALS[PAGE_NAME]";
@@ -411,6 +412,10 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                 drupal_set_message($errmsg,'warning');
             }
         }
+        if(isset($_POST['allowAnyGML']) and ($_POST['allowAnyGML'] == 'on')) {
+            $geoflag='yes';
+            $arbitraryGML = 'yes';
+        } else {
         // Determine geometry type
         if ($geo = $xml->xpath('/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:geographicElement[1]/gmd:EX_BoundingPolygon[1]/gmd:polygon[1]/gml:Polygon[1]')) {
             // Polygon - Ideally this is case
@@ -468,6 +473,7 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
         } else {
             $geoflag='no';
         }
+        }
 
         $dbms = OpenDB("GOMRI_RW");
         try {
@@ -475,8 +481,8 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
             $doc->formatOutput=true;
             $xml_save=$doc->saveXML();
 
-            // substitute exterior for interior (always)
-            if (preg_match('/gml:interior>/',$xml_save)) {
+            // substitute exterior for interior (assumed only for polygons)
+            if ((preg_match('/gml:interior>/',$xml_save)) and ($arbitraryGML == 'no')) {
                 $xml_save = preg_replace('/gml:interior>/','gml:exterior>',$xml_save);
                 drupal_set_message('Exterior polygon boundries assumed','warning');
             }
@@ -544,7 +550,7 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                     $xml_save=$doc2->saveXML(); // should still be clean without a 2nd run through tidy
 
                     $geoflag='yes';
-                    $msg = "The GML from file has been overridden by user.";
+                    $msg = "The polygon GML from file has been overridden by user.";
                     drupal_set_message($msg,'warning');
                 }
             }
@@ -577,10 +583,11 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
             $geo_status='Nothing to verify';
             $geometery=null;
             if ($geoflag=='yes') {
-            // attempt to have PostGIS validate any geometry, if found.
+            // attempt to have PostGIS validate any geometry, if found and return the geometery
                 $xml = simplexml_load_string($xml_save);
-                $geo = $xml->xpath('/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:geographicElement[1]/gmd:EX_BoundingPolygon[1]/gmd:polygon[1]/gml:Polygon[1]');
-                $sql2="select ST_GeomFromGML('".$geo[0]->asXML()."', 4326) as geometry";
+                $geo = $xml->xpath('/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:geographicElement[1]/gmd:EX_BoundingPolygon[1]/gmd:polygon[1]/*');
+                $geometry_xml = $geo[0]->asXML();
+                $sql2="select ST_GeomFromGML('$geometry_xml', 4326) as geometry";
                 $data2 = $dbms->prepare($sql2);
                 if ($data2->execute()) {
                     $geo_status = 'Verified by PostGIS as OK';
