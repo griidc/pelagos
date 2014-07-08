@@ -55,7 +55,7 @@ public class PublicationDbAgent {
 			.synchronizedSortedSet(new TreeSet<Integer>());
 
 
-	private static final String ErrorMsgPrefix = "Pub: ";
+	private static final String ErrorMsgPrefix = "Error Pub-";
 	
 	public PublicationDbAgent() {
 		// TODO Auto-generated constructor stub
@@ -76,10 +76,11 @@ public class PublicationDbAgent {
 	}
 
 	public static int errorCount = 0;
+	private static final int SpinnerInterval = 1000 / 4;
 
 	public void updateAllPublications(int[] allPubs) {
 		Publication publication = null;
-        ProgressSpinner spinner = new ProgressSpinner(250);
+        ProgressSpinner spinner = new ProgressSpinner(SpinnerInterval);
 		for (int pubSerial : allPubs) {
 			spinner.spin();
 			this.debugOut("updateAllPublications() - processing publication number: "
@@ -98,19 +99,19 @@ public class PublicationDbAgent {
 						this.pubsErrors++;
 						String msg = "Error in Pub serial number: " + pubSerial
 								+ "  " + e.getMessage();
-						MiscUtils.writeToPubsErrorLogFile(ErrorMsgPrefix + "1 " + msg);
+						MiscUtils.writeToPubsErrorLogFile(ErrorMsgPrefix + "1: " + msg);
 						if (PubsToGriidcMain.isDeBug()) {
 							System.out.println(msg);
 							// e.printStackTrace();
 						}
 					}
 				} else { // NOT ValidForGriidcDb
-					MiscUtils.writeToPubsErrorLogFile(ErrorMsgPrefix + "2 " + publication
+					MiscUtils.writeToPubsErrorLogFile(ErrorMsgPrefix + "2: " + publication
 							.getGriidcDBValidityErrorMessage());
 					this.pubsErrors++;
 				}
 			} catch (PubNotFoundInRefBaseException e) {
-				MiscUtils.writeToPubsErrorLogFile(ErrorMsgPrefix + "3 " + e.getMessage());
+				MiscUtils.writeToPubsErrorLogFile(ErrorMsgPrefix + "3: " + e.getMessage());
 			}
 		}
 	}

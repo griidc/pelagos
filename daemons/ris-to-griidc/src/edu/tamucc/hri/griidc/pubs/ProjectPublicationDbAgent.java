@@ -33,7 +33,7 @@ public class ProjectPublicationDbAgent {
 
 	public static boolean DeBug = false;
 	private PublicationCache publicationCache = new PublicationCache();
-	private static final String ErrorMsgPrefix = "Error ProjPub ";
+	private static final String ErrorMsgPrefix = "Error ProjPub-";
 
 	public ProjectPublicationDbAgent() {
 		// TODO Auto-generated constructor stub

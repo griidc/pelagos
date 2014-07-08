@@ -36,7 +36,7 @@ public class PersonPublicationDbAgent {
 	private String queryString = null;
 
 	private Set<Object> pubNumbers = null;
-	private static final String ErrorMsgPrefix = "PerPub: ";
+	private static final String ErrorMsgPrefix = "Error PerPub-";
 
 	public PersonPublicationDbAgent() {
 		// TODO Auto-generated constructor stub
@@ -97,7 +97,7 @@ public class PersonPublicationDbAgent {
 				String msg = ppMsg
 						+ ": There is no GRIIDC Person with RIS PeopleId "
 						+ risPeopleId;
-				this.errorMessage(ErrorMsgPrefix + "1 " + msg);
+				this.errorMessage(ErrorMsgPrefix + "1: " + msg);
 				this.errors++;
 				continue; // skip the rest - get the next one
 			}
@@ -110,7 +110,7 @@ public class PersonPublicationDbAgent {
 							+ formatPayload(pubNumber, griidcPersonNumber));
 					String msg = ppMsg
 							+ ": Duplicate Person-Publication record";
-					this.errorMessage(ErrorMsgPrefix + "2 " + msg);
+					this.errorMessage(ErrorMsgPrefix + "2: " + msg);
 					this.duplicateRecords++;
 					continue;
 				} catch (NoRecordFoundException e) { // record not found - add
@@ -134,7 +134,7 @@ public class PersonPublicationDbAgent {
 				String msg = ppMsg
 						+ "Did NOT find publication. Can't add Person-Publication if pub does not exist ";
 				debugMessage(msg);
-				this.errorMessage(ErrorMsgPrefix + "3 " + msg);
+				this.errorMessage(ErrorMsgPrefix + "3: " + msg);
 				continue;
 			}
 		}
