@@ -8,7 +8,7 @@ public class StringList {
 
 	private List<String> items = null;
 	
-	public String stringSeparator = PubsConstants.getDefaultStringListSeparator();
+	public String stringSeparator = ConfigurationConstants.getDefaultStringListSeparator();
 	
 	public StringList() {
 		this.items = new ArrayList<String>();

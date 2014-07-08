@@ -54,11 +54,13 @@ public class GriidcConfiguration {
 	private static final String RisToGriidcNotificationsSection = "ris-to-griidc"; // notifications.ini
 	private static final String RisErrorsType = "riserrors";  // notifications.ini
 	private static final String PrimaryLogType = "primarylog";  // notifications.ini
+	private static final String PubsErrorsType = "pubserrors";  // notifications.ini
 
 	//  property names
 	private static final String PrimayLogFileNameProperty = "primaryLogName";
 	private static final String PrimayLogFileDirectoryProperty = "logFileDir";
 	private static final String RisErrorLogNameProperty = "risErrorLogName";
+	private static final String PubsErrorLogNameProperty = "pubsErrorLogName";
 	private static final String DeveloperLogFileNameProperty = "developerLogName";
 	private static final String RisWarningLogNameProperty = "risWarningLogName";
 	private static final String FuzzyHeuristicPostalCodeMatchingProperty = "fuzzyHeuristicPostalCodeMatching";
@@ -293,6 +295,9 @@ public class GriidcConfiguration {
 	public static String getRisErrorLogFileName() {
 		return getCriticalRisToGriidcProperty(RisErrorLogNameProperty);
 	}
+	public static String getPubsErrorLogFileName() {
+		return getCriticalRisToGriidcProperty(PubsErrorLogNameProperty);
+	}
 	public static String getRisWarningLogFileName() {
 		return getCriticalRisToGriidcProperty(RisWarningLogNameProperty);
 	}
@@ -337,6 +342,9 @@ public class GriidcConfiguration {
 		return getRecipients(RisErrorsType);
 	}
 
+	public static String[] getPubsErrorMsgLogRecipients() {
+		return getRecipients(PubsErrorsType);
+	}
 	public static String[] getPrimaryMsgLogRecipients()
 			throws PropertyNotFoundException {
 		return getRecipients(PrimaryLogType);

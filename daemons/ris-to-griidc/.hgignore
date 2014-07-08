@@ -25,6 +25,7 @@ developerReport.txt
 main.jvh.pubs.sql
 pubsDeveloperReport.txt
 pubsErrorLog.txt
+pubsDataErrors.txt
 pubsPrimaryLog.txt
 refBase.xml
 risDataErrors.txt

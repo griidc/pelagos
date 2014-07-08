@@ -18,7 +18,7 @@ import edu.tamucc.hri.griidc.rdbms.DbColumnInfo;
 import edu.tamucc.hri.griidc.rdbms.RdbmsConnection;
 import edu.tamucc.hri.griidc.rdbms.RdbmsConnectionFactory;
 import edu.tamucc.hri.griidc.rdbms.RdbmsConstants;
-import edu.tamucc.hri.griidc.rdbms.RdbmsPubsUtils;
+import edu.tamucc.hri.griidc.rdbms.RdbmsUtils;
 import edu.tamucc.hri.griidc.rdbms.RisGriidcDataStoreInterface;
 import edu.tamucc.hri.griidc.rdbms.RisGriidcRelationalDataStore;
 import edu.tamucc.hri.griidc.rdbms.TableColInfo;
@@ -54,6 +54,9 @@ public class PublicationDbAgent {
 	private SortedSet<Integer> storedPublicationNumbers = Collections
 			.synchronizedSortedSet(new TreeSet<Integer>());
 
+
+	private static final String ErrorMsgPrefix = "Pub: ";
+	
 	public PublicationDbAgent() {
 		// TODO Auto-generated constructor stub
 	}
@@ -76,7 +79,7 @@ public class PublicationDbAgent {
 
 	public void updateAllPublications(int[] allPubs) {
 		Publication publication = null;
-        ProgressSpinner spinner = new ProgressSpinner();
+        ProgressSpinner spinner = new ProgressSpinner(250);
 		for (int pubSerial : allPubs) {
 			spinner.spin();
 			this.debugOut("updateAllPublications() - processing publication number: "
@@ -95,19 +98,19 @@ public class PublicationDbAgent {
 						this.pubsErrors++;
 						String msg = "Error in Pub serial number: " + pubSerial
 								+ "  " + e.getMessage();
-						MiscUtils.writeToErrorLogFile(msg);
+						MiscUtils.writeToPubsErrorLogFile(ErrorMsgPrefix + "1 " + msg);
 						if (PubsToGriidcMain.isDeBug()) {
 							System.out.println(msg);
 							// e.printStackTrace();
 						}
 					}
 				} else { // NOT ValidForGriidcDb
-					MiscUtils.writeToErrorLogFile(publication
+					MiscUtils.writeToPubsErrorLogFile(ErrorMsgPrefix + "2 " + publication
 							.getGriidcDBValidityErrorMessage());
 					this.pubsErrors++;
 				}
 			} catch (PubNotFoundInRefBaseException e) {
-				MiscUtils.writeToErrorLogFile(e.getMessage());
+				MiscUtils.writeToPubsErrorLogFile(ErrorMsgPrefix + "3 " + e.getMessage());
 			}
 		}
 	}
@@ -192,14 +195,14 @@ public class PublicationDbAgent {
 	private boolean modifyPublication(Publication pub) throws SQLException {
 		String query = formatModifyQuery(pub);
 		// this.debugOut("modifyPublication(); query: " + query);
-		return PublicationDbAgent.getGriidcDbConnection().executeQueryBoolean(
+		return this.getGriidcDbConnection().executeQueryBoolean(
 				query);
 	}
 
 	private boolean addPublication(Publication pub) throws SQLException {
 		String query = formatAddQuery(pub);
 		// this.debugOut("addPublication(); query: " + query);
-		return PublicationDbAgent.getGriidcDbConnection().executeQueryBoolean(
+		return this.getGriidcDbConnection().executeQueryBoolean(
 				query);
 	}
 
@@ -222,7 +225,7 @@ public class PublicationDbAgent {
 				+ "WHERE "
 				+ RdbmsConnection.wrapInDoubleQuotes(PubNumberColName)
 				+ RdbmsConstants.EqualSign + pubSerialNumber;
-		ResultSet rs = PublicationDbAgent.getGriidcDbConnection()
+		ResultSet rs = this.getGriidcDbConnection()
 				.executeQueryResultSet(query);
 		int count = 0;
 		Publication pub = new Publication();
@@ -249,7 +252,7 @@ public class PublicationDbAgent {
 	private String formatAddQuery(Publication pub) throws SQLException {
 
 		DbColumnInfo[] info = getDbColumnInfo(pub);
-		String query = RdbmsPubsUtils.formatInsertStatement(
+		String query = RdbmsUtils.formatInsertStatement(
 				RdbmsConstants.GriidcPublicationTableName, info);
 		return query;
 
@@ -260,8 +263,8 @@ public class PublicationDbAgent {
 		DbColumnInfo[] info = getDbColumnInfo(pub);
 		DbColumnInfo[] whereInfo = new DbColumnInfo[1];
 
-		TableColInfo tci = RdbmsPubsUtils.getMetaDataForTable(
-				RdbmsPubsUtils.getGriidcDbConnectionInstance(),
+		TableColInfo tci = RdbmsUtils.getMetaDataForTable(
+				RdbmsUtils.getGriidcDbConnectionInstance(),
 				RdbmsConstants.GriidcPublicationTableName);
 
 		whereInfo[0] = tci.getDbColumnInfo(PubNumberColName);
@@ -272,13 +275,13 @@ public class PublicationDbAgent {
 		// this.debugOut("formatModifyQuery() where clause info: \n"
 		// + DbColumnInfo.toString(whereInfo));
 
-		String query = RdbmsPubsUtils.formatUpdateStatement(
+		String query = RdbmsUtils.formatUpdateStatement(
 				RdbmsConstants.GriidcPublicationTableName, info, whereInfo);
 		return query;
 	}
 
 	private DbColumnInfo[] getDbColumnInfo(Publication pub) throws SQLException {
-		TableColInfo tci = RdbmsPubsUtils.getMetaDataForTable(
+		TableColInfo tci = RdbmsUtils.getMetaDataForTable(
 				getGriidcDbConnection(),
 				RdbmsConstants.GriidcPublicationTableName);
 
@@ -296,12 +299,11 @@ public class PublicationDbAgent {
 		return tci.getDbColumnInfo();
 	}
 
-	public static RdbmsConnection getGriidcDbConnection() {
+	public RdbmsConnection getGriidcDbConnection() {
 
 		try {
 			if (PublicationDbAgent.griidcDbConn == null) {
-				PublicationDbAgent.griidcDbConn = RdbmsConnectionFactory
-						.getGriidcDbConnectionInstance();
+				PublicationDbAgent.griidcDbConn = RdbmsConnectionFactory.getInstance().getGriidcDbConnectionInstance();
 			}
 		} catch (SQLException e) {
 			MiscUtils.fatalError("PublicationDbLayer", "getDbConnection",

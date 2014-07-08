@@ -1,8 +1,5 @@
 package edu.tamucc.hri.griidc.rdbms;
 
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.sql.SQLException;
 
 import edu.tamucc.hri.griidc.exception.IniSectionNotFoundException;
@@ -12,54 +9,62 @@ import edu.tamucc.hri.griidc.utils.GriidcConfiguration;
 
 public class RdbmsConnectionFactory {
 	
-	private static RdbmsConnection RisDbConnectionInstance = null;
+	private RdbmsConnection RisDbConnectionInstance = null;
 
-	private static RdbmsConnection GriidcDbConnectionInstance = null;
+	private RdbmsConnection GriidcDbConnectionInstance = null;
 
-	private static RdbmsConnection GriidcSecondaryDbConnection = null;
+	private RdbmsConnection GriidcSecondaryDbConnection = null;
+	
 	
 	private static boolean DeBug = false;
+	private static RdbmsConnectionFactory instance = null;
 	
-	public RdbmsConnectionFactory() {
+	public static RdbmsConnectionFactory getInstance() {
+		if(instance == null) {
+			RdbmsConnectionFactory.instance = new RdbmsConnectionFactory();
+		}
+		return RdbmsConnectionFactory.instance;
+	}
+	private RdbmsConnectionFactory() {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public static RdbmsConnection getRisDbConnectionInstance()
+	public RdbmsConnection getRisDbConnectionInstance()
 			throws SQLException {
-		if (RdbmsConnectionFactory.RisDbConnectionInstance == null) {
-			RdbmsConnectionFactory.RisDbConnectionInstance = RdbmsConnectionFactory.createNewRisDbConnection();
+		if (this.RisDbConnectionInstance == null) {
+			this.RisDbConnectionInstance = this.createNewRisDbConnection();
 		}
-		return RdbmsConnectionFactory.RisDbConnectionInstance;
+		return this.RisDbConnectionInstance;
 	}
 
-	public static  RdbmsConnection getGriidcDbConnectionInstance()
+	public  RdbmsConnection getGriidcDbConnectionInstance()
 			throws SQLException {
-		if (RdbmsConnectionFactory.GriidcDbConnectionInstance == null) {
-			RdbmsConnectionFactory.GriidcDbConnectionInstance = RdbmsConnectionFactory.createNewGriidcDbConnection();
+		if (this.GriidcDbConnectionInstance == null) {
+			this.GriidcDbConnectionInstance = this.createNewGriidcDbConnection();
 		}
-		return RdbmsConnectionFactory.GriidcDbConnectionInstance;
+		return this.GriidcDbConnectionInstance;
 	}
 
-	public static  RdbmsConnection getGriidcSecondaryDbConnectionInstance()
+	public RdbmsConnection getGriidcSecondaryDbConnectionInstance()
 			throws SQLException {
-		if (RdbmsConnectionFactory.GriidcSecondaryDbConnection == null) {
-			RdbmsConnectionFactory.GriidcSecondaryDbConnection = RdbmsConnectionFactory.createNewGriidcDbConnection();
+		if (this.GriidcSecondaryDbConnection == null) {
+			this.GriidcSecondaryDbConnection = this.createNewGriidcDbConnection();
 		}
-		return RdbmsConnectionFactory.GriidcSecondaryDbConnection;
+		return this.GriidcSecondaryDbConnection;
 	}
 
-	public static void closeGriidcSecondaryDbConnection() throws SQLException {
-		if (RdbmsConnectionFactory.GriidcSecondaryDbConnection == null)
+	public void closeGriidcSecondaryDbConnection() throws SQLException {
+		if (this.GriidcSecondaryDbConnection == null)
 			return;
-		RdbmsConnectionFactory.GriidcSecondaryDbConnection.closeConnection();
-		RdbmsConnectionFactory.GriidcSecondaryDbConnection = null;
+		this.GriidcSecondaryDbConnection.closeConnection();
+		this.GriidcSecondaryDbConnection = null;
 
 	}
 	
 	private  static int griidcInstanceCount = 0;
 	private  static int risInstanceCount = 0;
 
-	private static RdbmsConnection createNewGriidcDbConnection()
+	private RdbmsConnection createNewGriidcDbConnection()
 			throws SQLException {
 		String dbIniSectionName = GriidcConfiguration.getGriidcDbIniSection();
 		String risToGriidcIniSectionName = GriidcConfiguration.getRisToGriidcGriidcDbSection();
@@ -103,7 +108,7 @@ public class RdbmsConnectionFactory {
 	}
 
 	
-	private static RdbmsConnection createNewRisDbConnection()
+	private RdbmsConnection createNewRisDbConnection()
 			throws SQLException {
 		String dbIniSectionName =  GriidcConfiguration.getRisDbIniSection();
 		String risToGriidcIniSectionName = GriidcConfiguration.getRisToGriidcRisDbSection();
@@ -145,11 +150,11 @@ public class RdbmsConnectionFactory {
 		return con;
 	}
 	
-	public  static  int getGriidcInstanceCount() {
+	public int getGriidcInstanceCount() {
 		return griidcInstanceCount;
 	}
 
-	public  static  int getRisInstanceCount() {
+	public int getRisInstanceCount() {
 		return risInstanceCount;
 	}
 

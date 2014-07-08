@@ -1,10 +1,8 @@
-package edu.tamucc.hri.griidc.ris;
+package edu.tamucc.hri.griidc.rdbms;
 
 import java.io.IOException;
 import java.sql.SQLException;
 
-import edu.tamucc.hri.griidc.rdbms.RdbmsConnection;
-import edu.tamucc.hri.griidc.rdbms.RdbmsUtils;
 import edu.tamucc.hri.griidc.utils.MiscUtils;
 
 abstract public class SynchronizerBase {
@@ -42,7 +40,7 @@ abstract public class SynchronizerBase {
 		if (!baseInitialized) {
 			try {
 				MiscUtils.openPrimaryLogFile();
-				MiscUtils.openErrorLogFile();
+				MiscUtils.openRisErrorLogFile();
 				MiscUtils.openDeveloperReportFile();
 			} catch (IOException e) {
 				System.err.println("IOException in class: " + cName + " function: commonInitialize()");

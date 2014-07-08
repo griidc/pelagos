@@ -34,7 +34,7 @@ public class RisGriidcRelationalDataStore implements
 
 	@Override
 	public RisPeoplePub[] getRisPeoplePubs() throws SQLException {
-		RdbmsConnection con = RdbmsConnectionFactory.getRisDbConnectionInstance();
+		RdbmsConnection con = RdbmsConnectionFactory.getInstance().getRisDbConnectionInstance();
 		Vector<RisPeoplePub> rppV = new Vector<RisPeoplePub>();
 		String query = "SELECT * FROM " + RdbmsConstants.RisPeoplePublicationTableName;
 		RisPeoplePub rpp = null;
@@ -54,7 +54,7 @@ public class RisGriidcRelationalDataStore implements
 
 	@Override
 	public RisProjPub[] getRisProjPubs()  throws SQLException {
-		RdbmsConnection con = RdbmsConnectionFactory.getRisDbConnectionInstance();
+		RdbmsConnection con = RdbmsConnectionFactory.getInstance().getRisDbConnectionInstance();
 		Vector<RisProjPub> rppV = new Vector<RisProjPub>();
 		String query = "SELECT * FROM " + RdbmsConstants.RisProjPublicationTableName;
 		RisProjPub rpp = null;

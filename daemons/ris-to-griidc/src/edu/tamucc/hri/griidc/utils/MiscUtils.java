@@ -34,14 +34,10 @@ public class MiscUtils {
 	public static java.sql.Date MinDate = java.sql.Date.valueOf(MinDateString);
 
 	public static int primaryLogMsgCount = 0;
-	public static int errorLogCount = 0;
+	public static int pubsErrorLogCount = 0;
+	public static int risErrorLogCount = 0;
 	public static int warningLogCount = 0;
 
-	public static String developerReportFileName = PubsConstants.DeveloperReportFileName;
-	public static String primaryLogFileName = PubsConstants.PrimaryLogFileName;
-	public static String errorLogFileName = PubsConstants.ErrorLogFileName;
-	public static String warningLogFileName = PubsConstants.WarningLogFileName;
-	
 	public static String BreakLine = "\n\n************************************************************************\n";
 
 
@@ -142,7 +138,13 @@ public class MiscUtils {
 		throw new TelephoneNumberWrongFormatException("Telephone Number " + phoneNo
 				+ " is not a recognized format.");
 	}
-
+	public static boolean isNumericOnly(String s) {
+		   int max = s.length();
+		   for(int i = 0; i < max; i++) {
+			   if(s.charAt(i) < '0' || s.charAt(i) > '9') return false;
+		   }
+		   return true;
+		}
 	/**
 	 * for phone number that has extension on the end The ' x' is used in RIS
 	 * records
@@ -184,37 +186,7 @@ public class MiscUtils {
 	public static boolean doesCountryExist(int targetCountry) {
 		return CountryTableCache.getInstance().doesCountryExist(targetCountry);
 	}
-	public static String getDeveloperReportFileName() {
-		return developerReportFileName;
-	}
-
-	public static void setDeveloperReportFileName(String developerReportFileName) {
-		MiscUtils.developerReportFileName = developerReportFileName;
-	}
-
-	public static String getPrimaryLogFileName() {
-		return primaryLogFileName;
-	}
-
-	public static void setPrimaryLogFileName(String primaryLogFileName) {
-		MiscUtils.primaryLogFileName = primaryLogFileName;
-	}
-
-	public static String getErrorLogFileName() {
-		return errorLogFileName;
-	}
-
-	public static void setErrorLogFileName(String errorLogFileName) {
-		MiscUtils.errorLogFileName = errorLogFileName;
-	}
-
-	public static String getWarningLogFileName() {
-		return warningLogFileName;
-	}
-
-	public static void setWarningLogFileName(String warningLogFileName) {
-		MiscUtils.warningLogFileName = warningLogFileName;
-	}
+	
 
 	public static void writeStringToFile(String fileName, String msg)
 			throws IOException {
@@ -321,7 +293,9 @@ public class MiscUtils {
 
 	private static BufferedWriter primarylogFileWriter = null;
 
-	private static BufferedWriter errorLogFileWriter = null;
+	private static BufferedWriter risErrorLogFileWriter = null;
+	
+	private static BufferedWriter pubsErrorLogFileWriter = null;
 
 	private static BufferedWriter developerReportWriter = null;
 
@@ -331,8 +305,12 @@ public class MiscUtils {
 		MiscUtils.getPrimaryLogFileWriter().close();
 	}
 
-	public static void closeErrorLogFile() throws IOException {
-		MiscUtils.getErrorLogFileWriter().close();
+	public static void closeRisErrorLogFile() throws IOException {
+		MiscUtils.getRisErrorLogFileWriter().close();
+	}
+	
+	public static void closePubsErrorLogFile() throws IOException {
+		MiscUtils.getPubsErrorLogFileWriter().close();
 	}
 
 	public static void closeDeveloperReportFile() throws IOException {
@@ -340,7 +318,7 @@ public class MiscUtils {
 	}
 
 	public static void closeWarningReportFile() throws IOException {
-		MiscUtils.getWarningLogFileWriter().close();
+		MiscUtils.getRisWarningLogFileWriter().close();
 	}
 
 	public static final String DashLine = "--------------------------------------------------";
@@ -366,20 +344,36 @@ public class MiscUtils {
 		MiscUtils.primaryLogMsgCount++;
 		return MiscUtils.primaryLogMsgCount;
 	}
-	public static int writeToErrorLogFile(String msg) {
+	public static int writeToRisErrorLogFile(String msg) {
 		try {
-			MiscUtils.getErrorLogFileWriter().write(
+			MiscUtils.getRisErrorLogFileWriter().write(
 					"\n" + incrementPubsEntryNumber() + "\t" + msg + "\n"
 							+ DashLine);
 		} catch (IOException e) {
-			System.err.println("MiscUtils.writeToErrorLogFile() "
+			System.err.println("MiscUtils.writeToRisErrorLogFile() "
 					+ e.getMessage());
 			e.printStackTrace();
 			System.exit(-1);
 		}
-		MiscUtils.errorLogCount++;
-		return MiscUtils.errorLogCount;
+		MiscUtils.risErrorLogCount++;
+		return MiscUtils.risErrorLogCount;
 	}
+	
+	public static int writeToPubsErrorLogFile(String msg) {
+		try {
+			MiscUtils.getPubsErrorLogFileWriter().write(
+					"\n" + incrementPubsEntryNumber() + "\t" + msg + "\n"
+							+ DashLine);
+		} catch (IOException e) {
+			System.err.println("MiscUtils.writeToPubsErrorLogFile() "
+					+ e.getMessage());
+			e.printStackTrace();
+			System.exit(-1);
+		}
+		MiscUtils.pubsErrorLogCount++;
+		return MiscUtils.pubsErrorLogCount;
+	}
+	
 	public static int PubsEntryNumber = 1;
 
 	public static String incrementPubsEntryNumber() {
@@ -397,7 +391,7 @@ public class MiscUtils {
 
 	public static int writeToWarningLogFile(String msg) {
 		try {
-			MiscUtils.getWarningLogFileWriter().write(
+			MiscUtils.getRisWarningLogFileWriter().write(
 					"\n" + incrementRisEntryNumber() + "\t" + msg + "\n"
 							+ DashLine);
 		} catch (IOException e) {
@@ -441,7 +435,7 @@ public class MiscUtils {
 
 	public static BufferedWriter getPrimaryLogFileWriter() throws IOException {
 		MiscUtils.primarylogFileWriter =  getLogFileWriter(MiscUtils.primarylogFileWriter,
-                MiscUtils.getPrimaryLogFileName(),
+				GriidcConfiguration.getPrimaryLogFileName(),
                 "Primary Log file");
 		return MiscUtils.primarylogFileWriter;
 	}
@@ -465,13 +459,17 @@ public class MiscUtils {
 			throws IOException {
 		
 		MiscUtils.developerReportWriter =  getLogFileWriter(MiscUtils.developerReportWriter,
-                MiscUtils.getDeveloperReportFileName(),
+                GriidcConfiguration.getDeveloperReportFileName(),
                 "Developer Report Log file");
 		return MiscUtils.developerReportWriter;
 	}
 
-	public static BufferedWriter openErrorLogFile() throws IOException {
-		return getErrorLogFileWriter();
+	public static BufferedWriter openRisErrorLogFile() throws IOException {
+		return getRisErrorLogFileWriter();
+	}
+	
+	public static BufferedWriter openPubsErrorLogFile() throws IOException {
+		return getPubsErrorLogFileWriter();
 	}
 
 	public static void debugOut(String s) {
@@ -495,20 +493,27 @@ public class MiscUtils {
 		return bw;
 	}
 
-	public static BufferedWriter getErrorLogFileWriter() throws IOException {
-		MiscUtils.errorLogFileWriter =  getLogFileWriter(MiscUtils.errorLogFileWriter,
-				                                         MiscUtils.getErrorLogFileName(),
+	public static BufferedWriter getRisErrorLogFileWriter() throws IOException {
+		MiscUtils.risErrorLogFileWriter =  getLogFileWriter(MiscUtils.risErrorLogFileWriter,
+				                                         GriidcConfiguration.getRisErrorLogFileName(),
 				                                         "** Data Error Log file");
-		return MiscUtils.errorLogFileWriter;
+		return MiscUtils.risErrorLogFileWriter;
+	}
+	
+	public static BufferedWriter getPubsErrorLogFileWriter() throws IOException {
+		MiscUtils.pubsErrorLogFileWriter =  getLogFileWriter(MiscUtils.pubsErrorLogFileWriter,
+				                                         GriidcConfiguration.getPubsErrorLogFileName(),
+				                                         "** Data Error Log file");
+		return MiscUtils.pubsErrorLogFileWriter;
 	}
 
-	public static BufferedWriter openWarningLogFile() throws IOException {
-		return getWarningLogFileWriter();
+	public static BufferedWriter openRisWarningLogFile() throws IOException {
+		return getRisWarningLogFileWriter();
 	}
 
-	public static BufferedWriter getWarningLogFileWriter() throws IOException {
+	public static BufferedWriter getRisWarningLogFileWriter() throws IOException {
 		MiscUtils.warningLogFileWriter =  getLogFileWriter(MiscUtils.warningLogFileWriter,
-                MiscUtils.getWarningLogFileName(),
+				GriidcConfiguration.getRisWarningLogFileName(),
                 "Data Warning Log file");
 
 		return MiscUtils.warningLogFileWriter;
@@ -688,12 +693,19 @@ public class MiscUtils {
 		MiscUtils.primaryLogMsgCount = 0;
 	}
 
-	public static int getErrorLogCount() {
-		return errorLogCount;
+	public static int getPubsErrorLogCount() {
+		return pubsErrorLogCount;
 	}
 
-	public static void resetErrorLogCount() {
-		MiscUtils.errorLogCount = 0;
+	public static int getRisErrorLogCount() {
+		return risErrorLogCount;
+	}
+
+	public static void resetRisErrorLogCount() {
+		MiscUtils.risErrorLogCount = 0;
+	}
+	public static void resetPubsErrorLogCount() {
+		MiscUtils.pubsErrorLogCount = 0;
 	}
 
 	public static int getWarningLogCount() {

@@ -15,9 +15,10 @@ import edu.tamucc.hri.griidc.rdbms.RdbmsConstants;
 import edu.tamucc.hri.griidc.rdbms.RdbmsUtils;
 import edu.tamucc.hri.griidc.rdbms.RisFundSrcProgramsStartEndCollection;
 import edu.tamucc.hri.griidc.rdbms.RisProgramStartEnd;
+import edu.tamucc.hri.griidc.rdbms.SynchronizerBase;
 import edu.tamucc.hri.griidc.rdbms.TableColInfo;
 import edu.tamucc.hri.griidc.utils.MiscUtils;
-import edu.tamucc.hri.griidc.utils.RisToGriidcConfiguration;
+import edu.tamucc.hri.griidc.utils.GriidcConfiguration;
 
 /**
  * read the RIS Programs Table and create the GRIIDC Project table
@@ -165,7 +166,7 @@ public class ProjectSynchronizer extends SynchronizerBase {
 					if (ProjectSynchronizer.isDebug())
 						System.err.println(msg);
 					MiscUtils.writeToPrimaryLogFile(msg);
-					MiscUtils.writeToErrorLogFile(msg);
+					MiscUtils.writeToRisErrorLogFile(msg);
 					this.risRecordErrors++;
 					continue; // back to next RIS record from resultSet
 				}
@@ -233,13 +234,13 @@ public class ProjectSynchronizer extends SynchronizerBase {
 						if (ProjectSynchronizer.isDebug())
 							System.err.println(msg);
 						MiscUtils.writeToPrimaryLogFile(msg);
-						MiscUtils.writeToErrorLogFile(msg);
+						MiscUtils.writeToRisErrorLogFile(msg);
 						this.risRecordErrors++;
 					} catch (NoRecordFoundException e) {
 						msg = "In RIS " + RisTableName + " Table: "
 								+ this.risProgram_FundSrc + " - "
 								+ e.getMessage();
-						MiscUtils.writeToErrorLogFile(msg);
+						MiscUtils.writeToRisErrorLogFile(msg);
 						if (isDebug())
 							System.err.println(msg);
 						this.risRecordErrors++;
@@ -270,7 +271,7 @@ public class ProjectSynchronizer extends SynchronizerBase {
 						msg = "In RIS " + RisTableName + " Table: "
 								+ this.risProgram_FundSrc + " - "
 								+ e.getMessage();
-						MiscUtils.writeToErrorLogFile(msg);
+						MiscUtils.writeToRisErrorLogFile(msg);
 						if (isDebug())
 							System.err.println(msg);
 						this.risRecordErrors++;
@@ -441,12 +442,12 @@ public class ProjectSynchronizer extends SynchronizerBase {
 
 	public String getPrimaryLogFileName() throws FileNotFoundException,
 			PropertyNotFoundException {
-		return RisToGriidcConfiguration.getPrimaryLogFileName();
+		return GriidcConfiguration.getPrimaryLogFileName();
 	}
 
 	public String getRisErrorLogFileName() throws FileNotFoundException,
 			PropertyNotFoundException {
-		return RisToGriidcConfiguration.getRisErrorLogFileName();
+		return GriidcConfiguration.getRisErrorLogFileName();
 	}
 
 	public static boolean isDebug() {

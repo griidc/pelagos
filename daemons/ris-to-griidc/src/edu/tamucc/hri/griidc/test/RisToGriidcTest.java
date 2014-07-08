@@ -15,7 +15,7 @@ import edu.tamucc.hri.griidc.exception.TableNotInDatabaseException;
 import edu.tamucc.hri.griidc.rdbms.RdbmsConnection;
 import edu.tamucc.hri.griidc.rdbms.RdbmsUtils;
 import edu.tamucc.hri.griidc.utils.MiscUtils;
-import edu.tamucc.hri.griidc.utils.RisToGriidcConfiguration;
+import edu.tamucc.hri.griidc.utils.GriidcConfiguration;
 
 /**
  * A consolidation of test routines
@@ -24,7 +24,7 @@ import edu.tamucc.hri.griidc.utils.RisToGriidcConfiguration;
  * 
  */
 public class RisToGriidcTest {
-	public static RisToGriidcConfiguration propsAccess = null;
+	public static GriidcConfiguration propsAccess = null;
 	public static String msg = null;
 
 	public static boolean testApostropheEscape() {

@@ -4,8 +4,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
 import edu.tamucc.hri.griidc.utils.MiscUtils;
-import edu.tamucc.hri.griidc.utils.PubsConstants;
 import edu.tamucc.hri.griidc.utils.StringList;
+import edu.tamucc.hri.griidc.utils.ConfigurationConstants;
 
 /**
  * This class is a secondary representation of the GRIIDC Publication table
@@ -14,20 +14,24 @@ import edu.tamucc.hri.griidc.utils.StringList;
  * @author jvh
  * 
  */
-public class Publication {
+/**
+ * @author jvh
+ *
+ */
+public class Publication implements Comparable {
 
 	private String doi = null; // can be null
 	private String title = null; // required
 	private String publisher = null; // required
-	private int publicationYear = PubsConstants.Undefined; // required
+	private int publicationYear = ConfigurationConstants.Undefined; // required
 	private String pubAbstract = null; // can be null
 	private StringList authors = null; // required
-	private int serialNumber = PubsConstants.Undefined; // required
+	private int serialNumber = ConfigurationConstants.Undefined; // required
 	private String topic = null; // required
 
 	private StringBuffer errorMessageStringBuffer = null;
-	public static final String AuthorSeparator = PubsConstants.AuthorListSeparator;
-	public static final String ErrorMsgSeparator = PubsConstants.AuthorListSeparator;
+	public static final String AuthorSeparator = ConfigurationConstants.AuthorListSeparator;
+	public static final String ErrorMsgSeparator = ConfigurationConstants.AuthorListSeparator;
 
 	/**
 	 * @param doi
@@ -112,14 +116,14 @@ public class Publication {
 			this.appendToErrorMessageBuffer("Authors are empty");
 			validStatus = false;
 		}
-		if(this.publicationYear == PubsConstants.Undefined) {
+		if(this.publicationYear == ConfigurationConstants.Undefined) {
 			this.appendToErrorMessageBuffer("Publication year is not set");
 			validStatus = false;
-		} else if (!(this.publicationYear >= PubsConstants.EarliestPublicationYear && this.publicationYear <= PubsConstants.LatestPublicationYear)) {
+		} else if (!(this.publicationYear >= ConfigurationConstants.EarliestPublicationYear && this.publicationYear <= ConfigurationConstants.LatestPublicationYear)) {
 			this.appendToErrorMessageBuffer("Publication year: "
 					+ this.getPublicationYear() + " is not within the range " + 
-					PubsConstants.EarliestPublicationYear + " to " +
-					PubsConstants.LatestPublicationYear);
+					ConfigurationConstants.EarliestPublicationYear + " to " +
+					ConfigurationConstants.LatestPublicationYear);
 			validStatus = false;
 		}
 		if (this.publisher == null || this.publisher.length() == 0) {
@@ -139,7 +143,7 @@ public class Publication {
 		String pubNum = "unknown";
 		if (this.errorMessageStringBuffer == null) {
 			this.errorMessageStringBuffer = new StringBuffer();
-			if (this.getNumber() != PubsConstants.Unknown)
+			if (this.getNumber() != ConfigurationConstants.Unknown)
 				pubNum = String.valueOf(this.getNumber());
 			this.errorMessageStringBuffer.append(MiscUtils.getFormattedString(
 					PublicationIdFormat, pubNum));
@@ -253,57 +257,71 @@ public class Publication {
 	public boolean equals(Object obj) {
 		if (this == obj) // self same object
 			return true;
-		if (obj == null)
+		if (obj == null) // "this" is not null
 			return false;
-		if (getClass() != obj.getClass())
+		if (getClass() != obj.getClass())  // not the same class
 			return false;
+		
 		Publication other = (Publication) obj;
 		if (!areAuthorsEqual(other))
 			return false;
+		
 		if (doi == null) {
 			if (other.doi != null)
 				return false;
 		} else if (!doi.equals(other.doi))
 			return false;
+		
 		if (pubAbstract == null) {
 			if (other.pubAbstract != null)
 				return false;
 		} else if (!pubAbstract.equals(other.pubAbstract))
 			return false;
+		
 		if (publicationYear != other.publicationYear)
 			return false;
+		
 		if (publisher == null) {
 			if (other.publisher != null)
 				return false;
 		} else if (!publisher.equals(other.publisher))
 			return false;
+		
 		if (serialNumber != other.serialNumber)
 			return false;
+		
 		if (title == null) {
 			if (other.title != null)
 				return false;
 		} else if (!title.equals(other.title))
 			return false;
+		
 		if (topic == null) {
 			if (other.topic != null)
 				return false;
 		} else if (!topic.equals(other.topic))
 			return false;
+		
 		return true;
 	}
 
+	
+	/**
+	 * @param other
+	 * @return
+	 */
 	private boolean areAuthorsEqual(Publication other) {
 
-		if (this.authors == null && other.authors == null) // both null equal
+		if (this.authors == null && other.authors == null) // both null - equal
 			return true;
 		if (this.authors == null || other.authors == null) // one is null
 			return false;
 
 		String[] otherAuthors = other.getAuthors();
 		String[] thisAuthors = this.getAuthors();
-		if (otherAuthors.length != thisAuthors.length)
+		if (otherAuthors.length != thisAuthors.length)  // not equal if not the same number of authors
 			return false;
-		for (int i = 0; i < thisAuthors.length; i++) {
+		for (int i = 0; i < thisAuthors.length; i++) {  // if any author is not equal, the authors are not equal
 			if (!thisAuthors[i].equals(otherAuthors[i]))
 				return false;
 		}
@@ -326,6 +344,16 @@ public class Publication {
 				: this.authors.toString());
 		ps.printf(format, "serial number",
 				String.valueOf(this.getSerialNumber()));
+		return outStream.toString();
+	}
+	public String toShortString() {
+		String bigFormat = "%15s: %-5s, %5s: %-30s";
+		StringBuffer sb = new StringBuffer();
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream ps = new PrintStream(outStream);
+
+		ps.printf(bigFormat, "serial number",
+				String.valueOf(this.getSerialNumber()),  "doi", this.getDoi());
 		return outStream.toString();
 	}
 
@@ -369,6 +397,13 @@ public class Publication {
 			System.out.println("\n***********\nEQUAl\n************");
 		else
 			System.out.println("\n<><><><><>\n NOT EQUAl\n<><><><><>");
+	}
+
+	@Override
+	public int compareTo(Object arg0) {
+		if(this.equals(arg0)) return 0;
+		Publication oP = (Publication) arg0;
+		return this.getSerialNumber() - oP.getSerialNumber();
 	}
 
 }

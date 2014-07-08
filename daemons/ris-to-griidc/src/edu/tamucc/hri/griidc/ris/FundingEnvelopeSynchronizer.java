@@ -12,10 +12,11 @@ import edu.tamucc.hri.griidc.rdbms.DbColumnInfo;
 import edu.tamucc.hri.griidc.rdbms.RdbmsUtils;
 import edu.tamucc.hri.griidc.rdbms.RisFundSrcProgramsStartEndCollection;
 import edu.tamucc.hri.griidc.rdbms.RisProgramStartEnd;
+import edu.tamucc.hri.griidc.rdbms.SynchronizerBase;
 import edu.tamucc.hri.griidc.rdbms.TableColInfo;
 import edu.tamucc.hri.griidc.rdbms.TableColInfoCollection;
 import edu.tamucc.hri.griidc.utils.MiscUtils;
-import edu.tamucc.hri.griidc.utils.RisToGriidcConfiguration;
+import edu.tamucc.hri.griidc.utils.GriidcConfiguration;
 
 
 public class FundingEnvelopeSynchronizer extends SynchronizerBase {
@@ -181,7 +182,7 @@ public class FundingEnvelopeSynchronizer extends SynchronizerBase {
 				} catch (IllegalFundingSourceCodeException e2) {
 					msg = "In RIS table " + RisTableName + " - "
 							+ e2.getMessage();
-					MiscUtils.writeToErrorLogFile(msg);
+					MiscUtils.writeToRisErrorLogFile(msg);
 					if (FundingEnvelopeSynchronizer.isDebug())
 						System.err.println(msg);
 					this.risRecordErrors++;
@@ -253,12 +254,12 @@ public class FundingEnvelopeSynchronizer extends SynchronizerBase {
 						if (FundingEnvelopeSynchronizer.isDebug())
 							System.err.println(msg);
 						MiscUtils.writeToPrimaryLogFile(msg);
-						MiscUtils.writeToErrorLogFile(msg);
+						MiscUtils.writeToRisErrorLogFile(msg);
 						this.risRecordErrors++;
 					} catch (IllegalFundingSourceCodeException e) {
 						msg = "In RIS FundingSource Table - Fund_ID "
 								+ this.risFundId + " - " + e.getMessage();
-						MiscUtils.writeToErrorLogFile(msg);
+						MiscUtils.writeToRisErrorLogFile(msg);
 						if (FundingEnvelopeSynchronizer.isDebug())
 							System.err.println(msg);
 						this.risRecordErrors++;
@@ -280,7 +281,7 @@ public class FundingEnvelopeSynchronizer extends SynchronizerBase {
 					} catch (IllegalFundingSourceCodeException e) {
 						msg = "In RIS FundingSource Table - Fund_ID "
 								+ this.risFundId + " - " + e.getMessage();
-						MiscUtils.writeToErrorLogFile(msg);
+						MiscUtils.writeToRisErrorLogFile(msg);
 						if (FundingEnvelopeSynchronizer.isDebug())
 							System.err.println(msg);
 						this.risRecordErrors++;
@@ -469,12 +470,12 @@ public class FundingEnvelopeSynchronizer extends SynchronizerBase {
 
 	public String getPrimaryLogFileName() throws FileNotFoundException,
 			PropertyNotFoundException {
-		return RisToGriidcConfiguration.getPrimaryLogFileName();
+		return GriidcConfiguration.getPrimaryLogFileName();
 	}
 
 	public String getRisErrorLogFileName() throws FileNotFoundException,
 			PropertyNotFoundException {
-		return RisToGriidcConfiguration.getRisErrorLogFileName();
+		return GriidcConfiguration.getRisErrorLogFileName();
 	}
 
 	public static boolean isDebug() {

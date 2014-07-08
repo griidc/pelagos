@@ -52,7 +52,7 @@ public class RisPeopleGriidcPersonMap extends IntIntDbCache {
 	private static RdbmsConnection getDbConnection() {
 		RdbmsConnection conn = null;
 		try {
-			conn = RdbmsConnectionFactory.getGriidcDbConnectionInstance();
+			conn = RdbmsConnectionFactory.getInstance().getGriidcDbConnectionInstance();
 		} catch (SQLException e) {
 			MiscUtils.fatalError("RisPeopleGriidcPersonCache",
 					"getDbConnection", e.getMessage());

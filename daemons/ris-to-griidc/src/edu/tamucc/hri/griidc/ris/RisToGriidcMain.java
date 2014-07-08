@@ -14,7 +14,7 @@ import edu.tamucc.hri.griidc.rdbms.RdbmsUtils;
 import edu.tamucc.hri.griidc.utils.Emailer;
 import edu.tamucc.hri.griidc.utils.MiscUtils;
 import edu.tamucc.hri.griidc.utils.RisInstDeptPeopleErrorCollection;
-import edu.tamucc.hri.griidc.utils.RisToGriidcConfiguration;
+import edu.tamucc.hri.griidc.utils.GriidcConfiguration;
 
 public class RisToGriidcMain {
 
@@ -64,7 +64,7 @@ public class RisToGriidcMain {
 			if (argTemp.startsWith(HelpParm)) {
 				System.out
 						.println("Supply paramater \"Email\" to turn on email of logs to recepiants found in ini file "
-								+ RisToGriidcConfiguration
+								+ GriidcConfiguration
 										.getNotificationsFileName());
 				System.exit(1);
 			}
@@ -106,7 +106,7 @@ public class RisToGriidcMain {
 			String emailMessage = "Email of logs not turned on. To do so supply \"Email\" on command line";
 			if (EmailLogsOn)
 				emailMessage = "Email Logs to recepients specified in "
-						+ RisToGriidcConfiguration.getNotificationsFileName();
+						+ GriidcConfiguration.getNotificationsFileName();
 			System.out.println(emailMessage);
 			if (RunThis) {
 				if (RisToGriidcMain.MainDebugOn)
@@ -142,7 +142,7 @@ public class RisToGriidcMain {
 				risToGriidcMain.roleSynker.syncGriidcRolesFromRisRoles();
 			}
 			MiscUtils.closePrimaryLogFile();
-			MiscUtils.closeErrorLogFile();
+			MiscUtils.closeRisErrorLogFile();
 
 			risToGriidcMain.report();
 
@@ -181,11 +181,11 @@ public class RisToGriidcMain {
 			IniSectionNotFoundException {
 		Emailer emailer = new Emailer();
 		String rFormat = "\t%-40s%n";
-		String from = RisToGriidcConfiguration.getGriidcMailSender();
-		String[] tos = RisToGriidcConfiguration.getPrimaryMsgLogRecipients();
+		String from = GriidcConfiguration.getGriidcMailSender();
+		String[] tos = GriidcConfiguration.getPrimaryMsgLogRecipients();
 		String subject = "Primary Log File for RIS to GRIIDC - "
 				+ MiscUtils.getDateAndTime();
-		String absoluteFileName = RisToGriidcConfiguration
+		String absoluteFileName = GriidcConfiguration
 				.getPrimaryLogFileName();
 		String msg = MiscUtils.readFileToBuffer(absoluteFileName);
 		emailer.sendEmail(from, tos, subject, msg);
@@ -195,10 +195,10 @@ public class RisToGriidcMain {
 			System.out.printf(rFormat, t);
 		}
 
-		tos = RisToGriidcConfiguration.getRisErrorMsgLogRecipients();
+		tos = GriidcConfiguration.getRisErrorMsgLogRecipients();
 		subject = "RIS Error Log File for RIS to GRIIDC - "
 				+ MiscUtils.getDateAndTime();
-		absoluteFileName = RisToGriidcConfiguration.getRisErrorLogFileName();
+		absoluteFileName = GriidcConfiguration.getRisErrorLogFileName();
 		msg = MiscUtils.readFileToBuffer(absoluteFileName);
 		emailer.sendEmail(from, tos, subject, msg);
 		System.out.println("\n" + subject + " : " + absoluteFileName
@@ -407,10 +407,10 @@ public class RisToGriidcMain {
 		System.out.printf(titleFormat, title);
 
 		System.out.println("All Activity reported to log file: "
-				+ RisToGriidcConfiguration.getPrimaryLogFileName());
-		System.out.println(MiscUtils.getErrorLogCount()
+				+ GriidcConfiguration.getPrimaryLogFileName());
+		System.out.println(MiscUtils.getRisErrorLogCount()
 				+ " RIS Data Errors reported to log file: "
-				+ RisToGriidcConfiguration.getRisErrorLogFileName());
+				+ GriidcConfiguration.getRisErrorLogFileName());
 		System.out
 				.println("Institution/Deptartment/People error Tree reported in file: "
 						+ MiscUtils

@@ -17,12 +17,13 @@ import edu.tamucc.hri.griidc.rdbms.IntStringDbCache;
 import edu.tamucc.hri.griidc.rdbms.RdbmsConnection;
 import edu.tamucc.hri.griidc.rdbms.RdbmsConstants;
 import edu.tamucc.hri.griidc.rdbms.RdbmsUtils;
+import edu.tamucc.hri.griidc.rdbms.SynchronizerBase;
 import edu.tamucc.hri.griidc.utils.GriidcRisDepartmentMap;
 import edu.tamucc.hri.griidc.utils.GriidcRisInstitutionMap;
 import edu.tamucc.hri.griidc.utils.HeuristicMatching;
 import edu.tamucc.hri.griidc.utils.MiscUtils;
 import edu.tamucc.hri.griidc.utils.RisInstDeptPeopleErrorCollection;
-import edu.tamucc.hri.griidc.utils.RisToGriidcConfiguration;
+import edu.tamucc.hri.griidc.utils.GriidcConfiguration;
 
 /**
  * This class reads the RIS database for People records and adds/updates GRIIDC
@@ -224,7 +225,7 @@ public class PersonSynchronizer extends SynchronizerBase {
 							this.risPeople_InstitutionId,
 							this.risPeople_DepartmentId, this.risPeople_Id);
 					MiscUtils.writeToPrimaryLogFile(msg);
-					MiscUtils.writeToErrorLogFile(msg);
+					MiscUtils.writeToRisErrorLogFile(msg);
 					this.risRecordsSkipped++;
 					this.risRecordErrors++;
 					//
@@ -241,7 +242,7 @@ public class PersonSynchronizer extends SynchronizerBase {
 						System.out.println(">>P-2 Skip this one: " + msg);
 					e2.printStackTrace();
 					MiscUtils.writeToPrimaryLogFile(msg);
-					MiscUtils.writeToErrorLogFile(msg);
+					MiscUtils.writeToRisErrorLogFile(msg);
 					this.risRecordsSkipped++;
 					this.risRecordErrors++;
 					continue; // branch back to while (rset.next())
@@ -421,7 +422,7 @@ public class PersonSynchronizer extends SynchronizerBase {
 					msg = "Error P-3 When modifying telephone number for Person: "
 							+ pInfo + "\n" + e1.getMessage();
 					MiscUtils.writeToPrimaryLogFile(msg);
-					MiscUtils.writeToErrorLogFile(msg);
+					MiscUtils.writeToRisErrorLogFile(msg);
 				}
 
 			} // end of main while loop
@@ -620,7 +621,7 @@ public class PersonSynchronizer extends SynchronizerBase {
 			return true;
 		} catch (MultipleRecordsFoundException e) {
 			msg = "Error P-4 " + e.getMessage();
-			MiscUtils.writeToErrorLogFile(msg);
+			MiscUtils.writeToRisErrorLogFile(msg);
 			MiscUtils.writeToPrimaryLogFile(msg);
 		} catch (SQLException e) {
 			msg = "SQL Error: EmailInfo: " + e.getMessage();
@@ -629,7 +630,7 @@ public class PersonSynchronizer extends SynchronizerBase {
 					primary);
 			msg = "Error P-5 Email Address Exception for : " + emailInfo + " "
 					+ e.getMessage();
-			MiscUtils.writeToErrorLogFile(msg);
+			MiscUtils.writeToRisErrorLogFile(msg);
 			MiscUtils.writeToPrimaryLogFile(msg);
 		}
 		return false;
@@ -910,12 +911,12 @@ public class PersonSynchronizer extends SynchronizerBase {
 
 	public String getPrimaryLogFileName() throws FileNotFoundException,
 			PropertyNotFoundException {
-		return RisToGriidcConfiguration.getPrimaryLogFileName();
+		return GriidcConfiguration.getPrimaryLogFileName();
 	}
 
 	public String getRisErrorLogFileName() throws FileNotFoundException,
 			PropertyNotFoundException {
-		return RisToGriidcConfiguration.getRisErrorLogFileName();
+		return GriidcConfiguration.getRisErrorLogFileName();
 	}
 
 	public static boolean isDebug() {

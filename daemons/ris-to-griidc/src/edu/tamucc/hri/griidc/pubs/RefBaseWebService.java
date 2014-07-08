@@ -7,7 +7,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 
-import edu.tamucc.hri.griidc.utils.PubsConstants;
+import edu.tamucc.hri.griidc.utils.ConfigurationConstants;
 import edu.tamucc.hri.griidc.utils.MiscUtils;;
 
 public class RefBaseWebService {
@@ -15,7 +15,7 @@ public class RefBaseWebService {
 	public static String SPACE_CHAR = "%20";
 	public static String COMMA_CHAR = "%2C";
 
-	public static String outputFileName = PubsConstants.RefBaseXmlFileName;
+	public static String outputFileName = ConfigurationConstants.RefBaseXmlFileName;
 	public static String XML = ".xml";
 	public static String HTML = ".html";
 	public static String Curl = "/usr/bin/curl -0 ";
@@ -145,7 +145,7 @@ public class RefBaseWebService {
 		RefBaseWebService webService = new RefBaseWebService();
 		RefBaseWebService.setDeBug(true);
 		System.out.println("-- Start RefBaseWebService Main --");
-		int[] publicationSerialNumbers = PubsConstants.GoodPublicationSerialNumbers;
+		int[] publicationSerialNumbers = ConfigurationConstants.GoodPublicationSerialNumbers;
 		for (int serialNum : publicationSerialNumbers) {
 			try {
 				String filename = webService.getRefBaseXmlResponse(serialNum);

@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 
 import edu.tamucc.hri.griidc.exception.FileNotXmlException;
+import edu.tamucc.hri.griidc.utils.ConfigurationConstants;
 import edu.tamucc.hri.griidc.utils.MiscUtils;
-import edu.tamucc.hri.griidc.utils.PubsConstants;
 
 /**
  * This class is used to replace some characters and Strings in the file that
@@ -81,7 +81,7 @@ public class XmlPreprocessor {
 	 */
 	private boolean isXmlFile() throws IOException, FileNotXmlException {
 		String localBuffer = this.getFileBuffer();
-		if (localBuffer.startsWith(PubsConstants.FirstLineOfXmlFile)) {
+		if (localBuffer.startsWith(ConfigurationConstants.FirstLineOfXmlFile)) {
 			return true;
 		}
 		this.debugMessage("XmlPreprocessor.isXmlFile() -  NO NOT XML");

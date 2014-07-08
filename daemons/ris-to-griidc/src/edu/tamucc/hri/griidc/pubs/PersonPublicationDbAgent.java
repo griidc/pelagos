@@ -4,19 +4,21 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Set;
 
 import edu.tamucc.hri.griidc.exception.NoRecordFoundException;
 import edu.tamucc.hri.griidc.rdbms.DbColumnInfo;
 import edu.tamucc.hri.griidc.rdbms.RdbmsConnection;
 import edu.tamucc.hri.griidc.rdbms.RdbmsConstants;
-import edu.tamucc.hri.griidc.rdbms.RdbmsPubsUtils;
+import edu.tamucc.hri.griidc.rdbms.RdbmsUtils;
 import edu.tamucc.hri.griidc.rdbms.RisPeopleGriidcPersonMap;
 import edu.tamucc.hri.griidc.rdbms.TableColInfo;
 import edu.tamucc.hri.griidc.utils.MiscUtils;
 
 public class PersonPublicationDbAgent {
 
-	private RisPeopleGriidcPersonMap peoplePersonMap = RisPeopleGriidcPersonMap.getInstance();
+	private RisPeopleGriidcPersonMap risPeopleIdGriidcPersonNumMap = RisPeopleGriidcPersonMap
+			.getInstance();
 
 	private static final String TableName = RdbmsConstants.GriidcPersonPublicationTableName;
 
@@ -33,14 +35,34 @@ public class PersonPublicationDbAgent {
 
 	private String queryString = null;
 
+	private Set<Object> pubNumbers = null;
+	private static final String ErrorMsgPrefix = "PerPub: ";
+
 	public PersonPublicationDbAgent() {
 		// TODO Auto-generated constructor stub
 	}
 
 	private void initialize() throws SQLException {
 		if (this.dbCon == null) {
-			this.dbCon = RdbmsPubsUtils.getGriidcDbConnectionInstance();
+			this.dbCon = RdbmsUtils.getGriidcDbConnectionInstance();
 		}
+	}
+
+	private Set<Object> getPubNumbers() {
+		if (this.pubNumbers == null) {
+			try {
+				initialize();
+				this.pubNumbers = RdbmsUtils.getAllUniqueValuesFromTable(
+						RdbmsUtils.getGriidcDbConnectionInstance(),
+						"Publication", "RIS_Publication_Number");
+				return this.pubNumbers;
+			} catch (SQLException e) {
+				String msg = "PersonPublicationDbAgent.updateGriidcPersonPublication()";
+				System.err.println(msg + " - " + e.getMessage());
+				System.exit(-1);
+			}
+		}
+		return this.pubNumbers;
 	}
 
 	/**
@@ -53,67 +75,105 @@ public class PersonPublicationDbAgent {
 	 * @param risPeoplePubs
 	 * @return
 	 */
-	public boolean updateGriidcPersonPublication(RisPeoplePub[] risPeoplePubs) {
+	public void updateGriidcPersonPublication(RisPeoplePub[] risPeoplePubs) {
 
 		int griidcPersonNumber = -1;
 		int pubNumber = -1;
-		int risProgramId = -1;
 		int risPeopleId = -1;
+		String ppMsg = null;
 		for (RisPeoplePub rpp : risPeoplePubs) {
 			recordsRead++;
 			risPeopleId = rpp.getPeopleId();
-			risProgramId = rpp.getProgramId();
 			pubNumber = rpp.getPubSerial();
-			try {
-				this.debugMessage("\n*********** Processing pub # " + pubNumber + " people ID: " +  risPeopleId);
+			ppMsg = "Person-Publication " + risPeopleId + "-" + pubNumber + " ";
 
-				griidcPersonNumber = peoplePersonMap
+			this.debugMessage("\n*********** Processing pub # " + pubNumber
+					+ " people ID: " + risPeopleId);
+
+			try {
+				griidcPersonNumber = risPeopleIdGriidcPersonNumMap
 						.getPersonNumber(risPeopleId);
-						
-				if (findGriidcPersonPublication(pubNumber, griidcPersonNumber)) {
+			} catch (NoRecordFoundException e) {
+				String msg = ppMsg
+						+ ": There is no GRIIDC Person with RIS PeopleId "
+						+ risPeopleId;
+				this.errorMessage(ErrorMsgPrefix + "1 " + msg);
+				this.errors++;
+				continue; // skip the rest - get the next one
+			}
+
+			if (isPubInGriidc(pubNumber)) {// does the publication
+															// exist in the DB
+				try {
+					findGriidcPersonPublication(pubNumber, griidcPersonNumber);
 					debugMessage("Found "
 							+ formatPayload(pubNumber, griidcPersonNumber));
+					String msg = ppMsg
+							+ ": Duplicate Person-Publication record";
+					this.errorMessage(ErrorMsgPrefix + "2 " + msg);
 					this.duplicateRecords++;
-				} else {
-					addGriidcPersonPublication(pubNumber, griidcPersonNumber);
-					debugMessage("Added "
-							+ formatPayload(pubNumber, griidcPersonNumber));
-					this.recordsAdded++;
+					continue;
+				} catch (NoRecordFoundException e) { // record not found - add
+														// it
+					try {
+						addGriidcPersonPublication(pubNumber,
+								griidcPersonNumber);
+						debugMessage("Added "
+								+ formatPayload(pubNumber, griidcPersonNumber));
+						this.recordsAdded++;
+					} catch (SQLException e1) {
+						String msg = "PersonPublicationDbAgent.updateGriidcPersonPublication() Trying to add "
+								+ ppMsg;
+						System.err.println(msg);
+						e1.printStackTrace();
+						System.exit(-1);
+						;
+					}
 				}
-			} catch (SQLException e) {
-				String msg = "PersonPublicationDbAgent.updateGriidcPersonPublication() SQL error \n"
-						+ "query: " + this.queryString;
-				errorMessage(msg + "\n" + e.getMessage());
-				this.errors++;
-			} catch (NoRecordFoundException e) {
-				String msg = "PersonPublicationDbAgent: There is no GRIIDC Person corresponding to RIS PeopleId "
-						+ risPeopleId;
-				this.errorMessage(msg);
-				this.errors++;
+			} else { // the publication is NOT in the DB
+				String msg = ppMsg
+						+ "Did NOT find publication. Can't add Person-Publication if pub does not exist ";
+				debugMessage(msg);
+				this.errorMessage(ErrorMsgPrefix + "3 " + msg);
+				continue;
 			}
 		}
-		return false;
+		return;
+	}
+
+	private boolean isPubInGriidc(Integer risPubNumber) {
+		this.getPubNumbers();
+		return pubNumbers.contains(risPubNumber);
 	}
 
 	private boolean findGriidcPersonPublication(int pubNumber, int personNumber)
-			throws SQLException {
-		initialize();
+			throws NoRecordFoundException {
 		this.queryString = formatFindQuery(pubNumber, personNumber);
 		this.debugMessage("PersonPublicationDbAgent.findGriidcPersonPublication() \n"
 				+ this.formatPayload(pubNumber, personNumber)
 				+ "\n"
 				+ "query: " + this.queryString);
-		ResultSet rs = dbCon.executeQueryResultSet(this.queryString);
-		int count = 0;
-		// int personN = -1;
-		// int pubN = -1;
-		while (rs.next()) {
-			// personN = rs.getInt(PersonNumberColName);
-			// pubN = rs.getInt(PublicationNumberColName);
-			count++;
+		try {
+			ResultSet rs = dbCon.executeQueryResultSet(this.queryString);
+			int count = 0;
+			// int personN = -1;
+			// int pubN = -1;
+			while (rs.next()) {
+				// personN = rs.getInt(PersonNumberColName);
+				// pubN = rs.getInt(PublicationNumberColName);
+				count++;
+			}
+			if (count == 0) {
+				throw new NoRecordFoundException(
+						"No Person-Publication record found with person: "
+								+ personNumber + ", Publication: " + pubNumber);
+			}
+		} catch (SQLException e) {
+			throw new NoRecordFoundException(
+					"No Person-Publication record found with person: "
+							+ personNumber + ", Publication: " + pubNumber);
 		}
-		if (count == 0)
-			return false;
+
 		return true;
 	}
 
@@ -136,12 +196,12 @@ public class PersonPublicationDbAgent {
 			throws SQLException {
 
 		DbColumnInfo[] info = getDbColumnInfo(pubNumber, griidcPersonNumber);
-		return RdbmsPubsUtils.formatInsertStatement(TableName, info);
+		return RdbmsUtils.formatInsertStatement(TableName, info);
 	}
 
 	private DbColumnInfo[] getDbColumnInfo(int pubNumber, int griidcPersonNumber)
 			throws SQLException {
-		TableColInfo tci = RdbmsPubsUtils.getMetaDataForTable(dbCon, TableName);
+		TableColInfo tci = RdbmsUtils.getMetaDataForTable(dbCon, TableName);
 
 		tci.getDbColumnInfo(PersonNumberColName).setColValue(
 				String.valueOf(griidcPersonNumber));
@@ -153,6 +213,7 @@ public class PersonPublicationDbAgent {
 	public int getPersonPubsRead() {
 		return recordsRead;
 	}
+
 	public int getRecordsAdded() {
 		return recordsAdded;
 	}
@@ -160,13 +221,13 @@ public class PersonPublicationDbAgent {
 	public int getDuplicateRecords() {
 		return duplicateRecords;
 	}
-	
+
 	public int getErrors() {
 		return this.errors;
 	}
 
 	private void errorMessage(String msg) {
-		MiscUtils.writeToErrorLogFile(msg);
+		MiscUtils.writeToPubsErrorLogFile(msg);
 		debugMessage(msg);
 	}
 

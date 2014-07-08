@@ -10,8 +10,8 @@ public class ProgressSpinner {
       this(DefaultIntervalInMillSeconds);
 	}
 
-	public ProgressSpinner(int intervalInSeconds) {
-		this.interval = intervalInSeconds;
+	public ProgressSpinner(int intervalInMilliSeconds) {
+		this.interval = intervalInMilliSeconds;
 		nextTime = System.currentTimeMillis() + interval;
 	}
 

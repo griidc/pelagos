@@ -14,11 +14,12 @@ import edu.tamucc.hri.griidc.rdbms.DbColumnInfo;
 import edu.tamucc.hri.griidc.rdbms.RdbmsConnection;
 import edu.tamucc.hri.griidc.rdbms.RdbmsConstants;
 import edu.tamucc.hri.griidc.rdbms.RdbmsUtils;
+import edu.tamucc.hri.griidc.rdbms.SynchronizerBase;
 import edu.tamucc.hri.griidc.rdbms.TableColInfo;
 import edu.tamucc.hri.griidc.utils.GriidcRisInstitutionMap;
 import edu.tamucc.hri.griidc.utils.MiscUtils;
 import edu.tamucc.hri.griidc.utils.RisInstDeptPeopleErrorCollection;
-import edu.tamucc.hri.griidc.utils.RisToGriidcConfiguration;
+import edu.tamucc.hri.griidc.utils.GriidcConfiguration;
 
 /**
  * reads RIS Institutions records and converts to GRIIDC Institution. Store the
@@ -89,7 +90,7 @@ public class InstitutionSynchronizer extends SynchronizerBase {
 	public void initialize() {
 		if (!isInitialized()) {
 			super.commonInitialize();
-			if (RisToGriidcConfiguration.isFuzzyPostalCodeTrue())
+			if (GriidcConfiguration.isFuzzyPostalCodeTrue())
 				InstitutionSynchronizer.setFuzzyPostalCode(true);
 			initialized = true;
 		}
@@ -129,7 +130,7 @@ public class InstitutionSynchronizer extends SynchronizerBase {
 				int countryNumber = -1;
 				if (MiscUtils.isStringEmpty(risInstCountry)) {
 					MiscUtils
-							.writeToErrorLogFile("Error I-A In RIS Institutions record: "
+							.writeToRisErrorLogFile("Error I-A In RIS Institutions record: "
 									+ risInstId
 									+ " - Institution_Country is "
 									+ ((risInstCountry == null) ? "null"
@@ -145,7 +146,7 @@ public class InstitutionSynchronizer extends SynchronizerBase {
 				} catch (MultipleRecordsFoundException e) {
 					MiscUtils.writeToPrimaryLogFile(e.getMessage());
 					MiscUtils
-							.writeToErrorLogFile("Error I-B In RIS Institutions record: "
+							.writeToRisErrorLogFile("Error I-B In RIS Institutions record: "
 									+ risInstId + e.getMessage());
 					//this.risRecordsSkipped++;
 					this.risRecordErrors++;
@@ -164,7 +165,7 @@ public class InstitutionSynchronizer extends SynchronizerBase {
 						MiscUtils.writeToWarningLogFile(msg);
 					} else {
 						this.risRecordErrors++;
-						MiscUtils.writeToErrorLogFile(msg);
+						MiscUtils.writeToRisErrorLogFile(msg);
 						this.risInstitutionWithErrors.addInstitution(risInstId);
 						continue; // branch back to while (rset.next())
 					}
@@ -199,7 +200,7 @@ public class InstitutionSynchronizer extends SynchronizerBase {
 						MiscUtils.writeToWarningLogFile(msg);
 						this.risRecordWarnings++;
 					} else {
-						MiscUtils.writeToErrorLogFile(msg);
+						MiscUtils.writeToRisErrorLogFile(msg);
 						this.risRecordErrors++;
 						this.risInstitutionWithErrors.addInstitution(risInstId);
 						continue; // branch back to while (rset.next())
@@ -223,7 +224,7 @@ public class InstitutionSynchronizer extends SynchronizerBase {
 						this.risRecordWarnings++;
 					} else {
 						this.risRecordErrors++;
-						MiscUtils.writeToErrorLogFile(msg);
+						MiscUtils.writeToRisErrorLogFile(msg);
 						this.risInstitutionWithErrors.addInstitution(risInstId);
 						continue; // branch back to while (rset.next())
 					}
@@ -239,7 +240,7 @@ public class InstitutionSynchronizer extends SynchronizerBase {
 					String msg = errorOrWarning
 							+ "I-H In RIS Institutions record: "
 									+ risInstId + " - " + " Address 1 AND Address 2 are null or blank";
-					MiscUtils.writeToErrorLogFile(msg);
+					MiscUtils.writeToRisErrorLogFile(msg);
 					this.risRecordErrors++;
 					this.risInstitutionWithErrors.addInstitution(risInstId);
 					continue; // branch back to while (rset.next())

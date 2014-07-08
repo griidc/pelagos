@@ -1,28 +1,41 @@
 package edu.tamucc.hri.griidc.pubs;
 
+import java.io.IOException;
 import java.sql.SQLException;
 
+import edu.tamucc.hri.griidc.exception.IniSectionNotFoundException;
+import edu.tamucc.hri.griidc.exception.PropertyNotFoundException;
 import edu.tamucc.hri.griidc.rdbms.RisGriidcDataStoreInterface;
 import edu.tamucc.hri.griidc.rdbms.RisGriidcRelationalDataStore;
 import edu.tamucc.hri.griidc.rdbms.RisPubSerialNumberReader;
+import edu.tamucc.hri.griidc.utils.Emailer;
+import edu.tamucc.hri.griidc.utils.GriidcConfiguration;
 import edu.tamucc.hri.griidc.utils.GriidcElapsedTimer;
-import edu.tamucc.hri.griidc.utils.PubsIniConfiguration;
+import edu.tamucc.hri.griidc.utils.MiscUtils;
 
 public class PubsToGriidcMain {
 
 	// command line args switches
-	public static final String EmailLogsParm = "Email".toUpperCase();
-	public static final String HelpParm = "Help".toUpperCase();
+	public static final String EmailLogsParm = "Email";
+	public static final String HelpParm = "Help";
+	public static final String NotPubsParm = "NoPubs";
+
+	public static final String[] HelpMessages = {
+			"PubsToGriidcMain arguments usage: ",
+			EmailLogsParm + ": send email to recipients in the "
+					+ GriidcConfiguration.getRisToGriidcIniFileName(),
+			NotPubsParm
+					+ ": turn off the updating of publications in the DB (slow)",
+			HelpParm + ": show this message", };
+
 	private PublicationsGriidcDbInterface pubDbAgentAggregate = new PublicationsGriidcDbAgentAggregator();
 	private RisGriidcDataStoreInterface risGriidcDataStore = new RisGriidcRelationalDataStore();
 	private RisPubSerialNumberReader serialNumberReader = new RisPubSerialNumberReader();
 	private Publication publication = null;
-	
 
-	private boolean updatePublications = true; // this is the slowest part of
-												// the process
-	
-
+	private static boolean UpdatePublications = true; // this is the slowest
+														// part of
+	// the process
 	private static boolean EmailLogsOn = false;
 
 	public PubsToGriidcMain() {
@@ -51,7 +64,7 @@ public class PubsToGriidcMain {
 
 		try {
 			pubNumbers = serialNumberReader.getAllRisPubSerialNumbers();
-			if (this.isUpdatePublications()) {
+			if (PubsToGriidcMain.isUpdatePublications()) {
 				debugMessage("Update Publication");
 				pubDbAgentAggregate.updateAllPublications(pubNumbers);
 				System.out.println("Elapsed time for Publication update:"
@@ -59,7 +72,6 @@ public class PubsToGriidcMain {
 				// this.reportPublications();
 				timer = new GriidcElapsedTimer();
 			}
-			if(PublicationDbAgent.isDeBug()) return;
 			debugMessage("Update Person Publication");
 			pubDbAgentAggregate.updatePersonPublication();
 			System.out.println("Elapsed time for Publication-Person update:"
@@ -82,42 +94,64 @@ public class PubsToGriidcMain {
 		System.out.println("\nEND of PubsToGriidcMain");
 
 	}
+
 	/**
 	 * read the command line args to control some behaviours
 	 * 
 	 * @param args
 	 */
-	public static void processCommandLineArgs(String[] args) {
-
-		PubsIniConfiguration pubsIni = new PubsIniConfiguration();
+	public void processCommandLineArgs(String[] args) {
+		PubsToGriidcMain.setUpdatePublications(true);
+		PubsToGriidcMain.setEmailLogsOn(false);
 		for (String arg : args) {
 			String argTemp = arg.toUpperCase();
-			if (argTemp.startsWith(EmailLogsParm)) {
-				EmailLogsOn = true;
-			}
-			if (argTemp.startsWith(HelpParm)) {
-				System.out
-						.println("Supply paramater \"Email\" to turn on email of logs to recepiants found in ini file "
-								+ pubsIni.getNotificationsIniFileName());
+			if (argTemp.startsWith(HelpParm.toUpperCase())) {
+				for (String s : HelpMessages) {
+					System.out.println(s);
+				}
 				System.exit(1);
+			} else if (argTemp.startsWith(EmailLogsParm.toUpperCase())) {
+				System.out.println("Email notification is ON");
+				PubsToGriidcMain.setEmailLogsOn(true);
+			} else if (argTemp.startsWith(NotPubsParm.toUpperCase())) {
+				PubsToGriidcMain.setUpdatePublications(false);
+				System.out.println("Update Publications is OFF");
 			}
 		}
 	}
+
 	public static void main(String[] args) {
 		GriidcElapsedTimer timer = new GriidcElapsedTimer();
 		PubsToGriidcMain pubsToGriidcMain = new PubsToGriidcMain();
-		//PublicationsGriidcDbAgentAggregator.setDeBug(true);
+		pubsToGriidcMain.processCommandLineArgs(args);
+		// PublicationsGriidcDbAgentAggregator.setDeBug(true);
 		PubsToGriidcMain.setDeBug(true);
 		// PubsJaxbHandler.setDeBug(true);
-		//RefBaseWebService.setDeBug(true);
-		//PublicationDbAgent.setDeBug(true);
-		//PersonPublicationDbAgent.setDeBug(true);
+		// RefBaseWebService.setDeBug(true);
+		// PublicationDbAgent.setDeBug(true);
+		// PersonPublicationDbAgent.setDeBug(true);
 		// ProjectPublicationDbAgent.setDeBug(true);
 		// RisPeopleGriidcPersonMap.setDeBug(true);
-		//pubsToGriidcMain.setUpdatePublications(false);
-		//XmlPreprocessor.setDeBug(true);
+		// XmlPreprocessor.setDeBug(true);
 		pubsToGriidcMain.run();
 		// System.out.println(MiscUtils.getProjectNumberFundingCycleCache().toString());
+		try {
+			MiscUtils.closePrimaryLogFile();
+			MiscUtils.closePubsErrorLogFile();
+
+			if (EmailLogsOn)
+				pubsToGriidcMain.emailLogs();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (PropertyNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IniSectionNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("END of pubsToGriidcMain");
 		System.out.println("Overall Elapsed time:"
 				+ timer.getFormatedElapsedTime());
 	}
@@ -179,17 +213,55 @@ public class PubsToGriidcMain {
 				this.pubDbAgentAggregate.getProjectPubsErrors());
 	}
 
+	public void emailLogs() throws PropertyNotFoundException, IOException,
+			IniSectionNotFoundException {
+		Emailer emailer = new Emailer();
+		String rFormat = "\t%-40s%n";
+		String from = GriidcConfiguration.getGriidcMailSender();
+		String[] tos = GriidcConfiguration.getPrimaryMsgLogRecipients();
+		String subject = "Primary Log File for PUBS to GRIIDC - "
+				+ MiscUtils.getDateAndTime();
+		String absoluteFileName = GriidcConfiguration.getPrimaryLogFileName();
+		String msg = MiscUtils.readFileToBuffer(absoluteFileName);
+		emailer.sendEmail(from, tos, subject, msg);
+		System.out.println("\n" + subject + " : " + absoluteFileName
+				+ " emailed to the following addresses:");
+		for (String t : tos) {
+			System.out.printf(rFormat, t);
+		}
+
+		tos = GriidcConfiguration.getPubsErrorMsgLogRecipients();
+		subject = "PUBS Error Log File for PUBS to GRIIDC - "
+				+ MiscUtils.getDateAndTime();
+		absoluteFileName = GriidcConfiguration.getPubsErrorLogFileName();
+		msg = MiscUtils.readFileToBuffer(absoluteFileName);
+		emailer.sendEmail(from, tos, subject, msg);
+		System.out.println("\n" + subject + " : " + absoluteFileName
+				+ " emailed to the following addresses:");
+		for (String t : tos) {
+			System.out.printf(rFormat, t);
+		}
+	}
+
 	public void reportHeader(String title) {
 		String titleFormat = "%n*****************************  %-40s  ********************************%n";
 		System.out.printf(titleFormat, title);
 	}
 
-	public boolean isUpdatePublications() {
-		return updatePublications;
+	public static boolean isUpdatePublications() {
+		return UpdatePublications;
 	}
 
-	public void setUpdatePublications(boolean updatePublications) {
-		this.updatePublications = updatePublications;
+	public static void setUpdatePublications(boolean up) {
+		UpdatePublications = up;
+	}
+
+	public static boolean isEmailLogsOn() {
+		return EmailLogsOn;
+	}
+
+	public static void setEmailLogsOn(boolean emailLogsOn) {
+		EmailLogsOn = emailLogsOn;
 	}
 
 }

@@ -12,6 +12,7 @@ import edu.tamucc.hri.griidc.exception.PropertyNotFoundException;
 import edu.tamucc.hri.griidc.rdbms.RdbmsConnection;
 import edu.tamucc.hri.griidc.rdbms.RdbmsConstants;
 import edu.tamucc.hri.griidc.rdbms.RdbmsUtils;
+import edu.tamucc.hri.griidc.rdbms.SynchronizerBase;
 
 /***
  * Deprecated - Patrick decided to make this

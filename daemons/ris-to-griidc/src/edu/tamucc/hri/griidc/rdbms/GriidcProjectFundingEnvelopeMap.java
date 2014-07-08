@@ -39,7 +39,7 @@ public class GriidcProjectFundingEnvelopeMap extends IntStringDbCache {
 	public static RdbmsConnection getDbConnection() {
 		RdbmsConnection conn = null;
 		try {
-			conn = RdbmsConnectionFactory.getGriidcDbConnectionInstance();
+			conn = RdbmsConnectionFactory.getInstance().getGriidcDbConnectionInstance();
 		} catch (SQLException e) {
 			MiscUtils.fatalError("GriidcProjectFundingEnvelopeCache", "getDbConnection", e.getMessage());
 		}

@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import edu.tamucc.hri.griidc.exception.NoRecordFoundException;
 import edu.tamucc.hri.griidc.rdbms.RdbmsConnection;
 import edu.tamucc.hri.griidc.rdbms.RdbmsConstants;
+import edu.tamucc.hri.griidc.rdbms.SynchronizerBase;
 
 public class GomriPersonAgent  extends SynchronizerBase {
 

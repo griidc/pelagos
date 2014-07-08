@@ -10,6 +10,7 @@ import edu.tamucc.hri.griidc.exception.TelephoneNumberException;
 import edu.tamucc.hri.griidc.exception.TelephoneNumberWrongFormatException;
 import edu.tamucc.hri.griidc.rdbms.DbColumnInfo;
 import edu.tamucc.hri.griidc.rdbms.RdbmsUtils;
+import edu.tamucc.hri.griidc.rdbms.SynchronizerBase;
 import edu.tamucc.hri.griidc.rdbms.TableColInfo;
 import edu.tamucc.hri.griidc.utils.MiscUtils;
 

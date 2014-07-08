@@ -1,5 +1,6 @@
 package edu.tamucc.hri.griidc.rdbms;
 
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Connection;
@@ -7,10 +8,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.Vector;
+import java.util.List;
 
 import edu.tamucc.hri.griidc.exception.MultipleRecordsFoundException;
 import edu.tamucc.hri.griidc.exception.IllegalFundingSourceCodeException;
@@ -18,6 +23,7 @@ import edu.tamucc.hri.griidc.exception.MissingArgumentsException;
 import edu.tamucc.hri.griidc.exception.NoRecordFoundException;
 import edu.tamucc.hri.griidc.exception.PropertyNotFoundException;
 import edu.tamucc.hri.griidc.exception.TableNotInDatabaseException;
+import edu.tamucc.hri.griidc.pubs.Publication;
 import edu.tamucc.hri.griidc.utils.GriidcRisDepartmentMap;
 import edu.tamucc.hri.griidc.utils.GriidcRisInstitutionMap;
 import edu.tamucc.hri.griidc.utils.MiscUtils;
@@ -292,8 +298,9 @@ public class RdbmsUtils {
 	}
 
 	/**
-	 * get a collection of objects that contain the correspondence
-	 * between Ris Department to GRIIDC department
+	 * get a collection of objects that contain the correspondence between Ris
+	 * Department to GRIIDC department
+	 * 
 	 * @return
 	 */
 	public static GriidcRisDepartmentMap getGriidcRisDepartmentMap() {
@@ -544,6 +551,31 @@ public class RdbmsUtils {
 		return postalAreaNumber;
 	}
 
+	public static Set<Object> getAllUniqueValuesFromTable(RdbmsConnection con,
+			String tableName, String targetColName) throws SQLException {
+		List<Object> list = getAllIntValuesFromTable(con,tableName, targetColName);
+		SortedSet<Object> set = Collections.synchronizedSortedSet(new TreeSet<Object>());
+		for(Object n: list)
+			if(n != null) set.add(n);
+		return set;
+	}
+	public static List<Object> getAllIntValuesFromTable(RdbmsConnection con,
+			String tableName, String targetColName) throws SQLException {
+		String query = "SELECT * FROM  "
+				+ RdbmsConnection.wrapInDoubleQuotes(tableName);
+
+		List<Object> result = new ArrayList<Object>();
+		ResultSet rset = null;
+		rset = con.executeQueryResultSet(query);
+		Object returnValue = null;
+		
+		while (rset.next()) {
+			returnValue = rset.getObject(targetColName);
+			result.add(returnValue);
+		}
+        return result;
+	}
+
 	public static int getIntValueFromTable(RdbmsConnection con,
 			String tableName, String keyColumnName, int keyValue,
 			String targetColName) throws SQLException, NoRecordFoundException,
@@ -642,21 +674,24 @@ public class RdbmsUtils {
 
 	public static RdbmsConnection getRisDbConnectionInstance()
 			throws SQLException {
-		return RdbmsConnectionFactory.getRisDbConnectionInstance();
+		return RdbmsConnectionFactory.getInstance()
+				.getRisDbConnectionInstance();
 	}
 
 	public static RdbmsConnection getGriidcDbConnectionInstance()
 			throws SQLException {
-		return RdbmsConnectionFactory.getGriidcDbConnectionInstance();
+		return RdbmsConnectionFactory.getInstance()
+				.getGriidcDbConnectionInstance();
 	}
 
 	public static RdbmsConnection getGriidcSecondaryDbConnectionInstance()
 			throws SQLException {
-		return RdbmsConnectionFactory.getGriidcSecondaryDbConnectionInstance();
+		return RdbmsConnectionFactory.getInstance()
+				.getGriidcSecondaryDbConnectionInstance();
 	}
 
 	public static void closeGriidcSecondaryDbConnection() throws SQLException {
-		RdbmsConnectionFactory.closeGriidcSecondaryDbConnection();
+		RdbmsConnectionFactory.getInstance().closeGriidcSecondaryDbConnection();
 	}
 
 	/**
@@ -994,7 +1029,7 @@ public class RdbmsUtils {
 								+ e.getMessage();
 						if (RdbmsUtils.isDebug())
 							System.err.println(msg);
-						MiscUtils.writeToErrorLogFile(msg);
+						MiscUtils.writeToRisErrorLogFile(msg);
 						continue;
 					}
 				}
@@ -1035,56 +1070,59 @@ public class RdbmsUtils {
 	 * readable error message.
 	 * 
 	 * @param args
-	 * @throws SQLException 
+	 * @throws SQLException
 	 */
-	/* <><><><>
+	/*
+	 * <><><><>
 	 * 
-	 * BROKEN dont use. Returns zero rows in the result set.
-	 <><><><><>*/
-	public static String getCheckClause(String tableName, String constraintName) throws SQLException {
+	 * BROKEN dont use. Returns zero rows in the result set. <><><><><>
+	 */
+	public static String getCheckClause(String tableName, String constraintName)
+			throws SQLException {
 		String q1 = "SELECT  " +
-				// table_name, column_name, 
-				// " check_clause " +
-				"count(*) " + 
-				" FROM information_schema.check_constraints "
-				//+ " INNER JOIN "
-				//+ " information_schema.constraint_column_usage on "
-				//+ " information_schema.check_constraints.constraint_name = information_schema.constraint_column_usage.constraint_name "
-				// + " where TABLE_NAME = "
-			//	+ RdbmsConnection.wrapInSingleQuotes(tableName)
-				//+ " AND "
-				//+ " information_schema.constraint_column_usage.constraint_name = "
-				//+ RdbmsConnection.wrapInSingleQuotes(constraintName)
-				;
+		// table_name, column_name,
+		// " check_clause " +
+				"count(*) " + " FROM information_schema.check_constraints "
+		// + " INNER JOIN "
+		// + " information_schema.constraint_column_usage on "
+		// +
+		// " information_schema.check_constraints.constraint_name = information_schema.constraint_column_usage.constraint_name "
+		// + " where TABLE_NAME = "
+		// + RdbmsConnection.wrapInSingleQuotes(tableName)
+		// + " AND "
+		// + " information_schema.constraint_column_usage.constraint_name = "
+		// + RdbmsConnection.wrapInSingleQuotes(constraintName)
+		;
 
 		System.out.println("getCheckClause() query: " + q1);
-		ResultSet rset = RdbmsUtils.getGriidcSecondaryDbConnectionInstance().executeQueryResultSet(q1);
-		
+		ResultSet rset = RdbmsUtils.getGriidcSecondaryDbConnectionInstance()
+				.executeQueryResultSet(q1);
+
 		String cn = null;
 		String tn = null;
 		String cc = null;
-		
-        int rows = 0;
-        ResultSetMetaData rsmd = rset.getMetaData();
-        int colCount = rsmd.getColumnCount();
-        System.out.println("meta data column count: " + colCount);
-        for(int i = 0; i < colCount;i++) {
-        	int j = i+1;
-        	String n = rsmd.getColumnName(j);
-        	String t = rsmd.getColumnTypeName(j);
-        	System.out.println("Col: " + j + " name: " + n +  ", type: " + t);
-        }
+
+		int rows = 0;
+		ResultSetMetaData rsmd = rset.getMetaData();
+		int colCount = rsmd.getColumnCount();
+		System.out.println("meta data column count: " + colCount);
+		for (int i = 0; i < colCount; i++) {
+			int j = i + 1;
+			String n = rsmd.getColumnName(j);
+			String t = rsmd.getColumnTypeName(j);
+			System.out.println("Col: " + j + " name: " + n + ", type: " + t);
+		}
 		while (rset.next()) {
 			rows++;
-		//	tn = rset.getString("table_name");
-		//	cn = rset.getString("column_name");
-		//	cc = rset.getString("check_clause");
+			// tn = rset.getString("table_name");
+			// cn = rset.getString("column_name");
+			// cc = rset.getString("check_clause");
 			System.out.println(rset.getInt(1));
 		}
 		System.out.println("getCheckClause() rows: " + rows);
 		return cc;
 	}
-
+	
 	public static void main(String[] args) {
 
 		System.out.println("Rdbmsutils.main() - Start -");
@@ -1151,6 +1189,30 @@ public class RdbmsUtils {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		
+		String[]  targetCol = {"RIS_Publication_Number",
+				  "Publication_Abstract",
+				  "Publication_Authors" ,
+				  "Publication_DOI",
+				  "Publication_JournalName",
+				  "Publication_Title",
+				  "Publication_Year"};
+		for(String col: targetCol) {
+		try {
+			Set<Object> pubNumbers = getAllUniqueValuesFromTable(RdbmsUtils.getGriidcDbConnectionInstance(),"Publication",col);
+			Iterator<Object> it = pubNumbers.iterator();
+			int max = 20;
+			int count = 0;
+			while(it.hasNext() && count < max) {
+				Object n = it.next();
+				System.out.println(col + ": " + n);
+				count++;
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		}
 		System.out.println("Rdbmsutils.main() - END -");
 	}

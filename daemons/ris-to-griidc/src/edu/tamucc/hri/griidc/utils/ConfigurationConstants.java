@@ -1,6 +1,10 @@
 package edu.tamucc.hri.griidc.utils;
 
-public class PubsConstants {
+public class ConfigurationConstants {
+
+	public ConfigurationConstants() {
+		// TODO Auto-generated constructor stub
+	}
 	public static final int Unknown = -1;
 	public static final int Undefined = Unknown;
 	public static final int NotFound = Unknown;
@@ -9,11 +13,6 @@ public class PubsConstants {
 
 	public static final String DefaultStringListSeparator = ", ";
 	public static final String AuthorListSeparator = "; ";
-	
-	public static final String DeveloperReportFileName = "pubsDeveloperReport.txt";
-	public static final String PrimaryLogFileName = "pubsPrimaryLog.txt";
-	public static final String ErrorLogFileName = "pubsErrorLog.txt";
-	public static final String WarningLogFileName = "pubsWarningLog.txt";
 	
 	public static final int EarliestPublicationYear = 1950;
 	public static final int LatestPublicationYear = 2050;
@@ -64,13 +63,10 @@ public class PubsConstants {
 			2577, 2579, 2580, 2581, 2617, 2619, 2620, 2621, 2622, 2623, 2625,
 			2626, 2632, 2634, 2635, 2638, 2686, 2693, 2791, 2836, 2837, 2862 };
 
-	public PubsConstants() {
-		// TODO Auto-generated constructor stub
-	}
+	
 	
 	public static String getDefaultStringListSeparator() {
 		return DefaultStringListSeparator;
 		
 	}
-
 }

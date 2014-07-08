@@ -28,7 +28,7 @@ public class HeuristicMatching {
 	private void initialize() throws PropertyNotFoundException, InvalidFileFormatException, IOException {
 		if (initialized)
 			return;
-		if(RisToGriidcConfiguration.isFuzzyPostalCodeTrue())
+		if(GriidcConfiguration.isFuzzyPostalCodeTrue())
 			this.setFuzzyPostalCode(true);
 		initialized = true;
 	}

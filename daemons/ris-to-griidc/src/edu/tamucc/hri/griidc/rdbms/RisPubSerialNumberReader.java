@@ -1,7 +1,5 @@
 package edu.tamucc.hri.griidc.rdbms;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
@@ -10,8 +8,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import edu.tamucc.hri.griidc.pubs.RefBaseWebService;
-import edu.tamucc.hri.griidc.pubs.SynchronizerBase;
-import edu.tamucc.hri.griidc.utils.PubsConstants;
+import edu.tamucc.hri.griidc.utils.ConfigurationConstants;
 import edu.tamucc.hri.griidc.utils.MiscUtils;
 
 /**
@@ -56,22 +53,22 @@ public class RisPubSerialNumberReader extends SynchronizerBase {
 
 	public int getTotalPubsForTable(String targetTableName) {
 		int ndx = this.getTableNdx(targetTableName);
-		if(ndx != PubsConstants.NotFound) return this.pubs[ndx].intValue();
+		if(ndx != ConfigurationConstants.NotFound) return this.pubs[ndx].intValue();
 		return ndx;
 	}
 	public int getPubsAddedForTable(String targetTableName) {
 		int ndx = this.getTableNdx(targetTableName);
-		if(ndx != PubsConstants.NotFound) return this.added[ndx].intValue();
+		if(ndx != ConfigurationConstants.NotFound) return this.added[ndx].intValue();
 		return ndx;
 	}
 	public int getDuplicatePubsForTable(String targetTableName) {
 		int ndx = this.getTableNdx(targetTableName);
-		if(ndx != PubsConstants.NotFound) return this.duplicates[ndx].intValue();
+		if(ndx != ConfigurationConstants.NotFound) return this.duplicates[ndx].intValue();
 		return ndx;
 	}
 	/**
 	 * find the targetTableName and return it's index.
-	 * If not found return PubsConstants.NotFound
+	 * If not found return ConfigurationConstants.NotFound
 	 * @param targetTableName
 	 * @return
 	 */
@@ -80,7 +77,7 @@ public class RisPubSerialNumberReader extends SynchronizerBase {
 			if(table[i].equals(targetTableName))
 				return i;
 		}
-		return PubsConstants.NotFound;
+		return ConfigurationConstants.NotFound;
 	}
 	
 	/**

@@ -12,6 +12,7 @@ import edu.tamucc.hri.griidc.rdbms.RdbmsConnection;
 import edu.tamucc.hri.griidc.rdbms.RdbmsConstants;
 import edu.tamucc.hri.griidc.rdbms.RdbmsUtils;
 import edu.tamucc.hri.griidc.rdbms.RisFundSrcProgramsStartEndCollection;
+import edu.tamucc.hri.griidc.rdbms.SynchronizerBase;
 import edu.tamucc.hri.griidc.rdbms.TableColInfo;
 import edu.tamucc.hri.griidc.utils.MiscUtils;
 
@@ -222,7 +223,7 @@ public class TaskSynchronizer extends SynchronizerBase {
 						if (TaskSynchronizer.isDebug())
 							System.err.println(msg);
 						MiscUtils.writeToPrimaryLogFile(msg);
-						MiscUtils.writeToErrorLogFile(msg);
+						MiscUtils.writeToRisErrorLogFile(msg);
 						this.risRecordErrors++;
 						this.risRecordsSkipped++;
 						// back to next RIS record from resultSet
@@ -245,7 +246,7 @@ public class TaskSynchronizer extends SynchronizerBase {
 							if (TaskSynchronizer.isDebug())
 								System.err.println(msg);
 							MiscUtils.writeToPrimaryLogFile(msg);
-							MiscUtils.writeToErrorLogFile(msg);
+							MiscUtils.writeToRisErrorLogFile(msg);
 							this.risRecordErrors++;
 							this.risRecordsSkipped++;
 						}
@@ -257,7 +258,7 @@ public class TaskSynchronizer extends SynchronizerBase {
 					if (TaskSynchronizer.isDebug())
 						System.out.println(msg);
 					MiscUtils.writeToPrimaryLogFile(msg);
-					MiscUtils.writeToErrorLogFile(msg);
+					MiscUtils.writeToRisErrorLogFile(msg);
 					// back to next RIS record from resultSet
 				}
 			} // end of while (risRS.next())

@@ -17,7 +17,7 @@ import edu.tamucc.hri.griidc.pubs.jaxb.NamePart;
 import edu.tamucc.hri.griidc.pubs.jaxb.Records;
 import edu.tamucc.hri.griidc.pubs.jaxb.SearchRetrieveResponse;
 import edu.tamucc.hri.griidc.pubs.jaxb.TitleInfo;
-import edu.tamucc.hri.griidc.utils.PubsConstants;
+import edu.tamucc.hri.griidc.utils.ConfigurationConstants;
 
 /**
  * This class processes an XML file produced by the RefBaseWebService. It PRESUMES
@@ -26,7 +26,7 @@ import edu.tamucc.hri.griidc.utils.PubsConstants;
  * probably run without exception.
  * 
  * @author jvh
- * @see edu.tamucc.hri.griidc.utils.PubsConstants.
+ * @see edu.tamucc.hri.griidc.utils.ConfigurationConstants.
  */
 public class PubsJaxbHandler {
 	private JAXBContext jaxbContext = null;
@@ -58,7 +58,7 @@ public class PubsJaxbHandler {
 	}
 
 	public Publication processRefBaseXmlFile() throws JAXBException {
-		return this.processRefBaseXmlFile(PubsConstants.RefBaseXmlFileName);
+		return this.processRefBaseXmlFile(ConfigurationConstants.RefBaseXmlFileName);
 	}
 
 	public Publication processRefBaseXmlFile(String fileName) throws JAXBException {
@@ -121,13 +121,13 @@ public class PubsJaxbHandler {
 		String firstName = null;
 		for (Name name : nameSet) {
 			// an author name
-			if (name.getType().equals(PubsConstants.NameTypePersonal)) {
+			if (name.getType().equals(ConfigurationConstants.NameTypePersonal)) {
 				namePartList = name.getNamePart(); // get list of NamePart
 				for (NamePart namePart : namePartList) {
-					if (namePart.getType().equals(PubsConstants.NamePartTypeFamily)) {
+					if (namePart.getType().equals(ConfigurationConstants.NamePartTypeFamily)) {
 						lastName = namePart.getValue().trim();
 					} else if (namePart.getType().equals(
-							PubsConstants.NamePartTypeGiven)) {
+							ConfigurationConstants.NamePartTypeGiven)) {
 						firstName = namePart.getValue().trim();
 					}
 				}
@@ -219,7 +219,7 @@ public class PubsJaxbHandler {
 		Identifier[] identifiers = new Identifier[1];
 		identifiers = mods.getIdentifier().toArray(identifiers);
 		for (Identifier id : identifiers) {
-			if (id.getType().equals(PubsConstants.IdentifierTypeDoi)) {
+			if (id.getType().equals(ConfigurationConstants.IdentifierTypeDoi)) {
 				this.publication.setDoi(id.getValue().trim());
 			}
 		}

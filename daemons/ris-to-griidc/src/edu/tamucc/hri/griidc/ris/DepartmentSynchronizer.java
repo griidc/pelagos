@@ -16,6 +16,7 @@ import edu.tamucc.hri.griidc.rdbms.IntStringDbCache;
 import edu.tamucc.hri.griidc.rdbms.RdbmsConnection;
 import edu.tamucc.hri.griidc.rdbms.RdbmsConstants;
 import edu.tamucc.hri.griidc.rdbms.RdbmsUtils;
+import edu.tamucc.hri.griidc.rdbms.SynchronizerBase;
 import edu.tamucc.hri.griidc.rdbms.TableColInfo;
 import edu.tamucc.hri.griidc.utils.GriidcRisDepartmentMap;
 import edu.tamucc.hri.griidc.utils.GriidcRisInstitutionMap;
@@ -23,7 +24,7 @@ import edu.tamucc.hri.griidc.utils.HeuristicMatching;
 import edu.tamucc.hri.griidc.utils.InstitutionDepartmentRep;
 import edu.tamucc.hri.griidc.utils.MiscUtils;
 import edu.tamucc.hri.griidc.utils.RisInstDeptPeopleErrorCollection;
-import edu.tamucc.hri.griidc.utils.RisToGriidcConfiguration;
+import edu.tamucc.hri.griidc.utils.GriidcConfiguration;
 
 /**
  * reads RIS Departments records and converts to GRIIDC Department. Store the
@@ -161,7 +162,7 @@ public class DepartmentSynchronizer extends SynchronizerBase {
 							+ " - Department_Country is "
 							+ ((risDeptCountry == null) ? "null"
 									: " length zero");
-					MiscUtils.writeToErrorLogFile(msg);
+					MiscUtils.writeToRisErrorLogFile(msg);
 					errorMessageOut(msg);
 					this.risRecordErrors++;
 					this.risRecordsSkipped++;
@@ -190,7 +191,7 @@ public class DepartmentSynchronizer extends SynchronizerBase {
 				} catch (NoRecordFoundException e) {
 					msg = "Error D-2 in RIS Departments - record id: "
 							+ this.risDeptId + ": " + e.getMessage();
-					MiscUtils.writeToErrorLogFile(msg);
+					MiscUtils.writeToRisErrorLogFile(msg);
 					MiscUtils.writeToPrimaryLogFile(msg);
 					this.risRecordErrors++;
 					this.risRecordsSkipped++;
@@ -224,7 +225,7 @@ public class DepartmentSynchronizer extends SynchronizerBase {
 				} catch (NoRecordFoundException e) {
 					msg = "Error D-3 in RIS Departments - record id: "
 							+ this.risDeptId + ": " + e.getMessage();
-					MiscUtils.writeToErrorLogFile(msg);
+					MiscUtils.writeToRisErrorLogFile(msg);
 					MiscUtils.writeToPrimaryLogFile(msg);
 					errorMessageOut(msg);
 					this.risRecordErrors++;
@@ -240,7 +241,7 @@ public class DepartmentSynchronizer extends SynchronizerBase {
 				} catch (MissingArgumentsException e) {
 					msg = "Error D-4 In RIS Departments - record: " + risDeptId
 							+ " - " + e.getMessage();
-					MiscUtils.writeToErrorLogFile(msg);
+					MiscUtils.writeToRisErrorLogFile(msg);
 					errorMessageOut(msg);
 					this.risRecordErrors++;
 					this.risRecordsSkipped++;
@@ -260,7 +261,7 @@ public class DepartmentSynchronizer extends SynchronizerBase {
 				} catch (MultipleRecordsFoundException e) {
 					msg = "Error D-5 In RIS Departments - record RIS Department ID: " + risDeptId
 							+ " - " + e.getMessage();
-					MiscUtils.writeToErrorLogFile(msg);
+					MiscUtils.writeToRisErrorLogFile(msg);
 					errorMessageOut(msg);
 					this.risRecordErrors++;
 					this.risRecordsSkipped++;
@@ -326,7 +327,7 @@ public class DepartmentSynchronizer extends SynchronizerBase {
 		}
 		msg = msg + "\n" + exMessage;
 		MiscUtils.writeToPrimaryLogFile(msg);
-		MiscUtils.writeToErrorLogFile(msg);
+		MiscUtils.writeToRisErrorLogFile(msg);
 	}
 
 	/**
@@ -617,12 +618,12 @@ public class DepartmentSynchronizer extends SynchronizerBase {
 
 	public String getPrimaryLogFileName() throws PropertyNotFoundException,
 			InvalidFileFormatException, IOException {
-		return RisToGriidcConfiguration.getPrimaryLogFileName();
+		return GriidcConfiguration.getPrimaryLogFileName();
 	}
 
 	public String getRisErrorLogFileName() throws PropertyNotFoundException,
 			InvalidFileFormatException, IOException {
-		return RisToGriidcConfiguration.getRisErrorLogFileName();
+		return GriidcConfiguration.getRisErrorLogFileName();
 	}
 
 	public static boolean isDebug() {

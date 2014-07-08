@@ -996,17 +996,17 @@ public class RdbmsConnection {
 	
 		RdbmsConnection.setDebug(false);
 		try {
-			RdbmsPubsUtils.setDebug(true);
-			String fileName = RdbmsPubsUtils.getRisDbConnectionInstance()
+			RdbmsUtils.setDebug(true);
+			String fileName = RdbmsUtils.getRisDbConnectionInstance()
 					.getDbName() + "TableColTypeReport.txt";
-			String s = RdbmsPubsUtils.getColumnNamesAndDataTypesFromTables(
-					RdbmsPubsUtils.getRisDbConnectionInstance(), risTableNames);
+			String s = RdbmsUtils.getColumnNamesAndDataTypesFromTables(
+					RdbmsUtils.getRisDbConnectionInstance(), risTableNames);
 			MiscUtils.writeStringToFile(fileName, s);
 
-			fileName = RdbmsPubsUtils.getGriidcDbConnectionInstance().getDbName()
+			fileName = RdbmsUtils.getGriidcDbConnectionInstance().getDbName()
 					+ "TableColTypeReport.txt";
-			s = RdbmsPubsUtils.getColumnNamesAndDataTypesFromTables(
-					RdbmsPubsUtils.getGriidcDbConnectionInstance(),
+			s = RdbmsUtils.getColumnNamesAndDataTypesFromTables(
+					RdbmsUtils.getGriidcDbConnectionInstance(),
 					griidcTableNames);
 			MiscUtils.writeStringToFile(fileName, s);
 
@@ -1014,9 +1014,9 @@ public class RdbmsConnection {
 
 			for (String tabName : griidcTableNames) {
 				System.out.println("\n" + tabName);
-				String[] defaults = RdbmsPubsUtils.getGriidcDbConnectionInstance()
+				String[] defaults = RdbmsUtils.getGriidcDbConnectionInstance()
 						.getColumnDefaultValue(tabName);
-				String[] colNames = RdbmsPubsUtils.getGriidcDbConnectionInstance()
+				String[] colNames = RdbmsUtils.getGriidcDbConnectionInstance()
 						.getColumnNamesFromTable(tabName);
 
 				for (int i = 0; i < defaults.length && i < colNames.length; i++) {

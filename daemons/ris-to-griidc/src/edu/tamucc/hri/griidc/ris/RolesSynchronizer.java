@@ -10,6 +10,7 @@ import edu.tamucc.hri.griidc.rdbms.DbColumnInfo;
 import edu.tamucc.hri.griidc.rdbms.RdbmsConnection;
 import edu.tamucc.hri.griidc.rdbms.RdbmsConstants;
 import edu.tamucc.hri.griidc.rdbms.RdbmsUtils;
+import edu.tamucc.hri.griidc.rdbms.SynchronizerBase;
 import edu.tamucc.hri.griidc.rdbms.TableColInfo;
 import edu.tamucc.hri.griidc.utils.MiscUtils;
 import edu.tamucc.hri.griidc.utils.RandomBoolean;
@@ -137,7 +138,7 @@ public class RolesSynchronizer extends SynchronizerBase {
 					if (RolesSynchronizer.isDebug())
 						System.out.println(msg);
 					MiscUtils.writeToPrimaryLogFile(msg);
-					MiscUtils.writeToErrorLogFile(msg);
+					MiscUtils.writeToRisErrorLogFile(msg);
 					this.risRecordErrors++;
 					continue; // back to next RIS record from resultSet
 				}
@@ -210,7 +211,7 @@ public class RolesSynchronizer extends SynchronizerBase {
 						if (RolesSynchronizer.isDebug())
 							System.out.println(msg);
 						MiscUtils.writeToPrimaryLogFile(msg);
-						MiscUtils.writeToErrorLogFile(msg);
+						MiscUtils.writeToRisErrorLogFile(msg);
 						this.risRecordErrors++;
 						// back to next RIS record from resultSet
 					}
@@ -233,7 +234,7 @@ public class RolesSynchronizer extends SynchronizerBase {
 							if (RolesSynchronizer.isDebug())
 								System.out.println(msg);
 							MiscUtils.writeToPrimaryLogFile(msg);
-							MiscUtils.writeToErrorLogFile(msg);
+							MiscUtils.writeToRisErrorLogFile(msg);
 							this.risRecordErrors++;
 						}
 					}
@@ -249,7 +250,7 @@ public class RolesSynchronizer extends SynchronizerBase {
 					if (RolesSynchronizer.isDebug())
 						System.out.println(msg);
 					MiscUtils.writeToPrimaryLogFile(msg);
-					MiscUtils.writeToErrorLogFile(msg);
+					MiscUtils.writeToRisErrorLogFile(msg);
 					// back to next RIS record from resultSet
 				}
 				reportTheCounts();
