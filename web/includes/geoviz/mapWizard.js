@@ -26,6 +26,11 @@ function MapWizard(json)
     
     init();
     
+    this.flashMap = function()
+    {
+        smlGeoViz.flashMap();
+    }
+    
     this.cleanMap = function()
     {
         smlGeoViz.goHome();
