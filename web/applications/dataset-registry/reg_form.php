@@ -1,5 +1,5 @@
 <?php
-drupal_add_css('/dif/includes/css/overwrite.css',array('type'=>'external'));
+drupal_add_css('includes/css/overwrite.css',array('type'=>'external'));
 drupal_add_js('/includes/jquery-validation/jquery.validate.js',array('type'=>'external'));
 
 //drupal_add_js('includes/urlValidate.js',array('type'=>'external'));
@@ -755,14 +755,14 @@ function submitRegistry() {
 </div>
 
 <div id="regid_tip" style="display:none;">
-    <img src="/dif/images/info.png" style="float:right;" />
+    <img src="includes/images/info.png" style="float:right;" />
     <p>
         <strong>Registation Identifier:</strong><p/> This identifier is generated once the dataset is registered. However, you may enter a Dataset Registration Identifier to extract previously submitted data.
     </p>
 </div>
 
 <div id="title_tip" style="display:none;">
-    <img src="/dif/images/info.png" style="float:right;" />
+    <img src="includes/images/info.png" style="float:right;" />
     <p>
         <strong>Title:</strong><p/><p>It is in the discretion of the researcher to define the level of data aggregation to define a dataset. If this level of data aggregation has not been identified, it is recommended to start by answering the ‘what, how, when, where’. It is also not recommended to aggregate data too much that the data attributes can no longer be segregated and discoverable.</p><p>Example Input: Hydrodynamics: ADCP Data for June – July 2012 in Station 42001</p>
         <p>200 Characters Max</p>
@@ -770,35 +770,35 @@ function submitRegistry() {
 </div>
 
 <div id="abstract_tip" style="display:none;">
-    <img src="/dif/images/info.png" style="float:right;" />
+    <img src="includes/images/info.png" style="float:right;" />
     <p>
         <strong>Abstract:</strong><p/><p>This field should describe the rationale of collecting the dataset, procedure/process how this dataset will be created, period of data collection and what it will contain. Note that some of the fields that follow in this form are or may be components of this field.</p><br /><p>4000 Characters Max</p>
     </p>
 </div>
 
 <div id="dataset_originator_tip" style="display:none;">
-    <img src="/dif/images/info.png" style="float:right;" />
+    <img src="includes/images/info.png" style="float:right;" />
     <p>
         <strong>Dataset Originator(s):</strong><p/><p>This is the person (or people) or organization that generated the dataset. It is preferable to specify an individual, rather than an organization, whenever possible. Please specify individuals using the following format: Lastname, Firstname</p><p>For multiple originators, please use the MLA citation style, eg.:</p><p>Two originators:<br/>Cross, Susan, and Christine Hoffman</p><p>Three originators:<br/>Lowi, Theodore, Benjamin Ginsberg, and Steve Jackson</p><p>More than three originators:<br/> Gilman, Sander, et al</p>
     </p>
 </div>
 
 <div id="poc_tip" style="display:none;">
-    <img src="/dif/images/info.png" style="float:right;" />
+    <img src="includes/images/info.png" style="float:right;" />
     <p>
         <strong>Point Of Contact:</strong><p/> This is the person responsible for answering questions associated with this dataset.
     </p>
 </div>
 
 <div id="pocemail_tip" style="display:none;">
-    <img src="/dif/images/info.png" style="float:right;" />
+    <img src="includes/images/info.png" style="float:right;" />
     <p>
         <strong>Point Of Contact E-Mail:</strong><p/> This is the primary email of the POC.
     </p>
 </div>
 
 <div id="dataurl_tip" style="display:none;">
-    <img src="/dif/images/info.png" style="float:right;" />
+    <img src="includes/images/info.png" style="float:right;" />
     <p>
         <p><strong>Dataset File URL:</strong></p>
         <p>This is the URL that leads to the data being registered. Package the components of the datasets (if applicable) to form a single file (e.g. ZIP, TAR).</p>
@@ -807,7 +807,7 @@ function submitRegistry() {
 </div>
 
 <div id="sshdataurl_tip" style="display:none;">
-    <img src="/dif/images/info.png" style="float:right;" />
+    <img src="includes/images/info.png" style="float:right;" />
     <p>
         <p><strong>Dataset File Path:</strong></p>
         <p>This is the path on the server to the data file being registered. Click "Browse..." to find and select the data file you uploaded via SFTP/GridFTP.</p>
@@ -816,7 +816,7 @@ function submitRegistry() {
 </div>
 
 <div id="uploaddataurl_tip" style="display:none;">
-    <img src="/dif/images/info.png" style="float:right;" />
+    <img src="includes/images/info.png" style="float:right;" />
     <p>
         <p><strong>Dataset File:</strong></p>
         <p>Please select from your local machine the data file for the dataset you are registering.</p>
@@ -825,84 +825,84 @@ function submitRegistry() {
 </div>
 
 <div id="metadataurl_tip" style="display:none;">
-    <img src="/dif/images/info.png" style="float:right;" />
+    <img src="includes/images/info.png" style="float:right;" />
     <p>
         <strong>Metadata File URL:</strong><p/> This is the URL that leads to the metadata of the data being registered. The ISO 19115/19115-2 is recommended but a link to a form-based system and other XML or TXT formatted files are also acceptable.
     </p>
 </div>
 
 <div id="sshmetadataurl_tip" style="display:none;">
-    <img src="/dif/images/info.png" style="float:right;" />
+    <img src="includes/images/info.png" style="float:right;" />
     <p>
         <strong>Metadata File Path:</strong><p/>This is the path on the server to the metadata file for the data being registered. Click "Browse..." to find and select the data file you uploaded via SFTP/GridFTP.
     </p>
 </div>
 
 <div id="uploadmetadataurl_tip" style="display:none;">
-    <img src="/dif/images/info.png" style="float:right;" />
+    <img src="includes/images/info.png" style="float:right;" />
     <p>
         <strong>Metadata File:</strong><p/>Please select from your local machine the metadata file for the dataset you are registering.
     </p>
 </div>
 
 <div id="auth_tip" style="display:none;">
-    <img src="/dif/images/info.png" style="float:right;" />
+    <img src="includes/images/info.png" style="float:right;" />
     <p>
         <strong>Requires Authentication:</strong><p/> If accessing the files requires user authentication, please click ‘Yes’ (default is ‘No’).
     </p>
 </div>
 
 <div id="pull_tip" style="display:none;">
-    <img src="/dif/images/info.png" style="float:right;" />
+    <img src="includes/images/info.png" style="float:right;" />
     <p>
         <strong>Pull Source Data::</strong><p/> If the source data is archived in a cyber-infrastructure that can be maintained in the next decade, select ‘No’. If unsure, select ‘Yes’.
     </p>
 </div>
 
 <div id="when_tip" style="display:none;">
-    <img src="/dif/images/info.png" style="float:right;" />
+    <img src="includes/images/info.png" style="float:right;" />
     <p>
         <strong>Download Certain Times Only:</strong><p/> If you prefer for GRIIDC to download the time only on specified start period, click ‘Yes’ (default is ‘No’).
     </p>
 </div>
 
 <div id="uname_tip" style="display:none;">
-    <img src="/dif/images/info.png" style="float:right;" />
+    <img src="includes/images/info.png" style="float:right;" />
     <p>
         <strong>Username:</strong><p/> Enter the username required to access the data.
     </p>
 </div>
 
 <div id="pword_tip" style="display:none;">
-    <img src="/dif/images/info.png" style="float:right;" />
+    <img src="includes/images/info.png" style="float:right;" />
     <p>
         <strong>Password:</strong><p/> Enter the password needed to access the data.
     </p>
 </div>
 
 <div id="times_tip" style="display:none;">
-    <img src="/dif/images/info.png" style="float:right;" />
+    <img src="includes/images/info.png" style="float:right;" />
     <p>
         <strong>Pull Times:</strong><p/> Select the appropriate start period when GRIIDC can start downloading or reading the dataset.
     </p>
 </div>
 
 <div id="date_tip" style="display:none;">
-    <img src="/dif/images/info.png" style="float:right;" />
+    <img src="includes/images/info.png" style="float:right;" />
     <p>
         <strong>Date:</strong><p/> In some cases, registration is made prior to moving the data onto a space that it can be harvested or read by GRIIDC. In such cases, enter the appropriate date when data is ready for downloading or reading. Enter the current date (date of registration) if data is ready for downloading or reading.
     </p>
 </div>
 
 <div id="avail_tip" style="display:none;">
-    <img src="/dif/images/info.png" style="float:right;" />
+    <img src="includes/images/info.png" style="float:right;" />
     <p>
         <strong>Restrictions:</strong><p/> If data is available to the general public, select ‘None’. Select ‘Restricted’ if data cannot be shared to anyone. Select ‘Requires Author’s Approval’ if you can share the data but prefer to control the sharing of the dataset. In the later case, GRIIDC will maintain a list of users associated to a dataset.
     </p>
 </div>
 
 <div id="doi_tip" style="display:none;">
-    <img src="/dif/images/info.png" style="float:right;" />
+    <img src="includes/images/info.png" style="float:right;" />
     <p>
         <strong>Digital Object Identifier:</strong><p/> If your dataset has been issued a DOI from another repository or archive, please provide it here. Please note that this field is for <strong>dataset</strong> DOIs only, as publication DOIs are recorded elsewhere.
     </p>
@@ -921,7 +921,7 @@ function submitRegistry() {
     <fieldset>
         <p><fieldset>
             <span id="qtip_regid" style="float:right;">
-                <img src="/dif/images/info.png">
+                <img src="includes/images/info.png">
             </span>
             <label for="registry_id"><b>Registry Identifier: </b></label>
             <input onkeyup="if (this.value.length > 15) {document.getElementById('regbutton').disabled=false;};" <?php if (isset($dif_id)) {echo ' disabled ';};?>type="text" id="registry_id" name="registry_id" size="60" value="<?php if (isset($row['registry_id'])) {echo $row['registry_id'];};?>">
@@ -932,7 +932,7 @@ function submitRegistry() {
 
         <p><fieldset>
         <span id="qtip_title" style="float:right;">
-            <img src="/dif/images/info.png">
+            <img src="includes/images/info.png">
         </span>
         <label for="title"><b>Dataset Title: </b></label>
         <div class="fwtextboxcont">
@@ -942,7 +942,7 @@ function submitRegistry() {
 
     <p><fieldset>
         <span id="qtip_abstrct" style="float:right;">
-            <img src="/dif/images/info.png">
+            <img src="includes/images/info.png">
         </span>
         <label for="abstrct"><b>Dataset Abstract: </b></label>
         <div class="textareacontainer">
@@ -952,7 +952,7 @@ function submitRegistry() {
 
     <p><fieldset>
         <span id="qtip_dataset_originator" style="float:right;">
-            <img src="/dif/images/info.png">
+            <img src="includes/images/info.png">
         </span>
         <label for="dataset_originator"><b>Dataset Originator(s): </b></label>
         <div class="fwtextboxcont">
@@ -965,7 +965,7 @@ function submitRegistry() {
         <table WIDTH="100%"><tr><td width="50%">
 
             <span id="qtip_poc" style="float:right;">
-                <img src="/dif/images/info.png">
+                <img src="includes/images/info.png">
             </span>
             <label for="pocname"><b>Name: </b></label>
             <div class="fwtextboxcont">
@@ -974,7 +974,7 @@ function submitRegistry() {
         </td><td width="50%" style="padding-left:10px;">
 
             <span id="qtip_pocemail" style="float:right;">
-                <img src="/dif/images/info.png">
+                <img src="includes/images/info.png">
             </span>
             <label for="pocemail"><b>E-Mail: </b></label>
             <div class="fwtextboxcont">
@@ -985,7 +985,7 @@ function submitRegistry() {
 
     <p><fieldset>
                 <span id="qtip_avail" style="float:right;">
-                    <img src="/dif/images/info.png">
+                    <img src="includes/images/info.png">
                 </span>
                 <label for="avail">Restrictions:</label>
                     <input <?php formDisabled($formDisabled)?> <?PHP if (isset($row['access_status'])){isChecked($row['access_status'],0,"None");} elseif(!isset($_GET['regid'])){echo 'checked';};?> name="avail" id="avail" type="radio" value="None"/>None
@@ -997,7 +997,7 @@ function submitRegistry() {
     <p><fieldset>
             <legend>DOI for dataset (if available):</legend>
             <span id="qtip_doi" style="float:right;">
-                <img src="/dif/images/info.png">
+                <img src="includes/images/info.png">
             </span>
             <label for="doi">Digital Object Identifier:</label>
             <div class="fwtextboxcont">
@@ -1045,7 +1045,7 @@ function submitRegistry() {
                 ?>
             <p>
                 <span id="qtip_uploaddataurl" style="float:right;">
-                    <img src="/dif/images/info.png">
+                    <img src="includes/images/info.png">
                 </span>
                 <label for="datafile">Dataset File:</label>
                 <?php
@@ -1062,7 +1062,7 @@ function submitRegistry() {
             <fieldset>
             <p>
                 <span id="qtip_uploadmetadataurl" style="float:right;">
-                    <img src="/dif/images/info.png">
+                    <img src="includes/images/info.png">
                 </span>
                 <label for="metadatafile">Metadata File:</label>
                 <?php
@@ -1083,7 +1083,7 @@ function submitRegistry() {
         <fieldset>
             <p>
                 <span id="qtip_dataurl" style="float:right;">
-                    <img src="/dif/images/info.png">
+                    <img src="includes/images/info.png">
                 </span>
                 <label for="dataurl">Dataset File URL:</label>
                 <div class="fwtextboxcont">
@@ -1094,7 +1094,7 @@ function submitRegistry() {
             <fieldset>
             <p>
                 <span id="qtip_metadataurl" style="float:right;">
-                    <img src="/dif/images/info.png">
+                    <img src="includes/images/info.png">
                 </span>
                 <label for="metadataurl">Metadata File URL:</label>
                 <div class="fwtextboxcont">
@@ -1107,7 +1107,7 @@ function submitRegistry() {
             <fieldset>
             <p>
             <span id="qtip_date" style="float:right;">
-                <img src="/dif/images/info.png">
+                <img src="includes/images/info.png">
             </span>
             <label for="availdate">Availability Date:</label>
             <input <?php formDisabled($formDisabled)?> onchange="checkDOIFields();" value="<?php if (isset($row['availability_date'])) {echo $row['availability_date'];};?>" type="text" name="availdate" id="availdate" size="40" style="width:100px;"/>
@@ -1117,7 +1117,7 @@ function submitRegistry() {
             <fieldset>
                 <p>
                     <span id="qtip_pull" style="float:right;">
-                        <img src="/dif/images/info.png">
+                        <img src="includes/images/info.png">
                     </span>
                     <label for="pullds">Pull Source Data:</label>
                     <input <?php formDisabled($formDisabled)?> <?PHP if (isset($row['data_source_pull'])){isChecked($row['data_source_pull'],0,true);}; if(!isset($_GET['regid'])){echo 'checked';};?>  onclick="showCreds(this,'pulldiv','No');" onchange="showDOIbutton(this);" name="pullds" id="pullds" type="radio" value="Yes"/>Yes
@@ -1131,7 +1131,7 @@ function submitRegistry() {
             <fieldset>
             <p>
                 <span id="qtip_auth" style="float:right;">
-                    <img src="/dif/images/info.png">
+                    <img src="includes/images/info.png">
                 </span>
                 <label for="auth">Requires Authentication:</label>
                 <input <?php formDisabled($formDisabled)?> <?PHP if (isset($row['authentication'])){isChecked($row['authentication'],0,true);};?> onclick="showCreds(this,'creds','Yes');" name="auth" id="auth" type="radio" value="Yes"/>Yes
@@ -1143,7 +1143,7 @@ function submitRegistry() {
             <fieldset>
                 <p>
                     <span id="qtip_when" style="float:right;">
-                        <img src="/dif/images/info.png">
+                        <img src="includes/images/info.png">
                     </span>
                     <label for="whendl">Download Certain Times Only:</label>
                     <input <?php formDisabled($formDisabled)?> <?PHP if (isset($row['access_period'])){isChecked($row['access_period'],0,true);};?> onclick="showCreds(this,'whendiv','Yes');getTimeZone();weekDays();" name="whendl" id="whendl" type="radio" value="Yes"/>Yes
@@ -1159,7 +1159,7 @@ function submitRegistry() {
                 <table WIDTH="100%">
                 <tr><td width="50%">
                 <span id="qtip_uname" style="float:right;">
-                    <img src="/dif/images/info.png">
+                    <img src="includes/images/info.png">
                 </span>
                 <label for="uname">Username:</label>
                 <div class="fwtextboxcont">
@@ -1167,7 +1167,7 @@ function submitRegistry() {
                 </div>
                 </td><td width="50%" style="padding-left:10px;">
                 <span id="qtip_pword" style="float:right;">
-                    <img src="/dif/images/info.png">
+                    <img src="includes/images/info.png">
                 </span>
                 <label for="pword">Password:</label>
                 <div class="fwtextboxcont">
@@ -1180,7 +1180,7 @@ function submitRegistry() {
           <div id="whendiv" style="display:<?php if (isset($row['access_period'])){if ($row['access_period']==true){echo 'block';}else{echo 'none';};}else{ echo 'none';};?>;">
               <fieldset>
                   <span id="qtip_times" style="float:right;">
-                      <img src="/dif/images/info.png">
+                      <img src="includes/images/info.png">
                   </span>
               <legend>Pull Times:</legend>
               <table WIDTH="100%"><tr><td valign="top">
@@ -1239,7 +1239,7 @@ EOT;
         <fieldset>
         <p>
             <span id="qtip_sshdataurl" style="float:right;">
-                <img src="/dif/images/info.png">
+                <img src="includes/images/info.png">
             </span>
             <label for="sshdatapath">Dataset File Path:</label>
                 <div class="fwtextboxcont">
@@ -1252,7 +1252,7 @@ EOT;
 
             <p>
                 <span id="qtip_sshmetadataurl" style="float:right;">
-                    <img src="/dif/images/info.png">
+                    <img src="includes/images/info.png">
                 </span>
                 <label for="sshmetadatapath">Metadata File Path:</label>
                 <div class="fwtextboxcont">
