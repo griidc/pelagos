@@ -22,6 +22,8 @@ if (isset($_GET["udi"]))
 	$query = "SELECT EXISTS(SELECT 1 FROM registry WHERE registry_id LIKE '$udi%' LIMIT 1) as \"UDIexists\";";
 	
 	$row = pdoDBQuery($conn,$query);
+    
+    $row = $row[0];
 	
 	$returnexist = $row["UDIexists"];
 	
@@ -54,7 +56,7 @@ drupal_add_js('/includes/openlayers/lib/OpenLayers.js',array('type'=>'external')
 drupal_add_js('//maps.google.com/maps/api/js?v=3&sensor=false',array('type'=>'external'));
 
 drupal_add_js('/includes/geoviz/geoviz.js',array('type'=>'external'));
-//drupal_add_js('/~mvandeneijnden/map/geoviz.js',array('type'=>'external'));
+drupal_add_js('/~mvandeneijnden/map/mapWizard.js',array('type'=>'external'));
 
 if (array_key_exists('action',$_GET) and $_GET['action'] == 'help') {
     require 'help.html';

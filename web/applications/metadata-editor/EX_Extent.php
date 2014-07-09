@@ -54,8 +54,6 @@ class EX_Extent
 		$this->htmlString = $mMD->twig->render('html/EX_Extent.html', $twigArr);
 		
 		$mMD->jsString .= $mMD->twig->render('js/EX_Extent.js', array('instanceName' => $instanceName));
-		
-		$mMD->jqUIs .= $mMD->twig->render('js/EX_Extent_UI.js', array('instanceName' => $instanceName));
 
 		return true;
 	}

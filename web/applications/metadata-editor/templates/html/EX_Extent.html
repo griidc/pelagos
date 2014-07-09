@@ -11,17 +11,6 @@ This section collects information describing the spatial and temporal extent of 
 
 <input hidden onclick="changeExtent{{instanceName}}(this.checked);" id="EX0_{{instanceName}}" type="checkbox" />
 
-
-
-<tr id="EX1_{{instanceName}}row" style="display:none;"><td>
-<label for="EX1_{{instanceName}}"><em>*</em>Description</label>
-<textarea disabled class="required" rows="5" cols="80" id="EX1_{{instanceName}}" name="{{instanceType}}-gmd:description-gco:CharacterString">{{xmlArray["gmd:description"]["gco:CharacterString"]}}</textarea></td>
-<td>
-	
-<pre><div id="spatwizbtn" class="ui-widget-header ui-corner-all"><button style="color:#039203;font-size:larger;width:100%;" id="EXbtn_{{instanceName}}" type="button">Define Spatial Extent</button></div>
-The Spatial Extent Wizard provides users with guided instruction and tools to describe the Spatial Extent of their dataset. Users can 1) indicate that their data has no spatial or temporal extent, or 2) Create a spatial extent geometry by either providing a list of coordinates or drawing a geometry using a map.</pre>
-</td></tr>
-
 {{GeographicSection}}
 
 {{TemporalExtent}}
