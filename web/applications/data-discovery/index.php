@@ -528,7 +528,7 @@ $app->get('/enableGridFTP/:udi', function ($udi) use ($app) {
            
     }
 
-    $dat_file = $GLOBALS['storage']['storage']['data_store']."/$dataset[udi]/$dataset[udi].dat";
+    $dat_file = $GLOBALS['storage']['storage']['data_download_store']."/$dataset[udi]/$dataset[udi].dat";
     if (file_exists($dat_file)) {
         $env = $app->environment();
        
