@@ -21,6 +21,9 @@ function MapWizard(json)
     var gmlField = '#'+json.gmlField;
     var descField = '#'+json.descField;
     
+    var diaWidth = $(window).width()*.8;
+    var diaHeight = $(window).height()*.8;
+    
     init();
     
     this.cleanMap = function()
@@ -55,11 +58,18 @@ function MapWizard(json)
         
         $("#divMapWizard").append('<div id="provideDesc" style="display:none;"><h2>Please provide a short statement describing why this dataset does not have a spatial component.</h2><p><i>Example - "Dataset contains laboratory measurements of oil degradation, no field sampling involved"</i></p><textarea class="required" id="wizDesc" cols="80" rows="5"></textarea><br></div>')
 
-        $("#divMapWizard").append('<div id="mapwiz" style="display:none;">        <table id="maptoolstbl" width="100%" height="100%" border="0">        <tr valign="top">        <td width="80%" >        <!--Make sure the width and height of the map are 100%-->               </td>        <td width="20%">        <table width="100%" height="100%" border="0">        <tr>        <!--        <td align="center" valign="top" height="90%" style="position:relative;">        <label for="coordlist">Coordinate List</label>        <textarea id="coordlist" style="width:95%;position:absolute;left:5px;right:5px;top:20px;bottom:5px;"></textarea>        </td>        -->        <td align="center" valign="top">        <div id="coordtoolbar" class="ui-widget-header ui-corner-all">        <label id="coordlistLbl" for="coordlist">Coordinate List</label>        <textarea id="coordlist" style="width:95%;"></textarea>        <button style="width: 100%;" id="drawOnMap">Render on Map</button>        </div>        </td>        </tr>        <tr>        <td width="100%">        <h3>        <span id="wizDrawMode">Navigation</span> Mode</h3>        <fieldset>        <div id="maphelptxt" style="position:relative;overflow-x:hidden;overflow-y:auto;">                        </div>        </fieldset>        </td>                </tr>        <tr>        <td>        <div id="wiztoolbar" class="ui-widget-header ui-corner-all">        <button style="width: 100%;font-weight:bold;" id="saveFeature">Save and Finish</button>        <button style="width: 100%;" id="startDrawing">Start Drawing</button>        <button style="width: 100%;" id="deleteFeature">Delete</button>        <button style="width: 100%;" id="startOver">Change Mode</button>        <button style="width: 100%;" id="exitDialog">Restart Wizard</button>        </div>        </td>        </tr>        </table>        </td>        </tr>        </table>        </div>');               
+        $("#divMapWizard").append('<div id="mapwiz" style="display:none;">        <table id="maptoolstbl" width="100%" height="100%" border="0">        <tr valign="top">        <td width="80%" >        <!--Make sure the width and height of the map are 100%-->             </td>        <td width="20%">        <table width="100%" height="100%" border="0">        <tr>        <!--        <td align="center" valign="top" height="90%" style="position:relative;">        <label for="coordlist">Coordinate List</label>        <textarea id="coordlist" style="width:95%;position:absolute;left:5px;right:5px;top:20px;bottom:5px;"></textarea>        </td>        -->        <td align="center" valign="top">        <div id="coordtoolbar" class="ui-widget-header ui-corner-all">        <label id="coordlistLbl" for="coordlist">Coordinate List</label>        <textarea id="coordlist" style="width:95%;"></textarea>        <button style="width: 100%;" id="drawOnMap">Render on Map</button>        </div>        </td>        </tr>        <tr>        <td width="100%">        <h3>        <span id="wizDrawMode">Navigation</span> Mode</h3>        <fieldset>        <div id="maphelptxt" style="position:relative;overflow-x:hidden;overflow-y:auto;">                        </div>        </fieldset>        </td>                </tr>        <tr>        <td>        <div id="wiztoolbar" class="ui-widget-header ui-corner-all">        <button style="width: 100%;font-weight:bold;" id="saveFeature">Save and Finish</button>        <button style="width: 100%;" id="startDrawing">Start Drawing</button>        <button style="width: 100%;" id="deleteFeature">Delete</button>        <button style="width: 100%;" id="startOver">Change Mode</button>        <button style="width: 100%;" id="exitDialog">Restart Wizard</button>        </div>        </td>        </tr>        </table>        </td>        </tr>        </table>        </div>');               
         
         $("#divMapWizard").append('<div id="helpinfo" title="Spatial Extent Wizard - 4" style="display:none;width:1000px"><p>Define the spatial extent of your dataset by providing a list of coordinates or drawing on the map. Select the method and then the geometry type that best represents the spatial extent of your dataset.</p><div id="helptoolbar" style="font-size:100%;" class="ui-widget-header ui-corner-all"><div style="display:table;width:100%;"><div id="featMode" style="display:table-row;"><div style="display:table-cell;"><input type="radio" id="featPaste" name="featMode"><label for="featPaste">Insert Coordinate Text</label></div><div style="display:table-cell;"><input type="radio" id="featDraw" name="featMode" checked="checked"><label for="featDraw">Draw on the Map</label></div></div></div><div style="display:table;width:100%;"><div id="drawType" style="display:table-row;"><!--<div style="display:table-cell;"><input type="radio" id="drawBox" name="drawType"><label for="drawBox">Box</label></div>--><div style="display:table-cell;"><input class="button" type="radio" id="drawPolygon" name="drawType" checked="checked"><label for="drawPolygon">Polygon</label></div><div style="display:table-cell;"><input type="radio" id="drawLine" name="drawType"><label for="drawLine">Line</label></div><div style="display:table-cell;"><input type="radio" id="drawPoint" name="drawType"><label for="drawPoint">Point</label></div></div></div></div></div>');
         
         wizGeoViz = new GeoViz();
+        
+        var mymap = $('#mapwiz table#maptoolstbl tbody tr td').first();
+        //$(mymap).append("<div />").attr("id","olmap").css({width:$(this).width(),height:$(this).height()});
+        $(mymap).append("<div />").attr("id","olmap").css({width:100,height:100});
+        //.html('<div id="olmap" style="width: 400px;height: 500px"></div>');
+        wizGeoViz.initMap('olmap',{'onlyOneFeature':true,'allowModify':true,'allowDelete':true});
+        
         
         $(divSmallMap).on('gmlConverted', function(e, eventObj) {
             smlGeoViz.removeAllFeaturesFromMap();
@@ -105,7 +115,7 @@ function MapWizard(json)
         $("#helpinfo").dialog({
             autoOpen: false,
             width: 400,
-            modal: false,
+            modal: true,
             buttons: {
                 OK: function() {
                     if ($("#drawPolygon:checked").length){$("#drawPolygon:checked").click();}
@@ -215,10 +225,9 @@ function MapWizard(json)
 
     function drawMap()
     {
-        var diaWidth = $(window).width()*.8;
-        var diaHeight = $(window).height()*.8;
-        
         hasSpatial(false);
+        
+        
         
         $("#mapwiz").dialog({
             height: diaHeight,
@@ -239,13 +248,10 @@ function MapWizard(json)
     
     function finalizeMap()
     {
-        var mymap = $('#mapwiz table#maptoolstbl tbody tr td').first();
-        //$(mymap).append("<div />").attr("id","olmap").css({width:$(this).width(),height:$(this).height()});
-        $(mymap).append("<div />").attr("id","olmap").css({width:100,height:100});
-        //.html('<div id="olmap" style="width: 400px;height: 500px"></div>');
-        wizGeoViz.initMap('olmap',{'onlyOneFeature':true,'allowModify':true,'allowDelete':true});
         setEvents();
         fixMapToolHeight();
+        
+        wizGeoViz.updateMap();
         
         if ($(gmlField).val() != "")// && !featureSend)
         {
@@ -278,13 +284,18 @@ function MapWizard(json)
     
     function whatIsCoordinateOrder()
     {
-        var whatOrder = wizGeoViz.determineOrder($('#coordlist').val());
+        var coordList = $('#coordlist').val();
+        var whatOrder = wizGeoViz.determineOrder(coordList);
         var diaMessage = '';
         var diaButtons = [ {text:"Yes",click:function(){$(this).dialog("close");}},{text:"No",click:function(){$(this).dialog("close");}} ];
         var realOrder = 0;
         
-        
-        if (whatOrder == orderEnum.LATLONG)
+        if (whatOrder == orderEnum.EMPTY)
+        {
+            diaMessage = 'You didn\'t enter any (valid) coordinates!';
+            diaButtons = [ {text:"OK",click:function(){$(this).dialog("close");}} ];
+        }
+        else if (whatOrder == orderEnum.LATLONG)
         {
             diaMessage = 'This is Latitude, Longitude order, right?';
             diaButtons = [ {text:"Yes",click:function(){$(this).dialog("close");wizAddFeature(orderEnum.LATLONG);}},{text:"No, it\'s Longitude,Latitude",click:function(){wizAddFeature(orderEnum.LONGLAT);$(this).dialog("close");}} ];
@@ -370,7 +381,6 @@ function MapWizard(json)
     {
         wizGeoViz.stopDrawing();
         wizGeoViz.removeAllFeaturesFromMap();
-        
         whatIsCoordinateOrder();
     }
     
@@ -457,7 +467,9 @@ function MapWizard(json)
         
         $("#deleteFeature").button({ icons: { primary: "ui-icon ui-icon-trash"}}).click(function()
         {
-            wizGeoViz.deleteSelected();
+            wizGeoViz.removeAllFeaturesFromMap();
+            $('#coordlist').val('');
+            //wizGeoViz.deleteSelected();
         })
         .qtip({    content: {
             text: 'Deletes selected feature'
@@ -465,10 +477,11 @@ function MapWizard(json)
         
         $("#exitDialog").button({ icons: { primary: "ui-icon ui-icon-refresh"}}).click(function()
         {
-            closeDialog();
-            $("#coordlist").empty();
             wizGeoViz.removeAllFeaturesFromMap();
-            $(gmlField).val("");
+            smlGeoViz.removeAllFeaturesFromMap();
+            $(gmlField).val('');
+            $('#coordlist').val('');
+            closeDialog();
             showWizard();
         })
         .qtip({    content: {
@@ -478,12 +491,11 @@ function MapWizard(json)
         $("#startOver").button({ icons: { primary: "ui-icon ui-icon-wrench"}}).click(function()
         {
             wizGeoViz.stopDrawing();
+            wizGeoViz.removeAllFeaturesFromMap();
             $('#coordlist').val('');
             $(gmlField).val('');
-            wizGeoViz.removeAllFeaturesFromMap();
             wizGeoViz.goHome();
             $("#helpinfo").dialog('open');
-            
         })
         .qtip({    content: {
             text: 'Reselect geometry type and mode'

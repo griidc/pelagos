@@ -21,7 +21,8 @@ function GeoViz()
 	
 	this.orderEnum = 
 	{
-		OK : 0,
+		EMPTY: -1,
+        OK : 0,
 		LONGLAT : 1,
 		LATLONG : 2,
 		UNKNOWN : 3,
@@ -856,6 +857,11 @@ function GeoViz()
 		var orders = new Array();
 		var LongLat = 0;
 		var LatLong = 0;
+        
+        if (pointList == "")
+        {
+            return this.orderEnum.EMPTY;
+        }
 				
 		pointList = pointList.split(" ");
 		
@@ -886,8 +892,12 @@ function GeoViz()
 			}
 		}
 		
-		
 		if ((LatLong == pointList.length))
+		{
+			//console.log('For Sure Lat:Long');
+			return this.orderEnum.LATLONG;
+		}
+		else if ((LatLong == pointList.length))
 		{
 			//console.log('For Sure Lat:Long');
 			return this.orderEnum.LATLONG;
@@ -1043,7 +1053,8 @@ function GeoViz()
 		if (List != "")
 		{
 			var points = List.match(/(-?\d+\.\d+|-?\d+)/g); //-?\d+(\.\d+)?
-			for (var i=0;i<points.length;i+=2)
+            points == null ? pointsLength = 0 : pointsLength = points.length;
+			for (var i=0;i<pointsLength;i+=2)
 			{
 				if (i!=0) {pointList += " "};
 				pointList += points[i];
@@ -1116,7 +1127,10 @@ function GeoViz()
 	
 	this.removeAllFeaturesFromMap = function ()
 	{
+        this.stopDrawing();
 		vlayer.removeAllFeatures();
+        map.updateSize();
+        vlayer.removeAllFeatures();
 	}
 	
 	function startDrawing ()
