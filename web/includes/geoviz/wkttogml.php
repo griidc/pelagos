@@ -91,7 +91,6 @@ $gml = $row[0]["st_asgml"];
 
 //echo "{\"featureid\":\"$featureid\",\"reason\":\"$reason\"}";
 
-
 echo addGMLID($gml);;
 
 ?>
