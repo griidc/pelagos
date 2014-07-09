@@ -36,12 +36,22 @@ class metaData
 	{
 		if ($this->xmldoc != null)
 		{
-			$mynodes = $this->xmldoc->getElementsByTagNameNS($NameSpace, $NodeName);
-			
+			//$mynodes = $this->xmldoc->getElementsByTagNameNS($NameSpace, $NodeName);
+            
+            $xpath = new DOMXPath($this->xmldoc);
+            
+            $query = '/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:geographicElement[1]/gmd:EX_BoundingPolygon[1]/gmd:polygon[1]/*';
+            
+            $mynodes = $xpath->query($query);
+            
 			if( $mynodes->length > 0 )
 			{
 				$mynode = $mynodes->item(0);
-				return $this->xmldoc->saveXML($mynode);
+                $this->xmldoc->normalizeDocument();
+                $gml = $this->xmldoc->saveXML($mynode);
+                
+                return $gml;
+                
 			}
 		}
 	}

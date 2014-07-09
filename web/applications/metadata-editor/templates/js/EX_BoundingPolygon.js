@@ -4,6 +4,10 @@
 	$("#dtabs-4").on('active', function() {
 		console.log('tabs4-click');
 		geowizard.flashMap();
-		
+        $('#BPL1_{{instanceName}}').change();
 	});
+    
+    $('#BPL1_{{instanceName}}').change(function() {
+        geowizard.haveGML($(this).val());
+    });
 	 

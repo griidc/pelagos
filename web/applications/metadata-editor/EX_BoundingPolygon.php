@@ -9,12 +9,14 @@ class EX_BoundingPolygon
         $xmlArray = $mMD->returnPath($instanceType);
              
         $geoArray = $xmlArray[0];
-		
-		//var_dump($geoArray);
-		
+        
 		$gmlCoordinates = '';
 		
-		$gmlCoordinates = $mMD->returnXmlString('http://www.opengis.net/gml/3.2','Polygon');
+		$gmlCoordinates = $mMD->returnXmlString('http://www.isotc211.org/2005/gmd','polygon');
+        
+        // echo '<pre>';
+		// var_dump($gmlCoordinates);
+        // echo '</pre>';
               
         /* 
         if (isset ($geoArray['gmd:polygon']))
