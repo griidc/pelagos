@@ -43,7 +43,7 @@ function pdoGetErrors($connection)
     {
         $errmsg = 'ERRNUM:'.$error[0] . ',MESSAGE:'.$error[1];
         array_push($errlist,$errmsg);
-        var_dump($error);
+        //var_dump($error);
     }
     
     if (count($errlist>1))
