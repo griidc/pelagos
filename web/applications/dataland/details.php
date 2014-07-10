@@ -280,7 +280,11 @@ var dlmap = new GeoViz();
         dlmap.initMap('dlolmap',{'onlyOneFeature':false,'allowModify':false,'allowDelete':false,'staticMap':true,'labelAttr':'udi'});
 
         $("#downloadds").button().click(function() {
-            showDatasetDownload('<?php echo $udi;?>')
+            if(<?php echo "\"".$prow['dataset_download_status']."\"" ?> == "RemotelyHosted") {
+                showDatasetDownloadExternal('<?php echo $udi;?>')
+            } else {
+                showDatasetDownload('<?php echo $udi;?>')
+            }
             //window.location = '<?php echo "$pageLessBaseUrl/data-discovery?filter=$udi";?>';
         });
 
