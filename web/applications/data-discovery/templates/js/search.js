@@ -223,6 +223,7 @@ function showAllExtents() {
     }
     else {
         $('#show_all_extents_label').html('Show All Extents');
+        $('table.datasets tr td').removeClass('highlight');
         myGeoViz.removeAllFeaturesFromMap();
     }
 }
