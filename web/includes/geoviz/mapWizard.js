@@ -49,6 +49,17 @@ function MapWizard(json)
 
     function init()
     {
+        $.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
+            
+            position: {
+                adjust: {
+                    method: "flip flip"
+                },
+                my: "bottom right",
+                at: "top left",
+                viewport: $(window)
+            }
+        });
         
         smlGeoViz = new GeoViz();
         smlGeoViz.initMap(json.divSmallMap,{'onlyOneFeature':false,'allowModify':false,'allowDelete':false,'staticMap':true});
@@ -98,22 +109,14 @@ function MapWizard(json)
             showWizard();
         });
         
+        setEvents();
+        
         //console.log('Spatial Wizard Ready');
     }
     
     function showWizard()
     {
-        $.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
-            
-            position: {
-                adjust: {
-                    method: "flip flip"
-                },
-                my: "bottom right",
-                at: "top left",
-                viewport: $(window)
-            }
-        });
+       
         
         orderEnum = wizGeoViz.orderEnum;
         
@@ -253,7 +256,7 @@ function MapWizard(json)
     
     function finalizeMap()
     {
-        setEvents();
+        
         fixMapToolHeight();
         
         wizGeoViz.updateMap();
@@ -331,6 +334,8 @@ function MapWizard(json)
             diaButtons = [ {text:"I'll fix it!",click:function(){wizAddFeature(orderEnum.MIXED);$(this).dialog("close");}},{text:"No, it\'s Latitude,Longitude",click:function(){wizAddFeature(orderEnum.LATLONG);$(this).dialog("close");}},{text:"No, it\'s Longitude,Latitude",click:function(){wizAddFeature(orderEnum.LONGLAT);$(this).dialog("close");}} ];
         }
         
+        console.log('make dialog');
+        
         $("<div>"+diaMessage+"</div>").dialog({
             autoOpen: true,
             title: 'Coordinate Order?',
@@ -339,6 +344,7 @@ function MapWizard(json)
             buttons: diaButtons,
             modal: true,
             close: function( event, ui ) {
+                console.log('i was destroyed');
                 $(this).dialog("destroy").remove();
                 $(document).trigger('coordinateOrder',realOrder);
                 realOrder = 0;
@@ -384,6 +390,7 @@ function MapWizard(json)
     
     function renderOnMap()
     {
+        console.log('render on map');
         wizGeoViz.stopDrawing();
         wizGeoViz.removeAllFeaturesFromMap();
         whatIsCoordinateOrder();
@@ -455,11 +462,13 @@ function MapWizard(json)
             text: 'Saves extent to the metadata editor and closes wizard'
         }});
         
-        $("#drawOnMap").button({ icons: { primary: "ui-icon ui-icon-check"}}).click(function()
-        {renderOnMap();})
+        $("#drawOnMap").button({ icons: { primary: "ui-icon ui-icon-check"}})
         .qtip({    content: {
                 text: 'Re-renders to the exent on the map after changes to the coordinate list'
-            }});
+            }})
+        .click(function()
+        {renderOnMap();})
+            ;
         
         $("#startDrawing").button({ icons: { primary: "ui-icon ui-icon-pencil"}}).click(function()
         {
