@@ -49,18 +49,6 @@ function MapWizard(json)
 
     function init()
     {
-        $.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
-            
-            position: {
-                adjust: {
-                    method: "flip flip"
-                },
-                my: "bottom right",
-                at: "top left",
-                viewport: $(window)
-            }
-        });
-        
         smlGeoViz = new GeoViz();
         smlGeoViz.initMap(json.divSmallMap,{'onlyOneFeature':false,'allowModify':false,'allowDelete':false,'staticMap':true});
         
@@ -72,7 +60,18 @@ function MapWizard(json)
 
         $("#divMapWizard").append('<div id="hasSpatial" style="display:none;"><h2>Would you characterize your dataset as Spatial or Non-Spatial?</h2><p>Many datasets have an obvious spatial component (samples taken at a location or model results that describe an area). However, for some datasets, a location may not be relevant or even recorded (chemical analysis datasets wholly performed in the lab, data describing synthesis of new dispersants, etc.)</p></div>');
         
-        $("#divMapWizard").append('<div id="provideDesc" style="display:none;"><h2>Please provide a short statement describing why this dataset does not have a spatial component.</h2><p><i>Example - "Dataset contains laboratory measurements of oil degradation, no field sampling involved"</i></p><textarea class="required" id="wizDesc" cols="80" rows="5"></textarea><br></div>')
+        $("#divMapWizard").append('<div id="provideDesc" style="display:none;"><h2>Please provide a short statement describing why this dataset does not have a spatial component.</h2><p><i>Example - "Dataset contains laboratory measurements of oil degradation, no field sampling involved"</i></p><textarea class="required" id="wizDesc" cols="80" rows="5"></textarea><br></div>');
+        
+        $("#geowizBtn").button().click(function()
+        {
+            showSpatialDialog();
+        });
+        
+        
+    }
+    
+    function initWiz()
+    {
 
         $("#divMapWizard").append('<div id="mapwiz" style="display:none;">        <table id="maptoolstbl" width="100%" height="100%" border="0">        <tr valign="top">        <td width="80%" >        <!--Make sure the width and height of the map are 100%-->             </td>        <td width="20%">        <table width="100%" height="100%" border="0">        <tr>        <!--        <td align="center" valign="top" height="90%" style="position:relative;">        <label for="coordlist">Coordinate List</label>        <textarea id="coordlist" style="width:95%;position:absolute;left:5px;right:5px;top:20px;bottom:5px;"></textarea>        </td>        -->        <td align="center" valign="top">        <div id="coordtoolbar" class="ui-widget-header ui-corner-all">        <label id="coordlistLbl" for="coordlist">Coordinate List</label>        <textarea id="coordlist" style="width:95%;"></textarea>        <button style="width: 100%;" id="drawOnMap">Render on Map</button>        </div>        </td>        </tr>        <tr>        <td width="100%">        <h3>        <span id="wizDrawMode">Navigation</span> Mode</h3>        <fieldset>        <div id="maphelptxt" style="position:relative;overflow-x:hidden;overflow-y:auto;">                        </div>        </fieldset>        </td>                </tr>        <tr>        <td>        <div id="wiztoolbar" class="ui-widget-header ui-corner-all">        <button style="width: 100%;font-weight:bold;" id="saveFeature">Save and Finish</button>        <button style="width: 100%;" id="startDrawing">Start Drawing</button>        <button style="width: 100%;" id="deleteFeature">Delete</button>        <button style="width: 100%;" id="startOver">Change Mode</button>        <button style="width: 100%;" id="exitDialog">Restart Wizard</button>        </div>        </td>        </tr>        </table>        </td>        </tr>        </table>        </div>');               
         
@@ -85,7 +84,6 @@ function MapWizard(json)
         $(mymap).append("<div />").attr("id","olmap").css({width:100,height:100});
         //.html('<div id="olmap" style="width: 400px;height: 500px"></div>');
         wizGeoViz.initMap('olmap',{'onlyOneFeature':true,'allowModify':true,'allowDelete':true});
-        
         
         $(divSmallMap).on('gmlConverted', function(e, eventObj) {
             smlGeoViz.removeAllFeaturesFromMap();
@@ -102,12 +100,19 @@ function MapWizard(json)
             {
                 //difGeoViz.addImage('includes/images/notdefined.png',1);
             }
+        });    
+
+        $.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
+            
+            position: {
+                adjust: {
+                    method: "flip flip"
+                },
+                my: "bottom right",
+                at: "top left",
+                viewport: $(window)
+            }
         });        
-        
-        $("#geowizBtn").button().click(function()
-        {
-            showWizard();
-        });
         
         setEvents();
         
@@ -116,7 +121,7 @@ function MapWizard(json)
     
     function showWizard()
     {
-       
+        initWiz();
         
         orderEnum = wizGeoViz.orderEnum;
         
@@ -164,7 +169,7 @@ function MapWizard(json)
             }
         });
         
-        showSpatialDialog();
+        drawMap();
     }
     
     function showSpatialDialog()
@@ -177,7 +182,7 @@ function MapWizard(json)
             buttons: {
                 'Spatial': function() {
                    $(this).dialog('close');
-                   drawMap();
+                   showWizard();
                 },
                 'Non-Spatial': function() {
                     $(this).dialog('close');
@@ -198,8 +203,7 @@ function MapWizard(json)
             buttons: {
                 'OK': function() {
                     $(this).dialog('close');
-                    $(descField).val($("#wizDesc").val());
-                    $(descField).focus();
+                    noSpatialClose();
                 }
             }
         });
@@ -209,7 +213,12 @@ function MapWizard(json)
     
     function noSpatialClose()
     {
-        $("#wizDescForm").validate();
+        $(descField).val($("#wizDesc").val());
+        $(descField).focus();
+        $(gmlField).val('');
+        $(gmlField).trigger('change');
+        $("#wizDesc").val('')
+        //$("#wizDescForm").validate();
     }
     
     this.haveSpatial = function(Spatial)
@@ -235,8 +244,6 @@ function MapWizard(json)
     {
         hasSpatial(false);
         
-        
-        
         $("#mapwiz").dialog({
             height: diaHeight,
             width: diaWidth,
@@ -256,11 +263,6 @@ function MapWizard(json)
     
     function finalizeMap()
     {
-        
-        fixMapToolHeight();
-        
-        wizGeoViz.updateMap();
-        
         if ($(gmlField).val() != "")// && !featureSend)
         {
             wizGeoViz.gmlToWKT($(gmlField).val());
@@ -275,6 +277,10 @@ function MapWizard(json)
         {
             $("#helpinfo").dialog('open');
         }
+        
+        fixMapToolHeight();
+        
+        wizGeoViz.updateMap();
     }
     
     
@@ -334,8 +340,6 @@ function MapWizard(json)
             diaButtons = [ {text:"I'll fix it!",click:function(){wizAddFeature(orderEnum.MIXED);$(this).dialog("close");}},{text:"No, it\'s Latitude,Longitude",click:function(){wizAddFeature(orderEnum.LATLONG);$(this).dialog("close");}},{text:"No, it\'s Longitude,Latitude",click:function(){wizAddFeature(orderEnum.LONGLAT);$(this).dialog("close");}} ];
         }
         
-        console.log('make dialog');
-        
         $("<div>"+diaMessage+"</div>").dialog({
             autoOpen: true,
             title: 'Coordinate Order?',
@@ -344,11 +348,9 @@ function MapWizard(json)
             buttons: diaButtons,
             modal: true,
             close: function( event, ui ) {
-                console.log('i was destroyed');
                 $(this).dialog("destroy").remove();
                 $(document).trigger('coordinateOrder',realOrder);
                 realOrder = 0;
-                
             }
         }); 
     }
@@ -390,7 +392,6 @@ function MapWizard(json)
     
     function renderOnMap()
     {
-        console.log('render on map');
         wizGeoViz.stopDrawing();
         wizGeoViz.removeAllFeaturesFromMap();
         whatIsCoordinateOrder();
@@ -409,6 +410,7 @@ function MapWizard(json)
             $('#olmap').on('wktConverted', function(e, eventObj) {
                 $(gmlField).val(eventObj);
                 $(gmlField).trigger('change');
+                $(descField).val('');
                 closeDialog();
             });
         }
@@ -432,7 +434,22 @@ function MapWizard(json)
         
         $('#olmap').on('modeChange', function(e, eventInfo) { 
             $('#wizDrawMode').html(eventInfo);
-            showNavMode();
+
+            switch (eventInfo.trim())
+            {
+                case 'Navigation':
+                    showNavMode();
+                    break;
+                case 'Drawing':
+                    showDrawingMode();
+                    break;
+                case 'Modify':
+                    showModifyMode();
+                    break;
+                default:
+                    showNavMode();
+                    break;
+            }
         });
         
         $('#olmap').on('vectorChanged', function(e, eventInfo) { 
@@ -454,13 +471,17 @@ function MapWizard(json)
             }); 
         });
   
-        $("#saveFeature").button({ icons: { primary: "ui-icon ui-icon-disk"}}).click(function()
-        {
-            saveFeature();
-        })
+        $("#saveFeature")
         .qtip({    content: {
             text: 'Saves extent to the metadata editor and closes wizard'
-        }});
+        }})
+        .button({ icons: { primary: "ui-icon ui-icon-disk"}})
+        .click(function()
+        {
+            $(this).hide();
+            saveFeature();
+        });
+        
         
         $("#drawOnMap").button({ icons: { primary: "ui-icon ui-icon-check"}})
         .qtip({    content: {
@@ -554,13 +575,25 @@ function MapWizard(json)
     function showTextMode()
     {
         $('#wizDrawMode').html("Text");
-        var mapHelpText = "Coordinates should be latitude, longitude, but the wizard reverse your coordinate in alternate order. Coordinates can be modified in the list, click Render on Map to update feature";
+        var mapHelpText = "Coordinates should be latitude, longitude, but the wizard can accept your coordinate in reverse order alternate order. Coordinates in the list can be modified or deleted, click Render on Map to update feature on map.";
         $("#maphelptxt").html(mapHelpText);
     }
     
     function showNavMode ()
     {
-        var mapHelpText = "Double-click to finish drawing feature. Click feature to edit or edit Coordinate List directly. Drag hollow circles to move vertexes, draw solid midpoint circles to create new vertexes. Select feature and click Delete button to delete feature";
+        var mapHelpText = "Drag the map to explore, needs more text.";
+        $("#maphelptxt").html(mapHelpText);
+    }
+    
+    function showDrawingMode ()
+    {
+        var mapHelpText = "Click to add points, double-click to finish drawing feature. Click feature to select and modify. Drag hollow circles to move vertexes, drag solid midpoint circles to create new vertexes. Select feature and click Delete button to delete feature. Feature points can be modified or deleted in the Coordinate List text box.";
+        $("#maphelptxt").html(mapHelpText);
+    }
+    
+    function showModifyMode ()
+    {
+        var mapHelpText = "Click feature to edit or edit Coordinate List directly. Drag hollow circles to move vertexes, draw solid midpoint circles to create new vertexes.";
         $("#maphelptxt").html(mapHelpText);
     }
     
@@ -572,7 +605,14 @@ function MapWizard(json)
     
     function closeDialog()
     {
-        $("#mapwiz").dialog("close");
+        try
+        {
+            $("#mapwiz").dialog("destroy").remove();
+        }
+        catch(err) 
+        {
+            console.log(err.message);
+        }
     }
     
     function validateCoords(Unchecked, Checked)
@@ -583,6 +623,7 @@ function MapWizard(json)
     
     function fixMapToolHeight()
     {
+        console.log('im gonna fix it');
         var tblHgt = $("#maptoolstbl").height();
         tblHgt = tblHgt - $("#wiztoolbar").height();
         tblHgt = tblHgt - $("#coordlistLbl").height();
