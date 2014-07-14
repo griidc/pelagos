@@ -57,10 +57,11 @@ label:not(.button)
     box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
 }
 
-.ajstree-anchor {
-white-space: normal !important;
+.jstree-default .jstree-anchor {
+    white-space: normal !important;
+    height: auto;
+    padding-right: 30px;
 }
-
 
 .modal {
     display:    none;
