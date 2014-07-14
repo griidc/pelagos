@@ -131,6 +131,7 @@ function index($app) {
 }
 
 $app->get('/datasets/:filter/:by/:id/:geo_filter', function ($filter,$by,$id,$geo_filter) use ($app) {
+    $approvedMetadata = getApprovedMetadataUDIs();
     $stash = array();
     $stash['registered_datasets'] = array();
     $stash['identified_datasets'] = array();
@@ -173,11 +174,17 @@ $app->get('/datasets/:filter/:by/:id/:geo_filter', function ($filter,$by,$id,$ge
     }
 
     $unrestricted_datasets = get_registered_datasets(getDBH('GOMRI'),array_merge($reg_filters,array('restricted=0')),$filter,$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
-
+    $unrestricted_datasets_nonApprovedMetadata = array();
+    
     foreach ($unrestricted_datasets as $dataset) {
         add_download_size($dataset);
         add_project_info($dataset);
-        $stash['unrestricted_datasets'][] = $dataset;
+        $udi = $dataset['udi'];
+        if(isset($approvedMetadata[$udi])) {
+            $stash['unrestricted_datasets'][] = $dataset;
+        } else {
+            array_unshift($unrestricted_datasets_nonApprovedMetadata,$dataset);
+        }
     }
 
     $restricted_datasets = get_registered_datasets(getDBH('GOMRI'),array_merge($reg_filters,array('restricted=1')),$filter,$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
@@ -189,6 +196,7 @@ $app->get('/datasets/:filter/:by/:id/:geo_filter', function ($filter,$by,$id,$ge
     }
 
     $identified_datasets = get_identified_datasets(getDBH('GOMRI'),$dif_filters,$filter,$GLOBALS['config']['DataDiscovery']['identifiedOrderBy']);
+    array_merge($identified_datasets,$unrestricted_datasets_nonApprovedMetadata);
     foreach ($identified_datasets as $dataset) {
         add_project_info($dataset);
         $stash['identified_datasets'][] = $dataset;
@@ -708,5 +716,19 @@ function getHashes($udi) {
         $sha256 = $raw_data[2];
     }
     return "$md5|$sha1|$sha256";
+}
+
+function getApprovedMetadataUDIs() {
+    $hash = array();
+    $sql = "select dataset_udi from registry_view where 
+            metadata_status = 'Accepted'";
+    $dbms = OpenDB("GOMRI_RO");
+    $data = $dbms->prepare($sql);
+    $data->execute();
+    while ($raw_data = $data->fetch()) {
+        $hash[$raw_data[0]]=1;
+    }
+    $dbms = null;
+    return $hash;
 }
 ?>
