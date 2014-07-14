@@ -192,10 +192,13 @@ $(document).ready(function()
             {
                 $("#statustext").html('<fieldset><img src="/images/icons/tick.png">&nbsp;DIF approved (locked)</fieldset>');
             }
+            $("#difTasks").prop('disabled', true);
+            formHash = $("#difForm").serialize();
         }
         else
         {
             $("#statustext").html('');
+            $("#difTasks").prop('disabled', false);
         }
     });
     
@@ -253,6 +256,8 @@ function setFormStatus()
 {
     var Status = $("#status").val();
     var isAdmin =  $("#isadmin").val();
+    if (isAdmin != '1')
+    { $('#btnReqUnlock').hide(); }
 
     if (Status == "0")
     {
@@ -269,10 +274,6 @@ function setFormStatus()
         if (Status == "2")
         {
           $('#btnReqUnlock').show();  
-        }
-        else
-        {
-          $('#btnReqUnlock').hide();  
         }
     }
     

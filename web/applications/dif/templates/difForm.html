@@ -48,7 +48,7 @@
                     </span>
                     <label class="emRequired" for="difTitle">
                         <b>Dataset Title:</b></label>
-                    <textarea placeholder="Dataset Title (200 Character Maximum" name="title" id="difTitle" rows="2" style="width:100%;" required maxlength="200"></textarea>
+                    <textarea placeholder="Dataset Title (200 Character Maximum)" name="title" id="difTitle" rows="2" style="width:100%;" required maxlength="200"></textarea>
                 </fieldset>
             </div>
 
@@ -95,7 +95,7 @@
                 </span>
             <label class="emRequired" for="difAbstract"><b>Dataset Abstract: </b></label>
                 
-                <textarea placeholder="Please provide a brief narrative describing: What, where, why, how and when the data will be or have been collected/generated?  (4000 Character Maximum)"required maxlength="4000" name="abstract" id="difAbstract" rows="6" style="width:100%;"></textarea> 
+                <textarea placeholder="Please provide a brief narrative describing: What, where, why, how, and when the data will be or have been collected/generated?  (4000 Character Maximum)"required maxlength="4000" name="abstract" id="difAbstract" rows="6" style="width:100%;"></textarea> 
             </fieldset>
             </div>
 
@@ -104,7 +104,7 @@
                     <span class="helpSection"> 
                         <img class="info" src="/images/icons/info32.png">
                         <div class="tooltiptext">
-                            <p>Datasets may be categorized based on the discipline for which they are collected. Please check all the boxes that categorize the discipline(s) for which your dataset will be created. Note that datasets can be multidisciplinary so select all disciplines that apply. If your field of study is not listed, please select  and specify additional details.</p>
+                            <p>Field of study new icon hover help text: Datasets may be categorized based on the discipline for which they are collected. Please check all the boxes that categorize the discipline(s) for which your dataset will be created. Note that datasets can be multidisciplinary so select all disciplines that apply. If your field of study is not listed, please specify additional details in the &ldquo;other&rdquo; field.</p>
                         </div>
                     </span>
                 <label for="difDatafor"><b>Field of Study:</b></label>
@@ -201,7 +201,7 @@
                 <span class="helpSection"> 
                     <img class="info" src="/images/icons/info32.png">
                     <div class="tooltiptext">
-                        <p>The approximate time period when the data is expected to be collected and generated based on the information provided in your GoMRI proposal. If these dates need to be modified after the form has been submitted.</p>
+                        <p>The approximate time period when the data is expected to be collected and generated based on the information provided in your GoMRI proposal.</p>
                     </div>
                 </span>
                <label><b>Estimated Data Sampling/Generation Period: </b></label>
@@ -260,10 +260,10 @@
             <label for="difNatRepo"><b>Identify a National Data Archive for your Dataset, if applicable: </b></label>        
           
            <input type="checkbox"  name="repoNodc" value="National Oceanographic Data Center" id="difNatRepo">National Oceanographic Data Center <a href="http://www.nodc.noaa.gov" target="_blank">(http://www.nodc.noaa.gov)</a><br />
-           <input type="checkbox"  name="repoUsepa" value="US EPA Storet" id="difNatRepo">US EPA Storet <a href="http://www.epa.gov/storet/wqx" target="_blank">(http://www.epa.gov/storet/wqx)</a><br />
-           <input type="checkbox"  name="repoGbif" value="Global Biodiversity Information Facility"  id="difNatRepo"  />Global Biodiversity Information Facility <a href="http://www.gbif.org" target="_blank">(http://www.gbif.org)</a><br />
-           <input type="checkbox"  name="repoNcbi" value="National Center for Biotechnology Information" id="difNatRepo"  />National Center for Biotechnology Information <a href="http://www.ncbi.nlm.nih.gov" target="_blank">(http://www.ncbi.nlm.nih.gov)</a><br />
-           <input type="checkbox"  name="repoDatagov" value="Data.gov Dataset Management System"  id="difNatRepo"  />Data.gov Dataset Management System <a href="http://dms.data.gov" target="_blank">(http://dms.data.gov)</a><br />
+           <input type="checkbox"  name="repoUsepa" value="US EPA Storet" id="difNatRepo">US EPA Storet<br>
+           <input type="checkbox"  name="repoGbif" value="Global Biodiversity Information Facility" id="difNatRepo"  />Global Biodiversity Information Facility<br>
+           <input type="checkbox"  name="repoNcbi" value="National Center for Biotechnology Information" id="difNatRepo"  />National Center for Biotechnology Information<br>
+           <input type="checkbox" name="repoDatagov" value="Data.gov Dataset Management System"  id="difNatRepo"  />Data.gov Dataset Management System<br>
            <table>
            <tr>
              <td>Others:</td>
@@ -279,7 +279,7 @@
                         <p>Datasets that contain human health information or personal identifying information may have ethical and/or privacy issues that prevent the data from being shared or distributed. If such conditions exist, please select &ldquo;yes&rdquo;. If uncertain, please select &ldquo;uncertain&rdquo; and provide a short description of potential issues. GRIIDC staff will then follow up to help determine if privacy or ethical issues apply to your dataset.</p>
                     </div>
                 </span>
-                <label for="difPrivacy"><b>Will this dataset include any data governed under the IRB or HIPPA, or data with other ethical issues?</b></label>        
+                <label for="difPrivacy"><b>Will this dataset include any data governed under the IRB or HIPAA, or data with other ethical issues?</b></label>        
                     <input type="radio"  name="privacy" id="difPrivacy" value="No"> No<br>
                     <input type="radio"  name="privacy" id="difPrivacy" value="Yes"> Yes<br>
                     <input type="radio"  name="privacy" id="difPrivacy" value="Uncertain"> Uncertain
@@ -322,7 +322,7 @@
             {% else %}
             <button type="button" id="btnSave" value="save">Save and Continue Later</button>
             <button type="button" id="btnSubmit" value="submit">Save and Submit to GRIIDC</button>
-            <button style="display:none;" type="button" id="btnReqUnlock" value="requnlock">Request to Unlock</button>
+            <button style="display:none;" type="button" id="btnReqUnlock" value="requnlock">Request Unlock</button>
             {% endif %}
             <button type="button" id="btnReset">Reset Form</button>
             <!--button type="button" id="btnTop">Top</button-->
@@ -333,7 +333,7 @@
         
     </td>
     <td></td>
-    <td class="cleair diftree">
+    <td class="cleair diftree" style="min-width:600px;">
     <table width="100%">
     {% if (isadmin == true) or (isdmanager == true) or (isdifapprover == true) %}
     <tr>
@@ -345,7 +345,7 @@
             </td>
             <td><label>Show Empty Folders</label><input type="radio" value="1" name="showempty" checked>Yes<input type="radio" value="0" name="showempty">No</td>
             <td>
-                <button style="width:80px;" id="fltReset">Reset</button></td></tr>
+                <button style="width:120px;" id="fltReset">Reset Filters</button></td></tr>
             <input type="hidden" id="fltResearcher">
             <tr>
                 <td>
@@ -361,7 +361,7 @@
                 <label>Search in Results</label><input placeholder="Search Title or UDI" style="width:95%;" id="fltResults">
             </td>
             
-            <td><button style="width:80px;" type="button" id="btnSearch">Search</button></td>
+            <td><button style="width:120px;" type="button" id="btnSearch">Search</button></td>
                 
             </tr>
             </table>
@@ -378,7 +378,7 @@
                 <span id="statusicon" title="DIF is locked and is in review. DIF has been completed and submitted to GRIIDC for review and approval."><img src="/images/icons/error.png">&nbsp;Submitted</span>&nbsp;- 
                 <span id="statusicon" title="DIF is locked and approved. DIF has been submitted to GRIIDC and reviewed and approved by GRIIDC. It is locked to prevent additional changes."><img src="/images/icons/tick.png">&nbsp;Approved</span>&nbsp;-
                 <span id="statusicon" title="This is a task that you are associated with through your GoMRI proposal or grant funding agreement that has datasets identified"><img src="/images/icons/folder.png">&nbsp;Task Folder</span>&nbsp;-
-                <span id="statusicon" title="This is a task that you are associated with through your GoMRI proposal or grant funding agreement that does not yet have datasets identified."><img style="-webkit-filter:grayscale(100%);" src="/images/icons/folder.png">&nbsp;Empty Folder</span>
+                <span id="statusicon" title="This is a task that you are associated with through your GoMRI proposal or grant funding agreement that does not yet have datasets identified."><img style="-webkit-filter:grayscale(100%);" src="/images/icons/folder_gray.png">&nbsp;Empty Folder</span>
                 
                 </h3>
                 <h1>Datasets</h1>
