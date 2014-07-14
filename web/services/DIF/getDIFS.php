@@ -136,7 +136,7 @@ function displayTaskStatus($tasks,$conn,$update=null,$personid=null,$filterstatu
         {
             if ($ShowEmpty)
             {         
-                $resArray[] = array("text"=>$taskTitle,"icon"=>"/images/icons/folder.png","state"=>array("opened"=>false,"disabled"=>true),"children"=>$childArr,"li_attr"=>array("title"=>$taskTitle));       
+                $resArray[] = array("text"=>$taskTitle,"icon"=>"/images/icons/folder_gray.png","state"=>array("opened"=>false,"disabled"=>true),"children"=>$childArr,"li_attr"=>array("title"=>$taskTitle));       
             }
         }
     }
