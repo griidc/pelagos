@@ -452,6 +452,7 @@ function build_where($filters,$registered = false) {
 }
 
 function create_search_temp($dbh,$search) {
+    $search = trim(preg_replace("/[\*\+\?\{\}\[\]\(\)\.\\$\^\\\\]/",'\\\\\0',$search));
     $stmt = $dbh->prepare("CREATE TEMP TABLE search_temp AS SELECT search_word FROM regexp_split_to_table('$search', '\\s+') AS search_word;");
     if (!$stmt->execute()) {
         $arr = $stmt->errorInfo();
