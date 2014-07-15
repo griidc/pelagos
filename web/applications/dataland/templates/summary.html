@@ -1,7 +1,11 @@
 <div style="position: relative;">
 <font size="3">
 <div style="float:right;" class="minitoolbar">
-	<span ><img width="40px" height="40px" id="downloadds" src="/data-discovery/includes/images/download-package.png"></span>
+    {% if dl_ok %}
+	    <span><img width="40px" height="40px" id="downloadds" src="{{baseurl}}/includes/images/download-package.png"></span>
+    {% else %}
+	    <span><img width="40px" height="40px" id="downloaddsden" src="{{baseurl}}/includes/images/download-package-grey.png"></span>
+    {% endif %}
 	<span ><img title="test" width="40px" height="40px" id="metadatadl" src="{{baseurl}}/includes/images/xmlc.png"></span>
 </div>
 

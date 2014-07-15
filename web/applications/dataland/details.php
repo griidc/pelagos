@@ -23,6 +23,7 @@ drupal_add_js('/data-discovery/js/search.js',array('type'=>'external'));
 
 drupal_add_css("$_SERVER[SCRIPT_NAME]/includes/css/status.css",array('type'=>'external'));
 
+$GLOBALS['griidc'] = parse_ini_file('/etc/griidc.ini',true);
 $GLOBALS['config'] = parse_ini_file('config.ini',true);
 
 require_once 'Twig_Extensions_GRIIDC.php';
@@ -287,12 +288,14 @@ var dlmap = new GeoViz();
             }
             //window.location = '<?php echo "$pageLessBaseUrl/data-discovery?filter=$udi";?>';
         });
+        
+        $("#downloaddsden").button();
 
         $("#metadatadl").button().click(function() {
             window.location = '<?php echo "$pageLessBaseUrl/metadata/$udi"; ?>';
         });
 
-      
+         
 
         $.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
             show: {
@@ -320,6 +323,20 @@ var dlmap = new GeoViz();
             },
             content: {
                 text: 'Download Dataset'
+            }
+        });
+        
+        $("#downloaddsden").qtip({
+            position: {
+                adjust: {
+                    method: "flip flip"
+                },
+                my: "bottom right",
+                at: "top left",
+                viewport: $(window)
+            },
+            content: {
+                text: 'This dataset is not currently available for download.'
             }
         });
 
@@ -434,7 +451,16 @@ var dlmap = new GeoViz();
         </td>
         <td style="padding:10px;" width="60%" valign="top">
             <div id="summary">
-            <?php  echo $twig->render('summary.html', array('pdata' => $prow,'mdata' => $mrow,'mpdata' => $mprow, 'baseurl' => $_SERVER['SCRIPT_NAME'])); ?>
+            <?php
+            $dl_ok = 0;
+            # if either metadata has been approved, or we are not enforcing rule, or flag not set in ini altogether THEN ok to download, otherwise not.
+            if( ($prow['metadata_status'] == 'Accepted') or (!(( isset($GLOBALS['griidc']['syswide']['enforceApprovedMetadata'] ) and ( $GLOBALS['griidc']['syswide']['enforceApprovedMetadata'] == 1 ))))) {
+                $dl_ok = 1;
+            } else {
+                $dl_ok = 0;
+            }
+            echo $twig->render('summary.html', array('pdata' => $prow,'mdata' => $mrow,'mpdata' => $mprow, 'baseurl' => $_SERVER['SCRIPT_NAME'], 'dl_ok' => $dl_ok));
+            ?>
             </div>
         </td>
         </tr>
