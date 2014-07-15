@@ -441,6 +441,20 @@ $app->get('/download/:udi', function ($udi) use ($app) {
         $app->render('html/download_error.html',$stash);
         exit;
     }
+
+    $approved_md_udis=getApprovedMetadataUDIs(); 
+    $dl_ok = 0;
+    if( (isset($approved_md_udis["$udi"])) or (!(( isset($GLOBALS['griidc']['syswide']['enforceApprovedMetadata'] ) and ( $GLOBALS['griidc']['syswide']['enforceApprovedMetadata'] == 1 ))))) {
+        $dl_ok = 1;
+    } else {
+        $dl_ok = 0;
+    }
+    if ($dl_ok == 0) {
+        $stash['error_message'] = "This dataset can not be downloaded because its metadata has not been approved.";
+        $app->render('html/download_error.html',$stash);
+        exit;
+    }
+
     $dat_file = $GLOBALS['storage']['storage']['data_store']."/$dataset[udi]/$dataset[udi].dat";
     if (file_exists($dat_file)) {
         
@@ -485,8 +499,16 @@ $app->get('/initiateWebDownload/:udi', function ($udi) use ($app) {
         $datasets = get_identified_datasets(getDBH('GOMRI'),array("udi=$udi"));
     }
     $dataset = $datasets[0];
+    
+    $approved_md_udis=getApprovedMetadataUDIs(); 
+    $dl_ok = 0;
+    if( (isset($approved_md_udis["$udi"])) or (!(( isset($GLOBALS['griidc']['syswide']['enforceApprovedMetadata'] ) and ( $GLOBALS['griidc']['syswide']['enforceApprovedMetadata'] == 1 ))))) {
+        $dl_ok = 1;
+    } else {
+        $dl_ok = 0;
+    }
 
-    if ($dataset['access_status'] != "Restricted" and $dataset['access_status'] != "Approval") {
+    if ($dataset['access_status'] != "Restricted" and $dataset['access_status'] != "Approval" and $dl_ok == 1) {
         $dat_file = $GLOBALS['storage']['storage']['data_store']."/$dataset[udi]/$dataset[udi].dat";
         if (file_exists($dat_file)) {
             $env = $app->environment();
