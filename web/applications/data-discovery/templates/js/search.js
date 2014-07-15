@@ -240,6 +240,7 @@ function addTree() {
         filter: "",
         onload: "if(!tree.selected){showDatasets($('#by-input').val(),$('#id-input').val(),'');}",
         show_other_sources: false,
+        on_filter_by_change: "$('#by-input').val('');$('#id-input').val('');",
 
         yr1_folder_color: "#00A",
         yr1_folder_action: "$('#by-input').val('YR1'); $('#id-input').val('1'); showDatasets('YR1',1);",
