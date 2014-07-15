@@ -306,7 +306,7 @@
         </fieldset>
             <div id="diftoolbar" class="ui-widget-header ui-corner-all">
             <center>
-            {% if isdifapprover %}
+            {% if (isdifapprover) and (not isadmin) %}
             <button type="button" id="btnApprove" value="approve">Approve</button>
             <button type="button" id="btnReject" value="reject">Reject</button>
             <button type="button" id="btnUpdate" value="update">Update</button>
@@ -333,7 +333,7 @@
         
     </td>
     <td></td>
-    <td class="cleair diftree" style="min-width:600px;">
+    <td class="cleair diftree">
     <table width="100%">
     {% if (isadmin == true) or (isdmanager == true) or (isdifapprover == true) %}
     <tr>

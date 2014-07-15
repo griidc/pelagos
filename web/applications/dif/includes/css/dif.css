@@ -1,3 +1,7 @@
+.ui-button:focus {
+  outline: none;
+}
+
 .openlayers-map img{ margin:none }
 
 .statustext
@@ -41,7 +45,6 @@ label:not(.button)
 
 .tooltiptext
 {
-    font-size:1.3em;
     display: none;
 }
 
@@ -111,10 +114,11 @@ label:not(.button)
 .customqtip
 {
     font-family:Sans-serif;
-    line-height: 1.5em;
+    line-height: 1.2em;
+    font-size:1.2em;
 }
 
 .diftree
 {
-  vertical-align: top; width:40%; height:500px;overflow-y:auto;overflow-x:hidden;  
+  vertical-align: top; width:40%; height:500px;overflow-y:auto;overflow-x:hidden;min-width:600px; 
 }

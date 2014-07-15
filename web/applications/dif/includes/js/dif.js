@@ -130,9 +130,10 @@ $(document).ready(function()
     $("#difForm").validate({
         ignore: ".ignore",
         messages: {
-            geoloc: "Click tha button!",
+            geoloc: "Click on Spatial Wizard Button!",
         },
         submitHandler: function(form) {
+            $("#difTasks").prop('disabled', false);
            saveDIF();
         }
     });
@@ -316,6 +317,7 @@ function saveDIF()
                             {
                                 scrollToTop();
                                 treeFilter();
+                                
                             }
                         }
                     }
@@ -335,6 +337,7 @@ function formReset()
         $('#btnSubmit').prop('disabled',false);
         $('#btnSave').prop('disabled',false);
         geowizard.haveSpatial(false);
+        scrollToTop();
     });
 }
 
@@ -391,6 +394,7 @@ function loadDIFS(Status,Person,ShowEmpty)
         data: {'function':'loadDIFS','status':Status,'person':Person,'showempty':ShowEmpty}
         }).done(function(json) {
         makeTree(json);
+        
     });
 }
 
@@ -405,9 +409,12 @@ function makeTree(json)
             'search_leaves_only': true,
             'fuzzy' : false
         },
-    });
-    var searchValue = $('#fltResults').val();
-    $('#diftree').jstree(true).search(searchValue);
+    })
+    .on('loaded.jstree', function (e, data) {
+        var searchValue = $('#fltResults').val();
+        $('#diftree').jstree(true).search(searchValue);
+    })
+    
 }
 
 function loadTasks()

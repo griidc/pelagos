@@ -244,7 +244,7 @@ function postDIF($fielddata)
         }
         else if ($frmButton == 'submit')
         {
-            $message = '<div><img src="/images/icons/info32.png"><p>Congratulations! You have successfully submitted a DIF to GRIIDC. THE UDI for this dataset is '.$UDI.'.<br>The DIF will now be reviewed by GRIIDC staff and is locked to prevent editing.<br> To unlock your DIF to make changes, you must return to the DIF webpage. You can then load the DIF form you wish to edit from the datasets list and select &quot;Request Unlock&quot; from the bottom of the form.</p></div>';
+            $message = '<div><img src="/images/icons/info32.png"><p>Congratulations! You have successfully submitted a DIF to GRIIDC. THE UDI for this dataset is '.$UDI.'.<br>The DIF will now be reviewed by GRIIDC staff and is locked to prevent editing.<br> To unlock your DIF to make changes, you must return to the DIF webpage.<br> You can then load the DIF form you wish to edit from the datasets list and select &quot;Request Unlock&quot; from the bottom of the form.</p></div>';
             $msgtitle = 'DIF Submitted';
             
             $sendMail = sendSubmitMail($submitted,$UDI,'GRIIDC DIF Submitted','submitMail.html');
