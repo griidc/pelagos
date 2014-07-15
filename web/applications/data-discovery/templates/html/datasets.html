@@ -17,8 +17,11 @@ var tabIndex = 0;
                     {% if restricted_datasets %}
                         <li style="text-align:center"><a href="#tab-2">Datasets Available<br>with Restrictions ({{restricted_datasets|length}})</span></a></li>
                     {% endif %}
+                    {% if md_under_review_datasets %}
+                        <li style="text-align:center"><a href="#tab-3">Datasets w/Metadata<br>Under Review ({{md_under_review_datasets|length}})</a></li>
+                    {% endif %}
                     {% if identified_datasets %}
-                        <li style="text-align:center"><a href="#tab-3">Datasets Expected<br>to be Available Soon ({{identified_datasets|length}})</a></li>
+                        <li style="text-align:center"><a href="#tab-4">Datasets Expected<br>to be Available Soon ({{identified_datasets|length}})</a></li>
                     {% endif %}
                 </ul>
             </div>
@@ -141,10 +144,56 @@ var tabIndex = 0;
             </div> <!-- tab2 -->
             <script>tabIndex++</script>
         {% endif %}
+        
+        {% if md_under_review_datasets %}
+            <script>datasets[tabIndex] = new Array();</script>
+            <div id="tab-3" class="tab row">
+                <div class="cell">
+                    <div class="viewport">
+                        <div class="overview">
+                            <table class="datasets">
+                                {% for dataset in md_under_review_datasets %}
+                                    {% if dataset.the_geom %}
+                                        <script>
+                                            var ds = { 'udi': '{{dataset.udi}}', 'geom': '{{dataset.the_geom}}' };
+                                            datasets[tabIndex].push(ds);
+                                        </script>
+                                    {% endif %}
+                                    <tr udi="{{dataset.udi}}">
+                                        <td valign="top" class="direct-download">
+                                            <img src="{{baseUrl}}/includes/images/download-package-grey.png" title="download unavailable">
+                                        </td>
+                                        <td class="info">
+                                            {{dataset.dataset_originator}}.
+                                            {{dataset.year}}.
+                                            <a href="/data/{{dataset.udi}}" target="_blank">{{dataset.title}}</a>.
+                                            {% if dataset.project %}
+                                                {{dataset.project.Title | trim}}.
+                                            {% endif %}
+                                            {% if dataset.doi %}
+                                                DOI: <a href="http://dx.doi.org/{{dataset.doi}}" target="_blank">{{dataset.doi}}</a>
+                                            {% endif %}
+                                            <div class="details" style="display:none;"/>
+                                            <div class="attributes">
+                                                [<a href="javascript:showDatasetDetails('{{dataset.udi}}');" class="details_link">Show Details</a>]
+                                                {% if dataset.dataset_download_size %}
+                                                    [Size: <span style="{% if dataset.dataset_download_size > 1073741824 %}color:red;{% endif %}">{{dataset.filesize}}</span>]
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </div> <!-- overview -->
+                    </div> <!-- viewport -->
+                </div> <!-- cell -->
+            </div> <!-- tab3 -->
+            <script>tabIndex++</script>
+        {% endif %}
 
         {% if identified_datasets %}
             <script>datasets[tabIndex] = new Array();</script>
-            <div id="tab-3" class="tab row" style="height:100%; padding:0">
+            <div id="tab-4" class="tab row" style="height:100%; padding:0">
                 <div class="cell">
                     <div class="viewport">
                         <div class="overview">
@@ -181,7 +230,7 @@ var tabIndex = 0;
                         </div> <!-- overview -->
                     </div> <!-- viewport -->
                 </div> <!-- cell -->
-            </div> <!-- tab3 -->
+            </div> <!-- tab4 -->
             <script>tabIndex++</script>
         {% endif %}
 

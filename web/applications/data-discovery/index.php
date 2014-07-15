@@ -36,6 +36,7 @@ date_default_timezone_set('UTC');
 # drupal module.
 drupal_add_library('system', 'ui.tabs');
 
+$GLOBALS['griidc'] = parse_ini_file('/etc/griidc.ini',true);
 $GLOBALS['config'] = parse_ini_file('config.ini',true);
 $GLOBALS['storage'] = parse_ini_file('/etc/griidc/storage.ini',true);
 
@@ -174,16 +175,18 @@ $app->get('/datasets/:filter/:by/:id/:geo_filter', function ($filter,$by,$id,$ge
     }
 
     $unrestricted_datasets = get_registered_datasets(getDBH('GOMRI'),array_merge($reg_filters,array('restricted=0')),$filter,$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
-    $unrestricted_datasets_nonApprovedMetadata = array();
+    $md_under_review_datasets = array();
     
     foreach ($unrestricted_datasets as $dataset) {
         add_download_size($dataset);
         add_project_info($dataset);
         $udi = $dataset['udi'];
-        if(isset($approvedMetadata[$udi])) {
-            $stash['unrestricted_datasets'][] = $dataset;
+        # if either metadata has been approved, or we are not enforcing rule, or flag not set in ini altogether THEN do usual case
+        if( (isset($approvedMetadata[$udi])) or (!(( isset($GLOBALS['griidc']['syswide']['enforceApprovedMetadata'] ) and ( $GLOBALS['griidc']['syswide']['enforceApprovedMetadata'] == 1 ))))) {
+             $stash['unrestricted_datasets'][] = $dataset;
+        # otherwise  move the dataset to the $md_under_review_datasets array 
         } else {
-            array_unshift($unrestricted_datasets_nonApprovedMetadata,$dataset);
+            array_push($md_under_review_datasets,$dataset);
         }
     }
 
@@ -196,11 +199,16 @@ $app->get('/datasets/:filter/:by/:id/:geo_filter', function ($filter,$by,$id,$ge
     }
 
     $identified_datasets = get_identified_datasets(getDBH('GOMRI'),$dif_filters,$filter,$GLOBALS['config']['DataDiscovery']['identifiedOrderBy']);
-    array_merge($identified_datasets,$unrestricted_datasets_nonApprovedMetadata);
     foreach ($identified_datasets as $dataset) {
         add_project_info($dataset);
         $stash['identified_datasets'][] = $dataset;
     }
+
+    foreach ($md_under_review_datasets as $dataset) {
+        add_project_info($dataset);
+        $stash['md_under_review_datasets'][] = $dataset;
+    }
+
 
     $stash['filt'] = $filter;
 
