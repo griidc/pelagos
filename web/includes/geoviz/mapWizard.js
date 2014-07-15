@@ -75,7 +75,7 @@ function MapWizard(json)
     function initWiz()
     {
 
-        $("#divMapWizard").append('<div id="mapwiz" style="display:none;">        <table id="maptoolstbl" width="100%" height="100%" border="0">        <tr valign="top">        <td width="80%" >        <!--Make sure the width and height of the map are 100%-->             </td>        <td width="20%">        <table width="100%" height="100%" border="0">        <tr>        <!--        <td align="center" valign="top" height="90%" style="position:relative;">        <label for="coordlist">Coordinate List</label>        <textarea id="coordlist" style="width:95%;position:absolute;left:5px;right:5px;top:20px;bottom:5px;"></textarea>        </td>        -->        <td align="center" valign="top">        <div id="coordtoolbar" class="ui-widget-header ui-corner-all">        <label id="coordlistLbl" for="coordlist">Coordinate List</label>        <textarea id="coordlist" style="width:95%;"></textarea>        <button style="width: 100%;" id="drawOnMap">Render on Map</button>        </div>        </td>        </tr>        <tr>        <td width="100%">        <h3>        <span id="wizDrawMode">Navigation</span> Mode</h3>        <fieldset>        <div id="maphelptxt" style="position:relative;overflow-x:hidden;overflow-y:auto;">                        </div>        </fieldset>        </td>                </tr>        <tr>        <td>        <div id="wiztoolbar" class="ui-widget-header ui-corner-all">        <button style="width: 100%;font-weight:bold;" id="saveFeature">Save and Finish</button>        <button style="width: 100%;" id="startDrawing">Start Drawing</button>        <button style="width: 100%;" id="deleteFeature">Delete</button>        <button style="width: 100%;" id="startOver">Change Mode</button>        <button style="width: 100%;" id="exitDialog">Restart Wizard</button>        </div>        </td>        </tr>        </table>        </td>        </tr>        </table>        </div>');               
+        $("#divMapWizard").append('<div id="mapwiz" style="display:none;">        <table id="maptoolstbl" width="100%" height="100%" border="0">        <tr valign="top">        <td width="80%" >        <!--Make sure the width and height of the map are 100%-->             </td>        <td width="20%">        <table width="100%" height="100%" border="0">        <tr>        <!--        <td align="center" valign="top" height="90%" style="position:relative;">        <label for="coordlist">Coordinate List</label>        <textarea id="coordlist" style="width:95%;position:absolute;left:5px;right:5px;top:20px;bottom:5px;"></textarea>        </td>        -->        <td align="center" valign="top">        <div id="coordtoolbar" class="ui-widget-header ui-corner-all">        <label id="coordlistLbl" for="coordlist">Coordinate List</label>        <textarea id="coordlist" style="width:95%;"></textarea>        <button style="width: 100%;" id="drawOnMap">Render on Map</button>        </div>        </td>        </tr>        <tr>        <td width="100%">        <h3>        <span id="wizDrawMode">Navigation</span> Mode</h3>        <fieldset>        <div id="maphelptxt" style="position:relative;overflow-x:hidden;overflow-y:auto;">                        </div>        </fieldset>        </td>                </tr>        <tr>        <td>        <div id="wiztoolbar" class="ui-widget-header ui-corner-all">        <span><button style="width: 100%;"  id="saveFeature">Save and Finish</button></span>        <button style="width: 100%;" id="startDrawing">Start Drawing</button>        <span><button style="width: 100%;" id="deleteFeature">Delete</button></span>        <button style="width: 100%;" id="startOver">Change Mode</button>        <button style="width: 100%;" id="exitDialog">Restart Wizard</button>        </div>        </td>        </tr>        </table>        </td>        </tr>        </table>        </div>');               
         
         
         
@@ -105,14 +105,24 @@ function MapWizard(json)
         });    
 
         $.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
-            
+            show: {
+                event: 'mouseenter mouseover'
+            },
+            hide: {
+                event: 'mouseleave mouseout click'
+            },
             position: {
                 adjust: {
                     method: "flip flip"
                 },
-                my: "bottom right",
-                at: "top left",
+                my: "right bottom",
+                at: "center left",
                 viewport: $(window)
+            },
+            style: 
+            { 
+                classes: 'qtip-tipped qtip-shadow customqtip'
+    
             }
         });        
         
@@ -394,6 +404,7 @@ function MapWizard(json)
     
     function renderOnMap()
     {
+        $('#saveFeature').button("disable");
         wizGeoViz.stopDrawing();
         wizGeoViz.removeAllFeaturesFromMap();
         whatIsCoordinateOrder();
@@ -432,6 +443,10 @@ function MapWizard(json)
             
         $('#olmap').on('featureAdded', function(e, eventInfo) { 
             $('#coordlist').val(eventInfo);
+            if (eventInfo.trim() != '')
+            { $('#saveFeature').button("enable"); } 
+            else
+            { $('#saveFeature').button("disable"); } 
         });
         
         $('#olmap').on('modeChange', function(e, eventInfo) { 
@@ -474,14 +489,15 @@ function MapWizard(json)
         });
   
         $("#saveFeature")
-        .qtip({    content: {
-            text: 'Saves extent to the metadata editor and closes wizard'
-        }})
-        .button({ icons: { primary: "ui-icon ui-icon-disk"}})
+        .button({ icons: { primary: "ui-icon ui-icon-disk"}},{disabled: true})
         .click(function()
         {
-            $(this).hide();
             saveFeature();
+        })
+        .parent()
+        .attr('title','Saves extent to the metadata editor and closes wizard')
+        .qtip({    
+            content: $(this).attr('title')
         });
         
         
@@ -502,15 +518,20 @@ function MapWizard(json)
             text: 'Puts map in drawing mode, only one feature can be drawn on the map at a time'
         }});
         
-        $("#deleteFeature").button({ icons: { primary: "ui-icon ui-icon-trash"}}).click(function()
+        $("#deleteFeature").button({ icons: { primary: "ui-icon ui-icon-trash"}},{disabled: true}).click(function()
         {
-            wizGeoViz.removeAllFeaturesFromMap();
-            $('#coordlist').val('');
-            //wizGeoViz.deleteSelected();
+            //wizGeoViz.removeAllFeaturesFromMap();
+            //$('#coordlist').val('');
+            wizGeoViz.deleteSelected();
         })
-        .qtip({    content: {
-            text: 'Deletes selected feature'
-        }});
+        .parent()
+        .attr('title','Deletes selected feature')
+        .qtip({    
+            content: $(this).attr('title')
+        });
+        // .qtip({    content: {
+            // text: 'Deletes selected feature'
+        // }});
         
         $("#exitDialog").button({ icons: { primary: "ui-icon ui-icon-refresh"}}).click(function()
         {
@@ -519,7 +540,7 @@ function MapWizard(json)
             $(gmlField).val('');
             $('#coordlist').val('');
             closeDialog();
-            showWizard();
+            showSpatialDialog();
         })
         .qtip({    content: {
             text: 'Restart wizard from beginning'
@@ -585,18 +606,21 @@ function MapWizard(json)
     {
         var mapHelpText = "Drag the map to explore, needs more text.";
         $("#maphelptxt").html(mapHelpText);
+        $("#deleteFeature").button('disable');
     }
     
     function showDrawingMode ()
     {
         var mapHelpText = "Click to add points, double-click to finish drawing feature. Click feature to select and modify. Drag hollow circles to move vertexes, drag solid midpoint circles to create new vertexes. Select feature and click Delete button to delete feature. Feature points can be modified or deleted in the Coordinate List text box.";
         $("#maphelptxt").html(mapHelpText);
+        $("#deleteFeature").button('disable');
     }
     
     function showModifyMode ()
     {
         var mapHelpText = "Click feature to edit or edit Coordinate List directly. Drag hollow circles to move vertexes, draw solid midpoint circles to create new vertexes.";
         $("#maphelptxt").html(mapHelpText);
+        $("#deleteFeature").button('enable');
     }
     
     function verifyMap()
