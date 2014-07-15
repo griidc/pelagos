@@ -48,7 +48,11 @@ function insertTree(tree) {
 
     if (typeof tree === 'undefined' || typeof tree.start === 'undefined') {
         document.write('            <strong>' + tree.label + '</strong>');
-        document.write('            <select id="treetype-selector" onchange="trees[\'' + tree.name + '\'].selected=null;trees[\'' + tree.name + '\'].type=this.value;updateTree(trees[\'' + tree.name + '\']);">');
+        var on_filter_by_change = '';
+        if (typeof tree.on_filter_by_change !== 'undefined') {
+            on_filter_by_change = tree.on_filter_by_change;
+        }
+        document.write('            <select id="treetype-selector" onchange="' + on_filter_by_change + 'trees[\'' + tree.name + '\'].selected=null;trees[\'' + tree.name + '\'].type=this.value;updateTree(trees[\'' + tree.name + '\']);">');
         document.write('                <option value="ra"');
         if (tree.type == "ra") document.write(' selected');
         document.write('>Research Award</option>');
