@@ -442,7 +442,7 @@ function build_where($filters,$registered = false) {
                     $WHERE .= " AND p.\"FundSrc\" $matches[2] $matches[3]";
                     break;
                 case 'geo_filter':
-                    $WHERE .= " AND ST_Intersects('SRID=4326;$matches[3]'::geometry,geom)";
+                    $WHERE .= " AND ST_Intersects('SRID=4326;$matches[3]'::geometry,md.geom)";
                     break;
             }
         }
