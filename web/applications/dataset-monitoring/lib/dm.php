@@ -18,7 +18,7 @@ function getDBH($db) {
 
 function getTasksAndDatasets($projects) {
     $enforceMetadataRule = 0;
-    if( (isset($GLOBALS['griidc']['syswide']['enforceApprovedMetadata'] ) and ( $GLOBALS['griidc']['syswide']['enforceApprovedMetadata'] == 1 )) ) {
+    if( (isset($GLOBALS['griidc']['syswide']['enforce_approved_metadata'] ) and ( $GLOBALS['griidc']['syswide']['enforce_approved_metadata'] == 1 )) ) {
         $enforceMetadataRule = 1;
     } else {
         $enforceMetadataRule = 0;
