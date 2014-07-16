@@ -55,6 +55,7 @@ function MapWizard(json)
         $(divSpatialWizard).html('<fieldset><div class="ui-widget-header ui-corner-all"><button style="color:#039203;font-size:larger;width:100%;" id="geowizBtn" type="button">Define Spatial Extent</button></div><p>'+buttonText+'</p></fieldset>').show();
         
         $(divNonSpatial).hide();
+        $('#'+json.descField).hide().prop('disabled',true); 
         
         $(document.body).append('<div id="divMapWizard"></div>');
 
@@ -63,6 +64,23 @@ function MapWizard(json)
         $("#divMapWizard").append('<div id="provideDesc" style="display:none;"><h2>Please provide a short statement describing why this dataset does not have a spatial component.</h2><p><i>Example - "Dataset contains laboratory measurements of oil degradation, no field sampling involved"</i></p><textarea class="required" id="wizDesc" cols="80" rows="5"></textarea><br></div>');
         
         $("#divMapWizard").append('<div id="helpinfo" title="Spatial Extent Wizard - 4" style="display:none;width:1000px"><p>Define the spatial extent of your dataset by providing a list of coordinates or drawing on the map. Select the method and then the geometry type that best represents the spatial extent of your dataset.</p><div id="helptoolbar" style="font-size:100%;" class="ui-widget-header ui-corner-all"><div style="display:table;width:100%;"><div id="featMode" style="display:table-row;"><div style="display:table-cell;"><input type="radio" id="featPaste" name="featMode"><label for="featPaste">Insert Coordinate Text</label></div><div style="display:table-cell;"><input type="radio" id="featDraw" name="featMode" checked="checked"><label for="featDraw">Draw on the Map</label></div></div></div><div style="display:table;width:100%;"><div id="drawType" style="display:table-row;"><!--<div style="display:table-cell;"><input type="radio" id="drawBox" name="drawType"><label for="drawBox">Box</label></div>--><div style="display:table-cell;"><input class="button" type="radio" id="drawPolygon" name="drawType" checked="checked"><label for="drawPolygon">Polygon</label></div><div style="display:table-cell;"><input type="radio" id="drawLine" name="drawType"><label for="drawLine">Line</label></div><div style="display:table-cell;"><input type="radio" id="drawPoint" name="drawType"><label for="drawPoint">Point</label></div></div></div></div></div>');
+        
+        $(divSmallMap).on('gmlConverted', function(e, eventObj) {
+            smlGeoViz.removeAllFeaturesFromMap();
+            var addedFeature = smlGeoViz.addFeatureFromWKT(eventObj);
+            smlGeoViz.gotoAllFeatures();
+        });
+        
+        $(gmlField).change(function() {
+            smlGeoViz.goHome();
+            smlGeoViz.removeImage();
+            smlGeoViz.removeAllFeaturesFromMap();
+            smlGeoViz.gmlToWKT($(gmlField).val());
+            if ($(gmlField).val() == "")
+            {
+                //difGeoViz.addImage('includes/images/notdefined.png',1);
+            }
+        }); 
         
         $("#geowizBtn").button().click(function()
         {
@@ -87,22 +105,7 @@ function MapWizard(json)
         //.html('<div id="olmap" style="width: 400px;height: 500px"></div>');
         wizGeoViz.initMap('olmap',{'onlyOneFeature':true,'allowModify':true,'allowDelete':true});
         
-        $(divSmallMap).on('gmlConverted', function(e, eventObj) {
-            smlGeoViz.removeAllFeaturesFromMap();
-            var addedFeature = smlGeoViz.addFeatureFromWKT(eventObj);
-            smlGeoViz.gotoAllFeatures();
-        });
-        
-        $(gmlField).change(function() {
-            smlGeoViz.goHome();
-            smlGeoViz.removeImage();
-            smlGeoViz.removeAllFeaturesFromMap();
-            smlGeoViz.gmlToWKT($(gmlField).val());
-            if ($(gmlField).val() == "")
-            {
-                //difGeoViz.addImage('includes/images/notdefined.png',1);
-            }
-        });    
+          
 
         $.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
             show: {
@@ -243,12 +246,15 @@ function MapWizard(json)
         if (Spatial)
         { 
             $('#'+json.divNonSpatial).show(); 
-            $('#'+json.divSpatial).hide(); 
+            $('#'+json.descField).hide().prop('disabled',false); 
+            $('#'+json.gmlField).hide().prop('disabled',true); 
         }
         else
         { 
             $('#'+json.divSpatial).show(); 
-            $('#'+json.divNonSpatial).hide(); 
+            $('#'+json.divNonSpatial).hide();
+            $('#'+json.descField).hide().prop('disabled',true); 
+            $('#'+json.gmlField).hide().prop('disabled',false);             
         }
     }
 
