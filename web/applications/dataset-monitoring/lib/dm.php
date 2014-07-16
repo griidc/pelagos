@@ -17,6 +17,13 @@ function getDBH($db) {
 }
 
 function getTasksAndDatasets($projects) {
+    $enforceMetadataRule = 0;
+    if( (isset($GLOBALS['griidc']['syswide']['enforceApprovedMetadata'] ) and ( $GLOBALS['griidc']['syswide']['enforceApprovedMetadata'] == 1 )) ) {
+        $enforceMetadataRule = 1;
+    } else {
+        $enforceMetadataRule = 0;
+    }
+
     $SELECT = "SELECT DISTINCT status, dataset_uid, d.dataset_udi AS udi,
                CASE WHEN r.dataset_title IS NULL THEN title ELSE r.dataset_title END AS title,
 
@@ -38,7 +45,8 @@ function getTasksAndDatasets($projects) {
                END AS metadata,
 
                CASE WHEN dataset_download_status = 'Completed' THEN
-                        CASE WHEN access_status = 'None' THEN 10
+                        CASE WHEN (metadata_status <> 'Accepted' AND '$enforceMetadataRule' = '1') THEN 4
+                             WHEN access_status = 'None' THEN 10
                              WHEN access_status = 'Approval' THEN 9
                              WHEN access_status = 'Restricted' THEN 8
                              ELSE 0

@@ -12,6 +12,7 @@ require_once $GLOBALS['libraries']['GRIIDC']['directory'].'/php/rpis.php';
 
 require_once 'lib/dm.php';
 
+$GLOBALS['griidc'] = parse_ini_file('/etc/griidc.ini',true);
 $GLOBALS['config'] = parse_ini_file('config.ini',true);
 
 require_once 'lib/Twig_Extensions_GRIIDC.php';
