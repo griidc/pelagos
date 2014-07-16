@@ -314,7 +314,7 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
     {
 		case 'gmd:fileIdentifier':
         {
-            $node->nodeValue = str_replace(':','-',fieldvalue);
+            $node->nodeValue = str_replace(':','-',$fieldvalue);
             break;
         }
         case 'gmd:MD_CharacterSetCode':
@@ -380,14 +380,14 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
 			
 			$fieldvalue = htmlspecialchars_decode($fieldvalue, ENT_NOQUOTES | 'ENT_XML1');
 			$polygonDoc = new DomDocument('1.0','UTF-8');
-			$polygonDoc->loadXML($fieldvalue);
+			$polygonDoc->loadXML($fieldvalue,LIBXML_NOERROR);
 			
 			$polygonNode = $polygonDoc->documentElement;
 			
-			if ($polygonNode->getAttribute ='gml:id' == "")
-			{	
-				$polygonNode->setAttribute('gml:id','Geometry1');
-			}
+			// if ($polygonNode->getAttribute ='gml:id' == "")
+			// {	
+				// $polygonNode->setAttribute('gml:id','Geometry1');
+			// }
 			
 			//$one = new DOMDocument;
 			//$two = new DOMDocument;
@@ -521,10 +521,10 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
                 $elements2 = $xpathdoc2->query($beforeXpath);
                 $beforeNode = $elements2->item(0);
                 
-                var_dump($beforeNode->nodeName);
-                var_dump($elements2->length);
+                //var_dump($beforeNode->nodeName);
+                //var_dump($elements2->length);
                 
-                var_dump($beforeNode->textContent);
+                //var_dump($beforeNode->textContent);
                 
                 if ($elements2->length > 0 AND $beforeNode->textContent == "theme")
                 {
@@ -557,7 +557,7 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
                 $elements2 = $xpathdoc2->query($beforeXpath);
                 $beforeNode = $elements2->item(0);
                 
-                var_dump($beforeNode->nodeName);
+                //var_dump($beforeNode->nodeName);
                 
                 if ($elements2->length > 0)
                 {
@@ -617,10 +617,10 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
                 $elements2 = $xpathdoc2->query($beforeXpath);
                 $beforeNode = $elements2->item(0);
                 
-                var_dump($beforeNode->nodeName);
-                var_dump($elements2->length);
+                //var_dump($beforeNode->nodeName);
+                //var_dump($elements2->length);
                 
-                var_dump($beforeNode->textContent);
+                //var_dump($beforeNode->textContent);
                 
                 if ($elements2->length > 0 AND $beforeNode->textContent == "place")
                 {
@@ -652,7 +652,7 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
                 $elements2 = $xpathdoc2->query($beforeXpath);
                 $beforeNode = $elements2->item(0);
                 
-                var_dump($beforeNode->nodeName);
+                //var_dump($beforeNode->nodeName);
                 
                 if ($elements2->length > 0)
                 {
