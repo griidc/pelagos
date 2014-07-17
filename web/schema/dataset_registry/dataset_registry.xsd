@@ -327,6 +327,7 @@
             <xs:enumeration value="http"/>
             <xs:enumeration value="ftp"/>
             <xs:enumeration value="sftp"/>
+            <xs:enumeration value="gridftp"/>
             <!--
             these methods are not yet available
             <xs:enumeration value="tds"/>
