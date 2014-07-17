@@ -496,6 +496,12 @@ if (!$opts{'t'} and ($duplicate_count or $invalid_count or $update_count or $cre
     sendmail(%mail) or die $Mail::Sendmail::error;
 }
 
+if (!$opts{'t'} and ($create_count or $update_count)) {
+    # trigger filer
+    writelog($log,"Triggering filer to process new and updated registries.");
+    system('/usr/local/griidc/filer/trigger-filer');
+}
+
 writelog($log,"Registry Harvestor finished for: $source");
 
 if ($opts{'d'}) {
