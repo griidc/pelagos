@@ -10,6 +10,11 @@ $GLOBALS['IS_MAP'] = array(
     '!=' => 'IS NOT'
 );
 
+$GLOBALS['IS_NULL_INVERTED_MAP'] = array(
+    '=' => 'IS NOT NULL AND',
+    '!=' => 'IS NULL OR'
+);
+
 $GLOBALS['NULL_MAP'] = array(
     'null' => 'NULL',
     'NULL' => 'NULL',
@@ -314,13 +319,13 @@ function build_where($filters,$registered = false) {
         if (preg_match(FILTER_REG,$filter,$matches)) {
             switch (strtolower($matches[1])) {
                 case 'registry_id':
-                    $WHERE .= " AND r.registry_id " . $GLOBALS['PGSQL_LIKE_MAP'][$matches[2]] . " '$matches[3]'";
+                    $WHERE .= " AND (r.registry_id " . $GLOBALS['IS_NULL_INVERTED_MAP'][$matches[2]] . " r.registry_id " . $GLOBALS['PGSQL_LIKE_MAP'][$matches[2]] . " '$matches[3]')";
                     break;
                 case 'registry_ids':
                     $registry_ids = preg_split('/,/',$matches[3]);
                     $registry_id_filters = array();
                     foreach ($registry_ids as $registry_id) {
-                        $registry_id_filters[] = "r.registry_id " . $GLOBALS['PGSQL_LIKE_MAP'][$matches[2]] . " '$registry_id%'";
+                        $registry_id_filters[] = "(r.registry_id " . $GLOBALS['IS_NULL_INVERTED_MAP'][$matches[2]] . " r.registry_id " . $GLOBALS['PGSQL_LIKE_MAP'][$matches[2]] . " '$registry_id%')";
                     }
                     if ($matches[2] == '!=') { $glue = ' AND '; }
                     else { $glue = ' OR '; }
