@@ -137,7 +137,7 @@ $app->get('/datasets/:filter/:by/:id/:geo_filter', function ($filter,$by,$id,$ge
     $stash['registered_datasets'] = array();
     $stash['identified_datasets'] = array();
 
-    $reg_filters = array('dataset_download_statuses=Completed,RemotelyHosted','registry_id!=00%');
+    $reg_filters = array('registry_id!=00%');
 
     if (!empty($by)) {
         if ($by == 'otherSources') {
