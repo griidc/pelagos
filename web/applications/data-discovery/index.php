@@ -167,48 +167,43 @@ $app->get('/datasets/:filter/:by/:id/:geo_filter', function ($filter,$by,$id,$ge
         }
     }
 
-    $dif_filters = array("$by=$id",'dataset_download_statuses!=Completed,RemotelyHosted','status=2');
+    $unavailable_filters = array("$by=$id",'dataset_download_statuses!=Completed,RemotelyHosted','status=2');
 
     if (!empty($geo_filter) and $geo_filter != 'undefined') {
         $reg_filters[] = "geo_filter=$geo_filter";
-        $dif_filters[] = "geo_filter=$geo_filter";
+        $unavailable_filters[] = "geo_filter=$geo_filter";
     }
 
-    $unrestricted_datasets = get_registered_datasets(getDBH('GOMRI'),array_merge($reg_filters,array('restricted=0')),$filter,$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
-    $md_under_review_datasets = array();
+    $unrestricted_datasets = get_registered_datasets(getDBH('GOMRI'),array_merge($reg_filters,array('availability=available')),$filter,$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
     
     foreach ($unrestricted_datasets as $dataset) {
         add_download_size($dataset);
         add_project_info($dataset);
-        $udi = $dataset['udi'];
-        # if either metadata has been approved, or we are not enforcing rule, or flag not set in ini altogether THEN do usual case
-        if( (isset($approvedMetadata[$udi])) or (!(( isset($GLOBALS['griidc']['syswide']['enforce_approved_metadata'] ) and ( $GLOBALS['griidc']['syswide']['enforce_approved_metadata'] == 1 ))))) {
-             $stash['unrestricted_datasets'][] = $dataset;
-        # otherwise  move the dataset to the $md_under_review_datasets array 
-        } else {
-            array_push($md_under_review_datasets,$dataset);
-        }
+        $stash['unrestricted_datasets'][] = $dataset;
     }
 
-    $restricted_datasets = get_registered_datasets(getDBH('GOMRI'),array_merge($reg_filters,array('restricted=1')),$filter,$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
+    $restricted_datasets = get_registered_datasets(getDBH('GOMRI'),array_merge($reg_filters,array('availability=available_with_restrictions')),$filter,$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
 
     foreach ($restricted_datasets as $dataset) {
         add_download_size($dataset);
         add_project_info($dataset);
         $stash['restricted_datasets'][] = $dataset;
     }
-
-    $identified_datasets = get_identified_datasets(getDBH('GOMRI'),$dif_filters,$filter,$GLOBALS['config']['DataDiscovery']['identifiedOrderBy']);
-    foreach ($identified_datasets as $dataset) {
-        add_project_info($dataset);
-        $stash['identified_datasets'][] = $dataset;
-    }
-
+    
+    #if( (isset($approvedMetadata[$udi])) or (!(( isset($GLOBALS['griidc']['syswide']['enforce_approved_metadata'] ) and ( $GLOBALS['griidc']['syswide']['enforce_approved_metadata'] == 1 ))))) {
+    
+    $md_under_review_datasets = get_registered_datasets(getDBH('GOMRI'),array_merge($reg_filters,array('availability=unavailable_pending_metadata_acceptance')),$filter,$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
     foreach ($md_under_review_datasets as $dataset) {
         add_project_info($dataset);
+        add_download_size($dataset);
         $stash['md_under_review_datasets'][] = $dataset;
     }
 
+    $unavailable_datasets = get_identified_datasets(getDBH('GOMRI'),array_merge($reg_filters,array('availability=unavailable_pending_metadata_submission,unavailable_pending_data_submission,unavailable_pending_registration')),$filter,$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
+    foreach ($unavailable_datasets as $dataset) {
+        add_project_info($dataset);
+        $stash['identified_datasets'][] = $dataset;
+    }
 
     $stash['filt'] = $filter;
 

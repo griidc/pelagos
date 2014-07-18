@@ -12,16 +12,16 @@ var tabIndex = 0;
             <div class="cell">
                 <ul>
                     {% if unrestricted_datasets %}
-                        <li style="text-align:center"><a href="#tab-1">Publicly Available<br>Datasets ({{unrestricted_datasets|length}})</a></li>
+                        <li style="text-align:center"><a href="#tab-1">Available<br />({{unrestricted_datasets|length}})</a></li>
                     {% endif %}
                     {% if restricted_datasets %}
-                        <li style="text-align:center"><a href="#tab-2">Datasets Available<br>with Restrictions ({{restricted_datasets|length}})</span></a></li>
+                        <li style="text-align:center"><a href="#tab-2">Available<br />With Restrictions ({{restricted_datasets|length}})</span></a></li>
                     {% endif %}
                     {% if md_under_review_datasets %}
-                        <li style="text-align:center"><a href="#tab-3">Datasets w/Metadata<br>Under Review ({{md_under_review_datasets|length}})</a></li>
+                        <li style="text-align:center"><a href="#tab-3">Unavailable<br />Pending Metadata Review ({{md_under_review_datasets|length}})</a></li>
                     {% endif %}
                     {% if identified_datasets %}
-                        <li style="text-align:center"><a href="#tab-4">Datasets Expected<br>to be Available Soon ({{identified_datasets|length}})</a></li>
+                        <li style="text-align:center"><a href="#tab-4">Unavailable<br />Expected Soon ({{identified_datasets|length}})</a></li>
                     {% endif %}
                 </ul>
             </div>
