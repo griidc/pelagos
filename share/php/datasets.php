@@ -292,7 +292,6 @@ function get_registered_datasets($dbh, $filters = array(), $search = '', $order_
     else {
         $stmt = $dbh->prepare("$SELECT $GLOBALS[REGISTERED_FROM] $WHERE ORDER BY $order_by;");
     }
-
     if (!$stmt->execute()) {
         $arr = $stmt->errorInfo();
         print_r($arr);
@@ -434,6 +433,33 @@ function build_where($filters,$registered = false) {
                             $WHERE .= " AND access_status = 'None'";
                         }
                     }
+                    break;
+                case 'availability':
+                    $states = preg_split('/,/',$matches[3]);
+                    $availability = array();
+                    foreach ($states as $state) {
+                        switch($state) {
+                            case 'available':
+                                $availability[] = "(r.registry_id IS NOT NULL AND (dataset_download_status = 'Completed' OR dataset_download_status = 'RemotelyHosted') AND metadata_status = 'Accepted' AND access_status = 'None')";
+                            break;
+                            case 'available_with_restrictions':
+                                $availability[] = "(r.registry_id IS NOT NULL AND (dataset_download_status = 'Completed' OR dataset_download_status = 'RemotelyHosted') AND metadata_status = 'Accepted' AND (access_status = 'Restricted' OR access_status = 'Approval'))";
+                            break;
+                            case 'unavailable_pending_metadata_acceptance':
+                                $availability[] = "(r.registry_id IS NOT NULL AND (dataset_download_status = 'Completed' OR dataset_download_status = 'RemotelyHosted') AND metadata_dl_status = 'Completed' AND metadata_status <> 'Accepted')";
+                            break;
+                            case 'unavailable_pending_metadata_submission':
+                                $availability[] = "(r.registry_id IS NOT NULL AND (dataset_download_status = 'Completed' OR dataset_download_status = 'RemotelyHosted') AND metadata_dl_status <> 'Completed')";
+                            break;
+                            case 'unavailable_pending_data_submission':
+                                $availability[] = "(r.registry_id IS NOT NULL AND dataset_download_status <> 'Completed' AND dataset_download_status <> 'RemotelyHosted')";
+                            break;
+                            case 'unavailable_pending_registration':
+                                $availability[] = "(r.registry_id is NULL AND status = 2)";
+                            break;
+                        }
+                    }
+                    $WHERE .= " AND (" . implode(" OR ",$availability) . ")";
                     break;
                 case 'hasproject':
                     $WHERE .= " AND project_id " . $GLOBALS['IS_MAP'][$matches[2]] . ' ' . $GLOBALS['NULL_MAP'][$matches[3]];
