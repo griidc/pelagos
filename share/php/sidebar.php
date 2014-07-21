@@ -9,8 +9,8 @@
 include_once '/usr/local/share/GRIIDC/php/ldap.php';
 include_once '/usr/local/share/GRIIDC/php/drupal.php';
 
-drupal_add_css('/dif/includes/css/dtree.css',array('type'=>'external'));
-drupal_add_js('/dif/includes/js/dtree.js',array('type'=>'external'));
+drupal_add_css('includes/css/dtree.css',array('type'=>'external'));
+drupal_add_js('includes/js/dtree.js',array('type'=>'external'));
 
 ?>
 <script type="text/javascript">
