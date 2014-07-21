@@ -67,7 +67,13 @@ if ($udi <> '')
     $dbconnstr .= ' password=' . $pconfig["password"];
 
     $pconn = pdoDBConnect($dbconnstr);
-
+    
+    # Toggle per ini file parameter the enforcement of dataset downloadability requiring accepted metadata 
+    $condCase = '';
+    if( (isset($GLOBALS['griidc']['syswide']['enforce_approved_metadata'] ) and ( $GLOBALS['griidc']['syswide']['enforce_approved_metadata'] == 1 ))) {
+        $condCase = "WHEN metadata_status <> 'Accepted' THEN 1";
+    }
+    
     $pquery = "
     SELECT * , ST_AsText(metadata.geom) AS \"the_geom\",
     CASE WHEN datasets.dataset_udi IS NULL THEN registry.dataset_udi ELSE datasets.dataset_udi END AS dataset_udi,
@@ -91,7 +97,8 @@ if ($udi <> '')
     END AS metadata,
 
     CASE WHEN dataset_download_status = 'Completed' THEN
-             CASE WHEN access_status = 'None' THEN 10
+             CASE $condCase
+                  WHEN access_status = 'None' THEN 10
                   WHEN access_status = 'Approval' THEN 9
                   WHEN access_status = 'Restricted' THEN 8
                   ELSE 0
