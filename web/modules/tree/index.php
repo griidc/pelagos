@@ -69,7 +69,9 @@ $app->get('/json/:type.json', function ($type) use ($app) {
                         $data_count += count_identified_datasets(getDBH('GOMRI'),array_merge($dataset_filters,array("projectId=$project[ID]")),$stash['tree']['filter']);
                     }
                     if ($data_count > 0) {
-                        $inst['dataset_count'] = $data_count;
+                        if ($GLOBALS['config']['tree']['show_counts'] == 1) {
+                            $inst['dataset_count'] = $data_count;
+                        }
                         array_push($stash['institutions'],$inst);
                     }
                 }
@@ -119,7 +121,9 @@ $app->get('/json/:type.json', function ($type) use ($app) {
                     }
                 }
                 if ($data_count > 0) {
-                    $stash['YR1']['dataset_count'] = $data_count;
+                    if ($GLOBALS['config']['tree']['show_counts'] == 1) {
+                        $stash['YR1']['dataset_count'] = $data_count;
+                    }
                 }
                 else {
                     $stash['YR1']['hide'] = true;
@@ -139,14 +143,18 @@ $app->get('/json/:type.json', function ($type) use ($app) {
                         $data_count += count_identified_datasets(getDBH('GOMRI'),array_merge($dataset_filters,array("projectId=$project[ID]")),$stash['tree']['filter']);
                     }
                     if ($data_count > 0) {
-                        $RFP['dataset_count'] = $data_count;
+                        if ($GLOBALS['config']['tree']['show_counts'] == 1) {
+                            $RFP['dataset_count'] = $data_count;
+                        }
                         array_push($stash['RFPS'],$RFP);
                     }
                 }
 
                 $data_count = count_registered_datasets(getDBH('GOMRI'),array('registry_id=00%','dataset_download_status=done'),$stash['tree']['filter']);
                 if ($data_count > 0) {
-                    $stash['other_sources']['dataset_count'] = $data_count;
+                    if ($GLOBALS['config']['tree']['show_counts'] == 1) {
+                        $stash['other_sources']['dataset_count'] = $data_count;
+                    }
                 }
                 else {
                     $stash['tree']['show_other_sources'] = false;
@@ -187,7 +195,9 @@ $app->get('/json/ra/YR1.json', function () use ($app) {
                 $data_count += count_identified_datasets(getDBH('GOMRI'),array_merge($dataset_filters,array("projectId=$project[ID]")),$stash['tree']['filter']);
             }
             if ($data_count > 0) {
-                $YR1['dataset_count'] = $data_count;
+                if ($GLOBALS['config']['tree']['show_counts'] == 1) {
+                    $YR1['dataset_count'] = $data_count;
+                }
                 array_push($stash['YR1'],$YR1);
             }
         }
@@ -204,7 +214,9 @@ $app->get('/json/ra/otherSources.json', function () use ($app) {
     $stash['tree'] = array_merge($GLOBALS['config']['tree'],json_decode($app->request()->get('tree'),true));
     $stash['otherSources'] = array(array('ID' => '000', 'Name' => 'National Oceanographic Data Center',));
     if (isset($stash['tree']['filter'])) {
-        $stash['otherSources'][0]['dataset_count'] = count_registered_datasets(getDBH('GOMRI'),array('registry_id=00.x000%','dataset_download_status=done'),$stash['tree']['filter']);
+        if ($GLOBALS['config']['tree']['show_counts'] == 1) {
+            $stash['otherSources'][0]['dataset_count'] = count_registered_datasets(getDBH('GOMRI'),array('registry_id=00.x000%','dataset_download_status=done'),$stash['tree']['filter']);
+        }
     }
     $app->render('json/otherSources.json',$stash);
     exit;
@@ -230,7 +242,9 @@ $app->get('/json/re/:letter.json', function ($letter) use ($app) {
                 $data_count += count_identified_datasets(getDBH('GOMRI'),array_merge($dataset_filters,array("projectId=$project[ID]")),$stash['tree']['filter']);
             }
             if ($data_count > 0) {
-                $person['dataset_count'] = $data_count;
+                if ($GLOBALS['config']['tree']['show_counts'] == 1) {
+                    $person['dataset_count'] = $data_count;
+                }
                 array_push($stash['people'],$person);
             }
         }
@@ -263,7 +277,9 @@ $app->get('/json/in/:letter.json', function ($letter) use ($app) {
                 $data_count += count_identified_datasets(getDBH('GOMRI'),array_merge($dataset_filters,array("projectId=$project[ID]")),$stash['tree']['filter']);
             }
             if ($data_count > 0) {
-                $inst['dataset_count'] = $data_count;
+                if ($GLOBALS['config']['tree']['show_counts'] == 1) {
+                    $inst['dataset_count'] = $data_count;
+                }
                 array_push($stash['institutions'],$inst);
             }
         }
@@ -292,7 +308,9 @@ $app->get('/json/:type/projects/fundSrc/:fundSrc.json', function ($type,$fundSrc
         foreach ($projects as $project) {
             $data_count = count_identified_datasets(getDBH('GOMRI'),array_merge($dataset_filters,array("projectId=$project[ID]")),$stash['tree']['filter']);
             if ($data_count > 0) {
-                $project['dataset_count'] = $data_count;
+                if ($GLOBALS['config']['tree']['show_counts'] == 1) {
+                    $project['dataset_count'] = $data_count;
+                }
                 array_push($stash['projects'],$project);
             }
         }
@@ -322,7 +340,9 @@ $app->get('/json/:type/projects/peopleId/:peopleId.json', function ($type,$peopl
         foreach ($projects as $project) {
             $data_count = count_identified_datasets(getDBH('GOMRI'),array_merge($dataset_filters,array("projectId=$project[ID]")),$stash['tree']['filter']);
             if ($data_count > 0) {
-                $project['dataset_count'] = $data_count;
+                if ($GLOBALS['config']['tree']['show_counts'] == 1) {
+                    $project['dataset_count'] = $data_count;
+                }
                 array_push($stash['projects'],$project);
             }
         }
@@ -353,7 +373,9 @@ $app->get('/json/:type/projects/institutionId/:institutionId.json', function ($t
         foreach ($projects as $project) {
             $data_count = count_identified_datasets(getDBH('GOMRI'),array_merge($dataset_filters,array("projectId=$project[ID]")),$stash['tree']['filter']);
             if ($data_count > 0) {
-                $project['dataset_count'] = $data_count;
+                if ($GLOBALS['config']['tree']['show_counts'] == 1) {
+                    $project['dataset_count'] = $data_count;
+                }
                 array_push($stash['projects'],$project);
             }
         }
@@ -376,7 +398,9 @@ $app->get('/json/:type/tasks/projectId/:projectId.json', function ($type,$projec
         foreach ($tasks as $task) {
             $data_count = count_identified_datasets(getDBH('GOMRI'),array_merge($dataset_filters,array("taskId=$task[ID]")),$stash['tree']['filter']);
             if ($data_count > 0) {
-                $task['dataset_count'] = $data_count;
+                if ($GLOBALS['config']['tree']['show_counts'] == 1) {
+                    $task['dataset_count'] = $data_count;
+                }
                 array_push($stash['tasks'],$task);
             }
         }
@@ -398,7 +422,9 @@ $app->get('/json/:type/tasks/projectId/peopleId/:projectId/:peopleId.json', func
         foreach ($tasks as $task) {
             $data_count = count_identified_datasets(getDBH('GOMRI'),array_merge($dataset_filters,array("taskId=$task[ID]")),$stash['tree']['filter']);
             if ($data_count > 0) {
-                $task['dataset_count'] = $data_count;
+                if ($GLOBALS['config']['tree']['show_counts'] == 1) {
+                    $task['dataset_count'] = $data_count;
+                }
                 array_push($stash['tasks'],$task);
             }
         }
