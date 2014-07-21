@@ -95,10 +95,12 @@ var tabIndex = 0;
                                         <td valign="top" class="direct-download">
                                             {% if dataset.dataset_download_status == "RemotelyHosted" %}
                                                 <a href="javascript:showDatasetDownloadExternal('{{dataset.udi}}');">
-                                                {% if dataset.access_status == "Author" %}
+                                                {% if dataset.access_status == "Restricted" %}
                                                     <img src="{{baseUrl}}/includes/images/download-package-grey.png" title="This dataset is hosted by an external repository and has been marked as restricted for author use only. Please contact the external repository for information on how to access this dataset.">
                                                 {% elseif dataset.access_status == "Approval" %}
                                                     <img src="{{baseUrl}}/includes/images/download-package-grey.png" title="This dataset is hosted by an external repository and has been marked as requiring author approval for download. Please contact the external repository for information on how to access this dataset.">
+                                                {% else %}
+                                                    <img src="{{baseUrl}}/includes/images/download-package.png" title="download dataset"></a>
                                                 {% endif %}
                                                 </a>
                                             {% else %}
