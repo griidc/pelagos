@@ -319,7 +319,7 @@ for my $entry (@{$data->{'entry'}}) {
     # set transport
     if (defined $entry->{'transport'}) {
         if (defined $entry->{'transport'}->{'method'} and length $entry->{'transport'}->{'method'}) {
-            $reg->{'data_server_type'} = $entry->{'transport'}->{'method'};
+            $reg->{'data_server_type'} = uc($entry->{'transport'}->{'method'});
         }
         if (defined $entry->{'transport'}->{'pull'} and length $entry->{'transport'}->{'pull'}) {
             $reg->{'data_source_pull'} = $entry->{'transport'}->{'pull'} eq 'true' ? 1 : 0;
