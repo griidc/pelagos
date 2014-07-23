@@ -596,6 +596,14 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                     throw new RuntimeException("Error saving extent description to database: $err_str");
                 }
                 drupal_set_message("An extent description found and stored.",'status');
+            } else {
+                $sql = "update metadata set extent_description = null where registry_id = ?";
+                $data4 = $dbms->prepare($sql);
+                if(!$data4->execute(array($reg_id,))) {
+                    $err=$data4->errorInfo();
+                    $err_str=$err[2];
+                    throw new RuntimeException("Error saving extent description to database: $err_str");
+                }
             }
 
             // update approved flag, if selected
