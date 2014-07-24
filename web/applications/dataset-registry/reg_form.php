@@ -969,7 +969,7 @@ function submitRegistry() {
             </span>
             <label for="pocname"><b>Name: </b></label>
             <div class="fwtextboxcont">
-                <input <?php formDisabled($formDisabled)?> onchange="checkDOIFields();" type="text" name="pocname" id="pocname" size="25" value="<?php if (isset($row['primary_poc'])) {echo $row['primary_poc'];};?>">
+                <input <?php formDisabled($formDisabled)?> onchange="checkDOIFields();" type="text" name="pocname" id="pocname" style="width:100%" value="<?php if (isset($row['primary_poc'])) {echo $row['primary_poc'];};?>">
             </div>
         </td><td width="50%" style="padding-left:10px;">
 
@@ -978,7 +978,7 @@ function submitRegistry() {
             </span>
             <label for="pocemail"><b>E-Mail: </b></label>
             <div class="fwtextboxcont">
-                <input <?php formDisabled($formDisabled)?> type="text" name="pocemail" id="pocemail" size="25" value="<?php echo $poc_email;?>">
+                <input <?php formDisabled($formDisabled)?> type="text" name="pocemail" id="pocemail" style="width:100%" value="<?php echo $poc_email;?>">
             </div>
         </td></tr></table>
     </fieldset></p>
