@@ -689,7 +689,6 @@ function index($app) {
     drupal_add_js('https://cdn.datatables.net/1.10.0/js/jquery.dataTables.js',array('type'=>'external'));
     drupal_add_css('https://cdn.datatables.net/1.10.0/css/jquery.dataTables.css',array('type'=>'external'));
     $stash['defaultFilter'] = $app->request()->get('filter');
-    #$stash['m_dataset'] = GetAllMetadata('as_array');
     $stash['m_dataset']['accepted'] = GetMetadata('Accepted','as_array');
     $stash['m_dataset']['submitted'] = GetMetadata('Submitted','as_array');
     $stash['m_dataset']['inreview'] = GetMetadata('InReview','as_array');
@@ -857,44 +856,6 @@ function sendEmail($to,$from,$sub,$message,$cc=null) {
     }
     $header .= "$from\r\n";
     mail($to,$sub,$message,$header);
-}
-
-function GetAllMetadata($format) {
-        $sql = "SELECT
-                    curr_reg_view.metadata_status, curr_reg_view.url_metadata, curr_reg_view.dataset_udi,
-                    coalesce(trim(trailing '}' from trim(leading '{' from cast(
-                        xpath('/gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1]/text()',metadata_xml,
-                            ARRAY[
-                                ARRAY['gmi', 'http://www.isotc211.org/2005/gmi'],
-                                ARRAY['gmd', 'http://www.isotc211.org/2005/gmd'],
-                                ARRAY['gco', 'http://www.isotc211.org/2005/gco']
-                            ]
-                        ) as character varying ))), curr_reg_view.dataset_metadata
-                    ) as dataset_metadata,
-                    (metadata_xml is not null) as hasxml,
-                    curr_reg_view.submittimestamp,
-                    registry.approval_status as approval,
-                    curr_reg_view.metadata_status as metadata_status
-                FROM
-                    curr_reg_view left join metadata
-                    ON curr_reg_view.registry_id = metadata.registry_id
-                    left join registry
-                    ON curr_reg_view.registry_id = registry.registry_id
-                WHERE
-                    curr_reg_view.metadata_dl_status = 'Completed';";
-
-        $dbms = OpenDB("GOMRI_RO");
-        $data = $dbms->prepare($sql);
-        $data->execute();
-        $raw = array();
-        while ($row = $data->fetch(PDO::FETCH_ASSOC)) {
-            $rowStatus = strtolower($row['metadata_status']);
-            if(!isset($raw[$rowStatus])) {
-                $raw[$rowStatus]= array();
-            }
-            array_push($raw[$rowStatus],$row);
-        }
-        return $raw;
 }
 
 function GetMetadata($type,$format) {
