@@ -694,11 +694,6 @@ function index($app) {
     $stash['m_dataset']['inreview'] = GetMetadata('InReview','as_array');
     $stash['m_dataset']['secondcheck'] = GetMetadata('SecondCheck','as_array');
     $stash['m_dataset']['backtosubmitter'] = GetMetadata('BackToSubmitter','as_array');
-    $stash['m_dataset_json']['accepted'] = GetMetadata('Accepted','as_json');
-    $stash['m_dataset_json']['submitted'] = GetMetadata('Submitted','as_json');
-    $stash['m_dataset_json']['inreview'] = GetMetadata('InReview','as_json');
-    $stash['m_dataset_json']['secondcheck'] = GetMetadata('SecondCheck','as_json');
-    $stash['m_dataset_json']['backtosubmitter'] = GetMetadata('BackToSubmitter','as_json');
     $stash['srvr'] = "https://$_SERVER[HTTP_HOST]";
     if(isset($_SESSION['testPolygon'])) { $stash['testPolygon'] = $_SESSION['testPolygon']; }
     return $stash;
