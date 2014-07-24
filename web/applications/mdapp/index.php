@@ -39,7 +39,7 @@ drupal_add_library('system', 'jquery.cookie');
 global $user;
 
 $GLOBALS['config'] = parse_ini_file('config.ini',true);
-
+$GLOBALS['storage'] = parse_ini_file('/etc/griidc/storage.ini',true);
 $GLOBALS['logfile_location'] = $GLOBALS['config']['Logfiles']['logfilePath'].'/'.$GLOBALS['logfile_name'];
 
 TwigView::$twigDirectory = $GLOBALS['config']['TwigView']['twigDirectory'];
@@ -94,7 +94,7 @@ $app->get('/', function () use ($app) {
     return $app->render('html/main.html',index($app));
 });
 
-// Download from file on disk - probably going away
+// Download from file on disk - probably going away, but not today..
 $app->get('/download-metadata/:udi', function ($udi) use ($app) {
     if (preg_match('/^00/',$udi)) {
         $datasets = get_registered_datasets(OpenDB('GOMRI_RO'),array("registry_id=$udi%"));
@@ -103,7 +103,9 @@ $app->get('/download-metadata/:udi', function ($udi) use ($app) {
         $datasets = get_identified_datasets(OpenDB('GOMRI_RO'),array("udi=$udi"));
     }
     $dataset = $datasets[0];
-    $met_file = "/sftp/data/$dataset[udi]/$dataset[udi].met";
+    
+    $dl_dir = $GLOBALS['storage']['storage']['data_download_store'];
+    $met_file = "$dl_dir/$dataset[udi]/$dataset[udi].met";
     if (file_exists($met_file)) {
         $info = finfo_open(FILEINFO_MIME_TYPE);
         $mime = finfo_file($info, $met_file);
