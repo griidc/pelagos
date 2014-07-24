@@ -936,7 +936,7 @@ function submitRegistry() {
         </span>
         <label for="title"><b>Dataset Title: </b></label>
         <div class="fwtextboxcont">
-            <input <?php formDisabled($formDisabled)?> onchange="checkDOIFields();" type="text" name="title" id="title" style="width:100%"  value="<?php if (isset($row['title'])) {echo $row['title'];};?>"/>
+            <input <?php formDisabled($formDisabled)?> onchange="checkDOIFields();" type="text" name="title" id="title" style="width:100%"  value="<?php if (isset($row['title'])) {echo preg_replace('/"/','&quot;',$row['title']);};?>"/>
         </div>
     </fieldset></p>
 
@@ -956,7 +956,7 @@ function submitRegistry() {
         </span>
         <label for="dataset_originator"><b>Dataset Originator(s): </b></label>
         <div class="fwtextboxcont">
-            <input <?php formDisabled($formDisabled)?> type="text" name="dataset_originator" id="dataset_originator" style="width:100%" value="<?php if (isset($row['dataset_originator'])) {echo $row['dataset_originator'];};?>"/>
+            <input <?php formDisabled($formDisabled)?> type="text" name="dataset_originator" id="dataset_originator" style="width:100%" value="<?php if (isset($row['dataset_originator'])) {echo preg_replace('/"/','&quot;',$row['dataset_originator']);};?>"/>
         </div>
     </fieldset></p>
 
@@ -969,7 +969,7 @@ function submitRegistry() {
             </span>
             <label for="pocname"><b>Name: </b></label>
             <div class="fwtextboxcont">
-                <input <?php formDisabled($formDisabled)?> onchange="checkDOIFields();" type="text" name="pocname" id="pocname" style="width:100%" value="<?php if (isset($row['primary_poc'])) {echo $row['primary_poc'];};?>">
+                <input <?php formDisabled($formDisabled)?> onchange="checkDOIFields();" type="text" name="pocname" id="pocname" style="width:100%" value="<?php if (isset($row['primary_poc'])) {echo preg_replace('/"/','&quot;',$row['primary_poc']);};?>">
             </div>
         </td><td width="50%" style="padding-left:10px;">
 
@@ -978,7 +978,7 @@ function submitRegistry() {
             </span>
             <label for="pocemail"><b>E-Mail: </b></label>
             <div class="fwtextboxcont">
-                <input <?php formDisabled($formDisabled)?> type="text" name="pocemail" id="pocemail" style="width:100%" value="<?php echo $poc_email;?>">
+                <input <?php formDisabled($formDisabled)?> type="text" name="pocemail" id="pocemail" style="width:100%" value="<?php echo preg_replace('/"/','&quot;',$poc_email);?>">
             </div>
         </td></tr></table>
     </fieldset></p>
@@ -1001,7 +1001,7 @@ function submitRegistry() {
             </span>
             <label for="doi">Digital Object Identifier:</label>
             <div class="fwtextboxcont">
-                <input <?php formDisabled($formDisabled)?> type="text" name="doi" id="doi" size="60" value="<?php if (isset($row['doi'])) {echo $row['doi'];};?>">
+                <input <?php formDisabled($formDisabled)?> type="text" name="doi" id="doi" size="60" value="<?php if (isset($row['doi'])) {echo preg_replace('/"/','&quot;',$row['doi']);};?>">
             </div>
             <span style="display:none" id="doibuttondiv"><button disabled  id="doibutton" name="doibutton" type="button" onclick="checkDOIFields(true);">Digital Object Indentifier Request Form</button></span>
             <!--
