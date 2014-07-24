@@ -1128,16 +1128,7 @@ function submitRegistry() {
             </td>
 </tr><tr>
 <td>
-            <fieldset>
-            <p>
-                <span id="qtip_auth" style="float:right;">
-                    <img src="includes/images/info.png">
-                </span>
-                <label for="auth">Requires Authentication:</label>
-                <input <?php formDisabled($formDisabled)?> <?PHP if (isset($row['authentication'])){isChecked($row['authentication'],0,true);};?> onclick="showCreds(this,'creds','Yes');" name="auth" id="auth" type="radio" value="Yes"/>Yes
-                <input <?php formDisabled($formDisabled)?> <?PHP if (isset($row['authentication'])){isChecked($row['authentication'],0,false);}; if(!isset($_GET['regid'])){echo 'checked';};?> onclick="showCreds(this,'creds','Yes');" name="auth" id="auth" type="radio" value="No"/>No
-            </p>
-            </fieldset>
+                <input name="auth" id="auth" type="hidden" value="No"/>
             </td>
 <td>
             <fieldset>
@@ -1151,31 +1142,6 @@ function submitRegistry() {
                 </p>
             </fieldset>
            </td></tr></table>
-
-            <div id="creds" style="display:<?php if (isset($row['authentication'])){ if ($row['authentication']==true){echo 'block';}else{echo 'none';};}else{ echo 'none';};?>;">
-                <fieldset>
-                <legend>Credentials:</legend>
-
-                <table WIDTH="100%">
-                <tr><td width="50%">
-                <span id="qtip_uname" style="float:right;">
-                    <img src="includes/images/info.png">
-                </span>
-                <label for="uname">Username:</label>
-                <div class="fwtextboxcont">
-                    <input name="uname" id="uname" type="text" size="40" value="<?php if (isset($row['username'])) {echo $row['username'];};?>"/>
-                </div>
-                </td><td width="50%" style="padding-left:10px;">
-                <span id="qtip_pword" style="float:right;">
-                    <img src="includes/images/info.png">
-                </span>
-                <label for="pword">Password:</label>
-                <div class="fwtextboxcont">
-                    <input name="pword" id="pword" type="password" size="40" value="<?php if (isset($row['password'])) {echo $row['password'];};?>"/>
-                </div>
-               </td></tr></table>
-                </fieldset>
-            </div>
 
           <div id="whendiv" style="display:<?php if (isset($row['access_period'])){if ($row['access_period']==true){echo 'block';}else{echo 'none';};}else{ echo 'none';};?>;">
               <fieldset>
