@@ -1001,7 +1001,7 @@ function submitRegistry() {
             </span>
             <label for="doi">Digital Object Identifier:</label>
             <div class="fwtextboxcont">
-                <input <?php formDisabled($formDisabled)?> type="text" name="doi" id="doi" size="60"/ value="<?php if (isset($row['doi'])) {echo $row['doi'];};?>">
+                <input <?php formDisabled($formDisabled)?> type="text" name="doi" id="doi" size="60" value="<?php if (isset($row['doi'])) {echo $row['doi'];};?>">
             </div>
             <span style="display:none" id="doibuttondiv"><button disabled  id="doibutton" name="doibutton" type="button" onclick="checkDOIFields(true);">Digital Object Indentifier Request Form</button></span>
             <!--
