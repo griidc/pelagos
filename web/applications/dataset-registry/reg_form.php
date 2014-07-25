@@ -14,6 +14,7 @@ drupal_add_library('system', 'ui.tabs');
 //',array('type'=>'inline'));
 
 $tabselect = 0;
+$md_tabselect = 0;
 $formDisabled = true;
 
 
@@ -157,6 +158,19 @@ if (isset($reg_id))
                 break;
         }
 
+        switch ($row['metadata_server_type'])
+        {
+            case "upload":
+                $md_tabselect = 0;
+                break;
+            case "HTTP":
+                $md_tabselect = 1;
+                break;
+            case "SFTP":
+                $md_tabselect = 2;
+                break;
+        }
+
     }
 
     if ($regrow['registry_id'] <> $reg_id AND $regrow != false)
@@ -269,6 +283,12 @@ function formDisabled($isDisabled)
             active: <?php echo $tabselect;?>
         });
 
+        $( "#md-tabs" ).tabs({
+            heightStyleType: "fill",
+            disabled: [3,4,5],
+            active: <?php echo $md_tabselect;?>
+        });
+
         $( "#availdate" ).datepicker({
             showOn: "button",
             buttonImageOnly: false,
@@ -310,14 +330,6 @@ function formDisabled($isDisabled)
             {
                 required: false,
                 url: true
-            },
-            uname:
-            {
-                required: "#auth:checked"
-            },
-            pword:
-            {
-                required: "#auth:checked"
             },
             availdate:
             {
@@ -627,7 +639,8 @@ function submitRegistry() {
     weekDays();
     getTimeZone();
     if (jQuery("#regForm").valid()) {
-        if (jQuery('#servertype').val() == 'upload') {
+        if (jQuery('#servertype').val() == 'upload' && jQuery('#datafile').val() != '' ||
+            jQuery('#md_servertype').val() == 'upload' && jQuery('#metadatafile').val() != '') {
             showProgressBar();
         }
         jQuery('#post_frame').load(function() {
@@ -732,6 +745,22 @@ function submitRegistry() {
     position: absolute;
     left: 0px;
     right: 0px;
+}
+
+legend.section-header {
+    font-size: 130%;
+    font-weight: bold;
+}
+
+label {
+    color:#40626B;
+    font-family: sans-serif, Tahoma, Geneva;
+    font-size: 12px;
+}
+
+fieldset {
+    font-family: sans-serif, Tahoma, Geneva;
+    font-size: 12px;
 }
 
 </style>
@@ -912,335 +941,436 @@ function submitRegistry() {
 
 <form id="regForm" name="regForm" action="" method="post" enctype="multipart/form-data" target="post_frame">
 
-    <h1>Dataset Information Header</h1>
     <fieldset>
-        <p><STRONG> NOTE: </STRONG><FONT COLOR="grey">If you have a Dataset Information Form record submitted, click on the dataset in the right panel to extract the information needed for dataset registration.  If you require assistance in completing
-        this form, do not hesitate to contact GRIIDC (email: <A HREF=mailto:griidc@gomri.org>griidc@gomri.org</A>).</FONT></p>
+        <p>
+            <strong>NOTE:</strong> <span style="color:grey">If you have a Dataset Information Form record submitted, click on the dataset in the right panel to extract the information needed for dataset registration. If you require assistance in completing this form, do not hesitate to contact GRIIDC (email: <a href=mailto:griidc@gomri.org>griidc@gomri.org</a>).</span>
+        </p>
     </fieldset>
 
-    <fieldset>
-        <p><fieldset>
-            <span id="qtip_regid" style="float:right;">
-                <img src="includes/images/info.png">
-            </span>
-            <label for="registry_id"><b>Registry Identifier: </b></label>
-            <input onkeyup="if (this.value.length > 15) {document.getElementById('regbutton').disabled=false;};" <?php if (isset($dif_id)) {echo ' disabled ';};?>type="text" id="registry_id" name="registry_id" size="60" value="<?php if (isset($row['registry_id'])) {echo $row['registry_id'];};?>">
-            <button disabled name="regbutton" id="regbutton" onclick="window.location.href='<?php echo $_SERVER['SCRIPT_NAME'];?>?regid='+document.getElementById('registry_id').value;" type="button">Retrieve Registration</button>
-        </fieldset></p>
 
-        <input type="hidden" id="task" name="task" value="<?php if (isset($row['task_uid'])) {echo $row['task_uid'];};?>">
+    <fieldset> <!-- Dataset Information Header -->
 
-        <p><fieldset>
-        <span id="qtip_title" style="float:right;">
-            <img src="includes/images/info.png">
-        </span>
-        <label for="title"><b>Dataset Title: </b></label>
-        <div class="fwtextboxcont">
-            <input <?php formDisabled($formDisabled)?> onchange="checkDOIFields();" type="text" name="title" id="title" style="width:100%"  value="<?php if (isset($row['title'])) {echo htmlspecialchars($row['title']);};?>"/>
-        </div>
-    </fieldset></p>
+        <legend class="section-header">Dataset Information Header</legend>
 
-    <p><fieldset>
-        <span id="qtip_abstrct" style="float:right;">
-            <img src="includes/images/info.png">
-        </span>
-        <label for="abstrct"><b>Dataset Abstract: </b></label>
-        <div class="textareacontainer">
-            <textarea <?php formDisabled($formDisabled)?> name="abstrct" id="abstrct" style="height:100%;width:100%"><?php if (isset($row['abstract'])) {echo htmlspecialchars($row['abstract']);};?></textarea>
-        </div>
-    </fieldset></p>
-
-    <p><fieldset>
-        <span id="qtip_dataset_originator" style="float:right;">
-            <img src="includes/images/info.png">
-        </span>
-        <label for="dataset_originator"><b>Dataset Originator(s): </b></label>
-        <div class="fwtextboxcont">
-            <input <?php formDisabled($formDisabled)?> type="text" name="dataset_originator" id="dataset_originator" style="width:100%" value="<?php if (isset($row['dataset_originator'])) {echo htmlspecialchars($row['dataset_originator']);};?>"/>
-        </div>
-    </fieldset></p>
-
-    <p><fieldset>
-    <legend>Point of Contact</legend>
-        <table WIDTH="100%"><tr><td width="50%">
-
-            <span id="qtip_poc" style="float:right;">
-                <img src="includes/images/info.png">
-            </span>
-            <label for="pocname"><b>Name: </b></label>
-            <div class="fwtextboxcont">
-                <input <?php formDisabled($formDisabled)?> onchange="checkDOIFields();" type="text" name="pocname" id="pocname" style="width:100%" value="<?php if (isset($row['primary_poc'])) {echo htmlspecialchars($row['primary_poc']);};?>">
-            </div>
-        </td><td width="50%" style="padding-left:10px;">
-
-            <span id="qtip_pocemail" style="float:right;">
-                <img src="includes/images/info.png">
-            </span>
-            <label for="pocemail"><b>E-Mail: </b></label>
-            <div class="fwtextboxcont">
-                <input <?php formDisabled($formDisabled)?> type="text" name="pocemail" id="pocemail" style="width:100%" value="<?php echo htmlspecialchars($poc_email);?>">
-            </div>
-        </td></tr></table>
-    </fieldset></p>
-
-    <p><fieldset>
-                <span id="qtip_avail" style="float:right;">
-                    <img src="includes/images/info.png">
-                </span>
-                <label for="avail">Restrictions:</label>
-                    <input <?php formDisabled($formDisabled)?> <?PHP if (isset($row['access_status'])){isChecked($row['access_status'],0,"None");} elseif(!isset($_GET['regid'])){echo 'checked';};?> name="avail" id="avail" type="radio" value="None"/>None
-                    <input <?php formDisabled($formDisabled)?> <?PHP if (isset($row['access_status'])){isChecked($row['access_status'],0,"Approval");};?>  name="avail" id="avail" type="radio" value="Approval"/>Requires Author&apos;s Approval
-                    <input <?php formDisabled($formDisabled)?> <?PHP if (isset($row['access_status'])){isChecked($row['access_status'],0,"Restricted");};?>  name="avail" id="avail" type="radio" value="Restricted"/>Restricted
-                <br />
-    </fieldset></p>
-
-    <p><fieldset>
-            <legend>DOI for dataset (if available):</legend>
-            <span id="qtip_doi" style="float:right;">
-                <img src="includes/images/info.png">
-            </span>
-            <label for="doi">Digital Object Identifier:</label>
-            <div class="fwtextboxcont">
-                <input <?php formDisabled($formDisabled)?> type="text" name="doi" id="doi" size="60" value="<?php if (isset($row['doi'])) {echo htmlspecialchars($row['doi']);};?>">
-            </div>
-            <span style="display:none" id="doibuttondiv"><button disabled  id="doibutton" name="doibutton" type="button" onclick="checkDOIFields(true);">Digital Object Indentifier Request Form</button></span>
-            <!--
-            <span id="generatedoidiv"><input <?php formDisabled($formDisabled)?> checked onchange="document.getElementById('doi').disabled=this.checked;" type="checkbox" name="generatedoi" id="generatedoi">Auto-Generate DOI when data is available</span>
-            -->
-            <input type="hidden" name="generatedoi" id="generatedoi" value="No">
-    </fieldset></p>
-
-</fieldset>
-    <h1>Dataset File Transfer Details</h1>
-
-    <style>
-    label
-    {
-        color:#40626B;
-        font-family: sans-serif, Tahoma, Geneva;
-        font-size: 12px;
-        }
-    fieldset {
-        font-family: sans-serif, Tahoma, Geneva;
-        font-size: 12px;
-    }
-    </style>
-
-    <div style="background: transparent;" id="tabs">
-        <ul>
-            <li><a onclick="document.getElementById('servertype').value='upload'" href="#tabs-1">Direct Upload</a></li>
-            <li><a onclick="document.getElementById('servertype').value='HTTP'" href="#tabs-2">HTTP/FTP Server</a></li>
-            <li><a onclick="document.getElementById('servertype').value='SFTP'" href="#tabs-3">SFTP/GridFTP</a></li>
-            <li><a href="#tabs-4">ERDDAP</a></li>
-            <li><a href="#tabs-5">TDS</a></li>
-            <li><a href="#tabs-6">...</a></li>
-        </ul>
-
-        <div id="tabs-1">
-            For small datasets (&lt;1 GB), you may upload the dataset and metadata files directly. Depending on the size of your files, this may take several minutes. The maximum time the system will wait for your files to upload is 10 minutes.  For larger files, please consider using SFTP or GridFTP.<!--If the script times out after you click "Register" below, your files are too big and you must use an alternate method such as HTTP/FTP or SFTP.-->
+        <p> <!-- Registry Identifier -->
             <fieldset>
-                <?php
-                    $upload_progress_key = md5(mt_rand());
-                    echo "<input type='hidden' id='APC_UPLOAD_PROGRESS' name='APC_UPLOAD_PROGRESS' value='$upload_progress_key' />";
-                ?>
-            <p>
-                <span id="qtip_uploaddataurl" style="float:right;">
-                    <img src="includes/images/info.png">
-                </span>
-                <label for="datafile">Dataset File:</label>
-                <?php
-                    if (isset($row['data_server_type']) and $row['data_server_type'] == 'upload' and isset($row['url_data']) and $row['url_data'] != '') {
-                        echo "<div class='fwtextboxcont'>";
-                        echo "<input disabled type='text' style='width:100%' value='$row[url_data]' style='color:black; background-color:transparent; padding:2px;'></div>";
-                        echo "<input type='hidden' name='upload_dataurl' value='$row[url_data]'>";
-                        echo "To replace the dataset file: ";
-                    }
-                ?>
-                <input <?php formDisabled($formDisabled)?> name="datafile" id="datafile" type="file"/>
-            </p>
+                <span id="qtip_regid" style="float:right;"><img src="includes/images/info.png"></span>
+                <label for="registry_id"><b>Registry Identifier: </b></label>
+                <input onkeyup="if (this.value.length > 15) document.getElementById('regbutton').disabled=false;"
+                    <?php if (isset($dif_id)) echo 'disabled'; ?>
+                    type="text" id="registry_id" name="registry_id" size="60"
+                    value="<?php if (isset($row['registry_id'])) echo $row['registry_id']; ?>">
+                <button disabled name="regbutton" id="regbutton" onclick="window.location.href='<?php echo $_SERVER['SCRIPT_NAME'];?>?regid='+document.getElementById('registry_id').value;" type="button">Retrieve Registration</button>
             </fieldset>
-            <fieldset>
-            <p>
-                <span id="qtip_uploadmetadataurl" style="float:right;">
-                    <img src="includes/images/info.png">
-                </span>
-                <label for="metadatafile">Metadata File:</label>
-                <?php
-                    if (isset($row['data_server_type']) and $row['data_server_type'] == 'upload' and isset($row['url_metadata']) and $row['url_metadata'] != '') {
-                        echo "<div class='fwtextboxcont'>";
-                        echo "<input disabled type='text' style='width:100%' value='$row[url_metadata]' style='color:black; background-color:transparent; padding:2px;'></div>";
-                        echo "<input type='hidden' name='upload_metadataurl' value='$row[url_metadata]'>";
-                        echo "To replace the metadata file: ";
-                    }
-                ?>
-                <input <?php formDisabled($formDisabled)?> name="metadatafile" id="metadatafile" type="file"/>
-            </p>
-            </fieldset>
-        </div>
-
-      <div id="tabs-2">
-        Use this method when you can place your dataset and metadata files on an HTTP (web) or FTP server at your institution.
-        <fieldset>
-            <p>
-                <span id="qtip_dataurl" style="float:right;">
-                    <img src="includes/images/info.png">
-                </span>
-                <label for="dataurl">Dataset File URL:</label>
-                <div class="fwtextboxcont">
-                    <input <?php formDisabled($formDisabled)?> onchange="checkDOIFields();" name="dataurl" id="dataurl" type="text" style="width:100%" value="<?php if (isset($row['data_server_type']) and $row['data_server_type'] == 'HTTP' and isset($row['url_data'])) {echo $row['url_data'];};?>"/>
-                </div>
-            </p>
-            </fieldset>
-            <fieldset>
-            <p>
-                <span id="qtip_metadataurl" style="float:right;">
-                    <img src="includes/images/info.png">
-                </span>
-                <label for="metadataurl">Metadata File URL:</label>
-                <div class="fwtextboxcont">
-                    <input <?php formDisabled($formDisabled)?> name="metadataurl" id="metadataurl" style="width:100%" value="<?php if (isset($row['data_server_type']) and $row['data_server_type'] == 'HTTP' and isset($row['url_metadata'])) {echo $row['url_metadata'];};?>"/>
-                </div>
-            </p>
-            </fieldset>
-
-            <table WIDTH="100%"><tr><td>
-            <fieldset>
-            <p>
-            <span id="qtip_date" style="float:right;">
-                <img src="includes/images/info.png">
-            </span>
-            <label for="availdate">Availability Date:</label>
-            <input <?php formDisabled($formDisabled)?> onchange="checkDOIFields();" value="<?php if (isset($row['availability_date'])) {echo $row['availability_date'];};?>" type="text" name="availdate" id="availdate" size="40" style="width:100px;"/>
-            </td>
-            <td>
-            </p>
-            <fieldset>
-                <p>
-                    <span id="qtip_pull" style="float:right;">
-                        <img src="includes/images/info.png">
-                    </span>
-                    <label for="pullds">Pull Source Data:</label>
-                    <input <?php formDisabled($formDisabled)?> <?PHP if (isset($row['data_source_pull'])){isChecked($row['data_source_pull'],0,true);}; if(!isset($_GET['regid'])){echo 'checked';};?>  onclick="showCreds(this,'pulldiv','No');" onchange="showDOIbutton(this);" name="pullds" id="pullds" type="radio" value="Yes"/>Yes
-                    <input <?php formDisabled($formDisabled)?> <?PHP if (isset($row['data_source_pull'])){isChecked($row['data_source_pull'],0,false);};?> onclick="showCreds(this,'pulldiv','No');" onchange="showDOIbutton(this);" name="pullds" id="pullds" type="radio" value="No"/>No
-                </p>
-
-            </fieldset>
-            </td>
-</tr><tr>
-<td>
-                <input name="auth" id="auth" type="hidden" value="No"/>
-            </td>
-<td>
-            <fieldset>
-                <p>
-                    <span id="qtip_when" style="float:right;">
-                        <img src="includes/images/info.png">
-                    </span>
-                    <label for="whendl">Download Certain Times Only:</label>
-                    <input <?php formDisabled($formDisabled)?> <?PHP if (isset($row['access_period'])){isChecked($row['access_period'],0,true);};?> onclick="showCreds(this,'whendiv','Yes');getTimeZone();weekDays();" name="whendl" id="whendl" type="radio" value="Yes"/>Yes
-                    <input <?php formDisabled($formDisabled)?> <?PHP if (isset($row['access_period'])){isChecked($row['access_period'],0,false);}; if(!isset($_GET['regid'])){echo 'checked';};?> onclick="showCreds(this,'whendiv','Yes');getTimeZone();weekDays();" name="whendl" id="whendl" type="radio" value="No"/>No
-                </p>
-            </fieldset>
-           </td></tr></table>
-
-          <div id="whendiv" style="display:<?php if (isset($row['access_period'])){if ($row['access_period']==true){echo 'block';}else{echo 'none';};}else{ echo 'none';};?>;">
-              <fieldset>
-                  <span id="qtip_times" style="float:right;">
-                      <img src="includes/images/info.png">
-                  </span>
-              <legend>Pull Times:</legend>
-              <table WIDTH="100%"><tr><td valign="top">
-
-                  <label for="dlstart">Start Time:</label>
-                   <select name="dlstart" id="dlstart">
-                  <?php if (isset($row['access_period_start'])){createTimesDD($row['access_period_start']);}else{createTimesDD();};?>
-                  </select>
-
-               </td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
-
-                  <label for="weekdays">Weekdays:</label>
-                  <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Monday");}; if(!isset($_GET['regid'])){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Monday"/>Monday<br>
-                  <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Tuesday");}; if(!isset($_GET['regid'])){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Tuesday"/>Tuesday<br>
-                  <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Wednesday");}; if(!isset($_GET['regid'])){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Wednesday"/>Wednesday<br>
-                  <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Thursday");}; if(!isset($_GET['regid'])){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Thursday"/>Thursday<br>
-                  <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Friday");}; if(!isset($_GET['regid'])){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Friday"/>Friday<br>
-                  <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Saturday");}; if(!isset($_GET['regid'])){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Saturday"/>Saturday<br>
-                  <input onchange="weekDays();" <?PHP if (isset($row['access_period_weekdays'])){isChecked($row['access_period_weekdays'],0,"Sunday");}; if(!isset($_GET['regid'])){echo 'checked';};?> name="weekdays" id="weekdays" type="checkbox" value="Sunday"/>Sunday
-
-                  </td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td valign="top">
-                  <button style="width:100px" type="button" onclick="selDays(true);">Weekends</button><br \>
-                    <button style="width:100px" type="button" onclick="selDays(false);">Workdays</button>
-                  </td></tr></table>
-              </fieldset>
-          </div>
-            </fieldset>
-
-        </fieldset>
-
-    </p>
-    </div>
-
-    <div id="tabs-3">
-        Use this method when your dataset is &gt;1GB and you wish to push your data to GRIIDC (rather than place your dataset and metadata files on an HTTP (web) or FTP server at your institution).  <i>Using these methods requires that you have first uploaded your file via SFTP or GridFTP.</i>
-
-        <?php
-            if (!$sftpuser) {
-                echo <<<EOT
-                    <div style='color:red;'>
-                        Your account has not been configured for SFTP/GridFTP access.<br>
-                        If you wish to use SFTP/GridFTP, please contact <a href='mailto:griidc@gomri.org'>griidc@gomri.org</a> to request SFTP/GridFTP access.
-                    </div>
-EOT;
-            }
-            elseif (!$sftpdir) {
-                echo <<<EOT
-                    <div style="color:red;">
-                        Your SFTP/GridFTP directory has not been set up.<br>
-                        Please contact <a href='mailto:griidc@gomri.org'>griidc@gomri.org</a> for assistance.
-                    </div>
-EOT;
-            }
-        ?>
-
-        <fieldset>
-        <p>
-            <span id="qtip_sshdataurl" style="float:right;">
-                <img src="includes/images/info.png">
-            </span>
-            <label for="sshdatapath">Dataset File Path:</label>
-                <div class="fwtextboxcont">
-                    <input <?php formDisabled($formDisabled)?> name="sshdatapath" id="sshdatapath" type="text" style="width:100%" value="<?php if (isset($row['data_server_type']) and $row['data_server_type'] == 'SFTP' and isset($row['url_data'])) {echo $row['url_data'];};?>"/>
-                </div>
-            <input type="button" value="Browse..." onclick="showFileBrowser('data','%home%');">
         </p>
-            </fieldset>
+
+        <input type="hidden" id="task" name="task" value="<?php if (isset($row['task_uid'])) echo $row['task_uid']; ?>">
+
+        <p> <!-- Dataset Title -->
             <fieldset>
-
-            <p>
-                <span id="qtip_sshmetadataurl" style="float:right;">
-                    <img src="includes/images/info.png">
-                </span>
-                <label for="sshmetadatapath">Metadata File Path:</label>
+                <span id="qtip_title" style="float:right;"><img src="includes/images/info.png"></span>
+                <label for="title"><b>Dataset Title: </b></label>
                 <div class="fwtextboxcont">
-                    <input <?php formDisabled($formDisabled)?> name="sshmetadatapath" id="sshmetadatapath" type="text" style="width:100%" value="<?php if (isset($row['data_server_type']) and $row['data_server_type'] == 'SFTP' and isset($row['url_metadata'])) {echo $row['url_metadata'];};?>"/>
+                    <input
+                        <?php formDisabled($formDisabled); ?>
+                        onchange="checkDOIFields();" type="text" name="title" id="title" style="width:100%"
+                        value="<?php if (isset($row['title'])) echo htmlspecialchars($row['title']); ?>"/>
                 </div>
-                <input type="button" value="Browse..." onclick="showFileBrowser('metadata','%home%');">
-            </p>
-         </fieldset>
+            </fieldset>
+        </p>
 
-    </div>
-    </div>
+        <p> <!-- Dataset Abstract -->
+            <fieldset>
+                <span id="qtip_abstrct" style="float:right;"><img src="includes/images/info.png"></span>
+                <label for="abstrct"><b>Dataset Abstract: </b></label>
+                <div class="textareacontainer">
+                    <textarea
+                        <?php formDisabled($formDisabled); ?>
+                        name="abstrct" id="abstrct" style="height:100%;width:100%"><?php if (isset($row['abstract'])) echo htmlspecialchars($row['abstract']); ?></textarea>
+                </div>
+            </fieldset>
+        </p>
 
-    <input type="hidden" name="udi" id="udi" value="<?php if (isset($row['dataset_udi'])) {echo $row['dataset_udi'];};?>"/>
-    <input type="hidden" name="regid" id="regid" value="<?php if (isset($row['registry_id'])) {echo $row['registry_id'];};?>"/>
+        <p> <!-- Dataset Originator(s) -->
+            <fieldset>
+                <span id="qtip_dataset_originator" style="float:right;"><img src="includes/images/info.png"></span>
+                <label for="dataset_originator"><b>Dataset Originator(s): </b></label>
+                <div class="fwtextboxcont">
+                    <input
+                        <?php formDisabled($formDisabled); ?>
+                        type="text" name="dataset_originator" id="dataset_originator" style="width:100%"
+                        value="<?php if (isset($row['dataset_originator'])) echo htmlspecialchars($row['dataset_originator']); ?>"/>
+                </div>
+            </fieldset>
+        </p>
+
+        <p> <!-- Point of Contact -->
+            <fieldset>
+                <legend>Point of Contact</legend>
+                <table width="100%">
+                    <tr>
+                        <td width="50%">
+                            <span id="qtip_poc" style="float:right;"><img src="includes/images/info.png"></span>
+                            <label for="pocname"><b>Name: </b></label>
+                            <div class="fwtextboxcont">
+                                <input
+                                    <?php formDisabled($formDisabled); ?>
+                                    onchange="checkDOIFields();" type="text" name="pocname" id="pocname" style="width:100%"
+                                    value="<?php if (isset($row['primary_poc'])) echo htmlspecialchars($row['primary_poc']); ?>">
+                            </div>
+                        </td>
+                        <td width="50%" style="padding-left:10px;">
+                            <span id="qtip_pocemail" style="float:right;"><img src="includes/images/info.png"></span>
+                            <label for="pocemail"><b>E-Mail: </b></label>
+                            <div class="fwtextboxcont">
+                                <input <?php formDisabled($formDisabled); ?> type="text" name="pocemail" id="pocemail" style="width:100%" value="<?php echo htmlspecialchars($poc_email);?>">
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </fieldset>
+        </p>
+
+        <p> <!-- Restrictions -->
+            <fieldset>
+                <span id="qtip_avail" style="float:right;"><img src="includes/images/info.png"></span>
+                <label for="avail">Restrictions:</label>
+                    <input
+                        <?php formDisabled($formDisabled); ?>
+                        <?php if (isset($row['access_status'])) isChecked($row['access_status'],0,"None"); else echo 'checked'; ?>
+                        name="access_status" id="avail" type="radio" value="None"/>None
+                    <input
+                        <?php formDisabled($formDisabled); ?>
+                        <?php if (isset($row['access_status'])) isChecked($row['access_status'],0,"Approval"); ?>
+                        name="access_status" id="avail" type="radio" value="Approval"/>Requires Author&apos;s Approval
+                    <input
+                        <?php formDisabled($formDisabled); ?>
+                        <?php if (isset($row['access_status'])) isChecked($row['access_status'],0,"Restricted"); ?>
+                        name="access_status" id="avail" type="radio" value="Restricted"/>Restricted
+            </fieldset>
+        </p>
+
+        <p>
+            <fieldset>
+                <legend>DOI for dataset (if available):</legend>
+                <span id="qtip_doi" style="float:right;"><img src="includes/images/info.png"></span>
+                <label for="doi">Digital Object Identifier:</label>
+                <div class="fwtextboxcont">
+                    <input
+                        <?php formDisabled($formDisabled); ?>
+                        type="text" name="doi" id="doi" size="60"
+                        value="<?php if (isset($row['doi'])) echo htmlspecialchars($row['doi']); ?>">
+                </div>
+                <span style="display:none" id="doibuttondiv">
+                    <button disabled  id="doibutton" name="doibutton" type="button" onclick="checkDOIFields(true);">Digital Object Indentifier Request Form</button>
+                </span>
+                <input type="hidden" name="generatedoi" id="generatedoi" value="No">
+            </fieldset>
+        </p>
+
+    </fieldset> <!-- Dataset Information Header -->
+
+    <fieldset> <!-- Dataset File Transfer Details -->
+
+        <legend class="section-header">Dataset File Transfer Details</legend>
+
+        <div style="background: transparent;" id="tabs">
+            <ul>
+                <li><a onclick="document.getElementById('servertype').value='upload'" href="#tabs-1">Direct Upload</a></li>
+                <li><a onclick="document.getElementById('servertype').value='SFTP'" href="#tabs-2">Upload via SFTP/GridFTP</a></li>
+                <li><a onclick="document.getElementById('servertype').value='HTTP'" href="#tabs-3">Request Pull from HTTP/FTP Server</a></li>
+                <li><a href="#tabs-4">ERDDAP</a></li>
+                <li><a href="#tabs-5">TDS</a></li>
+                <li><a href="#tabs-6">...</a></li>
+            </ul>
+
+            <div id="tabs-1"> <!-- Direct Upload -->
+                For small datasets (&lt;1 GB), you may upload the dataset file directly, using your web browser. Depending on the size of the file, this may take several minutes. The maximum time the system will wait for the file to upload is 10 minutes. For larger files, please consider using SFTP or GridFTP to upload the file.
+                <fieldset>
+                    <?php
+                        $upload_progress_key = md5(mt_rand());
+                        echo "<input type='hidden' id='APC_UPLOAD_PROGRESS' name='APC_UPLOAD_PROGRESS' value='$upload_progress_key' />";
+                    ?>
+                    <p>
+                        <span id="qtip_uploaddataurl" style="float:right;"><img src="includes/images/info.png"></span>
+                        <label for="datafile">Dataset File:</label>
+                        <?php
+                            if (isset($row['data_server_type']) and $row['data_server_type'] == 'upload' and isset($row['url_data']) and $row['url_data'] != '') {
+                                echo "<div class='fwtextboxcont'>";
+                                echo "<input disabled type='text' style='width:100%' value='$row[url_data]' style='color:black; background-color:transparent; padding:2px;'></div>";
+                                echo "<input type='hidden' name='url_data_upload' value='$row[url_data]'>";
+                                echo "To replace the dataset file: ";
+                            }
+                        ?>
+                        <input <?php formDisabled($formDisabled); ?> name="datafile" id="datafile" type="file"/>
+                    </p>
+                </fieldset>
+            </div> <!-- tabs-1 -->
+
+            <div id="tabs-2"> <!-- Upload via SFTP/GridFTP -->
+                Use this method when the dataset is &gt;1GB and you wish to upload the dataset file to GRIIDC (rather than place the dataset file on an HTTP (web) or FTP server and have GRIIDC pull it).
+                <strong>Note:</strong> <em>Using this method requires that you have <strong>first</strong> uploaded the file via SFTP or GridFTP.</em>
+                <?php
+                    if (!$sftpuser) {
+                        echo <<<EOT
+                            <div style='color:red;'>
+                                Your account has not been configured for SFTP/GridFTP access.<br>
+                                If you wish to use SFTP/GridFTP, please contact <a href='mailto:griidc@gomri.org'>griidc@gomri.org</a> to request SFTP/GridFTP access.
+                            </div>
+EOT;
+                    }
+                    elseif (!$sftpdir) {
+                        echo <<<EOT
+                            <div style="color:red;">
+                                Your SFTP/GridFTP directory has not been set up.<br>
+                                Please contact <a href='mailto:griidc@gomri.org'>griidc@gomri.org</a> for assistance.
+                            </div>
+EOT;
+                    }
+                ?>
+                <fieldset>
+                    <p>
+                        <span id="qtip_sshdataurl" style="float:right;"><img src="includes/images/info.png"></span>
+                        <label for="sshdatapath">Dataset File Path:</label>
+                        <div class="fwtextboxcont">
+                            <input
+                                <?php formDisabled($formDisabled); ?>
+                                name="url_data_sftp" id="sshdatapath" type="text" style="width:100%"
+                                value="<?php if (isset($row['data_server_type']) and $row['data_server_type'] == 'SFTP' and isset($row['url_data'])) echo $row['url_data']; ?>"/>
+                        </div>
+                        <input type="button" value="Browse..." onclick="showFileBrowser('data','%home%');">
+                    </p>
+                </fieldset>
+            </div> <!-- tabs-2 -->
+
+            <div id="tabs-3"> <!-- Request Pull from HTTP/FTP Server -->
+                Use this method when you wish to place the dataset file on an HTTP (web) or FTP server at your institution (or elsewhere) and have GRIIDC pull it. You may specify an optional availability date, after which the dataset will be available at the provided URL, as well as optional preferred days and times of day to initiate the download. Additionally, if the dataset file is archived in a cyber-infrastructure that can be maintained for the next decade (e.g. NODC), you may specify that GRIIDC point to the dataset at the provided URL rather than download and house it at GRIIDC.
+                <fieldset>
+                    <p>
+                        <span id="qtip_dataurl" style="float:right;"><img src="includes/images/info.png"></span>
+                        <label for="dataurl">Dataset File URL:</label>
+                        <div class="fwtextboxcont">
+                            <input <?php formDisabled($formDisabled); ?>
+                            onchange="checkDOIFields();" name="url_data_http" id="dataurl" type="text" style="width:100%"
+                            value="<?php if (isset($row['data_server_type']) and $row['data_server_type'] == 'HTTP' and isset($row['url_data'])) echo $row['url_data']; ?>"/>
+                        </div>
+                    </p>
+                </fieldset>
+
+                <table width="100%">
+                    <tr>
+                        <td width="50%"> <!-- Availability Date -->
+                            <fieldset>
+                                <p>
+                                    <span id="qtip_date" style="float:right;"><img src="includes/images/info.png"></span>
+                                    <label for="availdate">Availability Date:</label>
+                                    <input
+                                        <?php formDisabled($formDisabled); ?>
+                                        onchange="checkDOIFields();"
+                                        value="<?php if (isset($row['availability_date'])) echo $row['availability_date']; ?>"
+                                        type="text" name="availability_date" id="availdate" size="40" style="width:100px;"/>
+                                    (leave blank for immediate availability
+                                </p>
+                            </fieldset>
+                        </td>
+                        <td width="50%"> <!-- Download Certain Times Only -->
+                            <fieldset>
+                                <p>
+                                    <span id="qtip_when" style="float:right;"><img src="includes/images/info.png"></span>
+                                    <label for="whendl">Download Certain Times Only:</label>
+                                    <input
+                                        <?php formDisabled($formDisabled); ?>
+                                        <?php if (isset($row['access_period'])) isChecked($row['access_period'],0,true); ?>
+                                        onclick="showCreds(this,'whendiv','Yes');getTimeZone();weekDays();"
+                                        name="access_period" id="whendl" type="radio" value="Yes"/>Yes
+                                    <input
+                                        <?php formDisabled($formDisabled); ?>
+                                        <?php if (isset($row['access_period'])) isChecked($row['access_period'],0,false); else echo 'checked'; ?>
+                                        onclick="showCreds(this,'whendiv','Yes');getTimeZone();weekDays();"
+                                        name="access_period" id="whendl" type="radio" value="No"/>No
+                                </p>
+                            </fieldset>
+                       </td>
+                    </tr>
+                    <input name="auth" id="auth" type="hidden" value="No"/>
+                </table>
+
+                <div id="whendiv" style="display:<?php if (isset($row['access_period'])) { if ($row['access_period']==true) echo 'block'; else echo 'none'; } else echo 'none'; ?>;">
+                    <fieldset>
+                        <span id="qtip_times" style="float:right;"><img src="includes/images/info.png"></span>
+                        <legend>Pull Times:</legend>
+                        <table width="100%">
+                            <tr>
+                                <td valign="top">
+                                    <label for="dlstart">Start Time:</label>
+                                    <select name="dlstart" id="dlstart">
+                                        <?php if (isset($row['access_period_start'])) createTimesDD($row['access_period_start']); else createTimesDD(); ?>
+                                    </select>
+
+                                </td>
+                                <td>
+                                    <label for="weekdays">Weekdays:</label>
+                                    <input onchange="weekDays();"
+                                        <?php if (isset($row['access_period_weekdays'])) isChecked($row['access_period_weekdays'],0,"Monday"); else echo 'checked'; ?>
+                                            name="weekdays" id="weekdays" type="checkbox" value="Monday"/>Monday<br>
+                                    <input onchange="weekDays();"
+                                        <?php if (isset($row['access_period_weekdays'])) isChecked($row['access_period_weekdays'],0,"Tuesday"); else echo 'checked'; ?>
+                                            name="weekdays" id="weekdays" type="checkbox" value="Tuesday"/>Tuesday<br>
+                                    <input onchange="weekDays();"
+                                        <?php if (isset($row['access_period_weekdays'])) isChecked($row['access_period_weekdays'],0,"Wednesday"); else echo 'checked'; ?>
+                                            name="weekdays" id="weekdays" type="checkbox" value="Wednesday"/>Wednesday<br>
+                                    <input onchange="weekDays();"
+                                        <?php if (isset($row['access_period_weekdays'])) isChecked($row['access_period_weekdays'],0,"Thursday"); else echo 'checked'; ?>
+                                            name="weekdays" id="weekdays" type="checkbox" value="Thursday"/>Thursday<br>
+                                    <input onchange="weekDays();"
+                                        <?php if (isset($row['access_period_weekdays'])) isChecked($row['access_period_weekdays'],0,"Friday"); else echo 'checked'; ?>
+                                            name="weekdays" id="weekdays" type="checkbox" value="Friday"/>Friday<br>
+                                    <input onchange="weekDays();"
+                                        <?php if (isset($row['access_period_weekdays'])) isChecked($row['access_period_weekdays'],0,"Saturday"); else echo 'checked'; ?>
+                                            name="weekdays" id="weekdays" type="checkbox" value="Saturday"/>Saturday<br>
+                                    <input onchange="weekDays();"
+                                        <?php if (isset($row['access_period_weekdays'])) isChecked($row['access_period_weekdays'],0,"Sunday"); else echo 'checked'; ?>
+                                            name="weekdays" id="weekdays" type="checkbox" value="Sunday"/>Sunday
+
+                                </td>
+                                <td valign="top">
+                                    <button style="width:100px" type="button" onclick="selDays(true);">Weekends</button><br \>
+                                    <button style="width:100px" type="button" onclick="selDays(false);">Workdays</button>
+                                </td>
+                            </tr>
+                        </table>
+                    </fieldset>
+                </div> <!-- whendiv -->
+                <div>
+                    <fieldset>
+                        <p>
+                            <span id="qtip_pull" style="float:right;"><img src="includes/images/info.png"></span>
+                            <label for="pullds">Pull Source Data:</label>
+                            <input
+                                <?php formDisabled($formDisabled); ?>
+                                <?php
+                                    if (isset($row['data_source_pull'])) isChecked($row['data_source_pull'],0,true);
+                                    else echo 'checked';
+                                ?>
+                                name="data_source_pull" id="pullds" type="radio" value="Yes"/>Yes
+                            <input
+                                <?php formDisabled($formDisabled); ?>
+                                <?php
+                                    if (isset($row['data_source_pull'])) isChecked($row['data_source_pull'],0,false);
+                                ?>
+                                name="data_source_pull" id="pullds" type="radio" value="No"/>No
+                        </p>
+                    </fieldset>
+                </div>
+            </div> <!-- tabs-3 -->
+
+        </div> <!-- tabs -->
+
+    </fieldset> <!-- Dataset File Transfer Details -->
+
+    <fieldset> <!-- Metadata File Transfer Details -->
+
+        <legend class="section-header">Metadata File Transfer Details</legend>
+
+        <div style="background: transparent;" id="md-tabs">
+            <ul>
+                <li><a onclick="document.getElementById('md_servertype').value='upload'" href="#md-tabs-1">Direct Upload</a></li>
+                <li><a onclick="document.getElementById('md_servertype').value='SFTP'" href="#md-tabs-2">Upload via SFTP/GridFTP</a></li>
+                <li><a onclick="document.getElementById('md_servertype').value='HTTP'" href="#md-tabs-3">Pull from HTTP/FTP Server</a></li>
+                <li><a href="#md-tabs-4">ERDDAP</a></li>
+                <li><a href="#md-tabs-5">TDS</a></li>
+                <li><a href="#md-tabs-6">...</a></li>
+            </ul>
+
+            <div id="md-tabs-1"> <!-- Direct Upload -->
+                You may upload the metadata file directly, using your web browser.
+                <fieldset>
+                    <p>
+                        <span id="qtip_uploadmetadataurl" style="float:right;"><img src="includes/images/info.png"></span>
+                        <label for="metadatafile">Metadata File:</label>
+                        <?php
+                            if (isset($row['data_server_type']) and $row['data_server_type'] == 'upload' and isset($row['url_metadata']) and $row['url_metadata'] != '') {
+                                echo "<div class='fwtextboxcont'>";
+                                echo "<input disabled type='text' style='width:100%' value='$row[url_metadata]' style='color:black; background-color:transparent; padding:2px;'></div>";
+                                echo "<input type='hidden' name='upload_metadataurl' value='$row[url_metadata]'>";
+                                echo "To replace the metadata file: ";
+                            }
+                        ?>
+                        <input <?php formDisabled($formDisabled); ?> name="metadatafile" id="metadatafile" type="file"/>
+                    </p>
+                </fieldset>
+            </div> <!-- md-tabs-1 -->
+
+            <div id="md-tabs-2"> <!-- Upload via SFTP/GridFTP -->
+                You may use this method if you wish to upload the metadata file via SFTP/GridFTP (e.g. if you uploaded a metadata file alongside a data file that you uploaded using SFTP/GridFTP).
+                <strong>Note:</strong> <em>Using this method requires that you have <strong>first</strong> uploaded your file via SFTP or GridFTP.</em>
+                <?php
+                    if (!$sftpuser) {
+                        echo <<<EOT
+                            <div style='color:red;'>
+                                Your account has not been configured for SFTP/GridFTP access.<br>
+                                If you wish to use SFTP/GridFTP, please contact <a href='mailto:griidc@gomri.org'>griidc@gomri.org</a> to request SFTP/GridFTP access.
+                            </div>
+EOT;
+                    }
+                    elseif (!$sftpdir) {
+                        echo <<<EOT
+                            <div style="color:red;">
+                                Your SFTP/GridFTP directory has not been set up.<br>
+                                Please contact <a href='mailto:griidc@gomri.org'>griidc@gomri.org</a> for assistance.
+                            </div>
+EOT;
+                    }
+                ?>
+                <fieldset>
+                    <p>
+                        <span id="qtip_sshmetadataurl" style="float:right;"><img src="includes/images/info.png"></span>
+                        <label for="sshmetadatapath">Metadata File Path:</label>
+                        <div class="fwtextboxcont">
+                            <input
+                                <?php formDisabled($formDisabled); ?>
+                                name="url_metadata_sftp" id="sshmetadatapath" type="text" style="width:100%"
+                                value="<?php if (isset($row['data_server_type']) and $row['data_server_type'] == 'SFTP' and isset($row['url_metadata'])) echo $row['url_metadata']; ?>"/>
+                        </div>
+                        <input type="button" value="Browse..." onclick="showFileBrowser('metadata','%home%');">
+                    </p>
+                 </fieldset>
+            </div> <!-- md-tabs-2 -->
+
+            <div id="md-tabs-3"> <!-- Pull from HTTP/FTP Server -->
+                Use this method when you wish to place the metadata file on an HTTP (web) or FTP server at your institution (or elsewhere) and have GRIIDC pull it. The file will be downloaded immediately upon submission.
+                <fieldset>
+                    <p>
+                        <span id="qtip_metadataurl" style="float:right;"><img src="includes/images/info.png"></span>
+                        <label for="metadataurl">Metadata File URL:</label>
+                        <div class="fwtextboxcont">
+                            <input
+                                <?php formDisabled($formDisabled); ?>
+                                name="metadataurl" id="metadataurl" style="width:100%"
+                                value="<?php if (isset($row['data_server_type']) and $row['data_server_type'] == 'HTTP' and isset($row['url_metadata'])) echo $row['url_metadata']; ?>"/>
+                        </div>
+                    </p>
+                </fieldset>
+            </div> <!-- md-tabs-3 -->
+
+        </div> <!-- md-tabs -->
+
+    </fieldset> <!-- Metadata File Transfer Details -->
+
+    <input type="hidden" name="dataset_udi" id="udi" value="<?php if (isset($row['dataset_udi'])) echo $row['dataset_udi']; ?>"/>
+    <input type="hidden" name="registry_id" id="regid" value="<?php if (isset($row['registry_id'])) echo $row['registry_id']; ?>"/>
     <input type="hidden" name="urlvalidate" id="urlvalidate"/>
-    <input type="hidden" name="weekdayslst" id="weekdayslst"/>
+    <input type="hidden" name="access_period_weekdays" id="weekdayslst"/>
     <input type="hidden" name="timezone" id="timezone"/>
-    <input type="hidden" name="servertype" id="servertype" value="<?php if ($tabselect==0){echo 'upload';};if ($tabselect==1){echo 'HTTP';};if ($tabselect==2){echo 'SFTP';};?>"/>
+    <input type="hidden" name="data_server_type" id="servertype" value="<?php if ($tabselect==0) echo 'upload'; elseif ($tabselect==1) echo 'HTTP'; elseif ($tabselect==2) echo 'SFTP'; ?>"/>
+    <input type="hidden" name="metadata_server_type" id="md_servertype" value="<?php if ($md_tabselect==0) echo 'upload'; elseif ($md_tabselect==1) echo 'HTTP'; elseif ($md_tabselect==2) echo 'SFTP'; ?>"/>
 
     <br>
     <div style="text-align:center;">
-        <input <?php formDisabled($formDisabled)?> onclick="submitRegistry();" type="button" value="<?php if ($registered) echo "Update"; else echo "Register"; ?>" style="font-size:120%; font-weight:bold;"/>
+        <input
+            <?php formDisabled($formDisabled); ?>
+            type="button" style="font-size:120%; font-weight:bold;" onclick="submitRegistry();"
+            value="<?php if ($registered) echo "Update"; else echo "Register"; ?>"/>
     </div>
 </form>
 

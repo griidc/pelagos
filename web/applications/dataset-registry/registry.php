@@ -20,6 +20,11 @@ $isGroupAdmin = false;
 
 $alltasks="";
 
+$registry_fields = array( 'registry_id', 'dataset_udi', 'dataset_title', 'dataset_abstract', 'dataset_originator', 'dataset_poc_name', 'dataset_poc_email', 'access_status', 'doi',
+                          'data_server_type', 'url_data', 'availability_date', 'access_period', 'access_period_start', 'access_period_weekdays', 'data_source_pull',
+                          'metadata_server_type', 'url_metadata',
+                          'userid', 'submittimestamp');
+
 $conn = pdoDBConnect('pgsql:'.GOMRI_DB_CONN_STRING);
 $DBH = OpenDB('GOMRI_RW');
 
@@ -103,52 +108,58 @@ if ($_GET)
     }
 }
 
-if ($_POST)
-{
+$registry_vals = array();
+
+if ($_POST) {
     $formHash = sha1(serialize($_POST));
-
-    $doi = '';
-
-    extract($_POST);
-
-    $SQL = "SELECT MAX(registry_id) AS maxregid FROM registry WHERE registry_id LIKE ?;";
-    $sth = $DBH->prepare($SQL);
-    if ($udi == "") $sth->execute(array('00.x000.000:%'));
-    else $sth->execute(array("$udi.%"));
-    $result = $sth->fetch();
-
-    $newserial = (int) substr($result['maxregid'],13,4) + 1;
-    $newsub = (int) substr($result['maxregid'],17,3) + 1;
-
-    $newserial = str_pad($newserial, 4,'0',STR_PAD_LEFT);
-    $newsub = str_pad($newsub, 3,'0',STR_PAD_LEFT);
-
-    if ($udi == "")
-    {
-        $reg_id = '00.x000.000:' . $newserial . '.001';
-    }
-    else
-    {
-        $reg_id = $udi.'.'.$newsub;
-    }
-
-    if ($title == "" OR $abstrct == "" OR $pocemail == "" OR $pocname == "" OR $dataset_originator == "")
-    {
+    if (empty($_POST['title']) or empty($_POST['abstrct']) or empty($_POST['pocemail']) or empty($_POST['pocname']) or empty($_POST['dataset_originator'])) {
         $dMessage = 'Not all required fields where filled out!';
         drupal_set_message($dMessage,'warning');
     }
-    else
-    {
-        //date_default_timezone_set('UTC');
-        $now = date('c');
-        $ip = $_SERVER['REMOTE_ADDR'];
+    else {
+        if ($_SESSION['submitok']) {
+            $dMessage= "Sorry, the data was already succesfully submitted. Please email <a href=\"mailto:griidc@gomri.org?subject=REG Form\">griidc@gomri.org</a> if you have any questions.";
+            drupal_set_message($dMessage,'warning',false);
+            $_SESSION['submitok'] = true;
+        }
+        else {
+            foreach ($registry_fields as $field) {
+                $registry_vals[$field] = null;
+            }
 
+            # determine registry_id
+            $SQL = "SELECT MAX(registry_id) AS maxregid FROM registry WHERE registry_id LIKE ?;";
+            $sth = $DBH->prepare($SQL);
+            if (array_key_exists('dataset_udi',$_POST) and !empty($_POST['dataset_udi'])) {
+                $registry_vals['dataset_udi'] = pg_escape_string($_POST['dataset_udi']);
+                $sth->execute(array("$_POST[dataset_udi].%"));
+                $result = $sth->fetch();
+                $newsub = (int) substr($result['maxregid'],17,3) + 1;
+                $newsub = str_pad($newsub, 3,'0',STR_PAD_LEFT);
+                $registry_vals['registry_id'] = $_POST['dataset_udi'].'.'.$newsub;
+            }
+            else {
+                $sth->execute(array('00.x000.000:%'));
+                $result = $sth->fetch();
+                $newserial = (int) substr($result['maxregid'],13,4) + 1;
+                $newserial = str_pad($newserial, 4,'0',STR_PAD_LEFT);
+                $registry_vals['registry_id'] = '00.x000.000:' . $newserial . '.001';
+            }
 
-        $title = pg_escape_string($title);
-        $abstrct = pg_escape_string($abstrct);
+            $registry_vals['dataset_title'] = pg_escape_string($_POST['title']);
+            $registry_vals['dataset_abstract'] = pg_escape_string($_POST['abstrct']);
+            $registry_vals['dataset_originator'] = pg_escape_string($_POST['dataset_originator']);
+            $registry_vals['dataset_poc_name'] = pg_escape_string($_POST['pocname']);
+            $registry_vals['dataset_poc_email'] = pg_escape_string($_POST['pocemail']);
+            $registry_vals['access_status'] = pg_escape_string($_POST['access_status']);
+            if (array_key_exists('doi',$_POST) and !empty($_POST['doi'])) {
+                $registry_vals['doi'] = $_POST['doi'];
+            }
+            $registry_vals['data_server_type'] = $_POST['data_server_type'];
+            $registry_vals['metadata_server_type'] = $_POST['metadata_server_type'];
 
-        if (!$_SESSION['submitok']) {
-            if ($servertype == "upload") {
+            # if we're uploading data, make sure we have a place to put it
+            if ($_POST['data_server_type'] == "upload" or $_POST['metadata_server_type'] == "upload") {
                 $home_dir = getHomedir($uid);
                 $home_dir = preg_replace('/\/+$/','',$home_dir);
                 $dest_dir = "$home_dir/incoming";
@@ -157,108 +168,109 @@ if ($_POST)
                     if (!file_exists("/san/home/upload/$uid")) mkdir("/san/home/upload/$uid");
                     if (!file_exists($dest_dir)) mkdir($dest_dir);
                 }
-
-                $data_file_path = '';
-                if (array_key_exists('upload_dataurl',$_POST)) $data_file_path = $_POST['upload_dataurl'];
-                if (array_key_exists('datafile',$_FILES) and !empty($_FILES["datafile"]["name"])) {
-                    if ($_FILES['datafile']['error'] > 0) {
-                        echo "Error uploading data file: " . $_FILES['datafile']['error'] . "<br>";
-                    }
-                    else {
-                        move_uploaded_file($_FILES["datafile"]["tmp_name"],"$dest_dir/" . $_FILES["datafile"]["name"]);
-                        $data_file_path = "file://$dest_dir/" . $_FILES["datafile"]["name"];
-                    }
-                }
-
-                $metadata_file_path = '';
-                if (array_key_exists('upload_metadataurl',$_POST)) {
-                    $metadata_file_path = $_POST['upload_metadataurl'];
-                }
-                if (array_key_exists('metadatafile',$_FILES) and !empty($_FILES["metadatafile"]["name"])) {
-                    if ($_FILES['metadatafile']['error'] > 0) {
-                        echo "Error upload metadata file: " . $_FILES['metadatafile']['error'] . "<br>";
-                    }
-                    else {
-                        move_uploaded_file($_FILES["metadatafile"]["tmp_name"],"$dest_dir/" . $_FILES["metadatafile"]["name"]);
-                        $metadata_file_path = "file://$dest_dir/" . $_FILES["metadatafile"]["name"];
-                    }
-                }
-
-                $SQL = "INSERT INTO registry ( registry_id, data_server_type, dataset_udi, dataset_title, dataset_abstract,
-                                               dataset_poc_name, dataset_poc_email, url_data, url_metadata, access_status,
-                                               data_source_pull, doi, generatedoi, submittimestamp, userid, dataset_originator )
-                        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
-                $sth = $DBH->prepare($SQL);
-                $result = $sth->execute(array( $reg_id, $servertype, $udi, $title, $abstrct,
-                                               $pocname, $pocemail, $data_file_path, $metadata_file_path, $avail,
-                                               'Yes', $doi, $generatedoi, $now, $uid, $dataset_originator ));
-
-                $dataurl = $data_file_path;
-                $metadataurl = $metadata_file_path;
             }
 
-            if ($servertype == "HTTP") {
-                $SQL = "INSERT INTO registry ( registry_id, data_server_type, dataset_udi, dataset_title, dataset_abstract,
-                                               dataset_poc_name, dataset_poc_email, url_data, url_metadata, username,
-                                               password, availability_date, authentication, access_status, access_period,
-                                               access_period_start, access_period_weekdays, data_source_pull, doi, generatedoi,
-                                               submittimestamp, userid, dataset_originator )
-                        VALUES ( ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
-                $sth = $DBH->prepare($SQL);
-                $result = $sth->execute(array( $reg_id, $servertype, $udi, $title, $abstrct,
-                                               $pocname, $pocemail, $dataurl, $metadataurl, $uname,
-                                               $pword, $availdate, $auth, $avail, $whendl,
-                                               "$dlstart$timezone", $weekdayslst, $pullds, $doi, $generatedoi,
-                                               $now, $uid, $dataset_originator ));
+            switch ($_POST['data_server_type']) {
+                case 'upload':
+                    $data_file_path = null;
+                    if (array_key_exists('url_data_upload',$_POST)) $data_file_path = $_POST['url_data_upload'];
+                    if (array_key_exists('datafile',$_FILES) and !empty($_FILES["datafile"]["name"])) {
+                        if ($_FILES['datafile']['error'] > 0) {
+                            echo "Error uploading data file: " . $_FILES['datafile']['error'] . "<br>";
+                        }
+                        else {
+                            move_uploaded_file($_FILES["datafile"]["tmp_name"],"$dest_dir/" . $_FILES["datafile"]["name"]);
+                            $data_file_path = "file://$dest_dir/" . $_FILES["datafile"]["name"];
+                        }
+                    }
+                    $registry_vals['url_data'] = $data_file_path;
+                    break;
+                case 'SFTP':
+                    if (array_key_exists('url_data_sftp',$_POST) and !empty($_POST['url_data_sftp']))
+                        $registry_vals['url_data'] = $_POST['url_data_sftp'];
+                    break;
+                case 'HTTP':
+                    if (array_key_exists('url_data_http',$_POST) and !empty($_POST['url_data_http']))
+                        $registry_vals['url_data'] = $_POST['url_data_http'];
+                    if (array_key_exists('availability_date',$_POST) and !empty($_POST['availability_date']))
+                        $registry_vals['availability_date'] =  $_POST['availability_date'];
+                    if (array_key_exists('access_period',$_POST) and !empty($_POST['access_period'])) {
+                        if ($_POST['access_period'] == 'Yes') {
+                            $registry_vals['access_period'] = true;
+                            if (array_key_exists('dlstart',$_POST) and !empty($_POST['dlstart']))
+                                $registry_vals['access_period_start'] = "$_POST[dlstart]$_POST[timezone]";
+                            if (array_key_exists('access_period_weekdays',$_POST) and !empty($_POST['access_period_weekdays']))
+                                $registry_vals['access_period_weekdays'] = $_POST['access_period_weekdays'];
+                        }
+                        else $registry_vals['access_period'] = false;
+                    }
+                    if (array_key_exists('data_source_pull',$_POST) and !empty($_POST['data_source_pull'])) {
+                        if ($_POST['data_source_pull'] == 'Yes') $registry_vals['data_source_pull'] = true;
+                        else $registry_vals['data_source_pull'] = false;
+                    }
+                    break;
             }
 
-            if ($servertype == "SFTP") {
-                $SQL = "INSERT INTO registry ( registry_id, data_server_type, dataset_udi, dataset_title, dataset_abstract,
-                                               dataset_poc_name, dataset_poc_email, url_data, url_metadata, access_status,
-                                               data_source_pull, doi, generatedoi, submittimestamp, userid, dataset_originator )
-                        VALUES ( ?,?,?,?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?);";
-                $sth = $DBH->prepare($SQL);
-                $result = $sth->execute(array( $reg_id, $servertype, $udi, $title, $abstrct,
-                                               $pocname, $pocemail, $sshdatapath, $sshmetadatapath, $avail,
-                                               'Yes', $doi, $generatedoi, $now, $uid, $dataset_originator ));
-                $dataurl = $sshdatapath;
-                $metadataurl = $sshmetadatapath;
+            switch ($_POST['metadata_server_type']) {
+                case 'upload':
+                    $metadata_file_path = null;
+                    if (array_key_exists('upload_metadataurl',$_POST)) {
+                        $metadata_file_path = $_POST['upload_metadataurl'];
+                    }
+                    if (array_key_exists('metadatafile',$_FILES) and !empty($_FILES["metadatafile"]["name"])) {
+                        if ($_FILES['metadatafile']['error'] > 0) {
+                            echo "Error uploading metadata file: " . $_FILES['metadatafile']['error'] . "<br>";
+                        }
+                        else {
+                            move_uploaded_file($_FILES["metadatafile"]["tmp_name"],"$dest_dir/" . $_FILES["metadatafile"]["name"]);
+                            $metadata_file_path = "file://$dest_dir/" . $_FILES["metadatafile"]["name"];
+                        }
+                    }
+                    $registry_vals['url_metadata'] = $metadata_file_path;
+                    break;
+                case 'SFTP':
+                    $registry_vals['url_metadata'] = $_POST['url_metadata_sftp'];
+                    break;
+                case 'HTTP':
+                    if (array_key_exists('url_metadata_http',$_POST) and !empty($_POST['url_metadata_http']))
+                        $registry_vals['url_metadata'] = $_POST['url_metadata_http'];
             }
 
-            if ($result)
-            {
+            $registry_vals['userid'] = $uid;
+            $registry_vals['submittimestamp'] = date('c');
+
+            $SQL = 'INSERT INTO registry (' . join(',',$registry_fields) . ') VALUES (:' . join(',:',$registry_fields) .');';
+            $sth = $DBH->prepare($SQL);
+            foreach ($registry_fields as $field) {
+                $sth->bindValue(":$field",$registry_vals[$field]);
+            }
+            $result = $sth->execute();
+
+            if ($result) {
                 $dMessage = "Thank you for your submission. Please email <a href=\"mailto:griidc@gomri.org?subject=DOI Form\">griidc@gomri.org</a> if you have any questions.";
                 drupal_set_message($dMessage,'status');
                 $_SESSION['submitok'] = true;
             }
-            else
-            {
+            else {
                 $dMessage= "A database error happened, please contact the administrator <a href=\"mailto:griidc@gomri.org?subject=DOI Error\">griidc@gomri.org</a>.<br/>".$sth->errorInfo();
                 drupal_set_message($dMessage,'error',false);
             }
-        }
-        else
-        {
-            $dMessage= "Sorry, the data was already succesfully submitted. Please email <a href=\"mailto:griidc@gomri.org?subject=REG Form\">griidc@gomri.org</a> if you have any questions.";
-            drupal_set_message($dMessage,'warning',false);
-            $_SESSION['submitok'] = true;
+
         }
 
     }
+
 }
-else
-{
+else {
     $_SESSION['submitok'] = false;
 }
 
-if ($_SESSION['submitok'])
-{
+if ($_SESSION['submitok']) {
     include 'submit.php';
     # trigger filer
     system('/usr/local/griidc/filer/trigger-filer');
 }
-else
-{
+else {
     echo '<table  border="0">';
     echo '<tr>';
     echo '<td width="60%" style="vertical-align: top; background: transparent;">';
@@ -273,8 +285,3 @@ else
 };
 
 ?>
-
-
-
-
-
