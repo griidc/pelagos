@@ -103,7 +103,7 @@ $app->get('/download-metadata/:udi', function ($udi) use ($app) {
         $datasets = get_identified_datasets(OpenDB('GOMRI_RO'),array("udi=$udi"));
     }
     $dataset = $datasets[0];
-    
+   
     $dl_dir = $GLOBALS['storage']['storage']['data_download_store'];
     $met_file = "$dl_dir/$dataset[udi]/$dataset[udi].met";
     if (file_exists($met_file)) {
@@ -114,11 +114,11 @@ $app->get('/download-metadata/:udi', function ($udi) use ($app) {
         header("Content-Type: $mime");
         header("Content-Transfer-Encoding: Binary");
         header("Content-Length:" . filesize($met_file));
-        header("Content-Disposition: attachment; filename=$dataset[metadata_filename]");
+        header("Content-Disposition: attachment; filename='$dataset[metadata_filename]'");
         readfile($met_file);
         exit;
     } else {
-        drupal_set_message("Error retrieving metadata file: file not found: $met_file",'error');
+        drupal_set_message("Error retrieving metadata file: file not found: '$met_file'",'error');
         drupal_goto($GLOBALS['PAGE_NAME']); # reload calling page (is there a better way to do this?
     }
 });
@@ -231,20 +231,7 @@ $app->get('/download-metadata-db/:udi', function ($udi) use ($app) {
     $sql = "
     select
         metadata_xml,
-        coalesce(
-            cast(
-                xpath('/gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1]/text()',metadata_xml,
-                    ARRAY[
-                    ARRAY['gmi', 'http://www.isotc211.org/2005/gmi'],
-                    ARRAY['gmd', 'http://www.isotc211.org/2005/gmd'],
-                    ARRAY['gco', 'http://www.isotc211.org/2005/gco']
-                    ]
-                ) as character varying
-            ),
-            dataset_metadata
-        )
-
-    as filename
+        substring(metadata.registry_id from 1 for 16) as filename
     FROM metadata left join registry on registry.registry_id = metadata.registry_id
     WHERE
         metadata.registry_id = (   select registry_id
@@ -273,7 +260,7 @@ $app->get('/download-metadata-db/:udi', function ($udi) use ($app) {
         print $raw_data['metadata_xml'];
         exit;
     } else {
-        drupal_set_message("Error retrieving metadata from database.",'error');
+        drupal_set_message("Error retrieving metadata from database. ($sql)",'error');
         drupal_goto($GLOBALS['PAGE_NAME']); # reload calling page (is there a better way to do this?
     }
 });
@@ -857,14 +844,9 @@ function GetMetadata($type,$format) {
     if(in_array($type,array('Accepted','Submitted','InReview','SecondCheck','BackToSubmitter'))) {
         $sql = "SELECT
                     curr_reg_view.metadata_status, curr_reg_view.url_metadata, curr_reg_view.dataset_udi,
-                    coalesce(trim(trailing '}' from trim(leading '{' from cast(
-                        xpath('/gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1]/text()',metadata_xml,
-                            ARRAY[
-                                ARRAY['gmi', 'http://www.isotc211.org/2005/gmi'],
-                                ARRAY['gmd', 'http://www.isotc211.org/2005/gmd'],
-                                ARRAY['gco', 'http://www.isotc211.org/2005/gco']
-                            ]
-                        ) as character varying ))), curr_reg_view.dataset_metadata
+                    coalesce(
+                      substring(metadata.registry_id from 1 for 16),
+                      curr_reg_view.dataset_metadata
                     ) as dataset_metadata,
                     (metadata_xml is not null) as hasxml,
                     curr_reg_view.submittimestamp,
