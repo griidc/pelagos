@@ -6,7 +6,7 @@
 
 # LOGFILE - SET THIS ACCORDINGLY
 $GLOBALS['logfile_name']='mdapp.log';
-date_default_timezone_set('UTC');
+date_default_timezone_set('America/Chicago');
 
 # database utilities
 require_once("/usr/local/share/GRIIDC/php/db-utils.lib.php");
@@ -150,7 +150,7 @@ $app->post('/change_status/:udi', function ($udi) use ($app) {
     $data->execute();
 
     drupal_set_message("Metadata status for $udi has been changed from $from to $to.",'status');
-    writeLog($user->name." has changed metedata status for $udi ($from -> $to)");
+    writeLog($user->name." has changed metadata status for $udi ($from -> $to)");
     drupal_goto($GLOBALS['PAGE_NAME']);
     drupal_exit();
 });
@@ -197,7 +197,7 @@ $app->post('/change_appr_status/:udi', function ($udi) use ($app) {
         $data->execute();
 
         drupal_set_message("Metadata approval status for $udi has been changed to $approval.",'status');
-        writeLog($user->name." has changed metedata approval status for $udi (to $approval)");
+        writeLog($user->name." has changed metadata approval status for $udi (to $approval)");
     }
     drupal_goto($GLOBALS['PAGE_NAME']);
     drupal_exit();
@@ -888,7 +888,7 @@ function GetMetadata($type,$format) {
 // some official capacity
 function writeLog($message) {
     $logfile_location = $GLOBALS['logfile_location'];
-    $dstamp = date('YmdHis');
+    $dstamp = date('r'); // RFC 2822 standard
     file_put_contents($logfile_location,"$dstamp:$message\n", FILE_APPEND);
 }
 
