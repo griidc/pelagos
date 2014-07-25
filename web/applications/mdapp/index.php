@@ -830,14 +830,22 @@ function getUserMail($gomri_userid) {
 }
 
 function sendEmail($to,$from,$sub,$message,$cc=null) {
-    ini_set("SMTP","smtp.tamucc.edu" );
-    $header = "From: <$from>\r\n";
-    $header .= "CC: ";
-    foreach ($cc as $cc_line) {
-        $header .= "$cc_line,";
+   if($GLOBALS['config']['email']['disable_email'] == 1) {
+        $cc_str = '';
+        foreach ($cc as $cc_person) {
+            $cc_str .= "$cc_person,";
+        }
+       drupal_set_message("The following email was disabled by ini setting. The following message was not sent.<br />To: $to<br />CC: $cc_str<br />From: $from<br />Subject: $sub<br />Message: $message",'warning'); 
+    } else { 
+        ini_set("SMTP","smtp.tamucc.edu" );
+        $header = "From: <$from>\r\n";
+        $header .= "CC: ";
+        foreach ($cc as $cc_line) {
+            $header .= "$cc_line,";
+        }
+        $header .= "$from\r\n";
+        mail($to,$sub,$message,$header);
     }
-    $header .= "$from\r\n";
-    mail($to,$sub,$message,$header);
 }
 
 function GetMetadata($type,$format) {
