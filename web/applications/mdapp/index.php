@@ -231,7 +231,7 @@ $app->get('/download-metadata-db/:udi', function ($udi) use ($app) {
     $sql = "
     select
         metadata_xml,
-        substring(metadata.registry_id from 1 for 16) as filename
+        concat(substring(metadata.registry_id from 1 for 16),'-metadata.xml') as filename
     FROM metadata left join registry on registry.registry_id = metadata.registry_id
     WHERE
         metadata.registry_id = (   select registry_id
