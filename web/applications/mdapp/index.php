@@ -366,7 +366,7 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
         $errmsg = "GRIIDC standards:  UDI does not match metadata URL (/gmi:MI_Metadata/gmd:dataSetURI/gco:CharacterString)";
         if(isset($loc_2[0][0])) {
             $loc_2_val = $loc_2[0][0];
-            if(!preg_match("/$udi$/",$loc_2_val)) { # URL must end with UDI
+            if(!preg_match("/\/$udi$/",$loc_2_val)) { # URL must end with UDI
                 if (isset($_POST['test2']) and $_POST['test2']=='on') {
                     throw new RuntimeException($errmsg);
                 } else {
@@ -387,7 +387,7 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
         $errmsg = 'GRIIDC standards:  UDI does not match distribution URL (/gmi:MI_Metadata/gmd:distributionInfo[1]/gmd:MD_Distribution[1]/gmd:distributor[1]/gmd:MD_Distributor[1]/gmd:distributorTransferOptions[1]/gmd:MD_DigitalTransferOptions[1]/gmd:onLine[1]/gmd:CI_OnlineResource[1]/gmd:linkage[1]/gmd:URL[1])';
         if(isset($loc_3[0][0])) {
             $loc_3_val = $loc_3[0][0];
-            if(!preg_match("/$udi$/",$loc_3_val)) { # URL must end with UDI
+            if(!preg_match("/\/$udi$/",$loc_3_val)) { # URL must end with UDI
                 if (isset($_POST['test3']) and $_POST['test3']=='on') {
                     throw new RuntimeException($errmsg);
                 } else {
