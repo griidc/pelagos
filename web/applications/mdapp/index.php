@@ -561,7 +561,7 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                 }
             } else {
                 if ($has_metadata_in_db) {
-                    $sql = "update metadata set metadata_xml=? where  registry_id = ?";
+                    $sql = "update metadata set metadata_xml=?, geom=null where  registry_id = ?";
                 } else {
                     $sql = "insert into metadata ( metadata_xml, registry_id ) values (?,?)";
                 }
