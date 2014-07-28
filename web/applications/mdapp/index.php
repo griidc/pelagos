@@ -339,6 +339,7 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
             throw new RuntimeException("The UDI $udi is not found in the registry.");
         }
 
+        $errors=array();
         // Check to see if filename matches XML internal filename reference
         $loc_1_xpath = "/gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1]"; # as filename
         $loc_1 = $xml->xpath($loc_1_xpath);
@@ -347,14 +348,14 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
             $loc_1_val = $loc_1[0][0];
             if(!preg_match("/^$orig_filename$/",$loc_1_val)) {
                 if (isset($_POST['test1']) and $_POST['test1']=='on') {
-                    throw new RuntimeException($errmsg);
+                    array_push($errors,$errmsg);
                 } else {
                     drupal_set_message($errmsg,'warning');
                 }
             }
         } else {
             if (isset($_POST['test1']) and $_POST['test1']=='on') {
-                throw new RuntimeException($errmsg);
+                array_push($errors,$errmsg);
             } else {
                 drupal_set_message($errmsg,'warning');
             }
@@ -368,14 +369,14 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
             $loc_2_val = $loc_2[0][0];
             if(!preg_match("/\/$udi$/",$loc_2_val)) { # URL must end with UDI
                 if (isset($_POST['test2']) and $_POST['test2']=='on') {
-                    throw new RuntimeException($errmsg);
+                    array_push($errors,$errmsg);
                 } else {
                     drupal_set_message($errmsg,'warning');
                 }
             }
         } else {
             if (isset($_POST['test2']) and $_POST['test2']=='on') {
-                throw new RuntimeException($errmsg);
+                array_push($errors,$errmsg);
             } else {
                 drupal_set_message($errmsg,'warning');
             }
@@ -389,18 +390,29 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
             $loc_3_val = $loc_3[0][0];
             if(!preg_match("/\/$udi$/",$loc_3_val)) { # URL must end with UDI
                 if (isset($_POST['test3']) and $_POST['test3']=='on') {
-                    throw new RuntimeException($errmsg);
+                    array_push($errors,$errmsg);
                 } else {
                     drupal_set_message($errmsg,'warning');
                 }
             }
         } else {
             if (isset($_POST['test3']) and $_POST['test3']=='on') {
-                throw new RuntimeException($errmsg);
+                array_push($errors,$errmsg);
             } else {
                 drupal_set_message($errmsg,'warning');
             }
         }
+        
+        # If there were previous user-enabled hard errors, throw exception and display errors.
+        if (count($errors) > 0) {
+            $err_str='<ul>';
+            foreach($errors as $error) {
+                $err_str .= "<li>$error</li>\n";
+            }
+            $err_str.='</ul>';
+            throw new RuntimeException($err_str);
+        }
+
         if(isset($_POST['allowAnyGML']) and ($_POST['allowAnyGML'] == 'on')) {
             $geoflag='yes';
             $arbitraryGML = 'yes';
