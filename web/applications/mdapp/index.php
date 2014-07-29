@@ -644,7 +644,7 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
             // update approved flag, if selected
             $flagged_accepted=false;
             $sql = '';
-            if (isset($_POST['approveMetadata']) and $_POST['approveMetadata']=='on') {
+            if (isset($_POST['acceptMetadata']) and $_POST['acceptMetadata']=='on') {
                 $flagged_accepted=true;
                 $sql = "update registry set metadata_status = 'Accepted' where registry_id = ?";
             $data4 = $dbms->prepare($sql);
@@ -655,14 +655,14 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                 }
             }
 
-            // send email if approved and mail flag is set
+            // send email if accepted and mail flag is set
             $dm_contacted=false;
             $dataManager=getDataManagerOldDataModel($udi); #array  ('fullname', 'email')
             $to_address_string = $dataManager['fullname'].'<'.$dataManager['email'].'>';
             $userMail=getUserMail($user->name); #array  ('fullname', 'email')
-            if (isset($_POST['approveMetadata']) and $_POST['approveMetadata']=='on' and isset($_POST['contactOwner']) and $_POST['contactOwner']=='on') {
+            if (isset($_POST['acceptMetadata']) and $_POST['acceptMetadata']=='on' and isset($_POST['contactOwner']) and $_POST['contactOwner']=='on') {
                 $dm_contacted=true;
-                sendEmail($to_address_string,$userMail['email'],"$udi metadata","The metadata for $udi has been approved by GRIIDC.  Thank you!");
+                sendEmail($to_address_string,$userMail['email'],"$udi metadata","The metadata for $udi has been accepted by GRIIDC.  Thank you!");
                 drupal_set_message("An email of this approval has been sent to ".$dataManager['fullname'].'('.$dataManager['email'].')','status');
             }
 
