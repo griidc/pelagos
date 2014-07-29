@@ -64,7 +64,7 @@ function make_ssha_password($password) {
 }
 
 function query_RPIS($email) {
-    $respStr = file_get_contents("http://griidc.tamucc.edu/services/RPIS/getPeopleDetails.php?email=$email");
+    $respStr = file_get_contents("http://localhost/services/RIS/getPeopleDetails.php?email=$email");
     $respArr = json_decode(json_encode((array) simplexml_load_string($respStr)),1);
 
     $retval['exception'] = false;
