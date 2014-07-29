@@ -30,9 +30,9 @@ foreach ($rpisTasks as $task)
     // {
         // $leadRoles = array(4,5,6);
     // }
-    
+
     $peops = $task->xpath('Researchers/Person');
-    
+
     foreach ($peops as $peoples)
     {
         // $roles = $peoples->xpath('Roles/Role/Name');
