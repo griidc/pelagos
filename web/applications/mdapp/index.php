@@ -164,29 +164,7 @@ $app->post('/change_appr_status/:udi', function ($udi) use ($app) {
             where registry_id =
             ( select MAX(registry_id) from registry where dataset_udi = :udi)";
 
-    if (in_array($approval,array('NotRequired','ApprovalRequired','Approved','ApprovalRequiredEmail'))) {
-        if ($approval == 'ApprovalRequiredEmail') {
-            $approval = 'ApprovalRequired';
-            # get submitter's email address
-            $poc = getUDIPOC($udi);
-            # get current user's mail  (for from:)
-            $userMail=getUserMail($user->name); #array  ('fullname', 'email')
-            # get Metadata Approver's addresses - CONVERT THIS TO A PROPER LDAP LOOKUP ASAP
-            $approvers = array();
-            array_push($approvers,'William Nichols <william.nichols@tamucc.edu');
-            array_push($approvers,'Susan Rogers <susan.rogers@tamucc.edu');
-
-            # message content            
-            $message =  "The metadata associated with dataset $udi has been changed.  Your approval is ";
-            $message .= "needed.  Please reply to this email with your decision.";
-            $subject = "Approval requested for changes made to metadata registered with GRIIDC as $udi";    
-
-            $userMailAddress=$userMail['fullname'].'" <'.$userMail['email'].'>';
-            # send email to submitter, CC all Metadata Approvers group members
-            #sendEmail($to,$from,$sub,$message,$cc_array=null);
-            sendEmail($poc,$userMailAddress,$subject,$message,$approvers);
-            drupal_set_message("Metadata POC has been emailed.",'status');
-        }
+    if (in_array($approval,array('NotRequired','ApprovalRequired','Approved'))) {
 
         $dbms = OpenDB("GOMRI_RW");
         $data = $dbms->prepare($sql);
