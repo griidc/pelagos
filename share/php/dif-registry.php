@@ -284,7 +284,7 @@ function filterTasks($tasks, $person) {
     return $filteredTasks;
 }
 
-function helps($for, $ht, $tip){ echo "\n<label for=\"$for\"><b>$ht: </b><span id=\"$tip\" style=\"float:right;\"> <IMG SRC=\"/dif/images/info.png\"></span></label>\n"; }
+function helps($for, $ht, $tip){ echo "\n<label for=\"$for\"><b>$ht: </b><span id=\"$tip\" style=\"float:right;\"> <IMG SRC=\"includes/images/info.png\"></span></label>\n"; }
 
 function getUID() {
     global $user;
