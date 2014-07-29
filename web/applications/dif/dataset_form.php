@@ -100,14 +100,14 @@ if (!isset($_POST['submit']) and isset($_GET['uid']) and $status == 0) {
         The information you provide via this form will assist GRIIDC in designing its infrastructure, identifying areas which need special attention, and allocating resources accordingly. We understand that some of 
         the answers to the following questions may not be exactly known at this time or are subject to change; this form allows users to revise or add information as necessary. Please use the UDI of the dataset when reporting issues. If you require assistance in completing
         this form, do not hesitate to contact GRIIDC (email: <A HREF=mailto:griidc@gomri.org>griidc@gomri.org</A>).</FONT></p>
-        <p align="right"><img src="/dif/images/pdf.png" width="27" height="32" alt="PDF" /> <a href="/dif/docs/DIF_User_Ref.pdf" target="_blank">Download a User Guide</a></p>
+        <p align="right"><img src="includes/images/pdf.png" width="27" height="32" alt="PDF" /> <a href="docs/DIF_User_Ref.pdf" target="_blank">Download a User Guide</a></p>
     </fieldset>
 
-    <h1>Dataset Information&nbsp&nbsp&nbsp&nbsp;<?PHP echo "<span  style=float:right; ><img style=\"width:24px;height:24px;\" src=\"/dif/images/$status.png\"></SPAN>"; ?> </h1>
+    <h1>Dataset Information&nbsp&nbsp&nbsp&nbsp;<?PHP echo "<span  style=float:right; ><img style=\"width:24px;height:24px;\" src=\"includes/images/$status.png\"></SPAN>"; ?> </h1>
     <strong>NOTICE:</strong> Fields that are preceded by an asterisk (<em style="font-weight: bold; vertical-align: top; color:#FF0000;">*</em>) are required inputs. Note that only records that have not been submitted can be edited. Also, <i>Tasks</i> may have more than one 
     <i>Dataset</i>. Submitting a record with the same <i>Task Title</i>, but with a different <i>Dataset Title</i>, produces several <i>Dataset</i> records for that <i>Task</i>.<hr /><br />
 
-    <?PHP if ($status != 0){echo "<div STYLE=text-align:right><a href=\"?\"><IMG SRC=/dif/images/button.png></A></div>"; }?>
+    <?PHP if ($status != 0){echo "<div STYLE=text-align:right><a href=\"?\"><IMG SRC=includes/images/button.png></A></div>"; }?>
 
    <p><fieldset id="qtask"> 
        <?PHP helps("ctask", "<em class='form'>*</em>Task Title", "itask"); ?>

@@ -77,24 +77,24 @@ if ($_GET)
 
 <head> 
   <title></title>
-  <LINK href="/dif/includes/css/overwrite.css" rel="stylesheet" type="text/css">
-  <LINK href="/dif/includes/css/Tooltip.css" rel="stylesheet" type="text/css">
-  <!--<SCRIPT LANGUAGE="JavaScript" SRC="/dif/includes/js/ds.js"> </SCRIPT>-->
-  <script language="javascript" src="/dif/includes/js/jquery-1.2.6.min.js"></script>
- <script src="/dif/includes/js/Tooltip.js"></script> 
-  <script src="/dif/includes/js/jquery-latest.js"></script>
-  <script type="text/javascript" src="/dif/includes/js/jquery.validate.js"></script>
+  <LINK href="includes/css/overwrite.css" rel="stylesheet" type="text/css">
+  <LINK href="includes/css/Tooltip.css" rel="stylesheet" type="text/css">
+  <!--<SCRIPT LANGUAGE="JavaScript" SRC="includes/js/ds.js"> </SCRIPT>-->
+  <script language="javascript" src="includes/js/jquery-1.2.6.min.js"></script>
+ <script src="includes/js/Tooltip.js"></script>
+  <script src="includes/js/jquery-latest.js"></script>
+  <script type="text/javascript" src="includes/js/jquery.validate.js"></script>
   <div class="bgCover">&nbsp;</div>
   <div class="overlayBox">
 	<div class="overlayContent">
         <a href="#" class="closeLink">X</a>
-        <h2><IMG SRC="images/info.png"> INFO</h2>
+        <h2><IMG SRC="includes/images/info.png"> INFO</h2>
         <p></p>
 	</div>
    </div>
 
-<link rel="StyleSheet" href="/dif/includes/css/dtree.css" type="text/css" />
-<script type="text/javascript" src="/dif/includes/js/dtree.js"></script>
+<link rel="StyleSheet" href="includes/css/dtree.css" type="text/css" />
+<script type="text/javascript" src="includes/js/dtree.js"></script>
 <script type="text/javascript">
 function updateTaskList(personID) {
    if (window.XMLHttpRequest) { xmlhttp=new XMLHttpRequest(); } else { xmlhttp=new ActiveXObject("Microsoft.XMLHTTP"); }
@@ -155,8 +155,8 @@ document.ed.video.value = "";
      });
   </script>
 <!--<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
-<SCRIPT LANGUAGE=JAVASCRIPT SRC="/dif/includes/js/map.js"></SCRIPT>
-<LINK href="/dif/includes/css/map.css" rel="stylesheet" type="text/css">-->
+<SCRIPT LANGUAGE=JAVASCRIPT SRC="includes/js/map.js"></SCRIPT>
+<LINK href="includes/css/map.css" rel="stylesheet" type="text/css">-->
 
    	<script language="javascript" type="text/javascript">
       function setOptions(chosen) {
@@ -186,7 +186,7 @@ $pu=array();
 $result3 = pg_exec($connection, "SELECT var_name, comments FROM form_info WHERE form = 'dif' ORDER BY form_info.id ASC");
 if (!$result3) { die("Error in SQL query: " . pg_last_error()); } 
 while($row = pg_fetch_row($result3)){
-echo " <div id=\"$row[0]_tip\" style=\"display:none;\"> <img src=\"/dif/images/info.png\" style=\"float:right;\" /> $row[1]</div>";
+echo " <div id=\"$row[0]_tip\" style=\"display:none;\"> <img src=\"includes/images/info.png\" style=\"float:right;\" /> $row[1]</div>";
 array_push($pu, $row[0]); }
 $status = 0;$usernumber=1;
 
