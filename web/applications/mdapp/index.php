@@ -584,20 +584,25 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
             $geo_status='Nothing to verify';
             $geometery=null;
             if ($geoflag=='yes') {
-            // attempt to have PostGIS validate any geometry, if found and return the geometery
+                // attempt to have PostGIS validate any geometry, if found and return the geometery
                 $xml = simplexml_load_string($xml_save);
                 $geo = $xml->xpath('/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:geographicElement[1]/gmd:EX_BoundingPolygon[1]/gmd:polygon[1]/*');
-                $geometry_xml = $geo[0]->asXML();
-                $sql2="select ST_GeomFromGML('$geometry_xml', 4326) as geometry";
-                $data2 = $dbms->prepare($sql2);
-                if ($data2->execute()) {
-                    $geo_status = 'Verified by PostGIS as OK';
-                    $tmp=$data2->fetchAll();
-                    $geometry=$tmp[0]['geometry'];
+                if($geo) {  // double check for existance of geometry ( in case user override )
+                    $geometry_xml = $geo[0]->asXML();
+                    $sql2="select ST_GeomFromGML('$geometry_xml', 4326) as geometry";
+                    $data2 = $dbms->prepare($sql2);
+                    if ($data2->execute()) {
+                        $geo_status = 'Verified by PostGIS as OK';
+                        $tmp=$data2->fetchAll();
+                        $geometry=$tmp[0]['geometry'];
+                    } else {
+                        $dbErr = $data2->errorInfo();
+                        $geo_status = "<font color=red>Rejected by PostGIS - ".$dbErr[2]."</font>";
+                        throw new RuntimeException("PostGIS rejected geometry supplied");
+                    }
                 } else {
-                    $dbErr = $data2->errorInfo();
-                    $geo_status = "<font color=red>Rejected by PostGIS - ".$dbErr[2]."</font>";
-                    throw new RuntimeException("PostGIS rejected geometry supplied");
+                    $geoflag = 'no';
+                    drupal_set_message("A geometry was not found yet the 'Accept any valid GML' option was selected.",'warning');
                 }
             }
 
