@@ -350,11 +350,11 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                     }
                 }
             } else {
-                drupal_set_message("XML File is valid ISO metadata",'status');
+                drupal_set_message("XML validates as ISO-19115-2 compliant",'status');
             }
     
             if($schemaErrors > 0) {
-                throw new RuntimeException("This document has XML schema errors.");
+                throw new RuntimeException("XML is not ISO-19115-2 compliant");
             }
         }
         
