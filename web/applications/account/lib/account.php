@@ -2,6 +2,7 @@
 
 function find_unique_uid($firstName,$lastName) {
     $uid = strtolower(substr($firstName,0,1) . $lastName);
+    $uid = preg_replace('/[^A-Za-z0-9]/','',$uid);
 
     $num = 1;
     $foundUnique = 0;
