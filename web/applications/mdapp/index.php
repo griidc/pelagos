@@ -315,6 +315,7 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
         fclose($fhandle);
 
         // load XML into DOM
+        libxml_use_internal_errors(true); // enables capture of error information
         $doc = new DomDocument('1.0','UTF-8');
         $tmpp = @$doc->loadXML($raw_xml);
         if (!$tmpp) {
@@ -322,9 +323,58 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
             $err_str = $err->message;
             throw new RuntimeException("Malformed XML: The XML file supplied could not be parsed. ($err_str)");
         }
+        
+        // Attempt to validate the XML file 
+        if(isset($_POST['validateSchema']) and $_POST['validateSchema'] == 'on') {
+            $schemaErrors=0;
+            $schema = 'http://www.ngdc.noaa.gov/metadata/published/xsd/schema.xsd';
+            if (!$doc->schemaValidate($schema)) {
+                $errors = libxml_get_errors();
+                libxml_clear_errors();
+                for ($i=0; $i<sizeof($errors); $i++) {
+                    switch ($errors[$i]->level) {
+                        case LIBXML_ERR_WARNING:
+                            $error = "WARNING (".$errors[$i]->code.") on XML line ".$errors[$i]->line.": ".$errors[$i]->message;
+                            drupal_set_message($error,'warning');
+                            break;
+                        case LIBXML_ERR_ERROR:
+                            $schemaErrors++;
+                            $error = "ERROR (".$errors[$i]->code.") on XML line ".$errors[$i]->line.": ".$errors[$i]->message;
+                            drupal_set_message($error,'error');
+                            break;
+                        case LIBXML_ERR_FATAL:
+                            $schemaErrors++;
+                            $error = "FATAL ERROR (".$errors[$i]->code.") on XML line ".$errors[$i]->line.": ".$errors[$i]->message;
+                            drupal_set_message($error,'error');
+                            break;
+                    }
+                }
+            } else {
+                drupal_set_message("XML File is valid ISO metadata",'status');
+            }
+    
+            if($schemaErrors > 0) {
+                throw new RuntimeException("This document has XML schema errors.");
+            }
+        }
+        
+
 
         // also load as simplxml object for quick xpath tests
         $xml = simplexml_import_dom($doc);
+
+        // register namespaces just in case they are not already defined in the XML
+        $xml->registerXPathNamespace('xmlns', 'http://www.isotc211.org/2005/gmi');
+        $xml->registerXPathNamespace('gco',   'http://www.isotc211.org/2005/gco');
+        $xml->registerXPathNamespace('gmd',   'http://www.isotc211.org/2005/gmd');
+        $xml->registerXPathNamespace('gmi',   'http://www.isotc211.org/2005/gmi');
+        $xml->registerXPathNamespace('gml',   'http://www.opengis.net/gml/3.2');
+        $xml->registerXPathNamespace('gmx',   'http://www.isotc211.org/2005/gmx');
+        $xml->registerXPathNamespace('gsr',   'http://www.isotc211.org/2005/gsr');
+        $xml->registerXPathNamespace('gss',   'http://www.isotc211.org/2005/gss');
+        $xml->registerXPathNamespace('gts',   'http://www.isotc211.org/2005/gts');
+        $xml->registerXPathNamespace('xlink', 'http://www.w3.org/1999/xlink');
+        $xml->registerXPathNamespace('xsi',   'http://www.w3.org/2001/XMLSchema-instance');
 
         // Check for description field, save if found
         $extent_description=null;
@@ -360,6 +410,7 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                 drupal_set_message($errmsg,'warning');
             }
         }
+        
 
         // Check to see if filename matches XML internal UDI reference #1
         $loc_2_xpath = "/gmi:MI_Metadata/gmd:dataSetURI[1]/gco:CharacterString[1]"; # as UDI
