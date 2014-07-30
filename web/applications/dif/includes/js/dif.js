@@ -55,6 +55,7 @@ $(document).ready(function()
     
     $('#btnReset').button().click(function() {
         formReset();
+        scrollToTop();
     });
     
     $('#btnTop').button().click(function() {
@@ -337,7 +338,7 @@ function formReset()
         $('#btnSubmit').prop('disabled',false);
         $('#btnSave').prop('disabled',false);
         geowizard.haveSpatial(false);
-        scrollToTop();
+        //scrollToTop();
     });
 }
 
