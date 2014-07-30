@@ -223,8 +223,22 @@ function postDIF($fielddata)
         {
             #new dif from scratch
             $nudi = $rc[0]["save_dif"];
-            $message = '<div><img src="/images/icons/info32.png"><p>You have saved a DIF. This DIF has been given the ID: '.$nudi.'<br>In order to submit your dataset to GRIIDC you must return to this page and submit the DIF for review and approval.</p></div>';
-            $msgtitle = 'New DIF Submitted';
+            
+            if ($status == 0)
+            {
+                $msgtitle = 'New DIF Created';
+                $message = '<div><img src="/images/icons/info32.png"><p>You have saved a DIF. This DIF has been given the ID: '.$nudi.'<br>In order to submit your dataset to GRIIDC you must return to this page and submit the DIF for review and approval.</p></div>';
+            }
+            else
+            {
+                $msgtitle = 'New DIF Submitted';
+                $message = '<div><img src="/images/icons/info32.png"><p>Congratulations! You have successfully submitted a DIF to GRIIDC. THE UDI for this dataset is '.$nudi.'.<br>The DIF will now be reviewed by GRIIDC staff and is locked to prevent editing.<br> To unlock your DIF to make changes, you must return to the DIF webpage.<br> You can then load the DIF form you wish to edit from the datasets list and select &quot;Request Unlock&quot; from the bottom of the form.</p></div>';
+                $msgtitle = 'DIF Submitted';
+                
+                $sendMail = sendSubmitMail($submitted,$nudi,'GRIIDC DIF Submitted','submitMail.html');
+                mailApprovers($nudi,'DIF Submitted for Approval','reviewMail.html');
+            }
+            
         }
         else if ($frmButton == 'approve')
         {
