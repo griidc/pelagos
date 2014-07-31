@@ -1,32 +1,30 @@
 <?php
 # METADATA APPROVAL APPLICATION
-# Author: Michael Scott Williamson  DEC 2013, Updated May 2014
-
-# Note: hardcoded smtp.tamucc.edu, triton.tamucc.edu (ldap) in file.
+# PPOC: Williamson
 
 # LOGFILE - SET THIS ACCORDINGLY
 $GLOBALS['logfile_name']='mdapp.log';
 date_default_timezone_set('America/Chicago');
 
 # database utilities
-require_once("/usr/local/share/GRIIDC/php/db-utils.lib.php");
+require_once("/opt/pelagos/share/php/db-utils.lib.php");
 # Framework (model/view)
 require_once '/usr/local/share/Slim/Slim/Slim.php';
 # templating engine - views
 require_once '/usr/local/share/Slim-Extras/Views/TwigView.php';
 # GRIIDC drupal extensions to allow use of drupal-intended code outside of drupal
-require_once '/usr/local/share/GRIIDC/php/drupal.php';
+require_once '/opt/pelagos/share/php/drupal.php';
 # PHP streams anything in an includes/ directory.  This is for use WITH slim.
 # if not using slim, use aliasIncludes.php instead.
-require_once '/usr/local/share/GRIIDC/php/dumpIncludesFile.php';
+require_once '/opt/pelagos/share/php/dumpIncludesFile.php';
 # various functions for accessing the RIS database
-require_once '/usr/local/share/GRIIDC/php/rpis.php';
+require_once '/opt/pelagos/share/php/rpis.php';
 # various functions for accessing GRIIDC datasets
-require_once '/usr/local/share/GRIIDC/php/datasets.php';
+require_once '/opt/pelagos/share/php/datasets.php';
 # misc utilities and stuff...
-require_once '/usr/local/share/GRIIDC/php/utils.php';
+require_once '/opt/pelagos/share/php/utils.php';
 # LDAP functionality
-require_once '/usr/local/share/GRIIDC/php/ldap.php';
+require_once '/opt/pelagos/share/php/ldap.php';
 
 # add js library - informs drupal to add these standard js libraries upstream.
 # can also use drupal_add_js to specify a full path to a js library to include.
@@ -37,12 +35,14 @@ drupal_add_library('system', 'ui.tabs');
 drupal_add_library('system', 'jquery.cookie');
 
 global $user;
+$GLOBALS['pelagos_config'] = parse_ini_file('/etc/opt/pelagos.ini',true);
+$GLOBALS['module_config'] = parse_ini_file('config.ini',true);
+$GLOBALS['storage'] = parse_ini_file($GLOBALS['pelagos_config']['paths']['conf'].'/storage.ini',true);
+$GLOBALS['logfile_location'] = $GLOBALS['module_config']['Logfiles']['logfilePath'].'/'.$GLOBALS['logfile_name'];
+$GLOBALS['ldap'] = parse_ini_file($GLOBALS['pelagos_config']['paths']['conf'].'/ldap.ini',true);
+$GLOBALS['smtp'] = parse_ini_file($GLOBALS['pelagos_config']['paths']['conf'].'/smtp.ini',true);
 
-$GLOBALS['config'] = parse_ini_file('config.ini',true);
-$GLOBALS['storage'] = parse_ini_file('/etc/griidc/storage.ini',true);
-$GLOBALS['logfile_location'] = $GLOBALS['config']['Logfiles']['logfilePath'].'/'.$GLOBALS['logfile_name'];
-
-TwigView::$twigDirectory = $GLOBALS['config']['TwigView']['twigDirectory'];
+TwigView::$twigDirectory = $GLOBALS['module_config']['TwigView']['twigDirectory'];
 
 
 $app = new Slim(array(
@@ -658,11 +658,17 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
             // send email if accepted and mail flag is set
             $dm_contacted=false;
             $dataManager=getDataManagerOldDataModel($udi); #array  ('fullname', 'email')
-            $to_address_string = $dataManager['fullname'].'<'.$dataManager['email'].'>';
             $userMail=getUserMail($user->name); #array  ('fullname', 'email')
+            $to_address_string = "$dataManager[email]";
+            $from_address_string = "$userMail[email]";
+            $approvers = getMetadataReviewers();
+            $cc = array();
+            foreach($approvers as $approver) {
+                array_push($cc,$approver['mail']);
+            }
             if (isset($_POST['acceptMetadata']) and $_POST['acceptMetadata']=='on' and isset($_POST['contactOwner']) and $_POST['contactOwner']=='on') {
                 $dm_contacted=true;
-                sendEmail($to_address_string,$userMail['email'],"$udi metadata","The metadata for $udi has been accepted by GRIIDC.  Thank you!");
+                sendEmail($to_address_string,$userMail['email'],"$udi metadata","The metadata for $udi has been accepted by GRIIDC.  Thank you!",$cc);
                 drupal_set_message("An email of this approval has been sent to ".$dataManager['fullname'].'('.$dataManager['email'].')','status');
             }
 
@@ -859,7 +865,7 @@ function getDataManagerOldDataModel($udi) {
 }
 
 function getUserMail($gomri_userid) {
-    $ldap = connectLDAP('triton.tamucc.edu');
+    $ldap = connectLDAP($GLOBALS['ldap']['ldap']['server']);
     $baseDN = 'dc=griidc,dc=org';
     $userDNs = getDNs($ldap,$baseDN,"uid=$gomri_userid");
     if (count($userDNs) > 0) {
@@ -876,16 +882,20 @@ function getUserMail($gomri_userid) {
 }
 
 function sendEmail($to,$from,$sub,$message,$cc=null) {
-   if($GLOBALS['config']['email']['disable_email'] == 1) {
+   $smtp_server=$GLOBALS['smtp']['smtp']['server']; 
+   if($GLOBALS['module_config']['email']['disable_email'] == 1) {
         $cc_str = '';
-        foreach ($cc as $cc_person) {
-            $cc_str .= "$cc_person,";
+        if($cc) {
+            foreach ($cc as $cc_person) {
+                $cc_str .= " $cc_person,";
+            }
         }
-       drupal_set_message("The following email was disabled by ini setting. The following message was not sent.<br />To: $to<br />CC: $cc_str<br />From: $from<br />Subject: $sub<br />Message: $message",'warning'); 
-    } else { 
-        ini_set("SMTP","smtp.tamucc.edu" );
+        $cc_str=rtrim(trim($cc_str),",");
+       drupal_set_message("The following email was disabled by ini setting. The following message was not sent.<br />To: $to<br />Cc: $cc_str<br />From: $from<br />Subject: $sub<br />SMTP Server: $smtp_server<br />Message: $message",'warning'); 
+    } else {
+        ini_set("SMTP",$smtp_server );
         $header = "From: <$from>\r\n";
-        $header .= "CC: ";
+        $header .= "Cc: ";
         foreach ($cc as $cc_line) {
             $header .= "$cc_line,";
         }
@@ -960,4 +970,21 @@ function getUDIPOC($udi) {
     $name = $raw_data['dataset_poc_name'];
     return "$name <$email>";
 }
+
+function getMetadataReviewers() {
+    $users = getGroupMembers("cn=reviewers,ou=Metadata,ou=applications,dc=griidc,dc=org");
+    $ldap = connectLDAP($GLOBALS['ldap']['ldap']['server']);
+    $newUserArray=array();
+    foreach ($users as $user_dn) {
+       #ldap dn attributes
+       $attributes = getAttributes($ldap,$user_dn,array("mail","cn","title","uid"));
+       $newUserArray[$user_dn]["mail"] = $attributes["mail"][0];
+       $newUserArray[$user_dn]["cn"] = $attributes["cn"][0];
+       $newUserArray[$user_dn]["title"] = $attributes["title"][0];
+       $newUserArray[$user_dn]["uid"] = $attributes["uid"][0];
+    }
+    ldap_unbind($ldap);
+    return $newUserArray;
+}
+
 ?>
