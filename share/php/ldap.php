@@ -71,10 +71,10 @@ function memberHasApplicationRole($username,$applicationName,$applicationRole) {
     return $allowAccess;
 }
 
-function getHasRole($role_dn) {
+function getGroupMembers($group_dn) {
     // returns array of DN's having specified role DN
     $ldap = connectLDAP($GLOBALS['ldap']['ldap']['server']);
-    $members = getAttributes($ldap,$role_dn,array('member'));
+    $members = getAttributes($ldap,$group_dn,array('member'));
     ldap_unbind($ldap);
     unset($members['member']['count']); // redundant, best to use count() imho.
     return $members['member'];
