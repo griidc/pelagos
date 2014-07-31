@@ -610,21 +610,21 @@ function MapWizard(json)
     
     function showNavMode ()
     {
-        var mapHelpText = "Drag the map to explore, needs more text.";
+        var mapHelpText = "Drag map to pan, mousewheel or double click to zoom at mouse pointer. Hold Shift, left-click mouse, and drag to draw a box, map will zoom to box.";
         $("#maphelptxt").html(mapHelpText);
         $("#deleteFeature").button('disable');
     }
     
     function showDrawingMode ()
     {
-        var mapHelpText = "Click to add points, double-click to finish drawing feature. Click feature to select and modify. Drag hollow circles to move vertexes, drag solid midpoint circles to create new vertexes. Select feature and click Delete button to delete feature. Feature points can be modified or deleted in the Coordinate List text box.";
+        var mapHelpText = "Click to add points, double-click to finish drawing. Click feature to select and modify. Select feature and click Delete button to delete feature. Feature points can be modified or deleted in the Coordinate List text box.";
         $("#maphelptxt").html(mapHelpText);
         $("#deleteFeature").button('disable');
     }
     
     function showModifyMode ()
     {
-        var mapHelpText = "Click feature to edit or edit Coordinate List directly. Drag hollow circles to move vertexes, draw solid midpoint circles to create new vertexes.";
+        var mapHelpText = "Drag hollow circles to move vertexes, drag solid midpoint circles to create new vertexes. Click hollow circle and press 'Delete' on keyboard to delete vertex, click Delete button to delete entire feature. Click map outside of feature to end modify mode.";
         $("#maphelptxt").html(mapHelpText);
         $("#deleteFeature").button('enable');
     }
