@@ -32,7 +32,7 @@ function getTasksAndDatasets($projects) {
                     ELSE 0
                END AS identified,
 
-               CASE WHEN registry_id IS NULL OR url_data IS NULL THEN 0
+               CASE WHEN registry_id IS NULL OR url_data IS NULL OR url_data = '' THEN 0
                     ELSE 10
                END AS registered,
 
