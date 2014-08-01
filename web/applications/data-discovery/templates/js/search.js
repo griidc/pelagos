@@ -246,7 +246,7 @@ function addTree() {
         animation: 250,
         type: "ra",
         filter: "",
-        onload: "if(!tree.selected){showDatasets($('#by-input').val(),$('#id-input').val(),'');}",
+        onload: "if (!tree.selected) { showDatasets($('#by-input').val(),$('#id-input').val(),''); } else if ($('#' + tree.name).jstree('get_selected').length < 1) { showDatasets($('#by-input').val(),$('#id-input').val(),''); }",
         show_other_sources: false,
         on_filter_by_change: "$('#by-input').val('');$('#id-input').val('');",
 
