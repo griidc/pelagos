@@ -27,6 +27,12 @@ $(document).ready(function() {
         }
     });
 
+    $('#filter-input').focusout(function() {
+        if ($('#filter-applied').val() != $('#filter-input').val()) {
+            applyFilter();
+        }
+    });
+
     $("#expand-collapse").click(function(){
         if ($('#expand-collapse').hasClass('collapsed')) {
             expand();
@@ -91,8 +97,8 @@ function showDatasets(by,id,peopleId) {
     currentlink = $('#packageLink').attr('href');
     if (currentlink) {
         newlink = currentlink.replace(/\?filter=[^&]*(&|$)/,'');
-        if ($('#filter-input').val() != '') {
-            newlink += '?filter=' + $('#filter-input').val();
+        if ($('#filter-applied').val() != '') {
+            newlink += '?filter=' + $('#filter-applied').val();
         }
         $('#packageLink').attr('href',newlink);
     }
@@ -102,7 +108,7 @@ function showDatasets(by,id,peopleId) {
         geo_filter = trees['tree'].geo_filter;
     }
     $.ajax({
-        "url": "{{baseUrl}}/datasets/" + encodeURIComponent(jQuery('#filter-input').val().replace(/\//g,"")) + "/" + by + "/" + id + "/" + geo_filter,
+        "url": "{{baseUrl}}/datasets/" + encodeURIComponent(jQuery('#filter-applied').val().replace(/\//g,"")) + "/" + by + "/" + id + "/" + geo_filter,
         "success": function(data) {
             $('#dataset_listing').html(data);
             $('#tabs').tabs({
@@ -196,6 +202,7 @@ function applyFilter() {
     myGeoViz.removeAllFeaturesFromMap();
     $('#dataset_listing').html('<div class="spinner"><div><img src="{{baseUrl}}/includes/images/spinner.gif"></div></div>');
     trees['tree'].filter=jQuery('#filter-input').val();
+    jQuery('#filter-applied').val(jQuery('#filter-input').val());
     updateTree(trees['tree']);
 }
 
@@ -204,6 +211,7 @@ function clearAll() {
     $('#by-input').val('');
     $('#id-input').val('');
     $('#filter-input').val('');
+    $('#filter-applied').val('');
     trees['tree'].selected = null;
     myGeoViz.clearFilter();
     trees['tree'].geo_filter = null;
