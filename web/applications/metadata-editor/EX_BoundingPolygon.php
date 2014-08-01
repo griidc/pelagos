@@ -37,7 +37,7 @@ class EX_BoundingPolygon
         
         $twigArr = array('instanceName' => $instanceName, 'instanceType' => $instanceType, 'xmlArray' => $xmlArray[0], 'gmlCoordinates' => $gmlCoordinates);
         
-        $this->htmlString = $mMD->twig->render('html/EX_BoundingPolygon.html', $twigArr);
+        //$this->htmlString = $mMD->twig->render('html/EX_BoundingPolygon.html', $twigArr);
 		
 		$mMD->onReady .= $mMD->twig->render('js/EX_BoundingPolygon.js', array('instanceName' => $instanceName));
         
