@@ -82,18 +82,25 @@ function insertTree(tree) {
 
 function updateTree(tree) {
     var init_open = [];
-    for (i in tree.init_open) {
-        init_open.push(tree.init_open[i]);
+    if (tree.type == "ra") {
+        for (i in tree.init_open) {
+            init_open.push(tree.init_open[i]);
+        }
     }
 
     if (tree.selected) {
         selected_node = $("#" + tree.name).jstree('get_selected');
         if (typeof(selected_node) != 'undefined' && typeof(selected_node.attr('id')) != 'undefined' && selected_node.attr('id') != 'tree') {
             selected_node.parents("li").each(function () {
-                init_open.push($(this).attr("id"));
+                var this_id = $(this).attr("id");
+                if ($.inArray(this_id,init_open) == -1) {
+                    init_open.push(this_id);
+                }
             });
         }
     }
+
+    var left_to_open = init_open.length;
 
     $("#" + tree.name).jstree({
         "core": {
@@ -146,6 +153,14 @@ function updateTree(tree) {
                 eval(tree.afteropen);
             }
         }
+        if (left_to_open > 0) {
+            left_to_open--;
+            if (left_to_open == 0) {
+                if (typeof tree.onload !== 'undefined') {
+                    eval(tree.onload);
+                }
+            }
+        }
     });
 
     $("#" + tree.name).bind("loaded.jstree", function(event, data) {
@@ -154,8 +169,10 @@ function updateTree(tree) {
             $('head').append('<link rel="stylesheet" type="text/css" media="all" href="' + cssUrl + '" />');
         }
         loadOpenChildren(data.inst,-1);
-        if (typeof tree.onload !== 'undefined') {
-            eval(tree.onload);
+        if ($("#" + tree.name + " > ul > li:first").attr("id") == 'noDatasetsFound' || left_to_open == 0) {
+            if (typeof tree.onload !== 'undefined') {
+                eval(tree.onload);
+            }
         }
     });
 
