@@ -1,20 +1,28 @@
 
 function changeExtent{{instanceName}}(what)
 {
-	document.getElementById("EX1_{{instanceName}}").disabled = !what;
+	// document.getElementById("EX1_{{instanceName}}").disabled = !what;
 	
-	document.getElementById("EX0_{{instanceName}}").checked = what;
+	// document.getElementById("EX0_{{instanceName}}").checked = what;
 	
 	var checkStyle = "table-row";
     
-	if (what)
-	{
-		document.getElementById("EX1_{{instanceName}}row").style.display = "table-row";
-	}
-	else
-	{
-		document.getElementById("EX1_{{instanceName}}row").style.display = "none";
-	}
+    try
+    {
+        if (what)
+        {
+            document.getElementById("EX1_{{instanceName}}row").style.display = "table-row";
+        }
+        else
+        {
+            
+                document.getElementById("EX1_{{instanceName}}row").style.display = "none";
+        }
+    }
+    catch(err)
+    {
+        //Handle errors here
+    }
 	
 	if (what)
 	{
@@ -39,7 +47,7 @@ function changeExtent{{instanceName}}(what)
     
     try
     {
-        document.getElementById("BPL1_{{instanceName}}row").style.display = checkStyle;
+        //document.getElementById("BPL1_{{instanceName}}row").style.display = checkStyle;
     }
     catch(err)
     {
