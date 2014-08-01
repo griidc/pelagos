@@ -81,10 +81,24 @@ function insertTree(tree) {
 }
 
 function updateTree(tree) {
+    var init_open = [];
+    for (i in tree.init_open) {
+        init_open.push(tree.init_open[i]);
+    }
+
+    if (tree.selected) {
+        selected_node = $("#" + tree.name).jstree('get_selected');
+        if (typeof(selected_node) != 'undefined' && typeof(selected_node.attr('id')) != 'undefined' && selected_node.attr('id') != 'tree') {
+            selected_node.parents("li").each(function () {
+                init_open.push($(this).attr("id"));
+            });
+        }
+    }
+
     $("#" + tree.name).jstree({
         "core": {
             "html_titles": true,
-            "initially_open": tree.init_open,
+            "initially_open": init_open,
             "animation": 0
         },
         "themes": {
