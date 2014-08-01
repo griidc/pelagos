@@ -167,26 +167,23 @@ $app->get('/datasets/:filter/:by/:id/:geo_filter', function ($filter,$by,$id,$ge
         }
     }
 
+    if (!empty($geo_filter) and $geo_filter != 'undefined') {
+        $reg_filters[] = "geo_filter=$geo_filter";
+    }
+
     # toggle whether to enforce new availability rules per ini file parameter
     if( (isset($GLOBALS['griidc']['syswide']['enforce_approved_metadata'] ) and ( $GLOBALS['griidc']['syswide']['enforce_approved_metadata'] == 1 ))) {
-        $unavailable_filters = array("$by=$id",'dataset_download_statuses!=Completed,RemotelyHosted','status=2');
         $unrestricted_datasets = get_registered_datasets(getDBH('GOMRI'),array_merge($reg_filters,array('availability=available')),$filter,$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
         $restricted_datasets = get_registered_datasets(getDBH('GOMRI'),array_merge($reg_filters,array('availability=available_with_restrictions')),$filter,$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
         $md_under_review_datasets = get_registered_datasets(getDBH('GOMRI'),array_merge($reg_filters,array('availability=unavailable_pending_metadata_acceptance')),$filter,$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
         $unavailable_datasets = get_identified_datasets(getDBH('GOMRI'),array_merge($reg_filters,array('availability=unavailable_pending_metadata_submission,unavailable_pending_data_submission,unavailable_pending_registration')),$filter,$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
     } else {
-        $unavailable_filters = array("$by=$id",'dataset_download_statuses!=Completed,RemotelyHosted','status=2');
         $unrestricted_datasets = get_registered_datasets(getDBH('GOMRI'),array_merge($reg_filters,array('availability=available,unavailable_pending_metadata_submission,unavailable_pending_metadata_acceptance','restricted=0')),$filter,$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
         $restricted_datasets = get_registered_datasets(getDBH('GOMRI'),array_merge($reg_filters,array('availability=available_with_restrictions,unavailable_pending_metadata_submission,unavailable_pending_metadata_acceptance','restricted=1')),$filter,$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
         $md_under_review_datasets = array();
         $unavailable_datasets = get_identified_datasets(getDBH('GOMRI'),array_merge($reg_filters,array('availability=unavailable_pending_data_submission,unavailable_pending_registration')),$filter,$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
     }
 
-    if (!empty($geo_filter) and $geo_filter != 'undefined') {
-        $reg_filters[] = "geo_filter=$geo_filter";
-        $unavailable_filters[] = "geo_filter=$geo_filter";
-    }
-    
     foreach ($unrestricted_datasets as $dataset) {
         add_download_size($dataset);
         add_project_info($dataset);
