@@ -243,18 +243,25 @@ function MapWizard(json)
     
     function hasSpatial(Spatial)
     {
+        
+        if (json.spatialFunction != '')
+        {
+            window[json.spatialFunction](Spatial);
+        }
+     
         if (Spatial)
         { 
-            $('#'+json.divNonSpatial).show(); 
-            $('#'+json.descField).hide().prop('disabled',false); 
-            $('#'+json.gmlField).hide().prop('disabled',true); 
+            $('#'+json.divNonSpatial).show();
+            $('#'+json.divSpatial).hide(); 
+            $('#'+json.descField).show().prop('disabled',false); 
+            $('#'+json.gmlField).prop('disabled',true); 
         }
         else
         { 
             $('#'+json.divSpatial).show(); 
             $('#'+json.divNonSpatial).hide();
-            $('#'+json.descField).hide().prop('disabled',true); 
-            $('#'+json.gmlField).hide().prop('disabled',false);             
+            $('#'+json.descField).prop('disabled',true); 
+            $('#'+json.gmlField).prop('disabled',false);             
         }
     }
 
