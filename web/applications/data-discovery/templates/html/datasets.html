@@ -18,7 +18,7 @@ var tabIndex = 0;
                         <li style="text-align:center"><a href="#tab-2">Available with<br />Restrictions ({{restricted_datasets|length}})</span></a></li>
                     {% endif %}
                     {% if md_under_review_datasets %}
-                        <li style="text-align:center"><a href="#tab-3">Unavailable, Pending<br />Metadata Review ({{md_under_review_datasets|length}})</a></li>
+                        <li style="text-align:center"><a href="#tab-3">Unavailable, Pending<br />Review ({{md_under_review_datasets|length}})</a></li>
                     {% endif %}
                     {% if identified_datasets %}
                         <li style="text-align:center"><a href="#tab-4">Unavailable &amp;<br />Expected Soon ({{identified_datasets|length}})</a></li>
