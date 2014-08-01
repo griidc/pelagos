@@ -84,7 +84,8 @@ $GLOBALS['DIF_FIELDS'] = array(
     "d.secondary_poc",
     "d.logname",
     "d.status",
-    "d.datafor"
+    "d.datafor",
+    "udf_ST_AsGML(3,d.geom,5,17) AS geom_gml"
 );
 
 $GLOBALS['REGISTRY_OVERRIDE_FIELDS'] = array(
