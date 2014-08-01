@@ -422,8 +422,7 @@ $app->get('/download/:udi', function ($udi) use ($app) {
     }
     if (preg_match('/^00/',$udi)) {
         $datasets = get_registered_datasets(getDBH('GOMRI'),array("registry_id=$udi%"));
-    }
-    else {
+    } else {
         $datasets = get_identified_datasets(getDBH('GOMRI'),array("udi=$udi"));
     }
     $dataset = $datasets[0];
@@ -455,18 +454,39 @@ $app->get('/download/:udi', function ($udi) use ($app) {
     }
 
     $dat_file = $GLOBALS['storage']['storage']['data_store']."/$dataset[udi]/$dataset[udi].dat";
-    if (file_exists($dat_file)) {
-        
-        $env = $app->environment();
-        $stash = array();
-        $stash['server'] = $env['SERVER_NAME'];
-        $stash['dataset'] = $dataset;
+    
+    $env = $app->environment();
+    $stash = array();
+    $stash['server'] = $env['SERVER_NAME'];
+    $stash['dataset'] = $dataset;
+    $stash['bytes']=0;
+    if(file_exists($dat_file)) {
         $stash['bytes'] = filesize($dat_file);
-        $stash['filesize'] = bytes2filesize($stash['bytes'],1);
-        $stash['filt'] = $app->request()->get('filter');
-        $stash['fs_hash_md5'] = $fs_hash_md5;
-        $stash['fs_hash_sha1'] = $fs_hash_sha1;
-        $stash['fs_hash_sha256'] = $fs_hash_sha256;
+    }
+    $stash['filesize'] = bytes2filesize($stash['bytes'],1);
+    $stash['filt'] = $app->request()->get('filter');
+    $stash['fs_hash_md5'] = $fs_hash_md5;
+    $stash['fs_hash_sha1'] = $fs_hash_sha1;
+    $stash['fs_hash_sha256'] = $fs_hash_sha256;
+
+    if ($GLOBALS['config']['DataDiscovery']['alternateDownloadSite'] == 1) {
+        $host = $GLOBALS['config']['DataDiscovery']['alternateDownloadSiteServer'];
+        $return = exec("ssh apache@$host -C ls $dat_file");
+        if (preg_match("/$dataset[udi].dat/",$return)) {
+            if((isset($_SESSION['guestAuthUser']) and ($_SESSION['guestAuthUser'] == true))) {
+                $stash['guest']=1;
+            } else {
+                $stash['guest']=0;
+            }
+            $app->render('html/download.html',$stash);
+            exit;
+        } else {
+            $stash['error_message'] = "Error retrieving data file: file not found (on $host): $dat_file";
+            $app->render('html/download_error.html',$stash);
+        exit;
+        }
+    } elseif (file_exists($dat_file)) {
+        
         if((isset($_SESSION['guestAuthUser']) and ($_SESSION['guestAuthUser'] == true))) {
             $stash['guest']=1;
         } else {
@@ -488,6 +508,7 @@ $app->get('/initiateWebDownload/:udi', function ($udi) use ($app) {
     # the content of the "The dataset you selected is ready for download"
     # div with a download link (button) to the generated symlink.
     global $user;
+    $env = $app->environment();
     if (!user_is_logged_in_somehow()) {
         drupal_exit();
     }
@@ -498,6 +519,14 @@ $app->get('/initiateWebDownload/:udi', function ($udi) use ($app) {
         $datasets = get_identified_datasets(getDBH('GOMRI'),array("udi=$udi"));
     }
     $dataset = $datasets[0];
+    if(empty($user->name)) { $uid = uniqid($_SESSION['guestAuthUser'] . '_'); } else { $uid = uniqid($user->name . '_'); }
+    $stash = array();
+    $stash['server'] = $env['SERVER_NAME'];
+    $stash['uid'] = $uid;
+    $stash['udi'] = $udi;
+    $stash["dataset_filename"]=$dataset['dataset_filename'];
+    $tstamp=date('c');
+
     
     $approved_md_udis=getApprovedMetadataUDIs(); 
     $dl_ok = 0;
@@ -509,36 +538,31 @@ $app->get('/initiateWebDownload/:udi', function ($udi) use ($app) {
 
     if ($dataset['access_status'] != "Restricted" and $dataset['access_status'] != "Approval" and $dl_ok == 1) {
         $dat_file = $GLOBALS['storage']['storage']['data_store']."/$dataset[udi]/$dataset[udi].dat";
-        if (file_exists($dat_file)) {
-            $env = $app->environment();
-            $uid = 0;
-            if(empty($user->name)) {
-                $uid = uniqid($_SESSION['guestAuthUser'] . '_');
-            } else {
-                $uid = uniqid($user->name . '_');
-            }
-            mkdir($GLOBALS['config']['DataDiscovery']['downloadDir']."/$uid/");
-            symlink($dat_file,$GLOBALS['config']['DataDiscovery']['downloadDir']."/$uid/$dataset[dataset_filename]");
 
-            $stash = array();
-            $stash['server'] = $env['SERVER_NAME'];
-            $stash['uid'] = $uid;
-            $stash['udi'] = $udi;
-            $stash["dataset_filename"]=$dataset['dataset_filename'];
-            $tstamp=date('c');
-            $altTag = '';
+        if ($GLOBALS['config']['DataDiscovery']['alternateDownloadSite'] == 1) {
+            $host = $GLOBALS['config']['DataDiscovery']['alternateDownloadSiteServer'];
+            $return = system("ssh apache@$host -C mkdir ".$GLOBALS['config']['DataDiscovery']['downloadDir']."/$uid/"); 
+            $return = system("ssh apache@$host -C ln -s $dat_file ".$GLOBALS['config']['DataDiscovery']['downloadDir']."/$uid/$dataset[dataset_filename]");
+            $stash['alternateDownloadSite']=1;
+            $stash['alternateDownloadSiteServer']=$host;
+            $altTag = " (ALT-SITE)";
             
-            if ($GLOBALS['config']['DataDiscovery']['alternateDownloadSite'] == 1) {
-                $return = system("ssh apache@poseidon-cs.tamu.edu -C mkdir ".$GLOBALS['config']['DataDiscovery']['downloadDir']."/$uid/"); 
-                $return = system("ssh apache@poseidon-cs.tamu.edu -C ln -s $dat_file ".$GLOBALS['config']['DataDiscovery']['downloadDir']."/$uid/$dataset[dataset_filename]");
-                $stash['alternateDownloadSite']=1;
-                $altTag = " (ALT-SITE)";
-            }
-
-            # logging
             `echo "$tstamp\t$dat_file\t$uid$altTag" >> /var/log/griidc/downloads.log`;
             $app->render('html/download-file.html',$stash);
             exit;
+        } else {
+            if (file_exists($dat_file)) {
+                mkdir($GLOBALS['config']['DataDiscovery']['downloadDir']."/$uid/");
+                symlink($dat_file,$GLOBALS['config']['DataDiscovery']['downloadDir']."/$uid/$dataset[dataset_filename]");
+                $altTag = '';
+                # logging
+                `echo "$tstamp\t$dat_file\t$uid$altTag" >> /var/log/griidc/downloads.log`;
+                $app->render('html/download-file.html',$stash);
+                exit;
+            } else {
+                print "Error";
+                exit;
+            }  
         }
     }
 });
