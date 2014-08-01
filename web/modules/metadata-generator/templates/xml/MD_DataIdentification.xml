@@ -40,20 +40,19 @@
     <gmd:topicCategory>
         <gmd:MD_TopicCategoryCode>oceans</gmd:MD_TopicCategoryCode>
     </gmd:topicCategory>
-    {% if dataset.geo_location or dataset.start_date or dataset.end_date %}
+    {% if dataset.geo_location or dataset.geom_gml or dataset.start_date or dataset.end_date %}
         <gmd:extent>
             <gmd:EX_Extent id="boundingExtent">
                 {% if dataset.geo_location %}
+                    <gmd:description>
+                        <gco:CharacterString>{{dataset.geo_location}}</gco:CharacterString>
+                    </gmd:description>
+                {% endif %}
+                {% if dataset.geom_gml %}
                     <gmd:geographicElement>
                         <gmd:EX_BoundingPolygon>
                             <gmd:polygon>
-                                <gml:Polygon gml:id="Polygon">
-                                    <gml:exterior>
-                                        <gml:LinearRing>
-                                            <gml:coordinates>{{dataset.geo_location}}</gml:coordinates>
-                                        </gml:LinearRing>
-                                    </gml:exterior>
-                                </gml:Polygon>
+                                {{dataset.geom_gml | raw}}
                             </gmd:polygon>
                         </gmd:EX_BoundingPolygon>
                     </gmd:geographicElement>
