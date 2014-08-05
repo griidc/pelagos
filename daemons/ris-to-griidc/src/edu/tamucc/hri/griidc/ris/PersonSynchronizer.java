@@ -353,6 +353,8 @@ public class PersonSynchronizer extends SynchronizerBase {
 									griidcDepartmentNumber);
 					// matching record found Modify Person record
 					// read the GRIIDC Person record
+
+					this.peoplePersonMap.put(this.risPeople_Id,correspondingGriidcPersonNum);
 					readGriidcPersonRecord(correspondingGriidcPersonNum);
 					if (isDebug())
 						this.messageContainer.add("Read GRIIDC Person: "

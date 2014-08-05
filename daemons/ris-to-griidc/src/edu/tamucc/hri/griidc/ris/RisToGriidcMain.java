@@ -93,7 +93,7 @@ public class RisToGriidcMain {
 
 		// InstitutionSynchronizer.setDebug(true);
 	     //DepartmentSynchronizer.setDebug(true);
-		PersonSynchronizer.setDebug(true);
+		//PersonSynchronizer.setDebug(true);
 		// TelephoneSynchronizer.setDebug(true);
 		// FundingEnvelopeSynchronizer.setDebug(true);
 		// RolesSynchronizer.setDebug(true);
