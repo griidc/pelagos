@@ -568,7 +568,7 @@ $app->get('/password', function () use ($app) {
     global $user;
     if (isset($user->name)) {
         $env = $app->environment();
-        $app->redirect("$env[SCRIPT_NAME]/password/reset");
+        $app->redirect("$env[SCRIPT_NAME]/password/change");
     }
     return $app->render('password_form.html');
 });
@@ -606,7 +606,7 @@ $app->post('/password', function () use ($app) {
     return $app->render('password_reset_email_sent.html',$stash);
 });
 
-$app->get('/password/reset', function () use ($app) {
+$app->get('/password/:action', function ($action) use ($app) {
     global $user;
     $person = get_verified_user($app);
 
@@ -618,10 +618,11 @@ $app->get('/password/reset', function () use ($app) {
 
     $stash['uid'] = $person['uid'][0];
     $stash['hash'] = $person['hash'];
+    $stash['action'] = $action;
     return $app->render('password_reset_form.html',$stash);
-});
+})->conditions(array('action' => '(reset|change)'));
 
-$app->post('/password/reset', function () use ($app) {
+$app->post('/password/:action', function ($action) use ($app) {
     global $user;
     $person = get_verified_user($app);
 
@@ -660,7 +661,7 @@ $app->post('/password/reset', function () use ($app) {
 
     drupal_set_message('Password changed.','status');
     echo "<p>Your password has been updated. Please use this new password to log in to GRIIDC systems. If you need assistance, please contact: <a href='mailto:griidc@gomri.org'>griidc@gomri.org</a> for help.</p>";
-});
+})->conditions(array('action' => '(reset|change)'));
 
 $app->run();
 
