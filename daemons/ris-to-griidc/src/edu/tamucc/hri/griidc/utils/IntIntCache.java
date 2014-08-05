@@ -96,7 +96,7 @@ public abstract class IntIntCache {
 	public String columnerToString() {
 		IntegerPair[] ip = this.toIntArray();
 		StringBuffer sb = new StringBuffer(getReportHeader());
-		String format = "%n%4d  %4d";
+		String format = "%n%6d  %6d";
 		for(int i = 0; i < ip.length;i++) {
 			sb.append(String.format(format,ip[i].getKey(),ip[i].getValue()));
 		}

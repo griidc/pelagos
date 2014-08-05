@@ -21,7 +21,9 @@ import edu.tamucc.hri.griidc.rdbms.SynchronizerBase;
 import edu.tamucc.hri.griidc.utils.GriidcRisDepartmentMap;
 import edu.tamucc.hri.griidc.utils.GriidcRisInstitutionMap;
 import edu.tamucc.hri.griidc.utils.HeuristicMatching;
+import edu.tamucc.hri.griidc.utils.MessageContainer;
 import edu.tamucc.hri.griidc.utils.MiscUtils;
+import edu.tamucc.hri.griidc.utils.PeoplePersonMap;
 import edu.tamucc.hri.griidc.utils.RisInstDeptPeopleErrorCollection;
 import edu.tamucc.hri.griidc.utils.GriidcConfiguration;
 
@@ -38,7 +40,7 @@ import edu.tamucc.hri.griidc.utils.GriidcConfiguration;
  * used for the address of the "Person" record.
  * 
  * In the case of an invalid address in "People" and "Departments" the address
- * of the referenced "Instutions" records is used for the address of the
+ * of the referenced "Institutions" records is used for the address of the
  * "Person" record
  * 
  * @author jvh
@@ -56,6 +58,8 @@ public class PersonSynchronizer extends SynchronizerBase {
 	private int griidcPersonRecordsModified = 0;
 	private int griidcPersonRecordDuplicates = 0;
 
+	private static int lastRisPeople_Id = RdbmsConstants.NotFound;
+	private static int PeopleIdThreshold = 10000;
 	private int risPeople_Id = RdbmsConstants.NotFound;
 	private int risPeople_InstitutionId = RdbmsConstants.NotFound;
 	private int risPeople_DepartmentId = RdbmsConstants.NotFound;
@@ -120,6 +124,10 @@ public class PersonSynchronizer extends SynchronizerBase {
 	private EmailSynchronizer emailSynchronizer = null;
 	private TelephoneSynchronizer telephoneSynchronizer = null;
 	private PersonTelephoneSynchronizer personTelephoneSynchronizer = null;
+	
+	private MessageContainer messageContainer = new MessageContainer();
+	
+	private PeoplePersonMap peoplePersonMap = PeoplePersonMap.getInstance();
 
 	public PersonSynchronizer() {
 		// TODO Auto-generated constructor stub
@@ -182,9 +190,13 @@ public class PersonSynchronizer extends SynchronizerBase {
 									// next RIS People record
 				risRecordCount++;
 				readRisPeopleRecord();
-				if (isDebug())
-					System.out.println("\n" + this.formatedRisPeople());
-
+				PersonSynchronizer.lastRisPeople_Id = this.risPeople_Id;
+				this.peoplePersonMap.put(this.risPeople_Id);
+				if (isDebug()) {
+					this.messageContainer.toOut();
+					this.messageContainer.initialize();
+					this.messageContainer.add("\n" + this.formatedRisPeople());
+				}
 				/****
 				 * find and update the GRIIDC Person table with these values
 				 */
@@ -219,7 +231,7 @@ public class PersonSynchronizer extends SynchronizerBase {
 							+ "\nThe referenced Institution and/or Department was not found in the database.\n"
 							+ e2.getMessage();
 					if (isDebug())
-						System.out.println(">>P-1 Skip this one: " + msg);
+						this.messageContainer.add(">>P-1 Skip this one: " + msg);
 
 					this.risErrorCollection.addPerson(
 							this.risPeople_InstitutionId,
@@ -239,7 +251,7 @@ public class PersonSynchronizer extends SynchronizerBase {
 							+ risPeople_InstitutionId + ", department: "
 							+ risPeople_DepartmentId + ".\n" + e2.getMessage();
 					if (isDebug())
-						System.out.println(">>P-2 Skip this one: " + msg);
+						this.messageContainer.add(">>P-2 Skip this one: " + msg);
 					e2.printStackTrace();
 					MiscUtils.writeToPrimaryLogFile(msg);
 					MiscUtils.writeToRisErrorLogFile(msg);
@@ -264,7 +276,7 @@ public class PersonSynchronizer extends SynchronizerBase {
 				} catch (MultipleRecordsFoundException e) {
 					MiscUtils.writeToPrimaryLogFile(e.getMessage());
 					if (isDebug())
-						System.out.println(">>CC Skip this one: "
+						this.messageContainer.add(">>CC Skip this one: "
 								+ e.getMessage());
 					this.risRecordsSkipped++;
 					//
@@ -343,13 +355,12 @@ public class PersonSynchronizer extends SynchronizerBase {
 					// read the GRIIDC Person record
 					readGriidcPersonRecord(correspondingGriidcPersonNum);
 					if (isDebug())
-						System.out.println("Read GRIIDC Person: "
+						this.messageContainer.add("Read GRIIDC Person: "
 								+ this.griidcPersonToString());
 					if (isCurrentRecordEqual(tempPostalAreaNumber,
 							tempDeliveryPoint)) {
 						if (isDebug())
-							System.out
-									.println("Person/People rcords are equal");
+							this.messageContainer.add("Person/People rcords are equal");
 						this.griidcPersonRecordDuplicates++;
 						continue;
 					} else { // matching key but not complete data match
@@ -371,6 +382,7 @@ public class PersonSynchronizer extends SynchronizerBase {
 					try {
 						correspondingGriidcPersonNum = addGriidcPerson(
 								tempPostalAreaNumber, tempDeliveryPoint);
+						this.peoplePersonMap.put(this.risPeople_Id,correspondingGriidcPersonNum);
 					} catch (SQLException e1) {
 						msg = "Error P-6 SQL Error: Add Person in GRIIDC "
 								+ e1.getMessage();
@@ -430,6 +442,12 @@ public class PersonSynchronizer extends SynchronizerBase {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		if(PersonSynchronizer.isDebug()) {
+			System.out.println(this.peoplePersonMap.columnerToString());
+			String path = MiscUtils.getWorkingDirectory();
+			String fileName = "PeopleToPersonMap.txt";
+			MiscUtils.writeStringToFile(path, fileName, this.peoplePersonMap.columnerToString());
+		}
 		return this.risErrorCollection;
 		// end of Person
 	}
@@ -442,7 +460,7 @@ public class PersonSynchronizer extends SynchronizerBase {
 					+ risPeople_FirstName + " " + risPeople_MiddleName
 					+ ", PostalArea_Number: " + tempPostalAreaNumber
 					+ ", Person_DeliveryPoint: " + tempDeliveryPoint;
-			System.out.println(msg);
+			this.messageContainer.add(msg);
 		}
 	}
 
@@ -539,8 +557,7 @@ public class PersonSynchronizer extends SynchronizerBase {
 			String tempDeliveryPoint) throws SQLException {
 		String addQuery = null;
 		if (isDebug())
-			System.out
-					.println("PersonSynchronizer.addGriidcPerson(postal area: "
+			this.messageContainer.add("PersonSynchronizer.addGriidcPerson(postal area: "
 							+ tempPostalAreaNumber + ", deliery point: "
 							+ tempDeliveryPoint + ")");
 		addQuery = this.formatAddPersonQuery(tempPostalAreaNumber,
@@ -548,7 +565,7 @@ public class PersonSynchronizer extends SynchronizerBase {
 				this.risPeople_FirstName, this.risPeople_MiddleName,
 				this.risPeople_Title, this.risPeople_Suffix);
 		if (isDebug())
-			System.out.println("PersonSynchronizer.addGriidcPerson() query: "
+			this.messageContainer.add("PersonSynchronizer.addGriidcPerson() query: "
 					+ addQuery);
 		ResultSet personRs = this.griidcDbConnection
 				.executeQueryResultSet(addQuery);
@@ -557,8 +574,7 @@ public class PersonSynchronizer extends SynchronizerBase {
 		while (personRs.next()) {
 			lastKey = personRs.getInt("Person_Number");
 			if (isDebug())
-				System.out
-						.println("PersonSynchronizer.addGriidcPerson() lastKey: "
+				this.messageContainer.add("PersonSynchronizer.addGriidcPerson() lastKey: "
 								+ lastKey);
 		}
 		this.griidcPersonRecordsAdded++;
@@ -575,7 +591,7 @@ public class PersonSynchronizer extends SynchronizerBase {
 						this.risPeople_Title, this.risPeople_Suffix);
 		MiscUtils.writeToPrimaryLogFile(msg);
 		if (PersonSynchronizer.isDebug())
-			System.out.println(msg);
+			this.messageContainer.add(msg);
 		return lastKey;
 	}
 
@@ -599,7 +615,7 @@ public class PersonSynchronizer extends SynchronizerBase {
 
 		MiscUtils.writeToPrimaryLogFile(msg);
 		if (PersonSynchronizer.isDebug())
-			System.out.println(msg);
+			this.messageContainer.add(msg);
 	}
 
 	/**
@@ -920,7 +936,8 @@ public class PersonSynchronizer extends SynchronizerBase {
 	}
 
 	public static boolean isDebug() {
-		return PersonSynchronizer.debug;
+		return ((PersonSynchronizer.lastRisPeople_Id >= PersonSynchronizer.PeopleIdThreshold) && 
+		        PersonSynchronizer.debug);
 	}
 
 	public static void setDebug(boolean db) {

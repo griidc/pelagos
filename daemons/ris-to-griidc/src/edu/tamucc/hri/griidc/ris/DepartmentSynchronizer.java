@@ -3,6 +3,8 @@ package edu.tamucc.hri.griidc.ris;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Iterator;
+import java.util.Vector;
 
 import org.ini4j.InvalidFileFormatException;
 
@@ -22,6 +24,7 @@ import edu.tamucc.hri.griidc.utils.GriidcRisDepartmentMap;
 import edu.tamucc.hri.griidc.utils.GriidcRisInstitutionMap;
 import edu.tamucc.hri.griidc.utils.HeuristicMatching;
 import edu.tamucc.hri.griidc.utils.InstitutionDepartmentRep;
+import edu.tamucc.hri.griidc.utils.MessageContainer;
 import edu.tamucc.hri.griidc.utils.MiscUtils;
 import edu.tamucc.hri.griidc.utils.RisInstDeptPeopleErrorCollection;
 import edu.tamucc.hri.griidc.utils.GriidcConfiguration;
@@ -95,10 +98,12 @@ public class DepartmentSynchronizer extends SynchronizerBase {
 	private static final boolean ShowRisRead = false;
 	private boolean initialized = false;
 	private HeuristicMatching heuristics = new HeuristicMatching();
-	//private IntStringDbCache griidcInstitutionNumberCache = null;
+	// private IntStringDbCache griidcInstitutionNumberCache = null;
 	private RisInstDeptPeopleErrorCollection risInstitutionWithErrors = null;
 	private GriidcRisInstitutionMap griidcRisInstitutionMap = null;
-	
+
+	private MessageContainer messagePackage = new MessageContainer();
+
 	public DepartmentSynchronizer() {
 
 	}
@@ -111,10 +116,10 @@ public class DepartmentSynchronizer extends SynchronizerBase {
 		super.commonInitialize();
 		if (!isInitialized()) {
 			// a set of all the GRIIDC institution numbers
-		//	this.griidcInstitutionNumberCache = new IntStringDbCache(
-		//			this.griidcDbConnection, "Institution",
-		//			"Institution_Number", "Institution_Name");
-		//	this.griidcInstitutionNumberCache.buildCacheFromDb();
+			// this.griidcInstitutionNumberCache = new IntStringDbCache(
+			// this.griidcDbConnection, "Institution",
+			// "Institution_Number", "Institution_Name");
+			// this.griidcInstitutionNumberCache.buildCacheFromDb();
 			this.griidcRisInstitutionMap = RdbmsUtils
 					.getGriidcRisInstitutionMap();
 			initialized = true;
@@ -151,11 +156,19 @@ public class DepartmentSynchronizer extends SynchronizerBase {
 			 * next record *
 			 */
 			while (rset.next()) { // continue statements branch back to here
+				//
+				// read another RIS record
+				//
+				if (DepartmentSynchronizer.isDebug()) {
+					if (this.messagePackage.size() > 0) {
+                        this.messagePackage.toOut();
+					}
+				}
 				readRisRecord();
 				int countryNumber = -1;
-				int mappedGriidcInstitutionNum = RdbmsConstants.NotFound;
-				int mappedGriidcDepartmentNum = RdbmsConstants.NotFound;
-				
+				int correspondingGriidcInstitutionNum = RdbmsConstants.NotFound;
+				int correspondingGriidcDepartmentNum = RdbmsConstants.NotFound;
+
 				if (MiscUtils.isStringEmpty(risDeptCountry)) {
 					msg = "Error D-1 In RIS Departments - record id: "
 							+ risDeptId
@@ -166,20 +179,32 @@ public class DepartmentSynchronizer extends SynchronizerBase {
 					errorMessageOut(msg);
 					this.risRecordErrors++;
 					this.risRecordsSkipped++;
+					
+					if (DepartmentSynchronizer.isDebug())
+					       this.messagePackage.add(msg);
 					continue; // skip to while (rset.next())
 				}
-				
+				//
+				// get the GRIIDC Institution number (previously stored)
+				// corresponding to the RIS Department Institutuion Id
+				//
 				try {
-					mappedGriidcInstitutionNum = this.griidcRisInstitutionMap.getGriidcInstitutionNumber(this.risDeptInstId);
-				
-				} catch (NoRecordFoundException e1) { 
+					correspondingGriidcInstitutionNum = this.griidcRisInstitutionMap
+							.getGriidcInstitutionNumber(this.risDeptInstId);
+
+				} catch (NoRecordFoundException e1) {
 					invalidInstitutionReference(e1.getMessage());
 					errorMessageOut(e1.getMessage());
 					this.risRecordErrors++;
 					this.risRecordsSkipped++;
+					if (DepartmentSynchronizer.isDebug())
+					       this.messagePackage.add(e1.getMessage());
+					
 					continue;
 				}
+				//
 				// is the contry code good ??
+				//
 				try {
 					countryNumber = RdbmsUtils
 							.getCountryNumberFromName(risDeptCountry);
@@ -187,6 +212,9 @@ public class DepartmentSynchronizer extends SynchronizerBase {
 					MiscUtils.writeToPrimaryLogFile(e.getMessage());
 					errorMessageOut(e.getMessage());
 					this.risRecordsSkipped++;
+
+					if (DepartmentSynchronizer.isDebug())
+					       this.messagePackage.add(e.getMessage());
 					continue; // branch back to while (rset.next())
 				} catch (NoRecordFoundException e) {
 					msg = "Error D-2 in RIS Departments - record id: "
@@ -196,12 +224,13 @@ public class DepartmentSynchronizer extends SynchronizerBase {
 					this.risRecordErrors++;
 					this.risRecordsSkipped++;
 					errorMessageOut(msg);
+					if (DepartmentSynchronizer.isDebug())
+					       this.messagePackage.add(msg);
 					continue; // branch back to while (rset.next())
 				}
-				
+
 				/****
-				 * The Department in RIS is in GRIIDC 
-				 * find and update the GRIIDC
+				 * The Department in RIS is in GRIIDC find and update the GRIIDC
 				 * Department table with these values
 				 */
 				tempPostalAreaNumber = -1;
@@ -221,6 +250,9 @@ public class DepartmentSynchronizer extends SynchronizerBase {
 					MiscUtils.writeToPrimaryLogFile(e.getMessage());
 					errorMessageOut(e.getMessage());
 					this.risRecordsSkipped++;
+
+					if (DepartmentSynchronizer.isDebug())
+					       this.messagePackage.add(e.getMessage());
 					continue; // branch back to while (rset.next())
 				} catch (NoRecordFoundException e) {
 					msg = "Error D-3 in RIS Departments - record id: "
@@ -230,6 +262,9 @@ public class DepartmentSynchronizer extends SynchronizerBase {
 					errorMessageOut(msg);
 					this.risRecordErrors++;
 					this.risRecordsSkipped++;
+
+					if (DepartmentSynchronizer.isDebug())
+					       this.messagePackage.add(msg);
 					continue; // branch back to while (rset.next())
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
@@ -237,6 +272,9 @@ public class DepartmentSynchronizer extends SynchronizerBase {
 					errorMessageOut(e.getMessage());
 					this.risRecordErrors++;
 					this.risRecordsSkipped++;
+
+					if (DepartmentSynchronizer.isDebug())
+					       this.messagePackage.add(e.getMessage());
 					continue; // branch back to while (rset.next())
 				} catch (MissingArgumentsException e) {
 					msg = "Error D-4 In RIS Departments - record: " + risDeptId
@@ -245,28 +283,48 @@ public class DepartmentSynchronizer extends SynchronizerBase {
 					errorMessageOut(msg);
 					this.risRecordErrors++;
 					this.risRecordsSkipped++;
+
+					if (DepartmentSynchronizer.isDebug())
+					       this.messagePackage.add(msg);
 					continue; // branch back to while (rset.next())
 				}
-				
+
 				tempDeliveryPoint = MiscUtils.makeDeliveryPoint(
 						this.risDeptAddr1, this.risDeptAddr2);
-			
+
+				//
+				// read the GRIIDC database to see if the Department record has
+				// been stored previously
+				// If it is not found - add it @see the NoRecordFoundException
+				// If it IS found modify it if it is NOT equal to the existing
+				// record
 				try {
-					mappedGriidcDepartmentNum = findMatchingGriidcDepartment();
-					modifyGriidcDepartment(mappedGriidcInstitutionNum,
+					// find the griidc dept (within the Institution) that
+					// matches the ris dept
+					correspondingGriidcDepartmentNum = RdbmsConstants.NotFound;
+					correspondingGriidcDepartmentNum = findMatchingGriidcDepartment(
+							this.risDeptId, correspondingGriidcInstitutionNum);
+					if (isDebug())
+						this.messagePackage
+								.add("Found Griidc Department record with corresponding Griidc Dept Number: "
+										+ correspondingGriidcDepartmentNum);
+					modifyGriidcDepartment(correspondingGriidcInstitutionNum,
 							tempDeliveryPoint, tempPostalAreaNumber);
 				} catch (NoRecordFoundException e) {
-					this.addGriidcDepartment(mappedGriidcInstitutionNum,
+					if(DepartmentSynchronizer.isDebug()) {
+						this.messagePackage.add("Record NOT found");
+					}
+					this.addGriidcDepartment(correspondingGriidcInstitutionNum,
 							tempDeliveryPoint, tempPostalAreaNumber);
 				} catch (MultipleRecordsFoundException e) {
-					msg = "Error D-5 In RIS Departments - record RIS Department ID: " + risDeptId
-							+ " - " + e.getMessage();
+					msg = "Error D-5 In RIS Departments - record RIS Department ID: "
+							+ risDeptId + " - " + e.getMessage();
 					MiscUtils.writeToRisErrorLogFile(msg);
 					errorMessageOut(msg);
 					this.risRecordErrors++;
 					this.risRecordsSkipped++;
 					continue; // branch back to while (rset.next())
-				}  
+				}
 			} // end of main while loop
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -291,20 +349,24 @@ public class DepartmentSynchronizer extends SynchronizerBase {
 		this.risDeptLat = rset.getDouble("Department_Lat");
 		this.risDeptLong = rset.getDouble("Department_Long");
 
-		String msg = "Read RIS: " + "Dept: " + risDeptId + ", "
-				+ "DeptInstId: " + risDeptInstId + ", " + "Name : "
+		String msg = "Read RIS: " + "R Dept: " + risDeptId + ", "
+				+ "R DeptInstId: " + risDeptInstId + ", " + "Name : "
 				+ risDeptName + ", " + "Addr 1: " + risDeptAddr1 + ", "
 				+ "Addr 2: " + risDeptAddr2 + ", " + "City: " + risDeptCity
 				+ ", " + "State: " + risDeptState + ", " + "Zip: " + risDeptZip
 				+ ", " + "Country: " + risDeptCountry + ", " + "URL: "
 				+ risDeptURL + ", " + "Lat: " + risDeptLat + ", " + "lon: "
 				+ risDeptLong;
-		if (isDebug() || ShowRisRead)
-			System.out.println("\n" + msg);
+		this.messagePackage.initialize();
+		this.messagePackage.add("\nMessage package RDN: " + risDeptId + ", RDIN: " + risDeptInstId);
+		this.messagePackage.add(msg);
+		// if (isDebug() || ShowRisRead)
+		// System.out.println("\n" + msg);
 	}
 
 	private void invalidInstitutionReference(String exMessage) {
-		String msg = "Error D-6 in RIS Departments - record id: " + this.risDeptId
+		String msg = "Error D-6 in RIS Departments - record id: "
+				+ this.risDeptId
 				+ " references an Institution that does not exist: "
 				+ risDeptInstId;
 		if (this.isInstitutionOnRisErrorsList(this.risDeptInstId)) {
@@ -331,35 +393,44 @@ public class DepartmentSynchronizer extends SynchronizerBase {
 	}
 
 	/**
-	 * Must read the griidc Department table to find a set of records (one
-	 * record)
+	 * Format the query to find a GRIIDC Department record that matches the two
+	 * keys of RIS Department ID and Griidc Institution number
 	 * 
 	 * @param targetRisDeptId
-	 * @param griidcInstNumber
+	 * @param targetGriidcInstitutionNum
 	 * @return
 	 */
-	private String formatFindQuery(int targetRisDeptId) {
+	private String formatFindQuery(int targetRisDeptId,
+			int targetGriidcInstitutionNum) {
 		return "SELECT * FROM "
 				// + this.getWrappedGriidcShemaName() + "."
 				+ RdbmsConnection.wrapInDoubleQuotes(GriidcTableName)
 				+ " WHERE "
 				+ RdbmsConnection.wrapInDoubleQuotes("Department_RIS_ID")
-				+ RdbmsConstants.EqualSign + targetRisDeptId;
+				+ RdbmsConstants.EqualSign + targetRisDeptId
+				+ RdbmsConstants.And
+				+ RdbmsConnection.wrapInDoubleQuotes("Institution_Number")
+				+ RdbmsConstants.EqualSign + targetGriidcInstitutionNum;
 	}
 
 	/**
 	 * read the GRIIDC department. The GRIIDC Department_Number is unique but
-	 * may not be known at this time. The RIS Department Id is also unique and
-	 * is stored in the GRIIDC Department Record
+	 * there may not yet be a stored GRIIDC department record. The RIS
+	 * Department Id is also unique and so can be used to find the GRIIDC
+	 * Department record in the GRIIDC Department Record
 	 * 
 	 * @param targetRisDeptId
 	 * @return the GRIIDC Department number
 	 */
-	private int findMatchingGriidcDepartment()
-			throws NoRecordFoundException, MultipleRecordsFoundException {
+	private int findMatchingGriidcDepartment(int risDepartmentId,
+			int griidcInstitutionNum) throws NoRecordFoundException,
+			MultipleRecordsFoundException {
 
-		String query = formatFindQuery(this.risDeptId);
+		String query = formatFindQuery(risDepartmentId, griidcInstitutionNum);
 		int count = 0;
+		if(DepartmentSynchronizer.isDebug()) {
+			this.messagePackage.add("Find griidc department() looking for risDeptId: " + risDepartmentId + ", GRIIDC dept Inst: " + griidcInstitutionNum);
+		}
 		this.griidcDeptNumber = RdbmsConstants.NotFound;
 		try {
 			griidcRset = this.griidcDbConnection.executeQueryResultSet(query);
@@ -390,6 +461,7 @@ public class DepartmentSynchronizer extends SynchronizerBase {
 					+ RdbmsConstants.GriidcDeptTableName + " table  - " + count
 					+ " records match Department_RIS_ID: " + this.risDeptId);
 		}
+		// if you get this far the record has been stored previously
 		return this.griidcDeptNumber;
 	}
 
@@ -404,30 +476,35 @@ public class DepartmentSynchronizer extends SynchronizerBase {
 					+ risDeptName + ", PostalArea_Number: "
 					+ griidcDeptPostalAreaNumber
 					+ ", Department_DeliveryPoint: " + tempDeliveryPoint;
-			System.out.println(msg);
+			this.messagePackage.add(msg);
 		}
 		String addQuery = null;
 		try {
-			addQuery = this.formatAddQuery(this.risDeptId, griidcInstNumber,
-					tempPostalAreaNumber, tempDeliveryPoint, this.risDeptName,
-					risDeptURL, risDeptLong, risDeptLat);
+			addQuery = this.formatAddQuery(griidcInstNumber,
+					tempPostalAreaNumber, tempDeliveryPoint, this.risDeptName,this.risDeptId, 
+					this.risDeptURL, this.risDeptLong, this.risDeptLat);
 			if (DepartmentSynchronizer.isDebug())
-				System.out.println("Query: " + addQuery);
+				this.messagePackage.add("Query: " + addQuery);
 			this.griidcDbConnection.executeQueryBoolean(addQuery);
 			this.griidcRecordsAdded++;
+			this.messagePackage.add(msg);
 		} catch (SQLException e) {
 			msg = "SQL Error: Adding Department in GRIIDC - \nQuery: "
 					+ addQuery + "\n" + e.getMessage();
-			if (DepartmentSynchronizer.isDebug())
-				System.err.println(msg);
+			if (DepartmentSynchronizer.isDebug()) {
+				this.messagePackage.add(msg);
+				this.messagePackage.toErr();
+				this.messagePackage.initialize();
+			}
 			MiscUtils.writeToPrimaryLogFile(msg);
 			errorMessageOut(msg);
 		}
 	}
 
 	/**
-	 * the RIS record matches one in GRIIDC 
-	 * Modify Department record
+	 * the RIS record matches one in GRIIDC Modify Department record by keys. If
+	 * the data values are euqual there is no need to modify. If not some values
+	 * may have changed and need to updated.
 	 * 
 	 * @param tempDeliveryPoint
 	 * @param tempPostalAreaNumber
@@ -435,51 +512,58 @@ public class DepartmentSynchronizer extends SynchronizerBase {
 	private void modifyGriidcDepartment(int mappedGriidcInstNumber,
 			String tempDeliveryPoint, int tempPostalAreaNumber) {
 		String msg = null;
-		
-		if (isCurrentRecordEqual(mappedGriidcInstNumber,
-				tempPostalAreaNumber, tempDeliveryPoint, this.risDeptName,
-				this.risDeptURL,
+		if (isCurrentRecordEqual(mappedGriidcInstNumber, tempPostalAreaNumber,
+				tempDeliveryPoint, this.risDeptName, this.risDeptURL,
+
 				this.griidcDeptInstNumber, this.griidcDeptPostalAreaNumber,
 				this.griidcDeptDeliveryPoint, this.griidcDeptName,
 				this.griidcDeptUrl)) {
 			this.griidcRecordDuplicates++;
 			errorMessageOut("Duplicate record");
-		} else {
+			if (DepartmentSynchronizer.isDebug()) {
+				this.messagePackage
+						.add("DepartmentSynchronizer.modifyGriidcDepartmen Record is found - a duplicate");
+			}
+		} else { // not equal (other than keys) so modify
 			if (DepartmentSynchronizer.isDebug()) {
 				msg = "Modify GRIIDC Department table matching "
-						+ "griidcDeptNumber: " + risDeptId
+						+ "griidcDeptNumber: " + this.griidcDeptNumber
+						+ "griidcRis_DEPT_ID: " + this.griidcDept_RIS_ID
+						+ "griidcDeptInstNumber: " + mappedGriidcInstNumber
 						+ ", Department_Name: " + risDeptName
 						+ ", PostalArea_Number: " + griidcDeptPostalAreaNumber
-						+ ", Department_DeliveryPoint: " + tempDeliveryPoint;
-				if (isDebug())
-					System.out.println(msg);
+						+ ", Department_DeliveryPoint: " + tempDeliveryPoint
+						+ " \n<><> because: " + getWhyFailedEqual();
+				this.messagePackage.add(msg);
 			}
 
 			String modifyQuery = null;
 			try {
-				modifyQuery = this.formatModifyQuery(this.risDeptId,
-						this.risDeptInstId, tempPostalAreaNumber,
-						tempDeliveryPoint, this.risDeptName, risDeptURL,
+				modifyQuery = this.formatModifyQuery(this.griidcDeptNumber,
+						this.griidcDeptInstNumber, tempPostalAreaNumber,
+						tempDeliveryPoint, this.risDeptName,this.risDeptId, risDeptURL,
 						risDeptLong, risDeptLat);
 
 				if (DepartmentSynchronizer.isDebug())
-					System.out.println("Query: " + modifyQuery);
+					this.messagePackage.add("Query: " + modifyQuery);
 				this.griidcDbConnection.executeQueryBoolean(modifyQuery);
 				this.griidcRecordsModified++;
 				successMessageOut(msg);
 			} catch (SQLException e) {
 				msg = "SQL Error: Modify Department in GRIIDC - Query: "
 						+ modifyQuery;
-				System.err.println(msg);
+				this.messagePackage.add(msg);
+				this.messagePackage.toOut();
 				e.printStackTrace();
 				errorMessageOut(msg);
 			}
 		}
 		return;
 	}
+
 	/**
-	 * if any of the parameter pairs don't match they are not equal
-	 * This looks at the payload of the record not the key
+	 * if any of the parameter pairs don't match they are not equal This looks
+	 * at the payload of the record not the key
 	 * 
 	 * @param rRisDeptId
 	 * @param rName
@@ -500,104 +584,137 @@ public class DepartmentSynchronizer extends SynchronizerBase {
 	private boolean isCurrentRecordEqual(int mappedGriidcInstNumber,
 			int rPostalAreaNumber, String rDeliveryPoint, String rName,
 			String rUrl, int gInstNumber, int gPostalAreaNumber,
-			String gDeliveryPoint, String gName, String gUrl) { 
+			String gDeliveryPoint, String gName, String gUrl) {
 
 		String dformat = "%n%10d %10d %10d %30s %30s %50s";
+		whyFailedEqualMessage = "Records Are Equal";
 
-		if(!(mappedGriidcInstNumber == gInstNumber))
+		if (!(mappedGriidcInstNumber == gInstNumber)) {
+			whyFailedEqualMessage = "\n\tMapped Inst: "
+					+ mappedGriidcInstNumber + " not equal \n\tG Inst: "
+					+ gInstNumber;
 			return false;
-		if (!(rName.equals(gName)))
+		}
+		if (!(rName.equals(gName))) {
+			whyFailedEqualMessage = "\n\tR name: " + rName
+					+ " not equal \n\tG name: " + gName;
 			return false;
-		if (!areDeliveryPointsEqual(rDeliveryPoint,gDeliveryPoint))
+		}
+		if (!areDeliveryPointsEqual(rDeliveryPoint, gDeliveryPoint)) {
+			whyFailedEqualMessage = "\n\tR deliver point: " + rDeliveryPoint
+					+ " not equal \n\tG deliver point: " + gDeliveryPoint;
 			return false;
-		if (!(rPostalAreaNumber == gPostalAreaNumber))
+		}
+		if (!(rPostalAreaNumber == gPostalAreaNumber)) {
+			whyFailedEqualMessage = "\n\tR postal area : " + rPostalAreaNumber
+					+ " not equal \n\tG postal area: " + gPostalAreaNumber;
 			return false;
-		if (!(rUrl.equals(gUrl)))
+		}
+		if (!(rUrl.equals(gUrl))) {
+			whyFailedEqualMessage = "\n\tR url : " + rUrl
+					+ " not equal \n\tG url: " + gUrl;
 			return false;
+		}
 		return true;
 
 	}
+
+	private static String whyFailedEqualMessage = "Equal";
+
+	private static String getWhyFailedEqual() {
+		return whyFailedEqualMessage;
+	}
+
 	/**
-	 * compare for equal 
-	 * if both are null return true;
-	 * if neither are null compare trimmed values
-	 * if one is null other not return false;
-	 * both blank (empty not null) will return true
+	 * compare for equal if both are null return true; if neither are null
+	 * compare trimmed values if one is null other not return false; both blank
+	 * (empty not null) will return true
+	 * 
 	 * @param rdp
 	 * @param gdp
 	 * @return
 	 */
 	private boolean areDeliveryPointsEqual(String rdp, String gdp) {
-		if(rdp == null && gdp == null) return true;
-		if(rdp != null && gdp != null) {
-			//  both are empty but non null
-			if(MiscUtils.isEmpty(rdp) && MiscUtils.isEmpty(gdp)) return true;
+		if (rdp == null && gdp == null)
+			return true;
+		if (rdp != null && gdp != null) {
+			// both are empty but non null
+			if (MiscUtils.isEmpty(rdp) && MiscUtils.isEmpty(gdp))
+				return true;
 			return rdp.trim().equals(gdp.trim());
 		}
 		return false;
 	}
+
 	private boolean isInstitutionOnRisErrorsList(int risDeptInstId) {
 		return this.risInstitutionWithErrors.containsInstitution(risDeptInstId);
 	}
 
-	private DbColumnInfo[] getDbColumnInfo(int griidcDept_RIS_ID,
-			int griidcDeptInstNumber, int griidcPostalAreaNumber,
-			String deliveryPoint, String risDeptName, String risDeptURL,
-			double risDeptLon, double risDeptLat) throws SQLException {
+	private DbColumnInfo[] getDbColumnInfo(int lgriidcDepartmentNum,
+			int lgriidcDepartmentInstNum, int lgriidcPostalAreaNumber,
+			String ldeliveryPoint, String lrisDeptName, int lrisDeptId, String lrisDeptURL,
+			double lrisDeptLon, double lrisDeptLat) throws SQLException {
 		TableColInfo tci = RdbmsUtils.getMetaDataForTable(
 				RdbmsUtils.getGriidcDbConnectionInstance(), GriidcTableName);
 
-		tci.getDbColumnInfo("Department_RIS_ID").setColValue(
-				String.valueOf(griidcDept_RIS_ID));
+		if(lgriidcDepartmentNum > 0) {
+		tci.getDbColumnInfo("Department_Number").setColValue(
+				String.valueOf(lgriidcDepartmentNum));
+		}
 		tci.getDbColumnInfo("Institution_Number").setColValue(
-				String.valueOf(griidcDeptInstNumber));
+				String.valueOf(lgriidcDepartmentInstNum));
 		tci.getDbColumnInfo("PostalArea_Number").setColValue(
-				String.valueOf(griidcPostalAreaNumber));
+				String.valueOf(lgriidcPostalAreaNumber));
 		tci.getDbColumnInfo("Department_DeliveryPoint").setColValue(
-				deliveryPoint);
-		tci.getDbColumnInfo("Department_Name").setColValue(risDeptName);
-		tci.getDbColumnInfo("Department_URL").setColValue(risDeptURL);
+				ldeliveryPoint);
+		tci.getDbColumnInfo("Department_Name").setColValue(lrisDeptName);
+		tci.getDbColumnInfo("Department_RIS_ID").setColValue(lrisDeptId);
+		tci.getDbColumnInfo("Department_URL").setColValue(lrisDeptURL);
 		tci.getDbColumnInfo("Department_GeoCoordinate").setColValue(
-				RdbmsUtils.makeSqlGeometryPointString(risDeptLon, risDeptLat));
+				RdbmsUtils.makeSqlGeometryPointString(lrisDeptLon, lrisDeptLat));
 		return tci.getDbColumnInfo();
 	}
 
-	private String formatAddQuery(int risDeptId, int gDeptInstNum,
-			int griidcPostalAreaNumber, String deliveryPoint,
-			String risDeptName, String risDeptURL, double risDeptLon,
-			double risDeptLat) throws SQLException {
+	private String formatAddQuery(int lGriidcDeptInstNumber,
+			int lGriidcPostalAreaNumber, String lDeliveryPoint,
+			String lRisDeptName, int lRisDeptId, String lRisDeptURL, double lRisDeptLon,
+			double lRisDeptLat) throws SQLException {
 
-		DbColumnInfo[] info = getDbColumnInfo(risDeptId, gDeptInstNum,
-				griidcPostalAreaNumber, deliveryPoint, risDeptName, risDeptURL,
-				risDeptLon, risDeptLat);
+		DbColumnInfo[] info = getDbColumnInfo(-1, lGriidcDeptInstNumber,
+				lGriidcPostalAreaNumber, lDeliveryPoint, lRisDeptName, lRisDeptId, lRisDeptURL,
+				lRisDeptLon, lRisDeptLat);
 		String query = RdbmsUtils.formatInsertStatement(GriidcTableName, info);
 		return query;
 
 	}
 
-	private String formatModifyQuery(int griidcDept_RIS_ID,
-			int griidcDeptInstNumber, int griidcPostalAreaNumber,
-			String deliveryPoint, String risDeptName, String risDeptURL,
-			double risDeptLon, double risDeptLat) throws SQLException {
+	private String formatModifyQuery(int lgriidcDepartmentNum,int lGriidcDeptInstNumber,
+			int lGriidcPostalAreaNumber, String lDeliveryPoint,
+			String lRisDeptName, int lRisDeptId, String lRisDeptURL, double lRisDeptLon,
+			double lRisDeptLat) throws SQLException {
 
-		DbColumnInfo[] info = getDbColumnInfo(griidcDept_RIS_ID,
-				griidcDeptInstNumber, griidcPostalAreaNumber, deliveryPoint,
-				risDeptName, risDeptURL, risDeptLon, risDeptLat);
-		DbColumnInfo[] whereInfo = new DbColumnInfo[1];
+		DbColumnInfo[] info = getDbColumnInfo(lgriidcDepartmentNum,
+				lGriidcDeptInstNumber, lGriidcPostalAreaNumber, lDeliveryPoint,
+				lRisDeptName, lRisDeptId, lRisDeptURL, lRisDeptLon, lRisDeptLat);
+		DbColumnInfo[] whereInfo = new DbColumnInfo[2];
 
 		TableColInfo tci = RdbmsUtils.getMetaDataForTable(
 				RdbmsUtils.getGriidcDbConnectionInstance(), GriidcTableName);
 
-		tci.getDbColumnInfo("Department_RIS_ID").setColValue(
-				String.valueOf(griidcDept_RIS_ID));
+		whereInfo[0] = tci.getDbColumnInfo("Department_Number");
+		whereInfo[0].setColValue(lgriidcDepartmentNum);
+		whereInfo[1] = tci.getDbColumnInfo("Institution_Number");
+		whereInfo[1].setColValue(lGriidcDeptInstNumber);
 
-		whereInfo[0] = tci.getDbColumnInfo("Institution_Number");
-
+		if (DepartmentSynchronizer.isDebug())
+			this.messagePackage
+					.add("formatModifyQuery() where clause whereInfo "
+							+ DbColumnInfo.toString(whereInfo));
 		String query = RdbmsUtils.formatUpdateStatement(
 				DepartmentSynchronizer.GriidcTableName, info, whereInfo);
 
 		if (DepartmentSynchronizer.isDebug())
-			System.out.println("formatModifyQuery() " + query);
+			this.messagePackage.add("formatModifyQuery() " + query);
 		return query;
 	}
 
@@ -613,8 +730,6 @@ public class DepartmentSynchronizer extends SynchronizerBase {
 				+ this.griidcDeptInstNumber + ", RIS Dept Id: "
 				+ this.griidcDept_RIS_ID;
 	}
-
-	
 
 	public String getPrimaryLogFileName() throws PropertyNotFoundException,
 			InvalidFileFormatException, IOException {

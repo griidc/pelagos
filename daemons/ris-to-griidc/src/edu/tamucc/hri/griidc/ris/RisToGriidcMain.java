@@ -50,7 +50,7 @@ public class RisToGriidcMain {
 	}
 
 	/**
-	 * read the command line args to control some behaviours
+	 * read the command line args to control some behaviors
 	 * 
 	 * @param args
 	 */
@@ -92,8 +92,8 @@ public class RisToGriidcMain {
 		RolesSynchronizer.setDebug(false);
 
 		// InstitutionSynchronizer.setDebug(true);
-		// DepartmentSynchronizer.setDebug(true);
-		// PersonSynchronizer.setDebug(true);
+	     //DepartmentSynchronizer.setDebug(true);
+		PersonSynchronizer.setDebug(true);
 		// TelephoneSynchronizer.setDebug(true);
 		// FundingEnvelopeSynchronizer.setDebug(true);
 		// RolesSynchronizer.setDebug(true);
