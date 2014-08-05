@@ -612,7 +612,7 @@ $app->get('/password/:action', function ($action) use ($app) {
 
     if (is_null($person)) {
         echo "<p>Please <a href='/auth/cas?dest=$_SERVER[SCRIPT_NAME]/password/reset'>login</a> first to change your password.</p>";
-        echo "<p>If you have forgotten you password, you may <a href='/account/password'>reset it</a>.</p>";
+        echo "<p>If you have forgotten your password or it has expired, you may <a href='/account/password'>reset it</a>.</p>";
         return;
     }
 
