@@ -6,7 +6,7 @@ include_once '/usr/local/share/GRIIDC/php/aliasIncludes.php';
 drupal_add_library('system', 'ui.datepicker');
 drupal_add_library('system', 'ui.dialog');
 
-drupal_add_css('/dif/includes/css/overwrite.css',array('type'=>'external'));
+drupal_add_css('includes/css/overwrite.css',array('type'=>'external'));
 
 drupal_add_js('/includes/jquery-validation/jquery.validate.js',array('type'=>'external'));
 
@@ -399,35 +399,35 @@ if ($userId == "")
 <div id="dialog" style=""></div>
 
 <div id="url_tip" style="display:none;">
-    <img src="/dif/images/info.png" style="float:right;" />
+    <img src="/images/icons/info.png" style="float:right;" />
     <p>
         <strong>Location (URL):</strong> This is the Uniform Resource Locator (URL) that resolves to the dataset.<br><em>(e.g. http://www.nodc.noaa.gov/cgi-bin/OAS/prd/download/65725.11.11.tar.gz)</em>
     </p>
 </div>
 
 <div id="creator_tip" style="display:none;">
-    <img src="/dif/images/info.png" style="float:right;" />
+    <img src="/images/icons/info.png" style="float:right;" />
     <p>
         <strong>Creator(s):</strong> The primary scientist or researcher in producing the data, or the authors of the publication in priority order. The names may include a corporate, institutions, or personal name. In personal names, list family name before given name, as in Darwin, Charles. Non-roman names should be transliterated according to the ALA-LC schemes. <a href="http://www.loc.gov/catdir/cpso/roman.html" target="_blank"><em>(http://www.loc.gov/catdir/cpso/roman.html)</em></a>. 
     </p>
 </div>
 
 <div id="title_tip" style="display:none;">
-    <img src="/dif/images/info.png" style="float:right;" />
+    <img src="/images/icons/info.png" style="float:right;" />
     <p>
         <strong>Title:</strong> A label by which the data or publication is known. <em>(e.g. Multibeam bathymetry data for east Flower Garden Bank)</em>
     </p>
 </div>
 
 <div id="publisher_tip" style="display:none;">
-    <img src="/dif/images/info.png" style="float:right;" />
+    <img src="/images/icons/info.png" style="float:right;" />
     <p>
         <strong>Publisher:</strong> A holder of the data (e.g., GRIIDC) or the institution responsible for making the data available to the public. 
     </p>
 </div>
 
 <div id="txtDate_tip" style="display:none;">
-    <img src="/dif/images/info.png" style="float:right;" />
+    <img src="/images/icons/info.png" style="float:right;" />
     <p>
         <strong>Publication Date:</strong> A valid ISO 8601 date <em>e.g. (2012-12-23)</em>
     </p>
@@ -446,7 +446,7 @@ if ($userId == "")
 
 <fieldset id="qurl">
     <span id="qtip_url" style="float:right;">
-        <img src="/dif/images/info.png">
+        <img src="/images/icons/info.png">
     </span>
     <label for="txtURL"><em>*</em>Digital Object URL:</label>
     <br />
@@ -455,7 +455,7 @@ if ($userId == "")
 
 <fieldset id="qcreator">
     <span id="qtip_creator" style="float:right;">
-        <img src="/dif/images/info.png">
+        <img src="/images/icons/info.png">
     </span>
     <label for="txtWho"><em>*</em>Digital Object Creator(s):</label>
     <br />
@@ -464,7 +464,7 @@ if ($userId == "")
 
 <fieldset id="qtitle">
     <span id="qtip_title" style="float:right;">
-        <img src="/dif/images/info.png">
+        <img src="/images/icons/info.png">
     </span>
     <label for="txtWhat"><em>*</em>Digital Object Title:</label>
     <br />
@@ -474,7 +474,7 @@ if ($userId == "")
 
 <fieldset id="qpub">
     <span id="qtip_pub" style="float:right;">
-        <img src="/dif/images/info.png">
+        <img src="/images/icons/info.png">
     </span>
     <label for="txtWhere"><em>*</em>Digital Object Publisher:</label>
     <br />
@@ -484,7 +484,7 @@ if ($userId == "")
 
 <fieldset id="txtDate_fld">
     <span id="qtip_date" style="float:right;">
-        <img src="/dif/images/info.png">
+        <img src="/images/icons/info.png">
     </span>
     <label for="txtDate"><em>*</em>Digital Object Publication Date:</label>
     <br />
