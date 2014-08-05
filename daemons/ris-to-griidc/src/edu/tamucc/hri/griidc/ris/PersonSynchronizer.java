@@ -59,7 +59,7 @@ public class PersonSynchronizer extends SynchronizerBase {
 	private int griidcPersonRecordDuplicates = 0;
 
 	private static int lastRisPeople_Id = RdbmsConstants.NotFound;
-	private static int PeopleIdThreshold = 10000;
+	private static int PeopleIdThreshold = 0;
 	private int risPeople_Id = RdbmsConstants.NotFound;
 	private int risPeople_InstitutionId = RdbmsConstants.NotFound;
 	private int risPeople_DepartmentId = RdbmsConstants.NotFound;
