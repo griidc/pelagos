@@ -13,17 +13,18 @@ use IO::Handle;
 
 umask 0022;
 
-my $config = Config::PHPINI->read('/etc/griidc/filer.ini');
+my $config = Config::PHPINI->read('/etc/opt/pelagos.ini');
+my $notifications = Config::PHPINI->read("$config->{paths}->{conf}/notifications.ini");
 
-my $logfile  = '/var/log/griidc/filer';
+my $logfile  = "$config->{paths}->{log}/filer";
 open(my $log,'>>',$logfile) or die "cannot open log file $logfile: $!";
 $log->autoflush(1);
 
 writelog($log,"filer starting");
 
-my $types = Config::PHPINI->read('/etc/griidc/filetypes.ini');
+my $types = Config::PHPINI->read("$config->{paths}->{conf}/filetypes.ini");
 
-my $db_conf = Config::PHPINI->read('/etc/griidc/db.ini');
+my $db_conf = Config::PHPINI->read("$config->{paths}->{conf}/db.ini");
 my %dbi_type_map = ('postgresql' => 'Pg', 'mysql' => 'mysql');
 my %db = %{$db_conf->{'GOMRI_RW'}};
 
@@ -43,6 +44,7 @@ $sth = $dbh->prepare("SELECT registry_id, dataset_udi, url_data, userid, dataset
                       ON r.registry_id = m.MaxID
                       WHERE
                           substr(registry_id,1,2) != '00' AND
+                          data_source_pull = 'true' AND
                           (dataset_download_status = 'no_status' OR dataset_download_status = 'None') AND
                           url_data IS NOT NULL AND
                           url_data != ''
@@ -162,7 +164,7 @@ while (my $r = $sth->fetchrow_hashref()) {
 
     # check if url is remote
     if ($url_metadata =~ /^(https?|ftp):\/\//) {
-        if ($url_metadata =~ /^https?:\/\// and -x '/usr/local/griidc/retriever/retriever_md') {
+        if ($url_metadata =~ /^https?:\/\// and -x '/opt/pelagos/back-end/retriever/retriever_md') {
             $retriever_md = 1;
         }
         else {
@@ -218,7 +220,7 @@ $dbh->disconnect();
 
 if ($retriever_md) {
     writelog($log,"Remote metadata found, spawning retriever_md");
-    system('/usr/local/griidc/retriever/retriever_md &');
+    system('/opt/pelagos/back-end/retriever/retriever_md &');
 }
 
 my $ldap = Net::LDAP->new('triton.tamucc.edu') or die "$@";
@@ -365,8 +367,8 @@ for my $uid (keys %notify) {
 }
 
 # notify internal users
-for my $email (keys %{$config->{'notifications'}}) {
-    my @types = split /[, ]/, $config->{'notifications'}->{$email};
+for my $email (keys %{$notifications->{'filer'}}) {
+    my @types = split /[, ]/, $notifications->{'filer'}->{$email};
     my $msg;
 
     my %mail = ( To      => $email,
