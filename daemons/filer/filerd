@@ -1,6 +1,7 @@
 #!/usr/bin/perl -w
 
 use strict;
+use Config::PHPINI;
 use Proc::Daemon;
 use Getopt::Long;
 use POSIX qw(strftime);
