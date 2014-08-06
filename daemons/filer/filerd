@@ -6,6 +6,8 @@ use Getopt::Long;
 use POSIX qw(strftime);
 use IO::Handle;
 
+my $config = Config::PHPINI->read('/etc/opt/pelagos.ini');
+
 my $pidfile = '/var/run/filerd.pid';
 GetOptions("pidfile=s" => \$pidfile);
 
@@ -16,7 +18,7 @@ $daemon->Init;
 chmod 0644, $pidfile;
 umask 0022;
 
-my $logfile  = '/var/log/griidc/filerd';
+my $logfile  = "$config->{paths}->{log}/filerd";
 open(my $log,'>>',$logfile) or die "cannot open log file $logfile: $!";
 $log->autoflush(1);
 
@@ -32,7 +34,7 @@ while ($continue) {
     while ($run_filer) {
         writelog($log,"running filer");
         $run_filer = 0;
-        system('/usr/local/griidc/filer/filer');
+        system('/opt/pelagos/back-end/filer/filer');
         writelog($log,"filer finished");
     }
     sleep;

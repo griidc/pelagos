@@ -13,7 +13,7 @@
 # Source function library.
 . /etc/init.d/functions
 
-binary="/usr/local/griidc/filer/filerd"
+binary="/opt/pelagos/back-end/filer/filerd"
 
 [ -x $binary ] || exit 0
 
