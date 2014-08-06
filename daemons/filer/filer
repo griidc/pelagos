@@ -43,7 +43,6 @@ $sth = $dbh->prepare("SELECT registry_id, dataset_udi, url_data, userid, dataset
                       ON r.registry_id = m.MaxID
                       WHERE
                           substr(registry_id,1,2) != '00' AND
-                          data_source_pull = 'true' AND
                           (dataset_download_status = 'no_status' OR dataset_download_status = 'None') AND
                           url_data IS NOT NULL AND
                           url_data != ''
