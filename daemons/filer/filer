@@ -13,6 +13,9 @@ use IO::Handle;
 
 umask 0022;
 
+my (undef,undef,$custodian_uid,$custodian_gid) = getpwnam('custodian');
+my (undef,undef,$apache_uid,$apache_gid) = getpwnam('apache');
+
 my $config = Config::PHPINI->read('/etc/opt/pelagos.ini');
 my $notifications = Config::PHPINI->read("$config->{paths}->{conf}/notifications.ini");
 
@@ -34,7 +37,7 @@ my $dbh = DBI->connect("DBI:$dbi_type_map{$db{type}}:host=$db{host};port=$db{por
 my $sth;
 
 # get all registry entries with url_data set, data_source_pull = true, and no download status
-$sth = $dbh->prepare("SELECT registry_id, dataset_udi, url_data, userid, dataset_title
+$sth = $dbh->prepare("SELECT registry_id, dataset_udi, url_data, userid, dataset_title, access_status
                       FROM registry r
                       INNER JOIN (
                                   SELECT MAX(registry_id) AS MaxID
@@ -94,19 +97,22 @@ while (my $r = $sth->fetchrow_hashref()) {
         next;
     }
 
-    # check if data store directory exists for this udi
-    if (! -d "$config->{paths}->{data_store}/$udi") {
-        writelog($log,"[$udi] creating data store directory $config->{paths}->{data_store}/$udi");
-        mkdir("$config->{paths}->{data_store}/$udi") or die "Error: could not create directory: $config->{paths}->{data_store}/$udi ($!)\n";
-    }
+    check_data_store_directory($log,$config,$udi,$custodian_uid,$custodian_gid);
 
     # copy data file to data store
     writelog($log,"[$udi] copying data file to data store (cp \"$filepath\" \"$config->{paths}->{data_store}/$udi/$udi.dat\")");
     copy($filepath,"$config->{paths}->{data_store}/$udi/$udi.dat") or die "Error: could not copy file ($!)\n";
+    # make custodian the owner
+    chown($custodian_uid,$custodian_gid,"$config->{paths}->{data_store}/$udi/$udi.dat");
     $data_filed{$reg_id} = {
                              from => $filepath,
                                to => "$config->{paths}->{data_store}/$udi/$udi.dat"
                            };
+
+    check_download_directory($log,$config,$udi,$apache_uid,$apache_gid,$r);
+
+    # link from data file in download directory to data file in data store
+    link("$config->{paths}->{data_store}/$udi/$udi.dat","$config->{paths}->{download}/$udi/$udi.dat");
 
     # update dataset_filename (original filename), dataset_download_size, and dataset_download_status
     my $filename = $url_data;
@@ -124,7 +130,7 @@ while (my $r = $sth->fetchrow_hashref()) {
 
 
 # get all registry entries with url_metadata set, and no metadata download status
-$sth = $dbh->prepare("SELECT registry_id, dataset_udi, url_metadata, userid, dataset_title
+$sth = $dbh->prepare("SELECT registry_id, dataset_udi, url_metadata, userid, dataset_title, access_status
                       FROM registry r
                       INNER JOIN (
                                   SELECT MAX(registry_id) AS MaxID
@@ -191,11 +197,7 @@ while (my $r = $sth->fetchrow_hashref()) {
         next;
     }
 
-    # check if data store directory exists for this udi
-    if (! -d "$config->{paths}->{data_store}/$udi") {
-        writelog($log,"[$udi] creating data store directory $config->{paths}->{data_store}/$udi");
-        mkdir("$config->{paths}->{data_store}/$udi") or die "Error: could not create directory: $config->{paths}->{data_store}/$udi ($!)\n";
-    }
+    check_data_store_directory($log,$config,$udi,$custodian_uid,$custodian_gid);
 
     # copy metadata file to data store
     writelog($log,"[$udi] copying metadata file to data store (cp \"$filepath\" \"$config->{paths}->{data_store}/$udi/$udi.met\")");
@@ -204,6 +206,11 @@ while (my $r = $sth->fetchrow_hashref()) {
                            from => $filepath,
                              to => "$config->{paths}->{data_store}/$udi/$udi.met"
                          };
+
+    check_download_directory($log,$config,$udi,$apache_uid,$apache_gid,$r);
+
+    # link from metadata file in download directory to metadata file in data store
+    link("$config->{paths}->{data_store}/$udi/$udi.met","$config->{paths}->{download}/$udi/$udi.met");
 
     # update dataset_metadata (original filename), metadata_dl_status, and metadata_status
     my $filename = $url_metadata;
@@ -563,4 +570,35 @@ sub writelog {
     my ($log,$message) = @_;
     my $ts = POSIX::strftime("%Y-%m-%d %H:%M:%S", localtime);
     print $log "[$ts] $message\n";
+}
+
+sub check_data_store_directory {
+    my ($log,$config,$udi,$custodian_uid,$custodian_gid) = @_;
+    # check if data store directory exists for this udi
+    if (! -d "$config->{paths}->{data_store}/$udi") {
+        writelog($log,"[$udi] creating data store directory $config->{paths}->{data_store}/$udi");
+        # make directory
+        mkdir("$config->{paths}->{data_store}/$udi",'0750') or die "Error: could not create directory: $config->{paths}->{data_store}/$udi ($!)\n";
+        # make custodian the owner
+        chown($custodian_uid,$custodian_gid,"$config->{paths}->{data_store}/$udi");
+        # give apache access
+        system("setfacl -m u:apache:--x $config->{paths}->{data_store}/$udi");
+    }
+}
+
+sub check_download_directory {
+    my ($log,$config,$udi,$apache_uid,$apache_gid,$r) = @_;
+    # check if download directory exists for this udi
+    if (! -d "$config->{paths}->{download}/$udi") {
+        writelog($log,"[$udi] creating download directory $config->{paths}->{download}/$udi");
+        # determine download directory permissions
+        my $dl_dir_perms = '0750';
+        $dl_dir_perms = '0751' if $r->{'access_status'} eq 'None';
+        # make directory
+        mkdir("$config->{paths}->{download}/$udi",$dl_dir_perms) or die "Error: could not create directory: $config->{paths}->{download}/$udi ($!)\n";
+        # make apache the owner
+        chown($apache_uid,$apache_gid,"$config->{paths}->{download}/$udi");
+        # give custodian access
+        system("setfacl -m u:custodian:rwx $config->{paths}->{download}/$udi");
+    }
 }
