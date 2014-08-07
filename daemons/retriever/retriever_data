@@ -14,8 +14,8 @@ use IO::File;
 
 umask 0022;
 
-my $conf = Config::PHPINI->read('/etc/griidc.ini');
-my $conf_notifications = Config::PHPINI->read('/etc/griidc/notifications.ini');
+my $conf = Config::PHPINI->read('/etc/opt/pelagos.ini');
+my $conf_notifications = Config::PHPINI->read("$conf->{paths}->{conf}/notifications.ini");
 $conf->{'notifications'} = $conf_notifications->{'retriever'} if exists $conf_notifications->{'retriever'};
 
 my $logfile  = "$conf->{paths}->{log}/retriever_data";
