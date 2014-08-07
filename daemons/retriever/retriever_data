@@ -170,11 +170,6 @@ for my $uid (keys %notify) {
         else {
             $mail{'Message'} .= ' dataset';
         }
-        $mail{'Message'} .= ' and' if exists $notify{$uid}->{'metadata'};
-    }
-
-    if (exists $notify{$uid}->{'metadata'}) {
-        $mail{'Message'} .= ' metadata';
     }
 
     $mail{'Message'} .= " with the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC).</p>",
