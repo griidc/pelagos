@@ -209,7 +209,10 @@ function postDIF($fielddata)
     
     $parameters = array($datasetUID,$UDI,$projectID,$taskID,$title,$primarypoc,$secondarypoc,$abstract,$datasettype,$datasetfor,$datasize,$observation,$approach,$startdate,$enddate,$geolocation,$submission,$natarchive,$ethical,$remarks,$logname,$status,$editor,$gmlText,$fundingSource,$submitted);
     
-    $rc = saveDIF($parameters);
+    if ((isAdmin(getUID())) OR ($frmButton == 'submit' OR $frmButton == 'save'))
+    {
+        $rc = saveDIF($parameters);
+    }
     
     $success= is_null($rc[1]) AND ($rc[0]["save_dif"] == 't');
     
