@@ -89,12 +89,14 @@ while (my $r = $sth->fetchrow_hashref()) {
 
     # check if file exists
     if (! -f $filepath) {
+        writelog($log,"[$udi] missing data file: $filepath");
         $data_missing{$reg_id} = $url_data;
         next;
     }
 
     # check if data store directory exists for this udi
     if (! -d "$config->{paths}->{data_store}/$udi") {
+        writelog($log,"[$udi] creating data store directory $config->{paths}->{data_store}/$udi");
         mkdir("$config->{paths}->{data_store}/$udi") or die "Error: could not create directory: $config->{paths}->{data_store}/$udi ($!)\n";
     }
 
@@ -184,12 +186,14 @@ while (my $r = $sth->fetchrow_hashref()) {
 
     # check if file exists
     if (! -f $filepath) {
+        writelog($log,"[$udi] missing metadata file: $filepath");
         $md_missing{$reg_id} = $url_metadata;
         next;
     }
 
     # check if data store directory exists for this udi
     if (! -d "$config->{paths}->{data_store}/$udi") {
+        writelog($log,"[$udi] creating data store directory $config->{paths}->{data_store}/$udi");
         mkdir("$config->{paths}->{data_store}/$udi") or die "Error: could not create directory: $config->{paths}->{data_store}/$udi ($!)\n";
     }
 
