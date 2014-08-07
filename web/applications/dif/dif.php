@@ -133,10 +133,6 @@ function postDIF($fielddata)
 {
     $formdata = array();
     
-    //var_dump($fielddata);
-    
-    //exit;
-    
     foreach ($fielddata as $field)
     {
         $data[$field["name"]] = $field["value"];
@@ -214,9 +210,7 @@ function postDIF($fielddata)
         $rc = saveDIF($parameters);
     }
     
-    $success= is_null($rc[1]) AND ($rc[0]["save_dif"] == 't');
-    
-    //var_dump($rc);
+    $success= ((is_null($rc[1])) AND ($rc[0]["save_dif"] == 't'));
     
     $sendMail = false;
     
@@ -291,7 +285,16 @@ function postDIF($fielddata)
     }
     else
     {
-        $message = '<div><img src="/images/icons/cancel.png"><p>There was an error! Form NOT submitted.<br>ERROR:'.$rc[0].'</p></div>';
+        if (is_array($rc[0]))
+        {
+            $error = 'unknown';
+        }
+        else
+        {
+            $error = $rc[0];
+        }
+        
+        $message = '<div><img src="/images/icons/cancel.png"><p>There was an error! Form NOT submitted.<br>ERROR:'.$error.'</p></div>';
         $msgtitle = 'DIF ERROR';
     }
     
