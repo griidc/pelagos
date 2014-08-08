@@ -161,9 +161,11 @@ if ($_POST) {
             # if we're uploading data, make sure we have a place to put it
             if ($_POST['data_server_type'] == "upload" or $_POST['metadata_server_type'] == "upload") {
                 $home_dir = getHomedir($uid);
-                $home_dir = preg_replace('/\/+$/','',$home_dir);
-                $dest_dir = "$home_dir/incoming";
-                if (!file_exists($dest_dir)) {
+                if (!is_null($home_dir)) {
+                    $home_dir = preg_replace('/\/+$/','',$home_dir);
+                    $dest_dir = "$home_dir/incoming";
+                }
+                if (is_null($home_dir) or !file_exists($dest_dir)) {
                     $dest_dir = "/san/home/upload/$uid/incoming";
                     if (!file_exists("/san/home/upload/$uid")) mkdir("/san/home/upload/$uid");
                     if (!file_exists($dest_dir)) mkdir($dest_dir);
