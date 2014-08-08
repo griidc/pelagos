@@ -36,9 +36,8 @@ date_default_timezone_set('UTC');
 # drupal module.
 drupal_add_library('system', 'ui.tabs');
 
-$GLOBALS['griidc'] = parse_ini_file('/etc/griidc.ini',true);
+$GLOBALS['griidc'] = parse_ini_file('/etc/opt/pelagos.ini',true);
 $GLOBALS['config'] = parse_ini_file('config.ini',true);
-$GLOBALS['storage'] = parse_ini_file('/etc/griidc/storage.ini',true);
 
 TwigView::$twigDirectory = $GLOBALS['config']['TwigView']['twigDirectory'];
 
@@ -239,7 +238,7 @@ $app->get('/metadata/:udi', function ($udi) use ($app) {
     
     $disk_metadata_file_mimetype = '';
     $disk_metadata_file = '';
-    $met_file = "/$GLOBALS[storage][storage][data_store]/$dataset[udi]/$dataset[udi].met";
+    $met_file = "/$GLOBALS[griidc][paths][download]/$dataset[udi]/$dataset[udi].met";
     if (file_exists($met_file)) {
         $info = finfo_open(FILEINFO_MIME_TYPE);
         $disk_metadata_file_mimetype = finfo_file($info, $met_file);
@@ -450,7 +449,7 @@ $app->get('/download/:udi', function ($udi) use ($app) {
         exit;
     }
 
-    $dat_file = $GLOBALS['storage']['storage']['data_store']."/$dataset[udi]/$dataset[udi].dat";
+    $dat_file = $GLOBALS['griidc']['paths']['data_download']."/$dataset[udi]/$dataset[udi].dat";
     
     $env = $app->environment();
     $stash = array();
@@ -534,12 +533,12 @@ $app->get('/initiateWebDownload/:udi', function ($udi) use ($app) {
     }
 
     if ($dataset['access_status'] != "Restricted" and $dataset['access_status'] != "Approval" and $dl_ok == 1) {
-        $dat_file = $GLOBALS['storage']['storage']['data_store']."/$dataset[udi]/$dataset[udi].dat";
+        $dat_file = $GLOBALS['griidc']['paths']['data_download']."/$dataset[udi]/$dataset[udi].dat";
 
         if ($GLOBALS['config']['DataDiscovery']['alternateDownloadSite'] == 1) {
             $host = $GLOBALS['config']['DataDiscovery']['alternateDownloadSiteServer'];
-            $return = system("ssh apache@$host -C mkdir ".$GLOBALS['config']['DataDiscovery']['downloadDir']."/$uid/"); 
-            $return = system("ssh apache@$host -C ln -s $dat_file ".$GLOBALS['config']['DataDiscovery']['downloadDir']."/$uid/$dataset[dataset_filename]");
+            $return = system("ssh apache@$host -C mkdir ".$GLOBALS['griidc']['paths']['http_download']."/$uid/"); 
+            $return = system("ssh apache@$host -C ln -s $dat_file ".$GLOBALS['griidc']['paths']['http_download']."/$uid/$dataset[dataset_filename]");
             $stash['alternateDownloadSite']=1;
             $stash['alternateDownloadSiteServer']=$host;
             $altTag = " (ALT-SITE)";
@@ -549,8 +548,8 @@ $app->get('/initiateWebDownload/:udi', function ($udi) use ($app) {
             exit;
         } else {
             if (file_exists($dat_file)) {
-                mkdir($GLOBALS['config']['DataDiscovery']['downloadDir']."/$uid/");
-                symlink($dat_file,$GLOBALS['config']['DataDiscovery']['downloadDir']."/$uid/$dataset[dataset_filename]");
+                mkdir($GLOBALS['griidc']['paths']['http_download']."/$uid/");
+                symlink($dat_file,$GLOBALS['griidc']['paths']['http_download']."/$uid/$dataset[dataset_filename]");
                 $altTag = '';
                 # logging
                 `echo "$tstamp\t$dat_file\t$uid$altTag" >> /var/log/griidc/downloads.log`;
@@ -586,7 +585,7 @@ $app->get('/enableGridFTP/:udi', function ($udi) use ($app) {
            
     }
 
-    $dat_file = $GLOBALS['storage']['storage']['data_download_store']."/$dataset[udi]/$dataset[udi].dat";
+    $dat_file = $GLOBALS['griidc']['paths']['data_download']."/$dataset[udi]/$dataset[udi].dat";
     if (file_exists($dat_file)) {
         $env = $app->environment();
        
