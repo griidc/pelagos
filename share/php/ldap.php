@@ -102,7 +102,11 @@ function getHomedir($user) {
     $ldap = connectLDAP($server);
     $dn_ary = getDNs($ldap,"ou=members,ou=people,dc=griidc,dc=org","uid=$user");
     $attributes = getAttributes($ldap,$dn_ary[0]['dn'],array("homeDirectory"));
-    return $attributes["homeDirectory"][0];
+    if(array_key_exists("homeDirectory",$attributes) and count($attributes["homeDirectory"]) > 0 and isset($attributes["homeDirectory"][0])) {
+        return $attributes["homeDirectory"][0];
+    } else { 
+        return null;
+    }
 }
 
 
