@@ -391,6 +391,7 @@ function loadDIFS(Status,Person,ShowEmpty)
 {
     if (personid > 0 && !Person) {Person = personid;}
     $.ajax({
+        cache: false,
         url: "/services/DIF/getDIFS.php",
         type: 'GET',
         datatype: 'json',
