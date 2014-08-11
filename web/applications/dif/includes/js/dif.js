@@ -4,6 +4,7 @@ var spinner;
 var targer;
 var formHash;
 var personid;
+var difValidator;
 
 $(document).ready(function()
 {
@@ -128,7 +129,7 @@ $(document).ready(function()
     loadTasks();
     loadDIFS(null,personid,true);
     
-    $("#difForm").validate({
+    difValidator = $("#difForm").validate({
         ignore: ".ignore",
         messages: {
             geoloc: "Click on Spatial Wizard Button!",
@@ -338,6 +339,7 @@ function formReset()
         $('#btnSubmit').prop('disabled',false);
         $('#btnSave').prop('disabled',false);
         geowizard.haveSpatial(false);
+        difValidator.resetForm();
         scrollToTop();
     });
 }
