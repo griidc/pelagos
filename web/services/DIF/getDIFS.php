@@ -97,7 +97,7 @@ function displayTaskStatus($tasks,$conn,$update=null,$personid=null,$filterstatu
                 
                 //exit;
                 $status = (integer)$row["status"];
-                $title = $row["title"];
+                $title = htmlentities($row["title"]);
                 $datasetid = $row["dataset_uid"];
                 $dataset_udi = $row["dataset_udi"];
                 
