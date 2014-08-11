@@ -3,6 +3,7 @@ var $ = jQuery.noConflict();
 var spinner;
 var targer;
 var formHash;
+var personid;
 
 $(document).ready(function()
 {
@@ -388,6 +389,7 @@ function getNode(UDI)
 
 function loadDIFS(Status,Person,ShowEmpty)
 {
+    if (personid > 0) {Person = personid;}
     $.ajax({
         url: "/services/DIF/getDIFS.php",
         type: 'GET',
