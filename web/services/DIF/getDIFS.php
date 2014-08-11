@@ -2,7 +2,7 @@
 
 header('Content-Type: application/json');
 
-define('RPIS_TASK_BASEURL','http://localhost/services/RIS/getTaskDetails.php');
+define('RPIS_TASK_BASEURL','http://data.gulfresearchinitiative.org/services/RPIS/getTaskDetails.php');
 
 include_once '/usr/local/share/GRIIDC/php/pdo.php';
 
@@ -25,7 +25,6 @@ if (isset($_GET["person"]) AND $_GET["person"] != '')
     $switch = "?peopleID=$searchTerm&maxResults=-1";
 }
 
-
 $tasks = array();
 
 $doc = simplexml_load_file(RPIS_TASK_BASEURL.$switch);
@@ -33,10 +32,11 @@ $rpisTasks = $doc->xpath('Task');
 
 $stuff = displayTaskStatus($rpisTasks,$dbconn);
 
-//echo '<pre>';
-//var_dump($stuff);
-//echo '</pre>';
+sort($stuff);
 
+echo json_encode($stuff);
+
+exit;
 
 function displayTaskStatus($tasks,$conn,$update=null,$personid=null,$filterstatus=null)
 {
@@ -78,13 +78,9 @@ function displayTaskStatus($tasks,$conn,$update=null,$personid=null,$filterstatu
             $query .= " AND status=$statusFlag";
         }
         
-        $query .= " ORDER BY dataset_udi";
+        $query .= " ORDER BY title;";
         
         $rows = pdoDBQuery($conn,$query);
-        
-        //var_dump($rows);
-        
-        //exit;
         
         if ($rows != null)
         {
@@ -92,12 +88,8 @@ function displayTaskStatus($tasks,$conn,$update=null,$personid=null,$filterstatu
             
             foreach ($rows as $row) 
             {
-                
-                //var_dump($row);
-                
-                //exit;
                 $status = (integer)$row["status"];
-                $title = htmlentities($row["title"]);
+                $title = htmlspecialchars($row["title"]);
                 $datasetid = $row["dataset_uid"];
                 $dataset_udi = $row["dataset_udi"];
                 
@@ -143,10 +135,5 @@ function displayTaskStatus($tasks,$conn,$update=null,$personid=null,$filterstatu
     
     return $resArray;
 }
-
-
-
-echo json_encode($stuff);
-
 
 ?>
