@@ -1,5 +1,5 @@
 <?php
-define('RPIS_TASK_BASEURL','http://data.gulfresearchinitiative.org/services/RPIS/getTaskDetails.php');
+define('RPIS_TASK_BASEURL','http://localhost/services/RIS/getTaskDetails.php');
 
 $switch = '?'.'maxResults=-1';
 
@@ -30,9 +30,9 @@ foreach ($rpisTasks as $task)
     // {
         // $leadRoles = array(4,5,6);
     // }
-    
+
     $peops = $task->xpath('Researchers/Person');
-    
+
     foreach ($peops as $peoples)
     {
         // $roles = $peoples->xpath('Roles/Role/Name');
