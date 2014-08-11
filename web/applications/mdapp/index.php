@@ -965,9 +965,11 @@ function getUDIPOC($udi) {
     $data = $dbms->prepare($sql);
     $data->bindParam(":udi",$udi);
     $data->execute();
-    $raw_data = $data->fetch();
-    $email = $raw_data['dataset_poc_email'];
-    $name = $raw_data['dataset_poc_name'];
+    $email = null; $name = null;
+    if ($raw_data = $data->fetch() ) {
+        $email = $raw_data['dataset_poc_email'];
+        $name = $raw_data['dataset_poc_name'];
+    }
     return "$name <$email>";
 }
 
@@ -977,11 +979,18 @@ function getMetadataReviewers() {
     $newUserArray=array();
     foreach ($users as $user_dn) {
        #ldap dn attributes
+       $newUserArray[$user_dn]["mail"]  = null;
+       $newUserArray[$user_dn]["cn"]    = null;
+       $newUserArray[$user_dn]["title"] = null;
+       $newUserArray[$user_dn]["uid"]   = null;
        $attributes = getAttributes($ldap,$user_dn,array("mail","cn","title","uid"));
-       $newUserArray[$user_dn]["mail"] = $attributes["mail"][0];
-       $newUserArray[$user_dn]["cn"] = $attributes["cn"][0];
-       $newUserArray[$user_dn]["title"] = $attributes["title"][0];
-       $newUserArray[$user_dn]["uid"] = $attributes["uid"][0];
+       if(count($attributes > 0)) {
+           foreach (array('mail','cn','title','uid') as $key) {
+               if (array_key_exists($key,$attributes) and count($attributes[$key] > 0)) {
+                   $newUserArray[$user_dn][$key] = $attributes[$key][0];
+               }
+           }
+       }
     }
     ldap_unbind($ldap);
     return $newUserArray;
