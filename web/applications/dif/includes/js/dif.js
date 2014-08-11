@@ -304,7 +304,7 @@ function saveDIF()
             hideSpinner();
             if (json.success == true)
             {
-                formReset();
+                formReset(true);
             }
                 $(json.message).dialog({
                     height: "auto",
@@ -327,7 +327,7 @@ function saveDIF()
         });
 }
 
-function formReset()
+function formReset(dontScrollToTop)
 {
     $.when(formChanged()).done(function() {
         $("#difForm").trigger("reset");
@@ -339,8 +339,7 @@ function formReset()
         $('#btnSubmit').prop('disabled',false);
         $('#btnSave').prop('disabled',false);
         geowizard.haveSpatial(false);
-        difValidator.resetForm();
-        scrollToTop();
+        if (!dontScrollToTop){scrollToTop();}
     });
 }
 
@@ -390,7 +389,7 @@ function getNode(UDI)
 
 function loadDIFS(Status,Person,ShowEmpty)
 {
-    if (personid > 0) {Person = personid;}
+    if (personid > 0 && !Person) {Person = personid;}
     $.ajax({
         url: "/services/DIF/getDIFS.php",
         type: 'GET',
@@ -510,6 +509,7 @@ function formChanged()
                     "Continue": function() {
                         $(this).dialog( "close" );
                         formHash = $("#difForm").serialize();
+                        difValidator.resetForm();
                         self.resolve();  
                         //fillForm(Form,UDI);
                     },
