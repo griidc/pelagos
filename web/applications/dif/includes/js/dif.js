@@ -137,7 +137,18 @@ $(document).ready(function()
         submitHandler: function(form) {
             $("#difTasks").prop('disabled', false);
            saveDIF();
+        },
+        rules: {
+            privacyother: {
+                required: {
+                    depends: function(element)
+                    {
+                        return ($('#difPrivacy:checked').val() == "Yes" || $('#difPrivacy:checked').val() == "Uncertain");
+                    }
+                }
+            }
         }
+        
     });
     
     $('#difGeoloc').change(function() {
