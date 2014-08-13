@@ -120,5 +120,5 @@ label:not(.button)
 
 .diftree
 {
-  vertical-align: top; width:40%; height:500px;overflow-y:auto;overflow-x:hidden;min-width:600px; 
+  position:absolute;top:0px;left:0px;bottom:0px;right:0px;overflow-y:auto;overflow-x:hidden;
 }

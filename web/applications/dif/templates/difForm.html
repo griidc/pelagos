@@ -333,13 +333,13 @@
         
     </td>
     <td></td>
-    <td class="cleair diftree">
-    <table width="100%">
+    <td class="cleair" height="100%">
+    <table width="100%" height="100%">
     {% if (isadmin == true) or (isdmanager == true) or (isdifapprover == true) %}
     <tr>
     <td>
         <div>
-            <table border="0" width="100%"><tr><td>
+            <table width="100%"><tr><td>
             <label for="acResearcher">Filter by Researcher:</label>
             <input placeholder="Start typing a Researchers Last Name" style="width:95%;" id="acResearcher">
             </td>
@@ -370,9 +370,9 @@
     </tr>
     {% endif %}
         <tr>
-        <td>
-        <div style="position:relative;">
-            <div  style="position:absolute;">
+        <td height="100%">
+        <div style="position:relative;height:100%">
+            <div class="diftree">
                 <h3>Legend:&nbsp; 
                 <span id="statusicon" title="DIF is Open. DIF has been started and saved for this dataset, but has not yet been submitted to GRIIDC."><img src="/images/icons/cross.png">&nbsp;Open</span>&nbsp;- 
                 <span id="statusicon" title="DIF is locked and is in review. DIF has been completed and submitted to GRIIDC for review and approval."><img src="/images/icons/error.png">&nbsp;Submitted</span>&nbsp;- 
