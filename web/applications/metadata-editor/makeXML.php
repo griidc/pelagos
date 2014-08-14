@@ -68,7 +68,7 @@ function createNodesXML($xml,$doc)
     
     $now = date('c');
     
-    $xmlComment = "Created with GRIIDC Metadata Editor 13.09 on $now";
+    $xmlComment = "Created with GRIIDC Metadata Editor 14.08 on $now";
     $commentNode = $doc->createComment($xmlComment);
     $commentNode = $doc->appendChild($commentNode);
     
@@ -99,20 +99,20 @@ function createNodesXML($xml,$doc)
             {
                 $node = $elements->item(0);
                 $val = htmlspecialchars($val, ENT_QUOTES | 'ENT_XML1', 'UTF-8');
-				
+                
                 $node->nodeValue = $val;
                 $parent = $node->parentNode;
-				if ($parent->nodeName == 'gmd:fileIdentifier')
-				{
-					$val = str_replace(":","-",$val);
-				}
+                if ($parent->nodeName == 'gmd:fileIdentifier')
+                {
+                    $val = str_replace(":","-",$val);
+                }
                 echo "($val) Existing Parent:" . $parent->nodeName .'<br>';
-			}
+            }
             else
             {
                 $nodelevels = preg_split("/\//",$xpath);
-				
-				
+                
+                
                 
                 $xpath = "";
                 
@@ -229,9 +229,9 @@ function createNodesXML($xml,$doc)
                         $grandparent = $parent->parentNode;
                         $nodelevel = $parent->nodeName;
                     
-						if ($node->nodeName == 'gmd:polygon')
-						{ echo "it here $val"; }
-						
+                        if ($node->nodeName == 'gmd:polygon')
+                        { echo "it here $val"; }
+                        
                         //$val = htmlspecialchars($val, ENT_QUOTES | 'ENT_XML1', 'UTF-8');
                         $node->nodeValue = $val;
                     }
@@ -271,7 +271,7 @@ function createNodesXML($xml,$doc)
 
 function addXMLChildValue($doc,$parent,$fieldname,$fieldvalue)
 {
-	echo "Doing $fieldname";
+    echo "Doing $fieldname";
     $escfieldvalue = htmlspecialchars($fieldvalue, ENT_QUOTES | 'ENT_XML1', 'UTF-8');
     $child = $doc->createElement($fieldname);
     $child = $parent->appendChild($child);
@@ -312,7 +312,7 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
 {
     switch ($fieldname)
     {
-		case 'gmd:fileIdentifier':
+        case '-gmd:fileIdentifier':
         {
             $node->nodeValue = str_replace(':','-',$fieldvalue);
             break;
@@ -370,53 +370,53 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
             $node->setAttribute('id','boundingExtent');
             break;
         }
-		case 'gmd:polygons':
+        case 'gmd:polygons':
         {
-			
-			$parent->removeChild($node);
-			
-			$node = $doc->createElement('gmd:polygon');
-			$node = $parent->appendChild($node);
-			
-			$fieldvalue = htmlspecialchars_decode($fieldvalue, ENT_NOQUOTES | 'ENT_XML1');
-			$polygonDoc = new DomDocument('1.0','UTF-8');
-			$polygonDoc->loadXML($fieldvalue,LIBXML_NOERROR);
-			
-			$polygonNode = $polygonDoc->documentElement;
-			
-			// if ($polygonNode->getAttribute ='gml:id' == "")
-			// {	
-				// $polygonNode->setAttribute('gml:id','Geometry1');
-			// }
-			
-			//$one = new DOMDocument;
-			//$two = new DOMDocument;
-			//$one->loadXml('<root><foo>one</foo></root>');
-			//$two->loadXml('<root><bar><sub>two</sub></bar></root>');
-			//$bar = $two->documentElement->firstChild; // we want to import the bar tree
-			//$one->documentElement->appendChild($one->importNode($polygonNode, TRUE));
-			//echo $one->saveXml();
-			
-			
-			if($polygonNode instanceof DOMNode == true)
-			{
-				$node->appendChild($doc->importNode($polygonNode, TRUE));
-			}
-			
-			
-			
-			/*
-			# b-method
-			$doc->validate();
-				
-			$fragment = $doc->createDocumentFragment();
-			$fragment->appendXML($fieldvalue);
-			$node->appendChild($fragment);
-			*/
+            
+            $parent->removeChild($node);
+            
+            $node = $doc->createElement('gmd:polygon');
+            $node = $parent->appendChild($node);
+            
+            $fieldvalue = htmlspecialchars_decode($fieldvalue, ENT_NOQUOTES | 'ENT_XML1');
+            $polygonDoc = new DomDocument('1.0','UTF-8');
+            $polygonDoc->loadXML($fieldvalue,LIBXML_NOERROR);
+            
+            $polygonNode = $polygonDoc->documentElement;
+            
+            // if ($polygonNode->getAttribute ='gml:id' == "")
+            // {    
+                // $polygonNode->setAttribute('gml:id','Geometry1');
+            // }
+            
+            //$one = new DOMDocument;
+            //$two = new DOMDocument;
+            //$one->loadXml('<root><foo>one</foo></root>');
+            //$two->loadXml('<root><bar><sub>two</sub></bar></root>');
+            //$bar = $two->documentElement->firstChild; // we want to import the bar tree
+            //$one->documentElement->appendChild($one->importNode($polygonNode, TRUE));
+            //echo $one->saveXml();
+            
+            
+            if($polygonNode instanceof DOMNode == true)
+            {
+                $node->appendChild($doc->importNode($polygonNode, TRUE));
+            }
+            
+            
+            
+            /*
+            # b-method
+            $doc->validate();
+                
+            $fragment = $doc->createDocumentFragment();
+            $fragment->appendXML($fieldvalue);
+            $node->appendChild($fragment);
+            */
 
             break;
         }
-		case 'gml:posList':
+        case 'gml:posList':
         {
             $node->setAttribute('srsDimension','2');
             break;
@@ -424,7 +424,7 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
         case 'gml:Polygon':
         {
             $node->setAttribute('gml:id','Polygon');
-			$node->setAttribute('srsName','urn:ogc:def:crs:EPSG::4326');
+            $node->setAttribute('srsName','urn:ogc:def:crs:EPSG::4326');
             break;
         }
         case 'gmd:EX_GeographicBoundingBox':
@@ -500,11 +500,11 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
             $xpathdoc2 = new DOMXpath($doc);
             $elements2 = $xpathdoc2->query($searchXpath);
             $node = $elements2->item(0);
-			if ($elements2->length > 0)
-			{
-				$parent = $node->parentNode;
-				$parent->removeChild($node);
-			}
+            if ($elements2->length > 0)
+            {
+                $parent = $node->parentNode;
+                $parent->removeChild($node);
+            }
             
             break;
         }
@@ -681,23 +681,23 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
             $parent = $node->appendChild($parent);
             
             $arrkeywords = preg_split("/\;/",$fieldvalue);
-			
-			if ($fieldvalue == "")
-			{
-				$mdkwrd = $doc->createElement('gmd:keyword');
+            
+            if ($fieldvalue == "")
+            {
+                $mdkwrd = $doc->createElement('gmd:keyword');
                 $mdkwrd = $parent->appendChild($mdkwrd);
                 $mdkwrd->setAttribute('nilReason','inapplicable');
-			}
+            }
             else
-			{
-				foreach ($arrkeywords as $myKeywords)
-				{
-					$mdkwrd = $doc->createElement('gmd:keyword');
-					$mdkwrd = $parent->appendChild($mdkwrd);
-					$addnode = addXMLChildValue($doc,$mdkwrd,"gco:CharacterString",$myKeywords);
-				}
-			}
-			
+            {
+                foreach ($arrkeywords as $myKeywords)
+                {
+                    $mdkwrd = $doc->createElement('gmd:keyword');
+                    $mdkwrd = $parent->appendChild($mdkwrd);
+                    $addnode = addXMLChildValue($doc,$mdkwrd,"gco:CharacterString",$myKeywords);
+                }
+            }
+            
             $tpkwrd = $doc->createElement('gmd:type');
             $tpkwrd = $parent->appendChild($tpkwrd);
             

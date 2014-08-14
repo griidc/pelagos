@@ -13,18 +13,11 @@ This section collects information describing the spatial and temporal extent of 
 
     <tr id="BPL1_{{instanceName}}row">
         <td valign="top">
-            <div id="spatial">
-                <label for="cgeoloc"><b><em>*</em>Spatial Extent </b></label>
-                <div>
-                    <div style="width:500px;height:300px;" id="difMap"></div>
-                </div>
-                <textarea hidden name="{{instanceType}}-gmd:EX_BoundingPolygon-gmd:polygons" id="BPL1_{{instanceName}}">{{gmlCoordinates}}</textarea>
-                
-            </div>
             <div id="nonspatial" style="display:none;width:500px;margin:15px;">
                 <label for="cgeoloc"><b>Study Area Description: </b></label>
                 <textarea name="{{instanceType}}-gmd:description-gco:CharacterString" id="EX1_{{instanceName}}" rows="5" style="width:100%;">{{xmlArray["gmd:description"]["gco:CharacterString"]}}</textarea>
             </div>
+            {{GeographicSection}}
         </td>
         <td>
             <div id="spatwizbtn"></div>

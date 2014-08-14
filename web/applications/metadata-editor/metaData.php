@@ -32,7 +32,7 @@ class metaData
 		return parse_ini_file($ini_path,true);
 	}
 	
-	public function returnXmlString($NameSpace,$NodeName)
+	public function returnXmlString($query)
 	{
 		if ($this->xmldoc != null)
 		{
@@ -40,7 +40,7 @@ class metaData
             
             $xpath = new DOMXPath($this->xmldoc);
             
-            $query = '/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:geographicElement[1]/gmd:EX_BoundingPolygon[1]/gmd:polygon[1]/*';
+            //$query = '/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:geographicElement[1]/gmd:EX_BoundingPolygon[1]/gmd:polygon[1]/*';
             
             $mynodes = $xpath->query($query);
             
