@@ -503,4 +503,16 @@ function password_old_enough($ppolicy,$person){
     return true;
 }
 
+function password_complex_enough($password) {
+    $err = array();
+    $score = 0;
+    if (preg_match('/\p{Lu}/',$password)) $score++; # upper case letter
+    if (preg_match('/\p{Ll}/',$password)) $score++; # lower case letter
+    if (preg_match('/\d/',$password)) $score++; # base 10 digit
+    if (preg_match('/[~!@#$%^&*_\-+=`|\\(){}\[\]:;"\'<>,.?\/]/',$password)) $score++; # special character
+    if (preg_match('/[\p{Lo}]/',$password)) $score++; # letter that is not uppercase or lowercase
+    if ($score < 3) return false;
+    return true;
+}
+
 ?>

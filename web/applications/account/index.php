@@ -297,6 +297,12 @@ $app->post('/request', function () use ($app) {
             $stash['person']['confirmPassword']['class'] = 'account_errorfield';
         }
 
+        if (!is_null($stash['person']['userPassword']['value']) and $stash['person']['userPassword']['value'] != '' and !password_complex_enough($stash['person']['userPassword']['value'])) {
+            $stash['err'][] = 'password does not meet complexity requirements';
+            $stash['person']['userPassword']['class'] = 'account_errorfield';
+            $stash['person']['confirmPassword']['class'] = 'account_errorfield';
+        }
+
         if ($stash['person']['userPassword']['value'] != $stash['person']['confirmPassword']['value']) {
             $stash['err'][] = "passwords do not match";
             $stash['person']['confirmPassword']['class'] = 'account_errorfield';
@@ -733,6 +739,12 @@ $app->post('/password/:action', function ($action) use ($app) {
     # check to make sure password is long enough
     if (strlen($password) < 8) {
         drupal_set_message('Password must be at least 8 characters long.','error');
+        return $app->render('password_reset_form.html',$stash);
+    }
+
+    # check to make sure password is complex enough
+    if (!password_complex_enough($password)) {
+        drupal_set_message('Password does not meet complexity requirements.','error');
         return $app->render('password_reset_form.html',$stash);
     }
 
