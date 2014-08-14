@@ -488,7 +488,6 @@ function get_password_policy() {
 }
 
 function password_old_enough($ppolicy,$person){
-    $password_old_enough = true;
     $pwdMinAge = $ppolicy['pwdminage'][0];
     if (array_key_exists('pwdchangedtime',$person) and count($person['pwdchangedtime']) > 0) {
         $pwdChangedTime = $person['pwdchangedtime'][0];
@@ -497,11 +496,11 @@ function password_old_enough($ppolicy,$person){
             $pwdChangedTS = mktime($matches[4],$matches[5],$matches[6],$matches[2],$matches[3],$matches[1]);
             $pwdAge = time() - $pwdChangedTS;
             if ($pwdAge < $pwdMinAge) {
-                $password_old_enough = false;
+                return false;
             }
         }
     }
-    return $password_old_enough;
+    return true;
 }
 
 ?>
