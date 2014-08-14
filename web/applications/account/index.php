@@ -730,6 +730,12 @@ $app->post('/password/:action', function ($action) use ($app) {
         return $app->render('password_reset_form.html',$stash);
     }
 
+    # check to make sure password is long enough
+    if (strlen($password) < 8) {
+        drupal_set_message('Password must be at least 8 characters long.','error');
+        return $app->render('password_reset_form.html',$stash);
+    }
+
     # change password
     if (!ldap_mod_replace ($GLOBALS['LDAP'], $person['dn'], array('userpassword' => $password))) {
         drupal_set_message("Error updating password.",'error');
