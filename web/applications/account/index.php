@@ -588,6 +588,13 @@ $app->post('/password', function () use ($app) {
         return $app->render('password_form.html');
     }
 
+    # attempt to bind to LDAP
+    if (!ldap_bind($GLOBALS['LDAP'], LDAP_BIND_DN, LDAP_BIND_PW)) {
+        drupal_set_message("Error binding to LDAP.",'error');
+        echo "<p>Please contact: <a href='mailto:griidc@gomri.org'>griidc@gomri.org</a> for help.";
+        return;
+    }
+
     $person = get_ldap_user("mail=$email");
 
     if (is_null($person)) {
@@ -610,6 +617,13 @@ $app->post('/password', function () use ($app) {
 });
 
 $app->get('/password/:action', function ($action) use ($app) {
+    # attempt to bind to LDAP
+    if (!ldap_bind($GLOBALS['LDAP'], LDAP_BIND_DN, LDAP_BIND_PW)) {
+        drupal_set_message("Error binding to LDAP.",'error');
+        echo "<p>Please contact: <a href='mailto:griidc@gomri.org'>griidc@gomri.org</a> for help.";
+        return;
+    }
+
     $person = get_verified_user($app);
 
     if (is_null($person)) {
