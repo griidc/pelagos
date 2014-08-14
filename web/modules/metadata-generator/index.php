@@ -36,7 +36,14 @@ $app->get('/:udi', function ($udi) use ($app) {
         $stash['dataset'] = $datasets[0];
         $stash['dataset']['url'] = "https://data.gulfresearchinitiative.org/data/$udi";
         if (array_key_exists('dataset_download_size',$stash['dataset'])) {
-            $stash['dataset']['size'] = round($stash['dataset']['dataset_download_size'] / 1048576,1);
+            $size_bytes = $stash['dataset']['dataset_download_size'] / 1048576;
+            if ($size_bytes >= 10) $precision = 0;
+            else {
+                for ($precision = 1; $precision < 6; $precision++) {
+                    if ($size_bytes > pow(10,-$precision)) break;
+                }
+            }
+            $stash['dataset']['size'] = round($size_bytes,$precision);
         }
         if (array_key_exists('dataset_filename',$stash['dataset'])) {
             $stash['dataset']['formatName'] = preg_replace('/^.*\./','',$stash['dataset']['dataset_filename']);
