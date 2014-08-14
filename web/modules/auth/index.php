@@ -80,6 +80,9 @@ $app->get('/:auth_type', function ($auth_type) use ($app) {
     if (!user_is_logged_in_somehow() and $auth_type == 'cas') {
         drupal_goto('cas',array('query' => array('destination' => preg_replace('/^\/+/','',$app->request->get('dest')))));
     }
+    if (!is_null($app->request->get('dest'))) {
+        drupal_goto($app->request->get('dest'));
+    }
     $stash['auth_type_key'] = $auth_type;
     $stash['auth_type'] = $GLOBALS['auth_types'][$auth_type];
     return $app->render('html/auth_type.html',$stash);
