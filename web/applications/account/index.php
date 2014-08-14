@@ -624,18 +624,31 @@ $app->get('/password/:action', function ($action) use ($app) {
         return;
     }
 
+    # verify user and get user info
     $person = get_verified_user($app);
 
+    # if we can't verify the user, ask them to log in
     if (is_null($person)) {
         echo "<p>Please <a href='/auth/cas?dest=$_SERVER[SCRIPT_NAME]/password/reset'>login</a> first to change your password.</p>";
         echo "<p>If you have forgotten your password or it has expired, you may <a href='/account/password'>reset it</a>.</p>";
         return;
     }
 
+    # create stash and put relevant info in it
     $stash = array();
     $stash['uid'] = $person['uid'][0];
     $stash['hash'] = $person['hash'];
     $stash['action'] = $action;
+
+    # get password policy
+    $ppolicy = get_password_policy();
+
+    # check to make sure minimum password age has been met
+    if (!password_old_enough($ppolicy,$person)) {
+        drupal_set_message("You cannot change your password again until it has met the minimum password age.",'error');
+        return;
+    }
+
     return $app->render('password_reset_form.html',$stash);
 })->conditions(array('action' => '(reset|change)'));
 
@@ -677,23 +690,12 @@ $app->post('/password/:action', function ($action) use ($app) {
     }
 
     # get password policy
-    $ppolicyResult = ldap_search($GLOBALS['LDAP'], 'cn=default,ou=pwpolicies,dc=griidc,dc=org', '(objectClass=*)', array('*'));
-    $ppolicy = ldap_get_entries($GLOBALS['LDAP'], $ppolicyResult);
-    $ppolicy = $ppolicy[0];
+    $ppolicy = get_password_policy();
 
     # check to make sure minimum password age has been met
-    $pwdMinAge = $ppolicy['pwdminage'][0];
-    if (array_key_exists('pwdchangedtime',$person) and count($person['pwdchangedtime']) > 0) {
-        $pwdChangedTime = $person['pwdchangedtime'][0];
-        if (preg_match('/^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/',$pwdChangedTime,$matches)) {
-            date_default_timezone_set('UTC');
-            $pwdChangedTS = mktime($matches[4],$matches[5],$matches[6],$matches[2],$matches[3],$matches[1]);
-            $pwdAge = time() - $pwdChangedTS;
-            if ($pwdAge < $pwdMinAge) {
-                drupal_set_message("You tried to change your password again too soon.",'error');
-                return $app->render('password_reset_form.html',$stash);
-            }
-        }
+    if (!password_old_enough($ppolicy,$person)) {
+        drupal_set_message("You tried to change your password again too soon.",'error');
+        return $app->render('password_reset_form.html',$stash);
     }
 
     # check to make sure user is not just using the same password

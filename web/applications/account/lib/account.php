@@ -481,4 +481,27 @@ function ldif_to_message($ldif) {
     return $message;
 }
 
+function get_password_policy() {
+    $ppolicyResult = ldap_search($GLOBALS['LDAP'], 'cn=default,ou=pwpolicies,dc=griidc,dc=org', '(objectClass=*)', array('*'));
+    $ppolicy = ldap_get_entries($GLOBALS['LDAP'], $ppolicyResult);
+    return $ppolicy[0];
+}
+
+function password_old_enough($ppolicy,$person){
+    $password_old_enough = true;
+    $pwdMinAge = $ppolicy['pwdminage'][0];
+    if (array_key_exists('pwdchangedtime',$person) and count($person['pwdchangedtime']) > 0) {
+        $pwdChangedTime = $person['pwdchangedtime'][0];
+        if (preg_match('/^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/',$pwdChangedTime,$matches)) {
+            date_default_timezone_set('UTC');
+            $pwdChangedTS = mktime($matches[4],$matches[5],$matches[6],$matches[2],$matches[3],$matches[1]);
+            $pwdAge = time() - $pwdChangedTS;
+            if ($pwdAge < $pwdMinAge) {
+                $password_old_enough = false;
+            }
+        }
+    }
+    return $password_old_enough;
+}
+
 ?>
