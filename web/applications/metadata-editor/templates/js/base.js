@@ -564,6 +564,11 @@ function uploadFile()
         
         //var isbad = false;
         
+        jQuery.validator.addMethod("positiveReal", 
+        function(value, element) {
+            return this.optional(element) || (jQuery.isNumeric(value) && (parseFloat(value) > 0));
+        }, "Please enter a positive real number.");
+        
         jQuery.validator.addMethod("greaterThan", 
         function(value, element, params) {
             
