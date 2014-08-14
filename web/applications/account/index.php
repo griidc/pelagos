@@ -610,7 +610,6 @@ $app->post('/password', function () use ($app) {
 });
 
 $app->get('/password/:action', function ($action) use ($app) {
-    global $user;
     $person = get_verified_user($app);
 
     if (is_null($person)) {
@@ -619,6 +618,7 @@ $app->get('/password/:action', function ($action) use ($app) {
         return;
     }
 
+    $stash = array();
     $stash['uid'] = $person['uid'][0];
     $stash['hash'] = $person['hash'];
     $stash['action'] = $action;
@@ -626,9 +626,23 @@ $app->get('/password/:action', function ($action) use ($app) {
 })->conditions(array('action' => '(reset|change)'));
 
 $app->post('/password/:action', function ($action) use ($app) {
-    global $user;
+    # attempt to bind to LDAP
+    if (!ldap_bind($GLOBALS['LDAP'], LDAP_BIND_DN, LDAP_BIND_PW)) {
+        drupal_set_message("Error binding to LDAP.",'error');
+        echo "<p>Please contact: <a href='mailto:griidc@gomri.org'>griidc@gomri.org</a> for help.";
+        return;
+    }
+
+    # verify user and get user info
     $person = get_verified_user($app);
 
+    # create stash and put relevant info in it
+    $stash = array();
+    $stash['uid'] = $person['uid'][0];
+    $stash['hash'] = $person['hash'];
+    $stash['action'] = $action;
+
+    # make sure we have authenticated (either by being logged in or using a password reset link)
     if (is_null($person)) {
         echo "<p>Please make sure you copied the entire link correcly from the password reset email. If you need assistance, please contact: <a href='mailto:griidc@gomri.org'>griidc@gomri.org</a> for help.";
         return;
@@ -636,27 +650,72 @@ $app->post('/password/:action', function ($action) use ($app) {
 
     $password = $app->request()->post('password');
 
+    # make sure the user has entered a password
     if (empty($password)) {
         drupal_set_message("You must enter a password.",'error');
-        $stash['uid'] = $person['uid'][0];
-        $stash['hash'] = $person['hash'];
         return $app->render('password_reset_form.html',$stash);
     }
 
+    # make sure passwords match
     if ($app->request()->post('verify_password') != $password) {
         drupal_set_message("Passwords do not match.",'error');
-        $stash['uid'] = $person['uid'][0];
-        $stash['hash'] = $person['hash'];
         return $app->render('password_reset_form.html',$stash);
     }
 
-    if (!ldap_bind($GLOBALS['LDAP'], LDAP_BIND_DN, LDAP_BIND_PW)) {
-        drupal_set_message("Error binding to LDAP.",'error');
-        echo "<p>Please contact: <a href='mailto:griidc@gomri.org'>griidc@gomri.org</a> for help.";
-        return;
+    # get password policy
+    $ppolicyResult = ldap_search($GLOBALS['LDAP'], 'cn=default,ou=pwpolicies,dc=griidc,dc=org', '(objectClass=*)', array('*'));
+    $ppolicy = ldap_get_entries($GLOBALS['LDAP'], $ppolicyResult);
+    $ppolicy = $ppolicy[0];
+
+    # check to make sure minimum password age has been met
+    $pwdMinAge = $ppolicy['pwdminage'][0];
+    if (array_key_exists('pwdchangedtime',$person) and count($person['pwdchangedtime']) > 0) {
+        $pwdChangedTime = $person['pwdchangedtime'][0];
+        if (preg_match('/^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/',$pwdChangedTime,$matches)) {
+            date_default_timezone_set('UTC');
+            $pwdChangedTS = mktime($matches[4],$matches[5],$matches[6],$matches[2],$matches[3],$matches[1]);
+            $pwdAge = time() - $pwdChangedTS;
+            if ($pwdAge < $pwdMinAge) {
+                drupal_set_message("You tried to change your password again too soon.",'error');
+                return $app->render('password_reset_form.html',$stash);
+            }
+        }
     }
 
-    if (!ldap_mod_replace ($GLOBALS['LDAP'], $person['dn'], array('userpassword' => make_ssha_password($password)))) {
+    # check to make sure user is not just using the same password
+    if (count($person['userpassword']) > 0 and preg_match('/{SSHA}(.*)$/',$person['userpassword'][0],$matches)) {
+        $hash_and_salt = base64_decode($matches[1]);
+        $curr_hash = join('',unpack('H*',substr($hash_and_salt,0,20)));
+        $salt = substr($hash_and_salt,20,4);
+        $new_hash = sha1($password.$salt);
+        if ($new_hash == $curr_hash ) {
+            drupal_set_message("Your new password must be different from your current password.",'error');
+            return $app->render('password_reset_form.html',$stash);
+        }
+    }
+
+    # check to make sure user is not using a recently used password
+    $pwd_in_history = false;
+    if (array_key_exists('pwdhistory',$person)) {
+        foreach ($person['pwdhistory'] as $pwd) {
+            if (preg_match('/{SSHA}(.*)$/',$pwd,$matches)) {
+                $hash_and_salt = base64_decode($matches[1]);
+                $old_hash = join('',unpack('H*',substr($hash_and_salt,0,20)));
+                $salt = substr($hash_and_salt,20,4);
+                $new_hash = sha1($password.$salt);
+                if ($new_hash == $old_hash ) {
+                    $pwd_in_history = true;
+                }
+            }
+        }
+    }
+    if ($pwd_in_history) {
+        drupal_set_message("Password used recently.",'error');
+        return $app->render('password_reset_form.html',$stash);
+    }
+
+    # change password
+    if (!ldap_mod_replace ($GLOBALS['LDAP'], $person['dn'], array('userpassword' => $password))) {
         drupal_set_message("Error updating password.",'error');
         echo "<p>Please contact: <a href='mailto:griidc@gomri.org'>griidc@gomri.org</a> for help.";
         return;

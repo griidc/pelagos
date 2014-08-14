@@ -409,7 +409,7 @@ function get_notify_to() {
 }
 
 function get_ldap_user($search) {
-    $personsResult = ldap_search($GLOBALS['LDAP'], "dc=griidc,dc=org", "($search)", array('uid','givenName','sn','cn','email'));
+    $personsResult = ldap_search($GLOBALS['LDAP'], "dc=griidc,dc=org", "($search)", array('uid','givenName','sn','cn','email','userPassword','pwdHistory','pwdChangedTime'));
     $persons = ldap_get_entries($GLOBALS['LDAP'], $personsResult);
 
     if ($persons['count'] == 0) {
