@@ -100,7 +100,7 @@ $(document).ready(function()
         changeYear: true,
         numberOfMonths: 3,
         stepMonths: 3,
-        showButtonPanel: true,
+        showButtonPanel: false,
         onClose: function(selectedDate) {
             $("#enddate").datepicker("option", "minDate", selectedDate);
         }
@@ -113,7 +113,7 @@ $(document).ready(function()
         changeYear: true,
         numberOfMonths: 3,
         stepMonths: 3,
-        showButtonPanel: true,
+        showButtonPanel: false,
         onClose: function(selectedDate) {
             $("#startdate").datepicker("option", "maxDate", selectedDate);
         }
