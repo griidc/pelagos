@@ -374,8 +374,8 @@ function MapWizard(json)
         }
         else if (whatOrder == orderEnum.MIXED)
         {
-            diaMessage = 'The coordinate order seems to be mixed!';
-            diaButtons = [ {text:"I'll fix it!",click:function(){wizAddFeature(orderEnum.MIXED);$(this).dialog("close");}},{text:"No, it\'s Latitude,Longitude",click:function(){wizAddFeature(orderEnum.LATLONG);$(this).dialog("close");}},{text:"No, it\'s Longitude,Latitude",click:function(){wizAddFeature(orderEnum.LONGLAT);$(this).dialog("close");}} ];
+            diaMessage = 'The coordinate order seems to be mixed, Please ensure your coordinates are in a consistent order.';
+            diaButtons = [ {text:"OK",click:function(){wizAddFeature(orderEnum.MIXED);$(this).dialog("close");}} ];
         }
         
         $("<div>"+diaMessage+"</div>").dialog({
