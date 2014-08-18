@@ -1,47 +1,47 @@
 <script>
 function getURLbyUDI()
 {
-	var udival = document.getElementById("udi").value;
+    var udival = document.getElementById("udi").value;
 
-	if (udival != "")
-	{
-		udival = udival.substring(0,16);
-		jQuery.ajax({
-				url: "/metadata-editor/",
-				type: "GET",
-				data: {udi: udival},
-				context: document.body
-			}).done(function(html) {
-				console.log(html);
-				eventObj = jQuery.parseJSON(html);
-				var udi = eventObj.udi;
-				if (eventObj.UDIexists == true)
-				{
-					location.href = "/metadata-editor/?dataUrl=http://" + location.hostname + "/metadata-generator/" + udival.substring(0,16);;
-				}
-				else
-				{
-					alert('Sorry that UDI:'+ udi +' does not exist');
-				}
-			return true;
-		});	
-	}
+    if (udival != "")
+    {
+        udival = udival.substring(0,16);
+        jQuery.ajax({
+                url: "/metadata-editor/",
+                type: "GET",
+                data: {udi: udival},
+                context: document.body
+            }).done(function(html) {
+                console.log(html);
+                eventObj = jQuery.parseJSON(html);
+                var udi = eventObj.udi;
+                if (eventObj.UDIexists == true)
+                {
+                    location.href = "/metadata-editor/?dataUrl=http://" + location.hostname + "/metadata-generator/" + udival.substring(0,16);;
+                }
+                else
+                {
+                    alert('Sorry that UDI:'+ udi +' does not exist');
+                }
+            return true;
+        });    
+    }
 }
 
 function loadExternalURL()
 {
-	var urlval = document.getElementById("url").value;
+    var urlval = document.getElementById("url").value;
 
-	if (urlval != "")
-	{
-		location.href = "/metadata-editor/?dataUrl=" + urlval;
-	}
+    if (urlval != "")
+    {
+        location.href = "/metadata-editor/?dataUrl=" + urlval;
+    }
 
 }
 
 function uploadFile()
 {
-	jQuery("#uploadfrm").submit();
+    jQuery("#uploadfrm").submit();
 }
 
 (function ($) {
@@ -51,17 +51,10 @@ function uploadFile()
             uploadFile();
         });
 
-		$( "#upload" )
-		.click(function( event ) {
-			if ($.browser.msie)
-			{
-				$("#loadfrm").css('display', 'inline');
-			}
-			else
-			{
-				$("#file").click();
-			}
-		});
+        $( "#upload" )
+        .click(function( event ) {
+            $("#file").click();
+        });
     });
 })(jQuery);
 
