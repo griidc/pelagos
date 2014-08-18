@@ -29,6 +29,13 @@ function MapWizard(json)
     this.flashMap = function()
     {
         smlGeoViz.flashMap();
+        var containerWidth = $('#'+json.divSmallMap).closest('tbody').width();
+        
+        var smallMapWidth = ((containerWidth / 2) * .95);
+        var smallMapHeight = ((smallMapWidth / 4) * 2.5);
+        
+        $('#'+json.divSmallMap).height(smallMapHeight);
+        $('#'+json.divSmallMap).width(smallMapWidth);
     }
     
     this.cleanMap = function()
@@ -87,7 +94,13 @@ function MapWizard(json)
             showSpatialDialog();
         });
         
+        var containerWidth = $('#'+json.divSmallMap).closest('tbody').width();
         
+        var smallMapWidth = ((containerWidth / 2) * .95);
+        var smallMapHeight = ((smallMapWidth / 4) * 2.5);
+        
+        $('#'+json.divSmallMap).height(smallMapHeight);
+        $('#'+json.divSmallMap).width(smallMapWidth);
     }
     
     function initWiz()
@@ -550,7 +563,6 @@ function MapWizard(json)
         {
             wizGeoViz.removeAllFeaturesFromMap();
             smlGeoViz.removeAllFeaturesFromMap();
-            $(gmlField).val('');
             $('#coordlist').val('');
             closeDialog();
             showSpatialDialog();
@@ -564,7 +576,6 @@ function MapWizard(json)
             wizGeoViz.stopDrawing();
             wizGeoViz.removeAllFeaturesFromMap();
             $('#coordlist').val('');
-            $(gmlField).val('');
             wizGeoViz.goHome();
             $("#helpinfo").dialog('open');
         })
