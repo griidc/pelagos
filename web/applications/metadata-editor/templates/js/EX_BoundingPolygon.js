@@ -5,6 +5,10 @@
 		console.log('tabs4-click');
 		geowizard.flashMap();
         $('#BPL1_{{instanceName}}').change();
+        
+        if ($('#BPL1_{{instanceName}}').val().length > 0 ) {geowizard.haveSpatial(false);}
+        if ($('#EX1_{{instanceName}}').val().length > 0 ) {geowizard.haveSpatial(true);}
+        
 	});
     
     $('#BPL1_{{instanceName}}').change(function() {
