@@ -16,7 +16,7 @@ function addHiddenElement_{{instanceName}}(elementName,elementValue)
 	newInput.value = element.value;
 	newInput.type = "hidden";
 	element.parentNode.insertBefore(newInput, element);
-    $(element).removeClass('error')
+    $(element).removeClass('error');
 }
 
 function removeHiddenElement_{{instanceName}}(elementName,elementValue)
@@ -68,4 +68,8 @@ function prefill_{{instanceName}}(what)
 		
 	}
 	
+    
+    $('#metadata').valid();
+    
+    validateTabs(false);
 }
