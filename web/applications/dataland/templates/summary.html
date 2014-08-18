@@ -1,12 +1,9 @@
+{% autoescape 'html' %}
 <div style="position: relative;">
 <font size="3">
 <div style="float:right;" class="minitoolbar">
-    {% if dl_ok %}
-	    <span><img width="40px" height="40px" id="downloadds" src="{{baseurl}}/includes/images/download-package.png"></span>
-    {% else %}
-	    <span><img width="40px" height="40px" id="downloaddsden" src="{{baseurl}}/includes/images/download-package-grey.png"></span>
-    {% endif %}
-	<span ><img title="test" width="40px" height="40px" id="metadatadl" src="{{baseurl}}/includes/images/xmlc.png"></span>
+    <span ><img width="40px" height="40px" id="downloadds" src="/data-discovery/includes/images/download-package.png"></span>
+    <span ><img title="test" width="40px" height="40px" id="metadatadl" src="{{baseurl}}/includes/images/xmlc.png"></span>
 </div>
 
 <h2>{{pdata.dataset_title}}</h2>
@@ -20,11 +17,11 @@
     <tr><td colspan="2">&nbsp;</td></tr>
 
     <tr><td valign="top"><b>Dataset Originator:</b><br/> {{pdata.dataset_originator}}</td>
-    	<td rowspan="4" valign="top">
+        <td rowspan="4" valign="top">
             {% if mpdata %}
                 <b>Point of Contact:</b><br/>
                 {{mpdata.People_LastName}}, {{mpdata.People_FirstName}}<br/>
-    	        {{mpdata.Institution_Name}}<br/>
+                {{mpdata.Institution_Name}}<br/>
                 <a href="{{mpdata.Department_URL}}" title="Link to Department" target="_blank">{{mpdata.Department_Name}}</a></span> <br>
                 {{mpdata.Department_Addr1}}<br>
                 {{mpdata.Department_Addr2}}<br>
@@ -62,17 +59,17 @@
         </td>
     </tr>
 
-	{% if pdata.extent_description %}
-    	<tr><td colspan="2">&nbsp;</td></tr>
-    	<tr><td colspan="2"><b>Extent Description:</b><br/> {{pdata.extent_description}}</td></tr>
-	{% endif %}
+    {% if pdata.extent_description %}
+        <tr><td colspan="2">&nbsp;</td></tr>
+        <tr><td colspan="2"><b>Extent Description:</b><br/> {{pdata.extent_description}}</td></tr>
+    {% endif %}
 
 </table>
 
 </font>
 <p/>
 <table class="status">
-	<tr>
+    <tr>
         {% if pdata.identified %}
             <th>Identified</th>
         {% endif %}
@@ -80,7 +77,7 @@
         <th>Metadata</th>
         <th>Available</th>
     </tr>
-	<tr>
+    <tr>
         {% if pdata.identified %}
             <td title="{{(pdata.identified ~ '_identified') | statusToTitle}}">
                 <img src="{{baseurl}}/includes/images/{{pdata.identified | statusToImg}}">
@@ -96,5 +93,6 @@
             <img src="{{baseurl}}/includes/images/{% if pdata.registered %}{{pdata.available | statusToImg}}{% else %}{{'-1' | statusToImg}}{% endif %}">
         </td>
     </tr>
-	</table>
+    </table>
 </div>
+{% endautoescape %}
