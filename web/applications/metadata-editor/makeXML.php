@@ -686,7 +686,7 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
             {
                 $mdkwrd = $doc->createElement('gmd:keyword');
                 $mdkwrd = $parent->appendChild($mdkwrd);
-                $mdkwrd->setAttribute('nilReason','inapplicable');
+                $mdkwrd->setAttribute('gco:nilReason','inapplicable');
             }
             else
             {
