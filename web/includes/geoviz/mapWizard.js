@@ -473,6 +473,11 @@ function MapWizard(json)
             { $('#saveFeature').button("enable"); } 
             else
             { $('#saveFeature').button("disable"); } 
+            
+            if (!wizGeoViz.canDraw())
+            { $('#startDrawing').button("enable"); } 
+            else
+            { $('#startDrawing').button("disable"); } 
         });
         
         $('#olmap').on('modeChange', function(e, eventInfo) { 

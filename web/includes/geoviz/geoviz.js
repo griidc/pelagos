@@ -667,6 +667,11 @@ function GeoViz()
         }
     }
     
+    this.canDraw = function ()
+    {
+        return checkOnlyOnePolygon();
+    }
+    
     function checkOnlyOnePolygon()
     {
         if (mapOptions.onlyOneFeature)
