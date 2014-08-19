@@ -447,13 +447,7 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
             $doc->normalizeDocument();
             $doc->formatOutput=true;
             $xml_save=$doc->saveXML();
-
-            // substitute exterior for interior (assumed only for polygons)
-            if ((preg_match('/gml:interior>/',$xml_save)) and ($arbitraryGML == 'no')) {
-                $xml_save = preg_replace('/gml:interior>/','gml:exterior>',$xml_save);
-                drupal_set_message('Exterior polygon boundries assumed','warning');
-            }
-
+            
             $dbms->beginTransaction();
 
             // query database for current (highest) registry_id for particular UDI
@@ -509,6 +503,7 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                         $geo_status = 'Verified by PostGIS as OK';
                         $tmp=$data2->fetchAll();
                         $geometry=$tmp[0]['geometry'];
+                        $geoflag = 'yes';
                     } else {
                         $dbErr = $data2->errorInfo();
                         $geo_status = "<font color=red>Rejected by PostGIS - ".$dbErr[2]."</font>";
