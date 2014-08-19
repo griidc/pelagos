@@ -442,69 +442,6 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
             throw new RuntimeException($err_str);
         }
 
-        if(isset($_POST['allowAnyGML']) and ($_POST['allowAnyGML'] == 'on')) {
-            $geoflag='yes';
-            $arbitraryGML = 'yes';
-        } else {
-        // Determine geometry type
-        if ($geo = $xml->xpath('/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:geographicElement[1]/gmd:EX_BoundingPolygon[1]/gmd:polygon[1]/gml:Polygon[1]')) {
-            // Polygon - Ideally this is case
-            $geoflag='yes';
-            $xpathdoc = new DOMXpath($doc);
-            $searchXpath = "/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:geographicElement[1]/gmd:EX_BoundingPolygon[1]/gmd:polygon[1]/gml:Polygon[1]";
-            $elements = $xpathdoc->query($searchXpath);
-            // assuming the following attribute...  ;-)
-            $node = $elements->item(0);
-            $node->setAttribute('gml:id',"Polygon");
-            $node->setAttribute('srsName',"urn:ogc:def:crs:EPSG::4326");
-            $xml_save=$doc->saveXML();
-
-        } elseif ($geo = $xml->xpath('/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:geographicElement[1]/gmd:EX_GeographicBoundingBox')) {
-            // If metadata has a bounding box, convert it to a polygon.
-            $coords=array();
-            $bounds=array('westBoundLongitude','eastBoundLongitude','southBoundLatitude','northBoundLatitude');
-            foreach ($bounds as $boundry) {
-                $coords[$boundry] = $xml->xpath("/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:geographicElement[1]/gmd:EX_GeographicBoundingBox/gmd:$boundry/gco:Decimal");
-            }
-            // enumerate polygons clockwise & repeat first point as last
-            $coord_list  = $coords['northBoundLatitude'][0].','.$coords['westBoundLongitude'][0].' ';
-            $coord_list .= $coords['northBoundLatitude'][0].','.$coords['eastBoundLongitude'][0].' ';
-            $coord_list .= $coords['southBoundLatitude'][0].','.$coords['eastBoundLongitude'][0].' ';
-            $coord_list .= $coords['southBoundLatitude'][0].','.$coords['westBoundLongitude'][0].' ';
-            $coord_list .= $coords['northBoundLatitude'][0].','.$coords['westBoundLongitude'][0];
-
-            $xpathdoc = new DOMXpath($doc);
-            $searchXpath = "/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:geographicElement/gmd:EX_GeographicBoundingBox";
-            $elements = $xpathdoc->query($searchXpath);
-            $node = $elements->item(0);
-
-            if ($elements->length > 0) {
-                $parent = $node->parentNode;
-                $parent->removeChild($node);
-
-                $newnode = createXmlNode($doc,$parent,'gmd:EX_BoundingPolygon');
-                $parent = $newnode;
-                $newnode = createXmlNode($doc,$parent,'gmd:polygon');
-                $parent = $newnode;
-                $newnode = createXmlNode($doc,$parent,'gml:Polygon');
-                $newnode->setAttribute('gml:id',"Polygon");
-                $newnode->setAttribute('srsName',"urn:ogc:def:crs:EPSG::4326");
-                $parent = $newnode;
-                $newnode = createXmlNode($doc,$parent,'gml:exterior');
-                $parent = $newnode;
-                $newnode = createXmlNode($doc,$parent,'gml:LinearRing');
-                $parent = $newnode;
-
-                addXMLChildValue($doc,$parent,'gml:coordinates',$coord_list);
-                $geoflag='yes';
-                $msg = "A bounding box was detected.  This has been converted into a polygon.";
-                drupal_set_message($msg,'warning');
-            }
-        } else {
-            $geoflag='no';
-        }
-        }
-
         $dbms = OpenDB("GOMRI_RW");
         try {
             $doc->normalizeDocument();
@@ -561,7 +498,6 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
             
             $geo_status='Nothing to verify';
             $geometery=null;
-            if ($geoflag=='yes') {
                 // attempt to have PostGIS validate any geometry, if found and return the geometery
                 $xml = simplexml_load_string($xml_save);
                 $geo = $xml->xpath('/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:geographicElement[1]/gmd:EX_BoundingPolygon[1]/gmd:polygon[1]/*');
@@ -578,11 +514,7 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                         $geo_status = "<font color=red>Rejected by PostGIS - ".$dbErr[2]."</font>";
                         throw new RuntimeException("PostGIS rejected geometry supplied");
                     }
-                } else {
-                    $geoflag = 'no';
-                    drupal_set_message("A geometry was not found yet the 'Accept any valid GML' option was selected.",'warning');
                 }
-            }
 
             // insert (or update) data in metadata table
             
