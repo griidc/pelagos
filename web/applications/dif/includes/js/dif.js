@@ -344,7 +344,8 @@ function formReset(dontScrollToTop)
         $("#difForm").trigger("reset");
         $("#udi").val('').change();
         $("#status").val('Open').change();
-        formHash = $("#difForm").serialize();
+        //formHash = $("#difForm").serialize();
+        formHash = undefined;
         geowizard.cleanMap();
         $('form :input').prop('disabled',false);
         $('#btnSubmit').prop('disabled',false);
