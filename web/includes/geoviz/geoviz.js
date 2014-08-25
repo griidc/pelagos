@@ -48,6 +48,7 @@ function GeoViz()
         firstLoad = false;
         
         mapDiv = "#"+DIV;
+        
         mapOptions = Options;
         map = new OpenLayers.Map( 
         {
@@ -385,6 +386,8 @@ function GeoViz()
         //selectControl.activate();
         
         lastBounds = map.getExtent();
+        
+        
     }
     
     this.flashMap = function ()
@@ -594,7 +597,7 @@ function GeoViz()
         
         jQuery(this.toolbardiv).append('<span style="font-family:Arial, Verdana, sans-serif;text-align:right;float:right;font-size:20;" id="helptext"></span>');
         
-        jQuery("#helptext").text('Navigation Mode');
+        //jQuery("#helptext").text('Navigation Mode');
         
     }
     
@@ -1083,6 +1086,7 @@ function GeoViz()
         {
             jQuery(mapDiv).trigger('coordinateError',checkMsg);
             //console.debug(checkMsg);
+            return false;
         }
         else
         {
@@ -1154,7 +1158,7 @@ function GeoViz()
             checkAllowModify(true);
             //draw.activate();
             drawControls[drawMode].activate()
-            jQuery("#helptext").html('Drawing Mode<br>(Double click to stop)');
+            //jQuery("#helptext").html('Drawing Mode<br>(Double click to stop)');
             
         }
     }

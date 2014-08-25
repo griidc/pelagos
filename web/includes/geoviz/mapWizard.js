@@ -12,6 +12,7 @@ function MapWizard(json)
     var drawTheMap = false;
     var startOffDrawing = true;
     var orderEnum;
+    var errMsg;
     
     var wizGeoViz;
     
@@ -85,7 +86,7 @@ function MapWizard(json)
             smlGeoViz.gmlToWKT($(gmlField).val());
             if ($(gmlField).val() == "")
             {
-                //difGeoViz.addImage('includes/images/notdefined.png',1);
+                //smlGeoViz.addImage('includes/images/notdefined.png',1);
             }
         }); 
         
@@ -336,6 +337,8 @@ function MapWizard(json)
     
     function whatIsCoordinateOrder()
     {
+        //todo: remove dialogs from if's, only one end dialog, and test wizAddFeature result for additional dialog.
+        
         var coordList = $('#coordlist').val();
         var whatOrder = wizGeoViz.determineOrder(coordList);
         var diaMessage = '';
@@ -405,11 +408,19 @@ function MapWizard(json)
                 
         var wktVal = $('#coordlist').val();
         
+        $('#olmap').on('coordinateError', function(e, eventInfo) { 
+            errMsg = eventInfo;
+        });
+        
         var triedAdd = wizGeoViz.addFeatureFromcoordinateList(wktVal,flipOrder);
         
         if (!triedAdd)
         {
-            $("<div>Those coordinates couldn't been made into a valid feature!</div>").dialog({
+            message = "Those coordinates don't appear to make a valid feature.";
+            if (typeof errMsg != "undefined") { message += "<p>Reason:"+errMsg+"</p>";errMsg=undefined;};
+            $("<div>"+message+"</div>").dialog({
+                height: "auto",
+                width: "auto",
                 autoOpen: true,
                 title: 'WARNING!',
                 buttons: {
@@ -421,10 +432,12 @@ function MapWizard(json)
                     $(this).dialog("destroy").remove();
                 }
             }); 
+            return false;
         }
         else
         {
             wizGeoViz.gotoAllFeatures();
+            return true;
         }
     }
     
@@ -504,20 +517,20 @@ function MapWizard(json)
             $('#coordlist').val(eventInfo);
         });
         
-        $('#olmap').on('coordinateError', function(e, eventInfo) { 
-            $("<div>"+eventInfo+"</div>").dialog({
-                autoOpen: true,
-                title: 'WARNING!',
-                buttons: {
-                    OK: function() {
-                    $(this).dialog('close');
-                    }},
-                modal: true,
-                close: function( event, ui ) {
-                    $(this).dialog("destroy").remove();
-                }
-            }); 
-        });
+        // $('#olmap').on('coordinateError', function(e, eventInfo) { 
+            // $("<div>"+eventInfo+"</divp.dialog({
+                // autoOpen: true,
+                // title: 'WARNING!',
+                // buttons: {
+                    // OK: function() {
+                    // $(this).dialog('close');
+                    // }},
+                // modal: true,
+                // close: function( event, ui ) {
+                    // $(this).dialog("destroy").remove();
+                // }
+            // }); 
+        // });
   
         $("#saveFeature")
         .button({ icons: { primary: "ui-icon ui-icon-disk"}},{disabled: true})
