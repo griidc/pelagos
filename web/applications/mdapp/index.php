@@ -465,28 +465,54 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
             $has_metadata_in_db=false;
             $has_metadata_in_db = ($tmp[0]['cnt'] ==  1);
 
-            // override datestamp in XML
+            // override datestamp in XML, if option is selected
             if (isset($_POST['overrideDatestamp']) and $_POST['overrideDatestamp']=='on') {
-                    $doc3 = new DomDocument('1.0','UTF-8');
-                    $tmpp = @$doc3->loadXML($xml_save);
-                    if (!$tmpp) {
-                        $err = libxml_get_last_error();
-                        $err_str = $err->message;
-                        throw new RuntimeException("Malformed XML: The XML file supplied could not be parsed. ($err_str)");
-                    }
+                /* Potential Cases
 
-                    $xpathdoc = new DOMXpath($doc3);
-                    $searchXpath = "/gmi:MI_Metadata/gmd:dateStamp/gco:Date";
-                    $elements = $xpathdoc->query($searchXpath);
-                    $node = $elements->item(0);
-                    if ($elements->length > 0) {
-                        $parent = $node->parentNode;
-                        $parent->removeChild($node);
-                    }
-                    addXMLChildValue($doc3,$parent,'gco:DateTime',date("c"));
-                    $doc3->normalizeDocument();
-                    $doc3->formatOutput=true;
-                    $xml_save=$doc3->saveXML();
+                1) XML has no /gmi:MI_Metadata/gmd:dateStamp
+                2) XML has existing /gmi:MI_Metadata/gmd:dateStamp/gco:Date
+                3) XML has existing /gmi:MI_Metadata/gmd:dateStamp/gco:DateTime
+
+                In all these cases, we the final XML to have /gmi:MI_Metadata/gmd:dateStamp/gco:DateTime
+                of the current datetime.
+
+                */
+
+                $doc3 = new DomDocument('1.0','UTF-8');
+                $tmpp = @$doc3->loadXML($xml_save);
+                if (!$tmpp) {
+                    $err = libxml_get_last_error();
+                    $err_str = $err->message;
+                    throw new RuntimeException("Malformed XML: The XML file supplied could not be parsed. ($err_str)");
+                }
+
+                $xpathdoc = new DOMXpath($doc3);
+                // remove gco:Date if it has one
+                $searchXpath = "/gmi:MI_Metadata/gmd:dateStamp/gco:Date";
+                $elements = $xpathdoc->query($searchXpath);
+                $node = $elements->item(0);
+                if ($elements->length > 0) {
+                    $parent = $node->parentNode;
+                    $parent->removeChild($node);
+                }
+
+                // remove gco:DateTime if it has one
+                $searchXpath = "/gmi:MI_Metadata/gmd:dateStamp/gco:DateTime";
+                $elements = $xpathdoc->query($searchXpath);
+                $node = $elements->item(0);
+                if ($elements->length > 0) {
+                    $parent = $node->parentNode;
+                    $parent->removeChild($node);
+                }
+
+                // Add DateTime element
+                $searchXpath = "/gmi:MI_Metadata/gmd:dateStamp";
+                $elements = $xpathdoc->query($searchXpath);
+                $node = $elements->item(0);
+                addXMLChildValue($doc3,$node,'gco:DateTime',date("c"));
+                $doc3->normalizeDocument();
+                $doc3->formatOutput=true;
+                $xml_save=$doc3->saveXML();
             }
 
             
