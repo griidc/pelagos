@@ -1,3 +1,4 @@
+<link type="text/css" rel="stylesheet" href="//proteus.tamucc.edu/sites/all/modules/jquery_update/replace/ui/themes/base/minified/jquery.ui.dialog.min.css" media="all" />
 <script>
 function getURLbyUDI()
 {
@@ -21,11 +22,27 @@ function getURLbyUDI()
                 }
                 else
                 {
-                    alert('Sorry that UDI:'+ udi +' does not exist');
+                    jQuery('<div title="Warning"><p>Sorry that UDI:'+ udi +' does not exist.</p></div>').dialog({
+                        modal: true,
+                        buttons: {
+                        Ok: function() {
+                            jQuery(this).dialog( "close" );
+                        }
+                        }
+                    });
                 }
             return true;
         });    
     }
+    else
+    jQuery('<div title="Warning"><p>No UDI provided.</p></div>').dialog({
+        modal: true,
+        buttons: {
+            Ok: function() {
+                jQuery(this).dialog( "close" );
+            }
+        }
+    });
 }
 
 function loadExternalURL()
@@ -36,6 +53,15 @@ function loadExternalURL()
     {
         location.href = "/metadata-editor/?dataUrl=" + urlval;
     }
+    else
+    jQuery('<div title="Warning"><p>No URL provided.</p></div>').dialog({
+        modal: true,
+        buttons: {
+            Ok: function() {
+                jQuery(this).dialog( "close" );
+            }
+        }
+    });
 
 }
 
