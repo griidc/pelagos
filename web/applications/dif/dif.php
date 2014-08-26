@@ -209,8 +209,8 @@ function postDIF($fielddata)
     {
         $rc = saveDIF($parameters);
     }
-    
-    $success= ((is_null($rc[1])) AND ($rc[0]["save_dif"] == 't'));
+   
+    $success= ((is_null($rc[1])) AND (($rc[0]["save_dif"] == 't') OR $rc[0]["save_dif"] != 'f'));
     
     $sendMail = false;
     

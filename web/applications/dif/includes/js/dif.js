@@ -8,11 +8,29 @@ var difValidator;
 
 $(document).ready(function()
 {
+    $.ajaxSetup({
+        error: function(x, t, m) {
+            var message;
+            if (typeof m.message != 'undefined')
+            {message = m.message;}else{message = m;};
+            console.log('Error in Ajax:'+t+' Message:'+message);
+            //hideSpinner();
+            // $('<div title="Ajax Error:'+t+'"><p>Message:'+message+'</p></div>').dialog({
+                // modal: true,
+                // buttons: {
+                    // Ok: function() {
+                        // $( this ).dialog( "close" );
+                    // }
+                // }
+            // });
+        }
+    });
+        
     initSpinner();
     
     personid = $('#personid').val();
     
-    $(document).one("difReady", function()
+    $(document).on("difReady", function()
     {
         var $_GET = getQueryParams(document.location.search);
         if (typeof $_GET["id"] != 'undefined')
@@ -129,16 +147,36 @@ $(document).ready(function()
     loadTasks();
     loadDIFS(null,personid,true);
     
+    jQuery.validator.addMethod("trueISODate", function(value, element) {
+        return this.optional(element) || (Date.parse(value));
+    });
+    
     difValidator = $("#difForm").validate({
         ignore: ".ignore",
         messages: {
             geoloc: "Click on Spatial Wizard Button!",
+            startdate: "Start Date is not a valid ISO date",
+            enddate: "End Date is not a valid ISO date"
         },
         submitHandler: function(form) {
             $("#difTasks").prop('disabled', false);
            saveDIF();
         },
+        errorPlacement: function(error, element) {
+            if (element.attr("name") == "enddate" || element.attr("name") == "startdate") {
+                error.insertAfter( $("#enddate+strong") );
+            } else {
+                // the default error placement for the rest
+                error.insertAfter(element);
+            }
+        },
         rules: {
+            startdate: "trueISODate",
+            enddate: "trueISODate",
+            // },
+            // enddate: {
+                // dateISO: true
+            // },  
             privacyother: {
                 required: {
                     depends: function(element)
@@ -262,7 +300,35 @@ function treeSearch()
 {
     var searchValue = $('#fltResults').val();
     showSpinner();
+    $('#diftree').on('search.jstree', function (e, data) {
+        if (data.res.length <= 0)
+        {
+            $('<div id="noresults" title="Search...">No Results Found.</div>').dialog({
+                resizable: false,
+                //height: 80,
+                //width: "auto",
+                modal: true,
+                //position: { my: "center center", at: "center center", of: "#difFilterTools" },
+                //difFilterTools
+                close: function(event, ui) {
+                    $(this).dialog('destroy').remove();
+                },
+                open: function(event, ui) {
+                    setTimeout(function(){
+                        //$('#noresults').dialog('close');
+                    }, 5000);
+                },
+                buttons: {
+                    "OK": function() {
+                        $(this).dialog('close');
+                    }
+                }
+            });
+        }
+    });
+    
     $('#diftree').jstree(true).search(searchValue);
+    
     hideSpinner();
 }
 
@@ -330,7 +396,6 @@ function saveDIF()
                             {
                                 scrollToTop();
                                 treeFilter();
-                                
                             }
                         }
                     }
@@ -352,7 +417,9 @@ function formReset(dontScrollToTop)
         $('#btnSave').prop('disabled',false);
         geowizard.haveSpatial(false);
         if (!dontScrollToTop){scrollToTop();}
+        difValidator.resetForm();
     });
+    
 }
 
 function treeFilter()
@@ -404,7 +471,8 @@ function loadDIFS(Status,Person,ShowEmpty)
     if (personid > 0 && !Person) {Person = personid;}
     $.ajax({
         cache: false,
-        url: "/services/DIF/getDIFS.php",
+        //url: "/services/DIF/getDIFS.php",
+        url: "/~mvandeneijnden/dif-service/getDIFS.php",
         type: 'GET',
         datatype: 'json',
         data: {'function':'loadDIFS','status':Status,'person':Person,'showempty':ShowEmpty}
@@ -464,7 +532,7 @@ function loadPOCs(PseudoID,ppoc,spoc)
         url: "/services/DIF/getPeople.php",
         type: "GET",
         datatype: "JSON",
-        data: {'function':'loadPOCs',pseudoid: PseudoID}
+        data: {'function':'loadPOCs','pseudoid': PseudoID}
         }).done(function(json) {
         if (json.length>0)
         {
