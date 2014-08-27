@@ -1,5 +1,16 @@
 
 var lastdata{{instanceName}} = [];
+var forced = false;
+
+jQuery(function() {
+    if (document.getElementById("CRIP2_{{instanceName}}").value == 'Gulf of Mexico Research Initiative')
+    { 
+        forced = true;
+        jQuery('#CRPF_{{instanceName}}').click();
+        forced = false;
+    }
+});
+   
 
 function addHiddenElement_{{instanceName}}(elementName,elementValue)
 {
@@ -43,7 +54,7 @@ function prefill_{{instanceName}}(what)
 		addHiddenElement_{{instanceName}}("CIAD4_{{instanceName}}","78412-5869");
 		addHiddenElement_{{instanceName}}("CIAD5_{{instanceName}}","USA");
 		addHiddenElement_{{instanceName}}("CIAD6_{{instanceName}}","griidc@gomri.org");
-		addHiddenElement_{{instanceName}}("OLR1_{{instanceName}}","http://data.gomri.org");
+		addHiddenElement_{{instanceName}}("OLR1_{{instanceName}}","http://data.gulfresearchinitiative.org");
 
 		document.getElementById("lastdata_{{instanceName}}").value = lastdata{{instanceName}};
 	}
@@ -67,9 +78,10 @@ function prefill_{{instanceName}}(what)
 		lastdata{{instanceName}} = [];
 		
 	}
-	
-    
-    $('#metadata').valid();
-    
-    validateTabs(false);
+
+    if (!forced)
+    {
+        $('#metadata').valid();
+        validateTabs(false);
+    }
 }
