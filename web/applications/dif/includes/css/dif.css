@@ -2,6 +2,13 @@
   outline: none;
 }
 
+.ui-button:disabled {
+  background: #cccccc;
+  border: 1px solid #777777;
+  opacity: .35;
+  cursor: default;
+}
+
 .openlayers-map img{ margin:none }
 
 .statustext
