@@ -297,6 +297,7 @@ function formDisabled($isDisabled)
         });
     });
 
+    
     $(document).ready(function(){
         $("#regForm").validate({
         rules: {
@@ -345,14 +346,29 @@ function formDisabled($isDisabled)
                 required: true
             }
         },
+        errorPlacement: function(error, element) {
+            if (element.attr("name") == "registry_id") {
+                error.insertAfter( $("#regbutton") );
+            } else {
+                error.insertAfter(element);
+            }
+        },
         messages: {
             txtMetaURL: "Please enter a valid URL.",
             radAuth: "Please select one.",
             dataurl: {
                 required: "Please enter a valid URL",
                 remote: jQuery.format("Please check the URL, it may not exist!")
-            },
+            }
         }
+        });
+        
+        $('#regForm').bind('change keyup mouseout', function() {
+            if($(this).validate().checkForm() && $('#registry_id').val() != '' && $('#registry_id').is(':disabled') == false) {
+                $('#regbutton').removeClass('button_disabled').attr('disabled', false);
+            } else {
+                $('#regbutton').addClass('button_disabled').attr('disabled', true);
+            }
         });
 
         $.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
@@ -956,7 +972,7 @@ fieldset {
             <fieldset>
                 <span id="qtip_regid" style="float:right;"><img src="includes/images/info.png"></span>
                 <label for="registry_id"><b>Registry Identifier: </b></label>
-                <input onkeyup="if (this.value.length > 15) document.getElementById('regbutton').disabled=false;"
+                <input minlength="15" onkeyup="if (this.value.length == 0) document.getElementById('regbutton').disabled=true;"
                     <?php if (isset($dif_id)) echo 'disabled'; ?>
                     type="text" id="registry_id" name="registry_id" size="60"
                     value="<?php if (isset($row['registry_id'])) echo $row['registry_id']; ?>">
