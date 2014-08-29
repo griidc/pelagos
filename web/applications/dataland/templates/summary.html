@@ -2,8 +2,15 @@
 <div style="position: relative;">
 <font size="3">
 <div style="float:right;" class="minitoolbar">
-    <span ><img width="40px" height="40px" id="downloadds" src="/data-discovery/includes/images/download-package.png"></span>
-    <span ><img title="test" width="40px" height="40px" id="metadatadl" src="{{baseurl}}/includes/images/xmlc.png"></span>
+    {% if pdata.metadata == 10 %}
+        <img width="40px" height="40px" id="downloadds" src="/data-discovery/includes/images/download-package.png">
+        <img title="test" width="40px" height="40px" id="metadatadl" src="{{baseurl}}/includes/images/xmlc.png">
+    {% else %}
+        <div>
+            <img width="40px" height="40px" id="downloaddsdenmd" src="/data-discovery/includes/images/download-package-grey.png">
+            <img title="test" width="40px" height="40px" id="metadatadl-dis" src="{{baseurl}}/includes/images/xmlc-bw.png">
+        </div>
+    {% endif %}
 </div>
 
 <h2>{{pdata.dataset_title}}</h2>

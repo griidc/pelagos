@@ -355,6 +355,20 @@ var dlmap = new GeoViz();
                 text: 'This dataset is not currently available for download.'
             }
         });
+        
+        $("#downloaddsdenmd").qtip({
+            position: {
+                adjust: {
+                    method: "flip flip"
+                },
+                my: "bottom right",
+                at: "top left",
+                viewport: $(window)
+            },
+            content: {
+                text: 'This dataset is not currently available for download until its metadata is approved.'
+            }
+        });
 
         $("#metadatadl").qtip({
             position: {
@@ -367,6 +381,20 @@ var dlmap = new GeoViz();
             },
             content: {
                 text: 'Download Metadata'
+            }
+        });
+        
+        $("#metadatadl-dis").qtip({
+            position: {
+                adjust: {
+                    method: "flip flip"
+                },
+                my: "bottom right",
+                at: "top left",
+                viewport: $(window)
+            },
+            content: {
+                text: 'Metadata will be available after it is approved.'
             }
         });
 
