@@ -41,13 +41,13 @@ function displayTaskStatus($tasks,$update=null,$personid=null)
     while ($row = pg_fetch_row($results))
     {
         $status = 2;
-        $title = $row[1];
+        $title = htmlspecialchars($row[1],ENT_QUOTES);
         $registry_id = $row[0];
 
         $qs = "?regid=$registry_id";
         if (isset($personid)) $qs .= "&prsid=$personid";
         if (array_key_exists('as_user',$_GET)) $qs .= "&as_user=$_GET[as_user]";
-        echo "d.add($nodeCount,$folderCount,'".addslashes("[$registry_id] $title")."','$qs','".addslashes("[$registry_id] $title")."','_self'";
+        echo "d.add($nodeCount,$folderCount,'[$registry_id] $title','$qs','[$registry_id] $title','_self'";
 
         switch ($status)
         {
@@ -101,21 +101,22 @@ function displayTaskStatus($tasks,$update=null,$personid=null)
 
         if ($rnum > 0)
         {
-
             echo "d.add($nodeCount,$dsNode,'".addslashes($taskTitle)."','javascript: d.o($nodeCount);','".addslashes($taskTitle)."','','','',true);\n";
             $nodeCount++;
 
             while ($row = pg_fetch_row($results))
             {
+                //var_dump($row[0]);
+                
                 $status = $row[1];
-                $title = $row[0];
+                $title = htmlspecialchars($row[0],ENT_QUOTES);
                 $datasetid = $row[2];
                 $dataset_udi = $row[3];
 
                 $qs = "?uid=$datasetid";
                 if (isset($personid)) $qs .= "&prsid=$personid";
                 if (array_key_exists('as_user',$_GET)) $qs .= "&as_user=$_GET[as_user]";
-                echo "d.add($nodeCount,$folderCount,'".addslashes("[$dataset_udi] $title")."','$qs','".addslashes("[$dataset_udi] $title")."','_self'";
+                echo "d.add($nodeCount,$folderCount,'[$dataset_udi] $title','$qs','[$dataset_udi] $title','_self'";
 
                 switch ($status)
                 {
