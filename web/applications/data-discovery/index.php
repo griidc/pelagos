@@ -227,6 +227,7 @@ $app->get('/dataset_details/:udi', function ($udi) use ($app) {
 
 
 $app->get('/metadata/:udi', function ($udi) use ($app) {
+    if (isMetadataApproved($udi)) {
     // if there is a file on disk, capture it
     if (preg_match('/^00/',$udi)) {
         $datasets = get_registered_datasets(getDBH('GOMRI'),array("registry_id=$udi%"));
@@ -305,6 +306,10 @@ $app->get('/metadata/:udi', function ($udi) use ($app) {
         exit;
     } else {
         drupal_set_message("Error retrieving metadata from database and filesystem.",'error');
+        drupal_goto($GLOBALS['PAGE_NAME']); # reload calling page
+    }
+    } else {
+        drupal_set_message("Metadata that has not been approved cannot be downloaded.",'error');
         drupal_goto($GLOBALS['PAGE_NAME']); # reload calling page
     }
 })->conditions(array('udi' => '(00|Y1|R\d)\.x\d{3}\.\d{3}:\d{4}'));
@@ -650,5 +655,17 @@ function getApprovedMetadataUDIs() {
     }
     $dbms = null;
     return $hash;
+}
+
+function isMetadataApproved($udi) {
+    $sql = "select count(*) from registry_view where 
+            metadata_status = 'Accepted' and dataset_udi = ?;";
+    $dbms = OpenDB("GOMRI_RO");
+    $data = $dbms->prepare($sql);
+    $data->execute(array($udi));
+    while ($row = $data->fetch()) {
+        $count = $row[0];
+    }
+    return ($count>0);
 }
 ?>
