@@ -9,7 +9,7 @@ require_once 'config.php';
 
 include_once '/usr/local/share/GRIIDC/php/ldap.php';
 include_once '/usr/local/share/GRIIDC/php/drupal.php';
-require_once '/usr/local/share/GRIIDC/php/dif-registry.php';
+require_once '/home/users/mvandeneijnden/public_html/share/php/dif-registry.php';
 require_once '/usr/local/share/GRIIDC/php/db-utils.lib.php';
 
 include_once 'pdo_functions.php';
@@ -131,7 +131,7 @@ if ($_POST) {
             $SQL = "SELECT MAX(registry_id) AS maxregid FROM registry WHERE registry_id LIKE ?;";
             $sth = $DBH->prepare($SQL);
             if (array_key_exists('dataset_udi',$_POST) and !empty($_POST['dataset_udi'])) {
-                $registry_vals['dataset_udi'] = pg_escape_string($_POST['dataset_udi']);
+                $registry_vals['dataset_udi'] = $_POST['dataset_udi'];
                 $sth->execute(array("$_POST[dataset_udi].%"));
                 $result = $sth->fetch();
                 $newsub = (int) substr($result['maxregid'],17,3) + 1;
@@ -146,12 +146,12 @@ if ($_POST) {
                 $registry_vals['registry_id'] = '00.x000.000:' . $newserial . '.001';
             }
 
-            $registry_vals['dataset_title'] = pg_escape_string($_POST['title']);
-            $registry_vals['dataset_abstract'] = pg_escape_string($_POST['abstrct']);
-            $registry_vals['dataset_originator'] = pg_escape_string($_POST['dataset_originator']);
-            $registry_vals['dataset_poc_name'] = pg_escape_string($_POST['pocname']);
-            $registry_vals['dataset_poc_email'] = pg_escape_string($_POST['pocemail']);
-            $registry_vals['access_status'] = pg_escape_string($_POST['access_status']);
+            $registry_vals['dataset_title'] = $_POST['title'];
+            $registry_vals['dataset_abstract'] = $_POST['abstrct'];
+            $registry_vals['dataset_originator'] = $_POST['dataset_originator'];
+            $registry_vals['dataset_poc_name'] = $_POST['pocname'];
+            $registry_vals['dataset_poc_email'] = $_POST['pocemail'];
+            $registry_vals['access_status'] = $_POST['access_status'];
             if (array_key_exists('doi',$_POST) and !empty($_POST['doi'])) {
                 $registry_vals['doi'] = $_POST['doi'];
             }
@@ -280,7 +280,7 @@ else {
     echo '</td>';
     echo '<td width="*">&nbsp;&nbsp;</td>';
     echo '<td width="40%" style="vertical-align: top; background: transparent;">';
-    include '/usr/local/share/GRIIDC/php/sidebar.php';
+    include '/home/users/mvandeneijnden/public_html/share/php/sidebar.php';
     echo '</td>';
     echo '</tr>';
     echo '</table>';
