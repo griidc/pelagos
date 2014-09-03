@@ -1,6 +1,6 @@
 <?php
 # PHP Sharedir
-$GRIIDC_PHP="../share/php"; # normally /usr/local/share/GRIIDC/php/
+$GRIIDC_PHP="/usr/local/share/GRIIDC/php"; # normally /usr/local/share/GRIIDC/php
 
 # Framework (model/view)
 require_once '/usr/local/share/Slim/Slim/Slim.php';
