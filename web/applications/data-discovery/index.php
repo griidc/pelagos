@@ -1,19 +1,22 @@
 <?php
+# PHP Sharedir
+$GRIIDC_PHP="../share/php"; # normally /usr/local/share/GRIIDC/php/
+
 # Framework (model/view)
 require_once '/usr/local/share/Slim/Slim/Slim.php';
 # templating engine - views
 require_once '/usr/local/share/Slim-Extras/Views/TwigView.php';
 # GRIIDC drupal extensions to allow use of drupal-intended code outside of drupal
-require_once '/usr/local/share/GRIIDC/php/drupal.php';
+require_once "$GRIIDC_PHP/drupal.php";
 # PHP streams anything in an includes/ directory.  This is for use WITH slim.
 # if not using slim, use aliasIncludes.php instead.
-require_once '/usr/local/share/GRIIDC/php/dumpIncludesFile.php';
+require_once "$GRIIDC_PHP/dumpIncludesFile.php";
 # various functions for accessing the RIS database
-require_once '/usr/local/share/GRIIDC/php/rpis.php';
+require_once "$GRIIDC_PHP/rpis.php";
 # various functions for accessing GRIIDC datasets
-require_once '/usr/local/share/GRIIDC/php/datasets.php';
+require_once "$GRIIDC_PHP/datasets.php";
 # misc utilities and stuff...
-require_once '/usr/local/share/GRIIDC/php/utils.php';
+require_once "$GRIIDC_PHP/utils.php";
 # local functions for data-discovery module
 require_once 'lib/search.php';
 # local functions for the packaging sub-module to the data-discovery module
@@ -21,11 +24,11 @@ require_once 'lib/package.php';
 # OpenID API for PHP
 require_once '/usr/local/share/lightopenid-lightopenid/openid.php';
 # GRIIDC database utilities
-require_once '/usr/local/share/GRIIDC/php/db-utils.lib.php';
+require_once "$GRIIDC_PHP/db-utils.lib.php";
 # Auth library
-require_once '/usr/local/share/GRIIDC/php/auth.php';
+require_once "$GRIIDC_PHP/auth.php";
 # LDAP
-require_once '/usr/local/share/GRIIDC/php/ldap.php';
+require_once "$GRIIDC_PHP/ldap.php";
 
 date_default_timezone_set('UTC');
 
