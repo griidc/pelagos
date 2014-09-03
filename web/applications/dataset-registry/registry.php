@@ -9,7 +9,7 @@ require_once 'config.php';
 
 include_once '/usr/local/share/GRIIDC/php/ldap.php';
 include_once '/usr/local/share/GRIIDC/php/drupal.php';
-require_once '/home/users/mvandeneijnden/public_html/share/php/dif-registry.php';
+require_once '/usr/local/share/GRIIDC/php/dif-registry.php';
 require_once '/usr/local/share/GRIIDC/php/db-utils.lib.php';
 
 include_once 'pdo_functions.php';

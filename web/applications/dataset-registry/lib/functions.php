@@ -70,8 +70,6 @@ function displayTaskStatus($tasks,$update=null,$personid=null)
         $nodeCount++;
     }
 
-
-
     // Datasets Folder Sub
     echo "d.add($nodeCount,-1,'Datasets','');\n\n";
     $dsNode = $nodeCount;
