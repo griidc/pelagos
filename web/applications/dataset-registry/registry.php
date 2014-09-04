@@ -1,20 +1,26 @@
 <?php
-include_once '/usr/local/share/GRIIDC/php/aliasIncludes.php';
 
-if (!file_exists('config.php')) {
-    echo 'Error: config.php is missing. Please see config.php.example for an example config file.';
+if (!file_exists('config.ini')) {
+    echo 'Error: config.ini is missing. Please see config.ini.example for an example config file.';
     exit;
 }
-require_once 'config.php';
 
-include_once '/usr/local/share/GRIIDC/php/ldap.php';
-include_once '/usr/local/share/GRIIDC/php/drupal.php';
-require_once '/usr/local/share/GRIIDC/php/dif-registry.php';
-require_once '/usr/local/share/GRIIDC/php/db-utils.lib.php';
+$GRIIDC_PHP = '/opt/pelagos/share/php';
+include_once "$GRIIDC_PHP/aliasIncludes.php";
+require_once "/opt/pelagos/share/php/ldap.php";
+include_once "$GRIIDC_PHP/drupal.php";
+require_once "$GRIIDC_PHP/dif-registry.php";
+require_once "$GRIIDC_PHP/db-utils.lib.php";
+include_once "pdo_functions.php";
+include_once "lib/functions.php";
 
-include_once 'pdo_functions.php';
+$GLOBALS['pelagos_config'] = parse_ini_file('/etc/opt/pelagos.ini',true);
+$GLOBALS['config'] = parse_ini_file('config.ini',true);
+$GLOBALS['ldap'] = parse_ini_file($GLOBALS['pelagos_config']['paths']['conf'].'/ldap.ini',true);
 
-include_once 'lib/functions.php';
+define('RPIS_TASK_BASEURL',$GLOBALS['config']['RISDATA']['RPIS_TASK_BASEURL']);
+define('RPIS_PEOPLE_BASEURL',$GLOBALS['config']['RISDATA']['RPIS_PEOPLE_BASEURL']); 
+define('GOMRI_DB_CONN_STRING',$GLOBALS['config']['GOMRI_DB']['connstr']." user = ".$GLOBALS['config']['GOMRI_DB']['username']." password = ".$GLOBALS['config']['GOMRI_DB']['password']); 
 
 $isGroupAdmin = false;
 
@@ -25,11 +31,11 @@ $registry_fields = array( 'registry_id', 'dataset_udi', 'dataset_title', 'datase
                           'metadata_server_type', 'url_metadata',
                           'userid', 'submittimestamp');
 
-$conn = pdoDBConnect('pgsql:'.GOMRI_DB_CONN_STRING);
 $DBH = OpenDB('GOMRI_RW');
 
-$ldap = connectLDAP('triton.tamucc.edu');
-$baseDN = 'dc=griidc,dc=org';
+$ldap = connectLDAP($GLOBALS['ldap']['ldap']['server']);
+$baseDN = $GLOBALS['ldap']['ldap']['base_dn'];
+
 $uid = getUID();
 if (isset($uid)) {
     $submittedby ="";
