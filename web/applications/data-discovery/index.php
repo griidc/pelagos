@@ -551,7 +551,7 @@ $app->get('/initiateWebDownload/:udi', function ($udi) use ($app) {
             $stash['alternateDownloadSite']=1;
             $stash['alternateDownloadSiteServer']=$host;
             $altTag = " (ALT-SITE)";
-            $stash['downloadUrl']="$protocol$host/download/$uid/".urlencode($dataset['dataset_filename']);
+            $stash['downloadUrl']="$protocol$host/download/$uid/".rawurlencode($dataset['dataset_filename']);
             
             `echo "$tstamp\t$dat_file\t$uid$altTag" >> /var/log/griidc/downloads.log`;
             $app->render('html/download-file.html',$stash);
@@ -561,7 +561,7 @@ $app->get('/initiateWebDownload/:udi', function ($udi) use ($app) {
                 mkdir($GLOBALS['griidc']['paths']['http_download']."/$uid/");
                 symlink($dat_file,$GLOBALS['griidc']['paths']['http_download']."/$uid/$dataset[dataset_filename]");
                 $altTag = '';
-                $stash['downloadUrl']="$protocol$env[SERVER_NAME]/download/$uid/".urlencode($dataset['dataset_filename']);
+                $stash['downloadUrl']="$protocol$env[SERVER_NAME]/download/$uid/".rawurlencode($dataset['dataset_filename']);
                 # logging
                 `echo "$tstamp\t$dat_file\t$uid$altTag" >> /var/log/griidc/downloads.log`;
                 $app->render('html/download-file.html',$stash);
