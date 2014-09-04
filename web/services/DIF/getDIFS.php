@@ -2,7 +2,17 @@
 
 header('Content-Type: application/json');
 
-define('RPIS_TASK_BASEURL','http://data.gulfresearchinitiative.org/services/RPIS/getTaskDetails.php');
+$personID = null;
+
+if (isset($_GET["person"]) AND $_GET["person"] != '')
+{
+    $personID = $_GET["person"];
+}
+
+
+define('RPIS_TASK_BASEURL','http://localhost/services/RIS/getTaskDetails.php');
+//define('RPIS_TASK_BASEURL','http://proteus.tamucc.edu/services/RPIS/getTaskDetails.php');
+//define('RPIS_TASK_BASEURL','http://data.gulfresearchinitiative.org/services/RPIS/getTaskDetails.php');
 
 include_once '/usr/local/share/GRIIDC/php/pdo.php';
 
@@ -17,20 +27,26 @@ $dbconnstr .= ' password=' . $config["password"];
 
 $dbconn = pdoDBConnect($dbconnstr);
 
-$switch = '?'.'maxResults=-1&cached=true';
+// $switch = '?'.'maxResults=-1&cached=true';
 
-if (isset($_GET["person"]) AND $_GET["person"] != '')
-{
-    $searchTerm = $_GET["person"];
-    $switch = "?peopleID=$searchTerm&maxResults=-1";
+// if (isset($_GET["person"]) AND $_GET["person"] != '')
+// {
+    // $searchTerm = $_GET["person"];
+    // $switch = "?peopleID=$searchTerm&maxResults=-1";
+// }
+
+// $tasks = array();
+
+// $doc = simplexml_load_file(RPIS_TASK_BASEURL.$switch);
+
+$tasks = getTasks($personID,true);
+
+# if we have no task roles, try to get tasks for which we have any role
+if (count($tasks) == 0) {
+    $tasks = getTasks($personID,false);
 }
 
-$tasks = array();
-
-$doc = simplexml_load_file(RPIS_TASK_BASEURL.$switch);
-$rpisTasks = $doc->xpath('Task');
-
-$stuff = displayTaskStatus($rpisTasks,$dbconn);
+$stuff = displayTaskStatus($tasks,$dbconn);
 
 sort($stuff);
 
@@ -135,5 +151,81 @@ function displayTaskStatus($tasks,$conn,$update=null,$personid=null,$filterstatu
     
     return $resArray;
 }
+
+function getTasks($peopleid,$restrict_to_task_roles=false) 
+{
+    $switch = '?'.'maxResults=-1';
+   
+    $tasks = array();
+    
+    $filters = '';
+    
+    # get all tasks based on reseacher RIS ID
+    # only search by peopleid if we have one
+    if (isset($peopleid))
+    {
+        $filters = "&peopleid=$peopleid";
+    }
+    else
+    {
+        $filters = "&cached=true";
+    }
+    $doc = simplexml_load_file(RPIS_TASK_BASEURL.$switch.$filters);
+    $my_tasks = $doc->xpath('Task');
+   
+    foreach ($my_tasks as $task)
+    {
+        # for projects with no tasks just add the ficticious project task
+        if ($task['ID'] == 0)
+        {
+            $tasks[] = $task;
+            continue;
+        }
+        
+        $currentPerson = null;
+        $people = $task->xpath('Researchers/Person');
+        foreach ($people as $person)
+        {
+            $personArray = (array)$person;
+            
+            if ($personArray['@attributes']['ID'] == $peopleid)
+            {
+                $currentPerson = $person;
+                break;
+            }
+        }
+        
+        # if we want to restrict the task list to tasks for which we have a task role
+        if ($restrict_to_task_roles)
+        {
+            if ($currentPerson)
+            {
+                $roles = $currentPerson->xpath('Roles/Role/Name');
+                $taskLead = false;
+                foreach ($roles as $role)
+                {
+                    if (in_array($role['ID'],array(4,5,6)))
+                    {
+                        $taskLead = true;
+                    }
+                }
+                if ($taskLead) {
+                    $tasks[] = $task;
+                }
+            }
+        }
+        # otherwise just return all the tasks for which we have any role
+        else
+        {
+            $tasks[] = $task;
+        }
+    }
+        
+    return $tasks;
+}
+    
+    
+
+    
 
 ?>
