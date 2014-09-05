@@ -29,9 +29,9 @@ if ($user) {
     $gidNumber = NULL;
     $groupName = NULL;
 
-    $ldap = ldap_connect('ldap://triton.tamucc.edu');
+    $ldap = ldap_connect($GLOBALS['ldap_config']['ldap']['server']);
 
-    $userResult = ldap_search($ldap, "ou=people,dc=griidc,dc=org", "(&(uid=$user)(objectClass=posixAccount))", array("gidNumber","homeDirectory"));
+    $userResult = ldap_search($ldap, $GLOBALS['ldap_config']['ldap']['people_dn'], "(&(uid=$user)(objectClass=posixAccount))", array("gidNumber","homeDirectory"));
 
     if (ldap_count_entries($ldap, $userResult) > 0) {
         $userEntries = ldap_get_entries($ldap, $userResult);

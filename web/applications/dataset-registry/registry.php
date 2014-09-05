@@ -7,20 +7,29 @@ if (!file_exists('config.ini')) {
 
 $GRIIDC_PHP = '/opt/pelagos/share/php';
 include_once "$GRIIDC_PHP/aliasIncludes.php";
-require_once "/opt/pelagos/share/php/ldap.php";
+require_once "$GRIIDC_PHP/ldap.php";
 include_once "$GRIIDC_PHP/drupal.php";
 require_once "$GRIIDC_PHP/dif-registry.php";
 require_once "$GRIIDC_PHP/db-utils.lib.php";
 include_once "pdo_functions.php";
 include_once "lib/functions.php";
 
-$GLOBALS['pelagos_config'] = parse_ini_file('/etc/opt/pelagos.ini',true);
-$GLOBALS['config'] = parse_ini_file('config.ini',true);
-$GLOBALS['ldap'] = parse_ini_file($GLOBALS['pelagos_config']['paths']['conf'].'/ldap.ini',true);
+$GLOBALS['pelagos_config']  = parse_ini_file('/etc/opt/pelagos.ini',true);
+$GLOBALS['ldap_config']     = parse_ini_file($GLOBALS['pelagos_config']['paths']['conf'].'/ldap.ini',true);
+$GLOBALS['db_config']       = parse_ini_file($GLOBALS['pelagos_config']['paths']['conf'].'/db.ini',true);
+$GLOBALS['module_config']   = parse_ini_file('config.ini',true);
 
-define('RPIS_TASK_BASEURL',$GLOBALS['config']['RISDATA']['RPIS_TASK_BASEURL']);
-define('RPIS_PEOPLE_BASEURL',$GLOBALS['config']['RISDATA']['RPIS_PEOPLE_BASEURL']); 
-define('GOMRI_DB_CONN_STRING',$GLOBALS['config']['GOMRI_DB']['connstr']." user = ".$GLOBALS['config']['GOMRI_DB']['username']." password = ".$GLOBALS['config']['GOMRI_DB']['password']); 
+define('RPIS_TASK_BASEURL',  $GLOBALS['module_config']['RISDATA']['RPIS_TASK_BASEURL']);
+define('RPIS_PEOPLE_BASEURL',$GLOBALS['module_config']['RISDATA']['RPIS_PEOPLE_BASEURL']); 
+
+$host   = $GLOBALS['db_config']['GOMRI_RW']['host'];
+$user   = $GLOBALS['db_config']['GOMRI_RW']['username'];
+$pw     = $GLOBALS['db_config']['GOMRI_RW']['password'];
+$port   = $GLOBALS['db_config']['GOMRI_RW']['port'];
+$dbname = $GLOBALS['db_config']['GOMRI_RW']['dbname'];
+
+define('GOMRI_DB_CONN_STRING',"host=$host port=$port dbname=$dbname user=$user password=$pw"); 
+$conn = pdoDBConnect('pgsql:'.GOMRI_DB_CONN_STRING);
 
 $isGroupAdmin = false;
 
@@ -33,8 +42,8 @@ $registry_fields = array( 'registry_id', 'dataset_udi', 'dataset_title', 'datase
 
 $DBH = OpenDB('GOMRI_RW');
 
-$ldap = connectLDAP($GLOBALS['ldap']['ldap']['server']);
-$baseDN = $GLOBALS['ldap']['ldap']['base_dn'];
+$ldap = connectLDAP($GLOBALS['ldap_config']['ldap']['server']);
+$baseDN = $GLOBALS['ldap_config']['ldap']['base_dn'];
 
 $uid = getUID();
 if (isset($uid)) {
