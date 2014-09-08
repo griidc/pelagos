@@ -493,7 +493,7 @@ $app->post('/approve/create', $GLOBALS['AUTH_FOR_ROLE']('admin'), function () us
             $message = "Your account request has been approved.";
             $message .= "\n\nYour username is: $uid";
             $message .= "\n\nYou may now use this username and the password you provided to log in to GRIIDC services.";
-            $message .= "\n\nNote: You must change your password every 90 days or it will expire. You will begin receiving password expiration warnings one week before your password expires.";
+            $message .= "\n\nNote: You must change your password every 180 days or it will expire. You will begin receiving password expiration warnings one week before your password expires.";
 
             mail($toAddress,$subject,$message,"From: $fromAddress");
 
