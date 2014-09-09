@@ -87,6 +87,7 @@ function updateTree(tree) {
             init_open.push(tree.init_open[i]);
         }
     }
+    
 
     if (tree.selected) {
         selected_node = $("#" + tree.name).jstree('get_selected');
@@ -169,6 +170,12 @@ function updateTree(tree) {
             $('head').append('<link rel="stylesheet" type="text/css" media="all" href="' + cssUrl + '" />');
         }
         loadOpenChildren(data.inst,-1);
+        var root_nodes=data.inst._get_children(-1);
+        var root_node_ids=[];
+        for (var i = 0; i < root_nodes.length; i++) { root_node_ids.push(root_nodes[i].id); }
+
+        init_open=$.grep(init_open,function( id ) { return $.inArray(id,root_node_ids)!=-1 });
+        left_to_open=init_open.length;
         if ($("#" + tree.name + " > ul > li:first").attr("id") == 'noDatasetsFound' || left_to_open == 0) {
             if (typeof tree.onload !== 'undefined') {
                 eval(tree.onload);
