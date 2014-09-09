@@ -64,7 +64,12 @@ if (isset($uid)) {
 $tasks = getTasks($ldap,$baseDN,$userDN,$submittedby,true);
 
 # if we have no task roles, try to get tasks for which we have any role
-if (count($tasks) == 0) {
+# Or if there are only Project Task, get the individual tasks as well
+$onlyProjects = true;
+
+foreach ($tasks as $task) { if ((int)$task['ID'] != 0) { $onlyProjects = false;} }
+
+if (count($tasks) == 0 OR $onlyProjects) {
     $tasks = getTasks($ldap,$baseDN,$userDN,$submittedby,false);
 }
 
