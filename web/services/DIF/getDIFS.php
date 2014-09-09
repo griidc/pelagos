@@ -42,7 +42,14 @@ $dbconn = pdoDBConnect($dbconnstr);
 $tasks = getTasks($personID,true);
 
 # if we have no task roles, try to get tasks for which we have any role
-if (count($tasks) == 0) {
+
+//var_dump($tasks);
+
+$onlyProjects = true;
+
+foreach ($tasks as $task) { if ((int)$task['ID'] != 0) { $onlyProjects = false;} }
+
+if (count($tasks) == 0 OR $onlyProjects) {
     $tasks = getTasks($personID,false);
 }
 

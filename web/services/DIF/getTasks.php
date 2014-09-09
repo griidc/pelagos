@@ -26,7 +26,11 @@ if (isset($_GET["person"]) AND $_GET["person"] != '')
 $rpisTasks = getTasks($personID,true);
 
 # if we have no task roles, try to get tasks for which we have any role
-if (count($rpisTasks) == 0) {
+$onlyProjects = true;
+
+foreach ($rpisTasks as $task) { if ((int)$task['ID'] != 0) { $onlyProjects = false;} }
+
+if (count($rpisTasks) == 0 OR $onlyProjects) {
     $rpisTasks = getTasks($personID,false);
 }
 
