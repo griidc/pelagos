@@ -218,17 +218,17 @@ if ($_POST) {
                         $registry_vals['availability_date'] =  $_POST['availability_date'];
                     if (array_key_exists('access_period',$_POST) and !empty($_POST['access_period'])) {
                         if ($_POST['access_period'] == 'Yes') {
-                            $registry_vals['access_period'] = true;
+                            $registry_vals['access_period'] = 'true';
                             if (array_key_exists('dlstart',$_POST) and !empty($_POST['dlstart']))
                                 $registry_vals['access_period_start'] = "$_POST[dlstart]$_POST[timezone]";
                             if (array_key_exists('access_period_weekdays',$_POST) and !empty($_POST['access_period_weekdays']))
                                 $registry_vals['access_period_weekdays'] = $_POST['access_period_weekdays'];
                         }
-                        else $registry_vals['access_period'] = false;
+                        else $registry_vals['access_period'] = 'false';
                     }
                     if (array_key_exists('data_source_pull',$_POST) and !empty($_POST['data_source_pull'])) {
-                        if ($_POST['data_source_pull'] == 'Yes') $registry_vals['data_source_pull'] = true;
-                        else $registry_vals['data_source_pull'] = false;
+                        if ($_POST['data_source_pull'] == 'Yes') $registry_vals['data_source_pull'] = 'true';
+                        else $registry_vals['data_source_pull'] = 'false';
                     }
                     break;
             }
