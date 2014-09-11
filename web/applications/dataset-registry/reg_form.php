@@ -1305,7 +1305,7 @@ EOT;
                         <span id="qtip_uploadmetadataurl" style="float:right;"><img src="includes/images/info.png"></span>
                         <label for="metadatafile">Metadata File:</label>
                         <?php
-                            if (isset($row['data_server_type']) and $row['data_server_type'] == 'upload' and isset($row['url_metadata']) and $row['url_metadata'] != '') {
+                            if (isset($row['metadata_server_type']) and $row['metadata_server_type'] == 'upload' and isset($row['url_metadata']) and $row['url_metadata'] != '') {
                                 echo "<div class='fwtextboxcont'>";
                                 echo "<input disabled type='text' style='width:100%' value='$row[url_metadata]' style='color:black; background-color:transparent; padding:2px;'></div>";
                                 echo "<input type='hidden' name='upload_metadataurl' value='$row[url_metadata]'>";
@@ -1346,7 +1346,7 @@ EOT;
                             <input
                                 <?php formDisabled($formDisabled); ?>
                                 name="url_metadata_sftp" id="sshmetadatapath" type="text" style="width:100%"
-                                value="<?php if (isset($row['data_server_type']) and $row['data_server_type'] == 'SFTP' and isset($row['url_metadata'])) echo $row['url_metadata']; ?>"/>
+                                value="<?php if (isset($row['metadata_server_type']) and $row['metadata_server_type'] == 'SFTP' and isset($row['url_metadata'])) echo $row['url_metadata']; ?>"/>
                         </div>
                         <input type="button" value="Browse..." onclick="showFileBrowser('metadata','%home%');">
                     </p>
@@ -1363,7 +1363,7 @@ EOT;
                             <input
                                 <?php formDisabled($formDisabled); ?>
                                 name="url_metadata_http" id="url_metadata_http" style="width:100%"
-                                value="<?php if (isset($row['data_server_type']) and $row['data_server_type'] == 'HTTP' and isset($row['url_metadata'])) echo $row['url_metadata']; ?>"/>
+                                value="<?php if (isset($row['metadata_server_type']) and $row['metadata_server_type'] == 'HTTP' and isset($row['url_metadata'])) echo $row['url_metadata']; ?>"/>
                         </div>
                     </p>
                 </fieldset>
