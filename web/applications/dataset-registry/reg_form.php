@@ -1378,8 +1378,8 @@ EOT;
     <input type="hidden" name="urlvalidate" id="urlvalidate"/>
     <input type="hidden" name="access_period_weekdays" id="weekdayslst"/>
     <input type="hidden" name="timezone" id="timezone"/>
-    <input type="hidden" name="data_server_type" id="servertype" value="<?php if ($tabselect==0) echo 'upload'; elseif ($tabselect==1) echo 'HTTP'; elseif ($tabselect==2) echo 'SFTP'; ?>"/>
-    <input type="hidden" name="metadata_server_type" id="md_servertype" value="<?php if ($md_tabselect==0) echo 'upload'; elseif ($md_tabselect==1) echo 'HTTP'; elseif ($md_tabselect==2) echo 'SFTP'; ?>"/>
+    <input type="hidden" name="data_server_type" id="servertype" value="<?php if ($tabselect==0) echo 'upload'; elseif ($tabselect==1) echo 'SFTP'; elseif ($tabselect==2) echo 'HTTP'; ?>"/>
+    <input type="hidden" name="metadata_server_type" id="md_servertype" value="<?php if ($md_tabselect==0) echo 'upload'; elseif ($md_tabselect==1) echo 'SFTP'; elseif ($md_tabselect==2) echo 'HTTP'; ?>"/>
 
     <br>
     <div style="text-align:center;">
