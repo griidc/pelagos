@@ -327,7 +327,7 @@ function formDisabled($isDisabled)
                 required: true,
                 url: true
             },
-            metadataurl:
+            url_metadata_http:
             {
                 required: false,
                 url: true
@@ -1358,11 +1358,11 @@ EOT;
                 <fieldset>
                     <p>
                         <span id="qtip_metadataurl" style="float:right;"><img src="includes/images/info.png"></span>
-                        <label for="metadataurl">Metadata File URL:</label>
+                        <label for="url_metadata_http">Metadata File URL:</label>
                         <div class="fwtextboxcont">
                             <input
                                 <?php formDisabled($formDisabled); ?>
-                                name="metadataurl" id="metadataurl" style="width:100%"
+                                name="url_metadata_http" id="url_metadata_http" style="width:100%"
                                 value="<?php if (isset($row['data_server_type']) and $row['data_server_type'] == 'HTTP' and isset($row['url_metadata'])) echo $row['url_metadata']; ?>"/>
                         </div>
                     </p>
