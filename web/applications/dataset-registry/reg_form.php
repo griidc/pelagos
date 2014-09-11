@@ -150,10 +150,10 @@ if (isset($reg_id))
             case "upload":
                 $tabselect = 0;
                 break;
-            case "HTTP":
+            case "SFTP":
                 $tabselect = 1;
                 break;
-            case "SFTP":
+            case "HTTP":
                 $tabselect = 2;
                 break;
         }
@@ -163,10 +163,10 @@ if (isset($reg_id))
             case "upload":
                 $md_tabselect = 0;
                 break;
-            case "HTTP":
+            case "SFTP":
                 $md_tabselect = 1;
                 break;
-            case "SFTP":
+            case "HTTP":
                 $md_tabselect = 2;
                 break;
         }
