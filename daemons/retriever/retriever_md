@@ -26,8 +26,8 @@ open(my $run,'>',$runfile) or die "cannot open run file $runfile: $!";
 print $run $$;
 close($run);
 
-my $conf = Config::PHPINI->read('/etc/griidc.ini');
-my $conf_notifications = Config::PHPINI->read('/etc/griidc/notifications.ini');
+my $conf = Config::PHPINI->read('/etc/opt/pelagos.ini');
+my $conf_notifications = Config::PHPINI->read("$conf->{paths}->{conf}/notifications.ini");
 $conf->{'notifications'} = $conf_notifications->{'retriever'} if exists $conf_notifications->{'retriever'};
 
 my $logfile  = "$conf->{paths}->{log}/retriever_md";
@@ -38,7 +38,7 @@ $log->autoflush(1);
 
 writelog("retriever_md starting");
 
-my $db_conf = Config::PHPINI->read('/etc/griidc/db.ini');
+my $db_conf = Config::PHPINI->read("$conf->{paths}->{conf}/db.ini");
 my %dbi_type_map = ('postgresql' => 'Pg', 'mysql' => 'mysql');
 my %db = %{$db_conf->{'GOMRI_RW'}};
 
