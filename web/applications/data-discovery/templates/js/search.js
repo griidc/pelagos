@@ -112,7 +112,7 @@ function showDatasets(by,id,peopleId) {
             $('#dataset_listing').html(data);
             $('#tabs').tabs({
                 activate: function(event, ui) {
-                    if ($('#show_all_extents_checkbox').attr('checked')) {
+                    if ($('#show_all_extents_checkbox').is(':checked')) {
                         var selectedTab = $("#tabs").tabs('option','active');
                         myGeoViz.removeAllFeaturesFromMap();
                         if (datasets[selectedTab]) {

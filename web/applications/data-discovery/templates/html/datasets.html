@@ -250,7 +250,7 @@ var tabIndex = 0;
 
 <script>
 
-if ($('#show_all_extents_checkbox').attr('checked')) {
+if ($('#show_all_extents_checkbox').is(':checked')) {
     if (datasets[0]) {
         for (var i=0; i<datasets[0].length; i++) {
             myGeoViz.addFeatureFromWKT(datasets[0][i].geom,{'udi':datasets[0][i].udi});
@@ -259,7 +259,7 @@ if ($('#show_all_extents_checkbox').attr('checked')) {
 }
 
 $('table.datasets tr').hover(function() {
-    if (!$('#show_all_extents_checkbox').attr('checked')) {
+    if (!$('#show_all_extents_checkbox').is(':checked')) {
         for (var j=0; j<datasets.length; j++) {
             for (var i=0; i<datasets[j].length; i++) {
                 if (datasets[j][i].udi == $(this).attr('udi')) {
@@ -271,7 +271,7 @@ $('table.datasets tr').hover(function() {
     myGeoViz.highlightFeature('udi',$(this).attr('udi'));
 },function() {
     myGeoViz.unhighlightFeature('udi',$(this).attr('udi'));
-    if (!$('#show_all_extents_checkbox').attr('checked')) {
+    if (!$('#show_all_extents_checkbox').is(':checked')) {
         myGeoViz.removeAllFeaturesFromMap();
     }
 });
