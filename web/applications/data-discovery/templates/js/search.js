@@ -47,7 +47,6 @@ $(document).ready(function() {
     });
 
     $(document).on('filterDrawn',function() {
-        $('#drawGeoFilterButton').button("enable");
         $('body').css('cursor','');
         $('#olmap').css('cursor','');
         $('input').css('cursor','');
@@ -125,6 +124,7 @@ function showDatasets(by,id,peopleId) {
                 }
             }
             );
+            $('#drawGeoFilterButton').button("enable");
         },
         "error": function(jqXHR, textStatus, errorThrown) {
             alert("Fail: " + textStatus + " " + errorThrown + jqXHR.getResponseHeader());
