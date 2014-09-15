@@ -373,7 +373,7 @@
         {% endif %}
             <tr>
             <td height="100%">
-            <div style="height:100%">
+            <div style="height:100%;overflow:hidden">
                     <h3>Legend:&nbsp; 
                     <span id="statusicon" title="DIF is Open. DIF has been started and saved for this dataset, but has not yet been submitted to GRIIDC."><img src="/images/icons/cross.png">&nbsp;Open</span>&nbsp;- 
                     <span id="statusicon" title="DIF is locked and is in review. DIF has been completed and submitted to GRIIDC for review and approval."><img src="/images/icons/error.png">&nbsp;Submitted</span>&nbsp;- 
@@ -384,7 +384,7 @@
                    
                     <h1>Datasets</h1>
                     <hr width="100%">
-                     <div style="position:relative;height:100%">
+                     <div style="position:relative;height:100%;overflow:auto;">
                         <div id="diftree" class="diftree">
                             <a class="jstree-anchor" href="#"><img src="/images/icons/throbber.gif"> Loading...</a>
                         </div>

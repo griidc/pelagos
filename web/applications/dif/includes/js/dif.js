@@ -30,7 +30,7 @@ $(document).ready(function()
     
     personid = $('#personid').val();
     
-    $(document).on("difReady", function()
+    $(document).one("difReady", function()
     {
         var $_GET = getQueryParams(document.location.search);
         if (typeof $_GET["id"] != 'undefined')
@@ -471,8 +471,7 @@ function loadDIFS(Status,Person,ShowEmpty)
     if (personid > 0 && !Person) {Person = personid;}
     $.ajax({
         cache: false,
-        //url: "/services/DIF/getDIFS.php",
-        url: "/~mvandeneijnden/dif-service/getDIFS.php",
+        url: "/services/DIF/getDIFS.php",
         type: 'GET',
         datatype: 'json',
         data: {'function':'loadDIFS','status':Status,'person':Person,'showempty':ShowEmpty}
