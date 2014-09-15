@@ -38,7 +38,8 @@ $alltasks="";
 $registry_fields = array( 'registry_id', 'dataset_udi', 'dataset_title', 'dataset_abstract', 'dataset_originator', 'dataset_poc_name', 'dataset_poc_email', 'access_status', 'doi',
                           'data_server_type', 'url_data', 'availability_date', 'access_period', 'access_period_start', 'access_period_weekdays', 'data_source_pull',
                           'metadata_server_type', 'url_metadata',
-                          'userid', 'submittimestamp');
+                          'userid', 'submittimestamp',
+                          'dataset_download_status','metadata_dl_status');
 
 $DBH = OpenDB('GOMRI_RW');
 
@@ -203,17 +204,26 @@ if ($_POST) {
                         else {
                             move_uploaded_file($_FILES["datafile"]["tmp_name"],"$dest_dir/" . $_FILES["datafile"]["name"]);
                             $data_file_path = "file://$dest_dir/" . $_FILES["datafile"]["name"];
+                            $registry_vals['dataset_download_status'] = 'None';
                         }
                     }
                     $registry_vals['url_data'] = $data_file_path;
                     break;
                 case 'SFTP':
-                    if (array_key_exists('url_data_sftp',$_POST) and !empty($_POST['url_data_sftp']))
+                    if (array_key_exists('url_data_sftp',$_POST) and !empty($_POST['url_data_sftp'])) {
                         $registry_vals['url_data'] = $_POST['url_data_sftp'];
+                        if (array_key_exists('sftp_force_data_download',$_POST) and !empty($_POST['sftp_force_data_download'])) {
+                            $registry_vals['dataset_download_status'] = 'None';
+                        }
+                    }
                     break;
                 case 'HTTP':
-                    if (array_key_exists('url_data_http',$_POST) and !empty($_POST['url_data_http']))
+                    if (array_key_exists('url_data_http',$_POST) and !empty($_POST['url_data_http'])) {
                         $registry_vals['url_data'] = $_POST['url_data_http'];
+                        if (array_key_exists('http_force_data_download',$_POST) and !empty($_POST['http_force_data_download'])) {
+                            $registry_vals['dataset_download_status'] = 'None';
+                        }
+                    }
                     if (array_key_exists('availability_date',$_POST) and !empty($_POST['availability_date']))
                         $registry_vals['availability_date'] =  $_POST['availability_date'];
                     if (array_key_exists('access_period',$_POST) and !empty($_POST['access_period'])) {
@@ -246,16 +256,25 @@ if ($_POST) {
                         else {
                             move_uploaded_file($_FILES["metadatafile"]["tmp_name"],"$dest_dir/" . $_FILES["metadatafile"]["name"]);
                             $metadata_file_path = "file://$dest_dir/" . $_FILES["metadatafile"]["name"];
+                            $registry_vals['metadata_dl_status'] = 'None';
                         }
                     }
                     $registry_vals['url_metadata'] = $metadata_file_path;
                     break;
                 case 'SFTP':
                     $registry_vals['url_metadata'] = $_POST['url_metadata_sftp'];
+                    if (array_key_exists('sftp_force_metadata_download',$_POST) and !empty($_POST['sftp_force_metadata_download'])) {
+                        $registry_vals['metadata_dl_status'] = 'None';
+                    }
                     break;
                 case 'HTTP':
-                    if (array_key_exists('url_metadata_http',$_POST) and !empty($_POST['url_metadata_http']))
+                    if (array_key_exists('url_metadata_http',$_POST) and !empty($_POST['url_metadata_http'])) {
                         $registry_vals['url_metadata'] = $_POST['url_metadata_http'];
+                        if (array_key_exists('http_force_metadata_download',$_POST) and !empty($_POST['http_force_metadata_download'])) {
+                            echo "FORCE DOWNLOAD";
+                            $registry_vals['metadata_dl_status'] = 'None';
+                        }
+                    }
             }
 
             $registry_vals['userid'] = $uid;

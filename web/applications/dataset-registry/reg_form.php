@@ -614,6 +614,7 @@ function hideFileBrowser() {
 function setPath(type,path)
 {
     jQuery("#ssh" + type + "path").val("file://" + path);
+    document.getElementById('sftp_force_' + type + '_download').style.visibility = 'hidden';
 }
 
 var progressBarInt;
@@ -1151,10 +1152,14 @@ EOT;
                         <div class="fwtextboxcont">
                             <input
                                 <?php formDisabled($formDisabled); ?>
+                                onchange="document.getElementById('sftp_force_data_download').style.visibility = 'hidden';"
                                 name="url_data_sftp" id="sshdatapath" type="text" style="width:100%"
                                 value="<?php if (isset($row['data_server_type']) and $row['data_server_type'] == 'SFTP' and isset($row['url_data'])) echo $row['url_data']; ?>"/>
                         </div>
                         <input type="button" value="Browse..." onclick="showFileBrowser('data','%home%');">
+                        <div id="sftp_force_data_download">
+                            <?php if (isset($row['data_server_type']) and $row['data_server_type'] == 'SFTP' and isset($row['url_data'])) echo "<input type='checkbox' name='sftp_force_data_download'>import this file again from the same path"; ?>
+                        </div>
                     </p>
                 </fieldset>
             </div> <!-- tabs-2 -->
@@ -1167,8 +1172,11 @@ EOT;
                         <label for="dataurl">Dataset File URL:</label>
                         <div class="fwtextboxcont">
                             <input <?php formDisabled($formDisabled); ?>
-                            onchange="checkDOIFields();" name="url_data_http" id="dataurl" type="text" style="width:100%"
+                            onchange="checkDOIFields(); document.getElementById('http_force_data_download').style.visibility = 'hidden';" name="url_data_http" id="dataurl" type="text" style="width:100%"
                             value="<?php if (isset($row['data_server_type']) and $row['data_server_type'] == 'HTTP' and isset($row['url_data'])) echo $row['url_data']; ?>"/>
+                        </div>
+                        <div id="http_force_data_download">
+                            <?php if (isset($row['data_server_type']) and $row['data_server_type'] == 'HTTP' and isset($row['url_data'])) echo "<input type='checkbox' name='http_force_data_download'>download this file again from the same URL"; ?>
                         </div>
                     </p>
                 </fieldset>
@@ -1345,10 +1353,14 @@ EOT;
                         <div class="fwtextboxcont">
                             <input
                                 <?php formDisabled($formDisabled); ?>
+                                onchange="document.getElementById('sftp_force_metadata_download').style.visibility = 'hidden';"
                                 name="url_metadata_sftp" id="sshmetadatapath" type="text" style="width:100%"
                                 value="<?php if (isset($row['metadata_server_type']) and $row['metadata_server_type'] == 'SFTP' and isset($row['url_metadata'])) echo $row['url_metadata']; ?>"/>
                         </div>
                         <input type="button" value="Browse..." onclick="showFileBrowser('metadata','%home%');">
+                        <div id="sftp_force_metadata_download">
+                            <?php if (isset($row['metadata_server_type']) and $row['metadata_server_type'] == 'SFTP' and isset($row['url_metadata'])) echo "<input type='checkbox' name='sftp_force_metadata_download'>import this file again from the same path"; ?>
+                        </div>
                     </p>
                  </fieldset>
             </div> <!-- md-tabs-2 -->
@@ -1362,8 +1374,12 @@ EOT;
                         <div class="fwtextboxcont">
                             <input
                                 <?php formDisabled($formDisabled); ?>
+                                onchange="document.getElementById('http_force_metadata_download').style.visibility = 'hidden';"
                                 name="url_metadata_http" id="url_metadata_http" style="width:100%"
                                 value="<?php if (isset($row['metadata_server_type']) and $row['metadata_server_type'] == 'HTTP' and isset($row['url_metadata'])) echo $row['url_metadata']; ?>"/>
+                        </div>
+                        <div id="http_force_metadata_download">
+                            <?php if (isset($row['metadata_server_type']) and $row['metadata_server_type'] == 'HTTP' and isset($row['url_metadata'])) echo "<input type='checkbox' name='http_force_metadata_download'>download this file again from the same URL"; ?>
                         </div>
                     </p>
                 </fieldset>
