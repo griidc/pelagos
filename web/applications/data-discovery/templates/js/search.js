@@ -52,7 +52,7 @@ $(document).ready(function() {
         $('input').css('cursor','');
         trees['tree'].geo_filter=myGeoViz.getFilter();
         applyFilter();
-        $('#clearGeoFilterButton').button('enable');
+        $('#clearGeoFilterButton').button('disable');
     });
 
     $("#show_all_extents_checkbox").button();
@@ -129,6 +129,9 @@ function showDatasets(by,id,peopleId) {
             $('#filter-button').button('enable');
             $('#clear-button').button('enable');
             $('#drawGeoFilterButton').button("enable");
+            if (myGeoViz.getFilter()) {
+                $('#clearGeoFilterButton').button('enable');
+            }
         },
         "error": function(jqXHR, textStatus, errorThrown) {
             alert("Fail: " + textStatus + " " + errorThrown + jqXHR.getResponseHeader());
