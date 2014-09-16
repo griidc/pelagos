@@ -271,7 +271,6 @@ if ($_POST) {
                     if (array_key_exists('url_metadata_http',$_POST) and !empty($_POST['url_metadata_http'])) {
                         $registry_vals['url_metadata'] = $_POST['url_metadata_http'];
                         if (array_key_exists('http_force_metadata_download',$_POST) and !empty($_POST['http_force_metadata_download'])) {
-                            echo "FORCE DOWNLOAD";
                             $registry_vals['metadata_dl_status'] = 'None';
                         }
                     }
@@ -293,7 +292,8 @@ if ($_POST) {
                 $_SESSION['submitok'] = true;
             }
             else {
-                $dMessage= "A database error happened, please contact the administrator <a href=\"mailto:griidc@gomri.org?subject=DOI Error\">griidc@gomri.org</a>.<br/>".$sth->errorInfo();
+                $errorInfo = $sth->errorInfo();
+                $dMessage= "A database error happened, please contact the administrator <a href=\"mailto:griidc@gomri.org?subject=DOI Error\">griidc@gomri.org</a>.<br/><br/>$errorInfo[2]";
                 drupal_set_message($dMessage,'error',false);
             }
 

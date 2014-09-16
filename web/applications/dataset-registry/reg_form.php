@@ -956,7 +956,7 @@ fieldset {
 
 <div class="cleair" style="width:auto; padding:10px;">
 
-<form id="regForm" name="regForm" action="" method="post" enctype="multipart/form-data" target="post_frame">
+<form id="regForm" name="regForm" action="" method="post" enctype="multipart/form-data">
 
     <fieldset>
         <p>
