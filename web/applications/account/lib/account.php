@@ -100,18 +100,21 @@ function query_RPIS($email) {
 }
 
 function query_griidc_people($email) {
-    $connString = sprintf('host=%s port=5432 dbname=%s user=%s password=%s',GRIIDC_PEOPLE_HOST,GRIIDC_PEOPLE_DBNAME,GRIIDC_PEOPLE_USER,GRIIDC_PEOPLE_PASSWORD);
-    $dbconn = pg_connect($connString) or die("Couldn't Connect " . pg_last_error());
-    $returnds = pg_query($dbconn, "select first_name,middle_name,last_name,business_phone,job_title,suffix,email from people where upper(email) = '" . strtoupper($email) . "'");
+    $connString = sprintf('pgsql:host=%s;port=5432;dbname=%s',GRIIDC_PEOPLE_HOST,GRIIDC_PEOPLE_DBNAME);
+    $dbh = new PDO($connString,GRIIDC_PEOPLE_USER,GRIIDC_PEOPLE_PASSWORD,array(PDO::ATTR_PERSISTENT => true));
+    $sth = $dbh->prepare('SELECT first_name,middle_name,last_name,business_phone,job_title,suffix,email
+                          FROM people WHERE upper(email) = ?');
+    $sth->execute(array(strtoupper($email)));
+    $result = $sth->fetch();
     $retval['found'] = false;
-    while ($row = pg_fetch_row($returnds)){
-        $retval['Person']['FirstName'] = $row[0];
-        $retval['Person']['MiddleName'] = $row[1];
-        $retval['Person']['LastName'] = $row[2];
-        $retval['Person']['PhoneNum'] = $row[3];
-        $retval['Person']['JobTitle'] = $row[4];
-        $retval['Person']['Suffix'] = $row[5];
-        $retval['Person']['Email'] = $row[6];
+    if ($result) {
+        $retval['Person']['FirstName'] = $result['first_name'];
+        $retval['Person']['MiddleName'] = $result['middle_name'];
+        $retval['Person']['LastName'] = $result['last_name'];
+        $retval['Person']['PhoneNum'] = $result['business_phone'];
+        $retval['Person']['JobTitle'] = $result['job_title'];
+        $retval['Person']['Suffix'] = $result['suffix'];
+        $retval['Person']['Email'] = $result['email'];
         $retval['found'] = true;
     }
     if ($retval['found']) {
