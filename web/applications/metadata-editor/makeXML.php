@@ -437,14 +437,14 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
             $node->setAttribute('gml:id','boundingTemporalExtent');
             break;
         }
-        case '!gmd:version': #temporary disabled
+        case 'gmd:version':
         {
-            $node->setAttribute('nilReason','Unknown');
-            $child = $node->firstChild;
-            if (isset($child))
-            {
-                $node->removeChild($child);
-            }
+            $node->setAttribute('gco:nilReason','inapplicable');
+            // $child = $node->firstChild;
+            // if (isset($child))
+            // {
+                // $node->removeChild($child);
+            // }
 
             break;
         }
