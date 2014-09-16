@@ -180,7 +180,7 @@ $app->get('/new', function () use ($app) {
 });
 
 $app->post('/new', function () use ($app) {
-    $email = $app->request()->post('email');
+    $email = substr($app->request()->post('email'),0,100);
     if (empty($email)) {
         drupal_set_message("You must enter an email address.",'error');
         return $app->render('verify_form.html');
@@ -588,7 +588,7 @@ $app->post('/password', function () use ($app) {
         $env = $app->environment();
         $app->redirect("$env[SCRIPT_NAME]/password/reset");
     }
-    $email = $app->request()->post('email');
+    $email = substr($app->request()->post('email'),0,100);
     if (empty($email)) {
         drupal_set_message("You must enter an email address.",'error');
         return $app->render('password_form.html');
