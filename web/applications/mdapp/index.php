@@ -805,6 +805,7 @@ function getDataManagerOldDataModel($udi) {
     }
 
     $data->execute(array("%$fc%",$projSec));
+    $fullname = ''; $email = '';
     if ($result = $data->fetchAll()) {
         // will only have one
         $email = $result[0]['EmailInfo_Address'];
@@ -821,6 +822,7 @@ function getUserMail($gomri_userid) {
     $ldap = connectLDAP($GLOBALS['ldap']['ldap']['server']);
     $baseDN = 'dc=griidc,dc=org';
     $userDNs = getDNs($ldap,$baseDN,"uid=$gomri_userid");
+    $cn = ''; $mail='';
     if (count($userDNs) > 0) {
         $userDN = $userDNs[0]['dn'];
         $attributes = getAttributes($ldap,$userDN,array('cn','mail'));
