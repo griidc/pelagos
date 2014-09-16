@@ -651,7 +651,9 @@ $app->get('/password/:action', function ($action) use ($app) {
 
     # check to make sure minimum password age has been met
     if (!password_old_enough($ppolicy,$person)) {
-        drupal_set_message("You cannot change your password again until it has met the minimum password age.",'error');
+        $pwdMinAge = $ppolicy['pwdminage'][0];
+        $pwdMinAgeHours = round($pwdMinAge/60/60);
+        drupal_set_message("You can only change your password once every $pwdMinAgeHours hours.",'error');
         return;
     }
 
