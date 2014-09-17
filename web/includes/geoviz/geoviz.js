@@ -1210,6 +1210,15 @@ function GeoViz()
         }
     }
     
+    this.getSingleFeatureClass = function ()
+    {
+        var ClassName = vlayer.features[0].geometry.CLASS_NAME;
+        if (typeof ClassName != 'undefined')
+        {
+            return ClassName.split('.')[2];
+        }
+    }
+    
     this.zoomIn = function ()
     {
         map.zoomIn();

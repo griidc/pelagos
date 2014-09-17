@@ -13,6 +13,7 @@ function MapWizard(json)
     var startOffDrawing = true;
     var orderEnum;
     var errMsg;
+    var geometryType;
     
     var wizGeoViz;
     
@@ -43,7 +44,8 @@ function MapWizard(json)
     {
         smlGeoViz.goHome();
         smlGeoViz.removeImage();
-        smlGeoViz.removeAllFeaturesFromMap(); 
+        smlGeoViz.removeAllFeaturesFromMap();
+        smlGeoViz.flashMap();
     }
     
     //function haveGML(gml)
@@ -77,6 +79,8 @@ function MapWizard(json)
             smlGeoViz.removeAllFeaturesFromMap();
             var addedFeature = smlGeoViz.addFeatureFromWKT(eventObj);
             smlGeoViz.gotoAllFeatures();
+            geometryType = smlGeoViz.getSingleFeatureClass();
+            console.log(geometryType);
         });
         
         $(gmlField).change(function() {
@@ -197,6 +201,19 @@ function MapWizard(json)
                 }
             }
         });
+        
+        switch (geometryType)
+        {
+            case 'Polygon':
+                $("#drawPolygon").click();
+                break;
+            case 'Point':
+                $("#drawPoint").click();
+                break;
+            case 'Line':
+                $("#drawLine").click();
+                break;
+        }
         
         drawMap();
     }
