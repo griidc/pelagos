@@ -185,7 +185,8 @@ $app->post('/new', function () use ($app) {
         drupal_set_message("You must enter an email address.",'error');
         return $app->render('verify_form.html');
     }
-    $personsResult = ldap_search($GLOBALS['LDAP'], "dc=griidc,dc=org", "(mail=$email)", array("uid"));
+    $email_safe = preg_replace('/([()*\\\\])/','\\\\$1',$email);
+    $personsResult = ldap_search($GLOBALS['LDAP'], "dc=griidc,dc=org", "(mail=$email_safe)", array("uid"));
     $persons = ldap_get_entries($GLOBALS['LDAP'], $personsResult);
     if ($persons['count'] > 0) {
         drupal_set_message("An account already exists for the email address \"$email\".",'error');
