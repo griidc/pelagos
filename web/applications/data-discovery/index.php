@@ -270,7 +270,7 @@ $app->get('/metadata/:udi', function ($udi) use ($app) {
     FROM metadata left join registry on registry.registry_id = metadata.registry_id
     WHERE 
         metadata.registry_id = (   select registry_id 
-                                    from curr_reg_view 
+                                    from registry_view 
                                     where dataset_udi = ?
                                 )";
 
@@ -385,7 +385,7 @@ $app->get('/metadata/:directory/:file', function ($directory,$file) use ($app) {
     $udi = preg_replace('/-metadata.xml$/','',$file);
     $udi = preg_replace('/-/',':',$udi);
     $dbms = OpenDB("GOMRI_RO");
-    $SQL = "SELECT dataset_udi,metadata_xml FROM curr_reg_view JOIN metadata on metadata.registry_id = curr_reg_view.registry_id WHERE metadata_status = 'Accepted' AND dataset_udi = ?";
+    $SQL = "SELECT dataset_udi,metadata_xml FROM registry_view JOIN metadata on metadata.registry_id = registry_view.registry_id WHERE metadata_status = 'Accepted' AND dataset_udi = ?";
     $data = $dbms->prepare($SQL);
     $data->execute(array($udi));
     $raw_data = $data->fetch();

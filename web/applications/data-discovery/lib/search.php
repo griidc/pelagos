@@ -84,9 +84,9 @@ function get_accepted_metadata($category) {
                     ]
                 ) AS character varying
             ) AS last_modified_date
-            FROM curr_reg_view
-            JOIN metadata on metadata.registry_id = curr_reg_view.registry_id
-            WHERE metadata_status = 'Accepted' AND curr_reg_view.registry_id $others LIKE '00%' ORDER BY dataset_udi";
+            FROM registry_view
+            JOIN metadata on metadata.registry_id = registry_view.registry_id
+            WHERE metadata_status = 'Accepted' AND registry_view.registry_id $others LIKE '00%' ORDER BY dataset_udi";
     $dbms = OpenDB("GOMRI_RO");
     $data = $dbms->prepare($SQL);
     $data->execute();
