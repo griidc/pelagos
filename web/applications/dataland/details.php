@@ -3,6 +3,7 @@ error_reporting(E_ALL);
 ini_set("display_errors", 1);
 
 include_once '/usr/local/share/GRIIDC/php/aliasIncludes.php';
+require_once '/usr/local/share/GRIIDC/php/auth.php'; # for user_is_logged_in_somehow()
 
 drupal_add_js('/includes/jquery-validation/jquery.validate.js',array('type'=>'external'));
 
@@ -39,6 +40,7 @@ $twig->addExtension(new Twig_Extensions_GRIIDC());
 
 $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
 $pageLessBaseUrl="$protocol$_SERVER[SERVER_NAME]";
+$server_name = $_SERVER['SERVER_NAME'];
 
 $udi='';
 $dsscript='';
@@ -52,6 +54,7 @@ $URI = preg_split('/\?/',$_SERVER['REQUEST_URI']);
 $URIs = preg_split('/\//',$_SERVER['REQUEST_URI']);
 
 $udi = urldecode($URIs[2]);
+$logged_in = user_is_logged_in_somehow(); # returns bool, true if logged in.
 
 if ($udi <> '')
 {
@@ -265,6 +268,17 @@ if ($prow != null)
 -->
 
 <script>
+
+$(document).ready(function() {
+    // If cookie is set and we are logged in (per php variable as a literal in js) remove it and initiate download
+    if ((<?php if ($logged_in) { print "1"; } else { print "0";} ?>) && (typeof $.cookie('dl_attempt_udi_cookie') != 'undefined')) {
+        var dl_cookie = $.cookie('dl_attempt_udi_cookie');
+        $.cookie("dl_attempt_udi_cookie", null, { path: "/", domain: "<?php print "$server_name"; ?>" });
+        showDatasetDownload(dl_cookie);
+    }
+});
+
+
 
 var dlmap = new GeoViz();
 
