@@ -158,6 +158,45 @@ if ($_POST) {
                 $newsub = (int) substr($result['maxregid'],17,3) + 1;
                 $newsub = str_pad($newsub, 3,'0',STR_PAD_LEFT);
                 $registry_vals['registry_id'] = $_POST['dataset_udi'].'.'.$newsub;
+                if ($newsub > 1) {
+                    $sth2 = $DBH->prepare('SELECT data_server_type,metadata_server_type FROM registry WHERE registry_id = ?');
+                    $sth2->execute(array($result['maxregid']));
+                    $result2 = $sth2->fetch();
+                    switch ($_POST['data_server_type']) {
+                        case 'upload':
+                            if (!array_key_exists('datafile',$_FILES) or empty($_FILES["datafile"]["name"])) {
+                                $_POST['data_server_type'] = $result2['data_server_type'];
+                            }
+                            break;
+                        case 'SFTP':
+                            if (!array_key_exists('url_data_sftp',$_POST) or empty($_POST['url_data_sftp'])) {
+                                $_POST['data_server_type'] = $result2['data_server_type'];
+                            }
+                            break;
+                        case 'HTTP':
+                            if (!array_key_exists('url_data_http',$_POST) or empty($_POST['url_data_http'])) {
+                                $_POST['data_server_type'] = $result2['data_server_type'];
+                            }
+                            break;
+                    }
+                    switch ($_POST['metadata_server_type']) {
+                        case 'upload':
+                            if (!array_key_exists('metadatafile',$_FILES) or empty($_FILES["metadatafile"]["name"])) {
+                                $_POST['metadata_server_type'] = $result2['metadata_server_type'];
+                            }
+                            break;
+                        case 'SFTP':
+                            if (!array_key_exists('url_metadata_sftp',$_POST) or empty($_POST['url_metadata_sftp'])) {
+                                $_POST['metadata_server_type'] = $result2['metadata_server_type'];
+                            }
+                            break;
+                        case 'HTTP':
+                            if (!array_key_exists('url_metadata_http',$_POST) or empty($_POST['url_metadata_http'])) {
+                                $_POST['metadata_server_type'] = $result2['metadata_server_type'];
+                            }
+                            break;
+                    }
+                }
             }
             else {
                 $sth->execute(array('00.x000.000:%'));
