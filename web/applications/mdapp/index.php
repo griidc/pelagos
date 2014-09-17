@@ -213,7 +213,7 @@ $app->get('/download-metadata-db/:udi', function ($udi) use ($app) {
     FROM metadata left join registry on registry.registry_id = metadata.registry_id
     WHERE
         metadata.registry_id = (   select registry_id
-                                    from curr_reg_view
+                                    from registry_view
                                     where dataset_udi = ?
                                 )";
 
@@ -709,7 +709,7 @@ function createXmlNode($doc,$parent,$nodeName) {
 }
 
 function checkForUDI($udi) {
-    $sql = "SELECT COUNT(*) FROM curr_reg_view where dataset_udi = ?";
+    $sql = "SELECT COUNT(*) FROM registry_view where dataset_udi = ?";
     $dbms = OpenDB("GOMRI_RO");
     $data = $dbms->prepare($sql);
     $data->execute(array($udi));
@@ -862,23 +862,23 @@ function sendEmail($to,$from,$sub,$message,$cc=null) {
 function GetMetadata($type,$format) {
     if(in_array($type,array('Accepted','Submitted','InReview','SecondCheck','BackToSubmitter'))) {
         $sql = "SELECT
-                    curr_reg_view.metadata_status, curr_reg_view.url_metadata, curr_reg_view.dataset_udi,
+                    registry_view.metadata_status, registry_view.url_metadata, registry_view.dataset_udi,
                     coalesce(
                       substring(metadata.registry_id from 1 for 16),
-                      curr_reg_view.dataset_metadata
+                      registry_view.dataset_metadata
                     ) as dataset_metadata,
                     (metadata_xml is not null) as hasxml,
-                    curr_reg_view.submittimestamp,
+                    registry_view.submittimestamp,
                     registry.approval_status as approval
                 FROM
-                    curr_reg_view left join metadata
-                    ON curr_reg_view.registry_id = metadata.registry_id
+                    registry_view left join metadata
+                    ON registry_view.registry_id = metadata.registry_id
                     left join registry
-                    ON curr_reg_view.registry_id = registry.registry_id
+                    ON registry_view.registry_id = registry.registry_id
                 WHERE
-                    curr_reg_view.metadata_status = :status
+                    registry_view.metadata_status = :status
                 AND
-                    curr_reg_view.metadata_dl_status = 'Completed'";
+                    registry_view.metadata_dl_status = 'Completed'";
         
         $dbms = OpenDB("GOMRI_RO");
         $data = $dbms->prepare($sql);
@@ -904,7 +904,7 @@ function writeLog($message) {
 }
 
 function getCurrentState($udi) {
-    $sql  = "select metadata_status from curr_reg_view where dataset_udi = :udi";
+    $sql  = "select metadata_status from registry_view where dataset_udi = :udi";
     $dbms = OpenDB("GOMRI_RO");
     $data = $dbms->prepare($sql);
     $data->bindParam(":udi",$udi);
@@ -915,7 +915,7 @@ function getCurrentState($udi) {
 }
 
 function getUDIPOC($udi) {
-    $sql  = "select dataset_poc_email, dataset_poc_name from curr_reg_view where dataset_udi = :udi";
+    $sql  = "select dataset_poc_email, dataset_poc_name from registry_view where dataset_udi = :udi";
     $dbms = OpenDB("GOMRI_RO");
     $data = $dbms->prepare($sql);
     $data->bindParam(":udi",$udi);
