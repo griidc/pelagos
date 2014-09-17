@@ -10,89 +10,103 @@ require_once 'xmlBuilder.php';
 require_once 'dbMyFunc.php';
 require_once 'owsException.php';
 
+$GLOBALS['pelagos_config'] = parse_ini_file('/etc/opt/pelagos.ini',true);
+require_once $GLOBALS['pelagos_config']['paths']['share'].'/php/db-utils.lib.php';
+
 function getData($params)
 {
 	require 'queries.php';
-	//Parameters predefined as variables.
-	$maxResults = -1;
-	$lastName = '';
-	$q_lastName = '';
-	$q_firstName = '';
-	$firstName = '';
-	$q_Institution = '';
-	$institution = '';
-	$department = '';
-	$q_Department = '';
-	$taskID = '';
-	$projectID = '';
-	$email = '';
 	
-	//Extract parameters into existing variables
-	$rc = extract($params, EXTR_IF_EXISTS);
+    $values = array();
+    $validParams = 0;
 		
 	$outerQuery = $basePersonQuery;
-	
-	if ($taskID <> "")
+
+	if (array_key_exists('taskID',$params) and !empty($params['taskID']))
 	{
-		$outerQuery .= "AND pp.Project_ID = \"$taskID\" ";	
+		$outerQuery .= "AND pp.Project_ID = ?";
+        $values[] = $params['taskID'];
+        $validParams++;
 	}
 	
-	if ($projectID <> "")
+	if (array_key_exists('projectID',$params) and !empty($params['projectID']))
 	{
-		$outerQuery .= "AND pp.Program_ID = \"$projectID\" ";	
+		$outerQuery .= "AND pp.Program_ID = ? ";
+        $values[] = $params['projectID'];
+        $validParams++;
 	}
 		
-	if ($q_lastName <> "")
+	if (array_key_exists('q_lastName',$params) and !empty($params['q_lastName']))
 	{
-		$outerQuery .= "AND p.People_LastName LIKE \"%$q_lastName%\" ";	
+		$outerQuery .= "AND p.People_LastName LIKE ? ";
+        $values[] = "%$params[q_lastName]%";
+        $validParams++;
 	}
 	
-	if ($lastName <> "")
+	if (array_key_exists('lastName',$params) and !empty($params['lastName']))
 	{
-		$outerQuery .= "AND p.People_LastName LIKE \"$lastName\" ";	
+		$outerQuery .= "AND p.People_LastName LIKE ? ";
+        $values[] = $params['lastName'];
+        $validParams++;
 	}
 	
-	if ($q_firstName <> "")
+	if (array_key_exists('q_firstName',$params) and !empty($params['q_firstName']))
 	{
-		$outerQuery .= "AND p.People_FirstName LIKE \"%$q_firstName%\" ";	
+		$outerQuery .= "AND p.People_FirstName LIKE ? ";
+        $values[] = "%$params[q_firstName]%";
+        $validParams++;
 	}
 	
-	if ($firstName <> "")
+	if (array_key_exists('firstName',$params) and !empty($params['firstName']))
 	{
-		$outerQuery .= "AND p.People_FirstName LIKE \"$firstName\" ";	
+		$outerQuery .= "AND p.People_FirstName LIKE ? ";
+        $values[] = $params['firstName'];
+        $validParams++;
 	}
 	
-	if ($q_Institution <> "")
+	if (array_key_exists('q_Institution',$params) and !empty($params['q_Institution']))
 	{
-		$outerQuery .= "AND i.Institution_Name LIKE \"%$q_Institution%\" ";	
+		$outerQuery .= "AND i.Institution_Name LIKE ? ";
+        $values[] = "%$params[q_Institution]%";
+        $validParams++;
 	}
 	
-	if ($institution <> "")
+	if (array_key_exists('institution',$params) and !empty($params['institution']))
 	{
-		$outerQuery .= "AND i.Institution_Name = \"$institution\" ";	
+		$outerQuery .= "AND i.Institution_Name = ? ";
+        $values[] = $params['institution'];
+        $validParams++;
 	}
 	
-	if ($department <> "")
+	if (array_key_exists('department',$params) and !empty($params['department']))
 	{
-		$outerQuery .= "AND d.Department_Name = \"$department\" ";	
+		$outerQuery .= "AND d.Department_Name = ? ";
+        $values[] = $params['department'];
+        $validParams++;
 	}
 	
-	if ($q_Department <> "")
+	if (array_key_exists('q_Department',$params) and !empty($params['q_Department']))
 	{
-		$outerQuery .= "AND d.Department_Name LIKE \"%$q_Department%\" ";	
+		$outerQuery .= "AND d.Department_Name LIKE ? ";
+        $values[] = "%$params[q_Department]%";
+        $validParams++;
 	}
 	
-	if ($email <> "")
+	if (array_key_exists('email',$params) and !empty($params['email']))
 	{
-		$outerQuery .= "AND UPPER(p.People_Email) = \"" . strtoupper($email). "\" ";	
+		$outerQuery .= "AND UPPER(p.People_Email) = ? ";
+        $values[] = strtoupper($params['email']);
+        $validParams++;
 	}
 	
-	if ($maxResults>0)
+	if (array_key_exists('maxResults',$params) and !empty($params['maxResults']))
 	{
-		$outerQuery .= "LIMIT 0,$maxResults";
+		$outerQuery .= "LIMIT 0,?";
+        $values[] = $params['maxResults'];
+        $validParams++;
 	}
 			
-	if ($rc == 0 AND count($params)<>0)
+	if ($validParams == 0 AND count($params) != 0)
 	{
 		$flipParams = array_flip($params);
 		$vars = implode (',',$flipParams);
@@ -106,10 +120,11 @@ function getData($params)
 	}
 		
 	// Execute SQL
-	$outerResult = executeMyQuery($outerQuery);
-	$numberOfRows = mysql_num_rows($outerResult);
-		
-	if ($numberOfRows == 0)
+    $dbh = OpenDB('RIS_RO');
+    $sth = $dbh->prepare($outerQuery);
+    $sth->execute($values);
+
+	if ($sth->rowCount() == 0)
 	{
 		echo showException('NoDataAvailable','No data was available on the selected request!');
 		goto errend;
@@ -121,13 +136,13 @@ function getData($params)
 	$root = $xmlBld->createXmlNode($xmlBld->doc,'gomri');
 	
 	//Add a node of Count with number of returned results.	
-	$xmlBld->addChildValue($root,'Count',$numberOfRows);
+	$xmlBld->addChildValue($root,'Count',$sth->rowCount());
 		
 	//add subnode for Researchers
 	//$innerParentNode = $xmlBld->createXmlNode($root,'Researchers'); 
 	$innerParentNode = $root;
 	
-	while ($row = mysql_fetch_assoc($outerResult)) 
+	while ($row = $sth->fetch(PDO::FETCH_ASSOC))
 	{
 		extract($row,EXTR_PREFIX_ALL,'innr');
 		
