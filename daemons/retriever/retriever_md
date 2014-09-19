@@ -13,6 +13,8 @@ use LWP::UserAgent;
 use LWP::Simple qw(getstore);
 use LWP::Simple::Cookies;
 use IO::File;
+use Pelagos::Logger;
+use Sys::Hostname;
 
 umask 0022;
 
@@ -30,13 +32,10 @@ my $conf = Config::PHPINI->read('/etc/opt/pelagos.ini');
 my $conf_notifications = Config::PHPINI->read("$conf->{paths}->{conf}/notifications.ini");
 $conf->{'notifications'} = $conf_notifications->{'retriever'} if exists $conf_notifications->{'retriever'};
 
-my $logfile  = "$conf->{paths}->{log}/retriever_md";
+my $log = Pelagos::Logger->new("$conf->{paths}->{log}/retriever_md");
+die $log->error if defined $log->error;
 
-my $log = IO::File->new;
-$log->open($logfile,'>>') or die "cannot open log file $logfile: $!";
-$log->autoflush(1);
-
-writelog("retriever_md starting");
+$log->write('retriever_md starting');
 
 my $db_conf = Config::PHPINI->read("$conf->{paths}->{conf}/db.ini");
 my %dbi_type_map = ('postgresql' => 'Pg', 'mysql' => 'mysql');
@@ -62,6 +61,8 @@ $sth->execute();
 my (%md_remote, %md_unknown, %md_missing, %md_filed, @md_approve, %md_bad_reg_id, %md_bad_udi);
 
 my $ua = LWP::UserAgent->new;
+$ua->agent('Retriever/1.0');
+$ua->cookie_jar({});
 
 # loop through all entries that need processing for metadata
 while (my $r = $sth->fetchrow_hashref()) {
@@ -96,25 +97,25 @@ while (my $r = $sth->fetchrow_hashref()) {
             }
 
             unless ($filename) {
-                writelog("[$udi] could not determine filename from $url_metadata");
+                $log->write("[$udi] could not determine filename from $url_metadata");
                 next;
             }
 
             # fetch the file
-            writelog("[$udi] fetching $url_metadata as $filename");
+            $log->write("[$udi] fetching $url_metadata as $filename");
             mkdir($conf->{'paths'}->{'retriever'}) or die $! if !-d $conf->{'paths'}->{'retriever'};
             my $filepath = "$conf->{paths}->{retriever}/$udi.met";
             my $resp_code = getstore($url_metadata,$filepath);
             if ($!) {
                 my $errmsg = "[$udi] unable to fetch $url_metadata to $filepath ($!)";
                 print STDERR "$errmsg\n";
-                writelog($errmsg);
+                $log->write($errmsg);
                 return;
             }
             if ($resp_code != 200) {
                 my $errmsg = "[$udi] unable to fetch $url_metadata to $filepath ($resp_code)";
                 print STDERR "$errmsg\n";
-                writelog($errmsg);
+                $log->write($errmsg);
                 return;
             }
 
@@ -124,7 +125,7 @@ while (my $r = $sth->fetchrow_hashref()) {
             }
 
             # copy metadata file to data store
-            writelog("[$udi] copying metadata file to data store (cp \"$filepath\" \"$conf->{paths}->{data_store}/$udi/$udi.met\")");
+            $log->write("[$udi] copying metadata file to data store (cp \"$filepath\" \"$conf->{paths}->{data_store}/$udi/$udi.met\")");
             copy($filepath,"$conf->{paths}->{data_store}/$udi/$udi.met") or die "Error: could not copy $filepath to $conf->{paths}->{data_store}/$udi/$udi.met ($!)\n";
             unlink $filepath or die "Error: could not delete temp file $filepath ($!)\n";
             $md_filed{$reg_id} = {
@@ -134,7 +135,7 @@ while (my $r = $sth->fetchrow_hashref()) {
 
             # update dataset_metadata (original filename), metadata_dl_status, and metadata_status
             my $sth2 = $dbh->prepare("UPDATE registry SET dataset_metadata = ?, metadata_dl_status = ?, metadata_status = ? WHERE registry_id = ?;");
-            writelog("[$udi] updating dataset_metadata, metadata_dl_status, and metadata_status");
+            $log->write("[$udi] updating dataset_metadata, metadata_dl_status, and metadata_status");
             $sth2->execute($filename,'Completed','Submitted',$reg_id) or die "Couldn't execute statement: " . $sth2->errstr;
 
             # set parameters for submitter notification
@@ -143,7 +144,7 @@ while (my $r = $sth->fetchrow_hashref()) {
             push(@md_approve, { udi => $udi, title => $r->{'dataset_title'}, filename => $filename });
         }
         else {
-            writelog("[$udi] failed to download metadata file from $url_metadata (" . $response->status_line . ")");
+            $log->write("[$udi] failed to download metadata file from $url_metadata (" . $response->status_line . ")");
             my $sth2 = $dbh->prepare("UPDATE registry SET metadata_dl_status = ? WHERE registry_id = ?;");
             $sth2->execute('Error',$reg_id) or die "Couldn't execute statement: " . $sth2->errstr;
         }
@@ -249,7 +250,7 @@ for my $uid (keys %notify) {
     $mail{'Message'} .= "\n\n<p>Thank you,<br>";
     $mail{'Message'} .= "\nThe GRIIDC team</p>";
 
-    writelog("sending confirmation of processed files to submitter ($mail{To})");
+    $log->write("sending confirmation of processed files to submitter ($mail{To})");
     sendmail(%mail) or die $Mail::Sendmail::error;
 }
 
@@ -259,8 +260,8 @@ for my $email (keys %{$conf->{'notifications'}}) {
     my $msg;
 
     my %mail = ( To      => $email,
-                 From    => 'GRIIDC Retriever <retriever@poseidon.tamucc.edu>',
-                 Subject => "Retriever Summary",
+                 From    => 'GRIIDC Metadata Retriever <retriever_md@' . hostname . '>',
+                 Subject => 'Metadata Retriever Summary for ' . hostname,
                  Message => '',
                  'content-type' => 'text/plain; charset="iso-8859-1"'
                );
@@ -291,9 +292,8 @@ for my $email (keys %{$conf->{'notifications'}}) {
     }
 
     if (length $mail{'Message'}) {
-        my $subject = "Retriever Summary";
-        $mail{'Message'} = "Retriever Summary\n$mail{Message}";
-        writelog('sending retriever summary (' . join(',',@types) . ") to: $mail{To}");
+        $mail{'Message'} = "Metadata Retriever Summary\n$mail{Message}";
+        $log->write('sending retriever_md summary (' . join(',',@types) . ") to: $mail{To}");
         sendmail(%mail) or die $Mail::Sendmail::error;
     }
 }
@@ -352,7 +352,7 @@ for my $md (@md_approve) {
     }
 
     my $msg = MIME::Lite->new(
-        From    => 'GRIIDC Retriever <retriever@poseidon.tamucc.edu>',
+        From    => 'GRIIDC Metadata Retriever <retriever_md@' . hostname . '>',
         To      => join(',',@md_approver_emails),
         Subject => "New metadata file for $md->{udi}",
         Type    => 'multipart/mixed',
@@ -382,19 +382,13 @@ for my $md (@md_approve) {
     );
 
     $ENV{'PATH'} = '/usr/sbin';
-    writelog("[$md->{udi}] sending metadata file to: " . join(',',@md_approver_emails));
+    $log->write("[$md->{udi}] sending metadata file to: " . join(',',@md_approver_emails));
     $msg->send;
 }
 
-writelog("retriever_md finished");
+$log->write('retriever_md finished');
 
 # remove run file
 unlink $runfile or die "could not remove run file $runfile: $!";
 
-undef $log;
-
-sub writelog {
-    my $message = shift;
-    my $ts = POSIX::strftime("%Y-%m-%d %H:%M:%S", localtime);
-    print $log "[$ts] $message\n";
-}
+$log->close;

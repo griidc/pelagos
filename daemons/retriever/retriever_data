@@ -11,6 +11,8 @@ use LWP::UserAgent;
 use LWP::Simple qw(getstore);
 use LWP::Simple::Cookies;
 use IO::File;
+use Pelagos::Logger;
+use Sys::Hostname;
 
 umask 0022;
 
@@ -18,13 +20,10 @@ my $conf = Config::PHPINI->read('/etc/opt/pelagos.ini');
 my $conf_notifications = Config::PHPINI->read("$conf->{paths}->{conf}/notifications.ini");
 $conf->{'notifications'} = $conf_notifications->{'retriever'} if exists $conf_notifications->{'retriever'};
 
-my $logfile  = "$conf->{paths}->{log}/retriever_data";
+my $log = Pelagos::Logger->new("$conf->{paths}->{log}/retriever_data");
+die $log->error if defined $log->error;
 
-my $log = IO::File->new;
-$log->open($logfile,'>>') or die "cannot open log file $logfile: $!";
-$log->autoflush(1);
-
-writelog("retriever starting");
+$log->write('retriever_data starting');
 
 my $types = Config::PHPINI->read('/etc/griidc/filetypes.ini');
 
@@ -90,12 +89,12 @@ while (my $r = $sth->fetchrow_hashref()) {
             if ($response->status_line =~ /^403/) {
                 my $sth2 = $dbh->prepare("UPDATE registry SET dataset_download_status = ?, access_status = ? WHERE registry_id = ?;");
                 if ($r->{'access_status'} eq 'Approval') {
-                    writelog("[$udi] remote file at $url_data is restricted. Setting dataset_download_status = 'RemotelyHosted' and access_status = 'Approval'.");
+                    $log->write("[$udi] remote file at $url_data is restricted. Setting dataset_download_status = 'RemotelyHosted' and access_status = 'Approval'.");
                     $sth2->execute('RemotelyHosted','Approval',$reg_id) or die "Couldn't execute statement: " . $sth2->errstr;
                     $data_notify->{'restricted'}->{$reg_id}->{'type'} = 'Approval';
                 }
                 else {
-                    writelog("[$udi] remote file at $url_data is restricted. Setting dataset_download_status = 'RemotelyHosted' and access_status = 'Restricted'.");
+                    $log->write("[$udi] remote file at $url_data is restricted. Setting dataset_download_status = 'RemotelyHosted' and access_status = 'Restricted'.");
                     $sth2->execute('RemotelyHosted','Restricted',$reg_id) or die "Couldn't execute statement: " . $sth2->errstr;
                     $data_notify->{'restricted'}->{$reg_id}->{'type'} = 'Restricted';
                 }
@@ -108,7 +107,7 @@ while (my $r = $sth->fetchrow_hashref()) {
                 }
                 else {
                     my $sth2 = $dbh->prepare("UPDATE registry SET dataset_download_status = ? WHERE registry_id = ?;");
-                    writelog("[$udi] failed to download data file from $url_data (" . $response->status_line . ")");
+                    $log->write("[$udi] failed to download data file from $url_data (" . $response->status_line . ")");
                     $sth2->execute('Error',$reg_id) or die "Couldn't execute statement: " . $sth2->errstr;
                     $data_notify->{'error'}->{$reg_id} = { url => $url_data, status => $response->status_line };
                 }
@@ -210,7 +209,7 @@ for my $uid (keys %notify) {
     $mail{'Message'} .= "\n\n<p>Thank you,<br>";
     $mail{'Message'} .= "\nThe GRIIDC team</p>";
 
-    writelog("sending confirmation of processed files to submitter ($mail{To})");
+    $log->write("sending confirmation of processed files to submitter ($mail{To})");
     sendmail(%mail) or die $Mail::Sendmail::error;
 }
 
@@ -220,8 +219,8 @@ for my $email (keys %{$conf->{'notifications'}}) {
     my $msg;
 
     my %mail = ( To      => $email,
-                 From    => 'GRIIDC Retriever <retriever@poseidon.tamucc.edu>',
-                 Subject => "Retriever Summary",
+                 From    => 'GRIIDC Data Retriever <retriever_data@' . hostname . '>',
+                 Subject => 'Data Retriever Summary for ' . hostname,
                  Message => '',
                  'content-type' => 'text/plain; charset="iso-8859-1"'
                );
@@ -276,21 +275,14 @@ for my $email (keys %{$conf->{'notifications'}}) {
     }
 
     if (length $mail{'Message'}) {
-        my $subject = "Retriever Summary";
-        $mail{'Message'} = "Retriever Summary\n$mail{Message}";
-        writelog('sending retriever summary (' . join(',',@types) . ") to: $mail{To}");
+        $mail{'Message'} = "Data Retriever Summary\n$mail{Message}";
+        $log->write('sending retriever_data summary (' . join(',',@types) . ") to: $mail{To}");
         sendmail(%mail) or die $Mail::Sendmail::error;
     }
 }
 
-writelog("retriever finished");
-undef $log;
-
-sub writelog {
-    my $message = shift;
-    my $ts = POSIX::strftime("%Y-%m-%d %H:%M:%S", localtime);
-    print $log "[$ts] $message\n";
-}
+$log->write('retriever_data finished');
+$log->close;
 
 sub get_filename {
     my ($response,$url_data) = @_;
@@ -322,9 +314,9 @@ sub getdata {
         # mark as html for further review
         $data_notify->{'html'}->{$reg_id} = $url_data;
         my $sth2 = $dbh->prepare("UPDATE registry SET dataset_download_status = ? WHERE registry_id = ?;");
-        writelog("[$udi] remote file at $url_data resolves to HTML page.");
+        $log->write("[$udi] remote file at $url_data resolves to HTML page.");
         $sth2->execute('NeedsReview',$reg_id) or die "Couldn't execute statement: " . $sth2->errstr;
-        writelog("[$udi] saving page found at $url_data to $conf->{paths}->{retriever}/html_pages/$udi.html.");
+        $log->write("[$udi] saving page found at $url_data to $conf->{paths}->{retriever}/html_pages/$udi.html.");
         mkdir("$conf->{paths}->{retriever}/html_pages") or die $! if !-d "$conf->{paths}->{retriever}/html_pages";
         my $filepath = "$conf->{paths}->{retriever}/html_pages/$udi.html";
         my $resp_code = getstore($url_data,$filepath);
@@ -334,13 +326,13 @@ sub getdata {
            ) {
             my $errmsg = "[$udi] unable to fetch $url_data to $filepath ($!)";
             print STDERR "$errmsg\n";
-            writelog($errmsg);
+            $log->write($errmsg);
             return;
         }
         if ($resp_code != 200) {
             my $errmsg = "[$udi] unable to fetch $url_data to $filepath ($resp_code)";
             print STDERR "$errmsg\n";
-            writelog($errmsg);
+            $log->write($errmsg);
             return;
         }
         return;
@@ -357,13 +349,13 @@ sub getdata {
 
     # if we still don't have a filename, give up and report it
     unless ($filename) {
-        writelog("[$udi] could not determine filename from $url_data");
+        $log->write("[$udi] could not determine filename from $url_data");
         $data_notify->{'error'}->{$reg_id} = { url => $url_data, status => 'could not determine filename' };
         return;
     }
 
     # fetch the file
-    writelog("[$udi] fetching $url_data as $filename");
+    $log->write("[$udi] fetching $url_data as $filename");
     mkdir($conf->{'paths'}->{'retriever'}) or die $! if !-d $conf->{'paths'}->{'retriever'};
     my $filepath = "$conf->{paths}->{retriever}/$udi.dat";
     my $resp_code = getstore($url_data,$filepath);
@@ -373,35 +365,35 @@ sub getdata {
        ) {
         my $errmsg = "[$udi] unable to fetch $url_data to $filepath ($!)";
         print STDERR "$errmsg\n";
-        writelog($errmsg);
+        $log->write($errmsg);
         return;
     }
     if ($resp_code != 200) {
         my $errmsg = "[$udi] unable to fetch $url_data to $filepath ($resp_code)";
         print STDERR "$errmsg\n";
-        writelog($errmsg);
+        $log->write($errmsg);
         return;
     }
 
     # check if data store directory exists for this udi
     if (! -d "$conf->{paths}->{data_store}/$udi") {
-        writelog("[$udi] creating data store directory ($conf->{paths}->{data_store}/$udi)");
+        $log->write("[$udi] creating data store directory ($conf->{paths}->{data_store}/$udi)");
         mkdir("$conf->{paths}->{data_store}/$udi") or die "Error: could not create directory: $conf->{paths}->{data_store}/$udi ($!)\n";
     }
 
     # copy data file to data store
-    writelog("[$udi] copying data file to data store (cp \"$filepath\" \"$conf->{paths}->{data_store}/$udi/$udi.dat\")");
+    $log->write("[$udi] copying data file to data store (cp \"$filepath\" \"$conf->{paths}->{data_store}/$udi/$udi.dat\")");
     copy($filepath,"$conf->{paths}->{data_store}/$udi/$udi.dat") or die "Error: could not copy file ($!)\n";
     $data_notify->{'filed'}->{$reg_id} = { url => $url_data, path => "$conf->{paths}->{data_store}/$udi/$udi.dat" };
 
     # delete temp file
-    writelog("[$udi] deleting temp file ($filepath)");
+    $log->write("[$udi] deleting temp file ($filepath)");
     unlink $filepath or die "Error: could not delete temp file: $filepath ($!)\n";
 
     # update dataset_filename (original filename), dataset_download_size, and dataset_download_status
     my $filesize = -s "$conf->{paths}->{data_store}/$udi/$udi.dat";
     my $sth2 = $dbh->prepare("UPDATE registry SET dataset_filename = ?, dataset_download_size = ?, dataset_download_status = ? WHERE registry_id = ?;");
-    writelog("[$udi] updating dataset_filename, dataset_download_size, and dataset_download_status");
+    $log->write("[$udi] updating dataset_filename, dataset_download_size, and dataset_download_status");
     $sth2->execute($filename,$filesize,'Completed',$reg_id) or die "Couldn't execute statement: " . $sth2->errstr;
 
     # set parameters for submitter notification
