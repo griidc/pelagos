@@ -1,6 +1,16 @@
 package Pelagos::DataStore;
 
 use strict;
+use warnings;
+
+our(@ISA, @EXPORT);
+
+sub check_data_store_directory;
+sub check_download_directory;
+
+require Exporter;
+@ISA = qw(Exporter);
+@EXPORT = qw(check_data_store_directory check_download_directory);
 
 sub check_data_store_directory {
     my ($log,$config,$udi,$custodian_uid,$custodian_gid) = @_;
