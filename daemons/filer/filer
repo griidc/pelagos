@@ -11,6 +11,7 @@ use MIME::Types qw(by_suffix);
 use POSIX qw(strftime);
 use IO::Handle;
 use Pelagos::DataStore;
+use Pelagos::Logger;
 
 umask 0022;
 
@@ -20,11 +21,10 @@ my (undef,undef,$apache_uid,$apache_gid) = getpwnam('apache');
 my $config = Config::PHPINI->read('/etc/opt/pelagos.ini');
 my $notifications = Config::PHPINI->read("$config->{paths}->{conf}/notifications.ini");
 
-my $logfile  = "$config->{paths}->{log}/filer";
-open(my $log,'>>',$logfile) or die "cannot open log file $logfile: $!";
-$log->autoflush(1);
+my $log = Pelagos::Logger->new("$config->{paths}->{log}/filer");
+die $log->error if defined $log->error;
 
-writelog($log,"filer starting");
+$log->write('filer starting');
 
 my $types = Config::PHPINI->read("$config->{paths}->{conf}/filetypes.ini");
 
@@ -93,7 +93,7 @@ while (my $r = $sth->fetchrow_hashref()) {
 
     # check if file exists
     if (! -f $filepath) {
-        writelog($log,"[$udi] missing data file: $filepath");
+        $log->write("[$udi] missing data file: $filepath");
         $data_missing{$reg_id} = $url_data;
         next;
     }
@@ -101,7 +101,7 @@ while (my $r = $sth->fetchrow_hashref()) {
     check_data_store_directory($log,$config,$udi,$custodian_uid,$custodian_gid);
 
     # copy data file to data store
-    writelog($log,"[$udi] copying data file to data store (cp \"$filepath\" \"$config->{paths}->{data_store}/$udi/$udi.dat\")");
+    $log->write("[$udi] copying data file to data store (cp \"$filepath\" \"$config->{paths}->{data_store}/$udi/$udi.dat\")");
     copy($filepath,"$config->{paths}->{data_store}/$udi/$udi.dat") or die "Error: could not copy file ($!)\n";
     # make custodian the owner
     chown($custodian_uid,$custodian_gid,"$config->{paths}->{data_store}/$udi/$udi.dat");
@@ -120,7 +120,7 @@ while (my $r = $sth->fetchrow_hashref()) {
     $filename =~ s/.*\///;
     my $filesize = -s "$config->{paths}->{data_store}/$udi/$udi.dat";
     my $sth2 = $dbh->prepare("UPDATE registry SET dataset_filename = ?, dataset_download_size = ?, dataset_download_status = ? WHERE registry_id = ?;");
-    writelog($log,"[$udi] updating dataset_filename, dataset_download_size, and dataset_download_status");
+    $log->write("[$udi] updating dataset_filename, dataset_download_size, and dataset_download_status");
     $sth2->execute($filename,$filesize,'Completed',$reg_id) or die "Couldn't execute statement: " . $sth2->errstr;
 
     # set parameters for submitter notification
@@ -193,7 +193,7 @@ while (my $r = $sth->fetchrow_hashref()) {
 
     # check if file exists
     if (! -f $filepath) {
-        writelog($log,"[$udi] missing metadata file: $filepath");
+        $log->write("[$udi] missing metadata file: $filepath");
         $md_missing{$reg_id} = $url_metadata;
         next;
     }
@@ -201,7 +201,7 @@ while (my $r = $sth->fetchrow_hashref()) {
     check_data_store_directory($log,$config,$udi,$custodian_uid,$custodian_gid);
 
     # copy metadata file to data store
-    writelog($log,"[$udi] copying metadata file to data store (cp \"$filepath\" \"$config->{paths}->{data_store}/$udi/$udi.met\")");
+    $log->write("[$udi] copying metadata file to data store (cp \"$filepath\" \"$config->{paths}->{data_store}/$udi/$udi.met\")");
     copy($filepath,"$config->{paths}->{data_store}/$udi/$udi.met") or die "Error: could not copy file ($!)\n";
     $md_filed{$reg_id} = {
                            from => $filepath,
@@ -217,7 +217,7 @@ while (my $r = $sth->fetchrow_hashref()) {
     my $filename = $url_metadata;
     $filename =~ s/.*\///;
     my $sth2 = $dbh->prepare("UPDATE registry SET dataset_metadata = ?, metadata_dl_status = ?, metadata_status = ? WHERE registry_id = ?;");
-    writelog($log,"[$udi] updating dataset_metadata, metadata_dl_status, and metadata_status");
+    $log->write("[$udi] updating dataset_metadata, metadata_dl_status, and metadata_status");
     $sth2->execute($filename,'Completed','Submitted',$reg_id) or die "Couldn't execute statement: " . $sth2->errstr;
 
     # set parameters for submitter notification
@@ -230,7 +230,7 @@ while (my $r = $sth->fetchrow_hashref()) {
 $dbh->disconnect();
 
 if ($retriever_md) {
-    writelog($log,"Remote metadata found, spawning retriever_md");
+    $log->write("Remote metadata found, spawning retriever_md");
     system('/opt/pelagos/back-end/retriever/retriever_md &');
 }
 
@@ -373,7 +373,7 @@ for my $uid (keys %notify) {
     $mail{'Message'} .= "\n\n<p>Thank you,<br>";
     $mail{'Message'} .= "\nThe GRIIDC team</p>";
 
-    writelog($log,"sending confirmation of processed files to submitter ($mail{To})");
+    $log->write("sending confirmation of processed files to submitter ($mail{To})");
     sendmail(%mail) or die $Mail::Sendmail::error;
 }
 
@@ -471,7 +471,7 @@ for my $email (keys %{$notifications->{'filer'}}) {
     if (length $mail{'Message'}) {
         my $subject = "Filer Summary";
         $mail{'Message'} = "Filer Summary\n$mail{Message}";
-        writelog($log,'sending filer summary (' . join(',',@types) . ") to: $mail{To}");
+        $log->write('sending filer summary (' . join(',',@types) . ") to: $mail{To}");
         sendmail(%mail) or die $Mail::Sendmail::error;
     }
 }
@@ -560,15 +560,9 @@ for my $md (@md_approve) {
     );
 
     $ENV{'PATH'} = '/usr/sbin';
-    writelog($log,"[$md->{udi}] sending metadata file to: " . join(',',@md_approver_emails));
+    $log->write("[$md->{udi}] sending metadata file to: " . join(',',@md_approver_emails));
     $msg->send;
 }
 
-writelog($log,"filer finished");
-close $log;
-
-sub writelog {
-    my ($log,$message) = @_;
-    my $ts = POSIX::strftime("%Y-%m-%d %H:%M:%S", localtime);
-    print $log "[$ts] $message\n";
-}
+$log->write('filer finished');
+$log->close;
