@@ -160,15 +160,10 @@ if ($udi <> '')
     $mconn = new PDO($dbconnstr,
         $mconfig["username"],
         $mconfig["password"],
-        array(PDO::ATTR_PERSISTENT => true));
+        array(PDO::ATTR_PERSISTENT => false));
 
     //$mconn = pdoDBConnect($dbconnstr);
 
-    $mquery = "SET character_set_client = utf8;";
-    pdoDBQuery($mconn,$mquery);
-    $mquery =   "SET character_set_results = utf8;";
-    pdoDBQuery($mconn,$mquery);
-    
     $mquery = "  SELECT * FROM Projects
     JOIN Programs ON Projects.Program_ID = Programs.Program_ID
     LEFT OUTER JOIN FundingSource ON  FundingSource.Fund_ID = Programs.Program_FundSrc
@@ -185,12 +180,9 @@ if ($udi <> '')
 
     $mquery = "
     SELECT 
-	-- CONVERT(CONVERT(CONVERT(People_FirstName USING latin1) USING binary) USING utf8) AS People_FirstName,
-	-- CONVERT(CONVERT(CONVERT(People_LastName USING latin1) USING binary) USING utf8) AS People_LastName,
 	People_FirstName, People_LastName,
     Institution_Name, Department_URL, Department_Name, 
-	CONVERT(CONVERT(CONVERT(Department_Addr1 USING latin1) USING binary) USING utf8) as Department_Addr1,
-	CONVERT(CONVERT(CONVERT(Department_Addr2 USING latin1) USING binary) USING utf8) as Department_Addr2,
+    Department_Addr1, Department_Addr2,
     Department_City, Department_State, Department_Zip, Department_Country, People_Email
     FROM People
     LEFT OUTER JOIN Institutions ON Institutions.Institution_ID = People.People_Institution
