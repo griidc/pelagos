@@ -18,7 +18,6 @@ use Pelagos::DataStore;
 umask 0022;
 
 my (undef,undef,$custodian_uid,$custodian_gid) = getpwnam('custodian');
-my (undef,undef,$apache_uid,$apache_gid) = getpwnam('apache');
 
 my $conf = Config::PHPINI->read('/etc/opt/pelagos.ini');
 my $conf_notifications = Config::PHPINI->read("$conf->{paths}->{conf}/notifications.ini");
@@ -380,7 +379,7 @@ sub getdata {
     }
 
     # check if data store directory exists for this udi
-    check_data_store_directory($log,$conf,$udi,$custodian_uid,$custodian_gid);
+    check_data_store_directory($log,$conf,$udi);
 
     # copy data file to data store
     $log->write("[$udi] copying data file to data store (cp \"$filepath\" \"$conf->{paths}->{data_store}/$udi/$udi.dat\")");
@@ -394,7 +393,7 @@ sub getdata {
     unlink $filepath or die "Error: could not delete temp file: $filepath ($!)\n";
 
     # check if download directory exists for this udi
-    check_download_directory($log,$config,$udi,$apache_uid,$apache_gid,$r->{'access_status'});
+    check_download_directory($log,$config,$udi,$r->{'access_status'});
 
     # link from data file in download directory to data file in data store
     link("$config->{paths}->{data_store}/$udi/$udi.dat","$config->{paths}->{download}/$udi/$udi.dat");
