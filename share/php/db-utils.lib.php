@@ -41,7 +41,7 @@ function OpenDB($database = "unspecified") {
         $user       = $config["username"];
         $password   = $config["password"];
         try {
-            $pdoconnection = new PDO($dbconnstr,$user,$password,array(PDO::ATTR_PERSISTENT => true));
+            $pdoconnection = new PDO($dbconnstr,$user,$password,array(PDO::ATTR_PERSISTENT => false));
         } catch (PDOException $e) {
             $dMessage = 'Connection failed: ' . $e->getMessage();
             drupal_set_message($dMessage,'error');
