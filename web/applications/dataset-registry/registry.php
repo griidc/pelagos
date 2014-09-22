@@ -274,7 +274,9 @@ if ($_POST) {
                 $_SESSION['submitok'] = true;
             }
             else {
-                $dMessage= "A database error happened, please contact the administrator <a href=\"mailto:griidc@gomri.org?subject=DOI Error\">griidc@gomri.org</a>.<br/>".$sth->errorInfo();
+                $errorInfo = $sth->errorInfo();
+                $errorDetails = "URI: $_SERVER[REQUEST_URI]\nDatabase Error Code: $errorInfo[0]\nStatement Error Code: $errorInfo[1]\nStatement Error Message: $errorInfo[2]";
+                $dMessage= "A database error has occurred, please contact GRIIDC at <a href=\"mailto:griidc@gomri.org?subject=Dataset Registration Error&body=".rawurlencode($errorDetails)."\">griidc@gomri.org</a> and provide the following information:<pre>$errorDetails</pre>";
                 drupal_set_message($dMessage,'error',false);
             }
 
