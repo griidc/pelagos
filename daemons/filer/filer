@@ -111,7 +111,7 @@ while (my $r = $sth->fetchrow_hashref()) {
                                to => "$config->{paths}->{data_store}/$udi/$udi.dat"
                            };
 
-    check_download_directory($log,$config,$udi,$apache_uid,$apache_gid,$r);
+    check_download_directory($log,$config,$udi,$apache_uid,$apache_gid,$r->{'access_status'});
 
     # link from data file in download directory to data file in data store
     link("$config->{paths}->{data_store}/$udi/$udi.dat","$config->{paths}->{download}/$udi/$udi.dat");
@@ -209,7 +209,7 @@ while (my $r = $sth->fetchrow_hashref()) {
                              to => "$config->{paths}->{data_store}/$udi/$udi.met"
                          };
 
-    check_download_directory($log,$config,$udi,$apache_uid,$apache_gid,$r);
+    check_download_directory($log,$config,$udi,$apache_uid,$apache_gid,$r->{'access_status'});
 
     # link from metadata file in download directory to metadata file in data store
     link("$config->{paths}->{data_store}/$udi/$udi.met","$config->{paths}->{download}/$udi/$udi.met");
