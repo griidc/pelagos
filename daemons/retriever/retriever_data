@@ -386,17 +386,17 @@ sub getdata {
     copy($filepath,"$conf->{paths}->{data_store}/$udi/$udi.dat") or die "Error: could not copy file ($!)\n";
 
     # make custodian the owner
-    chown($custodian_uid,$custodian_gid,"$config->{paths}->{data_store}/$udi/$udi.dat");
+    chown($custodian_uid,$custodian_gid,"$conf->{paths}->{data_store}/$udi/$udi.dat");
 
     # delete temp file
     $log->write("[$udi] deleting temp file ($filepath)");
     unlink $filepath or die "Error: could not delete temp file: $filepath ($!)\n";
 
     # check if download directory exists for this udi
-    check_download_directory($log,$config->{'paths'}->{'download'},$udi,$r->{'access_status'});
+    check_download_directory($log,$conf->{'paths'}->{'download'},$udi,$r->{'access_status'});
 
     # link from data file in download directory to data file in data store
-    link("$config->{paths}->{data_store}/$udi/$udi.dat","$config->{paths}->{download}/$udi/$udi.dat");
+    link("$conf->{paths}->{data_store}/$udi/$udi.dat","$conf->{paths}->{download}/$udi/$udi.dat");
 
     # add to notify list
     $data_notify->{'filed'}->{$reg_id} = { url => $url_data, path => "$conf->{paths}->{data_store}/$udi/$udi.dat" };
