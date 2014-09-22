@@ -188,6 +188,7 @@ function showDatasetDownload(udi) {
 }
 
 function showGridFTPDetails(udi) {
+    $(".qtip").hide();
     $.ajax({
             "url": "{{baseUrl}}/enableGridFTP/" + udi,
             "success": function(data) {
@@ -197,6 +198,7 @@ function showGridFTPDetails(udi) {
 }
 
 function showWebDownloadDetails(udi) {
+    $(".qtip").hide();
     $.ajax({
             "url": "{{baseUrl}}/initiateWebDownload/" + udi,
             "success": function(data) {
@@ -206,11 +208,12 @@ function showWebDownloadDetails(udi) {
 }
 
 function showDatasetDownloadExternal(udi) {
+    $(".qtip").hide();
     $.ajax({
             "url": "{{baseUrl}}/download-external/" + udi,
             "success": function(data) {
                 $('#dataset_download_content').html(data);
-                $  ('#dataset_download').show();
+                $('#dataset_download').show();
             }
     });
 }
