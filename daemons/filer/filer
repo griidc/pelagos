@@ -17,7 +17,6 @@ use Sys::Hostname;
 umask 0022;
 
 my (undef,undef,$custodian_uid,$custodian_gid) = getpwnam('custodian');
-my (undef,undef,$apache_uid,$apache_gid) = getpwnam('apache');
 
 my $config = Config::PHPINI->read('/etc/opt/pelagos.ini');
 my $notifications = Config::PHPINI->read("$config->{paths}->{conf}/notifications.ini");
@@ -99,19 +98,18 @@ while (my $r = $sth->fetchrow_hashref()) {
         next;
     }
 
-    check_data_store_directory($log,$config,$udi,$custodian_uid,$custodian_gid);
+    check_data_store_directory($log,$config,$udi);
 
     # copy data file to data store
     $log->write("[$udi] copying data file to data store (cp \"$filepath\" \"$config->{paths}->{data_store}/$udi/$udi.dat\")");
     copy($filepath,"$config->{paths}->{data_store}/$udi/$udi.dat") or die "Error: could not copy file ($!)\n";
+
     # make custodian the owner
     chown($custodian_uid,$custodian_gid,"$config->{paths}->{data_store}/$udi/$udi.dat");
-    $data_filed{$reg_id} = {
-                             from => $filepath,
-                               to => "$config->{paths}->{data_store}/$udi/$udi.dat"
-                           };
 
-    check_download_directory($log,$config,$udi,$apache_uid,$apache_gid,$r->{'access_status'});
+    $data_filed{$reg_id} = { from => $filepath, to => "$config->{paths}->{data_store}/$udi/$udi.dat" };
+
+    check_download_directory($log,$config,$udi,$r->{'access_status'});
 
     # link from data file in download directory to data file in data store
     link("$config->{paths}->{data_store}/$udi/$udi.dat","$config->{paths}->{download}/$udi/$udi.dat");
@@ -129,7 +127,6 @@ while (my $r = $sth->fetchrow_hashref()) {
     push(@{$notify{$r->{'userid'}}->{'data'}}, { udi => $udi, title => $r->{'dataset_title'}, filename => $filename });
 
 }
-
 
 # get all registry entries with url_metadata set, and no metadata download status
 $sth = $dbh->prepare("SELECT registry_id, dataset_udi, url_metadata, userid, dataset_title, access_status
@@ -199,7 +196,7 @@ while (my $r = $sth->fetchrow_hashref()) {
         next;
     }
 
-    check_data_store_directory($log,$config,$udi,$custodian_uid,$custodian_gid);
+    check_data_store_directory($log,$config,$udi);
 
     # copy metadata file to data store
     $log->write("[$udi] copying metadata file to data store (cp \"$filepath\" \"$config->{paths}->{data_store}/$udi/$udi.met\")");
@@ -209,7 +206,7 @@ while (my $r = $sth->fetchrow_hashref()) {
                              to => "$config->{paths}->{data_store}/$udi/$udi.met"
                          };
 
-    check_download_directory($log,$config,$udi,$apache_uid,$apache_gid,$r->{'access_status'});
+    check_download_directory($log,$config,$udi,$r->{'access_status'});
 
     # link from metadata file in download directory to metadata file in data store
     link("$config->{paths}->{data_store}/$udi/$udi.met","$config->{paths}->{download}/$udi/$udi.met");
