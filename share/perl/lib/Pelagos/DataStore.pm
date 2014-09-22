@@ -13,7 +13,8 @@ require Exporter;
 @EXPORT = qw(check_data_store_directory check_download_directory);
 
 sub check_data_store_directory {
-    my ($log,$config,$udi,$custodian_uid,$custodian_gid) = @_;
+    my ($log,$config,$udi) = @_;
+    my (undef,undef,$custodian_uid,$custodian_gid) = getpwnam('custodian');
     # check if data store directory exists for this udi
     if (! -d "$config->{paths}->{data_store}/$udi") {
         $log->write("[$udi] creating data store directory $config->{paths}->{data_store}/$udi");
@@ -27,7 +28,8 @@ sub check_data_store_directory {
 }
 
 sub check_download_directory {
-    my ($log,$config,$udi,$apache_uid,$apache_gid,$access_status) = @_;
+    my ($log,$config,$udi,$access_status) = @_;
+    my (undef,undef,$apache_uid,$apache_gid) = getpwnam('apache');
     # check if download directory exists for this udi
     if (! -d "$config->{paths}->{download}/$udi") {
         $log->write($log,"[$udi] creating download directory $config->{paths}->{download}/$udi");
