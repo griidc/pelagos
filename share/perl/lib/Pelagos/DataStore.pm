@@ -27,13 +27,13 @@ sub check_data_store_directory {
 }
 
 sub check_download_directory {
-    my ($log,$config,$udi,$apache_uid,$apache_gid,$r) = @_;
+    my ($log,$config,$udi,$apache_uid,$apache_gid,$access_status) = @_;
     # check if download directory exists for this udi
     if (! -d "$config->{paths}->{download}/$udi") {
         $log->write($log,"[$udi] creating download directory $config->{paths}->{download}/$udi");
         # determine download directory permissions
         my $dl_dir_perms = '0750';
-        $dl_dir_perms = '0751' if $r->{'access_status'} eq 'None';
+        $dl_dir_perms = '0751' if $access_status eq 'None';
         # make directory
         mkdir("$config->{paths}->{download}/$udi",$dl_dir_perms) or die "Error: could not create directory: $config->{paths}->{download}/$udi ($!)\n";
         # make apache the owner
