@@ -123,18 +123,12 @@ if ($udi <> '')
     ";
 
     $prow = pdoDBQuery($pconn,$pquery);
-    //echo $pquery;
-    //var_dump($prow);
     
     $prow = $prow[0];
 
     $dquery = "select * from datasets where dataset_udi='$udi';";
 
     $drow = pdoDBQuery($pconn,$dquery);
-    //echo $pquery;
-    //var_dump($prow);
-
-    //echo "</pre>";
     
     $drow = $drow[0];
 
@@ -162,8 +156,6 @@ if ($udi <> '')
         $mconfig["password"],
         array(PDO::ATTR_PERSISTENT => false));
 
-    //$mconn = pdoDBConnect($dbconnstr);
-
     $mquery = "  SELECT * FROM Projects
     JOIN Programs ON Projects.Program_ID = Programs.Program_ID
     LEFT OUTER JOIN FundingSource ON  FundingSource.Fund_ID = Programs.Program_FundSrc
@@ -176,8 +168,6 @@ if ($udi <> '')
     
     $mrow = $mrow[0];
     
-    //echo $mquery;
-
     $mquery = "
     SELECT 
 	People_FirstName, People_LastName,
@@ -192,19 +182,9 @@ if ($udi <> '')
     ;
     ";
 
-    //echo $mquery;
-
     $mprow = pdoDBQuery($mconn,$mquery);
 
-    // echo "<pre>";
-    // var_dump($prow);
-    // echo "</pre>";
-    
     $mprow = $mprow[0]; 
-
-    // echo '<pre>';
-    // var_dump($mrow);
-    // echo '</pre>';
 }
 
 
@@ -220,14 +200,10 @@ function transform($xml, $xsl) {
         $xsl_doc = new DOMDocument();
         $xsl_doc->load($xsl);
 
-        //var_dump($xsl_doc);
-
         // Proc
         $proc = new XSLTProcessor();
         $proc->importStylesheet($xsl_doc);
         $newdom = $proc->transformToDoc($xml_doc);
-
-        //var_dump($newdom);
 
         return $newdom->saveXML();
     }
@@ -241,23 +217,7 @@ function transform($xml, $xsl) {
 if ($prow != null)
 {
 
-
 ?>
-
-<!--
-<script type="text/javascript" src="//code.jquery.com/jquery-1.8.2.js"></script>
-<script type="text/javascript" src="//code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-<link rel="stylesheet" href="/includes/qTip2/jquery.qtip.min.css" />
-<link rel="stylesheet" href="/data/includes/css/xmlverbatim.css" />
-<link rel="stylesheet" href="//code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
-<link type="text/css" rel="stylesheet" href="/data/includes/css/details.css" type="text/css">
-<script type="text/javascript" src="/includes/openlayers/lib/OpenLayers.js"></script>
-<script type="text/javascript" src="//maps.google.com/maps/api/js?v=3&sensor=false"></script>
-<script type="text/javascript" src="/includes/qTip2/jquery.qtip.min.js"></script>
-
-<script src="/includes/geoviz/geoviz.js"></script>
-
--->
 
 <script>
 
@@ -269,8 +229,6 @@ $(document).ready(function() {
         showDatasetDownload(dl_cookie);
     }
 });
-
-
 
 var dlmap = new GeoViz();
 
@@ -308,7 +266,6 @@ var dlmap = new GeoViz();
             } else {
                 showDatasetDownload('<?php echo $udi;?>')
             }
-            //window.location = '<?php echo "$pageLessBaseUrl/data-discovery?filter=$udi";?>';
         });
         
         $("#downloaddsden").button();
@@ -316,8 +273,6 @@ var dlmap = new GeoViz();
         $("#metadatadl").button().click(function() {
             window.location = '<?php echo "$pageLessBaseUrl/metadata/$udi"; ?>';
         });
-
-         
 
         $.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
             show: {
@@ -442,7 +397,6 @@ var dlmap = new GeoViz();
 
     $(document).on('imready', function(e) {
         <?php echo $dsscript;?>
-        //console.log("added");
     });
 })(jQuery);
 </script>
@@ -517,9 +471,6 @@ var dlmap = new GeoViz();
 </table>
 
 <div>
-<!--<table width="100%">
-<tr height="100%">
-<td colspan="2"> -->
     <div id="tabs" style="width:100%">
         <ul>
             <li><a href="#tabs-1">Details</a></li>
@@ -541,12 +492,9 @@ var dlmap = new GeoViz();
             <p>
             <div id="formatedxml">
             <?php
-            //$xml = file_get_contents("/sftp/data/$udi/$udi.met");
 
-            //$xml = "/sftp/data/$udi/$udi.met";
             $xml = '';
             $xsl = 'xsl/xml-to-html-ISO.xsl';
-            //$xsl = 'xsl/xmlverbatim.xsl';
 
             if ($prow <>'')
             {
@@ -576,9 +524,6 @@ var dlmap = new GeoViz();
         </div>
     </div>
 </div>
-<!--</td>
-</tr>
-</table>-->
 
 <?php
 }
