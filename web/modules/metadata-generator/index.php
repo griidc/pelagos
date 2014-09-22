@@ -71,7 +71,9 @@ $app->get('/:udi', function ($udi) use ($app) {
         $stash['dataset']['metadata_filename'] = preg_replace('/:/','-',$udi) . '-metadata.xml';
 
         header('Content-Type: text/xml');
-        header('Content-Disposition: attachment; filename=' . $stash['dataset']['metadata_filename']);
+        if (!preg_match('/^f$|^false$|^n$|^no$/i',$app->request()->get('download'))) {
+            header('Content-Disposition: attachment; filename=' . $stash['dataset']['metadata_filename']);
+        }
 
         $app->view()->appendData($stash);
         $xml = $app->view()->render('xml/MI_Metadata.xml');
