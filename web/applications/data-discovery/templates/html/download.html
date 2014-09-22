@@ -82,12 +82,13 @@ griidc:{{dataset.udi}}
         <p>
             By downloading data you are expressing agreement with the disclaimer.
         </p>
-           <div>
-                <button onclick="showWebDownloadDetails('{{dataset.udi}}');" style="padding: 0px 0px;"><img src={{baseUrl}}/includes/images/select-arrow.png></button> Download via Web browser<br />
+           <div style="width: 100%; display: table; border: 1px solid #aaa; border-radius: 4px;">
+                <div style="display: table-row; margin: 0 auto;">
+                    <div style="display: table-cell;"><button onclick="showWebDownloadDetails('{{dataset.udi}}');" style="padding: 0px 0px;"><img style="vertical-align:middle;" src="{{baseUrl}}/includes/images/download.png"></button> Direct Download</div>
 {% if guest == false %}
-                <button onclick="showGridFTPDetails('{{dataset.udi}}');" style="padding: 0px 0px;"><img src={{baseUrl}}/includes/images/select-arrow.png></button> Place file on "gomri#griidc" GridFTP endpoint.  (Ideal for very large files) <br />
+                <div style="display: table-cell;"><button onclick="showGridFTPDetails('{{dataset.udi}}');" style="padding: 0px 0px;"><img style="vertical-align:middle;" src="{{baseUrl}}/includes/images/globus.png"></button> Place file on "gomri#griidc" GridFTP endpoint.  (Ideal for very large files)</div>
 {% endif %}
-            <button onclick="jQuery('#dataset_download').hide();" style="padding: 0px 0px;"><img src={{baseUrl}}/includes/images/select-arrow.png border=0></button> Cancel Download<br />
+            <div style="display: table-cell;"><button onclick="jQuery('#dataset_download').hide();" style="padding: 0px 0px;"><img style="vertical-align:middle;" src="{{baseUrl}}/includes/images/cancel.png" border="0"></button> Cancel Download</div>
         </div>
     </div>
 </div>
