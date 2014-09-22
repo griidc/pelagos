@@ -171,7 +171,17 @@ function showDatasetDownload(udi) {
             "url": "{{baseUrl}}/download/" + udi,
             "success": function(data) {
                 $('#dataset_download_content').html(data);
-                $  ('#dataset_download').show();
+                $('#dataset_download').show();
+                $(".dl_button[title]").qtip({
+                    position: {
+                        viewport: $(window),
+                        my: 'bottom left',  // position of arrow
+                        at: 'top right'     // position relative to selector
+                    }, 
+                    style: {
+                        classes: "qtip-shadow qtip-tipped customqtip"
+                    }
+                });
             }
         });
     {% endif %}
