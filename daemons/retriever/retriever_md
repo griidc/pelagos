@@ -123,7 +123,7 @@ while (my $r = $sth->fetchrow_hashref()) {
             }
 
             # check if data store directory exists for this udi
-            check_data_store_directory($log,$conf,$udi);
+            check_data_store_directory($log,$conf->{'paths'}->{'data_store'},$udi);
 
             # copy metadata file to data store
             $log->write("[$udi] copying metadata file to data store (cp \"$filepath\" \"$conf->{paths}->{data_store}/$udi/$udi.met\")");
@@ -137,7 +137,7 @@ while (my $r = $sth->fetchrow_hashref()) {
             unlink $filepath or die "Error: could not delete temp file $filepath ($!)\n";
 
             # check if download directory exists for this udi
-            check_download_directory($log,$conf,$udi,$r->{'access_status'});
+            check_download_directory($log,$conf->{'paths'}->{'download'},$udi,$r->{'access_status'});
 
             # link from metadata file in download directory to metadata file in data store
             link("$conf->{paths}->{data_store}/$udi/$udi.met","$conf->{paths}->{download}/$udi/$udi.met");
