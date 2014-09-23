@@ -3,7 +3,10 @@
 function makeXML($xml)
 {
     echo '<pre>';
-    //var_dump($_POST);
+    var_dump($_POST);
+    echo '</pre>';
+    
+    //exit;
     
     $xmldocstring = base64_decode($_POST["__ldxmldoc"]);
     $doc = null;
@@ -15,10 +18,6 @@ function makeXML($xml)
     }
         
     createNodesXML($xml,$doc);
-    
-    echo '</pre>';
-    
-    
     
     $dMessage = 'Succesfully Created XML file:';
     drupal_set_message($dMessage,'status');
@@ -54,7 +53,6 @@ function createBlankXML()
     return $newdoc;
 }
 
-
 function createNodesXML($xml,$doc)
 {
     
@@ -68,9 +66,9 @@ function createNodesXML($xml,$doc)
     
     $now = date('c');
     
-    $xmlComment = "Created with GRIIDC Metadata Editor 14.08 on $now";
-    $commentNode = $doc->createComment($xmlComment);
-    $commentNode = $doc->appendChild($commentNode);
+    // $xmlComment = "Created with GRIIDC Metadata Editor 14.08 on $now";
+    // $commentNode = $doc->createComment($xmlComment);
+    // $commentNode = $doc->appendChild($commentNode);
     
     $xpathdoc = new DOMXpath($doc);
     
@@ -365,15 +363,52 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
             $node->setAttribute('codeSpace',$codeSpace);
             break;
         }
-        case 'gmd:EX_Extent':
+        case 'gmd:description':
         {
-            $node->setAttribute('id','boundingExtent');
+            #Move up a few parent nodes to remove EX_Extent
+            $newParent = $parent->parentNode;
+            
+            #Here some node needs to removed and eventually re-created.
+            $newParent->removeChild($parent);
+            
+            #Recreating the node EX_Extent
+            $node = $doc->createElement('gmd:EX_Extent');
+            $node = $newParent->appendChild($node);
+            $node->setAttribute('id','descriptiveExtent');
+            
+            $parent = $node;
+            
+            $node = $doc->createElement('gmd:description');
+            $node = $parent->appendChild($node);
+
             break;
         }
         case 'gmd:polygons':
         {
+            #Move up a few parent nodes to remove EX_Extent
+            $newParent = $parent->parentNode;
+            $grandParent = $newParent->parentNode;
+            $superParent = $grandParent->parentNode;
             
-            $parent->removeChild($node);
+            #Here some nodes need to removed and eventually re-created.
+            $superParent->removeChild($grandParent);
+            
+            #Creating childs nodes from EX_Extent trough gmd:polygon
+            $node = $doc->createElement('gmd:EX_Extent');
+            $node = $superParent->appendChild($node);
+            $node->setAttribute('id','boundingExtent');
+            
+            $parent = $node;
+            
+            $node = $doc->createElement('gmd:geographicElement');
+            $node = $parent->appendChild($node);
+            
+            $parent = $node;
+            
+            $node = $doc->createElement('gmd:EX_BoundingPolygon');
+            $node = $parent->appendChild($node);
+            
+            $parent = $node;
             
             $node = $doc->createElement('gmd:polygon');
             $node = $parent->appendChild($node);
@@ -402,8 +437,6 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
             {
                 $node->appendChild($doc->importNode($polygonNode, TRUE));
             }
-            
-            
             
             /*
             # b-method
@@ -439,7 +472,10 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
         }
         case 'gmd:version':
         {
-            $node->setAttribute('gco:nilReason','inapplicable');
+            if ($fieldvalue == "")
+            {
+                $node->setAttribute('gco:nilReason','inapplicable');
+            }
             // $child = $node->firstChild;
             // if (isset($child))
             // {
