@@ -13,5 +13,6 @@
     
     $('#BPL1_{{instanceName}}').change(function() {
         geowizard.haveGML($(this).val());
+        geowizard.flashMap();
     });
 	 
