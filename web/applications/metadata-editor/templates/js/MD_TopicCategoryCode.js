@@ -28,12 +28,19 @@ function addTopicKWItem{{instanceName}}()
 		
 	var option=document.createElement("option");
 	option = tpkList.options[tpkList.selectedIndex];
+       
+    option.innerHTML = tpkList.options[tpkList.selectedIndex].innerHTML; // Needed for IE
+    option.value = tpkList.options[tpkList.selectedIndex].value; // Needed for IE
 	
 	rs = findSpot(tpkSel.options,option.value);
 		
 	tpkSel.add(option,tpkSel.options[rs]);
 	
-	tpkList.remove(tpkList.selectedIndex);
+    try {
+        tpkList.remove(tpkList.selectedIndex);
+    } catch (e) {
+        console.log(e.message)
+    }   
 	
 	tpkSel.selectedIndex = tpkSel.length-1;
 	
@@ -55,7 +62,11 @@ function removeTopicKWItem{{instanceName}}()
 	
 	tpkList.add(option,tpkList.options[rs]);
 	
-	tpkSel.remove(tpkSel.selectedIndex);
+    try {
+        tpkSel.remove(tpkSel.selectedIndex);
+    } catch (e) {
+        console.log(e.message)
+    }
 	
 	tpkSel.selectedIndex = tpkSel.length-1;
 	
@@ -67,6 +78,7 @@ function removeTopicKWItem{{instanceName}}()
 
 function makeTopiclist{{instanceName}}()
 {
+    //debugger;
 	var tpkSel=document.getElementById("TOPKselect_{{instanceName}}");
 	var tpkTxt=document.getElementById("TOPK_{{instanceName}}");
 	var txt="";
