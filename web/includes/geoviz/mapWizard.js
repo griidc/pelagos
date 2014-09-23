@@ -119,11 +119,9 @@ function MapWizard(json)
         
         var mymap = $('#mapwiz table#maptoolstbl tbody tr td').first();
         //$(mymap).append("<div />").attr("id","olmap").css({width:$(this).width(),height:$(this).height()});
-        $(mymap).append("<div />").attr("id","olmap").css({width:100,height:100});
+        $(mymap).append("<div />").attr("id","olmap").css({width:100,height:600});
         //.html('<div id="olmap" style="width: 400px;height: 500px"></div>');
         wizGeoViz.initMap('olmap',{'onlyOneFeature':true,'allowModify':true,'allowDelete':true});
-        
-          
 
         $.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
             show: {
