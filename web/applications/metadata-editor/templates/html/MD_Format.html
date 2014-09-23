@@ -11,7 +11,7 @@
 {% if xmlArray["gmd:version"]["gco:CharacterString"] != "" %}
 <input value="{{xmlArray["gmd:version"]["gco:CharacterString"]}}" type="hidden" id="MDF2_{{instanceName}}" size="80" name="{{instanceType}}-gmd:version-gco:CharacterString"/>
 {% else %}
-<input value="" type="hidden" id="MDF2_{{instanceName}}" size="80" name="{{instanceType}}-gmd:version-gco:CharacterString"/>
+<input value="" type="hidden" id="MDF2_{{instanceName}}" size="80" name="{{instanceType}}-gmd:version"/>
 {% endif %}
 
 <tr><td>
