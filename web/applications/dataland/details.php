@@ -25,6 +25,7 @@ drupal_add_js('/data-discovery/js/search.js',array('type'=>'external'));
 drupal_add_css("$_SERVER[SCRIPT_NAME]/includes/css/status.css",array('type'=>'external'));
 
 $GLOBALS['griidc'] = parse_ini_file('/etc/griidc.ini',true);
+$GLOBALS['pelagos'] = parse_ini_file('/etc/opt/pelagos.ini',true);
 $GLOBALS['config'] = parse_ini_file('config.ini',true);
 
 require_once 'Twig_Extensions_GRIIDC.php';
@@ -73,7 +74,7 @@ if ($udi <> '')
     
     # Toggle per ini file parameter the enforcement of dataset downloadability requiring accepted metadata 
     $condCase = '';
-    if( (isset($GLOBALS['griidc']['system']['enforce_approved_metadata'] ) and ( $GLOBALS['griidc']['system']['enforce_approved_metadata'] == 1 ))) {
+    if( (isset($GLOBALS['pelagos']['system']['enforce_approved_metadata'] ) and ( $GLOBALS['pelagos']['system']['enforce_approved_metadata'] == 1 ))) {
         $condCase = "WHEN metadata_status <> 'Accepted' THEN 1";
     }
     
@@ -458,7 +459,9 @@ var dlmap = new GeoViz();
             <?php
             $dl_ok = 0;
             # if either metadata has been approved, or we are not enforcing rule, or flag not set in ini altogether THEN ok to download, otherwise not.
-            if( ($prow['metadata_status'] == 'Accepted') or (!(( isset($GLOBALS['griidc']['system']['enforce_approved_metadata'] ) and ( $GLOBALS['griidc']['system']['enforce_approved_metadata'] == 1 ))))) {
+            if ($prow['metadata_status'] == 'Accepted') {
+                $dl_ok = 1;
+            } elseif  (isset($GLOBALS['pelagos']['system']['enforce_approved_metadata'] ) and ( $GLOBALS['pelagos']['system']['enforce_approved_metadata'] == 0 )) {
                 $dl_ok = 1;
             } else {
                 $dl_ok = 0;
