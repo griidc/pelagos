@@ -175,7 +175,7 @@ $app->get('/datasets/:filter/:by/:id/:geo_filter', function ($filter,$by,$id,$ge
     }
 
     # toggle whether to enforce new availability rules per ini file parameter
-    if( (isset($GLOBALS['griidc']['syswide']['enforce_approved_metadata'] ) and ( $GLOBALS['griidc']['syswide']['enforce_approved_metadata'] == 1 ))) {
+    if( (isset($GLOBALS['griidc']['system']['enforce_approved_metadata'] ) and ( $GLOBALS['griidc']['system']['enforce_approved_metadata'] == 1 ))) {
         $unrestricted_datasets = get_registered_datasets(getDBH('GOMRI'),array_merge($reg_filters,array('availability=available')),$filter,$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
         $restricted_datasets = get_registered_datasets(getDBH('GOMRI'),array_merge($reg_filters,array('availability=available_with_restrictions')),$filter,$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
         $md_under_review_datasets = get_registered_datasets(getDBH('GOMRI'),array_merge($reg_filters,array('availability=unavailable_pending_metadata_acceptance')),$filter,$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
@@ -447,7 +447,7 @@ $app->get('/download/:udi', function ($udi) use ($app) {
 
     $approved_md_udis=getApprovedMetadataUDIs(); 
     $dl_ok = 0;
-    if( (isset($approved_md_udis["$udi"])) or (!(( isset($GLOBALS['griidc']['syswide']['enforce_approved_metadata'] ) and ( $GLOBALS['griidc']['syswide']['enforce_approved_metadata'] == 1 ))))) {
+    if( (isset($approved_md_udis["$udi"])) or (!(( isset($GLOBALS['griidc']['system']['enforce_approved_metadata'] ) and ( $GLOBALS['griidc']['system']['enforce_approved_metadata'] == 1 ))))) {
         $dl_ok = 1;
     } else {
         $dl_ok = 0;
@@ -536,7 +536,7 @@ $app->get('/initiateWebDownload/:udi', function ($udi) use ($app) {
     
     $approved_md_udis=getApprovedMetadataUDIs(); 
     $dl_ok = 0;
-    if( (isset($approved_md_udis["$udi"])) or (!(( isset($GLOBALS['griidc']['syswide']['enforce_approved_metadata'] ) and ( $GLOBALS['griidc']['syswide']['enforce_approved_metadata'] == 1 ))))) {
+    if( (isset($approved_md_udis["$udi"])) or (!(( isset($GLOBALS['griidc']['system']['enforce_approved_metadata'] ) and ( $GLOBALS['griidc']['system']['enforce_approved_metadata'] == 1 ))))) {
         $dl_ok = 1;
     } else {
         $dl_ok = 0;
