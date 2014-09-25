@@ -127,11 +127,13 @@ JOIN
     (
         SELECT
             dataset_uid,
-                CASE WHEN d3.dataset_udi IS NULL THEN '' ELSE d3.dataset_udi END || ' ' ||
-                CASE WHEN title IS NULL THEN '' ELSE title END || ' ' ||
-                CASE WHEN abstract IS NULL THEN '' ELSE abstract END || ' ' ||
-                CASE WHEN p2.\"Title\" IS NULL THEN '' ELSE p2.\"Title\" END || ' ' ||
-                CASE WHEN dataset_originator IS NULL THEN '' ELSE dataset_originator END 
+            CONCAT(
+                d3.dataset_udi, ' ',
+                title, ' ',
+                abstract, ' ',
+                p2.\"Title\", ' ',
+                dataset_originator
+            )
             AS search_field
         FROM datasets d3
         LEFT JOIN (
@@ -147,7 +149,7 @@ JOIN
         LEFT JOIN projects p2 ON p2.\"ID\" = d3.project_id
     ) AS d2
 
-    JOIN search_temp ON d2.search_field ~* ('\\y' || search_temp.search_word || '\\y')
+    JOIN search_temp ON d2.search_field ~* CONCAT('\\y', search_temp.search_word, '\\y')
     GROUP BY d2.dataset_uid
 
 ) ranked ON ranked.dataset_uid = d.dataset_uid";
@@ -160,12 +162,14 @@ JOIN
     (
         SELECT
             registry_id,
-                CASE WHEN r3.dataset_udi IS NULL THEN substr(registry_id,1,16) ELSE r3.dataset_udi END  || ' ' ||
-                CASE WHEN dataset_title IS NULL THEN '' ELSE dataset_title END || ' ' ||
-                CASE WHEN dataset_abstract IS NULL THEN '' ELSE dataset_abstract END || ' ' ||
-                CASE WHEN dataset_originator IS NULL THEN '' ELSE dataset_originator END || ' ' ||
-                CASE WHEN p2.\"Title\" IS NULL THEN '' ELSE p2.\"Title\" END || ' ' ||
-                CASE WHEN submittimestamp IS NULL THEN '' ELSE to_char(submittimestamp,'YYYY') END
+            CONCAT(
+                CASE WHEN r3.dataset_udi IS NULL THEN substr(registry_id,1,16) ELSE r3.dataset_udi END, ' ',
+                dataset_title, ' ',
+                dataset_abstract, ' ',
+                dataset_originator, ' ',
+                p2.\"Title\", ' ',
+                to_char(submittimestamp,'YYYY')
+            )
             AS search_field
         FROM registry r3
         INNER JOIN
