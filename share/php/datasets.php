@@ -127,10 +127,10 @@ JOIN
     (
         SELECT
             dataset_uid,
-                d3.dataset_udi || ' ' ||
-                title || ' ' ||
-                abstract || ' ' ||
-                p2.\"Title\" || ' ' ||
+                CASE WHEN d3.dataset_udi IS NULL THEN '' ELSE d3.dataset_udi END || ' ' ||
+                CASE WHEN title IS NULL THEN '' ELSE title END || ' ' ||
+                CASE WHEN abstract IS NULL THEN '' ELSE abstract END || ' ' ||
+                CASE WHEN p2.\"Title\" IS NULL THEN '' ELSE p2.\"Title\" END || ' ' ||
                 CASE WHEN dataset_originator IS NULL THEN '' ELSE dataset_originator END 
             AS search_field
         FROM datasets d3
@@ -161,11 +161,11 @@ JOIN
         SELECT
             registry_id,
                 CASE WHEN r3.dataset_udi IS NULL THEN substr(registry_id,1,16) ELSE r3.dataset_udi END  || ' ' ||
-                dataset_title || ' ' ||
-                dataset_abstract || ' ' ||
-                dataset_originator || ' ' ||
-                p2.\"Title\" || ' ' ||
-                to_char(submittimestamp,'YYYY')
+                CASE WHEN dataset_title IS NULL THEN '' ELSE dataset_title END || ' ' ||
+                CASE WHEN dataset_abstract IS NULL THEN '' ELSE dataset_abstract END || ' ' ||
+                CASE WHEN dataset_originator IS NULL THEN '' ELSE dataset_originator END || ' ' ||
+                CASE WHEN p2.\"Title\" IS NULL THEN '' ELSE p2.\"Title\" END || ' ' ||
+                CASE WHEN submittimestamp IS NULL THEN '' ELSE to_char(submittimestamp,'YYYY') END
             AS search_field
         FROM registry r3
         INNER JOIN
