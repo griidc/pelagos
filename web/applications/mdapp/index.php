@@ -37,7 +37,6 @@ drupal_add_library('system', 'jquery.cookie');
 global $user;
 $GLOBALS['pelagos_config'] = parse_ini_file('/etc/opt/pelagos.ini',true);
 $GLOBALS['module_config'] = parse_ini_file('config.ini',true);
-$GLOBALS['storage'] = parse_ini_file($GLOBALS['pelagos_config']['paths']['conf'].'/storage.ini',true);
 $GLOBALS['logfile_location'] = $GLOBALS['module_config']['Logfiles']['logfilePath'].'/'.$GLOBALS['logfile_name'];
 $GLOBALS['ldap'] = parse_ini_file($GLOBALS['pelagos_config']['paths']['conf'].'/ldap.ini',true);
 $GLOBALS['smtp'] = parse_ini_file($GLOBALS['pelagos_config']['paths']['conf'].'/smtp.ini',true);
@@ -104,7 +103,7 @@ $app->get('/download-metadata/:udi', function ($udi) use ($app) {
     }
     $dataset = $datasets[0];
    
-    $dl_dir = $GLOBALS['storage']['storage']['data_download_store'];
+    $dl_dir = $GLOBALS['pelagos_config']['paths']['data_download'];
     $met_file = "$dl_dir/$dataset[udi]/$dataset[udi].met";
     if (file_exists($met_file)) {
         $info = finfo_open(FILEINFO_MIME_TYPE);
