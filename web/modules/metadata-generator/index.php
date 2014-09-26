@@ -3,10 +3,12 @@
 require_once '/usr/local/share/Slim/Slim/Slim.php';
 require_once '/usr/local/share/Slim-Extras/Views/TwigView.php';
 
-require_once '/usr/local/share/GRIIDC/php/db-utils.lib.php';
-require_once '/usr/local/share/GRIIDC/php/rpis.php';
-require_once '/usr/local/share/GRIIDC/php/datasets.php';
-require_once '/usr/local/share/GRIIDC/php/codelists.php';
+$GLOBALS['pelagos_config']  = parse_ini_file('/etc/opt/pelagos.ini',true);
+
+require_once $GLOBALS['pelagos_config']['paths']['share'].'/php/db-utils.lib.php';
+require_once $GLOBALS['pelagos_config']['paths']['share'].'/php/rpis.php';
+require_once $GLOBALS['pelagos_config']['paths']['share'].'/php/datasets.php';
+require_once $GLOBALS['pelagos_config']['paths']['share'].'/php/codelists.php';
 
 $GLOBALS['config'] = parse_ini_file('config.ini',true);
 
