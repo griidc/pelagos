@@ -14,9 +14,10 @@ define('RPIS_TASK_BASEURL','http://localhost/services/RIS/getTaskDetails.php');
 //define('RPIS_TASK_BASEURL','http://proteus.tamucc.edu/services/RPIS/getTaskDetails.php');
 //define('RPIS_TASK_BASEURL','http://data.gulfresearchinitiative.org/services/RPIS/getTaskDetails.php');
 
-include_once '/usr/local/share/GRIIDC/php/pdo.php';
+$pelagos_config  = parse_ini_file('/etc/opt/pelagos.ini',true);
+include_once $pelagos_config['paths']['share'].'/php/pdo.php';
 
-$configini = parse_ini_file("/etc/griidc/db.ini",true);
+$configini = parse_ini_file($pelagos_config['paths']['conf'].'/db.ini',true);
 $config = $configini["GOMRI_RW"];
 
 $dbconnstr = 'pgsql:host='. $config["host"];
