@@ -2,9 +2,6 @@
 error_reporting(E_ALL);
 ini_set("display_errors", 1);
 
-include_once '/usr/local/share/GRIIDC/php/aliasIncludes.php';
-require_once '/usr/local/share/GRIIDC/php/auth.php'; # for user_is_logged_in_somehow()
-
 drupal_add_js('/includes/jquery-validation/jquery.validate.js',array('type'=>'external'));
 
 drupal_add_css("$_SERVER[SCRIPT_NAME]/includes/css/xmlverbatim.css",array('type'=>'external'));
@@ -28,9 +25,12 @@ $GLOBALS['griidc'] = parse_ini_file('/etc/griidc.ini',true);
 $GLOBALS['pelagos'] = parse_ini_file('/etc/opt/pelagos.ini',true);
 $GLOBALS['config'] = parse_ini_file('config.ini',true);
 
+include_once $GLOBALS['pelagos']['paths']['share'].'/php/aliasIncludes.php';
+require_once $GLOBALS['pelagos']['paths']['share'].'/php/auth.php'; # for user_is_logged_in_somehow()
+
 require_once 'Twig_Extensions_GRIIDC.php';
 
-include_once '/usr/local/share/GRIIDC/php/pdo.php';
+include_once $GLOBALS['pelagos']['paths']['share'].'/php/pdo.php';
 
 require_once '/usr/share/pear/Twig/Autoloader.php';
 Twig_Autoloader::register();
