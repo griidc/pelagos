@@ -1,7 +1,7 @@
 <?php
 
-require_once('/usr/local/share/GRIIDC/php/drupal.php');
 $GLOBALS['config'] = parse_ini_file('/etc/griidc.ini',true);
+require_once $GLOBALS['config']['paths']['share'].'/php/drupal.php';
 $GLOBALS['ldap'] = parse_ini_file($GLOBALS['config']['paths']['conf'].'/ldap.ini',true);
 
 function connectLDAP($ldaphost) {

@@ -6,8 +6,10 @@
 // Returns: Folder list op datasets by task.
 // Purpose: To return data gather from the RPIS service and database to show a list of datasets by task.
 
-include_once '/usr/local/share/GRIIDC/php/ldap.php';
-include_once '/usr/local/share/GRIIDC/php/drupal.php';
+$config  = parse_ini_file('/etc/opt/pelagos.ini',true);
+
+include_once $config['paths']['share'].'/php/ldap.php';
+include_once $config['paths']['share'].'/php/drupal.php';
 
 drupal_add_css('includes/css/dtree.css',array('type'=>'external'));
 drupal_add_js('includes/js/dtree.js',array('type'=>'external'));

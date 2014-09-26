@@ -1,7 +1,9 @@
 <?php
 
-include_once '/usr/local/share/GRIIDC/php/ldap.php';
-include_once '/usr/local/share/GRIIDC/php/drupal.php';
+$config  = parse_ini_file('/etc/opt/pelagos.ini',true);
+
+include_once $config['paths']['share'].'/php/ldap.php';
+include_once $config['paths']['share'].'/php/drupal.php';
 
 class griidcMailer
 {

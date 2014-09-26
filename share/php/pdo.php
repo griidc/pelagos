@@ -1,7 +1,9 @@
 <?php
 //$dsn = 'pgsql:host=server.somewhere.edu;port=5432;dbname=name_of_database;user=username;password=Pas5W0rd!';
 
-include_once '/usr/local/share/GRIIDC/php/drupal.php';
+$config  = parse_ini_file('/etc/opt/pelagos.ini',true);
+
+include_once $config['paths']['share'].'/php/drupal.php';
 
 function pdoDBConnect($dsn) {
     try {
