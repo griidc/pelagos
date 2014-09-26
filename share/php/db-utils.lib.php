@@ -8,7 +8,7 @@
 #
 # Author: Williamson, Dec 2013
 #
-# Requires: access to centralized /etc/griidc/db.ini
+# Requires: access to centralized db.ini
 
 function OpenDB($database = "unspecified") {
 
