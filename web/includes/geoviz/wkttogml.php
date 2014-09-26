@@ -3,7 +3,8 @@
 //error_reporting(E_ALL);
 //ini_set("display_errors", 1);
 
-include_once '/usr/local/share/GRIIDC/php/pdo.php';
+$GLOBALS['pelagos_config']  = parse_ini_file('/etc/opt/pelagos.ini',true);
+include_once $GLOBALS['pelagos_config']['paths']['share'].'/php/pdo.php';
 
 function addGMLID($gml)
 {
@@ -72,7 +73,7 @@ if (isset($_POST["wkt"]))
 	$wkt = $_POST["wkt"];
 }
 
-$configini = parse_ini_file("/etc/griidc/db.ini",true);
+$configini = parse_ini_file($GLOBALS['pelagos_config']['paths']['conf'].'/db.ini',true);
 $config = $configini["GOMRI_RW"];
 
 $dbconnstr = 'pgsql:host='. $config["host"];
