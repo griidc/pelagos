@@ -1,6 +1,6 @@
 <?php
 
-include '/usr/local/share/GRIIDC/php/griidcMailer.php';
+include $GLOBALS['pelagos_config']['paths']['share'].'/php/griidcMailer.php';
 
 foreach ($registry_vals as $key => $value) {
     $registry_vals[$key] = htmlspecialchars($value);

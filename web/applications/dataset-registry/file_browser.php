@@ -1,7 +1,7 @@
 <?php
 
-require_once '/usr/local/share/GRIIDC/php/drupal.php';
-require_once '/usr/local/share/GRIIDC/php/dif-registry.php';
+require_once $GLOBALS['pelagos_config']['paths']['share'] . '/php/drupal.php';
+require_once $GLOBALS['pelagos_config']['paths']['share'] . '/php/dif-registry.php';
 
 if (array_key_exists('dir',$_GET)) {
 

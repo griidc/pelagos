@@ -5,16 +5,16 @@ if (!file_exists('config.ini')) {
     exit;
 }
 
-$GRIIDC_PHP = '/opt/pelagos/share/php';
-include_once "$GRIIDC_PHP/aliasIncludes.php";
-require_once "$GRIIDC_PHP/ldap.php";
-include_once "$GRIIDC_PHP/drupal.php";
-require_once "$GRIIDC_PHP/dif-registry.php";
-require_once "$GRIIDC_PHP/db-utils.lib.php";
+$GLOBALS['pelagos_config']  = parse_ini_file('/etc/opt/pelagos.ini',true);
+
+include_once $GLOBALS['pelagos_config']['paths']['share'].'/php/aliasIncludes.php';
+require_once $GLOBALS['pelagos_config']['paths']['share'].'/php/ldap.php';
+include_once $GLOBALS['pelagos_config']['paths']['share'].'/php/drupal.php';
+require_once $GLOBALS['pelagos_config']['paths']['share'].'/php/dif-registry.php';
+require_once $GLOBALS['pelagos_config']['paths']['share'].'/php/db-utils.lib.php';
 include_once "pdo_functions.php";
 include_once "lib/functions.php";
 
-$GLOBALS['pelagos_config']  = parse_ini_file('/etc/opt/pelagos.ini',true);
 $GLOBALS['ldap_config']     = parse_ini_file($GLOBALS['pelagos_config']['paths']['conf'].'/ldap.ini',true);
 $GLOBALS['db_config']       = parse_ini_file($GLOBALS['pelagos_config']['paths']['conf'].'/db.ini',true);
 $GLOBALS['module_config']   = parse_ini_file('config.ini',true);
@@ -349,7 +349,7 @@ else {
 if ($_SESSION['submitok']) {
     include 'submit.php';
     # trigger filer
-    system('/usr/local/griidc/filer/trigger-filer');
+    system($GLOBALS['pelagos_config']['paths']['root'].'/back-end/filer/trigger-filer');
 }
 else {
     echo '<table  border="0">';
@@ -359,7 +359,7 @@ else {
     echo '</td>';
     echo '<td width="*">&nbsp;&nbsp;</td>';
     echo '<td width="40%" style="vertical-align: top; background: transparent;">';
-    include '/opt/pelagos/share/php/sidebar.php';
+    include $GLOBALS['pelagos_config']['paths']['share'].'/php/sidebar.php';
     echo '</td>';
     echo '</tr>';
     echo '</table>';
