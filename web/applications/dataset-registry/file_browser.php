@@ -1,5 +1,7 @@
 <?php
 
+$GLOBALS['pelagos_config']  = parse_ini_file('/etc/opt/pelagos.ini',true);
+
 require_once $GLOBALS['pelagos_config']['paths']['share'] . '/php/drupal.php';
 require_once $GLOBALS['pelagos_config']['paths']['share'] . '/php/dif-registry.php';
 
