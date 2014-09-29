@@ -201,6 +201,10 @@ while (my $r = $sth->fetchrow_hashref()) {
     # copy metadata file to data store
     $log->write("[$udi] copying metadata file to data store (cp \"$filepath\" \"$config->{paths}->{data_store}/$udi/$udi.met\")");
     copy($filepath,"$config->{paths}->{data_store}/$udi/$udi.met") or die "Error: could not copy file ($!)\n";
+
+    # make custodian the owner
+    chown($custodian_uid,$custodian_gid,"$config->{paths}->{data_store}/$udi/$udi.met");
+
     $md_filed{$reg_id} = {
                            from => $filepath,
                              to => "$config->{paths}->{data_store}/$udi/$udi.met"
