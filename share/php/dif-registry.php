@@ -171,7 +171,7 @@ function getTasks($ldap,$baseDN,$userDN,$peopleid,$restrict_to_task_roles=false)
         foreach ($my_tasks as $task)
         {
             # for projects with no tasks just add the ficticious project task
-            if ($intval(task['ID']) == 0)
+            if (intval($task['ID']) == 0)
             {
                 $tasks[] = $task;
                 continue;
