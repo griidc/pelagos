@@ -4,6 +4,8 @@ include 'difDL.php'; //dif DataLayer
 
 include_once '/usr/local/share/GRIIDC/php/ldap.php'; 
 include_once '/usr/local/share/GRIIDC/php/griidcMailer.php';
+include_once '/usr/local/share/GRIIDC/php/dif-registry.php'; 
+//include_once '/usr/local/share/GRIIDC/php/drupal.php'; 
 
 require_once '/usr/share/pear/Twig/Autoloader.php';
 
@@ -26,11 +28,13 @@ if (isset($_POST['function']))
             $person = $_POST['person'];
             $showempty = (bool)$_POST['showempty'];
             header('Content-Type: application/json');
-            echo getTaskList($status,$person,$showempty);
+            //echo getTaskList($status,$person,$showempty);
+            echo getDIFS($person,$status);
             break;
         case 'loadTasks':
             header('Content-Type: application/json');
-            echo getTasks();
+            $person = $_POST['person'];
+            echo getTaskOptions($person);
             break;
         case 'fillForm':
             $difUDI = $_POST["udi"];
@@ -166,9 +170,9 @@ function postDIF($fielddata)
     $submitted = $data["submitter"];
     $editor = getUID();
     
-    if (($status > 1) AND (!isAdmin(getUID()))) {$status = 1;}; #If this happened, someone fiddled with the form.
+    if (($status > 1) AND (!isUserAdmin(getUID()))) {$status = 1;}; #If this happened, someone fiddled with the form.
     
-    if (isDIFApprover(getUID()) OR isAdmin(getUID()))
+    if (isDIFApprover(getUID()) OR isUserAdmin(getUID()))
     {
         if ($frmButton == 'approve' AND is) {$status = 2;};
         if ($frmButton == 'reject') {$status = 0;};
@@ -205,7 +209,7 @@ function postDIF($fielddata)
     
     $parameters = array($datasetUID,$UDI,$projectID,$taskID,$title,$primarypoc,$secondarypoc,$abstract,$datasettype,$datasetfor,$datasize,$observation,$approach,$startdate,$enddate,$geolocation,$submission,$natarchive,$ethical,$remarks,$logname,$status,$editor,$gmlText,$fundingSource,$submitted);
     
-    if ((isAdmin(getUID())) OR ($frmButton == 'submit' OR $frmButton == 'save'))
+    if ((isUserAdmin(getUID())) OR ($frmButton == 'submit' OR $frmButton == 'save'))
     {
         $rc = saveDIF($parameters);
     }
@@ -333,9 +337,9 @@ function getResearchers($PseudoID)
     echo json_encode($researchers);
 }
 
-function getTasks()
+function getTasks_OLD()
 {
-    if (!isAdmin(getUID()))
+    if (!isUserAdmin(getUID()))
     {$PersonID=getPersonID(getUID());}
 
     $diftasks = loadTasks($PersonID);
@@ -457,7 +461,7 @@ function getFormData($difID)
     $formArr = array_merge($formArr,array("privacy"=>$ethical[0]));
     $formArr = array_merge($formArr,array("privacyother"=>$ethical[1]));
     
-    //$formArr = array_merge($formArr,array("isadmin"=>$isadmin));
+    //$formArr = array_merge($formArr,array("isUserAdmin"=>$isUserAdmin));
     
     return json_encode(array('data'=>$formArr,'success'=>$success,'message'=>$message,'title'=>$msgtitle));
 }
@@ -466,7 +470,7 @@ function getFormData($difID)
 
 function getTaskList($Status=null,$PersonID=null,$ShowEmpty=true)
 {
-    if (!isAdmin(getUID()))
+    if (!isUserAdmin(getUID()))
     {$PersonID=getPersonID(getUID());}
     
     $listArray = array();
@@ -538,18 +542,18 @@ function showDIFForm()
     global $twig;
    //$helpText = getHelpText('DIF');
     
-    $isadmin = isAdmin(getUID());
+    $isUserAdmin = isUserAdmin(getUID());
     $isDManager = isDataManager(getUID());
     $isDIFApprover = isDIFApprover(getUID());
     
     $personid = getPersonID(getUID());
     if ($personid == 0) {$personid='';};
     
-    // echo "isadmin:$isadmin<br>";
+    // echo "isUserAdmin:$isUserAdmin<br>";
     // echo "isDManager:$isDManager<br>";
     // echo "isDIFApprover:$isDIFApprover<br>";
     
-    $twigdata = array('isadmin'=>$isadmin,'isdmanager'=>$isDManager,'isdifapprover'=>$isDIFApprover,'personid'=>$personid);
+    $twigdata = array('isUserAdmin'=>$isUserAdmin,'isdmanager'=>$isDManager,'isdifapprover'=>$isDIFApprover,'personid'=>$personid);
    
     echo $twig->render('difForm.html', $twigdata); 
 }
@@ -592,7 +596,7 @@ function isDIFApprover($UserName)
     return $admin;
 }
 
-function isAdmin($UserName) 
+function isUserAdmin($UserName) 
 {
     $admin = false;
     if ($UserName) 
@@ -607,19 +611,6 @@ function isAdmin($UserName)
         }
     }
     return $admin;
-}
-
-function getUID() {
-    global $user;
-    if (isset($user->name))
-    {
-        if (array_key_exists('as_user',$_GET) and isAdmin($user->name)) {
-            return $_GET['as_user'];
-        }
-        return $user->name;
-    }
-    else
-    {return null;}
 }
 
 function isDataManager($UserName)
@@ -638,6 +629,85 @@ function isDataManager($UserName)
 
 }
 
+
+function getRISTasks($personID)
+{
+    $GLOBALS['pelagos_config']  = parse_ini_file('/etc/opt/pelagos.ini',true);
+    $GLOBALS['ldap_config']     = parse_ini_file($GLOBALS['pelagos_config']['paths']['conf'].'/ldap.ini',true);
+    define('RPIS_TASK_BASEURL','http://localhost/services/RIS/getTaskDetails.php');
+    
+    $ldap = connectLDAP($GLOBALS['ldap_config']['ldap']['server']);
+    $baseDN = $GLOBALS['ldap_config']['ldap']['base_dn'];
+    
+    $uid = getUID();
+    if (isset($uid)) {
+        $submittedby ="";
+        $userDNs = getDNs($ldap,$baseDN,"uid=$uid");
+        $userDN = $userDNs[0]['dn'];
+        if (count($userDNs) > 0) {
+            $attributes = getAttributes($ldap,$userDN,array('givenName','sn','employeeNumber'));
+            if (count($attributes) > 0) {
+                if (array_key_exists('givenName',$attributes)) $firstName = $attributes['givenName'][0];
+                if (array_key_exists('sn',$attributes)) $lastName = $attributes['sn'][0];
+                if (array_key_exists('employeeNumber',$attributes)) $submittedby = $attributes['employeeNumber'][0];
+            }
+        }
+    }
+    
+    # first try to get tasks for which we have a task role
+    $tasks = getTasks($ldap,$baseDN,$userDN,$personID,true);
+    
+    # if we have no task roles, try to get tasks for which we have any role
+    # Or if there are only Project Task, get the individual tasks as well
+    $onlyProjects = true;
+    
+    foreach ($tasks as $task) { if ((int)$task['ID'] != 0) { $onlyProjects = false;} }
+    
+    if (count($tasks) == 0 OR $onlyProjects) {
+        $tasks = getTasks($ldap,$baseDN,$userDN,$personID,false);
+    }
+
+    return $tasks;
+}
+
+function getDIFS($personID,$status)
+{
+    $tasks = getRISTasks($personID);
+    
+    $stuff = displayTaskStatus($tasks,$dbconn);
+    
+    sort($stuff);
+    
+    return json_encode($stuff);
+}
+
+function getTaskOptions($personID)
+{
+    $rpisTasks = getRISTasks($personID);
+    
+    foreach ($rpisTasks as $task)
+    {
+        
+        $maxLength = 200;
+        if (strlen($task->Title) > $maxLength){
+            $taskTitle=substr((string)$task->Title,0,$maxLength).'...';
+        } else {
+            $taskTitle=(string)$task->Title;
+        }
+        
+        $fundingSource = (string)$task->Project->FundingSource["ID"];
+        
+        $taskID = (string)$task["ID"];
+        $projectID = (string)$task->Project["ID"];
+        $pseudoID = ((int)$projectID * 1024)+ (int)$taskID;
+        $tasks[] = array('Title'=>$taskTitle,'ID'=>$pseudoID,'taskID'=>$taskID,'projectID'=>$projectID,'fundSrcID'=>$fundingSource);
+        
+    }    
+    
+    sort($tasks);
+    
+    return json_encode($tasks);
+}
 
 
 

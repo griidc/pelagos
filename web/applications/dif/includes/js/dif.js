@@ -471,8 +471,7 @@ function loadDIFS(Status,Person,ShowEmpty)
     if (personid > 0 && !Person) {Person = personid;}
     $.ajax({
         cache: false,
-        url: "/services/DIF/getDIFS.php",
-        type: 'GET',
+        type: 'POST',
         datatype: 'json',
         data: {'function':'loadDIFS','status':Status,'person':Person,'showempty':ShowEmpty}
         }).done(function(json) {
@@ -503,10 +502,8 @@ function makeTree(json)
 function loadTasks()
 {
     $.ajax({
-        url: "/services/DIF/getTasks.php",
-        //context: document.body,
         datatype: 'JSON',
-        type: 'GET',
+        type: 'POST',
         data: {'function':'loadTasks','person':personid}
         }).done(function(json) {
         //var json = $.parseJSON(html);

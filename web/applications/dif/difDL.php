@@ -136,4 +136,108 @@ function loadTasks($Person)
     return $myDC->execute($parameters);  
 }
 
+function displayTaskStatus($tasks,$conn,$update=null,$personid=null,$filterstatus=null)
+{
+    $conn = OpenDB('GOMRI_RO');
+    
+    $ShowEmpty = true;
+    
+    if (isset($_GET["showempty"]))
+    {
+        $ShowEmpty = $_GET["showempty"];
+    }
+    
+    $resArray = array();
+    
+    $projectID ="";
+    $taskTitle="";
+    $taskID ="";
+
+    foreach ($tasks as $task)
+    {
+        $projectArr = array();
+        $childArr = array();
+        $taskID = (string)$task['ID'];
+        $taskTitle = (string)$task->Title;
+        $projectID = (string)$task->Project['ID'];
+        
+        //echo "d.add($nodeCount,0,'".addslashes($taskTitle)."','javascript: d.o($nodeCount);','".addslashes($taskTitle)."','','','',true);\n";
+        
+        if ($taskID > 0)
+        {
+            $query = "select title,status,dataset_uid,dataset_udi from datasets where task_uid=$taskID";
+        }
+        else
+        {
+            $query = "select title,status,dataset_uid,dataset_udi from datasets where project_id=$projectID";
+            
+        }       
+        
+        if (isset($_GET["status"]) AND $_GET["status"] != '')
+        {
+            $statusFlag = $_GET["status"];
+            $query .= " AND status=$statusFlag";
+        }
+        
+        $query .= " ORDER BY title;";
+        
+        $statementHandler = $conn->prepare($query);
+        $rc = $statementHandler->execute();
+        if (!$rc) {return $statementHandler->errorInfo();};
+        $rows = $statementHandler->fetchAll();
+        
+        if ($rows != null)
+        {
+            
+            
+            foreach ($rows as $row) 
+            {
+                $status = (integer)$row["status"];
+                $title = htmlspecialchars($row["title"]);
+                $datasetid = $row["dataset_uid"];
+                $dataset_udi = $row["dataset_udi"];
+                
+                $qs = "uid=$datasetid";
+                if (isset($personid)) { $qs .= "&prsid=$personid"; }
+                if (array_key_exists('as_user',$_GET)) { $qs .= "&as_user=$_GET[as_user]"; }
+                
+                if ($filterstatus==$status OR $filterstatus==null OR $filterstatus=="")
+                {
+                    
+                    //echo "d.add($nodeCount,$folderCount,'".addslashes("[$dataset_udi] $title")."','?$qs','".addslashes("[$dataset_udi] $title")."','_self'";
+                    
+                    switch ($status)
+                    {
+                        case null:
+                        $icon =  '/images/icons/cross.png';
+                        break;
+                        case 0:
+                        $icon = '/images/icons/cross.png';
+                        break;
+                        case 1:
+                        $icon = '/images/icons/error.png';
+                        break;
+                        case 2:
+                        $icon =  '/images/icons/tick.png';
+                        break;
+                    }
+                }
+                
+                $childArr[] = array("text"=>"[$dataset_udi] $title","icon"=>$icon,"li_attr"=>array("longtitle"=>$title),"a_attr"=>array("onclick"=>"getNode('$dataset_udi');"));
+                
+            }
+            $resArray[] = array("text"=>$taskTitle,"icon"=>"/images/icons/folder.png","state"=>array("opened"=>true),"children"=>$childArr,"li_attr"=>array("longtitle"=>$title),"a_attr"=>array("style"=>"color:black;cursor:default;opacity:1;background-color:transparent;box-shadow:none"));  
+        }
+        else
+        {
+            if ($ShowEmpty)
+            {         
+                $resArray[] = array("text"=>$taskTitle,"icon"=>"/images/icons/folder_gray.png","state"=>array("opened"=>false,"disabled"=>true),"children"=>$childArr,"li_attr"=>array("longtitle"=>$taskTitle,"style"=>"color:black"),"a_attr"=>array("style"=>"color:gray;cursor:default;opacity:.7;"));       
+            }
+        }
+    }
+    
+    return $resArray;
+}
+
 ?>
