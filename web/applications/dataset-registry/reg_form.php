@@ -1,6 +1,6 @@
 <?php
 drupal_add_css('includes/css/overwrite.css',array('type'=>'external'));
-drupal_add_js('/includes/jquery-validation/jquery.validate.js',array('type'=>'external'));
+drupal_add_js('//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js',array('type'=>'external'));
 
 //drupal_add_js('includes/urlValidate.js',array('type'=>'external'));
 
@@ -780,6 +780,11 @@ fieldset {
     font-size: 12px;
 }
 
+.emRequired::before {
+    font-weight: bold; color:#FF0000;
+    content:"*";
+}
+
 </style>
 
 <div id="fileBrowser">
@@ -960,7 +965,7 @@ fieldset {
 
     <fieldset>
         <p>
-            <strong>NOTE:</strong> <span style="color:grey">If you have a Dataset Information Form record submitted, click on the dataset in the right panel to extract the information needed for dataset registration. If you require assistance in completing this form, do not hesitate to contact GRIIDC (email: <a href=mailto:griidc@gomri.org>griidc@gomri.org</a>).</span>
+            <strong>NOTE:</strong> <span style="color:grey">If you have a Dataset Information Form record submitted, click on the dataset in the right panel to extract the information needed for dataset registration. The red asterisk (<span class="emRequired"/>) is used to indicate required fields. If you require assistance in completing this form, do not hesitate to contact GRIIDC (email: <a href=mailto:griidc@gomri.org>griidc@gomri.org</a>).</span>
         </p>
     </fieldset>
 
@@ -986,7 +991,7 @@ fieldset {
         <p> <!-- Dataset Title -->
             <fieldset>
                 <span id="qtip_title" style="float:right;"><img src="includes/images/info.png"></span>
-                <label for="title"><b>Dataset Title: </b></label>
+                <label for="title"><span class="emRequired"/><b>Dataset Title: </b></label>
                 <div class="fwtextboxcont">
                     <input
                         <?php formDisabled($formDisabled); ?>
@@ -999,7 +1004,7 @@ fieldset {
         <p> <!-- Dataset Abstract -->
             <fieldset>
                 <span id="qtip_abstrct" style="float:right;"><img src="includes/images/info.png"></span>
-                <label for="abstrct"><b>Dataset Abstract: </b></label>
+                <label for="abstrct"><span class="emRequired"/><b>Dataset Abstract: </b></label>
                 <div class="textareacontainer">
                     <textarea
                         <?php formDisabled($formDisabled); ?>
@@ -1011,7 +1016,7 @@ fieldset {
         <p> <!-- Dataset Originator(s) -->
             <fieldset>
                 <span id="qtip_dataset_originator" style="float:right;"><img src="includes/images/info.png"></span>
-                <label for="dataset_originator"><b>Dataset Originator(s): </b></label>
+                <label for="dataset_originator"><span class="emRequired"/><b>Dataset Originator(s): </b></label>
                 <div class="fwtextboxcont">
                     <input
                         <?php formDisabled($formDisabled); ?>
@@ -1028,7 +1033,7 @@ fieldset {
                     <tr>
                         <td width="50%">
                             <span id="qtip_poc" style="float:right;"><img src="includes/images/info.png"></span>
-                            <label for="pocname"><b>Name: </b></label>
+                            <label for="pocname"><span class="emRequired"/><b>Name: </b></label>
                             <div class="fwtextboxcont">
                                 <input
                                     <?php formDisabled($formDisabled); ?>
@@ -1038,7 +1043,7 @@ fieldset {
                         </td>
                         <td width="50%" style="padding-left:10px;">
                             <span id="qtip_pocemail" style="float:right;"><img src="includes/images/info.png"></span>
-                            <label for="pocemail"><b>E-Mail: </b></label>
+                            <label for="pocemail"><span class="emRequired"/><b>E-Mail: </b></label>
                             <div class="fwtextboxcont">
                                 <input <?php formDisabled($formDisabled); ?> type="text" name="pocemail" id="pocemail" style="width:100%" value="<?php echo htmlspecialchars($poc_email);?>">
                             </div>
