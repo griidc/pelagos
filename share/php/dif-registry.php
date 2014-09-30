@@ -137,7 +137,7 @@ function getTasks($ldap,$baseDN,$userDN,$peopleid,$restrict_to_task_roles=false)
     $tasks = array();
     $taskIDs = array();
 
-    # is we're a group admin, for each group add all the tasks for that group
+    # if we're a group admin, for each group add all the tasks for that group
     if (count($groupDNs) > 0)
     {
         foreach ($groupDNs as $group)
