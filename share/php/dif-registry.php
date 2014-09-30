@@ -171,7 +171,7 @@ function getTasks($ldap,$baseDN,$userDN,$peopleid,$restrict_to_task_roles=false)
         foreach ($my_tasks as $task)
         {
             # for projects with no tasks just add the ficticious project task
-            if ($task['ID'] == 0)
+            if ($intval(task['ID']) == 0)
             {
                 $tasks[] = $task;
                 continue;
@@ -262,7 +262,7 @@ function dbexecute($query,$connection=null) {
 function filterTasks($tasks, $person) {
     $filteredTasks = array();
     foreach ($tasks as $task) {
-        if ($task['ID'] == 0) {
+        if (intval($task['ID']) == 0) {
             $leadRoles = array(1,2,3,8,9,10);
         }
         else {
