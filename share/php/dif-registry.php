@@ -135,6 +135,7 @@ function getTasks($ldap,$baseDN,$userDN,$peopleid,$restrict_to_task_roles=false)
     $groupDNs = getDNs($ldap,'ou=groups,'.$baseDN,"(&(member=$userDN)(cn=administrators))");
 
     $tasks = array();
+    $taskIDs = array();
 
     # is we're a group admin, for each group add all the tasks for that group
     if (count($groupDNs) > 0)
@@ -154,6 +155,10 @@ function getTasks($ldap,$baseDN,$userDN,$peopleid,$restrict_to_task_roles=false)
         }
     }
 
+    foreach ($tasks as $task) {
+        $taskIDs[] = intval($task['ID']);
+    }
+
     # only search by peopleid if we have one
     if (!empty($peopleid))
     {
@@ -169,6 +174,11 @@ function getTasks($ldap,$baseDN,$userDN,$peopleid,$restrict_to_task_roles=false)
             if ($task['ID'] == 0)
             {
                 $tasks[] = $task;
+                continue;
+            }
+
+            # make sure we don't already have this task in the list
+            if (in_array(intval($task['ID']),$taskIDs)) {
                 continue;
             }
 
