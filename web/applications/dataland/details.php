@@ -17,16 +17,15 @@ drupal_add_js('//maps.google.com/maps/api/js?v=3&sensor=false',array('type'=>'ex
 drupal_add_js('/includes/geoviz/geoviz.js','external');
 drupal_add_js('/data-discovery/js/search.js',array('type'=>'external'));
 
-$GLOBALS['griidc'] = parse_ini_file('/etc/griidc.ini',true);
-$GLOBALS['pelagos'] = parse_ini_file('/etc/opt/pelagos.ini',true);
+$pelagos_config = parse_ini_file('/etc/opt/pelagos.ini',true);
 $GLOBALS['config'] = parse_ini_file('config.ini',true);
 
-include_once $GLOBALS['pelagos']['paths']['share'].'/php/aliasIncludes.php';
-require_once $GLOBALS['pelagos']['paths']['share'].'/php/auth.php'; # for user_is_logged_in_somehow()
+include_once $pelagos_config['paths']['share'].'/php/aliasIncludes.php';
+require_once $pelagos_config['paths']['share'].'/php/auth.php'; # for user_is_logged_in_somehow()
 
 require_once 'Twig_Extensions_GRIIDC.php';
 
-include_once $GLOBALS['pelagos']['paths']['share'].'/php/pdo.php';
+include_once $pelagos_config['paths']['share'].'/php/pdo.php';
 
 require_once '/usr/share/pear/Twig/Autoloader.php';
 Twig_Autoloader::register();
@@ -55,7 +54,7 @@ $logged_in = user_is_logged_in_somehow(); # returns bool, true if logged in.
 
 if ($udi <> '')
 {
-    $configini = parse_ini_file("/etc/griidc/db.ini",true);
+    $configini = parse_ini_file($pelagos_config['paths']['conf'].'/db.ini',true);
     $pconfig = $configini["GOMRI_RW"];
 
     $mconfig = $configini["RIS_RO"];
@@ -70,7 +69,7 @@ if ($udi <> '')
     
     # Toggle per ini file parameter the enforcement of dataset downloadability requiring accepted metadata 
     $condCase = '';
-    if( (isset($GLOBALS['pelagos']['system']['enforce_approved_metadata'] ) and ( $GLOBALS['pelagos']['system']['enforce_approved_metadata'] == 1 ))) {
+    if( (isset($pelagos_config['system']['enforce_approved_metadata'] ) and ( $pelagos_config['system']['enforce_approved_metadata'] == 1 ))) {
         $condCase = "WHEN metadata_status <> 'Accepted' THEN 1";
     }
     
@@ -457,7 +456,7 @@ var dlmap = new GeoViz();
             # if either metadata has been approved, or we are not enforcing rule, or flag not set in ini altogether THEN ok to download, otherwise not.
             if ($prow['metadata_status'] == 'Accepted') {
                 $dl_ok = 1;
-            } elseif  (isset($GLOBALS['pelagos']['system']['enforce_approved_metadata'] ) and ( $GLOBALS['pelagos']['system']['enforce_approved_metadata'] == 0 )) {
+            } elseif  (isset($pelagos_config['system']['enforce_approved_metadata'] ) and ( $pelagos_config['system']['enforce_approved_metadata'] == 0 )) {
                 $dl_ok = 1;
             } else {
                 $dl_ok = 0;
