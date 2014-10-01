@@ -53,7 +53,8 @@ $app->get('/json/:type.json', function ($type) use ($app) {
         case 'in':
             $institutions = getInstitutionDetails(getDBH('RPIS'));
 
-            if (isset($stash['tree']['filter'])) {
+            if (array_key_exists('filter',$stash['tree']) and !empty($stash['tree']['filter']) or
+                array_key_exists('geo_filter',$stash['tree']) and !empty($stash['tree']['geo_filter'])) {
                 $dataset_filters = getDatasetFilters($stash['tree']);
                 $stash['institutions'] = array();
                 foreach ($institutions as $inst) {
@@ -96,7 +97,8 @@ $app->get('/json/:type.json', function ($type) use ($app) {
 
             $RFPS = getFundingSources(getDBH('RPIS'),$fundFilter);
 
-            if (isset($stash['tree']['filter'])) {
+            if (array_key_exists('filter',$stash['tree']) and !empty($stash['tree']['filter']) or
+                array_key_exists('geo_filter',$stash['tree']) and !empty($stash['tree']['geo_filter'])) {
                 $dataset_filters = getDatasetFilters($stash['tree']);
 
                 $fundFilter = array('fundId>0','fundId<7');
@@ -179,7 +181,8 @@ $app->get('/json/ra/YR1.json', function () use ($app) {
     }
     $YR1S = getFundingSources(getDBH('RPIS'),$fundFilter);
 
-    if (isset($stash['tree']['filter'])) {
+    if (array_key_exists('filter',$stash['tree']) and !empty($stash['tree']['filter']) or
+        array_key_exists('geo_filter',$stash['tree']) and !empty($stash['tree']['geo_filter'])) {
         $dataset_filters = getDatasetFilters($stash['tree']);
         $stash['YR1'] = array();
         foreach ($YR1S as $YR1) {
@@ -213,7 +216,8 @@ $app->get('/json/ra/YR1.json', function () use ($app) {
 $app->get('/json/ra/otherSources.json', function () use ($app) {
     $stash['tree'] = array_merge($GLOBALS['config']['tree'],json_decode($app->request()->get('tree'),true));
     $stash['otherSources'] = array(array('ID' => '000', 'Name' => 'National Oceanographic Data Center',));
-    if (isset($stash['tree']['filter'])) {
+    if (array_key_exists('filter',$stash['tree']) and !empty($stash['tree']['filter']) or
+        array_key_exists('geo_filter',$stash['tree']) and !empty($stash['tree']['geo_filter'])) {
         if ($GLOBALS['config']['tree']['show_counts'] == 1) {
             $stash['otherSources'][0]['dataset_count'] = count_registered_datasets(getDBH('GOMRI'),array('registry_id=00.x000%','dataset_download_status=done'),$stash['tree']['filter']);
         }
@@ -226,7 +230,8 @@ $app->get('/json/re/:letter.json', function ($letter) use ($app) {
     $stash['tree'] = array_merge($GLOBALS['config']['tree'],json_decode($app->request()->get('tree'),true));
     $people = getPeopleList(getDBH('RPIS'),array("lastName=$letter%"));
 
-    if (isset($stash['tree']['filter'])) {
+    if (array_key_exists('filter',$stash['tree']) and !empty($stash['tree']['filter']) or
+        array_key_exists('geo_filter',$stash['tree']) and !empty($stash['tree']['geo_filter'])) {
         $dataset_filters = getDatasetFilters($stash['tree']);
         $stash['people'] = array();
         foreach ($people as $person) {
@@ -261,7 +266,8 @@ $app->get('/json/in/:letter.json', function ($letter) use ($app) {
     $stash['tree'] = array_merge($GLOBALS['config']['tree'],json_decode($app->request()->get('tree'),true));
     $institutions = getInstitutionDetails(getDBH('RPIS'),array("name=$letter%"));
 
-    if (isset($stash['tree']['filter'])) {
+    if (array_key_exists('filter',$stash['tree']) and !empty($stash['tree']['filter']) or
+        array_key_exists('geo_filter',$stash['tree']) and !empty($stash['tree']['geo_filter'])) {
         $dataset_filters = getDatasetFilters($stash['tree']);
         $stash['institutions'] = array();
         foreach ($institutions as $inst) {
@@ -302,7 +308,8 @@ $app->get('/json/:type/projects/fundSrc/:fundSrc.json', function ($type,$fundSrc
     }
     $projects = getProjectDetails(getDBH('RPIS'),$projectFilter);
 
-    if (isset($stash['tree']['filter'])) {
+    if (array_key_exists('filter',$stash['tree']) and !empty($stash['tree']['filter']) or
+        array_key_exists('geo_filter',$stash['tree']) and !empty($stash['tree']['geo_filter'])) {
         $dataset_filters = getDatasetFilters($stash['tree']);
         $stash['projects'] = array();
         foreach ($projects as $project) {
@@ -334,7 +341,8 @@ $app->get('/json/:type/projects/peopleId/:peopleId.json', function ($type,$peopl
     $projects = getProjectDetails(getDBH('RPIS'),$projectFilter);
 
 
-    if (isset($stash['tree']['filter'])) {
+    if (array_key_exists('filter',$stash['tree']) and !empty($stash['tree']['filter']) or
+        array_key_exists('geo_filter',$stash['tree']) and !empty($stash['tree']['geo_filter'])) {
         $dataset_filters = getDatasetFilters($stash['tree']);
         $stash['projects'] = array();
         foreach ($projects as $project) {
@@ -367,7 +375,8 @@ $app->get('/json/:type/projects/institutionId/:institutionId.json', function ($t
     }
     $projects = getProjectDetails(getDBH('RPIS'),$projectFilter);
 
-    if (isset($stash['tree']['filter'])) {
+    if (array_key_exists('filter',$stash['tree']) and !empty($stash['tree']['filter']) or
+        array_key_exists('geo_filter',$stash['tree']) and !empty($stash['tree']['geo_filter'])) {
         $dataset_filters = getDatasetFilters($stash['tree']);
         $stash['projects'] = array();
         foreach ($projects as $project) {
@@ -392,7 +401,8 @@ $app->get('/json/:type/tasks/projectId/:projectId.json', function ($type,$projec
     $stash['tree'] = array_merge($GLOBALS['config']['tree'],json_decode($app->request()->get('tree'),true));
     $filters = array("projectID=$projectId");
     $tasks = getTaskDetails(getDBH('RPIS'),$filters);
-    if (isset($stash['tree']['filter'])) {
+    if (array_key_exists('filter',$stash['tree']) and !empty($stash['tree']['filter']) or
+        array_key_exists('geo_filter',$stash['tree']) and !empty($stash['tree']['geo_filter'])) {
         $dataset_filters = getDatasetFilters($stash['tree']);
         $stash['tasks'] = array();
         foreach ($tasks as $task) {
@@ -416,7 +426,8 @@ $app->get('/json/:type/tasks/projectId/peopleId/:projectId/:peopleId.json', func
     $stash['tree'] = array_merge($GLOBALS['config']['tree'],json_decode($app->request()->get('tree'),true));
     $filters = array("projectID=$projectId","peopleId=$peopleId");
     $tasks = getTaskDetails(getDBH('RPIS'),$filters);
-    if (isset($stash['tree']['filter'])) {
+    if (array_key_exists('filter',$stash['tree']) and !empty($stash['tree']['filter']) or
+        array_key_exists('geo_filter',$stash['tree']) and !empty($stash['tree']['geo_filter'])) {
         $dataset_filters = getDatasetFilters($stash['tree']);
         $stash['tasks'] = array();
         foreach ($tasks as $task) {
