@@ -20,7 +20,7 @@ require_once "$GRIIDC_PHP/utils.php";
 # local functions for data-discovery module
 require_once 'lib/search.php';
 # local functions for the packaging sub-module to the data-discovery module
-require_once 'lib/package.php';
+//require_once 'lib/package.php';
 # OpenID API for PHP
 require_once '/usr/local/share/lightopenid-lightopenid/openid.php';
 # GRIIDC database utilities
@@ -112,7 +112,7 @@ $app->post('/', function () use ($app) {
 function index($app) {
     drupal_add_js('/tree/js/tree.js',array('type'=>'external'));
     drupal_add_js("/$GLOBALS[PAGE_NAME]/js/search.js",array('type'=>'external'));
-    drupal_add_js("/$GLOBALS[PAGE_NAME]/js/package.js",array('type'=>'external'));
+//    drupal_add_js("/$GLOBALS[PAGE_NAME]/js/package.js",array('type'=>'external'));
     drupal_add_library('system', 'jquery.cookie');
     drupal_add_css("/$GLOBALS[PAGE_NAME]/css/search.css",array('type'=>'external'));
     drupal_add_css("/$GLOBALS[PAGE_NAME]/includes/css/scrollbars.css",array('type'=>'external'));
