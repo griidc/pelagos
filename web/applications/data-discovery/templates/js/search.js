@@ -5,21 +5,19 @@ var $ = jQuery.noConflict();
 var myGeoViz = new GeoViz();
 
 $(document).ready(function() {
-    setTimeout(function() {
-        if (typeof($.cookie) == 'function' && $.cookie("expanded") == 1) {
-            expand();
-        }
+    if (typeof($.cookie) == 'function' && $.cookie("expanded") == 1) {
+        expand();
+    }
 
-        myGeoViz.initMap('olmap',{'onlyOneFeature':false,'allowModify':false,'allowDelete':true,'labelAttr':'udi'});
+    myGeoViz.initMap('olmap',{'onlyOneFeature':false,'allowModify':false,'allowDelete':true,'labelAttr':'udi'});
 
-        $(document).on('overFeature',function(e,eventVariables) {
-            $('table.datasets tr[udi="' + eventVariables.attributes.udi + '"] td').addClass('highlight');
-        });
-        $(document).on('outFeature',function(e,eventVariables) {
-            $('table.datasets tr[udi="' + eventVariables.attributes.udi + '"] td').removeClass('highlight');
-        });
-        $('#dataset_listing').html('<div class="spinner"><div><img src="{{baseUrl}}/includes/images/spinner.gif"></div></div>');
-    }, 500);
+    $(document).on('overFeature',function(e,eventVariables) {
+        $('table.datasets tr[udi="' + eventVariables.attributes.udi + '"] td').addClass('highlight');
+    });
+    $(document).on('outFeature',function(e,eventVariables) {
+        $('table.datasets tr[udi="' + eventVariables.attributes.udi + '"] td').removeClass('highlight');
+    });
+    $('#dataset_listing').html('<div class="spinner"><div><img src="{{baseUrl}}/includes/images/spinner.gif"></div></div>');
 
     $('#filter-input').bind('keypress', function(e) {
         if(e.keyCode==13){
