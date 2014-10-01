@@ -110,9 +110,6 @@ $app->post('/', function () use ($app) {
 });
 
 function index($app) {
-    drupal_add_js('/includes/tinyscrollbar/jquery.tinyscrollbar.min.js',array('type'=>'external'));
-    drupal_add_js('/includes/mutate/mutate.events.js',array('type'=>'external'));
-    drupal_add_js('/includes/mutate/mutate.min.js',array('type'=>'external'));
     drupal_add_js('/tree/js/tree.js',array('type'=>'external'));
     drupal_add_js("/$GLOBALS[PAGE_NAME]/js/search.js",array('type'=>'external'));
     drupal_add_js("/$GLOBALS[PAGE_NAME]/js/package.js",array('type'=>'external'));
