@@ -50,10 +50,6 @@ function add_project_info(&$dataset) {
         if (count($project) > 0) {
             $dataset['project'] = $project[0];
         }
-        $pi = getPeopleDetails(getDBH('RPIS'),array("projectId=$dataset[project_id]",'roleId=1'));
-        if (count($pi) > 0) {
-            $dataset['pi'] = $pi[0];
-        }
     }
 }
 
