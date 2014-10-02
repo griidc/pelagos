@@ -565,7 +565,7 @@ function getPersonID($UserName)
     $baseDN = 'dc=griidc,dc=org';
     $uid = $UserName;
     if (isset($uid)) {
-        $submittedby = 0;
+        $submittedby = null;
         $userDNs = getDNs($ldap,$baseDN,"uid=$uid");
         $userDN = $userDNs[0]['dn'];
         if (count($userDNs) > 0) {
