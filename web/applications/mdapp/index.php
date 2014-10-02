@@ -279,9 +279,17 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
         $filename = $_FILES['newMetadataFile']['tmp_name'];
         $orig_filename = $_FILES['newMetadataFile']['name'];
 
+        if(!file_exists($_FILES['newMetadataFile']['tmp_name'])) {
+            throw new RuntimeException('Error: file uploaded no longer exists.');
+        }
+
+        if ($_FILES['newMetadataFile']['size'] == 0) {
+            throw new RuntimeException('File uploaded was empty.  This may be caused by the use of the browser back button.');
+        }
+
         // pattern match check file
         if(!preg_match('/-metadata.xml$/',$orig_filename)) {
-            throw new RuntimeException('Bad filename: Filename must be "UDI-metadata.xml"');
+            throw new RuntimeException('Bad filename $orig_filename. Filename must be "UDI-metadata.xml"');
         }
 
         $udi = preg_replace('/-metadata.xml$/','',$orig_filename); # need to verify this!
@@ -298,7 +306,7 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
         if (!$tmpp) {
             $err = libxml_get_last_error();
             $err_str = $err->message;
-            throw new RuntimeException("Malformed XML: The XML file supplied could not be parsed. ($err_str)");
+            throw new RuntimeException("Malformed XML: The XML file supplied $orig_filename could not be parsed. ($err_str)");
         }
         
         // Attempt to validate the XML file 
@@ -327,11 +335,11 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                     }
                 }
             } else {
-                drupal_set_message("XML validates as ISO-19115-2 compliant",'status');
+                drupal_set_message("The file uploaded as $orig_filename validates as ISO-19115-2 compliant XML.",'status');
             }
     
             if($schemaErrors > 0) {
-                throw new RuntimeException("XML is not ISO-19115-2 compliant");
+                throw new RuntimeException("The file uploaded as $orig_filename does not validate as ISO-19115-2 compliant XML.");
             }
         }
         
@@ -370,9 +378,9 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
         // Check to see if filename matches XML internal filename reference
         $loc_1_xpath = "/gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1]"; # as filename
         $loc_1 = $xml->xpath($loc_1_xpath);
-        $errmsg = "GRIIDC standards: Filename does not match file identifier. (/gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1]) as UDI-metadata.xml (w/dash for colon)";
         if(isset($loc_1[0][0])) {
             $loc_1_val = $loc_1[0][0];
+            $errmsg = textboxize("GRIIDC standards: Filename, $orig_filename does not match file identifier, $loc_1_val as UDI-metadata.xml (w/dash for colon)","/gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1]");
             if(!preg_match("/^$orig_filename$/",$loc_1_val)) {
                 if (isset($_POST['test1']) and $_POST['test1']=='on') {
                     array_push($errors,$errmsg);
@@ -381,6 +389,7 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                 }
             }
         } else {
+            $errmsg = textboxize("GRIIDC standards:  File identifier not set in file uploaded.","/gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1]");
             if (isset($_POST['test1']) and $_POST['test1']=='on') {
                 array_push($errors,$errmsg);
             } else {
@@ -392,9 +401,9 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
         // Check to see if filename matches XML internal UDI reference #1
         $loc_2_xpath = "/gmi:MI_Metadata/gmd:dataSetURI[1]/gco:CharacterString[1]"; # as UDI
         $loc_2 = $xml->xpath($loc_2_xpath);
-        $errmsg = "GRIIDC standards:  UDI does not match metadata URL (/gmi:MI_Metadata/gmd:dataSetURI/gco:CharacterString)";
         if(isset($loc_2[0][0])) {
             $loc_2_val = $loc_2[0][0];
+            $errmsg = textboxize("GRIIDC standards:  UDI, $udi does not match metadata URL, $loc_2_val","/gmi:MI_Metadata/gmd:dataSetURI/gco:CharacterString");
             if(!preg_match("/\/$udi$/",$loc_2_val)) { # URL must end with UDI
                 if (isset($_POST['test2']) and $_POST['test2']=='on') {
                     array_push($errors,$errmsg);
@@ -403,6 +412,7 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                 }
             }
         } else {
+            $errmsg = textboxize("GRIIDC standards:  Metadata URL not set in the file uploaded.","/gmi:MI_Metadata/gmd:dataSetURI/gco:CharacterString");
             if (isset($_POST['test2']) and $_POST['test2']=='on') {
                 array_push($errors,$errmsg);
             } else {
@@ -413,9 +423,9 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
         // Check to see if filename matches XML internal UDI reference #2
         $loc_3_xpath = "/gmi:MI_Metadata/gmd:distributionInfo[1]/gmd:MD_Distribution[1]/gmd:distributor[1]/gmd:MD_Distributor[1]/gmd:distributorTransferOptions[1]/gmd:MD_DigitalTransferOptions[1]/gmd:onLine[1]/gmd:CI_OnlineResource[1]/gmd:linkage[1]/gmd:URL[1]";
         $loc_3 = $xml->xpath($loc_3_xpath);
-        $errmsg = 'GRIIDC standards:  UDI does not match distribution URL (/gmi:MI_Metadata/gmd:distributionInfo[1]/gmd:MD_Distribution[1]/gmd:distributor[1]/gmd:MD_Distributor[1]/gmd:distributorTransferOptions[1]/gmd:MD_DigitalTransferOptions[1]/gmd:onLine[1]/gmd:CI_OnlineResource[1]/gmd:linkage[1]/gmd:URL[1])';
         if(isset($loc_3[0][0])) {
             $loc_3_val = $loc_3[0][0];
+            $errmsg = textboxize("GRIIDC standards:  UDI, $udi does not match distribution URL $loc_3_val.","/gmi:MI_Metadata/gmd:distributionInfo[1]/gmd:MD_Distribution[1]/gmd:distributor[1]/gmd:MD_Distributor[1]/gmd:distributorTransferOptions[1]/gmd:MD_DigitalTransferOptions[1]/gmd:onLine[1]/gmd:CI_OnlineResource[1]/gmd:linkage[1]/gmd:URL[1]");
             if(!preg_match("/\/$udi$/",$loc_3_val)) { # URL must end with UDI
                 if (isset($_POST['test3']) and $_POST['test3']=='on') {
                     array_push($errors,$errmsg);
@@ -424,6 +434,7 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                 }
             }
         } else {
+            $errmsg = textboxize("GRIIDC standards:  Distribution URL was not set in file uploaded.","/gmi:MI_Metadata/gmd:distributionInfo[1]/gmd:MD_Distribution[1]/gmd:distributor[1]/gmd:MD_Distributor[1]/gmd:distributorTransferOptions[1]/gmd:MD_DigitalTransferOptions[1]/gmd:onLine[1]/gmd:CI_OnlineResource[1]/gmd:linkage[1]/gmd:URL[1]");
             if (isset($_POST['test3']) and $_POST['test3']=='on') {
                 array_push($errors,$errmsg);
             } else {
@@ -482,7 +493,7 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                 if (!$tmpp) {
                     $err = libxml_get_last_error();
                     $err_str = $err->message;
-                    throw new RuntimeException("Malformed XML: The XML file supplied could not be parsed. ($err_str)");
+                    throw new RuntimeException("Malformed XML: The XML file supplied $orig_filename could not be parsed. ($err_str)");
                 }
 
                 $xpathdoc = new DOMXpath($doc3);
@@ -532,7 +543,7 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                     } else {
                         $dbErr = $data2->errorInfo();
                         $geo_status = "<font color=red>Rejected by PostGIS - ".$dbErr[2]."</font>";
-                        throw new RuntimeException("PostGIS rejected geometry supplied");
+                        throw new RuntimeException("PostGIS rejected the geometry found in $orig_filename.");
                     }
                 }
 
@@ -948,6 +959,10 @@ function getMetadataReviewers() {
     }
     ldap_unbind($ldap);
     return $newUserArray;
+}
+
+function textboxize($string,$xpath) {
+    return "$string<textarea onclick=\"this.focus();this.select()\" readonly=\"readonly\" style=\"width: 100%\">$xpath</textarea>";
 }
 
 ?>
