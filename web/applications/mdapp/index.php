@@ -289,7 +289,7 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
 
         // pattern match check file
         if(!preg_match('/-metadata.xml$/',$orig_filename)) {
-            throw new RuntimeException('Bad filename $orig_filename. Filename must be "UDI-metadata.xml"');
+            throw new RuntimeException("Bad filename $orig_filename. Filename must be in the form of UDI-metadata.xml.");
         }
 
         $udi = preg_replace('/-metadata.xml$/','',$orig_filename); # need to verify this!
