@@ -168,11 +168,11 @@ function postDIF($fielddata)
     $gmlText = $data["geoloc"];
     $frmButton = $data["button"];
     $submitted = $data["submitter"];
-    $editor = getUID();
+    $editor = getUserID();
     
-    if (($status > 1) AND (!isUserAdmin(getUID()))) {$status = 1;}; #If this happened, someone fiddled with the form.
+    if (($status > 1) AND (!isUserAdmin(getUserID()))) {$status = 1;}; #If this happened, someone fiddled with the form.
     
-    if (isDIFApprover(getUID()) OR isUserAdmin(getUID()))
+    if (isDIFApprover(getUserID()) OR isUserAdmin(getUserID()))
     {
         if ($frmButton == 'approve' AND is) {$status = 2;};
         if ($frmButton == 'reject') {$status = 0;};
@@ -205,11 +205,11 @@ function postDIF($fielddata)
     
     //$gmlText = '<gml:Point srsName="urn:ogc:def:crs:EPSG::4326"><gml:pos srsDimension="2">27.70323 -97.30042</gml:pos></gml:Point>';
     
-    $logname = getPersonID(getUID());
+    $logname = getPersonID(getUserID());
     
     $parameters = array($datasetUID,$UDI,$projectID,$taskID,$title,$primarypoc,$secondarypoc,$abstract,$datasettype,$datasetfor,$datasize,$observation,$approach,$startdate,$enddate,$geolocation,$submission,$natarchive,$ethical,$remarks,$logname,$status,$editor,$gmlText,$fundingSource,$submitted);
     
-    if ((isUserAdmin(getUID())) OR ($frmButton == 'submit' OR $frmButton == 'save'))
+    if ((isUserAdmin(getUserID())) OR ($frmButton == 'submit' OR $frmButton == 'save'))
     {
         $rc = saveDIF($parameters);
     }
@@ -339,8 +339,8 @@ function getResearchers($PseudoID)
 
 function getTasks_OLD()
 {
-    if (!isUserAdmin(getUID()))
-    {$PersonID=getPersonID(getUID());}
+    if (!isUserAdmin(getUserID()))
+    {$PersonID=getPersonID(getUserID());}
 
     $diftasks = loadTasks($PersonID);
         
@@ -470,8 +470,8 @@ function getFormData($difID)
 
 function getTaskList($Status=null,$PersonID=null,$ShowEmpty=true)
 {
-    if (!isUserAdmin(getUID()))
-    {$PersonID=getPersonID(getUID());}
+    if (!isUserAdmin(getUserID()))
+    {$PersonID=getPersonID(getUserID());}
     
     $listArray = array();
 
@@ -542,18 +542,18 @@ function showDIFForm()
     global $twig;
    //$helpText = getHelpText('DIF');
     
-    $isUserAdmin = isUserAdmin(getUID());
-    $isDManager = isDataManager(getUID());
-    $isDIFApprover = isDIFApprover(getUID());
+    $isAdmin = isUserAdmin(getUserID());
+    $isDManager = isDataManager(getUserID());
+    $isDIFApprover = isDIFApprover(getUserID());
     
-    $personid = getPersonID(getUID());
+    $personid = getPersonID(getUserID());
     if ($personid == 0) {$personid='';};
     
     // echo "isUserAdmin:$isUserAdmin<br>";
     // echo "isDManager:$isDManager<br>";
     // echo "isDIFApprover:$isDIFApprover<br>";
     
-    $twigdata = array('isUserAdmin'=>$isUserAdmin,'isdmanager'=>$isDManager,'isdifapprover'=>$isDIFApprover,'personid'=>$personid);
+    $twigdata = array('isadmin'=>$isAdmin,'isdmanager'=>$isDManager,'isdifapprover'=>$isDIFApprover,'personid'=>$personid);
    
     echo $twig->render('difForm.html', $twigdata); 
 }
@@ -639,7 +639,7 @@ function getRISTasks($personID)
     $ldap = connectLDAP($GLOBALS['ldap_config']['ldap']['server']);
     $baseDN = $GLOBALS['ldap_config']['ldap']['base_dn'];
     
-    $uid = getUID();
+    $uid = getUserID();
     if (isset($uid)) {
         $submittedby ="";
         $userDNs = getDNs($ldap,$baseDN,"uid=$uid");
@@ -707,6 +707,21 @@ function getTaskOptions($personID)
     sort($tasks);
     
     return json_encode($tasks);
+}
+
+
+function getUserID() 
+{
+    global $user;
+    if (isset($user->name))
+    {
+    if (array_key_exists('as_user',$_GET) and isUserAdmin($user->name)) {
+          return $_GET['as_user'];
+        }
+        return $user->name;
+    }
+    else
+    {return null;}
 }
 
 

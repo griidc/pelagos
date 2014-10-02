@@ -15,8 +15,6 @@ function saveDIF($parameters)
     //$conn = $myDC->connection;
     
     $conn = OpenDB('GOMRI_RO');
-    
-    
 
 /*    
     dataset_uid_i integer,    -dataset_udi_t text,    -project_id_i integer,    -task_uid_i integer,    -title_t text,    -primary_poc_i integer,    -secondary_poc_i integer,    -abstract_t text,    -dataset_type_t text,    -dataset_for_t text,    -size_t text,    -observation_t text,    approach_t text,    start_date_d date,    end_date_d date,    geo_location_t text,    point_t text,    national_t text,    ethical_t text,    remarks_t text,
@@ -173,9 +171,9 @@ function displayTaskStatus($tasks,$conn,$update=null,$personid=null,$filterstatu
             
         }       
         
-        if (isset($_GET["status"]) AND $_GET["status"] != '')
+        if (isset($_POST["status"]) AND $_POST["status"] != '')
         {
-            $statusFlag = $_GET["status"];
+            $statusFlag = $_POST["status"];
             $query .= " AND status=$statusFlag";
         }
         
@@ -197,9 +195,9 @@ function displayTaskStatus($tasks,$conn,$update=null,$personid=null,$filterstatu
                 $datasetid = $row["dataset_uid"];
                 $dataset_udi = $row["dataset_udi"];
                 
-                $qs = "uid=$datasetid";
-                if (isset($personid)) { $qs .= "&prsid=$personid"; }
-                if (array_key_exists('as_user',$_GET)) { $qs .= "&as_user=$_GET[as_user]"; }
+                // $qs = "uid=$datasetid";
+                // if (isset($personid)) { $qs .= "&prsid=$personid"; }
+                // if (array_key_exists('as_user',$_GET)) { $qs .= "&as_user=$_GET[as_user]"; }
                 
                 if ($filterstatus==$status OR $filterstatus==null OR $filterstatus=="")
                 {
