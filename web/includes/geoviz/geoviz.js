@@ -1137,9 +1137,14 @@ function GeoViz()
     this.removeAllFeaturesFromMap = function ()
     {
         this.stopDrawing();
+        if (typeof vlayer == "undefined")
+        {
+            return false;
+        }
         vlayer.removeAllFeatures();
         map.updateSize();
         vlayer.removeAllFeatures();
+        return true;
     }
     
     function startDrawing ()
@@ -1170,6 +1175,10 @@ function GeoViz()
     
     function stopDrawing ()
     {
+        if (typeof modify == "undefined")
+        {
+            return false;
+        }
         jQuery("#drawtools").fadeOut();
         //$("#drawtools").hide();
         modify.deactivate();
@@ -1178,6 +1187,8 @@ function GeoViz()
         filter.deactivate();
         modify.activate();
         jQuery("#helptext").text('Navigation Mode');
+        return true;
+
     }
     
     this.stopDrawing = function ()
