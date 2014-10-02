@@ -107,6 +107,7 @@ function mailApprovers($udi,$title,$template)
         }
     }
     
+    $difMailer->mailSubject = $title;
     $difMailer->mailMessage = $message;
     return $difMailer->sendMail();
 
@@ -263,7 +264,7 @@ function postDIF($fielddata)
             $msgtitle = 'DIF Submitted';
             
             $sendMail = sendSubmitMail($submitted,$UDI,'GRIIDC DIF Submitted','submitMail.html');
-            mailApprovers($UDI,'DIF Submitted for Approval','reviewMail.html');
+            mailApprovers($UDI,"DIF:$UDI Submitted for Approval",'reviewMail.html');
             
         }
         else if ($frmButton == 'unlock')
@@ -278,7 +279,7 @@ function postDIF($fielddata)
             $message = '<div><img src="/images/icons/info32.png"><p>Your unlock request has been submitted for ID: '.$UDI.'.<br>Your unlock request will be reviewed by GRIIDC staff.<br>You will receive an e-mail when the DIF is unlocked.</p></div>';
             $msgtitle = 'DIF Submitted';
             
-            mailApprovers($UDI,'DIF Unlock Request','unlockReq.html');
+            mailApprovers($UDI,"DIF:$UDI Unlock Request",'unlockReq.html');
             
         }
         else
