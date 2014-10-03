@@ -1,9 +1,11 @@
 <?php
+date_default_timezone_set('America/Chicago');
 
 if (!file_exists('config.ini')) {
     echo 'Error: config.ini is missing. Please see config.ini.example for an example config file.';
     exit;
 }
+$drupaluser = $GLOBALS['user'];
 
 $GLOBALS['pelagos_config']  = parse_ini_file('/etc/opt/pelagos.ini',true);
 
@@ -18,6 +20,9 @@ include_once "lib/functions.php";
 $GLOBALS['ldap_config']     = parse_ini_file($GLOBALS['pelagos_config']['paths']['conf'].'/ldap.ini',true);
 $GLOBALS['db_config']       = parse_ini_file($GLOBALS['pelagos_config']['paths']['conf'].'/db.ini',true);
 $GLOBALS['module_config']   = parse_ini_file('config.ini',true);
+$GLOBALS['logfile_location'] = $GLOBALS['module_config']['Logfiles']['logfilePath'];
+# log registrations of new metadata to mdapp's log
+$mdapp_logfile = "$GLOBALS[logfile_location]/mdapp.log";  
 
 define('RPIS_TASK_BASEURL',  $GLOBALS['module_config']['RISDATA']['RPIS_TASK_BASEURL']);
 define('RPIS_PEOPLE_BASEURL',$GLOBALS['module_config']['RISDATA']['RPIS_PEOPLE_BASEURL']); 
@@ -296,6 +301,8 @@ if ($_POST) {
                             move_uploaded_file($_FILES["metadatafile"]["tmp_name"],"$dest_dir/" . $_FILES["metadatafile"]["name"]);
                             $metadata_file_path = "file://$dest_dir/" . $_FILES["metadatafile"]["name"];
                             $registry_vals['metadata_dl_status'] = 'None';
+                            $message = "$drupaluser->name has been registered new metadata via direct upload for ".addslashes($_POST['dataset_udi']);
+                            writeLog($message,$mdapp_logfile); 
                         }
                     }
                     $registry_vals['url_metadata'] = $metadata_file_path;
@@ -305,6 +312,8 @@ if ($_POST) {
                     if (array_key_exists('sftp_force_metadata_download',$_POST) and !empty($_POST['sftp_force_metadata_download'])) {
                         $registry_vals['metadata_dl_status'] = 'None';
                     }
+                    $message = "$drupaluser->name has been registered new metadata via SFTP/GridFTP upload for ".addslashes($_POST['dataset_udi']);
+                    writeLog($message,$mdapp_logfile); 
                     break;
                 case 'HTTP':
                     if (array_key_exists('url_metadata_http',$_POST) and !empty($_POST['url_metadata_http'])) {
@@ -312,6 +321,8 @@ if ($_POST) {
                         if (array_key_exists('http_force_metadata_download',$_POST) and !empty($_POST['http_force_metadata_download'])) {
                             $registry_vals['metadata_dl_status'] = 'None';
                         }
+                        $message = "$drupaluser->name has been registered new metadata via HTTP pull for ".addslashes($_POST['dataset_udi']);
+                        writeLog($message,$mdapp_logfile); 
                     }
             }
 
@@ -364,5 +375,11 @@ else {
     echo '</tr>';
     echo '</table>';
 };
+
+function writeLog($message,$logfile) {
+    $dstamp = date('r'); // RFC 2822 standard
+    file_put_contents($logfile,"$dstamp:$message\n", FILE_APPEND);
+}
+
 
 ?>
