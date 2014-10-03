@@ -539,7 +539,15 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                         $geo_status = 'Verified by PostGIS as OK';
                         $tmp=$data2->fetchAll();
                         $geometry=$tmp[0]['geometry'];
-                        $geoflag = 'yes';
+                        $geoflag = 'yes'; 
+                        // Now determine an envelope that surrounds this geometry
+                        $sql = "SELECT ST_AsText(ST_Envelope('$geometry'::geometry)) as geoenvelope";
+                        $data3 = $dbms->prepare($sql);
+                        if ($data3->execute()) {
+                            $tmp=$data3->fetchAll();
+                            $envelope=$tmp[0]['geoenvelope'];
+                            drupal_set_message("The following bounding envelope has been calculated for this geometry:".textboxize(null,$envelope),'status');
+                        }
                     } else {
                         $dbErr = $data2->errorInfo();
                         $geo_status = "<font color=red>Rejected by PostGIS - ".$dbErr[2]."</font>";
