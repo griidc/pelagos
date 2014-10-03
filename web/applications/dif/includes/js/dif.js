@@ -383,7 +383,7 @@ function saveDIF()
             {
                 formReset(true);
             }
-                $(json.message).dialog({
+                $("<div>"+json.message+"</div>").dialog({
                     height: "auto",
                     width: "auto",
                     title: json.title,
@@ -446,7 +446,7 @@ function initSpinner()
         shadow: true, // Whether to render a shadow
         hwaccel: true, // Whether to use hardware acceleration
         className: 'spinner', // The CSS class to assign to the spinner
-        zIndex: 2e9, // The z-index (defaults to 2000000000)
+        zIndex: 2000000000, // The z-index (defaults to 2000000000)
         top: '50%', // Top position relative to parent
         left: '50%' // Left position relative to parent
     };
@@ -456,10 +456,10 @@ function initSpinner()
 }
 
 function showSpinner()
-{$('#spinner').fadeIn('fast');}
+{$('#spinner').show();}
 
 function hideSpinner()
-{$('#spinner').fadeOut('fast');}
+{$('#spinner').hide();}
 
 function getNode(UDI)
 {
