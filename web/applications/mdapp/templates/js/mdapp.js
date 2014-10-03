@@ -5,9 +5,7 @@ $(document).ready( function () {
     if ($.cookie('activetab') == null) {
         $.cookie( 'activetab', 0, { path : '/mdapp' });
 
-    } else {
-        console.log("cookie value is: " + $.cookie('activetab'))
-    }
+    } 
 
     $('#tabs').tabs({
         active: $.cookie('activetab'),
