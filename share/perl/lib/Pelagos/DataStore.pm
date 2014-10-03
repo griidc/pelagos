@@ -40,6 +40,8 @@ sub check_download_directory {
         mkdir("$download_directory_path/$udi",$dl_dir_perms) or die "Error: could not create directory: $download_directory_path/$udi ($!)\n";
         # make apache the owner
         chown($apache_uid,$apache_gid,"$download_directory_path/$udi");
+        # give GRIIDC group access
+        system("setfacl -m g:GRIIDC:r-x $download_directory_path/$udi");
     }
 }
 
