@@ -1,13 +1,19 @@
 var $ = jQuery.noConflict();
 
 $(document).ready( function () {
+
+    if ($.cookie('activetab') == null) {
+        $.cookie( 'activetab', 0, { path : '/mdapp' });
+
+    } else {
+        console.log("cookie value is: " + $.cookie('activetab'))
+    }
+
     $('#tabs').tabs({
         active: $.cookie('activetab'),
         activate : function( event, ui ) {
-            $.cookie( 'activetab', ui.newTab.index(),{
-                expires : 10
-            });
-        $( $.fn.dataTable.tables( true ) ).DataTable().columns.adjust();
+            $.cookie( 'activetab', ui.newTab.index(),{ path : '/mdapp' });
+            $( $.fn.dataTable.tables( true ) ).DataTable().columns.adjust();
         }
     });
 
