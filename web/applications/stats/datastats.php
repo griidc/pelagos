@@ -61,6 +61,7 @@ for ($i = 0; $i < count($statq[0]); $i++)
     $sql = $statq[0][$i];
     
     $row = pdoDBQuery($conn,$sql);
+    $row = $row[0];
     
     $totalstat = $row['total'];
     $statname = $row['field'];

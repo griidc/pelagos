@@ -110,6 +110,7 @@ SELECT
 ";
 
 $row = pdoDBQuery($conn,$query);
+$row = $row[0];
 
 $gdata = array();
 
@@ -132,6 +133,7 @@ LEFT OUTER JOIN datasets on registry.dataset_udi = datasets.dataset_udi
 ";
 
 $row = pdoDBQuery($conn,$query);
+$row = $row[0];
 //var_dump($row);
 
 $ddata = array();
@@ -164,6 +166,7 @@ LEFT OUTER JOIN downloads on downloads.registry_id = substr(registry.registry_id
 ";
 
 $row = pdoDBQuery($conn,$query);
+$row = $row[0];
 //var_dump($row);
 
 $sdata = array();
@@ -212,6 +215,7 @@ where (not (pg.Program_ID in
 ";
 
 $row2 = pdoDBQuery($conn2,$query);
+$row2 = $row2[0];
 //var_dump($row);
 
 
