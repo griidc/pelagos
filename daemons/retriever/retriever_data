@@ -201,7 +201,7 @@ for my $uid (keys %notify) {
             $mail{'Message'} .= "\n        <td style='$td_style width: 400px;'>$ds->{title}</td>";
             $mail{'Message'} .= "\n        <td style='$td_style'>$ds->{filename}</td>";
             $mail{'Message'} .= "\n        <td style='$td_style'>$ds->{udi}</td>";
-            $mail{'Message'} .= "\n        <td style='$td_style'><a href='https://data.gulfresearchinitiative.org/data/$ds->{udi}'>https://data.gulfresearchinitiative.org/data/$ds->{udi}</a></td>";
+            $mail{'Message'} .= "\n        <td style='$td_style'><a href='https://$conf->{system}->{hostname}/data/$ds->{udi}'>https://$conf->{system}->{hostname}/data/$ds->{udi}</a></td>";
             $mail{'Message'} .= "\n    </tr>";
         }
     }
