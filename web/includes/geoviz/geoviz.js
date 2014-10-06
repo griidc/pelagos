@@ -43,7 +43,7 @@ function GeoViz()
                 
     this.initMap = function(DIV,Options)
     {
-        googleZoomLevel = 11, //max 11 on hybrid in ocean.
+        googleZoomLevel = 21, //max 11 on hybrid in ocean. //max 21
         
         firstLoad = false;
         
@@ -94,7 +94,7 @@ function GeoViz()
         dstyle.fillOpacity = 0;
         dstyle.strokeOpacity = 0.5;
         dstyle.strokeWidth = 2;
-        dstyle.pointRadius = 10;
+        //dstyle.pointRadius = 10;
         
         defaultStyle = new OpenLayers.Style(dstyle);
         
@@ -111,6 +111,7 @@ function GeoViz()
         {
             sstyle.label = "${" + Options.labelAttr + "}";
             //console.log("label set");
+            sstyle.labelAlign = "cm";
         }
         
         tstyle = OpenLayers.Util.extend({}, OpenLayers.Feature.Vector.style["temporary"]);
@@ -605,16 +606,27 @@ function GeoViz()
         
     this.gotoAllFeatures = function ()
     {
+        debugger;
         if (vlayer.features.length > 0)
         {
+            var featureZoomLevel = map.getZoomForExtent(vlayer.getDataExtent());
+            console.log(featureZoomLevel);
+            if (featureZoomLevel >= 11) {featureZoomLevel = 11;}
+            console.log(featureZoomLevel);
+            featureZoomLevel = map.adjustZoom(featureZoomLevel);
             map.zoomToExtent(vlayer.getDataExtent());
+            map.zoomTo(featureZoomLevel);
         }
     }
     
     this.gotoFeature = function (attrName,attrValue)
     {
         var myFeature=vlayer.getFeaturesByAttribute(attrName,attrValue)[0];
+        var featureZoomLevel = map.getZoomForExtent(myFeature.geometry.getBounds());
+        if (featureZoomLevel >= 11) {featureZoomLevel = 11;}
+        featureZoomLevel = map.adjustZoom(featureZoomLevel);
         map.zoomToExtent(myFeature.geometry.getBounds())
+        map.zoomTo(featureZoomLevel);
     }
     
     this.highlightFeature = function (attrName,attrValue)
