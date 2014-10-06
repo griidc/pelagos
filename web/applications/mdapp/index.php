@@ -37,7 +37,7 @@ drupal_add_library('system', 'jquery.cookie');
 global $user;
 $GLOBALS['pelagos_config'] = parse_ini_file('/etc/opt/pelagos.ini',true);
 $GLOBALS['module_config'] = parse_ini_file('config.ini',true);
-$GLOBALS['logfile_location'] = $GLOBALS['module_config']['Logfiles']['logfilePath'].'/'.$GLOBALS['logfile_name'];
+$GLOBALS['logfile_location'] = $GLOBALS['pelagos_config']['paths']['log'].'/'.$GLOBALS['logfile_name'];
 $GLOBALS['ldap'] = parse_ini_file($GLOBALS['pelagos_config']['paths']['conf'].'/ldap.ini',true);
 $GLOBALS['smtp'] = parse_ini_file($GLOBALS['pelagos_config']['paths']['conf'].'/smtp.ini',true);
 
