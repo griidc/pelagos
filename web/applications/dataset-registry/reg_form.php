@@ -782,7 +782,7 @@ fieldset {
 
 .emRequired::before {
     font-weight: bold; color:#FF0000;
-    content:"*";
+    content:"* ";
 }
 
 </style>
@@ -1089,6 +1089,8 @@ fieldset {
                 <input type="hidden" name="generatedoi" id="generatedoi" value="No">
             </fieldset>
         </p>
+
+        <span class="emRequired"/>required field
 
     </fieldset> <!-- Dataset Information Header -->
 
