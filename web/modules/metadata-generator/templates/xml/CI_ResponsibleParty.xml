@@ -36,55 +36,55 @@
             {% endif %}
             <gmd:address>
                 <gmd:CI_Address>
-                    {% if RP[RPType].Street1 or RP[RPType].Street2 %}
-                        <gmd:deliveryPoint>
-                            <gco:CharacterString><![CDATA[{{RP[RPType].Street1 | trim}}{% if RP[RPType].Street2 %}
-
-{{RP[RPType].Street2 | trim}}{% endif %}]]></gco:CharacterString>
-                        </gmd:deliveryPoint>
-                    {% elseif RP[RPType].Department_Addr1 or RP[RPType].Department_Addr2 %}
+                    {% if RP[RPType].Department_Addr1 or RP[RPType].Department_Addr2 %}
                         <gmd:deliveryPoint>
                             <gco:CharacterString><![CDATA[{{RP[RPType].Department_Addr1 | trim}}{% if RP[RPType].Department_Addr2 %}
 
 {{RP[RPType].Department_Addr2 | trim}}{% endif %}]]></gco:CharacterString>
                         </gmd:deliveryPoint>
+                    {% elseif RP[RPType].Institution_Addr1 or RP[RPType].Institution_Addr2 %}
+                        <gmd:deliveryPoint>
+                            <gco:CharacterString><![CDATA[{{RP[RPType].Institution_Addr1 | trim}}{% if RP[RPType].Institution_Addr2 %}
+
+{{RP[RPType].Institution_Addr2 | trim}}{% endif %}]]></gco:CharacterString>
+                        </gmd:deliveryPoint>
                     {% endif %}
-                    {% if RP[RPType].City %}
-                        <gmd:city>
-                            <gco:CharacterString>{{RP[RPType].City}}</gco:CharacterString>
-                        </gmd:city>
-                    {% elseif RP[RPType].Department_City %}
+                    {% if RP[RPType].Department_City %}
                         <gmd:city>
                             <gco:CharacterString>{{RP[RPType].Department_City}}</gco:CharacterString>
                         </gmd:city>
+                    {% elseif RP[RPType].Institution_City %}
+                        <gmd:city>
+                            <gco:CharacterString>{{RP[RPType].Institution_City}}</gco:CharacterString>
+                        </gmd:city>
                     {% endif %}
-                    {% if RP[RPType].State %}
-                        <gmd:administrativeArea>
-                            <gco:CharacterString>{{RP[RPType].State}}</gco:CharacterString>
-                        </gmd:administrativeArea>
-                    {% elseif RP[RPType].Department_State %}
+                    {% if RP[RPType].Department_State %}
                         <gmd:administrativeArea>
                             <gco:CharacterString>{{RP[RPType].Department_State}}</gco:CharacterString>
                         </gmd:administrativeArea>
+                    {% elseif RP[RPType].Institution_State %}
+                        <gmd:administrativeArea>
+                            <gco:CharacterString>{{RP[RPType].Institution_State}}</gco:CharacterString>
+                        </gmd:administrativeArea>
                     {% endif %}
-                    {% if RP[RPType].PostalCode %}
-                        <gmd:postalCode>
-                            <gco:CharacterString>{{RP[RPType].PostalCode}}</gco:CharacterString>
-                        </gmd:postalCode>
-                    {% elseif RP[RPType].Department_Zip %}
+                    {% if RP[RPType].Department_Zip %}
                         <gmd:postalCode>
                             <gco:CharacterString>{{RP[RPType].Department_Zip}}</gco:CharacterString>
+                        </gmd:postalCode>
+                    {% elseif RP[RPType].Institution_Zip %}
+                        <gmd:postalCode>
+                            <gco:CharacterString>{{RP[RPType].Institution_Zip}}</gco:CharacterString>
                         </gmd:postalCode>
                     {% else %}
                         <gmd:postalCode/>
                     {% endif %}
-                    {% if RP[RPType].Country %}
-                        <gmd:country>
-                            <gco:CharacterString>{{RP[RPType].Country}}</gco:CharacterString>
-                        </gmd:country>
-                    {% elseif RP[RPType].Department_Country %}
+                    {% if RP[RPType].Department_Country %}
                         <gmd:country>
                             <gco:CharacterString>{{RP[RPType].Department_Country}}</gco:CharacterString>
+                        </gmd:country>
+                    {% elseif RP[RPType].Institution_Country %}
+                        <gmd:country>
+                            <gco:CharacterString>{{RP[RPType].Institution_Country}}</gco:CharacterString>
                         </gmd:country>
                     {% endif %}
                     {% if RP[RPType].Email %}
