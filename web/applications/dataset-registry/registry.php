@@ -20,7 +20,7 @@ include_once "lib/functions.php";
 $GLOBALS['ldap_config']     = parse_ini_file($GLOBALS['pelagos_config']['paths']['conf'].'/ldap.ini',true);
 $GLOBALS['db_config']       = parse_ini_file($GLOBALS['pelagos_config']['paths']['conf'].'/db.ini',true);
 $GLOBALS['module_config']   = parse_ini_file('config.ini',true);
-$GLOBALS['logfile_location'] = $GLOBALS['module_config']['Logfiles']['logfilePath'];
+$GLOBALS['logfile_location'] = $GLOBALS['pelagos_config']['paths']['log'];
 # log registrations of new metadata to mdapp's log
 $mdapp_logfile = "$GLOBALS[logfile_location]/mdapp.log";  
 
