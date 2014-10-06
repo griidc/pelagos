@@ -84,6 +84,14 @@ if (isset($_FILES["file"]))
 	}
 }
 
+if (isset($_POST))
+{
+	if (count($_POST)>1)
+	{
+		makeXML($_POST);
+	}
+}
+
 if (isset($_GET["dataUrl"]) and !isset($_FILES["file"]))
 {
 	$xmlURL = $_GET["dataUrl"];
@@ -99,14 +107,6 @@ if (isset($_GET["dataUrl"]) and !isset($_FILES["file"]))
 	{
 		$dMessage = 'Error while loading data from: ' .  $xmlURL;
 		drupal_set_message($dMessage,'error');
-	}
-}
-
-if (isset($_POST))
-{
-	if (count($_POST)>1)
-	{
-		makeXML($_POST);
 	}
 }
 
