@@ -254,7 +254,7 @@ var dlmap = new GeoViz();
             $("#rawxml").hide();
         });
 
-        dlmap.initMap('dlolmap',{'onlyOneFeature':false,'allowModify':false,'allowDelete':false,'staticMap':true,'labelAttr':'udi'});
+        dlmap.initMap('dlolmap',{'onlyOneFeature':false,'allowModify':false,'allowDelete':false,'staticMap':false,'labelAttr':'udi'});
 
         $("#downloadds").button().click(function() {
             if(<?php echo "\"".$prow['dataset_download_status']."\"" ?> == "RemotelyHosted") {
