@@ -1,13 +1,3 @@
-[GOMRI_DB]
-connstr = "pgsql:host=localhost;dbname=gomri;"
-username = "gomri_user"
-password = "********"
-
-[RPIS_DB]
-connstr = "mysql:host=localhost;dbname=gomri_rpis;"
-username = "rpis"
-password = "********"
-
 [status_icons]
 -1 = "na.png"
  0 = "x.png"
