@@ -33,6 +33,9 @@ require_once '/opt/pelagos/share/php/ldap.php';
 # drupal module.
 drupal_add_library('system', 'ui.tabs');
 drupal_add_library('system', 'jquery.cookie');
+drupal_add_js('//cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js',array('type'=>'external'));
+drupal_add_js('//maps.google.com/maps/api/js?v=3&sensor=false',array('type'=>'external'));
+drupal_add_js('/~mvandeneijnden/map/geoviz.js','external');
 
 global $user;
 $GLOBALS['pelagos_config'] = parse_ini_file('/etc/opt/pelagos.ini',true);
@@ -533,20 +536,46 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                 $geo = $xml->xpath('/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:geographicElement[1]/gmd:EX_BoundingPolygon[1]/gmd:polygon[1]/*');
                 if($geo) {  // double check for existance of geometry ( in case user override )
                     $geometry_xml = $geo[0]->asXML();
-                    $sql2="select ST_GeomFromGML('$geometry_xml', 4326) as geometry";
+                    $sql2="select ST_GeomFromGML('$geometry_xml', 4326) as geometry, ST_AsText(ST_GeomFromGML('$geometry_xml', 4326)) as geometry_wkt";
                     $data2 = $dbms->prepare($sql2);
                     if ($data2->execute()) {
                         $geo_status = 'Verified by PostGIS as OK';
                         $tmp=$data2->fetchAll();
                         $geometry=$tmp[0]['geometry'];
+                        $geometry_wkt=$tmp[0]['geometry_wkt'];
                         $geoflag = 'yes'; 
                         // Now determine an envelope that surrounds this geometry
                         $sql = "SELECT ST_AsText(ST_Envelope('$geometry'::geometry)) as geoenvelope";
                         $data3 = $dbms->prepare($sql);
                         if ($data3->execute()) {
                             $tmp=$data3->fetchAll();
-                            $envelope=$tmp[0]['geoenvelope'];
-                            drupal_set_message("The following bounding envelope has been calculated for this geometry:".textboxize(null,$envelope),'status');
+                            $envelope_wkt=$tmp[0]['geoenvelope'];
+                            $envelope=polygonbox_to_bounding_box($tmp[0]['geoenvelope']);
+                            drupal_set_message("A bounding envelope has been calculated for this geometry.",'status');
+
+                            // first load XML into DOM object for future manipulation
+                            $doc = new DOMDocument('1.0','utf-8');
+                            $doc->loadXML($xml_save);  // already checked for validity
+                            $xpath = new DOMXpath($doc);
+
+                            // create new gmd:geographicElement for the bounding-box envelope
+                            $fragment = $doc->createDocumentFragment();
+                            // $fragment->appendChild($doc->createElement('gmd:geographicElement',$envelope));
+                            $fragment->appendXML($envelope);
+
+                            // locate parent node
+                            $parent_xpath = '/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]';
+                            $parent = $xpath->query('/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]');
+                            // locate reference node
+                            $ref_xpath = '/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:geographicElement[1]';
+                            $ref = $xpath->query($ref_xpath);
+
+                            // insert into XML before first existing geographicElement
+                            $parent->item(0)->insertBefore($fragment,$ref->item(0));
+                            $doc->normalizeDocument();
+                            $doc->formatOutput=true;
+                            $xml_save=$doc->saveXML();
+
                         }
                     } else {
                         $dbErr = $data2->errorInfo();
@@ -653,7 +682,8 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                                     <li> Geometry Detected: $geoflag</li>
                                     <li> Geometry Status: $geo_status </li>
                                 </ul>
-                            </p>";
+                            </p>
+                            <div id=olmap style=\"width:600px; height:400px;\"></div>";
 
             drupal_set_message($thanks_msg,'status');
             $loginfo=$user->name." successfully uploaded metadata for $reg_id";
@@ -673,6 +703,8 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
         drupal_set_message($user->name.": File upload error: $err_str",'error');
         writeLog($user->name." ".$err_str);
     }
+    echo "<script>var envelope_wkt = '$envelope_wkt'; var geometry_wkt = '$geometry_wkt';</script>";
+    drupal_add_js("/$GLOBALS[PAGE_NAME]/js/mdapp-ul.js",array('type'=>'external'));
     echo "<a href=.>Continue</a>";
 });
 
@@ -973,4 +1005,55 @@ function textboxize($string,$xpath) {
     return "$string<textarea onclick=\"this.focus();this.select()\" readonly=\"readonly\" style=\"width: 100%\">$xpath</textarea>";
 }
 
+function polygonbox_to_bounding_box($orig_coords) {
+    $i=0;
+
+    # strip out unneeded text
+    $coords = preg_split('/,/',preg_replace("/POLYGON\(\(|\)\)/",'',$orig_coords));
+
+    $long = array(); $lat = array();
+    foreach ($coords as $pair) {
+        list($long,$lat) = preg_split("/ /",$pair);
+        $longitudes[$i]=$long;
+        $latitudes[$i]=$lat;
+        $i++;
+    }
+    if ($i != 5) {
+        throw new RuntimeException("Expected envelope as polygon should be 5 coordinate pairs.");
+    }
+
+    $west = $longitudes[0];
+    $east = $longitudes[0];
+    $south = $latitudes[0];
+    $north = $latitudes[0];
+
+    for ($j=0;$j<$i;$j++) {
+        if($longitudes[$j]<$west) { $west = $longitudes[$j]; }
+        if($longitudes[$j]>$east) { $east = $longitudes[$j]; }
+        if($latitudes[$j]<$south) { $south = $latitudes[$j]; }
+        if($latitudes[$j]>$north) { $north = $latitudes[$j]; }
+    }
+
+    $return = 
+"<gmd:geographicElement>
+  <gmd:EX_GeographicBoundingBox>
+    <gmd:westBoundLongitude>
+      <gco:Decimal>$west</gco:Decimal>
+    </gmd:westBoundLongitude>
+    <gmd:eastBoundLongitude>
+      <gco:Decimal>$east</gco:Decimal>
+    </gmd:eastBoundLongitude>
+    <gmd:southBoundLatitude>
+      <gco:Decimal>$south</gco:Decimal>
+    </gmd:southBoundLatitude>
+    <gmd:northBoundLatitude>
+      <gco:Decimal>$north</gco:Decimal>
+     </gmd:northBoundLatitude>
+  </gmd:EX_GeographicBoundingBox>
+</gmd:geographicElement>
+";
+
+return $return;
+
+}
 ?>
