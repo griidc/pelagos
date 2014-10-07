@@ -508,6 +508,8 @@ $app->get('/json/:type/datasets/taskId/:taskId.json', function ($type,$taskId) u
     exit;
 });
 
+$orig_env = fixEnvironment();
 $app->run();
+restoreEnvironment($orig_env);
 
 ?>
