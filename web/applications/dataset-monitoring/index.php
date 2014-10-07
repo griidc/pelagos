@@ -209,6 +209,8 @@ $app->get('/pdf/:by/:id/:name', function ($by,$id,$name) use ($app) {
     exit;
 });
 
+$orig_env = fixEnvironment();
 $app->run();
+restoreEnvironment($orig_env);
 
 ?>
