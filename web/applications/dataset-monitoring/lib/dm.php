@@ -1,24 +1,8 @@
 <?php
 
-function getDBH($db) {
-    $dbh = new PDO($GLOBALS['config'][$db.'_DB']['connstr'],
-                   $GLOBALS['config'][$db.'_DB']['username'],
-                   $GLOBALS['config'][$db.'_DB']['password'],
-                   array(PDO::ATTR_PERSISTENT => true));
-
-    if ($db == 'RPIS') {
-        $stmt = $dbh->prepare('SET character_set_client = utf8;');
-        $stmt->execute();
-        $stmt = $dbh->prepare('SET character_set_results = utf8;');
-        $stmt->execute();
-    }
-
-    return $dbh;
-}
-
 function getTasksAndDatasets($projects) {
     $enforceMetadataRule = 0;
-    if( (isset($GLOBALS['pelagos']['system']['enforce_approved_metadata'] ) and ( $GLOBALS['pelagos']['system']['enforce_approved_metadata'] == 1 )) ) {
+    if( (isset($GLOBALS['config']['system']['enforce_approved_metadata'] ) and ( $GLOBALS['config']['system']['enforce_approved_metadata'] == 1 )) ) {
         $enforceMetadataRule = 1;
     } else {
         $enforceMetadataRule = 0;
@@ -71,23 +55,24 @@ function getTasksAndDatasets($projects) {
              ON r2.registry_id = m.MaxID
              ) r
              ON r.dataset_udi = d.dataset_udi';
-    $dbh = getDBH('GOMRI');
+    $RIS_DBH = OpenDB('RIS_RO');
+    $GOMRI_DBH = OpenDB('GOMRI_RO');
     for ($i=0;$i<count($projects);$i++) {
-        $pi = getPeopleDetails(getDBH('RPIS'),array('projectId='.$projects[$i]['ID'],'roleId=1'));
+        $pi = getPeopleDetails($RIS_DBH,array('projectId='.$projects[$i]['ID'],'roleId=1'));
         if ($pi) {
             $projects[$i]['PI'] = $pi[0];
         }
-        $projects[$i]['Institutions'] = getInstitutionDetails(getDBH('RPIS'),array('projectId='.$projects[$i]['ID']));
+        $projects[$i]['Institutions'] = getInstitutionDetails($RIS_DBH,array('projectId='.$projects[$i]['ID']));
         $taskFilter = array('projectId='.$projects[$i]['ID']);
         if (isset($GLOBALS['config']['exclude']['tasks'])) {
             foreach ($GLOBALS['config']['exclude']['tasks'] as $exclude) {
                 $taskFilter[] = "title!=$exclude";
             }
         }
-        $tasks = getTaskDetails(getDBH('RPIS'),$taskFilter);
+        $tasks = getTaskDetails($RIS_DBH,$taskFilter);
         if (count($tasks) > 0) {
             for ($j=0;$j<count($tasks);$j++) {
-                $stmt = $dbh->prepare("$SELECT $FROM WHERE task_uid=".$tasks[$j]['ID'].' AND status>0 ORDER BY udi;');
+                $stmt = $GOMRI_DBH->prepare("$SELECT $FROM WHERE task_uid=".$tasks[$j]['ID'].' AND status>0 ORDER BY udi;');
                 $stmt->execute();
                 $datasets = $stmt->fetchAll();
                 if (is_array($datasets)) {
@@ -97,7 +82,7 @@ function getTasksAndDatasets($projects) {
             $projects[$i]['tasks'] = $tasks;
         }
         else {
-            $stmt = $dbh->prepare("$SELECT $FROM WHERE project_id=".$projects[$i]['ID'].' AND status>0 ORDER BY udi;');
+            $stmt = $GOMRI_DBH->prepare("$SELECT $FROM WHERE project_id=".$projects[$i]['ID'].' AND status>0 ORDER BY udi;');
             $stmt->execute();
             $datasets = $stmt->fetchAll();
             if (is_array($datasets)) {

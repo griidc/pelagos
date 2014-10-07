@@ -1,23 +1,43 @@
 <?php
 
-$GLOBALS['libraries'] = parse_ini_file('/etc/griidc/libraries.ini',true);
+# load global pelagos config
+$GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini',true);
+# load local overrides and additions
+$GLOBALS['config'] = array_merge($GLOBALS['config'],parse_ini_file('config.ini',true));
+# load library info
+$GLOBALS['libraries'] = parse_ini_file($GLOBALS['config']['paths']['conf'].'/libraries.ini',true);
+# load database connection info
+$GLOBALS['db'] = parse_ini_file($GLOBALS['config']['paths']['conf'].'/db.ini',true);
 
+# load Slim2
 require_once $GLOBALS['libraries']['Slim2']['include'];
+# register Slim autoloader
 \Slim\Slim::registerAutoloader();
+# load Twig Slim-View
 require_once $GLOBALS['libraries']['Slim-Views']['include_Twig'];
-
-require_once $GLOBALS['libraries']['GRIIDC']['directory'].'/php/drupal.php';
-require_once $GLOBALS['libraries']['GRIIDC']['directory'].'/php/dumpIncludesFile.php';
-require_once $GLOBALS['libraries']['GRIIDC']['directory'].'/php/rpis.php';
-
-require_once 'lib/dm.php';
-
-$GLOBALS['griidc'] = parse_ini_file('/etc/griidc.ini',true);
-$GLOBALS['pelagos'] = parse_ini_file('/etc/opt/pelagos.ini',true);
-$GLOBALS['config'] = parse_ini_file('config.ini',true);
-
+# load custom Twig extensions
 require_once 'lib/Twig_Extensions_GRIIDC.php';
 
+# load Drupal functions
+require_once $GLOBALS['config']['paths']['share'].'/php/drupal.php';
+# load includes file dumper
+require_once $GLOBALS['config']['paths']['share'].'/php/dumpIncludesFile.php';
+# load RIS query functions
+require_once $GLOBALS['config']['paths']['share'].'/php/rpis.php';
+# load dataset query functions
+require_once $GLOBALS['config']['paths']['share'].'/php/datasets.php';
+# load database utilities
+require_once $GLOBALS['config']['paths']['share'].'/php/db-utils.lib.php';
+
+# load dataset monitoring library
+require_once 'lib/dm.php';
+
+
+#$GLOBALS['griidc'] = parse_ini_file('/etc/griidc.ini',true);
+#$GLOBALS['pelagos'] = parse_ini_file('/etc/opt/pelagos.ini',true);
+
+
+# initialize Slim
 $app = new \Slim\Slim(array(
                         'view' => new \Slim\Views\Twig(),
                         'debug' => true,
@@ -25,11 +45,14 @@ $app = new \Slim\Slim(array(
                         'log.enabled' => true
                      ));
 
+# set Twig directory for Twig Slim-View
 $app->view->parserDirectory = $GLOBALS['libraries']['Twig']['directory'];
+# add custom Twig extensions
 $app->view->parserExtensions = array(
     new \Slim\Views\Twig_Extensions_GRIIDC(),
 );
 
+# define baseUrl for use in templates
 $app->hook('slim.before', function () use ($app) {
     $env = $app->environment();
     $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
@@ -39,8 +62,9 @@ $app->hook('slim.before', function () use ($app) {
 $app->get('/includes/:file', 'dumpIncludesFile')->conditions(array('file' => '.+'));
 
 $app->get('/js/:name.js', function ($name) use ($app) {
-    $stash['funds'] = getFundingSources(getDBH('RPIS'));
-    $stash['projects'] = getProjectDetails(getDBH('RPIS'),array("fundsrc=7"));
+    $RIS_DBH = OpenDB('RIS_RO');
+    $stash['funds'] = getFundingSources($RIS_DBH);
+    $stash['projects'] = getProjectDetails($RIS_DBH,array("fundsrc=7"));
     header('Content-type: text/javascript');
     $app->render("js/$name.js",$stash);
     exit;
@@ -67,6 +91,7 @@ $app->get('/', function () use ($app) {
 
 $app->get('/projects/:by/:id(/:renderer)', function ($by,$id,$renderer='browser') use ($app) {
     $stash['timestamp'] = date('Y-m-d g:i A (T)',time());
+    $RIS_DBH = OpenDB('RIS_RO');
     if ($by == 'YR1') {
         $fundFilter = array('fundId>0','fundId<7');
         if (isset($GLOBALS['config']['exclude']['funds'])) {
@@ -74,7 +99,7 @@ $app->get('/projects/:by/:id(/:renderer)', function ($by,$id,$renderer='browser'
                 $fundFilter[] = "fundId!=$exclude";
             }
         }
-        $stash['funds'] = getFundingSources(getDBH('RPIS'),$fundFilter);
+        $stash['funds'] = getFundingSources($RIS_DBH,$fundFilter);
         for ($i=0; $i<count($stash['funds']); $i++) {
             $projectFilter = array('fundSrc='.$stash['funds'][$i]['ID']);
             if (isset($GLOBALS['config']['exclude']['projects'])) {
@@ -82,27 +107,27 @@ $app->get('/projects/:by/:id(/:renderer)', function ($by,$id,$renderer='browser'
                     $projectFilter[] = "projectId!=$exclude";
                 }
             }
-            $stash['funds'][$i]['projects'] = getTasksAndDatasets(getProjectDetails(getDBH('RPIS'),$projectFilter));
+            $stash['funds'][$i]['projects'] = getTasksAndDatasets(getProjectDetails($RIS_DBH,$projectFilter));
         }
         $app->render('html/YR1.html',$stash);
     }
     else {
         switch ($by) {
             case 'fundSrc':
-                $funds = getFundingSources(getDBH('RPIS'),array("fundId=$id"));
+                $funds = getFundingSources($RIS_DBH,array("fundId=$id"));
                 $stash['header'] = $funds[0]['Name'];
                 break;
             case 'peopleId':
-                $people = getPeopleDetails(getDBH('RPIS'),array("peopleId=$id"));
+                $people = getPeopleDetails($RIS_DBH,array("peopleId=$id"));
                 $stash['header'] = $people[0]['FirstName'] . ' ' . $people[0]['LastName'];
                 $stash['instName'] = $people[0]['Institution_Name'];
                 break;
             case 'institutionId':
-                $inst = getInstitutionDetails(getDBH('RPIS'),array("institutionId=$id"));
+                $inst = getInstitutionDetails($RIS_DBH,array("institutionId=$id"));
                 $stash['header'] = $inst[0]['Name'];
                 break;
             case 'projectId':
-                $proj = getProjectDetails(getDBH('RPIS'),array("projectId=$id"));
+                $proj = getProjectDetails($RIS_DBH,array("projectId=$id"));
                 $stash['header'] = $proj[0]['Title'];
                 break;
         }
@@ -112,7 +137,7 @@ $app->get('/projects/:by/:id(/:renderer)', function ($by,$id,$renderer='browser'
                 $projectFilter[] = "projectId!=$exclude";
             }
         }
-        $stash['projects'] = getTasksAndDatasets(getProjectDetails(getDBH('RPIS'),$projectFilter));
+        $stash['projects'] = getTasksAndDatasets(getProjectDetails($RIS_DBH,$projectFilter));
         if ($renderer == 'dompdf') {
             $env = $app->environment();
             header("Content-Type: text/html; charset=utf-8");
@@ -130,7 +155,8 @@ $app->get('/projects/:by/:id(/:renderer)', function ($by,$id,$renderer='browser'
 });
 
 $app->get('/dataset_details/:udi', function ($udi) use ($app) {
-    $dbh = getDBH('GOMRI');
+    $GOMRI_DBH = OpenDB('GOMRI_RO');
+    $RIS_DBH = OpenDB('RIS_RO');
 
     $SELECT = 'SELECT
                CASE WHEN r.dataset_title IS NULL THEN title ELSE r.dataset_title END AS title,
@@ -148,15 +174,15 @@ $app->get('/dataset_details/:udi', function ($udi) use ($app) {
 
     $WHERE = "WHERE d.dataset_udi='$udi'";
 
-    $stmt = $dbh->prepare("$SELECT $FROM $WHERE ORDER BY CAST(SUBSTRING(registry_id from 18 for 3) AS INTEGER) DESC LIMIT 1;");
+    $stmt = $GOMRI_DBH->prepare("$SELECT $FROM $WHERE ORDER BY CAST(SUBSTRING(registry_id from 18 for 3) AS INTEGER) DESC LIMIT 1;");
     $stmt->execute();
     $stash['datasets'] = $stmt->fetchAll();
 
     for ($i=0; $i<count($stash['datasets']); $i++) {
-        $ppoc = getPeopleDetails(getDBH('RPIS'),array('peopleId=' . $stash['datasets'][$i]['ppoc_ris_id']));
+        $ppoc = getPeopleDetails($RIS_DBH,array('peopleId=' . $stash['datasets'][$i]['ppoc_ris_id']));
         $stash['datasets'][$i]['ppoc'] = $ppoc[0];
         if ($stash['datasets'][$i]['spoc_ris_id']) {
-            $spoc = getPeopleDetails(getDBH('RPIS'),array('peopleId=' . $stash['datasets'][$i]['spoc_ris_id']));
+            $spoc = getPeopleDetails($RIS_DBH,array('peopleId=' . $stash['datasets'][$i]['spoc_ris_id']));
             $stash['datasets'][$i]['spoc'] = $spoc[0];
         }
     }
