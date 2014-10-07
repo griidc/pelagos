@@ -9,14 +9,14 @@ $GLOBALS['libraries'] = parse_ini_file($GLOBALS['config']['paths']['conf'].'/lib
 # load database connection info
 $GLOBALS['db'] = parse_ini_file($GLOBALS['config']['paths']['conf'].'/db.ini',true);
 
-# load Slim
-require_once $GLOBALS['libraries']['Slim']['include'];
-# Load TwigView
-require_once $GLOBALS['libraries']['Slim-Extras']['include_TwigView'];
-# set Twig directory for TwigView
-TwigView::$twigDirectory = $GLOBALS['libraries']['Twig']['directory'];
+# load Slim2
+require_once $GLOBALS['libraries']['Slim2']['include'];
+# register Slim autoloader
+\Slim\Slim::registerAutoloader();
+# load Twig Slim-View
+require_once $GLOBALS['libraries']['Slim-Views']['include_Twig'];
 # load custom Twig extensions
-require_once 'lib/Twig_Extensions_GRIIDC.php';
+require_once $GLOBALS['config']['paths']['share'].'/php/Twig_Extensions_Pelagos.php';
 
 # load Drupal functions
 require_once $GLOBALS['config']['paths']['share'].'/php/drupal.php';
@@ -33,12 +33,17 @@ require_once $GLOBALS['config']['paths']['share'].'/php/db-utils.lib.php';
 require_once 'lib/tree.php';
 
 # initialize Slim
-$app = new Slim(array(
-                        'view' => new TwigView,
-                        'debug' => true,
-                        'log.level' => Slim_Log::DEBUG,
-                        'log.enabled' => true
-                     ));
+$app = new \Slim\Slim(array(
+                            'view' => new \Slim\Views\Twig(),
+                            'debug' => true,
+                            'log.level' => \Slim\Log::DEBUG,
+                            'log.enabled' => true
+                           ));
+
+# set Twig directory for Twig Slim-View
+$app->view->parserDirectory = $GLOBALS['libraries']['Twig']['directory'];
+# add custom Twig extensions
+$app->view->parserExtensions = array( new \Slim\Views\Twig_Extensions_Pelagos() );
 
 # define baseUrl for use in templates
 $app->hook('slim.before', function () use ($app) {
