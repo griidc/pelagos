@@ -332,11 +332,10 @@
     </div>
         
     </td>
-    <td></td>
     <td height="100%" valign="top">
-    <div class="cleair" style="height:100%;">
+    <div style="height:100%; position:relative;">
+    <div class="cleair" style="position:absolute; top:0px; left:0px; right:0px; bottom:0px;">
         <table width="100%" height="100%">
-        
         {% if (isadmin == true) or (isdmanager == true) or (isdifapprover == true) %}
         <tr>
         <td>
@@ -371,28 +370,36 @@
         </td>
         </tr>
         {% endif %}
-            <tr>
+        <tr>
             <td height="100%">
-            <div style="height:100%;overflow:hidden">
-                    <h3>Legend:&nbsp; 
-                    <span id="statusicon" title="DIF is Open. DIF has been started and saved for this dataset, but has not yet been submitted to GRIIDC."><img src="/images/icons/cross.png">&nbsp;Open</span>&nbsp;- 
-                    <span id="statusicon" title="DIF is locked and is in review. DIF has been completed and submitted to GRIIDC for review and approval."><img src="/images/icons/error.png">&nbsp;Submitted</span>&nbsp;- 
-                    <span id="statusicon" title="DIF is locked and approved. DIF has been submitted to GRIIDC and reviewed and approved by GRIIDC. It is locked to prevent additional changes."><img src="/images/icons/tick.png">&nbsp;Approved</span>&nbsp;-
-                    <span id="statusicon" title="This is a task that you are associated with through your GoMRI proposal or grant funding agreement that has datasets identified"><img src="/images/icons/folder.png">&nbsp;Task</span>&nbsp;-
-                    <span id="statusicon" title="This is a task that you are associated with through your GoMRI proposal or grant funding agreement that does not yet have datasets identified."><img style="-webkit-filter:grayscale(100%);" src="/images/icons/folder_gray.png">&nbsp;Task Without Datasets</span>
-                    </h3>
-                   
-                    <h1>Datasets</h1>
-                    <hr width="100%">
-                     <div style="position:relative;height:100%;overflow:auto;">
-                        <div id="diftree" class="diftree">
-                            <a class="jstree-anchor" href="#"><img src="/images/icons/throbber.gif"> Loading...</a>
-                        </div>
-                    </div>
-            </div>
-        </td>
+                <table height="100%">
+                    <tr>
+                        <td>
+                            <h3>Legend:&nbsp;
+                                <span id="statusicon" title="DIF is Open. DIF has been started and saved for this dataset, but has not yet been submitted to GRIIDC."><img src="/images/icons/cross.png">&nbsp;Open</span>&nbsp;-
+                                <span id="statusicon" title="DIF is locked and is in review. DIF has been completed and submitted to GRIIDC for review and approval."><img src="/images/icons/error.png">&nbsp;Submitted</span>&nbsp;-
+                                <span id="statusicon" title="DIF is locked and approved. DIF has been submitted to GRIIDC and reviewed and approved by GRIIDC. It is locked to prevent additional changes."><img src="/images/icons/tick.png">&nbsp;Approved</span>&nbsp;-
+                                <span id="statusicon" title="This is a task that you are associated with through your GoMRI proposal or grant funding agreement that has datasets identified"><img src="/images/icons/folder.png">&nbsp;Task</span>&nbsp;-
+                                <span id="statusicon" title="This is a task that you are associated with through your GoMRI proposal or grant funding agreement that does not yet have datasets identified."><img style="-webkit-filter:grayscale(100%);" src="/images/icons/folder_gray.png">&nbsp;Task Without Datasets</span>
+                            </h3>
+                            <h1>Datasets</h1>
+                            <hr width="100%">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td height="100%">
+                            <div style="position:relative;height:100%;overflow:auto;">
+                                <div id="diftree" class="diftree">
+                                    <a class="jstree-anchor" href="#"><img src="/images/icons/throbber.gif"> Loading...</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
         </tr>
         </table>
+    </div>
     </div>
     </td>
     </tr>
