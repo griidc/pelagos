@@ -1,8 +1,8 @@
 <?php
 
-$GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini',true);
-require_once $GLOBALS['config']['paths']['share'].'/php/drupal.php';
-$GLOBALS['ldap'] = parse_ini_file($GLOBALS['config']['paths']['conf'].'/ldap.ini',true);
+$config = parse_ini_file('/etc/opt/pelagos.ini',true);
+require_once $config['paths']['share'].'/php/drupal.php';
+if (!array_key_exists('ldap',$GLOBALS)) $GLOBALS['ldap'] = parse_ini_file($config['paths']['conf'].'/ldap.ini',true);
 
 function connectLDAP($ldaphost) {
     $ldapconnect = ldap_connect("ldap://$ldaphost");
