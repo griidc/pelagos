@@ -44,9 +44,9 @@ function add_download_size(&$dataset) {
     }
 }
 
-function add_project_info(&$dataset) {
+function add_project_info(&$dataset,$RIS_DBH) {
     if ($dataset['project_id']) {
-        $project = getProjectDetails(getDBH('RPIS'),array("projectId=$dataset[project_id]"));
+        $project = getProjectDetails($RIS_DBH,array("projectId=$dataset[project_id]"));
         if (count($project) > 0) {
             $dataset['project'] = $project[0];
         }

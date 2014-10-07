@@ -1,34 +1,51 @@
 <?php
-# PHP Sharedir
-$GRIIDC_PHP="/usr/local/share/GRIIDC/php"; # normally /usr/local/share/GRIIDC/php
 
-# Framework (model/view)
-require_once '/usr/local/share/Slim/Slim/Slim.php';
-# templating engine - views
-require_once '/usr/local/share/Slim-Extras/Views/TwigView.php';
-# GRIIDC drupal extensions to allow use of drupal-intended code outside of drupal
-require_once "$GRIIDC_PHP/drupal.php";
-# PHP streams anything in an includes/ directory.  This is for use WITH slim.
-# if not using slim, use aliasIncludes.php instead.
-require_once "$GRIIDC_PHP/dumpIncludesFile.php";
-# various functions for accessing the RIS database
-require_once "$GRIIDC_PHP/rpis.php";
-# various functions for accessing GRIIDC datasets
-require_once "$GRIIDC_PHP/datasets.php";
-# misc utilities and stuff...
-require_once "$GRIIDC_PHP/utils.php";
+# load global pelagos config
+$GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini',true);
+# load local overrides and additions
+$GLOBALS['config'] = array_merge($GLOBALS['config'],parse_ini_file('config.ini',true));
+# shortcut for conf path
+$conf_path = $GLOBALS['config']['paths']['conf'];
+# shortcut for php share path
+$php_share_path = $GLOBALS['config']['paths']['share'].'/php';
+# load library info
+$GLOBALS['libraries'] = parse_ini_file("$conf_path/libraries.ini",true);
+# load database connection info
+$GLOBALS['db'] = parse_ini_file("$conf_path/db.ini",true);
+
+# load Slim2
+require_once $GLOBALS['libraries']['Slim2']['include'];
+# register Slim autoloader
+\Slim\Slim::registerAutoloader();
+# load Twig Slim-View
+require_once $GLOBALS['libraries']['Slim-Views']['include_Twig'];
+# load custom Twig extensions
+require_once "$php_share_path/Twig_Extensions_Pelagos.php";
+
+# load OpenID API for PHP
+require_once $GLOBALS['libraries']['LightOpenID']['include'];
+
+# load Drupal functions
+require_once "$php_share_path/drupal.php";
+# load includes file dumper
+require_once "$php_share_path/dumpIncludesFile.php";
+# load RIS query functions
+require_once "$php_share_path/rpis.php";
+# load dataset query functions
+require_once "$php_share_path/datasets.php";
+# load database utilities
+require_once "$php_share_path/db-utils.lib.php";
+# load misc utilities and stuff...
+require_once "$php_share_path/utils.php";
+# load auth library
+require_once "$php_share_path/auth.php";
+# load LDAP functions
+require_once "$php_share_path/ldap.php";
+
 # local functions for data-discovery module
 require_once 'lib/search.php';
 # local functions for the packaging sub-module to the data-discovery module
 //require_once 'lib/package.php';
-# OpenID API for PHP
-require_once '/usr/local/share/lightopenid-lightopenid/openid.php';
-# GRIIDC database utilities
-require_once "$GRIIDC_PHP/db-utils.lib.php";
-# Auth library
-require_once "$GRIIDC_PHP/auth.php";
-# LDAP
-require_once "$GRIIDC_PHP/ldap.php";
 
 date_default_timezone_set('UTC');
 
@@ -39,25 +56,27 @@ date_default_timezone_set('UTC');
 # drupal module.
 drupal_add_library('system', 'ui.tabs');
 
-$GLOBALS['griidc'] = parse_ini_file('/etc/opt/pelagos.ini',true);
-$GLOBALS['config'] = parse_ini_file('config.ini',true);
-
-TwigView::$twigDirectory = $GLOBALS['config']['TwigView']['twigDirectory'];
-
-$app = new Slim(array(
-                        'view' => new TwigView,
+# initialize Slim
+$app = new \Slim\Slim(array(
+                        'view' => new \Slim\Views\Twig(),
                         'debug' => true,
-                        'log.level' => Slim_Log::DEBUG,
+                        'log.level' => \Slim\Log::DEBUG,
                         'log.enabled' => true
                      ));
 
+# set Twig directory for Twig Slim-View
+$app->view->parserDirectory = $GLOBALS['libraries']['Twig']['directory'];
+# add custom Twig extensions
+$app->view->parserExtensions = array( new \Slim\Views\Twig_Extensions_Pelagos() );
+
+# define global variables for use in templates
 $app->hook('slim.before', function () use ($app) {
     global $user;
     $env = $app->environment();
     $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
-    $app->view()->appendData(array('baseUrl' => "$protocol$env[SERVER_NAME]/$GLOBALS[PAGE_NAME]"));
+    $app->view()->appendData(array('baseUrl' => "$protocol$env[SERVER_NAME]$env[SCRIPT_NAME]"));
     $app->view()->appendData(array('hostname' => $env['SERVER_NAME']));
-    $app->view()->appendData(array('pageName' => $GLOBALS['PAGE_NAME']));
+    $app->view()->appendData(array('pageName' => preg_replace('/^\//','',$env['SCRIPT_NAME'])));
     $app->view()->appendData(array('currentPage' => urlencode(preg_replace('/^\//','',$_SERVER['REQUEST_URI']))));
     if (!empty($user->name)) {
         $app->view()->appendData(array('uid' => $user->name));
@@ -110,17 +129,18 @@ $app->post('/', function () use ($app) {
 });
 
 function index($app) {
+    $env = $app->environment();
     drupal_add_js('/tree/js/tree.js',array('type'=>'external'));
-    drupal_add_js("/$GLOBALS[PAGE_NAME]/js/search.js",array('type'=>'external'));
-//    drupal_add_js("/$GLOBALS[PAGE_NAME]/js/package.js",array('type'=>'external'));
+    drupal_add_js("$env[SCRIPT_NAME]/js/search.js",array('type'=>'external'));
+//    drupal_add_js("$env[SCRIPT_NAME]/js/package.js",array('type'=>'external'));
     drupal_add_library('system', 'jquery.cookie');
-    drupal_add_css("/$GLOBALS[PAGE_NAME]/css/search.css",array('type'=>'external'));
-    drupal_add_css("/$GLOBALS[PAGE_NAME]/includes/css/scrollbars.css",array('type'=>'external'));
-    drupal_add_css("/$GLOBALS[PAGE_NAME]/includes/css/datasets.css",array('type'=>'external'));
-    drupal_add_css("/$GLOBALS[PAGE_NAME]/includes/css/downloads.css",array('type'=>'external'));
-    drupal_add_css("/$GLOBALS[PAGE_NAME]/includes/css/dataset_details.css",array('type'=>'external'));
-    drupal_add_css("/$GLOBALS[PAGE_NAME]/includes/css/dataset_download.css",array('type'=>'external'));
-    drupal_add_css("/$GLOBALS[PAGE_NAME]/includes/css/logins.css",array('type'=>'external'));
+    drupal_add_css("$env[SCRIPT_NAME]/css/search.css",array('type'=>'external'));
+    drupal_add_css("$env[SCRIPT_NAME]/includes/css/scrollbars.css",array('type'=>'external'));
+    drupal_add_css("$env[SCRIPT_NAME]/includes/css/datasets.css",array('type'=>'external'));
+    drupal_add_css("$env[SCRIPT_NAME]/includes/css/downloads.css",array('type'=>'external'));
+    drupal_add_css("$env[SCRIPT_NAME]/includes/css/dataset_details.css",array('type'=>'external'));
+    drupal_add_css("$env[SCRIPT_NAME]/includes/css/dataset_download.css",array('type'=>'external'));
+    drupal_add_css("$env[SCRIPT_NAME]/includes/css/logins.css",array('type'=>'external'));
     if (array_key_exists('treePaneCollapsed',$GLOBALS['config']['DataDiscovery'])) {
         $stash['treePaneCollapsed'] = $GLOBALS['config']['DataDiscovery']['treePaneCollapsed'];
     }
@@ -139,6 +159,9 @@ $app->get('/datasets/:filter/:by/:id/:geo_filter', function ($filter,$by,$id,$ge
 
     $reg_filters = array('registry_id!=00%');
 
+    $RIS_DBH = OpenDB('RIS_RO');
+    $GOMRI_DBH = OpenDB('GOMRI_RO');
+
     if (!empty($by)) {
         if ($by == 'otherSources') {
             $reg_filters[] = 'registry_id=00%';
@@ -154,7 +177,7 @@ $app->get('/datasets/:filter/:by/:id/:geo_filter', function ($filter,$by,$id,$ge
                 else {
                     $filters = array("$by=$id");
                 }
-                $projects = getProjectDetails(getDBH('RPIS'),$filters);
+                $projects = getProjectDetails($RIS_DBH,$filters);
                 $projectIds = array();
                 foreach ($projects as $project) {
                     $projectIds[] = $project['ID'];
@@ -172,38 +195,38 @@ $app->get('/datasets/:filter/:by/:id/:geo_filter', function ($filter,$by,$id,$ge
     }
 
     # toggle whether to enforce new availability rules per ini file parameter
-    if( (isset($GLOBALS['griidc']['system']['enforce_approved_metadata'] ) and ( $GLOBALS['griidc']['system']['enforce_approved_metadata'] == 1 ))) {
-        $unrestricted_datasets = get_registered_datasets(getDBH('GOMRI'),array_merge($reg_filters,array('availability=available')),$filter,$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
-        $restricted_datasets = get_registered_datasets(getDBH('GOMRI'),array_merge($reg_filters,array('availability=available_with_restrictions')),$filter,$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
-        $md_under_review_datasets = get_registered_datasets(getDBH('GOMRI'),array_merge($reg_filters,array('availability=unavailable_pending_metadata_acceptance')),$filter,$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
-        $unavailable_datasets = get_identified_datasets(getDBH('GOMRI'),array_merge($reg_filters,array('availability=unavailable_pending_metadata_submission,unavailable_pending_data_submission,unavailable_pending_registration')),$filter,$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
+    if( (isset($GLOBALS['config']['system']['enforce_approved_metadata'] ) and ( $GLOBALS['config']['system']['enforce_approved_metadata'] == 1 ))) {
+        $unrestricted_datasets = get_registered_datasets($GOMRI_DBH,array_merge($reg_filters,array('availability=available')),$filter,$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
+        $restricted_datasets = get_registered_datasets($GOMRI_DBH,array_merge($reg_filters,array('availability=available_with_restrictions')),$filter,$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
+        $md_under_review_datasets = get_registered_datasets($GOMRI_DBH,array_merge($reg_filters,array('availability=unavailable_pending_metadata_acceptance')),$filter,$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
+        $unavailable_datasets = get_identified_datasets($GOMRI_DBH,array_merge($reg_filters,array('availability=unavailable_pending_metadata_submission,unavailable_pending_data_submission,unavailable_pending_registration')),$filter,$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
     } else {
-        $unrestricted_datasets = get_registered_datasets(getDBH('GOMRI'),array_merge($reg_filters,array('availability=available,unavailable_pending_metadata_submission,unavailable_pending_metadata_acceptance','restricted=0')),$filter,$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
-        $restricted_datasets = get_registered_datasets(getDBH('GOMRI'),array_merge($reg_filters,array('availability=available_with_restrictions,unavailable_pending_metadata_submission,unavailable_pending_metadata_acceptance','restricted=1')),$filter,$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
+        $unrestricted_datasets = get_registered_datasets($GOMRI_DBH,array_merge($reg_filters,array('availability=available,unavailable_pending_metadata_submission,unavailable_pending_metadata_acceptance','restricted=0')),$filter,$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
+        $restricted_datasets = get_registered_datasets($GOMRI_DBH,array_merge($reg_filters,array('availability=available_with_restrictions,unavailable_pending_metadata_submission,unavailable_pending_metadata_acceptance','restricted=1')),$filter,$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
         $md_under_review_datasets = array();
-        $unavailable_datasets = get_identified_datasets(getDBH('GOMRI'),array_merge($reg_filters,array('availability=unavailable_pending_data_submission,unavailable_pending_registration')),$filter,$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
+        $unavailable_datasets = get_identified_datasets($GOMRI_DBH,array_merge($reg_filters,array('availability=unavailable_pending_data_submission,unavailable_pending_registration')),$filter,$GLOBALS['config']['DataDiscovery']['registeredOrderBy']);
     }
 
     foreach ($unrestricted_datasets as $dataset) {
         add_download_size($dataset);
-        add_project_info($dataset);
+        add_project_info($dataset,$RIS_DBH);
         $stash['unrestricted_datasets'][] = $dataset;
     }
 
     foreach ($restricted_datasets as $dataset) {
         add_download_size($dataset);
-        add_project_info($dataset);
+        add_project_info($dataset,$RIS_DBH);
         $stash['restricted_datasets'][] = $dataset;
     }
         
     foreach ($md_under_review_datasets as $dataset) {
-        add_project_info($dataset);
+        add_project_info($dataset,$RIS_DBH);
         add_download_size($dataset);
         $stash['md_under_review_datasets'][] = $dataset;
     }
 
     foreach ($unavailable_datasets as $dataset) {
-        add_project_info($dataset);
+        add_project_info($dataset,$RIS_DBH);
         $stash['identified_datasets'][] = $dataset;
     }
 
@@ -215,11 +238,12 @@ $app->get('/datasets/:filter/:by/:id/:geo_filter', function ($filter,$by,$id,$ge
 $app->get('/dataset_details/:udi', function ($udi) use ($app) {
     # used by a javascript that displays details on each
     # of the datasets in an expandable/collapsable manner
+    $GOMRI_DBH = OpenDB('GOMRI_RO');
     if (preg_match('/^00/',$udi)) {
-        $stash['datasets'] = get_registered_datasets(getDBH('GOMRI'),array("registry_id=$udi%"));
+        $stash['datasets'] = get_registered_datasets($GOMRI_DBH,array("registry_id=$udi%"));
     }
     else {
-        $stash['datasets'] = get_identified_datasets(getDBH('GOMRI'),array("udi=$udi"));
+        $stash['datasets'] = get_identified_datasets($GOMRI_DBH,array("udi=$udi"));
     }
 
     $app->render('html/dataset_details.html',$stash);
@@ -228,13 +252,15 @@ $app->get('/dataset_details/:udi', function ($udi) use ($app) {
 
 
 $app->get('/metadata/:udi', function ($udi) use ($app) {
+    $env = $app->environment();
     if (isMetadataApproved($udi)) {
     // if there is a file on disk, capture it
+        $GOMRI_DBH = OpenDB('GOMRI_RO');
     if (preg_match('/^00/',$udi)) {
-        $datasets = get_registered_datasets(getDBH('GOMRI'),array("registry_id=$udi%"));
+        $datasets = get_registered_datasets($GOMRI_DBH,array("registry_id=$udi%"));
     }
     else {
-        $datasets = get_identified_datasets(getDBH('GOMRI'),array("udi=$udi"));
+        $datasets = get_identified_datasets($GOMRI_DBH,array("udi=$udi"));
     }
     $dataset = $datasets[0];
     
@@ -307,11 +333,11 @@ $app->get('/metadata/:udi', function ($udi) use ($app) {
         exit;
     } else {
         drupal_set_message("Error retrieving metadata from database and filesystem.",'error');
-        drupal_goto($GLOBALS['PAGE_NAME']); # reload calling page
+        drupal_goto(preg_replace('/^\//','',$env['SCRIPT_NAME'])); # reload calling page
     }
     } else {
         drupal_set_message("Metadata that has not been approved cannot be downloaded.",'error');
-        drupal_goto($GLOBALS['PAGE_NAME']); # reload calling page
+        drupal_goto(preg_replace('/^\//','',$env['SCRIPT_NAME'])); # reload calling page
     }
 })->conditions(array('udi' => '(00|Y1|R\d)\.x\d{3}\.\d{3}:\d{4}'));
 
@@ -399,11 +425,12 @@ $app->get('/metadata/:directory/:file', function ($directory,$file) use ($app) {
 });
 
 $app->get('/download-external/:udi', function ($udi) use ($app) {
+    $GOMRI_DBH = OpenDB('GOMRI_RO');
     if (preg_match('/^00/',$udi)) {
-        $datasets = get_registered_datasets(getDBH('GOMRI'),array("registry_id=$udi%"));
+        $datasets = get_registered_datasets($GOMRI_DBH,array("registry_id=$udi%"));
     }
     else {
-        $datasets = get_identified_datasets(getDBH('GOMRI'),array("udi=$udi"));
+        $datasets = get_identified_datasets($GOMRI_DBH,array("udi=$udi"));
     }
     $dataset = $datasets[0];
     $stash['dataset'] = $dataset;
@@ -422,10 +449,11 @@ $app->get('/download/:udi', function ($udi) use ($app) {
         #$app->render('html/download_error.html',$stash);
         drupal_exit();
     }
+    $GOMRI_DBH = OpenDB('GOMRI_RO');
     if (preg_match('/^00/',$udi)) {
-        $datasets = get_registered_datasets(getDBH('GOMRI'),array("registry_id=$udi%"));
+        $datasets = get_registered_datasets($GOMRI_DBH,array("registry_id=$udi%"));
     } else {
-        $datasets = get_identified_datasets(getDBH('GOMRI'),array("udi=$udi"));
+        $datasets = get_identified_datasets($GOMRI_DBH,array("udi=$udi"));
     }
     $dataset = $datasets[0];
     list($fs_hash_md5,$fs_hash_sha1,$fs_hash_sha256) = preg_split("/\|/",getHashes($udi));
@@ -444,7 +472,7 @@ $app->get('/download/:udi', function ($udi) use ($app) {
 
     $approved_md_udis=getApprovedMetadataUDIs(); 
     $dl_ok = 0;
-    if( (isset($approved_md_udis["$udi"])) or (!(( isset($GLOBALS['griidc']['system']['enforce_approved_metadata'] ) and ( $GLOBALS['griidc']['system']['enforce_approved_metadata'] == 1 ))))) {
+    if( (isset($approved_md_udis["$udi"])) or (!(( isset($GLOBALS['config']['system']['enforce_approved_metadata'] ) and ( $GLOBALS['config']['system']['enforce_approved_metadata'] == 1 ))))) {
         $dl_ok = 1;
     } else {
         $dl_ok = 0;
@@ -455,7 +483,7 @@ $app->get('/download/:udi', function ($udi) use ($app) {
         exit;
     }
 
-    $dat_file = $GLOBALS['griidc']['paths']['data_download']."/$dataset[udi]/$dataset[udi].dat";
+    $dat_file = $GLOBALS['config']['paths']['data_download']."/$dataset[udi]/$dataset[udi].dat";
     
     $env = $app->environment();
     $stash = array();
@@ -514,11 +542,12 @@ $app->get('/initiateWebDownload/:udi', function ($udi) use ($app) {
     if (!user_is_logged_in_somehow()) {
         drupal_exit();
     }
+    $GOMRI_DBH = OpenDB('GOMRI_RO');
     if (preg_match('/^00/',$udi)) {
-        $datasets = get_registered_datasets(getDBH('GOMRI'),array("registry_id=$udi%"));
+        $datasets = get_registered_datasets($GOMRI_DBH,array("registry_id=$udi%"));
     }
     else {
-        $datasets = get_identified_datasets(getDBH('GOMRI'),array("udi=$udi"));
+        $datasets = get_identified_datasets($GOMRI_DBH,array("udi=$udi"));
     }
     $dataset = $datasets[0];
     if(empty($user->name)) { $uid = uniqid($_SESSION['guestAuthUser'] . '_'); } else { $uid = uniqid($user->name . '_'); }
@@ -533,19 +562,19 @@ $app->get('/initiateWebDownload/:udi', function ($udi) use ($app) {
     
     $approved_md_udis=getApprovedMetadataUDIs(); 
     $dl_ok = 0;
-    if( (isset($approved_md_udis["$udi"])) or (!(( isset($GLOBALS['griidc']['system']['enforce_approved_metadata'] ) and ( $GLOBALS['griidc']['system']['enforce_approved_metadata'] == 1 ))))) {
+    if( (isset($approved_md_udis["$udi"])) or (!(( isset($GLOBALS['config']['system']['enforce_approved_metadata'] ) and ( $GLOBALS['config']['system']['enforce_approved_metadata'] == 1 ))))) {
         $dl_ok = 1;
     } else {
         $dl_ok = 0;
     }
 
     if ($dataset['access_status'] != "Restricted" and $dataset['access_status'] != "Approval" and $dl_ok == 1) {
-        $dat_file = $GLOBALS['griidc']['paths']['data_download']."/$dataset[udi]/$dataset[udi].dat";
+        $dat_file = $GLOBALS['config']['paths']['data_download']."/$dataset[udi]/$dataset[udi].dat";
 
         if ($GLOBALS['config']['DataDiscovery']['alternateDownloadSite'] == 1) {
             $host = $GLOBALS['config']['DataDiscovery']['alternateDownloadSiteServer'];
-            $return = system("ssh apache@$host -C mkdir ".$GLOBALS['griidc']['paths']['http_download']."/$uid/"); 
-            $return = system("ssh apache@$host -C ln -s $dat_file ".$GLOBALS['griidc']['paths']['http_download']."/$uid/$dataset[dataset_filename]");
+            $return = system("ssh apache@$host -C mkdir ".$GLOBALS['config']['paths']['http_download']."/$uid/"); 
+            $return = system("ssh apache@$host -C ln -s $dat_file ".$GLOBALS['config']['paths']['http_download']."/$uid/$dataset[dataset_filename]");
             $stash['alternateDownloadSite']=1;
             $stash['alternateDownloadSiteServer']=$host;
             $altTag = " (ALT-SITE)";
@@ -556,8 +585,8 @@ $app->get('/initiateWebDownload/:udi', function ($udi) use ($app) {
             exit;
         } else {
             if (file_exists($dat_file)) {
-                mkdir($GLOBALS['griidc']['paths']['http_download']."/$uid/");
-                symlink($dat_file,$GLOBALS['griidc']['paths']['http_download']."/$uid/$dataset[dataset_filename]");
+                mkdir($GLOBALS['config']['paths']['http_download']."/$uid/");
+                symlink($dat_file,$GLOBALS['config']['paths']['http_download']."/$uid/$dataset[dataset_filename]");
                 $altTag = '';
                 $stash['downloadUrl']="$protocol$env[SERVER_NAME]/download/$uid/".rawurlencode($dataset['dataset_filename']);
                 # logging
@@ -582,11 +611,12 @@ $app->get('/enableGridFTP/:udi', function ($udi) use ($app) {
         drupal_exit();
     }
     $homedir = getHomedir($user->name);
+    $GOMRI_DBH = OpenDB('GOMRI_RO');
     if (preg_match('/^00/',$udi)) {
-        $datasets = get_registered_datasets(getDBH('GOMRI'),array("registry_id=$udi%"));
+        $datasets = get_registered_datasets($GOMRI_DBH,array("registry_id=$udi%"));
     }
     else {
-        $datasets = get_identified_datasets(getDBH('GOMRI'),array("udi=$udi"));
+        $datasets = get_identified_datasets($GOMRI_DBH,array("udi=$udi"));
     }
     $dataset = $datasets[0];
 
@@ -594,7 +624,7 @@ $app->get('/enableGridFTP/:udi', function ($udi) use ($app) {
            
     }
 
-    $dat_file = $GLOBALS['griidc']['paths']['data_download']."/$dataset[udi]/$dataset[udi].dat";
+    $dat_file = $GLOBALS['config']['paths']['data_download']."/$dataset[udi]/$dataset[udi].dat";
     if (file_exists($dat_file)) {
         $env = $app->environment();
        
@@ -627,7 +657,9 @@ $app->get('/download_redirect/:udi', function ($udi) use ($app) {
     exit;
 });
 
+$orig_env = fixEnvironment();
 $app->run();
+restoreEnvironment($orig_env);
 
 function getHashes($udi) {
     $sql = "select fs_md5_hash, fs_sha1_hash, fs_sha256_hash from registry_view where 
