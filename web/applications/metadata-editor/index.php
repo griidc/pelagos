@@ -1,10 +1,10 @@
 <?php
 
-include_once '/usr/local/share/GRIIDC/php/aliasIncludes.php';
+include_once '/opt/pelagos/GRIIDC/share/php/aliasIncludes.php';
 
 if (isset($_GET["udi"]))
 {
-	include_once '/usr/local/share/GRIIDC/php/pdo.php';
+	include_once '/opt/pelagos/GRIIDC/share/php/pdo.php';
 	
 	$udi = $_GET["udi"];
 	
