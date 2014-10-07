@@ -338,7 +338,7 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                     }
                 }
             } else {
-                drupal_set_message("The file uploaded as $orig_filename validates as ISO-19115-2 compliant XML.",'status');
+                drupal_set_message("XML Valid per ISO-19115-2 ",'status');
             }
     
             if($schemaErrors > 0) {
@@ -672,18 +672,18 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                 drupal_set_message("An email of this approval has been sent to ".$dataManager['fullname'].'('.$dataManager['email'].')','status');
             }
 
-            $thanks_msg = "Thank you ".$user->name.".  The metadata file for registry ID $reg_id has been recorded into the database.
+            drupal_set_message('Upload Successful','status');
+
+            $thanks_msg = " 
+                            <div id=olmap style=\"width:600px; height:400px;\"></div>
                             <p>
-                            Details:
                                 <ul>
                                     <li> Registry ID: <a href=\"$protocol$env[SERVER_NAME]/data/$udi/\" target=0>$reg_id</a></li>
-                                    <li> UDI: $udi</a></li>
                                     <li> Uploaded filename: $orig_filename</li>
                                     <li> Geometry Detected: $geoflag</li>
                                     <li> Geometry Status: $geo_status </li>
                                 </ul>
-                            </p>
-                            <div id=olmap style=\"width:600px; height:400px;\"></div>";
+                            </p>";
 
             drupal_set_message($thanks_msg,'status');
             $loginfo=$user->name." successfully uploaded metadata for $reg_id";
