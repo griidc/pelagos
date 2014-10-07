@@ -1,6 +1,6 @@
 <?php
 
-include_once '/usr/local/share/GRIIDC/php/aliasIncludes.php';
+include_once '/opt/pelagos/GRIIDC/share/php/aliasIncludes.php';
 
 drupal_add_js('//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js',array('type'=>'external'));
 drupal_add_js('includes/js/dif.js',array('type'=>'external'));
