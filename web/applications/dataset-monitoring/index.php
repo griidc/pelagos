@@ -16,7 +16,7 @@ require_once $GLOBALS['libraries']['Slim2']['include'];
 # load Twig Slim-View
 require_once $GLOBALS['libraries']['Slim-Views']['include_Twig'];
 # load custom Twig extensions
-require_once 'lib/Twig_Extensions_GRIIDC.php';
+require_once $GLOBALS['config']['paths']['share'].'/php/Twig_Extensions_Pelagos.php';
 
 # load Drupal functions
 require_once $GLOBALS['config']['paths']['share'].'/php/drupal.php';
@@ -32,11 +32,6 @@ require_once $GLOBALS['config']['paths']['share'].'/php/db-utils.lib.php';
 # load dataset monitoring library
 require_once 'lib/dm.php';
 
-
-#$GLOBALS['griidc'] = parse_ini_file('/etc/griidc.ini',true);
-#$GLOBALS['pelagos'] = parse_ini_file('/etc/opt/pelagos.ini',true);
-
-
 # initialize Slim
 $app = new \Slim\Slim(array(
                         'view' => new \Slim\Views\Twig(),
@@ -48,9 +43,7 @@ $app = new \Slim\Slim(array(
 # set Twig directory for Twig Slim-View
 $app->view->parserDirectory = $GLOBALS['libraries']['Twig']['directory'];
 # add custom Twig extensions
-$app->view->parserExtensions = array(
-    new \Slim\Views\Twig_Extensions_GRIIDC(),
-);
+$app->view->parserExtensions = array( new \Slim\Views\Twig_Extensions_Pelagos() );
 
 # define baseUrl for use in templates
 $app->hook('slim.before', function () use ($app) {
