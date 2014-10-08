@@ -106,7 +106,16 @@
                                 </form>
                             </td>
                             <td valign="top">{{dta.submittimestamp}}</td>
-                            <td valign="top"><button style="font-size:66%" onclick="javascript:showLogEntries('{{dta.dataset_udi}}')">Log</button> <a href="{{baseUrl}}/download-metadata/{{dta.dataset_udi}}"><img src="{{baseUrl}}/includes/images/download.png"></a>&nbsp;{% if dta.hasxml == true %}<a href="{{baseUrl}}/download-metadata-db/{{dta.dataset_udi}}"><img src="{{baseUrl}}/includes/images/download-from-db.png"></a>&nbsp;{% endif %}{{dta.dataset_metadata}}</td>
+                            <td valign="top">
+                                <table id="filedisp">
+                                    <tr>
+                                        <td id="button"><button style="font-size:66%" onclick="javascript:showLogEntries('{{dta.dataset_udi}}')">Log</button></td>
+                                        <td id="file_dl_icon"><a href="{{baseUrl}}/download-metadata/{{dta.dataset_udi}}"><img src="{{baseUrl}}/includes/images/download.png"></a></td>
+                                        <td id="db_dl_icon">{% if dta.hasxml == true %}<a href="{{baseUrl}}/download-metadata-db/{{dta.dataset_udi}}"><img src="{{baseUrl}}/includes/images/download-from-db.png"></a>{% else %}&nbsp;{% endif %}</td>
+                                        <td id="md_filename">{{dta.dataset_metadata}}</td>
+                                    </tr>
+                                </table>
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>

@@ -33,5 +33,23 @@
     margin-right: 3px;
     margin-bottom: 2px;
 }
-
-
+#filedisp{
+}
+#filedisp td{
+    padding: 5px;
+}
+#filedisp td button {
+    width: 40px;
+}
+#filedisp td file_dl_icon {
+    width: 20px;
+    min-width: 20px;
+}
+#filedisp td db_dl_icon {
+    width: 20px;
+    min-width: 20px;
+}
+#filedisp td md_filename {
+    width: 100px;
+    min-width: 100px;
+}
