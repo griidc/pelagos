@@ -18,7 +18,9 @@ $(document).ready( function () {
     $('table.display').dataTable( {
         "paging": true,
         "jQueryUI": true,
-        "lengthMenu": [ [-1, 25, 50, 75, 100], ["All", 25, 50, 75, 100] ]
+        "lengthMenu": [ [-1, 25, 50, 75, 100], ["All", 25, 50, 75, 100] ],
+        "stateSave": true,
+        "stateDuration": -1
     } );
 } );
 
