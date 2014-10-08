@@ -92,7 +92,6 @@ $app->get('/css/:name.css', function ($name) use ($app) {
 });
 
 $app->get('/', function () use ($app) {
-    #drupal_add_js('/includes/tablesorter/js/jquery.tablesorter.min.js',array('type'=>'external'));
     return $app->render('html/main.html',index($app));
 });
 

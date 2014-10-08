@@ -1,49 +1,3 @@
-body {
-  font: normal medium/1.4 sans-serif;
-}
-table {
-  border-collapse: collapse;
-  width: 66%;
-}
-th, td {
-  padding: 0.25rem;
-  text-align: left;
-  border: 1px solid #ccc;
-}
-tbody tr:hover {
-  background: yellow;
-}
-
-table.metadata .tablesorter-header {
-    cursor: pointer;
-}
-
-table.metadata .sorter-false {
-    cursor: default;
-}
-
-table.metadata th .title {
-    float: left;
-}
-
-table.metadata th .sorticon {
-    float: left;
-    width: 24px;
-    height: 16px;
-    margin-top: 2px;
-    margin-left: 0.25em;
-    background-position: left center;
-    background-repeat: no-repeat;
-}
-
-table.metadata .tablesorter-headerAsc .sorticon {
-    background-image: url({{baseUrl}}/includes/images/ascending.png);
-}
-
-table.metadata .tablesorter-headerDesc .sorticon {
-    background-image: url({{baseUrl}}/includes/images/descending.png);
-}
-
 #log{
     position: fixed;
     background-color: white;
@@ -68,16 +22,11 @@ table.metadata .tablesorter-headerDesc .sorticon {
 
     display: none;
 }
-
 #log_close {
     text-align: right;
     padding-top: 2px;
     padding-right: 2px;
 }
-
-#log_title{
-}
-
 #log_content{
     height: 400px;
     overflow: auto;
