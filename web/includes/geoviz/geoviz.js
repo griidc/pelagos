@@ -606,7 +606,6 @@ function GeoViz()
         
     this.gotoAllFeatures = function ()
     {
-        debugger;
         if (vlayer.features.length > 0)
         {
             var featureZoomLevel = map.getZoomForExtent(vlayer.getDataExtent());
