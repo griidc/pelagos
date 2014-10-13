@@ -140,9 +140,9 @@ function displayTaskStatus($tasks,$conn,$update=null,$personid=null,$filterstatu
     
     $ShowEmpty = true;
     
-    if (isset($_GET["showempty"]))
+    if (isset($_POST["showempty"]))
     {
-        $ShowEmpty = $_GET["showempty"];
+        $ShowEmpty = $_POST["showempty"];
     }
     
     $resArray = array();
