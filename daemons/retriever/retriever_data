@@ -118,6 +118,9 @@ while (my $r = $sth->fetchrow_hashref()) {
         }
 
     }
+    elsif ($url_data =~ /^ftp/) {
+        getdata($log,$r);
+    }
 
 }
 
@@ -288,12 +291,14 @@ $log->write('retriever_data finished');
 $log->close;
 
 sub get_filename {
-    my ($response,$url_data) = @_;
+    my ($url_data,$response) = @_;
     my $filename;
 
-    # try to get filename from the HTTP header
-    my $cd = $response->header('content-disposition');
-    ($filename) = $cd =~ /filename="([^"]+)"/ if $cd;
+    if ($url_data =~ /^http/) {
+        # try to get filename from the HTTP header
+        my $cd = $response->header('content-disposition');
+        ($filename) = $cd =~ /filename="([^"]+)"/ if $cd;
+    }
 
     # if we still don't have a filename, try to get it from the URL
     unless ($filename) {
@@ -311,34 +316,36 @@ sub getdata {
     my $reg_id = $r->{'registry_id'};
     my $url_data = $r->{'url_data'};
 
-    my $type = $response->header('content-type');
+    if ($url_data =~ /^http/) {
+        my $type = $response->header('content-type');
 
-    if ($type =~ /^text\/html/) {
-        # mark as html for further review
-        $data_notify->{'html'}->{$reg_id} = $url_data;
-        my $sth2 = $dbh->prepare("UPDATE registry SET dataset_download_status = ? WHERE registry_id = ?;");
-        $log->write("[$udi] remote file at $url_data resolves to HTML page.");
-        $sth2->execute('NeedsReview',$reg_id) or die "Couldn't execute statement: " . $sth2->errstr;
-        $log->write("[$udi] saving page found at $url_data to $conf->{paths}->{retriever}/html_pages/$udi.html.");
-        mkdir("$conf->{paths}->{retriever}/html_pages") or die $! if !-d "$conf->{paths}->{retriever}/html_pages";
-        my $filepath = "$conf->{paths}->{retriever}/html_pages/$udi.html";
-        my $resp_code = getstore($url_data,$filepath);
-        if ($!
-            # workaround for getstore bug (https://rt.cpan.org/Public/Bug/Display.html?id=96429)
-            and not ($! eq 'Inappropriate ioctl for device' and -f $filepath and -s $filepath < 760)
-           ) {
-            my $errmsg = "[$udi] unable to fetch $url_data to $filepath ($!)";
-            print STDERR "$errmsg\n";
-            $log->write($errmsg);
+        if ($type =~ /^text\/html/) {
+            # mark as html for further review
+            $data_notify->{'html'}->{$reg_id} = $url_data;
+            my $sth2 = $dbh->prepare("UPDATE registry SET dataset_download_status = ? WHERE registry_id = ?;");
+            $log->write("[$udi] remote file at $url_data resolves to HTML page.");
+            $sth2->execute('NeedsReview',$reg_id) or die "Couldn't execute statement: " . $sth2->errstr;
+            $log->write("[$udi] saving page found at $url_data to $conf->{paths}->{retriever}/html_pages/$udi.html.");
+            mkdir("$conf->{paths}->{retriever}/html_pages") or die $! if !-d "$conf->{paths}->{retriever}/html_pages";
+            my $filepath = "$conf->{paths}->{retriever}/html_pages/$udi.html";
+            my $resp_code = getstore($url_data,$filepath);
+            if ($!
+                # workaround for getstore bug (https://rt.cpan.org/Public/Bug/Display.html?id=96429)
+                and not ($! eq 'Inappropriate ioctl for device' and -f $filepath and -s $filepath < 760)
+               ) {
+                my $errmsg = "[$udi] unable to fetch $url_data to $filepath ($!)";
+                print STDERR "$errmsg\n";
+                $log->write($errmsg);
+                return;
+            }
+            if ($resp_code != 200) {
+                my $errmsg = "[$udi] unable to fetch $url_data to $filepath ($resp_code)";
+                print STDERR "$errmsg\n";
+                $log->write($errmsg);
+                return;
+            }
             return;
         }
-        if ($resp_code != 200) {
-            my $errmsg = "[$udi] unable to fetch $url_data to $filepath ($resp_code)";
-            print STDERR "$errmsg\n";
-            $log->write($errmsg);
-            return;
-        }
-        return;
     }
 
     my $filename;
@@ -347,7 +354,7 @@ sub getdata {
         $filename = $r->{'dataset_filename'};
     }
     else {
-        $filename = get_filename($response,$url_data);
+        $filename = get_filename($url_data,$response);
     }
 
     # if we still don't have a filename, give up and report it
