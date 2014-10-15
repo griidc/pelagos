@@ -38,15 +38,15 @@
                 <gmd:CI_Address>
                     {% if RP[RPType].Department_Addr1 %}
                         <gmd:deliveryPoint>
-                            <gco:CharacterString><![CDATA[{{RP[RPType].Department_Addr1 | trim}}{% if RP[RPType].Department_Addr2 %}
-
-{{RP[RPType].Department_Addr2 | trim}}{% endif %}]]></gco:CharacterString>
+                            <gco:CharacterString>
+                                <![CDATA[{{RP[RPType].Department_Addr1 | trim}}{% if RP[RPType].Department_Addr2 %}{{"\n" ~ RP[RPType].Department_Addr2 | trim}}{% endif %}]]>
+                            </gco:CharacterString>
                         </gmd:deliveryPoint>
                     {% elseif RP[RPType].Institution_Addr1 %}
                         <gmd:deliveryPoint>
-                            <gco:CharacterString><![CDATA[{{RP[RPType].Institution_Addr1 | trim}}{% if RP[RPType].Institution_Addr2 %}
-
-{{RP[RPType].Institution_Addr2 | trim}}{% endif %}]]></gco:CharacterString>
+                            <gco:CharacterString>
+                                <![CDATA[{{RP[RPType].Institution_Addr1 | trim}}{% if RP[RPType].Institution_Addr2 %}{{"\n" ~ RP[RPType].Institution_Addr2 | trim}}{% endif %}]]>
+                            </gco:CharacterString>
                         </gmd:deliveryPoint>
                     {% elseif RP[RPType].Street1 %}
                         <gmd:deliveryPoint>
