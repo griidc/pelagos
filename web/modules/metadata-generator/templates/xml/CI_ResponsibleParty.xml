@@ -93,8 +93,6 @@
                         <gmd:postalCode>
                             <gco:CharacterString>{{RP[RPType].PostalCode}}</gco:CharacterString>
                         </gmd:postalCode>
-                    {% else %}
-                        <gmd:postalCode/>
                     {% endif %}
                     {% if RP[RPType].Department_Country %}
                         <gmd:country>
