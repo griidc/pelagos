@@ -36,13 +36,13 @@
             {% endif %}
             <gmd:address>
                 <gmd:CI_Address>
-                    {% if RP[RPType].Department_Addr1 or RP[RPType].Department_Addr2 %}
+                    {% if RP[RPType].Department_Addr1 %}
                         <gmd:deliveryPoint>
                             <gco:CharacterString><![CDATA[{{RP[RPType].Department_Addr1 | trim}}{% if RP[RPType].Department_Addr2 %}
 
 {{RP[RPType].Department_Addr2 | trim}}{% endif %}]]></gco:CharacterString>
                         </gmd:deliveryPoint>
-                    {% elseif RP[RPType].Institution_Addr1 or RP[RPType].Institution_Addr2 %}
+                    {% elseif RP[RPType].Institution_Addr1 %}
                         <gmd:deliveryPoint>
                             <gco:CharacterString><![CDATA[{{RP[RPType].Institution_Addr1 | trim}}{% if RP[RPType].Institution_Addr2 %}
 
