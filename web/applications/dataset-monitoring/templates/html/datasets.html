@@ -106,6 +106,8 @@
         </td>
     </tr>
     {% endfor %}
+    </tbody>
+    <tfoot>
     <tr><td colspan=2>Totals</td><td>
         <img src="{{baseUrl}}/includes/images/{{10  | statusToImg}}"> {{ identified_green  }} <br />
         <img src="{{baseUrl}}/includes/images/{{1 | statusToImg}}"> {{ identified_yellow }} <br />
@@ -123,5 +125,6 @@
         <img src="{{baseUrl}}/includes/images/{{1 | statusToImg}}"> {{ available_yellow }} <br />
         <img src="{{baseUrl}}/includes/images/{{0  | statusToImg}}"><img src="{{baseUrl}}/includes/images/{{'-1'  | statusToImg}}"> {{ available_red+available_na  }} <br />
     </td></tr>
+    </tfoot>
     </tbody>
 </table>
