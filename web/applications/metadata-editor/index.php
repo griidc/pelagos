@@ -1,14 +1,15 @@
 <?php
 
-include_once '/opt/pelagos/GRIIDC/share/php/aliasIncludes.php';
+include_once '/opt/pelagos/share/php/aliasIncludes.php';
 
 if (isset($_GET["udi"]))
 {
-	include_once '/opt/pelagos/GRIIDC/share/php/pdo.php';
+	include_once '/opt/pelagos/share/php/pdo.php';
 	
 	$udi = $_GET["udi"];
 	
 	$configini = parse_ini_file("/etc/griidc/db.ini",true);
+
 	$config = $configini["GOMRI_RW"];
 	
 	$dbconnstr = 'pgsql:host='. $config["host"];
@@ -45,13 +46,13 @@ drupal_add_library('system', 'ui.dialog');
 drupal_add_library('system', 'ui.tooltip');
 
 drupal_add_css('includes/css/metadata.css',array('type'=>'external'));
-drupal_add_js('/includes/jquery-validation/jquery.validate.js',array('type'=>'external'));
+drupal_add_js('//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js',array('type'=>'external'));
 //drupal_add_css('misc/ui/jquery.ui.button.css');
 //drupal_add_css('misc/ui/jquery.ui.datepicker.css');
 //drupal_add_css('misc/ui/jquery.ui.tabs.css');
 //drupal_add_css('misc/ui/jquery.ui.dialog.css');
 
-drupal_add_js('/includes/openlayers/lib/OpenLayers.js',array('type'=>'external'));
+drupal_add_js('//cdn.jsdelivr.net/openlayers/2.13.1/OpenLayers.js',array('type'=>'external'));
 
 drupal_add_js('//maps.google.com/maps/api/js?v=3&sensor=false',array('type'=>'external'));
 
