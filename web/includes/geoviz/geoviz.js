@@ -325,6 +325,7 @@ function GeoViz()
             },
             'sketchcomplete': function(event) {
                 jQuery(mapDiv).trigger('modeChange','Navigation');
+                
             },
             'featureadded': function(event) {
                 //checkPolygon(event.feature.id);
@@ -609,9 +610,7 @@ function GeoViz()
         if (vlayer.features.length > 0)
         {
             var featureZoomLevel = map.getZoomForExtent(vlayer.getDataExtent());
-            console.log(featureZoomLevel);
             if (featureZoomLevel >= 11) {featureZoomLevel = 11;}
-            console.log(featureZoomLevel);
             featureZoomLevel = map.adjustZoom(featureZoomLevel);
             map.zoomToExtent(vlayer.getDataExtent());
             map.zoomTo(featureZoomLevel);
@@ -1234,11 +1233,17 @@ function GeoViz()
     
     this.getSingleFeatureClass = function ()
     {
-        var ClassName = vlayer.features[0].geometry.CLASS_NAME;
-        if (typeof ClassName != 'undefined')
+        if (typeof vlayer.features[0] != 'undefined')
         {
-            return ClassName.split('.')[2];
+            var ClassName = vlayer.features[0].geometry.CLASS_NAME;
+            if (typeof ClassName != 'undefined')
+            {
+                return ClassName.split('.')[2];
+            }
         }
+        else
+        { return false; }
+        
     }
     
     this.zoomIn = function ()
@@ -1279,7 +1284,53 @@ function GeoViz()
     this.getWKT = function (FeatureID)
     {
         var Feature = vlayer.getFeatureById(FeatureID);
-        return this.wkt.write(Feature);
+        if (typeof Feature == 'object' && Feature != null)
+        {
+            return this.wkt.write(Feature);
+        }
+        else
+        { return false; }
     }
-
+    
+    this.getWKTFromBounds = function(left, bottom, right, top)
+    {
+        //debugger;
+        var bounds = new OpenLayers.Bounds.fromArray(Array(left, bottom, right, top));
+        //console.debug(bounds.toBBOX());
+        var myGeometry = bounds.toGeometry();
+        //console.debug(myGeometry);
+        var newFeature = new OpenLayers.Feature.Vector(myGeometry);
+        //console.debug(newFeature);
+        var myWKT = this.wkt.write(newFeature);
+        
+        return myWKT;
+    }
+    
+    this.getBBOX = function(FeatureID)
+    {
+        //var myFeature = vlayer.getFeatureById(FeatureID);
+        var myWKT = this.getWKT(FeatureID);
+        
+        var wgs84WKT = this.wktTransformToWGS84(myWKT);
+        
+        //console.log(wgs84WKT);
+        
+        if (typeof wgs84WKT != 'undefined')
+        {
+            myFeature = this.wkt.read(wgs84WKT);
+                
+            if (typeof myFeature == 'object' && myFeature != null)
+            {   
+                var myBounds = myFeature.geometry.getBounds();
+                
+                //console.log(myBounds.toBBOX());
+                
+                return myBounds.toArray();
+            }
+            else
+            { return false; }
+        }
+        else
+        { return false; }
+    }
 }
