@@ -177,7 +177,7 @@ function displayTaskStatus($tasks,$conn,$update=null,$personid=null,$filterstatu
             $query .= " AND status=$statusFlag";
         }
         
-        $query .= " ORDER BY title;";
+        $query .= " ORDER BY dataset_udi,title;";
         
         $statementHandler = $conn->prepare($query);
         $rc = $statementHandler->execute();
