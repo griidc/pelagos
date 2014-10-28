@@ -244,13 +244,13 @@ function postDIF($fielddata)
         }
         else if ($frmButton == 'approve')
         {
-            $message = '<div><img src="/images/icons/info32.png"><p>The application with DIF ID: '.$UDI.' was succesfully approved!</p></div>';
+            $message = '<div><img src="/images/icons/info32.png"><p>The application with DIF ID: '.$UDI.' was successfully approved!</p></div>';
             $msgtitle = 'DIF Approved';
             $sendMail = sendSubmitMail($submitted,$UDI,'GRIIDC DIF Approved','approveMail.html');
         }
         else if ($frmButton == 'reject')
         {
-            $message = '<div><img src="/images/icons/info32.png"><p>The application with DIF ID: '.$UDI.' was succesfully rejected!</p></div>';
+            $message = '<div><img src="/images/icons/info32.png"><p>The application with DIF ID: '.$UDI.' was successfully rejected!</p></div>';
             $msgtitle = 'DIF Rejected';
         }
         else if ($frmButton == 'save')
@@ -269,7 +269,7 @@ function postDIF($fielddata)
         }
         else if ($frmButton == 'unlock')
         {
-            $message = '<div><img src="/images/icons/info32.png"><p>Succesfully unlocked DIF with ID: '.$UDI.'.</p></div>';
+            $message = '<div><img src="/images/icons/info32.png"><p>Successfully unlocked DIF with ID: '.$UDI.'.</p></div>';
             $msgtitle = 'DIF Unlocked';
             $sendMail = sendSubmitMail($submitted,$UDI,'GRIIDC DIF Unlocked','unlocked.html');
             
@@ -284,7 +284,7 @@ function postDIF($fielddata)
         }
         else
         {
-            $message = '<div><img src="/images/icons/info32.png"><p>Succesfully saved DIF with ID: '.$UDI.'.</p></div>';
+            $message = '<div><img src="/images/icons/info32.png"><p>Successfully saved DIF with ID: '.$UDI.'.</p></div>';
             $msgtitle = 'DIF Submitted';
         }
     }
