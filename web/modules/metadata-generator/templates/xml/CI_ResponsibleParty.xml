@@ -54,6 +54,8 @@
                                 <![CDATA[{{RP[RPType].Street1 | trim}}{% if RP[RPType].Street2 %}{{"\n" ~ RP[RPType].Street2 | trim}}{% endif %}]]>
                             </gco:CharacterString>
                         </gmd:deliveryPoint>
+                    {% else %}
+                        <gmd:deliveryPoint />
                     {% endif %}
                     {% if RP[RPType].Department_City %}
                         <gmd:city>
@@ -67,6 +69,8 @@
                         <gmd:city>
                             <gco:CharacterString>{{RP[RPType].City}}</gco:CharacterString>
                         </gmd:city>
+                    {% else %}
+                        <gmd:city />
                     {% endif %}
                     {% if RP[RPType].Department_State %}
                         <gmd:administrativeArea>
@@ -80,6 +84,8 @@
                         <gmd:administrativeArea>
                             <gco:CharacterString>{{RP[RPType].State}}</gco:CharacterString>
                         </gmd:administrativeArea>
+                    {% else %}
+                        <gmd:administrativeArea />
                     {% endif %}
                     {% if RP[RPType].Department_Zip %}
                         <gmd:postalCode>
@@ -93,6 +99,8 @@
                         <gmd:postalCode>
                             <gco:CharacterString>{{RP[RPType].PostalCode}}</gco:CharacterString>
                         </gmd:postalCode>
+                    {% else %}
+                        <gmd:postalCode />
                     {% endif %}
                     {% if RP[RPType].Department_Country %}
                         <gmd:country>
@@ -106,11 +114,15 @@
                         <gmd:country>
                             <gco:CharacterString>{{RP[RPType].Country}}</gco:CharacterString>
                         </gmd:country>
+                    {% else %}
+                        <gmd:country />
                     {% endif %}
                     {% if RP[RPType].Email %}
                         <gmd:electronicMailAddress>
                             <gco:CharacterString>{{RP[RPType].Email}}</gco:CharacterString>
                         </gmd:electronicMailAddress>
+                    {% else %}
+                        <gmd:electronicMailAddress />
                     {% endif %}
                 </gmd:CI_Address>
             </gmd:address>
