@@ -532,7 +532,7 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
             $geometery=null;
                 // attempt to have PostGIS validate any geometry, if found and return the geometery
                 $xml = simplexml_load_string($xml_save);
-                $geo = $xml->xpath('/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:geographicElement[1]/gmd:EX_BoundingPolygon[1]/gmd:polygon[1]/*');
+                $geo = $xml->xpath('/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:geographicElement/gmd:EX_BoundingPolygon/gmd:polygon/*');
                 if($geo) {  // double check for existance of geometry ( in case user override )
                     $geometry_xml = $geo[0]->asXML();
                     $sql2="select ST_GeomFromGML('$geometry_xml', 4326) as geometry, ST_AsText(ST_GeomFromGML('$geometry_xml', 4326)) as geometry_wkt";
