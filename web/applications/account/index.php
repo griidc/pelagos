@@ -1,14 +1,19 @@
 <?php
 
-require_once '/usr/local/share/Slim/Slim/Slim.php';
-require_once '/usr/local/share/Slim-Extras/Views/TwigView.php';
-require_once("/usr/local/share/GRIIDC/php/db-utils.lib.php");
+$GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini',true);
+
+$GLOBALS['libraries'] = parse_ini_file($GLOBALS['config']['paths']['conf'].'/libraries.ini',true);
+
+require_once $GLOBALS['libraries']['Slim']['include'];
+require_once $GLOBALS['libraries']['Slim-Extras']['include_TwigView'];
+
+require_once $GLOBALS['config']['paths']['share'].'/php/db-utils.lib.php';
 
 require_once 'lib/constants.php';
 require_once 'lib/account.php';
 require_once 'config.php';
 
-$GLOBALS['DB'] = parse_ini_file('/etc/griidc/db.ini',true);
+$GLOBALS['DB'] = parse_ini_file($GLOBALS['config']['paths']['conf'].'/db.ini',true);
 
 $GLOBALS['LDAP'] = ldap_connect('ldap://'.LDAP_HOST);
 
