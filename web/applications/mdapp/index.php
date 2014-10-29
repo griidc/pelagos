@@ -672,8 +672,8 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
             }
 
             drupal_set_message('Upload Successful','status');
-
-            $thanks_msg = " 
+            if(isset($envelope_wkt) and ($envelope_wkt != null)) {
+                $thanks_msg = " 
                             <div id=olmap style=\"width:600px; height:400px;\"></div>
                             <p>
                                 <ul>
@@ -683,6 +683,17 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                                     <li> Geometry Status: $geo_status </li>
                                 </ul>
                             </p>";
+            } else {
+                $thanks_msg = " 
+                            <p>
+                                <ul>
+                                    <li> Registry ID: <a href=\"$protocol$env[SERVER_NAME]/data/$udi/\" target=0>$reg_id</a></li>
+                                    <li> Uploaded filename: $orig_filename</li>
+                                    <li> Geometry Detected: $geoflag</li>
+                                    <li> Geometry Status: $geo_status </li>
+                                </ul>
+                            </p>";
+            }
 
             drupal_set_message($thanks_msg,'status');
             $loginfo=$user->name." successfully uploaded metadata for $reg_id";
@@ -702,8 +713,10 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
         drupal_set_message($user->name.": File upload error: $err_str",'error');
         writeLog($user->name." ".$err_str);
     }
-    echo "<script>var envelope_wkt = '$envelope_wkt'; var geometry_wkt = '$geometry_wkt';</script>";
-    drupal_add_js("/$GLOBALS[PAGE_NAME]/js/mdapp-ul.js",array('type'=>'external'));
+    if(isset($envelope_wkt) and ($envelope_wkt != null)) {
+        echo "<script>var envelope_wkt = '$envelope_wkt'; var geometry_wkt = '$geometry_wkt';</script>";
+        drupal_add_js("/$GLOBALS[PAGE_NAME]/js/mdapp-ul.js",array('type'=>'external'));
+    }
     echo "<a href=.>Continue</a>";
 });
 
