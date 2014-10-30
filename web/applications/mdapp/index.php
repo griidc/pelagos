@@ -557,6 +557,15 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                             $doc->loadXML($xml_save);  // already checked for validity
                             $xpath = new DOMXpath($doc);
 
+                            // locate any existing EX_GeographicBoundingBox and delete its parent.
+                            $bbox_xpath = "/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:geographicElement/gmd:EX_GeographicBoundingBox";
+                            $bboxes = $xpath->query($bbox_xpath);
+                            foreach ( $bboxes as $box ) {
+                                $parent = $box->parentNode;
+                                $grandparent = $parent->parentNode;
+                                $grandparent->removeChild($parent);
+                            }
+
                             // create new gmd:geographicElement for the bounding-box envelope
                             $fragment = $doc->createDocumentFragment();
                             // $fragment->appendChild($doc->createElement('gmd:geographicElement',$envelope));
