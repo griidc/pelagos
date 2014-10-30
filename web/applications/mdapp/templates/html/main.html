@@ -40,7 +40,7 @@
                         <tr>
                             <td valign="top"><a href="{{pagelessBaseUrl}}/data/{{dta.dataset_udi}}" target="0" >{{dta.dataset_udi}}</a></td>
                             <td valign="top"><form name="AcceptedState" action="{{baseUrl}}/change_status/{{dta.dataset_udi}}" method="post">
-                            <select name="to">
+                            <select name="to" id="state_sel_{{dta.dataset_udi}}">
                                     {% if sname == 'submitted' %}
                                         <option value="Submitted" SELECTED>Submitted</option>
                                         <option value="InReview" style="background-color: yellow;">InReview</option>
@@ -80,12 +80,12 @@
                                     {% endif %}
                                         
                             </select>
-                            <input type="submit" value="->">
+                            <input type="submit" value="->" id="state_sel_sub_{{dta.dataset_udi}}">
                             </form>
                             </td>
                             <td>
                                 <form name="setApprovalForm" action="{{baseUrl}}/change_appr_status/{{dta.dataset_udi}}" method="post">
-                                    <select name="approval">
+                                    <select name="approval" id="appr_sel_{{dta.dataset_udi}}">
                                         {% if dta.approval == 'Approved' %}
                                         <option value='Approved' SELECTED>Approved</option>
                                         <option value='NotRequired'>Not Required</option>
@@ -102,16 +102,16 @@
                                         <option value=''>Error</option>
                                         {% endif %}
                                     </select>
-                                    <input type="submit" value="->">
+                                    <input type="submit" value="->" id="appr_sel_sub_{{dta.dataset_udi}}">
                                 </form>
                             </td>
                             <td valign="top">{{dta.submittimestamp}}</td>
                             <td valign="top">
                                 <table id="filedisp">
                                     <tr>
-                                        <td id="button"><button style="font-size:66%" onclick="javascript:showLogEntries('{{dta.dataset_udi}}')">Log</button></td>
-                                        <td id="file_dl_icon"><a href="{{baseUrl}}/download-metadata/{{dta.dataset_udi}}"><img src="{{baseUrl}}/includes/images/download.png"></a></td>
-                                        <td id="db_dl_icon">{% if dta.hasxml == true %}<a href="{{baseUrl}}/download-metadata-db/{{dta.dataset_udi}}"><img src="{{baseUrl}}/includes/images/download-from-db.png"></a>{% else %}&nbsp;{% endif %}</td>
+                                        <td id="button"><button style="font-size:66%" onclick="javascript:showLogEntries('{{dta.dataset_udi}}')" id="log_butt_{{dta.dataset_udi}}">Log</button></td>
+                                        <td id="file_dl_icon"><a href="{{baseUrl}}/download-metadata/{{dta.dataset_udi}}" id="filedllnk_{{dta.dataset_udi}}"><img src="{{baseUrl}}/includes/images/download.png"></a></td>
+                                        <td id="db_dl_icon">{% if dta.hasxml == true %}<a href="{{baseUrl}}/download-metadata-db/{{dta.dataset_udi}}" id="dbdllnk_{{dta.dataset_udi}}"><img src="{{baseUrl}}/includes/images/download-from-db.png"></a>{% else %}&nbsp;{% endif %}</td>
                                         <td id="md_filename">{{dta.dataset_metadata}}</td>
                                     </tr>
                                 </table>
