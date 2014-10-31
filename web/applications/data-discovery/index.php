@@ -522,6 +522,7 @@ $app->get('/download/:udi', function ($udi) use ($app) {
         } else {
             $stash['guest']=0;
         }
+        $stash['gridOK'] = canHazGridFTP($user,$udi,$dataset['dataset_filename']);
         $app->render('html/download.html',$stash);
         exit;
     } else {
@@ -704,4 +705,29 @@ function isMetadataApproved($udi) {
     }
     return ($count>0);
 }
+
+function canHazGridFTP($user,$udi,$filename) {
+
+    $conf_path = $GLOBALS['config']['paths']['conf'];
+    $GLOBALS['ldap'] = parse_ini_file("$conf_path/ldap.ini",true);
+    $ldaphost = $GLOBALS['ldap']['ldap']['server'];
+    $baseDN = $GLOBALS['ldap']['ldap']['base_dn'];
+
+    $ldap = connectLDAP($ldaphost);
+    $dns = getDNs($ldap,$baseDN,"uid=$user->name");
+    $dn = $dns[0]['dn'];
+
+    $posix = userHasObjectClass($dn,"posixAccount");
+    $homedir = getHomeDir($user->name);
+
+    clearstatcache(); # needed because stat operations like file_exists() cache file state tests
+
+    $all_ok = 0;
+    if ( ($posix) and (isset($homedir)) and ($homedir != null) and file_exists($homedir) and file_exists($homedir."/download/".$udi."/".$filename)) {
+        $all_ok = 1;
+    }
+    return $all_ok;
+
+}
+
 ?>

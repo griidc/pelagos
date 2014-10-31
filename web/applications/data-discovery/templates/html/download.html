@@ -85,7 +85,7 @@ University-Corpus Christi.
            <div style="width: 100%; display: table; border: 1px solid #aaa; border-radius: 4px;">
                 <div style="display: table-row; margin: 0 auto;">
                     <div style="display: table-cell;"><button title="Download file directly to your web browser." class="dl_button" onclick="showWebDownloadDetails('{{dataset.udi}}');" style="padding: 0px 0px;"><img style="vertical-align:middle;" src="{{baseUrl}}/includes/images/download.png"></button> Direct File Download</div>
-{% if guest == false %}
+{% if guest == false and gridOK == 1 %}
                 <div style="display: table-cell;"><button title="Place this file on the Globus/GridFTP gomri#griidc endpoint.  This option is the preferred method for server-to-server transfer of very large files, but requires access to a Globus-enabled GridFTP endpoint and a Globus.org login." class="dl_button" onclick="showGridFTPDetails('{{dataset.udi}}');" style="padding: 0px 0px;"><img style="vertical-align:middle;" src="{{baseUrl}}/includes/images/globus.png"></button> Download via the Globus/GridFTP Network</div>
 {% endif %}
             <div style="display: table-cell;"><button title="Cancel this download attempt and close this dialog screen." class="dl_button" onclick="jQuery('#dataset_download').hide();" style="padding: 0px 0px;"><img style="vertical-align:middle;" src="{{baseUrl}}/includes/images/cancel.png" border="0"></button> Cancel Download</div>
