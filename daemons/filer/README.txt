@@ -1,6 +1,6 @@
 To set up filer:
 
-1. copy filer.ini.example to /etc/griidc/filer.ini and set configuration parameters in /etc/griidc/filer.ini
+1. copy filer.ini.example to /etc/opt/pelagos/filer.ini and set configuration parameters in /etc/opt/pelagos/filer.ini
 
 2. make sure trigger-filer is owned by root: chown root trigger-filer
 
