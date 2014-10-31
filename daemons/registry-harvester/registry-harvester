@@ -35,7 +35,7 @@ if ($opts{'t'}) {
     $log = *STDOUT;
 }
 else {
-    my $logfile  = '/var/log/griidc/registry-harvester';
+    my $logfile  = '/var/log/pelagos/registry-harvester';
     open($log,'>>',$logfile) or die "cannot open log file $logfile: $!";
 }
 
@@ -86,7 +86,7 @@ else {
 writelog($log,"processing: $source");
 print "\n" if $opts{'v'};
 
-my $dbconf = Config::PHPINI->read('/etc/griidc/db.ini');
+my $dbconf = Config::PHPINI->read('/etc/opt/pelagos/db.ini');
 
 my %dbi_map = ( postgresql => 'Pg:dbname', mysql => 'mysql:database' );
 
@@ -499,7 +499,7 @@ if (!$opts{'t'} and ($duplicate_count or $invalid_count or $update_count or $cre
 if (!$opts{'t'} and ($create_count or $update_count)) {
     # trigger filer
     writelog($log,"Triggering filer to process new and updated registries.");
-    system('/usr/local/griidc/filer/trigger-filer');
+    system('/opt/pelagos/back-end/filer/trigger-filer');
 }
 
 writelog($log,"Registry Harvestor finished for: $source");
