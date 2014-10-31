@@ -109,5 +109,15 @@ function getHomedir($user) {
     }
 }
 
+function userHasObjectClass($dn,$objectClass) {
+    $server = $GLOBALS['ldap']['ldap']['server'];
+    $ldap = connectLDAP($server);
+    $attributes = getAttributes($ldap,$dn,array("objectClass"));
+    if( isset($attributes["objectClass"][0]) and (count($attributes["objectClass"]) > 0) and (in_array($objectClass,$attributes['objectClass'])) ) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 ?>
