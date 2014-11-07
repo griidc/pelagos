@@ -91,7 +91,7 @@ table.datasets td {
     padding: 2px 5px;
 }
 
-table.datasets tr:hover td {
+table.datasets > tbody tr:hover td {
     background-color: #DFD;
 }
 
@@ -107,6 +107,22 @@ table.datasets .status {
 }
 
 table.datasets .status img {
+    vertical-align: middle;
+}
+
+table.datasets .status-totals table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 3px 0px;
+}
+table.datasets .status-totals td {
+    border: none;
+    width: 33%;
+    padding: 1px 0px;
+    text-align: center;
+}
+
+table.datasets .status-totals img {
     vertical-align: middle;
 }
 
@@ -126,25 +142,25 @@ table.datasets .sorter-false {
     cursor: default;
 }
 
-table.datasets .tablesorter-headerAsc {
+table.datasets thead .tablesorter-headerAsc {
     background-image: url({{baseUrl}}/includes/images/ascending-ltgrey.png);
     background-repeat: no-repeat;
     background-position: right center;
 }
 
-table.datasets .tablesorter-headerDesc {
+table.datasets thead .tablesorter-headerDesc {
     background-image: url({{baseUrl}}/includes/images/descending-ltgrey.png);
     background-repeat: no-repeat;
     background-position: right center;
 }
 
-table.datasets .tablesorter-headerAsc.status {
+table.datasets thead .tablesorter-headerAsc.status {
     background-image: url({{baseUrl}}/includes/images/ascending-ltgrey-small.png);
     background-repeat: no-repeat;
     background-position: right top;
 }
 
-table.datasets .tablesorter-headerDesc.status {
+table.datasets thead .tablesorter-headerDesc.status {
     background-image: url({{baseUrl}}/includes/images/descending-ltgrey-small.png);
     background-repeat: no-repeat;
     background-position: right top;

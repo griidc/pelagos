@@ -1,130 +1,158 @@
 <div class="tooltip-note" style="float:right; margin-right:5px; margin-bottom:3px; font-size:8pt;">place your mouse over each icon for a description</div>
 <table class="datasets tablesorter">
     <thead>
-    <tr>
-        <th class="udi" title="sort by UDI">UDI</th>
-        <th title="sort by Title">Title</th>
-        <th class="status" title="sort by Identified status">Identified</th>
-        <th class="status" title="sort by Registered status">Registered</th>
-        <th class="status" title="sort by Metadata status">Metadata</th>
-        <th class="status" title="sort by Available status">Available</th>
-    </tr>
+        <tr>
+            <th class="udi" title="sort by UDI">UDI</th>
+            <th title="sort by Title">Title</th>
+            <th class="status" title="sort by Identified status">Identified</th>
+            <th class="status" title="sort by Registered status">Registered</th>
+            <th class="status" title="sort by Metadata status">Metadata</th>
+            <th class="status" title="sort by Available status">Available</th>
+        </tr>
     </thead>
     <tbody>
 
-    {% set identified_green = 0 %}
-    {% set identified_yellow = 0 %}
-    {% set identified_red = 0 %}
-    {% set identified_na = 0 %}
-    {% set registered_green = 0 %}
-    {% set registered_yellow = 0 %}
-    {% set registered_red = 0 %}
-    {% set registered_na = 0 %}
-    {% set metadata_green = 0 %}
-    {% set metadata_yellow = 0 %}
-    {% set metadata_red = 0 %}
-    {% set metadata_na = 0 %}
-    {% set available_green = 0 %}
-    {% set available_yellow = 0 %}
-    {% set available_red = 0 %}
-    {% set available_na = 0 %}
+        {% set identified_green = 0 %}
+        {% set identified_yellow = 0 %}
+        {% set identified_red = 0 %}
+        {% set identified_na = 0 %}
+        {% set registered_green = 0 %}
+        {% set registered_yellow = 0 %}
+        {% set registered_red = 0 %}
+        {% set registered_na = 0 %}
+        {% set metadata_green = 0 %}
+        {% set metadata_yellow = 0 %}
+        {% set metadata_red = 0 %}
+        {% set metadata_na = 0 %}
+        {% set available_green = 0 %}
+        {% set available_yellow = 0 %}
+        {% set available_red = 0 %}
+        {% set available_na = 0 %}
 
-    {% for dataset in datasets %}
+        {% for dataset in datasets %}
 
-        {% if dataset.identified == '10' %}
-            {% set identified_green = identified_green+1 %}
-        {% elseif dataset.identified == '-1' %}
-            {% set identified_red = identified_red+1 %}
-        {% elseif dataset.identified == '0' %}
-            {% set identified_red = identified_red+1 %}
-        {% elseif dataset.identified == '1' %}
-            {% set identified_yellow = identified_yellow+1 %}
-        {% else %}
-        {% endif %}
+            {% if dataset.identified == '10' %}
+                {% set identified_green = identified_green+1 %}
+            {% elseif dataset.identified == '-1' %}
+                {% set identified_red = identified_red+1 %}
+            {% elseif dataset.identified == '0' %}
+                {% set identified_red = identified_red+1 %}
+            {% elseif dataset.identified == '1' %}
+                {% set identified_yellow = identified_yellow+1 %}
+            {% endif %}
 
-        {% if dataset.registered == '10' %}
-            {% set registered_green = registered_green+1 %}
-        {% else %}
-            {% set registered_red = registered_red+1 %}
-        {% endif %}
+            {% if dataset.registered == '10' %}
+                {% set registered_green = registered_green+1 %}
+            {% else %}
+                {% set registered_red = registered_red+1 %}
+            {% endif %}
 
-        {% if dataset.metadata == '10' %}
-            {% set metadata_green = metadata_green+1 %}
-        {% elseif dataset.metadata == '-1' %}
-            {% set metadata_na = metadata_na+1 %}
-        {% elseif dataset.metadata == '0' %}
-            {% set metadata_red = metadata_red+1 %}
-        {% elseif dataset.metadata == '1' %}
-            {% set metadata_yellow = metadata_yellow+1 %}
-        {% elseif dataset.metadata == '2' %}
-            {% set metadata_yellow = metadata_yellow+1 %}
-        {% elseif dataset.metadata is null %}
-            {% set metadata_na = metadata_na+1 %}
-        {% else %}
-            {% set metadata_na = metadata_na+1 %}
-        {% endif %}
+            {% if dataset.metadata == '10' %}
+                {% set metadata_green = metadata_green+1 %}
+            {% elseif dataset.metadata == '-1' %}
+                {% set metadata_na = metadata_na+1 %}
+            {% elseif dataset.metadata == '0' %}
+                {% set metadata_red = metadata_red+1 %}
+            {% elseif dataset.metadata == '1' %}
+                {% set metadata_yellow = metadata_yellow+1 %}
+            {% elseif dataset.metadata == '2' %}
+                {% set metadata_yellow = metadata_yellow+1 %}
+            {% elseif dataset.metadata is null %}
+                {% set metadata_na = metadata_na+1 %}
+            {% else %}
+                {% set metadata_na = metadata_na+1 %}
+            {% endif %}
 
-        {% if dataset.available == 10 %}
-            {% set available_green = available_green+1 %}
-        {% elseif dataset.available == '-1' %}
-            {% set available_na = available_na+1 %}
-        {% elseif dataset.available == 0 %}
-            {% set available_red = available_red+1 %}
-        {% elseif dataset.available == 4 %}
-            {% set available_yellow = available_yellow+1 %}
-        {% elseif dataset.available == 5 %}
-            {% set available_yellow = available_yellow+1 %}
-        {% elseif dataset.available == 6 %}
-            {% set available_yellow = available_yellow+1 %}
-        {% elseif dataset.available == 7 %}
-            {% set available_yellow = available_yellow+1 %}
-        {% elseif dataset.available == 8 %}
-            {% set available_yellow = available_yellow+1 %}
-        {% elseif dataset.available == 9 %}
-            {% set available_yellow = available_yellow+1 %}
-        {% else %}
-        {% endif %}
+            {% if dataset.available == 10 %}
+                {% set available_green = available_green+1 %}
+            {% elseif dataset.available == '-1' %}
+                {% set available_na = available_na+1 %}
+            {% elseif dataset.available == 0 %}
+                {% set available_red = available_red+1 %}
+            {% elseif dataset.available == 4 %}
+                {% set available_yellow = available_yellow+1 %}
+            {% elseif dataset.available == 5 %}
+                {% set available_yellow = available_yellow+1 %}
+            {% elseif dataset.available == 6 %}
+                {% set available_yellow = available_yellow+1 %}
+            {% elseif dataset.available == 7 %}
+                {% set available_yellow = available_yellow+1 %}
+            {% elseif dataset.available == 8 %}
+                {% set available_yellow = available_yellow+1 %}
+            {% elseif dataset.available == 9 %}
+                {% set available_yellow = available_yellow+1 %}
+            {% endif %}
 
-    <tr udi="{{dataset.udi}}">
-        <td class="udi details"><a href="{{hostUrl}}/data/{{dataset.udi}}" target="_blank">{{dataset.udi}}</a></td>
-        <td class="details"><a href="{{hostUrl}}/data/{{dataset.udi}}" target="_blank">{{dataset.title}}</a></td>
-        <td class="status" title="{{(dataset.identified ~ '_identified') | statusToTitle}}">
-            <span style="display:none;">{{dataset.identified}}</span>
-            <img src="{{baseUrl}}/includes/images/{{dataset.identified | statusToImg}}">
-        </td>
-        <td class="status" title="{{(dataset.registered ~ '_registered') | statusToTitle}}">
-            <span style="display:none;">{{dataset.registered}}</span>
-            <img src="{{baseUrl}}/includes/images/{{dataset.registered | statusToImg}}">
-        </td>
-        <td class="status" title="{% if dataset.registered %}{{(dataset.metadata ~ '_metadata') | statusToTitle}}{% else %}{{'-1_metadata' | statusToTitle}}{% endif %}">
-            <span style="display:none;">{% if dataset.registered %}{{dataset.metadata}}{% else %}-1{% endif %}</span>
-            <img src="{{baseUrl}}/includes/images/{% if dataset.registered %}{{dataset.metadata | statusToImg}}{% else %}{{'-1' | statusToImg}}{% endif %}">
-        </td>
-        <td class="status" title="{% if dataset.registered %}{{(dataset.available ~ '_available') | statusToTitle}}{% else %}{{'-1_available' | statusToTitle}}{% endif %}">
-            <span style="display:none;">{% if dataset.registered %}{{dataset.available}}{% else %}-1{% endif %}</span>
-            <img src="{{baseUrl}}/includes/images/{% if dataset.registered %}{{dataset.available | statusToImg}}{% else %}{{'-1' | statusToImg}}{% endif %}">
-        </td>
-    </tr>
-    {% endfor %}
+            <tr udi="{{dataset.udi}}">
+                <td class="udi details"><a href="{{hostUrl}}/data/{{dataset.udi}}" target="_blank">{{dataset.udi}}</a></td>
+                <td class="details"><a href="{{hostUrl}}/data/{{dataset.udi}}" target="_blank">{{dataset.title}}</a></td>
+                <td class="status" title="{{(dataset.identified ~ '_identified') | statusToTitle}}">
+                    <span style="display:none;">{{dataset.identified}}</span>
+                    <img src="{{baseUrl}}/includes/images/{{dataset.identified | statusToImg}}">
+                </td>
+                <td class="status" title="{{(dataset.registered ~ '_registered') | statusToTitle}}">
+                    <span style="display:none;">{{dataset.registered}}</span>
+                    <img src="{{baseUrl}}/includes/images/{{dataset.registered | statusToImg}}">
+                </td>
+                <td class="status" title="{% if dataset.registered %}{{(dataset.metadata ~ '_metadata') | statusToTitle}}{% else %}{{'-1_metadata' | statusToTitle}}{% endif %}">
+                    <span style="display:none;">{% if dataset.registered %}{{dataset.metadata}}{% else %}-1{% endif %}</span>
+                    <img src="{{baseUrl}}/includes/images/{% if dataset.registered %}{{dataset.metadata | statusToImg}}{% else %}{{'-1' | statusToImg}}{% endif %}">
+                </td>
+                <td class="status" title="{% if dataset.registered %}{{(dataset.available ~ '_available') | statusToTitle}}{% else %}{{'-1_available' | statusToTitle}}{% endif %}">
+                    <span style="display:none;">{% if dataset.registered %}{{dataset.available}}{% else %}-1{% endif %}</span>
+                    <img src="{{baseUrl}}/includes/images/{% if dataset.registered %}{{dataset.available | statusToImg}}{% else %}{{'-1' | statusToImg}}{% endif %}">
+                </td>
+            </tr>
+
+        {% endfor %}
+
     </tbody>
     <tfoot>
-    <tr><td colspan=2>Totals</td><td>
-        <img src="{{baseUrl}}/includes/images/{{10  | statusToImg}}"> {{ identified_green  }} <br />
-        <img src="{{baseUrl}}/includes/images/{{1 | statusToImg}}"> {{ identified_yellow }} <br />
-        <img src="{{baseUrl}}/includes/images/{{0  | statusToImg}}"> {{ identified_red  }} <br />
-    </td><td>
-        <img src="{{baseUrl}}/includes/images/{{10  | statusToImg}}"> {{ registered_green  }} <br />
-        <img src="{{baseUrl}}/includes/images/{{1 | statusToImg}}"> {{ registered_yellow }} <br />
-        <img src="{{baseUrl}}/includes/images/{{0  | statusToImg}}"> {{ registered_red  }} <br />
-    </td><td>
-        <img src="{{baseUrl}}/includes/images/{{10  | statusToImg}}"> {{ metadata_green  }} <br />
-        <img src="{{baseUrl}}/includes/images/{{1 | statusToImg}}"> {{ metadata_yellow }} <br />
-        <img src="{{baseUrl}}/includes/images/{{0  | statusToImg}}"><img src="{{baseUrl}}/includes/images/{{'-1'  | statusToImg}}"> {{ metadata_red+metadata_na  }} <br />
-    </td><td>
-        <img src="{{baseUrl}}/includes/images/{{10  | statusToImg}}"> {{ available_green  }} <br />
-        <img src="{{baseUrl}}/includes/images/{{1 | statusToImg}}"> {{ available_yellow }} <br />
-        <img src="{{baseUrl}}/includes/images/{{0  | statusToImg}}"><img src="{{baseUrl}}/includes/images/{{'-1'  | statusToImg}}"> {{ available_red+available_na  }} <br />
-    </td></tr>
+        <tr>
+            <th colspan=2 style="text-align:right; border:0px;">Totals:</th>
+            <td class="status-totals">
+                <table>
+                    <tr><td></td><td><img src="{{baseUrl}}/includes/images/{{ 10 | statusToImg }}"></td><td>{{ identified_green  }}</td></tr>
+                    <tr><td></td><td><img src="{{baseUrl}}/includes/images/{{  1 | statusToImg }}"></td><td>{{ identified_yellow }}</td></tr>
+                    <tr><td></td><td><img src="{{baseUrl}}/includes/images/{{  0 | statusToImg }}"></td><td>{{ identified_red    }}</td></tr>
+                </table>
+            </td>
+            <td class="status-totals">
+                <table>
+                    <tr><td></td><td><img src="{{baseUrl}}/includes/images/{{ 10 | statusToImg }}"></td><td>{{ registered_green  }}</td></tr>
+                    <tr><td></td><td><img src="{{baseUrl}}/includes/images/{{  1 | statusToImg }}"></td><td>{{ registered_yellow }}</td></tr>
+                    <tr><td></td><td><img src="{{baseUrl}}/includes/images/{{  0 | statusToImg }}"></td><td>{{ registered_red    }}</td></tr>
+                </table>
+            </td>
+            <td class="status-totals">
+                <table>
+                    <tr><td></td><td><img src="{{baseUrl}}/includes/images/{{ 10 | statusToImg }}"></td><td>{{ metadata_green  }}</td></tr>
+                    <tr><td></td><td><img src="{{baseUrl}}/includes/images/{{  1 | statusToImg }}"></td><td>{{ metadata_yellow }}</td></tr>
+                    <tr>
+                        <td><img src="{{baseUrl}}/includes/images/{{ '-1' | statusToImg }}"></td>
+                        <td><img src="{{baseUrl}}/includes/images/{{   0  | statusToImg }}"></td>
+                        <td>{{ metadata_red+metadata_na }}</td>
+                    </tr>
+                </table>
+            </td>
+            <td class="status-totals">
+                <table>
+                    <tr><td></td><td><img src="{{baseUrl}}/includes/images/{{ 10 | statusToImg }}"></td><td>{{ available_green  }}</td></tr>
+                    <tr><td></td><td><img src="{{baseUrl}}/includes/images/{{  1 | statusToImg }}"></td><td>{{ available_yellow }}</td></tr>
+                    <tr>
+                        <td><img src="{{baseUrl}}/includes/images/{{ '-1' | statusToImg }}"></td>
+                        <td><img src="{{baseUrl}}/includes/images/{{   0  | statusToImg }}"></td>
+                        <td>{{ available_red+available_na }}</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <th colspan=2 style="border:0px;"></th>
+            <th class="status">Identified</th>
+            <th class="status">Registered</th>
+            <th class="status">Metadata</th>
+            <th class="status">Available</th>
+        </tr>
     </tfoot>
-    </tbody>
 </table>
