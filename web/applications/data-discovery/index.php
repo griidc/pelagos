@@ -723,7 +723,13 @@ function canHazGridFTP($user,$udi,$filename) {
     clearstatcache(); # needed because stat operations like file_exists() cache file state tests
 
     $all_ok = 0;
-    if ( ($posix) and (isset($homedir)) and ($homedir != null) and file_exists($homedir) and file_exists($homedir."/download/".$udi."/".$filename)) {
+    if (
+            ($posix)
+            and (isset($homedir))
+            and ($homedir != null)
+            and is_writable($homedir."/download/" )
+            and (is_writable($homedir."/download/$udi" ) or (!file_exists($homedir."/download/$udi")))
+       ) {
         $all_ok = 1;
     }
     return $all_ok;
