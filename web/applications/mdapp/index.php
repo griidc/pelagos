@@ -35,7 +35,7 @@ drupal_add_library('system', 'ui.tabs');
 drupal_add_library('system', 'jquery.cookie');
 drupal_add_js('//cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js',array('type'=>'external'));
 drupal_add_js('//maps.google.com/maps/api/js?v=3&sensor=false',array('type'=>'external'));
-drupal_add_js('/~mvandeneijnden/map/geoviz.js','external');
+drupal_add_js('/includes/geoviz/geoviz.js','external');
 
 global $user;
 $GLOBALS['pelagos_config'] = parse_ini_file('/etc/opt/pelagos.ini',true);
