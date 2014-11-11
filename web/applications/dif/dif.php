@@ -425,7 +425,7 @@ function getFormData($difID)
     $formArr = array_merge($formArr,array("appLab"=>($dataSetProc[2]=='Labratory')));
     $formArr = array_merge($formArr,array("appLit"=>($dataSetProc[3]=='Literature Based')));
     $formArr = array_merge($formArr,array("appRemote"=>($dataSetProc[4]=='Remote Sensing')));
-    $formArr = array_merge($formArr,array("appOther"=>$dataSetFor[5]));
+    $formArr = array_merge($formArr,array("appOther"=>$dataSetProc[5]));
     
     $formArr = array_merge($formArr,array("startdate"=>$data["start_date"])); 
     $formArr = array_merge($formArr,array("enddate"=>$data["end_date"])); 
