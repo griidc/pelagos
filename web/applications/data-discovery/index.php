@@ -707,7 +707,9 @@ function isMetadataApproved($udi) {
 }
 
 function canHazGridFTP($user,$udi,$filename) {
-
+    if(!isset($user->name)) {
+        return 0;
+    }
     $conf_path = $GLOBALS['config']['paths']['conf'];
     $GLOBALS['ldap'] = parse_ini_file("$conf_path/ldap.ini",true);
     $ldaphost = $GLOBALS['ldap']['ldap']['server'];
