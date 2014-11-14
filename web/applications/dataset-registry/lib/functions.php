@@ -2,6 +2,22 @@
 
 function displayTaskStatus($tasks,$update=null,$personid=null)
 {
+    // Rebuilding the Task array because it's in simpleXML object which don't like to be sorted easily.
+    $newTasks = array();
+    
+    foreach ($tasks as $task)
+    {
+        $taskID = (integer)$task['ID'];
+        $taskTitle = (string)$task->Title;
+        $projectID = (integer)$task->Project['ID'];
+        
+        $newTasks[] = array('title'=>$taskTitle, 'taskID'=>$taskID, 'projectID'=>$projectID);
+    }
+    
+    sort($newTasks);
+    
+    $tasks = $newTasks;
+    
     $projectID ="";
     $taskTitle="";
     $taskID ="";
@@ -80,9 +96,9 @@ function displayTaskStatus($tasks,$update=null,$personid=null)
 
     foreach ($tasks as $task)
     {
-        $taskID = $task['ID'];
-        $taskTitle = $task->Title;
-        $projectID = $task->Project['ID'];
+        $taskID = $task['taskID'];
+        $taskTitle = $task['title'];
+        $projectID = $task['projectID'];
 
         if ($taskID > 0)
         {
