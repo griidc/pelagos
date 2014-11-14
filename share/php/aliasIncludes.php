@@ -2,10 +2,18 @@
 
 require_once 'dumpIncludesFile.php';
 
-$file = preg_replace('/^\/[^\/]+$/','',$_SERVER['REQUEST_URI']);
-$file = preg_replace('/^\/[^\/]+\//','',$file);
-$file = str_replace('//','/',$file);
+if (!isset($_SERVER['SCRIPT_NAME']) OR strpos($_SERVER['REQUEST_URI'],$_SERVER['SCRIPT_NAME']) === false) {
+    $file = preg_replace('/^\/[^\/]+$/','',$_SERVER['REQUEST_URI']);
+    $file = preg_replace('/^\/[^\/]+\//','',$file);
+    $file = str_replace('//','/',$file);
+}
+else {
+    $file = preg_replace('/^' . preg_replace('/\//','\/',$_SERVER['SCRIPT_NAME']) . '/','',$_SERVER['REQUEST_URI']);
+    $file = preg_replace('/^\//','',$file);
+}
+
 $file = str_replace('../','',$file);
+
 if (preg_match('/^includes\//',$file))
 {
     dumpIncludesFile($file);
