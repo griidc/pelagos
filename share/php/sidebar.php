@@ -45,6 +45,8 @@ drupal_add_js('includes/js/dtree.js',array('type'=>'external'));
     }
 </script>
 
+<table style="height:100%;width:100%;">
+
 <?php
 
 function buildFilter($tasks,$personid,$alltasks=null)
@@ -106,6 +108,7 @@ function buildFilter($tasks,$personid,$alltasks=null)
 
 if ($GLOBALS['isGroupAdmin'] OR (isAdmin() and !array_key_exists('as_user',$_GET)))
 {
+    echo "<tr><td>";
     echo '<table class=cleair style="width:100%;"><tbody class=tbody><tr><td style="padding:10px;">';
     echo '<form id="filter" name="filter">';
     echo '<label for="filtername">Filter by Researcher:</label>';
@@ -125,18 +128,22 @@ if ($GLOBALS['isGroupAdmin'] OR (isAdmin() and !array_key_exists('as_user',$_GET
 	
     echo '</form>';
     echo '</tbody></td></td></table><p \>';
+    echo '</td></tr>';
 }
 
-echo "<table class=cleair style='width:100%;'><tbody class=tbody><tr><td>";
+echo "<tr><td style='height:100%;'>";
+echo "<table class=cleair style='width:100%;height:100%;padding:0px;'><tbody class=tbody><tr><td>";
 echo "<h2 class=\"title\" align=center>Tasks and datasets for ".$firstName." ".$lastName."<hr />";
-echo "</h2></td></tr><tr><td>";
-
-
-echo '<div id="dstree" style="width:100%;max-height:1200px;overflow:auto;padding-left:10px;padding-bottom:10px;padding-right:10px;" BGCOLOR="#efefef">';
-echo "<div class=\"dtree\">\n";
+echo "</h2></td></tr><tr><td style='height:100%;position:relative;'>";
+echo '<div id="dstree" style="position:absolute; top:0px; left:10px; right:0px; bottom:10px; overflow:auto;" BGCOLOR="#efefef">';
+echo "<div class=\"dtree\" style=\"position:absolute;\">\n";
 echo "<script type=\"text/javascript\">\n\n";
 displayTaskStatus($tasks,null,$GLOBALS['personid']);
 echo "</script>\n</div>\n";
-echo "</div></td></tr> </tbody> </table>";
+echo "</div>";
+echo "</td></tr> </tbody> </table>";
+echo "</td></tr>";
 
 ?>
+
+</table>
