@@ -363,7 +363,7 @@ if ($_SESSION['submitok']) {
     system($GLOBALS['pelagos_config']['paths']['root'].'/back-end/filer/trigger-filer');
 }
 else {
-    echo '<table  border="0">';
+    echo '<table border="0" style="height:100%;width:100%;">';
     echo '<tr>';
     echo '<td width="60%" style="vertical-align: top; background: transparent;">';
     include 'reg_form.php';
