@@ -237,7 +237,7 @@ function postDIF($fielddata)
 
                 /** jvh modified on Nov 17th 2014 as per requirement PELAGOS-33 **/
                 $message = '<div><img src="/images/icons/info32.png">'.
-                            '<p>Congratulations! You have successfully submitted a DIF to GRIIDC. THE UDI for this dataset is '. $nudi.'.'.
+                            '<p>Congratulations! You have successfully submitted a DIF to GRIIDC. The UDI for this dataset is '. $nudi.'.'.
                             '<br>The DIF will now be reviewed by GRIIDC staff and is locked to prevent editing.To make changes'.
                             '<br>to your DIF, please email GRIIDC at griidc@gomri.org with the UDI for your dataset.'.
                             '<br>Note that you will receive an email notification when your DIF is approved.</p></div>';
@@ -266,7 +266,7 @@ function postDIF($fielddata)
         }
         else if ($frmButton == 'submit')
         {
-            $message = '<div><img src="/images/icons/info32.png"><p>Congratulations! You have successfully submitted a DIF to GRIIDC. THE UDI for this dataset is '.$UDI.'.<br>The DIF will now be reviewed by GRIIDC staff and is locked to prevent editing.<br> To unlock your DIF to make changes, you must return to the DIF webpage.<br> You can then load the DIF form you wish to edit from the datasets list and select &quot;Request Unlock&quot; from the bottom of the form.</p></div>';
+            $message = '<div><img src="/images/icons/info32.png"><p>Congratulations! You have successfully submitted a DIF to GRIIDC. The UDI for this dataset is '.$UDI.'.<br>The DIF will now be reviewed by GRIIDC staff and is locked to prevent editing.<br> To unlock your DIF to make changes, you must return to the DIF webpage.<br> You can then load the DIF form you wish to edit from the datasets list and select &quot;Request Unlock&quot; from the bottom of the form.</p></div>';
             $msgtitle = 'DIF Submitted';
             
             $sendMail = sendSubmitMail($submitted,$UDI,'GRIIDC DIF Submitted','submitMail.html');
