@@ -109,6 +109,8 @@ function displayTaskStatus($tasks,$update=null,$personid=null)
             $query = "select title,status,dataset_uid,dataset_udi from datasets where project_id=$projectID and status=2";
 
         }
+        
+        $query .= " order by dataset_udi;";
 
         $results = dbexecute($query);
 
