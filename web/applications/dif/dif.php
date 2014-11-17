@@ -1,436 +1,730 @@
 <?php
 
-// Module: dif.php
-// Author(s): Jew-Lee Irena Lann, James C. Davis
-// Last Updated: 6 November 2012
-// Parameters: Form fields with to add to the database or update.
-// Returns: Form / Sidebar
-// Purpose: Wrapper for form and action scripts to update database & email at later date.
+include 'difDL.php'; //dif DataLayer
 
-$alltasks="";
+include_once '/usr/local/share/GRIIDC/php/ldap.php'; 
+include_once '/usr/local/share/GRIIDC/php/griidcMailer.php';
+include_once '/usr/local/share/GRIIDC/php/dif-registry.php'; 
+//include_once '/usr/local/share/GRIIDC/php/drupal.php'; 
 
-$ldap = connectLDAP('triton.tamucc.edu');
-$baseDN = 'dc=griidc,dc=org';
-$uid = getUID();
-if (isset($uid)) {
-    $submittedby ="";
-    $userDNs = getDNs($ldap,$baseDN,"uid=$uid");
+require_once '/usr/share/pear/Twig/Autoloader.php';
+
+global $twig;
+$twigloader;
+
+Twig_Autoloader::register();
+
+$twigloader = new Twig_Loader_Filesystem('./templates');
+$twig = new Twig_Environment($twigloader,array('autoescape' => false));
+
+if (isset($_POST['function']))
+{
+    $difFunction = $_POST['function'];
+    
+    switch ($difFunction)
+    {
+        case 'loadDIFS':
+            $status = $_POST['status'];
+            $person = $_POST['person'];
+            $showempty = (bool)$_POST['showempty'];
+            header('Content-Type: application/json');
+            //echo getTaskList($status,$person,$showempty);
+            echo getDIFS($person,$status);
+            break;
+        case 'loadTasks':
+            header('Content-Type: application/json');
+            $person = $_POST['person'];
+            echo getTaskOptions($person);
+            break;
+        case 'fillForm':
+            $difUDI = $_POST["udi"];
+            header('Content-Type: application/json');
+            echo getFormData($difUDI);
+            break;
+        case 'loadPOCs':
+            $PseudoID = $_POST["pseudoid"];
+            header('Content-Type: application/json');
+            echo getResearchers($PseudoID);
+            break;
+        case 'saveDIF':
+            $formFields = $_POST["formFields"];
+            header('Content-Type: application/json');
+            echo postDIF($formFields);
+            break; 
+    }
+    exit;
+}
+
+function sendSubmitMail($user,$udi,$title,$template)
+{
+   global $twig;
+   
+   $difMailer = new griidcMailer(false); 
+   
+   $userDetails = getUserDetails($user);
+   
+   $twigdata = $userDetails;
+   $twigdata["url"] = 'https://'.$_SERVER[HTTP_HOST].'/dif/?id='.$udi;
+   $twigdata["udi"] = $udi;
+    
+   $message = $twig->render($template, $twigdata);
+   
+   $difMailer->addToUser($userDetails["firstName"], $userDetails["lastName"], $userDetails["eMail"]);
+   $difMailer->mailSubject = $title;
+
+   //$difMailer->donotBCC = true;   #for debug only
+   
+   $difMailer->mailMessage = $message;
+   return $difMailer->sendMail();
+}
+
+function mailApprovers($udi,$title,$template)
+{
+    global $twig;
+    $ldap = connectLDAP('triton.tamucc.edu');
+    
+    $difMailer = new griidcMailer(false); 
+    //$difMailer->donotBCC = true;
+    
+    $twigdata = array();
+    
+    $twigdata["url"] = 'https://'.$_SERVER[HTTP_HOST].'/dif/?id='.$udi;
+    $twigdata["udi"] = $udi;
+    
+    $message = $twig->render($template, $twigdata);
+    
+    $members = getAttributes($ldap,"cn=approvers,ou=DIF,ou=applications,dc=griidc,dc=org",array('member'));    
+    foreach ($members['member'] as $member)
+    {
+        $attributes = getAttributes($ldap,$member,array('givenName','sn','mail'));
+        if (count($attributes) > 0) {
+        			
+            if (array_key_exists('givenName',$attributes)) $mailFirstName = $attributes['givenName'][0];
+            if (array_key_exists('sn',$attributes)) $mailLastName = $attributes['sn'][0];
+            if (array_key_exists('mail',$attributes)) $eMail = $attributes['mail'][0];
+        					
+            $difMailer->addToUser($mailFirstName, $mailLastName, $eMail);
+        }
+    }
+    
+    $difMailer->mailSubject = $title;
+    $difMailer->mailMessage = $message;
+    return $difMailer->sendMail();
+
+}
+
+function getUserDetails($userName)
+{
+    $firstName = '';
+    $lastName = '';
+    $eMail = '';
+    $ldap = connectLDAP('triton.tamucc.edu');
+    $baseDN = 'dc=griidc,dc=org';
+    $userDNs = getDNs($ldap,$baseDN,"uid=$userName");
     $userDN = $userDNs[0]['dn'];
     if (count($userDNs) > 0) {
-        $attributes = getAttributes($ldap,$userDN,array('givenName','sn','employeeNumber'));
-        if (count($attributes) > 0) {
-            if (array_key_exists('givenName',$attributes)) $firstName = $attributes['givenName'][0];
-            if (array_key_exists('sn',$attributes)) $lastName = $attributes['sn'][0];
-            if (array_key_exists('employeeNumber',$attributes)) $submittedby = $attributes['employeeNumber'][0];
-        }
-    }
-}
-
-# first try to get tasks for which we have a task role
-$tasks = getTasks($ldap,$baseDN,$userDN,$submittedby,true);
-
-# if we have no task roles, try to get tasks for which we have any role
-if (count($tasks) == 0) {
-    $tasks = getTasks($ldap,$baseDN,$userDN,$submittedby,false);
-}
-
-# if we still have no tasks, show a warning
-if (count($tasks) == 0) {
-    drupal_set_message("No projects/tasks found for $firstName $lastName.<br>Please contact GRIIDC at <a href='mailto:griidc@gomri.org'>griidc@gomri.org</a>",'warning');
-}
-
-$GLOBALS['personid'] ="";
-if ($_GET) 
-{
-
-    if (isset($_GET['personID']) OR isset($_GET['status'])) 
-    {
-        $personid = $_GET['personID'];
-		$fstatus = $_GET['status'];
-        ob_clean();
-        ob_flush();
-        $tasks = filterTasks($tasks,$personid);
-        echo displayTaskStatus($tasks,true,$personid,$fstatus);
-        exit;
-    }
-    
-    if (isset($_GET['persontask'])) 
-    {
-        $personid = $_GET['persontask'];
-        ob_clean();
-        ob_flush();
-        $tasks = filterTasks($tasks,$personid);
-        echo "<option value=' '>[SELECT A TASK]</option>";
-        echo getTaskOptionList($tasks, null);
-        exit;
-    }
-    
-    if (isset($_GET['prsid'])) 
-    {
-        $GLOBALS['personid'] = $_GET['prsid'];
-        $alltasks = $tasks;
-        $tasks = filterTasks($tasks,$GLOBALS['personid']);
-    }
-}
-
- ?> 
-
-<head> 
-  <title></title>
-  <LINK href="includes/css/overwrite.css" rel="stylesheet" type="text/css">
-  <LINK href="includes/css/Tooltip.css" rel="stylesheet" type="text/css">
-  <!--<SCRIPT LANGUAGE="JavaScript" SRC="includes/js/ds.js"> </SCRIPT>-->
-  <script language="javascript" src="includes/js/jquery-1.2.6.min.js"></script>
- <script src="includes/js/Tooltip.js"></script>
-  <script src="includes/js/jquery-latest.js"></script>
-  <script type="text/javascript" src="includes/js/jquery.validate.js"></script>
-  <div class="bgCover">&nbsp;</div>
-  <div class="overlayBox">
-	<div class="overlayContent">
-        <a href="#" class="closeLink">X</a>
-        <h2><IMG SRC="includes/images/info.png"> INFO</h2>
-        <p></p>
-	</div>
-   </div>
-
-<link rel="StyleSheet" href="includes/css/dtree.css" type="text/css" />
-<script type="text/javascript" src="includes/js/dtree.js"></script>
-<script type="text/javascript">
-function updateTaskList(personID) {
-   if (window.XMLHttpRequest) { xmlhttp=new XMLHttpRequest(); } else { xmlhttp=new ActiveXObject("Microsoft.XMLHTTP"); }
-       xmlhttp.onreadystatechange=function updateTaskList() {
-            if (xmlhttp.readyState==4 && xmlhttp.status==200) {
-                var here = document.getElementById("ctask").innerHTML=xmlhttp.responseText;
-                var help=document.getElementById('span1').innerHTML = " <select id='ctask' name='task' style='width:800px;' size='1' onchange='setOptions(document.ed.task.options[document.ed.task.selectedIndex].value);' class='required' >" + here + "</select>";
+            $attributes = getAttributes($ldap,$userDN,array('givenName','sn','mail'));
+            if (count($attributes) > 0) {
+                    if (array_key_exists('givenName',$attributes)) $firstName = $attributes['givenName'][0];
+                    if (array_key_exists('sn',$attributes)) $lastName = $attributes['sn'][0];
+                    if (array_key_exists('mail',$attributes)) $eMail = $attributes['mail'][0];
             }
-        }
-        xmlhttp.open("GET","?persontask="+personID,true);
-        xmlhttp.send();
     }
-</script>
-
-<script type="text/javascript"> 
-
-function stopRKey(evt) { 
-  var evt = (evt) ? evt : ((event) ? event : null); 
-  var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null); 
-  if ((evt.keyCode == 13) && (node.type=="text"))  {return false;} 
-} 
-document.onkeypress = stopRKey; 
-</script> 
-   
-   
-   <script language="JavaScript">
-<!--
-function enable_text(status)
-{
-status=!status;
-document.ed.video.disabled = status;
-document.ed.video.value = "";
+    
+    return array('firstName'=>$firstName,'lastName'=>$lastName,'eMail'=>$eMail);
 }
-//-->
-</script>
-   <script type="text/javascript">
-    function getVal(){
-    var el=document.getElementById('inp0');
-    var i=0, c, arr=[];
-    while(c=document.getElementById('chk'+(i++))) c.checked? arr[arr.length]=c.value : null;
-     el.value = arr.join(";");
-    }
-   </script>
-   <script language="javascript" type="text/javascript">
-    function imposeMaxLength(Object, MaxLen)
+
+function postDIF($fielddata)
+{
+    $formdata = array();
+    
+    foreach ($fielddata as $field)
     {
-      return (Object.value.length <= MaxLen);
+        $data[$field["name"]] = $field["value"];
     }
-   </script>
-   <style type="text/css">
-     p { clear: both; }
-     em.form { font-weight: bold; padding-right: 1em; vertical-align: top; color:#FF0000;}
-     .submit { font-weight: bold; font-size: 120%; }
-   </style>
-  <script>
-     $(document).ready(function(){
-     $("#commentForm").validate();
-     });
-  </script>
-<!--<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
-<SCRIPT LANGUAGE=JAVASCRIPT SRC="includes/js/map.js"></SCRIPT>
-<LINK href="includes/css/map.css" rel="stylesheet" type="text/css">-->
-
-   	<script language="javascript" type="text/javascript">
-      function setOptions(chosen) {
-	     var selboxp = document.ed.ppoc;
-         var selboxs = document.ed.spoc;
-		 selboxp.options.length = 0;
-	     if (chosen == "") { selboxp.options[selboxp.options.length] = new Option('Please Choose a Task First',''); }
-	     else{ 
-		 <?php makeTaskGrouping($tasks, "p"); ?>  }
-	     selboxs.options.length = 0;
-         if (chosen == "") { selboxs.options[selboxs.options.length] = new Option('Please Choose a Task First',''); }
-		 else{  <?php makeTaskGrouping($tasks, "s");  ?>  }
-       }
-</script>
-
-
-</head>
-
-<body <?PHP if (!isset($_GET['uid']) OR $_GET['uid'] == "") { echo "onload=enable_text(false);"; } ?>>
-
-<?php 
-if (!$submittedby){$submittedby = '-1';}
-//CONNECTION TO POSTGRES
-$connection = pg_connect(GOMRI_DB_CONN_STRING) or die ("ERROR: " . pg_last_error($connection)); 
-if (!$connection) { die("Error in connection: " . pg_last_error()); } 
-$pu=array();
-$result3 = pg_exec($connection, "SELECT var_name, comments FROM form_info WHERE form = 'dif' ORDER BY form_info.id ASC");
-if (!$result3) { die("Error in SQL query: " . pg_last_error()); } 
-while($row = pg_fetch_row($result3)){
-echo " <div id=\"$row[0]_tip\" style=\"display:none;\"> <img src=\"includes/images/info.png\" style=\"float:right;\" /> $row[1]</div>";
-array_push($pu, $row[0]); }
-$status = 0;$usernumber=1;
-
-$flag = '';
-$m = array('','','','','','','','','','','','','','','','','','','','','','','','','','');
-$size = array('','','','','','');
-$l = array('','','');
-$n = array('','','');
-$stand = array('','','','','');
-$point = array('','','','','');
-$ep = array('','','');
-$dtt = array('','','','','','','','');
-$dtf = array('','','','','','','','','');
-$aq = array('','','','','','');
-
-$task = '|';
-$title = '';
-$eco = '';
-$phys = '';
-$atm = '';
-$ch = '';
-$geog = '';
-$scpe = '';
-$econom = '';
-$geop = '';
-$dtother = '';
-$field = '';
-$sim = '';
-$lab = '';
-$lit = '';
-$remote = '';
-$approachother = '';
-$sye = '';
-$smo = '';
-$sda = '';
-$edate = '';
-$eye = '';
-$emo = '';
-$eda = '';
-$s1 = '';
-$s2 = '';
-$s3 = '';
-$s4 = '';
-$otherst = '';
-$a1 = '';
-$a2 = '';
-$a3 = '';
-$accessother = '';
-$privacy = '';
-$privacyother = '';
-$nat1 = '';
-$nat2 = '';
-$nat3 = '';
-$nat4 = '';
-$nat5 = '';
-$nat6 = '';
-$othernat = '';
-$sascii = '';
-$uascii = '';
-$images = '';
-$netCDF = '';
-$dtvideo = '';
-$video = '';
-$gml = '';
-$otherdty = '';
-
-//SUBMITTED
-if ((isset($_POST['submit']) and $_POST['submit'])||(isset($_POST['later']) and $_POST['later'])||(isset($_POST['reject']) and $_POST['reject'])||(isset($_POST['accept']) and $_POST['accept'])) {
-    if (isset($_POST['later']) and $_POST['later']) { $status = 0;}else{$status = 1;}
-       //CONCAT TO FIT DB
-       foreach ($_POST as $k=>$v) { 
-
-    $$k = pg_escape_string($v);}
-
-	@list($task,$project,$fundSrc)=explode("|", $task);
-    $title = str_replace(array("\r\n", "\n\r", "\r", "\n", "\t"), " ", $title);
-    $datafor = $eco.'|'.$phys.'|'.$atm.'|'.$ch.'|'.$geog.'|'.$scpe.'|'.$econom.'|'.$geop.'|'.$dtother;
-    $approach = $field."|".$sim."|".$lab."|".$lit."|".$remote."|".$approachother;
-    $sdate="$sye-$smo-$sda";$edate="$eye-$emo-$eda";
-    $standards=$s1."|".$s2."|".$s3."|".$s4."|".$otherst;
-    $point =$a1."|".$a2."|".$a3."|".$accessother;
-    $privacy = $privacy."|".$privacyother;
-    $national= $nat1."|".$nat2."|".$nat3."|".$nat4."|".$nat5."|".$nat6."|".$othernat;
-    $datatype =$sascii."|".$uascii."|".$images."|".$netCDF."|".$dtvideo."|".$video."|".$gml."|".$otherdty;
-    //SQL
-    if (isset($_POST['reject']) and $_POST['reject']) { $status = 0;}
-    if (isset($_POST['accept']) and $_POST['accept']) { $status = 2;}
-    if (isset($_POST['accept']) and $_POST['accept'] OR isset($_POST['reject']) AND $_POST['reject'])
-    { 
-    	$uid =$modts;
-    	$sql = "UPDATE datasets SET status='".$status ."'  WHERE dataset_uid='".$uid."'";
+    
+    $UDI = $data["udi"];
+    $status = (int)$data["status"];
+    $title = $data["title"];
+    $primarypoc = (int)$data["primarypoc"];
+    $secondarypoc = (int)$data["secondarypoc"];
+    $abstract = $data["abstract"];
+    $pseudoID = (int)($data["task"]);
+    $projectID = intval($pseudoID/1024);
+    $taskID = $pseudoID - ($projectID*1024);
+    $datasettype = $data["dtascii"].'|'.$data["dtuascii"].'|'.$data["dtimages"].'|'.$data["dtnetcdf"].'|'.$data["dtvideo"].'|'.$data["dtgml"].'|'.$data["dtvideoatt"].'|'.$data["dtother"];
+    $datasetfor = $data["dfeco"].'|'.$data["dfphys"].'|'.$data["dfatm"].'|'.$data["dfchem"].'|'.$data["dfhumn"].'|'.$data["dfscpe"].'|'.$data["dfeconom"].'|'.$data["dfother"];
+    $datasize = $data["size"];
+    $approach = $data["appField"].'|'.$data["appSim"].'|'.$data["appLab"].'|'.$data["appLit"].'|'.$data["appRemote"].'|'.$data["appOther"];
+    $observation = $data["observation"];
+    $startdate = $data["startdate"];
+    $enddate = $data["enddate"];
+    $geolocation = $data["spatialdesc"];
+    $submission = $data["accFtp"].'|'.$data["accTds"].'|'.$data["accErdap"].'|'.$data["accOther"];
+    $natarchive = $data["repoNodc"].'|'.$data["repoUsepa"].'|'.$data["repoGbif"].'|'.$data["repoNcbi"].'|'.$data["repoDatagov"].'|'.$data["repoGriidc"].'|'.$data["repoOther"];
+    $ethical = $data["privacy"].'|'.$data["privacyother"];
+    $remarks = $data["remarks"];
+    $datasetUID = time();
+    $fundingSourceID = (int)$data["fundsrcid"];
+    $gmlText = $data["geoloc"];
+    $frmButton = $data["button"];
+    $submitted = $data["submitter"];
+    $editor = getUserID();
+    
+    if (($status > 1) AND (!isUserAdmin(getUserID()))) {$status = 1;}; #If this happened, someone fiddled with the form.
+    
+    if (isDIFApprover(getUserID()) OR isUserAdmin(getUserID()))
+    {
+        if ($frmButton == 'approve' AND is) {$status = 2;};
+        if ($frmButton == 'reject') {$status = 0;};
+        if ($frmButton == 'unlock') {$status = 0;};
+    }
+    
+    if ($frmButton == 'submit') {$status = 1;};
+    
+    
+    if ($fundingSourceID > 0 and $fundingSourceID < 7) {
+        $fundingSource = 'Y1';
+    }
+    else {
+        switch ($fundingSourceID) {
+            case 7: $fundingSource = 'R1'; break;
+            case 8: $fundingSource = 'R2'; break;
+            case 9: $fundingSource = 'R3'; break;
+            default: $fundingSource = '??';
+        }
+    }
+    
+    if (empty($startdate)){$startdate=null;};
+    
+    if (empty($enddate)){$enddate=null;};
+    
+    if (empty($gmlText)){$gmlText=null;};
+    
+    if (empty($submitted) OR ($status < 2 AND ($frmButton != 'reject' AND $frmButton != 'unlock')))
+    {$submitted=$editor;};
+    
+    //$gmlText = '<gml:Point srsName="urn:ogc:def:crs:EPSG::4326"><gml:pos srsDimension="2">27.70323 -97.30042</gml:pos></gml:Point>';
+    
+    $logname = getPersonID(getUserID());
+    
+    $parameters = array($datasetUID,$UDI,$projectID,$taskID,$title,$primarypoc,$secondarypoc,$abstract,$datasettype,$datasetfor,$datasize,$observation,$approach,$startdate,$enddate,$geolocation,$submission,$natarchive,$ethical,$remarks,$logname,$status,$editor,$gmlText,$fundingSource,$submitted);
+    
+    if ((isUserAdmin(getUserID())) OR ($frmButton == 'submit' OR $frmButton == 'save'))
+    {
+        $rc = saveDIF($parameters);
+    }
+   
+    $success= ((is_null($rc[1])) AND (($rc[0]["save_dif"] == 't') OR $rc[0]["save_dif"] != 'f'));
+    
+    $sendMail = false;
+    
+    if ($success)
+    {
+        if (isset($rc[0]["save_dif"]) AND $rc[0]["save_dif"] != 't')
+        {
+            #new dif from scratch
+            $nudi = $rc[0]["save_dif"];
+            
+            if ($status == 0)
+            {
+                $msgtitle = 'New DIF Created';
+                $message = '<div><img src="/images/icons/info32.png"><p>You have saved a DIF. This DIF has been given the ID: '.$nudi.'<br>In order to submit your dataset to GRIIDC you must return to this page and submit the DIF for review and approval.</p></div>';
+            }
+            else
+            {
+                $msgtitle = 'New DIF Submitted';
+                $message = '<div><img src="/images/icons/info32.png"><p>Congratulations! You have successfully submitted a DIF to GRIIDC. THE UDI for this dataset is '.$nudi.'.<br>The DIF will now be reviewed by GRIIDC staff and is locked to prevent editing.<br> To unlock your DIF to make changes, you must return to the DIF webpage.<br> You can then load the DIF form you wish to edit from the datasets list and select &quot;Request Unlock&quot; from the bottom of the form.</p></div>';
+                $msgtitle = 'DIF Submitted';
+                
+                $sendMail = sendSubmitMail($submitted,$nudi,'GRIIDC DIF Submitted','submitMail.html');
+                mailApprovers($nudi,'DIF Submitted for Approval','reviewMail.html');
+            }
+            
+        }
+        else if ($frmButton == 'approve')
+        {
+            $message = '<div><img src="/images/icons/info32.png"><p>The application with DIF ID: '.$UDI.' was successfully approved!</p></div>';
+            $msgtitle = 'DIF Approved';
+            $sendMail = sendSubmitMail($submitted,$UDI,'GRIIDC DIF Approved','approveMail.html');
+        }
+        else if ($frmButton == 'reject')
+        {
+            $message = '<div><img src="/images/icons/info32.png"><p>The application with DIF ID: '.$UDI.' was successfully rejected!</p></div>';
+            $msgtitle = 'DIF Rejected';
+        }
+        else if ($frmButton == 'save')
+        {
+            $message = '<div><img src="/images/icons/info32.png"><p>Thank you for saving DIF with ID:  '.$UDI.'.<br>Before registering this dataset you must return to this page and submit the dataset information form.</p></div>';
+            $msgtitle = 'DIF Submitted';
+        }
+        else if ($frmButton == 'submit')
+        {
+            $message = '<div><img src="/images/icons/info32.png"><p>Congratulations! You have successfully submitted a DIF to GRIIDC. THE UDI for this dataset is '.$UDI.'.<br>The DIF will now be reviewed by GRIIDC staff and is locked to prevent editing.<br> To unlock your DIF to make changes, you must return to the DIF webpage.<br> You can then load the DIF form you wish to edit from the datasets list and select &quot;Request Unlock&quot; from the bottom of the form.</p></div>';
+            $msgtitle = 'DIF Submitted';
+            
+            $sendMail = sendSubmitMail($submitted,$UDI,'GRIIDC DIF Submitted','submitMail.html');
+            mailApprovers($UDI,"DIF:$UDI Submitted for Approval",'reviewMail.html');
+            
+        }
+        else if ($frmButton == 'unlock')
+        {
+            $message = '<div><img src="/images/icons/info32.png"><p>Successfully unlocked DIF with ID: '.$UDI.'.</p></div>';
+            $msgtitle = 'DIF Unlocked';
+            $sendMail = sendSubmitMail($submitted,$UDI,'GRIIDC DIF Unlocked','unlocked.html');
+            
+        }
+        else if ($frmButton == 'requnlock')
+        {
+            $message = '<div><img src="/images/icons/info32.png"><p>Your unlock request has been submitted for ID: '.$UDI.'.<br>Your unlock request will be reviewed by GRIIDC staff.<br>You will receive an e-mail when the DIF is unlocked.</p></div>';
+            $msgtitle = 'DIF Submitted';
+            
+            mailApprovers($UDI,"DIF:$UDI Unlock Request",'unlockReq.html');
+            
+        }
+        else
+        {
+            $message = '<div><img src="/images/icons/info32.png"><p>Successfully saved DIF with ID: '.$UDI.'.</p></div>';
+            $msgtitle = 'DIF Submitted';
+        }
     }
     else
     {
-        if ($flag== "update") {
-            $uid = $modts;
-            $sql = "UPDATE datasets SET dataset_uid='".$uid."', task_uid='".$task."', title='".$title."', abstract='".$abstract."', dataset_type='".$datatype."', dataset_for='".$datafor."', size='".$size."', observation='".$observation ."', approach='".$approach ."', historic_links='".$historical."', meta_editor='".$ed ."', meta_standards='".$standards."', point='".$point."', national='".$national ."', ethical='".$privacy."', remarks='".$remarks ."', primary_poc=";
-            if ($ppoc ==""){$sql .="null";}else{ $sql.="'".$ppoc."'";}
-            $sql .=", secondary_poc=";
-            if ($spoc ==""){$sql .="null";}else{ $sql.="'".$spoc."'";}
-            $sql.=", status='".$status."', project_id=";
-            if ($project == "") { $sql .= "null";}else{ $sql.="'".$project."'";}
-            $sql.=", start_date='".$sdate."', end_date='".$edate."', geo_location='".$geoloc ."'";
-            if (sprintf('%s.x%03d.%03d',$fundSrc,$project,$task) != substr($dataset_udi,0,11)) {
-                $sql .= ", dataset_udi = nextudi($project,$task,'$fundSrc')";
-            }
-            if (!isAdmin())
+        if (is_array($rc[0]))
+        {
+            $error = 'unknown';
+        }
+        else
+        {
+            $error = $rc[0];
+        }
+        
+        $message = '<div><img src="/images/icons/cancel.png"><p>There was an error! Form NOT submitted.<br>ERROR:'.$error.'</p></div>';
+        $msgtitle = 'DIF ERROR';
+    }
+    
+    return json_encode(array('status'=>$rc,'success'=>$success,'message'=>$message,'title'=>$msgtitle,'sendmail'=>$sendMail));
+    
+    
+}
+
+function getResearchers($PseudoID)
+{
+    $peoples = loadResearchers($PseudoID);
+    
+    $researchers = array();
+    
+    foreach ($peoples as $person) {
+        $personID = $person['Person_Number'];
+        $personName = $person['Person_Name'];
+        
+        $role = (int) $person['Role_Number'];
+        
+        // if ($role == 16)
+        // {
+            // $isPrimary = true;
+        // }
+        // else
+        // {
+              $isPrimary = false;
+        // }
+        
+        $researchers[] = array('ID'=>$personID,'Contact'=>$personName,'isPrimary'=>$isPrimary);
+    }
+
+    //array_unique($researchers);
+    //sort($researchers);
+
+    echo json_encode($researchers);
+}
+
+function getTasks_OLD()
+{
+    if (!isUserAdmin(getUserID()))
+    {$PersonID=getPersonID(getUserID());}
+
+    $diftasks = loadTasks($PersonID);
+        
+    foreach ($diftasks as $task)
+    {
+        $maxLength = 200;
+        $taskTitle=$task['Task_Title'];
+        if (strlen($task['Task_Title']) > $maxLength){
+            $taskTitle=substr($taskTitle,0,$maxLength).'...';
+        }
+        
+        $taskID = $task["PseudoTask_Number"];
+        $tasks[] = array('Title'=>$taskTitle,'ID'=>$taskID);
+    }    
+    
+    sort($tasks);
+    
+    echo json_encode($tasks);
+}
+
+function getFormData($difID)
+{
+    $data = loadDIFData($difID);
+    $success = true; 
+    if (!$data)
+    {
+        $message = '<div><img src="/images/icons/cancel.png"><p>Couldn\'t find that ID:'.$difID.', no data loaded!</p></div>';
+        $msgtitle = 'DIF ERROR';
+        $success = false;
+    }
+    
+    $data = $data[0];
+    
+    $formArr = array();
+    
+    $formArr = array_merge($formArr,array("udi"=>$data["dataset_udi"]));
+    $PseudoTaskNumber = ((int)$data["project_id"] * 1024) + ((int)$data["task_uid"] );
+    $formArr = array_merge($formArr,array("task"=>$PseudoTaskNumber));
+    $formArr = array_merge($formArr,array("title"=>$data["title"]));
+    
+    $formArr = array_merge($formArr,array("primarypoc"=>$data["primary_poc"]));
+    $formArr = array_merge($formArr,array("secondarypoc"=>$data["secondary_poc"]));
+    $formArr = array_merge($formArr,array("abstract"=>$data["abstract"]));
+    $formArr = array_merge($formArr,array("size"=>$data["size"]));
+    $formArr = array_merge($formArr,array("observation"=>$data["observation"]));
+    $formArr = array_merge($formArr,array("historical"=>$data["historic_links"]));
+    $formArr = array_merge($formArr,array("remarks"=>$data["remarks"]));
+    $formArr = array_merge($formArr,array("status"=>$data["status"]));
+    $formArr = array_merge($formArr,array("spatialdesc"=>$data["geo_location"]));
+    $formArr = array_merge($formArr,array("geoloc"=>$data["the_geom"]));
+    $formArr = array_merge($formArr,array("projectid"=>$data["project_id"]));
+    $formArr = array_merge($formArr,array("taskid"=>$data["task_uid"]));
+    $formArr = array_merge($formArr,array("submitter"=>$data["submitted_by"]));
+    
+    $dataSetType = preg_split ("/\|/",$data["dataset_type"]);
+
+    $formArr = array_merge($formArr,array("dtascii"=>($dataSetType[0]=='Structured, Generic Text/ASCII File (CSV, TSV)')));
+    $formArr = array_merge($formArr,array("dtuascii"=>($dataSetType[1]=='Unstructured, Generic Text/ASCII File (TXT)')));
+    $formArr = array_merge($formArr,array("dtimages"=>($dataSetType[2]=='Images')));
+    $formArr = array_merge($formArr,array("dtnetcdf"=>($dataSetType[3]=='CDF/netCDF')));
+    $formArr = array_merge($formArr,array("dtvideo"=>($dataSetType[4]=='Video')));
+    $formArr = array_merge($formArr,array("dtgml"=>($dataSetType[6]=='GML/XML Structured')));
+    $formArr = array_merge($formArr,array("dtvideoatt"=>$dataSetType[5]));
+    $formArr = array_merge($formArr,array("dtother"=>$dataSetType[7]));
+    
+    $dataSetFor = preg_split ("/\|/",$data["dataset_for"]);
+    
+    $formArr = array_merge($formArr,array("dfeco"=>($dataSetFor[0]=='Ecological/Biological')));
+    $formArr = array_merge($formArr,array("dfphys"=>($dataSetFor[1]=='Physical Oceanographical')));
+    $formArr = array_merge($formArr,array("dfatm"=>($dataSetFor[2]=='Atmospheric')));
+    $formArr = array_merge($formArr,array("dfchem"=>($dataSetFor[3]=='Chemical')));
+    $formArr = array_merge($formArr,array("dfhumn"=>($dataSetFor[4]=='Human Health')));
+    $formArr = array_merge($formArr,array("dfscpe"=>($dataSetFor[5]=='Social/Cultural/Political')));
+    $formArr = array_merge($formArr,array("dfeconom"=>($dataSetFor[6]=='Economics')));
+    $formArr = array_merge($formArr,array("dfother"=>$dataSetFor[7]));
+    
+    $dataSetProc = preg_split ("/\|/",$data["approach"]);
+    
+    $formArr = array_merge($formArr,array("appField"=>($dataSetProc[0]=='Field Sampling')));
+    $formArr = array_merge($formArr,array("appSim"=>($dataSetProc[1]=='Simulated or Generated')));
+    $formArr = array_merge($formArr,array("appLab"=>($dataSetProc[2]=='Labratory')));
+    $formArr = array_merge($formArr,array("appLit"=>($dataSetProc[3]=='Literature Based')));
+    $formArr = array_merge($formArr,array("appRemote"=>($dataSetProc[4]=='Remote Sensing')));
+    $formArr = array_merge($formArr,array("appOther"=>$dataSetProc[5]));
+    
+    $formArr = array_merge($formArr,array("startdate"=>$data["start_date"])); 
+    $formArr = array_merge($formArr,array("enddate"=>$data["end_date"])); 
+    
+    $formArr = array_merge($formArr,array("metaeditor"=>$data["meta_editor"])); 
+    
+    $metadataStandards = preg_split ("/\|/",$data["meta_standards"]);
+    
+    $formArr = array_merge($formArr,array("msiso"=>($metadataStandards[0]=='ISO19115')));
+    $formArr = array_merge($formArr,array("msfgdc"=>($metadataStandards[1]=='CSDGM')));
+    $formArr = array_merge($formArr,array("msdublin"=>($metadataStandards[2]=='DUBLIN')));
+    $formArr = array_merge($formArr,array("mseco"=>($metadataStandards[3]=='EML')));
+    $formArr = array_merge($formArr,array("msother"=>$metadataStandards[4]));
+    
+    $accessPoint = preg_split ("/\|/",$data["point"]);
+    
+    $formArr = array_merge($formArr,array("accFtp"=>($accessPoint[0]=='FTP')));
+    $formArr = array_merge($formArr,array("accTds"=>($accessPoint[1]=='TDS')));
+    $formArr = array_merge($formArr,array("accErdap"=>($accessPoint[2]=='ERDAP')));
+    $formArr = array_merge($formArr,array("accOther"=>$accessPoint[3]));
+    
+    $dataCenter = preg_split ("/\|/",$data["national"]);
+    
+    $formArr = array_merge($formArr,array("repoNodc"=>($dataCenter[0]=='National Oceanographic Data Center')));
+    $formArr = array_merge($formArr,array("repoUsepa"=>($dataCenter[1]=='US EPA Storet')));
+    $formArr = array_merge($formArr,array("repoGbif"=>($dataCenter[2]=='Global Biodiversity Information Facility')));
+    $formArr = array_merge($formArr,array("repoNcbi"=>($dataCenter[3]=='National Center for Biotechnology Information')));
+    $formArr = array_merge($formArr,array("repoDatagov"=>($dataCenter[4]=='Data.gov Dataset Management System')));
+    $formArr = array_merge($formArr,array("repoGriidc"=>($dataCenter[5]=='Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC)')));
+    $formArr = array_merge($formArr,array("repoOther"=>$dataCenter[6]));
+    
+    $ethical = preg_split ("/\|/",$data["ethical"]);
+    
+    $formArr = array_merge($formArr,array("privacy"=>$ethical[0]));
+    $formArr = array_merge($formArr,array("privacyother"=>$ethical[1]));
+    
+    //$formArr = array_merge($formArr,array("isUserAdmin"=>$isUserAdmin));
+    
+    return json_encode(array('data'=>$formArr,'success'=>$success,'message'=>$message,'title'=>$msgtitle));
+}
+
+//echo getTaskList();
+
+function getTaskList($Status=null,$PersonID=null,$ShowEmpty=true)
+{
+    if (!isUserAdmin(getUserID()))
+    {$PersonID=getPersonID(getUserID());}
+    
+    $listArray = array();
+
+    $tasks = loadTasks($PersonID);
+    
+    foreach ($tasks as $task)
+    {
+        $taskTitle = $task['Task_Title'];
+        //$projectID = $task['projectid'];
+        $pseudoID = $task['PseudoTask_Number'];
+        $taskdata = loadTaskData($pseudoID,$Status);
+        $childArr = array();
+        
+        //var_dump($taskdata);
+        
+        if ($taskdata[0]["Title"] != null)
+        {
+            foreach ($taskdata as $dif) 
             {
-                $sql .= ", editor='" . getUID() . "'";
+                //var_dump($row);
+                
+                //exit;
+                $status = $dif["Access_Status"];
+                $title = $dif["Title"];
+                $difudi = $dif["UDI"];
+    
+                switch ($status)
+                {
+                    case null:
+                    $icon =  '/dataset-monitoring/includes/images/x.png';
+                    break;
+                    case 'Open':
+                    $icon = '/dataset-monitoring/includes/images/x.png';
+                    break;
+                    case 'Locked':
+                    $icon = '/dataset-monitoring/includes/images/triangle_yellow.png';
+                    break;
+                    case 'Approved':
+                    $icon =  '/dataset-monitoring/includes/images/check.png';
+                    break;
+                }
+                
+                $childArr[] = array("text"=>"[$difudi] $title","icon"=>$icon,"li_attr"=>array("title"=>$title),"a_attr"=>array("onclick"=>"getNode('$difudi');"));
+                
             }
-            $sql .= " WHERE dataset_uid='".$uid."'";
+            $listArray[] = array("text"=>$taskTitle,"icon"=>"/dif/images/folderopen.gif","state"=>array("opened"=>true),"children"=>$childArr,"li_attr"=>array("title"=>$taskTitle));  
         }
-        else {
-            $uid = time();
-            $sql = "INSERT INTO datasets(dataset_uid, task_uid, title, abstract, dataset_type, dataset_for, size, observation, approach, start_date, end_date, geo_location, historic_links, meta_editor, meta_standards, point, national, ethical, remarks, primary_poc, secondary_poc, logname, status, project_id, dataset_udi, editor) VALUES('$uid', '$task', '$title', '$abstract', '$datatype', '$datafor', '$size', '$observation', '$approach', '$sdate', '$edate','$geoloc', '$historical', '$ed', '$standards', '$point', '$national', '$privacy', '$remarks', ";
-            if ($ppoc ==""){$sql .="null";}else{ $sql.="'".$ppoc."'";}
-            $sql.=", ";
-            if ($spoc ==""){$sql .="null";}else{ $sql.="'".$spoc."'";}
-            $sql .=", '$submittedby','$status', ";
-            if ($project ==""){$sql .="null";}else{ $sql.="'".$project."'";}
-            $sql .=", nextudi($project,$task,'$fundSrc'), '" . getUID() . "')";
+        else
+        {
+            if ($ShowEmpty)
+            {
+                $listArray[] = array("text"=>$taskTitle,"icon"=>"/dif/images/nofolder.png","children"=>array("text"=>""),"li_attr"=>array("title"=>$taskTitle));       
+            }
         }
+        
     }
-    $result = pg_query($connection, $sql); 
-	
-    if (!$result) { $mymesg="error"; $yn= "Something Went Wrong!!!" . pg_last_error(); } else {
-        if ($status == 0) {
-            $mymesg= "warning";
-            $yn= "DIF saved but not submitted.</li><li>Please make sure you come back later and click \"Submit &amp; Done\" when you are ready to submit your DIF.";
-        }
-        else {
-			
-			$result = pg_query($connection, "select * from datasets where dataset_uid=$uid");
-			$row = pg_fetch_array($result);
-			
-			$datasetUDI = $row['dataset_udi'];
-            $mymesg= "status";
-            $yn= "DIF saved and submitted for approval.";
-			
-			//send e-mail for submit
-			
-			
-			
-			if (isset($_POST['accept']))
-			{
-				$eMail = "";
-				$difMailer = new griidcMailer(false);
-				$submitUser = $row['editor'];
-				if (isset($submitUser)) {
-					$userDNs = getDNs($ldap,$baseDN,"uid=$submitUser");
-					$userDN = $userDNs[0]['dn'];
-					if (count($userDNs) > 0) {
-						$attributes = getAttributes($ldap,$userDN,array('givenName','sn','mail'));
-						if (count($attributes) > 0) {
-							if (array_key_exists('givenName',$attributes)) $mailFirstName = $attributes['givenName'][0];
-							if (array_key_exists('sn',$attributes)) $mailLastName = $attributes['sn'][0];
-							if (array_key_exists('mail',$attributes)) $eMail = $attributes['mail'][0];
-						}
-					}
-				}
-				
-				$difMailer->addToUser($mailLastName, $mailLastName, $eMail);
-				
-				$message = "Congratulations $mailFirstName $mailLastName,<br /><br />";
-				$message .= 'Your Dataset Information Form (DIF) <a href="' . "https://$_SERVER[HTTP_HOST]" .'/dif/?uid='.$uid.'">'.$datasetUDI.'</a> has been approved by the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC). You will now be able to register the associated dataset at https://data.gulfresearchinitiative.org/dataset-registration. <br \>';
-				$message .= "If you have any questions regarding your DIF please contact griidc@gomri.org.<br \><br \>";
-				$message .= "Thank you,<br \>The GRIIDC Team<br \>";
-				
-				$difMailer->mailSubject = 'GRIIDC DIF Accepted';
-				
-			}
-			else
-			{
-				$difMailer = new griidcMailer(true);
-				$eMail = "";
-				$message = "Dear $difMailer->currentUserFirstName $difMailer->currentUserLastName,<br /><br />";
-				$message .= 'Thank you for submitting your Dataset Information Form (DIF) <a href="' . "https://$_SERVER[HTTP_HOST]" .'/dif/?uid='.$uid.'">'.$datasetUDI.'</a>. ';
-				$message .= "Your DIF is now being reviewed by staff at the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC). You will receive an e-mail notification once your DIF has been approved.<br \><br \>";
-				$message .= "Thank you,<br \>The GRIIDC Team<br \>";
-				
-				$difMailer->mailSubject = 'GRIIDC DIF Submitted';
-				
-				$members = getAttributes($ldap,"cn=approvers,ou=DIF,ou=applications,dc=griidc,dc=org",array('member'));
-				
-				$difMailer->donotBCC = true;
-				
-				$difMailer->addBCCUser('', '', 'griidc@gomri.org');
-				
-				foreach ($members['member'] as $member)
-				{
-					$attributes = getAttributes($ldap,$member,array('givenName','sn','mail'));
-					if (count($attributes) > 0) {
-					
-						if (array_key_exists('givenName',$attributes)) $mailFirstName = $attributes['givenName'][0];
-						if (array_key_exists('sn',$attributes)) $mailLastName = $attributes['sn'][0];
-						if (array_key_exists('mail',$attributes)) $eMail = $attributes['mail'][0];
-						
-						$difMailer->addBCCUser($mailFirstName, $mailLastName, $eMail);
-					}
-				}
-			}
-			
-			$difMailer->mailMessage = $message;
-			
-			$difMailer->sendMail();
-			
-        }
+    
+    if ($tasks == null)
+    {
+        $listArray[] = array("text"=>"None found","icon"=>"/dif/images/griidc_fav.png","state"=>array("opened"=>true),"li_attr"=>array("title"=>$taskTitle));  
     }
-    echo " <div class=\"messages ". $mymesg."\"> <h2 class=\"element-invisible\">". $mymesg."message</h2> <ul> <li>$yn</li> </ul> </div> <br /> "; 
-    pg_free_result($result); 
-
-    $status=0;
-    $flag="";
-}
-//Take Input from sidebar.
-elseif (isset($_GET['uid']) and $uid=$_GET['uid']) {
-    $sql5 = "SELECT * FROM datasets where dataset_uid=".$uid;
-    $result4 = pg_exec($connection, $sql5);
-    if (!$result4) { die("Error in SQL query: " . pg_last_error()); }
-    $m = pg_fetch_row($result4);
-    //EXPLODE FOR DATA POPULATION
-    $status=$m[22];
-    if (isset($m[14]) and !empty($m[14])) list($stand[0], $stand[1], $stand[2], $stand[3], $stand[4])=explode("|", $m[14] );
-    if (isset($m[15]) and !empty($m[15])) list($point[0], $point[1], $point[2], $point[3])=explode("|", $m[15] );
-    if (isset($m[17]) and !empty($m[17])) list($zz[0], $zz[1])=explode("|", $m[17]);
-    if (isset($m[8]) and !empty($m[8])) list($aq[0], $aq[1], $aq[2], $aq[3], $aq[4], $aq[5])=explode("|", $m[8] );
-    if (isset($m[4]) and !empty($m[4])) @list($dtt[0], $dtt[1], $dtt[2], $dtt[3], $dtt[4], $dtt[5], $dtt[6], $dtt[7]) = explode("|", $m[4]);
-    if (isset($m[9]) and !empty($m[9])) list($l[0], $l[1],  $l[2])=explode("-", $m[9]);
-    if (isset($m[10]) and !empty($m[10])) list($n[0], $n[1], $n[2])=explode("-", $m[10]);
-    if (isset($m[5]) and !empty($m[5])) list($dtf[0], $dtf[1], $dtf[2], $dtf[3], $dtf[4], $dtf[5], $dtf[6], $dtf[7],  $dtf[8]) = explode("|", $m[5]);
-    foreach ($m as $kk=>$vv) {  $$kk = pg_escape_string($vv); }
-    $mtask = $m[1]."|".$m[24].'|'.substr($m[25],0,2);
-
-    $flag="update";
-	
-	$submitUser = $m[26];
+    
+    return json_encode($listArray);
 }
 
-//CLOSE CONNECTIONS AND FREE RESOURCES
-pg_close($connection); 
-//FORM
+function showDIFForm()
+{
+    global $twig;
+   //$helpText = getHelpText('DIF');
+    
+    $isAdmin = isUserAdmin(getUserID());
+    $isDManager = isDataManager(getUserID());
+    $isDIFApprover = isDIFApprover(getUserID());
+    
+    $personid = getPersonID(getUserID());
+    if ($personid == 0) {$personid='';};
+    
+    // echo "isUserAdmin:$isUserAdmin<br>";
+    // echo "isDManager:$isDManager<br>";
+    // echo "isDIFApprover:$isDIFApprover<br>";
+    
+    $twigdata = array('isadmin'=>$isAdmin,'isdmanager'=>$isDManager,'isdifapprover'=>$isDIFApprover,'personid'=>$personid);
+   
+    echo $twig->render('difForm.html', $twigdata); 
+}
 
-include("dataset_form.php");
+function getPersonID($UserName)
+{
+    $ldap = connectLDAP('triton.tamucc.edu');
+    $baseDN = 'dc=griidc,dc=org';
+    $uid = $UserName;
+    if (isset($uid)) {
+        $submittedby = null;
+        $userDNs = getDNs($ldap,$baseDN,"uid=$uid");
+        $userDN = $userDNs[0]['dn'];
+        if (count($userDNs) > 0) {
+            $attributes = getAttributes($ldap,$userDN,array('givenName','sn','employeeNumber'));
+            if (count($attributes) > 0) {
+                if (array_key_exists('givenName',$attributes)) $firstName = $attributes['givenName'][0];
+                if (array_key_exists('sn',$attributes)) $lastName = $attributes['sn'][0];
+                if (array_key_exists('employeeNumber',$attributes)) (int)$submittedby = $attributes['employeeNumber'][0];
+            }
+        }
+    }
+    return $submittedby;
+}
+
+function isDIFApprover($UserName) 
+{
+    $admin = false;
+    if ($UserName) 
+    {
+        $ldap = ldap_connect('ldap://triton.tamucc.edu');
+        $adminsResult = ldap_search($ldap, "cn=approvers,ou=DIF,ou=applications,dc=griidc,dc=org", '(objectClass=*)', array("member"));
+        $admins = ldap_get_entries($ldap, $adminsResult);
+        for ($i=0;$i<$admins[0]['member']['count'];$i++) {
+            if ("uid=$UserName,ou=members,ou=people,dc=griidc,dc=org" == $admins[0]['member'][$i]) {
+                $admin = true;
+            }
+        }
+    }
+    return $admin;
+}
+
+function isUserAdmin($UserName) 
+{
+    $admin = false;
+    if ($UserName) 
+    {
+        $ldap = ldap_connect('ldap://triton.tamucc.edu');
+        $adminsResult = ldap_search($ldap, "cn=administrators,ou=DIF,ou=applications,dc=griidc,dc=org", '(objectClass=*)', array("member"));
+        $admins = ldap_get_entries($ldap, $adminsResult);
+        for ($i=0;$i<$admins[0]['member']['count'];$i++) {
+            if ("uid=$UserName,ou=members,ou=people,dc=griidc,dc=org" == $admins[0]['member'][$i]) {
+                $admin = true;
+            }
+        }
+    }
+    return $admin;
+}
+
+function isDataManager($UserName)
+{
+    $admin = false;
+    if ($UserName) 
+    {
+        $ldap = ldap_connect('ldap://triton.tamucc.edu');
+        $adminsResult = ldap_search($ldap, 'ou=groups,dc=griidc,dc=org', "(&(member=uid=$UserName,ou=members,ou=people,dc=griidc,dc=org)(cn=administrators))", array("dn"));
+        $admins = ldap_get_entries($ldap, $adminsResult);
+        
+        if (isset($admins[0]))
+        {return count($admins[0])>0;}
+        else {return false;}
+    }
+
+}
+
+
+function getRISTasks($personID)
+{
+    $GLOBALS['pelagos_config']  = parse_ini_file('/etc/opt/pelagos.ini',true);
+    $GLOBALS['ldap_config']     = parse_ini_file($GLOBALS['pelagos_config']['paths']['conf'].'/ldap.ini',true);
+    define('RPIS_TASK_BASEURL','http://localhost/services/RIS/getTaskDetails.php');
+    
+    $ldap = connectLDAP($GLOBALS['ldap_config']['ldap']['server']);
+    $baseDN = $GLOBALS['ldap_config']['ldap']['base_dn'];
+    
+    $uid = getUserID();
+    if (isset($uid)) {
+        $submittedby ="";
+        $userDNs = getDNs($ldap,$baseDN,"uid=$uid");
+        $userDN = $userDNs[0]['dn'];
+        if (count($userDNs) > 0) {
+            $attributes = getAttributes($ldap,$userDN,array('givenName','sn','employeeNumber'));
+            if (count($attributes) > 0) {
+                if (array_key_exists('givenName',$attributes)) $firstName = $attributes['givenName'][0];
+                if (array_key_exists('sn',$attributes)) $lastName = $attributes['sn'][0];
+                if (array_key_exists('employeeNumber',$attributes)) $submittedby = $attributes['employeeNumber'][0];
+            }
+        }
+    }
+    
+    # first try to get tasks for which we have a task role
+    $tasks = getTasks($ldap,$baseDN,$userDN,$personID,true);
+    
+    # if we have no task roles, try to get tasks for which we have any role
+    # Or if there are only Project Task, get the individual tasks as well
+    $onlyProjects = true;
+    
+    foreach ($tasks as $task) { if ((int)$task['ID'] != 0) { $onlyProjects = false;} }
+    
+    if (count($tasks) == 0 OR $onlyProjects) {
+        $tasks = getTasks($ldap,$baseDN,$userDN,$personID,false);
+    }
+
+    return $tasks;
+}
+
+function getDIFS($personID,$status)
+{
+    $tasks = getRISTasks($personID);
+    
+    $stuff = displayTaskStatus($tasks,$dbconn);
+    
+    sort($stuff);
+    
+    return json_encode($stuff);
+}
+
+function getTaskOptions($personID)
+{
+    $rpisTasks = getRISTasks($personID);
+    
+    foreach ($rpisTasks as $task)
+    {
+        
+        $maxLength = 200;
+        if (strlen($task->Title) > $maxLength){
+            $taskTitle=substr((string)$task->Title,0,$maxLength).'...';
+        } else {
+            $taskTitle=(string)$task->Title;
+        }
+        
+        $fundingSource = (string)$task->Project->FundingSource["ID"];
+        
+        $taskID = (string)$task["ID"];
+        $projectID = (string)$task->Project["ID"];
+        $pseudoID = ((int)$projectID * 1024)+ (int)$taskID;
+        $tasks[] = array('Title'=>$taskTitle,'ID'=>$pseudoID,'taskID'=>$taskID,'projectID'=>$projectID,'fundSrcID'=>$fundingSource);
+        
+    }    
+    
+    sort($tasks);
+    
+    return json_encode($tasks);
+}
+
+
+function getUserID() 
+{
+    global $user;
+    if (isset($user->name))
+    {
+    if (array_key_exists('as_user',$_GET) and isUserAdmin($user->name)) {
+          return $_GET['as_user'];
+        }
+        return $user->name;
+    }
+    else
+    {return null;}
+}
+
+
 
 ?>
-
-</body>
