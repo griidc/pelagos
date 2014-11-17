@@ -532,6 +532,7 @@ function loadPOCs(PseudoID,ppoc,spoc)
         }).done(function(json) {
         if (json.length>0)
         {
+            json.sort(SortByContact);
             var selectedID = 0;
             var element = $('[name="primarypoc"],[name="secondarypoc"]');
             element.find('option').remove().end().append('<option value="">[PLEASE SELECT A CONTACT]</option>').val('');
@@ -570,6 +571,10 @@ function loadPOCs(PseudoID,ppoc,spoc)
         var element = $('[name="primarypoc"],[name="secondarypoc"]');
         element.find('option').remove().end().append('<option>[PLEASE SELECT TASK FIRST]</option>').prop('disabled',true);
     }
+}
+
+function SortByContact(x,y) {
+    return ((x.Contact.toLowerCase() == y.Contact.toLowerCase()) ? 0 : ((x.Contact.toLowerCase() > y.Contact.toLowerCase()) ? 1 : -1 ));
 }
 
 function formChanged()
