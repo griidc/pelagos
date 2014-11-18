@@ -17,7 +17,7 @@ function fixEnvironment() {
     # save original script name
     $orig_env['SCRIPT_NAME'] = $_SERVER['SCRIPT_NAME'];
     # fix up the script name for Slim
-    $_SERVER['SCRIPT_NAME'] = preg_replace('/^(\/[^\/]+).*$/','$1',$_SERVER['REQUEST_URI']);
+    $_SERVER['SCRIPT_NAME'] = '/' . drupal_get_path_alias();
     # save original query string
     $orig_env['QUERY_STRING'] = $_SERVER['QUERY_STRING'];
     # fix up query string for Slim
