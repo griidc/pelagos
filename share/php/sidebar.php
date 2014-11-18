@@ -134,12 +134,14 @@ if ($GLOBALS['isGroupAdmin'] OR (isAdmin() and !array_key_exists('as_user',$_GET
 echo "<tr><td style='height:100%;'>";
 echo "<table class=cleair style='width:100%;height:100%;padding:0px;'><tbody class=tbody><tr><td>";
 echo "<h2 class=\"title\" align=center>Tasks and datasets for ".$firstName." ".$lastName."<hr />";
-echo "</h2></td></tr><tr><td style='height:100%;position:relative;'>";
+echo "</h2></td></tr><tr><td style='height:100%;'>";
+echo "<div style='position:relative;height:100%;'>";
 echo '<div id="dstree" style="position:absolute; top:0px; left:10px; right:0px; bottom:10px; overflow:auto;" BGCOLOR="#efefef">';
 echo "<div class=\"dtree\" style=\"position:absolute;\">\n";
 echo "<script type=\"text/javascript\">\n\n";
 displayTaskStatus($tasks,null,$GLOBALS['personid']);
 echo "</script>\n</div>\n";
+echo "</div>";
 echo "</div>";
 echo "</td></tr> </tbody> </table>";
 echo "</td></tr>";
