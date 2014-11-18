@@ -47,7 +47,9 @@
                 {% set registered_red = registered_red+1 %}
             {% endif %}
 
-            {% if dataset.metadata == '10' %}
+            {% if dataset.registered != '10' %}
+                {% set metadata_na = metadata_na+1 %}
+            {% elseif dataset.metadata == '10' %}
                 {% set metadata_green = metadata_green+1 %}
             {% elseif dataset.metadata == '-1' %}
                 {% set metadata_na = metadata_na+1 %}
@@ -63,7 +65,9 @@
                 {% set metadata_na = metadata_na+1 %}
             {% endif %}
 
-            {% if dataset.available == 10 %}
+            {% if dataset.registered != '10' %}
+                {% set available_na = available_na+1 %}
+            {% elseif dataset.available == 10 %}
                 {% set available_green = available_green+1 %}
             {% elseif dataset.available == '-1' %}
                 {% set available_na = available_na+1 %}
@@ -108,51 +112,46 @@
 
     </tbody>
     <tfoot>
+        <tr><td style="border: 0px;" colspan='2'></td><td colspan='4' bgcolor='beige' style="text-align:center; font-weight:bold;" >Totals ({{datasets|length}} datasets):</td></tr>
         <tr>
-            <th colspan=2 style="text-align:right; border:0px;">Totals:</th>
-            <td class="status-totals">
-                <table>
-                    <tr><td></td><td><img src="{{baseUrl}}/includes/images/{{ 10 | statusToImg }}"></td><td>{{ identified_green  }}</td></tr>
-                    <tr><td></td><td><img src="{{baseUrl}}/includes/images/{{  1 | statusToImg }}"></td><td>{{ identified_yellow }}</td></tr>
-                    <tr><td></td><td><img src="{{baseUrl}}/includes/images/{{  0 | statusToImg }}"></td><td>{{ identified_red    }}</td></tr>
-                </table>
-            </td>
-            <td class="status-totals">
-                <table>
-                    <tr><td></td><td><img src="{{baseUrl}}/includes/images/{{ 10 | statusToImg }}"></td><td>{{ registered_green  }}</td></tr>
-                    <tr><td></td><td><img src="{{baseUrl}}/includes/images/{{  1 | statusToImg }}"></td><td>{{ registered_yellow }}</td></tr>
-                    <tr><td></td><td><img src="{{baseUrl}}/includes/images/{{  0 | statusToImg }}"></td><td>{{ registered_red    }}</td></tr>
-                </table>
-            </td>
-            <td class="status-totals">
-                <table>
-                    <tr><td></td><td><img src="{{baseUrl}}/includes/images/{{ 10 | statusToImg }}"></td><td>{{ metadata_green  }}</td></tr>
-                    <tr><td></td><td><img src="{{baseUrl}}/includes/images/{{  1 | statusToImg }}"></td><td>{{ metadata_yellow }}</td></tr>
-                    <tr>
-                        <td><img src="{{baseUrl}}/includes/images/{{ '-1' | statusToImg }}"></td>
-                        <td><img src="{{baseUrl}}/includes/images/{{   0  | statusToImg }}"></td>
-                        <td>{{ metadata_red+metadata_na }}</td>
-                    </tr>
-                </table>
-            </td>
-            <td class="status-totals">
-                <table>
-                    <tr><td></td><td><img src="{{baseUrl}}/includes/images/{{ 10 | statusToImg }}"></td><td>{{ available_green  }}</td></tr>
-                    <tr><td></td><td><img src="{{baseUrl}}/includes/images/{{  1 | statusToImg }}"></td><td>{{ available_yellow }}</td></tr>
-                    <tr>
-                        <td><img src="{{baseUrl}}/includes/images/{{ '-1' | statusToImg }}"></td>
-                        <td><img src="{{baseUrl}}/includes/images/{{   0  | statusToImg }}"></td>
-                        <td>{{ available_red+available_na }}</td>
-                    </tr>
-                </table>
-            </td>
+            <td style="border: 0px;"></td>
+            <td style="text-align:right; border:0px;"><img src="{{baseUrl}}/includes/images/check.png"></td>
+            <td class="status">{{identified_green}}</td>
+            <td class="status">{{registered_green}}</td>
+            <td class="status">{{metadata_green}}</td>
+            <td class="status">{{available_green}}</td>
         </tr>
         <tr>
-            <th colspan=2 style="border:0px;"></th>
-            <th class="status">Identified</th>
-            <th class="status">Registered</th>
-            <th class="status">Metadata</th>
-            <th class="status">Available</th>
+            <td style="border: 0px;"></td>
+            <th style="text-align:right; border:0px;"><img src="{{baseUrl}}/includes/images/triangle_yellow.png"></td>
+            <td class="status">{{identified_yellow}}</td>
+            <td class="status">{{registered_yellow}}</td>
+            <td class="status">{{metadata_yellow}}</td>
+            <td class="status">{{available_yellow}}</td>
+        </tr>
+        <tr>
+            <td style="border: 0px;"></td>
+            <th style="text-align:right; border:0px;"><img src="{{baseUrl}}/includes/images/x.png"></td>
+            <td class="status" bgcolor='beige'></td>
+            <td class="status">{{registered_red}}</td>
+            <td class="status">{{metadata_red}}</td>
+            <td class="status">{{available_red}}</td>
+        </tr>
+        <tr>
+            <td style="border: 0px;"></td>
+            <th style="text-align:right; border:0px;"><img src="{{baseUrl}}/includes/images/na.png"></td>
+            <td class="status" bgcolor='beige'></td>
+            <td class="status" bgcolor='beige'></td>
+            <td class="status">{{metadata_na}}</td>
+            <td class="status">{{available_na}}</td>
+        </tr>
+        <tr>
+            <td style="border: 0px;"></td>
+            <td style="border: 0px;"></td>
+            <th>Identified</th>
+            <th>Registered</th>
+            <th>Metadata</th>
+            <th>Available</th>
         </tr>
     </tfoot>
 </table>
