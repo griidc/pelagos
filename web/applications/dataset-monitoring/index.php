@@ -1,5 +1,8 @@
 <?php
 
+$GLOBALS['orig_cwd'] = getcwd();
+chdir(realpath(dirname(__FILE__)));
+
 # load global pelagos config
 $GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini',true);
 # load local overrides and additions
@@ -205,5 +208,6 @@ $app->get('/pdf/:by/:id/:name', function ($by,$id,$name) use ($app) {
 $orig_env = fixEnvironment();
 $app->run();
 restoreEnvironment($orig_env);
+chdir($GLOBALS['orig_cwd']);
 
 ?>
