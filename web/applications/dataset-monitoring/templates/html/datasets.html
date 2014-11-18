@@ -43,6 +43,8 @@
 
             {% if dataset.registered == '10' %}
                 {% set registered_green = registered_green+1 %}
+            {% elseif dataset.registered == '1' %}
+                {% set registered_yellow = registered_yellow+1 %}
             {% else %}
                 {% set registered_red = registered_red+1 %}
             {% endif %}
