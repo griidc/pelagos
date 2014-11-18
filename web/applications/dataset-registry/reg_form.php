@@ -1090,8 +1090,6 @@ fieldset {
             </fieldset>
         </p>
 
-        <span class="emRequired"/>required field
-
     </fieldset> <!-- Dataset Information Header -->
 
     <fieldset> <!-- Dataset File Transfer Details -->
