@@ -114,9 +114,8 @@
 
     </tbody>
     <tfoot>
-        <tr><td style="border: 0px;" colspan='2'></td><td colspan='4' bgcolor='beige' style="text-align:center; font-weight:bold;" >Totals ({{datasets|length}} datasets):</td></tr>
-        <tr>
-            <td style="border: 0px;"></td>
+        <tr style="border-top:3.25px solid black;">
+            <td style="text-align:center; font-weight:bold;" data-column="0" rowspan="4">TOTALS</td>
             <td style="text-align:right; border:0px;"><img src="{{baseUrl}}/includes/images/check.png"></td>
             <td class="status">{{identified_green}}</td>
             <td class="status">{{registered_green}}</td>
@@ -124,26 +123,23 @@
             <td class="status">{{available_green}}</td>
         </tr>
         <tr>
-            <td style="border: 0px;"></td>
-            <th style="text-align:right; border:0px;"><img src="{{baseUrl}}/includes/images/triangle_yellow.png"></td>
+            <th style="text-align:right;"><img src="{{baseUrl}}/includes/images/triangle_yellow.png"></td>
             <td class="status">{{identified_yellow}}</td>
             <td class="status">{{registered_yellow}}</td>
             <td class="status">{{metadata_yellow}}</td>
             <td class="status">{{available_yellow}}</td>
         </tr>
         <tr>
-            <td style="border: 0px;"></td>
-            <th style="text-align:right; border:0px;"><img src="{{baseUrl}}/includes/images/x.png"></td>
-            <td class="status" bgcolor='beige'></td>
+            <th style="text-align:right;"><img src="{{baseUrl}}/includes/images/x.png"></td>
+            <td class="status" bgcolor='#D8D8D8'></td>
             <td class="status">{{registered_red}}</td>
             <td class="status">{{metadata_red}}</td>
             <td class="status">{{available_red}}</td>
         </tr>
         <tr>
-            <td style="border: 0px;"></td>
-            <th style="text-align:right; border:0px;"><img src="{{baseUrl}}/includes/images/na.png"></td>
-            <td class="status" bgcolor='beige'></td>
-            <td class="status" bgcolor='beige'></td>
+            <th style="text-align:right;"><img src="{{baseUrl}}/includes/images/na.png"></td>
+            <td class="status" bgcolor='#D8D8D8'></td>
+            <td class="status" bgcolor='#D8D8D8'></td>
             <td class="status">{{metadata_na}}</td>
             <td class="status">{{available_na}}</td>
         </tr>
