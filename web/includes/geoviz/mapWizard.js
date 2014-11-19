@@ -756,7 +756,7 @@ function MapWizard(json)
     function showTextMode()
     {
         $('#wizDrawMode').html("Text");
-        var mapHelpText = "Coordinates should be latitude, longitude, but the wizard can accept your coordinate in reverse order alternate order. Coordinates in the list can be modified or deleted, click Render on Map to update feature on map.";
+        var mapHelpText = "Coordinates should be latitude, longitude, in decimal degrees, but the wizard can accept your coordinate in alternate order. Coordinates in the list can be modified or deleted, click Render on Map to update feature on map.";
         $("#maphelptxt").html(mapHelpText);
     }
     
