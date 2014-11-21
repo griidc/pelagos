@@ -5,32 +5,28 @@ require_once '/usr/share/pear/Twig/Autoloader.php';
 
 Twig_Autoloader::register();
 
-$eventHandlerConfig  = parse_ini_file('./eventHandler.ini',true);
+$eventHandlerConfig  = parse_ini_file('./eventHandler.ini', true);
 
 function getMessageTemplate($Action)
 {
     global $eventHandlerConfig;
 
-    if (array_key_exists($Action, $eventHandlerConfig))
-    {
+    if (array_key_exists($Action, $eventHandlerConfig)) {
         $templateFileName = $eventHandlerConfig[$Action]["mail_template_filepath"];
 
         $messageTemplate = file_get_contents($templateFileName);
 
-        if (!$messageTemplate)
-        {
+        if (!$messageTemplate) {
             throw new Exception('Could not read template file');
         }
-    }
-    else
-    {
+    } else {
         throw new Exception('Action not found');
     }
 
     return $messageTemplate;
 }
 
-function expandTemplate($Template,$Data)
+function expandTemplate($Template, $Data)
 {
     $loader = new Twig_Loader_String();
     $twig = new Twig_Environment($loader);
@@ -38,7 +34,7 @@ function expandTemplate($Template,$Data)
     return $twig->render($Template, $Data);
 }
 
-function eventHappened($Action,$Data)
+function eventHappened($Action, $Data)
 {
     #Placeholder
 
@@ -53,8 +49,7 @@ function eventHappened($Action,$Data)
         mail($to,$message)
     */
 
-    try
-    {
+    try {
         $messageTemplate = getMessageTemplate($Action);
 
         $dataManagers = array();
@@ -63,20 +58,17 @@ function eventHappened($Action,$Data)
 
         #DMs += getDMsFromUDI($data['udi'])
 
-        foreach ($dataManagers as $dataManager)
-        {
+        foreach ($dataManagers as $dataManager) {
             $mailData = array();
 
-            $mailMessage  = expandTemplate($messageTemplate,array('firstname'=>'fred'));
+            $mailMessage  = expandTemplate($messageTemplate, array('firstname'=>'fred'));
 
             $eventMailer = new griidcMailer(false);
 
             $eventMailer->mailMessage = $mailMessage;
             $eventMailer->mailSubject = 'Where does the title come from?';
         }
-    }
-    catch (Exception $e)
-    {
+    } catch (Exception $e) {
         return $e->getMessage();
     }
 
@@ -84,8 +76,4 @@ function eventHappened($Action,$Data)
 
 }
 
-var_dump(eventHappened('dif_saved_and_submitted',array('user'=>'mvandeneijnden','udi'=>'R1.x999.9999:0001')));
-
-
-
-?>
+var_dump(eventHappened('dif_saved_and_submitted', array('user'=>'mvandeneijnden','udi'=>'R1.x999.9999:0001')));
