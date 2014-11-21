@@ -53,10 +53,14 @@ function eventHappened($Action, $Data)
         $messageTemplate = getMessageTemplate($Action);
 
         $dataManagers = array();
-
-        #DMs += getDMsFromUser($data['user'])
-
-        #DMs += getDMsFromUDI($data['udi'])
+        # check if we have a user ID
+        if (array_key_exists($Data['uid'])) {
+            $dataManagers = getDMsFromUser($Data['uid']);
+        }
+        # check if we have an UDI
+        if (array_key_exists($Data['udi'])) {
+            $dataManagers = array_unique(array_merge($dataManagers, getDMsFromUDI($Data['udi'])));
+        }
 
         foreach ($dataManagers as $dataManager) {
             $mailData = array();
