@@ -1,0 +1,5 @@
+[TwigView]
+twigDirectory = "/usr/share/pear/Twig"
+
+[Logfiles]
+logfilePath = "/var/log/pelagos"
