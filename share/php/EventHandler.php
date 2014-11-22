@@ -1,15 +1,8 @@
 <?php
 
-include_once '/usr/local/share/GRIIDC/php/griidcMailer.php';
-require_once '/usr/share/pear/Twig/Autoloader.php';
-
-Twig_Autoloader::register();
-
-$eventHandlerConfig  = parse_ini_file('./EventHandler.ini', true);
-
 function getMessageTemplate($Action)
 {
-    global $eventHandlerConfig;
+    $eventHandlerConfig  = parse_ini_file('./EventHandler.ini', true);
 
     if (array_key_exists($Action, $eventHandlerConfig)) {
         $templateFileName = $eventHandlerConfig[$Action]["mail_template_filepath"];
@@ -28,6 +21,8 @@ function getMessageTemplate($Action)
 
 function expandTemplate($Template, $Data)
 {
+    require_once '/usr/share/pear/Twig/Autoloader.php';
+    Twig_Autoloader::register();
     $loader = new Twig_Loader_String();
     $twig = new Twig_Environment($loader);
 
@@ -52,6 +47,7 @@ function eventHappened($Action, $Data)
     try {
         $messageTemplate = getMessageTemplate($Action);
 
+        require_once 'DataManagers.php';
         $dataManagers = array();
         # check if we have a user ID
         if (array_key_exists('uid', $Data)) {
@@ -59,18 +55,28 @@ function eventHappened($Action, $Data)
         }
         # check if we have an UDI
         if (array_key_exists('udi', $Data)) {
-            $dataManagers = array_unique(array_merge($dataManagers, getDMsFromUDI($Data['udi'])));
+            $getDataManagerID = function ($dataManager) {
+                return $dataManager['ID'];
+            };
+            $dataManagerIDs = array_map($getDataManagerID, $dataManagers);
+            foreach (getDMsFromUDI($Data['udi']) as $dataManager) {
+                if (!in_array($dataManager['ID'], $dataManagerIDs)) {
+                    $dataManagers[] = $dataManager;
+                }
+            }
         }
 
         foreach ($dataManagers as $dataManager) {
             $mailData = array();
 
-            $mailMessage  = expandTemplate($messageTemplate, array('firstname'=>'fred'));
+            $mailMessage  = expandTemplate($messageTemplate, array('firstname' => $dataManager['FirstName']));
 
+            require_once 'griidcMailer.php';
             $eventMailer = new griidcMailer(false);
-
+            $eventMailer->addToUser($dataManager['FirstName'], $dataManager['LastName'], $dataManager['Email']);
             $eventMailer->mailMessage = $mailMessage;
             $eventMailer->mailSubject = 'Where does the title come from?';
+            $eventMailer->sendMail();
         }
     } catch (Exception $e) {
         return $e->getMessage();
@@ -79,5 +85,3 @@ function eventHappened($Action, $Data)
     return true;
 
 }
-
-var_dump(eventHappened('dif_saved_and_submitted', array('user'=>'mvandeneijnden','udi'=>'R1.x999.9999:0001')));
