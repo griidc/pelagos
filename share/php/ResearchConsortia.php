@@ -4,9 +4,7 @@ function getRCFromUDI($udi)
 {
     # Precondition: Every registration has exactly 1 entry in the datasets (DIF) table.
 
-    if (!function_exists('OpenDB')) {
-        require 'db-utils.lib.php';
-    }
+    require_once 'db-utils.lib.php';
     $dbh = OpenDB("GOMRI_RW");
     $sql = "SELECT project_id from datasets WHERE dataset_udi = :udi";
     $stmt = $dbh->prepare($sql);
@@ -28,9 +26,7 @@ function getRCFromUDI($udi)
 
 function getRCsFromUser($griidc_ldap_uid)
 {
-    if (!function_exists('getRCsFromRISUser')) {
-        require 'rpis.php';
-    }
+    require_once 'rpis.php';
     #consult LDAP for $griidc_ldap_uid -> $RIS_user_ID
     $RIS_user_id = getEmployeeNumberFromUID($griidc_ldap_uid);
     $project_ids = getRCsFromRISUser($RIS_user_id);
@@ -39,9 +35,7 @@ function getRCsFromUser($griidc_ldap_uid)
 
 function getEmployeeNumberFromUID($gomri_userid)
 {
-    if (!function_exists('connectLDAP')) {
-        require 'ldap.php';
-    }
+    require_once 'ldap.php';
     $employeeNumber = null;
     $ldap = connectLDAP($GLOBALS['ldap']['ldap']['server']);
     $baseDN = 'dc=griidc,dc=org';
