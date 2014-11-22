@@ -5,7 +5,7 @@ require_once '/usr/share/pear/Twig/Autoloader.php';
 
 Twig_Autoloader::register();
 
-$eventHandlerConfig  = parse_ini_file('./eventHandler.ini', true);
+$eventHandlerConfig  = parse_ini_file('./EventHandler.ini', true);
 
 function getMessageTemplate($Action)
 {
