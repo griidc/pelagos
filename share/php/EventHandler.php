@@ -54,11 +54,11 @@ function eventHappened($Action, $Data)
 
         $dataManagers = array();
         # check if we have a user ID
-        if (array_key_exists($Data['uid'])) {
+        if (array_key_exists('uid', $Data)) {
             $dataManagers = getDMsFromUser($Data['uid']);
         }
         # check if we have an UDI
-        if (array_key_exists($Data['udi'])) {
+        if (array_key_exists('udi', $Data)) {
             $dataManagers = array_unique(array_merge($dataManagers, getDMsFromUDI($Data['udi'])));
         }
 
