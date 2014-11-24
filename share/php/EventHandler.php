@@ -17,7 +17,7 @@ function getMessageTemplate($Action)
         throw new Exception('Action not found');
     }
 
-    return array('messageTemplate'=>$messageTemplate,'subject'=>$subject;
+    return array('messageTemplate'=>$messageTemplate,'subject'=>$subject);
 }
 
 function expandTemplate($Template, $Data)
