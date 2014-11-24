@@ -5,8 +5,8 @@ if (!function_exists('getRCFromUDI')) {
     {
         # Precondition: Every registration has exactly 1 entry in the datasets (DIF) table.
 
-        require_once 'db-utils.lib.php';
-        $dbh = OpenDB("GOMRI_RW");
+        require_once 'DBUtils.php';
+        $dbh = openDB("GOMRI_RW");
         $sql = "SELECT project_id from datasets WHERE dataset_udi = :udi";
         $stmt = $dbh->prepare($sql);
         $stmt->bindParam(":udi", $udi);
@@ -30,11 +30,11 @@ if (!function_exists('getRCsFromUser')) {
     function getRCsFromUser($userId)
     {
         require_once 'RIS.php';
-        require_once 'db-utils.lib.php';
+        require_once 'DBUtils.php';
         #consult LDAP for $userId -> $RIS_user_ID
         $risUserId = getEmployeeNumberFromUID($userId);
         # open a database connetion to RIS
-        $RIS_DBH = OpenDB('RIS_RO');
+        $RIS_DBH = openDB('RIS_RO');
         $project_ids = getRCsFromRISUser($RIS_DBH, $risUserId);
         # close database connection
         $RIS_DBH = null;
