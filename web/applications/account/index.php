@@ -2,17 +2,24 @@
 
 $GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini',true);
 
+if(file_exists('config.ini')) {
+    require_once($GLOBALS['config']['paths']['share'].'/php/Common.php');
+    $GLOBALS['config'] = configMerge($GLOBALS['config'],parse_ini_file('config.ini',true));
+}
+
 $GLOBALS['libraries'] = parse_ini_file($GLOBALS['config']['paths']['conf'].'/libraries.ini',true);
 
 require_once $GLOBALS['libraries']['Slim']['include'];
 require_once $GLOBALS['libraries']['Slim-Extras']['include_TwigView'];
 
-require_once $GLOBALS['config']['paths']['share'].'/php/db-utils.lib.php';
+set_include_path(get_include_path() . PATH_SEPARATOR . $GLOBALS['config']['paths']['share']);
+
+require_once 'php/db-utils.lib.php';
 
 require_once 'lib/constants.php';
 require_once 'lib/account.php';
 require_once 'config.php';
-require_once 'EventHandler.php';
+require_once 'php/EventHandler.php';
 
 $GLOBALS['DB'] = parse_ini_file($GLOBALS['config']['paths']['conf'].'/db.ini',true);
 
