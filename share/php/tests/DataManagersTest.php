@@ -4,11 +4,39 @@ namespace Pelagos\DataManagers;
 
 class DataManagersTest extends \PHPUnit_Framework_TestCase
 {
-    public function __construct()
+    protected function setUp()
     {
-        require_once 'DataManagers.php';
-        require_once 'stubs/ResearchConsortiaStub.php';
-        require_once 'stubs/RISStub.php';
+        require 'DataManagers.php';
+        require 'stubs/ResearchConsortiaStub.php';
+        require 'stubs/RISStub.php';
+    }
+
+    protected function tearDown()
+    {
+        $funcs = array(
+            # functions declared in stubs/RISStub.php
+            'getProjectDetails',
+            'getTaskDetails',
+            'getPeopleDetails',
+            'getPeopleList',
+            'getPeopleLI',
+            'getInstitutionDetails',
+            'getFundingSources',
+            'getDMsFromRC',
+            'getRCsFromRISUser',
+            # functions declared in stubs/ResearchConsortia.php
+            'getRCFromUDI',
+            'getRCsFromUser',
+            # functions declared in DataManagers.php
+            'getDMsFromUser',
+            'getDMsFromUDI'
+        );
+        # remove all functions declared during setUp()
+        foreach ($funcs as $func) {
+            if (function_exists($func)) {
+                runkit_function_remove($func);
+            }
+        }
     }
 
     private function getDataManagerID($dataManager)

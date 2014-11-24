@@ -4,11 +4,38 @@ namespace Pelagos\ResearchConsortia;
 
 class ResearchConsortiaTest extends \PHPUnit_Framework_TestCase
 {
-    public function __construct()
+    protected function setUp()
     {
-        require_once 'ResearchConsortia.php';
-        require_once 'stubs/RISStub.php';
-        $GLOBALS['ldap']['ldap'] = parse_ini_file('/etc/opt/pelagos/ldap.ini');
+        require 'ResearchConsortia.php';
+        require 'stubs/RISStub.php';
+        $GLOBALS['ldap'] = parse_ini_file('tests/ldap.ini', true);
+    }
+
+    protected function tearDown()
+    {
+        # clean out $GLOBALS['ldap']
+        unset($GLOBALS['ldap']);
+        $funcs = array(
+            # functions declared in stubs/RISStub.php
+            'getProjectDetails',
+            'getTaskDetails',
+            'getPeopleDetails',
+            'getPeopleList',
+            'getPeopleLI',
+            'getInstitutionDetails',
+            'getFundingSources',
+            'getDMsFromRC',
+            'getRCsFromRISUser',
+            # functions declared in ResearchConsortia.php
+            'getRCFromUDI',
+            'getRCsFromUser'
+        );
+        # remove all functions declared during setUp()
+        foreach ($funcs as $func) {
+            if (function_exists($func)) {
+                runkit_function_remove($func);
+            }
+        }
     }
 
     public function testGetRCsFromUserNull()

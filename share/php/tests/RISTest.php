@@ -4,9 +4,31 @@ namespace Pelagos\RIS;
 
 class RISTest extends \PHPUnit_Framework_TestCase
 {
-    public function __construct()
+    protected function setUp()
     {
-        require_once 'RIS.php';
+        require 'RIS.php';
+    }
+
+    protected function tearDown()
+    {
+        $funcs = array(
+            # functions declared in RIS.php
+            'getProjectDetails',
+            'getTaskDetails',
+            'getPeopleDetails',
+            'getPeopleList',
+            'getPeopleLI',
+            'getInstitutionDetails',
+            'getFundingSources',
+            'getDMsFromRC',
+            'getRCsFromRISUser'
+        );
+        # remove all functions declared during setUp()
+        foreach ($funcs as $func) {
+            if (function_exists($func)) {
+                runkit_function_remove($func);
+            }
+        }
     }
 
     private function getDataManagerID($dataManager)
