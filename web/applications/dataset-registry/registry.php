@@ -14,6 +14,7 @@ require_once $GLOBALS['pelagos_config']['paths']['share'].'/php/ldap.php';
 include_once $GLOBALS['pelagos_config']['paths']['share'].'/php/drupal.php';
 require_once $GLOBALS['pelagos_config']['paths']['share'].'/php/dif-registry.php';
 require_once $GLOBALS['pelagos_config']['paths']['share'].'/php/db-utils.lib.php';
+require_once $GLOBALS['pelagos_config']['paths']['share'].'/php/EventHandler.php';
 include_once "pdo_functions.php";
 include_once "lib/functions.php";
 
@@ -137,6 +138,7 @@ if ($_GET)
 $registry_vals = array();
 
 if ($_POST) {
+        
     $formHash = sha1(serialize($_POST));
     if (empty($_POST['title']) or empty($_POST['abstrct']) or empty($_POST['pocemail']) or empty($_POST['pocname']) or empty($_POST['dataset_originator'])) {
         $dMessage = 'Not all required fields where filled out!';
@@ -337,8 +339,22 @@ if ($_POST) {
             $result = $sth->execute();
 
             if ($result) {
-                $dMessage = "Thank you for your submission. Please email <a href=\"mailto:griidc@gomri.org?subject=DOI Form\">griidc@gomri.org</a> if you have any questions.";
-                drupal_set_message($dMessage,'status');
+                $dMessage = "Thank you for your submission. Please email <a href=\"mailto:griidc@gomri.org?subject=Registration Form\">griidc@gomri.org</a> if you have any questions.";
+                drupal_set_message($dMessage,'status',false);
+                
+                $registryID = $registry_vals['registry_id'];
+                $UDI = $_POST['dataset_udi'];
+                $submitAction = $_POST["submit"];
+                
+                $eventData = array('udi'=>$UDI,'userId'=>$uid,'registryID'=>$registryID);
+                
+                if ($submitAction == 'Update')
+                { $eventAction = 'dataset_registration_updated'; }
+                else
+                { $eventAction = 'dataset_registration_submitted'; }
+                
+                eventHappened($eventAction,$eventData);
+                
                 $_SESSION['submitok'] = true;
             }
             else {

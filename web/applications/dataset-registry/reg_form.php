@@ -1406,7 +1406,7 @@ EOT;
     <div style="text-align:center;">
         <input
             <?php formDisabled($formDisabled); ?>
-            type="button" style="font-size:120%; font-weight:bold;" onclick="submitRegistry();"
+            type="submit" name="submit" style="font-size:120%; font-weight:bold;" onclick="submitRegistry();"
             value="<?php if ($registered) echo "Update"; else echo "Register"; ?>"/>
     </div>
 </form>
