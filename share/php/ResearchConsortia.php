@@ -29,7 +29,7 @@ if (!function_exists('getRCFromUDI')) {
 if (!function_exists('getRCsFromUser')) {
     function getRCsFromUser($griidc_ldap_uid)
     {
-        require_once 'rpis.php';
+        require_once 'RIS.php';
         #consult LDAP for $griidc_ldap_uid -> $RIS_user_ID
         $RIS_user_id = getEmployeeNumberFromUID($griidc_ldap_uid);
         $project_ids = getRCsFromRISUser($RIS_user_id);
