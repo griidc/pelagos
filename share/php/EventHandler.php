@@ -6,6 +6,7 @@ function getMessageTemplate($Action)
 
     if (array_key_exists($Action, $eventHandlerConfig)) {
         $templateFileName = $eventHandlerConfig[$Action]["mail_template_filepath"];
+        $subject = $eventHandlerConfig[$Action]["subject"];
 
         $messageTemplate = file_get_contents($templateFileName);
 
@@ -16,7 +17,7 @@ function getMessageTemplate($Action)
         throw new Exception('Action not found');
     }
 
-    return $messageTemplate;
+    return array('messageTemplate'=>$messageTemplate,'subject'=>$subject;
 }
 
 function expandTemplate($Template, $Data)
@@ -45,7 +46,10 @@ function eventHappened($Action, $Data)
     */
 
     try {
-        $messageTemplate = getMessageTemplate($Action);
+        $messageData = getMessageTemplate($Action);
+        
+        $messageTemplate = $messageData['messageTemplate'];
+        $subject = $messageData['subject'];
 
         require_once 'DataManagers.php';
         $dataManagers = array();
@@ -75,7 +79,7 @@ function eventHappened($Action, $Data)
             $eventMailer = new griidcMailer(false);
             $eventMailer->addToUser($dataManager['FirstName'], $dataManager['LastName'], $dataManager['Email']);
             $eventMailer->mailMessage = $mailMessage;
-            $eventMailer->mailSubject = 'Where does the title come from?';
+            $eventMailer->mailSubject = $subject;
             $eventMailer->sendMail();
         }
     } catch (Exception $e) {
