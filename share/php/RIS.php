@@ -349,4 +349,84 @@ function getFundingSources($dbh, $filters = array()) {
     return $stmt->fetchAll();
 }
 
+/**
+ *
+ * Find the Research Consortiums for a given RIS
+ * user identified by $risUserId and return an
+ * array of Research Consortium IDs.
+ * Return null if none are found.
+ * @tooDo  maybe should throw an exception
+ * @param $risUserId
+ * @Author: Joe V. Holland
+ * @Date: Nov 24, 2014
+ * @return an array of project_ids
+ *
+ * From Pelagos-34  task Pelagos-87
+ * consult RIS for $RIS_user_ID -> $RCs
+ * return $RCs (array of project_ids)
+ *
+ */
+function getRCsFromRISUser($dbh, $risUserId) {
+
+    $select = "SELECT DISTINCT ".
+              // " People.People_ID, People.People_LastName, People.People_FirstName,  ".
+              " Programs.Program_ID AS RcID, ".
+              " Programs.Program_Title AS RcTitle ".
+               " FROM People JOIN ProjPeople ON People.People_ID = ProjPeople.People_ID ".
+               " JOIN Programs ON ProjPeople.Program_ID = Programs.Program_ID ".
+               " JOIN FundingSource ON Programs.Program_FundSrc = FundingSource.Fund_ID ".
+               " JOIN Roles ON ProjPeople.Role_ID = Roles.Role_ID WHERE People.People_ID = '".$risUserId. "'".
+               " AND FundingSource.Fund_Source In ('RFP-I','RFP-IV') ".
+               " AND Programs.Program_Title NOT LIKE '%GRIIDC Test%'";
+
+    $stmt = $dbh->prepare($select);
+    $stmt->execute();
+    $ids = array();
+    while($id = $stmt->fetchColumn(0)) {  // defaults to fetching first column
+        $ids[] = $id;
+    }
+
+    return $ids;
+}
+
+/**
+ * Find all the data mangers within a research consortium
+ * and return them as a 2D array where each row is
+ * Last Name, First Name, email address
+ * The returned array should contain Ris People Ids.
+ * @tooDo  maybe should throw an exception
+ * @param $researchConsortiumId
+ * @Author: Joe V. Holland
+ * @Date: Nov 24, 2014
+ * @return two dimensional array of Last Name, First Name, email address
+ *
+ * from Pelagos-34 task Pelagos-87
+ * consult RIS for $RC -> DMs
+ * returns DMs (array of DM records including at least email,first_name,last_name)
+ * (same field names as DB are fine)
+
+ */
+function getDMsFromRC($dbh, $researchConsortiumId) {
+
+    $select = "SELECT DISTINCT ".
+              " People.People_ID AS ID, ".
+              " People.People_LastName AS LastName, ".
+              " People.People_FirstName AS FirstName, ".
+              " People.People_Email AS Email, ".
+              " Programs.Program_ID AS ProgID ".
+                  " FROM People JOIN ProjPeople ON People.People_ID = ProjPeople.People_ID ".
+                    " JOIN Programs ON ProjPeople.Program_ID = Programs.Program_ID ".
+                    " JOIN FundingSource ON Programs.Program_FundSrc = FundingSource.Fund_ID ".
+                    " JOIN Roles ON ProjPeople.Role_ID = Roles.Role_ID ".
+                    " WHERE Programs.Program_ID = '".$researchConsortiumId."'".
+                    " AND FundingSource.Fund_Source IN ('RFP-I','RFP-IV') ".
+                    " AND Roles.Role_Name = 'Project Data Point of Contact' ".
+                    " AND Programs.Program_Title NOT LIKE '%GRIIDC Test%'";
+
+
+    $stmt = $dbh->prepare($select);
+    $stmt->execute();
+
+    return $stmt->fetchAll();
+}
 ?>
