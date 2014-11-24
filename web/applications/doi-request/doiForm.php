@@ -282,7 +282,7 @@ function sendMailApprove($formHash)
     
     $doiLink = "http://ezid.cdlib.org/id/$doi";
     $doiFormLink "https://".$_SERVER['SERVER_NAME']."/doi?formKey=$formHash";
-    $eventData = array('userId'=>$userIdRequester,'doi'=>$doi,'doiLink'=>$doiLink,doiFormLink=>$doiFormLink);
+    $eventData = array('userId'=>$userIdRequester,'doi'=>$doi,'doiLink'=>$doiLink,'doiFormLink'=>$doiFormLink);
     eventHappened('doi_approved',$eventData);
 }
 
@@ -378,7 +378,7 @@ if ($_POST)
                     sendMailSubmit($formHash,$userEmail,$userFirstName,$userLastName);
                     
                     $doiFormLink "https://".$_SERVER['SERVER_NAME']."/doi?formKey=$formHash";
-                    $eventData = array('userId'=>$userId,$doiLink,doiFormLink=>$doiFormLink);
+                    $eventData = array('userId'=>$userId,'doiFormLink'=>$doiFormLink);
 
                     eventHappened('doi_requested',$eventData);
                 }
