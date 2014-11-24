@@ -47,7 +47,7 @@ function eventHappened($Action, $Data)
 
     try {
         $messageData = getMessageTemplate($Action);
-        
+
         $messageTemplate = $messageData['messageTemplate'];
         $subject = $messageData['subject'];
 
