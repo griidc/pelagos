@@ -1,6 +1,6 @@
 <?php
 
-function getDMsFromRC($RC)
+function getDMsFromRC($DBH, $RC)
 {
     switch ($RC) {
         case 132:
@@ -79,7 +79,7 @@ function getDMsFromRC($RC)
     return array();
 }
 
-function getRCsFromRISUser($RIS_user_ID)
+function getRCsFromRISUser($DBH, $RIS_user_ID)
 {
     switch ($RIS_user_ID) {
         case 87:
