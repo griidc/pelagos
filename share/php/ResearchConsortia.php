@@ -27,12 +27,12 @@ if (!function_exists('getRCFromUDI')) {
 }
 
 if (!function_exists('getRCsFromUser')) {
-    function getRCsFromUser($griidc_ldap_uid)
+    function getRCsFromUser($userId)
     {
         require_once 'RIS.php';
-        #consult LDAP for $griidc_ldap_uid -> $RIS_user_ID
-        $RIS_user_id = getEmployeeNumberFromUID($griidc_ldap_uid);
-        $project_ids = getRCsFromRISUser($RIS_user_id);
+        #consult LDAP for $userId -> $RIS_user_ID
+        $risUserId = getEmployeeNumberFromUID($userId);
+        $project_ids = getRCsFromRISUser($risUserId);
         return $project_ids;
     }
 }
