@@ -5,6 +5,7 @@ include 'difDL.php'; //dif DataLayer
 include_once '/usr/local/share/GRIIDC/php/ldap.php'; 
 include_once '/usr/local/share/GRIIDC/php/griidcMailer.php';
 include_once '/usr/local/share/GRIIDC/php/dif-registry.php'; 
+include_once '/usr/local/share/GRIIDC/php/EventHandler.php'; 
 //include_once '/usr/local/share/GRIIDC/php/drupal.php'; 
 
 require_once '/usr/share/pear/Twig/Autoloader.php';
@@ -230,12 +231,14 @@ function postDIF($fielddata)
             {
                 $msgtitle = 'New DIF Created';
                 $message = '<div><img src="/images/icons/info32.png"><p>You have saved a DIF. This DIF has been given the ID: '.$nudi.'<br>In order to submit your dataset to GRIIDC you must return to this page and submit the DIF for review and approval.</p></div>';
+                
+                $eventData = array('udi'=>$nudi,'griidc_ldap_uid'=>$submitted,'newDIF'=>true);
+                eventHappened('dif_saved_but_not_submitted',$eventData);
             }
             else
             {
                 $msgtitle = 'New DIF Submitted';
 
-                /** jvh modified on Nov 17th 2014 as per requirement PELAGOS-33 **/
                 $message = '<div><img src="/images/icons/info32.png">'.
                             '<p>Congratulations! You have successfully submitted a DIF to GRIIDC. The UDI for this dataset is '. $nudi.'.'.
                             '<br>The DIF will now be reviewed by GRIIDC staff and is locked to prevent editing.To make changes'.
@@ -245,6 +248,9 @@ function postDIF($fielddata)
                 
                 $sendMail = sendSubmitMail($submitted,$nudi,'GRIIDC DIF Submitted','submitMail.html');
                 mailApprovers($nudi,'DIF Submitted for Approval','reviewMail.html');
+                
+                $eventData = array('udi'=>$nudi,'griidc_ldap_uid'=>$submitted);
+                eventHappened('dif_saved_and_submitted',$eventData);
             }
             
         }
@@ -253,6 +259,9 @@ function postDIF($fielddata)
             $message = '<div><img src="/images/icons/info32.png"><p>The application with DIF ID: '.$UDI.' was successfully approved!</p></div>';
             $msgtitle = 'DIF Approved';
             $sendMail = sendSubmitMail($submitted,$UDI,'GRIIDC DIF Approved','approveMail.html');
+            
+            $eventData = array('udi'=>$UDI,'griidc_ldap_uid'=>$submitted);
+            eventHappened('dif_approved',$eventData);
         }
         else if ($frmButton == 'reject')
         {
@@ -263,6 +272,9 @@ function postDIF($fielddata)
         {
             $message = '<div><img src="/images/icons/info32.png"><p>Thank you for saving DIF with ID:  '.$UDI.'.<br>Before registering this dataset you must return to this page and submit the dataset information form.</p></div>';
             $msgtitle = 'DIF Submitted';
+            
+            $eventData = array('udi'=>$UDI,'griidc_ldap_uid'=>$submitted);
+            eventHappened('dif_saved_but_not_submitted',$eventData);
         }
         else if ($frmButton == 'submit')
         {
@@ -272,12 +284,18 @@ function postDIF($fielddata)
             $sendMail = sendSubmitMail($submitted,$UDI,'GRIIDC DIF Submitted','submitMail.html');
             mailApprovers($UDI,"DIF:$UDI Submitted for Approval",'reviewMail.html');
             
+            $eventData = array('udi'=>$UDI,'griidc_ldap_uid'=>$submitted);
+            eventHappened('dif_saved_and_submitted',$eventData);
+            
         }
         else if ($frmButton == 'unlock')
         {
             $message = '<div><img src="/images/icons/info32.png"><p>Successfully unlocked DIF with ID: '.$UDI.'.</p></div>';
             $msgtitle = 'DIF Unlocked';
             $sendMail = sendSubmitMail($submitted,$UDI,'GRIIDC DIF Unlocked','unlocked.html');
+            
+            $eventData = array('udi'=>$UDI,'griidc_ldap_uid'=>$submitted);
+            eventHappened('dif_unlock_request_approved',$eventData);
             
         }
         else if ($frmButton == 'requnlock')
@@ -287,6 +305,8 @@ function postDIF($fielddata)
             
             mailApprovers($UDI,"DIF:$UDI Unlock Request",'unlockReq.html');
             
+            $eventData = array('udi'=>$UDI,'griidc_ldap_uid'=>$submitted);
+            eventHappened('dif_unlock_requested',$eventData);
         }
         else
         {
