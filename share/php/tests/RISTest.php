@@ -2,14 +2,18 @@
 
 namespace Pelagos\RIS;
 
+/**
+ * @runTestsInSeparateProcesses
+ */
+
 class RISTest extends \PHPUnit_Framework_TestCase
 {
     private $DBH;
 
     protected function setUp()
     {
-        require 'RIS.php';
-        require 'db-utils.lib.php';
+        require_once 'RIS.php';
+        require_once 'DBUtils.php';
         # open a database connetion to RIS
         $this->DBH = OpenDB('RIS_RO');
     }
@@ -18,26 +22,6 @@ class RISTest extends \PHPUnit_Framework_TestCase
     {
         # close database connection
         $this->DBH = null;
-        $funcs = array(
-            # functions declared in db-utils.lib.php
-            'OpenDB',
-            # functions declared in RIS.php
-            'getProjectDetails',
-            'getTaskDetails',
-            'getPeopleDetails',
-            'getPeopleList',
-            'getPeopleLI',
-            'getInstitutionDetails',
-            'getFundingSources',
-            'getDMsFromRC',
-            'getRCsFromRISUser'
-        );
-        # remove all functions declared during setUp()
-        foreach ($funcs as $func) {
-            if (function_exists($func)) {
-                runkit_function_remove($func);
-            }
-        }
     }
 
     private function getDataManagerID($dataManager)
