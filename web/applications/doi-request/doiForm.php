@@ -253,7 +253,7 @@ function sendMailApprove($formHash)
     global $userLastName;
     global $userFirstName;
     
-    $query = "SELECT reqemail, doi, reqfirstname, reqlastname FROM doi_regs WHERE formhash='$formHash';";
+    $query = "SELECT reqemail, doi, reqfirstname, reqlastname, reqby FROM doi_regs WHERE formhash='$formHash';";
     $result = dbexecute ($query);
     
     $doi = splitToDoi($result[1]);
@@ -261,6 +261,7 @@ function sendMailApprove($formHash)
     $userEmail = $result[0];
     $userFirstName = $result[2];
     $userLastName = $result[3];
+    $userIdRequester = $result[4];
     
     $to      = $userEmail;
     $subject = 'DOI Approved';
@@ -278,6 +279,11 @@ function sendMailApprove($formHash)
     $message .= "<em>The GRIIDC Team.</em><br \>";
     
     mail($to, $subject, $message, $headers,$parameters);
+    
+    $doiLink = "http://ezid.cdlib.org/id/$doi";
+    $doiFormLink "https://".$_SERVER['SERVER_NAME']."/doi?formKey=$formHash";
+    $eventData = array('userId'=>$userIdRequester,'doi'=>$doi,'doiLink'=>$doiLink,doiFormLink=>$doiFormLink);
+    eventHappened('doi_approved',$eventData);
 }
 
 if ($_GET)
@@ -370,6 +376,11 @@ if ($_POST)
                     $dMessage = "Thank you for your submission, you will be contacted by GRIIDC shortly with your DOI. Please email <a href=\"mailto:griidc@gomri.org?subject=DOI Form\">griidc@gomri.org</a> if you have any questions.";
                     drupal_set_message($dMessage,'status');
                     sendMailSubmit($formHash,$userEmail,$userFirstName,$userLastName);
+                    
+                    $doiFormLink "https://".$_SERVER['SERVER_NAME']."/doi?formKey=$formHash";
+                    $eventData = array('userId'=>$userId,$doiLink,doiFormLink=>$doiFormLink);
+
+                    eventHappened('doi_requested',$eventData);
                 }
                 else
                 {
