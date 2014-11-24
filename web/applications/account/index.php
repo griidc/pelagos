@@ -12,6 +12,7 @@ require_once $GLOBALS['config']['paths']['share'].'/php/db-utils.lib.php';
 require_once 'lib/constants.php';
 require_once 'lib/account.php';
 require_once 'config.php';
+require_once 'EventHandler.php';
 
 $GLOBALS['DB'] = parse_ini_file($GLOBALS['config']['paths']['conf'].'/db.ini',true);
 
@@ -387,6 +388,11 @@ $app->post('/request', function () use ($app) {
                 mail($toAddress,$subject,$message,"From: $fromAddress");
             }
 
+            # pass event to notification event handler, along with username of
+            # user who successfully initiated an account request.
+            $eventData = array('uid'=>$uid);
+            eventHappened('account_requested', $eventData);
+
             return $app->render('request_submitted.html',$stash);
         }
 
@@ -510,6 +516,11 @@ $app->post('/approve/create', $GLOBALS['AUTH_FOR_ROLE']('admin'), function () us
             foreach (get_notify_to() as $toAddress) {
                 mail($toAddress,$subject,$message,"From: $fromAddress");
             }
+
+            # pass event to notification event handler, along with username of
+            # user who's account request was approved
+            $eventData = array('uid'=>$uid);
+            eventHappened('account_request_approved', $eventData);
         }
     }
 });
