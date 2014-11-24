@@ -9,11 +9,14 @@ class DataManagersTest extends \PHPUnit_Framework_TestCase
         require 'DataManagers.php';
         require 'stubs/ResearchConsortiaStub.php';
         require 'stubs/RISStub.php';
+        require 'stubs/DBUtilsStub.php';
     }
 
     protected function tearDown()
     {
         $funcs = array(
+            # functions declared in stubs/DBUtilsStub.php
+            'openDB',
             # functions declared in stubs/RISStub.php
             'getProjectDetails',
             'getTaskDetails',

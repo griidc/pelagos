@@ -5,9 +5,9 @@ if (!function_exists('getDMsFromUser')) {
     {
         require_once 'ResearchConsortia.php';
         require_once 'RIS.php';
-        require_once 'db-utils.lib.php';
+        require_once 'DBUtils.php';
         # open a database connetion to RIS
-        $RIS_DBH = OpenDB('RIS_RO');
+        $RIS_DBH = openDB('RIS_RO');
         $dms = array();
         foreach (getRCsFromUser($uid) as $rc) {
             $dms = array_merge($dms, getDMsFromRC($RIS_DBH, $rc));
@@ -23,9 +23,9 @@ if (!function_exists('getDMsFromUDI')) {
     {
         require_once 'ResearchConsortia.php';
         require_once 'RIS.php';
-        require_once 'db-utils.lib.php';
+        require_once 'DBUtils.php';
         # open a database connetion to RIS
-        $RIS_DBH = OpenDB('RIS_RO');
+        $RIS_DBH = openDB('RIS_RO');
         $DMs = getDMsFromRC($RIS_DBH, getRCFromUDI($udi));
         # close database connection
         $RIS_DBH = null;
