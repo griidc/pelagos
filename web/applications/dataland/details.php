@@ -43,13 +43,12 @@ $dsscript='';
 $prow ='';
 $mrow ='';
 $mprow ='';
-$drow = '';
 
 $URI = preg_split('/\?/',$_SERVER['REQUEST_URI']);
 
 $URIs = preg_split('/\//',$_SERVER['REQUEST_URI']);
 
-$udi = urldecode($URIs[2]);
+$udi = urldecode($URIs[count($URIs)-2]);
 $logged_in = user_is_logged_in_somehow(); # returns bool, true if logged in.
 
 if ($udi <> '')
@@ -68,22 +67,26 @@ if ($udi <> '')
     $pconn = pdoDBConnect($dbconnstr);
     
     # Toggle per ini file parameter the enforcement of dataset downloadability requiring accepted metadata 
-    $condCase = '';
-    if( (isset($pelagos_config['system']['enforce_approved_metadata'] ) and ( $pelagos_config['system']['enforce_approved_metadata'] == 1 ))) {
-        $condCase = "WHEN metadata_status <> 'Accepted' THEN 1";
+    $enforceMetadataRule = 0;
+    if( (isset($pelagos_config['system']['enforce_approved_metadata'] ) and ( $pelagos_config['system']['enforce_approved_metadata'] == 1 )) ) {
+        $enforceMetadataRule = 1;
+    } else {
+        $enforceMetadataRule = 0;
     }
     
     $pquery = "
-    SELECT * , ST_AsText(metadata.geom) AS \"the_geom\",
-    CASE WHEN datasets.dataset_udi IS NULL THEN registry.dataset_udi ELSE datasets.dataset_udi END AS dataset_udi,
-    CASE WHEN registry.dataset_title IS NULL THEN title ELSE registry.dataset_title END AS title,
+    SELECT *,
+    CASE WHEN metadata.geom IS NULL THEN ST_AsText(datasets.geom) ELSE ST_AsText(metadata.geom) END AS \"the_geom\",
+    CASE WHEN registry.dataset_udi IS NULL THEN datasets.dataset_udi ELSE registry.dataset_udi END AS dataset_udi,
+    CASE WHEN registry.dataset_title IS NULL THEN datasets.title ELSE registry.dataset_title END AS title,
 
     CASE WHEN status = 2 THEN 10
          WHEN status = 1 THEN 1
          ELSE 0
     END AS identified,
 
-    CASE WHEN registry.registry_id IS NULL OR url_data IS NULL OR url_data = '' THEN 0
+    CASE WHEN registry.registry_id IS NULL THEN 0
+         WHEN url_data IS NULL OR url_data = '' THEN 1
          ELSE 10
     END AS registered,
 
@@ -96,7 +99,7 @@ if ($udi <> '')
     END AS metadata,
 
     CASE WHEN dataset_download_status = 'Completed' THEN
-             CASE $condCase
+             CASE WHEN (metadata_status <> 'Accepted' AND '$enforceMetadataRule' = '1') THEN 4
                   WHEN access_status = 'None' THEN 10
                   WHEN access_status = 'Approval' THEN 9
                   WHEN access_status = 'Restricted' THEN 8
@@ -111,22 +114,16 @@ if ($udi <> '')
          ELSE 0
     END AS available
 
-    FROM registry_view registry
-    LEFT OUTER JOIN datasets ON substr(registry.registry_id,0,17) = datasets.dataset_udi
-    LEFT OUTER JOIN metadata on registry.registry_id = metadata.registry_id
-    WHERE registry.registry_id LIKE '$udi%'
+    FROM datasets
+    LEFT JOIN registry_view registry ON registry.dataset_udi = datasets.dataset_udi
+    LEFT JOIN metadata on registry.registry_id = metadata.registry_id
+    WHERE datasets.dataset_udi = '$udi'
     ;
     ";
 
     $prow = pdoDBQuery($pconn,$pquery);
-    
+
     $prow = $prow[0];
-
-    $dquery = "select * from datasets where dataset_udi='$udi';";
-
-    $drow = pdoDBQuery($pconn,$dquery);
-    
-    $drow = $drow[0];
 
     if ($prow["the_geom"] == null OR $prow == null)
     {
@@ -523,17 +520,6 @@ var dlmap = new GeoViz();
     </div>
 </div>
 
-<?php
-}
-elseif ($drow != null)
-{
-    #Has DIF, but NO registry
-?>
-<p>
-<h1>Dataset not found</h1>
-    This dataset has been identified, but has not yet been registered.<br/>
-    If you are experiencing difficulties, please contact <a href="mailto:griidc@gomri.org">GRIIDC</a>.
-</p>
 <?php
 }
 else
