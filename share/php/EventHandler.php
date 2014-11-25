@@ -53,8 +53,8 @@ function eventHappened($Action, $Data)
     require_once 'DataManagers.php';
     $dataManagers = array();
     # check if we have a user ID
-    if (array_key_exists('uid', $Data)) {
-        $dataManagers = getDMsFromUser($Data['uid']);
+    if (array_key_exists('userId', $Data)) {
+        $dataManagers = getDMsFromUser($Data['userId']);
     }
     # check if we have an UDI
     if (array_key_exists('udi', $Data)) {
