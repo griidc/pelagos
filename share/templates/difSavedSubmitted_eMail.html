@@ -1,7 +1,15 @@
-Dear {{firstname}} {{lastname}},
-
-A DIF with {{udi}} has been saved and submmited.
-
-Regards,
-
-GRIIDC
+Dear {{dm.FirstName}} {{dm.LastName}},<br>
+<br>
+A Dataset Information Form (DIF) has been saved and submitted to the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) by {{data.user.FirstName}} {{data.user.LastName}} for dataset {{data.udi}}. {{data.user.FirstName}} {{data.user.LastName}} is a member of {% for item in rcbyuserid %}
+    {{ item.Title|e }}
+    {% if not loop.last %},{% endif %}
+{% endfor %} and the DIF submitted is associated with {% for item in rcbyudi %}
+    {{ item.Title|e }}
+    {% if not loop.last %},{% endif %}
+{% endfor %}.<br>
+<br>
+Thank you,<br>
+<br>
+The GRIIDC Team<br>
+<br>
+*You are receiving this email because you are identified as a data manager for a Gulf of Mexico Research Initiative Research Consortium. If you believe you should not be receiving this email please notify <a href="mailto:griidc@gomri.org">griidc@gomri.org</a>.*
