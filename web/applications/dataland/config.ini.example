@@ -20,7 +20,7 @@
 
 -1_registered = ""
  0_registered = "This dataset has not yet been registered."
- 1_registered = "A registration has been made, but a data file was not provided at the time of registration."
+ 1_registered = "A registration has been created, but a data file was not provided at the time of registration."
 10_registered = "This dataset has been registered successfully."
 
 -1_metadata = "This dataset has not yet been registered, therefore no metadata is available."
