@@ -47,9 +47,6 @@ $app->get('/:udi', function ($udi) use ($app) {
             }
             $stash['dataset']['size'] = round($size_bytes,$precision);
         }
-        if (array_key_exists('dataset_filename',$stash['dataset'])) {
-            $stash['dataset']['formatName'] = preg_replace('/^.*\./','',$stash['dataset']['dataset_filename']);
-        }
 
         if (array_key_exists('primary_poc',$stash['dataset'])) {
             $people = getPeopleDetails($RIS_DBH,array('peopleId='.$stash['dataset']['primary_poc']));
