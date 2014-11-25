@@ -29,6 +29,29 @@ class RISTest extends \PHPUnit_Framework_TestCase
         return $dataManager['ID'];
     }
 
+    public function testGetProjectDetailsProjectId()
+    {
+        $project = array(
+            'ID' => '132',
+            'Abbr' => 'ECOGIG',
+            'Title' => 'Ecosystem Impacts of Oil and Gas Inputs to the Gulf (ECOGIG)',
+            'Abstract' => 'The ECOGIG consortium brings together physical oce',
+            'StartDate' => '2011-09-01',
+            'EndDate' => '2015-04-04',
+            'Location' => '',
+            'Fund_Src' => '7',
+            'Fund_Abbr' => 'RFP-I',
+            'Fund_Name' => 'Year 2-4 Consortia Grants (RFP-I)',
+            'SubTasks' => '8'
+        );
+        $details = getProjectDetails($this->DBH, array('projectid=132'));
+        $projectDetails = $details[0];
+        if (array_key_exists('Abstract', $projectDetails)) {
+            $projectDetails['Abstract'] = substr($projectDetails['Abstract'], 0, 50);
+        }
+        $this->assertEquals($project, $projectDetails);
+    }
+
     public function testGetDMsFromRCNull()
     {
         $this->assertEquals(array(), getDMsFromRC($this->DBH, null));
