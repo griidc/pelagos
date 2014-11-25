@@ -51,7 +51,7 @@ if (!function_exists('getProjectDetails')) {
 
         $stmt = $dbh->prepare("$SELECT $FROM $WHERE ORDER BY Title;");
         $stmt->execute();
-        $projects = $stmt->fetchAll();
+        $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         for ($i=0; $i<count($projects); $i++) {
             $SQL = 'SELECT COUNT(DISTINCT Project_ID) FROM Projects
