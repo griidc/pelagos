@@ -3,7 +3,7 @@ var lastdata{{instanceName}} = [];
 var forced = false;
 
 jQuery(function() {
-    if (document.getElementById("CRIP2_{{instanceName}}").value == 'Gulf of Mexico Research Initiative')
+    if (document.getElementById("CRIP2_{{instanceName}}").value == 'Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC)')
     { 
         forced = true;
         jQuery('#CRPF_{{instanceName}}').click();
@@ -20,12 +20,12 @@ function addHiddenElement_{{instanceName}}(elementName,elementValue)
 	lastdata{{instanceName}}.push(element.value);
 	element.value = elementValue;
 	
-	var newInput = document.createElement("INPUT");
+    var newInput = document.createElement("TEXTAREA");
 	
 	newInput.id = element.id+'hidden';
 	newInput.name = element.name;
 	newInput.value = element.value;
-	newInput.type = "hidden";
+    newInput.style.display = "none";
 	element.parentNode.insertBefore(newInput, element);
     $(element).removeClass('error');
 }
@@ -48,7 +48,7 @@ function prefill_{{instanceName}}(what)
 		addHiddenElement_{{instanceName}}("CRIP2_{{instanceName}}","Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC)");
 		addHiddenElement_{{instanceName}}("CITP1_{{instanceName}}","+1-361-825-3604");
 		addHiddenElement_{{instanceName}}("CITP2_{{instanceName}}","+1-361-825-2050");
-		addHiddenElement_{{instanceName}}("CIAD1_{{instanceName}}","6300 Ocean Drive Unit 5869");
+		addHiddenElement_{{instanceName}}("CIAD1_{{instanceName}}","6300 Ocean Drive\r\nUnit 5869");
 		addHiddenElement_{{instanceName}}("CIAD2_{{instanceName}}","Corpus Christi");
 		addHiddenElement_{{instanceName}}("CIAD3_{{instanceName}}","Texas");
 		addHiddenElement_{{instanceName}}("CIAD4_{{instanceName}}","78412-5869");

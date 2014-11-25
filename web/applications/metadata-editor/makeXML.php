@@ -96,9 +96,26 @@ function createNodesXML($xml,$doc)
             if ($elements->length > 0)
             {
                 $node = $elements->item(0);
+                $parent = $node->parentNode;
                 $val = htmlspecialchars($val, ENT_QUOTES | 'ENT_XML1', 'UTF-8');
                 
-                $node->nodeValue = $val;
+                #here then!
+                if ($parent->nodeName == 'gmd:deliveryPoint')
+                { 
+                    $parent->removeChild($node);
+                    
+                    $node = $doc->createElement('gco:CharacterString');
+                    $node = $parent->appendChild($node);
+                    
+                    $cdata = $doc->createCDATASection($val);
+                    $node = $node->appendChild($cdata);
+                }
+                else
+                {
+                    //$val = htmlspecialchars($val, ENT_QUOTES | 'ENT_XML1', 'UTF-8');
+                    $node->nodeValue = $val;
+                }
+                
                 $parent = $node->parentNode;
                 if ($parent->nodeName == 'gmd:fileIdentifier')
                 {
@@ -230,8 +247,16 @@ function createNodesXML($xml,$doc)
                         if ($node->nodeName == 'gmd:polygon')
                         { echo "it here $val"; }
                         
-                        //$val = htmlspecialchars($val, ENT_QUOTES | 'ENT_XML1', 'UTF-8');
-                        $node->nodeValue = $val;
+                        if ($parent->nodeName == 'gmd:deliveryPoint')
+                        { 
+                            $cdata = $doc->createCDATASection($val);
+                            $node = $node->appendChild($cdata);
+                        }
+                        else
+                        {
+                            //$val = htmlspecialchars($val, ENT_QUOTES | 'ENT_XML1', 'UTF-8');
+                            $node->nodeValue = $val;
+                        }
                     }
                     
                     //addNodeAttributes($doc,$parent,$node,$nodelevel,$val);
@@ -255,7 +280,7 @@ function createNodesXML($xml,$doc)
     $tidy = new tidy;
     $tidy->parseString($xmlString, $tidy_config, 'utf8');
     $tidy->cleanRepair();
-            
+         
     header("Content-type: text/xml; charset=utf-8"); 
     header("Content-Disposition: attachment; filename=$filename");
     
