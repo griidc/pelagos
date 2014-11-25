@@ -45,45 +45,41 @@ function eventHappened($Action, $Data)
         mail($to,$message)
     */
 
-    try {
-        $messageData = getMessageTemplate($Action);
+    $messageData = getMessageTemplate($Action);
 
-        $messageTemplate = $messageData['messageTemplate'];
-        $subject = $messageData['subject'];
+    $messageTemplate = $messageData['messageTemplate'];
+    $subject = $messageData['subject'];
 
-        require_once 'DataManagers.php';
-        $dataManagers = array();
-        # check if we have a user ID
-        if (array_key_exists('uid', $Data)) {
-            $dataManagers = getDMsFromUser($Data['uid']);
-        }
-        # check if we have an UDI
-        if (array_key_exists('udi', $Data)) {
-            $getDataManagerID = function ($dataManager) {
-                return $dataManager['ID'];
-            };
-            $dataManagerIDs = array_map($getDataManagerID, $dataManagers);
-            foreach (getDMsFromUDI($Data['udi']) as $dataManager) {
-                if (!in_array($dataManager['ID'], $dataManagerIDs)) {
-                    $dataManagers[] = $dataManager;
-                }
+    require_once 'DataManagers.php';
+    $dataManagers = array();
+    # check if we have a user ID
+    if (array_key_exists('uid', $Data)) {
+        $dataManagers = getDMsFromUser($Data['uid']);
+    }
+    # check if we have an UDI
+    if (array_key_exists('udi', $Data)) {
+        $getDataManagerID = function ($dataManager) {
+            return $dataManager['ID'];
+        };
+        $dataManagerIDs = array_map($getDataManagerID, $dataManagers);
+        foreach (getDMsFromUDI($Data['udi']) as $dataManager) {
+            if (!in_array($dataManager['ID'], $dataManagerIDs)) {
+                $dataManagers[] = $dataManager;
             }
         }
+    }
 
-        foreach ($dataManagers as $dataManager) {
-            $mailData = array();
+    foreach ($dataManagers as $dataManager) {
+        $mailData = array();
 
-            $mailMessage  = expandTemplate($messageTemplate, array('firstname' => $dataManager['FirstName']));
+        $mailMessage  = expandTemplate($messageTemplate, array('firstname' => $dataManager['FirstName']));
 
-            require_once 'griidcMailer.php';
-            $eventMailer = new griidcMailer(false);
-            $eventMailer->addToUser($dataManager['FirstName'], $dataManager['LastName'], $dataManager['Email']);
-            $eventMailer->mailMessage = $mailMessage;
-            $eventMailer->mailSubject = $subject;
-            $eventMailer->sendMail();
-        }
-    } catch (Exception $e) {
-        return $e->getMessage();
+        require_once 'griidcMailer.php';
+        $eventMailer = new griidcMailer(false);
+        $eventMailer->addToUser($dataManager['FirstName'], $dataManager['LastName'], $dataManager['Email']);
+        $eventMailer->mailMessage = $mailMessage;
+        $eventMailer->mailSubject = $subject;
+        $eventMailer->sendMail();
     }
 
     return true;
