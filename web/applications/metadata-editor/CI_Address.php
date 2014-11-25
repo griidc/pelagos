@@ -238,7 +238,7 @@ class CI_Address
 			"UKR" => "Ukraine",
 			"ARE" => "United Arab Emirates",
 			"GBR" => "United Kingdom",
-			"USA" => "United States",
+			"USA" => "United States (USA)",
 			"UMI" => "United States Minor Outlying Islands",
 			"URY" => "Uruguay",
 			"UZB" => "Uzbekistan",
@@ -277,4 +277,3 @@ class CI_Address
 	}
 
 }
-?>	

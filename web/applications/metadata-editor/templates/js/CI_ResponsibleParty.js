@@ -45,7 +45,7 @@ function prefill_{{instanceName}}(what)
 {
 	if (what.checked)
 	{
-		addHiddenElement_{{instanceName}}("CRIP2_{{instanceName}}","Gulf of Mexico Research Initiative");
+		addHiddenElement_{{instanceName}}("CRIP2_{{instanceName}}","Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC)");
 		addHiddenElement_{{instanceName}}("CITP1_{{instanceName}}","+1-361-825-3604");
 		addHiddenElement_{{instanceName}}("CITP2_{{instanceName}}","+1-361-825-2050");
 		addHiddenElement_{{instanceName}}("CIAD1_{{instanceName}}","6300 Ocean Drive Unit 5869");
