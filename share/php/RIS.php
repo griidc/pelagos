@@ -1,14 +1,12 @@
 <?php
 
-$GLOBALS['MYSQL_LIKE_MAP'] = array(
-    '=' => 'LIKE',
-    '!=' => 'NOT LIKE'
-);
-
-if (!defined('FILTER_REG')) define('FILTER_REG','/^(.*?)\s*(>=|<=|>|<|!=|=)\s*(.*?)$/');
+if (!defined('FILTER_REG')) {
+    define('FILTER_REG', '/^(.*?)\s*(>=|<=|>|<|!=|=)\s*(.*?)$/');
+}
 
 if (!function_exists('getProjectDetails')) {
-    function getProjectDetails($dbh, $filters = array()) {
+    function getProjectDetails($dbh, $filters = array())
+    {
         $SELECT = 'SELECT DISTINCT
                    pg.Program_ID as ID,
                    pg.Program_Title as Title,
@@ -29,7 +27,7 @@ if (!function_exists('getProjectDetails')) {
         $WHERE = 'WHERE pg.Program_Completed=1';
 
         foreach ($filters as $filter) {
-            if (preg_match(FILTER_REG,$filter,$matches)) {
+            if (preg_match(FILTER_REG, $filter, $matches)) {
                 switch(strtolower($matches[1])) {
                     case 'projectid':
                         $WHERE .= " AND pg.Program_ID $matches[2] $matches[3]";
@@ -56,22 +54,25 @@ if (!function_exists('getProjectDetails')) {
         $projects = $stmt->fetchAll();
 
         for ($i=0; $i<count($projects); $i++) {
-            $stmt = $dbh->prepare("SELECT COUNT(DISTINCT Project_ID) FROM Projects WHERE Program_ID = ? AND Project_Completed = 1;");
+            $SQL = 'SELECT COUNT(DISTINCT Project_ID) FROM Projects
+                    WHERE Program_ID = ? AND Project_Completed = 1;';
+            $stmt = $dbh->prepare($SQL);
             $stmt->execute(array($projects[$i]['ID']));
             $projects[$i]['SubTasks'] = $stmt->fetchColumn();
 
             if (isset($peopleId)) {
-                $stmt = $dbh->prepare("SELECT COUNT(DISTINCT Project_ID) FROM ProjectPeople WHERE Program_ID = ? AND People_ID = ? AND Project_ID = 0 AND Project_Completed = 1;");
+                $SQL = 'SELECT COUNT(DISTINCT Project_ID) FROM ProjectPeople
+                        WHERE Program_ID = ? AND People_ID = ? AND Project_ID = 0 AND Project_Completed = 1;';
+                $stmt = $dbh->prepare($SQL);
                 $stmt->execute(array($projects[$i]['ID'],$peopleId));
                 if ($stmt->fetchColumn() != 0) {
                     $projects[$i]['ProjectLevelAssoc'] = true;
-                }
-                else {
+                } else {
                     $projects[$i]['ProjectLevelAssoc'] = false;
                 }
             }
 
-            if (preg_match('/\(([^\)]+)\)$/',$projects[$i]['Title'],$matches)) {
+            if (preg_match('/\(([^\)]+)\)$/', $projects[$i]['Title'], $matches)) {
                 $projects[$i]['Abbr'] = $matches[1];
             }
         }
@@ -81,7 +82,8 @@ if (!function_exists('getProjectDetails')) {
 }
 
 if (!function_exists('getTaskDetails')) {
-    function getTaskDetails($dbh, $filters = array()) {
+    function getTaskDetails($dbh, $filters = array())
+    {
         $SELECT = 'SELECT DISTINCT
                    pj.Project_ID as ID,
                    pj.Project_Title as Title,
@@ -94,14 +96,19 @@ if (!function_exists('getTaskDetails')) {
 
         $WHERE = 'WHERE 1';
 
+        $MYSQL_LIKE_MAP = array(
+            '=' => 'LIKE',
+            '!=' => 'NOT LIKE'
+        );
+
         foreach ($filters as $filter) {
-            if (preg_match(FILTER_REG,$filter,$matches)) {
+            if (preg_match(FILTER_REG, $filter, $matches)) {
                 switch (strtolower($matches[1])) {
                     case 'projectid':
                         $WHERE .= " AND pj.Program_ID $matches[2] $matches[3]";
                         break;
                     case 'title':
-                        $WHERE .= " AND pj.Project_Title " . $GLOBALS['MYSQL_LIKE_MAP'][$matches[2]] . " \"$matches[3]\"";
+                        $WHERE .= " AND pj.Project_Title " . $MYSQL_LIKE_MAP[$matches[2]] . " \"$matches[3]\"";
                         break;
                     case 'peopleid':
                         $WHERE .= " AND pp.People_ID $matches[2] $matches[3]";
@@ -119,7 +126,8 @@ if (!function_exists('getTaskDetails')) {
 }
 
 if (!function_exists('getPeopleDetails')) {
-    function getPeopleDetails($dbh, $filters = array(), $order_by = 'LastName, FirstName') {
+    function getPeopleDetails($dbh, $filters = array(), $order_by = 'LastName, FirstName')
+    {
         $SELECT = 'SELECT DISTINCT
                    p.People_ID AS ID,
                    p.People_Title AS Title,
@@ -164,17 +172,22 @@ if (!function_exists('getPeopleDetails')) {
 
         $WHERE = 'WHERE 1';
 
+        $MYSQL_LIKE_MAP = array(
+            '=' => 'LIKE',
+            '!=' => 'NOT LIKE'
+        );
+
         foreach ($filters as $filter) {
-            if (preg_match(FILTER_REG,$filter,$matches)) {
+            if (preg_match(FILTER_REG, $filter, $matches)) {
                 switch (strtolower($matches[1])) {
                     case 'peopleid':
                         $WHERE .= " AND p.People_ID $matches[2] $matches[3]";
                         break;
                     case 'lastname':
-                        $WHERE .= " AND p.People_LastName " . $GLOBALS['MYSQL_LIKE_MAP'][$matches[2]] . " \"$matches[3]\"";
+                        $WHERE .= " AND p.People_LastName " . $MYSQL_LIKE_MAP[$matches[2]] . " \"$matches[3]\"";
                         break;
                     case 'firstname':
-                        $WHERE .= " AND p.People_FirstName " . $GLOBALS['MYSQL_LIKE_MAP'][$matches[2]] . " \"$matches[3]\"";
+                        $WHERE .= " AND p.People_FirstName " . $MYSQL_LIKE_MAP[$matches[2]] . " \"$matches[3]\"";
                         break;
                     case 'projectid':
                         $WHERE .= " AND pp.Program_ID $matches[2] $matches[3]";
@@ -197,7 +210,8 @@ if (!function_exists('getPeopleDetails')) {
 }
 
 if (!function_exists('getPeopleList')) {
-    function getPeopleList($dbh, $filters = array(), $order_by = 'LastName, FirstName') {
+    function getPeopleList($dbh, $filters = array(), $order_by = 'LastName, FirstName')
+    {
         $SELECT = 'SELECT DISTINCT
                    p.People_ID AS ID,
                    p.People_Title AS Title,
@@ -214,17 +228,22 @@ if (!function_exists('getPeopleList')) {
 
         $WHERE = 'WHERE 1';
 
+        $MYSQL_LIKE_MAP = array(
+            '=' => 'LIKE',
+            '!=' => 'NOT LIKE'
+        );
+
         foreach ($filters as $filter) {
-            if (preg_match(FILTER_REG,$filter,$matches)) {
+            if (preg_match(FILTER_REG, $filter, $matches)) {
                 switch (strtolower($matches[1])) {
                     case 'peopleid':
                         $WHERE .= " AND p.People_ID $matches[2] $matches[3]";
                         break;
                     case 'lastname':
-                        $WHERE .= " AND p.People_LastName " . $GLOBALS['MYSQL_LIKE_MAP'][$matches[2]] . " \"$matches[3]\"";
+                        $WHERE .= " AND p.People_LastName " . $MYSQL_LIKE_MAP[$matches[2]] . " \"$matches[3]\"";
                         break;
                     case 'firstname':
-                        $WHERE .= " AND p.People_FirstName " . $GLOBALS['MYSQL_LIKE_MAP'][$matches[2]] . " \"$matches[3]\"";
+                        $WHERE .= " AND p.People_FirstName " . $MYSQL_LIKE_MAP[$matches[2]] . " \"$matches[3]\"";
                         break;
                     case 'projectid':
                         $WHERE .= " AND pp.Program_ID $matches[2] $matches[3]";
@@ -247,7 +266,8 @@ if (!function_exists('getPeopleList')) {
 }
 
 if (!function_exists('getPeopleLI')) {
-    function getPeopleLI($dbh, $filters = array()) {
+    function getPeopleLI($dbh, $filters = array())
+    {
         $SELECT = 'SELECT DISTINCT UCASE(SUBSTR(p.People_LastName,1,1)) AS Letter';
 
         $FROM = 'FROM People p
@@ -255,17 +275,22 @@ if (!function_exists('getPeopleLI')) {
 
         $WHERE = 'WHERE 1';
 
+        $MYSQL_LIKE_MAP = array(
+            '=' => 'LIKE',
+            '!=' => 'NOT LIKE'
+        );
+
         foreach ($filters as $filter) {
-            if (preg_match(FILTER_REG,$filter,$matches)) {
+            if (preg_match(FILTER_REG, $filter, $matches)) {
                 switch (strtolower($matches[1])) {
                     case 'peopleid':
                         $WHERE .= " AND p.People_ID $matches[2] $matches[3]";
                         break;
                     case 'lastname':
-                        $WHERE .= " AND p.People_LastName " . $GLOBALS['MYSQL_LIKE_MAP'][$matches[2]] . " \"$matches[3]\"";
+                        $WHERE .= " AND p.People_LastName " . $MYSQL_LIKE_MAP[$matches[2]] . " \"$matches[3]\"";
                         break;
                     case 'firstname':
-                        $WHERE .= " AND p.People_FirstName " . $GLOBALS['MYSQL_LIKE_MAP'][$matches[2]] . " \"$matches[3]\"";
+                        $WHERE .= " AND p.People_FirstName " . $MYSQL_LIKE_MAP[$matches[2]] . " \"$matches[3]\"";
                         break;
                     case 'projectid':
                         $WHERE .= " AND pp.Program_ID $matches[2] $matches[3]";
@@ -288,7 +313,8 @@ if (!function_exists('getPeopleLI')) {
 }
 
 if (!function_exists('getInstitutionDetails')) {
-    function getInstitutionDetails($dbh, $filters = array()) {
+    function getInstitutionDetails($dbh, $filters = array())
+    {
         $SELECT = 'SELECT DISTINCT
                    Institution_ID as ID,
                    Institution_Name as Name';
@@ -297,14 +323,19 @@ if (!function_exists('getInstitutionDetails')) {
 
         $WHERE = 'WHERE 1';
 
+        $MYSQL_LIKE_MAP = array(
+            '=' => 'LIKE',
+            '!=' => 'NOT LIKE'
+        );
+
         foreach ($filters as $filter) {
-            if (preg_match(FILTER_REG,$filter,$matches)) {
+            if (preg_match(FILTER_REG, $filter, $matches)) {
                 switch(strtolower($matches[1])) {
                     case 'institutionid':
                         $WHERE .= " AND Institution_ID $matches[2] $matches[3]";
                         break;
                     case 'name':
-                        $WHERE .= " AND Institution_Name " . $GLOBALS['MYSQL_LIKE_MAP'][$matches[2]] . " \"$matches[3]\"";
+                        $WHERE .= " AND Institution_Name " . $MYSQL_LIKE_MAP[$matches[2]] . " \"$matches[3]\"";
                         break;
                     case 'projectid':
                         $FROM = " FROM (
@@ -323,7 +354,8 @@ if (!function_exists('getInstitutionDetails')) {
                                         )
                                         AS T
                                         LEFT JOIN People ON T.People_ID = People.People_ID
-                                        LEFT JOIN Institutions ON People.People_Institution = Institutions.Institution_ID";
+                                        LEFT JOIN Institutions
+                                            ON People.People_Institution = Institutions.Institution_ID";
                         break;
                 }
             }
@@ -337,7 +369,8 @@ if (!function_exists('getInstitutionDetails')) {
 }
 
 if (!function_exists('getFundingSources')) {
-    function getFundingSources($dbh, $filters = array()) {
+    function getFundingSources($dbh, $filters = array())
+    {
         $SELECT = 'SELECT DISTINCT
                    Fund_ID AS ID,
                    Fund_Source as Abbr,
@@ -348,7 +381,7 @@ if (!function_exists('getFundingSources')) {
         $WHERE = 'WHERE 1';
 
         foreach ($filters as $filter) {
-            if (preg_match(FILTER_REG,$filter,$matches)) {
+            if (preg_match(FILTER_REG, $filter, $matches)) {
                 switch(strtolower($matches[1])) {
                     case 'fundid':
                         $WHERE .= " AND Fund_ID $matches[2] $matches[3]";
@@ -381,7 +414,8 @@ if (!function_exists('getFundingSources')) {
  *
  */
 if (!function_exists('getRCsFromRISUser')) {
-    function getRCsFromRISUser($dbh, $risUserId) {
+    function getRCsFromRISUser($dbh, $risUserId)
+    {
 
         $select = "SELECT DISTINCT ".
                   // " People.People_ID, People.People_LastName, People.People_FirstName,  ".
@@ -397,7 +431,7 @@ if (!function_exists('getRCsFromRISUser')) {
         $stmt = $dbh->prepare($select);
         $stmt->execute();
         $ids = array();
-        while($id = $stmt->fetchColumn(0)) {  // defaults to fetching first column
+        while ($id = $stmt->fetchColumn(0)) { // defaults to fetching first column
             $ids[] = $id;
         }
 
@@ -423,7 +457,8 @@ if (!function_exists('getRCsFromRISUser')) {
 
  */
 if (!function_exists('getDMsFromRC')) {
-    function getDMsFromRC($dbh, $researchConsortiumId) {
+    function getDMsFromRC($dbh, $researchConsortiumId)
+    {
 
         $select = "SELECT DISTINCT ".
                   " People.People_ID AS ID, ".
