@@ -2,14 +2,18 @@
 
 namespace Pelagos\RIS;
 
+/**
+ * @runTestsInSeparateProcesses
+ */
+
 class RISTest extends \PHPUnit_Framework_TestCase
 {
     private $DBH;
 
     protected function setUp()
     {
-        require 'RIS.php';
-        require 'db-utils.lib.php';
+        require_once 'RIS.php';
+        require_once 'DBUtils.php';
         # open a database connetion to RIS
         $this->DBH = OpenDB('RIS_RO');
     }
@@ -18,31 +22,34 @@ class RISTest extends \PHPUnit_Framework_TestCase
     {
         # close database connection
         $this->DBH = null;
-        $funcs = array(
-            # functions declared in db-utils.lib.php
-            'OpenDB',
-            # functions declared in RIS.php
-            'getProjectDetails',
-            'getTaskDetails',
-            'getPeopleDetails',
-            'getPeopleList',
-            'getPeopleLI',
-            'getInstitutionDetails',
-            'getFundingSources',
-            'getDMsFromRC',
-            'getRCsFromRISUser'
-        );
-        # remove all functions declared during setUp()
-        foreach ($funcs as $func) {
-            if (function_exists($func)) {
-                runkit_function_remove($func);
-            }
-        }
     }
 
     private function getDataManagerID($dataManager)
     {
         return $dataManager['ID'];
+    }
+
+    public function testGetProjectDetailsProjectId()
+    {
+        $project = array(
+            'ID' => '132',
+            'Abbr' => 'ECOGIG',
+            'Title' => 'Ecosystem Impacts of Oil and Gas Inputs to the Gulf (ECOGIG)',
+            'Abstract' => 'The ECOGIG consortium brings together physical oce',
+            'StartDate' => '2011-09-01',
+            'EndDate' => '2015-04-04',
+            'Location' => '',
+            'Fund_Src' => '7',
+            'Fund_Abbr' => 'RFP-I',
+            'Fund_Name' => 'Year 2-4 Consortia Grants (RFP-I)',
+            'SubTasks' => '8'
+        );
+        $details = getProjectDetails($this->DBH, array('projectid=132'));
+        $projectDetails = $details[0];
+        if (array_key_exists('Abstract', $projectDetails)) {
+            $projectDetails['Abstract'] = substr($projectDetails['Abstract'], 0, 50);
+        }
+        $this->assertEquals($project, $projectDetails);
     }
 
     public function testGetDMsFromRCNull()
