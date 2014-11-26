@@ -1,12 +1,5 @@
-[GOMRI_DB]
-connstr = "pgsql:host=localhost;dbname=db;"
-username = "username"
-password = "password"
-
-[RPIS_DB]
-connstr = "mysql:host=localhost;dbname=db;"
-username = "user"
-password = "password"
-
 [exclude]
 funds[] = 1
+
+[misc]
+system_capacity = 109951162777600

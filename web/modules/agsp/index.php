@@ -1,101 +1,148 @@
 <?php
 
-error_reporting(E_ALL);
-ini_set( 'display_errors','1');
+# load global config
+$GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini', true);
 
-require_once '/usr/local/share/Slim/Slim/Slim.php';
-require_once '/usr/local/share/Slim-Extras/Views/TwigView.php';
+# check for local config file
+if (file_exists('config.ini')) {
+    # load Common library from global share
+    require_once($GLOBALS['config']['paths']['share'].'/php/Common.php');
+    # merge local config with global config
+    $GLOBALS['config'] = configMerge($GLOBALS['config'], parse_ini_file('config.ini', true));
+}
 
-require_once '/usr/local/share/GRIIDC/php/pdo.php';
-require_once '/usr/local/share/GRIIDC/php/datasets.php';
-require_once '/usr/local/share/GRIIDC/php/rpis.php';
-require_once '/usr/local/share/GRIIDC/php/utils.php';
+# add Pelagos share/php to include path
+set_include_path(get_include_path() . PATH_SEPARATOR . $GLOBALS['config']['paths']['share'] . '/php');
 
+# load library info
+$GLOBALS['libraries'] = parse_ini_file($GLOBALS['config']['paths']['conf'].'/libraries.ini', true);
+
+# load Slim2
+require_once $GLOBALS['libraries']['Slim2']['include'];
+# register Slim autoloader
+\Slim\Slim::registerAutoloader();
+# load Twig Slim-View
+require_once $GLOBALS['libraries']['Slim-Views']['include_Twig'];
+
+# load Pelagos libraries
+require_once 'DBUtils.php';
+require_once 'datasets.php';
+require_once 'RIS.php';
+require_once 'utils.php';
+
+# load AGSP application library
 require_once 'lib/agsp.php';
 
-$GLOBALS['config'] = parse_ini_file('config.ini',true);
+# create new Slim application
+$app = new \Slim\Slim(array('view' => new \Slim\Views\Twig()));
 
-TwigView::$twigDirectory = $GLOBALS['config']['TwigView']['twigDirectory'];
+# set Twig directory for Twig Slim-View
+$app->view->parserDirectory = $GLOBALS['libraries']['Twig']['directory'];
 
-$app = new Slim(array(
-                        'view' => new TwigView,
-                        'debug' => true,
-                        'log.level' => Slim_Log::DEBUG,
-                        'log.enabled' => true
-                     ));
-
-$app->get('/', function () use ($app) {
-});
-
-$app->get('/datasets', function () use ($app) {
-
-    $query = "SELECT COUNT(downloads.registry_id) as total_number_of_downloads,
-                     (SELECT SUM(dataset_download_size) FROM registry) AS total_file_size,
-                     (SELECT COALESCE(SUM(dataset_download_size),0) FROM registry WHERE substr(registry.registry_id,0,17) = dataset_udi AND dataset_download_status = 'Completed') AS total_file_size_by_gomri
-                     FROM registry
-                     LEFT OUTER JOIN datasets on registry.dataset_udi = datasets.dataset_udi
-                     LEFT OUTER JOIN downloads on downloads.registry_id = substr(registry.registry_id,0,17);";
-
-    $fsrow = pdoDBQuery(getDBH('GOMRI'),$query);
-    $fsrow = $fsrow[0];
-    $stash['avail_storage_space'] = bytes2filesize($GLOBALS['config']['misc']['system_capacity'] - $fsrow["total_file_size"],1);
-    $stash['used_storage_space'] = bytes2filesize($fsrow["total_file_size"],1);
-
-    $fundFilter = array('fundId>0');
-    if (isset($GLOBALS['config']['exclude']['funds'])) {
-    	foreach ($GLOBALS['config']['exclude']['funds'] as $exclude) {
-    		$fundFilter[] = "fundId!=$exclude";
-    	}
+# stub root
+$app->get(
+    '/',
+    function () use ($app) {
     }
+);
 
-    $FUNDS = getFundingSources(getDBH('RPIS'),$fundFilter);
+# respond to request for datasets summary
+$app->get(
+    '/datasets',
+    function () use ($app) {
 
-    $resultArr = array();
-    $resultSet = 0;
+        $query = "SELECT COUNT(downloads.registry_id) as total_number_of_downloads,
+                         (SELECT SUM(dataset_download_size) FROM registry) AS total_file_size,
+                         (SELECT COALESCE(SUM(dataset_download_size),0) FROM registry
+                         WHERE substr(registry.registry_id,0,17) = dataset_udi AND
+                         dataset_download_status = 'Completed') AS total_file_size_by_gomri
+                         FROM registry
+                         LEFT OUTER JOIN datasets on registry.dataset_udi = datasets.dataset_udi
+                         LEFT OUTER JOIN downloads on downloads.registry_id = substr(registry.registry_id,0,17);";
 
-    $stash['identified_total'] = 0;
-    $stash['registered_total'] = 0;
+        $GOMRI_DBH = openDB('GOMRI_RO');
+        $stmt = $GOMRI_DBH->prepare($query);
+        $stmt->execute();
+        $fsrow = $stmt->fetchAll();
+        $fsrow = $fsrow[0];
+        $stash['avail_storage_space'] = bytes2filesize(
+            $GLOBALS['config']['misc']['system_capacity'] - $fsrow["total_file_size"],
+            1
+        );
+        $stash['used_storage_space'] = bytes2filesize($fsrow["total_file_size"], 1);
 
-    foreach ($FUNDS as $FUND) {
-        $identified_count = count_identified_datasets(getDBH('GOMRI'),array('status>0',"funding_envelope=$FUND[ID]"));
-    	$registered_count = count_registered_datasets(getDBH('GOMRI'),array("funding_envelope=$FUND[ID]"));
-        $resultArr[$resultSet] = $FUND;
-    	$resultArr[$resultSet]['identified_count'] = $identified_count;
-        $stash['identified_total'] += $identified_count;
-    	$resultArr[$resultSet]['registered_count'] = $registered_count;
-        $stash['registered_total'] += $registered_count;
-    	$resultSet++;
+        $fundFilter = array('fundId>0');
+        if (isset($GLOBALS['config']['exclude']['funds'])) {
+            foreach ($GLOBALS['config']['exclude']['funds'] as $exclude) {
+                $fundFilter[] = "fundId!=$exclude";
+            }
+        }
+
+        $RIS_DBH = openDB('RIS_RO');
+
+        $FUNDS = getFundingSources($RIS_DBH, $fundFilter);
+
+        $resultArr = array();
+        $resultSet = 0;
+
+        $stash['identified_total'] = 0;
+        $stash['registered_total'] = 0;
+
+        foreach ($FUNDS as $FUND) {
+            $identified_count = count_identified_datasets($GOMRI_DBH, array('status>0',"funding_envelope=$FUND[ID]"));
+            $registered_count = count_registered_datasets($GOMRI_DBH, array("funding_envelope=$FUND[ID]"));
+            $resultArr[$resultSet] = $FUND;
+            $resultArr[$resultSet]['identified_count'] = $identified_count;
+            $stash['identified_total'] += $identified_count;
+            $resultArr[$resultSet]['registered_count'] = $registered_count;
+            $stash['registered_total'] += $registered_count;
+            $resultSet++;
+        }
+
+        usort($resultArr, 'cmpRegisteredIdentified');
+
+        $stash['funds'] = $resultArr;
+
+        $app->render('html/datasets.html', $stash);
+
+        exit;
     }
+);
 
-    usort($resultArr, 'cmp_registered_identified');
+# respond to requests for dataset summaty by fund ID
+$app->get(
+    '/datasets/by_fund/:fund_id',
+    function ($fund_id) use ($app) {
+        $RIS_DBH = openDB('RIS_RO');
+        $funds = getFundingSources($RIS_DBH, array("fundId=$fund_id"));
+        $stash['fund'] = $funds[0];
 
-    $stash['funds'] = $resultArr;
+        $projects = getProjectDetails($RIS_DBH, array("fundsrc=$fund_id"));
 
-    $app->render('html/datasets.html',$stash);
+        $GOMRI_DBH = openDB('GOMRI_RO');
 
-    exit;
-});
+        for ($i=0; $i<count($projects); $i++) {
+            $pi = getPeopleDetails($RIS_DBH, array('projectId='.$projects[$i]['ID'],'roleId=1'));
+            $projects[$i]['PI'] = $pi[0];
+            $projects[$i]['identified_count'] = count_identified_datasets(
+                $GOMRI_DBH,
+                array('status>0','projectid='.$projects[$i]['ID'])
+            );
+            $projects[$i]['registered_count'] = count_registered_datasets(
+                $GOMRI_DBH,
+                array('projectid='.$projects[$i]['ID'])
+            );
+            $projects[$i]['tree_node_id'] = $funds[0]['Abbr'] .  '/' .
+                (($fund_id == 7 and array_key_exists('Abbr', $projects[$i])) ?
+                    $projects[$i]['Abbr'] : $projects[$i]['ID']);
+        }
+        usort($projects, 'cmpRegisteredIdentified');
+        $stash['projects'] = $projects;
 
-$app->get('/datasets/by_fund/:fund_id', function ($fund_id) use ($app) {
-    $funds = getFundingSources(getDBH('RPIS'),array("fundId=$fund_id"));
-    $stash['fund'] = $funds[0];
-
-    $projects = getProjectDetails(getDBH('RPIS'),array("fundsrc=$fund_id"));
-
-    for ($i=0; $i<count($projects); $i++) {
-        $pi = getPeopleDetails(getDBH('RPIS'),array('projectId='.$projects[$i]['ID'],'roleId=1'));
-        $projects[$i]['PI'] = $pi[0];
-        $projects[$i]['identified_count'] = count_identified_datasets(getDBH('GOMRI'),array('status>0','projectid='.$projects[$i]['ID']));
-        $projects[$i]['registered_count'] = count_registered_datasets(getDBH('GOMRI'),array('projectid='.$projects[$i]['ID']));
-        $projects[$i]['tree_node_id'] = $funds[0]['Abbr'] . '/' . (($fund_id == 7 and array_key_exists('Abbr',$projects[$i])) ? $projects[$i]['Abbr'] : $projects[$i]['ID']);
+        $app->render('html/funding.html', $stash);
+        exit;
     }
-    usort($projects, 'cmp_registered_identified');
-    $stash['projects'] = $projects;
+);
 
-    $app->render('html/funding.html',$stash);
-    exit;
-});
-
+# run the Slim application
 $app->run();
-
-?>
