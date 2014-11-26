@@ -397,7 +397,7 @@ $app->post('/request', function () use ($app) {
 
             # pass event to notification event handler, along with username of
             # user who successfully initiated an account request.
-            $eventData = array('uid'=>$uid);
+            $eventData = array('userId'=>$uid);
             eventHappened('account_requested', $eventData);
 
             return $app->render('request_submitted.html',$stash);
@@ -526,7 +526,7 @@ $app->post('/approve/create', $GLOBALS['AUTH_FOR_ROLE']('admin'), function () us
 
             # pass event to notification event handler, along with username of
             # user who's account request was approved
-            $eventData = array('uid'=>$uid);
+            $eventData = array('userId'=>$uid);
             eventHappened('account_request_approved', $eventData);
         }
     }
