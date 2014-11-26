@@ -119,4 +119,23 @@ function userHasObjectClass($dn,$objectClass) {
     }
 }
 
-?>
+if (!function_exists('getEmployeeNumberFromUID')) {
+    function getEmployeeNumberFromUID($gomri_userid)
+    {
+        require_once 'ldap.php';
+        $employeeNumber = null;
+        $ldap = connectLDAP($GLOBALS['ldap']['ldap']['server']);
+        $baseDN = 'dc=griidc,dc=org';
+        $userDN = getDNs($ldap, $baseDN, "uid=$gomri_userid");
+        if (count($userDN) > 0) {
+            $userDN = $userDN[0]['dn'];
+            $attributes = getAttributes($ldap, $userDN, array('cn','givenName','employeeNumber'));
+            if (array_key_exists("employeeNumber", $attributes)
+                and count($attributes["employeeNumber"]) > 0
+                and isset($attributes["employeeNumber"][0])) {
+                $employeeNumber = $attributes['employeeNumber'][0];
+            }
+        }
+        return $employeeNumber;
+    }
+}
