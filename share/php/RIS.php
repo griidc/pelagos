@@ -480,4 +480,4 @@ if (!function_exists('getDMsFromRC')) {
 
         return $stmt->fetchAll();
     }
-
+}
