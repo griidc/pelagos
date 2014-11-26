@@ -230,8 +230,8 @@ function postDIF($fielddata)
                 $msgtitle = 'New DIF Created';
                 $message = '<div><img src="/images/icons/info32.png"><p>You have saved a DIF. This DIF has been given the ID: '.$nudi.'<br>In order to submit your dataset to GRIIDC you must return to this page and submit the DIF for review and approval.</p></div>';
                 
-                $userData = getUserDetails($editor); #return array('firstName'=>$firstName,'lastName'=>$lastName,'eMail'=>$eMail);
-                $eventData = array('udi'=>$UDI,'userId'=>$editor,'user'->$userData);
+                $userData = getUserDetails($editor); 
+                $eventData = array('udi'=>$UDI,'userId'=>$editor,'user'=>$userData);
                 eventHappened('dif_saved_but_not_submitted',$eventData);
             }
             else
