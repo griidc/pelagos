@@ -31,6 +31,7 @@ if (!function_exists('getRCsFromUser')) {
     {
         require_once 'RIS.php';
         require_once 'DBUtils.php';
+        require_once 'ldap.php';
         #consult LDAP for $userId -> $RIS_user_ID
         $risUserId = getEmployeeNumberFromUID($userId);
         # open a database connetion to RIS
