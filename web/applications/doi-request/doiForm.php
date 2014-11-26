@@ -281,7 +281,7 @@ function sendMailApprove($formHash)
     mail($to, $subject, $message, $headers,$parameters);
     
     $doiLink = "http://ezid.cdlib.org/id/$doi";
-    $doiFormLink "https://".$_SERVER['SERVER_NAME']."/doi?formKey=$formHash";
+    $doiFormLink = "https://".$_SERVER['SERVER_NAME']."/doi?formKey=$formHash";
     $doiData = array('url'=>$doiLink,'id'=>$doi,'formLink'=>$doiFormLink);
     $userData = array('FirstName'=>$userFirstName,'LastName'=>$userLastName,'Email'=>$userEmail);
     $eventData = array('userId'=>$userIdRequester,'doi'=>$doiData,'user'=>$userData);
@@ -379,7 +379,7 @@ if ($_POST)
                     drupal_set_message($dMessage,'status');
                     sendMailSubmit($formHash,$userEmail,$userFirstName,$userLastName);
                     
-                    $doiFormLink "https://".$_SERVER['SERVER_NAME']."/doi?formKey=$formHash";
+                    $doiFormLink = "https://".$_SERVER['SERVER_NAME']."/doi?formKey=$formHash";
                     $reqLink = $txtURL;
                     $userData = array('FirstName'=>$userFirstName,'LastName'=>$userLastName,'Email'=>$userEmail);
                     $doiData = array('requesturl'=>$reqLink,'formLink'=>$doiFormLink);
