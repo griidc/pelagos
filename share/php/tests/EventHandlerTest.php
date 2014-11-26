@@ -18,16 +18,38 @@ class EventHandlerTest extends \PHPUnit_Framework_TestCase
         require_once 'stubs/DBUtilsStub.php';
     }
 
+    public function testExceptionEventHappenedNoParams()
+    {
+        $this->setExpectedException('Exception', 'Missing argument 1 for eventHappened()');
+        eventHappened();
+    }
+
+    public function testExceptionEventHappenedOneParam()
+    {
+        $this->setExpectedException('Exception', 'Missing argument 2 for eventHappened()');
+        eventHappened('foo');
+    }
+
     public function testExceptionEventHappenedNullEvent()
     {
         $this->setExpectedException('Exception', 'Action not found');
-        eventHappened(null, array());
+        eventHappened(null, null);
     }
 
     public function testExceptionEventHappenedEmptyStringEvent()
     {
         $this->setExpectedException('Exception', 'Action not found');
-        eventHappened('', array());
+        eventHappened('', null);
+    }
+
+    public function testEventHappenedValidEventNullData()
+    {
+        $this->assertEquals(null, eventHappened('dif_saved_and_submitted', null));
+    }
+
+    public function testEventHappenedValidEventEmptyData()
+    {
+        $this->assertEquals(null, eventHappened('dif_saved_and_submitted', array()));
     }
 
     public function testExceptionEventHappenedValidEvents()
