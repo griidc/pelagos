@@ -13,6 +13,9 @@ class EventHandlerTest extends \PHPUnit_Framework_TestCase
         require_once 'EventHandler.php';
         require_once 'stubs/DataManagersStub.php';
         require_once 'stubs/griidcMailerStub.php';
+        require_once 'stubs/ResearchConsortiaStub.php';
+        require_once 'stubs/RISStub.php';
+        require_once 'stubs/DBUtilsStub.php';
     }
 
     public function testExceptionEventHappenedNullEvent()
