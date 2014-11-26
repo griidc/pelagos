@@ -471,8 +471,7 @@ if (!function_exists('getDMsFromRC')) {
                         " JOIN Roles ON ProjPeople.Role_ID = Roles.Role_ID ".
                         " WHERE Programs.Program_ID = '".$researchConsortiumId."'".
                         " AND FundingSource.Fund_Source IN ('RFP-I','RFP-IV') ".
-                        " AND Roles.Role_Name = 'Project Data Point of Contact' ".
-                        " AND Programs.Program_Title NOT LIKE '%GRIIDC Test%'";
+                        " AND Roles.Role_Name = 'Project Data Point of Contact' ";
 
 
         $stmt = $dbh->prepare($select);
