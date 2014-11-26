@@ -3,7 +3,7 @@
 function getMessageTemplate($Action)
 {
     $GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini',true);
-    $templatePath = $GLOBALS['config']['templates'];
+    $templatePath = $GLOBALS['config']['paths']['templates'];
 
     $eventHandlerConfig  = parse_ini_file('/etc/opt/pelagos/EventHandler.ini', true);
 
