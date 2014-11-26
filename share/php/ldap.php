@@ -122,7 +122,6 @@ function userHasObjectClass($dn,$objectClass) {
 if (!function_exists('getEmployeeNumberFromUID')) {
     function getEmployeeNumberFromUID($gomri_userid)
     {
-        require_once 'ldap.php';
         $employeeNumber = null;
         $ldap = connectLDAP($GLOBALS['ldap']['ldap']['server']);
         $baseDN = 'dc=griidc,dc=org';
