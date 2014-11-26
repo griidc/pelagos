@@ -1,7 +1,6 @@
 <?php
 
 $config = parse_ini_file('/etc/opt/pelagos.ini',true);
-require_once $config['paths']['share'].'/php/drupal.php';
 if (!array_key_exists('ldap',$GLOBALS)) $GLOBALS['ldap'] = parse_ini_file($config['paths']['conf'].'/ldap.ini',true);
 
 function connectLDAP($ldaphost) {
@@ -12,7 +11,7 @@ function connectLDAP($ldaphost) {
     
     if (!ldap_bind($ldapconnect)) {
         $dMessage = "Could not connect to LDAP. Please contact the administrator <a href=\"mailto:griidc@gomri.org?subject=DOI Error\">griidc@gomri.org</a>.";
-        drupal_set_message($dMessage,'error',false);
+        throw Exception($dMessage);
     }
     return $ldapconnect;
 }
