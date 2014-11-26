@@ -1,6 +1,6 @@
 Dear {{dm.FirstName}} {{dm.LastName}},<br>
 <br>
-A Dataset Information Form for dataset {{UDI}} has been approved by the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) for {{name of Research Consortium}}.<br>
+A Dataset Information Form for dataset {{data.udi}} has been approved by the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) for {% for rc in rcbyudi %}{{ rc.Title|join(',') }}{% endfor %}.<br>
 <br>
 Thank you,<br>
 <br>

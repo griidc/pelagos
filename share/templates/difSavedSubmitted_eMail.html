@@ -1,12 +1,6 @@
 Dear {{dm.FirstName}} {{dm.LastName}},<br>
 <br>
-A Dataset Information Form (DIF) has been saved and submitted to the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) by {{data.user.FirstName}} {{data.user.LastName}} for dataset {{data.udi}}. {{data.user.FirstName}} {{data.user.LastName}} is a member of {% for item in rcbyuserid %}
-    {{ item.Title|e }}
-    {% if not loop.last %},{% endif %}
-{% endfor %} and the DIF submitted is associated with {% for item in rcbyudi %}
-    {{ item.Title|e }}
-    {% if not loop.last %},{% endif %}
-{% endfor %}.<br>
+A Dataset Information Form (DIF) has been saved and submitted to the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) by {{data.user.FirstName}} {{data.user.LastName}} for dataset {{data.udi}}. {{data.user.FirstName}} {{data.user.LastName}} is a member of {% for rc in rcbyuserid %}{{ rc.Title|join(',') }}{% endfor %} and the DIF submitted is associated with {% for rc in rcbyudi %}{{ rc.Title|join(',') }}{% endfor %}.<br>
 <br>
 Thank you,<br>
 <br>

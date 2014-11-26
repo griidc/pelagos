@@ -124,7 +124,8 @@ if (!class_exists('griidcMailer')) {
             $headers .= 'X-Mailer: PHP/' . phpversion();
             $parameters = '-ODeliveryMode=d';
 
-            throw new Exception(
+            #throw new Exception(
+            var_dump(
                 "\n*** mail sent ***\n" .
                 "To: $to\n" .
                 "Parameters: $parameters\n" .

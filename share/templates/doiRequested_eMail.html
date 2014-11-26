@@ -1,6 +1,6 @@
 Dear {{dm.FirstName}} {{dm.LastName}},<br>
 <br>
-A Digital Object Identifier (DOI) has been requested for the dataset {{doi.URL}} that is submitted and registered with the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) by {{user.FirstName}} {{user.LastName}}. {{user.FirstName}} {{user.LastName}} is a member of {{list all Research Consortia researcher is associated with}}.<br>
+A Digital Object Identifier (DOI) has been requested for the dataset <a href="{{data.doi.requesturl}}">{{data.doi.requesturl}}</a> that is submitted and registered with the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) by {{data.user.FirstName}} {{data.user.LastName}}. {{data.user.FirstName}} {{data.user.LastName}} is a member of {% for rc in rcbyuserid %}{{ rc.Title|join(',') }}{% endfor %}.<br>
 <br>
 Thank you,<br>
 <br>

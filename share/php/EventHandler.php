@@ -39,15 +39,15 @@ function getRCsByUserId($userId)
     require_once 'ResearchConsortia.php';
     require_once 'RIS.php';
     require_once 'DBUtils.php';
-    # get Person ID by userId
+    #get Person ID by userId
     $personId = getEmployeeNumberFromUID($userId);
     # open a database connetion to RIS
     $RIS_DBH = openDB('RIS_RO');
-    # get RC's by Person ID
-    $rcByPersonID = getProjectDetails($RIS_DBH, array("peopleid=$personId"));
+    #get RC's by Person ID
+    $rcByPersonID = getProjectDetails($RIS_DBH,array("peopleid=$personId"));
     # close database connection
     $RIS_DBH = null;
-
+    
     return $rcByPersonID;
 }
 
@@ -56,19 +56,24 @@ function getRCsByUDI($udi)
     require_once 'ResearchConsortia.php';
     require_once 'RIS.php';
     require_once 'DBUtils.php';
-    # get Project ID by UDI
+    #get Project ID by UDI
     $projectid = getRCFromUDI($udi);
     # open a database connetion to RIS
     $RIS_DBH = openDB('RIS_RO');
-    # get RC's by Person ID
-    $rcByUDI = getProjectDetails($RIS_DBH, array("projectid=$projectid"));
+    #get RC's by Person ID
+    $rcByUDI = getProjectDetails($RIS_DBH,array("projectid=$projectid"));
     # close database connection
     $RIS_DBH = null;
-
+    
     return $rcByUDI;
 }
 
 function eventHappened($Action, $Data)
+{
+    emailDM($Action,$Data);
+}
+
+function emailDM($Action, $Data)
 {
     $messageData = getMessageTemplate($Action);
 
@@ -98,7 +103,7 @@ function eventHappened($Action, $Data)
 
     foreach ($dataManagers as $dataManager) {
         $mailData = array();
-
+        
         $mailData["data"] = $Data;
         $mailData["dm"] = $dataManager;
         if (isset($rcByUserId)) {
@@ -119,5 +124,4 @@ function eventHappened($Action, $Data)
     }
 
     return true;
-
 }
