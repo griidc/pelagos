@@ -10,6 +10,8 @@ class ResearchConsortiaTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
+        # add parent directory to include path so tests can be run from anywhere
+        set_include_path(get_include_path() . PATH_SEPARATOR . dirname(dirname(__FILE__)));
         require_once 'ResearchConsortia.php';
         require_once 'stubs/RISStub.php';
         $GLOBALS['ldap'] = parse_ini_file('tests/ldap.ini', true);

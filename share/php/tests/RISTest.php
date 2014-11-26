@@ -12,6 +12,8 @@ class RISTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
+        # add parent directory to include path so tests can be run from anywhere
+        set_include_path(get_include_path() . PATH_SEPARATOR . dirname(dirname(__FILE__)));
         require_once 'RIS.php';
         require_once 'DBUtils.php';
         # open a database connetion to RIS

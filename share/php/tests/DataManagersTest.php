@@ -10,6 +10,8 @@ class DataManagersTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
+        # add parent directory to include path so tests can be run from anywhere
+        set_include_path(get_include_path() . PATH_SEPARATOR . dirname(dirname(__FILE__)));
         require_once 'DataManagers.php';
         require_once 'stubs/ResearchConsortiaStub.php';
         require_once 'stubs/RISStub.php';
