@@ -80,6 +80,7 @@ function eventHappened($Action, $Data)
     # check if we have a user ID
     if (array_key_exists('userId', $Data)) {
         $dataManagers = getDMsFromUser($Data['userId']);
+        $rcByUserId = getRCsByUserId($Data['userId']);
     }
     # check if we have an UDI
     if (array_key_exists('udi', $Data)) {
@@ -92,18 +93,20 @@ function eventHappened($Action, $Data)
                 $dataManagers[] = $dataManager;
             }
         }
+        $rcByUDI = getRCsByUDI($Data['udi']);
     }
 
     foreach ($dataManagers as $dataManager) {
         $mailData = array();
 
-        $rcByUserId = getRCsByUserId($Data['userId']);
-        $rcByUDI = getRCsByUDI($Data['udi']);
-
         $mailData["data"] = $Data;
         $mailData["dm"] = $dataManager;
-        $mailData["rcbyuserid"] = $rcByUserId;
-        $mailData["rcbyudi"] = $rcByUDI;
+        if (isset($rcByUserId)) {
+            $mailData["rcbyuserid"] = $rcByUserId;
+        }
+        if (isset($rcByUDI)) {
+            $mailData["rcbyudi"] = $rcByUDI;
+        }
 
         $mailMessage  = expandTemplate($messageTemplate, $mailData);
 
