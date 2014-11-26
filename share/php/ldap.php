@@ -11,7 +11,7 @@ function connectLDAP($ldaphost) {
     
     if (!ldap_bind($ldapconnect)) {
         $dMessage = "Could not connect to LDAP. Please contact the administrator <a href=\"mailto:griidc@gomri.org?subject=DOI Error\">griidc@gomri.org</a>.";
-        throw Exception($dMessage);
+        throw new Exception($dMessage);
     }
     return $ldapconnect;
 }

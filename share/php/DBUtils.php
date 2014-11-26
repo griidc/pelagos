@@ -25,7 +25,7 @@ if (!function_exists('openDB')) {
             $dMessage  = "DB connection error: The database you specified, ";
             $dMessage .= "<i>$database</i>, could not be found in the GRIIDC ";
             $dMessage .= "database ini file.";
-            throw Exception($dMessage);
+            throw new Exception($dMessage);
             return $pdoconnection;
         } else {
             $config = $configini["$database"];
@@ -42,7 +42,7 @@ if (!function_exists('openDB')) {
                 $pdoconnection = new PDO($dbconnstr, $user, $password, array(PDO::ATTR_PERSISTENT => false));
             } catch (PDOException $e) {
                 $dMessage = 'Connection failed: ' . $e->getMessage();
-                throw Exception($dMessage);
+                throw new Exception($dMessage);
             }
         } elseif ($config["type"] == 'postgresql') {
             # driver used: pgsql
@@ -55,12 +55,12 @@ if (!function_exists('openDB')) {
                 $pdoconnection = new PDO($dbconnstr, $user, $password, array(PDO::ATTR_PERSISTENT => true));
             } catch (PDOException $e) {
                 $dMessage = 'Connection failed: ' . $e->getMessage();
-                throw Exception($dMessage);
+                throw new Exception($dMessage);
             }
         } else {
             $dMessage =  "Connection failed: unknown database type specified in ";
             $dMessage .= "the GRIIDC ini file for the <i>$database</i> database";
-            throw Exception($dMessage);
+            throw new Exception($dMessage);
         }
         return $pdoconnection;
     }
