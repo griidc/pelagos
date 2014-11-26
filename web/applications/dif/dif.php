@@ -249,7 +249,7 @@ function postDIF($fielddata)
                 mailApprovers($nudi,'DIF Submitted for Approval','reviewMail.html');
                 
                 $userData = getUserDetails($submitted);
-                $eventData = array('udi'=>$UDI,'userId'=>$submitted,'user'->$userData);
+                $eventData = array('udi'=>$UDI,'userId'=>$submitted,'user'=>$userData);
                 eventHappened('dif_saved_and_submitted',$eventData);
             }
             
@@ -261,7 +261,7 @@ function postDIF($fielddata)
             $sendMail = sendSubmitMail($submitted,$UDI,'GRIIDC DIF Approved','approveMail.html');
             
             $userData = getUserDetails($submitted);
-            $eventData = array('udi'=>$UDI,'userId'=>$submitted,'user'->$userData);
+            $eventData = array('udi'=>$UDI,'userId'=>$submitted,'user'=>$userData);
             eventHappened('dif_approved',$eventData);
         }
         else if ($frmButton == 'reject')
@@ -275,7 +275,7 @@ function postDIF($fielddata)
             $msgtitle = 'DIF Submitted';
             
             $userData = getUserDetails($editor);
-            $eventData = array('udi'=>$UDI,'userId'=>$editor,'user'->$userData);
+            $eventData = array('udi'=>$UDI,'userId'=>$editor,'user'=>$userData);
             eventHappened('dif_saved_but_not_submitted',$eventData);
         }
         else if ($frmButton == 'submit')
@@ -287,7 +287,7 @@ function postDIF($fielddata)
             mailApprovers($UDI,"DIF:$UDI Submitted for Approval",'reviewMail.html');
             
             $userData = getUserDetails($submitted);
-            $eventData = array('udi'=>$UDI,'userId'=>$submitted,'user'->$userData);
+            $eventData = array('udi'=>$UDI,'userId'=>$submitted,'user'=>$userData);
             eventHappened('dif_saved_and_submitted',$eventData);
             
         }
@@ -298,7 +298,7 @@ function postDIF($fielddata)
             $sendMail = sendSubmitMail($submitted,$UDI,'GRIIDC DIF Unlocked','unlocked.html');
             
             $userData = getUserDetails($submitted);
-            $eventData = array('udi'=>$UDI,'userId'=>$submitted,'user'->$userData);
+            $eventData = array('udi'=>$UDI,'userId'=>$submitted,'user'=>$userData);
             eventHappened('dif_unlock_request_approved',$eventData);
             
         }
@@ -310,7 +310,7 @@ function postDIF($fielddata)
             mailApprovers($UDI,"DIF:$UDI Unlock Request",'unlockReq.html');
             
             $userData = getUserDetails($editor);
-            $eventData = array('udi'=>$UDI,'userId'=>$editor,'user'->$userData);
+            $eventData = array('udi'=>$UDI,'userId'=>$editor,'user'=>$userData);
             eventHappened('dif_unlock_requested',$eventData);
         }
         else
