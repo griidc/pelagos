@@ -1,5 +1,7 @@
 <?php
 
+include_once '/opt/pelagos/share/php/aliasIncludes.php';
+
 include 'difDL.php'; //dif DataLayer
 
 include_once '/usr/local/share/GRIIDC/php/ldap.php'; 
