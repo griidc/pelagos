@@ -83,23 +83,26 @@ function emailDM($Action, $Data)
 
     require_once 'DataManagers.php';
     $dataManagers = array();
-    # check if we have a user ID
-    if (array_key_exists('userId', $Data)) {
-        $dataManagers = getDMsFromUser($Data['userId']);
-        $rcByUserId = getRCsByUserId($Data['userId']);
-    }
-    # check if we have an UDI
-    if (array_key_exists('udi', $Data)) {
-        $getDataManagerID = function ($dataManager) {
-            return $dataManager['ID'];
-        };
-        $dataManagerIDs = array_map($getDataManagerID, $dataManagers);
-        foreach (getDMsFromUDI($Data['udi']) as $dataManager) {
-            if (!in_array($dataManager['ID'], $dataManagerIDs)) {
-                $dataManagers[] = $dataManager;
-            }
+    
+    if (is_array($Data)) {
+        # check if we have a user ID
+        if (array_key_exists('userId', $Data)) {
+            $dataManagers = getDMsFromUser($Data['userId']);
+            $rcByUserId = getRCsByUserId($Data['userId']);
         }
-        $rcByUDI = getRCsByUDI($Data['udi']);
+        # check if we have an UDI
+        if (array_key_exists('udi', $Data)) {
+            $getDataManagerID = function ($dataManager) {
+                return $dataManager['ID'];
+            };
+            $dataManagerIDs = array_map($getDataManagerID, $dataManagers);
+            foreach (getDMsFromUDI($Data['udi']) as $dataManager) {
+                if (!in_array($dataManager['ID'], $dataManagerIDs)) {
+                    $dataManagers[] = $dataManager;
+                }
+            }
+            $rcByUDI = getRCsByUDI($Data['udi']);
+        }
     }
 
     foreach ($dataManagers as $dataManager) {
