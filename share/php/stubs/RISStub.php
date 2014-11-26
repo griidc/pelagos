@@ -1,5 +1,22 @@
 <?php
 
+function getProjectDetails($dbh, $filters = array())
+{
+    return array(
+        array(
+            'ID' => 1,
+            'Title' => 'Sample Project',
+            'Abstract' => 'This project is very abstract.',
+            'StartDate' => '2010-01-01',
+            'EndDate' => '2020-12-31',
+            'Location' => 'Everywhere and Nowhere',
+            'Fund_Src' => 7,
+            'Fund_Abbr' => 'RFP-I',
+            'Fund_Name' => 'Year 2-4 Consortia Grants (RFP-I)'
+        )
+    );
+}
+
 function getDMsFromRC($DBH, $RC)
 {
     switch ($RC) {
