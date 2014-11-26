@@ -425,8 +425,7 @@ if (!function_exists('getRCsFromRISUser')) {
                    " JOIN Programs ON ProjPeople.Program_ID = Programs.Program_ID ".
                    " JOIN FundingSource ON Programs.Program_FundSrc = FundingSource.Fund_ID ".
                    " JOIN Roles ON ProjPeople.Role_ID = Roles.Role_ID WHERE People.People_ID = '".$risUserId. "'".
-                   " AND FundingSource.Fund_Source In ('RFP-I','RFP-IV') ".
-                   " AND Programs.Program_Title NOT LIKE '%GRIIDC Test%'";
+                   " AND FundingSource.Fund_Source In ('RFP-I','RFP-IV') ";
 
         $stmt = $dbh->prepare($select);
         $stmt->execute();
@@ -481,4 +480,4 @@ if (!function_exists('getDMsFromRC')) {
 
         return $stmt->fetchAll();
     }
-}
+
