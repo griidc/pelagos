@@ -1,6 +1,6 @@
 Dear {{dm.FirstName}} {{dm.LastName}},<br>
 <br>
-This email is to notify you that a Dataset Information Form (DIF) has been created by {{data.user.FirstName}} {{data.user.LastName}}. The DIF {{data.udi}} has been saved, but has not yet been submitted to the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) for review and approval. {{data.user.FirstName}} {{data.user.LastName}} is a member of {% for rc in rcbyuserid %}{{ rc.Title|join(',') }}{% endfor %} and the dataset is associated with {% for rc in rcbyudi %}{{ rc.Title|join(',') }}{% endfor %}.<br>
+This email is to notify you that a Dataset Information Form (DIF) has been created by {{data.user.firstName}} {{data.user.lastName}}. The DIF {{data.udi}} has been saved, but has not yet been submitted to the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) for review and approval. {{data.user.firstName}} {{data.user.lastName}} is a member of {% for rc in rcbyuserid %}{{ rc.Title|join(',') }}{% endfor %} and the dataset is associated with {% for rc in rcbyudi %}{{ rc.Title|join(',') }}{% endfor %}.<br>
 <br>
 Thank you,<br>
 <br>
