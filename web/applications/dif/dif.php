@@ -205,8 +205,6 @@ function postDIF($fielddata)
     if (empty($submitted) OR ($status < 2 AND ($frmButton != 'reject' AND $frmButton != 'unlock')))
     {$submitted=$editor;};
     
-    //$gmlText = '<gml:Point srsName="urn:ogc:def:crs:EPSG::4326"><gml:pos srsDimension="2">27.70323 -97.30042</gml:pos></gml:Point>';
-    
     $logname = getPersonID(getUserID());
     
     $parameters = array($datasetUID,$UDI,$projectID,$taskID,$title,$primarypoc,$secondarypoc,$abstract,$datasettype,$datasetfor,$datasize,$observation,$approach,$startdate,$enddate,$geolocation,$submission,$natarchive,$ethical,$remarks,$logname,$status,$editor,$gmlText,$fundingSource,$submitted);
@@ -232,7 +230,8 @@ function postDIF($fielddata)
                 $msgtitle = 'New DIF Created';
                 $message = '<div><img src="/images/icons/info32.png"><p>You have saved a DIF. This DIF has been given the ID: '.$nudi.'<br>In order to submit your dataset to GRIIDC you must return to this page and submit the DIF for review and approval.</p></div>';
                 
-                $eventData = array('udi'=>$nudi,'userId'=>$submitted,'newDIF'=>true);
+                $userData = getUserDetails($editor); #return array('firstName'=>$firstName,'lastName'=>$lastName,'eMail'=>$eMail);
+                $eventData = array('udi'=>$UDI,'userId'=>$editor,'user'->$userData);
                 eventHappened('dif_saved_but_not_submitted',$eventData);
             }
             else
@@ -249,7 +248,8 @@ function postDIF($fielddata)
                 $sendMail = sendSubmitMail($submitted,$nudi,'GRIIDC DIF Submitted','submitMail.html');
                 mailApprovers($nudi,'DIF Submitted for Approval','reviewMail.html');
                 
-                $eventData = array('udi'=>$nudi,'userId'=>$submitted);
+                $userData = getUserDetails($submitted);
+                $eventData = array('udi'=>$UDI,'userId'=>$submitted,'user'->$userData);
                 eventHappened('dif_saved_and_submitted',$eventData);
             }
             
@@ -260,7 +260,8 @@ function postDIF($fielddata)
             $msgtitle = 'DIF Approved';
             $sendMail = sendSubmitMail($submitted,$UDI,'GRIIDC DIF Approved','approveMail.html');
             
-            $eventData = array('udi'=>$UDI,'userId'=>$submitted);
+            $userData = getUserDetails($submitted);
+            $eventData = array('udi'=>$UDI,'userId'=>$submitted,'user'->$userData);
             eventHappened('dif_approved',$eventData);
         }
         else if ($frmButton == 'reject')
@@ -273,7 +274,8 @@ function postDIF($fielddata)
             $message = '<div><img src="/images/icons/info32.png"><p>Thank you for saving DIF with ID:  '.$UDI.'.<br>Before registering this dataset you must return to this page and submit the dataset information form.</p></div>';
             $msgtitle = 'DIF Submitted';
             
-            $eventData = array('udi'=>$UDI,'userId'=>$submitted);
+            $userData = getUserDetails($editor);
+            $eventData = array('udi'=>$UDI,'userId'=>$editor,'user'->$userData);
             eventHappened('dif_saved_but_not_submitted',$eventData);
         }
         else if ($frmButton == 'submit')
@@ -284,7 +286,8 @@ function postDIF($fielddata)
             $sendMail = sendSubmitMail($submitted,$UDI,'GRIIDC DIF Submitted','submitMail.html');
             mailApprovers($UDI,"DIF:$UDI Submitted for Approval",'reviewMail.html');
             
-            $eventData = array('udi'=>$UDI,'userId'=>$submitted);
+            $userData = getUserDetails($submitted);
+            $eventData = array('udi'=>$UDI,'userId'=>$submitted,'user'->$userData);
             eventHappened('dif_saved_and_submitted',$eventData);
             
         }
@@ -294,7 +297,8 @@ function postDIF($fielddata)
             $msgtitle = 'DIF Unlocked';
             $sendMail = sendSubmitMail($submitted,$UDI,'GRIIDC DIF Unlocked','unlocked.html');
             
-            $eventData = array('udi'=>$UDI,'userId'=>$submitted);
+            $userData = getUserDetails($submitted);
+            $eventData = array('udi'=>$UDI,'userId'=>$submitted,'user'->$userData);
             eventHappened('dif_unlock_request_approved',$eventData);
             
         }
@@ -305,7 +309,8 @@ function postDIF($fielddata)
             
             mailApprovers($UDI,"DIF:$UDI Unlock Request",'unlockReq.html');
             
-            $eventData = array('udi'=>$UDI,'userId'=>$submitted);
+            $userData = getUserDetails($editor);
+            $eventData = array('udi'=>$UDI,'userId'=>$editor,'user'->$userData);
             eventHappened('dif_unlock_requested',$eventData);
         }
         else
