@@ -2,7 +2,7 @@
 
 function getMessageTemplate($Action)
 {
-    $eventHandlerConfig  = parse_ini_file('/etc/opt/EventHandler.ini', true);
+    $eventHandlerConfig  = parse_ini_file('/etc/opt/pelagos/EventHandler.ini', true);
 
     if (array_key_exists($Action, $eventHandlerConfig)) {
         $templateFileName = $eventHandlerConfig[$Action]["mail_template_filepath"];
