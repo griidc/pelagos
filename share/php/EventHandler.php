@@ -69,7 +69,7 @@ function getRCsByUDI($udi)
     # close database connection
     $RIS_DBH = null;
 
-    return $rcByUDI;
+    return $rcByUDI[0];
 }
 
 function eventHappened($Action, $Data)
@@ -108,13 +108,17 @@ function emailDM($Action, $Data)
         }
     }
 
+    $getRCTitle = function ($researchConsortia) {
+        return $researchConsortia['Title'];
+    };
+
     foreach ($dataManagers as $dataManager) {
         $mailData = array();
 
         $mailData["data"] = $Data;
         $mailData["dm"] = $dataManager;
         if (isset($rcByUserId)) {
-            $mailData["rcbyuserid"] = $rcByUserId;
+            $mailData['data']['user']['RCs'] = array_map($getRCTitle, $rcByUserId);
         }
         if (isset($rcByUDI)) {
             $mailData["rcbyudi"] = $rcByUDI;

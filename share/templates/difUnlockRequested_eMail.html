@@ -1,6 +1,6 @@
 Dear {{dm.FirstName}} {{dm.LastName}},<br>
 <br>
-The Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) has received a request to unlock the Dataset Information Form (DIF) approved for dataset {{data.udi}}. This request was submitted by {{data.user.firstName}} {{data.user.lastName}} who is a member of {% for rc in rcbyuserid %}{{ rc.Title|join(',') }}{% endfor %}. The dataset {{UDI}} is associated with {% for rc in rcbyudi %}{{ rc.Title|join(',') }}{% endfor %}.<br>
+The Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) has received a request to unlock the Dataset Information Form (DIF) approved for dataset {{data.udi}}. This request was submitted by {{data.user.firstName}} {{data.user.lastName}} who is a member of {{ data.user.RCs | join(',') }}. The dataset {{data.udi}} is associated with {{rcbyudi.Title}}.<br>
 <br>
 Thank you,<br>
 <br>
