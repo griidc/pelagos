@@ -124,14 +124,12 @@ if (!class_exists('griidcMailer')) {
             $headers .= 'X-Mailer: PHP/' . phpversion();
             $parameters = '-ODeliveryMode=d';
 
-            throw new Exception(
-                "\n*** mail sent ***\n" .
-                "To: $to\n" .
-                "Parameters: $parameters\n" .
-                "---------- START ----------\n" .
-                "Subject: $subject\n$headers\n\n" .
-                "$message----------- END -----------\n"
-            );
+            print "\n*** mail sent ***\n";
+            print "To: $to\n";
+            print "Parameters: $parameters\n";
+            print "---------- START ----------\n";
+            print "Subject: $subject\n$headers\n\n";
+            print "$message----------- END -----------\n";
         }
     }
 }
