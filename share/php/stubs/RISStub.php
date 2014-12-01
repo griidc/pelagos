@@ -2,10 +2,10 @@
 
 function getProjectDetails($dbh, $filters = array())
 {
-    return array(
+    $single_sample_project = array(
         array(
             'ID' => 1,
-            'Title' => 'Sample Project',
+            'Title' => 'Single Sample Project',
             'Abstract' => 'This project is very abstract.',
             'StartDate' => '2010-01-01',
             'EndDate' => '2020-12-31',
@@ -15,6 +15,41 @@ function getProjectDetails($dbh, $filters = array())
             'Fund_Name' => 'Year 2-4 Consortia Grants (RFP-I)'
         )
     );
+    $two_sample_projects = array(
+        array(
+            'ID' => 1,
+            'Title' => 'Sample Project 1',
+            'Abstract' => 'This project is very abstract.',
+            'StartDate' => '2010-01-01',
+            'EndDate' => '2020-12-31',
+            'Location' => 'Everywhere and Nowhere',
+            'Fund_Src' => 7,
+            'Fund_Abbr' => 'RFP-I',
+            'Fund_Name' => 'Year 2-4 Consortia Grants (RFP-I)'
+        ),
+        array(
+            'ID' => 2,
+            'Title' => 'Sample Project 2',
+            'Abstract' => 'This project is very abstract.',
+            'StartDate' => '2010-01-01',
+            'EndDate' => '2020-12-31',
+            'Location' => 'Everywhere and Nowhere',
+            'Fund_Src' => 7,
+            'Fund_Abbr' => 'RFP-I',
+            'Fund_Name' => 'Year 2-4 Consortia Grants (RFP-I)'
+        )
+    );
+    if (preg_match('/^peopleid=(\d+)/', $filters[0], $matches)) {
+        switch ($matches[1]) {
+            case 87:
+                return $two_sample_projects;
+            case 400:
+                return $single_sample_project;
+        }
+        return $single_sample_project;
+    } else {
+        return $single_sample_project;
+    }
 }
 
 function getDMsFromRC($DBH, $RC)
@@ -113,4 +148,13 @@ function getRCsFromRISUser($DBH, $RIS_user_ID)
             return array('134');
     }
     return array();
+}
+
+function getDMsFromRISUser($dbh, $risUserId)
+{
+    $DMs = array();
+    foreach (getRCsFromRISUser($dbh, $risUserId) as $RC) {
+        $DMs = array_merge($DMs, getDMsFromRC($dbh, $RC));
+    }
+    return $DMs;
 }
