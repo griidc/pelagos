@@ -460,11 +460,11 @@ if (!function_exists('getDMsFromRC')) {
     {
 
         $select = "SELECT DISTINCT ".
-                  " People.People_ID AS ID, ".
-                  " People.People_LastName AS LastName, ".
-                  " People.People_FirstName AS FirstName, ".
-                  " People.People_Email AS Email, ".
-                  " Programs.Program_ID AS ProgID ".
+                  " People.People_ID AS id, ".
+                  " People.People_LastName AS lastName, ".
+                  " People.People_FirstName AS firstName, ".
+                  " People.People_Email AS email, ".
+                  " Programs.Program_ID AS projectId ".
                       " FROM People JOIN ProjPeople ON People.People_ID = ProjPeople.People_ID ".
                         " JOIN Programs ON ProjPeople.Program_ID = Programs.Program_ID ".
                         " JOIN FundingSource ON Programs.Program_FundSrc = FundingSource.Fund_ID ".
