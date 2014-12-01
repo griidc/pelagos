@@ -480,3 +480,14 @@ if (!function_exists('getDMsFromRC')) {
         return $stmt->fetchAll();
     }
 }
+
+if (!function_exists('getDMsFromRISUser')) {
+    function getDMsFromRISUser($dbh, $risUserId)
+    {
+        $DMs = array();
+        foreach (getRCsFromRISUser($dbh, $risUserId) as $RC) {
+            $DMs = array_merge($DMs, getDMsFromRC($dbh, $RC));
+        }
+        return $DMs;
+    }
+}

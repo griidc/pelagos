@@ -28,7 +28,7 @@ class RISTest extends \PHPUnit_Framework_TestCase
 
     private function getDataManagerID($dataManager)
     {
-        return $dataManager['ID'];
+        return $dataManager['id'];
     }
 
     public function testGetProjectDetailsProjectId()
@@ -136,5 +136,18 @@ class RISTest extends \PHPUnit_Framework_TestCase
         $RCs = getRCsFromRISUser($this->DBH, 87);
         sort($RCs);
         $this->assertEquals(array(135,138), $RCs);
+    }
+
+    public function testGetDMsFromRISUser()
+    {
+        $DMs = getDMsFromRISUser($this->DBH, 400);
+        $this->assertEquals(array(778), array_map(array($this,'getDataManagerID'), $DMs));
+    }
+
+    public function testGetDMsFromRISUserMultiple()
+    {
+        $dataManagerIDs = array_map(array($this,'getDataManagerID'), getDMsFromRISUser($this->DBH, 87));
+        sort($dataManagerIDs);
+        $this->assertEquals(array(420,943), $dataManagerIDs);
     }
 }
