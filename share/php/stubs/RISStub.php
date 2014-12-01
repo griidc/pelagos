@@ -23,73 +23,81 @@ function getDMsFromRC($DBH, $RC)
         case 132:
             return array(
                 array(
-                    'ID' => 2818,
-                    'FirstName' => 'Brian',
-                    'LastName' => 'Dixon',
-                    'Email' => 'dixonb@uga.edu'
+                    'id' => 2818,
+                    'firstName' => 'Brian',
+                    'lastName' => 'Dixon',
+                    'email' => 'dixonb@uga.edu',
+                    'projectId' => 132
                 )
             );
         case 134:
             return array(
                 array(
-                    'ID' => 778,
-                    'FirstName' => 'Bruce',
-                    'LastName' => 'Lipphardt',
-                    'Email' => 'brucel@udel.edu'
+                    'id' => 778,
+                    'firstName' => 'Bruce',
+                    'lastName' => 'Lipphardt',
+                    'email' => 'brucel@udel.edu',
+                    'projectId' => 134
                 )
             );
         case 135:
             return array(
                 array(
-                    'ID' => 420,
-                    'FirstName' => 'Todd',
-                    'LastName' => 'Chavez',
-                    'Email' => 'tchavez@usf.edu'
+                    'id' => 420,
+                    'firstName' => 'Todd',
+                    'lastName' => 'Chavez',
+                    'email' => 'tchavez@usf.edu',
+                    'projectId' => 135
                 )
             );
         case 137:
             return array(
                 array(
-                    'ID' => 573,
-                    'FirstName' => 'Matthew',
-                    'LastName' => 'Howard',
-                    'Email' => 'mkhoward@tamu.edu'
+                    'id' => 573,
+                    'firstName' => 'Matthew',
+                    'lastName' => 'Howard',
+                    'email' => 'mkhoward@tamu.edu',
+                    'projectId' => 137
                 )
             );
         case 138:
             return array(
                 array(
-                    'ID' => 943,
-                    'FirstName' => 'Shawn',
-                    'LastName' => 'Smith',
-                    'Email' => 'smith@coaps.fsu.edu'
+                    'id' => 943,
+                    'firstName' => 'Shawn',
+                    'lastName' => 'Smith',
+                    'email' => 'smith@coaps.fsu.edu',
+                    'projectId' => 138
                 )
             );
         case 139:
             return array(
                 array(
-                    'ID' => 1544,
-                    'FirstName' => 'Jason',
-                    'LastName' => 'Weick',
-                    'Email' => 'jweick@lumcon.edu'
+                    'id' => 1544,
+                    'firstName' => 'Jason',
+                    'lastName' => 'Weick',
+                    'email' => 'jweick@lumcon.edu',
+                    'projectId' => 139
                 )
             );
         case 140:
             return array(
                 array(
-                    'ID' => 951,
-                    'FirstName' => 'Jian',
-                    'LastName' => 'Sheng',
-                    'Email' => 'jian.sheng@ttu.edu'
+                    'id' => 951,
+                    'firstName' => 'Jian',
+                    'lastName' => 'Sheng',
+                    'email' => 'jian.sheng@ttu.edu',
+                    'projectId' => 140
                 )
             );
         case 141:
             return array(
                 array(
-                    'ID' => 467,
-                    'FirstName' => 'Vijay',
-                    'LastName' => 'John',
-                    'Email' => 'vj@tulane.edu'
+                    'id' => 467,
+                    'firstName' => 'Vijay',
+                    'lastName' => 'John',
+                    'email' => 'vj@tulane.edu',
+                    'projectId' => 141
                 )
             );
     }

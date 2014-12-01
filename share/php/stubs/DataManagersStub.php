@@ -1,30 +1,33 @@
 <?php
 
-function getDMsFromUser($userID)
+function getDMsFromUser($userId)
 {
-    switch($userID) {
+    switch($userId) {
         case 'schen':
             return array(
                 array(
-                    'ID' => 778,
-                    'FirstName' => 'Bruce',
-                    'LastName' => 'Lipphardt',
-                    'Email' => 'brucel@udel.edu'
+                    'id' => 778,
+                    'firstName' => 'Bruce',
+                    'lastName' => 'Lipphardt',
+                    'email' => 'brucel@udel.edu',
+                    'projectId' => 134
                 )
             );
         case 'dhastings':
             return array(
                 array(
-                    'ID' => 420,
-                    'FirstName' => 'Todd',
-                    'LastName' => 'Chavez',
-                    'Email' => 'tchavez@usf.edu'
+                    'id' => 420,
+                    'firstName' => 'Todd',
+                    'lastName' => 'Chavez',
+                    'email' => 'tchavez@usf.edu',
+                    'projectId' => 135
                 ),
                 array(
-                    'ID' => 943,
-                    'FirstName' => 'Shawn',
-                    'LastName' => 'Smith',
-                    'Email' => 'smith@coaps.fsu.edu'
+                    'id' => 943,
+                    'firstName' => 'Shawn',
+                    'lastName' => 'Smith',
+                    'email' => 'smith@coaps.fsu.edu',
+                    'projectId' => 138
                 )
             );
     }
@@ -37,19 +40,21 @@ function getDMsFromUDI($UDI)
         case 'R1.x134.115:0002':
             return array(
                 array(
-                    'ID' => 778,
-                    'FirstName' => 'Bruce',
-                    'LastName' => 'Lipphardt',
-                    'Email' => 'brucel@udel.edu'
+                    'id' => 778,
+                    'firstName' => 'Bruce',
+                    'lastName' => 'Lipphardt',
+                    'email' => 'brucel@udel.edu',
+                    'projectId' => 134
                 )
             );
         case 'R1.x135.120:0002':
             return array(
                 array(
-                    'ID' => 420,
-                    'FirstName' => 'Todd',
-                    'LastName' => 'Chavez',
-                    'Email' => 'tchavez@usf.edu'
+                    'id' => 420,
+                    'firstName' => 'Todd',
+                    'lastName' => 'Chavez',
+                    'email' => 'tchavez@usf.edu',
+                    'projectId' => 135
                 )
             );
     }
