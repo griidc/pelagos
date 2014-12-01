@@ -96,11 +96,11 @@ function emailDM($Action, $Data)
         # check if we have an UDI
         if (array_key_exists('udi', $Data)) {
             $getDataManagerID = function ($dataManager) {
-                return $dataManager['ID'];
+                return $dataManager['id'];
             };
             $dataManagerIDs = array_map($getDataManagerID, $dataManagers);
             foreach (getDMsFromUDI($Data['udi']) as $dataManager) {
-                if (!in_array($dataManager['ID'], $dataManagerIDs)) {
+                if (!in_array($dataManager['id'], $dataManagerIDs)) {
                     $dataManagers[] = $dataManager;
                 }
             }
@@ -128,7 +128,7 @@ function emailDM($Action, $Data)
 
         require_once 'griidcMailer.php';
         $eventMailer = new griidcMailer(false);
-        $eventMailer->addToUser($dataManager['FirstName'], $dataManager['LastName'], $dataManager['Email']);
+        $eventMailer->addToUser($dataManager['firstName'], $dataManager['lastName'], $dataManager['email']);
         $eventMailer->mailMessage = $mailMessage;
         $eventMailer->mailSubject = $subject;
         $eventMailer->sendMail();
