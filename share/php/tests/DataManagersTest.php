@@ -20,7 +20,7 @@ class DataManagersTest extends \PHPUnit_Framework_TestCase
 
     private function getDataManagerID($dataManager)
     {
-        return $dataManager['ID'];
+        return $dataManager['id'];
     }
 
     public function testGetDMsFromUserNull()
