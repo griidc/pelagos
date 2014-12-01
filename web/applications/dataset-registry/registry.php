@@ -346,7 +346,8 @@ if ($_POST) {
                 $UDI = $_POST['dataset_udi'];
                 $submitAction = $_POST["submit"];
                 
-                $eventData = array('udi'=>$UDI,'userId'=>$uid,'registryID'=>$registryID,'user'=>array('FirstName'=>$firstName,'LastName'=>$lastName));
+                $userData = array('firstName'=>$firstName,'lastName'=>$lastName);
+                $eventData = array('udi'=>$UDI,'userId'=>$uid,'registryID'=>$registryID,'user'=>$userData);
                 
                 if ($submitAction == 'Update')
                 { $eventAction = 'dataset_registration_updated'; }
