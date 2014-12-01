@@ -47,7 +47,7 @@ function getRCsByUserId($userId)
     $personId = getEmployeeNumberFromUID($userId);
     # open a database connetion to RIS
     $RIS_DBH = openDB('RIS_RO');
-    #get RC's by Person ID
+    #get Project details by Person ID
     $rcByPersonID = getProjectDetails($RIS_DBH, array("peopleid=$personId"));
     # close database connection
     $RIS_DBH = null;
@@ -64,12 +64,49 @@ function getRCsByUDI($udi)
     $projectid = getRCFromUDI($udi);
     # open a database connetion to RIS
     $RIS_DBH = openDB('RIS_RO');
-    #get RC's by Person ID
-    $rcByUDI = getProjectDetails($RIS_DBH, array("projectid=$projectid"));
+    #get Project details by Project ID
+    $rcsByUDI = getProjectDetails($RIS_DBH, array("projectid=$projectid"));
     # close database connection
     $RIS_DBH = null;
 
     return $rcByUDI[0];
+}
+
+function getRCsByPeopleID($RISUserId)
+{
+    require_once 'ResearchConsortia.php';
+    require_once 'RIS.php';
+    require_once 'DBUtils.php';
+    # open a database connetion to RIS
+    $RIS_DBH = openDB('RIS_RO');
+    #get RC's by Person ID
+    $rcsByPeopleId = array();
+    foreach (getRCsFromRISUser($RIS_DBH, $RISUserId) as $projectid)
+    {
+        #get Project details by Project ID for each ID
+        $projectDetails = getProjectDetails($RIS_DBH, array("projectid=$projectid"));
+        $rcsByPeopleId[] = $projectDetails[0];
+    }
+    
+    # close database connection
+    $RIS_DBH = null;
+    
+    return $rcsByPeopleId[0];
+}
+
+function getDMsFromPeopleID($peopleId)
+{
+    require_once 'ResearchConsortia.php';
+    require_once 'RIS.php';
+    require_once 'DBUtils.php';
+    # open a database connetion to RIS
+    $RIS_DBH = openDB('RIS_RO');
+    #get DM's by Person ID
+    $dmByPeopleID = getDMsFromRISUser($RIS_DBH, $peopleId);
+    # close database connection
+    $RIS_DBH = null;
+    
+    return $dmByPeopleID; 
 }
 
 function eventHappened($Action, $Data)
@@ -88,6 +125,10 @@ function emailDM($Action, $Data)
     $dataManagers = array();
     
     if (is_array($Data)) {
+        
+        $getDataManagerID = function ($dataManager) {
+            return $dataManager['id'];
+        };
         # check if we have a user ID
         if (array_key_exists('userId', $Data)) {
             $dataManagers = getDMsFromUser($Data['userId']);
@@ -95,9 +136,6 @@ function emailDM($Action, $Data)
         }
         # check if we have an UDI
         if (array_key_exists('udi', $Data)) {
-            $getDataManagerID = function ($dataManager) {
-                return $dataManager['id'];
-            };
             $dataManagerIDs = array_map($getDataManagerID, $dataManagers);
             foreach (getDMsFromUDI($Data['udi']) as $dataManager) {
                 if (!in_array($dataManager['id'], $dataManagerIDs)) {
@@ -105,6 +143,16 @@ function emailDM($Action, $Data)
                 }
             }
             $rcByUDI = getRCsByUDI($Data['udi']);
+        }
+        # check to see if Person ID is given
+        if (array_key_exists('RISUserId', $Data)) {
+            $dataManagerIDs = array_map($getDataManagerID, $dataManagers);
+            foreach (getDMsFromPeopleID($Data['RISUserId']) as $dataManager) {
+                if (!in_array($dataManager['id'], $dataManagerIDs)) {
+                    $dataManagers[] = $dataManager;
+                }
+            } 
+            $rcByUserId = getRCsByPeopleID($Data['RISUserId']);
         }
     }
 
