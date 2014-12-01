@@ -69,7 +69,7 @@ function getRCsByUDI($udi)
     # close database connection
     $RIS_DBH = null;
 
-    return $rcByUDI[0];
+    return $rcsByUDI[0];
 }
 
 function getRCsByPeopleID($RISUserId)
