@@ -504,4 +504,11 @@ function drop_search_temp($dbh) {
     }
 }
 
-?>
+if (!function_exists('getProjectIdFromUdi')) {
+    function getProjectIdFromUdi($dbh, $udi) {
+        $stmt = $dbh->prepare('SELECT project_id from datasets WHERE dataset_udi = :udi');
+        $stmt->bindParam(':udi', $udi);
+        $stmt->execute();
+        return $stmt->fetchColumn();
+    }
+}

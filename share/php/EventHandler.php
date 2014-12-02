@@ -57,17 +57,19 @@ function getRCsByUserId($userId)
 
 function getRCsByUDI($udi)
 {
-    require_once 'ResearchConsortia.php';
+    require_once 'datasets.php';
     require_once 'RIS.php';
     require_once 'DBUtils.php';
+    $GOMRI_DBH = openDB('GOMRI_RO');
     #get Project ID by UDI
-    $projectid = getRCFromUDI($udi);
+    $projectid = getProjectIdFromUdi($GOMRI_DBH, $udi);
     # open a database connetion to RIS
     $RIS_DBH = openDB('RIS_RO');
     #get Project details by Project ID
     $rcsByUDI = getProjectDetails($RIS_DBH, array("projectid=$projectid"));
-    # close database connection
+    # close database connections
     $RIS_DBH = null;
+    $GOMRI_DBH = null;
 
     return $rcsByUDI[0];
 }
