@@ -72,7 +72,7 @@ function getRCsByUDI($udi)
     return $rcsByUDI[0];
 }
 
-function getRCsByPeopleID($RISUserId)
+function getRCsByPeopleID($risUserId)
 {
     require_once 'ResearchConsortia.php';
     require_once 'RIS.php';
@@ -81,7 +81,7 @@ function getRCsByPeopleID($RISUserId)
     $RIS_DBH = openDB('RIS_RO');
     #get RC's by Person ID
     $rcsByPeopleId = array();
-    foreach (getRCsFromRISUser($RIS_DBH, $RISUserId) as $projectid)
+    foreach (getRCsFromRISUser($RIS_DBH, $risUserId) as $projectid)
     {
         #get Project details by Project ID for each ID
         $projectDetails = getProjectDetails($RIS_DBH, array("projectid=$projectid"));
@@ -145,14 +145,14 @@ function emailDM($Action, $Data)
             $rcByUDI = getRCsByUDI($Data['udi']);
         }
         # check to see if Person ID is given
-        if (array_key_exists('RISUserId', $Data)) {
+        if (array_key_exists('risUserId', $Data)) {
             $dataManagerIDs = array_map($getDataManagerID, $dataManagers);
-            foreach (getDMsFromPeopleID($Data['RISUserId']) as $dataManager) {
+            foreach (getDMsFromPeopleID($Data['risUserId']) as $dataManager) {
                 if (!in_array($dataManager['id'], $dataManagerIDs)) {
                     $dataManagers[] = $dataManager;
                 }
             } 
-            $rcByUserId = getRCsByPeopleID($Data['RISUserId']);
+            $rcByUserId = getRCsByPeopleID($Data['risUserId']);
         }
     }
 

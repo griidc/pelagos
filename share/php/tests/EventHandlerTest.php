@@ -131,17 +131,17 @@ class EventHandlerTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-    public function testEventHappenedNullRISUserId()
+    public function testEventHappenedNullrisUserId()
     {
         foreach ($this->events as $event => $testInfo) {
-            $this->assertEquals(null, eventHappened($event, array('RISUserId' => null)));
+            $this->assertEquals(null, eventHappened($event, array('risUserId' => null)));
         }
     }
 
-    public function testEventHappenedUnknownRISUserId()
+    public function testEventHappenedUnknownrisUserId()
     {
         foreach ($this->events as $event => $testInfo) {
-            $this->assertEquals(null, eventHappened($event, array('RISUserId' => 0)));
+            $this->assertEquals(null, eventHappened($event, array('risUserId' => 0)));
         }
     }
 
@@ -151,7 +151,7 @@ class EventHandlerTest extends \PHPUnit_Framework_TestCase
     {
         foreach ($this->events as $event => $testInfo) {
             if (in_array('template', $testInfo['tests'])) {
-                foreach (array(array('userId' => 'schen'),array('RISUserId' => 400)) as $data) {
+                foreach (array(array('userId' => 'schen'),array('risUserId' => 400)) as $data) {
                     ob_start();
                     print "\n\nTesting event: $event\n\nwith data:\n\n";
                     foreach ($data as $key => $val) {
@@ -169,7 +169,7 @@ class EventHandlerTest extends \PHPUnit_Framework_TestCase
     {
         foreach ($this->events as $event => $testInfo) {
             if (in_array('dmEmail', $testInfo['tests'])) {
-                foreach (array(array('userId' => 'schen'),array('RISUserId' => 400)) as $data) {
+                foreach (array(array('userId' => 'schen'),array('risUserId' => 400)) as $data) {
                     ob_start();
                     print "\n\nTesting event: $event\n\nwith data:\n\n";
                     foreach ($data as $key => $val) {
@@ -187,7 +187,7 @@ class EventHandlerTest extends \PHPUnit_Framework_TestCase
     {
         foreach ($this->events as $event => $testInfo) {
             if (in_array('dmEmail', $testInfo['tests'])) {
-                foreach (array(array('userId' => 'dhastings'),array('RISUserId' => 87)) as $data) {
+                foreach (array(array('userId' => 'dhastings'),array('risUserId' => 87)) as $data) {
                     ob_start();
                     print "\n\nTesting event: $event\n\nwith data:\n\n";
                     foreach ($data as $key => $val) {
@@ -205,7 +205,7 @@ class EventHandlerTest extends \PHPUnit_Framework_TestCase
     {
         foreach ($this->events as $event => $testInfo) {
             if (in_array('dmName', $testInfo['tests'])) {
-                foreach (array(array('userId' => 'schen'),array('RISUserId' => 400)) as $data) {
+                foreach (array(array('userId' => 'schen'),array('risUserId' => 400)) as $data) {
                     ob_start();
                     print "\n\nTesting event: $event\n\nwith data:\n\n";
                     foreach ($data as $key => $val) {
@@ -251,7 +251,7 @@ class EventHandlerTest extends \PHPUnit_Framework_TestCase
     {
         foreach ($this->events as $event => $testInfo) {
             if (in_array('userRCList', $testInfo['tests'])) {
-                foreach (array(array('userId' => 'schen'),array('RISUserId' => 400)) as $data) {
+                foreach (array(array('userId' => 'schen'),array('risUserId' => 400)) as $data) {
                     ob_start();
                     print "\n\nTesting event: $event\n\nwith data:\n\n";
                     foreach ($data as $key => $val) {
@@ -269,7 +269,7 @@ class EventHandlerTest extends \PHPUnit_Framework_TestCase
     {
         foreach ($this->events as $event => $testInfo) {
             if (in_array('userRCList', $testInfo['tests'])) {
-                foreach (array(array('userId' => 'dhastings'),array('RISUserId' => 87)) as $data) {
+                foreach (array(array('userId' => 'dhastings'),array('risUserId' => 87)) as $data) {
                     ob_start();
                     print "\n\nTesting event: $event\n\nwith data:\n\n";
                     foreach ($data as $key => $val) {
