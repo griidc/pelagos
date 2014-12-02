@@ -16,6 +16,7 @@ class DataManagersTest extends \PHPUnit_Framework_TestCase
         require_once 'stubs/ResearchConsortiaStub.php';
         require_once 'stubs/RISStub.php';
         require_once 'stubs/DBUtilsStub.php';
+        require_once 'stubs/datasetsStub.php';
     }
 
     private function getDataManagerID($dataManager)
@@ -50,14 +51,14 @@ class DataManagersTest extends \PHPUnit_Framework_TestCase
 
     public function testGetDMsFromUserSingleRC()
     {
-        $this->assertEquals(array(778), array_map(array($this,'getDataManagerID'), getDMsFromUser('schen')));
+        $this->assertEquals(array(10), array_map(array($this,'getDataManagerID'), getDMsFromUser('user1')));
     }
 
     public function testGetDMsFromUserMultipleRCs()
     {
-        $dataManagerIDs = array_map(array($this,'getDataManagerID'), getDMsFromUser('dhastings'));
+        $dataManagerIDs = array_map(array($this,'getDataManagerID'), getDMsFromUser('user2'));
         sort($dataManagerIDs);
-        $this->assertEquals(array(420,943), $dataManagerIDs);
+        $this->assertEquals(array(20,30), $dataManagerIDs);
     }
 
     public function testGetDMsFromUDINull()
@@ -77,12 +78,13 @@ class DataManagersTest extends \PHPUnit_Framework_TestCase
 
     public function testGetDMsFromUDIUnknown()
     {
-        $this->assertEquals(array(), array_map(array($this,'getDataManagerID'), getDMsFromUDI('R1.x555.115:0002')));
+        $this->assertEquals(array(), array_map(array($this,'getDataManagerID'), getDMsFromUDI('R1.x999.999:0001')));
     }
 
     public function testGetDMsFromUDIValid()
     {
-        $this->assertEquals(array(778), array_map(array($this,'getDataManagerID'), getDMsFromUDI('R1.x134.115:0002')));
-        $this->assertEquals(array(420), array_map(array($this,'getDataManagerID'), getDMsFromUDI('R1.x135.120:0002')));
+        $this->assertEquals(array(10), array_map(array($this,'getDataManagerID'), getDMsFromUDI('R1.x100.001:0001')));
+        $this->assertEquals(array(20), array_map(array($this,'getDataManagerID'), getDMsFromUDI('R1.x200.002:0001')));
+        $this->assertEquals(array(30), array_map(array($this,'getDataManagerID'), getDMsFromUDI('R1.x300.003:0001')));
     }
 }

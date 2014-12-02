@@ -14,7 +14,9 @@ class ResearchConsortiaTest extends \PHPUnit_Framework_TestCase
         set_include_path(get_include_path() . PATH_SEPARATOR . dirname(dirname(__FILE__)));
         require_once 'ResearchConsortia.php';
         require_once 'stubs/RISStub.php';
-        $GLOBALS['ldap'] = parse_ini_file('tests/ldap.ini', true);
+        require_once 'stubs/DBUtilsStub.php';
+        require_once 'stubs/ldapStub.php';
+        require_once 'stubs/datasetsStub.php';
     }
 
     public function testGetRCsFromUserNull()
@@ -44,39 +46,13 @@ class ResearchConsortiaTest extends \PHPUnit_Framework_TestCase
 
     public function testGetRCsFromUserSingleRC()
     {
-        $this->assertEquals(array(134), getRCsFromUser('schen'));
+        $this->assertEquals(array(100), getRCsFromUser('user1'));
     }
 
     public function testGetRCsFromUserMultipleRCs()
     {
-        $RCs = getRCsFromUser('dhastings');
+        $RCs = getRCsFromUser('user2');
         sort($RCs);
-        $this->assertEquals(array(135,138), $RCs);
-    }
-
-    public function testGetRCFromUDINull()
-    {
-        $this->assertEquals(null, getRCFromUDI(null));
-    }
-
-    public function testGetRCFromUDIEmptyString()
-    {
-        $this->assertEquals(null, getRCFromUDI(''));
-    }
-
-    public function testGetRCFromUDIInvalidFormat()
-    {
-        $this->assertEquals(null, getRCFromUDI('0123456789012345'));
-    }
-
-    public function testGetRCFromUDIUnknown()
-    {
-        $this->assertEquals(null, getRCFromUDI('R1.x555.115:0002'));
-    }
-
-    public function testGetRCFromUDIValid()
-    {
-        $this->assertEquals(134, getRCFromUDI('R1.x134.115:0002'));
-        $this->assertEquals(135, getRCFromUDI('R1.x135.120:0002'));
+        $this->assertEquals(array(200,300), $RCs);
     }
 }

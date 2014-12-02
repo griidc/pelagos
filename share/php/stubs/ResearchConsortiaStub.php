@@ -1,23 +1,25 @@
 <?php
 
-function getRCFromUDI($UDI)
+function getRCFromUDI($udi)
 {
-    switch ($UDI) {
-        case 'R1.x134.115:0002':
-            return 134;
-        case 'R1.x135.120:0002':
-            return 135;
+    switch ($udi) {
+        case 'R1.x001.001:0001':
+            return 1;
+        case 'R1.x002.002:0001':
+            return 2;
+        case 'R1.x003.003:0001':
+            return 3;
     }
     return null;
 }
 
-function getRCsFromUser($userID)
+function getRCsFromUser($userId)
 {
-    switch ($userID) {
-        case 'schen':
-            return array(134);
-        case 'dhastings':
-            return array(135,138);
+    switch ($userId) {
+        case 'user1':
+            return array(100);
+        case 'user2':
+            return array(200,300);
     }
     return array();
 }

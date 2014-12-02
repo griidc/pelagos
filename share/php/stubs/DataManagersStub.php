@@ -3,31 +3,31 @@
 function getDMsFromUser($userId)
 {
     switch($userId) {
-        case 'schen':
+        case 'user1':
             return array(
                 array(
-                    'id' => 778,
-                    'firstName' => 'Bruce',
-                    'lastName' => 'Lipphardt',
-                    'email' => 'brucel@udel.edu',
-                    'projectId' => 134
+                    'id' => 10,
+                    'firstName' => 'Data',
+                    'lastName' => 'Manager 1',
+                    'email' => 'dm1@somewhere.edu',
+                    'projectId' => 100
                 )
             );
-        case 'dhastings':
+        case 'user2':
             return array(
                 array(
-                    'id' => 420,
-                    'firstName' => 'Todd',
-                    'lastName' => 'Chavez',
-                    'email' => 'tchavez@usf.edu',
-                    'projectId' => 135
+                    'id' => 20,
+                    'firstName' => 'Data',
+                    'lastName' => 'Manager 2',
+                    'email' => 'dm2@somewhere.edu',
+                    'projectId' => 200
                 ),
                 array(
-                    'id' => 943,
-                    'firstName' => 'Shawn',
-                    'lastName' => 'Smith',
-                    'email' => 'smith@coaps.fsu.edu',
-                    'projectId' => 138
+                    'id' => 30,
+                    'firstName' => 'Data',
+                    'lastName' => 'Manager 3',
+                    'email' => 'dm3@somewhere.edu',
+                    'projectId' => 300
                 )
             );
     }
@@ -37,24 +37,34 @@ function getDMsFromUser($userId)
 function getDMsFromUDI($UDI)
 {
     switch ($UDI) {
-        case 'R1.x134.115:0002':
+        case 'R1.x100.001:0001':
             return array(
                 array(
-                    'id' => 778,
-                    'firstName' => 'Bruce',
-                    'lastName' => 'Lipphardt',
-                    'email' => 'brucel@udel.edu',
-                    'projectId' => 134
+                    'id' => 10,
+                    'firstName' => 'Data',
+                    'lastName' => 'Manager 1',
+                    'email' => 'dm1@somewhere.edu',
+                    'projectId' => 100
                 )
             );
-        case 'R1.x135.120:0002':
+        case 'R1.x200.002:0001':
             return array(
                 array(
-                    'id' => 420,
-                    'firstName' => 'Todd',
-                    'lastName' => 'Chavez',
-                    'email' => 'tchavez@usf.edu',
-                    'projectId' => 135
+                    'id' => 20,
+                    'firstName' => 'Data',
+                    'lastName' => 'Manager 2',
+                    'email' => 'dm2@somewhere.edu',
+                    'projectId' => 200
+                )
+            );
+        case 'R1.x300.003:0001':
+            return array(
+                array(
+                    'id' => 30,
+                    'firstName' => 'Data',
+                    'lastName' => 'Manager 3',
+                    'email' => 'dm3@somewhere.edu',
+                    'projectId' => 300
                 )
             );
     }
