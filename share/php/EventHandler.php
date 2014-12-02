@@ -91,7 +91,7 @@ function getRCsByPeopleID($risUserId)
     # close database connection
     $RIS_DBH = null;
     
-    return $rcsByPeopleId[0];
+    return $rcsByPeopleId;
 }
 
 function getDMsFromPeopleID($peopleId)
