@@ -55,7 +55,7 @@ function getRCsByUserId($userId)
     return $rcByPersonID;
 }
 
-function getRCsByUDI($udi)
+function getRCsByUDI($udi) # return Array
 {
     require_once 'datasets.php';
     require_once 'RIS.php';
@@ -63,6 +63,10 @@ function getRCsByUDI($udi)
     $GOMRI_DBH = openDB('GOMRI_RO');
     #get Project ID by UDI
     $projectid = getProjectIdFromUdi($GOMRI_DBH, $udi);
+    if (!$projectid)
+    {
+        return array();
+    }
     # open a database connetion to RIS
     $RIS_DBH = openDB('RIS_RO');
     #get Project details by Project ID
