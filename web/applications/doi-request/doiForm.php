@@ -2,6 +2,7 @@
 include_once '/usr/local/share/GRIIDC/php/ldap.php';
 include_once '/usr/local/share/GRIIDC/php/drupal.php';
 include_once '/usr/local/share/GRIIDC/php/aliasIncludes.php';
+include_once '/usr/local/share/GRIIDC/php/EventHandler.php'; 
 
 drupal_add_library('system', 'ui.datepicker');
 drupal_add_library('system', 'ui.dialog');
