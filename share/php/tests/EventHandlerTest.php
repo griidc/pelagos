@@ -119,6 +119,13 @@ class EventHandlerTest extends \PHPUnit_Framework_TestCase
         }
     }
 
+    public function testEventHappenedBadUDI()
+    {
+        foreach ($this->events as $event => $testInfo) {
+            $this->assertEquals(null, eventHappened($event, array('udi' => '1234')));
+        }
+    }
+
     public function testEventHappenedNullUserId()
     {
         foreach ($this->events as $event => $testInfo) {
