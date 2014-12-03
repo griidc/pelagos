@@ -395,10 +395,26 @@ $app->post('/request', function () use ($app) {
                 mail($toAddress,$subject,$message,"From: $fromAddress");
             }
 
+            $risUserId = null;
+            if (array_key_exists('employeeNumber', $stash['person']) and
+                array_key_exists('value', $stash['person']['employeeNumber']) and
+                isset($stash['person']['employeeNumber']['value'])) {
+                $risUserId = $stash['person']['employeeNumber']['value'];
+            }
+
             # pass event to notification event handler, along with username of
             # user who successfully initiated an account request.
-            $eventData = array('userId'=>$uid);
-            eventHappened('account_requested', $eventData);
+            eventHappened(
+                'account_requested',
+                array(
+                    'risUserId' => $risUserId,
+                    'user' => array(
+                        'firstName' => $stash['person']['givenName']['value'],
+                        'lastName' => $stash['person']['sn']['value'],
+                        'email' => $stash['person']['mail']['value']
+                    )
+                )
+            );
 
             return $app->render('request_submitted.html',$stash);
         }
@@ -526,8 +542,17 @@ $app->post('/approve/create', $GLOBALS['AUTH_FOR_ROLE']('admin'), function () us
 
             # pass event to notification event handler, along with username of
             # user who's account request was approved
-            $eventData = array('userId'=>$uid);
-            eventHappened('account_request_approved', $eventData);
+            eventHappened(
+                'account_request_approved',
+                array(
+                    'userId' => $uid,
+                    'user' => array(
+                        'firstName' => $ldif['person']['givenName']['value'],
+                        'lastName' => $ldif['person']['sn']['value'],
+                        'email' => $ldif['person']['mail']['value']
+                    )
+                )
+            );
         }
     }
 });
