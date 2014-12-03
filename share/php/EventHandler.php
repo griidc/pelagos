@@ -2,7 +2,7 @@
 
 function getMessageTemplate($Action)
 {
-    $GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini',true);
+    $GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini', true);
     $templatePath = $GLOBALS['config']['paths']['templates'];
 
     $eventHandlerConfig  = parse_ini_file('/etc/opt/pelagos/EventHandler.ini', true);
@@ -63,8 +63,7 @@ function getRCsByUDI($udi) # return Array
     $GOMRI_DBH = openDB('GOMRI_RO');
     #get Project ID by UDI
     $projectid = getProjectIdFromUdi($GOMRI_DBH, $udi);
-    if (!$projectid)
-    {
+    if (!$projectid) {
         return array();
     }
     # open a database connetion to RIS
@@ -87,16 +86,15 @@ function getRCsByPeopleID($risUserId)
     $RIS_DBH = openDB('RIS_RO');
     #get RC's by Person ID
     $rcsByPeopleId = array();
-    foreach (getRCsFromRISUser($RIS_DBH, $risUserId) as $projectid)
-    {
+    foreach (getRCsFromRISUser($RIS_DBH, $risUserId) as $projectid) {
         #get Project details by Project ID for each ID
         $projectDetails = getProjectDetails($RIS_DBH, array("projectid=$projectid"));
         $rcsByPeopleId[] = $projectDetails[0];
     }
-    
+
     # close database connection
     $RIS_DBH = null;
-    
+
     return $rcsByPeopleId;
 }
 
@@ -111,8 +109,8 @@ function getDMsFromPeopleID($peopleId)
     $dmByPeopleID = getDMsFromRISUser($RIS_DBH, $peopleId);
     # close database connection
     $RIS_DBH = null;
-    
-    return $dmByPeopleID; 
+
+    return $dmByPeopleID;
 }
 
 function eventHappened($Action, $Data)
@@ -129,9 +127,9 @@ function emailDM($Action, $Data)
 
     require_once 'DataManagers.php';
     $dataManagers = array();
-    
+
     if (is_array($Data)) {
-        
+
         $getDataManagerID = function ($dataManager) {
             return $dataManager['id'];
         };
@@ -157,7 +155,7 @@ function emailDM($Action, $Data)
                 if (!in_array($dataManager['id'], $dataManagerIDs)) {
                     $dataManagers[] = $dataManager;
                 }
-            } 
+            }
             $rcByUserId = getRCsByPeopleID($Data['risUserId']);
         }
     }
