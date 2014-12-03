@@ -233,7 +233,7 @@ function postDIF($fielddata)
                 $message = '<div><img src="/images/icons/info32.png"><p>You have saved a DIF. This DIF has been given the ID: '.$nudi.'<br>In order to submit your dataset to GRIIDC you must return to this page and submit the DIF for review and approval.</p></div>';
                 
                 $userData = getUserDetails($editor); 
-                $eventData = array('udi'=>$UDI,'userId'=>$editor,'user'=>$userData);
+                $eventData = array('udi'=>$nudi,'userId'=>$editor,'user'=>$userData);
                 eventHappened('dif_saved_but_not_submitted',$eventData);
             }
             else
@@ -251,7 +251,7 @@ function postDIF($fielddata)
                 mailApprovers($nudi,'DIF Submitted for Approval','reviewMail.html');
                 
                 $userData = getUserDetails($submitted);
-                $eventData = array('udi'=>$UDI,'userId'=>$submitted,'user'=>$userData);
+                $eventData = array('udi'=>$nudi,'userId'=>$submitted,'user'=>$userData);
                 eventHappened('dif_saved_and_submitted',$eventData);
             }
             
