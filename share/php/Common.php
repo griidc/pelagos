@@ -1,17 +1,20 @@
 <?php
 
 if (!function_exists('configMerge')) {
-    function configMerge($originalConfigArray, $localConfigArray)
+    function configMerge($config_ini, $custom_ini)
     {
-        $newConfig = array();
-        foreach (array_keys($localConfigArray) as $key) {
-            if (isset($localConfigArray[$key])) {
-                $newConfig[$key] = array_merge($originalConfigArray[$key], $localConfigArray[$key]);
+        foreach ($custom_ini AS $k => $v) {
+            if (is_array($v)){
+                if(isset($custom_ini[$k]) and !isset($config_ini[$k])) {
+                    $config_ini[$k] =  $custom_ini[$k];
+                } else {
+                    $config_ini[$k] = configMerge($config_ini[$k], $custom_ini[$k]);
+                }
             } else {
-                $newConfig[$key] = $originalConfigArray[$key];
+                $config_ini[$k] = $v;
             }
         }
-        return array_merge($originalConfigArray, $newConfig);
+        return $config_ini;
     }
 }
 
