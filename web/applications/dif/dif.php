@@ -1,5 +1,8 @@
 <?php
 
+$GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini', true);
+$GLOBALS['config'] = array_merge($GLOBALS['config'], parse_ini_file($GLOBALS['config']['paths']['conf'].'/ldap.ini', true));
+
 include_once '/opt/pelagos/share/php/aliasIncludes.php';
 
 include 'difDL.php'; //dif DataLayer
@@ -84,7 +87,7 @@ function sendSubmitMail($user,$udi,$title,$template)
 function mailApprovers($udi,$title,$template)
 {
     global $twig;
-    $ldap = connectLDAP('triton.tamucc.edu');
+    $ldap = connectLDAP($GLOBALS['config']['ldap']['server']);
     
     $difMailer = new griidcMailer(false); 
     //$difMailer->donotBCC = true;
@@ -121,7 +124,7 @@ function getUserDetails($userName)
     $firstName = '';
     $lastName = '';
     $eMail = '';
-    $ldap = connectLDAP('triton.tamucc.edu');
+    $ldap = connectLDAP($GLOBALS['config']['ldap']['server']);
     $baseDN = 'dc=griidc,dc=org';
     $userDNs = getDNs($ldap,$baseDN,"uid=$userName");
     $userDN = $userDNs[0]['dn'];
@@ -594,7 +597,7 @@ function showDIFForm()
 
 function getPersonID($UserName)
 {
-    $ldap = connectLDAP('triton.tamucc.edu');
+    $ldap = connectLDAP($GLOBALS['config']['ldap']['server']);
     $baseDN = 'dc=griidc,dc=org';
     $uid = $UserName;
     if (isset($uid)) {
@@ -618,7 +621,7 @@ function isDIFApprover($UserName)
     $admin = false;
     if ($UserName) 
     {
-        $ldap = ldap_connect('ldap://triton.tamucc.edu');
+        $ldap = ldap_connect('ldap://'.$GLOBALS['config']['ldap']['server']);
         $adminsResult = ldap_search($ldap, "cn=approvers,ou=DIF,ou=applications,dc=griidc,dc=org", '(objectClass=*)', array("member"));
         $admins = ldap_get_entries($ldap, $adminsResult);
         for ($i=0;$i<$admins[0]['member']['count'];$i++) {
@@ -635,7 +638,7 @@ function isUserAdmin($UserName)
     $admin = false;
     if ($UserName) 
     {
-        $ldap = ldap_connect('ldap://triton.tamucc.edu');
+        $ldap = ldap_connect('ldap://'.$GLOBALS['config']['ldap']['server']);
         $adminsResult = ldap_search($ldap, "cn=administrators,ou=DIF,ou=applications,dc=griidc,dc=org", '(objectClass=*)', array("member"));
         $admins = ldap_get_entries($ldap, $adminsResult);
         for ($i=0;$i<$admins[0]['member']['count'];$i++) {
@@ -652,7 +655,7 @@ function isDataManager($UserName)
     $admin = false;
     if ($UserName) 
     {
-        $ldap = ldap_connect('ldap://triton.tamucc.edu');
+        $ldap = ldap_connect('ldap://'.$GLOBALS['config']['ldap']['server']);
         $adminsResult = ldap_search($ldap, 'ou=groups,dc=griidc,dc=org', "(&(member=uid=$UserName,ou=members,ou=people,dc=griidc,dc=org)(cn=administrators))", array("dn"));
         $admins = ldap_get_entries($ldap, $adminsResult);
         
