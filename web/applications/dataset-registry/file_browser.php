@@ -1,6 +1,7 @@
 <?php
 
 $GLOBALS['pelagos_config']  = parse_ini_file('/etc/opt/pelagos.ini',true);
+$GLOBALS['pelagos_config'] = array_merge($GLOBALS['pelagos_config'], parse_ini_file($GLOBALS['pelagos_config']['paths']['conf'].'/ldap.ini', true));
 
 require_once $GLOBALS['pelagos_config']['paths']['share'] . '/php/drupal.php';
 require_once $GLOBALS['pelagos_config']['paths']['share'] . '/php/dif-registry.php';
@@ -15,7 +16,7 @@ if (array_key_exists('dir',$_GET)) {
         $gidNumber = NULL;
         $groupName = NULL;
 
-        $ldap = ldap_connect('ldap://triton.tamucc.edu');
+        $ldap = ldap_connect('ldap://'.$GLOBALS['pelagos_config']['ldap']['server']);
 
         $userResult = ldap_search($ldap, "ou=people,dc=griidc,dc=org", "(&(uid=$user)(objectClass=posixAccount))", array("gidNumber","homeDirectory"));
 
