@@ -43,7 +43,9 @@ function isMember($ldap,$userDN,$groupDN) {
 
 function memberHasApplicationRole($username,$applicationName,$applicationRole) {
     $allowAccess=false;
-    $ldap=connectLDAP('triton.tamucc.edu');
+    $config = parse_ini_file('/etc/opt/pelagos.ini', true);
+    $config = array_merge($config, parse_ini_file($config['paths']['conf'].'/ldap.ini', true));
+    $ldap = connectLDAP($config['ldap']['server']);
     // check for group membership
     $attributes = array('dn');
     $groupDN = "cn=$applicationRole,ou=$applicationName,ou=applications,dc=griidc,dc=org";

@@ -18,13 +18,14 @@ if (!class_exists('griidcMailer')) {
         public function __construct($useCurrentUser)
         {
             $config = parse_ini_file('/etc/opt/pelagos.ini', true);
+            $config = array_merge($config, parse_ini_file($config['paths']['conf'].'/ldap.ini', true));
             include_once $config['paths']['share'].'/php/ldap.php';
             include_once $config['paths']['share'].'/php/drupal.php';
 
             $this->donotBCC = false;
             $userId = getDrupalUserName();
             if (isset($userId)) {
-                $ldap = connectLDAP('triton.tamucc.edu');
+                $ldap = connectLDAP($config['ldap']['server']);
                 $userDN = getDNs($ldap, "dc=griidc,dc=org", "(uid=$userId)");
                 $userDN = $userDN[0]['dn'];
                 $attributes = array('givenName','sn','mail');

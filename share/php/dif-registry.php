@@ -2,10 +2,12 @@
 
 function isAdmin() {
     global $user;
+    $config = parse_ini_file('/etc/opt/pelagos.ini', true);
+    $config = array_merge($config, parse_ini_file($config['paths']['conf'].'/ldap.ini', true));
     $admin = false;
     if ($user->uid) {
         $logged_in_uid = $user->name;
-        $ldap = ldap_connect('ldap://triton.tamucc.edu');
+        $ldap = ldap_connect('ldap://'.$config['ldap']['server']);
         $adminsResult = ldap_search($ldap, "cn=administrators,ou=DIF,ou=applications,dc=griidc,dc=org", '(objectClass=*)', array("member"));
         $admins = ldap_get_entries($ldap, $adminsResult);
         for ($i=0;$i<$admins[0]['member']['count'];$i++) {
