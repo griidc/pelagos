@@ -1,4 +1,8 @@
 <?php 
+
+$GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini', true);
+$GLOBALS['config'] = array_merge($GLOBALS['config'], parse_ini_file($GLOBALS['config']['paths']['conf'].'/ldap.ini', true));
+
 include_once '/usr/local/share/GRIIDC/php/ldap.php';
 include_once '/usr/local/share/GRIIDC/php/drupal.php';
 include_once '/usr/local/share/GRIIDC/php/aliasIncludes.php';
@@ -172,7 +176,7 @@ $userId = getDrupalUserName();
 
 if (isset($userId))
 {
-    $ldap = connectLDAP('triton.tamucc.edu');
+    $ldap = connectLDAP($GLOBALS['config']['ldap']['server']);
     
     $userDN = getDNs($ldap,"dc=griidc,dc=org", "(uid=$userId)");
             
