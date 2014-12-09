@@ -13,7 +13,7 @@ include_once '/usr/local/share/GRIIDC/php/dif-registry.php';
 include_once '/usr/local/share/GRIIDC/php/EventHandler.php'; 
 //include_once '/usr/local/share/GRIIDC/php/drupal.php'; 
 
-require_once '/usr/share/pear/Twig/Autoloader.php';
+require_once 'Twig/Autoloader.php';
 
 global $twig;
 $twigloader;
