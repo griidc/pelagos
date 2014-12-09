@@ -27,7 +27,7 @@ require_once 'Twig_Extensions_GRIIDC.php';
 
 include_once $pelagos_config['paths']['share'].'/php/pdo.php';
 
-require_once '/usr/share/pear/Twig/Autoloader.php';
+require_once 'Twig/Autoloader.php';
 Twig_Autoloader::register();
 
 $loader = new Twig_Loader_Filesystem('./templates');
