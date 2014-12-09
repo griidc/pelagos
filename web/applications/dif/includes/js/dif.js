@@ -415,6 +415,7 @@ function formReset(dontScrollToTop)
         $('form :input').prop('disabled',false);
         $('#btnSubmit').prop('disabled',false);
         $('#btnSave').prop('disabled',false);
+        $('#btnReqUnlock').hide(); 
         geowizard.haveSpatial(false);
         if (!dontScrollToTop){scrollToTop();}
         difValidator.resetForm();
@@ -639,6 +640,8 @@ function fillForm(Form,UDI)
                     }
                 });
             }
+            
+            difValidator.resetForm();
             
             loadPOCs(json.data.task,json.data.primarypoc,json.data.secondarypoc);
             $.each(json.data, function(name,value) {
