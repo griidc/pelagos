@@ -18,7 +18,7 @@ class metaData
 	
 	public function __construct()
 	{
-		require_once '/usr/share/pear/Twig/Autoloader.php';
+		require_once 'Twig/Autoloader.php';
 		Twig_Autoloader::register();
 		
 		$this->loader = new Twig_Loader_Filesystem('./templates');
