@@ -25,7 +25,7 @@ function getMessageTemplate($Action)
 
 function expandTemplate($Template, $Data)
 {
-    require_once '/usr/share/pear/Twig/Autoloader.php';
+    require_once 'Twig/Autoloader.php';
     Twig_Autoloader::register();
     $loader = new Twig_Loader_String();
     $twig = new Twig_Environment($loader);
