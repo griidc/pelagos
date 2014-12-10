@@ -30,28 +30,31 @@ require_once $GLOBALS['libraries']['Slim2']['include'];
 require_once $GLOBALS['libraries']['Slim-Views']['include_Twig'];
 # load Twig
 require_once 'Twig/Autoloader.php';
-# load custom Twig extensions
-require_once $GLOBALS['config']['paths']['share'] . '/php/Twig_Extensions_Pelagos.php';
 
 # load OpenID API for PHP
 require_once $GLOBALS['libraries']['LightOpenID']['include'];
 
+# add pelagos/share/php to the include path
+set_include_path(get_include_path() . PATH_SEPARATOR . $GLOBALS['config']['paths']['share'] . '/php');
+
+# load custom Twig extensions
+require_once 'Twig_Extensions_Pelagos.php';
 # load Drupal functions
-require_once $GLOBALS['config']['paths']['share'] . '/php/drupal.php';
+require_once 'drupal.php';
 # load includes file dumper
-require_once $GLOBALS['config']['paths']['share'] . '/php/dumpIncludesFile.php';
+require_once 'dumpIncludesFile.php';
 # load RIS query functions
-require_once $GLOBALS['config']['paths']['share'] . '/php/rpis.php';
+require_once 'rpis.php';
 # load dataset query functions
-require_once $GLOBALS['config']['paths']['share'] . '/php/datasets.php';
+require_once 'datasets.php';
 # load database utilities
-require_once $GLOBALS['config']['paths']['share'] . '/php/db-utils.lib.php';
+require_once 'db-utils.lib.php';
 # load misc utilities and stuff...
-require_once $GLOBALS['config']['paths']['share'] . '/php/utils.php';
+require_once 'utils.php';
 # load auth library
-require_once $GLOBALS['config']['paths']['share'] . '/php/auth.php';
+require_once 'auth.php';
 # load LDAP functions
-require_once $GLOBALS['config']['paths']['share'] . '/php/ldap.php';
+require_once 'ldap.php';
 
 # local functions for data-discovery module
 require_once 'lib/search.php';
