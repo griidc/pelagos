@@ -1,73 +1,68 @@
 [
-    {% if not YR1.hide %}
-    {
-        "data": {
-            "title": "Year-One Block Grants{% if YR1.dataset_count %} <span style='color:black;font-weight:bold;'>({{YR1.dataset_count}})</span>{% endif %}",
-            "attr": {
-                "style": "color:{{tree.yr1_folder_color}}"
-            }
-        },
-        "attr": {
-            "id": "YR1",
-            "action": "{{tree.yr1_folder_action | evaluate}}"
-        },
-        "state": "closed"
-    }
-    {% if RFPS or tree.show_other_sources %}
-    ,
-    {% endif %}
+    {% if not YR1.hide and YR1.top %}
+        {% include 'json/YR1_outer.json' %}
+        {% if RFPS or tree.show_other_sources %}
+            ,
+        {% endif %}
     {% endif %}
     {% for fundSrc in RFPS %}
-    {
-        "data": {
-            "title": "{{fundSrc.Name}}{% if fundSrc.dataset_count %} <span style='color:black;font-weight:bold;'>({{fundSrc.dataset_count}})</span>{% endif %}",
+        {
+            "data": {
+                "title": "{{fundSrc.Name}}{% if fundSrc.dataset_count %} <span style='color:black;font-weight:bold;'>({{fundSrc.dataset_count}})</span>{% endif %}",
+                "attr": {
+                    "style": "color:{{tree.rfp_color}}"
+                }
+            },
             "attr": {
-                "style": "color:{{tree.rfp_color}}"
+                "id": "projects_fundSrc_{{fundSrc.ID}}",
+                "action": "{{tree.rfp_action | evaluate}}"
             }
-        },
-        "attr": {
-            "id": "projects_fundSrc_{{fundSrc.ID}}",
-            "action": "{{tree.rfp_action | evaluate}}"
-        }
-        {% if fundSrc.ID == 7 or tree.max_depth > 0 %}
-            ,
-            {% if tree.expand_to_depth > 0 %}
-                "state": "open"
-            {% else %}
-                "state": "closed"
+            {% if fundSrc.ID == 7 or tree.max_depth > 0 %}
+                ,
+                {% if tree.expand_to_depth > 0 %}
+                    "state": "open"
+                {% else %}
+                    "state": "closed"
+                {% endif %}
             {% endif %}
+        }
+        {% if not loop.last %}
+            ,
         {% endif %}
-    }
-    {% if not loop.last or tree.show_other_sources %}
-    ,
-    {% endif %}
     {% endfor %}
+    {% if not YR1.hide and not YR1.top %}
+        {% if RFPS %}
+            ,
+        {% endif %}
+        {% include 'json/YR1_outer.json' %}
+    {% endif %}
     {% if tree.show_other_sources %}
-    {
-        "data": {
-            "title": "Other Sources{% if other_sources.dataset_count %} <span style='color:black;font-weight:bold;'>({{other_sources.dataset_count}})</span>{% endif %}",
+        ,
+        {
+            "data": {
+                "title": "Other Sources{% if other_sources.dataset_count %} <span style='color:black;font-weight:bold;'>({{other_sources.dataset_count}})</span>{% endif %}",
+                "attr": {
+                    "style": "color:{{tree.other_sources_folder_color}}"
+                }
+            },
             "attr": {
-                "style": "color:{{tree.other_sources_folder_color}}"
-            }
-        },
-        "attr": {
-            "id": "otherSources",
-            "action": "{{tree.other_sources_folder_action | evaluate}}"
-        },
-        "state": "open"
-    }
+                "id": "otherSources",
+                "action": "{{tree.other_sources_folder_action | evaluate}}"
+            },
+            "state": "open"
+        }
     {% endif %}
     {% if YR1.hide and not RFPS and not tree.show_other_sources %}
-    {
-        "data": {
-            "title": "no datasets found",
+        {
+            "data": {
+                "title": "no datasets found",
+                "attr": {
+                    "style": "color:red"
+                }
+            },
             "attr": {
-                "style": "color:red"
+                "id": "noDatasetsFound"
             }
-        },
-        "attr": {
-            "id": "noDatasetsFound"
         }
-    }
     {% endif %}
 ]

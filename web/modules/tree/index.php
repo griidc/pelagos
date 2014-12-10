@@ -1,11 +1,24 @@
 <?php
 
 # load global pelagos config
-$GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini',true);
-# load local overrides and additions
-$GLOBALS['config'] = array_merge($GLOBALS['config'],parse_ini_file('config.ini',true));
+$GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini', true);
+
+# load Common library from global share
+require_once($GLOBALS['config']['paths']['share'].'/php/Common.php');
+
+# make sure current working directory is the directory that this file lives in
+$GLOBALS['orig_cwd'] = getcwd();
+chdir(realpath(dirname(__FILE__)));
+
+# check for local config file
+if (file_exists('config.ini')) {
+    # merge local config with global config
+    $GLOBALS['config'] = configMerge($GLOBALS['config'], parse_ini_file('config.ini', true));
+}
+
 # load library info
 $GLOBALS['libraries'] = parse_ini_file($GLOBALS['config']['paths']['conf'].'/libraries.ini',true);
+
 # load database connection info
 $GLOBALS['db'] = parse_ini_file($GLOBALS['config']['paths']['conf'].'/db.ini',true);
 
@@ -17,19 +30,22 @@ require_once $GLOBALS['libraries']['Slim2']['include'];
 require_once $GLOBALS['libraries']['Slim-Views']['include_Twig'];
 # load Twig
 require_once 'Twig/Autoloader.php';
-# load custom Twig extensions
-require_once $GLOBALS['config']['paths']['share'].'/php/Twig_Extensions_Pelagos.php';
 
+# add pelagos/share/php to the include path
+set_include_path(get_include_path() . PATH_SEPARATOR . $GLOBALS['config']['paths']['share'] . '/php');
+
+# load custom Twig extensions
+require_once 'Twig_Extensions_Pelagos.php';
 # load Drupal functions
-require_once $GLOBALS['config']['paths']['share'].'/php/drupal.php';
+require_once 'drupal.php';
 # load includes file dumper
-require_once $GLOBALS['config']['paths']['share'].'/php/dumpIncludesFile.php';
+require_once 'dumpIncludesFile.php';
 # load RIS query functions
-require_once $GLOBALS['config']['paths']['share'].'/php/rpis.php';
+require_once 'rpis.php';
 # load dataset query functions
-require_once $GLOBALS['config']['paths']['share'].'/php/datasets.php';
+require_once 'datasets.php';
 # load database utilities
-require_once $GLOBALS['config']['paths']['share'].'/php/db-utils.lib.php';
+require_once 'db-utils.lib.php';
 
 # load tree library
 require_once 'lib/tree.php';
@@ -186,6 +202,11 @@ $app->get('/json/:type.json', function ($type) use ($app) {
             else {
                 $stash['RFPS'] = $RFPS;
             }
+            if (array_key_exists('yr1_top', $GLOBALS['config']['tree'])
+                and $GLOBALS['config']['tree']['yr1_top']) {
+                $stash['YR1']['top'] = true;
+            }
+
             $app->render('json/research_awards.json',$stash);
             break;
     }
@@ -506,5 +527,4 @@ $app->get('/json/:type/datasets/taskId/:taskId.json', function ($type,$taskId) u
 $orig_env = fixEnvironment();
 $app->run();
 restoreEnvironment($orig_env);
-
-?>
+chdir($GLOBALS['orig_cwd']);
