@@ -59,12 +59,7 @@ date_default_timezone_set('UTC');
 drupal_add_library('system', 'ui.tabs');
 
 # initialize Slim
-$app = new \Slim\Slim(array(
-                        'view' => new \Slim\Views\Twig(),
-                        'debug' => true,
-                        'log.level' => \Slim\Log::DEBUG,
-                        'log.enabled' => true
-                     ));
+$app = new \Slim\Slim(array('view' => new \Slim\Views\Twig()));
 
 # add custom Twig extensions
 $app->view->parserExtensions = array( new \Slim\Views\Twig_Extensions_Pelagos() );
