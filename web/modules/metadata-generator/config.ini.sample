@@ -1,6 +1,3 @@
-[Twig]
-twigDirectory = "/usr/share/pear/Twig"
-
 [Distributor]
 Institution_Name = "Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC)"
 Email = "griidc@gomri.org"
