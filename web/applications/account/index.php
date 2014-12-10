@@ -1,37 +1,55 @@
 <?php
 
-$GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini',true);
+# load global pelagos config
+$GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini', true);
 
-if(file_exists('config.ini')) {
-    require_once($GLOBALS['config']['paths']['share'].'/php/Common.php');
-    $GLOBALS['config'] = configMerge($GLOBALS['config'],parse_ini_file('config.ini',true));
+# load Common library from global share
+require_once($GLOBALS['config']['paths']['share'].'/php/Common.php');
+
+# make sure current working directory is the directory that this file lives in
+$GLOBALS['orig_cwd'] = getcwd();
+chdir(realpath(dirname(__FILE__)));
+
+# check for local config file
+if (file_exists('config.ini')) {
+    # merge local config with global config
+    $GLOBALS['config'] = configMerge($GLOBALS['config'], parse_ini_file('config.ini', true));
 }
 
-$GLOBALS['libraries'] = parse_ini_file($GLOBALS['config']['paths']['conf'].'/libraries.ini',true);
+# load library info
+$GLOBALS['libraries'] = parse_ini_file($GLOBALS['config']['paths']['conf'] . '/libraries.ini', true);
 
-require_once $GLOBALS['libraries']['Slim']['include'];
-require_once $GLOBALS['libraries']['Slim-Extras']['include_TwigView'];
+# load Slim2
+require_once $GLOBALS['libraries']['Slim2']['include'];
+# register Slim autoloader
+\Slim\Slim::registerAutoloader();
+# load Twig Slim-View
+require_once $GLOBALS['libraries']['Slim-Views']['include_Twig'];
+# load Twig
 require_once 'Twig/Autoloader.php';
 
+# add pelagos/share/php to the include path
 set_include_path(get_include_path() . PATH_SEPARATOR . $GLOBALS['config']['paths']['share'] . '/php');
 
+# load custom Twig extensions
+require_once 'Twig_Extensions_Pelagos.php';
 require_once 'db-utils.lib.php';
+require_once 'drupal.php';
+require_once 'EventHandler.php';
 
 require_once 'lib/constants.php';
 require_once 'lib/account.php';
 require_once 'config.php';
-require_once 'EventHandler.php';
 
 $GLOBALS['DB'] = parse_ini_file($GLOBALS['config']['paths']['conf'].'/db.ini',true);
 
 $GLOBALS['LDAP'] = ldap_connect('ldap://'.LDAP_HOST);
 
-$app = new Slim(array(
-                        'view' => new TwigView,
-                        'debug' => true,
-                        'log.level' => Slim_Log::DEBUG,
-                        'log.enabled' => true
-                     ));
+# initialize Slim
+$app = new \Slim\Slim(array('view' => new \Slim\Views\Twig()));
+
+# add custom Twig extensions
+$app->view->parserExtensions = array( new \Slim\Views\Twig_Extensions_Pelagos() );
 
 $app->hook('slim.before', function () use ($app) {
     $env = $app->environment();
@@ -811,6 +829,7 @@ $app->post('/password/:action', function ($action) use ($app) {
     echo "<p>Your password has been updated. Please use this new password to log in to GRIIDC systems. If you need assistance, please contact: <a href='mailto:griidc@gomri.org'>griidc@gomri.org</a> for help.</p>";
 })->conditions(array('action' => '(reset|change)'));
 
+$orig_env = fixEnvironment();
 $app->run();
-
-?>
+restoreEnvironment($orig_env);
+chdir($GLOBALS['orig_cwd']);
