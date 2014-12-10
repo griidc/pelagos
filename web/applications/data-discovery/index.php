@@ -2,16 +2,25 @@
 
 # load global pelagos config
 $GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini',true);
-# load local overrides and additions
-$GLOBALS['config'] = array_merge($GLOBALS['config'],parse_ini_file('config.ini',true));
-# shortcut for conf path
-$conf_path = $GLOBALS['config']['paths']['conf'];
-# shortcut for php share path
-$php_share_path = $GLOBALS['config']['paths']['share'].'/php';
+
+# load Common library from global share
+require_once($GLOBALS['config']['paths']['share'].'/php/Common.php');
+
+# make sure current working directory is the directory that this file lives in
+$GLOBALS['orig_cwd'] = getcwd();
+chdir(realpath(dirname(__FILE__)));
+
+# check for local config file
+if (file_exists('config.ini')) {
+    # merge local config with global config
+    $GLOBALS['config'] = configMerge($GLOBALS['config'], parse_ini_file('config.ini', true));
+}
+
 # load library info
-$GLOBALS['libraries'] = parse_ini_file("$conf_path/libraries.ini",true);
+$GLOBALS['libraries'] = parse_ini_file($GLOBALS['config']['paths']['conf'] . '/libraries.ini', true);
+
 # load database connection info
-$GLOBALS['db'] = parse_ini_file("$conf_path/db.ini",true);
+$GLOBALS['db'] = parse_ini_file($GLOBALS['config']['paths']['conf'] . '/db.ini', true);
 
 # load Slim2
 require_once $GLOBALS['libraries']['Slim2']['include'];
@@ -22,27 +31,27 @@ require_once $GLOBALS['libraries']['Slim-Views']['include_Twig'];
 # load Twig
 require_once 'Twig/Autoloader.php';
 # load custom Twig extensions
-require_once "$php_share_path/Twig_Extensions_Pelagos.php";
+require_once $GLOBALS['config']['paths']['share'] . '/php/Twig_Extensions_Pelagos.php';
 
 # load OpenID API for PHP
 require_once $GLOBALS['libraries']['LightOpenID']['include'];
 
 # load Drupal functions
-require_once "$php_share_path/drupal.php";
+require_once $GLOBALS['config']['paths']['share'] . '/php/drupal.php';
 # load includes file dumper
-require_once "$php_share_path/dumpIncludesFile.php";
+require_once $GLOBALS['config']['paths']['share'] . '/php/dumpIncludesFile.php';
 # load RIS query functions
-require_once "$php_share_path/rpis.php";
+require_once $GLOBALS['config']['paths']['share'] . '/php/rpis.php';
 # load dataset query functions
-require_once "$php_share_path/datasets.php";
+require_once $GLOBALS['config']['paths']['share'] . '/php/datasets.php';
 # load database utilities
-require_once "$php_share_path/db-utils.lib.php";
+require_once $GLOBALS['config']['paths']['share'] . '/php/db-utils.lib.php';
 # load misc utilities and stuff...
-require_once "$php_share_path/utils.php";
+require_once $GLOBALS['config']['paths']['share'] . '/php/utils.php';
 # load auth library
-require_once "$php_share_path/auth.php";
+require_once $GLOBALS['config']['paths']['share'] . '/php/auth.php';
 # load LDAP functions
-require_once "$php_share_path/ldap.php";
+require_once $GLOBALS['config']['paths']['share'] . '/php/ldap.php';
 
 # local functions for data-discovery module
 require_once 'lib/search.php';
@@ -84,13 +93,13 @@ $app->get('/js/:name.js', function ($name) use ($app) {
     header('Content-type: text/javascript');
     $stash['logged_in'] = (user_is_logged_in_somehow());
     $app->render("js/$name.js",$stash);
-    exit;
+    drupal_exit();
 });
 
 $app->get('/css/:name.css', function ($name) use ($app) {
     header('Content-type: text/css');
     $app->render("css/$name.css");
-    exit;
+    drupal_exit();
 });
 
 $app->get('/', function () use ($app) {
@@ -227,7 +236,7 @@ $app->get('/datasets/:filter/:by/:id/:geo_filter', function ($filter,$by,$id,$ge
 
     $stash['filt'] = $filter;
     $app->render('html/datasets.html',$stash);
-    exit;
+    drupal_exit();
 })->conditions(array('filter' => '.*', 'by' => '.*', 'id' => '.*', 'geo_filter' => '.*'));
 
 $app->get('/dataset_details/:udi', function ($udi) use ($app) {
@@ -242,7 +251,7 @@ $app->get('/dataset_details/:udi', function ($udi) use ($app) {
     }
 
     $app->render('html/dataset_details.html',$stash);
-    exit;  # prevents Drupal wrapper in output
+    drupal_exit();  # prevents Drupal wrapper in output
 });
 
 
@@ -311,7 +320,7 @@ $app->get('/metadata/:udi', function ($udi) use ($app) {
         ob_clean();
         flush();
         print $raw_data['metadata_xml'];
-        exit;
+        drupal_exit();
     } elseif(strlen($disk_metadata_file) > 0) {
         # Serve it out from the data in the filesystem if it wasn't in the database
         $filename=$dataset['metadata_filename'];
@@ -325,7 +334,7 @@ $app->get('/metadata/:udi', function ($udi) use ($app) {
         ob_clean();
         flush();
         readfile($met_file);
-        exit;
+        drupal_exit();
     } else {
         drupal_set_message("Error retrieving metadata from database and filesystem.",'error');
         drupal_goto(preg_replace('/^\//','',$env['SCRIPT_NAME'])); # reload calling page
@@ -430,7 +439,7 @@ $app->get('/download-external/:udi', function ($udi) use ($app) {
     $dataset = $datasets[0];
     $stash['dataset'] = $dataset;
     $app->render('html/download-external.html',$stash);
-    exit;
+    drupal_exit();
 });
 
 $app->get('/download/:udi', function ($udi) use ($app) {
@@ -456,13 +465,13 @@ $app->get('/download/:udi', function ($udi) use ($app) {
     if ($dataset['access_status'] == "Restricted") {
         $stash['error_message'] = "This dataset is restricted for author use only.";
         $app->render('html/download_error.html',$stash);
-        exit;
+        drupal_exit();
     }
 
     if ($dataset['access_status'] == "Approval") {
         $stash['error_message'] = "This dataset can only be downloaded with author approval.";
         $app->render('html/download_error.html',$stash);
-        exit;
+        drupal_exit();
     }
 
     $approved_md_udis=getApprovedMetadataUDIs(); 
@@ -475,7 +484,7 @@ $app->get('/download/:udi', function ($udi) use ($app) {
     if ($dl_ok == 0) {
         $stash['error_message'] = "This dataset can not be downloaded because its metadata has not been approved.";
         $app->render('html/download_error.html',$stash);
-        exit;
+        drupal_exit();
     }
 
     $dat_file = $GLOBALS['config']['paths']['data_download']."/$dataset[udi]/$dataset[udi].dat";
@@ -504,11 +513,11 @@ $app->get('/download/:udi', function ($udi) use ($app) {
                 $stash['guest']=0;
             }
             $app->render('html/download.html',$stash);
-            exit;
+            drupal_exit();
         } else {
             $stash['error_message'] = "Error retrieving data file: file not found (on $host): $dat_file";
             $app->render('html/download_error.html',$stash);
-        exit;
+        drupal_exit();
         }
     } elseif (file_exists($dat_file)) {
         
@@ -519,11 +528,11 @@ $app->get('/download/:udi', function ($udi) use ($app) {
         }
         $stash['gridOK'] = canHazGridFTP($user,$udi,$dataset['dataset_filename']);
         $app->render('html/download.html',$stash);
-        exit;
+        drupal_exit();
     } else {
         $stash['error_message'] = "Error retrieving data file: file not found: $dat_file";
         $app->render('html/download_error.html',$stash);
-        exit;
+        drupal_exit();
     }
 
 });
@@ -578,7 +587,7 @@ $app->get('/initiateWebDownload/:udi', function ($udi) use ($app) {
             
             `echo "$tstamp\t$dat_file\t$uid$altTag" >> /var/log/griidc/downloads.log`;
             $app->render('html/download-file.html',$stash);
-            exit;
+            drupal_exit();
         } else {
             if (file_exists($dat_file)) {
                 mkdir($GLOBALS['config']['paths']['http_download']."/$uid/");
@@ -588,10 +597,10 @@ $app->get('/initiateWebDownload/:udi', function ($udi) use ($app) {
                 # logging
                 `echo "$tstamp\t$dat_file\t$uid$altTag" >> /var/log/griidc/downloads.log`;
                 $app->render('html/download-file.html',$stash);
-                exit;
+                drupal_exit();
             } else {
                 print "Error";
-                exit;
+                drupal_exit();
             }  
         }
     }
@@ -643,19 +652,20 @@ $app->get('/enableGridFTP/:udi', function ($udi) use ($app) {
     $stash['udi']=$dataset['udi'];
     $stash['dataset_filename']=$dataset['dataset_filename'];
     $app->render('html/gridftp.html',$stash);
-    exit;
+    drupal_exit();
 });
 
 $app->get('/download_redirect/:udi', function ($udi) use ($app) {
     $stash['udi'] = $udi;
     $stash['final_destination'] = $app->request()->get('final_destination');
     $app->render('html/download_redirect.html',$stash);
-    exit;
+    drupal_exit();
 });
 
 $orig_env = fixEnvironment();
 $app->run();
 restoreEnvironment($orig_env);
+chdir($GLOBALS['orig_cwd']);
 
 function getHashes($udi) {
     $sql = "select fs_md5_hash, fs_sha1_hash, fs_sha256_hash from registry_view where 
