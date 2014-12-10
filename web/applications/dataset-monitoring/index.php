@@ -18,6 +18,8 @@ require_once $GLOBALS['libraries']['Slim2']['include'];
 \Slim\Slim::registerAutoloader();
 # load Twig Slim-View
 require_once $GLOBALS['libraries']['Slim-Views']['include_Twig'];
+# load Twig
+require_once 'Twig/Autoloader.php';
 # load custom Twig extensions
 require_once $GLOBALS['config']['paths']['share'].'/php/Twig_Extensions_Pelagos.php';
 
@@ -43,8 +45,6 @@ $app = new \Slim\Slim(array(
                         'log.enabled' => true
                      ));
 
-# set Twig directory for Twig Slim-View
-$app->view->parserDirectory = $GLOBALS['libraries']['Twig']['directory'];
 # add custom Twig extensions
 $app->view->parserExtensions = array( new \Slim\Views\Twig_Extensions_Pelagos() );
 
