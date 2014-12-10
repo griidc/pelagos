@@ -1,17 +1,6 @@
-[TwigView]
-twigDirectory = "/usr/share/pear/Twig"
-
-[GOMRI_DB]
-connstr = "pgsql:host=localhost;dbname=gomri;"
-username = "username"
-password = "password"
-
-[RPIS_DB]
-connstr = "mysql:host=localhost;dbname=gomri_rpis;"
-username = "username"
-password = "password"
-
 [DataDiscovery]
 registeredOrderBy = "year DESC, dataset_originator, title"
 identifiedOrderBy = "title"
-treePaneCollapsed = 1
+treePaneCollapsed = 0
+alternateDownloadSite = 0
+alternateDownloadSiteServer = "poseidon-cs.tamu.edu"
