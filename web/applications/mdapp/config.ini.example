@@ -1,5 +1,2 @@
-[TwigView]
-twigDirectory = "/usr/share/pear/Twig"
-
-[Logfiles]
-logfilePath = "/var/log/pelagos"
+[email]
+disable_email = 0

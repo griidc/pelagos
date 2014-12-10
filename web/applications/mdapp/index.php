@@ -25,6 +25,8 @@ require_once '/opt/pelagos/share/php/datasets.php';
 require_once '/opt/pelagos/share/php/utils.php';
 # LDAP functionality
 require_once '/opt/pelagos/share/php/ldap.php';
+# Twig templating engine autoloader
+require_once 'Twig/Autoloader.php';
 
 # add js library - informs drupal to add these standard js libraries upstream.
 # can also use drupal_add_js to specify a full path to a js library to include.
@@ -43,9 +45,6 @@ $GLOBALS['module_config'] = parse_ini_file('config.ini',true);
 $GLOBALS['logfile_location'] = $GLOBALS['pelagos_config']['paths']['log'].'/'.$GLOBALS['logfile_name'];
 $GLOBALS['ldap'] = parse_ini_file($GLOBALS['pelagos_config']['paths']['conf'].'/ldap.ini',true);
 $GLOBALS['smtp'] = parse_ini_file($GLOBALS['pelagos_config']['paths']['conf'].'/smtp.ini',true);
-
-TwigView::$twigDirectory = $GLOBALS['module_config']['TwigView']['twigDirectory'];
-
 
 $app = new Slim(array(
                         'view' => new TwigView,
