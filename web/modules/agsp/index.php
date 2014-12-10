@@ -23,6 +23,8 @@ require_once $GLOBALS['libraries']['Slim2']['include'];
 \Slim\Slim::registerAutoloader();
 # load Twig Slim-View
 require_once $GLOBALS['libraries']['Slim-Views']['include_Twig'];
+# load Twig
+require_once 'Twig/Autoloader.php';
 
 # load Pelagos libraries
 require_once 'DBUtils.php';
@@ -35,9 +37,6 @@ require_once 'lib/agsp.php';
 
 # create new Slim application
 $app = new \Slim\Slim(array('view' => new \Slim\Views\Twig()));
-
-# set Twig directory for Twig Slim-View
-$app->view->parserDirectory = $GLOBALS['libraries']['Twig']['directory'];
 
 # stub root
 $app->get(
