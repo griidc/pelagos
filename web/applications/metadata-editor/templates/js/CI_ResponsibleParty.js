@@ -79,12 +79,10 @@ function prefill_{{instanceName}}(what)
 		
 	}
 
-    if (!forced)
-    {
+    if (!forced) {
         if (onceValidated) {
-            //$('#metadata').valid();
+            $('#metadata').valid();
             validateTabs(false);
         }
-        $(':input:visible').next('label.error').hide();
     }
 }
