@@ -35,12 +35,7 @@ require_once $GLOBALS['config']['paths']['share'].'/php/db-utils.lib.php';
 require_once 'lib/tree.php';
 
 # initialize Slim
-$app = new \Slim\Slim(array(
-                            'view' => new \Slim\Views\Twig(),
-                            'debug' => true,
-                            'log.level' => \Slim\Log::DEBUG,
-                            'log.enabled' => true
-                           ));
+$app = new \Slim\Slim(array('view' => new \Slim\Views\Twig()));
 
 # add custom Twig extensions
 $app->view->parserExtensions = array( new \Slim\Views\Twig_Extensions_Pelagos() );
