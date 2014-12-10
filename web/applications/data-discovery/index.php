@@ -266,7 +266,7 @@ $app->get('/metadata/:udi', function ($udi) use ($app) {
     
     $disk_metadata_file_mimetype = '';
     $disk_metadata_file = '';
-    $met_file = "/$GLOBALS[config][paths][download]/$dataset[udi]/$dataset[udi].met";
+    $met_file = '/' . $GLOBALS['config']['paths']['download'] . "/$dataset[udi]/$dataset[udi].met";
     if (file_exists($met_file)) {
         $info = finfo_open(FILEINFO_MIME_TYPE);
         $disk_metadata_file_mimetype = finfo_file($info, $met_file);
