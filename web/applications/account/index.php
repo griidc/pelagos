@@ -11,6 +11,7 @@ $GLOBALS['libraries'] = parse_ini_file($GLOBALS['config']['paths']['conf'].'/lib
 
 require_once $GLOBALS['libraries']['Slim']['include'];
 require_once $GLOBALS['libraries']['Slim-Extras']['include_TwigView'];
+require_once 'Twig/Autoloader.php';
 
 set_include_path(get_include_path() . PATH_SEPARATOR . $GLOBALS['config']['paths']['share'] . '/php');
 

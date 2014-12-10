@@ -1,7 +1,5 @@
 <?php
 
-TwigView::$twigDirectory = '/usr/share/pear/Twig';
-
 define('LDAP_HOST','triton.tamucc.edu');
 define('LDAP_BIND_DN','cn=ldapadmin,dc=griidc,dc=org');
 define('LDAP_BIND_PW','changeme');
