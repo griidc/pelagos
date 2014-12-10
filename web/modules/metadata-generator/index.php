@@ -1,25 +1,44 @@
 <?php
 
-require_once '/usr/local/share/Slim/Slim/Slim.php';
-require_once '/usr/local/share/Slim-Extras/Views/TwigView.php';
+# load global pelagos config
+$GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini', true);
 
-$GLOBALS['pelagos_config']  = parse_ini_file('/etc/opt/pelagos.ini',true);
+# load Common library from global share
+require_once($GLOBALS['config']['paths']['share'].'/php/Common.php');
 
-require_once $GLOBALS['pelagos_config']['paths']['share'].'/php/db-utils.lib.php';
-require_once $GLOBALS['pelagos_config']['paths']['share'].'/php/rpis.php';
-require_once $GLOBALS['pelagos_config']['paths']['share'].'/php/datasets.php';
-require_once $GLOBALS['pelagos_config']['paths']['share'].'/php/codelists.php';
+# make sure current working directory is the directory that this file lives in
+$GLOBALS['orig_cwd'] = getcwd();
+chdir(realpath(dirname(__FILE__)));
 
-$GLOBALS['config'] = parse_ini_file('config.ini',true);
+# check for local config file
+if (file_exists('config.ini')) {
+    # merge local config with global config
+    $GLOBALS['config'] = configMerge($GLOBALS['config'], parse_ini_file('config.ini', true));
+}
 
-TwigView::$twigDirectory = $GLOBALS['config']['Twig']['twigDirectory'];
+# load library info
+$GLOBALS['libraries'] = parse_ini_file($GLOBALS['config']['paths']['conf'] . '/libraries.ini', true);
 
-$app = new Slim(array(
-                        'view' => new TwigView,
-                        'debug' => true,
-                        'log.level' => Slim_Log::DEBUG,
-                        'log.enabled' => true
-                     ));
+# load Slim2
+require_once $GLOBALS['libraries']['Slim2']['include'];
+# register Slim autoloader
+\Slim\Slim::registerAutoloader();
+# load Twig Slim-View
+require_once $GLOBALS['libraries']['Slim-Views']['include_Twig'];
+# load Twig
+require_once 'Twig/Autoloader.php';
+
+# add pelagos/share/php to the include path
+set_include_path(get_include_path() . PATH_SEPARATOR . $GLOBALS['config']['paths']['share'] . '/php');
+
+require_once 'db-utils.lib.php';
+require_once 'rpis.php';
+require_once 'datasets.php';
+require_once 'codelists.php';
+require_once 'drupal.php';
+
+# initialize Slim
+$app = new \Slim\Slim(array('view' => new \Slim\Views\Twig()));
 
 $app->get('/', function () use ($app) {
     echo <<<'EOT'
@@ -95,6 +114,7 @@ $app->get('/:udi', function ($udi) use ($app) {
     }
 });
 
+$orig_env = fixEnvironment();
 $app->run();
-
-?>
+restoreEnvironment($orig_env);
+chdir($GLOBALS['orig_cwd']);
