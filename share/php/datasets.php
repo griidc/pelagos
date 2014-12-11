@@ -353,13 +353,22 @@ function build_where($filters,$registered = false) {
                     $WHERE .= " AND task_uid $matches[2] $matches[3]";
                     break;
                 case 'projectid':
-                    $WHERE .= " AND project_id $matches[2] $matches[3]";
+                    $WHERE .= " AND project_id";
+                    if (isset($matches[3]) and $matches[3] != '') {
+                        $WHERE .= " $matches[2] $matches[3]";
+                    } else {
+                        $WHERE .= " IS NULL";
+                    }
                     break;
                 case 'projectids':
                     $projectIds = preg_split('/,/',$matches[3]);
                     $projects = array();
                     foreach ($projectIds as $projectId) {
-                        $projects[] = "project_id $matches[2] $projectId";
+                        if (isset($projectId) and $projectId != '') {
+                            $projects[] = "project_id $matches[2] $projectId";
+                        } else {
+                            $projects[] = "project_id IS NULL";
+                        }
                     }
                     if ($matches[2] == '!=') { $glue = ' AND '; }
                     else { $glue = ' OR '; }
