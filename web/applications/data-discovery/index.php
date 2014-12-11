@@ -48,7 +48,7 @@ require_once 'rpis.php';
 # load dataset query functions
 require_once 'datasets.php';
 # load database utilities
-require_once 'db-utils.lib.php';
+require_once 'DBUtils.php';
 # load misc utilities and stuff...
 require_once 'utils.php';
 # load auth library
@@ -149,8 +149,8 @@ $app->get('/datasets/:filter/:by/:id/:geo_filter', function ($filter, $by, $id, 
 
     $reg_filters = array('registry_id!=00%');
 
-    $RIS_DBH = OpenDB('RIS_RO');
-    $GOMRI_DBH = OpenDB('GOMRI_RO');
+    $RIS_DBH = openDB('RIS_RO');
+    $GOMRI_DBH = openDB('GOMRI_RO');
 
     if (!empty($by)) {
         if ($by == 'otherSources') {
@@ -312,7 +312,7 @@ $app->get('/datasets/:filter/:by/:id/:geo_filter', function ($filter, $by, $id, 
 $app->get('/dataset_details/:udi', function ($udi) use ($app) {
     # used by a javascript that displays details on each
     # of the datasets in an expandable/collapsable manner
-    $GOMRI_DBH = OpenDB('GOMRI_RO');
+    $GOMRI_DBH = openDB('GOMRI_RO');
     if (preg_match('/^00/', $udi)) {
         $stash['datasets'] = get_registered_datasets($GOMRI_DBH, array("registry_id=$udi%"));
     } else {
@@ -328,7 +328,7 @@ $app->get('/metadata/:udi', function ($udi) use ($app) {
     $env = $app->environment();
     if (isMetadataApproved($udi)) {
         // if there is a file on disk, capture it
-        $GOMRI_DBH = OpenDB('GOMRI_RO');
+        $GOMRI_DBH = openDB('GOMRI_RO');
         if (preg_match('/^00/', $udi)) {
             $datasets = get_registered_datasets($GOMRI_DBH, array("registry_id=$udi%"));
         } else {
@@ -370,7 +370,7 @@ $app->get('/metadata/:udi', function ($udi) use ($app) {
                                         where dataset_udi = ?
                                     )";
 
-        $dbms = OpenDB("GOMRI_RO");
+        $dbms = openDB("GOMRI_RO");
         $data = $dbms->prepare($sql);
         $data->execute(array($udi));
         $raw_data = $data->fetch();
@@ -517,7 +517,7 @@ $app->get('/metadata/:directory/', function ($directory) use ($app) {
 $app->get('/metadata/:directory/:file', function ($directory, $file) use ($app) {
     $udi = preg_replace('/-metadata.xml$/', '', $file);
     $udi = preg_replace('/-/', ':', $udi);
-    $dbms = OpenDB("GOMRI_RO");
+    $dbms = openDB("GOMRI_RO");
     $SQL = 'SELECT dataset_udi,metadata_xml '.
         'FROM registry_view '.
         'JOIN metadata ON metadata.registry_id = registry_view.registry_id '.
@@ -537,7 +537,7 @@ $app->get('/metadata/:directory/:file', function ($directory, $file) use ($app) 
 });
 
 $app->get('/download-external/:udi', function ($udi) use ($app) {
-    $GOMRI_DBH = OpenDB('GOMRI_RO');
+    $GOMRI_DBH = openDB('GOMRI_RO');
     if (preg_match('/^00/', $udi)) {
         $datasets = get_registered_datasets($GOMRI_DBH, array("registry_id=$udi%"));
     } else {
@@ -560,7 +560,7 @@ $app->get('/download/:udi', function ($udi) use ($app) {
         #$app->render('html/download_error.html',$stash);
         drupal_exit();
     }
-    $GOMRI_DBH = OpenDB('GOMRI_RO');
+    $GOMRI_DBH = openDB('GOMRI_RO');
     if (preg_match('/^00/', $udi)) {
         $datasets = get_registered_datasets($GOMRI_DBH, array("registry_id=$udi%"));
     } else {
@@ -656,7 +656,7 @@ $app->get('/initiateWebDownload/:udi', function ($udi) use ($app) {
     if (!user_is_logged_in_somehow()) {
         drupal_exit();
     }
-    $GOMRI_DBH = OpenDB('GOMRI_RO');
+    $GOMRI_DBH = openDB('GOMRI_RO');
     if (preg_match('/^00/', $udi)) {
         $datasets = get_registered_datasets($GOMRI_DBH, array("registry_id=$udi%"));
     } else {
@@ -742,7 +742,7 @@ $app->get('/enableGridFTP/:udi', function ($udi) use ($app) {
         drupal_exit();
     }
     $homedir = getHomedir($user->name);
-    $GOMRI_DBH = OpenDB('GOMRI_RO');
+    $GOMRI_DBH = openDB('GOMRI_RO');
     if (preg_match('/^00/', $udi)) {
         $datasets = get_registered_datasets($GOMRI_DBH, array("registry_id=$udi%"));
     } else {
