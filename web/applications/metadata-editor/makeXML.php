@@ -439,39 +439,19 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
             $node = $parent->appendChild($node);
             
             $fieldvalue = htmlspecialchars_decode($fieldvalue, ENT_NOQUOTES | 'ENT_XML1');
-            $polygonDoc = new DomDocument('1.0','UTF-8');
-            $polygonDoc->loadXML($fieldvalue,LIBXML_NOERROR);
             
-            $polygonNode = $polygonDoc->documentElement;
+            #Don't do this is there is no GML, or it will fail.
+            if ($fieldvalue != '') {
+                $polygonDoc = new DomDocument('1.0','UTF-8');
+                $polygonDoc->loadXML($fieldvalue,LIBXML_NOERROR);
             
-            // if ($polygonNode->getAttribute ='gml:id' == "")
-            // {    
-                // $polygonNode->setAttribute('gml:id','Geometry1');
-            // }
-            
-            //$one = new DOMDocument;
-            //$two = new DOMDocument;
-            //$one->loadXml('<root><foo>one</foo></root>');
-            //$two->loadXml('<root><bar><sub>two</sub></bar></root>');
-            //$bar = $two->documentElement->firstChild; // we want to import the bar tree
-            //$one->documentElement->appendChild($one->importNode($polygonNode, TRUE));
-            //echo $one->saveXml();
-            
-            
-            if($polygonNode instanceof DOMNode == true)
-            {
-                $node->appendChild($doc->importNode($polygonNode, TRUE));
-            }
-            
-            /*
-            # b-method
-            $doc->validate();
+                $polygonNode = $polygonDoc->documentElement;
                 
-            $fragment = $doc->createDocumentFragment();
-            $fragment->appendXML($fieldvalue);
-            $node->appendChild($fragment);
-            */
-
+                if($polygonNode instanceof DOMNode == true)
+                {
+                    $node->appendChild($doc->importNode($polygonNode, TRUE));
+                }
+            }
             break;
         }
         case 'gml:posList':
