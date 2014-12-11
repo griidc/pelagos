@@ -189,7 +189,7 @@ function canHazGridFTP($user, $udi, $filename)
         and isset($homedir)
         and $homedir != null
         and is_writable($homedir."/download/")
-        and is_writable($homedir."/download/$udi") or !file_exists($homedir."/download/$udi")
+        and (is_writable($homedir."/download/$udi") or !file_exists($homedir."/download/$udi"))
     ) {
         $all_ok = 1;
     }
