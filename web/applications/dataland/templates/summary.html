@@ -1,0 +1,112 @@
+{% autoescape 'html' %}
+<div style="position: relative;">
+<font size="3">
+<div style="float:right;" class="minitoolbar">
+    {% if dl_ok == 1 %}
+        {% if pdata.metadata == 10 %}
+            <img width="40px" height="40px" id="downloadds" src="/data-discovery/includes/images/download-package.png">
+            <img title="test" width="40px" height="40px" id="metadatadl" src="{{baseurl}}/includes/images/xmlc.png">
+        {% else %}
+            <div>
+                <img width="40px" height="40px" id="downloadds" src="/data-discovery/includes/images/download-package.png">
+                <img title="test" width="40px" height="40px" id="metadatadl-dis" src="{{baseurl}}/includes/images/xmlc-bw.png">
+            </div>
+        {% endif %}
+    {% else %}
+         <div>
+            <img width="40px" height="40px" id="downloaddsdenmd" src="/data-discovery/includes/images/download-package-grey.png">
+            <img title="test" width="40px" height="40px" id="metadatadl-dis" src="{{baseurl}}/includes/images/xmlc-bw.png">
+        </div>
+    {% endif %}
+</div>
+
+<h2>{{pdata.title}}</h2>
+
+{% if mdata.Program_Title %}
+    <h3>{{mdata.Program_Title}}</h3>
+{% endif %}
+
+<table width="90%">
+    <tr><td colspan="2"><b>UDI:</b><br/> {{pdata.dataset_udi}}</td></tr>
+    <tr><td colspan="2">&nbsp;</td></tr>
+
+    <tr><td valign="top"><b>Dataset Originator:</b><br/> {{pdata.dataset_originator}}</td>
+        <td rowspan="4" valign="top">
+            {% if mpdata %}
+                <b>Point of Contact:</b><br/>
+                {{mpdata.People_LastName}}, {{mpdata.People_FirstName}}<br/>
+                {{mpdata.Institution_Name}}<br/>
+                <a href="{{mpdata.Department_URL}}" title="Link to Department" target="_blank">{{mpdata.Department_Name}}</a></span> <br>
+                {{mpdata.Department_Addr1}}<br>
+                {{mpdata.Department_Addr2}}<br>
+                {{mpdata.Department_City}}, {{mpdata.Department_State}}&nbsp;&nbsp;{{mpdata.Department_Zip}}<br>
+                {{mpdata.Department_Country}}<br>
+                <a href="mailto:{{mpdata.People_Email}}">{{mpdata.People_Email}}</a>
+            {% endif %}
+        </td>
+    </tr>
+
+    <tr>
+        <td valign="top">
+            {% if mdata.Fund_Source %}
+                <b>Funding Source:</b><br/>
+                {{mdata.Fund_Source}}
+            {% endif %}
+        </td>
+    </tr>
+
+    <tr>
+        <td valign="top">
+            {% if mdata.Program_StartDate %}
+                <b>Program Start Date:</b><br/>
+                {{mdata.Program_StartDate}}
+            {% endif %}
+        </td>
+    </tr>
+
+    <tr>
+        <td>
+            {% if mdata.Program_EndDate %}
+                <b>Program End Date:</b><br/>
+                {{mdata.Program_EndDate}}
+            {% endif %}
+        </td>
+    </tr>
+
+    {% if pdata.extent_description %}
+        <tr><td colspan="2">&nbsp;</td></tr>
+        <tr><td colspan="2"><b>Extent Description:</b><br/> {{pdata.extent_description}}</td></tr>
+    {% endif %}
+
+</table>
+
+</font>
+<p/>
+<table class="status">
+    <tr>
+        {% if pdata.identified %}
+            <th>Identified</th>
+        {% endif %}
+        <th>Registered</th>
+        <th>Metadata</th>
+        <th>Available</th>
+    </tr>
+    <tr>
+        {% if pdata.identified %}
+            <td title="{{(pdata.identified ~ '_identified') | statusToTitle}}">
+                <img src="{{baseurl}}/includes/images/{{pdata.identified | statusToImg}}">
+            </td>
+        {% endif %}
+        <td title="{{(pdata.registered ~ '_registered') | statusToTitle}}">
+            <img src="{{baseurl}}/includes/images/{{pdata.registered | statusToImg}}">
+        </td>
+        <td title="{% if pdata.registered %}{{(pdata.metadata ~ '_metadata') | statusToTitle}}{% else %}{{'-1_metadata' | statusToTitle}}{% endif %}">
+            <img src="{{baseurl}}/includes/images/{% if pdata.registered %}{{pdata.metadata | statusToImg}}{% else %}{{'-1' | statusToImg}}{% endif %}">
+        </td>
+        <td title="{% if pdata.registered %}{{(pdata.available ~ '_available') | statusToTitle}}{% else %}{{'-1_available' | statusToTitle}}{% endif %}">
+            <img src="{{baseurl}}/includes/images/{% if pdata.registered %}{{pdata.available | statusToImg}}{% else %}{{'-1' | statusToImg}}{% endif %}">
+        </td>
+    </tr>
+    </table>
+</div>
+{% endautoescape %}

@@ -1,0 +1,27 @@
+{% if mdata.Program_Title %}
+<h2>Project Title:</h2>
+<div>
+<a target="_blank" href="http://research.gulfresearchinitiative.org/research-awards/projects/?pid={{mdata.Program_ID}}">{{mdata.Program_Title}}</a>
+</div>
+{% endif %}
+
+{% if mdata.Project_Title %}
+<h2>Task Title:</h2>
+<div>
+{{mdata.Project_Title}}
+</div>
+{% endif %}
+
+{% if pdata.dataset_abstract %}
+<h2>Abstract:</h2>
+<div>
+{{pdata.dataset_abstract}}
+</div>
+{% endif %}
+
+{% if mdata.Project_Abstract %}
+<h2>Project Abstract:</h2>
+<div>
+{{mdata.Project_Abstract}}
+</div>
+{% endif %}
