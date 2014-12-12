@@ -1,0 +1,5 @@
+<?php
+$doishoulder = 'doi:10.5072/FK2';
+$doiusername = 'apitest';
+$doipassword = 'apitest';
+?>
