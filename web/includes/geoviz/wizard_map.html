@@ -1,0 +1,95 @@
+<div id="mapwiz" style="display:none;">
+    <table id="maptoolstbl" width="100%" height="100%" border="0">
+        <tr valign="top">
+            <td width="80%" >
+                <!--Make sure the width and height of the map are 100%-->
+            </td>
+            <td width="20%">
+                <table width="100%" height="100%" border="0">
+                    <tr>
+                        <!--
+                        <td align="center" valign="top" height="90%" style="position:relative;">
+                        <label for="coordlist">Coordinate List</label>
+                        <textarea id="coordlist" style="width:95%;position:absolute;left:5px;right:5px;top:20px;bottom:5px;">
+
+                        </textarea>
+                        </td>
+                        -->
+                        <td align="center" valign="top">
+                            <div id="coordtoolbar" class="ui-widget-header ui-corner-all">
+                                <div id="coordTabs">
+                                    <ul>
+                                        <li>
+                                            <a href="#coordListTab">List</a>
+                                        </li>
+                                        <li>
+                                            <a href="#boundingBoxTab">Box</a>
+                                        </li>
+                                    </ul>
+                                    <div id="coordListTab">
+                                        <label id="coordlistLbl" for="coordlist">Coordinate List</label>
+                                        <textarea id="coordlist" style="width:95%;"></textarea>
+                                    </div>
+                                    <div id="boundingBoxTab">
+                                        <label for="boundingTable">Bounding Box</label>
+                                        <form id="coordForm">
+                                            <table border="0" width="100%" id="boundingTable">
+                                                <tr>
+                                                    <td colspan=3" align="center">
+                                                        <label for="coordlist">Max Lat.</label>
+                                                        <input id="maxLat" name="maxLat" type="text" size="8">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td align="left">
+                                                        <label for="minLong">Min Long.</label>
+                                                        <input type="text" id="minLong" size="8">
+                                                    </td>
+                                                    <td></td>
+                                                    <td align="right">
+                                                        <label for="maxLong">Max Long.</label>
+                                                        <input type="text" id="maxLong" size="8">
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td align="center" colspan="3">
+                                                        <input type="text" id="minLat" size="8">
+                                                        <label for="minLat">Min Lat.</label>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </form>
+                                    </div>
+                                    <button style="width: 100%;" id="drawOnMap">Render on Map</button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="100%">
+                            <h3><span id="wizDrawMode">Navigation</span> Mode</h3>
+                            <fieldset>
+                                <div id="maphelptxt" style="position:relative;overflow-x:hidden;overflow-y:auto;">
+                                </div>
+                            </fieldset>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div id="wiztoolbar" class="ui-widget-header ui-corner-all">
+                                <span>
+                                    <button style="width: 100%;"  id="saveFeature">Save and Finish</button>
+                                </span>
+                                <button style="width: 100%;" id="startDrawing">Start Drawing</button>        
+                                <span>
+                                    <button style="width: 100%;" id="deleteFeature">Delete</button>
+                                </span>        <button style="width: 100%;" id="startOver">Change Mode</button>
+                                <button style="width: 100%;" id="exitDialog">Restart Wizard</button>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>

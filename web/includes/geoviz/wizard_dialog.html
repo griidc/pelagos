@@ -1,0 +1,47 @@
+<div id="hasSpatial" style="display:none;">
+    <h2>Would you characterize your dataset as Spatial or Non-Spatial?</h2>
+    <p>Many datasets have an obvious spatial component (samples taken at a location or model results that describe an area). However, for some datasets, a location may not be relevant or even recorded (chemical analysis datasets wholly performed in the lab, data describing synthesis of new dispersants, etc.)</p>
+</div>
+
+<div id="provideDesc" style="display:none;">
+    <h2>Please provide a short statement describing why this dataset does not have a spatial component.</h2>
+    <p><i>Example - "Dataset contains laboratory measurements of oil degradation, no field sampling involved"</i></p>
+    <textarea class="required" id="wizDesc" cols="60" rows="5"></textarea>
+    <br>
+</div>
+
+<div id="helpinfo" title="Spatial Extent Wizard - 4" style="display:none;width:1000px">
+    <p>Define the spatial extent of your dataset by providing a list of coordinates (in decimal degrees) or drawing on the map. Select the method and then the geometry type that best represents the spatial extent of your dataset.</p>
+    <div id="helptoolbar" style="font-size:100%;" class="ui-widget-header ui-corner-all">
+        <div style="display:table;width:100%;">
+            <div id="featMode" style="display:table-row;">
+                <div style="display:table-cell;">
+                    <input type="radio" id="featPaste" name="featMode">
+                    <label for="featPaste">Insert Coordinate Text</label>
+                </div>
+                <div style="display:table-cell;">
+                    <input type="radio" id="featDraw" name="featMode" checked="checked">
+                    <label for="featDraw">Draw on the Map</label>
+                </div>
+            </div>
+        </div>
+        <div style="display:table;width:100%;">
+            <div id="drawType" style="display:table-row;">
+                <div style="display:table-cell;">
+                    <input type="radio" id="drawBox" name="drawType">
+                    <label for="drawBox">Box</label>
+                </div>
+                <div style="display:table-cell;">
+                    <input class="button" type="radio" id="drawPolygon" name="drawType" checked="checked">
+                    <label for="drawPolygon">Polygon</label>
+                </div>
+                <div style="display:table-cell;">
+                    <input type="radio" id="drawLine" name="drawType">
+                    <label for="drawLine">Line</label></div><div style="display:table-cell;">
+                    <input type="radio" id="drawPoint" name="drawType">
+                    <label for="drawPoint">Point</label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
