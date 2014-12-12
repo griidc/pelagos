@@ -1,0 +1,19 @@
+[
+    {% for source in otherSources %}
+    {
+        "data": {
+            "title": "{{source.Name}}{% if source.dataset_count %} <span style='color:black;font-weight:bold;'>({{source.dataset_count}})</span>{% endif %}",
+            "attr": {
+                "style": "color:{{tree.other_sources_color}}"
+            }
+        },
+        "attr": {
+            "id": "source_{{source.ID}}",
+            "action": "{{tree.other_sources_action | evaluate}}"
+        }
+    }
+    {% if not loop.last %}
+    ,
+    {% endif %}
+    {% endfor %}
+]
