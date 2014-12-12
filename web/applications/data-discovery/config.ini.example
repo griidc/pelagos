@@ -1,0 +1,6 @@
+[DataDiscovery]
+registeredOrderBy = "year DESC, dataset_originator, title"
+identifiedOrderBy = "title"
+treePaneCollapsed = 0
+alternateDownloadSite = 0
+alternateDownloadSiteServer = "poseidon-cs.tamu.edu"
