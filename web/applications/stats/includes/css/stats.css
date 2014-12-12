@@ -1,0 +1,183 @@
+#stats-page {
+    display: table;
+    width: 100%;
+    height: 100%;
+    min-height: 550px;
+}
+
+#stats-as-of-row {
+    display: table-row;
+}
+
+#stats-as-of-cell {
+    display: table-cell;
+}
+
+#stats-as-of-cell h2 {
+    margin: 0px;
+}
+
+#stats-tabs-row {
+    display: table-row;
+}
+
+#stats-tabs-cell {
+    display: table-cell;
+    height: 100%;
+}
+
+#stats-tabs {
+    display: table;
+    height: 100%;
+    width: 100%;
+    padding: 0px;
+}
+
+.ui-tabs .ui-tabs-panel {
+    padding: 0px;
+}
+
+#stats-tab-1 {
+    display: table-row;
+}
+
+#stats-tab-2 {
+    display: table-row;
+}
+
+#stats-overview {
+    display: table;
+    height: 100%;
+    width: 100%;
+    border-spacing: 10px;
+}
+
+.stats-overview-row {
+    display: table-row;
+}
+
+.stats-overview-cell {
+    display: table-cell;
+    width: 33%;
+    height: 50%;
+}
+
+.stats-section {
+    padding: 0px;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    background: #F1F3F5;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.stats-section td {
+    padding: 3px;
+    border: 1px solid #ccc;
+    border-collapse: collapse;
+    font-size: 10px;
+}
+
+.caption {
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    font-size: 14px;
+    color: #009922;
+    text-align: center;
+    line-height: 100%;
+}
+
+.result {
+    border: 1px solid #cccccc;
+    margin-top: 10px;
+    background: #E9ECEF;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: normal;
+    font-size: 12px;
+    padding: 5px;
+    margin-bottom: 10px;
+}
+
+#summary-of-records-legend {
+    margin-right: 15px;
+    margin-left: 37px;
+    margin-bottom: 5px;
+}
+
+#summary-of-records-legend table {
+    width: 100%;
+}
+
+#summary-of-records-legend td.legendLabel {
+    width: 25%;
+    text-align: center;
+    border: none;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    vertical-align: top;
+    line-height: 100%;
+}
+
+#summary-of-records-legend td.legendColorBox {
+    display: none;
+}
+
+#research-details-vals {
+    width: 100%;
+    height: 100%;
+    vertical-align: middle;
+}
+
+#research-details table.counts {
+    margin-left: auto;
+    margin-right: auto;
+    font-weight: normal;
+}
+
+#research-details table.counts td {
+    font-size: 10px;
+    width: 20%;
+    text-align: center;
+    line-height: 100%;
+    color: #555;
+}
+
+.research-label {
+    text-align: right;
+    font-weight: bold;
+}
+
+.research-value {
+    text-align: right;
+}
+
+#categories_legend {
+    display: table;
+    height: 100%;
+    width: 100%;
+    text-align: center;
+    font-weight: bold;
+    border-spacing: 10px;
+}
+
+#categories_legend .legend-cell {
+    display: table-cell;
+    height: 100%;
+    width: 16%;
+}
+
+#categories_legend .legend-item {
+    padding: 3px;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    white-space: nowrap;
+}
+
+#cattabs li {
+    list-style: none;
+}
+
+#system-capacity .error {
+    display: none;
+}
