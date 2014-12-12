@@ -1,0 +1,5 @@
+[exclude]
+funds[] = 1
+
+[misc]
+system_capacity = 109951162777600
