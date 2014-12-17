@@ -72,6 +72,9 @@ $app->get('/', function () use ($app) {
     drupal_add_js('/includes/jquery-hashchange/jquery.ba-hashchange.min.js',array('type'=>'external'));
     drupal_add_js('/includes/tablesorter/js/jquery.tablesorter.min.js',array('type'=>'external'));
     drupal_add_js('/tree/js/tree.js',array('type'=>'external'));
+    drupal_add_js('//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.min.js',array('type'=>'external'));
+    drupal_add_js('//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.stack.min.js',array('type'=>'external'));
+    drupal_add_js('//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.resize.min.js',array('type'=>'external'));
     drupal_add_js("$env[SCRIPT_NAME]/js/dm.js",array('type'=>'external'));
     drupal_add_css("$env[SCRIPT_NAME]/includes/css/dm.css",array('type'=>'external'));
     drupal_add_css("$env[SCRIPT_NAME]/includes/css/scrollbars.css",array('type'=>'external'));

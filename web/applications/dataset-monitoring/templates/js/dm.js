@@ -44,6 +44,7 @@ $(document).ready(function() {
         }
     })
 
+
 });
 
 function showProjects(by,id) {
@@ -125,6 +126,45 @@ function showProjects(by,id) {
                 sortList: [[0,0]],
                 sortRestart : true,
                 sortInitialOrder: 'asc'
+            });
+            $(".sbarchart").each(function() {
+
+    var series = [{
+        data: [
+            [15, 0]
+        ],
+        label: "Identified"
+    },
+    {
+        data: [
+            [10, 0]
+        ],
+        label: "Registered"
+    }, {
+        data: [
+            [9, 0]
+        ],
+        label: "Available"
+    }];
+
+    var options = {
+        xaxis: {
+            minTickSize: 1
+        },
+        yaxis: {
+            ticks: false
+        },
+        series: {
+            bars: {
+                align: "center",
+                show: true,
+                barWidth: .9,
+                horizontal: true
+            },
+            stack: true
+        }
+    };
+                $.plot((this), series, options);
             });
         }
     });
