@@ -1,11 +1,13 @@
 <?php
 
+$eventHandlerConfig  = parse_ini_file('/etc/opt/pelagos/EventHandler.ini', true);
+
 function getMessageTemplate($Action)
 {
     $GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini', true);
     $templatePath = $GLOBALS['config']['paths']['templates'];
 
-    $eventHandlerConfig  = parse_ini_file('/etc/opt/pelagos/EventHandler.ini', true);
+    global $eventHandlerConfig;
 
     if (array_key_exists($Action, $eventHandlerConfig)) {
         $templateFileName = $templatePath.'/'.$eventHandlerConfig[$Action]["mail_template_filename"];
@@ -115,7 +117,44 @@ function getDMsFromPeopleID($peopleId)
 
 function eventHappened($Action, $Data)
 {
-    emailDM($Action, $Data);
+    global $eventHandlerConfig;
+    $actions = $eventHandlerConfig[$Action]['action'];
+    #Take an action according to the event type/action
+    if (stristr($actions,'emaildm')){
+        emailDM($Action, $Data);
+    }
+    if (stristr($actions,'sendmail')){
+        emailUser($Action, $Data);
+    }
+}
+
+function emailUser($Action,$Data)
+{
+    $messageData = getMessageTemplate($Action);
+    
+    $messageTemplate = $messageData['messageTemplate'];
+    $subject = $messageData['subject'];
+    
+    $mailData = array();
+    
+    $mailData["data"] = $Data;
+    
+    #make sure user exists
+    if (array_key_exists('user', $Data)) {
+        $user = $Data['user'];
+        $mailData["user"] = $user;
+        
+        $mailMessage  = expandTemplate($messageTemplate, $mailData);
+        
+        require_once 'griidcMailer.php';
+        $eventMailer = new griidcMailer(false);
+        $eventMailer->addToUser($user['firstName'], $user['lastName'], $user['email']);
+        $eventMailer->mailMessage = $mailMessage;
+        $eventMailer->mailSubject = $subject;
+        $eventMailer->sendMail();
+    }
+    
+    return true;
 }
 
 function emailDM($Action, $Data)
