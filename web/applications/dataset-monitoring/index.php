@@ -83,6 +83,61 @@ $app->get('/', function () use ($app) {
     return $app->render('html/index.html');
 });
 
+$app->get('/summaryCount/:projectId', function ($projectId) use ($app) {
+    $sleep = rand(0,150)/100; 
+    sleep($sleep);
+$json = 
+"[{
+    data: [
+        [".rand(0,10).", 0]
+    ],
+    label: 'Identified'
+    },
+    {
+    data: [
+        [".rand(0,10).", 0]
+    ],
+    label: 'Registered'
+    },
+    {
+    data: [
+        [".rand(0,10).", 0]
+    ],
+    label: 'Available'
+    }
+]";
+    $raw = array(array(
+                array( 'data' =>
+                    array(
+                        array(
+                            rand(0,10),0
+                        )
+                    ),
+                    'label' => 'Identified'
+                ),
+                array( 'data' =>
+                    array(
+                        array(
+                            rand(0,10),0
+                        )
+                    ),
+                    'label' => 'Registered'
+                ),
+                array( 'data' =>
+                    array(
+                        array(
+                            rand(0,10),0
+                        )
+                    ),
+                    'label' => 'Available'
+                )
+            ),$projectId);
+
+    #header("Content-type: application/json");
+    print json_encode($raw);
+    exit;
+});
+
 $app->get('/projects/:by/:id(/:renderer)', function ($by,$id,$renderer='browser') use ($app) {
     $stash['timestamp'] = date('Y-m-d g:i A (T)',time());
     $RIS_DBH = OpenDB('RIS_RO');

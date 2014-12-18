@@ -128,25 +128,11 @@ function showProjects(by,id) {
                 sortInitialOrder: 'asc'
             });
             $(".sbarchart").each(function() {
+                var projectId = this.id;
 
-    var series = [{
-        data: [
-            [15, 0]
-        ],
-        label: "Identified"
-    },
-    {
-        data: [
-            [10, 0]
-        ],
-        label: "Registered"
-    }, {
-        data: [
-            [9, 0]
-        ],
-        label: "Available"
-    }];
-
+$.getJSON( "dataset-monitoring/summaryCount/" + projectId, null, function( data ) {
+    var jsondata = data[0];
+    var projectId = data[1];
     var options = {
         xaxis: {
             minTickSize: 1
@@ -162,10 +148,25 @@ function showProjects(by,id) {
                 horizontal: true
             },
             stack: true
+        },
+        grid: {
+            show: true
         }
     };
-                $.plot((this), series, options);
-            });
+    var projectGraph = $("div#" + projectId + ".sbarchart");
+    $.plot(projectGraph, jsondata, options);
+})
+    .fail(function() {
+        console.log("failed");
+    });
+
+
+
+
+
+
+
+ });
         }
     });
 }
