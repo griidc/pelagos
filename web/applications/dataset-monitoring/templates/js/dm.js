@@ -154,7 +154,12 @@ function showProjects(by,id) {
                     }
                 };
                 var projectGraph = $("div#" + projectId + ".sbarchart");
+                var projectText = $("div#" + projectId + ".sbarchart-counts");
                 $.plot(projectGraph, jsondata, options);
+                var identified = jsondata[0]["data"][0][0];
+                var registered = jsondata[1]["data"][0][0];
+                var available  = jsondata[2]["data"][0][0];
+                projectText.html("Datasets Identified:" + identified + " &nbsp; &nbsp; Datasets Registered:" + registered + " &nbsp; &nbsp; Datasets Available:" + available);
             })
                 .fail(function() {
                     console.log("failed");

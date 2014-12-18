@@ -30,8 +30,8 @@
                 {% endfor %}
             </div>
             <br />
-            Dataset Status Summary Graph:
             <div class="sbarchart" id="{{project.ID}}"></div>
+            <div class="sbarchart-counts" id="{{project.ID}}"></div>
             {% if not project.tasks %}
                 {% if project.datasets %}
                     {% set datasets = project.datasets %}
