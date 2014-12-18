@@ -130,43 +130,36 @@ function showProjects(by,id) {
             $(".sbarchart").each(function() {
                 var projectId = this.id;
 
-$.getJSON( "dataset-monitoring/summaryCount/" + projectId, null, function( data ) {
-    var jsondata = data[0];
-    var projectId = data[1];
-    var options = {
-        xaxis: {
-            minTickSize: 1
-        },
-        yaxis: {
-            ticks: false
-        },
-        series: {
-            bars: {
-                align: "center",
-                show: true,
-                barWidth: .9,
-                horizontal: true
-            },
-            stack: true
-        },
-        grid: {
-            show: true
-        }
-    };
-    var projectGraph = $("div#" + projectId + ".sbarchart");
-    $.plot(projectGraph, jsondata, options);
-})
-    .fail(function() {
-        console.log("failed");
-    });
-
-
-
-
-
-
-
- });
+            $.getJSON( "{{baseUrl}}/summaryCount/" + projectId, null, function( data ) {
+                var jsondata = data[0];
+                var projectId = data[1];
+                var options = {
+                    xaxis: {
+                        minTickSize: 1
+                    },
+                    yaxis: {
+                        ticks: false
+                    },
+                    series: {
+                        bars: {
+                            align: "center",
+                            show: true,
+                            barWidth: .9,
+                            horizontal: true
+                        },
+                        stack: true
+                    },
+                    grid: {
+                        show: true
+                    }
+                };
+                var projectGraph = $("div#" + projectId + ".sbarchart");
+                $.plot(projectGraph, jsondata, options);
+            })
+                .fail(function() {
+                    console.log("failed");
+                });
+            });
         }
     });
 }
