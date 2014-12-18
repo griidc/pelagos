@@ -1,13 +1,13 @@
 <?php
 
-$eventHandlerConfig  = parse_ini_file('/etc/opt/pelagos/EventHandler.ini', true);
-
 function getMessageTemplate($Action)
 {
-    $GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini', true);
-    $templatePath = $GLOBALS['config']['paths']['templates'];
+    $config = parse_ini_file('/etc/opt/pelagos.ini', true);
+    $templatePath = $config['paths']['templates'];
+    $iniPath = $config['paths']['conf'];
+    $iniFileName = $iniPath.'/'.'EventHandler.ini';
 
-    global $eventHandlerConfig;
+    $eventHandlerConfig  = parse_ini_file($iniFileName, true);
 
     if (array_key_exists($Action, $eventHandlerConfig)) {
         $templateFileName = $templatePath.'/'.$eventHandlerConfig[$Action]["mail_template_filename"];
@@ -117,18 +117,26 @@ function getDMsFromPeopleID($peopleId)
 
 function eventHappened($Action, $Data)
 {
-    global $eventHandlerConfig;
+    $config = parse_ini_file('/etc/opt/pelagos.ini', true);
+    $iniPath = $config['paths']['conf'];
+    $iniFileName = $iniPath.'/'.'EventHandler.ini';
+    $eventHandlerConfig  = parse_ini_file($iniFileName, true);
+    
+    if (!array_key_exists($Action, $eventHandlerConfig)) {
+        throw new Exception('Action not found');
+    }
+    
     $actions = $eventHandlerConfig[$Action]['action'];
     #Take an action according to the event type/action
-    if (stristr($actions,'emaildm')){
+    if (stristr($actions, 'emaildm')) {
         emailDM($Action, $Data);
     }
-    if (stristr($actions,'sendmail')){
+    if (stristr($actions, 'sendmail')) {
         emailUser($Action, $Data);
     }
 }
 
-function emailUser($Action,$Data)
+function emailUser($Action, $Data)
 {
     $messageData = getMessageTemplate($Action);
     
@@ -168,7 +176,6 @@ function emailDM($Action, $Data)
     $dataManagers = array();
 
     if (is_array($Data)) {
-
         $getDataManagerID = function ($dataManager) {
             return $dataManager['id'];
         };
