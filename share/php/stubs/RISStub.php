@@ -52,6 +52,47 @@ function getProjectDetails($dbh, $filters = array())
     }
 }
 
+function getPeopleDetails($dbh, $filters = array(), $order_by = 'LastName, FirstName')
+{
+    $sample_people = array(
+        1 => array(
+            'ID' => 1,
+            'Title' => 'Mr.',
+            'LastName' => 'Sample',
+            'FirstName' => 'User 1',
+            'Street1' => '6300 Ocean Dr',
+            'Street2' => 'Unit 5869',
+            'City' => 'Corpus Christi',
+            'State' => 'TX',
+            'PostalCode' => '78412',
+            'Email' => 'user1@griidc.org',
+            'Phone' => '(361) 825-0001',
+        ),
+        2 => array(
+            'ID' => 2,
+            'Title' => 'Mr.',
+            'LastName' => 'Sample',
+            'FirstName' => 'User 2',
+            'Street1' => '6300 Ocean Dr',
+            'Street2' => 'Unit 5869',
+            'City' => 'Corpus Christi',
+            'State' => 'TX',
+            'PostalCode' => '78412',
+            'Email' => 'user2@griidc.org',
+            'Phone' => '(361) 826-0002',
+        )
+    );
+    if (preg_match('/^peopleid=(\d+)/', $filters[0], $matches)) {
+        if (array_key_exists($matches[1], $sample_people)) {
+            return array($sample_people[$matches[1]]);
+        } else {
+            return array();
+        }
+    } else {
+        return array();
+    }
+}
+
 function getDMsFromRC($DBH, $RC)
 {
     switch ($RC) {
