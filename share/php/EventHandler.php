@@ -7,7 +7,7 @@ function getMessageTemplate($Action)
     $iniPath = $config['paths']['conf'];
     $iniFileName = $iniPath.'/'.'EventHandler.ini';
 
-    $eventHandlerConfig  = parse_ini_file($iniFileName, true);
+    $eventHandlerConfig = parse_ini_file($iniFileName, true);
 
     if (array_key_exists($Action, $eventHandlerConfig)) {
         $templateFileName = $templatePath.'/'.$eventHandlerConfig[$Action]["mail_template_filename"];
@@ -120,12 +120,12 @@ function eventHappened($Action, $Data)
     $config = parse_ini_file('/etc/opt/pelagos.ini', true);
     $iniPath = $config['paths']['conf'];
     $iniFileName = $iniPath.'/'.'EventHandler.ini';
-    $eventHandlerConfig  = parse_ini_file($iniFileName, true);
-    
+    $eventHandlerConfig = parse_ini_file($iniFileName, true);
+
     if (!array_key_exists($Action, $eventHandlerConfig)) {
         throw new Exception('Action not found');
     }
-    
+
     $actions = $eventHandlerConfig[$Action]['action'];
     #Take an action according to the event type/action
     if (stristr($actions, 'emaildm')) {
@@ -139,21 +139,21 @@ function eventHappened($Action, $Data)
 function emailUser($Action, $Data)
 {
     $messageData = getMessageTemplate($Action);
-    
+
     $messageTemplate = $messageData['messageTemplate'];
     $subject = $messageData['subject'];
-    
+
     $mailData = array();
-    
+
     $mailData["data"] = $Data;
-    
+
     #make sure user exists
     if (array_key_exists('user', $Data)) {
         $user = $Data['user'];
         $mailData["user"] = $user;
-        
-        $mailMessage  = expandTemplate($messageTemplate, $mailData);
-        
+
+        $mailMessage = expandTemplate($messageTemplate, $mailData);
+
         require_once 'griidcMailer.php';
         $eventMailer = new griidcMailer(false);
         $eventMailer->addToUser($user['firstName'], $user['lastName'], $user['email']);
@@ -161,7 +161,7 @@ function emailUser($Action, $Data)
         $eventMailer->mailSubject = $subject;
         $eventMailer->sendMail();
     }
-    
+
     return true;
 }
 
@@ -222,7 +222,7 @@ function emailDM($Action, $Data)
             $mailData["rcbyudi"] = $rcByUDI;
         }
 
-        $mailMessage  = expandTemplate($messageTemplate, $mailData);
+        $mailMessage = expandTemplate($messageTemplate, $mailData);
 
         require_once 'griidcMailer.php';
         $eventMailer = new griidcMailer(false);
