@@ -53,6 +53,10 @@ class EventHandlerTest extends \PHPUnit_Framework_TestCase
         'doi_approved' => array(
             'tests' => array('template','dmEmail','dmName','userFirstName','userLastName','userRCList'              ),
             'templateRegEx' => '/has approved the request for a Digital Object Identifier \(DOI\)/'
+        ),
+        'journal_rejected' => array(
+            'tests' => array('template',                   'userFirstName','userLastName'                           ),
+            'templateRegEx' => '/journal_rejected_text/'
         )
     );
 
@@ -167,13 +171,15 @@ class EventHandlerTest extends \PHPUnit_Framework_TestCase
         foreach ($this->events as $event => $testInfo) {
             if (in_array('template', $testInfo['tests'])) {
                 foreach (array(array('userId' => 'user1'),array('risUserId' => 1)) as $data) {
+                    ob_start();
                     print "\n\nTesting event: $event\n\nwith data:\n\n";
                     foreach ($data as $key => $val) {
                         print "  $key => $val\n";
                     }
                     print "\n\n";
                     eventHappened($event, $data);
-                    $this->expectOutputRegex($testInfo['templateRegEx']);
+                    $this->assertRegExp($testInfo['templateRegEx'], ob_get_contents());
+                    ob_end_clean();
                 }
             }
         }
@@ -184,13 +190,15 @@ class EventHandlerTest extends \PHPUnit_Framework_TestCase
         foreach ($this->events as $event => $testInfo) {
             if (in_array('dmEmail', $testInfo['tests'])) {
                 foreach (array(array('userId' => 'user1'),array('risUserId' => 1)) as $data) {
+                    ob_start();
                     print "\n\nTesting event: $event\n\nwith data:\n\n";
                     foreach ($data as $key => $val) {
                         print "  $key => $val\n";
                     }
                     print "\n\n";
                     eventHappened($event, $data);
-                    $this->expectOutputRegex('/To:.*dm1@somewhere.edu/');
+                    $this->assertRegExp('/To:.*dm1@somewhere.edu/', ob_get_contents());
+                    ob_end_clean();
                 }
             }
         }
@@ -201,13 +209,18 @@ class EventHandlerTest extends \PHPUnit_Framework_TestCase
         foreach ($this->events as $event => $testInfo) {
             if (in_array('dmEmail', $testInfo['tests'])) {
                 foreach (array(array('userId' => 'user2'),array('risUserId' => 2)) as $data) {
+                    ob_start();
                     print "\n\nTesting event: $event\n\nwith data:\n\n";
                     foreach ($data as $key => $val) {
                         print "  $key => $val\n";
                     }
                     print "\n\n";
                     eventHappened($event, $data);
-                    $this->expectOutputRegex('/To:[^\n]*dm2@somewhere\.edu.*To:[^\n]*dm3@somewhere\.edu/ms');
+                    $this->assertRegExp(
+                        '/To:[^\n]*dm2@somewhere\.edu.*To:[^\n]*dm3@somewhere\.edu/ms',
+                        ob_get_contents()
+                    );
+                    ob_end_clean();
                 }
             }
         }
@@ -218,13 +231,15 @@ class EventHandlerTest extends \PHPUnit_Framework_TestCase
         foreach ($this->events as $event => $testInfo) {
             if (in_array('dmName', $testInfo['tests'])) {
                 foreach (array(array('userId' => 'user1'),array('risUserId' => 1)) as $data) {
+                    ob_start();
                     print "\n\nTesting event: $event\n\nwith data:\n\n";
                     foreach ($data as $key => $val) {
                         print "  $key => $val\n";
                     }
                     print "\n\n";
                     eventHappened($event, $data);
-                    $this->expectOutputRegex('/Dear Data Manager 1,/');
+                    $this->assertRegExp('/Dear Data Manager 1,/', ob_get_contents());
+                    ob_end_clean();
                 }
             }
         }
@@ -234,11 +249,13 @@ class EventHandlerTest extends \PHPUnit_Framework_TestCase
     {
         foreach ($this->events as $event => $testInfo) {
             if (in_array('userFirstName', $testInfo['tests'])) {
+                ob_start();
                 eventHappened(
                     $event,
                     array('udi' => 'R1.x100.001:0001','user' => array('firstName' => 'UserFirstName'))
                 );
-                $this->expectOutputRegex('/UserFirstName/');
+                $this->assertRegExp('/UserFirstName/', ob_get_contents());
+                ob_end_clean();
             }
         }
     }
@@ -247,11 +264,13 @@ class EventHandlerTest extends \PHPUnit_Framework_TestCase
     {
         foreach ($this->events as $event => $testInfo) {
             if (in_array('userLastName', $testInfo['tests'])) {
+                ob_start();
                 eventHappened(
                     $event,
                     array('udi' => 'R1.x100.001:0001','user' => array('lastName' => 'UserLastName'))
                 );
-                $this->expectOutputRegex('/UserLastName/');
+                $this->assertRegExp('/UserLastName/', ob_get_contents());
+                ob_end_clean();
             }
         }
     }
@@ -261,13 +280,15 @@ class EventHandlerTest extends \PHPUnit_Framework_TestCase
         foreach ($this->events as $event => $testInfo) {
             if (in_array('userRCList', $testInfo['tests'])) {
                 foreach (array(array('userId' => 'user1'),array('risUserId' => 1)) as $data) {
+                    ob_start();
                     print "\n\nTesting event: $event\n\nwith data:\n\n";
                     foreach ($data as $key => $val) {
                         print "  $key => $val\n";
                     }
                     print "\n\n";
                     eventHappened($event, $data);
-                    $this->expectOutputRegex('/is a member of Sample Project 1/');
+                    $this->assertRegExp('/is a member of Sample Project 1/', ob_get_contents());
+                    ob_end_clean();
                 }
             }
         }
@@ -278,13 +299,15 @@ class EventHandlerTest extends \PHPUnit_Framework_TestCase
         foreach ($this->events as $event => $testInfo) {
             if (in_array('userRCList', $testInfo['tests'])) {
                 foreach (array(array('userId' => 'user2'),array('risUserId' => 2)) as $data) {
+                    ob_start();
                     print "\n\nTesting event: $event\n\nwith data:\n\n";
                     foreach ($data as $key => $val) {
                         print "  $key => $val\n";
                     }
                     print "\n\n";
                     eventHappened($event, $data);
-                    $this->expectOutputRegex('/is a member of Sample Project 2, Sample Project 3/');
+                    $this->assertRegExp('/is a member of Sample Project 2, Sample Project 3/', ob_get_contents());
+                    ob_end_clean();
                 }
             }
         }
@@ -294,8 +317,10 @@ class EventHandlerTest extends \PHPUnit_Framework_TestCase
     {
         foreach ($this->events as $event => $testInfo) {
             if (in_array('udi', $testInfo['tests'])) {
+                ob_start();
                 eventHappened($event, array('udi' => 'R1.x100.001:0001'));
-                $this->expectOutputRegex('/R1\.x100\.001:0001/');
+                $this->assertRegExp('/R1\.x100\.001:0001/', ob_get_contents());
+                ob_end_clean();
             }
         }
     }
@@ -304,8 +329,10 @@ class EventHandlerTest extends \PHPUnit_Framework_TestCase
     {
         foreach ($this->events as $event => $testInfo) {
             if (in_array('udiRC', $testInfo['tests'])) {
+                ob_start();
                 eventHappened($event, array('udi' => 'R1.x100.001:0001'));
-                $this->expectOutputRegex('/(is associated with|for) Sample Project 1./');
+                $this->assertRegExp('/(is associated with|for) Sample Project 1./', ob_get_contents());
+                ob_end_clean();
             }
         }
     }
