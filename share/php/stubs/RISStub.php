@@ -58,8 +58,8 @@ function getPeopleDetails($dbh, $filters = array(), $order_by = 'LastName, First
         1 => array(
             'ID' => 1,
             'Title' => 'Mr.',
-            'LastName' => 'Sample',
-            'FirstName' => 'User 1',
+            'LastName' => 'User 1',
+            'FirstName' => 'Sample',
             'Street1' => '6300 Ocean Dr',
             'Street2' => 'Unit 5869',
             'City' => 'Corpus Christi',
@@ -71,8 +71,8 @@ function getPeopleDetails($dbh, $filters = array(), $order_by = 'LastName, First
         2 => array(
             'ID' => 2,
             'Title' => 'Mr.',
-            'LastName' => 'Sample',
-            'FirstName' => 'User 2',
+            'LastName' => 'User 2',
+            'FirstName' => 'Sample',
             'Street1' => '6300 Ocean Dr',
             'Street2' => 'Unit 5869',
             'City' => 'Corpus Christi',

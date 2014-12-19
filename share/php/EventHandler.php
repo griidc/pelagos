@@ -7,7 +7,7 @@ function getMessageTemplate($Action)
     $iniPath = $config['paths']['conf'];
     $iniFileName = $iniPath.'/'.'EventHandler.ini';
 
-    $eventHandlerConfig = parse_ini_file($iniFileName, true);
+    $eventHandlerConfig  = parse_ini_file($iniFileName, true);
 
     if (array_key_exists($Action, $eventHandlerConfig)) {
         $templateFileName = $templatePath.'/'.$eventHandlerConfig[$Action]["mail_template_filename"];
@@ -115,17 +115,41 @@ function getDMsFromPeopleID($peopleId)
     return $dmByPeopleID;
 }
 
+function geteMailUserDetailsFromUserId($risUserId)
+{
+    require_once 'RIS.php';
+    require_once 'DBUtils.php';
+    # open a database connetion to RIS
+    $RIS_DBH = openDB('RIS_RO');
+    #get DM's by Person ID
+    $peopleDetailsByPeopleID = getPeopleDetails($RIS_DBH, array("peopleid=$risUserId"));
+    # close database connection
+    $RIS_DBH = null;
+    
+    $eMailUserDetails = array();
+    
+    if (is_array($peopleDetailsByPeopleID) and count($peopleDetailsByPeopleID) > 0) {
+        foreach ($peopleDetailsByPeopleID as $people) {
+            $eMailUserDetails['firstName'] = $people['FirstName'];
+            $eMailUserDetails['lastName'] = $people['LastName'];
+            $eMailUserDetails['email'] = $people['Email'];
+        }
+    }
+    
+    return $eMailUserDetails;
+}
+
 function eventHappened($Action, $Data)
 {
     $config = parse_ini_file('/etc/opt/pelagos.ini', true);
     $iniPath = $config['paths']['conf'];
     $iniFileName = $iniPath.'/'.'EventHandler.ini';
-    $eventHandlerConfig = parse_ini_file($iniFileName, true);
-
+    $eventHandlerConfig  = parse_ini_file($iniFileName, true);
+    
     if (!array_key_exists($Action, $eventHandlerConfig)) {
         throw new Exception('Action not found');
     }
-
+    
     $actions = $eventHandlerConfig[$Action]['action'];
     #Take an action according to the event type/action
     if (stristr($actions, 'emaildm')) {
@@ -139,29 +163,40 @@ function eventHappened($Action, $Data)
 function emailUser($Action, $Data)
 {
     $messageData = getMessageTemplate($Action);
-
+    
     $messageTemplate = $messageData['messageTemplate'];
     $subject = $messageData['subject'];
-
+    
     $mailData = array();
-
+    
     $mailData["data"] = $Data;
-
+    
     #make sure user exists
-    if (array_key_exists('user', $Data)) {
-        $user = $Data['user'];
+    if (is_array($Data) and (array_key_exists('userId', $Data) or array_key_exists('risUserId', $Data))) {
+        require_once 'ldap.php';
+        
+        if (!array_key_exists('risUserId', $Data)) {
+            $risUserId = getEmployeeNumberFromUID($Data['userId']);
+        } else {
+            $risUserId = $Data['risUserId'];
+        }
+        
+        $user = geteMailUserDetailsFromUserId($risUserId);
+        
         $mailData["user"] = $user;
-
-        $mailMessage = expandTemplate($messageTemplate, $mailData);
-
-        require_once 'griidcMailer.php';
-        $eventMailer = new griidcMailer(false);
-        $eventMailer->addToUser($user['firstName'], $user['lastName'], $user['email']);
-        $eventMailer->mailMessage = $mailMessage;
-        $eventMailer->mailSubject = $subject;
-        $eventMailer->sendMail();
+                
+        $mailMessage  = expandTemplate($messageTemplate, $mailData);
+        
+        if (count($user) > 0) {
+            require_once 'stubs/griidcMailerStub.php';
+            $eventMailer = new griidcMailer(false);
+            $eventMailer->addToUser($user['firstName'], $user['lastName'], $user['email']);
+            $eventMailer->mailMessage = $mailMessage;
+            $eventMailer->mailSubject = $subject;
+            $eventMailer->sendMail();
+        }
     }
-
+    
     return true;
 }
 
@@ -222,7 +257,7 @@ function emailDM($Action, $Data)
             $mailData["rcbyudi"] = $rcByUDI;
         }
 
-        $mailMessage = expandTemplate($messageTemplate, $mailData);
+        $mailMessage  = expandTemplate($messageTemplate, $mailData);
 
         require_once 'griidcMailer.php';
         $eventMailer = new griidcMailer(false);
