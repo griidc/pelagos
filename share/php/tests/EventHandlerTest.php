@@ -11,48 +11,57 @@ class EventHandlerTest extends \PHPUnit_Framework_TestCase
     # all events, event-dependent tests to perform, and extra info for tests
     private $events = array(
         'account_requested' => array(
-            'tests' => array('template','dmEmail','dmName','userFirstName','userLastName','userRCList'              ),
+            'tests' => array('template','dmEmail','dmSalutation','userFirstName','userLastName','userRCList'),
             'templateRegEx' => '/has received an account creation request from/'
         ),
         'account_request_approved' => array(
-            'tests' => array('template','dmEmail','dmName','userFirstName','userLastName','userRCList'              ),
+            'tests' => array('template','dmEmail','dmSalutation','userFirstName','userLastName','userRCList'),
             'templateRegEx' => '/has completed the .* account creation process/'
         ),
         'dif_saved_but_not_submitted' => array(
-            'tests' => array('template','dmEmail','dmName','userFirstName','userLastName','userRCList','udi','udiRC'),
+            'tests' => array('template','dmEmail','dmSalutation','userFirstName','userLastName','userRCList',
+                             'udi','udiRC'),
             'templateRegEx' => '/a Dataset Information Form \(DIF\) has been created/'
         ),
         'dif_saved_and_submitted' => array(
-            'tests' => array('template','dmEmail','dmName','userFirstName','userLastName','userRCList','udi','udiRC'),
+            'tests' => array('template','dmEmail','dmSalutation','userFirstName','userLastName','userRCList',
+                             'udi','udiRC'),
             'templateRegEx' => '/A Dataset Information Form \(DIF\) has been saved and submitted/'
         ),
         'dif_approved' => array(
-            'tests' => array('template','dmEmail','dmName',                                            'udi','udiRC'),
+            'tests' => array('template','dmEmail','dmSalutation','udi','udiRC'),
             'templateRegEx' => '/A Dataset Information Form for dataset  has been approved/'
         ),
         'dif_unlock_requested' => array(
-            'tests' => array('template','dmEmail','dmName','userFirstName','userLastName','userRCList','udi','udiRC'),
+            'tests' => array('template','dmEmail','dmSalutation','userFirstName','userLastName','userRCList',
+                             'udi','udiRC'),
             'templateRegEx' => '/has received a request to unlock the Dataset Information Form \(DIF\)/'
         ),
         'dif_unlock_request_approved' => array(
-            'tests' => array('template','dmEmail','dmName','userFirstName','userLastName',             'udi'        ),
+            'tests' => array('template','dmEmail','dmSalutation','userFirstName','userLastName','udi'),
             'templateRegEx' => '/has approved a request to unlock the Dataset Information Form \(DIF\)/'
         ),
         'dataset_registration_submitted' => array(
-            'tests' => array('template','dmEmail','dmName','userFirstName','userLastName','userRCList','udi','udiRC'),
+            'tests' => array('template','dmEmail','dmSalutation','userFirstName','userLastName','userRCList',
+                             'udi','udiRC'),
             'templateRegEx' => '/A registration form has been submitted/'
         ),
         'dataset_registration_updated' => array(
-            'tests' => array('template','dmEmail','dmName','userFirstName','userLastName','userRCList','udi','udiRC'),
+            'tests' => array('template','dmEmail','dmSalutation','userFirstName','userLastName','userRCList',
+                             'udi','udiRC'),
             'templateRegEx' => '/A registration form for the dataset .* has been updated/'
         ),
         'doi_requested' => array(
-            'tests' => array('template','dmEmail','dmName','userFirstName','userLastName','userRCList'              ),
+            'tests' => array('template','dmEmail','dmSalutation','userFirstName','userLastName','userRCList'),
             'templateRegEx' => '/A Digital Object Identifier \(DOI\) has been requested for/'
         ),
         'doi_approved' => array(
-            'tests' => array('template','dmEmail','dmName','userFirstName','userLastName','userRCList'              ),
+            'tests' => array('template','dmEmail','dmSalutation','userFirstName','userLastName','userRCList'),
             'templateRegEx' => '/has approved the request for a Digital Object Identifier \(DOI\)/'
+        ),
+        'journal_rejected' => array(
+            'tests' => array('template','userEmail','userSalutation'),
+            'templateRegEx' => '/journal_rejected_text/'
         )
     );
 
@@ -167,13 +176,34 @@ class EventHandlerTest extends \PHPUnit_Framework_TestCase
         foreach ($this->events as $event => $testInfo) {
             if (in_array('template', $testInfo['tests'])) {
                 foreach (array(array('userId' => 'user1'),array('risUserId' => 1)) as $data) {
+                    ob_start();
                     print "\n\nTesting event: $event\n\nwith data:\n\n";
                     foreach ($data as $key => $val) {
                         print "  $key => $val\n";
                     }
                     print "\n\n";
                     eventHappened($event, $data);
-                    $this->expectOutputRegex($testInfo['templateRegEx']);
+                    $this->assertRegExp($testInfo['templateRegEx'], ob_get_contents());
+                    ob_end_clean();
+                }
+            }
+        }
+    }
+
+    public function testEventHappenedUserEmail()
+    {
+        foreach ($this->events as $event => $testInfo) {
+            if (in_array('userEmail', $testInfo['tests'])) {
+                foreach (array(array('userId' => 'user1'),array('risUserId' => 1)) as $data) {
+                    ob_start();
+                    print "\n\nTesting event: $event\n\nwith data:\n\n";
+                    foreach ($data as $key => $val) {
+                        print "  $key => $val\n";
+                    }
+                    print "\n\n";
+                    eventHappened($event, $data);
+                    $this->assertRegExp('/To:.*user1@griidc.org/', ob_get_contents());
+                    ob_end_clean();
                 }
             }
         }
@@ -184,13 +214,15 @@ class EventHandlerTest extends \PHPUnit_Framework_TestCase
         foreach ($this->events as $event => $testInfo) {
             if (in_array('dmEmail', $testInfo['tests'])) {
                 foreach (array(array('userId' => 'user1'),array('risUserId' => 1)) as $data) {
+                    ob_start();
                     print "\n\nTesting event: $event\n\nwith data:\n\n";
                     foreach ($data as $key => $val) {
                         print "  $key => $val\n";
                     }
                     print "\n\n";
                     eventHappened($event, $data);
-                    $this->expectOutputRegex('/To:.*dm1@somewhere.edu/');
+                    $this->assertRegExp('/To:.*dm1@somewhere.edu/', ob_get_contents());
+                    ob_end_clean();
                 }
             }
         }
@@ -201,30 +233,56 @@ class EventHandlerTest extends \PHPUnit_Framework_TestCase
         foreach ($this->events as $event => $testInfo) {
             if (in_array('dmEmail', $testInfo['tests'])) {
                 foreach (array(array('userId' => 'user2'),array('risUserId' => 2)) as $data) {
+                    ob_start();
                     print "\n\nTesting event: $event\n\nwith data:\n\n";
                     foreach ($data as $key => $val) {
                         print "  $key => $val\n";
                     }
                     print "\n\n";
                     eventHappened($event, $data);
-                    $this->expectOutputRegex('/To:[^\n]*dm2@somewhere\.edu.*To:[^\n]*dm3@somewhere\.edu/ms');
+                    $this->assertRegExp(
+                        '/To:[^\n]*dm2@somewhere\.edu.*To:[^\n]*dm3@somewhere\.edu/ms',
+                        ob_get_contents()
+                    );
+                    ob_end_clean();
                 }
             }
         }
     }
 
-    public function testEventHappenedDMName()
+    public function testEventHappenedUserSalutation()
     {
         foreach ($this->events as $event => $testInfo) {
-            if (in_array('dmName', $testInfo['tests'])) {
+            if (in_array('userSalutation', $testInfo['tests'])) {
                 foreach (array(array('userId' => 'user1'),array('risUserId' => 1)) as $data) {
+                    ob_start();
                     print "\n\nTesting event: $event\n\nwith data:\n\n";
                     foreach ($data as $key => $val) {
                         print "  $key => $val\n";
                     }
                     print "\n\n";
                     eventHappened($event, $data);
-                    $this->expectOutputRegex('/Dear Data Manager 1,/');
+                    $this->assertRegExp('/Dear Sample User 1,/', ob_get_contents());
+                    ob_end_clean();
+                }
+            }
+        }
+    }
+
+    public function testEventHappenedDMSalutation()
+    {
+        foreach ($this->events as $event => $testInfo) {
+            if (in_array('dmSalutation', $testInfo['tests'])) {
+                foreach (array(array('userId' => 'user1'),array('risUserId' => 1)) as $data) {
+                    ob_start();
+                    print "\n\nTesting event: $event\n\nwith data:\n\n";
+                    foreach ($data as $key => $val) {
+                        print "  $key => $val\n";
+                    }
+                    print "\n\n";
+                    eventHappened($event, $data);
+                    $this->assertRegExp('/Dear Data Manager 1,/', ob_get_contents());
+                    ob_end_clean();
                 }
             }
         }
@@ -234,11 +292,13 @@ class EventHandlerTest extends \PHPUnit_Framework_TestCase
     {
         foreach ($this->events as $event => $testInfo) {
             if (in_array('userFirstName', $testInfo['tests'])) {
+                ob_start();
                 eventHappened(
                     $event,
                     array('udi' => 'R1.x100.001:0001','user' => array('firstName' => 'UserFirstName'))
                 );
-                $this->expectOutputRegex('/UserFirstName/');
+                $this->assertRegExp('/UserFirstName/', ob_get_contents());
+                ob_end_clean();
             }
         }
     }
@@ -247,11 +307,13 @@ class EventHandlerTest extends \PHPUnit_Framework_TestCase
     {
         foreach ($this->events as $event => $testInfo) {
             if (in_array('userLastName', $testInfo['tests'])) {
+                ob_start();
                 eventHappened(
                     $event,
                     array('udi' => 'R1.x100.001:0001','user' => array('lastName' => 'UserLastName'))
                 );
-                $this->expectOutputRegex('/UserLastName/');
+                $this->assertRegExp('/UserLastName/', ob_get_contents());
+                ob_end_clean();
             }
         }
     }
@@ -261,13 +323,15 @@ class EventHandlerTest extends \PHPUnit_Framework_TestCase
         foreach ($this->events as $event => $testInfo) {
             if (in_array('userRCList', $testInfo['tests'])) {
                 foreach (array(array('userId' => 'user1'),array('risUserId' => 1)) as $data) {
+                    ob_start();
                     print "\n\nTesting event: $event\n\nwith data:\n\n";
                     foreach ($data as $key => $val) {
                         print "  $key => $val\n";
                     }
                     print "\n\n";
                     eventHappened($event, $data);
-                    $this->expectOutputRegex('/is a member of Sample Project 1/');
+                    $this->assertRegExp('/is a member of Sample Project 1/', ob_get_contents());
+                    ob_end_clean();
                 }
             }
         }
@@ -278,13 +342,15 @@ class EventHandlerTest extends \PHPUnit_Framework_TestCase
         foreach ($this->events as $event => $testInfo) {
             if (in_array('userRCList', $testInfo['tests'])) {
                 foreach (array(array('userId' => 'user2'),array('risUserId' => 2)) as $data) {
+                    ob_start();
                     print "\n\nTesting event: $event\n\nwith data:\n\n";
                     foreach ($data as $key => $val) {
                         print "  $key => $val\n";
                     }
                     print "\n\n";
                     eventHappened($event, $data);
-                    $this->expectOutputRegex('/is a member of Sample Project 2, Sample Project 3/');
+                    $this->assertRegExp('/is a member of Sample Project 2, Sample Project 3/', ob_get_contents());
+                    ob_end_clean();
                 }
             }
         }
@@ -294,8 +360,10 @@ class EventHandlerTest extends \PHPUnit_Framework_TestCase
     {
         foreach ($this->events as $event => $testInfo) {
             if (in_array('udi', $testInfo['tests'])) {
+                ob_start();
                 eventHappened($event, array('udi' => 'R1.x100.001:0001'));
-                $this->expectOutputRegex('/R1\.x100\.001:0001/');
+                $this->assertRegExp('/R1\.x100\.001:0001/', ob_get_contents());
+                ob_end_clean();
             }
         }
     }
@@ -304,8 +372,10 @@ class EventHandlerTest extends \PHPUnit_Framework_TestCase
     {
         foreach ($this->events as $event => $testInfo) {
             if (in_array('udiRC', $testInfo['tests'])) {
+                ob_start();
                 eventHappened($event, array('udi' => 'R1.x100.001:0001'));
-                $this->expectOutputRegex('/(is associated with|for) Sample Project 1./');
+                $this->assertRegExp('/(is associated with|for) Sample Project 1./', ob_get_contents());
+                ob_end_clean();
             }
         }
     }
