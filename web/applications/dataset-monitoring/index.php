@@ -90,36 +90,19 @@ $app->get('/', function () use ($app) {
 $app->get('/summaryCount/:projectId', function ($projectId) use ($app) {
     $database    = openDB("GOMRI_RO");
     $available   = getAvailableDatasetsByProjectId($database, $projectId);
-    $registered  = getRegisteredDatasetsByProjectId($database,$projectId)-$available;
-    $identified  = getIdentifiedDatasetsByProjectId($database,$projectId)-$registered;
+    $available_len = $available;
+    $registered  = getRegisteredDatasetsByProjectId($database,$projectId);
+    $registered_len = $registered-$available;
+    $identified  = getIdentifiedDatasetsByProjectId($database,$projectId);
+    $identified_len = $identified-$registered;
     $database    = null;
     unset($database);
 
-$json = 
-"[{
-    data: [
-        [$identified, 0]
-    ],
-    label: 'Identified'
-    },
-    {
-    data: [
-        [$registered, 0]
-    ],
-    label: 'Registered'
-    },
-    {
-    data: [
-        [$available, 0]
-    ],
-    label: 'Available'
-    }
-]";
     $raw = array(array(
                 array( 'data' =>
                     array(
                         array(
-                            $identified,0
+                            $identified_len,0
                         )
                     ),
                     'label' => 'Identified'
@@ -127,7 +110,7 @@ $json =
                 array( 'data' =>
                     array(
                         array(
-                            $registered,0
+                            $registered_len,0
                         )
                     ),
                     'label' => 'Registered'
@@ -135,7 +118,7 @@ $json =
                 array( 'data' =>
                     array(
                         array(
-                            $available,0
+                            $available_len,0
                         )
                     ),
                     'label' => 'Available'

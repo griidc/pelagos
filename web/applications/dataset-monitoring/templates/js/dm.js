@@ -156,10 +156,13 @@ function showProjects(by,id) {
                 var projectGraph = $("div#" + projectId + ".sbarchart");
                 var projectText = $("div#" + projectId + ".sbarchart-counts");
                 $.plot(projectGraph, jsondata, options);
-                var identified = jsondata[0]["data"][0][0];
-                var registered = jsondata[1]["data"][0][0];
-                var available  = jsondata[2]["data"][0][0];
-                projectText.html("Datasets Identified:" + identified + " &nbsp; &nbsp; Datasets Registered:" + registered + " &nbsp; &nbsp; Datasets Available:" + available);
+                var identified_len = jsondata[0]["data"][0][0];
+                var registered_len = jsondata[1]["data"][0][0];
+                var available_len  = jsondata[2]["data"][0][0];
+                var available = available_len;
+                var registered = registered_len + available_len;
+                var identified = available_len + registered_len + identified_len;
+                projectText.html("Total Identified:" + identified + " &nbsp; &nbsp; Total Registered:" + registered + " &nbsp; &nbsp; Total Available:" + available);
             })
                 .fail(function() {
                     console.log("failed");
