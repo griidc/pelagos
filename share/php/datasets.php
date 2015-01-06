@@ -521,3 +521,97 @@ if (!function_exists('getProjectIdFromUdi')) {
         return $stmt->fetchColumn();
     }
 }
+
+/**
+ *
+ * @author Joe V. Holland
+ * January 5, 2015
+ *
+ * @param $pdo - the PDO connector
+ * @param $projectId - the number that is the project id i.e. 29
+ * @returns the number of registered data sets which are available with the project id
+ *
+ **/
+function getDatasetsRegisteredAvailableByProjectId(PDO $pdo,$projectId) {
+    $query = "select count(*) from datasets, registry_view ".
+        " where datasets.dataset_udi = registry_view.dataset_udi and ".
+        " datasets.project_id = ".$projectId.";";
+    $stmt = $pdo->prepare($query);
+    if (!$stmt->execute()) {
+        $arr = $stmt->errorInfo();
+        print_r($arr);
+    }
+    return $stmt->fetchColumn();
+
+}
+
+/**
+ *
+ * @author Joe V. Holland
+ * January 5, 2015
+ *
+ * @param $pdo - the PDO connector
+ * @param $projectId - the number that is the project id i.e. 29
+ * @returns the number of data sets with the project id
+ *
+ **/
+function getDatasetCountByProjectId(PDO $pdo,$projectId) {
+    $query = "select count(*) from datasets, registry_view ".
+        " where ".
+        " registry_view.access_status = 'None' and ".
+        " datasets.dataset_udi = registry_view.dataset_udi and ".
+        " datasets.project_id = ".$projectId.";";
+    $stmt = $pdo->prepare($query);
+    if (!$stmt->execute()) {
+        $arr = $stmt->errorInfo();
+        print_r($arr);
+    }
+    return $stmt->fetchColumn();
+}
+
+/**
+ *
+ * @author Joe V. Holland
+ * January 5, 2015
+ *
+ * @param $pdo - the PDO connector
+ * @param $projectId - the number that is the project id i.e. 29
+ * @returns the number of data sets registered with the project id
+ *
+ **/
+function getRegisteredCountByProjectId(PDO $pdo,$projectId) {
+    $query = "select count(*) from datasets, registry_view ".
+        " where ".
+        " datasets.dataset_udi = registry_view.dataset_udi and ".
+        " datasets.project_id = ".$projectId.";";
+    $stmt = $pdo->prepare($query);
+    if (!$stmt->execute()) {
+        $arr = $stmt->errorInfo();
+        print_r($arr);
+    }
+    return $stmt->fetchColumn();
+}
+/**
+ *
+ * @author Joe V. Holland
+ * January 5, 2015
+ *
+ * @param $pdo - the PDO connector
+ * @param $projectId - the number that is the project id i.e. 29
+ * @returns the number of data sets which are available for download with the project id
+ *
+ **/
+function getDataAvailableByProjectId(PDO $pdo, $projectId) {
+    $query = "select count(*) from datasets, registry_view ".
+        " where ".
+        " registry_view.access_status = 'None' and ".
+        " registry_view.metadata_status = 'Accepted' and ".
+        " datasets.dataset_udi = registry_view.dataset_udi and ".
+        " datasets.project_id = ".$projectId.";";
+    $stmt = $pdo->prepare($query);
+    if (!$stmt->execute()) {
+        $arr = $stmt->errorInfo();
+        print_r($arr);
+    }
+    return $stmt->fetchColumn();
+}
