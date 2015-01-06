@@ -29,9 +29,11 @@
                     {% endif %}
                 {% endfor %}
             </div>
+            {% if not pdf %}
             <br />
             <div class="sbarchart" id="{{project.ID}}"></div>
             <div class="sbarchart-counts" id="{{project.ID}}"></div>
+            {% endif %}
             {% if not project.tasks %}
                 {% if project.datasets %}
                     {% set datasets = project.datasets %}
