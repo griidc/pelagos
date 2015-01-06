@@ -529,10 +529,10 @@ if (!function_exists('getProjectIdFromUdi')) {
  *
  * @param $pdo - the PDO connector
  * @param $projectId - the number that is the project id i.e. 29
- * @returns the number of registered data sets which are available with the project id
+ * @returns the number of identified data sets
  *
  **/
-function getDatasetsRegisteredAvailableByProjectId(PDO $pdo,$projectId) {
+function getIdentifiedDatasetsByProjectId(PDO $pdo,$projectId) {
     $query = "select count(*) from datasets, registry_view ".
         " where datasets.dataset_udi = registry_view.dataset_udi and ".
         " datasets.project_id = ".$projectId.";";
@@ -552,10 +552,10 @@ function getDatasetsRegisteredAvailableByProjectId(PDO $pdo,$projectId) {
  *
  * @param $pdo - the PDO connector
  * @param $projectId - the number that is the project id i.e. 29
- * @returns the number of data sets with the project id
+ * @returns the number of data sets for which data has been registered with the project id
  *
  **/
-function getDatasetCountByProjectId(PDO $pdo,$projectId) {
+function getRegisteredDatasetsByProjectId(PDO $pdo,$projectId) {
     $query = "select count(*) from datasets, registry_view ".
         " where ".
         " registry_view.access_status = 'None' and ".
@@ -569,28 +569,7 @@ function getDatasetCountByProjectId(PDO $pdo,$projectId) {
     return $stmt->fetchColumn();
 }
 
-/**
- *
- * @author Joe V. Holland
- * January 5, 2015
- *
- * @param $pdo - the PDO connector
- * @param $projectId - the number that is the project id i.e. 29
- * @returns the number of data sets registered with the project id
- *
- **/
-function getRegisteredCountByProjectId(PDO $pdo,$projectId) {
-    $query = "select count(*) from datasets, registry_view ".
-        " where ".
-        " datasets.dataset_udi = registry_view.dataset_udi and ".
-        " datasets.project_id = ".$projectId.";";
-    $stmt = $pdo->prepare($query);
-    if (!$stmt->execute()) {
-        $arr = $stmt->errorInfo();
-        print_r($arr);
-    }
-    return $stmt->fetchColumn();
-}
+
 /**
  *
  * @author Joe V. Holland
@@ -601,7 +580,7 @@ function getRegisteredCountByProjectId(PDO $pdo,$projectId) {
  * @returns the number of data sets which are available for download with the project id
  *
  **/
-function getDataAvailableByProjectId(PDO $pdo, $projectId) {
+function getAvailableDatasetsByProjectId(PDO $pdo, $projectId) {
     $query = "select count(*) from datasets, registry_view ".
         " where ".
         " registry_view.access_status = 'None' and ".
