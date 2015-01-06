@@ -30,7 +30,7 @@ require_once $GLOBALS['config']['paths']['share'].'/php/dumpIncludesFile.php';
 # load RIS query functions
 require_once $GLOBALS['config']['paths']['share'].'/php/rpis.php';
 # load dataset query functions
-require_once $GLOBALS['config']['paths']['share'].'/php/datasets.php';
+require_once '../../../share/php/datasets.php';
 # load database utilities
 require_once $GLOBALS['config']['paths']['share'].'/php/db-utils.lib.php';
 
@@ -84,24 +84,29 @@ $app->get('/', function () use ($app) {
 });
 
 $app->get('/summaryCount/:projectId', function ($projectId) use ($app) {
-    $sleep = rand(0,150)/100; 
-    sleep($sleep);
+    $database    = OpenDB("GOMRI_RO");
+    $identified  = getDatasetsRegisteredAvailableByProjectId($database,$projectId);
+    $registered  = getRegisteredCountByProjectId($database,$projectId);
+    $available   = getDataAvailableByProjectId($database, $projectId);
+    $database    = null;
+    unset($database);
+
 $json = 
 "[{
     data: [
-        [".rand(0,10).", 0]
+        [$identified, 0]
     ],
     label: 'Identified'
     },
     {
     data: [
-        [".rand(0,10).", 0]
+        [$registered, 0]
     ],
     label: 'Registered'
     },
     {
     data: [
-        [".rand(0,10).", 0]
+        [$available, 0]
     ],
     label: 'Available'
     }
@@ -110,7 +115,7 @@ $json =
                 array( 'data' =>
                     array(
                         array(
-                            rand(0,10),0
+                            $identified,0
                         )
                     ),
                     'label' => 'Identified'
@@ -118,7 +123,7 @@ $json =
                 array( 'data' =>
                     array(
                         array(
-                            rand(0,10),0
+                            $registered,0
                         )
                     ),
                     'label' => 'Registered'
@@ -126,14 +131,13 @@ $json =
                 array( 'data' =>
                     array(
                         array(
-                            rand(0,10),0
+                            $available,0
                         )
                     ),
                     'label' => 'Available'
                 )
             ),$projectId);
 
-    #header("Content-type: application/json");
     print json_encode($raw);
     exit;
 });
