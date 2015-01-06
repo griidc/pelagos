@@ -3,10 +3,14 @@
 $GLOBALS['orig_cwd'] = getcwd();
 chdir(realpath(dirname(__FILE__)));
 
+set_include_path(get_include_path() . PATH_SEPARATOR . "../../../share/php");
+
 # load global pelagos config
 $GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini',true);
+# load Common lib
+require_once 'Common.php';
 # load local overrides and additions
-$GLOBALS['config'] = array_merge($GLOBALS['config'],parse_ini_file('config.ini',true));
+$GLOBALS['config'] = configMerge($GLOBALS['config'],parse_ini_file('config.ini',true));
 # load library info
 $GLOBALS['libraries'] = parse_ini_file($GLOBALS['config']['paths']['conf'].'/libraries.ini',true);
 # load database connection info
@@ -21,18 +25,18 @@ require_once $GLOBALS['libraries']['Slim-Views']['include_Twig'];
 # load Twig
 require_once 'Twig/Autoloader.php';
 # load custom Twig extensions
-require_once $GLOBALS['config']['paths']['share'].'/php/Twig_Extensions_Pelagos.php';
+require_once 'Twig_Extensions_Pelagos.php';
 
 # load Drupal functions
-require_once $GLOBALS['config']['paths']['share'].'/php/drupal.php';
+require_once 'drupal.php';
 # load includes file dumper
-require_once $GLOBALS['config']['paths']['share'].'/php/dumpIncludesFile.php';
+require_once 'dumpIncludesFile.php';
 # load RIS query functions
-require_once $GLOBALS['config']['paths']['share'].'/php/rpis.php';
+require_once 'rpis.php';
 # load dataset query functions
-require_once '../../../share/php/datasets.php';
+require_once 'datasets.php';
 # load database utilities
-require_once $GLOBALS['config']['paths']['share'].'/php/db-utils.lib.php';
+require_once 'DBUtils.php';
 
 # load dataset monitoring library
 require_once 'lib/dm.php';
@@ -53,7 +57,7 @@ $app->hook('slim.before', function () use ($app) {
 $app->get('/includes/:file', 'dumpIncludesFile')->conditions(array('file' => '.+'));
 
 $app->get('/js/:name.js', function ($name) use ($app) {
-    $RIS_DBH = OpenDB('RIS_RO');
+    $RIS_DBH = openDB('RIS_RO');
     $stash['funds'] = getFundingSources($RIS_DBH);
     $stash['projects'] = getProjectDetails($RIS_DBH,array("fundsrc=7"));
     header('Content-type: text/javascript');
@@ -84,10 +88,10 @@ $app->get('/', function () use ($app) {
 });
 
 $app->get('/summaryCount/:projectId', function ($projectId) use ($app) {
-    $database    = OpenDB("GOMRI_RO");
-    $identified  = getDatasetsRegisteredAvailableByProjectId($database,$projectId);
-    $registered  = getRegisteredCountByProjectId($database,$projectId);
-    $available   = getDataAvailableByProjectId($database, $projectId);
+    $database    = openDB("GOMRI_RO");
+    $available   = getAvailableDatasetsByProjectId($database, $projectId);
+    $registered  = getRegisteredDatasetsByProjectId($database,$projectId)-$available;
+    $identified  = getIdentifiedDatasetsByProjectId($database,$projectId)-$registered;
     $database    = null;
     unset($database);
 
@@ -144,7 +148,7 @@ $json =
 
 $app->get('/projects/:by/:id(/:renderer)', function ($by,$id,$renderer='browser') use ($app) {
     $stash['timestamp'] = date('Y-m-d g:i A (T)',time());
-    $RIS_DBH = OpenDB('RIS_RO');
+    $RIS_DBH = openDB('RIS_RO');
     if ($by == 'YR1') {
         $fundFilter = array('fundId>0','fundId<7');
         if (isset($GLOBALS['config']['exclude']['funds'])) {
@@ -208,8 +212,8 @@ $app->get('/projects/:by/:id(/:renderer)', function ($by,$id,$renderer='browser'
 });
 
 $app->get('/dataset_details/:udi', function ($udi) use ($app) {
-    $GOMRI_DBH = OpenDB('GOMRI_RO');
-    $RIS_DBH = OpenDB('RIS_RO');
+    $GOMRI_DBH = openDB('GOMRI_RO');
+    $RIS_DBH = openDB('RIS_RO');
 
     $SELECT = 'SELECT
                CASE WHEN r.dataset_title IS NULL THEN title ELSE r.dataset_title END AS title,

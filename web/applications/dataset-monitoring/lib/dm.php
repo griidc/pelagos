@@ -56,8 +56,8 @@ function getTasksAndDatasets($projects) {
              ON r2.registry_id = m.MaxID
              ) r
              ON r.dataset_udi = d.dataset_udi';
-    $RIS_DBH = OpenDB('RIS_RO');
-    $GOMRI_DBH = OpenDB('GOMRI_RO');
+    $RIS_DBH = openDB('RIS_RO');
+    $GOMRI_DBH = openDB('GOMRI_RO');
     for ($i=0;$i<count($projects);$i++) {
         $pi = getPeopleDetails($RIS_DBH,array('projectId='.$projects[$i]['ID'],'roleId=1'));
         if ($pi) {
