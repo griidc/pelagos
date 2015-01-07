@@ -60,6 +60,7 @@ $app->get('/js/:name.js', function ($name) use ($app) {
     $RIS_DBH = openDB('RIS_RO');
     $stash['funds'] = getFundingSources($RIS_DBH);
     $stash['projects'] = getProjectDetails($RIS_DBH,array("fundsrc=7"));
+    $RIS_DBH = null;
     header('Content-type: text/javascript');
     $app->render("js/$name.js",$stash);
     exit;
@@ -187,6 +188,7 @@ $app->get('/projects/:by/:id(/:renderer)', function ($by,$id,$renderer='browser'
             $app->render('html/projects.html',$stash);
         }
     }
+    $RIS_DBH = null;
     exit;
 });
 
@@ -223,6 +225,8 @@ $app->get('/dataset_details/:udi', function ($udi) use ($app) {
         }
     }
 
+    $RIS_DBH = null;
+    $GOMRI_DBH = null;
     $app->render('html/dataset_details.html',$stash);
     exit;
 });

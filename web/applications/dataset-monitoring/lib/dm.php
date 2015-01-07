@@ -79,6 +79,7 @@ function getTasksAndDatasets($projects) {
                 if (is_array($datasets)) {
                     $tasks[$j]['datasets'] = $datasets;
                 }
+                $stmt = null;
             }
             $projects[$i]['tasks'] = $tasks;
         }
@@ -89,9 +90,10 @@ function getTasksAndDatasets($projects) {
             if (is_array($datasets)) {
                 $projects[$i]['datasets'] = $datasets;
             }
+            $stmt = null;
         }
     }
+    $RIS_DBH = null;
+    $GOMRI_DBH = null;
     return $projects;
 }
-
-?>
