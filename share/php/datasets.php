@@ -532,17 +532,19 @@ if (!function_exists('getProjectIdFromUdi')) {
  * @returns the number of identified data sets
  *
  **/
-function getIdentifiedDatasetsByProjectId(PDO $pdo,$projectId) {
-    $query = "select count(*) from datasets, registry_view ".
-        " where datasets.dataset_udi = registry_view.dataset_udi and ".
-        " datasets.project_id = ".$projectId.";";
-    $stmt = $pdo->prepare($query);
-    if (!$stmt->execute()) {
-        $arr = $stmt->errorInfo();
-        print_r($arr);
+if (!function_exists('getIdentifiedDatasetsByProjectId')) {
+    function getIdentifiedDatasetsByProjectId(PDO $pdo, $projectId)
+    {
+        $query = "select count(*) from datasets, registry_view " .
+            " where datasets.dataset_udi = registry_view.dataset_udi and " .
+            " datasets.project_id = " . $projectId . ";";
+        $stmt = $pdo->prepare($query);
+        if (!$stmt->execute()) {
+            $arr = $stmt->errorInfo();
+            print_r($arr);
+        }
+        return $stmt->fetchColumn();
     }
-    return $stmt->fetchColumn();
-
 }
 
 /**
@@ -555,18 +557,21 @@ function getIdentifiedDatasetsByProjectId(PDO $pdo,$projectId) {
  * @returns the number of data sets for which data has been registered with the project id
  *
  **/
-function getRegisteredDatasetsByProjectId(PDO $pdo,$projectId) {
-    $query = "select count(*) from datasets, registry_view ".
-        " where ".
-        " registry_view.access_status = 'None' and ".
-        " datasets.dataset_udi = registry_view.dataset_udi and ".
-        " datasets.project_id = ".$projectId.";";
-    $stmt = $pdo->prepare($query);
-    if (!$stmt->execute()) {
-        $arr = $stmt->errorInfo();
-        print_r($arr);
+if (!function_exists('getRegisteredDatasetsByProjectId')) {
+    function getRegisteredDatasetsByProjectId(PDO $pdo, $projectId)
+    {
+        $query = "select count(*) from datasets, registry_view " .
+            " where " .
+            " registry_view.access_status = 'None' and " .
+            " datasets.dataset_udi = registry_view.dataset_udi and " .
+            " datasets.project_id = " . $projectId . ";";
+        $stmt = $pdo->prepare($query);
+        if (!$stmt->execute()) {
+            $arr = $stmt->errorInfo();
+            print_r($arr);
+        }
+        return $stmt->fetchColumn();
     }
-    return $stmt->fetchColumn();
 }
 
 
@@ -580,17 +585,20 @@ function getRegisteredDatasetsByProjectId(PDO $pdo,$projectId) {
  * @returns the number of data sets which are available for download with the project id
  *
  **/
-function getAvailableDatasetsByProjectId(PDO $pdo, $projectId) {
-    $query = "select count(*) from datasets, registry_view ".
-        " where ".
-        " registry_view.access_status = 'None' and ".
-        " registry_view.metadata_status = 'Accepted' and ".
-        " datasets.dataset_udi = registry_view.dataset_udi and ".
-        " datasets.project_id = ".$projectId.";";
-    $stmt = $pdo->prepare($query);
-    if (!$stmt->execute()) {
-        $arr = $stmt->errorInfo();
-        print_r($arr);
+if (!function_exists('getAvailableDatasetsByProjectId')) {
+    function getAvailableDatasetsByProjectId(PDO $pdo, $projectId)
+    {
+        $query = "select count(*) from datasets, registry_view " .
+            " where " .
+            " registry_view.access_status = 'None' and " .
+            " registry_view.metadata_status = 'Accepted' and " .
+            " datasets.dataset_udi = registry_view.dataset_udi and " .
+            " datasets.project_id = " . $projectId . ";";
+        $stmt = $pdo->prepare($query);
+        if (!$stmt->execute()) {
+            $arr = $stmt->errorInfo();
+            print_r($arr);
+        }
+        return $stmt->fetchColumn();
     }
-    return $stmt->fetchColumn();
 }
