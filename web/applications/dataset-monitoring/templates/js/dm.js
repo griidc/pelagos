@@ -43,8 +43,6 @@ $(document).ready(function() {
             }
         }
     })
-
-
 });
 
 function showProjects(by,id) {
@@ -128,46 +126,46 @@ function showProjects(by,id) {
                 sortInitialOrder: 'asc'
             });
             $(".sbarchart").each(function() {
-                var projectId = this.id;
+                var projectId = this.parentNode.id;
+                /* remove non-numeric part of the passed div ID */
+                projectId = projectId.replace(/^.*_/,'');
 
-            $.getJSON( "{{baseUrl}}/summaryCount/" + projectId, null, function( data ) {
-                var jsondata = data[0];
-                var projectId = data[1];
-                var options = {
-                    xaxis: {
-                        min: 0,
-                        minTickSize: 1
-                    },
-                    yaxis: {
-                        ticks: false
-                    },
-                    series: {
-                        bars: {
-                            align: "center",
-                            show: true,
-                            barWidth: .9,
-                            horizontal: true
+                $.getJSON( "{{baseUrl}}/summaryCount/" + projectId, null, function( data ) {
+                    var jsondata = data[0];
+                    var projectId = data[1];
+                    var options = {
+                        xaxis: {
+                            min: 0,
+                            minTickSize: 1
                         },
-                        stack: true
-                    },
-                    grid: {
-                        show: true
-                    },
-                    colors: [ "#6fcd6f", "#eee566", "#bababa" ]
-                };
-                var projectGraph = $("div#" + projectId + ".sbarchart");
-                var projectText = $("div#" + projectId + ".sbarchart-counts");
-                $.plot(projectGraph, jsondata, options);
-                var registered_len = jsondata[1]["data"][0][0];
-                var available_len  = jsondata[0]["data"][0][0];
-                var identified_len = jsondata[2]["data"][0][0];
-
-                var available = available_len;
-                var registered = registered_len + available_len;
-                var identified = available_len + registered_len + identified_len;
-                projectText.html("Available:" + available + " &nbsp; &nbsp; Total Registered:" + registered + " &nbsp; &nbsp; Identified:" + identified);
-            })
-                .fail(function() {
+                        yaxis: {
+                            ticks: false
+                        },
+                        series: {
+                            bars: {
+                                align: "center",
+                                show: true,
+                                barWidth: .9,
+                                horizontal: true
+                            },
+                            stack: true
+                        },
+                        grid: {
+                            show: true
+                        },
+                        colors: [ "#6fcd6f", "#eee566", "#bababa" ]
+                    };
+                    var projectGraph = $("div#sbarchart_" + projectId + " > .sbarchart" );
+                    var projectText = $("div#" + "sbarchart_" + projectId + " > .sbarchart-counts");
+                    $.plot(projectGraph, jsondata, options);
+                    var registered_len = jsondata[1]["data"][0][0];
+                    var available_len  = jsondata[0]["data"][0][0];
+                    var identified_len = jsondata[2]["data"][0][0];
+                    var available = available_len;
+                    var registered = registered_len + available_len;
+                    var identified = available_len + registered_len + identified_len;
+                    projectText.html("Available:" + available + " &nbsp; &nbsp; Total Registered:" + registered + " &nbsp; &nbsp; Identified:" + identified);
+                }).fail(function() {
                     console.log("failed");
                 });
             });

@@ -1,13 +1,15 @@
 <?php
 
 if (!function_exists('drupal_set_message')) {
-    function drupal_set_message($message = NULL, $type = 'status', $repeat = TRUE) {
+    function drupal_set_message($message = NULL, $type = 'status', $repeat = TRUE)
+    {
         echo "<p><strong>[$type]: $message</strong></p>";
     }
 }
 
 if (!function_exists('getDrupalUserName')) {
-    function getDrupalUserName() {
+    function getDrupalUserName()
+    {
         global $user;
         if (isset($user) and is_object($user) and property_exists($user,'name')) return $user->name;
         else return NULL;
@@ -15,7 +17,8 @@ if (!function_exists('getDrupalUserName')) {
 }
 
 if (!function_exists('fixEnvironment')) {
-    function fixEnvironment() {
+    function fixEnvironment()
+    {
         $orig_env = array();
         # save original script name
         $orig_env['SCRIPT_NAME'] = $_SERVER['SCRIPT_NAME'];
@@ -31,7 +34,8 @@ if (!function_exists('fixEnvironment')) {
 }
 
 if(!function_exists('restoreEnvironment')) {
-    function restoreEnvironment($orig_env) {
+    function restoreEnvironment($orig_env)
+    {
         # restore all environment variables back to their saved values
         foreach ($orig_env as $key => $val) {
             $_SERVER[$key] = $val;

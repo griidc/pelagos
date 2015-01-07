@@ -3,7 +3,7 @@
 $GLOBALS['orig_cwd'] = getcwd();
 chdir(realpath(dirname(__FILE__)));
 
-set_include_path(get_include_path() . PATH_SEPARATOR . "../../../share/php");
+set_include_path("../../../share/php" . PATH_SEPARATOR . get_include_path());
 
 # load global pelagos config
 $GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini',true);
@@ -90,19 +90,15 @@ $app->get('/', function () use ($app) {
 $app->get('/summaryCount/:projectId', function ($projectId) use ($app) {
     $database    = openDB("GOMRI_RO");
     $available   = getAvailableDatasetsByProjectId($database, $projectId);
-    $available_len = $available;
     $registered  = getRegisteredDatasetsByProjectId($database,$projectId);
-    $registered_len = $registered-$available;
     $identified  = getIdentifiedDatasetsByProjectId($database,$projectId);
-    $identified_len = $identified-$registered;
     $database    = null;
-    unset($database);
 
     $raw = array(array(
                 array( 'data' =>
                     array(
                         array(
-                            $available_len,0
+                            $available,0
                         )
                     ),
                     'label' => 'Availiable'
@@ -110,7 +106,7 @@ $app->get('/summaryCount/:projectId', function ($projectId) use ($app) {
                 array( 'data' =>
                     array(
                         array(
-                            $registered_len,0
+                            $registered-$available,0
                         )
                     ),
                     'label' => 'Registered'
@@ -118,7 +114,7 @@ $app->get('/summaryCount/:projectId', function ($projectId) use ($app) {
                 array( 'data' =>
                     array(
                         array(
-                            $identified_len,0
+                            $identified-$registered-$available,0
                         )
                     ),
                     'label' => 'Identified'
