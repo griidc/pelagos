@@ -114,7 +114,7 @@ $app->get('/summaryCount/:projectId', function ($projectId) use ($app) {
                 array( 'data' =>
                     array(
                         array(
-                            $identified-$registered-$available,0
+                            $identified-$registered,0
                         )
                     ),
                     'label' => 'Identified'
