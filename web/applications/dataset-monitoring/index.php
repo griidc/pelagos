@@ -102,10 +102,10 @@ $app->get('/summaryCount/:projectId', function ($projectId) use ($app) {
                 array( 'data' =>
                     array(
                         array(
-                            $identified_len,0
+                            $available_len,0
                         )
                     ),
-                    'label' => 'Identified'
+                    'label' => 'Availiable'
                 ),
                 array( 'data' =>
                     array(
@@ -118,10 +118,10 @@ $app->get('/summaryCount/:projectId', function ($projectId) use ($app) {
                 array( 'data' =>
                     array(
                         array(
-                            $available_len,0
+                            $identified_len,0
                         )
                     ),
-                    'label' => 'Available'
+                    'label' => 'Identified'
                 )
             ),$projectId);
 

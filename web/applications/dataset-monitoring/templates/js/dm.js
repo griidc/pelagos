@@ -135,6 +135,7 @@ function showProjects(by,id) {
                 var projectId = data[1];
                 var options = {
                     xaxis: {
+                        min: 0,
                         minTickSize: 1
                     },
                     yaxis: {
@@ -151,18 +152,20 @@ function showProjects(by,id) {
                     },
                     grid: {
                         show: true
-                    }
+                    },
+                    colors: [ "#6fcd6f", "#eee566", "#bababa" ]
                 };
                 var projectGraph = $("div#" + projectId + ".sbarchart");
                 var projectText = $("div#" + projectId + ".sbarchart-counts");
                 $.plot(projectGraph, jsondata, options);
-                var identified_len = jsondata[0]["data"][0][0];
                 var registered_len = jsondata[1]["data"][0][0];
-                var available_len  = jsondata[2]["data"][0][0];
+                var available_len  = jsondata[0]["data"][0][0];
+                var identified_len = jsondata[2]["data"][0][0];
+
                 var available = available_len;
                 var registered = registered_len + available_len;
                 var identified = available_len + registered_len + identified_len;
-                projectText.html("Total Identified:" + identified + " &nbsp; &nbsp; Total Registered:" + registered + " &nbsp; &nbsp; Total Available:" + available);
+                projectText.html("Available:" + available + " &nbsp; &nbsp; Total Registered:" + registered + " &nbsp; &nbsp; Identified:" + identified);
             })
                 .fail(function() {
                     console.log("failed");
