@@ -3,8 +3,8 @@
 function getTasksAndDatasets($projects)
 {
     $enforceMetadataRule = 0;
-    if (isset($GLOBALS['config']['system']['enforce_approved_metadata']
-        and $GLOBALS['config']['system']['enforce_approved_metadata'] == 1)) {
+    if (isset($GLOBALS['config']['system']['enforce_approved_metadata'])
+        and $GLOBALS['config']['system']['enforce_approved_metadata'] == 1) {
         $enforceMetadataRule = 1;
     } else {
         $enforceMetadataRule = 0;
