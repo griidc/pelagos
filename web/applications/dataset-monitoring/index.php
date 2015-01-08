@@ -6,15 +6,15 @@ chdir(realpath(dirname(__FILE__)));
 set_include_path("../../../share/php" . PATH_SEPARATOR . get_include_path());
 
 # load global pelagos config
-$GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini',true);
+$GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini', true);
 # load Common lib
 require_once 'Common.php';
 # load local overrides and additions
-$GLOBALS['config'] = configMerge($GLOBALS['config'],parse_ini_file('config.ini',true));
+$GLOBALS['config'] = configMerge($GLOBALS['config'], parse_ini_file('config.ini', true));
 # load library info
-$GLOBALS['libraries'] = parse_ini_file($GLOBALS['config']['paths']['conf'].'/libraries.ini',true);
+$GLOBALS['libraries'] = parse_ini_file($GLOBALS['config']['paths']['conf'].'/libraries.ini', true);
 # load database connection info
-$GLOBALS['db'] = parse_ini_file($GLOBALS['config']['paths']['conf'].'/db.ini',true);
+$GLOBALS['db'] = parse_ini_file($GLOBALS['config']['paths']['conf'].'/db.ini', true);
 
 # load Slim2
 require_once $GLOBALS['libraries']['Slim2']['include'];
@@ -50,7 +50,8 @@ $app->view->parserExtensions = array( new \Slim\Views\Twig_Extensions_Pelagos() 
 # define baseUrl for use in templates
 $app->hook('slim.before', function () use ($app) {
     $env = $app->environment();
-    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off'
+                 || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
     $app->view()->appendData(array('baseUrl' => "$protocol$env[SERVER_NAME]$env[SCRIPT_NAME]"));
 });
 
@@ -59,10 +60,10 @@ $app->get('/includes/:file', 'dumpIncludesFile')->conditions(array('file' => '.+
 $app->get('/js/:name.js', function ($name) use ($app) {
     $RIS_DBH = openDB('RIS_RO');
     $stash['funds'] = getFundingSources($RIS_DBH);
-    $stash['projects'] = getProjectDetails($RIS_DBH,array("fundsrc=7"));
+    $stash['projects'] = getProjectDetails($RIS_DBH, array("fundsrc=7"));
     $RIS_DBH = null;
     header('Content-type: text/javascript');
-    $app->render("js/$name.js",$stash);
+    $app->render("js/$name.js", $stash);
     exit;
 });
 
@@ -74,25 +75,25 @@ $app->get('/css/:name.css', function ($name) use ($app) {
 
 $app->get('/', function () use ($app) {
     $env = $app->environment();
-    drupal_add_js('/includes/jquery-hashchange/jquery.ba-hashchange.min.js',array('type'=>'external'));
-    drupal_add_js('/includes/tablesorter/js/jquery.tablesorter.min.js',array('type'=>'external'));
-    drupal_add_js('/tree/js/tree.js',array('type'=>'external'));
-    drupal_add_js('//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.min.js',array('type'=>'external'));
-    drupal_add_js('//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.stack.min.js',array('type'=>'external'));
-    drupal_add_js('//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.resize.min.js',array('type'=>'external'));
-    drupal_add_js("$env[SCRIPT_NAME]/js/dm.js",array('type'=>'external'));
-    drupal_add_css("$env[SCRIPT_NAME]/includes/css/dm.css",array('type'=>'external'));
-    drupal_add_css("$env[SCRIPT_NAME]/includes/css/scrollbars.css",array('type'=>'external'));
-    drupal_add_css("$env[SCRIPT_NAME]/css/projects.css",array('type'=>'external'));
-    drupal_add_css("$env[SCRIPT_NAME]/includes/css/dataset_details.css",array('type'=>'external'));
+    drupal_add_js('/includes/jquery-hashchange/jquery.ba-hashchange.min.js', array('type'=>'external'));
+    drupal_add_js('/includes/tablesorter/js/jquery.tablesorter.min.js', array('type'=>'external'));
+    drupal_add_js('/tree/js/tree.js', array('type'=>'external'));
+    drupal_add_js('//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.min.js', array('type'=>'external'));
+    drupal_add_js('//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.stack.min.js', array('type'=>'external'));
+    drupal_add_js('//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.resize.min.js', array('type'=>'external'));
+    drupal_add_js("$env[SCRIPT_NAME]/js/dm.js", array('type'=>'external'));
+    drupal_add_css("$env[SCRIPT_NAME]/includes/css/dm.css", array('type'=>'external'));
+    drupal_add_css("$env[SCRIPT_NAME]/includes/css/scrollbars.css", array('type'=>'external'));
+    drupal_add_css("$env[SCRIPT_NAME]/css/projects.css", array('type'=>'external'));
+    drupal_add_css("$env[SCRIPT_NAME]/includes/css/dataset_details.css", array('type'=>'external'));
     return $app->render('html/index.html');
 });
 
 $app->get('/summaryCount/:projectId', function ($projectId) use ($app) {
     $database    = openDB("GOMRI_RO");
     $available   = getAvailableDatasetsByProjectId($database, $projectId);
-    $registered  = getRegisteredDatasetsByProjectId($database,$projectId);
-    $identified  = getIdentifiedDatasetsByProjectId($database,$projectId);
+    $registered  = getRegisteredDatasetsByProjectId($database, $projectId);
+    $identified  = getIdentifiedDatasetsByProjectId($database, $projectId);
     $database    = null;
 
     $raw = array(array(
@@ -126,8 +127,8 @@ $app->get('/summaryCount/:projectId', function ($projectId) use ($app) {
     exit;
 });
 
-$app->get('/projects/:by/:id(/:renderer)', function ($by,$id,$renderer='browser') use ($app) {
-    $stash['timestamp'] = date('Y-m-d g:i A (T)',time());
+$app->get('/projects/:by/:id(/:renderer)', function ($by, $id, $renderer = 'browser') use ($app) {
+    $stash['timestamp'] = date('Y-m-d g:i A (T)', time());
     $RIS_DBH = openDB('RIS_RO');
     if ($by == 'YR1') {
         $fundFilter = array('fundId>0','fundId<7');
@@ -136,7 +137,7 @@ $app->get('/projects/:by/:id(/:renderer)', function ($by,$id,$renderer='browser'
                 $fundFilter[] = "fundId!=$exclude";
             }
         }
-        $stash['funds'] = getFundingSources($RIS_DBH,$fundFilter);
+        $stash['funds'] = getFundingSources($RIS_DBH, $fundFilter);
         for ($i=0; $i<count($stash['funds']); $i++) {
             $projectFilter = array('fundSrc='.$stash['funds'][$i]['ID']);
             if (isset($GLOBALS['config']['exclude']['projects'])) {
@@ -144,27 +145,26 @@ $app->get('/projects/:by/:id(/:renderer)', function ($by,$id,$renderer='browser'
                     $projectFilter[] = "projectId!=$exclude";
                 }
             }
-            $stash['funds'][$i]['projects'] = getTasksAndDatasets(getProjectDetails($RIS_DBH,$projectFilter));
+            $stash['funds'][$i]['projects'] = getTasksAndDatasets(getProjectDetails($RIS_DBH, $projectFilter));
         }
-        $app->render('html/YR1.html',$stash);
-    }
-    else {
+        $app->render('html/YR1.html', $stash);
+    } else {
         switch ($by) {
             case 'fundSrc':
-                $funds = getFundingSources($RIS_DBH,array("fundId=$id"));
+                $funds = getFundingSources($RIS_DBH, array("fundId=$id"));
                 $stash['header'] = $funds[0]['Name'];
                 break;
             case 'peopleId':
-                $people = getPeopleDetails($RIS_DBH,array("peopleId=$id"));
+                $people = getPeopleDetails($RIS_DBH, array("peopleId=$id"));
                 $stash['header'] = $people[0]['FirstName'] . ' ' . $people[0]['LastName'];
                 $stash['instName'] = $people[0]['Institution_Name'];
                 break;
             case 'institutionId':
-                $inst = getInstitutionDetails($RIS_DBH,array("institutionId=$id"));
+                $inst = getInstitutionDetails($RIS_DBH, array("institutionId=$id"));
                 $stash['header'] = $inst[0]['Name'];
                 break;
             case 'projectId':
-                $proj = getProjectDetails($RIS_DBH,array("projectId=$id"));
+                $proj = getProjectDetails($RIS_DBH, array("projectId=$id"));
                 $stash['header'] = $proj[0]['Title'];
                 break;
         }
@@ -174,18 +174,17 @@ $app->get('/projects/:by/:id(/:renderer)', function ($by,$id,$renderer='browser'
                 $projectFilter[] = "projectId!=$exclude";
             }
         }
-        $stash['projects'] = getTasksAndDatasets(getProjectDetails($RIS_DBH,$projectFilter));
+        $stash['projects'] = getTasksAndDatasets(getProjectDetails($RIS_DBH, $projectFilter));
         if ($renderer == 'dompdf') {
             $env = $app->environment();
             header("Content-Type: text/html; charset=utf-8");
             $stash['pdf'] = true;
             $stash['hostUrl'] = 'https://data.gulfresearchinitiative.org';
-            $app->render('html/pdf.html',$stash);
-        }
-        else {
+            $app->render('html/pdf.html', $stash);
+        } else {
             $stash['by'] = $by;
             $stash['id'] = $id;
-            $app->render('html/projects.html',$stash);
+            $app->render('html/projects.html', $stash);
         }
     }
     $RIS_DBH = null;
@@ -212,28 +211,33 @@ $app->get('/dataset_details/:udi', function ($udi) use ($app) {
 
     $WHERE = "WHERE d.dataset_udi='$udi'";
 
-    $stmt = $GOMRI_DBH->prepare("$SELECT $FROM $WHERE ORDER BY CAST(SUBSTRING(registry_id from 18 for 3) AS INTEGER) DESC LIMIT 1;");
+    $stmt = $GOMRI_DBH->prepare(
+        "$SELECT $FROM $WHERE ORDER BY CAST(SUBSTRING(registry_id from 18 for 3) AS INTEGER) DESC LIMIT 1;"
+    );
     $stmt->execute();
     $stash['datasets'] = $stmt->fetchAll();
 
     for ($i=0; $i<count($stash['datasets']); $i++) {
-        $ppoc = getPeopleDetails($RIS_DBH,array('peopleId=' . $stash['datasets'][$i]['ppoc_ris_id']));
+        $ppoc = getPeopleDetails($RIS_DBH, array('peopleId=' . $stash['datasets'][$i]['ppoc_ris_id']));
         $stash['datasets'][$i]['ppoc'] = $ppoc[0];
         if ($stash['datasets'][$i]['spoc_ris_id']) {
-            $spoc = getPeopleDetails($RIS_DBH,array('peopleId=' . $stash['datasets'][$i]['spoc_ris_id']));
+            $spoc = getPeopleDetails($RIS_DBH, array('peopleId=' . $stash['datasets'][$i]['spoc_ris_id']));
             $stash['datasets'][$i]['spoc'] = $spoc[0];
         }
     }
 
     $RIS_DBH = null;
     $GOMRI_DBH = null;
-    $app->render('html/dataset_details.html',$stash);
+    $app->render('html/dataset_details.html', $stash);
     exit;
 });
 
-$app->get('/pdf/:by/:id/:name', function ($by,$id,$name) use ($app) {
+$app->get('/pdf/:by/:id/:name', function ($by, $id, $name) use ($app) {
     if ($by == 'YR1') {
-        drupal_set_message("You cannot download a pdf for all Year One Block Grants. Please download each block grant individually.",'error');
+        drupal_set_message(
+            'You cannot download a pdf for all Year One Block Grants. Please download each block grant individually.',
+            'error'
+        );
         return;
     }
     $content = file_get_contents("http://localhost$_SERVER[SCRIPT_NAME]/projects/$by/$id/dompdf");
@@ -253,5 +257,3 @@ $orig_env = fixEnvironment();
 $app->run();
 restoreEnvironment($orig_env);
 chdir($GLOBALS['orig_cwd']);
-
-?>
