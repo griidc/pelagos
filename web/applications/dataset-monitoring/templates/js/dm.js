@@ -172,7 +172,7 @@ function showProjects(by,id) {
                     var available = available_len;
                     var registered = registered_len + available_len;
                     var identified = available_len + registered_len + identified_len;
-                    projectText.html("Available:" + available + " &nbsp; &nbsp; Total Registered:" + registered + " &nbsp; &nbsp; Identified:" + identified);
+                    projectText.html("<table><tr><td>Available: " + available + " </td><td>Total Registered: " + registered + "</td><td>Identified: " + identified + "</td></tr></table>");
                 }).fail(function() {
                     console.log("failed");
                 });
