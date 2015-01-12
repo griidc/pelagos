@@ -39,11 +39,12 @@ class datasetsTest extends \PHPUnit_Framework_TestCase
     }
 
    //  constants project ids for testing
-    private static $pids  = array(29,139,140,141);
+   //  must be strings since we are parsing for projectId via substring
+    private static $pids  = array('029','139','140','141');
     //  expected values for the three categories by the p-ids above
-    private static $identified = array(7,61,10,82);
-    private static $registered = array(5,30,6,62);
-    private static $available = array(1,22,6,43);
+    private static $identified = array(7,83,27,116);
+    private static $registered = array(7,53,10,79);
+    private static $available = array(1,22,6,42);
 
     public function  testGetIdentifiedDatasetsByProjectId() {
         $results = array();
