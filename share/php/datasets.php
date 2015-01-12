@@ -535,11 +535,10 @@ if (!function_exists('getProjectIdFromUdi')) {
 if (!function_exists('getIdentifiedDatasetsByProjectId')) {
     function getIdentifiedDatasetsByProjectId(PDO $pdo, $projectId)
     {
-        $query = "select count(*) from datasets, registry_view " .
-            " where datasets.dataset_udi = registry_view.dataset_udi and " .
-            " datasets.project_id = " . $projectId . ";";
+        $query = "select count(*) from datasets " .
+            " where datasets.project_id = ? and datasets.status = 2";
         $stmt = $pdo->prepare($query);
-        if (!$stmt->execute()) {
+        if (!$stmt->execute(array($projectId))) {
             $arr = $stmt->errorInfo();
             print_r($arr);
         }
@@ -560,13 +559,13 @@ if (!function_exists('getIdentifiedDatasetsByProjectId')) {
 if (!function_exists('getRegisteredDatasetsByProjectId')) {
     function getRegisteredDatasetsByProjectId(PDO $pdo, $projectId)
     {
-        $query = "select count(*) from datasets, registry_view " .
+        $query = "select count(*) from registry_view " .
             " where " .
-            " registry_view.access_status = 'None' and " .
-            " datasets.dataset_udi = registry_view.dataset_udi and " .
-            " datasets.project_id = " . $projectId . ";";
+            " substring(registry_view.dataset_udi from 5 for 3) = ? and " .
+            " url_data is not null and " .
+            " url_data <> ''";
         $stmt = $pdo->prepare($query);
-        if (!$stmt->execute()) {
+        if (!$stmt->execute(array($projectId))) {
             $arr = $stmt->errorInfo();
             print_r($arr);
         }
@@ -588,14 +587,14 @@ if (!function_exists('getRegisteredDatasetsByProjectId')) {
 if (!function_exists('getAvailableDatasetsByProjectId')) {
     function getAvailableDatasetsByProjectId(PDO $pdo, $projectId)
     {
-        $query = "select count(*) from datasets, registry_view " .
+        $query = "select count(*) from registry_view " .
             " where " .
+            " substring(registry_view.dataset_udi from 5 for 3) = ? and " .
+            " dataset_download_status in ('Completed','RemotelyHosted') and " .
             " registry_view.access_status = 'None' and " .
-            " registry_view.metadata_status = 'Accepted' and " .
-            " datasets.dataset_udi = registry_view.dataset_udi and " .
-            " datasets.project_id = " . $projectId . ";";
+            " registry_view.metadata_status = 'Accepted' ";
         $stmt = $pdo->prepare($query);
-        if (!$stmt->execute()) {
+        if (!$stmt->execute(array($projectId))) {
             $arr = $stmt->errorInfo();
             print_r($arr);
         }
