@@ -1,5 +1,12 @@
 <?php
 
+$GLOBALS['pelagos'] = array();
+$GLOBALS['pelagos']['title'] = 'ISO 19115-2 Metadata Editor';
+
+# make sure current working directory is the directory that this file lives in
+$GLOBALS['orig_cwd'] = getcwd();
+chdir(realpath(dirname(__FILE__)));
+
 include_once '/opt/pelagos/share/php/aliasIncludes.php';
 
 if (isset($_GET["udi"]))
@@ -143,6 +150,7 @@ echo "</script>\n";
 
 ?>
 
+<div>
 <div style="font-size:smaller;" id="metadialog"></div>
 <div style="font-size:smaller;display:none;" id="savedialog">
 <span id="dialogtxt">All required fields are complete.<br/>
@@ -192,3 +200,6 @@ Click OK to download.
 		</td>
 	</tr>
 </table>
+</div>
+<?php
+chdir($GLOBALS['orig_cwd']);

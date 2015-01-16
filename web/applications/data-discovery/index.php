@@ -1,5 +1,9 @@
 <?php
 
+$GLOBALS['pelagos'] = array();
+$GLOBALS['pelagos']['title'] = 'Data Discovery';
+$GLOBALS['pelagos']['show_title'] = false;
+
 # load global pelagos config
 $GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini', true);
 
@@ -786,7 +790,5 @@ $app->get('/download_redirect/:udi', function ($udi) use ($app) {
     drupal_exit();
 });
 
-$orig_env = fixEnvironment();
 $app->run();
-restoreEnvironment($orig_env);
 chdir($GLOBALS['orig_cwd']);

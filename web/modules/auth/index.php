@@ -1,17 +1,29 @@
 <?php
 
-$GLOBALS['griidc'] = parse_ini_file('/etc/griidc.ini',true);
+$GLOBALS['pelagos'] = array();
+$GLOBALS['pelagos']['title'] = 'Authentication';
+
+$GLOBALS['griidc'] = parse_ini_file('/etc/opt/pelagos.ini',true);
 $GLOBALS['libraries'] = parse_ini_file($GLOBALS['griidc']['paths']['conf'].'/libraries.ini',true);
 
 require_once $GLOBALS['libraries']['Slim2']['include'];
 \Slim\Slim::registerAutoloader();
 require_once $GLOBALS['libraries']['Slim-Views']['include_Twig'];
+# load Twig
+require_once 'Twig/Autoloader.php';
 require_once $GLOBALS['libraries']['LightOpenID']['include'];
 
-require_once $GLOBALS['libraries']['GRIIDC']['directory'].'/php/drupal.php';
-require_once $GLOBALS['libraries']['GRIIDC']['directory'].'/php/dumpIncludesFile.php';
-require_once $GLOBALS['libraries']['GRIIDC']['directory'].'/php/rpis.php';
-require_once $GLOBALS['libraries']['GRIIDC']['directory'].'/php/auth.php';
+# make sure current working directory is the directory that this file lives in
+$GLOBALS['orig_cwd'] = getcwd();
+chdir(realpath(dirname(__FILE__)));
+
+# add pelagos/share/php to the include path
+set_include_path('../../../share/php' . PATH_SEPARATOR . get_include_path());
+
+require_once 'drupal.php';
+require_once 'dumpIncludesFile.php';
+require_once 'rpis.php';
+require_once 'auth.php';
 
 $GLOBALS['auth_types'] = array(
     'cas' => array(
@@ -151,4 +163,4 @@ $app->get('/logout', function () use ($app) {
 
 $app->run();
 
-?>
+chdir($GLOBALS['orig_cwd']);

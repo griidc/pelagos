@@ -1,10 +1,19 @@
 <?php
 
-$GLOBALS['libraries'] = parse_ini_file('/etc/griidc/libraries.ini',true);
+$GLOBALS['pelagos'] = array();
+$GLOBALS['pelagos']['title'] = 'XML Validator';
+
+# make sure current working directory is the directory that this file lives in
+$GLOBALS['orig_cwd'] = getcwd();
+chdir(realpath(dirname(__FILE__)));
+
+$GLOBALS['libraries'] = parse_ini_file('/etc/opt/pelagos/libraries.ini',true);
 
 require_once $GLOBALS['libraries']['Slim2']['include'];
 \Slim\Slim::registerAutoloader();
 require_once $GLOBALS['libraries']['Slim-Views']['include_Twig'];
+# load Twig
+require_once 'Twig/Autoloader.php';
 
 $app = new \Slim\Slim(array(
                         'view' => new \Slim\Views\Twig(),
@@ -72,5 +81,6 @@ $app->get('/', function () use ($app) {
 });
 
 $app->run();
+chdir($GLOBALS['orig_cwd']);
 
 ?>

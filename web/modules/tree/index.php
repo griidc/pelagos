@@ -1,5 +1,8 @@
 <?php
 
+$GLOBALS['pelagos'] = array();
+$GLOBALS['pelagos']['title'] = 'Organizational Tree';
+
 # load global pelagos config
 $GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini', true);
 
@@ -32,7 +35,8 @@ require_once $GLOBALS['libraries']['Slim-Views']['include_Twig'];
 require_once 'Twig/Autoloader.php';
 
 # add pelagos/share/php to the include path
-set_include_path(get_include_path() . PATH_SEPARATOR . $GLOBALS['config']['paths']['share'] . '/php');
+#set_include_path(get_include_path() . PATH_SEPARATOR . $GLOBALS['config']['paths']['share'] . '/php');
+set_include_path('../../../share/php' . PATH_SEPARATOR . get_include_path());
 
 # load custom Twig extensions
 require_once 'Twig_Extensions_Pelagos.php';
@@ -45,7 +49,7 @@ require_once 'rpis.php';
 # load dataset query functions
 require_once 'datasets.php';
 # load database utilities
-require_once 'db-utils.lib.php';
+require_once 'DBUtils.php';
 
 # load tree library
 require_once 'lib/tree.php';
@@ -83,7 +87,7 @@ $app->get('/', function () use ($app) {
 
 $app->get('/json/:type.json', function ($type) use ($app) {
     $stash['tree'] = array_merge($GLOBALS['config']['tree'],json_decode($app->request()->get('tree'),true));
-    $RIS_DBH = OpenDB('RIS_RO');
+    $RIS_DBH = openDB('RIS_RO');
     switch ($type) {
         case 'in':
             $institutions = getInstitutionDetails($RIS_DBH);
@@ -91,7 +95,7 @@ $app->get('/json/:type.json', function ($type) use ($app) {
             if (array_key_exists('filter',$stash['tree']) and !empty($stash['tree']['filter']) or
                 array_key_exists('geo_filter',$stash['tree']) and !empty($stash['tree']['geo_filter'])) {
                 $dataset_filters = getDatasetFilters($stash['tree']);
-                $GOMRI_DBH = OpenDB('GOMRI_RO');
+                $GOMRI_DBH = openDB('GOMRI_RO');
                 $stash['institutions'] = array();
                 foreach ($institutions as $inst) {
                     $data_count = 0;
@@ -136,7 +140,7 @@ $app->get('/json/:type.json', function ($type) use ($app) {
             if (array_key_exists('filter',$stash['tree']) and !empty($stash['tree']['filter']) or
                 array_key_exists('geo_filter',$stash['tree']) and !empty($stash['tree']['geo_filter'])) {
                 $dataset_filters = getDatasetFilters($stash['tree']);
-                $GOMRI_DBH = OpenDB('GOMRI_RO');
+                $GOMRI_DBH = openDB('GOMRI_RO');
 
                 $fundFilter = array('fundId>0','fundId<7');
                 if (isset($GLOBALS['config']['exclude']['funds'])) {
@@ -215,7 +219,7 @@ $app->get('/json/:type.json', function ($type) use ($app) {
 
 $app->get('/json/ra/YR1.json', function () use ($app) {
     $stash['tree'] = array_merge($GLOBALS['config']['tree'],json_decode($app->request()->get('tree'),true));
-    $RIS_DBH = OpenDB('RIS_RO');
+    $RIS_DBH = openDB('RIS_RO');
     $fundFilter = array('fundId>0','fundId<7');
     if (isset($GLOBALS['config']['exclude']['funds'])) {
         foreach ($GLOBALS['config']['exclude']['funds'] as $exclude) {
@@ -227,7 +231,7 @@ $app->get('/json/ra/YR1.json', function () use ($app) {
     if (array_key_exists('filter',$stash['tree']) and !empty($stash['tree']['filter']) or
         array_key_exists('geo_filter',$stash['tree']) and !empty($stash['tree']['geo_filter'])) {
         $dataset_filters = getDatasetFilters($stash['tree']);
-        $GOMRI_DBH = OpenDB('GOMRI_RO');
+        $GOMRI_DBH = openDB('GOMRI_RO');
         $stash['YR1'] = array();
         foreach ($YR1S as $YR1) {
             $data_count = 0;
@@ -263,7 +267,7 @@ $app->get('/json/ra/otherSources.json', function () use ($app) {
     if (array_key_exists('filter',$stash['tree']) and !empty($stash['tree']['filter']) or
         array_key_exists('geo_filter',$stash['tree']) and !empty($stash['tree']['geo_filter'])) {
         if ($GLOBALS['config']['tree']['show_counts'] == 1) {
-            $GOMRI_DBH = OpenDB('GOMRI_RO');
+            $GOMRI_DBH = openDB('GOMRI_RO');
             $stash['otherSources'][0]['dataset_count'] = count_registered_datasets($GOMRI_DBH,array('registry_id=00.x000%','dataset_download_status=done'),$stash['tree']['filter']);
         }
     }
@@ -273,13 +277,13 @@ $app->get('/json/ra/otherSources.json', function () use ($app) {
 
 $app->get('/json/re/:letter.json', function ($letter) use ($app) {
     $stash['tree'] = array_merge($GLOBALS['config']['tree'],json_decode($app->request()->get('tree'),true));
-    $RIS_DBH = OpenDB('RIS_RO');
+    $RIS_DBH = openDB('RIS_RO');
     $people = getPeopleList($RIS_DBH,array("lastName=$letter%"));
 
     if (array_key_exists('filter',$stash['tree']) and !empty($stash['tree']['filter']) or
         array_key_exists('geo_filter',$stash['tree']) and !empty($stash['tree']['geo_filter'])) {
         $dataset_filters = getDatasetFilters($stash['tree']);
-        $GOMRI_DBH = OpenDB('GOMRI_RO');
+        $GOMRI_DBH = openDB('GOMRI_RO');
         $stash['people'] = array();
         foreach ($people as $person) {
             $data_count = 0;
@@ -311,13 +315,13 @@ $app->get('/json/re/:letter.json', function ($letter) use ($app) {
 
 $app->get('/json/in/:letter.json', function ($letter) use ($app) {
     $stash['tree'] = array_merge($GLOBALS['config']['tree'],json_decode($app->request()->get('tree'),true));
-    $RIS_DBH = OpenDB('RIS_RO');
+    $RIS_DBH = openDB('RIS_RO');
     $institutions = getInstitutionDetails($RIS_DBH,array("name=$letter%"));
 
     if (array_key_exists('filter',$stash['tree']) and !empty($stash['tree']['filter']) or
         array_key_exists('geo_filter',$stash['tree']) and !empty($stash['tree']['geo_filter'])) {
         $dataset_filters = getDatasetFilters($stash['tree']);
-        $GOMRI_DBH = OpenDB('GOMRI_RO');
+        $GOMRI_DBH = openDB('GOMRI_RO');
         $stash['institutions'] = array();
         foreach ($institutions as $inst) {
             $data_count = 0;
@@ -349,7 +353,7 @@ $app->get('/json/in/:letter.json', function ($letter) use ($app) {
 
 $app->get('/json/:type/projects/fundSrc/:fundSrc.json', function ($type,$fundSrc) use ($app) {
     $stash['tree'] = array_merge($GLOBALS['config']['tree'],json_decode($app->request()->get('tree'),true));
-    $RIS_DBH = OpenDB('RIS_RO');
+    $RIS_DBH = openDB('RIS_RO');
     $projectFilter = array("fundSrc=$fundSrc");
     if (isset($GLOBALS['config']['exclude']['projects'])) {
         foreach ($GLOBALS['config']['exclude']['projects'] as $exclude) {
@@ -361,7 +365,7 @@ $app->get('/json/:type/projects/fundSrc/:fundSrc.json', function ($type,$fundSrc
     if (array_key_exists('filter',$stash['tree']) and !empty($stash['tree']['filter']) or
         array_key_exists('geo_filter',$stash['tree']) and !empty($stash['tree']['geo_filter'])) {
         $dataset_filters = getDatasetFilters($stash['tree']);
-        $GOMRI_DBH = OpenDB('GOMRI_RO');
+        $GOMRI_DBH = openDB('GOMRI_RO');
         $stash['projects'] = array();
         foreach ($projects as $project) {
             $data_count = count_identified_datasets($GOMRI_DBH,array_merge($dataset_filters,array("projectId=$project[ID]")),$stash['tree']['filter']);
@@ -383,7 +387,7 @@ $app->get('/json/:type/projects/fundSrc/:fundSrc.json', function ($type,$fundSrc
 
 $app->get('/json/:type/projects/peopleId/:peopleId.json', function ($type,$peopleId) use ($app) {
     $stash['tree'] = array_merge($GLOBALS['config']['tree'],json_decode($app->request()->get('tree'),true));
-    $RIS_DBH = OpenDB('RIS_RO');
+    $RIS_DBH = openDB('RIS_RO');
     $projectFilter = array("peopleId=$peopleId");
     if (isset($GLOBALS['config']['exclude']['projects'])) {
         foreach ($GLOBALS['config']['exclude']['projects'] as $exclude) {
@@ -396,7 +400,7 @@ $app->get('/json/:type/projects/peopleId/:peopleId.json', function ($type,$peopl
     if (array_key_exists('filter',$stash['tree']) and !empty($stash['tree']['filter']) or
         array_key_exists('geo_filter',$stash['tree']) and !empty($stash['tree']['geo_filter'])) {
         $dataset_filters = getDatasetFilters($stash['tree']);
-        $GOMRI_DBH = OpenDB('GOMRI_RO');
+        $GOMRI_DBH = openDB('GOMRI_RO');
         $stash['projects'] = array();
         foreach ($projects as $project) {
             $data_count = count_identified_datasets($GOMRI_DBH,array_merge($dataset_filters,array("projectId=$project[ID]")),$stash['tree']['filter']);
@@ -420,7 +424,7 @@ $app->get('/json/:type/projects/peopleId/:peopleId.json', function ($type,$peopl
 
 $app->get('/json/:type/projects/institutionId/:institutionId.json', function ($type,$institutionId) use ($app) {
     $stash['tree'] = array_merge($GLOBALS['config']['tree'],json_decode($app->request()->get('tree'),true));
-    $RIS_DBH = OpenDB('RIS_RO');
+    $RIS_DBH = openDB('RIS_RO');
     $projectFilter = array("institutionId=$institutionId");
     if (isset($GLOBALS['config']['exclude']['projects'])) {
         foreach ($GLOBALS['config']['exclude']['projects'] as $exclude) {
@@ -432,7 +436,7 @@ $app->get('/json/:type/projects/institutionId/:institutionId.json', function ($t
     if (array_key_exists('filter',$stash['tree']) and !empty($stash['tree']['filter']) or
         array_key_exists('geo_filter',$stash['tree']) and !empty($stash['tree']['geo_filter'])) {
         $dataset_filters = getDatasetFilters($stash['tree']);
-        $GOMRI_DBH = OpenDB('GOMRI_RO');
+        $GOMRI_DBH = openDB('GOMRI_RO');
         $stash['projects'] = array();
         foreach ($projects as $project) {
             $data_count = count_identified_datasets($GOMRI_DBH,array_merge($dataset_filters,array("projectId=$project[ID]")),$stash['tree']['filter']);
@@ -454,13 +458,13 @@ $app->get('/json/:type/projects/institutionId/:institutionId.json', function ($t
 
 $app->get('/json/:type/tasks/projectId/:projectId.json', function ($type,$projectId) use ($app) {
     $stash['tree'] = array_merge($GLOBALS['config']['tree'],json_decode($app->request()->get('tree'),true));
-    $RIS_DBH = OpenDB('RIS_RO');
+    $RIS_DBH = openDB('RIS_RO');
     $filters = array("projectID=$projectId");
     $tasks = getTaskDetails($RIS_DBH,$filters);
     if (array_key_exists('filter',$stash['tree']) and !empty($stash['tree']['filter']) or
         array_key_exists('geo_filter',$stash['tree']) and !empty($stash['tree']['geo_filter'])) {
         $dataset_filters = getDatasetFilters($stash['tree']);
-        $GOMRI_DBH = OpenDB('GOMRI_RO');
+        $GOMRI_DBH = openDB('GOMRI_RO');
         $stash['tasks'] = array();
         foreach ($tasks as $task) {
             $data_count = count_identified_datasets($GOMRI_DBH,array_merge($dataset_filters,array("taskId=$task[ID]")),$stash['tree']['filter']);
@@ -481,13 +485,13 @@ $app->get('/json/:type/tasks/projectId/:projectId.json', function ($type,$projec
 
 $app->get('/json/:type/tasks/projectId/peopleId/:projectId/:peopleId.json', function ($type,$projectId,$peopleId) use ($app) {
     $stash['tree'] = array_merge($GLOBALS['config']['tree'],json_decode($app->request()->get('tree'),true));
-    $RIS_DBH = OpenDB('RIS_RO');
+    $RIS_DBH = openDB('RIS_RO');
     $filters = array("projectID=$projectId","peopleId=$peopleId");
     $tasks = getTaskDetails($RIS_DBH,$filters);
     if (array_key_exists('filter',$stash['tree']) and !empty($stash['tree']['filter']) or
         array_key_exists('geo_filter',$stash['tree']) and !empty($stash['tree']['geo_filter'])) {
         $dataset_filters = getDatasetFilters($stash['tree']);
-        $GOMRI_DBH = OpenDB('GOMRI_RO');
+        $GOMRI_DBH = openDB('GOMRI_RO');
         $stash['tasks'] = array();
         foreach ($tasks as $task) {
             $data_count = count_identified_datasets($GOMRI_DBH,array_merge($dataset_filters,array("taskId=$task[ID]")),$stash['tree']['filter']);
@@ -509,7 +513,7 @@ $app->get('/json/:type/tasks/projectId/peopleId/:projectId/:peopleId.json', func
 $app->get('/json/:type/datasets/projectId/:projectId.json', function ($type,$projectId) use ($app) {
     $stash['tree'] = array_merge($GLOBALS['config']['tree'],json_decode($app->request()->get('tree'),true));
     $dataset_filters = getDatasetFilters($stash['tree']);
-    $GOMRI_DBH = OpenDB('GOMRI_RO');
+    $GOMRI_DBH = openDB('GOMRI_RO');
     $stash['datasets'] = get_identified_datasets($GOMRI_DBH,array_merge($dataset_filters,array("projectId=$projectId")));
     $app->render('json/datasets.json',$stash);
     exit;
@@ -518,13 +522,11 @@ $app->get('/json/:type/datasets/projectId/:projectId.json', function ($type,$pro
 $app->get('/json/:type/datasets/taskId/:taskId.json', function ($type,$taskId) use ($app) {
     $stash['tree'] = array_merge($GLOBALS['config']['tree'],json_decode($app->request()->get('tree'),true));
     $dataset_filters = getDatasetFilters($stash['tree']);
-    $GOMRI_DBH = OpenDB('GOMRI_RO');
+    $GOMRI_DBH = openDB('GOMRI_RO');
     $stash['datasets'] = get_identified_datasets($GOMRI_DBH,array_merge($dataset_filters,array("taskId=$taskId")));
     $app->render('json/datasets.json',$stash);
     exit;
 });
 
-$orig_env = fixEnvironment();
 $app->run();
-restoreEnvironment($orig_env);
 chdir($GLOBALS['orig_cwd']);

@@ -1,5 +1,12 @@
 <?php
 
+$GLOBALS['pelagos'] = array();
+$GLOBALS['pelagos']['title'] = 'Dataset Information Form (DIF)';
+
+# make sure current working directory is the directory that this file lives in
+$GLOBALS['orig_cwd'] = getcwd();
+chdir(realpath(dirname(__FILE__)));
+
 include_once '/opt/pelagos/share/php/aliasIncludes.php';
 
 drupal_add_js('//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js',array('type'=>'external'));
@@ -30,3 +37,5 @@ else
 {showDIFForm();}
 ?>
 <div class="modal" id="spinner"></div>
+<?php
+chdir($GLOBALS['orig_cwd']);

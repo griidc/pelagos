@@ -1,5 +1,8 @@
 <?php
 
+$GLOBALS['pelagos'] = array();
+$GLOBALS['pelagos']['title'] = 'Account Management';
+
 # load global pelagos config
 $GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini', true);
 
@@ -829,7 +832,5 @@ $app->post('/password/:action', function ($action) use ($app) {
     echo "<p>Your password has been updated. Please use this new password to log in to GRIIDC systems. If you need assistance, please contact: <a href='mailto:griidc@gomri.org'>griidc@gomri.org</a> for help.</p>";
 })->conditions(array('action' => '(reset|change)'));
 
-$orig_env = fixEnvironment();
 $app->run();
-restoreEnvironment($orig_env);
 chdir($GLOBALS['orig_cwd']);

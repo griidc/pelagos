@@ -1,5 +1,8 @@
 <?php
 
+$GLOBALS['pelagos'] = array();
+$GLOBALS['pelagos']['title'] = 'Dataset Monitoring';
+
 $GLOBALS['orig_cwd'] = getcwd();
 chdir(realpath(dirname(__FILE__)));
 
@@ -200,9 +203,7 @@ $app->get('/pdf/:by/:id/:name', function ($by,$id,$name) use ($app) {
     exit;
 });
 
-$orig_env = fixEnvironment();
 $app->run();
-restoreEnvironment($orig_env);
 chdir($GLOBALS['orig_cwd']);
 
 ?>
