@@ -144,10 +144,11 @@ if ($udi <> '')
     $dbconnstr = 'mysql:host='. $mconfig["host"];
     $dbconnstr .= ';port=' . $mconfig["port"];
     $dbconnstr .= ';dbname=' . $mconfig["dbname"];
+    $dbconnstr .= ';charset=utf8';;
     $mconn = new PDO($dbconnstr,
         $mconfig["username"],
         $mconfig["password"],
-        array(PDO::ATTR_PERSISTENT => false));
+        array(PDO::ATTR_PERSISTENT => false, PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
 
     $mquery = "  SELECT * FROM Projects
     JOIN Programs ON Projects.Program_ID = Programs.Program_ID
