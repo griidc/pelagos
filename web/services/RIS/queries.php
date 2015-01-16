@@ -119,18 +119,18 @@ WHERE pg.Program_ID = ";
 
 $baseInstitutionQuery = "
 SELECT 
-	CONVERT(CONVERT(CONVERT(i.Institution_Name USING latin1) USING binary) USING utf8) 'Name',
-	CONVERT(CONVERT(CONVERT(i.Institution_Addr1 USING latin1) USING binary) USING utf8) 'Addr1',
-	CONVERT(CONVERT(CONVERT(i.Institution_Addr2 USING latin1) USING binary) USING utf8) 'Addr2',
-	CONVERT(CONVERT(CONVERT(i.Institution_City USING latin1) USING binary) USING utf8) 'City',
-	CONVERT(CONVERT(CONVERT(i.Institution_State USING latin1) USING binary) USING utf8) 'State',
-	CONVERT(CONVERT(CONVERT(i.Institution_Zip USING latin1) USING binary) USING utf8) 'Zip',
-	CONVERT(CONVERT(CONVERT(i.Institution_Country USING latin1) USING binary) USING utf8) 'Country',
-	CONVERT(CONVERT(CONVERT(i.Institution_URL USING latin1) USING binary) USING utf8) 'URL',
-	CONVERT(CONVERT(CONVERT(i.Institution_Long USING latin1) USING binary) USING utf8) 'Long',
-	CONVERT(CONVERT(CONVERT(i.Institution_Lat USING latin1) USING binary) USING utf8) 'Lat',
-	CONVERT(CONVERT(CONVERT(i.Institution_Keywords USING latin1) USING binary) USING utf8) 'Keywords',
-	CONVERT(CONVERT(CONVERT(i.Institution_Verified USING latin1) USING binary) USING utf8) 'Verified'
+	CONVERT(i.Institution_Name USING utf8) 'Name',
+	CONVERT(i.Institution_Addr1 USING utf8) 'Addr1',
+	CONVERT(i.Institution_Addr2 USING utf8) 'Addr2',
+	CONVERT(i.Institution_City USING utf8) 'City',
+	CONVERT(i.Institution_State USING utf8) 'State',
+	CONVERT(i.Institution_Zip USING utf8) 'Zip',
+	CONVERT(i.Institution_Country USING utf8) 'Country',
+	CONVERT(i.Institution_URL USING utf8) 'URL',
+	CONVERT(i.Institution_Long USING utf8) 'Long',
+	CONVERT(i.Institution_Lat USING utf8) 'Lat',
+	CONVERT(i.Institution_Keywords USING utf8) 'Keywords',
+	CONVERT(i.Institution_Verified USING utf8) 'Verified'
 FROM Institutions i
 WHERE i.Institution_ID = ";
 
@@ -169,54 +169,54 @@ WHERE 1=1
 
 $basePeopleQuery = "	
 SELECT 
-	CONVERT(CONVERT(CONVERT(p.People_Title USING latin1) USING binary) USING utf8) 'Title',
-	CONVERT(CONVERT(CONVERT(p.People_LastName USING latin1) USING binary) USING utf8) 'LastName',
-	CONVERT(CONVERT(CONVERT(p.People_FirstName USING latin1) USING binary) USING utf8) 'FirstName',
-	CONVERT(CONVERT(CONVERT(p.People_MiddleName USING latin1) USING binary) USING utf8) 'MiddleName',
-	CONVERT(CONVERT(CONVERT(p.People_Suffix USING latin1) USING binary) USING utf8) 'Suffix', 
-	CONVERT(CONVERT(CONVERT(p.People_AdrStreet1 USING latin1) USING binary) USING utf8) 'AdrStreet1',
-	CONVERT(CONVERT(CONVERT(p.People_AdrStreet2 USING latin1) USING binary) USING utf8) 'AdrStreet2',
-	CONVERT(CONVERT(CONVERT(p.People_AdrCity USING latin1) USING binary) USING utf8) 'AdrCity',
-	CONVERT(CONVERT(CONVERT(p.People_AdrState USING latin1) USING binary) USING utf8) 'AdrState',
-	CONVERT(CONVERT(CONVERT(p.People_AdrZip USING latin1) USING binary) USING utf8) 'AdrZip',
-	CONVERT(CONVERT(CONVERT(p.People_Email USING latin1) USING binary) USING utf8) 'Email',
-	CONVERT(CONVERT(CONVERT(p.People_PhoneNum USING latin1) USING binary) USING utf8) 'PhoneNum',
-	CONVERT(CONVERT(CONVERT(p.People_GulfBase USING latin1) USING binary) USING utf8) 'GulfBase',
-	CONVERT(CONVERT(CONVERT(p.People_Comment USING latin1) USING binary) USING utf8) 'Comment'
+	CONVERT(p.People_Title USING utf8) 'Title',
+	CONVERT(p.People_LastName USING utf8) 'LastName',
+	CONVERT(p.People_FirstName USING utf8) 'FirstName',
+	CONVERT(p.People_MiddleName USING utf8) 'MiddleName',
+	CONVERT(p.People_Suffix USING utf8) 'Suffix', 
+	CONVERT(p.People_AdrStreet1 USING utf8) 'AdrStreet1',
+	CONVERT(p.People_AdrStreet2 USING utf8) 'AdrStreet2',
+	CONVERT(p.People_AdrCity USING utf8) 'AdrCity',
+	CONVERT(p.People_AdrState USING utf8) 'AdrState',
+	CONVERT(p.People_AdrZip USING utf8) 'AdrZip',
+	CONVERT(p.People_Email USING utf8) 'Email',
+	CONVERT(p.People_PhoneNum USING utf8) 'PhoneNum',
+	CONVERT(p.People_GulfBase USING utf8) 'GulfBase',
+	CONVERT(p.People_Comment USING utf8) 'Comment'
 FROM People p
 WHERE p.People_ID = ";
 
 $personQuery = "	
 SELECT 
-	CONVERT(CONVERT(CONVERT(p.People_Title USING latin1) USING binary) USING utf8) 'Title',
-	CONVERT(CONVERT(CONVERT(p.People_LastName USING latin1) USING binary) USING utf8) 'LastName',
-	CONVERT(CONVERT(CONVERT(p.People_FirstName USING latin1) USING binary) USING utf8) 'FirstName',
-	CONVERT(CONVERT(CONVERT(p.People_MiddleName USING latin1) USING binary) USING utf8) 'MiddleName',
-	CONVERT(CONVERT(CONVERT(p.People_Suffix USING latin1) USING binary) USING utf8) 'Suffix', 
-	CONVERT(CONVERT(CONVERT(p.People_AdrStreet1 USING latin1) USING binary) USING utf8) 'AdrStreet1',
-	CONVERT(CONVERT(CONVERT(p.People_AdrStreet2 USING latin1) USING binary) USING utf8) 'AdrStreet2',
-	CONVERT(CONVERT(CONVERT(p.People_AdrCity USING latin1) USING binary) USING utf8) 'AdrCity',
-	CONVERT(CONVERT(CONVERT(p.People_AdrState USING latin1) USING binary) USING utf8) 'AdrState',
-	CONVERT(CONVERT(CONVERT(p.People_AdrZip USING latin1) USING binary) USING utf8) 'AdrZip',
-	CONVERT(CONVERT(CONVERT(p.People_Email USING latin1) USING binary) USING utf8) 'Email',
-	CONVERT(CONVERT(CONVERT(p.People_PhoneNum USING latin1) USING binary) USING utf8) 'PhoneNum',
-	CONVERT(CONVERT(CONVERT(p.People_GulfBase USING latin1) USING binary) USING utf8) 'GulfBase',
-	CONVERT(CONVERT(CONVERT(p.People_Comment USING latin1) USING binary) USING utf8) 'Comment'
+	CONVERT(p.People_Title USING utf8) 'Title',
+	CONVERT(p.People_LastName USING utf8) 'LastName',
+	CONVERT(p.People_FirstName USING utf8) 'FirstName',
+	CONVERT(p.People_MiddleName USING utf8) 'MiddleName',
+	CONVERT(p.People_Suffix USING utf8) 'Suffix', 
+	CONVERT(p.People_AdrStreet1 USING utf8) 'AdrStreet1',
+	CONVERT(p.People_AdrStreet2 USING utf8) 'AdrStreet2',
+	CONVERT(p.People_AdrCity USING utf8) 'AdrCity',
+	CONVERT(p.People_AdrState USING utf8) 'AdrState',
+	CONVERT(p.People_AdrZip USING utf8) 'AdrZip',
+	CONVERT(p.People_Email USING utf8) 'Email',
+	CONVERT(p.People_PhoneNum USING utf8) 'PhoneNum',
+	CONVERT(p.People_GulfBase USING utf8) 'GulfBase',
+	CONVERT(p.People_Comment USING utf8) 'Comment'
 FROM People p
 WHERE p.People_ID = ";
 
 $baseDepartmentQuery = "
 SELECT
-	CONVERT(CONVERT(CONVERT(d.Department_Name USING latin1) USING binary) USING utf8) 'Name',
-	CONVERT(CONVERT(CONVERT(d.Department_Addr1 USING latin1) USING binary) USING utf8) 'Addr1',
-	CONVERT(CONVERT(CONVERT(d.Department_Addr2 USING latin1) USING binary) USING utf8) 'Addr2',
-	CONVERT(CONVERT(CONVERT(d.Department_City USING latin1) USING binary) USING utf8) 'City',
-	CONVERT(CONVERT(CONVERT(d.Department_State USING latin1) USING binary) USING utf8) 'State',
-	CONVERT(CONVERT(CONVERT(d.Department_Zip USING latin1) USING binary) USING utf8) 'Zip',
-	CONVERT(CONVERT(CONVERT(d.Department_Country USING latin1) USING binary) USING utf8) 'Country',
-	CONVERT(CONVERT(CONVERT(d.Department_URL USING latin1) USING binary) USING utf8) 'URL',
-	CONVERT(CONVERT(CONVERT(d.Department_Lat USING latin1) USING binary) USING utf8) 'Lat',
-	CONVERT(CONVERT(CONVERT(d.Department_Long USING latin1) USING binary) USING utf8) 'Long'
+	CONVERT(d.Department_Name USING utf8) 'Name',
+	CONVERT(d.Department_Addr1 USING utf8) 'Addr1',
+	CONVERT(d.Department_Addr2 USING utf8) 'Addr2',
+	CONVERT(d.Department_City USING utf8) 'City',
+	CONVERT(d.Department_State USING utf8) 'State',
+	CONVERT(d.Department_Zip USING utf8) 'Zip',
+	CONVERT(d.Department_Country USING utf8) 'Country',
+	CONVERT(d.Department_URL USING utf8) 'URL',
+	CONVERT(d.Department_Lat USING utf8) 'Lat',
+	CONVERT(d.Department_Long USING utf8) 'Long'
 FROM Departments d
 WHERE Department_ID = ";
 
