@@ -2,6 +2,21 @@
 error_reporting(E_ALL);
 ini_set("display_errors", 1);
 
+# load global pelagos config
+$GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini', true);
+# load Common library from global share
+require_once($GLOBALS['config']['paths']['share'].'/php/Common.php');
+# check for local config file
+if (file_exists('config.ini')) {
+    # merge local config with global config
+    $GLOBALS['config'] = configMerge($GLOBALS['config'], parse_ini_file('config.ini', true));
+}
+# add pelagos/share/php to the include path
+set_include_path(get_include_path() . PATH_SEPARATOR . $GLOBALS['config']['paths']['share'] . '/php');
+
+
+require_once('DBUtils.php');
+
 drupal_add_css("$_SERVER[SCRIPT_NAME]/includes/css/xmlverbatim.css",array('type'=>'external'));
 drupal_add_css("$_SERVER[SCRIPT_NAME]/includes/css/details.css",array('type'=>'external'));
 drupal_add_css("$_SERVER[SCRIPT_NAME]/includes/css/status.css",array('type'=>'external'));
@@ -17,16 +32,10 @@ drupal_add_js('//maps.google.com/maps/api/js?v=3&sensor=false',array('type'=>'ex
 drupal_add_js('/includes/geoviz/geoviz.js','external');
 drupal_add_js('/data-discovery/js/search.js',array('type'=>'external'));
 
-$pelagos_config = parse_ini_file('/etc/opt/pelagos.ini',true);
-$GLOBALS['config'] = parse_ini_file('config.ini',true);
-
-include_once $pelagos_config['paths']['share'].'/php/aliasIncludes.php';
-require_once $pelagos_config['paths']['share'].'/php/auth.php'; # for user_is_logged_in_somehow()
-
+include_once 'aliasIncludes.php';
+require_once 'auth.php'; # for user_is_logged_in_somehow()
 require_once 'Twig_Extensions_GRIIDC.php';
-
-include_once $pelagos_config['paths']['share'].'/php/pdo.php';
-
+include_once 'pdo.php'; # for pdoDBQuery()
 require_once 'Twig/Autoloader.php';
 Twig_Autoloader::register();
 
@@ -53,22 +62,12 @@ $logged_in = user_is_logged_in_somehow(); # returns bool, true if logged in.
 
 if ($udi <> '')
 {
-    $configini = parse_ini_file($pelagos_config['paths']['conf'].'/db.ini',true);
-    $pconfig = $configini["GOMRI_RW"];
 
-    $mconfig = $configini["RIS_RO"];
-
-    $dbconnstr = 'pgsql:host='. $pconfig["host"];
-    $dbconnstr .= ' port=' . $pconfig["port"];
-    $dbconnstr .= ' dbname=' . $pconfig["dbname"];
-    $dbconnstr .= ' user=' . $pconfig["username"];
-    $dbconnstr .= ' password=' . $pconfig["password"];
-
-    $pconn = pdoDBConnect($dbconnstr);
+    $pconn = OpenDB("GOMRI_RW");
     
     # Toggle per ini file parameter the enforcement of dataset downloadability requiring accepted metadata 
     $enforceMetadataRule = 0;
-    if( (isset($pelagos_config['system']['enforce_approved_metadata'] ) and ( $pelagos_config['system']['enforce_approved_metadata'] == 1 )) ) {
+    if( (isset($GLOBALS['config']['system']['enforce_approved_metadata'] ) and ( $GLOBALS['config']['system']['enforce_approved_metadata'] == 1 )) ) {
         $enforceMetadataRule = 1;
     } else {
         $enforceMetadataRule = 0;
@@ -140,15 +139,8 @@ if ($udi <> '')
     {
         $dsscript = 'dlmap.addFeatureFromWKT("'. $prow['the_geom'] .'",{"udi":"'.$prow['dataset_udi'].'"});dlmap.gotoAllFeatures();';
     }
-
-    $dbconnstr = 'mysql:host='. $mconfig["host"];
-    $dbconnstr .= ';port=' . $mconfig["port"];
-    $dbconnstr .= ';dbname=' . $mconfig["dbname"];
-    $dbconnstr .= ';charset=utf8';;
-    $mconn = new PDO($dbconnstr,
-        $mconfig["username"],
-        $mconfig["password"],
-        array(PDO::ATTR_PERSISTENT => false, PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
+    
+    $mconn = OpenDB("RIS_RO");
 
     $mquery = "  SELECT * FROM Projects
     JOIN Programs ON Projects.Program_ID = Programs.Program_ID
@@ -454,7 +446,7 @@ var dlmap = new GeoViz();
             # if either metadata has been approved, or we are not enforcing rule, or flag not set in ini altogether THEN ok to download, otherwise not.
             if ($prow['metadata_status'] == 'Accepted') {
                 $dl_ok = 1;
-            } elseif  (isset($pelagos_config['system']['enforce_approved_metadata'] ) and ( $pelagos_config['system']['enforce_approved_metadata'] == 0 )) {
+            } elseif  (isset($GLOBALS['config']['system']['enforce_approved_metadata'] ) and ( $GLOBALS['config']['system']['enforce_approved_metadata'] == 0 )) {
                 $dl_ok = 1;
             } else {
                 $dl_ok = 0;
