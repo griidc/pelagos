@@ -3,9 +3,6 @@
 $GLOBALS['pelagos'] = array();
 $GLOBALS['pelagos']['title'] = 'Dataset Monitoring';
 
-$GLOBALS['orig_cwd'] = getcwd();
-chdir(realpath(dirname(__FILE__)));
-
 # load global pelagos config
 $GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini',true);
 # load local overrides and additions
@@ -204,6 +201,3 @@ $app->get('/pdf/:by/:id/:name', function ($by,$id,$name) use ($app) {
 });
 
 $app->run();
-chdir($GLOBALS['orig_cwd']);
-
-?>

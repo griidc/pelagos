@@ -13,10 +13,6 @@ require_once $GLOBALS['libraries']['Slim-Views']['include_Twig'];
 require_once 'Twig/Autoloader.php';
 require_once $GLOBALS['libraries']['LightOpenID']['include'];
 
-# make sure current working directory is the directory that this file lives in
-$GLOBALS['orig_cwd'] = getcwd();
-chdir(realpath(dirname(__FILE__)));
-
 # add pelagos/share/php to the include path
 set_include_path('../../../share/php' . PATH_SEPARATOR . get_include_path());
 
@@ -162,5 +158,3 @@ $app->get('/logout', function () use ($app) {
 });
 
 $app->run();
-
-chdir($GLOBALS['orig_cwd']);

@@ -5,10 +5,6 @@
 $GLOBALS['pelagos'] = array();
 $GLOBALS['pelagos']['title'] = 'Metadata Approval Application';
 
-# make sure current working directory is the directory that this file lives in
-$GLOBALS['orig_cwd'] = getcwd();
-chdir(realpath(dirname(__FILE__)));
-
 # LOGFILE - SET THIS ACCORDINGLY
 $GLOBALS['logfile_name']='mdapp.log';
 date_default_timezone_set('America/Chicago');
@@ -770,8 +766,6 @@ function index($app) {
 }
 
 $app->run();
-
-chdir($GLOBALS['orig_cwd']);
 
 function addXMLChildValue($doc,$parent,$fieldname,$fieldvalue) {
     $fieldvalue = htmlspecialchars($fieldvalue, ENT_QUOTES | 'ENT_XML1', 'UTF-8');
