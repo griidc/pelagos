@@ -40,9 +40,9 @@ require_once 'drupal.php';
 $app = new \Slim\Slim(array('view' => new \Slim\Views\Twig()));
 
 $app->get('/', function () use ($app) {
-    echo <<<'EOT'
-<p>Usage: /metadata-generator/$udi</p>
-<p>Example: <a href="/metadata-generator/R1.x134.114:0008">/metadata-generator/R1.x134.114:0008</a></p>
+    echo <<<EOT
+<p>Usage: $_SERVER[SCRIPT_NAME]/\$udi</p>
+<p>Example: <a href="$_SERVER[SCRIPT_NAME]/R1.x134.114:0008">/metadata-generator/R1.x134.114:0008</a></p>
 EOT;
 });
 
