@@ -1,11 +1,13 @@
 <?php
 
-class Journal 
+namespace Pelagos;
+
+class Journal
 {
     private function addKeyToArrayIfExists(&$source_array, $key, &$target_array)
     {
         if (array_key_exists($key, $source_array)) {
-            if ($source_array[$key] != '' AND $source_array[$key] != null) {
+            if ($source_array[$key] != '' and $source_array[$key] != null) {
                 $target_array[] = $source_array[$key];
             }
         }
@@ -42,10 +44,10 @@ class Journal
         
         $parameters = array();
         
-        $this->addKeyToArrayIfExists($data,'journalissn',$parameters);
-        $this->addKeyToArrayIfExists($data,'journalname',$parameters);
-        $this->addKeyToArrayIfExists($data,'journalpublisher',$parameters);
-        $this->addKeyToArrayIfExists($data,'journalstatus',$parameters);
+        $this->addKeyToArrayIfExists($data, 'journalissn', $parameters);
+        $this->addKeyToArrayIfExists($data, 'journalname', $parameters);
+        $this->addKeyToArrayIfExists($data, 'journalpublisher', $parameters);
+        $this->addKeyToArrayIfExists($data, 'journalstatus', $parameters);
                 
         $result =  insertJournal($parameters);
         
@@ -70,5 +72,3 @@ class Journal
         return $status;
     }
 }
-
-?>

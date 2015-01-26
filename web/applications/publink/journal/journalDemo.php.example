@@ -15,7 +15,7 @@
 // }
 
 include 'journalPost.php';
-include 'formHandler.php'; 
+include 'formHandler.php';
 
 $myHandler = new FormHandler();
 
