@@ -1,6 +1,5 @@
 <?php
 
-$GLOBALS['pelagos'] = array();
 $GLOBALS['pelagos']['title'] = 'XML Validator';
 
 $GLOBALS['libraries'] = parse_ini_file('/etc/opt/pelagos/libraries.ini',true);

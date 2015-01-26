@@ -1,6 +1,5 @@
 <?php
 
-$GLOBALS['pelagos'] = array();
 $GLOBALS['pelagos']['title'] = 'Dataset Information Form (DIF)';
 
 include_once '/opt/pelagos/share/php/aliasIncludes.php';

@@ -1,6 +1,5 @@
 <?php
 
-$GLOBALS['pelagos'] = array();
 $GLOBALS['pelagos']['title'] = 'ISO 19115-2 Metadata Editor';
 
 include_once '/opt/pelagos/share/php/aliasIncludes.php';

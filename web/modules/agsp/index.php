@@ -1,6 +1,5 @@
 <?php
 
-$GLOBALS['pelagos'] = array();
 $GLOBALS['pelagos']['title'] = 'Augmenting GoMRI Summary Page';
 
 # load global config

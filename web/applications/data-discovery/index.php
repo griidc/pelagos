@@ -1,6 +1,5 @@
 <?php
 
-$GLOBALS['pelagos'] = array();
 $GLOBALS['pelagos']['title'] = 'Data Discovery';
 $GLOBALS['pelagos']['show_title'] = false;
 

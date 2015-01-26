@@ -2,7 +2,6 @@
 # METADATA APPROVAL APPLICATION
 # PPOC: Williamson
 
-$GLOBALS['pelagos'] = array();
 $GLOBALS['pelagos']['title'] = 'Metadata Approval Application';
 
 # LOGFILE - SET THIS ACCORDINGLY

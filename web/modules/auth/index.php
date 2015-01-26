@@ -1,6 +1,5 @@
 <?php
 
-$GLOBALS['pelagos'] = array();
 $GLOBALS['pelagos']['title'] = 'Authentication';
 
 $GLOBALS['griidc'] = parse_ini_file('/etc/opt/pelagos.ini',true);
