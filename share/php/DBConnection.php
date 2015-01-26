@@ -1,5 +1,7 @@
 <?php
 
+namespace Pelagos;
+
 # DBConnection Class
 
 class DBConnection
@@ -11,15 +13,16 @@ class DBConnection
         return $this->pdoconnection;
     }
 
-    public function __construct($database = "unspecified") {
+    public function __construct($database = "unspecified")
+    {
         # the following provides drupal_set_message if this is ever
         # to be used outside of drupal, otherwise drupal's implmentation will
         # be used.
-        $pelagos_config  = parse_ini_file('/etc/opt/pelagos.ini',true);
+        $pelagos_config  = parse_ini_file('/etc/opt/pelagos.ini', true);
         require_once $pelagos_config['paths']['share'].'/php/drupal.php';
 
         # GRIIDC's databases are all listed in this ini file.
-        $configini = parse_ini_file($pelagos_config['paths']['conf'].'/db.ini',true);
+        $configini = parse_ini_file($pelagos_config['paths']['conf'].'/db.ini', true);
 
         $this->pdoconnection = null;
         $config = null;
@@ -41,7 +44,7 @@ class DBConnection
             $user       = $config["username"];
             $password   = $config["password"];
 
-            $this->pdoconnection = new PDO($dbconnstr,$user,$password,array(PDO::ATTR_PERSISTENT => false));
+            $this->pdoconnection = new PDO($dbconnstr, $user, $password, array(PDO::ATTR_PERSISTENT => false));
         } elseif ($config["type"] == 'postgresql') {
             # driver used: pgsql
             $dbconnstr  = "pgsql:host=".$config["host"].';';
@@ -50,9 +53,9 @@ class DBConnection
             $user       = $config["username"];
             $password   = $config["password"];
             
-            $this->pdoconnection = new PDO($dbconnstr,$user,$password,array(PDO::ATTR_PERSISTENT => true));
+            $this->pdoconnection = new PDO($dbconnstr, $user, $password, array(PDO::ATTR_PERSISTENT => true));
         } else {
-            $dMessage =  "Connection failed: unknown database type specified in "; 
+            $dMessage =  "Connection failed: unknown database type specified in ";
             $dMessage .= "the GRIIDC ini file for the <i>$database</i> database";
             throw new Exception($dMessage);
         }
@@ -64,7 +67,9 @@ class DBConnection
     {
         $statementHandler = $this->pdoconnection->prepare($query);
         $rc = $statementHandler->execute($parameters);
-        if (!$rc) {return $statementHandler->errorInfo();};
+        if (!$rc) {
+            return $statementHandler->errorInfo();
+        }
         return $statementHandler->fetchAll();
     }
     
@@ -75,36 +80,33 @@ class DBConnection
      * */
     function bindArrayValue($req, $array, $typeArray = false)
     {
-        if(is_object($req) && ($req instanceof PDOStatement))
-        {
-            foreach($array as $key => $value)
-            {
-                if($typeArray)
-                    $req->bindValue(":$key",$value,$typeArray[$key]);
-                else
-                {
-                    if(is_int($value))
-                    $param = PDO::PARAM_INT;
-                    elseif(is_bool($value))
-                    $param = PDO::PARAM_BOOL;
-                    elseif(is_null($value))
-                    $param = PDO::PARAM_NULL;
-                    elseif(is_string($value))
-                    $param = PDO::PARAM_STR;
-                    else
-                    $param = FALSE;
+        if (is_object($req) && ($req instanceof PDOStatement)) {
+            foreach ($array as $key => $value) {
+                if ($typeArray) {
+                    $req->bindValue(":$key", $value, $typeArray[$key]);
+                } else {
+                    if (is_int($value)) {
+                        $param = PDO::PARAM_INT;
+                    } elseif (is_bool($value)) {
+                        $param = PDO::PARAM_BOOL;
+                    } elseif (is_null($value)) {
+                        $param = PDO::PARAM_NULL;
+                    } elseif (is_string($value)) {
+                        $param = PDO::PARAM_STR;
+                    } else {
+                        $param = false;
+                    }
                     
-                    if($param)
-                    $req->bindValue(":$key",$value,$param);
+                    if ($param) {
+                        $req->bindValue(":$key", $value, $param);
+                    }
                 }
             }
         }
     }
     
-    public function __destruct() 
+    public function __destruct()
     {
         $this->pdoconnection = null;
     }
-    
 }
-?>
