@@ -4,13 +4,13 @@ $( document ).ready(function() {
     
     jQuery.validator.addMethod("ISSN", function(value, element) {
         return /[0-9]{4}-[0-9]{3}[0-9xX]/.test(value);
-        }, 
-            "Not a valid ISSN. (nnnn-nnnn)"
+    }, 
+    "Not a valid ISSN. (nnnn-nnnn)"
     );
-
+    
     myForm = new formHandler({
-        // "formPostURL" : "//proteus.tamucc.edu/~mvandeneijnden/journal/journalPost.php"
-        "formFileName" : "//proteus.tamucc.edu/~mvandeneijnden/journal/journalForm.php"
+        "formFileName" : "journalForm.php",
+        "formPostURL" : "."
     });
     
     myForm.createForm($("#journalForm"));

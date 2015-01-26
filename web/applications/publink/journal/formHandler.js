@@ -94,7 +94,7 @@ var formHandler = function (Options)
                     // Eventually reset the form, if everything went right.
                     Form.trigger("reset");
                 }
-                // Show confirmation Dialog
+        
                 showMessageDialog(json);
             },
             error: function(json) {

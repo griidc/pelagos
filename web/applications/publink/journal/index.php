@@ -1,5 +1,19 @@
 <?php
 
+// if (isset($_GET["getData"]))
+// {
+    
+    // $mydata = array("journal_volume"=>"foo");
+    
+    // $myjson = json_encode($mydata);
+    
+    // header('Content-Type: application/json');
+    // echo $myjson;
+    
+    // exit;
+
+// }
+
 include 'journalPost.php';
 include 'formHandler.php'; 
 
@@ -10,21 +24,22 @@ $myHandler->handleForm();
 ?>
 <html>
 <head>
-<title>Journal Test</title>
+    <title>Journal Test</title>
 
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css" />
-<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.13.1/jquery.validate.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css" />
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.13.1/jquery.validate.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/spin.js/2.0.1/spin.min.js"></script>
 
-<script type="text/javascript" src="formHandler.js"></script>
-<script type="text/javascript" src="journal.js"></script>
+    <script type="text/javascript" src="formHandler.js"></script>
 
-</head>
+    <script type="text/javascript" src="journalForm.js"></script>
+    </head>
 <body>
 
 <div style="width:600px;heigth:200px;" id="journalForm"></div>
 
-<button id="fillform">Fill Form</button>
+<!-- <button id="fillform">Fill Form</button> -->
 
 </body>

@@ -22,18 +22,18 @@ class Journal
     {
         require_once 'journalDL.php';
         
-        getJournalByName($journalName);
+        //getJournalByName($journalName);
         
-        return id;
+        return $journalName;
     }
 
     public function getJournalByID($journalId)
     {
         require_once 'journalDL.php';
         
-        getJournalById($journalId);
+        //getJournalById($journalId);
         
-        return id;
+        return $journalId;
     }
     
     public function saveJournal($data)
@@ -56,18 +56,18 @@ class Journal
     {
         require_once 'journalDL.php';
         
-        updateJournal($journalId);
+        //updateJournal($journalId);
         
-        return id;
+        return $journalData;
     }
     
     public function updateJournalStatus($journalId, $status)
     {
         require_once 'journalDL.php';
         
-        updateJournalStatus($journalId, $status);
+        //updateJournalStatus($journalId, $status);
         
-        return id;
+        return $status;
     }
 }
 

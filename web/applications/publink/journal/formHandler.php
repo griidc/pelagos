@@ -19,10 +19,11 @@ class FormHandler
             $userFunctions = get_defined_functions()["user"];
             
             // Make sure the requested user function is in the list
-            if (in_array ($formFunction,$userFunctions) == true) {
+            // the array values are all cast to lower case, so check lower to lower string.
+            if (in_array (strtolower($formFunction),$userFunctions) == true) {
                 $result = call_user_func($formFunction,$data);
 
-                handleReturnMessage($result);
+                $this->handleReturnMessage($result);
                 echo json_encode($result);
             } else {
                 echo '{"success":false,"title":"Failure!","message":"Unknown Function."}';
