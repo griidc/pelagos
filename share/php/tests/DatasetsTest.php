@@ -12,7 +12,8 @@ User: jvh
 
 **/
 
-namespace Pelagos\datasets;
+namespace Pelagos;
+
 /**
  * @runTestsInSeparateProcesses
  */
@@ -44,14 +45,16 @@ class DatasetsTest extends \PHPUnit_Framework_TestCase
     private static $registered = array(5,30,6,62);
     private static $available = array(1,22,6,43);
 
-    public function  testGetIdentifiedDatasetsByProjectId() {
+    public function testGetIdentifiedDatasetsByProjectId()
+    {
         $results = array();
         foreach (self::$pids as $pid) {
             $results[] = getIdentifiedDatasetsByProjectId($this->DBH, $pid);
         }
         $this->assertEquals(self::$identified, $results);
     }
-    public function  testGetRegisteredDatasetsByProjectId() {
+    public function testGetRegisteredDatasetsByProjectId()
+    {
 
         $results = array();
         foreach (self::$pids as $pid) {
@@ -59,7 +62,8 @@ class DatasetsTest extends \PHPUnit_Framework_TestCase
         }
         $this->assertEquals(self::$registered, $results);
     }
-    public function  testGetAvailableDatasetsByProjectId() {
+    public function testGetAvailableDatasetsByProjectId()
+    {
         $results = array();
         foreach (self::$pids as $pid) {
             $results[] = getAvailableDatasetsByProjectId($this->DBH, $pid);

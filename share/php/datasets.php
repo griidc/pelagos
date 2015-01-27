@@ -26,7 +26,7 @@ $GLOBALS['NULL_MAP'] = array(
     'true' => 'NOT NULL'
 );
 
-if (!defined('FILTER_REG')) define('FILTER_REG','/^(.*?)\s*(>=|<=|>|<|!=|=)\s*(.*?)$/');
+if (!defined('FILTER_REG') ) define('FILTER_REG','/^(.*?)\s*(>=|<=|>|<|!=|=)\s*(.*?)$/');
 
 $GLOBALS['REGISTRY_FIELDS'] = array(
     "r.registry_id",
@@ -189,7 +189,8 @@ JOIN
 
 ) ranked ON ranked.registry_id = r.registry_id";
 
-function count_identified_datasets($dbh, $filters = array(), $search = '') {
+function count_identified_datasets($dbh, $filters = array(), $search = '')
+{
     if (isset($search) and $search != '') {
         create_search_temp($dbh,$search);
     }
@@ -219,7 +220,8 @@ function count_identified_datasets($dbh, $filters = array(), $search = '') {
     return $retval;
 }
 
-function count_registered_datasets($dbh, $filters = array(), $search = '') {
+function count_registered_datasets($dbh, $filters = array(), $search = '')
+{
     if (isset($search) and $search != '') {
         create_search_temp($dbh,$search);
     }
@@ -249,7 +251,8 @@ function count_registered_datasets($dbh, $filters = array(), $search = '') {
     return $retval;
 }
 
-function get_identified_datasets($dbh, $filters = array(), $search = '', $order_by = 'udi') {
+function get_identified_datasets($dbh, $filters = array(), $search = '', $order_by = 'udi')
+{
     if (isset($search) and $search != '') {
         create_search_temp($dbh,$search);
     }
@@ -283,7 +286,8 @@ function get_identified_datasets($dbh, $filters = array(), $search = '', $order_
     return $retval;
 }
 
-function get_registered_datasets($dbh, $filters = array(), $search = '', $order_by = 'registry_id') {
+function get_registered_datasets($dbh, $filters = array(), $search = '', $order_by = 'registry_id')
+{
     if (isset($search) and $search != '') {
         create_search_temp($dbh,$search);
     }
@@ -316,7 +320,8 @@ function get_registered_datasets($dbh, $filters = array(), $search = '', $order_
     return $retval;
 }
 
-function build_where($filters,$registered = false) {
+function build_where($filters,$registered = false)
+{
     $table = $registered ? 'r' : 'd';
     $WHERE = 'WHERE TRUE';
 
@@ -496,16 +501,21 @@ function build_where($filters,$registered = false) {
     return $WHERE;
 }
 
-function create_search_temp($dbh,$search) {
-    $search = trim(preg_replace("/[\*\+\?\{\}\[\]\(\)\.\\$\^\\\\]/",'\\\\\0',$search));
-    $stmt = $dbh->prepare("CREATE TEMP TABLE search_temp AS SELECT search_word FROM regexp_split_to_table('$search', '\\s+') AS search_word;");
+function create_search_temp($dbh, $search)
+{
+    $search = trim(preg_replace("/[\*\+\?\{\}\[\]\(\)\.\\$\^\\\\]/", '\\\\\0', $search));
+    $qString = "CREATE TEMP TABLE search_temp AS SELECT " .
+                " search_word FROM regexp_split_to_table('.
+                $search. ', '\\s+') AS search_word;";
+    $stmt = $dbh->prepare($qString);
     if (!$stmt->execute()) {
         $arr = $stmt->errorInfo();
         print_r($arr);
     }
 }
 
-function drop_search_temp($dbh) {
+function drop_search_temp($dbh)
+{
     $stmt = $dbh->prepare("DROP TABLE search_temp;");
     if (!$stmt->execute()) {
         $arr = $stmt->errorInfo();
@@ -514,8 +524,9 @@ function drop_search_temp($dbh) {
 }
 
 if (!function_exists('getProjectIdFromUdi')) {
-    function getProjectIdFromUdi($dbh, $udi) {
-        $stmt = $dbh->prepare('SELECT project_id from datasets WHERE dataset_udi = :udi');
+    function getProjectIdFromUdi($dbh, $udi)
+    {
+        $stmt = $dbh->prepare('SELECT project_id FROM datasets WHERE dataset_udi = :udi');
         $stmt->bindParam(':udi', $udi);
         $stmt->execute();
         return $stmt->fetchColumn();
@@ -535,12 +546,16 @@ if (!function_exists('getProjectIdFromUdi')) {
 if (!function_exists('getIdentifiedDatasetsByProjectId')) {
     function getIdentifiedDatasetsByProjectId(PDO $pdo, $projectId)
     {
-        $query = "select count(*) from datasets " .
-            " where datasets.project_id = ? and datasets.status = 2";
-        $stmt = $pdo->prepare($query);
-        if (!$stmt->execute(array($projectId))) {
-            $arr = $stmt->errorInfo();
-            print_r($arr);
+        $query = "SELECT COUNT(*) FROM datasets, registry_view " .
+            " WHERE datasets.dataset_udi = registry_view.dataset_udi AND " .
+            " datasets.project_id = " . $projectId . ";";
+
+        try {
+            $stmt = $pdo->prepare($query);
+            $stmt->execute();
+        } catch (PDOException $e) {
+            $dMessage = 'PDO exception in datasets.php function getIdentifiedDatasetsByProjectId: ' . $e->getMessage();
+            throw new Exception($dMessage);
         }
         return $stmt->fetchColumn();
     }
@@ -559,15 +574,19 @@ if (!function_exists('getIdentifiedDatasetsByProjectId')) {
 if (!function_exists('getRegisteredDatasetsByProjectId')) {
     function getRegisteredDatasetsByProjectId(PDO $pdo, $projectId)
     {
-        $query = "select count(*) from registry_view " .
-            " where " .
-            " substring(registry_view.dataset_udi from 5 for 3) = ? and " .
-            " url_data is not null and " .
-            " url_data <> ''";
-        $stmt = $pdo->prepare($query);
-        if (!$stmt->execute(array($projectId))) {
-            $arr = $stmt->errorInfo();
-            print_r($arr);
+
+        $query = "SELECT COUNT(*) FROM datasets, registry_view " .
+            " WHERE " .
+            " registry_view.access_status = 'None' AND " .
+            " datasets.dataset_udi = registry_view.dataset_udi AND " .
+            " datasets.project_id = " . $projectId . ";";
+        try {
+            $stmt = $pdo->prepare($query);
+            $stmt->execute();
+        } catch (PDOException $e) {
+            $dMessage = 'PDO exception in datasets.php function getRegisteredDatasetsByProjectId: ' . $e->getMessage();
+            throw new Exception($dMessage);
+
         }
         return $stmt->fetchColumn();
     }
@@ -587,16 +606,18 @@ if (!function_exists('getRegisteredDatasetsByProjectId')) {
 if (!function_exists('getAvailableDatasetsByProjectId')) {
     function getAvailableDatasetsByProjectId(PDO $pdo, $projectId)
     {
-        $query = "select count(*) from registry_view " .
-            " where " .
-            " substring(registry_view.dataset_udi from 5 for 3) = ? and " .
-            " dataset_download_status in ('Completed','RemotelyHosted') and " .
-            " registry_view.access_status = 'None' and " .
-            " registry_view.metadata_status = 'Accepted' ";
-        $stmt = $pdo->prepare($query);
-        if (!$stmt->execute(array($projectId))) {
-            $arr = $stmt->errorInfo();
-            print_r($arr);
+        $query = "SELECT COUNT(*) FROM datasets, registry_view " .
+            " WHERE " .
+            " registry_view.access_status = 'None' AND " .
+            " registry_view.metadata_status = 'Accepted' AND " .
+            " datasets.dataset_udi = registry_view.dataset_udi AND " .
+            " datasets.project_id = " . $projectId . ";";
+        try {
+            $stmt = $pdo->prepare($query);
+            $stmt->execute();
+        } catch (PDOException $e) {
+            $dMessage = 'PDO exception in datasets.php function getAvailableDatasetsByProjectId: ' . $e->getMessage();
+            throw new Exception($dMessage);
         }
         return $stmt->fetchColumn();
     }
