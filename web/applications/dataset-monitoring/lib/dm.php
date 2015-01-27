@@ -37,7 +37,8 @@ function getTasksAndDatasets($projects) {
                              ELSE 0
                         END
                     WHEN dataset_download_status = 'RemotelyHosted' THEN
-                        CASE WHEN access_status = 'None' THEN 7
+                        CASE WHEN (metadata_status <> 'Accepted' AND '$enforceMetadataRule' = '1') THEN 4
+                             WHEN access_status = 'None' THEN 7
                              WHEN access_status = 'Approval' THEN 6
                              WHEN access_status = 'Restricted' THEN 5
                              ELSE 0
