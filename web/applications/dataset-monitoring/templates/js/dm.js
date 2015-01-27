@@ -32,18 +32,25 @@ $(document).ready(function() {
         if (m) {
             if (typeof m[1] !== 'undefined') {
                 if (typeof m[2] === 'undefined') {
-                    $("#tree").jstree("select_node", $('#datasets_projectId_' + m[1]), true);
-                    $("#tree").jstree("select_node", $('#tasks_projectId_' + m[1]), true);
+                    if ($('#tree').jstree('get_selected').attr('id') != 'datasets_projectId_' + m[1]) {
+                        $("#tree").jstree("select_node", $('#datasets_projectId_' + m[1]), true);
+                    }
+                    if ($('#tree').jstree('get_selected').attr('id') != 'tasks_projectId_' + m[1]) {
+                        $("#tree").jstree("select_node", $('#tasks_projectId_' + m[1]), true);
+                    }
                 }
                 else {
                     $("#tree").jstree("open_node", $('#projects_fundSrc_' + map_fund_src(m[1])));
-                    $("#tree").jstree("select_node", $('#datasets_projectId_' + map_project(m[2])), true);
-                    $("#tree").jstree("select_node", $('#tasks_projectId_' + map_project(m[2])), true);
+                    if ($('#tree').jstree('get_selected').attr('id') != 'datasets_projectId_' + map_project(m[2])) {
+                        $("#tree").jstree("select_node", $('#datasets_projectId_' + map_project(m[2])), true);
+                    }
+                    if ($('#tree').jstree('get_selected').attr('id') != 'tasks_projectId_' + map_project(m[2])) {
+                        $("#tree").jstree("select_node", $('#tasks_projectId_' + map_project(m[2])), true);
+                    }
                 }
             }
         }
     })
-
 });
 
 function showProjects(by,id) {
@@ -125,6 +132,50 @@ function showProjects(by,id) {
                 sortList: [[0,0]],
                 sortRestart : true,
                 sortInitialOrder: 'asc'
+            });
+            $(".sbarchart").each(function() {
+                var projectId = this.parentNode.id;
+                /* remove non-numeric part of the passed div ID */
+                projectId = projectId.replace(/^.*_/,'');
+
+                $.getJSON( "{{baseUrl}}/summaryCount/" + projectId, null, function( data ) {
+                    var jsondata = data[0];
+                    var projectId = data[1];
+                    var options = {
+                        xaxis: {
+                            min: 0,
+                            minTickSize: 1
+                        },
+                        yaxis: {
+                            ticks: false
+                        },
+                        series: {
+                            bars: {
+                                align: "center",
+                                show: true,
+                                barWidth: .9,
+                                horizontal: true
+                            },
+                            stack: true
+                        },
+                        grid: {
+                            show: true
+                        },
+                        colors: [ "#6fcd6f", "#eee566", "#bababa" ]
+                    };
+                    var projectGraph = $("div#sbarchart_" + projectId + " > .sbarchart" );
+                    var projectText = $("div#" + "sbarchart_" + projectId + " > .sbarchart-counts");
+                    $.plot(projectGraph, jsondata, options);
+                    var registered_len = jsondata[1]["data"][0][0];
+                    var available_len  = jsondata[0]["data"][0][0];
+                    var identified_len = jsondata[2]["data"][0][0];
+                    var available = available_len;
+                    var registered = registered_len + available_len;
+                    var identified = available_len + registered_len + identified_len;
+                    projectText.html("<table><tr><td>Available: " + available + " </td><td>Total Registered: " + registered + "</td><td>Identified: " + identified + "</td></tr></table>");
+                }).fail(function() {
+                    console.log("failed");
+                });
             });
         }
     });
