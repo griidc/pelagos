@@ -1,5 +1,7 @@
 <?php
 
+$GLOBALS['pelagos']['title'] = 'Augmenting GoMRI Summary Page';
+
 # load global config
 $GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini', true);
 
