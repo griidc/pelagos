@@ -1,7 +1,6 @@
 <?php
 
-$GLOBALS['orig_cwd'] = getcwd();
-chdir(realpath(dirname(__FILE__)));
+$GLOBALS['pelagos']['title'] = 'Dataset Monitoring';
 
 set_include_path("../../../share/php" . PATH_SEPARATOR . get_include_path());
 
@@ -253,7 +252,4 @@ $app->get('/pdf/:by/:id/:name', function ($by, $id, $name) use ($app) {
     exit;
 });
 
-$orig_env = fixEnvironment();
 $app->run();
-restoreEnvironment($orig_env);
-chdir($GLOBALS['orig_cwd']);

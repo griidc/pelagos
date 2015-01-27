@@ -1,14 +1,12 @@
 <?php
 
+$GLOBALS['pelagos']['title'] = 'Metadata Generator';
+
 # load global pelagos config
 $GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini', true);
 
 # load Common library from global share
 require_once($GLOBALS['config']['paths']['share'].'/php/Common.php');
-
-# make sure current working directory is the directory that this file lives in
-$GLOBALS['orig_cwd'] = getcwd();
-chdir(realpath(dirname(__FILE__)));
 
 # check for local config file
 if (file_exists('config.ini')) {
@@ -41,9 +39,9 @@ require_once 'drupal.php';
 $app = new \Slim\Slim(array('view' => new \Slim\Views\Twig()));
 
 $app->get('/', function () use ($app) {
-    echo <<<'EOT'
-<p>Usage: /metadata-generator/$udi</p>
-<p>Example: <a href="/metadata-generator/R1.x134.114:0008">/metadata-generator/R1.x134.114:0008</a></p>
+    echo <<<EOT
+<p>Usage: $_SERVER[SCRIPT_NAME]/\$udi</p>
+<p>Example: <a href="$_SERVER[SCRIPT_NAME]/R1.x134.114:0008">/metadata-generator/R1.x134.114:0008</a></p>
 EOT;
 });
 
@@ -114,7 +112,4 @@ $app->get('/:udi', function ($udi) use ($app) {
     }
 });
 
-$orig_env = fixEnvironment();
 $app->run();
-restoreEnvironment($orig_env);
-chdir($GLOBALS['orig_cwd']);
