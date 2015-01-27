@@ -69,7 +69,7 @@
 
             {% if dataset.registered != '10' %}
                 {% set available_na = available_na+1 %}
-            {% elseif dataset.available == 10 %}
+            {% elseif dataset.available == 10 or dataset.available == 7 %}
                 {% set available_green = available_green+1 %}
             {% elseif dataset.available == '-1' %}
                 {% set available_na = available_na+1 %}

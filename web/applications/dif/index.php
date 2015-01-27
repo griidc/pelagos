@@ -1,5 +1,7 @@
 <?php
 
+$GLOBALS['pelagos']['title'] = 'Dataset Information Form (DIF)';
+
 include_once '/opt/pelagos/share/php/aliasIncludes.php';
 
 drupal_add_js('//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js',array('type'=>'external'));

@@ -1,5 +1,7 @@
 <?php
 
+$GLOBALS['pelagos']['title'] = 'ISO 19115-2 Metadata Editor';
+
 include_once '/opt/pelagos/share/php/aliasIncludes.php';
 
 if (isset($_GET["udi"]))
@@ -143,6 +145,7 @@ echo "</script>\n";
 
 ?>
 
+<div>
 <div style="font-size:smaller;" id="metadialog"></div>
 <div style="font-size:smaller;display:none;" id="savedialog">
 <span id="dialogtxt">All required fields are complete.<br/>
@@ -192,3 +195,4 @@ Click OK to download.
 		</td>
 	</tr>
 </table>
+</div>

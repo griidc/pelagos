@@ -1,14 +1,12 @@
 <?php
 
+$GLOBALS['pelagos']['title'] = 'Account Management';
+
 # load global pelagos config
 $GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini', true);
 
 # load Common library from global share
 require_once($GLOBALS['config']['paths']['share'].'/php/Common.php');
-
-# make sure current working directory is the directory that this file lives in
-$GLOBALS['orig_cwd'] = getcwd();
-chdir(realpath(dirname(__FILE__)));
 
 # check for local config file
 if (file_exists('config.ini')) {
@@ -829,7 +827,4 @@ $app->post('/password/:action', function ($action) use ($app) {
     echo "<p>Your password has been updated. Please use this new password to log in to GRIIDC systems. If you need assistance, please contact: <a href='mailto:griidc@gomri.org'>griidc@gomri.org</a> for help.</p>";
 })->conditions(array('action' => '(reset|change)'));
 
-$orig_env = fixEnvironment();
 $app->run();
-restoreEnvironment($orig_env);
-chdir($GLOBALS['orig_cwd']);
