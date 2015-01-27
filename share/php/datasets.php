@@ -662,10 +662,8 @@ if (!function_exists('getProjectIdFromUdi')) {
 if (!function_exists('getIdentifiedDatasetsByProjectId')) {
     function getIdentifiedDatasetsByProjectId(PDO $pdo, $projectId)
     {
-        $query = "SELECT COUNT(*) FROM datasets, registry_view " .
-            " WHERE datasets.dataset_udi = registry_view.dataset_udi AND " .
-            " datasets.project_id = " . $projectId . ";";
-
+        $query = "SELECT COUNT(*) FROM datasets " .
+                 "WHERE datasets.project_id = " . $projectId . ";";
         try {
             $stmt = $pdo->prepare($query);
             $stmt->execute();

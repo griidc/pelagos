@@ -41,7 +41,7 @@ class DatasetsTest extends \PHPUnit_Framework_TestCase
    //  constants project ids for testing
     private static $pids  = array(29,139,140,141);
     //  expected values for the three categories by the p-ids above
-    private static $identified = array(7,61,10,82);
+    private static $identified = array(8,83,27,119);
     private static $registered = array(5,30,6,62);
     private static $available = array(1,22,6,43);
 
