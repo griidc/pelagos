@@ -26,7 +26,9 @@ $GLOBALS['NULL_MAP'] = array(
     'true' => 'NOT NULL'
 );
 
-if (!defined('FILTER_REG')) define('FILTER_REG','/^(.*?)\s*(>=|<=|>|<|!=|=)\s*(.*?)$/');
+if (!defined('FILTER_REG')) {
+    define('FILTER_REG', '/^(.*?)\s*(>=|<=|>|<|!=|=)\s*(.*?)$/');
+}
 
 $GLOBALS['REGISTRY_FIELDS'] = array(
     "r.registry_id",
@@ -189,9 +191,10 @@ JOIN
 
 ) ranked ON ranked.registry_id = r.registry_id";
 
-function count_identified_datasets($dbh, $filters = array(), $search = '') {
+function count_identified_datasets($dbh, $filters = array(), $search = '')
+{
     if (isset($search) and $search != '') {
-        create_search_temp($dbh,$search);
+        create_search_temp($dbh, $search);
     }
 
     $SELECT = 'SELECT COUNT(d.dataset_udi)';
@@ -200,8 +203,7 @@ function count_identified_datasets($dbh, $filters = array(), $search = '') {
 
     if (isset($search) and $search != '') {
         $stmt = $dbh->prepare("$SELECT $GLOBALS[IDENTIFIED_FROM] $GLOBALS[IDENTIFIED_SEARCH_RANK] $WHERE;");
-    }
-    else {
+    } else {
         $stmt = $dbh->prepare("$SELECT $GLOBALS[IDENTIFIED_FROM] $WHERE;");
     }
 
@@ -219,19 +221,19 @@ function count_identified_datasets($dbh, $filters = array(), $search = '') {
     return $retval;
 }
 
-function count_registered_datasets($dbh, $filters = array(), $search = '') {
+function count_registered_datasets($dbh, $filters = array(), $search = '')
+{
     if (isset($search) and $search != '') {
-        create_search_temp($dbh,$search);
+        create_search_temp($dbh, $search);
     }
 
     $SELECT = 'SELECT COUNT(r.registry_id)';
 
-    $WHERE = build_where($filters,true);
+    $WHERE = build_where($filters, true);
 
     if (isset($search) and $search != '') {
         $stmt = $dbh->prepare("$SELECT $GLOBALS[REGISTERED_FROM] $GLOBALS[REGISTRY_SEARCH_RANK] $WHERE;");
-    }
-    else {
+    } else {
         $stmt = $dbh->prepare("$SELECT $GLOBALS[REGISTERED_FROM] $WHERE;");
     }
 
@@ -249,23 +251,29 @@ function count_registered_datasets($dbh, $filters = array(), $search = '') {
     return $retval;
 }
 
-function get_identified_datasets($dbh, $filters = array(), $search = '', $order_by = 'udi') {
+function get_identified_datasets($dbh, $filters = array(), $search = '', $order_by = 'udi')
+{
     if (isset($search) and $search != '') {
-        create_search_temp($dbh,$search);
+        create_search_temp($dbh, $search);
     }
 
-    $SELECT = 'SELECT ' . 
-              implode(',',$GLOBALS['DIF_FIELDS']) . ',' .
-              implode(',',$GLOBALS['REGISTRY_FIELDS']) . ',' .
-              implode(',',$GLOBALS['REGISTRY_OVERRIDE_FIELDS']) . ',' .
+    $SELECT = 'SELECT ' .
+              implode(',', $GLOBALS['DIF_FIELDS']) . ',' .
+              implode(',', $GLOBALS['REGISTRY_FIELDS']) . ',' .
+              implode(',', $GLOBALS['REGISTRY_OVERRIDE_FIELDS']) . ',' .
               'd.dataset_udi udi';
 
     $WHERE = build_where($filters);
 
     if (isset($search) and $search != '') {
-        $stmt = $dbh->prepare("$SELECT $GLOBALS[IDENTIFIED_FROM] $GLOBALS[IDENTIFIED_SEARCH_RANK] $WHERE ORDER BY search_rank DESC, $order_by;");
-    }
-    else {
+        $stmt = $dbh->prepare(
+            $SELECT . ' ' .
+            $GLOBALS['IDENTIFIED_FROM'] . ' ' .
+            $GLOBALS['IDENTIFIED_SEARCH_RANK'] . ' ' .
+            $WHERE . ' ' .
+            "ORDER BY search_rank DESC, $order_by;"
+        );
+    } else {
         $stmt = $dbh->prepare("$SELECT $GLOBALS[IDENTIFIED_FROM] $WHERE ORDER BY $order_by;");
     }
 
@@ -283,23 +291,29 @@ function get_identified_datasets($dbh, $filters = array(), $search = '', $order_
     return $retval;
 }
 
-function get_registered_datasets($dbh, $filters = array(), $search = '', $order_by = 'registry_id') {
+function get_registered_datasets($dbh, $filters = array(), $search = '', $order_by = 'registry_id')
+{
     if (isset($search) and $search != '') {
-        create_search_temp($dbh,$search);
+        create_search_temp($dbh, $search);
     }
 
-    $SELECT = 'SELECT ' . 
-              implode(',',$GLOBALS['REGISTRY_FIELDS']) . ',' .
-              implode(',',$GLOBALS['DIF_FIELDS']) . ',' .
-              implode(',',$GLOBALS['REGISTRY_OVERRIDE_FIELDS']) . ',' .
+    $SELECT = 'SELECT ' .
+              implode(',', $GLOBALS['REGISTRY_FIELDS']) . ',' .
+              implode(',', $GLOBALS['DIF_FIELDS']) . ',' .
+              implode(',', $GLOBALS['REGISTRY_OVERRIDE_FIELDS']) . ',' .
               "CASE WHEN r.dataset_udi IS NULL THEN substr(r.registry_id,1,16) ELSE r.dataset_udi END AS udi";
 
-    $WHERE = build_where($filters,true);
+    $WHERE = build_where($filters, true);
 
     if (isset($search) and $search != '') {
-        $stmt = $dbh->prepare("$SELECT $GLOBALS[REGISTERED_FROM] $GLOBALS[REGISTRY_SEARCH_RANK] $WHERE ORDER BY search_rank DESC, $order_by;");
-    }
-    else {
+        $stmt = $dbh->prepare(
+            $SELECT . ' ' .
+            $GLOBALS['REGISTERED_FROM'] . ' ' .
+            $GLOBALS['REGISTRY_SEARCH_RANK'] . ' ' .
+            $WHERE . ' ' .
+            "ORDER BY search_rank DESC, $order_by;"
+        );
+    } else {
         $stmt = $dbh->prepare("$SELECT $GLOBALS[REGISTERED_FROM] $WHERE ORDER BY $order_by;");
     }
     if (!$stmt->execute()) {
@@ -316,38 +330,53 @@ function get_registered_datasets($dbh, $filters = array(), $search = '', $order_
     return $retval;
 }
 
-function build_where($filters,$registered = false) {
+function build_where($filters, $registered = false)
+{
     $table = $registered ? 'r' : 'd';
     $WHERE = 'WHERE TRUE';
 
     foreach ($filters as $filter) {
-        if (preg_match(FILTER_REG,$filter,$matches)) {
+        if (preg_match(FILTER_REG, $filter, $matches)) {
             switch (strtolower($matches[1])) {
                 case 'registry_id':
-                    $WHERE .= " AND (r.registry_id " . $GLOBALS['IS_NULL_INVERTED_MAP'][$matches[2]] . " r.registry_id " . $GLOBALS['PGSQL_LIKE_MAP'][$matches[2]] . " '$matches[3]')";
+                    $WHERE .= " AND (r.registry_id " .
+                        $GLOBALS['IS_NULL_INVERTED_MAP'][$matches[2]] .
+                        " r.registry_id " .
+                        $GLOBALS['PGSQL_LIKE_MAP'][$matches[2]] .
+                        " '$matches[3]')";
                     break;
                 case 'registry_ids':
-                    $registry_ids = preg_split('/,/',$matches[3]);
+                    $registry_ids = preg_split('/,/', $matches[3]);
                     $registry_id_filters = array();
                     foreach ($registry_ids as $registry_id) {
-                        $registry_id_filters[] = "(r.registry_id " . $GLOBALS['IS_NULL_INVERTED_MAP'][$matches[2]] . " r.registry_id " . $GLOBALS['PGSQL_LIKE_MAP'][$matches[2]] . " '$registry_id%')";
+                        $registry_id_filters[] = "(r.registry_id " .
+                            $GLOBALS['IS_NULL_INVERTED_MAP'][$matches[2]] .
+                            " r.registry_id " .
+                            $GLOBALS['PGSQL_LIKE_MAP'][$matches[2]] .
+                            " '$registry_id%')";
                     }
-                    if ($matches[2] == '!=') { $glue = ' AND '; }
-                    else { $glue = ' OR '; }
-                    $WHERE .= " AND (" . implode($glue,$registry_id_filters) . ")";
+                    if ($matches[2] == '!=') {
+                        $glue = ' AND ';
+                    } else {
+                        $glue = ' OR ';
+                    }
+                    $WHERE .= " AND (" . implode($glue, $registry_id_filters) . ")";
                     break;
                 case 'udi':
                     $WHERE .= " AND $table.dataset_udi " . $GLOBALS['PGSQL_LIKE_MAP'][$matches[2]] . " '$matches[3]'";
                     break;
                 case 'udis':
-                    $udis = preg_split('/,/',$matches[3]);
+                    $udis = preg_split('/,/', $matches[3]);
                     $udiFilters = array();
                     foreach ($udis as $udi) {
                         $udiFilters[] = "$table.dataset_udi " . $GLOBALS['PGSQL_LIKE_MAP'][$matches[2]] . " '$udi'";
                     }
-                    if ($matches[2] == '!=') { $glue = ' AND '; }
-                    else { $glue = ' OR '; }
-                    $WHERE .= " AND (" . implode($glue,$udiFilters) . ")";
+                    if ($matches[2] == '!=') {
+                        $glue = ' AND ';
+                    } else {
+                        $glue = ' OR ';
+                    }
+                    $WHERE .= " AND (" . implode($glue, $udiFilters) . ")";
                     break;
                 case 'taskid':
                     $WHERE .= " AND task_uid $matches[2] $matches[3]";
@@ -361,7 +390,7 @@ function build_where($filters,$registered = false) {
                     }
                     break;
                 case 'projectids':
-                    $projectIds = preg_split('/,/',$matches[3]);
+                    $projectIds = preg_split('/,/', $matches[3]);
                     $projects = array();
                     foreach ($projectIds as $projectId) {
                         if (isset($projectId) and $projectId != '') {
@@ -370,23 +399,25 @@ function build_where($filters,$registered = false) {
                             $projects[] = "project_id IS NULL";
                         }
                     }
-                    if ($matches[2] == '!=') { $glue = ' AND '; }
-                    else { $glue = ' OR '; }
-                    $WHERE .= " AND (" . implode($glue,$projects) . ")";
+                    if ($matches[2] == '!=') {
+                        $glue = ' AND ';
+                    } else {
+                        $glue = ' OR ';
+                    }
+                    $WHERE .= " AND (" . implode($glue, $projects) . ")";
                     break;
                 case 'title':
                     if ($registered) {
                         $WHERE .= " AND r.dataset_title " . $GLOBALS['PGSQL_LIKE_MAP'][$matches[2]] . " '$matches[3]'";
-                    }
-                    else {
+                    } else {
                         $WHERE .= " AND title " . $GLOBALS['PGSQL_LIKE_MAP'][$matches[2]] . " '$matches[3]'";
                     }
                     break;
                 case 'abstract':
                     if ($registered) {
-                        $WHERE .= " AND r.dataset_abstract " . $GLOBALS['PGSQL_LIKE_MAP'][$matches[2]] . " '$matches[3]'";
-                    }
-                    else {
+                        $WHERE .= " AND r.dataset_abstract " . $GLOBALS['PGSQL_LIKE_MAP'][$matches[2]] .
+                                  " '$matches[3]'";
+                    } else {
                         $WHERE .= " AND abstract " . $GLOBALS['PGSQL_LIKE_MAP'][$matches[2]] . " '$matches[3]'";
                     }
                     break;
@@ -395,10 +426,23 @@ function build_where($filters,$registered = false) {
                     break;
                 case 'dataset_download_status':
                     if ($matches[2] == '!=') {
-                        $WHERE .= " AND (r.dataset_download_status IS NULL OR r.dataset_download_status != '$matches[3]')";
-                    }
-                    else {
-                        $WHERE .= " AND (r.dataset_download_status IS NOT NULL AND r.dataset_download_status = '$matches[3]')";
+                        $WHERE .= <<<EOT
+                            AND
+                            (
+                                r.dataset_download_status IS NULL
+                                OR
+                                r.dataset_download_status != '$matches[3]'
+                            )
+EOT;
+                    } else {
+                        $WHERE .= <<<EOT
+                            AND
+                            (
+                                r.dataset_download_status IS NOT NULL
+                                AND
+                                r.dataset_download_status = '$matches[3]'
+                            )
+EOT;
                     }
                     break;
                 case 'dataset_download_statuses':
@@ -410,34 +454,39 @@ function build_where($filters,$registered = false) {
                         $NULLcomp = 'IS NOT';
                         $matchNULL = true;
                     }
-                    $statuses = preg_split('/,/',$matches[3]);
+                    $statuses = preg_split('/,/', $matches[3]);
                     $statusArray = array();
                     foreach ($statuses as $status) {
                         if ($status == 'NULL') {
                             $comp = $NULLcomp;
-                            if ($matches[2] == '!=') $matchNULL = false;
-                        }
-                        else {
+                            if ($matches[2] == '!=') {
+                                $matchNULL = false;
+                            }
+                        } else {
                             $comp = $matches[2];
                             $status = "'$status'";
                         }
                         $statusArray[] = "dataset_download_status $comp $status";
                     }
                     $WHERE .= " AND ";
-                    if ($matchNULL) $WHERE .= '( dataset_download_status IS NULL OR ';
-                    $WHERE .= "(" . implode($glue,$statusArray) . ")";
-                    if ($matchNULL) $WHERE .= ')';
+                    if ($matchNULL) {
+                        $WHERE .= '( dataset_download_status IS NULL OR ';
+                    }
+                    $WHERE .= "(" . implode($glue, $statusArray) . ")";
+                    if ($matchNULL) {
+                        $WHERE .= ')';
+                    }
                     break;
                 case 'registered':
-                    $WHERE .= " AND r.registry_id " . $GLOBALS['IS_MAP'][$matches[2]] . ' ' . $GLOBALS['NULL_MAP'][$matches[3]];
+                    $WHERE .= " AND r.registry_id " . $GLOBALS['IS_MAP'][$matches[2]] . ' ' .
+                              $GLOBALS['NULL_MAP'][$matches[3]];
                     break;
                 case 'filter':
                     $WHERE .= " AND (";
                     if ($registered) {
                         $WHERE .= "dataset_title " . $GLOBALS['PGSQL_LIKE_MAP'][$matches[2]] . " '$matches[3]'";
                         $WHERE .= " OR dataset_abstract " . $GLOBALS['PGSQL_LIKE_MAP'][$matches[2]] . " '$matches[3]'";
-                    }
-                    else {
+                    } else {
                         $WHERE .= "title " . $GLOBALS['PGSQL_LIKE_MAP'][$matches[2]] . " '$matches[3]'";
                         $WHERE .= " OR abstract " . $GLOBALS['PGSQL_LIKE_MAP'][$matches[2]] . " '$matches[3]'";
                     }
@@ -445,43 +494,115 @@ function build_where($filters,$registered = false) {
                     break;
                 case 'restricted':
                     if ($registered) {
-                        if (preg_match('/^1|t(?:rue)?|y(?:es)?$/',$matches[3])) {
+                        if (preg_match('/^1|t(?:rue)?|y(?:es)?$/', $matches[3])) {
                             $WHERE .= " AND (access_status = 'Restricted' OR access_status = 'Approval')";
-                        }
-                        elseif (preg_match('/^0|f(?:alse)?|no?$/',$matches[3])) {
+                        } elseif (preg_match('/^0|f(?:alse)?|no?$/', $matches[3])) {
                             $WHERE .= " AND access_status = 'None'";
                         }
                     }
                     break;
                 case 'availability':
-                    $states = preg_split('/,/',$matches[3]);
+                    $states = preg_split('/,/', $matches[3]);
                     $availability = array();
                     foreach ($states as $state) {
                         switch($state) {
                             case 'available':
-                                $availability[] = "(r.registry_id IS NOT NULL AND (dataset_download_status = 'Completed' OR dataset_download_status = 'RemotelyHosted') AND metadata_status = 'Accepted' AND access_status = 'None')";
-                            break;
+                                $availability[] = <<<'EOT'
+                                    (
+                                        r.registry_id IS NOT NULL
+                                        AND
+                                        (
+                                            dataset_download_status = 'Completed'
+                                            OR
+                                            dataset_download_status = 'RemotelyHosted'
+                                        )
+                                        AND
+                                        metadata_status = 'Accepted'
+                                        AND
+                                        access_status = 'None'
+                                    )
+EOT;
+                                break;
                             case 'available_with_restrictions':
-                                $availability[] = "(r.registry_id IS NOT NULL AND (dataset_download_status = 'Completed' OR dataset_download_status = 'RemotelyHosted') AND metadata_status = 'Accepted' AND (access_status = 'Restricted' OR access_status = 'Approval'))";
-                            break;
+                                $availability[] = <<<'EOT'
+                                    (
+                                        r.registry_id IS NOT NULL
+                                        AND
+                                        (
+                                            dataset_download_status = 'Completed'
+                                            OR
+                                            dataset_download_status = 'RemotelyHosted'
+                                        )
+                                        AND
+                                        metadata_status = 'Accepted'
+                                        AND
+                                        (
+                                            access_status = 'Restricted'
+                                            OR
+                                            access_status = 'Approval'
+                                        )
+                                    )
+EOT;
+                                break;
                             case 'unavailable_pending_metadata_acceptance':
-                                $availability[] = "(r.registry_id IS NOT NULL AND (dataset_download_status = 'Completed' OR dataset_download_status = 'RemotelyHosted') AND metadata_dl_status = 'Completed' AND metadata_status <> 'Accepted')";
-                            break;
+                                $availability[] = <<<'EOT'
+                                    (
+                                        r.registry_id IS NOT NULL
+                                        AND
+                                        (
+                                              dataset_download_status = 'Completed'
+                                              OR
+                                              dataset_download_status = 'RemotelyHosted'
+                                        )
+                                        AND
+                                        metadata_dl_status = 'Completed'
+                                        AND
+                                        metadata_status <> 'Accepted'
+                                    )
+EOT;
+                                break;
                             case 'unavailable_pending_metadata_submission':
-                                $availability[] = "(r.registry_id IS NOT NULL AND (dataset_download_status = 'Completed' OR dataset_download_status = 'RemotelyHosted') AND metadata_dl_status <> 'Completed')";
-                            break;
+                                $availability[] = <<<'EOT'
+                                    (
+                                        r.registry_id IS NOT NULL
+                                        AND
+                                        (
+                                            dataset_download_status = 'Completed'
+                                            OR
+                                            dataset_download_status = 'RemotelyHosted'
+                                        )
+                                        AND
+                                        metadata_dl_status <> 'Completed'
+                                    )
+EOT;
+                                break;
                             case 'unavailable_pending_data_submission':
-                                $availability[] = "(r.registry_id IS NOT NULL AND dataset_download_status <> 'Completed' AND dataset_download_status <> 'RemotelyHosted')";
-                            break;
+                                $availability[] = <<<'EOT'
+                                    (
+                                        r.registry_id IS NOT NULL
+                                        AND
+                                        dataset_download_status <> 'Completed'
+                                        AND
+                                        dataset_download_status <> 'RemotelyHosted'
+                                    )
+EOT;
+                                break;
                             case 'unavailable_pending_registration':
-                                $availability[] = "(r.registry_id is NULL AND status = 2)";
-                            break;
+                                $availability[] = <<<'EOT'
+                                    (
+                                        r.registry_id is NULL
+                                        AND
+                                        status = 2
+                                    )
+EOT;
+                                break;
                         }
                     }
-                    $WHERE .= " AND (" . implode(" OR ",$availability) . ")";
+                    $WHERE .= " AND (" . implode(" OR ", $availability) . ")";
                     break;
                 case 'hasproject':
-                    $WHERE .= " AND project_id " . $GLOBALS['IS_MAP'][$matches[2]] . ' ' . $GLOBALS['NULL_MAP'][$matches[3]];
+                    $WHERE .= " AND project_id " . $GLOBALS['IS_MAP'][$matches[2]] .
+                              ' ' . $GLOBALS['NULL_MAP'][$matches[3]];
                     break;
                 case 'funding_envelope':
                     $WHERE .= " AND p.\"FundSrc\" $matches[2] $matches[3]";
@@ -496,16 +617,21 @@ function build_where($filters,$registered = false) {
     return $WHERE;
 }
 
-function create_search_temp($dbh,$search) {
-    $search = trim(preg_replace("/[\*\+\?\{\}\[\]\(\)\.\\$\^\\\\]/",'\\\\\0',$search));
-    $stmt = $dbh->prepare("CREATE TEMP TABLE search_temp AS SELECT search_word FROM regexp_split_to_table('$search', '\\s+') AS search_word;");
+function create_search_temp($dbh, $search)
+{
+    $search = trim(preg_replace("/[\*\+\?\{\}\[\]\(\)\.\\$\^\\\\]/", '\\\\\0', $search));
+    $qString = "CREATE TEMP TABLE search_temp AS SELECT " .
+                " search_word FROM regexp_split_to_table('.
+                $search. ', '\\s+') AS search_word;";
+    $stmt = $dbh->prepare($qString);
     if (!$stmt->execute()) {
         $arr = $stmt->errorInfo();
         print_r($arr);
     }
 }
 
-function drop_search_temp($dbh) {
+function drop_search_temp($dbh)
+{
     $stmt = $dbh->prepare("DROP TABLE search_temp;");
     if (!$stmt->execute()) {
         $arr = $stmt->errorInfo();
@@ -514,10 +640,101 @@ function drop_search_temp($dbh) {
 }
 
 if (!function_exists('getProjectIdFromUdi')) {
-    function getProjectIdFromUdi($dbh, $udi) {
-        $stmt = $dbh->prepare('SELECT project_id from datasets WHERE dataset_udi = :udi');
+    function getProjectIdFromUdi($dbh, $udi)
+    {
+        $stmt = $dbh->prepare('SELECT project_id FROM datasets WHERE dataset_udi = :udi');
         $stmt->bindParam(':udi', $udi);
         $stmt->execute();
+        return $stmt->fetchColumn();
+    }
+}
+
+/**
+ *
+ * @author Joe V. Holland
+ * January 5, 2015
+ *
+ * @param $pdo - the PDO connector
+ * @param $projectId - the number that is the project id i.e. 29
+ * @returns the number of identified data sets
+ *
+ **/
+if (!function_exists('getIdentifiedDatasetsByProjectId')) {
+    function getIdentifiedDatasetsByProjectId(PDO $pdo, $projectId)
+    {
+        $query = "SELECT COUNT(*) FROM datasets, registry_view " .
+            " WHERE datasets.dataset_udi = registry_view.dataset_udi AND " .
+            " datasets.project_id = " . $projectId . ";";
+
+        try {
+            $stmt = $pdo->prepare($query);
+            $stmt->execute();
+        } catch (PDOException $e) {
+            $dMessage = 'PDO exception in datasets.php function getIdentifiedDatasetsByProjectId: ' . $e->getMessage();
+            throw new Exception($dMessage);
+        }
+        return $stmt->fetchColumn();
+    }
+}
+
+/**
+ *
+ * @author Joe V. Holland
+ * January 5, 2015
+ *
+ * @param $pdo - the PDO connector
+ * @param $projectId - the number that is the project id i.e. 29
+ * @returns the number of data sets for which data has been registered with the project id
+ *
+ **/
+if (!function_exists('getRegisteredDatasetsByProjectId')) {
+    function getRegisteredDatasetsByProjectId(PDO $pdo, $projectId)
+    {
+
+        $query = "SELECT COUNT(*) FROM datasets, registry_view " .
+            " WHERE " .
+            " registry_view.access_status = 'None' AND " .
+            " datasets.dataset_udi = registry_view.dataset_udi AND " .
+            " datasets.project_id = " . $projectId . ";";
+        try {
+            $stmt = $pdo->prepare($query);
+            $stmt->execute();
+        } catch (PDOException $e) {
+            $dMessage = 'PDO exception in datasets.php function getRegisteredDatasetsByProjectId: ' . $e->getMessage();
+            throw new Exception($dMessage);
+
+        }
+        return $stmt->fetchColumn();
+    }
+}
+
+
+/**
+ *
+ * @author Joe V. Holland
+ * January 5, 2015
+ *
+ * @param $pdo - the PDO connector
+ * @param $projectId - the number that is the project id i.e. 29
+ * @returns the number of data sets which are available for download with the project id
+ *
+ **/
+if (!function_exists('getAvailableDatasetsByProjectId')) {
+    function getAvailableDatasetsByProjectId(PDO $pdo, $projectId)
+    {
+        $query = "SELECT COUNT(*) FROM datasets, registry_view " .
+            " WHERE " .
+            " registry_view.access_status = 'None' AND " .
+            " registry_view.metadata_status = 'Accepted' AND " .
+            " datasets.dataset_udi = registry_view.dataset_udi AND " .
+            " datasets.project_id = " . $projectId . ";";
+        try {
+            $stmt = $pdo->prepare($query);
+            $stmt->execute();
+        } catch (PDOException $e) {
+            $dMessage = 'PDO exception in datasets.php function getAvailableDatasetsByProjectId: ' . $e->getMessage();
+            throw new Exception($dMessage);
+        }
         return $stmt->fetchColumn();
     }
 }
