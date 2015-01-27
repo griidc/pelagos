@@ -6,20 +6,18 @@
    Joe V. Holland
 
 Project: pelagos
-Pelagos1191Test.php
+DatasetsTest.php
 User: jvh
 1/6/15
 
 **/
 
-
-namespace Pelagos\RIS;
-
+namespace Pelagos\datasets;
 /**
  * @runTestsInSeparateProcesses
  */
 
-class Pelagos1191Test extends \PHPUnit_Framework_TestCase
+class DatasetsTest extends \PHPUnit_Framework_TestCase
 {
     private $DBH;
 
@@ -27,7 +25,6 @@ class Pelagos1191Test extends \PHPUnit_Framework_TestCase
     {
         # add parent directory to include path so tests can be run from anywhere
         set_include_path(get_include_path() . PATH_SEPARATOR . dirname(dirname(__FILE__)));
-        require_once 'RIS.php';
         require_once 'DBUtils.php';
         require_once "datasets.php";
         # open a database connetion to RIS
