@@ -27,8 +27,7 @@ FROM ProjPeople pp
     LEFT OUTER JOIN FundingSource f ON f.Fund_ID = pg.Program_FundSrc
     LEFT OUTER JOIN People p ON pp.People_ID = p.People_ID
 LEFT OUTER JOIN Departments d ON p.People_Department = d.Department_ID
-WHERE Project_Completed=1 AND Program_Completed=1
-AND f.Fund_ID > 0
+WHERE f.Fund_ID > 0
 ";
 
 $outerProgramBaseQuery = "
