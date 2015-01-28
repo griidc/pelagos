@@ -89,6 +89,10 @@ function getRCsByPeopleID($risUserId)
     foreach (getRCsFromRISUser($RIS_DBH, $risUserId) as $projectid) {
         #get Project details by Project ID for each ID
         $projectDetails = getProjectDetails($RIS_DBH, array("projectid=$projectid"));
+        if (count($projectDetails) == 0) {
+            # skip projects that we are unable to retrieve information for
+            continue;
+        }
         $rcsByPeopleId[] = $projectDetails[0];
     }
 
