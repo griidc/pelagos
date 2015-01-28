@@ -24,7 +24,7 @@ if (!function_exists('getProjectDetails')) {
                  LEFT OUTER JOIN Institutions inst ON inst.Institution_ID = p.People_Institution
                  LEFT OUTER JOIN FundingSource f ON f.Fund_ID = pg.Program_FundSrc';
 
-        $WHERE = 'WHERE pg.Program_Completed=1';
+        $WHERE = 'WHERE pg.Program_FundSrc > 0';
 
         foreach ($filters as $filter) {
             if (preg_match(FILTER_REG, $filter, $matches)) {
@@ -55,14 +55,14 @@ if (!function_exists('getProjectDetails')) {
 
         for ($i=0; $i<count($projects); $i++) {
             $SQL = 'SELECT COUNT(DISTINCT Project_ID) FROM Projects
-                    WHERE Program_ID = ? AND Project_Completed = 1;';
+                    WHERE Program_ID = ?';
             $stmt = $dbh->prepare($SQL);
             $stmt->execute(array($projects[$i]['ID']));
             $projects[$i]['SubTasks'] = $stmt->fetchColumn();
 
             if (isset($peopleId)) {
                 $SQL = 'SELECT COUNT(DISTINCT Project_ID) FROM ProjectPeople
-                        WHERE Program_ID = ? AND People_ID = ? AND Project_ID = 0 AND Project_Completed = 1;';
+                        WHERE Program_ID = ? AND People_ID = ? AND Project_ID = 0';
                 $stmt = $dbh->prepare($SQL);
                 $stmt->execute(array($projects[$i]['ID'],$peopleId));
                 if ($stmt->fetchColumn() != 0) {
