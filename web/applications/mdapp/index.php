@@ -546,12 +546,41 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                         $geometry_wkt=$tmp[0]['geometry_wkt'];
                         $geoflag = 'yes'; 
                         // Now determine an envelope that surrounds this geometry
-                        $sql = "SELECT ST_AsText(ST_Envelope('$geometry'::geometry)) as geoenvelope";
+                        $sql = "SELECT
+                                    ST_AsText(ST_Envelope(:geo::geometry)) as geoenvelope,
+                                    ST_XMax(:geo::geometry) as x_max,
+                                    ST_YMax(:geo::geometry) as y_max,
+                                    ST_XMin(:geo::geometry) as x_min,
+                                    ST_YMin(:geo::geometry) as y_min
+                                    ";
                         $data3 = $dbms->prepare($sql);
+                        $data3->bindParam(":geo",$geometry);
                         if ($data3->execute()) {
                             $tmp=$data3->fetchAll();
                             $envelope_wkt=$tmp[0]['geoenvelope'];
-                            $envelope=polygonbox_to_bounding_box($tmp[0]['geoenvelope']);
+                            $east=$tmp[0]['x_max'];
+                            $north=$tmp[0]['y_max'];
+                            $west=$tmp[0]['x_min'];
+                            $south=$tmp[0]['y_min'];
+                            $envelope=<<<EOF
+                                <gmd:geographicElement>
+                                  <gmd:EX_GeographicBoundingBox>
+                                    <gmd:westBoundLongitude>
+                                      <gco:Decimal>$west</gco:Decimal>
+                                    </gmd:westBoundLongitude>
+                                    <gmd:eastBoundLongitude>
+                                      <gco:Decimal>$east</gco:Decimal>
+                                    </gmd:eastBoundLongitude>
+                                    <gmd:southBoundLatitude>
+                                      <gco:Decimal>$south</gco:Decimal>
+                                    </gmd:southBoundLatitude>
+                                    <gmd:northBoundLatitude>
+                                      <gco:Decimal>$north</gco:Decimal>
+                                     </gmd:northBoundLatitude>
+                                  </gmd:EX_GeographicBoundingBox>
+                                </gmd:geographicElement>
+EOF;
+
                             drupal_set_message("A bounding envelope has been calculated for this geometry.",'status');
 
                             // first load XML into DOM object for future manipulation
@@ -1027,56 +1056,3 @@ function getMetadataReviewers() {
 function textboxize($string,$xpath) {
     return "$string<textarea onclick=\"this.focus();this.select()\" readonly=\"readonly\" style=\"width: 100%\">$xpath</textarea>";
 }
-
-function polygonbox_to_bounding_box($orig_coords) {
-    $i=0;
-
-    # strip out unneeded text
-    $coords = preg_split('/,/',preg_replace("/POLYGON\(\(|\)\)/",'',$orig_coords));
-
-    $long = array(); $lat = array();
-    foreach ($coords as $pair) {
-        list($long,$lat) = preg_split("/ /",$pair);
-        $longitudes[$i]=$long;
-        $latitudes[$i]=$lat;
-        $i++;
-    }
-    if ($i != 5) {
-        throw new RuntimeException("Expected envelope as polygon should be 5 coordinate pairs.");
-    }
-
-    $west = $longitudes[0];
-    $east = $longitudes[0];
-    $south = $latitudes[0];
-    $north = $latitudes[0];
-
-    for ($j=0;$j<$i;$j++) {
-        if($longitudes[$j]<$west) { $west = $longitudes[$j]; }
-        if($longitudes[$j]>$east) { $east = $longitudes[$j]; }
-        if($latitudes[$j]<$south) { $south = $latitudes[$j]; }
-        if($latitudes[$j]>$north) { $north = $latitudes[$j]; }
-    }
-
-    $return = 
-"<gmd:geographicElement>
-  <gmd:EX_GeographicBoundingBox>
-    <gmd:westBoundLongitude>
-      <gco:Decimal>$west</gco:Decimal>
-    </gmd:westBoundLongitude>
-    <gmd:eastBoundLongitude>
-      <gco:Decimal>$east</gco:Decimal>
-    </gmd:eastBoundLongitude>
-    <gmd:southBoundLatitude>
-      <gco:Decimal>$south</gco:Decimal>
-    </gmd:southBoundLatitude>
-    <gmd:northBoundLatitude>
-      <gco:Decimal>$north</gco:Decimal>
-     </gmd:northBoundLatitude>
-  </gmd:EX_GeographicBoundingBox>
-</gmd:geographicElement>
-";
-
-return $return;
-
-}
-?>
