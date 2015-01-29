@@ -154,13 +154,74 @@ function eventHappened($Action, $Data)
         throw new Exception('Action not found');
     }
     
-    $actions = $eventHandlerConfig[$Action]['action'];
-    #Take an action according to the event type/action
-    if (stristr($actions, 'emaildm')) {
-        emailDM($Action, $Data);
+    $actions = preg_split('/,/', $eventHandlerConfig[$Action]['action']);
+    
+    foreach ($actions as $action) {
+        #Take an action according to the event type/action
+        switch ($action) {
+            case "emaildm":
+                emailDM($Action, $Data);
+                break;
+            case "sendmail":
+                emailUser($Action, $Data);
+                break;
+            case "emaildoiapprovers":
+                emailDOIApprovers($Action, $Data);
+                break;
+        }
     }
-    if (stristr($actions, 'sendmail')) {
-        emailUser($Action, $Data);
+}
+
+function getEmailUsersFromLDAPGroup($ldapGroup)
+{
+    $GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini', true);
+    $GLOBALS['config'] = array_merge($GLOBALS['config'], parse_ini_file($GLOBALS['config']['paths']['conf'].'/ldap.ini', true));
+    
+    $users = array();
+    
+    require_once 'ldap.php';
+    
+    $members = getGroupMembers($ldapGroup);
+    $ldap = connectLDAP($GLOBALS['config']['ldap']['server']);
+
+    foreach ($members as $member) {
+        $attributes = getAttributes($ldap, $member, array('givenName', 'sn', 'mail'));
+        if (count($attributes) > 0) {
+            if (array_key_exists('givenName', $attributes)) $mailFirstName = $attributes['givenName'][0];
+            if (array_key_exists('sn', $attributes)) $mailLastName = $attributes['sn'][0];
+            if (array_key_exists('mail', $attributes)) $eMail = $attributes['mail'][0];
+            
+            $users[] = array("firstName"=>$mailFirstName,"lastName"=>$mailLastName,"email"=>$eMail);
+        }
+    }
+    
+    return $users;
+}
+
+function emailDOIApprovers($Action, $Data)
+{
+    $grp = "cn=approvers,ou=DOI,ou=Pelagos,ou=applications,dc=griidc,dc=org";
+    $approvers = getEmailUsersFromLDAPGroup($grp);
+    
+    $messageData = getMessageTemplate($Action);
+    
+    $messageTemplate = $messageData['messageTemplate'];
+    $subject = $messageData['subject'];
+ 
+    foreach ($approvers as $approver) {
+        $mailData = array();
+        
+        $mailData["data"] = $Data;
+        $mailData["apprv"] = $approver;
+        
+        $mailMessage  = expandTemplate($messageTemplate, $mailData);
+        
+        require_once 'griidcMailer.php';
+        $eventMailer = new griidcMailer(false);
+        $eventMailer->addToUser($approver['firstName'], $approver['lastName'], $approver['email']);
+        $eventMailer->mailMessage = $mailMessage;
+        $eventMailer->mailSubject = $subject;
+        $eventMailer->sendMail();
     }
 }
 
@@ -177,7 +238,7 @@ function emailUser($Action, $Data)
     
     #make sure user exists
     if (is_array($Data) and (array_key_exists('userId', $Data) or array_key_exists('risUserId', $Data))) {
-        require_once 'ldap.php';
+        require_once 'ldap.php'; //Why is this needed?
         
         if (!array_key_exists('risUserId', $Data)) {
             $risUserId = getEmployeeNumberFromUID($Data['userId']);

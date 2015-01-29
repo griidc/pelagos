@@ -43,10 +43,17 @@ subject="GRIIDC DIF Unlocked"
 action="emaildm"
 
 [doi_requested]
-description = "When a DOI is Requested (And Issued?)"
+description = "When a DOI is Requested."
 mail_template_filename = "../templates/doiRequested_eMail.html"
 subject="GRIIDC DOI Requested"
 action="emaildm"
+
+[doi_needs_approval]
+description = "When a DOI is need to be Approved."
+mail_template_filename = "../templates/doiNeedsApproval_eMail.html"
+mail_template_filename = "../../../../home/users/mvandeneijnden/pelagos/share/templates/doiNeedsApproval_eMail.html"
+subject="GRIIDC DOI Need Approval"
+action="emaildoiapprovers"
 
 [account_requested]
 description = "When an account is requested"
