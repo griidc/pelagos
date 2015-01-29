@@ -27,6 +27,10 @@
 {% endif %}
 
 <table width="90%">
+    {% if pdata.noheader_doi %}
+        <tr><td colspan="2"><b>DOI:</b><br/> {{pdata.noheader_doi}}</td></tr>
+        <tr><td colspan="2">&nbsp;</td></tr>
+    {% endif %}
     <tr><td colspan="2"><b>UDI:</b><br/> {{pdata.dataset_udi}}</td></tr>
     <tr><td colspan="2">&nbsp;</td></tr>
 

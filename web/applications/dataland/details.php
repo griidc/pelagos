@@ -124,6 +124,9 @@ if ($udi <> '')
     $prow = pdoDBQuery($pconn,$pquery);
 
     $prow = $prow[0];
+    if($prow["doi"]) {
+        $prow["noheader_doi"] = preg_replace("/doi:/",'',$prow["doi"]);
+    }
 
     if ($prow["the_geom"] == null OR $prow == null)
     {
