@@ -298,7 +298,7 @@ function getQueryParams(qs) {
 
 function treeSearch()
 {
-    var searchValue = $('#fltResults').val();
+    var searchValue = $('#fltResults').val().trim();
     showSpinner();
     $('#diftree').on('search.jstree', function (e, data) {
         if (data.res.length <= 0)
