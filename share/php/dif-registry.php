@@ -308,5 +308,3 @@ function getUID() {
         return null;
     }
 }
-
-?>

@@ -237,5 +237,3 @@ function displayTaskStatus($tasks,$conn,$update=null,$personid=null,$filterstatu
     
     return $resArray;
 }
-
-?>
