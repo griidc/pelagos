@@ -2,6 +2,7 @@
 
 $GLOBALS['pelagos']['title'] = 'Dataset Information Form (DIF)';
 
+require_once 'dif.php';
 include_once '../../../share/php/aliasIncludes.php';
 
 drupal_add_js('//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js', array('type'=>'external'));
@@ -22,7 +23,6 @@ drupal_add_library('system', 'ui.tooltip');
 drupal_add_library('system', 'ui.autocomplete');
 
 
-include 'dif.php';
 if (getUID() == "") {
     drupal_set_message('Please log in first!', 'warning', false);
     echo '<h1>Please login in first to use this form!</h1>';

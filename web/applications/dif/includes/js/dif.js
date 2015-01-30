@@ -469,7 +469,7 @@ function getNode(UDI)
 
 function loadDIFS(Status,Person,ShowEmpty)
 {
-    $("#btnSearch").attr('disabled', true);
+    $("#btnSearch").button('disable');
     if (personid > 0 && !Person) {Person = personid;}
     $.ajax({
         cache: false,
@@ -497,7 +497,7 @@ function makeTree(json)
     .on('loaded.jstree', function (e, data) {
         var searchValue = $('#fltResults').val();
         $('#diftree').jstree(true).search(searchValue);
-        $("#btnSearch").attr('disabled', false);
+        $("#btnSearch").button('enable');
     })
     
 }

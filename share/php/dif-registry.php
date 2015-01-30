@@ -300,11 +300,11 @@ function helps($for, $ht, $tip){ echo "\n<label for=\"$for\"><b>$ht: </b><span i
 
 function getUID() {
     global $user;
-    if (isset($user->name) and array_key_exists('as_user',$_GET) and isAdmin()) {
-        return $_GET['as_user'];
-    } elseif(isset($user->name)) {
-        return $user->name;
-    } else {
+    if(!isset($user->name)) {
         return null;
     }
+    if (array_key_exists('as_user',$_GET) and isAdmin()) {
+        return $_GET['as_user'];
+    }
+   return $user->name;
 }
