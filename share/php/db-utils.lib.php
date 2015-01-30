@@ -38,11 +38,12 @@ function OpenDB($database = "unspecified") {
         # driver used: mysql
         $dbconnstr  = "mysql:host=".$config["host"].';';
         $dbconnstr .= 'port='.$config["port"].';';
-        $dbconnstr .= 'dbname='.$config["dbname"];
+        $dbconnstr .= 'dbname='.$config["dbname"].';';
+        $dbconnstr .= 'charset=utf8';
         $user       = $config["username"];
         $password   = $config["password"];
         try {
-            $pdoconnection = new PDO($dbconnstr,$user,$password,array(PDO::ATTR_PERSISTENT => false));
+            $pdoconnection = new PDO($dbconnstr,$user,$password,array(PDO::ATTR_PERSISTENT => false, PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
         } catch (PDOException $e) {
             $dMessage = 'Connection failed: ' . $e->getMessage();
             drupal_set_message($dMessage,'error');
