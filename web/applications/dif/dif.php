@@ -3,14 +3,14 @@
 $GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini', true);
 $GLOBALS['config'] = array_merge($GLOBALS['config'], parse_ini_file($GLOBALS['config']['paths']['conf'].'/ldap.ini', true));
 
-include_once '/opt/pelagos/share/php/aliasIncludes.php';
+include_once '../../../share/php/aliasIncludes.php';
 
 include 'difDL.php'; //dif DataLayer
 
-include_once '/usr/local/share/GRIIDC/php/ldap.php'; 
-include_once '/usr/local/share/GRIIDC/php/griidcMailer.php';
-include_once '/usr/local/share/GRIIDC/php/dif-registry.php'; 
-include_once '/usr/local/share/GRIIDC/php/EventHandler.php'; 
+include_once '../../../share/php/ldap.php';
+include_once '../../../share/php/griidcMailer.php';
+include_once '../../../share/php/dif-registry.php';
+include_once '../../../share/php/EventHandler.php';
 //include_once '/usr/local/share/GRIIDC/php/drupal.php'; 
 
 require_once 'Twig/Autoloader.php';
