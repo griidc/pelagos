@@ -119,18 +119,18 @@ WHERE pg.Program_ID = ";
 
 $baseInstitutionQuery = "
 SELECT 
-	CONVERT(i.Institution_Name USING utf8) 'Name',
-	CONVERT(i.Institution_Addr1 USING utf8) 'Addr1',
-	CONVERT(i.Institution_Addr2 USING utf8) 'Addr2',
-	CONVERT(i.Institution_City USING utf8) 'City',
-	CONVERT(i.Institution_State USING utf8) 'State',
-	CONVERT(i.Institution_Zip USING utf8) 'Zip',
-	CONVERT(i.Institution_Country USING utf8) 'Country',
-	CONVERT(i.Institution_URL USING utf8) 'URL',
-	CONVERT(i.Institution_Long USING utf8) 'Long',
-	CONVERT(i.Institution_Lat USING utf8) 'Lat',
-	CONVERT(i.Institution_Keywords USING utf8) 'Keywords',
-	CONVERT(i.Institution_Verified USING utf8) 'Verified'
+	i.Institution_Name 'Name',
+	i.Institution_Addr1 'Addr1',
+	i.Institution_Addr2 'Addr2',
+	i.Institution_City 'City',
+	i.Institution_State 'State',
+	i.Institution_Zip 'Zip',
+	i.Institution_Country 'Country',
+	i.Institution_URL 'URL',
+	i.Institution_Long 'Long',
+	i.Institution_Lat 'Lat',
+	i.Institution_Keywords 'Keywords',
+	i.Institution_Verified 'Verified'
 FROM Institutions i
 WHERE i.Institution_ID = ";
 
@@ -169,54 +169,54 @@ WHERE 1=1
 
 $basePeopleQuery = "	
 SELECT 
-	CONVERT(p.People_Title USING utf8) 'Title',
-	CONVERT(p.People_LastName USING utf8) 'LastName',
-	CONVERT(p.People_FirstName USING utf8) 'FirstName',
-	CONVERT(p.People_MiddleName USING utf8) 'MiddleName',
-	CONVERT(p.People_Suffix USING utf8) 'Suffix', 
-	CONVERT(p.People_AdrStreet1 USING utf8) 'AdrStreet1',
-	CONVERT(p.People_AdrStreet2 USING utf8) 'AdrStreet2',
-	CONVERT(p.People_AdrCity USING utf8) 'AdrCity',
-	CONVERT(p.People_AdrState USING utf8) 'AdrState',
-	CONVERT(p.People_AdrZip USING utf8) 'AdrZip',
-	CONVERT(p.People_Email USING utf8) 'Email',
-	CONVERT(p.People_PhoneNum USING utf8) 'PhoneNum',
-	CONVERT(p.People_GulfBase USING utf8) 'GulfBase',
-	CONVERT(p.People_Comment USING utf8) 'Comment'
+	p.People_Title 'Title',
+	p.People_LastName 'LastName',
+	p.People_FirstName 'FirstName',
+	p.People_MiddleName 'MiddleName',
+	p.People_Suffix 'Suffix',
+	p.People_AdrStreet1 'AdrStreet1',
+	p.People_AdrStreet2 'AdrStreet2',
+	p.People_AdrCity 'AdrCity',
+	p.People_AdrState 'AdrState',
+	p.People_AdrZip 'AdrZip',
+	p.People_Email 'Email',
+	p.People_PhoneNum 'PhoneNum',
+	p.People_GulfBase 'GulfBase',
+	p.People_Comment 'Comment'
 FROM People p
 WHERE p.People_ID = ";
 
 $personQuery = "	
 SELECT 
-	CONVERT(p.People_Title USING utf8) 'Title',
-	CONVERT(p.People_LastName USING utf8) 'LastName',
-	CONVERT(p.People_FirstName USING utf8) 'FirstName',
-	CONVERT(p.People_MiddleName USING utf8) 'MiddleName',
-	CONVERT(p.People_Suffix USING utf8) 'Suffix', 
-	CONVERT(p.People_AdrStreet1 USING utf8) 'AdrStreet1',
-	CONVERT(p.People_AdrStreet2 USING utf8) 'AdrStreet2',
-	CONVERT(p.People_AdrCity USING utf8) 'AdrCity',
-	CONVERT(p.People_AdrState USING utf8) 'AdrState',
-	CONVERT(p.People_AdrZip USING utf8) 'AdrZip',
-	CONVERT(p.People_Email USING utf8) 'Email',
-	CONVERT(p.People_PhoneNum USING utf8) 'PhoneNum',
-	CONVERT(p.People_GulfBase USING utf8) 'GulfBase',
-	CONVERT(p.People_Comment USING utf8) 'Comment'
+	p.People_Title 'Title',
+	p.People_LastName 'LastName',
+	p.People_FirstName 'FirstName',
+	p.People_MiddleName 'MiddleName',
+	p.People_Suffix 'Suffix',
+	p.People_AdrStreet1 'AdrStreet1',
+	p.People_AdrStreet2 'AdrStreet2',
+	p.People_AdrCity 'AdrCity',
+	p.People_AdrState 'AdrState',
+	p.People_AdrZip 'AdrZip',
+	p.People_Email 'Email',
+	p.People_PhoneNum 'PhoneNum',
+	p.People_GulfBase 'GulfBase',
+	p.People_Comment 'Comment'
 FROM People p
 WHERE p.People_ID = ";
 
 $baseDepartmentQuery = "
 SELECT
-	CONVERT(d.Department_Name USING utf8) 'Name',
-	CONVERT(d.Department_Addr1 USING utf8) 'Addr1',
-	CONVERT(d.Department_Addr2 USING utf8) 'Addr2',
-	CONVERT(d.Department_City USING utf8) 'City',
-	CONVERT(d.Department_State USING utf8) 'State',
-	CONVERT(d.Department_Zip USING utf8) 'Zip',
-	CONVERT(d.Department_Country USING utf8) 'Country',
-	CONVERT(d.Department_URL USING utf8) 'URL',
-	CONVERT(d.Department_Lat USING utf8) 'Lat',
-	CONVERT(d.Department_Long USING utf8) 'Long'
+	d.Department_Name 'Name',
+	d.Department_Addr1 'Addr1',
+	d.Department_Addr2 'Addr2',
+	d.Department_City 'City',
+	d.Department_State 'State',
+	d.Department_Zip 'Zip',
+	d.Department_Country 'Country',
+	d.Department_URL 'URL',
+	d.Department_Lat 'Lat',
+	d.Department_Long 'Long'
 FROM Departments d
 WHERE Department_ID = ";
 
@@ -227,5 +227,3 @@ r.Role_ID AS '__Attr__ID'
 FROM Roles r
 JOIN ProjPeople pp ON pp.Role_ID = r.Role_ID
 WHERE pp.People_ID =";
-
-?>
