@@ -303,21 +303,9 @@ function treeSearch()
     $('#diftree').on('search.jstree', function (e, data) {
         if (data.res.length <= 0)
         {
-            $('<div id="noresults" title="Search...">No Results Found.</div>').dialog({
+            $('#noresults').dialog({
                 resizable: false,
-                //height: 80,
-                //width: "auto",
                 modal: true,
-                //position: { my: "center center", at: "center center", of: "#difFilterTools" },
-                //difFilterTools
-                close: function(event, ui) {
-                    $(this).dialog('destroy').remove();
-                },
-                open: function(event, ui) {
-                    setTimeout(function(){
-                        //$('#noresults').dialog('close');
-                    }, 5000);
-                },
                 buttons: {
                     "OK": function() {
                         $(this).dialog('close');
