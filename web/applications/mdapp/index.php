@@ -548,34 +548,34 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                         // Now determine an envelope that surrounds this geometry
                         $sql = "SELECT
                                     ST_AsText(ST_Envelope(:geo::geometry)) as geoenvelope,
-                                    ST_XMax(:geo::geometry) as x_max,
-                                    ST_YMax(:geo::geometry) as y_max,
-                                    ST_XMin(:geo::geometry) as x_min,
-                                    ST_YMin(:geo::geometry) as y_min
+                                    ST_XMin(:geo::geometry) as westBoundLongitude,
+                                    ST_XMax(:geo::geometry) as eastBoundLongitude,
+                                    ST_YMin(:geo::geometry) as southBoundLatitude,
+                                    ST_YMax(:geo::geometry) as northBoundLatitude
                                     ";
                         $data3 = $dbms->prepare($sql);
                         $data3->bindParam(":geo",$geometry);
                         if ($data3->execute()) {
                             $tmp=$data3->fetchAll();
                             $envelope_wkt=$tmp[0]['geoenvelope'];
-                            $east=$tmp[0]['x_max'];
-                            $north=$tmp[0]['y_max'];
-                            $west=$tmp[0]['x_min'];
-                            $south=$tmp[0]['y_min'];
+                            $westBoundLongitude=$tmp[0]['westBoundLongitude'];
+                            $eastBoundLongitude=$tmp[0]['eastBoundLongitude'];
+                            $southBoundLatitude=$tmp[0]['southBoundLatitude'];
+                            $northBoundLatitude=$tmp[0]['northBoundLatitude'];
                             $envelope=<<<EOF
                                 <gmd:geographicElement>
                                   <gmd:EX_GeographicBoundingBox>
                                     <gmd:westBoundLongitude>
-                                      <gco:Decimal>$west</gco:Decimal>
+                                      <gco:Decimal>$westBoundLongitude</gco:Decimal>
                                     </gmd:westBoundLongitude>
                                     <gmd:eastBoundLongitude>
-                                      <gco:Decimal>$east</gco:Decimal>
+                                      <gco:Decimal>$eastBoundLongitude</gco:Decimal>
                                     </gmd:eastBoundLongitude>
                                     <gmd:southBoundLatitude>
-                                      <gco:Decimal>$south</gco:Decimal>
+                                      <gco:Decimal>$southBoundLatitude</gco:Decimal>
                                     </gmd:southBoundLatitude>
                                     <gmd:northBoundLatitude>
-                                      <gco:Decimal>$north</gco:Decimal>
+                                      <gco:Decimal>$northBoundLatitude</gco:Decimal>
                                      </gmd:northBoundLatitude>
                                   </gmd:EX_GeographicBoundingBox>
                                 </gmd:geographicElement>
