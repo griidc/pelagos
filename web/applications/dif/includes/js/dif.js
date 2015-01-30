@@ -305,18 +305,7 @@ function treeSearch()
         {
             $('#noresults').dialog({
                 resizable: false,
-                //height: 80,
-                //width: "auto",
                 modal: true,
-                //position: { my: "center center", at: "center center", of: "#difFilterTools" },
-                //difFilterTools
-                close: function(event, ui) {
-                },
-                open: function(event, ui) {
-                    setTimeout(function(){
-                        //$('#noresults').dialog('close');
-                    }, 5000);
-                },
                 buttons: {
                     "OK": function() {
                         $(this).dialog('close');
