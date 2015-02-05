@@ -30,10 +30,7 @@
             </div>
             {% if not pdf %}
             <br />
-            <div id="sbarchart_{{project.ID}}">
-                <div class="sbarchart"></div>
-                <div class="sbarchart-counts"></div>
-            </div>
+            <div class="dotchart" project="{{project.ID}}"></div>
             {% endif %}
             {% if not project.tasks %}
                 {% if project.datasets %}
