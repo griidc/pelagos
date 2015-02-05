@@ -192,7 +192,7 @@ function emailUser($Action, $Data)
         $mailMessage  = expandTemplate($messageTemplate, $mailData);
         
         if (count($user) > 0) {
-            require_once 'stubs/griidcMailerStub.php';
+            require_once 'griidcMailer.php';
             $eventMailer = new griidcMailer(false);
             $eventMailer->addToUser($user['firstName'], $user['lastName'], $user['email']);
             $eventMailer->mailMessage = $mailMessage;
