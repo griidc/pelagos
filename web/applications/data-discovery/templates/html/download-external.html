@@ -1,6 +1,8 @@
 <div id="dataset_download_content">
 
+{% if not dataset.url_data matches '!^https?://data.gulfresearchinitiative.org!' %}
 <h3 style="text-align:center;">The dataset you selected is hosted by an external repository.</h3>
+{% endif %}
 
 <div style="border: 1px solid #aaa; padding: 10px; border-radius: 4px;">
     <p style="margin-top:0"><strong>UDI:</strong> {{dataset.udi}}</p>
