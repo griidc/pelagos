@@ -2,18 +2,12 @@
 /**************
  * DATA LAYER *
  **************/
- 
-include_once '/usr/local/share/GRIIDC/php/db-utils.lib.php'; 
 
-//global $myDC;
-
-//$myDC = new DataConnector('GOMRI_RO');
+set_include_path('../../../share/php' . PATH_SEPARATOR . get_include_path());
+include_once 'db-utils.lib.php'; 
 
 function saveDIF($parameters)
 {
-    //global $myDC;
-    //$conn = $myDC->connection;
-    
     $conn = OpenDB('GOMRI_RO');
 
 /*    
@@ -23,32 +17,16 @@ function saveDIF($parameters)
     $query = 'select save_dif(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
     
     $statementHandler = $conn->prepare($query);
-    //$myDC->prepare($query);
-    //$rc = $myDC->execute($parameters);
     $rc = $statementHandler->execute($parameters);
     if (!$rc) {return $statementHandler->errorInfo();};
-    //return $myDC->fetchAll();
     return $statementHandler->fetchAll();
 }
  
 function loadDIFData($difID)
 {
-    //global $myDC;
-    //$conn = makeConn("GOMRI_RO");
-    //$conn = makeConn("GRIIDC_RO");
-    //$conn = $myDC->connection;
     $conn = OpenDB('GOMRI_RO');
     
     $query = "select *, st_AsGML(geom) as \"the_geom\" from datasets where dataset_udi='$difID';";
-    
-    //$query = 'select * from "DataGroup_view" where "UDI"=\''.$difID.'\'';
-    
-    //echo $query;
-    
-    // $myDC->prepare($query);
-    // $rc = $myDC->execute();
-    // if (!$rc) {return $false;};
-    // return $myDC->fetchAll();  
     
     $statementHandler = $conn->prepare($query);
     $rc = $statementHandler->execute($parameters);
@@ -59,10 +37,6 @@ function loadDIFData($difID)
 function loadResearchers($PseudoID=null,$PersonID=null)
 {
     global $myDC;
-    //$conn = makeConn("GOMRI_RO");
-    //$conn = makeConn("GRIIDC_RO");
-    //$conn = $myDC->connection;
-    //$query = "select * from datasets where dataset_uid='$difID';";
     
     $query = 'select * from "PersonTask_view"';
     
@@ -76,7 +50,6 @@ function loadResearchers($PseudoID=null,$PersonID=null)
         $query .= ' where "Person_Number" ='.$PersonID.';';
     }
     
-    //echo $query;
     
     $myDC->prepare($query);
     
@@ -86,14 +59,7 @@ function loadResearchers($PseudoID=null,$PersonID=null)
 function loadTaskData($PseudoID=null,$Status=null)
 {
     global $myDC;
-    //$conn = makeConn("GRIIDC_RO");
-    //$conn = $myDC->connection;
     $query = 'select * from "DataGroupTasks_view" WHERE 1=1';
-    
-    // if (isset($UDI) AND $UDI !='')
-    // {
-        // $query .= ' AND "UDI"='.$UDI;
-    // }
     
     if (isset($PseudoID))
     {
@@ -105,10 +71,7 @@ function loadTaskData($PseudoID=null,$Status=null)
         $query .= ' AND "Access_Status"=\''.$Status.'\'';
     }
     
-    //echo $query;
-    
     $myDC->prepare($query);
-    //$result = pdoDBQuery($conn,$query);  
     
     return $myDC->execute(); 
 }
@@ -159,8 +122,6 @@ function displayTaskStatus($tasks,$conn,$update=null,$personid=null,$filterstatu
         $taskTitle = (string)$task->Title;
         $projectID = (string)$task->Project['ID'];
         
-        //echo "d.add($nodeCount,0,'".addslashes($taskTitle)."','javascript: d.o($nodeCount);','".addslashes($taskTitle)."','','','',true);\n";
-        
         if ($taskID > 0)
         {
             $query = "select title,status,dataset_uid,dataset_udi from datasets where task_uid=$taskID";
@@ -195,14 +156,8 @@ function displayTaskStatus($tasks,$conn,$update=null,$personid=null,$filterstatu
                 $datasetid = $row["dataset_uid"];
                 $dataset_udi = $row["dataset_udi"];
                 
-                // $qs = "uid=$datasetid";
-                // if (isset($personid)) { $qs .= "&prsid=$personid"; }
-                // if (array_key_exists('as_user',$_GET)) { $qs .= "&as_user=$_GET[as_user]"; }
-                
                 if ($filterstatus==$status OR $filterstatus==null OR $filterstatus=="")
                 {
-                    
-                    //echo "d.add($nodeCount,$folderCount,'".addslashes("[$dataset_udi] $title")."','?$qs','".addslashes("[$dataset_udi] $title")."','_self'";
                     
                     switch ($status)
                     {
@@ -237,5 +192,3 @@ function displayTaskStatus($tasks,$conn,$update=null,$personid=null,$filterstatu
     
     return $resArray;
 }
-
-?>
