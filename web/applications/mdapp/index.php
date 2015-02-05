@@ -547,11 +547,11 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                         $geoflag = 'yes'; 
                         // Now determine an envelope that surrounds this geometry
                         $sql = "SELECT
-                                    ST_AsText(ST_Envelope(:geo::geometry)) as geoenvelope,
-                                    ST_XMin(:geo::geometry) as westBoundLongitude,
-                                    ST_XMax(:geo::geometry) as eastBoundLongitude,
-                                    ST_YMin(:geo::geometry) as southBoundLatitude,
-                                    ST_YMax(:geo::geometry) as northBoundLatitude
+                                    ST_AsText(ST_Envelope(:geo::geometry)) as \"geoenvelope\",
+                                    ST_XMin(:geo::geometry) as \"westBoundLongitude\",
+                                    ST_XMax(:geo::geometry) as \"eastBoundLongitude\",
+                                    ST_YMin(:geo::geometry) as \"southBoundLatitude\",
+                                    ST_YMax(:geo::geometry) as \"northBoundLatitude\"
                                     ";
                         $data3 = $dbms->prepare($sql);
                         $data3->bindParam(":geo",$geometry);
