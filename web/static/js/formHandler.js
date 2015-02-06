@@ -4,6 +4,8 @@
 // formFileName =  filename/path of form html
 // formPostURL = URL that will be posted against.
 
+var $ = jQuery.noConflict();
+
 var formHandler = function (Options)
 {
     var Form

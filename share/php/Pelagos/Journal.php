@@ -13,11 +13,20 @@ class Journal
         }
     }
     
+    # This function belong in a new class Journals (with an S)
     public function getJournalList()
     {
-        require_once 'journalDL.php';
+        require_once $GLOBALS['pelagos']['root'].'/share/php/DBUtils.php';
+        $connection = OpenDB('GOMRI_RO');
         
-        return getJournalList();
+        $query = 'SELECT journal_name, journal_issn FROM udf_get_journals();';
+        
+        $statementHandler = $connection->prepare($query);
+        $rc = $statementHandler->execute();
+        if (!$rc) {
+            return $statementHandler->errorInfo();
+        };
+        return $statementHandler->fetchAll();
     }
     
     public function getJournalByName($journalName)
@@ -40,8 +49,6 @@ class Journal
     
     public function saveJournal($data)
     {
-        require_once 'journalDL.php';
-        
         $parameters = array();
         
         $this->addKeyToArrayIfExists($data, 'journalissn', $parameters);
@@ -49,9 +56,20 @@ class Journal
         $this->addKeyToArrayIfExists($data, 'journalpublisher', $parameters);
         $this->addKeyToArrayIfExists($data, 'journalstatus', $parameters);
                 
-        $result =  insertJournal($parameters);
+        require_once $GLOBALS['pelagos']['root'].'/share/php/DBUtils.php';
+        $connection = OpenDB('GOMRI_RO');
         
-        return $result;
+        if (count($parameters) == 4) {
+            $query = 'SELECT udf_insert_journal(?, ?, ?, ?);';
+        } else {
+            $query = 'SELECT udf_insert_journal(?, ?, ?);';
+        }
+        $statementHandler = $connection->prepare($query);
+        $rc = $statementHandler->execute($parameters);
+        if (!$rc) {
+            return $statementHandler->errorInfo();
+        }
+        return $statementHandler->fetchAll();
     }
     
     public function updateJournal($journalData)

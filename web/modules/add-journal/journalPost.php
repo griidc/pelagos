@@ -2,7 +2,7 @@
 
 function saveJournal($Data)
 {
-    require_once 'journal.php';
+    require_once $GLOBALS['pelagos']['root'].'/share/php/Pelagos/Journal.php';
     $clsJournal = new Pelagos\Journal();
     
     $result = $clsJournal->saveJournal($Data);
