@@ -31,13 +31,18 @@
             {% if not pdf %}
             <br />
             <div class="dotchartcontainer">
-                <table width="100%">
+                <table width="100%" cellpadding="5">
                     <tr width="100%">
                         <td width="80%">
                             <div class="dotchart" project="{{project.ID}}"></div>
                         </td>
+                    <tr width="100%">
                         <td>
-                            <div class="dotchart_legend" project="{{project.ID}}"></div>
+                            <div class="dotchart_legend" project="{{project.ID}}">
+                            <img src="{{baseUrl}}/includes/images/green-circle.png"> Datasets Available
+                            <img src="{{baseUrl}}/includes/images/yellow-circle.png"> Datasets Registered
+                            <img src="{{baseUrl}}/includes/images/empty-circle.png"> Datasets Identified
+                            </div>
                         </td>
                     </tr>
                 </table>

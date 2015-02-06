@@ -58,7 +58,4 @@ function createGraph(data,divClass,divSelAttr,divSelAttrVal){
                 return (Math.floor(i/dots)*(2*r));
             })
 			.attr("r", r-strokeWidth);
-    // Create Legend
-    $(divClass+"_legend").html("<svg height=\"" + h + "\" id=\"chart_legend\"><circle class=\"circleColor_a\" cx=\"" + (r+10-strokeWidth) + "\" cy=\"" + r + "\" r=\"" + (r-strokeWidth) + "\"></circle><text x=\"" + (2*r+15-strokeWidth) + "\" y=\"" + 1.5*r + "\" font-size=\"" + myFontSize*(.5) + "px\" font-weight=\"50\">Available</text><circle class=\"circleColor_r\" cx=\"" + (r+10-strokeWidth) + "\" cy=\"" + 3*r + "\" r=\"" + (r-strokeWidth) + "\"></circle><text x=\"" + (2*r+15-strokeWidth) + "\" y=\"" + 3.5*r + "\" font-size=\"" + myFontSize*(.5) + "px\">Registered</text><circle class=\"circleColor_i\" cx=\"" + (r+10-strokeWidth) + "\" cy=\"" + 5*r + "\" r=\"" + (r-strokeWidth) + "\"></circle><text x=\"" + (2*r+15-strokeWidth) + "\" y=\"" + 5.5*r + "\" font-size=\"" + myFontSize*(.5) + "px\">Identified</text></svg>");
-
 }
