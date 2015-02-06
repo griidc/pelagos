@@ -8,9 +8,7 @@ function graphDatasetStatus(divClass){
             var datasetsAvailable = rawJSON[0].data[0][0];
             var datasetsRegistered = rawJSON[1].data[0][0];
             var datasetsIdentified = rawJSON[2].data[0][0];
-
             var bitmapdatastring = '';
-            
             for (var i=0; i<datasetsAvailable; i++) {
                 bitmapdatastring += 'a';
             }
@@ -26,47 +24,41 @@ function graphDatasetStatus(divClass){
 }
 
 function createGraph(data,divClass,divSelAttr,divSelAttrVal){
-   
+    var dots = 50; // 50 dots per row easy "at a glance" quantity indicator
+    var rows = Math.ceil(data.length/dots);
     var mydiv = d3.selectAll(divClass).filter("["+divSelAttr+"="+"'"+divSelAttrVal+"']");
-    
+    var myFontSize = parseFloat(window.getComputedStyle(mydiv.node()).getPropertyValue('font-size'));
+    var myFontColor = window.getComputedStyle(mydiv.node()).getPropertyValue('font-color');
+    console.log(myFontColor);
+    var strokeWidth = parseFloat(window.getComputedStyle(mydiv.node()).getPropertyValue('stroke-width'));
     var w = $(mydiv.node()).width();
-    var h = $(mydiv.node()).height();
-
-    var margin = {
-        top: h * .2,
-        bottom: h * .2,
-        left: h * .2,
-        right: h * .2
-    };
-
-    var width = w - margin.left - margin.right;
-    var height = h - margin.top - margin.bottom;
-    var dots = 50;
-    var r = width/(dots*2);
+    //var r = myFontSize/2;
+    var r = w/dots*(1/2);
+    var h = 2*r*rows;
 
     var x = d3.scale.linear()
             .domain([0,dots])
-            .range([0,width]);
+            .range([0,w]);
     var svg = mydiv.append("svg")
                 .attr("id", "chart")
                 .attr("width", w)
                 .attr("height", h);
-    console.log(svg);
     var chart = svg.append("g")
                 .classed("display", true)
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-	
-    chart.selectAll(".bar")
+                .attr("transform", "translate(" + r + "," + r + ")");
+    chart.selectAll(divClass)
 		.data(data)
 		.enter()
 			.append("circle")
-			.classed("bar", true)
 			.attr("class", function(d,i){ return "circleColor_" + data[i]; })
 			.attr("cx", function(d,i){
                 return x((i%dots));
             })
 			.attr("cy", function(d,i){
-                return (Math.floor(i/dots)*(2*r+r/2));
+                return (Math.floor(i/dots)*(2*r));
             })
-			.attr("r", r)
+			.attr("r", r-strokeWidth);
+    // Create Legend
+    $(divClass+"_legend").html("<svg height=\"" + h + "\" id=\"chart_legend\"><circle class=\"circleColor_a\" cx=\"" + (r+10-strokeWidth) + "\" cy=\"" + r + "\" r=\"" + (r-strokeWidth) + "\"></circle><text x=\"" + (2*r+15-strokeWidth) + "\" y=\"" + 1.5*r + "\" font-size=\"" + myFontSize*(.5) + "px\" font-weight=\"50\">Available</text><circle class=\"circleColor_r\" cx=\"" + (r+10-strokeWidth) + "\" cy=\"" + 3*r + "\" r=\"" + (r-strokeWidth) + "\"></circle><text x=\"" + (2*r+15-strokeWidth) + "\" y=\"" + 3.5*r + "\" font-size=\"" + myFontSize*(.5) + "px\">Registered</text><circle class=\"circleColor_i\" cx=\"" + (r+10-strokeWidth) + "\" cy=\"" + 5*r + "\" r=\"" + (r-strokeWidth) + "\"></circle><text x=\"" + (2*r+15-strokeWidth) + "\" y=\"" + 5.5*r + "\" font-size=\"" + myFontSize*(.5) + "px\">Identified</text></svg>");
+
 }

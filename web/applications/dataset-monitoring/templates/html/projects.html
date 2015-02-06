@@ -30,7 +30,18 @@
             </div>
             {% if not pdf %}
             <br />
-            <div class="dotchart" project="{{project.ID}}"></div>
+            <div class="dotchartcontainer">
+                <table width="100%">
+                    <tr width="100%">
+                        <td width="80%">
+                            <div class="dotchart" project="{{project.ID}}"></div>
+                        </td>
+                        <td>
+                            <div class="dotchart_legend" project="{{project.ID}}"></div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
             {% endif %}
             {% if not project.tasks %}
                 {% if project.datasets %}
