@@ -187,9 +187,15 @@ function getEmailUsersFromLDAPGroup($ldapGroup)
     foreach ($members as $member) {
         $attributes = getAttributes($ldap, $member, array('givenName', 'sn', 'mail'));
         if (count($attributes) > 0) {
-            if (array_key_exists('givenName', $attributes)) $mailFirstName = $attributes['givenName'][0];
-            if (array_key_exists('sn', $attributes)) $mailLastName = $attributes['sn'][0];
-            if (array_key_exists('mail', $attributes)) $eMail = $attributes['mail'][0];
+            if (array_key_exists('givenName', $attributes)) {
+                $mailFirstName = $attributes['givenName'][0];
+            }
+            if (array_key_exists('sn', $attributes)) {
+                $mailLastName = $attributes['sn'][0];
+            }
+            if (array_key_exists('mail', $attributes)) {
+                $eMail = $attributes['mail'][0];
+            }
 
             $users[] = array("firstName"=>$mailFirstName,"lastName"=>$mailLastName,"email"=>$eMail);
         }
