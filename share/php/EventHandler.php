@@ -91,6 +91,10 @@ function getRCsByPeopleID($risUserId)
     foreach (getRCsFromRISUser($RIS_DBH, $risUserId) as $projectid) {
         #get Project details by Project ID for each ID
         $projectDetails = getProjectDetails($RIS_DBH, array("projectid=$projectid"));
+        if (count($projectDetails) == 0) {
+            # skip projects that we are unable to retrieve information for
+            continue;
+        }
         $rcsByPeopleId[] = $projectDetails[0];
     }
 
@@ -125,9 +129,9 @@ function geteMailUserDetailsFromUserId($risUserId)
     $peopleDetailsByPeopleID = getPeopleDetails($RIS_DBH, array("peopleid=$risUserId"));
     # close database connection
     $RIS_DBH = null;
-    
+
     $eMailUserDetails = array();
-    
+
     if (is_array($peopleDetailsByPeopleID) and count($peopleDetailsByPeopleID) > 0) {
         foreach ($peopleDetailsByPeopleID as $people) {
             $eMailUserDetails['firstName'] = $people['FirstName'];
@@ -135,7 +139,7 @@ function geteMailUserDetailsFromUserId($risUserId)
             $eMailUserDetails['email'] = $people['Email'];
         }
     }
-    
+
     return $eMailUserDetails;
 }
 
@@ -145,48 +149,118 @@ function eventHappened($Action, $Data)
     $iniPath = $config['paths']['conf'];
     $iniFileName = $iniPath.'/'.'EventHandler.ini';
     $eventHandlerConfig  = parse_ini_file($iniFileName, true);
-    
+
     if (!array_key_exists($Action, $eventHandlerConfig)) {
         throw new Exception('Action not found');
     }
-    
-    $actions = $eventHandlerConfig[$Action]['action'];
-    #Take an action according to the event type/action
-    if (stristr($actions, 'emaildm')) {
-        emailDM($Action, $Data);
+
+    $actions = preg_split('/,/', $eventHandlerConfig[$Action]['action']);
+
+    foreach ($actions as $action) {
+        #Take an action according to the event type/action
+        switch ($action) {
+            case "emaildm":
+                emailDM($Action, $Data);
+                break;
+            case "sendmail":
+                emailUser($Action, $Data);
+                break;
+            case "emaildoiapprovers":
+                emailDOIApprovers($Action, $Data);
+                break;
+        }
     }
-    if (stristr($actions, 'sendmail')) {
-        emailUser($Action, $Data);
+}
+
+function getEmailUsersFromLDAPGroup($ldapGroup)
+{
+    $GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini', true);
+    $GLOBALS['config'] = array_merge(
+        $GLOBALS['config'],
+        parse_ini_file($GLOBALS['config']['paths']['conf'].'/ldap.ini', true)
+    );
+
+    $users = array();
+
+    require_once 'ldap.php';
+
+    $members = getGroupMembers($ldapGroup);
+    $ldap = connectLDAP($GLOBALS['config']['ldap']['server']);
+
+    foreach ($members as $member) {
+        $attributes = getAttributes($ldap, $member, array('givenName', 'sn', 'mail'));
+        if (count($attributes) > 0) {
+            if (array_key_exists('givenName', $attributes)) {
+                $mailFirstName = $attributes['givenName'][0];
+            }
+            if (array_key_exists('sn', $attributes)) {
+                $mailLastName = $attributes['sn'][0];
+            }
+            if (array_key_exists('mail', $attributes)) {
+                $eMail = $attributes['mail'][0];
+            }
+
+            $users[] = array("firstName"=>$mailFirstName,"lastName"=>$mailLastName,"email"=>$eMail);
+        }
+    }
+
+    return $users;
+}
+
+function emailDOIApprovers($Action, $Data)
+{
+    $grp = "cn=approvers,ou=DOI,ou=Pelagos,ou=applications,dc=griidc,dc=org";
+    $approvers = getEmailUsersFromLDAPGroup($grp);
+
+    $messageData = getMessageTemplate($Action);
+
+    $messageTemplate = $messageData['messageTemplate'];
+    $subject = $messageData['subject'];
+
+    foreach ($approvers as $approver) {
+        $mailData = array();
+
+        $mailData["data"] = $Data;
+        $mailData["apprv"] = $approver;
+
+        $mailMessage  = expandTemplate($messageTemplate, $mailData);
+
+        require_once 'griidcMailer.php';
+        $eventMailer = new griidcMailer(false);
+        $eventMailer->addToUser($approver['firstName'], $approver['lastName'], $approver['email']);
+        $eventMailer->mailMessage = $mailMessage;
+        $eventMailer->mailSubject = $subject;
+        $eventMailer->sendMail();
     }
 }
 
 function emailUser($Action, $Data)
 {
     $messageData = getMessageTemplate($Action);
-    
+
     $messageTemplate = $messageData['messageTemplate'];
     $subject = $messageData['subject'];
-    
+
     $mailData = array();
-    
+
     $mailData["data"] = $Data;
-    
+
     #make sure user exists
     if (is_array($Data) and (array_key_exists('userId', $Data) or array_key_exists('risUserId', $Data))) {
         require_once 'ldap.php';
-        
+
         if (!array_key_exists('risUserId', $Data)) {
             $risUserId = getEmployeeNumberFromUID($Data['userId']);
         } else {
             $risUserId = $Data['risUserId'];
         }
-        
+
         $user = geteMailUserDetailsFromUserId($risUserId);
-        
+
         $mailData["user"] = $user;
-                
+
         $mailMessage  = expandTemplate($messageTemplate, $mailData);
-        
+
         if (count($user) > 0) {
             require_once 'stubs/griidcMailerStub.php';
             $eventMailer = new griidcMailer(false);
@@ -196,7 +270,7 @@ function emailUser($Action, $Data)
             $eventMailer->sendMail();
         }
     }
-    
+
     return true;
 }
 
