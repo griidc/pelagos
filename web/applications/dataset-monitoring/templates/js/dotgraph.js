@@ -2,7 +2,7 @@ function graphDatasetStatus(divClass){
     $(divClass).each(function(){
         myDiv = $(this);
         var project = myDiv.attr("project");
-        $.getJSON( "https://proteus.tamucc.edu/pelagos/dev/mwilliamson/applications/dataset-monitoring/summaryCount/" + project, function( data ) {
+        $.getJSON( "{{baseUrl}}/summaryCount/" + project, function( data ) {
             var projectBack = data[1];
             var rawJSON = data[0];
             var datasetsAvailable = rawJSON[0].data[0][0];
@@ -15,7 +15,7 @@ function graphDatasetStatus(divClass){
             for (var i=0; i<datasetsRegistered; i++) {
                 bitmapdatastring += 'r';
             }
-            for (var i=0; i<datasetsRegistered; i++) {
+            for (var i=0; i<datasetsIdentified; i++) {
                 bitmapdatastring += 'i';
             }
             createGraph(bitmapdatastring,divClass,"project",projectBack);
