@@ -51,8 +51,7 @@ action="emaildm"
 [doi_needs_approval]
 description = "When a DOI is need to be Approved."
 mail_template_filename = "../templates/doiNeedsApproval_eMail.html"
-mail_template_filename = "../../../../home/users/mvandeneijnden/pelagos/share/templates/doiNeedsApproval_eMail.html"
-subject="GRIIDC DOI Need Approval"
+subject="GRIIDC DOI Needs Approval"
 action="emaildoiapprovers"
 
 [account_requested]
