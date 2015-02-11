@@ -610,6 +610,10 @@ EOT;
                 case 'geo_filter':
                     $WHERE .= " AND ST_Intersects('SRID=4326;$matches[3]'::geometry,md.geom)";
                     break;
+                case 'has_data':
+                    $WHERE .= " AND r.url_data " . $GLOBALS['IS_MAP'][$matches[2]] . ' ' .
+                              $GLOBALS['NULL_MAP'][$matches[3]];
+                    break;
             }
         }
     }
