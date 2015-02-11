@@ -18,12 +18,15 @@ function graphDatasetStatus(divClass){
             for (var i=0; i<datasetsIdentified; i++) {
                 bitmapdatastring += 'i';
             }
-            createGraph(bitmapdatastring,divClass,"project",projectBack);
+            createGraph(bitmapdatastring,divClass,"project",projectBack,datasetsAvailable,datasetsRegistered,datasetsIdentified);
         });
     });
 }
 
-function createGraph(data,divClass,divSelAttr,divSelAttrVal){
+function createGraph(data,divClass,divSelAttr,divSelAttrVal,cntA,cntR,cntI){
+    $('.dotchart_legend[project="'+divSelAttrVal+'"] #a').append(" ("+cntA+")");
+    $('.dotchart_legend[project="'+divSelAttrVal+'"] #r').append(" ("+cntR+")");
+    $('.dotchart_legend[project="'+divSelAttrVal+'"] #i').append(" ("+cntI+")");
     var dots = 50; // 50 dots per row easy "at a glance" quantity indicator
     var rows = Math.ceil(data.length/dots);
     var mydiv = d3.selectAll(divClass).filter("["+divSelAttr+"="+"'"+divSelAttrVal+"']");
@@ -32,7 +35,7 @@ function createGraph(data,divClass,divSelAttr,divSelAttrVal){
     console.log(myFontColor);
     var strokeWidth = parseFloat(window.getComputedStyle(mydiv.node()).getPropertyValue('stroke-width'));
     var w = $(mydiv.node()).width();
-    //var r = myFontSize/2;
+    //var r = myFontSize/2; # this is perhaps a future option, but likely would require not having fixed number of dots per line
     var r = w/dots*(1/2);
     var h = 2*r*rows;
 
