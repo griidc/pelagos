@@ -92,9 +92,9 @@ $app->get('/', function () use ($app) {
 
 $app->get('/summaryCount/:projectId', function ($projectId) use ($app) {
     $database    = openDB("GOMRI_RO");
-    $available   = getAvailableDatasetsByProjectId($database, $projectId);
-    $registered  = getRegisteredDatasetsByProjectId($database, $projectId);
-    $identified  = getIdentifiedDatasetsByProjectId($database, $projectId);
+    $available   = count_registered_datasets($database, array("projectid=$projectId",'availability=available'));
+    $registered  = count_registered_datasets($database, array("projectid=$projectId",'has_data=true'));
+    $identified  = count_identified_datasets($database, array("projectid=$projectId",'status=2'));
     $database    = null;
 
     $raw = array(array(
