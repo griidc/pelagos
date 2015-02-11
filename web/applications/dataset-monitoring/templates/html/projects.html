@@ -38,10 +38,11 @@
                         </td>
                     <tr width="100%">
                         <td>
-                            <div class="dotchart_legend" project="{{project.ID}}">
-                            <span id="a"><img src="{{baseUrl}}/includes/images/green-circle.png" style "valign: bottom;"> Datasets Available</span>
-                            <span id="r"><img src="{{baseUrl}}/includes/images/yellow-circle.png" style "valign: bottom;"> Datasets Registered</span>
-                            <span id="i"><img src="{{baseUrl}}/includes/images/empty-circle.png" style "valign: bottom;"> Datasets Identified</span>
+                            <div class="dotchart_legend" project="{{project.ID}}" style="position: relative;">
+                            <span id="a"><strong>Dataset with status:</strong> <img src="{{baseUrl}}/includes/images/green-circle.png"> Available:</span>
+                            <span id="r"><img src="{{baseUrl}}/includes/images/yellow-circle.png"> Registered:</span>
+                            <span id="i"><img src="{{baseUrl}}/includes/images/empty-circle.png"> Identified:</span>
+                            <div id="tot" style="position:absolute; right:0; bottom:0;"><strong>Total Datasets:</strong></div>
                             </div>
                         </td>
                     </tr>

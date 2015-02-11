@@ -24,9 +24,10 @@ function graphDatasetStatus(divClass){
 }
 
 function createGraph(data,divClass,divSelAttr,divSelAttrVal,cntA,cntR,cntI){
-    $('.dotchart_legend[project="'+divSelAttrVal+'"] #a').append(" ("+cntA+")");
-    $('.dotchart_legend[project="'+divSelAttrVal+'"] #r').append(" ("+cntR+")");
-    $('.dotchart_legend[project="'+divSelAttrVal+'"] #i').append(" ("+cntI+")");
+    $('.dotchart_legend[project="'+divSelAttrVal+'"] #a').append(" "+cntA);
+    $('.dotchart_legend[project="'+divSelAttrVal+'"] #r').append(" "+cntR);
+    $('.dotchart_legend[project="'+divSelAttrVal+'"] #i').append(" "+cntI);
+    $('.dotchart_legend[project="'+divSelAttrVal+'"] #tot').append(" " + (cntA+cntR+cntI) + "");
     var dots = 50; // 50 dots per row easy "at a glance" quantity indicator
     var rows = Math.ceil(data.length/dots);
     var mydiv = d3.selectAll(divClass).filter("["+divSelAttr+"="+"'"+divSelAttrVal+"']");
