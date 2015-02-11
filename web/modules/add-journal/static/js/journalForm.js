@@ -10,8 +10,8 @@ $( document ).ready(function() {
     );
     
     myForm = new formHandler({
-        "formFileName" : "./?getForm",
-        "formPostURL" : "."
+        "formFileName" : "?getForm",
+        "formPostURL" : ""
     });
     
     myForm.createForm($("#journalForm"));

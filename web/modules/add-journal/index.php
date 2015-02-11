@@ -33,5 +33,5 @@ $myHandler = new FormHandler();
 $myHandler->handleForm();
 
 ?>
-<div style="width:600px;heigth:200px;" id="journalForm"></div>
+<div style="width:600px;height:200px;" id="journalForm"></div>
 
