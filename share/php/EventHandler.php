@@ -175,8 +175,10 @@ function eventHappened($Action, $Data)
 function getEmailUsersFromLDAPGroup($ldapGroup)
 {
     $GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini', true);
-    $GLOBALS['config'] = array_merge($GLOBALS['config'], _
-        parse_ini_file($GLOBALS['config']['paths']['conf'].'/ldap.ini', true));
+    $GLOBALS['config'] = array_merge(
+        $GLOBALS['config'],
+        parse_ini_file($GLOBALS['config']['paths']['conf'].'/ldap.ini', true)
+    );
 
     $users = array();
 
@@ -260,7 +262,7 @@ function emailUser($Action, $Data)
         $mailMessage  = expandTemplate($messageTemplate, $mailData);
 
         if (count($user) > 0) {
-            require_once 'stubs/griidcMailerStub.php';
+            require_once 'griidcMailer.php';
             $eventMailer = new griidcMailer(false);
             $eventMailer->addToUser($user['firstName'], $user['lastName'], $user['email']);
             $eventMailer->mailMessage = $mailMessage;

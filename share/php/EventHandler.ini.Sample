@@ -3,7 +3,7 @@ templatePath = "../templates/"
 [journal_rejected]
 description = "When a Journal is Rejected"
 mail_template_filename = "../templates/journalRejected_eMail.html"
-subject="GRIIDC Journal Rejected"
+subject="GRIIDC Journal Submission"
 action="sendmail"
 
 [dif_saved_and_submitted]

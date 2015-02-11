@@ -610,6 +610,10 @@ EOT;
                 case 'geo_filter':
                     $WHERE .= " AND ST_Intersects('SRID=4326;$matches[3]'::geometry,md.geom)";
                     break;
+                case 'has_data':
+                    $WHERE .= " AND r.url_data " . $GLOBALS['IS_MAP'][$matches[2]] . ' ' .
+                              $GLOBALS['NULL_MAP'][$matches[3]];
+                    break;
             }
         }
     }
@@ -619,11 +623,72 @@ EOT;
 
 function create_search_temp($dbh, $search)
 {
-    $search = trim(preg_replace("/[\*\+\?\{\}\[\]\(\)\.\\$\^\\\\]/", '\\\\\0', $search));
-    $qString = "CREATE TEMP TABLE search_temp AS SELECT " .
-                " search_word FROM regexp_split_to_table('.
-                $search. ', '\\s+') AS search_word;";
-    $stmt = $dbh->prepare($qString);
+    # list of all characters with special meaning in regular expressions (metacharacters)
+    $metacharacters = array('\\','^','$','.','|','?','*','+','(',')','[',']','{','}');
+    # escape all metacharacters
+    foreach ($metacharacters as $char) {
+        $search = str_replace($char, "\\$char", $search);
+    }
+    # define a list of charaters to be considered equivalent for search
+    $equiv_chars_list = array(
+        'AÀÁÂÃÄÅÆ',
+        'CÇ',
+        'DÐ',
+        'EÈÉÊË',
+        'IÌÍÎÏ',
+        'NÑ',
+        'OÒÓÔÕÖØŒ',
+        'SŠ',
+        'UÙÚÛÜ',
+        'YÝŸ¥',
+        'ZŽ',
+        'aàáâãäåæ',
+        'cç',
+        'eèéêë',
+        'iìíîï',
+        'nñ',
+        'oðòóôõöøœ',
+        'sšß',
+        'uùúûüµ',
+        'yýÿ',
+        'zž',
+    );
+    # this will be an array of our final search term regular expressions
+    $search_terms = array();
+    # split search terms
+    foreach (preg_split('/\s+/', $search) as $search_term) {
+        $search_term_reg = '';
+        # split term into character array
+        foreach (str_split(utf8_decode($search_term)) as $char) {
+            $has_equiv_characters = false;
+            foreach ($equiv_chars_list as $equiv_chars) {
+                # if character has other equivalent characters
+                if (in_array($char, str_split(utf8_decode($equiv_chars)))) {
+                    # append a character class containing all equivalent characters
+                    $search_term_reg .= "[$equiv_chars]";
+                    $has_equiv_characters = true;
+                    continue;
+                }
+            }
+            if (!$has_equiv_characters) {
+                # append single character only
+                $search_term_reg .= $char;
+            }
+        }
+        # append the search term regular expression
+        $search_terms[] = $search_term_reg;
+    }
+    # join search terms and trim whitespace
+    $search_words = trim(implode(' ', $search_terms));
+    # define the delimeter between search terms
+    $delimeter = '\s+';
+    # create a temp table containing the search terms
+    $stmt = $dbh->prepare(
+        'CREATE TEMP TABLE search_temp AS SELECT search_word ' .
+        'FROM regexp_split_to_table(:search_words, :delimeter) AS search_word'
+    );
+    $stmt->bindParam(':search_words', $search_words);
+    $stmt->bindParam(':delimeter', $delimeter);
     if (!$stmt->execute()) {
         $arr = $stmt->errorInfo();
         print_r($arr);
