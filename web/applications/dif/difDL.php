@@ -122,6 +122,12 @@ function displayTaskStatus($tasks,$conn,$update=null,$personid=null,$filterstatu
         $taskTitle = (string)$task->Title;
         $projectID = (string)$task->Project['ID'];
         
+        $fundingSourceName = (string)$task->Project->FundingSource;
+        
+        if (preg_match('/\(([^\)]+)\)/', $fundingSourceName ,$matches)) {
+            $fundingSourceName = $matches[1];
+        }
+        
         if ($taskID > 0)
         {
             $query = "select title,status,dataset_uid,dataset_udi from datasets where task_uid=$taskID";
@@ -179,13 +185,13 @@ function displayTaskStatus($tasks,$conn,$update=null,$personid=null,$filterstatu
                 $childArr[] = array("text"=>"[$dataset_udi] $title","icon"=>$icon,"li_attr"=>array("longtitle"=>$title),"a_attr"=>array("onclick"=>"getNode('$dataset_udi');"));
                 
             }
-            $resArray[] = array("text"=>$taskTitle,"icon"=>"/images/icons/folder.png","state"=>array("opened"=>true),"children"=>$childArr,"li_attr"=>array("longtitle"=>$title),"a_attr"=>array("style"=>"color:black;cursor:default;opacity:1;background-color:transparent;box-shadow:none"));  
+            $resArray[] = array("text"=>$taskTitle." ($fundingSourceName)","icon"=>"/images/icons/folder.png","state"=>array("opened"=>true),"children"=>$childArr,"li_attr"=>array("longtitle"=>$title),"a_attr"=>array("style"=>"color:black;cursor:default;opacity:1;background-color:transparent;box-shadow:none"));  
         }
         else
         {
             if ($ShowEmpty)
             {         
-                $resArray[] = array("text"=>$taskTitle,"icon"=>"/images/icons/folder_gray.png","state"=>array("opened"=>false,"disabled"=>true),"children"=>$childArr,"li_attr"=>array("longtitle"=>$taskTitle,"style"=>"color:black"),"a_attr"=>array("style"=>"color:gray;cursor:default;opacity:.7;"));       
+                $resArray[] = array("text"=>$taskTitle." ($fundingSourceName)","icon"=>"/images/icons/folder_gray.png","state"=>array("opened"=>false,"disabled"=>true),"children"=>$childArr,"li_attr"=>array("longtitle"=>$taskTitle,"style"=>"color:black"),"a_attr"=>array("style"=>"color:gray;cursor:default;opacity:.7;"));       
             }
         }
     }
