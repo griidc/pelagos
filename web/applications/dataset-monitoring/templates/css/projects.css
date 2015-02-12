@@ -189,7 +189,6 @@ div.spinner div {
 .dotchartcontainer{
     width: 100%;
     font-size: 11pt;
-    stroke: #333;
     stroke-width: 1;
 }
 .dotchart{
@@ -197,10 +196,13 @@ div.spinner div {
 }
 .circleColor_a{
     fill: #1b8d1b;
+    stroke: #888;
 }
 .circleColor_r{
     fill: #fedc00;
+    stroke: #aaa;
 }
 .circleColor_i{
     fill: #ddd;
+    stroke: #aaa;
 }
