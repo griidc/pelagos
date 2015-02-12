@@ -80,7 +80,9 @@ $app->get('/', function () use ($app) {
     drupal_add_js('//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.min.js', array('type'=>'external'));
     drupal_add_js('//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.stack.min.js', array('type'=>'external'));
     drupal_add_js('//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.resize.min.js', array('type'=>'external'));
+    drupal_add_js('//cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js', array('type'=>'external'));
     drupal_add_js("$env[SCRIPT_NAME]/js/dm.js", array('type'=>'external'));
+    drupal_add_js("$env[SCRIPT_NAME]/js/dotgraph.js", array('type'=>'external'));
     drupal_add_css("$env[SCRIPT_NAME]/includes/css/dm.css", array('type'=>'external'));
     drupal_add_css("$env[SCRIPT_NAME]/includes/css/scrollbars.css", array('type'=>'external'));
     drupal_add_css("$env[SCRIPT_NAME]/css/projects.css", array('type'=>'external'));
@@ -90,9 +92,9 @@ $app->get('/', function () use ($app) {
 
 $app->get('/summaryCount/:projectId', function ($projectId) use ($app) {
     $database    = openDB("GOMRI_RO");
-    $available   = getAvailableDatasetsByProjectId($database, $projectId);
-    $registered  = getRegisteredDatasetsByProjectId($database, $projectId);
-    $identified  = getIdentifiedDatasetsByProjectId($database, $projectId);
+    $available   = count_registered_datasets($database, array("projectid=$projectId",'availability=available'));
+    $registered  = count_registered_datasets($database, array("projectid=$projectId",'has_data=true'));
+    $identified  = count_identified_datasets($database, array("projectid=$projectId",'status=2'));
     $database    = null;
 
     $raw = array(array(
