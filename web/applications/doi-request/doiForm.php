@@ -391,6 +391,7 @@ if ($_POST)
                     $eventData = array('userId'=>$userId,'user'=>$userData,'doi'=>$doiData);
 
                     eventHappened('doi_requested',$eventData);
+                    eventHappened('doi_needs_approval',$eventData);
                 }
                 else
                 {
