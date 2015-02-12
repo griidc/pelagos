@@ -189,7 +189,7 @@ div.spinner div {
 .dotchartcontainer{
     width: 100%;
     font-size: 11pt;
-    stroke: #333;
+    stroke: #aaa;
     stroke-width: 1;
 }
 .dotchart{
