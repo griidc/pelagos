@@ -186,17 +186,18 @@ function postDIF($fielddata)
     
     if ($frmButton == 'submit') {$status = 1;};
     
-    
-    if ($fundingSourceID > 0 and $fundingSourceID < 7) {
-        $fundingSource = 'Y1';
-    }
-    else {
-        switch ($fundingSourceID) {
-            case 7: $fundingSource = 'R1'; break;
-            case 8: $fundingSource = 'R2'; break;
-            case 9: $fundingSource = 'R3'; break;
-            case 10: $fundingSource = 'R4'; break;
-            default: throw new Exception('Unknown Funding Source');
+    if ($fundingSourceID != 0 and $fundingSourceID != null) {
+        if ($fundingSourceID > 0 and $fundingSourceID < 7) {
+            $fundingSource = 'Y1';
+        }
+        else {
+            switch ($fundingSourceID) {
+                case 7: $fundingSource = 'R1'; break;
+                case 8: $fundingSource = 'R2'; break;
+                case 9: $fundingSource = 'R3'; break;
+                case 10: $fundingSource = 'R4'; break;
+                default: return json_encode(array('success'=>false,'message'=>'Unknown Funding Source!','title'=>'ERROR'));
+            }
         }
     }
     
