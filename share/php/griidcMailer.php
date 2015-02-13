@@ -17,9 +17,10 @@ if (!class_exists('griidcMailer')) {
 
         public function __construct($useCurrentUser)
         {
-            set_include_path('../../../share/php' . PATH_SEPARATOR . get_include_path());
-            require_once 'ldap.php';
-            require_once 'drupal.php';
+            $config = parse_ini_file('/etc/opt/pelagos.ini', true);
+            $config = array_merge($config, parse_ini_file($config['paths']['conf'].'/ldap.ini', true));
+            include_once $config['paths']['share'].'/php/ldap.php';
+            include_once $config['paths']['share'].'/php/drupal.php';
 
             $this->donotBCC = false;
             $userId = getDrupalUserName();
