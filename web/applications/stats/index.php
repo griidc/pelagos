@@ -487,28 +487,6 @@ $app->get('/data/overview/system-capacity', function () use ($app) {
     drupal_exit();
 });
 
-$app->get('/data/categories/:category_type/:category', function ($category_type,$category) use ($app) {
-    $category_data = array();
-    $dbh = OpenDB('GOMRI_RO');
-    foreach ($GLOBALS['size_ranges'] AS $range) {
-        $SQL = 'SELECT COUNT(*)
-                FROM registry_view
-                JOIN datasets
-                ON datasets.dataset_udi = registry_view.dataset_udi
-                WHERE ' . $GLOBALS['categories'][$category_type]['categories'][$category]['query'] . " AND
-                dataset_download_size $range[range0]";
-        if (array_key_exists('range1',$range)) {
-            $SQL .= " AND dataset_download_size $range[range1]";
-        }
-        $sth = $dbh->prepare($SQL);
-        $sth->execute();
-        $count = $sth->fetchColumn();
-        $category_data[] = $count;
-    }
-    print json_encode(array('category_type' => $category_type, 'category' => $category, 'data' => $category_data));
-    drupal_exit();
-});
-
 $app->run();
 
 ?>
