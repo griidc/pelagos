@@ -97,26 +97,7 @@ $(document).ready(function() {
             colors: [ '#88F', '#F55', 'orange' ],
             legend: { position: "nw" }
         },
-        'dataset-size-ranges': pie_conf,
-        'system-capacity': {
-            series: {
-                pie: {
-                    show: true,
-                    stroke: false,
-                    radius: 1,
-                    label: {
-                        show: true,
-                        radius: .6,
-                        formatter: labelFormatter,
-                        background: {
-                            opacity: 0
-                        }
-                    }
-                }
-            },
-            colors: [ '#f6d493', '#c6c8f9' ],
-            legend: { show: false }
-        }
+        'dataset-size-ranges': pie_conf
     };
 
     if (page == 'overview') {
