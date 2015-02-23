@@ -5,6 +5,8 @@ $GLOBALS['libraries'] = parse_ini_file('/etc/griidc/libraries.ini',true);
 require_once $GLOBALS['libraries']['Slim2']['include'];
 \Slim\Slim::registerAutoloader();
 require_once $GLOBALS['libraries']['Slim-Views']['include_Twig'];
+# load Twig
+require_once 'Twig/Autoloader.php';
 
 require_once $GLOBALS['libraries']['GRIIDC']['directory'].'/php/db-utils.lib.php';
 require_once $GLOBALS['libraries']['GRIIDC']['directory'].'/php/drupal.php';
