@@ -33,14 +33,14 @@ $(document).ready(function() {
 
     overviewSections = {
         'summary-of-records': {
-            colors: [ '#88F', '#F55', 'orange', 'green' ],
+            colors: [ '#88F', 'green', 'gold' ],
             xaxis: {
                 ticks: false,
                 min: 0,
                 max: 3.7
             },
             legend: {
-                noColumns: 4,
+                noColumns: 3,
                 container: $('#summary-of-records-legend')
             },
             bars: {
