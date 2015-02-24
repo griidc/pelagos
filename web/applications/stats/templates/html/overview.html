@@ -40,17 +40,26 @@
             <div id="research-details" class="stats-overview-cell stats-section">
                 <div style="height:100%; width:100%; display:table;">
                     <div style="display:table-row;">
-                        <div class="caption" style="display:table-cell;">Research Details</div>
+                        <div class="caption" style="display:table-cell;">Program Resources</div>
                     </div>
                     <div style="display:table-row;">
                         <div style="display:table-cell">
-                            <table class="counts" style="width:100%;">
+                            <table class="counts">
                                 <tr>
-                                    <td><span class="research-label">Projects:</span> {{ris.projects_count}}</td>
-                                    <td><span class="research-label">Tasks:</span> {{ris.tasks_count}}</td>
-                                    <td><span class="research-label">Researchers:</span> {{ris.researchers_count}}</td>
-                                    <td><span class="research-label">Institutions:</span> {{ris.institutions_count}}</td>
-                                    <td><span class="research-label">Countries:</span> {{ris.countries_count}}</td>
+                                    <td class="label"><span class="research-label">Projects:</span></td><td class="numericCount">{{ris.projects_count}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label"><span class="research-label">Tasks:</span></td><td class="numericCount">{{ris.tasks_count}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label"><span class="research-label">Researchers:</span></td><td class="numericCount">{{ris.researchers_count}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label"><span class="research-label">Institutions:</span></td><td class="numericCount">{{ris.institutions_count}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label"><span class="research-label">Countries:</span></td><td class="numericCount">{{ris.countries_count}}</td>
+                                </tr>
                                 </tr>
                             </table>
                         </div>
