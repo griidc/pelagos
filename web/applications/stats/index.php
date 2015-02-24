@@ -391,32 +391,6 @@ $app->get('/data/overview/dataset-size-ranges', function () use ($app) {
     drupal_exit();
 });
 
-$app->get('/data/overview/system-capacity', function () use ($app) {
-    $capacity_data = array();
-    $dbh = OpenDB('GOMRI_RO');
-    $SQL = "SELECT SUM(dataset_download_size) FROM registry_view WHERE registry_id NOT LIKE '00%'";
-    $sth = $dbh->prepare($SQL);
-    $sth->execute();
-    $size_bytes = $sth->fetchColumn();
-    $size_tb = round($size_bytes / pow(1000,4),1);
-    $capacity_data = array(
-        array(
-            'label' => 'Used Space',
-            'data' => $size_tb
-        ),
-        array(
-            'label' => 'Available Space',
-            'data' => round($GLOBALS['config']['stats']['total_capacity'] / pow(1000,4),1) - $size_tb
-        )
-    );
-    print json_encode(array(
-        'page' => 'overview',
-        'section' => 'system-capacity',
-        'data' => $capacity_data
-    ));
-    drupal_exit();
-});
-
 $app->run();
 
 ?>
