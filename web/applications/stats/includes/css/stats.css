@@ -132,15 +132,24 @@
 #research-details table.counts {
     margin-left: auto;
     margin-right: auto;
+    width: 50%;
     font-weight: normal;
 }
 
 #research-details table.counts td {
-    font-size: 15px;
+    font-size: 20px;
     text-align: center;
     line-height: 100%;
     color: #555;
     border: none;
+}
+
+#research-details table.counts td.numericCount {
+    text-align: right;
+}
+
+#research-details table.counts td.label {
+    text-align: left;
 }
 
 .research-label {
