@@ -100,8 +100,8 @@
 }
 
 #summary-of-records-legend {
-    margin-right: 15px;
-    margin-left: 37px;
+    margin-right: 28px;
+    margin-left: 46px;
     margin-bottom: 5px;
 }
 
@@ -110,7 +110,7 @@
 }
 
 #summary-of-records-legend td.legendLabel {
-    width: 25%;
+    width: 33%;
     text-align: center;
     border: none;
     padding-top: 0px;

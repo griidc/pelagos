@@ -12,6 +12,7 @@ require_once $GLOBALS['libraries']['GRIIDC']['directory'].'/php/db-utils.lib.php
 require_once $GLOBALS['libraries']['GRIIDC']['directory'].'/php/drupal.php';
 require_once $GLOBALS['libraries']['GRIIDC']['directory'].'/php/dumpIncludesFile.php';
 require_once $GLOBALS['libraries']['GRIIDC']['directory'].'/php/rpis.php';
+require_once $GLOBALS['libraries']['GRIIDC']['directory'].'/php/datasets.php';
 
 $GLOBALS['config'] = parse_ini_file('config.ini',true);
 
@@ -268,33 +269,19 @@ $app->get('/data/overview/summary-of-records', function () use ($app) {
 
     $bars = array( 'barWidth' => 0.8 );
 
-    $SQL = "SELECT COUNT(*) FROM datasets WHERE dataset_udi NOT LIKE '00%' AND status > 1";
-    $sth = $dbh->prepare($SQL);
-    $sth->execute();
-    $count = $sth->fetchColumn();
+    # called from datasets.php library
+    # 0 = unsubmitted, 1 = Submitted (locked), 2 = Approved
+    $countIdentified = count_identified_datasets($dbh,array("status>1"));
+    $countAvailable = count_registered_datasets($dbh,array("availability=available"));
     $sor_data[] = array(
-        'label' => 'Datasets Identified',
-        'data' => array(array(0.1,$count)),
+        'label' => 'Datasets In Development',
+        'data' => array(array(.325,$countIdentified-$countAvailable)),
         'bars' => $bars
     );
 
-    $SQL = "SELECT COUNT(*) FROM registry_view WHERE registry_id NOT LIKE '00%' AND url_data IS NOT NULL";
-    $sth = $dbh->prepare($SQL);
-    $sth->execute();
-    $count = $sth->fetchColumn();
     $sor_data[] = array(
-        'label' => 'Datasets Registered',
-        'data' => array(array(1,$count)),
-        'bars' => $bars
-    );
-
-    $SQL = "SELECT COUNT(*) FROM registry_view WHERE registry_id NOT LIKE '00%' AND metadata_dl_status = 'Completed'";
-    $sth = $dbh->prepare($SQL);
-    $sth->execute();
-    $count = $sth->fetchColumn();
-    $sor_data[] = array(
-        'label' => 'Metadata Submitted',
-        'data' => array(array(1.9,$count)),
+        'label' => 'Datasets Available',
+        'data' => array(array(1.45,$countAvailable)),
         'bars' => $bars
     );
 
@@ -302,9 +289,10 @@ $app->get('/data/overview/summary-of-records', function () use ($app) {
     $sth = $dbh->prepare($SQL);
     $sth->execute();
     $count = $sth->fetchColumn();
+    $sth=null;
     $sor_data[] = array(
         'label' => 'DOIs Issued',
-        'data' => array(array(2.8,$count)),
+        'data' => array(array(2.575,$count)),
         'bars' => $bars
     );
 
@@ -314,6 +302,7 @@ $app->get('/data/overview/summary-of-records', function () use ($app) {
         'data' => $sor_data
     ));
 
+    $dbh=null;
     drupal_exit();
 });
 
