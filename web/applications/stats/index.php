@@ -271,18 +271,17 @@ $app->get('/data/overview/summary-of-records', function () use ($app) {
 
     # called from datasets.php library
     # 0 = unsubmitted, 1 = Submitted (locked), 2 = Approved
-    $count = count_identified_datasets($dbh,array("status>0"));
+    $countIdentified = count_identified_datasets($dbh,array("status>1"));
+    $countAvailable = count_registered_datasets($dbh,array("availability=available"));
     $sor_data[] = array(
         'label' => 'Datasets In Development',
-        'data' => array(array(.25,$count)),
+        'data' => array(array(.25,$countIdentified-$countAvailable)),
         'bars' => $bars
     );
 
-    # called from datasets.php lib
-    $count = count_registered_datasets($dbh,array("availability=available"));
     $sor_data[] = array(
         'label' => 'Datasets Available',
-        'data' => array(array(1.45,$count)),
+        'data' => array(array(1.45,$countAvailable)),
         'bars' => $bars
     );
 
