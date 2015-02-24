@@ -1,28 +1,6 @@
-google.load('visualization', '1', {'packages': ['geochart']});
-
 var countries;
 
 var firstResize = true;
-
-function drawRegionsMap() {
-
-    if (typeof countries === 'undefined') return;
-
-    var data = google.visualization.arrayToDataTable(countries);
-
-    if (typeof data === 'undefined' || data === null) return;
-
-    var options = {
-        displayMode: 'regions',
-        colorAxis: {
-            colors: ['#AAF','#88F']
-        }
-    };
-
-    var chart = new google.visualization.GeoChart(document.getElementById('researcher_map'));
-    chart.draw(data, options);
-
-};
 
 var $ = jQuery.noConflict();
 
@@ -30,8 +8,6 @@ var winWidth = $(window).width();
 var winHeight = $(window).height();
 
 var drawn = { dataset_for: false, dataset_type: false, dataset_procedure: false };
-
-var resizeTimeout;
 
 var flotConfig;
 
@@ -43,12 +19,6 @@ $(document).ready(function() {
     winHeight = $(window).height();
 
     $(window).resize(function() {
-        var onResize = function() {
-             console.log('resize!');
-             $('#researcher_map').html('');
-             drawRegionsMap();
-        }
-
         var winNewWidth = $(window).width();
         var winNewHeight = $(window).height();
         if (winNewWidth != winWidth || winNewHeight != winHeight) {
@@ -58,8 +28,6 @@ $(document).ready(function() {
                 firstResize = false;
                 return;
             }
-            if (typeof resizeTimeout !== 'undefined') window.clearTimeout(resizeTimeout);
-            resizeTimeout = window.setTimeout(onResize, 500);
         }
     });
 
@@ -162,11 +130,6 @@ $(document).ready(function() {
             $('#' + data.section).css('min-height','');
         });
     }
-
-    $.getJSON(base_url + '/data/overview/researcher_map', function(data) {
-        countries = data;
-        drawRegionsMap();
-    });
 
     }
 

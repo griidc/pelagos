@@ -221,7 +221,6 @@ $app->get('/', function () use ($app) {
     drupal_add_js('//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.resize.min.js',array('type'=>'external'));
     drupal_add_js('//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.time.min.js',array('type'=>'external'));
     drupal_add_js('//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.pie.min.js',array('type'=>'external'));
-    drupal_add_js('//www.google.com/jsapi',array('type'=>'external'));
     drupal_add_js("$env[SCRIPT_NAME]/includes/js/jquery.flot.barnumbers.js",array('type'=>'external'));
     drupal_add_js("$env[SCRIPT_NAME]/includes/js/stats.js",array('type'=>'external'));
 
@@ -445,19 +444,6 @@ $app->get('/data/overview/dataset-size-ranges', function () use ($app) {
         'section' => 'dataset-size-ranges',
         'data' => $size_ranges_data
     ));
-    drupal_exit();
-});
-
-$app->get('/data/overview/researcher_map', function () use ($app) {
-    $dbh = OpenDB('RIS_RO');
-    $sth = $dbh->prepare('SELECT Country_Name, COUNT(*) AS count FROM Institutions JOIN People ON People.People_Institution = Institutions.Institution_ID JOIN Country ON Country.Country_Abbr = Institutions.Institution_Country GROUP BY Country_Name;');
-    $sth->execute();
-    $result = $sth->fetchAll();
-    $countries = array(array('Country','Researchers'));
-    foreach ($result as $row) {
-        $countries[] = array($row['Country_Name'],intval($row['count']));
-    }
-    print json_encode($countries);
     drupal_exit();
 });
 
