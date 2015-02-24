@@ -99,30 +99,6 @@ $(document).ready(function() {
 
     else {
 
-    $( "#stats-tabs" ).tabs({
-        heightStyleType: "fill",
-        activate: function(event,ui) {
-            if (!drawn.dataset_for) {
-                draw_categories('dataset_for');
-                drawn.dataset_for = true;
-            }
-        }
-    });
-
-    $( "#cattabs" ).tabs({
-        heightStyleType: "fill",
-        activate: function(event,ui) {
-            if (ui.newTab.index() == 1 && !drawn.dataset_type) {
-                draw_categories('dataset_type');
-                drawn.dataset_type = true;
-            }
-            else if (ui.newTab.index() == 2 && !drawn.dataset_procedure) {
-                draw_categories('dataset_procedure');
-                drawn.dataset_procedure = true;
-            }
-        }
-    });
-
     for (section in overviewSections) {
         $.getJSON(base_url + '/data/overview/' + section, function(data) {
             $('#' + data.section).css('min-height', $('#' + data.section).parent().height());
@@ -137,15 +113,4 @@ $(document).ready(function() {
 
 function labelFormatter(label, series) {
     return "<div style='font-size:8pt; text-align:center; padding:2px; padding-left:5px; color:#555; background-color:transparent;'>" + label + "<br/>" + series.data[0][1] + " TB (" + Math.round(series.percent) + "%)</div>";
-}
-
-function draw_categories(category_type) {
-    for (category in categories[category_type].categories) {
-        $.getJSON(base_url + '/data/categories/' + category_type + '/' + category, function(data) {
-            var graph_id = categories[data.category_type].categories[data.category].id;
-            $('#' + graph_id).css('min-height', $('#' + graph_id).parent().height());
-            $.plot('#' + categories[data.category_type].categories[data.category].id, data.data, pie_conf);
-            $('#' + graph_id).css('min-height','');
-        });
-    }
 }

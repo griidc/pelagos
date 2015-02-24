@@ -27,16 +27,7 @@
                 {% include "html/" ~ page ~ "/" ~ type ~ ".html" %}
             {% else %}
                 <div id="stats-tabs">
-                    <ul>
-                        <li><a href="#stats-tab-1">Overview</a></li>
-                        <li><a href="#stats-tab-2">Categories (from Identified Datasets)</a></li>
-                    </ul>
-                    <div id="stats-tab-1" class="stats-tab">
-                        {% include "html/overview.html" %}
-                    </div>
-                    <div id="stats-tab-2" class="stats-tab">
-                        {% include "html/categories.html" %}
-                    </div>
+                    {% include "html/overview.html" %}
                 </div>
             {% endif %}
         </div>
