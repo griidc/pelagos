@@ -379,51 +379,6 @@ $app->get('/data/overview/total-records-over-time', function () use ($app) {
     drupal_exit();
 });
 
-$app->get('/data/overview/total-size-over-time', function () use ($app) {
-    $tsot_data = array();
-    $dbh = OpenDB('GOMRI_RO');
-    $registrations = array( 'label' => 'Total Size of All Datasets Stored at GRIIDC (TB)', 'data' => array() );
-    $SQL = "SELECT r1.submittimestamp, r1.dataset_download_size, SUM(r2.dataset_download_size)/1000/1000/1000/1000 AS sum,
-                   extract(epoch from r1.submittimestamp) * 1000 AS ts
-            FROM 
-            (SELECT * FROM registry
-                WHERE registry_id IN (SELECT min_id FROM (SELECT SUBSTRING(registry_id FROM 1 FOR 16) AS udi,
-                                             MIN(registry_id) AS min_id
-                                  FROM registry
-                                  WHERE registry_id NOT LIKE '00%' AND dataset_download_status = 'Completed'
-                                  GROUP BY udi
-                                  ORDER BY udi) AS dataset_udi)
-            ) r1
-            INNER JOIN
-            (SELECT * FROM registry
-                WHERE registry_id IN (SELECT min_id FROM (SELECT SUBSTRING(registry_id FROM 1 FOR 16) AS udi,
-                                             MIN(registry_id) AS min_id
-                                  FROM registry
-                                  WHERE registry_id NOT LIKE '00%' AND dataset_download_status = 'Completed'
-                                  GROUP BY udi
-                                  ORDER BY udi) AS dataset_udi)
-            ) r2
-            ON r1.submittimestamp >= r2.submittimestamp
-            GROUP BY r1.submittimestamp, r1.dataset_download_size
-            ORDER BY r1.submittimestamp;";
-    $sth = $dbh->prepare($SQL);
-    $sth->execute();
-    $rows = $sth->fetchAll();
-    foreach ($rows as $row) {
-        $registrations['data'][] = array($row['ts'],$row['sum']);
-    }
-    if (count($rows) > 0) {
-        $registrations['data'][] = array(time()*1000,$rows[count($rows)-1]['sum']);
-    }
-    $tsot_data[] = $registrations;
-    print json_encode(array(
-        'page' => 'overview',
-        'section' => 'total-size-over-time',
-        'data' => $tsot_data
-    ));
-    drupal_exit();
-});
-
 $app->get('/data/overview/dataset-size-ranges', function () use ($app) {
     $size_ranges_data = array();
     $dbh = OpenDB('GOMRI_RO');
