@@ -100,8 +100,8 @@
 }
 
 #summary-of-records-legend {
-    margin-right: 15px;
-    margin-left: 37px;
+    margin-right: 28px;
+    margin-left: 46px;
     margin-bottom: 5px;
 }
 
@@ -110,7 +110,7 @@
 }
 
 #summary-of-records-legend td.legendLabel {
-    width: 25%;
+    width: 33%;
     text-align: center;
     border: none;
     padding-top: 0px;
@@ -132,15 +132,24 @@
 #research-details table.counts {
     margin-left: auto;
     margin-right: auto;
+    width: 50%;
     font-weight: normal;
 }
 
 #research-details table.counts td {
-    font-size: 10px;
-    width: 20%;
+    font-size: 20px;
     text-align: center;
     line-height: 100%;
     color: #555;
+    border: none;
+}
+
+#research-details table.counts td.numericCount {
+    text-align: right;
+}
+
+#research-details table.counts td.label {
+    text-align: left;
 }
 
 .research-label {
@@ -172,8 +181,4 @@
     border: 1px solid #cccccc;
     border-radius: 4px;
     white-space: nowrap;
-}
-
-#cattabs li {
-    list-style: none;
 }

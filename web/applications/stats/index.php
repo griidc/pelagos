@@ -12,6 +12,7 @@ require_once $GLOBALS['libraries']['GRIIDC']['directory'].'/php/db-utils.lib.php
 require_once $GLOBALS['libraries']['GRIIDC']['directory'].'/php/drupal.php';
 require_once $GLOBALS['libraries']['GRIIDC']['directory'].'/php/dumpIncludesFile.php';
 require_once $GLOBALS['libraries']['GRIIDC']['directory'].'/php/rpis.php';
+require_once $GLOBALS['libraries']['GRIIDC']['directory'].'/php/datasets.php';
 
 $GLOBALS['config'] = parse_ini_file('config.ini',true);
 
@@ -221,7 +222,6 @@ $app->get('/', function () use ($app) {
     drupal_add_js('//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.resize.min.js',array('type'=>'external'));
     drupal_add_js('//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.time.min.js',array('type'=>'external'));
     drupal_add_js('//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.pie.min.js',array('type'=>'external'));
-    drupal_add_js('//www.google.com/jsapi',array('type'=>'external'));
     drupal_add_js("$env[SCRIPT_NAME]/includes/js/jquery.flot.barnumbers.js",array('type'=>'external'));
     drupal_add_js("$env[SCRIPT_NAME]/includes/js/stats.js",array('type'=>'external'));
 
@@ -269,33 +269,19 @@ $app->get('/data/overview/summary-of-records', function () use ($app) {
 
     $bars = array( 'barWidth' => 0.8 );
 
-    $SQL = "SELECT COUNT(*) FROM datasets WHERE dataset_udi NOT LIKE '00%' AND status > 1";
-    $sth = $dbh->prepare($SQL);
-    $sth->execute();
-    $count = $sth->fetchColumn();
+    # called from datasets.php library
+    # 0 = unsubmitted, 1 = Submitted (locked), 2 = Approved
+    $countIdentified = count_identified_datasets($dbh,array("status>1"));
+    $countAvailable = count_registered_datasets($dbh,array("availability=available"));
     $sor_data[] = array(
-        'label' => 'Datasets Identified',
-        'data' => array(array(0.1,$count)),
+        'label' => 'Datasets In Development',
+        'data' => array(array(.325,$countIdentified-$countAvailable)),
         'bars' => $bars
     );
 
-    $SQL = "SELECT COUNT(*) FROM registry_view WHERE registry_id NOT LIKE '00%' AND url_data IS NOT NULL";
-    $sth = $dbh->prepare($SQL);
-    $sth->execute();
-    $count = $sth->fetchColumn();
     $sor_data[] = array(
-        'label' => 'Datasets Registered',
-        'data' => array(array(1,$count)),
-        'bars' => $bars
-    );
-
-    $SQL = "SELECT COUNT(*) FROM registry_view WHERE registry_id NOT LIKE '00%' AND metadata_dl_status = 'Completed'";
-    $sth = $dbh->prepare($SQL);
-    $sth->execute();
-    $count = $sth->fetchColumn();
-    $sor_data[] = array(
-        'label' => 'Metadata Submitted',
-        'data' => array(array(1.9,$count)),
+        'label' => 'Datasets Available',
+        'data' => array(array(1.45,$countAvailable)),
         'bars' => $bars
     );
 
@@ -303,9 +289,10 @@ $app->get('/data/overview/summary-of-records', function () use ($app) {
     $sth = $dbh->prepare($SQL);
     $sth->execute();
     $count = $sth->fetchColumn();
+    $sth=null;
     $sor_data[] = array(
         'label' => 'DOIs Issued',
-        'data' => array(array(2.8,$count)),
+        'data' => array(array(2.575,$count)),
         'bars' => $bars
     );
 
@@ -315,6 +302,7 @@ $app->get('/data/overview/summary-of-records', function () use ($app) {
         'data' => $sor_data
     ));
 
+    $dbh=null;
     drupal_exit();
 });
 
@@ -376,51 +364,6 @@ $app->get('/data/overview/total-records-over-time', function () use ($app) {
         'page' => 'overview',
         'section' => 'total-records-over-time',
         'data' => $trot_data
-    ));
-    drupal_exit();
-});
-
-$app->get('/data/overview/total-size-over-time', function () use ($app) {
-    $tsot_data = array();
-    $dbh = OpenDB('GOMRI_RO');
-    $registrations = array( 'label' => 'Total Size of All Datasets Stored at GRIIDC (TB)', 'data' => array() );
-    $SQL = "SELECT r1.submittimestamp, r1.dataset_download_size, SUM(r2.dataset_download_size)/1000/1000/1000/1000 AS sum,
-                   extract(epoch from r1.submittimestamp) * 1000 AS ts
-            FROM 
-            (SELECT * FROM registry
-                WHERE registry_id IN (SELECT min_id FROM (SELECT SUBSTRING(registry_id FROM 1 FOR 16) AS udi,
-                                             MIN(registry_id) AS min_id
-                                  FROM registry
-                                  WHERE registry_id NOT LIKE '00%' AND dataset_download_status = 'Completed'
-                                  GROUP BY udi
-                                  ORDER BY udi) AS dataset_udi)
-            ) r1
-            INNER JOIN
-            (SELECT * FROM registry
-                WHERE registry_id IN (SELECT min_id FROM (SELECT SUBSTRING(registry_id FROM 1 FOR 16) AS udi,
-                                             MIN(registry_id) AS min_id
-                                  FROM registry
-                                  WHERE registry_id NOT LIKE '00%' AND dataset_download_status = 'Completed'
-                                  GROUP BY udi
-                                  ORDER BY udi) AS dataset_udi)
-            ) r2
-            ON r1.submittimestamp >= r2.submittimestamp
-            GROUP BY r1.submittimestamp, r1.dataset_download_size
-            ORDER BY r1.submittimestamp;";
-    $sth = $dbh->prepare($SQL);
-    $sth->execute();
-    $rows = $sth->fetchAll();
-    foreach ($rows as $row) {
-        $registrations['data'][] = array($row['ts'],$row['sum']);
-    }
-    if (count($rows) > 0) {
-        $registrations['data'][] = array(time()*1000,$rows[count($rows)-1]['sum']);
-    }
-    $tsot_data[] = $registrations;
-    print json_encode(array(
-        'page' => 'overview',
-        'section' => 'total-size-over-time',
-        'data' => $tsot_data
     ));
     drupal_exit();
 });
