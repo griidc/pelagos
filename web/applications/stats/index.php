@@ -275,7 +275,7 @@ $app->get('/data/overview/summary-of-records', function () use ($app) {
     $countAvailable = count_registered_datasets($dbh,array("availability=available"));
     $sor_data[] = array(
         'label' => 'Datasets In Development',
-        'data' => array(array(.25,$countIdentified-$countAvailable)),
+        'data' => array(array(.325,$countIdentified-$countAvailable)),
         'bars' => $bars
     );
 
@@ -292,7 +292,7 @@ $app->get('/data/overview/summary-of-records', function () use ($app) {
     $sth=null;
     $sor_data[] = array(
         'label' => 'DOIs Issued',
-        'data' => array(array(2.65,$count)),
+        'data' => array(array(2.575,$count)),
         'bars' => $bars
     );
 
