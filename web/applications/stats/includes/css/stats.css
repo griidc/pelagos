@@ -136,11 +136,11 @@
 }
 
 #research-details table.counts td {
-    font-size: 10px;
-    width: 20%;
+    font-size: 15px;
     text-align: center;
     line-height: 100%;
     color: #555;
+    border: none;
 }
 
 .research-label {
