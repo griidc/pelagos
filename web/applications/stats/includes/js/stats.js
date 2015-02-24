@@ -59,12 +59,6 @@ $(document).ready(function() {
             colors: [ '#88F', '#F55', 'orange' ],
             legend: { position: "nw" }
         },
-        'total-size-over-time': {
-            xaxis: { mode: "time" },
-            yaxis: { position: 'right' },
-            colors: [ '#88F', '#F55', 'orange' ],
-            legend: { position: "nw" }
-        },
         'dataset-size-ranges': pie_conf
     };
 
