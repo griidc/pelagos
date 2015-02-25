@@ -59,7 +59,26 @@ $(document).ready(function() {
             colors: [ '#88F', '#F55', 'orange' ],
             legend: { position: "nw" }
         },
-        'dataset-size-ranges': pie_conf
+        'dataset-size-ranges': {
+            xaxis: {
+                ticks: true,
+                min: 0,
+                max: 3
+            },
+            bars: {
+                show: true,
+                fill: true,
+                numbers: {
+                    show: true,
+                    yAlign: function(plot,y) { return plot.getAxes().yaxis.c2p(plot.getAxes().yaxis.p2c(y)+15); },
+                    xAlign: function(plot,x) { return x + 0.25; }
+                }
+            },
+            legend: {
+                noColumns: 6,
+                container: $('#dataset-size-ranges-legend')
+            }
+        }
     };
 
     if (page == 'overview') {

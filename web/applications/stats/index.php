@@ -371,6 +371,7 @@ $app->get('/data/overview/total-records-over-time', function () use ($app) {
 $app->get('/data/overview/dataset-size-ranges', function () use ($app) {
     $size_ranges_data = array();
     $dbh = OpenDB('GOMRI_RO');
+    $i=0;
     foreach ($GLOBALS['size_ranges'] AS $range) {
         $SQL = "SELECT COUNT(*)
                 FROM registry_view
@@ -381,7 +382,8 @@ $app->get('/data/overview/dataset-size-ranges', function () use ($app) {
         $sth = $dbh->prepare($SQL);
         $sth->execute();
         $count = $sth->fetchColumn();
-        $size_ranges_data[] = $count;
+        $size_ranges_data[] = array("label" => "$range[label]", "data" => array(array($i*1.2/count($GLOBALS['size_ranges']),$count)), "bars" => array("barWidth" => 1/count($GLOBALS['size_ranges'])));
+        $i++;
     }
     print json_encode(array(
         'page' => 'overview',
@@ -392,5 +394,3 @@ $app->get('/data/overview/dataset-size-ranges', function () use ($app) {
 });
 
 $app->run();
-
-?>

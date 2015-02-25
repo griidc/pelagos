@@ -24,12 +24,10 @@
                     <div style="display:table-row;">
                         <div style="display:table-cell; text-align:center;">
                             <div id="categories_legend" style="border-spacing:5px; margin-bottom:-5px;">
-                                <div style="display:table-row; height:100%;">
-                                    {% for range in size_ranges %}
-                                        <div class="legend-cell">
-                                            <div class="legend-item" style="background-color:{{range.color}}; font-size:9px;">{{range.label}}</div>
-                                        </div>
-                                    {% endfor %}
+                                <div style="display:table-row;">
+                                    <div style="">
+                                        <div id="dataset-size-ranges-legend"></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
