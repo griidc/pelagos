@@ -353,14 +353,17 @@ $app->get('/data/overview/total-records-over-time', function () use ($app) {
     $registrations['data'][] = array(time()*1000,$rows[count($rows)-1]['count']);
     $trot_data[] = $registrations;
 
-    $metadata = array( 'label' => 'Total Metadata Submitted', 'data' => array() );
+    $metadata = array( 'label' => 'Total Datasets Available', 'data' => array() );
     $SQL = "SELECT row_number() OVER(ORDER BY submittimestamp) AS count,
                    extract(epoch from submittimestamp) * 1000 AS ts
             FROM registry
             WHERE registry_id IN (SELECT min_id FROM (SELECT SUBSTRING(registry_id FROM 1 FOR 16) AS udi,
                                          MIN(registry_id) AS min_id
                                   FROM registry
-                                  WHERE registry_id NOT LIKE '00%' AND metadata_dl_status = 'Completed'
+                                  WHERE registry_id NOT LIKE '00%' AND metadata_status = 'Accepted' AND
+                                        access_status = 'None' AND
+                                        url_data IS NOT null AND
+                                        (dataset_download_status = 'Completed' OR dataset_download_status = 'RemotelyHosted')
                                   GROUP BY udi
                                   ORDER BY udi) AS dataset_udi)
             ORDER BY submittimestamp;";
