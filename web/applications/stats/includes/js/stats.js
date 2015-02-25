@@ -81,8 +81,9 @@ $(document).ready(function() {
                 }
             },
             legend: {
-                noColumns: 6,
-                container: $('#dataset-size-ranges-legend')
+                noColumns: 2,
+                //container: $('#dataset-size-ranges-legend'),
+                position: "ne"
             }
         }
     };
