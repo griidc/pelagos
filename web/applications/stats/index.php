@@ -372,7 +372,6 @@ $app->get('/data/overview/dataset-size-ranges', function () use ($app) {
     $size_ranges_data = array();
     $dbh = OpenDB('GOMRI_RO');
     $i=0;
-    $totalCount = count($GLOBALS['size_ranges']);
     foreach ($GLOBALS['size_ranges'] AS $range) {
         $SQL = "SELECT COUNT(*)
                 FROM registry_view
