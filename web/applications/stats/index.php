@@ -382,7 +382,7 @@ $app->get('/data/overview/dataset-size-ranges', function () use ($app) {
         $sth = $dbh->prepare($SQL);
         $sth->execute();
         $count = $sth->fetchColumn();
-        $size_ranges_data[] = array("label" => "$range[label]", "data" => array(array($i*0.5+0.0825,$count)), "bars" => array("barWidth" => 0.333));
+        $size_ranges_data[] = array("label" => "$range[label]", "data" => array(array($i*0.971+0.171,$count)), "bars" => array("barWidth" => 0.8));
         $i++;
     }
     print json_encode(array(

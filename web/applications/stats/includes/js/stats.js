@@ -63,7 +63,7 @@ $(document).ready(function() {
             xaxis: {
                 ticks: true,
                 min: 0,
-                max: 3
+                max: 6
             },
             bars: {
                 show: true,
@@ -77,7 +77,7 @@ $(document).ready(function() {
                             return plot.getAxes().yaxis.c2p(plot.getAxes().yaxis.p2c(y)+13)
                         }
                     },
-                    xAlign: function(plot,x) { return x + 0.167; }
+                    xAlign: function(plot,x) { return x + 0.4; }
                 }
             },
             legend: {
