@@ -370,10 +370,10 @@ if ($_POST)
             $txtWho = pg_escape_string($txtWho);
             $txtWhere = pg_escape_string($txtWhere);
 
-            $query = "SELECT EXISTS(SELECT * from doi_regs where formhash = '$formHash')";
-            $dupeDetected = dbexecute($query);
+            $query = "SELECT EXISTS(SELECT * from doi_regs where formhash = '$formHash')::INT";
+            $dupeDetected = (bool) dbexecute($query)[0];
 
-            if ($dupeDetected == false) {
+            if (!$dupeDetected) {
                 $query = "INSERT INTO doi_regs (url,creator,title,publisher,dsdate,urlstatus,formhash,reqdate,reqip,reqemail,reqby, reqfirstname, reqlastname) 
                           VALUES ('$txtURL', '$txtWho', '$txtWhat', '$txtWhere', '$txtDate', '$urlValidate', '$formHash', '$now', '$ip','$userEmail','$userId', '$userFirstName', '$userLastName');";
                 $result = dbexecute ($query);
