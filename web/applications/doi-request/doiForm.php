@@ -370,10 +370,10 @@ if ($_POST)
             $txtWho = pg_escape_string($txtWho);
             $txtWhere = pg_escape_string($txtWhere);
 
-            $query = "SELECT COUNT(*) from doi_regs where formhash = '$formHash'";
-            $dupeDetected = (dbexecute($query)[0] > 0);
+            $query = "SELECT EXISTS(SELECT * from doi_regs where formhash = '$formHash')";
+            $dupeDetected = dbexecute($query);
 
-            if ($dupeDetected === false) {
+            if ($dupeDetected == false) {
                 $query = "INSERT INTO doi_regs (url,creator,title,publisher,dsdate,urlstatus,formhash,reqdate,reqip,reqemail,reqby, reqfirstname, reqlastname) 
                           VALUES ('$txtURL', '$txtWho', '$txtWhat', '$txtWhere', '$txtDate', '$urlValidate', '$formHash', '$now', '$ip','$userEmail','$userId', '$userFirstName', '$userLastName');";
                 $result = dbexecute ($query);
@@ -395,7 +395,7 @@ if ($_POST)
                         drupal_set_message($dMessage,'error',false);
                     }
             } else {
-                $dMessage= "A DOI has already been requested for this dataset. The requestor will be contacted by GRIIDC shortly with their DOI. Please email <a href=\"mailto:griidc@gomri.org?subject=DOI Form\">griidc@gomri.org</a> if you have any questions.";
+                $dMessage= "A DOI has already been requested with this information. For any concerns, please contact <a href=\"mailto:griidc@gomri.org?subject=DOI Form\">griidc@gomri.org</a>.";
                 drupal_set_message($dMessage,'warning');
             }
         }
