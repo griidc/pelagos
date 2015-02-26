@@ -267,7 +267,7 @@ $app->get('/data/overview/summary-of-records', function () use ($app) {
 
     $dbh = OpenDB('GOMRI_RO');
 
-    $bars = array( 'barWidth' => 0.8 );
+    $bars = array( 'barWidth' => 0.7 );
 
     # called from datasets.php library
     # 0 = unsubmitted, 1 = Submitted (locked), 2 = Approved
@@ -275,13 +275,13 @@ $app->get('/data/overview/summary-of-records', function () use ($app) {
     $countAvailable = count_registered_datasets($dbh,array("availability=available"));
     $sor_data[] = array(
         'label' => 'Datasets In Development',
-        'data' => array(array(.325,$countIdentified-$countAvailable)),
+        'data' => array(array(.225,$countIdentified-$countAvailable)),
         'bars' => $bars
     );
 
     $sor_data[] = array(
         'label' => 'Datasets Available',
-        'data' => array(array(1.45,$countAvailable)),
+        'data' => array(array(1.15,$countAvailable)),
         'bars' => $bars
     );
 
@@ -292,7 +292,7 @@ $app->get('/data/overview/summary-of-records', function () use ($app) {
     $sth=null;
     $sor_data[] = array(
         'label' => 'DOIs Issued',
-        'data' => array(array(2.575,$count)),
+        'data' => array(array(2.075,$count)),
         'bars' => $bars
     );
 
