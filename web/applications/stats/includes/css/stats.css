@@ -196,6 +196,8 @@
     width: 97%;
     margin-left: auto;
     margin-right: auto;
+    border-collapse: collapse;
+    border-spacing: 0px;
 }
 
 #dataset-size-ranges-legend td.legendLabel {
