@@ -65,6 +65,10 @@ $(document).ready(function() {
                 min: 0,
                 max: 6
             },
+            legend: {
+                noColumns: 6,
+                container: $('#dataset-size-ranges-legend')
+            },
             bars: {
                 show: true,
                 fill: true,
@@ -79,10 +83,6 @@ $(document).ready(function() {
                     },
                     xAlign: function(plot,x) { return x + 0.4; }
                 }
-            },
-            legend: {
-                noColumns: 2,
-                position: "ne"
             }
         }
     };
