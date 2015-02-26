@@ -73,21 +73,24 @@
 }
 
 #summary-of-records-legend {
-    margin-right: 28px;
-    margin-left: 46px;
-    margin-bottom: 5px;
+    margin-right: 7px;
+    margin-left: 24px;
 }
 
 #summary-of-records-legend table {
-    width: 100%;
+    width: 93%;
+    margin-left: auto;
+    margin-right: auto;
+    border-collapse: collapse;
+    border-spacing: 0px;
 }
 
 #summary-of-records-legend td.legendLabel {
     width: 33%;
     text-align: center;
     border: none;
-    padding-top: 0px;
-    padding-bottom: 0px;
+    padding: 0px;
+    margin: 0px;
     vertical-align: top;
     line-height: 100%;
 }

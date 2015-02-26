@@ -37,7 +37,7 @@ $(document).ready(function() {
             xaxis: {
                 ticks: false,
                 min: 0,
-                max: 3.7
+                max: 3
             },
             legend: {
                 noColumns: 3,
@@ -48,8 +48,8 @@ $(document).ready(function() {
                 fill: true,
                 numbers: {
                     show: true,
-                    yAlign: function(plot,y) { return plot.getAxes().yaxis.c2p(plot.getAxes().yaxis.p2c(y)+13); },
-                    xAlign: function(plot,x) { return x + 0.4; }
+                    yAlign: function(plot,y) { return plot.getAxes().yaxis.c2p(plot.getAxes().yaxis.p2c(y)+15); },
+                    xAlign: function(plot,x) { return x + 0.35; }
                 }
             }
         },
