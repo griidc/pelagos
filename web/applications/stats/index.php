@@ -1,5 +1,7 @@
 <?php
 
+$GLOBALS['pelagos']['title'] = 'System Statistics (as of ' . date('F j, Y') . ')';
+
 $GLOBALS['libraries'] = parse_ini_file('/etc/griidc/libraries.ini',true);
 
 require_once $GLOBALS['libraries']['Slim2']['include'];

@@ -1,36 +1,9 @@
-#stats-page {
-    display: table;
-    width: 100%;
-    height: 100%;
-    min-height: 550px;
-}
-
-#stats-as-of-row {
-    display: table-row;
-}
-
-#stats-as-of-cell {
-    display: table-cell;
-}
-
-#stats-as-of-cell h2 {
-    margin: 0px;
-}
-
-#stats-tabs-row {
-    display: table-row;
-}
-
-#stats-tabs-cell {
-    display: table-cell;
-    height: 100%;
-}
-
 #stats-tabs {
     display: table;
     height: 100%;
     width: 100%;
     padding: 0px;
+    min-height: 450px;
 }
 
 .ui-tabs .ui-tabs-panel {
