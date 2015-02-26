@@ -1,5 +1,7 @@
 <?php
 
+$GLOBALS['pelagos']['title'] = 'System Statistics (as of ' . date('F j, Y') . ')';
+
 $GLOBALS['libraries'] = parse_ini_file('/etc/griidc/libraries.ini',true);
 
 require_once $GLOBALS['libraries']['Slim2']['include'];
@@ -341,14 +343,17 @@ $app->get('/data/overview/total-records-over-time', function () use ($app) {
     $registrations['data'][] = array(time()*1000,$rows[count($rows)-1]['count']);
     $trot_data[] = $registrations;
 
-    $metadata = array( 'label' => 'Total Metadata Submitted', 'data' => array() );
+    $metadata = array( 'label' => 'Total Datasets Available', 'data' => array() );
     $SQL = "SELECT row_number() OVER(ORDER BY submittimestamp) AS count,
                    extract(epoch from submittimestamp) * 1000 AS ts
             FROM registry
             WHERE registry_id IN (SELECT min_id FROM (SELECT SUBSTRING(registry_id FROM 1 FOR 16) AS udi,
                                          MIN(registry_id) AS min_id
                                   FROM registry
-                                  WHERE registry_id NOT LIKE '00%' AND metadata_dl_status = 'Completed'
+                                  WHERE registry_id NOT LIKE '00%' AND metadata_status = 'Accepted' AND
+                                        access_status = 'None' AND
+                                        url_data IS NOT null AND
+                                        (dataset_download_status = 'Completed' OR dataset_download_status = 'RemotelyHosted')
                                   GROUP BY udi
                                   ORDER BY udi) AS dataset_udi)
             ORDER BY submittimestamp;";
@@ -371,6 +376,7 @@ $app->get('/data/overview/total-records-over-time', function () use ($app) {
 $app->get('/data/overview/dataset-size-ranges', function () use ($app) {
     $size_ranges_data = array();
     $dbh = OpenDB('GOMRI_RO');
+    $i=0;
     foreach ($GLOBALS['size_ranges'] AS $range) {
         $SQL = "SELECT COUNT(*)
                 FROM registry_view
@@ -381,7 +387,8 @@ $app->get('/data/overview/dataset-size-ranges', function () use ($app) {
         $sth = $dbh->prepare($SQL);
         $sth->execute();
         $count = $sth->fetchColumn();
-        $size_ranges_data[] = $count;
+        $size_ranges_data[] = array("label" => "$range[label]", "data" => array(array($i*0.971+0.171,$count)), "bars" => array("barWidth" => 0.8));
+        $i++;
     }
     print json_encode(array(
         'page' => 'overview',
@@ -392,5 +399,3 @@ $app->get('/data/overview/dataset-size-ranges', function () use ($app) {
 });
 
 $app->run();
-
-?>

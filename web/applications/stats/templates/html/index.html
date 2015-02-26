@@ -15,24 +15,13 @@
     var page = '{{page}}';
     var type = '{{type}}';
 </script>
-<div id="stats-page">
-    <div id="stats-as-of-row">
-        <div id="stats-as-of-cell">
-            <h1 class="title" style="margin-bottom:0px;">System Statistics <span style="font-style:italic; font-size:80%;">(as of {{ 'now' | date("F d, Y") }})</span></h1>
-        </div>
+{% if page and type %}
+    {% include "html/" ~ page ~ "/" ~ type ~ ".html" %}
+{% else %}
+    <div id="stats-tabs">
+        {% include "html/overview.html" %}
     </div>
-    <div id="stats-tabs-row">
-        <div id="stats-tabs-cell">
-            {% if page and type %}
-                {% include "html/" ~ page ~ "/" ~ type ~ ".html" %}
-            {% else %}
-                <div id="stats-tabs">
-                    {% include "html/overview.html" %}
-                </div>
-            {% endif %}
-        </div>
-    </div>
-</div>
+{% endif %}
 <form id="download_image_form" method="post" action="/data-uri-filename" style="display:none">
     <input id="download_image_filename" type="hidden" name="filename" value="download.png"/>
     <input id="download_image_data" type="hidden" name="data" value=""/></form>
