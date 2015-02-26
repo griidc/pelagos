@@ -141,14 +141,6 @@ function check_person($app,$type='u',$ldif=null) {
             }
         }
     }
-    $affiliation = $app->request()->post('affiliation');
-    if (is_null($affiliation) or $affiliation == 'select' or $affiliation == '') {
-        $retval['err'][] = 'you must select an affiliation (select "Other:" and enter your affiliation if yours is not listed)';
-    }
-    elseif ($affiliation == 'other' and $retval['person']['o']['value'] == '') {
-        $retval['err'][] = 'you must specify your affiliation if you select "Other:"';
-        $retval['person']['o']['class'] = 'account_errorfield';
-    }
     if (!array_key_exists('objectClasses',$retval))
         $retval['objectClasses'] = array('top','person','inetOrgPerson','organizationalPerson');
     if ($app->request()->post('Shell')) {
@@ -189,15 +181,11 @@ function read_ldif($ldifFile) {
             }
         }
         else {
-            if (preg_match('/^dn: (.*,ou=groups,dc=griidc,dc=org)/',$line,$matches)) {
-                $ldif['affiliation'] = $matches[1];
-            }
             if (preg_match('/^dn: cn=([^,]+),ou=([^,]+),ou=applications,dc=griidc,dc=org/',$line,$matches)) {
                 $ldif['applications'][$matches[2]] = $matches[1];
             }
         }
     }
-    if (!isset($ldif['affiliation'])) $ldif['affiliation'] = 'other';
     return $ldif;
 }
 
@@ -232,42 +220,6 @@ function write_ldif($ldifFile,$ldif) {
 
     foreach ($ldif['objectClasses'] as $objectClass) {
         $contents .= "\nobjectClass: $objectClass";
-    }
-
-    if (isset($ldif['affiliation']) and $ldif['affiliation'] != '' and $ldif['affiliation'] != 'other' and $ldif['affiliation'] != 'select') {
-
-        $result = ldap_search($GLOBALS['LDAP'],'ou=groups,dc=griidc,dc=org','(objectClass=*)',array('dn'));
-        $groups = ldap_get_entries($GLOBALS['LDAP'], $result);
-        $groupExists = false;
-        foreach ($groups as $group) {
-            if ($group['dn'] == $ldif['affiliation']) {
-                $groupExists = true;
-            }
-        }
-        if ($groupExists) {
-            $contents .= "\n\ndn: $ldif[affiliation]";
-            $contents .= "\nchangetype: modify";
-            $result = ldap_read($GLOBALS['LDAP'],$ldif['affiliation'],'(objectClass=*)',array('objectClass'));
-            $entry = ldap_get_entries($GLOBALS['LDAP'], $result);
-            if ($entry[0]['objectclass'][0] == 'posixGroup') {
-                $contents .= "\nadd: memberUid";
-                $contents .= "\nmemberUid: " . $ldif['person']['uid']['value'];
-            }
-            else {
-                $contents .= "\nadd: member";
-                $contents .= "\nmember: " . $ldif['person']['dn']['value'];
-            }
-        }
-        else {
-            if (preg_match('/cn=([^,]+)/',$ldif['affiliation'],$matches)) {
-                $contents .= "\n\ndn: $ldif[affiliation]";
-                $contents .= "\nchangetype: add";
-                $contents .= "\nobjectClass: top";
-                $contents .= "\nobjectClass: groupOfNames";
-                $contents .= "\ncn: $matches[1]";
-                $contents .= "\nmember: " . $ldif['person']['dn']['value'];
-            }
-        }
     }
 
     foreach ($ldif['applications'] as $application => $group) {
@@ -326,32 +278,6 @@ function verify_email ($email,$hash) {
         drupal_set_message("Email verification failed: $retval[error_message]",'error');
     }
     return $retval;
-}
-
-function get_affiliations($affiliation) {
-    $affiliations = array();
-
-    foreach ($GLOBALS['LDAP_AFFILIATIONS'] as $la) {
-        $name_attr = $GLOBALS['NAME_ATTRS'][$la['objectClass']];
-        $result = ldap_list($GLOBALS['LDAP'], "ou=$la[ou],ou=groups,dc=griidc,dc=org","(objectClass=$la[objectClass])",array($name_attr,'dn'));
-        $entries = ldap_get_entries($GLOBALS['LDAP'], $result);
-        sort($entries);
-        foreach ($entries as $entry) {
-            if (empty($entry['dn'])) continue;
-            $dn = $entry['dn'];
-            if ($la['objectClass'] == 'organizationalUnit') {
-                $defaultGroup = $la['defaultGroup'];
-                $defaultGroup = preg_replace("/\\\$$name_attr/",strtolower($entry[$name_attr][0]),$defaultGroup);
-                $dn = "cn=$defaultGroup,$dn";
-            }
-            $name = $la['ou'];
-            if ($entry[$name_attr][0] != 'members') $name .= ': ' . $entry[$name_attr][0];
-            $affiliations[$la['ou']][] = array('name' => $name, 'dn' => $dn, 'selected' => $dn == $affiliation);
-        }
-    }
-
-    $affiliations['other'] = $affiliation == 'other';
-    return $affiliations;
 }
 
 function output_errors($err) {
@@ -469,9 +395,6 @@ function ldif_to_message($ldif) {
     }
     if (array_key_exists('telephoneNumber',$ldif['person'])) {
         $message .= "\nPhone: " . $ldif['person']['telephoneNumber']['value'];
-    }
-    if (array_key_exists('affiliation',$ldif)) {
-        $message .= "\n\nAffiliation: $ldif[affiliation]";
     }
     if (array_key_exists('applications',$ldif)) {
         $message .= "\n\nAccess:";
