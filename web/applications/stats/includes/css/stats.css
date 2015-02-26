@@ -134,6 +134,10 @@
     text-align: right;
 }
 
+#research-details-vals {
+    width: 100%;
+}
+
 #categories_legend {
     display: table;
     height: 100%;
@@ -155,3 +159,31 @@
     border-radius: 4px;
     white-space: nowrap;
 }
+
+#dataset-size-ranges-legend {
+    margin-right: 7px;
+    margin-left: 24px;
+}
+
+#dataset-size-ranges-legend table {
+    width: 97%;
+    margin-left: auto;
+    margin-right: auto;
+    border-collapse: collapse;
+    border-spacing: 0px;
+}
+
+#dataset-size-ranges-legend td.legendLabel {
+    width: 16.7%;
+    text-align: center;
+    border: none;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    vertical-align: top;
+    line-height: 100%;
+}
+
+#dataset-size-ranges-legend td.legendColorBox {
+    display: none;
+}
+

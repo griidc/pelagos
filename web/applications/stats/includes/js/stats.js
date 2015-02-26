@@ -48,7 +48,7 @@ $(document).ready(function() {
                 fill: true,
                 numbers: {
                     show: true,
-                    yAlign: function(plot,y) { return plot.getAxes().yaxis.c2p(plot.getAxes().yaxis.p2c(y)+15); },
+                    yAlign: function(plot,y) { return plot.getAxes().yaxis.c2p(plot.getAxes().yaxis.p2c(y)+13); },
                     xAlign: function(plot,x) { return x + 0.4; }
                 }
             }
@@ -59,7 +59,32 @@ $(document).ready(function() {
             colors: [ '#88F', '#F55', 'orange' ],
             legend: { position: "nw" }
         },
-        'dataset-size-ranges': pie_conf
+        'dataset-size-ranges': {
+            xaxis: {
+                ticks: true,
+                min: 0,
+                max: 6
+            },
+            legend: {
+                noColumns: 6,
+                container: $('#dataset-size-ranges-legend')
+            },
+            bars: {
+                show: true,
+                fill: true,
+                numbers: {
+                    show: true,
+                    yAlign: function(plot,y) { 
+                        if (y < 25) {
+                            return plot.getAxes().yaxis.c2p(plot.getAxes().yaxis.p2c(y)-1);
+                        } else {
+                            return plot.getAxes().yaxis.c2p(plot.getAxes().yaxis.p2c(y)+13)
+                        }
+                    },
+                    xAlign: function(plot,x) { return x + 0.4; }
+                }
+            }
+        }
     };
 
     if (page == 'overview') {
