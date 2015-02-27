@@ -248,6 +248,12 @@ $app->get('/', function () use ($app) {
     $sth->execute();
     $ris = $sth->fetchAll();
     $stash['ris'] = $ris[0];
+    $sth = null;
+    $dbh = null;
+    
+    $gomri_dbh = OpenDB("GOMRI_RO");
+    $stash['datasetCount']=count_registered_datasets($gomri_dbh, array());
+    $gomri_dbh = null;
 
     return $app->render('html/index.html',$stash);
 });
