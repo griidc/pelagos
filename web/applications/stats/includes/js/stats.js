@@ -8,7 +8,7 @@ $(document).ready(function() {
 
     overviewSections = {
         'summary-of-records': {
-            colors: [ '#88F', 'green', 'gold' ],
+            colors: [ '#3f626a', '#3f626a', '#3f626a' ],
             xaxis: {
                 ticks: false,
                 min: 0,
@@ -35,6 +35,7 @@ $(document).ready(function() {
             legend: { position: "nw" }
         },
         'dataset-size-ranges': {
+            colors: [ '#3f626a', '#3f626a', '#3f626a', '#3f626a', '#3f626a', '#3f626a' ],
             xaxis: {
                 ticks: true,
                 min: 0,

@@ -312,7 +312,7 @@ $app->get('/data/overview/total-records-over-time', function () use ($app) {
     $trot_data = array();
     $dbh = OpenDB('GOMRI_RO');
 
-    $identifications = array( 'label' => 'Total Datasets Identified', 'data' => array() );
+    $identifications = array( 'label' => 'Identified', 'data' => array() );
     $SQL = "SELECT row_number() OVER(ORDER BY dataset_uid) AS count, dataset_uid::INT8 * 1000 AS ts FROM datasets WHERE status > 1;";
     $sth = $dbh->prepare($SQL);
     $sth->execute();
@@ -323,7 +323,7 @@ $app->get('/data/overview/total-records-over-time', function () use ($app) {
     $identifications['data'][] = array(time()*1000,$rows[count($rows)-1]['count']);
     $trot_data[] = $identifications;
 
-    $registrations = array( 'label' => 'Total Datasets Registered', 'data' => array() );
+    $registrations = array( 'label' => 'Registered', 'data' => array() );
     $SQL = "SELECT row_number() OVER(ORDER BY submittimestamp) AS count,
                    extract(epoch from submittimestamp) * 1000 AS ts
             FROM registry
@@ -343,7 +343,7 @@ $app->get('/data/overview/total-records-over-time', function () use ($app) {
     $registrations['data'][] = array(time()*1000,$rows[count($rows)-1]['count']);
     $trot_data[] = $registrations;
 
-    $metadata = array( 'label' => 'Total Datasets Available', 'data' => array() );
+    $metadata = array( 'label' => 'Available', 'data' => array() );
     $SQL = "SELECT row_number() OVER(ORDER BY submittimestamp) AS count,
                    extract(epoch from submittimestamp) * 1000 AS ts
             FROM registry
