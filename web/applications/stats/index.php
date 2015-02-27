@@ -198,6 +198,7 @@ $app->hook('slim.before', function () use ($app) {
     $env = $app->environment();
     $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
     $app->view()->appendData(array('baseUrl' => "$protocol$env[SERVER_NAME]$env[SCRIPT_NAME]"));
+    $app->view()->appendData(array('base_path' => $GLOBALS['pelagos']['base_path']));
 });
 
 $app->get('/includes/:file', 'dumpIncludesFile')->conditions(array('file' => '.+'));
