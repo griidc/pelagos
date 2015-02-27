@@ -31,7 +31,7 @@ $(document).ready(function() {
         'total-records-over-time': {
             xaxis: { mode: "time" },
             yaxis: { position: 'right' },
-            colors: [ '#88F', '#F55', 'orange' ],
+            colors: [ '#b8dcf1', '#bfcacd', '#004250' ],
             legend: { position: "nw" }
         },
         'dataset-size-ranges': {
