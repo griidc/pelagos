@@ -10,7 +10,7 @@ $(document).ready( function () {
     $('#tabs').tabs({
         active: $.cookie('activetab'),
         activate : function( event, ui ) {
-            $.cookie( 'activetab', ui.newTab.index(),{ path : '/mdapp' });
+            $.cookie( 'activetab', ui.newTab.index(), 1, { path : "/mdapp" });
             $( $.fn.dataTable.tables( true ) ).DataTable().columns.adjust();
         }
     });
