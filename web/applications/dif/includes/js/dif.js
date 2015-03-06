@@ -298,26 +298,14 @@ function getQueryParams(qs) {
 
 function treeSearch()
 {
-    var searchValue = $('#fltResults').val();
+    var searchValue = $('#fltResults').val().trim();
     showSpinner();
     $('#diftree').on('search.jstree', function (e, data) {
         if (data.res.length <= 0)
         {
-            $('<div id="noresults" title="Search...">No Results Found.</div>').dialog({
+            $('#noresults').dialog({
                 resizable: false,
-                //height: 80,
-                //width: "auto",
                 modal: true,
-                //position: { my: "center center", at: "center center", of: "#difFilterTools" },
-                //difFilterTools
-                close: function(event, ui) {
-                    $(this).dialog('destroy').remove();
-                },
-                open: function(event, ui) {
-                    setTimeout(function(){
-                        //$('#noresults').dialog('close');
-                    }, 5000);
-                },
                 buttons: {
                     "OK": function() {
                         $(this).dialog('close');
@@ -469,6 +457,7 @@ function getNode(UDI)
 
 function loadDIFS(Status,Person,ShowEmpty)
 {
+    $("#btnSearch").button('disable');
     if (personid > 0 && !Person) {Person = personid;}
     $.ajax({
         cache: false,
@@ -496,6 +485,7 @@ function makeTree(json)
     .on('loaded.jstree', function (e, data) {
         var searchValue = $('#fltResults').val();
         $('#diftree').jstree(true).search(searchValue);
+        $("#btnSearch").button('enable');
     })
     
 }

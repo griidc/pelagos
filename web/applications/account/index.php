@@ -1,14 +1,12 @@
 <?php
 
+$GLOBALS['pelagos']['title'] = 'Account Management';
+
 # load global pelagos config
 $GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini', true);
 
 # load Common library from global share
 require_once($GLOBALS['config']['paths']['share'].'/php/Common.php');
-
-# make sure current working directory is the directory that this file lives in
-$GLOBALS['orig_cwd'] = getcwd();
-chdir(realpath(dirname(__FILE__)));
 
 # check for local config file
 if (file_exists('config.ini')) {
@@ -295,7 +293,6 @@ $app->get('/request', function () use ($app) {
         }
 
         $stash['person']['sshPublicKey']['value'] = PASTE_PUB_KEY;
-        $stash['affiliations'] = get_affiliations(null);
         $stash['hash'] = $hash;
         $stash['checked'] = array('Drupal' => 1, 'pkiNone' => 1);
         $stash['PASTE_PUB_KEY'] = PASTE_PUB_KEY;
@@ -363,7 +360,6 @@ $app->post('/request', function () use ($app) {
                 $stash['checked'][$pubKeyActionOption] = $pubKeyActionOption == $pubKeyAction ? 1 : 0;
             }
 
-            $stash['affiliations'] = get_affiliations($app->request()->post('affiliation'));
             $stash['hash'] = $hash;
             $stash['PASTE_PUB_KEY'] = PASTE_PUB_KEY;
 
@@ -395,8 +391,6 @@ $app->post('/request', function () use ($app) {
                     $stash['applications'][$application] = $default_group;
                 }
             }
-
-            $stash['affiliation'] = $app->request()->post('affiliation');
 
             $stash['person']['userPassword']['value'] = make_ssha_password($stash['person']['userPassword']['value']);
 
@@ -455,7 +449,6 @@ $app->get('/approve', $GLOBALS['AUTH_FOR_ROLE']('admin'), function () use ($app)
         else {
             $stash = read_ldif($ldifFile);
             $stash['uid'] = $uid;
-            $stash['affiliations'] = get_affiliations($stash['affiliation']);
             $stash['checked']['Shell'] = in_array('posixAccount',$stash['objectClasses']);
             foreach ($GLOBALS['APPLICATIONS'] as $application => $default_group) {
                 $stash['checked'][$application] = isset($stash['applications'][$application]);
@@ -483,8 +476,6 @@ $app->post('/approve', $GLOBALS['AUTH_FOR_ROLE']('admin'), function () use ($app
         }
 
         $stash['uid'] = $uid;
-        $stash['affiliation'] = $app->request()->post('affiliation');
-        $stash['affiliations'] = get_affiliations($stash['affiliation']);
 
         $stash['applications'] = array();
         foreach ($GLOBALS['APPLICATIONS'] as $application => $default_group) {
@@ -511,8 +502,6 @@ $app->post('/approve/create', $GLOBALS['AUTH_FOR_ROLE']('admin'), function () us
         $ldifFile = SPOOL_DIR . "/incoming/$uid.ldif";
         $ldif = read_ldif($ldifFile);
         $ldif = check_person($app,'a',$ldif);
-
-        $ldif['affiliation'] = $app->request()->post('affiliation');
 
         $ldif['applications'] = array();
         foreach ($GLOBALS['APPLICATIONS'] as $application => $default_group) {
@@ -829,7 +818,4 @@ $app->post('/password/:action', function ($action) use ($app) {
     echo "<p>Your password has been updated. Please use this new password to log in to GRIIDC systems. If you need assistance, please contact: <a href='mailto:griidc@gomri.org'>griidc@gomri.org</a> for help.</p>";
 })->conditions(array('action' => '(reset|change)'));
 
-$orig_env = fixEnvironment();
 $app->run();
-restoreEnvironment($orig_env);
-chdir($GLOBALS['orig_cwd']);

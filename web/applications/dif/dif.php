@@ -3,16 +3,14 @@
 $GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini', true);
 $GLOBALS['config'] = array_merge($GLOBALS['config'], parse_ini_file($GLOBALS['config']['paths']['conf'].'/ldap.ini', true));
 
-include_once '/opt/pelagos/share/php/aliasIncludes.php';
+set_include_path('../../../share/php' . PATH_SEPARATOR . get_include_path());
 
-include 'difDL.php'; //dif DataLayer
-
-include_once '/usr/local/share/GRIIDC/php/ldap.php'; 
-include_once '/usr/local/share/GRIIDC/php/griidcMailer.php';
-include_once '/usr/local/share/GRIIDC/php/dif-registry.php'; 
-include_once '/usr/local/share/GRIIDC/php/EventHandler.php'; 
-//include_once '/usr/local/share/GRIIDC/php/drupal.php'; 
-
+require_once 'aliasIncludes.php';
+require_once 'difDL.php'; //dif DataLayer
+require_once 'ldap.php';
+require_once 'griidcMailer.php';
+require_once 'dif-registry.php';
+require_once 'EventHandler.php';
 require_once 'Twig/Autoloader.php';
 
 global $twig;
@@ -197,7 +195,8 @@ function postDIF($fielddata)
             case 7: $fundingSource = 'R1'; break;
             case 8: $fundingSource = 'R2'; break;
             case 9: $fundingSource = 'R3'; break;
-            default: $fundingSource = '??';
+            case 10: $fundingSource = 'R4'; break;
+            default: throw new Exception('Unknown Funding Source');
         }
     }
     
@@ -728,12 +727,17 @@ function getTaskOptions($personID)
     
     foreach ($rpisTasks as $task)
     {
+        $fundingSourceName = (string)$task->Project->FundingSource;
+        
+        if (preg_match('/\(([^\)]+)\)/', $fundingSourceName ,$matches)) {
+            $fundingSourceName = $matches[1];
+        }
         
         $maxLength = 200;
         if (strlen($task->Title) > $maxLength){
-            $taskTitle=substr((string)$task->Title,0,$maxLength).'...';
+            $taskTitle=substr((string)$task->Title,0,$maxLength).'...'.'('.$fundingSourceName.')';
         } else {
-            $taskTitle=(string)$task->Title;
+            $taskTitle=(string)$task->Title.' ('.$fundingSourceName.')';
         }
         
         $fundingSource = (string)$task->Project->FundingSource["ID"];
@@ -742,7 +746,6 @@ function getTaskOptions($personID)
         $projectID = (string)$task->Project["ID"];
         $pseudoID = ((int)$projectID * 1024)+ (int)$taskID;
         $tasks[] = array('Title'=>$taskTitle,'ID'=>$pseudoID,'taskID'=>$taskID,'projectID'=>$projectID,'fundSrcID'=>$fundingSource);
-        
     }    
     
     sort($tasks);

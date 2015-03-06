@@ -171,7 +171,6 @@ div.nodata {
     color: red;
 }
 
-
 div.spinner div {
     position: absolute;
     top: 50%;
@@ -185,4 +184,25 @@ div.spinner div {
 
 .qtip-tipped .qtip-content {
     color: #222;
+}
+
+.dotchartcontainer{
+    width: 100%;
+    font-size: 11pt;
+    stroke-width: 1;
+}
+.dotchart{
+    width: 100%;
+}
+.circleColor_a{
+    fill: #1b8d1b;
+    stroke: #888;
+}
+.circleColor_r{
+    fill: #fedc00;
+    stroke: #aaa;
+}
+.circleColor_i{
+    fill: #ddd;
+    stroke: #aaa;
 }

@@ -26,24 +26,30 @@ var $ = jQuery.noConflict();
 
 $(document).ready(function() {
     $('#menu .overview').width($('#menu .viewport').width() - 15);
-
-    $(window).hashchange( function(){
+        $(window).hashchange( function(){
         var m = location.hash.match(/^#([^\/]+)\/?([^\/]+)?/);
         if (m) {
             if (typeof m[1] !== 'undefined') {
                 if (typeof m[2] === 'undefined') {
-                    $("#tree").jstree("select_node", $('#datasets_projectId_' + m[1]), true);
-                    $("#tree").jstree("select_node", $('#tasks_projectId_' + m[1]), true);
+                    if ($('#tree').jstree('get_selected').attr('id') != 'datasets_projectId_' + m[1]) {
+                        $("#tree").jstree("select_node", $('#datasets_projectId_' + m[1]), true);
+                    }
+                    if ($('#tree').jstree('get_selected').attr('id') != 'tasks_projectId_' + m[1]) {
+                        $("#tree").jstree("select_node", $('#tasks_projectId_' + m[1]), true);
+                    }
                 }
                 else {
                     $("#tree").jstree("open_node", $('#projects_fundSrc_' + map_fund_src(m[1])));
-                    $("#tree").jstree("select_node", $('#datasets_projectId_' + map_project(m[2])), true);
-                    $("#tree").jstree("select_node", $('#tasks_projectId_' + map_project(m[2])), true);
+                    if ($('#tree').jstree('get_selected').attr('id') != 'datasets_projectId_' + map_project(m[2])) {
+                        $("#tree").jstree("select_node", $('#datasets_projectId_' + map_project(m[2])), true);
+                    }
+                    if ($('#tree').jstree('get_selected').attr('id') != 'tasks_projectId_' + map_project(m[2])) {
+                        $("#tree").jstree("select_node", $('#tasks_projectId_' + map_project(m[2])), true);
+                    }
                 }
             }
         }
-    })
-
+    });
 });
 
 function showProjects(by,id) {
@@ -126,6 +132,7 @@ function showProjects(by,id) {
                 sortRestart : true,
                 sortInitialOrder: 'asc'
             });
+            graphDatasetStatus(".dotchart");
         }
     });
 }

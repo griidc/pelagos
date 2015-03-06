@@ -1,5 +1,7 @@
 <?php
 
+$GLOBALS['pelagos']['title'] = 'ISO 19115-2 Metadata Editor';
+
 include_once '/opt/pelagos/share/php/aliasIncludes.php';
 
 if (isset($_GET["udi"]))
@@ -102,12 +104,12 @@ if (isset($_GET["dataUrl"]) and !isset($_FILES["file"]))
 	if ($xmldoc != null)
 	{
 		$dMessage = 'Successfully  loaded XML from URL: ' .  $xmlURL;
-		drupal_set_message($dMessage,'status');
+		drupal_set_message($dMessage,'status',false);
 	}
 	else
 	{
 		$dMessage = 'Error while loading data from: ' .  $xmlURL;
-		drupal_set_message($dMessage,'error');
+		drupal_set_message($dMessage,'error',false);
 	}
 }
 
@@ -122,7 +124,7 @@ if (isset($thefile))
 	else
 	{
 		$dMessage = 'Sorry.' .  $_FILES["file"]["name"] . ', is not an XML file!';
-		drupal_set_message($dMessage,'warning');
+		drupal_set_message($dMessage,'warning',false);
 	}
 }
 
@@ -143,6 +145,7 @@ echo "</script>\n";
 
 ?>
 
+<div>
 <div style="font-size:smaller;" id="metadialog"></div>
 <div style="font-size:smaller;display:none;" id="savedialog">
 <span id="dialogtxt">All required fields are complete.<br/>
@@ -192,3 +195,4 @@ Click OK to download.
 		</td>
 	</tr>
 </table>
+</div>

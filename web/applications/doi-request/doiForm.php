@@ -362,50 +362,45 @@ if ($_POST)
             else
             {
                 $doiArr = explode(' ',$result[0]);
-                $dMessage = 'Sorry, a DOI with this information already exists number: <a href="http://n2t.net/ezid/id/'.$doiArr[1].'">' . $doiArr[1] . '</a>';
+                $dMessage = 'Sorry, a DOI with this information already exists number: <a href="http://n2t.net/ezid/id/'.$doiArr[1].'">' . $doiArr[1] . '</a>.';
                 drupal_set_message($dMessage,'warning');
             }
-        }
-        else
-        {
+        } else {
             $txtWhat = pg_escape_string($txtWhat);
             $txtWho = pg_escape_string($txtWho);
             $txtWhere = pg_escape_string($txtWhere);
-            
-            $query = "INSERT INTO doi_regs (url,creator,title,publisher,dsdate,urlstatus,formhash,reqdate,reqip,reqemail,reqby, reqfirstname, reqlastname) 
-            VALUES ('$txtURL', '$txtWho', '$txtWhat', '$txtWhere', '$txtDate', '$urlValidate', '$formHash', '$now', '$ip','$userEmail','$userId', '$userFirstName', '$userLastName');";
-            $result = dbexecute ($query);
-                       
-            if (strpos($result,"duplicate") === false)
-            {
-                if (strpos($result,"ERROR") === false AND !is_null($result))
-                {
-                    $dMessage = "Thank you for your submission, you will be contacted by GRIIDC shortly with your DOI. Please email <a href=\"mailto:griidc@gomri.org?subject=DOI Form\">griidc@gomri.org</a> if you have any questions.";
-                    drupal_set_message($dMessage,'status');
-                    sendMailSubmit($formHash,$userEmail,$userFirstName,$userLastName);
-                    
-                    $doiFormLink = "https://".$_SERVER['SERVER_NAME']."/doi?formKey=$formHash";
-                    $reqLink = $txtURL;
-                    $userData = array('firstName'=>$userFirstName,'lastName'=>$userLastName,'email'=>$userEmail);
-                    $doiData = array('requesturl'=>$reqLink,'formLink'=>$doiFormLink);
-                    $eventData = array('userId'=>$userId,'user'=>$userData,'doi'=>$doiData);
 
-                    eventHappened('doi_requested',$eventData);
-                }
-                else
-                {
-                    $dMessage= "A database error happened, please contact the administrator <a href=\"mailto:griidc@gomri.org?subject=DOI Error\">griidc@gomri.org</a>.";
-                    drupal_set_message($dMessage,'error',false);
-                }
-            }
-            else
-            {
-                $dMessage= "Sorry, the data was already succesfully submitted, you will be contacted by GRIIDC shortly with your DOI. Please email <a href=\"mailto:griidc@gomri.org?subject=DOI Form\">griidc@gomri.org</a> if you have any questions.";
+            $query = "SELECT EXISTS(SELECT * from doi_regs where formhash = '$formHash')::INT";
+            $dupeDetected = (bool) dbexecute($query)[0];
+
+            if (!$dupeDetected) {
+                $query = "INSERT INTO doi_regs (url,creator,title,publisher,dsdate,urlstatus,formhash,reqdate,reqip,reqemail,reqby, reqfirstname, reqlastname) 
+                          VALUES ('$txtURL', '$txtWho', '$txtWhat', '$txtWhere', '$txtDate', '$urlValidate', '$formHash', '$now', '$ip','$userEmail','$userId', '$userFirstName', '$userLastName');";
+                $result = dbexecute ($query);
+
+                    if (strpos($result,"ERROR") === false AND !is_null($result)) {
+                        $dMessage = "Thank you for your submission. You will be contacted by GRIIDC shortly with your DOI. Please email <a href=\"mailto:griidc@gomri.org?subject=DOI Form\">griidc@gomri.org</a> if you have any questions.";
+                        drupal_set_message($dMessage,'status');
+                        sendMailSubmit($formHash,$userEmail,$userFirstName,$userLastName);
+                        $doiFormLink = "https://".$_SERVER['SERVER_NAME']."/doi?formKey=$formHash";
+                        $reqLink = $txtURL;
+                        $userData = array('firstName'=>$userFirstName,'lastName'=>$userLastName,'email'=>$userEmail);
+                        $doiData = array('requesturl'=>$reqLink,'formLink'=>$doiFormLink);
+                        $eventData = array('userId'=>$userId,'user'=>$userData,'doi'=>$doiData);
+
+                        eventHappened('doi_requested',$eventData);
+                        eventHappened('doi_needs_approval',$eventData);
+                    } else {
+                        $dMessage= "A database error happened. Please contact the administrator <a href=\"mailto:griidc@gomri.org?subject=DOI Error\">griidc@gomri.org</a>.";
+                        drupal_set_message($dMessage,'error',false);
+                    }
+            } else {
+                $dMessage= "A DOI has already been requested with this information. For any concerns, please contact <a href=\"mailto:griidc@gomri.org?subject=DOI Form\">griidc@gomri.org</a>.";
                 drupal_set_message($dMessage,'warning');
             }
         }
     }
-}    
+}
     
 if ($userId == "")
 {

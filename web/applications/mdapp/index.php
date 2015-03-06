@@ -2,6 +2,8 @@
 # METADATA APPROVAL APPLICATION
 # PPOC: Williamson
 
+$GLOBALS['pelagos']['title'] = 'Metadata Approval Application';
+
 # LOGFILE - SET THIS ACCORDINGLY
 $GLOBALS['logfile_name']='mdapp.log';
 date_default_timezone_set('America/Chicago');
@@ -45,6 +47,7 @@ $GLOBALS['module_config'] = parse_ini_file('config.ini',true);
 $GLOBALS['logfile_location'] = $GLOBALS['pelagos_config']['paths']['log'].'/'.$GLOBALS['logfile_name'];
 $GLOBALS['ldap'] = parse_ini_file($GLOBALS['pelagos_config']['paths']['conf'].'/ldap.ini',true);
 $GLOBALS['smtp'] = parse_ini_file($GLOBALS['pelagos_config']['paths']['conf'].'/smtp.ini',true);
+$GLOBALS['PAGE_NAME'] = preg_replace('/^\//', '', $_SERVER['SCRIPT_NAME']);
 
 $app = new Slim(array(
                         'view' => new TwigView,
@@ -543,12 +546,41 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                         $geometry_wkt=$tmp[0]['geometry_wkt'];
                         $geoflag = 'yes'; 
                         // Now determine an envelope that surrounds this geometry
-                        $sql = "SELECT ST_AsText(ST_Envelope('$geometry'::geometry)) as geoenvelope";
+                        $sql = "SELECT
+                                    ST_AsText(ST_Envelope(:geo::geometry)) as \"geoenvelope\",
+                                    ST_XMin(:geo::geometry) as \"westBoundLongitude\",
+                                    ST_XMax(:geo::geometry) as \"eastBoundLongitude\",
+                                    ST_YMin(:geo::geometry) as \"southBoundLatitude\",
+                                    ST_YMax(:geo::geometry) as \"northBoundLatitude\"
+                                    ";
                         $data3 = $dbms->prepare($sql);
+                        $data3->bindParam(":geo",$geometry);
                         if ($data3->execute()) {
                             $tmp=$data3->fetchAll();
                             $envelope_wkt=$tmp[0]['geoenvelope'];
-                            $envelope=polygonbox_to_bounding_box($tmp[0]['geoenvelope']);
+                            $westBoundLongitude=$tmp[0]['westBoundLongitude'];
+                            $eastBoundLongitude=$tmp[0]['eastBoundLongitude'];
+                            $southBoundLatitude=$tmp[0]['southBoundLatitude'];
+                            $northBoundLatitude=$tmp[0]['northBoundLatitude'];
+                            $envelope=<<<EOF
+                                <gmd:geographicElement>
+                                  <gmd:EX_GeographicBoundingBox>
+                                    <gmd:westBoundLongitude>
+                                      <gco:Decimal>$westBoundLongitude</gco:Decimal>
+                                    </gmd:westBoundLongitude>
+                                    <gmd:eastBoundLongitude>
+                                      <gco:Decimal>$eastBoundLongitude</gco:Decimal>
+                                    </gmd:eastBoundLongitude>
+                                    <gmd:southBoundLatitude>
+                                      <gco:Decimal>$southBoundLatitude</gco:Decimal>
+                                    </gmd:southBoundLatitude>
+                                    <gmd:northBoundLatitude>
+                                      <gco:Decimal>$northBoundLatitude</gco:Decimal>
+                                     </gmd:northBoundLatitude>
+                                  </gmd:EX_GeographicBoundingBox>
+                                </gmd:geographicElement>
+EOF;
+
                             drupal_set_message("A bounding envelope has been calculated for this geometry.",'status');
 
                             // first load XML into DOM object for future manipulation
@@ -662,23 +694,6 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                 }
             }
 
-            // send email if accepted and mail flag is set
-            $dm_contacted=false;
-            $dataManager=getDataManagerOldDataModel($udi); #array  ('fullname', 'email')
-            $userMail=getUserMail($user->name); #array  ('fullname', 'email')
-            $to_address_string = "$dataManager[email]";
-            $from_address_string = "$userMail[email]";
-            $approvers = getMetadataReviewers();
-            $cc = array();
-            foreach($approvers as $approver) {
-                array_push($cc,$approver['mail']);
-            }
-            if (isset($_POST['acceptMetadata']) and $_POST['acceptMetadata']=='on' and isset($_POST['contactOwner']) and $_POST['contactOwner']=='on') {
-                $dm_contacted=true;
-                sendEmail($to_address_string,$userMail['email'],"$udi metadata","The metadata for $udi has been accepted by GRIIDC.  Thank you!",$cc);
-                drupal_set_message("An email of this approval has been sent to ".$dataManager['fullname'].'('.$dataManager['email'].')','status');
-            }
-
             drupal_set_message('Upload Successful','status');
             if(isset($envelope_wkt) and ($envelope_wkt != null)) {
                 $thanks_msg = " 
@@ -706,7 +721,6 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
             drupal_set_message($thanks_msg,'status');
             $loginfo=$user->name." successfully uploaded metadata for $reg_id";
             if($flagged_accepted) {$loginfo .= " and data was flagged as accepted";}
-            if($dm_contacted) { $loginfo .= " and data manager was emailed"; }
             $loginfo .= '.'; // Punctuation is important.
             writeLog($loginfo);
 
@@ -786,106 +800,6 @@ function checkForUDI($udi) {
     $result = $data->fetchAll();
     $count = $result[0]['count'];
     return ($count==1);
-}
-
-function getDataManager($udi) {
-    // returns: array  ('fullname', 'email')
-    $sql = 'SELECT
-    "EmailInfo_Address", coalesce("Person_HonorificTitle",\'\')||
-    \' \'||"Person_FirstName"||\' \'||coalesce("Person_MiddleName",\'\')||
-    \' \'||"Person_LastName"||\' \'||coalesce("Person_NameSuffix",\'\') as fullname
-    FROM
-    "HRI"."Dept-GoMRIPerson-Project-Role",
-    "HRI"."EmailInfo",
-    "HRI"."Person",
-    "HRI"."Project"
-    WHERE
-    "EmailInfo"."Person_Number" = "Person"."Person_Number" AND
-    "Person"."Person_Number" = "Dept-GoMRIPerson-Project-Role"."Person_Number"
-    AND "Dept-GoMRIPerson-Project-Role"."ProjRole_Number" = 3
-    AND "Dept-GoMRIPerson-Project-Role"."Project_Number" = "Project"."Project_Number"
-    AND "Project"."FundingEnvelope_Cycle" = ? and "Project"."Project_Number" = ?';
-
-    $dbms = OpenDB("GRIIDC_RO");
-    $data = $dbms->prepare($sql);
-
-    $fundingCycle=substr($udi,0,1).'0'.substr($udi,1,1);
-    $fundingCycle=preg_replace('/Y01/','B01',$fundingCycle);
-    $projSec=substr($udi,4,3);
-    $data->execute(array($fundingCycle,$projSec));
-    $result = $data->fetchAll();
-    // will only have one
-    $email = $result[0]['EmailInfo_Address'];
-    $fullname = $result[0]['fullname'];
-    $ret['fullname']=$fullname;
-    $ret['email']=$email;
-    return $ret;
-}
-
-function getDataManagerOldDataModel($udi) {
-    // returns: array  ('fullname', 'email')
-    $sql = "
-    SELECT
-        People.People_Email as EmailInfo_Address,
-        concat(
-            coalesce(People.People_Title,''),
-            ' ',
-            People.People_FirstName,
-            ' ',
-            coalesce(People.People_MiddleName,''),
-            ' ',
-            People.People_LastName,
-            ' ',
-            coalesce(People.People_Suffix)
-        ) as fullname
-    FROM
-        People
-            JOIN ProjPeople
-                ON People.People_ID = ProjPeople.People_ID
-            JOIN Programs
-                ON ProjPeople.Program_ID = Programs.Program_ID
-            JOIN FundingSource
-                ON Programs.Program_FundSrc = FundingSource.Fund_ID
-            JOIN Roles
-                ON ProjPeople.Role_ID = Roles.Role_ID
-    WHERE FundingSource.Fund_Name like ?
-    AND Programs.Program_ID = ?
-    AND Role_Name = 'Project Data Point of Contact'
-";
-
-    $dbms = OpenDB("RIS_RO");
-    $data = $dbms->prepare($sql);
-
-    $projSec=substr($udi,4,3);
-
-    $fundingCycle=substr($udi,0,2);
-    switch ($fundingCycle) {
-        case "Y1":
-            $fc='Year One Block Grant';
-            break;
-        case "R1":
-            $fc='RFP-I';
-            break;
-        case "R2":
-            $fc='RFP-II';
-            break;
-        case "R3":
-            $fc='RFP-III';
-            break;
-    }
-
-    $data->execute(array("%$fc%",$projSec));
-    $fullname = ''; $email = '';
-    if ($result = $data->fetchAll()) {
-        // will only have one
-        $email = $result[0]['EmailInfo_Address'];
-        $fullname = $result[0]['fullname'];
-        $ret['fullname']=$fullname;
-        $ret['email']=$email;
-        return $ret;
-    } else {
-        return;
-    }
 }
 
 function getUserMail($gomri_userid) {
@@ -1024,56 +938,3 @@ function getMetadataReviewers() {
 function textboxize($string,$xpath) {
     return "$string<textarea onclick=\"this.focus();this.select()\" readonly=\"readonly\" style=\"width: 100%\">$xpath</textarea>";
 }
-
-function polygonbox_to_bounding_box($orig_coords) {
-    $i=0;
-
-    # strip out unneeded text
-    $coords = preg_split('/,/',preg_replace("/POLYGON\(\(|\)\)/",'',$orig_coords));
-
-    $long = array(); $lat = array();
-    foreach ($coords as $pair) {
-        list($long,$lat) = preg_split("/ /",$pair);
-        $longitudes[$i]=$long;
-        $latitudes[$i]=$lat;
-        $i++;
-    }
-    if ($i != 5) {
-        throw new RuntimeException("Expected envelope as polygon should be 5 coordinate pairs.");
-    }
-
-    $west = $longitudes[0];
-    $east = $longitudes[0];
-    $south = $latitudes[0];
-    $north = $latitudes[0];
-
-    for ($j=0;$j<$i;$j++) {
-        if($longitudes[$j]<$west) { $west = $longitudes[$j]; }
-        if($longitudes[$j]>$east) { $east = $longitudes[$j]; }
-        if($latitudes[$j]<$south) { $south = $latitudes[$j]; }
-        if($latitudes[$j]>$north) { $north = $latitudes[$j]; }
-    }
-
-    $return = 
-"<gmd:geographicElement>
-  <gmd:EX_GeographicBoundingBox>
-    <gmd:westBoundLongitude>
-      <gco:Decimal>$west</gco:Decimal>
-    </gmd:westBoundLongitude>
-    <gmd:eastBoundLongitude>
-      <gco:Decimal>$east</gco:Decimal>
-    </gmd:eastBoundLongitude>
-    <gmd:southBoundLatitude>
-      <gco:Decimal>$south</gco:Decimal>
-    </gmd:southBoundLatitude>
-    <gmd:northBoundLatitude>
-      <gco:Decimal>$north</gco:Decimal>
-     </gmd:northBoundLatitude>
-  </gmd:EX_GeographicBoundingBox>
-</gmd:geographicElement>
-";
-
-return $return;
-
-}
-?>
