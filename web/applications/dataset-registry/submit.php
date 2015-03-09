@@ -19,7 +19,7 @@ $mytest->mailSubject = 'GRIIDC Dataset Registration Submitted';
 $mytest->sendMail();
 
 echo '<fieldset>';
-echo '<table border="1" width="100%" style="background-color:transparent; color:black;" border="0">';
+echo '<table border="1" width="100%" style="background-color:white; color:black;" border="0">';
 echo "<tr><td width=\"200px\" align=\"top\"><b>Registry Identifier:</b></td><td><h2><a href=\"".$_SERVER['SCRIPT_NAME']."?regid=$registry_vals[registry_id]\">$registry_vals[registry_id]</h2></td></tr>";
 echo "<tr rowspan=2><td><b>Dataset Title:</b></td><td>$registry_vals[dataset_title]</td></tr>";
 echo "<tr rowspan=3><td><b>Dataset Abstract:</b></td><td>$registry_vals[dataset_abstract]</td></tr>";
