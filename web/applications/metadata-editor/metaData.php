@@ -56,7 +56,7 @@ class metaData
 		}
 	}
 	
-	public function returnPath($path)
+	public function returnPath($path, $firstOccurance = true)
 	{
 		if (is_null($this->xmldoc))
 		{
@@ -70,11 +70,19 @@ class metaData
 		
 		$nodelevels = preg_split("/-/",$path);
 		
+		$nodedeep = 0;
+        
 		foreach ($nodelevels as $nodelevel)
 		{
 			$splitnodelevel = preg_split("/\!/",$nodelevel);
-			
-			$xpath .= "/" . $splitnodelevel[0];
+           
+            if ($nodedeep > 1 and $firstOccurance) {
+                $xpath .= "[1]/" . $splitnodelevel[0];
+            } else {
+                $xpath .= "/" . $splitnodelevel[0];
+            }
+            
+            $nodedeep++;
 		}
 		
 		//echo "$xpath<br>";
