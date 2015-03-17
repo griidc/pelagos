@@ -23,10 +23,10 @@ $GLOBALS['db_config']       = parse_ini_file($GLOBALS['pelagos_config']['paths']
 $GLOBALS['module_config']   = parse_ini_file('config.ini',true);
 $GLOBALS['logfile_location'] = $GLOBALS['pelagos_config']['paths']['log'];
 # log registrations of new metadata to mdapp's log
-$mdapp_logfile = "$GLOBALS[logfile_location]/mdapp.log";  
+$mdapp_logfile = "$GLOBALS[logfile_location]/mdapp.log";
 
 define('RPIS_TASK_BASEURL',  $GLOBALS['module_config']['RISDATA']['RPIS_TASK_BASEURL']);
-define('RPIS_PEOPLE_BASEURL',$GLOBALS['module_config']['RISDATA']['RPIS_PEOPLE_BASEURL']); 
+define('RPIS_PEOPLE_BASEURL',$GLOBALS['module_config']['RISDATA']['RPIS_PEOPLE_BASEURL']);
 
 $host   = $GLOBALS['db_config']['GOMRI_RW']['host'];
 $user   = $GLOBALS['db_config']['GOMRI_RW']['username'];
@@ -34,7 +34,7 @@ $pw     = $GLOBALS['db_config']['GOMRI_RW']['password'];
 $port   = $GLOBALS['db_config']['GOMRI_RW']['port'];
 $dbname = $GLOBALS['db_config']['GOMRI_RW']['dbname'];
 
-define('GOMRI_DB_CONN_STRING',"host=$host port=$port dbname=$dbname user=$user password=$pw"); 
+define('GOMRI_DB_CONN_STRING',"host=$host port=$port dbname=$dbname user=$user password=$pw");
 $conn = pdoDBConnect('pgsql:'.GOMRI_DB_CONN_STRING);
 
 $isGroupAdmin = false;
@@ -67,18 +67,8 @@ if (isset($uid)) {
     }
 }
 
-# first try to get tasks for which we have a task role
-$tasks = getTasks($ldap,$baseDN,$userDN,$submittedby,true);
-
-# if we have no task roles, try to get tasks for which we have any role
-# Or if there are only Project Task, get the individual tasks as well
-$onlyProjects = true;
-
-foreach ($tasks as $task) { if ((int)$task['ID'] != 0) { $onlyProjects = false;} }
-
-if (count($tasks) == 0 OR $onlyProjects) {
-    $tasks = getTasks($ldap,$baseDN,$userDN,$submittedby,false);
-}
+# get Tasks for RIS Service
+$tasks = getTasks($ldap,$baseDN,$userDN,$submittedby);
 
 # if we still have no tasks, show a warning
 if (count($tasks) == 0) {
@@ -138,7 +128,7 @@ if ($_GET)
 $registry_vals = array();
 
 if ($_POST) {
-        
+
     $formHash = sha1(serialize($_POST));
     if (empty($_POST['title']) or empty($_POST['abstrct']) or empty($_POST['pocemail']) or empty($_POST['pocname']) or empty($_POST['dataset_originator'])) {
         $dMessage = 'Not all required fields where filled out!';
@@ -304,7 +294,7 @@ if ($_POST) {
                             $metadata_file_path = "file://$dest_dir/" . $_FILES["metadatafile"]["name"];
                             $registry_vals['metadata_dl_status'] = 'None';
                             $message = "$drupaluser->name has been registered new metadata via direct upload for ".addslashes($_POST['dataset_udi']);
-                            writeLog($message,$mdapp_logfile); 
+                            writeLog($message,$mdapp_logfile);
                         }
                     }
                     $registry_vals['url_metadata'] = $metadata_file_path;
@@ -315,7 +305,7 @@ if ($_POST) {
                         $registry_vals['metadata_dl_status'] = 'None';
                     }
                     $message = "$drupaluser->name has been registered new metadata via SFTP/GridFTP upload for ".addslashes($_POST['dataset_udi']);
-                    writeLog($message,$mdapp_logfile); 
+                    writeLog($message,$mdapp_logfile);
                     break;
                 case 'HTTP':
                     if (array_key_exists('url_metadata_http',$_POST) and !empty($_POST['url_metadata_http'])) {
@@ -324,7 +314,7 @@ if ($_POST) {
                             $registry_vals['metadata_dl_status'] = 'None';
                         }
                         $message = "$drupaluser->name has been registered new metadata via HTTP pull for ".addslashes($_POST['dataset_udi']);
-                        writeLog($message,$mdapp_logfile); 
+                        writeLog($message,$mdapp_logfile);
                     }
             }
 
@@ -341,21 +331,21 @@ if ($_POST) {
             if ($result) {
                 $dMessage = "Thank you for your submission. Please email <a href=\"mailto:griidc@gomri.org?subject=Registration Form\">griidc@gomri.org</a> if you have any questions.";
                 drupal_set_message($dMessage,'status',false);
-                
+
                 $registryID = $registry_vals['registry_id'];
                 $UDI = $_POST['dataset_udi'];
                 $submitAction = $_POST["submit"];
-                
+
                 $userData = array('firstName'=>$firstName,'lastName'=>$lastName);
                 $eventData = array('udi'=>$UDI,'userId'=>$uid,'registryID'=>$registryID,'user'=>$userData);
-                
+
                 if ($submitAction == 'Update')
                 { $eventAction = 'dataset_registration_updated'; }
                 else
                 { $eventAction = 'dataset_registration_submitted'; }
-                
+
                 eventHappened($eventAction,$eventData);
-                
+
                 $_SESSION['submitok'] = true;
             }
             else {

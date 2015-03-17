@@ -123,7 +123,7 @@ function getTaskOptionList($tasks, $what = null) {
 	unset($doc);
 }
 
-function getTasks($ldap,$baseDN,$userDN,$peopleid,$restrict_to_task_roles=false) {
+function getTasks($ldap,$baseDN,$userDN,$peopleid) {
     global $isGroupAdmin;
     $switch = '?'.'maxResults=-1';
 
@@ -157,31 +157,23 @@ function getTasks($ldap,$baseDN,$userDN,$peopleid,$restrict_to_task_roles=false)
         }
     }
 
-    foreach ($tasks as $task) {
-        $taskIDs[] = intval($task['ID']);
-    }
-
     # only search by peopleid if we have one
     if (!empty($peopleid))
     {
-
         # get all tasks based on reseacher RIS ID
         $filters = "&peopleid=$peopleid";
         $doc = simplexml_load_file(RPIS_TASK_BASEURL.$switch.$filters);
         $my_tasks = $doc->xpath('Task');
 
+        # start empty array to keep Project to Task relationship
+        $projectTasks = array();
+
         foreach ($my_tasks as $task)
         {
-            # for projects with no tasks just add the ficticious project task
-            if (intval($task['ID']) == 0)
-            {
-                $tasks[] = $task;
-                continue;
-            }
+            $projectId = (string) $task->Project["ID"];
 
-            # make sure we don't already have this task in the list
-            if (in_array(intval($task['ID']),$taskIDs)) {
-                continue;
+            if  (!array_key_exists($projectId, $projectTasks)) {
+                $projectTasks[$projectId] = array("alltasks"=>array(),"taskswithroles"=>array());
             }
 
             $currentPerson = null;
@@ -190,39 +182,47 @@ function getTasks($ldap,$baseDN,$userDN,$peopleid,$restrict_to_task_roles=false)
             {
                 $personArray = (array)$person;
 
-                if ($personArray['@attributes']['ID'] == $peopleid)
-                {
+                if ($personArray['@attributes']['ID'] == $peopleid) {
                     $currentPerson = $person;
                     break;
                 }
             }
 
-            # if we want to restrict the task list to tasks for which we have a task role
-            if ($restrict_to_task_roles)
-            {
-                if ($currentPerson)
+            # For the current person determine if they have a Task Role (for this task)
+            if ($currentPerson) {
+                $roles = $currentPerson->xpath('Roles/Role/Name');
+                $hasTaskRoles = false;
+                foreach ($roles as $role)
                 {
-                    $roles = $currentPerson->xpath('Roles/Role/Name');
-                    $taskLead = false;
-                    foreach ($roles as $role)
-                    {
-                        if (in_array($role['ID'],array(4,5,6)))
-                        {
-                            $taskLead = true;
-                        }
-                    }
-                    if ($taskLead) {
-                        $tasks[] = $task;
+                    if (in_array($role['ID'],array(4,5,6))) {
+                        $hasTaskRoles = true;
                     }
                 }
+
+                # If the user as Task roles, add the task to this array
+                if ($hasTaskRoles) {
+                    $projectTasks[$projectId]["taskswithroles"][] = $task;
+                }
             }
-            # otherwise just return all the tasks for which we have any role
-            else
-            {
-                $tasks[] = $task;
-            }
+
+            # Add this task to it's project
+            $projectTasks[$projectId]["alltasks"][] = $task;
         }
 
+        # Create new final Tasks Array
+        $tasks = array();
+
+        # Go through Project Tasks
+        foreach ($projectTasks as $project)
+        {
+            if (count($project["taskswithroles"]) > 0) {
+                # Add Tasks With Roles if there are any
+                $tasks = array_merge($tasks,$project["taskswithroles"]);
+            } else {
+                # Otherwise add all tasks for this Project
+                $tasks = array_merge($tasks,$project["alltasks"]);
+            }
+        }
     }
 
     return $tasks;
