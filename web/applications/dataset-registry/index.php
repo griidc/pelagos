@@ -1,5 +1,5 @@
 <?php
 
-$GLOBALS['pelagos']['title'] = 'Dataset Registry';
+$GLOBALS['pelagos']['title'] = 'Dataset Submission Form';
 
 require_once 'registry.php';
