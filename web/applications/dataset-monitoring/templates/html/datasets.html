@@ -112,8 +112,10 @@
 
         {% endfor %}
 
+    {% if not pdf %}
     </tbody>
     <tfoot>
+    {% endif %}
         <tr style="border-top:3.25px solid black;">
             <td style="text-align:center; font-weight:bold;" data-column="0" rowspan="4">TOTALS</td>
             <td style="text-align:right; border:0px;"><img src="{{baseUrl}}/includes/images/check.png"></td>
@@ -151,5 +153,9 @@
             <th>Metadata</th>
             <th>Available</th>
         </tr>
+    {% if pdf %}
+    </tbody>
+    {% else %}
     </tfoot>
+    {% endif %}
 </table>
