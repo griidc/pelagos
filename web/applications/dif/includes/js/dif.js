@@ -148,7 +148,8 @@ $(document).ready(function()
     loadDIFS(null,personid,true);
     
     jQuery.validator.addMethod("trueISODate", function(value, element) {
-        return this.optional(element) || (Date.parse(value));
+        var regPattern = /^\d{4}-\d{1,2}-\d{1,2}$/
+        return this.optional(element) || ((Date.parse(value)) && regPattern.test(value));
     });
     
     difValidator = $("#difForm").validate({
