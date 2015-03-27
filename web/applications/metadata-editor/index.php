@@ -161,7 +161,7 @@ Click OK to download.
   <p>Please enter your UDI/Registration ID.</p>
   <form>
   <fieldset>
-    <label for="name">UDI</label>
+    <label for="udifld">UDI</label>
     <input size="40" type="text" name="udifld" id="udifld" class="text ui-widget-content ui-corner-all" />
   </fieldset>
   </form>
