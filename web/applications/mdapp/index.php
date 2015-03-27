@@ -762,8 +762,8 @@ $app->get('/getlog(/)(:udi/?)', function ( $udi = '' ) {
 function index($app) {
     drupal_add_js("/$GLOBALS[PAGE_NAME]/js/mdapp.js",array('type'=>'external'));
     drupal_add_css("/$GLOBALS[PAGE_NAME]/css/mdapp.css",array('type'=>'external'));
-    drupal_add_js('https://cdn.datatables.net/1.10.0/js/jquery.dataTables.js',array('type'=>'external'));
-    drupal_add_css('https://cdn.datatables.net/1.10.0/css/jquery.dataTables.css',array('type'=>'external'));
+    drupal_add_js('//cdnjs.cloudflare.com/ajax/libs/datatables/1.10.5/js/jquery.dataTables.js',array('type'=>'external'));
+    drupal_add_css('//cdnjs.cloudflare.com/ajax/libs/datatables/1.10.5/css/jquery.dataTables.css',array('type'=>'external'));
     $stash['defaultFilter'] = $app->request()->get('filter');
     $stash['m_dataset']['accepted'] = GetMetadata('Accepted','as_array');
     $stash['m_dataset']['submitted'] = GetMetadata('Submitted','as_array');
