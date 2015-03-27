@@ -1,27 +1,27 @@
 <html>
     <head>
+        <script type="text/javascript">
+        //setting up headers and footers for html2pdf
+        var html2pdf = {
+            footer: {
+                height: "1cm",
+                contents: '<div class="center"><table width="100%"><tr><td align="left" style="font-size: 12px;">Generated: {{timestamp}}</td><td align="right" style="font-size: 12px;">page {% verbatim %}{{pageNumber}} of {{totalPages}}{% endverbatim %}</td></tr></table></div>'
+            }
+        };
+        </script>
         <style type='text/css'>
             @import url('{{baseUrl}}/css/projects.css');
             @import url('{{baseUrl}}/includes/css/projects-pdf.css');
         </style>
         <style media='all'>
             @page { margin: 48px; }
-            #header { position: relative; left: -1px; top: -10px; } 
+            #header { position: relative; left: -1px; top: 5px; } 
             #header img { height: 90px; }
-            #footer-left { position: fixed; left: 0px; bottom: 20px; right: 0px; text-align: left; font-size: 75%; }
-            #footer-right { position: fixed; left: 0px; bottom: 20px; right: 0px; text-align: right; font-size: 75%; }
-            #footer-right .page:after { content: counter(page); }
         </style>
         <meta http-equiv='Content-Type' content='text/html; charset=utf-8'/>
     </head>
     <body style='font-family:'>
         <div id='header'><img src='{{baseUrl}}/includes/images/griidc_header.png'></div>
-        <div id='footer-left'>
-            <p class='timestamp'>generated: {{timestamp}}</p>
-        </div>
-        <div id='footer-right'>
-            <p class='page'>Page </p>
-        </div>
         {% include 'html/projects.html' %}
     </body>
 </html>

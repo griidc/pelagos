@@ -76,6 +76,7 @@ table.datasets {
     margin-bottom: 1em;
     border-collapse: collapse;
     clear: both;
+    page-break-after: always;
 }
 
 table.datasets th {

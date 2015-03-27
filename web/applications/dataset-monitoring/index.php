@@ -52,6 +52,7 @@ $app->hook('slim.before', function () use ($app) {
     $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off'
                  || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
     $app->view()->appendData(array('baseUrl' => "$protocol$env[SERVER_NAME]$env[SCRIPT_NAME]"));
+    $app->view()->appendData(array('serverUrl' => "$protocol$env[SERVER_NAME]"));
 });
 
 $app->get('/includes/:file', 'dumpIncludesFile')->conditions(array('file' => '.+'));
@@ -177,6 +178,12 @@ $app->get('/projects/:by/:id(/:renderer)', function ($by, $id, $renderer = 'brow
         }
         $stash['projects'] = getTasksAndDatasets(getProjectDetails($RIS_DBH, $projectFilter));
         if ($renderer == 'dompdf') {
+            $env = $app->environment();
+            header("Content-Type: text/html; charset=utf-8");
+            $stash['pdf'] = true;
+            $stash['hostUrl'] = 'https://data.gulfresearchinitiative.org';
+            $app->render('html/pdf.html', $stash);
+        } elseif ($renderer == 'html2pdf') {
             $env = $app->environment();
             header("Content-Type: text/html; charset=utf-8");
             $stash['pdf'] = true;
