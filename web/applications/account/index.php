@@ -293,6 +293,7 @@ $app->get('/request', function () use ($app) {
         }
 
         $stash['person']['sshPublicKey']['value'] = PASTE_PUB_KEY;
+        $stash['affiliations'] = get_affiliations(null);
         $stash['hash'] = $hash;
         $stash['checked'] = array('Drupal' => 1, 'pkiNone' => 1);
         $stash['PASTE_PUB_KEY'] = PASTE_PUB_KEY;
@@ -360,6 +361,7 @@ $app->post('/request', function () use ($app) {
                 $stash['checked'][$pubKeyActionOption] = $pubKeyActionOption == $pubKeyAction ? 1 : 0;
             }
 
+            $stash['affiliations'] = get_affiliations($app->request()->post('affiliation'));
             $stash['hash'] = $hash;
             $stash['PASTE_PUB_KEY'] = PASTE_PUB_KEY;
 
@@ -391,6 +393,8 @@ $app->post('/request', function () use ($app) {
                     $stash['applications'][$application] = $default_group;
                 }
             }
+
+            $stash['affiliation'] = $app->request()->post('affiliation');
 
             $stash['person']['userPassword']['value'] = make_ssha_password($stash['person']['userPassword']['value']);
 
@@ -449,6 +453,7 @@ $app->get('/approve', $GLOBALS['AUTH_FOR_ROLE']('admin'), function () use ($app)
         else {
             $stash = read_ldif($ldifFile);
             $stash['uid'] = $uid;
+            $stash['affiliations'] = get_affiliations($stash['affiliation']);
             $stash['checked']['Shell'] = in_array('posixAccount',$stash['objectClasses']);
             foreach ($GLOBALS['APPLICATIONS'] as $application => $default_group) {
                 $stash['checked'][$application] = isset($stash['applications'][$application]);
@@ -476,6 +481,8 @@ $app->post('/approve', $GLOBALS['AUTH_FOR_ROLE']('admin'), function () use ($app
         }
 
         $stash['uid'] = $uid;
+        $stash['affiliation'] = $app->request()->post('affiliation');
+        $stash['affiliations'] = get_affiliations($stash['affiliation']);
 
         $stash['applications'] = array();
         foreach ($GLOBALS['APPLICATIONS'] as $application => $default_group) {
@@ -502,6 +509,8 @@ $app->post('/approve/create', $GLOBALS['AUTH_FOR_ROLE']('admin'), function () us
         $ldifFile = SPOOL_DIR . "/incoming/$uid.ldif";
         $ldif = read_ldif($ldifFile);
         $ldif = check_person($app,'a',$ldif);
+
+        $ldif['affiliation'] = $app->request()->post('affiliation');
 
         $ldif['applications'] = array();
         foreach ($GLOBALS['APPLICATIONS'] as $application => $default_group) {

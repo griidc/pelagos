@@ -36,7 +36,7 @@ function GeoViz()
              srsName: "urn:x-ogc:def:crs:EPSG:4326"
          }); 
     
-    var lon = -90.5, lat = 25, //Gulf of Mexico
+    var lon = -90, lat = 25, //Gulf of Mexico
     zoom = 4,
     epsg4326 = new OpenLayers.Projection('EPSG:4326'),
     epsg900913 = new OpenLayers.Projection('EPSG:900913');

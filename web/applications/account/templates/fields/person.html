@@ -28,3 +28,38 @@
             <td>Phone:</td>
             <td><input type=text name=telephoneNumber size=20 class="{{person.telephoneNumber.class}}" value='{{person.telephoneNumber.value}}'> <span style='font-size:75%;color:#555'>(XXX) XXX-XXXX</span></td>
         </tr>
+        <tr>
+            <td><span class=account_required>Affiliation:</span></td>
+            <td>
+                <select name=affiliation onchange='if (this.value=="other") document.getElementById("otherAffiliation").style.visibility="visible"; else document.getElementById("otherAffiliation").style.visibility="hidden"; if (this.value=="") { alert("Please select an affiliation or select Other: and enter your affiliation."); this.value="select"; }'>
+                    <option value='select'> [SELECT] </option>
+                    <option value=''>----------</option>
+                    {% for aff in affiliations['YR-1'] %}
+                        <option value='{{aff.dn}}' {{ aff.selected ? 'selected' : '' }}>{{aff.name}}</option>
+                    {% endfor %}
+                    <option value=''>----------</option>
+                    {% for aff in affiliations['RFP-I'] %}
+                        <option value='{{aff.dn}}' {{ aff.selected ? 'selected' : '' }}>{{aff.name}}</option>
+                    {% endfor %}
+                    <option value=''>----------</option>
+                    {% for aff in affiliations['RFP-II'] %}
+                        <option value='{{aff.dn}}' {{ aff.selected ? 'selected' : '' }}>{{aff.name}}</option>
+                    {% endfor %}
+                    <option value=''>----------</option>
+                    {% for aff in affiliations['RFP-III'] %}
+                        <option value='{{aff.dn}}' {{ aff.selected ? 'selected' : '' }}>{{aff.name}}</option>
+                    {% endfor %}
+                    <option value=''>----------</option>
+                    {% for aff in affiliations['GoMRI-AU'] %}
+                        <option value='{{aff.dn}}' {{ aff.selected ? 'selected' : '' }}>{{aff.name}}</option>
+                    {% endfor %}
+                    <option value=''>----------</option>
+                    {% for aff in affiliations.Other %}
+                        <option value='{{aff.dn}}' {{ aff.selected ? 'selected' : '' }}>{{aff.name}}</option>
+                    {% endfor %}
+                    <option value=''>----------</option>
+                    <option value='other' {{ affiliations.other ? 'selected' : '' }}>Other:</option>
+                </select>
+                <input type=text name=o id=otherAffiliation size=25 class="{{person.o.class}}" value='{{person.o.value}}' style='visibility:{{ affiliations.other ? 'visible' : 'hidden' }}'> 
+            </td>
+        </tr>
