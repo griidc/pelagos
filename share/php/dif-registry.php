@@ -169,35 +169,6 @@ function getTasks($ldap, $baseDN, $userDN, $peopleid)
         return $doc->xpath('Task');
     }
 
-    $groupDNs = getDNs($ldap, 'ou=groups,' . $baseDN, "(&(member=$userDN)(cn=administrators))");
-
-    $tasks = array();
-    $taskIDs = array();
-
-    # if we're a group admin, for each group add all the tasks for that group
-    if (count($groupDNs) > 0) {
-        foreach ($groupDNs as $group) {
-            if (!is_array($group)) {
-                continue;
-            }
-            preg_match('/ou=([^,]+)/', $group['dn'], $matches);
-            if ($matches[1] == 'FIO') {
-                $filters = '&fundingId=2';
-            } elseif ($matches[1] == 'LSU') {
-                $filters = '&fundingId=3';
-            } elseif ($matches[1] == 'MESC') {
-                $filters = '&fundingId=4';
-            } elseif ($matches[1] == 'NGI') {
-                $filters = '&fundingId=5';
-            } else {
-                $filters = "&projectTitle=$matches[1]";
-            }
-            $doc = simplexml_load_file(RPIS_TASK_BASEURL . $switch . $filters);
-            $GLOBALS['isGroupAdmin'] = true;
-            $tasks = array_merge($tasks, $doc->xpath('Task'));
-        }
-    }
-
     # only search by peopleid if we have one
     if (!empty($peopleid)) {
         # get all tasks based on reseacher RIS ID
@@ -229,15 +200,14 @@ function getTasks($ldap, $baseDN, $userDN, $peopleid)
             # For the current person determine if they have a Task Role (for this task)
             if ($currentPerson) {
                 $roles = $currentPerson->xpath('Roles/Role/Name');
-                $hasTaskRoles = false;
+
+                $projectTaskRoles = array();
                 foreach ($roles as $role) {
-                    if (in_array($role['ID'], array(4,5,6))) {
-                        $hasTaskRoles = true;
-                    }
+                    $projectTaskRoles[] = $role['ID'];
                 }
 
-                # If the user as Task roles, add the task to this array
-                if ($hasTaskRoles) {
+                if (count(array_intersect($projectTaskRoles, array(4,5,6))) > 0
+                        and count(array_intersect($projectTaskRoles, array(1,3,19))) == 0) {
                     $projectTasks[$projectId]["taskswithroles"][] = $task;
                 }
             }
@@ -246,7 +216,7 @@ function getTasks($ldap, $baseDN, $userDN, $peopleid)
             $projectTasks[$projectId]["alltasks"][] = $task;
         }
 
-        # Create new final Tasks Array
+        # Create final Task Array
         $tasks = array();
 
         # Go through Project Tasks
