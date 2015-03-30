@@ -26,6 +26,7 @@ drupal_add_css('/data-discovery/includes/css/logins.css',array('type'=>'external
 drupal_add_library('system', 'jquery.cookie');
 drupal_add_library('system', 'ui.tabs');
 drupal_add_library('system', 'ui.button');
+drupal_add_library('system', 'ui.dialog');
 
 drupal_add_js('//cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js',array('type'=>'external'));
 drupal_add_js('//maps.google.com/maps/api/js?v=3&sensor=false',array('type'=>'external'));
@@ -257,7 +258,22 @@ var dlmap = new GeoViz();
             }
         });
 
-        $("#downloaddsden").button();
+        $("#download_dialog").dialog({
+            autoOpen: false,
+            buttons: {
+                OK: function() {
+                    $(this).dialog("close");
+                }
+            },
+            modal: true,
+            resizable:false,
+        });
+
+        $("#downloaddsden").button().click(function() {
+            $("#download_dialog").dialog('option', 'title', 'Dataset Not Available');
+            $("#download_dialog").html('This dataset is not available for download.');
+            $("#download_dialog").dialog('open');
+        });
 
         $("#metadatadl").button().click(function() {
             window.location = '<?php echo "$pageLessBaseUrl/metadata/$udi"; ?>';
@@ -454,7 +470,12 @@ var dlmap = new GeoViz();
             } else {
                 $dl_ok = 0;
             }
-            echo $twig->render('summary.html', array('pdata' => $prow,'mdata' => $mrow,'mpdata' => $mprow, 'baseurl' => $_SERVER['SCRIPT_NAME'], 'dl_ok' => $dl_ok));
+            $dataset_available = 0;
+            # check if dataset file has been downloaded successfully or marked as remotely hosted
+            if (in_array($prow['dataset_download_status'], array('Completed','RemotelyHosted'))) {
+                $dataset_available = 1;
+            }
+            echo $twig->render('summary.html', array('pdata' => $prow,'mdata' => $mrow,'mpdata' => $mprow, 'baseurl' => $_SERVER['SCRIPT_NAME'], 'dl_ok' => $dl_ok, 'dataset_available' => $dataset_available));
             ?>
             </div>
         </td>
@@ -516,6 +537,7 @@ var dlmap = new GeoViz();
     </div>
 </div>
 
+<div id="download_dialog"></div>
 <?php
 }
 else
