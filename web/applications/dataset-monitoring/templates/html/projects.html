@@ -4,7 +4,7 @@
         <span class="header-inst-name">({{instName}})</span>
     {% endif %}
     {% if not pdf %}
-        <a href="{{serverUrl}}/html2pdf?url={{baseUrl}}/projects/{{by}}/{{id}}/html2pdf&format=Letter&orientation=portrait&margin=1cm&download=true&filename=Dataset Monitoring - {{header}}{% if instName %} ({{instName}}){% endif %} {{timestamp}}" class="download-pdf" title="save as pdf"><img src="{{baseUrl}}/includes/images/pdf_icon.png"></a>
+        <a href="{{serverUrl}}/html2pdf?url={{baseUrl}}/projects/{{by}}/{{id}}/html2pdf&format=Letter&orientation=portrait&margin=1cm&download=true&filename=Dataset Monitoring - {{header}}{% if instName %} ({{instName}}){% endif %}" class="download-pdf" title="save as pdf"><img src="{{baseUrl}}/includes/images/pdf_icon.png"></a>
     {% endif %}
 </div>
 {% for project in projects %}
