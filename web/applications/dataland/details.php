@@ -37,6 +37,8 @@ require_once 'auth.php'; # for user_is_logged_in_somehow()
 require_once 'Twig_Extensions_GRIIDC.php';
 include_once 'pdo.php'; # for pdoDBQuery()
 require_once 'Twig/Autoloader.php';
+require_once 'stubs/publinks-lib.php';
+
 Twig_Autoloader::register();
 
 $loader = new Twig_Loader_Filesystem('./templates');
@@ -173,7 +175,9 @@ if ($udi <> '')
 
     $mprow = pdoDBQuery($mconn,$mquery);
 
-    $mprow = $mprow[0]; 
+    $mprow = $mprow[0];
+    $publink = new PubLink();
+    $publinks = $publink->getLinksArray();
 }
 
 
@@ -466,8 +470,8 @@ var dlmap = new GeoViz();
         <ul>
             <li><a href="#tabs-1">Details</a></li>
             <li><a href="#tabs-2">Metadata</a></li>
-            <!--
             <li><a href="#tabs-3">Publications</a></li>
+            <!--
             <li><a href="#tabs-4">Manifest</a></li>
             -->
         </ul>
@@ -512,6 +516,9 @@ var dlmap = new GeoViz();
                 ?>
                 </div>
             </p>
+        </div>
+        <div class="tabb" id="tabs-3">
+            <?php echo $twig->render('publications.html', array('publinks' => $publinks)); ?>
         </div>
     </div>
 </div>
