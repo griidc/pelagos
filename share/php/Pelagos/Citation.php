@@ -41,7 +41,7 @@ class Citation
                 'text' => $this->text,
                 'style' => $this->style,
                 'locale' => $this->locale,
-                'timestamp' => $this->timestamp,
+                'timestamp' => $this->timestamp->format('c'),
             ),
             JSON_UNESCAPED_SLASHES
         );
