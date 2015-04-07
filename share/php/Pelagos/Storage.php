@@ -9,8 +9,8 @@ class Storage
         switch ($type) {
             case "Publink":
                 $link = $obj;
-                $doi = $link->doi;
-                $udi = $link->udi;
+                $doi = $link->get_doi();
+                $udi = $link->get_udi();
                 echo "pretending to store a publink linking $udi to $doi\n";
             break;
         }
