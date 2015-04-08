@@ -6,22 +6,17 @@
 // Returns: Common mySql functions
 // Purpose: Execute a mySql query
 
-require 'dbMyConfig.php';
-
 /********************************************************
  * Function: executeMyQuery								*
  * Desc: Connects and executes mysql Query				*
  * Parameters:											*
  * $Query = sql query (select etc...)					*					
 ********************************************************/
-function executeMyQuery($query)
+function openConnection()
 {
-	global $my_username;
-	global $my_password;
-	global $my_database;
-	global $my_dbserver;
-	
-	// Opens a connection to a MySQL server
+    require 'dbMyConfig.php';
+    
+    // Opens a connection to a MySQL server
 	$connection=mysql_connect ($my_dbserver, $my_username, $my_password);	
 	
 	if (!$connection) 
@@ -37,10 +32,15 @@ function executeMyQuery($query)
 		$message= 'Can\'t use db: ' . mysql_error();
 		throw new Exception ($message);
 	}
-
+    
     // Set client character set to UTF-8
     mysql_query('set character_set_client = utf8;');
-	
+    
+    return $connection;
+}
+
+function executeMyQuery($query)
+{
 	// Execute Query
 	$result = mysql_query($query);
 	if (!$result) 
@@ -48,8 +48,12 @@ function executeMyQuery($query)
 		$message = 'Invalid query: ' . $query .'<p>' . mysql_error();
 		throw new Exception ($message);
 	}
-	mysql_close($connection);
 	return $result;
+}
+
+function closeConnection($connection)
+{
+    mysql_close($connection);
 }
 
 ?>
