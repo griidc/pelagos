@@ -11,11 +11,11 @@ $comp->slim->get('/', function () {
     print 'This service creates associations between datasets and publications.';
 });
 
-$comp->slim->link('/makelink/:udi/:doiShoulder/:doiBody(/)', function ($udi, $doiShoulder, $doiBody) use ($comp) {
+$comp->slim->map('/makelink/:udi/:doiShoulder/:doiBody(/)', function ($udi, $doiShoulder, $doiBody) use ($comp) {
     $doi = $doiShoulder.'/'.$doiBody;
     $Publink = new \Pelagos\Publink;
     $Publink->createLink($udi,$doi,getEmployeeNumberFromUID($GLOBALS['_SESSION']['phpCAS']['user']));
     $comp->quit();
-});
+})->via('LINK');
 
 $comp->slim->run();
