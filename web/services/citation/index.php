@@ -9,21 +9,13 @@ $comp->slim->get('/', function () {
 
 $comp->slim->get('/publication(/)', function () use ($comp) {
     header('Content-Type:application/json');
-    http_response_code(400);
     $status = new \Pelagos\HTTPStatus(400, 'No DOI provided.');
+    http_response_code($status->code);
     print $status->asJSON();
     $comp->quit();
 });
 
-$comp->slim->get('/publication/:invalidDoi', function ($invalidDoi) use ($comp) {
-    header('Content-Type:application/json');
-    http_response_code(400);
-    $status = new \Pelagos\HTTPStatus(400, 'Invalid DOI format.');
-    print $status->asJSON();
-    $comp->quit();
-});
-
-$comp->slim->get('/publication/:doiShoulder/:doiBody', function ($doiShoulder, $doiBody) use ($comp) {
+$comp->slim->get('/publication/:doiShoulder(/(:doiBody))', function ($doiShoulder, $doiBody = '') use ($comp) {
     header('Content-Type:application/json');
     $pub = new \Pelagos\Publication("$doiShoulder/$doiBody");
     $citation = $pub->getCitation();
