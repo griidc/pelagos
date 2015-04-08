@@ -8,11 +8,14 @@ class Storage
     {
         switch ($type) {
             case "Publink":
-                $link = $obj;
-                $doi = $link->get_doi();
-                $udi = $link->get_udi();
-                echo "pretending to store a publink linking $udi to $doi\n";
+                $doi = $obj->get_doi();
+                $udi = $obj->get_udi();
+                $emp = $obj->get_linkCreator();
+                $sql = "INSERT INTO dataset2publication_link (dataset_uid, publication_number,
+                        person_number) values (:dataset_udi, :publication_doi, :person_number)";
+
+                echo "pretending to store a publink linking dataset ($udi) to publication ($doi) by employeeNumber ($emp)\n";
             break;
         }
-    } 
+    }
 }
