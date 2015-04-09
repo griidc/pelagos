@@ -1,11 +1,13 @@
 <?php
+
+namespace Citation;
+
 /**
  * This class that provides functionality to
  * fetch the dataset registered to the UDI.
  * It validates its udi string parameter and throws
  * an InvalidUdiException if the validation process fails.
  */
-
 class Dataset
 {
     const UDI_REST_TAG = "udi=";
@@ -38,7 +40,7 @@ class Dataset
     private function getDatabaseConnection()
     {
         require_once('DBUtils.php');
-        return openDB('GOMRI_RO');;
+        return openDB('GOMRI_RO');
     }
 
     /**
@@ -50,11 +52,12 @@ class Dataset
 
     public function getRegisteredDataset($udiTarget) // throws InvalidUdiException
     {
+        require_once './lib/NoRegisteredDatasetException.php';
         $dbh = $this->getDatabaseConnection();
 
-        $udi =  $this->validate($udiTarget);   // throws InvalidUdiException
+        $udi = $this->validate($udiTarget);   // throws InvalidUdiException
 
-        $filter = array(self::UDI_REST_TAG.$udi);
+        $filter = array(self::UDI_REST_TAG . $udi);
         //  call to pelagos/share/php/datasets.php
         require_once('datasets.php');
         $rds = get_registered_datasets($dbh, $filter);
@@ -62,8 +65,8 @@ class Dataset
         $count = count($rds);
 
         $rds2 = array();  // new array for simplified version to be transformed to json
-        if($count == 0) {
-            return false;
+        if ($count == 0) {
+            throw new \Citation\NoRegisteredDatasetException("No dataset registered for UDI: ".$udi);
         }
         $rds = $rds[0];  // there can only be one
         $keys = array_keys($rds);
@@ -75,6 +78,7 @@ class Dataset
         }
         return $rds2;
     }
+
     /**
      * @param string with a single udi of the form An.xnnn.nnn.nnnn
      * @return Citation object or false if no record found
@@ -82,7 +86,7 @@ class Dataset
      * @see InvalidUdiException
      */
 
-    public function getRegisteredDatasetCitation($udiTarget) // throws InvalidUdiException
+    public function getRegisteredDatasetCitation($udiTarget) // throws InvalidUdiException, NoRegisteredDatasetException
     {
         $rds = $this->getRegisteredDataset($udiTarget);
         return $this->createCitation($rds);
@@ -92,20 +96,11 @@ class Dataset
      * create a Citation from information found in the registered dataset.
      * Note that the doi column may contain a url or just the doi identifier
      */
-    function createCitation($ds)
+    private function createCitation($ds)
     {
         if ($ds == false) {
             return false;
         }
-        $cols = array(
-            "dataset_originator",
-            "year",
-            "title",
-            "doi",
-        );
-        //  $dataset_originator ($year). $title ($udi
-
-        //  http://dx.doi.org/$doi
         $author = $ds["dataset_originator"];
         $year = $ds["year"];
         $title = $ds['title'];
@@ -114,21 +109,21 @@ class Dataset
         $regId = $ds["registry_id"];
         $url = " url goes here";
 
-        if($doi && strlen($doi) > 0) {
+        // The doi could include a url - check for it
+        if ($doi && strlen($doi) > 0) {
             // does the doi contain the string http
-            $pos = strpos($doi,"http");
-            if($pos === false) { // make a url from the doi
+            $pos = strpos($doi, "http");
+            if ($pos === false) { // make a url from the doi
                 $url = "http://dx.doi.org/" . $doi;
             } else {  // stored doi is a url
                 $url = $doi;
             }
         } else {
-            $url = "http://data.gulfresearchinitiative.org/data/".$udi;
+            $url = "http://data.gulfresearchinitiative.org/data/" . $udi;
         }
-        $citationString = $author." (".$year."). " .$title." [Data files]. Retrieved from ".$url;
+        $citationString = $author . " (" . $year . "). " . $title . " [Data files]. Retrieved from " . $url;
 
-        require_once "Citation.php";
-        $citation = new Citation($regId, $citationString);
+        $citation = new \Pelagos\Citation($regId, $citationString);
         return $citation;
     }
 
@@ -145,8 +140,9 @@ class Dataset
     public function validate($udiString)
     {
         require_once './lib/UdiValidation.php';
-        $validator = new  UdiValidation();
-        $udi = $validator->validate($udiString);   // throws InvalidUdiException
+        $validator = new  \Citation\UdiValidation();
+        $s = trim($udiString);  // white space is so pesky
+        $udi = $validator->validate($s);   // throws InvalidUdiException
         return $udi;
     }
 }

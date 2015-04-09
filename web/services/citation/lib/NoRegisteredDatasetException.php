@@ -3,11 +3,11 @@
 namespace Citation;
 
 /**
- * An Exception thrown when errors are detected
- * when UDIs are used in operations
- * @see UdiValidation.php
+ * An Exception thrown when the UDI is valid
+ * but there are no registered datasets
+ * @see Dataset.php
  */
-class InvalidUdiException extends \Exception
+class NoRegisteredDatasetException extends \Exception
 {
 
     public function __construct($message, $code = 0, Exception $previous = null)

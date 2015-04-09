@@ -41,17 +41,26 @@ $comp->slim->get('/publication/:doiShoulder(/(:doiBody))', function ($doiShoulde
 $comp->slim->get('/dataset/:udi', function ($udi) use ($comp) {
     header('Content-Type:application/json');
     require_once './lib/Dataset.php';
-    $ds = new  Dataset();
+    $ds = new  \Citation\Dataset();
     try {
         $citation = $ds->getRegisteredDatasetCitation($udi);
-        print $citation->asJSON();
-        $comp->quit();
-    } catch(InvalidUdiException $e) {
+        if ($citation == false) {
+            $status = new \Pelagos\HTTPStatus(400, "No registered dataset found for UDI:" . $udi);
+            http_response_code($status->code);
+            print $status->asJSON();
+        } else {
+            print $citation->asJSON();
+            $comp->quit();
+        }
+    } catch (InvalidUdiException $e) {
+        $status = new \Pelagos\HTTPStatus(400, $e->getMessage());
+        http_response_code($status->code);
+        print $status->asJSON();
+    } catch (InvalidUdiException $e) {
         $status = new \Pelagos\HTTPStatus(400, $e->getMessage());
         http_response_code($status->code);
         print $status->asJSON();
     }
-
 });
 
 /**
