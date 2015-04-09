@@ -31,7 +31,7 @@ $comp->slim->map('/:udi/:doiShoulder/:doiBody(/)', function ($udi, $doiShoulder,
         $Publink->createLink($udi,$doi,getEmployeeNumberFromUID($user->name));
     } catch (\PDOException $ee) {
         $quit = true;
-        $HTTPStatus = new \Pelagos\HTTPStatus(500,$ee);
+        $HTTPStatus = new \Pelagos\HTTPStatus(500,$ee->getMessage());
         $comp->slim->response->headers->set('Content-Type', 'application/json');
         $comp->slim->response->status($HTTPStatus->code);
         $comp->slim->response->setBody($HTTPStatus->asJSON());
