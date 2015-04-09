@@ -11,8 +11,10 @@
 -- -----------------------------------------------------------------------------
 -- TODO DONE:
 -- -----------------------------------------------------------------------------
--- CHANGELOG:
+-- CHANGELOG: 08 Apr 2015: Added GRANT statements
 -- -----------------------------------------------------------------------------
+\c gomri postgres
+
 -- Drop everything to start with:
 DROP TABLE publication CASCADE;
 DROP DOMAIN DOI_TYPE CASCADE;
@@ -52,3 +54,21 @@ ALTER DOMAIN DOI_TYPE
 
 ALTER TABLE publication
    OWNER TO gomri_admin;
+
+-- Set the other permissions:
+GRANT USAGE
+ON SEQUENCE seq_publcation_number
+TO gomri_reader,
+   gomri_user,
+   gomri_writer;
+
+GRANT INSERT,
+      SELECT,
+      UPDATE
+ON TABLE publication
+TO gomri_user,
+   gomri_writer;;
+
+GRANT SELECT
+ON TABLE publication
+TO gomri_reader;

@@ -11,8 +11,11 @@
 -- -----------------------------------------------------------------------------
 -- TODO DONE:
 -- -----------------------------------------------------------------------------
--- CHANGELOG:
+-- CHANGELOG: 08 Apr 2015: Added GRANT statements
+--                         Added dataset2publication_createtime DEFAULT clause
 -- -----------------------------------------------------------------------------
+\c gomri postgres
+
 -- Drop everything to start with:
 DROP TABLE dataset2publication_link CASCADE;
 
@@ -22,7 +25,8 @@ CREATE TABLE dataset2publication_link
    dataset_uid                              INTEGER             NOT NULL,
    publication_number                       INTEGER             NOT NULL,
    person_number                            INTEGER             NOT NULL,
-   dataset2publication_createtime           TIMESTAMP           NOT NULL,
+   dataset2publication_createtime           TIMESTAMP           NOT NULL
+      DEFAULT NOW(),
 
    CONSTRAINT fk_datasets_dataset_uid
       FOREIGN KEY (dataset_uid)
@@ -47,3 +51,15 @@ ALTER INDEX dataset2publication_link_pkey
 -- Set object ownerships:
 ALTER TABLE dataset2publication_link
    OWNER TO gomri_admin;
+
+-- Set the other permissions:
+GRANT INSERT,
+      SELECT,
+      UPDATE
+ON TABLE dataset2publication_link
+TO gomri_user,
+   gomri_writer;;
+
+GRANT SELECT
+ON TABLE dataset2publication_link
+TO gomri_reader;
