@@ -8,7 +8,6 @@
 
 class Dataset
 {
-
     const UDI_REST_TAG = "udi=";
 
     public function __construct()
@@ -85,26 +84,54 @@ class Dataset
 
     public function getRegisteredDatasetCitation($udiTarget) // throws InvalidUdiException
     {
-            $rds = $this->getRegisteredDataset($udiTarget);
-            if ($rds == false) {
-                return false;
-            }
-            $regid = $rds['registry_id'];
-            $title = $rds['title'];
-            $doi = $rds['doi'];
-            $string = "id: " . $regid . ", " . $title;
-
-        // if there is a doi include it in the Citation message
-            if (strlen($doi) > 0) {
-                $string .= ", DOI: " . $doi;
-            }
-
-            // $url = $rds['url_data'];
-
-            $string .= ", GRIIDC";
-            $citation = new \Pelagos\Citation($regid, $string);
-            return $citation;
+        $rds = $this->getRegisteredDataset($udiTarget);
+        return $this->createCitation($rds);
     }
+
+    /**
+     * create a Citation from information found in the registered dataset.
+     * Note that the doi column may contain a url or just the doi identifier
+     */
+    function createCitation($ds)
+    {
+        if ($ds == false) {
+            return false;
+        }
+        $cols = array(
+            "dataset_originator",
+            "year",
+            "title",
+            "doi",
+        );
+        //  $dataset_originator ($year). $title ($udi
+
+        //  http://dx.doi.org/$doi
+        $author = $ds["dataset_originator"];
+        $year = $ds["year"];
+        $title = $ds['title'];
+        $doi = $ds['doi'];
+        $udi = $ds["udi"];
+        $regId = $ds["registry_id"];
+        $url = " url goes here";
+
+        if($doi && strlen($doi) > 0) {
+            // does the doi contain the string http
+            $pos = strpos($doi,"http");
+            if($pos === false) { // make a url from the doi
+                $url = "http://dx.doi.org/" . $doi;
+            } else {  // stored doi is a url
+                $url = $doi;
+            }
+        } else {
+            $url = "http://data.gulfresearchinitiative.org/data/".$udi;
+        }
+        $citationString = $author." (".$year."). " .$title." [Data files]. Retrieved from ".$url;
+
+        require_once "Citation.php";
+        $citation = new Citation($regId, $citationString);
+        return $citation;
+    }
+
 
     /**
      * Test the string for conformance to the
