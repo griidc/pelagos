@@ -12,7 +12,10 @@
 -- TODO DONE:
 -- -----------------------------------------------------------------------------
 -- CHANGELOG: 08 Apr 2015: Added GRANT statements
+<<<<<<< HEAD
 --                         Added UNIQUE INDEX on publication_doi attribute
+=======
+>>>>>>> 5dede6c73c0d0dddd0f9e67a1b4ce74163bd0834
 -- -----------------------------------------------------------------------------
 \c gomri postgres
 
