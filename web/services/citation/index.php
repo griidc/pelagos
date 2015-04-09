@@ -56,7 +56,7 @@ $comp->slim->get('/dataset/:udi', function ($udi) use ($comp) {
         $status = new \Pelagos\HTTPStatus(400, $e->getMessage());
         http_response_code($status->code);
         print $status->asJSON();
-    } catch (InvalidUdiException $e) {
+    } catch (NoRegisteredDatasetException $e) {
         $status = new \Pelagos\HTTPStatus(400, $e->getMessage());
         http_response_code($status->code);
         print $status->asJSON();
