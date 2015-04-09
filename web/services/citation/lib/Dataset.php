@@ -1,19 +1,17 @@
 <?php
 /**
- * User: jvh
- * Date: 4/1/15
- * Time: 1:23 PM
+ * This class that provides functionality to
+ * fetch the dataset registered to the UDI.
+ * It validates its udi string parameter and throws
+ * an InvalidUdiException if the validation process fails.
  */
-//require_once "./UdiValidation.php";
-//require_once "./InvalidUdiException.php";
-
 
 class Dataset
 {
 
     const UDI_REST_TAG = "udi=";
 
-    public function Dataset()
+    public function __construct()
     {
         // load global pelagos config
         $GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini', true);
@@ -46,8 +44,9 @@ class Dataset
 
     /**
      * @param string with a single udi of the form An.xnnn.nnn.nnnn
-     * @return json array if success
-     * false on nothing found
+     * @return associative array with all columns in the table if success or false if record not found
+     * @throws InvalidUdiException
+     * @see InvalidUdiException
      */
 
     public function getRegisteredDataset($udiTarget) // throws InvalidUdiException
@@ -79,8 +78,9 @@ class Dataset
     }
     /**
      * @param string with a single udi of the form An.xnnn.nnn.nnnn
-     * @return json array if success
-     * false on nothing found
+     * @return Citation object or false if no record found
+     * @throws InvalidUdiException
+     * @see InvalidUdiException
      */
 
     public function getRegisteredDatasetCitation($udiTarget) // throws InvalidUdiException
@@ -94,6 +94,7 @@ class Dataset
             $doi = $rds['doi'];
             $string = "id: " . $regid . ", " . $title;
 
+        // if there is a doi include it in the Citation message
             if (strlen($doi) > 0) {
                 $string .= ", DOI: " . $doi;
             }
@@ -106,11 +107,16 @@ class Dataset
     }
 
     /**
+     * Test the string for conformance to the
+     * known qualities of a UDI using the UdiValidation
      * @param $udiString
      * @return the UDI without the REST tag - or anything else
+     * @throws InvalidUdiException
+     * @see UdiValidation
+     * @see InvalidUdiException
      */
     public function validate($udiString)
-    { // throws InvalidUdiException
+    {
         require_once './lib/UdiValidation.php';
         $validator = new  UdiValidation();
         $udi = $validator->validate($udiString);   // throws InvalidUdiException
