@@ -11,8 +11,11 @@
 -- -----------------------------------------------------------------------------
 -- TODO DONE:
 -- -----------------------------------------------------------------------------
--- CHANGELOG:
+-- CHANGELOG: 08 Apr 2015: Added GRANT statements
+--                         Added UNIQUE INDEX on publication_doi attribute
 -- -----------------------------------------------------------------------------
+\c gomri postgres
+
 -- Drop everything to start with:
 DROP TABLE publication CASCADE;
 DROP DOMAIN DOI_TYPE CASCADE;
@@ -46,9 +49,31 @@ ALTER INDEX publication_pkey
 ALTER SEQUENCE publication_publication_number_seq
    RENAME TO seq_publcation_number;
 
+-- Create indexes:
+CREATE UNIQUE INDEX
+   ON publication(publication_doi);
+
 -- Set object ownerships:
 ALTER DOMAIN DOI_TYPE
    OWNER TO gomri_admin;
 
 ALTER TABLE publication
    OWNER TO gomri_admin;
+
+-- Set the other permissions:
+GRANT USAGE
+ON SEQUENCE seq_publcation_number
+TO gomri_reader,
+   gomri_user,
+   gomri_writer;
+
+GRANT INSERT,
+      SELECT,
+      UPDATE
+ON TABLE publication
+TO gomri_user,
+   gomri_writer;;
+
+GRANT SELECT
+ON TABLE publication
+TO gomri_reader;
