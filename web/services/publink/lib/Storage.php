@@ -15,12 +15,32 @@ class Storage
 
                 $dbms = openDB("GOMRI_RW");
 
+                $sql0 = "SELECT
+                            count(*)
+                        FROM
+                            publication
+                        WHERE
+                            publication_doi = :publication_doi";
+
+                $sth0 = $dbms->prepare($sql0);
+                $sth0->bindParam(':publication_doi',$doi);
+
+                try {
+                    $sth0->execute();
+                    $result = $sth0->fetchAll(\PDO::FETCH_ASSOC);
+                    if($result[0]['count'] < 1) {
+                        throw new \Exception("Record Does not exist in publication table");
+                    }
+                } catch (\PDOException $exception) {
+                    throw $exception;
+                }
+
                 $sql = "SELECT
                             count(*)
                         FROM
                             dataset2publication_link
                         WHERE
-                            dataset_uid = :dataset_udi
+                            dataset_udi = :dataset_udi
                         AND
                             publication_doi = :publication_doi";
 
@@ -31,15 +51,15 @@ class Storage
 
                 try {
                     $sth->execute();
-                    $result = $sth->fetchAll(PDO::FETCH_ASSOC);
-                    if($result[0] > 0) {
-                        throw new Exception("Record already exists");
+                    $result = $sth->fetchAll(\PDO::FETCH_ASSOC);
+                    if($result[0]['count'] > 0) {
+                        throw new \Exception("Record already exists");
                     }
                 } catch (\PDOException $exception) {
                     throw $exception;
                 }
 
-                $sql2 = "INSERT INTO dataset2publication_link (dataset_uid, publication_number,
+                $sql2 = "INSERT INTO dataset2publication_link (dataset_udi, publication_doi,
                         person_number) values (:dataset_udi, :publication_doi, :person_number)";
 
                 $sth2 = $dbms->prepare($sql2);
