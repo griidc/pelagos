@@ -15,6 +15,8 @@
 --               Added UNIQUE INDEX on publication_doi attribute
 --            09 Apr 2015: Modified the publication entity to use the DOI as
 --               the primary key.
+--               Altered pull date to a pull time timestamp.
+--               Added chk_publication_citation_pulltime_not_before_2015 check.
 -- -----------------------------------------------------------------------------
 \c gomri postgres
 
@@ -38,7 +40,10 @@ CREATE TABLE publication
 (
    publication_doi                          DOI_TYPE            NOT NULL,
    publication_citation                     TEXT                NOT NULL,
-   publication_citation_pull_date           DATE                NOT NULL,
+   publication_citation_pulltime            TIMESTAMP           NOT NULL,
+
+   CONSTRAINT chk_publication_citation_pulltime_not_before_2015
+      CHECK (publication_citation_pulltime > '2015-01-01 00:00:00'),
 
    PRIMARY KEY (publication_doi)
 );
