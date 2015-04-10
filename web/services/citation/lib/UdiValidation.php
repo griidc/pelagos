@@ -59,7 +59,7 @@ class UdiValidation
         $udi = trim($udi);
         $this->isValidString($udi);
         $this->isCorrectLength($udi);
-        $udi = $this->isValidPattern($udi);
+        $this->isValidPattern($udi);
         return $udi;
     }
 
@@ -78,11 +78,9 @@ class UdiValidation
         require_once './lib/InvalidUdiException.php';
         $out = "";  // the output buffer for pgreg_match
 
-        preg_match($this->getUdiPattern(), $udi, $out);
-        if (count($out) > 0) {
-            return $out[0];
-        }
-
+        $b = preg_match($this->getUdiPattern(), $udi, $out);
+        if ($b)
+            return true;
         throw new \Citation\InvalidUdiException("ERROR: UDI " . $udi . " must be in format like R4.x260.204:0001");
     }
 
@@ -110,15 +108,13 @@ class UdiValidation
      */
     private function isCorrectLength($udi)
     {
+        require_once './lib/InvalidUdiException.php';
         $len = strlen($udi);
 
-        if ($len == self::UDI_LENGTH) {
-            return true;
+        if ($len != self::UDI_LENGTH) {
+            $msg = "must be " . self::UDI_LENGTH . " characters in length.";
+            throw new \Citation\InvalidUdiException("ERROR: UDI provided (" . $udi . ") " . $msg);
         }
-        $msg = "must be " . self::UDI_LENGTH . " characters in length.";
-        require_once './lib/InvalidUdiException.php';
-        throw new \Citation\InvalidUdiException("ERROR: UDI provided (" . $udi . ") " . $msg);
-
         return true;
     }
 }
