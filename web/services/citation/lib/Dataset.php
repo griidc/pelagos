@@ -121,7 +121,7 @@ class Dataset
             $url = "http://data.gulfresearchinitiative.org/data/" . $udi;
         }
         $citationString = $author . " (" . $year . "). " . $title ." (".$udi.") ".
-                   " [Data files]  Available from " . $url;
+                   "[Data files] Available from " . $url;
 
         $citation = new \Pelagos\Citation($regId, $citationString);
         return $citation;
