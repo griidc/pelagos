@@ -18,14 +18,14 @@ class Publication
         $connection = openDB('GOMRI_RO');
 
         $sth = $connection->prepare(
-            'SELECT publication_citation, publication_citation_pull_date FROM publication WHERE publication_doi = :doi'
+            'SELECT publication_citation, publication_citation_pulltime FROM publication WHERE publication_doi = :doi'
         );
         $sth->bindParam(':doi', $this->doi);
         $result = $sth->execute();
         if ($result and $sth->rowCount() > 0) {
             $citation = $sth->fetch(\PDO::FETCH_ASSOC);
             $this->citation = new Citation($this->doi, $citation['publication_citation']);
-            $this->citation->setTimeStamp(new \DateTime($citation['publication_citation_pull_date']));
+            $this->citation->setTimeStamp(new \DateTime($citation['publication_citation_pulltime']));
         }
         return $this->citation;
     }
@@ -59,7 +59,7 @@ class Publication
             $connection = openDB('GOMRI_RW');
             $sth = $connection->prepare(
                  'update publication
-                    set publication_citation = :citation, publication_citation_pull_date = :pull_date
+                    set publication_citation = :citation, publication_citation_pulltime = :pull_date
                     where publication_doi = :doi;'
             );
             $sth->bindparam(':doi', $this->doi);
@@ -71,7 +71,7 @@ class Publication
                 return new HTTPStatus(500, $sth->errorInfo()[2]);
             }
             $sth = $connection->prepare(
-                'insert into publication (publication_doi, publication_citation, publication_citation_pull_date)
+                'insert into publication (publication_doi, publication_citation, publication_citation_pulltime)
                     select :doi, :citation, :pull_date
                     where not exists (select 1 from publication where publication_doi = :doi2);'
             );
