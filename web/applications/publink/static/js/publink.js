@@ -12,7 +12,7 @@ $(document).ready(function() {
     });
     $('#link').button().click(function () {
         $.ajax({
-            url: pelagos_base_path + '/services/publink/' + $('#udi').val() + '/' + $('#doi').val(),
+            url: pelagos_base_path + '/services/plinker/' + $('#udi').val() + '/' + $('#doi').val(),
             method: 'LINK'
         }).done(function (data) {
             $('#udi').val('');
@@ -84,7 +84,7 @@ function initSpinners()
         top: '20px', // Top position relative to parent
         left: '40px' // Left position relative to parent
     };
-    
+
     target = document.getElementById('publication_spinner');
     publication_spinner = new Spinner(opts).spin(target);
     target = document.getElementById('dataset_spinner');
