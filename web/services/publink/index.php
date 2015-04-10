@@ -83,7 +83,7 @@ $comp->slim->map('/:udi/:doiShoulder/:doiBody(/)', function ($udi, $doiShoulder,
     $comp->slim->response->setBody($HTTPStatus->asJSON());
 
     $quit = true;
-})->via('LINK','GET');
+})->via('LINK');
 
 $comp->slim->run();
 
