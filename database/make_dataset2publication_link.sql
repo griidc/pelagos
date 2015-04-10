@@ -17,6 +17,7 @@
 --               way to uniquely identify a dataset within the current data
 --               structure, so had to re-define this table to make the best of
 --               a bad situation.
+--               Added chk_dataset2publication_createtime_not_before_2015 check
 -- -----------------------------------------------------------------------------
 \c gomri postgres
 
@@ -31,6 +32,9 @@ CREATE TABLE dataset2publication_link
    dataset2publication_createtime           TIMESTAMP           NOT NULL
       DEFAULT NOW(),
    person_number                            INTEGER             NOT NULL,
+
+   CONSTRAINT chk_dataset2publication_createtime_not_before_2015
+      CHECK (dataset2publication_createtime > '2015-01-01 00:00:00'),
 
    CONSTRAINT fk_dataset2publication_link_publcation_doi
       FOREIGN KEY (publication_doi)
