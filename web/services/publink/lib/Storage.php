@@ -53,7 +53,7 @@ class Storage
                     $sth->execute();
                     $result = $sth->fetchAll(\PDO::FETCH_ASSOC);
                     if($result[0]['count'] > 0) {
-                        throw new \Exception("Record already exists");
+                        throw new \Exception("A link has already been established between the given dataset and publication.");
                     }
                 } catch (\PDOException $exception) {
                     throw $exception;
