@@ -39,7 +39,7 @@ $comp->slim->map('/:udi/:doiShoulder/:doiBody(/)', function ($udi, $doiShoulder,
     $doi = $doiShoulder.'/'.$doiBody;
     // check for valid format of doi
     if (preg_match('/(10[.]\d{4,}[^\s"\/\<\>]*\/[^\s"\<\>]+)/',$doi) == 0) {
-        # Thx to Alix Alex for the regexp at:
+        # Thx to Alix Axel for the regexp at:
         # http://stackoverflow.com/questions/27910/finding-a-doi-in-a-document-or-page
         $quit = true;
         $HTTPStatus = new \Pelagos\HTTPStatus(400,"Invalid doi format");
