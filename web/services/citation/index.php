@@ -41,7 +41,7 @@ $comp->slim->get('/publication/:doiShoulder(/(:doiBody))', function ($doiShoulde
 $comp->slim->get('/dataset/:udi', function ($udi) use ($comp) {
     header('Content-Type:application/json');
     require_once './lib/Dataset.php';
-    $ds = new  \Citation\Dataset();
+    $ds = new \Citation\Dataset();
     try {
         $citation = $ds->getRegisteredDatasetCitation($udi);
         if ($citation == false) {
@@ -50,17 +50,17 @@ $comp->slim->get('/dataset/:udi', function ($udi) use ($comp) {
             print $status->asJSON();
         } else {
             print $citation->asJSON();
-            $comp->quit();
         }
-    } catch (InvalidUdiException $e) {
+    } catch (\Citation\InvalidUdiException $e) {
         $status = new \Pelagos\HTTPStatus(400, $e->getMessage());
         http_response_code($status->code);
         print $status->asJSON();
-    } catch (NoRegisteredDatasetException $e) {
+    } catch (\Citation\NoRegisteredDatasetException $e) {
         $status = new \Pelagos\HTTPStatus(400, $e->getMessage());
         http_response_code($status->code);
         print $status->asJSON();
     }
+    $comp->quit();
 });
 
 /**
