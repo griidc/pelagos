@@ -12,7 +12,11 @@
 -- TODO DONE:
 -- -----------------------------------------------------------------------------
 -- CHANGELOG: 08 Apr 2015: Added GRANT statements
---                         Added dataset2publication_createtime DEFAULT clause
+--               Added dataset2publication_createtime DEFAULT clause
+--            09 Apr 2015: Finallly got everyone to realize that there is no
+--               way to uniquely identify a dataset within the current data
+--               structure, so had to re-define this table to make the best of
+--               a bad situation.
 -- -----------------------------------------------------------------------------
 \c gomri postgres
 
@@ -22,26 +26,20 @@ DROP TABLE dataset2publication_link CASCADE;
 -- Create the tabl(e):
 CREATE TABLE dataset2publication_link
 (
-   dataset_uid                              INTEGER             NOT NULL,
-   publication_number                       INTEGER             NOT NULL,
-   person_number                            INTEGER             NOT NULL,
+   dataset_udi                              CHAR(16)            NOT NULL,
+   publication_doi                          DOI_TYPE            NOT NULL,
    dataset2publication_createtime           TIMESTAMP           NOT NULL
       DEFAULT NOW(),
+   person_number                            INTEGER             NOT NULL,
 
-   CONSTRAINT fk_datasets_dataset_uid
-      FOREIGN KEY (dataset_uid)
-      REFERENCES datasets(dataset_uid)
+   CONSTRAINT fk_dataset2publication_link_publcation_doi
+      FOREIGN KEY (publication_doi)
+      REFERENCES publication(publication_doi)
       ON DELETE RESTRICT
       ON UPDATE RESTRICT,
 
-   CONSTRAINT fk_dataset2publication_link_publcation_number
-      FOREIGN KEY (publication_number)
-      REFERENCES publication(publication_number)
-      ON DELETE RESTRICT
-      ON UPDATE RESTRICT,
-
-   PRIMARY KEY (dataset_uid,
-                publication_number)
+   PRIMARY KEY (dataset_udi,
+                publication_doi)
 );
 
 -- Rename automatically created system names:

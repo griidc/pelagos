@@ -12,7 +12,9 @@
 -- TODO DONE:
 -- -----------------------------------------------------------------------------
 -- CHANGELOG: 08 Apr 2015: Added GRANT statements
---                         Added UNIQUE INDEX on publication_doi attribute
+--               Added UNIQUE INDEX on publication_doi attribute
+--            09 Apr 2015: Modified the publication entity to use the DOI as
+--               the primary key.
 -- -----------------------------------------------------------------------------
 \c gomri postgres
 
@@ -34,24 +36,16 @@ CONSTRAINT chk_doi_type
 -- Create the tabl(e):
 CREATE TABLE publication
 (
-   publication_number                       SERIAL              NOT NULL,
    publication_doi                          DOI_TYPE            NOT NULL,
    publication_citation                     TEXT                NOT NULL,
    publication_citation_pull_date           DATE                NOT NULL,
 
-   PRIMARY KEY (publication_number)
+   PRIMARY KEY (publication_doi)
 );
 
 -- Rename automatically created system names:
 ALTER INDEX publication_pkey
    RENAME TO uidx_pk_publication;
-
-ALTER SEQUENCE publication_publication_number_seq
-   RENAME TO seq_publcation_number;
-
--- Create indexes:
-CREATE UNIQUE INDEX
-   ON publication(publication_doi);
 
 -- Set object ownerships:
 ALTER DOMAIN DOI_TYPE
@@ -61,12 +55,6 @@ ALTER TABLE publication
    OWNER TO gomri_admin;
 
 -- Set the other permissions:
-GRANT USAGE
-ON SEQUENCE seq_publcation_number
-TO gomri_reader,
-   gomri_user,
-   gomri_writer;
-
 GRANT INSERT,
       SELECT,
       UPDATE
