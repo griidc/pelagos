@@ -107,7 +107,6 @@ class Dataset
         $doi = $ds['doi'];
         $udi = $ds["udi"];
         $regId = $ds["registry_id"];
-        $url = " url goes here";
 
         // The doi could include a url - check for it
         if ($doi && strlen($doi) > 0) {
@@ -121,7 +120,8 @@ class Dataset
         } else {
             $url = "http://data.gulfresearchinitiative.org/data/" . $udi;
         }
-        $citationString = $author . " (" . $year . "). " . $title . " [Data files]. Retrieved from " . $url;
+        $citationString = $author . " (" . $year . "). " . $title ." (".$udi.") ".
+                   " [Data files]  Available from " . $url;
 
         $citation = new \Pelagos\Citation($regId, $citationString);
         return $citation;

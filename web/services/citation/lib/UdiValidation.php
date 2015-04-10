@@ -9,14 +9,14 @@ class UdiValidation
 {
 
 
-    const REGXRYT = "[R|Y|T]{1}";
+    const REGXRY = "(?:[R[1-9]|Y1)";
     const REGXDOT = "\.";
     const REGXCOLON = "\:";
-    const REGXX = "x{1}";
-    const REGX09_1 = "[0-9|S]{1}";
+    const REGXX = "x";
+    const REGX09_1 = "[0-9]";
     const REGX09_3 = "[0-9]{3}";
     const REGX09_4 = "[0-9]{4}";
-    const UDI_MIN_LENGTH = 16;
+    const UDI_LENGTH = 16;
     const UDI_MAX_LENGTH = 20;
 
     public function __construct()
@@ -28,11 +28,10 @@ class UdiValidation
      * @return string that is a pattern that matches a conforming udi such as
      * R4.x260.204:0001
      */
-    private function getShortUdiPattern()
+    private function getUdiPattern()
     {
         $regX = "/" .
-            self::REGXRYT .  // R
-            self::REGX09_1 . // 4
+            self::REGXRY .  // R4
             self::REGXDOT .  // .
             self::REGXX .    //  x
             self::REGX09_3 . // 260
@@ -44,27 +43,7 @@ class UdiValidation
         return $regX;
     }
 
-    /**
-     * @return string that is a pattern that matches a conforming udi such as
-     * R4.x260.204:0001
-     */
-    private function getLongUdiPattern()
-    {
-        $regX = "/" .
-            self::REGXRYT .  // R
-            self::REGX09_1 . // 4
-            self::REGXDOT .  // .
-            self::REGXX .    //  x
-            self::REGX09_3 . // 260
-            self::REGXDOT .  // .
-            self::REGX09_3 .  // 204
-            self::REGXCOLON .  // .
-            self::REGX09_4 . //0001
-            self::REGXDOT .  // .
-            self::REGX09_3 . // 260
-            "/";
-        return $regX;
-    }
+
 
     /**
      * Test the udi for integrity.
@@ -77,6 +56,7 @@ class UdiValidation
      */
     public function validate($udi) // throws InvalidUdiException
     {
+        $udi = trim($udi);
         $this->isValidString($udi);
         $this->isCorrectLength($udi);
         $udi = $this->isValidPattern($udi);
@@ -91,27 +71,19 @@ class UdiValidation
      * @param $udi - a string to identify the dataset
      * @return true if the udi contains the expected pattern
      * otherwise throw InvalidUdiException
-     * @see getShortUdiPattern()
-     * @see getLongUdiPattern
+     * @see getUdiPattern()
      */
     private function isValidPattern($udi) // throws InvalidUdiException
     {
         require_once './lib/InvalidUdiException.php';
-        $out = "";  // the output   buffer for pgreg_match
+        $out = "";  // the output buffer for pgreg_match
 
-        preg_match($this->getLongUdiPattern(), $udi, $out);
-        //  even if it matches the long pattern return the short version
-        if (count($out) > 0) {
-            preg_match($this->getShortUdiPattern(), $udi, $out);
-            return $out[0];
-        }
-
-        preg_match($this->getShortUdiPattern(), $udi, $out);
+        preg_match($this->getUdiPattern(), $udi, $out);
         if (count($out) > 0) {
             return $out[0];
         }
 
-        throw new \Citation\InvalidUdiException("ERROR: UDI " . $udi . " does not conform to expected pattern");
+        throw new \Citation\InvalidUdiException("ERROR: UDI " . $udi . " must be in format like R4.x260.204:0001");
     }
 
     /**
@@ -122,10 +94,10 @@ class UdiValidation
     private function isValidString($udi) // throws InvalidUdiException
     {
         require_once './lib/InvalidUdiException.php';
-        if (!empty($udi)) {
-            return true;
+        if (empty($udi)) {
+            throw new \Citation\InvalidUdiException("ERROR: The UDI parameter provided is empty");
         }
-        throw new \Citation\InvalidUdiException("ERROR: The UDI parameter provided is empty");
+        return true;
     }
 
 
@@ -140,11 +112,10 @@ class UdiValidation
     {
         $len = strlen($udi);
 
-        if ($len == self::UDI_MIN_LENGTH ||
-            $len == self::UDI_MAX_LENGTH) {
+        if ($len == self::UDI_LENGTH) {
             return true;
         }
-        $msg = "must be " . self::UDI_MIN_LENGTH . " or " . self::UDI_MAX_LENGTH . " characters in length.";
+        $msg = "must be " . self::UDI_LENGTH . " characters in length.";
         require_once './lib/InvalidUdiException.php';
         throw new \Citation\InvalidUdiException("ERROR: UDI provided (" . $udi . ") " . $msg);
 
