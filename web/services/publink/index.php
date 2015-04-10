@@ -50,24 +50,14 @@ $comp->slim->map('/:udi/:doiShoulder/:doiBody(/)', function ($udi, $doiShoulder,
     }
 
     $Publink = new \Pelagos\Publink;
-    $empNum = getEmployeeNumberFromUID($user->name);
-    if ($empNum == '' or $empNum == null) {
-        $quit = true;
-        $HTTPStatus = new \Pelagos\HTTPStatus(401,'Only GoMRI users may use feature.');
-        $comp->slim->response->headers->set('Content-Type', 'application/json');
-        $comp->slim->response->status($HTTPStatus->code);
-        $comp->slim->response->setBody($HTTPStatus->asJSON());
-        return;
-    }
-
     try {
-        $Publink->createLink($udi,$doi,$empNum);
+        $Publink->createLink($udi,$doi,$user->name);
     } catch (\Exception $ee) {
         $quit = true;
         $code = 0;
         if ($ee->getMessage() == 'Record Does not exist in publication table') {
             $code = 417;
-        } elseif ($ee->getMessage() == 'Record already exists') {
+        } elseif ($ee->getMessage() == 'A link has already been established between the given dataset and publication.') {
             $code = 403;
         }
         $HTTPStatus = new \Pelagos\HTTPStatus($code,$ee->getMessage());

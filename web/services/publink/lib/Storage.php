@@ -60,12 +60,12 @@ class Storage
                 }
 
                 $sql2 = "INSERT INTO dataset2publication_link (dataset_udi, publication_doi,
-                        person_number) values (:dataset_udi, :publication_doi, :person_number)";
+                        username) values (:dataset_udi, :publication_doi, :username)";
 
                 $sth2 = $dbms->prepare($sql2);
                 $sth2->bindParam(':dataset_udi',$udi);
                 $sth2->bindParam(':publication_doi',$doi);
-                $sth2->bindParam(':person_number',$emp);
+                $sth2->bindParam(':username',$emp);
 
                 try {
                     $sth2->execute();
