@@ -32,4 +32,13 @@ class Publink
         $result = $persistance->store('Publink',$this);
     }
 
+    public function removeLink($udi,$doi,$linkCreator)
+    {
+        $this->udi = $udi;
+        $this->doi = $doi;
+        $this->linkCreator = $linkCreator;
+        $persistance = new Storage;
+        $result = $persistance->remove('Publink',$this);
+    }
+
 }

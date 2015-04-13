@@ -76,4 +76,58 @@ class Storage
             break;
         }
     }
+
+    public function remove($type,$obj)
+    {
+        require("DBUtils.php");
+        switch ($type) {
+            case "Publink":
+                $doi = $obj->get_doi();
+                $udi = $obj->get_udi();
+                $emp = $obj->get_linkCreator();
+
+                $dbms = openDB("GOMRI_RW");
+
+                $sql = "SELECT
+                            count(*)
+                        FROM
+                            dataset2publication_link
+                        WHERE
+                            dataset_udi = :dataset_udi
+                        AND
+                            publication_doi = :publication_doi";
+
+                $sth = $dbms->prepare($sql);
+
+                $sth->bindParam(':dataset_udi',$udi);
+                $sth->bindParam(':publication_doi',$doi);
+
+                try {
+                    $sth->execute();
+                    $result = $sth->fetchAll(\PDO::FETCH_ASSOC);
+                    if($result[0]['count'] == 0) {
+                        throw new \Exception("A link between the given doi and UDI does not exist.");
+                    }
+                } catch (\PDOException $exception) {
+                    throw $exception;
+                }
+
+                $sql2 = "DELETE FROM dataset2publication_link
+                         WHERE dataset_udi = :dataset_udi
+                         AND publication_doi = :publication_doi;";
+
+                $sth2 = $dbms->prepare($sql2);
+                $sth2->bindParam(':dataset_udi',$udi);
+                $sth2->bindParam(':publication_doi',$doi);
+                $sth2->bindParam(':username',$emp);
+
+                try {
+                    $sth2->execute();
+                } catch (\PDOException $exception) {
+                    throw $exception;
+                }
+
+            break;
+        }
+    }
 }
