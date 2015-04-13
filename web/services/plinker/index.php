@@ -14,6 +14,16 @@ $comp->slim->get('/', function () use ($comp) {
     print 'This service creates associations between datasets and publications.';
 });
 
+$comp->slim->map('/:udi(/(:incomplete(/)))', function ($udi, $incomplete = null) use ($comp) {
+    global $quit;
+    $quit = true;
+    $HTTPStatus = new \Pelagos\HTTPStatus(400,"Invalid doi format");
+    $comp->slim->response->headers->set('Content-Type', 'application/json');
+    $comp->slim->response->status($HTTPStatus->code);
+    $comp->slim->response->setBody($HTTPStatus->asJSON());
+    return;
+})->via('LINK');
+
 $comp->slim->map('/:udi/:doiShoulder/:doiBody(/)', function ($udi, $doiShoulder, $doiBody) use ($comp) {
     global $user;
     global $quit;
@@ -38,9 +48,7 @@ $comp->slim->map('/:udi/:doiShoulder/:doiBody(/)', function ($udi, $doiShoulder,
 
     $doi = $doiShoulder.'/'.$doiBody;
     // check for valid format of doi
-    if (preg_match('/(10[.]\d{4,}[^\s"\/\<\>]*\/[^\s"\<\>]+)/',$doi) == 0) {
-        # Thx to Alix Axel for the regexp at:
-        # http://stackoverflow.com/questions/27910/finding-a-doi-in-a-document-or-page
+    if (preg_match('/^10\..*\/.*$/',$doi) == 0) {
         $quit = true;
         $HTTPStatus = new \Pelagos\HTTPStatus(400,"Invalid doi format");
         $comp->slim->response->headers->set('Content-Type', 'application/json');
