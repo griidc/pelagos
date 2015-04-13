@@ -30,7 +30,7 @@ if (!function_exists('openDB')) {
         } else {
             $config = $configini["$database"];
         }
-        
+
         if ($config["type"] == 'mysql') {
             # driver used: mysql
             $dbconnstr  = "mysql:host=".$config["host"].';';
@@ -40,7 +40,7 @@ if (!function_exists('openDB')) {
             $user       = $config["username"];
             $password   = $config["password"];
             try {
-                $pdoconnection = new PDO($dbconnstr, $user, $password, array(PDO::ATTR_PERSISTENT => false, PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
+                $pdoconnection = new PDO($dbconnstr, $user, $password, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_PERSISTENT => false, PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
             } catch (PDOException $e) {
                 $dMessage = 'Connection failed: ' . $e->getMessage();
                 throw new Exception($dMessage);
@@ -53,7 +53,7 @@ if (!function_exists('openDB')) {
             $user       = $config["username"];
             $password   = $config["password"];
             try {
-                $pdoconnection = new PDO($dbconnstr, $user, $password, array(PDO::ATTR_PERSISTENT => true));
+                $pdoconnection = new PDO($dbconnstr, $user, $password, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_PERSISTENT => true));
             } catch (PDOException $e) {
                 $dMessage = 'Connection failed: ' . $e->getMessage();
                 throw new Exception($dMessage);
