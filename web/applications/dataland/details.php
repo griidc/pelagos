@@ -37,7 +37,7 @@ require_once 'auth.php'; # for user_is_logged_in_somehow()
 require_once 'Twig_Extensions_GRIIDC.php';
 include_once 'pdo.php'; # for pdoDBQuery()
 require_once 'Twig/Autoloader.php';
-require_once 'stubs/publinks-lib.php';
+require_once 'lib/plinker-lib.php';
 
 Twig_Autoloader::register();
 
@@ -66,15 +66,14 @@ if ($udi <> '')
 {
 
     $pconn = OpenDB("GOMRI_RW");
-    
-    # Toggle per ini file parameter the enforcement of dataset downloadability requiring accepted metadata 
+    # Toggle per ini file parameter the enforcement of dataset downloadability requiring accepted metadata
     $enforceMetadataRule = 0;
     if( (isset($GLOBALS['config']['system']['enforce_approved_metadata'] ) and ( $GLOBALS['config']['system']['enforce_approved_metadata'] == 1 )) ) {
         $enforceMetadataRule = 1;
     } else {
         $enforceMetadataRule = 0;
     }
-    
+
     $pquery = "
     SELECT *,
     CASE WHEN metadata.geom IS NULL THEN ST_AsText(datasets.geom) ELSE ST_AsText(metadata.geom) END AS \"the_geom\",
@@ -144,7 +143,7 @@ if ($udi <> '')
     {
         $dsscript = 'dlmap.addFeatureFromWKT("'. $prow['the_geom'] .'",{"udi":"'.$prow['dataset_udi'].'"});dlmap.gotoAllFeatures();';
     }
-    
+
     $mconn = OpenDB("RIS_RO");
 
     $mquery = "  SELECT * FROM Projects
@@ -156,19 +155,19 @@ if ($udi <> '')
     ";
 
     $mrow = pdoDBQuery($mconn,$mquery);
-    
+
     $mrow = $mrow[0];
-    
+
     $mquery = "
-    SELECT 
+    SELECT
 	People_FirstName, People_LastName,
-    Institution_Name, Department_URL, Department_Name, 
+    Institution_Name, Department_URL, Department_Name,
     Department_Addr1, Department_Addr2,
     Department_City, Department_State, Department_Zip, Department_Country, People_Email
     FROM People
     LEFT OUTER JOIN Institutions ON Institutions.Institution_ID = People.People_Institution
     LEFT OUTER JOIN Departments ON Departments.Department_ID = People.People_Department
-    
+
     WHERE People_ID = ".$prow["primary_poc"]."
     ;
     ";
@@ -176,8 +175,8 @@ if ($udi <> '')
     $mprow = pdoDBQuery($mconn,$mquery);
 
     $mprow = $mprow[0];
-    $publink = new PubLink();
-    $publinks = $publink->getLinksArray();
+    $publink = new \PubLink\PubLink();
+    $publinks = $publink->getLinksArray($udi);
 }
 
 
@@ -260,7 +259,7 @@ var dlmap = new GeoViz();
                 showDatasetDownload('<?php echo $udi;?>')
             }
         });
-        
+
         $("#downloaddsden").button();
 
         $("#metadatadl").button().click(function() {
@@ -295,7 +294,7 @@ var dlmap = new GeoViz();
                 text: 'Download Dataset'
             }
         });
-        
+
         $("#downloaddsden").qtip({
             position: {
                 adjust: {
@@ -309,7 +308,7 @@ var dlmap = new GeoViz();
                 text: 'This dataset is not currently available for download.'
             }
         });
-        
+
         $("#downloaddsdenmd").qtip({
             position: {
                 adjust: {
@@ -337,7 +336,7 @@ var dlmap = new GeoViz();
                 text: 'Download Metadata'
             }
         });
-        
+
         $("#metadatadl-dis").qtip({
             position: {
                 adjust: {
