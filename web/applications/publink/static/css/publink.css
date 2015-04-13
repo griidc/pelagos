@@ -1,0 +1,25 @@
+#pelagos-content {
+    font-size: 20px;
+}
+
+#pelagos-content button.retrieve {
+    font-size: 12px;
+}
+
+#link {
+    font-size: 15px;
+}
+
+.pelagos-citation-container {
+    position: relative;
+    height: 50px;
+    margin-top: 20px;
+}
+
+.pelagos-error {
+    color: red;
+}
+
+.pelagos-spinner {
+    display: none;
+}
