@@ -8,37 +8,36 @@ class Publink
     private $doi;
     private $linkCreator;
 
-    public function get_doi()
+    public function getDoi()
     {
         return $this->doi;
     }
 
-    public function get_udi()
+    public function getUdi()
     {
         return $this->udi;
     }
 
-    public function get_linkCreator()
+    public function getLinkCreator()
     {
         return $this->linkCreator;
     }
 
-    public function createLink($udi,$doi,$linkCreator)
+    public function createLink($udi, $doi, $linkCreator)
     {
         $this->udi = $udi;
         $this->doi = $doi;
         $this->linkCreator = $linkCreator;
         $persistance = new Storage;
-        $result = $persistance->store('Publink',$this);
+        $result = $persistance->store('Publink', $this);
     }
 
-    public function removeLink($udi,$doi,$linkCreator)
+    public function removeLink($udi, $doi, $linkCreator)
     {
         $this->udi = $udi;
         $this->doi = $doi;
         $this->linkCreator = $linkCreator;
         $persistance = new Storage;
-        $result = $persistance->remove('Publink',$this);
+        $result = $persistance->remove('Publink', $this);
     }
-
 }
