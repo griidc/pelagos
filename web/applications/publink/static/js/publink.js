@@ -15,12 +15,12 @@ $(document).ready(function() {
             url: pelagos_base_path + '/services/plinker/' + $('#udi').val() + '/' + $('#doi').val(),
             method: 'LINK'
         }).done(function (data) {
+            alert('Success: ' + data.message);
             $('#udi').val('');
             $('#doi').val('')
             $('#publication .pelagos-citation').html('');
             $('#dataset .pelagos-citation').html('');
             $('#link').button("option", "disabled", true);
-            alert('Success: ' + data.message);
         }).fail(function (data) {
             alert('Error: ' + data.responseJSON.message);
         });
