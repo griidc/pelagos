@@ -13,7 +13,7 @@ class PubLink
         $sql = "select publication_doi from dataset2publication_link
                 where dataset_udi = :udi";
 
-        $dbh = openDB("GOMRI_RW");
+        $dbh = openDB("GOMRI_RW",true);
         $sth = $dbh->prepare($sql);
         $sth->bindParam(":udi", $udi);
         try {
