@@ -37,7 +37,7 @@ require_once 'auth.php'; # for user_is_logged_in_somehow()
 require_once 'Twig_Extensions_GRIIDC.php';
 include_once 'pdo.php'; # for pdoDBQuery()
 require_once 'Twig/Autoloader.php';
-require_once 'lib/plinker-lib.php';
+require_once 'lib/DataLand/DataLand.php';
 
 Twig_Autoloader::register();
 
@@ -175,7 +175,7 @@ if ($udi <> '')
     $mprow = pdoDBQuery($mconn,$mquery);
 
     $mprow = $mprow[0];
-    $publink = new \PubLink\PubLink();
+    $publink = new \DataLand\PubLink();
     $publinks = $publink->getLinksArray($udi);
 }
 
