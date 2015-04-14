@@ -84,7 +84,6 @@ class Storage
             case "Publink":
                 $doi = $obj->get_doi();
                 $udi = $obj->get_udi();
-                $emp = $obj->get_linkCreator();
 
                 $dbms = openDB("GOMRI_RW");
 
@@ -119,7 +118,6 @@ class Storage
                 $sth2 = $dbms->prepare($sql2);
                 $sth2->bindParam(':dataset_udi',$udi);
                 $sth2->bindParam(':publication_doi',$doi);
-                $sth2->bindParam(':username',$emp);
 
                 try {
                     $sth2->execute();

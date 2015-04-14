@@ -119,6 +119,14 @@ $comp->slim->map('/:udi/:doiShoulder/:doiBody(/)', function ($udi, $doiShoulder,
     $Publink = new \Pelagos\Publink;
     try {
         $Publink->removeLink($udi,$doi,$user->name);
+    } catch (\PDOException $ee) {
+        $quit = true;
+        $code = 500;
+        $HTTPStatus = new \Pelagos\HTTPStatus($code,$ee->getMessage());
+        $comp->slim->response->headers->set('Content-Type', 'application/json');
+        $comp->slim->response->status($HTTPStatus->code);
+        $comp->slim->response->setBody($HTTPStatus->asJSON());
+        return;
     } catch (\Exception $ee) {
         $quit = true;
         $code = 0;
