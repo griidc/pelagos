@@ -17,6 +17,7 @@
 --               the primary key.
 --               Altered pull date to a pull time timestamp.
 --               Added chk_publication_citation_pulltime_not_before_2015 check.
+--            14 Apr 2015: Added DELETE privilege for gomri_user and writer
 -- -----------------------------------------------------------------------------
 \c gomri postgres
 
@@ -60,12 +61,13 @@ ALTER TABLE publication
    OWNER TO gomri_admin;
 
 -- Set the other permissions:
-GRANT INSERT,
+GRANT DELETE,
+      INSERT,
       SELECT,
       UPDATE
 ON TABLE publication
 TO gomri_user,
-   gomri_writer;;
+   gomri_writer;
 
 GRANT SELECT
 ON TABLE publication
