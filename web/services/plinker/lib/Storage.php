@@ -13,7 +13,7 @@ class Storage
                 $udi = $obj->get_udi();
                 $emp = $obj->get_linkCreator();
 
-                $dbms = openDB("GOMRI_RW");
+                $dbms = openDB("GOMRI_RW", true);
 
                 $sql0 = "SELECT
                             count(*)
