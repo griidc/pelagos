@@ -23,11 +23,8 @@ class PubLink
         }
 
         while ($dataRow = $sth->fetch(\PDO::FETCH_ASSOC)) {
-            $doi = $dataRow['publication_doi'];
-            $pub = new \Pelagos\Publication($doi);
-            $citation = $pub->getCitation();
-            $text = json_decode($citation->asJSON(), true)['text'];
-            array_push($citations, array('doi' => $doi, 'citation' => $text));
+            $pub = new \Pelagos\Publication($dataRow['publication_doi']);
+            array_push($citations, $pub->getCitation()->asArray());
         }
         $sth = null;
         unset($sth);
