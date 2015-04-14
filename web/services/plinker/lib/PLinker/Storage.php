@@ -13,7 +13,7 @@ class Storage
                 $udi = $obj->getUdi();
                 $emp = $obj->getLinkCreator();
 
-                $dbms = openDB("GOMRI_RW", true);
+                $dbms = openDB("GOMRI_RW");
 
                 $sql0 = "SELECT
                                 count(*)
@@ -86,7 +86,7 @@ class Storage
                 $doi = $obj->getDoi();
                 $udi = $obj->getUdi();
 
-                $dbms = openDB("GOMRI_RW");
+                $dbms = openDB("GOMRI_RW", true);
 
                 $sql = "SELECT
                                 count(*)
