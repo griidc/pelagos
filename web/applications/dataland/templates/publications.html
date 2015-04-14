@@ -1,0 +1,7 @@
+Publications:
+<hr>
+<div class="pubcite">
+    {% for publication in publinks %}
+        <p>{{ publication.citation }} doi:{{ publication.doi }}</p>
+    {% endfor %}
+</div>
