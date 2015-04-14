@@ -1,6 +1,6 @@
 <?php
 
-namespace Pelagos;
+namespace PLinker;
 
 class Publink
 {
