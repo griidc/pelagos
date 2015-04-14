@@ -37,7 +37,7 @@ require_once 'auth.php'; # for user_is_logged_in_somehow()
 require_once 'Twig_Extensions_GRIIDC.php';
 include_once 'pdo.php'; # for pdoDBQuery()
 require_once 'Twig/Autoloader.php';
-require_once 'lib/DataLand/DataLand.php';
+require_once 'lib/DataLand/PubLink.php';
 
 Twig_Autoloader::register();
 

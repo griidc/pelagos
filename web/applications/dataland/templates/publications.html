@@ -1,6 +1,6 @@
 <h2>Publications:</h2>
 <div class="pubcite">
     {% for publication in publinks %}
-        <p><a href="http://dx.doi.org/{{ publication.doi }}">{{ publication.citation }}</a></p>
+        <p><a href="http://dx.doi.org/{{ publication.doi }}" target="_blank">{{ publication.citation }}</a></p>
     {% endfor %}
 </div>
