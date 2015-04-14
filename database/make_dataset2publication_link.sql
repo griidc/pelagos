@@ -7,7 +7,11 @@
 -- Info:      This script creates the dataset2publication_link relationship
 --            entity table.
 -- -----------------------------------------------------------------------------
--- TODO:
+-- TODO:      dataset_udi will need to be a FK to a normalized dataset entity
+--            username eventually will need to be a FK to a normalized user
+--               entity. I would recommend creating a view that works with the
+--               username, and redefining this entity to associate with the PK
+--               of the user table.
 -- -----------------------------------------------------------------------------
 -- TODO DONE:
 -- -----------------------------------------------------------------------------
@@ -18,6 +22,7 @@
 --               structure, so had to re-define this table to make the best of
 --               a bad situation.
 --               Added chk_dataset2publication_createtime_not_before_2015 check
+--            14 Apr 2015: Added DELETE privilege for gomri_user and writer
 -- -----------------------------------------------------------------------------
 \c gomri postgres
 
@@ -29,9 +34,9 @@ CREATE TABLE dataset2publication_link
 (
    dataset_udi                              CHAR(16)            NOT NULL,
    publication_doi                          DOI_TYPE            NOT NULL,
+   username                                 TEXT                NOT NULL,
    dataset2publication_createtime           TIMESTAMP           NOT NULL
       DEFAULT NOW(),
-   person_number                            INTEGER             NOT NULL,
 
    CONSTRAINT chk_dataset2publication_createtime_not_before_2015
       CHECK (dataset2publication_createtime > '2015-01-01 00:00:00'),
@@ -55,12 +60,13 @@ ALTER TABLE dataset2publication_link
    OWNER TO gomri_admin;
 
 -- Set the other permissions:
-GRANT INSERT,
+GRANT DELETE,
+      INSERT,
       SELECT,
       UPDATE
 ON TABLE dataset2publication_link
 TO gomri_user,
-   gomri_writer;;
+   gomri_writer;
 
 GRANT SELECT
 ON TABLE dataset2publication_link
