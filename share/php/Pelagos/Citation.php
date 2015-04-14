@@ -33,17 +33,19 @@ class Citation
         }
     }
 
+    public function asArray()
+    {
+        return array(
+            'id' => $this->id,
+            'text' => $this->text,
+            'style' => $this->style,
+            'locale' => $this->locale,
+            'timestamp' => $this->timestamp->format('c'),
+        );
+    }
+
     public function asJSON()
     {
-        return json_encode(
-            array(
-                'id' => $this->id,
-                'text' => $this->text,
-                'style' => $this->style,
-                'locale' => $this->locale,
-                'timestamp' => $this->timestamp->format('c'),
-            ),
-            JSON_UNESCAPED_SLASHES
-        );
+        return json_encode($this->asArray(), JSON_UNESCAPED_SLASHES);
     }
 }
