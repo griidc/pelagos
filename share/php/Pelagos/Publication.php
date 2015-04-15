@@ -2,16 +2,48 @@
 
 namespace Pelagos;
 
+/**
+ * Pelagos\Publication
+ *
+ * This class generates a Publication object,
+ * which holds the DOI an a Citation object
+ * 
+ * 
+ */
 class Publication
 {
+    /**
+     * DOI
+     * @var $doi string Contains the DOI
+     */
     private $doi;
+    
+    /**
+     * Citation
+     * @var $citation object Contains the Citation Object
+     */
     private $citation;
 
+    /**
+     * Publication Constructor.
+     * 
+     * @param string $doi DOI
+     * 
+     * @return void
+     */
     public function __construct($doi)
     {
         $this->doi = $doi;
     }
 
+    /**
+     * Retrieves a Publication Citation.
+     * 
+     * This function retrieves a publication citation from DB cache
+     * or will create an empty Citation
+     * 
+     * @return Pelagos\Citation
+     */
     public function getCitation()
     {
         require_once 'DBUtils.php';
@@ -29,7 +61,17 @@ class Publication
         }
         return $this->citation;
     }
-
+    
+    /**
+     * Retrieved a Publication Citation.
+     * 
+     * This function will get a Publication Citation from doi.org
+     * 
+     * @param string $style (Optional) Style of the citation, default is 'apa'
+     * @param string $locale (Optional) Locale of the citation text, default is 'utf-8'
+     * 
+     * @return Pelagos\HTTPStatus    
+     */
     public function pullCitation($style = 'apa', $locale = 'utf-8')
     {
         $statusCodes = array(
@@ -92,6 +134,12 @@ class Publication
         return new HTTPStatus($curlInfo['http_code'], $status_message);
     }
 
+    /**
+     * Return this class as JSON.
+     * 
+     * @return JSON
+     */
+    
     public function asJSON()
     {
         return json_encode(
