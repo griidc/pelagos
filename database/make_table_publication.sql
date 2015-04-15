@@ -9,16 +9,6 @@
 -- -----------------------------------------------------------------------------
 -- TODO:
 -- -----------------------------------------------------------------------------
--- TODO DONE:
--- -----------------------------------------------------------------------------
--- CHANGELOG: 08 Apr 2015: Added GRANT statements
---               Added UNIQUE INDEX on publication_doi attribute
---            09 Apr 2015: Modified the publication entity to use the DOI as
---               the primary key.
---               Altered pull date to a pull time timestamp.
---               Added chk_publication_citation_pulltime_not_before_2015 check.
---            14 Apr 2015: Added DELETE privilege for gomri_user and writer
--- -----------------------------------------------------------------------------
 \c gomri postgres
 
 -- Drop everything to start with:

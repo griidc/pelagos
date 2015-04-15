@@ -13,17 +13,6 @@
 --               username, and redefining this entity to associate with the PK
 --               of the user table.
 -- -----------------------------------------------------------------------------
--- TODO DONE:
--- -----------------------------------------------------------------------------
--- CHANGELOG: 08 Apr 2015: Added GRANT statements
---               Added dataset2publication_createtime DEFAULT clause
---            09 Apr 2015: Finallly got everyone to realize that there is no
---               way to uniquely identify a dataset within the current data
---               structure, so had to re-define this table to make the best of
---               a bad situation.
---               Added chk_dataset2publication_createtime_not_before_2015 check
---            14 Apr 2015: Added DELETE privilege for gomri_user and writer
--- -----------------------------------------------------------------------------
 \c gomri postgres
 
 -- Drop everything to start with:
