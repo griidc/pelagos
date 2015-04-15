@@ -38,7 +38,7 @@ $comp->slim->get('/GetLinksJSON(/)', function () use ($comp) {
     // using PDO::FETCH_NUM to minimize json object size
     while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
         $inside[] = array(
-                        'del'       => "<button class=\"delBut\" udi=\"".$row['dataset_udi'].">X</button>",
+                        'del'       => "<button class=\"delBut\" data-udi=\"".$row['dataset_udi']."\" data-doi=\"".$row['publication_doi']."\"  >X</button>",
                         'udi'       => $row['dataset_udi'],
                         'doi'       => $row['publication_doi'],
                         'username'  => $row['username'],
