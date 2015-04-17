@@ -17,38 +17,32 @@ $comp->slim->get('/', function () use ($comp) {
 });
 
 $comp->slim->get('/GetLinks(/)', function () use ($comp) {
-    drupal_add_js('//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js');
     drupal_add_js('//cdn.datatables.net/1.10.6/js/jquery.dataTables.min.js');
     drupal_add_css('//cdn.datatables.net/1.10.6/css/jquery.dataTables.min.css');
+    $comp->addLibrary('ui.button');
     $comp->addJS('static/js/linkList.js');
     $stash = array('pelagos_base_path' => $GLOBALS['pelagos']['base_path']);
+    $stash = array('pelagos_component_path' => $GLOBALS['pelagos']['component_path']);
     return $comp->slim->render('html/linkList.html', $stash);
 });
 
 $comp->slim->get('/GetLinksJSON(/)', function () use ($comp) {
     global $quit;
-    $quit = true;
-    require_once "DBUtils.php";
-    $sql = "select dataset_udi, publication_doi, username, dataset2publication_createtime
-            from dataset2publication_link order by dataset2publication_createtime desc";
-    $dbh = openDB("GOMRI_RO");
-    $sth = $dbh->prepare($sql);
-    $sth->execute();
-    $inside = array();
-    // using PDO::FETCH_NUM to minimize json object size
-    while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
+    require_once "../../services/plinker/lib/Storage.php";
+    $storage = new \Pelagos\Storage;
+    $linksArray = $storage->getAll("Publink");
+    foreach ($linksArray as $link) {
         $inside[] = array(
-                        'del'       => "<button class=\"delBut\" data-udi=\"".$row['dataset_udi']."\" data-doi=\"".$row['publication_doi']."\"  >X</button>",
-                        'udi'       => $row['dataset_udi'],
-                        'doi'       => $row['publication_doi'],
-                        'username'  => $row['username'],
-                        'created'   => $row['dataset2publication_createtime']
+                        'del'       => "",
+                        'udi'       => $link['udi'],
+                        'doi'       => $link['doi'],
+                        'username'  => $link['username'],
+                        'created'   => $link['created']
                   );
     }
-    $sth = null;
-    $dbh = null;
     $data['aaData'] = $inside;
     echo json_encode($data);
+    $quit = true;
 });
 
 $comp->slim->run();

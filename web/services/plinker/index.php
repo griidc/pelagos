@@ -24,6 +24,33 @@ $comp->slim->map('/:udi(/(:incomplete(/)))', function ($udi, $incomplete = null)
     return;
 })->via('LINK');
 
+$comp->slim->get('/GetAllLinksAsJSON(/)', function () use ($comp) {
+    global $quit;
+    $quit = true;
+    require_once "DBUtils.php";
+    $sql = "select dataset_udi, publication_doi, username, dataset2publication_createtime
+            from dataset2publication_link order by dataset2publication_createtime desc";
+    $dbh = openDB("GOMRI_RO");
+    $sth = $dbh->prepare($sql);
+    $sth->execute();
+    $inside = array();
+    // using PDO::FETCH_NUM to minimize json object size
+    while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
+        $inside[] = array(
+                        'del'       => "",
+                        'udi'       => $row['dataset_udi'],
+                        'doi'       => $row['publication_doi'],
+                        'username'  => $row['username'],
+                        'created'   => $row['dataset2publication_createtime']
+                  );
+    }
+    $sth = null;
+    $dbh = null;
+    $data['aaData'] = $inside;
+    echo json_encode($data);
+});
+
+
 $comp->slim->map('/:udi/:doiShoulder/:doiBody(/)', function ($udi, $doiShoulder, $doiBody) use ($comp) {
     global $user;
     global $quit;
