@@ -19,6 +19,7 @@ $comp->slim->get('/', function () use ($comp) {
 $comp->slim->get('/GetLinks(/)', function () use ($comp) {
     drupal_add_js('//cdn.datatables.net/1.10.6/js/jquery.dataTables.min.js');
     drupal_add_css('//cdn.datatables.net/1.10.6/css/jquery.dataTables.min.css');
+    $comp->addCSS('static/css/linkList.css');
     $comp->addLibrary('ui.button');
     $comp->addJS('static/js/linkList.js');
     $stash = array('pelagos_base_path' => $GLOBALS['pelagos']['base_path']);

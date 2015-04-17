@@ -81,7 +81,7 @@ class Storage
         include "DBUtils.php";
         switch ($type) {
             case "Publink":
-                $sql = "select dataset_udi, publication_doi, username, dataset2publication_createtime
+                $sql = "select dataset_udi, publication_doi, username, to_char(dataset2publication_createtime, 'YYYY-MM-DD HH24:MI:SS') as createtime
                             from dataset2publication_link order by dataset2publication_createtime desc";
                 $dbh = openDB("GOMRI_RO", true);
                 $sth = $dbh->prepare($sql);
@@ -92,7 +92,7 @@ class Storage
                                       'udi'       => $row['dataset_udi'],
                                       'doi'       => $row['publication_doi'],
                                       'username'  => $row['username'],
-                                      'created'   => $row['dataset2publication_createtime']
+                                      'created'   => $row['createtime']
                                       );
                 }
                 $sth = null;
