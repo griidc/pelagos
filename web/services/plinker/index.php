@@ -57,7 +57,7 @@ $comp->slim->map('/:udi/:doiShoulder/:doiBody(/)', function ($udi, $doiShoulder,
         return;
     }
 
-    $Publink = new \Pelagos\Publink;
+    $Publink = new \Plinker\Publink;
     try {
         $Publink->createLink($udi,$doi,$user->name);
     } catch (\Exception $ee) {
