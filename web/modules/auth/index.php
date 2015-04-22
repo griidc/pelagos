@@ -111,6 +111,7 @@ $app->get('/oauth2/:provider(/)', function ($provider) use ($app) {
     switch($provider) {
         case "google":
             $url = "https://accounts.google.com/o/oauth2/auth";
+            $_SESSION['callback_dest']=$app->request->get('dest');
             $params = array(
                              "response_type" => "code",
                              "client_id" => $GLOBALS['config']['google']['client_id'],
@@ -126,6 +127,12 @@ $app->get('/oauth2/:provider(/)', function ($provider) use ($app) {
 
 $app->get('/oauth2callback', function () use ($app) {
     global $pelagos;
+    if (array_key_exists( 'callback_dest', $_SESSION ) and (isset($_SESSION['callback_dest']))) {
+        $dest = $_SESSION['callback_dest'];
+    } else {
+        $dest = '';
+    }
+
     $token = $app->request->get('code');
     $url = 'https://accounts.google.com/o/oauth2/token';
     $params = array(
@@ -149,7 +156,6 @@ $app->get('/oauth2callback', function () use ($app) {
         $_SESSION['guestAuthProvider'] = 'google';
         $_SESSION['guestAuthUser'] = $google_user_info->email;
 
-        $dest = $app->request->get('dest');
         if (substr($dest,0,1) != '/') {
             $dest = "/$dest";
         }
