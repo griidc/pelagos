@@ -141,6 +141,8 @@ function getData($params)
 	//add subnode for Researchers
 	//$innerParentNode = $xmlBld->createXmlNode($root,'Researchers'); 
 	$innerParentNode = $root;
+
+    $myConnection = openConnection();
 	
 	while ($row = $sth->fetch(PDO::FETCH_ASSOC))
 	{
@@ -199,6 +201,8 @@ function getData($params)
 			}
 		}
 	} 
+
+    closeConnection($myConnection);
 	
 	// get completed xml document
 	echo $xmlBld;
