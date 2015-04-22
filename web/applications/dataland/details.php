@@ -419,11 +419,11 @@ var dlmap = new GeoViz();
                 <td><img src="/data-discovery/includes/images/vbar.png"></td>
                 <td align="center">
                     <div>
-                        <a href="/auth/openid/google?dest=<?php echo "$_SERVER[REQUEST_URI]";?>"><img src="/data-discovery/includes/images/googleauth.png" alt="google auth logo"></a>
+                        <a href="/auth/oauth2/google>"><img src="/data-discovery/includes/images/googleauth.png" alt="google auth logo"></a>
                     </div>
                     <div>
                         Members of the public may use their<br>
-                        <a href="/auth/oauth2/google?dest=<?php echo "$_SERVER[REQUEST_URI]";?>">Google login</a> to download data.
+                        <a href="/auth/oauth2/google">Google login</a> to download data.
                     </div>
                 </td>
             </tr>
