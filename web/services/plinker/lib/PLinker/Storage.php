@@ -1,6 +1,6 @@
 <?php
 
-namespace Pelagos;
+namespace PLinker;
 
 class Storage
 {
@@ -9,9 +9,9 @@ class Storage
         include "DBUtils.php";
         switch ($type) {
             case "Publink":
-                $doi = $obj->get_doi();
-                $udi = $obj->get_udi();
-                $emp = $obj->get_linkCreator();
+                $doi = $obj->getDoi();
+                $udi = $obj->getUdi();
+                $emp = $obj->getLinkCreator();
 
                 $dbms = openDB("GOMRI_RW", true);
 
@@ -53,7 +53,8 @@ class Storage
                     $sth->execute();
                     $result = $sth->fetchAll(\PDO::FETCH_ASSOC);
                     if ($result[0]['count'] > 0) {
-                        throw new \Exception("A link already exists between this dataset and publication.");
+                        throw new \Exception("A link has already been established "
+                        . "between the given dataset and publication.");
                     }
                 } catch (\PDOException $exception) {
                     throw $exception;
@@ -72,6 +73,59 @@ class Storage
                 } catch (\PDOException $exception) {
                     throw $exception;
                 }
+
+                break;
+        }
+    }
+
+    public function remove($type, $obj)
+    {
+        include "DBUtils.php";
+        switch ($type) {
+            case "Publink":
+                $doi = $obj->getDoi();
+                $udi = $obj->getUdi();
+
+                $dbms = openDB("GOMRI_RW", true);
+
+                $sql = "SELECT
+                                count(*)
+                            FROM
+                                dataset2publication_link
+                            WHERE
+                                dataset_udi = :dataset_udi
+                            AND
+                                publication_doi = :publication_doi";
+
+                $sth = $dbms->prepare($sql);
+
+                $sth->bindParam(':dataset_udi', $udi);
+                $sth->bindParam(':publication_doi', $doi);
+
+                try {
+                    $sth->execute();
+                    $result = $sth->fetchAll(\PDO::FETCH_ASSOC);
+                    if ($result[0]['count'] == 0) {
+                        throw new \Exception("A link between the given doi and UDI does not exist.");
+                    }
+                } catch (\PDOException $exception) {
+                    throw $exception;
+                }
+
+                $sql2 = "DELETE FROM dataset2publication_link
+                             WHERE dataset_udi = :dataset_udi
+                             AND publication_doi = :publication_doi;";
+
+                $sth2 = $dbms->prepare($sql2);
+                $sth2->bindParam(':dataset_udi', $udi);
+                $sth2->bindParam(':publication_doi', $doi);
+
+                try {
+                    $sth2->execute();
+                } catch (\PDOException $exception) {
+                    throw $exception;
+                }
+
                 break;
         }
     }
@@ -119,4 +173,5 @@ class Storage
             break;
         }
     }
+
 }
