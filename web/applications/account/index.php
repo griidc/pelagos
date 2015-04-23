@@ -258,7 +258,7 @@ $app->post('/new', function () use ($app) {
         $env = $app->environment();
         $message = "Please visit the following link to verify your identity and complete your GRIIDC account request: https://$GLOBALS[HOST]$env[SCRIPT_NAME]/request?email=$email&hash=$person[hash]";
 
-        mail($email,$subject,$message,"From: $from\nTo: $to");
+        mail($email,$subject,$message,"From: $from\nTo: $to",'-f griidc@gomri.org');
 
         return $app->render('verification_email_sent.html',$person['Person']);
     }
@@ -405,7 +405,7 @@ $app->post('/request', function () use ($app) {
             $message .= "\n\n\nRequest details:\n\n" . ldif_to_message($ldif);
 
             foreach (get_notify_to() as $toAddress) {
-                mail($toAddress,$subject,$message,"From: $fromAddress");
+                mail($toAddress,$subject,$message,"From: $fromAddress",'-f griidc@gomri.org');
             }
 
             $risUserId = null;
@@ -538,14 +538,14 @@ $app->post('/approve/create', $GLOBALS['AUTH_FOR_ROLE']('admin'), function () us
             $message .= "\n\nYou may now use this username and the password you provided to log in to GRIIDC services.";
             $message .= "\n\nNote: You must change your password every 180 days or it will expire. You will begin receiving password expiration warnings one week before your password expires.";
 
-            mail($toAddress,$subject,$message,"From: $fromAddress");
+            mail($toAddress,$subject,$message,"From: $fromAddress",'-f griidc@gomri.org');
 
             $subject = "GRIIDC Account Request: $uid";
             $message = "The account request for $uid has been approved by " . $user->name . ".";
             $message .= "\n\n\nRequest details:\n\n" . ldif_to_message($ldif);
 
             foreach (get_notify_to() as $toAddress) {
-                mail($toAddress,$subject,$message,"From: $fromAddress");
+                mail($toAddress,$subject,$message,"From: $fromAddress",'-f griidc@gomri.org');
             }
 
             # pass event to notification event handler, along with username of
@@ -581,7 +581,7 @@ $app->post('/approve/delete', $GLOBALS['AUTH_FOR_ROLE']('admin'), function () us
         $message .= "\n\n\nRequest details:\n\n" . ldif_to_message($ldif);
 
         foreach (get_notify_to() as $toAddress) {
-            mail($toAddress,$subject,$message,"From: $fromAddress");
+            mail($toAddress,$subject,$message,"From: $fromAddress",'-f griidc@gomri.org');
         }
     }
 });
@@ -673,7 +673,7 @@ $app->post('/password', function () use ($app) {
     $env = $app->environment();
     $message = "Please visit the following link to verify your identity and complete your GRIIDC account request: https://$GLOBALS[HOST]$env[SCRIPT_NAME]/password/reset?uid=$uid&hash=$person[hash]";
 
-    mail($email,$subject,$message,"From: $from\nTo: $to");
+    mail($email,$subject,$message,"From: $from\nTo: $to",'-f griidc@gomri.org');
 
     $stash['email'] = $email;
     return $app->render('password_reset_email_sent.html',$stash);
