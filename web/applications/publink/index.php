@@ -29,8 +29,8 @@ $comp->slim->get('/GetLinks(/)', function () use ($comp) {
 
 $comp->slim->get('/GetLinksJSON(/)', function () use ($comp) {
     global $quit;
-    require_once "../../services/plinker/lib/Storage.php";
-    $storage = new \Pelagos\Storage;
+    require_once "../../services/plinker/lib/PLinker/Storage.php";
+    $storage = new \PLinker\Storage;
     $linksArray = $storage->getAll("Publink");
     foreach ($linksArray as $link) {
         list($fc, $proj) = getFcAndProj($link['udi']);
