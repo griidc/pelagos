@@ -256,7 +256,7 @@ var dlmap = new GeoViz();
                 showDatasetDownload('<?php echo $udi;?>')
             }
         });
-        
+
         $("#downloaddsden").button();
 
         $("#metadatadl").button().click(function() {
@@ -419,7 +419,7 @@ var dlmap = new GeoViz();
                 <td><img src="/data-discovery/includes/images/vbar.png"></td>
                 <td align="center">
                     <div>
-                        <a href="/auth/openid/google?dest=<?php echo "$_SERVER[REQUEST_URI]";?>"><img src="/data-discovery/includes/images/googleauth.png" alt="google auth logo"></a>
+                        <a href="/auth/oauth2/google?dest=<?php echo "$_SERVER[REQUEST_URI]";?>"><img src="/data-discovery/includes/images/googleauth.png" alt="google auth logo"></a>
                     </div>
                     <div>
                         Members of the public may use their<br>
