@@ -45,7 +45,13 @@ $(document).ready(function() {
             });
 
             request.fail( function ( xhr, textStatus, errorThrown) {
-                alert("Deletion failed.  Details: " + xhr.responseText);
+                var msg = "An unexpected database error has occurred.  Please contact GRIIDC support for assistance. ";
+                $( '<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>' + msg + '</p>' ).dialog({
+                    resizable: false,
+                    height:'auto',
+                    modal: true,
+                    title: 'Error Encountered'
+                   });
             });
         });
     });
