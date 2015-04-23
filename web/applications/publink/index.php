@@ -19,11 +19,14 @@ $comp->slim->get('/', function () use ($comp) {
 $comp->slim->get('/GetLinks(/)', function () use ($comp) {
     drupal_add_js('//cdn.datatables.net/1.10.6/js/jquery.dataTables.min.js');
     drupal_add_css('//cdn.datatables.net/1.10.6/css/jquery.dataTables.min.css');
+    drupal_add_library('system', 'ui.dialog');
     $comp->addCSS('static/css/linkList.css');
     $comp->addLibrary('ui.button');
     $comp->addJS('static/js/linkList.js');
-    $stash = array('pelagos_base_path' => $GLOBALS['pelagos']['base_path']);
-    $stash = array('pelagos_component_path' => $GLOBALS['pelagos']['component_path']);
+    $stash = array(
+                    'pelagos_base_path' => $GLOBALS['pelagos']['base_path'],
+                    'pelagos_component_path' => $GLOBALS['pelagos']['component_path']
+                   );
     return $comp->slim->render('html/linkList.html', $stash);
 });
 
@@ -35,7 +38,7 @@ $comp->slim->get('/GetLinksJSON(/)', function () use ($comp) {
     foreach ($linksArray as $link) {
         list($fc, $proj) = getFcAndProj($link['udi']);
         $inside[] = array(
-                        'del'       => "",
+                        // 'del'       => "",
                         'udi'       => $link['udi'],
                         'fc'        => $fc,
                         'proj'      => $proj,
