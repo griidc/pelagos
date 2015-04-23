@@ -81,11 +81,29 @@ class Storage
         include "DBUtils.php";
         switch ($type) {
             case "Publink":
-                $sql = "select dataset_udi, publication_doi, username, to_char(dataset2publication_createtime, 'YYYY-MM-DD HH24:MI:SS') as createtime
-                            from dataset2publication_link order by dataset2publication_createtime desc";
+                $sql = "SELECT
+                            dataset_udi,
+                            publication_doi,
+                            username,
+                            TO_CHAR(
+                                      TO_TIMESTAMP(
+                                                    dataset2publication_createtime,
+                                                    'YYYY-MM-DD HH24:MI:SS.US'
+                                                  ),
+                                      'Mon DD, YYYY HH12:MI am'
+                            ) AS createtime
+                            FROM
+                                dataset2publication_link
+                            ORDER BY
+                                dataset2publication_createtime desc";
                 $dbh = openDB("GOMRI_RO", true);
                 $sth = $dbh->prepare($sql);
-                $sth->execute();
+
+                try {
+                    $sth->execute();
+                } catch (\PDOException $exception) {
+                    throw $exception;
+                }
                 $inside = array();
                 while ($row = $sth->fetch(\PDO::FETCH_ASSOC)) {
                     $inside[] = array(
