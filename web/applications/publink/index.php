@@ -33,9 +33,12 @@ $comp->slim->get('/GetLinksJSON(/)', function () use ($comp) {
     $storage = new \Pelagos\Storage;
     $linksArray = $storage->getAll("Publink");
     foreach ($linksArray as $link) {
+        list($fc, $proj) = getFcAndProj($link['udi']);
         $inside[] = array(
                         'del'       => "",
                         'udi'       => $link['udi'],
+                        'fc'        => $fc,
+                        'proj'      => $proj,
                         'doi'       => $link['doi'],
                         'username'  => $link['username'],
                         'created'   => $link['created']
@@ -50,4 +53,12 @@ $comp->slim->run();
 
 if ($quit) {
     $comp->quit();
+}
+
+function getFcAndProj($key) {
+    # once we change the UDI format, this will break.  At this point,
+    # this will have to be replaced by a database/persistence lookup
+    # for these details.
+    list($fc, $proj, $task) = preg_split('/\./', $key);
+    return array($fc, $proj);
 }
