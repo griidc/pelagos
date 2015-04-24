@@ -42,6 +42,7 @@ $comp->slim->get(
     '/GetLinksJSON(/)',
     function () use ($comp) {
         global $quit;
+        $inside = '';
         require_once "lib/Publink/Storage.php";
         $storage = new \Publink\Storage;
         $linksArray = $storage->getAll("Publink");
