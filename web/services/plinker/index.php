@@ -14,15 +14,15 @@ $comp->slim->get('/', function () use ($comp) {
     print 'This service creates associations between datasets and publications.';
 });
 
-$comp->slim->map('/:udi(/(:incomplete(/)))', function ($udi, $incomplete = null) use ($comp) {
+$comp->slim->map('/:udi(/)', function ($udi) use ($comp) {
     global $quit;
     $quit = true;
-    $HTTPStatus = new \Pelagos\HTTPStatus(400, "Invalid doi format");
+    $HTTPStatus = new \Pelagos\HTTPStatus(400, 'No DOI provided');
     $comp->slim->response->headers->set('Content-Type', 'application/json');
     $comp->slim->response->status($HTTPStatus->code);
     $comp->slim->response->setBody($HTTPStatus->asJSON());
     return;
-})->via('LINK,DELETE');
+})->via('LINK', 'DELETE');
 
 $comp->slim->map('/:udi/:doi+', function ($udi, $doiArray) use ($comp) {
     global $user;
