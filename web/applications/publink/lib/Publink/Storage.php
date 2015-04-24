@@ -1,6 +1,6 @@
 <?php
-
 namespace Publink;
+
 class Storage
 {
     public function getAll($type)
