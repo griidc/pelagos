@@ -12,22 +12,22 @@
 \c gomri postgres
 
 -- Drop everything to start with:
-DROP TABLE publication CASCADE;
+DROP TABLE publication_table CASCADE;
 DROP DOMAIN DOI_TYPE CASCADE;
 
 -- Create the domain data type(s):
 -- A TEXT data type constrained to what I am best able to determine will be a
--- proper DOI, with an allowed optional http or doi prefix:
+-- proper DOI, with an allowed optional doi: prefix:
 CREATE DOMAIN DOI_TYPE
 AS TEXT
 DEFAULT NULL
 CONSTRAINT chk_doi_type
    CHECK (VALUE ~*
-          '^(doi:)?10\.[\u0020-\u007E][\u0020-\u007E]*$'
+'^(doi:)?10\.[\u0020-\u007E][\u0020-\u007E]*\/[\u0020-\u007E][\u0020-\u007E]*$'
          );
 
 -- Create the tabl(e):
-CREATE TABLE publication
+CREATE TABLE publication_table
 (
    publication_doi                          DOI_TYPE            NOT NULL,
    publication_citation                     TEXT                NOT NULL,
@@ -40,14 +40,14 @@ CREATE TABLE publication
 );
 
 -- Rename automatically created system names:
-ALTER INDEX publication_pkey
-   RENAME TO uidx_pk_publication;
+ALTER INDEX publication_table_pkey
+   RENAME TO uidx_pk_publication_table;
 
 -- Set object ownerships:
 ALTER DOMAIN DOI_TYPE
    OWNER TO gomri_admin;
 
-ALTER TABLE publication
+ALTER TABLE publication_table
    OWNER TO gomri_admin;
 
 -- Set the other permissions:
@@ -55,10 +55,10 @@ GRANT DELETE,
       INSERT,
       SELECT,
       UPDATE
-ON TABLE publication
+ON TABLE publication_table
 TO gomri_user,
    gomri_writer;
 
 GRANT SELECT
-ON TABLE publication
+ON TABLE publication_table
 TO gomri_reader;

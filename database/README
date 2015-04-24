@@ -1,0 +1,5 @@
+These scripts will need to be run in the following order:
+   make_table_publication.sql
+   make_table_dataset2publication_link.sql
+   make_view_publication.sql
+   make_view_dataset2publication_link.sql
