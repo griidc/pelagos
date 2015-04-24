@@ -11,7 +11,11 @@ $(document).ready(function() {
             { "mDataProp": "username" },
             { "mDataProp": "created" },
         ],
-        "deferRender": true
+        "deferRender": true,
+        "autoWidth": true,
+        "lengthMenu": [ [10, 25, 100, 250, -1], [10 , 25, 100, 250, "All"] ],
+        "stateSave": true,
+        "stateDuration": -1
         });
 
     var table = $('#linkList').DataTable();

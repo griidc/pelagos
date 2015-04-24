@@ -18,7 +18,9 @@ $comp->slim->get('/', function () use ($comp) {
 
 $comp->slim->get('/GetLinks(/)', function () use ($comp) {
     drupal_add_js('//cdn.datatables.net/1.10.6/js/jquery.dataTables.min.js');
+    drupal_add_js('//cdn.datatables.net/plug-ins/1.10.6/integration/jqueryui/dataTables.jqueryui.min.js');
     drupal_add_css('//cdn.datatables.net/1.10.6/css/jquery.dataTables.min.css');
+    drupal_add_css('//cdn.datatables.net/plug-ins/1.10.6/integration/jqueryui/dataTables.jqueryui.css');
     drupal_add_library('system', 'ui.dialog');
     $comp->addCSS('static/css/linkList.css');
     $comp->addLibrary('ui.button');
