@@ -106,8 +106,8 @@ AS $ds2pub_func$
       ELSE
          EXECUTE 'DELETE
                   FROM dataset2publication_link_table
-                  WHERE dataset_udi = $1,
-                        publication_doi = $2'
+                  WHERE dataset_udi = $1
+                     AND publication_doi = $2'
             USING OLD.dataset_udi,
                   OLD.publication_doi;
          RETURN OLD;
