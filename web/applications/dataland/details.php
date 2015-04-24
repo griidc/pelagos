@@ -65,15 +65,15 @@ if ($udi <> '')
 {
 
     $pconn = OpenDB("GOMRI_RW");
-    
-    # Toggle per ini file parameter the enforcement of dataset downloadability requiring accepted metadata 
+
+    # Toggle per ini file parameter the enforcement of dataset downloadability requiring accepted metadata
     $enforceMetadataRule = 0;
     if( (isset($GLOBALS['config']['system']['enforce_approved_metadata'] ) and ( $GLOBALS['config']['system']['enforce_approved_metadata'] == 1 )) ) {
         $enforceMetadataRule = 1;
     } else {
         $enforceMetadataRule = 0;
     }
-    
+
     $pquery = "
     SELECT *,
     CASE WHEN metadata.geom IS NULL THEN ST_AsText(datasets.geom) ELSE ST_AsText(metadata.geom) END AS \"the_geom\",
@@ -143,7 +143,7 @@ if ($udi <> '')
     {
         $dsscript = 'dlmap.addFeatureFromWKT("'. $prow['the_geom'] .'",{"udi":"'.$prow['dataset_udi'].'"});dlmap.gotoAllFeatures();';
     }
-    
+
     $mconn = OpenDB("RIS_RO");
 
     $mquery = "  SELECT * FROM Projects
@@ -155,26 +155,26 @@ if ($udi <> '')
     ";
 
     $mrow = pdoDBQuery($mconn,$mquery);
-    
+
     $mrow = $mrow[0];
-    
+
     $mquery = "
-    SELECT 
+    SELECT
 	People_FirstName, People_LastName,
-    Institution_Name, Department_URL, Department_Name, 
+    Institution_Name, Department_URL, Department_Name,
     Department_Addr1, Department_Addr2,
     Department_City, Department_State, Department_Zip, Department_Country, People_Email
     FROM People
     LEFT OUTER JOIN Institutions ON Institutions.Institution_ID = People.People_Institution
     LEFT OUTER JOIN Departments ON Departments.Department_ID = People.People_Department
-    
+
     WHERE People_ID = ".$prow["primary_poc"]."
     ;
     ";
 
     $mprow = pdoDBQuery($mconn,$mquery);
 
-    $mprow = $mprow[0]; 
+    $mprow = $mprow[0];
 }
 
 
@@ -307,7 +307,7 @@ var dlmap = new GeoViz();
                 text: 'Download Dataset'
             }
         });
-        
+
         $("#downloaddsden").qtip({
             position: {
                 adjust: {
@@ -321,7 +321,7 @@ var dlmap = new GeoViz();
                 text: 'This dataset is not currently available for download.'
             }
         });
-        
+
         $("#downloaddsdenmd").qtip({
             position: {
                 adjust: {
@@ -349,7 +349,7 @@ var dlmap = new GeoViz();
                 text: 'Download Metadata'
             }
         });
-        
+
         $("#metadatadl-dis").qtip({
             position: {
                 adjust: {
@@ -435,11 +435,11 @@ var dlmap = new GeoViz();
                 <td><img src="/data-discovery/includes/images/vbar.png"></td>
                 <td align="center">
                     <div>
-                        <a href="/auth/openid/google?dest=<?php echo "$_SERVER[REQUEST_URI]";?>"><img src="/data-discovery/includes/images/googleauth.png" alt="google auth logo"></a>
+                        <a href="/auth/oauth2/google?dest=<?php echo "$_SERVER[REQUEST_URI]";?>"><img src="/data-discovery/includes/images/googleauth.png" alt="google auth logo"></a>
                     </div>
                     <div>
                         Members of the public may use their<br>
-                        <a href="/auth/openid/google?dest=<?php echo "$_SERVER[REQUEST_URI]";?>">Google login</a> to download data.
+                        <a href="/auth/oauth2/google?dest=<?php echo "$_SERVER[REQUEST_URI]";?>">Google login</a> to download data.
                     </div>
                 </td>
             </tr>
