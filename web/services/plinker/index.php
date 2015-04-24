@@ -24,7 +24,7 @@ $comp->slim->map('/:udi(/(:incomplete(/)))', function ($udi, $incomplete = null)
     return;
 })->via('LINK,DELETE');
 
-$comp->slim->map('/:udi/:doiShoulder/:doiBody(/)', function ($udi, $doiShoulder, $doiBody) use ($comp) {
+$comp->slim->map('/:udi/:doi+', function ($udi, $doiArray) use ($comp) {
     global $user;
     global $quit;
     if (!isset($user->name)) {
@@ -46,7 +46,7 @@ $comp->slim->map('/:udi/:doiShoulder/:doiBody(/)', function ($udi, $doiShoulder,
         return;
     }
 
-    $doi = $doiShoulder.'/'.$doiBody;
+    $doi = join('/', $doiArray);
     // check for valid format of doi
     if (preg_match('/^10\..*\/.*$/', $doi) == 0) {
         $quit = true;
