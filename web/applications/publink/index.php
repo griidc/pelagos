@@ -34,11 +34,13 @@ $comp->slim->get('/GetLinks(/)', function () use ($comp) {
 
 $comp->slim->get('/GetLinksJSON(/)', function () use ($comp) {
     global $quit;
-    require_once "../../services/plinker/lib/PLinker/Storage.php";
-    $storage = new \PLinker\Storage;
+    require_once "lib/Publink/Storage.php";
+    $storage = new \Publink\Storage;
     $linksArray = $storage->getAll("Publink");
     foreach ($linksArray as $link) {
-        list($fc, $proj) = getFcAndProj($link['udi']);
+        require_once "lib/Publink/ComponentResolver.php";
+        $componentResolver = new \Publink\ComponentResolver;
+        list($fc, $proj) = $componentResolver->getFcAndProj($link['udi']);
         $inside[] = array(
                         'udi'       => $link['udi'],
                         'fc'        => $fc,
@@ -57,12 +59,4 @@ $comp->slim->run();
 
 if ($quit) {
     $comp->quit();
-}
-
-function getFcAndProj($key) {
-    # once we change the UDI format, this will break.  At this point,
-    # this will have to be replaced by a database/persistence lookup
-    # for these details.
-    list($fc, $proj, $task) = preg_split('/\./', $key);
-    return array($fc, $proj);
 }
