@@ -3,7 +3,7 @@
 $comp = new \Pelagos\Component();
 
 $comp->slim->get('/', function () use ($comp) {
-    $GLOBALS['pelagos']['title'] = 'Publication-Dataset Linker';
+    $GLOBALS['pelagos']['title'] = 'Dataset-Publication Linker';
     $comp->addLibrary('ui.button');
     $comp->addJS('static/js/publink.js');
     $comp->addCSS('static/css/publink.css');

@@ -12,7 +12,7 @@
 
 .pelagos-citation-container {
     position: relative;
-    height: 50px;
+    min-height: 3.5em;
     margin-top: 20px;
 }
 
