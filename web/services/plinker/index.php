@@ -110,8 +110,8 @@ $comp->slim->map(
 )->via('LINK');
 
 $comp->slim->map(
-    '/:udi/:doiShoulder/:doiBody(/)',
-    function ($udi, $doiShoulder, $doiBody) use ($comp) {
+    '/:udi/:doi+',
+    function ($udi, $doiArray) use ($comp) {
         global $user;
         global $quit;
         if (!isset($user->name)) {
@@ -133,7 +133,7 @@ $comp->slim->map(
             return;
         }
 
-        $doi = $doiShoulder.'/'.$doiBody;
+        $doi = join('/', $doiArray);
         // check for valid format of doi
         if (preg_match('/^10\..*\/.*$/', $doi) == 0) {
             $quit = true;
