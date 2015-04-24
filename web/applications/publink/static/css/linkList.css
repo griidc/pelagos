@@ -1,0 +1,6 @@
+table.display {
+    margin: left;
+    width: 100%;
+    clear: both;
+    border-collapse: collapse;
+}
