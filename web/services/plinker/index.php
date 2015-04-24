@@ -14,6 +14,16 @@ $comp->slim->get('/', function () use ($comp) {
     print 'This service creates associations between datasets and publications.';
 });
 
+$comp->slim->map('/', function () use ($comp) {
+    global $quit;
+    $quit = true;
+    $HTTPStatus = new \Pelagos\HTTPStatus(400, 'No parameters provided');
+    $comp->slim->response->headers->set('Content-Type', 'application/json');
+    $comp->slim->response->status($HTTPStatus->code);
+    $comp->slim->response->setBody($HTTPStatus->asJSON());
+    return;
+})->via('LINK', 'DELETE');
+
 $comp->slim->map('/:udi(/)', function ($udi) use ($comp) {
     global $quit;
     $quit = true;
