@@ -32,19 +32,15 @@ $(document).ready(function() {
         var doi = table.row('.selected').data().doi;
         var udi = table.row('.selected').data().udi;
         $.when(confirmDialog(doi, udi)).done(function() {
-            var request = $.ajax({
+            $.ajax({
                 url: pelagos_base_path + "/services/plinker/" + udi + "/" + doi,
                 method: "DELETE"
-            });
-
-            request.success(function () {
+            }).done(function () {
                 $('.selected').fadeOut('slow', function () {
                     table.row('.selected').remove().draw( true );
                     $('#delete_button').attr('disabled', 'disabled');
                 });
-            });
-
-            request.fail( function ( xhr, textStatus, errorThrown) {
+            }).fail( function ( xhr, textStatus, errorThrown) {
                 var msg = "An unexpected database error has occurred.  Please contact GRIIDC support for assistance. ";
                 $( '<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>' + msg + '</p>' ).dialog({
                     resizable: false,

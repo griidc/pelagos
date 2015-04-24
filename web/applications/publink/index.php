@@ -38,7 +38,6 @@ $comp->slim->get('/GetLinksJSON(/)', function () use ($comp) {
     foreach ($linksArray as $link) {
         list($fc, $proj) = getFcAndProj($link['udi']);
         $inside[] = array(
-                        // 'del'       => "",
                         'udi'       => $link['udi'],
                         'fc'        => $fc,
                         'proj'      => $proj,
