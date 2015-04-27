@@ -7,7 +7,7 @@ $(document).ready(function() {
             { "mDataProp": "fc" },
             { "mDataProp": "proj" },
             { "mDataProp": "udi" },
-            { "mDataProp": "doi" },
+            { "mDataProp": "doi", "sClass": "doi" },
             { "mDataProp": "username" },
             { "mDataProp": "created" },
         ],
@@ -64,14 +64,11 @@ $(document).ready(function() {
                         url: '/pelagos/dev/mwilliamson/services/citation/publication/' + $(this).text()
                     })
                     .then(function(content) {
-                        // Set the tooltip content upon successful retrieval
                         api.set('content.text', content.text);
                     }, function(xhr, status, error) {
-                        // Upon failure... set the tooltip content to the status and error value
                         api.set('content.text', status + ': ' + error);
                     });
-
-                    return 'Loading...'; // Set some initial text
+                    return '<img src="static/images/throbber.gif"> Looking up citation...'; // Set some initial text
                 }
             }
         });

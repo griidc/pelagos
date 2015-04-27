@@ -53,10 +53,10 @@ $comp->slim->get(
             $componentResolver = new \Publink\ComponentResolver;
             list($fc, $proj) = $componentResolver->getFcAndProj($link['udi']);
             $inside[] = array(
-                            'udi'       => "<div class='udi'>".$link['udi']."</div>",
+                            'udi'       => $link['udi'],
                             'fc'        => $fc,
                             'proj'      => $proj,
-                            'doi'       => "<div class='doi'>".$link['doi']."</div>",
+                            'doi'       => $link['doi'],
                             'username'  => $link['username'],
                             'created'   => $link['created']
                       );
