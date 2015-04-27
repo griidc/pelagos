@@ -32,6 +32,51 @@ $(document).ready(function() {
         }
     });
 
+    $.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
+        position: {
+            adjust: {
+                method: "flip flip"
+            },
+            my: "middle right",
+            at: "middle left",
+            viewport: $(window)
+        },
+        show: {
+            event: "mouseenter focus",
+            delay: 250,
+            solo: true
+        },
+        hide: {
+            event: "mouseleave blur",
+            delay: 100,
+            fixed: true
+        },
+        style: {
+            classes: "qtip-default qtip-shadow qtip-tipped"
+        }
+    });
+
+    table.on( 'draw', function () {
+        $('.doi').qtip({
+            content: {
+                text: function(event, api) {
+                    $.ajax({
+                        url: '/pelagos/dev/mwilliamson/services/citation/publication/' + $(this).text()
+                    })
+                    .then(function(content) {
+                        // Set the tooltip content upon successful retrieval
+                        api.set('content.text', content.text);
+                    }, function(xhr, status, error) {
+                        // Upon failure... set the tooltip content to the status and error value
+                        api.set('content.text', status + ': ' + error);
+                    });
+
+                    return 'Loading...'; // Set some initial text
+                }
+            }
+        });
+    });
+
     $('#delete_button').click( function ( ) {
         var doi = table.row('.selected').data().doi;
         var udi = table.row('.selected').data().udi;

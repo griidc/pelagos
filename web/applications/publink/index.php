@@ -28,6 +28,7 @@ $comp->slim->get(
         drupal_add_css('//cdn.datatables.net/1.10.6/css/jquery.dataTables.min.css');
         drupal_add_css('//cdn.datatables.net/plug-ins/1.10.6/integration/jqueryui/dataTables.jqueryui.css');
         drupal_add_library('system', 'ui.dialog');
+        drupal_add_library('system', 'ui.tooltip');
         $comp->addCSS('static/css/linkList.css');
         $comp->addLibrary('ui.button');
         $comp->addJS('static/js/linkList.js');
@@ -52,10 +53,10 @@ $comp->slim->get(
             $componentResolver = new \Publink\ComponentResolver;
             list($fc, $proj) = $componentResolver->getFcAndProj($link['udi']);
             $inside[] = array(
-                            'udi'       => $link['udi'],
+                            'udi'       => "<div class='udi'>".$link['udi']."</div>",
                             'fc'        => $fc,
                             'proj'      => $proj,
-                            'doi'       => $link['doi'],
+                            'doi'       => "<div class='doi'>".$link['doi']."</div>",
                             'username'  => $link['username'],
                             'created'   => $link['created']
                       );
