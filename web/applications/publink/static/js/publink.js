@@ -15,15 +15,35 @@ $(document).ready(function() {
             url: pelagos_base_path + '/services/plinker/' + $('#udi').val() + '/' + $('#doi').val(),
             method: 'LINK'
         }).done(function (data) {
-            alert('Success: ' + data.message);
-            $('#udi').val('');
-            $('#doi').val('')
-            $('#publication .pelagos-citation').html('');
-            $('#dataset .pelagos-citation').html('');
-            $('#link').button("option", "disabled", true);
+            $('#dialog-linked .dialog-text').text('Dataset ' + $('#udi').val() + ' and publication ' + $('#doi').val() + ' have been linked.');
+            $('#dialog-linked').dialog('open');
         }).fail(function (data) {
-            alert('Error: ' + data.responseJSON.message);
+            $('#dialog-error .dialog-text').text('Error: ' + data.responseJSON.message);
+            $('#dialog-error').dialog('open');
         });
+    });
+    $('#dialog-linked').dialog({
+        autoOpen: false,
+        modal: true,
+        buttons: {
+            Ok: function() {
+                $(this).dialog('close');
+                $('#udi').val('');
+                $('#doi').val('')
+                $('#publication .pelagos-citation').html('');
+                $('#dataset .pelagos-citation').html('');
+                $('#link').button("option", "disabled", true);
+            }
+        }
+    });
+    $('#dialog-error').dialog({
+        autoOpen: false,
+        modal: true,
+        buttons: {
+            Ok: function() {
+                $(this).dialog('close');
+            }
+        }
     });
     initSpinners();
 });
