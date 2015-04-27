@@ -6,7 +6,7 @@ $(document).ready(function() {
         "aoColumns": [
             { "mDataProp": "fc" },
             { "mDataProp": "proj" },
-            { "mDataProp": "udi" },
+            { "mDataProp": "udi", "sClass": "udi" },
             { "mDataProp": "doi", "sClass": "doi" },
             { "mDataProp": "username" },
             { "mDataProp": "created" },
@@ -68,7 +68,22 @@ $(document).ready(function() {
                     }, function(xhr, status, error) {
                         api.set('content.text', status + ': ' + error);
                     });
-                    return '<img src="static/images/throbber.gif"> Looking up citation...'; // Set some initial text
+                    return '<img src="static/images/throbber.gif"> Looking up publication citation...';
+                }
+            }
+        });
+        $('.udi').qtip({
+            content: {
+                text: function(event, api) {
+                    $.ajax({
+                        url: '/pelagos/dev/mwilliamson/services/citation/dataset/' + $(this).text()
+                    })
+                    .then(function(content) {
+                        api.set('content.text', content.text);
+                    }, function(xhr, status, error) {
+                        api.set('content.text', status + ': ' + error);
+                    });
+                    return '<img src="static/images/throbber.gif"> Looking up dataset citation...';
                 }
             }
         });
