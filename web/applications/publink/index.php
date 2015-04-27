@@ -10,6 +10,7 @@ $comp->slim->get(
     function () use ($comp) {
         $GLOBALS['pelagos']['title'] = 'Dataset-Publication Linker';
         $comp->addLibrary('ui.button');
+        $comp->addLibrary('ui.dialog');
         $comp->addJS('static/js/publink.js');
         $comp->addCSS('static/css/publink.css');
         # $comp->addJS currently only supports local js files
