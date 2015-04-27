@@ -44,7 +44,7 @@ $(document).ready(function() {
         },
         show: {
             event: "mouseenter focus",
-            delay: 250,
+            delay: 500,
             solo: true
         },
         hide: {
