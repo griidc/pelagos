@@ -61,7 +61,7 @@ $(document).ready(function() {
             content: {
                 text: function(event, api) {
                     $.ajax({
-                        url: '/pelagos/dev/mwilliamson/services/citation/publication/' + $(this).text()
+                        url: pelagos_base_path + '/services/citation/publication/' + $(this).text()
                     })
                     .then(function(content) {
                         api.set('content.text', content.text);
@@ -76,7 +76,7 @@ $(document).ready(function() {
             content: {
                 text: function(event, api) {
                     $.ajax({
-                        url: '/pelagos/dev/mwilliamson/services/citation/dataset/' + $(this).text()
+                        url: pelagos_base_path + '/services/citation/dataset/' + $(this).text()
                     })
                     .then(function(content) {
                         api.set('content.text', content.text);
