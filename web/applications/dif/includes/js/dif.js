@@ -8,6 +8,8 @@ var difValidator;
 
 $(document).ready(function()
 {
+    $('#pelagos-content > table > tbody > tr > td:last-child').height($('#pelagos-content > table > tbody > tr > td:first-child').height());
+
     $.ajaxSetup({
         error: function(x, t, m) {
             var message;
