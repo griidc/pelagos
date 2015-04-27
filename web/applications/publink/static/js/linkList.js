@@ -37,9 +37,10 @@ $(document).ready(function() {
             adjust: {
                 method: "flip flip"
             },
-            my: "middle right",
+            my: "right bottom",
             at: "middle left",
-            viewport: $(window)
+            viewport: $(window),
+            effect: false
         },
         show: {
             event: "mouseenter focus",
