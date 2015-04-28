@@ -6,8 +6,8 @@ $(document).ready(function() {
         "aoColumns": [
             { "mDataProp": "fc" },
             { "mDataProp": "proj" },
-            { "mDataProp": "udi" },
-            { "mDataProp": "doi" },
+            { "mDataProp": "udi", "sClass": "udi" },
+            { "mDataProp": "doi", "sClass": "doi" },
             { "mDataProp": "username" },
             { "mDataProp": "created" },
         ],
@@ -30,6 +30,64 @@ $(document).ready(function() {
             $(this).addClass('selected');
             $('#delete_button').removeAttr('disabled');
         }
+    });
+
+    $.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
+        position: {
+            adjust: {
+                method: "flip flip"
+            },
+            my: "right bottom",
+            at: "middle left",
+            viewport: $(window),
+            effect: false
+        },
+        show: {
+            event: "mouseenter focus",
+            delay: 500,
+            solo: true
+        },
+        hide: {
+            event: "mouseleave blur",
+            delay: 100,
+            fixed: true
+        },
+        style: {
+            classes: "qtip-default qtip-shadow qtip-tipped"
+        }
+    });
+
+    table.on( 'draw', function () {
+        $('.doi').qtip({
+            content: {
+                text: function(event, api) {
+                    $.ajax({
+                        url: pelagos_base_path + '/services/citation/publication/' + $(this).text()
+                    })
+                    .then(function(content) {
+                        api.set('content.text', content.text);
+                    }, function(xhr, status, error) {
+                        api.set('content.text', status + ': ' + error);
+                    });
+                    return '<img src="static/images/throbber.gif"> Looking up publication citation...';
+                }
+            }
+        });
+        $('.udi').qtip({
+            content: {
+                text: function(event, api) {
+                    $.ajax({
+                        url: pelagos_base_path + '/services/citation/dataset/' + $(this).text()
+                    })
+                    .then(function(content) {
+                        api.set('content.text', content.text);
+                    }, function(xhr, status, error) {
+                        api.set('content.text', status + ': ' + error);
+                    });
+                    return '<img src="static/images/throbber.gif"> Looking up dataset citation...';
+                }
+            }
+        });
     });
 
     $('#delete_button').click( function ( ) {

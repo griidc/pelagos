@@ -17,7 +17,7 @@ class Storage
                                                     dataset2publication_createtime,
                                                     'YYYY-MM-DD HH24:MI:SS.US'
                                                   ),
-                                      'Mon DD, YYYY HH12:MI am'
+                                      'YYYY-MM-DD HH24:MI'
                             ) AS createtime
                             FROM
                                 dataset2publication_link

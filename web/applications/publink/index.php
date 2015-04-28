@@ -23,11 +23,13 @@ $comp->slim->get(
 $comp->slim->get(
     '/GetLinks(/)',
     function () use ($comp) {
+        $GLOBALS['pelagos']['title'] = 'Dataset-Publication Links';
         drupal_add_js('//cdn.datatables.net/1.10.6/js/jquery.dataTables.min.js');
         drupal_add_js('//cdn.datatables.net/plug-ins/1.10.6/integration/jqueryui/dataTables.jqueryui.min.js');
         drupal_add_css('//cdn.datatables.net/1.10.6/css/jquery.dataTables.min.css');
         drupal_add_css('//cdn.datatables.net/plug-ins/1.10.6/integration/jqueryui/dataTables.jqueryui.css');
         drupal_add_library('system', 'ui.dialog');
+        drupal_add_library('system', 'ui.tooltip');
         $comp->addCSS('static/css/linkList.css');
         $comp->addLibrary('ui.button');
         $comp->addJS('static/js/linkList.js');
