@@ -517,7 +517,13 @@ var dlmap = new GeoViz();
             </p>
         </div>
         <div class="tabb" id="tabs-3">
-            <?php echo $twig->render('publications.html', array('publinks' => $publinks)); ?>
+            <?php
+                if(sizeof($publinks) > 0) {
+                    echo $twig->render('publications.html', array('publinks' => $publinks));
+                } else {
+                    echo "<script>$( '#tabs' ).tabs({ disabled: [ 2 ]});</script>";
+                }
+            ?>
         </div>
     </div>
 </div>
