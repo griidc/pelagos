@@ -15,7 +15,7 @@ $(document).ready(function() {
             url: pelagos_base_path + '/services/plinker/' + $('#udi').val() + '/' + $('#doi').val(),
             method: 'LINK'
         }).done(function (data) {
-            $('#dialog-linked .dialog-text').text('Dataset ' + $('#udi').val() + ' and publication ' + $('#doi').val() + ' have been linked.');
+            $('#dialog-linked .dialog-text').html('Dataset ' + $('#udi').val() + ' and publication<br>' + $('#doi').val() + ' have been linked.');
             $('#dialog-linked').dialog('open');
         }).fail(function (data) {
             $('#dialog-error .dialog-text').text('Error: ' + data.responseJSON.message);
@@ -25,6 +25,7 @@ $(document).ready(function() {
     $('#dialog-linked').dialog({
         autoOpen: false,
         modal: true,
+        width: 'auto',
         buttons: {
             Ok: function() {
                 $(this).dialog('close');
