@@ -56,6 +56,7 @@ function retrieveCitation(type) {
     }).done(function (data) {
         $('#' + type + ' .pelagos-citation').html(data.text);
         $('#' + type + ' .pelagos-citation').removeClass('pelagos-error');
+        // always show the citation div, in case it has been faded out
         $('#' + type + ' .pelagos-citation').show();
         if (type == 'dataset') {
             valid_dataset = true;
@@ -73,6 +74,7 @@ function retrieveCitation(type) {
             $('#' + type + ' .pelagos-citation').html(data.statusText);
         }
         $('#' + type + ' .pelagos-citation').addClass('pelagos-error');
+        // always show the citation div, in case it has been faded out
         $('#' + type + ' .pelagos-citation').show();
         if (type == 'dataset') {
             valid_dataset = false;
@@ -83,8 +85,11 @@ function retrieveCitation(type) {
         $('#link').button("option", "disabled", true);
     }).always(function () {
         $('#' + type + ' .pelagos-spinner').hide();
+        // add a keyup listener to fade out citation and remove itself
         $('#' + type + ' .id').on('keyup', function(event) {
+            // find citation div in my parent and fade it out
             $(this).parent().find('.pelagos-citation').first().fadeOut();
+            // remove listener
             $(this).off('keyup');
         });
     });
