@@ -50,12 +50,13 @@ $(document).ready(function() {
 
 function retrieveCitation(type) {
     $('#' + type + ' .pelagos-spinner').show();
-    $('#' + type + ' .pelagos-citation').html('');
+    $('#' + type + ' .pelagos-citation').empty();
     $.ajax({
         url: pelagos_base_path + '/services/citation/' + type + '/' + $('#' + type + ' .id').val()
     }).done(function (data) {
         $('#' + type + ' .pelagos-citation').html(data.text);
         $('#' + type + ' .pelagos-citation').removeClass('pelagos-error');
+        $('#' + type + ' .pelagos-citation').show();
         if (type == 'dataset') {
             valid_dataset = true;
         }
@@ -72,6 +73,7 @@ function retrieveCitation(type) {
             $('#' + type + ' .pelagos-citation').html(data.statusText);
         }
         $('#' + type + ' .pelagos-citation').addClass('pelagos-error');
+        $('#' + type + ' .pelagos-citation').show();
         if (type == 'dataset') {
             valid_dataset = false;
         }
@@ -81,6 +83,10 @@ function retrieveCitation(type) {
         $('#link').button("option", "disabled", true);
     }).always(function () {
         $('#' + type + ' .pelagos-spinner').hide();
+        $('#' + type + ' .id').on('keyup', function(event) {
+            $(this).parent().find('.pelagos-citation').first().fadeOut();
+            $(this).off('keyup');
+        });
     });
 }
 
