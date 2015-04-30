@@ -83,6 +83,7 @@ function retrieveCitation(type) {
         if (type == 'publication') {
             valid_publication = false;
         }
+        // disable the Link button
         $('#link').button("option", "disabled", true);
     }).always(function () {
         last_retrieved[type] = $('#' + type + ' .id').val();
@@ -94,6 +95,8 @@ function retrieveCitation(type) {
                 $(this).parent().find('.pelagos-citation').first().fadeOut();
                 // remove listener
                 $(this).off('keyup');
+                // disable the Link button
+                $('#link').button("option", "disabled", true);
             }
         });
     });
