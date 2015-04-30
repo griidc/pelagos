@@ -361,21 +361,24 @@ function GeoViz()
         });
         
         google.maps.event.addListener(google_hybrid.mapObject, "tilesloaded", function() {
-            //console.log("Tiles loaded");
-            if (!firstLoad)
-            {
-                //console.log('done with map');
-                firstLoad = true;
-                setTimeout( function() { 
-                    map.removeLayer(google_hybrid);
-                    map.updateSize();
-                    map.addLayer(google_hybrid);
-                    map.updateSize();
-                        
-                    jQuery(mapDiv).trigger('imready',mapDiv);
+            console.log("Google Tiles Loaded");
+            google.maps.event.clearListeners(google_hybrid.mapObject, 'tilesloaded');
+            google.maps.event.addListener(google_hybrid.mapObject, "idle", function() {
+            console.log("Google Map Idle");
+     
+            //console.log('done with map');
+            setTimeout( function() { 
+                // map.removeLayer(google_hybrid);
+                // map.updateSize();
+                // map.addLayer(google_hybrid);
+                map.updateSize();
+                console.log("Map is Ready");  
+                jQuery(mapDiv).trigger('imready',mapDiv);
                 }
-                , 300)
-            };
+            , 300);
+
+            google.maps.event.clearListeners(google_hybrid.mapObject, 'idle');
+            });
         });
                 
         map.setCenter(new OpenLayers.LonLat(lon, lat).transform('EPSG:4326', 'EPSG:900913'), zoom, true, true);
