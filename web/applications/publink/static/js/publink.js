@@ -2,6 +2,7 @@ var $ = jQuery.noConflict();
 
 var valid_publication = false;
 var valid_dataset = false;
+var last_retrieved = { dataset: "", publication: "" };
 
 $(document).ready(function() {
     $('#retrieve_publication').button().click(function () {
@@ -50,12 +51,14 @@ $(document).ready(function() {
 
 function retrieveCitation(type) {
     $('#' + type + ' .pelagos-spinner').show();
-    $('#' + type + ' .pelagos-citation').html('');
+    $('#' + type + ' .pelagos-citation').empty();
     $.ajax({
         url: pelagos_base_path + '/services/citation/' + type + '/' + $('#' + type + ' .id').val()
     }).done(function (data) {
         $('#' + type + ' .pelagos-citation').html(data.text);
         $('#' + type + ' .pelagos-citation').removeClass('pelagos-error');
+        // always show the citation div, in case it has been faded out
+        $('#' + type + ' .pelagos-citation').show();
         if (type == 'dataset') {
             valid_dataset = true;
         }
@@ -72,6 +75,8 @@ function retrieveCitation(type) {
             $('#' + type + ' .pelagos-citation').html(data.statusText);
         }
         $('#' + type + ' .pelagos-citation').addClass('pelagos-error');
+        // always show the citation div, in case it has been faded out
+        $('#' + type + ' .pelagos-citation').show();
         if (type == 'dataset') {
             valid_dataset = false;
         }
@@ -80,7 +85,17 @@ function retrieveCitation(type) {
         }
         $('#link').button("option", "disabled", true);
     }).always(function () {
+        last_retrieved[type] = $('#' + type + ' .id').val();
         $('#' + type + ' .pelagos-spinner').hide();
+        // add a keyup listener to fade out citation and remove itself
+        $('#' + type + ' .id').on('keyup', { type: type }, function(event) {
+            if ($(this).val() != last_retrieved[event.data.type]) {
+                // find citation div in my parent and fade it out
+                $(this).parent().find('.pelagos-citation').first().fadeOut();
+                // remove listener
+                $(this).off('keyup');
+            }
+        });
     });
 }
 
