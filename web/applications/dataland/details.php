@@ -177,6 +177,7 @@ if ($udi <> '')
     $mprow = $mprow[0];
     $publink = new \DataLand\PubLink();
     $publinks = $publink->getLinksArray($udi);
+    $publinkCount = sizeof($publinks);
 }
 
 
@@ -236,7 +237,11 @@ var dlmap = new GeoViz();
 
         $("#rawxml").width($(document).width()*.90);
 
-        $("#tabs").tabs({ heightStyle: "content" });
+        if( <?php echo $publinkCount ?> > 0) {
+            $("#tabs").tabs({ heightStyle: "content" });
+        } else {
+            $("#tabs").tabs({ heightStyle: "content", disabled: [ 2 ] });
+        }
 
         $("#xmlradio").buttonset();
 
@@ -517,7 +522,9 @@ var dlmap = new GeoViz();
             </p>
         </div>
         <div class="tabb" id="tabs-3">
-            <?php echo $twig->render('publications.html', array('publinks' => $publinks)); ?>
+            <?php
+                echo $twig->render('publications.html', array('publinks' => $publinks));
+            ?>
         </div>
     </div>
 </div>
