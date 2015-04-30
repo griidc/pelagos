@@ -2,6 +2,7 @@ var $ = jQuery.noConflict();
 
 var valid_publication = false;
 var valid_dataset = false;
+var last_retrieved = { dataset: "", publication: "" };
 
 $(document).ready(function() {
     $('#retrieve_publication').button().click(function () {
@@ -84,13 +85,16 @@ function retrieveCitation(type) {
         }
         $('#link').button("option", "disabled", true);
     }).always(function () {
+        last_retrieved[type] = $('#' + type + ' .id').val();
         $('#' + type + ' .pelagos-spinner').hide();
         // add a keyup listener to fade out citation and remove itself
-        $('#' + type + ' .id').on('keyup', function(event) {
-            // find citation div in my parent and fade it out
-            $(this).parent().find('.pelagos-citation').first().fadeOut();
-            // remove listener
-            $(this).off('keyup');
+        $('#' + type + ' .id').on('keyup', { type: type }, function(event) {
+            if ($(this).val() != last_retrieved[event.data.type]) {
+                // find citation div in my parent and fade it out
+                $(this).parent().find('.pelagos-citation').first().fadeOut();
+                // remove listener
+                $(this).off('keyup');
+            }
         });
     });
 }
