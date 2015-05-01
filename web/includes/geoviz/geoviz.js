@@ -215,7 +215,6 @@ function GeoViz()
         
         //TODO: if Options.BaseMapTerainDefault == true then add terain layer first.
         
-        //map.addLayers([google_hybrid, vlayer, flayer]);
         map.addLayers([vlayer, flayer]);
         
         map.events.register("click", map , function(e){
@@ -372,21 +371,14 @@ function GeoViz()
             google.maps.event.addListener(google_hybrid.mapObject, "idle", function() {
             console.log("Google Map Idle");
      
-            //console.log('done with map');
             setTimeout( function() { 
-                // map.removeLayer(google_hybrid);
-                // map.updateSize();
-                // map.addLayer(google_hybrid);
-                // map.updateSize();
                 console.log("Map is Ready");  
                 jQuery(mapDiv).trigger('imready',mapDiv);
                 }
             , 300);
-            //map.setCenter(new OpenLayers.LonLat(lon, lat).transform('EPSG:4326', 'EPSG:900913'), zoom, true, true);
             google.maps.event.clearListeners(google_hybrid.mapObject, 'idle');
             });
         });
-          //map.setCenter(new OpenLayers.LonLat(lon, lat).transform('EPSG:4326', 'EPSG:900913'), zoom, true, true);      
         
         //map.render(DIV);
         
