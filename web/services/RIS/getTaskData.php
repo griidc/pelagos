@@ -121,9 +121,8 @@ function getData($params,$recache = false)
 
     if ($peopleid <> "")
     {
-        $outerQuery .= "AND (pp.Program_ID in (SELECT DISTINCT Program_ID FROM ProjPeople WHERE People_ID in ($peopleid) AND Project_ID = 0) ";
-        $outerQuery .= "OR pp.Project_ID in (SELECT DISTINCT Project_ID FROM ProjPeople WHERE People_ID in ($peopleid) AND Project_ID <> 0)) ";
-        
+        $outerQuery .= "AND (FIND_IN_SET(pp.Program_ID, @PeoplePrograms) ";
+        $outerQuery .= "OR FIND_IN_SET(pp.Project_ID, @PeopleProjects)) ";
     }
     
     if ($q_taskkeyword <> "") 
@@ -256,10 +255,17 @@ function getData($params,$recache = false)
         
     }
     
-    //echo $outerQuery;
+    $myConnection = openConnection();
     
-    //exit;
+    if ($peopleid <> "")
+    {
+        $peopleSpecialQuery = "SELECT DISTINCT GROUP_CONCAT(Program_ID SEPARATOR ',') FROM ProjPeople WHERE People_ID in ($peopleid) AND Project_ID = 0 INTO @PeoplePrograms;";
+        executeMyQuery($peopleSpecialQuery);
         
+        $peopleSpecialQuery = "SELECT DISTINCT GROUP_CONCAT(Project_ID SEPARATOR ',') FROM ProjPeople WHERE People_ID in ($peopleid) AND Project_ID <> 0 INTO @PeopleProjects;";
+        executeMyQuery($peopleSpecialQuery);
+    }
+   
     // Execute SQL
     $outerResult = executeMyQuery($outerQuery);
    
@@ -454,6 +460,8 @@ function getData($params,$recache = false)
             } 
         }
     } 
+    
+    closeConnection($myConnection);
     
     // get completed xml document
     echo $xmlBld;
