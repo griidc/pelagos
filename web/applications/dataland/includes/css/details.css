@@ -165,4 +165,6 @@ span.attr {
     vertical-align: middle;
 }
 
-
+#tabs li.ui-state-disabled {
+    opacity: .5;
+}
