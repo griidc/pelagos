@@ -41,14 +41,12 @@ class Person
      * @param String $firstName Person's first name
      * @param String $lastName Person's last name
      * @param String $emailAddress Person's email address
-     * @param Int $id Person's internal id (if defined)
      */
-    public function __construct($firstName, $lastName, $emailAddress, $id = null)
+    public function __construct($firstName, $lastName, $emailAddress)
     {
         $this->firstName = $firstName;
         $this->lastName = $lastName;
         $this->emailAddress = $emailAddress;
-        $this->id = $id;
     }
 
     /**
