@@ -1,5 +1,8 @@
 <?php
 
+$path = "/opt/pelagos/share/php/Pelagos";
+set_include_path(get_include_path() . PATH_SEPARATOR . $path);
+
 $comp = new \Pelagos\Component();
 
 global $quit;
