@@ -1,9 +1,6 @@
 <?php
 
-$path = "/home/users/mwilliamson/pelagos/share/php/Pelagos";
-set_include_path(get_include_path() . PATH_SEPARATOR . $path);
-require_once "Component.php";
-require_once "Person.php";
+require_once $GLOBALS['pelagos']['root'] . '/vendor/autoload.php';
 
 $comp = new \Pelagos\Component();
 
