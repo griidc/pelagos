@@ -1,6 +1,7 @@
 <?php
 
 require_once $GLOBALS['pelagos']['root'] . '/vendor/autoload.php';
+require_once "../../../bootstrap.php";
 
 $comp = new \Pelagos\Component();
 
@@ -36,9 +37,15 @@ $comp->slim->map(
             return;
         }
 
-        $person = new \Pelagos\Person($firstName, $lastName, $email);
+        $person = new \Pelagos\Entity\Person($firstName, $lastName, $email);
+
+        $entityManager->persist($person);
+        $entityManager->flush();
+
         $cn = $person->getFirstName() . ' ' . $person->getLastName();
-        print "Hello $cn";
+        $id = $person->getId();
+
+        print "Hello $cn.  You have been assigned ID: $id.";
         return;
     }
 )->via('PUT','GET');
