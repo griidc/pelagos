@@ -108,12 +108,15 @@ AS $pers_func$
 
       IF TG_OP = 'INSERT'
       THEN
-         -- An INSERT statement from the front-end will not be passing in a
-         -- person number, so we need to retrieve the next available value in
-         -- the sequence:
-         EXECUTE 'SELECT NEXTVAL($1)'
-            INTO NEW.person_number
-            USING 'seq_person_number';
+         -- An INSERT statement from the front-end may not be passing in a
+         -- person number. IF so we need to retrieve the next available value
+         -- in the sequence:
+         IF NEW.person_number IS NULL
+         THEN
+            EXECUTE 'SELECT NEXTVAL($1)'
+               INTO NEW.person_number
+               USING 'seq_person_number';
+         END IF;
 
          -- Insert the person information into the person_table:
          EXECUTE 'INSERT INTO person_table
