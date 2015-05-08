@@ -2,3 +2,4 @@
 config.ini
 config.php
 vendor/
+db.sqlite
