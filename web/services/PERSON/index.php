@@ -1,7 +1,7 @@
 <?php
 
-require_once $GLOBALS['pelagos']['root'] . '/vendor/autoload.php';
-require_once "../../../bootstrap.php";
+// currently set by Drupal to local pelagos root
+require_once $GLOBALS['pelagos']['root'] . '/bootstrap.php';
 
 $comp = new \Pelagos\Component();
 
@@ -20,7 +20,7 @@ $comp->slim->get(
 
 $comp->slim->map(
     '/:firstName/:lastName/:email(/)',
-    function ($firstName, $lastName, $email) use ($comp) {
+    function ($firstName, $lastName, $email) use ($comp, $entityManager) {
 
         global $quit;
         $quit = true;
