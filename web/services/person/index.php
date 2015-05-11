@@ -15,7 +15,7 @@ $comp->slim->get(
     }
 );
 
-$comp->slim->map(
+$comp->slim->put(
     '/:firstName/:lastName/:email(/)',
     function ($firstName, $lastName, $email) use ($comp, $entityManager) {
 
@@ -81,7 +81,7 @@ $comp->slim->map(
 
         return;
     }
-)->via('PUT', 'GET');
+);
 
 
 $comp->slim->run();
