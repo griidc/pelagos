@@ -6,7 +6,20 @@ drupal_add_js('/pelagos/dev/mvde/applications/person-editor/static/js/personForm
 
 drupal_add_library('system', 'ui.widget');
 drupal_add_library('system', 'ui.dialog');
+drupal_add_library('system', 'ui.dialog');
 
-include 'personForm.html';
+require_once 'Twig/Autoloader.php';
+
+global $twig;
+$twigloader;
+
+Twig_Autoloader::register();
+
+$twigloader = new Twig_Loader_Filesystem('./templates');
+$twig = new Twig_Environment($twigloader,array('autoescape' => false));
+
+$twigdata = array();
+
+echo $twig->render('personForm.html', $twigdata);
 
 ?>
