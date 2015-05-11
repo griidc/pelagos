@@ -5,5 +5,8 @@
             <exclude>share/php/tests/DatasetsTest.php</exclude>
             <exclude>share/php/tests/RISTest.php</exclude>
         </testsuite>
+        <testsuite name="unit">
+            <directory>tests/unit</directory>
+        </testsuite>
     </testsuites>
 </phpunit>
