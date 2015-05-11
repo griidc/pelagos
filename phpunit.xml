@@ -1,0 +1,9 @@
+<phpunit>
+    <testsuites>
+        <testsuite name="legacy">
+            <directory>share/php/tests</directory>
+            <exclude>share/php/tests/DatasetsTest.php</exclude>
+            <exclude>share/php/tests/RISTest.php</exclude>
+        </testsuite>
+    </testsuites>
+</phpunit>
