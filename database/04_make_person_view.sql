@@ -50,20 +50,31 @@ AS $pers_func$
       -- Function variables:
       _count                 INTEGER;
       _email_addr            EMAIL_ADDRESS_TYPE  := NULL;
+      _err_hint              TEXT                := NULL;
+      _err_msg               TEXT                := NULL;
 
    BEGIN
       IF TG_OP <> 'DELETE'
       THEN
          -- Attempt to cast the email address to an EMAIL_ADDRESS_TYPE:
-         -- _email_addr := CONCAT('x',NEW.email_verified,'x',NEW.email_address);
+         _err_hint   := 'Please check the email address';
+         _err_msg    := CONCAT(NEW.email_address,
+                               ' is not a valid email address.');
          _email_addr := COALESCE(NEW.email_address);
          IF NEW.email_verified IS DISTINCT FROM TRUE
          THEN
             NEW.email_verified := FALSE;
          END IF;
 
-         -- The requirements call for the combination of email address given,
-         -- name, and surname to be unique. We can enforce that here:
+         _err_hint := CONCAT('Perhaps you need to perform ',
+                                   'an UPDATE instead?');
+         _err_msg := CONCAT('Unique constraint violation. ',
+                            'email address ',
+                            _email_addr,
+                            ' is already present in relation person.');
+
+         -- The requirements call for the combination of given name, surname,
+         -- and email_address to be unique. We can enforce that here:
          EXECUTE 'SELECT COUNT(*)
                   FROM person
                   WHERE given_name = $1
@@ -76,8 +87,10 @@ AS $pers_func$
 
          IF _count > 0
          THEN
-            -- This is a duplicate entry. Raise an exception and quit:
-            RAISE EXCEPTION 'Duplicate person entry'
+            -- This is a duplicate entry. Raise an exception and quit (the
+            -- exception text is only used when we disable exception handling
+            -- below):
+            RAISE EXCEPTION 'Duplicate person/email entry'
                USING ERRCODE = '23505';
          END IF;
 
@@ -102,6 +115,39 @@ AS $pers_func$
                         VALUES ($1, $2)'
                   USING _email_addr,
                         NEW.email_verified;
+            ELSE
+               -- This email address is already known. The requirement is for
+               -- an email address to map to a single person only, and we can
+               -- enforce that here:
+               IF TG_OP = 'INSERT'
+               THEN
+                  EXECUTE 'SELECT COUNT(*)
+                           FROM person
+                           WHERE email_address = $1
+                              AND ROW(given_name, surname)
+                                  IS DISTINCT FROM
+                                  ROW($2, $3)'
+                     INTO _count
+                     USING NEW.email_address,
+                           NEW.given_name,
+                           NEW.surname;
+               ELSE
+                  EXECUTE 'SELECT COUNT(*)
+                           FROM person
+                           WHERE email_address = $1
+                              AND person_number <> $2'
+                     INTO _count
+                     USING NEW.email_address,
+                           NEW.person_number;
+               END IF;
+
+               IF _count > 0
+               THEN
+                  -- This email is known, and associated with a different
+                  -- person. Generate a duplicate entry error:
+                  RAISE EXCEPTION 'Duplicate email entry'
+                     USING ERRCODE = '23505';
+               END IF;
             END IF;
          END IF;
       END IF;
@@ -269,21 +315,15 @@ AS $pers_func$
       EXCEPTION
          WHEN SQLSTATE '23505'
             THEN
-               RAISE EXCEPTION '%',  CONCAT(NEW.given_name, ' ',
-                                            NEW.surname,
-                                            ' with email address ',
-                                            _email_addr,
-                                            ' already exists.')
-                     USING HINT      = CONCAT('Perhaps you need to UPDATE ',
-                                              'the record instead?'),
-                           ERRCODE   = '23505';
+               RAISE EXCEPTION '%',   _err_msg
+                  USING HINT        = _err_hint,
+                        ERRCODE     = '23505';
                RETURN NULL;
          WHEN SQLSTATE '23514'
             THEN
-               RAISE EXCEPTION '%',  CONCAT(NEW.email_address,
-                                            ' is not a valid email address.')
-                       USING HINT      = 'Please check the email address',
-                             ERRCODE   = '23514';
+               RAISE EXCEPTION '%',   _err_msg
+                  USING HINT        = _err_hint,
+                        ERRCODE     = '23514';
                RETURN NULL;
          WHEN OTHERS
             THEN
