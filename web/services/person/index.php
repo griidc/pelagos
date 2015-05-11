@@ -26,8 +26,6 @@ $comp->slim->map(
     function ($firstName, $lastName, $email) use ($comp, $entityManager) {
 
         global $quit;
-        $quit = true;
-
         global $user;
         $quit = true;
 
@@ -46,7 +44,10 @@ $comp->slim->map(
             return;
         }
 
-        // Check to see that user has been authorized
+        // Check to see that user is logged in.
+        // THIS IS AN INSUFFICIENT SECURITY CHECK, THIS WILL
+        // HAVE TO BE TIED TO SOME SORT OF ACCESS LIST WHEN
+        // RELEASED.
         if (!isset($user->name)) {
             $quit = true;
             $code = 401;
