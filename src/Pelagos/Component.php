@@ -6,6 +6,8 @@ class Component
 {
     public $slim;
 
+    protected $quitOnFinalize = false;
+
     public function __construct($options = array())
     {
         # load Twig
@@ -46,6 +48,18 @@ class Component
             drupal_exit();
         } else {
             exit;
+        }
+    }
+
+    public function setQuitOnFinalize($quitOnFinalize)
+    {
+        $this->quitOnFinalize = $quitOnFinalize;
+    }
+
+    public function finalize()
+    {
+        if ($this->quitOnFinalize) {
+            $this->quit();
         }
     }
 }

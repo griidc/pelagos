@@ -5,12 +5,6 @@ require_once $GLOBALS['pelagos']['root'] . '/bootstrap.php';
 
 $comp = new \Pelagos\Component();
 
-global $quit;
-$quit = false;
-
-$code = '';
-$msg = '';
-
 $comp->slim->get(
     '/',
     function () use ($comp) {
@@ -25,16 +19,15 @@ $comp->slim->map(
     '/:firstName/:lastName/:email(/)',
     function ($firstName, $lastName, $email) use ($comp, $entityManager) {
 
-        global $quit;
         global $user;
-        $quit = true;
+
+        $comp->setQuitOnFinalize(true);
 
         // First name, last name, and email have to exist, otherwise the route
         // would not have been matched
 
         // validate email format
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $quit = true;
             $code = 400;
             $msg = "Improperly formatted email address";
             $HTTPStatus = new \Pelagos\HTTPStatus($code, $msg);
@@ -49,7 +42,6 @@ $comp->slim->map(
         // HAVE TO BE TIED TO SOME SORT OF ACCESS LIST WHEN
         // RELEASED.
         if (!isset($user->name)) {
-            $quit = true;
             $code = 401;
             $msg = "Login Required to use this feature";
             $HTTPStatus = new \Pelagos\HTTPStatus($code, $msg);
@@ -64,7 +56,6 @@ $comp->slim->map(
         $entityManager->persist($person);
 
         try {
-            $quit = true;
             $entityManager->flush();
             $firstName = $person->getFirstName();
             $lastName = $person->getLastName();
@@ -74,7 +65,6 @@ $comp->slim->map(
             $code = 200;
             $msg = "A person has been successfully created $firstName $lastName ($email) with at ID of $id.";
         } catch (\Exception $error) {
-            $quit = true;
             // Duplicate Error - 23505
             if (preg_match('/SQLSTATE\[23505\]: Unique violation/', $error->getMessage())) {
                 $code = 409;
@@ -97,6 +87,4 @@ $comp->slim->map(
 
 $comp->slim->run();
 
-if ($quit) {
-    $comp->quit();
-}
+$comp->finalize();
