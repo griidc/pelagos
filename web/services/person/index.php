@@ -28,6 +28,19 @@ $comp->slim->map(
         global $user;
         $quit = true;
 
+        // First name, last name, and email have to exist, otherwise the route
+        // would not have been matched
+
+        // validate email format
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $quit = true;
+            $HTTPStatus = new \Pelagos\HTTPStatus(400, 'Improperly formatted email address');
+            $comp->slim->response->headers->set('Content-Type', 'application/json');
+            $comp->slim->response->status($HTTPStatus->code);
+            $comp->slim->response->setBody($HTTPStatus->asJSON());
+            return;
+        }
+
         if (!isset($user->name)) {
             $quit = true;
             $HTTPStatus = new \Pelagos\HTTPStatus(401, 'Login Required to use this feature.');
@@ -40,12 +53,19 @@ $comp->slim->map(
         $person = new \Pelagos\Entity\Person($firstName, $lastName, $email);
 
         $entityManager->persist($person);
-        $entityManager->flush();
+
+        try {
+            $entityManager->flush();
+
+        } catch (\Exception $error) {
+            print $error->getMessage();
+            return;
+        }
 
         $cn = $person->getFirstName() . ' ' . $person->getLastName();
         $id = $person->getId();
-
         print "Hello $cn.  You have been assigned ID: $id.";
+
         return;
     }
 )->via('PUT','GET');
