@@ -62,4 +62,11 @@ class Component
             $this->quit();
         }
     }
+
+    public function setSlimResponseHTTPStatusJSON(HTTPStatus $status)
+    {
+        $this->slim->response->headers->set('Content-Type', 'application/json');
+        $this->slim->response->status($status->code);
+        $this->slim->response->setBody($status->asJSON());
+    }
 }

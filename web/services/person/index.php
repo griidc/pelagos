@@ -28,12 +28,12 @@ $comp->slim->map(
 
         // validate email format
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $code = 400;
-            $msg = "Improperly formatted email address";
-            $HTTPStatus = new \Pelagos\HTTPStatus($code, $msg);
-            $comp->slim->response->headers->set('Content-Type', 'application/json');
-            $comp->slim->response->status($HTTPStatus->code);
-            $comp->slim->response->setBody($HTTPStatus->asJSON());
+            $comp->setSlimResponseHTTPStatusJSON(
+                new \Pelagos\HTTPStatus(
+                    400,
+                    'Improperly formatted email address'
+                )
+            );
             return;
         }
 
@@ -42,12 +42,12 @@ $comp->slim->map(
         // HAVE TO BE TIED TO SOME SORT OF ACCESS LIST WHEN
         // RELEASED.
         if (!isset($user->name)) {
-            $code = 401;
-            $msg = "Login Required to use this feature";
-            $HTTPStatus = new \Pelagos\HTTPStatus($code, $msg);
-            $comp->slim->response->headers->set('Content-Type', 'application/json');
-            $comp->slim->response->status($HTTPStatus->code);
-            $comp->slim->response->setBody($HTTPStatus->asJSON());
+            $comp->setSlimResponseHTTPStatusJSON(
+                new \Pelagos\HTTPStatus(
+                    401,
+                    'Login Required to use this feature'
+                )
+            );
             return;
         }
 
@@ -75,10 +75,9 @@ $comp->slim->map(
             }
         }
 
-        $HTTPStatus = new \Pelagos\HTTPStatus($code, $msg);
-        $comp->slim->response->headers->set('Content-Type', 'application/json');
-        $comp->slim->response->status($HTTPStatus->code);
-        $comp->slim->response->setBody($HTTPStatus->asJSON());
+        $comp->setSlimResponseHTTPStatusJSON(
+            new \Pelagos\HTTPStatus($code, $msg)
+        );
 
         return;
     }
