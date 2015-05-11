@@ -8,6 +8,9 @@ $comp = new \Pelagos\Component();
 global $quit;
 $quit = false;
 
+$code = '';
+$msg = '';
+
 $comp->slim->get(
     '/',
     function () use ($comp) {
@@ -34,16 +37,21 @@ $comp->slim->map(
         // validate email format
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $quit = true;
-            $HTTPStatus = new \Pelagos\HTTPStatus(400, 'Improperly formatted email address');
+            $code = 400;
+            $msg = "Improperly formatted email address";
+            $HTTPStatus = new \Pelagos\HTTPStatus($code,$msg);
             $comp->slim->response->headers->set('Content-Type', 'application/json');
             $comp->slim->response->status($HTTPStatus->code);
             $comp->slim->response->setBody($HTTPStatus->asJSON());
             return;
         }
 
+        // Check to see that user has been authorized
         if (!isset($user->name)) {
             $quit = true;
-            $HTTPStatus = new \Pelagos\HTTPStatus(401, 'Login Required to use this feature.');
+            $code = 401;
+            $msg = "Login Required to use this feature";
+            $HTTPStatus = new \Pelagos\HTTPStatus($code,$msg);
             $comp->slim->response->headers->set('Content-Type', 'application/json');
             $comp->slim->response->status($HTTPStatus->code);
             $comp->slim->response->setBody($HTTPStatus->asJSON());
@@ -55,16 +63,31 @@ $comp->slim->map(
         $entityManager->persist($person);
 
         try {
+            $quit = true;
             $entityManager->flush();
+            $firstName = $person->getFirstName();
+            $lastName = $person->getLastName();
+            $email = $person->getEmailAddress();
+            $id = $person->getId();
 
+            $code = 200;
+            $msg = "A person has been successfully created $firstName $lastName ($email) with at ID of $id.";
         } catch (\Exception $error) {
-            print $error->getMessage();
-            return;
+            $quit = true;
+            // Duplicate Error - 23505
+            if (preg_match('/SQLSTATE\[23505\]: Unique violation/', $error->getMessage())){
+                $code = 409;
+                $msg = 'This record already exists in the database';
+            } else {
+                $code = 500;
+                $msg = "A general database error has occured." . $error->getMessage();
+            }
         }
 
-        $cn = $person->getFirstName() . ' ' . $person->getLastName();
-        $id = $person->getId();
-        print "Hello $cn.  You have been assigned ID: $id.";
+        $HTTPStatus = new \Pelagos\HTTPStatus($code, $msg);
+        $comp->slim->response->headers->set('Content-Type', 'application/json');
+        $comp->slim->response->status($HTTPStatus->code);
+        $comp->slim->response->setBody($HTTPStatus->asJSON());
 
         return;
     }
