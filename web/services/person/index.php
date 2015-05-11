@@ -39,7 +39,7 @@ $comp->slim->map(
             $quit = true;
             $code = 400;
             $msg = "Improperly formatted email address";
-            $HTTPStatus = new \Pelagos\HTTPStatus($code,$msg);
+            $HTTPStatus = new \Pelagos\HTTPStatus($code, $msg);
             $comp->slim->response->headers->set('Content-Type', 'application/json');
             $comp->slim->response->status($HTTPStatus->code);
             $comp->slim->response->setBody($HTTPStatus->asJSON());
@@ -51,7 +51,7 @@ $comp->slim->map(
             $quit = true;
             $code = 401;
             $msg = "Login Required to use this feature";
-            $HTTPStatus = new \Pelagos\HTTPStatus($code,$msg);
+            $HTTPStatus = new \Pelagos\HTTPStatus($code, $msg);
             $comp->slim->response->headers->set('Content-Type', 'application/json');
             $comp->slim->response->status($HTTPStatus->code);
             $comp->slim->response->setBody($HTTPStatus->asJSON());
@@ -75,7 +75,7 @@ $comp->slim->map(
         } catch (\Exception $error) {
             $quit = true;
             // Duplicate Error - 23505
-            if (preg_match('/SQLSTATE\[23505\]: Unique violation/', $error->getMessage())){
+            if (preg_match('/SQLSTATE\[23505\]: Unique violation/', $error->getMessage())) {
                 $code = 409;
                 $msg = 'This record already exists in the database';
             } else {
@@ -91,7 +91,7 @@ $comp->slim->map(
 
         return;
     }
-)->via('PUT','GET');
+)->via('PUT', 'GET');
 
 
 $comp->slim->run();
@@ -99,4 +99,3 @@ $comp->slim->run();
 if ($quit) {
     $comp->quit();
 }
-
