@@ -1,20 +1,24 @@
 var $ = jQuery.noConflict();
 
+var base_path;
+
 $(document).ready(function()
 {
+    base_path = $('div[base_path]').attr('base_path');
+
     formValidator = $("#personForm").validate({
         submitHandler: function(form) {
             var data = getFormJSON($('form'));
             savePerson(data.firstName, data.lastName, data.eMailAddress)
         }
     });
-    
+
     $('#btnSave').button();
-    
+
     $('#btnReset').button().click(function() {
         formValidator.resetForm();
     });
-    
+
     $('#personFormDialog').dialog({
         autoOpen: false,
         resizable: false,
@@ -28,14 +32,25 @@ $(document).ready(function()
             }
         }
     });
-    
+
     //minWidth does not work properly with 'auto' width, so hack
     $('.ui-dialog').css({'min-width': '300px'});
 });
 
+/**
+ *  savePerson function
+ *
+ *  This function will send the person data to the webservice
+ *
+ *  @param [string] firstName First/Given Name
+ *  @param [string] lastName Last/Sur/Family Name
+ *  @param [string] eMailAddress E-Mail Address
+ *
+ */
 function savePerson(firstName, lastName, eMailAddress)
 {
-    var url = "/pelagos/dev/mvde/services/person/" + firstName + "/" + lastName + "/" + eMailAddress;
+    debugger;
+    var url = base_path + "/services/person/" + firstName + "/" + lastName + "/" + eMailAddress;
     var title = "";
     var messsage = "";
     $.ajax({
@@ -71,9 +86,18 @@ function savePerson(firstName, lastName, eMailAddress)
     })
 }
 
+/**
+ *  getFormJSON function
+ *
+ *  This function will return the form fields/data as JSON
+ *  it takes a jQuery selector of a Form
+ *
+ *  @param [selector] formSelector jQuery selector of the Form
+ *  @return JSON
+ */
 function getFormJSON(formSelector)
 {
     var data = {};
-    formSelector.serializeArray().map(function(x){data[x.name] = x.value;}); 
+    formSelector.serializeArray().map(function(x){data[x.name] = x.value;});
     return data;
 }
