@@ -35,6 +35,14 @@ CREATE TABLE email_table
 ALTER INDEX email_table_pkey
    RENAME TO uidx_pk_email;
 
+-- Create a UNIQUE INDEX on the lower case value of email address so we can
+-- maintain case-insensitive uniqueness of email address. This violates RFC
+-- 5321 specification that local-parts are to be treated in a case-sensitive
+-- manner, but the RFC also indicates this requirement is discouraged
+-- (http://tools.ietf.org/html/rfc5321#section-2.4):
+CREATE UNIQUE INDEX uidx_lower_email
+   ON email_table (LOWER(email_address));
+
 -- Set object ownerships:
 ALTER TABLE email_table
    OWNER TO gomri_admin;

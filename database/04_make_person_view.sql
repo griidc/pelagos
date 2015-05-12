@@ -74,12 +74,13 @@ AS $pers_func$
                             ' is already present in relation person.');
 
          -- The requirements call for the combination of given name, surname,
-         -- and email_address to be unique. We can enforce that here:
+         -- and the (case-insensitive) email_address to be unique. We can
+         -- enforce that here
          EXECUTE 'SELECT COUNT(*)
                   FROM person
                   WHERE given_name = $1
                      AND surname = $2
-                     AND email_address = $3'
+                     AND LOWER(email_address) = LOWER($3)'
                INTO _count
                USING NEW.given_name,
                      NEW.surname,
@@ -99,7 +100,7 @@ AS $pers_func$
             -- Let's see if we already have a record for this email address:
             EXECUTE 'SELECT COUNT(*)
                      FROM email_table
-                     WHERE email_address = $1'
+                     WHERE LOWER(email_address) = LOWER($1)'
                INTO _count
                USING _email_addr;
 
@@ -123,7 +124,7 @@ AS $pers_func$
                THEN
                   EXECUTE 'SELECT COUNT(*)
                            FROM person
-                           WHERE email_address = $1
+                           WHERE LOWER(email_address) = LOWER($1)
                               AND ROW(given_name, surname)
                                   IS DISTINCT FROM
                                   ROW($2, $3)'
@@ -134,7 +135,7 @@ AS $pers_func$
                ELSE
                   EXECUTE 'SELECT COUNT(*)
                            FROM person
-                           WHERE email_address = $1
+                           WHERE LOWER(email_address) = LOWER($1)
                               AND person_number <> $2'
                      INTO _count
                      USING NEW.email_address,
@@ -259,7 +260,7 @@ AS $pers_func$
          -- association:
          EXECUTE 'SELECT COUNT(*)
                   FROM email2person_table
-                  WHERE email_address = $1'
+                  WHERE LOWER(email_address) = LOWER($1)'
             INTO _count
             USING _email_addr;
 
@@ -281,7 +282,7 @@ AS $pers_func$
             EXECUTE 'UPDATE email2person_table
                      SET is_primary_email_address = TRUE
                      WHERE person_number = $1
-                        AND email_address = $2
+                        AND LOWER(email_address) = LOWER($2)
                         AND is_primary_email_address = FALSE'
                USING NEW.person_number,
                      _email_addr;
@@ -299,7 +300,7 @@ AS $pers_func$
          -- information:
          EXECUTE 'UPDATE email_table
                   SET email_validated = FALSE
-                  WHERE email_address = $1'
+                  WHERE LOWER(email_address) = LOWER($1)'
             USING OLD.email_address;
          EXECUTE 'DELETE
                   FROM email2person_table
