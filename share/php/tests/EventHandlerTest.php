@@ -58,10 +58,6 @@ class EventHandlerTest extends \PHPUnit_Framework_TestCase
         'doi_approved' => array(
             'tests' => array('template','dmEmail','dmSalutation','userFirstName','userLastName','userRCList'),
             'templateRegEx' => '/has approved the request for a Digital Object Identifier \(DOI\)/'
-        ),
-        'journal_rejected' => array(
-            'tests' => array('template','userEmail','userSalutation'),
-            'templateRegEx' => '/journal_rejected_text/'
         )
     );
 

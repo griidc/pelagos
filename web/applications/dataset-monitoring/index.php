@@ -155,19 +155,32 @@ $app->get('/projects/:by/:id(/:renderer)', function ($by, $id, $renderer = 'brow
             case 'fundSrc':
                 $funds = getFundingSources($RIS_DBH, array("fundId=$id"));
                 $stash['header'] = $funds[0]['Name'];
+                $stash['pdfFilename'] = filterFilename('Dataset Monitoring - '.$funds[0]['Abbr']);
                 break;
             case 'peopleId':
                 $people = getPeopleDetails($RIS_DBH, array("peopleId=$id"));
                 $stash['header'] = $people[0]['FirstName'] . ' ' . $people[0]['LastName'];
                 $stash['instName'] = $people[0]['Institution_Name'];
+                $stash['pdfFilename'] = filterFilename('Dataset Monitoring - '.$people[0]['FirstName'] .
+                    ' ' . $people[0]['LastName'].' ('.$people[0]['Institution_Name'].')');
                 break;
             case 'institutionId':
                 $inst = getInstitutionDetails($RIS_DBH, array("institutionId=$id"));
                 $stash['header'] = $inst[0]['Name'];
+                $stash['pdfFilename'] = filterFilename('Dataset Monitoring - '.$inst[0]['Name']);
                 break;
             case 'projectId':
                 $proj = getProjectDetails($RIS_DBH, array("projectId=$id"));
                 $stash['header'] = $proj[0]['Title'];
+                $matches = array();
+                $has_shorthand = preg_match('/\(.*\)/',$proj[0]['Title'],$matches);
+                if ($has_shorthand) {
+                    $consortia = array_pop($matches);
+                    $stash['pdfFilename'] = "Dataset Monitoring - ".$proj[0]["Fund_Abbr"]." - $consortia";
+                } else {
+                    $words = array_slice(explode(' ', $stash['header'] = $proj[0]['Title'], 7),0,6);
+                    $stash['pdfFilename'] = filterFilename("Dataset Monitoring - ".$proj[0]["Fund_Abbr"].'- '.implode(' ',$words));
+                }
                 break;
         }
         $projectFilter = array("$by=$id");
@@ -262,3 +275,9 @@ $app->get('/pdf/:by/:id/:name', function ($by, $id, $name) use ($app) {
 });
 
 $app->run();
+
+function filterFilename($raw_filename) {
+    $pattern = array('/,/', '/:/', '/\'/', '/\./', '/\//');
+    $replace = array('', '', '', '_', '_');
+    return preg_replace($pattern,$replace,$raw_filename);
+}

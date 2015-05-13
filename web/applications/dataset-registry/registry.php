@@ -370,6 +370,9 @@ if ($_SESSION['submitok']) {
     system($GLOBALS['pelagos_config']['paths']['root'].'/back-end/filer/trigger-filer');
 }
 else {
+    echo '<script>';
+    echo 'jQuery(document).ready(function() { jQuery("#pelagos-content > table > tbody > tr > td:last-child").height(jQuery("#pelagos-content > table > tbody > tr > td:first-child").height()); });';
+    echo '</script>';
     echo '<table border="0" style="height:100%;width:100%;">';
     echo '<tr>';
     echo '<td width="60%" style="vertical-align: top; background: transparent;">';

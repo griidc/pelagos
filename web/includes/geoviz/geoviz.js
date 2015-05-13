@@ -50,12 +50,24 @@ function GeoViz()
         mapDiv = "#"+DIV;
         
         mapOptions = Options;
+        
+        google_hybrid = new OpenLayers.Layer.Google('Google Hybrid Map', 
+        {
+            type: google.maps.MapTypeId.HYBRID,
+            numZoomLevels: googleZoomLevel,
+            sphericalMercator: true,
+            displayInLayerSwitcher: true
+        });
+        
         map = new OpenLayers.Map( 
         {
+            layers: [google_hybrid],
+            center: new OpenLayers.LonLat(lon, lat).transform('EPSG:4326', 'EPSG:900913'),
+            zoom: zoom,
             div: DIV,
             projection: new OpenLayers.Projection('EPSG:900913'),
             displayProjection: new OpenLayers.Projection('EPSG:4326'),
-            zoomDuration: 10,
+            zoomDuration: 20,
             maxResolution: "auto",
             maxExtent: new OpenLayers.Bounds(-180, -90, 180, 90),
             minResolution: "auto",
@@ -126,13 +138,6 @@ function GeoViz()
             "select": selectStyle
         });
         
-        google_hybrid = new OpenLayers.Layer.Google('Google Hybrid Map', 
-        {
-            type: google.maps.MapTypeId.HYBRID,
-            numZoomLevels: googleZoomLevel,
-            sphericalMercator: true,
-            displayInLayerSwitcher: true
-        });
         
         google_terain = new OpenLayers.Layer.Google('Google Terrain Map', 
         {
@@ -210,7 +215,7 @@ function GeoViz()
         
         //TODO: if Options.BaseMapTerainDefault == true then add terain layer first.
         
-        map.addLayers([google_hybrid, vlayer, flayer]);
+        map.addLayers([vlayer, flayer]);
         
         map.events.register("click", map , function(e){
             var vpxy = map.getLayerPxFromViewPortPx(e.xy) ;
@@ -361,24 +366,20 @@ function GeoViz()
         });
         
         google.maps.event.addListener(google_hybrid.mapObject, "tilesloaded", function() {
-            //console.log("Tiles loaded");
-            if (!firstLoad)
-            {
-                //console.log('done with map');
-                firstLoad = true;
-                setTimeout( function() { 
-                    map.removeLayer(google_hybrid);
-                    map.updateSize();
-                    map.addLayer(google_hybrid);
-                    map.updateSize();
-                        
-                    jQuery(mapDiv).trigger('imready',mapDiv);
+            console.log("Google Tiles Loaded");
+            google.maps.event.clearListeners(google_hybrid.mapObject, 'tilesloaded');
+            google.maps.event.addListener(google_hybrid.mapObject, "idle", function() {
+            console.log("Google Map Idle");
+     
+            setTimeout( function() { 
+                console.log("Map is Ready");  
+                jQuery(mapDiv).trigger('imready',mapDiv);
                 }
-                , 300)
-            };
+            , 300);
+            google.maps.event.clearListeners(google_hybrid.mapObject, 'idle');
+            });
         });
-                
-        map.setCenter(new OpenLayers.LonLat(lon, lat).transform('EPSG:4326', 'EPSG:900913'), zoom, true, true);
+        
         //map.render(DIV);
         
         //Add map selector for highlighting
