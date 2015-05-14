@@ -14,14 +14,15 @@
 -- Start by dropping everything:
 DROP TABLE email_table CASCADE;
 
--- A case insensitive email data type that also matches IP addresses as the
--- domain (note that RFC 5322 [http://www.rfc-editor.org/rfc/rfc5322.txt]
--- allows almost all non-whitespace characters to be used in the local part. We
--- are just allowing alphanumeric characters, an underscore, a hyphen, or a
--- period at the moment):
+-- A case insensitive email data type that allows any character other than a
+-- dot, an @, or any whitespace, followed by any number of characters that are
+-- not an @ or whitespace, followed by an @, a domeain name that cannot consist
+-- of an @ or whitespace, anchored by a TLD that can contain anything other
+-- than whitespace or an @ (Note that RFC 5322 allows local parts to contain
+-- whitespace in quoted strings, but we are choosing to disallow that):
 CREATE DOMAIN EMAIL_ADDRESS_TYPE AS TEXT
 CONSTRAINT chk_email
-   CHECK (VALUE ~* '^[\w.-]+@([\w-]+\.)*[\w-]+\.[a-z]{2,}$');
+   CHECK (VALUE ~* '^[^.@\s][^@\s]*@[^@\s]+.[^@\s]+$');
 
 CREATE TABLE email_table
 (
