@@ -22,7 +22,7 @@ DROP TABLE email_table CASCADE;
 -- whitespace in quoted strings, but we are choosing to disallow that):
 CREATE DOMAIN EMAIL_ADDRESS_TYPE AS TEXT
 CONSTRAINT chk_email
-   CHECK (VALUE ~* '^[^.@\s][^@\s]*@[^@\s]+.[^@\s]+$');
+   CHECK (VALUE ~* '^[^.@\s][^@\s]*@[^@\s]+\.[^@\s]+$');
 
 CREATE TABLE email_table
 (
