@@ -26,6 +26,7 @@ drupal_add_css('/data-discovery/includes/css/logins.css',array('type'=>'external
 drupal_add_library('system', 'jquery.cookie');
 drupal_add_library('system', 'ui.tabs');
 drupal_add_library('system', 'ui.button');
+drupal_add_library('system', 'ui.dialog');
 
 drupal_add_js('//cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js',array('type'=>'external'));
 drupal_add_js('//maps.google.com/maps/api/js?v=3&sensor=false',array('type'=>'external'));
@@ -66,6 +67,7 @@ if ($udi <> '')
 {
 
     $pconn = OpenDB("GOMRI_RW");
+
     # Toggle per ini file parameter the enforcement of dataset downloadability requiring accepted metadata
     $enforceMetadataRule = 0;
     if( (isset($GLOBALS['config']['system']['enforce_approved_metadata'] ) and ( $GLOBALS['config']['system']['enforce_approved_metadata'] == 1 )) ) {
@@ -106,7 +108,8 @@ if ($udi <> '')
                   ELSE 0
              END
          WHEN dataset_download_status = 'RemotelyHosted' THEN
-             CASE WHEN access_status = 'None' THEN 7
+             CASE WHEN (metadata_status <> 'Accepted' AND '$enforceMetadataRule' = '1') THEN 4
+                  WHEN access_status = 'None' THEN 7
                   WHEN access_status = 'Approval' THEN 6
                   WHEN access_status = 'Restricted' THEN 5
                   ELSE 0
@@ -265,7 +268,22 @@ var dlmap = new GeoViz();
             }
         });
 
-        $("#downloaddsden").button();
+        $("#download_dialog").dialog({
+            autoOpen: false,
+            buttons: {
+                OK: function() {
+                    $(this).dialog("close");
+                }
+            },
+            modal: true,
+            resizable:false,
+        });
+
+        $("#downloaddsden").button().click(function() {
+            $("#download_dialog").dialog('option', 'title', 'Dataset Not Available');
+            $("#download_dialog").html('This dataset is not available for download.');
+            $("#download_dialog").dialog('open');
+        });
 
         $("#metadatadl").button().click(function() {
             window.location = '<?php echo "$pageLessBaseUrl/metadata/$udi"; ?>';
@@ -427,11 +445,11 @@ var dlmap = new GeoViz();
                 <td><img src="/data-discovery/includes/images/vbar.png"></td>
                 <td align="center">
                     <div>
-                        <a href="/auth/openid/google?dest=<?php echo "$_SERVER[REQUEST_URI]";?>"><img src="/data-discovery/includes/images/googleauth.png" alt="google auth logo"></a>
+                        <a href="/auth/oauth2/google?dest=<?php echo "$_SERVER[REQUEST_URI]";?>"><img src="/data-discovery/includes/images/googleauth.png" alt="google auth logo"></a>
                     </div>
                     <div>
                         Members of the public may use their<br>
-                        <a href="/auth/openid/google?dest=<?php echo "$_SERVER[REQUEST_URI]";?>">Google login</a> to download data.
+                        <a href="/auth/oauth2/google?dest=<?php echo "$_SERVER[REQUEST_URI]";?>">Google login</a> to download data.
                     </div>
                 </td>
             </tr>
@@ -462,7 +480,12 @@ var dlmap = new GeoViz();
             } else {
                 $dl_ok = 0;
             }
-            echo $twig->render('summary.html', array('pdata' => $prow,'mdata' => $mrow,'mpdata' => $mprow, 'baseurl' => $_SERVER['SCRIPT_NAME'], 'dl_ok' => $dl_ok));
+            $dataset_available = 0;
+            # check if dataset file has been downloaded successfully or marked as remotely hosted
+            if (in_array($prow['dataset_download_status'], array('Completed','RemotelyHosted'))) {
+                $dataset_available = 1;
+            }
+            echo $twig->render('summary.html', array('pdata' => $prow,'mdata' => $mrow,'mpdata' => $mprow, 'baseurl' => $_SERVER['SCRIPT_NAME'], 'dl_ok' => $dl_ok, 'dataset_available' => $dataset_available));
             ?>
             </div>
         </td>
@@ -529,6 +552,7 @@ var dlmap = new GeoViz();
     </div>
 </div>
 
+<div id="download_dialog"></div>
 <?php
 }
 else

@@ -3,6 +3,7 @@
 $GLOBALS['pelagos']['title'] = 'Authentication';
 
 $GLOBALS['griidc'] = parse_ini_file('/etc/opt/pelagos.ini',true);
+$GLOBALS['config'] = parse_ini_file('config.ini',true);
 $GLOBALS['libraries'] = parse_ini_file($GLOBALS['griidc']['paths']['conf'].'/libraries.ini',true);
 
 require_once $GLOBALS['libraries']['Slim2']['include'];
@@ -27,15 +28,20 @@ $GLOBALS['auth_types'] = array(
     'openid' => array(
         'name' => 'OpenID',
         'providers' => array(
-            'google' => array(
-                'name' => 'Google',
-                'identity' => 'https://www.google.com/accounts/o8/id',
-                'logout' => 'https://www.google.com/accounts/Logout'
-            ),
             'symantec' => array(
                 'name' => 'Symantec',
                 'identity' => 'https://pip.verisignlabs.com/login.do',
                 'logout' => 'https://pip.verisignlabs.com/logout.do'
+            )
+        )
+    ),
+    'oauth2' => array(
+        'name' => 'OAuth2',
+        'providers' => array(
+            'google' => array(
+                'name' => 'google',
+                'client_id' => $GLOBALS['config']['google']['client_id'],
+                'logout' => 'https://accounts.google.com/logout'
             )
         )
     )
@@ -55,7 +61,11 @@ $app->baseUrl = "$protocol$env[SERVER_NAME]$env[SCRIPT_NAME]";
 $app->view->parserDirectory = $GLOBALS['libraries']['Twig']['directory'];
 
 $app->hook('slim.before', function () use ($app) {
-    $app->view()->appendData(array('baseUrl' => $app->baseUrl));
+    $env = $app->environment();
+    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off'
+                 || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+    $app->view()->appendData(array('baseUrl' => "$protocol$env[SERVER_NAME]$env[SCRIPT_NAME]"));
+    $app->view()->appendData(array('serverUrl' => "$protocol$env[SERVER_NAME]"));
 });
 
 $app->get('/includes/:file', 'dumpIncludesFile')->conditions(array('file' => '.+'));
@@ -95,6 +105,65 @@ $app->get('/:auth_type', function ($auth_type) use ($app) {
     return $app->render('html/auth_type.html',$stash);
 })->conditions(array('auth_type' => join('|',array_keys($GLOBALS['auth_types']))));
 
+// this route will provide a redirect to the oauth2 provider's login URL
+$app->get('/oauth2/:provider(/)', function ($provider) use ($app) {
+    global $pelagos;
+    switch($provider) {
+        case "google":
+            $url = "https://accounts.google.com/o/oauth2/auth";
+            $_SESSION['callback_dest']=$app->request->get('dest');
+            $params = array(
+                             "response_type" => "code",
+                             "client_id" => $GLOBALS['config']['google']['client_id'],
+                             "redirect_uri" => "$pelagos[component_url]/oauth2callback",
+                             "scope" => "https://www.googleapis.com/auth/plus.me https://www.googleapis.com/auth/plus.profile.emails.read"
+            );
+            $request_to = $url . '?' . http_build_query($params);
+            header("Location: " . $request_to);
+            drupal_exit();
+        break;
+    }
+})->conditions(array('provider' => join('|',array_keys($GLOBALS['auth_types']['oauth2']['providers']))));
+
+$app->get('/oauth2callback', function () use ($app) {
+    global $pelagos;
+    if (array_key_exists( 'callback_dest', $_SESSION ) and (isset($_SESSION['callback_dest']))) {
+        $dest = $_SESSION['callback_dest'];
+    } else {
+        $dest = '';
+    }
+
+    $token = $app->request->get('code');
+    $url = 'https://accounts.google.com/o/oauth2/token';
+    $params = array(
+        "code" => $token,
+        "client_id" => $GLOBALS['config']['google']['client_id'],
+        "client_secret" => $GLOBALS['config']['google']['client_secret'],
+        "redirect_uri" => "$pelagos[component_url]/oauth2callback",
+        "grant_type" => "authorization_code"
+    );
+    $request = new HttpRequest($url, HttpRequest::METH_POST);
+    $request->setPostFields($params);
+    $request->send();
+    $responseObj = json_decode($request->getResponseBody());
+    if((isset($responseObj->access_token)) and (!isset($responseObj->error))) {
+
+        preg_match("/^([^\.]+)\.([^\.]+)/",$responseObj->id_token,$jwt);
+        $google_user_info = json_decode(base64_decode($jwt[2]));
+
+        $_SESSION['guestAuth'] = true;
+        $_SESSION['guestAuthType'] = 'oauth2';
+        $_SESSION['guestAuthProvider'] = 'google';
+        $_SESSION['guestAuthUser'] = $google_user_info->email;
+
+        if (substr($dest,0,1) != '/') {
+            $dest = "/$dest";
+        }
+        header("Location: $dest");
+        drupal_exit();
+    }
+})->conditions(array('provider' => join('|',array_keys($GLOBALS['auth_types']['oauth2']['providers']))));
+
 $app->get('/openid/:provider', function ($provider) use ($app) {
     try {
         $env = $app->environment();
@@ -132,7 +201,7 @@ $app->get('/logout', function () use ($app) {
         if ($auth_info['type'] == 'cas') {
             cas_logout();
         }
-        if ($auth_info['type'] == 'openid') {
+        if ($auth_info['type'] == 'openid' or $auth_info['type'] == 'oauth2') {
             try {
                 if (array_key_exists('guestAuthUser',$_SESSION)) {
                     $user = $_SESSION['guestAuthUser'];

@@ -4,11 +4,11 @@
 Authentication Options
 <ul>
     {% for auth_type in auth_types|keys %}
-        <li><a href="/auth/{{auth_type}}">{{auth_types[auth_type].name}}</a></li>
+        <li><a href="{{baseUrl}}/{{auth_type}}">{{auth_types[auth_type].name}}</a></li>
         {% if auth_types[auth_type].providers %}
             <ul>
                 {% for provider in auth_types[auth_type].providers|keys %}
-                    <li><a href="/auth/{{auth_type}}/{{provider}}">{{auth_types[auth_type].providers[provider].name}}</a></li>
+                    <li><a href="{{baseUrl}}/{{auth_type}}/{{provider}}">{{auth_types[auth_type].providers[provider].name}}</a></li>
                 {% endfor %}
             </ul>
         {% endif %}
