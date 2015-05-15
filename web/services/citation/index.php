@@ -19,7 +19,7 @@ $comp->slim->get('/publication(/)', function () use ($comp) {
 
 $comp->slim->get('/publication/:doi+', function ($doi) use ($comp) {
     header('Content-Type:application/json');
-    $pub = new \Pelagos\Publication(join('/', $doi));
+    $pub = new \Pelagos\Entity\Publication(join('/', $doi));
     $citation = $pub->getCitation();
     if ($citation === null) {
         $status = $pub->pullCitation('apa');
