@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/../../../vendor/autoload.php';
+
 $comp = new \Pelagos\Component();
 
 $comp->slim->get('/', function () {
