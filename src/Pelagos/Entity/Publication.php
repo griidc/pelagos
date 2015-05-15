@@ -1,6 +1,8 @@
 <?php
 
-namespace Pelagos;
+namespace Pelagos\Entity;
+
+use \Pelagos\HTTPStatus;
 
 /**
  * Pelagos\Publication

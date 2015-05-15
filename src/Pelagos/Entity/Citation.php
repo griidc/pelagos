@@ -1,6 +1,6 @@
 <?php
 
-namespace Pelagos;
+namespace Pelagos\Entity;
 
 /**
  * Pelagos\Citation
