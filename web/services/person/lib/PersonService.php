@@ -1,6 +1,7 @@
 <?php
 
 namespace Pelagos\Component;
+
 class PersonService extends \Pelagos\Component
 {
     public function giveDescription()
@@ -9,8 +10,12 @@ class PersonService extends \Pelagos\Component
         return $this->slim->render("html/index.html");
     }
 
-    public function createPerson($entityManager, $firstName, $lastName, $email)
-    {
+    public function createPerson(
+        \Doctrine\Common\Persistence\ObjectManager $entityManager,
+        $firstName,
+        $lastName,
+        $email
+    ) {
         global $user;
 
         $this->setQuitOnFinalize(true);
@@ -45,9 +50,9 @@ class PersonService extends \Pelagos\Component
 
         $person = new \Pelagos\Entity\Person($firstName, $lastName, $email);
 
-        $entityManager->persist($person);
 
         try {
+            $entityManager->persist($person);
             $entityManager->flush();
             $firstName = $person->getFirstName();
             $lastName = $person->getLastName();
