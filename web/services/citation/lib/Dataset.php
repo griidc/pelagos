@@ -123,7 +123,7 @@ class Dataset
         $citationString = $author . " (" . $year . "). " . $title ." (".$udi.") ".
                    "[Data files] Available from " . $url;
 
-        $citation = new \Pelagos\Citation($regId, $citationString);
+        $citation = new \Pelagos\Entity\Citation($regId, $citationString);
         return $citation;
     }
 
