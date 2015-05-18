@@ -73,7 +73,7 @@ function savePerson(firstName, lastName, eMailAddress)
     .fail(function(response) {
         json = response.responseJSON;
         if (typeof response.responseJSON == 'undefined') {
-            json = {};
+            var json = {};
             json['code'] = response.status;
             json['message'] = response.statusText;
         }
