@@ -2,10 +2,10 @@
 
 /**
  * convert xml string to php array - useful to get a serializable value
-	*
+ * 
  * @param string $xmlstr
  * @return array
-	*
+ *
  * @author Adrien aka Gaarf & contributors
  * @see http://gaarf.info/2009/08/13/xml-string-to-php-array/
  */
@@ -71,10 +71,68 @@ function domnode_to_array($node) {
 	return $output;
 }
 
+/**
+ *  This function will produce a DomDocument from and XML file.
+ *  
+ *  @param String $file File and path of XML file.
+ *  @return Mixed Return false on failure, XML Doc on success
+ *  
+ */
+function loadXMLFromFile($file)
+{
+    $doc = new DomDocument('1.0','UTF-8');
+    $fileContents = file_get_contents($file);
+    
+    $retval = $doc->loadXML($fileContents);
+
+    if ($retval == false) {
+        return false;
+    } else {
+        return $doc;
+    }
+}
+
+/**
+ *  @brief Brief
+ *  
+ *  @param String $url Parameter_Description
+ *  @return Mixed Will return a DomDoc on success, false on failure, HTTP Status code (as int) if status 204
+ *  
+ *  @details Details
+ */
+function loadXMLFromURL($url)
+{
+    $ch = curl_init();
+    
+    //$url = "https://data.gulfresearchinitiative.org/metadata-generator/R1.x138.079:0038";
+    
+    curl_setopt($ch, CURLOPT_URL, $url);
+    // Since the request 302's (forwards/slim url rewrite)
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt ($ch, CURLOPT_HEADER, false);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $output = curl_exec($ch);
+    $curlinfo = curl_getinfo($ch);
+    $httpstatus = $curlinfo["http_code"];
+    curl_close($ch);
+    
+    if ($httpstatus == 200) {
+        $doc = new DomDocument('1.0','UTF-8');
+        if ($doc->loadXML($output, LIBXML_NOERROR)) {
+            return $doc;
+        } else {
+            return false;
+        }
+    } elseif ($httpstatus == 204) {
+        return $httpstatus;
+    } else {
+        return false;
+    }
+    
+}
+
 function loadXML($url)
 {
-	$doc = new DomDocument('1.0','UTF-8');
-
 	if(!@$doc->load($url))
 	{
 		$doc = null;
