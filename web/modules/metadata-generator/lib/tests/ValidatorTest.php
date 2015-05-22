@@ -9,7 +9,7 @@ class XMLValidatorTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         error_reporting(E_ERROR);
-        require_once __DIR__.'/../XMLValidator.php';
+        require_once __DIR__.'/../Validator.php';
     }
 
     public function testGoodMetadata()
