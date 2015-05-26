@@ -14,17 +14,28 @@ class PersonService extends \Pelagos\Component
         \Doctrine\Common\Persistence\ObjectManager $entityManager,
         $firstName,
         $lastName,
-        $email
+        $emailAddress
     ) {
         global $user;
 
         $this->setQuitOnFinalize(true);
 
-        // First name, last name, and email have to exist, otherwise the route
-        // would not have been matched
+        // mandatory fields
+        if (($emailAddress == '' or $emailAddress == null) or
+            ($firstName == '' or $firstName == null) or
+            ($lastName == '' or $lastName == null)) {
+                $this->setSlimResponseHTTPStatusJSON(
+                    new \Pelagos\HTTPStatus(
+                        400,
+                        'one or more mandatory fields are missing (emailAddress, FirstName, LastName)'
+                    )
+                );
+            return;
+
+        }
 
         // validate email format
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        if (!filter_var($emailAddress, FILTER_VALIDATE_EMAIL)) {
             $this->setSlimResponseHTTPStatusJSON(
                 new \Pelagos\HTTPStatus(
                     400,
@@ -48,7 +59,7 @@ class PersonService extends \Pelagos\Component
             return;
         }
 
-        $person = new \Pelagos\Entity\Person($firstName, $lastName, $email);
+        $person = new \Pelagos\Entity\Person($firstName, $lastName, $emailAddress);
 
 
         try {
@@ -56,11 +67,11 @@ class PersonService extends \Pelagos\Component
             $entityManager->flush();
             $firstName = $person->getFirstName();
             $lastName = $person->getLastName();
-            $email = $person->getEmailAddress();
+            $emailAddress = $person->getEmailAddress();
             $id = $person->getId();
 
             $code = 200;
-            $msg = "A person has been successfully created $firstName $lastName ($email) with at ID of $id.";
+            $msg = "A person has been successfully created $firstName $lastName ($emailAddress) with at ID of $id.";
         } catch (\Exception $error) {
             // Duplicate Error - 23505
             if (preg_match('/SQLSTATE\[23505\]: Unique violation/', $error->getMessage())) {

@@ -1,7 +1,7 @@
 <?php
 
 // currently set by Drupal to local pelagos root
-require_once $GLOBALS['pelagos']['root'] . '/bootstrap.php';
+require_once __DIR__.'/../../../bootstrap.php';
 require_once "lib/PersonService.php";
 
 $comp = new \Pelagos\Component\PersonService();
@@ -13,10 +13,13 @@ $comp->slim->get(
     }
 );
 
-$comp->slim->get(
-    '/:firstName/:lastName/:email(/)',
-    function ($firstName, $lastName, $email) use ($comp, $entityManager) {
-        $comp->createPerson($entityManager, $firstName, $lastName, $email);
+$comp->slim->post(
+    '/',
+    function () use ($comp, $entityManager) {
+        $firstName = $comp->slim->request->post('firstName');
+        $lastName = $comp->slim->request->post('lastName');
+        $emailAddress = $comp->slim->request->post('emailAddress');
+        $comp->createPerson($entityManager, $firstName, $lastName, $emailAddress);
     }
 );
 

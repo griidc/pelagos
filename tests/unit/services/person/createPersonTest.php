@@ -14,9 +14,9 @@ class testUser
 class servicePersonTest extends \PHPUnit_Framework_TestCase
 {
     protected $personService;
-    protected $first = 'test';
-    protected $last = 'user';
-    protected $email;
+    protected $firstName = 'test';
+    protected $lastName = 'user';
+    protected $emailAddress;
     protected $guid = null;
 
     protected function setUp()
@@ -32,9 +32,9 @@ class servicePersonTest extends \PHPUnit_Framework_TestCase
     // test cases
     public function testCreateNormalPerson()
     {
-        $first = "test";
-        $last = "user";
-        $email = "test.user-".$this->guid."@testdomain.tld";
+        $firstName = "test";
+        $lastName = "user";
+        $emailAddress = "$firstName.$lastName-".$this->guid."@testdomain.tld";
 
         // this person should be created, and a code 200 returned.
         $entityManager = $this
@@ -42,7 +42,7 @@ class servicePersonTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->personService->createPerson($entityManager, 'test', 'user', $email);
+        $this->personService->createPerson($entityManager, $firstName, $lastName, $emailAddress);
         $response = $this->personService->slim->response->getBody();
 
         $this->assertRegExp('/{"code":200/', $response);
@@ -50,9 +50,9 @@ class servicePersonTest extends \PHPUnit_Framework_TestCase
 
     public function testCreatePersonWithBadEmail()
     {
-        $first = "test";
-        $last = "user";
-        $email = "test.user-".$this->guid."@testdomain@tld;";
+        $firstName = "test";
+        $lastName = "user";
+        $emailAddress = "$firstName.$lastName-".$this->guid."@testdomain@tld";
 
         // this person should be created, and a code 200 returned.
         $entityManager = $this
@@ -60,7 +60,47 @@ class servicePersonTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->personService->createPerson($entityManager, 'test', 'user', $email);
+        $this->personService->createPerson($entityManager, $firstName, $lastName, $emailAddress);
+        $response = $this->personService->slim->response->getBody();
+
+        $this->assertRegExp('/{"code":400/', $response);
+
+    }
+
+    // this case represents a missing mandatory field, sent in as null
+    public function testCreatePersonWithMissingEmail()
+    {
+        $firstName = "test";
+        $lastName = "user";
+        $emailAddress = null;
+
+        // this person should be created, and a code 200 returned.
+        $entityManager = $this
+            ->getMockBuilder('\Doctrine\Common\Persistence\ObjectManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->personService->createPerson($entityManager, $firstName, $lastName, $emailAddress);
+        $response = $this->personService->slim->response->getBody();
+
+        $this->assertRegExp('/{"code":400/', $response);
+
+    }
+
+    // this case represents a missing mandatory field, sent in as empty string
+    public function testCreatePersonWithEmptyFirstName()
+    {
+        $firstName = '';
+        $lastName = "user";
+        $emailAddress = "$firstName.$lastName-".$this->guid."@testdomain@tld";
+
+        // this person should be created, and a code 200 returned.
+        $entityManager = $this
+            ->getMockBuilder('\Doctrine\Common\Persistence\ObjectManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->personService->createPerson($entityManager, $firstName, $lastName, $emailAddress);
         $response = $this->personService->slim->response->getBody();
 
         $this->assertRegExp('/{"code":400/', $response);
