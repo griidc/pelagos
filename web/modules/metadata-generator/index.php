@@ -29,12 +29,20 @@ require_once 'Twig/Autoloader.php';
 # add pelagos/share/php to the include path
 set_include_path(get_include_path() . PATH_SEPARATOR . $GLOBALS['config']['paths']['share'] . '/php');
 
-require_once 'db-utils.lib.php';
 require_once 'rpis.php';
 require_once 'datasets.php';
 require_once 'codelists.php';
 require_once 'drupal.php';
+require_once '../../../share/php/db-utils.lib.php';
+require_once "./exceptions/DuplicateException.php";
+require_once "./exceptions/NotFoundException.php";
+require_once "./exceptions/PersistenceEngineException.php";
+require_once "./MetadataGeneratorUtility.php";
 
+use \Exception\NotFoundException as NotFoundException;
+use \Exception\DuplicateException as DuplicateException;
+use \Exception\PersistenceEngineException as PersistenceEngineException;
+use \MetadataGenerator\MetadataGeneratorUtility as MetadataGeneratorUtility;
 # initialize Slim
 $app = new \Slim\Slim(array('view' => new \Slim\Views\Twig()));
 
@@ -43,6 +51,34 @@ $app->get('/', function () use ($app) {
 <p>Usage: $_SERVER[SCRIPT_NAME]/\$udi</p>
 <p>Example: <a href="$_SERVER[SCRIPT_NAME]/R1.x134.114:0008">/metadata-generator/R1.x134.114:0008</a></p>
 EOT;
+});
+
+/**
+ * Using a GomriMetadataPersistence instance, retrieve
+ * a Metadata object identified by the registry id provided
+ * and created from the information in the database.
+ * Return the xml data from the Metadata.
+  * @throws NotFoundException
+ * @throws PersistenceEngineException
+ * @return XML as string from Metadata in Gomri database
+ */
+
+function getMetadataXmlFromGomri($datasetUdi) {
+    $mdgu = new MetadataGeneratorUtility();
+    return $mdgu->getMetadataXmlForDatasetUdi($datasetUdi);
+}
+$app->get('/DB/:udi', function ($udi) use ($app) {
+    $BR = "<br>";
+    try {
+        $mdXml = getMetadataXmlFromGomri($udi);
+        echo $mdXml;
+    } catch (NotFoundException $ex) {
+        echo $ex->getMessage().$BR;
+    } catch (PersistenceEngineException $ex) {
+        echo $ex->getMessage().$BR;
+    }
+    exit;
+    exit;
 });
 
 $app->get('/:udi', function ($udi) use ($app) {
