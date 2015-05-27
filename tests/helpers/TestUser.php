@@ -1,6 +1,6 @@
 <?php
 
-namespace Pelagos;
+namespace Pelagos\Tests\Helpers;
 
 class TestUser
 {

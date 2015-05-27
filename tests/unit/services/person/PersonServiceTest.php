@@ -14,9 +14,10 @@ class PersonServiceTest extends \PHPUnit_Framework_TestCase
     {
         require_once __DIR__ . '/../../../../vendor/autoload.php';
         require_once __DIR__ . "/../../../../web/services/person/lib/PersonService.php";
+        require_once __DIR__ . "/../../../helpers/TestUser.php";
 
         $this->personService = new \Pelagos\Component\PersonService();
-        $GLOBALS['user'] = new \Pelagos\TestUser;
+        $GLOBALS['user'] = new \Pelagos\Tests\Helpers\TestUser;
         // create a unique string as an ID
         $guid = uniqid();
     }
