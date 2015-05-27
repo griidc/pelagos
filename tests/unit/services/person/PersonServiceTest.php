@@ -1,17 +1,8 @@
 <?php
 
-namespace Pelagos;
+namespace Pelagos\Tests\Unit;
 
-require_once __DIR__ . '/../../../../vendor/autoload.php';
-require_once __DIR__ . "/../../../../web/services/person/lib/PersonService.php";
-
-class testUser
-{
-    public $name = 'test';
-}
-
-
-class servicePersonTest extends \PHPUnit_Framework_TestCase
+class PersonServiceTest extends \PHPUnit_Framework_TestCase
 {
     protected $personService;
     protected $firstName = 'test';
@@ -21,9 +12,11 @@ class servicePersonTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
+        require_once __DIR__ . '/../../../../vendor/autoload.php';
+        require_once __DIR__ . "/../../../../web/services/person/lib/PersonService.php";
 
         $this->personService = new \Pelagos\Component\PersonService();
-        $GLOBALS['user'] = new testUser;
+        $GLOBALS['user'] = new \Pelagos\TestUser;
         // create a unique string as an ID
         $guid = uniqid();
     }
@@ -106,5 +99,4 @@ class servicePersonTest extends \PHPUnit_Framework_TestCase
         $this->assertRegExp('/{"code":400/', $response);
 
     }
-
 }
