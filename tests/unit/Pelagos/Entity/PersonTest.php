@@ -20,11 +20,6 @@ class PersonTest extends \PHPUnit_Framework_TestCase
     protected static $testEmailAddress = 'foo@bar.com';
 
     /**
-     * @var string $testInvalidEmailAddress Static class variable containing an invalid email address to use for testing
-     */
-    protected static $testInvalidEmailAddress = 'foo@bar@com';
-
-    /**
      * Setup for PHPUnit tests.
      * This includes the autoloader and instantiates an instance of Person.
      */
@@ -84,111 +79,6 @@ class PersonTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(
             $this->person->getEmailAddress(),
             self::$testEmailAddress
-        );
-    }
-
-    /**
-     * Test constructing a Person with a null first name.
-     * An InvalidArgumentException should be thrown.
-     *
-     * @expectedException InvalidArgumentException
-     */
-    public function testNullFirstName()
-    {
-        $this->person = new Person(
-            null,
-            self::$testLastName,
-            self::$testEmailAddress
-        );
-    }
-
-    /**
-     * Test constructing a Person with an empty first name.
-     * An InvalidArgumentException should be thrown.
-     *
-     * @expectedException InvalidArgumentException
-     */
-    public function testEmptyFirstName()
-    {
-        $this->person = new Person(
-            '',
-            self::$testLastName,
-            self::$testEmailAddress
-        );
-    }
-
-    /**
-     * Test constructing a Person with a null last name.
-     * An InvalidArgumentException should be thrown.
-     *
-     * @expectedException InvalidArgumentException
-     */
-    public function testNullLastName()
-    {
-        $this->person = new Person(
-            self::$testFirstName,
-            null,
-            self::$testEmailAddress
-        );
-    }
-
-    /**
-     * Test constructing a Person with an empty last name.
-     * An InvalidArgumentException should be thrown.
-     *
-     * @expectedException InvalidArgumentException
-     */
-    public function testEmptyLastName()
-    {
-        $this->person = new Person(
-            self::$testFirstName,
-            '',
-            self::$testEmailAddress
-        );
-    }
-
-    /**
-     * Test constructing a Person with a null email address.
-     * An InvalidArgumentException should be thrown.
-     *
-     * @expectedException InvalidArgumentException
-     */
-    public function testNullEmailAddress()
-    {
-        $this->person = new Person(
-            self::$testFirstName,
-            self::$testLastName,
-            null
-        );
-    }
-
-    /**
-     * Test constructing a Person with an empty email address.
-     * An InvalidArgumentException should be thrown.
-     *
-     * @expectedException InvalidArgumentException
-     */
-    public function testEmptyEmailAddress()
-    {
-        $this->person = new Person(
-            self::$testFirstName,
-            self::$testLastName,
-            ''
-        );
-    }
-
-    /**
-     * Test constructing a Person with an invalid address.
-     * An InvalidArgumentException should be thrown.
-     *
-     * @expectedException InvalidArgumentException
-     */
-    public function testInvalidEmailAddress()
-    {
-        $this->person = new Person(
-            self::$testFirstName,
-            self::$testLastName,
-            self::$testInvalidEmailAddress
         );
     }
 }
