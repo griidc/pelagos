@@ -1,5 +1,5 @@
 -- -----------------------------------------------------------------------------
--- Name:      make_view_publication.sql
+-- Name:      make_person_view.sql
 -- Author:    Patrick Krepps
 -- Date:      05 May 2015
 -- Inputs:    NONE
@@ -183,19 +183,24 @@ AS $pers_func$
                   NEW.surname,
                   NEW.suffix;
 
-         -- Associate the person and email address with each other. Since the
-         -- purpose of the view (at least for the time being) is to present a
-         -- single email address as an attribute of person, we are working off
-         -- of the premise that the single email will always be the primary
-         -- email address for the person:
+         -- Associate the person and email address with each other. We will
+         -- have already inserted the email address into the email table if
+         -- needed, so we just need to associate that email address with this
+         -- person as the primary email address:
          EXECUTE 'INSERT INTO email2person_table
                   (
                      email_address,
                      person_number,
                      is_primary_email_address
                   )
-                  VALUES ($1, $2, $3)'
-            USING _email_addr,
+                  VALUES
+                  (
+                     (SELECT email_address
+                      FROM email_table
+                      WHERE LOWER(email_address) = $1),
+                      $2, $3
+                   )'
+            USING LOWER(_email_addr),
                   NEW.person_number,
                   TRUE;
       RETURN NEW;
@@ -330,7 +335,7 @@ AS $pers_func$
             THEN
                RAISE EXCEPTION '%', CONCAT('Unable to ',
                                            TG_OP,
-                                           ' person publication. An unknown ',
+                                           ' person. An unknown ',
                                            'error has occurred.')
                      USING HINT      = CONCAT('Check the database log for ',
                                               'more nformation.'),

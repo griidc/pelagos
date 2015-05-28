@@ -23,12 +23,12 @@ CREATE TABLE email2person_table
       FOREIGN KEY (email_address)
       REFERENCES email_table(email_address)
       ON DELETE RESTRICT
-      ON UPDATE RESTRICT,
+      ON UPDATE CASCADE,
 
    CONSTRAINT fk_email2person_person_number
       FOREIGN KEY (person_number)
       REFERENCES person_table(person_number)
-      ON DELETE RESTRICT
+      ON DELETE CASCADE
       ON UPDATE RESTRICT,
 
    PRIMARY KEY (email_address,
