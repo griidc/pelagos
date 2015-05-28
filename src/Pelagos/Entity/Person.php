@@ -44,6 +44,18 @@ class Person
      */
     public function __construct($firstName, $lastName, $emailAddress)
     {
+        if (empty($firstName)) {
+            throw new \InvalidArgumentException('firstName is required');
+        }
+        if (empty($lastName)) {
+            throw new \InvalidArgumentException('lastName is required');
+        }
+        if (empty($emailAddress)) {
+            throw new \InvalidArgumentException('emailAddress is required');
+        }
+        if (!filter_var($emailAddress, FILTER_VALIDATE_EMAIL)) {
+            throw new \InvalidArgumentException('emailAddress is improperly formatted');
+        }
         $this->firstName = $firstName;
         $this->lastName = $lastName;
         $this->emailAddress = $emailAddress;
