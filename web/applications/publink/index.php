@@ -4,12 +4,18 @@ require_once __DIR__ . '/../../../vendor/autoload.php';
 
 $comp = new \Pelagos\Component();
 
+$slim = new \Slim\Slim(
+    array(
+        'view' => new \Slim\Views\Twig(),
+    )
+);
+
 global $quit;
 $quit = false;
 
-$comp->slim->get(
+$slim->get(
     '/',
-    function () use ($comp) {
+    function () use ($comp, $slim) {
         $GLOBALS['pelagos']['title'] = 'Dataset-Publication Linker';
         $comp->addLibrary('ui.button');
         $comp->addLibrary('ui.dialog');
@@ -18,13 +24,13 @@ $comp->slim->get(
         # $comp->addJS currently only supports local js files
         drupal_add_js('//cdnjs.cloudflare.com/ajax/libs/spin.js/2.0.1/spin.min.js');
         $stash = array('pelagos_base_path' => $GLOBALS['pelagos']['base_path']);
-        return $comp->slim->render('html/index.html', $stash);
+        return $slim->render('html/index.html', $stash);
     }
 );
 
-$comp->slim->get(
+$slim->get(
     '/GetLinks(/)',
-    function () use ($comp) {
+    function () use ($comp, $slim) {
         $GLOBALS['pelagos']['title'] = 'Dataset-Publication Links';
         drupal_add_js('//cdn.datatables.net/1.10.6/js/jquery.dataTables.min.js');
         drupal_add_js('//cdn.datatables.net/plug-ins/1.10.6/integration/jqueryui/dataTables.jqueryui.min.js');
@@ -39,11 +45,11 @@ $comp->slim->get(
                         'pelagos_base_path' => $GLOBALS['pelagos']['base_path'],
                         'pelagos_component_path' => $GLOBALS['pelagos']['component_path']
                        );
-        return $comp->slim->render('html/linkList.html', $stash);
+        return $slim->render('html/linkList.html', $stash);
     }
 );
 
-$comp->slim->get(
+$slim->get(
     '/GetLinksJSON(/)',
     function () use ($comp) {
         global $quit;
@@ -70,7 +76,7 @@ $comp->slim->get(
     }
 );
 
-$comp->slim->run();
+$slim->run();
 
 if ($quit) {
     $comp->quit();
