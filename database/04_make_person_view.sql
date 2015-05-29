@@ -50,6 +50,7 @@ AS $pers_func$
       -- Function variables:
       _count                 INTEGER;
       _email_addr            EMAIL_ADDRESS_TYPE  := NULL;
+      _err_code              TEXT                := NULL;
       _err_hint              TEXT                := NULL;
       _err_msg               TEXT                := NULL;
 
@@ -333,13 +334,14 @@ AS $pers_func$
                RETURN NULL;
          WHEN OTHERS
             THEN
+               _err_code = SQLSTATE;
                RAISE EXCEPTION '%', CONCAT('Unable to ',
                                            TG_OP,
                                            ' person. An unknown ',
                                            'error has occurred.')
-                     USING HINT      = CONCAT('Check the database log for ',
-                                              'more nformation.'),
-                           ERRCODE   = 'G0901';
+                  USING HINT      = CONCAT('Check the database log for ',
+                                           'more nformation.'),
+                        ERRCODE   = _err_code;
                RETURN NULL;
 
    END;
