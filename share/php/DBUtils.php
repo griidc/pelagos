@@ -11,7 +11,7 @@
 # Requires: access to centralized db.ini
 
 if (!function_exists('openDB')) {
-    function openDB($database = "unspecified")
+    function openDB($database = "unspecified", $throwExceptions = false)
     {
         $pelagos_config  = parse_ini_file('/etc/opt/pelagos.ini', true);
 
@@ -30,7 +30,7 @@ if (!function_exists('openDB')) {
         } else {
             $config = $configini["$database"];
         }
-        
+
         if ($config["type"] == 'mysql') {
             # driver used: mysql
             $dbconnstr  = "mysql:host=".$config["host"].';';
@@ -40,7 +40,24 @@ if (!function_exists('openDB')) {
             $user       = $config["username"];
             $password   = $config["password"];
             try {
-                $pdoconnection = new PDO($dbconnstr, $user, $password, array(PDO::ATTR_PERSISTENT => false, PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
+                if ($throwExceptions) {
+                    $pdoconnection = new PDO(
+                        $dbconnstr,
+                        $user,
+                        $password,
+                        array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                              PDO::ATTR_PERSISTENT => false,
+                              PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")
+                    );
+                } else {
+                    $pdoconnection = new PDO(
+                        $dbconnstr,
+                        $user,
+                        $password,
+                        array(PDO::ATTR_PERSISTENT => false,
+                              PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")
+                    );
+                }
             } catch (PDOException $e) {
                 $dMessage = 'Connection failed: ' . $e->getMessage();
                 throw new Exception($dMessage);
@@ -53,7 +70,24 @@ if (!function_exists('openDB')) {
             $user       = $config["username"];
             $password   = $config["password"];
             try {
-                $pdoconnection = new PDO($dbconnstr, $user, $password, array(PDO::ATTR_PERSISTENT => true));
+                if ($throwExceptions) {
+                    $pdoconnection = new PDO(
+                        $dbconnstr,
+                        $user,
+                        $password,
+                        array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                              PDO::ATTR_PERSISTENT => true,
+                              PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")
+                    );
+                } else {
+                    $pdoconnection = new PDO(
+                        $dbconnstr,
+                        $user,
+                        $password,
+                        array(PDO::ATTR_PERSISTENT => true,
+                              PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")
+                    );
+                }
             } catch (PDOException $e) {
                 $dMessage = 'Connection failed: ' . $e->getMessage();
                 throw new Exception($dMessage);
