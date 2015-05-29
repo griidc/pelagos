@@ -1,6 +1,6 @@
 <?php
 /**
- * MetadataGeneratorUtility
+ * MetadataXmlFromDB
  * Texas A&M Corpus Christi
  * Harte Research Institute
  * Gulf (of Mexico) Research Initiative Information Data Cooperative
@@ -11,16 +11,15 @@
 namespace MetadataGenerator;
 
 require_once '../../../share/php/db-utils.lib.php';
-require_once "./exceptions/DuplicateException.php";
-require_once "./exceptions/NotFoundException.php";
-require_once "./exceptions/PersistenceEngineException.php";
+require_once "exceptions/DuplicateException.php";
+require_once "exceptions/NotFoundException.php";
+require_once "exceptions/PersistenceEngineException.php";
 
 use \Exception\NotFoundException as NotFoundException;
-use \Exception\DuplicateException as DuplicateException;
 use \Exception\PersistenceEngineException as PersistenceEngineException;
 use \PDO as PDO;
 
-class MetadataGeneratorUtility {
+class MetadataXmlFromDB {
 
 
     private $dbcon = null;
@@ -78,10 +77,10 @@ class MetadataGeneratorUtility {
                     $metadataXml = $row[self::METADATA_XML_COL];
                     return $this->compressXml($metadataXml);
                 } // else it is false - not found
-                throw new NotFoundException("No ".METADATA_TABLE_NAME."  found with registry ID " . $registryId);
+                throw new NotFoundException("C-1: "."No ".self::METADATA_TABLE_NAME."  found with registry ID " . $registryId);
             }
         } catch (PDOException $pdoEx) {
-            throw new PersistenceEngineException($pdoEx->getMessage());
+            throw new PersistenceEngineException("C-1: ".$pdoEx->getMessage());
         }
     }
 
@@ -119,10 +118,10 @@ class MetadataGeneratorUtility {
                     $registryId = $row[self::REGISTRY_ID_COL];
                     return $registryId;
                 } // else it is false - not found
-                throw new NotFoundException("No ".self::REGISTRY_TABLE_NAME." record found for dataset UDI: " . $datasetUdi);
+                throw new NotFoundException("C-1: "."No ".self::REGISTRY_TABLE_NAME." record found for dataset UDI: " . $datasetUdi);
             }
         } catch (PDOException $pdoEx) {
-            throw new PersistenceEngineException($pdoEx->getMessage());
+            throw new PersistenceEngineException("C-1: ".$pdoEx->getMessage());
         }
     }
 
