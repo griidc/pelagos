@@ -1,0 +1,37 @@
+.specialfield {
+    border-style: solid;
+    border-color: #fff;
+    #font-size: larger;
+}
+
+label {
+    display: inline;
+}
+
+.specialfield:read-write:focus {
+    border-width: 1px;
+    font-family: courier;
+    border-style: inset;
+}
+
+.editField:read-only 
+    border-style: solid;
+    border-width: 1px;
+    border-color: #fff;
+}
+
+.editField:read-only :hover {
+    border-style: solid;
+    border-width: 2px;
+    border-color: #ddd;
+}
+
+.editField:hover::after {
+    display:inline;
+    font-family: "WingDings";
+    font-size: larger;
+    content: "!";
+    background-color: #ddd;
+    border: 2px solid #ddd;
+}
+
