@@ -93,9 +93,9 @@ class PersonTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test constructing a Person with a null first name.
-     * An InvalidArgumentException should be thrown.
+     * A \Pelagos\Exception\EmptyRequiredArgumentException should be thrown.
      *
-     * @expectedException InvalidArgumentException
+     * @expectedException \Pelagos\Exception\EmptyRequiredArgumentException
      */
     public function testNullFirstName()
     {
@@ -107,10 +107,29 @@ class PersonTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test constructing a Person with a null first name and catching the exception.
+     * A \Pelagos\Exception\EmptyRequiredArgumentException should be thrown.
+     * The argument name in the exception should be 'firstName' and the argument value should be null.
+     */
+    public function testCatchNullFirstName()
+    {
+        try {
+            $this->person = new Person(
+                null,
+                self::$testLastName,
+                self::$testEmailAddress
+            );
+        } catch (\Pelagos\Exception\EmptyRequiredArgumentException $e) {
+            $this->assertEquals($e->getArgumentName(), 'firstName');
+            $this->assertNull($e->getArgumentValue());
+        }
+    }
+
+    /**
      * Test constructing a Person with an empty first name.
-     * An InvalidArgumentException should be thrown.
+     * A \Pelagos\Exception\EmptyRequiredArgumentException should be thrown.
      *
-     * @expectedException InvalidArgumentException
+     * @expectedException \Pelagos\Exception\EmptyRequiredArgumentException
      */
     public function testEmptyFirstName()
     {
@@ -122,10 +141,29 @@ class PersonTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test constructing a Person with an empty first name and catching the exception.
+     * A \Pelagos\Exception\EmptyRequiredArgumentException should be thrown.
+     * The argument name in the exception should be 'firstName' and the argument value should be ''.
+     */
+    public function testCatchEmptyFirstName()
+    {
+        try {
+            $this->person = new Person(
+                '',
+                self::$testLastName,
+                self::$testEmailAddress
+            );
+        } catch (\Pelagos\Exception\EmptyRequiredArgumentException $e) {
+            $this->assertEquals($e->getArgumentName(), 'firstName');
+            $this->assertSame($e->getArgumentValue(), '');
+        }
+    }
+
+    /**
      * Test constructing a Person with a null last name.
-     * An InvalidArgumentException should be thrown.
+     * A \Pelagos\Exception\EmptyRequiredArgumentException should be thrown.
      *
-     * @expectedException InvalidArgumentException
+     * @expectedException \Pelagos\Exception\EmptyRequiredArgumentException
      */
     public function testNullLastName()
     {
@@ -137,10 +175,29 @@ class PersonTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test constructing a Person with a null last name and catching the exception.
+     * A \Pelagos\Exception\EmptyRequiredArgumentException should be thrown.
+     * The argument name in the exception should be 'lastName' and the argument value should be null.
+     */
+    public function testCatchNullLastName()
+    {
+        try {
+            $this->person = new Person(
+                self::$testFirstName,
+                null,
+                self::$testEmailAddress
+            );
+        } catch (\Pelagos\Exception\EmptyRequiredArgumentException $e) {
+            $this->assertEquals($e->getArgumentName(), 'lastName');
+            $this->assertNull($e->getArgumentValue());
+        }
+    }
+
+    /**
      * Test constructing a Person with an empty last name.
-     * An InvalidArgumentException should be thrown.
+     * A \Pelagos\Exception\EmptyRequiredArgumentException should be thrown.
      *
-     * @expectedException InvalidArgumentException
+     * @expectedException \Pelagos\Exception\EmptyRequiredArgumentException
      */
     public function testEmptyLastName()
     {
@@ -152,10 +209,29 @@ class PersonTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test constructing a Person with an empty last name and catching the exception.
+     * A \Pelagos\Exception\EmptyRequiredArgumentException should be thrown.
+     * The argument name in the exception should be 'lastName' and the argument value should be ''.
+     */
+    public function testCatchEmptyLastName()
+    {
+        try {
+            $this->person = new Person(
+                self::$testFirstName,
+                '',
+                self::$testEmailAddress
+            );
+        } catch (\Pelagos\Exception\EmptyRequiredArgumentException $e) {
+            $this->assertEquals($e->getArgumentName(), 'lastName');
+            $this->assertSame($e->getArgumentValue(), '');
+        }
+    }
+
+    /**
      * Test constructing a Person with a null email address.
-     * An InvalidArgumentException should be thrown.
+     * A \Pelagos\Exception\EmptyRequiredArgumentException should be thrown.
      *
-     * @expectedException InvalidArgumentException
+     * @expectedException \Pelagos\Exception\EmptyRequiredArgumentException
      */
     public function testNullEmailAddress()
     {
@@ -167,10 +243,29 @@ class PersonTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test constructing a Person with a null email address and catching the exception.
+     * A \Pelagos\Exception\EmptyRequiredArgumentException should be thrown.
+     * The argument name in the exception should be 'emailAddress' and the argument value should be null.
+     */
+    public function testCatchNullEmailAddress()
+    {
+        try {
+            $this->person = new Person(
+                self::$testFirstName,
+                self::$testLastName,
+                null
+            );
+        } catch (\Pelagos\Exception\EmptyRequiredArgumentException $e) {
+            $this->assertEquals($e->getArgumentName(), 'emailAddress');
+            $this->assertNull($e->getArgumentValue());
+        }
+    }
+
+    /**
      * Test constructing a Person with an empty email address.
-     * An InvalidArgumentException should be thrown.
+     * A \Pelagos\Exception\EmptyRequiredArgumentException should be thrown.
      *
-     * @expectedException InvalidArgumentException
+     * @expectedException \Pelagos\Exception\EmptyRequiredArgumentException
      */
     public function testEmptyEmailAddress()
     {
@@ -182,10 +277,29 @@ class PersonTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test constructing a Person with an empty email address and catching the exception.
+     * A \Pelagos\Exception\EmptyRequiredArgumentException should be thrown.
+     * The argument name in the exception should be 'emailAddress' and the argument value should be ''.
+     */
+    public function testCatchEmptyEmailAddress()
+    {
+        try {
+            $this->person = new Person(
+                self::$testFirstName,
+                self::$testLastName,
+                ''
+            );
+        } catch (\Pelagos\Exception\EmptyRequiredArgumentException $e) {
+            $this->assertEquals($e->getArgumentName(), 'emailAddress');
+            $this->assertSame($e->getArgumentValue(), '');
+        }
+    }
+
+    /**
      * Test constructing a Person with an invalid address.
-     * An InvalidArgumentException should be thrown.
+     * A \Pelagos\Exception\InvalidFormatArgumentException should be thrown.
      *
-     * @expectedException InvalidArgumentException
+     * @expectedException \Pelagos\Exception\InvalidFormatArgumentException
      */
     public function testInvalidEmailAddress()
     {
@@ -194,5 +308,26 @@ class PersonTest extends \PHPUnit_Framework_TestCase
             self::$testLastName,
             self::$testInvalidEmailAddress
         );
+    }
+
+    /**
+     * Test constructing a Person with an invalid address and catching the exception.
+     * A \Pelagos\Exception\InvalidFormatArgumentException should be thrown.
+     * The argument name in the exception should be 'emailAddress', the argument value
+     * should be the passed in value, and the expected format should be 'local@domain.tld'.
+     */
+    public function testCatchInvalidEmailAddress()
+    {
+        try {
+            $this->person = new Person(
+                self::$testFirstName,
+                self::$testLastName,
+                self::$testInvalidEmailAddress
+            );
+        } catch (\Pelagos\Exception\InvalidFormatArgumentException $e) {
+            $this->assertEquals($e->getArgumentName(), 'emailAddress');
+            $this->assertEquals($e->getArgumentValue(), self::$testInvalidEmailAddress);
+            $this->assertEquals($e->getExpectedFormat(), 'local@domain.tld');
+        }
     }
 }

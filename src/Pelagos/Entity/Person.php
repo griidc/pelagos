@@ -2,6 +2,9 @@
 
 namespace Pelagos\Entity;
 
+use \Pelagos\Exception\EmptyRequiredArgumentException;
+use \Pelagos\Exception\InvalidFormatArgumentException;
+
 /**
  * Class to represent people.
  */
@@ -45,16 +48,16 @@ class Person
     public function __construct($firstName, $lastName, $emailAddress)
     {
         if (empty($firstName)) {
-            throw new \InvalidArgumentException('firstName is required');
+            $this->throwEmptyRequiredArgumentException('firstName', $firstName);
         }
         if (empty($lastName)) {
-            throw new \InvalidArgumentException('lastName is required');
+            $this->throwEmptyRequiredArgumentException('lastName', $lastName);
         }
         if (empty($emailAddress)) {
-            throw new \InvalidArgumentException('emailAddress is required');
+            $this->throwEmptyRequiredArgumentException('emailAddress', $emailAddress);
         }
         if (!filter_var($emailAddress, FILTER_VALIDATE_EMAIL)) {
-            throw new \InvalidArgumentException('emailAddress is improperly formatted');
+            $this->throwInvalidFormatArgumentException('emailAddress', $emailAddress, 'local@domain.tld');
         }
         $this->firstName = $firstName;
         $this->lastName = $lastName;
@@ -99,5 +102,35 @@ class Person
     public function getEmailAddress()
     {
         return $this->emailAddress;
+    }
+
+    /**
+     * Method to throw EmptyRequiredArgumentException with properties set.
+     *
+     * @param $argumentName string Name of the empty required argument.
+     * @param $argumentValue mixed Value of the empty required argument.
+     */
+    protected function throwEmptyRequiredArgumentException($argumentName, $argumentValue)
+    {
+        $exception = new EmptyRequiredArgumentException("$argumentName is required");
+        $exception->setArgumentName($argumentName);
+        $exception->setArgumentValue($argumentValue);
+        throw $exception;
+    }
+
+    /**
+     * Method to throw InvalidFormatArgumentException with properties set.
+     *
+     * @param $argumentName string Name of the invalidly formatted argument.
+     * @param $argumentValue mixed Value of the invalidly formatted argument.
+     * @param $expectedFormat string Text description of the expected format for the argument.
+     */
+    protected function throwInvalidFormatArgumentException($argumentName, $argumentValue, $expectedFormat = null)
+    {
+        $exception = new InvalidFormatArgumentException("$argumentName is improperly formatted");
+        $exception->setArgumentName($argumentName);
+        $exception->setArgumentValue($argumentValue);
+        $exception->setExpectedFormat($expectedFormat);
+        throw $exception;
     }
 }
