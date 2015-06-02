@@ -4,6 +4,10 @@ namespace Pelagos\Entity;
 
 /**
  * Unit tests for Pelagos\Entity\Person.
+ *
+ * @group Pelagos
+ * @group Pelagos\Entity
+ * @group Pelagos\Entity\Person
  */
 class PersonTest extends \PHPUnit_Framework_TestCase
 {
