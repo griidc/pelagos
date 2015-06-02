@@ -4,28 +4,7 @@ namespace Pelagos;
 
 class Component
 {
-    public $slim;
-
     protected $quitOnFinalize = false;
-
-    public function __construct($options = array())
-    {
-        # load Twig
-        require_once 'Twig/Autoloader.php';
-        # load custom Twig extensions
-        # require_once 'Twig_Extensions_Pelagos.php';
-        require_once 'Slim/Slim.php';
-        \Slim\Slim::registerAutoloader();
-        if (!array_key_exists('Slim', $options) or !is_array($options['Slim'])) {
-            $options['Slim'] = array();
-        }
-        if (class_exists('Twig_Autoloader')) {
-            # load Twig Slim-View
-            require_once 'Slim-Views/Twig.php';
-            $options['Slim']['view'] = new \Slim\Views\Twig();
-        }
-        $this->slim = new \Slim\Slim($options['Slim']);
-    }
 
     public function addJS($js_file)
     {

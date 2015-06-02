@@ -2,7 +2,7 @@
 
 namespace Pelagos;
 
-class HTTPStatus
+class HTTPStatus implements \JsonSerializable
 {
     public $code;
     public $message;
@@ -13,13 +13,16 @@ class HTTPStatus
         $this->message = $message;
     }
 
+    public function jsonSerialize()
+    {
+        return [
+            'code' => $this->code,
+            'message' => $this->message,
+        ];
+    }
+
     public function asJSON()
     {
-        return json_encode(
-            array(
-                'code' => $this->code,
-                'message' => $this->message,
-            )
-        );
+        return json_encode($this);
     }
 }
