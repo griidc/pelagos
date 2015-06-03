@@ -93,18 +93,15 @@ function loadXMLFromFile($file)
 }
 
 /**
- *  @brief Brief
+ *  This function will return XML document from URL
  *  
  *  @param String $url Parameter_Description
  *  @return Mixed Will return a DomDoc on success, false on failure, HTTP Status code (as int) if status 204
  *  
- *  @details Details
  */
 function loadXMLFromURL($url)
 {
     $ch = curl_init();
-    
-    //$url = "https://data.gulfresearchinitiative.org/metadata-generator/R1.x138.079:0038";
     
     curl_setopt($ch, CURLOPT_URL, $url);
     // Since the request 302's (forwards/slim url rewrite)

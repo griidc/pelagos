@@ -284,7 +284,6 @@ function uploadFile()
                 console.log(html);
                 eventObj = jQuery.parseJSON(html);
                 var udi = eventObj.udi;
-                debugger;
                 if (eventObj.UDIexists == true)
                 {
                     location.href = "?dataUrl=http://" + location.hostname + base_path +"/modules/metadata-generator/" + udival.substring(0,16);;
