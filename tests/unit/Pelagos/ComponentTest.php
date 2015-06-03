@@ -15,10 +15,19 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Set up method.
-     * Creates an instance of \Pelagos\Component and saves it in $this->component
+     * Alias mock \Pelagos\Persistance::createEntityManager() to return a mock \Doctrine\ORM\EntityManager
+     * Create an instance of \Pelagos\Component and save it in $this->component
      */
     public function setUp()
     {
+        \Mockery::mock(
+            'alias:\Pelagos\Persistance',
+            array(
+                'createEntityManager' => \Mockery::mock(
+                    '\Doctrine\ORM\EntityManager'
+                ),
+            )
+        );
         $this->component = new \Pelagos\Component;
     }
 
