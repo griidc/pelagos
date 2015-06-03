@@ -57,6 +57,23 @@ AS $pers_func$
    BEGIN
       IF TG_OP <> 'DELETE'
       THEN
+         IF TG_OP = 'INSERT'
+         THEN
+            -- Make sure we have all required fields for an INSERT:
+            IF NEW.email_address IS NULL OR NEW.email_address = '' OR
+               NEW.given_name IS NULL OR NEW.given_name = '' OR
+               NEW.surname IS NULL OR NEW.surname = ''
+            THEN
+               _err_hint := CONCAT('A person entity requires a Given Name, a ',
+                                   'Surname, and an email address');
+               _err_msg  := 'Missing required field violation';
+               -- This is an invalid entry. Raise an exception and quit (the
+               -- exception text is only used when we disable exception
+               -- handling below):
+               RAISE EXCEPTION 'Missing required fields'
+                  USING ERRCODE = '23502';
+            END IF;
+         END IF;
          -- Attempt to cast the email address to an EMAIL_ADDRESS_TYPE:
          _err_hint   := 'Please check the email address';
          _err_msg    := CONCAT(NEW.email_address,
@@ -89,9 +106,7 @@ AS $pers_func$
 
          IF _count > 0
          THEN
-            -- This is a duplicate entry. Raise an exception and quit (the
-            -- exception text is only used when we disable exception handling
-            -- below):
+            -- This is a duplicate entry.
             RAISE EXCEPTION 'Duplicate person/email entry'
                USING ERRCODE = '23505';
          END IF;
@@ -320,6 +335,12 @@ AS $pers_func$
       END IF;
 
       EXCEPTION
+         WHEN SQLSTATE '23502'
+            THEN
+               RAISE EXCEPTION '%',   _err_msg
+                  USING HINT        = _err_hint,
+                        ERRCODE     = '23502';
+               RETURN NULL;
          WHEN SQLSTATE '23505'
             THEN
                RAISE EXCEPTION '%',   _err_msg
@@ -340,7 +361,7 @@ AS $pers_func$
                                            ' person. An unknown ',
                                            'error has occurred.')
                   USING HINT      = CONCAT('Check the database log for ',
-                                           'more nformation.'),
+                                           'more information.'),
                         ERRCODE   = _err_code;
                RETURN NULL;
 
