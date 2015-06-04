@@ -17,9 +17,11 @@ namespace Exception;
  * duplicate in a context in which duplicates are
  * not allowed.
  */
-class DuplicateException extends \Exception {
+class DuplicateException extends \Exception
+{
 
-    public function __construct($message) {
+    public function __construct($message)
+    {
         parent::__construct($message);
     }
 }

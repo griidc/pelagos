@@ -19,9 +19,11 @@ namespace Exception;
  * returning null.
  */
 
-class NotFoundException extends \Exception {
+class NotFoundException extends \Exception
+{
 
-    public function __construct($message) {
+    public function __construct($message)
+    {
         parent::__construct($message);
     }
 }

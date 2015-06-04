@@ -8,6 +8,7 @@
  */
 
 namespace Exception;
+
 /**
  * Class PersistenceEngineException
  * @package Exception
@@ -18,9 +19,11 @@ namespace Exception;
  * exception might come from the database etc.
  */
 
-class PersistenceEngineException extends \Exception {
+class PersistenceEngineException extends \Exception
+{
 
-    public function __construct($message) {
+    public function __construct($message)
+    {
         parent::__construct($message);
     }
 }

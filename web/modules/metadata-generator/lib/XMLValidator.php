@@ -2,6 +2,9 @@
 
 namespace MetadataGenerator;
 
+require_once "exceptions/InvalidXmlException.php";
+use \Exception\InvalidXmlException as InvalidXmlException;
+
 class XMLValidator
 {
     public function validate($raw_xml)
@@ -9,6 +12,7 @@ class XMLValidator
         $errors = 0;
 
         // create domdoc element and attempt to populate with supplied XML
+        libxml_use_internal_errors(true);
         $doc = new \DomDocument('1.0', 'UTF-8');
         $tmpp = @$doc->loadXML($raw_xml);
         if (!$tmpp) {
@@ -20,7 +24,7 @@ class XMLValidator
         if (!$doc->schemaValidate($schema)) {
             $errors = libxml_get_errors();
             libxml_clear_errors();
-            for ($i=0; $i<sizeof($errors); $i++) {
+            for ($i = 0; $i < sizeof($errors); $i++) {
                 switch ($errors[$i]->level) {
                     case LIBXML_ERR_WARNING:
                         break;
@@ -35,8 +39,7 @@ class XMLValidator
         }
         if ($errors == 0) {
             return true;
-        } else {
-            return false;
         }
+        throw new InvalidXmlException("Invalid XML found by XMLValidator");
     }
 }

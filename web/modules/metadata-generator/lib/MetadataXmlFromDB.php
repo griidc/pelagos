@@ -8,18 +8,22 @@
  */
 
 
+
 namespace MetadataGenerator;
+
 
 require_once '../../../share/php/db-utils.lib.php';
 require_once "exceptions/DuplicateException.php";
 require_once "exceptions/NotFoundException.php";
 require_once "exceptions/PersistenceEngineException.php";
-
+require_once "lib/MetadataLogger.php";
 use \Exception\NotFoundException as NotFoundException;
 use \Exception\PersistenceEngineException as PersistenceEngineException;
+use \MetadataGenerator\MetadataLogger as MetadataLogger;
 use \PDO as PDO;
 
-class MetadataXmlFromDB {
+class MetadataXmlFromDB
+{
 
 
     private $dbcon = null;
@@ -38,13 +42,31 @@ class MetadataXmlFromDB {
 
     const METADATA_TABLE_NAME = "public.metadata";
 
+    private $logger = null;
 
-    function __construct()
+    private static $instance = null;
+
+    /**
+     * singleton implementation
+     * only one instance of this class allowed
+     * per executable unit
+     */
+    private function __construct()
     {
         $this->dbcon = OpenDB("GOMRI_RW");
         $this->dbcon->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 
+    /**
+     * singleton implementation
+     */
+    public static function getInstance()
+    {
+        if (self::$instance == null) {
+            self::$instance = new MetadataXmlFromDB();
+        }
+        return self::$instance;
+    }
 
     /**
      * Read the database metadata table and return the
@@ -52,9 +74,18 @@ class MetadataXmlFromDB {
      * @param $datasetUdi
      * @return string - the xml data as a string
      */
-    public function getMetadataXmlForDatasetUdi($datasetUdi) {
-        $registryId = $this->getRegistryIdForDatasetUdi($datasetUdi);
+    public function getMetadataXmlForDatasetUdi($datasetUdi)
+    {
+
+        $targetUdi = trim($datasetUdi);
+        $this->logger = new MetadataLogger("metadataXmlFromDB", $targetUdi);
+        $this->logger->turnOff();
+        $this->logger->log("inside getMetadataXmlForDatasetUdi");
+        $registryId = $this->getRegistryIdForDatasetUdi($targetUdi);
+        $this->logger->log("  got back " . $registryId);
+        $this->logger->log("inside getMetadataXmlForDatasetUdi calling getMetadataXml ");
         $xmlData = $this->getMetadataXml($registryId);
+        $this->logger->log("inside getMetadataXmlForDatasetUdi returning  getMetadataXml ");
         return $xmlData;
     }
 
@@ -66,9 +97,11 @@ class MetadataXmlFromDB {
      * @throws NotFoundException of the registry row is not found
      * @throws PersistenceEngineException
      */
-    private function getMetadataXml($registryId) {
+    private function getMetadataXml($registryId)
+    {
 
-        $query = $this->getMetadataSelectQueryString() . " WHERE " . self::REGISTRY_ID_COL . " = " .$this->wrapInSingleQuotes($registryId) . " LIMIT 1";
+        $query = $this->getMetadataSelectQueryString() . " WHERE " . self::REGISTRY_ID_COL . " = " .
+                           $this->wrapInSingleQuotes($registryId) . " LIMIT 1";
         $statement = $this->dbcon->prepare($query);
         $metadataXml = null;
         try {
@@ -77,10 +110,13 @@ class MetadataXmlFromDB {
                     $metadataXml = $row[self::METADATA_XML_COL];
                     return $this->compressXml($metadataXml);
                 } // else it is false - not found
-                throw new NotFoundException("C-1: "."No ".self::METADATA_TABLE_NAME."  found with registry ID " . $registryId);
+                throw new NotFoundException(
+                    "C-1: " . "No " . self::METADATA_TABLE_NAME . "  found with registry ID " .
+                    $registryId
+                );
             }
         } catch (PDOException $pdoEx) {
-            throw new PersistenceEngineException("C-1: ".$pdoEx->getMessage());
+            throw new PersistenceEngineException("C-1: " . $pdoEx->getMessage());
         }
     }
 
@@ -94,9 +130,10 @@ class MetadataXmlFromDB {
      * @see getAll($targetClassName)
      * @see get(I_Persistable $obj)
      */
-    private function getMetadataSelectQueryString() {
-        return  "SELECT ".self::REGISTRY_ID_COL. ", ".
-        self::METADATA_XML_COL." FROM ".self::METADATA_TABLE_NAME." ";
+    private function getMetadataSelectQueryString()
+    {
+        return "SELECT " . self::REGISTRY_ID_COL . ", " .
+        self::METADATA_XML_COL . " FROM " . self::METADATA_TABLE_NAME . " ";
     }
 
 
@@ -107,21 +144,31 @@ class MetadataXmlFromDB {
      * @throws NotFoundException of the object is not found
      * @throws PersistenceEngineException
      */
-    private  function getRegistryIdForDatasetUdi($datasetUdi) {
+    private function getRegistryIdForDatasetUdi($datasetUdi)
+    {
 
-        $query = $this->getRegistryAndUdiSelectQueryString() . " WHERE " . self::DATASET_UDI_COL . " = " .$this->wrapInSingleQuotes($datasetUdi) . " LIMIT 1";
+        $query = $this->getRegistryAndUdiSelectQueryString() . " WHERE " . self::DATASET_UDI_COL . " = " .
+                $this->wrapInSingleQuotes($datasetUdi) . " LIMIT 1";
+
+        $this->logger->log("getRegistryIdForDatasetUdi() query: " . $query);
         $statement = $this->dbcon->prepare($query);
         $registryId = null;
         try {
             if ($statement->execute()) {
                 if ($row = $statement->fetch(PDO::FETCH_ASSOC)) { // if true
                     $registryId = $row[self::REGISTRY_ID_COL];
+                    $this->logger->log("getRegistryIdForDatasetUdi() returning registry " . $registryId);
                     return $registryId;
                 } // else it is false - not found
-                throw new NotFoundException("C-1: "."No ".self::REGISTRY_TABLE_NAME." record found for dataset UDI: " . $datasetUdi);
+                $this->logger->log("getRegistryIdForDatasetUdi() throwing NotFoundException");
+                throw new NotFoundException(
+                    "C-1: " . "No " . self::REGISTRY_TABLE_NAME .
+                    " record found for dataset UDI: " . $datasetUdi
+                );
             }
         } catch (PDOException $pdoEx) {
-            throw new PersistenceEngineException("C-1: ".$pdoEx->getMessage());
+            $this->logger->log("getRegistryIdForDatasetUdi() PDOException: " . $pdoEx->getMessage());
+            throw new PersistenceEngineException("C-1: " . $pdoEx->getMessage());
         }
     }
 
@@ -135,20 +182,24 @@ class MetadataXmlFromDB {
      * @see getAll($targetClassName)
      * @see get(I_Persistable $obj)
      */
-    private function getRegistryAndUdiSelectQueryString() {
-        return  "SELECT ".self::REGISTRY_ID_COL. ", ".
-        self::DATASET_UDI_COL.
-        " FROM ".self::REGISTRY_TABLE_NAME." ";
-    }
-    private function wrapInSingleQuotes($s) {
-        return "'".$s."'";
+    private function getRegistryAndUdiSelectQueryString()
+    {
+        return "SELECT " . self::REGISTRY_ID_COL . ", " .
+        self::DATASET_UDI_COL .
+        " FROM " . self::REGISTRY_TABLE_NAME . " ";
     }
 
-    private function compressXml($string) {
+    private function wrapInSingleQuotes($s)
+    {
+        return "'" . trim($s) . "'";
+    }
+
+    private function compressXml($string)
+    {
         $NA = "N/A";
         $compressedXml = $NA;
         if ($string != null) {
-            $compressedXml = $ro = preg_replace('/\s+/', ' ',$string);
+            $compressedXml = $ro = preg_replace('/\s+/', ' ', $string);
         }
         return $compressedXml;
     }
