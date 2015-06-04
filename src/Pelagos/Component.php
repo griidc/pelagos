@@ -4,6 +4,8 @@ namespace Pelagos;
 
 class Component
 {
+    private $entityManager;
+
     public function addJS($js_file)
     {
         drupal_add_js($GLOBALS['pelagos']['component_path'] . "/$js_file", array('type'=>'external'));
@@ -26,5 +28,17 @@ class Component
         } else {
             exit;
         }
+    }
+
+    /**
+     * Get the entity manager.
+     * This method returns the entity manager (and creates it first if doesn't exist).
+     */
+    public function getEntityManager()
+    {
+        if (!isset($this->entityManager)) {
+            $this->entityManager = Persistance::createEntityManager();
+        }
+        return $this->entityManager;
     }
 }
