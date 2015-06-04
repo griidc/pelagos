@@ -1,5 +1,5 @@
 -- -----------------------------------------------------------------------------
--- Name:      make_view_publication.sql
+-- Name:      make_person_view.sql
 -- Author:    Patrick Krepps
 -- Date:      05 May 2015
 -- Inputs:    NONE
@@ -50,12 +50,30 @@ AS $pers_func$
       -- Function variables:
       _count                 INTEGER;
       _email_addr            EMAIL_ADDRESS_TYPE  := NULL;
+      _err_code              TEXT                := NULL;
       _err_hint              TEXT                := NULL;
       _err_msg               TEXT                := NULL;
 
    BEGIN
       IF TG_OP <> 'DELETE'
       THEN
+         IF TG_OP = 'INSERT'
+         THEN
+            -- Make sure we have all required fields for an INSERT:
+            IF NEW.email_address IS NULL OR NEW.email_address = '' OR
+               NEW.given_name IS NULL OR NEW.given_name = '' OR
+               NEW.surname IS NULL OR NEW.surname = ''
+            THEN
+               _err_hint := CONCAT('A person entity requires a Given Name, a ',
+                                   'Surname, and an email address');
+               _err_msg  := 'Missing required field violation';
+               -- This is an invalid entry. Raise an exception and quit (the
+               -- exception text is only used when we disable exception
+               -- handling below):
+               RAISE EXCEPTION 'Missing required fields'
+                  USING ERRCODE = '23502';
+            END IF;
+         END IF;
          -- Attempt to cast the email address to an EMAIL_ADDRESS_TYPE:
          _err_hint   := 'Please check the email address';
          _err_msg    := CONCAT(NEW.email_address,
@@ -88,9 +106,7 @@ AS $pers_func$
 
          IF _count > 0
          THEN
-            -- This is a duplicate entry. Raise an exception and quit (the
-            -- exception text is only used when we disable exception handling
-            -- below):
+            -- This is a duplicate entry.
             RAISE EXCEPTION 'Duplicate person/email entry'
                USING ERRCODE = '23505';
          END IF;
@@ -183,19 +199,24 @@ AS $pers_func$
                   NEW.surname,
                   NEW.suffix;
 
-         -- Associate the person and email address with each other. Since the
-         -- purpose of the view (at least for the time being) is to present a
-         -- single email address as an attribute of person, we are working off
-         -- of the premise that the single email will always be the primary
-         -- email address for the person:
+         -- Associate the person and email address with each other. We will
+         -- have already inserted the email address into the email table if
+         -- needed, so we just need to associate that email address with this
+         -- person as the primary email address:
          EXECUTE 'INSERT INTO email2person_table
                   (
                      email_address,
                      person_number,
                      is_primary_email_address
                   )
-                  VALUES ($1, $2, $3)'
-            USING _email_addr,
+                  VALUES
+                  (
+                     (SELECT email_address
+                      FROM email_table
+                      WHERE LOWER(email_address) = $1),
+                      $2, $3
+                   )'
+            USING LOWER(_email_addr),
                   NEW.person_number,
                   TRUE;
       RETURN NEW;
@@ -314,6 +335,12 @@ AS $pers_func$
       END IF;
 
       EXCEPTION
+         WHEN SQLSTATE '23502'
+            THEN
+               RAISE EXCEPTION '%',   _err_msg
+                  USING HINT        = _err_hint,
+                        ERRCODE     = '23502';
+               RETURN NULL;
          WHEN SQLSTATE '23505'
             THEN
                RAISE EXCEPTION '%',   _err_msg
@@ -328,13 +355,14 @@ AS $pers_func$
                RETURN NULL;
          WHEN OTHERS
             THEN
+               _err_code = SQLSTATE;
                RAISE EXCEPTION '%', CONCAT('Unable to ',
                                            TG_OP,
-                                           ' person publication. An unknown ',
+                                           ' person. An unknown ',
                                            'error has occurred.')
-                     USING HINT      = CONCAT('Check the database log for ',
-                                              'more nformation.'),
-                           ERRCODE   = 'G0901';
+                  USING HINT      = CONCAT('Check the database log for ',
+                                           'more information.'),
+                        ERRCODE   = _err_code;
                RETURN NULL;
 
    END;

@@ -6,6 +6,8 @@ class Component
 {
     protected $quitOnFinalize = false;
 
+    private $entityManager;
+
     public function addJS($js_file)
     {
         drupal_add_js($GLOBALS['pelagos']['component_path'] . "/$js_file", array('type'=>'external'));
@@ -47,5 +49,17 @@ class Component
         $this->slim->response->headers->set('Content-Type', 'application/json');
         $this->slim->response->status($status->code);
         $this->slim->response->setBody($status->asJSON());
+    }
+
+    /**
+     * Get the entity manager.
+     * This method returns the entity manager (and creates it first if doesn't exist).
+     */
+    public function getEntityManager()
+    {
+        if (!isset($this->entityManager)) {
+            $this->entityManager = Persistance::createEntityManager();
+        }
+        return $this->entityManager;
     }
 }
