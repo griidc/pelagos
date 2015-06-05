@@ -91,6 +91,9 @@ class Component
 
     /**
      * Private static method that tests whether a string looks like a full URL.
+     *
+     * @param string $string String to test.
+     * @return bool Returns true if it is a full URL, false otherwise.
      */
     private static function isFullUrl($string)
     {
