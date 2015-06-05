@@ -2,13 +2,13 @@
 
 namespace MetadataGenerator;
 
-require_once "exceptions/InvalidXmlException.php";
 use \Exception\InvalidXmlException as InvalidXmlException;
 
 class XMLValidator
 {
     public function validate($raw_xml)
     {
+        require_once "./exceptions/InvalidXmlException.php";
         $errors = 0;
 
         // create domdoc element and attempt to populate with supplied XML

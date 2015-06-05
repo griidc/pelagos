@@ -11,12 +11,6 @@
 
 namespace MetadataGenerator;
 
-
-require_once '../../../share/php/db-utils.lib.php';
-require_once "exceptions/DuplicateException.php";
-require_once "exceptions/NotFoundException.php";
-require_once "exceptions/PersistenceEngineException.php";
-require_once "lib/MetadataLogger.php";
 use \Exception\NotFoundException as NotFoundException;
 use \Exception\PersistenceEngineException as PersistenceEngineException;
 use \MetadataGenerator\MetadataLogger as MetadataLogger;
@@ -24,8 +18,6 @@ use \PDO as PDO;
 
 class MetadataXmlFromDB
 {
-
-
     private $dbcon = null;
 
     const REGISTRY_TABLE_NAME = "public.registry_view";
@@ -53,6 +45,7 @@ class MetadataXmlFromDB
      */
     private function __construct()
     {
+        require_once '../../../share/php/db-utils.lib.php';
         $this->dbcon = OpenDB("GOMRI_RW");
         $this->dbcon->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
@@ -76,10 +69,10 @@ class MetadataXmlFromDB
      */
     public function getMetadataXmlForDatasetUdi($datasetUdi)
     {
-
+        require_once "lib/MetadataLogger.php";
         $targetUdi = trim($datasetUdi);
         $this->logger = new MetadataLogger("metadataXmlFromDB", $targetUdi);
-        $this->logger->turnOff();
+        $this->logger->setOff;
         $this->logger->log("inside getMetadataXmlForDatasetUdi");
         $registryId = $this->getRegistryIdForDatasetUdi($targetUdi);
         $this->logger->log("  got back " . $registryId);
@@ -99,7 +92,8 @@ class MetadataXmlFromDB
      */
     private function getMetadataXml($registryId)
     {
-
+        require_once "exceptions/NotFoundException.php";
+        require_once "exceptions/PersistenceEngineException.php";
         $query = $this->getMetadataSelectQueryString() . " WHERE " . self::REGISTRY_ID_COL . " = " .
                            $this->wrapInSingleQuotes($registryId) . " LIMIT 1";
         $statement = $this->dbcon->prepare($query);
@@ -146,7 +140,8 @@ class MetadataXmlFromDB
      */
     private function getRegistryIdForDatasetUdi($datasetUdi)
     {
-
+        require_once "exceptions/NotFoundException.php";
+        require_once "exceptions/PersistenceEngineException.php";
         $query = $this->getRegistryAndUdiSelectQueryString() . " WHERE " . self::DATASET_UDI_COL . " = " .
                 $this->wrapInSingleQuotes($datasetUdi) . " LIMIT 1";
 

@@ -37,22 +37,12 @@ require_once 'Twig/Autoloader.php';
 # add pelagos/share/php to the include path
 set_include_path(get_include_path() . PATH_SEPARATOR . $env['config']['paths']['share'] . '/php');
 
-require_once 'rpis.php';
-require_once 'datasets.php';
+
+
 require_once 'codelists.php';
 require_once 'drupal.php';
-require_once '../../../share/php/db-utils.lib.php';
-require_once "./exceptions/DuplicateException.php";
-require_once "./exceptions/NotFoundException.php";
-require_once "./exceptions/PersistenceEngineException.php";
-require_once "./exceptions/InvalidXmlException.php";
-require_once "./lib/MetadataXmlFromDB.php";
-require_once "./lib/XMLValidator.php";
-require_once "./lib/XMLDataFile.php";
-require_once "lib/MetadataLogger.php";
 
 use \Exception\NotFoundException as NotFoundException;
-use \Exception\DuplicateException as DuplicateException;
 use \Exception\PersistenceEngineException as PersistenceEngineException;
 use \Exception\InvalidXmlException as InvalidXmlException;
 use \MetadataGenerator\MetadataXmlFromDB as MetadataXmlFromDB;
@@ -73,6 +63,7 @@ use \MetadataGenerator\MetadataLogger as MetadataLogger;
 
 function getMetadataXmlFromGomriDB($datasetUdi)
 {
+    require_once "./lib/MetadataXmlFromDB.php";
     $mdgu = MetadataXmlFromDB::getInstance();
     return $mdgu->getMetadataXmlForDatasetUdi($datasetUdi);
 }
@@ -92,6 +83,7 @@ function getMetadataXmlFromGomriDB($datasetUdi)
 
 function getMetadataXmlFromFile($datasetUdi)
 {
+    require_once "./lib/XMLDataFile.php";
     $xmldf = XMLDataFile::getInstance();
     $xml = $xmldf->getXML($datasetUdi);
     return $xml;
@@ -129,6 +121,11 @@ function finishAllSuccessfulCases($udi, $app, $metadataXml)
  */
 function legacyGetMetadataXml($udi, $app, MetadataLogger $logger)
 {
+    require_once "./exceptions/NotFoundException.php";
+    require_once "./lib/MetadataLogger.php";
+    require_once '../../../share/php/db-utils.lib.php';
+    require_once 'datasets.php';
+    require_once 'rpis.php';
     $env = getLocalEnvironment();
     $stash = array();
     $GOMRI_DBH = OpenDB('GOMRI_RO');
@@ -238,12 +235,16 @@ EOT;
 $app->get(
     '/:udi',
     function ($udi) use ($app) {
-        $BR = "<BR>";
+
+
+        require_once "./exceptions/InvalidXmlException.php";
+        require_once "./exceptions/NotFoundException.php";
+        require_once "./exceptions/PersistenceEngineException.php";
+        require_once "./lib/MetadataLogger.php";
         $trimUdi = trim($udi);
 
-        echo $BR . "index.php starting" . $BR;
         $logger = new MetadataLogger("indexPHP", $trimUdi);
-        $logger->turnOff();
+        $logger->setOff;
         $env = getLocalEnvironment();
 
 
@@ -254,6 +255,7 @@ $app->get(
         try {
             $logger->write("Metadata Generator - calling getMetadataXmlFromGomriDB() udi: " . $trimUdi);
             $metadataXml = getMetadataXmlFromGomriDB($trimUdi);
+            $logger->write("Metadata Generator - back from  getMetadataXmlFromGomriDB() udi: " . $trimUdi);
             finishAllSuccessfulCases($trimUdi, $app, $metadataXml);
             $logger->write("Data found with Case 1 method getMetadataXmlFromGomriDB ");
             //$whichCaseSolution = "Data found with Case 1 method getMetadataXmlFromGomriDB ";

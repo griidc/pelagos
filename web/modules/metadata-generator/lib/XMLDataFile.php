@@ -2,13 +2,6 @@
 
 namespace MetadataGenerator;
 
-require_once "exceptions/NotFoundException.php";
-require_once "exceptions/PersistenceEngineException.php";
-require_once "exceptions/InvalidXmlException.php";
-require_once '../../../share/php/db-utils.lib.php';
-require_once "lib/MetadataLogger.php";
-require_once "lib/XMLValidator.php";
-
 use \Exception\NotFoundException as NotFoundException;
 use \Exception\PersistenceEngineException as PersistenceEngineException;
 use \PDO as PDO;
@@ -29,6 +22,7 @@ class XMLDataFile
      */
     private function __construct()
     {
+        require_once '../../../share/php/db-utils.lib.php';
         $this->dbcon = OpenDB("GOMRI_RW");
         $this->dbcon->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
@@ -66,6 +60,7 @@ class XMLDataFile
 
     private function getLocationFromDB($udi)
     {
+        require_once "./exceptions/PersistenceEngineException.php";
         $targetUdi = trim($udi);
         $this->logger->write("XMLDataFile.getLocationFromDB(" . $targetUdi . ")");
 
@@ -132,9 +127,13 @@ class XMLDataFile
      */
     public function getXML($udi)
     {
+        require_once "./exceptions/NotFoundException.php";
+        require_once "./exceptions/InvalidXmlException.php";
+        require_once "./lib/MetadataLogger.php";
+        require_once "./lib/XMLValidator.php";
         $targetUdi = trim($udi);
         $this->logger = new MetadataLogger("XMLDataFile", $targetUdi);
-        $this->logger->turnOff();
+        $this->logger->setOff;
         $xmlText = false;
         $this->logger->write("XMLDataFile.getXML(" . $targetUdi . ") calling getLocationFromDB()");
         $path = $this->getLocationFromDB($targetUdi);
