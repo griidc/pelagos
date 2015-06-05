@@ -1,37 +1,62 @@
-.specialfield {
-    border-style: solid;
-    border-color: #fff;
-    #font-size: larger;
-}
-
 label {
     display: inline;
 }
 
-.specialfield:read-write:focus {
-    border-width: 1px;
-    font-family: courier;
-    border-style: inset;
+input {
+    -webkit-transition: border-color 250ms ease-in 0ms;
+    transition: border-color 250ms ease-in 0ms;
+    border: 1px solid rgba(255,255,255,0);
+    margin: 1px;
 }
 
-.editField:read-only 
-    border-style: solid;
-    border-width: 1px;
-    border-color: #fff;
+.formfield.inactive {
+    
 }
 
-.editField:read-only :hover {
-    border-style: solid;
-    border-width: 2px;
-    border-color: #ddd;
+.formfield.active {
+    border: 1px solid #aaa;
 }
 
-.editField:hover::after {
+.editableForm {
+    position: relative;
+}
+
+.innerForm {
+    position: absolute;
+    left: -10px;
+    right: -10px;
+    top: -10px;
+    bottom: -10px;
+    
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-transition: box-shadow 150ms ease-in 0ms;
+    transition: box-shadow 150ms ease-in 0ms;
+    border-radius: 2.01px;
+    display: inline-block;
+    max-width: 100%;
+    box-shadow: 0 0 0 0 transparent;
+}
+
+.innerForm:hover::after {
     display:inline;
     font-family: "WingDings";
     font-size: larger;
     content: "!";
-    background-color: #ddd;
-    border: 2px solid #ddd;
+    background-color: #ccc;
+    border: 1px solid #ccc;
+    float:right;
+    position: absolute;
+    right: -1px;
+    bottom: -1px;
 }
+
+.innerForm:hover{
+    box-shadow: 0 0 0 1px #ccc;
+}
+
+
+    
+
 

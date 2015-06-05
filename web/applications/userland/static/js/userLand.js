@@ -4,7 +4,7 @@ var base_path;
 
 $(document).ready(function()
 {
-    $('#personForm').pelagosForm();
+    //$('#personForm').editableForm();
     
     base_path = $('div[base_path]').attr('base_path');
     $("#tabs").tabs({ heightStyle: "content" });
@@ -14,6 +14,7 @@ $(document).ready(function()
     
     // Trigger the event (useful on page load).
     hashchanged();
+    
 });
 
 function hashchanged(){
@@ -22,9 +23,22 @@ function hashchanged(){
     populatePerson(hash);
 }
 
-function populatePerson(hash)
+function populatePerson(PersonID)
 {
-    $('#firstName').val('Mickel');
-    $('#lastName').val('van den Eijnden');
-    $('#emailAddress').val('michael.vandeneijnden@tamucc.edu');
+    $.get(base_path+"/services/person/"+PersonID)
+    .done(function( data ) {
+        $('#personForm').fillForm(data);
+    })
+    .fail(function( data ) {
+        console.debug('fail');
+    });
+    
+    
+    // var data = {
+            // firstName:"Michael",
+            // lastName:"van den Eijnden",
+            // emailAddress:"michael.vandeneijnden@tamucc.edu"
+        // };
+    
+    
 }
