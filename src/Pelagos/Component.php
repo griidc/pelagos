@@ -57,6 +57,8 @@ class Component
     /**
      * A method for including libraries from the containing framework.
      * Currently, only Drupal is supported.
+     *
+     * @param string $library Name of library.
      */
     public function addLibrary($library)
     {
@@ -106,7 +108,7 @@ class Component
     /**
      * Private method to get full urls for an asset or array of assets.
      *
-     * @param $assets string|array An asset or array of assets to get full urls for.
+     * @param string|array $assets An asset or array of assets to get full urls for.
      * @return array An array containing full urls for the assets.
      */
     private function getUrlArray($assets)
