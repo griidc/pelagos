@@ -15,8 +15,6 @@ namespace Pelagos;
  */
 class Component
 {
-    protected $quitOnFinalize = false;
-
     /** @var \Doctrine\ORM\EntityManager $entityManager A private class variable to hold the entity manager. */
     private $entityManager;
 
@@ -85,25 +83,6 @@ class Component
         } else {
             exit;
         }
-    }
-
-    public function setQuitOnFinalize($quitOnFinalize)
-    {
-        $this->quitOnFinalize = $quitOnFinalize;
-    }
-
-    public function finalize()
-    {
-        if ($this->quitOnFinalize) {
-            $this->quit();
-        }
-    }
-
-    public function setSlimResponseHTTPStatusJSON(HTTPStatus $status)
-    {
-        $this->slim->response->headers->set('Content-Type', 'application/json');
-        $this->slim->response->status($status->code);
-        $this->slim->response->setBody($status->asJSON());
     }
 
     /**
