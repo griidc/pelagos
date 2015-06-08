@@ -18,7 +18,7 @@ $slim->get('/', function () {
 $slim->get('/publication(/)', function () use ($comp) {
     header('Content-Type:application/json');
     $status = new \Pelagos\HTTPStatus(400, 'No DOI provided.');
-    http_response_code($status->code);
+    http_response_code($status->getCode());
     print $status->asJSON();
     $comp->quit();
 });
@@ -29,10 +29,10 @@ $slim->get('/publication/:doi+', function ($doi) use ($comp) {
     $citation = $pub->getCitation();
     if ($citation === null) {
         $status = $pub->pullCitation('apa');
-        if ($status->code == 200) {
+        if ($status->getCode() == 200) {
             print $pub->getCitation()->asJSON();
         } else {
-            http_response_code($status->code);
+            http_response_code($status->getCode());
             print $status->asJSON();
         }
         $comp->quit();
@@ -55,11 +55,11 @@ $slim->get('/dataset/:udi', function ($udi) use ($comp) {
         print $citation->asJSON();
     } catch (\Citation\InvalidUdiException $e) {
         $status = new \Pelagos\HTTPStatus(400, $e->getMessage());
-        http_response_code($status->code);
+        http_response_code($status->getCode());
         print $status->asJSON();
     } catch (\Citation\NoRegisteredDatasetException $e) {
         $status = new \Pelagos\HTTPStatus(400, $e->getMessage());
-        http_response_code($status->code);
+        http_response_code($status->getCode());
         print $status->asJSON();
     }
     $comp->quit();
