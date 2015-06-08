@@ -32,7 +32,7 @@ $slim->map(
         $quit = true;
         $HTTPStatus = new \Pelagos\HTTPStatus(400, 'No parameters provided');
         $slim->response->headers->set('Content-Type', 'application/json');
-        $slim->response->status($HTTPStatus->code);
+        $slim->response->status($HTTPStatus->getCode());
         $slim->response->setBody($HTTPStatus->asJSON());
         return;
     }
@@ -45,7 +45,7 @@ $slim->map(
         $quit = true;
         $HTTPStatus = new \Pelagos\HTTPStatus(400, 'No DOI provided');
         $slim->response->headers->set('Content-Type', 'application/json');
-        $slim->response->status($HTTPStatus->code);
+        $slim->response->status($HTTPStatus->getCode());
         $slim->response->setBody($HTTPStatus->asJSON());
         return;
     }
@@ -60,7 +60,7 @@ $slim->map(
             $quit = true;
             $HTTPStatus = new \Pelagos\HTTPStatus(401, 'Login Required to use this feature.');
             $slim->response->headers->set('Content-Type', 'application/json');
-            $slim->response->status($HTTPStatus->code);
+            $slim->response->status($HTTPStatus->getCode());
             $slim->response->setBody($HTTPStatus->asJSON());
             return;
         }
@@ -70,7 +70,7 @@ $slim->map(
             $quit = true;
             $HTTPStatus = new \Pelagos\HTTPStatus(400, "Invalid UDI format");
             $slim->response->headers->set('Content-Type', 'application/json');
-            $slim->response->status($HTTPStatus->code);
+            $slim->response->status($HTTPStatus->getCode());
             $slim->response->setBody($HTTPStatus->asJSON());
             return;
         }
@@ -81,7 +81,7 @@ $slim->map(
             $quit = true;
             $HTTPStatus = new \Pelagos\HTTPStatus(400, "Invalid doi format");
             $slim->response->headers->set('Content-Type', 'application/json');
-            $slim->response->status($HTTPStatus->code);
+            $slim->response->status($HTTPStatus->getCode());
             $slim->response->setBody($HTTPStatus->asJSON());
             return;
         }
@@ -100,7 +100,7 @@ $slim->map(
             }
             $HTTPStatus = new \Pelagos\HTTPStatus($code, $ee->getMessage());
             $slim->response->headers->set('Content-Type', 'application/json');
-            $slim->response->status($HTTPStatus->code);
+            $slim->response->status($HTTPStatus->getCode());
             $slim->response->setBody($HTTPStatus->asJSON());
             return;
         }
@@ -110,7 +110,7 @@ $slim->map(
             "A Link has been successfully created between dataset $udi and publication $doi."
         );
         $slim->response->headers->set('Content-Type', 'application/json');
-        $slim->response->status($HTTPStatus->code);
+        $slim->response->status($HTTPStatus->getCode());
         $slim->response->setBody($HTTPStatus->asJSON());
 
         $quit = true;
@@ -126,7 +126,7 @@ $slim->map(
             $quit = true;
             $HTTPStatus = new \Pelagos\HTTPStatus(401, 'Login Required to use this feature.');
             $slim->response->headers->set('Content-Type', 'application/json');
-            $slim->response->status($HTTPStatus->code);
+            $slim->response->status($HTTPStatus->getCode());
             $slim->response->setBody($HTTPStatus->asJSON());
             return;
         }
@@ -136,7 +136,7 @@ $slim->map(
             $quit = true;
             $HTTPStatus = new \Pelagos\HTTPStatus(400, "Invalid UDI format");
             $slim->response->headers->set('Content-Type', 'application/json');
-            $slim->response->status($HTTPStatus->code);
+            $slim->response->status($HTTPStatus->getCode());
             $slim->response->setBody($HTTPStatus->asJSON());
             return;
         }
@@ -147,7 +147,7 @@ $slim->map(
             $quit = true;
             $HTTPStatus = new \Pelagos\HTTPStatus(400, "Invalid doi format");
             $slim->response->headers->set('Content-Type', 'application/json');
-            $slim->response->status($HTTPStatus->code);
+            $slim->response->status($HTTPStatus->getCode());
             $slim->response->setBody($HTTPStatus->asJSON());
             return;
         }
@@ -160,7 +160,7 @@ $slim->map(
             $code = 500;
             $HTTPStatus = new \Pelagos\HTTPStatus($code, $ee->getMessage());
             $slim->response->headers->set('Content-Type', 'application/json');
-            $slim->response->status($HTTPStatus->code);
+            $slim->response->status($HTTPStatus->getCode());
             $slim->response->setBody($HTTPStatus->asJSON());
             return;
         } catch (\Exception $ee) {
@@ -171,7 +171,7 @@ $slim->map(
             }
             $HTTPStatus = new \Pelagos\HTTPStatus($code, $ee->getMessage());
             $slim->response->headers->set('Content-Type', 'application/json');
-            $slim->response->status($HTTPStatus->code);
+            $slim->response->status($HTTPStatus->getCode());
             $slim->response->setBody($HTTPStatus->asJSON());
             return;
         }
@@ -181,7 +181,7 @@ $slim->map(
             "The link between dataset $udi and publication $doi has been removed."
         );
         $slim->response->headers->set('Content-Type', 'application/json');
-        $slim->response->status($HTTPStatus->code);
+        $slim->response->status($HTTPStatus->getCode());
         $slim->response->setBody($HTTPStatus->asJSON());
 
         $quit = true;
