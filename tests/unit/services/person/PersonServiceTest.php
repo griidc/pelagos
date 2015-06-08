@@ -39,7 +39,6 @@ class PersonServiceTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        require_once __DIR__ . '/../../../../web/services/person/lib/PersonService.php';
         $this->personService = new \Pelagos\Component\PersonService();
 
         $mockPerson = \Mockery::mock('overload:\Pelagos\Entity\Person');

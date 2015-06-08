@@ -1,7 +1,6 @@
 <?php
 
 require_once __DIR__.'/../../../vendor/autoload.php';
-require_once __DIR__ . '/lib/PersonService.php';
 
 use \Pelagos\HTTPStatus;
 use \Pelagos\Exception\EmptyRequiredArgumentException;
