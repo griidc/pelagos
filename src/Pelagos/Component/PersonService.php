@@ -2,8 +2,19 @@
 
 namespace Pelagos\Component;
 
+/**
+ * Class to handle creating, getting, updating, and deleting Persons.
+ */
 class PersonService extends \Pelagos\Component
 {
+    /**
+     * Method to create a Person object from parameters and persist it.
+     *
+     * @param string $firstName Person's first name.
+     * @param string $lastName Person's last name.
+     * @param string $emailAddress Person's email address.
+     * @return \Pelagos\Entity\Person The person object that was created and persisted.
+     */
     public function createPerson($firstName, $lastName, $emailAddress)
     {
         $person = new \Pelagos\Entity\Person($firstName, $lastName, $emailAddress);
