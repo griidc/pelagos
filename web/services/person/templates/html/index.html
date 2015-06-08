@@ -6,7 +6,15 @@ of a person.
 Web Service Usage:
 <ol>
     <li>GET / - This message</li>
-    <li>PUT /FirstName/LastName/Email - Person will be created.  JSON
-        response will indicate success or failure with error.  Authentication
+    <li>POST /
+        <ul>
+            <li>* firstName = string</li>
+            <li>* LastName = string</li>
+            <li>* emailAddress = string</li>
+        </ul>
+        * = mandatory
+   <br />
+        Result - Person will be created.  JSON
+        response will indicate success or failure with error.<br />Authentication
         is required to use this feature.</li>
 </ol>
