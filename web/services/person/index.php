@@ -34,7 +34,7 @@ $slim->post(
         // RELEASED.
         if (!$comp->userIsLoggedIn()) {
             $status = new HTTPStatus(401, 'Login Required to use this feature');
-            $response->status($status->code);
+            $response->status($status->getCode());
             $response->body(json_encode($status));
             return;
         }
@@ -68,7 +68,7 @@ $slim->post(
         } catch (\Exception $e) {
             $status = new HTTPStatus(500, 'A general error has occured: ' . $e->getMessage());
         }
-        $response->status($status->code);
+        $response->status($status->getCode());
         $response->body(json_encode($status));
     }
 );
