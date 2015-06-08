@@ -67,14 +67,14 @@ class HTTPStatus implements \JsonSerializable
      */
     public function jsonSerialize()
     {
-        $serialized = array(
+        $arrayToSerialize = array(
             'code' => $this->code,
             'message' => $this->message,
         );
         if (isset($this->data)) {
-            $serialized['data'] = $this->data;
+            $arrayToSerialize['data'] = $this->data;
         }
-        return $serialized;
+        return $arrayToSerialize;
     }
 
     /**
