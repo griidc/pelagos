@@ -8,7 +8,7 @@ use \Pelagos\Exception\InvalidFormatArgumentException;
 /**
  * Class to represent people.
  */
-class Person
+class Person implements \JsonSerializable
 {
     /**
      * Person identifier
@@ -102,6 +102,21 @@ class Person
     public function getEmailAddress()
     {
         return $this->emailAddress;
+    }
+
+    /**
+     * Implement JsonSerializable.
+     *
+     * @return array An array suitable for JSON serialization of the object.
+     */
+    public function jsonSerialize()
+    {
+        return array(
+            'id' => $this->id,
+            'firstName' => $this->firstName,
+            'lastName' => $this->lastName,
+            'emailAddress' => $this->emailAddress,
+        );
     }
 
     /**
