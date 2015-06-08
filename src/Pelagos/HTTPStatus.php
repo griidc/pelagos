@@ -13,16 +13,20 @@ class HTTPStatus implements \JsonSerializable
     /** @var string $message A message to send with the response. **/
     protected $message;
 
+    /** @var string $data A data package to send with the response. **/
+    protected $data;
+
     /**
      * Constructor for HTTPStatus.
      *
      * @param int $code The HTTP response code.
      * @param string $message A message to send with the response.
      */
-    public function __construct($code, $message = null)
+    public function __construct($code, $message = null, $data = null)
     {
         $this->code = $code;
         $this->message = $message;
+        $this->data = $data;
     }
 
     /**
@@ -46,6 +50,16 @@ class HTTPStatus implements \JsonSerializable
     }
 
     /**
+     * Getter for $data.
+     *
+     * @return mixed The data package to send with the response for this HTTPStatus.
+     */
+    public function getData()
+    {
+        return $this->data;
+    }
+
+    /**
      * Serializer to be called when json_encode is called on this object.
      * This is required to implement \JsonSerializable.
      *
@@ -53,10 +67,14 @@ class HTTPStatus implements \JsonSerializable
      */
     public function jsonSerialize()
     {
-        return [
+        $serialized = array(
             'code' => $this->code,
             'message' => $this->message,
-        ];
+        );
+        if (isset($this->data)) {
+            $serialized['data'] = $this->data;
+        }
+        return $serialized;
     }
 
     /**
