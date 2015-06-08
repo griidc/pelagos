@@ -63,6 +63,7 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
+        require_once __DIR__ . '/../../helpers/TestUser.php';
         $GLOBALS['pelagos']['base_path'] = 'https://foo.bar/pelagos';
         $GLOBALS['pelagos']['component_path'] = 'https://foo.bar/pelagos/applications/baz';
         \Mockery::mock(
@@ -250,5 +251,44 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
     {
         $this->expectOutputString("drupal_exit\n");
         $this->component->quit();
+    }
+
+    /**
+     * Test userIsLogged in for both cases.
+     */
+    public function testUserIsLoggedIn()
+    {
+        $this->assertFalse($this->component->userIsLoggedIn());
+        $GLOBALS['user'] = new \Pelagos\Tests\Helpers\TestUser;
+        $this->assertTrue($this->component->userIsLoggedIn());
+    }
+
+    /**
+     * Test that finalize calls quit when quitOnFinalize is set to true.
+     */
+    public function testQuitOnFinalize()
+    {
+        $this->component->setQuitOnFinalize(true);
+        $this->expectOutputString("drupal_exit\n");
+        $this->component->finalize();
+    }
+
+    /**
+     * Test that finalize doesn't call quit when quitOnFinalize is set to false.
+     */
+    public function testDontQuitOnFinalize()
+    {
+        $this->component->setQuitOnFinalize(false);
+        $this->expectOutputString('');
+        $this->component->finalize();
+    }
+
+    /**
+     * Test that finalize doesn't call quit by default.
+     */
+    public function testDontQuitOnFinalizeByDefault()
+    {
+        $this->expectOutputString('');
+        $this->component->finalize();
     }
 }
