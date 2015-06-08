@@ -21,6 +21,12 @@ class Component
     private $entityManager;
 
     /**
+      * @var bool $quitOnFinalize A boolean value that is used to decide whether or not
+      *                           to call quit() when finalize() is called.
+      */
+    private $quitOnFinalize = false;
+
+    /**
      * A method for adding javascript files to a page.
      * This currently only works when the component is contained by Drupal.
      *
@@ -151,5 +157,40 @@ class Component
             array_push($url_array, $url);
         }
         return $url_array;
+    }
+
+    /**
+     * Setter for quitOnFinalize.
+     *
+     * @param bool $quitOnFinalize True to quit on finalize, False to not.
+     */
+    public function setQuitOnFinalize($quitOnFinalize)
+    {
+        $this->quitOnFinalize = $quitOnFinalize;
+    }
+
+    /**
+     * Method to do various things after the component has run
+     * (such as quit if quitOnFinalize has been set to true).
+     */
+    public function finalize()
+    {
+        if ($this->quitOnFinalize) {
+            $this->quit();
+        }
+    }
+
+    /**
+     * Method to determine if the user is logged in or not.
+     *
+     * @return bool Returns true if user is logged in, false otherwise.
+     */
+    public function userIsLoggedIn()
+    {
+        global $user;
+        if (isset($user->name) and !empty($user->name)) {
+            return true;
+        }
+        return false;
     }
 }
