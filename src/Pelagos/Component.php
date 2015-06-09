@@ -43,7 +43,7 @@ class Component
             if (array_key_exists('base_path', $GLOBALS['pelagos'])) {
                 $this->basePath = $GLOBALS['pelagos']['base_path'];
             }
-            if (array_key_exists('base_path', $GLOBALS['pelagos'])) {
+            if (array_key_exists('component_path', $GLOBALS['pelagos'])) {
                 $this->path = $GLOBALS['pelagos']['component_path'];
             }
         }
@@ -154,9 +154,9 @@ class Component
             if (self::isFullUrl($asset)) {
                 $url = $asset;
             } elseif (preg_match('/^\//', $asset)) {
-                $url = $GLOBALS['pelagos']['base_path'] . $asset;
+                $url = $this->basePath . $asset;
             } else {
-                $url = $GLOBALS['pelagos']['component_path'] . "/$asset";
+                $url = $this->path . "/$asset";
             }
             array_push($url_array, $url);
         }
