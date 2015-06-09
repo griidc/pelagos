@@ -10,64 +10,36 @@ use \Pelagos\Exception\InvalidFormatArgumentException;
  */
 class Person implements \JsonSerializable
 {
-    /**
-     * Person identifier
-     *
-     * @var Int
-     */
+    /** @var int $id Person identifier. */
     protected $id;
 
-    /**
-     * Person's first name
-     *
-     * @var String
-     */
+    /** @var string $firstName Person's first name. */
     protected $firstName;
 
-    /**
-     * Person's last name
-     *
-     * @var String
-     */
+    /** @var string $lastName Person's last name. */
     protected $lastName;
 
-    /**
-     * Person's email address
-     *
-     * @var String
-     */
+    /** @var string $emailAddress Person's email address. */
     protected $emailAddress;
 
     /**
-     * Person constructor
+     * Person constructor.
      *
-     * @param String $firstName Person's first name
-     * @param String $lastName Person's last name
-     * @param String $emailAddress Person's email address
+     * @param string $firstName Person's first name.
+     * @param string $lastName Person's last name.
+     * @param string $emailAddress Person's email address.
      */
     public function __construct($firstName, $lastName, $emailAddress)
     {
-        if (empty($firstName)) {
-            $this->throwEmptyRequiredArgumentException('firstName', $firstName);
-        }
-        if (empty($lastName)) {
-            $this->throwEmptyRequiredArgumentException('lastName', $lastName);
-        }
-        if (empty($emailAddress)) {
-            $this->throwEmptyRequiredArgumentException('emailAddress', $emailAddress);
-        }
-        if (!filter_var($emailAddress, FILTER_VALIDATE_EMAIL)) {
-            $this->throwInvalidFormatArgumentException('emailAddress', $emailAddress, 'local@domain.tld');
-        }
-        $this->firstName = $firstName;
-        $this->lastName = $lastName;
-        $this->emailAddress = $emailAddress;
+        $this->setFirstName($firstName);
+        $this->setLastName($lastName);
+        $this->setEmailAddress($emailAddress);
     }
 
     /**
      * id getter
      *
-     * @return Int persistent identifier for the Person
+     * @return int Persistent identifier for the Person.
      */
     public function getId()
     {
@@ -75,9 +47,22 @@ class Person implements \JsonSerializable
     }
 
     /**
+     * firstName setter
+     *
+     * @param string First name of the Person.
+     */
+    public function setFirstName($firstName)
+    {
+        if (empty($firstName)) {
+            $this->throwEmptyRequiredArgumentException('firstName', $firstName);
+        }
+        $this->firstName = $firstName;
+    }
+
+    /**
      * firstName getter
      *
-     * @return String first name of the Person
+     * @return string First name of the Person.
      */
     public function getFirstName()
     {
@@ -85,9 +70,22 @@ class Person implements \JsonSerializable
     }
 
     /**
+     * lastName setter
+     *
+     * @param string $lastName Last name of the Person.
+     */
+    public function setLastName($lastName)
+    {
+        if (empty($lastName)) {
+            $this->throwEmptyRequiredArgumentException('lastName', $lastName);
+        }
+        $this->lastName = $lastName;
+    }
+
+    /**
      * lastName getter
      *
-     * @return String last name of the Person
+     * @return string Last name of the Person.
      */
     public function getLastname()
     {
@@ -95,9 +93,25 @@ class Person implements \JsonSerializable
     }
 
     /**
+     * emailAddress setter
+     *
+     * @param string Email address of the Person.
+     */
+    public function setEmailAddress($emailAddress)
+    {
+        if (empty($emailAddress)) {
+            $this->throwEmptyRequiredArgumentException('emailAddress', $emailAddress);
+        }
+        if (!filter_var($emailAddress, FILTER_VALIDATE_EMAIL)) {
+            $this->throwInvalidFormatArgumentException('emailAddress', $emailAddress, 'local@domain.tld');
+        }
+        $this->emailAddress = $emailAddress;
+    }
+
+    /**
      * emailAddress getter
      *
-     * @return String email address of the Person
+     * @return string Email address of the Person.
      */
     public function getEmailAddress()
     {
@@ -117,6 +131,29 @@ class Person implements \JsonSerializable
             'lastName' => $this->lastName,
             'emailAddress' => $this->emailAddress,
         );
+    }
+
+    /**
+     * Method to update multiple properties.
+     *
+     * @param array $updates An associative array indexed with property names
+     *                       and containing each property's new value.
+     */
+    public function update($updates)
+    {
+        foreach ($updates as $field => $value) {
+            switch($field) {
+                case 'firstName':
+                    $this->setFirstName($value);
+                    break;
+                case 'lastName':
+                    $this->setLastName($value);
+                    break;
+                case 'emailAddress':
+                    $this->setEmailAddress($value);
+                    break;
+            }
+        }
     }
 
     /**
