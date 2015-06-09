@@ -25,20 +25,15 @@ function hashchanged(){
 
 function populatePerson(PersonID)
 {
+    $('#personForm').trigger("reset");
     $.get(base_path+"/services/person/"+PersonID)
     .done(function( data ) {
-        $('#personForm').fillForm(data);
+        $('#personForm').fillForm(data.data);
     })
     .fail(function( data ) {
         console.debug('fail');
+    })
+    .always(function( data ) {
+        
     });
-    
-    
-    // var data = {
-            // firstName:"Michael",
-            // lastName:"van den Eijnden",
-            // emailAddress:"michael.vandeneijnden@tamucc.edu"
-        // };
-    
-    
 }
