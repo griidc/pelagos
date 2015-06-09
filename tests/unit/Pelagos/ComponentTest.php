@@ -254,6 +254,25 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test adding multiple libraries in one call by passing an array.
+     */
+    public function testAddLibraryMultiple()
+    {
+        $this->expectOutputString(
+            "drupal_add_library: system::foo\n" .
+            "drupal_add_library: system::bar\n" .
+            "drupal_add_library: system::baz\n"
+        );
+        $this->component->addLibrary(
+            array(
+                'foo',
+                'bar',
+                'baz',
+            )
+        );
+    }
+
+    /**
      * Test quitting.
      */
     public function testQuit()

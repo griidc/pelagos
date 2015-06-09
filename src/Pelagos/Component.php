@@ -89,11 +89,18 @@ class Component
      * A method for including libraries from the containing framework.
      * Currently, only Drupal is supported.
      *
-     * @param string $library Name of library.
+     * @param string|array $library Name of library ir array of library names.
      */
     public function addLibrary($library)
     {
-        drupal_add_library('system', $library);
+        if (is_array($library)) {
+            $libraryArray = $library;
+        } else {
+            $libraryArray = array($library);
+        }
+        foreach ($libraryArray as $libraryName) {
+            drupal_add_library('system', $libraryName);
+        }
     }
 
     /**
