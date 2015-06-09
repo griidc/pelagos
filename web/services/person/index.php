@@ -3,10 +3,12 @@
 require_once __DIR__.'/../../../vendor/autoload.php';
 
 use \Pelagos\HTTPStatus;
+use \Pelagos\Exception\ArgumentException;
 use \Pelagos\Exception\EmptyRequiredArgumentException;
 use \Pelagos\Exception\InvalidFormatArgumentException;
 use \Pelagos\Exception\MissingRequiredFieldPersistenceException;
 use \Pelagos\Exception\RecordExistsPersistenceException;
+use \Pelagos\Exception\RecordNotFoundPersistenceException;
 use \Pelagos\Exception\PersistenceException;
 
 $comp = new \Pelagos\Component\PersonService();
@@ -63,6 +65,29 @@ $slim->post(
             $status = new HTTPStatus(400, 'A required field is missing: ' . $e->getDatabaseErrorHint());
         } catch (RecordExistsPersistenceException $e) {
             $status = new HTTPStatus(409, 'This record already exists.');
+        } catch (PersistenceException $e) {
+            $status = new HTTPStatus(500, 'A database error has occured: ' . $e->getDatabaseErrorMessage());
+        } catch (\Exception $e) {
+            $status = new HTTPStatus(500, 'A general error has occured: ' . $e->getMessage());
+        }
+        $response->status($status->getCode());
+        $response->body(json_encode($status));
+    }
+);
+
+$slim->get(
+    '/:id',
+    function ($id) use ($comp, $slim) {
+        $response = $slim->response;
+        $response->headers->set('Content-Type', 'application/json');
+        $comp->setQuitOnFinalize(true);
+        try {
+            $person = $comp->getPerson($id);
+            $status = new HTTPStatus(200, "Found Person with id: $id", $person);
+        } catch (ArgumentException $e) {
+            $status = new HTTPStatus(400, $e->getMessage());
+        } catch (RecordNotFoundPersistenceException $e) {
+            $status = new HTTPStatus(404, $e->getMessage());
         } catch (PersistenceException $e) {
             $status = new HTTPStatus(500, 'A database error has occured: ' . $e->getDatabaseErrorMessage());
         } catch (\Exception $e) {
