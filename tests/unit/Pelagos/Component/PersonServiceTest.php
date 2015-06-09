@@ -8,13 +8,16 @@ namespace Pelagos\Component;
  */
 class PersonServiceTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var \Pelagos\Component\PersonService $personService ... **/
+    /** @var \Pelagos\Component\PersonService $personService Property to hold an instance of PersonService. **/
     protected $personService;
 
-    /** @var \Doctrine\ORM\EntityManager $mockEntityManager ... **/
+    /** @var \Pelagos\Entity\Person $mockPerson Property to hold a mock person for testing. **/
+    protected $mockPerson;
+
+    /** @var \Doctrine\ORM\EntityManager $mockEntityManager Propety to hold a mock EntityManager. **/
     protected $mockEntityManager;
 
-    /** @var \Doctrine\DBAL\Driver\DriverException $mockDriverException ... **/
+    /** @var \Doctrine\DBAL\Driver\DriverException $mockDriverException Propety to hold a mock DriverException. **/
     protected $mockDriverException;
 
     /** @var string $firstName A valid first name to use for testing. **/
@@ -41,11 +44,11 @@ class PersonServiceTest extends \PHPUnit_Framework_TestCase
     {
         $this->personService = new \Pelagos\Component\PersonService();
 
-        $mockPerson = \Mockery::mock('overload:\Pelagos\Entity\Person');
-        $mockPerson->shouldReceive('getId')->andReturn(0);
-        $mockPerson->shouldReceive('getFirstName')->andReturn(self::$firstName);
-        $mockPerson->shouldReceive('getLastName')->andReturn(self::$lastName);
-        $mockPerson->shouldReceive('getEmailAddress')->andReturn(self::$emailAddress);
+        $this->mockPerson = \Mockery::mock('overload:\Pelagos\Entity\Person');
+        $this->mockPerson->shouldReceive('getId')->andReturn(0);
+        $this->mockPerson->shouldReceive('getFirstName')->andReturn(self::$firstName);
+        $this->mockPerson->shouldReceive('getLastName')->andReturn(self::$lastName);
+        $this->mockPerson->shouldReceive('getEmailAddress')->andReturn(self::$emailAddress);
 
         $this->mockEntityManager = \Mockery::mock('\Doctrine\ORM\EntityManager');
         $this->mockEntityManager->shouldReceive('persist');
@@ -79,7 +82,11 @@ class PersonServiceTest extends \PHPUnit_Framework_TestCase
      */
     public function testCreatePersonMissingRequiredField()
     {
-        $this->mockEntityManager->shouldReceive('flush')->andThrow('\Doctrine\DBAL\Exception\NotNullConstraintViolationException', null, $this->mockDriverException);
+        $this->mockEntityManager->shouldReceive('flush')->andThrow(
+            '\Doctrine\DBAL\Exception\NotNullConstraintViolationException',
+            null,
+            $this->mockDriverException
+        );
         $person = $this->personService->createPerson(self::$firstName, self::$lastName, self::$emailAddress);
     }
 
@@ -90,7 +97,11 @@ class PersonServiceTest extends \PHPUnit_Framework_TestCase
      */
     public function testCreatePersonRecordExists()
     {
-        $this->mockEntityManager->shouldReceive('flush')->andThrow('\Doctrine\DBAL\Exception\UniqueConstraintViolationException', null, $this->mockDriverException);
+        $this->mockEntityManager->shouldReceive('flush')->andThrow(
+            '\Doctrine\DBAL\Exception\UniqueConstraintViolationException',
+            null,
+            $this->mockDriverException
+        );
         $person = $this->personService->createPerson(self::$firstName, self::$lastName, self::$emailAddress);
     }
 
@@ -104,5 +115,82 @@ class PersonServiceTest extends \PHPUnit_Framework_TestCase
     {
         $this->mockEntityManager->shouldReceive('flush')->andThrow('\Doctrine\DBAL\DBALException');
         $person = $this->personService->createPerson(self::$firstName, self::$lastName, self::$emailAddress);
+    }
+
+    /**
+     * Test getting a person that exists.
+     * Should return the person for the provided id.
+     */
+    public function testGetPerson()
+    {
+        $this->mockEntityManager->shouldReceive('find')->andReturn($this->mockPerson);
+        $person = $this->personService->getPerson(0);
+        $this->assertInstanceOf('\Pelagos\Entity\Person', $person);
+        $this->assertSame(0, $person->getId());
+        $this->assertEquals(self::$firstName, $person->getFirstName());
+        $this->assertEquals(self::$lastName, $person->getLastName());
+        $this->assertEquals(self::$emailAddress, $person->getEmailAddress());
+    }
+
+    /**
+     * Test getting a person that exists by passing a string that contains an integer.
+     * Should return the person for the provided id.
+     */
+    public function testGetPersonIntegerString()
+    {
+        $this->mockEntityManager->shouldReceive('find')->andReturn($this->mockPerson);
+        $person = $this->personService->getPerson('0');
+        $this->assertInstanceOf('\Pelagos\Entity\Person', $person);
+        $this->assertSame(0, $person->getId());
+        $this->assertEquals(self::$firstName, $person->getFirstName());
+        $this->assertEquals(self::$lastName, $person->getLastName());
+        $this->assertEquals(self::$emailAddress, $person->getEmailAddress());
+    }
+
+    /**
+     * Test handling of attempting to get a person with an invalid id.
+     *
+     * @expectedException \Pelagos\Exception\ArgumentException
+     */
+    public function testGetPersonInvalidID()
+    {
+        $person = $this->personService->getPerson('foo');
+    }
+
+    /**
+     * Test handling of attempting to get a person with an invalid id
+     * and getting back the id sent upon catching the exception.
+     */
+    public function testGetPersonInvalidIDGetID()
+    {
+        try {
+            $person = $this->personService->getPerson('foo');
+        } catch (\Pelagos\Exception\ArgumentException $e) {
+            $this->assertEquals('id', $e->getArgumentName());
+            $this->assertEquals('foo', $e->getArgumentValue());
+        }
+    }
+
+    /**
+     * Test handling of attempting to get a person that does not exist in persistence.
+     *
+     * @expectedException \Pelagos\Exception\RecordNotFoundPersistenceException
+     */
+    public function testGetPersonRecordNotFound()
+    {
+        $this->mockEntityManager->shouldReceive('find')->andReturnNull();
+        $person = $this->personService->getPerson(0);
+    }
+
+    /**
+     * Test handling of attempting to get a person and encountering a persistence error.
+     * This tests for handling of persistence errors not handled specifically.
+     *
+     * @expectedException \Pelagos\Exception\PersistenceException
+     */
+    public function testGetPersonPersistenceError()
+    {
+        $this->mockEntityManager->shouldReceive('find')->andThrow('\Doctrine\DBAL\DBALException');
+        $person = $this->personService->getPerson(0);
     }
 }

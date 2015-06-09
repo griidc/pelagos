@@ -257,15 +257,143 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test that getting a person with an invalid id.
+     * Should return 400 with a message indicating the id must be a non-negative integer.
+     */
+    public function testGetPersonInvalidId()
+    {
+        \Slim\Environment::mock(
+            array(
+                'REQUEST_METHOD' => 'GET',
+                'PATH_INFO' => '/foo',
+            )
+        );
+        $this->expectOutputString(
+            $this->makeHTTPStatusJSON(
+                400,
+                'Person id must be a non-negative integer'
+            )
+        );
+        require 'index.php';
+    }
+
+    /**
+     * Test that getting a person that doesn't exist.
+     * Should return 404 with a message indicating the person is not found.
+     */
+    public function testGetPersonNotFound()
+    {
+        $this->mockEntityManager->shouldReceive('find')->andReturnNull();
+        \Slim\Environment::mock(
+            array(
+                'REQUEST_METHOD' => 'GET',
+                'PATH_INFO' => '/0',
+            )
+        );
+        $this->expectOutputString(
+            $this->makeHTTPStatusJSON(
+                404,
+                'Could not find a Person with id: 0'
+            )
+        );
+        require 'index.php';
+    }
+
+    /**
+     * Test that getting a person and encountering a persistence error.
+     * Should return 500 with a message indicating what happened.
+     */
+    public function testGetPersonPersistenceError()
+    {
+        $this->mockEntityManager->shouldReceive('find')->andThrow(
+            '\Doctrine\DBAL\DBALException'
+        );
+        \Slim\Environment::mock(
+            array(
+                'REQUEST_METHOD' => 'GET',
+                'PATH_INFO' => '/0',
+            )
+        );
+        $this->expectOutputString(
+            $this->makeHTTPStatusJSON(
+                500,
+                'A database error has occured: '
+            )
+        );
+        require 'index.php';
+    }
+
+    /**
+     * Test that getting a person and encountering a general error.
+     * Should return 500 with a message indicating what happened.
+     */
+    public function testGetPersonGeneralError()
+    {
+        $this->mockEntityManager->shouldReceive('find')->andThrow(
+            '\Exception'
+        );
+        \Slim\Environment::mock(
+            array(
+                'REQUEST_METHOD' => 'GET',
+                'PATH_INFO' => '/0',
+            )
+        );
+        $this->expectOutputString(
+            $this->makeHTTPStatusJSON(
+                500,
+                'A general error has occured: '
+            )
+        );
+        require 'index.php';
+    }
+
+    /**
+     * Test that getting a person with a valid id is successful.
+     * Should return 200 with a message indicating the person was found
+     * and a JSON serialization of the person as the data package.
+     */
+    public function testGetPersonSuccess()
+    {
+        $personData = array(
+            'id' => 0,
+            'firstName' => self::$firstName,
+            'lastName' => self::$lastName,
+            'emailAddress' => self::$emailAddress,
+        );
+        $mockPerson = \Mockery::mock('\Pelagos\Entity\Person, JsonSerializable');
+        $mockPerson->shouldReceive('jsonSerialize')->andReturn($personData);
+        $this->mockEntityManager->shouldReceive('find')->andReturn($mockPerson);
+        \Slim\Environment::mock(
+            array(
+                'REQUEST_METHOD' => 'GET',
+                'PATH_INFO' => '/0',
+            )
+        );
+        $this->expectOutputString(
+            $this->makeHTTPStatusJSON(
+                200,
+                'Found Person with id: 0',
+                $personData
+            )
+        );
+        require 'index.php';
+    }
+
+    /**
      * Utility method to build a JSON string equivalent to a JSON serialized HTTPStatus.
      *
      * @param int $code The HTTP status code.
      * @param string $message The HTTP status message.
      * @return string A JSON string containing $code and $message.
      */
-    protected function makeHTTPStatusJSON($code, $message)
+    protected function makeHTTPStatusJSON($code, $message, $data = null)
     {
-        return "{\"code\":$code,\"message\":\"$message\"}drupal_exit\n";
+        $json = "{\"code\":$code,\"message\":\"$message\"";
+        if (isset($data)) {
+            $json .= ',"data":' . json_encode($data);
+        }
+        $json .= "}drupal_exit\n";
+        return $json;
     }
 
     /**
