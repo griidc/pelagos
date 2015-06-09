@@ -24,6 +24,31 @@ class Component
       */
     private $quitOnFinalize = false;
 
+    /** @var string $basePath The URL base path for Pelagos. **/
+    protected $basePath;
+
+    /** @var string $path The URL path to this component. **/
+    protected $path;
+
+    /** @var string $title The page title. **/
+    protected $title;
+
+    /**
+     * Constructor for component.
+     * This initializes some properties from the environment.
+     */
+    public function __construct()
+    {
+        if (array_key_exists('pelagos', $GLOBALS)) {
+            if (array_key_exists('base_path', $GLOBALS['pelagos'])) {
+                $this->basePath = $GLOBALS['pelagos']['base_path'];
+            }
+            if (array_key_exists('base_path', $GLOBALS['pelagos'])) {
+                $this->path = $GLOBALS['pelagos']['component_path'];
+            }
+        }
+    }
+
     /**
      * A method for adding javascript files to a page.
      * This currently only works when the component is contained by Drupal.
@@ -149,11 +174,16 @@ class Component
     }
 
     /**
-     * Method to do various things after the component has run
-     * (such as quit if quitOnFinalize has been set to true).
+     * Method to do various things after the component has run.
+     * These include:
+     * - set the page title in the environment if the title propety has been set
+     * - quit if quitOnFinalize has been set to true
      */
     public function finalize()
     {
+        if (isset($this->title)) {
+            $GLOBALS['pelagos']['title'] = $this->title;
+        }
         if ($this->quitOnFinalize) {
             $this->quit();
         }
@@ -171,5 +201,35 @@ class Component
             return true;
         }
         return false;
+    }
+
+    /**
+     * Method to get the Pelagos base URL path.
+     *
+     * @return string The URL base path for Pelagos.
+     */
+    public function getBasePath()
+    {
+        return $this->basePath;
+    }
+
+    /**
+     * Method to get the Pelagos component URL path.
+     *
+     * @return string The URL path to this component.
+     */
+    public function getPath()
+    {
+        return $this->path;
+    }
+
+    /**
+     * Method to set the page title.
+     *
+     * @param string $title The page title.
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
     }
 }
