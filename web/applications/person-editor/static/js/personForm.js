@@ -9,7 +9,7 @@ $(document).ready(function()
     formValidator = $("#personForm").validate({
         submitHandler: function(form) {
             var data = getFormJSON($('form'));
-            savePerson(data.firstName, data.lastName, data.eMailAddress)
+            savePerson(data)
         }
     });
 
@@ -42,19 +42,17 @@ $(document).ready(function()
  *
  *  This function will send the person data to the webservice
  *
- *  @param [string] firstName First/Given Name
- *  @param [string] lastName Last/Sur/Family Name
- *  @param [string] eMailAddress E-Mail Address
+ *  @param [json] data Contains a JSON of firstName,lastName,eMailAddress
  *
  */
-function savePerson(firstName, lastName, eMailAddress)
+function savePerson(jsonData)
 {
-    debugger;
-    var url = base_path + "/services/person/" + firstName + "/" + lastName + "/" + eMailAddress;
+    var url = base_path + "/services/person";
     var title = "";
     var messsage = "";
     $.ajax({
-        type: 'PUT',
+        type: 'POST',
+        data: jsonData,
         url: url,
         // Optionally enforce JSON return, in case a status 200 happens, but no JSON returns
         //dataType: 'json'
