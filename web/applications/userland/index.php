@@ -4,6 +4,8 @@ require_once __DIR__ . '/../../../vendor/autoload.php';
 
 $comp = new \Pelagos\Component;
 
+$comp->setTitle('User Landing Page');
+
 $comp->addJS(
     array(
         '//cdnjs.cloudflare.com/ajax/libs/jquery-hashchange/v1.3/jquery.ba-hashchange.min.js',
@@ -22,3 +24,5 @@ $twig = new Twig_Environment($twigloader, array('autoescape' => false));
 $twigdata = array('base_path' => $comp->getBasePath());
 
 echo $twig->render('userland.html', $twigdata);
+
+$comp->finalize();
