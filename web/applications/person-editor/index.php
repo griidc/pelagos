@@ -10,6 +10,8 @@
 $base_path = $GLOBALS['pelagos']['base_path'];
 $component_path = $GLOBALS['pelagos']['component_path'];
 
+$GLOBALS['pelagos']['title'] = 'Person Editor';
+
 drupal_add_js(
     '//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js',
     array('type'=>'external')
