@@ -133,6 +133,21 @@ class PersonServiceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test getting a person that exists by passing a string that contains an integer.
+     * Should return the person for the provided id.
+     */
+    public function testGetPersonIntegerString()
+    {
+        $this->mockEntityManager->shouldReceive('find')->andReturn($this->mockPerson);
+        $person = $this->personService->getPerson('0');
+        $this->assertInstanceOf('\Pelagos\Entity\Person', $person);
+        $this->assertSame(0, $person->getId());
+        $this->assertEquals(self::$firstName, $person->getFirstName());
+        $this->assertEquals(self::$lastName, $person->getLastName());
+        $this->assertEquals(self::$emailAddress, $person->getEmailAddress());
+    }
+
+    /**
      * Test handling of attempting to get a person with an invalid id.
      *
      * @expectedException \Pelagos\Exception\ArgumentException

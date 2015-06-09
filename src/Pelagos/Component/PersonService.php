@@ -40,9 +40,9 @@ class PersonService extends \Pelagos\Component
      */
     public function getPerson($id)
     {
-        if (!is_int($id)) {
+        if (!preg_match('/^\d+$/', $id)) {
             $exception = new \Pelagos\Exception\ArgumentException(
-                "Person id must be an integer"
+                "Person id must be a non-negative integer"
             );
             $exception->setArgumentName('id');
             $exception->setArgumentValue($id);
