@@ -1,6 +1,12 @@
 {
     "require": {
+        "slim/slim": "2.*",
+        "slim/views": "0.1.*",
+        "twig/twig": "1.*",
         "doctrine/orm": "2.4.*"
+    },
+    "require-dev": {
+        "mockery/mockery": "dev-master"
     },
     "autoload": {
         "psr-4": {"": "src"}
