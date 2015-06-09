@@ -89,7 +89,7 @@ class Component
      * A method for including libraries from the containing framework.
      * Currently, only Drupal is supported.
      *
-     * @param string|array $library Name of library ir array of library names.
+     * @param string|array $library Name of library or array of library names.
      */
     public function addLibrary($library)
     {
