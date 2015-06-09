@@ -14,17 +14,17 @@ function copyValue(what,to)
 }
 
 function altRows(id){
-    if(document.getElementsByTagName){  
-        
-        var table = document.getElementById(id);  
-        var rows = table.getElementsByTagName("tr"); 
-         
-        for(i = 0; i < rows.length; i++){          
+    if(document.getElementsByTagName){
+
+        var table = document.getElementById(id);
+        var rows = table.getElementsByTagName("tr");
+
+        for(i = 0; i < rows.length; i++){
             if(i % 2 == 0){
                 rows[i].className = "evenrowcolor";
             }else{
                 rows[i].className = "oddrowcolor";
-            }      
+            }
         }
     }
 }
@@ -51,7 +51,7 @@ function sortSelect(selectToSort) {
 function validateTabs(shouldTabFocus)
     {
     onceValidated =  true;
-    
+
     tab0HasErrors = false;
     tab1HasErrors = false;
     tab2HasErrors = false;
@@ -59,13 +59,13 @@ function validateTabs(shouldTabFocus)
     tab4HasErrors = false;
     tab5HasErrors = false;
     tab6HasErrors = false;
-    
+
     $('#dtabs-0 input,#dtabs-0 textarea,#dtabs-0 select').each(function() {
         if ($(this).hasClass('error')) {
             // hilight tab 0
             //alert('error in tab 0');
             if (shouldTabFocus != false)
-            { 
+            {
                 $( "#dtabs" ).tabs({
                     active: 6
                 });
@@ -75,13 +75,13 @@ function validateTabs(shouldTabFocus)
             //break;
         }
     });
-    
+
     $('#dtabs-5 input,#dtabs-5 textarea,#dtabs-5 select').each(function() {
         if ($(this).hasClass('error')) {
             // hilight tab 5
             //alert('error in tab 5');
             if (shouldTabFocus != false)
-            { 
+            {
                 $( "#dtabs" ).tabs({
                     active: 5
                 });
@@ -91,13 +91,13 @@ function validateTabs(shouldTabFocus)
             //break;
         }
     });
-    
+
     $('#dtabs-6 input,#dtabs-6 textarea,#dtabs-6 select').each(function() {
         if ($(this).hasClass('error')) {
             // hilight tab 6
             //alert('error in tab 6');
             if (shouldTabFocus != false)
-            { 
+            {
                 $( "#dtabs" ).tabs({
                 active: 4
                 });
@@ -107,13 +107,13 @@ function validateTabs(shouldTabFocus)
             //break;
         }
     });
-    
+
     $('#dtabs-4 input,#dtabs-4 textarea,#dtabs-4 select').each(function() {
         if ($(this).hasClass('error')) {
             // hilight tab 4
             //alert('error in tab 4');
             if (shouldTabFocus != false)
-            { 
+            {
                 $( "#dtabs" ).tabs({
                     active: 3
                 });
@@ -123,13 +123,13 @@ function validateTabs(shouldTabFocus)
             //break;
         }
     });
-    
+
     $('#dtabs-3 input,#dtabs-3 textarea,#dtabs-3 select').each(function() {
         if ($(this).hasClass('error')) {
             // hilight tab 3
             //alert('error in tab 3');
             if (shouldTabFocus != false)
-            { 
+            {
                 $( "#dtabs" ).tabs({
                     active: 2
                 });
@@ -139,13 +139,13 @@ function validateTabs(shouldTabFocus)
             //break;
         }
     });
-    
+
     $('#dtabs-1 input,#dtabs-1 textarea,#dtabs-1 select').each(function() {
         if ($(this).hasClass('error')) {
             // hilight tab 1
             //alert('error in tab 1');
             if (shouldTabFocus != false)
-            { 
+            {
                 $( "#dtabs" ).tabs({
                     active: 1
                 });
@@ -155,13 +155,13 @@ function validateTabs(shouldTabFocus)
             //break;
         }
     });
-    
+
     $('#dtabs-2 input,#dtabs-2 textarea,#dtabs-2 select').each(function() {
         if ($(this).hasClass('error')) {
             // hilight tab 2
             //alert('error in tab 2');
             if (shouldTabFocus != false)
-            { 
+            {
                 $( "#dtabs" ).tabs({
                     active: 0
                 });
@@ -172,7 +172,7 @@ function validateTabs(shouldTabFocus)
             //break;
         }
     });
-    
+
     if (!tab0HasErrors){$('#chkimgtab0').attr("src","includes/images/check.png");};
     if (!tab1HasErrors){$('#chkimgtab1').attr("src","includes/images/check.png");};
     if (!tab2HasErrors){$('#chkimgtab2').attr("src","includes/images/check.png");};
@@ -191,15 +191,15 @@ function uploadFile()
 
 (function ($) {
     $(function() {
-        $(document).ready(function() 
+        $(document).ready(function()
         {
             {{onReady}}
         });
-        
-        $("#file").change(function() { 
+
+        $("#file").change(function() {
             uploadFile();
         });
-        
+
         $.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
             position: {
                 adjust: {
@@ -226,18 +226,18 @@ function uploadFile()
                 'font-size': 12
             }
         });
-        
+
         $("select option").hover(function(){
             $(this).toggleClass('option_hover');
         });
-        
+
         $( "#dtabs" ).tabs({
             heightStyleType: "fill",
 			activate: function(event, ui) {
                 var validator = $("#metadata").validate();
-				
+
 				$(ui.newTab.context.hash).trigger('active');
-                
+
                 if (validator.numberOfInvalids() > 0)
                 {
                     //$("#metadata").validate();
@@ -250,7 +250,7 @@ function uploadFile()
             }
         });
         {{jqUIs}}
-        
+
         $( "#metadialog" ).dialog({
             title: "Metadata Editor:",
             modal: true,
@@ -268,7 +268,50 @@ function uploadFile()
                 }
             },
         });
-        
+
+        function loadFromUDI()
+        {
+            var udival = $('#udifld').val();
+            jQuery.ajax({
+                url: "/metadata-editor/",
+                type: "GET",
+                data: {udi: udival},
+                context: document.body
+                }).done(function(html) {
+                console.log(html);
+                eventObj = jQuery.parseJSON(html);
+                var udi = eventObj.udi;
+                if (eventObj.UDIexists == true)
+                {
+                    location.href = "?dataUrl=http://" + location.hostname + "/pelagos/modules/metadata-generator/" + udival.substring(0,16);;
+                }
+                else
+                {
+                    var errMessage = 'Sorry, UDI:'+ udi +' could not be found.';
+                    $('#udifld').val('');
+                    $('<div>'+errMessage+'</div>').dialog({
+                        height: 'auto',
+                        width: 'auto',
+                        title: "UDI Not found",
+                        resizable: false,
+                        modal: true,
+                        buttons: {
+                            OK: function() {
+                                $(this).dialog( "close" );
+                            }
+                        }
+                    });
+                }
+                return true;
+            });
+        }
+
+        $( "#udidialog form" ).on('submit',function(e) {
+            e.preventDefault();
+            $( "#udidialog" ).dialog( "close" );
+            loadFromUDI();
+        })
+
         $( "#udidialog" ).dialog({
             title: "Metadata Editor:",
             modal: true,
@@ -278,34 +321,14 @@ function uploadFile()
             buttons: {
                 Ok: function() {
                     $( this ).dialog( "close" );
-					var udival = $('#udifld').val();
-                    jQuery.ajax({
-						url: "/metadata-editor/", 
-						type: "GET",
-						data: {udi: udival},
-						context: document.body
-						}).done(function(html) {
-						console.log(html);
-						eventObj = jQuery.parseJSON(html);
-						var udi = eventObj.udi;
-						if (eventObj.UDIexists == true)
-						{
-							location.href = "/metadata-editor/?dataUrl=http://" + location.hostname + "/metadata-generator/" + udival.substring(0,16);;
-						}
-						else
-						{
-							alert('Sorry that UDI:'+ udi +' does not exist');
-							$('#udifld').val('');
-						}
-						return true;
-					});	
+					loadFromUDI();
                 },
                 Cancel: function() {
                     $( this ).dialog( "close" );
                 }
             },
         });
-        
+
         $( "#errordialog" ).dialog({
             title: "Warning:",
             autoOpen: false,
@@ -316,7 +339,7 @@ function uploadFile()
                     $( this ).dialog( "close" );
                 }
             },
-        });    
+        });
 
         $( "#helpdialog" ).dialog({
             title: "Metadata Generator Help:",
@@ -339,8 +362,8 @@ function uploadFile()
                     tabIndex: -1
                 }
             ]
-        });    
-        
+        });
+
         $( "#savedialog" ).dialog({
             title: "Metadata Editor:",
             autoOpen: false,
@@ -360,14 +383,14 @@ function uploadFile()
                     $("#metadata").validate().cancelSubmit = true;
                     $("#metadata").submit();
                     $( this ).dialog( "close" );
-                    
+
                 },
                 Cancel: function() {
                     $( this ).dialog( "close" );
                 }
             },
-        });    
-        
+        });
+
         $("#generate").qtip({
             content: {
                 text: "This button will check that all required fields are completed then save the contents of the form to an ISO 19115-2 XML metadata file on your local computer.  This file is correctly formed XML adhering to the ISO 19115-2 Metadata standard but it is NOT validated at this stage."
@@ -378,7 +401,7 @@ function uploadFile()
                 viewport: $(window)
             }
         });
-        
+
         $("#upload").qtip({
             content: {
                 text: "This button will load the form with information from a previously generated file stored on your local computer."
@@ -389,7 +412,7 @@ function uploadFile()
                 viewport: $(window)
             }
         });
-        
+
         $("#fromudi").qtip({
             content: {
                 text: "This button will pre-populate the form with information about a dataset from the GRIIDC Registry."
@@ -400,7 +423,7 @@ function uploadFile()
                 viewport: $(window)
             }
         });
-        
+
         $("#forcesave").qtip({
             content: {
                 text: "This button will save the contents of the form to an ISO 19115-2 XML metadata file on your local computer. The file will be correctly formed XML, but it is not checked for completion of all required elements."
@@ -411,7 +434,7 @@ function uploadFile()
                 viewport: $(window)
             }
         });
-        
+
         $("#startover").qtip({
             content: {
                 text: "This button will reload a blank form."
@@ -422,7 +445,7 @@ function uploadFile()
             viewport: $(window)
             }
         });
-        
+
         $("#helpscreen").qtip({
             content: {
                 text: "Show help in a separate window."
@@ -433,9 +456,9 @@ function uploadFile()
                 viewport: $(window)
             }
         });
-        
+
         $( "#generate" )
-            
+
             .button({
                     icons: {
                         primary: "ui-icon-check",
@@ -447,14 +470,14 @@ function uploadFile()
                 var validator = $("#metadata").validate();
                 var numOfInvalids = validator.numberOfInvalids();
                 var errText =  "The Metadata form has " + numOfInvalids + " incomplete field(s).<br>Please review fields prior to download.<p/>Please click OK to continue.";
-                
-                
+
+
                 var filenamefld = $("#MI1").val();
                 $("#filename").val(filenamefld);
-                
+
                 if (validator.numberOfInvalids() > 0)
                 {
-                    $('#errordialog').html(errText); 
+                    $('#errordialog').html(errText);
                     $("#errordialog").dialog( "open" );
                 }
                 var spnhtml = "All required fields are complete.<br/>Your metadata file is ready for download.<br/>";
@@ -487,7 +510,7 @@ function uploadFile()
         .click(function( event ) {
             $("#udidialog").dialog("open");
         });
-        
+
         $( "#forcesave" ).button({
                 icons: {
                     primary: "ui-icon-disk"
@@ -498,11 +521,11 @@ function uploadFile()
             $("#dialogtxt").html(spnhtml);
             var filenamefld = $("#MI1").val();
             $("#filename").val(filenamefld);
-            
+
             $("#metadata").validate().cancelSubmit = true;
             $("#metadata").submit();
         });
-        
+
         $( "#startover" ).button({
             icons: {
                 primary: "ui-icon-refresh"
@@ -512,13 +535,13 @@ function uploadFile()
             var urls = location.href.split("?");
             location.href=urls[0];
         });
-        
+
         $( "#helpscreen" ).button({
         icons: {
             primary: "ui-icon-help"
         }
         })
-        
+
         .click(function( event ) {
             var width = 730;
             var height = 500;
@@ -527,15 +550,15 @@ function uploadFile()
             window.open('?action=help','help','width='+width+',height='+height+',top='+top+',left='+left+',toolbar=0,scrollbars=1,location=0,resizable=1');
         });
      });
-        
+
     $("#metadata :checkbox").change(function(){
         if(this.checked) {
             $(this).parent("div").removeClass("error");
         }
     })
-    
+
     $(document).ready(function(){
-        
+
         $.validator.addClassRules({
             phone: {
                 digits: false,
@@ -561,25 +584,25 @@ function uploadFile()
                 //greaterThan: "starttime"
             }
         });
-        
+
         //var isbad = false;
-        
-        jQuery.validator.addMethod("positiveReal", 
+
+        jQuery.validator.addMethod("positiveReal",
         function(value, element) {
             return this.optional(element) || (jQuery.isNumeric(value) && (parseFloat(value) > 0));
         }, "Please enter a positive real number.");
-        
-        jQuery.validator.addMethod("greaterThan", 
+
+        jQuery.validator.addMethod("greaterThan",
         function(value, element, params) {
-            
+
             if (!/Invalid|NaN/.test(new Date(value))) {
                 return new Date(value) > new Date($(params).val());
             }
-            
-            return isNaN(value) && isNaN($(params).val()) 
-            || (Number(value) > Number($(params).val())); 
+
+            return isNaN(value) && isNaN($(params).val())
+            || (Number(value) > Number($(params).val()));
         },'Must be greater than {0}.');
-                
+
         $("#metadata").validate({
             ignore: ".ignore",
             onfocusout: function(event, validator) {
@@ -595,10 +618,10 @@ function uploadFile()
             invalidHandler: function(event, validator) {
                 if ($("#errordialog").dialog( "isOpen" )== false)
                 {
-                    
+
                 }
                 isbad = true;
-                
+
             },
             submitHandler: function(form) {
                 if ($("#savedialog").dialog( "isOpen" )== false)

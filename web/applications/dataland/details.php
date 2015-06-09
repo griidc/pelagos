@@ -38,6 +38,8 @@ require_once 'auth.php'; # for user_is_logged_in_somehow()
 require_once 'Twig_Extensions_GRIIDC.php';
 include_once 'pdo.php'; # for pdoDBQuery()
 require_once 'Twig/Autoloader.php';
+require_once 'lib/DataLand/PubLink.php';
+
 Twig_Autoloader::register();
 
 $loader = new Twig_Loader_Filesystem('./templates');
@@ -106,7 +108,8 @@ if ($udi <> '')
                   ELSE 0
              END
          WHEN dataset_download_status = 'RemotelyHosted' THEN
-             CASE WHEN access_status = 'None' THEN 7
+             CASE WHEN (metadata_status <> 'Accepted' AND '$enforceMetadataRule' = '1') THEN 4
+                  WHEN access_status = 'None' THEN 7
                   WHEN access_status = 'Approval' THEN 6
                   WHEN access_status = 'Restricted' THEN 5
                   ELSE 0
@@ -175,6 +178,9 @@ if ($udi <> '')
     $mprow = pdoDBQuery($mconn,$mquery);
 
     $mprow = $mprow[0];
+    $publink = new \DataLand\PubLink();
+    $publinks = $publink->getLinksArray($udi);
+    $publinkCount = sizeof($publinks);
 }
 
 
@@ -234,7 +240,11 @@ var dlmap = new GeoViz();
 
         $("#rawxml").width($(document).width()*.90);
 
-        $("#tabs").tabs({ heightStyle: "content" });
+        if( <?php echo $publinkCount ?> > 0) {
+            $("#tabs").tabs({ heightStyle: "content" });
+        } else {
+            $("#tabs").tabs({ heightStyle: "content", disabled: [ 2 ] });
+        }
 
         $("#xmlradio").buttonset();
 
@@ -487,8 +497,8 @@ var dlmap = new GeoViz();
         <ul>
             <li><a href="#tabs-1">Details</a></li>
             <li><a href="#tabs-2">Metadata</a></li>
-            <!--
             <li><a href="#tabs-3">Publications</a></li>
+            <!--
             <li><a href="#tabs-4">Manifest</a></li>
             -->
         </ul>
@@ -533,6 +543,11 @@ var dlmap = new GeoViz();
                 ?>
                 </div>
             </p>
+        </div>
+        <div class="tabb" id="tabs-3">
+            <?php
+                echo $twig->render('publications.html', array('publinks' => $publinks));
+            ?>
         </div>
     </div>
 </div>
