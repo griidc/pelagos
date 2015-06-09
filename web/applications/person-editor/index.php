@@ -7,30 +7,27 @@
  *
  */
 
-$base_path = $GLOBALS['pelagos']['base_path'];
-$component_path = $GLOBALS['pelagos']['component_path'];
+require_once __DIR__.'/../../../vendor/autoload.php';
 
-drupal_add_js(
-    '//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js',
-    array('type'=>'external')
+$comp = new \Pelagos\Component;
+
+$comp->setTitle('Person Editor');
+
+$comp->addJS(
+    array(
+        '//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js',
+        'static/js/personForm.js',
+    )
 );
 
-drupal_add_js($component_path.'/static/js/personForm.js', 'external');
-
-drupal_add_library('system', 'ui.widget');
-drupal_add_library('system', 'ui.dialog');
-drupal_add_library('system', 'ui.dialog');
-
-require_once 'Twig/Autoloader.php';
-
-global $twig;
-$twigloader;
-
-Twig_Autoloader::register();
+$comp->addLibrary('ui.widget');
+$comp->addLibrary('ui.dialog');
 
 $twigloader = new Twig_Loader_Filesystem('./templates');
 $twig = new Twig_Environment($twigloader, array('autoescape' => false));
 
-$twigdata = array('base_path' => $base_path);
+$twigdata = array('base_path' => $comp->getBasePath());
 
 echo $twig->render('personForm.html', $twigdata);
+
+$comp->finalize();
