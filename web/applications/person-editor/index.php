@@ -11,9 +11,7 @@ require_once __DIR__.'/../../../vendor/autoload.php';
 
 $comp = new \Pelagos\Component;
 
-$base_path = $GLOBALS['pelagos']['base_path'];
-
-$GLOBALS['pelagos']['title'] = 'Person Editor';
+$comp->setTitle('Person Editor');
 
 $comp->addJS(
     array(
@@ -28,7 +26,7 @@ $comp->addLibrary('ui.dialog');
 $twigloader = new Twig_Loader_Filesystem('./templates');
 $twig = new Twig_Environment($twigloader, array('autoescape' => false));
 
-$twigdata = array('base_path' => $base_path);
+$twigdata = array('base_path' => $comp->getBasePath());
 
 echo $twig->render('personForm.html', $twigdata);
 
