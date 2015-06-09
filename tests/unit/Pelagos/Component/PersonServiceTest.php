@@ -125,6 +125,30 @@ class PersonServiceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test handling of attempting to get a person with an invalid id.
+     *
+     * @expectedException \Pelagos\Exception\ArgumentException
+     */
+    public function testGetPersonInvalidID()
+    {
+        $person = $this->personService->getPerson('foo');
+    }
+
+    /**
+     * Test handling of attempting to get a person with an invalid id
+     * and getting back the id sent upon catching the exception.
+     */
+    public function testGetPersonInvalidIDGetID()
+    {
+        try {
+            $person = $this->personService->getPerson('foo');
+        } catch (\Pelagos\Exception\ArgumentException $e) {
+            $this->assertEquals('id', $e->getArgumentName());
+            $this->assertEquals('foo', $e->getArgumentValue());
+        }
+    }
+
+    /**
      * Test handling of attempting to get a person that does not exist in persistence.
      *
      * @expectedException \Pelagos\Exception\RecordNotFoundPersistenceException

@@ -40,6 +40,14 @@ class PersonService extends \Pelagos\Component
      */
     public function getPerson($id)
     {
+        if (!is_int($id)) {
+            $exception = new \Pelagos\Exception\ArgumentException(
+                "Person id must be an integer"
+            );
+            $exception->setArgumentName('id');
+            $exception->setArgumentValue($id);
+            throw $exception;
+        }
         try {
             $entityManager = $this->getEntityManager();
             $person = $entityManager->find('\Pelagos\Entity\Person', $id);
