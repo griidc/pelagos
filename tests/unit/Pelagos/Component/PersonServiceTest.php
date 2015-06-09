@@ -193,4 +193,91 @@ class PersonServiceTest extends \PHPUnit_Framework_TestCase
         $this->mockEntityManager->shouldReceive('find')->andThrow('\Doctrine\DBAL\DBALException');
         $person = $this->personService->getPerson(0);
     }
+
+    /**
+     * Test updating a person that exists.
+     * Should return the updated person for the provided id.
+     */
+    public function testUpdatePerson()
+    {
+        $this->mockPerson->shouldReceive('update');
+        $this->mockEntityManager->shouldReceive('find')->andReturn($this->mockPerson);
+        $this->mockEntityManager->shouldReceive('flush');
+        $updates = array(
+            'firstName' => self::$firstName
+        );
+        $person = $this->personService->updatePerson(0, $updates);
+        $this->assertInstanceOf('\Pelagos\Entity\Person', $person);
+        $this->assertSame(0, $person->getId());
+        $this->assertEquals(self::$firstName, $person->getFirstName());
+        $this->assertEquals(self::$lastName, $person->getLastName());
+        $this->assertEquals(self::$emailAddress, $person->getEmailAddress());
+    }
+
+    /**
+     * Test updating a person that exists by passing a string that contains an integer.
+     * Should return the updated person for the provided id.
+     */
+    public function testUpdatePersonIntegerString()
+    {
+        $this->mockPerson->shouldReceive('update');
+        $this->mockEntityManager->shouldReceive('find')->andReturn($this->mockPerson);
+        $this->mockEntityManager->shouldReceive('flush');
+        $updates = array(
+            'firstName' => self::$firstName
+        );
+        $person = $this->personService->updatePerson('0', $updates);
+        $this->assertInstanceOf('\Pelagos\Entity\Person', $person);
+        $this->assertSame(0, $person->getId());
+        $this->assertEquals(self::$firstName, $person->getFirstName());
+        $this->assertEquals(self::$lastName, $person->getLastName());
+        $this->assertEquals(self::$emailAddress, $person->getEmailAddress());
+    }
+
+    /**
+     * Test handling of attempting to update a person with an invalid id.
+     *
+     * @expectedException \Pelagos\Exception\ArgumentException
+     */
+    public function testUpdatePersonInvalidID()
+    {
+        $person = $this->personService->updatePerson('foo', array());
+    }
+
+    /**
+     * Test handling of attempting to update a person with an invalid id
+     * and getting back the id sent upon catching the exception.
+     */
+    public function testUpdatePersonInvalidIDGetID()
+    {
+        try {
+            $person = $this->personService->updatePerson('foo', array());
+        } catch (\Pelagos\Exception\ArgumentException $e) {
+            $this->assertEquals('id', $e->getArgumentName());
+            $this->assertEquals('foo', $e->getArgumentValue());
+        }
+    }
+
+    /**
+     * Test handling of attempting to update a person that does not exist in persistence.
+     *
+     * @expectedException \Pelagos\Exception\RecordNotFoundPersistenceException
+     */
+    public function testUpdatePersonRecordNotFound()
+    {
+        $this->mockEntityManager->shouldReceive('find')->andReturnNull();
+        $person = $this->personService->updatePerson(0, array());
+    }
+
+    /**
+     * Test handling of attempting to update a person and encountering a persistence error.
+     * This tests for handling of persistence errors not handled specifically.
+     *
+     * @expectedException \Pelagos\Exception\PersistenceException
+     */
+    public function testUpdatePersonPersistenceError()
+    {
+        $this->mockEntityManager->shouldReceive('find')->andThrow('\Doctrine\DBAL\DBALException');
+        $person = $this->personService->updatePerson(0, array());
+    }
 }
