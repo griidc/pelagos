@@ -82,7 +82,11 @@ class PersonServiceTest extends \PHPUnit_Framework_TestCase
      */
     public function testCreatePersonMissingRequiredField()
     {
-        $this->mockEntityManager->shouldReceive('flush')->andThrow('\Doctrine\DBAL\Exception\NotNullConstraintViolationException', null, $this->mockDriverException);
+        $this->mockEntityManager->shouldReceive('flush')->andThrow(
+            '\Doctrine\DBAL\Exception\NotNullConstraintViolationException',
+            null,
+            $this->mockDriverException
+        );
         $person = $this->personService->createPerson(self::$firstName, self::$lastName, self::$emailAddress);
     }
 
@@ -93,7 +97,11 @@ class PersonServiceTest extends \PHPUnit_Framework_TestCase
      */
     public function testCreatePersonRecordExists()
     {
-        $this->mockEntityManager->shouldReceive('flush')->andThrow('\Doctrine\DBAL\Exception\UniqueConstraintViolationException', null, $this->mockDriverException);
+        $this->mockEntityManager->shouldReceive('flush')->andThrow(
+            '\Doctrine\DBAL\Exception\UniqueConstraintViolationException',
+            null,
+            $this->mockDriverException
+        );
         $person = $this->personService->createPerson(self::$firstName, self::$lastName, self::$emailAddress);
     }
 
