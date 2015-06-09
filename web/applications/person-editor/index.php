@@ -7,6 +7,8 @@
  *
  */
 
+require_once __DIR__.'/../../../vendor/autoload.php';
+
 $base_path = $GLOBALS['pelagos']['base_path'];
 $component_path = $GLOBALS['pelagos']['component_path'];
 
@@ -22,13 +24,6 @@ drupal_add_js($component_path.'/static/js/personForm.js', 'external');
 drupal_add_library('system', 'ui.widget');
 drupal_add_library('system', 'ui.dialog');
 drupal_add_library('system', 'ui.dialog');
-
-require_once 'Twig/Autoloader.php';
-
-global $twig;
-$twigloader;
-
-Twig_Autoloader::register();
 
 $twigloader = new Twig_Loader_Filesystem('./templates');
 $twig = new Twig_Environment($twigloader, array('autoescape' => false));
