@@ -75,7 +75,7 @@ function getMetadataXmlFromGomriDB($datasetUdi)
  * if there is a database problem.
  * Throw NotFoundException if the database finds a path
  * but the path is not readable.
- * @param $datasetUdi
+ * @param string $datasetUdi
  * @return string xml
  * @throws NotFoundException
  * @throws PersistenceEngineException
@@ -114,8 +114,9 @@ function finishAllSuccessfulCases($udi, $app, $metadataXml)
  * Bit of a black box but I know it does not rely on xml
  * stored in either the database or a file. Call it when the
  * first two methods fail.
- * @param $udi
- * @param $app
+ * @param string $udi
+ * @param slim $app
+ * @param MetadataLogger $logger
  * @return tidy
  * @throws NotFoundException
  */
@@ -128,7 +129,7 @@ function legacyGetMetadataXml($udi, $app, MetadataLogger $logger)
     require_once 'rpis.php';
     $env = getLocalEnvironment();
     $stash = array();
-    $GOMRI_DBH = OpenDB('GOMRI_RO');
+    $GOMRI_DBH = OpenDB('GOMRI_RW');
     $RIS_DBH = OpenDB('RIS_RO');
     $logger->write("Metadata Generator - starting legacyGetMetadataXml() udi: " . $udi);
     $datasets = get_identified_datasets($GOMRI_DBH, array("udi=$udi"));
@@ -244,7 +245,7 @@ $app->get(
         $trimUdi = trim($udi);
 
         $logger = new MetadataLogger("indexPHP", $trimUdi);
-        $logger->setOff;
+        $logger->setOff();
         $env = getLocalEnvironment();
 
 

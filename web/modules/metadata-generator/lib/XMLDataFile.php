@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * A class to get XML metadata files from a file.
+ * The file location is stored in the database.
+ */
 namespace MetadataGenerator;
 
 use \Exception\NotFoundException as NotFoundException;
@@ -38,6 +42,11 @@ class XMLDataFile
         return self::$instance;
     }
 
+    /**
+     * Unused - as far as I know
+     * @@param string $udi
+     * @return string
+     */
     private function getLocationUgly($udi)
     {
         # load global pelagos config
@@ -58,6 +67,13 @@ class XMLDataFile
         return $filePath;
     }
 
+    /**
+     * The XML is stored in a file.
+     * Get the file name / path from the database
+     * @@param string $udi
+     * @return bool|string
+     * @throws PersistenceEngineException
+     */
     private function getLocationFromDB($udi)
     {
         require_once "./exceptions/PersistenceEngineException.php";
@@ -119,7 +135,7 @@ class XMLDataFile
      * if there is a database problem.
      * Throw NotFoundException if the database finds a path
      * but the path is not readable.
-     * @param $udi
+     * @param string $udi
      * @return bool|string
      * @throws NotFoundException
      * @throws PersistenceEngineException
@@ -133,7 +149,7 @@ class XMLDataFile
         require_once "./lib/XMLValidator.php";
         $targetUdi = trim($udi);
         $this->logger = new MetadataLogger("XMLDataFile", $targetUdi);
-        $this->logger->setOff;
+        $this->logger->setOff();
         $xmlText = false;
         $this->logger->write("XMLDataFile.getXML(" . $targetUdi . ") calling getLocationFromDB()");
         $path = $this->getLocationFromDB($targetUdi);

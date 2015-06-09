@@ -39,6 +39,7 @@ class MetadataXmlFromDB
     private static $instance = null;
 
     /**
+     * private constructor
      * singleton implementation
      * only one instance of this class allowed
      * per executable unit
@@ -52,6 +53,10 @@ class MetadataXmlFromDB
 
     /**
      * singleton implementation
+     * use this method instead of new MetadataXmlFromDB()
+     * This function will return the one instance of this class.
+     * If not yet instantiated will create an instance with the
+     * private constructor.
      */
     public static function getInstance()
     {
@@ -64,7 +69,7 @@ class MetadataXmlFromDB
     /**
      * Read the database metadata table and return the
      * xml data
-     * @param $datasetUdi
+     * @param string $datasetUdi
      * @return string - the xml data as a string
      */
     public function getMetadataXmlForDatasetUdi($datasetUdi)
@@ -72,7 +77,7 @@ class MetadataXmlFromDB
         require_once "lib/MetadataLogger.php";
         $targetUdi = trim($datasetUdi);
         $this->logger = new MetadataLogger("metadataXmlFromDB", $targetUdi);
-        $this->logger->setOff;
+        $this->logger->setOff();
         $this->logger->log("inside getMetadataXmlForDatasetUdi");
         $registryId = $this->getRegistryIdForDatasetUdi($targetUdi);
         $this->logger->log("  got back " . $registryId);
@@ -85,7 +90,7 @@ class MetadataXmlFromDB
     /**
      * Fetch the the metadata xml from the Metadata table
      * The key is registry id
-     * @param $registryId
+     * @param string $registryId
      * @return the xml from the meatadata t
      * @throws NotFoundException of the registry row is not found
      * @throws PersistenceEngineException
@@ -102,7 +107,7 @@ class MetadataXmlFromDB
             if ($statement->execute()) {
                 if ($row = $statement->fetch(PDO::FETCH_ASSOC)) { // if true
                     $metadataXml = $row[self::METADATA_XML_COL];
-                    return $this->compressXml($metadataXml);
+                    return $metadataXml;
                 } // else it is false - not found
                 throw new NotFoundException(
                     "C-1: " . "No " . self::METADATA_TABLE_NAME . "  found with registry ID " .
@@ -133,7 +138,7 @@ class MetadataXmlFromDB
 
     /**
      * Fetch the object based on it's unique id.
-     * @param I_Persistable $obj
+     * @param string $datasetUdi
      * @return the Registry instance if it exists in the store
      * @throws NotFoundException of the object is not found
      * @throws PersistenceEngineException
