@@ -380,6 +380,155 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test attempting to update a person when no user is logged in.
+     * Should fail and return 401 with a message indicating that login is required.
+     */
+    public function testUpdatePersonNotLoggedIn()
+    {
+        \Slim\Environment::mock(
+            array(
+                'REQUEST_METHOD' => 'PUT',
+                'PATH_INFO' => '/0',
+            )
+        );
+        $this->expectOutputString($this->makeHTTPStatusJSON(401, 'Login Required to use this feature'));
+        require 'index.php';
+    }
+
+    /**
+     * Test that updating a person with an invalid id.
+     * Should return 400 with a message indicating the id must be a non-negative integer.
+     */
+    public function testUpdatePersonInvalidId()
+    {
+        \Slim\Environment::mock(
+            array(
+                'REQUEST_METHOD' => 'PUT',
+                'PATH_INFO' => '/foo',
+            )
+        );
+        $this->expectOutputString(
+            $this->makeHTTPStatusJSON(
+                400,
+                'Person id must be a non-negative integer'
+            )
+        );
+        $GLOBALS['user'] = new \Pelagos\Tests\Helpers\TestUser;
+        require 'index.php';
+    }
+
+    /**
+     * Test that updating a person that doesn't exist.
+     * Should return 404 with a message indicating the person is not found.
+     */
+    public function testUpdatePersonNotFound()
+    {
+        $this->mockEntityManager->shouldReceive('find')->andReturnNull();
+        \Slim\Environment::mock(
+            array(
+                'REQUEST_METHOD' => 'PUT',
+                'PATH_INFO' => '/0',
+            )
+        );
+        $this->expectOutputString(
+            $this->makeHTTPStatusJSON(
+                404,
+                'Person with id 0 not found'
+            )
+        );
+        $GLOBALS['user'] = new \Pelagos\Tests\Helpers\TestUser;
+        require 'index.php';
+    }
+
+    /**
+     * Test that updating a person and encountering a persistence error.
+     * Should return 500 with a message indicating what happened.
+     */
+    public function testUpdatePersonPersistenceError()
+    {
+        $this->mockEntityManager->shouldReceive('find')->andThrow(
+            '\Doctrine\DBAL\DBALException'
+        );
+        \Slim\Environment::mock(
+            array(
+                'REQUEST_METHOD' => 'PUT',
+                'PATH_INFO' => '/0',
+            )
+        );
+        $this->expectOutputString(
+            $this->makeHTTPStatusJSON(
+                500,
+                'A database error has occured: '
+            )
+        );
+        $GLOBALS['user'] = new \Pelagos\Tests\Helpers\TestUser;
+        require 'index.php';
+    }
+
+    /**
+     * Test updating a person and encountering a general error.
+     * Should return 500 with a message indicating what happened.
+     */
+    public function testUpdatePersonGeneralError()
+    {
+        $this->mockEntityManager->shouldReceive('find')->andThrow(
+            '\Exception'
+        );
+        \Slim\Environment::mock(
+            array(
+                'REQUEST_METHOD' => 'PUT',
+                'PATH_INFO' => '/0',
+            )
+        );
+        $this->expectOutputString(
+            $this->makeHTTPStatusJSON(
+                500,
+                'A general error has occured: '
+            )
+        );
+        $GLOBALS['user'] = new \Pelagos\Tests\Helpers\TestUser;
+        require 'index.php';
+    }
+
+    /**
+     * Test that updating a person with a valid id is successful.
+     * Should return 200 with a message indicating the person was updated
+     * and a JSON serialization of the person as the data package.
+     */
+    public function testUpdatePersonSuccess()
+    {
+        $personData = array(
+            'id' => 0,
+            'firstName' => self::$firstName,
+            'lastName' => self::$lastName,
+            'emailAddress' => self::$emailAddress,
+        );
+        $mockPerson = \Mockery::mock('\Pelagos\Entity\Person, JsonSerializable');
+        $mockPerson->shouldReceive('jsonSerialize')->andReturn($personData);
+        $mockPerson->shouldReceive('update');
+        $this->mockEntityManager->shouldReceive('find')->andReturn($mockPerson);
+        $this->mockEntityManager->shouldReceive('flush');
+        \Slim\Environment::mock(
+            array(
+                'REQUEST_METHOD' => 'PUT',
+                'PATH_INFO' => '/0',
+                'slim.input' => 'firstName=' . self::$firstName .
+                                '&lastName=' . self::$lastName .
+                                '&emailAddress=' . self::$emailAddress
+            )
+        );
+        $this->expectOutputString(
+            $this->makeHTTPStatusJSON(
+                200,
+                'Updated Person with id: 0',
+                $personData
+            )
+        );
+        $GLOBALS['user'] = new \Pelagos\Tests\Helpers\TestUser;
+        require 'index.php';
+    }
+
+    /**
      * Utility method to build a JSON string equivalent to a JSON serialized HTTPStatus.
      *
      * @param int $code The HTTP status code.

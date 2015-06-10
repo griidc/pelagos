@@ -98,5 +98,51 @@ $slim->get(
     }
 );
 
+$slim->put(
+    '/:id',
+    function ($id) use ($comp, $slim) {
+        $response = $slim->response;
+        $response->headers->set('Content-Type', 'application/json');
+        $comp->setQuitOnFinalize(true);
+
+        // Check to see that user is logged in.
+        // THIS IS AN INSUFFICIENT SECURITY CHECK, THIS WILL
+        // HAVE TO BE TIED TO SOME SORT OF ACCESS LIST WHEN
+        // RELEASED.
+        if (!$comp->userIsLoggedIn()) {
+            $status = new HTTPStatus(401, 'Login Required to use this feature');
+            $response->status($status->getCode());
+            $response->body(json_encode($status));
+            return;
+        }
+
+        $personProps = array(
+            'firstName',
+            'lastName',
+            'emailAddress',
+        );
+        try {
+            $updates = array();
+            foreach ($personProps as $prop) {
+                if ($slim->request->put($prop) !== null) {
+                    $updates[$prop] = $slim->request->put($prop);
+                }
+            }
+            $person = $comp->updatePerson($id, $updates);
+            $status = new HTTPStatus(200, "Updated Person with id: $id", $person);
+        } catch (ArgumentException $e) {
+            $status = new HTTPStatus(400, $e->getMessage());
+        } catch (RecordNotFoundPersistenceException $e) {
+            $status = new HTTPStatus(404, $e->getMessage());
+        } catch (PersistenceException $e) {
+            $status = new HTTPStatus(500, 'A database error has occured: ' . $e->getDatabaseErrorMessage());
+        } catch (\Exception $e) {
+            $status = new HTTPStatus(500, 'A general error has occured: ' . $e->getMessage());
+        }
+        $response->status($status->getCode());
+        $response->body(json_encode($status));
+    }
+);
+
 $slim->run();
 $comp->finalize();
