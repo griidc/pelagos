@@ -34,16 +34,19 @@ class PersistenceException extends \Exception
     public function __construct($message = '', $code = 0, \Exception $previous = null)
     {
         if (isset($previous) and is_a($previous->getPrevious(), '\PDOException')) {
-            $this->databaseErrorCode = $previous->getPrevious()->errorInfo[0];
-            $this->databaseErrorCodeDriver = $previous->getPrevious()->errorInfo[1];
-            $dbMessage = $previous->getPrevious()->errorInfo[2];
-            if (preg_match('/ERROR: +(.*?)(?:\n|$)/', $dbMessage, $matches)) {
-                $this->databaseErrorMessage = $matches[1];
-            } else {
-                $this->databaseErrorMessage = $dbMessage;
-            }
-            if (preg_match('/HINT: +(.*?)(?:\n|$)/', $dbMessage, $matches)) {
-                $this->databaseErrorHint = $matches[1];
+            $pdoException = $previous->getPrevious();
+            if (isset($pdoException->errorInfo) and is_array($pdoException->errorInfo)) {
+                $this->databaseErrorCode = $pdoException->errorInfo[0];
+                $this->databaseErrorDriverCode = $pdoException->errorInfo[1];
+                $dbMessage = $pdoException->errorInfo[2];
+                if (preg_match('/ERROR: +(.*?)(?:\n|$)/', $dbMessage, $matches)) {
+                    $this->databaseErrorMessage = $matches[1];
+                } else {
+                    $this->databaseErrorMessage = $dbMessage;
+                }
+                if (preg_match('/HINT: +(.*?)(?:\n|$)/', $dbMessage, $matches)) {
+                    $this->databaseErrorHint = $matches[1];
+                }
             }
         }
         if (preg_match('/An exception occurred while executing \'([^\']+)\'/', $message, $matches)) {
@@ -86,13 +89,13 @@ class PersistenceException extends \Exception
     }
 
     /**
-     * Getter for databaseErrorCodeDriver.
+     * Getter for databaseErrorDriverCode.
      *
      * @return string The driver-specific error code from the database.
      */
-    public function getDatabaseErrorCodeDriver()
+    public function getDatabaseErrorDriverCode()
     {
-        return $this->databaseErrorCodeDriver;
+        return $this->databaseErrorDriverCode;
     }
 
     /**
