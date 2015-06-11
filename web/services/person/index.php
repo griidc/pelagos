@@ -48,7 +48,7 @@ $slim->post(
                 $slim->request->post('emailAddress')
             );
             $status = new HTTPStatus(
-                200,
+                201,
                 sprintf(
                     'A person has been successfully created: %s %s (%s) with at ID of %d.',
                     $person->getFirstName(),
@@ -57,6 +57,8 @@ $slim->post(
                     $person->getId()
                 )
             );
+            # TODO: switch to getUri() once merged in
+            $response->headers->set('Location', $comp->getPath() . '/' . $person->getId());
         } catch (EmptyRequiredArgumentException $e) {
             $status = new HTTPStatus(400, $e->getMessage());
         } catch (InvalidFormatArgumentException $e) {

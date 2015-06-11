@@ -248,7 +248,7 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
         $GLOBALS['user'] = new \Pelagos\Tests\Helpers\TestUser;
         $this->expectOutputString(
             $this->makeHTTPStatusJSON(
-                200,
+                201,
                 'A person has been successfully created: ' .
                 'test user (test.user@testdomian.tld) with at ID of 0.'
             )
