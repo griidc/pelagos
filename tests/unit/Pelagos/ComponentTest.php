@@ -56,6 +56,15 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
     /** @var \Pelagos\Component $component Class variable to hold an instance of \Pelagos\Component to test against */
     protected $component;
 
+    /** @var string $basePath A URL base path for Pelagos for testing. **/
+    protected static $basePath = '/pelagos-base';
+
+    /** @var string $path A URL path to this component for testing. **/
+    protected static $path = '/pelagos-base/applications/my-component';
+
+    /** @var string $title A page title for testing. **/
+    protected static $title = 'Foo Bar Baz';
+
     /**
      * Set up method.
      * Alias mock \Pelagos\Persistance::createEntityManager() to return a mock \Doctrine\ORM\EntityManager
@@ -64,8 +73,8 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         require_once __DIR__ . '/../../helpers/TestUser.php';
-        $GLOBALS['pelagos']['base_path'] = 'https://foo.bar/pelagos';
-        $GLOBALS['pelagos']['component_path'] = 'https://foo.bar/pelagos/applications/baz';
+        $GLOBALS['pelagos']['base_path'] = self::$basePath;
+        $GLOBALS['pelagos']['component_path'] = self::$path;
         \Mockery::mock(
             'alias:\Pelagos\Persistance',
             array(
@@ -92,7 +101,7 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
      */
     public function testAddJSRelativePath()
     {
-        $this->expectOutputString('drupal_add_js: ' . $GLOBALS['pelagos']['component_path'] . "/static/js/foo.js\n");
+        $this->expectOutputString('drupal_add_js: ' . self::$path . "/static/js/foo.js\n");
         $this->component->addJS('static/js/foo.js');
     }
 
@@ -101,7 +110,7 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
      */
     public function testAddJSAbsolutePath()
     {
-        $this->expectOutputString('drupal_add_js: ' . $GLOBALS['pelagos']['base_path'] . "/static/js/bar.js\n");
+        $this->expectOutputString('drupal_add_js: ' . self::$basePath . "/static/js/bar.js\n");
         $this->component->addJS('/static/js/bar.js');
     }
 
@@ -138,9 +147,9 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
     public function testAddJSMultiple()
     {
         $this->expectOutputString(
-            'drupal_add_js: ' . $GLOBALS['pelagos']['component_path'] . "/foo.js\n" .
-            'drupal_add_js: ' . $GLOBALS['pelagos']['component_path'] . "/bar.js\n" .
-            'drupal_add_js: ' . $GLOBALS['pelagos']['component_path'] . "/baz.js\n"
+            'drupal_add_js: ' . self::$path . "/foo.js\n" .
+            'drupal_add_js: ' . self::$path . "/bar.js\n" .
+            'drupal_add_js: ' . self::$path . "/baz.js\n"
         );
         $this->component->addJS(
             array(
@@ -157,7 +166,7 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
      */
     public function testAddJSNonUrlHTTP()
     {
-        $this->expectOutputString("drupal_add_js: https://foo.bar/pelagos/applications/baz/http/js/baz.js\n");
+        $this->expectOutputString("drupal_add_js: " . self::$path . "/http/js/baz.js\n");
         $this->component->addJS('http/js/baz.js');
     }
 
@@ -166,7 +175,7 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
      */
     public function testAddCSSRelativePath()
     {
-        $this->expectOutputString('drupal_add_css: ' . $GLOBALS['pelagos']['component_path'] . "/static/css/foo.css\n");
+        $this->expectOutputString('drupal_add_css: ' . self::$path . "/static/css/foo.css\n");
         $this->component->addCSS('static/css/foo.css');
     }
 
@@ -175,7 +184,7 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
      */
     public function testAddCSSAbsolutePath()
     {
-        $this->expectOutputString('drupal_add_css: ' . $GLOBALS['pelagos']['base_path'] . "/static/css/bar.css\n");
+        $this->expectOutputString('drupal_add_css: ' . self::$basePath . "/static/css/bar.css\n");
         $this->component->addCSS('/static/css/bar.css');
     }
 
@@ -212,7 +221,7 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
      */
     public function testAddCSSNonUrlHTTP()
     {
-        $this->expectOutputString("drupal_add_css: https://foo.bar/pelagos/applications/baz/http/css/baz.css\n");
+        $this->expectOutputString("drupal_add_css: " . self::$path . "/http/css/baz.css\n");
         $this->component->addCSS('http/css/baz.css');
     }
 
@@ -222,9 +231,9 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
     public function testAddCSSMultiple()
     {
         $this->expectOutputString(
-            'drupal_add_css: ' . $GLOBALS['pelagos']['component_path'] . "/foo.css\n" .
-            'drupal_add_css: ' . $GLOBALS['pelagos']['component_path'] . "/bar.css\n" .
-            'drupal_add_css: ' . $GLOBALS['pelagos']['component_path'] . "/baz.css\n"
+            'drupal_add_css: ' . self::$path . "/foo.css\n" .
+            'drupal_add_css: ' . self::$path . "/bar.css\n" .
+            'drupal_add_css: ' . self::$path . "/baz.css\n"
         );
         $this->component->addCSS(
             array(
@@ -242,6 +251,25 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
     {
         $this->expectOutputString("drupal_add_library: system::foo.bar\n");
         $this->component->addLibrary('foo.bar');
+    }
+
+    /**
+     * Test adding multiple libraries in one call by passing an array.
+     */
+    public function testAddLibraryMultiple()
+    {
+        $this->expectOutputString(
+            "drupal_add_library: system::foo\n" .
+            "drupal_add_library: system::bar\n" .
+            "drupal_add_library: system::baz\n"
+        );
+        $this->component->addLibrary(
+            array(
+                'foo',
+                'bar',
+                'baz',
+            )
+        );
     }
 
     /**
@@ -290,5 +318,24 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
     {
         $this->expectOutputString('');
         $this->component->finalize();
+    }
+
+    /**
+     * Test getting environmental properties.
+     */
+    public function testGetEnvironmentalProperties()
+    {
+        $this->assertEquals(self::$basePath, $this->component->getBasePath());
+        $this->assertEquals(self::$path, $this->component->getPath());
+    }
+
+    /**
+     * Test setting environmental properties.
+     */
+    public function testSetEnvironmentalProperties()
+    {
+        $this->component->setTitle(self::$title);
+        $this->component->finalize();
+        $this->assertEquals(self::$title, $GLOBALS['pelagos']['title']);
     }
 }
