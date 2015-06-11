@@ -5,12 +5,31 @@ var base_path;
 $(document).ready(function()
 {
     base_path = $('div[base_path]').attr('base_path');
+    
+    $.validator.methods._required = $.validator.methods.required;
+    $.validator.methods.required = function( value, element, param )
+    {
+        if (typeof this.settings.rules[ $(element).attr('name') ] != 'undefined' 
+            && typeof this.settings.rules[ $(element).attr('name') ].remote != 'undefined') {
+                return true;
+            }
+        return  $.validator.methods._required.call( this, value, element, param );
+    }
 
     formValidator = $("#personForm").validate({
         submitHandler: function(form) {
             var data = getFormJSON($('form'));
             savePerson(data)
-        }
+        },
+    });
+    
+    $("input").each(function() {
+        var url = base_path + "/services/person/isValid";
+        $(this).rules( "add", {
+            remote: {
+                url: url,
+            }
+        })
     });
 
     $('#btnSave').button();
