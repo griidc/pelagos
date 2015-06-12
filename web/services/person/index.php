@@ -57,16 +57,19 @@ $slim->post(
                     $person->getId()
                 )
             );
-            # TODO: switch to getUri() once merged in
-            $response->headers->set('Location', $comp->getPath() . '/' . $person->getId());
+            $response->headers->set('Location', $comp->getUri() . '/' . $person->getId());
         } catch (EmptyRequiredArgumentException $e) {
-            $status = new HTTPStatus(400, $e->getMessage());
+            $status = new HTTPStatus(400, 'Cannot create person because ' . $e->getMessage() . '.');
         } catch (InvalidFormatArgumentException $e) {
-            $status = new HTTPStatus(400, $e->getMessage());
+            $status = new HTTPStatus(
+                400,
+                'Cannot create person because ' . $e->getMessage() .
+                '. It should follow this format: ' . $e->getExpectedFormat()
+            );
         } catch (MissingRequiredFieldPersistenceException $e) {
-            $status = new HTTPStatus(400, 'A required field is missing: ' . $e->getDatabaseErrorHint());
+            $status = new HTTPStatus(400, 'Cannot create person because a required field is missing.');
         } catch (RecordExistsPersistenceException $e) {
-            $status = new HTTPStatus(409, 'This record already exists.');
+            $status = new HTTPStatus(409, 'Cannot create person: ' . $e->getDatabaseErrorMessage());
         } catch (PersistenceException $e) {
             $status = new HTTPStatus(500, 'A database error has occured: ' . $e->getDatabaseErrorMessage());
         } catch (\Exception $e) {

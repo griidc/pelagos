@@ -23,11 +23,11 @@ class PersonService extends \Pelagos\Component
             $entityManager->persist($person);
             $entityManager->flush();
         } catch (\Doctrine\DBAL\Exception\NotNullConstraintViolationException $e) {
-            throw new \Pelagos\Exception\MissingRequiredFieldPersistenceException($e);
+            throw new \Pelagos\Exception\MissingRequiredFieldPersistenceException($e->getMessage(), $e->getCode(), $e);
         } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException $e) {
-            throw new \Pelagos\Exception\RecordExistsPersistenceException($e);
+            throw new \Pelagos\Exception\RecordExistsPersistenceException($e->getMessage(), $e->getCode(), $e);
         } catch (\Doctrine\DBAL\DBALException $e) {
-            throw new \Pelagos\Exception\PersistenceException($e->getMessage());
+            throw new \Pelagos\Exception\PersistenceException($e->getMessage(), $e->getCode(), $e);
         }
         return $person;
     }

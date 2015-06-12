@@ -24,9 +24,6 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
     /** @var \Doctrine\ORM\EntityManager $mockEntityManager An instance of a mock EntityManager. **/
     protected $mockEntityManager;
 
-    /** @var \Doctrine\DBAL\Driver\DriverException $mockDriverException An instance of a mock DriverException.  **/
-    protected $mockDriverException;
-
     /** @var string $firstName A valid first name to use for testing. **/
     protected static $firstName = 'test';
 
@@ -54,8 +51,6 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
         $mockPersistence = \Mockery::mock('alias:\Pelagos\Persistance');
         $mockPersistence->shouldReceive('createEntityManager')->andReturn($this->mockEntityManager);
 
-        $this->mockDriverException = \Mockery::mock('\Doctrine\DBAL\Driver\DriverException');
-
         $this->saveCwd = getcwd();
         chdir(__DIR__ . '/../../../../web/services/person');
     }
@@ -67,7 +62,12 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
     public function testCreatePersonNotLoggedIn()
     {
         \Slim\Environment::mock(array('REQUEST_METHOD' => 'POST'));
-        $this->expectOutputString($this->makeHTTPStatusJSON(401, 'Login Required to use this feature'));
+        $this->expectOutputString(
+            $this->makeHTTPStatusJSON(
+                401,
+                'Login Required to use this feature'
+            )
+        );
         require 'index.php';
     }
 
@@ -79,7 +79,12 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
     {
         $GLOBALS['user'] = new \Pelagos\Tests\Helpers\TestUser;
         \Slim\Environment::mock(array( 'REQUEST_METHOD' => 'POST'));
-        $this->expectOutputString($this->makeHTTPStatusJSON(400, 'firstName is required'));
+        $this->expectOutputString(
+            $this->makeHTTPStatusJSON(
+                400,
+                'Cannot create person because firstName is required.'
+            )
+        );
         require 'index.php';
     }
 
@@ -96,7 +101,12 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
             )
         );
         $GLOBALS['user'] = new \Pelagos\Tests\Helpers\TestUser;
-        $this->expectOutputString($this->makeHTTPStatusJSON(400, 'lastName is required'));
+        $this->expectOutputString(
+            $this->makeHTTPStatusJSON(
+                400,
+                'Cannot create person because lastName is required.'
+            )
+        );
         require 'index.php';
     }
 
@@ -114,7 +124,12 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
             )
         );
         $GLOBALS['user'] = new \Pelagos\Tests\Helpers\TestUser;
-        $this->expectOutputString($this->makeHTTPStatusJSON(400, 'emailAddress is required'));
+        $this->expectOutputString(
+            $this->makeHTTPStatusJSON(
+                400,
+                'Cannot create person because emailAddress is required.'
+            )
+        );
         require 'index.php';
     }
 
@@ -133,7 +148,13 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
             )
         );
         $GLOBALS['user'] = new \Pelagos\Tests\Helpers\TestUser;
-        $this->expectOutputString($this->makeHTTPStatusJSON(400, 'emailAddress is improperly formatted'));
+        $this->expectOutputString(
+            $this->makeHTTPStatusJSON(
+                400,
+                'Cannot create person because emailAddress is improperly formatted. ' .
+                'It should follow this format: local@domain.tld'
+            )
+        );
         require 'index.php';
     }
 
@@ -143,10 +164,12 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
      */
     public function testCreatePersonEmptyRequiredField()
     {
+        $pdoException = new \PDOException;
+        $pdoException->errorInfo = array('12345', 0, 'ERROR: Not null constraint violation.');
         $this->mockEntityManager->shouldReceive('flush')->andThrow(
             '\Doctrine\DBAL\Exception\NotNullConstraintViolationException',
             null,
-            $this->mockDriverException
+            new \Doctrine\DBAL\Driver\PDOException($pdoException)
         );
         \Slim\Environment::mock(
             array(
@@ -157,7 +180,12 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
             )
         );
         $GLOBALS['user'] = new \Pelagos\Tests\Helpers\TestUser;
-        $this->expectOutputString($this->makeHTTPStatusJSON(400, 'A required field is missing: '));
+        $this->expectOutputString(
+            $this->makeHTTPStatusJSON(
+                400,
+                'Cannot create person because a required field is missing.'
+            )
+        );
         require 'index.php';
     }
 
@@ -167,10 +195,12 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
      */
     public function testCreatePersonRecordExists()
     {
+        $pdoException = new \PDOException;
+        $pdoException->errorInfo = array('12345', 0, 'ERROR: Unique constraint violation.');
         $this->mockEntityManager->shouldReceive('flush')->andThrow(
             '\Doctrine\DBAL\Exception\UniqueConstraintViolationException',
             null,
-            $this->mockDriverException
+            new \Doctrine\DBAL\Driver\PDOException($pdoException)
         );
         \Slim\Environment::mock(
             array(
@@ -181,7 +211,12 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
             )
         );
         $GLOBALS['user'] = new \Pelagos\Tests\Helpers\TestUser;
-        $this->expectOutputString($this->makeHTTPStatusJSON(409, 'This record already exists.'));
+        $this->expectOutputString(
+            $this->makeHTTPStatusJSON(
+                409,
+                'Cannot create person: Unique constraint violation.'
+            )
+        );
         require 'index.php';
     }
 
