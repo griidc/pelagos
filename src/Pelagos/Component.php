@@ -30,6 +30,12 @@ class Component
     /** @var string $path The URL path to this component. **/
     protected $path;
 
+    /** @var string $baseUri The base full URI for Pelagos. **/
+    protected $baseUri;
+
+    /** @var string $uri The full URI to this component. **/
+    protected $uri;
+
     /** @var string $title The page title. **/
     protected $title;
 
@@ -45,6 +51,12 @@ class Component
             }
             if (array_key_exists('component_path', $GLOBALS['pelagos'])) {
                 $this->path = $GLOBALS['pelagos']['component_path'];
+            }
+            if (array_key_exists('base_url', $GLOBALS['pelagos'])) {
+                $this->baseUri = $GLOBALS['pelagos']['base_url'];
+            }
+            if (array_key_exists('component_url', $GLOBALS['pelagos'])) {
+                $this->uri = $GLOBALS['pelagos']['component_url'];
             }
         }
     }
@@ -228,6 +240,26 @@ class Component
     public function getPath()
     {
         return $this->path;
+    }
+
+    /**
+     * Method to get the Pelagos full base URI.
+     *
+     * @return string The base full URI for Pelagos.
+     */
+    public function getBaseUri()
+    {
+        return $this->baseUri;
+    }
+
+    /**
+     * Method to get the Pelagos component full URI.
+     *
+     * @return string The full URI to this component.
+     */
+    public function getUri()
+    {
+        return $this->uri;
     }
 
     /**

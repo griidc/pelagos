@@ -62,6 +62,12 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
     /** @var string $path A URL path to this component for testing. **/
     protected static $path = '/pelagos-base/applications/my-component';
 
+    /** @var string $baseUri A base full URI for Pelagos for testing. **/
+    protected static $baseUri = 'http://foo.bar/pelagos-base';
+
+    /** @var string $uri A full URI to this component for testing. **/
+    protected static $uri = 'http://foo.bar/pelagos-base/applications/my-component';
+
     /** @var string $title A page title for testing. **/
     protected static $title = 'Foo Bar Baz';
 
@@ -75,6 +81,8 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
         require_once __DIR__ . '/../../helpers/TestUser.php';
         $GLOBALS['pelagos']['base_path'] = self::$basePath;
         $GLOBALS['pelagos']['component_path'] = self::$path;
+        $GLOBALS['pelagos']['base_url'] = self::$baseUri;
+        $GLOBALS['pelagos']['component_url'] = self::$uri;
         \Mockery::mock(
             'alias:\Pelagos\Persistance',
             array(
@@ -327,6 +335,8 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertEquals(self::$basePath, $this->component->getBasePath());
         $this->assertEquals(self::$path, $this->component->getPath());
+        $this->assertEquals(self::$baseUri, $this->component->getBaseUri());
+        $this->assertEquals(self::$uri, $this->component->getUri());
     }
 
     /**
