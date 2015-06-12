@@ -47,7 +47,7 @@ class XMLDataFile
      * @@param string $udi
      * @return string
      */
-    private function getLocationUgly($udi)
+    private function getFileLocation($udi)
     {
         # load global pelagos config
         $GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini', true);
@@ -65,68 +65,6 @@ class XMLDataFile
         $filePath = $metadataPath . '/' . $udi . '/' . $udi . '.met';
 
         return $filePath;
-    }
-
-    /**
-     * The XML is stored in a file.
-     * Get the file name / path from the database
-     * @@param string $udi
-     * @return bool|string
-     * @throws PersistenceEngineException
-     */
-    private function getLocationFromDB($udi)
-    {
-        require_once "./exceptions/PersistenceEngineException.php";
-        $targetUdi = trim($udi);
-        $this->logger->write("XMLDataFile.getLocationFromDB(" . $targetUdi . ")");
-
-        # load global pelagos config
-        $env = array();
-        $env['config'] = parse_ini_file('/etc/opt/pelagos.ini', true);
-        // $GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini', true);
-        # load Common libraries
-
-        # check for local config file
-        if (file_exists('/config.ini')) {
-            # merge local config with global config
-            $env['config'] = configMerge($env, parse_ini_file('config.ini', true));
-        }
-
-        $this->logger->write("XMLDataFile.getLocationFromDB(" . $targetUdi . ")");
-
-        $metadataPath = $env['config']['paths']['data_download'];
-
-        $sql = "SELECT REGEXP_REPLACE(
-                                        REGEXP_REPLACE(
-                                                        dataset_metadata,
-                                                        '-metadata.xml$', ''),
-                                        '-',
-                                        ':')
-               AS dataset_metadata
-               FROM registry_view
-               WHERE dataset_udi = :udi";
-
-
-        $sth = $this->dbcon->prepare($sql);
-        $sth->bindparam(":udi", $targetUdi);
-        try {
-            $sth->execute();
-        } catch (\PDOException $e) {
-            throw new PersistenceEngineException("C-2 XMLDataFile " . $e->getMessage());
-        }
-
-        $data = $sth->fetchAll();
-
-        if (($sth->rowCount() > 0)) {
-            $filepath = $metadataPath . '/' . $data[0][0] . '/' . $data[0][0] . '.met';
-            $this->logger->write("XMLDataFile.getLocationFromDB(" . $targetUdi . ") returning file path: " . $filepath);
-
-            return $filepath;
-        } else {
-            $this->logger->write("XMLDataFile.getLocationFromDB(" . $targetUdi . ") returning FALSE: ");
-            return false;
-        }
-
     }
 
     /**
@@ -151,8 +89,8 @@ class XMLDataFile
         $this->logger = new MetadataLogger("XMLDataFile", $targetUdi);
         $this->logger->setOff();
         $xmlText = false;
-        $this->logger->write("XMLDataFile.getXML(" . $targetUdi . ") calling getLocationFromDB()");
-        $path = $this->getLocationFromDB($targetUdi);
+        $this->logger->write("XMLDataFile.getXML(" . $targetUdi . ") calling getFileLocation()");
+        $path = $this->getFileLocation($targetUdi);
         if ($path == false) {
             throw new NotFoundException("C-2 XMLDataFile No XML found in path: " . $path);
         } elseif (is_readable($path)) {
