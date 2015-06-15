@@ -16,6 +16,7 @@ class PersonTest extends \PHPUnit_Framework_TestCase
     /** @var Person $person Property to hold an instance of Person for testing */
     protected $person;
 
+    /** @var \Symfony\Component\Validator\Validator $validator Property to hold an instance of the Symfony Validator */
     protected $validator;
 
     /** @var string $testFirstName Static class variable containing a first name to use for testing */
@@ -446,5 +447,4 @@ class PersonTest extends \PHPUnit_Framework_TestCase
         );
         $this->assertCount(0, $violations);
     }
-
 }
