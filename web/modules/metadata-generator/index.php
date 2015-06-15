@@ -12,7 +12,7 @@ function getLocalEnvironment()
     require_once(__DIR__ . '/../../../share/php/Common.php');
 
     # check for local config file
-    if (file_exists('config.ini')) {
+    if (file_exists(__DIR__.'/config.ini')) {
         # merge local config with global config
         $locals['config'] = configMerge($locals['config'], parse_ini_file('config.ini', true));
     }

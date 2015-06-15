@@ -26,7 +26,7 @@ class XMLDataFile
      */
     private function __construct()
     {
-        require_once '../../../share/php/db-utils.lib.php';
+        require_once __DIR__.'/../../../../share/php/db-utils.lib.php';
         $this->dbcon = OpenDB("GOMRI_RW");
         $this->dbcon->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
@@ -52,13 +52,13 @@ class XMLDataFile
         # load global pelagos config
         $GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini', true);
 
-        # load Common library from global share
+        # load the Common library
         require_once(__DIR__ . '/../../../../share/php/Common.php');
 
         # check for local config file
-        if (file_exists('/config.ini')) {
+        if (file_exists(__DIR__ . '/../config.ini')) {
             # merge local config with global config
-            $GLOBALS['config'] = configMerge($GLOBALS['config'], parse_ini_file('config.ini', true));
+            $GLOBALS['config'] = configMerge($GLOBALS['config'], parse_ini_file(__DIR__ . '/../config.ini', true));
         }
 
         $metadataPath = $GLOBALS['config']['paths']['data_download'];
@@ -81,10 +81,10 @@ class XMLDataFile
      */
     public function getXML($udi)
     {
-        require_once "./exceptions/NotFoundException.php";
-        require_once "./exceptions/InvalidXmlException.php";
-        require_once "./lib/MetadataLogger.php";
-        require_once "./lib/XMLValidator.php";
+        require_once __DIR__ . "/../exceptions/NotFoundException.php";
+        require_once __DIR__ . "/../exceptions/InvalidXmlException.php";
+        require_once __DIR__ . "/MetadataLogger.php";
+        require_once __DIR__ . "/XMLValidator.php";
         $targetUdi = trim($udi);
         $this->logger = new MetadataLogger("XMLDataFile", $targetUdi);
         $this->logger->setOff();
