@@ -171,7 +171,7 @@ class PersonTest extends \PHPUnit_Framework_TestCase
         $violations = $this->validator->validate($this->person);
         $this->assertCount(1, $violations);
         $this->assertInstanceOf('\Symfony\Component\Validator\ConstraintViolation', $violations[0]);
-        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\Regex', $violations[0]->getConstraint());
+        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\NoAngleBrackets', $violations[0]->getConstraint());
         $this->assertEquals('firstName', $violations[0]->getPropertyPath());
         $this->assertEquals('First name cannot contain angle brackets (< or >)', $violations[0]->getMessage());
     }
@@ -189,7 +189,7 @@ class PersonTest extends \PHPUnit_Framework_TestCase
         );
         $this->assertCount(1, $violations);
         $this->assertInstanceOf('\Symfony\Component\Validator\ConstraintViolation', $violations[0]);
-        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\Regex', $violations[0]->getConstraint());
+        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\NoAngleBrackets', $violations[0]->getConstraint());
         $this->assertEquals('First name cannot contain angle brackets (< or >)', $violations[0]->getMessage());
     }
 
@@ -280,7 +280,7 @@ class PersonTest extends \PHPUnit_Framework_TestCase
         $violations = $this->validator->validate($this->person);
         $this->assertCount(1, $violations);
         $this->assertInstanceOf('\Symfony\Component\Validator\ConstraintViolation', $violations[0]);
-        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\Regex', $violations[0]->getConstraint());
+        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\NoAngleBrackets', $violations[0]->getConstraint());
         $this->assertEquals('lastName', $violations[0]->getPropertyPath());
         $this->assertEquals('Last name cannot contain angle brackets (< or >)', $violations[0]->getMessage());
     }
@@ -298,7 +298,7 @@ class PersonTest extends \PHPUnit_Framework_TestCase
         );
         $this->assertCount(1, $violations);
         $this->assertInstanceOf('\Symfony\Component\Validator\ConstraintViolation', $violations[0]);
-        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\Regex', $violations[0]->getConstraint());
+        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\NoAngleBrackets', $violations[0]->getConstraint());
         $this->assertEquals('Last name cannot contain angle brackets (< or >)', $violations[0]->getMessage());
     }
 
@@ -377,7 +377,7 @@ class PersonTest extends \PHPUnit_Framework_TestCase
         $violations = $this->validator->validate($this->person);
         $this->assertCount(1, $violations);
         $this->assertInstanceOf('\Symfony\Component\Validator\ConstraintViolation', $violations[0]);
-        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\Regex', $violations[0]->getConstraint());
+        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\NoAngleBrackets', $violations[0]->getConstraint());
         $this->assertEquals('emailAddress', $violations[0]->getPropertyPath());
         $this->assertEquals('Email address cannot contain angle brackets (< or >)', $violations[0]->getMessage());
     }
@@ -395,7 +395,7 @@ class PersonTest extends \PHPUnit_Framework_TestCase
         );
         $this->assertCount(1, $violations);
         $this->assertInstanceOf('\Symfony\Component\Validator\ConstraintViolation', $violations[0]);
-        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\Regex', $violations[0]->getConstraint());
+        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\NoAngleBrackets', $violations[0]->getConstraint());
         $this->assertEquals('Email address cannot contain angle brackets (< or >)', $violations[0]->getMessage());
     }
 

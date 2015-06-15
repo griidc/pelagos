@@ -20,9 +20,7 @@ class Person implements \JsonSerializable
      * @Assert\NotBlank(
      *     message="First name is required"
      * )
-     * @Assert\Regex(
-     *     pattern="/[<>]/",
-     *     match=false,
+     * @Assert\NoAngleBrackets(
      *     message="First name cannot contain angle brackets (< or >)"
      * )
      * @var string $firstName
@@ -35,9 +33,7 @@ class Person implements \JsonSerializable
      * @Assert\NotBlank(
      *     message="Last name is required"
      * )
-     * @Assert\Regex(
-     *     pattern="/[<>]/",
-     *     match=false,
+     * @Assert\NoAngleBrackets(
      *     message="Last name cannot contain angle brackets (< or >)"
      * )
      * @var string $lastName
@@ -50,9 +46,7 @@ class Person implements \JsonSerializable
      * @Assert\NotBlank(
      *     message="Email address is required"
      * )
-     * @Assert\Regex(
-     *     pattern="/[<>]/",
-     *     match=false,
+     * @Assert\NoAngleBrackets(
      *     message="Email address cannot contain angle brackets (< or >)"
      * )
      * @Assert\Email(
