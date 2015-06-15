@@ -53,7 +53,7 @@ class XMLDataFile
         $GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini', true);
 
         # load Common library from global share
-        require_once('/../../../../share/php/Common.php');
+        require_once(__DIR__ . '/../../../../share/php/Common.php');
 
         # check for local config file
         if (file_exists('/config.ini')) {
