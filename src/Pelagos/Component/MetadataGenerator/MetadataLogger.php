@@ -10,11 +10,8 @@
  * html file extension.
  *@see Logger
  **/
-namespace MetadataGenerator;
+namespace Pelagos\Component\MetadataGenerator;
 
-use \MetadataGenerator\Logger as Logger;
-
-require_once "./lib/Logger.php";
 class MetadataLogger extends Logger
 {
 

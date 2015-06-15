@@ -7,7 +7,7 @@
  * GRIIDC
  */
 
-namespace Exception;
+namespace Pelagos\Exception;
 
 /**
  * Class DuplicateException
@@ -19,9 +19,4 @@ namespace Exception;
  */
 class DuplicateException extends \Exception
 {
-
-    public function __construct($message)
-    {
-        parent::__construct($message);
-    }
 }

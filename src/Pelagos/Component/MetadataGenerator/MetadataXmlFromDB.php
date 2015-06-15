@@ -7,14 +7,10 @@
  * GRIIDC
  */
 
+namespace Pelagos\Component\MetadataGenerator;
 
-
-namespace MetadataGenerator;
-
-use \Exception\NotFoundException as NotFoundException;
-use \Exception\PersistenceEngineException as PersistenceEngineException;
-use \MetadataGenerator\MetadataLogger as MetadataLogger;
-use \PDO as PDO;
+use \Pelagos\Exception\NotFoundException;
+use \Pelagos\Exception\PersistenceException;
 
 class MetadataXmlFromDB
 {
@@ -46,9 +42,9 @@ class MetadataXmlFromDB
      */
     private function __construct()
     {
-        require_once '../../../share/php/db-utils.lib.php';
-        $this->dbcon = OpenDB("GOMRI_RW");
-        $this->dbcon->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        require_once 'DBUtils.php';
+        $this->dbcon = openDB("GOMRI_RW");
+        $this->dbcon->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
     }
 
     /**
@@ -74,7 +70,6 @@ class MetadataXmlFromDB
      */
     public function getMetadataXmlForDatasetUdi($datasetUdi)
     {
-        require_once "lib/MetadataLogger.php";
         $targetUdi = trim($datasetUdi);
         $this->logger = new MetadataLogger("metadataXmlFromDB", $targetUdi);
         $this->logger->setOff();
@@ -93,19 +88,17 @@ class MetadataXmlFromDB
      * @param string $registryId
      * @return the xml from the meatadata t
      * @throws NotFoundException of the registry row is not found
-     * @throws PersistenceEngineException
+     * @throws PersistenceException
      */
     private function getMetadataXml($registryId)
     {
-        require_once "exceptions/NotFoundException.php";
-        require_once "exceptions/PersistenceEngineException.php";
         $query = $this->getMetadataSelectQueryString() . " WHERE " . self::REGISTRY_ID_COL . " = " .
                            $this->wrapInSingleQuotes($registryId) . " LIMIT 1";
         $statement = $this->dbcon->prepare($query);
         $metadataXml = null;
         try {
             if ($statement->execute()) {
-                if ($row = $statement->fetch(PDO::FETCH_ASSOC)) { // if true
+                if ($row = $statement->fetch(\PDO::FETCH_ASSOC)) { // if true
                     $metadataXml = $row[self::METADATA_XML_COL];
                     return $metadataXml;
                 } // else it is false - not found
@@ -114,8 +107,8 @@ class MetadataXmlFromDB
                     $registryId
                 );
             }
-        } catch (PDOException $pdoEx) {
-            throw new PersistenceEngineException("C-1: " . $pdoEx->getMessage());
+        } catch (\PDOException $pdoEx) {
+            throw new PersistenceException("C-1: " . $pdoEx->getMessage());
         }
     }
 
@@ -141,12 +134,10 @@ class MetadataXmlFromDB
      * @param string $datasetUdi
      * @return the Registry instance if it exists in the store
      * @throws NotFoundException of the object is not found
-     * @throws PersistenceEngineException
+     * @throws PersistenceException
      */
     private function getRegistryIdForDatasetUdi($datasetUdi)
     {
-        require_once "exceptions/NotFoundException.php";
-        require_once "exceptions/PersistenceEngineException.php";
         $query = $this->getRegistryAndUdiSelectQueryString() . " WHERE " . self::DATASET_UDI_COL . " = " .
                 $this->wrapInSingleQuotes($datasetUdi) . " LIMIT 1";
 
@@ -155,7 +146,7 @@ class MetadataXmlFromDB
         $registryId = null;
         try {
             if ($statement->execute()) {
-                if ($row = $statement->fetch(PDO::FETCH_ASSOC)) { // if true
+                if ($row = $statement->fetch(\PDO::FETCH_ASSOC)) { // if true
                     $registryId = $row[self::REGISTRY_ID_COL];
                     $this->logger->log("getRegistryIdForDatasetUdi() returning registry " . $registryId);
                     return $registryId;
@@ -166,9 +157,9 @@ class MetadataXmlFromDB
                     " record found for dataset UDI: " . $datasetUdi
                 );
             }
-        } catch (PDOException $pdoEx) {
+        } catch (\PDOException $pdoEx) {
             $this->logger->log("getRegistryIdForDatasetUdi() PDOException: " . $pdoEx->getMessage());
-            throw new PersistenceEngineException("C-1: " . $pdoEx->getMessage());
+            throw new PersistenceException("C-1: " . $pdoEx->getMessage());
         }
     }
 

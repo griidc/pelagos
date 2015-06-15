@@ -4,13 +4,10 @@
  * A class to get XML metadata files from a file.
  * The file location is stored in the database.
  */
-namespace MetadataGenerator;
+namespace Pelagos\Component\MetadataGenerator;
 
-use \Exception\NotFoundException as NotFoundException;
-use \Exception\PersistenceEngineException as PersistenceEngineException;
-use \PDO as PDO;
-use \MetadataGenerator\MetadataLogger as MetadataLogger;
-use \MetadataGenerator\XMLValidator as XMLValidator;
+use \Pelagos\Exception\NotFoundException;
+use \Pelagos\Exception\PersistenceException;
 
 class XMLDataFile
 {
@@ -26,9 +23,9 @@ class XMLDataFile
      */
     private function __construct()
     {
-        require_once __DIR__.'/../../../../share/php/db-utils.lib.php';
-        $this->dbcon = OpenDB("GOMRI_RW");
-        $this->dbcon->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        require_once 'DBUtils.php';
+        $this->dbcon = openDB("GOMRI_RW");
+        $this->dbcon->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
     }
 
     /**
@@ -53,7 +50,7 @@ class XMLDataFile
         $GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini', true);
 
         # load the Common library
-        require_once(__DIR__ . '/../../../../share/php/Common.php');
+        require_once 'Common.php';
 
         # check for local config file
         if (file_exists(__DIR__ . '/../config.ini')) {
@@ -69,22 +66,18 @@ class XMLDataFile
 
     /**
      * Get the location of the xml file from the database.
-     * Read it and return it. Throw PersistenceEngineException
+     * Read it and return it. Throw PersistenceException
      * if there is a database problem.
      * Throw NotFoundException if the database finds a path
      * but the path is not readable.
      * @param string $udi
      * @return bool|string
      * @throws NotFoundException
-     * @throws PersistenceEngineException
+     * @throws PersistenceException
      * @throws InvalidXmlException
      */
     public function getXML($udi)
     {
-        require_once __DIR__ . "/../exceptions/NotFoundException.php";
-        require_once __DIR__ . "/../exceptions/InvalidXmlException.php";
-        require_once __DIR__ . "/MetadataLogger.php";
-        require_once __DIR__ . "/XMLValidator.php";
         $targetUdi = trim($udi);
         $this->logger = new MetadataLogger("XMLDataFile", $targetUdi);
         $this->logger->setOff();

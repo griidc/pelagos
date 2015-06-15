@@ -7,7 +7,7 @@
  * GRIIDC
  */
 
-namespace Exception;
+namespace Pelagos\Exception;
 
 /**
  * Class NotFoundException
@@ -21,9 +21,4 @@ namespace Exception;
 
 class NotFoundException extends \Exception
 {
-
-    public function __construct($message)
-    {
-        parent::__construct($message);
-    }
 }

@@ -13,7 +13,7 @@
  * activate logging with logger->setOn();
  * log messages with logger->write(msg) or logger->log(message);
  */
-namespace MetadataGenerator;
+namespace Pelagos\Component\MetadataGenerator;
 
 
 class Logger
