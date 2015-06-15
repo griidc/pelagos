@@ -4,6 +4,7 @@ namespace Pelagos\Entity;
 
 use \Pelagos\Exception\EmptyRequiredArgumentException;
 use \Pelagos\Exception\InvalidFormatArgumentException;
+use \Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Class to represent people.
@@ -13,13 +14,52 @@ class Person implements \JsonSerializable
     /** @var int $id Person identifier. */
     protected $id;
 
-    /** @var string $firstName Person's first name. */
+    /**
+     * Person's first name.
+     *
+     * @Assert\NotBlank(
+     *     message="First name is required"
+     * )
+     * @Assert\Regex(
+     *     pattern="/[<>]/",
+     *     match=false,
+     *     message="First name cannot contain angle brackets (< or >)"
+     * )
+     * @var string $firstName
+     */
     protected $firstName;
 
-    /** @var string $lastName Person's last name. */
+    /**
+     * Person's last name.
+     *
+     * @Assert\NotBlank(
+     *     message="Last name is required"
+     * )
+     * @Assert\Regex(
+     *     pattern="/[<>]/",
+     *     match=false,
+     *     message="Last name cannot contain angle brackets (< or >)"
+     * )
+     * @var string $lastName
+     */
     protected $lastName;
 
-    /** @var string $emailAddress Person's email address. */
+    /**
+     * Person's email address.
+     *
+     * @Assert\NotBlank(
+     *     message="Email address is required"
+     * )
+     * @Assert\Regex(
+     *     pattern="/[<>]/",
+     *     match=false,
+     *     message="Email address cannot contain angle brackets (< or >)"
+     * )
+     * @Assert\Email(
+     *     message="Email address is invalid"
+     * )
+     * @var string $emailAddress
+     */
     protected $emailAddress;
 
     /**
@@ -53,9 +93,6 @@ class Person implements \JsonSerializable
      */
     public function setFirstName($firstName)
     {
-        if (empty($firstName)) {
-            $this->throwEmptyRequiredArgumentException('firstName', $firstName);
-        }
         $this->firstName = $firstName;
     }
 
@@ -76,9 +113,6 @@ class Person implements \JsonSerializable
      */
     public function setLastName($lastName)
     {
-        if (empty($lastName)) {
-            $this->throwEmptyRequiredArgumentException('lastName', $lastName);
-        }
         $this->lastName = $lastName;
     }
 
@@ -99,12 +133,6 @@ class Person implements \JsonSerializable
      */
     public function setEmailAddress($emailAddress)
     {
-        if (empty($emailAddress)) {
-            $this->throwEmptyRequiredArgumentException('emailAddress', $emailAddress);
-        }
-        if (!filter_var($emailAddress, FILTER_VALIDATE_EMAIL)) {
-            $this->throwInvalidFormatArgumentException('emailAddress', $emailAddress, 'local@domain.tld');
-        }
         $this->emailAddress = $emailAddress;
     }
 
@@ -154,35 +182,5 @@ class Person implements \JsonSerializable
                     break;
             }
         }
-    }
-
-    /**
-     * Method to throw EmptyRequiredArgumentException with properties set.
-     *
-     * @param $argumentName string Name of the empty required argument.
-     * @param $argumentValue mixed Value of the empty required argument.
-     */
-    protected function throwEmptyRequiredArgumentException($argumentName, $argumentValue)
-    {
-        $exception = new EmptyRequiredArgumentException("$argumentName is required");
-        $exception->setArgumentName($argumentName);
-        $exception->setArgumentValue($argumentValue);
-        throw $exception;
-    }
-
-    /**
-     * Method to throw InvalidFormatArgumentException with properties set.
-     *
-     * @param $argumentName string Name of the invalidly formatted argument.
-     * @param $argumentValue mixed Value of the invalidly formatted argument.
-     * @param $expectedFormat string Text description of the expected format for the argument.
-     */
-    protected function throwInvalidFormatArgumentException($argumentName, $argumentValue, $expectedFormat = null)
-    {
-        $exception = new InvalidFormatArgumentException("$argumentName is improperly formatted");
-        $exception->setArgumentName($argumentName);
-        $exception->setArgumentValue($argumentValue);
-        $exception->setExpectedFormat($expectedFormat);
-        throw $exception;
     }
 }
