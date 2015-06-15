@@ -1,4 +1,10 @@
 <?php
+/**
+ * This file contains the implementation of the Person entity class.
+ *
+ * @package    Pelagos\Entity
+ * @subpackage Person
+ */
 
 namespace Pelagos\Entity;
 
@@ -11,11 +17,17 @@ use \Symfony\Component\Validator\Constraints as Assert;
  */
 class Person implements \JsonSerializable
 {
-    /** @var int $id Person identifier. */
+    /**
+     * Person identifier.
+     *
+     * @var int $id
+     */
     protected $id;
 
     /**
      * Person's first name.
+     *
+     * @var string $firstName
      *
      * @Assert\NotBlank(
      *     message="First name is required"
@@ -23,12 +35,13 @@ class Person implements \JsonSerializable
      * @Assert\NoAngleBrackets(
      *     message="First name cannot contain angle brackets (< or >)"
      * )
-     * @var string $firstName
      */
     protected $firstName;
 
     /**
      * Person's last name.
+     *
+     * @var string $lastName
      *
      * @Assert\NotBlank(
      *     message="Last name is required"
@@ -36,12 +49,13 @@ class Person implements \JsonSerializable
      * @Assert\NoAngleBrackets(
      *     message="Last name cannot contain angle brackets (< or >)"
      * )
-     * @var string $lastName
      */
     protected $lastName;
 
     /**
      * Person's email address.
+     *
+     * @var string $emailAddress
      *
      * @Assert\NotBlank(
      *     message="Email address is required"
@@ -52,15 +66,14 @@ class Person implements \JsonSerializable
      * @Assert\Email(
      *     message="Email address is invalid"
      * )
-     * @var string $emailAddress
      */
     protected $emailAddress;
 
     /**
      * Person constructor.
      *
-     * @param string $firstName Person's first name.
-     * @param string $lastName Person's last name.
+     * @param string $firstName    Person's first name.
+     * @param string $lastName     Person's last name.
      * @param string $emailAddress Person's email address.
      */
     public function __construct($firstName, $lastName, $emailAddress)
@@ -71,7 +84,7 @@ class Person implements \JsonSerializable
     }
 
     /**
-     * id getter
+     * Getter for id property.
      *
      * @return int Persistent identifier for the Person.
      */
@@ -81,9 +94,11 @@ class Person implements \JsonSerializable
     }
 
     /**
-     * firstName setter
+     * Setter for firstName property.
      *
-     * @param string First name of the Person.
+     * @param string $firstName First name of the Person.
+     *
+     * @return void
      */
     public function setFirstName($firstName)
     {
@@ -91,7 +106,7 @@ class Person implements \JsonSerializable
     }
 
     /**
-     * firstName getter
+     * Getter for firstName property.
      *
      * @return string First name of the Person.
      */
@@ -101,9 +116,11 @@ class Person implements \JsonSerializable
     }
 
     /**
-     * lastName setter
+     * Setter for lastName property.
      *
      * @param string $lastName Last name of the Person.
+     *
+     * @return void
      */
     public function setLastName($lastName)
     {
@@ -111,7 +128,7 @@ class Person implements \JsonSerializable
     }
 
     /**
-     * lastName getter
+     * Getter for lastName property.
      *
      * @return string Last name of the Person.
      */
@@ -121,9 +138,11 @@ class Person implements \JsonSerializable
     }
 
     /**
-     * emailAddress setter
+     * Setter for emailAddress property.
      *
-     * @param string Email address of the Person.
+     * @param string $emailAddress Email address of the Person.
+     *
+     * @return void
      */
     public function setEmailAddress($emailAddress)
     {
@@ -131,7 +150,7 @@ class Person implements \JsonSerializable
     }
 
     /**
-     * emailAddress getter
+     * Getter for emailAddress property.
      *
      * @return string Email address of the Person.
      */
@@ -160,8 +179,10 @@ class Person implements \JsonSerializable
      *
      * @param array $updates An associative array indexed with property names
      *                       and containing each property's new value.
+     *
+     * @return void
      */
-    public function update($updates)
+    public function update(array $updates)
     {
         foreach ($updates as $field => $value) {
             switch($field) {
