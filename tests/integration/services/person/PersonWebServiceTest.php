@@ -709,6 +709,41 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test of attempting to validate an unknown field
+     */
+    public function testValidatePropertyUnknown()
+    {
+        $propName = 'unknownProperty';
+        $propVal = 'someValue';
+        \Slim\Environment::mock(
+            array(
+                'REQUEST_METHOD' => 'GET',
+                'PATH_INFO' => '/validateProperty/',
+                'QUERY_STRING' => "$propName=$propVal"
+            )
+        );
+        $this->expectOutputString(json_encode("The parameter $propName is not a valid property of Person.")."drupal_exit\n");
+        require 'index.php';
+    }
+
+    /**
+     * Test attempting to validate more than one property in the same request
+     */
+    public function testValidateMultipleProperties()
+    {
+        \Slim\Environment::mock(
+            array(
+                'REQUEST_METHOD' => 'GET',
+                'PATH_INFO' => '/validateProperty/',
+                'QUERY_STRING' => self::$firstName . '&' . self::$lastName
+            )
+        );
+        $this->expectOutputString(json_encode('Validation of multiple properties not allowed.')."drupal_exit\n");
+        require 'index.php';
+    }
+
+
+    /**
      * Utility method to build a JSON string equivalent to a JSON serialized HTTPStatus.
      *
      * @param int $code The HTTP status code.
@@ -723,6 +758,21 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
         }
         $json .= "}drupal_exit\n";
         return $json;
+    }
+
+    /**
+     * Test of default route
+     */
+    public function testPersonDefaultRoute()
+    {
+        \Slim\Environment::mock(
+            array(
+                'REQUEST_METHOD' => 'GET',
+                'PATH_INFO' => '/'
+            )
+        );
+        $this->expectOutputRegex('/This Web service establishes a REST API/');
+        require 'index.php';
     }
 
     /**
