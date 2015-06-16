@@ -742,6 +742,21 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
         require 'index.php';
     }
 
+    /**
+     * Test of validating "nothing"
+     */
+    public function testValidateNothing()
+    {
+        \Slim\Environment::mock(
+            array(
+                'REQUEST_METHOD' => 'GET',
+                'PATH_INFO' => '/validateProperty/'
+            )
+        );
+        $this->expectOutputString(json_encode('Property to be validated not supplied')."drupal_exit\n");
+        require 'index.php';
+    }
+
 
     /**
      * Utility method to build a JSON string equivalent to a JSON serialized HTTPStatus.
