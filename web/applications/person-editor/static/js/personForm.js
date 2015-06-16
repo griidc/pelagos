@@ -77,7 +77,7 @@ function savePerson(jsonData)
         //dataType: 'json'
     })
     .done(function(json) {
-        if (json.code == 200) {
+        if (json.code == 201) {
             title = "Success!";
             message = json.message;
             $('#btnReset').click();
