@@ -564,6 +564,151 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test of setting the property of firstName to a valid value
+     */
+    public function testValidatePropertyFirstName()
+    {
+        \Slim\Environment::mock(
+            array(
+                'REQUEST_METHOD' => 'GET',
+                'PATH_INFO' => '/validateProperty/',
+                'QUERY_STRING' => 'firstName=' . self::$firstName
+            )
+        );
+        $this->expectOutputString(json_encode(true)."drupal_exit\n");
+        require 'index.php';
+    }
+
+    /**
+     * Test of setting the property of lastName to a valid value
+     */
+    public function testValidatePropertyLastName()
+    {
+        \Slim\Environment::mock(
+            array(
+                'REQUEST_METHOD' => 'GET',
+                'PATH_INFO' => '/validateProperty/',
+                'QUERY_STRING' => 'lastName=' . self::$firstName
+            )
+        );
+        $this->expectOutputString(json_encode(true)."drupal_exit\n");
+        require 'index.php';
+    }
+
+
+    /**
+     * Test of setting the property of emailAddress to a valid value
+     */
+    public function testValidatePropertyEmailAddress()
+    {
+        \Slim\Environment::mock(
+            array(
+                'REQUEST_METHOD' => 'GET',
+                'PATH_INFO' => '/validateProperty/',
+                'QUERY_STRING' => 'emailAddress=' . self::$emailAddress
+            )
+        );
+        $this->expectOutputString(json_encode(true)."drupal_exit\n");
+        require 'index.php';
+    }
+
+    /**
+     * Test of setting the property of firstName to blank
+     */
+    public function testValidatePropertyFirstNameBlank()
+    {
+        \Slim\Environment::mock(
+            array(
+                'REQUEST_METHOD' => 'GET',
+                'PATH_INFO' => '/validateProperty/',
+                'QUERY_STRING' => 'firstName='
+            )
+        );
+        $this->expectOutputString(json_encode('First name is required')."drupal_exit\n");
+        require 'index.php';
+    }
+
+    /**
+     * Test of setting the property of lastName to blank
+     */
+    public function testValidatePropertyLastNameBlank()
+    {
+        \Slim\Environment::mock(
+            array(
+                'REQUEST_METHOD' => 'GET',
+                'PATH_INFO' => '/validateProperty/',
+                'QUERY_STRING' => 'lastName='
+            )
+        );
+        $this->expectOutputString(json_encode('Last name is required')."drupal_exit\n");
+        require 'index.php';
+    }
+
+    /**
+     * Test of setting emailAddress to blank
+     */
+    public function testValidatePropertyEmailAddressBlank()
+    {
+        \Slim\Environment::mock(
+            array(
+                'REQUEST_METHOD' => 'GET',
+                'PATH_INFO' => '/validateProperty/',
+                'QUERY_STRING' => 'emailAddress='
+            )
+        );
+        $this->expectOutputString(json_encode('Email address is required')."drupal_exit\n");
+        require 'index.php';
+    }
+
+    /**
+     * Test of setting the property of firstName to a string with invalid characters
+     */
+    public function testValidatePropertyFirstNameBad()
+    {
+        \Slim\Environment::mock(
+            array(
+                'REQUEST_METHOD' => 'GET',
+                'PATH_INFO' => '/validateProperty/',
+                'QUERY_STRING' => 'firstName=Bad<i>Name</i>'
+            )
+        );
+        $this->expectOutputString(json_encode('First name cannot contain angle brackets (< or >)')."drupal_exit\n");
+        require 'index.php';
+    }
+
+    /**
+     * Test of setting the property of lastName to a string with invalid characters
+     */
+    public function testValidatePropertyLastNameBad()
+    {
+        \Slim\Environment::mock(
+            array(
+                'REQUEST_METHOD' => 'GET',
+                'PATH_INFO' => '/validateProperty/',
+                'QUERY_STRING' => 'lastName=Bad<i>Name</i>'
+            )
+        );
+        $this->expectOutputString(json_encode('Last name cannot contain angle brackets (< or >)')."drupal_exit\n");
+        require 'index.php';
+    }
+
+    /**
+     * Test of setting the property emailAddress to a string of the wrong syntax
+     */
+    public function testValidatePropertyEmailAddressBad()
+    {
+        \Slim\Environment::mock(
+            array(
+                'REQUEST_METHOD' => 'GET',
+                'PATH_INFO' => '/validateProperty/',
+                'QUERY_STRING' => 'emailAddress=bad.address@missing-tld'
+            )
+        );
+        $this->expectOutputString(json_encode('Email address is invalid')."drupal_exit\n");
+        require 'index.php';
+    }
+
+    /**
      * Utility method to build a JSON string equivalent to a JSON serialized HTTPStatus.
      *
      * @param int $code The HTTP status code.
