@@ -46,23 +46,25 @@ $slim->get(
         }
 
         $paramName = array_keys($params);
-        if (property_exists('\Pelagos\Entity\Person', $paramName[0])) {
-            $person = new Person;
-            $person->update($params);
-            $validator = Validation::createValidatorBuilder()->enableAnnotationMapping()->getValidator();
-            $violations = $validator->validateProperty($person, $paramName[0]);
-            if (count($violations) > 0) {
-                $violationMsgs = array();
-                foreach ($violations as $violation) {
-                    $violationMsgs[] = $violation->getMessage();
-                }
-                print json_encode(join($violationMsgs, ', '));
-            } else {
-                print json_encode(true);
-            }
-        } else {
+
+        if (!property_exists('\Pelagos\Entity\Person', $paramName[0])) {
             print json_encode("The parameter $paramName[0] is not a valid property of Person.");
+            return;
         }
+
+        $person = new Person;
+        $person->update($params);
+        $validator = Validation::createValidatorBuilder()->enableAnnotationMapping()->getValidator();
+        $violations = $validator->validateProperty($person, $paramName[0]);
+        if (count($violations) > 0) {
+            $violationMsgs = array();
+            foreach ($violations as $violation) {
+                $violationMsgs[] = $violation->getMessage();
+            }
+            print json_encode(join($violationMsgs, ', '));
+            return;
+        }
+        print json_encode(true);
     }
 );
 
