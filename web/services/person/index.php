@@ -3,6 +3,9 @@
 require_once __DIR__.'/../../../vendor/autoload.php';
 
 use \Pelagos\HTTPStatus;
+use \Pelagos\Entity\Person;
+use \Symfony\Component\Validator\Validation;
+use \Pelagos\Exception\ValidationException;
 use \Pelagos\Exception\ArgumentException;
 use \Pelagos\Exception\EmptyRequiredArgumentException;
 use \Pelagos\Exception\InvalidFormatArgumentException;
@@ -42,10 +45,12 @@ $slim->post(
         }
 
         try {
-            $person = $comp->createPerson(
-                $slim->request->post('firstName'),
-                $slim->request->post('lastName'),
-                $slim->request->post('emailAddress')
+            $person = new Person();
+            $person = $comp->persist(
+                $comp->validate(
+                    $person->update($slim->request->params()),
+                    Validation::createValidatorBuilder()->enableAnnotationMapping()->getValidator()
+                )
             );
             $status = new HTTPStatus(
                 201,
@@ -58,13 +63,14 @@ $slim->post(
                 )
             );
             $response->headers->set('Location', $comp->getUri() . '/' . $person->getId());
-        } catch (EmptyRequiredArgumentException $e) {
-            $status = new HTTPStatus(400, 'Cannot create person because ' . $e->getMessage() . '.');
-        } catch (InvalidFormatArgumentException $e) {
+        } catch (ValidationException $e) {
+            $violations = array();
+            foreach ($e->getViolations() as $violation) {
+                $violations[] = $violation->getMessage();
+            }
             $status = new HTTPStatus(
                 400,
-                'Cannot create person because ' . $e->getMessage() .
-                '. It should follow this format: ' . $e->getExpectedFormat()
+                'Cannot create person because: ' . join(', ', $violations)
             );
         } catch (MissingRequiredFieldPersistenceException $e) {
             $status = new HTTPStatus(400, 'Cannot create person because a required field is missing.');

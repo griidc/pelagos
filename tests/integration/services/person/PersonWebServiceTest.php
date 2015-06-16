@@ -82,7 +82,7 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
         $this->expectOutputString(
             $this->makeHTTPStatusJSON(
                 400,
-                'Cannot create person because firstName is required.'
+                'Cannot create person because: First name is required, Last name is required, Email address is required'
             )
         );
         require 'index.php';
@@ -97,14 +97,15 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
         \Slim\Environment::mock(
             array(
                 'REQUEST_METHOD' => 'POST',
-                'slim.input' => 'firstName=' . self::$firstName
+                'slim.input' => 'firstName=' . self::$firstName .
+                                '&emailAddress=' . self::$emailAddress
             )
         );
         $GLOBALS['user'] = new \Pelagos\Tests\Helpers\TestUser;
         $this->expectOutputString(
             $this->makeHTTPStatusJSON(
                 400,
-                'Cannot create person because lastName is required.'
+                'Cannot create person because: Last name is required'
             )
         );
         require 'index.php';
@@ -127,7 +128,7 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
         $this->expectOutputString(
             $this->makeHTTPStatusJSON(
                 400,
-                'Cannot create person because emailAddress is required.'
+                'Cannot create person because: Email address is required'
             )
         );
         require 'index.php';
@@ -151,8 +152,7 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
         $this->expectOutputString(
             $this->makeHTTPStatusJSON(
                 400,
-                'Cannot create person because emailAddress is improperly formatted. ' .
-                'It should follow this format: local@domain.tld'
+                'Cannot create person because: Email address is invalid'
             )
         );
         require 'index.php';
