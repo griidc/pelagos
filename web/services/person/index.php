@@ -26,6 +26,48 @@ $slim->get(
     }
 );
 
+$slim->get(
+    '/validateProperty/',
+    function () use ($comp, $slim) {
+        $response = $slim->response;
+        $response->headers->set('Content-Type', 'application/json');
+        $comp->setQuitOnFinalize(true);
+
+        $params = $slim->request->params();
+
+        if (count($params) == 0) {
+            print json_encode('Property to be validated not supplied');
+            return;
+        }
+
+        if (count($params) > 1) {
+            print json_encode('Validation of multiple properties not allowed.');
+            return;
+        }
+
+        $paramName = array_keys($params);
+
+        if (!property_exists('\Pelagos\Entity\Person', $paramName[0])) {
+            print json_encode("The parameter $paramName[0] is not a valid property of Person.");
+            return;
+        }
+
+        $person = new Person;
+        $person->update($params);
+        $validator = Validation::createValidatorBuilder()->enableAnnotationMapping()->getValidator();
+        $violations = $validator->validateProperty($person, $paramName[0]);
+        if (count($violations) > 0) {
+            $violationMsgs = array();
+            foreach ($violations as $violation) {
+                $violationMsgs[] = $violation->getMessage();
+            }
+            print json_encode(join($violationMsgs, ', '));
+            return;
+        }
+        print json_encode(true);
+    }
+);
+
 $slim->post(
     '/',
     function () use ($comp, $slim) {
