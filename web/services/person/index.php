@@ -3,6 +3,9 @@
 require_once __DIR__.'/../../../vendor/autoload.php';
 
 use \Pelagos\HTTPStatus;
+use \Pelagos\Entity\Person;
+use \Symfony\Component\Validator\Validation;
+use \Pelagos\Exception\ValidationException;
 use \Pelagos\Exception\ArgumentException;
 use \Pelagos\Exception\EmptyRequiredArgumentException;
 use \Pelagos\Exception\InvalidFormatArgumentException;
@@ -42,13 +45,15 @@ $slim->post(
         }
 
         try {
-            $person = $comp->createPerson(
-                $slim->request->post('firstName'),
-                $slim->request->post('lastName'),
-                $slim->request->post('emailAddress')
+            $person = new Person();
+            $person = $comp->persist(
+                $comp->validate(
+                    $person->update($slim->request->params()),
+                    Validation::createValidatorBuilder()->enableAnnotationMapping()->getValidator()
+                )
             );
             $status = new HTTPStatus(
-                200,
+                201,
                 sprintf(
                     'A person has been successfully created: %s %s (%s) with at ID of %d.',
                     $person->getFirstName(),
@@ -57,14 +62,20 @@ $slim->post(
                     $person->getId()
                 )
             );
-        } catch (EmptyRequiredArgumentException $e) {
-            $status = new HTTPStatus(400, $e->getMessage());
-        } catch (InvalidFormatArgumentException $e) {
-            $status = new HTTPStatus(400, $e->getMessage());
+            $response->headers->set('Location', $comp->getUri() . '/' . $person->getId());
+        } catch (ValidationException $e) {
+            $violations = array();
+            foreach ($e->getViolations() as $violation) {
+                $violations[] = $violation->getMessage();
+            }
+            $status = new HTTPStatus(
+                400,
+                'Cannot create person because: ' . join(', ', $violations)
+            );
         } catch (MissingRequiredFieldPersistenceException $e) {
-            $status = new HTTPStatus(400, 'A required field is missing: ' . $e->getDatabaseErrorHint());
+            $status = new HTTPStatus(400, 'Cannot create person because a required field is missing.');
         } catch (RecordExistsPersistenceException $e) {
-            $status = new HTTPStatus(409, 'This record already exists.');
+            $status = new HTTPStatus(409, 'Cannot create person: ' . $e->getDatabaseErrorMessage());
         } catch (PersistenceException $e) {
             $status = new HTTPStatus(500, 'A database error has occured: ' . $e->getDatabaseErrorMessage());
         } catch (\Exception $e) {

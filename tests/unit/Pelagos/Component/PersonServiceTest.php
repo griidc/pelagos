@@ -20,6 +20,9 @@ class PersonServiceTest extends \PHPUnit_Framework_TestCase
     /** @var \Doctrine\DBAL\Driver\DriverException $mockDriverException Propety to hold a mock DriverException. **/
     protected $mockDriverException;
 
+    /** @var mixed $mockValidator Propety to hold a mock validator. **/
+    protected $mockValidator;
+
     /** @var string $firstName A valid first name to use for testing. **/
     protected static $firstName = 'test';
 
@@ -57,16 +60,38 @@ class PersonServiceTest extends \PHPUnit_Framework_TestCase
         $mockPersistence->shouldReceive('createEntityManager')->andReturn($this->mockEntityManager);
 
         $this->mockDriverException = \Mockery::mock('\Doctrine\DBAL\Driver\DriverException');
+
+        $this->mockValidator = \Mockery::mock('\Symfony\Component\Validator\Validator');
     }
 
     /**
-     * Test creating a person with valid required parameters.
-     * Should successfully create a person and return it.
+     * Test validating a person with success.
      */
-    public function testCreatePerson()
+    public function testValidateSuccess()
+    {
+        $this->mockValidator->shouldReceive('validate')->andReturn(array());
+        $person = $this->personService->validate($this->mockPerson, $this->mockValidator);
+        $this->assertInstanceOf('\Pelagos\Entity\Person', $person);
+    }
+
+    /**
+     * Test validating a person with validation failure.
+     *
+     * @expectedException \Pelagos\Exception\ValidationException
+     */
+    public function testValidateFailure()
+    {
+        $this->mockValidator->shouldReceive('validate')->andReturn(array(1));
+        $person = $this->personService->validate($this->mockPerson, $this->mockValidator);
+    }
+
+    /**
+     * Test persisting a person successfully.
+     */
+    public function testPersistSuccess()
     {
         $this->mockEntityManager->shouldReceive('flush');
-        $person = $this->personService->createPerson(self::$firstName, self::$lastName, self::$emailAddress);
+        $person = $this->personService->persist($this->mockPerson);
         $this->assertInstanceOf('\Pelagos\Entity\Person', $person);
         $this->assertSame(0, $person->getId());
         $this->assertEquals(self::$firstName, $person->getFirstName());
@@ -76,18 +101,17 @@ class PersonServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test handling of attempting to persist a person with a missing required field.
-     * This should never happen as the Peron constructor checks for all required fields.
      *
      * @expectedException \Pelagos\Exception\MissingRequiredFieldPersistenceException
      */
-    public function testCreatePersonMissingRequiredField()
+    public function testPersistMissingRequiredField()
     {
         $this->mockEntityManager->shouldReceive('flush')->andThrow(
             '\Doctrine\DBAL\Exception\NotNullConstraintViolationException',
             null,
             $this->mockDriverException
         );
-        $person = $this->personService->createPerson(self::$firstName, self::$lastName, self::$emailAddress);
+        $person = $this->personService->persist($this->mockPerson);
     }
 
     /**
@@ -95,14 +119,14 @@ class PersonServiceTest extends \PHPUnit_Framework_TestCase
      *
      * @expectedException \Pelagos\Exception\RecordExistsPersistenceException
      */
-    public function testCreatePersonRecordExists()
+    public function testPersistRecordExists()
     {
         $this->mockEntityManager->shouldReceive('flush')->andThrow(
             '\Doctrine\DBAL\Exception\UniqueConstraintViolationException',
             null,
             $this->mockDriverException
         );
-        $person = $this->personService->createPerson(self::$firstName, self::$lastName, self::$emailAddress);
+        $person = $this->personService->persist($this->mockPerson);
     }
 
     /**
@@ -111,10 +135,10 @@ class PersonServiceTest extends \PHPUnit_Framework_TestCase
      *
      * @expectedException \Pelagos\Exception\PersistenceException
      */
-    public function testCreatePersonPersistenceError()
+    public function testPersistPersistenceError()
     {
         $this->mockEntityManager->shouldReceive('flush')->andThrow('\Doctrine\DBAL\DBALException');
-        $person = $this->personService->createPerson(self::$firstName, self::$lastName, self::$emailAddress);
+        $person = $this->personService->persist($this->mockPerson);
     }
 
     /**
