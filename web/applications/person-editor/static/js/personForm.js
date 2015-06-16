@@ -95,7 +95,7 @@ function savePerson(jsonData)
             json['message'] = response.statusText;
         }
         title = "Error!";
-        message = "ERROR:" + json.code + "<br>" + json.message;
+        message = json.message;
     })
     .always(function(json) {
         $('#personFormDialog').html(message);
