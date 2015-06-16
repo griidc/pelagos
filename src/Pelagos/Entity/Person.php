@@ -180,7 +180,7 @@ class Person implements \JsonSerializable
      * @param array $updates An associative array indexed with property names
      *                       and containing each property's new value.
      *
-     * @return void
+     * @return Person Return the updated object.
      */
     public function update(array $updates)
     {
@@ -197,5 +197,6 @@ class Person implements \JsonSerializable
                     break;
             }
         }
+        return $this;
     }
 }
