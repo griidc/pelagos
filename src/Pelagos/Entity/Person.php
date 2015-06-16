@@ -76,7 +76,7 @@ class Person implements \JsonSerializable
      * @param string $lastName     Person's last name.
      * @param string $emailAddress Person's email address.
      */
-    public function __construct($firstName, $lastName, $emailAddress)
+    public function __construct($firstName = null, $lastName = null, $emailAddress = null)
     {
         $this->setFirstName($firstName);
         $this->setLastName($lastName);
