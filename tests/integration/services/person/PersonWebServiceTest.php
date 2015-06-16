@@ -468,7 +468,7 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
         $this->expectOutputString(
             $this->makeHTTPStatusJSON(
                 404,
-                'Person with id 0 not found'
+                'Could not find a Person with id: 0'
             )
         );
         $GLOBALS['user'] = new \Pelagos\Tests\Helpers\TestUser;
@@ -533,15 +533,14 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
     public function testUpdatePersonSuccess()
     {
         $personData = array(
-            'id' => 0,
+            'id' => null,
             'firstName' => self::$firstName,
             'lastName' => self::$lastName,
             'emailAddress' => self::$emailAddress,
         );
-        $mockPerson = \Mockery::mock('\Pelagos\Entity\Person, JsonSerializable');
-        $mockPerson->shouldReceive('jsonSerialize')->andReturn($personData);
-        $mockPerson->shouldReceive('update');
-        $this->mockEntityManager->shouldReceive('find')->andReturn($mockPerson);
+        $person = new \Pelagos\Entity\Person;
+        $person->update($personData);
+        $this->mockEntityManager->shouldReceive('find')->andReturn($person);
         $this->mockEntityManager->shouldReceive('flush');
         \Slim\Environment::mock(
             array(

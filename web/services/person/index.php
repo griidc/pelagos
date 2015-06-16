@@ -127,22 +127,25 @@ $slim->put(
             return;
         }
 
-        $personProps = array(
-            'firstName',
-            'lastName',
-            'emailAddress',
-        );
         try {
-            $updates = array();
-            foreach ($personProps as $prop) {
-                if ($slim->request->put($prop) !== null) {
-                    $updates[$prop] = $slim->request->put($prop);
-                }
-            }
-            $person = $comp->updatePerson($id, $updates);
+            $person = $comp->persist(
+                $comp->validate(
+                    $comp->getPerson($id)->update($slim->request->params()),
+                    Validation::createValidatorBuilder()->enableAnnotationMapping()->getValidator()
+                )
+            );
             $status = new HTTPStatus(200, "Updated Person with id: $id", $person);
         } catch (ArgumentException $e) {
             $status = new HTTPStatus(400, $e->getMessage());
+        } catch (ValidationException $e) {
+            $violations = array();
+            foreach ($e->getViolations() as $violation) {
+                $violations[] = $violation->getMessage();
+            }
+            $status = new HTTPStatus(
+                400,
+                'Cannot update person because: ' . join(', ', $violations)
+            );
         } catch (RecordNotFoundPersistenceException $e) {
             $status = new HTTPStatus(404, $e->getMessage());
         } catch (PersistenceException $e) {
