@@ -20,6 +20,9 @@ class PersonServiceTest extends \PHPUnit_Framework_TestCase
     /** @var \Doctrine\DBAL\Driver\DriverException $mockDriverException Propety to hold a mock DriverException. **/
     protected $mockDriverException;
 
+    /** @var mixed $mockValidator Propety to hold a mock validator. **/
+    protected $mockValidator;
+
     /** @var string $firstName A valid first name to use for testing. **/
     protected static $firstName = 'test';
 
