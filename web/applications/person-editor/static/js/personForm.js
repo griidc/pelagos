@@ -24,7 +24,7 @@ $(document).ready(function()
     });
     
     $("input").each(function() {
-        var url = base_path + "/services/person/isValid";
+        var url = base_path + "/services/person/validateProperty";
         $(this).rules( "add", {
             remote: {
                 url: url,
