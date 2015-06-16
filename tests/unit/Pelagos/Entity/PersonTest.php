@@ -2,6 +2,8 @@
 
 namespace Pelagos\Entity;
 
+use Symfony\Component\Validator\Validation;
+
 /**
  * Unit tests for Pelagos\Entity\Person.
  *
@@ -13,6 +15,9 @@ class PersonTest extends \PHPUnit_Framework_TestCase
 {
     /** @var Person $person Property to hold an instance of Person for testing */
     protected $person;
+
+    /** @var \Symfony\Component\Validator\Validator $validator Property to hold an instance of the Symfony Validator */
+    protected $validator;
 
     /** @var string $testFirstName Static class variable containing a first name to use for testing */
     protected static $testFirstName = 'MyFirstName';
@@ -34,7 +39,9 @@ class PersonTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        require_once __DIR__ . '/../../../../vendor/autoload.php';
+        $this->validator = Validation::createValidatorBuilder()
+            ->enableAnnotationMapping()
+            ->getValidator();
         $this->person = new Person(
             self::$testFirstName,
             self::$testLastName,
@@ -92,10 +99,7 @@ class PersonTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test constructing a Person with a null first name.
-     * A \Pelagos\Exception\EmptyRequiredArgumentException should be thrown.
-     *
-     * @expectedException \Pelagos\Exception\EmptyRequiredArgumentException
+     * Test that validation fails for a Person with a null first name.
      */
     public function testNullFirstName()
     {
@@ -104,32 +108,28 @@ class PersonTest extends \PHPUnit_Framework_TestCase
             self::$testLastName,
             self::$testEmailAddress
         );
+        $violations = $this->validator->validate($this->person);
+        $this->assertCount(1, $violations);
+        $this->assertInstanceOf('\Symfony\Component\Validator\ConstraintViolation', $violations[0]);
+        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\NotBlank', $violations[0]->getConstraint());
+        $this->assertEquals('firstName', $violations[0]->getPropertyPath());
+        $this->assertEquals('First name is required', $violations[0]->getMessage());
     }
 
     /**
-     * Test constructing a Person with a null first name and catching the exception.
-     * A \Pelagos\Exception\EmptyRequiredArgumentException should be thrown.
-     * The argument name in the exception should be 'firstName' and the argument value should be null.
+     * Test that validation fails when validating a value of null against the constraints for the firstName property.
      */
-    public function testCatchNullFirstName()
+    public function testValidatePropertyValueNullFirstName()
     {
-        try {
-            $this->person = new Person(
-                null,
-                self::$testLastName,
-                self::$testEmailAddress
-            );
-        } catch (\Pelagos\Exception\EmptyRequiredArgumentException $e) {
-            $this->assertEquals($e->getArgumentName(), 'firstName');
-            $this->assertNull($e->getArgumentValue());
-        }
+        $violations = $this->validator->validatePropertyValue('\Pelagos\Entity\Person', 'firstName', null);
+        $this->assertCount(1, $violations);
+        $this->assertInstanceOf('\Symfony\Component\Validator\ConstraintViolation', $violations[0]);
+        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\NotBlank', $violations[0]->getConstraint());
+        $this->assertEquals('First name is required', $violations[0]->getMessage());
     }
 
     /**
-     * Test constructing a Person with an empty first name.
-     * A \Pelagos\Exception\EmptyRequiredArgumentException should be thrown.
-     *
-     * @expectedException \Pelagos\Exception\EmptyRequiredArgumentException
+     * Test that validation fails for a Person with an empty first name.
      */
     public function testEmptyFirstName()
     {
@@ -138,32 +138,77 @@ class PersonTest extends \PHPUnit_Framework_TestCase
             self::$testLastName,
             self::$testEmailAddress
         );
+        $violations = $this->validator->validate($this->person);
+        $this->assertCount(1, $violations);
+        $this->assertInstanceOf('\Symfony\Component\Validator\ConstraintViolation', $violations[0]);
+        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\NotBlank', $violations[0]->getConstraint());
+        $this->assertEquals('firstName', $violations[0]->getPropertyPath());
+        $this->assertEquals('First name is required', $violations[0]->getMessage());
     }
 
     /**
-     * Test constructing a Person with an empty first name and catching the exception.
-     * A \Pelagos\Exception\EmptyRequiredArgumentException should be thrown.
-     * The argument name in the exception should be 'firstName' and the argument value should be ''.
+     * Test that validation fails when validating a value of '' against the constraints for the firstName property.
      */
-    public function testCatchEmptyFirstName()
+    public function testValidatePropertyValueEmptyFirstName()
     {
-        try {
-            $this->person = new Person(
-                '',
-                self::$testLastName,
-                self::$testEmailAddress
-            );
-        } catch (\Pelagos\Exception\EmptyRequiredArgumentException $e) {
-            $this->assertEquals($e->getArgumentName(), 'firstName');
-            $this->assertSame($e->getArgumentValue(), '');
-        }
+        $violations = $this->validator->validatePropertyValue('\Pelagos\Entity\Person', 'firstName', '');
+        $this->assertCount(1, $violations);
+        $this->assertInstanceOf('\Symfony\Component\Validator\ConstraintViolation', $violations[0]);
+        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\NotBlank', $violations[0]->getConstraint());
+        $this->assertEquals('First name is required', $violations[0]->getMessage());
     }
 
     /**
-     * Test constructing a Person with a null last name.
-     * A \Pelagos\Exception\EmptyRequiredArgumentException should be thrown.
-     *
-     * @expectedException \Pelagos\Exception\EmptyRequiredArgumentException
+     * Test that validation fails for a Person with angle brackets in their first name.
+     */
+    public function testAngleBracketsInFirstName()
+    {
+        $this->person = new Person(
+            '<i>' . self::$testFirstName . '</i>',
+            self::$testLastName,
+            self::$testEmailAddress
+        );
+        $violations = $this->validator->validate($this->person);
+        $this->assertCount(1, $violations);
+        $this->assertInstanceOf('\Symfony\Component\Validator\ConstraintViolation', $violations[0]);
+        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\NoAngleBrackets', $violations[0]->getConstraint());
+        $this->assertEquals('firstName', $violations[0]->getPropertyPath());
+        $this->assertEquals('First name cannot contain angle brackets (< or >)', $violations[0]->getMessage());
+    }
+
+    /**
+     * Test that validation fails when validating a string that contains angle brackets against
+     * the constraints for the firstName property.
+     */
+    public function testValidatePropertyValueAngleBracketsInFirstName()
+    {
+        $violations = $this->validator->validatePropertyValue(
+            '\Pelagos\Entity\Person',
+            'firstName',
+            '<i>' . self::$testFirstName . '</i>'
+        );
+        $this->assertCount(1, $violations);
+        $this->assertInstanceOf('\Symfony\Component\Validator\ConstraintViolation', $violations[0]);
+        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\NoAngleBrackets', $violations[0]->getConstraint());
+        $this->assertEquals('First name cannot contain angle brackets (< or >)', $violations[0]->getMessage());
+    }
+
+    /**
+     * Test that validation succeeds when validating a valid first name against
+     * the constraints for the firstName property.
+     */
+    public function testValidatePropertyValueValidFirstName()
+    {
+        $violations = $this->validator->validatePropertyValue(
+            '\Pelagos\Entity\Person',
+            'firstName',
+            self::$testFirstName
+        );
+        $this->assertCount(0, $violations);
+    }
+
+    /**
+     * Test that validation fails for a Person with a null last name.
      */
     public function testNullLastName()
     {
@@ -172,32 +217,28 @@ class PersonTest extends \PHPUnit_Framework_TestCase
             null,
             self::$testEmailAddress
         );
+        $violations = $this->validator->validate($this->person);
+        $this->assertCount(1, $violations);
+        $this->assertInstanceOf('\Symfony\Component\Validator\ConstraintViolation', $violations[0]);
+        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\NotBlank', $violations[0]->getConstraint());
+        $this->assertEquals('lastName', $violations[0]->getPropertyPath());
+        $this->assertEquals('Last name is required', $violations[0]->getMessage());
     }
 
     /**
-     * Test constructing a Person with a null last name and catching the exception.
-     * A \Pelagos\Exception\EmptyRequiredArgumentException should be thrown.
-     * The argument name in the exception should be 'lastName' and the argument value should be null.
+     * Test that validation fails when validating a value of null against the constraints for the lastName property.
      */
-    public function testCatchNullLastName()
+    public function testValidatePropertyValueNullLastName()
     {
-        try {
-            $this->person = new Person(
-                self::$testFirstName,
-                null,
-                self::$testEmailAddress
-            );
-        } catch (\Pelagos\Exception\EmptyRequiredArgumentException $e) {
-            $this->assertEquals($e->getArgumentName(), 'lastName');
-            $this->assertNull($e->getArgumentValue());
-        }
+        $violations = $this->validator->validatePropertyValue('\Pelagos\Entity\Person', 'lastName', null);
+        $this->assertCount(1, $violations);
+        $this->assertInstanceOf('\Symfony\Component\Validator\ConstraintViolation', $violations[0]);
+        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\NotBlank', $violations[0]->getConstraint());
+        $this->assertEquals('Last name is required', $violations[0]->getMessage());
     }
 
     /**
-     * Test constructing a Person with an empty last name.
-     * A \Pelagos\Exception\EmptyRequiredArgumentException should be thrown.
-     *
-     * @expectedException \Pelagos\Exception\EmptyRequiredArgumentException
+     * Test that validation fails for a Person with an empty last name.
      */
     public function testEmptyLastName()
     {
@@ -206,32 +247,77 @@ class PersonTest extends \PHPUnit_Framework_TestCase
             '',
             self::$testEmailAddress
         );
+        $violations = $this->validator->validate($this->person);
+        $this->assertCount(1, $violations);
+        $this->assertInstanceOf('\Symfony\Component\Validator\ConstraintViolation', $violations[0]);
+        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\NotBlank', $violations[0]->getConstraint());
+        $this->assertEquals('lastName', $violations[0]->getPropertyPath());
+        $this->assertEquals('Last name is required', $violations[0]->getMessage());
     }
 
     /**
-     * Test constructing a Person with an empty last name and catching the exception.
-     * A \Pelagos\Exception\EmptyRequiredArgumentException should be thrown.
-     * The argument name in the exception should be 'lastName' and the argument value should be ''.
+     * Test that validation fails when validating a value of '' against the constraints for the lastName property.
      */
-    public function testCatchEmptyLastName()
+    public function testValidatePropertyValueEmptyLastName()
     {
-        try {
-            $this->person = new Person(
-                self::$testFirstName,
-                '',
-                self::$testEmailAddress
-            );
-        } catch (\Pelagos\Exception\EmptyRequiredArgumentException $e) {
-            $this->assertEquals($e->getArgumentName(), 'lastName');
-            $this->assertSame($e->getArgumentValue(), '');
-        }
+        $violations = $this->validator->validatePropertyValue('\Pelagos\Entity\Person', 'lastName', '');
+        $this->assertCount(1, $violations);
+        $this->assertInstanceOf('\Symfony\Component\Validator\ConstraintViolation', $violations[0]);
+        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\NotBlank', $violations[0]->getConstraint());
+        $this->assertEquals('Last name is required', $violations[0]->getMessage());
     }
 
     /**
-     * Test constructing a Person with a null email address.
-     * A \Pelagos\Exception\EmptyRequiredArgumentException should be thrown.
-     *
-     * @expectedException \Pelagos\Exception\EmptyRequiredArgumentException
+     * Test that validation fails for a Person with angle brackets in their last name.
+     */
+    public function testAngleBracketsInLastName()
+    {
+        $this->person = new Person(
+            self::$testFirstName,
+            '<i>' . self::$testLastName . '</i>',
+            self::$testEmailAddress
+        );
+        $violations = $this->validator->validate($this->person);
+        $this->assertCount(1, $violations);
+        $this->assertInstanceOf('\Symfony\Component\Validator\ConstraintViolation', $violations[0]);
+        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\NoAngleBrackets', $violations[0]->getConstraint());
+        $this->assertEquals('lastName', $violations[0]->getPropertyPath());
+        $this->assertEquals('Last name cannot contain angle brackets (< or >)', $violations[0]->getMessage());
+    }
+
+    /**
+     * Test that validation fails when validating a string that contains angle brackets against
+     * the constraints for the lastName property.
+     */
+    public function testValidatePropertyValueAngleBracketsInLastName()
+    {
+        $violations = $this->validator->validatePropertyValue(
+            '\Pelagos\Entity\Person',
+            'lastName',
+            '<i>' . self::$testLastName . '</i>'
+        );
+        $this->assertCount(1, $violations);
+        $this->assertInstanceOf('\Symfony\Component\Validator\ConstraintViolation', $violations[0]);
+        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\NoAngleBrackets', $violations[0]->getConstraint());
+        $this->assertEquals('Last name cannot contain angle brackets (< or >)', $violations[0]->getMessage());
+    }
+
+    /**
+     * Test that validation succeeds when validating a valid last name against
+     * the constraints for the lastName property.
+     */
+    public function testValidatePropertyValueValidLastName()
+    {
+        $violations = $this->validator->validatePropertyValue(
+            '\Pelagos\Entity\Person',
+            'lastName',
+            self::$testLastName
+        );
+        $this->assertCount(0, $violations);
+    }
+
+    /**
+     * Test that validation fails for a Person with a null email address.
      */
     public function testNullEmailAddress()
     {
@@ -240,32 +326,28 @@ class PersonTest extends \PHPUnit_Framework_TestCase
             self::$testLastName,
             null
         );
+        $violations = $this->validator->validate($this->person);
+        $this->assertCount(1, $violations);
+        $this->assertInstanceOf('\Symfony\Component\Validator\ConstraintViolation', $violations[0]);
+        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\NotBlank', $violations[0]->getConstraint());
+        $this->assertEquals('emailAddress', $violations[0]->getPropertyPath());
+        $this->assertEquals('Email address is required', $violations[0]->getMessage());
     }
 
     /**
-     * Test constructing a Person with a null email address and catching the exception.
-     * A \Pelagos\Exception\EmptyRequiredArgumentException should be thrown.
-     * The argument name in the exception should be 'emailAddress' and the argument value should be null.
+     * Test that validation fails when validating a value of null against the constraints for the emailAddress property.
      */
-    public function testCatchNullEmailAddress()
+    public function testValidatePropertyValueNullEmailAddress()
     {
-        try {
-            $this->person = new Person(
-                self::$testFirstName,
-                self::$testLastName,
-                null
-            );
-        } catch (\Pelagos\Exception\EmptyRequiredArgumentException $e) {
-            $this->assertEquals($e->getArgumentName(), 'emailAddress');
-            $this->assertNull($e->getArgumentValue());
-        }
+        $violations = $this->validator->validatePropertyValue('\Pelagos\Entity\Person', 'emailAddress', null);
+        $this->assertCount(1, $violations);
+        $this->assertInstanceOf('\Symfony\Component\Validator\ConstraintViolation', $violations[0]);
+        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\NotBlank', $violations[0]->getConstraint());
+        $this->assertEquals('Email address is required', $violations[0]->getMessage());
     }
 
     /**
-     * Test constructing a Person with an empty email address.
-     * A \Pelagos\Exception\EmptyRequiredArgumentException should be thrown.
-     *
-     * @expectedException \Pelagos\Exception\EmptyRequiredArgumentException
+     * Test that validation fails for a Person with an empty email address.
      */
     public function testEmptyEmailAddress()
     {
@@ -274,32 +356,51 @@ class PersonTest extends \PHPUnit_Framework_TestCase
             self::$testLastName,
             ''
         );
+        $violations = $this->validator->validate($this->person);
+        $this->assertCount(1, $violations);
+        $this->assertInstanceOf('\Symfony\Component\Validator\ConstraintViolation', $violations[0]);
+        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\NotBlank', $violations[0]->getConstraint());
+        $this->assertEquals('emailAddress', $violations[0]->getPropertyPath());
+        $this->assertEquals('Email address is required', $violations[0]->getMessage());
     }
 
     /**
-     * Test constructing a Person with an empty email address and catching the exception.
-     * A \Pelagos\Exception\EmptyRequiredArgumentException should be thrown.
-     * The argument name in the exception should be 'emailAddress' and the argument value should be ''.
+     * Test that validation fails for a Person with angle brackets in their email address.
      */
-    public function testCatchEmptyEmailAddress()
+    public function testAngleBracketsInEmailAddress()
     {
-        try {
-            $this->person = new Person(
-                self::$testFirstName,
-                self::$testLastName,
-                ''
-            );
-        } catch (\Pelagos\Exception\EmptyRequiredArgumentException $e) {
-            $this->assertEquals($e->getArgumentName(), 'emailAddress');
-            $this->assertSame($e->getArgumentValue(), '');
-        }
+        $this->person = new Person(
+            self::$testFirstName,
+            self::$testLastName,
+            '<i>' . self::$testEmailAddress . '</i>'
+        );
+        $violations = $this->validator->validate($this->person);
+        $this->assertCount(1, $violations);
+        $this->assertInstanceOf('\Symfony\Component\Validator\ConstraintViolation', $violations[0]);
+        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\NoAngleBrackets', $violations[0]->getConstraint());
+        $this->assertEquals('emailAddress', $violations[0]->getPropertyPath());
+        $this->assertEquals('Email address cannot contain angle brackets (< or >)', $violations[0]->getMessage());
     }
 
     /**
-     * Test constructing a Person with an invalid address.
-     * A \Pelagos\Exception\InvalidFormatArgumentException should be thrown.
-     *
-     * @expectedException \Pelagos\Exception\InvalidFormatArgumentException
+     * Test that validation fails when validating a string that contains angle brackets against
+     * the constraints for the emailAddress property.
+     */
+    public function testValidatePropertyValueAngleBracketsInEmailAddress()
+    {
+        $violations = $this->validator->validatePropertyValue(
+            '\Pelagos\Entity\Person',
+            'emailAddress',
+            '<i>' . self::$testEmailAddress . '</i>'
+        );
+        $this->assertCount(1, $violations);
+        $this->assertInstanceOf('\Symfony\Component\Validator\ConstraintViolation', $violations[0]);
+        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\NoAngleBrackets', $violations[0]->getConstraint());
+        $this->assertEquals('Email address cannot contain angle brackets (< or >)', $violations[0]->getMessage());
+    }
+
+    /**
+     * Test that validation fails for a Person with an invalid address.
      */
     public function testInvalidEmailAddress()
     {
@@ -308,26 +409,42 @@ class PersonTest extends \PHPUnit_Framework_TestCase
             self::$testLastName,
             self::$testInvalidEmailAddress
         );
+        $violations = $this->validator->validate($this->person);
+        $this->assertCount(1, $violations);
+        $this->assertInstanceOf('\Symfony\Component\Validator\ConstraintViolation', $violations[0]);
+        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\Email', $violations[0]->getConstraint());
+        $this->assertEquals('emailAddress', $violations[0]->getPropertyPath());
+        $this->assertEquals('Email address is invalid', $violations[0]->getMessage());
     }
 
     /**
-     * Test constructing a Person with an invalid address and catching the exception.
-     * A \Pelagos\Exception\InvalidFormatArgumentException should be thrown.
-     * The argument name in the exception should be 'emailAddress', the argument value
-     * should be the passed in value, and the expected format should be 'local@domain.tld'.
+     * Test that validation fails when validating a string that contains an invalid email address against
+     * the constraints for the emailAddress property.
      */
-    public function testCatchInvalidEmailAddress()
+    public function testValidatePropertyValueInvalidEmailAddress()
     {
-        try {
-            $this->person = new Person(
-                self::$testFirstName,
-                self::$testLastName,
-                self::$testInvalidEmailAddress
-            );
-        } catch (\Pelagos\Exception\InvalidFormatArgumentException $e) {
-            $this->assertEquals($e->getArgumentName(), 'emailAddress');
-            $this->assertEquals($e->getArgumentValue(), self::$testInvalidEmailAddress);
-            $this->assertEquals($e->getExpectedFormat(), 'local@domain.tld');
-        }
+        $violations = $this->validator->validatePropertyValue(
+            '\Pelagos\Entity\Person',
+            'emailAddress',
+            self::$testInvalidEmailAddress
+        );
+        $this->assertCount(1, $violations);
+        $this->assertInstanceOf('\Symfony\Component\Validator\ConstraintViolation', $violations[0]);
+        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\Email', $violations[0]->getConstraint());
+        $this->assertEquals('Email address is invalid', $violations[0]->getMessage());
+    }
+
+    /**
+     * Test that validation succeeds when validating a valid email address against
+     * the constraints for the emailAddress property.
+     */
+    public function testValidatePropertyValueValidEmailAddress()
+    {
+        $violations = $this->validator->validatePropertyValue(
+            '\Pelagos\Entity\Person',
+            'emailAddress',
+            self::$testEmailAddress
+        );
+        $this->assertCount(0, $violations);
     }
 }

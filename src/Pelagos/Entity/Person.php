@@ -1,9 +1,16 @@
 <?php
+/**
+ * This file contains the implementation of the Person entity class.
+ *
+ * @package    Pelagos\Entity
+ * @subpackage Person
+ */
 
 namespace Pelagos\Entity;
 
 use \Pelagos\Exception\EmptyRequiredArgumentException;
 use \Pelagos\Exception\InvalidFormatArgumentException;
+use \Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Class to represent people.
@@ -11,63 +18,75 @@ use \Pelagos\Exception\InvalidFormatArgumentException;
 class Person implements \JsonSerializable
 {
     /**
-     * Person identifier
+     * Person identifier.
      *
-     * @var Int
+     * @var int $id
      */
     protected $id;
 
     /**
-     * Person's first name
+     * Person's first name.
      *
-     * @var String
+     * @var string $firstName
+     *
+     * @Assert\NotBlank(
+     *     message="First name is required"
+     * )
+     * @Assert\NoAngleBrackets(
+     *     message="First name cannot contain angle brackets (< or >)"
+     * )
      */
     protected $firstName;
 
     /**
-     * Person's last name
+     * Person's last name.
      *
-     * @var String
+     * @var string $lastName
+     *
+     * @Assert\NotBlank(
+     *     message="Last name is required"
+     * )
+     * @Assert\NoAngleBrackets(
+     *     message="Last name cannot contain angle brackets (< or >)"
+     * )
      */
     protected $lastName;
 
     /**
-     * Person's email address
+     * Person's email address.
      *
-     * @var String
+     * @var string $emailAddress
+     *
+     * @Assert\NotBlank(
+     *     message="Email address is required"
+     * )
+     * @Assert\NoAngleBrackets(
+     *     message="Email address cannot contain angle brackets (< or >)"
+     * )
+     * @Assert\Email(
+     *     message="Email address is invalid"
+     * )
      */
     protected $emailAddress;
 
     /**
-     * Person constructor
+     * Person constructor.
      *
-     * @param String $firstName Person's first name
-     * @param String $lastName Person's last name
-     * @param String $emailAddress Person's email address
+     * @param string $firstName    Person's first name.
+     * @param string $lastName     Person's last name.
+     * @param string $emailAddress Person's email address.
      */
-    public function __construct($firstName, $lastName, $emailAddress)
+    public function __construct($firstName = null, $lastName = null, $emailAddress = null)
     {
-        if (empty($firstName)) {
-            $this->throwEmptyRequiredArgumentException('firstName', $firstName);
-        }
-        if (empty($lastName)) {
-            $this->throwEmptyRequiredArgumentException('lastName', $lastName);
-        }
-        if (empty($emailAddress)) {
-            $this->throwEmptyRequiredArgumentException('emailAddress', $emailAddress);
-        }
-        if (!filter_var($emailAddress, FILTER_VALIDATE_EMAIL)) {
-            $this->throwInvalidFormatArgumentException('emailAddress', $emailAddress, 'local@domain.tld');
-        }
-        $this->firstName = $firstName;
-        $this->lastName = $lastName;
-        $this->emailAddress = $emailAddress;
+        $this->setFirstName($firstName);
+        $this->setLastName($lastName);
+        $this->setEmailAddress($emailAddress);
     }
 
     /**
-     * id getter
+     * Getter for id property.
      *
-     * @return Int persistent identifier for the Person
+     * @return int Persistent identifier for the Person.
      */
     public function getId()
     {
@@ -75,9 +94,21 @@ class Person implements \JsonSerializable
     }
 
     /**
-     * firstName getter
+     * Setter for firstName property.
      *
-     * @return String first name of the Person
+     * @param string $firstName First name of the Person.
+     *
+     * @return void
+     */
+    public function setFirstName($firstName)
+    {
+        $this->firstName = $firstName;
+    }
+
+    /**
+     * Getter for firstName property.
+     *
+     * @return string First name of the Person.
      */
     public function getFirstName()
     {
@@ -85,9 +116,21 @@ class Person implements \JsonSerializable
     }
 
     /**
-     * lastName getter
+     * Setter for lastName property.
      *
-     * @return String last name of the Person
+     * @param string $lastName Last name of the Person.
+     *
+     * @return void
+     */
+    public function setLastName($lastName)
+    {
+        $this->lastName = $lastName;
+    }
+
+    /**
+     * Getter for lastName property.
+     *
+     * @return string Last name of the Person.
      */
     public function getLastname()
     {
@@ -95,9 +138,21 @@ class Person implements \JsonSerializable
     }
 
     /**
-     * emailAddress getter
+     * Setter for emailAddress property.
      *
-     * @return String email address of the Person
+     * @param string $emailAddress Email address of the Person.
+     *
+     * @return void
+     */
+    public function setEmailAddress($emailAddress)
+    {
+        $this->emailAddress = $emailAddress;
+    }
+
+    /**
+     * Getter for emailAddress property.
+     *
+     * @return string Email address of the Person.
      */
     public function getEmailAddress()
     {
@@ -120,32 +175,28 @@ class Person implements \JsonSerializable
     }
 
     /**
-     * Method to throw EmptyRequiredArgumentException with properties set.
+     * Method to update multiple properties.
      *
-     * @param $argumentName string Name of the empty required argument.
-     * @param $argumentValue mixed Value of the empty required argument.
-     */
-    protected function throwEmptyRequiredArgumentException($argumentName, $argumentValue)
-    {
-        $exception = new EmptyRequiredArgumentException("$argumentName is required");
-        $exception->setArgumentName($argumentName);
-        $exception->setArgumentValue($argumentValue);
-        throw $exception;
-    }
-
-    /**
-     * Method to throw InvalidFormatArgumentException with properties set.
+     * @param array $updates An associative array indexed with property names
+     *                       and containing each property's new value.
      *
-     * @param $argumentName string Name of the invalidly formatted argument.
-     * @param $argumentValue mixed Value of the invalidly formatted argument.
-     * @param $expectedFormat string Text description of the expected format for the argument.
+     * @return Person Return the updated object.
      */
-    protected function throwInvalidFormatArgumentException($argumentName, $argumentValue, $expectedFormat = null)
+    public function update(array $updates)
     {
-        $exception = new InvalidFormatArgumentException("$argumentName is improperly formatted");
-        $exception->setArgumentName($argumentName);
-        $exception->setArgumentValue($argumentValue);
-        $exception->setExpectedFormat($expectedFormat);
-        throw $exception;
+        foreach ($updates as $field => $value) {
+            switch($field) {
+                case 'firstName':
+                    $this->setFirstName($value);
+                    break;
+                case 'lastName':
+                    $this->setLastName($value);
+                    break;
+                case 'emailAddress':
+                    $this->setEmailAddress($value);
+                    break;
+            }
+        }
+        return $this;
     }
 }
