@@ -103,12 +103,12 @@ class MetadataXmlFromDB
                     return $metadataXml;
                 } // else it is false - not found
                 throw new NotFoundException(
-                    "C-1: " . "No " . self::METADATA_TABLE_NAME . "  found with registry ID " .
+                    "No " . self::METADATA_TABLE_NAME . "  found with registry ID " .
                     $registryId
                 );
             }
         } catch (\PDOException $pdoEx) {
-            throw new PersistenceException("C-1: " . $pdoEx->getMessage());
+            throw new PersistenceException( $pdoEx->getMessage());
         }
     }
 
@@ -153,13 +153,13 @@ class MetadataXmlFromDB
                 } // else it is false - not found
                 $this->logger->log("getRegistryIdForDatasetUdi() throwing NotFoundException");
                 throw new NotFoundException(
-                    "C-1: " . "No " . self::REGISTRY_TABLE_NAME .
+                    "No " . self::REGISTRY_TABLE_NAME .
                     " record found for dataset UDI: " . $datasetUdi
                 );
             }
         } catch (\PDOException $pdoEx) {
             $this->logger->log("getRegistryIdForDatasetUdi() PDOException: " . $pdoEx->getMessage());
-            throw new PersistenceException("C-1: " . $pdoEx->getMessage());
+            throw new PersistenceException(  $pdoEx->getMessage());
         }
     }
 
