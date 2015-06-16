@@ -34,27 +34,34 @@ $slim->get(
         $comp->setQuitOnFinalize(true);
 
         $params = $slim->request->params();
-        if (count($params) == 1) {
-            $paramName = array_keys($params);
-            if (property_exists('\Pelagos\Entity\Person', $paramName[0])) {
-                $person = new Person;
-                $person->update($params);
-                $validator = Validation::createValidatorBuilder()->enableAnnotationMapping()->getValidator();
-                $violations = $validator->validateProperty($person, $paramName[0]);
-                if (count($violations) > 0) {
-                    $violationMsgs = array();
-                    foreach ($violations as $violation) {
-                        $violationMsgs[] = $violation->getMessage();
-                    }
-                    print json_encode(join($violationMsgs, ', '));
-                } else {
-                    print json_encode(true);
+
+        if (count($params) == 0) {
+            print json_encode('Property to be validated not supplied');
+            return;
+        }
+
+        if (count($params) > 1) {
+            print json_encode('Validation of multiple properties not allowed.');
+            return;
+        }
+
+        $paramName = array_keys($params);
+        if (property_exists('\Pelagos\Entity\Person', $paramName[0])) {
+            $person = new Person;
+            $person->update($params);
+            $validator = Validation::createValidatorBuilder()->enableAnnotationMapping()->getValidator();
+            $violations = $validator->validateProperty($person, $paramName[0]);
+            if (count($violations) > 0) {
+                $violationMsgs = array();
+                foreach ($violations as $violation) {
+                    $violationMsgs[] = $violation->getMessage();
                 }
+                print json_encode(join($violationMsgs, ', '));
             } else {
-                print json_encode("The parameter $paramName[0] is not a valid property of Person.");
+                print json_encode(true);
             }
         } else {
-                print json_encode('Validation of multiple properties not allowed.');
+            print json_encode("The parameter $paramName[0] is not a valid property of Person.");
         }
     }
 );
