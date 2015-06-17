@@ -9,9 +9,7 @@ $(document).ready(function()
     formValidator = $('#personForm').validate({
         submitHandler: function(form) {
             var data = $(form).getFormJSON();
-            $.when(updatePerson(data,currentPerson)).done(function () {
-                $(form).editableForm('reset');
-            });
+            updatePerson(data,currentPerson);
         }
     });
     
@@ -93,6 +91,7 @@ function updatePerson(jsonData,PersonID)
         if (json.code == 200) {
             title = "Success!";
             message = json.message;
+            $(form).editableForm('reset');
         } else {
             title = "Error!";
             message = "Something went wrong!<br>Didn't receive the correct success message!";
@@ -110,7 +109,9 @@ function updatePerson(jsonData,PersonID)
         message = json.message;
     })
     .always(function(json) {
-        $('#personFormDialog').html(message);
-        $('#personFormDialog').dialog( 'option', 'title', title).dialog('open');
+        if (json.code != 200) {
+            $('#personFormDialog').html(message);
+            $('#personFormDialog').dialog( 'option', 'title', title).dialog('open');
+        }
     })
 }

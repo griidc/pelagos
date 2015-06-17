@@ -39,22 +39,24 @@ input {
     box-shadow: 0 0 0 0 transparent;
 }
 
-.innerForm:hover::after {
-    display:inline;
-    font-family: "WingDings";
-    font-size: larger;
-    content: "!";
-    background-color: #ccc;
-    border: 1px solid #ccc;
-    float:right;
-    position: absolute;
-    right: -1px;
-    bottom: -1px;
+.innerForm:hover{
+    box-shadow: 0 0 0 3px #ccc;
 }
 
-.innerForm:hover{
-    box-shadow: 0 0 0 1px #ccc;
+
+.innerForm:hover::after {
+    display:inline;
+    background-image: url("/pelagos/dev/mvde/static/images/user_edit.png");
+    content: "";
+    height: 32px;
+    width: 32px;
+    background-color: #fff;
+    border: 3px solid #ccc;
+    position: absolute;
+    right: -3px;
+    bottom: -3px;
 }
+
 
 
     

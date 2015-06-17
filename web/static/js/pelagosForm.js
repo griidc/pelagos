@@ -9,7 +9,15 @@
         if (command) {
             switch (command) {
                 case 'reset': 
-                    console.log('reset!');
+                    this.find('input').each(function() {
+                        $(this)
+                        .attr('readonly',true)
+                        .removeClass('active');
+                    });
+                    $('#editableWrapper')
+                    .append('<div class="innerForm"><div>')
+                    .removeClass('active');
+                    $('.editableFormButton').css({opacity: 1.0, visibility: "visible"}).animate({opacity: 0.0});
                     break;
                 default:
                     break;
@@ -33,9 +41,10 @@
         
         self.append('<button class="editableFormButton" type="submit">Save</input>');
         self.append('<button class="editableFormButton" type="reset">Reset</input>');
-        $('.editableFormButton').css('visibility','hidden')
+        $('.editableFormButton').css('visibility','hidden');
         
-        $('#editableWrapper').append('<div class="innerForm"><div>');
+        $('#editableWrapper').append('<div class="innerForm"><div>')
+        
         
         this.find('input').each(function() {
             $(this)
@@ -43,19 +52,22 @@
             .addClass('formfield');
         });
         
-        $('#editableWrapper').one("click", function() {
-            var url = base_path + "/services/person/validateProperty";
-            self.find('input').each(function() {
-                $(this).attr('readonly',false)
-                .addClass('active')
-                .rules( "add", {
-                    remote: {
-                        url: url,
-                    }
-                })
-                $('.innerForm').remove();
-            });
-            $('.editableFormButton').css('visibility','visible')
+        $('#editableWrapper').on("click", function() {
+            if (!$(this).hasClass('active')) {
+                $(this).addClass('active');
+                var url = base_path + "/services/person/validateProperty";
+                self.find('input').each(function() {
+                    $(this).attr('readonly',false)
+                    .addClass('active')
+                    .rules( "add", {
+                        remote: {
+                            url: url,
+                        }
+                    })
+                    $('.innerForm').remove();
+                });
+                $('.editableFormButton').css({opacity: 0.0, visibility: "visible"}).animate({opacity: 1.0});
+            }   
         });
         
         return this.each(function() {
