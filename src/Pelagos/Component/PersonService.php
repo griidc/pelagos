@@ -93,39 +93,4 @@ class PersonService extends \Pelagos\Component
         }
         return $person;
     }
-
-    /**
-     * Method to update a Person object given the provided id.
-     *
-     * @param string $id Person's id.
-     * @return \Pelagos\Entity\Person The person object with the provided id.
-     */
-    public function updatePerson($id, $updates)
-    {
-        if (!preg_match('/^\d+$/', $id)) {
-            $exception = new \Pelagos\Exception\ArgumentException(
-                "Person id must be a non-negative integer"
-            );
-            $exception->setArgumentName('id');
-            $exception->setArgumentValue($id);
-            throw $exception;
-        }
-        try {
-            $entityManager = $this->getEntityManager();
-            $person = $entityManager->find('\Pelagos\Entity\Person', $id);
-            if (!isset($person)) {
-                throw new \Pelagos\Exception\RecordNotFoundPersistenceException("Person with id $id not found");
-            }
-            $person->update($updates);
-            $entityManager->persist($person);
-            $entityManager->flush();
-        } catch (\Doctrine\DBAL\Exception\NotNullConstraintViolationException $e) {
-            throw new \Pelagos\Exception\MissingRequiredFieldPersistenceException($e);
-        } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException $e) {
-            throw new \Pelagos\Exception\RecordExistsPersistenceException($e);
-        } catch (\Doctrine\DBAL\DBALException $e) {
-            throw new \Pelagos\Exception\PersistenceException($e->getMessage());
-        }
-        return $person;
-    }
 }
