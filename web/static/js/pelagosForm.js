@@ -1,29 +1,61 @@
 (function( $ ) {
-    $.fn.editableForm = function() {
+    $.fn.editableForm = function(command) {
         //make sure this is of type form
         if (!this.is('form'))
         { return false; }
         
         self = this;
         
-        self.hashValue = 'test';
+        if (command) {
+            switch (command) {
+                case 'reset': 
+                    console.log('reset!');
+                    break;
+                default:
+                    break;
+            }
+            return;
+        }
+        
+        $.validator.methods._required = $.validator.methods.required;
+        $.validator.methods.required = function( value, element, param )
+        {
+            if (typeof this.settings.rules[ $(element).attr('name') ] != 'undefined' 
+            && typeof this.settings.rules[ $(element).attr('name') ].remote != 'undefined') {
+                return true;
+            }
+            return  $.validator.methods._required.call( this, value, element, param );
+        }
+        
+        self.hashValue = self.serialize();
         
         self.wrap('<div id="editableWrapper" class="editableForm formReadonly"></div>');
+        
+        self.append('<button class="editableFormButton" type="submit">Save</input>');
+        self.append('<button class="editableFormButton" type="reset">Reset</input>');
+        $('.editableFormButton').css('visibility','hidden')
         
         $('#editableWrapper').append('<div class="innerForm"><div>');
         
         this.find('input').each(function() {
             $(this)
             .attr('readonly',true)
-            .addClass('formfield')
+            .addClass('formfield');
         });
         
         $('#editableWrapper').one("click", function() {
+            var url = base_path + "/services/person/validateProperty";
             self.find('input').each(function() {
                 $(this).attr('readonly',false)
                 .addClass('active')
+                .rules( "add", {
+                    remote: {
+                        url: url,
+                    }
+                })
                 $('.innerForm').remove();
             });
+            $('.editableFormButton').css('visibility','visible')
         });
         
         return this.each(function() {

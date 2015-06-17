@@ -11,6 +11,7 @@ $comp->addJS(
         '//cdnjs.cloudflare.com/ajax/libs/jquery-hashchange/v1.3/jquery.ba-hashchange.min.js',
         '/static/js/pelagosForm.js',
         'static/js/userLand.js',
+        '//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.13.1/jquery.validate.min.js'
     )
 );
 
