@@ -2,12 +2,14 @@ var $ = jQuery.noConflict();
 
 var base_path;
 
+var currentPerson;
+
 $(document).ready(function()
 {
     formValidator = $('#personForm').validate({
         submitHandler: function(form) {
             var data = $(form).getFormJSON();
-            $.when(updatePerson(data)).done(function () {
+            $.when(updatePerson(data,currentPerson)).done(function () {
                 $(form).editableForm('reset');
             });
         }
@@ -55,6 +57,7 @@ function updatePerson()
 
 function hashchanged(){
     var hash = location.hash.replace( /^#/, '' );
+    currentPerson = hash;
     console.log(hash);
     populatePerson(hash);
 }
@@ -74,9 +77,9 @@ function populatePerson(PersonID)
     });
 }
 
-function updatePerson(jsonData)
+function updatePerson(jsonData,PersonID)
 {
-    var url = base_path + "/services/person";
+    var url = base_path + "/services/person/"+PersonID;
     var title = "";
     var messsage = "";
     $.ajax({
