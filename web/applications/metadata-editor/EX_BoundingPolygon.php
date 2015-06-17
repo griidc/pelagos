@@ -13,7 +13,7 @@ class EX_BoundingPolygon
         
         $gmlCoordinates = '';
              
-        $gmlCoordinates = $mMD->returnXmlString('/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:geographicElement/gmd:EX_BoundingPolygon[1]/gmd:polygon[1]/*');
+        $gmlCoordinates = $mMD->returnXmlString('/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:extent[1]/gmd:EX_Extent[1]/gmd:geographicElement[1]/gmd:EX_BoundingPolygon[1]/gmd:polygon[1]/*');
               
         /* 
         if (isset ($geoArray['gmd:polygon']))
