@@ -78,24 +78,17 @@ class XMLDataFile
     public function getXML($udi)
     {
         $targetUdi = trim($udi);
-        $this->logger = new MetadataLogger("XMLDataFile", $targetUdi);
-        $this->logger->setOff();
         $xmlText = false;
-        $this->logger->write("XMLDataFile.getXML(" . $targetUdi . ") calling getFileLocation()");
         $path = $this->getFileLocation($targetUdi);
         if ($path == false) {
             throw new NotFoundException("XMLDataFile No XML found in path: " . $path);
         } elseif (is_readable($path)) {
-            $this->logger->write("XMLDataFile.getXML(" . $targetUdi . ") reading file: " . $path);
             $xmlText = file_get_contents($path);
             if ($xmlText === false) {
                 throw new NotFoundException("XMLDataFile file_get_contents is FALSE for path: " . $path);
             }
-            $this->logger->write("XMLDataFile.getXML(" . $targetUdi . ") create validator");
             $validator = new XMLValidator();
-            $this->logger->write("XMLDataFile.getXML(" . $targetUdi . ") call validator");
             $validator->validate($xmlText);  // throws InvalidXmlException
-            $this->logger->write("XMLDataFile.getXML(" . $targetUdi . ") returning xml text");
             return $xmlText;
         }
         throw new NotFoundException("XMLDataFile No XML found in path: " . $path);

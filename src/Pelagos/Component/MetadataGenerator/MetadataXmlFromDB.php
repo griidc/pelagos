@@ -72,14 +72,8 @@ class MetadataXmlFromDB
     public function getMetadataXmlForDatasetUdi($datasetUdi)
     {
         $targetUdi = trim($datasetUdi);
-        $this->logger = new MetadataLogger("metadataXmlFromDB", $targetUdi);
-        $this->logger->setOff();
-        $this->logger->log("inside getMetadataXmlForDatasetUdi");
         $registryId = $this->getRegistryIdForDatasetUdi($targetUdi);
-        $this->logger->log("  got back " . $registryId);
-        $this->logger->log("inside getMetadataXmlForDatasetUdi calling getMetadataXml ");
         $xmlData = $this->getMetadataXml($registryId);
-        $this->logger->log("inside getMetadataXmlForDatasetUdi returning  getMetadataXml ");
         return $xmlData;
     }
 
