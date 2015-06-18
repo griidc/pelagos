@@ -1,32 +1,21 @@
 <?php
 
-/**
- * A class to get XML metadata files from a file.
- * The file location is stored in the database.
- */
 namespace Pelagos\Component\MetadataGenerator;
 
 use \Pelagos\Exception\NotFoundException;
 use \Pelagos\Exception\PersistenceException;
 
+/**
+ * A class to get XML metadata files from a file.
+ *
+ * This pulls an XML metadata file from filesystem
+ * and returns it as a string.  The file location is
+ * determined by the UDI passed.
+ */
 class XMLDataFile
 {
-    private $dbcon = null;
-
     private $logger = null;
     private static $instance = null;
-
-    /**
-     * singleton implementation
-     * only one instance of this class allowed
-     * per executable unit
-     */
-    private function __construct()
-    {
-        require_once 'DBUtils.php';
-        $this->dbcon = openDB("GOMRI_RW");
-        $this->dbcon->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-    }
 
     /**
      * singleton implementation
@@ -40,9 +29,8 @@ class XMLDataFile
     }
 
     /**
-     * Unused - as far as I know
-     * @@param string $udi
-     * @return string
+     * @param string $udi - dataset identification
+     * @return string - absolute filesystem location of metadata file associated with supplied UDI
      */
     private function getFileLocation($udi)
     {

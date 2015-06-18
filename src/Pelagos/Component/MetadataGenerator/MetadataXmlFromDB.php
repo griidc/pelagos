@@ -86,7 +86,7 @@ class MetadataXmlFromDB
      * Fetch the the metadata xml from the Metadata table
      * The key is registry id
      * @param string $registryId
-     * @return the xml from the meatadata t
+     * @return string xml text from the metadata table
      * @throws NotFoundException of the registry row is not found
      * @throws PersistenceException
      */
