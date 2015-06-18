@@ -33,8 +33,6 @@ class MetadataXmlFromDB
 
     const METADATA_TABLE_NAME = "public.metadata";
 
-    private $logger = null;
-
     private static $instance = null;
 
     /**
@@ -143,17 +141,14 @@ class MetadataXmlFromDB
             if ($statement->execute(array(':arg1' => $datasetUdi))) {
                 if ($row = $statement->fetch(\PDO::FETCH_ASSOC)) { // if true
                     $registryId = $row[self::REGISTRY_ID_COL];
-                    $this->logger->log("getRegistryIdForDatasetUdi() returning registry " . $registryId);
                     return $registryId;
                 } // else it is false - not found
-                $this->logger->log("getRegistryIdForDatasetUdi() throwing NotFoundException");
                 throw new NotFoundException(
                     "No " . self::REGISTRY_TABLE_NAME .
                     " record found for dataset UDI: " . $datasetUdi
                 );
             }
         } catch (\PDOException $pdoEx) {
-            $this->logger->log("getRegistryIdForDatasetUdi() PDOException: " . $pdoEx->getMessage());
             throw new PersistenceException(  $pdoEx->getMessage());
         }
     }
