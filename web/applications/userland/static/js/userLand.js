@@ -53,11 +53,33 @@ $(document).ready(function()
     
 });
 
-function hashchanged(){
-    var hash = location.hash.replace( /^#/, '' );
-    currentPerson = hash;
-    console.log(hash);
-    populatePerson(hash);
+var rebindHash = function ()
+{
+    $(window).unbind('hashchange', rebindHash);
+    $(window).bind('hashchange', hashchanged);
+}
+
+var hashchanged = function(){
+    var hash = window.location.hash.replace( /^#/, '' );
+    
+    //console.log(hash);
+    if ($('form .active').length == 0) {
+        populatePerson(hash);
+        currentPerson = hash;
+    } else {
+        //window.location.hash = window.location.href + '#' + currentPerson;
+        console.log ('reload!');
+        console.log(currentPerson);
+        if (confirm('You still have unsaved changed!\nAre you sure you want to navigate away?')) {
+                $('form').editableForm('reset');
+                populatePerson(hash);
+                currentPerson = hash;
+        } else {
+            $(window).unbind('hashchange', hashchanged);
+            $(window).bind('hashchange', rebindHash);
+            window.location.hash =  '#' + currentPerson;
+        }
+    }
 }
 
 function populatePerson(PersonID)
@@ -114,9 +136,8 @@ function updatePerson(jsonData,PersonID)
             $('#personFormDialog').dialog( 'option', 'title', title).dialog('open');
         } else {
             //$('.noty_inline_layout_container);
-            //var n = $('#notycontainer').noty({
-            var n = noty({
-                type: 'success',
+            var n = $('#notycontainer').noty({
+            //var n = noty({
                 layout: 'top',
                 text: message,
                 theme: 'relax',

@@ -47,7 +47,7 @@
         
         self.wrap('<div id="editableWrapper" class="editableForm formReadonly"></div>');
         
-        self.append('<div id="buttonWrapper" style="position:relative;"><div id="notycontainer" style="position:absolute;top:0px;bottom:0px;"></div><button class="editableFormButton" type="submit">Save</button>&nbsp;<button id="cancelButton" class="editableFormButton" type="button">Cancel</button></div>');
+        self.append('<div id="buttonWrapper" style="position:relative;"><div id="notycontainer" style="position:absolute;top:0px;bottom:0px;width:600px;"></div><br><button class="editableFormButton" type="submit">Save</button>&nbsp;<button id="cancelButton" class="editableFormButton" type="button">Cancel</button></div>');
         $('.editableFormButton').css('visibility','hidden').button();
         
         $('#editableWrapper').append('<div class="innerForm"><div>')
