@@ -11,6 +11,7 @@ namespace Pelagos\Component\MetadataGenerator;
 
 use \Pelagos\Exception\NotFoundException;
 use \Pelagos\Exception\PersistenceException;
+use \PDO as PDO;
 
 class MetadataXmlFromDB
 {
@@ -42,7 +43,7 @@ class MetadataXmlFromDB
      */
     private function __construct()
     {
-        require_once 'DBUtils.php';
+        require_once '../../../../share/php/DBUtils.php';
         $this->dbcon = openDB("GOMRI_RW");
         $this->dbcon->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
     }
@@ -92,12 +93,11 @@ class MetadataXmlFromDB
      */
     private function getMetadataXml($registryId)
     {
-        $query = $this->getMetadataSelectQueryString() . " WHERE " . self::REGISTRY_ID_COL . " = " .
-                           $this->wrapInSingleQuotes($registryId) . " LIMIT 1";
-        $statement = $this->dbcon->prepare($query);
+        $query = $this->getMetadataSelectQueryString() . " WHERE " . self::REGISTRY_ID_COL ." = :arg1  LIMIT 1";
+        $statement = $this->dbcon->prepare($query, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
         $metadataXml = null;
         try {
-            if ($statement->execute()) {
+            if ($statement->execute(array(':arg1' => $registryId))) {
                 if ($row = $statement->fetch(\PDO::FETCH_ASSOC)) { // if true
                     $metadataXml = $row[self::METADATA_XML_COL];
                     return $metadataXml;
@@ -138,14 +138,13 @@ class MetadataXmlFromDB
      */
     private function getRegistryIdForDatasetUdi($datasetUdi)
     {
-        $query = $this->getRegistryAndUdiSelectQueryString() . " WHERE " . self::DATASET_UDI_COL . " = " .
-                $this->wrapInSingleQuotes($datasetUdi) . " LIMIT 1";
+        $query = $this->getRegistryAndUdiSelectQueryString() . " WHERE " . self::DATASET_UDI_COL . " = :arg1  LIMIT 1";
 
-        $this->logger->log("getRegistryIdForDatasetUdi() query: " . $query);
-        $statement = $this->dbcon->prepare($query);
+        $statement = $this->dbcon->prepare($query, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+
         $registryId = null;
         try {
-            if ($statement->execute()) {
+            if ($statement->execute(array(':arg1' => $datasetUdi))) {
                 if ($row = $statement->fetch(\PDO::FETCH_ASSOC)) { // if true
                     $registryId = $row[self::REGISTRY_ID_COL];
                     $this->logger->log("getRegistryIdForDatasetUdi() returning registry " . $registryId);
@@ -180,10 +179,6 @@ class MetadataXmlFromDB
         " FROM " . self::REGISTRY_TABLE_NAME . " ";
     }
 
-    private function wrapInSingleQuotes($s)
-    {
-        return "'" . trim($s) . "'";
-    }
 
     private function compressXml($string)
     {
