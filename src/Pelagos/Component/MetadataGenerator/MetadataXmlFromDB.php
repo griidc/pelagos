@@ -1,11 +1,12 @@
 <?php
 /**
- * MetadataXmlFromDB
+ * MetadataXmlFromDB.
  *
  * Generates metadata
+ *
  * Texas A&M Corpus Christi
  * Harte Research Institute
- * Gulf (of Mexico) Research Initiative Information Data Cooperative
+ * Gulf (of Mexico) Research Initiative Information & Data Cooperative
  * GRIIDC.
  */
 
@@ -15,8 +16,19 @@ use \Pelagos\Exception\NotFoundException;
 use \Pelagos\Exception\PersistenceException;
 use \PDO as PDO;
 
+/**
+ * This class pulls metadata from the persistence layer.
+ *
+ * This class uses PDO to fetch XML metadata from the database
+ * and returns it as XML text.
+ */
 class MetadataXmlFromDB
 {
+    /**
+     * Database connection variable.
+     *
+     * @var PDO $dbcon This variable holds the database handle.
+     */
     private $dbcon = null;
 
     const REGISTRY_TABLE_NAME = "public.registry_view";
@@ -33,13 +45,19 @@ class MetadataXmlFromDB
 
     const METADATA_TABLE_NAME = "public.metadata";
 
+    /**
+     * Var to refence self class.
+     *
+     * @var MetadataXmlFromDB $instance
+     */
     private static $instance = null;
 
     /**
-     * private constructor
-     * singleton implementation
+     * Private constructor.
+     *
+     * Singleton implementation
      * only one instance of this class allowed
-     * per executable unit
+     * per executable unit.
      */
     private function __construct()
     {
@@ -49,11 +67,14 @@ class MetadataXmlFromDB
     }
 
     /**
-     * singleton implementation
-     * use this method instead of new MetadataXmlFromDB()
+     * Singleton implementation.
+     *
+     * Use this method instead of new MetadataXmlFromDB()
      * This function will return the one instance of this class.
      * If not yet instantiated will create an instance with the
      * private constructor.
+     *
+     * @return MetadataXmlFromDB self::$instance Itself.
      */
     public static function getInstance()
     {
@@ -64,9 +85,10 @@ class MetadataXmlFromDB
     }
 
     /**
-     * Read the database metadata table and return the
-     * xml data
-     * @param string $datasetUdi
+     * Reads the database metadata table and returns the xml data.
+     *
+     * @param string $datasetUdi Identifier.
+     *
      * @return string - the xml data as a string
      */
     public function getMetadataXmlForDatasetUdi($datasetUdi)
@@ -78,12 +100,17 @@ class MetadataXmlFromDB
     }
 
     /**
-     * Fetch the the metadata xml from the Metadata table
-     * The key is registry id
-     * @param string $registryId
-     * @return string xml text from the metadata table
-     * @throws NotFoundException of the registry row is not found
-     * @throws PersistenceException
+     * Grabs XML from DB.
+     *
+     * Fetch the the metadata xml from the Metadata table.
+     * The key is registry id.
+     *
+     * @param string $registryId Registry ID.
+     *
+     * @return string XML text from the metadata table.
+     *
+     * @throws NotFoundException If the registry row is not found.
+     * @throws PersistenceException If persistance layer fails.
      */
     private function getMetadataXml($registryId)
     {
@@ -107,14 +134,18 @@ class MetadataXmlFromDB
     }
 
     /**
+     * SQL generating function.
+     *
      * This function returns the SELECT statement for all columns
      * in the metatdata table. It is implemented in this way
      * so that the code will reside in only one place to be shared
      * by two or more functions using the product.
-     * @return string
-     * @see makeSelectQuery(I_Persistable $target)
-     * @see getAll($targetClassName)
-     * @see get(I_Persistable $obj)
+     *
+     * @return string SQL string.
+     *
+     * @see    makeSelectQuery(I_Persistable $target)
+     * @see    getAll($targetClassName)
+     * @see    get(I_Persistable $obj)
      */
     private function getMetadataSelectQueryString()
     {
@@ -125,10 +156,13 @@ class MetadataXmlFromDB
 
     /**
      * Fetch the object based on it's unique id.
-     * @param string $datasetUdi
-     * @return the Registry instance if it exists in the store
-     * @throws NotFoundException of the object is not found
-     * @throws PersistenceException
+     *
+     * @param string $datasetUdi Input.
+     *
+     * @return the Registry instance if it exists in the store.
+     *
+     * @throws NotFoundException If the object is not found.
+     * @throws PersistenceException Upon DB failure.
      */
     private function getRegistryIdForDatasetUdi($datasetUdi)
     {
@@ -154,14 +188,18 @@ class MetadataXmlFromDB
     }
 
     /**
+     * SQL generating function.
+     *
      * This function returns the SELECT statement for all columns
      * in the metatdata table. It is implemented in this way
      * so that the code will reside in only one place to be shared
      * by two or more functions using the product.
-     * @return string
-     * @see makeSelectQuery(I_Persistable $target)
-     * @see getAll($targetClassName)
-     * @see get(I_Persistable $obj)
+     *
+     * @return string Of SQL.
+     *
+     * @see    makeSelectQuery(I_Persistable $target)
+     * @see    getAll($targetClassName)
+     * @see    get(I_Persistable $obj)
      */
     private function getRegistryAndUdiSelectQueryString()
     {
@@ -170,7 +208,13 @@ class MetadataXmlFromDB
         " FROM " . self::REGISTRY_TABLE_NAME . " ";
     }
 
-
+    /**
+     * Compress XML function.
+     *
+     * @param string $string Input string of XML text.
+     *
+     * @return string $compressedXml XML in 'compressed' form.
+     */
     private function compressXml($string)
     {
         $NA = "N/A";
