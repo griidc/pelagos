@@ -11,15 +11,18 @@ use \Pelagos\Exception\InvalidXmlException;
  * This class performs ISO-19115-2 validation against a passed
  * XML string.  It either returns a boolean true or throws
  * an exception.
- *
-*/
+ */
 class XMLValidator
 {
     /**
-     * @param string
-     * @return bool in the event of success
-     * @throws InvalidXmlException if validation fails
-    */
+     * This method validates a string of XML.
+     *
+     * @param string $raw_xml This is XML as text.
+     *
+     * @return bool In the event of success.
+     *
+     * @throws InvalidXmlException If validation fails.
+     */
     public function validate($raw_xml)
     {
         $errors = 0;

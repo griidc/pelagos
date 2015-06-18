@@ -1,10 +1,12 @@
 <?php
 /**
  * MetadataXmlFromDB
+ *
+ * Generates metadata
  * Texas A&M Corpus Christi
  * Harte Research Institute
  * Gulf (of Mexico) Research Initiative Information Data Cooperative
- * GRIIDC
+ * GRIIDC.
  */
 
 namespace Pelagos\Component\MetadataGenerator;
@@ -22,7 +24,7 @@ class MetadataXmlFromDB
     const REGISTRY_ID_COL = "registry_id";
     const DATASET_UDI_COL = "dataset_udi";
 
-    //  column names for gomri PGSQL metadata table
+    // column names for gomri PGSQL metadata table
     // registry id col is named the same in both tables
     const METADATA_XML_COL = "metadata_xml";
     const GEOMETRY_COL = "geom";

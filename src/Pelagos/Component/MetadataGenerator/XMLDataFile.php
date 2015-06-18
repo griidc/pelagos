@@ -3,7 +3,6 @@
 namespace Pelagos\Component\MetadataGenerator;
 
 use \Pelagos\Exception\NotFoundException;
-use \Pelagos\Exception\PersistenceException;
 
 /**
  * A class to get XML metadata files from a file.
@@ -13,23 +12,29 @@ use \Pelagos\Exception\PersistenceException;
  * determined by the UDI passed.
  */
 class XMLDataFile
-{
-    private $logger = null;
+{   /**
+     * This variable contains the instanciated instance of the class.
+     *
+     * @var XMLDataFile $instance
+     */
     private static $instance = null;
 
     const SHARE_PHP = '../../../../share/php/';
 
     /**
-     * singleton implementation
-     * only one instance of this class allowed
-     * per executable unit
+     * Singleton implementation.
+     *
+     * Only one instance of this class allowed
+     * per executable unit.
      */
     private function __construct()
     {
     }
 
     /**
-     * singleton implementation
+     * Singleton implementation.
+     *
+     * @return XMLDataFile self::$instance Returns instance of XMLDataFile
      */
     public static function getInstance()
     {
@@ -40,8 +45,11 @@ class XMLDataFile
     }
 
     /**
-     * @param string $udi - dataset identification
-     * @return string - absolute filesystem location of metadata file associated with supplied UDI
+     * This function resolves a filesystem location from an UDI.
+     *
+     * @param string $udi Dataset identification.
+     *
+     * @return string Absolute filesystem location of metadata file associated with supplied UDI.
      */
     private function getFileLocation($udi)
     {
@@ -64,16 +72,18 @@ class XMLDataFile
     }
 
     /**
-     * Get the location of the xml file from the database.
-     * Read it and return it. Throw PersistenceException
-     * if there is a database problem.
-     * Throw NotFoundException if the database finds a path
-     * but the path is not readable.
-     * @param string $udi
-     * @return bool|string
-     * @throws NotFoundException
-     * @throws PersistenceException
-     * @throws InvalidXmlException
+     * Get the location of the xml file from the filesystem.
+     *
+     * Returns location as string xor will throw NotFoundException
+     * if file is not found or not readable.  If XML is not valid,
+     * it will allow the InvalidXmlException to bubble up from
+     * the Validator class.
+     *
+     * @param string $udi Dataset identifier.
+     *
+     * @return boolean|string Result.
+     *
+     * @throws NotFoundException If not found.
      */
     public function getXML($udi)
     {
