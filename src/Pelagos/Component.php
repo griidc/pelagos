@@ -7,7 +7,7 @@ namespace Pelagos;
  *
  * These include:
  *   - methods to add assets (JavaScript and CSS) to a page
- *   - a method to quit safely when output should be immediately flushed 
+ *   - a method to quit safely when output should be immediately flushed
  *     and control should not be returned to the containing framework (e.g. Drupal)
  *   - a method to access the entity manager for Pelagos entities
  *
@@ -15,32 +15,58 @@ namespace Pelagos;
  */
 class Component
 {
-    /** @var \Doctrine\ORM\EntityManager $entityManager A private class variable to hold the entity manager. */
+    /**
+     * A private class variable to hold the entity manager.
+     *
+     * @var \Doctrine\ORM\EntityManager $entityManager
+     */
     private $entityManager;
 
     /**
-      * @var bool $quitOnFinalize A boolean value that is used to decide whether or not
-      *                           to call quit() when finalize() is called.
-      */
+     * A boolean value that is used to decide whether or not to call quit() when finalize() is called.
+     *
+     * @var bool $quitOnFinalize
+     */
     private $quitOnFinalize = false;
 
-    /** @var string $basePath The URL base path for Pelagos. **/
+    /**
+     * The URL base path for Pelagos.
+     *
+     * @var string $basePath
+     */
     protected $basePath;
 
-    /** @var string $path The URL path to this component. **/
+    /**
+     * The URL path to this component.
+     *
+     * @var string $path
+     */
     protected $path;
 
-    /** @var string $baseUri The base full URI for Pelagos. **/
+    /**
+     * The base full URI for Pelagos.
+     *
+     * @var string $baseUri
+     */
     protected $baseUri;
 
-    /** @var string $uri The full URI to this component. **/
+    /**
+     * The full URI to this component.
+     *
+     * @var string $uri
+     */
     protected $uri;
 
-    /** @var string $title The page title. **/
+    /**
+     * The page title.
+     *
+     * @var string $title
+     */
     protected $title;
 
     /**
      * Constructor for component.
+     *
      * This initializes some properties from the environment.
      */
     public function __construct()
@@ -63,6 +89,7 @@ class Component
 
     /**
      * A method for adding javascript files to a page.
+     *
      * This currently only works when the component is contained by Drupal.
      *
      * @param string|array $js The relative (to component path)
@@ -70,6 +97,8 @@ class Component
      *                         path the javascript file,
      *                         a full URL to the file,
      *                         or an array of any of the former.
+     *
+     * @return void
      */
     public function addJS($js)
     {
@@ -81,6 +110,7 @@ class Component
 
     /**
      * A method for adding CSS files to a page.
+     *
      * This currently only works when the component is contained by Drupal.
      *
      * @param string|array $css The relative (to component path)
@@ -88,6 +118,8 @@ class Component
      *                          path the CSS file,
      *                          a full URL to the file,
      *                          or an array of any of the former.
+     *
+     * @return void
      */
     public function addCSS($css)
     {
@@ -99,9 +131,12 @@ class Component
 
     /**
      * A method for including libraries from the containing framework.
+     *
      * Currently, only Drupal is supported.
      *
      * @param string|array $library Name of library or array of library names.
+     *
+     * @return void
      */
     public function addLibrary($library)
     {
@@ -116,9 +151,11 @@ class Component
     }
 
     /**
-     * A method for quitting safely when output should be immediately flushed 
-     * and control should not be returned to the containing framework.
+     * A method for quitting safely when output should be immediately flushed.
+     *
      * Currently, only Drupal is supported, but it will simply exit if not contained by Drupal.
+     *
+     * @return void
      */
     public function quit()
     {
@@ -131,7 +168,10 @@ class Component
 
     /**
      * Get the entity manager.
+     *
      * This method returns the entity manager (and creates it first if doesn't exist).
+     *
+     * @return \Doctrine\ORM\EntityManager The Doctrine entity manager.
      */
     public function getEntityManager()
     {
@@ -145,6 +185,7 @@ class Component
      * Private static method that tests whether a string looks like a full URL.
      *
      * @param string $string String to test.
+     *
      * @return bool Returns true if it is a full URL, false otherwise.
      */
     private static function isFullUrl($string)
@@ -159,6 +200,7 @@ class Component
      * Private method to get full urls for an asset or array of assets.
      *
      * @param string|array $assets An asset or array of assets to get full urls for.
+     *
      * @return array An array containing full urls for the assets.
      */
     private function getUrlArray($assets)
@@ -185,7 +227,9 @@ class Component
     /**
      * Setter for quitOnFinalize.
      *
-     * @param bool $quitOnFinalize True to quit on finalize, False to not.
+     * @param boolean $quitOnFinalize True to quit on finalize, False to not.
+     *
+     * @return void
      */
     public function setQuitOnFinalize($quitOnFinalize)
     {
@@ -194,9 +238,12 @@ class Component
 
     /**
      * Method to do various things after the component has run.
+     *
      * These include:
      * - set the page title in the environment if the title propety has been set
      * - quit if quitOnFinalize has been set to true
+     *
+     * @return void
      */
     public function finalize()
     {
@@ -282,6 +329,8 @@ class Component
      * Method to set the page title.
      *
      * @param string $title The page title.
+     *
+     * @return void
      */
     public function setTitle($title)
     {
