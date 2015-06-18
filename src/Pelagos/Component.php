@@ -223,6 +223,22 @@ class Component
     }
 
     /**
+     * Method to get the currently logged in user.
+     *
+     * @return string The username of the currently logged in user.
+     *
+     * @throws \Exception When no user is logged in.
+     */
+    public function getLoggedInUser()
+    {
+        global $user;
+        if (isset($user->name) and !empty($user->name)) {
+            return $user->name;
+        }
+        throw new \Exception('No user is logged in');
+    }
+
+    /**
      * Method to get the Pelagos base URL path.
      *
      * @return string The URL base path for Pelagos.
