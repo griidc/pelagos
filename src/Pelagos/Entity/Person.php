@@ -253,12 +253,16 @@ class Person implements \JsonSerializable
      */
     public function jsonSerialize()
     {
+        $creationTimeStampISO = null;
+        if (isset($this->creationTimeStamp) and $this->creationTimeStamp instanceof \DateTime) {
+            $creationTimeStampISO = $this->creationTimeStamp->format(\DateTime::ISO8601);
+        }
         return array(
             'id' => $this->id,
             'firstName' => $this->firstName,
             'lastName' => $this->lastName,
             'emailAddress' => $this->emailAddress,
-            'creationTimeStamp' => $this->creationTimeStamp->format(\DateTime::ISO8601),
+            'creationTimeStamp' => $creationTimeStampISO,
             'creator' => $this->creator,
         );
     }
