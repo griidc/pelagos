@@ -4,8 +4,18 @@ var base_path;
 
 var currentPerson;
 
+var userLoggedIn;
+
 $(document).ready(function()
 {
+    base_path = $('div[base_path]').attr('base_path');
+    
+    isLoggedIn = JSON.parse($('div[userLoggedIn]').attr('userLoggedIn'));
+    
+    console.log(isLoggedIn);
+    
+    $("#tabs").tabs({ heightStyle: "content" });
+    
     formValidator = $('#personForm').validate({
         submitHandler: function(form) {
             var data = $(form).getFormJSON();
@@ -30,10 +40,10 @@ $(document).ready(function()
     //minWidth does not work properly with 'auto' width, so hack
     $('.ui-dialog').css({'min-width': '300px'});
     
-    $('#personForm').editableForm();
-    
-    base_path = $('div[base_path]').attr('base_path');
-    $("#tabs").tabs({ heightStyle: "content" });
+    //Make form editable if Logged In
+    if (isLoggedIn) {
+        $('#personForm').editableForm();
+    }
     
     // Bind the event.
     $(window).hashchange(hashchanged);
@@ -42,16 +52,6 @@ $(document).ready(function()
     hashchanged();
     
 });
-
-function updatePerson()
-{
-    return $.Deferred(function() {
-        var self = this;
-        console.log('updated!');
-        self.resolve();
-    });
-    
-}
 
 function hashchanged(){
     var hash = location.hash.replace( /^#/, '' );
@@ -91,7 +91,7 @@ function updatePerson(jsonData,PersonID)
         if (json.code == 200) {
             title = "Success!";
             message = json.message;
-            $(form).editableForm('reset');
+            $('#personForm').editableForm('reset');
         } else {
             title = "Error!";
             message = "Something went wrong!<br>Didn't receive the correct success message!";
@@ -112,6 +112,22 @@ function updatePerson(jsonData,PersonID)
         if (json.code != 200) {
             $('#personFormDialog').html(message);
             $('#personFormDialog').dialog( 'option', 'title', title).dialog('open');
+        } else {
+            //$('.noty_inline_layout_container);
+            //var n = $('#notycontainer').noty({
+            var n = noty({
+                type: 'success',
+                layout: 'top',
+                text: message,
+                theme: 'relax',
+                animation: {
+                    open: 'animated bounceIn', // Animate.css class names
+                    close: 'animated fadeOut', // Animate.css class names
+                    easing: 'swing', // unavailable - no need
+                    speed: 500 // unavailable - no need
+                },
+                timeout: 3000
+            });
         }
     })
 }

@@ -8,16 +8,24 @@
         
         if (command) {
             switch (command) {
+                case 'cancel':
+                    self.find('.revertField').each(function() {
+                        $('[name="'+$(this).attr('original')+'"]').val($(this).val());
+                        });
                 case 'reset': 
                     this.find('input').each(function() {
                         $(this)
                         .attr('readonly',true)
-                        .removeClass('active');
+                        .removeClass('active')
+                        .rules("remove");
                     });
                     $('#editableWrapper')
                     .append('<div class="innerForm"><div>')
                     .removeClass('active');
+                    
                     $('.editableFormButton').css({opacity: 1.0, visibility: "visible"}).animate({opacity: 0.0});
+                    $('.revertField').remove();
+                    window.onbeforeunload = null;
                     break;
                 default:
                     break;
@@ -39,12 +47,10 @@
         
         self.wrap('<div id="editableWrapper" class="editableForm formReadonly"></div>');
         
-        self.append('<button class="editableFormButton" type="submit">Save</input>');
-        self.append('<button class="editableFormButton" type="reset">Reset</input>');
-        $('.editableFormButton').css('visibility','hidden');
+        self.append('<div id="buttonWrapper" style="position:relative;"><div id="notycontainer" style="position:absolute;top:0px;bottom:0px;"></div><button class="editableFormButton" type="submit">Save</button>&nbsp;<button id="cancelButton" class="editableFormButton" type="button">Cancel</button></div>');
+        $('.editableFormButton').css('visibility','hidden').button();
         
         $('#editableWrapper').append('<div class="innerForm"><div>')
-        
         
         this.find('input').each(function() {
             $(this)
@@ -54,9 +60,15 @@
         
         $('#editableWrapper').on("click", function() {
             if (!$(this).hasClass('active')) {
+                window.onbeforeunload = function() {
+                    return "You still have unsaved changed!\nAre you sure you want to navigate away?";
+                }
                 $(this).addClass('active');
                 var url = base_path + "/services/person/validateProperty";
                 self.find('input').each(function() {
+                    self.append('<input class="revertField" type="hidden" original="'+
+                    $(this).attr('name') + '">');
+                    $('.revertField[original="'+$(this).attr('name')+'"]').val($(this).val());
                     $(this).attr('readonly',false)
                     .addClass('active')
                     .rules( "add", {
@@ -68,6 +80,11 @@
                 });
                 $('.editableFormButton').css({opacity: 0.0, visibility: "visible"}).animate({opacity: 1.0});
             }   
+        });
+        
+        $('#cancelButton').click(function(event) {
+            event.stopPropagation();
+            self.editableForm('cancel');
         });
         
         return this.each(function() {
