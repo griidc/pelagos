@@ -105,7 +105,7 @@ class Person implements \JsonSerializable
         $this->setLastName($lastName);
         $this->setEmailAddress($emailAddress);
         $this->setCreator($creator);
-        $this->setCreationTimestamp();
+        $this->setCreationTimeStamp();
     }
 
     /**
@@ -125,9 +125,9 @@ class Person implements \JsonSerializable
      *
      * @return void
      *
-     * @throws \Exception When $timeStam does not have a timezone of UTC.
+     * @throws \Exception When $timeStamp does not have a timezone of UTC.
      */
-    public function setCreationTimestamp(\DateTime $timeStamp = null)
+    public function setCreationTimeStamp(\DateTime $timeStamp = null)
     {
         if (isset($timeStamp)) {
             if ($timeStamp->getTimezone()->getName() != 'UTC') {
@@ -143,19 +143,39 @@ class Person implements \JsonSerializable
      * Getter for creationTimeStamp property.
      *
      * The default is to return the timestamp localized to the current timezone.
+     * This getter also makes sure the creationTimeStamp property is set to UTC.
      *
      * @param boolean $localized Whether to convert timestamp to the local timezone.
      *
      * @return \DateTime Creation timestamp for this Person.
      */
-    public function getCreationTimestamp($localized = true)
+    public function getCreationTimeStamp($localized = true)
     {
+        if (!isset($this->creationTimeStamp)) {
+            return null;
+        }
+        $this->creationTimeStamp->setTimeZone(new \DateTimeZone('UTC'));
         if ($localized) {
             $timeStamp = clone $this->creationTimeStamp;
             $timeStamp->setTimeZone(new \DateTimeZone(date_default_timezone_get()));
             return $timeStamp;
         }
         return $this->creationTimeStamp;
+    }
+
+    /**
+     * Get the creationTimeStamp property as an ISO8601 string.
+     *
+     * @param boolean $localized Whether to convert timestamp to the local timezone.
+     *
+     * @return string ISO8601 string represnting creationTimeStamp.
+     */
+    public function getCreationTimeStampAsISO($localized = true)
+    {
+        if (isset($this->creationTimeStamp) and $this->creationTimeStamp instanceof \DateTime) {
+            return $this->getCreationTimeStamp($localized)->format(\DateTime::ISO8601);
+        }
+        return null;
     }
 
     /**
@@ -253,17 +273,13 @@ class Person implements \JsonSerializable
      */
     public function jsonSerialize()
     {
-        $creationTimeStampISO = null;
-        if (isset($this->creationTimeStamp) and $this->creationTimeStamp instanceof \DateTime) {
-            $creationTimeStampISO = $this->creationTimeStamp->format(\DateTime::ISO8601);
-        }
         return array(
-            'id' => $this->id,
-            'firstName' => $this->firstName,
-            'lastName' => $this->lastName,
-            'emailAddress' => $this->emailAddress,
-            'creationTimeStamp' => $creationTimeStampISO,
-            'creator' => $this->creator,
+            'id' => $this->getId(),
+            'firstName' => $this->getFirstName(),
+            'lastName' => $this->getLastName(),
+            'emailAddress' => $this->getEmailAddress(),
+            'creationTimeStamp' => $this->getCreationTimeStampAsISO(false),
+            'creator' => $this->getCreator(),
         );
     }
 
