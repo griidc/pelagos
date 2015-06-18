@@ -88,9 +88,11 @@ $slim->post(
 
         try {
             $person = new Person();
+            $updates = $slim->request->params();
+            $updates['creator'] = $comp->getLoggedInUser();
             $person = $comp->persist(
                 $comp->validate(
-                    $person->update($slim->request->params()),
+                    $person->update($updates),
                     Validation::createValidatorBuilder()->enableAnnotationMapping()->getValidator()
                 )
             );
