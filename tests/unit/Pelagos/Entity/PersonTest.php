@@ -19,6 +19,9 @@ class PersonTest extends \PHPUnit_Framework_TestCase
     /** @var \Symfony\Component\Validator\Validator $validator Property to hold an instance of the Symfony Validator */
     protected $validator;
 
+    /** @var string $testCreator Static class variable containing  creator to use for testing */
+    protected static $testCreator = 'tuser';
+
     /** @var string $testFirstName Static class variable containing a first name to use for testing */
     protected static $testFirstName = 'MyFirstName';
 
@@ -45,7 +48,8 @@ class PersonTest extends \PHPUnit_Framework_TestCase
         $this->person = new Person(
             self::$testFirstName,
             self::$testLastName,
-            self::$testEmailAddress
+            self::$testEmailAddress,
+            self::$testCreator
         );
     }
 
@@ -99,6 +103,74 @@ class PersonTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test the getCreator method.
+     * This method should return the creator that was passed to the constructor.
+     */
+    public function testGetCreator()
+    {
+        $this->assertEquals(
+            $this->person->getCreator(),
+            self::$testCreator
+        );
+    }
+
+    /**
+     * Test the getCreationTimeStamp method.
+     * This method should return a \DateTime object localized to the current timezone.
+     */
+    public function testGetCreationTimeStamp()
+    {
+        $creationTimeStamp = $this->person->getCreationTimeStamp();
+        $this->assertInstanceOf('\DateTime', $creationTimeStamp);
+        $this->assertEquals(
+            date_default_timezone_get(),
+            $creationTimeStamp->getTimezone()->getName()
+        );
+    }
+
+    /**
+     * Test the getCreationTimeStamp method (non-localized).
+     * This method should return a \DateTime object in UTC.
+     */
+    public function testGetCreationTimeStampNonLocalized()
+    {
+        $creationTimeStamp = $this->person->getCreationTimeStamp(false);
+        $this->assertInstanceOf('\DateTime', $creationTimeStamp);
+        $this->assertEquals(
+            'UTC',
+            $creationTimeStamp->getTimezone()->getName()
+        );
+    }
+
+    /**
+     * Test the setCreationTimeStamp method.
+     * This method should accept a \DateTime object in UTC.
+     * We should be able to get back the same timestamp in UTC
+     * if we call getCreationTimeStamp(false) (non-localized).
+     */
+    public function testSetCreationTimeStamp()
+    {
+        $timeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
+        $timeStampISO = $timeStamp->format(\DateTime::ISO8601);
+        $this->person->setCreationTimeStamp($timeStamp);
+        $creationTimeStamp = $this->person->getCreationTimeStamp(false);
+        $this->assertInstanceOf('\DateTime', $creationTimeStamp);
+        $this->assertEquals($timeStampISO, $creationTimeStamp->format(\DateTime::ISO8601));
+    }
+
+    /**
+     * Test the setCreationTimeStamp method with a non-UTC timestamp.
+     *
+     * @expectedException \Exception
+     */
+    public function testSetCreationTimeStampFailForNonUTC()
+    {
+        $this->person->setCreationTimeStamp(
+            new \DateTime('now', new \DateTimeZone('America/Chicago'))
+        );
+    }
+
+    /**
      * Test that validation fails for a Person with a null first name.
      */
     public function testNullFirstName()
@@ -106,12 +178,19 @@ class PersonTest extends \PHPUnit_Framework_TestCase
         $this->person = new Person(
             null,
             self::$testLastName,
-            self::$testEmailAddress
+            self::$testEmailAddress,
+            self::$testCreator
         );
         $violations = $this->validator->validate($this->person);
         $this->assertCount(1, $violations);
-        $this->assertInstanceOf('\Symfony\Component\Validator\ConstraintViolation', $violations[0]);
-        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\NotBlank', $violations[0]->getConstraint());
+        $this->assertInstanceOf(
+            '\Symfony\Component\Validator\ConstraintViolation',
+            $violations[0]
+        );
+        $this->assertInstanceOf(
+            '\Symfony\Component\Validator\Constraints\NotBlank',
+            $violations[0]->getConstraint()
+        );
         $this->assertEquals('firstName', $violations[0]->getPropertyPath());
         $this->assertEquals('First name is required', $violations[0]->getMessage());
     }
@@ -123,8 +202,14 @@ class PersonTest extends \PHPUnit_Framework_TestCase
     {
         $violations = $this->validator->validatePropertyValue('\Pelagos\Entity\Person', 'firstName', null);
         $this->assertCount(1, $violations);
-        $this->assertInstanceOf('\Symfony\Component\Validator\ConstraintViolation', $violations[0]);
-        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\NotBlank', $violations[0]->getConstraint());
+        $this->assertInstanceOf(
+            '\Symfony\Component\Validator\ConstraintViolation',
+            $violations[0]
+        );
+        $this->assertInstanceOf(
+            '\Symfony\Component\Validator\Constraints\NotBlank',
+            $violations[0]->getConstraint()
+        );
         $this->assertEquals('First name is required', $violations[0]->getMessage());
     }
 
@@ -136,12 +221,19 @@ class PersonTest extends \PHPUnit_Framework_TestCase
         $this->person = new Person(
             '',
             self::$testLastName,
-            self::$testEmailAddress
+            self::$testEmailAddress,
+            self::$testCreator
         );
         $violations = $this->validator->validate($this->person);
         $this->assertCount(1, $violations);
-        $this->assertInstanceOf('\Symfony\Component\Validator\ConstraintViolation', $violations[0]);
-        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\NotBlank', $violations[0]->getConstraint());
+        $this->assertInstanceOf(
+            '\Symfony\Component\Validator\ConstraintViolation',
+            $violations[0]
+        );
+        $this->assertInstanceOf(
+            '\Symfony\Component\Validator\Constraints\NotBlank',
+            $violations[0]->getConstraint()
+        );
         $this->assertEquals('firstName', $violations[0]->getPropertyPath());
         $this->assertEquals('First name is required', $violations[0]->getMessage());
     }
@@ -153,8 +245,14 @@ class PersonTest extends \PHPUnit_Framework_TestCase
     {
         $violations = $this->validator->validatePropertyValue('\Pelagos\Entity\Person', 'firstName', '');
         $this->assertCount(1, $violations);
-        $this->assertInstanceOf('\Symfony\Component\Validator\ConstraintViolation', $violations[0]);
-        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\NotBlank', $violations[0]->getConstraint());
+        $this->assertInstanceOf(
+            '\Symfony\Component\Validator\ConstraintViolation',
+            $violations[0]
+        );
+        $this->assertInstanceOf(
+            '\Symfony\Component\Validator\Constraints\NotBlank',
+            $violations[0]->getConstraint()
+        );
         $this->assertEquals('First name is required', $violations[0]->getMessage());
     }
 
@@ -166,12 +264,19 @@ class PersonTest extends \PHPUnit_Framework_TestCase
         $this->person = new Person(
             '<i>' . self::$testFirstName . '</i>',
             self::$testLastName,
-            self::$testEmailAddress
+            self::$testEmailAddress,
+            self::$testCreator
         );
         $violations = $this->validator->validate($this->person);
         $this->assertCount(1, $violations);
-        $this->assertInstanceOf('\Symfony\Component\Validator\ConstraintViolation', $violations[0]);
-        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\NoAngleBrackets', $violations[0]->getConstraint());
+        $this->assertInstanceOf(
+            '\Symfony\Component\Validator\ConstraintViolation',
+            $violations[0]
+        );
+        $this->assertInstanceOf(
+            '\Symfony\Component\Validator\Constraints\NoAngleBrackets',
+            $violations[0]->getConstraint()
+        );
         $this->assertEquals('firstName', $violations[0]->getPropertyPath());
         $this->assertEquals('First name cannot contain angle brackets (< or >)', $violations[0]->getMessage());
     }
@@ -188,8 +293,14 @@ class PersonTest extends \PHPUnit_Framework_TestCase
             '<i>' . self::$testFirstName . '</i>'
         );
         $this->assertCount(1, $violations);
-        $this->assertInstanceOf('\Symfony\Component\Validator\ConstraintViolation', $violations[0]);
-        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\NoAngleBrackets', $violations[0]->getConstraint());
+        $this->assertInstanceOf(
+            '\Symfony\Component\Validator\ConstraintViolation',
+            $violations[0]
+        );
+        $this->assertInstanceOf(
+            '\Symfony\Component\Validator\Constraints\NoAngleBrackets',
+            $violations[0]->getConstraint()
+        );
         $this->assertEquals('First name cannot contain angle brackets (< or >)', $violations[0]->getMessage());
     }
 
@@ -215,12 +326,19 @@ class PersonTest extends \PHPUnit_Framework_TestCase
         $this->person = new Person(
             self::$testFirstName,
             null,
-            self::$testEmailAddress
+            self::$testEmailAddress,
+            self::$testCreator
         );
         $violations = $this->validator->validate($this->person);
         $this->assertCount(1, $violations);
-        $this->assertInstanceOf('\Symfony\Component\Validator\ConstraintViolation', $violations[0]);
-        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\NotBlank', $violations[0]->getConstraint());
+        $this->assertInstanceOf(
+            '\Symfony\Component\Validator\ConstraintViolation',
+            $violations[0]
+        );
+        $this->assertInstanceOf(
+            '\Symfony\Component\Validator\Constraints\NotBlank',
+            $violations[0]->getConstraint()
+        );
         $this->assertEquals('lastName', $violations[0]->getPropertyPath());
         $this->assertEquals('Last name is required', $violations[0]->getMessage());
     }
@@ -232,8 +350,14 @@ class PersonTest extends \PHPUnit_Framework_TestCase
     {
         $violations = $this->validator->validatePropertyValue('\Pelagos\Entity\Person', 'lastName', null);
         $this->assertCount(1, $violations);
-        $this->assertInstanceOf('\Symfony\Component\Validator\ConstraintViolation', $violations[0]);
-        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\NotBlank', $violations[0]->getConstraint());
+        $this->assertInstanceOf(
+            '\Symfony\Component\Validator\ConstraintViolation',
+            $violations[0]
+        );
+        $this->assertInstanceOf(
+            '\Symfony\Component\Validator\Constraints\NotBlank',
+            $violations[0]->getConstraint()
+        );
         $this->assertEquals('Last name is required', $violations[0]->getMessage());
     }
 
@@ -245,12 +369,19 @@ class PersonTest extends \PHPUnit_Framework_TestCase
         $this->person = new Person(
             self::$testFirstName,
             '',
-            self::$testEmailAddress
+            self::$testEmailAddress,
+            self::$testCreator
         );
         $violations = $this->validator->validate($this->person);
         $this->assertCount(1, $violations);
-        $this->assertInstanceOf('\Symfony\Component\Validator\ConstraintViolation', $violations[0]);
-        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\NotBlank', $violations[0]->getConstraint());
+        $this->assertInstanceOf(
+            '\Symfony\Component\Validator\ConstraintViolation',
+            $violations[0]
+        );
+        $this->assertInstanceOf(
+            '\Symfony\Component\Validator\Constraints\NotBlank',
+            $violations[0]->getConstraint()
+        );
         $this->assertEquals('lastName', $violations[0]->getPropertyPath());
         $this->assertEquals('Last name is required', $violations[0]->getMessage());
     }
@@ -262,8 +393,14 @@ class PersonTest extends \PHPUnit_Framework_TestCase
     {
         $violations = $this->validator->validatePropertyValue('\Pelagos\Entity\Person', 'lastName', '');
         $this->assertCount(1, $violations);
-        $this->assertInstanceOf('\Symfony\Component\Validator\ConstraintViolation', $violations[0]);
-        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\NotBlank', $violations[0]->getConstraint());
+        $this->assertInstanceOf(
+            '\Symfony\Component\Validator\ConstraintViolation',
+            $violations[0]
+        );
+        $this->assertInstanceOf(
+            '\Symfony\Component\Validator\Constraints\NotBlank',
+            $violations[0]->getConstraint()
+        );
         $this->assertEquals('Last name is required', $violations[0]->getMessage());
     }
 
@@ -275,12 +412,19 @@ class PersonTest extends \PHPUnit_Framework_TestCase
         $this->person = new Person(
             self::$testFirstName,
             '<i>' . self::$testLastName . '</i>',
-            self::$testEmailAddress
+            self::$testEmailAddress,
+            self::$testCreator
         );
         $violations = $this->validator->validate($this->person);
         $this->assertCount(1, $violations);
-        $this->assertInstanceOf('\Symfony\Component\Validator\ConstraintViolation', $violations[0]);
-        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\NoAngleBrackets', $violations[0]->getConstraint());
+        $this->assertInstanceOf(
+            '\Symfony\Component\Validator\ConstraintViolation',
+            $violations[0]
+        );
+        $this->assertInstanceOf(
+            '\Symfony\Component\Validator\Constraints\NoAngleBrackets',
+            $violations[0]->getConstraint()
+        );
         $this->assertEquals('lastName', $violations[0]->getPropertyPath());
         $this->assertEquals('Last name cannot contain angle brackets (< or >)', $violations[0]->getMessage());
     }
@@ -297,8 +441,14 @@ class PersonTest extends \PHPUnit_Framework_TestCase
             '<i>' . self::$testLastName . '</i>'
         );
         $this->assertCount(1, $violations);
-        $this->assertInstanceOf('\Symfony\Component\Validator\ConstraintViolation', $violations[0]);
-        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\NoAngleBrackets', $violations[0]->getConstraint());
+        $this->assertInstanceOf(
+            '\Symfony\Component\Validator\ConstraintViolation',
+            $violations[0]
+        );
+        $this->assertInstanceOf(
+            '\Symfony\Component\Validator\Constraints\NoAngleBrackets',
+            $violations[0]->getConstraint()
+        );
         $this->assertEquals('Last name cannot contain angle brackets (< or >)', $violations[0]->getMessage());
     }
 
@@ -324,12 +474,19 @@ class PersonTest extends \PHPUnit_Framework_TestCase
         $this->person = new Person(
             self::$testFirstName,
             self::$testLastName,
-            null
+            null,
+            self::$testCreator
         );
         $violations = $this->validator->validate($this->person);
         $this->assertCount(1, $violations);
-        $this->assertInstanceOf('\Symfony\Component\Validator\ConstraintViolation', $violations[0]);
-        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\NotBlank', $violations[0]->getConstraint());
+        $this->assertInstanceOf(
+            '\Symfony\Component\Validator\ConstraintViolation',
+            $violations[0]
+        );
+        $this->assertInstanceOf(
+            '\Symfony\Component\Validator\Constraints\NotBlank',
+            $violations[0]->getConstraint()
+        );
         $this->assertEquals('emailAddress', $violations[0]->getPropertyPath());
         $this->assertEquals('Email address is required', $violations[0]->getMessage());
     }
@@ -341,8 +498,14 @@ class PersonTest extends \PHPUnit_Framework_TestCase
     {
         $violations = $this->validator->validatePropertyValue('\Pelagos\Entity\Person', 'emailAddress', null);
         $this->assertCount(1, $violations);
-        $this->assertInstanceOf('\Symfony\Component\Validator\ConstraintViolation', $violations[0]);
-        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\NotBlank', $violations[0]->getConstraint());
+        $this->assertInstanceOf(
+            '\Symfony\Component\Validator\ConstraintViolation',
+            $violations[0]
+        );
+        $this->assertInstanceOf(
+            '\Symfony\Component\Validator\Constraints\NotBlank',
+            $violations[0]->getConstraint()
+        );
         $this->assertEquals('Email address is required', $violations[0]->getMessage());
     }
 
@@ -354,12 +517,19 @@ class PersonTest extends \PHPUnit_Framework_TestCase
         $this->person = new Person(
             self::$testFirstName,
             self::$testLastName,
-            ''
+            '',
+            self::$testCreator
         );
         $violations = $this->validator->validate($this->person);
         $this->assertCount(1, $violations);
-        $this->assertInstanceOf('\Symfony\Component\Validator\ConstraintViolation', $violations[0]);
-        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\NotBlank', $violations[0]->getConstraint());
+        $this->assertInstanceOf(
+            '\Symfony\Component\Validator\ConstraintViolation',
+            $violations[0]
+        );
+        $this->assertInstanceOf(
+            '\Symfony\Component\Validator\Constraints\NotBlank',
+            $violations[0]->getConstraint()
+        );
         $this->assertEquals('emailAddress', $violations[0]->getPropertyPath());
         $this->assertEquals('Email address is required', $violations[0]->getMessage());
     }
@@ -372,12 +542,19 @@ class PersonTest extends \PHPUnit_Framework_TestCase
         $this->person = new Person(
             self::$testFirstName,
             self::$testLastName,
-            '<i>' . self::$testEmailAddress . '</i>'
+            '<i>' . self::$testEmailAddress . '</i>',
+            self::$testCreator
         );
         $violations = $this->validator->validate($this->person);
         $this->assertCount(1, $violations);
-        $this->assertInstanceOf('\Symfony\Component\Validator\ConstraintViolation', $violations[0]);
-        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\NoAngleBrackets', $violations[0]->getConstraint());
+        $this->assertInstanceOf(
+            '\Symfony\Component\Validator\ConstraintViolation',
+            $violations[0]
+        );
+        $this->assertInstanceOf(
+            '\Symfony\Component\Validator\Constraints\NoAngleBrackets',
+            $violations[0]->getConstraint()
+        );
         $this->assertEquals('emailAddress', $violations[0]->getPropertyPath());
         $this->assertEquals('Email address cannot contain angle brackets (< or >)', $violations[0]->getMessage());
     }
@@ -394,8 +571,14 @@ class PersonTest extends \PHPUnit_Framework_TestCase
             '<i>' . self::$testEmailAddress . '</i>'
         );
         $this->assertCount(1, $violations);
-        $this->assertInstanceOf('\Symfony\Component\Validator\ConstraintViolation', $violations[0]);
-        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\NoAngleBrackets', $violations[0]->getConstraint());
+        $this->assertInstanceOf(
+            '\Symfony\Component\Validator\ConstraintViolation',
+            $violations[0]
+        );
+        $this->assertInstanceOf(
+            '\Symfony\Component\Validator\Constraints\NoAngleBrackets',
+            $violations[0]->getConstraint()
+        );
         $this->assertEquals('Email address cannot contain angle brackets (< or >)', $violations[0]->getMessage());
     }
 
@@ -407,12 +590,19 @@ class PersonTest extends \PHPUnit_Framework_TestCase
         $this->person = new Person(
             self::$testFirstName,
             self::$testLastName,
-            self::$testInvalidEmailAddress
+            self::$testInvalidEmailAddress,
+            self::$testCreator
         );
         $violations = $this->validator->validate($this->person);
         $this->assertCount(1, $violations);
-        $this->assertInstanceOf('\Symfony\Component\Validator\ConstraintViolation', $violations[0]);
-        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\Email', $violations[0]->getConstraint());
+        $this->assertInstanceOf(
+            '\Symfony\Component\Validator\ConstraintViolation',
+            $violations[0]
+        );
+        $this->assertInstanceOf(
+            '\Symfony\Component\Validator\Constraints\Email',
+            $violations[0]->getConstraint()
+        );
         $this->assertEquals('emailAddress', $violations[0]->getPropertyPath());
         $this->assertEquals('Email address is invalid', $violations[0]->getMessage());
     }
@@ -429,8 +619,14 @@ class PersonTest extends \PHPUnit_Framework_TestCase
             self::$testInvalidEmailAddress
         );
         $this->assertCount(1, $violations);
-        $this->assertInstanceOf('\Symfony\Component\Validator\ConstraintViolation', $violations[0]);
-        $this->assertInstanceOf('\Symfony\Component\Validator\Constraints\Email', $violations[0]->getConstraint());
+        $this->assertInstanceOf(
+            '\Symfony\Component\Validator\ConstraintViolation',
+            $violations[0]
+        );
+        $this->assertInstanceOf(
+            '\Symfony\Component\Validator\Constraints\Email',
+            $violations[0]->getConstraint()
+        );
         $this->assertEquals('Email address is invalid', $violations[0]->getMessage());
     }
 
@@ -446,5 +642,58 @@ class PersonTest extends \PHPUnit_Framework_TestCase
             self::$testEmailAddress
         );
         $this->assertCount(0, $violations);
+    }
+
+    /**
+     * Test that Person is JsonSerializable and serializes to the expected JSON.
+     */
+    public function testJsonSerialize()
+    {
+        $timeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
+        $timeStampISO = $timeStamp->format(\DateTime::ISO8601);
+        $personData = array(
+            'id' => null,
+            'firstName' => self::$testFirstName,
+            'lastName' => self::$testLastName,
+            'emailAddress' => self::$testEmailAddress,
+            'creationTimeStamp' => $timeStampISO,
+            'creator' => self::$testCreator,
+        );
+        $this->person->setCreationTimeStamp($timeStamp);
+        $this->assertEquals(json_encode($personData), json_encode($this->person));
+    }
+
+    /**
+     * Test that we can update single values in Person with update().
+     */
+    public function testUpdateSingleValue()
+    {
+        $this->person->update(array('firstName' => 'newFirstName'));
+        $this->assertEquals('newFirstName', $this->person->getFirstName());
+        $this->person->update(array('lastName' => 'newLastName'));
+        $this->assertEquals('newLastName', $this->person->getLastName());
+        $this->person->update(array('emailAddress' => 'newEmailAddress'));
+        $this->assertEquals('newEmailAddress', $this->person->getEmailAddress());
+        $this->person->update(array('creator' => 'newCreator'));
+        $this->assertEquals('newCreator', $this->person->getCreator());
+    }
+
+    /**
+     * Test that we can update multiple values at once in Person with update().
+     */
+    public function testUpdateMultipleValues()
+    {
+        $this->person->update(
+            array(
+                'firstName' => 'newFirstName2',
+                'lastName' => 'newLastName2',
+                'emailAddress' => 'newEmailAddress2',
+                'creator' => 'newCreator2',
+            )
+        );
+        $this->assertEquals('newFirstName2', $this->person->getFirstName());
+        $this->assertEquals('newLastName2', $this->person->getLastName());
+        $this->assertEquals('newEmailAddress2', $this->person->getEmailAddress());
+        $this->assertEquals('newCreator2', $this->person->getCreator());
     }
 }

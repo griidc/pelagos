@@ -25,6 +25,28 @@ class Person implements \JsonSerializable
     protected $id;
 
     /**
+     * The creation timestamp (in UTC) for this Person.
+     *
+     * @var \DateTime $creationTimeStamp;
+     *
+     * @Assert\NotBlank(
+     *     message="Creator is required"
+     * )
+     */
+    protected $creationTimeStamp;
+
+    /**
+     * The username of the user who created this Person.
+     *
+     * @var string $creator;
+     *
+     * @Assert\NotBlank(
+     *     message="Creator is required"
+     * )
+     */
+    protected $creator;
+
+    /**
      * Person's first name.
      *
      * @var string $firstName
@@ -75,12 +97,15 @@ class Person implements \JsonSerializable
      * @param string $firstName    Person's first name.
      * @param string $lastName     Person's last name.
      * @param string $emailAddress Person's email address.
+     * @param string $creator      The username of the user who created this Person.
      */
-    public function __construct($firstName = null, $lastName = null, $emailAddress = null)
+    public function __construct($firstName = null, $lastName = null, $emailAddress = null, $creator = null)
     {
         $this->setFirstName($firstName);
         $this->setLastName($lastName);
         $this->setEmailAddress($emailAddress);
+        $this->setCreator($creator);
+        $this->setCreationTimeStamp();
     }
 
     /**
@@ -91,6 +116,88 @@ class Person implements \JsonSerializable
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Setter for creationTimeStamp property.
+     *
+     * @param \DateTime $timeStamp Creation timestamp to set.
+     *
+     * @return void
+     *
+     * @throws \Exception When $timeStamp does not have a timezone of UTC.
+     */
+    public function setCreationTimeStamp(\DateTime $timeStamp = null)
+    {
+        if (isset($timeStamp)) {
+            if ($timeStamp->getTimezone()->getName() != 'UTC') {
+                throw new \Exception('creationTimeStamp must be in UTC');
+            }
+            $this->creationTimeStamp = $timeStamp;
+        } else {
+            $this->creationTimeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
+        }
+    }
+
+    /**
+     * Getter for creationTimeStamp property.
+     *
+     * The default is to return the timestamp localized to the current timezone.
+     * This getter also makes sure the creationTimeStamp property is set to UTC.
+     *
+     * @param boolean $localized Whether to convert timestamp to the local timezone.
+     *
+     * @return \DateTime Creation timestamp for this Person.
+     */
+    public function getCreationTimeStamp($localized = true)
+    {
+        if (!isset($this->creationTimeStamp)) {
+            return null;
+        }
+        $this->creationTimeStamp->setTimeZone(new \DateTimeZone('UTC'));
+        if ($localized) {
+            $timeStamp = clone $this->creationTimeStamp;
+            $timeStamp->setTimeZone(new \DateTimeZone(date_default_timezone_get()));
+            return $timeStamp;
+        }
+        return $this->creationTimeStamp;
+    }
+
+    /**
+     * Get the creationTimeStamp property as an ISO8601 string.
+     *
+     * @param boolean $localized Whether to convert timestamp to the local timezone.
+     *
+     * @return string ISO8601 string represnting creationTimeStamp.
+     */
+    public function getCreationTimeStampAsISO($localized = true)
+    {
+        if (isset($this->creationTimeStamp) and $this->creationTimeStamp instanceof \DateTime) {
+            return $this->getCreationTimeStamp($localized)->format(\DateTime::ISO8601);
+        }
+        return null;
+    }
+
+    /**
+     * Setter for creator property.
+     *
+     * @param string $creator The username of the user who created this Person.
+     *
+     * @return void
+     */
+    public function setCreator($creator)
+    {
+        $this->creator = $creator;
+    }
+
+    /**
+     * Getter for creator property.
+     *
+     * @return string The username of the user who created this Person.
+     */
+    public function getCreator()
+    {
+        return $this->creator;
     }
 
     /**
@@ -167,10 +274,12 @@ class Person implements \JsonSerializable
     public function jsonSerialize()
     {
         return array(
-            'id' => $this->id,
-            'firstName' => $this->firstName,
-            'lastName' => $this->lastName,
-            'emailAddress' => $this->emailAddress,
+            'id' => $this->getId(),
+            'firstName' => $this->getFirstName(),
+            'lastName' => $this->getLastName(),
+            'emailAddress' => $this->getEmailAddress(),
+            'creationTimeStamp' => $this->getCreationTimeStampAsISO(false),
+            'creator' => $this->getCreator(),
         );
     }
 
@@ -194,6 +303,9 @@ class Person implements \JsonSerializable
                     break;
                 case 'emailAddress':
                     $this->setEmailAddress($value);
+                    break;
+                case 'creator':
+                    $this->setCreator($value);
                     break;
             }
         }
