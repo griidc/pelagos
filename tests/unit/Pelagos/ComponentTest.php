@@ -300,6 +300,25 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test getLoggedInUser.
+     */
+    public function testGetLoggedInUser()
+    {
+        $GLOBALS['user'] = new \Pelagos\Tests\Helpers\TestUser;
+        $this->assertEquals('test', $this->component->getLoggedInUser());
+    }
+
+    /**
+     * Test getLoggedInUser when no user is logged in.
+     *
+     * @expectedException \Exception
+     */
+    public function testGetLoggedInUserNotLoggedIn()
+    {
+        $this->component->getLoggedInUser();
+    }
+
+    /**
      * Test that finalize calls quit when quitOnFinalize is set to true.
      */
     public function testQuitOnFinalize()
