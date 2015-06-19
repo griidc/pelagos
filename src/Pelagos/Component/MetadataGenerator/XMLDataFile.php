@@ -19,8 +19,6 @@ class XMLDataFile
      */
     private static $instance = null;
 
-    const SHARE_PHP = '../../../../share/php/';
-
     /**
      * Singleton implementation.
      *
@@ -30,7 +28,6 @@ class XMLDataFile
     private function __construct()
     {
     }
-
     /**
      * Singleton implementation.
      *
@@ -57,7 +54,7 @@ class XMLDataFile
         $GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini', true);
 
         # load the Common library
-        require_once self::SHARE_PHP . "Common.php";
+        require_once 'Common.php';
 
         # check for local config file
         if (file_exists(__DIR__ . '/../config.ini')) {

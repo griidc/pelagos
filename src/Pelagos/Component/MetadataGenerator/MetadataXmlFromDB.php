@@ -14,7 +14,6 @@ namespace Pelagos\Component\MetadataGenerator;
 
 use \Pelagos\Exception\NotFoundException;
 use \Pelagos\Exception\PersistenceException;
-use \PDO as PDO;
 
 /**
  * This class pulls metadata from the persistence layer.
@@ -61,7 +60,7 @@ class MetadataXmlFromDB
      */
     private function __construct()
     {
-        require_once '../../../../share/php/DBUtils.php';
+        require_once 'DBUtils.php';
         $this->dbcon = openDB("GOMRI_RW");
         $this->dbcon->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
     }
@@ -114,11 +113,12 @@ class MetadataXmlFromDB
      */
     private function getMetadataXml($registryId)
     {
-        $query = $this->getMetadataSelectQueryString() . " WHERE " . self::REGISTRY_ID_COL ." = :arg1  LIMIT 1";
-        $statement = $this->dbcon->prepare($query, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
+        $query = $this->getMetadataSelectQueryString() . " WHERE " . self::REGISTRY_ID_COL . " = " .
+                           $this->wrapInSingleQuotes($registryId) . " LIMIT 1";
+        $statement = $this->dbcon->prepare($query);
         $metadataXml = null;
         try {
-            if ($statement->execute(array(':arg1' => $registryId))) {
+            if ($statement->execute()) {
                 if ($row = $statement->fetch(\PDO::FETCH_ASSOC)) { // if true
                     $metadataXml = $row[self::METADATA_XML_COL];
                     return $metadataXml;
@@ -166,13 +166,14 @@ class MetadataXmlFromDB
      */
     private function getRegistryIdForDatasetUdi($datasetUdi)
     {
-        $query = $this->getRegistryAndUdiSelectQueryString() . " WHERE " . self::DATASET_UDI_COL . " = :arg1  LIMIT 1";
+        $query = $this->getRegistryAndUdiSelectQueryString() . " WHERE " . self::DATASET_UDI_COL . " = " .
+                $this->wrapInSingleQuotes($datasetUdi) . " LIMIT 1";
 
-        $statement = $this->dbcon->prepare($query, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
-
+        $this->logger->log("getRegistryIdForDatasetUdi() query: " . $query);
+        $statement = $this->dbcon->prepare($query);
         $registryId = null;
         try {
-            if ($statement->execute(array(':arg1' => $datasetUdi))) {
+            if ($statement->execute()) {
                 if ($row = $statement->fetch(\PDO::FETCH_ASSOC)) { // if true
                     $registryId = $row[self::REGISTRY_ID_COL];
                     return $registryId;
@@ -212,7 +213,6 @@ class MetadataXmlFromDB
      * Compress XML function.
      *
      * @param string $string Input string of XML text.
-     *
      * @return string $compressedXml XML in 'compressed' form.
      */
     private function compressXml($string)
