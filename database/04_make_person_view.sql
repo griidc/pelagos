@@ -21,8 +21,8 @@ DROP TRIGGER udf_person_update_trigger
 DROP FUNCTION udf_modify_person();
 DROP VIEW person;
 
--- Create the view (we cast email address to text so we can handle CHECK errors
--- in our exception block):
+-- Create the view (we cast email address and instantiation_time to text so
+-- that we can handle CHECK errors in our exception block):
 CREATE VIEW person AS
    SELECT p.person_number AS person_number,
           p.person_honorific_title AS title,
@@ -31,7 +31,9 @@ CREATE VIEW person AS
           p.person_surname AS surname,
           p.person_name_suffix AS suffix,
           CAST(e2p.email_address AS TEXT) AS email_address,
-          e.email_validated AS email_verified
+          e.email_validated AS email_verified,
+          p.person_instantiator AS instantiator,
+          CAST(p.person_instantiation_time AS TEXT) AS instantiation_time
    FROM person_table p
       JOIN email2person_table e2p
          ON p.person_number = e2p.person_number
@@ -53,6 +55,7 @@ AS $pers_func$
       _err_code              TEXT                := NULL;
       _err_hint              TEXT                := NULL;
       _err_msg               TEXT                := NULL;
+      _instantiation_time    TIMESTAMP WITH TIME ZONE := NULL;
 
    BEGIN
       IF TG_OP <> 'DELETE'
@@ -62,10 +65,13 @@ AS $pers_func$
             -- Make sure we have all required fields for an INSERT:
             IF NEW.email_address IS NULL OR NEW.email_address = '' OR
                NEW.given_name IS NULL OR NEW.given_name = '' OR
+               NEW.instantiation_time IS NULL OR NEW.instantiation_time = '' OR
+               NEW.instantiator IS NULL OR NEW.instantiator = '' OR
                NEW.surname IS NULL OR NEW.surname = ''
             THEN
                _err_hint := CONCAT('A person entity requires a Given Name, a ',
-                                   'Surname, and an email address');
+                                   'Surname, an email address, an ',
+                                   'instantiator, and an instantiation time');
                _err_msg  := 'Missing required field violation';
                -- This is an invalid entry. Raise an exception and quit (the
                -- exception text is only used when we disable exception
@@ -74,21 +80,36 @@ AS $pers_func$
                   USING ERRCODE = '23502';
             END IF;
          END IF;
+
          -- Attempt to cast the email address to an EMAIL_ADDRESS_TYPE:
          _err_hint   := 'Please check the email address';
-         _err_msg    := CONCAT(NEW.email_address,
+         _err_msg    := CONCAT('"',
+                               NEW.email_address,
+                               '"',
                                ' is not a valid email address.');
          _email_addr := COALESCE(NEW.email_address);
+
          IF NEW.email_verified IS DISTINCT FROM TRUE
          THEN
             NEW.email_verified := FALSE;
          END IF;
 
+         -- Attempt to cast the instantiation time to a TIMESTAMP:
+         _err_hint   := 'Please check the instantiation time';
+         _err_msg    := CONCAT('"',
+                               NEW.instantiation_time,
+                               '"',
+                               ' is not a valid timestamp.');
+          _instantiation_time := COALESCE(NEW.instantiation_time);
+
+         -- set the error variables for a uniqueness violation:
          _err_hint := CONCAT('Perhaps you need to perform ',
                                    'an UPDATE instead?');
          _err_msg := CONCAT('Unique constraint violation. ',
                             'email address ',
+                            '"',
                             _email_addr,
+                            '"',
                             ' is already present in relation person.');
 
          -- The requirements call for the combination of given name, surname,
@@ -189,15 +210,19 @@ AS $pers_func$
                      person_given_name,
                      person_middle_name,
                      person_surname,
-                     person_name_suffix
+                     person_name_suffix,
+                     person_instantiator,
+                     person_instantiation_time
                   )
-                  VALUES ($1, $2, $3, $4, $5, $6)'
+                  VALUES ($1, $2, $3, $4, $5, $6, $7, $8)'
             USING NEW.person_number,
                   NEW.title,
                   NEW.given_name,
                   NEW.middle_name,
                   NEW.surname,
-                  NEW.suffix;
+                  NEW.suffix,
+                  NEW.instantiator,
+                  _instantiation_time;
 
          -- Associate the person and email address with each other. We will
          -- have already inserted the email address into the email table if
@@ -223,7 +248,7 @@ AS $pers_func$
 
       ELSEIF TG_OP = 'UPDATE'
       THEN
-         -- First, update the person information if necessary:
+         -- Update the person information if necessary:
          IF ROW(NEW.title,
                 NEW.given_name,
                 NEW.middle_name,
@@ -317,8 +342,7 @@ AS $pers_func$
          -- there is a real possibility of it being used again in the future.
          -- So, UPDATE the email_validated entry for the email address to
          -- FALSE, but leave the email address record behind. Then DELETE the
-         -- email_address-to-person association, and finally DELETE the person
-         -- information:
+         -- email2person association, and then DELETE the person information:
          EXECUTE 'UPDATE email_table
                   SET email_validated = FALSE
                   WHERE LOWER(email_address) = LOWER($1)'
