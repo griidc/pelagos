@@ -22,8 +22,13 @@ DROP DOMAIN EMAIL_ADDRESS_TYPE;
 CREATE TABLE person_table
 (
    person_number                            SERIAL,
+   person_creation_time                     TIMESTAMP WITH TIME ZONE
+      NOT NULL                              DEFAULT NOW(),
    person_given_name                        TEXT                NOT NULL,
    person_honorific_title                   TEXT                DEFAULT NULL,
+   person_instantiation_time                TIMESTAMP WITH TIME ZONE
+      NOT NULL                              DEFAULT NOW(),
+   person_instantiator                      TEXT                NOT NULL,
    person_middle_name                       TEXT                DEFAULT NULL,
    person_name_suffix                       TEXT                DEFAULT NULL,
    person_surname                           TEXT                NOT NULL,
