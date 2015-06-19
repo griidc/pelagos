@@ -2,6 +2,9 @@
 
 namespace Pelagos;
 
+use Doctrine\ORM\EntityManager;
+use Doctrine\DBAL\Event\Listeners\PostgresSessionInit;
+
 class Persistance
 {
     /**
@@ -28,7 +31,13 @@ class Persistance
             'dbname'   => $db_conn_info['dbname'],
         );
 
-        // create and return an entity manager
-        return \Doctrine\ORM\EntityManager::create($doctrine_conn, $doctrine_config);
+        // create an entity manager
+        $entityManager = EntityManager::create($doctrine_conn, $doctrine_config);
+        // register the PostgresSessionInit listener with session variables
+        $entityManager->getConnection()->getEventManager()->addEventSubscriber(
+            new PostgresSessionInit(array('timezone' => 'UTC'))
+        );
+        // return the entity manager
+        return $entityManager;
     }
 }
