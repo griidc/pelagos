@@ -537,9 +537,12 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
             'firstName' => self::$firstName,
             'lastName' => self::$lastName,
             'emailAddress' => self::$emailAddress,
+            'creationTimeStamp' => new \DateTime('now', new \DateTimeZone('UTC')),
+            'creator' => 'test',
         );
         $person = new \Pelagos\Entity\Person;
         $person->update($personData);
+        $personData['creationTimeStamp'] = $personData['creationTimeStamp']->format(\DateTime::ISO8601);
         $this->mockEntityManager->shouldReceive('find')->andReturn($person);
         $this->mockEntityManager->shouldReceive('flush');
         \Slim\Environment::mock(
