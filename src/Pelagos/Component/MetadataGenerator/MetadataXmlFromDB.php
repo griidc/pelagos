@@ -213,6 +213,7 @@ class MetadataXmlFromDB
      * Compress XML function.
      *
      * @param string $string Input string of XML text.
+     *
      * @return string $compressedXml XML in 'compressed' form.
      */
     private function compressXml($string)
@@ -223,5 +224,17 @@ class MetadataXmlFromDB
             $compressedXml = $ro = preg_replace('/\s+/', ' ', $string);
         }
         return $compressedXml;
+    }
+
+    /**
+     * Adds single quotes around a string after trimming whitespace from around the supplied string.
+     *
+     * @param string $s Input string of arbitrary text.
+     *
+     * @return string Of original string, trimmed and quoted in single quotes.
+     */
+    private function wrapInSingleQuotes($s)
+    {
+        return "'" . trim($s) . "'";
     }
 }
