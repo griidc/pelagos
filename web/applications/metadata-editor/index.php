@@ -9,35 +9,35 @@ include_once '/opt/pelagos/share/php/aliasIncludes.php';
 if (isset($_GET["udi"]))
 {
 	include_once '/opt/pelagos/share/php/pdo.php';
-	
+
 	$udi = $_GET["udi"];
-	
+
 	$configini = parse_ini_file("/etc/griidc/db.ini",true);
 
 	$config = $configini["GOMRI_RW"];
-	
+
 	$dbconnstr = 'pgsql:host='. $config["host"];
 	$dbconnstr .= ' port=' . $config["port"];
 	$dbconnstr .= ' dbname=' . $config["dbname"];
 	$dbconnstr .= ' user=' . $config["username"];
 	$dbconnstr .= ' password=' . $config["password"];
-	
+
 	$conn = pdoDBConnect($dbconnstr);
-    
-   
-	
+
+
+
 	$query = "SELECT EXISTS(SELECT 1 FROM registry WHERE registry_id LIKE '$udi%' AND '$udi' != '' LIMIT 1) as \"UDIexists\";";
-	
+
 	$row = pdoDBQuery($conn,$query);
-    
+
     $row = $row[0];
-	
+
 	$returnexist = $row["UDIexists"];
     $returnArray = array("UDIexists"=>$returnexist, "udi"=>$udi);
-    
+
     ob_clean();
     flush();
-	
+
 	echo json_encode($returnArray);
     //"{\"UDIexists\":\"$returnexist\",\"udi\":\"$udi\"}";
 	drupal_exit();
@@ -76,12 +76,12 @@ $xmldoc = null;
 
 if (isset($_FILES["file"]))
 {
-	
+
 	if ($_FILES["file"]["error"] > 0)
 	{
 		//echo "Error: " . $_FILES["file"]["error"] . "<br>";
 		$dMessage = 'Error while loading file: ' .  $_FILES["file"]["error"];
-		drupal_set_message($dMessage,'error',false);
+		drupal_set_message($dMessage, 'error', false);
 	}
 	else
 	{
@@ -105,18 +105,21 @@ if (isset($_GET["dataUrl"]) and !isset($_FILES["file"]))
 {
 	$xmlURL = $_GET["dataUrl"];
 	$xmldoc = loadXMLFromURL($xmlURL);
-    
+
 
     if ($xmldoc != null and gettype($xmldoc) == 'object') {
         $dMessage = 'Successfully loaded XML from URL: ' .  $xmlURL;
-        drupal_set_message($dMessage,'status',false);
+        drupal_set_message($dMessage, 'status',false);
     } elseif ($xmldoc != null and $xmldoc == 204) {
-        $dMessage = 'No proper metadata found from registered metadata.';
-        drupal_set_message($dMessage,'warning',false);
+        $dMessage =  'Sorry, the GRIIDC Metadata Editor is unable to load ';
+        $dMessage .= 'the submitted metadata file because it is not valid ';
+        $dMessage .= 'ISO 19115-2 XML. Please contact griidc@gomri.org for ';
+        $dMessage .= 'assistance.';
+        drupal_set_message($dMessage, 'warning', false);
         $xmldoc = null;
-    } else { 
+    } else {
 		$dMessage = 'Error while loading data from: ' .  $xmlURL;
-		drupal_set_message($dMessage,'error',false);
+		drupal_set_message($dMessage, 'error', false);
         $xmldoc = null;
 	}
 }
@@ -127,14 +130,14 @@ if (isset($thefile))
 		$xmldoc = loadXMLFromFile($thefile);
         if ($xmldoc === false) {
             $dMessage = 'Unable to load file: ' .  $_FILES["file"]["name"];
-            drupal_set_message($dMessage,'error',false);
+            drupal_set_message($dMessage, 'error', false);
         } else {
             $dMessage = 'Successfully loaded file: ' .  $_FILES["file"]["name"];
-            drupal_set_message($dMessage,'status',false);
+            drupal_set_message($dMessage, 'status', false);
         }
 	} else {
 		$dMessage = 'Sorry.' .  $_FILES["file"]["name"] . ', is not an XML file!';
-		drupal_set_message($dMessage,'warning',false);
+		drupal_set_message($dMessage, 'warning', false);
 	}
 }
 
@@ -147,7 +150,7 @@ if (isset($xmldoc))
 }
 
 include 'MI_Metadata.php';
-$myMImeta = new MI_Metadata($mMD,'MIMeta',"metadata.xml");
+$myMImeta = new MI_Metadata($mMD, 'MIMeta', "metadata.xml");
 $twigArray = array();
 $twigArray['onReady'] = $mMD->onReady;
 $twigArray['jqUIs'] = $mMD->jqUIs;
