@@ -169,7 +169,6 @@ class MetadataXmlFromDB
         $query = $this->getRegistryAndUdiSelectQueryString() . " WHERE " . self::DATASET_UDI_COL . " = " .
                 $this->wrapInSingleQuotes($datasetUdi) . " LIMIT 1";
 
-        $this->logger->log("getRegistryIdForDatasetUdi() query: " . $query);
         $statement = $this->dbcon->prepare($query);
         $registryId = null;
         try {
