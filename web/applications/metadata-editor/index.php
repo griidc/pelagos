@@ -1,6 +1,8 @@
 <?php
 
 $GLOBALS['pelagos']['title'] = 'ISO 19115-2 Metadata Editor';
+$base_path = $GLOBALS['pelagos']['base_path'];
+$component_path = $GLOBALS['pelagos']['component_path'];
 
 include_once '/opt/pelagos/share/php/aliasIncludes.php';
 
@@ -21,19 +23,23 @@ if (isset($_GET["udi"]))
 	$dbconnstr .= ' password=' . $config["password"];
 	
 	$conn = pdoDBConnect($dbconnstr);
+    
+   
 	
-	$query = "SELECT EXISTS(SELECT 1 FROM registry WHERE registry_id LIKE '$udi%' LIMIT 1) as \"UDIexists\";";
+	$query = "SELECT EXISTS(SELECT 1 FROM registry WHERE registry_id LIKE '$udi%' AND '$udi' != '' LIMIT 1) as \"UDIexists\";";
 	
 	$row = pdoDBQuery($conn,$query);
     
     $row = $row[0];
 	
 	$returnexist = $row["UDIexists"];
-	
-	ob_clean();
+    $returnArray = array("UDIexists"=>$returnexist, "udi"=>$udi);
+    
+    ob_clean();
     flush();
 	
-	echo "{\"UDIexists\":\"$returnexist\",\"udi\":\"$udi\"}";
+	echo json_encode($returnArray);
+    //"{\"UDIexists\":\"$returnexist\",\"udi\":\"$udi\"}";
 	drupal_exit();
 }
 
@@ -98,35 +104,40 @@ if (isset($_POST))
 if (isset($_GET["dataUrl"]) and !isset($_FILES["file"]))
 {
 	$xmlURL = $_GET["dataUrl"];
-	$xmldoc = loadXML($xmlURL);
-	//$xmldoc->loadXML($xmlString);
-	
-	if ($xmldoc != null)
-	{
-		$dMessage = 'Successfully  loaded XML from URL: ' .  $xmlURL;
-		drupal_set_message($dMessage,'status',false);
-	}
-	else
-	{
+	$xmldoc = loadXMLFromURL($xmlURL);
+    
+
+    if ($xmldoc != null and gettype($xmldoc) == 'object') {
+        $dMessage = 'Successfully loaded XML from URL: ' .  $xmlURL;
+        drupal_set_message($dMessage,'status',false);
+    } elseif ($xmldoc != null and $xmldoc == 204) {
+        $dMessage = 'No proper metadata found from registered metadata.';
+        drupal_set_message($dMessage,'warning',false);
+        $xmldoc = null;
+    } else { 
 		$dMessage = 'Error while loading data from: ' .  $xmlURL;
 		drupal_set_message($dMessage,'error',false);
+        $xmldoc = null;
 	}
 }
 
 if (isset($thefile))
 {
-	if ($_FILES["file"]["type"] == "text/xml")
-	{
-		$xmldoc = loadXML($thefile);
-		$dMessage = 'Successfully  loaded file: ' .  $_FILES["file"]["name"];
-		drupal_set_message($dMessage,'status',false);
-	}
-	else
-	{
+	if ($_FILES["file"]["type"] == "text/xml") {
+		$xmldoc = loadXMLFromFile($thefile);
+        if ($xmldoc === false) {
+            $dMessage = 'Unable to load file: ' .  $_FILES["file"]["name"];
+            drupal_set_message($dMessage,'error',false);
+        } else {
+            $dMessage = 'Successfully loaded file: ' .  $_FILES["file"]["name"];
+            drupal_set_message($dMessage,'status',false);
+        }
+	} else {
 		$dMessage = 'Sorry.' .  $_FILES["file"]["name"] . ', is not an XML file!';
 		drupal_set_message($dMessage,'warning',false);
 	}
 }
+
 
 $mMD = new metaData();
 
@@ -137,9 +148,16 @@ if (isset($xmldoc))
 
 include 'MI_Metadata.php';
 $myMImeta = new MI_Metadata($mMD,'MIMeta',"metadata.xml");
+$twigArray = array();
+$twigArray['onReady'] = $mMD->onReady;
+$twigArray['jqUIs'] = $mMD->jqUIs;
+$twigArray['validateRules'] = $mMD->validateRules;
+$twigArray['validateMessages'] = $mMD->validateMessages;
+$twigArray['base_path'] = $base_path;
+$twigArray['component_path'] = $component_path;
 
 echo "\n\n<script type=\"text/javascript\">\n";
-$mMD->jsString .= $mMD->twig->render('js/base.js', array('onReady' => $mMD->onReady,'jqUIs' => $mMD->jqUIs,'validateRules' => $mMD->validateRules, 'validateMessages' => $mMD->validateMessages));
+$mMD->jsString .= $mMD->twig->render('js/base.js', $twigArray);
 echo $mMD->jsString;
 echo "</script>\n";
 
