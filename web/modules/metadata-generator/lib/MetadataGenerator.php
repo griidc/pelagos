@@ -146,6 +146,9 @@ function legacyGetMetadataXml($udi, $app, MetadataLogger $logger)
 
         $stash['RP']['DIST'] = $env['config']['Distributor'];
         $stash['RP']['DIST']['RoleCode'] = $GLOBALS['CodeLists']['CI_RoleCode']['distributor'];
+        
+        date_default_timezone_set('UTC');
+        $stash['isoDatetime'] = date('c');
 
         $app->view()->appendData($stash);
         $xml = $app->view()->render('xml/MI_Metadata.xml');
