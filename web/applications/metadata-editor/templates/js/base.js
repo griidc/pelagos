@@ -483,11 +483,15 @@ function uploadFile()
                     $('#errordialog').html(errText);
                     $("#errordialog").dialog( "open" );
                 }
+                else
+                {
+                    console.log("Setting __validated = 1");
+                    $('#metadata').find('input[name="__validated"]').val('1');
+                }
                 var spnhtml = "All required fields are complete.<br/>Your metadata file is ready for download.<br/>";
                 $("#dialogtxt").html(spnhtml);
                 $('#metadata').valid();
                 validateTabs();
-                $('#metadata').append('<input type="hidden" name="validated" value="1" />');
                 $("#metadata").submit();
             });
         $( "#upload" )
@@ -635,6 +639,9 @@ function uploadFile()
                 else
                 {
                     form.submit();
+
+                    console.log("Setting __validated = 0");
+                    $('#metadata').find('input[name="__validated"]').val('0');
                 }
             }
         });

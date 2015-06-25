@@ -17,12 +17,11 @@ function makeXML($xml)
         $doc->loadXML($xmldocstring);
     }
 
-    if (isset($_POST['validated']) and $_POST['validated'] == 1) {
-        $validated = true;
+    if (isset($_POST['__validated']) and $_POST['__validated'] == 1) {
+        createNodesXML($xml, $doc, true);
     } else {
-        $validated = false;
+        createNodesXML($xml, $doc, false);
     }
-    createNodesXML($xml, $doc, $validated);
 
     $dMessage = 'Succesfully Created XML file:';
     drupal_set_message($dMessage,'status');
@@ -58,7 +57,7 @@ function createBlankXML()
     return $newdoc;
 }
 
-function createNodesXML($xml, $doc, $verified)
+function createNodesXML($xml, $doc, $validated)
 {
 
     if (is_null($doc))
@@ -296,12 +295,14 @@ function createNodesXML($xml, $doc, $verified)
 
     $timestamp = gmdate('c');
     $maintenanceNote='';
-    if ($verified == true) {
+    if ($validated == true) {
         $maintenanceNote = "This ISO metadata record was created using the 'Check and Save to File' (with form validation) function of the GRIIDC ISO 19115-2 Metadata Editor on $timestamp";
     } else {
         $maintenanceNote = "This ISO metadata record was created using the 'Save to File' (no form validation) function of the GRIIDC ISO 19115-2 Metadata Editor on $timestamp";
     }
-    $currentNode->setAttribute('gco:CharacterString', $maintenanceNote);
+
+    $newChild = $doc->createElement('gco:CharacterString', $maintenanceNote);
+    $currentNode->appendChild($newChild);
 
     $doc->formatOutput = true;
     $doc->normalizeDocument();
