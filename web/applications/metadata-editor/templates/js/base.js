@@ -487,6 +487,7 @@ function uploadFile()
                 $("#dialogtxt").html(spnhtml);
                 $('#metadata').valid();
                 validateTabs();
+                $('#metadata').append('<input type="hidden" name="validated" value="1" />');
                 $("#metadata").submit();
             });
         $( "#upload" )
