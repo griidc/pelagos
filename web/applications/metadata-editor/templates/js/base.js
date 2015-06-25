@@ -483,6 +483,10 @@ function uploadFile()
                     $('#errordialog').html(errText);
                     $("#errordialog").dialog( "open" );
                 }
+                else
+                {
+                    $('#metadata').find('input[name="__validated"]').val('1');
+                }
                 var spnhtml = "All required fields are complete.<br/>Your metadata file is ready for download.<br/>";
                 $("#dialogtxt").html(spnhtml);
                 $('#metadata').valid();
@@ -634,6 +638,7 @@ function uploadFile()
                 else
                 {
                     form.submit();
+                    $('#metadata').find('input[name="__validated"]').val('0');
                 }
             }
         });
