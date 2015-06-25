@@ -33,7 +33,9 @@ CREATE VIEW person AS
           CAST(e2p.email_address AS TEXT) AS email_address,
           e.email_validated AS email_verified,
           p.person_instantiator AS instantiator,
-          CAST(p.person_instantiation_time AS TEXT) AS instantiation_time
+          CAST(p.person_instantiation_time AS TEXT) AS instantiation_time,
+          p.person_modifier AS modifier,
+          CAST(p.person_modification_time AS TEXT) AS modification_time
    FROM person_table p
       JOIN email2person_table e2p
          ON p.person_number = e2p.person_number
@@ -56,6 +58,7 @@ AS $pers_func$
       _err_hint              TEXT                := NULL;
       _err_msg               TEXT                := NULL;
       _instantiation_time    TIMESTAMP WITH TIME ZONE := NULL;
+      _modification_time     TIMESTAMP WITH TIME ZONE := NULL;
 
    BEGIN
       IF TG_OP <> 'DELETE'
@@ -67,11 +70,13 @@ AS $pers_func$
                NEW.given_name IS NULL OR NEW.given_name = '' OR
                NEW.instantiation_time IS NULL OR NEW.instantiation_time = '' OR
                NEW.instantiator IS NULL OR NEW.instantiator = '' OR
+               NEW.modifier IS NULL OR NEW.modifier = '' OR
                NEW.surname IS NULL OR NEW.surname = ''
             THEN
                _err_hint := CONCAT('A person entity requires a Given Name, a ',
                                    'Surname, an email address, an ',
-                                   'instantiator, and an instantiation time');
+                                   'instantiator, an instantiation time, and ',
+                                   'a modifier username.');
                _err_msg  := 'Missing required field violation';
                -- This is an invalid entry. Raise an exception and quit (the
                -- exception text is only used when we disable exception
@@ -166,7 +171,7 @@ AS $pers_func$
                                   IS DISTINCT FROM
                                   ROW($2, $3)'
                      INTO _count
-                     USING NEW.email_address,
+                     USING _email_addr,
                            NEW.given_name,
                            NEW.surname;
                ELSE
@@ -175,7 +180,7 @@ AS $pers_func$
                            WHERE LOWER(email_address) = LOWER($1)
                               AND person_number <> $2'
                      INTO _count
-                     USING NEW.email_address,
+                     USING _email_addr,
                            NEW.person_number;
                END IF;
 
@@ -188,6 +193,11 @@ AS $pers_func$
                END IF;
             END IF;
          END IF;
+
+         -- Let modification time be controlled by the system so we always have
+         -- the actual modificaiton time, regardless of any supplied value:
+         SELECT DATE_TRUNC('seconds', NOW())
+            INTO _modification_time;
       END IF;
 
       IF TG_OP = 'INSERT'
@@ -212,9 +222,11 @@ AS $pers_func$
                      person_surname,
                      person_name_suffix,
                      person_instantiator,
-                     person_instantiation_time
+                     person_instantiation_time,
+                     person_modification_time,
+                     person_modifier
                   )
-                  VALUES ($1, $2, $3, $4, $5, $6, $7, $8)'
+                  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)'
             USING NEW.person_number,
                   NEW.title,
                   NEW.given_name,
@@ -222,7 +234,9 @@ AS $pers_func$
                   NEW.surname,
                   NEW.suffix,
                   NEW.instantiator,
-                  _instantiation_time;
+                  _instantiation_time,
+                  _modification_time,
+                  NEW.modifier;
 
          -- Associate the person and email address with each other. We will
          -- have already inserted the email address into the email table if
@@ -244,10 +258,56 @@ AS $pers_func$
             USING LOWER(_email_addr),
                   NEW.person_number,
                   TRUE;
-      RETURN NEW;
+         RETURN NEW;
 
       ELSEIF TG_OP = 'UPDATE'
       THEN
+         -- Capture the modification information regardless of any other
+         -- changes. Worst case scenario is we end up with a record that shows
+         -- a modification where no modification occurred. This is an artifact
+         -- of this design:
+         EXECUTE 'UPDATE person_table
+                  SET person_modification_time = $1,
+                      person_modifier = $2
+                  WHERE person_number = $3'
+             USING _modification_time,
+                   NEW.modifier,
+                   NEW.person_number;
+
+         -- Update the history table with the current OLD information:
+         EXECUTE 'INSERT INTO person_history_table
+                  (
+                      person_history_action,
+                      person_number,
+                      title,
+                      given_name,
+                      middle_name,
+                      surname,
+                      email_address,
+                      modifier,
+                      modification_time
+                   )
+                   VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)'
+           USING TG_OP,
+                 OLD.person_number,
+                 (CASE WHEN NEW.title IS NULL THEN NULL
+                    ELSE OLD.title
+                 END),
+                 (CASE WHEN NEW.given_name IS NULL THEN NULL
+                    ELSE OLD.given_name
+                 END),
+                 (CASE WHEN NEW.middle_name IS NULL THEN NULL
+                    ELSE OLD.middle_name
+                 END),
+                 (CASE WHEN NEW.surname IS NULL THEN NULL
+                    ELSE OLD.surname
+                 END),
+                 (CASE WHEN NEW.email_address IS NULL THEN NULL
+                    ELSE OLD.email_address
+                 END),
+                 OLD.modifier,
+                 CAST(OLD.modification_time AS TIMESTAMP WITH TIME ZONE);
+
          -- Update the person information if necessary:
          IF ROW(NEW.title,
                 NEW.given_name,
@@ -335,6 +395,30 @@ AS $pers_func$
          END IF;
          RETURN NEW;
       ELSE
+         -- Update the history table with all current information:
+         EXECUTE 'INSERT INTO person_history_table
+                  (
+                      person_history_action,
+                      person_number,
+                      title,
+                      given_name,
+                      middle_name,
+                      surname,
+                      email_address,
+                      modifier,
+                      modification_time
+                   )
+                   VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)'
+           USING TG_OP,
+                 OLD.person_number,
+                 OLD.title,
+                 OLD.given_name,
+                 OLD.middle_name,
+                 OLD.surname,
+                 OLD.email_address,
+                 OLD.modifier,
+                 CAST(OLD.modification_time AS TIMESTAMP WITH TIME ZONE);
+
          -- The DELETE operation will leave the email address behind, on the
          -- off chance that we need to associate that email address with
          -- another person, or the same person again. The expense of keeping
@@ -358,36 +442,36 @@ AS $pers_func$
          RETURN OLD;
       END IF;
 
-      EXCEPTION
-         WHEN SQLSTATE '23502'
-            THEN
-               RAISE EXCEPTION '%',   _err_msg
-                  USING HINT        = _err_hint,
-                        ERRCODE     = '23502';
-               RETURN NULL;
-         WHEN SQLSTATE '23505'
-            THEN
-               RAISE EXCEPTION '%',   _err_msg
-                  USING HINT        = _err_hint,
-                        ERRCODE     = '23505';
-               RETURN NULL;
-         WHEN SQLSTATE '23514'
-            THEN
-               RAISE EXCEPTION '%',   _err_msg
-                  USING HINT        = _err_hint,
-                        ERRCODE     = '23514';
-               RETURN NULL;
-         WHEN OTHERS
-            THEN
-               _err_code = SQLSTATE;
-               RAISE EXCEPTION '%', CONCAT('Unable to ',
-                                           TG_OP,
-                                           ' person. An unknown ',
-                                           'error has occurred.')
-                  USING HINT      = CONCAT('Check the database log for ',
-                                           'more information.'),
-                        ERRCODE   = _err_code;
-               RETURN NULL;
+--       EXCEPTION
+--          WHEN SQLSTATE '23502'
+--             THEN
+--                RAISE EXCEPTION '%',   _err_msg
+--                   USING HINT        = _err_hint,
+--                         ERRCODE     = '23502';
+--                RETURN NULL;
+--          WHEN SQLSTATE '23505'
+--             THEN
+--                RAISE EXCEPTION '%',   _err_msg
+--                   USING HINT        = _err_hint,
+--                         ERRCODE     = '23505';
+--                RETURN NULL;
+--          WHEN SQLSTATE '23514'
+--             THEN
+--                RAISE EXCEPTION '%',   _err_msg
+--                   USING HINT        = _err_hint,
+--                         ERRCODE     = '23514';
+--                RETURN NULL;
+--          WHEN OTHERS
+--             THEN
+--                _err_code = SQLSTATE;
+--                RAISE EXCEPTION '%', CONCAT('Unable to ',
+--                                            TG_OP,
+--                                            ' person. An unknown ',
+--                                            'error has occurred.')
+--                   USING HINT      = CONCAT('Check the database log for ',
+--                                            'more information.'),
+--                         ERRCODE   = _err_code;
+--                RETURN NULL;
 
    END;
 

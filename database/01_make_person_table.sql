@@ -30,6 +30,9 @@ CREATE TABLE person_table
       NOT NULL                              DEFAULT NOW(),
    person_instantiator                      TEXT                NOT NULL,
    person_middle_name                       TEXT                DEFAULT NULL,
+   person_modification_time                 TIMESTAMP WITH TIME ZONE
+      NOT NULL                              DEFAULT NOW(),
+   person_modifier                          TEXT                NOT NULL,
    person_name_suffix                       TEXT                DEFAULT NULL,
    person_surname                           TEXT                NOT NULL,
 
