@@ -16,7 +16,8 @@ class Persistance
     {
         // create Doctrine metadata configuration from mappings defined in XML
         $doctrine_config = \Doctrine\ORM\Tools\Setup::createXMLMetadataConfiguration(
-            array(__DIR__.'/../../config/doctrine')
+            array(__DIR__.'/../../config/doctrine'),
+            true
         );
 
         // get database configuration parameters from db.ini and set up Doctrine database configuration array
