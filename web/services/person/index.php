@@ -144,7 +144,12 @@ $slim->get(
         } catch (RecordNotFoundPersistenceException $e) {
             $status = new HTTPStatus(404, $e->getMessage());
         } catch (PersistenceException $e) {
-            $status = new HTTPStatus(500, 'A database error has occured: ' . $e->getDatabaseErrorMessage());
+            $databaseErrorMessage = $e->getDatabaseErrorMessage();
+            if (empty($databaseErrorMessage)) {
+                $status = new HTTPStatus(500, 'A database error has occured: ' . $e->getMessage());
+            } else {
+                $status = new HTTPStatus(500, "A database error has occured: $databaseErrorMessage");
+            }
         } catch (\Exception $e) {
             $status = new HTTPStatus(500, 'A general error has occured: ' . $e->getMessage());
         }
@@ -172,9 +177,12 @@ $slim->put(
         }
 
         try {
+            $updates = $slim->request->params();
+            $updates['modifier'] = $comp->getLoggedInUser();
+            // get the Person, apply updates, validate the Person, persist the updated Person
             $person = $comp->persist(
                 $comp->validate(
-                    $comp->getPerson($id)->update($slim->request->params()),
+                    $comp->getPerson($id)->update($updates),
                     Validation::createValidatorBuilder()->enableAnnotationMapping()->getValidator()
                 )
             );
