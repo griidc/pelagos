@@ -13,7 +13,6 @@
 
 -- Start by dropping everything:
 DROP VIEW person;
-DROP TABLE person_history_table;
 DROP TABLE email2person_table;
 DROP TABLE email_table;
 DROP TABLE person_table CASCADE;
