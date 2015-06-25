@@ -94,7 +94,7 @@ function finishAllSuccessfulCases($udi, $app, $metadataXml)
  * @return tidy
  * @throws NotFoundException
  */
-function legacyGetMetadataXml($udi, $app, MetadataLogger $logger)
+function legacyGetMetadataXml($udi, $app)
 {
     require_once 'DBUtils.php';
     require_once 'datasets.php';
@@ -103,10 +103,8 @@ function legacyGetMetadataXml($udi, $app, MetadataLogger $logger)
     $stash = array();
     $GOMRI_DBH = openDB('GOMRI_RW');
     $RIS_DBH = openDB('RIS_RO');
-    $logger->write("Metadata Generator - starting legacyGetMetadataXml() udi: " . $udi);
     $datasets = get_identified_datasets($GOMRI_DBH, array("udi=$udi"));
 
-    $logger->write("Metadata Generator - legacyGetMetadataXml() datasets count: " . count($datasets));
     if (count($datasets) > 0) {
         $stash['dataset'] = $datasets[0];
         $stash['dataset']['url'] = "https://data.gulfresearchinitiative.org/data/$udi";
@@ -152,10 +150,8 @@ function legacyGetMetadataXml($udi, $app, MetadataLogger $logger)
 
         $app->view()->appendData($stash);
         $xml = $app->view()->render('xml/MI_Metadata.xml');
-        $logger->write("Metadata Generator - legacyGetMetadataXml() returning XML");
         return $xml;
     }
-    $logger->write("Metadata Generator - legacyGetMetadataXml() Throw NotFoundException ");
     throw new NotFoundException("C-3 UDI: $udi not found.");
 }
 
