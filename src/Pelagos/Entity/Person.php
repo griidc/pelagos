@@ -25,13 +25,9 @@ class Person implements \JsonSerializable
     protected $id;
 
     /**
-     * The creation timestamp (in UTC) for this Person.
+     * The creation time stamp (in UTC) for this Person.
      *
      * @var \DateTime $creationTimeStamp;
-     *
-     * @Assert\NotBlank(
-     *     message="Creator is required"
-     * )
      */
     protected $creationTimeStamp;
 
@@ -45,6 +41,24 @@ class Person implements \JsonSerializable
      * )
      */
     protected $creator;
+
+    /**
+     * The last modification time stamp (in UTC) for this Person.
+     *
+     * @var \DateTime $modificationTimeStamp;
+     */
+    protected $modificationTimeStamp;
+
+    /**
+     * The username of the user who last modified this Person.
+     *
+     * @var string $creator;
+     *
+     * @Assert\NotBlank(
+     *     message="Modifier is required"
+     * )
+     */
+    protected $modifier;
 
     /**
      * Person's first name.
@@ -92,23 +106,6 @@ class Person implements \JsonSerializable
     protected $emailAddress;
 
     /**
-     * Person constructor.
-     *
-     * @param string $firstName    Person's first name.
-     * @param string $lastName     Person's last name.
-     * @param string $emailAddress Person's email address.
-     * @param string $creator      The username of the user who created this Person.
-     */
-    public function __construct($firstName = null, $lastName = null, $emailAddress = null, $creator = null)
-    {
-        $this->setFirstName($firstName);
-        $this->setLastName($lastName);
-        $this->setEmailAddress($emailAddress);
-        $this->setCreator($creator);
-        $this->setCreationTimeStamp();
-    }
-
-    /**
      * Getter for id property.
      *
      * @return int Persistent identifier for the Person.
@@ -121,7 +118,9 @@ class Person implements \JsonSerializable
     /**
      * Setter for creationTimeStamp property.
      *
-     * @param \DateTime $timeStamp Creation timestamp to set.
+     * Setting the creation time stamp also sets the modification time stamp.
+     *
+     * @param \DateTime $timeStamp Creation time stamp to set.
      *
      * @return void
      *
@@ -137,19 +136,21 @@ class Person implements \JsonSerializable
         } else {
             $this->creationTimeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
         }
+        $this->modificationTimeStamp = $this->creationTimeStamp;
     }
 
     /**
      * Getter for creationTimeStamp property.
      *
-     * The default is to return the timestamp localized to the current timezone.
+     * The default is to return the time stamp in UTC.
+     * Setting $localized to true will retunr the time stamp localized to the current timezone.
      * This getter also makes sure the creationTimeStamp property is set to UTC.
      *
-     * @param boolean $localized Whether to convert timestamp to the local timezone.
+     * @param boolean $localized Whether to convert time stamp to the local timezone.
      *
-     * @return \DateTime Creation timestamp for this Person.
+     * @return \DateTime Creation time stamp for this Person.
      */
-    public function getCreationTimeStamp($localized = true)
+    public function getCreationTimeStamp($localized = false)
     {
         if (!isset($this->creationTimeStamp)) {
             return null;
@@ -166,11 +167,11 @@ class Person implements \JsonSerializable
     /**
      * Get the creationTimeStamp property as an ISO8601 string.
      *
-     * @param boolean $localized Whether to convert timestamp to the local timezone.
+     * @param boolean $localized Whether to convert time stamp to the local timezone.
      *
-     * @return string ISO8601 string represnting creationTimeStamp.
+     * @return string ISO8601 string representing creationTimeStamp.
      */
-    public function getCreationTimeStampAsISO($localized = true)
+    public function getCreationTimeStampAsISO($localized = false)
     {
         if (isset($this->creationTimeStamp) and $this->creationTimeStamp instanceof \DateTime) {
             return $this->getCreationTimeStamp($localized)->format(\DateTime::ISO8601);
@@ -181,6 +182,8 @@ class Person implements \JsonSerializable
     /**
      * Setter for creator property.
      *
+     * Setting the creator also sets the modifier.
+     *
      * @param string $creator The username of the user who created this Person.
      *
      * @return void
@@ -188,6 +191,7 @@ class Person implements \JsonSerializable
     public function setCreator($creator)
     {
         $this->creator = $creator;
+        $this->modifier = $creator;
     }
 
     /**
@@ -198,6 +202,103 @@ class Person implements \JsonSerializable
     public function getCreator()
     {
         return $this->creator;
+    }
+
+    /**
+     * Setter for modificationTimeStamp property.
+     *
+     * @param \DateTime $timeStamp Modification time stamp to set.
+     *
+     * @return void
+     *
+     * @throws \Exception When $timeStamp does not have a timezone of UTC.
+     */
+    public function setModificationTimeStamp(\DateTime $timeStamp = null)
+    {
+        if (isset($timeStamp)) {
+            if ($timeStamp->getTimezone()->getName() != 'UTC') {
+                throw new \Exception('modificationTimeStamp must be in UTC');
+            }
+            $this->modificationTimeStamp = $timeStamp;
+        } else {
+            $this->modificationTimeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
+        }
+    }
+
+    /**
+     * Getter for modificationTimeStamp property.
+     *
+     * The default is to return the time stamp localized to the current timezone.
+     * This getter also makes sure the modificationTimeStamp property is set to UTC.
+     *
+     * @param boolean $localized Whether to convert time stamp to the local timezone.
+     *
+     * @return \DateTime Modification time stamp for this Person.
+     */
+    public function getModificationTimeStamp($localized = false)
+    {
+        if (!isset($this->modificationTimeStamp)) {
+            return null;
+        }
+        $this->modificationTimeStamp->setTimeZone(new \DateTimeZone('UTC'));
+        if ($localized) {
+            $timeStamp = clone $this->modificationTimeStamp;
+            $timeStamp->setTimeZone(new \DateTimeZone(date_default_timezone_get()));
+            return $timeStamp;
+        }
+        return $this->modificationTimeStamp;
+    }
+
+    /**
+     * Get the modificationTimeStamp property as an ISO8601 string.
+     *
+     * @param boolean $localized Whether to convert time stamp to the local timezone.
+     *
+     * @return string ISO8601 string representing modificationTimeStamp.
+     */
+    public function getModificationTimeStampAsISO($localized = false)
+    {
+        if (isset($this->modificationTimeStamp) and $this->modificationTimeStamp instanceof \DateTime) {
+            return $this->getModificationTimeStamp($localized)->format(\DateTime::ISO8601);
+        }
+        return null;
+    }
+
+    /**
+     * Setter for modifier property.
+     *
+     * @param string $modifier The username of the user who modified this Person.
+     *
+     * @return void
+     */
+    public function setModifier($modifier)
+    {
+        $this->modifier = $modifier;
+    }
+
+    /**
+     * Getter for modifier property.
+     *
+     * @return string The username of the user who modified this Person.
+     */
+    public function getModifier()
+    {
+        return $this->modifier;
+    }
+
+    /**
+     * Update the time stamps to the current time.
+     *
+     * The creation time stamp is only updated if not already set.
+     *
+     * @return void
+     */
+    public function updateTimeStamps()
+    {
+        if ($this->creationTimeStamp == null) {
+            $this->setCreationTimeStamp();
+        }
+        $this->setModificationTimeStamp();
     }
 
     /**
@@ -278,8 +379,10 @@ class Person implements \JsonSerializable
             'firstName' => $this->getFirstName(),
             'lastName' => $this->getLastName(),
             'emailAddress' => $this->getEmailAddress(),
-            'creationTimeStamp' => $this->getCreationTimeStampAsISO(false),
+            'creationTimeStamp' => $this->getCreationTimeStampAsISO(),
             'creator' => $this->getCreator(),
+            'modificationTimeStamp' => $this->getModificationTimeStampAsISO(),
+            'modifier' => $this->getModifier(),
         );
     }
 

@@ -10,8 +10,15 @@
             <sequence-generator sequence-name="seq_person_number" allocation-size="1" initial-value="1" />
         </id>
 
+        <lifecycle-callbacks>
+            <lifecycle-callback type="prePersist" method="updateTimeStamps" />
+            <lifecycle-callback type="preUpdate" method="updateTimeStamps" />
+        </lifecycle-callbacks>
+
         <field name="creationTimeStamp" column="instantiation_time" type="datetimetz" />
         <field name="creator" column="instantiator" type="string" />
+        <field name="modificationTimeStamp" column="modification_time" type="datetimetz" />
+        <field name="modifier" column="modifier" type="string" />
         <field name="firstName" column="given_name" type="string" />
         <field name="lastName" column="surname" type="string" />
         <field name="emailAddress" column="email_address" type="string" />
