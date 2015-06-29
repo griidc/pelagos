@@ -6,6 +6,20 @@ $comp = new \Pelagos\Component;
 
 $comp->setTitle('Person List');
 
+$comp->addJS(
+    array(
+        '//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js',
+        'static/js/personList.js',
+    )
+);
+
+$comp->addCSS(
+    array(
+        '//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css'
+    )
+);
+
+
 $twig = new Twig_Environment(new Twig_Loader_Filesystem('./templates'));
 
 // get all Persons ordered by modificationTimeStamp descending and put them in the Twig data array
