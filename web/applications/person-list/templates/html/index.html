@@ -1,7 +1,6 @@
 <table id="personlist" width="100%" class="stripe">
     <thead>
         <tr>
-            <th>Delete</th>
             <th>ID</th>
             <th>First Name</th>
             <th>Last Name</th>
@@ -15,8 +14,7 @@
     <tbody>
         {% for person in persons %}
             <tr>
-                <td><a href="#">X</a></td>
-                <td>{{ person.getId() }}</td>
+                <td class = 'id'>{{ person.getId() }}</td>
                 <td>{{ person.getFirstName() }}</td>
                 <td>{{ person.getLastName() }}</td>
                 <td>{{ person.getEmailAddress() }}</td>
