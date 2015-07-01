@@ -1,26 +1,28 @@
-<table>
-    <tr>
-        <th>Delete</th>
-        <th>ID</th>
-        <th>First Name</th>
-        <th>Last Name</th>
-        <th>Email Address</th>
-        <th>Creation Time Stamp</th>
-        <th>Creator</th>
-        <th>Last Modified Time Stamp</th>
-        <th>Modifier</th>
-    </tr>
-    {% for person in persons %}
+<table id="personlist" width="100%" class="stripe">
+    <thead>
         <tr>
-            <td><a href="#">X</a></td>
-            <td>{{ person.getId() }}</td>
-            <td>{{ person.getFirstName() }}</td>
-            <td>{{ person.getLastName() }}</td>
-            <td>{{ person.getEmailAddress() }}</td>
-            <td>{{ person.getCreationTimeStampAsISO(true) }}</td>
-            <td>{{ person.getCreator() }}</td>
-            <td>{{ person.getModificationTimeStampAsISO(true) }}</td>
-            <td>{{ person.getModifier() }}</td>
+            <th>ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email Address</th>
+            <th>Creation Time Stamp</th>
+            <th>Creator</th>
+            <th>Last Modified Time Stamp</th>
+            <th>Modifier</th>
         </tr>
-    {% endfor %}
+    </thead>
+    <tbody>
+        {% for person in persons %}
+            <tr>
+                <td class = 'id'>{{ person.getId() }}</td>
+                <td>{{ person.getFirstName() }}</td>
+                <td>{{ person.getLastName() }}</td>
+                <td>{{ person.getEmailAddress() }}</td>
+                <td>{{ person.getCreationTimeStampAsISO(true) }}</td>
+                <td>{{ person.getCreator() }}</td>
+                <td>{{ person.getModificationTimeStampAsISO(true) }}</td>
+                <td>{{ person.getModifier() }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
 </table>
