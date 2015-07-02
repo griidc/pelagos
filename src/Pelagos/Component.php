@@ -74,19 +74,15 @@ class Component
         if (array_key_exists('pelagos', $GLOBALS)) {
             if (array_key_exists('base_path', $GLOBALS['pelagos'])) {
                 $this->basePath = $GLOBALS['pelagos']['base_path'];
-                $this->addJS('var pelagosBasePath = "' . $this->basePath . '";', 'inline');
             }
             if (array_key_exists('component_path', $GLOBALS['pelagos'])) {
                 $this->path = $GLOBALS['pelagos']['component_path'];
-                $this->addJS('var pelagosComponentPath = "' . $this->path . '";', 'inline');
             }
             if (array_key_exists('base_url', $GLOBALS['pelagos'])) {
                 $this->baseUri = $GLOBALS['pelagos']['base_url'];
-                $this->addJS('var pelagosBaseUri = "' . $this->baseUri . '";', 'inline');
             }
             if (array_key_exists('component_url', $GLOBALS['pelagos'])) {
                 $this->uri = $GLOBALS['pelagos']['component_url'];
-                $this->addJS('var pelagosComponentUri = "' . $this->uri . '";', 'inline');
             }
         }
     }
@@ -345,5 +341,26 @@ class Component
     public function setTitle($title)
     {
         $this->title = $title;
+    }
+
+    /**
+     * Method to set Pelagos globals in JavaScript.
+     *
+     * @return void
+     */
+    public function setJSGlobals()
+    {
+        if (isset($this->basePath)) {
+            $this->addJS('var pelagosBasePath = "' . $this->basePath . '";', 'inline');
+        }
+        if (isset($this->path)) {
+            $this->addJS('var pelagosComponentPath = "' . $this->path . '";', 'inline');
+        }
+        if (isset($this->baseUri)) {
+            $this->addJS('var pelagosBaseUri = "' . $this->baseUri . '";', 'inline');
+        }
+        if (isset($this->uri)) {
+            $this->addJS('var pelagosComponentUri = "' . $this->uri . '";', 'inline');
+        }
     }
 }
