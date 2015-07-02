@@ -9,7 +9,7 @@ $comp->setTitle('Person List');
 $comp->addJS(
     array(
         '//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js',
-        'static/js/personList.js',
+        'static/js/personList.js'
     )
 );
 
@@ -27,7 +27,8 @@ $twigData = array(
     'persons' => $comp
                     ->getEntityManager()
                     ->getRepository('Pelagos\Entity\Person')
-                    ->findBy(array(), array('modificationTimeStamp' => 'DESC'))
+                    ->findBy(array(), array('modificationTimeStamp' => 'DESC')),
+    'pelagos_base_path' => $GLOBALS['pelagos']['base_path']
 );
 
 echo $twig->render('html/index.html', $twigData);

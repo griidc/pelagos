@@ -1,3 +1,7 @@
+<script>
+    var pelagos_base_path = '{{pelagos_base_path}}';
+</script>
+
 <table id="personlist" width="100%" class="stripe">
     <thead>
         <tr>
@@ -25,4 +29,12 @@
             </tr>
         {% endfor %}
     </tbody>
+    <tfoot>
+        <tr>
+            <td colspan='8'>
+                <button id="details_button" disabled>View Person Landing Page</button> &nbsp;
+                <span id='detail1'><i>To view details for a Person, first click on row above.</i></span>
+            </td>
+        </tr>
+    </tfoot>
 </table>
