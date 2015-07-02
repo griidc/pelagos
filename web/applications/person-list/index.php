@@ -28,8 +28,7 @@ $twigData = array(
     'persons' => $comp
                     ->getEntityManager()
                     ->getRepository('Pelagos\Entity\Person')
-                    ->findBy(array(), array('modificationTimeStamp' => 'DESC')),
-    'pelagos_base_path' => $GLOBALS['pelagos']['base_path']
+                    ->findBy(array(), array('modificationTimeStamp' => 'DESC'))
 );
 
 echo $twig->render('html/index.html', $twigData);
