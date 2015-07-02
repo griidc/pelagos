@@ -208,6 +208,7 @@ Click OK to download.
 			</frameset>
 			</div>
 			<form name="metadata" id="metadata" method="post">
+            <input type="hidden" name="__validated" value="0">
 			<input type="hidden" id="__ldxmldoc" name="__ldxmldoc" value="<?php if(isset($mMD->xmldoc)){echo base64_encode($mMD->xmldoc->saveXML());};?>">
 			<fieldset>
 				<?php echo $myMImeta->getHTML(); ?>
