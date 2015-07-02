@@ -23,7 +23,7 @@ $(document).ready(function(){
 
     $('#details_button').click( function ( ) {
         var id = table.row('.selected').data()[0];
-        var url = pelagos_base_path + '/applications/userland#' + id;
+        var url = pelagosBasePath + '/applications/userland#' + id;
         window.open(url, '_blank');
     });
 });

@@ -19,6 +19,7 @@ $comp->addCSS(
     )
 );
 
+$comp->setJSGlobals();
 
 $twig = new Twig_Environment(new Twig_Loader_Filesystem('./templates'));
 
