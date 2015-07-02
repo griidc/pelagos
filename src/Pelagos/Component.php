@@ -74,15 +74,19 @@ class Component
         if (array_key_exists('pelagos', $GLOBALS)) {
             if (array_key_exists('base_path', $GLOBALS['pelagos'])) {
                 $this->basePath = $GLOBALS['pelagos']['base_path'];
+                $this->addJS('var pelagosBasePath = "' . $this->basePath . '";', 'inline');
             }
             if (array_key_exists('component_path', $GLOBALS['pelagos'])) {
                 $this->path = $GLOBALS['pelagos']['component_path'];
+                $this->addJS('var pelagosComponentPath = "' . $this->path . '";', 'inline');
             }
             if (array_key_exists('base_url', $GLOBALS['pelagos'])) {
                 $this->baseUri = $GLOBALS['pelagos']['base_url'];
+                $this->addJS('var pelagosBaseUri = "' . $this->baseUri . '";', 'inline');
             }
             if (array_key_exists('component_url', $GLOBALS['pelagos'])) {
                 $this->uri = $GLOBALS['pelagos']['component_url'];
+                $this->addJS('var pelagosComponentUri = "' . $this->uri . '";', 'inline');
             }
         }
     }
@@ -92,19 +96,24 @@ class Component
      *
      * This currently only works when the component is contained by Drupal.
      *
-     * @param string|array $js The relative (to component path)
-     *                         or absolute (to Pelagos base path)
-     *                         path the javascript file,
-     *                         a full URL to the file,
-     *                         or an array of any of the former.
+     * @param string|array $js   The relative (to component path)
+     *                           or absolute (to Pelagos base path)
+     *                           path the javascript file,
+     *                           a full URL to the file,
+     *                           or an array of any of the former.
+     *                           When the 'inline' type is specified, this is a string
+     *                           (or an array of strings) containing JavaScript.
+     * @param string       $type The type of JavaScript to add (external, inline, etc).
      *
      * @return void
      */
-    public function addJS($js)
+    public function addJS($js, $type = 'external')
     {
-        $url_array = $this->getUrlArray($js);
+        $url_array = $this->getUrlArray($js, $type);
         foreach ($url_array as $js_url) {
-            drupal_add_js($js_url, array('type'=>'external'));
+            if (function_exists('drupal_add_js')) {
+                drupal_add_js($js_url, array('type'=>$type));
+            }
         }
     }
 
@@ -200,10 +209,11 @@ class Component
      * Private method to get full urls for an asset or array of assets.
      *
      * @param string|array $assets An asset or array of assets to get full urls for.
+     * @param string       $type   The type of JavaScript to add (external, inline, etc).
      *
      * @return array An array containing full urls for the assets.
      */
-    private function getUrlArray($assets)
+    private function getUrlArray($assets, $type = 'external')
     {
         $url_array = array();
         if (is_array($assets)) {
@@ -212,7 +222,7 @@ class Component
             $asset_array = array($assets);
         }
         foreach ($asset_array as $asset) {
-            if (self::isFullUrl($asset)) {
+            if ($type == 'inline' or self::isFullUrl($asset)) {
                 $url = $asset;
             } elseif (preg_match('/^\//', $asset)) {
                 $url = $this->basePath . $asset;
