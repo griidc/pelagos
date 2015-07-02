@@ -26,6 +26,4 @@ $(document).ready(function(){
         var url = pelagos_base_path + '/applications/userland#' + id;
         window.open(url, '_blank');
     });
-
-
 });
