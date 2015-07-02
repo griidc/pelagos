@@ -92,19 +92,24 @@ class Component
      *
      * This currently only works when the component is contained by Drupal.
      *
-     * @param string|array $js The relative (to component path)
-     *                         or absolute (to Pelagos base path)
-     *                         path the javascript file,
-     *                         a full URL to the file,
-     *                         or an array of any of the former.
+     * @param string|array $js   The relative (to component path)
+     *                           or absolute (to Pelagos base path)
+     *                           path the javascript file,
+     *                           a full URL to the file,
+     *                           or an array of any of the former.
+     *                           When the 'inline' type is specified, this is a string
+     *                           (or an array of strings) containing JavaScript.
+     * @param string       $type The type of JavaScript to add (external, inline, etc).
      *
      * @return void
      */
-    public function addJS($js)
+    public function addJS($js, $type = 'external')
     {
-        $url_array = $this->getUrlArray($js);
+        $url_array = $this->getUrlArray($js, $type);
         foreach ($url_array as $js_url) {
-            drupal_add_js($js_url, array('type'=>'external'));
+            if (function_exists('drupal_add_js')) {
+                drupal_add_js($js_url, array('type'=>$type));
+            }
         }
     }
 
@@ -200,10 +205,11 @@ class Component
      * Private method to get full urls for an asset or array of assets.
      *
      * @param string|array $assets An asset or array of assets to get full urls for.
+     * @param string       $type   The type of JavaScript to add (external, inline, etc).
      *
      * @return array An array containing full urls for the assets.
      */
-    private function getUrlArray($assets)
+    private function getUrlArray($assets, $type = 'external')
     {
         $url_array = array();
         if (is_array($assets)) {
@@ -212,7 +218,7 @@ class Component
             $asset_array = array($assets);
         }
         foreach ($asset_array as $asset) {
-            if (self::isFullUrl($asset)) {
+            if ($type == 'inline' or self::isFullUrl($asset)) {
                 $url = $asset;
             } elseif (preg_match('/^\//', $asset)) {
                 $url = $this->basePath . $asset;
@@ -335,5 +341,26 @@ class Component
     public function setTitle($title)
     {
         $this->title = $title;
+    }
+
+    /**
+     * Method to set Pelagos globals in JavaScript.
+     *
+     * @return void
+     */
+    public function setJSGlobals()
+    {
+        if (isset($this->basePath)) {
+            $this->addJS('var pelagosBasePath = "' . $this->basePath . '";', 'inline');
+        }
+        if (isset($this->path)) {
+            $this->addJS('var pelagosComponentPath = "' . $this->path . '";', 'inline');
+        }
+        if (isset($this->baseUri)) {
+            $this->addJS('var pelagosBaseUri = "' . $this->baseUri . '";', 'inline');
+        }
+        if (isset($this->uri)) {
+            $this->addJS('var pelagosComponentUri = "' . $this->uri . '";', 'inline');
+        }
     }
 }
