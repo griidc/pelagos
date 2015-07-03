@@ -9,7 +9,7 @@ $comp->setTitle('Person List');
 $comp->addJS(
     array(
         '//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js',
-        'static/js/personList.js',
+        'static/js/personList.js'
     )
 );
 
@@ -19,17 +19,34 @@ $comp->addCSS(
     )
 );
 
+$comp->setJSGlobals();
 
 $twig = new Twig_Environment(new Twig_Loader_Filesystem('./templates'));
 
-// get all Persons ordered by modificationTimeStamp descending and put them in the Twig data array
-$twigData = array(
-    'persons' => $comp
-                    ->getEntityManager()
-                    ->getRepository('Pelagos\Entity\Person')
-                    ->findBy(array(), array('modificationTimeStamp' => 'DESC'))
-);
+// get all Persons and put them in the Twig data array
+$persons = $comp
+               ->getEntityManager()
+               ->getRepository('Pelagos\Entity\Person')
+               ->findAll();
 
-echo $twig->render('html/index.html', $twigData);
+$dataSet=array();
+foreach ($persons as $person) {
+    $dataSet[] = $person->asArray(
+        array(
+            'id',
+            'firstName',
+            'lastName',
+            'emailAddress',
+            'creationTimeStamp',
+            'creator',
+            'modificationTimeStamp',
+            'modifier'
+        ),
+        true
+    );
+}
+$comp->addJS("var dataSet = " . json_encode($dataSet), 'inline');
+
+echo $twig->render('html/index.html');
 
 $comp->finalize();
