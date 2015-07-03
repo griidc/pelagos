@@ -734,4 +734,68 @@ class PersonTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('newEmailAddress2', $this->person->getEmailAddress());
         $this->assertEquals('newCreator2', $this->person->getCreator());
     }
+
+    /**
+     * Test that we can get a Person's properties as an array.
+     *
+     * @return void
+     */
+    public function testAsArray()
+    {
+        // Get all properties.
+        $this->assertEquals(
+            array(
+                null,
+                self::$testFirstName,
+                self::$testLastName,
+                self::$testEmailAddress,
+                null,
+                self::$testCreator,
+                null,
+                self::$testCreator,
+            ),
+            $this->person->asArray(
+                array(
+                    'id',
+                    'firstName',
+                    'lastName',
+                    'emailAddress',
+                    'creationTimeStamp',
+                    'creator',
+                    'modificationTimeStamp',
+                    'modifier',
+                )
+            )
+        );
+        // Get a subset of the properties.
+        $this->assertEquals(
+            array(
+                self::$testFirstName,
+                self::$testLastName,
+                self::$testEmailAddress,
+            ),
+            $this->person->asArray(
+                array(
+                    'firstName',
+                    'lastName',
+                    'emailAddress',
+                )
+            )
+        );
+        // Should always come back in the order specified in the properties array.
+        $this->assertEquals(
+            array(
+                self::$testEmailAddress,
+                self::$testLastName,
+                self::$testFirstName,
+            ),
+            $this->person->asArray(
+                array(
+                    'emailAddress',
+                    'lastName',
+                    'firstName',
+                )
+            )
+        );
+    }
 }

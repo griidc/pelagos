@@ -414,4 +414,48 @@ class Person implements \JsonSerializable
         }
         return $this;
     }
+
+    /**
+     * Method that returns a Person's properties as an array.
+     *
+     * Default is to not localize time stamps.
+     *
+     * @param array   $properties         An array listing the properties to include.
+     * @param boolean $localizeTimestamps A flag to inidcate whether or not to localize time stamps.
+     *
+     * @return array An array of property values for this Person.
+     */
+    public function asArray(array $properties, $localizeTimestamps = false)
+    {
+        $personArray = array();
+        foreach ($properties as $property) {
+            switch($property) {
+                case 'id':
+                    $personArray[] = $this->getId();
+                    break;
+                case 'firstName':
+                    $personArray[] = $this->getFirstName();
+                    break;
+                case 'lastName':
+                    $personArray[] = $this->getLastName();
+                    break;
+                case 'emailAddress':
+                    $personArray[] = $this->getEmailAddress();
+                    break;
+                case 'creationTimeStamp':
+                    $personArray[] = $this->getCreationTimeStampAsISO($localizeTimestamps);
+                    break;
+                case 'creator':
+                    $personArray[] = $this->getCreator();
+                    break;
+                case 'modificationTimeStamp':
+                    $personArray[] = $this->getModificationTimeStampAsISO($localizeTimestamps);
+                    break;
+                case 'modifier':
+                    $personArray[] = $this->getModifier();
+                    break;
+            }
+        }
+        return $personArray;
+    }
 }
