@@ -11,20 +11,6 @@
             <th>Modifier</th>
         </tr>
     </thead>
-    <tbody>
-        {% for person in persons %}
-            <tr>
-                <td class = 'id'>{{ person.getId() }}</td>
-                <td>{{ person.getFirstName() }}</td>
-                <td>{{ person.getLastName() }}</td>
-                <td>{{ person.getEmailAddress() }}</td>
-                <td>{{ person.getCreationTimeStampAsISO(true) }}</td>
-                <td>{{ person.getCreator() }}</td>
-                <td>{{ person.getModificationTimeStampAsISO(true) }}</td>
-                <td>{{ person.getModifier() }}</td>
-            </tr>
-        {% endfor %}
-    </tbody>
     <tfoot>
         <tr>
             <td colspan='8'>

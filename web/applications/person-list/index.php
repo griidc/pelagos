@@ -24,13 +24,29 @@ $comp->setJSGlobals();
 $twig = new Twig_Environment(new Twig_Loader_Filesystem('./templates'));
 
 // get all Persons and put them in the Twig data array
-$twigData = array(
-    'persons' => $comp
-                    ->getEntityManager()
-                    ->getRepository('Pelagos\Entity\Person')
-                    ->findAll()
-);
+$persons = $comp
+               ->getEntityManager()
+               ->getRepository('Pelagos\Entity\Person')
+               ->findAll();
 
-echo $twig->render('html/index.html', $twigData);
+$dataSet=array();
+foreach ($persons as $person) {
+    $dataSet[] = $person->asArray(
+        array(
+            'id',
+            'firstName',
+            'lastName',
+            'emailAddress',
+            'creationTimeStamp',
+            'creator',
+            'modificationTimeStamp',
+            'modifier'
+        ),
+        true
+    );
+}
+$comp->addJS("var dataSet = " . json_encode($dataSet), 'inline');
+
+echo $twig->render('html/index.html');
 
 $comp->finalize();
