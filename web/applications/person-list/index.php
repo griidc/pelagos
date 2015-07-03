@@ -23,12 +23,12 @@ $comp->setJSGlobals();
 
 $twig = new Twig_Environment(new Twig_Loader_Filesystem('./templates'));
 
-// get all Persons ordered by modificationTimeStamp descending and put them in the Twig data array
+// get all Persons and put them in the Twig data array
 $twigData = array(
     'persons' => $comp
                     ->getEntityManager()
                     ->getRepository('Pelagos\Entity\Person')
-                    ->findBy(array(), array('modificationTimeStamp' => 'DESC'))
+                    ->findAll()
 );
 
 echo $twig->render('html/index.html', $twigData);
