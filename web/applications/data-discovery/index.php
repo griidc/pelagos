@@ -30,9 +30,6 @@ require_once $GLOBALS['libraries']['Slim-Views']['include_Twig'];
 # load Twig
 require_once 'Twig/Autoloader.php';
 
-# load OpenID API for PHP
-require_once $GLOBALS['libraries']['LightOpenID']['include'];
-
 # add pelagos/share/php to the include path
 set_include_path(get_include_path() . PATH_SEPARATOR . $GLOBALS['config']['paths']['share'] . '/php');
 
