@@ -8,6 +8,9 @@ var $ = jQuery.noConflict();
 
 var onceValidated = false;
 
+var base_path = '{{base_path}}';
+var component_path = '{{component_path}}';
+
 function copyValue(what,to)
 {
     document.getElementById(to).value = what.value;
@@ -273,7 +276,7 @@ function uploadFile()
         {
             var udival = $('#udifld').val();
             jQuery.ajax({
-                url: "/metadata-editor/",
+                url: component_path,
                 type: "GET",
                 data: {udi: udival},
                 context: document.body
@@ -283,7 +286,7 @@ function uploadFile()
                 var udi = eventObj.udi;
                 if (eventObj.UDIexists == true)
                 {
-                    location.href = "?dataUrl=http://" + location.hostname + "/pelagos/modules/metadata-generator/" + udival.substring(0,16);;
+                    location.href = "?dataUrl=http://" + location.hostname + base_path +"/modules/metadata-generator/" + udival.substring(0,16);;
                 }
                 else
                 {
@@ -480,6 +483,10 @@ function uploadFile()
                     $('#errordialog').html(errText);
                     $("#errordialog").dialog( "open" );
                 }
+                else
+                {
+                    $('#metadata').find('input[name="__validated"]').val('1');
+                }
                 var spnhtml = "All required fields are complete.<br/>Your metadata file is ready for download.<br/>";
                 $("#dialogtxt").html(spnhtml);
                 $('#metadata').valid();
@@ -631,6 +638,7 @@ function uploadFile()
                 else
                 {
                     form.submit();
+                    $('#metadata').find('input[name="__validated"]').val('0');
                 }
             }
         });

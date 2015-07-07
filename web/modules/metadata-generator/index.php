@@ -1,115 +1,95 @@
 <?php
 
-$GLOBALS['pelagos']['title'] = 'Metadata Generator';
+namespace Pelagos\Component\MetadataGenerator;
 
-# load global pelagos config
-$GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini', true);
+require_once __DIR__ . '/../../../vendor/autoload.php';
 
-# load Common library from global share
-require_once($GLOBALS['config']['paths']['share'].'/php/Common.php');
+require_once __DIR__ . '/lib/MetadataGenerator.php';
 
-# check for local config file
-if (file_exists('config.ini')) {
-    # merge local config with global config
-    $GLOBALS['config'] = configMerge($GLOBALS['config'], parse_ini_file('config.ini', true));
-}
-
-# load library info
-$GLOBALS['libraries'] = parse_ini_file($GLOBALS['config']['paths']['conf'] . '/libraries.ini', true);
-
-# load Slim2
-require_once $GLOBALS['libraries']['Slim2']['include'];
-# register Slim autoloader
-\Slim\Slim::registerAutoloader();
-# load Twig Slim-View
-require_once $GLOBALS['libraries']['Slim-Views']['include_Twig'];
-# load Twig
-require_once 'Twig/Autoloader.php';
+$env = getLocalEnvironment();
 
 # add pelagos/share/php to the include path
-set_include_path(get_include_path() . PATH_SEPARATOR . $GLOBALS['config']['paths']['share'] . '/php');
+set_include_path(get_include_path() . PATH_SEPARATOR . $env['config']['paths']['share'] . '/php');
 
-require_once 'db-utils.lib.php';
-require_once 'rpis.php';
-require_once 'datasets.php';
 require_once 'codelists.php';
 require_once 'drupal.php';
+
+use \Pelagos\Exception\PersistenceException;
+use \Pelagos\Exception\InvalidXmlException;
+use \Pelagos\Exception\NotFoundException;
 
 # initialize Slim
 $app = new \Slim\Slim(array('view' => new \Slim\Views\Twig()));
 
-$app->get('/', function () use ($app) {
-    echo <<<EOT
+$app->get(
+    '/',
+    function () use ($app) {
+            echo <<<EOT
 <p>Usage: $_SERVER[SCRIPT_NAME]/\$udi</p>
 <p>Example: <a href="$_SERVER[SCRIPT_NAME]/R1.x134.114:0008">/metadata-generator/R1.x134.114:0008</a></p>
 EOT;
-});
+    }
+);
 
-$app->get('/:udi', function ($udi) use ($app) {
-    $stash = array();
-    $GOMRI_DBH = OpenDB('GOMRI_RO');
-    $RIS_DBH = OpenDB('RIS_RO');
-    $datasets = get_identified_datasets($GOMRI_DBH,array("udi=$udi"));
+/**
+ * New entry point. Same url syntax as legacy route.
+ * Return XML from storage.
+ * 1st - search the Database for approved XML.
+ * 2nd - failing to find 1st, look for stored file
+ *       referenced in the database.
+ * 3rd - failing 1st and 2nd - return a blank dataset template
+ */
+$app->get(
+    '/:udi',
+    function ($udi) use ($app) {
 
-    if (count($datasets) > 0) {
-        $stash['dataset'] = $datasets[0];
-        $stash['dataset']['url'] = "https://data.gulfresearchinitiative.org/data/$udi";
-        if (array_key_exists('dataset_download_size',$stash['dataset'])) {
-            $size_bytes = $stash['dataset']['dataset_download_size'] / 1048576;
-            if ($size_bytes >= 10) $precision = 0;
-            else {
-                for ($precision = 1; $precision < 6; $precision++) {
-                    if ($size_bytes > pow(10,-$precision)) break;
+        $trimUdi = trim($udi);
+
+        $env = getLocalEnvironment();
+
+        $metadataXml = null;
+
+        //  try the database for stored xml first - CASE 1
+        try {
+            $metadataXml = getMetadataXmlFromGomriDB($trimUdi);
+            finishAllSuccessfulCases($trimUdi, $app, $metadataXml);
+            //$whichCaseSolution = "Data found with Case 1 method getMetadataXmlFromGomriDB ";
+        } catch (NotFoundException $ex) { // Case 1 Not Found Catch
+            //  CASE 2
+            //  No XML found in the database.
+            //  Try retrieving from a file referenced in the database
+            try {
+                $metadataXml = getMetadataXmlFromFile($trimUdi);
+                finishAllSuccessfulCases($trimUdi, $app, $metadataXml);
+                exit;
+            } catch (InvalidXmlException $ex) {
+                header("status: 204");
+                header("HTTP/1.0 204 No Response");
+                exit;
+            } catch (PersistenceException $ex) {
+                header("status: 500");
+                header("HTTP/1.0 505 Internal Server Error");
+                exit;
+            } catch (NotFoundException $ex) { // Case 2 Not Found Catch
+                try {
+                    // CASE 3 -
+                    $metadataXml = legacyGetMetadataXml($trimUdi, $app);
+                    finishAllSuccessfulCases($trimUdi, $app, $metadataXml);
+                    //$whichCaseSolution = " Data found with Case 3 method legacyGetMetadataXml ";
+                    exit;
+                } catch (NotFoundException $ex) { // Case 3 Not Found Catch
+                    header("status: 404");
+                    header("HTTP/1.0 404 Not Found");
+                    exit;
                 }
             }
-            $stash['dataset']['size'] = round($size_bytes,$precision);
+        } catch (PersistenceException $ex) {
+            header("status: 500");
+            header("HTTP/1.0 505 Internal Server Error");
+            exit;
         }
-
-        if (array_key_exists('primary_poc',$stash['dataset'])) {
-            $people = getPeopleDetails($RIS_DBH,array('peopleId='.$stash['dataset']['primary_poc']));
-            if (count($people)) {
-                $stash['RP']['PPOC'] = $people[0];
-                $stash['RP']['PPOC']['RoleCode'] = $GLOBALS['CodeLists']['CI_RoleCode']['pointOfContact'];
-            }
-        }
-    
-        if (array_key_exists('project_id',$stash['dataset'])) {
-            $people = getPeopleDetails($RIS_DBH,array('projectId='.$stash['dataset']['project_id'],'RoleId=3'));
-            if (count($people)) {
-                $stash['RP']['DM'] = $people[0];
-                $stash['RP']['DM']['RoleCode'] = $GLOBALS['CodeLists']['CI_RoleCode']['pointOfContact'];
-            }
-        }
-
-        $stash['RP']['DIST'] = $GLOBALS['config']['Distributor'];
-        $stash['RP']['DIST']['RoleCode'] = $GLOBALS['CodeLists']['CI_RoleCode']['distributor'];
-
-        $stash['dataset']['metadata_filename'] = preg_replace('/:/','-',$udi) . '-metadata.xml';
-
-        header('Content-Type: text/xml');
-        if (!preg_match('/^f$|^false$|^n$|^no$/i',$app->request()->get('download'))) {
-            header('Content-Disposition: attachment; filename=' . $stash['dataset']['metadata_filename']);
-        }
-
-        $app->view()->appendData($stash);
-        $xml = $app->view()->render('xml/MI_Metadata.xml');
-
-        $tidy_config = array('indent'        => true,
-                             'indent-spaces' => 4,
-                             'input-xml'     => true,
-                             'output-xml'    => true,
-                             'wrap'          => 0);
-
-        $tidy = new tidy;
-        $tidy->parseString($xml, $tidy_config, 'utf8');
-        $tidy->cleanRepair();
-
-        echo $tidy;
         exit;
     }
-    else {
-        drupal_set_message("UDI: $udi not found.",'error');
-    }
-});
+);
 
 $app->run();
