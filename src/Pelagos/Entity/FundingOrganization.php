@@ -11,16 +11,8 @@ namespace Pelagos\Entity;
 /**
  * Class to represent funding organizations.
  */
-class FundingOrganization
+class FundingOrganization extends Entity
 {
-    /**
-     * Identifier for a funding organization.
-     *
-     * @var $id integer
-     * @access protected
-     */
-    protected $id;
-
     /**
      * Name of a funding organization.
      *
@@ -108,18 +100,6 @@ class FundingOrganization
      * @access protected
      */
     protected $country;
-
-    /**
-     * Getter for id.
-     *
-     * @access public
-     *
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
 
     /**
      * Setter for name.
