@@ -212,7 +212,7 @@ class FundingOrganization
     }
 
     /**
-     * Settter for description.
+     * Getter for description.
      *
      * @access public
      *
@@ -394,7 +394,7 @@ class FundingOrganization
     }
 
     /**
-     * Short description of method getCountry.
+     * Getter for country.
      *
      * @access public
      *
