@@ -161,7 +161,7 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertEquals(
             $this->fundingOrganization->getLogo(),
-            self::$testLogo
+            $this->testLogo
         );
     }
 
