@@ -386,4 +386,54 @@ class FundingOrganization extends Entity
     {
         return $this->country;
     }
+
+    /**
+     * Method to update multiple properties.
+     *
+     * @param array $updates An associative array indexed with property names
+     *                       and containing each property's new value.
+     *
+     * @return FundingOrganization Return the updated object.
+     */
+    public function update(array $updates)
+    {
+        foreach ($updates as $field => $value) {
+            switch($field) {
+                case 'name':
+                    $this->setName($value);
+                    break;
+                case 'logo':
+                    $this->setLogo($value);
+                    break;
+                case 'emailAddress':
+                    $this->setEmailAddress($value);
+                    break;
+                case 'description':
+                    $this->setDescription($value);
+                    break;
+                case 'url':
+                    $this->setUrl($value);
+                    break;
+                case 'phoneNumber':
+                    $this->setPhoneNumber($value);
+                    break;
+                case 'deliveryPoint':
+                    $this->setDeliveryPoint($value);
+                    break;
+                case 'city':
+                    $this->setCity($value);
+                    break;
+                case 'administrativeArea':
+                    $this->setAdministrativeArea($value);
+                    break;
+                case 'postalCode':
+                    $this->setPostalCode($value);
+                    break;
+                case 'country':
+                    $this->setCountry($value);
+                    break;
+            }
+        }
+        return $this;
+    }
 }
