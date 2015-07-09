@@ -1,14 +1,18 @@
 <?php
+/**
+ * This file contains the implementation of the FundingOrganization entity class.
+ *
+ * @package    Pelagos\Entity
+ * @subpackage FundingOrganization
+ */
 
 namespace Pelagos\Entity;
 
 /**
- * This file contains the implementation of the FundingOrganization entity class.
+ * Class to represent funding organizations.
  */
 class FundingOrganization
 {
-    // --- ATTRIBUTES ---
-
     /**
      * Identifier for a funding organization.
      *
@@ -104,8 +108,6 @@ class FundingOrganization
      * @access protected
      */
     protected $country;
-
-    // --- OPERATIONS ---
 
     /**
      * Getter for id.
