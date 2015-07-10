@@ -1,11 +1,7 @@
 var $ = jQuery.noConflict();
 
-var base_path;
-
 $(document).ready(function()
 {
-    base_path = $('div[base_path]').attr('base_path');
-    
     $.validator.methods._required = $.validator.methods.required;
     $.validator.methods.required = function( value, element, param )
     {
@@ -24,9 +20,9 @@ $(document).ready(function()
             saveFundingOrg(data)
         }
     });
-    
+
     $("input,textarea").each(function() {
-        var url = base_path + "/services/fundingOrganization/validateProperty";
+        var url = pelagosBasePath + "/services/fundingOrganization/validateProperty";
         $(this).rules( "add", {
             remote: {
                 url: url,
@@ -68,8 +64,7 @@ $(document).ready(function()
  */
 function saveFundingOrg(jsonData)
 {
-    //var url = base_path + "/services/fundingOrganization";
-    var url = "https://proteus.tamucc.edu/~mvandeneijnden/test/upload.php";
+    var url = pelagosBasePath + "/services/fundingOrganization";
     var title = "";
     var messsage = "";
     $.ajax({

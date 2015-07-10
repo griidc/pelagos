@@ -13,6 +13,8 @@ $comp = new \Pelagos\Component;
 
 $comp->setTitle('Funding Organization Creator');
 
+$comp->setJSGlobals();
+
 $comp->addJS(
     array(
         '//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js',
@@ -26,8 +28,6 @@ $comp->addLibrary('ui.dialog');
 $twigloader = new Twig_Loader_Filesystem('./templates');
 $twig = new Twig_Environment($twigloader, array('autoescape' => false));
 
-$twigdata = array('base_path' => $comp->getBasePath());
-
-echo $twig->render('fundingOrgForm.html', $twigdata);
+echo $twig->render('fundingOrgForm.html');
 
 $comp->finalize();
