@@ -51,7 +51,7 @@ ALTER SEQUENCE seq_person_history_number
 -- CREATE INDEX idx_person_history_surname
 --    ON person_history_table(surname);
 
--- Set object ownerships:
+-- Set object ownership:
 ALTER TABLE person_history_table
    OWNER TO gomri_admin;
 
