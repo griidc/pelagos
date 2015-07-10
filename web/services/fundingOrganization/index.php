@@ -4,6 +4,7 @@ require_once __DIR__.'/../../../vendor/autoload.php';
 
 use \Pelagos\HTTPStatus;
 use \Pelagos\Entity\FundingOrganization;
+use \Pelagos\Service\EntityService;
 use \Symfony\Component\Validator\Validation;
 use \Pelagos\Exception\ArgumentException;
 use \Pelagos\Exception\EmptyRequiredArgumentException;
@@ -12,10 +13,11 @@ use \Pelagos\Exception\MissingRequiredFieldPersistenceException;
 use \Pelagos\Exception\RecordExistsPersistenceException;
 use \Pelagos\Exception\RecordNotFoundPersistenceException;
 use \Pelagos\Exception\PersistenceException;
+use \Pelagos\Exception\ValidationException;
 
-$comp = new \Pelagos\Component\EntityService();
+$comp = new \Pelagos\Component;
 
-$slim = new \Slim\Slim();
+$slim = new \Slim\Slim;
 
 $slim->get(
     '/',
@@ -45,9 +47,20 @@ $slim->post(
 
         try {
             $fundingOrganization = new FundingOrganization();
+            if (array_key_exists('logo', $_FILES) and
+                array_key_exists('tmp_name', $_FILES['logo']) and
+                is_file($_FILES['logo']['tmp_name'])) {
+                $fundingOrganization->setLogo(
+                    file_get_contents($_FILES['logo']['tmp_name'])
+                );
+            }
             $updates = $slim->request->params();
-            $fundingOrganization = $comp->persist(
-                $comp->validate(
+            if (array_key_exists('logo', $updates)) {
+                unset($updates['logo']);
+            }
+            $entityService = new EntityService($comp->getEntityManager());
+            $fundingOrganization = $entityService->persist(
+                $entityService->validate(
                     $fundingOrganization->update($updates),
                     Validation::createValidatorBuilder()->enableAnnotationMapping()->getValidator()
                 )
