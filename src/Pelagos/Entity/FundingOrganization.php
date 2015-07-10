@@ -8,6 +8,8 @@
 
 namespace Pelagos\Entity;
 
+use \Symfony\Component\Validator\Constraints as Assert;
+
 /**
  * Class to represent funding organizations.
  */
@@ -18,6 +20,10 @@ class FundingOrganization extends Entity
      *
      * @var string $name
      * @access protected
+     *
+     * @Assert\NotBlank(
+     *     message="Name is required"
+     * )
      */
     protected $name;
 
