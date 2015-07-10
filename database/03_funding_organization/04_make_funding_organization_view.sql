@@ -41,9 +41,9 @@ CREATE VIEW funding_organization AS
           f.funding_organization_postal_code AS postal_code,
           f.funding_organization_logo AS logo
    FROM funding_organization_table f
-      JOIN email2funding_organization_table e2f
+      LEFT JOIN email2funding_organization_table e2f
          ON f.funding_organization_number = e2f.funding_organization_number
-      JOIN email_table e
+      LEFT JOIN email_table e
          ON e2f.email_address = e.email_address;
 
 -- CREATE THE trigger function:
