@@ -18,27 +18,29 @@ $(document).ready(function()
 
     formValidator = $("#fundingOrgForm").validate({
         submitHandler: function(form) {
-            var data = getFormJSON($(form));
+            var data = new FormData($('form')[0]);
+            console.log(data);
+            //var data = getFormJSON($(form));
             saveFundingOrg(data)
-        },
+        }
     });
     
-    // $("input").each(function() {
-        // var url = base_path + "/services/fundingOrganization/validateProperty";
-        // $(this).rules( "add", {
-            // remote: {
-                // url: url,
-            // }
-        // })
-    // });
+    $("input,textarea").each(function() {
+        var url = base_path + "/services/fundingOrganization/validateProperty";
+        $(this).rules( "add", {
+            remote: {
+                url: url,
+            }
+        })
+    });
 
-    $('#btnSave').button();
+    $('button[type="submit"]').button();
 
-    $('#btnReset').button().click(function() {
+    $('button[type="reset"]').button().click(function() {
         formValidator.resetForm();
     });
 
-    $('#personFormDialog').dialog({
+    $('#fundingOrgDialog').dialog({
         autoOpen: false,
         resizable: false,
         minWidth: 300,
@@ -66,7 +68,8 @@ $(document).ready(function()
  */
 function saveFundingOrg(jsonData)
 {
-    var url = base_path + "/services/fundingOrganization";
+    //var url = base_path + "/services/fundingOrganization";
+    var url = "https://proteus.tamucc.edu/~mvandeneijnden/test/upload.php";
     var title = "";
     var messsage = "";
     $.ajax({
@@ -75,6 +78,9 @@ function saveFundingOrg(jsonData)
         url: url,
         // Optionally enforce JSON return, in case a status 200 happens, but no JSON returns
         //dataType: 'json'
+        cache: false,
+        contentType: false,
+        processData: false
     })
     .done(function(json) {
         if (json.code == 201) {
@@ -98,8 +104,8 @@ function saveFundingOrg(jsonData)
         message = json.message;
     })
     .always(function(json) {
-        $('#personFormDialog').html(message);
-        $('#personFormDialog').dialog( 'option', 'title', title).dialog('open');
+        $('#fundingOrgDialog').html(message);
+        $('#fundingOrgDialog').dialog( 'option', 'title', title).dialog('open');
     })
 }
 
