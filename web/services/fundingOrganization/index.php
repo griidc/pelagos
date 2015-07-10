@@ -100,6 +100,11 @@ $slim->post(
             if (array_key_exists('logo', $updates)) {
                 unset($updates['logo']);
             }
+            foreach ($updates as $property => $value) {
+                if (empty($value)) {
+                    $updates[$property] = null;
+                }
+            }
             $entityService = new EntityService($comp->getEntityManager());
             $fundingOrganization = $entityService->persist(
                 $entityService->validate(
