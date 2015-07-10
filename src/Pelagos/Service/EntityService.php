@@ -1,21 +1,31 @@
 <?php
 
-namespace Pelagos\Component;
+namespace Pelagos\Service;
 
-use \Pelagos\Entity\Entity;
-use \Pelagos\Exception\ValidationException;
-use \Doctrine\DBAL\Exception\NotNullConstraintViolationException;
-use \Pelagos\Exception\MissingRequiredFieldPersistenceException;
-use \Doctrine\DBAL\Exception\UniqueConstraintViolationException;
-use \Pelagos\Exception\RecordExistsPersistenceException;
 use \Doctrine\DBAL\DBALException;
+use \Doctrine\DBAL\Exception\NotNullConstraintViolationException;
+use \Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use \Doctrine\ORM\EntityManager;
+use \Pelagos\Entity\Entity;
+use \Pelagos\Exception\ArgumentException;
 use \Pelagos\Exception\PersistenceException;
+use \Pelagos\Exception\MissingRequiredFieldPersistenceException;
+use \Pelagos\Exception\RecordExistsPersistenceException;
+use \Pelagos\Exception\RecordNotFoundPersistenceException;
+use \Pelagos\Exception\ValidationException;
 
 /**
  * Class to handle validating, persisting, and retrieving Pelagos entities.
  */
-class EntityService extends \Pelagos\Component
+class EntityService
 {
+    protected $entityManager;
+
+    public function __construct(EntityManager $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
     /**
      * Validate an Entity with the provided validator.
      *
@@ -49,9 +59,8 @@ class EntityService extends \Pelagos\Component
     public function persist(Entity $entity)
     {
         try {
-            $entityManager = $this->getEntityManager();
-            $entityManager->persist($entity);
-            $entityManager->flush();
+            $this->entityManager->persist($entity);
+            $this->entityManager->flush();
         } catch (NotNullConstraintViolationException $e) {
             throw new MissingRequiredFieldPersistenceException($e->getMessage(), $e->getCode(), $e);
         } catch (UniqueConstraintViolationException $e) {
@@ -63,17 +72,21 @@ class EntityService extends \Pelagos\Component
     }
 
     /**
-     * Method to get an Entity object of the provided class given the provided id.
+     * Method to get an Entity object of the specified class given the provided id.
      *
      * @param string $entityClass Entity class to retrieve from.
-     * @param string $id Entity identifier to retrieve.
+     * @param string $id          Entity identifier to retrieve.
      *
      * @return Entity The entity object with the provided id.
+     *
+     * @throws ArgumentException                  When $id is not a non-negative integer.
+     * @throws PersistenceException               When an error occurs retrieving from persistence.
+     * @throws RecordNotFoundPersistenceException When no object of the specified class is found for the provided id.
      */
     public function get($entityClass, $id)
     {
         if (!preg_match('/^\d+$/', $id)) {
-            $exception = new \Pelagos\Exception\ArgumentException(
+            $exception = new ArgumentException(
                 "$entityClass id must be a non-negative integer"
             );
             $exception->setArgumentName('id');
@@ -81,13 +94,12 @@ class EntityService extends \Pelagos\Component
             throw $exception;
         }
         try {
-            $entityManager = $this->getEntityManager();
-            $entity = $entityManager->find('\Pelagos\Entity\\' . $entityClass, $id);
-        } catch (\Doctrine\DBAL\DBALException $e) {
-            throw new \Pelagos\Exception\PersistenceException($e->getMessage());
+            $entity = $this->entityManager->find('\Pelagos\Entity\\' . $entityClass, $id);
+        } catch (DBALException $e) {
+            throw new PersistenceException($e->getMessage());
         }
         if (!isset($entity)) {
-            $exception = new \Pelagos\Exception\RecordNotFoundPersistenceException(
+            $exception = new RecordNotFoundPersistenceException(
                 "Could not find a $entityClass with id: $id"
             );
             $exception->setId($id);
