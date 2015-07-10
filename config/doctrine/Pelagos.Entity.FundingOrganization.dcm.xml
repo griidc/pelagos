@@ -1,7 +1,7 @@
-<!-- config/xml/Pelagos.Entity.FundingOrganization.dcm.xml-->
+<!-- config/doctrine/Pelagos.Entity.FundingOrganization.dcm.xml-->
 
 <!--
-     This file defines the Doctrine mapping between the postgress GOMRI database, funding_organization
+     This file defines the Doctrine mapping between the postgres GOMRI database, funding_organization
      view and and the Pelagos\Entity\FundingOrganization class
 -->
 
