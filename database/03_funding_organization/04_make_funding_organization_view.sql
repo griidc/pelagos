@@ -330,25 +330,28 @@ AS $f_o_func$
 
             -- Now create the email-to-funding_organization association (if
             -- needed). First, see if there is an existing association:
-            EXECUTE 'SELECT COUNT(*)
-                     FROM email2funding_organization_table
-                     WHERE LOWER(email_address) = LOWER($1)
-                        AND funding_organization_number = $2'
-               INTO _count
-               USING _email_addr,
-                     NEW.funding_organization_number;
-
-            IF _count = 0
+            IF _email_addr IS NOT NULL
             THEN
-               -- No existing association found. Create one:
-               EXECUTE 'INSERT INTO email2funding_organization_table
-                        (
-                           email_address,
-                           funding_organization_number
-                        )
-                        VALUES ($1, $2)'
+               EXECUTE 'SELECT COUNT(*)
+                        FROM email2funding_organization_table
+                        WHERE LOWER(email_address) = LOWER($1)
+                           AND funding_organization_number = $2'
+                  INTO _count
                   USING _email_addr,
                         NEW.funding_organization_number;
+   
+               IF _count = 0
+               THEN
+                  -- No existing association found. Create one:
+                  EXECUTE 'INSERT INTO email2funding_organization_table
+                           (
+                              email_address,
+                              funding_organization_number
+                           )
+                           VALUES ($1, $2)'
+                     USING _email_addr,
+                           NEW.funding_organization_number;
+               END IF;
             END IF;
 
             RETURN NEW;
@@ -406,36 +409,36 @@ AS $f_o_func$
          RETURN OLD;
       END IF;
 
-      EXCEPTION
-         WHEN SQLSTATE '23502'
-            THEN
-               RAISE EXCEPTION '%',   _err_msg
-                  USING HINT        = _err_hint,
-                        ERRCODE     = '23502';
-               RETURN NULL;
-         WHEN SQLSTATE '23505'
-            THEN
-               RAISE EXCEPTION '%',   _err_msg
-                  USING HINT        = _err_hint,
-                        ERRCODE     = '23505';
-               RETURN NULL;
-         WHEN SQLSTATE '23514'
-            THEN
-               RAISE EXCEPTION '%',   _err_msg
-                  USING HINT        = _err_hint,
-                        ERRCODE     = '23514';
-               RETURN NULL;
-         WHEN OTHERS
-            THEN
-               _err_code = SQLSTATE;
-               RAISE EXCEPTION '%', CONCAT('Unable to ',
-                                           TG_OP,
-                                           ' funding_organization. An unknown ',
-                                           'error has occurred.')
-                  USING HINT      = CONCAT('Check the database log for ',
-                                           'more information.'),
-                        ERRCODE   = _err_code;
-               RETURN NULL;
+--       EXCEPTION
+--          WHEN SQLSTATE '23502'
+--             THEN
+--                RAISE EXCEPTION '%',   _err_msg
+--                   USING HINT        = _err_hint,
+--                         ERRCODE     = '23502';
+--                RETURN NULL;
+--          WHEN SQLSTATE '23505'
+--             THEN
+--                RAISE EXCEPTION '%',   _err_msg
+--                   USING HINT        = _err_hint,
+--                         ERRCODE     = '23505';
+--                RETURN NULL;
+--          WHEN SQLSTATE '23514'
+--             THEN
+--                RAISE EXCEPTION '%',   _err_msg
+--                   USING HINT        = _err_hint,
+--                         ERRCODE     = '23514';
+--                RETURN NULL;
+--          WHEN OTHERS
+--             THEN
+--                _err_code = SQLSTATE;
+--                RAISE EXCEPTION '%', CONCAT('Unable to ',
+--                                            TG_OP,
+--                                            ' funding_organization. An unknown ',
+--                                            'error has occurred.')
+--                   USING HINT      = CONCAT('Check the database log for ',
+--                                            'more information.'),
+--                         ERRCODE   = _err_code;
+--                RETURN NULL;
 
    END;
 
