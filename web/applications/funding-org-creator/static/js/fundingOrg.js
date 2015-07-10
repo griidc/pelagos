@@ -55,12 +55,11 @@ $(document).ready(function()
 });
 
 /**
- *  savePerson function
+ * This function will send the funding organization data to the web service.
  *
- *  This function will send the person data to the webservice
+ * @param FormData jsonData The form data.
  *
- *  @param [json] data Contains a JSON of firstName,lastName,eMailAddress
- *
+ * @return void
  */
 function saveFundingOrg(jsonData)
 {
@@ -105,12 +104,12 @@ function saveFundingOrg(jsonData)
 }
 
 /**
- *  getFormJSON function
+ *  This function will return the form fields/data as JSON.
  *
- *  This function will return the form fields/data as JSON
- *  it takes a jQuery selector of a Form
+ *  It takes a jQuery selector of a Form.
  *
  *  @param [selector] formSelector jQuery selector of the Form
+ *
  *  @return JSON
  */
 function getFormJSON(formSelector)
