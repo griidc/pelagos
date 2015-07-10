@@ -1,23 +1,9 @@
-<!-- config/xml/Pelagos.FundingOrganization.dcm.xml -->
+<!-- config/xml/Pelagos.FundingOrganization.dcm.xml-->
 
 <!--
-Postgres gomri database funding_organization table
-            Column            |  Type   | Modifiers
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~+~~~~~~~~~+~~~~~~~~~~~
- funding_organization_number | integer |
- name                        | text    |
- description                 | text    |
- phone_number                | text    |
- email_address               | text    |
- website                     | text    |
- delivery_point              | text    |
- city                        | text    |
- administrative_area         | text    |
- country                     | text    |
- postal_code                 | text    |
- logo                        | bytea   |
+     This file defines the Doctrine mapping between the postgress GOMRI database, funding_organization
+     view and and the Pelagos\Entity\FundingOrganization class
 -->
-
 
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
