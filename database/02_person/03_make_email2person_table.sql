@@ -43,7 +43,7 @@ CREATE UNIQUE INDEX uidx_one_primary_per_person
                           is_primary_email_address)
    WHERE is_primary_email_address = TRUE;
 
--- Set object ownerships:
+-- Set object ownership:
 ALTER TABLE email2person_table
    OWNER TO gomri_admin;
 
