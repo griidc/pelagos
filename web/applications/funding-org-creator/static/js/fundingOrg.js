@@ -5,7 +5,7 @@ $(document).ready(function()
     $.validator.methods._required = $.validator.methods.required;
     $.validator.methods.required = function( value, element, param )
     {
-        if (typeof this.settings.rules[ $(element).attr('name') ] != 'undefined'
+        if (typeof this.settings.rules[ $(element).attr('name') ] != 'undefined' 
             && typeof this.settings.rules[ $(element).attr('name') ].remote != 'undefined') {
                 return true;
             }
@@ -15,6 +15,7 @@ $(document).ready(function()
     formValidator = $("#fundingOrgForm").validate({
         submitHandler: function(form) {
             var data = new FormData($('form')[0]);
+            console.log(data);
             //var data = getFormJSON($(form));
             saveFundingOrg(data)
         }
@@ -29,11 +30,7 @@ $(document).ready(function()
         })
     });
 
-    $('button[type="submit"]').button().click(function() {
-        console.log("Submit button pressed");
-        var data = new FormData($('form')[0]);
-        saveFundingOrg(data)
-    });
+    $('button[type="submit"]').button();
 
     $('button[type="reset"]').button().click(function() {
         formValidator.resetForm();
