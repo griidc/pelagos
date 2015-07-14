@@ -20,7 +20,7 @@ $(document).ready(function()
         }
     });
 
-    $("input,textarea").each(function() {
+    $("#fundingOrgForm input, textarea").each(function() {
         var url = pelagosBasePath + "/services/fundingOrganization/validateProperty";
         $(this).rules( "add", {
             remote: {
@@ -29,16 +29,15 @@ $(document).ready(function()
         })
     });
 
-    $('button[type="submit"]').button();
+    $("#fundingOrgForm button[type='submit']").button();
 
-    $('button[type="reset"]').button().click(function() {
+    $("#fundingOrgForm button[type='reset']").button().click(function() {
         formValidator.resetForm();
     });
 
     $('#fundingOrgDialog').dialog({
         autoOpen: false,
         resizable: false,
-        minWidth: 300,
         width: 'auto',
         height: 'auto',
         modal: true,
@@ -48,9 +47,6 @@ $(document).ready(function()
             }
         }
     });
-
-    //minWidth does not work properly with 'auto' width, so hack
-    $('.ui-dialog').css({'min-width': '300px'});
 });
 
 /**
