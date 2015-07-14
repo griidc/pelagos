@@ -6,8 +6,8 @@ $(document).ready(function()
     $.validator.methods._required = $.validator.methods.required;
     $.validator.methods.required = function( value, element, param )
     {
-        if (typeof this.settings.rules[ $(element).attr("name") ] != "undefined"
-            && typeof this.settings.rules[ $(element).attr("name") ].remote != "undefined") {
+        if (typeof this.settings.rules[ $(element).attr("name") ] !== "undefined"
+            && typeof this.settings.rules[ $(element).attr("name") ].remote !== "undefined") {
                 return true;
             }
         return  $.validator.methods._required.call( this, value, element, param );
@@ -73,7 +73,7 @@ function saveFundingOrg(jsonData)
         processData: false
     })
     .done(function(json) {
-        if (json.code == 201) {
+        if (json.code === 201) {
             title = "Success!";
             message = json.message;
             $("#btnReset").click();
@@ -85,7 +85,7 @@ function saveFundingOrg(jsonData)
     })
     .fail(function(response) {
         json = response.responseJSON;
-        if (typeof response.responseJSON == "undefined") {
+        if (typeof response.responseJSON === "undefined") {
             var json = {};
             json["code"] = response.status;
             json["message"] = response.statusText;
