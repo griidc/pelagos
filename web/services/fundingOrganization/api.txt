@@ -1,0 +1,18 @@
+URL: {pelagosBaseUri}/web/services/fundingOrganization
+
+POST
+
+    Description:
+
+        Create a new funding organization.
+
+    Request:
+
+        properties: name, logo, emailAddress, description, url, phoneNumber, deliveryPoint, city, administrativeArea, postalCode, country
+
+    Responses:
+
+        201 - created
+        400 - invalid
+        409 - conflict
+        500 - server error

@@ -5,7 +5,7 @@
 -- Inputs:    NONE
 -- Output:    A new database view
 -- Info:      This script creates the person view, and the trigger functions
---            functions to allow the view to be updatable.
+--            to allow the view to be updatable.
 -- -----------------------------------------------------------------------------
 -- TODO:
 -- -----------------------------------------------------------------------------
@@ -195,7 +195,7 @@ AS $pers_func$
          END IF;
 
          -- Let modification time be controlled by the system so we always have
-         -- the actual modificaiton time, regardless of any supplied value:
+         -- the actual modification time, regardless of any supplied value:
          SELECT DATE_TRUNC('seconds', NOW())
             INTO _modification_time;
       END IF;
@@ -442,36 +442,36 @@ AS $pers_func$
          RETURN OLD;
       END IF;
 
---       EXCEPTION
---          WHEN SQLSTATE '23502'
---             THEN
---                RAISE EXCEPTION '%',   _err_msg
---                   USING HINT        = _err_hint,
---                         ERRCODE     = '23502';
---                RETURN NULL;
---          WHEN SQLSTATE '23505'
---             THEN
---                RAISE EXCEPTION '%',   _err_msg
---                   USING HINT        = _err_hint,
---                         ERRCODE     = '23505';
---                RETURN NULL;
---          WHEN SQLSTATE '23514'
---             THEN
---                RAISE EXCEPTION '%',   _err_msg
---                   USING HINT        = _err_hint,
---                         ERRCODE     = '23514';
---                RETURN NULL;
---          WHEN OTHERS
---             THEN
---                _err_code = SQLSTATE;
---                RAISE EXCEPTION '%', CONCAT('Unable to ',
---                                            TG_OP,
---                                            ' person. An unknown ',
---                                            'error has occurred.')
---                   USING HINT      = CONCAT('Check the database log for ',
---                                            'more information.'),
---                         ERRCODE   = _err_code;
---                RETURN NULL;
+      EXCEPTION
+         WHEN SQLSTATE '23502'
+            THEN
+               RAISE EXCEPTION '%',   _err_msg
+                  USING HINT        = _err_hint,
+                        ERRCODE     = '23502';
+               RETURN NULL;
+         WHEN SQLSTATE '23505'
+            THEN
+               RAISE EXCEPTION '%',   _err_msg
+                  USING HINT        = _err_hint,
+                        ERRCODE     = '23505';
+               RETURN NULL;
+         WHEN SQLSTATE '23514'
+            THEN
+               RAISE EXCEPTION '%',   _err_msg
+                  USING HINT        = _err_hint,
+                        ERRCODE     = '23514';
+               RETURN NULL;
+         WHEN OTHERS
+            THEN
+               _err_code = SQLSTATE;
+               RAISE EXCEPTION '%', CONCAT('Unable to ',
+                                           TG_OP,
+                                           ' person. An unknown ',
+                                           'error has occurred.')
+                  USING HINT      = CONCAT('Check the database log for ',
+                                           'more information.'),
+                        ERRCODE   = _err_code;
+               RETURN NULL;
 
    END;
 
@@ -494,7 +494,7 @@ CREATE TRIGGER udf_person_update_trigger
    FOR EACH ROW
    EXECUTE PROCEDURE udf_modify_person();
 
--- Set object ownerships:
+-- Set object ownership:
 ALTER VIEW person
    OWNER TO gomri_admin;
 

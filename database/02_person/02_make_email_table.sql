@@ -16,7 +16,7 @@ DROP TABLE email_table CASCADE;
 
 -- A case insensitive email data type that allows any character other than a
 -- dot, an @, or any whitespace, followed by any number of characters that are
--- not an @ or whitespace, followed by an @, a domeain name that cannot consist
+-- not an @ or whitespace, followed by an @, a domain name that cannot consist
 -- of an @ or whitespace, anchored by a TLD that can contain anything other
 -- than whitespace or an @ (Note that RFC 5322 allows local parts to contain
 -- whitespace in quoted strings, but we are choosing to disallow that):
@@ -44,7 +44,7 @@ ALTER INDEX email_table_pkey
 CREATE UNIQUE INDEX uidx_lower_email
    ON email_table (LOWER(email_address));
 
--- Set object ownerships:
+-- Set object ownership:
 ALTER TABLE email_table
    OWNER TO gomri_admin;
 

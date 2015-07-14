@@ -299,4 +299,72 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
             self::$testCountry
         );
     }
+
+    /**
+     * Test the update method.
+     *
+     * @return void
+     */
+    public function testUpdate()
+    {
+        $this->fundingOrganization->update(
+            array(
+                'name' => 'new_name',
+                'logo' => 'new_logo',
+                'emailAddress' => 'new_emailAddress',
+                'description' => 'new_description',
+                'url' => 'new_url',
+                'phoneNumber' => 'new_phoneNumber',
+                'deliveryPoint' => 'new_deliveryPoint',
+                'city' => 'new_city',
+                'administrativeArea' => 'new_administrativeArea',
+                'postalCode' => 'new_postalCode',
+                'country' => 'new_country',
+            )
+        );
+        $this->assertEquals(
+            $this->fundingOrganization->getName(),
+            'new_name'
+        );
+        $this->assertEquals(
+            $this->fundingOrganization->getLogo(),
+            'new_logo'
+        );
+        $this->assertEquals(
+            $this->fundingOrganization->getEmailAddress(),
+            'new_emailAddress'
+        );
+        $this->assertEquals(
+            $this->fundingOrganization->getDescription(),
+            'new_description'
+        );
+        $this->assertEquals(
+            $this->fundingOrganization->getUrl(),
+            'new_url'
+        );
+        $this->assertEquals(
+            $this->fundingOrganization->getPhoneNumber(),
+            'new_phoneNumber'
+        );
+        $this->assertEquals(
+            $this->fundingOrganization->getDeliveryPoint(),
+            'new_deliveryPoint'
+        );
+        $this->assertEquals(
+            $this->fundingOrganization->getCity(),
+            'new_city'
+        );
+        $this->assertEquals(
+            $this->fundingOrganization->getAdministrativeArea(),
+            'new_administrativeArea'
+        );
+        $this->assertEquals(
+            $this->fundingOrganization->getPostalCode(),
+            'new_postalCode'
+        );
+        $this->assertEquals(
+            $this->fundingOrganization->getCountry(),
+            'new_country'
+        );
+    }
 }
