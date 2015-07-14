@@ -6,8 +6,8 @@ $(document).ready(function()
     $.validator.methods._required = $.validator.methods.required;
     $.validator.methods.required = function( value, element, param )
     {
-        if (typeof this.settings.rules[ $(element).attr('name') ] != 'undefined'
-            && typeof this.settings.rules[ $(element).attr('name') ].remote != 'undefined') {
+        if (typeof this.settings.rules[ $(element).attr("name") ] != "undefined"
+            && typeof this.settings.rules[ $(element).attr("name") ].remote != "undefined") {
                 return true;
             }
         return  $.validator.methods._required.call( this, value, element, param );
@@ -35,11 +35,11 @@ $(document).ready(function()
         formValidator.resetForm();
     });
 
-    $('#fundingOrgDialog').dialog({
+    $("#fundingOrgDialog").dialog({
         autoOpen: false,
         resizable: false,
-        width: 'auto',
-        height: 'auto',
+        width: "auto",
+        height: "auto",
         modal: true,
         buttons: {
             Ok: function() {
@@ -63,7 +63,7 @@ function saveFundingOrg(jsonData)
     var title = "";
     var message = "";
     $.ajax({
-        type: 'POST',
+        type: "POST",
         data: jsonData,
         url: url,
         // Optionally enforce JSON return, in case a status 200 happens, but no JSON returns
@@ -76,25 +76,25 @@ function saveFundingOrg(jsonData)
         if (json.code == 201) {
             title = "Success!";
             message = json.message;
-            $('#btnReset').click();
+            $("#btnReset").click();
         } else {
             title = "Error!";
             message = "Something went wrong!<br>Didn't receive the correct success message!";
-            message += '<br>Please contact <a href="mailto:griidc@gomri.org&subject=Person%20Form">griidc@gomri.org</a>';
+            message += "<br>Please contact <a href=\"mailto:griidc@gomri.org&subject=Person%20Form\">griidc@gomri.org</a>";
         }
     })
     .fail(function(response) {
         json = response.responseJSON;
-        if (typeof response.responseJSON == 'undefined') {
+        if (typeof response.responseJSON == "undefined") {
             var json = {};
-            json['code'] = response.status;
-            json['message'] = response.statusText;
+            json["code"] = response.status;
+            json["message"] = response.statusText;
         }
         title = "Error!";
         message = json.message;
     })
     .always(function(json) {
-        $('#fundingOrgDialog').html(message);
-        $('#fundingOrgDialog').dialog( 'option', 'title', title).dialog('open');
+        $("#fundingOrgDialog").html(message);
+        $("#fundingOrgDialog").dialog( "option", "title", title).dialog("open");
     })
 }
