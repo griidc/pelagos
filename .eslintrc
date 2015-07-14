@@ -1,0 +1,17 @@
+{
+    "globals": {
+        "$": 2,
+        "jQuery": 2,
+        "document": 2,
+        "FormData": 2,
+        "pelagosBasePath": 2,
+        "pelagosComponentPath": 2,
+        "pelagosBaseUri": 2,
+        "pelagosComponentUri": 2
+    },
+    "rules": {
+        "no-underscore-dangle": 0,
+        "no-use-before-define": [2, "nofunc"],
+        "space-in-parens": 2
+    }
+}
