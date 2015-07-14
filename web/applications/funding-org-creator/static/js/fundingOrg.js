@@ -10,7 +10,7 @@ $(document).ready(function()
             && typeof this.settings.rules[ $(element).attr("name") ].remote !== "undefined") {
                 return true;
             }
-        return  $.validator.methods._required.call( this, value, element, param );
+        return $.validator.methods._required.call( this, value, element, param );
     };
 
     var formValidator = $("#fundingOrgForm").validate({
@@ -24,7 +24,7 @@ $(document).ready(function()
         var url = pelagosBasePath + "/services/fundingOrganization/validateProperty";
         $(this).rules( "add", {
             remote: {
-                url: url,
+                url: url
             }
         });
     });
