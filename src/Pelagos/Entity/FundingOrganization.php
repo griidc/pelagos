@@ -8,24 +8,22 @@
 
 namespace Pelagos\Entity;
 
+use \Symfony\Component\Validator\Constraints as Assert;
+
 /**
  * Class to represent funding organizations.
  */
-class FundingOrganization
+class FundingOrganization extends Entity
 {
-    /**
-     * Identifier for a funding organization.
-     *
-     * @var $id integer
-     * @access protected
-     */
-    protected $id;
-
     /**
      * Name of a funding organization.
      *
      * @var string $name
      * @access protected
+     *
+     * @Assert\NotBlank(
+     *     message="Name is required"
+     * )
      */
     protected $name;
 
@@ -108,18 +106,6 @@ class FundingOrganization
      * @access protected
      */
     protected $country;
-
-    /**
-     * Getter for id.
-     *
-     * @access public
-     *
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
 
     /**
      * Setter for name.
@@ -405,5 +391,55 @@ class FundingOrganization
     public function getCountry()
     {
         return $this->country;
+    }
+
+    /**
+     * Method to update multiple properties.
+     *
+     * @param array $updates An associative array indexed with property names
+     *                       and containing each property's new value.
+     *
+     * @return FundingOrganization Return the updated object.
+     */
+    public function update(array $updates)
+    {
+        foreach ($updates as $field => $value) {
+            switch($field) {
+                case 'name':
+                    $this->setName($value);
+                    break;
+                case 'logo':
+                    $this->setLogo($value);
+                    break;
+                case 'emailAddress':
+                    $this->setEmailAddress($value);
+                    break;
+                case 'description':
+                    $this->setDescription($value);
+                    break;
+                case 'url':
+                    $this->setUrl($value);
+                    break;
+                case 'phoneNumber':
+                    $this->setPhoneNumber($value);
+                    break;
+                case 'deliveryPoint':
+                    $this->setDeliveryPoint($value);
+                    break;
+                case 'city':
+                    $this->setCity($value);
+                    break;
+                case 'administrativeArea':
+                    $this->setAdministrativeArea($value);
+                    break;
+                case 'postalCode':
+                    $this->setPostalCode($value);
+                    break;
+                case 'country':
+                    $this->setCountry($value);
+                    break;
+            }
+        }
+        return $this;
     }
 }
