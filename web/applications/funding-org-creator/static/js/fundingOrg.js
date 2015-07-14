@@ -87,8 +87,8 @@ function saveFundingOrg(jsonData)
         json = response.responseJSON;
         if (typeof response.responseJSON === "undefined") {
             var json = {};
-            json["code"] = response.status;
-            json["message"] = response.statusText;
+            json.code = response.status;
+            json.message = response.statusText;
         }
         title = "Error!";
         message = json.message;
