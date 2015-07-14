@@ -5,7 +5,7 @@ $(document).ready(function()
     $.validator.methods._required = $.validator.methods.required;
     $.validator.methods.required = function( value, element, param )
     {
-        if (typeof this.settings.rules[ $(element).attr('name') ] != 'undefined' 
+        if (typeof this.settings.rules[ $(element).attr('name') ] != 'undefined'
             && typeof this.settings.rules[ $(element).attr('name') ].remote != 'undefined') {
                 return true;
             }
@@ -14,9 +14,8 @@ $(document).ready(function()
 
     formValidator = $("#fundingOrgForm").validate({
         submitHandler: function(form) {
-            var data = new FormData($('form')[0]);
+            var data = new FormData(form);
             console.log(data);
-            //var data = getFormJSON($(form));
             saveFundingOrg(data)
         }
     });
@@ -101,20 +100,4 @@ function saveFundingOrg(jsonData)
         $('#fundingOrgDialog').html(message);
         $('#fundingOrgDialog').dialog( 'option', 'title', title).dialog('open');
     })
-}
-
-/**
- *  This function will return the form fields/data as JSON.
- *
- *  It takes a jQuery selector of a Form.
- *
- *  @param [selector] formSelector jQuery selector of the Form
- *
- *  @return JSON
- */
-function getFormJSON(formSelector)
-{
-    var data = {};
-    formSelector.serializeArray().map(function(x){data[x.name] = x.value;});
-    return data;
 }
