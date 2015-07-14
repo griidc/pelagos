@@ -11,12 +11,12 @@ $(document).ready(function()
                 return true;
             }
         return  $.validator.methods._required.call( this, value, element, param );
-    }
+    };
 
     var formValidator = $("#fundingOrgForm").validate({
         submitHandler: function(form) {
             var data = new FormData(form);
-            saveFundingOrg(data)
+            saveFundingOrg(data);
         }
     });
 
@@ -26,7 +26,7 @@ $(document).ready(function()
             remote: {
                 url: url,
             }
-        })
+        });
     });
 
     $("#fundingOrgForm button[type='submit']").button();
@@ -96,5 +96,5 @@ function saveFundingOrg(jsonData)
     .always(function(json) {
         $("#fundingOrgDialog").html(message);
         $("#fundingOrgDialog").dialog( "option", "title", title).dialog("open");
-    })
+    });
 }
