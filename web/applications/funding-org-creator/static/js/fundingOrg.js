@@ -93,7 +93,7 @@ function saveFundingOrg(jsonData)
         title = "Error!";
         message = json.message;
     })
-    .always(function(json) {
+    .always(function() {
         $("#fundingOrgDialog").html(message);
         $("#fundingOrgDialog").dialog( "option", "title", title).dialog("open");
     });
