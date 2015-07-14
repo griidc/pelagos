@@ -4,13 +4,13 @@ $(document).ready(function()
 {
     "use strict";
     $.validator.methods._required = $.validator.methods.required;
-    $.validator.methods.required = function( value, element, param )
+    $.validator.methods.required = function(value, element, param)
     {
         if (typeof this.settings.rules[ $(element).attr("name") ] !== "undefined"
             && typeof this.settings.rules[ $(element).attr("name") ].remote !== "undefined") {
                 return true;
             }
-        return $.validator.methods._required.call( this, value, element, param );
+        return $.validator.methods._required.call(this, value, element, param);
     };
 
     var formValidator = $("#fundingOrgForm").validate({
@@ -22,7 +22,7 @@ $(document).ready(function()
 
     $("#fundingOrgForm input, textarea").each(function() {
         var url = pelagosBasePath + "/services/fundingOrganization/validateProperty";
-        $(this).rules( "add", {
+        $(this).rules("add", {
             remote: {
                 url: url
             }
@@ -43,7 +43,7 @@ $(document).ready(function()
         modal: true,
         buttons: {
             Ok: function() {
-                $( this ).dialog( "close" );
+                $(this).dialog("close");
             }
         }
     });
@@ -95,6 +95,6 @@ function saveFundingOrg(jsonData)
     })
     .always(function() {
         $("#fundingOrgDialog").html(message);
-        $("#fundingOrgDialog").dialog( "option", "title", title).dialog("open");
+        $("#fundingOrgDialog").dialog("option", "title", title).dialog("open");
     });
 }
