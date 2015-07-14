@@ -84,11 +84,11 @@ function saveFundingOrg(jsonData)
         }
     })
     .fail(function(response) {
-        json = response.responseJSON;
+        var json = {};
         if (typeof response.responseJSON === "undefined") {
-            var json = {};
-            json.code = response.status;
             json.message = response.statusText;
+        } else {
+            json = response.responseJSON;
         }
         title = "Error!";
         message = json.message;
