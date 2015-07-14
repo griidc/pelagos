@@ -2,6 +2,7 @@ var $ = jQuery.noConflict();
 
 $(document).ready(function()
 {
+    "use strict";
     $.validator.methods._required = $.validator.methods.required;
     $.validator.methods.required = function( value, element, param )
     {
@@ -12,10 +13,9 @@ $(document).ready(function()
         return  $.validator.methods._required.call( this, value, element, param );
     }
 
-    formValidator = $("#fundingOrgForm").validate({
+    var formValidator = $("#fundingOrgForm").validate({
         submitHandler: function(form) {
             var data = new FormData(form);
-            console.log(data);
             saveFundingOrg(data)
         }
     });
@@ -58,9 +58,10 @@ $(document).ready(function()
  */
 function saveFundingOrg(jsonData)
 {
+    "use strict";
     var url = pelagosBasePath + "/services/fundingOrganization";
     var title = "";
-    var messsage = "";
+    var message = "";
     $.ajax({
         type: 'POST',
         data: jsonData,
