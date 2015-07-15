@@ -485,6 +485,22 @@ class FundingOrganization extends Entity
     }
 
     /**
+     * Get the creationTimeStamp property as an ISO8601 string.
+     *
+     * @param boolean $localized Whether to convert time stamp to the local timezone.
+     *
+     * @return string ISO8601 string representing creationTimeStamp.
+     */
+    public function getCreationTimeStampAsISO($localized = false)
+    {
+        if (isset($this->creationTimeStamp) and $this->creationTimeStamp instanceof \DateTime) {
+            return $this->getCreationTimeStamp($localized)->format(\DateTime::ISO8601);
+        }
+        return null;
+    }
+
+
+    /**
      * Method to update multiple properties.
      *
      * @param array $updates An associative array indexed with property names
