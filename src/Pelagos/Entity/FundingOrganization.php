@@ -108,24 +108,6 @@ class FundingOrganization extends Entity
     protected $country;
 
     /**
-     * The username of the user who created this Funding Organization.
-     *
-     * @var string $creator;
-     *
-     * @Assert\NotBlank(
-     *     message="Creator is required"
-     * )
-     */
-    protected $creator;
-
-    /**
-     * The creation time stamp (in UTC) for this Person.
-     *
-     * @var \DateTime $creationTimeStamp;
-     */
-    protected $creationTimeStamp;
-
-    /**
      * Setter for name.
      *
      * @param string $name Textual name of funding organization.
@@ -409,108 +391,6 @@ class FundingOrganization extends Entity
     public function getCountry()
     {
         return $this->country;
-    }
-
-    /**
-     * Setter for creator.
-     *
-     * @param string $creator Funding organization's creator username.
-     *
-     * @access public
-     *
-     * @return void
-     */
-    public function setCreator($creator)
-    {
-        $this->creator = $creator;
-    }
-
-    /**
-     * Getter for creator.
-     *
-     * @access public
-     *
-     * @return string Funding Organization's creator's username.
-     */
-    public function getCreator()
-    {
-        return $this->creator;
-    }
-
-    /**
-     * Setter for creationTimeStamp property.
-     *
-     * @param \DateTime $timeStamp Creation time stamp to set.
-     *
-     * @return void
-     *
-     * @throws \Exception When $timeStamp does not have a timezone of UTC.
-     */
-    public function setCreationTimeStamp(\DateTime $timeStamp = null)
-    {
-        if (isset($timeStamp)) {
-            if ($timeStamp->getTimezone()->getName() != 'UTC') {
-                throw new \Exception('creationTimeStamp must be in UTC');
-            }
-            $this->creationTimeStamp = $timeStamp;
-        } else {
-            $this->creationTimeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
-        }
-        $this->modificationTimeStamp = $this->creationTimeStamp;
-    }
-
-    /**
-     * Getter for creationTimeStamp property.
-     *
-     * The default is to return the time stamp in UTC.
-     * Setting $localized to true will return the time stamp localized to the current timezone.
-     * This getter also makes sure the creationTimeStamp property is set to UTC.
-     *
-     * @param boolean $localized Whether to convert time stamp to the local timezone.
-     *
-     * @return \DateTime Creation time stamp for this Person.
-     */
-    public function getCreationTimeStamp($localized = false)
-    {
-        if (!isset($this->creationTimeStamp)) {
-            return null;
-        }
-        $this->creationTimeStamp->setTimeZone(new \DateTimeZone('UTC'));
-        if ($localized) {
-            $timeStamp = clone $this->creationTimeStamp;
-            $timeStamp->setTimeZone(new \DateTimeZone(date_default_timezone_get()));
-            return $timeStamp;
-        }
-        return $this->creationTimeStamp;
-    }
-
-    /**
-     * Get the creationTimeStamp property as an ISO8601 string.
-     *
-     * @param boolean $localized Whether to convert time stamp to the local timezone.
-     *
-     * @return string ISO8601 string representing creationTimeStamp.
-     */
-    public function getCreationTimeStampAsISO($localized = false)
-    {
-        if (isset($this->creationTimeStamp) and $this->creationTimeStamp instanceof \DateTime) {
-            return $this->getCreationTimeStamp($localized)->format(\DateTime::ISO8601);
-        }
-        return null;
-    }
-
-    /**
-     * Update the time stamps to the current time.
-     *
-     * The creation time stamp is only updated if not already set.
-     *
-     * @return void
-     */
-    public function updateTimeStamps()
-    {
-        if ($this->creationTimeStamp == null) {
-            $this->setCreationTimeStamp();
-        }
     }
 
     /**
