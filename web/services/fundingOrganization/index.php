@@ -144,5 +144,73 @@ $slim->post(
     }
 );
 
+$slim->get(
+    '/logo/:id',
+    function ($id) use ($comp, $slim) {
+        $response = $slim->response;
+        $comp->setQuitOnFinalize(true);
+        try {
+            $entityService = new EntityService($comp->getEntityManager());
+            $fundingOrganization = $entityService->get('FundingOrganization', $id);
+            $logoStream = $fundingOrganization->getLogo();
+            if (isset($logoStream)) {
+                $logo = stream_get_contents($logoStream);
+                $finfo = new finfo(FILEINFO_MIME_TYPE);
+                $mimeType = $finfo->buffer($logo);
+                $response->headers->set('Content-Type', $mimeType);
+                $response->body($logo);
+                return;
+            } else {
+                $status = new HTTPStatus(404, "No logo found for FundingOrganization $id");
+            }
+        } catch (ArgumentException $e) {
+            $status = new HTTPStatus(400, $e->getMessage());
+        } catch (RecordNotFoundPersistenceException $e) {
+            $status = new HTTPStatus(404, $e->getMessage());
+        } catch (PersistenceException $e) {
+            $databaseErrorMessage = $e->getDatabaseErrorMessage();
+            if (empty($databaseErrorMessage)) {
+                $status = new HTTPStatus(500, 'A database error has occured: ' . $e->getMessage());
+            } else {
+                $status = new HTTPStatus(500, "A database error has occured: $databaseErrorMessage");
+            }
+        } catch (\Exception $e) {
+            $status = new HTTPStatus(500, 'A general error has occured: ' . $e->getMessage());
+        }
+        $response->headers->set('Content-Type', 'application/json');
+        $response->status($status->getCode());
+        $response->body(json_encode($status));
+    }
+);
+
+$slim->get(
+    '/:id',
+    function ($id) use ($comp, $slim) {
+        $response = $slim->response;
+        $response->headers->set('Content-Type', 'application/json');
+        $comp->setQuitOnFinalize(true);
+        try {
+            $entityService = new EntityService($comp->getEntityManager());
+            $fundingOrganization = $entityService->get('FundingOrganization', $id);
+            $status = new HTTPStatus(200, "Found FundingOrganization with id: $id", $fundingOrganization);
+        } catch (ArgumentException $e) {
+            $status = new HTTPStatus(400, $e->getMessage());
+        } catch (RecordNotFoundPersistenceException $e) {
+            $status = new HTTPStatus(404, $e->getMessage());
+        } catch (PersistenceException $e) {
+            $databaseErrorMessage = $e->getDatabaseErrorMessage();
+            if (empty($databaseErrorMessage)) {
+                $status = new HTTPStatus(500, 'A database error has occured: ' . $e->getMessage());
+            } else {
+                $status = new HTTPStatus(500, "A database error has occured: $databaseErrorMessage");
+            }
+        } catch (\Exception $e) {
+            $status = new HTTPStatus(500, 'A general error has occured: ' . $e->getMessage());
+        }
+        $response->status($status->getCode());
+        $response->body(json_encode($status));
+    }
+);
+
 $slim->run();
 $comp->finalize();
