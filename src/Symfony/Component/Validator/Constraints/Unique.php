@@ -17,12 +17,4 @@ class Unique extends Constraint
      * @var string $message
      */
     public $message = 'This value must be unique';
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getTargets()
-    {
-        return self::PROPERTY_CONSTRAINT;
-    }
 }
