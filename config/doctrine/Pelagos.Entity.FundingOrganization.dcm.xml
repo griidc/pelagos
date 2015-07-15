@@ -38,5 +38,9 @@
 
         <field name="postalCode"         column="postal_code"                 type="string" />
 
+        <field name="creationTimeStamp"  column="creation_time"               type="datetimetz" />
+
+        <field name="creator"            column="creator"                     type="string" />
+
     </entity>
 </doctrine-mapping>
