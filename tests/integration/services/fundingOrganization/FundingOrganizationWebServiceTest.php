@@ -43,8 +43,12 @@ class FundingOrganizationWebServiceTest extends \PHPUnit_Framework_TestCase
     {
         require_once __DIR__ . '/../../../helpers/TestUser.php';
 
+        $this->mockEntityRepository = \Mockery::mock('\Doctrine\ORM\EntityRepository');
+        $this->mockEntityRepository->shouldReceive('findBy')->andReturn(array());
+
         $this->mockEntityManager = \Mockery::mock('\Doctrine\ORM\EntityManager');
         $this->mockEntityManager->shouldReceive('persist');
+        $this->mockEntityManager->shouldReceive('getRepository')->andReturn($this->mockEntityRepository);
 
         $mockPersistence = \Mockery::mock('alias:\Pelagos\Persistance');
         $mockPersistence->shouldReceive('createEntityManager')->andReturn($this->mockEntityManager);
