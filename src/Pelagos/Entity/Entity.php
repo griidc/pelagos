@@ -11,7 +11,7 @@ namespace Pelagos\Entity;
 /**
  * Abstract class that contains basic properties and methods common to all Pelagos entities.
  */
-abstract class Entity
+abstract class Entity implements \JsonSerializable
 {
     /**
      * Entity identifier.
@@ -28,5 +28,17 @@ abstract class Entity
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Implement JsonSerializable.
+     *
+     * @return array An array suitable for JSON serialization of the object.
+     */
+    public function jsonSerialize()
+    {
+        return array(
+            'id' => $this->getId(),
+        );
     }
 }
