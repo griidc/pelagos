@@ -97,6 +97,7 @@ $slim->post(
                 );
             }
             $updates = $slim->request->params();
+            $updates['creator'] = $comp->getLoggedInUser();
             if (array_key_exists('logo', $updates)) {
                 unset($updates['logo']);
             }

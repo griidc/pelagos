@@ -426,7 +426,7 @@ class FundingOrganization extends Entity
     }
 
     /**
-     * Getter for creator
+     * Getter for creator.
      *
      * @access public
      *
@@ -499,6 +499,19 @@ class FundingOrganization extends Entity
         return null;
     }
 
+    /**
+     * Update the time stamps to the current time.
+     *
+     * The creation time stamp is only updated if not already set.
+     *
+     * @return void
+     */
+    public function updateTimeStamps()
+    {
+        if ($this->creationTimeStamp == null) {
+            $this->setCreationTimeStamp();
+        }
+    }
 
     /**
      * Method to update multiple properties.
@@ -544,6 +557,9 @@ class FundingOrganization extends Entity
                     break;
                 case 'country':
                     $this->setCountry($value);
+                    break;
+                case 'creator':
+                    $this->setCreator($value);
                     break;
             }
         }
