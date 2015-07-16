@@ -1,9 +1,10 @@
 {
+    "env": {
+        "browser": true
+    },
     "globals": {
         "$": 2,
         "jQuery": 2,
-        "window": 2,
-        "document": 2,
         "FormData": 2,
         "pelagosBasePath": 2,
         "pelagosComponentPath": 2,
