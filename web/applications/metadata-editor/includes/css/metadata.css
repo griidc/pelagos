@@ -40,65 +40,66 @@
 		background-color:#C6D0D2;
 	}
 
-	input[type=text] 
+	input[type=text]
 	{
-		
+
 	}
 	input[type=text]:focus
 	{
 		background-color: #FFFFCC;
 	}
-	
+
 	textarea:focus
 	{
 	background-color: #FFFFCC;
 	}
-	
+
 	pre
 	{
 		width:400px;
 		white-space: pre-wrap;
 	}
-	
+
 	em
 	{
 		color:red;
 		font-weight:bold;
 		font-style:italic;
 	}
-	
+
 	select:focus
 	{
 	background-color: #FFFFCC;
 	}
-			
-	label:not(.button) 
+
+	label:not(.button)
     	{
 		font-weight: bold;
 		display: block;
     }
     /*label:not(.button):after {content:": "}*/
-	
-	
+
+
 	select {width:250px}
-	
+
 	.toolbarbutton{font-size:1.2em;}
-	
-	#metatoolbar 
+
+	#metatoolbar
 	{
-    padding: 4px;
-    display: inline-block;
+        padding: 4px;
+        display: inline-block;
+        font-size: 12px;
 	}
-  
+
 	#helptext
 	{
 		text-align:center;
 		color:red;
 	}
-	
+
 	.option_hover { background-color: #c8c8c8; }
-	
-	#loadfrm 
+
+	#loadfrm
 	{
 		position:fixed;
 		top: 50%;
@@ -116,7 +117,7 @@
 		z-index:99;
 	}
 
-	legend 
+	legend
 	{
 		text-shadow: 2px 2px 3px rgba(150, 150, 150, 0.75);
 		font-family:Verdana, Geneva, sans-serif;
@@ -128,12 +129,12 @@
 		border-bottom:  1px solid #000;
 		background-color: white;
 	}
-	
-	fieldset 
+
+	fieldset
 	{
 		border: 1px dotted #eee;
 	}
-	
+
 	.fancybuttton{
 	-webkit-box-shadow:rgba(0,0,0,0.0.1) 0 1px 0 0;
 	-moz-box-shadow:rgba(0,0,0,0.0.1) 0 1px 0 0;
@@ -152,4 +153,4 @@
 	}
 
 	.openlayers-map img{margin:0px;max-width: none;}
-	
+
