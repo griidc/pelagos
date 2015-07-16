@@ -31,7 +31,8 @@ CREATE VIEW funding_organization AS
    SELECT f.funding_organization_number AS funding_organization_number,
           f.funding_organization_name AS name,
           f.funding_organization_description AS description,
-          f.funding_organization_creation_time AS creation_time,
+          DATE_TRUNC('seconds', f.funding_organization_creation_time)
+             AS creation_time,
           f.funding_organization_creator AS creator,
           f.funding_organization_phone_number AS phone_number,
           CAST(e2f.email_address AS TEXT) AS email_address,
@@ -179,12 +180,12 @@ AS $f_o_func$
                      NEW.administrative_area,
                      NEW.city,
                      NEW.country,
-                     NOW(),
+                     DATE_TRUNC('seconds', NOW()),
                      NEW.creator,
                      NEW.delivery_point,
                      NEW.description,
                      NEW.logo,
--- MOD                      NOW(),
+-- MOD                      DATE_TRUNC('seconds', NOW()),
 -- MOD                      NEW.modifier,
                      NEW.name,
                      NEW.phone_number,
@@ -379,7 +380,7 @@ AS $f_o_func$
 
                -- Finally, update the modification information:
 -- MOD                EXECUTE 'UPDATE funding_organization_table
--- MOD                         SET funding_organization_modification_time = NOW(),
+-- MOD                         SET funding_organization_modification_time = DATE_TRUNC('seconds', NOW()),
 -- MOD                            funding_organization_modifier = $1
 -- MOD                         WHERE funding_organization_number = $2'
 -- MOD                USING NEW.modifier,
