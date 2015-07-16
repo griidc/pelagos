@@ -16,6 +16,10 @@
             <sequence-generator sequence-name="seq_funding_organization_number" allocation-size="1" initial-value="1" />
         </id>
 
+        <lifecycle-callbacks>
+            <lifecycle-callback type="prePersist" method="updateTimeStamps" />
+        </lifecycle-callbacks>
+
         <field name="name"               column="name"                        type="string" />
 
         <field name="logo"               column="logo"                        type="blob" />
@@ -37,6 +41,10 @@
         <field name="administrativeArea" column="administrative_area"         type="string" />
 
         <field name="postalCode"         column="postal_code"                 type="string" />
+
+        <field name="creationTimeStamp"  column="creation_time"               type="datetimetz" />
+
+        <field name="creator"            column="creator"                     type="string" />
 
     </entity>
 </doctrine-mapping>

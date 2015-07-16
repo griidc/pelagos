@@ -143,7 +143,7 @@ class Person implements \JsonSerializable
      * Getter for creationTimeStamp property.
      *
      * The default is to return the time stamp in UTC.
-     * Setting $localized to true will retunr the time stamp localized to the current timezone.
+     * Setting $localized to true will return the time stamp localized to the current timezone.
      * This getter also makes sure the creationTimeStamp property is set to UTC.
      *
      * @param boolean $localized Whether to convert time stamp to the local timezone.
