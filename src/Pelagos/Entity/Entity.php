@@ -13,7 +13,7 @@ use \Symfony\Component\Validator\Constraints as Assert;
 /**
  * Abstract class that contains basic properties and methods common to all Pelagos entities.
  */
-abstract class Entity
+abstract class Entity implements \JsonSerializable
 {
     /**
      * Entity identifier.
@@ -149,5 +149,19 @@ abstract class Entity
         if ($this->creationTimeStamp == null) {
             $this->setCreationTimeStamp();
         }
+    }
+
+    /**
+     * Implement JsonSerializable.
+     *
+     * @return array An array suitable for JSON serialization of the object.
+     */
+    public function jsonSerialize()
+    {
+        return array(
+            'id' => $this->getId(),
+            'creationTimeStamp' => $this->getCreationTimeStampAsISO(),
+            'creator' => $this->getCreator(),
+        );
     }
 }

@@ -541,4 +541,29 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
             'new_country'
         );
     }
+
+    /**
+     * Test that FundingOrganization is JsonSerializable and serializes to the expected JSON.
+     *
+     * @return void
+     */
+    public function testJsonSerialize()
+    {
+        $fundingOrganizationData = array(
+            'id' => null,
+            'creationTimeStamp' => null,
+            'creator' => self::$testCreator,
+            'name' => self::$testName,
+            'emailAddress' => self::$testEmailAddress,
+            'description' => self::$testDescription,
+            'url' => self::$testUrl,
+            'phoneNumber' => self::$testPhoneNumber,
+            'deliveryPoint' => self::$testDeliveryPoint,
+            'city' => self::$testCity,
+            'administrativeArea' => self::$testAdministrativeArea,
+            'postalCode' => self::$testPostalCode,
+            'country' => self::$testCountry,
+        );
+        $this->assertEquals(json_encode($fundingOrganizationData), json_encode($this->fundingOrganization));
+    }
 }

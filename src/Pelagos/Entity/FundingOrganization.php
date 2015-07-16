@@ -448,4 +448,28 @@ class FundingOrganization extends Entity
         }
         return $this;
     }
+
+    /**
+     * Override jsonSerialize.
+     *
+     * @return array An array suitable for JSON serialization of the object.
+     */
+    public function jsonSerialize()
+    {
+        return array(
+            'id' => $this->getId(),
+            'creationTimeStamp' => $this->getCreationTimeStampAsISO(),
+            'creator' => $this->getCreator(),
+            'name' => $this->getName(),
+            'emailAddress' => $this->getEmailAddress(),
+            'description' => $this->getDescription(),
+            'url' => $this->getUrl(),
+            'phoneNumber' => $this->getPhoneNumber(),
+            'deliveryPoint' => $this->getDeliveryPoint(),
+            'city' => $this->getCity(),
+            'administrativeArea' => $this->getAdministrativeArea(),
+            'postalCode' => $this->getPostalCode(),
+            'country' => $this->getCountry(),
+        );
+    }
 }
