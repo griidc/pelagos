@@ -31,6 +31,8 @@ CREATE VIEW funding_organization AS
    SELECT f.funding_organization_number AS funding_organization_number,
           f.funding_organization_name AS name,
           f.funding_organization_description AS description,
+          f.funding_organization_creation_time AS creation_time,
+          f.funding_organization_creator AS creator,
           f.funding_organization_phone_number AS phone_number,
           CAST(e2f.email_address AS TEXT) AS email_address,
           f.funding_organization_website AS website,
@@ -40,6 +42,8 @@ CREATE VIEW funding_organization AS
           f.funding_organization_country AS country,
           f.funding_organization_postal_code AS postal_code,
           f.funding_organization_logo AS logo
+-- MOD           f.funding_organization_modifier AS modifier,
+-- MOD           f.funding_organization_modification_time AS modification_time
    FROM funding_organization_table f
       LEFT JOIN email2funding_organization_table e2f
          ON f.funding_organization_number = e2f.funding_organization_number
@@ -80,9 +84,12 @@ AS $f_o_func$
          IF TG_OP = 'INSERT'
          THEN
             -- Make sure we were supplied a Funding Organization name:
-            IF NEW.name IS NULL OR NEW.name = ''
+            IF NEW.name IS NULL OR NEW.name = '' OR
+               NEW.creator is NULL or NEW.creator = ''
             THEN
-               _err_hint := 'A Funding Organization entity requires a name';
+               _err_hint := CONCAT('A Funding Organization entity requires a ',
+                                   'funding organization name and a creator ',
+                                   'name');
                _err_msg  := 'Missing required field violation';
                -- This is an invalid entry. Raise an exception and quit (the
                -- exception text is only used when we disable exception
@@ -153,22 +160,32 @@ AS $f_o_func$
                         funding_organization_administrative_area,
                         funding_organization_city,
                         funding_organization_country,
+                        funding_organization_creation_time,
+                        funding_organization_creator,
                         funding_organization_delivery_point,
                         funding_organization_description,
                         funding_organization_logo,
+-- MOD                         funding_organization_modification_time,
+-- MOD                         funding_organization_modifier,
                         funding_organization_name,
                         funding_organization_phone_number,
                         funding_organization_postal_code,
                         funding_organization_website
                      )
-                     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)'
+                     VALUES ($1,  $2,  $3,  $4,  $5,  $6,  $7,  $8,
+                             $9,  $10, $11, $12, $13)'
+-- MOD                              $9,  $10, $11, $12, $13, $14, $15)'
                USING NEW.funding_organization_number,
                      NEW.administrative_area,
                      NEW.city,
                      NEW.country,
+                     NOW(),
+                     NEW.creator,
                      NEW.delivery_point,
                      NEW.description,
                      NEW.logo,
+-- MOD                      NOW(),
+-- MOD                      NEW.modifier,
                      NEW.name,
                      NEW.phone_number,
                      NEW.postal_code,
@@ -208,6 +225,8 @@ AS $f_o_func$
 --                          funding_organization_number,
 --                          name,
 --                          description,
+--                          creator,
+--                          creation_time,
 --                          phone_number,
 --                          email_address,
 --                          website,
@@ -216,45 +235,53 @@ AS $f_o_func$
 --                          administrative_area,
 --                          country,
 --                          postal_code,
---                          logo
+--                          logo,
+-- -- MOD                           modifier,
+-- -- MOD                           modification_time
 --                       )
---                       VALUES ($1,  $2,  $3,  $4,  $5,  $6,  $7,
---                               $8,  $9,  $10, $11, $12, $13)'
+--                       VALUES ($1,  $2,  $3,  $4,  $5,  $6,
+--                               $7,  $8   $9,  $10, $11, $12,
+--                               $13, $14, $15)'
+-- -- MOD                                $13, $14, $15, $16, $17)'
 --               USING TG_OP,
 --                     OLD.funding_organization_number,
---                     (CASE WHEN NEW.name IS NULL THEN NULL
+--                     CASE WHEN NEW.name IS NULL THEN NULL
 --                        ELSE OLD.name
 --                     END),
---                     (CASE WHEN NEW.description IS NULL THEN NULL
+--                     CASE WHEN NEW.description IS NULL THEN NULL
 --                        ELSE OLD.description
 --                     END),
---                     (CASE WHEN NEW.phone_number IS NULL THEN NULL
+--                     OLD.creator,
+--                     OLD.creation_time,
+--                     CASE WHEN NEW.phone_number IS NULL THEN NULL
 --                        ELSE OLD.phone_number
 --                     END),
---                     (CASE WHEN _email_addr IS NULL THEN NULL
+--                     CASE WHEN NEW.email_address IS NULL THEN NULL
 --                        ELSE OLD.email_address
 --                     END),
---                     (CASE WHEN NEW.website IS NULL THEN NULL
+--                     CASE WHEN NEW.website IS NULL THEN NULL
 --                        ELSE OLD.website
 --                     END),
---                     (CASE WHEN NEW.delivery_point IS NULL THEN NULL
+--                     CASE WHEN NEW.delivery_point IS NULL THEN NULL
 --                        ELSE OLD.delivery_point
 --                     END),
---                     (CASE WHEN NEW.city IS NULL THEN NULL
+--                     CASE WHEN NEW.city IS NULL THEN NULL
 --                        ELSE OLD.city
 --                     END),
---                     (CASE WHEN NEW.administrative_area IS NULL THEN NULL
+--                     CASE WHEN NEW.administrative_area IS NULL THEN NULL
 --                        ELSE OLD.administrative_area
 --                     END),
---                     (CASE WHEN NEW.country IS NULL THEN NULL
+--                     CASE WHEN NEW.country IS NULL THEN NULL
 --                        ELSE OLD.country
 --                     END),
---                     (CASE WHEN NEW.postal_code IS NULL THEN NULL
+--                     CASE WHEN NEW.postal_code IS NULL THEN NULL
 --                        ELSE OLD.postal_code
 --                     END),
---                     (CASE WHEN NEW.logo IS NULL THEN NULL
---                        ELSE OLD.logo
---                     END);
+--                     CASE WHEN NEW.logo, IS NULL THEN NULL
+--                        ELSE OLD.logo,
+--                     END),
+-- -- MOD                      OLD.modifier,
+-- -- MOD                      CAST(OLD.modification_time AS TIMESTAMP WITH TIME ZONE);
 
             -- Update the funding_organization information if necessary:
             IF ROW(NEW.administrative_area,
@@ -349,6 +376,14 @@ AS $f_o_func$
                      USING _email_addr,
                            NEW.funding_organization_number;
                END IF;
+
+               -- Finally, update the modification information:
+-- MOD                EXECUTE 'UPDATE funding_organization_table
+-- MOD                         SET funding_organization_modification_time = NOW(),
+-- MOD                            funding_organization_modifier = $1
+-- MOD                         WHERE funding_organization_number = $2'
+-- MOD                USING NEW.modifier,
+-- MOD                      NEW.funding_organization_number;
             END IF;
 
             RETURN NEW;
@@ -362,6 +397,8 @@ AS $f_o_func$
 --                       funding_organization_number,
 --                       name,
 --                       description,
+--                       creator,
+--                       creation_time,
 --                       phone_number,
 --                       email_address,
 --                       website,
@@ -370,14 +407,19 @@ AS $f_o_func$
 --                       administrative_area,
 --                       country,
 --                       postal_code,
---                       logo
+--                       logo,
+-- -- MOD                        modifier,
+-- -- MOD                        modification_time
 --                    )
---                    VALUES ($1,  $2,  $3,  $4,  $5,  $6,  $7,
---                            $8,  $9,  $10, $11, $12, $13)'
+--                    VALUES ($1,  $2,  $3,  $4,  $5,  $6,
+--                            $7,  $8   $9,  $10, $11, $12,
+--                            $13, $14, $15, $16, $17)'
 --            USING TG_OP,
 --                  OLD.funding_organization_number,
 --                  OLD.name,
 --                  OLD.description,
+--                  OLD.creator,
+--                  OLD.creation_time,
 --                  OLD.phone_number,
 --                  OLD.email_address,
 --                  OLD.website,
@@ -387,6 +429,8 @@ AS $f_o_func$
 --                  OLD.country,
 --                  OLD.postal_code,
 --                  OLD.logo;
+-- MOD                   OLD.modifier,
+-- MOD                   CAST(OLD.modification_time AS TIMESTAMP WITH TIME ZONE);
 
          -- The DELETE operation will leave the email address behind, on the
          -- off chance that we need to associate that email address with
