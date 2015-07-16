@@ -551,6 +551,8 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     {
         $fundingOrganizationData = array(
             'id' => null,
+            'creationTimeStamp' => null,
+            'creator' => self::$testCreator,
             'name' => self::$testName,
             'emailAddress' => self::$testEmailAddress,
             'description' => self::$testDescription,

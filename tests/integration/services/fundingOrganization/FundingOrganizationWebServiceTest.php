@@ -102,6 +102,13 @@ class FundingOrganizationWebServiceTest extends \PHPUnit_Framework_TestCase
     protected static $testCountry = 'USA';
 
     /**
+     * Static class variable containing username to use as creator.
+     *
+     * @var string $testCreator
+     */
+    protected static $testCreator = 'testcreator';
+
+    /**
      * Set up for tests.
      *
      * We mock \Doctrine\ORM\EntityManager and \Pelagos\Persistance so we don't need a real database.
@@ -419,6 +426,8 @@ class FundingOrganizationWebServiceTest extends \PHPUnit_Framework_TestCase
     {
         $fundingOrganizationData = array(
             'id' => null,
+            'creationTimeStamp' => null,
+            'creator' => self::$testCreator,
             'name' => self::$testName,
             'emailAddress' => self::$testEmailAddress,
             'description' => self::$testDescription,
@@ -430,9 +439,9 @@ class FundingOrganizationWebServiceTest extends \PHPUnit_Framework_TestCase
             'postalCode' => self::$testPostalCode,
             'country' => self::$testCountry,
         );
-        $mockFundingOrganization = \Mockery::mock('\Pelagos\Entity\FundingOrganization, JsonSerializable');
-        $mockFundingOrganization->shouldReceive('jsonSerialize')->andReturn($fundingOrganizationData);
-        $this->mockEntityManager->shouldReceive('find')->andReturn($mockFundingOrganization);
+        $testFundingOrganization = new \Pelagos\Entity\FundingOrganization;
+        $testFundingOrganization->update($fundingOrganizationData);
+        $this->mockEntityManager->shouldReceive('find')->andReturn($testFundingOrganization);
         \Slim\Environment::mock(
             array(
                 'REQUEST_METHOD' => 'GET',

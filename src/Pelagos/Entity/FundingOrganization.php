@@ -458,6 +458,8 @@ class FundingOrganization extends Entity
     {
         return array(
             'id' => $this->getId(),
+            'creationTimeStamp' => $this->getCreationTimeStampAsISO(),
+            'creator' => $this->getCreator(),
             'name' => $this->getName(),
             'emailAddress' => $this->getEmailAddress(),
             'description' => $this->getDescription(),

@@ -160,6 +160,8 @@ abstract class Entity implements \JsonSerializable
     {
         return array(
             'id' => $this->getId(),
+            'creationTimeStamp' => $this->getCreationTimeStampAsISO(),
+            'creator' => $this->getCreator(),
         );
     }
 }
