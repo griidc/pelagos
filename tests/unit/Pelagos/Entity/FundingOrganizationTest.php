@@ -96,6 +96,41 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     protected static $testCountry = 'USA';
 
     /**
+     * Static class variable containing username to use as creator.
+     *
+     * @var string $testCreator
+     */
+    protected static $testCreator = 'testcreator';
+
+    /**
+     * Property to hold a time stamp to use in testing.
+     *
+     * @var \DateTime $timeStamp
+     */
+    protected $timeStamp;
+
+    /**
+     * Property to hold an ISO 8601 representation of a time stamp to use in testing.
+     *
+     * @var string $timeStampISO
+     */
+    protected $timeStampISO;
+
+    /**
+     * Property to hold a localized time stamp to use in testing.
+     *
+     * @var \DateTime $timeStampLocalized
+     */
+    protected $timeStampLocalized;
+
+    /**
+     * Property to hold an ISO 8601 representation of a localized time stamp to use in testing.
+     *
+     * @var string $timeStampLocalizedISO
+     */
+    protected $timeStampLocalizedISO;
+
+    /**
      * Setup for PHPUnit tests.
      *
      * This instantiates an instance of FundingOrganization.
@@ -117,6 +152,14 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
         $this->fundingOrganization->setAdministrativeArea(self::$testAdministrativeArea);
         $this->fundingOrganization->setPostalCode(self::$testPostalCode);
         $this->fundingOrganization->setCountry(self::$testCountry);
+        $this->fundingOrganization->setCreator(self::$testCreator);
+
+        $this->timeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->timeStampISO = $this->timeStamp->format(\DateTime::ISO8601);
+        $this->timeStampLocalized = clone $this->timeStamp;
+        $this->timeStampLocalized->setTimeZone(new \DateTimeZone(date_default_timezone_get()));
+        $this->timeStampLocalizedISO = $this->timeStampLocalized->format(\DateTime::ISO8601);
+
     }
 
     /**
@@ -298,6 +341,137 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
             $this->fundingOrganization->getCountry(),
             self::$testCountry
         );
+    }
+
+    /**
+     * Test the getCreator method.
+     *
+     * This method should return the creator that was set in setUp.
+     *
+     * @return void
+     */
+    public function testGetCreator()
+    {
+        $this->assertEquals(
+            $this->fundingOrganization->getCreator(),
+            self::$testCreator
+        );
+    }
+    /**
+     * Test the setCreationTimeStamp method.
+     *
+     * This method should accept a \DateTime object in UTC.
+     * We should be able to get back the same timestamp in UTC
+     * if we call getCreationTimeStamp(false) (non-localized).
+     *
+     * @return void
+     */
+    public function testSetCreationTimeStamp()
+    {
+        $timeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
+        $timeStampISO = $timeStamp->format(\DateTime::ISO8601);
+        $this->fundingOrganization->setCreationTimeStamp($timeStamp);
+        $creationTimeStamp = $this->fundingOrganization->getCreationTimeStamp(false);
+        $this->assertInstanceOf('\DateTime', $creationTimeStamp);
+        $this->assertEquals($timeStampISO, $creationTimeStamp->format(\DateTime::ISO8601));
+    }
+
+    /**
+     * Test the setCreationTimeStamp method with a non-UTC timestamp.
+     *
+     * @return void
+     *
+     * @expectedException \Exception
+     */
+    public function testSetCreationTimeStampFailForNonUTC()
+    {
+        $this->fundingOrganization->setCreationTimeStamp(
+            new \DateTime('now', new \DateTimeZone('America/Chicago'))
+        );
+    }
+
+    /**
+     * Test the getCreationTimeStamp method.
+     *
+     * This method should return a \DateTime object in UTC.
+     *
+     * @return void
+     */
+    public function testGetCreationTimeStamp()
+    {
+        $this->fundingOrganization->setCreationTimeStamp($this->timeStamp);
+        $creationTimeStamp = $this->fundingOrganization->getCreationTimeStamp();
+        $this->assertInstanceOf('\DateTime', $creationTimeStamp);
+        $this->assertEquals(
+            'UTC',
+            $creationTimeStamp->getTimezone()->getName()
+        );
+        $this->assertEquals($this->timeStamp, $creationTimeStamp);
+    }
+
+    /**
+     * Test the getCreationTimeStamp method (localized).
+     *
+     * This method should return a \DateTime object localized to the current timezone.
+     *
+     * @return void
+     */
+    public function testGetCreationTimeStampLocalized()
+    {
+        $this->fundingOrganization->setCreationTimeStamp($this->timeStamp);
+        $creationTimeStamp = $this->fundingOrganization->getCreationTimeStamp(true);
+        $this->assertInstanceOf('\DateTime', $creationTimeStamp);
+        $this->assertEquals(
+            date_default_timezone_get(),
+            $creationTimeStamp->getTimezone()->getName()
+        );
+        $this->assertEquals($this->timeStamp, $creationTimeStamp);
+    }
+
+    /**
+     * Test the getCreationTimeStampAsISO method.
+     *
+     * This method should return a string containing the ISO 8601 representation
+     * of the creation time stamp localized to the current timezone.
+     *
+     * @return void
+     */
+    public function testGetCreationTimeStampAsISO()
+    {
+        $this->fundingOrganization->setCreationTimeStamp($this->timeStamp);
+        $this->assertEquals(
+            $this->timeStampISO,
+            $this->fundingOrganization->getCreationTimeStampAsISO()
+        );
+    }
+
+    /**
+     * Test the getCreationTimeStampAsISO method.
+     *
+     * This method should return a string containing the ISO 8601 representation
+     * of the creation time stamp localized to the current timezone.
+     *
+     * @return void
+     */
+    public function testGetCreationTimeStampAsISOLocalized()
+    {
+        $this->fundingOrganization->setCreationTimeStamp($this->timeStamp);
+        $this->assertEquals(
+            $this->timeStampLocalizedISO,
+            $this->fundingOrganization->getCreationTimeStampAsISO(true)
+        );
+    }
+
+    /**
+     * Test the getCreationTimeStampAsISO method when creationTimeStamp is null.
+     *
+     * This method should return null in this case.
+     *
+     * @return void
+     */
+    public function testGetCreationTimeStampAsISONull()
+    {
+        $this->assertNull($this->fundingOrganization->getCreationTimeStampAsISO());
     }
 
     /**

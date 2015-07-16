@@ -441,6 +441,9 @@ class FundingOrganization extends Entity
                 case 'country':
                     $this->setCountry($value);
                     break;
+                case 'creator':
+                    $this->setCreator($value);
+                    break;
             }
         }
         return $this;
