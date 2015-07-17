@@ -39,6 +39,9 @@ CREATE TABLE email2funding_organization_table
 ALTER INDEX email2funding_organization_table_pkey
    RENAME TO uidx_pk_email2funding_organization;
 
+CREATE UNIQUE INDEX uidx_one_email_to_fund_org
+   ON email2funding_organization_table(funding_organization_number);
+
 -- Set object ownership's:
 ALTER TABLE email2funding_organization_table
    OWNER TO gomri_admin;
