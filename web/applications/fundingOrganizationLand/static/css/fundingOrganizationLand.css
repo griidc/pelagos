@@ -1,0 +1,9 @@
+label {
+    display: inline;
+}
+
+input,textarea {
+    border: 1px solid rgba(255,255,255,0);
+    margin: 1px;
+    font-family: sans-serif;
+}
