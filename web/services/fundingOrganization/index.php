@@ -242,8 +242,6 @@ $slim->put(
                 }
             }
 
-        #var_dump($updates);  die();
-
             // get the Funding Organization (F.O.), apply updates, validate the F.O. , persist the updated F.O.
             $entityService = new EntityService($comp->getEntityManager());
             $fundingOrganization = $entityService->get('FundingOrganization', $id);
