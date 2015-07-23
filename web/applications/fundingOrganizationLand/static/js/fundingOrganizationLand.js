@@ -55,7 +55,14 @@ function populateFundingOrganization(FundingOrganizationID)
     $.get(pelagosBasePath + "/services/fundingOrganization/" + FundingOrganizationID)
     .done(function(data) {
         $("#fundingOrganizationForm").fillForm(data.data);
-        $("#fundingOrganizationLogo").html("<img src=\"" + pelagosBasePath + "/services/fundingOrganization/logo/" + FundingOrganizationID + "\">");
+        $.ajax({
+            url: 'test.html',
+            cache: false,
+            success: function(html){
+                $('#results').append(html);
+            }
+        });
+        $("#fundingOrganizationLogo").html("<img src=\"" + pelagosBasePath + "/services/fundingOrganization/logo/" + FundingOrganizationID + "?" + Math.random() + "\">");
     });
 }
 
@@ -114,6 +121,8 @@ function updateFundingOrganization(jsonData,fundingID)
                 },
                 timeout: 3000
             });
+            
+            populateFundingOrganization(json.data.id);
         }
     })
 }
