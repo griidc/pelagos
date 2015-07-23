@@ -23,7 +23,7 @@
                     .append('<div class="innerForm"><div>')
                     .removeClass('active');
                     
-                    $('.editableFormButton').css({opacity: 1.0, visibility: "visible"}).animate({opacity: 0.0});
+                    $('.editableFormButton,.showOnEdit').css({opacity: 1.0, visibility: "visible"}).animate({opacity: 0.0});
                     $('.revertField').remove();
                     window.onbeforeunload = null;
                     break;
@@ -66,6 +66,7 @@
                     return "You still have unsaved changed!\nAre you sure you want to navigate away?";
                 }
                 $(this).addClass('active');
+                
                 var url = options.validationURL;
                 self.find('input,textarea').each(function() {
                     self.append('<input class="revertField" type="hidden" original="'+
@@ -80,7 +81,7 @@
                     })
                     $('.innerForm').remove();
                 });
-                $('.editableFormButton').css({opacity: 0.0, visibility: "visible"}).animate({opacity: 1.0});
+                $('.editableFormButton,.showOnEdit').css({opacity: 0.0, visibility: "visible"}).animate({opacity: 1.0});
             }   
         });
         
