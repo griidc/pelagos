@@ -98,6 +98,7 @@ $slim->post(
             }
             $updates = $slim->request->params();
             $updates['creator'] = $comp->getLoggedInUser();
+            $updates['modifier'] = $comp->getLoggedInUser();
             if (array_key_exists('logo', $updates)) {
                 unset($updates['logo']);
             }
@@ -233,7 +234,7 @@ $slim->post(
 
         try {
             $updates = $slim->request->params();
-            //$updates['modifier'] = $comp->getLoggedInUser();
+            $updates['modifier'] = $comp->getLoggedInUser();
 
             // get the Funding Organization (F.O.)
             $entityService = new EntityService($comp->getEntityManager());
