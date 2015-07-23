@@ -31,6 +31,9 @@ CREATE VIEW funding_organization AS
    SELECT f.funding_organization_number AS funding_organization_number,
           f.funding_organization_name AS name,
           f.funding_organization_description AS description,
+          DATE_TRUNC('seconds', f.funding_organization_creation_time)
+             AS creation_time,
+          f.funding_organization_creator AS creator,
           f.funding_organization_phone_number AS phone_number,
           CAST(e2f.email_address AS TEXT) AS email_address,
           f.funding_organization_website AS website,
@@ -39,7 +42,9 @@ CREATE VIEW funding_organization AS
           f.funding_organization_administrative_area AS administrative_area,
           f.funding_organization_country AS country,
           f.funding_organization_postal_code AS postal_code,
-          f.funding_organization_logo AS logo
+          f.funding_organization_logo AS logo,
+          f.funding_organization_modifier AS modifier,
+          f.funding_organization_modification_time AS modification_time
    FROM funding_organization_table f
       LEFT JOIN email2funding_organization_table e2f
          ON f.funding_organization_number = e2f.funding_organization_number
@@ -80,9 +85,12 @@ AS $f_o_func$
          IF TG_OP = 'INSERT'
          THEN
             -- Make sure we were supplied a Funding Organization name:
-            IF NEW.name IS NULL OR NEW.name = ''
+            IF NEW.name IS NULL OR NEW.name = '' OR
+               NEW.creator is NULL or NEW.creator = ''
             THEN
-               _err_hint := 'A Funding Organization entity requires a name';
+               _err_hint := CONCAT('A Funding Organization entity requires a ',
+                                   'funding organization name and a creator ',
+                                   'name');
                _err_msg  := 'Missing required field violation';
                -- This is an invalid entry. Raise an exception and quit (the
                -- exception text is only used when we disable exception
@@ -153,22 +161,31 @@ AS $f_o_func$
                         funding_organization_administrative_area,
                         funding_organization_city,
                         funding_organization_country,
+                        funding_organization_creation_time,
+                        funding_organization_creator,
                         funding_organization_delivery_point,
                         funding_organization_description,
                         funding_organization_logo,
+                        funding_organization_modification_time,
+                        funding_organization_modifier,
                         funding_organization_name,
                         funding_organization_phone_number,
                         funding_organization_postal_code,
                         funding_organization_website
                      )
-                     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)'
+                     VALUES ($1,  $2,  $3,  $4,  $5,  $6,  $7,  $8,
+                             $9,  $10, $11, $12, $13, $14, $15)'
                USING NEW.funding_organization_number,
                      NEW.administrative_area,
                      NEW.city,
                      NEW.country,
+                     DATE_TRUNC('seconds', NOW()),
+                     NEW.creator,
                      NEW.delivery_point,
                      NEW.description,
                      NEW.logo,
+                     DATE_TRUNC('seconds', NOW()),
+                     NEW.modifier,
                      NEW.name,
                      NEW.phone_number,
                      NEW.postal_code,
@@ -201,60 +218,69 @@ AS $f_o_func$
 
          ELSEIF TG_OP = 'UPDATE'
          THEN
---             -- Update the history table with the current OLD information:
---             EXECUTE 'INSERT INTO funding_organization_history_table
---                      (
---                          funding_organization_history_action,
---                          funding_organization_number,
---                          name,
---                          description,
---                          phone_number,
---                          email_address,
---                          website,
---                          delivery_point,
---                          city,
---                          administrative_area,
---                          country,
---                          postal_code,
---                          logo
---                       )
---                       VALUES ($1,  $2,  $3,  $4,  $5,  $6,  $7,
---                               $8,  $9,  $10, $11, $12, $13)'
---               USING TG_OP,
---                     OLD.funding_organization_number,
---                     (CASE WHEN NEW.name IS NULL THEN NULL
---                        ELSE OLD.name
---                     END),
---                     (CASE WHEN NEW.description IS NULL THEN NULL
---                        ELSE OLD.description
---                     END),
---                     (CASE WHEN NEW.phone_number IS NULL THEN NULL
---                        ELSE OLD.phone_number
---                     END),
---                     (CASE WHEN _email_addr IS NULL THEN NULL
---                        ELSE OLD.email_address
---                     END),
---                     (CASE WHEN NEW.website IS NULL THEN NULL
---                        ELSE OLD.website
---                     END),
---                     (CASE WHEN NEW.delivery_point IS NULL THEN NULL
---                        ELSE OLD.delivery_point
---                     END),
---                     (CASE WHEN NEW.city IS NULL THEN NULL
---                        ELSE OLD.city
---                     END),
---                     (CASE WHEN NEW.administrative_area IS NULL THEN NULL
---                        ELSE OLD.administrative_area
---                     END),
---                     (CASE WHEN NEW.country IS NULL THEN NULL
---                        ELSE OLD.country
---                     END),
---                     (CASE WHEN NEW.postal_code IS NULL THEN NULL
---                        ELSE OLD.postal_code
---                     END),
---                     (CASE WHEN NEW.logo IS NULL THEN NULL
---                        ELSE OLD.logo
---                     END);
+            -- Update the history table with the current OLD information:
+            EXECUTE 'INSERT INTO funding_organization_history_table
+                     (
+                         funding_organization_history_action,
+                         funding_organization_number,
+                         name,
+                         description,
+                         creator,
+                         creation_time,
+                         phone_number,
+                         email_address,
+                         website,
+                         delivery_point,
+                         city,
+                         administrative_area,
+                         country,
+                         postal_code,
+                         logo,
+                         modifier,
+                         modification_time
+                      )
+                      VALUES ($1,  $2,  $3,  $4,  $5,  $6,
+                              $7,  $8,  $9,  $10, $11, $12,
+                              $13, $14, $15, $16, $17)'
+               USING TG_OP,
+                     OLD.funding_organization_number,
+                     (CASE WHEN NEW.name IS NULL THEN NULL
+                         ELSE OLD.name
+                      END),
+                     (CASE WHEN NEW.description IS NULL THEN NULL
+                         ELSE OLD.description
+                      END),
+                     OLD.creator,
+                     OLD.creation_time,
+                     (CASE WHEN NEW.phone_number IS NULL THEN NULL
+                         ELSE OLD.phone_number
+                      END),
+                     (CASE WHEN NEW.email_address IS NULL THEN NULL
+                         ELSE OLD.email_address
+                      END),
+                     (CASE WHEN NEW.website IS NULL THEN NULL
+                         ELSE OLD.website
+                      END),
+                     (CASE WHEN NEW.delivery_point IS NULL THEN NULL
+                         ELSE OLD.delivery_point
+                      END),
+                     (CASE WHEN NEW.city IS NULL THEN NULL
+                         ELSE OLD.city
+                      END),
+                     (CASE WHEN NEW.administrative_area IS NULL THEN NULL
+                         ELSE OLD.administrative_area
+                      END),
+                     (CASE WHEN NEW.country IS NULL THEN NULL
+                         ELSE OLD.country
+                      END),
+                     (CASE WHEN NEW.postal_code IS NULL THEN NULL
+                         ELSE OLD.postal_code
+                      END),
+                     (CASE WHEN NEW.logo IS NULL THEN NULL
+                         ELSE OLD.logo
+                      END),
+                     OLD.modifier,
+                     CAST(OLD.modification_time AS TIMESTAMP WITH TIME ZONE);
 
             -- Update the funding_organization information if necessary:
             IF ROW(NEW.administrative_area,
@@ -328,7 +354,17 @@ AS $f_o_func$
                END IF;
 
                -- Now create the email-to-funding_organization association (if
-               -- needed). First, see if there is an existing association:
+               -- needed). First, delete any existing association not with this
+               -- email address:
+               EXECUTE 'DELETE
+                        FROM email2funding_organization_table
+                        WHERE LOWER(email_address) <> LOWER($1)
+                           AND funding_organization_number = $2'
+                  USING _email_addr,
+                        NEW.funding_organization_number;
+
+               -- Now make sure we are not trying to insert the same relation
+               -- again, and create it if necessary:
                EXECUTE 'SELECT COUNT(*)
                         FROM email2funding_organization_table
                         WHERE LOWER(email_address) = LOWER($1)
@@ -336,7 +372,7 @@ AS $f_o_func$
                   INTO _count
                   USING _email_addr,
                         NEW.funding_organization_number;
-   
+
                IF _count = 0
                THEN
                   -- No existing association found. Create one:
@@ -349,44 +385,62 @@ AS $f_o_func$
                      USING _email_addr,
                            NEW.funding_organization_number;
                END IF;
+
+               -- Finally, update the modification information:
+               EXECUTE 'UPDATE funding_organization_table
+                        SET funding_organization_modification_time = 
+                               DATE_TRUNC(''seconds'', NOW()),
+                            funding_organization_modifier = $1
+                        WHERE funding_organization_number = $2'
+                  USING NEW.modifier,
+                        NEW.funding_organization_number;
             END IF;
 
             RETURN NEW;
          END IF;
       ELSE
          -- This is a deletion.
---          -- First update the history table with all current information:
---          EXECUTE 'INSERT INTO funding_organization_history_table
---                   (
---                       funding_organization_history_action,
---                       funding_organization_number,
---                       name,
---                       description,
---                       phone_number,
---                       email_address,
---                       website,
---                       delivery_point,
---                       city,
---                       administrative_area,
---                       country,
---                       postal_code,
---                       logo
---                    )
---                    VALUES ($1,  $2,  $3,  $4,  $5,  $6,  $7,
---                            $8,  $9,  $10, $11, $12, $13)'
---            USING TG_OP,
---                  OLD.funding_organization_number,
---                  OLD.name,
---                  OLD.description,
---                  OLD.phone_number,
---                  OLD.email_address,
---                  OLD.website,
---                  OLD.delivery_point,
---                  OLD.city,
---                  OLD.administrative_area,
---                  OLD.country,
---                  OLD.postal_code,
---                  OLD.logo;
+         -- First update the history table with all current information:
+         EXECUTE 'INSERT INTO funding_organization_history_table
+                  (
+                      funding_organization_history_action,
+                      funding_organization_number,
+                      name,
+                      description,
+                      creator,
+                      creation_time,
+                      phone_number,
+                      email_address,
+                      website,
+                      delivery_point,
+                      city,
+                      administrative_area,
+                      country,
+                      postal_code,
+                      logo,
+                      modifier,
+                      modification_time
+                   )
+                   VALUES ($1,  $2,  $3,  $4,  $5,  $6,
+                           $7,  $8,  $9,  $10, $11, $12,
+                           $13, $14, $15, $16, $17)'
+            USING TG_OP,
+                  OLD.funding_organization_number,
+                  OLD.name,
+                  OLD.description,
+                  OLD.creator,
+                  OLD.creation_time,
+                  OLD.phone_number,
+                  OLD.email_address,
+                  OLD.website,
+                  OLD.delivery_point,
+                  OLD.city,
+                  OLD.administrative_area,
+                  OLD.country,
+                  OLD.postal_code,
+                  OLD.logo,
+                  OLD.modifier,
+                  CAST(OLD.modification_time AS TIMESTAMP WITH TIME ZONE);
 
          -- The DELETE operation will leave the email address behind, on the
          -- off chance that we need to associate that email address with

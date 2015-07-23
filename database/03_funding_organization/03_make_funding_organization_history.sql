@@ -28,6 +28,9 @@ CREATE TABLE funding_organization_history_table
    funding_organization_number              INTEGER             NOT NULL,
    name                                     TEXT,
    description                              TEXT,
+   creator                                  TEXT                NOT NULL,
+   creation_time                            TIMESTAMP WITH TIME ZONE
+      NOT NULL,
    phone_number                             TEXT,
    email_address                            EMAIL_ADDRESS_TYPE,
    website                                  TEXT,
@@ -37,6 +40,9 @@ CREATE TABLE funding_organization_history_table
    country                                  TEXT,
    postal_code                              TEXT,
    logo                                     BYTEA,
+   modifier                                 TEXT                NOT NULL,
+   modification_time                        TIMESTAMP WITH TIME ZONE
+      NOT NULL,
 
    PRIMARY KEY (funding_organization_history_number)
 );
