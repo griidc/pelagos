@@ -213,5 +213,68 @@ $slim->get(
     }
 );
 
+$slim->put(
+    '/:id',
+    function ($id) use ($comp, $slim) {
+        $response = $slim->response;
+        $response->headers->set('Content-Type', 'application/json');
+        $comp->setQuitOnFinalize(true);
+
+        // Check to see that user is logged in.
+        // THIS IS AN INSUFFICIENT SECURITY CHECK, THIS WILL
+        // HAVE TO BE TIED TO SOME SORT OF ACCESS LIST WHEN
+        // RELEASED.
+        if (!$comp->userIsLoggedIn()) {
+            $status = new HTTPStatus(401, 'Login Required to use this feature');
+            $response->status($status->getCode());
+            $response->body(json_encode($status));
+            return;
+        }
+
+        try {
+
+            $updates = $slim->request->params();
+            //$updates['modifier'] = $comp->getLoggedInUser();
+
+            foreach ($updates as $property => $value) {
+                if (empty($value)) {
+                    $updates[$property] = null;
+                }
+            }
+
+            // get the Funding Organization (F.O.), apply updates, validate the F.O. , persist the updated F.O.
+            $entityService = new EntityService($comp->getEntityManager());
+            $fundingOrganization = $entityService->get('FundingOrganization', $id);
+            $fundingOrganization = $entityService->persist(
+                $entityService->validate(
+                    $fundingOrganization->update($updates),
+                    Validation::createValidatorBuilder()->enableAnnotationMapping()->getValidator()
+                )
+            );
+            $status = new HTTPStatus(200, "Updated Funding Organization with id: $id", $fundingOrganization);
+        } catch (ArgumentException $e) {
+            $status = new HTTPStatus(400, $e->getMessage());
+        } catch (ValidationException $e) {
+            $violations = array();
+            foreach ($e->getViolations() as $violation) {
+                $violations[] = $violation->getMessage();
+            }
+            $status = new HTTPStatus(
+                400,
+                'Cannot update funding organization because: ' . join(', ', $violations)
+            );
+        } catch (RecordNotFoundPersistenceException $e) {
+            $status = new HTTPStatus(404, $e->getMessage());
+        } catch (PersistenceException $e) {
+            $status = new HTTPStatus(500, 'A database error has occured:: ' . $e->getDatabaseErrorMessage());
+        } catch (\Exception $e) {
+            $status = new HTTPStatus(500, 'A general error has occured: ' . $e->getMessage());
+        }
+        $response->status($status->getCode());
+        $response->body(json_encode($status));
+    }
+);
+
+
 $slim->run();
 $comp->finalize();

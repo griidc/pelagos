@@ -24,9 +24,6 @@ class FundingOrganization extends Entity
      * @Assert\NotBlank(
      *     message="Name is required"
      * )
-     * @Assert\Unique(
-     *     message="This name has already been used"
-     * )
      */
     protected $name;
 
