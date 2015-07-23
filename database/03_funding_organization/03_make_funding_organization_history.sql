@@ -40,9 +40,9 @@ CREATE TABLE funding_organization_history_table
    country                                  TEXT,
    postal_code                              TEXT,
    logo                                     BYTEA,
--- MOD    modifier                                 TEXT                NOT NULL,
--- MOD    modification_time                        TIMESTAMP WITH TIME ZONE
--- MOD       NOT NULL,
+   modifier                                 TEXT                NOT NULL,
+   modification_time                        TIMESTAMP WITH TIME ZONE
+      NOT NULL,
 
    PRIMARY KEY (funding_organization_history_number)
 );
