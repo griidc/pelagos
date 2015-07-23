@@ -64,9 +64,8 @@ function updateFundingOrganization(jsonData,fundingID)
     var theurl = pelagosBasePath + "/services/fundingOrganization/"+fundingID;
     var title = "";
     var messsage = "";
-    debugger;
     $.ajax({
-        type: 'PUT',
+        type: 'POST',
         data: jsonData,
         url: theurl,
         // Optionally enforce JSON return, in case a status 200 happens, but no JSON returns
