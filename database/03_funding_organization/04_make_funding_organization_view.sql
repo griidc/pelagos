@@ -42,9 +42,9 @@ CREATE VIEW funding_organization AS
           f.funding_organization_administrative_area AS administrative_area,
           f.funding_organization_country AS country,
           f.funding_organization_postal_code AS postal_code,
-          f.funding_organization_logo AS logo
--- MOD           f.funding_organization_modifier AS modifier,
--- MOD           f.funding_organization_modification_time AS modification_time
+          f.funding_organization_logo AS logo,
+          f.funding_organization_modifier AS modifier,
+          f.funding_organization_modification_time AS modification_time
    FROM funding_organization_table f
       LEFT JOIN email2funding_organization_table e2f
          ON f.funding_organization_number = e2f.funding_organization_number
@@ -166,16 +166,15 @@ AS $f_o_func$
                         funding_organization_delivery_point,
                         funding_organization_description,
                         funding_organization_logo,
--- MOD                         funding_organization_modification_time,
--- MOD                         funding_organization_modifier,
+                        funding_organization_modification_time,
+                        funding_organization_modifier,
                         funding_organization_name,
                         funding_organization_phone_number,
                         funding_organization_postal_code,
                         funding_organization_website
                      )
                      VALUES ($1,  $2,  $3,  $4,  $5,  $6,  $7,  $8,
-                             $9,  $10, $11, $12, $13)'
--- MOD                              $9,  $10, $11, $12, $13, $14, $15)'
+                             $9,  $10, $11, $12, $13, $14, $15)'
                USING NEW.funding_organization_number,
                      NEW.administrative_area,
                      NEW.city,
@@ -185,8 +184,8 @@ AS $f_o_func$
                      NEW.delivery_point,
                      NEW.description,
                      NEW.logo,
--- MOD                      DATE_TRUNC('seconds', NOW()),
--- MOD                      NEW.modifier,
+                     DATE_TRUNC('seconds', NOW()),
+                     NEW.modifier,
                      NEW.name,
                      NEW.phone_number,
                      NEW.postal_code,
@@ -219,70 +218,69 @@ AS $f_o_func$
 
          ELSEIF TG_OP = 'UPDATE'
          THEN
---             -- Update the history table with the current OLD information:
---             EXECUTE 'INSERT INTO funding_organization_history_table
---                      (
---                          funding_organization_history_action,
---                          funding_organization_number,
---                          name,
---                          description,
---                          creator,
---                          creation_time,
---                          phone_number,
---                          email_address,
---                          website,
---                          delivery_point,
---                          city,
---                          administrative_area,
---                          country,
---                          postal_code,
---                          logo,
--- -- MOD                           modifier,
--- -- MOD                           modification_time
---                       )
---                       VALUES ($1,  $2,  $3,  $4,  $5,  $6,
---                               $7,  $8   $9,  $10, $11, $12,
---                               $13, $14, $15)'
--- -- MOD                                $13, $14, $15, $16, $17)'
---               USING TG_OP,
---                     OLD.funding_organization_number,
---                     CASE WHEN NEW.name IS NULL THEN NULL
---                        ELSE OLD.name
---                     END),
---                     CASE WHEN NEW.description IS NULL THEN NULL
---                        ELSE OLD.description
---                     END),
---                     OLD.creator,
---                     OLD.creation_time,
---                     CASE WHEN NEW.phone_number IS NULL THEN NULL
---                        ELSE OLD.phone_number
---                     END),
---                     CASE WHEN NEW.email_address IS NULL THEN NULL
---                        ELSE OLD.email_address
---                     END),
---                     CASE WHEN NEW.website IS NULL THEN NULL
---                        ELSE OLD.website
---                     END),
---                     CASE WHEN NEW.delivery_point IS NULL THEN NULL
---                        ELSE OLD.delivery_point
---                     END),
---                     CASE WHEN NEW.city IS NULL THEN NULL
---                        ELSE OLD.city
---                     END),
---                     CASE WHEN NEW.administrative_area IS NULL THEN NULL
---                        ELSE OLD.administrative_area
---                     END),
---                     CASE WHEN NEW.country IS NULL THEN NULL
---                        ELSE OLD.country
---                     END),
---                     CASE WHEN NEW.postal_code IS NULL THEN NULL
---                        ELSE OLD.postal_code
---                     END),
---                     CASE WHEN NEW.logo, IS NULL THEN NULL
---                        ELSE OLD.logo,
---                     END),
--- -- MOD                      OLD.modifier,
--- -- MOD                      CAST(OLD.modification_time AS TIMESTAMP WITH TIME ZONE);
+            -- Update the history table with the current OLD information:
+            EXECUTE 'INSERT INTO funding_organization_history_table
+                     (
+                         funding_organization_history_action,
+                         funding_organization_number,
+                         name,
+                         description,
+                         creator,
+                         creation_time,
+                         phone_number,
+                         email_address,
+                         website,
+                         delivery_point,
+                         city,
+                         administrative_area,
+                         country,
+                         postal_code,
+                         logo,
+                         modifier,
+                         modification_time
+                      )
+                      VALUES ($1,  $2,  $3,  $4,  $5,  $6,
+                              $7,  $8,  $9,  $10, $11, $12,
+                              $13, $14, $15, $16, $17)'
+               USING TG_OP,
+                     OLD.funding_organization_number,
+                     (CASE WHEN NEW.name IS NULL THEN NULL
+                         ELSE OLD.name
+                      END),
+                     (CASE WHEN NEW.description IS NULL THEN NULL
+                         ELSE OLD.description
+                      END),
+                     OLD.creator,
+                     OLD.creation_time,
+                     (CASE WHEN NEW.phone_number IS NULL THEN NULL
+                         ELSE OLD.phone_number
+                      END),
+                     (CASE WHEN NEW.email_address IS NULL THEN NULL
+                         ELSE OLD.email_address
+                      END),
+                     (CASE WHEN NEW.website IS NULL THEN NULL
+                         ELSE OLD.website
+                      END),
+                     (CASE WHEN NEW.delivery_point IS NULL THEN NULL
+                         ELSE OLD.delivery_point
+                      END),
+                     (CASE WHEN NEW.city IS NULL THEN NULL
+                         ELSE OLD.city
+                      END),
+                     (CASE WHEN NEW.administrative_area IS NULL THEN NULL
+                         ELSE OLD.administrative_area
+                      END),
+                     (CASE WHEN NEW.country IS NULL THEN NULL
+                         ELSE OLD.country
+                      END),
+                     (CASE WHEN NEW.postal_code IS NULL THEN NULL
+                         ELSE OLD.postal_code
+                      END),
+                     (CASE WHEN NEW.logo IS NULL THEN NULL
+                         ELSE OLD.logo
+                      END),
+                     OLD.modifier,
+                     CAST(OLD.modification_time AS TIMESTAMP WITH TIME ZONE);
 
             -- Update the funding_organization information if necessary:
             IF ROW(NEW.administrative_area,
@@ -389,59 +387,60 @@ AS $f_o_func$
                END IF;
 
                -- Finally, update the modification information:
--- MOD                EXECUTE 'UPDATE funding_organization_table
--- MOD                         SET funding_organization_modification_time = DATE_TRUNC('seconds', NOW()),
--- MOD                            funding_organization_modifier = $1
--- MOD                         WHERE funding_organization_number = $2'
--- MOD                USING NEW.modifier,
--- MOD                      NEW.funding_organization_number;
+               EXECUTE 'UPDATE funding_organization_table
+                        SET funding_organization_modification_time = 
+                               DATE_TRUNC(''seconds'', NOW()),
+                            funding_organization_modifier = $1
+                        WHERE funding_organization_number = $2'
+                  USING NEW.modifier,
+                        NEW.funding_organization_number;
             END IF;
 
             RETURN NEW;
          END IF;
       ELSE
          -- This is a deletion.
---          -- First update the history table with all current information:
---          EXECUTE 'INSERT INTO funding_organization_history_table
---                   (
---                       funding_organization_history_action,
---                       funding_organization_number,
---                       name,
---                       description,
---                       creator,
---                       creation_time,
---                       phone_number,
---                       email_address,
---                       website,
---                       delivery_point,
---                       city,
---                       administrative_area,
---                       country,
---                       postal_code,
---                       logo,
--- -- MOD                        modifier,
--- -- MOD                        modification_time
---                    )
---                    VALUES ($1,  $2,  $3,  $4,  $5,  $6,
---                            $7,  $8   $9,  $10, $11, $12,
---                            $13, $14, $15, $16, $17)'
---            USING TG_OP,
---                  OLD.funding_organization_number,
---                  OLD.name,
---                  OLD.description,
---                  OLD.creator,
---                  OLD.creation_time,
---                  OLD.phone_number,
---                  OLD.email_address,
---                  OLD.website,
---                  OLD.delivery_point,
---                  OLD.city,
---                  OLD.administrative_area,
---                  OLD.country,
---                  OLD.postal_code,
---                  OLD.logo;
--- MOD                   OLD.modifier,
--- MOD                   CAST(OLD.modification_time AS TIMESTAMP WITH TIME ZONE);
+         -- First update the history table with all current information:
+         EXECUTE 'INSERT INTO funding_organization_history_table
+                  (
+                      funding_organization_history_action,
+                      funding_organization_number,
+                      name,
+                      description,
+                      creator,
+                      creation_time,
+                      phone_number,
+                      email_address,
+                      website,
+                      delivery_point,
+                      city,
+                      administrative_area,
+                      country,
+                      postal_code,
+                      logo,
+                      modifier,
+                      modification_time
+                   )
+                   VALUES ($1,  $2,  $3,  $4,  $5,  $6,
+                           $7,  $8,  $9,  $10, $11, $12,
+                           $13, $14, $15, $16, $17)'
+            USING TG_OP,
+                  OLD.funding_organization_number,
+                  OLD.name,
+                  OLD.description,
+                  OLD.creator,
+                  OLD.creation_time,
+                  OLD.phone_number,
+                  OLD.email_address,
+                  OLD.website,
+                  OLD.delivery_point,
+                  OLD.city,
+                  OLD.administrative_area,
+                  OLD.country,
+                  OLD.postal_code,
+                  OLD.logo,
+                  OLD.modifier,
+                  CAST(OLD.modification_time AS TIMESTAMP WITH TIME ZONE);
 
          -- The DELETE operation will leave the email address behind, on the
          -- off chance that we need to associate that email address with
@@ -461,36 +460,36 @@ AS $f_o_func$
          RETURN OLD;
       END IF;
 
---       EXCEPTION
---          WHEN SQLSTATE '23502'
---             THEN
---                RAISE EXCEPTION '%',   _err_msg
---                   USING HINT        = _err_hint,
---                         ERRCODE     = '23502';
---                RETURN NULL;
---          WHEN SQLSTATE '23505'
---             THEN
---                RAISE EXCEPTION '%',   _err_msg
---                   USING HINT        = _err_hint,
---                         ERRCODE     = '23505';
---                RETURN NULL;
---          WHEN SQLSTATE '23514'
---             THEN
---                RAISE EXCEPTION '%',   _err_msg
---                   USING HINT        = _err_hint,
---                         ERRCODE     = '23514';
---                RETURN NULL;
---          WHEN OTHERS
---             THEN
---                _err_code = SQLSTATE;
---                RAISE EXCEPTION '%', CONCAT('Unable to ',
---                                            TG_OP,
---                                            ' funding_organization. An unknown ',
---                                            'error has occurred.')
---                   USING HINT      = CONCAT('Check the database log for ',
---                                            'more information.'),
---                         ERRCODE   = _err_code;
---                RETURN NULL;
+      EXCEPTION
+         WHEN SQLSTATE '23502'
+            THEN
+               RAISE EXCEPTION '%',   _err_msg
+                  USING HINT        = _err_hint,
+                        ERRCODE     = '23502';
+               RETURN NULL;
+         WHEN SQLSTATE '23505'
+            THEN
+               RAISE EXCEPTION '%',   _err_msg
+                  USING HINT        = _err_hint,
+                        ERRCODE     = '23505';
+               RETURN NULL;
+         WHEN SQLSTATE '23514'
+            THEN
+               RAISE EXCEPTION '%',   _err_msg
+                  USING HINT        = _err_hint,
+                        ERRCODE     = '23514';
+               RETURN NULL;
+         WHEN OTHERS
+            THEN
+               _err_code = SQLSTATE;
+               RAISE EXCEPTION '%', CONCAT('Unable to ',
+                                           TG_OP,
+                                           ' funding_organization. An unknown ',
+                                           'error has occurred.')
+                  USING HINT      = CONCAT('Check the database log for ',
+                                           'more information.'),
+                        ERRCODE   = _err_code;
+               RETURN NULL;
 
    END;
 
