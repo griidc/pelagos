@@ -6,14 +6,14 @@
         
         self = this;
         
-        if (command) {
+        if (command && typeof command != "object") {
             switch (command) {
                 case 'cancel':
                     self.find('.revertField').each(function() {
                         $('[name="'+$(this).attr('original')+'"]').val($(this).val());
                         });
                 case 'reset': 
-                    this.find('input').each(function() {
+                    this.find('input,textarea').each(function() {
                         $(this)
                         .attr('readonly',true)
                         .removeClass('active')
@@ -32,6 +32,8 @@
             }
             return;
         }
+        
+        var options = command;
         
         $.validator.methods._required = $.validator.methods.required;
         $.validator.methods.required = function( value, element, param )
@@ -52,7 +54,7 @@
         
         $('#editableWrapper').append('<div class="innerForm"><div>')
         
-        this.find('input').each(function() {
+        this.find('input,textarea').each(function() {
             $(this)
             .attr('readonly',true)
             .addClass('formfield');
@@ -60,12 +62,12 @@
         
         $('#editableWrapper').on("click", function() {
             if (!$(this).hasClass('active')) {
-                window.onbeforeunload = function() {
+                    window.onbeforeunload = function() {
                     return "You still have unsaved changed!\nAre you sure you want to navigate away?";
                 }
                 $(this).addClass('active');
-                var url = base_path + "/services/person/validateProperty";
-                self.find('input').each(function() {
+                var url = options.validationURL;
+                self.find('input,textarea').each(function() {
                     self.append('<input class="revertField" type="hidden" original="'+
                     $(this).attr('name') + '">');
                     $('.revertField[original="'+$(this).attr('name')+'"]').val($(this).val());
