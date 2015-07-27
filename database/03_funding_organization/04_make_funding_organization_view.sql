@@ -44,7 +44,8 @@ CREATE VIEW funding_organization AS
           f.funding_organization_postal_code AS postal_code,
           f.funding_organization_logo AS logo,
           f.funding_organization_modifier AS modifier,
-          f.funding_organization_modification_time AS modification_time
+          DATE_TRUNC('seconds', f.funding_organization_modification_time)
+             AS modification_time
    FROM funding_organization_table f
       LEFT JOIN email2funding_organization_table e2f
          ON f.funding_organization_number = e2f.funding_organization_number
@@ -280,7 +281,8 @@ AS $f_o_func$
                          ELSE OLD.logo
                       END),
                      OLD.modifier,
-                     CAST(OLD.modification_time AS TIMESTAMP WITH TIME ZONE);
+                     DATE_TRUNC('seconds', CAST(OLD.modification_time AS
+                                                TIMESTAMP WITH TIME ZONE));
 
             -- Update the funding_organization information if necessary:
             IF ROW(NEW.administrative_area,
@@ -439,8 +441,8 @@ AS $f_o_func$
                   OLD.country,
                   OLD.postal_code,
                   OLD.logo,
-                  OLD.modifier,
-                  CAST(OLD.modification_time AS TIMESTAMP WITH TIME ZONE);
+                  current_user,
+                  DATE_TRUNC('seconds', NOW());
 
          -- The DELETE operation will leave the email address behind, on the
          -- off chance that we need to associate that email address with
