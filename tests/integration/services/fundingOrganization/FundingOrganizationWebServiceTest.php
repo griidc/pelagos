@@ -32,6 +32,13 @@ class FundingOrganizationWebServiceTest extends \PHPUnit_Framework_TestCase
     protected static $testName = 'My Funding Organization';
 
     /**
+     * Static class variable containing a second name to use for testing.
+     *
+     * @var string $testName2
+     */
+    protected static $testName2 = 'My Other Funding Organization';
+
+    /**
      * Class variable to hold a logo to use for testing.
      *
      * @var string $testLogo
@@ -589,6 +596,35 @@ class FundingOrganizationWebServiceTest extends \PHPUnit_Framework_TestCase
         $finfo = new \finfo(FILEINFO_MIME_TYPE);
         $mimeType = $finfo->buffer($output);
         $this->assertEquals('image/jpeg', $mimeType);
+    }
+
+    /**
+     * Test that updating name parameter
+     *
+     * Should return 200 with a message indicating that a funding organization has been successfully updated
+     * and listing details about the funding organization including this changed field
+     *
+     * @return void
+     */
+    public function testUpdateName()
+    {
+        $this->mockEntityManager->shouldReceive('flush');
+        \Slim\Environment::mock(
+            array(
+                'REQUEST_METHOD' => 'POST',
+                'PATH_INFO' => '/1',
+                'slim.input' => 'name=' . self::$testName2
+            )
+        );
+        $GLOBALS['user'] = new \Pelagos\Tests\Helpers\TestUser;
+        $this->expectOutputString(
+            $this->makeHTTPStatusJSON(
+                201,
+                'A funding organization has been successfully created: ' . self::$testName .
+                ' with at ID of 0.'
+            )
+        );
+        require 'index.php';
     }
 
 
