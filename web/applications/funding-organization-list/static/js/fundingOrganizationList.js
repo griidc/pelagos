@@ -14,7 +14,7 @@ $(document).ready(function(){
              // third column.  The row[0] statement is the literal Funding Organization id glued
              // to the end of the service request url.
              { 'mData': 2, 'aTargets': [2], 'mRender': function (data,type,row) {
-                 return "<img src=" + pelagosBasePath + "/services/fundingOrganization/logo/" + row[0] + ">";
+                 return "<img src=" + pelagosBasePath + "/services/fundingOrganization/logo/" + row[0] + "/thumbnail>";
                        }
              }
          ],
