@@ -41,6 +41,23 @@ abstract class Entity implements \JsonSerializable
     protected $creationTimeStamp;
 
     /**
+     * The last modification time stamp (in UTC) for this Person.
+     *
+     * @var \DateTime $modificationTimeStamp;
+     */
+    protected $modificationTimeStamp;
+
+    /**
+     * The username of the user who last modified this Person.
+     *
+     * @var string $creator;
+     *
+     * @Assert\NotBlank(
+     *     message="Modifier is required"
+     * )
+     */
+    protected $modifier;
+    /**
      * Getter for id property.
      *
      * @return int Persistent identifier for the Entity.
@@ -74,6 +91,27 @@ abstract class Entity implements \JsonSerializable
     public function getCreator()
     {
         return $this->creator;
+    }
+    /**
+     * Setter for modifier property.
+     *
+     * @param string $modifier The username of the user who modified this Person.
+     *
+     * @return void
+     */
+    public function setModifier($modifier)
+    {
+        $this->modifier = $modifier;
+    }
+
+    /**
+     * Getter for modifier property.
+     *
+     * @return string The username of the user who modified this Person.
+     */
+    public function getModifier()
+    {
+        return $this->modifier;
     }
 
     /**
@@ -149,6 +187,66 @@ abstract class Entity implements \JsonSerializable
         if ($this->creationTimeStamp == null) {
             $this->setCreationTimeStamp();
         }
+        $this->setModificationTimeStamp();
+    }
+    /**
+     * Setter for modificationTimeStamp property.
+     *
+     * @param \DateTime $timeStamp Modification time stamp to set.
+     *
+     * @return void
+     *
+     * @throws \Exception When $timeStamp does not have a timezone of UTC.
+     */
+    public function setModificationTimeStamp(\DateTime $timeStamp = null)
+    {
+        if (isset($timeStamp)) {
+            if ($timeStamp->getTimezone()->getName() != 'UTC') {
+                throw new \Exception('modificationTimeStamp must be in UTC');
+            }
+            $this->modificationTimeStamp = $timeStamp;
+        } else {
+            $this->modificationTimeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
+        }
+    }
+
+    /**
+     * Getter for modificationTimeStamp property.
+     *
+     * The default is to return the time stamp localized to the current timezone.
+     * This getter also makes sure the modificationTimeStamp property is set to UTC.
+     *
+     * @param boolean $localized Whether to convert time stamp to the local timezone.
+     *
+     * @return \DateTime Modification time stamp for this Person.
+     */
+    public function getModificationTimeStamp($localized = false)
+    {
+        if (!isset($this->modificationTimeStamp)) {
+            return null;
+        }
+        $this->modificationTimeStamp->setTimeZone(new \DateTimeZone('UTC'));
+        if ($localized) {
+            $timeStamp = clone $this->modificationTimeStamp;
+            $timeStamp->setTimeZone(new \DateTimeZone(date_default_timezone_get()));
+            return $timeStamp;
+        }
+        return $this->modificationTimeStamp;
+    }
+
+    /**
+     * Get the modificationTimeStamp property as an ISO8601 string.
+     *
+     * @param boolean $localized Whether to convert time stamp to the local timezone.
+     *
+     * @return string ISO8601 string representing modificationTimeStamp.
+     */
+    public function getModificationTimeStampAsISO($localized = false)
+    {
+        if (isset($this->modificationTimeStamp) and $this->modificationTimeStamp instanceof \DateTime) {
+            return $this->getModificationTimeStamp($localized)->format(\DateTime::ISO8601);
+        }
+        return null;
     }
 
     /**

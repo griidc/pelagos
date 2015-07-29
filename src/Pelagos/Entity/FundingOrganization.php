@@ -393,6 +393,8 @@ class FundingOrganization extends Entity
         return $this->country;
     }
 
+
+
     /**
      * Method to update multiple properties.
      *
@@ -468,5 +470,67 @@ class FundingOrganization extends Entity
             'postalCode' => $this->getPostalCode(),
             'country' => $this->getCountry(),
         );
+    }
+
+    /**
+     * Method that returns a FundingOrganization's properties as an array.
+     *
+     * Default is to not localize time stamps.
+     *
+     * @param array   $properties         An array listing the properties to include.
+     * @param boolean $localizeTimeStamps A flag to inidcate whether or not to localize time stamps.
+     *
+     * @return array An array of property values for this FundingOrganization.
+     */
+    public function asArray(array $properties, $localizeTimeStamps = false)
+    {
+        $personArray = array();
+        foreach ($properties as $property) {
+            switch($property) {
+                case 'id':
+                    $personArray[] = $this->getId();
+                    break;
+                case 'name':
+                    $personArray[] = $this->getName();
+                    break;
+                case 'description':
+                    $personArray[] = $this->getDescription();
+                    break;
+                case 'phoneNumber':
+                    $personArray[] = $this->getPhoneNumber();
+                    break;
+                case 'emailAddress':
+                    $personArray[] = $this->getEmailAddress();
+                    break;
+                case 'url':
+                    $personArray[] = $this->getUrl();
+                    break;
+                case 'administrativeArea':
+                    $personArray[] = $this->getAdministrativeArea();
+                    break;
+                case 'postalCode':
+                    $personArray[] = $this->getPostalCode();
+                    break;
+                case 'country':
+                    $personArray[] = $this->getCountry();
+                    break;
+                case 'logo':
+                    $personArray[] = $this->getLogo();
+                    break;
+                case 'creationTimeStamp':
+                    $personArray[] = $this->getCreationTimeStamp($localizeTimeStamps);
+                    break;
+                case 'creator':
+                    $personArray[] = $this->getCreator();
+                    break;
+                case 'modificationTimeStamp':
+                    $personArray[] = $this->getModificationTimeStamp($localizeTimeStamps);
+                    break;
+                case 'modifier':
+                    $personArray[] = $this->getModifier();
+                    break;
+            }
+        }
+        return $personArray;
     }
 }
