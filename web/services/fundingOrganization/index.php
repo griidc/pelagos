@@ -147,8 +147,8 @@ $slim->post(
 );
 
 $slim->get(
-    '/logo/:id',
-    function ($id) use ($comp, $slim) {
+    '/logo/:id(/:size)',
+    function ($id, $size='') use ($comp, $slim) {
         $response = $slim->response;
         $comp->setQuitOnFinalize(true);
         try {
@@ -159,8 +159,17 @@ $slim->get(
                 $logo = stream_get_contents($logoStream);
                 $finfo = new finfo(FILEINFO_MIME_TYPE);
                 $mimeType = $finfo->buffer($logo);
-                $response->headers->set('Content-Type', $mimeType);
-                $response->body($logo);
+                if ($size == 'thumbnail') {
+                    $imagick = new \Imagick();
+                    $imagick->readImageBlob($logo);
+                    $imagick->scaleImage(125, 250, true);
+                    $imagick->setImageFormat("jpeg");
+                    $response->headers->set('Content-Type', 'image/jpeg');
+                    echo $imagick->getImageBlob();
+                } else {
+                    $response->headers->set('Content-Type', $mimeType);
+                    $response->body($logo);
+                }
                 return;
             } else {
                 $status = new HTTPStatus(404, "No logo found for FundingOrganization $id");

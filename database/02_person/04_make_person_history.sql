@@ -19,7 +19,11 @@ DROP TABLE person_history_table;
 
 -- Create the person_history_table with a surrogate key and all person
 -- attributes of interest. The attribute names remain the same as the names
--- are in the person view:
+-- are in the person view. email address is allowed to be recast as TEXT
+-- because it should be of the correct type in the parent table, and we are
+-- more interested in capturing the contents of the parent table here than we
+-- are in accuracy (the same argument could be made about the timestamp
+-- attributes as well?):
 CREATE TABLE person_history_table
 (
    person_history_number                    SERIAL,
@@ -29,9 +33,12 @@ CREATE TABLE person_history_table
    given_name                               TEXT,
    middle_name                              TEXT,
    surname                                  TEXT,
-   email_address                            EMAIL_ADDRESS_TYPE,
-   modifier                                 TEXT                NOT NULL,
-   modification_time                        TIMESTAMP WITH TIME ZONE
+   email_address                            TEXT,
+   old_modifier                             TEXT                NOT NULL,
+   old_modification_time                    TIMESTAMP WITH TIME ZONE
+      NOT NULL,
+   new_modifier                             TEXT                NOT NULL,
+   new_modification_time                    TIMESTAMP WITH TIME ZONE
       NOT NULL,
 
    PRIMARY KEY (person_history_number)
