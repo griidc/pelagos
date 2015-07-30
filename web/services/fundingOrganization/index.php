@@ -223,7 +223,7 @@ $slim->get(
     }
 );
 
-$slim->put(
+$slim->post(
     '/:id',
     function ($id) use ($comp, $slim) {
         $response = $slim->response;
