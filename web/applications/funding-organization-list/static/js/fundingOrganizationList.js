@@ -21,4 +21,26 @@ $(document).ready(function(){
          "deferRender": true,
          "order": [[ 5, "desc" ]]
      });
+
+    var table = $('#fundingOrganizationList').DataTable();
+
+     $('#fundingOrganizationList tbody').on( 'click', 'tr', function () {
+        if ( $(this).hasClass('selected') ) {
+            $(this).removeClass('selected');
+            $("#button_detail").attr('disabled', 'disabled');
+            $("#selection_comment").fadeIn();
+        } else {
+            table.$('tr.selected').removeClass('selected');
+            $(this).addClass('selected');
+            $('#button_detail').removeAttr('disabled');
+            $("#selection_comment").fadeOut();
+        }
+     });
+
+    $('#button_detail').click( function ( ) {
+        var id = table.row('.selected').data()[0];
+        var url = pelagosBasePath + '/applications/fundingOrganizationLand#' + id;
+        window.open(url, '_blank');
+    });
+
 });
