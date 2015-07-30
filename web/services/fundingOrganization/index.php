@@ -249,14 +249,6 @@ $slim->post(
             $entityService = new EntityService($comp->getEntityManager());
             $fundingOrganization = $entityService->get('FundingOrganization', $id);
 
-            if (array_key_exists('logo', $_FILES) and
-                array_key_exists('tmp_name', $_FILES['logo']) and
-                is_file($_FILES['logo']['tmp_name'])) {
-                $fundingOrganization->setLogo(
-                    file_get_contents($_FILES['logo']['tmp_name'])
-                );
-            }
-
             // handle logo file upload, if set
             if (array_key_exists('logo', $_FILES) and
                 array_key_exists('tmp_name', $_FILES['logo']) and
