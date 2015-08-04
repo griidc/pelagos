@@ -147,8 +147,8 @@ $slim->post(
 );
 
 $slim->get(
-    '/logo/:id',
-    function ($id) use ($comp, $slim) {
+    '/logo/:id(/:size)',
+    function ($id, $size='') use ($comp, $slim) {
         $response = $slim->response;
         $comp->setQuitOnFinalize(true);
         try {
@@ -159,8 +159,17 @@ $slim->get(
                 $logo = stream_get_contents($logoStream);
                 $finfo = new finfo(FILEINFO_MIME_TYPE);
                 $mimeType = $finfo->buffer($logo);
-                $response->headers->set('Content-Type', $mimeType);
-                $response->body($logo);
+                if ($size == 'thumbnail') {
+                    $imagick = new \Imagick();
+                    $imagick->readImageBlob($logo);
+                    $imagick->scaleImage(125, 250, true);
+                    $imagick->setImageFormat("jpeg");
+                    $response->headers->set('Content-Type', 'image/jpeg');
+                    echo $imagick->getImageBlob();
+                } else {
+                    $response->headers->set('Content-Type', $mimeType);
+                    $response->body($logo);
+                }
                 return;
             } else {
                 $status = new HTTPStatus(404, "No logo found for FundingOrganization $id");
@@ -214,7 +223,7 @@ $slim->get(
     }
 );
 
-$slim->put(
+$slim->post(
     '/:id',
     function ($id) use ($comp, $slim) {
         $response = $slim->response;
@@ -233,9 +242,19 @@ $slim->put(
         }
 
         try {
-
             $updates = $slim->request->params();
             $updates['modifier'] = $comp->getLoggedInUser();
+
+            // get the Funding Organization (F.O.)
+            $entityService = new EntityService($comp->getEntityManager());
+            $fundingOrganization = $entityService->get('FundingOrganization', $id);
+
+            // handle logo file upload, if set
+            if (array_key_exists('logo', $_FILES) and
+                array_key_exists('tmp_name', $_FILES['logo']) and
+                is_file($_FILES['logo']['tmp_name'])) {
+                $updates['logo'] = file_get_contents($_FILES['logo']['tmp_name']);
+            }
 
             foreach ($updates as $property => $value) {
                 if (empty($value)) {
@@ -243,9 +262,6 @@ $slim->put(
                 }
             }
 
-            // get the Funding Organization (F.O.), apply updates, validate the F.O. , persist the updated F.O.
-            $entityService = new EntityService($comp->getEntityManager());
-            $fundingOrganization = $entityService->get('FundingOrganization', $id);
             $fundingOrganization = $entityService->persist(
                 $entityService->validate(
                     $fundingOrganization->update($updates),

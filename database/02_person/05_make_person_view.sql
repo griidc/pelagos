@@ -33,9 +33,11 @@ CREATE VIEW person AS
           CAST(e2p.email_address AS TEXT) AS email_address,
           e.email_validated AS email_verified,
           p.person_instantiator AS instantiator,
-          CAST(p.person_instantiation_time AS TEXT) AS instantiation_time,
+          CAST(DATE_TRUNC('seconds', p.person_instantiation_time) AS TEXT)
+             AS instantiation_time,
           p.person_modifier AS modifier,
-          CAST(p.person_modification_time AS TEXT) AS modification_time
+          CAST(DATE_TRUNC('seconds', p.person_modification_time) AS TEXT)
+             AS modification_time
    FROM person_table p
       JOIN email2person_table e2p
          ON p.person_number = e2p.person_number
@@ -284,29 +286,48 @@ AS $pers_func$
                       middle_name,
                       surname,
                       email_address,
-                      modifier,
-                      modification_time
+                      old_modifier,
+                      old_modification_time,
+                      new_modifier,
+                      new_modification_time
                    )
-                   VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)'
+                   VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)'
            USING TG_OP,
                  OLD.person_number,
-                 (CASE WHEN NEW.title IS NULL THEN NULL
-                    ELSE OLD.title
+                 (CASE
+                     WHEN NEW.title IS NOT DISTINCT FROM
+                          OLD.title
+                        THEN NULL
+                     ELSE OLD.title
                  END),
-                 (CASE WHEN NEW.given_name IS NULL THEN NULL
-                    ELSE OLD.given_name
+                 (CASE
+                     WHEN NEW.given_name IS NOT DISTINCT FROM
+                          OLD.given_name
+                        THEN NULL
+                     ELSE OLD.given_name
                  END),
-                 (CASE WHEN NEW.middle_name IS NULL THEN NULL
-                    ELSE OLD.middle_name
+                 (CASE
+                     WHEN NEW.middle_name IS NOT DISTINCT FROM
+                          OLD.middle_name
+                        THEN NULL
+                     ELSE OLD.middle_name
                  END),
-                 (CASE WHEN NEW.surname IS NULL THEN NULL
-                    ELSE OLD.surname
+                 (CASE
+                     WHEN NEW.surname IS NOT DISTINCT FROM
+                          OLD.surname
+                        THEN NULL
+                     ELSE OLD.surname
                  END),
-                 (CASE WHEN NEW.email_address IS NULL THEN NULL
-                    ELSE OLD.email_address
+                 (CASE
+                     WHEN NEW.email_address IS NULL THEN NULL
+                     ELSE OLD.email_address
                  END),
                  OLD.modifier,
-                 CAST(OLD.modification_time AS TIMESTAMP WITH TIME ZONE);
+                 DATE_TRUNC('seconds',
+                    CAST(OLD.modification_time AS TIMESTAMP WITH TIME ZONE)),
+                 NEW.modifier,
+                 DATE_TRUNC('seconds',
+                    CAST(NEW.modification_time AS TIMESTAMP WITH TIME ZONE));
 
          -- Update the person information if necessary:
          IF ROW(NEW.title,
@@ -393,6 +414,16 @@ AS $pers_func$
                USING NEW.person_number,
                      _email_addr;
          END IF;
+
+         -- Now, update the modification information:
+         EXECUTE 'UPDATE person_table
+                  SET person_modification_time = $1,
+                      person_modifier = $2
+                  WHERE person_number = $3'
+         USING DATE_TRUNC('seconds', NOW()),
+               NEW.modifier,
+               NEW.person_number;
+
          RETURN NEW;
       ELSE
          -- Update the history table with all current information:
@@ -405,10 +436,12 @@ AS $pers_func$
                       middle_name,
                       surname,
                       email_address,
-                      modifier,
-                      modification_time
+                      old_modifier,
+                      old_modification_time,
+                      new_modifier,
+                      new_modification_time
                    )
-                   VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)'
+                   VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)'
            USING TG_OP,
                  OLD.person_number,
                  OLD.title,
@@ -417,7 +450,10 @@ AS $pers_func$
                  OLD.surname,
                  OLD.email_address,
                  OLD.modifier,
-                 CAST(OLD.modification_time AS TIMESTAMP WITH TIME ZONE);
+                 DATE_TRUNC('seconds',
+                    CAST(OLD.modification_time AS TIMESTAMP WITH TIME ZONE)),
+                 current_user,
+                 DATE_TRUNC('seconds', NOW());
 
          -- The DELETE operation will leave the email address behind, on the
          -- off chance that we need to associate that email address with

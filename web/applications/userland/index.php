@@ -6,6 +6,8 @@ $comp = new \Pelagos\Component;
 
 $comp->setTitle('User Landing Page');
 
+$comp->setJSGlobals();
+
 $comp->addJS(
     array(
         '//cdnjs.cloudflare.com/ajax/libs/jquery-hashchange/v1.3/jquery.ba-hashchange.min.js',

@@ -42,7 +42,9 @@ $(document).ready(function()
     
     //Make form editable if Logged In
     if (isLoggedIn) {
-        $('#personForm').editableForm();
+        $('#personForm').editableForm({
+            validationURL : pelagosBasePath + '/services/person/validateProperty'
+        });
     }
     
     // Bind the event.
