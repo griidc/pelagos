@@ -6,7 +6,10 @@ $(document).ready(function(){
          "lengthMenu": [ [25, 40, 100, -1], [25, 50, 100, "Show All"] ],
          "columnDefs": [ { "searchable": false, "targets": [ 0, 4, 5, 6, 7 ] } ],
          "deferRender": true,
-         "order": [[ 6, "desc" ]]
+         "order": [[ 6, "desc" ]],
+         "search": {
+            "caseInsensitive": true
+         }
      });
 
     var table = $('#personlist').DataTable();

@@ -19,6 +19,9 @@ $(document).ready(function(){
              }
          ],
          "deferRender": true,
-         "order": [[ 5, "desc" ]]
+         "order": [[ 5, "desc" ]],
+         "search": {
+            "caseInsensitive": true
+         }
      });
 });
