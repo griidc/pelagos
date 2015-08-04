@@ -79,6 +79,7 @@ abstract class Entity implements \JsonSerializable
     public function setCreator($creator)
     {
         $this->creator = $creator;
+        $this->modifier = $creator;
     }
 
     /**

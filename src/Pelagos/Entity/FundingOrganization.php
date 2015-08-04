@@ -469,6 +469,8 @@ class FundingOrganization extends Entity
             'administrativeArea' => $this->getAdministrativeArea(),
             'postalCode' => $this->getPostalCode(),
             'country' => $this->getCountry(),
+            'modificationTimeStamp' => $this->getModificationTimeStampAsISO(),
+            'modifier' => $this->getModifier()
         );
     }
 
