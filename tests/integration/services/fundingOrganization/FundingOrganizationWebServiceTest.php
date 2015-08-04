@@ -438,6 +438,8 @@ class FundingOrganizationWebServiceTest extends \PHPUnit_Framework_TestCase
             'administrativeArea' => self::$testAdministrativeArea,
             'postalCode' => self::$testPostalCode,
             'country' => self::$testCountry,
+            'modificationTimeStamp' => null,
+            'modifier' => self::$testCreator
         );
         $testFundingOrganization = new \Pelagos\Entity\FundingOrganization;
         $testFundingOrganization->update($fundingOrganizationData);

@@ -563,6 +563,8 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
             'administrativeArea' => self::$testAdministrativeArea,
             'postalCode' => self::$testPostalCode,
             'country' => self::$testCountry,
+            'modificationTimeStamp' => null,
+            'modifier' => self::$testCreator,
         );
         $this->assertEquals(json_encode($fundingOrganizationData), json_encode($this->fundingOrganization));
     }

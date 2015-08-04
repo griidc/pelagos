@@ -223,7 +223,7 @@ $slim->get(
     }
 );
 
-$slim->put(
+$slim->post(
     '/:id',
     function ($id) use ($comp, $slim) {
         $response = $slim->response;
@@ -242,9 +242,19 @@ $slim->put(
         }
 
         try {
-
             $updates = $slim->request->params();
             $updates['modifier'] = $comp->getLoggedInUser();
+
+            // get the Funding Organization (F.O.)
+            $entityService = new EntityService($comp->getEntityManager());
+            $fundingOrganization = $entityService->get('FundingOrganization', $id);
+
+            // handle logo file upload, if set
+            if (array_key_exists('logo', $_FILES) and
+                array_key_exists('tmp_name', $_FILES['logo']) and
+                is_file($_FILES['logo']['tmp_name'])) {
+                $updates['logo'] = file_get_contents($_FILES['logo']['tmp_name']);
+            }
 
             foreach ($updates as $property => $value) {
                 if (empty($value)) {
@@ -252,9 +262,6 @@ $slim->put(
                 }
             }
 
-            // get the Funding Organization (F.O.), apply updates, validate the F.O. , persist the updated F.O.
-            $entityService = new EntityService($comp->getEntityManager());
-            $fundingOrganization = $entityService->get('FundingOrganization', $id);
             $fundingOrganization = $entityService->persist(
                 $entityService->validate(
                     $fundingOrganization->update($updates),

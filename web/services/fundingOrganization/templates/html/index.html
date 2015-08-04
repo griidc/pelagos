@@ -22,7 +22,22 @@ Web Service Usage:
         </ul>
         * = mandatory
    <br />
-        Result - Funding organization will be created. JSON
+    <li>POST /id (Accepts updates of these fields via POST)
+        <ul>
+            <li>name = string</li>
+            <li>logo = image</li>
+            <li>emailAddress = string</li>
+            <li>description = string</li>
+            <li>url = string</li>
+            <li>phoneNumber = string</li>
+            <li>deliveryPoint = string</li>
+            <li>city = string</li>
+            <li>administrativeArea = string</li>
+            <li>postalCode = string</li>
+            <li>country = string</li>
+        </ul>
+   <br />
+        Result - Funding organization will be created or updated. JSON
         response will indicate success or failure with error.<br />Authentication
         is required to use this feature.</li>
 </ol>
