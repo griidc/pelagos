@@ -15,7 +15,10 @@ $(document).ready(function() {
         "autoWidth": true,
         "lengthMenu": [ [10, 25, 100, 250, -1], [10 , 25, 100, 250, "All"] ],
         "stateSave": true,
-        "stateDuration": -1
+        "stateDuration": -1,
+         "search": {
+            "caseInsensitive": true
+         }
         });
 
     var table = $('#linkList').DataTable();

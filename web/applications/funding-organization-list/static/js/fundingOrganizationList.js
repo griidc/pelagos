@@ -6,8 +6,8 @@ $(document).ready(function(){
          "lengthMenu": [ [25, 40, 100, -1], [25, 50, 100, "Show All"] ],
          "columnDefs": [
              {
-                 "searchable": true,
-                 "targets": [ 0, 1, 3, 4, 5 ]
+                 "searchable": false,
+                 "targets": [ 0, 2, 3, 4, 5, 6 ]
 
              },
              //  this section uses a service to fetch and display the image that is the logo in the
@@ -19,6 +19,9 @@ $(document).ready(function(){
              }
          ],
          "deferRender": true,
-         "order": [[ 5, "desc" ]]
+         "order": [[ 5, "desc" ]],
+         "search": {
+            "caseInsensitive": true
+         }
      });
 });

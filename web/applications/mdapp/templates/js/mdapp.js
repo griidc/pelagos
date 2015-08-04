@@ -20,7 +20,10 @@ $(document).ready( function () {
         "jQueryUI": true,
         "lengthMenu": [ [-1, 25, 50, 75, 100], ["All", 25, 50, 75, 100] ],
         "stateSave": true,
-        "stateDuration": -1
+        "stateDuration": -1,
+         "search": {
+            "caseInsensitive": true
+         }
     } );
 } );
 
