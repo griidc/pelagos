@@ -25,18 +25,19 @@ class FundingOrganizationWebServiceTest extends \PHPUnit_Framework_TestCase
     protected $mockEntityManager;
 
     /**
+     * Static class variable containing an ID to use for testing.
+     *
+     * @var string $testId
+     */
+    protected static $testId = '0';
+
+
+    /**
      * Static class variable containing a name to use for testing.
      *
      * @var string $testName
      */
     protected static $testName = 'My Funding Organization';
-
-    /**
-     * Class variable to hold a logo to use for testing.
-     *
-     * @var string $testLogo
-     */
-    protected $testLogo;
 
     /**
      * Static class variable containing an email address to use for testing.
@@ -107,6 +108,13 @@ class FundingOrganizationWebServiceTest extends \PHPUnit_Framework_TestCase
      * @var string $testCreator
      */
     protected static $testCreator = 'testcreator';
+
+    /**
+     * Static class variable containing username to use as modifier.
+     *
+     * @var string $testModifier
+     */
+    protected static $testModifier = 'testmodifier';
 
     /**
      * Set up for tests.
@@ -591,6 +599,56 @@ class FundingOrganizationWebServiceTest extends \PHPUnit_Framework_TestCase
         $finfo = new \finfo(FILEINFO_MIME_TYPE);
         $mimeType = $finfo->buffer($output);
         $this->assertEquals('image/jpeg', $mimeType);
+    }
+
+    /**
+     * Test Successful Update
+     *
+     * Should return 200 with a message indicating that a funding organization has been successfully updated
+     * and listing details about the funding organization including this changed field
+     *
+     * @return void
+     */
+    public function testUpdateSuccess()
+    {
+        $organizationData = array (
+            'id' => null,
+            'creationTimeStamp' => null,
+            'creator' => 'test',
+            'name' => self::$testName,
+            'emailAddress' => self::$testEmailAddress,
+            'description' => self::$testDescription,
+            'url' => self::$testUrl,
+            'phoneNumber' => self::$testPhoneNumber,
+            'deliveryPoint' => self::$testDeliveryPoint,
+            'city' => self::$testCity,
+            'administrativeArea' => self::$testAdministrativeArea,
+            'postalCode' => self::$testPostalCode,
+            'country' => self::$testCountry,
+            'modificationTimeStamp' => null,
+            'modifier' => 'test'
+
+        );
+        $fundingOrganization = new \Pelagos\Entity\FundingOrganization;
+        $fundingOrganization->update($organizationData);
+        $this->mockEntityManager->shouldReceive('find')->andReturn($fundingOrganization);
+        $this->mockEntityManager->shouldReceive('flush');
+        \Slim\Environment::mock(
+            array(
+                'REQUEST_METHOD' => 'POST',
+                'PATH_INFO' => '/0',
+                'slim.input' => 'name=' . self::$testName
+            )
+        );
+        $GLOBALS['user'] = new \Pelagos\Tests\Helpers\TestUser;
+        $this->expectOutputString(
+            $this->makeHTTPStatusJSON(
+                200,
+                'Updated Funding Organization with id: 0',
+                $organizationData
+            )
+        );
+        require 'index.php';
     }
 
 
