@@ -24,6 +24,9 @@ class FundingOrganization extends Entity
      * @Assert\NotBlank(
      *     message="Name is required"
      * )
+     * @Assert\NoAngleBrackets(
+     *     message="Last name cannot contain angle brackets (< or >)"
+     * )
      */
     protected $name;
 
@@ -40,6 +43,13 @@ class FundingOrganization extends Entity
      *
      * @var string $emailAddress
      * @access protected
+     *
+     * @Assert\NoAngleBrackets(
+     *     message="Last name cannot contain angle brackets (< or >)"
+     * )
+     * @Assert\Email(
+     *     message="Email address is invalid"
+     * )
      */
     protected $emailAddress;
 
@@ -48,6 +58,10 @@ class FundingOrganization extends Entity
      *
      * @var string $description
      * @access protected
+     *
+     * @Assert\NoAngleBrackets(
+     *     message="Description cannot contain angle brackets (< or >)"
+     * )
      */
     protected $description;
 
@@ -56,6 +70,10 @@ class FundingOrganization extends Entity
      *
      * @var string $url
      * @access protected
+     *
+     * @Assert\NoAngleBrackets(
+     *     message="URL cannot contain angle brackets (< or >)"
+     * )
      */
     protected $url;
 
@@ -64,6 +82,10 @@ class FundingOrganization extends Entity
      *
      * @var string $phoneNumber
      * @access protected
+     *
+     * @Assert\NoAngleBrackets(
+     *     message="Phone number cannot contain angle brackets (< or >)"
+     * )
      */
     protected $phoneNumber;
 
@@ -72,6 +94,10 @@ class FundingOrganization extends Entity
      *
      * @var string $deliveryPoint
      * @access protected
+     *
+     * @Assert\NoAngleBrackets(
+     *     message="Delievery point (address) cannot contain angle brackets (< or >)"
+     * )
      */
     protected $deliveryPoint;
 
@@ -80,6 +106,10 @@ class FundingOrganization extends Entity
      *
      * @var string $city
      * @access protected
+     *
+     * @Assert\NoAngleBrackets(
+     *     message="City cannot contain angle brackets (< or >)"
+     * )
      */
     protected $city;
 
@@ -88,6 +118,10 @@ class FundingOrganization extends Entity
      *
      * @var string $administrativeArea
      * @access protected
+     *
+     * @Assert\NoAngleBrackets(
+     *     message="Administrative area (state) cannot contain angle brackets (< or >)"
+     * )
      */
     protected $administrativeArea;
 
@@ -96,6 +130,10 @@ class FundingOrganization extends Entity
      *
      * @var string $postalCode
      * @access protected
+     *
+     * @Assert\NoAngleBrackets(
+     *     message="Postal code (zip) cannot contain angle brackets (< or >)"
+     * )
      */
     protected $postalCode;
 
@@ -104,6 +142,10 @@ class FundingOrganization extends Entity
      *
      * @var string $country
      * @access protected
+     *
+     * @Assert\NoAngleBrackets(
+     *     message="Country cannot contain angle brackets (< or >)"
+     * )
      */
     protected $country;
 
