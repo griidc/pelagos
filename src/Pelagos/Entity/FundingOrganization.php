@@ -25,7 +25,7 @@ class FundingOrganization extends Entity
      *     message="Name is required"
      * )
      * @Assert\NoAngleBrackets(
-     *     message="Last name cannot contain angle brackets (< or >)"
+     *     message="Name cannot contain angle brackets (< or >)"
      * )
      */
     protected $name;
@@ -45,7 +45,7 @@ class FundingOrganization extends Entity
      * @access protected
      *
      * @Assert\NoAngleBrackets(
-     *     message="Last name cannot contain angle brackets (< or >)"
+     *     message="Email address cannot contain angle brackets (< or >)"
      * )
      * @Assert\Email(
      *     message="Email address is invalid"
@@ -72,7 +72,7 @@ class FundingOrganization extends Entity
      * @access protected
      *
      * @Assert\NoAngleBrackets(
-     *     message="URL cannot contain angle brackets (< or >)"
+     *     message="Website URL cannot contain angle brackets (< or >)"
      * )
      */
     protected $url;
