@@ -16,7 +16,7 @@
             <sequence-generator sequence-name="seq_funding_cycle_number" allocation-size="1" initial-value="1" />
         </id>
         
-        <field name="number"                column="funding_cycle_number"  type="integer" />"
+        <field name="id"                column="funding_cycle_number"  type="integer" />"
 
         <field name="name"                  column="name"                  type="string" />
 
@@ -28,7 +28,7 @@
 
         <field name="url"                   column="website"               type="string" />
 
-        <field name="fundingOrganization"   column="funding_organization"  type="string" />
+        <field name="fundingOrganization"   column="funding_organization_number"  type="integer" />
 
     </entity>
 </doctrine-mapping>
