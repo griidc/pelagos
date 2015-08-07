@@ -43,7 +43,7 @@ class FundingCycle extends Entity
     protected $description;
 
     /**
-     * Funding organization's Website url.
+     * Funding cycle's Website url.
      *
      * @var string $url
      * @access protected
@@ -53,6 +53,34 @@ class FundingCycle extends Entity
      * )
      */
     protected $url;
+    
+    /**
+     * Funding cycle's start date.
+     *
+     * @var \Datetime $startDate
+     * @access protected
+     *
+     */
+    protected $startDate;
+    
+    /**
+     * Funding cycle's end date.
+     *
+     * @var \Datetime $endDate
+     * @access protected
+     *
+     */
+    protected $endDate;
+    
+    /**
+     * Funding cycle's Funding Organization.
+     *
+     * @var FundingOrganization
+     * @ManyToOne(targetEntity="FundingOrganization")
+     * @access protected
+     *
+     */
+    protected $fundingOrganization;
 
     /**
      * Setter for name.
@@ -131,7 +159,54 @@ class FundingCycle extends Entity
     {
         return $this->url;
     }
-
+    
+    /**
+     * Setter for startDate.
+     *
+     * @access public
+     *
+     * @return void
+     */
+    public function setStartDate($startDate)
+    {
+        $this->startDate = $startDate;
+    }
+    
+    /**
+     * Getter for startDate.
+        *
+     * @access public
+        *
+     * @return \Datetime startDate of funding cycle's Website.
+     */
+    public function getStartDate()
+    {
+        return $this->startDate;
+    }
+    
+    /**
+     * Setter for endDate.
+        *
+     * @access public
+        *
+     * @return void
+     */
+    public function setEndDate($endDate)
+    {
+        $this->endDate = $endDate;
+    }
+    
+    /**
+     * Getter for endDate.
+        *
+     * @access public
+        *
+     * @return \Datetime endDate of funding cycle's Website.
+     */
+    public function getEndDate()
+    {
+        return $this->endDate;
+    }
 
     /**
      * Method to update multiple properties.

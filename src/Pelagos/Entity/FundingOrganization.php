@@ -148,6 +148,15 @@ class FundingOrganization extends Entity
      * )
      */
     protected $country;
+    
+    /**
+     * Funding organization's Funding Cycle's.
+     *
+     * @OneToMany(targetEntity="FundingCycle", mappedBy="FundingOrganization")
+     * @access protected
+     *
+     */
+    protected $fundingCycles;
 
     /**
      * Setter for name.
@@ -200,7 +209,7 @@ class FundingOrganization extends Entity
     {
         return $this->logo;
     }
-
+        
     /**
      * Setter for emailAddress.
      *
