@@ -298,42 +298,42 @@ AS $f_o_func$
          RETURN OLD;
       END IF;
 
--- PNK       EXCEPTION
--- PNK          WHEN SQLSTATE '23502'
--- PNK             THEN
--- PNK                RAISE EXCEPTION '%',   _err_msg
--- PNK                   USING HINT        = _err_hint,
--- PNK                         ERRCODE     = '23502';
--- PNK                RETURN NULL;
--- PNK          WHEN SQLSTATE '23503'
--- PNK             THEN
--- PNK                RAISE EXCEPTION '%',   _err_msg
--- PNK                   USING HINT        = _err_hint,
--- PNK                         ERRCODE     = '23503';
--- PNK                RETURN NULL;
--- PNK          WHEN SQLSTATE '23505'
--- PNK             THEN
--- PNK                RAISE EXCEPTION '%',   _err_msg
--- PNK                   USING HINT        = _err_hint,
--- PNK                         ERRCODE     = '23505';
--- PNK                RETURN NULL;
--- PNK          WHEN SQLSTATE '23514'
--- PNK             THEN
--- PNK                RAISE EXCEPTION '%',   _err_msg
--- PNK                   USING HINT        = _err_hint,
--- PNK                         ERRCODE     = '23514';
--- PNK                RETURN NULL;
--- PNK          WHEN OTHERS
--- PNK             THEN
--- PNK                _err_code = SQLSTATE;
--- PNK                RAISE EXCEPTION '%', CONCAT('Unable to ',
--- PNK                                            TG_OP,
--- PNK                                            ' funding_cycle. An unknown ',
--- PNK                                            'error has occurred.')
--- PNK                   USING HINT      = CONCAT('Check the database log for ',
--- PNK                                            'more information.'),
--- PNK                         ERRCODE   = _err_code;
--- PNK                RETURN NULL;
+      EXCEPTION
+         WHEN SQLSTATE '23502'
+            THEN
+               RAISE EXCEPTION '%',   _err_msg
+                  USING HINT        = _err_hint,
+                        ERRCODE     = '23502';
+               RETURN NULL;
+         WHEN SQLSTATE '23503'
+            THEN
+               RAISE EXCEPTION '%',   _err_msg
+                  USING HINT        = _err_hint,
+                        ERRCODE     = '23503';
+               RETURN NULL;
+         WHEN SQLSTATE '23505'
+            THEN
+               RAISE EXCEPTION '%',   _err_msg
+                  USING HINT        = _err_hint,
+                        ERRCODE     = '23505';
+               RETURN NULL;
+         WHEN SQLSTATE '23514'
+            THEN
+               RAISE EXCEPTION '%',   _err_msg
+                  USING HINT        = _err_hint,
+                        ERRCODE     = '23514';
+               RETURN NULL;
+         WHEN OTHERS
+            THEN
+               _err_code = SQLSTATE;
+               RAISE EXCEPTION '%', CONCAT('Unable to ',
+                                           TG_OP,
+                                           ' funding_cycle. An unknown ',
+                                           'error has occurred.')
+                  USING HINT      = CONCAT('Check the database log for ',
+                                           'more information.'),
+                        ERRCODE   = _err_code;
+               RETURN NULL;
 
    END;
 
