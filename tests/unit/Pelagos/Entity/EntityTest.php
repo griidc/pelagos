@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Validation;
  *
  * @group Pelagos
  * @group Pelagos\Entity
- * @group Pelagos\Entity\EntityTestClass
+ * @group Pelagos\Entity\EntityTest
  */
 class EntityTest extends \PHPUnit_Framework_TestCase
 {
