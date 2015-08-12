@@ -74,7 +74,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $this->validator = Validation::createValidatorBuilder()
             ->enableAnnotationMapping()
             ->getValidator();
-        $this->entitytestclass = new EntityTestClass;
+        $this->entitytestclass = new \Pelagos\Tests\Helpers\EntityTestClass;
         $this->entitytestclass->setCreator(self::$testCreator);
         $this->entitytestclass->setModifier(self::$testCreator);
         $this->timeStamp = new \DateTime('now', new \DateTimeZone('UTC'));

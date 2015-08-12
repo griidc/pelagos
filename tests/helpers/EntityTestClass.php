@@ -6,7 +6,7 @@
  * @subpackage EntityTestClass
  */
 
-namespace Pelagos\Entity;
+namespace Pelagos\Tests\Helpers;
 
 /**
  * Class to represent EntityTestClass.

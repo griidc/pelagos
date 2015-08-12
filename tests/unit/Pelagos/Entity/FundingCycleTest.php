@@ -3,7 +3,7 @@
 namespace Pelagos\Entity;
 
 use Symfony\Component\Validator\Validation;
-include __dir__."/EntityTest.php";
+
 
 /**
  * Unit tests for Pelagos\Entity\FundingCycle.
@@ -105,17 +105,17 @@ class FundingCycleTest extends EntityTest
     /**
      * Test the getName method.
      *
-     * This method should return the first name that was set in setUp.
+     * This method should return the name that was set in setUp.
      *
      * @return void
      */
-    public function testGetName()
-    {
-        $this->assertEquals(
-            $this->fundingcycle->getName(),
-            self::$testFundingCycleName
-        );
-    }
+#    public function testGetName()
+#    {
+#        $this->assertEquals(
+#            $this->fundingcycle->getName(),
+#            self::$testFundingCycleName
+#        );
+#    }
 
 #    /**
 #     * Test that FundingCycle is JsonSerializable and serializes to the expected JSON.
