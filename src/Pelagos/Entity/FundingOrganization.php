@@ -9,6 +9,7 @@
 namespace Pelagos\Entity;
 
 use \Symfony\Component\Validator\Constraints as Assert;
+use \Doctrine\ORM\Mapping\OneToMany;
 
 /**
  * Class to represent funding organizations.
