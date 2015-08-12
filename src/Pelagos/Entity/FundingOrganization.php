@@ -9,6 +9,7 @@
 namespace Pelagos\Entity;
 
 use \Symfony\Component\Validator\Constraints as Assert;
+use \Doctrine\ORM\Mapping\OneToMany;
 
 /**
  * Class to represent funding organizations.
@@ -148,6 +149,15 @@ class FundingOrganization extends Entity
      * )
      */
     protected $country;
+    
+    /**
+     * Funding organization's Funding Cycle's.
+     *
+     * @OneToMany(targetEntity="FundingCycle", mappedBy="FundingOrganization")
+     * @access protected
+     *
+     */
+    protected $fundingCycles;
 
     /**
      * Setter for name.
@@ -200,7 +210,7 @@ class FundingOrganization extends Entity
     {
         return $this->logo;
     }
-
+        
     /**
      * Setter for emailAddress.
      *
