@@ -5,14 +5,14 @@
 -- Inputs:    NONE
 -- Output:    A new database entity
 -- Info:      This script creates the funding organization entity table and all
---            required elements of the table. The lack of data constraints on
---            the non-normalized attributes are a task requirement that I think
---            will cause problems down the road, but I was told we would
---            revisit this and associated scripts before they made it into
+--            required elements of the table. The lack of proper constraints on
+--            the data attributes are a task requirement that I think will
+--            cause problems down the road, but I was told we would revisit
+--            this script and associated scripts before they made it into
 --            production code. Fortunately the choice to abstract the physical
 --            entities out to views will allow the necessary normalization
 --            practices to be implemented at that time with minimal disruption.
---            This table will most likely ever contain more than a handful of
+--            This table will most likely never contain more than a handful of
 --            rows, so no index is going to be worth the trouble.
 -- -----------------------------------------------------------------------------
 -- TODO:

@@ -22,14 +22,14 @@ CREATE TABLE email2funding_organization_table
       FOREIGN KEY (email_address)
       REFERENCES email_table(email_address)
       ON DELETE RESTRICT
-      ON UPDATE CASCADE,
+      ON UPDATE RESTRICT,
 
    -- Note the truncation of funding_organization to make the constraint name
    -- less unwieldy to deal with:
    CONSTRAINT fk_email2funding_organization_fund_org_number
       FOREIGN KEY (funding_organization_number)
       REFERENCES funding_organization_table(funding_organization_number)
-      ON DELETE CASCADE
+      ON DELETE RESTRICT
       ON UPDATE RESTRICT,
 
    PRIMARY KEY (email_address,
