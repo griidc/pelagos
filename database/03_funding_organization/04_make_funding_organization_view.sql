@@ -186,7 +186,7 @@ AS $f_o_func$
                      NEW.description,
                      NEW.logo,
                      DATE_TRUNC('seconds', NOW()),
-                     NEW.modifier,
+                     NEW.creator,
                      NEW.name,
                      NEW.phone_number,
                      NEW.postal_code,

@@ -39,7 +39,7 @@ CREATE TABLE funding_cycle_table
    CONSTRAINT fk_funding_cycle_funding_organization
       FOREIGN KEY (funding_organization_number)
       REFERENCES funding_organization_table(funding_organization_number)
-      ON DELETE CASCADE
+      ON DELETE RESTRICT
       ON UPDATE RESTRICT,
 
    PRIMARY KEY (funding_cycle_number)
