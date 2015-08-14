@@ -195,6 +195,32 @@ $slim->get(
 );
 
 $slim->get(
+    '/list',
+    function () use ($comp, $slim) {
+        $response = $slim->response;
+        $response->headers->set('Content-Type', 'application/json');
+        $comp->setQuitOnFinalize(true);
+
+        $fundingOrganizations = $comp
+            ->getEntityManager()
+            ->getRepository('Pelagos\Entity\FundingOrganization')
+            ->findAll();
+
+        $dataSet=array();
+
+        $fundingOrganizationsCount = count($fundingOrganizations);
+        $dataSet["Count"] = $fundingOrganizationsCount;
+
+        $dataSet["FundingOrganizations"] = $fundingOrganizations;
+
+        $status = new HTTPStatus(200, "Retrieved $fundingOrganizationsCount Funding Organizations", $dataSet);
+
+        $response->status($status->getCode());
+        $response->body(json_encode($status));
+    }
+);
+
+$slim->get(
     '/:id',
     function ($id) use ($comp, $slim) {
         $response = $slim->response;
