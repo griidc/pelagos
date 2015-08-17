@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/../../../vendor/autoload.php';
+
 $GLOBALS['pelagos']['title'] = 'Dataset Information Form (DIF)';
 
 require_once 'dif.php';
