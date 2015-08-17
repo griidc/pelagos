@@ -1,14 +1,10 @@
 <?php
 
+require_once __DIR__.'/../../../vendor/autoload.php';
+
 $GLOBALS['pelagos']['title'] = 'System Statistics (as of ' . date('F j, Y') . ')';
 
 $GLOBALS['libraries'] = parse_ini_file('/etc/griidc/libraries.ini',true);
-
-require_once $GLOBALS['libraries']['Slim2']['include'];
-\Slim\Slim::registerAutoloader();
-require_once $GLOBALS['libraries']['Slim-Views']['include_Twig'];
-# load Twig
-require_once 'Twig/Autoloader.php';
 
 require_once $GLOBALS['libraries']['GRIIDC']['directory'].'/php/db-utils.lib.php';
 require_once $GLOBALS['libraries']['GRIIDC']['directory'].'/php/drupal.php';
@@ -185,14 +181,11 @@ $GLOBALS['categories'] = array(
     )
 );
 
-$app = new \Slim\Slim(array(
-                        'view' => new \Slim\Views\Twig(),
-                        'debug' => true,
-                        'log.level' => \Slim\Log::DEBUG,
-                        'log.enabled' => true
-                     ));
-
-$app->view->parserDirectory = $GLOBALS['libraries']['Twig']['directory'];
+$app = new \Slim\Slim(
+    array(
+        'view' => new \Slim\Views\Twig()
+    )
+);
 
 $app->hook('slim.before', function () use ($app) {
     $env = $app->environment();
