@@ -1,23 +1,14 @@
 <?php
 
+require_once __DIR__.'/../../../vendor/autoload.php';
+
 $GLOBALS['pelagos']['title'] = 'XML Validator';
 
-$GLOBALS['libraries'] = parse_ini_file('/etc/opt/pelagos/libraries.ini',true);
-
-require_once $GLOBALS['libraries']['Slim2']['include'];
-\Slim\Slim::registerAutoloader();
-require_once $GLOBALS['libraries']['Slim-Views']['include_Twig'];
-# load Twig
-require_once 'Twig/Autoloader.php';
-
-$app = new \Slim\Slim(array(
-                        'view' => new \Slim\Views\Twig(),
-                        'debug' => true,
-                        'log.level' => \Slim\Log::DEBUG,
-                        'log.enabled' => true
-                     ));
-
-$app->view->parserDirectory = $GLOBALS['libraries']['Twig']['directory'];
+$app = new \Slim\Slim(
+    array(
+        'view' => new \Slim\Views\Twig()
+    )
+);
 
 $app->get('/', function () use ($app) {
 
