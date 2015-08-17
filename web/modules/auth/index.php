@@ -1,16 +1,13 @@
 <?php
 
+require_once __DIR__.'/../../../vendor/autoload.php';
+
 $GLOBALS['pelagos']['title'] = 'Authentication';
 
 $GLOBALS['griidc'] = parse_ini_file('/etc/opt/pelagos.ini',true);
 $GLOBALS['config'] = parse_ini_file('config.ini',true);
 $GLOBALS['libraries'] = parse_ini_file($GLOBALS['griidc']['paths']['conf'].'/libraries.ini',true);
 
-require_once $GLOBALS['libraries']['Slim2']['include'];
-\Slim\Slim::registerAutoloader();
-require_once $GLOBALS['libraries']['Slim-Views']['include_Twig'];
-# load Twig
-require_once 'Twig/Autoloader.php';
 require_once $GLOBALS['libraries']['LightOpenID']['include'];
 
 # add pelagos/share/php to the include path
@@ -47,18 +44,15 @@ $GLOBALS['auth_types'] = array(
     )
 );
 
-$app = new \Slim\Slim(array(
-                        'view' => new \Slim\Views\Twig(),
-                        'debug' => true,
-                        'log.level' => \Slim\Log::DEBUG,
-                        'log.enabled' => true
-                     ));
+$app = new \Slim\Slim(
+    array(
+        'view' => new \Slim\Views\Twig()
+    )
+);
 
 $env = $app->environment();
 $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
 $app->baseUrl = "$protocol$env[SERVER_NAME]$env[SCRIPT_NAME]";
-
-$app->view->parserDirectory = $GLOBALS['libraries']['Twig']['directory'];
 
 $app->hook('slim.before', function () use ($app) {
     $env = $app->environment();
