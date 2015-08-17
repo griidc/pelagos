@@ -9,13 +9,12 @@
 ini_set('display_errors',true);
 error_reporting(-1);
 
-require 'Slim/Slim.php';
 require 'getTaskData.php';
 
 $debug = true;
 
 //With default settings
-$app = new Slim();
+$app = new \Slim\Slim();
 
 $app->config('debug', $debug);
 

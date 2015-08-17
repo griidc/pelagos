@@ -8,13 +8,12 @@
 
 //error_reporting(-1);
 
-require 'Slim/Slim.php';
 require 'getPeopleData.php';
 
 $debug = false;
 
 //With default settings
-$app = new Slim();
+$app = new \Slim\Slim();
 
 $app->config('debug', $debug);
 
