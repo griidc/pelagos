@@ -27,8 +27,8 @@ function getMessageTemplate($Action)
 
 function expandTemplate($Template, $Data)
 {
-    $loader = new Twig_Loader_String();
-    $twig = new Twig_Environment($loader);
+    $loader = new \Twig_Loader_String();
+    $twig = new \Twig_Environment($loader);
 
     try {
         return $twig->render($Template, $Data);

@@ -18,8 +18,8 @@ class metaData
 	
 	public function __construct()
 	{
-		$this->loader = new Twig_Loader_Filesystem('./templates');
-		$this->twig = new Twig_Environment($this->loader,array('autoescape' => false));
+		$this->loader = new \Twig_Loader_Filesystem('./templates');
+		$this->twig = new \Twig_Environment($this->loader,array('autoescape' => false));
 	}
 	
 	public function loadINI($filename)

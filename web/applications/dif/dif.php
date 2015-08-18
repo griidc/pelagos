@@ -15,8 +15,8 @@ require_once 'EventHandler.php';
 global $twig;
 $twigloader;
 
-$twigloader = new Twig_Loader_Filesystem('./templates');
-$twig = new Twig_Environment($twigloader,array('autoescape' => false));
+$twigloader = new \Twig_Loader_Filesystem('./templates');
+$twig = new \Twig_Environment($twigloader,array('autoescape' => false));
 
 if (isset($_POST['function']))
 {

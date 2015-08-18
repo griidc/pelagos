@@ -38,8 +38,8 @@ require_once 'auth.php'; # for user_is_logged_in_somehow()
 include_once 'pdo.php'; # for pdoDBQuery()
 require_once 'lib/DataLand/PubLink.php';
 
-$loader = new Twig_Loader_Filesystem('./templates');
-$twig = new Twig_Environment($loader,array('autoescape' => false));
+$loader = new \Twig_Loader_Filesystem('./templates');
+$twig = new \Twig_Environment($loader,array('autoescape' => false));
 $twig->addExtension(new \Pelagos\TwigExtensions());
 
 $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
