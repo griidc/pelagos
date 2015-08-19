@@ -59,7 +59,6 @@ class FundingCycle extends Entity
      *
      * @var \Datetime $startDate
      * @access protected
-     *
      */
     protected $startDate;
 
@@ -68,7 +67,6 @@ class FundingCycle extends Entity
      *
      * @var \Datetime $endDate
      * @access protected
-     *
      */
     protected $endDate;
 
@@ -77,7 +75,6 @@ class FundingCycle extends Entity
      *
      * @var FundingOrganization
      * @access protected
-     *
      */
     protected $fundingOrganization;
 
@@ -187,6 +184,7 @@ class FundingCycle extends Entity
     /**
      * Setter for startDate.
      *
+     * @param \DateTime $startDate The Start Date
      * @access public
      *
      * @return void
@@ -198,10 +196,10 @@ class FundingCycle extends Entity
 
     /**
      * Getter for startDate.
-        *
+     *
      * @access public
-        *
-     * @return \Datetime startDate of funding cycle's Website.
+     *
+     * @return \DateTime startDate of funding cycle's Website.
      */
     public function getStartDate()
     {
@@ -210,9 +208,10 @@ class FundingCycle extends Entity
 
     /**
      * Setter for endDate.
-        *
+     *
+     * @param \DateTime $endDate The End Date
      * @access public
-        *
+     *
      * @return void
      */
     public function setEndDate($endDate)
@@ -222,10 +221,10 @@ class FundingCycle extends Entity
 
     /**
      * Getter for endDate.
-        *
+     *
      * @access public
-        *
-     * @return \Datetime endDate of funding cycle's Website.
+     *
+     * @return \DateTime endDate of funding cycle's Website.
      */
     public function getEndDate()
     {
@@ -242,7 +241,6 @@ class FundingCycle extends Entity
      */
     public function update(array $updates)
     {
-        echo "\n\nEntity::update()";
         foreach ($updates as $field => $value) {
             switch($field) {
                 case 'name':
@@ -256,7 +254,6 @@ class FundingCycle extends Entity
                     break;
                 case 'creator':
                     $this->setCreator($value);
-                    echo "\n\nEntity::update(".$field.")";
                     break;
             }
         }
@@ -280,49 +277,5 @@ class FundingCycle extends Entity
             'modificationTimeStamp' => $this->getModificationTimeStampAsISO(),
             'modifier' => $this->getModifier()
         );
-    }
-
-    /**
-     * Method that returns a FundingCycle's properties as an array.
-     *
-     * Default is to not localize time stamps.
-     *
-     * @param array   $properties         An array listing the properties to include.
-     * @param boolean $localizeTimeStamps A flag to inidcate whether or not to localize time stamps.
-     *
-     * @return array An array of property values for this FundingCycle.
-     */
-    public function asArray(array $properties, $localizeTimeStamps = false)
-    {
-        $personArray = array();
-        foreach ($properties as $property) {
-            switch($property) {
-                case 'id':
-                    $personArray[] = $this->getId();
-                    break;
-                case 'name':
-                    $personArray[] = $this->getName();
-                    break;
-                case 'description':
-                    $personArray[] = $this->getDescription();
-                    break;
-                case 'url':
-                    $personArray[] = $this->getUrl();
-                    break;
-                case 'creationTimeStamp':
-                    $personArray[] = $this->getCreationTimeStamp($localizeTimeStamps);
-                    break;
-                case 'creator':
-                    $personArray[] = $this->getCreator();
-                    break;
-                case 'modificationTimeStamp':
-                    $personArray[] = $this->getModificationTimeStamp($localizeTimeStamps);
-                    break;
-                case 'modifier':
-                    $personArray[] = $this->getModifier();
-                    break;
-            }
-        }
-        return $personArray;
     }
 }

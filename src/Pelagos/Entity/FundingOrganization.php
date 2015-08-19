@@ -148,17 +148,17 @@ class FundingOrganization extends Entity
      * )
      */
     protected $country;
-    
+
     /**
      * Funding organization's Funding Cycle's.
      *
      * @var FundingCycle
-     * 
+     *
      * @access protected
      *
      */
     protected $fundingCycles;
-    
+
     /**
      * Getter for fundingCycles.
      *
@@ -169,7 +169,7 @@ class FundingOrganization extends Entity
     public function getFundingCycles()
     {
         return $this->fundingCycles;
-    } 
+    }
 
     /**
      * Setter for name.
@@ -222,7 +222,7 @@ class FundingOrganization extends Entity
     {
         return $this->logo;
     }
-        
+
     /**
      * Setter for emailAddress.
      *
@@ -457,8 +457,6 @@ class FundingOrganization extends Entity
         return $this->country;
     }
 
-
-
     /**
      * Method to update multiple properties.
      *
@@ -599,11 +597,4 @@ class FundingOrganization extends Entity
         }
         return $personArray;
     }
-
-    function __toString()
-    {
-        return "Funding Organization: ".$this->getName() . " " . $this->getDescription();
-    }
-
-
 }
