@@ -20,20 +20,19 @@
             <lifecycle-callback type="prePersist" method="updateTimeStamps" />
             <lifecycle-callback type="preUpdate" method="updateTimeStamps" />
         </lifecycle-callbacks>
-        
-        <field name="id"                column="funding_cycle_number"  type="integer" />"
 
         <field name="name"                  column="name"                  type="string" />
 
         <field name="description"           column="description"           type="string" />
 
-        <field name="startDate"             column="start_date"            type="datetimetz" />
+        <field name="startDate"             column="start_date"            type="date" />
 
-        <field name="endDate"               column="end_date"              type="datetimetz" />
+        <field name="endDate"               column="end_date"              type="date" />
 
         <field name="url"                   column="website"               type="string" />
-
-        <field name="fundingOrganization"   column="funding_organization_number"  type="integer" />
-
+               
+        <many-to-one field="fundingOrganization" target-entity="FundingOrganization">
+            <join-column name="funding_organization_number" referenced-column-name="funding_organization_number" />
+        </many-to-one>
     </entity>
 </doctrine-mapping>
