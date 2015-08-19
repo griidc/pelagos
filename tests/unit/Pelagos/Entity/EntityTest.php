@@ -16,9 +16,9 @@ class EntityTest extends \PHPUnit_Framework_TestCase
     /**
      * Property to hold an instancet of EntityTestClass for testing.
      *
-     * @var EntityTestClass $entitytestclass
+     * @var EntityTestClass $concreteEntity
      */
-    protected $entitytestclass;
+    protected $concreteEntity;
 
     /**
      * Property to hold an instance of the Symfony Validator.
@@ -74,9 +74,9 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $this->validator = Validation::createValidatorBuilder()
             ->enableAnnotationMapping()
             ->getValidator();
-        $this->entitytestclass = new \Pelagos\Tests\Helpers\EntityTestClass;
-        $this->entitytestclass->setCreator(self::$testCreator);
-        $this->entitytestclass->setModifier(self::$testCreator);
+        $this->concreteEntity = new \Tests\Helpers\EntityTestClass;
+        $this->concreteEntity->setCreator(self::$testCreator);
+        $this->concreteEntity->setModifier(self::$testCreator);
         $this->timeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->timeStampISO = $this->timeStamp->format(\DateTime::ISO8601);
         $this->timeStampLocalized = clone $this->timeStamp;
@@ -95,7 +95,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
     public function testGetID()
     {
         $this->assertEquals(
-            $this->entitytestclass->getId(),
+            $this->concreteEntity->getId(),
             null
         );
     }
@@ -110,7 +110,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
     public function testGetCreator()
     {
         $this->assertEquals(
-            $this->entitytestclass->getCreator(),
+            $this->concreteEntity->getCreator(),
             self::$testCreator
         );
     }
@@ -125,7 +125,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
     public function testGetModifier()
     {
         $this->assertEquals(
-            $this->entitytestclass->getModifier(),
+            $this->concreteEntity->getModifier(),
             self::$testCreator
         );
     }
@@ -143,8 +143,8 @@ class EntityTest extends \PHPUnit_Framework_TestCase
     {
         $timeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
         $timeStampISO = $timeStamp->format(\DateTime::ISO8601);
-        $this->entitytestclass->setCreationTimeStamp($timeStamp);
-        $creationTimeStamp = $this->entitytestclass->getCreationTimeStamp(false);
+        $this->concreteEntity->setCreationTimeStamp($timeStamp);
+        $creationTimeStamp = $this->concreteEntity->getCreationTimeStamp(false);
         $this->assertInstanceOf('\DateTime', $creationTimeStamp);
         $this->assertEquals($timeStampISO, $creationTimeStamp->format(\DateTime::ISO8601));
     }
@@ -158,7 +158,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetCreationTimeStampFailForNonUTC()
     {
-        $this->entitytestclass->setCreationTimeStamp(
+        $this->concreteEntity->setCreationTimeStamp(
             new \DateTime('now', new \DateTimeZone('America/Chicago'))
         );
     }
@@ -172,8 +172,8 @@ class EntityTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetCreationTimeStamp()
     {
-        $this->entitytestclass->setCreationTimeStamp($this->timeStamp);
-        $creationTimeStamp = $this->entitytestclass->getCreationTimeStamp();
+        $this->concreteEntity->setCreationTimeStamp($this->timeStamp);
+        $creationTimeStamp = $this->concreteEntity->getCreationTimeStamp();
         $this->assertInstanceOf('\DateTime', $creationTimeStamp);
         $this->assertEquals(
             'UTC',
@@ -191,8 +191,8 @@ class EntityTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetCreationTimeStampLocalized()
     {
-        $this->entitytestclass->setCreationTimeStamp($this->timeStamp);
-        $creationTimeStamp = $this->entitytestclass->getCreationTimeStamp(true);
+        $this->concreteEntity->setCreationTimeStamp($this->timeStamp);
+        $creationTimeStamp = $this->concreteEntity->getCreationTimeStamp(true);
         $this->assertInstanceOf('\DateTime', $creationTimeStamp);
         $this->assertEquals(
             date_default_timezone_get(),
@@ -211,10 +211,10 @@ class EntityTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetCreationTimeStampAsISO()
     {
-        $this->entitytestclass->setCreationTimeStamp($this->timeStamp);
+        $this->concreteEntity->setCreationTimeStamp($this->timeStamp);
         $this->assertEquals(
             $this->timeStampISO,
-            $this->entitytestclass->getCreationTimeStampAsISO()
+            $this->concreteEntity->getCreationTimeStampAsISO()
         );
     }
 
@@ -228,10 +228,10 @@ class EntityTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetCreationTimeStampAsISOLocalized()
     {
-        $this->entitytestclass->setCreationTimeStamp($this->timeStamp);
+        $this->concreteEntity->setCreationTimeStamp($this->timeStamp);
         $this->assertEquals(
             $this->timeStampLocalizedISO,
-            $this->entitytestclass->getCreationTimeStampAsISO(true)
+            $this->concreteEntity->getCreationTimeStampAsISO(true)
         );
     }
 
@@ -244,7 +244,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetCreationTimeStampAsISONull()
     {
-        $this->assertNull($this->entitytestclass->getCreationTimeStampAsISO());
+        $this->assertNull($this->concreteEntity->getCreationTimeStampAsISO());
     }
 
     /**
@@ -260,8 +260,8 @@ class EntityTest extends \PHPUnit_Framework_TestCase
     {
         $timeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
         $timeStampISO = $timeStamp->format(\DateTime::ISO8601);
-        $this->entitytestclass->setModificationTimeStamp($timeStamp);
-        $modificationTimeStamp = $this->entitytestclass->getModificationTimeStamp(false);
+        $this->concreteEntity->setModificationTimeStamp($timeStamp);
+        $modificationTimeStamp = $this->concreteEntity->getModificationTimeStamp(false);
         $this->assertInstanceOf('\DateTime', $modificationTimeStamp);
         $this->assertEquals($timeStampISO, $modificationTimeStamp->format(\DateTime::ISO8601));
     }
@@ -275,7 +275,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetModificationTimeStampFailForNonUTC()
     {
-        $this->entitytestclass->setModificationTimeStamp(
+        $this->concreteEntity->setModificationTimeStamp(
             new \DateTime('now', new \DateTimeZone('America/Chicago'))
         );
     }
@@ -289,8 +289,8 @@ class EntityTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetModificationTimeStamp()
     {
-        $this->entitytestclass->setModificationTimeStamp($this->timeStamp);
-        $modificationTimeStamp = $this->entitytestclass->getModificationTimeStamp();
+        $this->concreteEntity->setModificationTimeStamp($this->timeStamp);
+        $modificationTimeStamp = $this->concreteEntity->getModificationTimeStamp();
         $this->assertInstanceOf('\DateTime', $modificationTimeStamp);
         $this->assertEquals(
             'UTC',
@@ -308,8 +308,8 @@ class EntityTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetModificationTimeStampLocalized()
     {
-        $this->entitytestclass->setModificationTimeStamp($this->timeStamp);
-        $modificationTimeStamp = $this->entitytestclass->getModificationTimeStamp(true);
+        $this->concreteEntity->setModificationTimeStamp($this->timeStamp);
+        $modificationTimeStamp = $this->concreteEntity->getModificationTimeStamp(true);
         $this->assertInstanceOf('\DateTime', $modificationTimeStamp);
         $this->assertEquals(
             date_default_timezone_get(),
@@ -328,10 +328,10 @@ class EntityTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetModificationTimeStampAsISO()
     {
-        $this->entitytestclass->setModificationTimeStamp($this->timeStamp);
+        $this->concreteEntity->setModificationTimeStamp($this->timeStamp);
         $this->assertEquals(
             $this->timeStampISO,
-            $this->entitytestclass->getModificationTimeStampAsISO()
+            $this->concreteEntity->getModificationTimeStampAsISO()
         );
     }
 
@@ -345,10 +345,10 @@ class EntityTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetModificationTimeStampAsISOLocalized()
     {
-        $this->entitytestclass->setModificationTimeStamp($this->timeStamp);
+        $this->concreteEntity->setModificationTimeStamp($this->timeStamp);
         $this->assertEquals(
             $this->timeStampLocalizedISO,
-            $this->entitytestclass->getModificationTimeStampAsISO(true)
+            $this->concreteEntity->getModificationTimeStampAsISO(true)
         );
     }
 
@@ -361,7 +361,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetModificationTimeStampAsISONull()
     {
-        $this->assertNull($this->entitytestclass->getModificationTimeStampAsISO());
+        $this->assertNull($this->concreteEntity->getModificationTimeStampAsISO());
     }
 
     /**
@@ -371,11 +371,11 @@ class EntityTest extends \PHPUnit_Framework_TestCase
      */
     public function testUpdateTimeStamps()
     {
-        $this->assertNull($this->entitytestclass->getCreationTimeStamp());
-        $this->assertNull($this->entitytestclass->getModificationTimeStamp());
-        $this->entitytestclass->updateTimeStamps();
-        $this->assertInstanceOf('\DateTime', $this->entitytestclass->getCreationTimeStamp());
-        $this->assertInstanceOf('\DateTime', $this->entitytestclass->getModificationTimeStamp());
+        $this->assertNull($this->concreteEntity->getCreationTimeStamp());
+        $this->assertNull($this->concreteEntity->getModificationTimeStamp());
+        $this->concreteEntity->updateTimeStamps();
+        $this->assertInstanceOf('\DateTime', $this->concreteEntity->getCreationTimeStamp());
+        $this->assertInstanceOf('\DateTime', $this->concreteEntity->getModificationTimeStamp());
     }
 
     /**
@@ -387,13 +387,13 @@ class EntityTest extends \PHPUnit_Framework_TestCase
     {
         $timeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
         $timeStampISO = $timeStamp->format(\DateTime::ISO8601);
-        $entitytestclassData = array(
+        $concreteEntityData = array(
             'id' => null,
             'creationTimeStamp' => $timeStampISO,
             'creator' => self::$testCreator,
         );
-        $this->entitytestclass->setCreationTimeStamp($timeStamp);
-        $this->assertEquals(json_encode($entitytestclassData), json_encode($this->entitytestclass));
+        $this->concreteEntity->setCreationTimeStamp($timeStamp);
+        $this->assertEquals(json_encode($concreteEntityData), json_encode($this->concreteEntity));
     }
 
 }

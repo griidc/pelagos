@@ -6,12 +6,12 @@
  * @subpackage EntityTestClass
  */
 
-namespace Pelagos\Tests\Helpers;
+namespace Tests\Helpers;
 
 /**
  * Class to represent EntityTestClass.
  */
-class EntityTestClass extends Entity
+class EntityTestClass extends \Pelagos\Entity\Entity
 {
     /* This simply instanciates Entity a concrete class */
 }
