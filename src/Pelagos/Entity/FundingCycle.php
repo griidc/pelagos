@@ -133,7 +133,7 @@ class FundingCycle extends Entity
     /**
      * Setter for Funding Cycle.
      *
-     * @param FundingOrganization $fundingOrg the funding organization.
+     * @param FundingOrganization $fundingOrg The funding organization.
      *
      * @access public
      *
@@ -184,12 +184,13 @@ class FundingCycle extends Entity
     /**
      * Setter for startDate.
      *
-     * @param \DateTime $startDate The Start Date
+     * @param \DateTime $startDate The Start Date.
+     *
      * @access public
      *
      * @return void
      */
-    public function setStartDate($startDate)
+    public function setStartDate(\DateTime $startDate)
     {
         $this->startDate = $startDate;
     }
@@ -209,12 +210,13 @@ class FundingCycle extends Entity
     /**
      * Setter for endDate.
      *
-     * @param \DateTime $endDate The End Date
+     * @param \DateTime $endDate The End Date.
+     *
      * @access public
      *
      * @return void
      */
-    public function setEndDate($endDate)
+    public function setEndDate(\DateTime $endDate)
     {
         $this->endDate = $endDate;
     }

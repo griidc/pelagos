@@ -155,7 +155,6 @@ class FundingOrganization extends Entity
      * @var FundingCycle
      *
      * @access protected
-     *
      */
     protected $fundingCycles;
 
