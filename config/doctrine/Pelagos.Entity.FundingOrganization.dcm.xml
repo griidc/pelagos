@@ -50,6 +50,8 @@
         <field name="modificationTimeStamp" column="modification_time"   type="datetimetz" />
 
         <field name="modifier"              column="modifier"            type="string" />
+        
+        <one-to-many field="fundingCycles" target-entity="FundingCycle" mapped-by="fundingOrganization" />
 
     </entity>
 </doctrine-mapping>
