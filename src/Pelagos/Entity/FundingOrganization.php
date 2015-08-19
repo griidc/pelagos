@@ -9,7 +9,6 @@
 namespace Pelagos\Entity;
 
 use \Symfony\Component\Validator\Constraints as Assert;
-use \Doctrine\ORM\Mapping\OneToMany;
 
 /**
  * Class to represent funding organizations.
@@ -26,7 +25,7 @@ class FundingOrganization extends Entity
      *     message="Name is required"
      * )
      * @Assert\NoAngleBrackets(
-     *     message="Last name cannot contain angle brackets (< or >)"
+     *     message="Name cannot contain angle brackets (< or >)"
      * )
      */
     protected $name;
@@ -46,7 +45,7 @@ class FundingOrganization extends Entity
      * @access protected
      *
      * @Assert\NoAngleBrackets(
-     *     message="Last name cannot contain angle brackets (< or >)"
+     *     message="Email address cannot contain angle brackets (< or >)"
      * )
      * @Assert\Email(
      *     message="Email address is invalid"
@@ -73,7 +72,7 @@ class FundingOrganization extends Entity
      * @access protected
      *
      * @Assert\NoAngleBrackets(
-     *     message="URL cannot contain angle brackets (< or >)"
+     *     message="Website URL cannot contain angle brackets (< or >)"
      * )
      */
     protected $url;
@@ -153,11 +152,24 @@ class FundingOrganization extends Entity
     /**
      * Funding organization's Funding Cycle's.
      *
-     * @OneToMany(targetEntity="FundingCycle", mappedBy="FundingOrganization")
+     * @var FundingCycle
+     * 
      * @access protected
      *
      */
     protected $fundingCycles;
+    
+    /**
+     * Getter for fundingCycles.
+     *
+     * @access public
+     *
+     * @return string String containing fundingCycles of funding organization.
+     */
+    public function getFundingCycles()
+    {
+        return $this->fundingCycles;
+    } 
 
     /**
      * Setter for name.
@@ -587,4 +599,11 @@ class FundingOrganization extends Entity
         }
         return $personArray;
     }
+
+    function __toString()
+    {
+        return "Funding Organization: ".$this->getName() . " " . $this->getDescription();
+    }
+
+
 }

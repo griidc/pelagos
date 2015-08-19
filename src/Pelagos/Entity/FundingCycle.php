@@ -9,7 +9,6 @@
 namespace Pelagos\Entity;
 
 use \Symfony\Component\Validator\Constraints as Assert;
-use \Doctrine\ORM\Mapping\ManyToOne;
 
 /**
  * Class to represent funding cycles.
@@ -54,7 +53,7 @@ class FundingCycle extends Entity
      * )
      */
     protected $url;
-    
+
     /**
      * Funding cycle's start date.
      *
@@ -63,7 +62,7 @@ class FundingCycle extends Entity
      *
      */
     protected $startDate;
-    
+
     /**
      * Funding cycle's end date.
      *
@@ -72,12 +71,11 @@ class FundingCycle extends Entity
      *
      */
     protected $endDate;
-    
+
     /**
      * Funding cycle's Funding Organization.
      *
      * @var FundingOrganization
-     * @ManyToOne(targetEntity="FundingOrganization")
      * @access protected
      *
      */
@@ -136,6 +134,31 @@ class FundingCycle extends Entity
     }
 
     /**
+     * Setter for Funding Cycle.
+     *
+     * @param FundingOrganization $fundingOrg the funding organization.
+     *
+     * @access public
+     *
+     * @return void
+     */
+    public function setFundingOrganization(FundingOrganization $fundingOrg)
+    {
+        $this->fundingOrganization = $fundingOrg;
+    }
+
+    /**
+     * Getter for Funding Organization.
+     *
+     * @access public
+     *
+     * @return FundingOrganization Funding Organization.
+     */
+    public function getFundingOrganization()
+    {
+        return $this->fundingOrganization;
+    }
+    /**
      * Setter for url.
      *
      * @param string $url Funding organization's Website URL.
@@ -160,7 +183,7 @@ class FundingCycle extends Entity
     {
         return $this->url;
     }
-    
+
     /**
      * Setter for startDate.
      *
@@ -172,7 +195,7 @@ class FundingCycle extends Entity
     {
         $this->startDate = $startDate;
     }
-    
+
     /**
      * Getter for startDate.
         *
@@ -184,7 +207,7 @@ class FundingCycle extends Entity
     {
         return $this->startDate;
     }
-    
+
     /**
      * Setter for endDate.
         *
@@ -196,7 +219,7 @@ class FundingCycle extends Entity
     {
         $this->endDate = $endDate;
     }
-    
+
     /**
      * Getter for endDate.
         *
@@ -219,6 +242,7 @@ class FundingCycle extends Entity
      */
     public function update(array $updates)
     {
+        echo "\n\nEntity::update()";
         foreach ($updates as $field => $value) {
             switch($field) {
                 case 'name':
@@ -232,6 +256,7 @@ class FundingCycle extends Entity
                     break;
                 case 'creator':
                     $this->setCreator($value);
+                    echo "\n\nEntity::update(".$field.")";
                     break;
             }
         }
