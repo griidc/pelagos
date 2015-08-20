@@ -494,6 +494,7 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
                 'administrativeArea' => 'new_administrativeArea',
                 'postalCode' => 'new_postalCode',
                 'country' => 'new_country',
+                'creator' => 'new_creator',
             )
         );
         $this->assertEquals(
@@ -540,6 +541,10 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
             $this->fundingOrganization->getCountry(),
             'new_country'
         );
+        $this->assertEquals(
+            $this->fundingOrganization->getCreator(),
+            'new_creator'
+        );
     }
 
     /**
@@ -567,5 +572,49 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
             'modifier' => self::$testCreator,
         );
         $this->assertEquals(json_encode($fundingOrganizationData), json_encode($this->fundingOrganization));
+    }
+
+    /**
+     * Test that FundingOrganization can be returned as an array via asArray(arry) method.
+     *
+     * @return void
+     */
+    public function testAsArray()
+    {
+        $fundingOrganizationProperties = array(
+            'id',
+            'creationTimeStamp',
+            'creator',
+            'name',
+            'emailAddress',
+            'description',
+            'url',
+            'phoneNumber',
+            //'deliveryPoint',
+            //'city',
+            'administrativeArea',
+            'postalCode',
+            'country',
+            'modificationTimeStamp',
+            'modifier',
+        );
+        $fundingOrganizationData = array(
+            null,
+            null,
+            self::$testCreator,
+            self::$testName,
+            self::$testEmailAddress,
+            self::$testDescription,
+            self::$testUrl,
+            self::$testPhoneNumber,
+            //self::$testDeliveryPoint,
+            //self::$testCity,
+            self::$testAdministrativeArea,
+            self::$testPostalCode,
+            self::$testCountry,
+            null,
+            self::$testCreator,
+        );
+        $this->assertEquals($fundingOrganizationData, $this->fundingOrganization->asArray($fundingOrganizationProperties));
     }
 }
