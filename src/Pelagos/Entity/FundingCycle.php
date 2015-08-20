@@ -9,7 +9,6 @@
 namespace Pelagos\Entity;
 
 use \Symfony\Component\Validator\Constraints as Assert;
-use \Doctrine\ORM\Mapping\ManyToOne;
 
 /**
  * Class to represent funding cycles.
@@ -54,32 +53,28 @@ class FundingCycle extends Entity
      * )
      */
     protected $url;
-    
+
     /**
      * Funding cycle's start date.
      *
      * @var \Datetime $startDate
      * @access protected
-     *
      */
     protected $startDate;
-    
+
     /**
      * Funding cycle's end date.
      *
      * @var \Datetime $endDate
      * @access protected
-     *
      */
     protected $endDate;
-    
+
     /**
      * Funding cycle's Funding Organization.
      *
      * @var FundingOrganization
-     * @ManyToOne(targetEntity="FundingOrganization")
      * @access protected
-     *
      */
     protected $fundingOrganization;
 
@@ -136,6 +131,31 @@ class FundingCycle extends Entity
     }
 
     /**
+     * Setter for Funding Cycle.
+     *
+     * @param FundingOrganization $fundingOrg The funding organization.
+     *
+     * @access public
+     *
+     * @return void
+     */
+    public function setFundingOrganization(FundingOrganization $fundingOrg)
+    {
+        $this->fundingOrganization = $fundingOrg;
+    }
+
+    /**
+     * Getter for Funding Organization.
+     *
+     * @access public
+     *
+     * @return FundingOrganization Funding Organization.
+     */
+    public function getFundingOrganization()
+    {
+        return $this->fundingOrganization;
+    }
+    /**
      * Setter for url.
      *
      * @param string $url Funding organization's Website URL.
@@ -160,49 +180,53 @@ class FundingCycle extends Entity
     {
         return $this->url;
     }
-    
+
     /**
      * Setter for startDate.
+     *
+     * @param \DateTime $startDate The Start Date.
      *
      * @access public
      *
      * @return void
      */
-    public function setStartDate($startDate)
+    public function setStartDate(\DateTime $startDate)
     {
         $this->startDate = $startDate;
     }
-    
+
     /**
      * Getter for startDate.
-        *
+     *
      * @access public
-        *
-     * @return \Datetime startDate of funding cycle's Website.
+     *
+     * @return \DateTime startDate of funding cycle's Website.
      */
     public function getStartDate()
     {
         return $this->startDate;
     }
-    
+
     /**
      * Setter for endDate.
-        *
+     *
+     * @param \DateTime $endDate The End Date.
+     *
      * @access public
-        *
+     *
      * @return void
      */
-    public function setEndDate($endDate)
+    public function setEndDate(\DateTime $endDate)
     {
         $this->endDate = $endDate;
     }
-    
+
     /**
      * Getter for endDate.
-        *
+     *
      * @access public
-        *
-     * @return \Datetime endDate of funding cycle's Website.
+     *
+     * @return \DateTime endDate of funding cycle's Website.
      */
     public function getEndDate()
     {
@@ -255,49 +279,5 @@ class FundingCycle extends Entity
             'modificationTimeStamp' => $this->getModificationTimeStampAsISO(),
             'modifier' => $this->getModifier()
         );
-    }
-
-    /**
-     * Method that returns a FundingCycle's properties as an array.
-     *
-     * Default is to not localize time stamps.
-     *
-     * @param array   $properties         An array listing the properties to include.
-     * @param boolean $localizeTimeStamps A flag to inidcate whether or not to localize time stamps.
-     *
-     * @return array An array of property values for this FundingCycle.
-     */
-    public function asArray(array $properties, $localizeTimeStamps = false)
-    {
-        $personArray = array();
-        foreach ($properties as $property) {
-            switch($property) {
-                case 'id':
-                    $personArray[] = $this->getId();
-                    break;
-                case 'name':
-                    $personArray[] = $this->getName();
-                    break;
-                case 'description':
-                    $personArray[] = $this->getDescription();
-                    break;
-                case 'url':
-                    $personArray[] = $this->getUrl();
-                    break;
-                case 'creationTimeStamp':
-                    $personArray[] = $this->getCreationTimeStamp($localizeTimeStamps);
-                    break;
-                case 'creator':
-                    $personArray[] = $this->getCreator();
-                    break;
-                case 'modificationTimeStamp':
-                    $personArray[] = $this->getModificationTimeStamp($localizeTimeStamps);
-                    break;
-                case 'modifier':
-                    $personArray[] = $this->getModifier();
-                    break;
-            }
-        }
-        return $personArray;
     }
 }
