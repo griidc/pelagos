@@ -10,7 +10,7 @@ use Tests\Helpers\ConcreteEntity;
  *
  * @group Pelagos
  * @group Pelagos\Entity
- * @group Pelagos\Entity\EntityTest
+ * @group Pelagos\Entity\Entity
  */
 class EntityTest extends \PHPUnit_Framework_TestCase
 {
