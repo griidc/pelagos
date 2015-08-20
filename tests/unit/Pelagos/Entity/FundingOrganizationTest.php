@@ -30,7 +30,7 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
      *
      * @var string $testLogo
      */
-    protected $testLogo;
+    protected static $testLogo = '12345';
 
     /**
      * Static class variable containing an email address to use for testing.
@@ -141,8 +141,7 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     {
         $this->fundingOrganization = new FundingOrganization;
         $this->fundingOrganization->setName(self::$testName);
-        $this->testLogo = file_get_contents(__DIR__ . '/../../../data/gomri-logo.jpg');
-        $this->fundingOrganization->setLogo($this->testLogo);
+        $this->fundingOrganization->setLogo(self::$testLogo);
         $this->fundingOrganization->setEmailAddress(self::$testEmailAddress);
         $this->fundingOrganization->setDescription(self::$testDescription);
         $this->fundingOrganization->setUrl(self::$testUrl);
@@ -204,7 +203,7 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertEquals(
             $this->fundingOrganization->getLogo(),
-            $this->testLogo
+            self::$testLogo
         );
     }
 
@@ -590,13 +589,14 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
             'description',
             'url',
             'phoneNumber',
-            //'deliveryPoint',
-            //'city',
+            'deliveryPoint',
+            'city',
             'administrativeArea',
             'postalCode',
             'country',
             'modificationTimeStamp',
             'modifier',
+            'logo',
         );
         $fundingOrganizationData = array(
             null,
@@ -607,13 +607,14 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
             self::$testDescription,
             self::$testUrl,
             self::$testPhoneNumber,
-            //self::$testDeliveryPoint,
-            //self::$testCity,
+            self::$testDeliveryPoint,
+            self::$testCity,
             self::$testAdministrativeArea,
             self::$testPostalCode,
             self::$testCountry,
             null,
             self::$testCreator,
+            self::$testLogo,
         );
         $this->assertEquals($fundingOrganizationData, $this->fundingOrganization->asArray($fundingOrganizationProperties));
     }

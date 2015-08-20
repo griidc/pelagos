@@ -592,6 +592,12 @@ class FundingOrganization extends Entity
                 case 'modifier':
                     $personArray[] = $this->getModifier();
                     break;
+                case 'city':
+                    $personArray[] = $this->getCity();
+                    break;
+                case 'deliveryPoint':
+                    $personArray[] = $this->getDeliveryPoint();
+                    break;
             }
         }
         return $personArray;
