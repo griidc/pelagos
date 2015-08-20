@@ -9,7 +9,7 @@
 namespace Tests\Helpers;
 
 /**
- * Concreteentity class for testing \Pelagos\Entity\Entity.
+ * Concrete entity class for testing \Pelagos\Entity\Entity.
  */
 class ConcreteEntity extends \Pelagos\Entity\Entity
 {
