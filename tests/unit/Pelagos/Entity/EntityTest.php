@@ -3,9 +3,10 @@
 namespace Pelagos\Entity;
 
 use Symfony\Component\Validator\Validation;
+use Tests\Helpers\ConcreteEntity;
 
 /**
- * Unit tests for Pelagos\Entity\EntityTestClass.
+ * Unit tests for Pelagos\Entity\Entity.
  *
  * @group Pelagos
  * @group Pelagos\Entity
@@ -14,9 +15,9 @@ use Symfony\Component\Validator\Validation;
 class EntityTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * Property to hold an instancet of EntityTestClass for testing.
+     * Property to hold an instance of ConcreteEntity for testing.
      *
-     * @var EntityTestClass $concreteEntity
+     * @var ConcreteEntity $concreteEntity
      */
     protected $concreteEntity;
 
@@ -74,7 +75,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $this->validator = Validation::createValidatorBuilder()
             ->enableAnnotationMapping()
             ->getValidator();
-        $this->concreteEntity = new \Tests\Helpers\EntityTestClass;
+        $this->concreteEntity = new ConcreteEntity;
         $this->concreteEntity->setCreator(self::$testCreator);
         $this->concreteEntity->setModifier(self::$testCreator);
         $this->timeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
