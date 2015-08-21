@@ -182,6 +182,10 @@ class FundingOrganization extends Entity
     public function setFundingCycles($fundingCycles)
     {
         $this->fundingCycles = $fundingCycles;
+        foreach ($fundingCycles as $fundingCycle)
+        {
+            $fundingCycle->setFundingOrganization($this);
+        }
     }
 
     /**
