@@ -171,6 +171,20 @@ class FundingOrganization extends Entity
     }
 
     /**
+     * Setter for fundingCycles.
+     *
+     * @param FundingCycles $fundingCycles set of FundingCycle objects.
+     *
+     * @access public
+     *
+     * @return void
+     */
+    public function setFundingCycles($fundingCycles)
+    {
+        $this->fundingCycles = $fundingCycles;
+    }
+
+    /**
      * Setter for name.
      *
      * @param string $name Textual name of funding organization.
