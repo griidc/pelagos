@@ -177,6 +177,9 @@ class FundingOrganization extends Entity
      *
      * @access public
      *
+     * @throws \Exception When Non-funding cycle found in FundingCycles or a Funding Cycle
+     *                    is found that is not an array or traversable object.
+     *
      * @return void
      */
     public function setFundingCycles($fundingCycles)
@@ -185,12 +188,12 @@ class FundingOrganization extends Entity
             $this->fundingCycles = $fundingCycles;
             foreach ($fundingCycles as $fundingCycle) {
                 if (!$fundingCycle instanceof FundingCycle) {
-                    throw new \Exception ('Non-funding cycle found in FundingCycles');
+                    throw new \Exception('Non-funding cycle found in FundingCycles');
                 }
                 $fundingCycle->setFundingOrganization($this);
             }
         } else {
-            throw new \Exception ('Funding Cycles must be array or traversable objects');
+            throw new \Exception('Funding Cycles must be array or traversable objects');
         }
     }
 

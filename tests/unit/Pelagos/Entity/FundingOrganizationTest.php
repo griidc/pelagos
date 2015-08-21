@@ -512,6 +512,8 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
      * This method should result in an exception being thrown.
      *
      * @expectedException \Exception
+     *
+     * @return void
      */
     public function testSetFundingCyclesWithNonFC()
     {
@@ -524,6 +526,8 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
      * This method should result in an exception being thrown.
      *
      * @expectedException \Exception
+     *
+     * @return void
      */
     public function testSetFundingCyclesWithNonFCElement()
     {
@@ -673,6 +677,11 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
             self::$testCreator,
             self::$testLogo,
         );
-        $this->assertEquals($fundingOrganizationData, $this->fundingOrganization->asArray($fundingOrganizationProperties));
+        $this->assertEquals(
+            $fundingOrganizationData,
+            $this->fundingOrganization->asArray(
+                $fundingOrganizationProperties
+            )
+        );
     }
 }
