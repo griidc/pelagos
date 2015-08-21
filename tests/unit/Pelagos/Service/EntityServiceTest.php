@@ -67,9 +67,15 @@ class EntityServiceTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
+        $this->mockEntityRepository = \Mockery::mock('\Doctrine\ORM\EntityRepository');
+
         $this->mockEntityManager = \Mockery::mock('\Doctrine\ORM\EntityManager');
         $this->mockEntityManager->shouldReceive('persist');
+
+        $this->mockEntityManager->shouldReceive('getRepository')->andReturn($this->mockEntityRepository);
+
         $this->entityService = new \Pelagos\Service\EntityService($this->mockEntityManager);
+
 
         $this->mockEntity = \Mockery::mock('overload:\Pelagos\Entity\Entity');
         $this->mockEntity->shouldReceive('getId')->andReturn(0);
@@ -227,5 +233,18 @@ class EntityServiceTest extends \PHPUnit_Framework_TestCase
     {
         $this->mockEntityManager->shouldReceive('find')->andThrow('\Doctrine\DBAL\DBALException');
         $entity = $this->entityService->get('Entity', 0);
+    }
+
+    /**
+     * Test getting all entities.
+     * Should return an array of entities for the provided id.
+     */
+    public function testGetAll()
+    {
+        $this->mockEntityRepository->shouldReceive('findAll')->andReturn(array($this->mockEntity));
+        $entities = $this->entityService->getAll('Entity');
+        $this->assertCount(1, $entities);
+        $this->assertInstanceOf('\Pelagos\Entity\Entity', $entities[0]);
+        $this->assertSame(0, $entities[0]->getId());
     }
 }
