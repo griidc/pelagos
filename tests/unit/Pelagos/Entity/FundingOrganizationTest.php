@@ -138,6 +138,13 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     protected $timeStampLocalizedISO;
 
     /**
+     * Property to hold a funding cycle to use in testing.
+     *
+     * @var FundingCycle $testMockFundingCycle
+     */
+    protected $testMockFundingCycle;
+
+    /**
      * Setup for PHPUnit tests.
      *
      * This instantiates an instance of FundingOrganization.
@@ -160,9 +167,9 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
         $this->fundingOrganization->setCountry(self::$testCountry);
         $this->fundingOrganization->setCreator(self::$testCreator);
 
-        $mockFundingCycle = \Mockery::mock('\Pelagos\Entity\FundingCycle');
-        $mockFundingCycle->shouldReceive('setFundingOrganization');
-        $this->fundingOrganization->setFundingCycles(array($mockFundingCycle));
+        $this->testMockFundingCycle = \Mockery::mock('\Pelagos\Entity\FundingCycle');
+        $this->testMockFundingCycle->shouldReceive('setFundingOrganization');
+        $this->fundingOrganization->setFundingCycles(array($this->testMockFundingCycle));
 
         $this->timeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->timeStampISO = $this->timeStamp->format(\DateTime::ISO8601);
@@ -497,6 +504,30 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
         foreach ($fundingCycles as $fc) {
             $this->assertInstanceOf('\Pelagos\Entity\FundingCycle', $fc);
         }
+    }
+
+    /**
+     * Test the testSetFundingCycles() method with bad (non-FC) element.
+     *
+     * This method should result in an exception being thrown.
+     *
+     * @expectedException \Exception
+     */
+    public function testSetFundingCyclesWithNonFC()
+    {
+        $this->fundingOrganization->setFundingCycles('string data');
+    }
+
+    /**
+     * Test the testSetFundingCycles() method with a bad (non-FC) element included in set.
+     *
+     * This method should result in an exception being thrown.
+     *
+     * @expectedException \Exception
+     */
+    public function testSetFundingCyclesWithNonFCElement()
+    {
+        $this->fundingOrganization->setFundingCycles(array($this->testMockFundingCycle, 'string data'));
     }
 
     /**
