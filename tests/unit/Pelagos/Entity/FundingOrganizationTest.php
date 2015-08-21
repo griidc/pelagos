@@ -19,6 +19,13 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     protected $fundingOrganization;
 
     /**
+     * Property to hold set of funding cycles for testing.
+     *
+     * @var testFundingCycles $testFundingCycles
+     */
+    protected $testFundingCycles;
+
+    /**
      * Static class variable containing a name to use for testing.
      *
      * @var string $testName
@@ -152,6 +159,10 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
         $this->fundingOrganization->setPostalCode(self::$testPostalCode);
         $this->fundingOrganization->setCountry(self::$testCountry);
         $this->fundingOrganization->setCreator(self::$testCreator);
+
+        $mockFundingCycle = \Mockery::mock('\Pelagos\Entity\FundingCycle');
+        $mockFundingCycle->shouldReceive('setFundingOrganization');
+        $this->fundingOrganization->setFundingCycles(array($mockFundingCycle));
 
         $this->timeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->timeStampISO = $this->timeStamp->format(\DateTime::ISO8601);
@@ -471,6 +482,21 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     public function testGetCreationTimeStampAsISONull()
     {
         $this->assertNull($this->fundingOrganization->getCreationTimeStampAsISO());
+    }
+
+    /**
+     * Test the testGetFundingCycles() method.
+     *
+     * This method verify the return a set of Funding Cycles.
+     *
+     * @return void
+     */
+    public function testGetFundingCycles()
+    {
+        $fundingCycles = $this->fundingOrganization->getFundingCycles();
+        foreach ($fundingCycles as $fc) {
+            $this->assertInstanceOf('\Pelagos\Entity\FundingCycle', $fc);
+        }
     }
 
     /**
