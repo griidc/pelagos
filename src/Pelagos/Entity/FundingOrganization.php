@@ -173,7 +173,7 @@ class FundingOrganization extends Entity
     /**
      * Setter for fundingCycles.
      *
-     * @param FundingCycles $fundingCycles set of FundingCycle objects.
+     * @param array|\Traversable $fundingCycles Set of FundingCycle objects.
      *
      * @access public
      *
@@ -181,10 +181,16 @@ class FundingOrganization extends Entity
      */
     public function setFundingCycles($fundingCycles)
     {
-        $this->fundingCycles = $fundingCycles;
-        foreach ($fundingCycles as $fundingCycle)
-        {
-            $fundingCycle->setFundingOrganization($this);
+        if (is_array($fundingCycles) || $fundingCycles instanceof \Traversable) {
+            $this->fundingCycles = $fundingCycles;
+            foreach ($fundingCycles as $fundingCycle) {
+                if (!$fundingCycle instanceof FundingCycle) {
+                    throw new \Exception ('Non-funding cycle found in FundingCycles');
+                }
+                $fundingCycle->setFundingOrganization($this);
+            }
+        } else {
+            throw new \Exception ('Funding Cycles must be array or traversable objects');
         }
     }
 
