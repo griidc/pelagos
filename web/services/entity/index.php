@@ -251,5 +251,35 @@ $slim->put(
     }
 );
 
+$slim->get(
+    '/:entityName',
+    function ($entityName) use ($comp, $slim) {
+        $response = $slim->response;
+        $response->headers->set('Content-Type', 'application/json');
+        $comp->setQuitOnFinalize(true);
+        try {
+            $entityService = new EntityService($comp->getEntityManager());
+            $entities = $entityService->getAll($entityName);
+            $entitiesCount = count($entities);
+            $status = new HTTPStatus(
+                200,
+                "Retrieved $entitiesCount entities of type $entityName",
+                $entities
+            );
+        } catch (PersistenceException $e) {
+            $databaseErrorMessage = $e->getDatabaseErrorMessage();
+            if (empty($databaseErrorMessage)) {
+                $status = new HTTPStatus(500, 'A database error has occured: ' . $e->getMessage());
+            } else {
+                $status = new HTTPStatus(500, "A database error has occured: $databaseErrorMessage");
+            }
+        } catch (\Exception $e) {
+            $status = new HTTPStatus(500, 'A general error has occured: ' . $e->getMessage());
+        }
+        $response->status($status->getCode());
+        $response->body(json_encode($status));
+    }
+);
+
 $slim->run();
 $comp->finalize();
