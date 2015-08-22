@@ -96,22 +96,17 @@ $slim->post(
         try {
             $entityClass = "\Pelagos\Entity\\$entityName";
             $entity = new $entityClass;
-            if (array_key_exists('logo', $_FILES) and
-                array_key_exists('tmp_name', $_FILES['logo']) and
-                is_file($_FILES['logo']['tmp_name'])) {
-                $entity->setLogo(
-                    file_get_contents($_FILES['logo']['tmp_name'])
-                );
-            }
             $updates = $slim->request->params();
             $updates['creator'] = $comp->getLoggedInUser();
             $updates['modifier'] = $comp->getLoggedInUser();
-            if (array_key_exists('logo', $updates)) {
-                unset($updates['logo']);
-            }
             foreach ($updates as $property => $value) {
                 if (empty($value)) {
                     $updates[$property] = null;
+                }
+            }
+            foreach ($_FILES as $fileProperty => $file) {
+                if (array_key_exists('tmp_name', $file) and is_file($file['tmp_name'])) {
+                    $updates[$fileProperty] = file_get_contents($file['tmp_name']);
                 }
             }
             $entityService = new EntityService($comp->getEntityManager());
@@ -203,24 +198,18 @@ $slim->put(
         try {
             $updates = $slim->request->params();
             $updates['modifier'] = $comp->getLoggedInUser();
-
-            // get the Funding Organization (F.O.)
-            $entityService = new EntityService($comp->getEntityManager());
-            $entity = $entityService->get($entityName, $id);
-
-            // handle logo file upload, if set
-            if (array_key_exists('logo', $_FILES) and
-                array_key_exists('tmp_name', $_FILES['logo']) and
-                is_file($_FILES['logo']['tmp_name'])) {
-                $updates['logo'] = file_get_contents($_FILES['logo']['tmp_name']);
-            }
-
             foreach ($updates as $property => $value) {
                 if (empty($value)) {
                     $updates[$property] = null;
                 }
             }
-
+            foreach ($_FILES as $fileProperty => $file) {
+                if (array_key_exists('tmp_name', $file) and is_file($file['tmp_name'])) {
+                    $updates[$fileProperty] = file_get_contents($file['tmp_name']);
+                }
+            }
+            $entityService = new EntityService($comp->getEntityManager());
+            $entity = $entityService->get($entityName, $id);
             $entity = $entityService->persist(
                 $entityService->validate(
                     $entity->update($updates),
