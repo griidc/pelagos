@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__.'/../../../vendor/autoload.php';
+require_once __DIR__.'/lib/EntityWebService.php';
 
 use \Pelagos\HTTPStatus;
 use \Pelagos\Service\EntityService;
@@ -14,7 +15,7 @@ use \Pelagos\Exception\RecordNotFoundPersistenceException;
 use \Pelagos\Exception\PersistenceException;
 use \Pelagos\Exception\ValidationException;
 
-$comp = new \Pelagos\Component;
+$comp = new \Pelagos\Component\EntityWebService;
 
 $slim = new \Slim\Slim;
 
@@ -93,55 +94,25 @@ $slim->post(
             return;
         }
 
-        try {
-            $entityClass = "\Pelagos\Entity\\$entityName";
-            $entity = new $entityClass;
-            $updates = $slim->request->params();
-            $updates['creator'] = $comp->getLoggedInUser();
-            $updates['modifier'] = $comp->getLoggedInUser();
-            foreach ($updates as $property => $value) {
-                if (empty($value)) {
-                    $updates[$property] = null;
-                }
+        // build the fully qualified class name
+        $entityClass = "\Pelagos\Entity\\$entityName";
+        // instantiate a new entity
+        $entity = new $entityClass;
+        // get updates from request parameters
+        $updates = $slim->request->params();
+        // set creator to currently logged in user
+        $updates['creator'] = $comp->getLoggedInUser();
+        // set modifier to currently logged in user
+        $updates['modifier'] = $comp->getLoggedInUser();
+        // add any files to updates
+        foreach ($_FILES as $fileProperty => $file) {
+            if (array_key_exists('tmp_name', $file) and is_file($file['tmp_name'])) {
+                $updates[$fileProperty] = file_get_contents($file['tmp_name']);
             }
-            foreach ($_FILES as $fileProperty => $file) {
-                if (array_key_exists('tmp_name', $file) and is_file($file['tmp_name'])) {
-                    $updates[$fileProperty] = file_get_contents($file['tmp_name']);
-                }
-            }
-            $entityService = new EntityService($comp->getEntityManager());
-            $entity = $entityService->persist(
-                $entityService->validate(
-                    $entity->update($updates),
-                    Validation::createValidatorBuilder()->enableAnnotationMapping()->getValidator()
-                )
-            );
-            $status = new HTTPStatus(
-                201,
-                sprintf(
-                    'A %s has been successfully created with at ID of %d.',
-                    $entityName,
-                    $entity->getId()
-                )
-            );
-            $response->headers->set('Location', $comp->getUri() . '/' . $entity->getId());
-        } catch (ValidationException $e) {
-            $violations = array();
-            foreach ($e->getViolations() as $violation) {
-                $violations[] = $violation->getMessage();
-            }
-            $status = new HTTPStatus(
-                400,
-                "Cannot create $entityName because: " . join(', ', $violations)
-            );
-        } catch (MissingRequiredFieldPersistenceException $e) {
-            $status = new HTTPStatus(400, "Cannot create $entityName because a required field is missing.");
-        } catch (RecordExistsPersistenceException $e) {
-            $status = new HTTPStatus(409, "Cannot create $entityName: " . $e->getDatabaseErrorMessage());
-        } catch (PersistenceException $e) {
-            $status = new HTTPStatus(500, 'A database error has occured: ' . $e->getDatabaseErrorMessage());
-        } catch (\Exception $e) {
-            $status = new HTTPStatus(500, 'A general error has occured: ' . $e->getMessage());
+        }
+        $status = $comp->updateValidateAndPersist($entity, $updates, 'create');
+        if ($status->getCode() == 201) {
+            $response->headers->set('Location', $comp->getUri() . "/$entityName/" . $entity->getId());
         }
         $response->status($status->getCode());
         $response->body(json_encode($status));
@@ -196,45 +167,25 @@ $slim->put(
         }
 
         try {
-            $updates = $slim->request->params();
-            $updates['modifier'] = $comp->getLoggedInUser();
-            foreach ($updates as $property => $value) {
-                if (empty($value)) {
-                    $updates[$property] = null;
-                }
-            }
-            foreach ($_FILES as $fileProperty => $file) {
-                if (array_key_exists('tmp_name', $file) and is_file($file['tmp_name'])) {
-                    $updates[$fileProperty] = file_get_contents($file['tmp_name']);
-                }
-            }
-            $entityService = new EntityService($comp->getEntityManager());
-            $entity = $entityService->get($entityName, $id);
-            $entity = $entityService->persist(
-                $entityService->validate(
-                    $entity->update($updates),
-                    Validation::createValidatorBuilder()->enableAnnotationMapping()->getValidator()
-                )
-            );
-            $status = new HTTPStatus(200, "Updated $entityName with id: $id", $entity);
-        } catch (ArgumentException $e) {
-            $status = new HTTPStatus(400, $e->getMessage());
-        } catch (ValidationException $e) {
-            $violations = array();
-            foreach ($e->getViolations() as $violation) {
-                $violations[] = $violation->getMessage();
-            }
-            $status = new HTTPStatus(
-                400,
-                "Cannot update $entityName because: " . join(', ', $violations)
-            );
+            // retrieve the entity
+            $entity = $comp->getEntityService->get($entityName, $id);
         } catch (RecordNotFoundPersistenceException $e) {
             $status = new HTTPStatus(404, $e->getMessage());
-        } catch (PersistenceException $e) {
-            $status = new HTTPStatus(500, 'A database error has occured:: ' . $e->getDatabaseErrorMessage());
-        } catch (\Exception $e) {
-            $status = new HTTPStatus(500, 'A general error has occured: ' . $e->getMessage());
+            $response->status($status->getCode());
+            $response->body(json_encode($status));
+            return;
         }
+        // get updates from request parameters
+        $updates = $slim->request->params();
+        // set the modified to the currently logged in user
+        $updates['modifier'] = $comp->getLoggedInUser();
+        // add any files to updates
+        foreach ($_FILES as $fileProperty => $file) {
+            if (array_key_exists('tmp_name', $file) and is_file($file['tmp_name'])) {
+                $updates[$fileProperty] = file_get_contents($file['tmp_name']);
+            }
+        }
+        $status = $comp->updateValidateAndPersist($entity, $updates, 'update');
         $response->status($status->getCode());
         $response->body(json_encode($status));
     }
