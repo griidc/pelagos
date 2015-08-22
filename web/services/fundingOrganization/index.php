@@ -195,6 +195,39 @@ $slim->get(
 );
 
 $slim->get(
+    '/list',
+    function () use ($comp, $slim) {
+        $response = $slim->response;
+        $response->headers->set('Content-Type', 'application/json');
+        $comp->setQuitOnFinalize(true);
+        try {
+            $entityService = new EntityService($comp->getEntityManager());
+            $fundingOrganizations = $entityService->getAll('FundingOrganization');
+            $fundingOrganizationsCount = count($fundingOrganizations);
+            $status = new HTTPStatus(
+                200,
+                "Retrieved $fundingOrganizationsCount Funding Organizations",
+                array(
+                    'Count' => $fundingOrganizationsCount,
+                    'FundingOrganizations' => $fundingOrganizations
+                )
+            );
+        } catch (PersistenceException $e) {
+            $databaseErrorMessage = $e->getDatabaseErrorMessage();
+            if (empty($databaseErrorMessage)) {
+                $status = new HTTPStatus(500, 'A database error has occured: ' . $e->getMessage());
+            } else {
+                $status = new HTTPStatus(500, "A database error has occured: $databaseErrorMessage");
+            }
+        } catch (\Exception $e) {
+            $status = new HTTPStatus(500, 'A general error has occured: ' . $e->getMessage());
+        }
+        $response->status($status->getCode());
+        $response->body(json_encode($status));
+    }
+);
+
+$slim->get(
     '/:id',
     function ($id) use ($comp, $slim) {
         $response = $slim->response;

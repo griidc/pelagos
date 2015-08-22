@@ -19,8 +19,18 @@ use \Pelagos\Exception\ValidationException;
  */
 class EntityService
 {
+    /**
+     * The entity manager to use with this service.
+     *
+     * @var EntityManager $entityManager
+     */
     protected $entityManager;
 
+    /**
+     * Constructor for entity service.
+     *
+     * @param EntityManager $entityManager The entity manager to use with this service.
+     */
     public function __construct(EntityManager $entityManager)
     {
         $this->entityManager = $entityManager;
@@ -106,5 +116,24 @@ class EntityService
             throw $exception;
         }
         return $entity;
+    }
+
+    /**
+     * Method to get all Entity objects of the specified class.
+     *
+     * @param string $entityClass Entity class to retrieve from.
+     *
+     * @return array A list of entity objects of the specified class.
+     *
+     * @throws PersistenceException When an error occurs retrieving from persistence.
+     */
+    public function getAll($entityClass)
+    {
+        try {
+            $entities = $this->entityManager->getRepository('\Pelagos\Entity\\' . $entityClass)->findAll();
+        } catch (DBALException $e) {
+            throw new PersistenceException($e->getMessage());
+        }
+        return $entities;
     }
 }
