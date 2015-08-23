@@ -3,6 +3,7 @@
 namespace Pelagos\Component;
 
 use \Pelagos\HTTPStatus;
+use \Pelagos\Entity\Entity;
 use \Pelagos\Service\EntityService;
 use \Symfony\Component\Validator\Validation;
 use \Pelagos\Exception\ArgumentException;
@@ -14,24 +15,56 @@ use \Pelagos\Exception\RecordNotFoundPersistenceException;
 use \Pelagos\Exception\PersistenceException;
 use \Pelagos\Exception\ValidationException;
 
+/**
+ * Utility class for the entity web service.
+ */
 class EntityWebService extends \Pelagos\Component
 {
+    /**
+     * An instance of Pelagos\Service\EntityService.
+     *
+     * @var EntityService $entityService
+     * @access protected
+     */
     protected $entityService;
 
+    /**
+     * Constructor for EntityWebService.
+     *
+     * @access public
+     */
     public function __construct()
     {
-        // call constructor for \Pelagos\Component
+        // Call constructor for \Pelagos\Component
         parent::__construct();
-        // get an entityService instance
+        // Create an EntityService instance
         $this->entityService = new EntityService($this->getEntityManager());
     }
 
+    /**
+     * Getter for entityService.
+     *
+     * @access public
+     *
+     * @return EntityService An instance of Pelagos\Service\EntityService.
+     */
     public function getEntityService()
     {
         return $this->entityService;
     }
 
-    public function updateValidateAndPersist(\Pelagos\Entity\Entity $entity, array $updates, $action)
+    /**
+     * Apply updates to an entity, validate it, and persist it.
+     *
+     * @param Entity $entity  The entity to operate on.
+     * @param array  $updates The update to apply to $entity.
+     * @param string $action  The name of the action calling this method.
+     *
+     * @access public
+     *
+     * @return HTTPStatus Object containing the result of the operation.
+     */
+    public function updateValidateAndPersist(Entity $entity, array $updates, $action)
     {
         if ($action == 'create') {
             $successCode = 201;
