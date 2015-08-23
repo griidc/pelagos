@@ -190,8 +190,8 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     public function testGetID()
     {
         $this->assertEquals(
-            $this->fundingOrganization->getId(),
-            null
+            null,
+            $this->fundingOrganization->getId()
         );
     }
 
@@ -205,8 +205,8 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     public function testGetName()
     {
         $this->assertEquals(
-            $this->fundingOrganization->getName(),
-            self::$testName
+            self::$testName,
+            $this->fundingOrganization->getName()
         );
     }
 
@@ -220,8 +220,8 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     public function testGetLogo()
     {
         $this->assertEquals(
-            $this->fundingOrganization->getLogo(),
-            self::$testLogo
+            self::$testLogo,
+            $this->fundingOrganization->getLogo()
         );
     }
 
@@ -235,8 +235,8 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     public function testGetEmailAddress()
     {
         $this->assertEquals(
-            $this->fundingOrganization->getEmailAddress(),
-            self::$testEmailAddress
+            self::$testEmailAddress,
+            $this->fundingOrganization->getEmailAddress()
         );
     }
 
@@ -250,8 +250,8 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     public function testGetDescription()
     {
         $this->assertEquals(
-            $this->fundingOrganization->getDescription(),
-            self::$testDescription
+            self::$testDescription,
+            $this->fundingOrganization->getDescription()
         );
     }
 
@@ -265,8 +265,8 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     public function testGetUrl()
     {
         $this->assertEquals(
-            $this->fundingOrganization->getUrl(),
-            self::$testUrl
+            self::$testUrl,
+            $this->fundingOrganization->getUrl()
         );
     }
 
@@ -280,8 +280,8 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     public function testGetPhoneNumber()
     {
         $this->assertEquals(
-            $this->fundingOrganization->getPhoneNumber(),
-            self::$testPhoneNumber
+            self::$testPhoneNumber,
+            $this->fundingOrganization->getPhoneNumber()
         );
     }
 
@@ -295,8 +295,8 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     public function testGetDeliveryPoint()
     {
         $this->assertEquals(
-            $this->fundingOrganization->getDeliveryPoint(),
-            self::$testDeliveryPoint
+            self::$testDeliveryPoint,
+            $this->fundingOrganization->getDeliveryPoint()
         );
     }
 
@@ -310,8 +310,8 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     public function testGetCity()
     {
         $this->assertEquals(
-            $this->fundingOrganization->getCity(),
-            self::$testCity
+            self::$testCity,
+            $this->fundingOrganization->getCity()
         );
     }
 
@@ -325,8 +325,8 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     public function testGetAdministrativeArea()
     {
         $this->assertEquals(
-            $this->fundingOrganization->getAdministrativeArea(),
-            self::$testAdministrativeArea
+            self::$testAdministrativeArea,
+            $this->fundingOrganization->getAdministrativeArea()
         );
     }
 
@@ -340,8 +340,8 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     public function testGetPostalCode()
     {
         $this->assertEquals(
-            $this->fundingOrganization->getPostalCode(),
-            self::$testPostalCode
+            self::$testPostalCode,
+            $this->fundingOrganization->getPostalCode()
         );
     }
 
@@ -355,8 +355,8 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     public function testGetCountry()
     {
         $this->assertEquals(
-            $this->fundingOrganization->getCountry(),
-            self::$testCountry
+            self::$testCountry,
+            $this->fundingOrganization->getCountry()
         );
     }
 
@@ -370,8 +370,8 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     public function testGetCreator()
     {
         $this->assertEquals(
-            $this->fundingOrganization->getCreator(),
-            self::$testCreator
+            self::$testCreator,
+            $this->fundingOrganization->getCreator()
         );
     }
     /**
@@ -558,52 +558,52 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
             )
         );
         $this->assertEquals(
-            $this->fundingOrganization->getName(),
-            'new_name'
+            'new_name',
+            $this->fundingOrganization->getName()
         );
         $this->assertEquals(
-            $this->fundingOrganization->getLogo(),
-            'new_logo'
+            'new_logo',
+            $this->fundingOrganization->getLogo()
         );
         $this->assertEquals(
-            $this->fundingOrganization->getEmailAddress(),
-            'new_emailAddress'
+            'new_emailAddress',
+            $this->fundingOrganization->getEmailAddress()
         );
         $this->assertEquals(
-            $this->fundingOrganization->getDescription(),
-            'new_description'
+            'new_description',
+            $this->fundingOrganization->getDescription()
         );
         $this->assertEquals(
-            $this->fundingOrganization->getUrl(),
-            'new_url'
+            'new_url',
+            $this->fundingOrganization->getUrl()
         );
         $this->assertEquals(
-            $this->fundingOrganization->getPhoneNumber(),
-            'new_phoneNumber'
+            'new_phoneNumber',
+            $this->fundingOrganization->getPhoneNumber()
         );
         $this->assertEquals(
-            $this->fundingOrganization->getDeliveryPoint(),
-            'new_deliveryPoint'
+            'new_deliveryPoint',
+            $this->fundingOrganization->getDeliveryPoint()
         );
         $this->assertEquals(
-            $this->fundingOrganization->getCity(),
-            'new_city'
+            'new_city',
+            $this->fundingOrganization->getCity()
         );
         $this->assertEquals(
-            $this->fundingOrganization->getAdministrativeArea(),
-            'new_administrativeArea'
+            'new_administrativeArea',
+            $this->fundingOrganization->getAdministrativeArea()
         );
         $this->assertEquals(
-            $this->fundingOrganization->getPostalCode(),
-            'new_postalCode'
+            'new_postalCode',
+            $this->fundingOrganization->getPostalCode()
         );
         $this->assertEquals(
-            $this->fundingOrganization->getCountry(),
-            'new_country'
+            'new_country',
+            $this->fundingOrganization->getCountry()
         );
         $this->assertEquals(
-            $this->fundingOrganization->getCreator(),
-            'new_creator'
+            'new_creator',
+            $this->fundingOrganization->getCreator()
         );
     }
 
