@@ -447,7 +447,9 @@ class FundingOrganizationWebServiceTest extends \PHPUnit_Framework_TestCase
             'postalCode' => self::$testPostalCode,
             'country' => self::$testCountry,
             'modificationTimeStamp' => null,
-            'modifier' => self::$testCreator
+            'modifier' => self::$testCreator,
+            'logoBase64' => '',
+            'logoMimeType' => 'application/x-empty'
         );
         $testFundingOrganization = new \Pelagos\Entity\FundingOrganization;
         $testFundingOrganization->update($fundingOrganizationData);
@@ -626,8 +628,9 @@ class FundingOrganizationWebServiceTest extends \PHPUnit_Framework_TestCase
             'postalCode' => self::$testPostalCode,
             'country' => self::$testCountry,
             'modificationTimeStamp' => null,
-            'modifier' => 'test'
-
+            'modifier' => 'test',
+            'logoBase64' => '',
+            'logoMimeType' => 'application/x-empty'
         );
         $fundingOrganization = new \Pelagos\Entity\FundingOrganization;
         $fundingOrganization->update($organizationData);
