@@ -168,7 +168,7 @@ $slim->put(
 
         try {
             // retrieve the entity
-            $entity = $comp->getEntityService->get($entityName, $id);
+            $entity = $comp->getEntityService()->get($entityName, $id);
         } catch (RecordNotFoundPersistenceException $e) {
             $status = new HTTPStatus(404, $e->getMessage());
             $response->status($status->getCode());
@@ -179,12 +179,44 @@ $slim->put(
         $updates = $slim->request->params();
         // set the modified to the currently logged in user
         $updates['modifier'] = $comp->getLoggedInUser();
-        // add any files to updates
-        foreach ($_FILES as $fileProperty => $file) {
-            if (array_key_exists('tmp_name', $file) and is_file($file['tmp_name'])) {
-                $updates[$fileProperty] = file_get_contents($file['tmp_name']);
+
+        // Get the multipart boundary from the Content-Type header
+        preg_match('/^multipart\/form-data; boundary=(.*)/', $slim->request->headers->get('Content-Type'), $matches);
+        $boundary = $matches[1];
+
+        // Split the body in to parts by slicing on the boundary
+        $parts = array_slice(explode($boundary, $slim->request()->getBody()), 1);
+
+        foreach ($parts as $part) {
+            // If this is the last part, break
+            if ($part == "--\r\n") {
+                break;
+            }
+
+            // Separate headers and body
+            $part = ltrim($part, "\r\n");
+            list($raw_headers, $body) = explode("\r\n\r\n", $part, 2);
+
+            // Parse the headers
+            $raw_headers = explode("\r\n", $raw_headers);
+            $headers = array();
+            foreach ($raw_headers as $header) {
+                list($name, $value) = explode(':', $header);
+                $headers[strtolower($name)] = ltrim($value, ' ');
+            }
+
+            // Parse the Content-Disposition to determine if this is a file part and get the field name
+            if (isset($headers['content-disposition'])) {
+                if (preg_match(
+                    '/^.+; *name="([^"]+)"; *filename="[^"]+"/',
+                    $headers['content-disposition'],
+                    $matches
+                )) {
+                    $updates[$matches[1]] = $body;
+                }
             }
         }
+
         $status = $comp->updateValidateAndPersist($entity, $updates, 'update');
         $response->status($status->getCode());
         $response->body(json_encode($status));
