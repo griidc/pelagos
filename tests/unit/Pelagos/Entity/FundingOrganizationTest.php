@@ -19,6 +19,13 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     protected $fundingOrganization;
 
     /**
+     * Property to hold set of funding cycles for testing.
+     *
+     * @var testFundingCycles $testFundingCycles
+     */
+    protected $testFundingCycles;
+
+    /**
      * Static class variable containing a name to use for testing.
      *
      * @var string $testName
@@ -30,7 +37,7 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
      *
      * @var string $testLogo
      */
-    protected $testLogo;
+    protected static $testLogo = '12345';
 
     /**
      * Static class variable containing an email address to use for testing.
@@ -131,6 +138,13 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     protected $timeStampLocalizedISO;
 
     /**
+     * Property to hold a funding cycle to use in testing.
+     *
+     * @var FundingCycle $testMockFundingCycle
+     */
+    protected $testMockFundingCycle;
+
+    /**
      * Setup for PHPUnit tests.
      *
      * This instantiates an instance of FundingOrganization.
@@ -141,8 +155,7 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     {
         $this->fundingOrganization = new FundingOrganization;
         $this->fundingOrganization->setName(self::$testName);
-        $this->testLogo = file_get_contents(__DIR__ . '/../../../data/gomri-logo.jpg');
-        $this->fundingOrganization->setLogo($this->testLogo);
+        $this->fundingOrganization->setLogo(self::$testLogo);
         $this->fundingOrganization->setEmailAddress(self::$testEmailAddress);
         $this->fundingOrganization->setDescription(self::$testDescription);
         $this->fundingOrganization->setUrl(self::$testUrl);
@@ -154,28 +167,16 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
         $this->fundingOrganization->setCountry(self::$testCountry);
         $this->fundingOrganization->setCreator(self::$testCreator);
 
+        $this->testMockFundingCycle = \Mockery::mock('\Pelagos\Entity\FundingCycle');
+        $this->testMockFundingCycle->shouldReceive('setFundingOrganization');
+        $this->fundingOrganization->setFundingCycles(array($this->testMockFundingCycle));
+
         $this->timeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->timeStampISO = $this->timeStamp->format(\DateTime::ISO8601);
         $this->timeStampLocalized = clone $this->timeStamp;
         $this->timeStampLocalized->setTimeZone(new \DateTimeZone(date_default_timezone_get()));
         $this->timeStampLocalizedISO = $this->timeStampLocalized->format(\DateTime::ISO8601);
 
-    }
-
-    /**
-     * Test the getId method.
-     *
-     * This method should always return null because it can not be set (even by the constructor).
-     * The id property can only be set when a FundingOrganization is instantiated from persistence by Doctrine.
-     *
-     * @return void
-     */
-    public function testGetID()
-    {
-        $this->assertEquals(
-            $this->fundingOrganization->getId(),
-            null
-        );
     }
 
     /**
@@ -188,8 +189,8 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     public function testGetName()
     {
         $this->assertEquals(
-            $this->fundingOrganization->getName(),
-            self::$testName
+            self::$testName,
+            $this->fundingOrganization->getName()
         );
     }
 
@@ -203,8 +204,8 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     public function testGetLogo()
     {
         $this->assertEquals(
-            $this->fundingOrganization->getLogo(),
-            $this->testLogo
+            self::$testLogo,
+            $this->fundingOrganization->getLogo()
         );
     }
 
@@ -218,8 +219,8 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     public function testGetEmailAddress()
     {
         $this->assertEquals(
-            $this->fundingOrganization->getEmailAddress(),
-            self::$testEmailAddress
+            self::$testEmailAddress,
+            $this->fundingOrganization->getEmailAddress()
         );
     }
 
@@ -233,8 +234,8 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     public function testGetDescription()
     {
         $this->assertEquals(
-            $this->fundingOrganization->getDescription(),
-            self::$testDescription
+            self::$testDescription,
+            $this->fundingOrganization->getDescription()
         );
     }
 
@@ -248,8 +249,8 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     public function testGetUrl()
     {
         $this->assertEquals(
-            $this->fundingOrganization->getUrl(),
-            self::$testUrl
+            self::$testUrl,
+            $this->fundingOrganization->getUrl()
         );
     }
 
@@ -263,8 +264,8 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     public function testGetPhoneNumber()
     {
         $this->assertEquals(
-            $this->fundingOrganization->getPhoneNumber(),
-            self::$testPhoneNumber
+            self::$testPhoneNumber,
+            $this->fundingOrganization->getPhoneNumber()
         );
     }
 
@@ -278,8 +279,8 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     public function testGetDeliveryPoint()
     {
         $this->assertEquals(
-            $this->fundingOrganization->getDeliveryPoint(),
-            self::$testDeliveryPoint
+            self::$testDeliveryPoint,
+            $this->fundingOrganization->getDeliveryPoint()
         );
     }
 
@@ -293,8 +294,8 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     public function testGetCity()
     {
         $this->assertEquals(
-            $this->fundingOrganization->getCity(),
-            self::$testCity
+            self::$testCity,
+            $this->fundingOrganization->getCity()
         );
     }
 
@@ -308,8 +309,8 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     public function testGetAdministrativeArea()
     {
         $this->assertEquals(
-            $this->fundingOrganization->getAdministrativeArea(),
-            self::$testAdministrativeArea
+            self::$testAdministrativeArea,
+            $this->fundingOrganization->getAdministrativeArea()
         );
     }
 
@@ -323,8 +324,8 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     public function testGetPostalCode()
     {
         $this->assertEquals(
-            $this->fundingOrganization->getPostalCode(),
-            self::$testPostalCode
+            self::$testPostalCode,
+            $this->fundingOrganization->getPostalCode()
         );
     }
 
@@ -338,140 +339,52 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     public function testGetCountry()
     {
         $this->assertEquals(
-            $this->fundingOrganization->getCountry(),
-            self::$testCountry
+            self::$testCountry,
+            $this->fundingOrganization->getCountry()
         );
     }
 
     /**
-     * Test the getCreator method.
+     * Test the testGetFundingCycles() method.
      *
-     * This method should return the creator that was set in setUp.
-     *
-     * @return void
-     */
-    public function testGetCreator()
-    {
-        $this->assertEquals(
-            $this->fundingOrganization->getCreator(),
-            self::$testCreator
-        );
-    }
-    /**
-     * Test the setCreationTimeStamp method.
-     *
-     * This method should accept a \DateTime object in UTC.
-     * We should be able to get back the same timestamp in UTC
-     * if we call getCreationTimeStamp(false) (non-localized).
+     * This method verify the return a set of Funding Cycles.
      *
      * @return void
      */
-    public function testSetCreationTimeStamp()
+    public function testGetFundingCycles()
     {
-        $timeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
-        $timeStampISO = $timeStamp->format(\DateTime::ISO8601);
-        $this->fundingOrganization->setCreationTimeStamp($timeStamp);
-        $creationTimeStamp = $this->fundingOrganization->getCreationTimeStamp(false);
-        $this->assertInstanceOf('\DateTime', $creationTimeStamp);
-        $this->assertEquals($timeStampISO, $creationTimeStamp->format(\DateTime::ISO8601));
+        $fundingCycles = $this->fundingOrganization->getFundingCycles();
+        foreach ($fundingCycles as $fc) {
+            $this->assertInstanceOf('\Pelagos\Entity\FundingCycle', $fc);
+        }
     }
 
     /**
-     * Test the setCreationTimeStamp method with a non-UTC timestamp.
+     * Test the testSetFundingCycles() method with bad (non-FC) element.
      *
-     * @return void
+     * This method should result in an exception being thrown.
      *
      * @expectedException \Exception
-     */
-    public function testSetCreationTimeStampFailForNonUTC()
-    {
-        $this->fundingOrganization->setCreationTimeStamp(
-            new \DateTime('now', new \DateTimeZone('America/Chicago'))
-        );
-    }
-
-    /**
-     * Test the getCreationTimeStamp method.
-     *
-     * This method should return a \DateTime object in UTC.
      *
      * @return void
      */
-    public function testGetCreationTimeStamp()
+    public function testSetFundingCyclesWithNonFC()
     {
-        $this->fundingOrganization->setCreationTimeStamp($this->timeStamp);
-        $creationTimeStamp = $this->fundingOrganization->getCreationTimeStamp();
-        $this->assertInstanceOf('\DateTime', $creationTimeStamp);
-        $this->assertEquals(
-            'UTC',
-            $creationTimeStamp->getTimezone()->getName()
-        );
-        $this->assertEquals($this->timeStamp, $creationTimeStamp);
+        $this->fundingOrganization->setFundingCycles('string data');
     }
 
     /**
-     * Test the getCreationTimeStamp method (localized).
+     * Test the testSetFundingCycles() method with a bad (non-FC) element included in set.
      *
-     * This method should return a \DateTime object localized to the current timezone.
+     * This method should result in an exception being thrown.
      *
-     * @return void
-     */
-    public function testGetCreationTimeStampLocalized()
-    {
-        $this->fundingOrganization->setCreationTimeStamp($this->timeStamp);
-        $creationTimeStamp = $this->fundingOrganization->getCreationTimeStamp(true);
-        $this->assertInstanceOf('\DateTime', $creationTimeStamp);
-        $this->assertEquals(
-            date_default_timezone_get(),
-            $creationTimeStamp->getTimezone()->getName()
-        );
-        $this->assertEquals($this->timeStamp, $creationTimeStamp);
-    }
-
-    /**
-     * Test the getCreationTimeStampAsISO method.
-     *
-     * This method should return a string containing the ISO 8601 representation
-     * of the creation time stamp localized to the current timezone.
+     * @expectedException \Exception
      *
      * @return void
      */
-    public function testGetCreationTimeStampAsISO()
+    public function testSetFundingCyclesWithNonFCElement()
     {
-        $this->fundingOrganization->setCreationTimeStamp($this->timeStamp);
-        $this->assertEquals(
-            $this->timeStampISO,
-            $this->fundingOrganization->getCreationTimeStampAsISO()
-        );
-    }
-
-    /**
-     * Test the getCreationTimeStampAsISO method.
-     *
-     * This method should return a string containing the ISO 8601 representation
-     * of the creation time stamp localized to the current timezone.
-     *
-     * @return void
-     */
-    public function testGetCreationTimeStampAsISOLocalized()
-    {
-        $this->fundingOrganization->setCreationTimeStamp($this->timeStamp);
-        $this->assertEquals(
-            $this->timeStampLocalizedISO,
-            $this->fundingOrganization->getCreationTimeStampAsISO(true)
-        );
-    }
-
-    /**
-     * Test the getCreationTimeStampAsISO method when creationTimeStamp is null.
-     *
-     * This method should return null in this case.
-     *
-     * @return void
-     */
-    public function testGetCreationTimeStampAsISONull()
-    {
-        $this->assertNull($this->fundingOrganization->getCreationTimeStampAsISO());
+        $this->fundingOrganization->setFundingCycles(array($this->testMockFundingCycle, 'string data'));
     }
 
     /**
@@ -494,51 +407,56 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
                 'administrativeArea' => 'new_administrativeArea',
                 'postalCode' => 'new_postalCode',
                 'country' => 'new_country',
+                'creator' => 'new_creator',
             )
         );
         $this->assertEquals(
-            $this->fundingOrganization->getName(),
-            'new_name'
+            'new_name',
+            $this->fundingOrganization->getName()
         );
         $this->assertEquals(
-            $this->fundingOrganization->getLogo(),
-            'new_logo'
+            'new_logo',
+            $this->fundingOrganization->getLogo()
         );
         $this->assertEquals(
-            $this->fundingOrganization->getEmailAddress(),
-            'new_emailAddress'
+            'new_emailAddress',
+            $this->fundingOrganization->getEmailAddress()
         );
         $this->assertEquals(
-            $this->fundingOrganization->getDescription(),
-            'new_description'
+            'new_description',
+            $this->fundingOrganization->getDescription()
         );
         $this->assertEquals(
-            $this->fundingOrganization->getUrl(),
-            'new_url'
+            'new_url',
+            $this->fundingOrganization->getUrl()
         );
         $this->assertEquals(
-            $this->fundingOrganization->getPhoneNumber(),
-            'new_phoneNumber'
+            'new_phoneNumber',
+            $this->fundingOrganization->getPhoneNumber()
         );
         $this->assertEquals(
-            $this->fundingOrganization->getDeliveryPoint(),
-            'new_deliveryPoint'
+            'new_deliveryPoint',
+            $this->fundingOrganization->getDeliveryPoint()
         );
         $this->assertEquals(
-            $this->fundingOrganization->getCity(),
-            'new_city'
+            'new_city',
+            $this->fundingOrganization->getCity()
         );
         $this->assertEquals(
-            $this->fundingOrganization->getAdministrativeArea(),
-            'new_administrativeArea'
+            'new_administrativeArea',
+            $this->fundingOrganization->getAdministrativeArea()
         );
         $this->assertEquals(
-            $this->fundingOrganization->getPostalCode(),
-            'new_postalCode'
+            'new_postalCode',
+            $this->fundingOrganization->getPostalCode()
         );
         $this->assertEquals(
-            $this->fundingOrganization->getCountry(),
-            'new_country'
+            'new_country',
+            $this->fundingOrganization->getCountry()
+        );
+        $this->assertEquals(
+            'new_creator',
+            $this->fundingOrganization->getCreator()
         );
     }
 
@@ -567,5 +485,56 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
             'modifier' => self::$testCreator,
         );
         $this->assertEquals(json_encode($fundingOrganizationData), json_encode($this->fundingOrganization));
+    }
+
+    /**
+     * Test that FundingOrganization can be returned as an array via asArray(arry) method.
+     *
+     * @return void
+     */
+    public function testAsArray()
+    {
+        $fundingOrganizationProperties = array(
+            'id',
+            'creationTimeStamp',
+            'creator',
+            'name',
+            'emailAddress',
+            'description',
+            'url',
+            'phoneNumber',
+            'deliveryPoint',
+            'city',
+            'administrativeArea',
+            'postalCode',
+            'country',
+            'modificationTimeStamp',
+            'modifier',
+            'logo',
+        );
+        $fundingOrganizationData = array(
+            null,
+            null,
+            self::$testCreator,
+            self::$testName,
+            self::$testEmailAddress,
+            self::$testDescription,
+            self::$testUrl,
+            self::$testPhoneNumber,
+            self::$testDeliveryPoint,
+            self::$testCity,
+            self::$testAdministrativeArea,
+            self::$testPostalCode,
+            self::$testCountry,
+            null,
+            self::$testCreator,
+            self::$testLogo,
+        );
+        $this->assertEquals(
+            $fundingOrganizationData,
+            $this->fundingOrganization->asArray(
+                $fundingOrganizationProperties
+            )
+        );
     }
 }

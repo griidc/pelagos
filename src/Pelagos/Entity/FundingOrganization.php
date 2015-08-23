@@ -171,6 +171,33 @@ class FundingOrganization extends Entity
     }
 
     /**
+     * Setter for fundingCycles.
+     *
+     * @param array|\Traversable $fundingCycles Set of FundingCycle objects.
+     *
+     * @access public
+     *
+     * @throws \Exception When Non-funding cycle found in FundingCycles or a Funding Cycle
+     *                    is found that is not an array or traversable object.
+     *
+     * @return void
+     */
+    public function setFundingCycles($fundingCycles)
+    {
+        if (is_array($fundingCycles) || $fundingCycles instanceof \Traversable) {
+            $this->fundingCycles = $fundingCycles;
+            foreach ($fundingCycles as $fundingCycle) {
+                if (!$fundingCycle instanceof FundingCycle) {
+                    throw new \Exception('Non-funding cycle found in FundingCycles');
+                }
+                $fundingCycle->setFundingOrganization($this);
+            }
+        } else {
+            throw new \Exception('Funding Cycles must be array or traversable objects');
+        }
+    }
+
+    /**
      * Setter for name.
      *
      * @param string $name Textual name of funding organization.
@@ -591,6 +618,12 @@ class FundingOrganization extends Entity
                     break;
                 case 'modifier':
                     $personArray[] = $this->getModifier();
+                    break;
+                case 'city':
+                    $personArray[] = $this->getCity();
+                    break;
+                case 'deliveryPoint':
+                    $personArray[] = $this->getDeliveryPoint();
                     break;
             }
         }
