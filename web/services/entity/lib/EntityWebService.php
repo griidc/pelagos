@@ -26,6 +26,11 @@ class EntityWebService extends \Pelagos\Component
         $this->entityService = new EntityService($this->getEntityManager());
     }
 
+    public function getEntityService()
+    {
+        return $this->entityService;
+    }
+
     public function updateValidateAndPersist(\Pelagos\Entity\Entity $entity, array $updates, $action)
     {
         if ($action == 'create') {
@@ -49,13 +54,14 @@ class EntityWebService extends \Pelagos\Component
                 )
             );
             $status = new HTTPStatus(
-                201,
+                $successCode,
                 sprintf(
-                    'A %s has been successfully %sed with at ID of %d.',
+                    'A %s has been successfully %sd with at ID of %d.',
                     $entityName,
                     $action,
                     $entity->getId()
-                )
+                ),
+                $entity
             );
         } catch (ValidationException $e) {
             $violations = array();
