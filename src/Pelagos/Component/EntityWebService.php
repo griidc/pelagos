@@ -350,11 +350,11 @@ class EntityWebService extends \Pelagos\Component
                 // Parse the Content-Disposition to determine if this is a file part and get the field name
                 if (isset($headers['content-disposition'])) {
                     if (preg_match(
-                        '/^.+; *name="([^"]+)"; *filename="[^"]+"/',
+                        '/^.+; *name="([^"]+)"/',
                         $headers['content-disposition'],
                         $matches
                     )) {
-                        $updates[$matches[1]] = $body;
+                        $updates[$matches[1]] = rtrim($body, "\r\n--");
                     }
                 }
             }
