@@ -61,7 +61,7 @@ function populateFundingOrganization(FundingOrganizationID)
                 $('#results').append(html);
             }
         });
-        $("#fundingOrganizationLogo").html("<img src=\"data:" + data.data.logoMimeType + ";base64," + data.data.logoBase64 + "\">");
+        $("#fundingOrganizationLogo").html("<img src=\"data:" + data.data.logo.mimeType + ";base64," + data.data.logo.base64 + "\">");
     });
 }
 
@@ -85,7 +85,7 @@ function updateFundingOrganization(jsonData,fundingID)
             title = "Success!";
             message = json.message;
             $('#fundingOrganizationForm').editableForm('reset');
-            $("#fundingOrganizationLogo").html("<img src=\"data:" + json.data.logoMimeType + ";base64," + json.data.logoBase64 + "\">");
+            $("#fundingOrganizationLogo").html("<img src=\"data:" + json.data.logo.mimeType + ";base64," + json.data.logo.base64 + "\">");
         } else {
             title = "Error!";
             message = "Something went wrong!<br>Didn't receive the correct success message!";
