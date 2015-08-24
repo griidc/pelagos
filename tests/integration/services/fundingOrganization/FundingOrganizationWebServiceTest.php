@@ -448,11 +448,13 @@ class FundingOrganizationWebServiceTest extends \PHPUnit_Framework_TestCase
             'country' => self::$testCountry,
             'modificationTimeStamp' => null,
             'modifier' => self::$testCreator,
-            'logoBase64' => '',
-            'logoMimeType' => 'application/x-empty'
         );
         $testFundingOrganization = new \Pelagos\Entity\FundingOrganization;
         $testFundingOrganization->update($fundingOrganizationData);
+        $fundingOrganizationData['logo'] = array(
+            'base64' => '',
+            'mimeType' => 'application/x-empty',
+        );
         $this->mockEntityManager->shouldReceive('find')->andReturn($testFundingOrganization);
         \Slim\Environment::mock(
             array(
@@ -604,7 +606,7 @@ class FundingOrganizationWebServiceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test Successful Update
+     * Test Successful Update.
      *
      * Should return 200 with a message indicating that a funding organization has been successfully updated
      * and listing details about the funding organization including this changed field
@@ -613,7 +615,7 @@ class FundingOrganizationWebServiceTest extends \PHPUnit_Framework_TestCase
      */
     public function testUpdateSuccess()
     {
-        $organizationData = array (
+        $fundingOrganizationData = array(
             'id' => null,
             'creationTimeStamp' => null,
             'creator' => 'test',
@@ -629,11 +631,13 @@ class FundingOrganizationWebServiceTest extends \PHPUnit_Framework_TestCase
             'country' => self::$testCountry,
             'modificationTimeStamp' => null,
             'modifier' => 'test',
-            'logoBase64' => '',
-            'logoMimeType' => 'application/x-empty'
         );
         $fundingOrganization = new \Pelagos\Entity\FundingOrganization;
-        $fundingOrganization->update($organizationData);
+        $fundingOrganization->update($fundingOrganizationData);
+        $fundingOrganizationData['logo'] = array(
+            'base64' => '',
+            'mimeType' => 'application/x-empty',
+        );
         $this->mockEntityManager->shouldReceive('find')->andReturn($fundingOrganization);
         $this->mockEntityManager->shouldReceive('flush');
         \Slim\Environment::mock(
@@ -648,7 +652,7 @@ class FundingOrganizationWebServiceTest extends \PHPUnit_Framework_TestCase
             $this->makeHTTPStatusJSON(
                 200,
                 'Updated Funding Organization with id: 0',
-                $organizationData
+                $fundingOrganizationData
             )
         );
         require 'index.php';

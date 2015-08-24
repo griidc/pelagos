@@ -585,8 +585,10 @@ class FundingOrganization extends Entity
             'country' => $this->getCountry(),
             'modificationTimeStamp' => $this->getModificationTimeStampAsISO(),
             'modifier' => $this->getModifier(),
-            'logoBase64' => base64_encode($this->getLogo()),
-            'logoMimeType' => $this->getLogoMimeType(),
+            'logo' => array(
+                'base64' => base64_encode($this->getLogo()),
+                'mimeType' => $this->getLogoMimeType(),
+            ),
         );
     }
 
