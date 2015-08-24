@@ -89,7 +89,7 @@ class EntityWebService extends \Pelagos\Component
             $status = new HTTPStatus(
                 $successCode,
                 sprintf(
-                    'A %s has been successfully %sd with at ID of %d.',
+                    'A %s has been successfully %sd with an ID of %d.',
                     $entityName,
                     $action,
                     $entity->getId()
