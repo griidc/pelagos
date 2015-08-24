@@ -23,8 +23,7 @@ $(document).ready(function()
     var isLoggedIn = JSON.parse($('div[userLoggedIn]').attr('userLoggedIn'));
     if (isLoggedIn) {
         $('#fundingOrganizationForm').editableForm({
-            validationURL: pelagosBasePath + '/services/fundingOrganization/validateProperty'
-            
+            validationURL: pelagosBasePath + '/services/entity/FundingOrganization/validateProperty'
         });
     }
     // Bind the event.
@@ -52,7 +51,7 @@ function populateFundingOrganization(FundingOrganizationID)
     "use strict";
     $("#fundingOrganizationForm").trigger("reset");
     $("#fundingOrganizationLogo").html("");
-    $.get(pelagosBasePath + "/services/fundingOrganization/" + FundingOrganizationID)
+    $.get(pelagosBasePath + "/services/entity/FundingOrganization/" + FundingOrganizationID)
     .done(function(data) {
         $("#fundingOrganizationForm").fillForm(data.data);
         $.ajax({
@@ -62,17 +61,17 @@ function populateFundingOrganization(FundingOrganizationID)
                 $('#results').append(html);
             }
         });
-        $("#fundingOrganizationLogo").html("<img src=\"" + pelagosBasePath + "/services/fundingOrganization/logo/" + FundingOrganizationID + "?" + Math.random() + "\">");
+        $("#fundingOrganizationLogo").html("<img src=\"data:" + data.data.logoMimeType + ";base64," + data.data.logoBase64 + "\">");
     });
 }
 
 function updateFundingOrganization(jsonData,fundingID)
 {
-    var theurl = pelagosBasePath + "/services/fundingOrganization/"+fundingID;
+    var theurl = pelagosBasePath + "/services/entity/FundingOrganization/" + fundingID;
     var title = "";
     var messsage = "";
     $.ajax({
-        type: 'POST',
+        type: 'PUT',
         data: jsonData,
         url: theurl,
         // Optionally enforce JSON return, in case a status 200 happens, but no JSON returns
@@ -86,6 +85,7 @@ function updateFundingOrganization(jsonData,fundingID)
             title = "Success!";
             message = json.message;
             $('#fundingOrganizationForm').editableForm('reset');
+            $("#fundingOrganizationLogo").html("<img src=\"data:" + json.data.logoMimeType + ";base64," + json.data.logoBase64 + "\">");
         } else {
             title = "Error!";
             message = "Something went wrong!<br>Didn't receive the correct success message!";

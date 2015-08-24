@@ -21,7 +21,7 @@ $(document).ready(function()
     });
 
     $("#fundingOrgForm input, textarea").each(function() {
-        var url = pelagosBasePath + "/services/fundingOrganization/validateProperty";
+        var url = pelagosBasePath + "/services/entity/FundingOrganization/validateProperty";
         $(this).rules("add", {
             remote: {
                 url: url
@@ -59,7 +59,7 @@ $(document).ready(function()
 function saveFundingOrg(jsonData)
 {
     "use strict";
-    var url = pelagosBasePath + "/services/fundingOrganization";
+    var url = pelagosBasePath + "/services/entity/FundingOrganization";
     var title = "";
     var message = "";
     $.ajax({
