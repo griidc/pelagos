@@ -16,10 +16,16 @@ use \Pelagos\Exception\PersistenceException;
 use \Pelagos\Exception\ValidationException;
 
 /**
- * Utility class for the entity web service.
+ * Class for the entity web service.
  */
 class EntityWebService extends \Pelagos\Component
 {
+    /**
+     * The instance of \Slim\Slim used by this web service.
+     *
+     * @var \Slim\Slim $slim
+     * @access protected
+     */
     protected $slim;
 
     /**
@@ -32,6 +38,8 @@ class EntityWebService extends \Pelagos\Component
 
     /**
      * Constructor for EntityWebService.
+     *
+     * @param \Slim\Slim $slim The instance of \Slim\Slim used by this web service.
      *
      * @access public
      */
@@ -75,7 +83,7 @@ class EntityWebService extends \Pelagos\Component
         } else {
             $successCode = 200;
         }
-        $entityName = preg_replace('/^.*\\\/', '', get_class($entity));
+        $entityType = preg_replace('/^.*\\\/', '', get_class($entity));
         // set any empty properties to null
         foreach ($updates as $property => $value) {
             if (empty($value)) {
@@ -94,7 +102,7 @@ class EntityWebService extends \Pelagos\Component
                 $successCode,
                 sprintf(
                     'A %s has been successfully %sd with an ID of %d.',
-                    $entityName,
+                    $entityType,
                     $action,
                     $entity->getId()
                 ),
@@ -107,12 +115,12 @@ class EntityWebService extends \Pelagos\Component
             }
             $status = new HTTPStatus(
                 400,
-                "Cannot $action $entityName because: " . join(', ', $violations)
+                "Cannot $action $entityType because: " . join(', ', $violations)
             );
         } catch (MissingRequiredFieldPersistenceException $e) {
-            $status = new HTTPStatus(400, "Cannot $action $entityName because a required field is missing.");
+            $status = new HTTPStatus(400, "Cannot $action $entityType because a required field is missing.");
         } catch (RecordExistsPersistenceException $e) {
-            $status = new HTTPStatus(409, "Cannot $action $entityName: " . $e->getDatabaseErrorMessage());
+            $status = new HTTPStatus(409, "Cannot $action $entityType: " . $e->getDatabaseErrorMessage());
         } catch (PersistenceException $e) {
             $status = new HTTPStatus(500, 'A database error has occured: ' . $e->getDatabaseErrorMessage());
         } catch (\Exception $e) {
@@ -121,7 +129,21 @@ class EntityWebService extends \Pelagos\Component
         return $status;
     }
 
-    public function validateProperty($entityName)
+    /**
+     * Method to handle a request to validate a value for a property of an entity.
+     *
+     * This method will validate key/value pairs found in the query string against
+     * properties of the given entity type. The Slim response body will be populated
+     * with JSON true if valid or, if invalid, a JSON string containing a message
+     * indicating why.
+     *
+     * @param string $entityType The type of entity to validate against.
+     *
+     * @access protected
+     *
+     * @return void
+     */
+    public function validateProperty($entityType)
     {
         $response = $this->slim->response;
         $response->headers->set('Content-Type', 'application/json');
@@ -141,12 +163,12 @@ class EntityWebService extends \Pelagos\Component
 
         $paramName = array_keys($params);
 
-        if (!property_exists("\Pelagos\Entity\\$entityName", $paramName[0])) {
-            print json_encode("The parameter $paramName[0] is not a valid property of $entityName.");
+        if (!property_exists("\Pelagos\Entity\\$entityType", $paramName[0])) {
+            print json_encode("The parameter $paramName[0] is not a valid property of $entityType.");
             return;
         }
 
-        $entityClass = "\Pelagos\Entity\\$entityName";
+        $entityClass = "\Pelagos\Entity\\$entityType";
         $entity = new $entityClass;
         $entity->update($params);
         $validator = Validation::createValidatorBuilder()->enableAnnotationMapping()->getValidator();
@@ -162,7 +184,16 @@ class EntityWebService extends \Pelagos\Component
         print json_encode(true);
     }
 
-    public function handlePost($entityName)
+    /**
+     * Method to handle an HTTP POST request (create) for a given entity type.
+     *
+     * @param string $entityType The type of entity to create.
+     *
+     * @access public
+     *
+     * @return void
+     */
+    public function handlePost($entityType)
     {
         $response = $this->slim->response;
         $response->headers->set('Content-Type', 'application/json');
@@ -180,7 +211,7 @@ class EntityWebService extends \Pelagos\Component
         }
 
         // build the fully qualified class name
-        $entityClass = "\Pelagos\Entity\\$entityName";
+        $entityClass = "\Pelagos\Entity\\$entityType";
         // instantiate a new entity
         $entity = new $entityClass;
         // get updates from request parameters
@@ -197,21 +228,34 @@ class EntityWebService extends \Pelagos\Component
         }
         $status = $this->updateValidateAndPersist($entity, $updates, 'create');
         if ($status->getCode() == 201) {
-            $response->headers->set('Location', $this->getUri() . "/$entityName/" . $entity->getId());
+            $response->headers->set('Location', $this->getUri() . "/$entityType/" . $entity->getId());
         }
         $response->status($status->getCode());
         $response->body(json_encode($status));
     }
 
-    public function handleGet($entityName, $id)
+    /**
+     * Method to handle an HTTP GET request (retrieve) for a given entity type and id.
+     *
+     * This method will retrieve the entity of $entityType identified by $id and
+     * populate the Slim response body with a JSON representation of the entity.
+     *
+     * @param string  $entityType The type of entity to retrieve.
+     * @param integer $id         The id of the entity to retrieve.
+     *
+     * @access public
+     *
+     * @return void
+     */
+    public function handleGet($entityType, $id)
     {
         $response = $this->slim->response;
         $response->headers->set('Content-Type', 'application/json');
         $this->setQuitOnFinalize(true);
         try {
             $entityService = new EntityService($this->getEntityManager());
-            $entity = $entityService->get($entityName, $id);
-            $status = new HTTPStatus(200, "Found $entityName with id: $id", $entity);
+            $entity = $entityService->get($entityType, $id);
+            $status = new HTTPStatus(200, "Found $entityType with id: $id", $entity);
         } catch (ArgumentException $e) {
             $status = new HTTPStatus(400, $e->getMessage());
         } catch (RecordNotFoundPersistenceException $e) {
@@ -230,7 +274,20 @@ class EntityWebService extends \Pelagos\Component
         $response->body(json_encode($status));
     }
 
-    public function handlePut($entityName, $id)
+    /**
+     * Method to handle an HTTP PUT request (update) for a given entity type and id.
+     *
+     * This method will update the entity of $entityType identified by $id and populate
+     * the Slim response body with a JSON representation of the updated entity.
+     *
+     * @param string  $entityType The type of entity to update.
+     * @param integer $id         The id of the entity to retrieve.
+     *
+     * @access public
+     *
+     * @return void
+     */
+    public function handlePut($entityType, $id)
     {
         $response = $this->slim->response;
         $response->headers->set('Content-Type', 'application/json');
@@ -249,7 +306,7 @@ class EntityWebService extends \Pelagos\Component
 
         try {
             // retrieve the entity
-            $entity = $this->getEntityService()->get($entityName, $id);
+            $entity = $this->getEntityService()->get($entityType, $id);
         } catch (RecordNotFoundPersistenceException $e) {
             $status = new HTTPStatus(404, $e->getMessage());
             $response->status($status->getCode());
@@ -308,17 +365,29 @@ class EntityWebService extends \Pelagos\Component
         $response->body(json_encode($status));
     }
 
-    public function handleGetAll($entityName)
+    /**
+     * Method to handle an HTTP GET request (retrieve) for a given entity type.
+     *
+     * This method will retrieve all entities of $entityType and populate
+     * the Slim response body with a JSON representation of them.
+     *
+     * @param string $entityType The type of entity to retrieve.
+     *
+     * @access public
+     *
+     * @return void
+     */
+    public function handleGetAll($entityType)
     {
         $response = $this->slim->response;
         $response->headers->set('Content-Type', 'application/json');
         $this->setQuitOnFinalize(true);
         try {
-            $entities = $this->getEntityService()->getAll($entityName);
+            $entities = $this->getEntityService()->getAll($entityType);
             $entitiesCount = count($entities);
             $status = new HTTPStatus(
                 200,
-                "Retrieved $entitiesCount entities of type $entityName",
+                "Retrieved $entitiesCount entities of type $entityType",
                 $entities
             );
         } catch (PersistenceException $e) {

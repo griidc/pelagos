@@ -5,10 +5,10 @@ require_once __DIR__.'/../../../vendor/autoload.php';
 $slim = new \Slim\Slim;
 $comp = new \Pelagos\Component\EntityWebService($slim);
 
-// Set the default condition for the entityName parameter to match a camel-case word.
+// Set the default condition for the entityType parameter to match a camel-case word.
 \Slim\Route::setDefaultConditions(
     array(
-        'entityName' => '([A-Z][a-z]*)+'
+        'entityType' => '([A-Z][a-z]*)+'
     )
 );
 
@@ -21,43 +21,43 @@ $slim->get(
     }
 );
 
-// GET route to validate properties of $entityName.
+// GET route to validate properties of $entityType.
 $slim->get(
-    '/:entityName/validateProperty/',
-    function ($entityName) use ($comp) {
-        $comp->validateProperty($entityName);
+    '/:entityType/validateProperty/',
+    function ($entityType) use ($comp) {
+        $comp->validateProperty($entityType);
     }
 );
 
 // POST route for creating a new entity.
 $slim->post(
-    '/:entityName/',
-    function ($entityName) use ($comp) {
-        $comp->handlePost($entityName);
+    '/:entityType/',
+    function ($entityType) use ($comp) {
+        $comp->handlePost($entityType);
     }
 );
 
 // GET route for retrieving an entity.
 $slim->get(
-    '/:entityName/:id',
-    function ($entityName, $id) use ($comp) {
-        $comp->handleGet($entityName, $id);
+    '/:entityType/:id',
+    function ($entityType, $id) use ($comp) {
+        $comp->handleGet($entityType, $id);
     }
 );
 
 // PUT route for updating an entity.
 $slim->put(
-    '/:entityName/:id',
-    function ($entityName, $id) use ($comp) {
-        $comp->handlePut($entityName, $id);
+    '/:entityType/:id',
+    function ($entityType, $id) use ($comp) {
+        $comp->handlePut($entityType, $id);
     }
 );
 
 // GET route for retrieveing all entities of a given type.
 $slim->get(
-    '/:entityName',
-    function ($entityName) use ($comp) {
-        $comp->handleGetAll($entityName);
+    '/:entityType',
+    function ($entityType) use ($comp) {
+        $comp->handleGetAll($entityType);
     }
 );
 
