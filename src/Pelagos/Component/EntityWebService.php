@@ -237,25 +237,25 @@ class EntityWebService extends \Pelagos\Component
     /**
      * Method to handle an HTTP GET request (retrieve) for a given entity type and id.
      *
-     * This method will retrieve the entity of $entityType identified by $id and
+     * This method will retrieve the entity of $entityType identified by $entityId and
      * populate the Slim response body with a JSON representation of the entity.
      *
      * @param string  $entityType The type of entity to retrieve.
-     * @param integer $id         The id of the entity to retrieve.
+     * @param integer $entityId   The id of the entity to retrieve.
      *
      * @access public
      *
      * @return void
      */
-    public function handleGet($entityType, $id)
+    public function handleGet($entityType, $entityId)
     {
         $response = $this->slim->response;
         $response->headers->set('Content-Type', 'application/json');
         $this->setQuitOnFinalize(true);
         try {
             $entityService = new EntityService($this->getEntityManager());
-            $entity = $entityService->get($entityType, $id);
-            $status = new HTTPStatus(200, "Found $entityType with id: $id", $entity);
+            $entity = $entityService->get($entityType, $entityId);
+            $status = new HTTPStatus(200, "Found $entityType with id: $entityId", $entity);
         } catch (ArgumentException $e) {
             $status = new HTTPStatus(400, $e->getMessage());
         } catch (RecordNotFoundPersistenceException $e) {
@@ -277,17 +277,17 @@ class EntityWebService extends \Pelagos\Component
     /**
      * Method to handle an HTTP PUT request (update) for a given entity type and id.
      *
-     * This method will update the entity of $entityType identified by $id and populate
+     * This method will update the entity of $entityType identified by $entityId and populate
      * the Slim response body with a JSON representation of the updated entity.
      *
      * @param string  $entityType The type of entity to update.
-     * @param integer $id         The id of the entity to retrieve.
+     * @param integer $entityId   The id of the entity to retrieve.
      *
      * @access public
      *
      * @return void
      */
-    public function handlePut($entityType, $id)
+    public function handlePut($entityType, $entityId)
     {
         $response = $this->slim->response;
         $response->headers->set('Content-Type', 'application/json');
@@ -306,7 +306,7 @@ class EntityWebService extends \Pelagos\Component
 
         try {
             // retrieve the entity
-            $entity = $this->getEntityService()->get($entityType, $id);
+            $entity = $this->getEntityService()->get($entityType, $entityId);
         } catch (RecordNotFoundPersistenceException $e) {
             $status = new HTTPStatus(404, $e->getMessage());
             $response->status($status->getCode());

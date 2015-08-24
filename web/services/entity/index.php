@@ -39,17 +39,17 @@ $slim->post(
 
 // GET route for retrieving an entity.
 $slim->get(
-    '/:entityType/:id',
-    function ($entityType, $id) use ($comp) {
-        $comp->handleGet($entityType, $id);
+    '/:entityType/:entityId',
+    function ($entityType, $entityId) use ($comp) {
+        $comp->handleGet($entityType, $entityId);
     }
 );
 
 // PUT route for updating an entity.
 $slim->put(
-    '/:entityType/:id',
-    function ($entityType, $id) use ($comp) {
-        $comp->handlePut($entityType, $id);
+    '/:entityType/:entityId',
+    function ($entityType, $entityId) use ($comp) {
+        $comp->handlePut($entityType, $entityId);
     }
 );
 
