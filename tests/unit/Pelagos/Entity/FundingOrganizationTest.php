@@ -483,6 +483,10 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
             'country' => self::$testCountry,
             'modificationTimeStamp' => null,
             'modifier' => self::$testCreator,
+            'logo' => array(
+                'base64' => base64_encode(self::$testLogo),
+                'mimeType' => 'text/plain',
+            ),
         );
         $this->assertEquals(json_encode($fundingOrganizationData), json_encode($this->fundingOrganization));
     }
