@@ -390,11 +390,12 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $timeStampISO = $timeStamp->format(\DateTime::ISO8601);
         $concreteEntityData = array(
             'id' => null,
-            'creationTimeStamp' => $timeStampISO,
             'creator' => self::$testCreator,
+            'creationTimeStamp' => $timeStampISO,
+            'modifier' => self::$testCreator,
+            'modificationTimeStamp' => $timeStampISO,
         );
         $this->concreteEntity->setCreationTimeStamp($timeStamp);
         $this->assertEquals(json_encode($concreteEntityData), json_encode($this->concreteEntity));
     }
-
 }
