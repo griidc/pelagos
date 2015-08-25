@@ -29,9 +29,12 @@ $app = new \Slim\Slim(array(
         'view' => new \Slim\Views\Twig()
 ));
 
-$app->get('/:entity', function ($entity) use ($app) {
-   
+$app->get('/:entity', function ($entity) use ($app,$comp) {
+    if (file_exists(__DIR__."/static/js/$entity.js")) {
+        $comp->addJS("static/js/$entity.js");
+    }
     $app->render("$entity.html");
+    
 });
 
 $app->run();

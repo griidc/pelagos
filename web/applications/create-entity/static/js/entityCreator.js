@@ -18,7 +18,7 @@ var $ = jQuery.noConflict();
         });
         
         $(this).find("input, textarea").each(function() {
-            var url = pelagosBasePath + "/services/" + entity + "/validateProperty";
+            var url = pelagosBasePath + "/services/entity/" + entity + "/validateProperty";
             $(this).rules("add", {
                 remote: {
                     url: url
