@@ -54,13 +54,6 @@ function populateFundingOrganization(FundingOrganizationID)
     $.get(pelagosBasePath + "/services/entity/FundingOrganization/" + FundingOrganizationID)
     .done(function(data) {
         $("#fundingOrganizationForm").fillForm(data.data);
-        $.ajax({
-            url: 'test.html',
-            cache: false,
-            success: function(html){
-                $('#results').append(html);
-            }
-        });
         $("#fundingOrganizationLogo").html("<img src=\"data:" + data.data.logo.mimeType + ";base64," + data.data.logo.base64 + "\">");
     });
 }
