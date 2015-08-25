@@ -3,7 +3,6 @@
 namespace Pelagos\Entity;
 
 use Symfony\Component\Validator\Validation;
-use Tests\Helpers\ConcreteEntity;
 
 /**
  * Unit tests for Pelagos\Entity\Entity.
@@ -380,6 +379,28 @@ class EntityTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test update method.
+     *
+     * @return void
+     */
+    public function testUpdate()
+    {
+        $updates = array(
+            'creator' => 'new_creator',
+            'modifier' => 'new_modifier',
+        );
+        $this->concreteEntity->update($updates);
+        $this->assertEquals(
+            'new_creator',
+            $this->concreteEntity->getCreator()
+        );
+        $this->assertEquals(
+            'new_modifier',
+            $this->concreteEntity->getModifier()
+        );
+    }
+
+    /**
      * Test that FundingCycle is JsonSerializable and serializes to the expected JSON.
      *
      * @return void
@@ -390,11 +411,12 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $timeStampISO = $timeStamp->format(\DateTime::ISO8601);
         $concreteEntityData = array(
             'id' => null,
-            'creationTimeStamp' => $timeStampISO,
             'creator' => self::$testCreator,
+            'creationTimeStamp' => $timeStampISO,
+            'modifier' => self::$testCreator,
+            'modificationTimeStamp' => $timeStampISO,
         );
         $this->concreteEntity->setCreationTimeStamp($timeStamp);
         $this->assertEquals(json_encode($concreteEntityData), json_encode($this->concreteEntity));
     }
-
 }

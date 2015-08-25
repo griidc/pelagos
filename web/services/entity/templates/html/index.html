@@ -1,0 +1,58 @@
+<p>
+    This Web service establishes a REST API for the creation and storage of Pelagos Entities.
+</p>
+
+<p>
+    Web Service Usage:
+    <ul>
+        <li>GET / - This message</li>
+        <li>POST /<em>entityName</em> - <strong>C</strong>reate an entity of type <em>entityName</em></li>
+        <li>GET /<em>entityName</em>/<em>id</em> - <strong>R</strong>etrieve an entity of type <em>entityName</em> identified by <em>id</em></li>
+        <li>PUT /<em>entityName</em>/<em>id</em> - <strong>U</strong>pdate an entity of type <em>entityName</em> identified by <em>id</em></li>
+        <li>GET /<em>entityName</em> - Retrieve all entities of type <em>entityName</em></li>
+        <li>GET /<em>entityName</em>/validateProperty?<em>property</em>=<em>value</em> - Validate <em>value</em> for <em>property</em> of entity of type <em>entityName</em></li>
+    </ul>
+    Items in <em>italics</em> are variable parameters.
+</p>
+
+<p>
+    The HTTP status code will be set appropriately to indicate success or failure:
+    <ul>
+        <li>
+            Success
+            <ul>
+                <li>200 OK - operation was successful</li>
+                <li>201 Created - entity was created successfully</li>
+            </ul>
+        </li>
+        <li>
+            Client Error
+            <ul>
+                <li>400 Bad Request - operation failed because invalid parameters were given</li>
+                <li>401 Unauthorized - operation failed because authorization is required</li>
+                <li>404 Not Found - operation failed because no entity identified by <em>id</em> could be found</li>
+                <li>409 Conflict - operation failed because given parameters violate a uniqueness constraint</li>
+            </ul>
+        </li>
+        <li>
+            Server Error
+            <ul>
+                <li>500 Internal Server Error - operation failed because of an unexpected condition on the server side</li>
+            </ul>
+        </li>
+    </ul>
+</p>
+
+<p>
+    The response body will be JSON and include the HTTP status code, a message, and optional data, e.g.:
+<pre>
+{
+  "code": 200,
+  "message": "Great success!",
+  "data": {
+    "property1": "value1"
+    "property2": "value2"
+  }
+}
+</pre>
+</p>
