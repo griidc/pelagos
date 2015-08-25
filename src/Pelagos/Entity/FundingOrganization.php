@@ -33,7 +33,7 @@ class FundingOrganization extends Entity
     /**
      * Funding organization's logo.
      *
-     * @var string $logo
+     * @var string|resource $logo
      * @access protected
      */
     protected $logo;
@@ -226,7 +226,7 @@ class FundingOrganization extends Entity
     /**
      * Setter for logo.
      *
-     * @param string $logo Containing byte string of logo.
+     * @param string|resource $logo Containing byte string of logo.
      *
      * @access public
      *
@@ -240,13 +240,39 @@ class FundingOrganization extends Entity
     /**
      * Getter for logo.
      *
+     * @param boolean $asStream Whether to return the logo as a stream.
+     *
      * @access public
      *
-     * @return string Containing logo encoded as byte text.
+     * @return string|resource Binary string containing the logo or a stream resource pointing to it.
      */
-    public function getLogo()
+    public function getLogo($asStream = false)
     {
+        if ($asStream) {
+            if (is_resource($this->logo) and get_resource_type($this->logo) == 'stream') {
+                return $this->logo;
+            } else {
+                return null;
+            }
+        }
+        if (is_resource($this->logo) and get_resource_type($this->logo) == 'stream') {
+            rewind($this->logo);
+            return stream_get_contents($this->logo);
+        }
         return $this->logo;
+    }
+
+    /**
+     * Get the mime type of logo.
+     *
+     * @access public
+     *
+     * @return string The mime type of logo.
+     */
+    public function getLogoMimeType()
+    {
+        $finfo = new \finfo(FILEINFO_MIME_TYPE);
+        return $finfo->buffer($this->getLogo());
     }
 
     /**
@@ -558,7 +584,11 @@ class FundingOrganization extends Entity
             'postalCode' => $this->getPostalCode(),
             'country' => $this->getCountry(),
             'modificationTimeStamp' => $this->getModificationTimeStampAsISO(),
-            'modifier' => $this->getModifier()
+            'modifier' => $this->getModifier(),
+            'logo' => array(
+                'base64' => base64_encode($this->getLogo()),
+                'mimeType' => $this->getLogoMimeType(),
+            ),
         );
     }
 
