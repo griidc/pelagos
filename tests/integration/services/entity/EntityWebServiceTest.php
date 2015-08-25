@@ -458,6 +458,115 @@ class EntityWebServiceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test successful property validation.
+     *
+     * Should return a json encoded true.
+     *
+     * @return void
+     */
+    public function testValidatePropertyValid()
+    {
+        \Slim\Environment::mock(
+            array(
+                'REQUEST_METHOD' => 'GET',
+                'PATH_INFO' => '/ConcreteEntity/validateProperty',
+                'QUERY_STRING' => 'name=' . self::$testName,
+            )
+        );
+        $this->expectOutputString(
+            json_encode(true) . "drupal_exit\n"
+        );
+        require 'index.php';
+    }
+
+    /**
+     * Test unsuccessful property validation.
+     *
+     * Should return a json encoded string containing why validation failed.
+     *
+     * @return void
+     */
+    public function testValidatePropertyInValid()
+    {
+        \Slim\Environment::mock(
+            array(
+                'REQUEST_METHOD' => 'GET',
+                'PATH_INFO' => '/ConcreteEntity/validateProperty',
+                'QUERY_STRING' => 'name='
+            )
+        );
+        $this->expectOutputString(
+            json_encode('Name is required') . "drupal_exit\n"
+        );
+        require 'index.php';
+    }
+
+    /**
+     * Test property validation with no parameters.
+     *
+     * Should return the json encoded string" "Property to be validated not supplied".
+     *
+     * @return void
+     */
+    public function testValidatePropertyNoParameters()
+    {
+        \Slim\Environment::mock(
+            array(
+                'REQUEST_METHOD' => 'GET',
+                'PATH_INFO' => '/ConcreteEntity/validateProperty',
+            )
+        );
+        $this->expectOutputString(
+            json_encode('Property to be validated not supplied') . "drupal_exit\n"
+        );
+        require 'index.php';
+    }
+
+    /**
+     * Test property validation with multiple parameters.
+     *
+     * Should return the json encoded string: "Validation of multiple properties not allowed.".
+     *
+     * @return void
+     */
+    public function testValidatePropertyMultipleParameters()
+    {
+        \Slim\Environment::mock(
+            array(
+                'REQUEST_METHOD' => 'GET',
+                'PATH_INFO' => '/ConcreteEntity/validateProperty',
+                'QUERY_STRING' => 'name=' . self::$testName . '&foo=bar',
+            )
+        );
+        $this->expectOutputString(
+            json_encode('Validation of multiple properties not allowed.') . "drupal_exit\n"
+        );
+        require 'index.php';
+    }
+
+    /**
+     * Test property validation with a bad parameter.
+     *
+     * Should return a json encoded string "The parameter $paramName is not a valid property of $entityType.".
+     *
+     * @return void
+     */
+    public function testValidatePropertyBadParameter()
+    {
+        \Slim\Environment::mock(
+            array(
+                'REQUEST_METHOD' => 'GET',
+                'PATH_INFO' => '/ConcreteEntity/validateProperty',
+                'QUERY_STRING' => 'foo=bar'
+            )
+        );
+        $this->expectOutputString(
+            json_encode('The parameter foo is not a valid property of ConcreteEntity.') . "drupal_exit\n"
+        );
+        require 'index.php';
+    }
+
+    /**
      * Utility method to build a JSON string equivalent to a JSON serialized HTTPStatus.
      *
      * @param integer $code    The HTTP status code.
