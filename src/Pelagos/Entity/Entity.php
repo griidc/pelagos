@@ -267,7 +267,15 @@ abstract class Entity implements \JsonSerializable
         );
     }
 
-    public function update($updates)
+    /**
+     * Method to update multiple properties.
+     *
+     * @param array $updates An associative array indexed with property names
+     *                       and containing each property's new value.
+     *
+     * @return FundingOrganization Return the updated object.
+     */
+    public function update(array $updates)
     {
         foreach ($updates as $field => $value) {
             switch($field) {
