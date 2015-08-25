@@ -266,4 +266,19 @@ abstract class Entity implements \JsonSerializable
             'modificationTimeStamp' => $this->getModificationTimeStampAsISO(),
         );
     }
+
+    public function update($updates)
+    {
+        foreach ($updates as $field => $value) {
+            switch($field) {
+                case 'creator':
+                    $this->setCreator($value);
+                    break;
+                case 'modifier':
+                    $this->setModifier($value);
+                    break;
+            }
+        }
+        return $this;
+    }
 }
