@@ -85,6 +85,7 @@ function updateFundingOrganization(jsonData,fundingID)
             title = "Success!";
             message = json.message;
             $('#fundingOrganizationForm').editableForm('reset');
+            $("#fundingOrganizationForm").fillForm(json.data);
             $("#fundingOrganizationLogo").html("<img src=\"data:" + json.data.logo.mimeType + ";base64," + json.data.logo.base64 + "\">");
         } else {
             title = "Error!";
@@ -121,8 +122,6 @@ function updateFundingOrganization(jsonData,fundingID)
                 },
                 timeout: 3000
             });
-            
-            populateFundingOrganization(json.data.id);
         }
     })
 }
