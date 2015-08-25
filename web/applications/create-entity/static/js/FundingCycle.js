@@ -1,5 +1,6 @@
 $(document).ready(function()
 {
+    "use strict";
     populateFundingOrganisations($("#fundingOrganisation"));
 });
 
@@ -9,7 +10,6 @@ function populateFundingOrganisations(selectElement)
     var url = pelagosBasePath + "/services/entity/fundingOrganization/";
 
     $.getJSON(url, function(data) {
-        //debugger;
         var fundingOrganizations = sortResults(data.data.FundingOrganizations, "name", false, true);
         $.each(fundingOrganizations, function(seq, FundingOrg) {
             selectElement.append(

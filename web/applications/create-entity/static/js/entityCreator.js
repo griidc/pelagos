@@ -1,22 +1,18 @@
 var $ = jQuery.noConflict();
 
-
-(function( $ ) {
+(function($) {
+    "use strict";
     $.fn.createEntityForm = function() {
-        
-        "use strict";
-        
-        var self = this;
-        
+
         var entity = $(this).attr("entity");
-        
+
         var formValidator = $(this).validate({
             submitHandler: function(form) {
                 var formData = new FormData(form);
-                saveEntity(entity,formData);
+                saveEntity(entity, formData);
             }
         });
-        
+
         $(this).find("input, textarea").each(function() {
             var url = pelagosBasePath + "/services/entity/" + entity + "/validateProperty";
             $(this).rules("add", {
@@ -25,16 +21,16 @@ var $ = jQuery.noConflict();
                 }
             });
         });
-        
+
         $(this).find("button[type='submit']").button();
-        
+
         $(this).find("button[type='reset']").button().click(function() {
             formValidator.resetForm();
         });
-        
-        
+
+
     };
-}( jQuery ));
+}(jQuery));
 
 
 $(document).ready(function()
@@ -98,13 +94,14 @@ function saveEntity(entity, jsonData)
         message = json.message;
     })
     .always(function() {
-        showDialog(title,message);
+        showDialog(title, message);
     });
 }
 
 function showDialog(title, message)
 {
-    $("<div>"+message+"</div>").dialog({
+    "use strict";
+    $("<div>" + message + "</div>").dialog({
         autoOpen: true,
         resizable: false,
         width: "auto",
@@ -116,5 +113,5 @@ function showDialog(title, message)
                 $(this).dialog("close");
             }
         }
-    });   
+    });
 }
