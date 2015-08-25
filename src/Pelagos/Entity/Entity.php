@@ -134,6 +134,7 @@ abstract class Entity implements \JsonSerializable
         } else {
             $this->creationTimeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
         }
+        $this->setModificationTimeStamp(clone $this->getCreationTimeStamp());
     }
 
     /**
@@ -259,8 +260,33 @@ abstract class Entity implements \JsonSerializable
     {
         return array(
             'id' => $this->getId(),
-            'creationTimeStamp' => $this->getCreationTimeStampAsISO(),
             'creator' => $this->getCreator(),
+            'creationTimeStamp' => $this->getCreationTimeStampAsISO(),
+            'modifier' => $this->getModifier(),
+            'modificationTimeStamp' => $this->getModificationTimeStampAsISO(),
         );
+    }
+
+    /**
+     * Method to update multiple properties.
+     *
+     * @param array $updates An associative array indexed with property names
+     *                       and containing each property's new value.
+     *
+     * @return FundingOrganization Return the updated object.
+     */
+    public function update(array $updates)
+    {
+        foreach ($updates as $field => $value) {
+            switch($field) {
+                case 'creator':
+                    $this->setCreator($value);
+                    break;
+                case 'modifier':
+                    $this->setModifier($value);
+                    break;
+            }
+        }
+        return $this;
     }
 }
