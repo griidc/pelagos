@@ -3,7 +3,6 @@
 namespace Pelagos\Entity;
 
 use Symfony\Component\Validator\Validation;
-use Tests\Helpers\ConcreteEntity;
 
 /**
  * Unit tests for Pelagos\Entity\Entity.
