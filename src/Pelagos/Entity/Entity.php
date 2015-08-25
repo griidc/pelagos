@@ -134,6 +134,7 @@ abstract class Entity implements \JsonSerializable
         } else {
             $this->creationTimeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
         }
+        $this->setModificationTimeStamp(clone $this->getCreationTimeStamp());
     }
 
     /**
