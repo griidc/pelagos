@@ -344,6 +344,10 @@ class EntityWebServiceTest extends \PHPUnit_Framework_TestCase
                     'country' => null,
                     'modificationTimeStamp' => null,
                     'modifier' => 'test',
+                    'logo' => array(
+                        'base64' => '',
+                        'mimeType' => 'application/x-empty',
+                    ),
                 )
             )
         );
@@ -482,6 +486,10 @@ class EntityWebServiceTest extends \PHPUnit_Framework_TestCase
         );
         $testFundingOrganization = new \Pelagos\Entity\FundingOrganization;
         $testFundingOrganization->update($fundingOrganizationData);
+        $fundingOrganizationData['logo'] = array(
+            'base64' => '',
+            'mimeType' => 'application/x-empty',
+        );
         $this->mockEntityManager->shouldReceive('find')->andReturn($testFundingOrganization);
         \Slim\Environment::mock(
             array(
@@ -509,7 +517,7 @@ class EntityWebServiceTest extends \PHPUnit_Framework_TestCase
      */
     public function testUpdateSuccess()
     {
-        $organizationData = array (
+        $fundingOrganizationData = array (
             'id' => null,
             'creationTimeStamp' => null,
             'creator' => 'test',
@@ -528,7 +536,11 @@ class EntityWebServiceTest extends \PHPUnit_Framework_TestCase
 
         );
         $fundingOrganization = new \Pelagos\Entity\FundingOrganization;
-        $fundingOrganization->update($organizationData);
+        $fundingOrganization->update($fundingOrganizationData);
+        $fundingOrganizationData['logo'] = array(
+            'base64' => '',
+            'mimeType' => 'application/x-empty',
+        );
         $this->mockEntityManager->shouldReceive('find')->andReturn($fundingOrganization);
         $this->mockEntityManager->shouldReceive('flush');
         \Slim\Environment::mock(
@@ -543,7 +555,7 @@ class EntityWebServiceTest extends \PHPUnit_Framework_TestCase
             $this->makeHTTPStatusJSON(
                 200,
                 'A FundingOrganization has been successfully updated with an ID of 0.',
-                $organizationData
+                $fundingOrganizationData
             )
         );
         require 'index.php';
