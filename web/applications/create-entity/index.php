@@ -18,7 +18,8 @@ $comp->setJSGlobals();
 $comp->addJS(
     array(
         '//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js',
-        'static/js/entityCreator.js',
+        '//cdnjs.cloudflare.com/ajax/libs/jquery-noty/2.3.5/packaged/jquery.noty.packaged.min.js',
+        'static/js/entityCreator.js'
     )
 );
 
