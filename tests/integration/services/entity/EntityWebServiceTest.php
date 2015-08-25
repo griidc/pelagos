@@ -313,7 +313,7 @@ class EntityWebServiceTest extends \PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    public function testCreateSuccess()
+    public function testCreateFundingOrganizationSuccess()
     {
         $this->mockEntityManager->shouldReceive('flush');
         \Slim\Environment::mock(
@@ -410,7 +410,7 @@ class EntityWebServiceTest extends \PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    public function testGetPersistenceError()
+    public function testGetFundingOrganizationPersistenceError()
     {
         $this->mockEntityManager->shouldReceive('find')->andThrow(
             '\Doctrine\DBAL\DBALException'
@@ -437,7 +437,7 @@ class EntityWebServiceTest extends \PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    public function testGetGeneralError()
+    public function testGetFundingOrganizationGeneralError()
     {
         $this->mockEntityManager->shouldReceive('find')->andThrow(
             '\Exception'
@@ -465,7 +465,7 @@ class EntityWebServiceTest extends \PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    public function testGetSuccess()
+    public function testGetFundingOrganizationSuccess()
     {
         $fundingOrganizationData = array(
             'id' => null,
@@ -515,7 +515,7 @@ class EntityWebServiceTest extends \PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    public function testUpdateSuccess()
+    public function testUpdateFundingOrganizationSuccess()
     {
         $fundingOrganizationData = array (
             'id' => null,
