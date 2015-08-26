@@ -368,7 +368,10 @@ abstract class Entity implements \JsonSerializable
      */
     public static function resolveDateTime($value)
     {
-        if (gettype($value) == 'object' and get_class($value) == '\DateTime') {
+        if (!isset($value)) {
+            return null;
+        }
+        if (gettype($value) == 'object' and get_class($value) == 'DateTime') {
             return $value;
         }
         return new \DateTime($value);
