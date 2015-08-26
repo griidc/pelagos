@@ -270,6 +270,7 @@ class EntityWebServiceTest extends \PHPUnit_Framework_TestCase
                     'creationTimeStamp' => null,
                     'modifier' => 'test',
                     'modificationTimeStamp' => null,
+                    'name' => self::$testName,
                 )
             )
         );
@@ -395,6 +396,7 @@ class EntityWebServiceTest extends \PHPUnit_Framework_TestCase
             'creationTimeStamp' => null,
             'modifier' => self::$testCreator,
             'modificationTimeStamp' => null,
+            'name' => self::$testName,
         );
         $testConcreteEntity = new \Pelagos\Entity\ConcreteEntity;
         $testConcreteEntity->update($concreteEntityData);
@@ -445,8 +447,6 @@ class EntityWebServiceTest extends \PHPUnit_Framework_TestCase
             )
         );
         $GLOBALS['user'] = new \Pelagos\Tests\Helpers\TestUser;
-        // Unset name because ConcreteEntity does not override jsonSerialize
-        unset($concreteEntityData['name']);
         $this->expectOutputString(
             $this->makeHTTPStatusJSON(
                 200,
