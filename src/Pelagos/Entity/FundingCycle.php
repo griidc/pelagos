@@ -241,17 +241,14 @@ class FundingCycle extends Entity
     /**
      * Setter for startDate.
      *
-     * @param mixed $startDate The Start Date.
+     * @param \DateTime $startDate The Start Date.
      *
      * @access public
      *
      * @return void
      */
-    public function setStartDate($startDate)
+    public function setStartDate(\DateTime $startDate)
     {
-        if (gettype($startDate) == 'string') {
-            $startDate = new \DateTime($startDate);
-        }
         $this->startDate = $startDate;
     }
 
@@ -268,32 +265,16 @@ class FundingCycle extends Entity
     }
 
     /**
-     * Get the startDate property as an ISO8601 string.
-     *
-     * @return string ISO8601 string representing startDate.
-     */
-    public function getStartDateAsISO()
-    {
-        if (isset($this->startDate) and $this->startDate instanceof \DateTime) {
-            return $this->getStartDate()->format('Y-m-d');
-        }
-        return null;
-    }
-
-    /**
      * Setter for endDate.
      *
-     * @param mixed $endDate The End Date.
+     * @param \DateTime $endDate The End Date.
      *
      * @access public
      *
      * @return void
      */
-    public function setEndDate($endDate)
+    public function setEndDate(\DateTime $endDate)
     {
-        if (gettype($endDate) == 'string') {
-            $endDate = new \DateTime($endDate);
-        }
         $this->endDate = $endDate;
     }
 
@@ -307,18 +288,5 @@ class FundingCycle extends Entity
     public function getEndDate()
     {
         return $this->endDate;
-    }
-
-    /**
-     * Get the endDate property as an ISO8601 string.
-     *
-     * @return string ISO8601 string representing endDate.
-     */
-    public function getEndDateAsISO()
-    {
-        if (isset($this->endDate) and $this->endDate instanceof \DateTime) {
-            return $this->getEndDate()->format('Y-m-d');
-        }
-        return null;
     }
 }
