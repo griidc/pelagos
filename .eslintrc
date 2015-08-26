@@ -14,6 +14,15 @@
     "rules": {
         "no-underscore-dangle": 0,
         "no-use-before-define": [2, "nofunc"],
-        "space-in-parens": 2
-    }
+        "space-in-parens": 2,
+        "shadow-exception/no-shadow": [2, {
+            "exceptions": {
+                "$": true
+            }
+        }],
+        "no-shadow": 0
+    },
+    "plugins": [
+        "shadow-exception"
+    ]
 }
