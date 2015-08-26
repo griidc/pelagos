@@ -313,7 +313,7 @@ abstract class Entity implements \JsonSerializable
      */
     public function update(array $updates)
     {
-        $properties = static::getProperties();
+        $properties = $this->getProperties();
         foreach ($updates as $field => $value) {
             // If this field is a valid property
             if (array_key_exists($field, $properties)) {
@@ -323,7 +323,7 @@ abstract class Entity implements \JsonSerializable
                 }
                 // If a resolver has been defined for this property, use it to resolve the final value.
                 if (array_key_exists('resolver', $properties[$field])) {
-                    $value = self::$properties[$field]['resolver']($value);
+                    $value = $this->$properties[$field]['resolver']($value);
                 }
                 // If a setter has been defined, use it to set the vale of this property.
                 if (array_key_exists('setter', $properties[$field])) {
@@ -342,7 +342,7 @@ abstract class Entity implements \JsonSerializable
     public function jsonSerialize()
     {
         $jsonArray = array();
-        foreach (static::getProperties() as $property => $attributes) {
+        foreach ($this->getProperties() as $property => $attributes) {
             // Skip this property if serialize = false
             if (array_key_exists('serialize', $attributes) and !$attributes['serialize']) {
                 continue;
@@ -352,7 +352,7 @@ abstract class Entity implements \JsonSerializable
                 $jsonArray[$property] = $this->$attributes['getter']();
                 // If a serializer has been defined, use it to serialize this value
                 if (array_key_exists('serializer', $attributes)) {
-                    $jsonArray[$property] = static::$attributes['serializer']($jsonArray[$property]);
+                    $jsonArray[$property] = $this->$attributes['serializer']($jsonArray[$property]);
                 }
             }
         }
