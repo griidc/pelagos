@@ -184,14 +184,17 @@ class FundingCycle extends Entity
     /**
      * Setter for startDate.
      *
-     * @param \DateTime $startDate The Start Date.
+     * @param mixed $startDate The Start Date.
      *
      * @access public
      *
      * @return void
      */
-    public function setStartDate(\DateTime $startDate)
+    public function setStartDate($startDate)
     {
+        if (gettype($startDate) == 'string') {
+            $startDate = new \DateTime($startDate);
+        }
         $this->startDate = $startDate;
     }
 
@@ -210,14 +213,17 @@ class FundingCycle extends Entity
     /**
      * Setter for endDate.
      *
-     * @param \DateTime $endDate The End Date.
+     * @param mixed $endDate The End Date.
      *
      * @access public
      *
      * @return void
      */
-    public function setEndDate(\DateTime $endDate)
+    public function setEndDate($endDate)
     {
+        if (gettype($endDate) == 'string') {
+            $endDate = new \DateTime($endDate);
+        }
         $this->endDate = $endDate;
     }
 
@@ -253,6 +259,15 @@ class FundingCycle extends Entity
                     break;
                 case 'url':
                     $this->setUrl($value);
+                    break;
+                case 'fundingOrganization':
+                    $this->setFundingOrganization($value);
+                    break;
+                case 'startDate':
+                    $this->setStartDate($value);
+                    break;
+                case 'endDate':
+                    $this->setEndDate($value);
                     break;
                 case 'creator':
                     $this->setCreator($value);
