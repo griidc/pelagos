@@ -86,6 +86,7 @@ class FundingCycleTest extends \PHPUnit_Framework_TestCase
         $this->testEndDate = new \DateTime('2015-12-31');
         $this->fundingCycle->setEndDate($this->testEndDate);
         $this->testFundingOrganization = \Mockery::mock('\Pelagos\Entity\FundingOrganization');
+        $this->testFundingOrganization->shouldReceive('jsonSerialize')->andReturn(array('id'=>0));
         $this->fundingCycle->setFundingOrganization($this->testFundingOrganization);
     }
 
@@ -189,7 +190,7 @@ class FundingCycleTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertSame(
             $this->testFundingOrganization,
-            $this->fundingCycle->GetFundingOrganization()
+            $this->fundingCycle->getFundingOrganization()
         );
     }
 
@@ -235,13 +236,16 @@ class FundingCycleTest extends \PHPUnit_Framework_TestCase
     {
         $fundingCycleData = array(
             'id' => null,
-            'creationTimeStamp' => null,
             'creator' => self::$testCreator,
+            'creationTimeStamp' => null,
+            'modifier' => self::$testCreator,
+            'modificationTimeStamp' => null,
             'name' => self::$testName,
             'description' => self::$testDescription,
             'url' => self::$testUrl,
-            'modificationTimeStamp' => null,
-            'modifier' => self::$testCreator,
+            'startDate' => $this->testStartDate->format('Y-m-d'),
+            'endDate' => $this->testEndDate->format('Y-m-d'),
+            'fundingOrganization' => array('id' => 0),
         );
         $this->assertEquals(json_encode($fundingCycleData), json_encode($this->fundingCycle));
     }

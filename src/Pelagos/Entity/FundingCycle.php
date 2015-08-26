@@ -79,6 +79,62 @@ class FundingCycle extends Entity
     protected $fundingOrganization;
 
     /**
+     * Static array containing a list of the properties and their attributes.
+     *
+     * @var array $properties
+     */
+    protected static $properties = array(
+        'name' => array(
+            'type' => 'string',
+            'setter' => 'setName',
+            'getter' => 'getName',
+        ),
+        'description' => array(
+            'type' => 'string',
+            'setter' => 'setDescription',
+            'getter' => 'getDescription',
+        ),
+        'url' => array(
+            'type' => 'string',
+            'setter' => 'setUrl',
+            'getter' => 'geturl',
+        ),
+        'startDate' => array(
+            'type' => 'object',
+            'class' => 'DateTime',
+            'resolver' => 'resolveDateTime',
+            'setter' => 'setStartDate',
+            'getter' => 'getStartDate',
+            'serializer' => 'serializeDate',
+        ),
+        'endDate' => array(
+            'type' => 'object',
+            'class' => 'DateTime',
+            'resolver' => 'resolveDateTime',
+            'setter' => 'setEndDate',
+            'getter' => 'getEndDate',
+            'serializer' => 'serializeDate',
+        ),
+        'fundingOrganization' => array(
+            'type' => 'object',
+            'class' => 'Pelagos\Entity\FundingOrganization',
+            'entity' => true,
+            'setter' => 'setFundingOrganization',
+            'getter' => 'getFundingOrganization',
+        ),
+    );
+
+    /**
+     * Static method to get a list of properties for this class.
+     *
+     * @return array The list of properties for this class.
+     */
+    public static function getProperties()
+    {
+        return array_merge(parent::getProperties(), self::$properties);
+    }
+
+    /**
      * Setter for name.
      *
      * @param string $name Textual name of funding cycle.
@@ -155,6 +211,7 @@ class FundingCycle extends Entity
     {
         return $this->fundingOrganization;
     }
+
     /**
      * Setter for url.
      *
@@ -211,6 +268,19 @@ class FundingCycle extends Entity
     }
 
     /**
+     * Get the startDate property as an ISO8601 string.
+     *
+     * @return string ISO8601 string representing startDate.
+     */
+    public function getStartDateAsISO()
+    {
+        if (isset($this->startDate) and $this->startDate instanceof \DateTime) {
+            return $this->getStartDate()->format('Y-m-d');
+        }
+        return null;
+    }
+
+    /**
      * Setter for endDate.
      *
      * @param mixed $endDate The End Date.
@@ -240,59 +310,15 @@ class FundingCycle extends Entity
     }
 
     /**
-     * Method to update multiple properties.
+     * Get the endDate property as an ISO8601 string.
      *
-     * @param array $updates An associative array indexed with property names
-     *                       and containing each property's new value.
-     *
-     * @return FundingCycle Return the updated object.
+     * @return string ISO8601 string representing endDate.
      */
-    public function update(array $updates)
+    public function getEndDateAsISO()
     {
-        foreach ($updates as $field => $value) {
-            switch($field) {
-                case 'name':
-                    $this->setName($value);
-                    break;
-                case 'description':
-                    $this->setDescription($value);
-                    break;
-                case 'url':
-                    $this->setUrl($value);
-                    break;
-                case 'fundingOrganization':
-                    $this->setFundingOrganization($value);
-                    break;
-                case 'startDate':
-                    $this->setStartDate($value);
-                    break;
-                case 'endDate':
-                    $this->setEndDate($value);
-                    break;
-                case 'creator':
-                    $this->setCreator($value);
-                    break;
-            }
+        if (isset($this->endDate) and $this->endDate instanceof \DateTime) {
+            return $this->getEndDate()->format('Y-m-d');
         }
-        return $this;
-    }
-
-    /**
-     * Override jsonSerialize.
-     *
-     * @return array An array suitable for JSON serialization of the object.
-     */
-    public function jsonSerialize()
-    {
-        return array(
-            'id' => $this->getId(),
-            'creationTimeStamp' => $this->getCreationTimeStampAsISO(),
-            'creator' => $this->getCreator(),
-            'name' => $this->getName(),
-            'description' => $this->getDescription(),
-            'url' => $this->getUrl(),
-            'modificationTimeStamp' => $this->getModificationTimeStampAsISO(),
-            'modifier' => $this->getModifier()
-        );
+        return null;
     }
 }

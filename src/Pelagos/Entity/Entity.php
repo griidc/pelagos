@@ -57,6 +57,58 @@ abstract class Entity implements \JsonSerializable
      * )
      */
     protected $modifier;
+
+    /**
+     * Static array containing a list of the properties and their attributes.
+     *
+     * @var array $properties
+     */
+    protected static $properties = array(
+        'id' => array(
+            'type' => 'integer',
+            'updateable' => false,
+            'getter' => 'getId',
+        ),
+        'creator' => array(
+            'type' => 'string',
+            'setter' => 'setCreator',
+            'getter' => 'getCreator',
+        ),
+        'creationTimeStamp' => array(
+            'type' => 'object',
+            'class' => 'DateTime',
+            'updateable' => false,
+            'resolver' => 'resolveDateTime',
+            'setter' => 'setCreationTimeStamp',
+            'getter' => 'getCreationTimeStamp',
+            'serializer' => 'serializeDateTime',
+        ),
+        'modifier' => array(
+            'type' => 'string',
+            'setter' => 'setModifier',
+            'getter' => 'getModifier',
+        ),
+        'modificationTimeStamp' => array(
+            'type' => 'object',
+            'class' => 'DateTime',
+            'updateable' => false,
+            'resolver' => 'resolveDateTime',
+            'setter' => 'setModificationTimeStamp',
+            'getter' => 'getModificationTimeStamp',
+            'serializer' => 'serializeDateTime',
+        ),
+    );
+
+    /**
+     * Static method to get a list of properties for this class.
+     *
+     * @return array The list of properties for this class.
+     */
+    public static function getProperties()
+    {
+        return self::$properties;
+    }
+
     /**
      * Getter for id property.
      *
@@ -252,41 +304,103 @@ abstract class Entity implements \JsonSerializable
     }
 
     /**
+     * Method to update multiple properties.
+     *
+     * @param array $updates An associative array indexed with property names
+     *                       and containing each property's new value.
+     *
+     * @return Entity Return the updated object.
+     */
+    public function update(array $updates)
+    {
+        $properties = static::getProperties();
+        foreach ($updates as $field => $value) {
+            // If this field is a valid property
+            if (array_key_exists($field, $properties)) {
+                // Skip this property if it has been marked as updateable = false
+                if (array_key_exists('updateable', $properties[$field]) and !$properties[$field]['updateable']) {
+                    continue;
+                }
+                // If a resolver has been defined for this property, use it to resolve the final value.
+                if (array_key_exists('resolver', $properties[$field])) {
+                    $value = self::$properties[$field]['resolver']($value);
+                }
+                // If a setter has been defined, use it to set the vale of this property.
+                if (array_key_exists('setter', $properties[$field])) {
+                    $this->$properties[$field]['setter']($value);
+                }
+            }
+        }
+        return $this;
+    }
+
+    /**
      * Implement JsonSerializable.
      *
      * @return array An array suitable for JSON serialization of the object.
      */
     public function jsonSerialize()
     {
-        return array(
-            'id' => $this->getId(),
-            'creator' => $this->getCreator(),
-            'creationTimeStamp' => $this->getCreationTimeStampAsISO(),
-            'modifier' => $this->getModifier(),
-            'modificationTimeStamp' => $this->getModificationTimeStampAsISO(),
-        );
+        $jsonArray = array();
+        foreach (static::getProperties() as $property => $attributes) {
+            // Skip this property if serialize = false
+            if (array_key_exists('serialize', $attributes) and !$attributes['serialize']) {
+                continue;
+            }
+            // If a getter has been defined, use it get this value
+            if (array_key_exists('getter', $attributes)) {
+                $jsonArray[$property] = $this->$attributes['getter']();
+                // If a serializer has been defined, use it to serialize this value
+                if (array_key_exists('serializer', $attributes)) {
+                    $jsonArray[$property] = static::$attributes['serializer']($jsonArray[$property]);
+                }
+            }
+        }
+        return $jsonArray;
     }
 
     /**
-     * Method to update multiple properties.
+     * Static method to resolve a value as a DateTime object.
      *
-     * @param array $updates An associative array indexed with property names
-     *                       and containing each property's new value.
+     * @param mixed $value A value to resolve to a DateTime.
      *
-     * @return FundingOrganization Return the updated object.
+     * @return \DateTime The resolved DateTime.
      */
-    public function update(array $updates)
+    public static function resolveDateTime($value)
     {
-        foreach ($updates as $field => $value) {
-            switch($field) {
-                case 'creator':
-                    $this->setCreator($value);
-                    break;
-                case 'modifier':
-                    $this->setModifier($value);
-                    break;
-            }
+        if (gettype($value) == 'object' and get_class($value) == '\DateTime') {
+            return $value;
         }
-        return $this;
+        return new \DateTime($value);
+    }
+
+    /**
+     * Static method to serialize a DateTime object as an ISO8601 string.
+     *
+     * @param \DateTime|null $dateTime The DateTime to serialize.
+     *
+     * @return string The serialized DateTime.
+     */
+    public static function serializeDateTime($dateTime)
+    {
+        if (isset($dateTime) and $dateTime instanceof \DateTime) {
+            return $dateTime->format(\DateTime::ISO8601);
+        }
+        return null;
+    }
+
+    /**
+     * Static method to serialize a DateTime object as an ISO8601 string without time.
+     *
+     * @param \DateTime|null $dateTime The DateTime to serialize.
+     *
+     * @return string The serialized DateTime.
+     */
+    public static function serializeDate($dateTime)
+    {
+        if (isset($dateTime) and $dateTime instanceof \DateTime) {
+            return $dateTime->format('Y-m-d');
+        }
+        return null;
     }
 }
