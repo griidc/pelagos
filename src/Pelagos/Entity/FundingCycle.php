@@ -118,7 +118,7 @@ class FundingCycle extends Entity
         'fundingOrganization' => array(
             'type' => 'object',
             'class' => 'Pelagos\Entity\FundingOrganization',
-            'entity' => true,
+            'entity' => 'FundingOrganization',
             'setter' => 'setFundingOrganization',
             'getter' => 'getFundingOrganization',
         ),
