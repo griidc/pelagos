@@ -15,14 +15,10 @@ var $ = jQuery.noConflict();
 
         $(this).find("input, textarea").each(function() {
             var url = pelagosBasePath + "/services/entity/" + entity + "/validateProperty";
-            var self = this;
+
             $(this).rules("add", {
                 remote: {
-                    url: url,
-                    error: function (request, status) {
-                        var message = "Validator error for:" + $(self).attr("id") + " reason:" + status;
-                        showNotyWarning(message);
-                    }
+                    url: url
                 }
             });
         });
@@ -117,24 +113,6 @@ function showDialog(title, message)
             Ok: function() {
                 $(this).dialog("close");
             }
-        }
-    });
-}
-
-function showNotyWarning(message)
-{
-    "use strict";
-    noty({
-        text: message,
-        //timeout: 3000,
-        theme: "relax",
-        layout: "top",
-        type: "warning",
-        animation: {
-            open: {height: "toggle"}, // jQuery animate function property object
-            close: {height: "toggle"}, // jQuery animate function property object
-            easing: "swing", // easing
-            speed: 500 // opening & closing animation speed
         }
     });
 }

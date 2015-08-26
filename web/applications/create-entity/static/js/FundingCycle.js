@@ -2,6 +2,10 @@ $(document).ready(function()
 {
     "use strict";
     populateFundingOrganizations($("#fundingOrganization"));
+
+    $("#startDate,#endDate").datepicker({
+        dateFormat: "yy-mm-dd"
+    });
 });
 
 function populateFundingOrganizations(selectElement)
@@ -12,7 +16,7 @@ function populateFundingOrganizations(selectElement)
     $.getJSON(url, function(json) {
         //debugger;
         var fundingOrganizations = sortResults(json.data, "name", false, true);
-        
+
         $.each(fundingOrganizations, function(seq, FundingOrg) {
             selectElement.append(
             $("<option></option>").val(FundingOrg.id).html(FundingOrg.name)

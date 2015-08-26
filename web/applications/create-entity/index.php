@@ -18,13 +18,13 @@ $comp->setJSGlobals();
 $comp->addJS(
     array(
         '//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js',
-        '//cdnjs.cloudflare.com/ajax/libs/jquery-noty/2.3.5/packaged/jquery.noty.packaged.min.js',
         'static/js/entityCreator.js'
     )
 );
 
 $comp->addLibrary('ui.widget');
 $comp->addLibrary('ui.dialog');
+$comp->addLibrary('ui.datepicker');
 
 $app = new \Slim\Slim(array(
         'view' => new \Slim\Views\Twig()
@@ -35,7 +35,7 @@ $app->get('/:entity', function ($entity) use ($app,$comp) {
         $comp->addJS("static/js/$entity.js");
     }
     $app->render("$entity.html");
-    
+
 });
 
 $app->run();
