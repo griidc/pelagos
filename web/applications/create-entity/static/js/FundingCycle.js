@@ -1,16 +1,18 @@
 $(document).ready(function()
 {
     "use strict";
-    populateFundingOrganisations($("#fundingOrganisation"));
+    populateFundingOrganizations($("#fundingOrganization"));
 });
 
-function populateFundingOrganisations(selectElement)
+function populateFundingOrganizations(selectElement)
 {
     "use strict";
-    var url = pelagosBasePath + "/services/entity/fundingOrganization/";
+    var url = pelagosBasePath + "/services/entity/FundingOrganization";
 
-    $.getJSON(url, function(data) {
-        var fundingOrganizations = sortResults(data.data.FundingOrganizations, "name", false, true);
+    $.getJSON(url, function(json) {
+        //debugger;
+        var fundingOrganizations = sortResults(json.data, "name", false, true);
+        
         $.each(fundingOrganizations, function(seq, FundingOrg) {
             selectElement.append(
             $("<option></option>").val(FundingOrg.id).html(FundingOrg.name)
