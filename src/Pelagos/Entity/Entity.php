@@ -106,7 +106,7 @@ abstract class Entity implements \JsonSerializable
      */
     public static function getProperties()
     {
-        return self::$properties;
+        return array_merge(self::$properties, static::$properties);;
     }
 
     /**

@@ -125,16 +125,6 @@ class FundingCycle extends Entity
     );
 
     /**
-     * Static method to get a list of properties for this class.
-     *
-     * @return array The list of properties for this class.
-     */
-    public static function getProperties()
-    {
-        return array_merge(parent::getProperties(), self::$properties);
-    }
-
-    /**
      * Setter for name.
      *
      * @param string $name Textual name of funding cycle.
