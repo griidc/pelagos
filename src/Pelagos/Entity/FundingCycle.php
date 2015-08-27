@@ -185,7 +185,7 @@ class FundingCycle extends Entity
      *
      * @return void
      */
-    public function setFundingOrganization(FundingOrganization $fundingOrg)
+    public function setFundingOrganization(FundingOrganization $fundingOrg = null)
     {
         $this->fundingOrganization = $fundingOrg;
     }
@@ -237,7 +237,7 @@ class FundingCycle extends Entity
      *
      * @return void
      */
-    public function setStartDate(\DateTime $startDate)
+    public function setStartDate(\DateTime $startDate = null)
     {
         $this->startDate = $startDate;
     }
@@ -263,7 +263,7 @@ class FundingCycle extends Entity
      *
      * @return void
      */
-    public function setEndDate(\DateTime $endDate)
+    public function setEndDate(\DateTime $endDate = null)
     {
         $this->endDate = $endDate;
     }
