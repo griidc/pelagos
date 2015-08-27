@@ -685,13 +685,13 @@ class PersonTest extends \PHPUnit_Framework_TestCase
         $timeStampISO = $timeStamp->format(\DateTime::ISO8601);
         $personData = array(
             'id' => null,
+            'creator' => self::$testCreator,
+            'creationTimeStamp' => $timeStampISO,
+            'modifier' => self::$testCreator,
+            'modificationTimeStamp' => $timeStampISO,
             'firstName' => self::$testFirstName,
             'lastName' => self::$testLastName,
-            'emailAddress' => self::$testEmailAddress,
-            'creationTimeStamp' => $timeStampISO,
-            'creator' => self::$testCreator,
-            'modificationTimeStamp' => $timeStampISO,
-            'modifier' => self::$testCreator,
+            'emailAddress' => self::$testEmailAddress
         );
         $this->person->setCreationTimeStamp($timeStamp);
         $this->assertEquals(json_encode($personData), json_encode($this->person));
@@ -746,24 +746,24 @@ class PersonTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(
             array(
                 null,
+                self::$testCreator,
+                null,
+                self::$testCreator,
+                null,
                 self::$testFirstName,
                 self::$testLastName,
                 self::$testEmailAddress,
-                null,
-                self::$testCreator,
-                null,
-                self::$testCreator,
             ),
             $this->person->asArray(
                 array(
                     'id',
+                    'creator',
+                    'creationTimeStamp',
+                    'modifier',
+                    'modificationTimeStamp',
                     'firstName',
                     'lastName',
                     'emailAddress',
-                    'creationTimeStamp',
-                    'creator',
-                    'modificationTimeStamp',
-                    'modifier',
                 )
             )
         );
