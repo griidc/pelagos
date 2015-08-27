@@ -8,7 +8,7 @@ namespace Pelagos;
 class ClassAnnotations
 {
     /**
-     * Name of a funding cycle.
+     * Holds the Reflection
      *
      * @var \ReflectionClass $classReflection
      * @access private
