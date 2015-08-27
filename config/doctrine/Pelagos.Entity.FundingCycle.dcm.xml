@@ -21,6 +21,10 @@
             <lifecycle-callback type="preUpdate" method="updateTimeStamps" />
         </lifecycle-callbacks>
 
+        <field name="creator"               column="creator"               type="string" />
+
+        <field name="creationTimeStamp"     column="creation_time"         type="datetimetz" />
+
         <field name="name"                  column="name"                  type="string" />
 
         <field name="description"           column="description"           type="string" />
