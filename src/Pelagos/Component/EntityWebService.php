@@ -84,19 +84,22 @@ class EntityWebService extends \Pelagos\Component
             $successCode = 200;
         }
         $entityType = preg_replace('/^.*\\\/', '', get_class($entity));
-        $properties = $entity->getProperties();
-        // set any empty properties to null
         foreach ($updates as $property => $value) {
+            // Set any empty properties to null.
             if (empty($value)) {
                 $updates[$property] = null;
             }
-            if (array_key_exists($property, $properties)) {
-                if (array_key_exists('entity', $properties[$property])) {
-                    try {
-                        $updates[$property] = $this->entityService->get($properties[$property]['entity'], $value);
-                    } catch (\Exception $e) {
-                        return new HTTPStatus(500, $e->getMessage());
-                    }
+            // Get entity for any properties that are set and expect one.
+            if (isset($value) and
+                $entity->propertyExists($property) and
+                $entity->propertyExpectsEntity($property)) {
+                try {
+                    $updates[$property] = $this->entityService->get(
+                        $entity->getPropertyEntityType($property),
+                        $value
+                    );
+                } catch (\Exception $e) {
+                    return new HTTPStatus(500, $e->getMessage());
                 }
             }
         }
@@ -171,21 +174,27 @@ class EntityWebService extends \Pelagos\Component
             return;
         }
 
-        list($paramName) = array_keys($params);
+        list($property) = array_keys($params);
+        list($value) = array_values($params);
 
         // Set empty parameter to null
-        if (empty($params[$paramName])) {
-            $params[$paramName] = null;
+        if (empty($value)) {
+            $params[$property] = null;
         }
 
         $entityClass = "\Pelagos\Entity\\$entityType";
 
-        $properties = $entityClass::getProperties();
+        $entity = new $entityClass;
 
-        if (array_key_exists($paramName, $properties)) {
-            if (array_key_exists('entity', $properties[$paramName])) {
+        if ($entity->propertyExists($property)) {
+            // Attempt to get entity for any properties that are set and expect one.
+            if (isset($value) and
+                $entity->propertyExpectsEntity($property)) {
                 try {
-                    $this->entityService->get($properties[$paramName]['entity'], $params[$paramName]);
+                    $this->entityService->get(
+                        $entity->getPropertyEntityType($property),
+                        $value
+                    );
                     print json_encode(true);
                     return;
                 } catch (\Exception $e) {
@@ -193,24 +202,15 @@ class EntityWebService extends \Pelagos\Component
                     return;
                 }
             }
-            if (array_key_exists('resolver', $properties[$paramName])) {
-                try {
-                    $params[$paramName] = $entityClass::$properties[$paramName]['resolver']($params[$paramName]);
-                } catch (\Exception $e) {
-                    print json_encode("Invalid $paramName");
-                    return;
-                }
-            }
         } else {
-            print json_encode("The parameter $paramName is not a valid property of $entityType.");
+            print json_encode("The parameter $property is not a valid property of $entityType.");
             return;
         }
 
-        $entity = new $entityClass;
         try {
             $entity->update($params);
             $validator = Validation::createValidatorBuilder()->enableAnnotationMapping()->getValidator();
-            $violations = $validator->validateProperty($entity, $paramName);
+            $violations = $validator->validateProperty($entity, $property);
             if (count($violations) > 0) {
                 $violationMsgs = array();
                 foreach ($violations as $violation) {
