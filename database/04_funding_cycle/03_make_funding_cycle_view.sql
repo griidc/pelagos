@@ -68,9 +68,9 @@ AS $f_o_func$
          THEN
             _err_hint := 'Please check the website URL';
             _err_msg  := CONCAT('"',
-                                  NEW.website,
-                                  '"',
-                                  ' is not a valid website URL.');
+                                NEW.website,
+                                '"',
+                                ' is not a valid website URL.');
             _fc_url   := NEW.website;
          END IF;
 
@@ -178,78 +178,75 @@ AS $f_o_func$
 
          ELSEIF TG_OP = 'UPDATE'
          THEN
-         IF ROW(NEW.name,
-                NEW.description,
-                NEW.start_date,
-                NEW.end_date,
-                NEW.website,
-                NEW.funding_organization_number)
-            IS DISTINCT FROM ROW(OLD.name,
-                                 OLD.description,
-                                 OLD.start_date,
-                                 OLD.end_date,
-                                 OLD.website,
-                                 OLD.funding_organization_number)
-         THEN
-            -- Update the history table with the current OLD information:
-            EXECUTE 'INSERT INTO funding_cycle_history_table
-                     (
-                        funding_cycle_history_action,
-                        funding_cycle_number,
-                        name,
-                        description,
-                        start_date,
-                        end_date,
-                        website,
-                        funding_organization_number,
-                        creator,
-                        creation_time
--- MOD                         ,modifier,
--- MOD                         modification_time
-                     )
-                     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)'
--- MOD                      VALUES ( $1,  $2,  $3,  $4,  $5,  $6,
+            IF ROW(NEW.name,
+                   NEW.description,
+                   NEW.start_date,
+                   NEW.end_date,
+                   NEW.website,
+                   NEW.funding_organization_number)
+               IS DISTINCT FROM ROW(OLD.name,
+                                    OLD.description,
+                                    OLD.start_date,
+                                    OLD.end_date,
+                                    OLD.website,
+                                    OLD.funding_organization_number)
+            THEN
+               -- Update the history table with the current OLD information:
+               EXECUTE 'INSERT INTO funding_cycle_history_table
+                        (
+                           funding_cycle_history_action,
+                           funding_cycle_number,
+                           name,
+                           description,
+                           start_date,
+                           end_date,
+                           website,
+                           funding_organization_number,
+                           creator,
+                           creation_time
+-- MOD                            ,modifier,
+-- MOD                            modification_time
+                        )
+                        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)'
+-- MOD                         VALUES ( $1,  $2,  $3,  $4,  $5,  $6,
 -- MOD                               $7,  $8,  $9, $10, $11, $12)'
-               USING TG_OP,
-                     OLD.funding_cycle_number,
-                     COALESCE(NEW.name, OLD.name),
-                     COALESCE(NEW.description, OLD.description),
-                     COALESCE(NEW.start_date, OLD.start_date),
-                     COALESCE(NEW.end_date, OLD.end_date),
-                     COALESCE(NEW.website, OLD.website),
-                     COALESCE(NEW.funding_organization_number,
-                              OLD.funding_organization_number),
-                     OLD.creator,
-                     OLD.creation_time
--- MOD                      ,OLD.modifier,
--- MOD                      DATE_TRUNC('seconds', CAST(OLD.modification_time AS
--- MOD                                                 TIMESTAMP WITH TIME ZONE))
-                           ;
-             -- Perform the update:
-             EXECUTE 'UPDATE funding_cycle_table
-                      SET funding_cycle_name = $1,
-                          funding_cycle_description = $2,
-                          funding_cycle_start_date = $3,
-                          funding_cycle_end_date = $4,
-                          funding_cycle_website = $5,
-                          funding_organization_number = $6
--- MOD                           ,funding_cycle_modifier = $7,
--- MOD                           funding_cycle_modification_time = 
--- MOD                              DATE_TRUNC(''seconds'', NOW())
--- MOD                       WHERE funding_cycle_number = $8''
+                  USING TG_OP,
+                        OLD.funding_cycle_number,
+                        OLD.name,
+                        OLD.description,
+                        OLD.start_date,
+                        OLD.end_date,
+                        OLD.website,
+                        OLD.funding_organization_number,
+                        OLD.creator,
+                        OLD.creation_time
+-- MOD                         ,OLD.modifier,
+-- MOD                         DATE_TRUNC('seconds', CAST(OLD.modification_time AS
+-- MOD                                                    TIMESTAMP WITH TIME ZONE))
+                              ;
+               -- Perform the update:
+               EXECUTE 'UPDATE funding_cycle_table
+                        SET funding_cycle_name = $1,
+                            funding_cycle_description = $2,
+                            funding_cycle_start_date = $3,
+                            funding_cycle_end_date = $4,
+                            funding_cycle_website = $5,
+                            funding_organization_number = $6
+-- MOD                             ,funding_cycle_modifier = $7,
+-- MOD                             funding_cycle_modification_time = 
+-- MOD                                DATE_TRUNC(''seconds'', NOW())
+-- MOD                         WHERE funding_cycle_number = $8''
 -- MOD Do not forget the double quotes need to be singles when uncommented!
-                      WHERE funding_cycle_number = $7'
-               USING COALESCE(NEW.name, OLD.name),
-                     COALESCE(NEW.description, OLD.description),
-                     COALESCE(NEW.start_date, OLD.start_date),
-                     COALESCE(NEW.end_date, OLD.end_date),
-                     COALESCE(NEW.website, OLD.website),
-                     COALESCE(NEW.funding_organization_number,
-                              OLD.funding_organization_number),
--- MOD                      NEW.modifier,
-                     OLD.funding_cycle_number;
-
-         END IF;
+                        WHERE funding_cycle_number = $7'
+                  USING NEW.name,
+                        NEW.description,
+                        NEW.start_date,
+                        NEW.end_date,
+                        NEW.website,
+                        NEW.funding_organization_number,
+-- MOD                         NEW.modifier,
+                        OLD.funding_cycle_number;
+            END IF;
             RETURN NEW;
          END IF;
       ELSE

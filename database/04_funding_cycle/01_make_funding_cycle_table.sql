@@ -10,6 +10,9 @@
 --            proper URL) are a task requirement that I think will eventually
 --            cause problems, but  I was told we would revisit this script and
 --            associated scripts before they made it into production code.
+--            12 August 2015, The Product Owner has indicated that ON DELETE
+--            actions are to be restricted, not cascaded. Modified the script
+--            to reflect this decision.
 -- -----------------------------------------------------------------------------
 -- TODO:
 -- -----------------------------------------------------------------------------
