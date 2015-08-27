@@ -110,6 +110,49 @@ abstract class Entity implements \JsonSerializable
     }
 
     /**
+     * Static method to check if a given property exists for this class.
+     *
+     * @param string $property The property to check.
+     *
+     * @return boolean Whether or not the given property exists.
+     */
+    public static function propertyExists($property)
+    {
+        $properties = static::getProperties();
+        return array_key_exists($property, $properties);
+    }
+
+    /**
+     * Static method to determine if a given property expects an entity.
+     *
+     * @return boolean Whether or not given property expects an entity.
+     */
+    public static function propertyExpectsEntity($property)
+    {
+        $properties = static::getProperties();
+        if (array_key_exists($property, $properties)) {
+            return array_key_exists('entity', $properties[$property]);
+        }
+        return false;
+    }
+
+    /**
+     * Static method to get the expected entity type for a given property.
+     *
+     * @return string The expected entity type for given property.
+     */
+    public static function getPropertyEntityType($property)
+    {
+        $properties = static::getProperties();
+        if (array_key_exists($property, $properties)) {
+            if (array_key_exists('entity', $properties[$property])) {
+                return $properties[$property]['entity'];
+            }
+        }
+        return null;
+    }
+
+    /**
      * Getter for id property.
      *
      * @return int Persistent identifier for the Entity.
