@@ -119,20 +119,23 @@
                 switch (elementType)
                 {
                     case "radio":
-                    selector.filter('[value="'+value+'"]').prop("checked",true);
-                    break;
-                    case "checkbox":
-                    selector.prop("checked",value);
-                    break;
-                    case "select":
-                    $.each(value, function(index,value) {
                         selector.filter('[value="'+value+'"]').prop("checked",true);
-                    });
-                    break;
+                        break;
+                    case "checkbox":
+                        selector.prop("checked",value);
+                        break;
+                    case "select":
+                        $.each(value, function(index,value) {
+                            selector.filter('[value="'+value+'"]').prop("checked",true);
+                        });
+                        break;
+                    case "file":
+                        /* Do Nothing */
+                        break;
                     default:
-                    selector.val(value);
-                    selector.filter(':hidden').change();
-                    break;
+                        selector.val(value);
+                        selector.filter(':hidden').change();
+                        break;
                 }
             });
             return true;
