@@ -415,6 +415,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
             'creationTimeStamp' => $timeStampISO,
             'modifier' => self::$testCreator,
             'modificationTimeStamp' => $timeStampISO,
+            'name' => null,
         );
         $this->concreteEntity->setCreationTimeStamp($timeStamp);
         $this->assertEquals(json_encode($concreteEntityData), json_encode($this->concreteEntity));

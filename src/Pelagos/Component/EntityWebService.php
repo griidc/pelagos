@@ -84,10 +84,23 @@ class EntityWebService extends \Pelagos\Component
             $successCode = 200;
         }
         $entityType = preg_replace('/^.*\\\/', '', get_class($entity));
-        // set any empty properties to null
         foreach ($updates as $property => $value) {
+            // Set any empty properties to null.
             if (empty($value)) {
                 $updates[$property] = null;
+            }
+            // Get entity for any properties that are set and expect one.
+            if (isset($value) and
+                $entity->propertyExists($property) and
+                $entity->propertyExpectsEntity($property)) {
+                try {
+                    $updates[$property] = $this->entityService->get(
+                        $entity->getPropertyEntityType($property),
+                        $value
+                    );
+                } catch (\Exception $e) {
+                    return new HTTPStatus(500, $e->getMessage());
+                }
             }
         }
         try {
@@ -161,27 +174,55 @@ class EntityWebService extends \Pelagos\Component
             return;
         }
 
-        $paramName = array_keys($params);
+        list($property) = array_keys($params);
+        list($value) = array_values($params);
 
-        if (!property_exists("\Pelagos\Entity\\$entityType", $paramName[0])) {
-            print json_encode("The parameter $paramName[0] is not a valid property of $entityType.");
-            return;
+        // Set empty parameter to null
+        if (empty($value)) {
+            $params[$property] = null;
         }
 
         $entityClass = "\Pelagos\Entity\\$entityType";
+
         $entity = new $entityClass;
-        $entity->update($params);
-        $validator = Validation::createValidatorBuilder()->enableAnnotationMapping()->getValidator();
-        $violations = $validator->validateProperty($entity, $paramName[0]);
-        if (count($violations) > 0) {
-            $violationMsgs = array();
-            foreach ($violations as $violation) {
-                $violationMsgs[] = $violation->getMessage();
+
+        if ($entity->propertyExists($property)) {
+            // Attempt to get entity for any properties that are set and expect one.
+            if (isset($value) and
+                $entity->propertyExpectsEntity($property)) {
+                try {
+                    $this->entityService->get(
+                        $entity->getPropertyEntityType($property),
+                        $value
+                    );
+                    print json_encode(true);
+                    return;
+                } catch (\Exception $e) {
+                    print json_encode($e->getMessage());
+                    return;
+                }
             }
-            print json_encode(join($violationMsgs, ', '));
+        } else {
+            print json_encode("The parameter $property is not a valid property of $entityType.");
             return;
         }
-        print json_encode(true);
+
+        try {
+            $entity->update($params);
+            $validator = Validation::createValidatorBuilder()->enableAnnotationMapping()->getValidator();
+            $violations = $validator->validateProperty($entity, $property);
+            if (count($violations) > 0) {
+                $violationMsgs = array();
+                foreach ($violations as $violation) {
+                    $violationMsgs[] = $violation->getMessage();
+                }
+                print json_encode(join($violationMsgs, ', '));
+                return;
+            }
+            print json_encode(true);
+        } catch (\Exception $e) {
+            print json_encode($e->getMessage());
+        }
     }
 
     /**

@@ -125,16 +125,6 @@ class FundingCycle extends Entity
     );
 
     /**
-     * Static method to get a list of properties for this class.
-     *
-     * @return array The list of properties for this class.
-     */
-    public static function getProperties()
-    {
-        return array_merge(parent::getProperties(), self::$properties);
-    }
-
-    /**
      * Setter for name.
      *
      * @param string $name Textual name of funding cycle.
@@ -195,7 +185,7 @@ class FundingCycle extends Entity
      *
      * @return void
      */
-    public function setFundingOrganization(FundingOrganization $fundingOrg)
+    public function setFundingOrganization(FundingOrganization $fundingOrg = null)
     {
         $this->fundingOrganization = $fundingOrg;
     }
@@ -247,7 +237,7 @@ class FundingCycle extends Entity
      *
      * @return void
      */
-    public function setStartDate(\DateTime $startDate)
+    public function setStartDate(\DateTime $startDate = null)
     {
         $this->startDate = $startDate;
     }
@@ -273,7 +263,7 @@ class FundingCycle extends Entity
      *
      * @return void
      */
-    public function setEndDate(\DateTime $endDate)
+    public function setEndDate(\DateTime $endDate = null)
     {
         $this->endDate = $endDate;
     }
