@@ -534,13 +534,13 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
     {
         $personData = array(
             'id' => null,
+            'creator' => 'test',
+            'creationTimeStamp' => null,
+            'modifier' => 'test',
+            'modificationTimeStamp' => null,
             'firstName' => self::$firstName,
             'lastName' => self::$lastName,
             'emailAddress' => self::$emailAddress,
-            'creationTimeStamp' => null,
-            'creator' => 'test',
-            'modificationTimeStamp' => null,
-            'modifier' => 'test',
         );
         $person = new \Pelagos\Entity\Person;
         $person->update($personData);
