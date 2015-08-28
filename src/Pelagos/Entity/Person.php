@@ -15,7 +15,7 @@ use \Symfony\Component\Validator\Constraints as Assert;
 /**
  * Class to represent people.
  */
-class Person  extends Entity implements \JsonSerializable
+class Person extends Entity
 {
 
     /**
