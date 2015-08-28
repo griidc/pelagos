@@ -422,6 +422,22 @@ class EntityTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test that we can control which properties are serialized and specify the order.
+     *
+     * @return void
+     */
+    public function testSerializationControl()
+    {
+        $concreteEntityData = array(
+            'id' => null,
+            'name' => null,
+            'creator' => self::$testCreator,
+        );
+        $this->concreteEntity->setSerializeProperties(array('id','name','creator'));
+        $this->assertEquals(json_encode($concreteEntityData), json_encode($this->concreteEntity));
+    }
+
+    /**
      * Test that time stamps serialize to a specified time zone.
      *
      * @return void
@@ -441,6 +457,4 @@ class EntityTest extends \PHPUnit_Framework_TestCase
             'modificationTimeStamp' => $timeStampISO,
             'name' => null,
         );
-        $this->assertEquals(json_encode($concreteEntityData), json_encode($this->concreteEntity));
-    }
 }

@@ -23,7 +23,7 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
      *
      * @var testFundingCycles $testFundingCycles
      */
-    protected $testFundingCycles;
+    protected static $testFundingCycles;
 
     /**
      * Static class variable containing a name to use for testing.
@@ -169,6 +169,7 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
 
         $this->testMockFundingCycle = \Mockery::mock('\Pelagos\Entity\FundingCycle');
         $this->testMockFundingCycle->shouldReceive('setFundingOrganization');
+        $this->testMockFundingCycle->shouldReceive('jsonSerialize');
         $this->fundingOrganization->setFundingCycles(array($this->testMockFundingCycle));
 
         $this->timeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
@@ -469,9 +470,12 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     {
         $fundingOrganizationData = array(
             'id' => null,
-            'creationTimeStamp' => null,
             'creator' => self::$testCreator,
+            'creationTimeStamp' => null,
+            'modifier' => self::$testCreator,
+            'modificationTimeStamp' => null,
             'name' => self::$testName,
+            'logo' => array('mimeType' => 'text/plain', 'base64' => base64_encode(self::$testLogo)),
             'emailAddress' => self::$testEmailAddress,
             'description' => self::$testDescription,
             'url' => self::$testUrl,
@@ -481,12 +485,6 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
             'administrativeArea' => self::$testAdministrativeArea,
             'postalCode' => self::$testPostalCode,
             'country' => self::$testCountry,
-            'modificationTimeStamp' => null,
-            'modifier' => self::$testCreator,
-            'logo' => array(
-                'base64' => base64_encode(self::$testLogo),
-                'mimeType' => 'text/plain',
-            ),
         );
         $this->assertEquals(json_encode($fundingOrganizationData), json_encode($this->fundingOrganization));
     }

@@ -1,0 +1,28 @@
+<fieldset>
+    <form id="fundingCycleForm" entity="FundingCycle">
+        <label for="name">Funding Cycle Name:</label>
+        <input type="text" id="name" name="name" size="100">
+
+        <label for="fundingOrganization">Funding Organisation:</label>
+        <select id="fundingOrganization" name="fundingOrganization">
+            <option>[Please Select a Funding Organisation]</option>
+        </select>
+
+        <label for="description">Description:</label>
+        <input type="text" id="description" name="description" size="100">
+
+        <label for="url">Website:</label>
+        <input type="text" id="url" name="url" size="100">
+        
+        <label for="startDate">Start Date:</label>
+        <input placeholder="yyyy-mm-dd" type="text" id="startDate" name="startDate" size="100">
+        
+        <label for="endDate">End Date:</label>
+        <input placeholder="yyyy-mm-dd" type="text" id="endDate" name="endDate" size="100">
+
+        <p>
+            <button type="submit" id="btnSave">Save</button>
+            <button type="reset" id="btnReset">Reset</button>
+        </p>
+</form>
+</fieldset>

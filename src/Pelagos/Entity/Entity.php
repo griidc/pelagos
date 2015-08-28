@@ -59,6 +59,15 @@ abstract class Entity implements \JsonSerializable
     protected $modifier;
 
     /**
+     * An array of properties to serialize.
+     *
+     * If not set, all serializable properties will be serialized.
+     *
+     * @var array $serializeProperties
+     */
+    protected $serializeProperties;
+
+    /**
      * The time zone to use when returning time stamps.
      *
      * @var string $timeZone
@@ -113,7 +122,7 @@ abstract class Entity implements \JsonSerializable
      */
     public static function getProperties()
     {
-        return array_merge(self::$properties, static::$properties);;
+        return array_merge(self::$properties, static::$properties);
     }
 
     /**
@@ -132,6 +141,8 @@ abstract class Entity implements \JsonSerializable
     /**
      * Static method to determine if a given property expects an entity.
      *
+     * @param string $property The property to check.
+     *
      * @return boolean Whether or not given property expects an entity.
      */
     public static function propertyExpectsEntity($property)
@@ -145,6 +156,8 @@ abstract class Entity implements \JsonSerializable
 
     /**
      * Static method to get the expected entity type for a given property.
+     *
+     * @param string $property The property to get the entity type for.
      *
      * @return string The expected entity type for given property.
      */
@@ -292,6 +305,7 @@ abstract class Entity implements \JsonSerializable
         }
         $this->setModificationTimeStamp();
     }
+
     /**
      * Setter for modificationTimeStamp property.
      *
@@ -383,6 +397,18 @@ abstract class Entity implements \JsonSerializable
     }
 
     /**
+     * Specify a list of properties to serialize.
+     *
+     * @param array $properties The list of properties to serialize.
+     *
+     * @return void
+     */
+    public function setSerializeProperties(array $properties)
+    {
+        $this->serializeProperties = $properties;
+    }
+
+    /**
      * Implement JsonSerializable.
      *
      * @return array An array suitable for JSON serialization of the object.
@@ -390,7 +416,21 @@ abstract class Entity implements \JsonSerializable
     public function jsonSerialize()
     {
         $jsonArray = array();
-        foreach ($this->getProperties() as $property => $attributes) {
+        $serializeProperties = array();
+        $properties = $this->getProperties();
+        if (isset($this->serializeProperties)) {
+            // If we've set which properties to serialize.
+            foreach ($this->serializeProperties as $property) {
+                if (array_key_exists($property, $properties)) {
+                    // Grab property metadata for the property and add it to list to serialize.
+                    $serializeProperties[$property] = $properties[$property];
+                }
+            }
+        } else {
+            // Otherwise, just serialize them all.
+            $serializeProperties = $properties;
+        }
+        foreach ($serializeProperties as $property => $attributes) {
             // Skip this property if serialize = false
             if (array_key_exists('serialize', $attributes) and !$attributes['serialize']) {
                 continue;
@@ -465,5 +505,23 @@ abstract class Entity implements \JsonSerializable
             return $dateTime->format('Y-m-d');
         }
         return null;
+    }
+
+    /**
+     * Static method to serialize a binary attribute.
+     *
+     * @param string $binaryData The binary data to serialize.
+     *
+     * @return string The serialized binary data.
+     */
+    public static function serializeBinary($binaryData)
+    {
+        $finfo = new \finfo(FILEINFO_MIME_TYPE);
+        $mimeType = $finfo->buffer($binaryData);
+
+        return array(
+            'mimeType' => $mimeType,
+            'base64' => base64_encode($binaryData)
+        );
     }
 }
