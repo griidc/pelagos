@@ -12,6 +12,12 @@ use \Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Class to represent funding cycles.
+ *
+ * @Assert\UniqueEntity(
+ *     fields={"fundingOrganization","name"},
+ *     errorPath="name",
+ *     message="Name must be unique within a FundingOrganization"
+ * )
  */
 class FundingCycle extends Entity
 {
