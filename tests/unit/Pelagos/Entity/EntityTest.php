@@ -401,7 +401,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test that FundingCycle is JsonSerializable and serializes to the expected JSON.
+     * Test that Entity is JsonSerializable and serializes to the expected JSON.
      *
      * @return void
      */
@@ -436,4 +436,25 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $this->concreteEntity->setSerializeProperties(array('id','name','creator'));
         $this->assertEquals(json_encode($concreteEntityData), json_encode($this->concreteEntity));
     }
+
+    /**
+     * Test that time stamps serialize to a specified time zone.
+     *
+     * @return void
+     */
+    public function testSerializeTimeStampsTimeZone()
+    {
+        $timeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->concreteEntity->setCreationTimeStamp($timeStamp);
+        $this->concreteEntity->setTimeZone('America/Chicago');
+        $timeStamp->setTimeZone(new \DateTimeZone('America/Chicago'));
+        $timeStampISO = $timeStamp->format(\DateTime::ISO8601);
+        $concreteEntityData = array(
+            'id' => null,
+            'creator' => self::$testCreator,
+            'creationTimeStamp' => $timeStampISO,
+            'modifier' => self::$testCreator,
+            'modificationTimeStamp' => $timeStampISO,
+            'name' => null,
+        );
 }

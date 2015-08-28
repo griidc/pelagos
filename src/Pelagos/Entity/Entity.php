@@ -68,6 +68,13 @@ abstract class Entity implements \JsonSerializable
     protected $serializeProperties;
 
     /**
+     * The time zone to use when returning time stamps.
+     *
+     * @var string $timeZone
+     */
+    protected $timeZone = 'UTC';
+
+    /**
      * Static array containing a list of the properties and their attributes.
      *
      * @var array $properties
@@ -248,11 +255,10 @@ abstract class Entity implements \JsonSerializable
     /**
      * Getter for creationTimeStamp property.
      *
-     * The default is to return the time stamp in UTC.
-     * Setting $localized to true will return the time stamp localized to the current timezone.
-     * This getter also makes sure the creationTimeStamp property is set to UTC.
+     * The default is to return the time stamp in the time zone set in $this->timeZone.
+     * Setting $localized to true will return the time stamp localized to the current time zone.
      *
-     * @param boolean $localized Whether to convert time stamp to the local timezone.
+     * @param boolean $localized Whether to convert time stamp to the local time zone.
      *
      * @return \DateTime Creation time stamp for this Person.
      */
@@ -261,13 +267,13 @@ abstract class Entity implements \JsonSerializable
         if (!isset($this->creationTimeStamp)) {
             return null;
         }
-        $this->creationTimeStamp->setTimeZone(new \DateTimeZone('UTC'));
+        $timeStamp = clone $this->creationTimeStamp;
         if ($localized) {
-            $timeStamp = clone $this->creationTimeStamp;
             $timeStamp->setTimeZone(new \DateTimeZone(date_default_timezone_get()));
-            return $timeStamp;
+        } else {
+            $timeStamp->setTimeZone(new \DateTimeZone($this->timeZone));
         }
-        return $this->creationTimeStamp;
+        return $timeStamp;
     }
 
     /**
@@ -324,10 +330,9 @@ abstract class Entity implements \JsonSerializable
     /**
      * Getter for modificationTimeStamp property.
      *
-     * The default is to return the time stamp localized to the current timezone.
-     * This getter also makes sure the modificationTimeStamp property is set to UTC.
+     * The default is to return the time stamp in the time zone set in $this->timeZone.
      *
-     * @param boolean $localized Whether to convert time stamp to the local timezone.
+     * @param boolean $localized Whether to convert time stamp to the local time zone.
      *
      * @return \DateTime Modification time stamp for this Person.
      */
@@ -336,13 +341,13 @@ abstract class Entity implements \JsonSerializable
         if (!isset($this->modificationTimeStamp)) {
             return null;
         }
-        $this->modificationTimeStamp->setTimeZone(new \DateTimeZone('UTC'));
+        $timeStamp = clone $this->modificationTimeStamp;
         if ($localized) {
-            $timeStamp = clone $this->modificationTimeStamp;
             $timeStamp->setTimeZone(new \DateTimeZone(date_default_timezone_get()));
-            return $timeStamp;
+        } else {
+            $timeStamp->setTimeZone(new \DateTimeZone($this->timeZone));
         }
-        return $this->modificationTimeStamp;
+        return $timeStamp;
     }
 
     /**
@@ -440,6 +445,18 @@ abstract class Entity implements \JsonSerializable
             }
         }
         return $jsonArray;
+    }
+
+    /**
+     * Setter for $timeZone.
+     *
+     * @param string $timeZone The time zone to set.
+     *
+     * @return void
+     */
+    public function setTimeZone($timeZone)
+    {
+        $this->timeZone = $timeZone;
     }
 
     /**
