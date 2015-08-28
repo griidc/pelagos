@@ -510,87 +510,74 @@ class FundingOrganization extends Entity
     }
 
     /**
-     * Method to update multiple properties.
+     * Static array containing a list of the properties and their attributes.
      *
-     * @param array $updates An associative array indexed with property names
-     *                       and containing each property's new value.
-     *
-     * @return FundingOrganization Return the updated object.
+     * @var array $properties
      */
-    public function update(array $updates)
-    {
-        foreach ($updates as $field => $value) {
-            switch($field) {
-                case 'name':
-                    $this->setName($value);
-                    break;
-                case 'logo':
-                    $this->setLogo($value);
-                    break;
-                case 'emailAddress':
-                    $this->setEmailAddress($value);
-                    break;
-                case 'description':
-                    $this->setDescription($value);
-                    break;
-                case 'url':
-                    $this->setUrl($value);
-                    break;
-                case 'phoneNumber':
-                    $this->setPhoneNumber($value);
-                    break;
-                case 'deliveryPoint':
-                    $this->setDeliveryPoint($value);
-                    break;
-                case 'city':
-                    $this->setCity($value);
-                    break;
-                case 'administrativeArea':
-                    $this->setAdministrativeArea($value);
-                    break;
-                case 'postalCode':
-                    $this->setPostalCode($value);
-                    break;
-                case 'country':
-                    $this->setCountry($value);
-                    break;
-                case 'creator':
-                    $this->setCreator($value);
-                    break;
-            }
-        }
-        return $this;
-    }
-
-    /**
-     * Override jsonSerialize.
-     *
-     * @return array An array suitable for JSON serialization of the object.
-     */
-    public function jsonSerialize()
-    {
-        return array(
-            'id' => $this->getId(),
-            'creationTimeStamp' => $this->getCreationTimeStampAsISO(),
-            'creator' => $this->getCreator(),
-            'name' => $this->getName(),
-            'emailAddress' => $this->getEmailAddress(),
-            'description' => $this->getDescription(),
-            'url' => $this->getUrl(),
-            'phoneNumber' => $this->getPhoneNumber(),
-            'deliveryPoint' => $this->getDeliveryPoint(),
-            'city' => $this->getCity(),
-            'administrativeArea' => $this->getAdministrativeArea(),
-            'postalCode' => $this->getPostalCode(),
-            'country' => $this->getCountry(),
-            'modificationTimeStamp' => $this->getModificationTimeStampAsISO(),
-            'modifier' => $this->getModifier(),
-            'logo' => array(
-                'base64' => base64_encode($this->getLogo()),
-                'mimeType' => $this->getLogoMimeType(),
-            ),
-        );
-    }
+    protected static $properties = array(
+        'name' => array(
+            'type' => 'string',
+            'getter' => 'getName',
+            'setter' => 'setName',
+        ),
+        'logo' => array(
+            'type' => 'string',
+            'getter' => 'getLogo',
+            'setter' => 'setLogo',
+            'serializer' => 'serializeBinary',
+        ),
+        'emailAddress' => array(
+            'type' => 'string',
+            'getter' => 'getEmailAddress',
+            'setter' => 'setEmailAddress',
+        ),
+        'description' => array(
+            'type' => 'string',
+            'getter' => 'getDescription',
+            'setter' => 'setDescription',
+        ),
+        'url' => array(
+            'type' => 'string',
+            'getter' => 'getUrl',
+            'setter' => 'setUrl',
+        ),
+        'phoneNumber' => array(
+            'type' => 'string',
+            'getter' => 'getPhoneNumber',
+            'setter' => 'setPhoneNumber',
+        ),
+        'deliveryPoint' => array(
+            'type' => 'string',
+            'getter' => 'getDeliveryPoint',
+            'setter' => 'setDeliveryPoint',
+        ),
+        'city' => array(
+            'type' => 'string',
+            'getter' => 'getCity',
+            'setter' => 'setCity',
+        ),
+        'administrativeArea' => array(
+            'type' => 'string',
+            'getter' => 'getAdministrativeArea',
+            'setter' => 'setAdministrativeArea',
+        ),
+        'postalCode' => array(
+            'type' => 'string',
+            'getter' => 'getPostalCode',
+            'setter' => 'setPostalCode',
+        ),
+        'country' => array(
+            'type' => 'string',
+            'getter' => 'getCountry',
+            'setter' => 'setCountry',
+        ),
+        'fundingCycles' => array(
+            'type' => 'fundingCycle',
+            'getter' => 'getFundingCycles',
+            'setter' => 'setFundingCycles',
+            'serialize' => false,
+        )
+    );
 
     /**
      * Method that returns a FundingOrganization's properties as an array.

@@ -434,9 +434,12 @@ class FundingOrganizationWebServiceTest extends \PHPUnit_Framework_TestCase
     {
         $fundingOrganizationData = array(
             'id' => null,
-            'creationTimeStamp' => null,
             'creator' => self::$testCreator,
+            'creationTimeStamp' => null,
+            'modifier' => self::$testCreator,
+            'modificationTimeStamp' => null,
             'name' => self::$testName,
+            'logo' => null,
             'emailAddress' => self::$testEmailAddress,
             'description' => self::$testDescription,
             'url' => self::$testUrl,
@@ -446,14 +449,12 @@ class FundingOrganizationWebServiceTest extends \PHPUnit_Framework_TestCase
             'administrativeArea' => self::$testAdministrativeArea,
             'postalCode' => self::$testPostalCode,
             'country' => self::$testCountry,
-            'modificationTimeStamp' => null,
-            'modifier' => self::$testCreator,
         );
         $testFundingOrganization = new \Pelagos\Entity\FundingOrganization;
         $testFundingOrganization->update($fundingOrganizationData);
         $fundingOrganizationData['logo'] = array(
-            'base64' => '',
             'mimeType' => 'application/x-empty',
+            'base64' => '',
         );
         $this->mockEntityManager->shouldReceive('find')->andReturn($testFundingOrganization);
         \Slim\Environment::mock(
@@ -617,9 +618,12 @@ class FundingOrganizationWebServiceTest extends \PHPUnit_Framework_TestCase
     {
         $fundingOrganizationData = array(
             'id' => null,
+            'creator' => self::$testCreator,
             'creationTimeStamp' => null,
-            'creator' => 'test',
+            'modifier' => 'test',
+            'modificationTimeStamp' => null,
             'name' => self::$testName,
+            'logo' => null,
             'emailAddress' => self::$testEmailAddress,
             'description' => self::$testDescription,
             'url' => self::$testUrl,
@@ -629,14 +633,12 @@ class FundingOrganizationWebServiceTest extends \PHPUnit_Framework_TestCase
             'administrativeArea' => self::$testAdministrativeArea,
             'postalCode' => self::$testPostalCode,
             'country' => self::$testCountry,
-            'modificationTimeStamp' => null,
-            'modifier' => 'test',
         );
         $fundingOrganization = new \Pelagos\Entity\FundingOrganization;
         $fundingOrganization->update($fundingOrganizationData);
         $fundingOrganizationData['logo'] = array(
-            'base64' => '',
             'mimeType' => 'application/x-empty',
+            'base64' => '',
         );
         $this->mockEntityManager->shouldReceive('find')->andReturn($fundingOrganization);
         $this->mockEntityManager->shouldReceive('flush');

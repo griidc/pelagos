@@ -449,4 +449,22 @@ abstract class Entity implements \JsonSerializable
         }
         return null;
     }
+
+    /**
+     * Static method to serialize a binary attribute.
+     *
+     * @param string $binaryData The binary data to serialize.
+     *
+     * @return string The serialized binary data.
+     */
+    public static function serializeBinary($binaryData)
+    {
+        $finfo = new \finfo(FILEINFO_MIME_TYPE);
+        $mimeType = $finfo->buffer($binaryData);
+
+        return array(
+            'mimeType' => $mimeType,
+            'base64' => base64_encode($binaryData)
+        );
+    }
 }
