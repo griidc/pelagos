@@ -457,4 +457,5 @@ class EntityTest extends \PHPUnit_Framework_TestCase
             'modificationTimeStamp' => $timeStampISO,
             'name' => null,
         );
+    }
 }
