@@ -15,20 +15,6 @@ $(document).ready(function()
             $("#startDate").datepicker("option", "maxDate", selectedDate);
         }
     });
-    
-    // $("#startDate").rules("add", {
-        // required: function(element) {
-            // return $("#endDate").val() != "";
-        // }
-    // });
-    
-    // $("#endDate").rules("add", {
-        // required: function(element) {
-            // return $("#startDate").val() != "";
-        // }
-    // });
-    
-   
 });
 
 
