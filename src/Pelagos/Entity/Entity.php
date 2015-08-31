@@ -144,7 +144,7 @@ abstract class Entity implements \JsonSerializable
         $parentClassName = get_parent_class($this);
         $props = array_merge($propsSoFar,$thisName::$properties); // static access to member properties
         if($parentClassName) {
-            $reflectClass = new  ReflectionClass($parentClassName);
+            $reflectClass = new  \ReflectionClass($parentClassName);
             if($reflectClass->isAbstract()) {
                 $props = array_merge($propsSoFar,$parentClassName::$properties); // static access to member properties
             } else {
