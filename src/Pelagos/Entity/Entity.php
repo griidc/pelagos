@@ -116,36 +116,41 @@ abstract class Entity implements \JsonSerializable
     );
 
     /**
-     * getProps() returns the combined properties of all
-     * the classes in the inheritance tree.
+     * Return the combined properties of all instances in this inheritance tree.
      *
      * @return array Return is an array of all properties in the tree
      */
-    public static function getProperties() {
+    public static function getProperties()
+    {
         $thisName = get_called_class();
         $calledInstance = new $thisName;
         return $calledInstance->getPropertiesRecurse(array());
     }
 
     /**
-     * a helper function to provide recursive
-     * collection of the properties memeber element.
+     * A recursive helper function for getProperties().
+     *
+     * Returns a collection of the properties member element.
      * The Properties are static in all cases.
      * The properties are merged in the the argument to the function
      * and returned each stack frame call.
      * The properties are accumulated bottom to top in the inheritance tree.
-     * @param $propsSoFar
+     * @param array $propsSoFar The properties collected at the invocation of the function.
      *
-     * @return array Return description
+     * @return array The properties collected to this point.
      */
     public function getPropertiesRecurse($propsSoFar) {
         $thisName = get_class($this);
         $parentClassName = get_parent_class($this);
         $props = array_merge($propsSoFar,$thisName::$properties); // static access to member properties
-        $this->showArray($thisName,$props);
         if($parentClassName) {
-            $p = new $parentClassName;
-            $props = $p->getPropertiesRecurse($props);
+            $reflectClass = new  ReflectionClass($parentClassName);
+            if($reflectClass->isAbstract()) {
+                $props = array_merge($propsSoFar,$parentClassName::$properties); // static access to member properties
+            } else {
+                $p = new $parentClassName;
+                $props = $p->getPropertiesRecurse($props);
+            }
 
         }
         return $props;
