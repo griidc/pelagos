@@ -2,7 +2,8 @@
 -- PASS
 DELETE
 FROM funding_organization
-WHERE name = 'testfundingorganization';
+WHERE name = CONCAT('testfundingorganization',
+                    DATE_TRUNC('minute', NOW()));
 -- END
 
 -- PASS
@@ -36,7 +37,8 @@ VALUES
    E'xDEADBEEF',
    'pkrepps',
    NULL,
-   'testfundingorganization',
+   CONCAT('testfundingorganization',
+          DATE_TRUNC('minute', NOW())),
    '1-800-867-5309',
    '12345-6789',
    'http://www.nosuchpage.example.com',
@@ -69,7 +71,8 @@ VALUES
 (
    (SELECT funding_organization_number
     FROM funding_organization
-    WHERE name = 'testfundingorganization'),
+    WHERE name = CONCAT('testfundingorganization',
+                        DATE_TRUNC('minute', NOW()))),
    NOW(),
    'pkrepps',
    'dummy data',
@@ -114,7 +117,8 @@ VALUES
    'http://www.nosuchpage.example.com',
    (SELECT funding_organization_number
     FROM funding_organization
-    WHERE name = 'testfundingorganization'),
+    WHERE name = CONCAT('testfundingorganization',
+                        DATE_TRUNC('minute', NOW()))),
    'John Doe',
    NOW()
 -- MOD    ,'modifier',
@@ -148,7 +152,8 @@ VALUES
    'http://www.nosuchpage.example.com',
    (SELECT funding_organization_number
     FROM funding_organization
-    WHERE name = 'testfundingorganization'),
+    WHERE name = CONCAT('testfundingorganization',
+                        DATE_TRUNC('minute', NOW()))),
    'John Doe',
    NOW()
 -- MOD    ,'modifier',
@@ -182,7 +187,8 @@ VALUES
    'http://www.nosuchpage.example.com',
    (SELECT funding_organization_number
     FROM funding_organization
-    WHERE name = 'testfundingorganization'),
+    WHERE name = CONCAT('testfundingorganization',
+                        DATE_TRUNC('minute', NOW()))),
    NULL,
    NOW()
 -- MOD    ,'modifier',
@@ -216,7 +222,8 @@ VALUES
    'http://www.nosuchpage.example.com',
    (SELECT funding_organization_number
     FROM funding_organization
-    WHERE name = 'testfundingorganization'),
+    WHERE name = CONCAT('testfundingorganization',
+                        DATE_TRUNC('minute', NOW()))),
    '',
    NOW()
 -- MOD    ,'modifier',
@@ -250,7 +257,8 @@ VALUES
 -- MOD    'http://www.nosuchpage.example.com',
 -- MOD    (SELECT funding_organization_number
 -- MOD     FROM funding_organization
--- MOD     WHERE name = 'testfundingorganization'),
+-- MOD     WHERE name = CONCAT('testfundingorganization',
+-- MOD                  DATE_TRUNC('minute', NOW()))),
 -- MOD    'batman',
 -- MOD    NOW()
 -- MOD    ,NULL,
@@ -284,7 +292,8 @@ VALUES
 -- MOD    'http://www.nosuchpage.example.com',
 -- MOD    (SELECT funding_organization_number
 -- MOD     FROM funding_organization
--- MOD     WHERE name = 'testfundingorganization'),
+-- MOD     WHERE name = CONCAT('testfundingorganization',
+-- MOD                         DATE_TRUNC('minute', NOW()))),
 -- MOD    'batman',
 -- MOD    NOW()
 -- MOD    ,'',
@@ -350,7 +359,8 @@ VALUES
    'http://www.nosuchpage.example.com',
    (SELECT funding_organization_number
     FROM funding_organization
-    WHERE name = 'testfundingorganization'),
+    WHERE name = CONCAT('testfundingorganization',
+                        DATE_TRUNC('minute', NOW()))),
    'mmouse',
    NOW()
 -- MOD    ,'modifier',
@@ -384,7 +394,8 @@ VALUES
    'http://www.nosuchpage.example.com',
    (SELECT funding_organization_number
     FROM funding_organization
-    WHERE name = 'testfundingorganization'),
+    WHERE name = CONCAT('testfundingorganization',
+                        DATE_TRUNC('minute', NOW()))),
    'mmouse',
    NOW()
 -- MOD    ,'modifier',
@@ -403,7 +414,8 @@ WHERE funding_cycle_number =
        AND funding_organization_number =
           (SELECT funding_organization_number
            FROM funding_organization
-           WHERE name = 'testfundingorganization'));
+           WHERE name = CONCAT('testfundingorganization',
+                               DATE_TRUNC('minute', NOW()))));
 -- END
 
 -- UPDATE that should pass but update nothing:
@@ -417,14 +429,12 @@ WHERE funding_cycle_number =
        AND funding_organization_number =
           (SELECT funding_organization_number
            FROM funding_organization
-           WHERE name = 'testfundingorganization'));
+           WHERE name = CONCAT('testfundingorganization',
+                               DATE_TRUNC('minute', NOW()))));
 -- END
 
--- UPDATE setting a required field to NULL that should pass but update nothing
--- because testing has shown that attempting to update a field of a view on a
--- table column that is constrained to NOT NULL just silently doesn't perform
--- the update, but returns an indication that an update occurred. Interesting.
--- PASS
+-- UPDATE setting a required field to NULL fail:
+-- FAIL
 UPDATE funding_cycle
 SET funding_organization_number = NULL
 WHERE funding_cycle_number =
@@ -434,10 +444,11 @@ WHERE funding_cycle_number =
        AND funding_organization_number =
           (SELECT funding_organization_number
            FROM funding_organization
-           WHERE name = 'testfundingorganization'));
+           WHERE name = CONCAT('testfundingorganization',
+                               DATE_TRUNC('minute', NOW()))));
 -- END
 
--- UPDATE setting a required field to NULL should pass but update nothing:
+-- UPDATE setting a required field with a default value to NULL should pass:
 -- PASS
 UPDATE funding_cycle
 SET creation_time = NULL
@@ -448,10 +459,11 @@ WHERE funding_cycle_number =
        AND funding_organization_number =
           (SELECT funding_organization_number
            FROM funding_organization
-           WHERE name = 'testfundingorganization'));
+           WHERE name = CONCAT('testfundingorganization',
+                               DATE_TRUNC('minute', NOW()))));
 -- END
 
--- UPDATE setting a required field to NULL should pass but update nothing:
+-- UPDATE setting a required field to NULL should fail:
 -- PASS
 UPDATE funding_cycle
 SET creator = NULL
@@ -462,11 +474,12 @@ WHERE funding_cycle_number =
        AND funding_organization_number =
           (SELECT funding_organization_number
            FROM funding_organization
-           WHERE name = 'testfundingorganization'));
+           WHERE name = CONCAT('testfundingorganization',
+                               DATE_TRUNC('minute', NOW()))));
 -- END
 
--- UPDATE setting a required field to NULL should pass but update nothing:
--- PASS
+-- UPDATE setting a required field to NULL should fail:
+-- FAIL
 UPDATE funding_cycle
 SET name = NULL
 WHERE funding_cycle_number =
@@ -476,7 +489,8 @@ WHERE funding_cycle_number =
        AND funding_organization_number =
           (SELECT funding_organization_number
            FROM funding_organization
-           WHERE name = 'testfundingorganization'));
+           WHERE name = CONCAT('testfundingorganization',
+                               DATE_TRUNC('minute', NOW()))));
 -- END
 
 -- DELETE that should pass:

@@ -25,11 +25,14 @@ DROP TRIGGER udf_funding_cycle_update_trigger
 DROP FUNCTION udf_modify_funding_cycle();
 DROP VIEW funding_cycle;
 
+-- Add the CITEXT data type if needed:
+CREATE EXTENSION IF NOT EXISTS citext;
+
 -- Create the view (we cast email address and instantiation_time to text so
 -- that we can handle CHECK errors in our exception block):
 CREATE VIEW funding_cycle AS
    SELECT funding_cycle_number AS funding_cycle_number,
-          funding_cycle_name AS name,
+          CAST(funding_cycle_name AS CITEXT) AS name,
           funding_cycle_description AS description,
           funding_cycle_start_date AS start_date,
           funding_cycle_end_date AS end_date,
@@ -114,10 +117,10 @@ AS $f_o_func$
             -- enforce that here:
             EXECUTE 'SELECT COUNT(*)
                      FROM funding_cycle_table
-                     WHERE LOWER(funding_cycle_name) = LOWER($1)
+                     WHERE LOWER(funding_cycle_name) = $1
                         AND funding_organization_number = $2'
                INTO _count
-               USING NEW.name,
+               USING LOWER(CAST(NEW.name AS TEXT)),
                      NEW.funding_organization_number;
 
             IF _count > 0
@@ -127,7 +130,10 @@ AS $f_o_func$
                _err_msg  := CONCAT('Funding Cyle ',
                                    NEW.name,
                                    ' of ',
-                                   NEW.funding_organization_number,
+                                   (SELECT name
+                                    FROM funding_organization
+                                    WHERE funding_organization_number =
+                                       NEW.funding_organization_number),
                                    ' already exists in funding_cycle');
                RAISE EXCEPTION 'Duplicate funding_cycle entry'
                   USING ERRCODE = '23505';
@@ -170,7 +176,7 @@ AS $f_o_func$
                      NEW.end_date,
 -- MOD                      NEW.modification_time,
 -- MOD                      NEW.creator,
-                     NEW.name,
+                     CAST(NEW.name AS TEXT),
                      NEW.start_date,
                      NEW.website;
 
@@ -212,7 +218,7 @@ AS $f_o_func$
 -- MOD                               $7,  $8,  $9, $10, $11, $12)'
                   USING TG_OP,
                         OLD.funding_cycle_number,
-                        OLD.name,
+                        CAST(OLD.name AS TEXT),
                         OLD.description,
                         OLD.start_date,
                         OLD.end_date,
@@ -238,7 +244,7 @@ AS $f_o_func$
 -- MOD                         WHERE funding_cycle_number = $8''
 -- MOD Do not forget the double quotes need to be singles when uncommented!
                         WHERE funding_cycle_number = $7'
-                  USING NEW.name,
+                  USING CAST(NEW.name AS TEXT),
                         NEW.description,
                         NEW.start_date,
                         NEW.end_date,
@@ -271,7 +277,7 @@ AS $f_o_func$
 -- HIST -- MOD                               $7,  $8,  $9, $10, $11, $12)'
 -- HIST                USING TG_OP,
 -- HIST                      OLD.funding_cycle_number,
--- HIST                      OLD.name,
+-- HIST                      CAST(OLD.name AS TEXT),
 -- HIST                      OLD.description,
 -- HIST                      OLD.start_date,
 -- HIST                      OLD.end_date,
@@ -287,9 +293,9 @@ AS $f_o_func$
          -- Perform the DELETE:
          EXECUTE 'DELETE
                   FROM funding_cycle_table
-                  WHERE LOWER(funding_cycle_name) = LOWER($1)
+                  WHERE LOWER(funding_cycle_name) = $1
                      AND funding_organization_number = $2'
-            USING OLD.name,
+            USING LOWER(CAST(OLD.name AS TEXT)),
                   OLD.funding_organization_number;
 
          RETURN OLD;
