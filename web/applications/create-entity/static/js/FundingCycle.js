@@ -3,18 +3,48 @@ $(document).ready(function()
     "use strict";
     populateFundingOrganizations($("#fundingOrganization"));
 
-    $("#startDate,#endDate").datepicker({
-        dateFormat: "yy-mm-dd"
+    $("#startDate").datepicker({
+        dateFormat: "yy-mm-dd",
+        onClose: function(selectedDate) {
+            $("#endDate").datepicker("option", "minDate", selectedDate);
+        }
     });
+    $("#endDate").datepicker({
+        dateFormat: "yy-mm-dd",
+        onClose: function(selectedDate) {
+            $("#startDate").datepicker("option", "maxDate", selectedDate);
+        }
+    });
+    
+    // $("#startDate").rules("add", {
+        // required: function(element) {
+            // return $("#endDate").val() != "";
+        // }
+    // });
+    
+    // $("#endDate").rules("add", {
+        // required: function(element) {
+            // return $("#startDate").val() != "";
+        // }
+    // });
+    
+   
 });
 
+
+/**
+ * This function add funding org options to a select element
+ *
+ * @param selectElement element Element of Select item
+ *
+ * @return void
+ */
 function populateFundingOrganizations(selectElement)
 {
     "use strict";
     var url = pelagosBasePath + "/services/entity/FundingOrganization";
 
     $.getJSON(url, function(json) {
-        //debugger;
         var fundingOrganizations = sortResults(json.data, "name", false, true);
 
         $.each(fundingOrganizations, function(seq, FundingOrg) {
