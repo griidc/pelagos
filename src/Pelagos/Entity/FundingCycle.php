@@ -108,7 +108,7 @@ class FundingCycle extends Entity
         'startDate' => array(
             'type' => 'object',
             'class' => 'DateTime',
-            'resolver' => 'resolveDateTime',
+            'resolver' => 'resolveDate',
             'setter' => 'setStartDate',
             'getter' => 'getStartDate',
             'serializer' => 'serializeDate',
@@ -116,7 +116,7 @@ class FundingCycle extends Entity
         'endDate' => array(
             'type' => 'object',
             'class' => 'DateTime',
-            'resolver' => 'resolveDateTime',
+            'resolver' => 'resolveDate',
             'setter' => 'setEndDate',
             'getter' => 'getEndDate',
             'serializer' => 'serializeDate',
