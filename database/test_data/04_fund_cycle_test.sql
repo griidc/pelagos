@@ -403,6 +403,82 @@ VALUES
 );
 -- END
 
+-- INSERT with just an end date should pass:
+-- PASS
+INSERT INTO funding_cycle
+(                  
+   funding_organization_number,
+   name,
+   creator,
+   end_date
+)
+VALUES
+(
+   5,
+   'fc3',
+   'pluto',
+   '2020-12-31' 
+);
+-- END
+
+-- INSERT with just a start date should pass:
+-- PASS
+INSERT INTO funding_cycle
+(                  
+   funding_organization_number,
+   name,
+   creator,
+   start_date
+)
+VALUES
+(
+   5,
+   'fc4',
+   'pluto',
+   '2020-12-31' 
+);
+-- END
+
+-- INSERT where end date preceeds start date should fail:
+-- FAIL
+INSERT INTO funding_cycle
+(                  
+   funding_organization_number,
+   name,
+   creator,
+   start_date,
+   end_date
+)
+VALUES
+(
+   5,
+   'fc6',
+   'pluto',
+   '2020-12-31',
+   '1055-11-30'
+);
+-- END
+
+-- INSERT WHERE end date not one day creater than start date should fail:
+-- FAIL
+INSERT INTO funding_cycle
+(                  
+   funding_organization_number,
+   name,
+   creator,
+   start_date,
+   end_date
+)
+VALUES
+(
+   5,
+   'fc6',
+   'pluto',
+   '2015-08-31',
+   '2015-08-31'
+);
+-- END
+
 -- UPDATE that should pass:
 -- PASS
 UPDATE funding_cycle
@@ -499,6 +575,42 @@ DELETE
 FROM funding_cycle
 WHERE name = 'FC_test';
 -- END
+
+-- UPDATE start date to equal end date should fail:
+-- FAIL
+UPDATE funding_cycle
+SET start_date = '2020-12-31'
+WHERE name = 'FC1';
+-- END
+
+-- UPDATE start date should pass:
+-- PASS
+UPDATE funding_cycle
+SET start_date = '2015-08-31'
+WHERE name = 'FC1';
+-- END
+
+-- UPDATE end date should fail:
+-- FAIL
+UPDATE funding_cycle
+SET end_date = '2015-08-30'
+WHERE name = 'FC1';
+-- END
+
+-- UPDATE end date should fail:
+-- FAIL
+UPDATE funding_cycle
+SET end_date = '2015-08-31'
+WHERE name = 'FC1';
+-- END
+
+-- UPDATE end date should pass:
+-- PASS
+UPDATE funding_cycle
+SET end_date = '2015-09-01'
+WHERE name = 'FC1';
+-- END
+
 
 -- PNKJR    -- ,modifier,
 -- PNKJR    -- modification_time

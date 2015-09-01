@@ -44,6 +44,9 @@ CREATE TABLE funding_cycle_table
       REFERENCES funding_organization_table(funding_organization_number)
       ON DELETE RESTRICT
       ON UPDATE RESTRICT,
+   CONSTRAINT chk_end_date_not_before_start
+      CHECK (funding_cycle_end_date >=
+             funding_cycle_start_date + INTERVAL '1 DAY'),
 
    PRIMARY KEY (funding_cycle_number)
 );

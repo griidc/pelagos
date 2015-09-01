@@ -139,6 +139,20 @@ AS $f_o_func$
                   USING ERRCODE = '23505';
             END IF;
 
+            -- The task requirements require an end date to be at least one
+            -- day greater than the start date (if both have been supplied.
+            -- Both end and start date are optional). Test for that here:
+            IF NOT NEW.end_date >= NEW.start_date + INTERVAL '1 DAY'
+            THEN
+               _err_hint := CONCAT('End date must be at least one day ',
+                                   ' greater than Start date');
+               _err_msg  := CONCAT(NEW.end_date,
+                                   ' is not at least one day greater than ',
+                                   NEW.start_date);
+               RAISE EXCEPTION 'end_date not greater than start_date'
+                  USING ERRCODE = '23514';
+            END IF;
+
             -- An INSERT statement from the front-end may not be passing in a
             -- funding_cycle number. If so we need to retrieve the next
             -- available value in the sequence:
@@ -184,6 +198,21 @@ AS $f_o_func$
 
          ELSEIF TG_OP = 'UPDATE'
          THEN
+
+            -- The task requirements require an end date to be at least one
+            -- day greater than the start date (if both have been supplied.
+            -- Both end and start date are optional). Test for that here:
+            IF NOT NEW.end_date >= NEW.start_date + INTERVAL '1 DAY'
+            THEN
+               _err_hint := CONCAT('End date must be at least one day ',
+                                   ' greater than Start date');
+               _err_msg  := CONCAT(NEW.end_date,
+                                   ' is not at least one day greater than ',
+                                   NEW.start_date);
+               RAISE EXCEPTION 'end_date not greater than start_date'
+                  USING ERRCODE = '23514';
+           END IF;
+
             IF ROW(NEW.name,
                    NEW.description,
                    NEW.start_date,
