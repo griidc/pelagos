@@ -9,6 +9,7 @@
 namespace Pelagos\Entity;
 
 use \Symfony\Component\Validator\Constraints as Assert;
+use \Pelagos\Exception\InvalidFormatArgumentException;
 
 /**
  * Abstract class that contains basic properties and methods common to all Pelagos entities.
@@ -474,7 +475,11 @@ abstract class Entity implements \JsonSerializable
         if (gettype($value) == 'object' and get_class($value) == 'DateTime') {
             return $value;
         }
-        return new \DateTime($value);
+        try {
+            return new \DateTime($value);
+        } catch (\Exception $e) {
+            throw new InvalidFormatArgumentException('Invalid date/time format');
+        }
     }
 
     /**
