@@ -6,16 +6,27 @@ $(document).ready(function()
     $("#startDate").datepicker({
         dateFormat: "yy-mm-dd",
         onClose: function(selectedDate) {
-            $("#endDate").datepicker("option", "minDate", selectedDate);
+            var tomorrow = new Date(selectedDate);
+            var newdate = tomorrow.setDate(tomorrow.getDate() + 1);
+            newdate = tomorrow.toISOString().substring(0, 10);
+            $("#endDate").datepicker("option", "minDate", newdate);
             $("#startDate").keyup();
         }
     });
     $("#endDate").datepicker({
         dateFormat: "yy-mm-dd",
         onClose: function(selectedDate) {
-            $("#startDate").datepicker("option", "maxDate", selectedDate);
+            var yesterday = new Date(selectedDate);
+            var newdate = yesterday.setDate(yesterday.getDate() - 1);
+            newdate = yesterday.toISOString().substring(0, 10);
+            $("#startDate").datepicker("option", "maxDate", newdate);
             $("#endDate").keyup();
         }
+    });
+    
+    $("form").has("#startDate,#endDate").bind("reset", function() {
+        $("#startDate").datepicker("option", "maxDate", "");
+        $("#endDate").datepicker("option", "minDate", "");
     });
 });
 
