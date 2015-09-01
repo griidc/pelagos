@@ -7,16 +7,17 @@ $(document).ready(function()
         dateFormat: "yy-mm-dd",
         onClose: function(selectedDate) {
             $("#endDate").datepicker("option", "minDate", selectedDate);
+            $("#startDate").keyup();
         }
     });
     $("#endDate").datepicker({
         dateFormat: "yy-mm-dd",
         onClose: function(selectedDate) {
             $("#startDate").datepicker("option", "maxDate", selectedDate);
+            $("#endDate").keyup();
         }
     });
 });
-
 
 /**
  * This function add funding org options to a select element
