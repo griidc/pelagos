@@ -6,6 +6,7 @@ $(document).ready(function()
     $("#startDate").datepicker({
         dateFormat: "yy-mm-dd",
         onClose: function(selectedDate) {
+            $("#endDate").datepicker("option", "minDate", selectedDate);
             var tomorrow = new Date(selectedDate);
             var newdate = tomorrow.setDate(tomorrow.getDate() + 1);
             newdate = tomorrow.toISOString().substring(0, 10);
@@ -23,7 +24,7 @@ $(document).ready(function()
             $("#endDate").keyup();
         }
     });
-    
+
     $("form").has("#startDate,#endDate").bind("reset", function() {
         $("#startDate").datepicker("option", "maxDate", "");
         $("#endDate").datepicker("option", "minDate", "");
