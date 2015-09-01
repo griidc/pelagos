@@ -9,6 +9,7 @@
 namespace Pelagos\Entity;
 
 use \Symfony\Component\Validator\Constraints as Assert;
+use \Pelagos\Exception\InvalidFormatArgumentException;
 
 /**
  * Abstract class that contains basic properties and methods common to all Pelagos entities.
@@ -474,7 +475,38 @@ abstract class Entity implements \JsonSerializable
         if (gettype($value) == 'object' and get_class($value) == 'DateTime') {
             return $value;
         }
-        return new \DateTime($value);
+        try {
+            return new \DateTime($value);
+        } catch (\Exception $e) {
+            throw new InvalidFormatArgumentException('Invalid date/time format');
+        }
+    }
+
+    /**
+     * Static method to resolve a value as a DateTime object.
+     *
+     * This resolver will only accept strings in the ISO 8601 date format.
+     *
+     * @param mixed $value A value to resolve to a DateTime.
+     *
+     * @return \DateTime The resolved DateTime.
+     */
+    public static function resolveDate($value)
+    {
+        if (!isset($value)) {
+            return null;
+        }
+        if (gettype($value) == 'object' and get_class($value) == 'DateTime') {
+            return $value;
+        }
+        $dateTime = \DateTime::createFromFormat('Y-m-d', $value, new \DateTimeZone('UTC'));
+        if ($dateTime === false) {
+            throw new InvalidFormatArgumentException('Invalid date format');
+        } elseif (\DateTime::getLastErrors()['warning_count'] > 0) {
+            throw new InvalidFormatArgumentException('Invalid date');
+        } else {
+            return $dateTime;
+        }
     }
 
     /**
