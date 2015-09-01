@@ -116,42 +116,43 @@ abstract class Entity implements \JsonSerializable
     );
 
     /**
-     * Return the combined properties of all instances in this inheritance tree.
+     * Return the combined properties of all classes in the inheritance tree.
      *
      * @return array Return is an array of all properties in the tree
      */
+
     public static function getProperties()
     {
-        $thisName = get_called_class();
-        $calledInstance = new $thisName;
-        return $calledInstance->getPropertiesRecurse(array());
+        $thisClassName = get_called_class();
+        return static::getPropertiesWork(array(), $thisClassName);
     }
 
     /**
-     * A recursive helper function for getProperties().
+     * A helper function to collect the properties including the inherited properties.
      *
-     * Returns a collection of the properties member element.
      * The Properties are static in all cases.
      * The properties are merged in the the argument to the function
-     * and returned each stack frame call.
+     * and returned each iteration through the while.
      * The properties are accumulated bottom to top in the inheritance tree.
-     * @param array $propsSoFar The properties collected at the invocation of the function.
      *
-     * @return array The properties collected to this point.
+     * @param array  $props     Empty set of properties.
+     * @param string $className The name of the calling class.
+     *
+     * @see    getProperties()
+     *
+     * @return array $props Set of properties
      */
-    public function getPropertiesRecurse($propsSoFar) {
-        $thisName = get_class($this);
-        $parentClassName = get_parent_class($this);
-        $props = array_merge($propsSoFar,$thisName::$properties); // static access to member properties
-        if($parentClassName) {
-            $reflectClass = new  \ReflectionClass($parentClassName);
-            if($reflectClass->isAbstract()) {
-                $props = array_merge($propsSoFar,$parentClassName::$properties); // static access to member properties
-            } else {
-                $p = new $parentClassName;
-                $props = $p->getPropertiesRecurse($props);
-            }
+    public static function getPropertiesWork(array $props, $className)
+    {
+        $parents = array();
+        $reflectionClass = new \ReflectionClass($className);
+        $props = array_merge($className::$properties, $props); // static access to member properties
 
+        while ($parentReflection = $reflectionClass->getParentClass()) {
+            $parents[] = $parentReflection->getName();
+            $parentClassName = $parentReflection->getName();
+            $props = array_merge($parentClassName::$properties, $props); // static access to member properties
+            $reflectionClass = $parentReflection;
         }
         return $props;
     }
