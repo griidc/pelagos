@@ -483,6 +483,33 @@ abstract class Entity implements \JsonSerializable
     }
 
     /**
+     * Static method to resolve a value as a DateTime object.
+     *
+     * This resolver will only accept strings in the ISO 8601 date format.
+     *
+     * @param mixed $value A value to resolve to a DateTime.
+     *
+     * @return \DateTime The resolved DateTime.
+     */
+    public static function resolveDate($value)
+    {
+        if (!isset($value)) {
+            return null;
+        }
+        if (gettype($value) == 'object' and get_class($value) == 'DateTime') {
+            return $value;
+        }
+        $dateTime = \DateTime::createFromFormat('Y-m-d', $value, new \DateTimeZone('UTC'));
+        if ($dateTime === false) {
+            throw new InvalidFormatArgumentException('Invalid date format');
+        } elseif (\DateTime::getLastErrors()['warning_count'] > 0) {
+            throw new InvalidFormatArgumentException('Invalid date');
+        } else {
+            return $dateTime;
+        }
+    }
+
+    /**
      * Static method to serialize a DateTime object as an ISO8601 string.
      *
      * @param \DateTime|null $dateTime The DateTime to serialize.
