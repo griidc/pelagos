@@ -118,38 +118,21 @@ abstract class Entity implements \JsonSerializable
     /**
      * Return the combined properties of all classes in the inheritance tree.
      *
-     * @return array Return is an array of all properties in the tree
-     */
-
-    public static function getProperties()
-    {
-        $thisClassName = get_called_class();
-        return static::getPropertiesWork(array(), $thisClassName);
-    }
-
-    /**
-     * A helper function to collect the properties including the inherited properties.
-     *
      * The Properties are static in all cases.
      * The properties are merged in the the argument to the function
      * and returned each iteration through the while.
      * The properties are accumulated bottom to top in the inheritance tree.
      *
-     * @param array  $props     Empty set of properties.
-     * @param string $className The name of the calling class.
-     *
-     * @see    getProperties()
-     *
      * @return array $props Set of properties
      */
-    public static function getPropertiesWork(array $props, $className)
+    public static function getPropertiesWork()
     {
-        $parents = array();
+        $props = array();
+        $className = get_called_class();
         $reflectionClass = new \ReflectionClass($className);
         $props = array_merge($className::$properties, $props); // static access to member properties
 
         while ($parentReflection = $reflectionClass->getParentClass()) {
-            $parents[] = $parentReflection->getName();
             $parentClassName = $parentReflection->getName();
             $props = array_merge($parentClassName::$properties, $props); // static access to member properties
             $reflectionClass = $parentReflection;
