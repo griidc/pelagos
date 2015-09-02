@@ -20,6 +20,7 @@
                 <thead>
                     <tr>
                         <th><div class="title">UDI</div></th>
+                        <th><div class="title">Jira Link</div></th>
                         <th><div class="title">Action</div></th>
                         <th><div class="title">Approval</div></th>
                         <th><div class="title">Timestamp</div></th>
@@ -29,6 +30,7 @@
                 <tfoot>
                     <tr>
                         <th><div class="title">UDI</div></th>
+                        <th><div class="title">Jira Link</div></th>
                         <th><div class="title">Action</div></th>
                         <th><div class="title">Approval</div></th>
                         <th><div class="title">Timestamp</div></th>
@@ -39,6 +41,9 @@
                     {% for dta in section %}
                         <tr>
                             <td valign="top"><a href="{{pagelessBaseUrl}}/data/{{dta.dataset_udi}}" target="0" >{{dta.dataset_udi}}</a></td>
+                            <td>
+                                <a href="{{jiraBase}}/{{dta.jiraTicket}}" target="_BLANK">{{dta.jira_ticket}}</a>
+                            </td>
                             <td valign="top"><form name="AcceptedState" action="{{baseUrl}}/change_status/{{dta.dataset_udi}}" method="post">
                             <select name="to" id="state_sel_{{dta.dataset_udi}}">
                                     {% if sname == 'submitted' %}
@@ -78,7 +83,7 @@
                                         <option value="Accepted">Accepted</option>
                                         <option value="BackToSubmitter">BackToSubmitter</option>
                                     {% endif %}
-                                        
+
                             </select>
                             <input type="submit" value="->" id="state_sel_sub_{{dta.dataset_udi}}">
                             </form>
@@ -144,7 +149,7 @@
                     <h3>GRIIDC Metadata Standards Compliance Enforcement</h3>
                     <p>The following checks help ensure that the UDI references within
                        a metadata record are consistent. The UDI is determined by reading
-                       the uploaded filename. If checked, failed tests will result in 
+                       the uploaded filename. If checked, failed tests will result in
                        rejection of the upload. If unchecked, failed tests will result in
                        a non-blocking warning instead.</p>
                     <input type="checkbox" name="test1" CHECKED>Filename matches file identifier (/gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1]) as UDI-metadata.xml (w/dash instead of colon)<br />

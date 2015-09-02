@@ -62,6 +62,7 @@ $app->hook('slim.before', function () use ($app) {
     $app->view()->appendData(array('baseUrl' => "$protocol$env[SERVER_NAME]/$GLOBALS[PAGE_NAME]"));
     $app->view()->appendData(array('pagelessBaseUrl' => "$protocol$env[SERVER_NAME]"));
     $app->view()->appendData(array('pageName' => $GLOBALS['PAGE_NAME']));
+    $app->view()->appendData(array('jiraBase' => $GLOBALS['module_config']['jira']['jira_base']));
 });
 
 $app->hook('slim.before.router', function () use ($app) {
@@ -106,7 +107,7 @@ $app->get('/download-metadata/:udi', function ($udi) use ($app) {
         $datasets = get_identified_datasets(OpenDB('GOMRI_RO'),array("udi=$udi"));
     }
     $dataset = $datasets[0];
-   
+
     $dl_dir = $GLOBALS['pelagos_config']['paths']['data_download'];
     $met_file = "$dl_dir/$dataset[udi]/$dataset[udi].met";
     if (file_exists($met_file)) {
@@ -131,14 +132,14 @@ $app->post('/change_status/:udi', function ($udi) use ($app) {
     global $user;
     $to = $app->request()->post('to');
     $from = getCurrentState($udi);
-    /*   
+    /*
         BackToSubmitter
         Submitted
         InReview
         SecondCheck
         Accepted
     */
- 
+
     $sql = "update registry set metadata_status = :to where
             metadata_status = :from and registry_id =
             ( select MAX(registry_id) from registry where dataset_udi = :udi)";
@@ -146,7 +147,7 @@ $app->post('/change_status/:udi', function ($udi) use ($app) {
     $dbms = OpenDB("GOMRI_RW");
     $data = $dbms->prepare($sql);
 
-    $data->bindParam(':to',$to); 
+    $data->bindParam(':to',$to);
     $data->bindParam(':from',$from);
     $data->bindParam(':udi',$udi);
 
@@ -312,8 +313,8 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
             $err_str = $err->message;
             throw new RuntimeException("Malformed XML: The XML file supplied $orig_filename could not be parsed. ($err_str)");
         }
-        
-        // Attempt to validate the XML file 
+
+        // Attempt to validate the XML file
         if(isset($_POST['validateSchema']) and $_POST['validateSchema'] == 'on') {
             $schemaErrors=0;
             $schema = 'http://www.ngdc.noaa.gov/metadata/published/xsd/schema.xsd';
@@ -341,12 +342,12 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
             } else {
                 drupal_set_message("XML Valid per ISO-19115-2 ",'status');
             }
-    
+
             if($schemaErrors > 0) {
                 throw new RuntimeException("The file uploaded as $orig_filename does not validate as ISO-19115-2 compliant XML.");
             }
         }
-        
+
 
 
         // also load as simplxml object for quick xpath tests
@@ -400,7 +401,7 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                 drupal_set_message($errmsg,'warning');
             }
         }
-        
+
 
         // Check to see if filename matches XML internal UDI reference #1
         $loc_2_xpath = "/gmi:MI_Metadata/gmd:dataSetURI[1]/gco:CharacterString[1]"; # as UDI
@@ -445,7 +446,7 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                 drupal_set_message($errmsg,'warning');
             }
         }
-        
+
         # If there were previous user-enabled hard errors, throw exception and display errors.
         if (count($errors) > 0) {
             $err_str='<ul>';
@@ -461,7 +462,7 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
             $doc->normalizeDocument();
             $doc->formatOutput=true;
             $xml_save=$doc->saveXML();
-            
+
             $dbms->beginTransaction();
 
             // query database for current (highest) registry_id for particular UDI
@@ -529,7 +530,7 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                 $xml_save=$doc3->saveXML();
             }
 
-            
+
             $geo_status='Nothing to verify';
             $geometery=null;
                 // attempt to have PostGIS validate any geometry, if found and return the geometery
@@ -544,7 +545,7 @@ $app->post('/upload-new-metadata-file', function () use ($app) {
                         $tmp=$data2->fetchAll();
                         $geometry=$tmp[0]['geometry'];
                         $geometry_wkt=$tmp[0]['geometry_wkt'];
-                        $geoflag = 'yes'; 
+                        $geoflag = 'yes';
                         // Now determine an envelope that surrounds this geometry
                         $sql = "SELECT
                                     ST_AsText(ST_Envelope(:geo::geometry)) as \"geoenvelope\",
@@ -624,7 +625,7 @@ EOF;
                 }
 
             // insert (or update) data in metadata table
-            
+
             // clean up formatting via tidy
             $tidy_config = array('indent' => true,'indent-spaces' => 4,'input-xml' => true,'output-xml' => true,'wrap' => 0);
             $tidy = new tidy;
@@ -696,7 +697,7 @@ EOF;
 
             drupal_set_message('Upload Successful','status');
             if(isset($envelope_wkt) and ($envelope_wkt != null)) {
-                $thanks_msg = " 
+                $thanks_msg = "
                             <div id=olmap style=\"width:600px; height:400px;\"></div>
                             <p>
                                 <ul>
@@ -707,7 +708,7 @@ EOF;
                                 </ul>
                             </p>";
             } else {
-                $thanks_msg = " 
+                $thanks_msg = "
                             <p>
                                 <ul>
                                     <li> Registry ID: <a href=\"$protocol$env[SERVER_NAME]/data/$udi/\" target=0>$reg_id</a></li>
@@ -821,7 +822,7 @@ function getUserMail($gomri_userid) {
 }
 
 function sendEmail($to,$from,$sub,$message,$cc=null) {
-   $smtp_server=$GLOBALS['smtp']['smtp']['server']; 
+   $smtp_server=$GLOBALS['smtp']['smtp']['server'];
    if($GLOBALS['module_config']['email']['disable_email'] == 1) {
         $cc_str = '';
         if($cc) {
@@ -830,7 +831,7 @@ function sendEmail($to,$from,$sub,$message,$cc=null) {
             }
         }
         $cc_str=rtrim(trim($cc_str),",");
-       drupal_set_message("The following email was disabled by ini setting. The following message was not sent.<br />To: $to<br />Cc: $cc_str<br />From: $from<br />Subject: $sub<br />SMTP Server: $smtp_server<br />Message: $message",'warning'); 
+       drupal_set_message("The following email was disabled by ini setting. The following message was not sent.<br />To: $to<br />Cc: $cc_str<br />From: $from<br />Subject: $sub<br />SMTP Server: $smtp_server<br />Message: $message",'warning');
     } else {
         ini_set("SMTP",$smtp_server );
         $header = "From: <$from>\r\n";
@@ -853,7 +854,8 @@ function GetMetadata($type,$format) {
                     ) as dataset_metadata,
                     (metadata_xml is not null) as hasxml,
                     registry_view.submittimestamp,
-                    registry.approval_status as approval
+                    registry.approval_status as approval,
+                    'PELAGOS-1462' as jira_ticket
                 FROM
                     registry_view left join metadata
                     ON registry_view.registry_id = metadata.registry_id
@@ -863,14 +865,14 @@ function GetMetadata($type,$format) {
                     registry_view.metadata_status = :status
                 AND
                     registry_view.metadata_dl_status = 'Completed'";
-        
+
         $dbms = OpenDB("GOMRI_RO");
         $data = $dbms->prepare($sql);
         $data->bindParam(":status",$type);
         $data->execute();
         if ($format == 'as_json') {
             return json_encode($data->fetchAll());
-            
+
         } else {
             return $data->fetchAll();
         }
