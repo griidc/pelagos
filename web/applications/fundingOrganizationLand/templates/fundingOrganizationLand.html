@@ -10,4 +10,21 @@
             </div>
         </td>
     </tr>
+    <tr>
+        <td><h1>Funding Cycles</h1></td>
+    </tr>
+    {% for FundingCycle in entity.getFundingCycles %}
+    <tr>
+        <td width="25%" valign="top">
+
+        </td>
+        <td>
+            <div>
+                <p>
+                    {% include 'fundingCycle.html' %}
+                </p>
+            </div>
+        </td>
+    </tr>
+    {% endfor %}
 </table>

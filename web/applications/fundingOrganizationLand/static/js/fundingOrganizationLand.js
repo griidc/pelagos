@@ -2,34 +2,40 @@ var $ = jQuery.noConflict();
 
 var fundingID;
 
-var hashchanged = function()
-{
-    "use strict";
-    var hash = window.location.hash.replace(/^#/, "");
-    populateFundingOrganization(hash);
-    fundingID = hash;
-};
-
 $(document).ready(function()
 {
+    
+    fundingID = $('#fundingOrganizationForm #id').val();
+    
     "use strict";
-    var formValidator = $('#fundingOrganizationForm').validate({
+    $('#fundingOrganizationForm').validate({
         submitHandler: function(form) {
             //var data = $(form).getFormJSON();
             var data = new FormData(form);
-            updateFundingOrganization(data,fundingID);
+            var url = pelagosBasePath + "/services/entity/FundingOrganization/" + fundingID;
+            updateFundingOrganization(data, fundingID, url);
         }
     });
+    
+    $('#fundingCycleForm').validate({
+        submitHandler: function(form) {
+            //var data = $(form).getFormJSON();
+            var data = new FormData(form);
+            var url = pelagosBasePath + "/services/entity/FundingOrganization/" + fundingID;
+            updateFundingOrganization(data, fundingID, url);
+        }
+    });
+    
     var isLoggedIn = JSON.parse($('div[userLoggedIn]').attr('userLoggedIn'));
     if (isLoggedIn) {
         $('#fundingOrganizationForm').editableForm({
             validationURL: pelagosBasePath + '/services/entity/FundingOrganization/validateProperty'
         });
+        
+        $('#fundingCycleForm').editableForm({
+            validationURL: pelagosBasePath + '/services/entity/FundingCycle/validateProperty'
+        });
     }
-    // Bind the event.
-    $(window).hashchange(hashchanged);
-    // Trigger the event (useful on page load).
-    hashchanged();
     
     $('#fundingOrganizationFormDialog').dialog({
         autoOpen: false,
@@ -58,9 +64,9 @@ function populateFundingOrganization(FundingOrganizationID)
     });
 }
 
-function updateFundingOrganization(jsonData,fundingID)
+function updateFundingOrganization(jsonData,fundingID, url)
 {
-    var theurl = pelagosBasePath + "/services/entity/FundingOrganization/" + fundingID;
+    var theurl = url; 
     var title = "";
     var messsage = "";
     $.ajax({
@@ -77,7 +83,7 @@ function updateFundingOrganization(jsonData,fundingID)
         if (json.code == 200) {
             title = "Success!";
             message = json.message;
-            $('#fundingOrganizationForm').editableForm('reset');
+            $('form').editableForm('reset');
             $("#fundingOrganizationForm").fillForm(json.data);
             $("#fundingOrganizationLogo").html("<img src=\"data:" + json.data.logo.mimeType + ";base64," + json.data.logo.base64 + "\">");
         } else {

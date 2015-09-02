@@ -1,0 +1,25 @@
+    <form id="fundingCycleForm" entity="FundingCycle">
+        <label for="name">Funding Cycle Name:</label>
+        <input readonly type="text" id="name" name="name" size="100" value="{{FundingCycle.getName}}"><br>
+
+        <label for="fundingOrganization">Funding Organization:</label>
+        <select readonly required id="fundingOrganization" name="fundingOrganization">
+        
+            <option value="">[Please Select a Funding Organization]</option>
+            
+            
+        </select><br>
+
+        <label for="description">Description:</label>
+        <input readonly  type="text" id="description" name="description" size="100" value="{{FundingCycle.getDescription}}"><br>
+
+        <label for="url">Website:</label>
+        <input readonly type="text" id="url" name="url" size="100" value="{{FundingCycle.getUrl}}"><br>
+        
+        <label for="startDate">Start Date:</label>
+        <input readonly placeholder="yyyy-mm-dd" type="text" id="startDate" name="startDate" size="100" value="{{FundingCycle.getStartDate|date("Y-m-d")}}"><br>
+        
+        <label for="endDate">End Date:</label>
+        <input readonly placeholder="yyyy-mm-dd" type="text" id="endDate" name="endDate" size="100" value="{{FundingCycle.getEndDate|date("Y-m-d")}}"><br>
+</form>
+
