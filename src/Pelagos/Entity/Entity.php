@@ -125,7 +125,7 @@ abstract class Entity implements \JsonSerializable
      *
      * @return array $props Set of properties
      */
-    public static function getPropertiesWork()
+    public static function getProperties()
     {
         $props = array();
         $className = get_called_class();
