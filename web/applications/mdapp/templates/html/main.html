@@ -42,7 +42,11 @@
                         <tr>
                             <td valign="top"><a href="{{pagelessBaseUrl}}/data/{{dta.dataset_udi}}" target="0" >{{dta.dataset_udi}}</a></td>
                             <td>
-                                <a href="{{jiraBase}}/{{dta.jiraTicket}}" target="_BLANK">{{dta.jira_ticket}}</a>
+                                <div style="postion:relative;">
+                                    <button id='jiraLinkEditButton' class='jlink'><img src={{baseUrl}}/includes/images/edit.png></button>&nbsp;
+                                    <a href="{{jiraBase}}/{{dta.jira_ticket}}" target="_BLANK">{{dta.jira_ticket}}</a>
+                                    <input type=text name=jiraTicket class='jiraTicketClass' style='display:none; position:absolute;'>
+                                </div>
                             </td>
                             <td valign="top"><form name="AcceptedState" action="{{baseUrl}}/change_status/{{dta.dataset_udi}}" method="post">
                             <select name="to" id="state_sel_{{dta.dataset_udi}}">

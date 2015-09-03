@@ -53,3 +53,11 @@
     width: 100px;
     min-width: 100px;
 }
+
+.jiraTicketClass {
+    display:none;
+    position:absolute;
+    width: 400px;
+    border-radius: 5px;
+    border: 1px solid black;
+}

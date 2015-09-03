@@ -22,6 +22,34 @@ $(document).ready( function () {
         "stateSave": true,
         "stateDuration": -1
     } );
+
+        $('.jlink').click(function(){
+        $(this).hide();                     // hides button
+        $(this).next().hide();              // hides original text
+        $(this).next().next().val($(this).next().html());
+        $(this).next().next().show();       // shows previously-hidden input
+        $(this).next().next().select();
+    });
+
+        $('input[type="text"]').blur(function() {
+            // ajax call will go here instead
+            $(this).prev().html(this.value);
+            $(this).hide();
+            $(this).prev().show();
+            $(this).prev().prev().show();
+         });
+
+         $('input[type="text"]').keypress(function(event) {
+             if (event.keyCode == '13') {
+                // ajax call will go here instead
+                $(this).prev().html(this.value);
+                $(this).hide();
+                $(this).prev().show();
+                $(this).prev().prev().show();
+             }
+        });
+
+
 } );
 
 function clearStatusMessages() {
@@ -44,3 +72,5 @@ function showLogEntries(udi) {
     });
 
 }
+
+
