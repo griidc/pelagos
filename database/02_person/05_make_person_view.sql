@@ -63,6 +63,10 @@ AS $pers_func$
       _modification_time     TIMESTAMP WITH TIME ZONE := NULL;
 
    BEGIN
+      -- Set the modification time:
+      SELECT DATE_TRUNC('seconds', NOW())
+         INTO _modification_time;
+
       IF TG_OP <> 'DELETE'
       THEN
          IF TG_OP = 'INSERT'
@@ -86,61 +90,60 @@ AS $pers_func$
                RAISE EXCEPTION 'Missing required fields'
                   USING ERRCODE = '23502';
             END IF;
-         END IF;
 
-         -- Attempt to cast the email address to an EMAIL_ADDRESS_TYPE:
-         _err_hint   := 'Please check the email address';
-         _err_msg    := CONCAT('"',
-                               NEW.email_address,
+            -- Attempt to cast the email address to an EMAIL_ADDRESS_TYPE:
+            _err_hint   := 'Please check the email address';
+            _err_msg    := CONCAT('"',
+                                  NEW.email_address,
+                                  '"',
+                                  ' is not a valid email address.');
+            _email_addr := NEW.email_address;
+
+            -- Set the correct verified status:
+            IF NEW.email_verified IS DISTINCT FROM TRUE
+            THEN
+               NEW.email_verified := FALSE;
+            END IF;
+   
+            -- Attempt to cast the instantiation time to a TIMESTAMP:
+            _err_hint   := 'Please check the instantiation time';
+            _err_msg    := CONCAT('"',
+                                  NEW.instantiation_time,
+                                  '"',
+                                  ' is not a valid timestamp.');
+             _instantiation_time := COALESCE(NEW.instantiation_time,
+                                             CAST(NOW() AS TEXT));
+   
+            -- set the error variables for a uniqueness violation:
+            _err_hint := CONCAT('Perhaps you need to perform ',
+                                      'an UPDATE instead?');
+            _err_msg := CONCAT('Unique constraint violation. ',
+                               'email address ',
                                '"',
-                               ' is not a valid email address.');
-         _email_addr := COALESCE(NEW.email_address);
-
-         IF NEW.email_verified IS DISTINCT FROM TRUE
-         THEN
-            NEW.email_verified := FALSE;
-         END IF;
-
-         -- Attempt to cast the instantiation time to a TIMESTAMP:
-         _err_hint   := 'Please check the instantiation time';
-         _err_msg    := CONCAT('"',
-                               NEW.instantiation_time,
+                               _email_addr,
                                '"',
-                               ' is not a valid timestamp.');
-          _instantiation_time := COALESCE(NEW.instantiation_time);
-
-         -- set the error variables for a uniqueness violation:
-         _err_hint := CONCAT('Perhaps you need to perform ',
-                                   'an UPDATE instead?');
-         _err_msg := CONCAT('Unique constraint violation. ',
-                            'email address ',
-                            '"',
-                            _email_addr,
-                            '"',
-                            ' is already present in relation person.');
-
-         -- The requirements call for the combination of given name, surname,
-         -- and the (case-insensitive) email_address to be unique. We can
-         -- enforce that here
-         EXECUTE 'SELECT COUNT(*)
-                  FROM person
-                  WHERE given_name = $1
-                     AND surname = $2
-                     AND LOWER(email_address) = LOWER($3)'
+                               ' is already present in relation person.');
+   
+            -- The requirements call for the combination of given name, surname,
+            -- and the (case-insensitive) email_address to be unique. We can
+            -- enforce that here:
+            EXECUTE 'SELECT COUNT(*)
+                     FROM person
+                     WHERE given_name = $1
+                        AND surname = $2
+                        AND LOWER(email_address) = LOWER($3)'
                INTO _count
                USING NEW.given_name,
                      NEW.surname,
                      _email_addr;
 
-         IF _count > 0
-         THEN
-            -- This is a duplicate entry.
-            RAISE EXCEPTION 'Duplicate person/email entry'
-               USING ERRCODE = '23505';
-         END IF;
+            IF _count > 0
+            THEN
+               -- This is a duplicate entry.
+               RAISE EXCEPTION 'Duplicate person/email entry'
+                  USING ERRCODE = '23505';
+            END IF;
 
-         IF _email_addr IS NOT NULL
-         THEN
             -- Let's see if we already have a record for this email address:
             EXECUTE 'SELECT COUNT(*)
                      FROM email_table
@@ -151,7 +154,7 @@ AS $pers_func$
             IF _count = 0
             THEN
                -- Apparently not. Insert the email address in the email_address
-               -- table first:
+               -- table:
                EXECUTE 'INSERT INTO email_table
                         (
                            email_address,
@@ -163,28 +166,19 @@ AS $pers_func$
             ELSE
                -- This email address is already known. The requirement is for
                -- an email address to map to a single person only, and we can
-               -- enforce that here:
-               IF TG_OP = 'INSERT'
-               THEN
-                  EXECUTE 'SELECT COUNT(*)
-                           FROM person
-                           WHERE LOWER(email_address) = LOWER($1)
-                              AND ROW(given_name, surname)
-                                  IS DISTINCT FROM
-                                  ROW($2, $3)'
-                     INTO _count
-                     USING _email_addr,
-                           NEW.given_name,
-                           NEW.surname;
-               ELSE
-                  EXECUTE 'SELECT COUNT(*)
-                           FROM person
-                           WHERE LOWER(email_address) = LOWER($1)
-                              AND person_number <> $2'
-                     INTO _count
-                     USING _email_addr,
-                           NEW.person_number;
-               END IF;
+               -- check that here (and if we ever relax that rule, removing
+               -- this ELSE clause will allow that):
+               _count := NULL;
+               EXECUTE 'SELECT COUNT(*)
+                        FROM person
+                        WHERE LOWER(email_address) = LOWER($1)
+                           AND ROW(given_name, surname)
+                               IS DISTINCT FROM
+                               ROW($2, $3)'
+                  INTO _count
+                  USING _email_addr,
+                        NEW.given_name,
+                        NEW.surname;
 
                IF _count > 0
                THEN
@@ -194,238 +188,284 @@ AS $pers_func$
                      USING ERRCODE = '23505';
                END IF;
             END IF;
-         END IF;
 
-         -- Let modification time be controlled by the system so we always have
-         -- the actual modification time, regardless of any supplied value:
-         SELECT DATE_TRUNC('seconds', NOW())
-            INTO _modification_time;
-      END IF;
+            -- An INSERT statement from the front-end may not be passing in a
+            -- person number. IF so we need to retrieve the next available
+            -- value in the sequence:
+            IF NEW.person_number IS NULL
+            THEN
+               EXECUTE 'SELECT NEXTVAL($1)'
+                  INTO NEW.person_number
+                  USING 'seq_person_number';
+            END IF;
 
-      IF TG_OP = 'INSERT'
-      THEN
-         -- An INSERT statement from the front-end may not be passing in a
-         -- person number. IF so we need to retrieve the next available value
-         -- in the sequence:
-         IF NEW.person_number IS NULL
-         THEN
-            EXECUTE 'SELECT NEXTVAL($1)'
-               INTO NEW.person_number
-               USING 'seq_person_number';
-         END IF;
-
-         -- Insert the person information into the person_table:
-         EXECUTE 'INSERT INTO person_table
-                  (
-                     person_number,
-                     person_honorific_title,
-                     person_given_name,
-                     person_middle_name,
-                     person_surname,
-                     person_name_suffix,
-                     person_instantiator,
-                     person_instantiation_time,
-                     person_modification_time,
-                     person_modifier
-                  )
-                  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)'
-            USING NEW.person_number,
-                  NEW.title,
-                  NEW.given_name,
-                  NEW.middle_name,
-                  NEW.surname,
-                  NEW.suffix,
-                  NEW.instantiator,
-                  _instantiation_time,
-                  _modification_time,
-                  NEW.modifier;
-
-         -- Associate the person and email address with each other. We will
-         -- have already inserted the email address into the email table if
-         -- needed, so we just need to associate that email address with this
-         -- person as the primary email address:
-         EXECUTE 'INSERT INTO email2person_table
-                  (
-                     email_address,
-                     person_number,
-                     is_primary_email_address
-                  )
-                  VALUES
-                  (
-                     (SELECT email_address
-                      FROM email_table
-                      WHERE LOWER(email_address) = $1),
-                      $2, $3
-                   )'
-            USING LOWER(_email_addr),
-                  NEW.person_number,
-                  TRUE;
-         RETURN NEW;
-
-      ELSEIF TG_OP = 'UPDATE'
-      THEN
-         -- Capture the modification information regardless of any other
-         -- changes. Worst case scenario is we end up with a record that shows
-         -- a modification where no modification occurred. This is an artifact
-         -- of this design:
-         EXECUTE 'UPDATE person_table
-                  SET person_modification_time = $1,
-                      person_modifier = $2
-                  WHERE person_number = $3'
-             USING _modification_time,
-                   NEW.modifier,
-                   NEW.person_number;
-
-         -- Update the history table with the current OLD information:
-         EXECUTE 'INSERT INTO person_history_table
-                  (
-                      person_history_action,
-                      person_number,
-                      title,
-                      given_name,
-                      middle_name,
-                      surname,
-                      email_address,
-                      old_modifier,
-                      old_modification_time,
-                      new_modifier,
-                      new_modification_time
-                   )
-                   VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)'
-           USING TG_OP,
-                 OLD.person_number,
-                 (CASE
-                     WHEN NEW.title IS NOT DISTINCT FROM
-                          OLD.title
-                        THEN NULL
-                     ELSE OLD.title
-                 END),
-                 (CASE
-                     WHEN NEW.given_name IS NOT DISTINCT FROM
-                          OLD.given_name
-                        THEN NULL
-                     ELSE OLD.given_name
-                 END),
-                 (CASE
-                     WHEN NEW.middle_name IS NOT DISTINCT FROM
-                          OLD.middle_name
-                        THEN NULL
-                     ELSE OLD.middle_name
-                 END),
-                 (CASE
-                     WHEN NEW.surname IS NOT DISTINCT FROM
-                          OLD.surname
-                        THEN NULL
-                     ELSE OLD.surname
-                 END),
-                 (CASE
-                     WHEN NEW.email_address IS NULL THEN NULL
-                     ELSE OLD.email_address
-                 END),
-                 OLD.modifier,
-                 DATE_TRUNC('seconds',
-                    CAST(OLD.modification_time AS TIMESTAMP WITH TIME ZONE)),
-                 NEW.modifier,
-                 DATE_TRUNC('seconds',
-                    CAST(NEW.modification_time AS TIMESTAMP WITH TIME ZONE));
-
-         -- Update the person information if necessary:
-         IF ROW(NEW.title,
-                NEW.given_name,
-                NEW.middle_name,
-                NEW.surname,
-                NEW.suffix)
-            IS DISTINCT FROM ROW(OLD.title,
-                                 OLD.given_name,
-                                 OLD.middle_name,
-                                 OLD.surname,
-                                 OLD.suffix)
-         THEN
-            EXECUTE 'UPDATE person_table
-                     SET person_honorific_title = $1,
-                         person_given_name = $2,
-                         person_middle_name = $3,
-                         person_surname = $4,
-                         person_name_suffix = $5
-                     WHERE person_number = $6'
-            USING COALESCE(NEW.title, OLD.title),
-                  COALESCE(NEW.given_name, OLD.given_name),
-                  COALESCE(NEW.middle_name, OLD.middle_name),
-                  COALESCE(NEW.surname, OLD.surname),
-                  COALESCE(NEW.suffix, OLD.suffix),
-                  NEW.person_number;
-         END IF;
-
-         -- If this is a new, or a different email address, we will need to set
-         -- any existing email-to-person associations listed as the primary to
-         -- not be the primary so that we can make this one the primary. First,
-         -- do we have an existing primary email addresses that are not this
-         -- email address?
-         EXECUTE 'SELECT COUNT(*)
-                  FROM email2person_table
-                  WHERE person_number = $1
-                     AND email_address <> $2
-                     AND is_primary_email_address = TRUE'
-            INTO _count
-            USING NEW.person_number,
-                  _email_addr;
-
-         IF _count > 0
-         THEN
-            -- Yes, we have an existing primary email address that is now no
-            -- longer the primary. Reset it:
-            EXECUTE 'UPDATE email2person_table
-                     SET is_primary_email_address = FALSE
-                     WHERE person_number = $1
-                        AND is_primary_email_address = TRUE'
+            EXECUTE 'INSERT INTO person_table
+                     (
+                        person_number,
+                        person_honorific_title,
+                        person_given_name,
+                        person_middle_name,
+                        person_surname,
+                        person_name_suffix,
+                        person_instantiator,
+                        person_instantiation_time,
+                        person_modification_time,
+                        person_modifier
+                     )
+                     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)'
                USING NEW.person_number,
-                     _email_addr;
-         END IF;
+                     NEW.title,
+                     NEW.given_name,
+                     NEW.middle_name,
+                     NEW.surname,
+                     NEW.suffix,
+                     NEW.instantiator,
+                     _instantiation_time,
+                     _modification_time,
+                     NEW.modifier;
 
-         -- Now create the email-to-person association with the correct primary
-         -- email address (if needed). First, see if there is an existing
-         -- association:
-         EXECUTE 'SELECT COUNT(*)
-                  FROM email2person_table
-                  WHERE LOWER(email_address) = LOWER($1)'
-            INTO _count
-            USING _email_addr;
-
-         IF _count = 0
-         THEN
-            -- No existing association found. Create one:
+            -- Associate the person and email address with each other. We will
+            -- have already inserted the email address into the email table if
+            -- needed, so we just need to associate that email address with
+            -- this person as the primary email address:
             EXECUTE 'INSERT INTO email2person_table
                      (
                         email_address,
                         person_number,
                         is_primary_email_address
                      )
-                     VALUES ($1, $2, $3)'
-               USING _email_addr,
+                     VALUES
+                     (
+                        (SELECT email_address
+                         FROM email_table
+                         WHERE LOWER(email_address) = $1),
+                         $2, $3
+                      )'
+               USING LOWER(_email_addr),
                      NEW.person_number,
                      TRUE;
+            RETURN NEW;
+
          ELSE
-            -- Update the existing association:
-            EXECUTE 'UPDATE email2person_table
-                     SET is_primary_email_address = TRUE
-                     WHERE person_number = $1
-                        AND LOWER(email_address) = LOWER($2)
-                        AND is_primary_email_address = FALSE'
-               USING NEW.person_number,
-                     _email_addr;
-         END IF;
+            -- This is an UPDATE operation
+            -- Unfortunately, there does not appear to be any way to test that
+            -- the calling statement actually supplied values because unless
+            -- the UPDATE statement explicitly sets attribute values it appears
+            -- that the NEW values are populated with the OLD values. So the
+            -- following tests will only fail if the UPDATE statement is
+            -- explicitly setting required attributes to invalid values.
+            -- Make sure we have all required fields for an UPDATE:
+            IF NEW.person_number IS NULL OR
+               NEW.email_address IS NULL OR NEW.email_address = '' OR
+               NEW.given_name IS NULL OR NEW.given_name = '' OR
+               NEW.modifier IS NULL OR NEW.modifier = '' OR
+               NEW.surname IS NULL OR NEW.surname = ''
+            THEN
+               _err_hint := CONCAT('An UPDATE operation requires a ',
+                                   'person_number and a modifier username');
+               _err_msg  := 'Missing required field violation';
+               -- This is an invalid entry. Raise an exception and quit (the
+               -- exception text is only used when we disable exception
+               -- handling below):
+               RAISE EXCEPTION 'Missing required fields'
+                  USING ERRCODE = '23502';
+            END IF;
 
-         -- Now, update the modification information:
-         EXECUTE 'UPDATE person_table
-                  SET person_modification_time = $1,
-                      person_modifier = $2
-                  WHERE person_number = $3'
-         USING DATE_TRUNC('seconds', NOW()),
-               NEW.modifier,
-               NEW.person_number;
+            -- If we've been given a different email address, it needs to be
+            -- validated as a valid email address, and possibly added to the
+            -- underlying tables:
+            IF NEW.email_address IS DISTINCT FROM OLD.email_address
+            THEN
+               _err_hint   := 'Please check the email address';
+               _err_msg    := CONCAT('"',
+                                     NEW.email_address,
+                                     '"',
+                                     ' is not a valid email address.');
+               _email_addr := NEW.email_address;
 
-         RETURN NEW;
+               -- Let's see if the email address needs to be added to the email
+               -- table:
+               _count := NULL;
+               EXECUTE 'SELECT COUNT(*)
+                        FROM email_table
+                        WHERE LOWER(email_address) = $1'
+                  INTO _count
+                  USING _email_addr;
+
+               IF _count = 0
+               THEN
+                  EXECUTE 'INSERT INTO email_table
+                           ( email_address, email_validated )
+                           VALUES ($1, FALSE)'
+                     USING _email_addr;
+               END IF;
+
+               -- Since we have a different email address, we need to modify
+               -- the existing email address association to not be the primary
+               -- address:
+               EXECUTE 'UPDATE email2person_table
+                        SET is_primary_email_address = FALSE
+                        WHERE person_number = $1
+                           AND is_primary_email_address = TRUE'
+                  USING NEW.person_number;
+
+               -- And now make the new association:
+               EXECUTE 'INSERT INTO email2person_table
+                        (
+                           email_address,
+                           person_number,
+                           is_primary_email_address
+                        )
+                        VALUES ($1, $2, $3)'
+                  USING _email_addr,
+                        OLD.person_number,
+                        TRUE;
+            END IF;
+
+            -- We have all required fields, and we've made any necessary
+            -- email changes. Let's see if a change is actually happening:
+            IF ROW(NEW.title,
+                   NEW.given_name,
+                   NEW.middle_name,
+                   NEW.surname,
+                   NEW.suffix,
+                   NEW.email_address,
+                   NEW.email_verified)
+               IS NOT DISTINCT FROM ROW(OLD.title,
+                                    OLD.given_name,
+                                    OLD.middle_name,
+                                    OLD.surname,
+                                    OLD.suffix,
+                                    OLD.email_address,
+                                    OLD.email_verified)
+            THEN
+               -- Apparently not. Just return:
+               RETURN NEW;
+            END IF;
+
+            -- Make sure we are not updating a NEW row to be a duplicate of an
+            -- OLD row:
+            _count := NULL;
+            EXECUTE 'SELECT person_number
+                     FROM person
+                     WHERE LOWER(given_name) = $1
+                        AND LOWER(surname) = $2
+                        AND LOWER(email_address) = $3
+                        AND person_number <> $4'
+               INTO _count
+               USING LOWER(NEW.given_name),
+                     LOWER(NEW.surname),
+                     LOWER(NEW.email_address),
+                     NEW.person_number;
+            IF _count IS NOT NULL
+            THEN
+               -- There is already a person with the NEW given_name, the NEW
+               -- surname, and the NEW email_address that is not this record.
+               -- Set the exception variables and throw an exception:
+               _err_hint := 'Are you updating the correct record?';
+               _err_msg  := CONCAT(NEW.given_name, ' ',
+                                   NEW.surname,
+                                   ' with email address ',
+                                   _email_addr,
+                                   ' already assigned to person_number ',
+                                   _count, '.');
+               RAISE EXCEPTION 'Duplicate person/email entry'
+                  USING ERRCODE = '23505';
+            END IF;
+
+            -- Now update the history table with the current
+            -- person values:
+            EXECUTE 'INSERT INTO person_history_table
+                     (
+                         person_history_action,
+                         person_number,
+                         title,
+                         given_name,
+                         middle_name,
+                         surname,
+                         email_address,
+                         old_modifier,
+                         old_modification_time,
+                         new_modifier,
+                         new_modification_time
+                      )
+                      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)'
+               USING TG_OP,
+                     OLD.person_number,
+                     OLD.title,
+                     OLD.given_name,
+                     OLD.middle_name,
+                     OLD.surname,
+                     OLD.email_address,
+                     OLD.modifier,
+                     DATE_TRUNC('seconds',
+                        CAST(OLD.modification_time AS
+                             TIMESTAMP WITH TIME ZONE)),
+                     NEW.modifier,
+                     DATE_TRUNC('seconds', NOW());
+
+            -- UPDATE person_table if necessary (we update modification time
+            -- below since this test may not always evaluate to TRUE. I wonder
+            -- if this is indicative of the need for modification attributes on
+            -- the email_table and the email2person_table, and redefining the
+            -- person view history_table INSERT to use the latest one?):
+            IF ROW(NEW.title,
+                NEW.given_name,
+                   NEW.middle_name,
+                   NEW.surname,
+                   NEW.suffix)
+               IS DISTINCT FROM ROW(OLD.title,
+                                    OLD.given_name,
+                                    OLD.middle_name,
+                                    OLD.surname,
+                                    OLD.suffix)
+            THEN
+               EXECUTE 'UPDATE person_table
+                        SET person_honorific_title = $1,
+                            person_given_name = $2,
+                            person_middle_name = $3,
+                            person_surname = $4,
+                            person_name_suffix = $5
+                        WHERE person_number = $6'
+               USING NEW.title,
+                     NEW.given_name,
+                     NEW.middle_name,
+                     NEW.surname,
+                     NEW.suffix,
+                     NEW.person_number;
+            END IF;
+
+            -- UPDATE the email_verified person attribute (the email_validated
+            -- attribute of the email_table. We will have taken care of any
+            -- other email changes above since the is_primary_email_address
+            -- attribute of the email2person_table is not directly accessible
+            -- through this view and function):
+            IF NEW.email_verified IS DISTINCT FROM OLD.email_verified
+            THEN
+               -- Probably no need to wrap this in an EXECUTE USING command
+               -- since if our input values were not kosher we would not be
+               -- here, but it doesn't hurt.
+               EXECUTE 'UPDATE email_table
+                        SET email_validated = $1
+                        WHERE LOWER(email_address) = $2'
+                  USING NEW.email_verified,
+                        _email_addr;
+            END IF;
+
+            -- Now, update the modification attributes:
+            EXECUTE 'UPDATE person_table
+                     SET person_modification_time = $1,
+                         person_modifier = $2
+                     WHERE person_number = $3'
+            USING DATE_TRUNC('seconds', NOW()),
+                  NEW.modifier,
+                  NEW.person_number;
+
+            RETURN NEW;
+         END IF; -- End of IF clause to determine if operation is an INSERT or
+                 -- an UPDATE
       ELSE
+         -- This is a DELETE operation
          -- Update the history table with all current information:
          EXECUTE 'INSERT INTO person_history_table
                   (
@@ -476,37 +516,36 @@ AS $pers_func$
                   WHERE person_number = $1'
             USING OLD.person_number;
          RETURN OLD;
-      END IF;
+      END IF; -- End IF to determine if this is a DELETE operation.
 
       EXCEPTION
          WHEN SQLSTATE '23502'
             THEN
                RAISE EXCEPTION '%',   _err_msg
                   USING HINT        = _err_hint,
-                        ERRCODE     = '23502';
+                        ERRCODE     = SQLSTATE;
                RETURN NULL;
          WHEN SQLSTATE '23505'
             THEN
                RAISE EXCEPTION '%',   _err_msg
                   USING HINT        = _err_hint,
-                        ERRCODE     = '23505';
+                        ERRCODE     = SQLSTATE;
                RETURN NULL;
          WHEN SQLSTATE '23514'
             THEN
                RAISE EXCEPTION '%',   _err_msg
                   USING HINT        = _err_hint,
-                        ERRCODE     = '23514';
+                        ERRCODE     = SQLSTATE;
                RETURN NULL;
          WHEN OTHERS
             THEN
-               _err_code = SQLSTATE;
                RAISE EXCEPTION '%', CONCAT('Unable to ',
                                            TG_OP,
                                            ' person. An unknown ',
                                            'error has occurred.')
                   USING HINT      = CONCAT('Check the database log for ',
                                            'more information.'),
-                        ERRCODE   = _err_code;
+                        ERRCODE     = SQLSTATE;
                RETURN NULL;
 
    END;

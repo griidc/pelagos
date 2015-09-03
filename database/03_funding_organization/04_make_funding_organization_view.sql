@@ -245,41 +245,19 @@ AS $f_o_func$
                               $13, $14, $15, $16, $17)'
                USING TG_OP,
                      OLD.funding_organization_number,
-                     (CASE WHEN NEW.name IS NULL THEN NULL
-                         ELSE OLD.name
-                      END),
-                     (CASE WHEN NEW.description IS NULL THEN NULL
-                         ELSE OLD.description
-                      END),
+                     OLD.name,
+                     OLD.description,
                      OLD.creator,
                      OLD.creation_time,
-                     (CASE WHEN NEW.phone_number IS NULL THEN NULL
-                         ELSE OLD.phone_number
-                      END),
-                     (CASE WHEN NEW.email_address IS NULL THEN NULL
-                         ELSE OLD.email_address
-                      END),
-                     (CASE WHEN NEW.website IS NULL THEN NULL
-                         ELSE OLD.website
-                      END),
-                     (CASE WHEN NEW.delivery_point IS NULL THEN NULL
-                         ELSE OLD.delivery_point
-                      END),
-                     (CASE WHEN NEW.city IS NULL THEN NULL
-                         ELSE OLD.city
-                      END),
-                     (CASE WHEN NEW.administrative_area IS NULL THEN NULL
-                         ELSE OLD.administrative_area
-                      END),
-                     (CASE WHEN NEW.country IS NULL THEN NULL
-                         ELSE OLD.country
-                      END),
-                     (CASE WHEN NEW.postal_code IS NULL THEN NULL
-                         ELSE OLD.postal_code
-                      END),
-                     (CASE WHEN NEW.logo IS NULL THEN NULL
-                         ELSE OLD.logo
-                      END),
+                     OLD.phone_number,
+                     OLD.email_address,
+                     OLD.website,
+                     OLD.delivery_point,
+                     OLD.city,
+                     OLD.administrative_area,
+                     OLD.country,
+                     OLD.postal_code,
+                     OLD.logo,
                      OLD.modifier,
                      DATE_TRUNC('seconds', CAST(OLD.modification_time AS
                                                 TIMESTAMP WITH TIME ZONE));
@@ -318,16 +296,16 @@ AS $f_o_func$
                             funding_organization_postal_code = $9,
                             funding_organization_website = $10
                         WHERE funding_organization_number = $11'
-               USING COALESCE(NEW.administrative_area, OLD.administrative_area),
-                     COALESCE(NEW.city, OLD.city),
-                     COALESCE(NEW.country, OLD.country),
-                     COALESCE(NEW.delivery_point, OLD.delivery_point),
-                     COALESCE(NEW.description, OLD.description),
-                     COALESCE(NEW.logo, OLD.logo),
-                     COALESCE(NEW.name, OLD.name),
-                     COALESCE(NEW.phone_number, OLD.phone_number),
-                     COALESCE(NEW.postal_code, OLD.postal_code),
-                     COALESCE(NEW.website, OLD.website),
+               USING NEW.administrative_area,
+                     NEW.city,
+                     NEW.country,
+                     NEW.delivery_point,
+                     NEW.description,
+                     NEW.logo,
+                     NEW.name,
+                     NEW.phone_number,
+                     NEW.postal_code,
+                     NEW.website,
                      NEW.funding_organization_number;
             END IF;
 

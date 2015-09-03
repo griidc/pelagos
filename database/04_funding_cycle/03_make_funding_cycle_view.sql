@@ -25,11 +25,14 @@ DROP TRIGGER udf_funding_cycle_update_trigger
 DROP FUNCTION udf_modify_funding_cycle();
 DROP VIEW funding_cycle;
 
+-- Add the CITEXT data type if needed:
+CREATE EXTENSION IF NOT EXISTS citext;
+
 -- Create the view (we cast email address and instantiation_time to text so
 -- that we can handle CHECK errors in our exception block):
 CREATE VIEW funding_cycle AS
    SELECT funding_cycle_number AS funding_cycle_number,
-          funding_cycle_name AS name,
+          CAST(funding_cycle_name AS CITEXT) AS name,
           funding_cycle_description AS description,
           funding_cycle_start_date AS start_date,
           funding_cycle_end_date AS end_date,
@@ -68,9 +71,9 @@ AS $f_o_func$
          THEN
             _err_hint := 'Please check the website URL';
             _err_msg  := CONCAT('"',
-                                  NEW.website,
-                                  '"',
-                                  ' is not a valid website URL.');
+                                NEW.website,
+                                '"',
+                                ' is not a valid website URL.');
             _fc_url   := NEW.website;
          END IF;
 
@@ -114,10 +117,10 @@ AS $f_o_func$
             -- enforce that here:
             EXECUTE 'SELECT COUNT(*)
                      FROM funding_cycle_table
-                     WHERE LOWER(funding_cycle_name) = LOWER($1)
+                     WHERE LOWER(funding_cycle_name) = $1
                         AND funding_organization_number = $2'
                INTO _count
-               USING NEW.name,
+               USING LOWER(CAST(NEW.name AS TEXT)),
                      NEW.funding_organization_number;
 
             IF _count > 0
@@ -127,10 +130,27 @@ AS $f_o_func$
                _err_msg  := CONCAT('Funding Cyle ',
                                    NEW.name,
                                    ' of ',
-                                   NEW.funding_organization_number,
+                                   (SELECT name
+                                    FROM funding_organization
+                                    WHERE funding_organization_number =
+                                       NEW.funding_organization_number),
                                    ' already exists in funding_cycle');
                RAISE EXCEPTION 'Duplicate funding_cycle entry'
                   USING ERRCODE = '23505';
+            END IF;
+
+            -- The task requirements require an end date to be at least one
+            -- day greater than the start date (if both have been supplied.
+            -- Both end and start date are optional). Test for that here:
+            IF NOT NEW.end_date >= NEW.start_date + INTERVAL '1 DAY'
+            THEN
+               _err_hint := CONCAT('End date must be at least one day ',
+                                   ' greater than Start date');
+               _err_msg  := CONCAT(NEW.end_date,
+                                   ' is not at least one day greater than ',
+                                   NEW.start_date);
+               RAISE EXCEPTION 'end_date not greater than start_date'
+                  USING ERRCODE = '23514';
             END IF;
 
             -- An INSERT statement from the front-end may not be passing in a
@@ -170,7 +190,7 @@ AS $f_o_func$
                      NEW.end_date,
 -- MOD                      NEW.modification_time,
 -- MOD                      NEW.creator,
-                     NEW.name,
+                     CAST(NEW.name AS TEXT),
                      NEW.start_date,
                      NEW.website;
 
@@ -178,78 +198,90 @@ AS $f_o_func$
 
          ELSEIF TG_OP = 'UPDATE'
          THEN
-         IF ROW(NEW.name,
-                NEW.description,
-                NEW.start_date,
-                NEW.end_date,
-                NEW.website,
-                NEW.funding_organization_number)
-            IS DISTINCT FROM ROW(OLD.name,
-                                 OLD.description,
-                                 OLD.start_date,
-                                 OLD.end_date,
-                                 OLD.website,
-                                 OLD.funding_organization_number)
-         THEN
-            -- Update the history table with the current OLD information:
-            EXECUTE 'INSERT INTO funding_cycle_history_table
-                     (
-                        funding_cycle_history_action,
-                        funding_cycle_number,
-                        name,
-                        description,
-                        start_date,
-                        end_date,
-                        website,
-                        funding_organization_number,
-                        creator,
-                        creation_time
--- MOD                         ,modifier,
--- MOD                         modification_time
-                     )
-                     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)'
--- MOD                      VALUES ( $1,  $2,  $3,  $4,  $5,  $6,
--- MOD                               $7,  $8,  $9, $10, $11, $12)'
-               USING TG_OP,
-                     OLD.funding_cycle_number,
-                     COALESCE(NEW.name, OLD.name),
-                     COALESCE(NEW.description, OLD.description),
-                     COALESCE(NEW.start_date, OLD.start_date),
-                     COALESCE(NEW.end_date, OLD.end_date),
-                     COALESCE(NEW.website, OLD.website),
-                     COALESCE(NEW.funding_organization_number,
-                              OLD.funding_organization_number),
-                     OLD.creator,
-                     OLD.creation_time
--- MOD                      ,OLD.modifier,
--- MOD                      DATE_TRUNC('seconds', CAST(OLD.modification_time AS
--- MOD                                                 TIMESTAMP WITH TIME ZONE))
-                           ;
-             -- Perform the update:
-             EXECUTE 'UPDATE funding_cycle_table
-                      SET funding_cycle_name = $1,
-                          funding_cycle_description = $2,
-                          funding_cycle_start_date = $3,
-                          funding_cycle_end_date = $4,
-                          funding_cycle_website = $5,
-                          funding_organization_number = $6
--- MOD                           ,funding_cycle_modifier = $7,
--- MOD                           funding_cycle_modification_time = 
--- MOD                              DATE_TRUNC(''seconds'', NOW())
--- MOD                       WHERE funding_cycle_number = $8''
--- MOD Do not forget the double quotes need to be singles when uncommented!
-                      WHERE funding_cycle_number = $7'
-               USING COALESCE(NEW.name, OLD.name),
-                     COALESCE(NEW.description, OLD.description),
-                     COALESCE(NEW.start_date, OLD.start_date),
-                     COALESCE(NEW.end_date, OLD.end_date),
-                     COALESCE(NEW.website, OLD.website),
-                     COALESCE(NEW.funding_organization_number,
-                              OLD.funding_organization_number),
--- MOD                      NEW.modifier,
-                     OLD.funding_cycle_number;
 
-         END IF;
+            -- The task requirements require an end date to be at least one
+            -- day greater than the start date (if both have been supplied.
+            -- Both end and start date are optional). Test for that here:
+            IF NOT NEW.end_date >= NEW.start_date + INTERVAL '1 DAY'
+            THEN
+               _err_hint := CONCAT('End date must be at least one day ',
+                                   ' greater than Start date');
+               _err_msg  := CONCAT(NEW.end_date,
+                                   ' is not at least one day greater than ',
+                                   NEW.start_date);
+               RAISE EXCEPTION 'end_date not greater than start_date'
+                  USING ERRCODE = '23514';
+           END IF;
+
+            IF ROW(NEW.name,
+                   NEW.description,
+                   NEW.start_date,
+                   NEW.end_date,
+                   NEW.website,
+                   NEW.funding_organization_number)
+               IS DISTINCT FROM ROW(OLD.name,
+                                    OLD.description,
+                                    OLD.start_date,
+                                    OLD.end_date,
+                                    OLD.website,
+                                    OLD.funding_organization_number)
+            THEN
+               -- Update the history table with the current OLD information:
+               EXECUTE 'INSERT INTO funding_cycle_history_table
+                        (
+                           funding_cycle_history_action,
+                           funding_cycle_number,
+                           name,
+                           description,
+                           start_date,
+                           end_date,
+                           website,
+                           funding_organization_number,
+                           creator,
+                           creation_time
+-- MOD                            ,modifier,
+-- MOD                            modification_time
+                        )
+                        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)'
+-- MOD                         VALUES ( $1,  $2,  $3,  $4,  $5,  $6,
+-- MOD                               $7,  $8,  $9, $10, $11, $12)'
+                  USING TG_OP,
+                        OLD.funding_cycle_number,
+                        CAST(OLD.name AS TEXT),
+                        OLD.description,
+                        OLD.start_date,
+                        OLD.end_date,
+                        OLD.website,
+                        OLD.funding_organization_number,
+                        OLD.creator,
+                        OLD.creation_time
+-- MOD                         ,OLD.modifier,
+-- MOD                         DATE_TRUNC('seconds', CAST(OLD.modification_time AS
+-- MOD                                                    TIMESTAMP WITH TIME ZONE))
+                              ;
+               -- Perform the update:
+               EXECUTE 'UPDATE funding_cycle_table
+                        SET funding_cycle_name = $1,
+                            funding_cycle_description = $2,
+                            funding_cycle_start_date = $3,
+                            funding_cycle_end_date = $4,
+                            funding_cycle_website = $5,
+                            funding_organization_number = $6
+-- MOD                             ,funding_cycle_modifier = $7,
+-- MOD                             funding_cycle_modification_time = 
+-- MOD                                DATE_TRUNC(''seconds'', NOW())
+-- MOD                         WHERE funding_cycle_number = $8''
+-- MOD Do not forget the double quotes need to be singles when uncommented!
+                        WHERE funding_cycle_number = $7'
+                  USING CAST(NEW.name AS TEXT),
+                        NEW.description,
+                        NEW.start_date,
+                        NEW.end_date,
+                        NEW.website,
+                        NEW.funding_organization_number,
+-- MOD                         NEW.modifier,
+                        OLD.funding_cycle_number;
+            END IF;
             RETURN NEW;
          END IF;
       ELSE
@@ -274,7 +306,7 @@ AS $f_o_func$
 -- HIST -- MOD                               $7,  $8,  $9, $10, $11, $12)'
 -- HIST                USING TG_OP,
 -- HIST                      OLD.funding_cycle_number,
--- HIST                      OLD.name,
+-- HIST                      CAST(OLD.name AS TEXT),
 -- HIST                      OLD.description,
 -- HIST                      OLD.start_date,
 -- HIST                      OLD.end_date,
@@ -290,9 +322,9 @@ AS $f_o_func$
          -- Perform the DELETE:
          EXECUTE 'DELETE
                   FROM funding_cycle_table
-                  WHERE LOWER(funding_cycle_name) = LOWER($1)
+                  WHERE LOWER(funding_cycle_name) = $1
                      AND funding_organization_number = $2'
-            USING OLD.name,
+            USING LOWER(CAST(OLD.name AS TEXT)),
                   OLD.funding_organization_number;
 
          RETURN OLD;

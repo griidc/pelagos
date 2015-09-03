@@ -10,6 +10,9 @@
 --            proper URL) are a task requirement that I think will eventually
 --            cause problems, but  I was told we would revisit this script and
 --            associated scripts before they made it into production code.
+--            12 August 2015, The Product Owner has indicated that ON DELETE
+--            actions are to be restricted, not cascaded. Modified the script
+--            to reflect this decision.
 -- -----------------------------------------------------------------------------
 -- TODO:
 -- -----------------------------------------------------------------------------
@@ -41,6 +44,9 @@ CREATE TABLE funding_cycle_table
       REFERENCES funding_organization_table(funding_organization_number)
       ON DELETE RESTRICT
       ON UPDATE RESTRICT,
+   CONSTRAINT chk_end_date_not_before_start
+      CHECK (funding_cycle_end_date >=
+             funding_cycle_start_date + INTERVAL '1 DAY'),
 
    PRIMARY KEY (funding_cycle_number)
 );
