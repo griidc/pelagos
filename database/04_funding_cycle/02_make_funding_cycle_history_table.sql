@@ -32,9 +32,9 @@ CREATE TABLE funding_cycle_history_table
    creator                                  TEXT                NOT NULL,
    creation_time                            TIMESTAMP WITH TIME ZONE
       NOT NULL,
--- MOD    modifier                                 TEXT                NOT NULL,
--- MOD    modification_time                        TIMESTAMP WITH TIME ZONE
--- MOD       NOT NULL,
+   modifier                                 TEXT                NOT NULL,
+   modification_time                        TIMESTAMP WITH TIME ZONE
+      NOT NULL,
 
    PRIMARY KEY (funding_cycle_history_number)
 );
