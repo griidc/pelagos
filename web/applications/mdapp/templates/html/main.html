@@ -40,7 +40,7 @@
                 <tbody>
                     {% for dta in section %}
                         <tr>
-                            <td valign="top"><a href="{{pagelessBaseUrl}}/data/{{dta.dataset_udi}}" target="0" >{{dta.dataset_udi}}</a></td>
+                            <td valign="top" class='udiTD'><a href="{{pagelessBaseUrl}}/data/{{dta.dataset_udi}}" target="0" >{{dta.dataset_udi}}</a></td>
                             <td>
                                 <div style="postion:relative;">
                                     <button id='jiraLinkEditButton' class='jlink'><img src={{baseUrl}}/includes/images/edit.png></button>&nbsp;

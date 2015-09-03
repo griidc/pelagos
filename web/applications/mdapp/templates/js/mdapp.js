@@ -24,6 +24,8 @@ $(document).ready( function () {
     } );
 
         $('.jlink').click(function(){
+        // store original value in cookie for .fail later
+        $.cookie("origTicket", $(this).next().html(), 1, { path : "mdapp/jlink" });
         $(this).hide();                     // hides button
         $(this).next().hide();              // hides original text
         $(this).next().next().val($(this).next().html());
@@ -32,23 +34,47 @@ $(document).ready( function () {
     });
 
         $('input[type="text"]').blur(function() {
-            // ajax call will go here instead
-            $(this).prev().html(this.value);
-            $(this).hide();
-            $(this).prev().show();
-            $(this).prev().prev().show();
-         });
+            var udi = $(this).prev().parent().parent().parent().children('.udiTD').text();
+            console.log(udi);
+            var curLinkVal = this.value;
 
-         $('input[type="text"]').keypress(function(event) {
-             if (event.keyCode == '13') {
-                // ajax call will go here instead
-                $(this).prev().html(this.value);
-                $(this).hide();
-                $(this).prev().show();
-                $(this).prev().prev().show();
-             }
+            // if URL provided, trim an optional / at end, then
+            // remove all contents except anything following the last slash.
+            curLinkVal = curLinkVal.replace(/\/$/, '');
+            console.log('trimmed:'+curLinkVal);
+            var parseRegexp = /^.*\/([a-zA-Z0-9\-]+)$/g;;
+            var matches = parseRegexp.exec(curLinkVal);
+            if (matches) {
+                curLinkVal = matches[1];
+            }
+
+            var curPos = this;
+            var origValue = $.cookie("origTicket");
+
+            if (origValue != curLinkVal) {
+                $.ajax({
+                    "method":"PUT",
+                    "url": "{{baseUrl}}/JiraLink/" + udi + "/" + this.value
+                    }).done(function(data) {
+                        $(curPos).prev().html(curLinkVal);
+                        $(curPos).fadeOut();
+                        $(curPos).prev().fadeIn();
+                        $(curPos).prev().prev().show();
+                    }).fail(function(data) {
+                        alert("update rejected by database.");
+                        $(curPos).prev().html(origValue);
+                        $(curPos).fadeOut();
+                        $(curPos).prev().fadeIn();
+                        $(curPos).prev().prev().fadeIn();
+                    }).always(function(data) {
+                        // no-op
+                    });
+            } else {
+                $(curPos).hide();
+                $(curPos).prev().fadeIn();
+                $(curPos).prev().prev().fadeIn();
+            }
         });
-
 
 } );
 
