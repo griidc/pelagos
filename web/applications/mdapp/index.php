@@ -828,6 +828,7 @@ $app->put('/jiraLink/:udi/:linkValue', function ($udi,$jiraLinkValue) use ($app)
        // print '<br>'.$msg;
         $status = new \Pelagos\HTTPStatus(200,$msg);
         http_response_code($status->getCode());
+        print $status->asJSON();
     }
     drupal_exit();
 
