@@ -131,9 +131,18 @@ class FundingOrganizationWebServiceTest extends \PHPUnit_Framework_TestCase
         $this->mockEntityRepository = \Mockery::mock('\Doctrine\ORM\EntityRepository');
         $this->mockEntityRepository->shouldReceive('findBy')->andReturn(array());
 
+        $this->mockReflectionProperty = \Mockery::mock('\ReflectionProperty');
+        $this->mockReflectionProperty->shouldReceive('getValue')->andReturnNull();
+
+        $this->mockClassMetadata = \Mockery::mock('\Doctrine\ORM\Mapping\ClassMetadata');
+        $this->mockClassMetadata->shouldReceive('hasField')->andReturn(true);
+        $this->mockClassMetadata->shouldReceive('hasAssociation')->andReturn(true);
+        $this->mockClassMetadata->reflFields = array('name' => $this->mockReflectionProperty);
+
         $this->mockEntityManager = \Mockery::mock('\Doctrine\ORM\EntityManager');
         $this->mockEntityManager->shouldReceive('persist');
         $this->mockEntityManager->shouldReceive('getRepository')->andReturn($this->mockEntityRepository);
+        $this->mockEntityManager->shouldReceive('getClassMetadata')->andReturn($this->mockClassMetadata);
 
         $mockPersistence = \Mockery::mock('alias:\Pelagos\Persistance');
         $mockPersistence->shouldReceive('createEntityManager')->andReturn($this->mockEntityManager);
