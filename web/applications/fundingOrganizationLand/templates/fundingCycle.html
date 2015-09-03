@@ -1,15 +1,17 @@
-    <form id="fundingCycleForm" entity="FundingCycle">
+    <form id="fundingCycleForm" entityType="FundingCycle" entityId="{{FundingCycle.getId}}">
         <label for="name">Funding Cycle Name:</label>
         <input readonly type="text" id="name" name="name" size="100" value="{{FundingCycle.getName}}"><br>
 
         <label for="fundingOrganization">Funding Organization:</label>
+        <!--
         <select readonly required id="fundingOrganization" name="fundingOrganization">
         
             <option value="">[Please Select a Funding Organization]</option>
             
             
         </select><br>
-
+        -->
+        
         <label for="description">Description:</label>
         <input readonly  type="text" id="description" name="description" size="100" value="{{FundingCycle.getDescription}}"><br>
 

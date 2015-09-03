@@ -1,7 +1,6 @@
 <h2>Funding Organization Details</h2>
 
-<form id="fundingOrganizationForm">
-    <input type="hidden" id="id" name="id" value="{{entity.id}}">
+<form id="fundingOrganizationForm" entityType="FundingOrganization" entityId="{{entity.id}}">
     <label for="name">Name:</label>
     <input readonly type="text" id="name" name="name" size="100" value="{{entity.getName}}" required><br>
     <label for="emailAddress">E-Mail Address:</label>
@@ -24,9 +23,13 @@
     <input readonly type="text" id="country" name="country" size="100" value="{{entity.getCountry}}"><br>
     <span class="showOnEdit">
         <label for="logo">Logo:</label>
-        <input name="logo" type="file" /><br>
+        <input name="logo" type="file" 
+            base64="{{entity.serializeBinary(entity.getLogo).base64}}" 
+            mimeType="{{entity.serializeBinary(entity.getLogo).mimeType}}">
+        <br>
+
     </span>
     
 </form>
     
-<div id="fundingOrganizationFormDialog"></div>
+

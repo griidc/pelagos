@@ -12,7 +12,6 @@ $comp->setJSGlobals();
 
 $comp->addJS(
     array(
-        '//cdnjs.cloudflare.com/ajax/libs/jquery-hashchange/v1.3/jquery.ba-hashchange.min.js',
         'static/js/editableForm.js',
         'static/js/fundingOrganizationLand.js',
         '//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.13.1/jquery.validate.min.js',
@@ -38,26 +37,19 @@ $app = new \Slim\Slim(
         )
 );
 
-$app->get('/:entityId', function ($entityId) use ($app, $comp) {
-    $entityService = new EntityService($comp->getEntityManager());
-    $entity = $entityService->get('FundingOrganization', $entityId);
-    
-    //var_dump($entity);
-    
-    // if (file_exists(__DIR__."/static/js/$entityType.js")) {
-        // $comp->addJS("static/js/$entityType.js");
-    // }
-    // if (file_exists(__DIR__."/static/css/$entityType.css")) {
-        // $comp->addCSS("static/css/$entityType.css");
-    // }
-    
-    $twigData = array(
-        'userLoggedIn' => ($comp->userIsLoggedIn()) ? 'true' : 'false',
-        'entity' => $entity,
-    );
-    $app->render('fundingOrganizationLand.html', $twigData);
-    
-});
+$app->get(
+    '/:entityId',
+    function ($entityId) use ($app, $comp) {
+        $entityService = new EntityService($comp->getEntityManager());
+        $entity = $entityService->get('FundingOrganization', $entityId);
+
+        $twigData = array(
+            'userLoggedIn' => ($comp->userIsLoggedIn()) ? 'true' : 'false',
+            'entity' => $entity,
+        );
+        $app->render('fundingOrganizationLand.html', $twigData);
+    }
+);
 
 $app->run();
 
