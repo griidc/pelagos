@@ -855,7 +855,7 @@ function GetMetadata($type,$format) {
                     (metadata_xml is not null) as hasxml,
                     registry_view.submittimestamp,
                     registry.approval_status as approval,
-                    jira_ticket
+                    registry.jira_ticket
                 FROM
                     registry_view left join metadata
                     ON registry_view.registry_id = metadata.registry_id
