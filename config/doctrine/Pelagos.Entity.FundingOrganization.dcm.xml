@@ -16,11 +16,6 @@
             <sequence-generator sequence-name="seq_funding_organization_number" allocation-size="1" initial-value="1" />
         </id>
 
-        <lifecycle-callbacks>
-            <lifecycle-callback type="prePersist" method="updateTimeStamps" />
-            <lifecycle-callback type="preUpdate" method="updateTimeStamps" />
-        </lifecycle-callbacks>
-
         <field name="name"                  column="name"                type="string" />
 
         <field name="logo"                  column="logo"                type="blob" />
@@ -43,14 +38,6 @@
 
         <field name="postalCode"            column="postal_code"         type="string" />
 
-        <field name="creationTimeStamp"     column="creation_time"       type="datetimetz" />
-
-        <field name="creator"               column="creator"             type="string" />
-
-        <field name="modificationTimeStamp" column="modification_time"   type="datetimetz" />
-
-        <field name="modifier"              column="modifier"            type="string" />
-        
         <one-to-many field="fundingCycles" target-entity="FundingCycle" mapped-by="fundingOrganization" />
 
     </entity>

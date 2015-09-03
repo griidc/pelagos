@@ -15,15 +15,6 @@
             <generator strategy="SEQUENCE" />
             <sequence-generator sequence-name="seq_funding_cycle_number" allocation-size="1" initial-value="1" />
         </id>
-        
-        <lifecycle-callbacks>
-            <lifecycle-callback type="prePersist" method="updateTimeStamps" />
-            <lifecycle-callback type="preUpdate" method="updateTimeStamps" />
-        </lifecycle-callbacks>
-
-        <field name="creator"               column="creator"               type="string" />
-
-        <field name="creationTimeStamp"     column="creation_time"         type="datetimetz" />
 
         <field name="name"                  column="name"                  type="string" />
 
