@@ -808,13 +808,15 @@ $app->put('/jiraLink/:udi/:linkValue', function ($udi,$jiraLinkValue) use ($app)
     $statement->execute();
     $raw_data = $statement->fetchAll();
 
-    if($raw_data == false || count($raw_data) == 0) {
+    if($raw_data == false) {
         $status = new \Pelagos\HTTPStatus(500, 'No data from query.');
         http_response_code($status->getCode());
         print $status->asJSON();
+    } elseif (count($raw_data) == 0){
+        $status = new \Pelagos\HTTPStatus(404, 'No registry_view record found matching UDI:'.$udi);
+        http_response_code($status->getCode());
+        print $status->asJSON();
     } else {
-        $numRows = count($raw_data);
-        $keys = array_keys($raw_data);
         $registryId = $raw_data[0]["registry_id"];
 
         $statement = $dbms->prepare($updateRegistryQuery);
