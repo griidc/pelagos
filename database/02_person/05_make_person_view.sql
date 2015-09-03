@@ -21,8 +21,10 @@ DROP TRIGGER udf_person_update_trigger
 DROP FUNCTION udf_modify_person();
 DROP VIEW person;
 
--- Create the view (we cast email address and instantiation_time to text so
--- that we can handle CHECK errors in our exception block):
+-- Create the view (we cast email address to TEXT so that we can handle CHECK
+-- errors in our exception block. We also cast creation and modification times
+-- to TEXT as we ignore any input values. By casting to TEXT we can handle an
+-- accidental emtpy string passed to us.):
 CREATE VIEW person AS
    SELECT p.person_number AS person_number,
           p.person_honorific_title AS title,
@@ -32,9 +34,9 @@ CREATE VIEW person AS
           p.person_name_suffix AS suffix,
           CAST(e2p.email_address AS TEXT) AS email_address,
           e.email_validated AS email_verified,
-          p.person_instantiator AS instantiator,
-          CAST(DATE_TRUNC('seconds', p.person_instantiation_time) AS TEXT)
-             AS instantiation_time,
+          p.person_creator AS creator,
+          CAST(DATE_TRUNC('seconds', p.person_creation_time) AS TEXT)
+             AS creation_time,
           p.person_modifier AS modifier,
           CAST(DATE_TRUNC('seconds', p.person_modification_time) AS TEXT)
              AS modification_time
@@ -59,14 +61,8 @@ AS $pers_func$
       _err_code              TEXT                := NULL;
       _err_hint              TEXT                := NULL;
       _err_msg               TEXT                := NULL;
-      _instantiation_time    TIMESTAMP WITH TIME ZONE := NULL;
-      _modification_time     TIMESTAMP WITH TIME ZONE := NULL;
 
    BEGIN
-      -- Set the modification time:
-      SELECT DATE_TRUNC('seconds', NOW())
-         INTO _modification_time;
-
       IF TG_OP <> 'DELETE'
       THEN
          IF TG_OP = 'INSERT'
@@ -74,15 +70,12 @@ AS $pers_func$
             -- Make sure we have all required fields for an INSERT:
             IF NEW.email_address IS NULL OR NEW.email_address = '' OR
                NEW.given_name IS NULL OR NEW.given_name = '' OR
-               NEW.instantiation_time IS NULL OR NEW.instantiation_time = '' OR
-               NEW.instantiator IS NULL OR NEW.instantiator = '' OR
-               NEW.modifier IS NULL OR NEW.modifier = '' OR
+               NEW.creator IS NULL OR NEW.creator = '' OR
                NEW.surname IS NULL OR NEW.surname = ''
             THEN
                _err_hint := CONCAT('A person entity requires a Given Name, a ',
-                                   'Surname, an email address, an ',
-                                   'instantiator, an instantiation time, and ',
-                                   'a modifier username.');
+                                   'Surname, an email address, and a creator '
+                                   'username.');
                _err_msg  := 'Missing required field violation';
                -- This is an invalid entry. Raise an exception and quit (the
                -- exception text is only used when we disable exception
@@ -104,15 +97,6 @@ AS $pers_func$
             THEN
                NEW.email_verified := FALSE;
             END IF;
-   
-            -- Attempt to cast the instantiation time to a TIMESTAMP:
-            _err_hint   := 'Please check the instantiation time';
-            _err_msg    := CONCAT('"',
-                                  NEW.instantiation_time,
-                                  '"',
-                                  ' is not a valid timestamp.');
-             _instantiation_time := COALESCE(NEW.instantiation_time,
-                                             CAST(NOW() AS TEXT));
    
             -- set the error variables for a uniqueness violation:
             _err_hint := CONCAT('Perhaps you need to perform ',
@@ -202,27 +186,27 @@ AS $pers_func$
             EXECUTE 'INSERT INTO person_table
                      (
                         person_number,
-                        person_honorific_title,
+                        person_creator,
+                        person_creation_time,
                         person_given_name,
+                        person_honorific_title,
                         person_middle_name,
-                        person_surname,
-                        person_name_suffix,
-                        person_instantiator,
-                        person_instantiation_time,
                         person_modification_time,
-                        person_modifier
+                        person_modifier,
+                        person_name_suffix,
+                        person_surname
                      )
                      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)'
                USING NEW.person_number,
-                     NEW.title,
+                     NEW.creator,
+                     DATE_TRUNC('seconds', NOW()),
                      NEW.given_name,
+                     NEW.title,
                      NEW.middle_name,
-                     NEW.surname,
+                     DATE_TRUNC('seconds', NOW()),
+                     NEW.creator,
                      NEW.suffix,
-                     NEW.instantiator,
-                     _instantiation_time,
-                     _modification_time,
-                     NEW.modifier;
+                     NEW.surname;
 
             -- Associate the person and email address with each other. We will
             -- have already inserted the email address into the email table if
@@ -262,7 +246,9 @@ AS $pers_func$
                NEW.surname IS NULL OR NEW.surname = ''
             THEN
                _err_hint := CONCAT('An UPDATE operation requires a ',
-                                   'person_number and a modifier username');
+                                   'person_number and a modifier username, '
+                                   'and none of given_name, surname, nor '
+                                   'email address can be empty or NULL.');
                _err_msg  := 'Missing required field violation';
                -- This is an invalid entry. Raise an exception and quit (the
                -- exception text is only used when we disable exception
@@ -332,12 +318,12 @@ AS $pers_func$
                    NEW.email_address,
                    NEW.email_verified)
                IS NOT DISTINCT FROM ROW(OLD.title,
-                                    OLD.given_name,
-                                    OLD.middle_name,
-                                    OLD.surname,
-                                    OLD.suffix,
-                                    OLD.email_address,
-                                    OLD.email_verified)
+                                        OLD.given_name,
+                                        OLD.middle_name,
+                                        OLD.surname,
+                                        OLD.suffix,
+                                        OLD.email_address,
+                                        OLD.email_verified)
             THEN
                -- Apparently not. Just return:
                RETURN NEW;
@@ -383,24 +369,31 @@ AS $pers_func$
                          given_name,
                          middle_name,
                          surname,
+                         suffix,
                          email_address,
+                         creator,
+                         creation_time,
                          old_modifier,
                          old_modification_time,
                          new_modifier,
                          new_modification_time
-                      )
-                      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)'
+                     )
+                     VALUES ( $1,  $2,  $3,  $4,  $5,  $6,  $7,
+                              $8,  $9, $10, $11, $12, $13, $14)'
                USING TG_OP,
                      OLD.person_number,
                      OLD.title,
                      OLD.given_name,
                      OLD.middle_name,
                      OLD.surname,
+                     OLD.suffix,
                      OLD.email_address,
+                     OLD.creator,
+                     DATE_TRUNC('seconds',
+                                CAST(OLD.creation_time AS TIMESTAMP)),
                      OLD.modifier,
                      DATE_TRUNC('seconds',
-                        CAST(OLD.modification_time AS
-                             TIMESTAMP WITH TIME ZONE)),
+                                CAST(OLD.modification_time AS TIMESTAMP)),
                      NEW.modifier,
                      DATE_TRUNC('seconds', NOW());
 
@@ -410,7 +403,7 @@ AS $pers_func$
             -- the email_table and the email2person_table, and redefining the
             -- person view history_table INSERT to use the latest one?):
             IF ROW(NEW.title,
-                NEW.given_name,
+                   NEW.given_name,
                    NEW.middle_name,
                    NEW.surname,
                    NEW.suffix)
@@ -432,7 +425,7 @@ AS $pers_func$
                      NEW.middle_name,
                      NEW.surname,
                      NEW.suffix,
-                     NEW.person_number;
+                     OLD.person_number;
             END IF;
 
             -- UPDATE the email_verified person attribute (the email_validated
@@ -459,7 +452,7 @@ AS $pers_func$
                      WHERE person_number = $3'
             USING DATE_TRUNC('seconds', NOW()),
                   NEW.modifier,
-                  NEW.person_number;
+                  OLD.person_number;
 
             RETURN NEW;
          END IF; -- End of IF clause to determine if operation is an INSERT or
@@ -475,25 +468,33 @@ AS $pers_func$
                       given_name,
                       middle_name,
                       surname,
+                      suffix,
                       email_address,
+                      creator,
+                      creation_time,
                       old_modifier,
                       old_modification_time,
                       new_modifier,
                       new_modification_time
-                   )
-                   VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)'
-           USING TG_OP,
-                 OLD.person_number,
-                 OLD.title,
-                 OLD.given_name,
-                 OLD.middle_name,
-                 OLD.surname,
-                 OLD.email_address,
-                 OLD.modifier,
-                 DATE_TRUNC('seconds',
-                    CAST(OLD.modification_time AS TIMESTAMP WITH TIME ZONE)),
-                 current_user,
-                 DATE_TRUNC('seconds', NOW());
+                     )
+                     VALUES ( $1,  $2,  $3,  $4,  $5,  $6,  $7,
+                              $8,  $9, $10, $11, $12, $13, $14)'
+            USING TG_OP,
+                  OLD.person_number,
+                  OLD.title,
+                  OLD.given_name,
+                  OLD.middle_name,
+                  OLD.surname,
+                  OLD.suffix,
+                  OLD.email_address,
+                  OLD.creator,
+                     DATE_TRUNC('seconds',
+                                CAST(OLD.creation_time AS TIMESTAMP)),
+                  OLD.modifier,
+                  DATE_TRUNC('seconds',
+                             CAST(OLD.modification_time AS TIMESTAMP)),
+                  current_user,
+                  DATE_TRUNC('seconds', NOW());
 
          -- The DELETE operation will leave the email address behind, on the
          -- off chance that we need to associate that email address with
@@ -518,35 +519,35 @@ AS $pers_func$
          RETURN OLD;
       END IF; -- End IF to determine if this is a DELETE operation.
 
-      EXCEPTION
-         WHEN SQLSTATE '23502'
-            THEN
-               RAISE EXCEPTION '%',   _err_msg
-                  USING HINT        = _err_hint,
-                        ERRCODE     = SQLSTATE;
-               RETURN NULL;
-         WHEN SQLSTATE '23505'
-            THEN
-               RAISE EXCEPTION '%',   _err_msg
-                  USING HINT        = _err_hint,
-                        ERRCODE     = SQLSTATE;
-               RETURN NULL;
-         WHEN SQLSTATE '23514'
-            THEN
-               RAISE EXCEPTION '%',   _err_msg
-                  USING HINT        = _err_hint,
-                        ERRCODE     = SQLSTATE;
-               RETURN NULL;
-         WHEN OTHERS
-            THEN
-               RAISE EXCEPTION '%', CONCAT('Unable to ',
-                                           TG_OP,
-                                           ' person. An unknown ',
-                                           'error has occurred.')
-                  USING HINT      = CONCAT('Check the database log for ',
-                                           'more information.'),
-                        ERRCODE     = SQLSTATE;
-               RETURN NULL;
+-- PNK       EXCEPTION
+-- PNK          WHEN SQLSTATE '23502'
+-- PNK             THEN
+-- PNK                RAISE EXCEPTION '%',   _err_msg
+-- PNK                   USING HINT        = _err_hint,
+-- PNK                         ERRCODE     = SQLSTATE;
+-- PNK                RETURN NULL;
+-- PNK          WHEN SQLSTATE '23505'
+-- PNK             THEN
+-- PNK                RAISE EXCEPTION '%',   _err_msg
+-- PNK                   USING HINT        = _err_hint,
+-- PNK                         ERRCODE     = SQLSTATE;
+-- PNK                RETURN NULL;
+-- PNK          WHEN SQLSTATE '23514'
+-- PNK             THEN
+-- PNK                RAISE EXCEPTION '%',   _err_msg
+-- PNK                   USING HINT        = _err_hint,
+-- PNK                         ERRCODE     = SQLSTATE;
+-- PNK                RETURN NULL;
+-- PNK          WHEN OTHERS
+-- PNK             THEN
+-- PNK                RAISE EXCEPTION '%', CONCAT('Unable to ',
+-- PNK                                            TG_OP,
+-- PNK                                            ' person. An unknown ',
+-- PNK                                            'error has occurred.')
+-- PNK                   USING HINT      = CONCAT('Check the database log for ',
+-- PNK                                            'more information.'),
+-- PNK                         ERRCODE     = SQLSTATE;
+-- PNK                RETURN NULL;
 
    END;
 
