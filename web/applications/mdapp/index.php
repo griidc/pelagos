@@ -775,6 +775,61 @@ function index($app) {
     if(isset($_SESSION['testPolygon'])) { $stash['testPolygon'] = $_SESSION['testPolygon']; }
     return $stash;
 }
+/**
+ * default route - nothing happens
+ */
+$app->get('/jiraLink', function () {
+    // $GLOBALS['pelagos']['title'] = 'Jira Link Service';
+    print 'This is the Jira Link service...';
+    drupal_exit();
+});
+/**
+ * update the Registry table with the supplied jira link value.
+ * Use the $udi as a key to the Registry table.
+ * How you ask ...
+ * With the UDI parameter find the registry ID in the registry_view relation.
+ * Use the found registry_id to find the row in the registry table.
+ * Put the link value in the registry table.
+ */
+$app->put('/jiraLink/:udi/:linkValue', function ($udi,$jiraLinkValue) use ($app) {
+
+    $env = $app->environment();
+    $registryViewQuery = "SELECT dataset_udi, registry_id ".
+            "FROM registry_view ".
+            " WHERE dataset_udi = :udi";
+
+    $updateRegistryQuery = "UPDATE registry SET jira_ticket = :jiraLinkValue WHERE registry_id = :registry_id";
+
+    $dbms = OpenDB("GOMRI_RO");
+    $statement = $dbms->prepare($registryViewQuery);
+
+    $statement->bindParam(':udi',$udi);
+
+    $statement->execute();
+    $raw_data = $statement->fetchAll();
+
+    if($raw_data == false || count($raw_data) == 0) {
+        $status = new \Pelagos\HTTPStatus(500, 'No data from query.');
+        http_response_code($status->getCode());
+        print $status->asJSON();
+    } else {
+        $numRows = count($raw_data);
+        $keys = array_keys($raw_data);
+        $registryId = $raw_data[0]["registry_id"];
+
+        $statement = $dbms->prepare($updateRegistryQuery);
+
+        $statement->bindParam(':jiraLinkValue',$jiraLinkValue);
+        $statement->bindParam(':registry_id',$registryId);
+        $statement->execute();
+        $msg = "Updated Jira link ".$jiraLinkValue." in Registry id: ".$registryId;
+       // print '<br>'.$msg;
+        $status = new \Pelagos\HTTPStatus(200,$msg);
+        http_response_code($status->getCode());
+    }
+    drupal_exit();
+
+    });
 
 $app->run();
 
@@ -940,3 +995,4 @@ function getMetadataReviewers() {
 function textboxize($string,$xpath) {
     return "$string<textarea onclick=\"this.focus();this.select()\" readonly=\"readonly\" style=\"width: 100%\">$xpath</textarea>";
 }
+
