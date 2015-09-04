@@ -28,8 +28,8 @@ DROP VIEW funding_cycle;
 -- Add the CITEXT data type if needed:
 CREATE EXTENSION IF NOT EXISTS citext;
 
--- Create the view (we cast email address and instantiation_time to text so
--- that we can handle CHECK errors in our exception block):
+-- Create the view (we cast email address to text so that we can handle CHECK
+-- errors in our exception block):
 CREATE VIEW funding_cycle AS
    SELECT funding_cycle_number AS funding_cycle_number,
           CAST(funding_cycle_name AS CITEXT) AS name,
@@ -39,9 +39,9 @@ CREATE VIEW funding_cycle AS
           funding_cycle_website AS website,
           funding_organization_number AS funding_organization_number,
           funding_cycle_creator AS creator,
-          funding_cycle_creation_time AS creation_time
--- MOD           ,funding_cycle_modifier AS modifier,
--- MOD           funding_cycle_modification_time AS modification_time
+          funding_cycle_creation_time AS creation_time,
+          funding_cycle_modifier AS modifier,
+          funding_cycle_modification_time AS modification_time
    FROM funding_cycle_table;
 
 -- CREATE THE trigger function:
@@ -80,16 +80,14 @@ AS $f_o_func$
          IF TG_OP = 'INSERT'
          THEN
             -- Make sure we were passed all required fields:
--- MOD             IF NEW.name IS NULL OR NEW.name = '' OR
--- MOD                NEW.creator IS NULL OR NEW.creator = '' OR
--- MOD                NEW.modifier IS NULL OR NEW.modifier = ''
             IF NEW.name IS NULL OR NEW.name = '' OR
-               NEW.creator IS NULL OR NEW.creator = ''
+               NEW.creator IS NULL OR NEW.creator = '' OR
+               NEW.modifier IS NULL OR NEW.modifier = ''
             THEN
                 _err_hint := CONCAT('A Funding Cycle entity requires a ',
                                     'funding cycle name, a funding ',
-                                    'organization number, and a creator ',
-                                    'name');
+                                    'organization number, a creator name, ',
+                                    'and a modifier name');
                _err_msg  := 'Missing required field violation';
                RAISE EXCEPTION 'Missing required fields'
                   USING ERRCODE = '23502';
@@ -173,23 +171,22 @@ AS $f_o_func$
                         funding_cycle_creator,
                         funding_cycle_description,
                         funding_cycle_end_date,
--- MOD                         funding_cycle_modification_time,
--- MOD                         funding_cycle_modifier,
+                        funding_cycle_modification_time,
+                        funding_cycle_modifier,
                         funding_cycle_name,
                         funding_cycle_start_date,
                         funding_cycle_website
                      )
-                     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)'
--- MOD                      VALUES ( $1,  $2,  $3,  $4,  $5,  $6,
--- MOD                               $7,  $8,  $9,  $10, $11)'
+                     VALUES ( $1,  $2,  $3,  $4,  $5,  $6,
+                              $7,  $8,  $9,  $10, $11)'
                USING NEW.funding_cycle_number,
                      NEW.funding_organization_number,
                      DATE_TRUNC('seconds', NOW()),
                      NEW.creator,
                      NEW.description,
                      NEW.end_date,
--- MOD                      NEW.modification_time,
--- MOD                      NEW.creator,
+                     DATE_TRUNC('seconds', NOW()),
+                     NEW.creator,
                      CAST(NEW.name AS TEXT),
                      NEW.start_date,
                      NEW.website;
@@ -238,13 +235,12 @@ AS $f_o_func$
                            website,
                            funding_organization_number,
                            creator,
-                           creation_time
--- MOD                            ,modifier,
--- MOD                            modification_time
+                           creation_time,
+                           modifier,
+                           modification_time
                         )
-                        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)'
--- MOD                         VALUES ( $1,  $2,  $3,  $4,  $5,  $6,
--- MOD                               $7,  $8,  $9, $10, $11, $12)'
+                        VALUES ( $1,  $2,  $3,  $4,  $5,  $6,
+                              $7,  $8,  $9, $10, $11, $12)'
                   USING TG_OP,
                         OLD.funding_cycle_number,
                         CAST(OLD.name AS TEXT),
@@ -254,10 +250,10 @@ AS $f_o_func$
                         OLD.website,
                         OLD.funding_organization_number,
                         OLD.creator,
-                        OLD.creation_time
--- MOD                         ,OLD.modifier,
--- MOD                         DATE_TRUNC('seconds', CAST(OLD.modification_time AS
--- MOD                                                    TIMESTAMP WITH TIME ZONE))
+                        OLD.creation_time,
+                        OLD.modifier,
+                        DATE_TRUNC('seconds', CAST(OLD.modification_time AS
+                                                   TIMESTAMP WITH TIME ZONE))
                               ;
                -- Perform the update:
                EXECUTE 'UPDATE funding_cycle_table
@@ -266,58 +262,55 @@ AS $f_o_func$
                             funding_cycle_start_date = $3,
                             funding_cycle_end_date = $4,
                             funding_cycle_website = $5,
-                            funding_organization_number = $6
--- MOD                             ,funding_cycle_modifier = $7,
--- MOD                             funding_cycle_modification_time = 
--- MOD                                DATE_TRUNC(''seconds'', NOW())
--- MOD                         WHERE funding_cycle_number = $8''
--- MOD Do not forget the double quotes need to be singles when uncommented!
-                        WHERE funding_cycle_number = $7'
+                            funding_organization_number = $6,
+                            funding_cycle_modifier = $7,
+                            funding_cycle_modification_time = $8
+                        WHERE funding_cycle_number = $9'
                   USING CAST(NEW.name AS TEXT),
                         NEW.description,
                         NEW.start_date,
                         NEW.end_date,
                         NEW.website,
                         NEW.funding_organization_number,
--- MOD                         NEW.modifier,
+                        NEW.modifier,
+                        DATE_TRUNC('seconds', NOW()),
                         OLD.funding_cycle_number;
             END IF;
             RETURN NEW;
          END IF;
       ELSE
--- HIST             -- Update the history table with all current information:
--- HIST             EXECUTE 'INSERT INTO funding_cycle_history_table
--- HIST                      (
--- HIST                         funding_cycle_history_action,
--- HIST                         funding_cycle_number,
--- HIST                         name,
--- HIST                         description,
--- HIST                         start_date,
--- HIST                         end_date,
--- HIST                         website,
--- HIST                         funding_organization_number,
--- HIST                         creator,
--- HIST                         creation_time
--- HIST -- MOD                         ,modifier,
--- HIST -- MOD                         modification_time
--- HIST                      )
--- HIST                      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)'
--- HIST -- MOD                      VALUES ( $1,  $2,  $3,  $4,  $5,  $6,
--- HIST -- MOD                               $7,  $8,  $9, $10, $11, $12)'
--- HIST                USING TG_OP,
--- HIST                      OLD.funding_cycle_number,
--- HIST                      CAST(OLD.name AS TEXT),
--- HIST                      OLD.description,
--- HIST                      OLD.start_date,
--- HIST                      OLD.end_date,
--- HIST                      OLD.website,
--- HIST                      OLD.funding_organization_number,
--- HIST                      OLD.creator,
--- HIST                      OLD.creation_time
--- HIST -- MOD                      ,current_user,
--- HIST -- MOD                      DATE_TRUNC('seconds', CAST(OLD.modification_time AS
--- HIST -- MOD                                                 TIMESTAMP WITH TIME ZONE))
--- HIST                            ;
+            -- Update the history table with all current information:
+            EXECUTE 'INSERT INTO funding_cycle_history_table
+                     (
+                        funding_cycle_history_action,
+                        funding_cycle_number,
+                        name,
+                        description,
+                        start_date,
+                        end_date,
+                        website,
+                        funding_organization_number,
+                        creator,
+                        creation_time,
+                        modifier,
+                        modification_time
+                     )
+                     VALUES ( $1,  $2,  $3,  $4,  $5,  $6,
+                              $7,  $8,  $9, $10, $11, $12)'
+               USING TG_OP,
+                     OLD.funding_cycle_number,
+                     CAST(OLD.name AS TEXT),
+                     OLD.description,
+                     OLD.start_date,
+                     OLD.end_date,
+                     OLD.website,
+                     OLD.funding_organization_number,
+                     OLD.creator,
+                     OLD.creation_time,
+                     current_user,
+                     DATE_TRUNC('seconds', CAST(OLD.modification_time AS
+                                                TIMESTAMP WITH TIME ZONE))
+                           ;
 
          -- Perform the DELETE:
          EXECUTE 'DELETE
