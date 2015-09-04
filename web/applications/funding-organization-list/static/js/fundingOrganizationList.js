@@ -42,7 +42,7 @@ $(document).ready(function(){
 
     $('#button_detail').click( function ( ) {
         var id = table.row('.selected').data()[0];
-        var url = pelagosBasePath + '/applications/fundingOrganizationLand#' + id;
+        var url = pelagosBasePath + '/applications/fundingOrganizationLand/' + id;
         window.open(url, '_blank');
     });
 
