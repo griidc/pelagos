@@ -25,7 +25,7 @@ CREATE TABLE dataset2publication_link_table
    publication_doi                          DOI_TYPE            NOT NULL,
    username                                 TEXT                NOT NULL,
    dataset2publication_createtime           TIMESTAMP           NOT NULL
-      DEFAULT NOW(),
+     DEFAULT DATE_TRUNC('seconds', NOW()),
 
    CONSTRAINT chk_dataset2publication_createtime_not_before_2015
       CHECK (dataset2publication_createtime > '2015-01-01 00:00:00'),

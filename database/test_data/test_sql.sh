@@ -182,7 +182,7 @@ fi
 
 # Let the user know what we are doing:
 echo -e "\nTests will be run as user $db_user using the $db_name database"
-echo -e "on host ${db_hostname}, port ${db_port}.\n"
+echo -e "on host ${db_hostname}, port ${db_port}, using file $input_file.\n"
 echo -n "Please wait while the connection is verified... "
 
 # I can't find a sure-fire way to verify a good host was passed by either IP
