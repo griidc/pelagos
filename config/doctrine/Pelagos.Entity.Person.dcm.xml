@@ -1,26 +1,28 @@
-<!-- config/xml/Pelagos.Person.dcm.xml -->
+<!--
+This file defines the Doctrine mapping between the Pelagos\Entity\Person
+entity class and the person view in the postgres database.
+Properties other than id that are inherited from Pelagos\Entity\Entity are mapped in
+Pelagos.Entity.Entity.dcm.xml
+-->
+
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
                         http://raw.github.com/doctrine/doctrine2/master/doctrine-mapping.xsd">
 
     <entity name="Pelagos\Entity\Person" table="person">
+
         <id name="id" column="person_number" type="integer">
             <generator strategy="SEQUENCE" />
             <sequence-generator sequence-name="seq_person_number" allocation-size="1" initial-value="1" />
         </id>
 
-        <lifecycle-callbacks>
-            <lifecycle-callback type="prePersist" method="updateTimeStamps" />
-            <lifecycle-callback type="preUpdate" method="updateTimeStamps" />
-        </lifecycle-callbacks>
+        <field name="firstName"    column="given_name"    type="string" />
 
-        <field name="creationTimeStamp" column="instantiation_time" type="datetimetz" />
-        <field name="creator" column="instantiator" type="string" />
-        <field name="modificationTimeStamp" column="modification_time" type="datetimetz" />
-        <field name="modifier" column="modifier" type="string" />
-        <field name="firstName" column="given_name" type="string" />
-        <field name="lastName" column="surname" type="string" />
+        <field name="lastName"     column="surname"       type="string" />
+
         <field name="emailAddress" column="email_address" type="string" />
+
     </entity>
+
 </doctrine-mapping>
