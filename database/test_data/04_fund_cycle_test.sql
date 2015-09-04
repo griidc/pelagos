@@ -31,11 +31,11 @@ VALUES
    'Denial',
    'Any City',
    'USA',
-   'pkrepps',
+   'superman',
    '123 Lazy Lane',
    'Test insert should pass',
    E'xDEADBEEF',
-   'pkrepps',
+   'superman',
    NULL,
    CONCAT('testfundingorganization',
           DATE_TRUNC('minute', NOW())),
@@ -61,8 +61,8 @@ INSERT INTO funding_cycle_table
    funding_cycle_creator,
    funding_cycle_description,
    funding_cycle_end_date,
--- MOD    funding_cycle_modification_time,
--- MOD    funding_cycle_modifier,
+   funding_cycle_modification_time,
+   funding_cycle_modifier,
    funding_cycle_name,
    funding_cycle_start_date,
    funding_cycle_website
@@ -74,11 +74,11 @@ VALUES
     WHERE name = CONCAT('testfundingorganization',
                         DATE_TRUNC('minute', NOW()))),
    NOW(),
-   'pkrepps',
+   'superman',
    'dummy data',
    '2015-12-31',
--- MOD    NOW(),
--- MOD    'superman',
+   NOW(),
+   'superman',
    'FC_test',
    '2015-01-01',
    'http://www.example.com'
@@ -104,8 +104,8 @@ INSERT INTO funding_cycle
    funding_organization_number,
    creator,
    creation_time
--- MOD    ,modifier,
--- MOD    modification_time
+   ,modifier,
+   modification_time
 )
 VALUES
 (
@@ -121,8 +121,8 @@ VALUES
                         DATE_TRUNC('minute', NOW()))),
    'John Doe',
    NOW()
--- MOD    ,'modifier',
--- MOD    NOW()
+   ,'modifier',
+   NOW()
 );
 -- END
 
@@ -139,8 +139,8 @@ INSERT INTO funding_cycle
    funding_organization_number,
    creator,
    creation_time
--- MOD    ,modifier,
--- MOD    modification_time
+   ,modifier,
+   modification_time
 )
 VALUES
 (
@@ -156,8 +156,8 @@ VALUES
                         DATE_TRUNC('minute', NOW()))),
    'John Doe',
    NOW()
--- MOD    ,'modifier',
--- MOD    NOW()
+   ,'modifier',
+   NOW()
 );
 -- END
 
@@ -174,8 +174,8 @@ INSERT INTO funding_cycle
    funding_organization_number,
    creator,
    creation_time
--- MOD    ,modifier,
--- MOD    modification_time
+   ,modifier,
+   modification_time
 )
 VALUES
 (
@@ -191,8 +191,8 @@ VALUES
                         DATE_TRUNC('minute', NOW()))),
    NULL,
    NOW()
--- MOD    ,'modifier',
--- MOD    NOW()
+   ,'modifier',
+   NOW()
 );
 -- END
 
@@ -209,8 +209,8 @@ INSERT INTO funding_cycle
    funding_organization_number,
    creator,
    creation_time
--- MOD    ,modifier,
--- MOD    modification_time
+   ,modifier,
+   modification_time
 )
 VALUES
 (
@@ -226,80 +226,80 @@ VALUES
                         DATE_TRUNC('minute', NOW()))),
    '',
    NOW()
--- MOD    ,'modifier',
--- MOD    NOW()
+   ,'modifier',
+   NOW()
 );
 -- END
 
--- MOD -- Fail because of NULL modifier:
--- MOD -- FAIL
--- MOD INSERT INTO funding_cycle
--- MOD (
--- MOD    funding_cycle_number,
--- MOD    name,
--- MOD    description,
--- MOD    start_date,
--- MOD    end_date,
--- MOD    website,
--- MOD    funding_organization_number,
--- MOD    creator,
--- MOD    creation_time
--- MOD    ,modifier,
--- MOD    modification_time
--- MOD )
--- MOD VALUES
--- MOD (
--- MOD    NULL,
--- MOD    'FC1',
--- MOD    'Funding Cycle 1',
--- MOD    '1055-11-30',
--- MOD    '2020-12-31',
--- MOD    'http://www.nosuchpage.example.com',
--- MOD    (SELECT funding_organization_number
--- MOD     FROM funding_organization
--- MOD     WHERE name = CONCAT('testfundingorganization',
--- MOD                  DATE_TRUNC('minute', NOW()))),
--- MOD    'batman',
--- MOD    NOW()
--- MOD    ,NULL,
--- MOD    NOW()
--- MOD );
--- MOD -- END
+-- Fail because of NULL modifier:
+-- FAIL
+INSERT INTO funding_cycle
+(
+   funding_cycle_number,
+   name,
+   description,
+   start_date,
+   end_date,
+   website,
+   funding_organization_number,
+   creator,
+   creation_time
+   ,modifier,
+   modification_time
+)
+VALUES
+(
+   NULL,
+   'FC1',
+   'Funding Cycle 1',
+   '1055-11-30',
+   '2020-12-31',
+   'http://www.nosuchpage.example.com',
+   (SELECT funding_organization_number
+    FROM funding_organization
+    WHERE name = CONCAT('testfundingorganization',
+                 DATE_TRUNC('minute', NOW()))),
+   'batman',
+   NOW()
+   ,NULL,
+   NOW()
+);
+-- END
 
--- MOD -- Fail because of empty modifier:
--- MOD -- FAIL
--- MOD INSERT INTO funding_cycle
--- MOD (
--- MOD    funding_cycle_number,
--- MOD    name,
--- MOD    description,
--- MOD    start_date,
--- MOD    end_date,
--- MOD    website,
--- MOD    funding_organization_number,
--- MOD    creator,
--- MOD    creation_time
--- MOD    ,modifier,
--- MOD    modification_time
--- MOD )
--- MOD VALUES
--- MOD (
--- MOD    NULL,
--- MOD    'FC1',
--- MOD    'Funding Cycle 1',
--- MOD    '1055-11-30',
--- MOD    '2020-12-31',
--- MOD    'http://www.nosuchpage.example.com',
--- MOD    (SELECT funding_organization_number
--- MOD     FROM funding_organization
--- MOD     WHERE name = CONCAT('testfundingorganization',
--- MOD                         DATE_TRUNC('minute', NOW()))),
--- MOD    'batman',
--- MOD    NOW()
--- MOD    ,'',
--- MOD    NOW()
--- MOD );
--- MOD -- END
+-- Fail because of empty modifier:
+-- FAIL
+INSERT INTO funding_cycle
+(
+   funding_cycle_number,
+   name,
+   description,
+   start_date,
+   end_date,
+   website,
+   funding_organization_number,
+   creator,
+   creation_time
+   ,modifier,
+   modification_time
+)
+VALUES
+(
+   NULL,
+   'FC1',
+   'Funding Cycle 1',
+   '1055-11-30',
+   '2020-12-31',
+   'http://www.nosuchpage.example.com',
+   (SELECT funding_organization_number
+    FROM funding_organization
+    WHERE name = CONCAT('testfundingorganization',
+                        DATE_TRUNC('minute', NOW()))),
+   'batman',
+   NOW()
+   ,'',
+   NOW()
+);
+-- END
 
 -- Fail because of NULL FO:
 -- FAIL
@@ -314,8 +314,8 @@ INSERT INTO funding_cycle
    funding_organization_number,
    creator,
    creation_time
--- MOD    ,modifier,
--- MOD    modification_time
+   ,modifier,
+   modification_time
 )
 VALUES
 (
@@ -328,8 +328,8 @@ VALUES
    NULL
    'John Doe',
    NOW()
--- MOD    ,'modifier',
--- MOD    NOW()
+   ,'modifier',
+   NOW()
 );
 -- END
 
@@ -346,8 +346,8 @@ INSERT INTO funding_cycle
    funding_organization_number,
    creator,
    creation_time
--- MOD    ,modifier,
--- MOD    modification_time
+   ,modifier,
+   modification_time
 )
 VALUES
 (
@@ -363,8 +363,8 @@ VALUES
                         DATE_TRUNC('minute', NOW()))),
    'mmouse',
    NOW()
--- MOD    ,'modifier',
--- MOD    NOW()
+   ,'modifier',
+   NOW()
 );
 -- END
 
@@ -381,8 +381,8 @@ INSERT INTO funding_cycle
    funding_organization_number,
    creator,
    creation_time
--- MOD    ,modifier,
--- MOD    modification_time
+   ,modifier,
+   modification_time
 )
 VALUES
 (
@@ -398,8 +398,8 @@ VALUES
                         DATE_TRUNC('minute', NOW()))),
    'mmouse',
    NOW()
--- MOD    ,'modifier',
--- MOD    NOW()
+   ,'modifier',
+   NOW()
 );
 -- END
 
@@ -410,14 +410,16 @@ INSERT INTO funding_cycle
    funding_organization_number,
    name,
    creator,
-   end_date
+   end_date,
+   modifier
 )
 VALUES
 (
    5,
    'fc3',
    'pluto',
-   '2020-12-31' 
+   '2020-12-31',
+   'dduck'
 );
 -- END
 
@@ -428,14 +430,16 @@ INSERT INTO funding_cycle
    funding_organization_number,
    name,
    creator,
-   start_date
+   start_date,
+   modifier
 )
 VALUES
 (
    5,
    'fc4',
    'pluto',
-   '2020-12-31' 
+   '2020-12-31',
+   'dduck'
 );
 -- END
 
@@ -447,7 +451,8 @@ INSERT INTO funding_cycle
    name,
    creator,
    start_date,
-   end_date
+   end_date,
+   modifier
 )
 VALUES
 (
@@ -455,7 +460,8 @@ VALUES
    'fc6',
    'pluto',
    '2020-12-31',
-   '1055-11-30'
+   '1055-11-30',
+   'dduck'
 );
 -- END
 
@@ -467,7 +473,8 @@ INSERT INTO funding_cycle
    name,
    creator,
    start_date,
-   end_date
+   end_date,
+   modifier
 )
 VALUES
 (
@@ -475,14 +482,20 @@ VALUES
    'fc6',
    'pluto',
    '2015-08-31',
-   '2015-08-31'
+   '2015-08-31',
+   'dduck'
 );
 -- END
 
 -- UPDATE that should pass:
 -- PASS
 UPDATE funding_cycle
-SET description = 'update test'
+SET description = 'update test',
+    modifier = CONCAT('new_modifier_',
+                      CAST((SELECT *
+                            FROM generate_series(1,100000)
+                            ORDER BY RANDOM()
+                            LIMIT 1) AS TEXT))
 WHERE funding_cycle_number =
    (SELECT funding_cycle_number
     FROM funding_cycle
@@ -497,7 +510,12 @@ WHERE funding_cycle_number =
 -- UPDATE that should pass but update nothing:
 -- PASS
 UPDATE funding_cycle
-SET description = 'update test'
+SET description = 'update test',
+    modifier = CONCAT('new_modifier_',
+                      CAST((SELECT *
+                            FROM generate_series(1,100000)
+                            ORDER BY RANDOM()
+                            LIMIT 1) AS TEXT))
 WHERE funding_cycle_number =
    (SELECT funding_cycle_number
     FROM funding_cycle
@@ -512,7 +530,12 @@ WHERE funding_cycle_number =
 -- UPDATE setting a required field to NULL fail:
 -- FAIL
 UPDATE funding_cycle
-SET funding_organization_number = NULL
+SET funding_organization_number = NULL,
+    modifier = CONCAT('new_modifier_',
+                      CAST((SELECT *
+                            FROM generate_series(1,100000)
+                            ORDER BY RANDOM()
+                            LIMIT 1) AS TEXT))
 WHERE funding_cycle_number =
    (SELECT funding_cycle_number
     FROM funding_cycle
@@ -527,7 +550,12 @@ WHERE funding_cycle_number =
 -- UPDATE setting a required field with a default value to NULL should pass:
 -- PASS
 UPDATE funding_cycle
-SET creation_time = NULL
+SET creation_time = NULL,
+    modifier = CONCAT('new_modifier_',
+                      CAST((SELECT *
+                            FROM generate_series(1,100000)
+                            ORDER BY RANDOM()
+                            LIMIT 1) AS TEXT))
 WHERE funding_cycle_number =
    (SELECT funding_cycle_number
     FROM funding_cycle
@@ -542,7 +570,12 @@ WHERE funding_cycle_number =
 -- UPDATE setting a required field to NULL should fail:
 -- PASS
 UPDATE funding_cycle
-SET creator = NULL
+SET creator = NULL,
+    modifier = CONCAT('new_modifier_',
+                      CAST((SELECT *
+                            FROM generate_series(1,100000)
+                            ORDER BY RANDOM()
+                            LIMIT 1) AS TEXT))
 WHERE funding_cycle_number =
    (SELECT funding_cycle_number
     FROM funding_cycle
@@ -557,7 +590,12 @@ WHERE funding_cycle_number =
 -- UPDATE setting a required field to NULL should fail:
 -- FAIL
 UPDATE funding_cycle
-SET name = NULL
+SET name = NULL,
+    modifier = CONCAT('new_modifier_',
+                      CAST((SELECT *
+                            FROM generate_series(1,100000)
+                            ORDER BY RANDOM()
+                            LIMIT 1) AS TEXT))
 WHERE funding_cycle_number =
    (SELECT funding_cycle_number
     FROM funding_cycle
@@ -579,38 +617,59 @@ WHERE name = 'FC_test';
 -- UPDATE start date to equal end date should fail:
 -- FAIL
 UPDATE funding_cycle
-SET start_date = '2020-12-31'
+SET start_date = '2020-12-31',
+    modifier = CONCAT('new_modifier_',
+                      CAST((SELECT *
+                            FROM generate_series(1,100000)
+                            ORDER BY RANDOM()
+                            LIMIT 1) AS TEXT))
 WHERE name = 'FC1';
 -- END
 
 -- UPDATE start date should pass:
 -- PASS
 UPDATE funding_cycle
-SET start_date = '2015-08-31'
+SET start_date = '2015-08-31',
+    modifier = CONCAT('new_modifier_',
+                      CAST((SELECT *
+                            FROM generate_series(1,100000)
+                            ORDER BY RANDOM()
+                            LIMIT 1) AS TEXT))
 WHERE name = 'FC1';
 -- END
 
 -- UPDATE end date should fail:
 -- FAIL
 UPDATE funding_cycle
-SET end_date = '2015-08-30'
+SET end_date = '2015-08-30',
+    modifier = CONCAT('new_modifier_',
+                      CAST((SELECT *
+                            FROM generate_series(1,100000)
+                            ORDER BY RANDOM()
+                            LIMIT 1) AS TEXT))
 WHERE name = 'FC1';
 -- END
 
 -- UPDATE end date should fail:
 -- FAIL
 UPDATE funding_cycle
-SET end_date = '2015-08-31'
+SET end_date = '2015-08-31',
+    modifier = CONCAT('new_modifier_',
+                      CAST((SELECT *
+                            FROM generate_series(1,100000)
+                            ORDER BY RANDOM()
+                            LIMIT 1) AS TEXT))
 WHERE name = 'FC1';
 -- END
 
 -- UPDATE end date should pass:
 -- PASS
 UPDATE funding_cycle
-SET end_date = '2015-09-01'
+SET end_date = '2015-09-01',
+    modifier = CONCAT('new_modifier_',
+                      CAST((SELECT *
+                            FROM generate_series(1,100000)
+                            ORDER BY RANDOM()
+                            LIMIT 1) AS TEXT))
 WHERE name = 'FC1';
 -- END
-
-
--- PNKJR    -- ,modifier,
--- PNKJR    -- modification_time

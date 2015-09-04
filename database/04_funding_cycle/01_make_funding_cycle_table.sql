@@ -28,13 +28,13 @@ CREATE TABLE funding_cycle_table
    funding_cycle_number                     SERIAL,
    funding_organization_number              INTEGER             NOT NULL,
    funding_cycle_creation_time              TIMESTAMP WITH TIME ZONE
-      NOT NULL                              DEFAULT NOW(), 
+      DEFAULT DATE_TRUNC('seconds', NOW())  NOT NULL, 
    funding_cycle_creator                    TEXT                NOT NULL,
    funding_cycle_description                TEXT                DEFAULT NULL,
    funding_cycle_end_date                   DATE                DEFAULT NULL,
--- MOD    funding_cycle_modification_time          TIMESTAMP WITH TIME ZONE
--- MOD       NOT NULL                              DEFAULT NOW(),
--- MOD    funding_cycle_modifier                   TEXT                NOT NULL,
+   funding_cycle_modification_time          TIMESTAMP WITH TIME ZONE
+      DEFAULT DATE_TRUNC('seconds', NOW())  NOT NULL,
+   funding_cycle_modifier                   TEXT                NOT NULL,
    funding_cycle_name                       TEXT                NOT NULL,
    funding_cycle_start_date                 DATE                DEFAULT NULL,
    funding_cycle_website                    TEXT                DEFAULT NULL,

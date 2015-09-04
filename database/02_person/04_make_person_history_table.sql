@@ -27,13 +27,17 @@ DROP TABLE person_history_table;
 CREATE TABLE person_history_table
 (
    person_history_number                    SERIAL,
-   person_history_action                    TEXT,
+   person_history_action                    TEXT                NOT NULL,
    person_number                            INTEGER             NOT NULL,
    title                                    TEXT,
-   given_name                               TEXT,
+   given_name                               TEXT                NOT NULL,
    middle_name                              TEXT,
-   surname                                  TEXT,
-   email_address                            TEXT,
+   surname                                  TEXT                NOT NULL,
+   suffix                                   TEXT,
+   email_address                            TEXT                NOT NULL,
+   creator                                  TEXT                NOT NULL,
+   creation_time                            TIMESTAMP WITH TIME ZONE
+      NOT NULL,
    old_modifier                             TEXT                NOT NULL,
    old_modification_time                    TIMESTAMP WITH TIME ZONE
       NOT NULL,

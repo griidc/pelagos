@@ -32,13 +32,13 @@ CREATE TABLE funding_organization_table
    funding_organization_city                TEXT                DEFAULT NULL,
    funding_organization_country             TEXT                DEFAULT NULL,
    funding_organization_creation_time       TIMESTAMP WITH TIME ZONE
-      NOT NULL                              DEFAULT NOW(),
+      DEFAULT DATE_TRUNC('seconds', NOW())  NOT NULL,
    funding_organization_creator             TEXT                NOT NULL,
    funding_organization_delivery_point      TEXT                DEFAULT NULL,
    funding_organization_description         TEXT                DEFAULT NULL,
    funding_organization_logo                BYTEA               DEFAULT NULL,
    funding_organization_modification_time   TIMESTAMP WITH TIME ZONE
-      NOT NULL                              DEFAULT NOW(),
+      DEFAULT DATE_TRUNC('seconds', NOW())  NOT NULL,
    funding_organization_modifier            TEXT                NOT NULL,
    funding_organization_name                TEXT                NOT NULL,
    funding_organization_phone_number        TEXT                DEFAULT NULL,
