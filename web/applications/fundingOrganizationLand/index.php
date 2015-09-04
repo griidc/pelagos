@@ -28,9 +28,6 @@ $comp->addCSS(
 
 $comp->addLibrary(array('ui.widget','ui.dialog','ui.tabs','ui.datepicker'));
 
-$twigloader = new Twig_Loader_Filesystem('./templates');
-$twig = new Twig_Environment($twigloader, array('autoescape' => false));
-
 $app = new \Slim\Slim(
     array(
             'view' => new \Slim\Views\Twig()
