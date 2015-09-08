@@ -23,7 +23,7 @@ $(document).ready( function () {
         "stateDuration": -1
     } );
 
-        $('.jlink').click(function(){
+    $('.jlink').click(function(){
         // store original value in cookie for .fail later
         $.cookie("origTicket", $(this).next().html(), 1, { path : "mdapp/jlink" });
         $(this).hide();                     // hides button
@@ -33,47 +33,53 @@ $(document).ready( function () {
         $(this).next().next().select();
     });
 
-        $('input[type="text"]').blur(function() {
-            var udi = $(this).prev().parent().parent().parent().children('.udiTD').text();
-            var curLinkVal = this.value;
+    $('.jiraTicketClass').blur(function() {
+        var udi = $(this).prev().parent().parent().parent().children('.udiTD').text();
+        var curLinkVal = this.value;
 
-            // if URL provided, trim an optional / at end, then
-            // remove all contents except anything following the last slash.
-            curLinkVal = curLinkVal.replace(/\/$/, '');
-            var parseRegexp = /^.*\/([a-zA-Z0-9\-]+)\/{0,1}$/g;;
-            var matches = parseRegexp.exec(curLinkVal);
-            if (matches) {
-                curLinkVal = matches[1];
-            }
+        // if URL provided, trim an optional / at end, then
+        // remove all contents except anything following the last slash.
+        curLinkVal = curLinkVal.replace(/\/$/, '');
+        var parseRegexp = /^.*\/([a-zA-Z0-9\-]+)\/{0,1}$/g;;
+        var matches = parseRegexp.exec(curLinkVal);
+        if (matches) {
+            curLinkVal = matches[1];
+        }
 
-            var curPos = this;
-            var origValue = $.cookie("origTicket");
+        var curPos = this;
+        var origValue = $.cookie("origTicket");
 
-            if (origValue != curLinkVal) {
-                $.ajax({
-                    "method":"PUT",
-                    "url": "{{baseUrl}}/jiraLink/" + udi + "/" + curLinkVal + "/"
-                    }).done(function(data) {
-                        $(curPos).prev().html(curLinkVal);
-                        $(curPos).fadeOut();
-                        $(curPos).prev().fadeIn();
-                        $(curPos).prev().prev().show();
-                    }).fail(function(data) {
-                        alert("update rejected by database.");
-                        $(curPos).prev().html(origValue);
-                        $(curPos).fadeOut();
-                        $(curPos).prev().fadeIn();
-                        $(curPos).prev().prev().fadeIn();
-                    }).always(function(data) {
-                        // no-op
-                    });
-            } else {
-                $(curPos).hide();
-                $(curPos).prev().fadeIn();
-                $(curPos).prev().prev().fadeIn();
-            }
-        });
+        if (origValue != curLinkVal) {
+            $.ajax({
+                "method":"PUT",
+                "url": "{{baseUrl}}/jiraLink/" + udi + "/" + curLinkVal + "/"
+                }).done(function(data) {
+                    $(curPos).prev().html(curLinkVal);
+                    $(curPos).fadeOut();
+                    $(curPos).prev().fadeIn();
+                    $(curPos).prev().prev().show();
+                }).fail(function(data) {
+                    alert("update rejected by database.");
+                    $(curPos).prev().html(origValue);
+                    $(curPos).fadeOut();
+                    $(curPos).prev().fadeIn();
+                    $(curPos).prev().prev().fadeIn();
+                }).always(function(data) {
+                    // no-op
+                });
+        } else {
+            $(curPos).hide();
+            $(curPos).prev().fadeIn();
+            $(curPos).prev().prev().fadeIn();
+        }
+    });
 
+    $('.jiraTicketClass').keyup(function(e) {
+        if(e.which == 13) // Enter key
+        $(this).blur();
+    });
+
+    $('.jiraTicketClass').keypress(function(e) { return e.which != 13; });
 } );
 
 function clearStatusMessages() {
