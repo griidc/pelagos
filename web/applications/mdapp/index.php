@@ -30,6 +30,9 @@ require_once '/opt/pelagos/share/php/ldap.php';
 # Twig templating engine autoloader
 require_once 'Twig/Autoloader.php';
 
+require_once '../../../src/Pelagos/HTTPStatus.php';
+
+
 # add js library - informs drupal to add these standard js libraries upstream.
 # can also use drupal_add_js to specify a full path to a js library to include.
 # similarly, there is a drupal_add_css function.  These js includes are sent
