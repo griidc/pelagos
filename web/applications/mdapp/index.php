@@ -778,14 +778,7 @@ function index($app) {
     if(isset($_SESSION['testPolygon'])) { $stash['testPolygon'] = $_SESSION['testPolygon']; }
     return $stash;
 }
-/**
- * default route - nothing happens
- */
-$app->get('/jiraLink', function () {
-    // $GLOBALS['pelagos']['title'] = 'Jira Link Service';
-    print 'This is the Jira Link service...';
-    drupal_exit();
-});
+
 /**
  * update the Registry table with the supplied jira link value.
  * Use the $udi as a key to the Registry table.
