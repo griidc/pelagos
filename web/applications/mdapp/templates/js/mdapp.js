@@ -28,13 +28,13 @@ $(document).ready( function () {
         $.cookie("origTicket", $(this).next().html(), 1, { path : "mdapp/jlink" });
         $(this).hide();                     // hides button
         $(this).next().hide();              // hides original text
-        $(this).next().next().val($(this).next().html());
+        $(this).next().next().val($(this).next().text());
         $(this).next().next().show();       // shows previously-hidden input
         $(this).next().next().select();
     });
 
     $('.jiraTicketClass').blur(function() {
-        var udi = $(this).prev().parent().parent().parent().children('.udiTD').text();
+        var udi = $(this)parents('tr').children('.udiTD').text();
         var curLinkVal = this.value;
 
         // if URL provided, trim an optional / at end, then
@@ -54,7 +54,7 @@ $(document).ready( function () {
                 "method":"PUT",
                 "url": "{{baseUrl}}/jiraLink/" + udi + "/" + curLinkVal + "/"
                 }).done(function(data) {
-                    $(curPos).prev().html(curLinkVal);
+                    $(curPos).prev().html( "<a href='" + jiraBase + "/" + curLinkVal + "'>" + curLinkVal + "</a>" );
                     $(curPos).fadeOut();
                     $(curPos).prev().fadeIn();
                     $(curPos).prev().prev().show();
