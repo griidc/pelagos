@@ -89,13 +89,17 @@ class UniqueEntityValidator extends ConstraintValidator
         $repository = $em->getRepository(get_class($entity));
         $result = $repository->{$constraint->repositoryMethod}($criteria);
 
-        /* If no entity matched the query criteria or a single entity matched,
-         * which is the same as the entity being validated, the criteria is
-         * unique.
-         */
-        if (0 === count($result) || (1 === count($result) &&
-            $entity === ($result instanceof \Iterator ? $result->current() : current($result)))) {
+        if (count($result) === 0) {
+            // If no entity matched the query criteria, the criteria is unique.
             return;
+        }
+        if (count($result) === 1) {
+            // If one entity matched the query criteria, get it.
+            $foundEntity = $result instanceof \Iterator ? $result->current() : current($result);
+            if ($foundEntity->getId() === $entity->getId()) {
+                // If it's id is the same as the id of entity being validated, the criteria is unique.
+                return;
+            }
         }
 
         $errorPath = null !== $constraint->errorPath ? $constraint->errorPath : $fields[0];

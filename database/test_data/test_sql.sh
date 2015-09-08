@@ -29,6 +29,10 @@ declare -r FAILURE=1
 # declare -r _DEBUG=TRUE
 
 
+#----- Independent script variables: -------------------------------------------
+
+declare l_count=1
+
 #----- Dependent script variables: ---------------------------------------------
 
 declare db_hostname="proteus.tamucc.edu"
@@ -78,7 +82,7 @@ usage()
    echo     "Test all aspects of the person, email, and history entities"
    echo -e  "\nOptions:\n   -f file - filename containing sql statements"
    echo     "   -U username - user name to connect as"
-   echo     "   -d database - database to connect to"
+   echo     "   -h database - database to connect to"
    echo     "   -h host     - remote host to connect to"
    echo     "   -p port     - remote port to connect to"
    echo     "   -H help     - print this help message"
@@ -178,7 +182,7 @@ fi
 
 # Let the user know what we are doing:
 echo -e "\nTests will be run as user $db_user using the $db_name database"
-echo -e "on host ${db_hostname}, port ${db_port}.\n"
+echo -e "on host ${db_hostname}, port ${db_port}, using file $input_file.\n"
 echo -n "Please wait while the connection is verified... "
 
 # I can't find a sure-fire way to verify a good host was passed by either IP
@@ -207,7 +211,8 @@ $CAT $input_file |
             end_seen=FALSE
             expected_result=$FAILURE
             sql_stmt=""
-            echo -n "Preparing to execute a failing statement: "
+            printf "% 4d: Preparing to execute a failing statement: " $l_count
+            ((l_count += 1))
          else
             continue
          fi
@@ -218,7 +223,8 @@ $CAT $input_file |
             end_seen=FALSE
             expected_result=$SUCCESS
             sql_stmt=""
-            echo -n "Preparing to execute a passing statement: "
+            printf "% 4d: Preparing to execute a passing statement: " $l_count
+            ((l_count += 1))
          else
             continue
          fi
