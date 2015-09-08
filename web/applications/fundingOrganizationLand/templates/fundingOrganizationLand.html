@@ -2,7 +2,9 @@
 <table border="0" width="100%">
     <tr>
         <td width="25%" valign="top">
-            <div id="fundingOrganizationLogo"></div>
+            <div id="fundingOrganizationLogo">
+                <img src="data:{{entity.serializeBinary(entity.getLogo).mimeType}};base64,{{entity.serializeBinary(entity.getLogo).base64}}">
+            </div>
         </td>
         <td style="padding:10px;" width="60%" valign="top">
             <div id="details">
@@ -10,4 +12,21 @@
             </div>
         </td>
     </tr>
+    <tr>
+        <td><h1>Funding Cycles</h1></td>
+    </tr>
+    {% for FundingCycle in entity.getFundingCycles %}
+    <tr>
+        <td width="25%" valign="top">
+
+        </td>
+        <td>
+            <div>
+                <p>
+                    {% include 'fundingCycle.html' %}
+                </p>
+            </div>
+        </td>
+    </tr>
+    {% endfor %}
 </table>
