@@ -794,7 +794,7 @@ $app->get('/jiraLink', function () {
  * Use the found registry_id to find the row in the registry table.
  * Put the link value in the registry table.
  */
-$app->put('/jiraLink/:udi/:linkValue', function ($udi,$jiraLinkValue) use ($app) {
+$app->put('/jiraLink/:udi/(:linkValue)/', function ($udi,$jiraLinkValue = null) use ($app) {
 
     $env = $app->environment();
     $registryViewQuery = "SELECT dataset_udi, registry_id ".
@@ -828,7 +828,6 @@ $app->put('/jiraLink/:udi/:linkValue', function ($udi,$jiraLinkValue) use ($app)
         $statement->bindParam(':registry_id',$registryId);
         $statement->execute();
         $msg = "Updated Jira link ".$jiraLinkValue." in Registry id: ".$registryId;
-       // print '<br>'.$msg;
         $status = new \Pelagos\HTTPStatus(200,$msg);
         http_response_code($status->getCode());
         print $status->asJSON();

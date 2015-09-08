@@ -54,7 +54,7 @@ $(document).ready( function () {
             if (origValue != curLinkVal) {
                 $.ajax({
                     "method":"PUT",
-                    "url": "{{baseUrl}}/jiraLink/" + udi + "/" + this.value
+                    "url": "{{baseUrl}}/jiraLink/" + udi + "/" + this.value + "/"
                     }).done(function(data) {
                         $(curPos).prev().html(curLinkVal);
                         $(curPos).fadeOut();
