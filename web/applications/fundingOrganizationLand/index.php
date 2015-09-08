@@ -3,6 +3,7 @@
 require_once __DIR__ . '/../../../vendor/autoload.php';
 
 use Pelagos\Service\EntityService;
+use Pelagos\Exception\RecordNotFoundPersistenceException;
 
 $comp = new \Pelagos\Component;
 
@@ -38,7 +39,17 @@ $app->get(
     '/:entityId',
     function ($entityId) use ($app, $comp) {
         $entityService = new EntityService($comp->getEntityManager());
-        $entity = $entityService->get('FundingOrganization', $entityId);
+        try {
+            $entity = $entityService->get('FundingOrganization', $entityId);
+        } catch (RecordNotFoundPersistenceException $e) {
+            $app->response->setStatus(404);
+            $app->render('error.html', array('errorMessage' => $e->getMessage()));
+            return;
+        } catch (\Exception $e) {
+            $app->response->setStatus(500);
+            $app->render('error.html', array('errorMessage' => $e->getMessage()));
+            return;
+        }
 
         $twigData = array(
             'userLoggedIn' => ($comp->userIsLoggedIn()) ? 'true' : 'false',
