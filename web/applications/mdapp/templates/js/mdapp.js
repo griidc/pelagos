@@ -25,7 +25,8 @@ $(document).ready( function () {
 
     $('.jlink').click(function(){
         // store original value in cookie for .fail later
-        $.cookie("origTicket", $(this).next().html(), 1, { path : "mdapp/jlink" });
+        var udi = $(this).parents('tr').children('.udiTD').text();
+        $.cookie(udi, $(this).next().text(), 1, { path : "mdapp/jlink" });
         $(this).hide();                     // hides button
         $(this).next().hide();              // hides original text
         $(this).next().next().val($(this).next().text());
@@ -43,7 +44,7 @@ $(document).ready( function () {
         var parseRegexp = /(?:^|\/)([A-Z]+-\d+)$/;
         var matches = parseRegexp.exec(curLinkVal);
         var curPos = this;
-        var origValue = $.cookie("origTicket");
+        var origValue = $.cookie(udi);
         if (matches || curLinkVal == '') {
             if (matches) {
                 curLinkVal = matches[1];
