@@ -35,14 +35,12 @@ $(document).ready( function () {
 
         $('input[type="text"]').blur(function() {
             var udi = $(this).prev().parent().parent().parent().children('.udiTD').text();
-            console.log(udi);
             var curLinkVal = this.value;
 
             // if URL provided, trim an optional / at end, then
             // remove all contents except anything following the last slash.
             curLinkVal = curLinkVal.replace(/\/$/, '');
-            console.log('trimmed:'+curLinkVal);
-            var parseRegexp = /^.*\/([a-zA-Z0-9\-]+)$/g;;
+            var parseRegexp = /^.*\/([a-zA-Z0-9\-]+)\/{0,1}$/g;;
             var matches = parseRegexp.exec(curLinkVal);
             if (matches) {
                 curLinkVal = matches[1];
@@ -54,7 +52,7 @@ $(document).ready( function () {
             if (origValue != curLinkVal) {
                 $.ajax({
                     "method":"PUT",
-                    "url": "{{baseUrl}}/jiraLink/" + udi + "/" + this.value + "/"
+                    "url": "{{baseUrl}}/jiraLink/" + udi + "/" + curLinkVal + "/"
                     }).done(function(data) {
                         $(curPos).prev().html(curLinkVal);
                         $(curPos).fadeOut();
