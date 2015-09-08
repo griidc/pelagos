@@ -788,6 +788,7 @@ function index($app) {
  * Put the link value in the registry table.
  */
 $app->put('/jiraLink/:udi/(:linkValue)/', function ($udi,$jiraLinkValue = null) use ($app) {
+    global $user;
 
     $env = $app->environment();
     $registryViewQuery = "SELECT dataset_udi, registry_id ".
@@ -824,6 +825,7 @@ $app->put('/jiraLink/:udi/(:linkValue)/', function ($udi,$jiraLinkValue = null) 
         $status = new \Pelagos\HTTPStatus(200,$msg);
         http_response_code($status->getCode());
         print $status->asJSON();
+        writeLog("$user->name set Jira Link for udi: $udi to $jiraLinkValue.");
     }
     drupal_exit();
 
