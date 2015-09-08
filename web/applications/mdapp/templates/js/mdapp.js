@@ -34,44 +34,53 @@ $(document).ready( function () {
     });
 
     $('.jiraTicketClass').blur(function() {
-        var udi = $(this)parents('tr').children('.udiTD').text();
+        var udi = $(this).parents('tr').children('.udiTD').text();
         var curLinkVal = this.value;
 
         // if URL provided, trim an optional / at end, then
         // remove all contents except anything following the last slash.
         curLinkVal = curLinkVal.replace(/\/$/, '');
-        var parseRegexp = /^.*\/([a-zA-Z0-9\-]+)\/{0,1}$/g;;
+        var parseRegexp = /(?:^|\/)([A-Z]+-\d+)$/;
         var matches = parseRegexp.exec(curLinkVal);
-        if (matches) {
-            curLinkVal = matches[1];
-        }
-
         var curPos = this;
         var origValue = $.cookie("origTicket");
+        if (matches || curLinkVal == '') {
+            if (matches) {
+                curLinkVal = matches[1];
+            }
 
-        if (origValue != curLinkVal) {
-            $.ajax({
-                "method":"PUT",
-                "url": "{{baseUrl}}/jiraLink/" + udi + "/" + curLinkVal + "/"
-                }).done(function(data) {
-                    $(curPos).prev().html( "<a href='" + jiraBase + "/" + curLinkVal + "'>" + curLinkVal + "</a>" );
-                    $(curPos).fadeOut();
-                    $(curPos).prev().fadeIn();
-                    $(curPos).prev().prev().show();
-                }).fail(function(data) {
-                    alert("update rejected by database.");
-                    $(curPos).prev().html(origValue);
-                    $(curPos).fadeOut();
-                    $(curPos).prev().fadeIn();
-                    $(curPos).prev().prev().fadeIn();
-                }).always(function(data) {
-                    // no-op
-                });
+            if (origValue != curLinkVal) {
+                $.ajax({
+                    "method":"PUT",
+                    "url": "{{baseUrl}}/jiraLink/" + udi + "/" + curLinkVal + "/"
+                    }).done(function(data) {
+                        $(curPos).prev().html( "<a href='" + jiraBase + "/" + curLinkVal + "'>" + curLinkVal + "</a>" );
+                        $(curPos).fadeOut();
+                        $(curPos).prev().fadeIn();
+                        $(curPos).prev().prev().show();
+                    }).fail(function(data) {
+                        alert("update rejected by database.");
+                        $(curPos).prev().html(origValue);
+                        $(curPos).fadeOut();
+                        $(curPos).prev().fadeIn();
+                        $(curPos).prev().prev().fadeIn();
+                    }).always(function(data) {
+                        // no-op
+                    });
+            } else {
+                $(curPos).hide();
+                $(curPos).prev().fadeIn();
+                $(curPos).prev().prev().fadeIn();
+            }
         } else {
-            $(curPos).hide();
-            $(curPos).prev().fadeIn();
-            $(curPos).prev().prev().fadeIn();
+            // indicate some sort of error and revert to previous value, which can be null.
+                alert("Please post a Jira ticket.");
+                $(curPos).prev().html(origValue);
+                $(curPos).fadeOut();
+                $(curPos).prev().fadeIn();
+                $(curPos).prev().prev().fadeIn();
         }
+
     });
 
     $('.jiraTicketClass').keyup(function(e) {
