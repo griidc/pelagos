@@ -42,6 +42,11 @@ $app = new \Slim\Slim(
     )
 );
 
+# add custom Twig extensions
+$app->view->parserExtensions = array(
+    new \Pelagos\TwigEntityExtensions()
+);
+
 // Set the default condition for the entityType parameter to match a camel-case word.
 \Slim\Route::setDefaultConditions(
     array(
