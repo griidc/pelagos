@@ -39,6 +39,11 @@
                 .addClass("formfield");
             });
 
+            $(this).find("input.url").each(function () {
+                $(this).wrap("<span class=\"url\"></span>")
+                .after("<span><a name=\"url\" target=\"_blank\" href=\"" + $(this).val() + "\">" + $(this).val() + "</a></span>");
+            });
+
             if (!options.canEdit) {
                 return null;
             }
@@ -93,11 +98,6 @@
                     $(".innerForm", this).remove();
                     $(".entityFormButton,.showOnEdit", this).css({opacity: 0.0, visibility: "visible"}).animate({opacity: 1.0});
                 }
-            });
-
-            $(this).find("input.url").each(function () {
-                $(this).wrap("<span class=\"url\"></span>")
-                .after("<span><a name=\"url\" target=\"_blank\" href=\"" + $(this).val() + "\">" + $(this).val() + "</a></span>");
             });
 
             $(this).bind("reset", function() {
