@@ -23,6 +23,37 @@
     background: none;
 }
 
+.entityForm span.url {
+    position: relative;
+}
+
+.entityForm input.url {
+    -webkit-transition: visibility 250ms ease-in 0ms, opacity 250ms ease-in 0ms;
+    visibility: hidden;
+    opacity: 0;
+    border: 1px solid #aaa;
+}
+
+.entityWrapper.active input.url {
+    opacity: 1;
+    visibility: visible;
+}
+
+.entityForm span.url span {
+    margin-left: 3px;
+    margin-top: 2px;
+    font-family: sans-serif;
+    position: absolute;
+    left: 0px;
+    opacity: 1;
+}
+
+.entityWrapper.active span.url span {
+    -webkit-transition: visibility 250ms ease-in 0ms, opacity 250ms ease-in 0ms;
+    visibility: hidden;
+    opacity: 0;
+}
+
 .entityForm textarea {
     resize: none;
 }

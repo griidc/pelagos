@@ -95,6 +95,11 @@
                 }
             });
 
+            $(this).find("input.url").each(function () {
+                $(this).wrap("<span class=\"url\"></span>")
+                .after("<span><a name=\"url\" target=\"_blank\" href=\"" + $(this).val() + "\">" + $(this).val() + "</a></span>");
+            });
+
             $(this).bind("reset", function() {
                 formValidator.resetForm();
                 $("input:visible,textarea", this).each(function() {
@@ -128,7 +133,8 @@
         {
             Form.trigger("reset");
             $.each(Data, function(name, value) {
-                var selector = Form.find("[name=\"" + name + "\"]");
+                Form.find("a[name=\"" + name + "\"]").attr("href",value).text(value);
+                var selector = Form.find("input,textarea,select").filter("[name=\"" + name + "\"]");
                 var elementType = selector.prop("type");
                 switch (elementType)
                 {
@@ -149,6 +155,10 @@
                         selector.attr("base64", value.base64);
                         selector.attr("mimeType", value.mimeType);
                         selector.trigger("logoChanged");
+                        break;
+                    case "textarea":
+                        selector.html(value);
+                        selector.val(value);
                         break;
                     default:
                         selector.attr("value", value);
