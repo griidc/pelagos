@@ -1,29 +1,45 @@
 <h2>Funding Organization Details</h2>
 
-<form id="FundingOrganizationForm">
+<form class="entityForm" entityType="FundingOrganization">
+
+    <input type="hidden" name="id" value="{{FundingOrganization.getId}}">
+
     <label for="name">Name:</label>
-    <input readonly type="text" id="name" name="name" size="100" value="{{entity.getName}}" required><br>
+    <input type="text" name="name" size="100" value="{{FundingOrganization.getName}}" required><br>
+
     <label for="emailAddress">E-Mail Address:</label>
-    <input readonly type="text" id="emailAddress" name="emailAddress" size="100" value="{{entity.getEmailAddress}}"><br>
+    <input type="text" name="emailAddress" size="100" value="{{FundingOrganization.getEmailAddress}}"><br>
+
     <label for="description">Description:</label><br>
-    <textarea readonly id="description" name="description" cols="100" rows="5">{{entity.getDescription}}</textarea><br>
+    <textarea name="description" cols="100" rows="5">{{FundingOrganization.getDescription}}</textarea><br>
+
     <label for="url">Website:</label>
-    <input readonly type="text" id="url" name="url" size="100" value="{{entity.getUrl}}"><br>
+    <input type="text" name="url" size="100" value="{{FundingOrganization.getUrl}}"><br>
+
     <label for="phoneNumber">Phone Number:</label>
-    <input readonly type="text" id="phoneNumber" name="phoneNumber" size="100" value="{{entity.getPhoneNumber}}"><br>
+    <input type="text" name="phoneNumber" size="100" value="{{FundingOrganization.getPhoneNumber}}"><br>
+
     <label for="deliveryPoint">Delivery Point:</label><br>
-    <textarea readonly id="deliveryPoint" name="deliveryPoint" cols="100" rows="5">{{entity.getDeliveryPoint}}</textarea><br>
+    <textarea name="deliveryPoint" cols="100" rows="5">{{FundingOrganization.getDeliveryPoint}}</textarea><br>
+
     <label for="city">City:</label>
-    <input readonly type="text" id="city" name="city" size="100" value="{{entity.getCity}}"><br>
+    <input type="text" name="city" size="100" value="{{FundingOrganization.getCity}}"><br>
+
     <label for="administrativeArea">Administrative Area:</label>
-    <input readonly type="text" id="administrativeArea" name="administrativeArea" size="100" value="{{entity.getAdministrativeArea}}"><br>
+    <input type="text" name="administrativeArea" size="100" value="{{FundingOrganization.getAdministrativeArea}}"><br>
+
     <label for="postalCode">Postal Code:</label>
-    <input readonly type="text" id="postalCode" name="postalCode" size="100" value="{{entity.getPostalCode}}"><br>
+    <input type="text" name="postalCode" size="100" value="{{FundingOrganization.getPostalCode}}"><br>
+
     <label for="country">Country:</label>
-    <input readonly type="text" id="country" name="country" size="100" value="{{entity.getCountry}}"><br>
+    <input type="text" name="country" size="100" value="{{FundingOrganization.getCountry}}"><br>
+
     <span class="showOnEdit">
         <label for="logo">Logo:</label>
-        <input name="logo" type="file" /><br>
+        <input name="logo" type="file" 
+            base64="{{FundingOrganization.serializeBinary(FundingOrganization.getLogo).base64}}" 
+            mimeType="{{FundingOrganization.serializeBinary(FundingOrganization.getLogo).mimeType}}">
+        <br>
     </span>
-    
+
 </form>

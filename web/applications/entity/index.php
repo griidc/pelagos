@@ -14,7 +14,8 @@ $comp->addJS(
     array(
         '//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js',
         '//cdnjs.cloudflare.com/ajax/libs/jquery-noty/2.3.5/packaged/jquery.noty.packaged.min.js',
-        '/static/js/pelagosForm.js',
+        '/static/js/common.js',
+        'static/js/entityForm.js',
         'static/js/entity.js',
     )
 );
@@ -49,30 +50,26 @@ $app = new \Slim\Slim(
 );
 
 $app->get(
-    '/:entityType',
-    function ($entityType) use ($app, $comp) {
+    '/:entityType(/)(:entityId)',
+    function ($entityType, $entityId = null) use ($app, $comp) {
         if (preg_match_all('/([A-Z][a-z]*)/', $entityType, $entityName)) {
-            $comp->setTitle('Create ' . implode(' ', $entityName[1]));
+            if (isset($entityId)) {
+                $comp->setTitle(implode(' ', $entityName[1]) . ' Landing Page');
+            } else {
+                $comp->setTitle('Create ' . implode(' ', $entityName[1]));
+            }
+        }
+        if (file_exists("static/js/$entityType" . 'Land.js')) {
+            $comp->addJS("static/js/$entityType" . 'Land.js');
         }
         $twigData = array(
             'userLoggedIn' => ($comp->userIsLoggedIn()) ? 'true' : 'false',
         );
-        $app->render($entityType . 'Land.html', $twigData);
-    }
-);
-
-$app->get(
-    '/:entityType/:entityId',
-    function ($entityType, $entityId) use ($app, $comp) {
-        if (preg_match_all('/([A-Z][a-z]*)/', $entityType, $entityName)) {
-            $comp->setTitle(implode(' ', $entityName[1]) . ' Landing Page');
+        if (isset($entityId)) {
+            $entityService = new EntityService($comp->getEntityManager());
+            $entity = $entityService->get($entityType, $entityId);
+            $twigData[$entityType] = $entity;
         }
-        $entityService = new EntityService($comp->getEntityManager());
-        $entity = $entityService->get($entityType, $entityId);
-        $twigData = array(
-            'userLoggedIn' => ($comp->userIsLoggedIn()) ? 'true' : 'false',
-            'entity' => $entity,
-        );
         $app->render($entityType . 'Land.html', $twigData);
     }
 );

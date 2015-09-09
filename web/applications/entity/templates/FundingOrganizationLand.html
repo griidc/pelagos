@@ -2,7 +2,11 @@
 <table border="0" width="100%">
     <tr>
         <td width="25%" valign="top">
-            <div id="FundingOrganizationLogo"></div>
+            <div id="fundingOrganizationLogo">
+                {% if FundingOrganization.getLogo %}
+                    <img src="data:{{FundingOrganization.serializeBinary(FundingOrganization.getLogo).mimeType}};base64,{{FundingOrganization.serializeBinary(FundingOrganization.getLogo).base64}}">
+                {% endif %}
+            </div>
         </td>
         <td style="padding:10px;" width="60%" valign="top">
             <div id="details">
@@ -10,4 +14,21 @@
             </div>
         </td>
     </tr>
+    <tr>
+        <td><h1>Funding Cycles</h1></td>
+    </tr>
+    {% for FundingCycle in FundingOrganization.getFundingCycles %}
+    <tr>
+        <td width="25%" valign="top">
+
+        </td>
+        <td>
+            <div>
+                <p>
+                    {% include 'FundingCycle.html' %}
+                </p>
+            </div>
+        </td>
+    </tr>
+    {% endfor %}
 </table>

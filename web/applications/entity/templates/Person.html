@@ -1,12 +1,11 @@
     <h2>Person Details</h2>
-    <form id="PersonForm">
-    
+    <form class="entityForm" entityType="Person">
+        <input type="hidden" name="id" value="{{Person.getId}}">
         <label for="firstName">Given Name:</label>
-        <input readonly type="text" id="firstName" name="firstName" size="80" value="{{entity.getFirstName}}" required><br>
-        <label class="editable" for="lastName">Family Name:</label>
-        <input readonly type="text" id="lastName" name="lastName" size="80" value="{{entity.getLastName}}" required><br>
+        <input type="text" id="firstName" name="firstName" size="80" value="{{Person.getFirstName}}" required><br>
+        <label for="lastName">Family Name:</label>
+        <input type="text" id="lastName" name="lastName" size="80" value="{{Person.getLastName}}" required><br>
         <label for="emailAddress">E-Mail Address:</label>
-        <input readonly type="email" id="emailAddress" name="emailAddress" size="80" value="{{entity.getEmailAddress}}" required><br>
-        
+        <input type="email" id="emailAddress" name="emailAddress" size="80" value="{{Person.getEmailAddress}}" required><br>        
     </form>
 <br>
