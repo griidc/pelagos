@@ -138,13 +138,12 @@
                     case "checkbox":
                         selector.attr("checked", value);
                         break;
-                    case "select":
+                    case "select-one":
                         if (typeof value === "object") {
                             value = value.id;
                         }
-                        $.each(value, function(index, option) {
-                            selector.filter("[value=\"" + option + "\"]").attr("checked", true);
-                        });
+                        selector.find("[value=\"" + value + "\"]").attr("selected", true);
+                        selector.val(value);
                         break;
                     case "file":
                         selector.attr("base64", value.base64);
