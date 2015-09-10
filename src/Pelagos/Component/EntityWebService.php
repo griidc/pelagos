@@ -432,6 +432,12 @@ class EntityWebService extends \Pelagos\Component
         $this->setQuitOnFinalize(true);
         try {
             $entities = $this->getEntityService()->getAll($entityType);
+            if ($this->slim->request->params("properties")) {
+                $fields = preg_split("/,/", $this->slim->request->params("properties"));
+                foreach ($entities as $entity) {
+                    $entity->setSerializeProperties($fields);
+                }
+            }
             $entitiesCount = count($entities);
             $status = new HTTPStatus(
                 200,
