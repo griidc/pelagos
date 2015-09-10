@@ -59,6 +59,7 @@
 }
 .jiraForm {
     display:none;
+    top: 5px;
     border-spacing: 0px;
     border-collapse: collapse;
     position:absolute;
