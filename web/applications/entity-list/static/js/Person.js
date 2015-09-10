@@ -1,6 +1,7 @@
 $(document).ready(function(){
-    
-     $('.entityTable').pelagosDataTable({
+    "use strict";
+
+     $(".entityTable").pelagosDataTable({
         "ajax": pelagosBasePath + "/services/entity/Person",
         "columns": [
             { "data": "id" },
@@ -26,4 +27,4 @@ $(document).ready(function(){
         "order": [[ 6, "desc" ]]
      });
 
- });
+});

@@ -29,20 +29,24 @@ $comp->addCSS(
 
 $comp->addLibrary('ui.dialog');
 
-$app = new \Slim\Slim(array(
+$app = new \Slim\Slim(
+    array(
         'view' => new \Slim\Views\Twig()
-));
+    )
+);
 
-$app->get('/:entity', function ($entity) use ($app,$comp) {
-    if (file_exists(__DIR__."/static/js/$entity.js")) {
-        $comp->addJS("static/js/$entity.js");
+$app->get(
+    '/:entity',
+    function ($entity) use ($app, $comp) {
+        if (file_exists(__DIR__."/static/js/$entity.js")) {
+            $comp->addJS("static/js/$entity.js");
+        }
+        $twigData = array(
+            'entityType' => $entity
+        );
+        $app->render("entityList.html", $twigData);
     }
-    $twigData = array(
-        'entityType' => $entity
-    );
-    $app->render("entityList.html", $twigData);
-
-});
+);
 
 $app->run();
 
