@@ -55,9 +55,12 @@
 }
 
 .jiraTicketClass {
+    width: 200px;
+}
+.jiraForm {
     display:none;
+    border-spacing: 0px;
+    border-collapse: collapse;
     position:absolute;
-    width: 400px;
-    border-radius: 5px;
     border: 1px solid black;
 }

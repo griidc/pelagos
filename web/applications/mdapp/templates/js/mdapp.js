@@ -29,14 +29,20 @@ $(document).ready( function () {
         $.cookie(udi, $(this).next().text(), 1, { path : "mdapp/jlink" });
         $(this).hide();                     // hides button
         $(this).next().hide();              // hides original text
-        $(this).next().next().val($(this).next().text());
-        $(this).next().next().show();       // shows previously-hidden input
-        $(this).next().next().select();
+        $(this).parent().children('.jiraForm').show();
+        $(this).parent().find('.jiraTicketClass').val($(this).next().text());
+        $(this).parent().find('.jiraTicketClass').select();
     });
 
-    $('.jiraTicketClass').blur(function() {
+    $('.jiraCancelButton').click(function() {
+        $(this).closest('.jiraForm').hide();
+        $(this).closest('table').closest('tr').find('.jlink').show();
+        $(this).closest('table').closest('tr').find('a').show();
+    });
+
+    $('.jiraSaveButton').click(function() {
         var udi = $(this).parents('tr').children('.udiTD').text();
-        var curLinkVal = this.value;
+        var curLinkVal = $(this).parents('tr').find('.jiraTicketClass').val();
 
         // if URL provided, trim an optional / at end, then
         // remove all contents except anything following the last slash.
@@ -55,10 +61,10 @@ $(document).ready( function () {
                     "method":"PUT",
                     "url": "{{baseUrl}}/jiraLink/" + udi + "/" + curLinkVal + "/"
                     }).done(function(data) {
-                        $(curPos).prev().html( "<a href='" + jiraBase + "/" + curLinkVal + "'>" + curLinkVal + "</a>" );
-                        $(curPos).fadeOut();
-                        $(curPos).prev().fadeIn();
-                        $(curPos).prev().prev().show();
+                        $(curPos).closest('div').find('a').html( "<a href='" + jiraBase + "/" + curLinkVal + "'>" + curLinkVal + "</a>" );
+                        $(curPos).closest('.jiraForm').fadeOut();
+                        $(curPos).closest('div').find('.jlink').fadeIn();
+                        $(curPos).closest('div').find('a').fadeIn();
                     }).fail(function(data) {
                         alert("update rejected by database.");
                         $(curPos).prev().html(origValue);
@@ -69,9 +75,10 @@ $(document).ready( function () {
                         // no-op
                     });
             } else {
-                $(curPos).hide();
-                $(curPos).prev().fadeIn();
-                $(curPos).prev().prev().fadeIn();
+                // nothing changed, set table cell to prior state.
+                $(curPos).closest('.jiraForm').hide();
+                $(curPos).closest('div').find('.jlink').fadeIn();
+                $(curPos).closest('div').find('a').fadeIn();
             }
         } else {
             // indicate some sort of error and revert to previous value, which can be null.
@@ -83,13 +90,6 @@ $(document).ready( function () {
         }
 
     });
-
-    $('.jiraTicketClass').keyup(function(e) {
-        if(e.which == 13) // Enter key
-        $(this).blur();
-    });
-
-    $('.jiraTicketClass').keypress(function(e) { return e.which != 13; });
 } );
 
 function clearStatusMessages() {
