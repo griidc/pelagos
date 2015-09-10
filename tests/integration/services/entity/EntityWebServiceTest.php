@@ -418,6 +418,51 @@ class EntityWebServiceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test that getting a subset of ConcreteEntity's fields using a valid id is successful.
+     *
+     * Should return 200 with a message indicating the ConcreteEntity was found
+     * and a JSON serialization of the ConcreteEntity as the data package only
+     * for the subset of fields specified, and that it is returned in that order.
+     *
+     * @return void
+     */
+    public function testGetSuccessSubset()
+    {
+        $concreteEntityData = array(
+            'id' => null,
+            'creator' => self::$testCreator,
+            'creationTimeStamp' => null,
+            'modifier' => self::$testCreator,
+            'modificationTimeStamp' => null,
+            'name' => self::$testName,
+        );
+        $concreteEntityDataSubset = array(
+            'name' => self::$testName,
+            'creator' => self::$testCreator,
+            'id' => null,
+        );
+        $testConcreteEntity = new \Pelagos\Entity\ConcreteEntity;
+        $testConcreteEntity->update($concreteEntityData);
+        $this->mockEntityManager->shouldReceive('find')->andReturn($testConcreteEntity);
+        \Slim\Environment::mock(
+            array(
+                'REQUEST_METHOD' => 'GET',
+                'PATH_INFO' => '/ConcreteEntity/0',
+                'QUERY_STRING' => 'properties='.implode(',', array_keys($concreteEntityDataSubset)),
+            )
+        );
+        $this->expectOutputString(
+            $this->makeHTTPStatusJSON(
+                200,
+                'Found ConcreteEntity with id: 0',
+                $concreteEntityDataSubset
+            )
+        );
+        require 'index.php';
+    }
+
+    /**
+    /**
      * Test Successful Update.
      *
      * Should return 200 with a message indicating that a funding organization has been successfully updated
