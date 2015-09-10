@@ -296,6 +296,10 @@ class EntityWebService extends \Pelagos\Component
         try {
             $entityService = new EntityService($this->getEntityManager());
             $entity = $entityService->get($entityType, $entityId);
+            if ($this->slim->request->params("properties")) {
+                $fields = preg_split("/,/", $this->slim->request->params("properties"));
+                $entity->setSerializeProperties($fields);
+            }
             $status = new HTTPStatus(200, "Found $entityType with id: $entityId", $entity);
         } catch (ArgumentException $e) {
             $status = new HTTPStatus(400, $e->getMessage());
