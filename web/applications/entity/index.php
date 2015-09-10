@@ -3,6 +3,8 @@
 require_once __DIR__.'/../../../vendor/autoload.php';
 
 use Pelagos\Service\EntityService;
+use Pelagos\Exception\ArgumentException;
+use Pelagos\Exception\RecordNotFoundPersistenceException;
 
 $comp = new \Pelagos\Component;
 
@@ -72,7 +74,20 @@ $app->get(
         );
         if (isset($entityId)) {
             $entityService = new EntityService($comp->getEntityManager());
-            $entity = $entityService->get($entityType, $entityId);
+            try {
+                $entity = $entityService->get($entityType, $entityId);
+                $app->response->setStatus(200);
+            } catch (ArgumentException $e) {
+                $app->response->setStatus(400);
+            } catch (RecordNotFoundPersistenceException $e) {
+                $app->response->setStatus(404);
+            } catch (\Exception $e) {
+                $app->response->setStatus(500);
+            }
+            if ($app->response->getStatus() != 200) {
+                $app->render('error.html', array('errorMessage' => $e->getMessage()));
+                return;
+            }
             $twigData[$entityType] = $entity;
         }
         $app->render($entityType . 'Land.html', $twigData);
