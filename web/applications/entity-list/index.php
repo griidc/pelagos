@@ -10,7 +10,7 @@ require_once __DIR__.'/../../../vendor/autoload.php';
 
 $comp = new \Pelagos\Component;
 
-$comp->setTitle('Entity List');
+$comp->setTitle('Entity Creator');
 
 $comp->setJSGlobals();
 
@@ -38,7 +38,10 @@ $app = new \Slim\Slim(
 $app->get(
     '/:entity',
     function ($entity) use ($app, $comp) {
-        $comp->setTitle("$entity List");
+        if (preg_match_all('/([A-Z][a-z]*)/', $entity, $entityName)) {
+            $comp->setTitle(implode(' ', $entityName[1]) . ' List');
+        }
+        
         if (file_exists(__DIR__."/static/js/$entity.js")) {
             $comp->addJS("static/js/$entity.js");
         }
