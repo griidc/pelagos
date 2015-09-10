@@ -15,22 +15,24 @@
             </div>
         </td>
     </tr>
-    <tr>
-        <td></td>
-        <td><h2>Funding Cycles</h2></td>
-    </tr>
-    {% for FundingCycle in FundingOrganization.getFundingCycles | sortBy("name") %}
-    <tr>
-        <td width="25%" valign="top">
+    {% if FundingOrganization.getFundingCycles | length > 0 %}
+        <tr>
+            <td></td>
+            <td><h2>Funding Cycles</h2></td>
+        </tr>
+        {% for FundingCycle in FundingOrganization.getFundingCycles | sortBy("name") %}
+        <tr>
+            <td width="25%" valign="top">
 
-        </td>
-        <td>
-            <div>
-                <p>
-                    {% include 'FundingCycle.html' %}
-                </p>
-            </div>
-        </td>
-    </tr>
-    {% endfor %}
+            </td>
+            <td>
+                <div>
+                    <p>
+                        {% include 'FundingCycle.html' %}
+                    </p>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    {% endif %}
 </table>
