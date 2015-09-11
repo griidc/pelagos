@@ -41,10 +41,10 @@
                 <tbody>
                     {% for dta in section %}
                         <tr>
-                            <td valign="top" class='udiTD'><a href="{{pagelessBaseUrl}}/data/{{dta.dataset_udi}}" target="_BLANK" >{{dta.dataset_udi}}</a></td>
+                            <td valign="top" class="udiTD"><a href="{{pagelessBaseUrl}}/data/{{dta.dataset_udi}}" target="_BLANK" >{{dta.dataset_udi}}</a></td>
                             <td style="position:relative;">
                                 <div>
-                                    <button id='jiraLinkEditButton' class='jlink'><img src={{baseUrl}}/includes/images/edit.png></button>&nbsp;
+                                    <button id="jiraLinkEditButton" class="jlink"><img src="{{baseUrl}}/includes/images/edit.png"></button>&nbsp;
                                     <a href="{{jiraBase}}/{{dta.jira_ticket}}" target="_BLANK">{{dta.jira_ticket}}</a>
                                     <table class="jiraForm">
                                         <tr>
