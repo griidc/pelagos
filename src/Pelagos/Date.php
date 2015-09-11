@@ -28,9 +28,9 @@ class Date extends DateTime  // this is \Pelagos\DateTime
      * @param null $time
      * @param DateTimeZone $timezone
      */
-    public function __construct( $time = NULL, DateTimeZone $timezone = NULL)
+    public function __construct($time = null, DateTimeZone $timezone = null)
     {
-       parent::__construct($time, $timezone);
-        $this->setFormat(Date::$DefaultFormat);
+         parent::__construct($time, $timezone);
+         $this->setFormat(Date::$DefaultFormat);
     }
 }

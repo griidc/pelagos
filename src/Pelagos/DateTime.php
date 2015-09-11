@@ -13,14 +13,16 @@ namespace Pelagos;
  * to that of returning a string formatted to the ISO standard
  * format the GRIIDC prefers.
  */
-class DateTime  extends \DateTime {
+class DateTime extends \DateTime
+{
 
     public static $DefaultFormat = \DateTime::ISO8601;
 
     private $format =  \DateTime::ISO8601;
 
-    public static function getDefaultFormat() {
-      return self::$DefaultFormat;
+    public static function getDefaultFormat()
+    {
+        return self::$DefaultFormat;
     }
     /**
      * Change the value in the format attribute.
@@ -38,7 +40,8 @@ class DateTime  extends \DateTime {
      * @param \DateTime $dt - Another DateTime object that you wish to copy
      *
      */
-    public function set(DateTime $dt) {
+    public function set(DateTime $dt)
+    {
         $this->setTimestamp($dt->getTimestamp());
     }
 
