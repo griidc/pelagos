@@ -39,8 +39,8 @@
                 .addClass("formfield");
             });
 
-            $(this).find("input.url").each(function () {
-                $(this).wrap("<span class=\"url\"></span>")
+            $(this).find("input.clickableLink").each(function () {
+                $(this).wrap("<span class=\"clickableLink\"></span>")
                 .after("<span><a name=\"url\" target=\"_blank\" href=\"" + $(this).val() + "\">" + $(this).val() + "</a></span>");
             });
 

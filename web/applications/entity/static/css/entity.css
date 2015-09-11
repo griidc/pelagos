@@ -23,23 +23,23 @@
     background: none;
 }
 
-.entityForm span.url {
+.entityForm span.clickableLink {
     position: relative;
 }
 
-.entityForm input.url {
+.entityForm input.clickableLink {
     -webkit-transition: visibility 250ms ease-in 0ms, opacity 250ms ease-in 0ms;
     visibility: hidden;
     opacity: 0;
     border: 1px solid #aaa;
 }
 
-.entityWrapper.active input.url {
+.entityWrapper.active input.clickableLink {
     opacity: 1;
     visibility: visible;
 }
 
-.entityForm span.url span {
+.entityForm span.clickableLink span {
     margin-left: 3px;
     margin-top: 2px;
     font-family: sans-serif;
@@ -48,7 +48,7 @@
     opacity: 1;
 }
 
-.entityWrapper.active span.url span {
+.entityWrapper.active span.clickableLink span {
     -webkit-transition: visibility 250ms ease-in 0ms, opacity 250ms ease-in 0ms;
     visibility: hidden;
     opacity: 0;
