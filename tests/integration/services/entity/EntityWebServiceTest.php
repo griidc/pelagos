@@ -418,6 +418,47 @@ class EntityWebServiceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test that getting all ConcreteEntities is successful.
+     *
+     * Should return 200 with a message indicating the ConcreteEntites were found
+     * and a JSON serialization of the ConcreteEntities as the data package.
+     *
+     * @return void
+     */
+    public function testGetAllSuccess()
+    {
+        $concreteEntityData = array(
+            'id' => null,
+            'creator' => self::$testCreator,
+            'creationTimeStamp' => null,
+            'modifier' => self::$testCreator,
+            'modificationTimeStamp' => null,
+            'name' => self::$testName,
+        );
+        $testConcreteEntity1 = new \Pelagos\Entity\ConcreteEntity;
+        $testConcreteEntity1->update($concreteEntityData);
+        $testConcreteEntity2 = new \Pelagos\Entity\ConcreteEntity;
+        $testConcreteEntity2->update($concreteEntityData);
+        $this->mockEntityRepository->shouldReceive('findAll')->andReturn(
+            array($testConcreteEntity1, $testConcreteEntity1)
+        );
+        \Slim\Environment::mock(
+            array(
+                'REQUEST_METHOD' => 'GET',
+                'PATH_INFO' => '/ConcreteEntity',
+            )
+        );
+        $this->expectOutputString(
+            $this->makeHTTPStatusJSON(
+                200,
+                'Retrieved 2 entities of type ConcreteEntity',
+                array($concreteEntityData,$concreteEntityData)
+            )
+        );
+        require 'index.php';
+    }
+
+    /**
      * Test that getting a subset of ConcreteEntity's fields using a valid id is successful.
      *
      * Should return 200 with a message indicating the ConcreteEntity was found
@@ -462,11 +503,59 @@ class EntityWebServiceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test that getting all ConcreteEntities with a subset of fields  is successful.
+     *
+     * Should return 200 with a message indicating the ConcreteEntites were found
+     * and a JSON serialization of the ConcreteEntities as the data package.  Only
+     * the fields specified should be returned, in the specified order.
+     *
+     * @return void
+     */
+    public function testGetAllSubsetSuccess()
+    {
+        $concreteEntityData = array(
+            'id' => null,
+            'creator' => self::$testCreator,
+            'creationTimeStamp' => null,
+            'modifier' => self::$testCreator,
+            'modificationTimeStamp' => null,
+            'name' => self::$testName,
+        );
+        $concreteEntityDataSubset = array(
+            'creator' => self::$testCreator,
+            'name' => self::$testName,
+            'modificationTimeStamp' => null,
+        );
+        $testConcreteEntity1 = new \Pelagos\Entity\ConcreteEntity;
+        $testConcreteEntity1->update($concreteEntityData);
+        $testConcreteEntity2 = new \Pelagos\Entity\ConcreteEntity;
+        $testConcreteEntity2->update($concreteEntityData);
+        $this->mockEntityRepository->shouldReceive('findAll')->andReturn(
+            array($testConcreteEntity1, $testConcreteEntity1)
+        );
+        \Slim\Environment::mock(
+            array(
+                'REQUEST_METHOD' => 'GET',
+                'PATH_INFO' => '/ConcreteEntity',
+                'QUERY_STRING' => 'properties='.implode(',', array_keys($concreteEntityDataSubset)),
+            )
+        );
+        $this->expectOutputString(
+            $this->makeHTTPStatusJSON(
+                200,
+                'Retrieved 2 entities of type ConcreteEntity',
+                array($concreteEntityDataSubset ,$concreteEntityDataSubset)
+            )
+        );
+        require 'index.php';
+    }
+
     /**
      * Test Successful Update.
      *
-     * Should return 200 with a message indicating that a funding organization has been successfully updated
-     * and listing details about the funding organization including this changed field.
+     * Should return 200 with a message indicating that a funding organization has been
+     * successfully updated and listing details about the funding organization including
+     * this changed field.
      *
      * @return void
      */
