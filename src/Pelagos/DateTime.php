@@ -40,7 +40,7 @@ class DateTime extends \DateTime
      * @param \DateTime $dt - Another DateTime object that you wish to copy
      *
      */
-    public function set(DateTime $dt)
+    public function set(\DateTime $dt)
     {
         $this->setTimestamp($dt->getTimestamp());
     }
