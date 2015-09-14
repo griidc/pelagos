@@ -70,8 +70,6 @@ $(document).ready(function(){
                         $(curPos).closest(".jiraForm").fadeOut();
                         $(curPos).closest("div").find(".jlink").fadeIn();
                         $(curPos).closest("div").find("a").fadeIn();
-                    }).always(function() {
-                        // no-op
                     });
             } else {
                 // nothing changed, set table cell to prior state.
