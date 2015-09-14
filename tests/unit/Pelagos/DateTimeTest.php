@@ -1,19 +1,10 @@
 <?php
-/**
- * DateTimeTest.php Short description goes here. (Includes - GRIIDC PHP CLASS FILE DOC).
- *
- * @package Pelagos
- * Texas A&M Corpus Christi
- * Harte Research Institute
- * Gulf (of Mexico) Research Initiative Information Data Cooperative ( GRIIDC )
- */
 
 namespace Pelagos;
 
 use Symfony\Component\Validator\Validation;
 use \Pelagos\DateTime as DateTime;
 use \Pelagos\Date as Date;
-
 
 /**
  * Class DateTimeTest.
@@ -45,8 +36,8 @@ class DateTimeTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->referenceDateTime = new DateTime();
-        $this->referenceDateTime->setDate(self::$year,self::$month,self::$day);
-        $this->referenceDateTime->setTime(self::$hour,self::$minute,self::$second);
+        $this->referenceDateTime->setDate(self::$year, self::$month, self::$day);
+        $this->referenceDateTime->setTime(self::$hour, self::$minute, self::$second);
         $this->referenceDateTime->setFormat(self::$referenceFormat);
 
     }
@@ -69,7 +60,8 @@ class DateTimeTest extends \PHPUnit_Framework_TestCase
     /**
      * Test the comparison of two dates two seconds apart
      */
-    public function testComparison() {
+    public function testComparison()
+    {
         $this->currentDateTime = new DateTime();
         sleep(2);
         $this->laterDateTime = new DateTime();

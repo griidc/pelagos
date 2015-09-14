@@ -1,13 +1,4 @@
 <?php
-/**
- * DateTest.php
- *
- * @package Pelagos
- * Texas A&M Corpus Christi
- * Harte Research Institute
- * Gulf (of Mexico) Research Initiative Information Data Cooperative ( GRIIDC )
- */
-
 namespace Pelagos;
 
 
@@ -16,12 +7,9 @@ use \Pelagos\DateTime as DateTime;
 use \Pelagos\Date as Date;
 
 /**
- * DateTest.php Short description goes here. (Includes - GRIIDC PHP CLASS FILE DOC).
+ * DateTest.php A unit test for the Pelagos Date class
  *
  * @package Pelagos
- * Texas A&M Corpus Christi
- * Harte Research Institute
- * Gulf (of Mexico) Research Initiative Information Data Cooperative ( GRIIDC )
  */
 
 class DateTest extends \PHPUnit_Framework_TestCase
@@ -48,8 +36,8 @@ class DateTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->referenceDate = new Date();
-        $this->referenceDate->setDate(self::$year,self::$month,self::$day);
-        $this->referenceDate->setTime(self::$hour,self::$minute,self::$second);
+        $this->referenceDate->setDate(self::$year, self::$month, self::$day);
+        $this->referenceDate->setTime(self::$hour, self::$minute, self::$second);
     }
 
 
@@ -62,8 +50,8 @@ class DateTest extends \PHPUnit_Framework_TestCase
      */
     public function testDefaultFormat()
     {
-        $this->referenceDate->setDate(self::$year,self::$month,self::$day);
-        $this->referenceDate->setTime(self::$hour,self::$minute,self::$second);
+        $this->referenceDate->setDate(self::$year, self::$month, self::$day);
+        $this->referenceDate->setTime(self::$hour, self::$minute, self::$second);
         $this->expectOutputString(self::$expectedResult);
         print $this->referenceDate;
     }
