@@ -880,8 +880,6 @@ $app->put(
                 "FROM registry_view ".
                 " WHERE dataset_udi = :udi";
 
-        $updateRegistryQuery = "UPDATE registry SET jira_ticket = :jiraLinkValue WHERE registry_id = :registry_id";
-
         $dbms = OpenDB("GOMRI_RO");
         $statement = $dbms->prepare($registryViewQuery);
 
@@ -901,6 +899,7 @@ $app->put(
         } else {
             $registryId = $raw_data[0]["registry_id"];
 
+            $updateRegistryQuery = "UPDATE registry SET jira_ticket = :jiraLinkValue WHERE registry_id = :registry_id";
             $statement = $dbms->prepare($updateRegistryQuery);
 
             $statement->bindParam(':jiraLinkValue', $jiraLinkValue);
