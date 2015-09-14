@@ -80,17 +80,12 @@ $(document).ready(function(){
         } else {
             // indicate some sort of error and revert to previous value, which can be null.
             alert("Please post a Jira ticket.");
-            $(curPos).closest("div").find("a").html(origValue);
-            $(curPos).closest(".jiraForm").fadeOut();
-            $(curPos).closest("div").find(".jlink").fadeIn();
-            $(curPos).closest("div").find("a").fadeIn();
         }
     });
 });
 
 function clearStatusMessages() {
-    $("#messages").fadeOut("fast", function(){
-    });
+    $("#messages").fadeOut("fast");
 }
 
 function clearTestGeometry(){
