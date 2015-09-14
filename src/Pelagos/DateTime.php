@@ -18,7 +18,7 @@ class DateTime extends \DateTime
 
     public static $DefaultFormat = \DateTime::ISO8601;
 
-    private $format =  \DateTime::ISO8601;
+    private $formatString =  \DateTime::ISO8601;
 
     public static function getDefaultFormat()
     {
@@ -32,7 +32,7 @@ class DateTime extends \DateTime
      */
     public function setFormat($formatString)
     {
-        $this->format = $formatString;
+        $this->formatString = $formatString;
     }
 
     /**
@@ -52,6 +52,6 @@ class DateTime extends \DateTime
      */
     public function __toString()
     {
-        return $this->format($this->format);
+        return $this->format($this->formatString);
     }
 }
