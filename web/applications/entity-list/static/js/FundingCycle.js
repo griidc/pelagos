@@ -1,6 +1,7 @@
 $(document).ready(function(){
+    "use strict";
 
-     $('.entityTable').pelagosDataTable({
+    $(".entityTable").pelagosDataTable({
         "ajax": pelagosBasePath + "/services/entity/FundingCycle",
         "columns": [
             { "data": "name" },
@@ -23,6 +24,13 @@ $(document).ready(function(){
             "Creator",
             "Last Modified",
             "Modifier By"
+        ],
+        "order": [[7, "desc" ]],
+        "columnDefs": [
+            {
+                "searchable": false,
+                "targets": [1, 2, 3, 4, 5, 6, 7, 8]
+            }
         ]
-     });
+    });
 });
