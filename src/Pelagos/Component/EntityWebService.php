@@ -296,9 +296,9 @@ class EntityWebService extends \Pelagos\Component
         try {
             $entityService = new EntityService($this->getEntityManager());
             $entity = $entityService->get($entityType, $entityId);
-            if ($this->slim->request->params("properties")) {
-                $fields = preg_split("/,/", $this->slim->request->params("properties"));
-                $entity->setSerializeProperties($fields);
+            if (!is_null($this->slim->request->params('properties'))) {
+                $properties = explode(',', $this->slim->request->params('properties'));
+                $entity->setSerializeProperties($properties);
             }
             $status = new HTTPStatus(200, "Found $entityType with id: $entityId", $entity);
         } catch (ArgumentException $e) {
@@ -436,10 +436,10 @@ class EntityWebService extends \Pelagos\Component
         $this->setQuitOnFinalize(true);
         try {
             $entities = $this->getEntityService()->getAll($entityType);
-            if ($this->slim->request->params("properties")) {
-                $fields = preg_split("/,/", $this->slim->request->params("properties"));
+            if (!is_null($this->slim->request->params('properties'))) {
+                $properties = explode(',', $this->slim->request->params('properties'));
                 foreach ($entities as $entity) {
-                    $entity->setSerializeProperties($fields);
+                    $entity->setSerializeProperties($properties);
                 }
             }
             $entitiesCount = count($entities);
