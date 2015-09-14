@@ -60,7 +60,7 @@ $(document).ready(function(){
                     "method": "PUT",
                     "url": "{{baseUrl}}/jiraLink/" + udi + "/" + curLinkVal + "/"
                     }).done(function() {
-                        $(curPos).closest("div").find("a").html("<a href='" + jiraBase + "/" + curLinkVal + "'>" + curLinkVal + "</a>");
+                        $(curPos).closest("div").find("a").attr('href', jiraBase + "/" + curLinkVal).text(curLinkVal);
                         $(curPos).closest(".jiraForm").fadeOut();
                         $(curPos).closest("div").find(".jlink").fadeIn();
                         $(curPos).closest("div").find("a").fadeIn();
