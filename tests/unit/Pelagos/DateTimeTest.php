@@ -63,8 +63,9 @@ class DateTimeTest extends \PHPUnit_Framework_TestCase
     public function testComparison()
     {
         $this->currentDateTime = new DateTime();
-        sleep(2);
+        $t = $this->currentDateTime->getTimestamp();
         $this->laterDateTime = new DateTime();
+        $this->laterDateTime->setTimestamp($t+2000);
         $this->assertTrue($this->laterDateTime > $this->currentDateTime);
     }
 

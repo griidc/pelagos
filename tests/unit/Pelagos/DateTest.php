@@ -50,8 +50,6 @@ class DateTest extends \PHPUnit_Framework_TestCase
      */
     public function testDefaultFormat()
     {
-        $this->referenceDate->setDate(self::$year, self::$month, self::$day);
-        $this->referenceDate->setTime(self::$hour, self::$minute, self::$second);
         $this->expectOutputString(self::$expectedResult);
         print $this->referenceDate;
     }
