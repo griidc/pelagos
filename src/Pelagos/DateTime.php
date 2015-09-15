@@ -2,8 +2,6 @@
 
 namespace Pelagos;
 
-use \DateTime as DateTime;
-
 /**
  * DateTime an extension of \DateTime that prints via toString.
  *
