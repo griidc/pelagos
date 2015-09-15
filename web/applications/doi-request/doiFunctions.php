@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 function getDOIMetaData($doi)
 {
     $ch = curl_init();

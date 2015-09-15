@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 include 'TimePeriod.php';
 include 'TimeInstant.php';
 

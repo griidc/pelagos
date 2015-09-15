@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 
 if (!function_exists('configMerge')) {
     function configMerge($config_ini, $custom_ini)

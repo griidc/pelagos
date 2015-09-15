@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 
 function dumpIncludesFile($file) {
     if (!preg_match('/^includes\//',$file)) {

@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 
 if (!function_exists('drupal_set_message')) {
     function drupal_set_message($message = null, $type = 'status', $repeat = true)

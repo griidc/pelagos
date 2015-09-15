@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 
 function find_unique_uid($firstName,$lastName) {
     $uid = strtolower(substr($firstName,0,1) . $lastName);

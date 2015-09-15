@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 include_once 'CI_Telephone.php';
 include_once 'CI_Address.php';
 

@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 include_once 'CI_ResponsibleParty.php';
 include_once 'MD_DataIdentifcation.php';
 include_once 'MD_Distribution.php';

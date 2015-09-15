@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 
 function displayTaskStatus($tasks,$update=null,$personid=null)
 {

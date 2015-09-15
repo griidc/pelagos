@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 
 header('Content-Type: application/json');
 

@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 // Module: getTaskData.php
 // Author(s): Michael van den Eijnden
 // Parameters: None
