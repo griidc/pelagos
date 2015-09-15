@@ -29,7 +29,7 @@ class ClassAnnotationsTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->testAnnotationClass = new ClassAnnotations('\\Pelagos\\TestClass');
-    } 
+    }
     
     public function testGetClassAnnotations()
     {

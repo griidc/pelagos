@@ -14,7 +14,7 @@ class ValidationExceptionTest extends \PHPUnit_Framework_TestCase
     /**
      * Static class variable containing a list of violationse to use for testing.
      *
-     * @var string $testViolation 
+     * @var string $testViolation
      */
     protected static $testViolations = array(1,2,3);
 

@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__.'/../../../vendor/autoload.php';
+
 $GLOBALS['pelagos']['title'] = 'Augmenting GoMRI Summary Page';
 
 # load global config
@@ -15,18 +17,6 @@ if (file_exists('config.ini')) {
 
 # add Pelagos share/php to include path
 set_include_path(get_include_path() . PATH_SEPARATOR . $GLOBALS['config']['paths']['share'] . '/php');
-
-# load library info
-$GLOBALS['libraries'] = parse_ini_file($GLOBALS['config']['paths']['conf'].'/libraries.ini', true);
-
-# load Slim2
-require_once $GLOBALS['libraries']['Slim2']['include'];
-# register Slim autoloader
-\Slim\Slim::registerAutoloader();
-# load Twig Slim-View
-require_once $GLOBALS['libraries']['Slim-Views']['include_Twig'];
-# load Twig
-require_once 'Twig/Autoloader.php';
 
 # load Pelagos libraries
 require_once 'DBUtils.php';

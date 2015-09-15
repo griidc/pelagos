@@ -148,7 +148,7 @@ $slim->post(
 
 $slim->get(
     '/logo/:id(/:size)',
-    function ($id, $size='') use ($comp, $slim) {
+    function ($id, $size = '') use ($comp, $slim) {
         $response = $slim->response;
         $comp->setQuitOnFinalize(true);
         try {

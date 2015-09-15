@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 
 function bytes2filesize($bytes,$precision = 0) {
     $units = array('B','KB','MB','GB','TB');

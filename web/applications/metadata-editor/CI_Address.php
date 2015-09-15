@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 include_once 'CI_OnlineResource.php';
 
 class CI_Address

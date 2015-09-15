@@ -18,6 +18,12 @@ use \Symfony\Component\Validator\Constraints as Assert;
  *     errorPath="name",
  *     message="Name must be unique within a FundingOrganization"
  * )
+ * @Assert\CompareProperties(
+ *     left="endDate",
+ *     comparison="GreaterThan",
+ *     right="startDate",
+ *     message="End Date must be after Start Date"
+ * )
  */
 class FundingCycle extends Entity
 {
@@ -108,7 +114,7 @@ class FundingCycle extends Entity
         'startDate' => array(
             'type' => 'object',
             'class' => 'DateTime',
-            'resolver' => 'resolveDateTime',
+            'resolver' => 'resolveDate',
             'setter' => 'setStartDate',
             'getter' => 'getStartDate',
             'serializer' => 'serializeDate',
@@ -116,7 +122,7 @@ class FundingCycle extends Entity
         'endDate' => array(
             'type' => 'object',
             'class' => 'DateTime',
-            'resolver' => 'resolveDateTime',
+            'resolver' => 'resolveDate',
             'setter' => 'setEndDate',
             'getter' => 'getEndDate',
             'serializer' => 'serializeDate',

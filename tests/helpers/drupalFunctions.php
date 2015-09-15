@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 
 /**
   * Mock the drupal_add_js function to just print the URL.

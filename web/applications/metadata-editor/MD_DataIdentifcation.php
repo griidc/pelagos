@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 include_once 'CI_Citation.php';
 include_once 'CI_ResponsibleParty.php';
 include_once 'MD_Keywords.php';

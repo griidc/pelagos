@@ -129,7 +129,7 @@ class MetadataXmlFromDB
                 );
             }
         } catch (\PDOException $pdoEx) {
-            throw new PersistenceException( $pdoEx->getMessage());
+            throw new PersistenceException($pdoEx->getMessage());
         }
     }
 
@@ -183,7 +183,7 @@ class MetadataXmlFromDB
                 );
             }
         } catch (\PDOException $pdoEx) {
-            throw new PersistenceException(  $pdoEx->getMessage());
+            throw new PersistenceException($pdoEx->getMessage());
         }
     }
 

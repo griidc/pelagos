@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 
 # Library for simplistic database handle selection
 # resolves a given database by name in the centralized

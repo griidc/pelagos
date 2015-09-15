@@ -1,0 +1,29 @@
+<!--
+This file defines the Doctrine mapping between properties (other than id) in the Pelagos\Entity\Entity
+base entity class and corresponding columns in the postgres database. Each entity table muse have these
+columns. The lifecycle callbacks in Pelagos\Entity\Entity are also defined.
+-->
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                        http://raw.github.com/doctrine/doctrine2/master/doctrine-mapping.xsd">
+
+    <mapped-superclass name="Pelagos\Entity\Entity">
+
+        <field name="creator"               column="creator"           type="string" />
+
+        <field name="creationTimeStamp"     column="creation_time"     type="datetimetz" />
+
+        <field name="modifier"              column="modifier"          type="string" />
+
+        <field name="modificationTimeStamp" column="modification_time" type="datetimetz" />
+
+        <lifecycle-callbacks>
+            <lifecycle-callback type="prePersist" method="updateTimeStamps" />
+            <lifecycle-callback type="preUpdate" method="updateTimeStamps" />
+        </lifecycle-callbacks>
+
+    </mapped-superclass>
+
+</doctrine-mapping>

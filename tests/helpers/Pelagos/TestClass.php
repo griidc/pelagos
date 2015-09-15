@@ -2,24 +2,24 @@
 
 namespace Pelagos;
 
-/** 
+/**
 * A test class
 *
 * @foo bar
 * @return something
 */
-class TestClass { 
+class TestClass
+{
 
-    /** 
+    /**
      * A test property
      *
      * @something else
      * @blabla ding ding ding
      */
     private $testProp;
-    
-    
-    /** 
+
+    /**
      * A test method
      *
      * @type sometype
@@ -28,5 +28,4 @@ class TestClass {
     public function testFunction()
     {
     }
-
 }

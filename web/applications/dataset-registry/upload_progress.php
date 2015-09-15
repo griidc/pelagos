@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 
 if(isset($_GET['key'])) {
 

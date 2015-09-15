@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 
 include_once 'MD_Format.php';
 include_once 'MD_DigitalTransferOptions.php';
