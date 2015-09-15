@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 #$firstName = "Vernon";
 #$lastName="Asper";
 $baseURL = 'https://proteus.tamucc.edu/~mvandeneijnden/ProjectDB/getTaskDetails.php?';

@@ -12,6 +12,12 @@ use \Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Class to represent funding organizations.
+ *
+ * @Assert\UniqueEntity(
+ *     fields={"name"},
+ *     errorPath="name",
+ *     message="A Funding Organization with this name already exists"
+ * )
  */
 class FundingOrganization extends Entity
 {
@@ -593,7 +599,7 @@ class FundingOrganization extends Entity
     {
         $personArray = array();
         foreach ($properties as $property) {
-            switch($property) {
+            switch ($property) {
                 case 'id':
                     $personArray[] = $this->getId();
                     break;

@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 //$dsn = 'pgsql:host=server.somewhere.edu;port=5432;dbname=name_of_database;user=username;password=Pas5W0rd!';
 
 include_once $GLOBALS['pelagos_config']['paths']['share'].'/php/drupal.php';

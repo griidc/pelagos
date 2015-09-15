@@ -48,6 +48,8 @@ class PostgresSessionInit implements EventSubscriber
      */
     public function getSubscribedEvents()
     {
+        // @codingStandardsIgnoreStart
         return array(Events::postConnect);
+        // @codingStandardsIgnoreEnd
     }
 }

@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 // Module: xmlBuilder.php
 // Author(s): Michael van den Eijnden
 // Last Updated: 16 August 2012

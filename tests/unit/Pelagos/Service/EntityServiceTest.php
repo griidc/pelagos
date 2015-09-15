@@ -8,14 +8,14 @@ namespace Pelagos\Component;
  */
 class EntityServiceTest extends \PHPUnit_Framework_TestCase
 {
-    /** 
+    /**
      * Property to hold an instance of EntityService.
      *
-     * @var \Pelagos\Service\EntityService $entityService 
+     * @var \Pelagos\Service\EntityService $entityService
      */
     protected $entityService;
 
-    /** 
+    /**
      * Property to hold a mock entity for testing.
      *
      * @var \Pelagos\Entity\Entity $mockEntity
@@ -23,7 +23,7 @@ class EntityServiceTest extends \PHPUnit_Framework_TestCase
     protected $mockEntity;
 
     /**
-     * Propety to hold a mock EntityManager. 
+     * Propety to hold a mock EntityManager.
      *
      * @var \Doctrine\ORM\EntityManager $mockEntityManager
      */
@@ -42,8 +42,6 @@ class EntityServiceTest extends \PHPUnit_Framework_TestCase
      * @var mixed $mockValidator
      */
     protected $mockValidator;
-
-
 
     /** @var string $firstName A valid first name to use for testing. **/
     protected static $firstName = 'test';

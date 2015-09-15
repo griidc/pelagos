@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 
 if (!file_exists('/var/tmp/gmxCodelists.xml')) {
     file_put_contents('/var/tmp/gmxCodelists.xml', fopen('http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml', 'r'));

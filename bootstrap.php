@@ -7,7 +7,10 @@ require_once "vendor/autoload.php";
 $isDevMode = true;
 
 // mapping via XML
-$doctrine_config = \Doctrine\ORM\Tools\Setup::createXMLMetadataConfiguration(array(__DIR__."/config/doctrine"), $isDevMode);
+$doctrine_config = \Doctrine\ORM\Tools\Setup::createXMLMetadataConfiguration(
+    array(__DIR__."/config/doctrine"),
+    $isDevMode
+);
 
 // postgres database configuration parameters
 $db_config = parse_ini_file('/etc/opt/pelagos/db.ini', true);
