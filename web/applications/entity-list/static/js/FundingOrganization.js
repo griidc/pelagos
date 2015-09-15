@@ -1,6 +1,7 @@
 $(document).ready(function(){
+    "use strict";
 
-     $('.entityTable').pelagosDataTable({
+    $(".entityTable").pelagosDataTable({
         "ajax": pelagosBasePath + "/services/entity/FundingOrganization",
         "columns": [
             { "data": "name" },
@@ -34,5 +35,5 @@ $(document).ready(function(){
             "Last Modified",
             "Modifier By"
         ]
-     });
+    });
 });
