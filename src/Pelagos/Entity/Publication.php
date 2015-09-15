@@ -102,7 +102,7 @@ class Publication
             require_once 'DBUtils.php';
             $connection = openDB('GOMRI_RW');
             $sth = $connection->prepare(
-                 'update publication
+                'update publication
                     set publication_citation = :citation, publication_citation_pulltime = :pull_date
                     where publication_doi = :doi;'
             );
