@@ -725,7 +725,9 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
                 'QUERY_STRING' => "$propName=$propVal"
             )
         );
-        $this->expectOutputString(json_encode("The parameter $propName is not a valid property of Person.")."drupal_exit\n");
+        $this->expectOutputString(
+            json_encode("The parameter $propName is not a valid property of Person.")."drupal_exit\n"
+        );
         require 'index.php';
     }
 
