@@ -98,7 +98,7 @@ function get_accepted_metadata($category)
 function index($app)
 {
     $env = $app->environment();
-    drupal_add_js('/tree/js/tree.js', array('type'=>'external'));
+    drupal_add_js($GLOBALS['pelagos']['base_path'] . '/modules/tree/js/tree.js', array('type'=>'external'));
     drupal_add_js("$env[SCRIPT_NAME]/js/search.js", array('type'=>'external'));
     // drupal_add_js("$env[SCRIPT_NAME]/js/package.js",array('type'=>'external'));
     drupal_add_library('system', 'jquery.cookie');

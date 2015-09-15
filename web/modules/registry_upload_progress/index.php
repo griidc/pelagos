@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__.'/../../../vendor/autoload.php';
+
 if(isset($_GET['key'])) {
 
     $percent_done = 0;

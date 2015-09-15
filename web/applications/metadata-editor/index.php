@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__.'/../../../vendor/autoload.php';
+
 $GLOBALS['pelagos']['title'] = 'ISO 19115-2 Metadata Editor';
 $base_path = $GLOBALS['pelagos']['base_path'];
 $component_path = $GLOBALS['pelagos']['component_path'];
