@@ -29,6 +29,9 @@
 
 .entityForm input.clickableLink {
     -webkit-transition: visibility 250ms ease-in 0ms, opacity 250ms ease-in 0ms;
+    -moz-transition: visibility 250ms ease-in 0ms, opacity 250ms ease-in 0ms;
+    -o-transition: visibility 250ms ease-in 0ms, opacity 250ms ease-in 0ms;
+    transition: visibility 250ms ease-in 0ms, opacity 250ms ease-in 0ms;
     visibility: hidden;
     opacity: 0;
     border: 1px solid #aaa;
@@ -44,12 +47,15 @@
     margin-top: 2px;
     font-family: sans-serif;
     position: absolute;
-    left: 0px;
+    left: 0;
     opacity: 1;
 }
 
 .entityWrapper.active span.clickableLink span {
     -webkit-transition: visibility 250ms ease-in 0ms, opacity 250ms ease-in 0ms;
+    -moz-transition: visibility 250ms ease-in 0ms, opacity 250ms ease-in 0ms;
+    -o-transition: visibility 250ms ease-in 0ms, opacity 250ms ease-in 0ms;
+    transition: visibility 250ms ease-in 0ms, opacity 250ms ease-in 0ms;
     visibility: hidden;
     opacity: 0;
 }

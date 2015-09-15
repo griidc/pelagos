@@ -133,7 +133,7 @@
         {
             Form.trigger("reset");
             $.each(Data, function(name, value) {
-                Form.find("a[name=\"" + name + "\"]").attr("href",value).text(value);
+                Form.find("a[name=\"" + name + "\"]").attr("href", value).text(value);
                 var selector = Form.find("input,textarea,select").filter("[name=\"" + name + "\"]");
                 var elementType = selector.prop("type");
                 switch (elementType)
