@@ -30,7 +30,7 @@ class Date extends DateTime
      * Attribute format is in the base class DateTime. Set it to
      * the default of this class Date.
      *
-     * @param null         $time     A value of the time for the new Object.
+     * @param string       $time     A value of the time for the new Object.
      * @param DateTimeZone $timezone The time zone to use in the object.
      */
     public function __construct($time = null, DateTimeZone $timezone = null)
