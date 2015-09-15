@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 
 if (!function_exists('getDMsFromUser')) {
     function getDMsFromUser($uid)

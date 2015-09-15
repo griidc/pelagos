@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 // Module: queries.php
 // Author(s): Michael van den Eijnden
 // Last Updated: 3 August 2012

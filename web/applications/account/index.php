@@ -1,4 +1,7 @@
 <?php
+// @codingStandardsIgnoreFile
+
+require_once __DIR__.'/../../../vendor/autoload.php';
 
 $GLOBALS['pelagos']['title'] = 'Account Management';
 
@@ -17,20 +20,9 @@ if (file_exists('config.ini')) {
 # load library info
 $GLOBALS['libraries'] = parse_ini_file($GLOBALS['config']['paths']['conf'] . '/libraries.ini', true);
 
-# load Slim2
-require_once $GLOBALS['libraries']['Slim2']['include'];
-# register Slim autoloader
-\Slim\Slim::registerAutoloader();
-# load Twig Slim-View
-require_once $GLOBALS['libraries']['Slim-Views']['include_Twig'];
-# load Twig
-require_once 'Twig/Autoloader.php';
-
 # add pelagos/share/php to the include path
 set_include_path(get_include_path() . PATH_SEPARATOR . $GLOBALS['config']['paths']['share'] . '/php');
 
-# load custom Twig extensions
-require_once 'Twig_Extensions_Pelagos.php';
 require_once 'db-utils.lib.php';
 require_once 'drupal.php';
 require_once 'EventHandler.php';
@@ -47,7 +39,9 @@ $GLOBALS['LDAP'] = ldap_connect('ldap://'.LDAP_HOST);
 $app = new \Slim\Slim(array('view' => new \Slim\Views\Twig()));
 
 # add custom Twig extensions
-$app->view->parserExtensions = array( new \Slim\Views\Twig_Extensions_Pelagos() );
+$app->view->parserExtensions = array(
+    new \Pelagos\TwigExtensions()
+);
 
 $app->hook('slim.before', function () use ($app) {
     $env = $app->environment();

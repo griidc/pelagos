@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 
 $GLOBALS['PGSQL_LIKE_MAP'] = array(
     '=' => 'ILIKE',

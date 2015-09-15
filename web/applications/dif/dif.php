@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 
 $GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini', true);
 $GLOBALS['config'] = array_merge($GLOBALS['config'], parse_ini_file($GLOBALS['config']['paths']['conf'].'/ldap.ini', true));
@@ -11,15 +12,12 @@ require_once 'ldap.php';
 require_once 'griidcMailer.php';
 require_once 'dif-registry.php';
 require_once 'EventHandler.php';
-require_once 'Twig/Autoloader.php';
 
 global $twig;
 $twigloader;
 
-Twig_Autoloader::register();
-
-$twigloader = new Twig_Loader_Filesystem('./templates');
-$twig = new Twig_Environment($twigloader,array('autoescape' => false));
+$twigloader = new \Twig_Loader_Filesystem('./templates');
+$twig = new \Twig_Environment($twigloader,array('autoescape' => false));
 
 if (isset($_POST['function']))
 {

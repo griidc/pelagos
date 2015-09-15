@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 drupal_add_css('includes/css/overwrite.css',array('type'=>'external'));
 drupal_add_js('//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js',array('type'=>'external'));
 

@@ -12,7 +12,8 @@ use \Pelagos\Exception\NotFoundException;
  * determined by the UDI passed.
  */
 class XMLDataFile
-{   /**
+{
+    /**
      * This variable contains the instanciated instance of the class.
      *
      * @var XMLDataFile $instance

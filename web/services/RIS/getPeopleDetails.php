@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 // Module: getPeopleDetails.php
 // Author(s): Michael van den Eijnden
 // Last Updated: 15 August 2012
@@ -8,13 +9,14 @@
 
 //error_reporting(-1);
 
-require 'Slim/Slim.php';
+require_once __DIR__.'/../../../vendor/autoload.php';
+
 require 'getPeopleData.php';
 
 $debug = false;
 
 //With default settings
-$app = new Slim();
+$app = new \Slim\Slim();
 
 $app->config('debug', $debug);
 

@@ -1,4 +1,7 @@
 <?php
+// @codingStandardsIgnoreFile
+
+require_once __DIR__.'/../../../vendor/autoload.php';
 
 $GLOBALS['pelagos']['title'] = 'Data Discovery';
 $GLOBALS['pelagos']['show_title'] = false;
@@ -21,23 +24,9 @@ $GLOBALS['libraries'] = parse_ini_file($GLOBALS['config']['paths']['conf'] . '/l
 # load database connection info
 $GLOBALS['db'] = parse_ini_file($GLOBALS['config']['paths']['conf'] . '/db.ini', true);
 
-# load Slim2
-require_once $GLOBALS['libraries']['Slim2']['include'];
-# register Slim autoloader
-\Slim\Slim::registerAutoloader();
-# load Twig Slim-View
-require_once $GLOBALS['libraries']['Slim-Views']['include_Twig'];
-# load Twig
-require_once 'Twig/Autoloader.php';
-
-# load OpenID API for PHP
-require_once $GLOBALS['libraries']['LightOpenID']['include'];
-
 # add pelagos/share/php to the include path
 set_include_path(get_include_path() . PATH_SEPARATOR . $GLOBALS['config']['paths']['share'] . '/php');
 
-# load custom Twig extensions
-require_once 'Twig_Extensions_Pelagos.php';
 # load Drupal functions
 require_once 'drupal.php';
 # load includes file dumper
@@ -73,7 +62,9 @@ drupal_add_library('system', 'ui.tabs');
 $app = new \Slim\Slim(array('view' => new \Slim\Views\Twig()));
 
 # add custom Twig extensions
-$app->view->parserExtensions = array( new \Slim\Views\Twig_Extensions_Pelagos() );
+$app->view->parserExtensions = array(
+    new \Pelagos\TwigExtensions()
+);
 
 # define global variables for use in templates
 $app->hook('slim.before', function () use ($app) {
