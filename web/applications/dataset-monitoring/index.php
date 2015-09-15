@@ -1,6 +1,8 @@
 <?php
 // @codingStandardsIgnoreFile
 
+require_once __DIR__.'/../../../vendor/autoload.php';
+
 $GLOBALS['pelagos']['title'] = 'Dataset Monitoring';
 
 set_include_path("../../../share/php" . PATH_SEPARATOR . get_include_path());
@@ -15,17 +17,6 @@ $GLOBALS['config'] = configMerge($GLOBALS['config'], parse_ini_file('config.ini'
 $GLOBALS['libraries'] = parse_ini_file($GLOBALS['config']['paths']['conf'].'/libraries.ini', true);
 # load database connection info
 $GLOBALS['db'] = parse_ini_file($GLOBALS['config']['paths']['conf'].'/db.ini', true);
-
-# load Slim2
-require_once $GLOBALS['libraries']['Slim2']['include'];
-# register Slim autoloader
-\Slim\Slim::registerAutoloader();
-# load Twig Slim-View
-require_once $GLOBALS['libraries']['Slim-Views']['include_Twig'];
-# load Twig
-require_once 'Twig/Autoloader.php';
-# load custom Twig extensions
-require_once 'Twig_Extensions_Pelagos.php';
 
 # load Drupal functions
 require_once 'drupal.php';
@@ -45,7 +36,9 @@ require_once 'lib/dm.php';
 $app = new \Slim\Slim(array('view' => new \Slim\Views\Twig()));
 
 # add custom Twig extensions
-$app->view->parserExtensions = array( new \Slim\Views\Twig_Extensions_Pelagos() );
+$app->view->parserExtensions = array(
+    new \Pelagos\TwigExtensions()
+);
 
 # define baseUrl for use in templates
 $app->hook('slim.before', function () use ($app) {

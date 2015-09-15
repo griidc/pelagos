@@ -36,16 +36,12 @@ drupal_add_js('/data-discovery/js/search.js',array('type'=>'external'));
 
 include_once 'aliasIncludes.php';
 require_once 'auth.php'; # for user_is_logged_in_somehow()
-require_once 'Twig_Extensions_GRIIDC.php';
 include_once 'pdo.php'; # for pdoDBQuery()
-require_once 'Twig/Autoloader.php';
 require_once 'lib/DataLand/PubLink.php';
 
-Twig_Autoloader::register();
-
-$loader = new Twig_Loader_Filesystem('./templates');
-$twig = new Twig_Environment($loader,array('autoescape' => false));
-$twig->addExtension(new Twig_Extensions_GRIIDC());
+$loader = new \Twig_Loader_Filesystem('./templates');
+$twig = new \Twig_Environment($loader,array('autoescape' => false));
+$twig->addExtension(new \Pelagos\TwigExtensions());
 
 $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
 $pageLessBaseUrl="$protocol$_SERVER[SERVER_NAME]";

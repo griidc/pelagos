@@ -28,10 +28,8 @@ function getMessageTemplate($Action)
 
 function expandTemplate($Template, $Data)
 {
-    require_once 'Twig/Autoloader.php';
-    Twig_Autoloader::register();
-    $loader = new Twig_Loader_String();
-    $twig = new Twig_Environment($loader);
+    $loader = new \Twig_Loader_String();
+    $twig = new \Twig_Environment($loader);
 
     try {
         return $twig->render($Template, $Data);

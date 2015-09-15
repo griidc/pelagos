@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__.'/../../../vendor/autoload.php';
+
 if (preg_match("!^$_SERVER[SCRIPT_NAME]/([^\?]*)!", $_SERVER['REQUEST_URI'], $matches)) {
     $_SERVER['REQUEST_URI'] = preg_replace("!$matches[1]!", '', $_SERVER['REQUEST_URI']);
     switch($matches[1]) {

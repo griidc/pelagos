@@ -1,6 +1,8 @@
 <?php
 // @codingStandardsIgnoreFile
 
+require_once __DIR__.'/../../../vendor/autoload.php';
+
 $GLOBALS['pelagos_config']  = parse_ini_file('/etc/opt/pelagos.ini',true);
 $GLOBALS['pelagos_config'] = array_merge($GLOBALS['pelagos_config'], parse_ini_file($GLOBALS['pelagos_config']['paths']['conf'].'/ldap.ini', true));
 

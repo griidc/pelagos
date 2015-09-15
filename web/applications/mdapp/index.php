@@ -3,6 +3,8 @@
 # METADATA APPROVAL APPLICATION
 # PPOC: Williamson
 
+require_once __DIR__.'/../../../vendor/autoload.php';
+
 $GLOBALS['pelagos']['title'] = 'Metadata Approval Application';
 
 # LOGFILE - SET THIS ACCORDINGLY
@@ -11,10 +13,6 @@ date_default_timezone_set('America/Chicago');
 
 # database utilities
 require_once("/opt/pelagos/share/php/db-utils.lib.php");
-# Framework (model/view)
-require_once '/usr/local/share/Slim/Slim/Slim.php';
-# templating engine - views
-require_once '/usr/local/share/Slim-Extras/Views/TwigView.php';
 # GRIIDC drupal extensions to allow use of drupal-intended code outside of drupal
 require_once '/opt/pelagos/share/php/drupal.php';
 # PHP streams anything in an includes/ directory.  This is for use WITH slim.
@@ -28,8 +26,6 @@ require_once '/opt/pelagos/share/php/datasets.php';
 require_once '/opt/pelagos/share/php/utils.php';
 # LDAP functionality
 require_once '/opt/pelagos/share/php/ldap.php';
-# Twig templating engine autoloader
-require_once 'Twig/Autoloader.php';
 
 require_once '../../../src/Pelagos/HTTPStatus.php';
 
@@ -53,13 +49,10 @@ $GLOBALS['ldap'] = parse_ini_file($GLOBALS['pelagos_config']['paths']['conf'].'/
 $GLOBALS['smtp'] = parse_ini_file($GLOBALS['pelagos_config']['paths']['conf'].'/smtp.ini', true);
 $GLOBALS['PAGE_NAME'] = preg_replace('/^\//', '', $_SERVER['SCRIPT_NAME']);
 
-$app = new Slim(
+$app = new \Slim\Slim(
     array(
-             'view' => new TwigView,
-             'debug' => true,
-             'log.level' => Slim_Log::DEBUG,
-             'log.enabled' => true
-      )
+        'view' => new \Slim\Views\Twig()
+    )
 );
 
 $app->hook(
