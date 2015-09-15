@@ -5,6 +5,7 @@ $(document).ready(function(){
         "ajax": pelagosBasePath + "/services/entity/FundingCycle",
         "columns": [
             { "data": "name" },
+            { "data": "fundingOrganization.name" },
             { "data": "description" },
             { "data": "url" },
             { "data": "startDate" },
@@ -12,10 +13,12 @@ $(document).ready(function(){
             { "data": "creationTimeStamp" },
             { "data": "creator" },
             { "data": "modificationTimeStamp" },
-            { "data": "modifier" }
+            { "data": "modifier" },
+            { "data": "fundingOrganization.id" }
         ],
         "headers": [
             "Name",
+            "Funding Organization",
             "Description",
             "URL",
             "Starts",
@@ -25,12 +28,24 @@ $(document).ready(function(){
             "Last Modified",
             "Modifier By"
         ],
-        "order": [[7, "desc" ]],
+        "order": [[8, "desc" ]],
         "columnDefs": [
             {
-                "searchable": false,
-                "targets": [1, 2, 3, 4, 5, 6, 7, 8]
+                "targets": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                "searchable": false
+            },
+            {
+                "targets": [10],
+                "visible": false
             }
         ]
+    });
+
+    $("#button_detail")
+    .off("click")
+    .click(function () {
+        var id = table.row(".selected").data().fundingOrganization.id;
+        var url = pelagosBasePath + "/applications/entity/FundingOrganization/" + id;
+        window.open(url, "_blank");
     });
 });

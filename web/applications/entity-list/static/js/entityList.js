@@ -1,5 +1,7 @@
 var $ = jQuery.noConflict();
 
+var table;
+
 (function($) {
     "use strict";
     $.fn.pelagosDataTable = function(options) {
@@ -14,8 +16,8 @@ var $ = jQuery.noConflict();
             $(self).find("thead > tr").append("<th>" + this + "</th>");
         });
 
-        var table = $(this).DataTable($.extend(true, {
-                "lengthMenu": [ [15, 25, 40, 100, -1], [15, 25, 50, 100, "Show All"] ],
+        table = $(this).DataTable($.extend(true, {
+                "lengthMenu": [ [25, 40, 100, -1], [25, 50, 100, "Show All"] ],
                 "deferRender": false,
                 "search": {
                     "caseInsensitive": true
@@ -28,7 +30,7 @@ var $ = jQuery.noConflict();
             disabled: true
         })
         .click(function () {
-            var id = table.row(".selected").data()["id"];
+            var id = table.row(".selected").data().id;
             var url = pelagosBasePath + "/applications/entity/" + entityType + "/" + id;
             window.open(url, "_blank");
         });
