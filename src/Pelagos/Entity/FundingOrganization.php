@@ -599,7 +599,7 @@ class FundingOrganization extends Entity
     {
         $personArray = array();
         foreach ($properties as $property) {
-            switch($property) {
+            switch ($property) {
                 case 'id':
                     $personArray[] = $this->getId();
                     break;
