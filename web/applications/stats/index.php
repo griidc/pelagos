@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 
 $GLOBALS['pelagos']['title'] = 'System Statistics (as of ' . date('F j, Y') . ')';
 

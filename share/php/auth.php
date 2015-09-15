@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 
 function user_is_logged_in_somehow() {
     $drupal_login = user_is_logged_in();

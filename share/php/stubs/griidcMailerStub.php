@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 
 if (!class_exists('griidcMailer')) {
     class griidcMailer

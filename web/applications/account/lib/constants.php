@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 
 define('PASTE_PUB_KEY','*** paste your public key here ***');
 

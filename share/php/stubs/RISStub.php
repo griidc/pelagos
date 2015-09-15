@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 
 function getProjectDetails($dbh, $filters = array())
 {

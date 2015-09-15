@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 
 function getTree($app) {
     return array_merge($GLOBALS['config']['tree'],json_decode($app->request()->get('tree'),true));

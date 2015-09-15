@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 
 $GLOBALS['pelagos']['title'] = 'Data Discovery';
 $GLOBALS['pelagos']['show_title'] = false;

@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 include_once 'CI_Contact.php';
 include_once 'CI_RoleCode.php';
 

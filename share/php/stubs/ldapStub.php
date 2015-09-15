@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 
 function getEmployeeNumberFromUID($userId) {
     switch ($userId) {

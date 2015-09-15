@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 // Module: getPeopleData.php
 // Author(s): Michael van den Eijnden
 // Last Updated: 14 August 2012

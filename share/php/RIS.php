@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 
 if (!defined('FILTER_REG')) {
     define('FILTER_REG', '/^(.*?)\s*(>=|<=|>|<|!=|=)\s*(.*?)$/');

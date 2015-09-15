@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 // Module: sidebar.php
 // Author(s): Michael van den Eijnden
 // Last Updated: 21 August 2012

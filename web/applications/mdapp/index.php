@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 # METADATA APPROVAL APPLICATION
 # PPOC: Williamson
 

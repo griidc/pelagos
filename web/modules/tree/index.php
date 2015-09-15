@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 
 $GLOBALS['pelagos']['title'] = 'Organizational Tree';
 

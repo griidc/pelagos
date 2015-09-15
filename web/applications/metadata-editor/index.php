@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 
 $GLOBALS['pelagos']['title'] = 'ISO 19115-2 Metadata Editor';
 $base_path = $GLOBALS['pelagos']['base_path'];

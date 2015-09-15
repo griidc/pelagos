@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 // Module: getTaskDetails.php
 // Author(s): Michael van den Eijnden
 // Last Updated: 15 August 2012

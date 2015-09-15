@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 // Module: owsException.php
 // Author(s): Michael van den Eijnden
 // Last Updated: 3 August 2012
