@@ -34,6 +34,9 @@ CREATE TABLE person_table
    person_name_suffix                       TEXT                DEFAULT NULL,
    person_surname                           TEXT                NOT NULL,
 
+   CONSTRAINT chk_person_mod_time_not_before_create
+      CHECK (person_modification_time >= person_creation_time),
+
    PRIMARY KEY (person_number)
 );
 
