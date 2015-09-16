@@ -11,30 +11,61 @@ namespace Pelagos\Exception;
  */
 class PersistenceExceptionTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var string $databaseQuery Static class variable containing a database query */
+    /**
+     * Static class variable containing a database query.
+     *
+     * @var string $databaseQuery
+     */
     protected static $databaseQuery = 'INSERT INTO foobar (field1, field2, field3, foobar_number) VALUES (?, ?, ?, ?)';
 
-    /** @var string $databaseParams Static class variable containing some database parameters */
+    /**
+     * Static class variable containing some database parameters.
+     *
+     * @var string $databaseParams
+     */
     protected static $databaseParams = '"one", "two", "three", 123';
 
-    /** @var string $databaseErrorCode Static class variable containing a SQLSTATE database error code */
+    /**
+     * Static class variable containing a SQLSTATE database error code.
+     *
+     * @var string $databaseErrorCode
+     */
     protected static $databaseErrorCode = 12345;
 
-    /** @var string $databaseErrorDriverCode Static class variable containing a driver-specific database error code */
+    /**
+     * Static class variable containing a driver-specific database error code.
+     *
+     * @var string $databaseErrorDriverCode
+     */
     protected static $databaseErrorDriverCode = 1;
 
-    /** @var string $databaseErrorMessage Static class variable containing a database error message */
+    /**
+     * Static class variable containing a database error message.
+     *
+     * @var string $databaseErrorMessage
+     */
     protected static $databaseErrorMessage = 'You are in violation!';
 
-    /** @var string $databaseErrorHint Static class variable containing a database error hint */
+    /**
+     * Static class variable containing a database error hint.
+     *
+     * @var string $databaseErrorHint
+     */
     protected static $databaseErrorHint = 'Perhaps you need to do something different?';
 
-    /** @var string $message Class variable to hold a message to pass to PersistenceException */
+    /**
+     * Class variable to hold a message to pass to PersistenceException.
+     *
+     * @var string $message
+     */
     protected $message;
 
     /**
      * Set up tests.
+     *
      * Construct a test message from the static properties.
+     *
+     * @return void
      */
     public function setUp()
     {
@@ -49,6 +80,10 @@ class PersistenceExceptionTest extends \PHPUnit_Framework_TestCase
      * Test that we can throw an PersistenceException.
      *
      * @expectedException \Pelagos\Exception\PersistenceException
+     *
+     * @throws PersistenceException Always.
+     *
+     * @return void
      */
     public function testThrowPersistenceException()
     {
@@ -57,30 +92,42 @@ class PersistenceExceptionTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test that we can catch an PersistenceException.
+     *
+     * @throws PersistenceException Always, but it is caught.
+     *
+     * @return void
      */
     public function testCatchPersistenceException()
     {
         try {
             throw new PersistenceException();
         } catch (PersistenceException $e) {
-            // do nothing but exception is caught
+            // Do nothing but exception is caught.
         }
     }
 
     /**
      * Test that we can catch an PersistenceException as an \Exception.
+     *
+     * @throws PersistenceException Always, but it is caught as an \Exception.
+     *
+     * @return void
      */
     public function testCatchException()
     {
         try {
             throw new PersistenceException();
         } catch (\Exception $e) {
-            // do nothing but exception is caught
+            // Do nothing but exception is caught.
         }
     }
 
     /**
      * Test getters return null for empty message and no previous exception.
+     *
+     * @throws PersistenceException Always, but it is caught as an \Exception.
+     *
+     * @return void
      */
     public function testGettersReturnNullEmptyNoPrevious()
     {
@@ -98,6 +145,10 @@ class PersistenceExceptionTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test getters return null for empty message and previous exception without a previous exception.
+     *
+     * @throws PersistenceException Always, but it is caught.
+     *
+     * @return void
      */
     public function testGettersReturnNullEmptyNoPreviousPrevious()
     {
@@ -114,8 +165,11 @@ class PersistenceExceptionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test getters return null for empty message and previous exception with a previous exception that
-     * is not a PDOException.
+     * Test getters return null for empty message and both previous exceptions are not PDOException.
+     *
+     * @throws PersistenceException Always, but it is caught.
+     *
+     * @return void
      */
     public function testGettersReturnNullEmptyPreviousPreviousNotPDOException()
     {
@@ -132,8 +186,11 @@ class PersistenceExceptionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test getters return null for empty message and previous exception with a previous exception that
-     * is a PDOException without errorInfo set.
+     * Test getters return null for empty message and previous previous exception is a PDOException with no errorInfo.
+     *
+     * @throws PersistenceException Always, but it is caught.
+     *
+     * @return void
      */
     public function testGettersReturnNullEmptyPreviousPreviousPDOExceptionNoErrorInfo()
     {
@@ -151,6 +208,10 @@ class PersistenceExceptionTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test getters return expected values for an expected message.
+     *
+     * @throws PersistenceException Always, but it is caught.
+     *
+     * @return void
      */
     public function testGettersReturnExpectedValues()
     {
@@ -175,11 +236,13 @@ class PersistenceExceptionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test getters return expected values for a PDO message that does not follow the:
-     *   ERROR: ...
-     *   HINT: ....
-     * convention.
+     * Test getters return expected values for a PDO message that does not follow the ERROR/HINT convention.
+     *
      * In this case the entire message is put into $databaseErrorMessage and $databaseErrorHint will be null.
+     *
+     * @throws PersistenceException Always, but it is caught.
+     *
+     * @return void
      */
     public function testGettersReturnExpectedValuesIrregularPDOMessage()
     {

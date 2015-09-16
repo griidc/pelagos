@@ -10,13 +10,25 @@ namespace Pelagos;
  */
 class HTTPStatusTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var int $testCode An HTTP status code to use for testing. **/
+    /**
+     * An HTTP status code to use for testing.
+     *
+     * @var int $testCode
+     */
     protected static $testCode = 200;
 
-    /** @var string $testMessage A message to use for testing. **/
+    /**
+     * A message to use for testing.
+     *
+     * @var string $testMessage
+     */
     protected static $testMessage = 'Success!';
 
-    /** @var array $testData A data package to use for testing. **/
+    /**
+     * A data package to use for testing.
+     *
+     * @var array $testData
+     */
     protected static $testData = array(
         'foo' => 1,
         'bar' => 2,
@@ -25,6 +37,8 @@ class HTTPStatusTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test that getters return values passed to constructor.
+     *
+     * @return void
      */
     public function testGetters()
     {
@@ -36,6 +50,8 @@ class HTTPStatusTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test that message is null by default if not passed to constructor.
+     *
+     * @return void
      */
     public function testNullMessageByDefault()
     {
@@ -46,6 +62,8 @@ class HTTPStatusTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test that data is null by default if not passed to constructor.
+     *
+     * @return void
      */
     public function testNullDataByDefault()
     {
@@ -55,6 +73,8 @@ class HTTPStatusTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test that HTTPStatus is JSON serializable and returns expected JSON.
+     *
+     * @return void
      */
     public function testJsonSerializable()
     {
@@ -67,6 +87,8 @@ class HTTPStatusTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test that HTTPStatus is JSON serializable and returns expected JSON when data is not set.
+     *
+     * @return void
      */
     public function testJsonSerializableNoData()
     {
@@ -79,6 +101,8 @@ class HTTPStatusTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test that asJSON() returns expected JSON.
+     *
+     * @return void
      */
     public function testAsJSON()
     {
@@ -92,9 +116,10 @@ class HTTPStatusTest extends \PHPUnit_Framework_TestCase
     /**
      * Utility method to build a JSON string equivalent to a JSON serialized HTTPStatus.
      *
-     * @param int $code The HTTP status code.
-     * @param string $message The HTTP status message.
-     * @param mixed $data The data package.
+     * @param integer $code    The HTTP status code.
+     * @param string  $message The HTTP status message.
+     * @param mixed   $data    The data package.
+     *
      * @return string A JSON string containing $code, $message, and $data (if set).
      */
     protected function makeHTTPStatusJSON($code, $message = null, $data = null)

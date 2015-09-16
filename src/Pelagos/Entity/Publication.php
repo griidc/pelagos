@@ -5,31 +5,28 @@ namespace Pelagos\Entity;
 use \Pelagos\HTTPStatus;
 
 /**
- * Pelagos\Publication
- *
- * This class generates a Publication object,
- * which holds the DOI an a Citation object
- *
- *
+ * This class generates a Publication object,* which holds the DOI an a Citation object.
  */
 class Publication
 {
     /**
      * DOI
-     * @var $doi string Contains the DOI
+     *
+     * @var $doi string Contains the DOI.
      */
     private $doi;
 
     /**
      * Citation
-     * @var $citation object Contains the Citation Object
+     *
+     * @var $citation object Contains the Citation Object.
      */
     private $citation;
 
     /**
      * Publication Constructor.
      *
-     * @param string $doi DOI
+     * @param string $doi DOI.
      *
      * @return void
      */
@@ -42,9 +39,9 @@ class Publication
      * Retrieves a Publication Citation.
      *
      * This function retrieves a publication citation from DB cache
-     * or will create an empty Citation
+     * or will create an empty Citation.
      *
-     * @return Pelagos\Citation
+     * @return \Pelagos\Citation The publication citation.
      */
     public function getCitation()
     {
@@ -69,8 +66,8 @@ class Publication
      *
      * This function will get a Publication Citation from doi.org
      *
-     * @param string $style (Optional) Style of the citation, default is 'apa'
-     * @param string $locale (Optional) Locale of the citation text, default is 'utf-8'
+     * @param string $style  Style of the citation, default is 'apa'.
+     * @param string $locale Locale of the citation text, default is 'utf-8'.
      *
      * @return Pelagos\HTTPStatus
      */
@@ -141,7 +138,6 @@ class Publication
      *
      * @return JSON
      */
-
     public function asJSON()
     {
         return json_encode(

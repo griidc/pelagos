@@ -8,11 +8,11 @@ if (preg_match("!^$_SERVER[SCRIPT_NAME]/([^\?]*)!", $_SERVER['REQUEST_URI'], $ma
         case 'getTaskDetails.php':
             require 'getTaskDetails.php';
             exit;
-            // don't need to break because we are exiting
+            // Don't need to break because we are exiting.
         case 'getPeopleDetails.php':
             require 'getPeopleDetails.php';
             exit;
-            // don't need to break because we are exiting
+            // Don't need to break because we are exiting.
     }
 }
 

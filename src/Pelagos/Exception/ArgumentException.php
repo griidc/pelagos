@@ -10,21 +10,23 @@ class ArgumentException extends \Exception
     /**
      * Name of the argument that caused the error.
      *
-     * @var string
+     * @var string $argumentName
      */
     protected $argumentName;
 
     /**
      * Value of the argument that caused the error.
      *
-     * @var mixed
+     * @var mixed $argumentValue
      */
     protected $argumentValue;
 
     /**
      * Setter for argumentName.
      *
-     * @param string $argumentName Name of the argument that caused the error
+     * @param string $argumentName Name of the argument that caused the error.
+     *
+     * @return void
      */
     public function setArgumentName($argumentName)
     {
@@ -34,7 +36,7 @@ class ArgumentException extends \Exception
     /**
      * Getter for argumentName.
      *
-     * @return string Name of the argument that caused the error
+     * @return string Name of the argument that caused the error.
      */
     public function getArgumentName()
     {
@@ -44,7 +46,9 @@ class ArgumentException extends \Exception
     /**
      * Setter for argumentValue.
      *
-     * @param string $argumentValue Value of the argument that caused the error
+     * @param string $argumentValue Value of the argument that caused the error.
+     *
+     * @return void
      */
     public function setArgumentValue($argumentValue)
     {
@@ -54,7 +58,7 @@ class ArgumentException extends \Exception
     /**
      * Getter for argumentValue.
      *
-     * @return string Value of the argument that caused the error
+     * @return string Value of the argument that caused the error.
      */
     public function getArgumentValue()
     {

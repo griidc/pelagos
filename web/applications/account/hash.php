@@ -6,7 +6,7 @@ require_once 'config.php';
 
 $GLOBALS['LDAP'] = ldap_connect('ldap://'.LDAP_HOST);
 
-# attempt to bind to LDAP
+// Attempt to bind to LDAP.
 if (!ldap_bind($GLOBALS['LDAP'], LDAP_BIND_DN, LDAP_BIND_PW)) {
     print "Error binding to LDAP.\n";
     exit;
