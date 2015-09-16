@@ -45,6 +45,10 @@ CREATE TABLE funding_organization_table
    funding_organization_postal_code         TEXT                DEFAULT NULL,
    funding_organization_website             TEXT                DEFAULT NULL,
 
+   CONSTRAINT chk_fo_mod_time_not_before_create
+      CHECK(funding_organization_modification_time >=
+            funding_organization_creation_time),
+
    PRIMARY KEY (funding_organization_number)
 );
 
