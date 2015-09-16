@@ -164,8 +164,6 @@ class ResearchGroup extends Entity
      */
     protected $emailAddress;
 
-    /* Getters / Setters *******************************************************
-
     /**
      * Setter for name.
      *
