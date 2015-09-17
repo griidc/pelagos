@@ -1,17 +1,20 @@
 $(document).ready(function()
 {
     "use strict";
-    
+
     var self = this;
-    
+
     addOptionsByEntity($(this).find("[name=\"fundingOrganization\"]"), "FundingOrganization");
-    
+
     $(this).find("[name=\"fundingOrganization\"]").change(function () {
         $(self).find("[name=\"fundingCycle\"]").find("option").remove();
         $(self).find("[name=\"fundingCycle\"]").removeAttr("disabled")
-        .append("<option value=0>[Please Select a Funding Cycle]</option>");
-        
-        addOptionsByEntity($(self).find("[name=\"fundingCycle\"]"), "FundingCycle", "fundingOrganization=" + $(this).val());
+        .append("<option value=\"\">[Please Select a Funding Cycle]</option>");
+
+        addOptionsByEntity(
+            $(self).find("[name=\"fundingCycle\"]"),
+            "FundingCycle", "fundingOrganization=" + $(this).val()
+        );
     });
 });
 
@@ -25,9 +28,9 @@ $(document).ready(function()
 function addOptionsByEntity(selectElement, entity, filter)
 {
     "use strict";
-    
-    var url = pelagosBasePath + "/services/entity/" + entity 
-    if (typeof Id != "undefined") {
+
+    var url = pelagosBasePath + "/services/entity/" + entity;
+    if (typeof filter !== "undefined") {
         url += "?" + filter + "&properties=id,name";
     } else {
         url += "?properties=id,name";
