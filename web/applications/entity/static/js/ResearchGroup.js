@@ -4,12 +4,14 @@ $(document).ready(function()
     
     var self = this;
     
-    debugger;
-    
     addOptionsByEntity($(this).find("[name=\"fundingOrganization\"]"), "FundingOrganization");
     
     $(this).find("[name=\"fundingOrganization\"]").change(function () {
-        addOptionsByEntity($(self).find("[name=\"fundingCycle\"]"), "FundingCycle");
+        $(self).find("[name=\"fundingCycle\"]").find("option").remove();
+        $(self).find("[name=\"fundingCycle\"]").removeAttr("disabled")
+        .append("<option value=0>[Please Select a Funding Cycle]</option>");
+        
+        addOptionsByEntity($(self).find("[name=\"fundingCycle\"]"), "FundingCycle", $(this).val());
     });
 });
 
@@ -20,10 +22,16 @@ $(document).ready(function()
  *
  * @return void
  */
-function addOptionsByEntity(selectElement, Entity)
+function addOptionsByEntity(selectElement, Entity, Id)
 {
     "use strict";
-    var url = pelagosBasePath + "/services/entity/" + Entity + "?properties=id,name";
+    
+    var url = pelagosBasePath + "/services/entity/" + Entity 
+    if (typeof Id != "undefined") {
+        url += "?" + Entity + "=" + Id + "&properties=id,name";
+    } else {
+        url += "?properties=id,name";
+    }
 
     $.getJSON(url, function(json) {
         var entities = sortObject(json.data, "name", false, true);
