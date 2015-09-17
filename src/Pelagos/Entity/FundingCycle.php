@@ -317,5 +317,4 @@ class FundingCycle extends Entity
     {
         return $this->researchGroups;
     }
-
 }
