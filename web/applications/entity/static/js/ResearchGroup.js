@@ -5,23 +5,28 @@ $(document).ready(function()
     var self = this;
 
     addOptionsByEntity($(this).find("[name=\"fundingOrganization\"]"), "FundingOrganization");
-
+    
     $(this).find("[name=\"fundingOrganization\"]").change(function () {
-        $(self).find("[name=\"fundingCycle\"]").find("option").remove();
-        $(self).find("[name=\"fundingCycle\"]").removeAttr("disabled")
-        .append("<option value=\"\">[Please Select a Funding Cycle]</option>");
-
-        addOptionsByEntity(
-            $(self).find("[name=\"fundingCycle\"]"),
-            "FundingCycle", "fundingOrganization=" + $(this).val()
-        );
+        var fundingCycle = $(self).find("[name=\"fundingCycle\"]");
         
-        if ($(this).val() === "") {
-            $(self).find("[name=\"fundingCycle\"]").attr("disabled","disabled");
-        } else {
+        fundingCycle.removeAttr("disabled")
+            .find("option").remove();
             
+        if ($(this).val() === "") {
+            fundingCycle.attr("disabled","disabled")
+            .append("<option value=\"\">[Please Select a Funding Organization First]</option>");;
+        } else {
+            fundingCycle.append("<option value=\"\">[Please Select a Funding Cycle]</option>");
+            addOptionsByEntity(
+                fundingCycle,
+                "FundingCycle", "fundingOrganization=" + $(this).val()
+            );
         }
     });
+    
+    if ($(this).find("[name=\"fundingOrganization\"]").attr("fundingOrganization") !== "") {
+        $(this).find("[name=\"fundingOrganization\"]").change();
+    }
 });
 
 /**
@@ -44,7 +49,12 @@ function addOptionsByEntity(selectElement, entity, filter)
         url += "?properties=id,name";
     }
 
-    $.getJSON(url, function(json) {
+    $.ajax({
+        url: url,
+        dataType: "json",
+        async: false
+    })
+    .done(function(json) {
         var entities = sortObject(json.data, "name", false, true);
 
         $.each(entities, function(seq, item) {
