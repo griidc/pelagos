@@ -151,8 +151,9 @@ class EntityService
     {
         try {
             $fullyQualifiedEntityClass = '\Pelagos\Entity\\' . $entityClass;
+            $class = $this->entityManager->getClassMetadata($fullyQualifiedEntityClass);
             foreach (array_keys($criteria) as $property) {
-                if (!$fullyQualifiedEntityClass::propertyExists($property)) {
+                if (!$class->hasField($property) && !$class->hasAssociation($property)) {
                     unset($criteria[$property]);
                 }
             }
