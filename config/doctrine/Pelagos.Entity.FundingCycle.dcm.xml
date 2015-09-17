@@ -31,6 +31,8 @@ Pelagos.Entity.Entity.dcm.xml
             <join-column name="funding_organization_number" referenced-column-name="funding_organization_number" />
         </many-to-one>
 
+        <one-to-many field="researchGroups" target-entity="ResearchGroup" mapped-by="fundingCycle" />
+
     </entity>
 
 </doctrine-mapping>
