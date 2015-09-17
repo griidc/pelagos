@@ -34,8 +34,7 @@ class ResearchGroup extends Entity
         ),
         'fundingCycle' => array(
             'type' => 'fundingCycle',
-            'getter' => 'getFundingCycles',
-            'setter' => 'setFundingCycles',
+            'getter' => 'getFundingCycle',
             'serialize' => false,
         ),
         'url' => array(
