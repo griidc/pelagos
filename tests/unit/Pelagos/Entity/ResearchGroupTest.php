@@ -28,9 +28,9 @@ class ResearchGroupTest extends \PHPUnit_Framework_TestCase
     /**
      * Property to hold a parent funding cycles for testing.
      *
-     * @var FundingCycle $testParentFundingCycle
+     * @var FundingCycle $testFundingCycle
      */
-    protected static $testParentFundingCycle;
+    protected static $testFundingCycle;
 
     /**
      * Static class variable containing a URL to use for testing.
@@ -107,7 +107,7 @@ class ResearchGroupTest extends \PHPUnit_Framework_TestCase
      *
      * @var FundingCycle $testParentMockFundingCycle
      */
-    protected $testMockParentFundingCycle;
+    protected $testMockFundingCycle;
 
     /**
      * Setup for PHPUnit tests.
@@ -120,9 +120,9 @@ class ResearchGroupTest extends \PHPUnit_Framework_TestCase
     {
         $this->researchGroup = new ResearchGroup;
         $this->researchGroup->setName(self::$testName);
-        $this->testMockParentFundingCycle = \Mockery::mock('\Pelagos\Entity\FundingCycle');
-        $this->testMockParentFundingCycle->shouldReceive('jsonSerialize');
-        $this->researchGroup->setParentFundingCycle($this->testMockParentFundingCycle);
+        $this->testMockFundingCycle = \Mockery::mock('\Pelagos\Entity\FundingCycle');
+        $this->testMockFundingCycle->shouldReceive('jsonSerialize');
+        $this->researchGroup->setFundingCycle($this->testMockFundingCycle);
         $this->researchGroup->setUrl(self::$testUrl);
         $this->researchGroup->setPhoneNumber(self::$testPhoneNumber);
         $this->researchGroup->setDeliveryPoint(self::$testDeliveryPoint);
@@ -151,30 +151,30 @@ class ResearchGroupTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test the testGetParentFundingCycle() method.
+     * Test the testGetFundingCycle() method.
      *
      * This method verify the return of the parent's Funding Cycle
      *
      * @return void
      */
-    public function testGetParentFundingCycle()
+    public function testGetFundingCycle()
     {
-        $parentFundingCycle = $this->researchGroup->getParentFundingCycle();
-        $this->assertInstanceOf('\Pelagos\Entity\FundingCycle', $parentFundingCycle);
+        $fundingCycle = $this->researchGroup->getFundingCycle();
+        $this->assertInstanceOf('\Pelagos\Entity\FundingCycle', $fundingCycle);
     }
 
     /**
-     * Test the testSetParentFundingCycle() method with bad (non-FC) element.
+     * Test the testSetFundingCycle() method with bad (non-FC) element.
      *
      * This method should result in an exception being thrown.
      *
-     * @expectedException \Exception
+     * @expectedException \PHPUnit_Framework_Error
      *
      * @return void
      */
-    public function testSetParentFundingCyclesWithNonFC()
+    public function testSetFundingCyclesWithNonFC()
     {
-        $this->researchGroup->setParentFundingCycle('string data');
+        $this->researchGroup->setFundingCycle('string data');
     }
 
     /**
@@ -422,5 +422,26 @@ class ResearchGroupTest extends \PHPUnit_Framework_TestCase
             'emailAddress' => self::$testEmailAddress,
         );
         $this->assertEquals(json_encode($researchGroupData), json_encode($this->researchGroup));
+    }
+
+    /**
+     * Make sure all nullable properties can be set to null.
+     *
+     * @return void
+     */
+    public function testSetNullable()
+    {
+        $this->researchGroup->setName(null);
+        $this->researchGroup->setFundingCycle(null);
+        $this->researchGroup->setUrl(null);
+        $this->researchGroup->setPhoneNumber(null);
+        $this->researchGroup->setDeliveryPoint(null);
+        $this->researchGroup->setCity(null);
+        $this->researchGroup->setAdministrativeArea(null);
+        $this->researchGroup->setPostalCode(null);
+        $this->researchGroup->setCountry(null);
+        $this->researchGroup->setDescription(null);
+        $this->researchGroup->setLogo(null);
+        $this->researchGroup->setEmailAddress(null);
     }
 }

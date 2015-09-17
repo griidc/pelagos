@@ -22,6 +22,76 @@ use \Symfony\Component\Validator\Constraints as Assert;
 class ResearchGroup extends Entity
 {
     /**
+     * Static array containing a list of the properties and their attributes.
+     *
+     * @var array $properties
+     */
+    protected static $properties = array(
+        'name' => array(
+            'type' => 'string',
+            'getter' => 'getName',
+            'setter' => 'setName',
+        ),
+        'fundingCycle' => array(
+            'type' => 'fundingCycle',
+            'getter' => 'getFundingCycles',
+            'setter' => 'setFundingCycles',
+            'serialize' => false,
+        ),
+        'url' => array(
+            'type' => 'string',
+            'getter' => 'getUrl',
+            'setter' => 'setUrl',
+        ),
+        'phoneNumber' => array(
+            'type' => 'string',
+            'getter' => 'getPhoneNumber',
+            'setter' => 'setPhoneNumber',
+        ),
+        'deliveryPoint' => array(
+            'type' => 'string',
+            'getter' => 'getDeliveryPoint',
+            'setter' => 'setDeliveryPoint',
+        ),
+        'city' => array(
+            'type' => 'string',
+            'getter' => 'getCity',
+            'setter' => 'setCity',
+        ),
+        'administrativeArea' => array(
+            'type' => 'string',
+            'getter' => 'getAdministrativeArea',
+            'setter' => 'setAdministrativeArea',
+        ),
+        'postalCode' => array(
+            'type' => 'string',
+            'getter' => 'getPostalCode',
+            'setter' => 'setPostalCode',
+        ),
+        'country' => array(
+            'type' => 'string',
+            'getter' => 'getCountry',
+            'setter' => 'setCountry',
+        ),
+        'description' => array(
+            'type' => 'string',
+            'getter' => 'getDescription',
+            'setter' => 'setDescription',
+        ),
+        'logo' => array(
+            'type' => 'string',
+            'getter' => 'getLogo',
+            'setter' => 'setLogo',
+            'serializer' => 'serializeBinary',
+        ),
+        'emailAddress' => array(
+            'type' => 'string',
+            'getter' => 'getEmailAddress',
+            'setter' => 'setEmailAddress',
+        ),
+    );
+
+    /**
      * Name of a research group.
      *
      * @var string $name
@@ -39,11 +109,11 @@ class ResearchGroup extends Entity
     /**
      * Research group's parent Funding Cycle.
      *
-     * @var FundingCycle $parentFundingCycle
+     * @var FundingCycle $fundingCycle
      *
      * @access protected
      */
-    protected $parentFundingCycle;
+    protected $fundingCycle;
 
     /**
      * Research group's Website url.
@@ -191,22 +261,17 @@ class ResearchGroup extends Entity
     }
 
     /**
-     * Setter for parentFundingCycle.
+     * Setter for fundingCycle.
      *
-     * @param FundingCycle $parentFundingCycle
+     * @param FundingCycle $fundingCycle
      *
      * @access public
      *
-     * @throws \Exception When Non-funding cycle is encountered.
-     *
      * @return void
      */
-    public function setParentFundingCycle($parentFundingCycle)
+    public function setFundingCycle(FundingCycle $fundingCycle = null)
     {
-        $this->parentFundingCycle = $parentFundingCycle;
-        if (!$parentFundingCycle instanceof FundingCycle) {
-            throw new \Exception('Non-funding cycle found in FundingCycles');
-        }
+        $this->fundingCycle = $fundingCycle;
     }
 
     /**
@@ -216,11 +281,10 @@ class ResearchGroup extends Entity
      *
      * @return string String containing fundingCycles of research group.
      */
-    public function getParentFundingCycle()
+    public function getFundingCycle()
     {
-        return $this->parentFundingCycle;
+        return $this->fundingCycle;
     }
-
 
     /**
      * Setter for url.
@@ -470,19 +534,6 @@ class ResearchGroup extends Entity
     }
 
     /**
-     * Get the mime type of logo.
-     *
-     * @access public
-     *
-     * @return string The mime type of logo.
-     */
-    public function getLogoMimeType()
-    {
-        $finfo = new \finfo(FILEINFO_MIME_TYPE);
-        return $finfo->buffer($this->getLogo());
-    }
-
-    /**
      * Setter for emailAddress.
      *
      * @param string $emailAddress Containing email address of research group.
@@ -507,74 +558,4 @@ class ResearchGroup extends Entity
     {
         return $this->emailAddress;
     }
-
-    /**
-     * Static array containing a list of the properties and their attributes.
-     *
-     * @var array $properties
-     */
-    protected static $properties = array(
-        'name' => array(
-            'type' => 'string',
-            'getter' => 'getName',
-            'setter' => 'setName',
-        ),
-        'parentFundingCycle' => array(
-            'type' => 'fundingCycle',
-            'getter' => 'getParentFundingCycles',
-            'setter' => 'setParentFundingCycles',
-            'serialize' => false,
-        ),
-        'url' => array(
-            'type' => 'string',
-            'getter' => 'getUrl',
-            'setter' => 'setUrl',
-        ),
-        'phoneNumber' => array(
-            'type' => 'string',
-            'getter' => 'getPhoneNumber',
-            'setter' => 'setPhoneNumber',
-        ),
-        'deliveryPoint' => array(
-            'type' => 'string',
-            'getter' => 'getDeliveryPoint',
-            'setter' => 'setDeliveryPoint',
-        ),
-        'city' => array(
-            'type' => 'string',
-            'getter' => 'getCity',
-            'setter' => 'setCity',
-        ),
-        'administrativeArea' => array(
-            'type' => 'string',
-            'getter' => 'getAdministrativeArea',
-            'setter' => 'setAdministrativeArea',
-        ),
-        'postalCode' => array(
-            'type' => 'string',
-            'getter' => 'getPostalCode',
-            'setter' => 'setPostalCode',
-        ),
-        'country' => array(
-            'type' => 'string',
-            'getter' => 'getCountry',
-            'setter' => 'setCountry',
-        ),
-        'description' => array(
-            'type' => 'string',
-            'getter' => 'getDescription',
-            'setter' => 'setDescription',
-        ),
-        'logo' => array(
-            'type' => 'string',
-            'getter' => 'getLogo',
-            'setter' => 'setLogo',
-            'serializer' => 'serializeBinary',
-        ),
-        'emailAddress' => array(
-            'type' => 'string',
-            'getter' => 'getEmailAddress',
-            'setter' => 'setEmailAddress',
-        ),
-    );
 }
