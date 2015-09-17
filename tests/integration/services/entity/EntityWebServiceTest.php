@@ -65,7 +65,6 @@ class EntityWebServiceTest extends \PHPUnit_Framework_TestCase
         require_once __DIR__ . '/../../../helpers/TestUser.php';
 
         $this->mockEntityRepository = \Mockery::mock('\Doctrine\ORM\EntityRepository');
-        $this->mockEntityRepository->shouldReceive('findBy')->andReturn(array());
 
         $this->mockEntityManager = \Mockery::mock('\Doctrine\ORM\EntityManager');
         $this->mockEntityManager->shouldReceive('persist');
@@ -439,7 +438,7 @@ class EntityWebServiceTest extends \PHPUnit_Framework_TestCase
         $testConcreteEntity1->update($concreteEntityData);
         $testConcreteEntity2 = new \Pelagos\Entity\ConcreteEntity;
         $testConcreteEntity2->update($concreteEntityData);
-        $this->mockEntityRepository->shouldReceive('findAll')->andReturn(
+        $this->mockEntityRepository->shouldReceive('findBy')->andReturn(
             array($testConcreteEntity1, $testConcreteEntity1)
         );
         \Slim\Environment::mock(
@@ -530,7 +529,7 @@ class EntityWebServiceTest extends \PHPUnit_Framework_TestCase
         $testConcreteEntity1->update($concreteEntityData);
         $testConcreteEntity2 = new \Pelagos\Entity\ConcreteEntity;
         $testConcreteEntity2->update($concreteEntityData);
-        $this->mockEntityRepository->shouldReceive('findAll')->andReturn(
+        $this->mockEntityRepository->shouldReceive('findBy')->andReturn(
             array($testConcreteEntity1, $testConcreteEntity1)
         );
         \Slim\Environment::mock(
