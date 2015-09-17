@@ -36,6 +36,7 @@ class ResearchGroup extends Entity
             'type' => 'object',
             'class' => 'Pelagos\Entity\FundingCycle',
             'entity' => 'FundingCycle',
+            'setter' => 'setFundingCycle',
             'getter' => 'getFundingCycle',
             'serialize' => false,
         ),
