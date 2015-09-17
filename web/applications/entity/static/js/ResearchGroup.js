@@ -11,7 +11,7 @@ $(document).ready(function()
         $(self).find("[name=\"fundingCycle\"]").removeAttr("disabled")
         .append("<option value=0>[Please Select a Funding Cycle]</option>");
         
-        addOptionsByEntity($(self).find("[name=\"fundingCycle\"]"), "FundingCycle", $(this).val());
+        addOptionsByEntity($(self).find("[name=\"fundingCycle\"]"), "FundingCycle", "fundingOrganization=" + $(this).val());
     });
 });
 
@@ -22,13 +22,13 @@ $(document).ready(function()
  *
  * @return void
  */
-function addOptionsByEntity(selectElement, Entity, Id)
+function addOptionsByEntity(selectElement, entity, filter)
 {
     "use strict";
     
-    var url = pelagosBasePath + "/services/entity/" + Entity 
+    var url = pelagosBasePath + "/services/entity/" + entity 
     if (typeof Id != "undefined") {
-        url += "?" + Entity + "=" + Id + "&properties=id,name";
+        url += "?" + filter + "&properties=id,name";
     } else {
         url += "?properties=id,name";
     }
@@ -41,6 +41,6 @@ function addOptionsByEntity(selectElement, Entity, Id)
                 $("<option></option>").val(item.id).html(item.name)
             );
         });
-        selectElement.find("option[value=\"" + selectElement.attr(Entity) + "\"]").attr("selected", true);
+        selectElement.find("option[value=\"" + selectElement.attr(entity) + "\"]").attr("selected", true);
     });
 }
