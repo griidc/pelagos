@@ -1,6 +1,6 @@
 <?php
 /**
- * This file contains the implementation of the ResearchGroup Entity class.
+ * This file contains the implementation of the ResearchGroup entity class.
  *
  * @package    Pelagos\Entity
  * @subpackage ResearchGroup
