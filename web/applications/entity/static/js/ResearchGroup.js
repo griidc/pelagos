@@ -21,7 +21,9 @@ $(document).ready(function()
 /**
  * This function add funding org options to a select element
  *
- * @param selectElement element Element of Select item
+ * @param selectElement element Element of Select item.
+ * @param entity string Name of the entity.
+ * @param filter string Filter for the entity.
  *
  * @return void
  */
