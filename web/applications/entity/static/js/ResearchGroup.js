@@ -15,6 +15,12 @@ $(document).ready(function()
             $(self).find("[name=\"fundingCycle\"]"),
             "FundingCycle", "fundingOrganization=" + $(this).val()
         );
+        
+        if ($(this).val() === "") {
+            $(self).find("[name=\"fundingCycle\"]").attr("disabled","disabled");
+        } else {
+            
+        }
     });
 });
 
