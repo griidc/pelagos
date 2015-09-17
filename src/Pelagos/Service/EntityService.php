@@ -136,4 +136,24 @@ class EntityService
         }
         return $entities;
     }
+
+    /**
+     * Method to get all Entity objects of the specified class that satisfy a set of criteria.
+     *
+     * @param string $entityClass Entity class to retrieve from.
+     * @param array  $criteria    The criteria to filter by.
+     *
+     * @return array A list of entity objects of the specified class.
+     *
+     * @throws PersistenceException When an error occurs retrieving from persistence.
+     */
+    public function getBy($entityClass, array $criteria)
+    {
+        try {
+            $entities = $this->entityManager->getRepository('\Pelagos\Entity\\' . $entityClass)->findBy($criteria);
+        } catch (DBALException $e) {
+            throw new PersistenceException($e->getMessage());
+        }
+        return $entities;
+    }
 }

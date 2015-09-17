@@ -435,7 +435,11 @@ class EntityWebService extends \Pelagos\Component
         $response->headers->set('Content-Type', 'application/json');
         $this->setQuitOnFinalize(true);
         try {
-            $entities = $this->getEntityService()->getAll($entityType);
+            $criteria = $this->slim->request->params();
+            if (array_key_exists('properties', $criteria)) {
+                unset($criteria['properties']);
+            }
+            $entities = $this->getEntityService()->getBy($entityType, $criteria);
             if (!is_null($this->slim->request->params('properties'))) {
                 $properties = explode(',', $this->slim->request->params('properties'));
                 foreach ($entities as $entity) {
