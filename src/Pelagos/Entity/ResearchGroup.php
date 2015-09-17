@@ -95,6 +95,7 @@ class ResearchGroup extends Entity
      * Name of a research group.
      *
      * @var string $name
+     *
      * @access protected
      *
      * @Assert\NotBlank(
@@ -119,6 +120,7 @@ class ResearchGroup extends Entity
      * Research group's Website url.
      *
      * @var string $url
+     *
      * @access protected
      *
      * @Assert\NoAngleBrackets(
@@ -131,6 +133,7 @@ class ResearchGroup extends Entity
      * Research group's telephone number.
      *
      * @var string $phoneNumber
+     *
      * @access protected
      *
      * @Assert\NoAngleBrackets(
@@ -143,6 +146,7 @@ class ResearchGroup extends Entity
      * Research group's delivery point (street address).
      *
      * @var string $deliveryPoint
+     *
      * @access protected
      *
      * @Assert\NoAngleBrackets(
@@ -155,6 +159,7 @@ class ResearchGroup extends Entity
      * Research group's city.
      *
      * @var string $city
+     *
      * @access protected
      *
      * @Assert\NoAngleBrackets(
@@ -167,6 +172,7 @@ class ResearchGroup extends Entity
      * Research group's administrative area (state).
      *
      * @var string $administrativeArea
+     *
      * @access protected
      *
      * @Assert\NoAngleBrackets(
@@ -179,6 +185,7 @@ class ResearchGroup extends Entity
      * Research group's postal code (zipcode).
      *
      * @var string $postalCode
+     *
      * @access protected
      *
      * @Assert\NoAngleBrackets(
@@ -191,6 +198,7 @@ class ResearchGroup extends Entity
      * Research group's country.
      *
      * @var string $country
+     *
      * @access protected
      *
      * @Assert\NoAngleBrackets(
@@ -203,6 +211,7 @@ class ResearchGroup extends Entity
      * Description of a research group.
      *
      * @var string $description
+     *
      * @access protected
      *
      * @Assert\NoAngleBrackets(
@@ -215,6 +224,7 @@ class ResearchGroup extends Entity
      * Research group's logo.
      *
      * @var string|resource $logo
+     *
      * @access protected
      */
     protected $logo;
@@ -223,6 +233,7 @@ class ResearchGroup extends Entity
      * Research group's email address.
      *
      * @var string $emailAddress
+     *
      * @access protected
      *
      * @Assert\NoAngleBrackets(
@@ -263,7 +274,7 @@ class ResearchGroup extends Entity
     /**
      * Setter for fundingCycle.
      *
-     * @param FundingCycle $fundingCycle
+     * @param FundingCycle $fundingCycle The FundingCycle to associate this ResearchGroup with.
      *
      * @access public
      *
