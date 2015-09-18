@@ -7,29 +7,58 @@ namespace Pelagos\Exception;
  */
 class PersistenceException extends \Exception
 {
-    /** @var string The query sent to the database. */
+    /**
+     * The query sent to the database.
+     *
+     * @var string
+     */
     protected $databaseQuery;
 
-    /** @var string The parameters sent to the database. */
+    /**
+     * The parameters sent to the database.
+     *
+     * @var string
+     */
     protected $databaseParams;
 
-    /** @var string The SQLSTATE error code from the database. */
+    /**
+     * The SQLSTATE error code from the database.
+     *
+     * @var string
+     */
     protected $databaseErrorCode;
 
-    /** @var int The error code from the database driver. */
+    /**
+     * The error code from the database driver.
+     *
+     * @var integer
+     */
     protected $databaseErrorDriverCode;
 
-    /** @var string The error message from the database. */
+    /**
+     * The error message from the database.
+     *
+     * @var string
+     */
     protected $databaseErrorMessage;
 
-    /** @var string The error message from the database. */
+    /**
+     * The error message from the database.
+     *
+     * @var string
+     */
     protected $databaseErrorHint;
 
     /**
      * Constructor for a PersistenceException.
+     *
      * If previous exception's previous exception is a PDOException, pull out
      * the database error codes, message, and hint from the PDOException.
      * Attempt to extract query and parameters from error message.
+     *
+     * @param string     $message  An exception message.
+     * @param integer    $code     An exception code.
+     * @param \Exception $previous A previous exception.
      */
     public function __construct($message = '', $code = 0, \Exception $previous = null)
     {

@@ -2,8 +2,16 @@
 
 namespace Pelagos\Component\MetadataGenerator;
 
+/**
+ * Class to test XMLValidator.
+ */
 class XMLValidatorTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * Test good metadata.
+     *
+     * @return void
+     */
     public function testGoodMetadata()
     {
         $validator = new XMLValidator;
@@ -15,7 +23,11 @@ class XMLValidatorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test known bad metadata.
+     *
      * @expectedException \Pelagos\Exception\InvalidXmlException
+     *
+     * @return void
      */
     public function testKnownBadMetadata()
     {
@@ -28,7 +40,11 @@ class XMLValidatorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test known unparseable metadata.
+     *
      * @expectedException \Pelagos\Exception\InvalidXmlException
+     *
+     * @return void
      */
     public function testKnownUnparsableMetadata()
     {
@@ -41,7 +57,11 @@ class XMLValidatorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test bone head binary.
+     *
      * @expectedException \Pelagos\Exception\InvalidXmlException
+     *
+     * @return void
      */
     public function testBoneheadBinary()
     {
