@@ -64,11 +64,16 @@ class EntityWebServiceTest extends \PHPUnit_Framework_TestCase
     {
         require_once __DIR__ . '/../../../helpers/TestUser.php';
 
+        $this->mockClassMetadata = \Mockery::mock('\Doctrine\ORM\Mapping\ClassMetadata');
+        $this->mockClassMetadata->shouldReceive('hasField')->andReturn(true);
+        $this->mockClassMetadata->shouldReceive('hasAssociation')->andReturn(true);
+
         $this->mockEntityRepository = \Mockery::mock('\Doctrine\ORM\EntityRepository');
 
         $this->mockEntityManager = \Mockery::mock('\Doctrine\ORM\EntityManager');
         $this->mockEntityManager->shouldReceive('persist');
         $this->mockEntityManager->shouldReceive('getRepository')->andReturn($this->mockEntityRepository);
+        $this->mockEntityManager->shouldReceive('getClassMetadata')->andReturn($this->mockClassMetadata);
 
         $mockPersistence = \Mockery::mock('alias:\Pelagos\Persistance');
         $mockPersistence->shouldReceive('createEntityManager')->andReturn($this->mockEntityManager);

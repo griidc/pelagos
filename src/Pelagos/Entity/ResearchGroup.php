@@ -33,9 +33,11 @@ class ResearchGroup extends Entity
             'setter' => 'setName',
         ),
         'fundingCycle' => array(
-            'type' => 'fundingCycle',
-            'getter' => 'getFundingCycles',
-            'setter' => 'setFundingCycles',
+            'type' => 'object',
+            'class' => 'Pelagos\Entity\FundingCycle',
+            'entity' => 'FundingCycle',
+            'setter' => 'setFundingCycle',
+            'getter' => 'getFundingCycle',
             'serialize' => false,
         ),
         'url' => array(
