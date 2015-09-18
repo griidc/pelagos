@@ -7,12 +7,26 @@
 
     <label for="fundingOrganization">Funding Organization:</label>
     <select required name="fundingOrganization" fundingOrganization="{{ResearchGroup.getFundingCycle.getFundingOrganization.getId}}">
-        <option value="">[Please Select a Funding Organization]</option>
+    <option value="">[Please Select a Funding Organization]</option>
+    {% for FundingOrganization in fundingOrganizations | sortBy("name") %}
+        <option value="{{FundingOrganization.getId}}" 
+        {{ (ResearchGroup.getFundingCycle.getFundingOrganization.getId == FundingOrganization.getId ? ' selected ' : '') }}
+        >{{FundingOrganization.getName}}</option>
+    {% endfor %}
     </select><br>
         
     <label for="fundingCycle">Funding Cycle:</label>
-    <select disabled required name="fundingCycle" fundingCycle="{{ResearchGroup.getFundingCycle.getId}}">
+    <select 
+    {{ (ResearchGroup.getFundingCycle.getId == '' ? ' disabled ' : '')  }}
+    required name="fundingCycle" fundingCycle="{{ResearchGroup.getFundingCycle.getId}}">
         <option value="">[Please Select a Funding Organization First]</option>
+        {% if (ResearchGroup) %}
+            {% for FundingCycle in ResearchGroup.getFundingCycle.getFundingOrganization.getFundingCycles | sortBy("name") %}
+                <option value="{{FundingCycle.getId}}" 
+                {{ (ResearchGroup.getFundingCycle.getId == FundingCycle.getId ? ' selected ' : '') }}
+                >{{FundingCycle.getName}}</option>
+            {% endfor %}
+        {% endif %}
     </select><br>
 
     <label for="url">Website:</label>

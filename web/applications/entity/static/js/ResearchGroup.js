@@ -3,8 +3,6 @@ $(document).ready(function()
     "use strict";
 
     var self = this;
-
-    addOptionsByEntity($(this).find("[name=\"fundingOrganization\"]"), "FundingOrganization");
     
     $(this).find("[name=\"fundingOrganization\"]").change(function () {
         var fundingCycle = $(self).find("[name=\"fundingCycle\"]");
@@ -24,9 +22,15 @@ $(document).ready(function()
         }
     });
     
-    if ($(this).find("[name=\"fundingOrganization\"]").attr("fundingOrganization") !== "") {
-        $(this).find("[name=\"fundingOrganization\"]").change();
-    }
+    // Set FundingCycle list back to match with the original funding organization
+    $(this).bind("reset", function() {
+        var fundingOrganization = $(this).find("[name=\"fundingOrganization\"]");
+        fundingOrganization.val(fundingOrganization.attr("fundingOrganization"))
+            .change()
+        var fundingCycle = $(self).find("[name=\"fundingCycle\"]");
+        fundingCycle.val(fundingCycle.attr("fundingCycle"))
+            .find("option[value=\"" + fundingCycle.val() + "\"]").attr("selected", true);
+    });
 });
 
 /**
@@ -62,6 +66,6 @@ function addOptionsByEntity(selectElement, entity, filter)
                 $("<option></option>").val(item.id).html(item.name)
             );
         });
-        selectElement.find("option[value=\"" + selectElement.attr(entity) + "\"]").attr("selected", true);
+        //selectElement.find("option[value=\"" + selectElement.attr(entity) + "\"]").attr("selected", true);
     });
 }
