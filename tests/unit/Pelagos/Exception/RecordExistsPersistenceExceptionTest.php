@@ -15,6 +15,10 @@ class RecordExistsPersistenceExceptionTest extends \PHPUnit_Framework_TestCase
      * Test that we can throw a RecordExistsPersistenceException.
      *
      * @expectedException \Pelagos\Exception\RecordExistsPersistenceException
+     *
+     * @throws RecordExistsPersistenceException Always.
+     *
+     * @return void
      */
     public function testThrowRecordExistsPersistenceException()
     {
@@ -23,37 +27,49 @@ class RecordExistsPersistenceExceptionTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test that we can catch a RecordExistsPersistenceException.
+     *
+     * @throws RecordExistsPersistenceException Always, but it's caught.
+     *
+     * @return void
      */
     public function testCatchRecordExistsPersistenceException()
     {
         try {
             throw new RecordExistsPersistenceException();
         } catch (RecordExistsPersistenceException $e) {
-            // do nothing but exception is caught
+            // Do nothing but exception is caught.
         }
     }
 
     /**
      * Test that we can catch a RecordExistsPersistenceException as an PersistenceException.
+     *
+     * @throws RecordExistsPersistenceException Always, but it's caught as a PersistenceException.
+     *
+     * @return void
      */
     public function testCatchPersistenceException()
     {
         try {
             throw new RecordExistsPersistenceException();
         } catch (PersistenceException $e) {
-            // do nothing but exception is caught
+            // Do nothing but exception is caught.
         }
     }
 
     /**
      * Test that we can catch a RecordExistsPersistenceException as an \Exception.
+     *
+     * @throws RecordExistsPersistenceException Always, but it's caught as an \Exception.
+     *
+     * @return void
      */
     public function testCatchException()
     {
         try {
             throw new RecordExistsPersistenceException();
         } catch (\Exception $e) {
-            // do nothing but exception is caught
+            // Do nothing but exception is caught.
         }
     }
 }

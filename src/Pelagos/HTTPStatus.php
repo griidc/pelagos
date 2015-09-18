@@ -7,20 +7,33 @@ namespace Pelagos;
  */
 class HTTPStatus implements \JsonSerializable
 {
-    /** @var int $code The HTTP response code. **/
+    /**
+     * The HTTP response code.
+     *
+     * @var integer $code
+     */
     protected $code;
 
-    /** @var string $message A message to send with the response. **/
+    /**
+     * A message to send with the response.
+     *
+     * @var string $message
+     */
     protected $message;
 
-    /** @var string $data A data package to send with the response. **/
+    /**
+     * A data package to send with the response.
+     *
+     * @var mixed $data
+     */
     protected $data;
 
     /**
      * Constructor for HTTPStatus.
      *
-     * @param int $code The HTTP response code.
-     * @param string $message A message to send with the response.
+     * @param integer $code    The HTTP response code.
+     * @param string  $message A message to send with the response.
+     * @param mixed   $data    A data package to send with the response.
      */
     public function __construct($code, $message = null, $data = null)
     {

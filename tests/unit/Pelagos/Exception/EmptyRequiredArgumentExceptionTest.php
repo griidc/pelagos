@@ -15,6 +15,10 @@ class EmptyRequiredArgumentExceptionTest extends \PHPUnit_Framework_TestCase
      * Test that we can throw a EmptyRequiredArgumentException.
      *
      * @expectedException \Pelagos\Exception\EmptyRequiredArgumentException
+     *
+     * @throws EmptyRequiredArgumentException Always.
+     *
+     * @return void
      */
     public function testThrowEmptyRequiredArgumentException()
     {
@@ -23,37 +27,49 @@ class EmptyRequiredArgumentExceptionTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test that we can catch a EmptyRequiredArgumentException.
+     *
+     * @throws EmptyRequiredArgumentException Always, but it is caught.
+     *
+     * @return void
      */
     public function testCatchEmptyRequiredArgumentException()
     {
         try {
             throw new EmptyRequiredArgumentException();
         } catch (EmptyRequiredArgumentException $e) {
-            // do nothing but exception is caught
+            // Do nothing but exception is caught.
         }
     }
 
     /**
      * Test that we can catch a EmptyRequiredArgumentException as an ArgumentException.
+     *
+     * @throws EmptyRequiredArgumentException Always, but it is caught as an ArgumentException.
+     *
+     * @return void
      */
     public function testCatchArgumentException()
     {
         try {
             throw new EmptyRequiredArgumentException();
         } catch (ArgumentException $e) {
-            // do nothing but exception is caught
+            // Do nothing but exception is caught.
         }
     }
 
     /**
      * Test that we can catch a EmptyRequiredArgumentException as an \Exception.
+     *
+     * @throws EmptyRequiredArgumentException Always, but it is caught as an \Exception.
+     *
+     * @return void
      */
     public function testCatchException()
     {
         try {
             throw new EmptyRequiredArgumentException();
         } catch (\Exception $e) {
-            // do nothing but exception is caught
+            // Do nothing but exception is caught.
         }
     }
 }

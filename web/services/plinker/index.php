@@ -65,7 +65,7 @@ $slim->map(
             return;
         }
 
-        // check for valid format of UDI
+        // Check for valid format of UDI.
         if (preg_match('/(?:Y1|R[1-9])\.x\d{3}\.\d{3}:\d{4}/', $udi) == 0) {
             $quit = true;
             $HTTPStatus = new \Pelagos\HTTPStatus(400, "Invalid UDI format");
@@ -76,7 +76,7 @@ $slim->map(
         }
 
         $doi = join('/', $doiArray);
-        // check for valid format of doi
+        // Check for valid format of doi.
         if (preg_match('/^10\..*\/.*$/', $doi) == 0) {
             $quit = true;
             $HTTPStatus = new \Pelagos\HTTPStatus(400, "Invalid doi format");
@@ -104,7 +104,7 @@ $slim->map(
             $slim->response->setBody($HTTPStatus->asJSON());
             return;
         }
-        // if successful
+        // If successful.
         $HTTPStatus = new \Pelagos\HTTPStatus(
             200,
             "A Link has been successfully created between dataset $udi and publication $doi."
@@ -131,7 +131,7 @@ $slim->map(
             return;
         }
 
-        // check for valid format of UDI
+        // Check for valid format of UDI.
         if (preg_match('/(?:Y1|R[1-9])\.x\d{3}\.\d{3}:\d{4}/', $udi) == 0) {
             $quit = true;
             $HTTPStatus = new \Pelagos\HTTPStatus(400, "Invalid UDI format");
@@ -142,7 +142,7 @@ $slim->map(
         }
 
         $doi = join('/', $doiArray);
-        // check for valid format of doi
+        // Check for valid format of doi.
         if (preg_match('/^10\..*\/.*$/', $doi) == 0) {
             $quit = true;
             $HTTPStatus = new \Pelagos\HTTPStatus(400, "Invalid doi format");
@@ -175,7 +175,7 @@ $slim->map(
             $slim->response->setBody($HTTPStatus->asJSON());
             return;
         }
-        // if successful
+        // If successful.
         $HTTPStatus = new \Pelagos\HTTPStatus(
             200,
             "The link between dataset $udi and publication $doi has been removed."
