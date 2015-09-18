@@ -150,7 +150,14 @@ class EntityService
     public function getBy($entityClass, array $criteria)
     {
         try {
-            $entities = $this->entityManager->getRepository('\Pelagos\Entity\\' . $entityClass)->findBy($criteria);
+            $fullyQualifiedEntityClass = '\Pelagos\Entity\\' . $entityClass;
+            $class = $this->entityManager->getClassMetadata($fullyQualifiedEntityClass);
+            foreach (array_keys($criteria) as $property) {
+                if (!$class->hasField($property) && !$class->hasAssociation($property)) {
+                    unset($criteria[$property]);
+                }
+            }
+            $entities = $this->entityManager->getRepository($fullyQualifiedEntityClass)->findBy($criteria);
         } catch (DBALException $e) {
             throw new PersistenceException($e->getMessage());
         }
