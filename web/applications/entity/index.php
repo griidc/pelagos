@@ -73,6 +73,7 @@ $app->get(
             'userLoggedIn' => ($comp->userIsLoggedIn()) ? 'true' : 'false',
         );
         $entityService = new EntityService($comp->getEntityManager());
+        $twigData['entityService'] = $entityService;
         if (isset($entityId)) {
             try {
                 $entity = $entityService->get($entityType, $entityId);
@@ -89,10 +90,7 @@ $app->get(
                 return;
             }
             $twigData[$entityType] = $entity;
-
         }
-        $fundingOrganizations = $entityService->getAll("FundingOrganization");        
-        $twigData["fundingOrganizations"] = $fundingOrganizations;
         $app->render($entityType . 'Land.html', $twigData);
     }
 );

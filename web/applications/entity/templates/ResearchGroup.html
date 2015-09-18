@@ -8,7 +8,7 @@
     <label for="fundingOrganization">Funding Organization:</label>
     <select required name="fundingOrganization" fundingOrganization="{{ResearchGroup.getFundingCycle.getFundingOrganization.getId}}">
     <option value="">[Please Select a Funding Organization]</option>
-    {% for FundingOrganization in fundingOrganizations | sortBy("name") %}
+    {% for FundingOrganization in entityService.getAll("FundingOrganization") | sortBy("name") %}
         <option value="{{FundingOrganization.getId}}" 
         {{ (ResearchGroup.getFundingCycle.getFundingOrganization.getId == FundingOrganization.getId ? ' selected ' : '') }}
         >{{FundingOrganization.getName}}</option>
