@@ -18,7 +18,7 @@ $(document).ready(function(){
             { "data": "modificationTimeStamp" },
             { "data": "modifier" },
             { "data": "description" },
-            { "data": "emailAddress" },
+            { "data": "emailAddress" }
         ],
         "headers": [
             "Id",
@@ -35,7 +35,7 @@ $(document).ready(function(){
             "Last Modified",
             "Modifier By",
             "Description",
-            "Email Address",
+            "Email Address"
         ],
         "order": [[ 11, "desc" ]],
         "columnDefs": [
@@ -43,7 +43,7 @@ $(document).ready(function(){
                 "targets": [ 0 ],
                 "visible": false,
                 "searchable": false
-            },
+            }
         ]
     });
 });
