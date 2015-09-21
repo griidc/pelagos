@@ -10,7 +10,7 @@ $GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini', true);
 // Check for local config file.
 if (file_exists('config.ini')) {
     // Load Common library from global share.
-    require_once($GLOBALS['config']['paths']['share'] . '/php/Common.php');
+    require_once $GLOBALS['config']['paths']['share'] . '/php/Common.php';
     // Merge local config with global config.
     $GLOBALS['config'] = configMerge($GLOBALS['config'], parse_ini_file('config.ini', true));
 }
