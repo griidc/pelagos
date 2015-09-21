@@ -13,7 +13,7 @@ if (array_key_exists('uid', $_GET) and $_GET['uid'] != '') {
             $photo = ldap_get_values_len($ldap, ldap_first_entry($ldap, $result), 'jpegPhoto');
         }
     }
-    header("Content-type: image/jpeg");
+    header('Content-type: image/jpeg');
     $num = 0;
     if (array_key_exists('num', $_GET) and $_GET['num'] != '' and intval($_GET['num'])) {
         $num = intval($_GET['num']);

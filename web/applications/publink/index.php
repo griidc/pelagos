@@ -52,11 +52,11 @@ $slim->get(
     '/GetLinksJSON(/)',
     function () use ($comp) {
         $inside = '';
-        require_once "lib/Publink/Storage.php";
+        require_once 'lib/Publink/Storage.php';
         $storage = new \Publink\Storage;
-        $linksArray = $storage->getAll("Publink");
+        $linksArray = $storage->getAll('Publink');
         foreach ($linksArray as $link) {
-            require_once "lib/Publink/ComponentResolver.php";
+            require_once 'lib/Publink/ComponentResolver.php';
             $componentResolver = new \Publink\ComponentResolver;
             list($fc, $proj) = $componentResolver->getFcAndProj($link['udi']);
             $inside[] = array(

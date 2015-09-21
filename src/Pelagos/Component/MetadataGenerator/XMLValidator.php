@@ -56,6 +56,6 @@ class XMLValidator
         if ($errors == 0) {
             return true;
         }
-        throw new InvalidXmlException("Invalid XML found by XMLValidator");
+        throw new InvalidXmlException('Invalid XML found by XMLValidator');
     }
 }

@@ -85,7 +85,7 @@ class Logger
             var_dump($msg);
             $output = ob_get_clean();
 
-            $outputFile = "./" . $this->fileName;
+            $outputFile = './' . $this->fileName;
 
             // If this is first time this run open and truncate.
             if ($this->firstTime) {

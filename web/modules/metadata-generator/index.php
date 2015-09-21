@@ -65,12 +65,12 @@ $app->get(
                 finishAllSuccessfulCases($trimUdi, $app, $metadataXml);
                 exit;
             } catch (InvalidXmlException $ex) {
-                header("status: 204");
-                header("HTTP/1.0 204 No Response");
+                header('status: 204');
+                header('HTTP/1.0 204 No Response');
                 exit;
             } catch (PersistenceException $ex) {
-                header("status: 500");
-                header("HTTP/1.0 505 Internal Server Error");
+                header('status: 500');
+                header('HTTP/1.0 505 Internal Server Error');
                 exit;
             } catch (NotFoundException $ex) {
                 // Case 2 Not Found Catch.
@@ -82,14 +82,14 @@ $app->get(
                     exit;
                 } catch (NotFoundException $ex) {
                     // Case 3 Not Found Catch.
-                    header("status: 404");
-                    header("HTTP/1.0 404 Not Found");
+                    header('status: 404');
+                    header('HTTP/1.0 404 Not Found');
                     exit;
                 }
             }
         } catch (PersistenceException $ex) {
-            header("status: 500");
-            header("HTTP/1.0 505 Internal Server Error");
+            header('status: 500');
+            header('HTTP/1.0 505 Internal Server Error');
             exit;
         }
         exit;

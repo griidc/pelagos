@@ -10,9 +10,9 @@ $slim = new \Slim\Slim(
     )
 );
 
-require_once "ldap.php";
-require_once "lib/PLinker/Storage.php";
-require_once "lib/PLinker/Publink.php";
+require_once 'ldap.php';
+require_once 'lib/PLinker/Storage.php';
+require_once 'lib/PLinker/Publink.php';
 
 $GLOBALS['quit'] = false;
 
@@ -63,7 +63,7 @@ $slim->map(
         // Check for valid format of UDI.
         if (preg_match('/(?:Y1|R[1-9])\.x\d{3}\.\d{3}:\d{4}/', $udi) == 0) {
             $GLOBALS['quit'] = true;
-            $HTTPStatus = new \Pelagos\HTTPStatus(400, "Invalid UDI format");
+            $HTTPStatus = new \Pelagos\HTTPStatus(400, 'Invalid UDI format');
             $slim->response->headers->set('Content-Type', 'application/json');
             $slim->response->status($HTTPStatus->getCode());
             $slim->response->setBody($HTTPStatus->asJSON());
@@ -74,7 +74,7 @@ $slim->map(
         // Check for valid format of doi.
         if (preg_match('/^10\..*\/.*$/', $doi) == 0) {
             $GLOBALS['quit'] = true;
-            $HTTPStatus = new \Pelagos\HTTPStatus(400, "Invalid doi format");
+            $HTTPStatus = new \Pelagos\HTTPStatus(400, 'Invalid doi format');
             $slim->response->headers->set('Content-Type', 'application/json');
             $slim->response->status($HTTPStatus->getCode());
             $slim->response->setBody($HTTPStatus->asJSON());
@@ -127,7 +127,7 @@ $slim->map(
         // Check for valid format of UDI.
         if (preg_match('/(?:Y1|R[1-9])\.x\d{3}\.\d{3}:\d{4}/', $udi) == 0) {
             $GLOBALS['quit'] = true;
-            $HTTPStatus = new \Pelagos\HTTPStatus(400, "Invalid UDI format");
+            $HTTPStatus = new \Pelagos\HTTPStatus(400, 'Invalid UDI format');
             $slim->response->headers->set('Content-Type', 'application/json');
             $slim->response->status($HTTPStatus->getCode());
             $slim->response->setBody($HTTPStatus->asJSON());
@@ -138,7 +138,7 @@ $slim->map(
         // Check for valid format of doi.
         if (preg_match('/^10\..*\/.*$/', $doi) == 0) {
             $GLOBALS['quit'] = true;
-            $HTTPStatus = new \Pelagos\HTTPStatus(400, "Invalid doi format");
+            $HTTPStatus = new \Pelagos\HTTPStatus(400, 'Invalid doi format');
             $slim->response->headers->set('Content-Type', 'application/json');
             $slim->response->status($HTTPStatus->getCode());
             $slim->response->setBody($HTTPStatus->asJSON());

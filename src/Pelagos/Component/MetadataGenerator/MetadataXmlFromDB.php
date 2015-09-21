@@ -30,20 +30,20 @@ class MetadataXmlFromDB
      */
     private $dbcon = null;
 
-    const REGISTRY_TABLE_NAME = "public.registry_view";
+    const REGISTRY_TABLE_NAME = 'public.registry_view';
     // Column names for gomri PGSQL registry table.
-    const REGISTRY_ID_COL = "registry_id";
-    const DATASET_UDI_COL = "dataset_udi";
+    const REGISTRY_ID_COL = 'registry_id';
+    const DATASET_UDI_COL = 'dataset_udi';
 
     // Column names for gomri PGSQL metadata table.
     // Registry id col is named the same in both tables.
-    const METADATA_XML_COL = "metadata_xml";
-    const GEOMETRY_COL = "geom";
+    const METADATA_XML_COL = 'metadata_xml';
+    const GEOMETRY_COL = 'geom';
     // This for converting geometry to readable form.
-    const GEOMETRY_COL_ST_ASTEXT = "st_astext";
-    const EXTENT_DESCRIPTION_COL = "extent_description";
+    const GEOMETRY_COL_ST_ASTEXT = 'st_astext';
+    const EXTENT_DESCRIPTION_COL = 'extent_description';
 
-    const METADATA_TABLE_NAME = "public.metadata";
+    const METADATA_TABLE_NAME = 'public.metadata';
 
     /**
      * Var to refence self class.
@@ -62,7 +62,7 @@ class MetadataXmlFromDB
     private function __construct()
     {
         require_once 'DBUtils.php';
-        $this->dbcon = openDB("GOMRI_RW");
+        $this->dbcon = openDB('GOMRI_RW');
         $this->dbcon->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
     }
 
@@ -114,8 +114,8 @@ class MetadataXmlFromDB
      */
     private function getMetadataXml($registryId)
     {
-        $query = $this->getMetadataSelectQueryString() . " WHERE " . self::REGISTRY_ID_COL . " = " .
-                           $this->wrapInSingleQuotes($registryId) . " LIMIT 1";
+        $query = $this->getMetadataSelectQueryString() . ' WHERE ' . self::REGISTRY_ID_COL . ' = ' .
+                           $this->wrapInSingleQuotes($registryId) . ' LIMIT 1';
         $statement = $this->dbcon->prepare($query);
         $metadataXml = null;
         try {
@@ -128,7 +128,7 @@ class MetadataXmlFromDB
                 }
                 // Else it is false - not found.
                 throw new NotFoundException(
-                    "No " . self::METADATA_TABLE_NAME . "  found with registry ID " .
+                    'No ' . self::METADATA_TABLE_NAME . '  found with registry ID ' .
                     $registryId
                 );
             }
@@ -153,8 +153,8 @@ class MetadataXmlFromDB
      */
     private function getMetadataSelectQueryString()
     {
-        return "SELECT " . self::REGISTRY_ID_COL . ", " .
-        self::METADATA_XML_COL . " FROM " . self::METADATA_TABLE_NAME . " ";
+        return 'SELECT ' . self::REGISTRY_ID_COL . ', ' .
+        self::METADATA_XML_COL . ' FROM ' . self::METADATA_TABLE_NAME . ' ';
     }
 
 
@@ -170,8 +170,8 @@ class MetadataXmlFromDB
      */
     private function getRegistryIdForDatasetUdi($datasetUdi)
     {
-        $query = $this->getRegistryAndUdiSelectQueryString() . " WHERE " . self::DATASET_UDI_COL . " = " .
-                $this->wrapInSingleQuotes($datasetUdi) . " LIMIT 1";
+        $query = $this->getRegistryAndUdiSelectQueryString() . ' WHERE ' . self::DATASET_UDI_COL . ' = ' .
+                $this->wrapInSingleQuotes($datasetUdi) . ' LIMIT 1';
 
         $statement = $this->dbcon->prepare($query);
         $registryId = null;
@@ -185,8 +185,8 @@ class MetadataXmlFromDB
                 }
                 // Else it is false - not found.
                 throw new NotFoundException(
-                    "No " . self::REGISTRY_TABLE_NAME .
-                    " record found for dataset UDI: " . $datasetUdi
+                    'No ' . self::REGISTRY_TABLE_NAME .
+                    ' record found for dataset UDI: ' . $datasetUdi
                 );
             }
         } catch (\PDOException $pdoEx) {
@@ -210,9 +210,9 @@ class MetadataXmlFromDB
      */
     private function getRegistryAndUdiSelectQueryString()
     {
-        return "SELECT " . self::REGISTRY_ID_COL . ", " .
+        return 'SELECT ' . self::REGISTRY_ID_COL . ', ' .
         self::DATASET_UDI_COL .
-        " FROM " . self::REGISTRY_TABLE_NAME . " ";
+        ' FROM ' . self::REGISTRY_TABLE_NAME . ' ';
     }
 
     /**
@@ -224,7 +224,7 @@ class MetadataXmlFromDB
      */
     private function compressXml($string)
     {
-        $NA = "N/A";
+        $NA = 'N/A';
         $compressedXml = $NA;
         if ($string != null) {
             $compressedXml = preg_replace('/\s+/', ' ', $string);
