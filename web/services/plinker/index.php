@@ -21,7 +21,7 @@ $slim->get(
     '/',
     function () use ($comp) {
         $GLOBALS['pelagos']['title'] = 'Publink Service';
-        print 'This service creates associations between datasets and publications.';
+        echo 'This service creates associations between datasets and publications.';
     }
 );
 
