@@ -32,7 +32,6 @@ var table;
         .click(function () {
             var id = table.row(".selected").data().id;
             var url = pelagosBasePath + "/applications/entity/" + entityType + "/" + id;
-            debugger;
             window.open(url, "_blank");
         });
 
