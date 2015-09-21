@@ -205,8 +205,8 @@
             if (json.code === returnCode) {
                 title = "Success!";
                 message = json.message;
-                $(form).fillForm(json.data);
                 $(form).trigger("saved");
+                $(form).fillForm(json.data);
             } else {
                 title = "Error!";
                 message = "Something went wrong!<br>Didn't receive the correct success message!";
