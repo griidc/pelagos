@@ -40,7 +40,7 @@ class XMLValidator
         if (!$doc->schemaValidate($schema)) {
             $errors = libxml_get_errors();
             libxml_clear_errors();
-            for ($i = 0; $i < sizeof($errors); $i++) {
+            for ($i = 0; $i < count($errors); $i++) {
                 switch ($errors[$i]->level) {
                     case LIBXML_ERR_WARNING:
                         break;
