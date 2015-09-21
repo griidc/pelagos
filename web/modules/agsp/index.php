@@ -57,7 +57,7 @@ $app->get(
         $fsrow = $stmt->fetchAll();
         $fsrow = $fsrow[0];
         $stash['avail_storage_space'] = bytes2filesize(
-            $GLOBALS['config']['misc']['system_capacity'] - $fsrow["total_file_size"],
+            ($GLOBALS['config']['misc']['system_capacity'] - $fsrow["total_file_size"]),
             1
         );
         $stash['used_storage_space'] = bytes2filesize($fsrow["total_file_size"], 1);
