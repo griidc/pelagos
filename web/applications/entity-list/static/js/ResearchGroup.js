@@ -2,7 +2,7 @@ $(document).ready(function(){
     "use strict";
 
     $(".entityTable").pelagosDataTable({
-        "ajax": pelagosBasePath + "/services/entity/ResearchGroup?properties=name,url,phoneNumber,deliveryPoint,city,administrativeArea,postalCode,creationTimeStamp,creator,modificationTimeStamp,modifier,description,emailAddress"
+        "ajax": pelagosBasePath + "/services/entity/ResearchGroup?properties=name,url,phoneNumber,deliveryPoint,city,administrativeArea,postalCode,country,creationTimeStamp,creator,modificationTimeStamp,modifier,description,emailAddress",
         "columns": [
             { "data": "name" },
             { "data": "url" },
@@ -15,7 +15,7 @@ $(document).ready(function(){
             { "data": "creationTimeStamp" },
             { "data": "creator" },
             { "data": "modificationTimeStamp" },
-            { "data": "modifier" }
+            { "data": "modifier" },
             { "data": "description" },
             { "data": "emailAddress" },
         ],
@@ -31,7 +31,7 @@ $(document).ready(function(){
             "Created On",
             "Creator",
             "Last Modified",
-            "Modifier By"
+            "Modifier By",
             "Description",
             "Email Address",
         ]
