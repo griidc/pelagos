@@ -34,6 +34,7 @@ $(document).ready(function(){
             "Modifier By",
             "Description",
             "Email Address",
-        ]
+        ],
+        "order": [[ 10, "desc" ]]
     });
 });
