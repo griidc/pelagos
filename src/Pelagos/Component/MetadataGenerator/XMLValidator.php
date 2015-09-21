@@ -27,7 +27,7 @@ class XMLValidator
     {
         $errors = 0;
 
-        // create domdoc element and attempt to populate with supplied XML
+        // Create domdoc element and attempt to populate with supplied XML.
         libxml_use_internal_errors(true);
         $doc = new \DomDocument('1.0', 'UTF-8');
         $tmpp = @$doc->loadXML($raw_xml);
@@ -35,7 +35,7 @@ class XMLValidator
             $errors++;
         }
 
-        // attempt to validate XML per ISO-19115-2
+        // Attempt to validate XML per ISO-19115-2.
         $schema = 'http://www.ngdc.noaa.gov/metadata/published/xsd/schema.xsd';
         if (!$doc->schemaValidate($schema)) {
             $errors = libxml_get_errors();
