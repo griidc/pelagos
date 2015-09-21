@@ -8,7 +8,7 @@ if (array_key_exists('uid', $_GET) and $_GET['uid'] != '') {
     $entries = ldap_get_entries($ldap, $result);
     $photo = null;
     if ($entries['count'] > 0) {
-        $attrs =  ldap_get_attributes($ldap, ldap_first_entry($ldap, $result));
+        $attrs = ldap_get_attributes($ldap, ldap_first_entry($ldap, $result));
         if ($attrs['count'] > 0) {
             $photo = ldap_get_values_len($ldap, ldap_first_entry($ldap, $result), 'jpegPhoto');
         }

@@ -108,7 +108,7 @@ class Component
         $urlArray = $this->getUrlArray($js, $type);
         foreach ($urlArray as $jsUrl) {
             if (function_exists('drupal_add_js')) {
-                drupal_add_js($jsUrl, array('type'=>$type));
+                drupal_add_js($jsUrl, array('type' => $type));
             }
         }
     }
@@ -130,7 +130,7 @@ class Component
     {
         $urlArray = $this->getUrlArray($css);
         foreach ($urlArray as $cssUrl) {
-            drupal_add_css($cssUrl, array('type'=>'external'));
+            drupal_add_css($cssUrl, array('type' => 'external'));
         }
     }
 

@@ -112,7 +112,7 @@ $app->get(
 
         $gomriDBH = openDB('GOMRI_RO');
 
-        for ($i=0; $i<count($projects); $i++) {
+        for ($i = 0; $i < count($projects); $i++) {
             $pi = getPeopleDetails($risDBH, array('projectId=' . $projects[$i]['ID'],'roleId=1'));
             $projects[$i]['PI'] = $pi[0];
             $projects[$i]['identified_count'] = count_identified_datasets(
