@@ -2,17 +2,15 @@ $(document).ready(function()
 {
     "use strict";
 
-    var self = this;
-    
-    $(this).find("[name=\"fundingOrganization\"]").change(function () {
-        var fundingCycle = $(self).find("[name=\"fundingCycle\"]");
-        
+    $("[name=\"fundingOrganization\"]").change(function () {
+        var fundingCycle = $(this).nextAll("[name=\"fundingCycle\"]");
+
         fundingCycle.removeAttr("disabled")
             .find("option").remove();
-            
+
         if ($(this).val() === "") {
-            fundingCycle.attr("disabled","disabled")
-            .append("<option value=\"\">[Please Select a Funding Organization First]</option>");;
+            fundingCycle.attr("disabled", "disabled")
+            .append("<option value=\"\">[Please Select a Funding Organization First]</option>");
         } else {
             fundingCycle.append("<option value=\"\">[Please Select a Funding Cycle]</option>");
             addOptionsByEntity(
@@ -21,15 +19,24 @@ $(document).ready(function()
             );
         }
     });
-    
+
     // Set FundingCycle list back to match with the original funding organization
-    $(this).bind("reset", function() {
+    $("form").on("reset", function() {
         var fundingOrganization = $(this).find("[name=\"fundingOrganization\"]");
         fundingOrganization.val(fundingOrganization.attr("fundingOrganization"))
-            .change()
-        var fundingCycle = $(self).find("[name=\"fundingCycle\"]");
+            .change();
+        var fundingCycle = $(this).find("[name=\"fundingCycle\"]");
         fundingCycle.val(fundingCycle.attr("fundingCycle"))
             .find("option[value=\"" + fundingCycle.val() + "\"]").attr("selected", true);
+    });
+
+    //debugger;
+
+    $("form").on("saved", function() {
+        var fundingOrganization = $(this).find("[name=\"fundingOrganization\"]");
+        fundingOrganization.attr("fundingOrganization", fundingOrganization.val());
+        var fundingCycle = $(this).find("[name=\"fundingCycle\"]");
+        fundingCycle.attr("fundingCycle", fundingCycle.val());
     });
 });
 

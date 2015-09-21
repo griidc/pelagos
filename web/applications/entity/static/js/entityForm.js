@@ -206,6 +206,7 @@
                 title = "Success!";
                 message = json.message;
                 $(form).fillForm(json.data);
+                $(form).trigger("saved");
             } else {
                 title = "Error!";
                 message = "Something went wrong!<br>Didn't receive the correct success message!";
