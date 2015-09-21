@@ -6,7 +6,7 @@
     <input type="text" name="name" size="100" value="{{ResearchGroup.getName}}" required><br>
 
     <label for="fundingOrganization">Funding Organization:</label>
-    <select required name="fundingOrganization" fundingOrganization="{{ResearchGroup.getFundingCycle.getFundingOrganization.getId}}">
+    <select required name="fundingCycle.fundingOrganization" fundingOrganization="{{ResearchGroup.getFundingCycle.getFundingOrganization.getId}}">
     <option value="">[Please Select a Funding Organization]</option>
     {% for FundingOrganization in entityService.getAll("FundingOrganization") | sortBy("name") %}
         <option value="{{FundingOrganization.getId}}" 

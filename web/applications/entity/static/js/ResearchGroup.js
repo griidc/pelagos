@@ -2,7 +2,7 @@ $(document).ready(function()
 {
     "use strict";
 
-    $("[name=\"fundingOrganization\"]").change(function () {
+    $("[name=\"fundingCycle.fundingOrganization\"]").change(function () {
         var fundingCycle = $(this).nextAll("[name=\"fundingCycle\"]");
 
         fundingCycle.removeAttr("disabled")
@@ -22,7 +22,7 @@ $(document).ready(function()
 
     // Set FundingCycle list back to match with the original funding organization
     $("form").on("reset", function() {
-        var fundingOrganization = $(this).find("[name=\"fundingOrganization\"]");
+        var fundingOrganization = $(this).find("[name=\"fundingCycle.fundingOrganization\"]");
         fundingOrganization.val(fundingOrganization.attr("fundingOrganization"))
             .change();
         var fundingCycle = $(this).find("[name=\"fundingCycle\"]");
@@ -30,10 +30,9 @@ $(document).ready(function()
             .find("option[value=\"" + fundingCycle.val() + "\"]").attr("selected", true);
     });
 
-    //debugger;
-
+    // Set the attributes of the reset values.
     $("form").on("saved", function() {
-        var fundingOrganization = $(this).find("[name=\"fundingOrganization\"]");
+        var fundingOrganization = $(this).find("[name=\"fundingCycle.fundingOrganization\"]");
         fundingOrganization.attr("fundingOrganization", fundingOrganization.val());
         var fundingCycle = $(this).find("[name=\"fundingCycle\"]");
         fundingCycle.attr("fundingCycle", fundingCycle.val());
