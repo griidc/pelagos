@@ -13,7 +13,7 @@ use \Symfony\Component\Validator\Constraints as Assert;
 /**
  * Class to represent research groups.
  *
- * @ Assert\UniqueEntity(
+ * @Assert\UniqueEntity(
  *     fields={"name", "fundingCycle"},
  *     errorPath="name",
  *     message="A Research Group with this name already exists"
