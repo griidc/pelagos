@@ -120,7 +120,8 @@ class MetadataXmlFromDB
         $metadataXml = null;
         try {
             if ($statement->execute()) {
-                if ($row = $statement->fetch(\PDO::FETCH_ASSOC)) {
+                $row = $statement->fetch(\PDO::FETCH_ASSOC);
+                if ($row !== false) {
                     // If true.
                     $metadataXml = $row[self::METADATA_XML_COL];
                     return $metadataXml;
@@ -176,7 +177,8 @@ class MetadataXmlFromDB
         $registryId = null;
         try {
             if ($statement->execute()) {
-                if ($row = $statement->fetch(\PDO::FETCH_ASSOC)) {
+                $row = $statement->fetch(\PDO::FETCH_ASSOC);
+                if ($row !== false) {
                     // If true.
                     $registryId = $row[self::REGISTRY_ID_COL];
                     return $registryId;
@@ -225,7 +227,7 @@ class MetadataXmlFromDB
         $NA = "N/A";
         $compressedXml = $NA;
         if ($string != null) {
-            $compressedXml = $ro = preg_replace('/\s+/', ' ', $string);
+            $compressedXml = preg_replace('/\s+/', ' ', $string);
         }
         return $compressedXml;
     }
