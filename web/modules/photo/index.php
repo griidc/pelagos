@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__.'/../../../vendor/autoload.php';
+require_once __DIR__ . '/../../../vendor/autoload.php';
 
 if (array_key_exists('uid', $_GET) and $_GET['uid'] != '') {
     $ldap = ldap_connect('ldap://triton.tamucc.edu');

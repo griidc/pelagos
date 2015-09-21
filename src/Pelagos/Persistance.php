@@ -22,7 +22,7 @@ class Persistance
     {
         // Create Doctrine metadata configuration from mappings defined in XML.
         $doctrineConfig = \Doctrine\ORM\Tools\Setup::createXMLMetadataConfiguration(
-            array(__DIR__.'/../../config/doctrine'),
+            array(__DIR__ . '/../../config/doctrine'),
             true
         );
 

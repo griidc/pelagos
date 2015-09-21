@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__.'/../../../vendor/autoload.php';
+require_once __DIR__ . '/../../../vendor/autoload.php';
 
 $GLOBALS['pelagos']['title'] = 'Augmenting GoMRI Summary Page';
 
@@ -10,7 +10,7 @@ $GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini', true);
 // Check for local config file.
 if (file_exists('config.ini')) {
     // Load Common library from global share.
-    require_once($GLOBALS['config']['paths']['share'].'/php/Common.php');
+    require_once($GLOBALS['config']['paths']['share'] . '/php/Common.php');
     // Merge local config with global config.
     $GLOBALS['config'] = configMerge($GLOBALS['config'], parse_ini_file('config.ini', true));
 }
@@ -113,17 +113,17 @@ $app->get(
         $gomriDBH = openDB('GOMRI_RO');
 
         for ($i=0; $i<count($projects); $i++) {
-            $pi = getPeopleDetails($risDBH, array('projectId='.$projects[$i]['ID'],'roleId=1'));
+            $pi = getPeopleDetails($risDBH, array('projectId=' . $projects[$i]['ID'],'roleId=1'));
             $projects[$i]['PI'] = $pi[0];
             $projects[$i]['identified_count'] = count_identified_datasets(
                 $gomriDBH,
-                array('status>0','projectid='.$projects[$i]['ID'])
+                array('status>0','projectid=' . $projects[$i]['ID'])
             );
             $projects[$i]['registered_count'] = count_registered_datasets(
                 $gomriDBH,
-                array('projectid='.$projects[$i]['ID'])
+                array('projectid=' . $projects[$i]['ID'])
             );
-            $projects[$i]['tree_node_id'] = $funds[0]['Abbr'] .  '/' .
+            $projects[$i]['tree_node_id'] = $funds[0]['Abbr'] . '/' .
                 (($fundId == 7 and array_key_exists('Abbr', $projects[$i])) ?
                     $projects[$i]['Abbr'] : $projects[$i]['ID']);
         }

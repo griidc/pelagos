@@ -4,7 +4,7 @@ require_once 'lib/constants.php';
 require_once 'lib/account.php';
 require_once 'config.php';
 
-$GLOBALS['LDAP'] = ldap_connect('ldap://'.LDAP_HOST);
+$GLOBALS['LDAP'] = ldap_connect('ldap://' . LDAP_HOST);
 
 // Attempt to bind to LDAP.
 if (!ldap_bind($GLOBALS['LDAP'], LDAP_BIND_DN, LDAP_BIND_PW)) {
