@@ -268,8 +268,7 @@ class Component
      */
     public function userIsLoggedIn()
     {
-        global $user;
-        if (isset($user->name) and !empty($user->name)) {
+        if (isset($GLOBALS['user']->name) and !empty($GLOBALS['user']->name)) {
             return true;
         }
         return false;
@@ -284,9 +283,8 @@ class Component
      */
     public function getLoggedInUser()
     {
-        global $user;
-        if (isset($user->name) and !empty($user->name)) {
-            return $user->name;
+        if (isset($GLOBALS['user']->name) and !empty($GLOBALS['user']->name)) {
+            return $GLOBALS['user']->name;
         }
         throw new \Exception('No user is logged in');
     }

@@ -14,8 +14,7 @@ require_once "ldap.php";
 require_once "lib/PLinker/Storage.php";
 require_once "lib/PLinker/Publink.php";
 
-global $quit;
-$quit = false;
+$GLOBALS['quit'] = false;
 
 $slim->get(
     '/',
@@ -28,8 +27,7 @@ $slim->get(
 $slim->map(
     '/',
     function () use ($comp, $slim) {
-        global $quit;
-        $quit = true;
+        $GLOBALS['quit'] = true;
         $HTTPStatus = new \Pelagos\HTTPStatus(400, 'No parameters provided');
         $slim->response->headers->set('Content-Type', 'application/json');
         $slim->response->status($HTTPStatus->getCode());
@@ -41,8 +39,7 @@ $slim->map(
 $slim->map(
     '/:udi(/)',
     function ($udi) use ($comp, $slim) {
-        global $quit;
-        $quit = true;
+        $GLOBALS['quit'] = true;
         $HTTPStatus = new \Pelagos\HTTPStatus(400, 'No DOI provided');
         $slim->response->headers->set('Content-Type', 'application/json');
         $slim->response->status($HTTPStatus->getCode());
@@ -54,10 +51,8 @@ $slim->map(
 $slim->map(
     '/:udi/:doi+',
     function ($udi, $doiArray) use ($comp, $slim) {
-        global $user;
-        global $quit;
-        if (!isset($user->name)) {
-            $quit = true;
+        if (!isset($GLOBALS['user']->name)) {
+            $GLOBALS['quit'] = true;
             $HTTPStatus = new \Pelagos\HTTPStatus(401, 'Login Required to use this feature.');
             $slim->response->headers->set('Content-Type', 'application/json');
             $slim->response->status($HTTPStatus->getCode());
@@ -67,7 +62,7 @@ $slim->map(
 
         // Check for valid format of UDI.
         if (preg_match('/(?:Y1|R[1-9])\.x\d{3}\.\d{3}:\d{4}/', $udi) == 0) {
-            $quit = true;
+            $GLOBALS['quit'] = true;
             $HTTPStatus = new \Pelagos\HTTPStatus(400, "Invalid UDI format");
             $slim->response->headers->set('Content-Type', 'application/json');
             $slim->response->status($HTTPStatus->getCode());
@@ -78,7 +73,7 @@ $slim->map(
         $doi = join('/', $doiArray);
         // Check for valid format of doi.
         if (preg_match('/^10\..*\/.*$/', $doi) == 0) {
-            $quit = true;
+            $GLOBALS['quit'] = true;
             $HTTPStatus = new \Pelagos\HTTPStatus(400, "Invalid doi format");
             $slim->response->headers->set('Content-Type', 'application/json');
             $slim->response->status($HTTPStatus->getCode());
@@ -88,9 +83,9 @@ $slim->map(
 
         $publink = new \PLinker\Publink;
         try {
-            $publink->createLink($udi, $doi, $user->name);
+            $publink->createLink($udi, $doi, $GLOBALS['user']->name);
         } catch (\Exception $ee) {
-            $quit = true;
+            $GLOBALS['quit'] = true;
             $code = 0;
             if ($ee->getMessage() == 'Record Does not exist in publication table') {
                 $code = 417;
@@ -113,17 +108,15 @@ $slim->map(
         $slim->response->status($HTTPStatus->getCode());
         $slim->response->setBody($HTTPStatus->asJSON());
 
-        $quit = true;
+        $GLOBALS['quit'] = true;
     }
 )->via('LINK');
 
 $slim->map(
     '/:udi/:doi+',
     function ($udi, $doiArray) use ($comp, $slim) {
-        global $user;
-        global $quit;
-        if (!isset($user->name)) {
-            $quit = true;
+        if (!isset($GLOBALS['user']->name)) {
+            $GLOBALS['quit'] = true;
             $HTTPStatus = new \Pelagos\HTTPStatus(401, 'Login Required to use this feature.');
             $slim->response->headers->set('Content-Type', 'application/json');
             $slim->response->status($HTTPStatus->getCode());
@@ -133,7 +126,7 @@ $slim->map(
 
         // Check for valid format of UDI.
         if (preg_match('/(?:Y1|R[1-9])\.x\d{3}\.\d{3}:\d{4}/', $udi) == 0) {
-            $quit = true;
+            $GLOBALS['quit'] = true;
             $HTTPStatus = new \Pelagos\HTTPStatus(400, "Invalid UDI format");
             $slim->response->headers->set('Content-Type', 'application/json');
             $slim->response->status($HTTPStatus->getCode());
@@ -144,7 +137,7 @@ $slim->map(
         $doi = join('/', $doiArray);
         // Check for valid format of doi.
         if (preg_match('/^10\..*\/.*$/', $doi) == 0) {
-            $quit = true;
+            $GLOBALS['quit'] = true;
             $HTTPStatus = new \Pelagos\HTTPStatus(400, "Invalid doi format");
             $slim->response->headers->set('Content-Type', 'application/json');
             $slim->response->status($HTTPStatus->getCode());
@@ -154,9 +147,9 @@ $slim->map(
 
         $publink = new \PLinker\Publink;
         try {
-            $publink->removeLink($udi, $doi, $user->name);
+            $publink->removeLink($udi, $doi, $GLOBALS['user']->name);
         } catch (\PDOException $ee) {
-            $quit = true;
+            $GLOBALS['quit'] = true;
             $code = 500;
             $HTTPStatus = new \Pelagos\HTTPStatus($code, $ee->getMessage());
             $slim->response->headers->set('Content-Type', 'application/json');
@@ -164,7 +157,7 @@ $slim->map(
             $slim->response->setBody($HTTPStatus->asJSON());
             return;
         } catch (\Exception $ee) {
-            $quit = true;
+            $GLOBALS['quit'] = true;
             $code = 0;
             if ($ee->getMessage() == 'A link between the given doi and UDI does not exist.') {
                 $code = 417;
@@ -184,12 +177,12 @@ $slim->map(
         $slim->response->status($HTTPStatus->getCode());
         $slim->response->setBody($HTTPStatus->asJSON());
 
-        $quit = true;
+        $GLOBALS['quit'] = true;
     }
 )->via('DELETE');
 
 $slim->run();
 
-if ($quit) {
+if ($GLOBALS['quit']) {
     $comp->quit();
 }

@@ -10,8 +10,7 @@ $slim = new \Slim\Slim(
     )
 );
 
-global $quit;
-$quit = false;
+$GLOBALS['quit'] = false;
 
 $slim->get(
     '/',
@@ -52,7 +51,6 @@ $slim->get(
 $slim->get(
     '/GetLinksJSON(/)',
     function () use ($comp) {
-        global $quit;
         $inside = '';
         require_once "lib/Publink/Storage.php";
         $storage = new \Publink\Storage;
@@ -72,12 +70,12 @@ $slim->get(
         }
         $data['aaData'] = $inside;
         echo json_encode($data);
-        $quit = true;
+        $GLOBALS['quit'] = true;
     }
 );
 
 $slim->run();
 
-if ($quit) {
+if ($GLOBALS['quit']) {
     $comp->quit();
 }
