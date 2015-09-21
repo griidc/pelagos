@@ -86,9 +86,9 @@ $slim->map(
             return;
         }
 
-        $Publink = new \PLinker\Publink;
+        $publink = new \PLinker\Publink;
         try {
-            $Publink->createLink($udi, $doi, $user->name);
+            $publink->createLink($udi, $doi, $user->name);
         } catch (\Exception $ee) {
             $quit = true;
             $code = 0;
@@ -152,9 +152,9 @@ $slim->map(
             return;
         }
 
-        $Publink = new \PLinker\Publink;
+        $publink = new \PLinker\Publink;
         try {
-            $Publink->removeLink($udi, $doi, $user->name);
+            $publink->removeLink($udi, $doi, $user->name);
         } catch (\PDOException $ee) {
             $quit = true;
             $code = 500;

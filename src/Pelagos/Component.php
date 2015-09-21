@@ -105,10 +105,10 @@ class Component
      */
     public function addJS($js, $type = 'external')
     {
-        $url_array = $this->getUrlArray($js, $type);
-        foreach ($url_array as $js_url) {
+        $urlArray = $this->getUrlArray($js, $type);
+        foreach ($urlArray as $jsUrl) {
             if (function_exists('drupal_add_js')) {
-                drupal_add_js($js_url, array('type'=>$type));
+                drupal_add_js($jsUrl, array('type'=>$type));
             }
         }
     }
@@ -128,9 +128,9 @@ class Component
      */
     public function addCSS($css)
     {
-        $url_array = $this->getUrlArray($css);
-        foreach ($url_array as $css_url) {
-            drupal_add_css($css_url, array('type'=>'external'));
+        $urlArray = $this->getUrlArray($css);
+        foreach ($urlArray as $cssUrl) {
+            drupal_add_css($cssUrl, array('type'=>'external'));
         }
     }
 
@@ -211,13 +211,13 @@ class Component
      */
     private function getUrlArray($assets, $type = 'external')
     {
-        $url_array = array();
+        $urlArray = array();
         if (is_array($assets)) {
-            $asset_array = $assets;
+            $assetArray = $assets;
         } else {
-            $asset_array = array($assets);
+            $assetArray = array($assets);
         }
-        foreach ($asset_array as $asset) {
+        foreach ($assetArray as $asset) {
             if ($type == 'inline' or self::isFullUrl($asset)) {
                 $url = $asset;
             } elseif (preg_match('/^\//', $asset)) {
@@ -225,9 +225,9 @@ class Component
             } else {
                 $url = $this->path . "/$asset";
             }
-            array_push($url_array, $url);
+            array_push($urlArray, $url);
         }
-        return $url_array;
+        return $urlArray;
     }
 
     /**

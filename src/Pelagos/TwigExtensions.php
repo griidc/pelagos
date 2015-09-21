@@ -82,13 +82,13 @@ class TwigExtensions extends \Twig_Extension
     /**
      * Return that status title that corresponds to the given status type.
      *
-     * @param string $status_type The status type.
+     * @param string $statusType The status type.
      *
      * @return string The status title.
      */
-    public function statusToTitle($status_type)
+    public function statusToTitle($statusType)
     {
-        return $GLOBALS['config']['status_titles'][$status_type];
+        return $GLOBALS['config']['status_titles'][$statusType];
     }
 
     /**

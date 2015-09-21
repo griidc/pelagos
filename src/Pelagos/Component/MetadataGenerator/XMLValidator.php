@@ -17,20 +17,20 @@ class XMLValidator
     /**
      * This method validates a string of XML.
      *
-     * @param string $raw_xml This is XML as text.
+     * @param string $rawXml This is XML as text.
      *
      * @return bool In the event of success.
      *
      * @throws InvalidXmlException If validation fails.
      */
-    public function validate($raw_xml)
+    public function validate($rawXml)
     {
         $errors = 0;
 
         // Create domdoc element and attempt to populate with supplied XML.
         libxml_use_internal_errors(true);
         $doc = new \DomDocument('1.0', 'UTF-8');
-        $tmpp = @$doc->loadXML($raw_xml);
+        $tmpp = @$doc->loadXML($rawXml);
         if (!$tmpp) {
             $errors++;
         }

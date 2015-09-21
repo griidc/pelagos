@@ -105,8 +105,8 @@ class Publication
             );
             $sth->bindparam(':doi', $this->doi);
             $sth->bindparam(':citation', $curlResponse);
-            $pull_date = date('c');
-            $sth->bindparam(':pull_date', $pull_date);
+            $pullDate = date('c');
+            $sth->bindparam(':pull_date', $pullDate);
             $result = $sth->execute();
             if (!$result) {
                 return new HTTPStatus(500, $sth->errorInfo()[2]);
@@ -119,18 +119,18 @@ class Publication
             $sth->bindparam(':doi', $this->doi);
             $sth->bindparam(':doi2', $this->doi);
             $sth->bindparam(':citation', $curlResponse);
-            $pull_date = date('c');
-            $sth->bindparam(':pull_date', $pull_date);
+            $pullDate = date('c');
+            $sth->bindparam(':pull_date', $pullDate);
             $result = $sth->execute();
             if (!$result) {
                 return new HTTPStatus(500, $sth->errorInfo()[2]);
             }
         }
-        $status_message = null;
+        $statusMessage = null;
         if (array_key_exists($curlInfo['http_code'], $statusCodes)) {
-            $status_message = $statusCodes[$curlInfo['http_code']];
+            $statusMessage = $statusCodes[$curlInfo['http_code']];
         }
-        return new HTTPStatus($curlInfo['http_code'], $status_message);
+        return new HTTPStatus($curlInfo['http_code'], $statusMessage);
     }
 
     /**
