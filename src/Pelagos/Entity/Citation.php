@@ -74,7 +74,7 @@ class Citation
      *
      * @return void
      */
-    public function setTimeStamp(\DateTime $timestamp)
+    public function setTimeStamp(\DateTime $timestamp = null)
     {
         if ($timestamp === null) {
             $this->timestamp = new \DateTime();
