@@ -154,7 +154,7 @@
                 Form.find("a[name=\"" + name + "\"]").attr("href", value).html(value);
                 var selector = Form.find("input,textarea,select").filter("[name=\"" + name + "\"]");
                 // Set extra property of name for reset purposes.
-                if (Parent == name) {
+                if (Parent === name) {
                     var childName = name.split(".");
                     childName = childName[childName.length - 1];
                     selector.attr(childName, value);
