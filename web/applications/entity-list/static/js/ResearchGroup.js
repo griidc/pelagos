@@ -23,7 +23,7 @@ $(document).ready(function(){
             "Created By",
             "Modified By"
         ],
-        "order": [[ 4, "desc" ]],
+        "order": [[ 5, "desc" ]],
         "columnDefs": [
             {
                 "targets": [ 0 ],
