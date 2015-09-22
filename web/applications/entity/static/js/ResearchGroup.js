@@ -2,9 +2,8 @@ $(document).ready(function()
 {
     "use strict";
 
-    $("[name=\"fundingCycle.fundingOrganization\"]").change(function () {
-        var fundingCycle = $(this).nextAll("[name=\"fundingCycle\"]");
-
+    $("[fundingOrganization]").change(function () {
+        var fundingCycle = $(this).nextAll("[fundingCycle]");
         fundingCycle.removeAttr("disabled")
             .find("option").remove();
 
@@ -22,21 +21,26 @@ $(document).ready(function()
 
     // Set FundingCycle list back to match with the original funding organization
     $("form").on("reset", function() {
-        var fundingOrganization = $(this).find("[name=\"fundingCycle.fundingOrganization\"]");
-        fundingOrganization.val(fundingOrganization.attr("fundingOrganization"))
-            .change();
-        var fundingCycle = $(this).find("[name=\"fundingCycle\"]");
-        fundingCycle.val(fundingCycle.attr("fundingCycle"))
-            .find("option[value=\"" + fundingCycle.val() + "\"]").attr("selected", true);
+        var fundingOrganization = $(this).find("[fundingOrganization]");
+        var fundingOrganizationValue = fundingOrganization.attr("fundingOrganization");
+        fundingOrganization.find("option").attr("selected", false);
+        fundingOrganization.val(fundingOrganizationValue);
+        fundingOrganization.find("[value=\"" + fundingOrganizationValue + "\"]").attr("selected", true);
+        fundingOrganization.change();
+
+        var fundingCycle = $(this).find("[fundingCycle]");
+        var fundingCycleValue = fundingCycle.attr("fundingCycle");
+        fundingCycle.val(fundingCycleValue);
+        fundingCycle.find("option[value=\"" + fundingCycleValue + "\"]").attr("selected", true);
     });
 
     // Set the attributes of the reset values.
-    $("form").on("saved", function() {
-        var fundingOrganization = $(this).find("[name=\"fundingCycle.fundingOrganization\"]");
-        fundingOrganization.attr("fundingOrganization", fundingOrganization.val());
-        var fundingCycle = $(this).find("[name=\"fundingCycle\"]");
-        fundingCycle.attr("fundingCycle", fundingCycle.val());
-    });
+    // $("form").on("saved", function() {
+        // var fundingOrganization = $(this).find("[fundingOrganization]");
+        // fundingOrganization.attr("fundingOrganization", fundingOrganization.val());
+        // var fundingCycle = $(this).find("[fundingCycle]");
+        // fundingCycle.attr("fundingCycle", fundingCycle.val());
+    // });
 });
 
 /**

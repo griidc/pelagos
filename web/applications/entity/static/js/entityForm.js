@@ -132,13 +132,12 @@
         if (typeof Data !== "undefined" && Object.keys(Data).length > 0)
         {
             fillElement(Data, Form);
-            Form.trigger("reset");
             return true;
         } else {
             return false;
         }
     };
-    
+
     function fillElement(Data, Form, Parent)
     {
         $.each(Data, function(name, value) {
@@ -151,40 +150,45 @@
             }
             if (typeof value === "object" && value !== null) {
                 fillElement(value, Form, name);
+            } else {
+                Form.find("a[name=\"" + name + "\"]").attr("href", value).html(value);
+                var selector = Form.find("input,textarea,select").filter("[name=\"" + name + "\"]");
+                // Set extra property of name for reset purposes.
+                if (Parent == name) {
+                    var childName = name.split(".");
+                    childName = childName[childName.length - 1];
+                    selector.attr(childName, value);
+                }
+
+                var elementType = selector.prop("type");
+                switch (elementType)
+                {
+                    case "radio":
+                        selector.filter("[value=\"" + value + "\"]").attr("checked", true);
+                        break;
+                    case "checkbox":
+                        selector.attr("checked", value);
+                        break;
+                    case "select-one":
+                        selector.val(value);
+                        selector.find("[value=\"" + value + "\"]").attr("selected", true);
+                        break;
+                    case "file":
+                        selector.attr("base64", value.base64);
+                        selector.attr("mimeType", value.mimeType);
+                        selector.trigger("logoChanged");
+                        break;
+                    case "textarea":
+                        selector.html(value);
+                        selector.val(value);
+                        break;
+                    default:
+                        selector.attr("value", value);
+                        selector.val(value);
+                        break;
+                }
             }
-            Form.find("a[name=\"" + name + "\"]").attr("href", value).html(value);
-            var selector = Form.find("input,textarea,select").filter("[name=\"" + name + "\"]");
-            var elementType = selector.prop("type");
-            switch (elementType)
-            {
-                case "radio":
-                    selector.filter("[value=\"" + value + "\"]").attr("checked", true);
-                    break;
-                case "checkbox":
-                    selector.attr("checked", value);
-                    break;
-                case "select-one":
-                    // if (typeof value === "object") {
-                        // value = value.id;
-                    // }
-                    selector.find("[value=\"" + value + "\"]").attr("selected", true);
-                    selector.val(value);
-                    break;
-                case "file":
-                    selector.attr("base64", value.base64);
-                    selector.attr("mimeType", value.mimeType);
-                    selector.trigger("logoChanged");
-                    break;
-                case "textarea":
-                    selector.html(value);
-                    selector.val(value);
-                    break;
-                default:
-                    selector.attr("value", value);
-                    selector.val(value);
-                    break;
-            }
-        });   
+        });
     }
 
     function updateEntity(form)
@@ -220,8 +224,9 @@
             if (json.code === returnCode) {
                 title = "Success!";
                 message = json.message;
-                $(form).trigger("saved");
                 $(form).fillForm(json.data);
+                //$(form).trigger("saved");
+                $(form).trigger("reset");
             } else {
                 title = "Error!";
                 message = "Something went wrong!<br>Didn't receive the correct success message!";
