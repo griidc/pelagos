@@ -2,46 +2,36 @@ $(document).ready(function(){
     "use strict";
 
     $(".entityTable").pelagosDataTable({
-        "ajax": pelagosBasePath + "/services/entity/ResearchGroup?properties=id,name,url,phoneNumber,deliveryPoint,city,administrativeArea,postalCode,country,creationTimeStamp,creator,modificationTimeStamp,modifier,description,emailAddress",
+        "ajax": pelagosBasePath + "/services/entity/ResearchGroup?properties=id,name,fundingCycle,creationTimeStamp,modificationTimeStamp,creator,modifier",
         "columns": [
             { "data": "id" },
             { "data": "name" },
-            { "data": "url" },
-            { "data": "phoneNumber" },
-            { "data": "deliveryPoint" },
-            { "data": "city" },
-            { "data": "administrativeArea" },
-            { "data": "postalCode" },
-            { "data": "country" },
+            { "data": "fundingCycle.name" },
+            { "data": "fundingCycle.fundingOrganization.name" },
             { "data": "creationTimeStamp" },
-            { "data": "creator" },
             { "data": "modificationTimeStamp" },
-            { "data": "modifier" },
-            { "data": "description" },
-            { "data": "emailAddress" }
+            { "data": "creator" },
+            { "data": "modifier" }
         ],
         "headers": [
             "Id",
-            "Name",
-            "URL",
-            "Phone Number",
-            "Address",
-            "City",
-            "State",
-            "Zip",
-            "Country",
-            "Created On",
-            "Creator",
-            "Last Modified",
-            "Modifier By",
-            "Description",
-            "Email Address"
+            "Research Group Name",
+            "Funding Cycle Name",
+            "Funding Organization Name",
+            "Created",
+            "Modified",
+            "Created By",
+            "Modified By"
         ],
-        "order": [[ 11, "desc" ]],
+        "order": [[ 4, "desc" ]],
         "columnDefs": [
             {
                 "targets": [ 0 ],
                 "visible": false,
+                "searchable": false
+            },
+            {
+                "targets": [ 2, 3, 4, 5, 6, 7 ],
                 "searchable": false
             }
         ]
