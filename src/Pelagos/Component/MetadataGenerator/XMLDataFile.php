@@ -12,7 +12,8 @@ use \Pelagos\Exception\NotFoundException;
  * determined by the UDI passed.
  */
 class XMLDataFile
-{   /**
+{
+    /**
      * This variable contains the instanciated instance of the class.
      *
      * @var XMLDataFile $instance
@@ -50,15 +51,15 @@ class XMLDataFile
      */
     private function getFileLocation($udi)
     {
-        # load global pelagos config
+        // Load global pelagos config.
         $GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini', true);
 
-        # load the Common library
+        // Load the Common library.
         require_once 'Common.php';
 
-        # check for local config file
+        // Check for local config file.
         if (file_exists(__DIR__ . '/../config.ini')) {
-            # merge local config with global config
+            // Merge local config with global config.
             $GLOBALS['config'] = configMerge($GLOBALS['config'], parse_ini_file(__DIR__ . '/../config.ini', true));
         }
 
@@ -95,7 +96,8 @@ class XMLDataFile
                 throw new NotFoundException("XMLDataFile file_get_contents is FALSE for path: " . $path);
             }
             $validator = new XMLValidator();
-            $validator->validate($xmlText);  // throws InvalidXmlException
+            // Throws InvalidXmlException.
+            $validator->validate($xmlText);
             return $xmlText;
         }
         throw new NotFoundException("XMLDataFile No XML found in path: " . $path);

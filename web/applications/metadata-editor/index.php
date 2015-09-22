@@ -1,4 +1,7 @@
 <?php
+// @codingStandardsIgnoreFile
+
+require_once __DIR__.'/../../../vendor/autoload.php';
 
 $GLOBALS['pelagos']['title'] = 'ISO 19115-2 Metadata Editor';
 $base_path = $GLOBALS['pelagos']['base_path'];
@@ -193,7 +196,7 @@ Click OK to download.
 		<td width="100%">
 			<div id="metatoolbar" class="ui-widget-header ui-corner-all toolbarbutton">
 				<button id="upload">Load from File</button>
-				<button id="fromudi">Fill from UDI</button>
+				<button id="fromudi">Load from Registered Dataset</button>
 				<button id="forcesave">Save to File</button>
 				<button id="startover">Clear Form</button>
 				<button id="generate">Check and Save to File</button>

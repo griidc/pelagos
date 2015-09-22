@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 // Module: map.php
 // Author(s): Jew-Lee Irena Lann
 // Last Updated: 11 Feb. 2013

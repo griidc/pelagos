@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 
 include $GLOBALS['pelagos_config']['paths']['share'].'/php/griidcMailer.php';
 

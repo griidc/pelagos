@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 
 # This library contains specific function the properly create messages for formHandler.js
 

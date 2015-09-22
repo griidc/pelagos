@@ -15,6 +15,10 @@ class MissingRequiredFieldPersistenceExceptionTest extends \PHPUnit_Framework_Te
      * Test that we can throw a MissingRequiredFieldPersistenceException.
      *
      * @expectedException \Pelagos\Exception\MissingRequiredFieldPersistenceException
+     *
+     * @throws MissingRequiredFieldPersistenceException Always.
+     *
+     * @return void
      */
     public function testThrowMissingRequiredFieldPersistenceException()
     {
@@ -23,37 +27,49 @@ class MissingRequiredFieldPersistenceExceptionTest extends \PHPUnit_Framework_Te
 
     /**
      * Test that we can catch a MissingRequiredFieldPersistenceException.
+     *
+     * @throws MissingRequiredFieldPersistenceException Always, but it's caught.
+     *
+     * @return void
      */
     public function testCatchMissingRequiredFieldPersistenceException()
     {
         try {
             throw new MissingRequiredFieldPersistenceException();
         } catch (MissingRequiredFieldPersistenceException $e) {
-            // do nothing but exception is caught
+            // Do nothing but exception is caught.
         }
     }
 
     /**
      * Test that we can catch a MissingRequiredFieldPersistenceException as an PersistenceException.
+     *
+     * @throws MissingRequiredFieldPersistenceException Always, but it's caught as a PersistenceException.
+     *
+     * @return void
      */
     public function testCatchPersistenceException()
     {
         try {
             throw new MissingRequiredFieldPersistenceException();
         } catch (PersistenceException $e) {
-            // do nothing but exception is caught
+            // Do nothing but exception is caught.
         }
     }
 
     /**
      * Test that we can catch a MissingRequiredFieldPersistenceException as an \Exception.
+     *
+     * @throws MissingRequiredFieldPersistenceException Always, but it's caught as an \Exception.
+     *
+     * @return void
      */
     public function testCatchException()
     {
         try {
             throw new MissingRequiredFieldPersistenceException();
         } catch (\Exception $e) {
-            // do nothing but exception is caught
+            // Do nothing but exception is caught.
         }
     }
 }

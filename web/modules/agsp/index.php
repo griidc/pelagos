@@ -1,53 +1,43 @@
 <?php
 
+require_once __DIR__.'/../../../vendor/autoload.php';
+
 $GLOBALS['pelagos']['title'] = 'Augmenting GoMRI Summary Page';
 
-# load global config
+// Load global config.
 $GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini', true);
 
-# check for local config file
+// Check for local config file.
 if (file_exists('config.ini')) {
-    # load Common library from global share
+    // Load Common library from global share.
     require_once($GLOBALS['config']['paths']['share'].'/php/Common.php');
-    # merge local config with global config
+    // Merge local config with global config.
     $GLOBALS['config'] = configMerge($GLOBALS['config'], parse_ini_file('config.ini', true));
 }
 
-# add Pelagos share/php to include path
+// Add Pelagos share/php to include path.
 set_include_path(get_include_path() . PATH_SEPARATOR . $GLOBALS['config']['paths']['share'] . '/php');
 
-# load library info
-$GLOBALS['libraries'] = parse_ini_file($GLOBALS['config']['paths']['conf'].'/libraries.ini', true);
-
-# load Slim2
-require_once $GLOBALS['libraries']['Slim2']['include'];
-# register Slim autoloader
-\Slim\Slim::registerAutoloader();
-# load Twig Slim-View
-require_once $GLOBALS['libraries']['Slim-Views']['include_Twig'];
-# load Twig
-require_once 'Twig/Autoloader.php';
-
-# load Pelagos libraries
+// Load Pelagos libraries.
 require_once 'DBUtils.php';
 require_once 'datasets.php';
 require_once 'RIS.php';
 require_once 'utils.php';
 
-# load AGSP application library
+// Load AGSP application library.
 require_once 'lib/agsp.php';
 
-# create new Slim application
+// Create new Slim application.
 $app = new \Slim\Slim(array('view' => new \Slim\Views\Twig()));
 
-# stub root
+// Stub root.
 $app->get(
     '/',
     function () use ($app) {
     }
 );
 
-# respond to request for datasets summary
+// Respond to request for datasets summary.
 $app->get(
     '/datasets',
     function () use ($app) {
@@ -110,7 +100,7 @@ $app->get(
     }
 );
 
-# respond to requests for dataset summaty by fund ID
+// Respond to requests for dataset summary by fund ID.
 $app->get(
     '/datasets/by_fund/:fund_id',
     function ($fund_id) use ($app) {
@@ -145,5 +135,5 @@ $app->get(
     }
 );
 
-# run the Slim application
+// Run the Slim application.
 $app->run();

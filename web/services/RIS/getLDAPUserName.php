@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 function getFullNameFromDrupalUsername()
 {
 	global $user;

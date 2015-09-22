@@ -44,10 +44,14 @@ class PostgresSessionInit implements EventSubscriber
     }
 
     /**
-     * {@inheritdoc}
+     * Returns an array of events this subscriber wants to listen to.
+     *
+     * @return array An array of events this subscriber wants to listen to.
      */
     public function getSubscribedEvents()
     {
+        // @codingStandardsIgnoreStart
         return array(Events::postConnect);
+        // @codingStandardsIgnoreEnd
     }
 }

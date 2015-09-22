@@ -1,32 +1,56 @@
 <?php
-/**
- * Logger
- * Texas A&M Corpus Christi
- * Harte Research Institute
- * Gulf (of Mexico) Research Initiative Information Data Cooperative
- * GRIIDC
- */
+
+namespace Pelagos\Component\MetadataGenerator;
 
 /**
  * A class provided as a simple logging mechanism.
+ *
  * Construct with new Logger() or new Logger(filename);
  * activate logging with logger->setOn();
  * log messages with logger->write(msg) or logger->log(message);
  */
-namespace Pelagos\Component\MetadataGenerator;
-
-
 class Logger
 {
+    /**
+     * Flag whether this is first time this run.
+     *
+     * @var bool $firstTime
+     */
     private $firstTime = true;
-    private static $defaultFileName = "logger.txt";
-    //  the name of the file in which the log is stored
+
+    /**
+     * The default file name to log to.
+     *
+     * @var string $defaultFileName
+     */
+    private static $defaultFileName = 'logger.txt';
+
+    /**
+     * The name of the file in which the log is stored.
+     *
+     * @var string $fileName
+     */
     private $fileName = null;
-    //  a toggle used to turn logging on and off
+
+    /**
+     * A toggle used to turn logging on and off.
+     *
+     * @var bool $onOffSwitch
+     */
     private $onOffSwitch = false;
-    // a character be append to the end of each logged message
+
+    /**
+     * A character be append to the end of each logged message.
+     *
+     * @var string $lineBreakCharacter
+     */
     private $lineBreakCharacter = "\n";
 
+    /**
+     * Constructor for Logger.
+     *
+     * @param string $filename The file name to log to.
+     */
     public function __construct($filename = null)
     {
         $this->fileName = self::$defaultFileName;
@@ -36,6 +60,8 @@ class Logger
     }
 
     /**
+     * Returns the default file name.
+     *
      * @return string
      */
     public static function getDefaultFileName()
@@ -45,8 +71,12 @@ class Logger
 
     /**
      * Send the message to the log.
+     *
      * If the logger is turned off no message is written.
-     * @param $msg
+     *
+     * @param string $msg The message to write.
+     *
+     * @return void
      */
     public function write($msg)
     {
@@ -57,7 +87,7 @@ class Logger
 
             $outputFile = "./" . $this->fileName;
 
-            /**  if this is first time this run open and truncate  */
+            // If this is first time this run open and truncate.
             if ($this->firstTime) {
                 $filehandle = fopen($outputFile, 'w') or die('File creation error.');
                 fclose($filehandle);
@@ -68,10 +98,15 @@ class Logger
             fclose($filehandle);
         }
     }
+
     /**
      * Send the message to the log.
+     *
      * If the logger is turned off no message is written.
-     * @param $msg
+     *
+     * @param string $msg The message to write.
+     *
+     * @return void
      */
     public function log($msg)
     {
@@ -79,9 +114,11 @@ class Logger
     }
 
     /**
-     * Is loggin turned on?
+     * Is logging turned on?
+     *
      * Returns true if logging is turned on.
      * Returns false if loggin is turned off
+     *
      * @return boolean
      */
     public function isOn()
@@ -90,8 +127,9 @@ class Logger
     }
 
     /**
-     * Turn loggin on
-     * @param boolean $onOffSwitch
+     * Turn logging on.
+     *
+     * @return void
      */
     public function setOn()
     {
@@ -99,8 +137,9 @@ class Logger
     }
 
     /**
-     * Turn off logging
-     * @param boolean $onOffSwitch
+     * Turn off logging.
+     *
+     * @return void
      */
     public function setOff()
     {
@@ -108,8 +147,8 @@ class Logger
     }
 
     /**
-     * Return the name of the file that this
-     * logger is writing.
+     * Return the name of the file that this logger is writing.
+     *
      * @return null|string
      */
     public function getFileName()
@@ -117,8 +156,13 @@ class Logger
         return $this->fileName;
     }
 
+    /**
+     * Return a descriptive string containing the name of the file that this logger is writing.
+     *
+     * @return string
+     */
     public function __toString()
     {
-        return "logger: filename: " . $this->getFileName();
+        return 'logger: filename: ' . $this->getFileName();
     }
 }

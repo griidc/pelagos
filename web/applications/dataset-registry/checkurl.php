@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 
 //require 'build_url.php';
 

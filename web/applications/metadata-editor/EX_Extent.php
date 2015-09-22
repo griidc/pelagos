@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 include 'EX_GeographicBoundingBox.php';
 include 'EX_TemporalExtent.php';
 include 'EX_BoundingPolygon.php';

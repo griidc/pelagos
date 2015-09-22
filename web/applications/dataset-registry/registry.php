@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 date_default_timezone_set('America/Chicago');
 
 if (!file_exists('config.ini')) {

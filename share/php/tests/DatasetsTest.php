@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 /**
    Harte Research Institute (HRI)
    Gomri Reseach Initiative Information and Data Cooperative (GRIIDC)

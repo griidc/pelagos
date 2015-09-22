@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 define('RPIS_TASK_BASEURL','http://localhost/services/RIS/getTaskDetails.php');
 
 $switch = '?'.'maxResults=-1';

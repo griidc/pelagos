@@ -1,4 +1,5 @@
 <?php
+// @codingStandardsIgnoreFile
 #include 'CI_Telephone_DL.php';
 include_once 'CI_Date.php';
 include_once 'CI_ResponsibleParty.php';

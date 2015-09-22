@@ -31,15 +31,16 @@ class MetadataXmlFromDB
     private $dbcon = null;
 
     const REGISTRY_TABLE_NAME = "public.registry_view";
-    //  column names for gomri PGSQL registry table
+    // Column names for gomri PGSQL registry table.
     const REGISTRY_ID_COL = "registry_id";
     const DATASET_UDI_COL = "dataset_udi";
 
-    // column names for gomri PGSQL metadata table
-    // registry id col is named the same in both tables
+    // Column names for gomri PGSQL metadata table.
+    // Registry id col is named the same in both tables.
     const METADATA_XML_COL = "metadata_xml";
     const GEOMETRY_COL = "geom";
-    const GEOMETRY_COL_ST_ASTEXT = "st_astext"; // this for converting geometry to readable form
+    // This for converting geometry to readable form.
+    const GEOMETRY_COL_ST_ASTEXT = "st_astext";
     const EXTENT_DESCRIPTION_COL = "extent_description";
 
     const METADATA_TABLE_NAME = "public.metadata";
@@ -119,17 +120,19 @@ class MetadataXmlFromDB
         $metadataXml = null;
         try {
             if ($statement->execute()) {
-                if ($row = $statement->fetch(\PDO::FETCH_ASSOC)) { // if true
+                if ($row = $statement->fetch(\PDO::FETCH_ASSOC)) {
+                    // If true.
                     $metadataXml = $row[self::METADATA_XML_COL];
                     return $metadataXml;
-                } // else it is false - not found
+                }
+                // Else it is false - not found.
                 throw new NotFoundException(
                     "No " . self::METADATA_TABLE_NAME . "  found with registry ID " .
                     $registryId
                 );
             }
         } catch (\PDOException $pdoEx) {
-            throw new PersistenceException( $pdoEx->getMessage());
+            throw new PersistenceException($pdoEx->getMessage());
         }
     }
 
@@ -143,9 +146,9 @@ class MetadataXmlFromDB
      *
      * @return string SQL string.
      *
-     * @see    makeSelectQuery(I_Persistable $target)
-     * @see    getAll($targetClassName)
-     * @see    get(I_Persistable $obj)
+     * @see makeSelectQuery(I_Persistable $target)
+     * @see getAll($targetClassName)
+     * @see get(I_Persistable $obj)
      */
     private function getMetadataSelectQueryString()
     {
@@ -173,17 +176,19 @@ class MetadataXmlFromDB
         $registryId = null;
         try {
             if ($statement->execute()) {
-                if ($row = $statement->fetch(\PDO::FETCH_ASSOC)) { // if true
+                if ($row = $statement->fetch(\PDO::FETCH_ASSOC)) {
+                    // If true.
                     $registryId = $row[self::REGISTRY_ID_COL];
                     return $registryId;
-                } // else it is false - not found
+                }
+                // Else it is false - not found.
                 throw new NotFoundException(
                     "No " . self::REGISTRY_TABLE_NAME .
                     " record found for dataset UDI: " . $datasetUdi
                 );
             }
         } catch (\PDOException $pdoEx) {
-            throw new PersistenceException(  $pdoEx->getMessage());
+            throw new PersistenceException($pdoEx->getMessage());
         }
     }
 
@@ -197,9 +202,9 @@ class MetadataXmlFromDB
      *
      * @return string Of SQL.
      *
-     * @see    makeSelectQuery(I_Persistable $target)
-     * @see    getAll($targetClassName)
-     * @see    get(I_Persistable $obj)
+     * @see makeSelectQuery(I_Persistable $target)
+     * @see getAll($targetClassName)
+     * @see get(I_Persistable $obj)
      */
     private function getRegistryAndUdiSelectQueryString()
     {
