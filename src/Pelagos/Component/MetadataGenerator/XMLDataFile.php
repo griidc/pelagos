@@ -29,6 +29,7 @@ class XMLDataFile
     private function __construct()
     {
     }
+
     /**
      * Singleton implementation.
      *

@@ -157,7 +157,6 @@ class MetadataXmlFromDB
         self::METADATA_XML_COL . ' FROM ' . self::METADATA_TABLE_NAME . ' ';
     }
 
-
     /**
      * Fetch the object based on it's unique id.
      *
