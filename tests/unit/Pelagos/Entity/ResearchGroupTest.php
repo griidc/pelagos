@@ -410,6 +410,7 @@ class ResearchGroupTest extends \PHPUnit_Framework_TestCase
             'modifier' => null,
             'modificationTimeStamp' => null,
             'name' => self::$testName,
+            'fundingCycle' => null,
             'url' => self::$testUrl,
             'phoneNumber' => self::$testPhoneNumber,
             'deliveryPoint' => self::$testDeliveryPoint,
