@@ -37,7 +37,7 @@ class DateTest extends \PHPUnit_Framework_TestCase
 
         $expectedResult = "1996-10-07";
 
-        $this->assertEquals($expectedResult,$referenceDate);
+        $this->assertEquals($expectedResult,(string)$referenceDate);
     }
 
 
