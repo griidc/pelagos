@@ -44,6 +44,7 @@ foreach ($fundingOrganizations as $fo) {
 
 
 $comp->addJS("var dataSet = " . json_encode($dataSet), 'inline');
+echo "Joe V. Holland - Great Googly Mooga";
 echo $twig->render('html/index.html');
 
 $comp->finalize();
