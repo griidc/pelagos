@@ -33,14 +33,6 @@ $(document).ready(function()
         fundingCycle.val(fundingCycleValue);
         fundingCycle.find("option[value=\"" + fundingCycleValue + "\"]").attr("selected", true);
     });
-
-    // Set the attributes of the reset values.
-    // $("form").on("saved", function() {
-        // var fundingOrganization = $(this).find("[fundingOrganization]");
-        // fundingOrganization.attr("fundingOrganization", fundingOrganization.val());
-        // var fundingCycle = $(this).find("[fundingCycle]");
-        // fundingCycle.attr("fundingCycle", fundingCycle.val());
-    // });
 });
 
 /**
