@@ -38,7 +38,7 @@ class DateTimeTest extends \PHPUnit_Framework_TestCase
 
         $referenceDateTime->setFormat($referenceFormat);
 
-        $this->assertEquals($referenceFormatResult,(string)$referenceDateTime);
+        $this->assertEquals($referenceFormatResult, (string)$referenceDateTime);
     }
 
     /**
