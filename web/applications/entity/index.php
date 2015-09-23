@@ -72,8 +72,9 @@ $app->get(
         $twigData = array(
             'userLoggedIn' => ($comp->userIsLoggedIn()) ? 'true' : 'false',
         );
+        $entityService = new EntityService($comp->getEntityManager());
+        $twigData['entityService'] = $entityService;
         if (isset($entityId)) {
-            $entityService = new EntityService($comp->getEntityManager());
             try {
                 $entity = $entityService->get($entityType, $entityId);
                 $app->response->setStatus(200);
