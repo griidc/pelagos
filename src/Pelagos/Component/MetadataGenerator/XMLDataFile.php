@@ -80,9 +80,11 @@ class XMLDataFile
      *
      * @param string $udi Dataset identifier.
      *
-     * @return boolean|string Result.
+     * @throws NotFoundException When no XML file found for $udi.
+     * @throws NotFoundException When there is a failure reading the XML file for $udi.
+     * @throws NotFoundException When XML file for $udi is not readable.
      *
-     * @throws NotFoundException If not found.
+     * @return boolean|string Result.
      */
     public function getXML($udi)
     {

@@ -114,7 +114,7 @@ class Logger
     }
 
     /**
-     * Is logging turned on?
+     * Check if logging is turned on.
      *
      * Returns true if logging is turned on.
      * Returns false if loggin is turned off

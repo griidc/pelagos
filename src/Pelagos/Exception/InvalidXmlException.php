@@ -1,19 +1,14 @@
 <?php
-/**
- * DuplicateException
- * Texas A&M Corpus Christi
- * Harte Research Institute
- * Gulf (of Mexico) Research Initiative Information Data Cooperative
- * GRIIDC
- */
 
 namespace Pelagos\Exception;
 
 /**
- * Class InvalidXmlException
- * @package Exception
+ * Class InvalidXmlException.
+ *
  * An exception to be thrown when text
- * expected to be XML does not validate
+ * expected to be XML does not validate.
+ *
+ * @package Exception
  */
 class InvalidXmlException extends \Exception
 {

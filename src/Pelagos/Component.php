@@ -10,7 +10,6 @@ namespace Pelagos;
  *   - a method to quit safely when output should be immediately flushed
  *     and control should not be returned to the containing framework (e.g. Drupal)
  *   - a method to access the entity manager for Pelagos entities
- *
  * Each component can extend this class with a custom component class.
  */
 class Component
@@ -277,9 +276,9 @@ class Component
     /**
      * Method to get the currently logged in user.
      *
-     * @return string The username of the currently logged in user.
-     *
      * @throws \Exception When no user is logged in.
+     *
+     * @return string The username of the currently logged in user.
      */
     public function getLoggedInUser()
     {

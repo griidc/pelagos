@@ -19,9 +19,9 @@ class XMLValidator
      *
      * @param string $rawXml This is XML as text.
      *
-     * @return bool In the event of success.
-     *
      * @throws InvalidXmlException If validation fails.
+     *
+     * @return bool In the event of success.
      */
     public function validate($rawXml)
     {

@@ -107,10 +107,10 @@ class MetadataXmlFromDB
      *
      * @param string $registryId Registry ID.
      *
-     * @return string XML text from the metadata table.
-     *
      * @throws NotFoundException If the registry row is not found.
      * @throws PersistenceException If persistance layer fails.
+     *
+     * @return string XML text from the metadata table.
      */
     private function getMetadataXml($registryId)
     {
@@ -145,11 +145,11 @@ class MetadataXmlFromDB
      * so that the code will reside in only one place to be shared
      * by two or more functions using the product.
      *
-     * @return string SQL string.
-     *
      * @see makeSelectQuery(I_Persistable $target)
      * @see getAll($targetClassName)
      * @see get(I_Persistable $obj)
+     *
+     * @return string SQL string.
      */
     private function getMetadataSelectQueryString()
     {
@@ -162,10 +162,10 @@ class MetadataXmlFromDB
      *
      * @param string $datasetUdi Input.
      *
-     * @return the Registry instance if it exists in the store.
-     *
      * @throws NotFoundException If the object is not found.
      * @throws PersistenceException Upon DB failure.
+     *
+     * @return the Registry instance if it exists in the store.
      */
     private function getRegistryIdForDatasetUdi($datasetUdi)
     {
@@ -201,11 +201,11 @@ class MetadataXmlFromDB
      * so that the code will reside in only one place to be shared
      * by two or more functions using the product.
      *
-     * @return string Of SQL.
-     *
      * @see makeSelectQuery(I_Persistable $target)
      * @see getAll($targetClassName)
      * @see get(I_Persistable $obj)
+     *
+     * @return string Of SQL.
      */
     private function getRegistryAndUdiSelectQueryString()
     {

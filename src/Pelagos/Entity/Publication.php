@@ -10,14 +10,14 @@ use \Pelagos\HTTPStatus;
 class Publication
 {
     /**
-     * DOI
+     * DOI.
      *
      * @var $doi string Contains the DOI.
      */
     private $doi;
 
     /**
-     * Citation
+     * Citation.
      *
      * @var $citation object Contains the Citation Object.
      */

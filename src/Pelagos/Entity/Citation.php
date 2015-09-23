@@ -3,7 +3,7 @@
 namespace Pelagos\Entity;
 
 /**
- * This class holds a Citation object
+ * This class holds a Citation object.
  */
 class Citation
 {
@@ -100,7 +100,7 @@ class Citation
     }
 
     /**
-     * Return the Citation Object as JSON
+     * Return the Citation Object as JSON.
      *
      * @return JSON
      */
