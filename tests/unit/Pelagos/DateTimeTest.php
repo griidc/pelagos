@@ -2,10 +2,6 @@
 
 namespace Pelagos;
 
-use Symfony\Component\Validator\Validation;
-use \Pelagos\DateTime as DateTime;
-use \Pelagos\Date as Date;
-
 /**
  * Class DateTimeTest.
  *
@@ -13,21 +9,6 @@ use \Pelagos\Date as Date;
  */
 class DateTimeTest extends \PHPUnit_Framework_TestCase
 {
-    private $referenceDateTime = null;
-    private $laterDateTime = null;
-    private $currentDateTime = null;
-
-    private static $year = 1996;
-    private static $month = 10;
-    private static $day = 7;
-
-    private static $hour = 13;
-    private static $minute = 33;
-    private static $second = 55;
-
-    private static $referenceFormat = "Y-m-d:H-i-s";
-    private static $referenceFormatResult = "1996-10-07:13-33-55";
-
     /**
      * Setup for PHPUnit tests
      *
@@ -35,11 +16,6 @@ class DateTimeTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->referenceDateTime = new DateTime();
-        $this->referenceDateTime->setDate(self::$year, self::$month, self::$day);
-        $this->referenceDateTime->setTime(self::$hour, self::$minute, self::$second);
-        $this->referenceDateTime->setFormat(self::$referenceFormat);
-
     }
 
 
@@ -52,9 +28,17 @@ class DateTimeTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetFormat()
     {
-        $this->referenceDateTime->setFormat(self::$referenceFormat);
-        $this->expectOutputString(self::$referenceFormatResult);
-        print $this->referenceDateTime;
+
+        $referenceFormat = "Y-m-d:H-i-s";
+        $referenceFormatResult = "1996-10-07:13-33-55";
+
+        $referenceDateTime = new Date();
+        $referenceDateTime->setDate(1996, 10, 7);
+        $referenceDateTime->setTime(13, 33, 55);
+
+        $referenceDateTime->setFormat($referenceFormat);
+
+        $this->assertEquals($referenceFormatResult,$referenceDateTime);
     }
 
     /**
@@ -62,11 +46,11 @@ class DateTimeTest extends \PHPUnit_Framework_TestCase
      */
     public function testComparison()
     {
-        $this->currentDateTime = new DateTime();
-        $t = $this->currentDateTime->getTimestamp();
-        $this->laterDateTime = new DateTime();
-        $this->laterDateTime->setTimestamp($t+2000);
-        $this->assertTrue($this->laterDateTime > $this->currentDateTime);
+        $currentDateTime = new DateTime();
+        $t = $currentDateTime->getTimestamp();
+        $laterDateTime = new DateTime();
+        $laterDateTime->setTimestamp($t+2000);
+        $this->assertTrue($laterDateTime > $currentDateTime);
     }
 
     /**

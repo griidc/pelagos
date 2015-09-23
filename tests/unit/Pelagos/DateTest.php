@@ -1,32 +1,13 @@
 <?php
 namespace Pelagos;
 
-
-use Symfony\Component\Validator\Validation;
-use \Pelagos\DateTime as DateTime;
-use \Pelagos\Date as Date;
-
 /**
  * DateTest.php A unit test for the Pelagos Date class
  *
  * @package Pelagos
  */
-
 class DateTest extends \PHPUnit_Framework_TestCase
 {
-    private $referenceDate = null;
-    private $laterDate = null;
-    private $currentDate = null;
-
-    private static $year = 1996;
-    private static $month = 10;
-    private static $day = 7;
-
-    private static $hour = 13;
-    private static $minute = 33;
-    private static $second = 55;
-
-    private static $expectedResult = "1996-10-07";
 
     /**
      * Setup for PHPUnit tests
@@ -35,9 +16,6 @@ class DateTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->referenceDate = new Date();
-        $this->referenceDate->setDate(self::$year, self::$month, self::$day);
-        $this->referenceDate->setTime(self::$hour, self::$minute, self::$second);
     }
 
 
@@ -46,12 +24,20 @@ class DateTest extends \PHPUnit_Framework_TestCase
      * Set the referenceDate to the reference format
      * and compare the output to expected results.
      *
+     * The output should not produce hours, minutes and seconds,
+     * only the year, month and day
+     *
      * @return void
      */
     public function testDefaultFormat()
     {
-        $this->expectOutputString(self::$expectedResult);
-        print $this->referenceDate;
+        $referenceDate = new Date();
+        $referenceDate->setDate(1996, 10, 7);
+        $referenceDate->setTime(13, 33, 55);
+
+        $expectedResult = "1996-10-07";
+
+        $this->assertEquals($expectedResult,$referenceDate);
     }
 
 
