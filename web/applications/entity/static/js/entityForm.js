@@ -97,6 +97,7 @@
                     });
                     $(".innerForm", this).remove();
                     $(".entityFormButton,.showOnEdit", this).css({opacity: 0.0, visibility: "visible"}).animate({opacity: 1.0});
+                    $('button', this).button("enable");
                 }
             });
 
@@ -114,6 +115,8 @@
 
                 $(".entityFormButton,.showOnEdit", this).css({opacity: 1.0, visibility: "visible" }).animate({opacity: 0.0});
                 $(this).prop("unsavedChanges", false);
+
+                $('button', this).button("disable");
             });
 
             if (entityId === "") {
