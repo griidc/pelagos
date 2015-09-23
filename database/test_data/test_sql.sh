@@ -82,7 +82,7 @@ usage()
    echo     "Test all aspects of the person, email, and history entities"
    echo -e  "\nOptions:\n   -f file - filename containing sql statements"
    echo     "   -U username - user name to connect as"
-   echo     "   -h database - database to connect to"
+   echo     "   -d database - database to connect to"
    echo     "   -h host     - remote host to connect to"
    echo     "   -p port     - remote port to connect to"
    echo     "   -H help     - print this help message"

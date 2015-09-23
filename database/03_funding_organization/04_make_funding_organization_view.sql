@@ -21,8 +21,8 @@ DROP TRIGGER udf_funding_organization_update_trigger
 DROP FUNCTION udf_modify_funding_organization();
 DROP VIEW funding_organization;
 
--- Create the view (we cast email address and instantiation_time to text so
--- that we can handle CHECK errors in our exception block):
+-- Create the view (we cast email address to text so that we can handle CHECK
+-- errors in our exception block):
 CREATE VIEW funding_organization AS
    SELECT f.funding_organization_number AS funding_organization_number,
           f.funding_organization_name AS name,
@@ -82,8 +82,8 @@ AS $f_o_func$
          IF TG_OP = 'INSERT'
          THEN
             -- Make sure we were supplied a Funding Organization name:
-            IF NEW.name IS NULL OR NEW.name = '' OR
-               NEW.creator is NULL or NEW.creator = ''
+            IF NEW.creator IS NULL OR NEW.creator = '' OR
+               NEW.name IS NULL OR NEW.name = ''
             THEN
                _err_hint := CONCAT('A Funding Organization entity requires a ',
                                    'funding organization name and a creator ',
