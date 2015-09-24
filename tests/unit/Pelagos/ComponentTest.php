@@ -176,7 +176,7 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
      */
     public function testAddJSNonUrlHTTP()
     {
-        $this->expectOutputString("drupal_add_js: " . self::$path . "/http/js/baz.js\n");
+        $this->expectOutputString('drupal_add_js: ' . self::$path . "/http/js/baz.js\n");
         $this->component->addJS('http/js/baz.js');
     }
 
@@ -244,7 +244,7 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
      */
     public function testAddCSSNonUrlHTTP()
     {
-        $this->expectOutputString("drupal_add_css: " . self::$path . "/http/css/baz.css\n");
+        $this->expectOutputString('drupal_add_css: ' . self::$path . "/http/css/baz.css\n");
         $this->component->addCSS('http/css/baz.css');
     }
 
@@ -415,10 +415,10 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
     public function testSetJSGlobals()
     {
         $this->expectOutputString(
-            "drupal_add_js: var pelagosBasePath = \"" . self::$basePath . "\";\n" .
-            "drupal_add_js: var pelagosComponentPath = \"" . self::$path . "\";\n" .
-            "drupal_add_js: var pelagosBaseUri = \"" . self::$baseUri . "\";\n" .
-            "drupal_add_js: var pelagosComponentUri = \"" . self::$uri . "\";\n"
+            'drupal_add_js: var pelagosBasePath = "' . self::$basePath . "\";\n" .
+            'drupal_add_js: var pelagosComponentPath = "' . self::$path . "\";\n" .
+            'drupal_add_js: var pelagosBaseUri = "' . self::$baseUri . "\";\n" .
+            'drupal_add_js: var pelagosComponentUri = "' . self::$uri . "\";\n"
         );
         $this->component->setJSGlobals();
     }

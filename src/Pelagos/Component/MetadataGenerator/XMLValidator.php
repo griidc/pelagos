@@ -17,20 +17,20 @@ class XMLValidator
     /**
      * This method validates a string of XML.
      *
-     * @param string $raw_xml This is XML as text.
-     *
-     * @return bool In the event of success.
+     * @param string $rawXml This is XML as text.
      *
      * @throws InvalidXmlException If validation fails.
+     *
+     * @return bool In the event of success.
      */
-    public function validate($raw_xml)
+    public function validate($rawXml)
     {
         $errors = 0;
 
         // Create domdoc element and attempt to populate with supplied XML.
         libxml_use_internal_errors(true);
         $doc = new \DomDocument('1.0', 'UTF-8');
-        $tmpp = @$doc->loadXML($raw_xml);
+        $tmpp = @$doc->loadXML($rawXml);
         if (!$tmpp) {
             $errors++;
         }
@@ -40,7 +40,7 @@ class XMLValidator
         if (!$doc->schemaValidate($schema)) {
             $errors = libxml_get_errors();
             libxml_clear_errors();
-            for ($i = 0; $i < sizeof($errors); $i++) {
+            for ($i = 0; $i < count($errors); $i++) {
                 switch ($errors[$i]->level) {
                     case LIBXML_ERR_WARNING:
                         break;
@@ -56,6 +56,6 @@ class XMLValidator
         if ($errors == 0) {
             return true;
         }
-        throw new InvalidXmlException("Invalid XML found by XMLValidator");
+        throw new InvalidXmlException('Invalid XML found by XMLValidator');
     }
 }

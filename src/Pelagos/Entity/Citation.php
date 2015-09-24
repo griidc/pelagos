@@ -3,7 +3,7 @@
 namespace Pelagos\Entity;
 
 /**
- * This class holds a Citation object
+ * This class holds a Citation object.
  */
 class Citation
 {
@@ -74,7 +74,7 @@ class Citation
      *
      * @return void
      */
-    public function setTimeStamp(\DateTime $timestamp)
+    public function setTimeStamp(\DateTime $timestamp = null)
     {
         if ($timestamp === null) {
             $this->timestamp = new \DateTime();
@@ -100,7 +100,7 @@ class Citation
     }
 
     /**
-     * Return the Citation Object as JSON
+     * Return the Citation Object as JSON.
      *
      * @return JSON
      */
