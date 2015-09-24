@@ -25,6 +25,7 @@ class FundingOrganization extends Entity
      * Name of a funding organization.
      *
      * @var string $name
+     *
      * @access protected
      *
      * @Assert\NotBlank(
@@ -40,6 +41,7 @@ class FundingOrganization extends Entity
      * Funding organization's logo.
      *
      * @var string|resource $logo
+     *
      * @access protected
      */
     protected $logo;
@@ -48,6 +50,7 @@ class FundingOrganization extends Entity
      * Funding organization's email address.
      *
      * @var string $emailAddress
+     *
      * @access protected
      *
      * @Assert\NoAngleBrackets(
@@ -63,6 +66,7 @@ class FundingOrganization extends Entity
      * Description of a funding organization.
      *
      * @var string $description
+     *
      * @access protected
      *
      * @Assert\NoAngleBrackets(
@@ -75,6 +79,7 @@ class FundingOrganization extends Entity
      * Funding organization's Website url.
      *
      * @var string $url
+     *
      * @access protected
      *
      * @Assert\NoAngleBrackets(
@@ -87,6 +92,7 @@ class FundingOrganization extends Entity
      * Funding organization's telephone number.
      *
      * @var string $phoneNumber
+     *
      * @access protected
      *
      * @Assert\NoAngleBrackets(
@@ -99,6 +105,7 @@ class FundingOrganization extends Entity
      * Funding organization's delivery point (street address).
      *
      * @var string $deliveryPoint
+     *
      * @access protected
      *
      * @Assert\NoAngleBrackets(
@@ -111,6 +118,7 @@ class FundingOrganization extends Entity
      * Funding organization's city.
      *
      * @var string $city
+     *
      * @access protected
      *
      * @Assert\NoAngleBrackets(
@@ -123,6 +131,7 @@ class FundingOrganization extends Entity
      * Funding organization's administrative area (state).
      *
      * @var string $administrativeArea
+     *
      * @access protected
      *
      * @Assert\NoAngleBrackets(
@@ -135,6 +144,7 @@ class FundingOrganization extends Entity
      * Funding organization's postal code (zipcode).
      *
      * @var string $postalCode
+     *
      * @access protected
      *
      * @Assert\NoAngleBrackets(
@@ -147,6 +157,7 @@ class FundingOrganization extends Entity
      * Funding organization's country.
      *
      * @var string $country
+     *
      * @access protected
      *
      * @Assert\NoAngleBrackets(
@@ -183,8 +194,8 @@ class FundingOrganization extends Entity
      *
      * @access public
      *
-     * @throws \Exception When Non-funding cycle found in FundingCycles or a Funding Cycle
-     *                    is found that is not an array or traversable object.
+     * @throws \Exception When Non-funding cycle found in $fundingCycles.
+     * @throws \Exception When $fundingCycles is not an array or traversable object.
      *
      * @return void
      */

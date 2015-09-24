@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__.'/../../../vendor/autoload.php';
+require_once __DIR__ . '/../../../vendor/autoload.php';
 
 use Pelagos\Service\EntityService;
 use Pelagos\Exception\ArgumentException;
@@ -44,7 +44,7 @@ $app = new \Slim\Slim(
     )
 );
 
-# add custom Twig extensions
+// Add custom Twig extensions.
 $app->view->parserExtensions = array(
     new \Pelagos\TwigEntityExtensions()
 );

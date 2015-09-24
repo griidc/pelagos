@@ -22,6 +22,10 @@ class ValidationExceptionTest extends \PHPUnit_Framework_TestCase
      * Test that we can throw an ValidationException.
      *
      * @expectedException \Pelagos\Exception\ValidationException
+     *
+     * @throws ValidationException Always.
+     *
+     * @return void
      */
     public function testThrowValidationException()
     {
@@ -30,30 +34,40 @@ class ValidationExceptionTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test that we can catch an ValidationException.
+     *
+     * @throws ValidationException Always, but it is caught.
+     *
+     * @return void
      */
     public function testCatchValidationException()
     {
         try {
             throw new ValidationException();
         } catch (ValidationException $e) {
-            // do nothing but exception is caught
+            // Do nothing but exception is caught.
         }
     }
 
     /**
      * Test that we can catch an ValidationException as an \Exception.
+     *
+     * @throws ValidationException Always, but it is caught as an \Exception.
+     *
+     * @return void
      */
     public function testCatchException()
     {
         try {
             throw new ValidationException();
         } catch (\Exception $e) {
-            // do nothing but exception is caught
+            // Do nothing but exception is caught.
         }
     }
 
     /**
      * Test that we construct with a violations list and get it back.
+     *
+     * @return void
      */
     public function testConstructWithViolations()
     {
@@ -66,6 +80,10 @@ class ValidationExceptionTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test that we can get the violations list upon catching the exception.
+     *
+     * @throws ValidationException Always, but it is caught.
+     *
+     * @return void
      */
     public function testGetViolationsOnCatch()
     {
@@ -82,6 +100,8 @@ class ValidationExceptionTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test that we can set the violations list and get it back.
+     *
+     * @return void
      */
     public function testSetViolations()
     {
