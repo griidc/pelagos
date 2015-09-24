@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__.'/../../../vendor/autoload.php';
+require_once __DIR__ . '/../../../vendor/autoload.php';
 
 if (array_key_exists('uid', $_GET) and $_GET['uid'] != '') {
     $ldap = ldap_connect('ldap://triton.tamucc.edu');
@@ -8,12 +8,12 @@ if (array_key_exists('uid', $_GET) and $_GET['uid'] != '') {
     $entries = ldap_get_entries($ldap, $result);
     $photo = null;
     if ($entries['count'] > 0) {
-        $attrs =  ldap_get_attributes($ldap, ldap_first_entry($ldap, $result));
+        $attrs = ldap_get_attributes($ldap, ldap_first_entry($ldap, $result));
         if ($attrs['count'] > 0) {
             $photo = ldap_get_values_len($ldap, ldap_first_entry($ldap, $result), 'jpegPhoto');
         }
     }
-    header("Content-type: image/jpeg");
+    header('Content-type: image/jpeg');
     $num = 0;
     if (array_key_exists('num', $_GET) and $_GET['num'] != '' and intval($_GET['num'])) {
         $num = intval($_GET['num']);

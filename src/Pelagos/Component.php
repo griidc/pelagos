@@ -10,7 +10,6 @@ namespace Pelagos;
  *   - a method to quit safely when output should be immediately flushed
  *     and control should not be returned to the containing framework (e.g. Drupal)
  *   - a method to access the entity manager for Pelagos entities
- *
  * Each component can extend this class with a custom component class.
  */
 class Component
@@ -105,10 +104,10 @@ class Component
      */
     public function addJS($js, $type = 'external')
     {
-        $url_array = $this->getUrlArray($js, $type);
-        foreach ($url_array as $js_url) {
+        $urlArray = $this->getUrlArray($js, $type);
+        foreach ($urlArray as $jsUrl) {
             if (function_exists('drupal_add_js')) {
-                drupal_add_js($js_url, array('type'=>$type));
+                drupal_add_js($jsUrl, array('type' => $type));
             }
         }
     }
@@ -128,9 +127,9 @@ class Component
      */
     public function addCSS($css)
     {
-        $url_array = $this->getUrlArray($css);
-        foreach ($url_array as $css_url) {
-            drupal_add_css($css_url, array('type'=>'external'));
+        $urlArray = $this->getUrlArray($css);
+        foreach ($urlArray as $cssUrl) {
+            drupal_add_css($cssUrl, array('type' => 'external'));
         }
     }
 
@@ -211,13 +210,13 @@ class Component
      */
     private function getUrlArray($assets, $type = 'external')
     {
-        $url_array = array();
+        $urlArray = array();
         if (is_array($assets)) {
-            $asset_array = $assets;
+            $assetArray = $assets;
         } else {
-            $asset_array = array($assets);
+            $assetArray = array($assets);
         }
-        foreach ($asset_array as $asset) {
+        foreach ($assetArray as $asset) {
             if ($type == 'inline' or self::isFullUrl($asset)) {
                 $url = $asset;
             } elseif (preg_match('/^\//', $asset)) {
@@ -225,9 +224,9 @@ class Component
             } else {
                 $url = $this->path . "/$asset";
             }
-            array_push($url_array, $url);
+            array_push($urlArray, $url);
         }
-        return $url_array;
+        return $urlArray;
     }
 
     /**
@@ -268,8 +267,7 @@ class Component
      */
     public function userIsLoggedIn()
     {
-        global $user;
-        if (isset($user->name) and !empty($user->name)) {
+        if (isset($GLOBALS['user']->name) and !empty($GLOBALS['user']->name)) {
             return true;
         }
         return false;
@@ -278,15 +276,14 @@ class Component
     /**
      * Method to get the currently logged in user.
      *
-     * @return string The username of the currently logged in user.
-     *
      * @throws \Exception When no user is logged in.
+     *
+     * @return string The username of the currently logged in user.
      */
     public function getLoggedInUser()
     {
-        global $user;
-        if (isset($user->name) and !empty($user->name)) {
-            return $user->name;
+        if (isset($GLOBALS['user']->name) and !empty($GLOBALS['user']->name)) {
+            return $GLOBALS['user']->name;
         }
         throw new \Exception('No user is logged in');
     }

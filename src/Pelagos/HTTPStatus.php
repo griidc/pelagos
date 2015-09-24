@@ -74,6 +74,7 @@ class HTTPStatus implements \JsonSerializable
 
     /**
      * Serializer to be called when json_encode is called on this object.
+     *
      * This is required to implement \JsonSerializable.
      *
      * @return array Array representing this object's properties.

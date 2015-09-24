@@ -12,8 +12,8 @@ namespace Pelagos\Component\MetadataGenerator;
 class MetadataLogger extends Logger
 {
 
-    const EXT = ".html";
-    const BR = "<br>";
+    const EXT = '.html';
+    const BR = '<br>';
 
     /**
      * Constructor for metadata logger.
@@ -29,10 +29,10 @@ class MetadataLogger extends Logger
         }
 
         if ($udi != null) {
-            $lfileName .= "_" . $udi . "_";
+            $lfileName .= '_' . $udi . '_';
         }
         $dateTime = date('Y-m-d_h:i:s');
-        $lfileName .= "_" . $dateTime . self::EXT;
+        $lfileName .= '_' . $dateTime . self::EXT;
         parent::__construct($lfileName);
     }
 }
