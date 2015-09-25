@@ -263,14 +263,10 @@ function createNodesXML($xml, $doc, $validated)
         $currentNode = createXmlNode($doc, $currentNode, 'gmd:MD_MaintenanceInformation');
         $maintInfoNode = $currentNode;
 
-        $currentNode = createXmlNode($doc, $maintInfoNode, 'gmd:maintenanceAndUpdateFrequency');
-        $freqNode = $currentNode;
-
-        // Code for 'unknown' is 012.
-        $maintFreqCode = '012';
-        $newNode = $doc->createElement('gmd:MD_MaintenanceFrequencyCode');
-        addNodeAttributes($doc, $newNode->parentNode, $newNode, 'gmd:MD_MaintenanceFrequencyCode', $maintFreqCode);
+        $newNode = $doc->createElement('gmd:maintenanceAndUpdateFrequency');
+        addNodeAttributes($doc, $newNode->parentNode, $newNode, 'gco:nilReason', 'unknown');
         $currentNode->appendChild($newNode);
+        $freqNode = $currentNode;
 
         $currentNode = createXmlNode($doc, $maintInfoNode, 'gmd:maintenanceNote');
         $maintNoteNode = $currentNode;
@@ -352,14 +348,8 @@ function codeLookup($codeList, $codeListValue)
 function addNodeAttributes($doc, $parent, $node, $fieldname, $fieldvalue = null)
 {
     switch ($fieldname) {
-        case 'gmd:MD_MaintenanceFrequencyCode':
-            $node->setAttribute(
-                'codeList',
-                'http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_MaintenanceFrequencyCode'
-            );
-            $node->setAttribute('codeListValue', $fieldvalue);
-            $codeSpace = codeLookup($fieldname, $fieldvalue);
-            $node->setAttribute('codeSpace', $codeSpace);
+        case 'gco:nilReason':
+            $node->setAttribute('gco:nilReason', $fieldvalue);
             break;
         case '-gmd:fileIdentifier':
             $node->nodeValue = str_replace(':', '-', $fieldvalue);
