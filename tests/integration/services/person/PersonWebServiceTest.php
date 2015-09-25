@@ -15,7 +15,7 @@ if (!function_exists('\Pelagos\drupal_exit')) {
 }
 
 /**
- * A sets of tests for the Perosn web service.
+ * A sets of tests for the Person web service.
  *
  * @runTestsInSeparateProcesses
  *
