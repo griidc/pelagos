@@ -25,6 +25,7 @@
 
 .entityForm span.clickableLink {
     position: relative;
+    z-index: 10;
 }
 
 .entityForm input.clickableLink {
@@ -40,6 +41,12 @@
 .entityWrapper.active input.clickableLink {
     opacity: 1;
     visibility: visible;
+}
+
+.entityWrapper:not(.active) input,
+.entityWrapper:not(.active) textarea,
+.entityWrapper:not(.active) select{
+    color:initial;
 }
 
 .entityForm span.clickableLink span {

@@ -33,9 +33,9 @@
                 return false;
             }
 
-            $("input,textarea", this).each(function() {
+            $("input,textarea,select", this).each(function() {
                 $(this)
-                .attr("readonly", true)
+                .attr("disabled", true)
                 .addClass("formfield");
             });
 
@@ -43,6 +43,13 @@
                 $(this).wrap("<span class=\"clickableLink\"></span>")
                 .after("<span><a name=\"url\" target=\"_blank\" href=\"" + $(this).val() + "\">" + $(this).val() + "</a></span>");
             });
+            $(this).find("input.clickableLink").next().click(function () {
+                event.stopPropagation();
+            });
+
+            var wrapper = "<div class=\"entityWrapper formReadonly\"></div>";
+
+            $(this).wrap(wrapper);
 
             if (!options.canEdit) {
                 return null;
@@ -59,10 +66,6 @@
                 }
             });
 
-            var wrapper = "<div class=\"entityWrapper formReadonly\"></div>";
-
-            $(this).wrap(wrapper);
-
             var buttons = "<div style=\"position:relative;\">" +
                           "<div id=\"notycontainer\" style=\"position:absolute;top:0px;bottom:0px;width:600px;\">" +
                           "</div><br><button class=\"entityFormButton\" type=\"submit\">Save</button>" +
@@ -73,7 +76,6 @@
             $(".entityFormButton").css("visibility", "hidden").button();
 
             $(".entityWrapper").has(this).append("<div class=\"innerForm\"><div>");
-
 
             $(this).on("keyup change", function () {
                 if ($(".entityWrapper").has(this).hasClass("active")) {
@@ -87,25 +89,28 @@
 
                     var url = pelagosBasePath + "/services/entity/" + entityType + "/validateProperty";
 
-                    $("input:visible,textarea", this).each(function() {
-                        $(this).attr("readonly", false)
-                        .rules("add", {
-                            remote: {
-                                url: url
-                            }
-                        });
+                    $("input:visible,textarea,select", this).each(function() {
+                        $(this).attr("disabled", false);
+                        var dontvalidate = $(this).attr("dontvalidate");
+                        if (typeof dontvalidate === typeof undefined || dontvalidate === false) {
+                            $(this).rules("add", {
+                                remote: {
+                                    url: url
+                                }
+                            });
+                        }
                     });
                     $(".innerForm", this).remove();
                     $(".entityFormButton,.showOnEdit", this).css({opacity: 0.0, visibility: "visible"}).animate({opacity: 1.0});
-                    $('button', this).button("enable");
+                    $("button", this).button("enable");
                 }
             });
 
             $(this).bind("reset", function() {
                 formValidator.resetForm();
-                $("input:visible,textarea", this).each(function() {
+                $("input:visible,textarea,select", this).each(function() {
                     $(this)
-                    .attr("readonly", true)
+                    .attr("disabled", true)
                     .removeClass("active")
                     .rules("remove");
                 });
@@ -116,7 +121,7 @@
                 $(".entityFormButton,.showOnEdit", this).css({opacity: 1.0, visibility: "visible" }).animate({opacity: 0.0});
                 $(this).prop("unsavedChanges", false);
 
-                $('button', this).button("disable");
+                $("button", this).button("disable");
             });
 
             if (entityId === "") {
