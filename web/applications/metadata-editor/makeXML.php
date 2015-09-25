@@ -256,6 +256,7 @@ function createNodesXML($xml, $doc, $validated)
         $currentNode = $parentMi->item(0);
         $newNode = $doc->createElement('gmd:maintenanceNote');
         $currentNode = $currentNode->appendChild($newNode);
+        $maintNoteNode = $currentNode;
     } else {
         $parent = $miXpathdoc->query('/gmi:MI_Metadata');
         $currentNode = createXmlNode($doc, $parent->item(0), 'gmd:metadataMaintenance');
