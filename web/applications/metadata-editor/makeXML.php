@@ -289,9 +289,19 @@ function createNodesXML($xml, $doc, $validated)
         $parent = $miXpathdoc->query('/gmi:MI_Metadata');
         $currentNode = createXmlNode($doc, $parent->item(0), 'gmd:metadataMaintenance');
         $currentNode = createXmlNode($doc, $currentNode, 'gmd:MD_MaintenanceInformation');
+        $maintInfoNode = $currentNode;
 
-        $newNode = $doc->createElement('gmd:maintenanceNote');
-        $currentNode = $currentNode->appendChild($newNode);
+        $currentNode = createXmlNode($doc, $maintInfoNode, 'gmd:maintenanceAndUpdateFrequency');
+        $freqNode = $currentNode;
+
+        // Code for 'unknown' is 012.
+        $maintFreqCode = '012';
+        $newNode = $doc->createElement('gmd:MD_MaintenanceFrequencyCode');
+        addNodeAttributes($doc,$newNode->parentNode,$newNode,'gmd:MD_MaintenanceFrequencyCode',$maintFreqCode);
+        $currentNode->appendChild($newNode);
+
+        $currentNode = createXmlNode($doc, $maintInfoNode, 'gmd:maintenanceNote');
+        $maintNoteNode = $currentNode;
     }
 
     $timestamp = gmdate('c');
@@ -303,7 +313,7 @@ function createNodesXML($xml, $doc, $validated)
     }
 
     $newChild = $doc->createElement('gco:CharacterString', $maintenanceNote);
-    $currentNode->appendChild($newChild);
+    $maintNoteNode->appendChild($newChild);
 
     $doc->formatOutput = true;
     $doc->normalizeDocument();
@@ -369,6 +379,14 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
 {
     switch ($fieldname)
     {
+        case 'gmd:MD_MaintenanceFrequencyCode':
+        {
+            $node->setAttribute('codeList','http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_MaintenanceFrequencyCode');
+            $node->setAttribute('codeListValue',$fieldvalue);
+            $codeSpace = codeLookup($fieldname,$fieldvalue);
+            $node->setAttribute('codeSpace',$codeSpace);
+            break;
+        }
         case '-gmd:fileIdentifier':
         {
             $node->nodeValue = str_replace(':','-',$fieldvalue);
