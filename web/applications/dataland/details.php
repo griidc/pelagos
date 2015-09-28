@@ -75,7 +75,7 @@ if ($udi <> '')
 
     $pquery = "
     SELECT *,
-    CASE WHEN metadata.geom IS NULL THEN ST_AsText(datasets.geom) ELSE ST_AsText(metadata.geom) END AS \"the_geom\",
+    CASE WHEN metadata.geom IS NULL THEN NULL ELSE ST_AsText(metadata.geom) END AS \"the_geom\",
     CASE WHEN registry.dataset_udi IS NULL THEN datasets.dataset_udi ELSE registry.dataset_udi END AS dataset_udi,
     CASE WHEN registry.dataset_title IS NULL THEN datasets.title ELSE registry.dataset_title END AS title,
 
