@@ -17,11 +17,19 @@
     border: 1px solid rgba(255,255,255,0);
     margin: 1px;
     font-family: sans-serif;
-    font-size: 100%;
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
     background: none;
+    overflow: auto;
+}
+
+.entityForm select::-ms-expand {
+    display: none;
+}
+
+.active select::-ms-expand {
+    display: block;
 }
 
 .entityForm span.clickableLink {
@@ -47,7 +55,7 @@
 .entityWrapper:not(.active) input,
 .entityWrapper:not(.active) textarea,
 .entityWrapper:not(.active) select{
-    color:initial;
+    color:black;
 }
 
 .entityForm span.clickableLink span {

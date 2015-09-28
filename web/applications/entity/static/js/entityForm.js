@@ -167,6 +167,7 @@
                 childName = childName[childName.length - 1];
                 selector.attr(childName, value);
             }
+            selector.prop("defaultValue", value);
             var elementType = selector.prop("type");
             //Check if value is an object, and switch between the case that can handle objects
             if (typeof value !== "object") {
