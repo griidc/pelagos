@@ -128,11 +128,11 @@ if ($udi <> '')
         $prow["noheader_doi"] = preg_replace("/doi:/",'',$prow["doi"]);
     }
 
-    if ($prow["the_geom"] == null OR $prow == null)
-    {
+    if ($prow["the_geom"] == null OR $prow == null) {
+
         if ($prow["metadata_xml"] == "")
         {
-            $dsscript = "addImage('$_SERVER[SCRIPT_NAME]/includes/images/nodata.png',0.4);$('#metadatadl').button('disable');dlmap.makeStatic();";
+            $dsscript = "dlmap.addImage('$_SERVER[SCRIPT_NAME]/includes/images/nodata.png',0.4);$('#metadatadl').button('disable');dlmap.makeStatic();";
         }
         else
         {
