@@ -6,7 +6,7 @@
     <input type="text" name="name" size="100" value="{{ResearchGroup.getName}}" required><br>
 
     <label for="fundingOrganization">Funding Organization:</label>
-    <select required name="fundingCycle.fundingOrganization" fundingOrganization="{{ResearchGroup.getFundingCycle.getFundingOrganization.getId}}">
+    <select dontvalidate required name="fundingCycle.fundingOrganization" fundingOrganization="{{ResearchGroup.getFundingCycle.getFundingOrganization.getId}}">
     <option value="">[Please Select a Funding Organization]</option>
     {% for FundingOrganization in entityService.getAll("FundingOrganization") | sortBy(["name"]) %}
         <option value="{{FundingOrganization.getId}}" 
@@ -14,9 +14,9 @@
         >{{FundingOrganization.getName}}</option>
     {% endfor %}
     </select><br>
-        
+
     <label for="fundingCycle">Funding Cycle:</label>
-    <select 
+    <select
     {{ (ResearchGroup.getFundingCycle.getId == '' ? ' disabled ' : '')  }}
     required name="fundingCycle" fundingCycle="{{ResearchGroup.getFundingCycle.getId}}">
         <option value="">[Please Select a Funding Organization First]</option>
@@ -30,18 +30,18 @@
     </select><br>
 
     <label for="url">Website:</label>
-    <input type="text" name="url" class="clickableLink" size="100" value="{{ResearchGroup.getUrl}}"><br>    
+    <input type="text" name="url" class="clickableLink" size="100" value="{{ResearchGroup.getUrl}}"><br>
 
     <label for="phoneNumber">Phone Number:</label>
     <input type="text" name="phoneNumber" size="100" value="{{ResearchGroup.getPhoneNumber}}"><br>
 
     <label for="deliveryPoint">Delivery Point:</label><br>
-    <textarea name="deliveryPoint" cols="100" rows="5">{{ResearchGroup.getDeliveryPoint}}</textarea><br>
+    <textarea maxlength="300" name="deliveryPoint" cols="150" rows="2">{{ResearchGroup.getDeliveryPoint}}</textarea><br>
 
     <label for="city">City:</label>
     <input type="text" name="city" size="100" value="{{ResearchGroup.getCity}}"><br>
 
-    <label for="administrativeArea">Administrative Area:</label>
+    <label for="administrativeArea">State/Province:</label>
     <input type="text" name="administrativeArea" size="100" value="{{ResearchGroup.getAdministrativeArea}}"><br>
 
     <label for="postalCode">Postal Code:</label>
@@ -52,14 +52,14 @@
 
     <label for="description">Description:</label><br>
     <textarea name="description" cols="100" rows="5">{{ResearchGroup.getDescription}}</textarea><br>
-        
+
     <label for="emailAddress">E-Mail Address:</label>
     <input type="text" name="emailAddress" size="100" value="{{ResearchGroup.getEmailAddress}}"><br>
 
     <span class="showOnEdit">
         <label for="logo">Logo:</label>
-        <input name="logo" type="file" 
-            base64="{{ResearchGroup.serializeBinary(ResearchGroup.getLogo).base64}}" 
+        <input name="logo" type="file"
+            base64="{{ResearchGroup.serializeBinary(ResearchGroup.getLogo).base64}}"
             mimeType="{{ResearchGroup.serializeBinary(ResearchGroup.getLogo).mimeType}}">
         <br>
     </span>
