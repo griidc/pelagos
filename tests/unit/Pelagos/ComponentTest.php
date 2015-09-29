@@ -10,28 +10,55 @@ namespace Pelagos;
  */
 class ComponentTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var \Pelagos\Component $component Class variable to hold an instance of \Pelagos\Component to test against */
+    /**
+     * Class variable to hold an instance of \Pelagos\Component to test against.
+     *
+     * @var \Pelagos\Component $component
+     */
     protected $component;
 
-    /** @var string $basePath A URL base path for Pelagos for testing. **/
+    /**
+     * A URL base path for Pelagos for testing.
+     *
+     * @var string $basePath
+     */
     protected static $basePath = '/pelagos-base';
 
-    /** @var string $path A URL path to this component for testing. **/
+    /**
+     * A URL path to this component for testing.
+     *
+     * @var string $path
+     */
     protected static $path = '/pelagos-base/applications/my-component';
 
-    /** @var string $baseUri A base full URI for Pelagos for testing. **/
+    /**
+     * A base full URI for Pelagos for testing.
+     *
+     * @var string $baseUri
+     */
     protected static $baseUri = 'http://foo.bar/pelagos-base';
 
-    /** @var string $uri A full URI to this component for testing. **/
+    /**
+     * A full URI to this component for testing.
+     *
+     * @var string $uri
+     */
     protected static $uri = 'http://foo.bar/pelagos-base/applications/my-component';
 
-    /** @var string $title A page title for testing. **/
+    /**
+     * A page title for testing.
+     *
+     * @var string $title
+     */
     protected static $title = 'Foo Bar Baz';
 
     /**
      * Set up method.
+     *
      * Alias mock \Pelagos\Persistance::createEntityManager() to return a mock \Doctrine\ORM\EntityManager
      * Create an instance of \Pelagos\Component and save it in $this->component
+     *
+     * @return void
      */
     public function setUp()
     {
@@ -53,7 +80,10 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test retrieving the entity manager from the component.
+     *
      * Checks to see that we get an instance of \Doctrine\ORM\EntityManager back.
+     *
+     * @return void
      */
     public function testGetEntityManager()
     {
@@ -63,6 +93,8 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test adding a javascript file with a relative path (relative to the component path).
+     *
+     * @return void
      */
     public function testAddJSRelativePath()
     {
@@ -72,6 +104,8 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test adding a javascript file with an absolute path (relative to the base path).
+     *
+     * @return void
      */
     public function testAddJSAbsolutePath()
     {
@@ -81,6 +115,8 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test adding a javascript file with a full url with the http protocol.
+     *
+     * @return void
      */
     public function testAddJSFullUrlHTTP()
     {
@@ -90,6 +126,8 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test adding a javascript file with a full url with the https protocol.
+     *
+     * @return void
      */
     public function testAddJSFullUrlHTTPS()
     {
@@ -99,6 +137,8 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test adding a javascript file with a full url with no protocol (protocol relative).
+     *
+     * @return void
      */
     public function testAddJSFullUrlProtocolRelative()
     {
@@ -108,6 +148,8 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test adding multiple javascript files in one call by passing an array.
+     *
+     * @return void
      */
     public function testAddJSMultiple()
     {
@@ -127,16 +169,21 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test adding a javascript file with a path that starts with http but is not a full url.
+     *
      * This should just end up as a relative url (relative to the component path).
+     *
+     * @return void
      */
     public function testAddJSNonUrlHTTP()
     {
-        $this->expectOutputString("drupal_add_js: " . self::$path . "/http/js/baz.js\n");
+        $this->expectOutputString('drupal_add_js: ' . self::$path . "/http/js/baz.js\n");
         $this->component->addJS('http/js/baz.js');
     }
 
     /**
      * Test adding a CSS file with a relative path (relative to the component path).
+     *
+     * @return void
      */
     public function testAddCSSRelativePath()
     {
@@ -146,6 +193,8 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test adding a CSS file with an absolute path (relative to the base path).
+     *
+     * @return void
      */
     public function testAddCSSAbsolutePath()
     {
@@ -155,6 +204,8 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test adding a CSS file with a full url with the http protocol.
+     *
+     * @return void
      */
     public function testAddCSSFullUrlHTTP()
     {
@@ -164,6 +215,8 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test adding a CSS file with a full url with the https protocol.
+     *
+     * @return void
      */
     public function testAddCSSFullUrlHTTPS()
     {
@@ -173,6 +226,8 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test adding a CSS file with a full url with no protocol (protocol relative).
+     *
+     * @return void
      */
     public function testAddCSSFullUrlProtocolRelative()
     {
@@ -182,16 +237,21 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test adding a CSS file with a path that starts with http but is not a full url.
+     *
      * This should just end up as a relative url (relative to the component path).
+     *
+     * @return void
      */
     public function testAddCSSNonUrlHTTP()
     {
-        $this->expectOutputString("drupal_add_css: " . self::$path . "/http/css/baz.css\n");
+        $this->expectOutputString('drupal_add_css: ' . self::$path . "/http/css/baz.css\n");
         $this->component->addCSS('http/css/baz.css');
     }
 
     /**
      * Test adding multiple CSS files in one call by passing an array.
+     *
+     * @return void
      */
     public function testAddCSSMultiple()
     {
@@ -211,6 +271,8 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test adding a library.
+     *
+     * @return void
      */
     public function testAddLibrary()
     {
@@ -220,6 +282,8 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test adding multiple libraries in one call by passing an array.
+     *
+     * @return void
      */
     public function testAddLibraryMultiple()
     {
@@ -239,6 +303,8 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test quitting.
+     *
+     * @return void
      */
     public function testQuit()
     {
@@ -248,6 +314,8 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test userIsLogged in for both cases.
+     *
+     * @return void
      */
     public function testUserIsLoggedIn()
     {
@@ -258,6 +326,8 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test getLoggedInUser.
+     *
+     * @return void
      */
     public function testGetLoggedInUser()
     {
@@ -269,6 +339,8 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
      * Test getLoggedInUser when no user is logged in.
      *
      * @expectedException \Exception
+     *
+     * @return void
      */
     public function testGetLoggedInUserNotLoggedIn()
     {
@@ -277,6 +349,8 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test that finalize calls quit when quitOnFinalize is set to true.
+     *
+     * @return void
      */
     public function testQuitOnFinalize()
     {
@@ -287,6 +361,8 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test that finalize doesn't call quit when quitOnFinalize is set to false.
+     *
+     * @return void
      */
     public function testDontQuitOnFinalize()
     {
@@ -297,6 +373,8 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test that finalize doesn't call quit by default.
+     *
+     * @return void
      */
     public function testDontQuitOnFinalizeByDefault()
     {
@@ -306,6 +384,8 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test getting environmental properties.
+     *
+     * @return void
      */
     public function testGetEnvironmentalProperties()
     {
@@ -317,6 +397,8 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test setting environmental properties.
+     *
+     * @return void
      */
     public function testSetEnvironmentalProperties()
     {
@@ -327,14 +409,16 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test setting Pelagos globals in JavaScript.
+     *
+     * @return void
      */
     public function testSetJSGlobals()
     {
         $this->expectOutputString(
-            "drupal_add_js: var pelagosBasePath = \"" . self::$basePath . "\";\n" .
-            "drupal_add_js: var pelagosComponentPath = \"" . self::$path . "\";\n" .
-            "drupal_add_js: var pelagosBaseUri = \"" . self::$baseUri . "\";\n" .
-            "drupal_add_js: var pelagosComponentUri = \"" . self::$uri . "\";\n"
+            'drupal_add_js: var pelagosBasePath = "' . self::$basePath . "\";\n" .
+            'drupal_add_js: var pelagosComponentPath = "' . self::$path . "\";\n" .
+            'drupal_add_js: var pelagosBaseUri = "' . self::$baseUri . "\";\n" .
+            'drupal_add_js: var pelagosComponentUri = "' . self::$uri . "\";\n"
         );
         $this->component->setJSGlobals();
     }

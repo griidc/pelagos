@@ -29,6 +29,7 @@ class XMLDataFile
     private function __construct()
     {
     }
+
     /**
      * Singleton implementation.
      *
@@ -51,15 +52,15 @@ class XMLDataFile
      */
     private function getFileLocation($udi)
     {
-        # load global pelagos config
+        // Load global pelagos config.
         $GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini', true);
 
-        # load the Common library
+        // Load the Common library.
         require_once 'Common.php';
 
-        # check for local config file
+        // Check for local config file.
         if (file_exists(__DIR__ . '/../config.ini')) {
-            # merge local config with global config
+            // Merge local config with global config.
             $GLOBALS['config'] = configMerge($GLOBALS['config'], parse_ini_file(__DIR__ . '/../config.ini', true));
         }
 
@@ -79,9 +80,11 @@ class XMLDataFile
      *
      * @param string $udi Dataset identifier.
      *
-     * @return boolean|string Result.
+     * @throws NotFoundException When no XML file found for $udi.
+     * @throws NotFoundException When there is a failure reading the XML file for $udi.
+     * @throws NotFoundException When XML file for $udi is not readable.
      *
-     * @throws NotFoundException If not found.
+     * @return boolean|string Result.
      */
     public function getXML($udi)
     {
@@ -89,16 +92,17 @@ class XMLDataFile
         $xmlText = false;
         $path = $this->getFileLocation($targetUdi);
         if ($path == false) {
-            throw new NotFoundException("XMLDataFile No XML found in path: " . $path);
+            throw new NotFoundException('XMLDataFile No XML found in path: ' . $path);
         } elseif (is_readable($path)) {
             $xmlText = file_get_contents($path);
             if ($xmlText === false) {
-                throw new NotFoundException("XMLDataFile file_get_contents is FALSE for path: " . $path);
+                throw new NotFoundException('XMLDataFile file_get_contents is FALSE for path: ' . $path);
             }
             $validator = new XMLValidator();
-            $validator->validate($xmlText);  // throws InvalidXmlException
+            // Throws InvalidXmlException.
+            $validator->validate($xmlText);
             return $xmlText;
         }
-        throw new NotFoundException("XMLDataFile No XML found in path: " . $path);
+        throw new NotFoundException('XMLDataFile No XML found in path: ' . $path);
     }
 }

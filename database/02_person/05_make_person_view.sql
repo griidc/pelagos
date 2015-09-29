@@ -519,35 +519,35 @@ AS $pers_func$
          RETURN OLD;
       END IF; -- End IF to determine if this is a DELETE operation.
 
--- PNK       EXCEPTION
--- PNK          WHEN SQLSTATE '23502'
--- PNK             THEN
--- PNK                RAISE EXCEPTION '%',   _err_msg
--- PNK                   USING HINT        = _err_hint,
--- PNK                         ERRCODE     = SQLSTATE;
--- PNK                RETURN NULL;
--- PNK          WHEN SQLSTATE '23505'
--- PNK             THEN
--- PNK                RAISE EXCEPTION '%',   _err_msg
--- PNK                   USING HINT        = _err_hint,
--- PNK                         ERRCODE     = SQLSTATE;
--- PNK                RETURN NULL;
--- PNK          WHEN SQLSTATE '23514'
--- PNK             THEN
--- PNK                RAISE EXCEPTION '%',   _err_msg
--- PNK                   USING HINT        = _err_hint,
--- PNK                         ERRCODE     = SQLSTATE;
--- PNK                RETURN NULL;
--- PNK          WHEN OTHERS
--- PNK             THEN
--- PNK                RAISE EXCEPTION '%', CONCAT('Unable to ',
--- PNK                                            TG_OP,
--- PNK                                            ' person. An unknown ',
--- PNK                                            'error has occurred.')
--- PNK                   USING HINT      = CONCAT('Check the database log for ',
--- PNK                                            'more information.'),
--- PNK                         ERRCODE     = SQLSTATE;
--- PNK                RETURN NULL;
+      EXCEPTION
+         WHEN SQLSTATE '23502'
+            THEN
+               RAISE EXCEPTION '%',   _err_msg
+                  USING HINT        = _err_hint,
+                        ERRCODE     = SQLSTATE;
+               RETURN NULL;
+         WHEN SQLSTATE '23505'
+            THEN
+               RAISE EXCEPTION '%',   _err_msg
+                  USING HINT        = _err_hint,
+                        ERRCODE     = SQLSTATE;
+               RETURN NULL;
+         WHEN SQLSTATE '23514'
+            THEN
+               RAISE EXCEPTION '%',   _err_msg
+                  USING HINT        = _err_hint,
+                        ERRCODE     = SQLSTATE;
+               RETURN NULL;
+         WHEN OTHERS
+            THEN
+               RAISE EXCEPTION '%', CONCAT('Unable to ',
+                                           TG_OP,
+                                           ' person. An unknown ',
+                                           'error has occurred.')
+                  USING HINT      = CONCAT('Check the database log for ',
+                                           'more information.'),
+                        ERRCODE     = SQLSTATE;
+               RETURN NULL;
 
    END;
 

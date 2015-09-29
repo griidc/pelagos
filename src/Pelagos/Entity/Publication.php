@@ -5,31 +5,28 @@ namespace Pelagos\Entity;
 use \Pelagos\HTTPStatus;
 
 /**
- * Pelagos\Publication
- *
- * This class generates a Publication object,
- * which holds the DOI an a Citation object
- *
- *
+ * This class generates a Publication object,* which holds the DOI an a Citation object.
  */
 class Publication
 {
     /**
-     * DOI
-     * @var $doi string Contains the DOI
+     * DOI.
+     *
+     * @var $doi string Contains the DOI.
      */
     private $doi;
 
     /**
-     * Citation
-     * @var $citation object Contains the Citation Object
+     * Citation.
+     *
+     * @var $citation object Contains the Citation Object.
      */
     private $citation;
 
     /**
      * Publication Constructor.
      *
-     * @param string $doi DOI
+     * @param string $doi DOI.
      *
      * @return void
      */
@@ -42,9 +39,9 @@ class Publication
      * Retrieves a Publication Citation.
      *
      * This function retrieves a publication citation from DB cache
-     * or will create an empty Citation
+     * or will create an empty Citation.
      *
-     * @return Pelagos\Citation
+     * @return \Pelagos\Citation The publication citation.
      */
     public function getCitation()
     {
@@ -69,8 +66,8 @@ class Publication
      *
      * This function will get a Publication Citation from doi.org
      *
-     * @param string $style (Optional) Style of the citation, default is 'apa'
-     * @param string $locale (Optional) Locale of the citation text, default is 'utf-8'
+     * @param string $style  Style of the citation, default is 'apa'.
+     * @param string $locale Locale of the citation text, default is 'utf-8'.
      *
      * @return Pelagos\HTTPStatus
      */
@@ -108,8 +105,8 @@ class Publication
             );
             $sth->bindparam(':doi', $this->doi);
             $sth->bindparam(':citation', $curlResponse);
-            $pull_date = date('c');
-            $sth->bindparam(':pull_date', $pull_date);
+            $pullDate = date('c');
+            $sth->bindparam(':pull_date', $pullDate);
             $result = $sth->execute();
             if (!$result) {
                 return new HTTPStatus(500, $sth->errorInfo()[2]);
@@ -122,18 +119,18 @@ class Publication
             $sth->bindparam(':doi', $this->doi);
             $sth->bindparam(':doi2', $this->doi);
             $sth->bindparam(':citation', $curlResponse);
-            $pull_date = date('c');
-            $sth->bindparam(':pull_date', $pull_date);
+            $pullDate = date('c');
+            $sth->bindparam(':pull_date', $pullDate);
             $result = $sth->execute();
             if (!$result) {
                 return new HTTPStatus(500, $sth->errorInfo()[2]);
             }
         }
-        $status_message = null;
+        $statusMessage = null;
         if (array_key_exists($curlInfo['http_code'], $statusCodes)) {
-            $status_message = $statusCodes[$curlInfo['http_code']];
+            $statusMessage = $statusCodes[$curlInfo['http_code']];
         }
-        return new HTTPStatus($curlInfo['http_code'], $status_message);
+        return new HTTPStatus($curlInfo['http_code'], $statusMessage);
     }
 
     /**
@@ -141,7 +138,6 @@ class Publication
      *
      * @return JSON
      */
-
     public function asJSON()
     {
         return json_encode(

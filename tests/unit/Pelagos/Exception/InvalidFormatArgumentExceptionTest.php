@@ -11,13 +11,21 @@ namespace Pelagos\Exception;
  */
 class InvalidFormatArgumentExceptionTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var string $testExpectedFormat Static class variable containing an expected format to use for testing */
+    /**
+     * Static class variable containing an expected format to use for testing.
+     *
+     * @var string $testExpectedFormat
+     */
     protected static $testExpectedFormat = 'yyyy-mm-dd';
 
     /**
      * Test that we can throw an InvalidFormatArgumentException.
      *
      * @expectedException \Pelagos\Exception\InvalidFormatArgumentException
+     *
+     * @throws InvalidFormatArgumentException Always.
+     *
+     * @return void
      */
     public function testThrowInvalidFormatArgumentException()
     {
@@ -26,42 +34,56 @@ class InvalidFormatArgumentExceptionTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test that we can catch a InvalidFormatArgumentException.
+     *
+     * @throws InvalidFormatArgumentException Always, but it's caught.
+     *
+     * @return void
      */
     public function testCatchInvalidFormatArgumentException()
     {
         try {
             throw new InvalidFormatArgumentException();
         } catch (InvalidFormatArgumentException $e) {
-            // do nothing but exception is caught
+            // Do nothing but exception is caught.
         }
     }
 
     /**
      * Test that we can catch a InvalidFormatArgumentException as an ArgumentException.
+     *
+     * @throws InvalidFormatArgumentException Always, but it's caught as an ArgumentException..
+     *
+     * @return void
      */
     public function testCatchArgumentException()
     {
         try {
             throw new InvalidFormatArgumentException();
         } catch (ArgumentException $e) {
-            // do nothing but exception is caught
+            // Do nothing but exception is caught.
         }
     }
 
     /**
      * Test that we can catch a InvalidFormatArgumentException as an \Exception.
+     *
+     * @throws InvalidFormatArgumentException Always, but it's caught as an \Exception.
+     *
+     * @return void
      */
     public function testCatchException()
     {
         try {
             throw new InvalidFormatArgumentException();
         } catch (\Exception $e) {
-            // do nothing but exception is caught
+            // Do nothing but exception is caught.
         }
     }
 
     /**
      * Test that we can set the expected format and get it back.
+     *
+     * @return void
      */
     public function testSetExpectedFormat()
     {
@@ -75,6 +97,10 @@ class InvalidFormatArgumentExceptionTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test that we can set the expected format and get it back upon catching the exception.
+     *
+     * @throws InvalidFormatArgumentException Always, but it's caught.
+     *
+     * @return void
      */
     public function testGetExpectedFormatOnCatch()
     {

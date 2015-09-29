@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__.'/../../../vendor/autoload.php';
+require_once __DIR__ . '/../../../vendor/autoload.php';
 
 use Pelagos\Service\EntityService;
 use Pelagos\Exception\ArgumentException;
@@ -44,7 +44,7 @@ $app = new \Slim\Slim(
     )
 );
 
-# add custom Twig extensions
+// Add custom Twig extensions.
 $app->view->parserExtensions = array(
     new \Pelagos\TwigEntityExtensions()
 );
@@ -72,8 +72,9 @@ $app->get(
         $twigData = array(
             'userLoggedIn' => ($comp->userIsLoggedIn()) ? 'true' : 'false',
         );
+        $entityService = new EntityService($comp->getEntityManager());
+        $twigData['entityService'] = $entityService;
         if (isset($entityId)) {
-            $entityService = new EntityService($comp->getEntityManager());
             try {
                 $entity = $entityService->get($entityType, $entityId);
                 $app->response->setStatus(200);

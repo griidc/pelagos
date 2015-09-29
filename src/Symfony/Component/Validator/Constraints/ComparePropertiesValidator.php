@@ -33,7 +33,7 @@ class ComparePropertiesValidator extends ConstraintValidator
         $em = $comp->getEntityManager();
 
         if (!$constraint instanceof CompareProperties) {
-            throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\CompareProperties');
+            throw new UnexpectedTypeException($constraint, __NAMESPACE__ . '\CompareProperties');
         }
 
         if (null !== $constraint->errorPath && !is_string($constraint->errorPath)) {

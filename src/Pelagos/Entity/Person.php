@@ -63,9 +63,9 @@ class Person extends Entity
      */
     protected $emailAddress;
 
-
     /**
      * Static array containing a list of the properties and their attributes.
+     *
      * Used by common update code.
      *
      * @var array $properties
