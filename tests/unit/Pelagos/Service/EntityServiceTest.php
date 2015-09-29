@@ -3,7 +3,10 @@
 namespace Pelagos\Component;
 
 /**
+ * Tests for the Entity service.
+ *
  * @runTestsInSeparateProcesses
+ *
  * @preserveGlobalState disabled
  */
 class EntityServiceTest extends \PHPUnit_Framework_TestCase
@@ -43,25 +46,44 @@ class EntityServiceTest extends \PHPUnit_Framework_TestCase
      */
     protected $mockValidator;
 
-    /** @var string $firstName A valid first name to use for testing. **/
+    /**
+     * A valid first name to use for testing.
+     *
+     * @var string $firstName
+     */
     protected static $firstName = 'test';
 
-    /** @var string $lastName A valid last name to use for testing. **/
+    /**
+     * A valid last name to use for testing.
+     *
+     * @var string $lastName
+     */
     protected static $lastName = 'user';
 
-    /** @var string $emailAddress A valid email address to use for testing. **/
+    /**
+     * A valid email address to use for testing.
+     *
+     * @var string $emailAddress
+     */
     protected static $emailAddress = 'test.user@testdomian.tld';
 
-    /** @var string $emailAddress An invalid email address to use for testing. **/
+    /**
+     * An invalid email address to use for testing.
+     *
+     * @var string $emailAddress
+     */
     protected static $badEmailAddress = 'bademail@testdomian';
 
     /**
      * Set up for tests.
+     *
      * Since this is a unit tests, we mock all dependencies:
      * - \Pelagos\Entity\Person
      * - \Doctrine\ORM\EntityManager
      * - \Pelagos\Persistance
      * - \Doctrine\DBAL\Driver\DriverException
+     *
+     * @return void
      */
     protected function setUp()
     {
@@ -78,8 +100,6 @@ class EntityServiceTest extends \PHPUnit_Framework_TestCase
         $this->mockEntity = \Mockery::mock('overload:\Pelagos\Entity\Entity');
         $this->mockEntity->shouldReceive('getId')->andReturn(0);
 
-
-
         $mockPersistence = \Mockery::mock('alias:\Pelagos\Persistance');
         $mockPersistence->shouldReceive('createEntityManager')->andReturn($this->mockEntityManager);
 
@@ -90,6 +110,8 @@ class EntityServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test validating an entity with success.
+     *
+     * @return void
      */
     public function testValidateSuccess()
     {
@@ -102,6 +124,8 @@ class EntityServiceTest extends \PHPUnit_Framework_TestCase
      * Test validating an entity with validation failure.
      *
      * @expectedException \Pelagos\Exception\ValidationException
+     *
+     * @return void
      */
     public function testValidateFailure()
     {
@@ -111,6 +135,8 @@ class EntityServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test persisting an entity successfully.
+     *
+     * @return void
      */
     public function testPersistSuccess()
     {
@@ -124,6 +150,8 @@ class EntityServiceTest extends \PHPUnit_Framework_TestCase
      * Test handling of attempting to persist an entity with a missing required field.
      *
      * @expectedException \Pelagos\Exception\MissingRequiredFieldPersistenceException
+     *
+     * @return void
      */
     public function testPersistMissingRequiredField()
     {
@@ -139,6 +167,8 @@ class EntityServiceTest extends \PHPUnit_Framework_TestCase
      * Test handling of attempting to persist an entity that already exists in persistence.
      *
      * @expectedException \Pelagos\Exception\RecordExistsPersistenceException
+     *
+     * @return void
      */
     public function testPersistRecordExists()
     {
@@ -152,9 +182,12 @@ class EntityServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test handling of attempting to persist an entity and encountering a persistence error.
+     *
      * This tests for handling of persistence errors not handled specifically.
      *
      * @expectedException \Pelagos\Exception\PersistenceException
+     *
+     * @return void
      */
     public function testPersistPersistenceError()
     {
@@ -164,7 +197,10 @@ class EntityServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test getting an entity that exists.
+     *
      * Should return the entity for the provided id.
+     *
+     * @return void
      */
     public function testGet()
     {
@@ -176,7 +212,10 @@ class EntityServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test getting an entity that exists by passing a string that contains an integer.
+     *
      * Should return the entity for the provided id.
+     *
+     * @return void
      */
     public function testGetIntegerString()
     {
@@ -190,6 +229,8 @@ class EntityServiceTest extends \PHPUnit_Framework_TestCase
      * Test handling of attempting to get an entity with an invalid id.
      *
      * @expectedException \Pelagos\Exception\ArgumentException
+     *
+     * @return void
      */
     public function testGetInvalidID()
     {
@@ -197,8 +238,9 @@ class EntityServiceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test handling of attempting to get an entity with an invalid id
-     * and getting back the id sent upon catching the exception.
+     * Test attempting to get an entity with an invalid id and getting back the id sent upon catching the exception.
+     *
+     * @return void
      */
     public function testGetInvalidIDGetID()
     {
@@ -214,6 +256,8 @@ class EntityServiceTest extends \PHPUnit_Framework_TestCase
      * Test handling of attempting to get an entity that does not exist in persistence.
      *
      * @expectedException \Pelagos\Exception\RecordNotFoundPersistenceException
+     *
+     * @return void
      */
     public function testGetRecordNotFound()
     {
@@ -223,9 +267,12 @@ class EntityServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test handling of attempting to get an entity and encountering a persistence error.
+     *
      * This tests for handling of persistence errors not handled specifically.
      *
      * @expectedException \Pelagos\Exception\PersistenceException
+     *
+     * @return void
      */
     public function testGetPersistenceError()
     {
@@ -235,7 +282,10 @@ class EntityServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test getting all entities.
+     *
      * Should return an array of entities for the provided id.
+     *
+     * @return void
      */
     public function testGetAll()
     {

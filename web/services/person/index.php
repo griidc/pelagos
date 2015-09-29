@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__.'/../../../vendor/autoload.php';
+require_once __DIR__ . '/../../../vendor/autoload.php';
 
 use \Pelagos\HTTPStatus;
 use \Pelagos\Entity\Person;
@@ -36,19 +36,19 @@ $slim->get(
         $params = $slim->request->params();
 
         if (count($params) == 0) {
-            print json_encode('Property to be validated not supplied');
+            echo json_encode('Property to be validated not supplied');
             return;
         }
 
         if (count($params) > 1) {
-            print json_encode('Validation of multiple properties not allowed.');
+            echo json_encode('Validation of multiple properties not allowed.');
             return;
         }
 
         $paramName = array_keys($params);
 
         if (!property_exists('\Pelagos\Entity\Person', $paramName[0])) {
-            print json_encode("The parameter $paramName[0] is not a valid property of Person.");
+            echo json_encode("The parameter $paramName[0] is not a valid property of Person.");
             return;
         }
 
@@ -61,10 +61,10 @@ $slim->get(
             foreach ($violations as $violation) {
                 $violationMsgs[] = $violation->getMessage();
             }
-            print json_encode(join($violationMsgs, ', '));
+            echo json_encode(join($violationMsgs, ', '));
             return;
         }
-        print json_encode(true);
+        echo json_encode(true);
     }
 );
 
@@ -179,7 +179,7 @@ $slim->put(
         try {
             $updates = $slim->request->params();
             $updates['modifier'] = $comp->getLoggedInUser();
-            // get the Person, apply updates, validate the Person, persist the updated Person
+            // Get the Person, apply updates, validate the Person, persist the updated Person.
             $person = $comp->persist(
                 $comp->validate(
                     $comp->getPerson($id)->update($updates),

@@ -228,9 +228,9 @@ class PersonTest extends \PHPUnit_Framework_TestCase
     /**
      * Test the setCreationTimeStamp method with a non-UTC timestamp.
      *
-     * @return void
-     *
      * @expectedException \Exception
+     *
+     * @return void
      */
     public function testSetCreationTimeStampFailForNonUTC()
     {
@@ -345,9 +345,9 @@ class PersonTest extends \PHPUnit_Framework_TestCase
     /**
      * Test the setModificationTimeStamp method with a non-UTC timestamp.
      *
-     * @return void
-     *
      * @expectedException \Exception
+     *
+     * @return void
      */
     public function testSetModificationTimeStampFailForNonUTC()
     {

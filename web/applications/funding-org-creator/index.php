@@ -1,13 +1,12 @@
 <?php
 /**
- * Funding Organization Interface
+ * Funding Organization Interface.
  *
  * Based on the Funding Org class, a simple web form that creates a funding source
  * then sends it to the web-service to save.
- *
  */
 
-require_once __DIR__.'/../../../vendor/autoload.php';
+require_once __DIR__ . '/../../../vendor/autoload.php';
 
 $comp = new \Pelagos\Component;
 

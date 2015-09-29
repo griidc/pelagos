@@ -86,7 +86,7 @@ class FundingCycleTest extends \PHPUnit_Framework_TestCase
         $this->testEndDate = new \DateTime('2015-12-31');
         $this->fundingCycle->setEndDate($this->testEndDate);
         $this->testFundingOrganization = \Mockery::mock('\Pelagos\Entity\FundingOrganization');
-        $this->testFundingOrganization->shouldReceive('jsonSerialize')->andReturn(array('id'=>0));
+        $this->testFundingOrganization->shouldReceive('jsonSerialize')->andReturn(array('id' => 0));
         $this->fundingCycle->setFundingOrganization($this->testFundingOrganization);
     }
 

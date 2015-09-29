@@ -24,6 +24,7 @@ class EntityWebService extends \Pelagos\Component
      * The instance of \Slim\Slim used by this web service.
      *
      * @var \Slim\Slim $slim
+     *
      * @access protected
      */
     protected $slim;
@@ -32,6 +33,7 @@ class EntityWebService extends \Pelagos\Component
      * An instance of Pelagos\Service\EntityService.
      *
      * @var EntityService $entityService
+     *
      * @access protected
      */
     protected $entityService;
@@ -165,12 +167,12 @@ class EntityWebService extends \Pelagos\Component
         $params = $this->slim->request->params();
 
         if (count($params) == 0) {
-            print json_encode('Property to be validated not supplied');
+            echo json_encode('Property to be validated not supplied');
             return;
         }
 
         if (count($params) > 1) {
-            print json_encode('Validation of multiple properties not allowed.');
+            echo json_encode('Validation of multiple properties not allowed.');
             return;
         }
 
@@ -195,15 +197,15 @@ class EntityWebService extends \Pelagos\Component
                         $entity->getPropertyEntityType($property),
                         $value
                     );
-                    print json_encode(true);
+                    echo json_encode(true);
                     return;
                 } catch (\Exception $e) {
-                    print json_encode($e->getMessage());
+                    echo json_encode($e->getMessage());
                     return;
                 }
             }
         } else {
-            print json_encode("The parameter $property is not a valid property of $entityType.");
+            echo json_encode("The parameter $property is not a valid property of $entityType.");
             return;
         }
 
@@ -216,12 +218,12 @@ class EntityWebService extends \Pelagos\Component
                 foreach ($violations as $violation) {
                     $violationMsgs[] = $violation->getMessage();
                 }
-                print json_encode(join($violationMsgs, ', '));
+                echo json_encode(join($violationMsgs, ', '));
                 return;
             }
-            print json_encode(true);
+            echo json_encode(true);
         } catch (\Exception $e) {
-            print json_encode($e->getMessage());
+            echo json_encode($e->getMessage());
         }
     }
 
@@ -296,7 +298,7 @@ class EntityWebService extends \Pelagos\Component
         try {
             $entityService = new EntityService($this->getEntityManager());
             $entity = $entityService->get($entityType, $entityId);
-            if (!is_null($this->slim->request->params('properties'))) {
+            if ($this->slim->request->params('properties') !== null) {
                 $properties = explode(',', $this->slim->request->params('properties'));
                 $entity->setSerializeProperties($properties);
             }
@@ -382,12 +384,12 @@ class EntityWebService extends \Pelagos\Component
 
                 // Separate headers and body
                 $part = ltrim($part, "\r\n");
-                list($raw_headers, $body) = explode("\r\n\r\n", $part, 2);
+                list($rawHeaders, $body) = explode("\r\n\r\n", $part, 2);
 
                 // Parse the headers
-                $raw_headers = explode("\r\n", $raw_headers);
+                $rawHeaders = explode("\r\n", $rawHeaders);
                 $headers = array();
-                foreach ($raw_headers as $header) {
+                foreach ($rawHeaders as $header) {
                     list($name, $value) = explode(':', $header);
                     $headers[strtolower($name)] = ltrim($value, ' ');
                 }
@@ -436,7 +438,7 @@ class EntityWebService extends \Pelagos\Component
         $this->setQuitOnFinalize(true);
         try {
             $entities = $this->getEntityService()->getBy($entityType, $this->slim->request->params());
-            if (!is_null($this->slim->request->params('properties'))) {
+            if ($this->slim->request->params('properties') !== null) {
                 $properties = explode(',', $this->slim->request->params('properties'));
                 foreach ($entities as $entity) {
                     $entity->setSerializeProperties($properties);

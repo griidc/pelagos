@@ -2,44 +2,76 @@
 
 namespace Pelagos;
 
-/**
-  * Mock the drupal_exit function to just print drupal_exit followed by a newline.
-  */
 if (!function_exists('\Pelagos\drupal_exit')) {
+    /**
+     * Mock the drupal_exit function to just print drupal_exit followed by a newline.
+     *
+     * @return void
+     */
     function drupal_exit()
     {
-        print "drupal_exit\n";
+        echo "drupal_exit\n";
     }
 }
 
 /**
+ * A sets of tests for the Person web service.
+ *
  * @runTestsInSeparateProcesses
+ *
  * @preserveGlobalState disabled
  */
 class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var string $saveCwd Variable to save the current working directory. **/
+    /**
+     * Variable to save the current working directory.
+     *
+     * @var string
+     */
     private $saveCwd;
 
-    /** @var \Doctrine\ORM\EntityManager $mockEntityManager An instance of a mock EntityManager. **/
+    /**
+     * An instance of a mock EntityManager.
+     *
+     * @var \Doctrine\ORM\EntityManager
+     */
     protected $mockEntityManager;
 
-    /** @var string $firstName A valid first name to use for testing. **/
+    /**
+     * A valid first name to use for testing.
+     *
+     * @var string
+     */
     protected static $firstName = 'test';
 
-    /** @var string $lastName A valid last name to use for testing. **/
+    /**
+     * A valid last name to use for testing.
+     *
+     * @var string
+     */
     protected static $lastName = 'user';
 
-    /** @var string $emailAddress A valid email address to use for testing. **/
+    /**
+     * A valid email address to use for testing.
+     *
+     * @var string
+     */
     protected static $emailAddress = 'test.user@testdomian.tld';
 
-    /** @var string $emailAddress An invalid email address to use for testing. **/
+    /**
+     * An invalid email address to use for testing.
+     *
+     * @var string
+     */
     protected static $badEmailAddress = 'bademail@testdomian';
 
     /**
      * Set up for tests.
+     *
      * We mock \Doctrine\ORM\EntityManager and \Pelagos\Persistance so we don't need a real database.
      * We mock \Doctrine\DBAL\Driver\DriverException so that we can test throwing Doctrine DBAL exceptions.
+     *
+     * @return void
      */
     public function setUp()
     {
@@ -57,7 +89,10 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test attempting to create a person when no user is logged in.
+     *
      * Should fail and return 401 with a message indicating that login is required.
+     *
+     * @return void
      */
     public function testCreatePersonNotLoggedIn()
     {
@@ -73,7 +108,10 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test attempting to create a person with no post parameters.
+     *
      * Should fail and return 400 with a message indicating that firstName is required.
+     *
+     * @return void
      */
     public function testCreatePersonNoParameters()
     {
@@ -90,7 +128,10 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test attempting to create a person with lastName missing from the post parameters.
+     *
      * Should fail and return 400 with a message indicating that lastName is required.
+     *
+     * @return void
      */
     public function testCreatePersonMissingLastName()
     {
@@ -113,7 +154,10 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test attempting to create a person with emailAddress missing from the post parameters.
+     *
      * Should fail and return 400 with a message indicating that emailAddress is required.
+     *
+     * @return void
      */
     public function testCreatePersonMissingEmailAddress()
     {
@@ -136,7 +180,10 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test attempting to create a person with an invalid emailAddress sent in the post parameters.
+     *
      * Should fail and return 400 with a message indicating that emailAddress is improperly formatted.
+     *
+     * @return void
      */
     public function testCreatePersonInvalidEmailAddress()
     {
@@ -160,7 +207,10 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test attempting to create a person and encountering a not null violation when persisting.
+     *
      * Should fail and return 400 with a message indicating that a required field is missing.
+     *
+     * @return void
      */
     public function testCreatePersonEmptyRequiredField()
     {
@@ -191,7 +241,10 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test attempting to create a person and encountering a unique constraint violation when persisting.
+     *
      * Should fail and return 409 with a message indicating that the reocord already exists.
+     *
+     * @return void
      */
     public function testCreatePersonRecordExists()
     {
@@ -222,7 +275,10 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test attempting to create a person and encountering a database error when persisting.
+     *
      * Should fail and return 500 with a message indicating that a database error has occured.
+     *
+     * @return void
      */
     public function testCreatePersonPersistenceError()
     {
@@ -244,7 +300,10 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test attempting to create a person and encountering a general error when persisting.
+     *
      * Should fail and return 500 with a message indicating that a general error has occured.
+     *
+     * @return void
      */
     public function testCreatePersonGeneralError()
     {
@@ -266,8 +325,11 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test that creating a person with all valid parameters is successful.
+     *
      * Should return 200 with a message indicating that a person has been successfully created
-     * and lsiting details about the person.
+     * and listing details about the person.
+     *
+     * @return void
      */
     public function testCreatePersonSuccess()
     {
@@ -293,7 +355,10 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test that getting a person with an invalid id.
+     *
      * Should return 400 with a message indicating the id must be a non-negative integer.
+     *
+     * @return void
      */
     public function testGetPersonInvalidId()
     {
@@ -314,7 +379,10 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test that getting a person that doesn't exist.
+     *
      * Should return 404 with a message indicating the person is not found.
+     *
+     * @return void
      */
     public function testGetPersonNotFound()
     {
@@ -336,7 +404,10 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test that getting a person and encountering a persistence error.
+     *
      * Should return 500 with a message indicating what happened.
+     *
+     * @return void
      */
     public function testGetPersonPersistenceError()
     {
@@ -360,7 +431,10 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test that getting a person and encountering a general error.
+     *
      * Should return 500 with a message indicating what happened.
+     *
+     * @return void
      */
     public function testGetPersonGeneralError()
     {
@@ -384,8 +458,11 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test that getting a person with a valid id is successful.
+     *
      * Should return 200 with a message indicating the person was found
      * and a JSON serialization of the person as the data package.
+     *
+     * @return void
      */
     public function testGetPersonSuccess()
     {
@@ -416,7 +493,10 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test attempting to update a person when no user is logged in.
+     *
      * Should fail and return 401 with a message indicating that login is required.
+     *
+     * @return void
      */
     public function testUpdatePersonNotLoggedIn()
     {
@@ -432,7 +512,10 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test that updating a person with an invalid id.
+     *
      * Should return 400 with a message indicating the id must be a non-negative integer.
+     *
+     * @return void
      */
     public function testUpdatePersonInvalidId()
     {
@@ -454,7 +537,10 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test that updating a person that doesn't exist.
+     *
      * Should return 404 with a message indicating the person is not found.
+     *
+     * @return void
      */
     public function testUpdatePersonNotFound()
     {
@@ -477,7 +563,10 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test that updating a person and encountering a persistence error.
+     *
      * Should return 500 with a message indicating what happened.
+     *
+     * @return void
      */
     public function testUpdatePersonPersistenceError()
     {
@@ -502,7 +591,10 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test updating a person and encountering a general error.
+     *
      * Should return 500 with a message indicating what happened.
+     *
+     * @return void
      */
     public function testUpdatePersonGeneralError()
     {
@@ -527,8 +619,11 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test that updating a person with a valid id is successful.
+     *
      * Should return 200 with a message indicating the person was updated
      * and a JSON serialization of the person as the data package.
+     *
+     * @return void
      */
     public function testUpdatePersonSuccess()
     {
@@ -567,7 +662,9 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test of setting the property of firstName to a valid value
+     * Test of setting the property of firstName to a valid value.
+     *
+     * @return void
      */
     public function testValidatePropertyFirstName()
     {
@@ -578,12 +675,14 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
                 'QUERY_STRING' => 'firstName=' . self::$firstName
             )
         );
-        $this->expectOutputString(json_encode(true)."drupal_exit\n");
+        $this->expectOutputString(json_encode(true) . "drupal_exit\n");
         require 'index.php';
     }
 
     /**
-     * Test of setting the property of lastName to a valid value
+     * Test of setting the property of lastName to a valid value.
+     *
+     * @return void
      */
     public function testValidatePropertyLastName()
     {
@@ -594,13 +693,14 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
                 'QUERY_STRING' => 'lastName=' . self::$firstName
             )
         );
-        $this->expectOutputString(json_encode(true)."drupal_exit\n");
+        $this->expectOutputString(json_encode(true) . "drupal_exit\n");
         require 'index.php';
     }
 
-
     /**
-     * Test of setting the property of emailAddress to a valid value
+     * Test of setting the property of emailAddress to a valid value.
+     *
+     * @return void
      */
     public function testValidatePropertyEmailAddress()
     {
@@ -611,12 +711,14 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
                 'QUERY_STRING' => 'emailAddress=' . self::$emailAddress
             )
         );
-        $this->expectOutputString(json_encode(true)."drupal_exit\n");
+        $this->expectOutputString(json_encode(true) . "drupal_exit\n");
         require 'index.php';
     }
 
     /**
-     * Test of setting the property of firstName to blank
+     * Test of setting the property of firstName to blank.
+     *
+     * @return void
      */
     public function testValidatePropertyFirstNameBlank()
     {
@@ -627,12 +729,14 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
                 'QUERY_STRING' => 'firstName='
             )
         );
-        $this->expectOutputString(json_encode('First name is required')."drupal_exit\n");
+        $this->expectOutputString(json_encode('First name is required') . "drupal_exit\n");
         require 'index.php';
     }
 
     /**
-     * Test of setting the property of lastName to blank
+     * Test of setting the property of lastName to blank.
+     *
+     * @return void
      */
     public function testValidatePropertyLastNameBlank()
     {
@@ -643,12 +747,14 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
                 'QUERY_STRING' => 'lastName='
             )
         );
-        $this->expectOutputString(json_encode('Last name is required')."drupal_exit\n");
+        $this->expectOutputString(json_encode('Last name is required') . "drupal_exit\n");
         require 'index.php';
     }
 
     /**
-     * Test of setting emailAddress to blank
+     * Test of setting emailAddress to blank.
+     *
+     * @return void
      */
     public function testValidatePropertyEmailAddressBlank()
     {
@@ -659,12 +765,14 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
                 'QUERY_STRING' => 'emailAddress='
             )
         );
-        $this->expectOutputString(json_encode('Email address is required')."drupal_exit\n");
+        $this->expectOutputString(json_encode('Email address is required') . "drupal_exit\n");
         require 'index.php';
     }
 
     /**
-     * Test of setting the property of firstName to a string with invalid characters
+     * Test of setting the property of firstName to a string with invalid characters.
+     *
+     * @return void
      */
     public function testValidatePropertyFirstNameBad()
     {
@@ -675,12 +783,14 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
                 'QUERY_STRING' => 'firstName=Bad<i>Name</i>'
             )
         );
-        $this->expectOutputString(json_encode('First name cannot contain angle brackets (< or >)')."drupal_exit\n");
+        $this->expectOutputString(json_encode('First name cannot contain angle brackets (< or >)') . "drupal_exit\n");
         require 'index.php';
     }
 
     /**
-     * Test of setting the property of lastName to a string with invalid characters
+     * Test of setting the property of lastName to a string with invalid characters.
+     *
+     * @return void
      */
     public function testValidatePropertyLastNameBad()
     {
@@ -691,12 +801,14 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
                 'QUERY_STRING' => 'lastName=Bad<i>Name</i>'
             )
         );
-        $this->expectOutputString(json_encode('Last name cannot contain angle brackets (< or >)')."drupal_exit\n");
+        $this->expectOutputString(json_encode('Last name cannot contain angle brackets (< or >)') . "drupal_exit\n");
         require 'index.php';
     }
 
     /**
-     * Test of setting the property emailAddress to a string of the wrong syntax
+     * Test of setting the property emailAddress to a string of the wrong syntax.
+     *
+     * @return void
      */
     public function testValidatePropertyEmailAddressBad()
     {
@@ -707,12 +819,14 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
                 'QUERY_STRING' => 'emailAddress=bad.address@missing-tld'
             )
         );
-        $this->expectOutputString(json_encode('Email address is invalid')."drupal_exit\n");
+        $this->expectOutputString(json_encode('Email address is invalid') . "drupal_exit\n");
         require 'index.php';
     }
 
     /**
-     * Test of attempting to validate an unknown field
+     * Test of attempting to validate an unknown field.
+     *
+     * @return void
      */
     public function testValidatePropertyUnknown()
     {
@@ -726,13 +840,15 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
             )
         );
         $this->expectOutputString(
-            json_encode("The parameter $propName is not a valid property of Person.")."drupal_exit\n"
+            json_encode("The parameter $propName is not a valid property of Person.") . "drupal_exit\n"
         );
         require 'index.php';
     }
 
     /**
-     * Test attempting to validate more than one property in the same request
+     * Test attempting to validate more than one property in the same request.
+     *
+     * @return void
      */
     public function testValidateMultipleProperties()
     {
@@ -743,12 +859,14 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
                 'QUERY_STRING' => self::$firstName . '&' . self::$lastName
             )
         );
-        $this->expectOutputString(json_encode('Validation of multiple properties not allowed.')."drupal_exit\n");
+        $this->expectOutputString(json_encode('Validation of multiple properties not allowed.') . "drupal_exit\n");
         require 'index.php';
     }
 
     /**
-     * Test of validating "nothing"
+     * Test of validating "nothing".
+     *
+     * @return void
      */
     public function testValidateNothing()
     {
@@ -758,17 +876,18 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
                 'PATH_INFO' => '/validateProperty/'
             )
         );
-        $this->expectOutputString(json_encode('Property to be validated not supplied')."drupal_exit\n");
+        $this->expectOutputString(json_encode('Property to be validated not supplied') . "drupal_exit\n");
         require 'index.php';
     }
-
 
     /**
      * Utility method to build a JSON string equivalent to a JSON serialized HTTPStatus.
      *
-     * @param int $code The HTTP status code.
-     * @param string $message The HTTP status message.
-     * @return string A JSON string containing $code and $message.
+     * @param integer $code    The HTTP status code.
+     * @param string  $message The HTTP status message.
+     * @param mixed   $data    The HTTP data package.
+     *
+     * @return string A JSON string containing $code, $message, and $data.
      */
     protected function makeHTTPStatusJSON($code, $message, $data = null)
     {
@@ -781,7 +900,9 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test of default route
+     * Test of default route.
+     *
+     * @return void
      */
     public function testPersonDefaultRoute()
     {
@@ -797,7 +918,10 @@ class PersonWebServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Tear down method to be run after each test.
+     *
      * Restores current working directory.
+     *
+     * @return void
      */
     public function tearDown()
     {

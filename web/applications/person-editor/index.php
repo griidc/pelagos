@@ -1,13 +1,12 @@
 <?php
 /**
- * Person Interface
+ * Person Interface.
  *
  * Based on the person class, a simple web form that gets First, Last Name and e-mail,
  * then sends it to the web-service.
- *
  */
 
-require_once __DIR__.'/../../../vendor/autoload.php';
+require_once __DIR__ . '/../../../vendor/autoload.php';
 
 $comp = new \Pelagos\Component;
 

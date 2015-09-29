@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__.'/../../../vendor/autoload.php';
+require_once __DIR__ . '/../../../vendor/autoload.php';
 
 $comp = new \Pelagos\Component;
 
@@ -23,13 +23,13 @@ $comp->setJSGlobals();
 
 $twig = new Twig_Environment(new Twig_Loader_Filesystem('./templates'));
 
-// get all Persons and put them in the Twig data array
+// Get all Persons and put them in the Twig data array.
 $persons = $comp
-               ->getEntityManager()
-               ->getRepository('Pelagos\Entity\Person')
-               ->findAll();
+    ->getEntityManager()
+    ->getRepository('Pelagos\Entity\Person')
+    ->findAll();
 
-$dataSet=array();
+$dataSet = array();
 foreach ($persons as $person) {
     $dataSet[] = $person->asArray(
         array(
@@ -45,7 +45,7 @@ foreach ($persons as $person) {
         true
     );
 }
-$comp->addJS("var dataSet = " . json_encode($dataSet), 'inline');
+$comp->addJS('var dataSet = ' . json_encode($dataSet), 'inline');
 
 echo $twig->render('html/index.html');
 
