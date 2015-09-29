@@ -6,6 +6,7 @@ namespace Pelagos;
  * Integration tests for funding organization web service.
  *
  * @runTestsInSeparateProcesses
+ *
  * @preserveGlobalState disabled
  */
 class FundingOrganizationWebServiceTest extends \PHPUnit_Framework_TestCase
@@ -30,7 +31,6 @@ class FundingOrganizationWebServiceTest extends \PHPUnit_Framework_TestCase
      * @var string $testId
      */
     protected static $testId = '0';
-
 
     /**
      * Static class variable containing a name to use for testing.
@@ -668,7 +668,6 @@ class FundingOrganizationWebServiceTest extends \PHPUnit_Framework_TestCase
         );
         require 'index.php';
     }
-
 
     /**
      * Utility method to build a JSON string equivalent to a JSON serialized HTTPStatus.

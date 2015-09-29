@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__.'/../../../vendor/autoload.php';
+require_once __DIR__ . '/../../../vendor/autoload.php';
 
 use \Pelagos\HTTPStatus;
 use \Pelagos\Entity\FundingOrganization;
@@ -37,19 +37,19 @@ $slim->get(
         $params = $slim->request->params();
 
         if (count($params) == 0) {
-            print json_encode('Property to be validated not supplied');
+            echo json_encode('Property to be validated not supplied');
             return;
         }
 
         if (count($params) > 1) {
-            print json_encode('Validation of multiple properties not allowed.');
+            echo json_encode('Validation of multiple properties not allowed.');
             return;
         }
 
         $paramName = array_keys($params);
 
         if (!property_exists('\Pelagos\Entity\FundingOrganization', $paramName[0])) {
-            print json_encode("The parameter $paramName[0] is not a valid property of FundingOrganization.");
+            echo json_encode("The parameter $paramName[0] is not a valid property of FundingOrganization.");
             return;
         }
 
@@ -62,10 +62,10 @@ $slim->get(
             foreach ($violations as $violation) {
                 $violationMsgs[] = $violation->getMessage();
             }
-            print json_encode(join($violationMsgs, ', '));
+            echo json_encode(join($violationMsgs, ', '));
             return;
         }
-        print json_encode(true);
+        echo json_encode(true);
     }
 );
 
@@ -163,7 +163,7 @@ $slim->get(
                     $imagick = new \Imagick();
                     $imagick->readImageBlob($logo);
                     $imagick->scaleImage(125, 250, true);
-                    $imagick->setImageFormat("jpeg");
+                    $imagick->setImageFormat('jpeg');
                     $response->headers->set('Content-Type', 'image/jpeg');
                     echo $imagick->getImageBlob();
                 } else {
@@ -278,11 +278,11 @@ $slim->post(
             $updates = $slim->request->params();
             $updates['modifier'] = $comp->getLoggedInUser();
 
-            // get the Funding Organization (F.O.)
+            // Get the Funding Organization (F.O.).
             $entityService = new EntityService($comp->getEntityManager());
             $fundingOrganization = $entityService->get('FundingOrganization', $id);
 
-            // handle logo file upload, if set
+            // Handle logo file upload, if set.
             if (array_key_exists('logo', $_FILES) and
                 array_key_exists('tmp_name', $_FILES['logo']) and
                 is_file($_FILES['logo']['tmp_name'])) {

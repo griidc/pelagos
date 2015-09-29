@@ -24,6 +24,7 @@ class UniqueEntityValidator extends ConstraintValidator
      * @throws UnexpectedTypeException       When $constraint->errorPath is not a string or null.
      * @throws ConstraintDefinitionException When no field is specified.
      * @throws ConstraintDefinitionException When a specified field is not mapped in Doctrine.
+     * @throws ConstraintDefinitionException When more than one identifier field in an associated entity is used.
      *
      * @return void
      */
@@ -33,7 +34,7 @@ class UniqueEntityValidator extends ConstraintValidator
         $em = $comp->getEntityManager();
 
         if (!$constraint instanceof UniqueEntity) {
-            throw new UnexpectedTypeException($constraint, __NAMESPACE__.'\UniqueEntity');
+            throw new UnexpectedTypeException($constraint, __NAMESPACE__ . '\UniqueEntity');
         }
 
         if (!is_array($constraint->fields) && !is_string($constraint->fields)) {
@@ -69,17 +70,16 @@ class UniqueEntityValidator extends ConstraintValidator
             }
 
             if (null !== $criteria[$fieldName] && $class->hasAssociation($fieldName)) {
-                /* Ensure the Proxy is initialized before using reflection to
-                 * read its identifiers. This is necessary because the wrapped
-                 * getter methods in the Proxy are being bypassed.
-                 */
+                // Ensure the Proxy is initialized before using reflection to
+                // read its identifiers. This is necessary because the wrapped
+                // getter methods in the Proxy are being bypassed.
                 $em->initializeObject($criteria[$fieldName]);
                 $relatedClass = $em->getClassMetadata($class->getAssociationTargetClass($fieldName));
                 $relatedId = $relatedClass->getIdentifierValues($criteria[$fieldName]);
                 if (count($relatedId) > 1) {
                     throw new ConstraintDefinitionException(
-                        'Associated entities are not allowed to have more than one identifier field to be '.
-                        'part of a unique constraint in: '.$class->getName().'#'.$fieldName
+                        'Associated entities are not allowed to have more than one identifier field to be ' .
+                        'part of a unique constraint in: ' . $class->getName() . '#' . $fieldName
                     );
                 }
                 $criteria[$fieldName] = array_pop($relatedId);

@@ -115,6 +115,10 @@ class ResearchGroup extends Entity
      * @var FundingCycle $fundingCycle
      *
      * @access protected
+     *
+     * @Assert\NotBlank(
+     *     message="Funding Cycle is required"
+     * )
      */
     protected $fundingCycle;
 

@@ -42,9 +42,9 @@ class EntityService
      * @param Entity $entity    The entity object to validate.
      * @param mixed  $validator The validator to use for validation.
      *
-     * @return Entity The entity object that was validated.
-     *
      * @throws ValidationException When there are validation violations.
+     *
+     * @return Entity The entity object that was validated.
      */
     public function validate(Entity $entity, $validator)
     {
@@ -60,11 +60,11 @@ class EntityService
      *
      * @param Entity $entity The entity object to persist.
      *
-     * @return Entity The entity object that was persisted.
-     *
      * @throws MissingRequiredFieldPersistenceException When a required field is missing.
      * @throws RecordExistsPersistenceException         When a uniqueness constrain is violated.
      * @throws PersistenceException                     When a previously uncaught persistence error occurs.
+     *
+     * @return Entity The entity object that was persisted.
      */
     public function persist(Entity $entity)
     {
@@ -87,11 +87,11 @@ class EntityService
      * @param string $entityClass Entity class to retrieve from.
      * @param string $id          Entity identifier to retrieve.
      *
-     * @return Entity The entity object with the provided id.
-     *
      * @throws ArgumentException                  When $id is not a non-negative integer.
      * @throws PersistenceException               When an error occurs retrieving from persistence.
      * @throws RecordNotFoundPersistenceException When no object of the specified class is found for the provided id.
+     *
+     * @return Entity The entity object with the provided id.
      */
     public function get($entityClass, $id)
     {
@@ -123,9 +123,9 @@ class EntityService
      *
      * @param string $entityClass Entity class to retrieve from.
      *
-     * @return array A list of entity objects of the specified class.
-     *
      * @throws PersistenceException When an error occurs retrieving from persistence.
+     *
+     * @return array A list of entity objects of the specified class.
      */
     public function getAll($entityClass)
     {
@@ -143,9 +143,9 @@ class EntityService
      * @param string $entityClass Entity class to retrieve from.
      * @param array  $criteria    The criteria to filter by.
      *
-     * @return array A list of entity objects of the specified class.
-     *
      * @throws PersistenceException When an error occurs retrieving from persistence.
+     *
+     * @return array A list of entity objects of the specified class.
      */
     public function getBy($entityClass, array $criteria)
     {

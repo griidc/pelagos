@@ -1,13 +1,12 @@
 <?php
 /**
- * Funding Organization Interface
+ * Funding Organization Interface.
  *
  * Based on the Funding Org class, a simple web form that creates a funding source
  * then sends it to the web-service to save.
- *
  */
 
-require_once __DIR__.'/../../../vendor/autoload.php';
+require_once __DIR__ . '/../../../vendor/autoload.php';
 
 $comp = new \Pelagos\Component;
 
@@ -31,7 +30,7 @@ $app = new \Slim\Slim(array(
 ));
 
 $app->get('/:entity', function ($entity) use ($app, $comp) {
-    if (file_exists(__DIR__."/static/js/$entity.js")) {
+    if (file_exists(__DIR__ . "/static/js/$entity.js")) {
         $comp->addJS("static/js/$entity.js");
     }
     $app->render("$entity.html");

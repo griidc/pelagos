@@ -19,6 +19,7 @@ class ConcreteEntity extends Entity
      * Name of the entity.
      *
      * @var string $name
+     *
      * @access protected
      *
      * @Assert\NotBlank(

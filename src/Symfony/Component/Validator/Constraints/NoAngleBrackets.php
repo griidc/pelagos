@@ -11,6 +11,10 @@ use Symfony\Component\Validator\Constraint;
  */
 class NoAngleBrackets extends Constraint
 {
-    /** @var string $message The default message to return when this constraint fails. **/
+    /**
+     * The default message to return when this constraint fails.
+     *
+     * @var string
+     */
     public $message = 'This value cannot contain angle brackets (< or >)';
 }

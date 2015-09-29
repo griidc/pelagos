@@ -6,6 +6,7 @@ namespace Pelagos;
  * Integration tests for funding organization web service.
  *
  * @runTestsInSeparateProcesses
+ *
  * @preserveGlobalState disabled
  */
 class EntityWebServiceTest extends \PHPUnit_Framework_TestCase
@@ -493,7 +494,7 @@ class EntityWebServiceTest extends \PHPUnit_Framework_TestCase
             array(
                 'REQUEST_METHOD' => 'GET',
                 'PATH_INFO' => '/ConcreteEntity/0',
-                'QUERY_STRING' => 'properties='.implode(',', array_keys($concreteEntityDataSubset)),
+                'QUERY_STRING' => 'properties=' . implode(',', array_keys($concreteEntityDataSubset)),
             )
         );
         $this->expectOutputString(
@@ -541,7 +542,7 @@ class EntityWebServiceTest extends \PHPUnit_Framework_TestCase
             array(
                 'REQUEST_METHOD' => 'GET',
                 'PATH_INFO' => '/ConcreteEntity',
-                'QUERY_STRING' => 'properties='.implode(',', array_keys($concreteEntityDataSubset)),
+                'QUERY_STRING' => 'properties=' . implode(',', array_keys($concreteEntityDataSubset)),
             )
         );
         $this->expectOutputString(

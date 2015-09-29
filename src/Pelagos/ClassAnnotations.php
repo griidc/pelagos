@@ -3,20 +3,21 @@
 namespace Pelagos;
 
 /**
- * A class that has functions that read class annotations
+ * A class that has functions that read class annotations.
  */
 class ClassAnnotations
 {
     /**
-     * Holds the Reflection
+     * Holds the Reflection.
      *
      * @var \ReflectionClass $classReflection
+     *
      * @access private
      */
     private $classReflection;
     
     /**
-     * Contructor for this class
+     * Constructor for this class.
      *
      * @param string $class Class name.
      *
@@ -30,7 +31,7 @@ class ClassAnnotations
     }
     
     /**
-     * gets class annotations
+     * Gets class annotations.
      *
      * @access public
      *
@@ -70,9 +71,9 @@ class ClassAnnotations
     }
     
     /**
-     * Converts docblock annotations to key value array
+     * Converts docblock annotations to key value array.
      *
-     * @param string $docBlock a document block string containing annotations.
+     * @param string $docBlock A document block string containing annotations.
      *
      * @access private
      *
@@ -83,7 +84,7 @@ class ClassAnnotations
         $parameters = array();
         preg_match_all('#@(.*?)\n#s', $docBlock, $annotations);
         foreach ($annotations[1] as $annotation) {
-            $valuePair = preg_split("/[\s]+/", $annotation, 2);
+            $valuePair = preg_split('/[\s]+/', $annotation, 2);
             $parameters[$valuePair[0]] = trim($valuePair[1]);
         }
         

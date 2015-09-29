@@ -3,27 +3,32 @@
 namespace Pelagos;
 
 /**
-* A test class
-*
-* @foo bar
-* @return something
-*/
+ * A test class.
+ *
+ * @foo bar
+ *
+ * @return something
+ */
 class TestClass
 {
 
     /**
-     * A test property
+     * A test property.
+     *
+     * @var string
      *
      * @something else
+     *
      * @blabla ding ding ding
      */
     private $testProp;
 
     /**
-     * A test method
+     * A test method.
      *
      * @type sometype
-     * @return baz
+     *
+     * @return void
      */
     public function testFunction()
     {
