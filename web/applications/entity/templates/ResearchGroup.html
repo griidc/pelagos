@@ -8,7 +8,7 @@
     <label for="fundingOrganization">Funding Organization:</label>
     <select required name="fundingCycle.fundingOrganization" fundingOrganization="{{ResearchGroup.getFundingCycle.getFundingOrganization.getId}}">
     <option value="">[Please Select a Funding Organization]</option>
-    {% for FundingOrganization in entityService.getAll("FundingOrganization") | sortBy("name") %}
+    {% for FundingOrganization in entityService.getAll("FundingOrganization") | sortBy(["name"]) %}
         <option value="{{FundingOrganization.getId}}" 
         {{ (ResearchGroup.getFundingCycle.getFundingOrganization.getId == FundingOrganization.getId ? ' selected ' : '') }}
         >{{FundingOrganization.getName}}</option>
@@ -21,7 +21,7 @@
     required name="fundingCycle" fundingCycle="{{ResearchGroup.getFundingCycle.getId}}">
         <option value="">[Please Select a Funding Organization First]</option>
         {% if (ResearchGroup) %}
-            {% for FundingCycle in ResearchGroup.getFundingCycle.getFundingOrganization.getFundingCycles | sortBy("name") %}
+            {% for FundingCycle in ResearchGroup.getFundingCycle.getFundingOrganization.getFundingCycles | sortBy(["name"]) %}
                 <option value="{{FundingCycle.getId}}" 
                 {{ (ResearchGroup.getFundingCycle.getId == FundingCycle.getId ? ' selected ' : '') }}
                 >{{FundingCycle.getName}}</option>
