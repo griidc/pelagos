@@ -93,6 +93,10 @@ class FundingCycle extends Entity
      * @var FundingOrganization
      *
      * @access protected
+     *
+     * @Assert\NotBlank(
+     *     message="Funding Organization is required"
+     * )
      */
     protected $fundingOrganization;
 

@@ -93,6 +93,7 @@ class EntityWebService extends \Pelagos\Component
             }
             // Get entity for any properties that are set and expect one.
             if (isset($value) and
+                !empty($value) and
                 $entity->propertyExists($property) and
                 $entity->propertyExpectsEntity($property)) {
                 try {
@@ -191,6 +192,7 @@ class EntityWebService extends \Pelagos\Component
         if ($entity->propertyExists($property)) {
             // Attempt to get entity for any properties that are set and expect one.
             if (isset($value) and
+                !empty($value) and
                 $entity->propertyExpectsEntity($property)) {
                 try {
                     $this->entityService->get(
