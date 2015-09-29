@@ -131,11 +131,13 @@ abstract class Entity implements \JsonSerializable
         $props = array();
         $className = get_called_class();
         $reflectionClass = new \ReflectionClass($className);
-        $props = array_merge($className::$properties, $props); // static access to member properties
+        // static access to member properties
+        $props = array_merge($className::$properties, $props);
 
         while ($parentReflection = $reflectionClass->getParentClass()) {
             $parentClassName = $parentReflection->getName();
-            $props = array_merge($parentClassName::$properties, $props); // static access to member properties
+            // static access to member properties
+            $props = array_merge($parentClassName::$properties, $props);
             $reflectionClass = $parentReflection;
         }
         return $props;
