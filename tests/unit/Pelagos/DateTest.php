@@ -2,15 +2,14 @@
 namespace Pelagos;
 
 /**
- * DateTest.php A unit test for the Pelagos Date class
+ * DateTest.php A unit test for the Pelagos Date class.
  *
  * @package Pelagos
  */
 class DateTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
-     * Setup for PHPUnit tests
+     * Setup for PHPUnit tests.
      *
      * @return void
      */
@@ -18,9 +17,9 @@ class DateTest extends \PHPUnit_Framework_TestCase
     {
     }
 
-
     /**
      * Test the ability to set the format.
+     *
      * Set the referenceDate to the reference format
      * and compare the output to expected results.
      *
@@ -35,16 +34,17 @@ class DateTest extends \PHPUnit_Framework_TestCase
         $referenceDate->setDate(1996, 10, 7);
         $referenceDate->setTime(13, 33, 55);
 
-        $expectedResult = "1996-10-07";
+        $expectedResult = '1996-10-07';
 
-        $this->assertEquals($expectedResult, (string)$referenceDate);
+        $this->assertEquals($expectedResult, (string) $referenceDate);
     }
 
-
-
     /**
-     * Test the setting of one date to the value of another
+     * Test the setting of one date to the value of another.
+     *
      * Compare for equality
+     *
+     * @return void
      */
     public function testSet()
     {

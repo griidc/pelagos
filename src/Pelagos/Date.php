@@ -13,6 +13,7 @@ use \DateTimeZone as DateTimeZone;
  * \Pelagos\DateTime
  *
  * @package Pelagos
+ *
  * @see \Pelagos\DateTime
  */
 class Date extends DateTime
@@ -22,7 +23,7 @@ class Date extends DateTime
      *
      * @var string
      */
-    public static $DefaultFormat = 'Y-m-d';
+    public static $defaultFormat = 'Y-m-d';
 
     /**
      * Constructor implemented so that the format can be set.
@@ -36,6 +37,6 @@ class Date extends DateTime
     public function __construct($time = null, DateTimeZone $timezone = null)
     {
          parent::__construct($time, $timezone);
-         $this->setFormat(Date::$DefaultFormat);
+         $this->setFormat(self::$defaultFormat);
     }
 }

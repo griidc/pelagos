@@ -17,7 +17,8 @@ class DateTime extends \DateTime
      *
      * @var string
      */
-    public static $DefaultFormat = \DateTime::ISO8601;
+    public static $defaultFormat = \DateTime::ISO8601;
+
     /**
      * The format to use for formatting this value as a string.
      *
@@ -25,18 +26,18 @@ class DateTime extends \DateTime
      *
      * @var string
      */
-    private $formatString =  \DateTime::ISO8601;
+    private $formatString = \DateTime::ISO8601;
 
     /**
      * Return the format used  by default for formatting as a string.
      *
      * @return string Return description goes here.
-     * Throws description goes here.
      */
     public static function getDefaultFormat()
     {
-        return self::$DefaultFormat;
+        return self::$defaultFormat;
     }
+
     /**
      * Change the value in the format attribute.
      *

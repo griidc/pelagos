@@ -10,7 +10,7 @@ namespace Pelagos;
 class DateTimeTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * Setup for PHPUnit tests
+     * Setup for PHPUnit tests.
      *
      * @return void
      */
@@ -18,9 +18,9 @@ class DateTimeTest extends \PHPUnit_Framework_TestCase
     {
     }
 
-
     /**
      * Test the ability to set the format.
+     *
      * Set the referenceDateTime to the reference format
      * and compare the output to expected results.
      *
@@ -29,8 +29,8 @@ class DateTimeTest extends \PHPUnit_Framework_TestCase
     public function testSetFormat()
     {
 
-        $referenceFormat = "Y-m-d:H-i-s";
-        $referenceFormatResult = "1996-10-07:13-33-55";
+        $referenceFormat = 'Y-m-d:H-i-s';
+        $referenceFormatResult = '1996-10-07:13-33-55';
 
         $referenceDateTime = new Date();
         $referenceDateTime->setDate(1996, 10, 7);
@@ -38,24 +38,29 @@ class DateTimeTest extends \PHPUnit_Framework_TestCase
 
         $referenceDateTime->setFormat($referenceFormat);
 
-        $this->assertEquals($referenceFormatResult, (string)$referenceDateTime);
+        $this->assertEquals($referenceFormatResult, (string) $referenceDateTime);
     }
 
     /**
-     * Test the comparison of two dates two seconds apart
+     * Test the comparison of two dates two seconds apart.
+     *
+     * @return void
      */
     public function testComparison()
     {
         $currentDateTime = new DateTime();
         $t = $currentDateTime->getTimestamp();
         $laterDateTime = new DateTime();
-        $laterDateTime->setTimestamp($t+2000);
+        $laterDateTime->setTimestamp($t + 2000);
         $this->assertTrue($laterDateTime > $currentDateTime);
     }
 
     /**
-     * Test the setting of one date to the value of another
+     * Test the setting of one date to the value of another.
+     *
      * Compare for equality
+     *
+     * @return void
      */
     public function testSet()
     {
