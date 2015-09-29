@@ -22,9 +22,9 @@ class PersonService extends \Pelagos\Component
      * @param Person $person    The person object to validate.
      * @param mixed  $validator The validator to use for validation.
      *
-     * @return Person The person object that was validated.
-     *
      * @throws ValidationException When there are validation violations.
+     *
+     * @return Person The person object that was validated.
      */
     public function validate(Person $person, $validator)
     {
@@ -40,11 +40,11 @@ class PersonService extends \Pelagos\Component
      *
      * @param Person $person The Person object to persist.
      *
-     * @return Person The person object that was persisted.
-     *
      * @throws MissingRequiredFieldPersistenceException When a required field is missing.
      * @throws RecordExistsPersistenceException         When a uniqueness constrain is violated.
      * @throws PersistenceException                     When a previously uncaught persistence error occurs.
+     *
+     * @return Person The person object that was persisted.
      */
     public function persist(Person $person)
     {
@@ -66,13 +66,18 @@ class PersonService extends \Pelagos\Component
      * Method to get a Person object given the provided id.
      *
      * @param string $id Person's id.
+     *
+     * @throws \Pelagos\Exception\ArgumentException When $id is not a non-negative integer.
+     * @throws \Pelagos\Exception\PersistenceException When a persistence error occurs.
+     * @throws \Pelagos\Exception\RecordNotFoundPersistenceException When a Person is not found identified by $id.
+     *
      * @return \Pelagos\Entity\Person The person object with the provided id.
      */
     public function getPerson($id)
     {
         if (!preg_match('/^\d+$/', $id)) {
             $exception = new \Pelagos\Exception\ArgumentException(
-                "Person id must be a non-negative integer"
+                'Person id must be a non-negative integer'
             );
             $exception->setArgumentName('id');
             $exception->setArgumentValue($id);

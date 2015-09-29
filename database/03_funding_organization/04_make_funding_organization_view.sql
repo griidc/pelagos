@@ -6,10 +6,6 @@
 -- Output:    A new database view
 -- Info:      This script creates the funding_organization view, and the
 --            trigger functions to allow the view to be updatable.
---            The history tracking aspect has been commented out because it was
---            not a requirement of this task, but is likely to become on in the
---            future. It was easiest to develop that process as the script was
---            developed.
 -- -----------------------------------------------------------------------------
 -- TODO:
 -- -----------------------------------------------------------------------------
@@ -25,8 +21,8 @@ DROP TRIGGER udf_funding_organization_update_trigger
 DROP FUNCTION udf_modify_funding_organization();
 DROP VIEW funding_organization;
 
--- Create the view (we cast email address and instantiation_time to text so
--- that we can handle CHECK errors in our exception block):
+-- Create the view (we cast email address to text so that we can handle CHECK
+-- errors in our exception block):
 CREATE VIEW funding_organization AS
    SELECT f.funding_organization_number AS funding_organization_number,
           f.funding_organization_name AS name,
@@ -86,8 +82,8 @@ AS $f_o_func$
          IF TG_OP = 'INSERT'
          THEN
             -- Make sure we were supplied a Funding Organization name:
-            IF NEW.name IS NULL OR NEW.name = '' OR
-               NEW.creator is NULL or NEW.creator = ''
+            IF NEW.creator IS NULL OR NEW.creator = '' OR
+               NEW.name IS NULL OR NEW.name = ''
             THEN
                _err_hint := CONCAT('A Funding Organization entity requires a ',
                                    'funding organization name and a creator ',

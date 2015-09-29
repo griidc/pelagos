@@ -17,7 +17,9 @@ class InvalidFormatArgumentException extends ArgumentException
     /**
      * Setter for expectedFormat.
      *
-     * @param string $expectedFormat The expected format of the argument that caused the error
+     * @param string $expectedFormat The expected format of the argument that caused the error.
+     *
+     * @return void
      */
     public function setExpectedFormat($expectedFormat)
     {
@@ -27,7 +29,7 @@ class InvalidFormatArgumentException extends ArgumentException
     /**
      * Getter for expectedFormat.
      *
-     * @return string The expected format of the argument that caused the error
+     * @return string The expected format of the argument that caused the error.
      */
     public function getExpectedFormat()
     {

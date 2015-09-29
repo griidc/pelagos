@@ -1,12 +1,11 @@
 <?php
 /**
- * Generic Entity View Interface
+ * Generic Entity View Interface.
  *
  * Shows a list a type Entity
- *
  */
 
-require_once __DIR__.'/../../../vendor/autoload.php';
+require_once __DIR__ . '/../../../vendor/autoload.php';
 
 $comp = new \Pelagos\Component;
 
@@ -42,13 +41,13 @@ $app->get(
             $comp->setTitle(implode(' ', $entityName[1]) . ' List');
         }
         
-        if (file_exists(__DIR__."/static/js/$entity.js")) {
+        if (file_exists(__DIR__ . "/static/js/$entity.js")) {
             $comp->addJS("static/js/$entity.js");
         }
         $twigData = array(
             'entityType' => $entity
         );
-        $app->render("entityList.html", $twigData);
+        $app->render('entityList.html', $twigData);
     }
 );
 

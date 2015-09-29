@@ -209,6 +209,7 @@ abstract class Entity implements \JsonSerializable
     {
         return $this->creator;
     }
+
     /**
      * Setter for modifier property.
      *
@@ -236,9 +237,9 @@ abstract class Entity implements \JsonSerializable
      *
      * @param \DateTime $timeStamp Creation time stamp to set.
      *
-     * @return void
-     *
      * @throws \Exception When $timeStamp does not have a timezone of UTC.
+     *
+     * @return void
      */
     public function setCreationTimeStamp(\DateTime $timeStamp = null)
     {
@@ -312,9 +313,9 @@ abstract class Entity implements \JsonSerializable
      *
      * @param \DateTime $timeStamp Modification time stamp to set.
      *
-     * @return void
-     *
      * @throws \Exception When $timeStamp does not have a timezone of UTC.
+     *
+     * @return void
      */
     public function setModificationTimeStamp(\DateTime $timeStamp = null)
     {
@@ -465,6 +466,8 @@ abstract class Entity implements \JsonSerializable
      *
      * @param mixed $value A value to resolve to a DateTime.
      *
+     * @throws InvalidFormatArgumentException When it cannot resolve $value to a \DateTime.
+     *
      * @return \DateTime The resolved DateTime.
      */
     public static function resolveDateTime($value)
@@ -488,6 +491,9 @@ abstract class Entity implements \JsonSerializable
      * This resolver will only accept strings in the ISO 8601 date format.
      *
      * @param mixed $value A value to resolve to a DateTime.
+     *
+     * @throws InvalidFormatArgumentException When it cannot resolve $value to a \DateTime.
+     * @throws InvalidFormatArgumentException When it resolves $value to a \DateTime, but there are warnings.
      *
      * @return \DateTime The resolved DateTime.
      */

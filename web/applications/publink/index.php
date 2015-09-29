@@ -10,8 +10,7 @@ $slim = new \Slim\Slim(
     )
 );
 
-global $quit;
-$quit = false;
+$GLOBALS['quit'] = false;
 
 $slim->get(
     '/',
@@ -21,7 +20,7 @@ $slim->get(
         $comp->addLibrary('ui.dialog');
         $comp->addJS('static/js/publink.js');
         $comp->addCSS('static/css/publink.css');
-        # $comp->addJS currently only supports local js files
+        // $comp->addJS currently only supports local js files
         drupal_add_js('//cdnjs.cloudflare.com/ajax/libs/spin.js/2.0.1/spin.min.js');
         $stash = array('pelagos_base_path' => $GLOBALS['pelagos']['base_path']);
         return $slim->render('html/index.html', $stash);
@@ -52,13 +51,12 @@ $slim->get(
 $slim->get(
     '/GetLinksJSON(/)',
     function () use ($comp) {
-        global $quit;
         $inside = '';
-        require_once "lib/Publink/Storage.php";
+        require_once 'lib/Publink/Storage.php';
         $storage = new \Publink\Storage;
-        $linksArray = $storage->getAll("Publink");
+        $linksArray = $storage->getAll('Publink');
         foreach ($linksArray as $link) {
-            require_once "lib/Publink/ComponentResolver.php";
+            require_once 'lib/Publink/ComponentResolver.php';
             $componentResolver = new \Publink\ComponentResolver;
             list($fc, $proj) = $componentResolver->getFcAndProj($link['udi']);
             $inside[] = array(
@@ -72,12 +70,12 @@ $slim->get(
         }
         $data['aaData'] = $inside;
         echo json_encode($data);
-        $quit = true;
+        $GLOBALS['quit'] = true;
     }
 );
 
 $slim->run();
 
-if ($quit) {
+if ($GLOBALS['quit']) {
     $comp->quit();
 }

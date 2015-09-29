@@ -31,6 +31,7 @@ class FundingCycle extends Entity
      * Name of a funding cycle.
      *
      * @var string $name
+     *
      * @access protected
      *
      * @Assert\NotBlank(
@@ -46,6 +47,7 @@ class FundingCycle extends Entity
      * Description of a funding cycle.
      *
      * @var string $description
+     *
      * @access protected
      *
      * @Assert\NoAngleBrackets(
@@ -58,6 +60,7 @@ class FundingCycle extends Entity
      * Funding cycle's Website url.
      *
      * @var string $url
+     *
      * @access protected
      *
      * @Assert\NoAngleBrackets(
@@ -70,6 +73,7 @@ class FundingCycle extends Entity
      * Funding cycle's start date.
      *
      * @var \Datetime $startDate
+     *
      * @access protected
      */
     protected $startDate;
@@ -78,6 +82,7 @@ class FundingCycle extends Entity
      * Funding cycle's end date.
      *
      * @var \Datetime $endDate
+     *
      * @access protected
      */
     protected $endDate;
@@ -86,9 +91,23 @@ class FundingCycle extends Entity
      * Funding cycle's Funding Organization.
      *
      * @var FundingOrganization
+     *
      * @access protected
+     *
+     * @Assert\NotBlank(
+     *     message="Funding Organization is required"
+     * )
      */
     protected $fundingOrganization;
+
+    /**
+     * Funding cycle's list of associated research groups.
+     *
+     * @var \Doctrine\Common\Collections\Collection
+     *
+     * @access protected
+     */
+    protected $researchGroups;
 
     /**
      * Static array containing a list of the properties and their attributes.
@@ -133,6 +152,12 @@ class FundingCycle extends Entity
             'entity' => 'FundingOrganization',
             'setter' => 'setFundingOrganization',
             'getter' => 'getFundingOrganization',
+        ),
+        'researchGroups' => array(
+            'type' => 'object',
+            'class' => 'Doctrine\Common\Collections\Collection',
+            'getter' => 'getResearchGroups',
+            'serialize' => false,
         ),
     );
 
@@ -290,5 +315,17 @@ class FundingCycle extends Entity
     public function getEndDate()
     {
         return $this->endDate;
+    }
+
+    /**
+     * Getter for getResearchGroups.
+     *
+     * @access public
+     *
+     * @return \Doctrine\Common\Collections\Collection List of funding cycle's research groups.
+     */
+    public function getResearchGroups()
+    {
+        return $this->researchGroups;
     }
 }

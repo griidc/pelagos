@@ -6,6 +6,7 @@ namespace Pelagos;
  * Integration tests for funding organization web service.
  *
  * @runTestsInSeparateProcesses
+ *
  * @preserveGlobalState disabled
  */
 class EntityWebServiceTest extends \PHPUnit_Framework_TestCase
@@ -64,12 +65,16 @@ class EntityWebServiceTest extends \PHPUnit_Framework_TestCase
     {
         require_once __DIR__ . '/../../../helpers/TestUser.php';
 
+        $this->mockClassMetadata = \Mockery::mock('\Doctrine\ORM\Mapping\ClassMetadata');
+        $this->mockClassMetadata->shouldReceive('hasField')->andReturn(true);
+        $this->mockClassMetadata->shouldReceive('hasAssociation')->andReturn(true);
+
         $this->mockEntityRepository = \Mockery::mock('\Doctrine\ORM\EntityRepository');
-        $this->mockEntityRepository->shouldReceive('findBy')->andReturn(array());
 
         $this->mockEntityManager = \Mockery::mock('\Doctrine\ORM\EntityManager');
         $this->mockEntityManager->shouldReceive('persist');
         $this->mockEntityManager->shouldReceive('getRepository')->andReturn($this->mockEntityRepository);
+        $this->mockEntityManager->shouldReceive('getClassMetadata')->andReturn($this->mockClassMetadata);
 
         $mockPersistence = \Mockery::mock('alias:\Pelagos\Persistance');
         $mockPersistence->shouldReceive('createEntityManager')->andReturn($this->mockEntityManager);
@@ -439,7 +444,7 @@ class EntityWebServiceTest extends \PHPUnit_Framework_TestCase
         $testConcreteEntity1->update($concreteEntityData);
         $testConcreteEntity2 = new \Pelagos\Entity\ConcreteEntity;
         $testConcreteEntity2->update($concreteEntityData);
-        $this->mockEntityRepository->shouldReceive('findAll')->andReturn(
+        $this->mockEntityRepository->shouldReceive('findBy')->andReturn(
             array($testConcreteEntity1, $testConcreteEntity1)
         );
         \Slim\Environment::mock(
@@ -489,7 +494,7 @@ class EntityWebServiceTest extends \PHPUnit_Framework_TestCase
             array(
                 'REQUEST_METHOD' => 'GET',
                 'PATH_INFO' => '/ConcreteEntity/0',
-                'QUERY_STRING' => 'properties='.implode(',', array_keys($concreteEntityDataSubset)),
+                'QUERY_STRING' => 'properties=' . implode(',', array_keys($concreteEntityDataSubset)),
             )
         );
         $this->expectOutputString(
@@ -530,14 +535,14 @@ class EntityWebServiceTest extends \PHPUnit_Framework_TestCase
         $testConcreteEntity1->update($concreteEntityData);
         $testConcreteEntity2 = new \Pelagos\Entity\ConcreteEntity;
         $testConcreteEntity2->update($concreteEntityData);
-        $this->mockEntityRepository->shouldReceive('findAll')->andReturn(
+        $this->mockEntityRepository->shouldReceive('findBy')->andReturn(
             array($testConcreteEntity1, $testConcreteEntity1)
         );
         \Slim\Environment::mock(
             array(
                 'REQUEST_METHOD' => 'GET',
                 'PATH_INFO' => '/ConcreteEntity',
-                'QUERY_STRING' => 'properties='.implode(',', array_keys($concreteEntityDataSubset)),
+                'QUERY_STRING' => 'properties=' . implode(',', array_keys($concreteEntityDataSubset)),
             )
         );
         $this->expectOutputString(

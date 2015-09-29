@@ -33,9 +33,9 @@
                 return false;
             }
 
-            $("input,textarea", this).each(function() {
+            $("input,textarea,select", this).each(function() {
                 $(this)
-                .attr("readonly", true)
+                .attr("disabled", true)
                 .addClass("formfield");
             });
 
@@ -43,6 +43,13 @@
                 $(this).wrap("<span class=\"clickableLink\"></span>")
                 .after("<span><a name=\"url\" target=\"_blank\" href=\"" + $(this).val() + "\">" + $(this).val() + "</a></span>");
             });
+            $(this).find("input.clickableLink").next().click(function () {
+                event.stopPropagation();
+            });
+
+            var wrapper = "<div class=\"entityWrapper formReadonly\"></div>";
+
+            $(this).wrap(wrapper);
 
             if (!options.canEdit) {
                 return null;
@@ -59,10 +66,6 @@
                 }
             });
 
-            var wrapper = "<div class=\"entityWrapper formReadonly\"></div>";
-
-            $(this).wrap(wrapper);
-
             var buttons = "<div style=\"position:relative;\">" +
                           "<div id=\"notycontainer\" style=\"position:absolute;top:0px;bottom:0px;width:600px;\">" +
                           "</div><br><button class=\"entityFormButton\" type=\"submit\">Save</button>" +
@@ -73,7 +76,6 @@
             $(".entityFormButton").css("visibility", "hidden").button();
 
             $(".entityWrapper").has(this).append("<div class=\"innerForm\"><div>");
-
 
             $(this).on("keyup change", function () {
                 if ($(".entityWrapper").has(this).hasClass("active")) {
@@ -87,24 +89,28 @@
 
                     var url = pelagosBasePath + "/services/entity/" + entityType + "/validateProperty";
 
-                    $("input:visible,textarea", this).each(function() {
-                        $(this).attr("readonly", false)
-                        .rules("add", {
-                            remote: {
-                                url: url
-                            }
-                        });
+                    $("input:visible,textarea,select", this).each(function() {
+                        $(this).attr("disabled", false);
+                        var dontvalidate = $(this).attr("dontvalidate");
+                        if (typeof dontvalidate === typeof undefined || dontvalidate === false) {
+                            $(this).rules("add", {
+                                remote: {
+                                    url: url
+                                }
+                            });
+                        }
                     });
                     $(".innerForm", this).remove();
                     $(".entityFormButton,.showOnEdit", this).css({opacity: 0.0, visibility: "visible"}).animate({opacity: 1.0});
+                    $("button", this).button("enable");
                 }
             });
 
             $(this).bind("reset", function() {
                 formValidator.resetForm();
-                $("input:visible,textarea", this).each(function() {
+                $("input:visible,textarea,select", this).each(function() {
                     $(this)
-                    .attr("readonly", true)
+                    .attr("disabled", true)
                     .removeClass("active")
                     .rules("remove");
                 });
@@ -114,6 +120,8 @@
 
                 $(".entityFormButton,.showOnEdit", this).css({opacity: 1.0, visibility: "visible" }).animate({opacity: 0.0});
                 $(this).prop("unsavedChanges", false);
+
+                $("button", this).button("disable");
             });
 
             if (entityId === "") {
@@ -131,11 +139,38 @@
 
         if (typeof Data !== "undefined" && Object.keys(Data).length > 0)
         {
-            Form.trigger("reset");
-            $.each(Data, function(name, value) {
-                Form.find("a[name=\"" + name + "\"]").attr("href", value).text(value);
-                var selector = Form.find("input,textarea,select").filter("[name=\"" + name + "\"]");
-                var elementType = selector.prop("type");
+            fillElement(Data, Form);
+            return true;
+        } else {
+            return false;
+        }
+    };
+
+    function fillElement(Data, Form, Parent)
+    {
+        $.each(Data, function(name, value) {
+            if (typeof Parent !== "undefined" && Parent !== "") {
+                if (name === "id") {
+                    name = Parent;
+                } else {
+                    name = Parent + "." + name;
+                }
+            }
+            if (typeof value === "object" && value !== null) {
+                fillElement(value, Form, name);
+            }
+            Form.find("a[name=\"" + name + "\"]").attr("href", value).html(value);
+            var selector = Form.find("input,textarea,select").filter("[name=\"" + name + "\"]");
+            // Set extra property of name for reset purposes.
+            if (Parent === name) {
+                var childName = name.split(".");
+                childName = childName[childName.length - 1];
+                selector.attr(childName, value);
+            }
+            selector.prop("defaultValue", value);
+            var elementType = selector.prop("type");
+            //Check if value is an object, and switch between the case that can handle objects
+            if (typeof value !== "object") {
                 switch (elementType)
                 {
                     case "radio":
@@ -145,16 +180,8 @@
                         selector.attr("checked", value);
                         break;
                     case "select-one":
-                        if (typeof value === "object") {
-                            value = value.id;
-                        }
-                        selector.find("[value=\"" + value + "\"]").attr("selected", true);
                         selector.val(value);
-                        break;
-                    case "file":
-                        selector.attr("base64", value.base64);
-                        selector.attr("mimeType", value.mimeType);
-                        selector.trigger("logoChanged");
+                        selector.find("[value=\"" + value + "\"]").attr("selected", true);
                         break;
                     case "textarea":
                         selector.html(value);
@@ -165,12 +192,21 @@
                         selector.val(value);
                         break;
                 }
-            });
-            return true;
-        } else {
-            return false;
-        }
-    };
+            } else {
+                switch (elementType)
+                {
+                    case "file":
+                        selector.attr("base64", value.base64);
+                        selector.attr("mimeType", value.mimeType);
+                        selector.trigger("logoChanged");
+                        break;
+                    default:
+                        break;
+                }
+
+            }
+        });
+    }
 
     function updateEntity(form)
     {
@@ -206,6 +242,8 @@
                 title = "Success!";
                 message = json.message;
                 $(form).fillForm(json.data);
+                //$(form).trigger("saved");
+                $(form).trigger("reset");
             } else {
                 title = "Error!";
                 message = "Something went wrong!<br>Didn't receive the correct success message!";

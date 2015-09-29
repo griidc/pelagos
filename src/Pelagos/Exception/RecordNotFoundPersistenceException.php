@@ -7,13 +7,19 @@ namespace Pelagos\Exception;
  */
 class RecordNotFoundPersistenceException extends PersistenceException
 {
-    /** @var mixed $id Property to hold the id of the entity that was searched for. **/
+    /**
+     * Property to hold the id of the entity that was searched for.
+     *
+     * @var mixed $id
+     */
     protected $id;
 
     /**
-     * Setter for $id
+     * Setter for $id.
      *
      * @param mixed $id The id of the entity that was searched for.
+     *
+     * @return void
      */
     public function setId($id)
     {
@@ -21,7 +27,7 @@ class RecordNotFoundPersistenceException extends PersistenceException
     }
 
     /**
-     * Getter for $id
+     * Getter for $id.
      *
      * @return mixed The id of the entity that was searched for.
      */

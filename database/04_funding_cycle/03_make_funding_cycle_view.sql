@@ -6,10 +6,6 @@
 -- Output:    A new database view
 -- Info:      This script creates the funding_cycle view, and the trigger
 --            functions to allow the view to be updatable.
---            The history tracking aspect has been commented out because it was
---            not a requirement of this task, but is likely to become one in
---            the future. It was easiest to develop that process as the script
---            was developed.
 -- -----------------------------------------------------------------------------
 -- TODO:
 -- -----------------------------------------------------------------------------
@@ -47,7 +43,7 @@ CREATE VIEW funding_cycle AS
 -- CREATE THE trigger function:
 CREATE FUNCTION udf_modify_funding_cycle()
 RETURNS TRIGGER
-AS $f_o_func$
+AS $f_c_func$
 
    DECLARE
       -- Function CONSTANTS:
@@ -362,7 +358,7 @@ AS $f_o_func$
 
    END;
 
-$f_o_func$
+$f_c_func$
 LANGUAGE plpgsql;
 
 -- Create the view's triggers:
