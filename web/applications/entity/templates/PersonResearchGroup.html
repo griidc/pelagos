@@ -13,7 +13,7 @@
     </select><br>
 
     <label for="researchGroup.fundingCycle.fundingOrganization">Funding Organization:</label>
-    <select required name="researchGroup.fundingCycle.fundingOrganization" fundingOrganization="{{PersonResearchGroup.getResearchGroup.getFundingCycle.getFundingOrganization.getId}}">
+    <select dontvalidate required name="researchGroup.fundingCycle.fundingOrganization" fundingOrganization="{{PersonResearchGroup.getResearchGroup.getFundingCycle.getFundingOrganization.getId}}">
     <option value="">[Please Select a Funding Organization]</option>
     {% for FundingOrganization in entityService.getAll("FundingOrganization") | sortBy(["name"]) %}
         <option value="{{FundingOrganization.getId}}" 
@@ -25,7 +25,7 @@
     <label for="researchGroup.fundingCycle">Funding Cycle:</label>
     <select 
     {{ (PersonResearchGroup.getResearchGroup.getFundingCycle.getId == '' ? ' disabled ' : '')  }}
-    required name="researchGroup.fundingCycle" fundingCycle="{{PersonResearchGroup.getResearchGroup.getFundingCycle.getId}}">
+    required dontvalidate name="researchGroup.fundingCycle" fundingCycle="{{PersonResearchGroup.getResearchGroup.getFundingCycle.getId}}">
         <option value="">[Please Select a Funding Organization First]</option>
         {% if (PersonResearchGroup) %}
             {% for FundingCycle in PersonResearchGroup.getResearchGroup.getFundingCycle.getFundingOrganization.getFundingCycles | sortBy(["name"]) %}
@@ -51,7 +51,7 @@
     </select><br>
 
     <label for="role">Role:</label>
-    <select required name="role" role="{{PersonResearchGroup.getRole.getId}}">
+    <select required name="role" researchGroupRole="{{PersonResearchGroup.getRole.getId}}">
     <option value="">[Please Select a Role]</option>
 {#
     {% for Role in entityService.getAll("ResearchGroupRole") | sortBy(["weight"]) %}
