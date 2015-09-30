@@ -163,4 +163,24 @@ class EntityService
         }
         return $entities;
     }
+
+    /**
+     * Delete an Entity.
+     *
+     * @param Entity $entity The entity object to delete.
+     *
+     * @throws PersistenceException When a persistence error occurs.
+     *
+     * @return Entity The entity object that was deleted.
+     */
+    public function delete(Entity $entity)
+    {
+        try {
+            $this->entityManager->remove($entity);
+            $this->entityManager->flush();
+        } catch (DBALException $e) {
+            throw new PersistenceException($e->getMessage(), $e->getCode(), $e);
+        }
+        return $entity;
+    }
 }
