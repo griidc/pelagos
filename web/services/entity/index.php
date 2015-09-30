@@ -61,5 +61,13 @@ $slim->get(
     }
 );
 
+// DELETE route for deleting an entity.
+$slim->delete(
+    '/:entityType/:entityId',
+    function ($entityType, $entityId) use ($comp) {
+        $comp->handleDelete($entityType, $entityId);
+    }
+);
+
 $slim->run();
 $comp->finalize();

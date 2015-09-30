@@ -465,4 +465,73 @@ class EntityWebService extends \Pelagos\Component
         $response->status($status->getCode());
         $response->body(json_encode($status));
     }
+
+    /**
+     * Method to handle an HTTP DELETE request for a given entity type and id.
+     *
+     * This method will delete the entity of $entityType identified by $entityId and populate
+     * the Slim response body with a JSON representation of the deleted entity.
+     *
+     * @param string  $entityType The type of entity to delete.
+     * @param integer $entityId   The id of the entity to delete.
+     *
+     * @access public
+     *
+     * @return void
+     */
+    public function handleDelete($entityType, $entityId)
+    {
+        $response = $this->slim->response;
+        $response->headers->set('Content-Type', 'application/json');
+        $this->setQuitOnFinalize(true);
+
+        // Check to see that user is logged in.
+        // THIS IS AN INSUFFICIENT SECURITY CHECK, THIS WILL
+        // HAVE TO BE TIED TO SOME SORT OF ACCESS LIST WHEN
+        // RELEASED.
+        if (!$this->userIsLoggedIn()) {
+            $status = new HTTPStatus(401, 'Login Required to use this feature');
+            $response->status($status->getCode());
+            $response->body(json_encode($status));
+            return;
+        }
+
+        try {
+            // retrieve the entity
+            $entity = $this->getEntityService()->get($entityType, $entityId);
+        } catch (RecordNotFoundPersistenceException $e) {
+            $status = new HTTPStatus(404, $e->getMessage());
+            $response->status($status->getCode());
+            $response->body(json_encode($status));
+            return;
+        }
+
+        try {
+            // Set the status.
+            // We do this before deletion and clone the entity so that we have the entity id.
+            // It will be overwritten on failure.
+            $status = new HTTPStatus(
+                200,
+                sprintf(
+                    '%s with ID of %d has been deleted.',
+                    $entityType,
+                    $entity->getId()
+                ),
+                clone $entity
+            );
+            // delete the entity
+            $this->getEntityService()->delete($entity);
+        } catch (PersistenceException $e) {
+            $databaseErrorMessage = $e->getDatabaseErrorMessage();
+            if (empty($databaseErrorMessage)) {
+                $status = new HTTPStatus(500, 'A database error has occured: ' . $e->getMessage());
+            } else {
+                $status = new HTTPStatus(500, "A database error has occured: $databaseErrorMessage");
+            }
+        } catch (\Exception $e) {
+            $status = new HTTPStatus(500, 'A general error has occured: ' . $e->getMessage());
+        }
+        $response->status($status->getCode());
+        $response->body(json_encode($status));
+    }
 }
