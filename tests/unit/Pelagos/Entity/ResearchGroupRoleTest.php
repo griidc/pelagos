@@ -56,8 +56,8 @@ class ResearchGroupRoleTest extends \PHPUnit_Framework_TestCase
     public function testGetName()
     {
         $this->assertEquals(
-            $this->researchGroupRole->getName(),
-            self::$testName
+            self::$testName,
+            $this->researchGroupRole->getName()
         );
     }
 
@@ -71,8 +71,8 @@ class ResearchGroupRoleTest extends \PHPUnit_Framework_TestCase
     public function testGetWeight()
     {
         $this->assertEquals(
-            $this->researchGroupRole->getWeight(),
-            self::$testWeight
+            self::$testWeight,
+            $this->researchGroupRole->getWeight()
         );
     }
 
@@ -85,8 +85,8 @@ class ResearchGroupRoleTest extends \PHPUnit_Framework_TestCase
     {
         $this->researchGroupRole->setWeight('1');
         $this->assertEquals(
-            $this->researchGroupRole->getWeight(),
-            self::$testWeight
+            self::$testWeight,
+            $this->researchGroupRole->getWeight()
         );
     }
 
