@@ -128,7 +128,7 @@
                             });
                         }
                     });
-                    $(".innerForm", this).remove();
+                    $(".innerForm", this).hide();
                     $(".entityFormButton,.showOnEdit", this).css({opacity: 0.0, visibility: "visible"}).animate({opacity: 1.0});
                     $("button", this).button("enable");
                 }
@@ -143,8 +143,8 @@
                     .rules("remove");
                 });
                 $(".entityWrapper").has(this)
-                .append("<div class=\"innerForm\"><div>")
-                .removeClass("active");
+                .removeClass("active")
+                .find(".innerForm", this).show();
 
                 $(".entityFormButton,.showOnEdit", this).css({opacity: 1.0, visibility: "visible" }).animate({opacity: 0.0});
                 $(this).prop("unsavedChanges", false);
@@ -270,6 +270,7 @@
         })
         .done(function(json) {
             if (json.code === returnCode) {
+                console.log(type);
                 title = "Success!";
                 message = json.message;
                 $(form).fillForm(json.data);
@@ -304,7 +305,12 @@
                         easing: "swing", // unavailable - no need
                         speed: 500 // unavailable - no need
                     },
-                    timeout: 3000
+                    timeout: 3000,
+                    callback: {
+                        afterShow: function() {
+                            return $.Deferred.resolve();
+                        }
+                    }
                 });
             }
         });
