@@ -74,8 +74,50 @@
             $(this).append(buttons);
 
             $(".entityFormButton").css("visibility", "hidden").button();
-
-            $(".entityWrapper").has(this).append("<div class=\"innerForm\"><div>");
+            
+            var innerform = "<div class=\"innerForm\">" +
+                            "<img class=\"editimg\" src=\"../static/images/application_edit.png\">" +
+                            "<img class=\"deleteimg\" src=\"../static/images/delete.png\">" +
+                            "</div>"
+                            
+            $(".entityWrapper").has(this).append(innerform);
+            
+            $(".deleteimg").button().click(function () {
+                event.stopPropagation();
+                
+                var entity = this;
+                $.when(showConfirmation("Delete Entity", "Are you sure?")).done(function() {
+                    
+                    //Now AJAX delete
+                    
+                    $("#notycontainer").noty({
+                        layout: "top",
+                        text: "Entity Deleted!",
+                        theme: "relax",
+                        animation: {
+                            open: "animated bounceIn", // Animate.css class names
+                            close: "animated fadeOut" // Animate.css class names
+                        },
+                        timeout: 3000,
+                        callback: {
+                            afterShow: function() {
+                                $(".entityWrapper").has(entity)
+                                .after("<div id=\"notycontainer\">");
+                                $(".entityWrapper").has(entity)
+                                .animate({ height: "toggle", opacity: "toggle" }, "slow", function() {
+                                    $(this).slideUp("fast", function() {
+                                        $(this)
+                                        .remove();
+                                    }); 
+                                });
+                            }
+                        }
+                    });
+                    
+                    
+                    
+                });
+            });
 
             $(this).on("keyup change", function () {
                 if ($(".entityWrapper").has(this).hasClass("active")) {
@@ -100,7 +142,7 @@
                             });
                         }
                     });
-                    $(".innerForm", this).remove();
+                    $(".innerForm", this).hide();
                     $(".entityFormButton,.showOnEdit", this).css({opacity: 0.0, visibility: "visible"}).animate({opacity: 1.0});
                     $("button", this).button("enable");
                 }
@@ -115,8 +157,8 @@
                     .rules("remove");
                 });
                 $(".entityWrapper").has(this)
-                .append("<div class=\"innerForm\"><div>")
-                .removeClass("active");
+                .removeClass("active")
+                .find(".innerForm", this).show();
 
                 $(".entityFormButton,.showOnEdit", this).css({opacity: 1.0, visibility: "visible" }).animate({opacity: 0.0});
                 $(this).prop("unsavedChanges", false);
@@ -239,6 +281,7 @@
         })
         .done(function(json) {
             if (json.code === returnCode) {
+                console.log(type);
                 title = "Success!";
                 message = json.message;
                 $(form).fillForm(json.data);
@@ -273,7 +316,12 @@
                         easing: "swing", // unavailable - no need
                         speed: 500 // unavailable - no need
                     },
-                    timeout: 3000
+                    timeout: 3000,
+                    callback: {
+                        afterShow: function() {
+                            return $.Deferred.resolve();
+                        }
+                    }
                 });
             }
         });
