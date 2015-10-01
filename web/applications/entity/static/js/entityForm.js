@@ -230,7 +230,7 @@
         });
     }
 
-    function updateEntity(form)
+    function updateEntity(form, action)
     {
         var data = new FormData(form);
         var entityType = $(form).attr("entityType");
@@ -253,18 +253,17 @@
             var title = "";
             var message = "";
             var mainPromise = this;
-            $.ajax({
+            var myAjax = $.ajax({
                 type: type,
                 data: data,
                 url: url,
                 // Optionally enforce JSON return, in case a status 200 happens, but no JSON returns
-                //dataType: 'json'
+                //dataType: 'json',
                 cache: false,
                 contentType: false,
                 processData: false,
                 success: function(json) {
                     if (json.code === returnCode) {
-                        console.log(type);
                         title = "Success!";
                         message = json.message;
                         $(form).fillForm(json.data);
@@ -273,6 +272,7 @@
                     } else {
                         title = "Error!";
                         message = "Something went wrong!<br>Didn't receive the correct success message!";
+						myAjax.fail();
                     }
                 },
                 error: function(response) {
@@ -303,15 +303,17 @@
                         timeout: 3000,
                         callback: {
                             afterClose: function() {
-                                console.log("noty done");
                                 notyPromise.resolve();
                             }
                         }
-                    })
+                    });
                 });
             })
+			.fail(function() {
+				showDialog(title, message);
+				mainPromise.reject();
+			})
             .then(function() {
-                console.log("all done");
                 return mainPromise.resolve();
             });
         });
