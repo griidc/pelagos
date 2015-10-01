@@ -4,10 +4,6 @@ namespace Pelagos\Component;
 
 /**
  * Tests for the Entity service.
- *
- * @runTestsInSeparateProcesses
- *
- * @preserveGlobalState disabled
  */
 class EntityServiceTest extends \PHPUnit_Framework_TestCase
 {
@@ -97,8 +93,7 @@ class EntityServiceTest extends \PHPUnit_Framework_TestCase
 
         $this->entityService = new \Pelagos\Service\EntityService($this->mockEntityManager);
 
-
-        $this->mockEntity = \Mockery::mock('overload:\Pelagos\Entity\Entity');
+        $this->mockEntity = \Mockery::mock('\Pelagos\Entity\Entity');
         $this->mockEntity->shouldReceive('getId')->andReturn(0);
 
         $mockPersistence = \Mockery::mock('alias:\Pelagos\Persistance');
