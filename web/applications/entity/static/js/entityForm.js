@@ -245,8 +245,7 @@
         var entityType = $(form).attr("entityType");
         var entityId = $(form).find("[name=\"id\"]").val();
         var url;
-        var title = "";
-        var message = "";
+
         var type;
         var returnCode;
         if (entityId === "") {
@@ -258,61 +257,72 @@
             type = "PUT";
             returnCode = 200;
         }
-        $.ajax({
-            type: type,
-            data: data,
-            url: url,
-            // Optionally enforce JSON return, in case a status 200 happens, but no JSON returns
-            //dataType: 'json'
-            cache: false,
-            contentType: false,
-            processData: false
-        })
-        .done(function(json) {
-            if (json.code === returnCode) {
-                console.log(type);
-                title = "Success!";
-                message = json.message;
-                $(form).fillForm(json.data);
-                //$(form).trigger("saved");
-                $(form).trigger("reset");
-            } else {
-                title = "Error!";
-                message = "Something went wrong!<br>Didn't receive the correct success message!";
-            }
-        })
-        .fail(function(response) {
-            var json = response.responseJSON;
-            if (typeof response.responseJSON === "undefined") {
-                json = {};
-                json.code = response.status;
-                json.message = response.statusText;
-            }
-            title = "Error!";
-            message = json.message;
-        })
-        .always(function(json) {
-            if (json.code !== returnCode) {
-                showDialog(title, message);
-            } else {
-                $("#notycontainer", form).noty({
-                    layout: "top",
-                    text: message,
-                    theme: "relax",
-                    animation: {
-                        open: "animated bounceIn", // Animate.css class names
-                        close: "animated fadeOut", // Animate.css class names
-                        easing: "swing", // unavailable - no need
-                        speed: 500 // unavailable - no need
-                    },
-                    timeout: 3000,
-                    callback: {
-                        afterShow: function() {
-                            return $.Deferred.resolve();
-                        }
+
+        return $.Deferred(function() {
+            var title = "";
+            var message = "";
+            var mainPromise = this;
+            $.ajax({
+                type: type,
+                data: data,
+                url: url,
+                // Optionally enforce JSON return, in case a status 200 happens, but no JSON returns
+                //dataType: 'json'
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function(json) {
+                    if (json.code === returnCode) {
+                        console.log(type);
+                        title = "Success!";
+                        message = json.message;
+                        $(form).fillForm(json.data);
+                        //$(form).trigger("saved");
+                        $(form).trigger("reset");
+                    } else {
+                        title = "Error!";
+                        message = "Something went wrong!<br>Didn't receive the correct success message!";
                     }
+                },
+                error: function(response) {
+                    var json = response.responseJSON;
+                    if (typeof response.responseJSON === "undefined") {
+                        json = {};
+                        json.code = response.status;
+                        json.message = response.statusText;
+                    }
+                    title = "Error!";
+                    message = json.message;
+                }
+            })
+            .then(function() {
+                return $.Deferred(function() {
+                    var notyPromise = this;
+                    $("#notycontainer", form)
+                    .noty({
+                        layout: "top",
+                        text: message,
+                        theme: "relax",
+                        animation: {
+                            open: "animated bounceIn", // Animate.css class names
+                            close: "animated fadeOut", // Animate.css class names
+                            easing: "swing", // unavailable - no need
+                            speed: 500 // unavailable - no need
+                        },
+                        timeout: 3000,
+                        callback: {
+                            afterClose: function() {
+                                console.log("noty done");
+                                notyPromise.resolve();
+                            }
+                        }
+                    })
                 });
-            }
+            })
+            .then(function() {
+                console.log("all done");
+                return mainPromise.resolve();
+            });
         });
     }
 }(jQuery));
