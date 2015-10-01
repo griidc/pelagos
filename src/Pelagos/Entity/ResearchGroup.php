@@ -252,6 +252,15 @@ class ResearchGroup extends Entity
     protected $emailAddress;
 
     /**
+     * Research group's PersonResearchGroups.
+     *
+     * @var personResearchGroups
+     *
+     * @access protected
+     */
+    protected $personResearchGroups;
+
+    /**
      * Setter for name.
      *
      * @param string $name Textual name of research group.
@@ -574,5 +583,43 @@ class ResearchGroup extends Entity
     public function getEmailAddress()
     {
         return $this->emailAddress;
+    }
+
+    /**
+     * Setter for personResearchGroups.
+     *
+     * @param array|\Traversable $personResearchGroups Set of PersonResearchGroup objects.
+     *
+     * @access public
+     *
+     * @throws \Exception When Non-PersonResearchGroup found in $personResearchGroups.
+     * @throws \Exception When $personResearchGroups is not an array or traversable object.
+     *
+     * @return void
+     */
+    public function setPersonResearchGroups($personResearchGroups)
+    {
+        if (is_array($personResearchGroups) || $personResearchGroups instanceof \Traversable) {
+            $this->personResearchGroups = $personResearchGroups;
+            foreach ($personResearchGroups as $personResearchGroup) {
+                if (!$personResearchGroup instanceof PersonResearchGroup) {
+                    throw new \Exception('Non-PersonResearchGroup found in personResearchGroups.');
+                }
+            }
+        } else {
+            throw new \Exception('personResearchGroups must be either array or traversable objects.');
+        }
+    }
+
+    /**
+     * Getter for personResearchGroups.
+     *
+     * @access public
+     *
+     * @return string String containing personResearchGroups listings for this research group.
+     */
+    public function getPersonResearchGroups()
+    {
+        return $this->personResearchGroups;
     }
 }
