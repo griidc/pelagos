@@ -141,8 +141,18 @@ class ResearchGroupTest extends \PHPUnit_Framework_TestCase
         $this->researchGroup->setLogo(self::$testLogo);
         $this->researchGroup->setEmailAddress(self::$testEmailAddress);
         $this->testPersonResearchGroups = array(
-            \Mockery::mock('\Pelagos\Entity\PersonResearchGroup'),
-            \Mockery::mock('\Pelagos\Entity\PersonResearchGroup'),
+            \Mockery::mock(
+                '\Pelagos\Entity\PersonResearchGroup',
+                array(
+                    'setResearchGroup' => null
+                )
+            ),
+            \Mockery::mock(
+                '\Pelagos\Entity\PersonResearchGroup',
+                array(
+                    'setResearchGroup' => null
+                )
+            ),
         );
         $this->researchGroup->setPersonResearchGroups($this->testPersonResearchGroups);
     }
