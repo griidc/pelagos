@@ -47,6 +47,10 @@ class PersonResearchGroup extends Entity
      * Person entity for this association.
      *
      * @var Person
+     *
+     * @Assert\NotBlank(
+     *     message="Person is required"
+     * )
      */
     protected $person;
 
@@ -54,6 +58,10 @@ class PersonResearchGroup extends Entity
      * Research Group entity for this association.
      *
      * @var ResearchGroup
+     *
+     * @Assert\NotBlank(
+     *     message="Research Group is required"
+     * )
      */
     protected $researchGroup;
 
@@ -61,6 +69,10 @@ class PersonResearchGroup extends Entity
      * Role for this association.
      *
      * @var ResearchGroupRole
+     *
+     * @Assert\NotBlank(
+     *     message="Role is required"
+     * )
      */
     protected $role;
 
