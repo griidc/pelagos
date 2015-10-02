@@ -91,6 +91,12 @@ class ResearchGroup extends Entity
             'getter' => 'getEmailAddress',
             'setter' => 'setEmailAddress',
         ),
+        'personResearchGroups' => array(
+            'type' => 'PersonResearchGroup',
+            'getter' => 'getPersonResearchGroups',
+            'setter' => 'setPersonResearchGroups',
+            'serialize' => false,
+        ),
     );
 
     /**

@@ -145,7 +145,6 @@ class ResearchGroupTest extends \PHPUnit_Framework_TestCase
             \Mockery::mock('\Pelagos\Entity\PersonResearchGroup'),
         );
         $this->researchGroup->setPersonResearchGroups($this->testPersonResearchGroups);
-        #$this->testPersonResearchGroups->shouldReceive('jsonSerialize');
     }
 
     /**
@@ -186,7 +185,7 @@ class ResearchGroupTest extends \PHPUnit_Framework_TestCase
     public function testGetPersonResearchGroups()
     {
         $personResearchGroups = $this->researchGroup->getPersonResearchGroups();
-        foreach($personResearchGroups as $personResearchGroup) {
+        foreach ($personResearchGroups as $personResearchGroup) {
             $this->assertInstanceOf('\Pelagos\Entity\PersonResearchGroup', $personResearchGroup);
         }
     }
