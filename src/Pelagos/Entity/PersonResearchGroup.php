@@ -4,6 +4,12 @@ namespace Pelagos\Entity;
 
 /**
  * Class to represent Person - Research Group associations.
+ *
+ * @Assert\UniqueEntity(
+ *     fields={"person", "researchGroup"},
+ *     errorPath="person",
+ *     message="A Person can have only one association with a Research Group"
+ * )
  */
 class PersonResearchGroup extends Entity
 {
