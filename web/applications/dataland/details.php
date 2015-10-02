@@ -72,10 +72,20 @@ if ($udi <> '')
     } else {
         $enforceMetadataRule = 0;
     }
-
     $pquery = "
     SELECT *,
-    CASE WHEN metadata.geom IS NULL THEN NULL ELSE ST_AsText(metadata.geom) END AS \"the_geom\",
+    CASE WHEN metadata.registry_id IS NULL
+        THEN CASE WHEN datasets.geom IS NULL
+             THEN 'baseMap'
+             ELSE ST_AsText(datasets.geom)
+             END,
+        ELSE CASE WHEN matadata.geom IS NULL
+             THEN CASE WHEN metadata.extent_description IS NULL
+                  THEN 'baseMap'
+                  ELSE 'labOnly'
+                  END,
+              ELSE ST_AsText(metadata.geom)
+             END AS \"the_geom\",
     CASE WHEN registry.dataset_udi IS NULL THEN datasets.dataset_udi ELSE registry.dataset_udi END AS dataset_udi,
     CASE WHEN registry.dataset_title IS NULL THEN datasets.title ELSE registry.dataset_title END AS title,
 
@@ -128,7 +138,7 @@ if ($udi <> '')
         $prow["noheader_doi"] = preg_replace("/doi:/",'',$prow["doi"]);
     }
 
-    if ($prow["the_geom"] == null OR $prow == null) {
+    if ($prow == null  OR  $prow["the_geom"] == null) {
 
         if ($prow["metadata_xml"] == "")
         {
@@ -139,9 +149,13 @@ if ($udi <> '')
             $dsscript = "dlmap.addImage('$_SERVER[SCRIPT_NAME]/includes/images/labonly.png',0.4);dlmap.makeStatic();";
         }
     }
-    else
-    {
-        $dsscript = 'dlmap.addFeatureFromWKT("'. $prow['the_geom'] .'",{"udi":"'.$prow['dataset_udi'].'"});dlmap.gotoAllFeatures();';
+    else {
+        if ($prow["the_geom"] == 'labOnly') {
+            $dsscript = "dlmap.addImage('$_SERVER[SCRIPT_NAME]/includes/images/labonly.png',0.4);dlmap.makeStatic();";
+        } else { //  add the geometry from the data. Either datasets or metadata
+            $dsscript = 'dlmap.addFeatureFromWKT("' . $prow['the_geom'] . '",{"udi":"' . $prow['dataset_udi'] . '"});dlmap.gotoAllFeatures();';
+        } //  else
+        //  fall through and only the base map will show
     }
 
     $mconn = OpenDB("RIS_RO");

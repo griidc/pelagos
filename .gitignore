@@ -2,3 +2,5 @@
 config.ini
 config.php
 vendor/
+.idea
+scratch/
