@@ -9,10 +9,10 @@
 .entityForm input,
 .entityForm textarea,
 .entityForm select {
-    -webkit-transition: border-color 250ms ease-in 0ms;
-    -moz-transition: border-color 250ms ease-in 0ms;
-    -o-transition: border-color 250ms ease-in 0ms;
-    transition: border-color 250ms ease-in 0ms;
+    -webkit-transition: border-color 200ms ease-in 0ms;
+    -moz-transition: border-color 200ms ease-in 0ms;
+    -o-transition: border-color 200ms ease-in 0ms;
+    transition: border-color 200ms ease-in 0ms;
     border: 1px solid white;
     border: 1px solid rgba(255,255,255,0);
     margin: 1px;
@@ -105,43 +105,40 @@
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-    -webkit-transition: box-shadow 150ms ease-in 0ms;
-    -moz-transition: box-shadow 150ms ease-in 0ms;
-    -o-transition: box-shadow 150ms ease-in 0ms;
-    transition: box-shadow 150ms ease-in 0ms;
+    -webkit-transition: all 250ms ease-in 0ms;
+    -moz-transition: all 250ms ease-in 0ms;
+    -o-transition: all 250ms ease-in 0ms;
+    transition: all 250ms ease-in 0ms;
     border-radius: 2.01px;
     display: inline-block;
     max-width: 100%;
     box-shadow: 0 0 0 0 transparent;
+    background: rgba(200, 200, 200, 0)
 }
 
-.innerForm:hover{
+.innerForm:hover {
     box-shadow: 0 0 0 3px #d3d3d3;
     visibility: visible;
+    background: rgba(208, 208, 208, 0.1);
 }
 
 .deleteimg,.editimg {
-    -webkit-transition: opacity 150ms ease-in 0ms;
-    -moz-transition: opacity 150ms ease-in 0ms;
-    -o-transition: opacity 150ms ease-in 0ms;
-    transition: opacity 150ms ease-in 0ms;
+    -webkit-transition: opacity 250ms ease-in 0ms;
+    -moz-transition: opacity 250ms ease-in 0ms;
+    -o-transition: opacity 250ms ease-in 0ms;
+    transition: opacity 250ms ease-in 0ms;
     opacity: 0;
     height: 32px;
     width: 32px;
-    //background-color: #d3d3d3;
-    //border-left: 3px solid #d3d3d3;
     position: absolute;
-
 }
 
 .deleteimg {
-   //border-bottom: 3px solid #e6e6e6;
-   top: -0px;
-   right: -0px;
+   top: 0px;
+   right: 0px;
 }
 
 .editimg {
-    //border-top: 3px solid #d3d3d3;
     bottom: -3px;
     right: -3px;
 }
