@@ -169,27 +169,22 @@ select, input{
 }
 
 .deleteimg,.editimg {
-    -webkit-transition: opacity 150ms ease-in 0ms;
-    -moz-transition: opacity 150ms ease-in 0ms;
-    -o-transition: opacity 150ms ease-in 0ms;
-    transition: opacity 150ms ease-in 0ms;
+    -webkit-transition: opacity 250ms ease-in 0ms;
+    -moz-transition: opacity 250ms ease-in 0ms;
+    -o-transition: opacity 250ms ease-in 0ms;
+    transition: opacity 250ms ease-in 0ms;
     opacity: 0;
     height: 32px;
     width: 32px;
-    //background-color: #d3d3d3;
-    //border-left: 3px solid #d3d3d3;
     position: absolute;
-
 }
 
 .deleteimg {
-   //border-bottom: 3px solid #e6e6e6;
-   top: -0px;
-   right: -0px;
+   top: 0px;
+   right: 0px;
 }
 
 .editimg {
-    //border-top: 3px solid #d3d3d3;
     bottom: -3px;
     right: -3px;
 }
