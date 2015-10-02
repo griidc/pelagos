@@ -41,7 +41,8 @@ class EntityWebService extends \Pelagos\Component
     /**
      * Constructor for EntityWebService.
      *
-     * @param \Slim\Slim $slim The instance of \Slim\Slim used by this web service.
+     * @param \Slim\Slim    $slim          The instance of \Slim\Slim used by this web service.
+     * @param EntityService $entityService The instance of EntityService used by this web service.
      *
      * @access public
      */
