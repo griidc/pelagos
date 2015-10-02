@@ -28,6 +28,8 @@
         return this.each(function() {
             //plug-in
 
+            var form = this;
+
             //make sure this is of type form
             if (!$(this).is("form")) {
                 return false;
@@ -62,7 +64,12 @@
 
             var formValidator = $(this).validate({
                 submitHandler: function(form) {
-                    updateEntity(form);
+                    if (entityId === "") {
+                        updateEntity(form, "Create");
+                    } else {
+                        updateEntity(form, "Update");
+                    }
+
                 }
             });
 
@@ -118,9 +125,7 @@
 
                     $("input:visible,textarea,select", this).each(function() {
                         $(this).attr("disabled", false);
-
-                        var dontvalidate = $(this).attr("dontvalidate");
-                        if (typeof dontvalidate === typeof undefined || dontvalidate === false) {
+                        if ($(this).hasAttr("dontvalidate")) {
                             $(this).rules("add", {
                                 remote: {
                                     url: url
@@ -129,7 +134,9 @@
                         }
                     });
                     $(".innerForm", this).hide();
-                    $(".entityFormButton,.showOnEdit", this).css({opacity: 0.0, visibility: "visible"}).animate({opacity: 1.0});
+                    $(".entityFormButton,.showOnEdit", this)
+                    .css({opacity: 0.0, visibility: "visible"})
+                    .animate({opacity: 1.0});
                     $("button", this).button("enable");
                 }
             });
@@ -146,7 +153,9 @@
                 .removeClass("active")
                 .find(".innerForm", this).show();
 
-                $(".entityFormButton,.showOnEdit", this).css({opacity: 1.0, visibility: "visible" }).animate({opacity: 0.0});
+                $(".entityFormButton,.showOnEdit", this)
+                .css({opacity: 1.0, visibility: "visible" })
+                .animate({opacity: 0.0});
                 $(this).prop("unsavedChanges", false);
 
                 $("button", this).button("disable");
@@ -156,6 +165,11 @@
                 $(".entityWrapper").has(this).click();
             }
         });
+    };
+
+    $.fn.hasAttr = function(attribute) {
+        var hasAttribute = $(this).attr(attribute);
+        return (typeof hasAttribute === typeof undefined || hasAttribute === false) ? false : true;
     };
 
     $.fn.fillForm = function(Data) {
@@ -248,14 +262,29 @@
 
         var type;
         var returnCode;
-        if (entityId === "") {
-            url = pelagosBasePath + "/services/entity/" + entityType;
-            type = "POST";
-            returnCode = 201;
-        } else {
-            url = pelagosBasePath + "/services/entity/" + entityType + "/" + entityId;
-            type = "PUT";
-            returnCode = 200;
+
+        switch (action)
+        {
+            case "Create":
+                url = pelagosBasePath + "/services/entity/" + entityType;
+                type = "POST";
+                returnCode = 201;
+                break;
+            case "Update":
+                url = pelagosBasePath + "/services/entity/" + entityType + "/" + entityId;
+                type = "PUT";
+                returnCode = 200;
+                break;
+            case "Delete":
+                url = pelagosBasePath + "/services/entity/" + entityType + "/" + entityId;
+                type = "DELETE";
+                returnCode = 200;
+                break;
+            default:
+                url = pelagosBasePath + "/services/entity/" + entityType + "/" + entityId;
+                type = "GET";
+                returnCode = 200;
+                break;
         }
 
         return $.Deferred(function() {
@@ -281,7 +310,7 @@
                     } else {
                         title = "Error!";
                         message = "Something went wrong!<br>Didn't receive the correct success message!";
-						myAjax.fail();
+						myAjax.reject();
                     }
                 },
                 error: function(response) {
@@ -322,7 +351,7 @@
 				showDialog(title, message);
 				mainPromise.reject();
 			})
-            .then(function() {
+            .done(function() {
                 return mainPromise.resolve();
             });
         });
