@@ -191,7 +191,7 @@ class ResearchGroupTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test the testSetPersonResearchGroups() method with bad (non-PersonResearchGroup) element.
+     * Test the testSetPersonResearchGroups() method with a non-array/traversable object.
      *
      * This method should result in an exception being thrown.
      *

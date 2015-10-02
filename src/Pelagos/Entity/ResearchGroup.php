@@ -92,7 +92,8 @@ class ResearchGroup extends Entity
             'setter' => 'setEmailAddress',
         ),
         'personResearchGroups' => array(
-            'type' => 'PersonResearchGroup',
+            'type' => 'object',
+            'class' => '\Doctrine\Common\Collections\Collection',
             'getter' => 'getPersonResearchGroups',
             'setter' => 'setPersonResearchGroups',
             'serialize' => false,
@@ -260,7 +261,7 @@ class ResearchGroup extends Entity
     /**
      * Research group's PersonResearchGroups.
      *
-     * @var personResearchGroups
+     * @var \Doctrine\Common\Collections\Collection $personResearchGroups
      *
      * @access protected
      */
@@ -611,6 +612,7 @@ class ResearchGroup extends Entity
                 if (!$personResearchGroup instanceof PersonResearchGroup) {
                     throw new \Exception('Non-PersonResearchGroup found in personResearchGroups.');
                 }
+                $personResearchGroup->setResearchGroup($this);
             }
         } else {
             throw new \Exception('personResearchGroups must be either array or traversable objects.');
@@ -622,7 +624,8 @@ class ResearchGroup extends Entity
      *
      * @access public
      *
-     * @return string String containing personResearchGroups listings for this research group.
+     * @return \Doctrine\Common\Collections\Collection Collection containing personResearchGroups
+     *                                                 listings for this research group.
      */
     public function getPersonResearchGroups()
     {
