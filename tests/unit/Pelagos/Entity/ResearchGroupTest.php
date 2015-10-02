@@ -209,7 +209,7 @@ class ResearchGroupTest extends \PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    public function testSetPersonResearchGroupWithNonPRC()
+    public function testSetPersonResearchGroupsWithNonTraversable()
     {
         $this->researchGroup->setPersonResearchGroups('string data');
     }
@@ -223,7 +223,7 @@ class ResearchGroupTest extends \PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    public function testSetPersonResearchGroupWithSingleNonPRC()
+    public function testSetPersonResearchGroupsWithANonPersonResearchGroupInArray()
     {
         $testArry = $this->testPersonResearchGroups;
         array_push($testArry, 'string data');
