@@ -2,6 +2,8 @@
 
 namespace Pelagos\Entity;
 
+use \Symfony\Component\Validator\Constraints as Assert;
+
 /**
  * Class to represent Person - Research Group associations.
  */
@@ -66,6 +68,13 @@ class PersonResearchGroup extends Entity
      * Label for this association.
      *
      * @var string
+     *
+     * @Assert\NotBlank(
+     *     message="Label is required"
+     * )
+     * @Assert\NoAngleBrackets(
+     *     message="Label cannot contain angle brackets (< or >)"
+     * )
      */
     protected $label;
 
