@@ -20,7 +20,12 @@
                 "$": true
             }
         }],
-        "no-shadow": 0
+        "no-shadow": 0,
+        "new-cap": [2, {
+            "capIsNewExceptions": [
+                "Deferred"
+            ]
+        }]
     },
     "plugins": [
         "shadow-exception"
