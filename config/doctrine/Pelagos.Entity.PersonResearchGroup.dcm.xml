@@ -1,0 +1,36 @@
+<!--
+This file defines the Doctrine mapping between the Pelagos\Entity\PersonResearchGroup
+entity class and the person2research_group2role view in the postgres database.
+Properties other than id that are inherited from Pelagos\Entity\Entity are mapped in
+Pelagos.Entity.Entity.dcm.xml
+-->
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                        http://raw.github.com/doctrine/doctrine2/master/doctrine-mapping.xsd">
+
+    <entity name="Pelagos\Entity\PersonResearchGroup" table="person2research_group2role">
+
+        <id name="id" column="person2research_group2role_number" type="integer">
+            <generator strategy="SEQUENCE" />
+            <sequence-generator sequence-name="seq_person2research_group2role_number" allocation-size="1" initial-value="1" />
+        </id>
+
+        <many-to-one field="person" target-entity="Person">
+            <join-column name="person_number" referenced-column-name="person_number" />
+        </many-to-one>
+
+        <many-to-one field="researchGroup" target-entity="ResearchGroup">
+            <join-column name="research_group_number" referenced-column-name="research_group_number" />
+        </many-to-one>
+
+        <many-to-one field="role" target-entity="ResearchGroupRole">
+            <join-column name="research_group_role_number" referenced-column-name="research_group_role_number" />
+        </many-to-one>
+
+        <field name="label" column="label" type="string" />
+
+    </entity>
+
+</doctrine-mapping>

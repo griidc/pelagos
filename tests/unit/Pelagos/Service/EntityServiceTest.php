@@ -4,10 +4,6 @@ namespace Pelagos\Component;
 
 /**
  * Tests for the Entity service.
- *
- * @runTestsInSeparateProcesses
- *
- * @preserveGlobalState disabled
  */
 class EntityServiceTest extends \PHPUnit_Framework_TestCase
 {
@@ -91,13 +87,13 @@ class EntityServiceTest extends \PHPUnit_Framework_TestCase
 
         $this->mockEntityManager = \Mockery::mock('\Doctrine\ORM\EntityManager');
         $this->mockEntityManager->shouldReceive('persist');
+        $this->mockEntityManager->shouldReceive('remove');
 
         $this->mockEntityManager->shouldReceive('getRepository')->andReturn($this->mockEntityRepository);
 
         $this->entityService = new \Pelagos\Service\EntityService($this->mockEntityManager);
 
-
-        $this->mockEntity = \Mockery::mock('overload:\Pelagos\Entity\Entity');
+        $this->mockEntity = \Mockery::mock('\Pelagos\Entity\Entity');
         $this->mockEntity->shouldReceive('getId')->andReturn(0);
 
         $mockPersistence = \Mockery::mock('alias:\Pelagos\Persistance');
@@ -294,5 +290,31 @@ class EntityServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(1, $entities);
         $this->assertInstanceOf('\Pelagos\Entity\Entity', $entities[0]);
         $this->assertSame(0, $entities[0]->getId());
+    }
+
+    /**
+     * Test deleting an entity.
+     *
+     * @return void
+     */
+    public function testDeleteSuccess()
+    {
+        $this->mockEntityManager->shouldReceive('flush');
+        $entity = $this->entityService->delete($this->mockEntity);
+        $this->assertInstanceOf('\Pelagos\Entity\Entity', $entity);
+        $this->assertSame(0, $entity->getId());
+    }
+
+    /**
+     * Test handling of attempting to delete an entity and encountering a persistence error.
+     *
+     * @expectedException \Pelagos\Exception\PersistenceException
+     *
+     * @return void
+     */
+    public function testDeletePersistenceError()
+    {
+        $this->mockEntityManager->shouldReceive('flush')->andThrow('\Doctrine\DBAL\DBALException');
+        $entity = $this->entityService->delete($this->mockEntity);
     }
 }

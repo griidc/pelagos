@@ -2,11 +2,23 @@
 -- Name:      make_dif_and_reg_views.sql
 -- Author:    Patrick N. Krepps Jr.
 -- Date:      02 September 2015
--- Purpose    This script creates views that hide many of the design flaws in
+-- Purpose:   This script creates views that hide many of the design flaws in
 --            the original GRIIDC database.
+--            dif_view displays records from the datasets table with the long
+--               TEXT fields truncated to 50 characters. It is useful for
+--               seeing if a DIF exists and seeing the most important
+--               attributes without cluttering the screen.
+--            curr_reg_view shows the most recent record for a dataset_udi,
+--               again with long fields truncated.
+--            reg_view shows all registry records, not just the most recent
+--               one, again with long fields truncated.
+--            registry_view shows all information related to a dataset_udi,
+--               displaying the most recent record (it acts as an UPDATE on a
+--               table where UPDATEs were not accounted for).
 -- -----------------------------------------------------------------------------
+\c gomri postgres
+
 DROP VIEW dif_view;
-DROP VIEW restricted_time_view;
 DROP VIEW curr_reg_view;
 DROP VIEW reg_view;
 DROP VIEW registry_view;
@@ -210,218 +222,38 @@ CREATE VIEW curr_reg_view AS
                                         ORDER BY udi) AS dataset_udi);
 
 -- ----------------------------------------------------------------------------
+-- Set view ownership:
+-- ----------------------------------------------------------------------------
 
-CREATE VIEW restricted_time_view AS
-   SELECT CASE
-             WHEN "FundSrc" = 2
-                THEN 'Y1 FIO'
-             WHEN "FundSrc" = 3
-                THEN 'Y1 LSU'
-             WHEN "FundSrc" = 4
-                THEN 'Y1 MESC'
-             WHEN "FundSrc" = 5
-                THEN 'Y1 NGI'
-             WHEN "FundSrc" = 6
-                THEN 'Y1 NIH'
-             WHEN "FundSrc" = 8
-                THEN 'RFP-II'
-             WHEN "FundSrc" = 9
-                THEN 'RFP-III'
-             ELSE
-                SUBSTRING("Title", '\((.*)\)')
-          END AS "Project",
-          dataset_udi AS "UDI",
-          userid AS "Submitter",
-          CASE
-             WHEN submittimestamp <= CURRENT_TIMESTAMP
-                  AND submittimestamp > (CURRENT_DATE - INTERVAL '1 MONTH')
-                THEN TO_CHAR(submittimestamp, 'YYYY-MM-DD')
-             ELSE ''
-          END AS "< 1 month",
-          CASE
-             WHEN submittimestamp < (CURRENT_DATE - INTERVAL '1 MONTHS')
-                  AND submittimestamp > (CURRENT_DATE - INTERVAL '2 MONTHS')
-                THEN TO_CHAR(submittimestamp, 'YYYY-MM-DD')
-             ELSE ''
-          END AS "1 month",
-          CASE
-             WHEN submittimestamp < (CURRENT_DATE - INTERVAL '2 MONTHS')
-                  AND submittimestamp > (CURRENT_DATE - INTERVAL '3 MONTHS')
-                THEN TO_CHAR(submittimestamp, 'YYYY-MM-DD')
-             ELSE ''
-          END AS "2 months",
-          CASE
-             WHEN submittimestamp < (CURRENT_DATE - INTERVAL '3 MONTHS')
-                  AND submittimestamp > (CURRENT_DATE - INTERVAL '4 MONTHS')
-                THEN TO_CHAR(submittimestamp, 'YYYY-MM-DD')
-             ELSE ''
-          END AS "3 months",
-          CASE
-             WHEN submittimestamp < (CURRENT_DATE - INTERVAL '4 MONTHS')
-                  AND submittimestamp > (CURRENT_DATE - INTERVAL '5 MONTHS')
-                THEN TO_CHAR(submittimestamp, 'YYYY-MM-DD')
-             ELSE ''
-          END AS "4 months",
-          CASE
-             WHEN submittimestamp < (CURRENT_DATE - INTERVAL '5 MONTHS')
-                  AND submittimestamp > (CURRENT_DATE - INTERVAL '6 MONTHS')
-                THEN TO_CHAR(submittimestamp, 'YYYY-MM-DD')
-             ELSE ''
-          END AS "5 months",
-          CASE
-             WHEN submittimestamp < (CURRENT_DATE - INTERVAL '6 MONTHS')
-                  AND submittimestamp > (CURRENT_DATE - INTERVAL '7 MONTHS')
-                THEN TO_CHAR(submittimestamp, 'YYYY-MM-DD')
-             ELSE ''
-          END AS "6 months",
-          CASE
-             WHEN submittimestamp < (CURRENT_DATE - INTERVAL '7 MONTHS')
-                  AND submittimestamp > (CURRENT_DATE - INTERVAL '8 MONTHS')
-                THEN TO_CHAR(submittimestamp, 'YYYY-MM-DD')
-             ELSE ''
-          END AS "7 months",
-          CASE
-             WHEN submittimestamp < (CURRENT_DATE - INTERVAL '8 MONTHS')
-                  AND submittimestamp > (CURRENT_DATE - INTERVAL '9 MONTHS')
-                THEN TO_CHAR(submittimestamp, 'YYYY-MM-DD')
-             ELSE ''
-          END AS "8 months",
-          CASE
-             WHEN submittimestamp < (CURRENT_DATE - INTERVAL '9 MONTHS')
-                  AND submittimestamp > (CURRENT_DATE - INTERVAL '10 MONTHS')
-                THEN TO_CHAR(submittimestamp, 'YYYY-MM-DD')
-             ELSE ''
-          END AS "9 months",
-          CASE
-             WHEN submittimestamp < (CURRENT_DATE - INTERVAL '10 MONTHS')
-                  AND submittimestamp > (CURRENT_DATE - INTERVAL '11 MONTHS')
-                THEN TO_CHAR(submittimestamp, 'YYYY-MM-DD')
-             ELSE ''
-          END AS "10 months",
-          CASE
-             WHEN submittimestamp < (CURRENT_DATE - INTERVAL '11 MONTHS')
-                  AND submittimestamp > (CURRENT_DATE - INTERVAL '12 MONTHS')
-                THEN TO_CHAR(submittimestamp, 'YYYY-MM-DD')
-             ELSE ''
-          END AS "11 months",
-          CASE
-             WHEN submittimestamp < (CURRENT_DATE - INTERVAL '12 MONTHS')
-                THEN TO_CHAR(submittimestamp, 'YYYY-MM-DD')
-             ELSE ''
-          END AS "> 12 months"
-   FROM registry_view
-      JOIN projects
-         ON CAST(SUBSTRING(registry_id FROM 5 FOR 3) AS INTEGER) = projects."ID"
-   WHERE access_status IN ('Approval',
-                           'Restricted')
-      AND dataset_udi IN (SELECT udi
-                          FROM (SELECT SUBSTRING(registry_id
-                                                 FROM 1 FOR 16) AS udi,
-                                       MIN(registry_ID) AS min_id
-                                FROM registry
-                                WHERE registry_id NOT LIKE '00.%'
-                                   AND dataset_filename IS NOT NULL
-                                GROUP BY udi) AS dataset_udi)
-   ORDER BY submittimestamp;
+ALTER VIEW dif_view
+   OWNER TO gomri_user;
+
+ALTER VIEW registry_view
+   OWNER TO gomri_user;
+
+ALTER VIEW reg_view
+   OWNER TO gomri_user;
+
+ALTER VIEW curr_reg_view
+   OWNER TO gomri_user;
 
 -- ----------------------------------------------------------------------------
 -- Set our privileges:
 -- ----------------------------------------------------------------------------
 
-GRANT SELECT
-ON registry_view
-TO gomri_reader;
-
-GRANT SELECT
-ON registry_view
-TO gomri_user;
-
 GRANT ALL
-ON registry_view
-TO gomri_writer;
-
-GRANT ALL
-ON registry_view
-TO postgres;
-
-GRANT SELECT
-ON registry_view
-TO srogers;
-
--- ----------------------------------------------------------------------------
+ON curr_reg_view,
+   dif_view,
+   reg_view,
+   registry_view
+TO gomri_admin,
+   postgres;
 
 GRANT SELECT
-ON reg_view
-TO gomri_reader;
-
-GRANT SELECT
-ON reg_view
-TO gomri_user;
-
-GRANT ALL
-ON reg_view
-TO gomri_writer;
-
-GRANT ALL
-ON reg_view
-TO postgres;
-
-GRANT SELECT
-ON reg_view
-TO srogers;
-
--- ----------------------------------------------------------------------------
-
-GRANT SELECT
-ON curr_reg_view
-TO gomri_reader;
-
-GRANT SELECT
-ON curr_reg_view
-TO gomri_user;
-
-GRANT ALL
-ON curr_reg_view
-TO gomri_writer;
-
-GRANT ALL
-ON curr_reg_view
-TO postgres;
-
-GRANT SELECT
-ON curr_reg_view
-TO srogers;
-
--- ----------------------------------------------------------------------------
-
-GRANT ALL
-ON dif_view
-TO postgres;
-
-GRANT SELECT
-ON dif_view
-TO gomri_reader;
-
-GRANT SELECT
-ON dif_view
-TO gomri_user;
-
-GRANT ALL
-ON dif_view
-TO gomri_writer;
-
-GRANT ALL
-ON dif_view
-TO postgres;
-
-GRANT SELECT
-ON dif_view
-TO srogers;
-
-
-
-GRANT ALL
-ON restricted_time_view
+ON curr_reg_view,
+   dif_view,
+   reg_view,
+   registry_view
 TO gomri_reader,
    gomri_user,
    gomri_writer;
