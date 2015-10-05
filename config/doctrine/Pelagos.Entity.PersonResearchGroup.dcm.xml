@@ -18,10 +18,10 @@ Pelagos.Entity.Entity.dcm.xml
         </id>
 
         <many-to-one field="person" target-entity="Person">
-            <join-column name="person_number" referenced-column-name="person_number" inversed-by="person" />
+            <join-column name="person_number" referenced-column-name="person_number" />
         </many-to-one>
 
-        <many-to-one field="researchGroup" target-entity="ResearchGroup">
+        <many-to-one field="researchGroup" target-entity="ResearchGroup" inversed-by="personResearchGroups">
             <join-column name="research_group_number" referenced-column-name="research_group_number" />
         </many-to-one>
 
