@@ -28,7 +28,7 @@
         return this.each(function() {
             //plug-in
 
-            var form = this;
+            var thisForm = this;
 
             //make sure this is of type form
             if (!$(this).is("form")) {
@@ -84,19 +84,19 @@
 
             var innerform = "<div class=\"innerForm\">" +
                             "<img class=\"editimg\" src=\"../static/images/application_edit.png\">";
-            if ($(this).hasAttr("deleteable")) {
-                 innerform += "<img class=\"deleteimg\" src=\"../static/images/delete.png\">"
+            if ($(this).hasAttr("deletable")) {
+                 innerform += "<img class=\"deleteimg\" src=\"../static/images/delete.png\">";
             }
             innerform += "</div>";
 
-            $(".entityWrapper").has(this).append(innerform);
+            $(this).append(innerform);
 
-            $(".deleteimg").button().click(function (event) {
+            $(".deleteimg", this).button().click(function (event) {
                 event.stopPropagation();
 
                 $.when(showConfirmation("Delete Entity", "Are you sure?")).done(function() {
-                    $.when(updateEntity($(form), "Delete")).done(function() {
-                        $(".entityWrapper").has(form)
+                    $.when(updateEntity($(thisForm), "Delete")).done(function() {
+                        $(".entityWrapper").has(thisForm)
                         .animate({ height: "toggle", opacity: "toggle" }, "slow", function() {
                             $(this).slideUp("fast", function() {
                                 $(this)

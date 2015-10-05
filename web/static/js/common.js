@@ -81,14 +81,12 @@ function showConfirmation(title, message)
                 "Yes": function() {
                     jQuery(this).dialog("close");
                     self.resolve();
-
                 },
                 "No": function() {
                     jQuery(this).dialog("close");
                     self.reject();
-
                 }
             }
-        })
+        });
     });
 }
