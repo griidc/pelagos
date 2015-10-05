@@ -72,20 +72,21 @@ if ($udi <> '')
     } else {
         $enforceMetadataRule = 0;
     }
+
     $pquery = "
     SELECT *,
-    CASE WHEN metadata.registry_id IS NULL
-        THEN CASE WHEN datasets.geom IS NULL
-             THEN 'baseMap'
-             ELSE ST_AsText(datasets.geom)
-             END,
-        ELSE CASE WHEN matadata.geom IS NULL
-             THEN CASE WHEN metadata.extent_description IS NULL
-                  THEN 'baseMap'
-                  ELSE 'labOnly'
-                  END,
-              ELSE ST_AsText(metadata.geom)
-             END AS \"the_geom\",
+
+    CASE WHEN metadata.registry_id IS NULL AND datasets.geom IS NULL THEN 'baseMap'
+
+    WHEN metadata.registry_id IS NULL AND datasets.geom IS NOT NULL THEN ST_AsText(datasets.geom)
+
+    WHEN metadata.registry_id IS NOT NULL AND metadata.geom IS NOT NULL THEN ST_AsText(metadata.geom)
+
+    WHEN metadata.registry_id IS NOT NULL AND metadata.geom IS NULL AND metadata.extent_description IS NULL THEN 'baseMap'
+
+    WHEN metadata.registry_id IS NOT NULL AND metadata.geom IS NULL AND metadata.extent_description IS NOT NULL THEN 'labOnly'
+                                                                     END AS geom_data,
+
     CASE WHEN registry.dataset_udi IS NULL THEN datasets.dataset_udi ELSE registry.dataset_udi END AS dataset_udi,
     CASE WHEN registry.dataset_title IS NULL THEN datasets.title ELSE registry.dataset_title END AS title,
 
@@ -127,18 +128,19 @@ if ($udi <> '')
     FROM datasets
     LEFT JOIN registry_view registry ON registry.dataset_udi = datasets.dataset_udi
     LEFT JOIN metadata on registry.registry_id = metadata.registry_id
-    WHERE datasets.dataset_udi = '$udi'
+    WHERE datasets.dataset_udi = '$udi' limit 1
     ;
     ";
 
     $prow = pdoDBQuery($pconn,$pquery);
 
     $prow = $prow[0];
+
     if($prow["doi"]) {
         $prow["noheader_doi"] = preg_replace("/doi:/",'',$prow["doi"]);
     }
 
-    if ($prow == null  OR  $prow["the_geom"] == null) {
+    if ($prow == null  OR  $prow["geom_data"] == null) {
 
         if ($prow["metadata_xml"] == "")
         {
@@ -150,10 +152,10 @@ if ($udi <> '')
         }
     }
     else {
-        if ($prow["the_geom"] == 'labOnly') {
+        if ($prow["geom_data"] == 'labOnly') {
             $dsscript = "dlmap.addImage('$_SERVER[SCRIPT_NAME]/includes/images/labonly.png',0.4);dlmap.makeStatic();";
         } else { //  add the geometry from the data. Either datasets or metadata
-            $dsscript = 'dlmap.addFeatureFromWKT("' . $prow['the_geom'] . '",{"udi":"' . $prow['dataset_udi'] . '"});dlmap.gotoAllFeatures();';
+            $dsscript = 'dlmap.addFeatureFromWKT("' . $prow['geom_data'] . '",{"udi":"' . $prow['dataset_udi'] . '"});dlmap.gotoAllFeatures();';
         } //  else
         //  fall through and only the base map will show
     }
