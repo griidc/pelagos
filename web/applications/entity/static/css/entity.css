@@ -82,10 +82,10 @@ select, input{
 }
 
 .entityForm input.clickableLink {
-    -webkit-transition: visibility 250ms ease-in 0ms, opacity 250ms ease-in 0ms;
-       -moz-transition: visibility 250ms ease-in 0ms, opacity 250ms ease-in 0ms;
-         -o-transition: visibility 250ms ease-in 0ms, opacity 250ms ease-in 0ms;
-            transition: visibility 250ms ease-in 0ms, opacity 250ms ease-in 0ms;
+    -webkit-transition: visibility 200ms ease-in 0ms, opacity 200ms ease-in 0ms;
+    -moz-transition: visibility 200ms ease-in 0ms, opacity 200ms ease-in 0ms;
+    -o-transition: visibility 200ms ease-in 0ms, opacity 200ms ease-in 0ms;
+    transition: visibility 200ms ease-in 0ms, opacity 200ms ease-in 0ms;
     visibility: hidden;
     opacity: 0;
     border: 1px solid #aaa;
@@ -112,10 +112,10 @@ select, input{
 }
 
 .entityWrapper.active span.clickableLink span {
-    -webkit-transition: visibility 250ms ease-in 0ms, opacity 250ms ease-in 0ms;
-       -moz-transition: visibility 250ms ease-in 0ms, opacity 250ms ease-in 0ms;
-         -o-transition: visibility 250ms ease-in 0ms, opacity 250ms ease-in 0ms;
-            transition: visibility 250ms ease-in 0ms, opacity 250ms ease-in 0ms;
+    -webkit-transition: visibility 200ms ease-in 0ms, opacity 200ms ease-in 0ms;
+    -moz-transition: visibility 200ms ease-in 0ms, opacity 200ms ease-in 0ms;
+    -o-transition: visibility 200ms ease-in 0ms, opacity 200ms ease-in 0ms;
+    transition: visibility 200ms ease-in 0ms, opacity 200ms ease-in 0ms;
     visibility: hidden;
     opacity: 0;
 }
@@ -147,12 +147,12 @@ select, input{
     top: -10px;
     bottom: -10px;
     -webkit-box-sizing: border-box;
-       -moz-box-sizing: border-box;
-            box-sizing: border-box;
-    -webkit-transition: box-shadow 150ms ease-in 0ms;
-       -moz-transition: box-shadow 150ms ease-in 0ms;
-         -o-transition: box-shadow 150ms ease-in 0ms;
-            transition: box-shadow 150ms ease-in 0ms;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-transition: all 200ms ease-in 0ms;
+    -moz-transition: all 200ms ease-in 0ms;
+    -o-transition: all 200ms ease-in 0ms;
+    transition: all 200ms ease-in 0ms;
     border-radius: 2.01px;
     display: inline-block;
     max-width: 100%;
@@ -169,10 +169,10 @@ select, input{
 }
 
 .deleteimg,.editimg {
-    -webkit-transition: opacity 250ms ease-in 0ms;
-    -moz-transition: opacity 250ms ease-in 0ms;
-    -o-transition: opacity 250ms ease-in 0ms;
-    transition: opacity 250ms ease-in 0ms;
+    -webkit-transition: opacity 200ms ease-in 0ms;
+    -moz-transition: opacity 200ms ease-in 0ms;
+    -o-transition: opacity 200ms ease-in 0ms;
+    transition: opacity 200ms ease-in 0ms;
     opacity: 0;
     height: 32px;
     width: 32px;
@@ -180,13 +180,13 @@ select, input{
 }
 
 .deleteimg {
-   top: 0px;
-   right: 0px;
+   top: 0;
+   right: 0;
 }
 
 .editimg {
-    bottom: -3px;
-    right: -3px;
+    bottom: 0;
+    right: 0;
 }
 .innerForm:hover>.deleteimg,.innerForm:hover>.editimg{
      opacity: 1;

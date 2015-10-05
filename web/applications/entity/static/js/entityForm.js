@@ -28,7 +28,7 @@
         return this.each(function() {
             //plug-in
 
-            var form = this;
+            var thisForm = this;
 
             //make sure this is of type form
             if (!$(this).is("form")) {
