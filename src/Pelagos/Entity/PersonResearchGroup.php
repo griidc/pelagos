@@ -99,11 +99,11 @@ class PersonResearchGroup extends Entity
     /**
      * Setter for Person.
      *
-     * @param Person $person The Person entity for this association.
+     * @param Person|null $person The Person entity for this association.
      *
      * @return void
      */
-    public function setPerson(Person $person)
+    public function setPerson(Person $person = null)
     {
         $this->person = $person;
     }
@@ -121,11 +121,11 @@ class PersonResearchGroup extends Entity
     /**
      * Setter for ResearchGroup.
      *
-     * @param ResearchGroup $researchGroup The Research Group entity for this association.
+     * @param ResearchGroup|null $researchGroup The Research Group entity for this association.
      *
      * @return void
      */
-    public function setResearchGroup(ResearchGroup $researchGroup)
+    public function setResearchGroup(ResearchGroup $researchGroup = null)
     {
         $this->researchGroup = $researchGroup;
     }
@@ -143,11 +143,11 @@ class PersonResearchGroup extends Entity
     /**
      * Setter for Role.
      *
-     * @param ResearchGroupRole $role The Role for this association.
+     * @param ResearchGroupRole|null $role The Role for this association.
      *
      * @return void
      */
-    public function setRole(ResearchGroupRole $role)
+    public function setRole(ResearchGroupRole $role = null)
     {
         $this->role = $role;
     }
