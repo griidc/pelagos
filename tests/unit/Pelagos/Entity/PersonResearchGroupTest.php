@@ -99,22 +99,37 @@ class PersonResearchGroupTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test the testGetPerson() method.
+     * Test the getPerson method.
      *
-     * This method verify the return of the parent's Funding Cycle
+     * This method should return the Person set in setUp.
      *
      * @return void
      */
     public function testGetPerson()
     {
-        $this->assertInstanceOf(
-            '\Pelagos\Entity\Person',
+        $this->assertSame(
+            $this->mockPerson,
             $this->personResearchGroup->getPerson()
         );
     }
 
     /**
-     * Test the testSetPerson() method with a non object.
+     * Test the setPerson method with null.
+     *
+     * This should be allowed and null should be returned by getPerson.
+     *
+     * @return void
+     */
+    public function testSetPersonNull()
+    {
+        $this->personResearchGroup->setPerson(null);
+        $this->assertNull(
+            $this->personResearchGroup->getPerson()
+        );
+    }
+
+    /**
+     * Test the setPerson method with a non object.
      *
      * This method should result in an exception being thrown.
      *
@@ -128,7 +143,7 @@ class PersonResearchGroupTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test the testSetPerson() method with a non Person.
+     * Test the setPerson method with a non Person.
      *
      * This method should result in an exception being thrown.
      *
@@ -142,22 +157,37 @@ class PersonResearchGroupTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test the testGetResearchGroup() method.
+     * Test the getResearchGroup method.
      *
-     * This method verify the return of the parent's Funding Cycle
+     * This method should return the ResearchGroup set in setUp.
      *
      * @return void
      */
     public function testGetResearchGroup()
     {
-        $this->assertInstanceOf(
-            '\Pelagos\Entity\ResearchGroup',
+        $this->assertSame(
+            $this->mockResearchGroup,
             $this->personResearchGroup->getResearchGroup()
         );
     }
 
     /**
-     * Test the testSetResearchGroup() method with a non object.
+     * Test the setResearchGroup method with null.
+     *
+     * This should be allowed and null should be returned by getResearchGroup.
+     *
+     * @return void
+     */
+    public function testSetResearchGroupNull()
+    {
+        $this->personResearchGroup->setResearchGroup(null);
+        $this->assertNull(
+            $this->personResearchGroup->getResearchGroup()
+        );
+    }
+
+    /**
+     * Test the setResearchGroup method with a non object.
      *
      * This method should result in an exception being thrown.
      *
@@ -171,7 +201,7 @@ class PersonResearchGroupTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test the testSetResearchGroup() method with a non ResearchGroup.
+     * Test the setResearchGroup method with a non ResearchGroup.
      *
      * This method should result in an exception being thrown.
      *
@@ -185,22 +215,37 @@ class PersonResearchGroupTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test the testGetRole() method.
+     * Test the getRole method.
      *
-     * This method verify the return of the parent's Funding Cycle
+     * This method should return the ResearchGroupRole set in setUp.
      *
      * @return void
      */
     public function testGetRole()
     {
-        $this->assertInstanceOf(
-            '\Pelagos\Entity\ResearchGroupRole',
+        $this->assertSame(
+            $this->mockResearchGroupRole,
             $this->personResearchGroup->getRole()
         );
     }
 
     /**
-     * Test the testSetRole() method with a non object.
+     * Test the setRole method with null.
+     *
+     * This should be allowed and null should be returned by getRole.
+     *
+     * @return void
+     */
+    public function testSetRoleNull()
+    {
+        $this->personResearchGroup->setRole(null);
+        $this->assertNull(
+            $this->personResearchGroup->getRole()
+        );
+    }
+
+    /**
+     * Test the setRole method with a non object.
      *
      * This method should result in an exception being thrown.
      *
@@ -214,7 +259,7 @@ class PersonResearchGroupTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test the testSetResearchGroup() method with a non ResearchGroup.
+     * Test the setResearchGroup method with a non ResearchGroup.
      *
      * This method should result in an exception being thrown.
      *
@@ -240,5 +285,34 @@ class PersonResearchGroupTest extends \PHPUnit_Framework_TestCase
             self::$testLabel,
             $this->personResearchGroup->getLabel()
         );
+    }
+
+    /**
+     * Test setLabel with null.
+     *
+     * This should be allowed and null should be returned by getLabel.
+     *
+     * @return void
+     */
+    public function testSetLabelNull()
+    {
+        $this->personResearchGroup->setLabel(null);
+        $this->assertNull(
+            $this->personResearchGroup->getLabel()
+        );
+    }
+
+    /**
+     * Test setLabel with non-string.
+     *
+     * This should throw an exception.
+     *
+     * @expectedException \InvalidArgumentException
+     *
+     * @return void
+     */
+    public function testSetLabelNonString()
+    {
+        $this->personResearchGroup->setLabel(1);
     }
 }
