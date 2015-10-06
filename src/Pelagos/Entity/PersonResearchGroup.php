@@ -165,7 +165,7 @@ class PersonResearchGroup extends Entity
     /**
      * Setter for Label.
      *
-     * @param mixed $label The Label for this association.
+     * @param string $label The Label for this association.
      *
      * @return void
      */
