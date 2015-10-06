@@ -167,11 +167,17 @@ class PersonResearchGroup extends Entity
      *
      * @param string|null $label The Label for this association.
      *
+     * @throws \InvalidArgumentException When $label is not a string or null.
+     *
      * @return void
      */
     public function setLabel($label)
     {
-        $this->label = $label;
+        if (is_string($label) or $label === null) {
+            $this->label = $label;
+        } else {
+            throw new \InvalidArgumentException('Label must be a string or null, ' . gettype($label) . ' given');
+        }
     }
 
     /**

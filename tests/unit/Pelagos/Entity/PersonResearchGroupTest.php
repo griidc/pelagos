@@ -241,4 +241,33 @@ class PersonResearchGroupTest extends \PHPUnit_Framework_TestCase
             $this->personResearchGroup->getLabel()
         );
     }
+
+    /**
+     * Test setLabel with null.
+     *
+     * This should be allowed and null should be returned by getLabel.
+     *
+     * @return void
+     */
+    public function testSetLabelNull()
+    {
+        $this->personResearchGroup->setLabel(null);
+        $this->assertNull(
+            $this->personResearchGroup->getLabel()
+        );
+    }
+
+    /**
+     * Test setLabel with non-string.
+     *
+     * This should throw an exception.
+     *
+     * @expectedException \InvalidArgumentException
+     *
+     * @return void
+     */
+    public function testSetLabelNonString()
+    {
+        $this->personResearchGroup->setLabel(1);
+    }
 }
