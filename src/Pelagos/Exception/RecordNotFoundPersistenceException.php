@@ -15,7 +15,7 @@ class RecordNotFoundPersistenceException extends PersistenceException
     protected $id;
 
     /**
-     * Setter for $id
+     * Setter for $id.
      *
      * @param mixed $id The id of the entity that was searched for.
      *
@@ -27,7 +27,7 @@ class RecordNotFoundPersistenceException extends PersistenceException
     }
 
     /**
-     * Getter for $id
+     * Getter for $id.
      *
      * @return mixed The id of the entity that was searched for.
      */

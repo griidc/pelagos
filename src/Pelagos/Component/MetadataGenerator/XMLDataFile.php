@@ -29,6 +29,7 @@ class XMLDataFile
     private function __construct()
     {
     }
+
     /**
      * Singleton implementation.
      *
@@ -79,9 +80,11 @@ class XMLDataFile
      *
      * @param string $udi Dataset identifier.
      *
-     * @return boolean|string Result.
+     * @throws NotFoundException When no XML file found for $udi.
+     * @throws NotFoundException When there is a failure reading the XML file for $udi.
+     * @throws NotFoundException When XML file for $udi is not readable.
      *
-     * @throws NotFoundException If not found.
+     * @return boolean|string Result.
      */
     public function getXML($udi)
     {
@@ -89,17 +92,17 @@ class XMLDataFile
         $xmlText = false;
         $path = $this->getFileLocation($targetUdi);
         if ($path == false) {
-            throw new NotFoundException("XMLDataFile No XML found in path: " . $path);
+            throw new NotFoundException('XMLDataFile No XML found in path: ' . $path);
         } elseif (is_readable($path)) {
             $xmlText = file_get_contents($path);
             if ($xmlText === false) {
-                throw new NotFoundException("XMLDataFile file_get_contents is FALSE for path: " . $path);
+                throw new NotFoundException('XMLDataFile file_get_contents is FALSE for path: ' . $path);
             }
             $validator = new XMLValidator();
             // Throws InvalidXmlException.
             $validator->validate($xmlText);
             return $xmlText;
         }
-        throw new NotFoundException("XMLDataFile No XML found in path: " . $path);
+        throw new NotFoundException('XMLDataFile No XML found in path: ' . $path);
     }
 }

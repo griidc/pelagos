@@ -85,7 +85,7 @@ class Logger
             var_dump($msg);
             $output = ob_get_clean();
 
-            $outputFile = "./" . $this->fileName;
+            $outputFile = './' . $this->fileName;
 
             // If this is first time this run open and truncate.
             if ($this->firstTime) {
@@ -114,7 +114,7 @@ class Logger
     }
 
     /**
-     * Is logging turned on?
+     * Check if logging is turned on.
      *
      * Returns true if logging is turned on.
      * Returns false if loggin is turned off

@@ -69,7 +69,7 @@ class PersistenceExceptionTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->message = 'An exception occurred while executing ' .  "'" . self::$databaseQuery . "' " .
+        $this->message = 'An exception occurred while executing ' . "'" . self::$databaseQuery . "' " .
             'with params [' . self::$databaseParams . ']: ' .
             'SQLSTATE[' . self::$databaseErrorCode . ']: Unique violation: 7 ' .
             'ERROR: ' . self::$databaseErrorMessage . "\n" .
