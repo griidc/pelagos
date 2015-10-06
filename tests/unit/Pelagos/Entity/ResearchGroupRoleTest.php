@@ -103,6 +103,30 @@ class ResearchGroupRoleTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test setting the weight to zero.
+     *
+     * @expectedException \InvalidArgumentException
+     *
+     * @return void
+     */
+    public function testSetWeightZero()
+    {
+        $this->researchGroupRole->setWeight(0);
+    }
+
+    /**
+     * Test setting the weight to a negative integer.
+     *
+     * @expectedException \InvalidArgumentException
+     *
+     * @return void
+     */
+    public function testSetWeightNegative()
+    {
+        $this->researchGroupRole->setWeight(-1);
+    }
+
+    /**
      * Test setting the weight with an integer string.
      *
      * @return void
@@ -117,7 +141,31 @@ class ResearchGroupRoleTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test setting the weight with an string containing non-digits.
+     * Test setting the weight with a string containing 0.
+     *
+     * @expectedException \InvalidArgumentException
+     *
+     * @return void
+     */
+    public function testSetWeightZeroString()
+    {
+        $this->researchGroupRole->setWeight('0');
+    }
+
+    /**
+     * Test setting the weight with a string containing a negative integer.
+     *
+     * @expectedException \InvalidArgumentException
+     *
+     * @return void
+     */
+    public function testSetWeightNegativeString()
+    {
+        $this->researchGroupRole->setWeight('-1');
+    }
+
+    /**
+     * Test setting the weight with a string containing non-digits.
      *
      * @expectedException \InvalidArgumentException
      *
@@ -126,5 +174,41 @@ class ResearchGroupRoleTest extends \PHPUnit_Framework_TestCase
     public function testSetWeightNonDigitString()
     {
         $this->researchGroupRole->setWeight('A');
+    }
+
+    /**
+     * Test setting the weight with string containing non-digits but starting with a digit.
+     *
+     * @expectedException \InvalidArgumentException
+     *
+     * @return void
+     */
+    public function testSetWeightPartialDigitStringStart()
+    {
+        $this->researchGroupRole->setWeight('1A');
+    }
+
+    /**
+     * Test setting the weight with string containing non-digits but ending with a digit.
+     *
+     * @expectedException \InvalidArgumentException
+     *
+     * @return void
+     */
+    public function testSetWeightPartialDigitStringEnd()
+    {
+        $this->researchGroupRole->setWeight('A1');
+    }
+
+    /**
+     * Test setting the weight with string containing non-digits but with a digit in the middle.
+     *
+     * @expectedException \InvalidArgumentException
+     *
+     * @return void
+     */
+    public function testSetWeightPartialDigitStringMiddle()
+    {
+        $this->researchGroupRole->setWeight('A1A');
     }
 }
