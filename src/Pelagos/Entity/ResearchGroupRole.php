@@ -2,6 +2,8 @@
 
 namespace Pelagos\Entity;
 
+use \Symfony\Component\Validator\Constraints as Assert;
+
 /**
  * A Class for Research Group Roles.
  */
@@ -29,6 +31,13 @@ class ResearchGroupRole extends Entity
      * The name of this role.
      *
      * @var string
+     *
+     * @Assert\NotBlank(
+     *     message="Name is required"
+     * )
+     * @Assert\NoAngleBrackets(
+     *     message="Name cannot contain angle brackets (< or >)"
+     * )
      */
     protected $name;
 
@@ -36,6 +45,10 @@ class ResearchGroupRole extends Entity
      * The weight associated with this role.
      *
      * @var integer
+     *
+     * @Assert\NotBlank(
+     *     message="Weight is required"
+     * )
      */
     protected $weight;
 
