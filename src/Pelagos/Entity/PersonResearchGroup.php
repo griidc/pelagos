@@ -165,7 +165,7 @@ class PersonResearchGroup extends Entity
     /**
      * Setter for Label.
      *
-     * @param string $label The Label for this association.
+     * @param string|null $label The Label for this association.
      *
      * @return void
      */
@@ -177,7 +177,7 @@ class PersonResearchGroup extends Entity
     /**
      * Getter for Label.
      *
-     * @return string The Label for this association.
+     * @return string|null The Label for this association.
      */
     public function getLabel()
     {
