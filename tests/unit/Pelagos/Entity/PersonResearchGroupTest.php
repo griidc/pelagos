@@ -99,16 +99,16 @@ class PersonResearchGroupTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test the testGetPerson() method.
+     * Test the getPerson method.
      *
-     * This method verify the return of the parent's Funding Cycle
+     * This method should return the Person set in setUp.
      *
      * @return void
      */
     public function testGetPerson()
     {
-        $this->assertInstanceOf(
-            '\Pelagos\Entity\Person',
+        $this->assertSame(
+            $this->mockPerson,
             $this->personResearchGroup->getPerson()
         );
     }
@@ -129,7 +129,7 @@ class PersonResearchGroupTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test the testSetPerson() method with a non object.
+     * Test the setPerson method with a non object.
      *
      * This method should result in an exception being thrown.
      *
@@ -143,7 +143,7 @@ class PersonResearchGroupTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test the testSetPerson() method with a non Person.
+     * Test the setPerson method with a non Person.
      *
      * This method should result in an exception being thrown.
      *
@@ -157,16 +157,16 @@ class PersonResearchGroupTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test the testGetResearchGroup() method.
+     * Test the getResearchGroup method.
      *
-     * This method verify the return of the parent's Funding Cycle
+     * This method should return the ResearchGroup set in setUp.
      *
      * @return void
      */
     public function testGetResearchGroup()
     {
-        $this->assertInstanceOf(
-            '\Pelagos\Entity\ResearchGroup',
+        $this->assertSame(
+            $this->mockResearchGroup,
             $this->personResearchGroup->getResearchGroup()
         );
     }
@@ -187,7 +187,7 @@ class PersonResearchGroupTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test the testSetResearchGroup() method with a non object.
+     * Test the setResearchGroup method with a non object.
      *
      * This method should result in an exception being thrown.
      *
@@ -201,7 +201,7 @@ class PersonResearchGroupTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test the testSetResearchGroup() method with a non ResearchGroup.
+     * Test the setResearchGroup method with a non ResearchGroup.
      *
      * This method should result in an exception being thrown.
      *
@@ -215,16 +215,16 @@ class PersonResearchGroupTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test the testGetRole() method.
+     * Test the getRole method.
      *
-     * This method verify the return of the parent's Funding Cycle
+     * This method should return the ResearchGroupRole set in setUp.
      *
      * @return void
      */
     public function testGetRole()
     {
-        $this->assertInstanceOf(
-            '\Pelagos\Entity\ResearchGroupRole',
+        $this->assertSame(
+            $this->mockResearchGroupRole,
             $this->personResearchGroup->getRole()
         );
     }
@@ -245,7 +245,7 @@ class PersonResearchGroupTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test the testSetRole() method with a non object.
+     * Test the setRole method with a non object.
      *
      * This method should result in an exception being thrown.
      *
@@ -259,7 +259,7 @@ class PersonResearchGroupTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test the testSetResearchGroup() method with a non ResearchGroup.
+     * Test the setResearchGroup method with a non ResearchGroup.
      *
      * This method should result in an exception being thrown.
      *
