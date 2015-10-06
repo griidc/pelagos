@@ -9,7 +9,9 @@
         "pelagosBasePath": 2,
         "pelagosComponentPath": 2,
         "pelagosBaseUri": 2,
-        "pelagosComponentUri": 2
+        "pelagosComponentUri": 2,
+        "sortObject": 2,
+        "showDialog": 2
     },
     "rules": {
         "no-underscore-dangle": 0,
@@ -20,7 +22,12 @@
                 "$": true
             }
         }],
-        "no-shadow": 0
+        "no-shadow": 0,
+        "new-cap": [2, {
+            "capIsNewExceptions": [
+                "Deferred"
+            ]
+        }]
     },
     "plugins": [
         "shadow-exception"

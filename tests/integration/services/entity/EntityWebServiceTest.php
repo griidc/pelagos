@@ -73,6 +73,7 @@ class EntityWebServiceTest extends \PHPUnit_Framework_TestCase
 
         $this->mockEntityManager = \Mockery::mock('\Doctrine\ORM\EntityManager');
         $this->mockEntityManager->shouldReceive('persist');
+        $this->mockEntityManager->shouldReceive('remove');
         $this->mockEntityManager->shouldReceive('getRepository')->andReturn($this->mockEntityRepository);
         $this->mockEntityManager->shouldReceive('getClassMetadata')->andReturn($this->mockClassMetadata);
 
@@ -597,6 +598,155 @@ class EntityWebServiceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test attempting to delete a ConcreteEntity when no user is logged in.
+     *
+     * Should fail and return 401 with a message indicating that login is required.
+     *
+     * @return void
+     */
+    public function testDeleteNotLoggedIn()
+    {
+        \Slim\Environment::mock(
+            array(
+                'REQUEST_METHOD' => 'DELETE',
+                'PATH_INFO' => '/ConcreteEntity/0',
+            )
+        );
+        $this->runAndCheckStatus(
+            new HTTPStatus(
+                401,
+                'Login Required to use this feature'
+            )
+        );
+    }
+
+    /**
+     * Test attempting to delete a ConcreteEntity that does not exist.
+     *
+     * Should return 404 with a message indicating the ConcreteEntity is not found.
+     *
+     * @return void
+     */
+    public function testDeleteNotFound()
+    {
+        $this->mockEntityManager->shouldReceive('find')->andReturnNull();
+        $this->mockEntityManager->shouldReceive('flush');
+        $this->mockClassMetadata->shouldReceive('__sleep')->andReturn(array());
+        \Slim\Environment::mock(
+            array(
+                'REQUEST_METHOD' => 'DELETE',
+                'PATH_INFO' => '/ConcreteEntity/0',
+            )
+        );
+        $GLOBALS['user'] = new \Pelagos\Tests\Helpers\TestUser;
+        $this->runAndCheckStatus(
+            new HTTPStatus(
+                404,
+                'Could not find a ConcreteEntity with id: 0'
+            )
+        );
+    }
+
+    /**
+     * Test attempting to delete a ConcreteEntity and encountering a persistence error.
+     *
+     * Should return 500 with a message indicating what happened.
+     *
+     * @return void
+     */
+    public function testDeletePersistenceError()
+    {
+        $concreteEntity = new \Pelagos\Entity\ConcreteEntity;
+        $this->mockEntityManager->shouldReceive('find')->andReturn($concreteEntity);
+        $this->mockClassMetadata->shouldReceive('__sleep')->andReturn(array());
+        $this->mockEntityManager->shouldReceive('flush')->andThrow(
+            '\Doctrine\DBAL\DBALException'
+        );
+        \Slim\Environment::mock(
+            array(
+                'REQUEST_METHOD' => 'DELETE',
+                'PATH_INFO' => '/ConcreteEntity/0',
+            )
+        );
+        $GLOBALS['user'] = new \Pelagos\Tests\Helpers\TestUser;
+        $this->runAndCheckStatus(
+            new HTTPStatus(
+                500,
+                'A database error has occured: '
+            )
+        );
+    }
+
+    /**
+     * Test attempting to delete a ConcreteEntity and encountering a general error.
+     *
+     * Should return 500 with a message indicating what happened.
+     *
+     * @return void
+     */
+    public function testDeleteGeneralError()
+    {
+        $concreteEntity = new \Pelagos\Entity\ConcreteEntity;
+        $this->mockEntityManager->shouldReceive('find')->andReturn($concreteEntity);
+        $this->mockClassMetadata->shouldReceive('__sleep')->andReturn(array());
+        $this->mockEntityManager->shouldReceive('flush')->andThrow(
+            '\Exception'
+        );
+        \Slim\Environment::mock(
+            array(
+                'REQUEST_METHOD' => 'DELETE',
+                'PATH_INFO' => '/ConcreteEntity/0',
+            )
+        );
+        $GLOBALS['user'] = new \Pelagos\Tests\Helpers\TestUser;
+        $this->runAndCheckStatus(
+            new HTTPStatus(
+                500,
+                'A general error has occured: '
+            )
+        );
+    }
+
+    /**
+     * Test successful delete.
+     *
+     * Should return 200 with a message indicating that an entity has been
+     * successfully deleted and listing details about the entity.
+     *
+     * @return void
+     */
+    public function testDeleteSuccess()
+    {
+        $concreteEntityData = array (
+            'id' => null,
+            'creator' => 'test',
+            'creationTimeStamp' => null,
+            'modifier' => 'test',
+            'modificationTimeStamp' => null,
+            'name' => self::$testName,
+        );
+        $concreteEntity = new \Pelagos\Entity\ConcreteEntity;
+        $concreteEntity->update($concreteEntityData);
+        $this->mockEntityManager->shouldReceive('find')->andReturn($concreteEntity);
+        $this->mockEntityManager->shouldReceive('flush');
+        $this->mockClassMetadata->shouldReceive('__sleep')->andReturn(array());
+        \Slim\Environment::mock(
+            array(
+                'REQUEST_METHOD' => 'DELETE',
+                'PATH_INFO' => '/ConcreteEntity/0',
+            )
+        );
+        $GLOBALS['user'] = new \Pelagos\Tests\Helpers\TestUser;
+        $this->runAndCheckStatus(
+            new HTTPStatus(
+                200,
+                'ConcreteEntity with ID of 0 has been deleted.',
+                $concreteEntityData
+            )
+        );
+    }
+
+    /**
      * Test successful property validation.
      *
      * Should return a json encoded true.
@@ -739,6 +889,32 @@ class EntityWebServiceTest extends \PHPUnit_Framework_TestCase
         );
         $this->expectOutputRegex('/This Web service establishes a REST API/');
         require 'index.php';
+    }
+
+    /**
+     * Run Entity Web Service, capture output, and check against expected status.
+     *
+     * @param HTTPStatus $expectedStatus The expected status.
+     *
+     * @return void
+     */
+    protected function runAndCheckStatus(HTTPStatus $expectedStatus)
+    {
+        ob_start();
+        require 'index.php';
+        $output = ob_get_contents();
+        ob_end_clean();
+        $this->assertRegExp(
+            "/drupal_exit\n$/",
+            $output,
+            'No drupal_exit found at end of output!'
+        );
+        $output = preg_replace("/drupal_exit\n$/", '', $output);
+        $this->assertJsonStringEqualsJsonString(
+            json_encode($expectedStatus),
+            $output,
+            'Did not see expected JSON output!'
+        );
     }
 
     /**

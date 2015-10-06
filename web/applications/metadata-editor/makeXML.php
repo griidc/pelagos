@@ -12,9 +12,8 @@ function makeXML($xml)
     $xmldocstring = base64_decode($_POST["__ldxmldoc"]);
     $doc = null;
 
-    if ($xmldocstring <> false)
-    {
-        $doc = new DomDocument('1.0','UTF-8');
+    if ($xmldocstring <> false) {
+        $doc = new DomDocument('1.0', 'UTF-8');
         $doc->loadXML($xmldocstring);
     }
 
@@ -25,33 +24,36 @@ function makeXML($xml)
     }
 
     $dMessage = 'Succesfully Created XML file:';
-    drupal_set_message($dMessage,'status');
+    drupal_set_message($dMessage, 'status');
 }
 
 function createBlankXML()
 {
-    $doc = new DomDocument('1.0','UTF-8');
+    $doc = new DomDocument('1.0', 'UTF-8');
 
-    $root = createXmlNode($doc,$doc,'gmi:MI_Metadata');
+    $root = createXmlNode($doc, $doc, 'gmi:MI_Metadata');
 
-    $root->setAttribute('xmlns','http://www.isotc211.org/2005/gmi');
-    $root->setAttribute('xmlns:gco','http://www.isotc211.org/2005/gco');
-    $root->setAttribute('xmlns:gmd','http://www.isotc211.org/2005/gmd');
-    $root->setAttribute('xmlns:gmi','http://www.isotc211.org/2005/gmi');
-    $root->setAttribute('xmlns:gml','http://www.opengis.net/gml/3.2');
-    $root->setAttribute('xmlns:gmx','http://www.isotc211.org/2005/gmx');
-    $root->setAttribute('xmlns:gsr','http://www.isotc211.org/2005/gsr');
-    $root->setAttribute('xmlns:gss','http://www.isotc211.org/2005/gss');
-    $root->setAttribute('xmlns:gts','http://www.isotc211.org/2005/gts');
-    $root->setAttribute('xmlns:xlink','http://www.w3.org/1999/xlink');
-    $root->setAttribute('xmlns:xsi','http://www.w3.org/2001/XMLSchema-instance');
-    $root->setAttribute('xsi:schemaLocation','http://www.isotc211.org/2005/gmi http://www.ngdc.noaa.gov/metadata/published/xsd/schema.xsd');
+    $root->setAttribute('xmlns', 'http://www.isotc211.org/2005/gmi');
+    $root->setAttribute('xmlns:gco', 'http://www.isotc211.org/2005/gco');
+    $root->setAttribute('xmlns:gmd', 'http://www.isotc211.org/2005/gmd');
+    $root->setAttribute('xmlns:gmi', 'http://www.isotc211.org/2005/gmi');
+    $root->setAttribute('xmlns:gml', 'http://www.opengis.net/gml/3.2');
+    $root->setAttribute('xmlns:gmx', 'http://www.isotc211.org/2005/gmx');
+    $root->setAttribute('xmlns:gsr', 'http://www.isotc211.org/2005/gsr');
+    $root->setAttribute('xmlns:gss', 'http://www.isotc211.org/2005/gss');
+    $root->setAttribute('xmlns:gts', 'http://www.isotc211.org/2005/gts');
+    $root->setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
+    $root->setAttribute('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance');
+    $root->setAttribute(
+        'xsi:schemaLocation',
+        'http://www.isotc211.org/2005/gmi http://www.ngdc.noaa.gov/metadata/published/xsd/schema.xsd'
+    );
 
     $doc->normalizeDocument();
     $doc->formatOutput = true;
 
     $xmlString = $doc->saveXML();
-    $newdoc = new DomDocument('1.0','UTF-8');
+    $newdoc = new DomDocument('1.0', 'UTF-8');
 
     $newdoc->loadXML($xmlString);
 
@@ -61,8 +63,7 @@ function createBlankXML()
 function createNodesXML($xml, $doc, $validated)
 {
 
-    if (is_null($doc))
-    {
+    if (is_null($doc)) {
         $doc = createBlankXML();
     }
 
@@ -77,36 +78,28 @@ function createNodesXML($xml, $doc, $validated)
 
     $xpathdoc = new DOMXpath($doc);
 
-    foreach ($xml as $key=>$val)
-    {
+    foreach ($xml as $key => $val) {
         $xpath = "";
 
-        if (substr($key,0,2) != "__")
-        {
+        if (substr($key, 0, 2) != "__") {
+            $nodelevels = preg_split("/-/", $key);
 
-            $nodelevels = preg_split("/-/",$key);
-
-            foreach ($nodelevels as $nodelevel)
-            {
-                $splitnodelevel = preg_split("/\!/",$nodelevel);
+            foreach ($nodelevels as $nodelevel) {
+                $splitnodelevel = preg_split("/\!/", $nodelevel);
 
                 $xpath .= "/" . $splitnodelevel[0];
             }
 
-            //echo $xpath . '<br>';
-
             $xpathdoc = new DOMXpath($doc);
             $elements = $xpathdoc->query($xpath);
 
-            if ($elements->length > 0)
-            {
+            if ($elements->length > 0) {
                 $node = $elements->item(0);
                 $parent = $node->parentNode;
                 $val = htmlspecialchars($val, ENT_QUOTES | 'ENT_XML1', 'UTF-8');
 
                 #here then!
-                if ($parent->nodeName == 'gmd:deliveryPoint')
-                {
+                if ($parent->nodeName == 'gmd:deliveryPoint') {
                     $parent->removeChild($node);
 
                     $node = $doc->createElement('gco:CharacterString');
@@ -114,36 +107,25 @@ function createNodesXML($xml, $doc, $validated)
 
                     $cdata = $doc->createCDATASection($val);
                     $node = $node->appendChild($cdata);
-                }
-                else
-                {
+                } else {
                     //$val = htmlspecialchars($val, ENT_QUOTES | 'ENT_XML1', 'UTF-8');
                     $node->nodeValue = $val;
                 }
 
                 $parent = $node->parentNode;
-                if ($parent->nodeName == 'gmd:fileIdentifier')
-                {
-                    $val = str_replace(":","-",$val);
+                if ($parent->nodeName == 'gmd:fileIdentifier') {
+                    $val = str_replace(':', '-', $val);
                 }
-                echo "($val) Existing Parent:" . $parent->nodeName .'<br>';
-            }
-            else
-            {
-                $nodelevels = preg_split("/\//",$xpath);
-
-
+                echo "($val) Existing Parent:" . $parent->nodeName . '<br>';
+            } else {
+                $nodelevels = preg_split("/\//", $xpath);
 
                 $xpath = "";
 
-                //var_dump($nodelevels);
-
                 $parent = $doc;
 
-                foreach ($nodelevels as $nodelevel)
-                {
-                    if($nodelevel <> "")
-                    {
+                foreach ($nodelevels as $nodelevel) {
+                    if ($nodelevel <> "") {
                         $xpath .= "/" . $nodelevel;
                         $elements = $xpathdoc->query($xpath);
 
@@ -152,8 +134,7 @@ function createNodesXML($xml, $doc, $validated)
 
                         //var_dump($elements);
 
-                        if($elements->length > 0)
-                        {
+                        if ($elements->length > 0) {
                             $xpathdocsub = new DOMXpath($doc);
                             $subelements = $xpathdocsub->query($xpath);
                             $node = $subelements->item(0);
@@ -164,10 +145,8 @@ function createNodesXML($xml, $doc, $validated)
                             $parentXpath = $xpath;
                             echo "Found path: $xpath. Parent is: " . $parentname . "<br>";
 
-                            addNodeAttributes($doc,$parent,$node,$nodelevel,$val);
-                        }
-                        else
-                        {
+                            addNodeAttributes($doc, $parent, $node, $nodelevel, $val);
+                        } else {
                             $xpathdocsub = new DOMXpath($doc);
                             $subelements = $xpathdocsub->query($parentXpath);
                             $node = $subelements->item(0);
@@ -179,11 +158,11 @@ function createNodesXML($xml, $doc, $validated)
                             ## This section Abadoned for now!!!!
 
                             #find parent by previous xpath:
-                            $thisPath = substr(str_replace("/","-",$xpath),1);
-                            //$thosePaths = preg_split("/-/",$thisPath,2    );
+                            $thisPath = substr(str_replace('/', '-', $xpath), 1);
+                            //$thosePaths = preg_split('/-/', $thisPath, 2    );
                             //$thePath = $thosePaths[1];
                             //var_dump(array_keys($xml));
-                            $thisIndex =  array_search($thisPath,array_keys($xml));
+                            $thisIndex =  array_search($thisPath, array_keys($xml));
                             /*
                             if ($thisIndex > 0)
                             {
@@ -207,15 +186,12 @@ function createNodesXML($xml, $doc, $validated)
                             //echo "!!!$thisPath:nowpath:$thisIndex Result:";
 
 
-                            if ($thisIndex > 0)
-                            {
-                                $node = addXMLChildValue($doc,$parent,$nodelevel,$val);
-                            }
-                            else
-                            {
+                            if ($thisIndex > 0) {
+                                $node = addXMLChildValue($doc, $parent, $nodelevel, $val);
+                            } else {
                                 $node = $doc->createElement($nodelevel);
                                 $node = $parent->appendChild($node);
-                                addNodeAttributes($doc,$parent,$node,$nodelevel,$val);
+                                addNodeAttributes($doc, $parent, $node, $nodelevel, $val);
                             }
 
 
@@ -235,30 +211,25 @@ function createNodesXML($xml, $doc, $validated)
                         //addNodeAttributes($doc,$parent,$node,$nodelevel,$val);
                     }
 
-
                 }
 
                 $xpathdocsub = new DOMXpath($doc);
                 $subelements = $xpathdocsub->query($parentXpath);
-                if ($subelements <> false)
-                {
+                if ($subelements <> false) {
                     $node = $subelements->item(0);
-                    if ($node != null)
-                    {
+                    if ($node != null) {
                         $parent = $node->parentNode;
                         $grandparent = $parent->parentNode;
                         $nodelevel = $parent->nodeName;
 
-                        if ($node->nodeName == 'gmd:polygon')
-                        { echo "it here $val"; }
+                        if ($node->nodeName == 'gmd:polygon') {
+                            echo "it here $val";
+                        }
 
-                        if ($parent->nodeName == 'gmd:deliveryPoint')
-                        {
+                        if ($parent->nodeName == 'gmd:deliveryPoint') {
                             $cdata = $doc->createCDATASection($val);
                             $node = $node->appendChild($cdata);
-                        }
-                        else
-                        {
+                        } else {
                             //$val = htmlspecialchars($val, ENT_QUOTES | 'ENT_XML1', 'UTF-8');
                             $node->nodeValue = $val;
                         }
@@ -281,29 +252,38 @@ function createNodesXML($xml, $doc, $validated)
     $parentMi = $miXpathdoc->query('/gmi:MI_Metadata/gmd:metadataMaintenance/gmd:MD_MaintenanceInformation');
 
     $currentNode = 0;
-    if($parentMi->item(0)) {
+    if ($parentMi->item(0)) {
         $currentNode = $parentMi->item(0);
         $newNode = $doc->createElement('gmd:maintenanceNote');
         $currentNode = $currentNode->appendChild($newNode);
+        $maintNoteNode = $currentNode;
     } else {
         $parent = $miXpathdoc->query('/gmi:MI_Metadata');
         $currentNode = createXmlNode($doc, $parent->item(0), 'gmd:metadataMaintenance');
         $currentNode = createXmlNode($doc, $currentNode, 'gmd:MD_MaintenanceInformation');
+        $maintInfoNode = $currentNode;
 
-        $newNode = $doc->createElement('gmd:maintenanceNote');
-        $currentNode = $currentNode->appendChild($newNode);
+        $newNode = $doc->createElement('gmd:maintenanceAndUpdateFrequency');
+        addNodeAttributes($doc, $newNode->parentNode, $newNode, 'gco:nilReason', 'unknown');
+        $currentNode->appendChild($newNode);
+        $freqNode = $currentNode;
+
+        $currentNode = createXmlNode($doc, $maintInfoNode, 'gmd:maintenanceNote');
+        $maintNoteNode = $currentNode;
     }
 
     $timestamp = gmdate('c');
     $maintenanceNote='';
     if ($validated == true) {
-        $maintenanceNote = "This ISO metadata record was created using the 'Check and Save to File' (with form validation) function of the GRIIDC ISO 19115-2 Metadata Editor on $timestamp";
+        $maintenanceNote = "This ISO metadata record was created using the 'Check and Save to File' ";
+        $maintenanceNote .= "(with form validation) function of the GRIIDC ISO 19115-2 Metadata Editor on $timestamp";
     } else {
-        $maintenanceNote = "This ISO metadata record was created using the 'Save to File' (no form validation) function of the GRIIDC ISO 19115-2 Metadata Editor on $timestamp";
+        $maintenanceNote = "This ISO metadata record was created using the 'Save to File' (no form validation) ";
+        $maintenanceNote .= "function of the GRIIDC ISO 19115-2 Metadata Editor on $timestamp";
     }
 
     $newChild = $doc->createElement('gco:CharacterString', $maintenanceNote);
-    $currentNode->appendChild($newChild);
+    $maintNoteNode->appendChild($newChild);
 
     $doc->formatOutput = true;
     $doc->normalizeDocument();
@@ -326,7 +306,7 @@ function createNodesXML($xml, $doc, $validated)
     //*/
 }
 
-function addXMLChildValue($doc,$parent,$fieldname,$fieldvalue)
+function addXMLChildValue($doc, $parent, $fieldname, $fieldvalue)
 {
     echo "Doing $fieldname";
     $escfieldvalue = htmlspecialchars($fieldvalue, ENT_QUOTES | 'ENT_XML1', 'UTF-8');
@@ -335,23 +315,23 @@ function addXMLChildValue($doc,$parent,$fieldname,$fieldvalue)
     $value = $doc->createTextNode($escfieldvalue);
     $value = $child->appendChild($value);
 
-    addNodeAttributes($doc,$parent,$child,$fieldname,$fieldvalue);
+    addNodeAttributes($doc, $parent, $child, $fieldname, $fieldvalue);
 
     return $child;
 }
 
-function createXmlNode($doc,$parent,$nodeName)
+function createXmlNode($doc, $parent, $nodeName)
 {
     //echo $nodeName;
     $node = $doc->createElement($nodeName);
     $node = $parent->appendChild($node);
 
-    addNodeAttributes($doc,$parent,$node,$nodeName);
+    addNodeAttributes($doc, $parent, $node, $nodeName);
 
     return $node;
 }
 
-function codeLookup($codeList,$codeListValue)
+function codeLookup($codeList, $codeListValue)
 {
     #TODO
 
@@ -365,65 +345,70 @@ function codeLookup($codeList,$codeListValue)
 
 }
 
-function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
+function addNodeAttributes($doc, $parent, $node, $fieldname, $fieldvalue = null)
 {
-    switch ($fieldname)
-    {
+    switch ($fieldname) {
+        case 'gco:nilReason':
+            $node->setAttribute('gco:nilReason', $fieldvalue);
+            break;
         case '-gmd:fileIdentifier':
-        {
-            $node->nodeValue = str_replace(':','-',$fieldvalue);
+            $node->nodeValue = str_replace(':', '-', $fieldvalue);
             break;
-        }
         case 'gmd:MD_CharacterSetCode':
-        {
-            $node->setAttribute('codeList','http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_CharacterSetCode');
-            $node->setAttribute('codeListValue',$fieldvalue);
-            $codeSpace = codeLookup($fieldname,$fieldvalue);
-            $node->setAttribute('codeSpace',$codeSpace);
+            $node->setAttribute(
+                'codeList',
+                'http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_CharacterSetCode'
+            );
+            $node->setAttribute('codeListValue', $fieldvalue);
+            $codeSpace = codeLookup($fieldname, $fieldvalue);
+            $node->setAttribute('codeSpace', $codeSpace);
             break;
-        }
         case 'gmd:MD_ScopeCode':
-        {
-            $node->setAttribute('codeList','http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_ScopeCode');
-            $node->setAttribute('codeListValue',$fieldvalue);
-            $codeSpace = codeLookup($fieldname,$fieldvalue);
-            $node->setAttribute('codeSpace',$codeSpace);
+            $node->setAttribute(
+                'codeList',
+                'http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_ScopeCode'
+            );
+            $node->setAttribute('codeListValue', $fieldvalue);
+            $codeSpace = codeLookup($fieldname, $fieldvalue);
+            $node->setAttribute('codeSpace', $codeSpace);
             break;
-        }
         case 'gmd:CI_RoleCode':
-        {
-            $node->setAttribute('codeList','http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode');
-            $node->setAttribute('codeListValue',$fieldvalue);
-            $codeSpace = codeLookup($fieldname,$fieldvalue);
-            $node->setAttribute('codeSpace',$codeSpace);
+            $node->setAttribute(
+                'codeList',
+                'http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode'
+            );
+            $node->setAttribute('codeListValue', $fieldvalue);
+            $codeSpace = codeLookup($fieldname, $fieldvalue);
+            $node->setAttribute('codeSpace', $codeSpace);
             break;
-        }
         case 'gmd:CI_DateTypeCode':
-        {
-            $node->setAttribute('codeList','http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode');
-            $node->setAttribute('codeListValue',$fieldvalue);
-            $codeSpace = codeLookup($fieldname,$fieldvalue);
-            $node->setAttribute('codeSpace',$codeSpace);
+            $node->setAttribute(
+                'codeList',
+                'http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode'
+            );
+            $node->setAttribute('codeListValue', $fieldvalue);
+            $codeSpace = codeLookup($fieldname, $fieldvalue);
+            $node->setAttribute('codeSpace', $codeSpace);
             break;
-        }
         case 'gmd:MD_ProgressCode':
-        {
-            $node->setAttribute('codeList','http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_ProgressCode');
-            $node->setAttribute('codeListValue',$fieldvalue);
-            $codeSpace = codeLookup($fieldname,$fieldvalue);
-            $node->setAttribute('codeSpace',$codeSpace);
+            $node->setAttribute(
+                'codeList',
+                'http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_ProgressCode'
+            );
+            $node->setAttribute('codeListValue', $fieldvalue);
+            $codeSpace = codeLookup($fieldname, $fieldvalue);
+            $node->setAttribute('codeSpace', $codeSpace);
             break;
-        }
         case 'gmd:MD_KeywordTypeCode':
-        {
-            $node->setAttribute('codeList','http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_KeywordTypeCode');
-            $node->setAttribute('codeListValue',$fieldvalue);
-            $codeSpace = codeLookup($fieldname,$fieldvalue);
-            $node->setAttribute('codeSpace',$codeSpace);
+            $node->setAttribute(
+                'codeList',
+                'http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_KeywordTypeCode'
+            );
+            $node->setAttribute('codeListValue', $fieldvalue);
+            $codeSpace = codeLookup($fieldname, $fieldvalue);
+            $node->setAttribute('codeSpace', $codeSpace);
             break;
-        }
         case 'gmd:description':
-        {
             #Move up a few parent nodes to remove EX_Extent
             $newParent = $parent->parentNode;
 
@@ -433,7 +418,7 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
             #Recreating the node EX_Extent
             $node = $doc->createElement('gmd:EX_Extent');
             $node = $newParent->appendChild($node);
-            $node->setAttribute('id','descriptiveExtent');
+            $node->setAttribute('id', 'descriptiveExtent');
 
             $parent = $node;
 
@@ -441,9 +426,7 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
             $node = $parent->appendChild($node);
 
             break;
-        }
         case 'gmd:polygons':
-        {
             #Move up a few parent nodes to remove EX_Extent
             $newParent = $parent->parentNode;
             $grandParent = $newParent->parentNode;
@@ -455,7 +438,7 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
             #Creating childs nodes from EX_Extent trough gmd:polygon
             $node = $doc->createElement('gmd:EX_Extent');
             $node = $superParent->appendChild($node);
-            $node->setAttribute('id','boundingExtent');
+            $node->setAttribute('id', 'boundingExtent');
 
             $parent = $node;
 
@@ -476,44 +459,32 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
 
             #Don't do this is there is no GML, or it will fail.
             if ($fieldvalue != '') {
-                $polygonDoc = new DomDocument('1.0','UTF-8');
-                $polygonDoc->loadXML($fieldvalue,LIBXML_NOERROR);
+                $polygonDoc = new DomDocument('1.0', 'UTF-8');
+                $polygonDoc->loadXML($fieldvalue, LIBXML_NOERROR);
 
                 $polygonNode = $polygonDoc->documentElement;
 
-                if($polygonNode instanceof DOMNode == true)
-                {
-                    $node->appendChild($doc->importNode($polygonNode, TRUE));
+                if ($polygonNode instanceof DOMNode == true) {
+                    $node->appendChild($doc->importNode($polygonNode, true));
                 }
             }
             break;
-        }
         case 'gml:posList':
-        {
-            $node->setAttribute('srsDimension','2');
+            $node->setAttribute('srsDimension', '2');
             break;
-        }
         case 'gml:Polygon':
-        {
-            $node->setAttribute('gml:id','Polygon');
-            $node->setAttribute('srsName','urn:ogc:def:crs:EPSG::4326');
+            $node->setAttribute('gml:id', 'Polygon');
+            $node->setAttribute('srsName', 'urn:ogc:def:crs:EPSG::4326');
             break;
-        }
         case 'gmd:EX_GeographicBoundingBox':
-        {
-            $node->setAttribute('id','boundingGeographicBoundingBox');
+            $node->setAttribute('id', 'boundingGeographicBoundingBox');
             break;
-        }
         case 'gml:TimePeriod':
-        {
-            $node->setAttribute('gml:id','boundingTemporalExtent');
+            $node->setAttribute('gml:id', 'boundingTemporalExtent');
             break;
-        }
         case 'gmd:version':
-        {
-            if ($fieldvalue == "")
-            {
-                $node->setAttribute('gco:nilReason','inapplicable');
+            if ($fieldvalue == "") {
+                $node->setAttribute('gco:nilReason', 'inapplicable');
             }
             // $child = $node->firstChild;
             // if (isset($child))
@@ -522,76 +493,66 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
             // }
 
             break;
-        }
         case 'gmd:CI_DateTypeCode':
-        {
-            $node->setAttribute('codeList','http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode');
-            $node->setAttribute('codeListValue',$fieldvalue);
-            $codeSpace = codeLookup($fieldname,$fieldvalue);
-            $node->setAttribute('codeSpace',$codeSpace);
+            $node->setAttribute(
+                'codeList',
+                'http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode'
+            );
+            $node->setAttribute('codeListValue', $fieldvalue);
+            $codeSpace = codeLookup($fieldname, $fieldvalue);
+            $node->setAttribute('codeSpace', $codeSpace);
             break;
-        }
         case '!gmd:descriptiveKeywords':
-        {
             $elements2 = null;
             $beforeXpath = "/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:language";
-            if ($doc != null)
-            {
+            if ($doc != null) {
                 $xpathdoc2 = new DOMXpath($doc);
                 $elements2 = $xpathdoc2->query($beforeXpath);
                 $beforeNode = $elements2->item(0);
 
-                if ($element2->length > 0)
-                {
+                if ($element2->length > 0) {
                     $parent->removeChild($node);
                     $parent = $beforeNode->parentNode;
 
                     $node = $doc->createElement('gmd:descriptiveKeywords');
-                    $node = $parent->insertBefore($node,$beforeNode);
+                    $node = $parent->insertBefore($node, $beforeNode);
                 }
             }
             break;
-        }
         case 'gmd:topicCategory':
-        {
-            $beforeXpath = "/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent";
+            $beforeXpath = '/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent';
             $xpathdoc2 = new DOMXpath($doc);
             $elements2 = $xpathdoc2->query($beforeXpath);
             $beforeNode = $elements2->item(0);
-            if ($element2->length > 0)
-            {
+            if ($element2->length > 0) {
                 $parent->removeChild($node);
 
                 $parent = $beforeNode->parentNode;
 
                 $node = $doc->createElement('gmd:topicCategory');
-                $node = $parent->insertBefore($node,$beforeNode);
+                $node = $parent->insertBefore($node, $beforeNode);
             }
             break;
-        }
         case 'gml:coordinates':
-        {
-            $searchXpath = "/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:geographicElement/gmd:EX_GeographicBoundingBox";
+            $searchXpath = '/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/';
+            $searchXpath .= 'gmd:EX_Extent/gmd:geographicElement/gmd:EX_GeographicBoundingBox';
             $xpathdoc2 = new DOMXpath($doc);
             $elements2 = $xpathdoc2->query($searchXpath);
             $node = $elements2->item(0);
-            if ($elements2->length > 0)
-            {
+            if ($elements2->length > 0) {
                 $parent = $node->parentNode;
                 $parent->removeChild($node);
             }
 
             break;
-        }
         case 'gmd:keywordtheme':
-        {
             $parent->removeChild($node);
 
             $elements2 = null;
-            $beforeXpath = "/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:descriptiveKeywords[1]/gmd:MD_Keywords[1]/gmd:type[1]/gmd:MD_KeywordTypeCode[1]";
+            $beforeXpath = '/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/';
+            $beforeXpath .= 'gmd:descriptiveKeywords[1]/gmd:MD_Keywords[1]/gmd:type[1]/gmd:MD_KeywordTypeCode[1]';
 
-            if ($doc != null)
-            {
+            if ($doc != null) {
                 $xpathdoc2 = new DOMXpath($doc);
                 $elements2 = $xpathdoc2->query($beforeXpath);
                 $beforeNode = $elements2->item(0);
@@ -601,8 +562,7 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
 
                 //var_dump($beforeNode->textContent);
 
-                if ($elements2->length > 0 AND $beforeNode->textContent == "theme")
-                {
+                if ($elements2->length > 0 and $beforeNode->textContent == "theme") {
                     $parent = $beforeNode->parentNode;
                     $parent = $parent->parentNode;
                     $node = $parent->parentNode;
@@ -616,9 +576,7 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
                     $doc->loadXML($xmlString);
                     //$doc->normalizeDocument();
 
-                }
-                else
-                {
+                } else {
                     //echo $parent->nodeName;
                 }
             }
@@ -626,24 +584,20 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
 
             $elements2 = null;
             $beforeXpath = "/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:language";
-            if ($doc != null)
-            {
+            if ($doc != null) {
                 $xpathdoc2 = new DOMXpath($doc);
                 $elements2 = $xpathdoc2->query($beforeXpath);
                 $beforeNode = $elements2->item(0);
 
                 //var_dump($beforeNode->nodeName);
 
-                if ($elements2->length > 0)
-                {
+                if ($elements2->length > 0) {
                     //$parent->removeChild($node);
                     $parent = $beforeNode->parentNode;
 
                     $node = $doc->createElement('gmd:descriptiveKeywords');
-                    $node = $parent->insertBefore($node,$beforeNode);
-                }
-                else
-                {
+                    $node = $parent->insertBefore($node, $beforeNode);
+                } else {
                     $node = $doc->createElement('gmd:descriptiveKeywords');
                     $node = $parent->appendChild($node);
                 }
@@ -660,34 +614,31 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
             $parent = $doc->createElement('gmd:MD_Keywords');
             $parent = $node->appendChild($parent);
 
-            $arrkeywords = preg_split("/\;/",$fieldvalue);
+            $arrkeywords = preg_split("/\;/", $fieldvalue);
 
-            foreach ($arrkeywords as $myKeywords)
-            {
+            foreach ($arrkeywords as $myKeywords) {
                 $mdkwrd = $doc->createElement('gmd:keyword');
                 $mdkwrd = $parent->appendChild($mdkwrd);
 
-                $addnode = addXMLChildValue($doc,$mdkwrd,"gco:CharacterString",$myKeywords);
+                $addnode = addXMLChildValue($doc, $mdkwrd, 'gco:CharacterString', $myKeywords);
             }
 
             $tpkwrd = $doc->createElement('gmd:type');
             $tpkwrd = $parent->appendChild($tpkwrd);
 
-            $addnode = addXMLChildValue($doc,$tpkwrd,"gmd:MD_KeywordTypeCode",'theme');
+            $addnode = addXMLChildValue($doc, $tpkwrd, 'gmd:MD_KeywordTypeCode', 'theme');
             break;
-        }
         case 'gmd:keywordplace':
-        {
             //var_dump($node->nodeName);
         //    exit;
 
             $parent->removeChild($node);
 
             $elements2 = null;
-            $beforeXpath = "/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/gmd:descriptiveKeywords[1]/gmd:MD_Keywords[1]/gmd:type[1]/gmd:MD_KeywordTypeCode[1]";
+            $beforeXpath = '/gmi:MI_Metadata/gmd:identificationInfo[1]/gmd:MD_DataIdentification[1]/';
+            $beforeXpath .= 'gmd:descriptiveKeywords[1]/gmd:MD_Keywords[1]/gmd:type[1]/gmd:MD_KeywordTypeCode[1]';
 
-            if ($doc != null)
-            {
+            if ($doc != null) {
                 $xpathdoc2 = new DOMXpath($doc);
                 $elements2 = $xpathdoc2->query($beforeXpath);
                 $beforeNode = $elements2->item(0);
@@ -697,8 +648,7 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
 
                 //var_dump($beforeNode->textContent);
 
-                if ($elements2->length > 0 AND $beforeNode->textContent == "place")
-                {
+                if ($elements2->length > 0 and $beforeNode->textContent == "place") {
                     $parent = $beforeNode->parentNode;
                     $parent = $parent->parentNode;
                     $node = $parent->parentNode;
@@ -711,34 +661,27 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
 
                     $doc->loadXML($xmlString);
                     //$doc->normalizeDocument();
-                }
-                else
-                {
+                } else {
                     //echo $parent->nodeName;
                 }
-
             }
 
             $elements2 = null;
             $beforeXpath = "/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:language";
-            if ($doc != null)
-            {
+            if ($doc != null) {
                 $xpathdoc2 = new DOMXpath($doc);
                 $elements2 = $xpathdoc2->query($beforeXpath);
                 $beforeNode = $elements2->item(0);
 
                 //var_dump($beforeNode->nodeName);
 
-                if ($elements2->length > 0)
-                {
+                if ($elements2->length > 0) {
                     //$parent->removeChild($node);
                     $parent = $beforeNode->parentNode;
 
                     $node = $doc->createElement('gmd:descriptiveKeywords');
-                    $node = $parent->insertBefore($node,$beforeNode);
-                }
-                else
-                {
+                    $node = $parent->insertBefore($node, $beforeNode);
+                } else {
                     $node = $doc->createElement('gmd:descriptiveKeywords');
                     $node = $parent->appendChild($node);
                 }
@@ -755,109 +698,95 @@ function addNodeAttributes($doc,$parent,$node,$fieldname,$fieldvalue=null)
             $parent = $doc->createElement('gmd:MD_Keywords');
             $parent = $node->appendChild($parent);
 
-            $arrkeywords = preg_split("/\;/",$fieldvalue);
+            $arrkeywords = preg_split("/\;/", $fieldvalue);
 
-            if ($fieldvalue == "")
-            {
+            if ($fieldvalue == "") {
                 $mdkwrd = $doc->createElement('gmd:keyword');
                 $mdkwrd = $parent->appendChild($mdkwrd);
-                $mdkwrd->setAttribute('gco:nilReason','inapplicable');
-            }
-            else
-            {
-                foreach ($arrkeywords as $myKeywords)
-                {
+                $mdkwrd->setAttribute('gco:nilReason', 'inapplicable');
+            } else {
+                foreach ($arrkeywords as $myKeywords) {
                     $mdkwrd = $doc->createElement('gmd:keyword');
                     $mdkwrd = $parent->appendChild($mdkwrd);
-                    $addnode = addXMLChildValue($doc,$mdkwrd,"gco:CharacterString",$myKeywords);
+                    $addnode = addXMLChildValue($doc, $mdkwrd, 'gco:CharacterString', $myKeywords);
                 }
             }
 
             $tpkwrd = $doc->createElement('gmd:type');
             $tpkwrd = $parent->appendChild($tpkwrd);
 
-            $addnode = addXMLChildValue($doc,$tpkwrd,"gmd:MD_KeywordTypeCode",'place');
+            $addnode = addXMLChildValue($doc, $tpkwrd, 'gmd:MD_KeywordTypeCode', 'place');
 
             break;
-        }
         case 'gmd:topicCategorys':
-        {
-
             #todo: remove all old gmd:topicCategory
             # insert before <gmd:extent>
             $parent->removeChild($node);
 
             $elements2 = null;
-            $beforeXpath = "/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:topicCategory";
+            $beforeXpath = '/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:topicCategory';
             $xpathdoc2 = new DOMXpath($doc);
             $elements2 = $xpathdoc2->query($beforeXpath);
 
-            foreach($elements2 as $node)
-            {
+            foreach ($elements2 as $node) {
                 $parent = $node->parentNode;
                 $parent->removeChild($node);
             }
 
-            $arrkeywords = preg_split("/\;/",$fieldvalue);
+            $arrkeywords = preg_split("/\;/", $fieldvalue);
 
             $elements2 = null;
-            $beforeXpath = "/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification[1]/gmd:extent";
+            $beforeXpath = '/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification[1]/gmd:extent';
             $xpathdoc2 = new DOMXpath($doc);
             $elements2 = $xpathdoc2->query($beforeXpath);
 
-            foreach ($arrkeywords as $myKeywords)
-            {
-                if ($elements2->length > 0)
-                {
+            foreach ($arrkeywords as $myKeywords) {
+                if ($elements2->length > 0) {
                     $beforeNode = $elements2->item(0);
                     $parent = $beforeNode->parentNode;
 
                     $node = $doc->createElement('gmd:topicCategory');
-                    $node = $parent->insertBefore($node,$beforeNode);
-                }
-                else
-                {
+                    $node = $parent->insertBefore($node, $beforeNode);
+                } else {
                     $node = $doc->createElement('gmd:topicCategory');
                     $node = $parent->appendChild($node);
                 }
 
-                $addnode = addXMLChildValue($doc,$node,"gmd:MD_TopicCategoryCode",$myKeywords);
+                $addnode = addXMLChildValue($doc, $node, 'gmd:MD_TopicCategoryCode', $myKeywords);
                 //$child = $doc->createElement('gmd:MD_TopicCategoryCode');
                 //$child = $parent->appendChild($child);
                 //$value = $doc->createTextNode($myKeywords);
                 //$value = $child->appendChild($value);
             }
             break;
-        }
     }
 }
 
-function guid(){
-    if (function_exists('com_create_guid')){
+function guid()
+{
+    if (function_exists('com_create_guid')) {
         return com_create_guid();
-        }else{
-        mt_srand((double)microtime()*10000);//optional for php 4.2.0 and up.
+    } else {
+        mt_srand((double)microtime()*10000); //optional for php 4.2.0 and up.
         $charid = strtoupper(md5(uniqid(rand(), true)));
-        $hyphen = chr(45);// "-"
+        $hyphen = chr(45); // "-"
         $uuid = chr(123)// "{"
         .substr($charid, 0, 8).$hyphen
         .substr($charid, 8, 4).$hyphen
-        .substr($charid,12, 4).$hyphen
-        .substr($charid,16, 4).$hyphen
-        .substr($charid,20,12)
+        .substr($charid, 12, 4).$hyphen
+        .substr($charid, 16, 4).$hyphen
+        .substr($charid, 20, 12)
         .chr(125);// "}"
         return $uuid;
     }
 }
 
-function removeFromArray($array,$position)
+function removeFromArray($array, $position)
 {
     $temparr = array();
 
-    for ($i=0;$i<=count($array)-1;$i++)
-    {
-        if ($i<>$position)
-        {
+    for ($i=0; $i <= count($array)-1; $i++) {
+        if ($i<>$position) {
             $temparr[] = $array[$i];
         }
     }
@@ -865,29 +794,20 @@ function removeFromArray($array,$position)
     return $temparr;
 }
 
-function insertIntoArray($array,$position,$var)
+function insertIntoArray($array, $position, $var)
 {
     $temparr = array();
 
     $i = 0;
 
-    if ($position>count($array))
-    {
+    if ($position>count($array)) {
         $temparr = $array;
-        array_push($temparr,$var);
-    }
-    else
-    {
-
-        foreach ($array as $node)
-        {
-            if ($i==$position)
-            {
+        array_push($temparr, $var);
+    } else {
+        foreach ($array as $node) {
+            if ($i==$position) {
                 $temparr[] = $var;
-
-            }
-            else
-            {
+            } else {
                 $temparr[] = $node;
             }
             $i++;
@@ -895,5 +815,3 @@ function insertIntoArray($array,$position,$var)
     }
     return $temparr;
 }
-
-?>
