@@ -57,10 +57,13 @@ AS $rgr_func$
             -- Make sure we were passed all required elements for an INSERT, or
             -- that we are not trying to UPDATE a required field to NULL or the
             -- empty string:
-            IF NEW.creator IS NULL OR NEW.creator = '' OR
-               NEW.name IS NULL OR NEW.name = '' OR
+            IF NEW.name IS NULL OR NEW.name = '' OR
                NEW.weight IS NULL OR
-               (TG_OP = 'UPDATE' AND NEW.research_group_role_number IS NULL)
+               (TG_OP = 'INSERT' AND NEW.creator IS NULL) OR
+               (TG_OP = 'INSERT' AND NEW.creator = '') OR
+               (TG_OP = 'UPDATE' AND NEW.research_group_role_number IS NULL) OR
+               (TG_OP = 'UPDATE' AND NEW.modifier IS NULL) OR
+               (TG_OP = 'UPDATE' AND NEW.modifier = '')
             THEN
                _err_hint := CONCAT('A Research Group Role entity requires ',
                                    'a Role name, a Role weight, and a ',
