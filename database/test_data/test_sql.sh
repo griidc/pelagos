@@ -44,6 +44,7 @@ declare expected_result=""
 declare input_file=sql_test.sql
 declare line=""
 declare line_number=0
+declare output=""
 declare pg_version
 declare sql_stmt=""
 
@@ -231,14 +232,18 @@ $CAT $input_file |
       elif [ "$line" = "$END_COMMENT" ]
       then
          end_seen=TRUE
-         $PSQL -U $db_user -d $db_name -h $db_hostname -p $db_port \
-               -Aqtc "$sql_stmt;" 1>/dev/null 2>&1
+         output=$($PSQL -U $db_user -d $db_name -h $db_hostname -p $db_port \
+               --set=VERBOSITY=VERBOSE -Atc "$sql_stmt;" 2>&1)
          if [ $? -eq $expected_result ]
          then
-            echo "success"
+            echo -n "success: "
+            echo "`echo \"$output\" | grep ERROR | sed \"s/  */ /g\" | \
+                   cut -d \" \" -f 2 | sed \"s/://g\"`"
          else
-            echo "failed. Failing SQL statement was:"
-            echo "$sql_stmt"
+            echo -n "failed. "
+            echo "`echo \"$output\" | grep ERROR | sed \"s/  */ /g\" | \
+                   cut -d \" \" -f 2 | sed \"s/://g\"`"
+            echo "Failing SQL statement was: $sql_stmt"
             echo "ending at line number $line_number"
             exit 1
          fi
