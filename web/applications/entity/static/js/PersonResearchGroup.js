@@ -2,8 +2,6 @@
 {
     "use strict";
 
-    console.log('I loaded');
-
     $("[fundingOrganization]").change(function () {
         var fundingCycle = $(this).nextAll("[fundingCycle]");
         fundingCycle.removeAttr("disabled")
