@@ -114,6 +114,21 @@ class PersonResearchGroupTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test the setPerson method with null.
+     *
+     * This should be allowed and null should be returned by getPerson.
+     *
+     * @return void
+     */
+    public function testSetPersonNull()
+    {
+        $this->personResearchGroup->setPerson(null);
+        $this->assertNull(
+            $this->personResearchGroup->getPerson()
+        );
+    }
+
+    /**
      * Test the testSetPerson() method with a non object.
      *
      * This method should result in an exception being thrown.
@@ -157,6 +172,21 @@ class PersonResearchGroupTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test the setResearchGroup method with null.
+     *
+     * This should be allowed and null should be returned by getResearchGroup.
+     *
+     * @return void
+     */
+    public function testSetResearchGroupNull()
+    {
+        $this->personResearchGroup->setResearchGroup(null);
+        $this->assertNull(
+            $this->personResearchGroup->getResearchGroup()
+        );
+    }
+
+    /**
      * Test the testSetResearchGroup() method with a non object.
      *
      * This method should result in an exception being thrown.
@@ -195,6 +225,21 @@ class PersonResearchGroupTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertInstanceOf(
             '\Pelagos\Entity\ResearchGroupRole',
+            $this->personResearchGroup->getRole()
+        );
+    }
+
+    /**
+     * Test the setRole method with null.
+     *
+     * This should be allowed and null should be returned by getRole.
+     *
+     * @return void
+     */
+    public function testSetRoleNull()
+    {
+        $this->personResearchGroup->setRole(null);
+        $this->assertNull(
             $this->personResearchGroup->getRole()
         );
     }
