@@ -21,12 +21,12 @@ DROP TABLE research_group_role_table;
 CREATE TABLE research_group_role_table
 (
    research_group_role_number               SERIAL              NOT NULL,
-   research_group_creation_time             TIMESTAMP WITH TIME ZONE
+   research_group_role_creation_time        TIMESTAMP WITH TIME ZONE
       DEFAULT DATE_TRUNC('seconds', NOW())  NOT NULL,
-   research_group_creator                   TEXT                NOT NULL,
-   research_group_modification_time         TIMESTAMP WITH TIME ZONE
+   research_group_role_creator              TEXT                NOT NULL,
+   research_group_role_modification_time    TIMESTAMP WITH TIME ZONE
       DEFAULT DATE_TRUNC('seconds', NOW())  NOT NULL,
-   research_group_modifier                  TEXT                NOT NULL,
+   research_group_role_modifier             TEXT                NOT NULL,
    research_group_role_name                 TEXT                NOT NULL,
    research_group_role_weight               INTEGER             NOT NULL
 );

@@ -1,5 +1,5 @@
 -- -----------------------------------------------------------------------------
--- Name:      make_research_group_view.sql
+-- Name:      make_research_group_role_view.sql
 -- Author:    Patrick Krepps
 -- Date:      02 October 2015
 -- Inputs:    NONE
@@ -29,11 +29,11 @@ CREATE VIEW research_group_role AS
    SELECT research_group_role_number AS research_group_role_number,
           CAST(research_group_role_name AS CITEXT) AS name,
           research_group_role_weight AS weight,
-          research_group_creator AS creator,
-          DATE_TRUNC('seconds', research_group_creation_time)
+          research_group_role_creator AS creator,
+          DATE_TRUNC('seconds', research_group_role_creation_time)
              AS creation_time,
-          research_group_modifier AS modifier,
-          DATE_TRUNC('seconds', research_group_modification_time)
+          research_group_role_modifier AS modifier,
+          DATE_TRUNC('seconds', research_group_role_modification_time)
              AS modification_time
    FROM research_group_role_table;
 
@@ -122,10 +122,10 @@ AS $rgr_func$
             EXECUTE 'INSERT INTO research_group_role_table
                      (
                         research_group_role_number,
-                        research_group_creation_time,
-                        research_group_creator,
-                        research_group_modification_time,
-                        research_group_modifier,
+                        research_group_role_creation_time,
+                        research_group_role_creator,
+                        research_group_role_modification_time,
+                        research_group_role_modifier,
                         research_group_role_name,
                         research_group_role_weight
                      )
@@ -140,8 +140,8 @@ AS $rgr_func$
          ELSE
             -- This is an update.
             EXECUTE 'UPDATE research_group_role_table
-                     SET research_group_modification_time = $1,
-                         research_group_modifier = $2,
+                     SET research_group_role_modification_time = $1,
+                         research_group_role_modifier = $2,
                          research_group_role_name = $3,
                          research_group_role_weight = $4
                      WHERE research_group_role_number = $5'
