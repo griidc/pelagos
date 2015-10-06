@@ -17,6 +17,7 @@
                 "FundingCycle", "fundingOrganization=" + $(this).val()
             );
         }
+        $("[fundingCycle]").change();
     });
 
     $("[fundingCycle]").change(function () {
