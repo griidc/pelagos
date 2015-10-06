@@ -1,7 +1,7 @@
 ﻿$(document).ready(function()
 {
     "use strict";
-    
+
     console.log('I loaded');
 
     $("[fundingOrganization]").change(function () {
@@ -20,12 +20,12 @@
             );
         }
     });
-    
+
     $("[fundingCycle]").change(function () {
         var researchGroup = $(this).nextAll("[researchGroup]");
         researchGroup.removeAttr("disabled")
         .find("option").remove();
-        
+
         if ($(this).val() === "") {
             researchGroup.attr("disabled", "disabled")
             .append("<option value=\"\">[Please Select a Funding Cycle First]</option>");
@@ -52,10 +52,47 @@
         fundingCycle.val(fundingCycleValue);
         fundingCycle.find("option[value=\"" + fundingCycleValue + "\"]").attr("selected", true);
         fundingCycle.change();
-        
+
         var researchGroup = $(this).find("[researchGroup]");
         var researchGroupValue = researchGroup.attr("researchGroup");
         researchGroup.val(researchGroupValue);
         researchGroup.find("option[value=\"" + researchGroupValue + "\"]").attr("selected", true);
     });
+
+    /**
+     * This function add funding org options to a select element
+        *
+     * @param selectElement element Element of Select item.
+     * @param entity string Name of the entity.
+     * @param filter string Filter for the entity.
+        *
+     * @return void
+     */
+    function addOptionsByEntity(selectElement, entity, filter)
+    {
+        "use strict";
+
+        var url = pelagosBasePath + "/services/entity/" + entity;
+        if (typeof filter !== "undefined") {
+            url += "?" + filter + "&properties=id,name";
+        } else {
+            url += "?properties=id,name";
+        }
+
+        $.ajax({
+            url: url,
+            dataType: "json",
+            async: false
+        })
+        .done(function(json) {
+            var entities = sortObject(json.data, "name", false, true);
+
+            $.each(entities, function(seq, item) {
+                selectElement.append(
+                $("<option></option>").val(item.id).html(item.name)
+                );
+            });
+            //selectElement.find("option[value=\"" + selectElement.attr(entity) + "\"]").attr("selected", true);
+        });
+    }
 });
