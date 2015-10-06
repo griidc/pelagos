@@ -111,7 +111,7 @@ class PersonResearchGroup extends Entity
     /**
      * Getter for Person.
      *
-     * @return Person The Person entity for this association.
+     * @return Person|null The Person entity for this association.
      */
     public function getPerson()
     {
@@ -133,7 +133,7 @@ class PersonResearchGroup extends Entity
     /**
      * Getter for ResearchGroup.
      *
-     * @return ResearchGroup The Research Group entity for this association.
+     * @return ResearchGroup|null The Research Group entity for this association.
      */
     public function getResearchGroup()
     {
@@ -155,7 +155,7 @@ class PersonResearchGroup extends Entity
     /**
      * Getter for Role.
      *
-     * @return ResearchGroupRole The Role for this association.
+     * @return ResearchGroupRole|null The Role for this association.
      */
     public function getRole()
     {
