@@ -121,33 +121,32 @@ class EntityService
     /**
      * Method to get all Entity objects of the specified class.
      *
-     * @param string $entityClass Entity class to retrieve from.
+     * @param string     $entityClass Entity class to retrieve from.
+     * @param array|null $orderBy     Associative array of properties to order by
+     *                                (keys = properties, values = ASC/DESC).
      *
      * @throws PersistenceException When an error occurs retrieving from persistence.
      *
      * @return array A list of entity objects of the specified class.
      */
-    public function getAll($entityClass)
+    public function getAll($entityClass, $orderBy = null)
     {
-        try {
-            $entities = $this->entityManager->getRepository('\Pelagos\Entity\\' . $entityClass)->findAll();
-        } catch (DBALException $e) {
-            throw new PersistenceException($e->getMessage());
-        }
-        return $entities;
+        return $this->getBy($entityClass, array(), $orderBy);
     }
 
     /**
      * Method to get all Entity objects of the specified class that satisfy a set of criteria.
      *
-     * @param string $entityClass Entity class to retrieve from.
-     * @param array  $criteria    The criteria to filter by.
+     * @param string     $entityClass Entity class to retrieve from.
+     * @param array      $criteria    The criteria to filter by.
+     * @param array|null $orderBy     Associative array of properties to order by
+     *                                (keys = properties, values = ASC/DESC).
      *
      * @throws PersistenceException When an error occurs retrieving from persistence.
      *
      * @return array A list of entity objects of the specified class.
      */
-    public function getBy($entityClass, array $criteria)
+    public function getBy($entityClass, array $criteria, $orderBy = null)
     {
         try {
             $fullyQualifiedEntityClass = '\Pelagos\Entity\\' . $entityClass;
@@ -157,7 +156,17 @@ class EntityService
                     unset($criteria[$property]);
                 }
             }
-            $entities = $this->entityManager->getRepository($fullyQualifiedEntityClass)->findBy($criteria);
+            if ($orderBy !== null) {
+                foreach (array_keys($orderBy) as $property) {
+                    if (!$class->hasField($property) && !$class->hasAssociation($property)) {
+                        unset($orderBy[$property]);
+                    }
+                }
+            }
+            $entities = $this
+                ->entityManager
+                ->getRepository($fullyQualifiedEntityClass)
+                ->findBy($criteria, $orderBy);
         } catch (DBALException $e) {
             throw new PersistenceException($e->getMessage());
         }
