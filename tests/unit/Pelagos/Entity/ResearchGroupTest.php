@@ -110,6 +110,13 @@ class ResearchGroupTest extends \PHPUnit_Framework_TestCase
     protected $testMockFundingCycle;
 
     /**
+     * Property to hold a set of PersonResearchGroup for testing.
+     *
+     * @var $testPersonResearchGroups
+     */
+    protected $testPersonResearchGroups;
+
+    /**
      * Setup for PHPUnit tests.
      *
      * This instantiates an instance of ResearchGroup.
@@ -133,6 +140,21 @@ class ResearchGroupTest extends \PHPUnit_Framework_TestCase
         $this->researchGroup->setDescription(self::$testDescription);
         $this->researchGroup->setLogo(self::$testLogo);
         $this->researchGroup->setEmailAddress(self::$testEmailAddress);
+        $this->testPersonResearchGroups = array(
+            \Mockery::mock(
+                '\Pelagos\Entity\PersonResearchGroup',
+                array(
+                    'setResearchGroup' => null
+                )
+            ),
+            \Mockery::mock(
+                '\Pelagos\Entity\PersonResearchGroup',
+                array(
+                    'setResearchGroup' => null
+                )
+            ),
+        );
+        $this->researchGroup->setPersonResearchGroups($this->testPersonResearchGroups);
     }
 
     /**
@@ -161,6 +183,51 @@ class ResearchGroupTest extends \PHPUnit_Framework_TestCase
     {
         $fundingCycle = $this->researchGroup->getFundingCycle();
         $this->assertInstanceOf('\Pelagos\Entity\FundingCycle', $fundingCycle);
+    }
+
+    /**
+     * Test the testGetPersonResearchGroups method.
+     *
+     * This method verify the associated PersonResearchGroups are each an instance of PersonResearchGroup.
+     *
+     * @return void
+     */
+    public function testGetPersonResearchGroups()
+    {
+        $personResearchGroups = $this->researchGroup->getPersonResearchGroups();
+        foreach ($personResearchGroups as $personResearchGroup) {
+            $this->assertInstanceOf('\Pelagos\Entity\PersonResearchGroup', $personResearchGroup);
+        }
+    }
+
+    /**
+     * Test the testSetPersonResearchGroups() method with a non-array/traversable object.
+     *
+     * This method should result in an exception being thrown.
+     *
+     * @expectedException \Exception
+     *
+     * @return void
+     */
+    public function testSetPersonResearchGroupsWithNonTraversable()
+    {
+        $this->researchGroup->setPersonResearchGroups('string data');
+    }
+
+    /**
+     * Test testSetPersonResearchGroups() method with bad (non-PersonResearchGroup) element in otherwise good array.
+     *
+     * This method should result in an exception being thrown.
+     *
+     * @expectedException \Exception
+     *
+     * @return void
+     */
+    public function testSetPersonResearchGroupsWithANonPersonResearchGroupInArray()
+    {
+        $testArry = $this->testPersonResearchGroups;
+        array_push($testArry, 'string data');
+        $this->researchGroup->setPersonResearchGroups($testArry);
     }
 
     /**

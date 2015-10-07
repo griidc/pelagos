@@ -11,8 +11,7 @@
         "pelagosBaseUri": 2,
         "pelagosComponentUri": 2,
         "sortObject": 2,
-        "showDialog": 2,
-        "showConfirmation": 2
+        "showDialog": 2
     },
     "rules": {
         "no-underscore-dangle": 0,

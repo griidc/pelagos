@@ -56,37 +56,3 @@ function showDialog(title, message)
         }
     });
 }
-
-/**
- * This function will display a jQuery confirmation dialog with the given title and message.
- *
- * @param title   string Dialog title.
- * @param message string Dialog message.
- *
- * @return Deferred
- */
-function showConfirmation(title, message)
-{
-    "use strict";
-    return $.Deferred(function() {
-        var self = this;
-        jQuery("<div>" + message + "</div>").dialog({
-            autoOpen: true,
-            resizable: false,
-            minWidth: 300,
-            height: "auto",
-            modal: true,
-            title: title,
-            buttons: {
-                "Yes": function() {
-                    jQuery(this).dialog("close");
-                    self.resolve();
-                },
-                "No": function() {
-                    jQuery(this).dialog("close");
-                    self.reject();
-                }
-            }
-        });
-    });
-}

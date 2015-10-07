@@ -16,6 +16,7 @@ $comp->addJS(
     array(
         '//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js',
         '//cdnjs.cloudflare.com/ajax/libs/jquery-noty/2.3.5/packaged/jquery.noty.packaged.min.js',
+        '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js',
         '/static/js/common.js',
         'static/js/entityForm.js',
         'static/js/entity.js',
@@ -25,6 +26,7 @@ $comp->addJS(
 $comp->addCSS(
     array(
         '//cdnjs.cloudflare.com/ajax/libs/animate.css/3.3.0/animate.min.css',
+        '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css',
         'static/css/entity.css',
     )
 );
@@ -35,6 +37,7 @@ $comp->addLibrary(
         'ui.dialog',
         'ui.tabs',
         'ui.widget',
+        'ui.autocomplete',
     )
 );
 
