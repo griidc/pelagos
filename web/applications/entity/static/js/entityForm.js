@@ -125,7 +125,7 @@
 
                     $("input:visible,textarea,select", this).each(function() {
                         $(this).attr("disabled", false);
-                        if ($(this).hasAttr("dontvalidate")) {
+                        if (!$(this).hasAttr("dontvalidate")) {
                             $(this).rules("add", {
                                 remote: {
                                     url: url
