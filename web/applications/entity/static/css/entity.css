@@ -53,16 +53,16 @@ select, input{
 .entityForm input,
 .entityForm textarea,
 .entityForm select {
-    -webkit-transition: border-color 250ms ease-in 0ms;
-       -moz-transition: border-color 250ms ease-in 0ms;
-         -o-transition: border-color 250ms ease-in 0ms;
-            transition: border-color 250ms ease-in 0ms;
+    -webkit-transition: border-color 200ms ease-in 0ms;
+       -moz-transition: border-color 200ms ease-in 0ms;
+         -o-transition: border-color 200ms ease-in 0ms;
+            transition: border-color 200ms ease-in 0ms;
     border: 1px solid white;
     border: 1px solid rgba(255,255,255,0);
     margin: 1px;
     font-family: sans-serif;
     -webkit-appearance: none;
-    -moz-appearance: none;
+       -moz-appearance: none;
     appearance: none;
     background: none;
     overflow: auto;
@@ -83,9 +83,9 @@ select, input{
 
 .entityForm input.clickableLink {
     -webkit-transition: visibility 200ms ease-in 0ms, opacity 200ms ease-in 0ms;
-    -moz-transition: visibility 200ms ease-in 0ms, opacity 200ms ease-in 0ms;
-    -o-transition: visibility 200ms ease-in 0ms, opacity 200ms ease-in 0ms;
-    transition: visibility 200ms ease-in 0ms, opacity 200ms ease-in 0ms;
+       -moz-transition: visibility 200ms ease-in 0ms, opacity 200ms ease-in 0ms;
+         -o-transition: visibility 200ms ease-in 0ms, opacity 200ms ease-in 0ms;
+            transition: visibility 200ms ease-in 0ms, opacity 200ms ease-in 0ms;
     visibility: hidden;
     opacity: 0;
     border: 1px solid #aaa;
@@ -113,9 +113,9 @@ select, input{
 
 .entityWrapper.active span.clickableLink span {
     -webkit-transition: visibility 200ms ease-in 0ms, opacity 200ms ease-in 0ms;
-    -moz-transition: visibility 200ms ease-in 0ms, opacity 200ms ease-in 0ms;
-    -o-transition: visibility 200ms ease-in 0ms, opacity 200ms ease-in 0ms;
-    transition: visibility 200ms ease-in 0ms, opacity 200ms ease-in 0ms;
+       -moz-transition: visibility 200ms ease-in 0ms, opacity 200ms ease-in 0ms;
+         -o-transition: visibility 200ms ease-in 0ms, opacity 200ms ease-in 0ms;
+            transition: visibility 200ms ease-in 0ms, opacity 200ms ease-in 0ms;
     visibility: hidden;
     opacity: 0;
 }
@@ -132,7 +132,7 @@ select, input{
 
 .entityWrapper.active select {
     -webkit-appearance: menulist;
-    -moz-appearance: menulist;
+       -moz-appearance: menulist;
     appearance: list-menu;
 }
 
@@ -147,12 +147,12 @@ select, input{
     top: -10px;
     bottom: -10px;
     -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
+       -moz-box-sizing: border-box;
+            box-sizing: border-box;
     -webkit-transition: all 200ms ease-in 0ms;
-    -moz-transition: all 200ms ease-in 0ms;
-    -o-transition: all 200ms ease-in 0ms;
-    transition: all 200ms ease-in 0ms;
+       -moz-transition: all 200ms ease-in 0ms;
+         -o-transition: all 200ms ease-in 0ms;
+            transition: all 200ms ease-in 0ms;
     border-radius: 2.01px;
     display: inline-block;
     max-width: 100%;
@@ -170,9 +170,9 @@ select, input{
 
 .deleteimg,.editimg {
     -webkit-transition: opacity 200ms ease-in 0ms;
-    -moz-transition: opacity 200ms ease-in 0ms;
-    -o-transition: opacity 200ms ease-in 0ms;
-    transition: opacity 200ms ease-in 0ms;
+       -moz-transition: opacity 200ms ease-in 0ms;
+         -o-transition: opacity 200ms ease-in 0ms;
+            transition: opacity 200ms ease-in 0ms;
     opacity: 0;
     height: 32px;
     width: 32px;

@@ -27,7 +27,6 @@
 
         return this.each(function() {
             //plug-in
-
             var thisForm = this;
 
             //make sure this is of type form
@@ -69,7 +68,6 @@
                     } else {
                         updateEntity(form, "Update");
                     }
-
                 }
             });
 
