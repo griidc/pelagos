@@ -91,6 +91,10 @@ class EntityServiceTest extends \PHPUnit_Framework_TestCase
 
         $this->mockEntityManager->shouldReceive('getRepository')->andReturn($this->mockEntityRepository);
 
+        $this->mockClassMetadata = \Mockery::mock('\Doctrine\ORM\Mapping\ClassMetadata');
+
+        $this->mockEntityManager->shouldReceive('getClassMetadata')->andReturn($this->mockClassMetadata);
+
         $this->entityService = new \Pelagos\Service\EntityService($this->mockEntityManager);
 
         $this->mockEntity = \Mockery::mock('\Pelagos\Entity\Entity');
@@ -285,7 +289,7 @@ class EntityServiceTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetAll()
     {
-        $this->mockEntityRepository->shouldReceive('findAll')->andReturn(array($this->mockEntity));
+        $this->mockEntityRepository->shouldReceive('findBy')->andReturn(array($this->mockEntity));
         $entities = $this->entityService->getAll('Entity');
         $this->assertCount(1, $entities);
         $this->assertInstanceOf('\Pelagos\Entity\Entity', $entities[0]);
