@@ -83,9 +83,13 @@
             $(".entityFormButton").css("visibility", "hidden").button();
 
             var innerform = "<div class=\"innerForm\">" +
-                            "<img class=\"editimg\" src=\"../static/images/application_edit.png\">";
+                            "<img class=\"editimg\" src=\"" +
+                            pelagosComponentPath +
+                            "/static/images/application_edit.png\">";
             if ($(this).hasAttr("deletable")) {
-                 innerform += "<img class=\"deleteimg\" src=\"../static/images/delete.png\">";
+                 innerform += "<img class=\"deleteimg\" src=\"" +
+                 pelagosComponentPath +
+                 "/static/images/delete.png\">";
             }
             innerform += "</div>";
 
@@ -121,7 +125,7 @@
 
                     $("input:visible,textarea,select", this).each(function() {
                         $(this).attr("disabled", false);
-                        if ($(this).hasAttr("dontvalidate")) {
+                        if (!$(this).hasAttr("dontvalidate")) {
                             $(this).rules("add", {
                                 remote: {
                                     url: url
@@ -199,7 +203,7 @@
             }
             //set value to blank, for default value, to avoid display of null
             value = (value === null) ? "" : value;
-            
+
             Form.find("a[name=\"" + name + "\"]").attr("href", value).html(value);
             var selector = Form.find("input,textarea,select").filter("[name=\"" + name + "\"]");
             // Set extra property of name for reset purposes.

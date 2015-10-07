@@ -1,3 +1,27 @@
+/*select 2 overrides */
+.select2-selection,.select2-container {
+    font-family: sans-serif;
+    font-size: 100%;
+}
+.select2-container--default.select2-container--disabled .select2-selection--single {
+    background-color:white;
+    border: none;
+}
+.select2-container--default.select2-container--disabled .select2-selection--single .select2-selection__clear {
+    color: black;
+}
+.select2-container--default.select2-container--disabled .select2-selection--single .select2-selection__arrow {
+   display: none;
+}
+.select2-container--default .select2-selection--single .select2-selection__placeholder{
+    color:black;
+}
+/* */
+
+input, textarea, keygen, select, button {
+    font-size: 100%;
+}
+
 .entityForm label {
     display: inline;
 }

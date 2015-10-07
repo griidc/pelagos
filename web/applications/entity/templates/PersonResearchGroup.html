@@ -10,7 +10,9 @@
         {{ (PersonResearchGroup.getPerson.getId == Person.getId ? ' selected ' : '') }}
         >{{Person.getLastName}}, {{Person.getFirstName}}, {{Person.getEmailAddress}}</option>
     {% endfor %}
-    </select><br>
+    </select>
+    <label for="person" class="error"></label>
+    <br>
 
     <label for="researchGroup.fundingCycle.fundingOrganization">Funding Organization:</label>
     <select dontvalidate required name="researchGroup.fundingCycle.fundingOrganization" fundingOrganization="{{PersonResearchGroup.getResearchGroup.getFundingCycle.getFundingOrganization.getId}}">
