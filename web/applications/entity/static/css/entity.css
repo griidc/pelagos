@@ -37,6 +37,10 @@ input, textarea, keygen, select, button {
     font-size: 100%;
 }
 
+select, input{
+   height: 20px;
+}
+
 .entityForm label {
     display: inline;
 }
