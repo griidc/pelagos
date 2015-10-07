@@ -1,3 +1,47 @@
+/*select 2 overrides */
+.select2-selection,.select2-container {
+    font-family: sans-serif;
+    font-size: 100%;
+    -webkit-transition: border-color 200ms ease-in 0ms;
+       -moz-transition: border-color 200ms ease-in 0ms;
+         -o-transition: border-color 200ms ease-in 0ms;
+            transition: border-color 200ms ease-in 0ms;
+    vertical-align: bottom;
+}
+.select2-container--default.select2-container--disabled .select2-selection--single {
+    background-color:white;
+    border-color: rgba(255,255,255,0);
+}
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: black;
+}
+.select2-container--default.select2-container--disabled .select2-selection--single .select2-selection__clear {
+    color: black;
+}
+.select2-selection__arrow {
+    -webkit-transition: opacity 200ms ease-in 0ms;
+       -moz-transition: opacity 200ms ease-in 0ms;
+         -o-transition: opacity 200ms ease-in 0ms;
+            transition: opacity 200ms ease-in 0ms;
+    opacity: 1;
+}
+.select2-container--default.select2-container--disabled .select2-selection--single .select2-selection__arrow {
+   opacity: 0;
+}
+.select2-container--default .select2-selection--single .select2-selection__placeholder{
+    color:black;
+}
+/* */
+
+/* to counteract user-agent font sizing */
+input, textarea, keygen, select, button {
+    font-size: 100%;
+}
+
+select, input{
+   height: 20px;
+}
+
 .entityForm label {
     display: inline;
 }
@@ -10,9 +54,9 @@
 .entityForm textarea,
 .entityForm select {
     -webkit-transition: border-color 250ms ease-in 0ms;
-    -moz-transition: border-color 250ms ease-in 0ms;
-    -o-transition: border-color 250ms ease-in 0ms;
-    transition: border-color 250ms ease-in 0ms;
+       -moz-transition: border-color 250ms ease-in 0ms;
+         -o-transition: border-color 250ms ease-in 0ms;
+            transition: border-color 250ms ease-in 0ms;
     border: 1px solid white;
     border: 1px solid rgba(255,255,255,0);
     margin: 1px;
@@ -39,9 +83,9 @@
 
 .entityForm input.clickableLink {
     -webkit-transition: visibility 250ms ease-in 0ms, opacity 250ms ease-in 0ms;
-    -moz-transition: visibility 250ms ease-in 0ms, opacity 250ms ease-in 0ms;
-    -o-transition: visibility 250ms ease-in 0ms, opacity 250ms ease-in 0ms;
-    transition: visibility 250ms ease-in 0ms, opacity 250ms ease-in 0ms;
+       -moz-transition: visibility 250ms ease-in 0ms, opacity 250ms ease-in 0ms;
+         -o-transition: visibility 250ms ease-in 0ms, opacity 250ms ease-in 0ms;
+            transition: visibility 250ms ease-in 0ms, opacity 250ms ease-in 0ms;
     visibility: hidden;
     opacity: 0;
     border: 1px solid #aaa;
@@ -69,9 +113,9 @@
 
 .entityWrapper.active span.clickableLink span {
     -webkit-transition: visibility 250ms ease-in 0ms, opacity 250ms ease-in 0ms;
-    -moz-transition: visibility 250ms ease-in 0ms, opacity 250ms ease-in 0ms;
-    -o-transition: visibility 250ms ease-in 0ms, opacity 250ms ease-in 0ms;
-    transition: visibility 250ms ease-in 0ms, opacity 250ms ease-in 0ms;
+       -moz-transition: visibility 250ms ease-in 0ms, opacity 250ms ease-in 0ms;
+         -o-transition: visibility 250ms ease-in 0ms, opacity 250ms ease-in 0ms;
+            transition: visibility 250ms ease-in 0ms, opacity 250ms ease-in 0ms;
     visibility: hidden;
     opacity: 0;
 }
@@ -103,12 +147,12 @@
     top: -10px;
     bottom: -10px;
     -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
+       -moz-box-sizing: border-box;
+            box-sizing: border-box;
     -webkit-transition: box-shadow 150ms ease-in 0ms;
-    -moz-transition: box-shadow 150ms ease-in 0ms;
-    -o-transition: box-shadow 150ms ease-in 0ms;
-    transition: box-shadow 150ms ease-in 0ms;
+       -moz-transition: box-shadow 150ms ease-in 0ms;
+         -o-transition: box-shadow 150ms ease-in 0ms;
+            transition: box-shadow 150ms ease-in 0ms;
     border-radius: 2.01px;
     display: inline-block;
     max-width: 100%;

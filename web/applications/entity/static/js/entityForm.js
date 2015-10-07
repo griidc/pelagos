@@ -91,6 +91,7 @@
 
                     $("input:visible,textarea,select", this).each(function() {
                         $(this).attr("disabled", false);
+
                         var dontvalidate = $(this).attr("dontvalidate");
                         if (typeof dontvalidate === typeof undefined || dontvalidate === false) {
                             $(this).rules("add", {
@@ -159,6 +160,9 @@
             if (typeof value === "object" && value !== null) {
                 fillElement(value, Form, name);
             }
+            //set value to blank, for default value, to avoid display of null
+            value = (value === null) ? "" : value;
+
             Form.find("a[name=\"" + name + "\"]").attr("href", value).html(value);
             var selector = Form.find("input,textarea,select").filter("[name=\"" + name + "\"]");
             // Set extra property of name for reset purposes.
