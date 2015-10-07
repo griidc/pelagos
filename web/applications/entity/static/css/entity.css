@@ -113,12 +113,14 @@
     display: inline-block;
     max-width: 100%;
     box-shadow: 0 0 0 0 transparent;
-    background: rgba(208, 208, 208, 0)
+    background: transparent;
+    background: rgba(208, 208, 208, 0);
 }
 
 .innerForm:hover {
     box-shadow: 0 0 0 3px #d3d3d3;
     visibility: visible;
+    background: transparent;
     background: rgba(208, 208, 208, 0.1);
 }
 
