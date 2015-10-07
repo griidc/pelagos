@@ -83,9 +83,13 @@
             $(".entityFormButton").css("visibility", "hidden").button();
 
             var innerform = "<div class=\"innerForm\">" +
-                            "<img class=\"editimg\" src=\"../static/images/application_edit.png\">";
+                            "<img class=\"editimg\" src=\"" +
+                            pelagosComponentPath +
+                            "/static/images/application_edit.png\">";
             if ($(this).hasAttr("deletable")) {
-                 innerform += "<img class=\"deleteimg\" src=\"../static/images/delete.png\">";
+                 innerform += "<img class=\"deleteimg\" src=\"" +
+                              pelagosComponentPath +
+                              "/static/images/delete.png\">";
             }
             innerform += "</div>";
 
