@@ -85,10 +85,12 @@ class ResearchGroupRole extends Entity
      */
     public function setWeight($weight)
     {
-        if (!is_int($weight) and !ctype_digit($weight)) {
-            throw new \InvalidArgumentException('Weight must be an integer');
+        if (is_int($weight) and $weight > 0 or
+            is_string($weight) and ctype_digit($weight) and (integer) $weight > 0) {
+            $this->weight = (integer) $weight;
+        } else {
+            throw new \InvalidArgumentException('Weight must be a positive integer');
         }
-        $this->weight = (integer) $weight;
     }
 
     /**

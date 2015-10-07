@@ -99,11 +99,11 @@ class PersonResearchGroup extends Entity
     /**
      * Setter for Person.
      *
-     * @param Person $person The Person entity for this association.
+     * @param Person|null $person The Person entity for this association.
      *
      * @return void
      */
-    public function setPerson(Person $person)
+    public function setPerson(Person $person = null)
     {
         $this->person = $person;
     }
@@ -111,7 +111,7 @@ class PersonResearchGroup extends Entity
     /**
      * Getter for Person.
      *
-     * @return Person The Person entity for this association.
+     * @return Person|null The Person entity for this association.
      */
     public function getPerson()
     {
@@ -121,11 +121,11 @@ class PersonResearchGroup extends Entity
     /**
      * Setter for ResearchGroup.
      *
-     * @param ResearchGroup $researchGroup The Research Group entity for this association.
+     * @param ResearchGroup|null $researchGroup The Research Group entity for this association.
      *
      * @return void
      */
-    public function setResearchGroup(ResearchGroup $researchGroup)
+    public function setResearchGroup(ResearchGroup $researchGroup = null)
     {
         $this->researchGroup = $researchGroup;
     }
@@ -133,7 +133,7 @@ class PersonResearchGroup extends Entity
     /**
      * Getter for ResearchGroup.
      *
-     * @return ResearchGroup The Research Group entity for this association.
+     * @return ResearchGroup|null The Research Group entity for this association.
      */
     public function getResearchGroup()
     {
@@ -143,11 +143,11 @@ class PersonResearchGroup extends Entity
     /**
      * Setter for Role.
      *
-     * @param ResearchGroupRole $role The Role for this association.
+     * @param ResearchGroupRole|null $role The Role for this association.
      *
      * @return void
      */
-    public function setRole(ResearchGroupRole $role)
+    public function setRole(ResearchGroupRole $role = null)
     {
         $this->role = $role;
     }
@@ -155,7 +155,7 @@ class PersonResearchGroup extends Entity
     /**
      * Getter for Role.
      *
-     * @return ResearchGroupRole The Role for this association.
+     * @return ResearchGroupRole|null The Role for this association.
      */
     public function getRole()
     {
@@ -165,19 +165,25 @@ class PersonResearchGroup extends Entity
     /**
      * Setter for Label.
      *
-     * @param mixed $label The Label for this association.
+     * @param string|null $label The Label for this association.
+     *
+     * @throws \InvalidArgumentException When $label is not a string or null.
      *
      * @return void
      */
     public function setLabel($label)
     {
-        $this->label = $label;
+        if (is_string($label) or $label === null) {
+            $this->label = $label;
+        } else {
+            throw new \InvalidArgumentException('Label must be a string or null, ' . gettype($label) . ' given');
+        }
     }
 
     /**
      * Getter for Label.
      *
-     * @return string The Label for this association.
+     * @return string|null The Label for this association.
      */
     public function getLabel()
     {
