@@ -148,7 +148,7 @@ AS $rgr_func$
                      DATE_TRUNC('seconds', NOW()),
                      NEW.creator,
                      DATE_TRUNC('seconds', NOW()),
-                     NEW.modifier,
+                     NEW.creator,
                      NEW.name,
                      NEW.weight;
          ELSE
