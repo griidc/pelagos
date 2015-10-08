@@ -67,15 +67,31 @@ AS $rgr_func$
             THEN
                _err_hint := CONCAT('A Research Group Role entity requires ',
                                    'a Role name, a Role weight, and a ',
-                                   'Creator name.');
-               _err_msg  := 'Missing required field';
-               -- This is an invalid entry. Raise an exception and quit (the
-               -- exception text is only used when we disable exception
-               -- handling below [ditto for the HINT, but since we pass the
-               -- same HINT to both handlers that is not readily apparent]):
-               RAISE EXCEPTION 'Missing required research_group_role fields'
-                  USING HINT = _err_hint,
-                     ERRCODE = '23502';
+                                   CASE TG_OP
+                                      WHEN 'INSERT'
+                                         THEN 'Creator '
+                                      ELSE 'Modifier '
+                                   END,
+                                   'name.');
+               _err_msg  := CONCAT('Missing required field(s): Name = "',
+                                   NEW.name,
+                                   '", Weight = "',
+                                   NEW.Weight,
+                                   CASE TG_OP
+                                      WHEN 'INSERT'
+                                         THEN CONCAT('", Creator = "',
+                                                     NEW.creator)
+                                      ELSE CONCAT('", Modifier = "',
+                                              NEW.modifier,
+                                              '", ',
+                                              'research_group_role_number',
+                                              ' = "',
+                                              NEW.research_group_role_number)
+                                   END,
+                                   '".');
+               -- This is an invalid entry. Raise an exception that is handled
+               -- by the EXCEPTION clause below:
+               RAISE EXCEPTION USING ERRCODE = '23502';
             END IF;
 
             -- The research group role name is supposed to be unique. Make sure
@@ -98,9 +114,7 @@ AS $rgr_func$
                                       NEW.name,
                                       ' is already present in relation ',
                                       'research_group_role.');
-                  RAISE EXCEPTION 'Duplicate research_group_role_name entry'
-                     USING HINT = _err_hint,
-                        ERRCODE = '23505';
+                  RAISE EXCEPTION USING ERRCODE = '23505';
                END IF;
             END IF;
             -- At this point we know we have all required fields, and the role
