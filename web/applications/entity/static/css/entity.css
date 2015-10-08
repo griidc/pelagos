@@ -53,16 +53,16 @@ select, input{
 .entityForm input,
 .entityForm textarea,
 .entityForm select {
-    -webkit-transition: border-color 250ms ease-in 0ms;
-       -moz-transition: border-color 250ms ease-in 0ms;
-         -o-transition: border-color 250ms ease-in 0ms;
-            transition: border-color 250ms ease-in 0ms;
+    -webkit-transition: border-color 200ms ease-in 0ms;
+       -moz-transition: border-color 200ms ease-in 0ms;
+         -o-transition: border-color 200ms ease-in 0ms;
+            transition: border-color 200ms ease-in 0ms;
     border: 1px solid white;
     border: 1px solid rgba(255,255,255,0);
     margin: 1px;
     font-family: sans-serif;
     -webkit-appearance: none;
-    -moz-appearance: none;
+       -moz-appearance: none;
     appearance: none;
     background: none;
     overflow: auto;
@@ -82,10 +82,10 @@ select, input{
 }
 
 .entityForm input.clickableLink {
-    -webkit-transition: visibility 250ms ease-in 0ms, opacity 250ms ease-in 0ms;
-       -moz-transition: visibility 250ms ease-in 0ms, opacity 250ms ease-in 0ms;
-         -o-transition: visibility 250ms ease-in 0ms, opacity 250ms ease-in 0ms;
-            transition: visibility 250ms ease-in 0ms, opacity 250ms ease-in 0ms;
+    -webkit-transition: visibility 200ms ease-in 0ms, opacity 200ms ease-in 0ms;
+       -moz-transition: visibility 200ms ease-in 0ms, opacity 200ms ease-in 0ms;
+         -o-transition: visibility 200ms ease-in 0ms, opacity 200ms ease-in 0ms;
+            transition: visibility 200ms ease-in 0ms, opacity 200ms ease-in 0ms;
     visibility: hidden;
     opacity: 0;
     border: 1px solid #aaa;
@@ -112,10 +112,10 @@ select, input{
 }
 
 .entityWrapper.active span.clickableLink span {
-    -webkit-transition: visibility 250ms ease-in 0ms, opacity 250ms ease-in 0ms;
-       -moz-transition: visibility 250ms ease-in 0ms, opacity 250ms ease-in 0ms;
-         -o-transition: visibility 250ms ease-in 0ms, opacity 250ms ease-in 0ms;
-            transition: visibility 250ms ease-in 0ms, opacity 250ms ease-in 0ms;
+    -webkit-transition: visibility 200ms ease-in 0ms, opacity 200ms ease-in 0ms;
+       -moz-transition: visibility 200ms ease-in 0ms, opacity 200ms ease-in 0ms;
+         -o-transition: visibility 200ms ease-in 0ms, opacity 200ms ease-in 0ms;
+            transition: visibility 200ms ease-in 0ms, opacity 200ms ease-in 0ms;
     visibility: hidden;
     opacity: 0;
 }
@@ -132,7 +132,7 @@ select, input{
 
 .entityWrapper.active select {
     -webkit-appearance: menulist;
-    -moz-appearance: menulist;
+       -moz-appearance: menulist;
     appearance: list-menu;
 }
 
@@ -149,30 +149,45 @@ select, input{
     -webkit-box-sizing: border-box;
        -moz-box-sizing: border-box;
             box-sizing: border-box;
-    -webkit-transition: box-shadow 150ms ease-in 0ms;
-       -moz-transition: box-shadow 150ms ease-in 0ms;
-         -o-transition: box-shadow 150ms ease-in 0ms;
-            transition: box-shadow 150ms ease-in 0ms;
+    -webkit-transition: all 200ms ease-in 0ms;
+       -moz-transition: all 200ms ease-in 0ms;
+         -o-transition: all 200ms ease-in 0ms;
+            transition: all 200ms ease-in 0ms;
     border-radius: 2.01px;
     display: inline-block;
     max-width: 100%;
     box-shadow: 0 0 0 0 transparent;
+    background: transparent;
+    background: rgba(208, 208, 208, 0);
 }
 
-.innerForm:hover{
-    box-shadow: 0 0 0 3px #ccc;
+.innerForm:hover {
+    box-shadow: 0 0 0 3px #d3d3d3;
+    visibility: visible;
+    background: transparent;
+    background: rgba(208, 208, 208, 0.1);
 }
 
-.innerForm:hover::after {
-    display: block;
-    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAABcZJREFUeNq0V2lsVFUU/t42U9rOdGba0pZWLPjDRIiIJEbAUgOYVMoPohBCLQWtssg2Gn5oBCMV/6ixBssm2jattgia1MoWEQENsljDIpRKWVxSSBFtStfpzHvXc++baTtLl0G4Mzdv5r775vvOOd8594wEQE0v2lfjk+RcxhhA73syJHpLElRm7G16c9YcWvHxZZXmCB/k3I2zH4NuGJCle4NvkGGKLGPdN6dyOSbNtgCBGJ0ZsFsVrN77F1RFwt3mwJ3q0xk25WaCY3HM/gQkzi7BqmJsYgws94hADxHgGAYLBMQcnACxAmItGtJssVBErO4yAdaHoYdozCRAXska1YOs2Ql+btKQgoraBZyFpUdghREQa0xG3bl6MEkeHJvcI8nRhUlkFwl80qPjEIJvEggMRaWvsiJM5GFgLNQMTkDGhV/PUCwZ3TdC9oSSNffz6/jxE8TC4AQU2qwoUFU1xIP0IvUYhvm4MykFs3KeGrYH9h44CFkjFpSG3bI8GAEFiqbhFbcb2dnZBGr01iVd1/Hs3LkUQx2OBFtUEnC57JApA+o3HMUVleGBgQjI5C4+t23bLmLNLeaTR9wgd3u9XnF1Op1REUgamQxP2VXYJz6Ejq5OnH5jd/PEd+ZZeXbKfSqlEFH8JXLR8uXLUL2zGlXVVeJW1c4qVH9RLe7xOLqiJHDo0BEcSr+M7ttd6GzrRFvSfTjlLvPQLUuwB0jdXLElm7f0qpd7YP78BYKhKNVEIinRNWzwzR+XYdqUyXAlO/BpRTly5Jno7vbA4uX4iFP79M1EenHB6bovWIIsUL6YEGrjlatijQ1UJGQN0GLRWjwOCVkVSHC5cPlSI1KdydjdVIP85kw8snXZ4+EiJOuMsAyXgmuAfw6YdwRuKLFofm8cpq4pxOSMMSip+hGKtx2N9RegxkgEvmQa7W6i2RESAtlfAyQTl4VWAS5UCefPnTVTU9QCP7bMU9hCJsUhcX8epq5cBIx6CTi+ASu9u+D+Yz1UerbE8QztLubgN7kIQ7JAIRK8DiiChAnQl/+BUNicich+YkpEJxxzZ2DKqgICX0LgbwOX9nDf4uEbO/BC6VVsL/qOb2vn4MEhYDy+EmQCX7p0CWbMmNmbhvn5+SgvLxdXXhtstviI4EdXpiF7zWK/5Ry8VvQdJSfSMa/4jPhsBOkrtA4oighDZeVnvcUnYHVhYaGoAzp9t9vCC9GRFal40k3gGdzyjQT+NRnlw6bjKZjzwWmwHjLaFycq6sAECJxXw4KCAkyfPh0LFy5EZUWFiC/3RF5eniDksNsHAF/qB68V4B/+NBLuyt/Q0toJD5EHM8KIBxEQQARQWlZmdjHc/UQmoAfuEa50h9MxBLhXWM7B+bDHW/F3lxSx31T7y5x0LM5rnem9a4YUnAqKrOLWv+2QtHg0rMuIDH4iFc9ta0DzrVYYvh6hL1WcsgMQEGlNGaipdBYM2hXLIs+ZJR71r6ebguuNuSm4LSfT8PyOi9C7Ouh3yRB+CpJhiqgR4d2WIKDxVpjUnxBnReQDXvI7QIFPGYG6tanIWh1QO4E3ErhioKIuHS+XnycX+sy2k1n6KohkYmghbTcnwKzdLcccbx2Z6jVYRHwq0mSbStOCSR2H8dVsKjKZaynvXiXwfeKHPz97PxZnfoLlRYeJgCdM7Ryfg3Os/iWO0+E5NZqfmqGijDC0H7YuqspaVuLUr+0HGr6E0vQ9Ss89iMKPjj1N971DPM+LwC2af/Zvy7v8CzeHaDfl9xePWTBhQrIT18nqlgac/70Tv1wU4IHa3j6M9rTbjxl1fzvitRdzWmNco7RVOTbU1hz0fPvzjU3Vx1tq+hnQcwf/2IY15KIVOatPXk8pHq1d88m3LxdvPnC91u/Of2i23gk4hhHzwLC2aWPXp0l1727ddWpPP2AeR0+gs7/D/6zDGvz0STELAW775/8CjpaAxr3Az6e7BRwY/wkwADllXHtJMyNuAAAAAElFTkSuQmCC');
-    content: "";
+.deleteimg,.editimg {
+    -webkit-transition: opacity 200ms ease-in 0ms;
+       -moz-transition: opacity 200ms ease-in 0ms;
+         -o-transition: opacity 200ms ease-in 0ms;
+            transition: opacity 200ms ease-in 0ms;
+    opacity: 0;
     height: 32px;
     width: 32px;
-    background-color: #ccc;
-    border-top: 3px solid #ccc;
-    border-left: 3px solid #ccc;
     position: absolute;
-    right: -3px;
-    bottom: -3px;
+}
+
+.deleteimg {
+   top: 0;
+   right: 0;
+}
+
+.editimg {
+    bottom: 0;
+    right: 0;
+}
+.innerForm:hover>.deleteimg,.innerForm:hover>.editimg{
+     opacity: 1;
 }
