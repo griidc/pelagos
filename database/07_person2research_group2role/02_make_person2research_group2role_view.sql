@@ -195,7 +195,7 @@ AS $p2rg2r_func$
                      DATE_TRUNC('seconds', NOW()),
                      NEW.creator,
                      DATE_TRUNC('seconds', NOW()),
-                     NEW.modifier,
+                     NEW.creator,
                      NEW.label;
          ELSE
             -- This is an update.
