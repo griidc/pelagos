@@ -5,7 +5,7 @@
     <label for="person">Person:</label>
     <select required name="person" person="{{PersonResearchGroup.getPerson.getId}}">
     <option value="">[Please Select a Person]</option>
-    {% for Person in entityService.getAll("Person") | sortBy(["lastName","firstName"]) %}
+    {% for Person in entityService.getAll("Person", {"lastName":"ASC","firstName":"ASC"}) %}
         <option value="{{Person.getId}}"
         {{ (PersonResearchGroup.getPerson.getId == Person.getId ? ' selected ' : '') }}
         >{{Person.getLastName}}, {{Person.getFirstName}}, {{Person.getEmailAddress}}</option>
@@ -17,7 +17,7 @@
     <label for="researchGroup.fundingCycle.fundingOrganization">Funding Organization:</label>
     <select dontvalidate required name="researchGroup.fundingCycle.fundingOrganization" fundingOrganization="{{PersonResearchGroup.getResearchGroup.getFundingCycle.getFundingOrganization.getId}}">
     <option value="">[Please Select a Funding Organization]</option>
-    {% for FundingOrganization in entityService.getAll("FundingOrganization") | sortBy(["name"]) %}
+    {% for FundingOrganization in entityService.getAll("FundingOrganization", {"name":"ASC"}) %}
         <option value="{{FundingOrganization.getId}}"
         {{ (PersonResearchGroup.getResearchGroup.getFundingCycle.getFundingOrganization.getId == FundingOrganization.getId ? ' selected ' : '') }}
         >{{FundingOrganization.getName}}</option>
@@ -55,7 +55,7 @@
     <label for="role">Role:</label>
     <select required name="role" researchGroupRole="{{PersonResearchGroup.getRole.getId}}">
     <option value="">[Please Select a Role]</option>
-    {% for Role in entityService.getAll("ResearchGroupRole") | sortBy(["weight"]) %}
+    {% for Role in entityService.getAll("ResearchGroupRole", {"weight":"ASC"}) %}
         <option value="{{Role.getId}}"
         {{ (PersonResearchGroup.getRole.getId == Role.getId ? ' selected ' : '') }}
         >{{Role.getName}}</option>
