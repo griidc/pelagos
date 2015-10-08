@@ -58,8 +58,7 @@ ALTER TABLE person2research_group2role_table
 
 CREATE UNIQUE INDEX uidx_person_rg_role
    ON person2research_group2role_table(person_number,
-                                       research_group_number,
-                                       research_group_role_number);
+                                       research_group_number);
 
 -- Rename automatically created system names:
 ALTER SEQUENCE person2research_group2role_ta_person2research_group2role_nu_seq

@@ -84,13 +84,11 @@ AS $p2rg2r_func$
                                 '".');
             -- Raise an exception that is handled by the EXCEPTION clause
             -- below, using the _err_* variables:
--- PNK             RAISE EXCEPTION USING ERRCODE = '23502';
-            RAISE EXCEPTION '%', _err_msg
-               USING HINT = _err_hint,
-                  ERRCODE = '23502';
+            RAISE EXCEPTION USING ERRCODE = '23502';
          END IF;
 
-         -- Verify the FKs exist in the parent tables:
+         -- Verify the FKs exist in the parent tables, starting with the person
+         -- number check:
          _count := NULL;
          EXECUTE 'SELECT 0
                   WHERE NOT EXISTS (SELECT person_number
@@ -101,14 +99,13 @@ AS $p2rg2r_func$
          IF _count = 0
          THEN
             _err_hint := 'Please provide a valid person_number';
-            _err_msg  := CONCAT('No person with person_number ',
+            _err_msg  := CONCAT('No person with person_number "',
                                 NEW.person_number,
-                                ' exists in person.');
--- PNK             RAISE EXCEPTION USING ERRCODE = '23503';
-            RAISE EXCEPTION '%', _err_msg
-               USING HINT = _err_hint,
-                  ERRCODE = '23503';
+                                '" exists in person.');
+            RAISE EXCEPTION USING ERRCODE = '23503';
          END IF;
+
+         -- Check existing research group:
          EXECUTE 'SELECT 0
                   WHERE NOT EXISTS (SELECT research_group_number
                                     FROM research_group
@@ -118,19 +115,57 @@ AS $p2rg2r_func$
          IF _count = 0
          THEN
             _err_hint := 'Please provide a valid research_group_number';
-            _err_msg  := CONCAT('No research_group with research_group_number ',
+            _err_msg  := CONCAT('No research_group with ',
+                                'research_group_number "',
                                 NEW.research_group_number,
-                                ' exists in research_group.');
--- PNK             RAISE EXCEPTION USING ERRCODE = '23503';
-            RAISE EXCEPTION '%', _err_msg
-               USING HINT = _err_hint,
-                  ERRCODE = '23503';
+                                '" exists in research_group.');
+            RAISE EXCEPTION USING ERRCODE = '23503';
+         END IF;
+
+         -- Check existing research group role:
+         EXECUTE 'SELECT 0
+                  WHERE NOT EXISTS (SELECT research_group_role_number
+                                    FROM research_group_role
+                                    WHERE research_group_role_number = $1)'
+            INTO _count
+            USING NEW.research_group_role_number;
+         IF _count = 0
+         THEN
+            _err_hint := 'Please provide a valid research_group_role_number';
+            _err_msg  := CONCAT('No research_group_role with ',
+                                'research_group_role_number "',
+                                NEW.research_group_role_number,
+                                '" exists in research_group_role.');
+            RAISE EXCEPTION USING ERRCODE = '23503';
          END IF;
 
          -- At this point we have all required fields for an INSERT or an
          -- UPDATE. Go ahead and perform the desired operation:
          IF TG_OP = 'INSERT'
          THEN
+            -- A person can have only one association to a research group.
+            -- Make sure we are not trying to violate that:
+            EXECUTE 'SELECT 1
+                     WHERE EXISTS (SELECT person_number
+                                   FROM person2research_group2role_table
+                                   WHERE person_number = $1
+                                      AND research_group_number = $2)'
+               INTO _count
+               USING NEW.person_number,
+                     NEW.research_group_number;
+            IF _count = 1
+            THEN
+               _err_hint := CONCAT('A person can have only one Research ',
+                                   'Group association.');
+               _err_msg  := CONCAT('Person number "',
+                                   NEW.person_number,
+                                   '" is already associated with research ',
+                                   'group "',
+                                   NEW.research_group_number,
+                                   '".');
+              RAISE EXCEPTION USING ERRCODE = '23505';
+            END IF;
+
             -- An INSERT statement from the front-end may not be passing in a
             -- person2research_group2role_number. If that is the case then we
             -- need to retrieve the next available value in the sequence:
@@ -164,6 +199,34 @@ AS $p2rg2r_func$
                      NEW.label;
          ELSE
             -- This is an update.
+            -- A person can have only one association to a research group.
+            -- Make sure we are not trying to violate that:
+            IF ROW(NEW.person_number, NEW.research_group_number)
+               IS DISTINCT FROM
+               ROW(OLD.person_number, OLD.research_group_number)
+            THEN
+               EXECUTE 'SELECT 1
+                        WHERE EXISTS (SELECT person_number
+                                      FROM person2research_group2role_table
+                                      WHERE person_number = $1
+                                         AND research_group_number = $2)'
+                  INTO _count
+                  USING NEW.person_number,
+                        NEW.research_group_number;
+               IF _count = 1
+               THEN
+                  _err_hint := CONCAT('A person can have only one Research ',
+                                      'Group association.');
+                  _err_msg  := CONCAT('Person number "',
+                                      NEW.person_number,
+                                      '" is already associated with research ',
+                                      'group "',
+                                      NEW.research_group_number,
+                                      '".');
+                 RAISE EXCEPTION USING ERRCODE = '23505';
+               END IF;
+            END IF;
+
             EXECUTE 'UPDATE person2research_group2role_table
                         SET person_number = $1,
                             research_group_number = $2,
@@ -198,24 +261,24 @@ AS $p2rg2r_func$
          RETURN OLD;
       END IF;
 
--- PNK      EXCEPTION
--- PNK         WHEN SQLSTATE '23502' OR
--- PNK              SQLSTATE '23503' OR
--- PNK              SQLSTATE '23505'
--- PNK            THEN
--- PNK               RAISE EXCEPTION '%',   _err_msg
--- PNK                  USING HINT        = _err_hint,
--- PNK                        ERRCODE     = SQLSTATE;
--- PNK         WHEN OTHERS
--- PNK            THEN
--- PNK               RAISE EXCEPTION '%', CONCAT('Unable to ',
--- PNK                                           TG_OP,
--- PNK                                           ' research group role. An unknown ',
--- PNK                                           'error has occurred.')
--- PNK                  USING HINT      = CONCAT('Check the database log for ',
--- PNK                                           'more information.'),
--- PNK                        ERRCODE   = SQLSTATE;
--- PNK               RETURN NULL;
+     EXCEPTION
+        WHEN SQLSTATE '23502' OR
+             SQLSTATE '23503' OR
+             SQLSTATE '23505'
+           THEN
+              RAISE EXCEPTION '%',   _err_msg
+                 USING HINT        = _err_hint,
+                       ERRCODE     = SQLSTATE;
+        WHEN OTHERS
+           THEN
+              RAISE EXCEPTION '%', CONCAT('Unable to ',
+                                          TG_OP,
+                                          ' research group role. An unknown ',
+                                          'error has occurred.')
+                 USING HINT      = CONCAT('Check the database log for ',
+                                          'more information.'),
+                       ERRCODE   = SQLSTATE;
+              RETURN NULL;
 
    END;
 
