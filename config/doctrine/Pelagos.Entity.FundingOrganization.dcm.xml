@@ -39,7 +39,11 @@ Pelagos.Entity.Entity.dcm.xml
 
         <field name="postalCode"         column="postal_code"         type="string" />
 
-        <one-to-many field="fundingCycles" target-entity="FundingCycle" mapped-by="fundingOrganization" />
+        <one-to-many field="fundingCycles" target-entity="FundingCycle" mapped-by="fundingOrganization">
+            <order-by>
+                <order-by-field name="name" direction="ASC" />
+            </order-by>
+        </one-to-many>
 
     </entity>
 

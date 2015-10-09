@@ -21,7 +21,7 @@
     required name="fundingCycle" fundingCycle="{{ResearchGroup.getFundingCycle.getId}}">
         <option value="">[Please Select a Funding Organization First]</option>
         {% if (ResearchGroup) %}
-            {% for FundingCycle in ResearchGroup.getFundingCycle.getFundingOrganization.getFundingCycles | sortBy(["name"]) %}
+            {% for FundingCycle in ResearchGroup.getFundingCycle.getFundingOrganization.getFundingCycles %}
                 <option value="{{FundingCycle.getId}}" 
                 {{ (ResearchGroup.getFundingCycle.getId == FundingCycle.getId ? ' selected ' : '') }}
                 >{{FundingCycle.getName}}</option>

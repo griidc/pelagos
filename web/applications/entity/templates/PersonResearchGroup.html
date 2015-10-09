@@ -30,7 +30,7 @@
     required dontvalidate name="researchGroup.fundingCycle" fundingCycle="{{PersonResearchGroup.getResearchGroup.getFundingCycle.getId}}">
         <option value="">[Please Select a Funding Organization First]</option>
         {% if (PersonResearchGroup) %}
-            {% for FundingCycle in PersonResearchGroup.getResearchGroup.getFundingCycle.getFundingOrganization.getFundingCycles | sortBy(["name"]) %}
+            {% for FundingCycle in PersonResearchGroup.getResearchGroup.getFundingCycle.getFundingOrganization.getFundingCycles %}
                 <option value="{{FundingCycle.getId}}"
                 {{ (PersonResearchGroup.getResearchGroup.getFundingCycle.getId == FundingCycle.getId ? ' selected ' : '') }}
                 >{{FundingCycle.getName}}</option>
@@ -44,7 +44,7 @@
     required name="researchGroup" researchGroup="{{PersonResearchGroup.getResearchGroup.getId}}">
         <option value="">[Please Select a Funding Cycle First]</option>
         {% if (PersonResearchGroup) %}
-            {% for ResearchGroup in PersonResearchGroup.getResearchGroup.getFundingCycle.getResearchGroups | sortBy(["name"]) %}
+            {% for ResearchGroup in PersonResearchGroup.getResearchGroup.getFundingCycle.getResearchGroups %}
                 <option value="{{ResearchGroup.getId}}"
                 {{ (PersonResearchGroup.getResearchGroup.getId == ResearchGroup.getId ? ' selected ' : '') }}
                 >{{ResearchGroup.getName}}</option>
