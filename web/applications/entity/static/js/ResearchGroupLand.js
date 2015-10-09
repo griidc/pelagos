@@ -13,4 +13,7 @@ $(document).ready(function()
             $("#researchGroupLogo").html("<img src=\"data:" + $(this).attr("mimeType") + ";base64," + $(this).attr("base64") + "\">");
         }
     });
+    $("#tabs")
+        .tabs({ heightStyle: "content" })
+        .tabs("disable", 1);
 });

@@ -15,7 +15,7 @@
         </select>
         <label for="person" class="error"></label>
     {% else %}
-        {{PersonResearchGroup.getPerson.getLastName}}, {{PersonResearchGroup.getPerson.getFirstName}}, {{PersonResearchGroup.getPerson.getEmailAddress}}
+        {{PersonResearchGroup.getPerson.getLastName}}, {{PersonResearchGroup.getPerson.getFirstName}} &lt;{{PersonResearchGroup.getPerson.getEmailAddress}}&gt;
     {% endif %}
     <br>
 
