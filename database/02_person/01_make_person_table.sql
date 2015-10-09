@@ -22,9 +22,9 @@ DROP DOMAIN EMAIL_ADDRESS_TYPE;
 CREATE TABLE person_table
 (
    person_number                            SERIAL,
-   person_creator                           TEXT                NOT NULL,
    person_creation_time                     TIMESTAMP WITH TIME ZONE
       DEFAULT DATE_TRUNC('seconds', NOW())  NOT NULL,
+   person_creator                           TEXT                NOT NULL,
    person_given_name                        TEXT                NOT NULL,
    person_honorific_title                   TEXT                DEFAULT NULL,
    person_middle_name                       TEXT                DEFAULT NULL,
