@@ -20,7 +20,7 @@
             <td></td>
             <td><h2>Funding Cycles</h2></td>
         </tr>
-        {% for FundingCycle in FundingOrganization.getFundingCycles | sortBy(["name"]) %}
+        {% for FundingCycle in FundingOrganization.getFundingCycles %}
         <tr>
             <td width="25%" valign="top">
 
