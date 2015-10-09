@@ -26,7 +26,7 @@
         <table border="0" width="100%">
         {% if ResearchGroup.getPersonResearchGroups | length > 0 %}
             {% set PersonResearchGroupDeletable = true %}
-            {% for PersonResearchGroup in ResearchGroup.getPersonResearchGroups | sortBy(["person"]) %}
+            {% for PersonResearchGroup in ResearchGroup.getPersonResearchGroups | sortBy(["role.weight","person.lastName","person.firstName"]) %}
                 <tr>
                     <td>
                         <div>
