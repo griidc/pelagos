@@ -42,14 +42,14 @@ class TwigEntityExtensions extends \Twig_Extension
      */
     public function sortBy($entityList, array $properties)
     {
-        setlocale(LC_ALL, "en_US.UTF-8");
         if (gettype($entityList) == 'object' and is_a($entityList, 'Doctrine\Common\Collections\Collection')) {
             // If the entity list is a collection, get it as an array.
             $entityList = $entityList->toArray();
         }
+        $collator = collator_create('en_US.UTF-8');
         usort(
             $entityList,
-            function ($a, $b) use ($properties) {
+            function ($a, $b) use ($properties, $collator) {
                 while (count($properties) > 0) {
                     // For each sort criteria, reset 'a' and 'b' entity back to original.
                     $aEntity = $a;
@@ -99,7 +99,7 @@ class TwigEntityExtensions extends \Twig_Extension
 
                     if (gettype($aVal) == 'string' and gettype($bVal) == 'string') {
                         // It the values on both sides are strings, use a string comparison.
-                        $cmp = strcoll($aVal, $bVal);
+                        $cmp = collator_compare($collator, $aVal, $bVal);
                         if ($cmp != 0) {
                             return $cmp;
                         }
