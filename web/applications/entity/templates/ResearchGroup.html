@@ -9,7 +9,7 @@
     <select dontvalidate required name="fundingCycle.fundingOrganization" fundingOrganization="{{ResearchGroup.getFundingCycle.getFundingOrganization.getId}}">
     <option value="">[Please Select a Funding Organization]</option>
     {% for FundingOrganization in entityService.getAll("FundingOrganization") | sortBy(["name"]) %}
-        <option value="{{FundingOrganization.getId}}" 
+        <option value="{{FundingOrganization.getId}}"
         {{ (ResearchGroup.getFundingCycle.getFundingOrganization.getId == FundingOrganization.getId ? ' selected ' : '') }}
         >{{FundingOrganization.getName}}</option>
     {% endfor %}
@@ -22,7 +22,7 @@
         <option value="">[Please Select a Funding Organization First]</option>
         {% if (ResearchGroup) %}
             {% for FundingCycle in ResearchGroup.getFundingCycle.getFundingOrganization.getFundingCycles | sortBy(["name"]) %}
-                <option value="{{FundingCycle.getId}}" 
+                <option value="{{FundingCycle.getId}}"
                 {{ (ResearchGroup.getFundingCycle.getId == FundingCycle.getId ? ' selected ' : '') }}
                 >{{FundingCycle.getName}}</option>
             {% endfor %}
