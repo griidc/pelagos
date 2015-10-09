@@ -128,7 +128,7 @@ if ($udi <> '')
     FROM datasets
     LEFT JOIN registry_view registry ON registry.dataset_udi = datasets.dataset_udi
     LEFT JOIN metadata on registry.registry_id = metadata.registry_id
-    WHERE datasets.dataset_udi = '$udi' limit 1
+    WHERE datasets.dataset_udi = '$udi' LIMIT 1
     ;
     ";
 
@@ -140,25 +140,12 @@ if ($udi <> '')
         $prow["noheader_doi"] = preg_replace("/doi:/",'',$prow["doi"]);
     }
 
-    if ($prow == null  OR  $prow["geom_data"] == null) {
-
-        if ($prow["metadata_xml"] == "")
-        {
-            $dsscript = "dlmap.addImage('$_SERVER[SCRIPT_NAME]/includes/images/nodata.png',0.4);$('#metadatadl').button('disable');dlmap.makeStatic();";
-        }
-        else
-        {
-            $dsscript = "dlmap.addImage('$_SERVER[SCRIPT_NAME]/includes/images/labonly.png',0.4);dlmap.makeStatic();";
-        }
-    }
-    else {
-        if ($prow["geom_data"] == 'labOnly') {
-            $dsscript = "dlmap.addImage('$_SERVER[SCRIPT_NAME]/includes/images/labonly.png',0.4);dlmap.makeStatic();";
-        } else { //  add the geometry from the data. Either datasets or metadata
-            $dsscript = 'dlmap.addFeatureFromWKT("' . $prow['geom_data'] . '",{"udi":"' . $prow['dataset_udi'] . '"});dlmap.gotoAllFeatures();';
-        } //  else
-        //  fall through and only the base map will show
-    }
+    if ($prow["geom_data"] == 'labOnly') {
+        $dsscript = "dlmap.addImage('$_SERVER[SCRIPT_NAME]/includes/images/labonly.png',0.4);dlmap.makeStatic();";
+    } elseif ($prow["geom_data"] != 'baseMap') { //  add the geometry from the data. Either datasets or metadata
+        $dsscript = 'dlmap.addFeatureFromWKT("' . $prow['geom_data'] . '",{"udi":"' . $prow['dataset_udi'] . '"});dlmap.gotoAllFeatures();';
+    } //  else
+    //  fall through and only the base map will show
 
     $mconn = OpenDB("RIS_RO");
 
