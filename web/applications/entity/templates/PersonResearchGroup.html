@@ -7,7 +7,7 @@
     {% if not ResearchGroup %}
         <select required name="person" person="{{PersonResearchGroup.getPerson.getId}}">
         <option value="">[Please Select a Person]</option>
-        {% for Person in entityService.getAll("Person", {"lastName":"ASC","firstName":"ASC"}) %}
+        {% for Person in entityService.getAll("Person") | sortBy(["lastName","firstName"]) %}
             <option value="{{Person.getId}}"
             {{ (PersonResearchGroup.getPerson.getId == Person.getId ? ' selected ' : '') }}
             >{{Person.getLastName}}, {{Person.getFirstName}}, {{Person.getEmailAddress}}</option>
@@ -23,7 +23,7 @@
         <label for="researchGroup.fundingCycle.fundingOrganization">Funding Organization:</label>
         <select dontvalidate required name="researchGroup.fundingCycle.fundingOrganization" fundingOrganization="{{PersonResearchGroup.getResearchGroup.getFundingCycle.getFundingOrganization.getId}}">
         <option value="">[Please Select a Funding Organization]</option>
-        {% for FundingOrganization in entityService.getAll("FundingOrganization", {"name":"ASC"}) %}
+        {% for FundingOrganization in entityService.getAll("FundingOrganization") | sortBy(["name"]) %}
             <option value="{{FundingOrganization.getId}}"
             {{ (PersonResearchGroup.getResearchGroup.getFundingCycle.getFundingOrganization.getId == FundingOrganization.getId ? ' selected ' : '') }}
             >{{FundingOrganization.getName}}</option>
@@ -37,7 +37,7 @@
         required dontvalidate name="researchGroup.fundingCycle" fundingCycle="{{PersonResearchGroup.getResearchGroup.getFundingCycle.getId}}">
             <option value="">[Please Select a Funding Organization First]</option>
             {% if (PersonResearchGroup) %}
-                {% for FundingCycle in PersonResearchGroup.getResearchGroup.getFundingCycle.getFundingOrganization.getFundingCycles %}
+                {% for FundingCycle in PersonResearchGroup.getResearchGroup.getFundingCycle.getFundingOrganization.getFundingCycles | sortBy(["name"]) %}
                     <option value="{{FundingCycle.getId}}"
                     {{ (PersonResearchGroup.getResearchGroup.getFundingCycle.getId == FundingCycle.getId ? ' selected ' : '') }}
                     >{{FundingCycle.getName}}</option>
@@ -51,7 +51,7 @@
         required name="researchGroup" researchGroup="{{PersonResearchGroup.getResearchGroup.getId}}">
             <option value="">[Please Select a Funding Cycle First]</option>
             {% if (PersonResearchGroup) %}
-                {% for ResearchGroup in PersonResearchGroup.getResearchGroup.getFundingCycle.getResearchGroups %}
+                {% for ResearchGroup in PersonResearchGroup.getResearchGroup.getFundingCycle.getResearchGroups | sortBy(["name"]) %}
                     <option value="{{ResearchGroup.getId}}"
                     {{ (PersonResearchGroup.getResearchGroup.getId == ResearchGroup.getId ? ' selected ' : '') }}
                     >{{ResearchGroup.getName}}</option>
@@ -60,15 +60,17 @@
         </select><br>
     {% endif %}
 
-    <label for="role">Role:</label>
-    <select required name="role" researchGroupRole="{{PersonResearchGroup.getRole.getId}}">
-    <option value="">[Please Select a Role]</option>
-    {% for Role in entityService.getAll("ResearchGroupRole", {"weight":"ASC"}) %}
-        <option value="{{Role.getId}}"
-        {{ (PersonResearchGroup.getRole.getId == Role.getId ? ' selected ' : '') }}
-        >{{Role.getName}}</option>
-    {% endfor %}
-    </select><br>
+    {% if userLoggedIn == "true" %}
+        <label for="role">Role:</label>
+        <select required name="role" researchGroupRole="{{PersonResearchGroup.getRole.getId}}">
+        <option value="">[Please Select a Role]</option>
+        {% for Role in entityService.getAll("ResearchGroupRole") | sortBy(["weight"]) %}
+            <option value="{{Role.getId}}"
+            {{ (PersonResearchGroup.getRole.getId == Role.getId ? ' selected ' : '') }}
+            >{{Role.getName}}</option>
+        {% endfor %}
+        </select><br>
+    {% endif %}
 
     <label for="label">Label:</label>
     <input type="text" name="label" size="50" value="{{PersonResearchGroup.getLabel}}"><br>
