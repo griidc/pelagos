@@ -191,3 +191,8 @@ select, input{
 .innerForm:hover>.deleteimg,.innerForm:hover>.editimg{
      opacity: 1;
 }
+
+.displayField {
+    font-size: 100%;
+    font-family: sans-serif;
+}

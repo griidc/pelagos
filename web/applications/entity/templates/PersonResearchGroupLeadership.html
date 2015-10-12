@@ -5,9 +5,9 @@
         {% if PersonResearchGroup.getRole.getWeight == 1 %}
             <tr>
                 <td>
-                    <b>Name:</b> {{PersonResearchGroup.getPerson.getLastName}}, {{PersonResearchGroup.getPerson.getFirstName}}<br>
-                    <b>eMail:</b> {{PersonResearchGroup.getPerson.getEmailAddress}}<br>
-                    <b>Title:</b> {{PersonResearchGroup.getRole.name}}
+                    <b>Name:</b> <span class="displayField">{{PersonResearchGroup.getPerson.getFirstName}} {{PersonResearchGroup.getPerson.getLastName}}</span><br>
+                    <b>eMail:</b> <a class="displayField" href="mailto:{{PersonResearchGroup.getPerson.getEmailAddress}}">{{PersonResearchGroup.getPerson.getEmailAddress}}</a><br>
+                    <b>Title:</b> <span class="displayField">{{PersonResearchGroup.getLabel}}</span>
                 </td>
             <tr>
         {% endif %}
