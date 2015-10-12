@@ -13,13 +13,6 @@ namespace Pelagos;
 class DateTime extends \DateTime
 {
     /**
-     * The format to use by default for formatting this value as a string.
-     *
-     * @var string
-     */
-    public static $defaultFormat = \DateTime::ISO8601;
-
-    /**
      * The format to use for formatting this value as a string.
      *
      * This value can be changed via setFormat().
@@ -27,16 +20,6 @@ class DateTime extends \DateTime
      * @var string
      */
     private $formatString = \DateTime::ISO8601;
-
-    /**
-     * Return the format used  by default for formatting as a string.
-     *
-     * @return string Return description goes here.
-     */
-    public static function getDefaultFormat()
-    {
-        return self::$defaultFormat;
-    }
 
     /**
      * Change the value in the format attribute.
