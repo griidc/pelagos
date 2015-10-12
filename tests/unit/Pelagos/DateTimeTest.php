@@ -10,15 +10,6 @@ namespace Pelagos;
 class DateTimeTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * Setup for PHPUnit tests.
-     *
-     * @return void
-     */
-    protected function setUp()
-    {
-    }
-
-    /**
      * Test the ability to set the format.
      *
      * Set the referenceDateTime to the reference format
