@@ -9,7 +9,7 @@
     <select dontvalidate required name="fundingCycle.fundingOrganization" fundingOrganization="{{ResearchGroup.getFundingCycle.getFundingOrganization.getId}}">
     <option value="">[Please Select a Funding Organization]</option>
     {% for FundingOrganization in entityService.getAll("FundingOrganization") | sortBy(["name"]) %}
-        <option value="{{FundingOrganization.getId}}" 
+        <option value="{{FundingOrganization.getId}}"
         {{ (ResearchGroup.getFundingCycle.getFundingOrganization.getId == FundingOrganization.getId ? ' selected ' : '') }}
         >{{FundingOrganization.getName}}</option>
     {% endfor %}
@@ -22,7 +22,7 @@
         <option value="">[Please Select a Funding Organization First]</option>
         {% if (ResearchGroup) %}
             {% for FundingCycle in ResearchGroup.getFundingCycle.getFundingOrganization.getFundingCycles %}
-                <option value="{{FundingCycle.getId}}" 
+                <option value="{{FundingCycle.getId}}"
                 {{ (ResearchGroup.getFundingCycle.getId == FundingCycle.getId ? ' selected ' : '') }}
                 >{{FundingCycle.getName}}</option>
             {% endfor %}
@@ -36,7 +36,7 @@
     <input type="text" name="phoneNumber" size="100" value="{{ResearchGroup.getPhoneNumber}}"><br>
 
     <label for="deliveryPoint">Delivery Point:</label><br>
-    <textarea maxlength="300" name="deliveryPoint" cols="150" rows="2">{{ResearchGroup.getDeliveryPoint}}</textarea><br>
+    <textarea maxlength="300" name="deliveryPoint" cols="100" rows="3">{{ResearchGroup.getDeliveryPoint}}</textarea><br>
 
     <label for="city">City:</label>
     <input type="text" name="city" size="100" value="{{ResearchGroup.getCity}}"><br>
