@@ -3,7 +3,7 @@
     <input type="hidden" name="id" value="{{ResearchGroup.getId}}">
 
     <label for="name">Name:</label>
-    <input type="text" name="name" size="100" value="{{ResearchGroup.getName}}" required><br>
+    <input type="text" name="name" value="{{ResearchGroup.getName}}" required><br>
 
     <label for="fundingOrganization">Funding Organization:</label>
     <select dontvalidate required name="fundingCycle.fundingOrganization" fundingOrganization="{{ResearchGroup.getFundingCycle.getFundingOrganization.getId}}">
@@ -30,31 +30,31 @@
     </select><br>
 
     <label for="url">Website:</label>
-    <input type="text" name="url" class="clickableLink" size="100" value="{{ResearchGroup.getUrl}}"><br>
+    <input type="text" name="url" class="clickableLink" value="{{ResearchGroup.getUrl}}">
 
     <label for="phoneNumber">Phone Number:</label>
-    <input type="text" name="phoneNumber" size="100" value="{{ResearchGroup.getPhoneNumber}}"><br>
+    <input type="text" name="phoneNumber" value="{{ResearchGroup.getPhoneNumber}}"><br>
 
     <label for="deliveryPoint">Delivery Point:</label><br>
-    <textarea maxlength="300" name="deliveryPoint" cols="150" rows="2">{{ResearchGroup.getDeliveryPoint}}</textarea><br>
+    <textarea maxlength="300" name="deliveryPoint" rows="3">{{ResearchGroup.getDeliveryPoint}}</textarea><br>
 
     <label for="city">City:</label>
-    <input type="text" name="city" size="100" value="{{ResearchGroup.getCity}}"><br>
+    <input type="text" name="city" value="{{ResearchGroup.getCity}}"><br>
 
     <label for="administrativeArea">State/Province:</label>
-    <input type="text" name="administrativeArea" size="100" value="{{ResearchGroup.getAdministrativeArea}}"><br>
+    <input type="text" name="administrativeArea" value="{{ResearchGroup.getAdministrativeArea}}"><br>
 
     <label for="postalCode">Postal Code:</label>
-    <input type="text" name="postalCode" size="100" value="{{ResearchGroup.getPostalCode}}"><br>
+    <input type="text" name="postalCode" value="{{ResearchGroup.getPostalCode}}"><br>
 
     <label for="country">Country:</label>
-    <input type="text" name="country" size="100" value="{{ResearchGroup.getCountry}}"><br>
+    <input type="text" name="country" value="{{ResearchGroup.getCountry}}"><br>
 
     <label for="description">Description:</label><br>
-    <textarea name="description" cols="100" rows="5">{{ResearchGroup.getDescription}}</textarea><br>
+    <textarea name="description" rows="5">{{ResearchGroup.getDescription}}</textarea><br>
 
     <label for="emailAddress">E-Mail Address:</label>
-    <input type="text" name="emailAddress" size="100" value="{{ResearchGroup.getEmailAddress}}"><br>
+    <input type="text" name="emailAddress" value="{{ResearchGroup.getEmailAddress}}"><br>
 
     <span class="showOnEdit">
         <label for="logo">Logo:</label>

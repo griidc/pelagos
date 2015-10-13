@@ -41,7 +41,7 @@
             });
 
             $(this).find("input.clickableLink").each(function () {
-                $(this).wrap("<span class=\"clickableLink\"></span>")
+                $(this).wrap("<div class=\"clickableLink\"></div>")
                 .after("<span><a name=\"url\" target=\"_blank\" href=\"" + $(this).val() + "\">" + $(this).val() + "</a></span>");
             });
             $(this).find("input.clickableLink").next().click(function () {
@@ -98,6 +98,9 @@
 
                 $.when(showConfirmation("Delete Entity", "Are you sure?")).done(function() {
                     $.when(updateEntity($(thisForm), "Delete")).done(function() {
+                        var deletedId = $(thisForm).find("[name=\"id\"]").val();
+                        var deleteType = $(thisForm).attr("entityType");
+                        $(thisForm).trigger("entityDelete", [deletedId, deleteType]);
                         $(".entityWrapper").has(thisForm)
                         .animate({ height: "toggle", opacity: "toggle" }, "slow", function() {
                             $(this).slideUp("fast", function() {
