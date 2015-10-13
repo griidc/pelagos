@@ -42,6 +42,11 @@ select, input{
    height: 20px;
 }
 
+#details .entityForm input[type="text"],
+#details .entityForm textarea {
+    width:100%;
+}
+
 .entityForm label {
     display: inline;
 }
@@ -103,12 +108,13 @@ select, input{
 }
 
 .entityForm span.clickableLink span {
-    margin-left: 3px;
-    margin-top: 2px;
+    margin-left: 1px;
+    margin-top: -3px;
     font-family: sans-serif;
     position: absolute;
     left: 0;
     opacity: 1;
+    top: 0;
 }
 
 .entityWrapper.active span.clickableLink span {
