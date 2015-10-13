@@ -98,6 +98,9 @@
 
                 $.when(showConfirmation("Delete Entity", "Are you sure?")).done(function() {
                     $.when(updateEntity($(thisForm), "Delete")).done(function() {
+                        var deletedId = $(thisForm).find("[name=\"id\"]").val();
+                        var deleteType = $(thisForm).attr("entityType");
+                        $(thisForm).trigger("entityDelete", [deletedId, deleteType]);
                         $(".entityWrapper").has(thisForm)
                         .animate({ height: "toggle", opacity: "toggle" }, "slow", function() {
                             $(this).slideUp("fast", function() {
