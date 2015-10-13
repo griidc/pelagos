@@ -81,7 +81,18 @@ select, input{
     display: block;
 }
 
-.entityForm span.clickableLink {
+.entityWrapper:not(.active) input,
+.entityWrapper:not(.active) textarea,
+.entityWrapper:not(.active) select{
+    color:black;
+}
+
+.entityWrapper.active input.clickableLink {
+    opacity: 1;
+    visibility: visible;
+}
+
+.entityForm div.clickableLink {
     position: relative;
     z-index: 10;
 }
@@ -96,20 +107,9 @@ select, input{
     border: 1px solid #aaa;
 }
 
-.entityWrapper.active input.clickableLink {
-    opacity: 1;
-    visibility: visible;
-}
-
-.entityWrapper:not(.active) input,
-.entityWrapper:not(.active) textarea,
-.entityWrapper:not(.active) select{
-    color:black;
-}
-
-.entityForm span.clickableLink span {
-    margin-left: 1px;
-    margin-top: -3px;
+.entityForm div.clickableLink span {
+    margin-left: 2px;
+    margin-top: 1px;
     font-family: sans-serif;
     position: absolute;
     left: 0;
@@ -117,7 +117,7 @@ select, input{
     top: 0;
 }
 
-.entityWrapper.active span.clickableLink span {
+.entityWrapper.active div.clickableLink span {
     -webkit-transition: visibility 200ms ease-in 0ms, opacity 200ms ease-in 0ms;
        -moz-transition: visibility 200ms ease-in 0ms, opacity 200ms ease-in 0ms;
          -o-transition: visibility 200ms ease-in 0ms, opacity 200ms ease-in 0ms;

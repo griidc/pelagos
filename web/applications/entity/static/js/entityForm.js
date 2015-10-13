@@ -41,7 +41,7 @@
             });
 
             $(this).find("input.clickableLink").each(function () {
-                $(this).wrap("<span class=\"clickableLink\"></span>")
+                $(this).wrap("<div class=\"clickableLink\"></div>")
                 .after("<span><a name=\"url\" target=\"_blank\" href=\"" + $(this).val() + "\">" + $(this).val() + "</a></span>");
             });
             $(this).find("input.clickableLink").next().click(function () {
