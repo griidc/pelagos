@@ -542,8 +542,8 @@ class FundingOrganization extends Entity
      *
      * @access public
      *
-     * @throws \Exception When Non-PersonFundingOrganization found within $personFundingOrganizations.
      * @throws \Exception When $personFundingOrganizations is not an array or traversable object.
+     * @throws \Exception When Non-PersonFundingOrganization found within $personFundingOrganizations.
      *
      * @return void
      */
