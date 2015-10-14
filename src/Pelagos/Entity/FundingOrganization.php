@@ -176,6 +176,15 @@ class FundingOrganization extends Entity
     protected $fundingCycles;
 
     /**
+     * Funding Organization's PersonFundingOrganizations.
+     *
+     * @var \Doctrine\Common\Collections\Collection $personFundingOrganizations
+     *
+     * @access protected
+     */
+    protected $personFundingOrganizations;
+
+    /**
      * Getter for fundingCycles.
      *
      * @access public
@@ -527,6 +536,46 @@ class FundingOrganization extends Entity
     }
 
     /**
+     * Setter for personFundingOrganizations.
+     *
+     * @param array|\Traversable $personFundingOrganizations Set of PersonFundingOrganization objects.
+     *
+     * @access public
+     *
+     * @throws \Exception When Non-PersonFundingOrganization found within $personFundingOrganizations.
+     * @throws \Exception When $personFundingOrganizations is not an array or traversable object.
+     *
+     * @return void
+     */
+    public function setPersonFundingOrganizations($personFundingOrganizations)
+    {
+        if (is_array($personFundingOrganizations) || $personFundingOrganizations instanceof \Traversable) {
+            $this->personFundingOrganizations = $personFundingOrganizations;
+            foreach ($personFundingOrganizations as $personFundingOrganization) {
+                if (!$personFundingOrganization instanceof PersonFundingOrganization) {
+                    throw new \Exception('Non-PersonFundingOrganization found in personFundingOrganizations.');
+                }
+                $personFundingOrganization->setFundingOrganization($this);
+            }
+        } else {
+            throw new \Exception('personFundingOrganizations must be either array or traversable objects.');
+        }
+    }
+
+    /**
+     * Getter for personFundingOrganizations.
+     *
+     * @access public
+     *
+     * @return \Doctrine\Common\Collections\Collection Collection containing personFundingOrganizations
+     *                                                 listings for this Funding Organization.
+     */
+    public function getPersonFundingOrganizations()
+    {
+        return $this->personFundingOrganizations;
+    }
+
+    /**
      * Static array containing a list of the properties and their attributes.
      *
      * @var array $properties
@@ -593,7 +642,14 @@ class FundingOrganization extends Entity
             'getter' => 'getFundingCycles',
             'setter' => 'setFundingCycles',
             'serialize' => false,
-        )
+        ),
+        'personFundingOrganizations' => array(
+            'type' => 'object',
+            'class' => '\Doctrine\Common\Collections\Collection',
+            'getter' => 'getPersonFundingOrganizations',
+            'setter' => 'setPersonFundingOrganizations',
+            'serialize' => false,
+        ),
     );
 
     /**
