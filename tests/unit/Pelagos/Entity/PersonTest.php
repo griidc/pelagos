@@ -113,6 +113,22 @@ class PersonTest extends \PHPUnit_Framework_TestCase
         $this->timeStampLocalized = clone $this->timeStamp;
         $this->timeStampLocalized->setTimeZone(new \DateTimeZone(date_default_timezone_get()));
         $this->timeStampLocalizedISO = $this->timeStampLocalized->format(\DateTime::ISO8601);
+
+        $this->testPersonResearchGroups = array(
+            \Mockery::mock(
+                '\Pelagos\Entity\PersonResearchGroup',
+                array(
+                    'setPerson' => null
+                )
+            ),
+            \Mockery::mock(
+                '\Pelagos\Entity\PersonResearchGroup',
+                array(
+                    'setPerson' => null
+                )
+            ),
+        );
+        $this->person->setPersonResearchGroups($this->testPersonResearchGroups);
     }
 
     /**
@@ -733,6 +749,51 @@ class PersonTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('newLastName2', $this->person->getLastName());
         $this->assertEquals('newEmailAddress2', $this->person->getEmailAddress());
         $this->assertEquals('newCreator2', $this->person->getCreator());
+    }
+
+    /**
+     * Test the testGetPersonResearchGroups method.
+     *
+     * This method verify the associated PersonResearchGroups are each an instance of PersonResearchGroup.
+     *
+     * @return void
+     */
+    public function testGetPersonResearchGroups()
+    {
+        $personResearchGroups = $this->person->getPersonResearchGroups();
+        foreach ($personResearchGroups as $personResearchGroup) {
+            $this->assertInstanceOf('\Pelagos\Entity\PersonResearchGroup', $personResearchGroup);
+        }
+    }
+
+    /**
+     * Test the testSetPersonResearchGroups() method with a non-array/traversable object.
+     *
+     * This method should result in an exception being thrown.
+     *
+     * @expectedException \Exception
+     *
+     * @return void
+     */
+    public function testSetPersonResearchGroupsWithNonTraversable()
+    {
+        $this->person->setPersonResearchGroups('string data');
+    }
+
+    /**
+     * Test testSetPersonResearchGroups() method with bad (non-PersonResearchGroup) element in otherwise good array.
+     *
+     * This method should result in an exception being thrown.
+     *
+     * @expectedException \Exception
+     *
+     * @return void
+     */
+    public function testSetPersonResearchGroupsWithANonPersonResearchGroupInArray()
+    {
+        $testArry = $this->testPersonResearchGroups;
+        array_push($testArry, 'string data');
+        $this->person->setPersonResearchGroups($testArry);
     }
 
     /**
