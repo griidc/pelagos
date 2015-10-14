@@ -113,6 +113,21 @@ class PersonTest extends \PHPUnit_Framework_TestCase
         $this->timeStampLocalized = clone $this->timeStamp;
         $this->timeStampLocalized->setTimeZone(new \DateTimeZone(date_default_timezone_get()));
         $this->timeStampLocalizedISO = $this->timeStampLocalized->format(\DateTime::ISO8601);
+        $this->testPersonFundingOrganizations = array(
+            \Mockery::mock(
+                '\Pelagos\Entity\PersonFundingOrganization',
+                array(
+                    'setPerson' => null
+                )
+            ),
+            \Mockery::mock(
+                '\Pelagos\Entity\PersonFundingOrganization',
+                array(
+                    'setPerson' => null
+                )
+            ),
+        );
+        $this->person->setPersonFundingOrganizations($this->testPersonFundingOrganizations);
     }
 
     /**
@@ -733,6 +748,52 @@ class PersonTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('newLastName2', $this->person->getLastName());
         $this->assertEquals('newEmailAddress2', $this->person->getEmailAddress());
         $this->assertEquals('newCreator2', $this->person->getCreator());
+    }
+
+    /**
+     * Test the getPersonFundingOrganizations method.
+     *
+     * Each item in the traversable returned by getPersonFundingOrganizations()
+     * should be an instance of PersonFundingOrganization.
+     *
+     * @return void
+     */
+    public function testGetPersonFundingOrganizations()
+    {
+        $personFundingOrganizations = $this->person->getPersonFundingOrganizations();
+        foreach ($personFundingOrganizations as $personFundingOrganization) {
+            $this->assertInstanceOf('\Pelagos\Entity\PersonFundingOrganization', $personFundingOrganization);
+        }
+    }
+
+    /**
+     * Test setPersonFundingOrganizations with a non-array/traversable object.
+     *
+     * This should result in an exception being thrown.
+     *
+     * @expectedException \Exception
+     *
+     * @return void
+     */
+    public function testSetPersonFundingOrganizationsWithNonTraversable()
+    {
+        $this->person->setPersonFundingOrganizations('string data');
+    }
+
+    /**
+     * Test setPersonFundingOrganizations with a non-PersonFundingOrganization element in otherwise good array.
+     *
+     * This should result in an exception being thrown.
+     *
+     * @expectedException \Exception
+     *
+     * @return void
+     */
+    public function testSetPersonFundingOrganizationsWithANonPersonFundingOrganizationInArray()
+    {
+        $testArry = $this->testPersonFundingOrganizations;
+        array_push($testArry, 'string data');
+        $this->person->setPersonFundingOrganizations($testArry);
     }
 
     /**
