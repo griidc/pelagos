@@ -550,11 +550,13 @@ class FundingOrganization extends Entity
     public function setPersonFundingOrganizations($personFundingOrganizations)
     {
         if (is_array($personFundingOrganizations) || $personFundingOrganizations instanceof \Traversable) {
-            $this->personFundingOrganizations = $personFundingOrganizations;
             foreach ($personFundingOrganizations as $personFundingOrganization) {
                 if (!$personFundingOrganization instanceof PersonFundingOrganization) {
                     throw new \Exception('Non-PersonFundingOrganization found in personFundingOrganizations.');
                 }
+            }
+            $this->personFundingOrganizations = $personFundingOrganizations;
+            foreach ($this->personFundingOrganizations as $personFundingOrganization) {
                 $personFundingOrganization->setFundingOrganization($this);
             }
         } else {
