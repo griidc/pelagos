@@ -185,11 +185,13 @@ class Person extends Entity
     public function setPersonResearchGroups($personResearchGroups)
     {
         if (is_array($personResearchGroups) || $personResearchGroups instanceof \Traversable) {
-            $this->personResearchGroups = $personResearchGroups;
             foreach ($personResearchGroups as $personResearchGroup) {
                 if (!$personResearchGroup instanceof PersonResearchGroup) {
                     throw new \Exception('Non-PersonResearchGroup found in personResearchGroups.');
                 }
+            }
+            $this->personResearchGroups = $personResearchGroups;
+            foreach ($this->personResearchGroups as $personResearchGroup) {
                 $personResearchGroup->setPerson($this);
             }
         } else {
