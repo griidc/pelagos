@@ -73,6 +73,15 @@ class Person extends Entity
     protected $personFundingOrganizations;
 
     /**
+     * Person's PersonResearchGroups.
+     *
+     * @var \Doctrine\Common\Collections\Collection $personResearchGroups
+     *
+     * @access protected
+     */
+    protected $personResearchGroups;
+
+    /**
      * Static array containing a list of the properties and their attributes.
      *
      * Used by common update code.
@@ -94,7 +103,14 @@ class Person extends Entity
             'type' => 'string',
             'setter' => 'setEmailAddress',
             'getter' => 'getEmailAddress',
-        )
+        ),
+        'personResearchGroups' => array(
+            'type' => 'object',
+            'class' => '\Doctrine\Common\Collections\Collection',
+            'getter' => 'getPersonResearchGroups',
+            'setter' => 'setPersonResearchGroups',
+            'serialize' => false,
+        ),
     );
 
     /**
@@ -193,6 +209,35 @@ class Person extends Entity
     }
 
     /**
+     * Setter for personResearchGroups.
+     *
+     * @param array|\Traversable $personResearchGroups Set of PersonResearchGroup objects.
+     *
+     * @access public
+     *
+     * @throws \Exception When Non-PersonResearchGroup found in $personResearchGroups.
+     * @throws \Exception When $personResearchGroups is not an array or traversable object.
+     *
+     * @return void
+     */
+    public function setPersonResearchGroups($personResearchGroups)
+    {
+        if (is_array($personResearchGroups) || $personResearchGroups instanceof \Traversable) {
+            foreach ($personResearchGroups as $personResearchGroup) {
+                if (!$personResearchGroup instanceof PersonResearchGroup) {
+                    throw new \Exception('Non-PersonResearchGroup found in personResearchGroups.');
+                }
+            }
+            $this->personResearchGroups = $personResearchGroups;
+            foreach ($this->personResearchGroups as $personResearchGroup) {
+                $personResearchGroup->setPerson($this);
+            }
+        } else {
+            throw new \Exception('personResearchGroups must be either array or traversable objects.');
+        }
+    }
+
+    /**
      * Getter for personFundingOrganizations.
      *
      * @access public
@@ -203,6 +248,19 @@ class Person extends Entity
     public function getPersonFundingOrganizations()
     {
         return $this->personFundingOrganizations;
+    }
+
+    /**
+     * Getter for personResearchGroups.
+     *
+     * @access public
+     *
+     * @return \Doctrine\Common\Collections\Collection Collection containing personResearchGroups
+     *                                                 listings for this research group.
+     */
+    public function getPersonResearchGroups()
+    {
+        return $this->personResearchGroups;
     }
 
     /**
