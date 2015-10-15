@@ -52,7 +52,7 @@
 
             $(this).wrap(wrapper);
 
-            if (!options.canEdit) {
+            if (!options.canEdit || !$(this).hasAttr("editable")) {
                 return null;
             }
 

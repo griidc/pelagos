@@ -29,8 +29,9 @@
     </ul>
     <div id="tabs-1">
         <table border="0" width="100%">
+        {% set PersonResearchGroupEditable = true %}
+        {% set PersonResearchGroupDeletable = true %}
         {% if ResearchGroup.getPersonResearchGroups | length > 0 %}
-            {% set PersonResearchGroupDeletable = true %}
             {% for PersonResearchGroup in ResearchGroup.getPersonResearchGroups | sortBy(["role.weight","person.lastName","person.firstName"]) %}
                 <tr>
                     <td>
