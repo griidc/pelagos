@@ -64,6 +64,15 @@ class Person extends Entity
     protected $emailAddress;
 
     /**
+     * Person's PersonFundingOrganizations.
+     *
+     * @var \Doctrine\Common\Collections\Collection $personFundingOrganizations
+     *
+     * @access protected
+     */
+    protected $personFundingOrganizations;
+
+    /**
      * Person's PersonResearchGroups.
      *
      * @var \Doctrine\Common\Collections\Collection $personResearchGroups
@@ -94,6 +103,13 @@ class Person extends Entity
             'type' => 'string',
             'setter' => 'setEmailAddress',
             'getter' => 'getEmailAddress',
+        ),
+        'personFundingOrganizations' => array(
+            'type' => 'object',
+            'class' => '\Doctrine\Common\Collections\Collection',
+            'getter' => 'getPersonFundingOrganizations',
+            'setter' => 'setPersonFundingOrganizations',
+            'serialize' => false,
         ),
         'personResearchGroups' => array(
             'type' => 'object',
@@ -168,6 +184,48 @@ class Person extends Entity
     public function getEmailAddress()
     {
         return $this->emailAddress;
+    }
+
+    /**
+     * Setter for personFundingOrganizations.
+     *
+     * @param array|\Traversable $personFundingOrganizations Set of PersonFundingOrganization objects.
+     *
+     * @access public
+     *
+     * @throws \Exception When $personFundingOrganizations is not an array or traversable object.
+     * @throws \Exception When Non-PersonFundingOrganization found in $personFundingOrganizations.
+     *
+     * @return void
+     */
+    public function setPersonFundingOrganizations($personFundingOrganizations)
+    {
+        if (is_array($personFundingOrganizations) || $personFundingOrganizations instanceof \Traversable) {
+            foreach ($personFundingOrganizations as $personFundingOrganization) {
+                if (!$personFundingOrganization instanceof PersonFundingOrganization) {
+                    throw new \Exception('Non-PersonFundingOrganization found in personFundingOrganizations.');
+                }
+            }
+            $this->personFundingOrganizations = $personFundingOrganizations;
+            foreach ($this->personFundingOrganizations as $personFundingOrganization) {
+                $personFundingOrganization->setPerson($this);
+            }
+        } else {
+            throw new \Exception('personFundingOrganizations must be either array or traversable objects.');
+        }
+    }
+
+    /**
+     * Getter for personFundingOrganizations.
+     *
+     * @access public
+     *
+     * @return \Doctrine\Common\Collections\Collection Collection containing personFundingOrganizations
+     *                                                 listings for this Person.
+     */
+    public function getPersonFundingOrganizations()
+    {
+        return $this->personFundingOrganizations;
     }
 
     /**
