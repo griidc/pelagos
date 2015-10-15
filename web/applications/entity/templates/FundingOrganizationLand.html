@@ -41,6 +41,7 @@
         {% endfor %}
     {% endif %}
     {% if FundingOrganization.getPersonFundingOrganizations | length > 0 %}
+        {% set PersonFundingOrganizationDeletable = true %}
         <tr>
             <td></td>
             <td><h2>People</h2></td>
