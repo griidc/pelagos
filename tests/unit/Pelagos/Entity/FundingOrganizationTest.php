@@ -145,6 +145,13 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     protected $testMockFundingCycle;
 
     /**
+     * Property to hold a set of PersonFundingOrganizations for testing.
+     *
+     * @var $testPersonFundingOrganizations
+     */
+    protected $testPersonFundingOrganizations;
+
+    /**
      * Setup for PHPUnit tests.
      *
      * This instantiates an instance of FundingOrganization.
@@ -166,6 +173,30 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
         $this->fundingOrganization->setPostalCode(self::$testPostalCode);
         $this->fundingOrganization->setCountry(self::$testCountry);
         $this->fundingOrganization->setCreator(self::$testCreator);
+        $this->testPersonFundingOrganizations = array(
+            \Mockery::mock(
+                '\Pelagos\Entity\PersonFundingOrganization',
+                array(
+                    'setFundingOrganization' => null,
+                )
+            ),
+            \Mockery::mock(
+                '\Pelagos\Entity\PersonFundingOrganization',
+                array(
+                    'setFundingOrganization' => null,
+                )
+            ),
+        );
+        $this->fundingOrganization->setPersonFundingOrganizations($this->testPersonFundingOrganizations);
+
+        $this->testNewPersonFundingOrganizations = array(
+            \Mockery::mock(
+                '\Pelagos\Entity\PersonFundingOrganization',
+                array(
+                    'setFundingOrganization' => null,
+                )
+            ),
+        );
 
         $this->testMockFundingCycle = \Mockery::mock('\Pelagos\Entity\FundingCycle');
         $this->testMockFundingCycle->shouldReceive('setFundingOrganization');
@@ -346,7 +377,7 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test the testGetFundingCycles() method.
+     * Test the getFundingCycles() method.
      *
      * This method verify the return a set of Funding Cycles.
      *
@@ -361,7 +392,7 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test the testSetFundingCycles() method with bad (non-FC) element.
+     * Test the setFundingCycles() method with bad (non-FC) element.
      *
      * This method should result in an exception being thrown.
      *
@@ -375,7 +406,7 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test the testSetFundingCycles() method with a bad (non-FC) element included in set.
+     * Test the setFundingCycles() method with a bad (non-FC) element included in set.
      *
      * This method should result in an exception being thrown.
      *
@@ -386,6 +417,51 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     public function testSetFundingCyclesWithNonFCElement()
     {
         $this->fundingOrganization->setFundingCycles(array($this->testMockFundingCycle, 'string data'));
+    }
+
+    /**
+     * Test the getPersonFundingOrganizations method.
+     *
+     * Verifies the associated PersonFundingOrganizations are each an instance of PersonFundingOrganizations.
+     *
+     * @return void
+     */
+    public function testGetPersonFundingOrganization()
+    {
+        $personFundingOrganizations = $this->fundingOrganization->getPersonFundingOrganizations();
+        foreach ($personFundingOrganizations as $personFundingOrganization) {
+            $this->assertInstanceOf('\Pelagos\Entity\PersonFundingOrganization', $personFundingOrganization);
+        }
+    }
+
+    /**
+     * Test the setPersonFundingOrganizations() method with a non-array/traversable object.
+     *
+     * This method should result in an exception being thrown.
+     *
+     * @expectedException \Exception
+     *
+     * @return void
+     */
+    public function testSetPersonFundingOrganizationsWithNonTraversable()
+    {
+        $this->fundingOrganization->setPersonFundingOrganizations('string data');
+    }
+
+    /**
+     * Test setPersonFundingOrganizations() with bad (non-PersonFundingOrganization) element.
+     *
+     * This method should result in an exception being thrown.
+     *
+     * @expectedException \Exception
+     *
+     * @return void
+     */
+    public function testSetPersonFundingOrganizationsWithANonPersonFundingOrganizationInArray()
+    {
+        $testArry = $this->testPersonFundingOrganizations;
+        array_push($testArry, 'string data');
+        $this->fundingOrganization->setPersonFundingOrganizations($testArry);
     }
 
     /**
@@ -409,6 +485,7 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
                 'postalCode' => 'new_postalCode',
                 'country' => 'new_country',
                 'creator' => 'new_creator',
+                'personFundingOrganizations' => $this->testNewPersonFundingOrganizations,
             )
         );
         $this->assertEquals(
@@ -458,6 +535,10 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(
             'new_creator',
             $this->fundingOrganization->getCreator()
+        );
+        $this->assertSame(
+            $this->testNewPersonFundingOrganizations,
+            $this->fundingOrganization->getPersonFundingOrganizations()
         );
     }
 
