@@ -2,7 +2,6 @@
 <div id="leadership">
     <table>
     {% if FundingOrganization.getPersonFundingOrganizations | length > 0 %}
-    yo
         {% for PersonFundingOrganization in FundingOrganization.getPersonFundingOrganizations | sortBy(["role.weight","person.lastName","person.firstName"]) %}
             {% if PersonFundingOrganization.getRole.getWeight == 1 %}
                 <tr PersonFundingOrganizationId="{{PersonFundingOrganization.getId}}">
