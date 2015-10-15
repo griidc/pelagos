@@ -24,7 +24,7 @@
         <table border="0" width="100%">
         {% set PersonResearchGroupEditable = false %}
         {% if Person.getPersonResearchGroups | length > 0 %}
-            {% for PersonResearchGroup in Person.getPersonResearchGroups | sortBy(["role.weight","person.lastName","person.firstName"]) %}
+            {% for PersonResearchGroup in Person.getPersonResearchGroups | sortBy(["researchGroup.name"]) %}
                 <tr>
                     <td>
                         <div>
