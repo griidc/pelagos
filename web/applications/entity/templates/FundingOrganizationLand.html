@@ -40,4 +40,24 @@
         </tr>
         {% endfor %}
     {% endif %}
+    {% if FundingOrganization.getPersonFundingOrganizations | length > 0 %}
+        <tr>
+            <td></td>
+            <td><h2>People</h2></td>
+        </tr>
+        {% for PersonFundingOrganization in FundingOrganization.getPersonFundingOrganizations %}
+        <tr>
+            <td width="25%" valign="top">
+
+            </td>
+            <td>
+                <div>
+                    <p>
+                        {% include 'PersonFundingOrganization.html' %}
+                    </p>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    {% endif %}
 </table>
