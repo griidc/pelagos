@@ -1,7 +1,7 @@
 <!--
-This file defines the Doctrine mapping between the Pelagos\Entity\ResearchGroupRole
-entity class and the research_group_role view in the postgres database.
-Properties other than id that are inherited from Pelagos\Entity\Entity are mapped in
+This file defines the Doctrine mapping between the Pelagos\Entity\FundingOrganizationRole
+entity class and the funding_organization_role view in the postgres database.
+Properties other than id that are inherited from Pelagos\Entity\Entity and are mapped in
 Pelagos.Entity.Entity.dcm.xml
 -->
 
@@ -10,11 +10,11 @@ Pelagos.Entity.Entity.dcm.xml
     xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
                         http://raw.github.com/doctrine/doctrine2/master/doctrine-mapping.xsd">
 
-    <entity name="Pelagos\Entity\ResearchGroupRole" table="research_group_role">
+    <entity name="Pelagos\Entity\FundingOrganizationRole" table="funding_organization_role">
 
-        <id name="id" column="research_group_role_number" type="integer">
+        <id name="id" column="funding_organization_role_number" type="integer">
             <generator strategy="SEQUENCE" />
-            <sequence-generator sequence-name="seq_research_group_role_number" allocation-size="1" initial-value="1" />
+            <sequence-generator sequence-name="seq_funding_organization_role_number" allocation-size="1" initial-value="1" />
         </id>
 
         <field name="name"   column="name"   type="string" />
