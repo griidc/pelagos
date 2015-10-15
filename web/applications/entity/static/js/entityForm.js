@@ -208,12 +208,15 @@
             Form.find("a[name=\"" + name + "\"]").attr("href", value).html(value);
             var selector = Form.find("input,textarea,select").filter("[name=\"" + name + "\"]");
             // Set extra property of name for reset purposes.
+
             if (Parent === name) {
                 var childName = name.split(".");
                 childName = childName[childName.length - 1];
                 selector.attr(childName, value);
             }
-            selector.prop("defaultValue", value);
+            if (typeof value !== "object") {
+                selector.prop("defaultValue", value);
+            }
             var elementType = selector.prop("type");
             //Check if value is an object, and switch between the case that can handle objects
             if (typeof value !== "object") {
@@ -226,6 +229,7 @@
                         selector.attr("checked", value);
                         break;
                     case "select-one":
+                        selector.find("option").attr("selected", false);
                         selector.val(value);
                         selector.find("[value=\"" + value + "\"]").attr("selected", true);
                         break;

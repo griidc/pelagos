@@ -20,7 +20,7 @@ $(document).ready(function()
     });
 
     // Set FundingCycle list back to match with the original funding organization
-    $("form").on("reset", function() {
+    $("form[entityType=\"ResearchGroup\"]").on("reset", function() {
         var fundingOrganization = $(this).find("[fundingOrganization]");
         var fundingOrganizationValue = fundingOrganization.attr("fundingOrganization");
         fundingOrganization.find("option").attr("selected", false);
