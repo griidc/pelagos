@@ -104,6 +104,13 @@ class Person extends Entity
             'setter' => 'setEmailAddress',
             'getter' => 'getEmailAddress',
         ),
+        'personFundingOrganizations' => array(
+            'type' => 'object',
+            'class' => '\Doctrine\Common\Collections\Collection',
+            'getter' => 'getPersonFundingOrganizations',
+            'setter' => 'setPersonFundingOrganizations',
+            'serialize' => false,
+        ),
         'personResearchGroups' => array(
             'type' => 'object',
             'class' => '\Doctrine\Common\Collections\Collection',
