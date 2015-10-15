@@ -189,6 +189,15 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
         );
         $this->fundingOrganization->setPersonFundingOrganizations($this->testPersonFundingOrganizations);
 
+        $this->testNewPersonFundingOrganizations = array(
+            \Mockery::mock(
+                '\Pelagos\Entity\PersonFundingOrganization',
+                array(
+                    'setFundingOrganization' => null,
+                )
+            ),
+        );
+
         $this->testMockFundingCycle = \Mockery::mock('\Pelagos\Entity\FundingCycle');
         $this->testMockFundingCycle->shouldReceive('setFundingOrganization');
         $this->testMockFundingCycle->shouldReceive('jsonSerialize');
@@ -476,6 +485,7 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
                 'postalCode' => 'new_postalCode',
                 'country' => 'new_country',
                 'creator' => 'new_creator',
+                'personFundingOrganizations' => $this->testNewPersonFundingOrganizations,
             )
         );
         $this->assertEquals(
@@ -525,6 +535,10 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(
             'new_creator',
             $this->fundingOrganization->getCreator()
+        );
+        $this->assertSame(
+            $this->testNewPersonFundingOrganizations,
+            $this->fundingOrganization->getPersonFundingOrganizations()
         );
     }
 
