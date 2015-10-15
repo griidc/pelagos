@@ -1,23 +1,24 @@
-<form {{ (PersonResearchGroupDeletable ? ' deletable ' : '') }}
-    class="entityForm" entityType="PersonResearchGroup">
+<form class="entityForm" entityType="PersonResearchGroup" {{ (PersonResearchGroupEditable ? 'editable' : '') }} {{ (PersonResearchGroupDeletable ? 'deletable' : '') }} >
 
     <input type="hidden" name="id" value="{{PersonResearchGroup.getId}}">
 
-    <label for="person">Person:</label>
-    {% if not ResearchGroup %}
-        <select required name="person" person="{{PersonResearchGroup.getPerson.getId}}">
-        <option value="">[Please Select a Person]</option>
-        {% for Person in entityService.getAll("Person") | sortBy(["lastName","firstName"]) %}
-            <option value="{{Person.getId}}"
-            {{ (PersonResearchGroup.getPerson.getId == Person.getId ? ' selected ' : '') }}
-            >{{Person.getLastName}}, {{Person.getFirstName}}, {{Person.getEmailAddress}}</option>
-        {% endfor %}
-        </select>
-        <label for="person" class="error"></label>
-    {% else %}
-        {{PersonResearchGroup.getPerson.getLastName}}, {{PersonResearchGroup.getPerson.getFirstName}} &lt;{{PersonResearchGroup.getPerson.getEmailAddress}}&gt;
+    {% if not Person %}
+        <label for="person">Person:</label>
+        {% if not ResearchGroup %}
+            <select required name="person" person="{{PersonResearchGroup.getPerson.getId}}">
+            <option value="">[Please Select a Person]</option>
+            {% for Person in entityService.getAll("Person") | sortBy(["lastName","firstName"]) %}
+                <option value="{{Person.getId}}"
+                {{ (PersonResearchGroup.getPerson.getId == Person.getId ? ' selected ' : '') }}
+                >{{Person.getLastName}}, {{Person.getFirstName}}, {{Person.getEmailAddress}}</option>
+            {% endfor %}
+            </select>
+            <label for="person" class="error"></label>
+        {% else %}
+            {{PersonResearchGroup.getPerson.getLastName}}, {{PersonResearchGroup.getPerson.getFirstName}} &lt;{{PersonResearchGroup.getPerson.getEmailAddress}}&gt;
+        {% endif %}
+        <br>
     {% endif %}
-    <br>
 
     {% if not ResearchGroup %}
         <label for="researchGroup.fundingCycle.fundingOrganization">Funding Organization:</label>
