@@ -1,4 +1,5 @@
-<form class="entityForm" entityType="PersonFundingOrganization" {{ (PersonFundingOrganizationEditable ? 'editable' : '') }}>
+<form class="entityForm" entityType="PersonFundingOrganization" {{ (PersonFundingOrganizationEditable ? 'editable' : '') }}
+{{(PersonFundingOrganizationDeletable ? 'deletable' : '') }} >
 
     <input type="hidden" name="id" value="{{PersonFundingOrganization.getId}}">
 
