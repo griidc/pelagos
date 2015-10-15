@@ -377,7 +377,7 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test the testGetFundingCycles() method.
+     * Test the getFundingCycles() method.
      *
      * This method verify the return a set of Funding Cycles.
      *
@@ -392,7 +392,7 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test the testSetFundingCycles() method with bad (non-FC) element.
+     * Test the setFundingCycles() method with bad (non-FC) element.
      *
      * This method should result in an exception being thrown.
      *
@@ -406,7 +406,7 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test the testSetFundingCycles() method with a bad (non-FC) element included in set.
+     * Test the setFundingCycles() method with a bad (non-FC) element included in set.
      *
      * This method should result in an exception being thrown.
      *
@@ -419,10 +419,10 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
         $this->fundingOrganization->setFundingCycles(array($this->testMockFundingCycle, 'string data'));
     }
 
-   /**
-     * Test the testGetPersonFundingOrganizations method.
+    /**
+     * Test the getPersonFundingOrganizations method.
      *
-     * This method verifies the associated PersonFundingOrganizations are each an instance of PersonFundingOrganizations.
+     * Verifies the associated PersonFundingOrganizations are each an instance of PersonFundingOrganizations.
      *
      * @return void
      */
@@ -435,7 +435,7 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test the testSetPersonFundingOrganizations() method with a non-array/traversable object.
+     * Test the setPersonFundingOrganizations() method with a non-array/traversable object.
      *
      * This method should result in an exception being thrown.
      *
@@ -449,7 +449,7 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test testSetPersonFundingOrganizations() method with a bad (non-PersonFundingOrganization) element in otherwise good array.
+     * Test setPersonFundingOrganizations() with bad (non-PersonFundingOrganization) element.
      *
      * This method should result in an exception being thrown.
      *
