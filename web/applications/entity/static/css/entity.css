@@ -42,8 +42,8 @@ select, input{
    height: 20px;
 }
 
-#researchgroup .entityForm input[type="text"],
-#researchgroup .entityForm textarea {
+#orgdetails .entityForm input[type="text"],
+#orgdetails .entityForm textarea {
     width:100%;
 }
 

@@ -8,10 +8,15 @@
                 {% endif %}
             </div>
         </td>
-        <td style="padding:10px;" width="60%" valign="top">
-            <div id="details">
+        <td style="padding:10px;" width="50%" valign="top">
+            <div id="orgdetails">
                 <h2>Funding Organization Details</h2>
                 {% include 'FundingOrganization.html' %}
+            </div>
+        </td>
+        <td width="25%" valign="top">
+            <div id="leadership">
+                {% include 'PersonFundingOrganizationLeadership.html' %}
             </div>
         </td>
     </tr>
