@@ -16,10 +16,31 @@
 
 <div id="tabs" style="width:100%">
     <ul>
+        {% if Person.getPersonFundingOrganizations | length > 0 %}
+            <li><a href="#tabs-FundingOrganizations">Funding Organizations</a></li>
+        {% endif %}
         <li><a href="#tabs-1">Research Groups</a></li>
         <li><a href="#tabs-2">Datasets</a></li>
         <li><a href="#tabs-3">Publications</a></li>
     </ul>
+    {% if Person.getPersonFundingOrganizations | length > 0 %}
+        {% set PersonFundingOrganizationEditable = false %}
+        <div id="tabs-FundingOrganizations">
+            <table border="0" width="100%">
+                {% for PersonFundingOrganization in Person.getPersonFundingOrganizations | sortBy(["fundingOrganization.name"]) %}
+                    <tr>
+                        <td>
+                            <div>
+                                <p>
+                                    {% include 'PersonFundingOrganization.html' %}
+                                </p>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    {% endif %}
     <div id="tabs-1">
         <table border="0" width="100%">
         {% set PersonResearchGroupEditable = false %}
