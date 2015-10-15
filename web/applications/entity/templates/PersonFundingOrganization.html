@@ -2,21 +2,23 @@
 
     <input type="hidden" name="id" value="{{PersonFundingOrganization.getId}}">
 
-    <label for="person">Person:</label>
-    {% if not FundingOrganization %}
-        <select required name="person" person="{{PersonFundingOrganization.getPerson.getId}}">
-        <option value="">[Please Select a Person]</option>
-        {% for Person in entityService.getAll("Person", {"lastName":"ASC","firstName":"ASC"}) %}
-            <option value="{{Person.getId}}"
-            {{ (PersonFundingOrganization.getPerson.getId == Person.getId ? ' selected ' : '') }}
-            >{{Person.getLastName}}, {{Person.getFirstName}}, {{Person.getEmailAddress}}</option>
-        {% endfor %}
-        </select>
-        <label for="person" class="error"></label>
-    {% else %}
-        {{PersonFundingOrganization.getPerson.getFirstName}} {{PersonFundingOrganization.getPerson.getLastName}} &lt;{{PersonFundingOrganization.getPerson.getEmailAddress}}&gt;
+    {% if not Person %}
+        <label for="person">Person:</label>
+        {% if not FundingOrganization %}
+            <select required name="person" person="{{PersonFundingOrganization.getPerson.getId}}">
+            <option value="">[Please Select a Person]</option>
+            {% for Person in entityService.getAll("Person", {"lastName":"ASC","firstName":"ASC"}) %}
+                <option value="{{Person.getId}}"
+                {{ (PersonFundingOrganization.getPerson.getId == Person.getId ? ' selected ' : '') }}
+                >{{Person.getLastName}}, {{Person.getFirstName}}, {{Person.getEmailAddress}}</option>
+            {% endfor %}
+            </select>
+            <label for="person" class="error"></label>
+        {% else %}
+            {{PersonFundingOrganization.getPerson.getFirstName}} {{PersonFundingOrganization.getPerson.getLastName}} &lt;{{PersonFundingOrganization.getPerson.getEmailAddress}}&gt;
+        {% endif %}
+        <br>
     {% endif %}
-    <br>
 
     {% if not FundingOrganization %}
         <label for="researchGroup.fundingCycle.fundingOrganization">Funding Organization:</label>
