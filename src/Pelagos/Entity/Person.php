@@ -209,6 +209,19 @@ class Person extends Entity
     }
 
     /**
+     * Getter for personFundingOrganizations.
+     *
+     * @access public
+     *
+     * @return \Doctrine\Common\Collections\Collection Collection containing personFundingOrganizations
+     *                                                 listings for this Person.
+     */
+    public function getPersonFundingOrganizations()
+    {
+        return $this->personFundingOrganizations;
+    }
+
+    /**
      * Setter for personResearchGroups.
      *
      * @param array|\Traversable $personResearchGroups Set of PersonResearchGroup objects.
@@ -235,19 +248,6 @@ class Person extends Entity
         } else {
             throw new \Exception('personResearchGroups must be either array or traversable objects.');
         }
-    }
-
-    /**
-     * Getter for personFundingOrganizations.
-     *
-     * @access public
-     *
-     * @return \Doctrine\Common\Collections\Collection Collection containing personFundingOrganizations
-     *                                                 listings for this Person.
-     */
-    public function getPersonFundingOrganizations()
-    {
-        return $this->personFundingOrganizations;
     }
 
     /**
