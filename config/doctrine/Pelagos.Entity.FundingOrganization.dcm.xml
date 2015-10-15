@@ -45,6 +45,8 @@ Pelagos.Entity.Entity.dcm.xml
             </order-by>
         </one-to-many>
 
+        <one-to-many field="personFundingOrganizations" target-entity="PersonFundingOrganization" mapped-by="fundingOrganization" />
+
     </entity>
 
 </doctrine-mapping>
