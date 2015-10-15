@@ -63,7 +63,7 @@
 
     {% if userLoggedIn == "true" %}
         <label for="role">Role:</label>
-        <select required name="role" researchGroupRole="{{PersonResearchGroup.getRole.getId}}">
+        <select required name="role" role="{{PersonResearchGroup.getRole.getId}}">
         <option value="">[Please Select a Role]</option>
         {% for Role in entityService.getAll("ResearchGroupRole") | sortBy(["weight"]) %}
             <option value="{{Role.getId}}"
