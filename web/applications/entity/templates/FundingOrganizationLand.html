@@ -47,7 +47,7 @@
             <td><h2>People</h2></td>
         </tr>
         {% set PersonFundingOrganizationEditable = true %}
-        {% for PersonFundingOrganization in FundingOrganization.getPersonFundingOrganizations %}
+        {% for PersonFundingOrganization in FundingOrganization.getPersonFundingOrganizations | sortBy(["role.weight","person.lastName","person.firstName"]) %}
         <tr>
             <td width="25%" valign="top">
 
