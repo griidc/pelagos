@@ -39,10 +39,29 @@ var table;
         .button({
             disabled: true
         })
-        .click(function () {
+        .click( function ( ) {
             var id = table.row(".selected").data().id;
-            var url = pelagosBasePath + "/applications/entity/" + entityType + "/" + id;
-            window.open(url, "_blank");
+            $.when(confirmDialog(id)).done(function() {
+                $.ajax({
+                    url: pelagosBasePath + "/services/entity/" + entityType + "/" + id,
+                    method: "DELETE"
+                }).done(function () {
+                    $('.selected').fadeOut('slow', function () {
+                        table.row('.selected').remove().draw( true );
+                        $('#button_delete').button('option', 'disabled', 'true');
+                        $('#button_detail').button('option', 'disabled', 'true');
+                        $("#selection_comment").fadeIn();
+                    });
+                }).fail( function ( xhr, textStatus, errorThrown) {
+                    var msg = "Could not delete due to reason: ";
+                    $( '<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>' + msg + errorThrown + '</p>' ).dialog({
+                        resizable: false,
+                        height:'auto',
+                        modal: true,
+                        title: 'Error Encountered'
+                       });
+                });
+            });
         });
 
         $(this).find("tbody").on("click", "tr", function ()
@@ -60,6 +79,30 @@ var table;
                 $("#selection_comment").fadeOut();
             }
         });
+
+    function confirmDialog(id)
+    {
+        return $.Deferred(function() {
+            var self = this;
+            $( '<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Remove Person from Research Group?</p>' ).dialog({
+                resizable: false,
+                height:'auto',
+                modal: true,
+                title: 'Please Confirm',
+                buttons: {
+                    "Delete?": function() {
+                        $( this ).dialog( "close" );
+                        self.resolve();
+                    },
+                    "Cancel": function() {
+                        $( this ).dialog( "close" );
+                        self.reject();
+                    }
+                }
+            });
+        });
+    }
+
     };
 }(jQuery));
 
