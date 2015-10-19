@@ -35,16 +35,28 @@ var table;
             window.open(url, "_blank");
         });
 
+        $("#button_delete")
+        .button({
+            disabled: true
+        })
+        .click(function () {
+            var id = table.row(".selected").data().id;
+            var url = pelagosBasePath + "/applications/entity/" + entityType + "/" + id;
+            window.open(url, "_blank");
+        });
+
         $(this).find("tbody").on("click", "tr", function ()
         {
             if ($(this).hasClass("selected")) {
                 $(this).removeClass("selected");
                 $("#button_detail").button("option", "disabled", true);
+                $("#button_delete").button("option", "disabled", true);
                 $("#selection_comment").fadeIn();
             } else {
                 table.$("tr.selected").removeClass("selected");
                 $(this).addClass("selected");
                 $("#button_detail").button("option", "disabled", false);
+                $("#button_delete").button("option", "disabled", false);
                 $("#selection_comment").fadeOut();
             }
         });
