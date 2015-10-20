@@ -71,20 +71,20 @@ function showConfirmation(title, message, yesText, noText)
     var yesText = yesText || "yes";
     var noText = noText || "no";
 
-    var dialog_buttons = {};
-
-    dialog_buttons[yesText] = function () {
-                    jQuery(this).dialog("close");
-                    self.resolve();
-    }
-
-    dialog_buttons[noText] = function () {
-                    jQuery(this).dialog("close");
-                    self.reject();
-    }
-
     return $.Deferred(function () {
+        var dialog_buttons = {};
         var self = this;
+
+        dialog_buttons[yesText] = function () {
+            jQuery(this).dialog("close");
+            self.resolve();
+        }
+
+        dialog_buttons[noText] = function () {
+            jQuery(this).dialog("close");
+            self.reject();
+        }
+
         jQuery("<div>" + message + "</div>").dialog({
             autoOpen: true,
             resizable: false,
