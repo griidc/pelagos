@@ -41,7 +41,9 @@ var table;
         })
         .click( function ( ) {
             var id = table.row(".selected").data().id;
-            $.when(confirmDialog(id)).done(function() {
+            var title = "Please confirm:";
+            var msg = "You are about to remove a " + entityType + " association.";
+            $.when(showConfirmation( title, msg )).done(function() {
                 $.ajax({
                     url: pelagosBasePath + "/services/entity/" + entityType + "/" + id,
                     method: "DELETE"
@@ -81,30 +83,6 @@ var table;
                 $("#selection_comment").fadeOut();
             }
         });
-
-    function confirmDialog(id)
-    {
-        return $.Deferred(function() {
-            var self = this;
-            $( '<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Remove this association from ' + entityType + '?</p>' ).dialog({
-                resizable: false,
-                height:'auto',
-                modal: true,
-                title: 'Please Confirm',
-                buttons: {
-                    "Delete?": function() {
-                        $( this ).dialog( "close" );
-                        self.resolve();
-                    },
-                    "Cancel": function() {
-                        $( this ).dialog( "close" );
-                        self.reject();
-                    }
-                }
-            });
-        });
-    }
-
     };
 }(jQuery));
 
