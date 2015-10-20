@@ -42,8 +42,8 @@ var table;
         .click( function ( ) {
             var id = table.row(".selected").data().id;
             var title = "Please confirm:";
-            var msg = "You are about to remove a " + entityType + " association.";
-            $.when(showConfirmation( title, msg )).done(function() {
+            var msg = "You are about to remove a " + entityType + ".";
+            $.when(showConfirmation( title, msg, "Delete " + entityType, "Cancel" )).done(function() {
                 $.ajax({
                     url: pelagosBasePath + "/services/entity/" + entityType + "/" + id,
                     method: "DELETE"
