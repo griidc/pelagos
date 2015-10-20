@@ -43,29 +43,31 @@ var table;
             var id = table.row(".selected").data().id;
             var title = "Please confirm:";
             var msg = "You are about to remove a " + entityType + ".";
-            $.when(showConfirmation( title, msg, "Delete " + entityType, "Cancel" )).done(function() {
-                $.ajax({
-                    url: pelagosBasePath + "/services/entity/" + entityType + "/" + id,
-                    method: "DELETE"
-                }).done(function () {
-                    $('.selected').fadeOut('slow', function () {
-                        table.row('.selected').remove().draw( true );
-                        $('#button_delete').button('option', 'disabled', 'true');
-                        $('#button_detail').button('option', 'disabled', 'true');
-                        $("#selection_comment").fadeIn();
+            if ($(this).parents("table")[0].hasAttribute("deletable")) {
+                $.when(showConfirmation( title, msg, "Delete " + entityType, "Cancel" )).done(function() {
+                    $.ajax({
+                        url: pelagosBasePath + "/services/entity/" + entityType + "/" + id,
+                        method: "DELETE"
+                    }).done(function () {
+                        $('.selected').fadeOut('slow', function () {
+                            table.row('.selected').remove().draw( true );
+                            $('#button_delete').button('option', 'disabled', 'true');
+                            $('#button_detail').button('option', 'disabled', 'true');
+                            $("#selection_comment").fadeIn();
+                        });
+                    }).fail( function ( xhr, textStatus, errorThrown ) {
+                        var msg = "Could not delete due to reason: ";
+                        var jsonError = xhr.responseJSON.message;
+                        console.log(jsonError);
+                        $( '<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>' + msg + jsonError +'</p>' ).dialog({
+                            resizable: false,
+                            height:'auto',
+                            modal: true,
+                            title: 'Error Encountered'
+                           });
                     });
-                }).fail( function ( xhr, textStatus, errorThrown ) {
-                    var msg = "Could not delete due to reason: ";
-                    var jsonError = xhr.responseJSON.message;
-                    console.log(jsonError);
-                    $( '<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>' + msg + jsonError +'</p>' ).dialog({
-                        resizable: false,
-                        height:'auto',
-                        modal: true,
-                        title: 'Error Encountered'
-                       });
                 });
-            });
+            }
         });
 
         $(this).find("tbody").on("click", "tr", function ()
@@ -73,13 +75,17 @@ var table;
             if ($(this).hasClass("selected")) {
                 $(this).removeClass("selected");
                 $("#button_detail").button("option", "disabled", true);
-                $("#button_delete").button("option", "disabled", true);
+                if ($(this).parents("table")[0].hasAttribute("deletable")) {
+                    $("#button_delete").button("option", "disabled", true);
+                }
                 $("#selection_comment").fadeIn();
             } else {
                 table.$("tr.selected").removeClass("selected");
                 $(this).addClass("selected");
                 $("#button_detail").button("option", "disabled", false);
-                $("#button_delete").button("option", "disabled", false);
+                if ($(this).parents("table")[0].hasAttribute("deletable")) {
+                    $("#button_delete").button("option", "disabled", false);
+                }
                 $("#selection_comment").fadeOut();
             }
         });
