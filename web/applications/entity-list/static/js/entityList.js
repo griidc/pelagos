@@ -52,9 +52,11 @@ var table;
                         $('#button_detail').button('option', 'disabled', 'true');
                         $("#selection_comment").fadeIn();
                     });
-                }).fail( function ( xhr, textStatus, errorThrown) {
+                }).fail( function ( xhr, textStatus, errorThrown ) {
                     var msg = "Could not delete due to reason: ";
-                    $( '<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>' + msg + errorThrown + '</p>' ).dialog({
+                    var jsonError = xhr.responseJSON.message;
+                    console.log(jsonError);
+                    $( '<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>' + msg + jsonError +'</p>' ).dialog({
                         resizable: false,
                         height:'auto',
                         modal: true,
@@ -84,7 +86,7 @@ var table;
     {
         return $.Deferred(function() {
             var self = this;
-            $( '<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Remove Person from Research Group?</p>' ).dialog({
+            $( '<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Remove this association from ' + entityType + '?</p>' ).dialog({
                 resizable: false,
                 height:'auto',
                 modal: true,
