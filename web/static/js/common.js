@@ -11,7 +11,7 @@
 function sortObject(data, property, desc, ignorecase)
 {
     "use strict";
-    return data.sort(function(a, b) {
+    return data.sort(function (a, b) {
         if (!ignorecase) {
             if (!desc) {
                 return (a[property] > b[property]) ? 1 : ((a[property] < b[property]) ? -1 : 0);
@@ -50,7 +50,7 @@ function showDialog(title, message)
         modal: true,
         title: title,
         buttons: {
-            Ok: function() {
+            Ok: function () {
                 jQuery(this).dialog("close");
             }
         }
@@ -65,10 +65,25 @@ function showDialog(title, message)
  *
  * @return Deferred
  */
-function showConfirmation(title, message)
+function showConfirmation(title, message, yesText, noText)
 {
     "use strict";
-    return $.Deferred(function() {
+    var yesText = yesText || "yes";
+    var noText = noText || "no";
+
+    var dialog_buttons = {};
+
+    dialog_buttons[yesText] = function () {
+                    jQuery(this).dialog("close");
+                    self.resolve();
+    }
+
+    dialog_buttons[noText] = function () {
+                    jQuery(this).dialog("close");
+                    self.reject();
+    }
+
+    return $.Deferred(function () {
         var self = this;
         jQuery("<div>" + message + "</div>").dialog({
             autoOpen: true,
@@ -77,16 +92,7 @@ function showConfirmation(title, message)
             height: "auto",
             modal: true,
             title: title,
-            buttons: {
-                "Yes": function() {
-                    jQuery(this).dialog("close");
-                    self.resolve();
-                },
-                "No": function() {
-                    jQuery(this).dialog("close");
-                    self.reject();
-                }
-            }
+            buttons: dialog_buttons,
         });
     });
 }
