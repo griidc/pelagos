@@ -36,5 +36,5 @@ $(document).ready(function(){
             }
         ]
     });
-    $(".entityTable").attr("deletable", true);
+    $(".entityTable").attr("deletable", "");
 });

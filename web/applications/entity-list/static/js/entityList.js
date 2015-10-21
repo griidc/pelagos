@@ -42,7 +42,7 @@ var table;
         .click(function () {
             var id = table.row(".selected").data().id;
             var msg = "You are about to remove a " + entityType + ".";
-            if ($(this).parents("table")[0].hasAttribute("deletable")) {
+            if ($(this).closest("table").is("[deletable]")) {
                 $.when(showConfirmation({
                         title: "Please confirm:",
                         message: msg,
@@ -84,7 +84,7 @@ var table;
             if ($(this).hasClass("selected")) {
                 $(this).removeClass("selected");
                 $("#button_detail").button("option", "disabled", true);
-                if ($(this).parents("table")[0].hasAttribute("deletable")) {
+                if ($(this).closest("table").is("[deletable]")) {
                     $("#button_delete").button("option", "disabled", true);
                 }
                 $("#selection_comment").fadeIn();
@@ -92,7 +92,7 @@ var table;
                 table.$("tr.selected").removeClass("selected");
                 $(this).addClass("selected");
                 $("#button_detail").button("option", "disabled", false);
-                if ($(this).parents("table")[0].hasAttribute("deletable")) {
+                if ($(this).closest("table").is("[deletable]")) {
                     $("#button_delete").button("option", "disabled", false);
                 }
                 $("#selection_comment").fadeOut();
