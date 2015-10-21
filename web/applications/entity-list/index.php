@@ -15,8 +15,8 @@ $comp->setJSGlobals();
 
 $comp->addJS(
     array(
-        '/static/js/common.js',
         '//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js',
+        '/static/js/common.js',
         'static/js/entityList.js',
     )
 );
