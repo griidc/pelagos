@@ -44,7 +44,18 @@ var table;
             var title = "Please confirm:";
             var msg = "You are about to remove a " + entityType + ".";
             if ($(this).parents("table")[0].hasAttribute("deletable")) {
-                $.when(showConfirmation( title, msg, "Delete " + entityType, "Cancel" )).done(function() {
+                $.when(showConfirmation({
+                        title: "Please confirm:",
+                        message: msg,
+                        buttons: {
+                            "Yes" : {
+                                text: "Delete " + entityType
+                            },
+                            "No" : {
+                                text: "Cancel"
+                            }
+                        }
+                    })).done(function() {
                     $.ajax({
                         url: pelagosBasePath + "/services/entity/" + entityType + "/" + id,
                         method: "DELETE"

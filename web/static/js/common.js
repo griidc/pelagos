@@ -65,34 +65,42 @@ function showDialog(title, message)
  *
  * @return Deferred
  */
-function showConfirmation(title, message, yesText, noText)
+function showConfirmation(options) //title, message, yesText, noText
 {
     "use strict";
-    var yesText = yesText || "yes";
-    var noText = noText || "no";
+
+    var message = "Are you sure?";
+
+    if (options && options.hasOwnProperty("message")) {
+        message = options.message;
+    }
 
     return $.Deferred(function () {
-        var dialog_buttons = {};
         var self = this;
 
-        dialog_buttons[yesText] = function () {
-            jQuery(this).dialog("close");
-            self.resolve();
-        }
-
-        dialog_buttons[noText] = function () {
-            jQuery(this).dialog("close");
-            self.reject();
-        }
-
-        jQuery("<div>" + message + "</div>").dialog({
+        jQuery("<div>" + message + "</div>").dialog($.extend(true, {
             autoOpen: true,
             resizable: false,
             minWidth: 300,
             height: "auto",
             modal: true,
-            title: title,
-            buttons: dialog_buttons,
-        });
+            title: "Please Confirm",
+            buttons: {
+                "Yes" : {
+                    text: "Yes",
+                    click: function() {
+                        jQuery(this).dialog("close");
+                        self.resolve();
+                    }
+                },
+                "No" : {
+                    text: "No",
+                    click: function() {
+                        jQuery(this).dialog("close");
+                        self.reject();
+                    }
+                },
+            }
+        }, options));
     });
 }
