@@ -86,20 +86,20 @@ function showConfirmation(options) //title, message, yesText, noText
             modal: true,
             title: "Please Confirm",
             buttons: {
-                "Yes" : {
+                "Yes": {
                     text: "Yes",
                     click: function() {
                         jQuery(this).dialog("close");
                         self.resolve();
                     }
                 },
-                "No" : {
+                "No": {
                     text: "No",
                     click: function() {
                         jQuery(this).dialog("close");
                         self.reject();
                     }
-                },
+                }
             }
         }, options));
     });
