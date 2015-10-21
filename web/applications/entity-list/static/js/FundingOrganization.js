@@ -36,5 +36,4 @@ $(document).ready(function(){
             "Modifier By"
         ]
     });
-    $(".entityTable").attr("deletable", true);
 });
