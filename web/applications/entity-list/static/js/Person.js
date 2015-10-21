@@ -26,5 +26,5 @@ $(document).ready(function(){
         "columnDefs": [ { "searchable": false, "targets": [ 0, 4, 5, 6, 7 ] } ],
         "order": [[ 6, "desc" ]]
      });
-    $(".entityTable").attr("deletable", true);
+    $(".entityTable").attr("deletable", "");
 });
