@@ -35,6 +35,8 @@ $app = new \Slim\Slim(
     )
 );
 
+$comp->addJS('var userIsLoggedIn = "' . $comp->userIsLoggedIn() . '";', 'inline');
+
 $app->get(
     '/:entity',
     function ($entity) use ($app, $comp) {
