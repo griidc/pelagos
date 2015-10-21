@@ -25,7 +25,8 @@
             "capIsNewExceptions": [
                 "Deferred"
             ]
-        }]
+        }],
+        "quotes": [2, "double", "avoid-escape"]
     },
     "plugins": [
         "shadow-exception"
