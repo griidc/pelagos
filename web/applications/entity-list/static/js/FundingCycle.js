@@ -40,12 +40,5 @@ $(document).ready(function(){
             }
         ]
     });
-
-    $("#button_detail")
-    .off("click")
-    .click(function () {
-        var id = table.row(".selected").data().fundingOrganization.id;
-        var url = pelagosBasePath + "/applications/entity/FundingOrganization/" + id;
-        window.open(url, "_blank");
-    });
+    $(".entityTable").attr("deletable", "");
 });
