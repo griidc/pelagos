@@ -42,7 +42,7 @@ var table;
         .click(function () {
             var id = table.row(".selected").data().id;
             var msg = "You are about to remove a " + entityType + ".";
-            if ((userIsLoggedIn == 1) && $(this).closest("table").is("[deletable]")) {
+            if ((userIsLoggedIn === true) && $(this).closest("table").is("[deletable]")) {
                 $.when(showConfirmation({
                         title: "Please confirm:",
                         message: msg,
@@ -68,7 +68,7 @@ var table;
                     }).fail(function (xhr) {
                         msg = "Could not delete due to reason: ";
                         var jsonError = xhr.responseJSON.message;
-                        showDialog('Error', msg + jsonError);
+                        showDialog("Error", msg + jsonError);
                     });
                 });
             }
@@ -79,7 +79,7 @@ var table;
             if ($(this).hasClass("selected")) {
                 $(this).removeClass("selected");
                 $("#button_detail").button("option", "disabled", true);
-                if ((userIsLoggedIn == 1) && $(this).closest("table").is("[deletable]")) {
+                if ((userIsLoggedIn === true) && $(this).closest("table").is("[deletable]")) {
                     $("#button_delete").button("option", "disabled", true);
                 }
                 $("#selection_comment").fadeIn();
@@ -87,7 +87,7 @@ var table;
                 table.$("tr.selected").removeClass("selected");
                 $(this).addClass("selected");
                 $("#button_detail").button("option", "disabled", false);
-                if ((userIsLoggedIn == 1) && $(this).closest("table").is("[deletable]")) {
+                if ((userIsLoggedIn === true) && $(this).closest("table").is("[deletable]")) {
                     $("#button_delete").button("option", "disabled", false);
                 }
                 $("#selection_comment").fadeOut();
