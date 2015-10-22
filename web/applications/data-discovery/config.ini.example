@@ -1,6 +1,7 @@
 [DataDiscovery]
-registeredOrderBy = "year DESC, dataset_originator, title"
-identifiedOrderBy = "title"
+registeredOrderBy = "submittimestamp DESC"
+identifiedOrderBy = "last_edit DESC"
 treePaneCollapsed = 0
 alternateDownloadSite = 0
 alternateDownloadSiteServer = "poseidon-cs.tamu.edu"
+downloadDir = "/san/home/http/download"

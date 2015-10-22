@@ -1,3 +1,4 @@
+var $ = jQuery.noConflict();
 $(document).ready(function(){
     "use strict";
 
@@ -27,5 +28,5 @@ $(document).ready(function(){
         "order": [[ 6, "desc" ]],
         "canDelete": userIsLoggedIn
      });
-    $(".entityTable").attr("deletable", "");
+
 });
