@@ -1,5 +1,3 @@
-var table;
-
 (function($) {
     "use strict";
     $.fn.pelagosDataTable = function(options) {
@@ -14,7 +12,7 @@ var table;
             $(self).find("thead > tr").append("<th>" + this + "</th>");
         });
 
-        table = $(this).DataTable($.extend(true, {
+        var table = $(this).DataTable($.extend(true, {
                 "lengthMenu": [ [25, 40, 100, -1], [25, 50, 100, "Show All"] ],
                 "deferRender": false,
                 "search": {
