@@ -68,12 +68,7 @@ var table;
                     }).fail(function (xhr) {
                         msg = "Could not delete due to reason: ";
                         var jsonError = xhr.responseJSON.message;
-                        $('<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>' + msg + jsonError + "</p>").dialog({
-                            resizable: false,
-                            height: "auto",
-                            modal: true,
-                            title: "Error Encountered"
-                           });
+                        showDialog('Error', msg + jsonError);
                     });
                 });
             }
