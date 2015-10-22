@@ -28,5 +28,5 @@ $(document).ready(function(){
         "order": [[ 6, "desc" ]],
         "canDelete": userIsLoggedIn
      });
-
+    $(".entityTable").attr("deletable", "");
 });
