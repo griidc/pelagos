@@ -11,7 +11,7 @@
 function sortObject(data, property, desc, ignorecase)
 {
     "use strict";
-    return data.sort(function(a, b) {
+    return data.sort(function (a, b) {
         if (!ignorecase) {
             if (!desc) {
                 return (a[property] > b[property]) ? 1 : ((a[property] < b[property]) ? -1 : 0);
@@ -50,7 +50,7 @@ function showDialog(title, message)
         modal: true,
         title: title,
         buttons: {
-            Ok: function() {
+            Ok: function () {
                 jQuery(this).dialog("close");
             }
         }
@@ -65,28 +65,42 @@ function showDialog(title, message)
  *
  * @return Deferred
  */
-function showConfirmation(title, message)
+function showConfirmation(options) //title, message, yesText, noText
 {
     "use strict";
-    return $.Deferred(function() {
+
+    var message = "Are you sure?";
+
+    if (options && options.hasOwnProperty("message")) {
+        message = options.message;
+    }
+
+    return $.Deferred(function () {
         var self = this;
-        jQuery("<div>" + message + "</div>").dialog({
+
+        jQuery("<div>" + message + "</div>").dialog($.extend(true, {
             autoOpen: true,
             resizable: false,
             minWidth: 300,
             height: "auto",
             modal: true,
-            title: title,
+            title: "Please Confirm",
             buttons: {
-                "Yes": function() {
-                    jQuery(this).dialog("close");
-                    self.resolve();
+                "Yes": {
+                    text: "Yes",
+                    click: function() {
+                        jQuery(this).dialog("close");
+                        self.resolve();
+                    }
                 },
-                "No": function() {
-                    jQuery(this).dialog("close");
-                    self.reject();
+                "No": {
+                    text: "No",
+                    click: function() {
+                        jQuery(this).dialog("close");
+                        self.reject();
+                    }
                 }
             }
-        });
+        }, options));
     });
 }
