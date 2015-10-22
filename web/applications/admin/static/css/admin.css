@@ -1,0 +1,23 @@
+a.button {
+    -webkit-appearance: button;
+       -moz-appearance: button;
+         -o-appearance: button;
+            appearance: button;
+
+    text-decoration: none;
+    color: initial;
+    padding: 10px;
+}
+
+a.button[disabled] {
+    -webkit-appearance: none;
+       -moz-appearance: none;
+         -o-appearance: none;
+            appearance: none;
+
+    text-decoration: none;
+    color: initial;
+    padding: 10px;
+    opacity: 0.5;
+    cursor: not-allowed;
+}
