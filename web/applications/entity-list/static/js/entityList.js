@@ -1,5 +1,3 @@
-var $ = jQuery.noConflict();
-
 var table;
 
 (function($) {
