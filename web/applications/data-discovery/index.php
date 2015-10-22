@@ -222,7 +222,7 @@ $app->get('/datasets/:filter/:by/:id/:geo_filter', function ($filter, $by, $id, 
                 )
             ),
             $filter,
-            $GLOBALS['config']['DataDiscovery']['registeredOrderBy']
+            $GLOBALS['config']['DataDiscovery']['identifiedOrderBy']
         );
     } else {
         $unrestricted_datasets = get_registered_datasets(
@@ -267,7 +267,7 @@ $app->get('/datasets/:filter/:by/:id/:geo_filter', function ($filter, $by, $id, 
                 )
             ),
             $filter,
-            $GLOBALS['config']['DataDiscovery']['registeredOrderBy']
+            $GLOBALS['config']['DataDiscovery']['identifiedOrderBy']
         );
     }
 

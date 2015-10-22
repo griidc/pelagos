@@ -96,7 +96,10 @@
             $(".deleteimg", this).button().click(function (event) {
                 event.stopPropagation();
 
-                $.when(showConfirmation("Delete Entity", "Are you sure?")).done(function() {
+                $.when(showConfirmation({
+                        title: "Delete Entity",
+                        message: "Are you sure?"
+                    })).done(function() {
                     $.when(updateEntity($(thisForm), "Delete")).done(function() {
                         var deletedId = $(thisForm).find("[name=\"id\"]").val();
                         var deleteType = $(thisForm).attr("entityType");
