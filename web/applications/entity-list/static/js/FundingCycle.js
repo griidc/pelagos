@@ -38,7 +38,8 @@ $(document).ready(function(){
                 "targets": [10],
                 "visible": false
             }
-        ]
+        ],
+        "canDelete": userIsLoggedIn
     });
     $(".entityTable").attr("deletable", "");
 });
