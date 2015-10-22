@@ -728,7 +728,7 @@ EOF;
                 }
 
                 // check for description, if exists, insert into metadata table as well.
-                if ($extent_description) {
+                if (isset($extent_description)) {
                     $sql = "update metadata set extent_description = ? where registry_id = ?";
                     // this is an update only because the preceeding block guarantees
                     // that an entry exists in the metadata table.
