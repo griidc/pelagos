@@ -35,6 +35,8 @@ $(document).ready(function(){
             "Creator",
             "Last Modified",
             "Modifier By"
-        ]
+        ],
+        "canDelete": userIsLoggedIn
     });
+    $(".entityTable").attr("deletable", "");
 });
