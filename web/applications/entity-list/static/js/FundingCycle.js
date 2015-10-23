@@ -39,7 +39,8 @@ $(document).ready(function(){
                 "targets": [10],
                 "visible": false
             }
-        ]
+        ],
+        "canDelete": userIsLoggedIn
     });
 
     $("#button_detail")
@@ -49,4 +50,6 @@ $(document).ready(function(){
         var url = pelagosBasePath + "/applications/entity/FundingOrganization/" + id;
         window.open(url, "_blank");
     });
+    
+    $(".entityTable").attr("deletable", "");
 });
