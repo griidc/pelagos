@@ -6,18 +6,28 @@
 
         var self = this;
 
-        $(".buttons").attr("colspan", options.headers.length);
-
         $.each(options.headers, function() {
             $(self).find("thead > tr").append("<th>" + this + "</th>");
         });
+
+        var listButtons = '<td class="buttons">' +
+                          "<div>" +
+                          '<button id="button_detail">View ' + entityType + ' Details</button>&nbsp;' +
+                          '<button id="button_delete">Delete ' + entityType + ' Details</button>&nbsp;' +
+                          '<span id="selection_comment"><i>For additional options, please make a selection above.</i></span>' +
+                          "</div></td>"
+
+        $(this).find("tfoot > tr").append(listButtons);
+
+        $(".buttons").attr("colspan", options.headers.length);
 
         var table = $(this).DataTable($.extend(true, {
                 "lengthMenu": [ [25, 40, 100, -1], [25, 50, 100, "Show All"] ],
                 "deferRender": false,
                 "search": {
                     "caseInsensitive": true
-                }
+                },
+                "select": "single"
             }, options)
         );
 
@@ -70,25 +80,25 @@
             }
         });
 
-        $(this).find("tbody").on("click", "tr", function ()
+        table.on("deselect", function ()
         {
-            if ($(this).hasClass("selected")) {
-                $(this).removeClass("selected");
-                $("#button_detail").button("option", "disabled", true);
-                if ((options.canDelete) && $(this).closest("table").is("[deletable]")) {
-                    $("#button_delete").button("option", "disabled", true);
-                }
-                $("#selection_comment").fadeIn();
-            } else {
-                table.$("tr.selected").removeClass("selected");
-                $(this).addClass("selected");
-                $("#button_detail").button("option", "disabled", false);
-                if ((options.canDelete) && $(this).closest("table").is("[deletable]")) {
-                    $("#button_delete").button("option", "disabled", false);
-                }
-                $("#selection_comment").fadeOut();
+            $("#button_detail").button("option", "disabled", true);
+            if ((options.canDelete) && $(this).closest("table").is("[deletable]")) {
+                $("#button_delete").button("option", "disabled", true);
             }
+            $("#selection_comment").fadeIn();
         });
+
+        table.on("select", function ()
+        {
+            $("#button_detail").button("option", "disabled", false);
+            if ((options.canDelete) && $(this).closest("table").is("[deletable]")) {
+                $("#button_delete").button("option", "disabled", false);
+            }
+            $("#selection_comment").fadeOut();
+        });
+
+        return table;
     };
 }(jQuery));
 
