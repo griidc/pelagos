@@ -38,6 +38,6 @@ $twigData = array(
     'basePath' => $comp->getBasePath()
 );
 
-$app->render($entityType . 'adminMain.html', $twigData);
+$app->render('adminMain.html', $twigData);
 
 $comp->finalize();
