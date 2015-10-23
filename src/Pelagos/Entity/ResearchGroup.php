@@ -9,6 +9,7 @@
 namespace Pelagos\Entity;
 
 use \Symfony\Component\Validator\Constraints as Assert;
+use \Pelagos\Exception\NotDeletableException;
 
 /**
  * Class to represent research groups.
@@ -630,5 +631,32 @@ class ResearchGroup extends Entity
     public function getPersonResearchGroups()
     {
         return $this->personResearchGroups;
+    }
+
+    /**
+     * Check if this ResearchGroup is deletable.
+     *
+     * This method throws a NotDeletableException when the ResearchGroup has associated
+     * Persons. The NotDeletableException will have its reasons set to a list of
+     * reasons the ResearchGroup is not deletable.
+     *
+     * @throws NotDeletableException When the ResearchGroup has associated Persons.
+     *
+     * @return void
+     */
+    public function checkDeletable()
+    {
+        $notDeletableReasons = array();
+        $personResearchGroupCount = count($this->getPersonResearchGroups());
+        if ($personResearchGroupCount > 0) {
+            $notDeletableReasons[] = 'there ' . ($personResearchGroupCount > 1 ? 'are' : 'is') .
+                " $personResearchGroupCount associated Person" .
+                ($personResearchGroupCount > 1 ? 's' : '');
+        }
+        if (count($notDeletableReasons) > 0) {
+            $notDeletableException = new NotDeletableException();
+            $notDeletableException->setReasons($notDeletableReasons);
+            throw $notDeletableException;
+        }
     }
 }
