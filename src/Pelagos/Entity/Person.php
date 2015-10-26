@@ -10,6 +10,7 @@ namespace Pelagos\Entity;
 
 use \Pelagos\Exception\EmptyRequiredArgumentException;
 use \Pelagos\Exception\InvalidFormatArgumentException;
+use \Pelagos\Exception\NotDeletableException;
 use \Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -312,5 +313,38 @@ class Person extends Entity
             }
         }
         return $personArray;
+    }
+
+    /**
+     * Check if this Person is deletable.
+     *
+     * This method throws a NotDeletableException when the Person has associated FundingOrganizations or
+     * ResearchGroups. The NotDeletableException will have its reasons set to a list of reasons the Person
+     * is not deletable.
+     *
+     * @throws NotDeletableException When the Person has associated FundingOrganizations or ResearchGroups.
+     *
+     * @return void
+     */
+    public function checkDeletable()
+    {
+        $notDeletableReasons = array();
+        $personFundingOrganizationCount = count($this->getPersonFundingOrganizations());
+        if ($personFundingOrganizationCount > 0) {
+            $notDeletableReasons[] = 'there ' . ($personFundingOrganizationCount > 1 ? 'are' : 'is') .
+                " $personFundingOrganizationCount associated Funding Organization" .
+                ($personFundingOrganizationCount > 1 ? 's' : '');
+        }
+        $personResearchGroupCount = count($this->getPersonResearchGroups());
+        if ($personResearchGroupCount > 0) {
+            $notDeletableReasons[] = 'there ' . ($personResearchGroupCount > 1 ? 'are' : 'is') .
+                " $personResearchGroupCount associated Research Group" .
+                ($personResearchGroupCount > 1 ? 's' : '');
+        }
+        if (count($notDeletableReasons) > 0) {
+            $notDeletableException = new NotDeletableException();
+            $notDeletableException->setReasons($notDeletableReasons);
+            throw $notDeletableException;
+        }
     }
 }
