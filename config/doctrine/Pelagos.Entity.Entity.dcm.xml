@@ -22,6 +22,7 @@ columns. The lifecycle callbacks in Pelagos\Entity\Entity are also defined.
         <lifecycle-callbacks>
             <lifecycle-callback type="prePersist" method="updateTimeStamps" />
             <lifecycle-callback type="preUpdate" method="updateTimeStamps" />
+            <lifecycle-callback type="preRemove" method="checkDeletable" />
         </lifecycle-callbacks>
 
     </mapped-superclass>

@@ -479,6 +479,23 @@ abstract class Entity implements \JsonSerializable
     }
 
     /**
+     * Check if the Entity is deletable.
+     *
+     * By default, there is no checking, so this method does nothing.
+     * It exists here because it will be called just before attempting to delete any Entity.
+     * Entities that need checking should override this method and throw NotDeletableExceptions
+     * when the Entity is not deletable.
+     *
+     * @see \Pelagos\Exception\NotDeletableException
+     *
+     * @return void
+     */
+    public function checkDeletable()
+    {
+        // Do nothing.
+    }
+
+    /**
      * Static method to resolve a value as a DateTime object.
      *
      * @param mixed $value A value to resolve to a DateTime.

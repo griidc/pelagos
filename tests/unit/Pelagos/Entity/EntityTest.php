@@ -458,4 +458,15 @@ class EntityTest extends \PHPUnit_Framework_TestCase
             'name' => null,
         );
     }
+
+    /**
+     * Test that there is a checkDeletable method that is callable.
+     *
+     * @return void
+     */
+    public function testCheckDeletable()
+    {
+        $rc = new \ReflectionClass('\Pelagos\Entity\Entity');
+        $this->assertTrue($rc->hasMethod('checkDeletable'));
+    }
 }

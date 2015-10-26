@@ -1,3 +1,4 @@
+var $ = jQuery.noConflict();
 $(document).ready(function(){
     "use strict";
 
@@ -24,7 +25,8 @@ $(document).ready(function(){
             "Modifier"
         ],
         "columnDefs": [ { "searchable": false, "targets": [ 0, 4, 5, 6, 7 ] } ],
-        "order": [[ 6, "desc" ]]
+        "order": [[ 6, "desc" ]],
+        "canDelete": userIsLoggedIn
      });
-
+    $(".entityTable").attr("deletable", "");
 });

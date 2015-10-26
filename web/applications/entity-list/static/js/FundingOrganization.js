@@ -1,3 +1,4 @@
+var $ = jQuery.noConflict();
 $(document).ready(function(){
     "use strict";
 
@@ -34,6 +35,8 @@ $(document).ready(function(){
             "Creator",
             "Last Modified",
             "Modifier By"
-        ]
+        ],
+        "canDelete": userIsLoggedIn
     });
+    $(".entityTable").attr("deletable", "");
 });
