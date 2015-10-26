@@ -79,13 +79,13 @@
             }
         });
 
-        table.on("deselect", function ()
+        table.on("deselect", function ( e, dt, type, indexes )
         {
             $("#button_detail").button("option", "disabled", true);
             if ((options.canDelete) && $(this).closest("table").is("[deletable]")) {
                 $("#button_delete").button("option", "disabled", true);
             }
-            $("#selection_comment").fadeIn();
+            $("#selection_comment").show();
         });
 
         table.on("select", function ()
@@ -94,7 +94,7 @@
             if ((options.canDelete) && $(this).closest("table").is("[deletable]")) {
                 $("#button_delete").button("option", "disabled", false);
             }
-            $("#selection_comment").fadeOut();
+            $("#selection_comment").hide();
         });
 
         return table;
