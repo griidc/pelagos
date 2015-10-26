@@ -17,12 +17,28 @@ Pelagos.Entity.Entity.dcm.xml
             <sequence-generator sequence-name="seq_person_number" allocation-size="1" initial-value="1" />
         </id>
 
-        <field name="firstName"    column="given_name"    type="string" />
+        <field name="firstName"          column="given_name"                 type="string" />
 
-        <field name="lastName"     column="surname"       type="string" />
+        <field name="lastName"           column="surname"                    type="string" />
 
-        <field name="emailAddress" column="email_address" type="string" />
-
+        <field name="emailAddress"       column="email_address"              type="string" />
+        
+        <field name="phoneNumber"        column="person_phone_number"        type="string" />
+        
+        <field name="deliveryPoint"      column="person_delivery_point"      type="string" />
+        
+        <field name="city"               column="person_city"                type="string" />
+        
+        <field name="administrativeArea" column="person_administrative_area" type="string" />
+        
+        <field name="postalCode"         column="person_postal_code"         type="string" />
+        
+        <field name="country"            column="person_country"             type="string" />
+        
+        <field name="organization"       column="person_organization"        type="string" />
+        
+        <field name="position"           column="person_position"            type="string" />
+ 
         <one-to-many field="personFundingOrganizations" target-entity="PersonFundingOrganization" mapped-by="person" />
 
         <one-to-many field="personResearchGroups"       target-entity="PersonResearchGroup"       mapped-by="person" />
