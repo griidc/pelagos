@@ -13,7 +13,7 @@
         var listButtons = '<td class="buttons">' +
                           "<div>" +
                           '<button id="button_detail">View ' + entityType + " Details</button>&nbsp;" +
-                          '<button id="button_delete">Delete ' + entityType + " Details</button>&nbsp;" +
+                          '<button id="button_delete">Delete ' + entityType + "</button>&nbsp;" +
                           '<span id="selection_comment"><i>For additional options, please make a selection above.</i></span>' +
                           "</div></td>";
 
