@@ -12,10 +12,10 @@
 
         var listButtons = '<td class="buttons">' +
                           "<div>" +
-                          '<button id="button_detail">View ' + entityType + ' Details</button>&nbsp;' +
-                          '<button id="button_delete">Delete ' + entityType + ' Details</button>&nbsp;' +
+                          '<button id="button_detail">View ' + entityType + " Details</button>&nbsp;" +
+                          '<button id="button_delete">Delete ' + entityType + " Details</button>&nbsp;" +
                           '<span id="selection_comment"><i>For additional options, please make a selection above.</i></span>' +
-                          "</div></td>"
+                          "</div></td>";
 
         $(this).find("tfoot > tr").append(listButtons);
 
@@ -79,7 +79,7 @@
             }
         });
 
-        table.on("deselect", function ( e, dt, type, indexes )
+        table.on("deselect", function ()
         {
             $("#button_detail").button("option", "disabled", true);
             if ((options.canDelete) && $(this).closest("table").is("[deletable]")) {

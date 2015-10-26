@@ -50,6 +50,6 @@ $(document).ready(function(){
         var url = pelagosBasePath + "/applications/entity/FundingOrganization/" + id;
         window.open(url, "_blank");
     });
-    
+
     $(".entityTable").attr("deletable", "");
 });
