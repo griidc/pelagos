@@ -20,7 +20,13 @@
                 "$": true
             }
         }],
-        "no-shadow": 0
+        "no-shadow": 0,
+        "new-cap": [2, {
+            "capIsNewExceptions": [
+                "Deferred"
+            ]
+        }],
+        "quotes": [2, "double", "avoid-escape"]
     },
     "plugins": [
         "shadow-exception"
