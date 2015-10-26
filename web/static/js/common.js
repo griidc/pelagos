@@ -47,6 +47,7 @@ function showDialog(title, message)
         resizable: false,
         minWidth: 300,
         height: "auto",
+        width: "auto",
         modal: true,
         title: title,
         buttons: {

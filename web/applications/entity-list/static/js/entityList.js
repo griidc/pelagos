@@ -72,9 +72,8 @@
                             $("#selection_comment").fadeIn();
                         });
                     }).fail(function (xhr) {
-                        msg = "Could not delete due to reason: ";
                         var jsonError = xhr.responseJSON.message;
-                        showDialog("Error", msg + jsonError);
+                        showDialog("Error", jsonError);
                     });
                 });
             }
