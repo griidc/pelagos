@@ -17,6 +17,89 @@ use \Symfony\Component\Validator\Constraints as Assert;
  */
 class Person extends Entity
 {
+    /**
+     * Static array containing a list of the properties and their attributes.
+     *
+     * Used by common update code.
+     *
+     * @var array $properties
+     */
+    protected static $properties = array(
+        'firstName' => array(
+            'type' => 'string',
+            'setter' => 'setFirstName',
+            'getter' => 'getFirstName',
+        ),
+        'lastName' => array(
+            'type' => 'string',
+            'setter' => 'setLastName',
+            'getter' => 'getLastName',
+        ),
+        'emailAddress' => array(
+            'type' => 'string',
+            'setter' => 'setEmailAddress',
+            'getter' => 'getEmailAddress',
+        ),
+        'phoneNumber' => array(
+            'type' => 'string',
+            'setter' => 'setPhoneNumber',
+            'getter' => 'getPhoneNumber',
+        ),
+        'deliveryPoint' => array(
+            'type' => 'string',
+            'setter' => 'setDeliveryPoint',
+            'getter' => 'getDeliveryPoint',
+        ),
+        'city' => array(
+            'type' => 'string',
+            'setter' => 'setCity',
+            'getter' => 'getCity',
+        ),
+        'administrativeArea' => array(
+            'type' => 'string',
+            'setter' => 'setAdministrativeArea',
+            'getter' => 'getAdministrativeArea',
+        ),
+        'postalCode' => array(
+            'type' => 'string',
+            'setter' => 'setPostalCode',
+            'getter' => 'getPostalCode',
+        ),
+        'country' => array(
+            'type' => 'string',
+            'setter' => 'setCountry',
+            'getter' => 'getCountry',
+        ),
+        'url' => array(
+            'type' => 'string',
+            'setter' => 'setUrl',
+            'getter' => 'getUrl',
+        ),
+        'organization' => array(
+            'type' => 'string',
+            'setter' => 'setOrganization',
+            'getter' => 'getOrganization',
+        ),
+        'position' => array(
+            'type' => 'string',
+            'setter' => 'setPosition',
+            'getter' => 'getPosition',
+        ),
+        'personFundingOrganizations' => array(
+            'type' => 'object',
+            'class' => '\Doctrine\Common\Collections\Collection',
+            'getter' => 'getPersonFundingOrganizations',
+            'setter' => 'setPersonFundingOrganizations',
+            'serialize' => false,
+        ),
+        'personResearchGroups' => array(
+            'type' => 'object',
+            'class' => '\Doctrine\Common\Collections\Collection',
+            'getter' => 'getPersonResearchGroups',
+            'setter' => 'setPersonResearchGroups',
+            'serialize' => false,
+        ),
+    );
 
     /**
      * Person's first name.
@@ -64,6 +147,123 @@ class Person extends Entity
     protected $emailAddress;
 
     /**
+     * Person's telephone number.
+     *
+     * @var string $phoneNumber
+     *
+     * @access protected
+     *
+     * @Assert\NoAngleBrackets(
+     *     message="Phone number cannot contain angle brackets (< or >)"
+     * )
+     */
+    protected $phoneNumber;
+
+    /**
+     * Person's delivery point (street address).
+     *
+     * @var string
+     *
+     * @access protected
+     *
+     * @Assert\NoAngleBrackets(
+     *     message="Delievery point (address) cannot contain angle brackets (< or >)"
+     * )
+     */
+    protected $deliveryPoint;
+
+    /**
+     * Person's city.
+     *
+     * @var string
+     *
+     * @access protected
+     *
+     * @Assert\NoAngleBrackets(
+     *     message="City cannot contain angle brackets (< or >)"
+     * )
+     */
+    protected $city;
+
+    /**
+     * Person's administrative area (state).
+     *
+     * @var string
+     *
+     * @access protected
+     *
+     * @Assert\NoAngleBrackets(
+     *     message="Administrative area (state) cannot contain angle brackets (< or >)"
+     * )
+     */
+    protected $administrativeArea;
+
+    /**
+     * Person's postal code (zipcode).
+     *
+     * @var string
+     *
+     * @access protected
+     *
+     * @Assert\NoAngleBrackets(
+     *     message="Postal code (zip) cannot contain angle brackets (< or >)"
+     * )
+     */
+    protected $postalCode;
+
+    /**
+     * Person's country.
+     *
+     * @var string
+     *
+     * @access protected
+     *
+     * @Assert\NoAngleBrackets(
+     *     message="Country cannot contain angle brackets (< or >)"
+     * )
+     */
+    protected $country;
+
+    /**
+     * Person's Website url.
+     *
+     * @var string
+     *
+     * @access protected
+     *
+     * @Assert\NoAngleBrackets(
+     *     message="Website URL cannot contain angle brackets (< or >)"
+     * )
+     */
+    protected $url;
+
+    /**
+     * Person's organization.
+     *
+     * @var string
+     *
+     * @access protected
+     *
+     * @Assert\NoAngleBrackets(
+     *     message="Organization cannot contain angle brackets (< or >)"
+     * )
+     */
+    protected $organization;
+
+    /**
+     * Person's position.
+     *
+     * @var string
+     *
+     * @access protected
+     *
+     * @Assert\NoAngleBrackets(
+     *     message="Position cannot contain angle brackets (< or >)"
+     * )
+     */
+    protected $position;
+
+    /**
      * Person's PersonFundingOrganizations.
      *
      * @var \Doctrine\Common\Collections\Collection $personFundingOrganizations
@@ -80,45 +280,6 @@ class Person extends Entity
      * @access protected
      */
     protected $personResearchGroups;
-
-    /**
-     * Static array containing a list of the properties and their attributes.
-     *
-     * Used by common update code.
-     *
-     * @var array $properties
-     */
-    protected static $properties = array(
-        'firstName' => array(
-            'type' => 'string',
-            'setter' => 'setFirstName',
-            'getter' => 'getFirstName',
-        ),
-        'lastName' => array(
-            'type' => 'string',
-            'setter' => 'setLastName',
-            'getter' => 'getLastName',
-        ),
-        'emailAddress' => array(
-            'type' => 'string',
-            'setter' => 'setEmailAddress',
-            'getter' => 'getEmailAddress',
-        ),
-        'personFundingOrganizations' => array(
-            'type' => 'object',
-            'class' => '\Doctrine\Common\Collections\Collection',
-            'getter' => 'getPersonFundingOrganizations',
-            'setter' => 'setPersonFundingOrganizations',
-            'serialize' => false,
-        ),
-        'personResearchGroups' => array(
-            'type' => 'object',
-            'class' => '\Doctrine\Common\Collections\Collection',
-            'getter' => 'getPersonResearchGroups',
-            'setter' => 'setPersonResearchGroups',
-            'serialize' => false,
-        ),
-    );
 
     /**
      * Setter for firstName property.
@@ -184,6 +345,240 @@ class Person extends Entity
     public function getEmailAddress()
     {
         return $this->emailAddress;
+    }
+
+    /**
+     * Setter for phoneNumber.
+     *
+     * @param string $phoneNumber Person's phone number.
+     *
+     * @access public
+     *
+     * @return void
+     */
+    public function setPhoneNumber($phoneNumber)
+    {
+        $this->phoneNumber = $phoneNumber;
+    }
+
+    /**
+     * Getter for phoneNumber.
+     *
+     * @access public
+     *
+     * @return string Phone number of Person.
+     */
+    public function getPhoneNumber()
+    {
+        return $this->phoneNumber;
+    }
+
+    /**
+     * Setter for deliveryPoint.
+     *
+     * @param string $deliveryPoint Street address of Person.
+     *
+     * @access public
+     *
+     * @return void
+     */
+    public function setDeliveryPoint($deliveryPoint)
+    {
+        $this->deliveryPoint = $deliveryPoint;
+    }
+
+    /**
+     * Getter for deliveryPoint.
+     *
+     * @access public
+     *
+     * @return string Street address of Person.
+     */
+    public function getDeliveryPoint()
+    {
+        return $this->deliveryPoint;
+    }
+
+    /**
+     * Setter for city.
+     *
+     * @param string $city City of Person.
+     *
+     * @access public
+     *
+     * @return void
+     */
+    public function setCity($city)
+    {
+        $this->city = $city;
+    }
+
+    /**
+     * Getter for city.
+     *
+     * @access public
+     *
+     * @return string City of Person.
+     */
+    public function getCity()
+    {
+        return $this->city;
+    }
+
+    /**
+     * Setter for administrativeArea.
+     *
+     * @param string $administrativeArea Person's administrative area (state).
+     *
+     * @access public
+     *
+     * @return void
+     */
+    public function setAdministrativeArea($administrativeArea)
+    {
+        $this->administrativeArea = $administrativeArea;
+    }
+
+    /**
+     * Getter for administrativeArea.
+     *
+     * @access public
+     *
+     * @return string Person's administrative area (state).
+     */
+    public function getAdministrativeArea()
+    {
+        return $this->administrativeArea;
+    }
+
+    /**
+     * Setter for postalCode.
+     *
+     * @param string $postalCode Postal (zip) code.
+     *
+     * @access public
+     *
+     * @return void
+     */
+    public function setPostalCode($postalCode)
+    {
+        $this->postalCode = $postalCode;
+    }
+
+    /**
+     * Getter for postalCode.
+     *
+     * @access public
+     *
+     * @return string Containing postal (zip) code.
+     */
+    public function getPostalCode()
+    {
+        return $this->postalCode;
+    }
+
+    /**
+     * Setter for country.
+     *
+     * @param string $country Person's country.
+     *
+     * @access public
+     *
+     * @return void
+     */
+    public function setCountry($country)
+    {
+        $this->country = $country;
+    }
+
+    /**
+     * Getter for country.
+     *
+     * @access public
+     *
+     * @return string Person's country.
+     */
+    public function getCountry()
+    {
+        return $this->country;
+    }
+
+    /**
+     * Setter for url.
+     *
+     * @param string $url Person's Website URL.
+     *
+     * @access public
+     *
+     * @return void
+     */
+    public function setUrl($url)
+    {
+        $this->url = $url;
+    }
+
+    /**
+     * Getter for url.
+     *
+     * @access public
+     *
+     * @return string URL of Person's Website.
+     */
+    public function getUrl()
+    {
+        return $this->url;
+    }
+
+    /**
+     * Setter for organization.
+     *
+     * @param string $organization Person's organization.
+     *
+     * @access public
+     *
+     * @return void
+     */
+    public function setOrganization($organization)
+    {
+        $this->organization = $organization;
+    }
+
+    /**
+     * Getter for organization.
+     *
+     * @access public
+     *
+     * @return string Person's organization.
+     */
+    public function getOrganization()
+    {
+        return $this->organization;
+    }
+
+    /**
+     * Setter for position.
+     *
+     * @param string $position Person's position.
+     *
+     * @access public
+     *
+     * @return void
+     */
+    public function setPosition($position)
+    {
+        $this->position = $position;
+    }
+
+    /**
+     * Getter for position.
+     *
+     * @access public
+     *
+     * @return string Person's position.
+     */
+    public function getPosition()
+    {
+        return $this->position;
     }
 
     /**
@@ -268,49 +663,5 @@ class Person extends Entity
     public function getPersonResearchGroups()
     {
         return $this->personResearchGroups;
-    }
-
-    /**
-     * Method that returns a Person's properties as an array.
-     *
-     * Default is to not localize time stamps.
-     *
-     * @param array   $properties         An array listing the properties to include.
-     * @param boolean $localizeTimeStamps A flag to inidcate whether or not to localize time stamps.
-     *
-     * @return array An array of property values for this Person.
-     */
-    public function asArray(array $properties, $localizeTimeStamps = false)
-    {
-        $personArray = array();
-        foreach ($properties as $property) {
-            switch ($property) {
-                case 'id':
-                    $personArray[] = $this->getId();
-                    break;
-                case 'firstName':
-                    $personArray[] = $this->getFirstName();
-                    break;
-                case 'lastName':
-                    $personArray[] = $this->getLastName();
-                    break;
-                case 'emailAddress':
-                    $personArray[] = $this->getEmailAddress();
-                    break;
-                case 'creationTimeStamp':
-                    $personArray[] = $this->getCreationTimeStampAsISO($localizeTimeStamps);
-                    break;
-                case 'creator':
-                    $personArray[] = $this->getCreator();
-                    break;
-                case 'modificationTimeStamp':
-                    $personArray[] = $this->getModificationTimeStampAsISO($localizeTimeStamps);
-                    break;
-                case 'modifier':
-                    $personArray[] = $this->getModifier();
-                    break;
-            }
-        }
-        return $personArray;
     }
 }
