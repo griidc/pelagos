@@ -9,6 +9,7 @@
 namespace Pelagos\Entity;
 
 use \Symfony\Component\Validator\Constraints as Assert;
+use \Pelagos\Exception\NotDeletableException;
 
 /**
  * Class to represent funding organizations.
@@ -720,5 +721,38 @@ class FundingOrganization extends Entity
             }
         }
         return $personArray;
+    }
+
+    /**
+     * Check if this FundingOrganization is deletable.
+     *
+     * This method throws a NotDeletableException when the FundingOrganization has associated
+     * FundingCycles or Persons. The NotDeletableException will have its reasons set to a list of
+     * reasons the FundingOrganization is not deletable.
+     *
+     * @throws NotDeletableException When the FundingOrganization has associated FundingCycles or Persons.
+     *
+     * @return void
+     */
+    public function checkDeletable()
+    {
+        $notDeletableReasons = array();
+        $fundingCycleCount = count($this->getFundingCycles());
+        if ($fundingCycleCount > 0) {
+            $notDeletableReasons[] = 'there ' . ($fundingCycleCount > 1 ? 'are' : 'is') .
+                " $fundingCycleCount associated Funding Cycle" .
+                ($fundingCycleCount > 1 ? 's' : '');
+        }
+        $personFundingOrganizationCount = count($this->getPersonFundingOrganizations());
+        if ($personFundingOrganizationCount > 0) {
+            $notDeletableReasons[] = 'there ' . ($personFundingOrganizationCount > 1 ? 'are' : 'is') .
+                " $personFundingOrganizationCount associated Person" .
+                ($personFundingOrganizationCount > 1 ? 's' : '');
+        }
+        if (count($notDeletableReasons) > 0) {
+            $notDeletableException = new NotDeletableException();
+            $notDeletableException->setReasons($notDeletableReasons);
+            throw $notDeletableException;
+        }
     }
 }
