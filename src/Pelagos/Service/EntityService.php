@@ -192,4 +192,43 @@ class EntityService
         }
         return $entity;
     }
+
+    /**
+     * Get a list of all distinct values for a property of a given Entity class.
+     *
+     * @param string $entityClass Entity class to get distinct values from.
+     * @param string $property    Property to get distinct values of.
+     *
+     * @throws \Exception           When Entity $entityClass does not have a mapped property $property.
+     * @throws PersistenceException When a database error occurs.
+     *
+     * @return array List of all distinct values for $property for $entityClass.
+     */
+    public function getDistinctVals($entityClass, $property)
+    {
+        $fullyQualifiedEntityClass = '\Pelagos\Entity\\' . $entityClass;
+        $class = $this->entityManager->getClassMetadata($fullyQualifiedEntityClass);
+        if (!$class->hasField($property) && !$class->hasAssociation($property)) {
+            throw new \Exception("Entity \"$entityClass\" has no mapped property \"$property\"");
+        }
+        try {
+            $this->entityManager
+                ->getConfiguration()
+                ->addCustomHydrationMode(
+                    'COLUMN_HYDRATOR',
+                    'Pelagos\DoctrineExtensions\Hydrators\ColumnHydrator'
+                );
+            // Get distinct vals
+            $query = $this->entityManager
+                ->getRepository($fullyQualifiedEntityClass)
+                ->createQueryBuilder('entity')
+                ->select('entity.' . $property)
+                ->distinct()
+                ->orderBy('entity.' . $property)
+                ->getQuery();
+            return $query->getResult('COLUMN_HYDRATOR');
+        } catch (DBALException $e) {
+            throw new PersistenceException($e->getMessage());
+        }
+    }
 }
