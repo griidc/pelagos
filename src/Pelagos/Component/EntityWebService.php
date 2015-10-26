@@ -10,6 +10,7 @@ use \Pelagos\Exception\ArgumentException;
 use \Pelagos\Exception\EmptyRequiredArgumentException;
 use \Pelagos\Exception\InvalidFormatArgumentException;
 use \Pelagos\Exception\MissingRequiredFieldPersistenceException;
+use \Pelagos\Exception\NotDeletableException;
 use \Pelagos\Exception\RecordExistsPersistenceException;
 use \Pelagos\Exception\RecordNotFoundPersistenceException;
 use \Pelagos\Exception\PersistenceException;
@@ -528,6 +529,11 @@ class EntityWebService extends \Pelagos\Component
             );
             // delete the entity
             $this->getEntityService()->delete($entity);
+        } catch (NotDeletableException $e) {
+            $status = new HTTPStatus(
+                409,
+                "This $entityType cannot be deleted because: " . implode(', ', $e->getReasons())
+            );
         } catch (PersistenceException $e) {
             $databaseErrorMessage = $e->getDatabaseErrorMessage();
             if (empty($databaseErrorMessage)) {
