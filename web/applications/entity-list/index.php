@@ -16,6 +16,7 @@ $comp->setJSGlobals();
 $comp->addJS(
     array(
         '//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js',
+        '//cdn.datatables.net/select/1.0.1/js/dataTables.select.min.js',
         '/static/js/common.js',
         'static/js/entityList.js',
     )
@@ -23,7 +24,8 @@ $comp->addJS(
 
 $comp->addCSS(
     array(
-        '//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css'
+        '//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css',
+        '//cdn.datatables.net/select/1.0.1/css/select.dataTables.min.css',
     )
 );
 

@@ -2,7 +2,7 @@ var $ = jQuery.noConflict();
 $(document).ready(function(){
     "use strict";
 
-    $(".entityTable").pelagosDataTable({
+    var pelagosTable = $(".entityTable").pelagosDataTable({
         "ajax": pelagosBasePath + "/services/entity/FundingCycle",
         "columns": [
             { "data": "name" },
@@ -42,5 +42,14 @@ $(document).ready(function(){
         ],
         "canDelete": userIsLoggedIn
     });
+
+    $("#button_detail")
+    .off("click")
+    .click(function () {
+        var id = pelagosTable.row(".selected").data().fundingOrganization.id;
+        var url = pelagosBasePath + "/applications/entity/FundingOrganization/" + id;
+        window.open(url, "_blank");
+    });
+
     $(".entityTable").attr("deletable", "");
 });
