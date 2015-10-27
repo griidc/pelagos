@@ -17,11 +17,11 @@ Pelagos.Entity.Entity.dcm.xml
             <sequence-generator sequence-name="seq_person_number" allocation-size="1" initial-value="1" />
         </id>
 
-        <field name="firstName"          column="given_name"                 type="string" />
+        <field name="firstName"          column="given_name"          type="string" />
 
-        <field name="lastName"           column="surname"                    type="string" />
+        <field name="lastName"           column="surname"             type="string" />
 
-        <field name="emailAddress"       column="email_address"              type="string" />
+        <field name="emailAddress"       column="email_address"       type="string" />
         
         <field name="phoneNumber"        column="phone_number"        type="string" />
         
@@ -29,7 +29,7 @@ Pelagos.Entity.Entity.dcm.xml
         
         <field name="city"               column="city"                type="string" />
         
-        <field name="administrativeArea" column="person_administrative_area" type="string" />
+        <field name="administrativeArea" column="administrative_area" type="string" />
         
         <field name="postalCode"         column="postal_code"         type="string" />
         
