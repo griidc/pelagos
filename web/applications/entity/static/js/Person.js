@@ -13,7 +13,7 @@ $(document).ready(function()
         ]
     });
     
-    $("#role").autocomplete({
+    $("#position").autocomplete({
         source: [
             "Administrator",
             "Researcher"
