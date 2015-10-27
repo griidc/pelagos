@@ -23,6 +23,14 @@ $slim->get(
 
 // GET route to validate properties of $entityType.
 $slim->get(
+    '/:entityType/getDistinctVals/:property',
+    function ($entityType, $property) use ($comp) {
+        $comp->handleGetDistinctVals($entityType, $property);
+    }
+);
+
+// GET route to validate properties of $entityType.
+$slim->get(
     '/:entityType/validateProperty/',
     function ($entityType) use ($comp) {
         $comp->validateProperty($entityType);
