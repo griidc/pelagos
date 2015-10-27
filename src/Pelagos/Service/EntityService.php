@@ -222,9 +222,10 @@ class EntityService
             $query = $this->entityManager
                 ->getRepository($fullyQualifiedEntityClass)
                 ->createQueryBuilder('entity')
-                ->select('entity.' . $property)
+                ->select("entity.$property")
+                ->where("entity.$property IS NOT NULL")
                 ->distinct()
-                ->orderBy('entity.' . $property)
+                ->orderBy("entity.$property")
                 ->getQuery();
             return $query->getResult('COLUMN_HYDRATOR');
         } catch (DBALException $e) {
