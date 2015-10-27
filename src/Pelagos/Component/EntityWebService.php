@@ -547,4 +547,41 @@ class EntityWebService extends \Pelagos\Component
         $response->status($status->getCode());
         $response->body(json_encode($status));
     }
+
+    /**
+     * Method to handle a request to get all distinct values for a property of an entity.
+     *
+     * @param string $entityType The type of entity to retrieve distinct values from.
+     * @param string $property   The property to retrieve distinct values for.
+     *
+     * @access public
+     *
+     * @return void
+     */
+    public function handleGetDistinctVals($entityType, $property)
+    {
+        $response = $this->slim->response;
+        $response->headers->set('Content-Type', 'application/json');
+        $this->setQuitOnFinalize(true);
+        try {
+            $vals = $this->getEntityService()->getDistinctVals($entityType, $property);
+            $valCount = count($vals);
+            $status = new HTTPStatus(
+                200,
+                "Retrieved $valCount values for $entityType::$property",
+                $vals
+            );
+        } catch (PersistenceException $e) {
+            $databaseErrorMessage = $e->getDatabaseErrorMessage();
+            if (empty($databaseErrorMessage)) {
+                $status = new HTTPStatus(500, 'A database error has occured: ' . $e->getMessage());
+            } else {
+                $status = new HTTPStatus(500, "A database error has occured: $databaseErrorMessage");
+            }
+        } catch (\Exception $e) {
+            $status = new HTTPStatus(500, 'A general error has occured: ' . $e->getMessage());
+        }
+        $response->status($status->getCode());
+        $response->body(json_encode($status));
+    }
 }
