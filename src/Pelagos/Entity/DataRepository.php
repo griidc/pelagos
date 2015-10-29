@@ -170,7 +170,7 @@ class DataRepository extends Entity
     /**
      * Setter for name.
      *
-     * @param string $name name of Data Repository.
+     * @param string $name Name of Data Repository.
      *
      * @access public Assign a name to object
      *
