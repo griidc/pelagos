@@ -17,7 +17,7 @@ use \Pelagos\Exception\NotDeletableException;
  * @Assert\UniqueEntity(
  *     fields={"name"},
  *     errorPath="name",
- *     message="A Funding Organization with this name already exists"
+ *     message="A Data Repository with this name already exists"
  * )
  */
 class DataRepository extends Entity
@@ -159,7 +159,7 @@ class DataRepository extends Entity
     protected $country;
 
     /**
-     * Funding Organization's relationship with Persons.
+     * Data Repository's relationship with Persons.
      *
      * @var \Doctrine\Common\Collections\Collection $personDataRepositories
      *
@@ -462,7 +462,7 @@ class DataRepository extends Entity
      * @access public
      *
      * @return \Doctrine\Common\Collections\Collection Collection containing personDataRepositories
-     *                                                 listings for this Funding Organization.
+     *                                                 listings for this Data Repository.
      */
     public function getPersonDataRepositories()
     {
