@@ -157,7 +157,7 @@ class DataRepository extends Entity
      * )
      */
     protected $country;
-    
+
     /**
      * Funding Organization's relationship with Persons.
      *
@@ -172,7 +172,7 @@ class DataRepository extends Entity
      *
      * @param string $name name of Data Repository.
      *
-     * @access public
+     * @access public Assign a name to object
      *
      * @return void
      */
