@@ -1,0 +1,46 @@
+<!--
+This file defines the Doctrine mapping between the Pelagos\Entity\DataRepository
+entity class and the funding_organization view in the postgres database.
+Properties other than id that are inherited from Pelagos\Entity\Entity are mapped in
+Pelagos.Entity.Entity.dcm.xml
+-->
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                        http://raw.github.com/doctrine/doctrine2/master/doctrine-mapping.xsd">
+
+    <entity name="Pelagos\Entity\DataRepository" table="data_repository">
+
+        <id name="id" column="data_repository_number" type="integer">
+            <generator strategy="SEQUENCE" />
+            <sequence-generator sequence-name="seq_data_repository_number" allocation-size="1" initial-value="1" />
+        </id>
+
+        <field name="name"               column="name"                type="string" />
+
+        <field name="emailAddress"       column="email_address"       type="string" />
+
+        <field name="description"        column="description"         type="string" />
+
+        <field name="url"                column="website"             type="string" />
+
+        <field name="phoneNumber"        column="phone_number"        type="string" />
+
+        <field name="deliveryPoint"      column="delivery_point"      type="string" />
+
+        <field name="city"               column="city"                type="string" />
+
+        <field name="country"            column="country"             type="string" />
+
+        <field name="administrativeArea" column="administrative_area" type="string" />
+
+        <field name="postalCode"         column="postal_code"         type="string" />
+
+        <!--
+            <one-to-many field="personDataRepositories" target-entity="PersonDataRepository" mapped-by="dataRepository" />
+        -->
+
+    </entity>
+
+</doctrine-mapping>
