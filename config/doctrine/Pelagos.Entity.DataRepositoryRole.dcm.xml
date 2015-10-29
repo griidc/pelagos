@@ -1,6 +1,6 @@
 <!--
-This file defines the Doctrine mapping between the Pelagos\Entity\FundingOrganizationRole
-entity class and the funding_organization_role view in the postgres database.
+This file defines the Doctrine mapping between the Pelagos\Entity\DataRepositoryRole
+entity class and the data_repositry_role view in the postgres database.
 Properties other than id that are inherited from Pelagos\Entity\Entity and are mapped in
 Pelagos.Entity.Entity.dcm.xml
 -->
