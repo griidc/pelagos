@@ -45,6 +45,9 @@ class DataRepository extends Entity
      *
      * @access protected
      *
+     * @Assert\NotBlank(
+     *     message="Email address is required"
+     * )
      * @Assert\NoAngleBrackets(
      *     message="Email address cannot contain angle brackets (< or >)"
      * )
@@ -61,6 +64,9 @@ class DataRepository extends Entity
      *
      * @access protected
      *
+     * @Assert\NotBlank(
+     *     message="Description is required"
+     * )
      * @Assert\NoAngleBrackets(
      *     message="Description cannot contain angle brackets (< or >)"
      * )
@@ -74,6 +80,9 @@ class DataRepository extends Entity
      *
      * @access protected
      *
+     * @Assert\NotBlank(
+     *     message=""Website URL is required"
+     * )
      * @Assert\NoAngleBrackets(
      *     message="Website URL cannot contain angle brackets (< or >)"
      * )
@@ -87,6 +96,9 @@ class DataRepository extends Entity
      *
      * @access protected
      *
+     * @Assert\NotBlank(
+     *     message="Phone number is required"
+     * )
      * @Assert\NoAngleBrackets(
      *     message="Phone number cannot contain angle brackets (< or >)"
      * )
@@ -100,8 +112,11 @@ class DataRepository extends Entity
      *
      * @access protected
      *
+     * @Assert\NotBlank(
+     *     message="Delivery point is required"
+     * )
      * @Assert\NoAngleBrackets(
-     *     message="Delievery point (address) cannot contain angle brackets (< or >)"
+     *     message="Delivery point (address) cannot contain angle brackets (< or >)"
      * )
      */
     protected $deliveryPoint;
@@ -113,6 +128,9 @@ class DataRepository extends Entity
      *
      * @access protected
      *
+     * @Assert\NotBlank(
+     *     message="City is required"
+     * )
      * @Assert\NoAngleBrackets(
      *     message="City cannot contain angle brackets (< or >)"
      * )
@@ -126,6 +144,9 @@ class DataRepository extends Entity
      *
      * @access protected
      *
+     * @Assert\NotBlank(
+     *     message="Administrative area (state) is required"
+     * )
      * @Assert\NoAngleBrackets(
      *     message="Administrative area (state) cannot contain angle brackets (< or >)"
      * )
@@ -139,6 +160,9 @@ class DataRepository extends Entity
      *
      * @access protected
      *
+     * @Assert\NotBlank(
+     *     message="Postal code (zip) is required"
+     * )
      * @Assert\NoAngleBrackets(
      *     message="Postal code (zip) cannot contain angle brackets (< or >)"
      * )
@@ -152,6 +176,9 @@ class DataRepository extends Entity
      *
      * @access protected
      *
+     * @Assert\NotBlank(
+     *     message="Country is required"
+     * )
      * @Assert\NoAngleBrackets(
      *     message="Country cannot contain angle brackets (< or >)"
      * )
