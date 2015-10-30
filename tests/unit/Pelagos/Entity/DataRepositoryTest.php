@@ -181,7 +181,8 @@ class DataRepositoryTest extends \PHPUnit_Framework_TestCase
                 )
               ),
               );
-              */
+        */
+
         $this->timeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->timeStampISO = $this->timeStamp->format(\DateTime::ISO8601);
         $this->timeStampLocalized = clone $this->timeStamp;
@@ -341,7 +342,7 @@ class DataRepositoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /*
-            * Testing of DataRepository - Person relationship functionality is deferred until a later commit.
+        * Testing of DataRepository - Person relationship functionality is deferred until a later commit.
             *
             * Test the getPersonDataRepositories method.
             *
@@ -356,10 +357,10 @@ class DataRepositoryTest extends \PHPUnit_Framework_TestCase
             $this->assertInstanceOf('\Pelagos\Entity\PersonDataRepository', $personDataRepository);
             }
             }
-            **************************/
+    */
 
     /*
-            * Testing of DataRepository - Person relationship functionality is deferred until a later commit.
+        * Testing of DataRepository - Person relationship functionality is deferred until a later commit.
             *
             * Test the setPersonDataRepositories() method with a non-array/traversable object.
             *
@@ -373,10 +374,10 @@ class DataRepositoryTest extends \PHPUnit_Framework_TestCase
             {
             $this->dataRepository->setPersonDataRepositories('string data');
             }
-            */
+    */
 
     /*
-            * Testing of DataRepository - Person relationship functionality is deferred until a later commit.
+        * Testing of DataRepository - Person relationship functionality is deferred until a later commit.
              *
              * Test setPersonDataRepositories() with bad (non-PersonDataRepository) element.
              *
@@ -392,7 +393,7 @@ class DataRepositoryTest extends \PHPUnit_Framework_TestCase
                   array_push($testArry, 'string data');
                   $this->dataRepository->setPersonDataRepositories($testArry);
               }
-              */
+    */
 
     /**
      * Test the update method.
@@ -461,14 +462,16 @@ class DataRepositoryTest extends \PHPUnit_Framework_TestCase
             'new_creator',
             $this->dataRepository->getCreator()
         );
-        /**
-         * Testing of DataRepository - Person relationship functionality
-         * is deferred until a later commit.
-        $this->assertSame(
-            $this->testNewPersonDataRepositories,
-            $this->dataRepository->getPersonDataRepositories()
-        );
-         * ******************/
+
+        /*
+            * Testing of DataRepository - Person relationship functionality
+            * is deferred until a later commit.
+            $this->assertSame(
+                $this->testNewPersonDataRepositories,
+                $this->dataRepository->getPersonDataRepositories()
+            );
+        */
+        
     }
 
     /**
