@@ -27,7 +27,7 @@
         <option value="">[Please Select a Data Repository]</option>
         {% for DataRepository in entityService.getAll("DataRepository", {"name":"ASC"}) %}
             <option value="{{DataRepository.getId}}"
-            {{ (PersonDataRepository.getDataRespository.getId == DataRepository.getId ? ' selected ' : '') }}
+            {{ (PersonDataRepository.getDataRepository.getId == DataRepository.getId ? ' selected ' : '') }}
             >{{DataRepository.getName}}</option>
         {% endfor %}
         </select><br>
