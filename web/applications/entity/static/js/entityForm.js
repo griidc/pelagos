@@ -268,8 +268,8 @@
         var entityId = $(form).find("[name=\"id\"]").val();
         var url;
 
-        $('form input:hidden').each(function(key,input){
-            data.append(input.name,input.value);
+        $("form input:hidden").each(function(key, input){
+            data.append(input.name, input.value);
         });
 
         var type;
