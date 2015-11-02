@@ -25,21 +25,21 @@ DROP TABLE data_repository_table CASCADE;
 CREATE TABLE data_repository_table
 (
    data_repository_number                   SERIAL,
-   data_repository_administrative_area      TEXT                DEFAULT NULL,
-   data_repository_city                     TEXT                DEFAULT NULL,
-   data_repository_country                  TEXT                DEFAULT NULL,
+   data_repository_administrative_area      TEXT                NOT NULL,
+   data_repository_city                     TEXT                NOT NULL,
+   data_repository_country                  TEXT                NOT NULL,
    data_repository_creation_time            TIMESTAMP WITH TIME ZONE
       DEFAULT DATE_TRUNC('seconds', NOW())  NOT NULL,
    data_repository_creator                  TEXT                NOT NULL,
-   data_repository_delivery_point           TEXT                DEFAULT NULL,
-   data_repository_description              TEXT                DEFAULT NULL,
+   data_repository_delivery_point           TEXT                NOT NULL,
+   data_repository_description              TEXT                NOT NULL,
    data_repository_modification_time        TIMESTAMP WITH TIME ZONE
       DEFAULT DATE_TRUNC('seconds', NOW())  NOT NULL,
    data_repository_modifier                 TEXT                NOT NULL,
    data_repository_name                     TEXT                NOT NULL,
-   data_repository_phone_number             TEXT                DEFAULT NULL,
-   data_repository_postal_code              TEXT                DEFAULT NULL,
-   data_repository_website                  TEXT                DEFAULT NULL,
+   data_repository_phone_number             TEXT                NOT NULL,
+   data_repository_postal_code              TEXT                NOT NULL,
+   data_repository_website                  TEXT                NOT NULL,
 
    CONSTRAINT chk_dr_mod_time_not_before_create
       CHECK(data_repository_modification_time >=

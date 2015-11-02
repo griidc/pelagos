@@ -66,6 +66,56 @@ AS $f_o_func$
    BEGIN
       IF TG_OP <> 'DELETE'
       THEN
+         -- Check for all required fields:
+         IF NEW.administrative_area IS NULL OR NEW.administrative_area = '' OR
+            NEW.city IS NULL OR NEW.city = '' OR
+            NEW.country IS NULL OR NEW.country = '' OR
+            NEW.delivery_point IS NULL OR NEW.delivery_point = '' OR
+            NEW.description IS NULL OR NEW.description = '' OR
+            NEW.email_address IS NULL OR NEW.email_address = '' OR
+            NEW.name IS NULL OR NEW.name = '' OR
+            NEW.phone_number IS NULL OR NEW.phone_number = '' OR
+            NEW.postal_code IS NULL OR NEW.postal_code = '' OR
+            NEW.website IS NULL OR NEW.website = '' OR
+            (TG_OP = 'INSERT' AND (NEW.creator IS NULL OR NEW.creator = '')) OR
+            (TG_OP = 'UPDATE' AND (NEW.data_repository_number IS NULL OR
+                                   NEW.modifier IS NULL OR NEW.modifier = ''))
+         THEN
+            _err_hint := CONCAT('A Data Repository entity requires a name, ',
+                                'a description, a phone number, an email ',
+                                'address, a website, a delivery point, a ',
+                                'city, an administrative area, a country, ',
+                                'a postal code, and a ',
+                                (SELECT CASE WHEN TG_OP = 'INSERT'
+                                                THEN 'Creator '
+                                             ELSE 'Modifier '
+                                         END),
+                                'name.');
+            _err_msg  := CONCAT('Missing required field(s): ',
+                                'data_repository_number = "',
+                                '", name = "',
+                                '", description = "',
+                                '", phone_number = "',
+                                '", email_address = "',
+                                '", website = "',
+                                '", delivery_point = "',
+                                '", city = "',
+                                '", administrative_area = "',
+                                '", country = "',
+                                '", postal_code = "',
+                                NEW.postal_code,
+                                '", ',
+                                CASE TG_OP
+                                   WHEN 'INSERT'
+                                      THEN CONCAT('creator = "',
+                                                  NEW.creator)
+                                   ELSE CONCAT('modifier = "',
+                                               NEW.modifier)
+                                END,
+                                '".');
+            RAISE EXCEPTION USING ERRCODE = '23502';
+         END IF;
+
          -- If an email address was supplied, attempt to cast it to an
          -- EMAIL_ADDRESS_TYPE. Raise an exception if the cast fails:
          IF NEW.email_address IS NOT NULL
@@ -80,21 +130,6 @@ AS $f_o_func$
 
          IF TG_OP = 'INSERT'
          THEN
-            -- Make sure we were supplied a Data Repository name:
-            IF NEW.creator IS NULL OR NEW.creator = '' OR
-               NEW.name IS NULL OR NEW.name = ''
-            THEN
-               _err_hint := CONCAT('A Data Repository entity requires a ',
-                                   'data repository name and a creator ',
-                                   'name');
-               _err_msg  := 'Missing required field violation';
-               -- This is an invalid entry. Raise an exception and quit (the
-               -- exception text is only used when we disable exception
-               -- handling below):
-               RAISE EXCEPTION 'Missing required fields'
-                  USING ERRCODE = '23502';
-            END IF;
-
             -- The task requirements call for the Data Repository name to
             -- be unique. That can be enforced here:
             EXECUTE 'SELECT COUNT(*)
@@ -115,28 +150,25 @@ AS $f_o_func$
                   USING ERRCODE = '23505';
             END IF;
 
-            IF _email_addr IS NOT NULL
-            THEN
-               -- Let's see if we already have a record for this email address:
-               EXECUTE 'SELECT COUNT(*)
-                        FROM email_table
-                        WHERE LOWER(email_address) = LOWER($1)'
-                  INTO _count
-                  USING _email_addr;
+            -- Let's see if we already have a record for this email address:
+            EXECUTE 'SELECT COUNT(*)
+                     FROM email_table
+                     WHERE LOWER(email_address) = LOWER($1)'
+               INTO _count
+               USING _email_addr;
 
-               IF _count = 0
-               THEN
-                  -- Apparently not. Insert the email address in the
-                  -- email_address table first:
-                  EXECUTE 'INSERT INTO email_table
-                           (
-                              email_address,
-                              email_validated
-                           )
-                           VALUES ($1, $2)'
-                     USING _email_addr,
-                           FALSE;
-               END IF;
+            IF _count = 0
+            THEN
+               -- Apparently not. Insert the email address in the
+               -- email_address table first:
+               EXECUTE 'INSERT INTO email_table
+                        (
+                           email_address,
+                           email_validated
+                        )
+                        VALUES ($1, $2)'
+                  USING _email_addr,
+                        FALSE;
             END IF;
 
             -- An INSERT statement from the front-end may not be passing in a
@@ -185,28 +217,21 @@ AS $f_o_func$
                      NEW.postal_code,
                      NEW.website;
 
-            -- If we were supplied an email address then associate the
-            -- data_repository and email address with each other. We will
-            -- have already inserted the email address into the email table if
-            -- needed, so we just need to associate that email address with
-            -- this data_repository:
-            IF _email_addr IS NOT NULL
-            THEN
-               EXECUTE 'INSERT INTO email2data_repository_table
-                        (
-                           email_address,
-                           data_repository_number
-                        )
-                        VALUES
-                        (
-                           (SELECT email_address
-                            FROM email_table
-                            WHERE LOWER(email_address) = $1),
-                            $2
-                         )'
-                  USING LOWER(_email_addr),
-                        NEW.data_repository_number;
-            END IF;
+            -- Associate the data_repository and email address with each other:
+            EXECUTE 'INSERT INTO email2data_repository_table
+                     (
+                        email_address,
+                        data_repository_number
+                     )
+                     VALUES
+                     (
+                        (SELECT email_address
+                         FROM email_table
+                         WHERE LOWER(email_address) = $1),
+                         $2
+                      )'
+               USING LOWER(_email_addr),
+                     NEW.data_repository_number;
 
             RETURN NEW;
 

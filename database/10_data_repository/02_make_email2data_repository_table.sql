@@ -40,7 +40,7 @@ CREATE TABLE email2data_repository_table
 ALTER INDEX email2data_repository_table_pkey
    RENAME TO uidx_pk_email2data_repository;
 
-CREATE UNIQUE INDEX uidx_one_email_to_fund_org
+CREATE UNIQUE INDEX uidx_one_email_to_data_repository
    ON email2data_repository_table(data_repository_number);
 
 -- Set object ownership's:
