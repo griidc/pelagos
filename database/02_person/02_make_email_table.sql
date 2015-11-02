@@ -13,6 +13,7 @@
 
 -- Start by dropping everything:
 DROP TABLE email_table CASCADE;
+DROP DOMAIN EMAIL_ADDRESS_TYPE CASCADE;
 
 -- A case insensitive email data type that allows any character other than a
 -- dot, an @, or any whitespace, followed by any number of characters that are

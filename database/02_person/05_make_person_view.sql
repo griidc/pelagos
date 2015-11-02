@@ -1,11 +1,12 @@
 -- -----------------------------------------------------------------------------
 -- Name:      make_person_view.sql
 -- Author:    Patrick Krepps
--- Date:      05 May 2015
+-- Date:      22 October 2015
 -- Inputs:    NONE
 -- Output:    A new database view
--- Info:      This script creates the person view, and the trigger functions
---            to allow the view to be updatable.
+-- Info:      This script creates the person view with the new attributes that
+--            added for task PELAGOS-38. It also redefines the view's trigger
+--            functions.
 -- -----------------------------------------------------------------------------
 -- TODO:
 -- -----------------------------------------------------------------------------
@@ -24,7 +25,7 @@ DROP VIEW person;
 -- Create the view (we cast email address to TEXT so that we can handle CHECK
 -- errors in our exception block. We also cast creation and modification times
 -- to TEXT as we ignore any input values. By casting to TEXT we can handle an
--- accidental emtpy string passed to us.):
+-- accidental emtpy string passed to us. Ditto for phone number.):
 CREATE VIEW person AS
    SELECT p.person_number AS person_number,
           p.person_honorific_title AS title,
@@ -32,8 +33,17 @@ CREATE VIEW person AS
           p.person_middle_name AS middle_name,
           p.person_surname AS surname,
           p.person_name_suffix AS suffix,
+          p.person_organization AS organization,
+          p.person_position AS position,
           CAST(e2p.email_address AS TEXT) AS email_address,
           e.email_validated AS email_verified,
+          p.person_website AS website,
+          p.person_delivery_point AS delivery_point,
+          p.person_city AS city,
+          p.person_administrative_area AS administrative_area,
+          p.person_country AS country,
+          p.person_postal_code AS postal_code,
+          CAST(p.person_phone_number AS TEXT) AS phone_number,
           p.person_creator AS creator,
           CAST(DATE_TRUNC('seconds', p.person_creation_time) AS TEXT)
              AS creation_time,
@@ -61,6 +71,7 @@ AS $pers_func$
       _err_code              TEXT                := NULL;
       _err_hint              TEXT                := NULL;
       _err_msg               TEXT                := NULL;
+      _phone_number          PHONE_NUMBER_TYPE   := NULL;
 
    BEGIN
       IF TG_OP <> 'DELETE'
@@ -88,8 +99,8 @@ AS $pers_func$
             _err_hint   := 'Please check the email address';
             _err_msg    := CONCAT('"',
                                   NEW.email_address,
-                                  '"',
-                                  ' is not a valid email address.');
+                                  '" ',
+                                  'is not a valid email address.');
             _email_addr := NEW.email_address;
 
             -- Set the correct verified status:
@@ -97,25 +108,25 @@ AS $pers_func$
             THEN
                NEW.email_verified := FALSE;
             END IF;
+
+            -- Attempt to cast the phone number to a PHONE_NUMBER_TYPE:
+            _err_hint := CONCAT('Phone numbers are stored as a 10 character ',
+                                'string consisting of digits only');
+            _err_msg  := CONCAT('"',
+                                NEW.phone_number,
+                                '" ',
+                                'is not a valid phone number.');
+            _phone_number := NEW.phone_number;
    
-            -- set the error variables for a uniqueness violation:
-            _err_hint := CONCAT('Perhaps you need to perform ',
-                                      'an UPDATE instead?');
-            _err_msg := CONCAT('Unique constraint violation. ',
-                               'email address ',
-                               '"',
-                               _email_addr,
-                               '"',
-                               ' is already present in relation person.');
-   
-            -- The requirements call for the combination of given name, surname,
-            -- and the (case-insensitive) email_address to be unique. We can
-            -- enforce that here:
-            EXECUTE 'SELECT COUNT(*)
-                     FROM person
-                     WHERE given_name = $1
-                        AND surname = $2
-                        AND LOWER(email_address) = LOWER($3)'
+            -- The requirements call for the combination of given name,
+            -- surname, and the (case-insensitive) email_address to be unique.
+            -- We can enforce that here:
+            EXECUTE 'SELECT 1
+                     WHERE EXISTS (SELECT 1
+                                   FROM person
+                                   WHERE given_name = $1
+                                      AND surname = $2
+                                      AND LOWER(email_address) = LOWER($3))'
                INTO _count
                USING NEW.given_name,
                      NEW.surname,
@@ -124,9 +135,17 @@ AS $pers_func$
             IF _count > 0
             THEN
                -- This is a duplicate entry.
-               RAISE EXCEPTION 'Duplicate person/email entry'
-                  USING ERRCODE = '23505';
-            END IF;
+               _err_hint := CONCAT('Perhaps you need to perform ',
+                                         'an UPDATE instead?');
+               _err_msg := CONCAT('Unique constraint violation. ',
+                                  'email address ',
+                                  '"',
+                                  _email_addr,
+                                  '"',
+                                  ' is already present in relation person.');
+                  RAISE EXCEPTION 'Duplicate person/email entry'
+                     USING ERRCODE = '23505';
+               END IF;
 
             -- Let's see if we already have a record for this email address:
             EXECUTE 'SELECT COUNT(*)
@@ -186,27 +205,47 @@ AS $pers_func$
             EXECUTE 'INSERT INTO person_table
                      (
                         person_number,
-                        person_creator,
+                        person_administrative_area,
+                        person_city,
+                        person_country,
                         person_creation_time,
+                        person_creator,
+                        person_delivery_point,
                         person_given_name,
                         person_honorific_title,
                         person_middle_name,
                         person_modification_time,
                         person_modifier,
                         person_name_suffix,
-                        person_surname
+                        person_organization,
+                        person_phone_number,
+                        person_position,
+                        person_postal_code,
+                        person_surname,
+                        person_website
                      )
-                     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)'
+                     VALUES ( $1,  $2,  $3,  $4,  $5,  $6,  $7,  $8,  $9,
+                             $10, $11, $12, $13, $14, $15, $16, $17, $18,
+                             $19)'
                USING NEW.person_number,
-                     NEW.creator,
+                     NEW.administrative_area,
+                     NEW.city,
+                     NEW.country,
                      DATE_TRUNC('seconds', NOW()),
+                     NEW.creator,
+                     NEW.delivery_point,
                      NEW.given_name,
                      NEW.title,
                      NEW.middle_name,
                      DATE_TRUNC('seconds', NOW()),
                      NEW.creator,
                      NEW.suffix,
-                     NEW.surname;
+                     NEW.organization,
+                     _phone_number,
+                     NEW.position,
+                     NEW.postal_code,
+                     NEW.surname,
+                     NEW.website;
 
             -- Associate the person and email address with each other. We will
             -- have already inserted the email address into the email table if
@@ -255,6 +294,20 @@ AS $pers_func$
                -- handling below):
                RAISE EXCEPTION 'Missing required fields'
                   USING ERRCODE = '23502';
+            END IF;
+
+            -- If we've been give a different phone number, attempt to cast it
+            -- to a PHONE_NUMBER_TYPE:
+            IF NEW.phone_number IS DISTINCT FROM OLD.phone_number
+            THEN
+               _err_hint := CONCAT('Phone numbers are stored as a 10 ',
+                                   'character string consisting of digits ',
+                                   'only');
+               _err_msg  := CONCAT('"',
+                                   NEW.phone_number,
+                                   '" ',
+                                   'is not a valid phone number.');
+               _phone_number := NEW.phone_number;
             END IF;
 
             -- If we've been given a different email address, it needs to be
@@ -315,22 +368,40 @@ AS $pers_func$
                    NEW.middle_name,
                    NEW.surname,
                    NEW.suffix,
+                   NEW.organization,
+                   NEW.position,
                    NEW.email_address,
-                   NEW.email_verified)
+                   NEW.email_verified,
+                   NEW.website,
+                   NEW.delivery_point,
+                   NEW.city,
+                   NEW.administrative_area,
+                   NEW.country,
+                   NEW.postal_code,
+                   NEW.phone_number)
                IS NOT DISTINCT FROM ROW(OLD.title,
                                         OLD.given_name,
                                         OLD.middle_name,
                                         OLD.surname,
                                         OLD.suffix,
+                                        OLD.organization,
+                                        OLD.position,
                                         OLD.email_address,
-                                        OLD.email_verified)
+                                        OLD.email_verified,
+                                        OLD.website,
+                                        OLD.delivery_point,
+                                        OLD.city,
+                                        OLD.administrative_area,
+                                        OLD.country,
+                                        OLD.postal_code,
+                                        OLD.phone_number)
             THEN
                -- Apparently not. Just return:
                RETURN NEW;
             END IF;
 
             -- Make sure we are not updating a NEW row to be a duplicate of an
-            -- OLD row:
+            -- OLD row's required fields:
             _count := NULL;
             EXECUTE 'SELECT person_number
                      FROM person
@@ -370,7 +441,16 @@ AS $pers_func$
                          middle_name,
                          surname,
                          suffix,
+                         organization,
+                         position,
                          email_address,
+                         website,
+                         delivery_point,
+                         city,
+                         administrative_area,
+                         country,
+                         postal_code,
+                         phone_number,
                          creator,
                          creation_time,
                          old_modifier,
@@ -378,8 +458,9 @@ AS $pers_func$
                          new_modifier,
                          new_modification_time
                      )
-                     VALUES ( $1,  $2,  $3,  $4,  $5,  $6,  $7,
-                              $8,  $9, $10, $11, $12, $13, $14)'
+                     VALUES ( $1,  $2,  $3,  $4,  $5,  $6,  $7,  $8,  $9,
+                             $10, $11, $12, $13, $14, $15, $16, $17, $18,
+                             $19, $20, $21, $22, $23)'
                USING TG_OP,
                      OLD.person_number,
                      OLD.title,
@@ -387,7 +468,16 @@ AS $pers_func$
                      OLD.middle_name,
                      OLD.surname,
                      OLD.suffix,
+                     OLD.organization,
+                     OLD.position,
                      OLD.email_address,
+                     OLD.website,
+                     OLD.delivery_point,
+                     OLD.city,
+                     OLD.administrative_area,
+                     OLD.country,
+                     OLD.postal_code,
+                     OLD.phone_number,
                      OLD.creator,
                      DATE_TRUNC('seconds',
                                 CAST(OLD.creation_time AS TIMESTAMP)),
@@ -401,30 +491,66 @@ AS $pers_func$
             -- below since this test may not always evaluate to TRUE. I wonder
             -- if this is indicative of the need for modification attributes on
             -- the email_table and the email2person_table, and redefining the
-            -- person view history_table INSERT to use the latest one?):
-            IF ROW(NEW.title,
+            -- person_history_table INSERT to use the latest one?):
+            IF ROW(NEW.administrative_area,
+                   NEW.city,
+                   NEW.country,
+                   NEW.delivery_point,
                    NEW.given_name,
                    NEW.middle_name,
+                   NEW.organization,
+                   NEW.phone_number,
+                   NEW.position,
+                   NEW.postal_code,
                    NEW.surname,
-                   NEW.suffix)
-               IS DISTINCT FROM ROW(OLD.title,
+                   NEW.suffix,
+                   NEW.title,
+                   NEW.website)
+               IS DISTINCT FROM ROW(OLD.administrative_area,
+                                    OLD.city,
+                                    OLD.country,
+                                    OLD.delivery_point,
                                     OLD.given_name,
                                     OLD.middle_name,
+                                    OLD.organization,
+                                    OLD.phone_number,
+                                    OLD.position,
+                                    OLD.postal_code,
                                     OLD.surname,
-                                    OLD.suffix)
+                                    OLD.suffix,
+                                    OLD.title,
+                                    OLD.website)
             THEN
                EXECUTE 'UPDATE person_table
-                        SET person_honorific_title = $1,
-                            person_given_name = $2,
-                            person_middle_name = $3,
-                            person_surname = $4,
-                            person_name_suffix = $5
-                        WHERE person_number = $6'
-               USING NEW.title,
+                        SET person_administrative_area = $1,
+                            person_city = $2,
+                            person_country = $3,
+                            person_delivery_point = $4,
+                            person_given_name = $5,
+                            person_honorific_title = $6,
+                            person_middle_name = $7,
+                            person_name_suffix = $8,
+                            person_organization = $9,
+                            person_phone_number = $10,
+                            person_position = $11,
+                            person_postal_code = $12,
+                            person_surname = $13,
+                            person_website = $14
+                        WHERE person_number = $15'
+               USING NEW.administrative_area,
+                     NEW.city,
+                     NEW.country,
+                     NEW.delivery_point,
                      NEW.given_name,
+                     NEW.title,
                      NEW.middle_name,
-                     NEW.surname,
                      NEW.suffix,
+                     NEW.organization,
+                     NEW.phone_number,
+                     NEW.position,
+                     NEW.postal_code,
+                     NEW.surname,
+                     NEW.website,
                      OLD.person_number;
             END IF;
 
@@ -459,42 +585,29 @@ AS $pers_func$
                  -- an UPDATE
       ELSE
          -- This is a DELETE operation
-         -- Update the history table with all current information:
-         EXECUTE 'INSERT INTO person_history_table
-                  (
-                      person_history_action,
-                      person_number,
-                      title,
-                      given_name,
-                      middle_name,
-                      surname,
-                      suffix,
-                      email_address,
-                      creator,
-                      creation_time,
-                      old_modifier,
-                      old_modification_time,
-                      new_modifier,
-                      new_modification_time
-                     )
-                     VALUES ( $1,  $2,  $3,  $4,  $5,  $6,  $7,
-                              $8,  $9, $10, $11, $12, $13, $14)'
-            USING TG_OP,
-                  OLD.person_number,
-                  OLD.title,
-                  OLD.given_name,
-                  OLD.middle_name,
-                  OLD.surname,
-                  OLD.suffix,
-                  OLD.email_address,
-                  OLD.creator,
-                     DATE_TRUNC('seconds',
-                                CAST(OLD.creation_time AS TIMESTAMP)),
-                  OLD.modifier,
-                  DATE_TRUNC('seconds',
-                             CAST(OLD.modification_time AS TIMESTAMP)),
-                  current_user,
-                  DATE_TRUNC('seconds', NOW());
+         -- First set the error message variables for a foreign key violation:
+         _err_msg  := CONCAT('Unable to ',
+                             TG_OP,
+                             ' "',
+                             OLD.given_name,
+                             ' ',
+                             CASE
+                                WHEN OLD.middle_name IS NOT NULL
+                                   THEN CONCAT(OLD.middle_name, ' ')
+                                ELSE ''
+                             END,
+                             OLD.surname,
+                             CASE
+                                WHEN OLD.suffix IS NOT NULL
+                                   THEN CONCAT(' ', OLD.suffix)
+                                ELSE ''
+                             END,
+                             '", person_number "',
+                             OLD.person_number,
+                             '" because it is still referenced by child ',
+                             'entities.');
+         _err_hint := CONCAT('You will need to first delete all dependent ',
+                             'references first.');
 
          -- The DELETE operation will leave the email address behind, on the
          -- off chance that we need to associate that email address with
@@ -516,23 +629,73 @@ AS $pers_func$
                   FROM person_table
                   WHERE person_number = $1'
             USING OLD.person_number;
+
+         -- Update the history table with all current information:
+         EXECUTE 'INSERT INTO person_history_table
+                  (
+                      person_history_action,
+                      person_number,
+                      title,
+                      given_name,
+                      middle_name,
+                      surname,
+                      suffix,
+                      organization,
+                      position,
+                      email_address,
+                      website,
+                      delivery_point,
+                      city,
+                      administrative_area,
+                      country,
+                      postal_code,
+                      phone_number,
+                      creator,
+                      creation_time,
+                      old_modifier,
+                      old_modification_time,
+                      new_modifier,
+                      new_modification_time
+                  )
+                  VALUES ( $1,  $2,  $3,  $4,  $5,  $6,  $7,  $8,  $9,
+                          $10, $11, $12, $13, $14, $15, $16, $17, $18,
+                          $19, $20, $21, $22, $23)'
+            USING TG_OP,
+                  OLD.person_number,
+                  OLD.title,
+                  OLD.given_name,
+                  OLD.middle_name,
+                  OLD.surname,
+                  OLD.suffix,
+                  OLD.organization,
+                  OLD.position,
+                  OLD.email_address,
+                  OLD.website,
+                  OLD.delivery_point,
+                  OLD.city,
+                  OLD.administrative_area,
+                  OLD.country,
+                  OLD.postal_code,
+                  OLD.phone_number,
+                  OLD.creator,
+                  DATE_TRUNC('seconds',
+                             CAST(OLD.creation_time AS TIMESTAMP)),
+                  OLD.modifier,
+                  DATE_TRUNC('seconds',
+                             CAST(OLD.modification_time AS TIMESTAMP)),
+                  current_user,
+                  DATE_TRUNC('seconds', NOW());
+
+         -- The record has been successfully deleted, and the history table
+         -- properly updated.
          RETURN OLD;
       END IF; -- End IF to determine if this is a DELETE operation.
 
       EXCEPTION
-         WHEN SQLSTATE '23502'
-            THEN
-               RAISE EXCEPTION '%',   _err_msg
-                  USING HINT        = _err_hint,
-                        ERRCODE     = SQLSTATE;
-               RETURN NULL;
-         WHEN SQLSTATE '23505'
-            THEN
-               RAISE EXCEPTION '%',   _err_msg
-                  USING HINT        = _err_hint,
-                        ERRCODE     = SQLSTATE;
-               RETURN NULL;
-         WHEN SQLSTATE '23514'
+         WHEN SQLSTATE '23502' OR
+              SQLSTATE '23503' OR
+              SQLSTATE '23505' OR
+              SQLSTATE '23514'
             THEN
                RAISE EXCEPTION '%',   _err_msg
                   USING HINT        = _err_hint,
