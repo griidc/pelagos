@@ -23,7 +23,7 @@
 
     {% if not DataRepository %}
         <label for="DataRepository">Data Repository:</label>
-        <select required name="DataRepository" DataRepository="{{PersonDataRepository.getDataRepository.getId}}">
+        <select required name="dataRepository" DataRepository="{{PersonDataRepository.getDataRepository.getId}}">
         <option value="">[Please Select a Data Repository]</option>
         {% for DataRepository in entityService.getAll("DataRepository", {"name":"ASC"}) %}
             <option value="{{DataRepository.getId}}"
