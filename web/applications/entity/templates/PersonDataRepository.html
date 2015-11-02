@@ -1,0 +1,51 @@
+<form class="entityForm" entityType="PersonDataRepository" {{ (PersonDataRepositoryEditable ? 'editable' : '') }}
+{{(PersonDataRepositoryDeletable ? 'deletable' : '') }} >
+
+    <input type="hidden" name="id" value="{{PersonDataRepository.getId}}">
+
+    {% if not Person %}
+        <label for="person">Person:</label>
+        {% if not DataRepository %}
+            <select required name="person" person="{{PersonDataRepository.getPerson.getId}}">
+            <option value="">[Please Select a Person]</option>
+            {% for Person in entityService.getAll("Person", {"lastName":"ASC","firstName":"ASC"}) %}
+                <option value="{{Person.getId}}"
+                {{ (PersonDataRepository.getPerson.getId == Person.getId ? ' selected ' : '') }}
+                >{{Person.getLastName}}, {{Person.getFirstName}}, {{Person.getEmailAddress}}</option>
+            {% endfor %}
+            </select>
+            <label for="person" class="error"></label>
+        {% else %}
+            {{PersonDataRepository.getPerson.getFirstName}} {{PersonDataRepository.getPerson.getLastName}} &lt;{{PersonDataRepository.getPerson.getEmailAddress}}&gt;
+        {% endif %}
+        <br>
+    {% endif %}
+
+    {% if not DataRepository %}
+        <label for="DataRepository">Data Repository:</label>
+        <select required name="DataRepository" DataRepository="{{PersonDataRepository.getDataRepository.getId}}">
+        <option value="">[Please Select a Data Repository]</option>
+        {% for DataRepository in entityService.getAll("DataRepository", {"name":"ASC"}) %}
+            <option value="{{DataRepository.getId}}"
+            {{ (PersonDataRepository.getDataRespository.getId == DataRepository.getId ? ' selected ' : '') }}
+            >{{DataRepository.getName}}</option>
+        {% endfor %}
+        </select><br>
+    {% endif %}
+
+    {% if userLoggedIn == "true" %}
+        <label for="role">Role:</label>
+        <select required name="role" dataRepositoryRole="{{PersonDataRepository.getRole.getId}}">
+        <option value="">[Please Select a Role]</option>
+        {% for Role in entityService.getAll("DataRepositoryRole", {"weight":"ASC"}) %}
+            <option value="{{Role.getId}}"
+            {{ (PersonDataRepository.getRole.getId == Role.getId ? ' selected ' : '') }}
+            >{{Role.getName}}</option>
+        {% endfor %}
+        </select><br>
+    {% endif %}
+
+    <label for="label">Label:</label>
+    <input type="text" name="label" size="50" value="{{PersonDataRepository.getLabel}}"><br>
+
+</form>
