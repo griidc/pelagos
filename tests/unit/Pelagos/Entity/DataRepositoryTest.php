@@ -471,7 +471,7 @@ class DataRepositoryTest extends \PHPUnit_Framework_TestCase
                 $this->dataRepository->getPersonDataRepositories()
             );
         */
-        
+
     }
 
     /**
