@@ -10,7 +10,7 @@ use \Symfony\Component\Validator\Constraints as Assert;
  * @Assert\UniqueEntity(
  *     fields={"person", "dataRepository"},
  *     errorPath="person",
- *     message="A Person can have only one association with a Funding Organization"
+ *     message="A Person can have only one association with a Data Repository"
  * )
  */
 class PersonDataRepository extends Entity
@@ -66,7 +66,7 @@ class PersonDataRepository extends Entity
      * @var DataRepository
      *
      * @Assert\NotBlank(
-     *     message="Funding Organization is required"
+     *     message="Data Repositry is required"
      * )
      */
     protected $dataRepository;
@@ -135,7 +135,7 @@ class PersonDataRepository extends Entity
      *
      * @return DataRepository|null The Data Repository entity for this association.
      */
-    public function getFundingOrganization()
+    public function getDataRepository()
     {
         return $this->dataRepository;
     }
