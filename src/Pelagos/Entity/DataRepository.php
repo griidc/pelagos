@@ -195,6 +195,71 @@ class DataRepository extends Entity
     protected $personDataRepositories;
 
     /**
+     * Static array containing a list of the properties and their attributes.
+     *
+     * @var array $properties
+     */
+    protected static $properties = array(
+        'name' => array(
+            'type' => 'string',
+            'getter' => 'getName',
+            'setter' => 'setName',
+        ),
+        'emailAddress' => array(
+            'type' => 'string',
+            'getter' => 'getEmailAddress',
+            'setter' => 'setEmailAddress',
+        ),
+        'description' => array(
+            'type' => 'string',
+            'getter' => 'getDescription',
+            'setter' => 'setDescription',
+        ),
+        'url' => array(
+            'type' => 'string',
+            'getter' => 'getUrl',
+            'setter' => 'setUrl',
+        ),
+        'phoneNumber' => array(
+            'type' => 'string',
+            'getter' => 'getPhoneNumber',
+            'setter' => 'setPhoneNumber',
+        ),
+        'deliveryPoint' => array(
+            'type' => 'string',
+            'getter' => 'getDeliveryPoint',
+            'setter' => 'setDeliveryPoint',
+        ),
+        'city' => array(
+            'type' => 'string',
+            'getter' => 'getCity',
+            'setter' => 'setCity',
+        ),
+        'administrativeArea' => array(
+            'type' => 'string',
+            'getter' => 'getAdministrativeArea',
+            'setter' => 'setAdministrativeArea',
+        ),
+        'postalCode' => array(
+            'type' => 'string',
+            'getter' => 'getPostalCode',
+            'setter' => 'setPostalCode',
+        ),
+        'country' => array(
+            'type' => 'string',
+            'getter' => 'getCountry',
+            'setter' => 'setCountry',
+        ),
+        'personDataRepositories' => array(
+            'type' => 'object',
+            'class' => '\Doctrine\Common\Collections\Collection',
+            'getter' => 'getPersonDataRepositories',
+            'setter' => 'setPersonDataRepositories',
+            'serialize' => false,
+        ),
+    );
+
+    /**
      * Setter for name.
      *
      * @param string $name Name of Data Repository.
@@ -494,136 +559,6 @@ class DataRepository extends Entity
     public function getPersonDataRepositories()
     {
         return $this->personDataRepositories;
-    }
-
-    /**
-     * Static array containing a list of the properties and their attributes.
-     *
-     * @var array $properties
-     */
-    protected static $properties = array(
-        'name' => array(
-            'type' => 'string',
-            'getter' => 'getName',
-            'setter' => 'setName',
-        ),
-        'emailAddress' => array(
-            'type' => 'string',
-            'getter' => 'getEmailAddress',
-            'setter' => 'setEmailAddress',
-        ),
-        'description' => array(
-            'type' => 'string',
-            'getter' => 'getDescription',
-            'setter' => 'setDescription',
-        ),
-        'url' => array(
-            'type' => 'string',
-            'getter' => 'getUrl',
-            'setter' => 'setUrl',
-        ),
-        'phoneNumber' => array(
-            'type' => 'string',
-            'getter' => 'getPhoneNumber',
-            'setter' => 'setPhoneNumber',
-        ),
-        'deliveryPoint' => array(
-            'type' => 'string',
-            'getter' => 'getDeliveryPoint',
-            'setter' => 'setDeliveryPoint',
-        ),
-        'city' => array(
-            'type' => 'string',
-            'getter' => 'getCity',
-            'setter' => 'setCity',
-        ),
-        'administrativeArea' => array(
-            'type' => 'string',
-            'getter' => 'getAdministrativeArea',
-            'setter' => 'setAdministrativeArea',
-        ),
-        'postalCode' => array(
-            'type' => 'string',
-            'getter' => 'getPostalCode',
-            'setter' => 'setPostalCode',
-        ),
-        'country' => array(
-            'type' => 'string',
-            'getter' => 'getCountry',
-            'setter' => 'setCountry',
-        ),
-        'personDataRepositories' => array(
-            'type' => 'object',
-            'class' => '\Doctrine\Common\Collections\Collection',
-            'getter' => 'getPersonDataRepositories',
-            'setter' => 'setPersonDataRepositories',
-            'serialize' => false,
-        ),
-    );
-
-    /**
-     * Method that returns a DataRepository's properties as an array.
-     *
-     * Default is to not localize time stamps.
-     *
-     * @param array   $properties         An array listing the properties to include.
-     * @param boolean $localizeTimeStamps A flag to inidcate whether or not to localize time stamps.
-     *
-     * @return array An array of property values for this DataRepository.
-     */
-    public function asArray(array $properties, $localizeTimeStamps = false)
-    {
-        $personArray = array();
-        foreach ($properties as $property) {
-            switch ($property) {
-                case 'id':
-                    $personArray[] = $this->getId();
-                    break;
-                case 'name':
-                    $personArray[] = $this->getName();
-                    break;
-                case 'description':
-                    $personArray[] = $this->getDescription();
-                    break;
-                case 'phoneNumber':
-                    $personArray[] = $this->getPhoneNumber();
-                    break;
-                case 'emailAddress':
-                    $personArray[] = $this->getEmailAddress();
-                    break;
-                case 'url':
-                    $personArray[] = $this->getUrl();
-                    break;
-                case 'administrativeArea':
-                    $personArray[] = $this->getAdministrativeArea();
-                    break;
-                case 'postalCode':
-                    $personArray[] = $this->getPostalCode();
-                    break;
-                case 'country':
-                    $personArray[] = $this->getCountry();
-                    break;
-                case 'creationTimeStamp':
-                    $personArray[] = $this->getCreationTimeStamp($localizeTimeStamps);
-                    break;
-                case 'creator':
-                    $personArray[] = $this->getCreator();
-                    break;
-                case 'modificationTimeStamp':
-                    $personArray[] = $this->getModificationTimeStamp($localizeTimeStamps);
-                    break;
-                case 'modifier':
-                    $personArray[] = $this->getModifier();
-                    break;
-                case 'city':
-                    $personArray[] = $this->getCity();
-                    break;
-                case 'deliveryPoint':
-                    $personArray[] = $this->getDeliveryPoint();
-                    break;
-            }
-        }
-        return $personArray;
     }
 
     /**

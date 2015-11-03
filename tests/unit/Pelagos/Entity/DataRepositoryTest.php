@@ -151,44 +151,11 @@ class DataRepositoryTest extends \PHPUnit_Framework_TestCase
         $this->dataRepository->setPostalCode(self::$testPostalCode);
         $this->dataRepository->setCountry(self::$testCountry);
         $this->dataRepository->setCreator(self::$testCreator);
-
-        /*
-            * Testing of DataRepository - Person relationship functionality is deferred until a later commit.
-            *
-
-             $this->testPersonDataRepositories = array(
-             \Mockery::mock(
-                '\Pelagos\Entity\PersonDataRepository',
-                array(
-                    'setDataRepository' => null,
-                )
-              ),
-              \Mockery::mock(
-                '\Pelagos\Entity\PersonDataRepository',
-                array(
-                    'setDataRepository' => null,
-                )
-               ),
-              );
-
-              $this->dataRepository->setPersonDataRepositories($this->testPersonDataRepositories);
-
-              $this->testNewPersonDataRepositories = array(
-              \Mockery::mock(
-                '\Pelagos\Entity\PersonDataRepository',
-                array(
-                    'setDataRepository' => null,
-                )
-              ),
-              );
-        */
-
         $this->timeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->timeStampISO = $this->timeStamp->format(\DateTime::ISO8601);
         $this->timeStampLocalized = clone $this->timeStamp;
         $this->timeStampLocalized->setTimeZone(new \DateTimeZone(date_default_timezone_get()));
         $this->timeStampLocalizedISO = $this->timeStampLocalized->format(\DateTime::ISO8601);
-
     }
 
     /**
@@ -341,59 +308,7 @@ class DataRepositoryTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /*
-        * Testing of DataRepository - Person relationship functionality is deferred until a later commit.
-            *
-            * Test the getPersonDataRepositories method.
-            *
-            * Verifies the associated PersonDataRepositories are each an instance of PersonDataRepositories.
-            *
-            * @return void
 
-            public function testGetPersonDataRepository()
-            {
-            $personDataRepositories = $this->dataRepository->getPersonDataRepositories();
-            foreach ($personDataRepositories as $personDataRepository) {
-            $this->assertInstanceOf('\Pelagos\Entity\PersonDataRepository', $personDataRepository);
-            }
-            }
-    */
-
-    /*
-        * Testing of DataRepository - Person relationship functionality is deferred until a later commit.
-            *
-            * Test the setPersonDataRepositories() method with a non-array/traversable object.
-            *
-            * This method should result in an exception being thrown.
-            *
-            * @expectedException \Exception
-            *
-            * @return void
-
-            public function testSetPersonDataRepositoriesWithNonTraversable()
-            {
-            $this->dataRepository->setPersonDataRepositories('string data');
-            }
-    */
-
-    /*
-        * Testing of DataRepository - Person relationship functionality is deferred until a later commit.
-             *
-             * Test setPersonDataRepositories() with bad (non-PersonDataRepository) element.
-             *
-             * This method should result in an exception being thrown.
-             *
-             * @expectedException \Exception
-             *
-             * @return void
-
-              public function testSetPersonDataRepositoriesWithANonPersonDataRepositoryInArray()
-              {
-                  $testArry = $this->testPersonDataRepositories;
-                  array_push($testArry, 'string data');
-                  $this->dataRepository->setPersonDataRepositories($testArry);
-              }
-    */
 
     /**
      * Test the update method.
@@ -415,7 +330,6 @@ class DataRepositoryTest extends \PHPUnit_Framework_TestCase
                 'postalCode' => 'new_postalCode',
                 'country' => 'new_country',
                 'creator' => 'new_creator'
-                // 'personDataRepositories' => $this->testNewPersonDataRepositories,
             )
         );
         $this->assertEquals(
@@ -462,16 +376,6 @@ class DataRepositoryTest extends \PHPUnit_Framework_TestCase
             'new_creator',
             $this->dataRepository->getCreator()
         );
-
-        /*
-            * Testing of DataRepository - Person relationship functionality
-            * is deferred until a later commit.
-            $this->assertSame(
-                $this->testNewPersonDataRepositories,
-                $this->dataRepository->getPersonDataRepositories()
-            );
-        */
-
     }
 
     /**
@@ -499,54 +403,5 @@ class DataRepositoryTest extends \PHPUnit_Framework_TestCase
             'country' => self::$testCountry,
         );
         $this->assertEquals(json_encode($dataRepositoryData), json_encode($this->dataRepository));
-    }
-
-    /**
-     * Test that DataRepository can be returned as an array via asArray(arry) method.
-     *
-     * @return void
-     */
-    public function testAsArray()
-    {
-        $dataRepositoryProperties = array(
-            'id',
-            'creationTimeStamp',
-            'creator',
-            'name',
-            'emailAddress',
-            'description',
-            'url',
-            'phoneNumber',
-            'deliveryPoint',
-            'city',
-            'administrativeArea',
-            'postalCode',
-            'country',
-            'modificationTimeStamp',
-            'modifier'
-        );
-        $dataRepositoryData = array(
-            null,
-            null,
-            self::$testCreator,
-            self::$testName,
-            self::$testEmailAddress,
-            self::$testDescription,
-            self::$testUrl,
-            self::$testPhoneNumber,
-            self::$testDeliveryPoint,
-            self::$testCity,
-            self::$testAdministrativeArea,
-            self::$testPostalCode,
-            self::$testCountry,
-            null,
-            self::$testCreator
-        );
-        $this->assertEquals(
-            $dataRepositoryData,
-            $this->dataRepository->asArray(
-                $dataRepositoryProperties
-            )
-        );
     }
 }
