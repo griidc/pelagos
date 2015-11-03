@@ -13,18 +13,29 @@
 
 -- Start by dropping everything:
 DROP VIEW person;
-DROP TABLE email2person_table;
-DROP TABLE email_table;
+DROP TABLE email2person_table CASCADE;
+DROP TABLE email_table CASCADE;
 DROP TABLE person_table CASCADE;
-DROP DOMAIN EMAIL_ADDRESS_TYPE;
+DROP DOMAIN PHONE_NUMBER_TYPE;
 
--- Now create person_table, and make the necessary alterations:
+-- Now create the telephone number type:
+CREATE DOMAIN PHONE_NUMBER_TYPE
+AS TEXT
+DEFAULT NULL
+CONSTRAINT chk_phone_number
+   CHECK (VALUE ~ '^[1-9][0-9]{2}[1-9][0-9]{6}$');
+
+-- Now create person_table:
 CREATE TABLE person_table
 (
    person_number                            SERIAL,
+   person_administrative_area               TEXT                DEFAULT NULL,
+   person_city                              TEXT                DEFAULT NULL,
+   person_country                           TEXT                DEFAULT NULL,
    person_creation_time                     TIMESTAMP WITH TIME ZONE
       DEFAULT DATE_TRUNC('seconds', NOW())  NOT NULL,
    person_creator                           TEXT                NOT NULL,
+   person_delivery_point                    TEXT                DEFAULT NULL,
    person_given_name                        TEXT                NOT NULL,
    person_honorific_title                   TEXT                DEFAULT NULL,
    person_middle_name                       TEXT                DEFAULT NULL,
@@ -32,7 +43,12 @@ CREATE TABLE person_table
       DEFAULT DATE_TRUNC('seconds', NOW())  NOT NULL,
    person_modifier                          TEXT                NOT NULL,
    person_name_suffix                       TEXT                DEFAULT NULL,
+   person_organization                      TEXT                DEFAULT NULL,
+   person_phone_number                      PHONE_NUMBER_TYPE   DEFAULT NULL,
+   person_position                          TEXT                DEFAULT NULL,
+   person_postal_code                       TEXT                DEFAULT NULL,
    person_surname                           TEXT                NOT NULL,
+   person_website                           TEXT                DEFAULT NULL,
 
    CONSTRAINT chk_person_mod_time_not_before_create
       CHECK (person_modification_time >= person_creation_time),

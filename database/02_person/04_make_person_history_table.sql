@@ -15,7 +15,7 @@
 \c gomri postgres
 
 -- Start by dropping the history table:
-DROP TABLE person_history_table;
+DROP TABLE person_history_table CASCADE;
 
 -- Create the person_history_table with a surrogate key and all person
 -- attributes of interest. The attribute names remain the same as the names
@@ -34,7 +34,16 @@ CREATE TABLE person_history_table
    middle_name                              TEXT,
    surname                                  TEXT                NOT NULL,
    suffix                                   TEXT,
+   organization                             TEXT                DEFAULT NULL,
+   position                                 TEXT                DEFAULT NULL,
    email_address                            TEXT                NOT NULL,
+   website                                  TEXT                DEFAULT NULL,
+   delivery_point                           TEXT                DEFAULT NULL,
+   city                                     TEXT                DEFAULT NULL,
+   administrative_area                      TEXT                DEFAULT NULL,
+   country                                  TEXT                DEFAULT NULL,
+   postal_code                              TEXT                DEFAULT NULL,
+   phone_number                             TEXT                DEFAULT NULL,
    creator                                  TEXT                NOT NULL,
    creation_time                            TIMESTAMP WITH TIME ZONE
       NOT NULL,
