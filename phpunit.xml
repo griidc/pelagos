@@ -16,5 +16,10 @@
         <blacklist>
             <directory>./vendor</directory>
         </blacklist>
+        <whitelist>
+            <directory suffix=".php">share</directory>
+            <directory suffix=".php">src</directory>
+            <directory suffix=".php">web</directory>
+        </whitelist>
     </filter>
 </phpunit>
