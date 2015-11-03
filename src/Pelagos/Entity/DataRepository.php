@@ -81,7 +81,7 @@ class DataRepository extends Entity
      * @access protected
      *
      * @Assert\NotBlank(
-     *     message=""Website URL is required"
+     *     message="Website URL is required"
      * )
      * @Assert\NoAngleBrackets(
      *     message="Website URL cannot contain angle brackets (< or >)"
