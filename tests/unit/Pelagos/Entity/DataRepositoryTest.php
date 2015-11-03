@@ -308,8 +308,6 @@ class DataRepositoryTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-
-
     /**
      * Test the update method.
      *
