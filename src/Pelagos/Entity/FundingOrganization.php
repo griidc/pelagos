@@ -23,6 +23,83 @@ use \Pelagos\Exception\NotDeletableException;
 class FundingOrganization extends Entity
 {
     /**
+     * Static array containing a list of the properties and their attributes.
+     *
+     * @var array $properties
+     */
+    protected static $properties = array(
+        'name' => array(
+            'type' => 'string',
+            'getter' => 'getName',
+            'setter' => 'setName',
+        ),
+        'logo' => array(
+            'type' => 'string',
+            'getter' => 'getLogo',
+            'setter' => 'setLogo',
+            'serializer' => 'serializeBinary',
+        ),
+        'emailAddress' => array(
+            'type' => 'string',
+            'getter' => 'getEmailAddress',
+            'setter' => 'setEmailAddress',
+        ),
+        'description' => array(
+            'type' => 'string',
+            'getter' => 'getDescription',
+            'setter' => 'setDescription',
+        ),
+        'url' => array(
+            'type' => 'string',
+            'getter' => 'getUrl',
+            'setter' => 'setUrl',
+        ),
+        'phoneNumber' => array(
+            'type' => 'string',
+            'getter' => 'getPhoneNumber',
+            'setter' => 'setPhoneNumber',
+        ),
+        'deliveryPoint' => array(
+            'type' => 'string',
+            'getter' => 'getDeliveryPoint',
+            'setter' => 'setDeliveryPoint',
+        ),
+        'city' => array(
+            'type' => 'string',
+            'getter' => 'getCity',
+            'setter' => 'setCity',
+        ),
+        'administrativeArea' => array(
+            'type' => 'string',
+            'getter' => 'getAdministrativeArea',
+            'setter' => 'setAdministrativeArea',
+        ),
+        'postalCode' => array(
+            'type' => 'string',
+            'getter' => 'getPostalCode',
+            'setter' => 'setPostalCode',
+        ),
+        'country' => array(
+            'type' => 'string',
+            'getter' => 'getCountry',
+            'setter' => 'setCountry',
+        ),
+        'fundingCycles' => array(
+            'type' => 'fundingCycle',
+            'getter' => 'getFundingCycles',
+            'setter' => 'setFundingCycles',
+            'serialize' => false,
+        ),
+        'personFundingOrganizations' => array(
+            'type' => 'object',
+            'class' => '\Doctrine\Common\Collections\Collection',
+            'getter' => 'getPersonFundingOrganizations',
+            'setter' => 'setPersonFundingOrganizations',
+            'serialize' => false,
+        ),
+    );
+
+    /**
      * Name of a funding organization.
      *
      * @var string $name
@@ -577,83 +654,6 @@ class FundingOrganization extends Entity
     {
         return $this->personFundingOrganizations;
     }
-
-    /**
-     * Static array containing a list of the properties and their attributes.
-     *
-     * @var array $properties
-     */
-    protected static $properties = array(
-        'name' => array(
-            'type' => 'string',
-            'getter' => 'getName',
-            'setter' => 'setName',
-        ),
-        'logo' => array(
-            'type' => 'string',
-            'getter' => 'getLogo',
-            'setter' => 'setLogo',
-            'serializer' => 'serializeBinary',
-        ),
-        'emailAddress' => array(
-            'type' => 'string',
-            'getter' => 'getEmailAddress',
-            'setter' => 'setEmailAddress',
-        ),
-        'description' => array(
-            'type' => 'string',
-            'getter' => 'getDescription',
-            'setter' => 'setDescription',
-        ),
-        'url' => array(
-            'type' => 'string',
-            'getter' => 'getUrl',
-            'setter' => 'setUrl',
-        ),
-        'phoneNumber' => array(
-            'type' => 'string',
-            'getter' => 'getPhoneNumber',
-            'setter' => 'setPhoneNumber',
-        ),
-        'deliveryPoint' => array(
-            'type' => 'string',
-            'getter' => 'getDeliveryPoint',
-            'setter' => 'setDeliveryPoint',
-        ),
-        'city' => array(
-            'type' => 'string',
-            'getter' => 'getCity',
-            'setter' => 'setCity',
-        ),
-        'administrativeArea' => array(
-            'type' => 'string',
-            'getter' => 'getAdministrativeArea',
-            'setter' => 'setAdministrativeArea',
-        ),
-        'postalCode' => array(
-            'type' => 'string',
-            'getter' => 'getPostalCode',
-            'setter' => 'setPostalCode',
-        ),
-        'country' => array(
-            'type' => 'string',
-            'getter' => 'getCountry',
-            'setter' => 'setCountry',
-        ),
-        'fundingCycles' => array(
-            'type' => 'fundingCycle',
-            'getter' => 'getFundingCycles',
-            'setter' => 'setFundingCycles',
-            'serialize' => false,
-        ),
-        'personFundingOrganizations' => array(
-            'type' => 'object',
-            'class' => '\Doctrine\Common\Collections\Collection',
-            'getter' => 'getPersonFundingOrganizations',
-            'setter' => 'setPersonFundingOrganizations',
-            'serialize' => false,
-        ),
-    );
 
     /**
      * Check if this FundingOrganization is deletable.
