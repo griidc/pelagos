@@ -23,6 +23,71 @@ use \Pelagos\Exception\NotDeletableException;
 class DataRepository extends Entity
 {
     /**
+     * Static array containing a list of the properties and their attributes.
+     *
+     * @var array $properties
+     */
+    protected static $properties = array(
+        'name' => array(
+            'type' => 'string',
+            'getter' => 'getName',
+            'setter' => 'setName',
+        ),
+        'emailAddress' => array(
+            'type' => 'string',
+            'getter' => 'getEmailAddress',
+            'setter' => 'setEmailAddress',
+        ),
+        'description' => array(
+            'type' => 'string',
+            'getter' => 'getDescription',
+            'setter' => 'setDescription',
+        ),
+        'url' => array(
+            'type' => 'string',
+            'getter' => 'getUrl',
+            'setter' => 'setUrl',
+        ),
+        'phoneNumber' => array(
+            'type' => 'string',
+            'getter' => 'getPhoneNumber',
+            'setter' => 'setPhoneNumber',
+        ),
+        'deliveryPoint' => array(
+            'type' => 'string',
+            'getter' => 'getDeliveryPoint',
+            'setter' => 'setDeliveryPoint',
+        ),
+        'city' => array(
+            'type' => 'string',
+            'getter' => 'getCity',
+            'setter' => 'setCity',
+        ),
+        'administrativeArea' => array(
+            'type' => 'string',
+            'getter' => 'getAdministrativeArea',
+            'setter' => 'setAdministrativeArea',
+        ),
+        'postalCode' => array(
+            'type' => 'string',
+            'getter' => 'getPostalCode',
+            'setter' => 'setPostalCode',
+        ),
+        'country' => array(
+            'type' => 'string',
+            'getter' => 'getCountry',
+            'setter' => 'setCountry',
+        ),
+        'personDataRepositories' => array(
+            'type' => 'object',
+            'class' => '\Doctrine\Common\Collections\Collection',
+            'getter' => 'getPersonDataRepositories',
+            'setter' => 'setPersonDataRepositories',
+            'serialize' => false,
+        ),
+    );
+
+    /**
      * Name of a Data Repository.
      *
      * @var string $name
@@ -193,71 +258,6 @@ class DataRepository extends Entity
      * @access protected
      */
     protected $personDataRepositories;
-
-    /**
-     * Static array containing a list of the properties and their attributes.
-     *
-     * @var array $properties
-     */
-    protected static $properties = array(
-        'name' => array(
-            'type' => 'string',
-            'getter' => 'getName',
-            'setter' => 'setName',
-        ),
-        'emailAddress' => array(
-            'type' => 'string',
-            'getter' => 'getEmailAddress',
-            'setter' => 'setEmailAddress',
-        ),
-        'description' => array(
-            'type' => 'string',
-            'getter' => 'getDescription',
-            'setter' => 'setDescription',
-        ),
-        'url' => array(
-            'type' => 'string',
-            'getter' => 'getUrl',
-            'setter' => 'setUrl',
-        ),
-        'phoneNumber' => array(
-            'type' => 'string',
-            'getter' => 'getPhoneNumber',
-            'setter' => 'setPhoneNumber',
-        ),
-        'deliveryPoint' => array(
-            'type' => 'string',
-            'getter' => 'getDeliveryPoint',
-            'setter' => 'setDeliveryPoint',
-        ),
-        'city' => array(
-            'type' => 'string',
-            'getter' => 'getCity',
-            'setter' => 'setCity',
-        ),
-        'administrativeArea' => array(
-            'type' => 'string',
-            'getter' => 'getAdministrativeArea',
-            'setter' => 'setAdministrativeArea',
-        ),
-        'postalCode' => array(
-            'type' => 'string',
-            'getter' => 'getPostalCode',
-            'setter' => 'setPostalCode',
-        ),
-        'country' => array(
-            'type' => 'string',
-            'getter' => 'getCountry',
-            'setter' => 'setCountry',
-        ),
-        'personDataRepositories' => array(
-            'type' => 'object',
-            'class' => '\Doctrine\Common\Collections\Collection',
-            'getter' => 'getPersonDataRepositories',
-            'setter' => 'setPersonDataRepositories',
-            'serialize' => false,
-        ),
-    );
 
     /**
      * Setter for name.
