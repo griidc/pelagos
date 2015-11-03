@@ -77,14 +77,7 @@ class DataRepository extends Entity
             'type' => 'string',
             'getter' => 'getCountry',
             'setter' => 'setCountry',
-        ),
-        'personDataRepositories' => array(
-            'type' => 'object',
-            'class' => '\Doctrine\Common\Collections\Collection',
-            'getter' => 'getPersonDataRepositories',
-            'setter' => 'setPersonDataRepositories',
-            'serialize' => false,
-        ),
+        )
     );
 
     /**
