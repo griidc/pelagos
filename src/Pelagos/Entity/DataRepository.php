@@ -244,6 +244,15 @@ class DataRepository extends Entity
     protected $country;
 
     /**
+     * Data Repository's relationship with Persons.
+     *
+     * @var \Doctrine\Common\Collections\Collection $personDataRepositories
+     *
+     * @access protected
+     */
+    protected $personDataRepositories;
+
+    /**
      * Setter for name.
      *
      * @param string $name Name of Data Repository.
