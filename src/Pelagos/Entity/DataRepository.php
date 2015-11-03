@@ -560,32 +560,4 @@ class DataRepository extends Entity
     {
         return $this->personDataRepositories;
     }
-
-    /**
-     * Check if this DataRepository is deletable.
-     *
-     * This method throws a NotDeletableException when the DataRepository has associated
-     * Persons. The NotDeletableException will have its reasons set to a list of
-     * reasons the DataRepository is not deletable.
-     *
-     * @throws NotDeletableException When the DataRepository has associated Persons.
-     *
-     * @return void
-     */
-    public function checkDeletable()
-    {
-        $notDeletableReasons = array();
-
-        $personDataRepositoryCount = count($this->getPersonDataRepositories());
-        if ($personDataRepositoryCount > 0) {
-            $notDeletableReasons[] = 'there ' . ($personDataRepositoryCount > 1 ? 'are' : 'is') .
-                " $personDataRepositoryCount associated Person" .
-                ($personDataRepositoryCount > 1 ? 's' : '');
-        }
-        if (count($notDeletableReasons) > 0) {
-            $notDeletableException = new NotDeletableException();
-            $notDeletableException->setReasons($notDeletableReasons);
-            throw $notDeletableException;
-        }
-    }
 }
