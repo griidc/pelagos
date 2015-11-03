@@ -36,7 +36,7 @@ class PersonDataRepositoryTest extends \PHPUnit_Framework_TestCase
     {
         $this->mockPerson = \Mockery::mock('\Pelagos\Entity\Person');
         $this->mockDataRepository = \Mockery::mock('\Pelagos\Entity\DataRepository');
-        $this->mockDataRepositorynRole = \Mockery::mock('\Pelagos\Entity\DataRepositoryRole');
+        $this->mockDataRepositoryRole = \Mockery::mock('\Pelagos\Entity\DataRepositoryRole');
         $this->personDataRepository = new PersonDataRepository;
         $this->personDataRepository->setPerson($this->mockPerson);
         $this->personDataRepository->setDataRepository($this->mockDataRepository);
