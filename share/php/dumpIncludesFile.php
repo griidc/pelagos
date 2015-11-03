@@ -8,6 +8,9 @@ function dumpIncludesFile($file) {
     if (preg_match('/\.css$/',$file)) {
         $mime = 'text/css';
     }
+    elseif (preg_match('/\.js$/',$file)) {
+        $mime = 'text/javascript';
+    }
     else {
         $info = finfo_open(FILEINFO_MIME_TYPE);
         $mime = finfo_file($info, $file);
