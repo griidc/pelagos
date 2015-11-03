@@ -23,6 +23,71 @@ use \Pelagos\Exception\NotDeletableException;
 class DataRepository extends Entity
 {
     /**
+     * Static array containing a list of the properties and their attributes.
+     *
+     * @var array $properties
+     */
+    protected static $properties = array(
+        'name' => array(
+            'type' => 'string',
+            'getter' => 'getName',
+            'setter' => 'setName',
+        ),
+        'emailAddress' => array(
+            'type' => 'string',
+            'getter' => 'getEmailAddress',
+            'setter' => 'setEmailAddress',
+        ),
+        'description' => array(
+            'type' => 'string',
+            'getter' => 'getDescription',
+            'setter' => 'setDescription',
+        ),
+        'url' => array(
+            'type' => 'string',
+            'getter' => 'getUrl',
+            'setter' => 'setUrl',
+        ),
+        'phoneNumber' => array(
+            'type' => 'string',
+            'getter' => 'getPhoneNumber',
+            'setter' => 'setPhoneNumber',
+        ),
+        'deliveryPoint' => array(
+            'type' => 'string',
+            'getter' => 'getDeliveryPoint',
+            'setter' => 'setDeliveryPoint',
+        ),
+        'city' => array(
+            'type' => 'string',
+            'getter' => 'getCity',
+            'setter' => 'setCity',
+        ),
+        'administrativeArea' => array(
+            'type' => 'string',
+            'getter' => 'getAdministrativeArea',
+            'setter' => 'setAdministrativeArea',
+        ),
+        'postalCode' => array(
+            'type' => 'string',
+            'getter' => 'getPostalCode',
+            'setter' => 'setPostalCode',
+        ),
+        'country' => array(
+            'type' => 'string',
+            'getter' => 'getCountry',
+            'setter' => 'setCountry',
+        ),
+        'personDataRepositories' => array(
+            'type' => 'object',
+            'class' => '\Doctrine\Common\Collections\Collection',
+            'getter' => 'getPersonDataRepositories',
+            'setter' => 'setPersonDataRepositories',
+            'serialize' => false,
+        ),
+    );
+
+    /**
      * Name of a Data Repository.
      *
      * @var string $name
@@ -193,71 +258,6 @@ class DataRepository extends Entity
      * @access protected
      */
     protected $personDataRepositories;
-
-    /**
-     * Static array containing a list of the properties and their attributes.
-     *
-     * @var array $properties
-     */
-    protected static $properties = array(
-        'name' => array(
-            'type' => 'string',
-            'getter' => 'getName',
-            'setter' => 'setName',
-        ),
-        'emailAddress' => array(
-            'type' => 'string',
-            'getter' => 'getEmailAddress',
-            'setter' => 'setEmailAddress',
-        ),
-        'description' => array(
-            'type' => 'string',
-            'getter' => 'getDescription',
-            'setter' => 'setDescription',
-        ),
-        'url' => array(
-            'type' => 'string',
-            'getter' => 'getUrl',
-            'setter' => 'setUrl',
-        ),
-        'phoneNumber' => array(
-            'type' => 'string',
-            'getter' => 'getPhoneNumber',
-            'setter' => 'setPhoneNumber',
-        ),
-        'deliveryPoint' => array(
-            'type' => 'string',
-            'getter' => 'getDeliveryPoint',
-            'setter' => 'setDeliveryPoint',
-        ),
-        'city' => array(
-            'type' => 'string',
-            'getter' => 'getCity',
-            'setter' => 'setCity',
-        ),
-        'administrativeArea' => array(
-            'type' => 'string',
-            'getter' => 'getAdministrativeArea',
-            'setter' => 'setAdministrativeArea',
-        ),
-        'postalCode' => array(
-            'type' => 'string',
-            'getter' => 'getPostalCode',
-            'setter' => 'setPostalCode',
-        ),
-        'country' => array(
-            'type' => 'string',
-            'getter' => 'getCountry',
-            'setter' => 'setCountry',
-        ),
-        'personDataRepositories' => array(
-            'type' => 'object',
-            'class' => '\Doctrine\Common\Collections\Collection',
-            'getter' => 'getPersonDataRepositories',
-            'setter' => 'setPersonDataRepositories',
-            'serialize' => false,
-        ),
-    );
 
     /**
      * Setter for name.
@@ -517,75 +517,5 @@ class DataRepository extends Entity
     public function getCountry()
     {
         return $this->country;
-    }
-
-    /**
-     * Setter for personDataRepositories.
-     *
-     * @param array|\Traversable $personDataRepositories Set of PersonDataRepository objects.
-     *
-     * @access public
-     *
-     * @throws \Exception When $personDataRepositories is not an array or traversable object.
-     * @throws \Exception When Non-PersonDataRepository found within $personDataRepositories.
-     *
-     * @return void
-     */
-    public function setPersonDataRepositories($personDataRepositories)
-    {
-        if (is_array($personDataRepositories) || $personDataRepositories instanceof \Traversable) {
-            foreach ($personDataRepositories as $personDataRepository) {
-                if (!$personDataRepository instanceof PersonDataRepository) {
-                    throw new \Exception('Non-PersonDataRepository found in personDataRepositories.');
-                }
-            }
-            $this->personDataRepositories = $personDataRepositories;
-            foreach ($this->personDataRepositories as $personDataRepository) {
-                $personDataRepository->setDataRepository($this);
-            }
-        } else {
-            throw new \Exception('personDataRepositories must be either array or traversable objects.');
-        }
-    }
-
-    /**
-     * Getter for personDataRepositories.
-     *
-     * @access public
-     *
-     * @return \Doctrine\Common\Collections\Collection Collection containing personDataRepositories
-     *                                                 listings for this Data Repository.
-     */
-    public function getPersonDataRepositories()
-    {
-        return $this->personDataRepositories;
-    }
-
-    /**
-     * Check if this DataRepository is deletable.
-     *
-     * This method throws a NotDeletableException when the DataRepository has associated
-     * Persons. The NotDeletableException will have its reasons set to a list of
-     * reasons the DataRepository is not deletable.
-     *
-     * @throws NotDeletableException When the DataRepository has associated Persons.
-     *
-     * @return void
-     */
-    public function checkDeletable()
-    {
-        $notDeletableReasons = array();
-
-        $personDataRepositoryCount = count($this->getPersonDataRepositories());
-        if ($personDataRepositoryCount > 0) {
-            $notDeletableReasons[] = 'there ' . ($personDataRepositoryCount > 1 ? 'are' : 'is') .
-                " $personDataRepositoryCount associated Person" .
-                ($personDataRepositoryCount > 1 ? 's' : '');
-        }
-        if (count($notDeletableReasons) > 0) {
-            $notDeletableException = new NotDeletableException();
-            $notDeletableException->setReasons($notDeletableReasons);
-            throw $notDeletableException;
-        }
     }
 }
