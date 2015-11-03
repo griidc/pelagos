@@ -141,8 +141,8 @@ AS $f_o_func$
             IF _count > 0
             THEN
                -- This is a duplicate entry.
-               _err_hint := CONCAT('Please supply a unique name for Funding ',
-                                   'Organization.');
+               _err_hint := CONCAT('Please supply a unique name for the Data ',
+                                   'Repository.');
                _err_msg  := CONCAT('A Data Repository by the name ',
                                    NEW.name,
                                    ' already exists.');
