@@ -23,6 +23,83 @@ use \Pelagos\Exception\NotDeletableException;
 class FundingOrganization extends Entity
 {
     /**
+     * Static array containing a list of the properties and their attributes.
+     *
+     * @var array $properties
+     */
+    protected static $properties = array(
+        'name' => array(
+            'type' => 'string',
+            'getter' => 'getName',
+            'setter' => 'setName',
+        ),
+        'logo' => array(
+            'type' => 'string',
+            'getter' => 'getLogo',
+            'setter' => 'setLogo',
+            'serializer' => 'serializeBinary',
+        ),
+        'emailAddress' => array(
+            'type' => 'string',
+            'getter' => 'getEmailAddress',
+            'setter' => 'setEmailAddress',
+        ),
+        'description' => array(
+            'type' => 'string',
+            'getter' => 'getDescription',
+            'setter' => 'setDescription',
+        ),
+        'url' => array(
+            'type' => 'string',
+            'getter' => 'getUrl',
+            'setter' => 'setUrl',
+        ),
+        'phoneNumber' => array(
+            'type' => 'string',
+            'getter' => 'getPhoneNumber',
+            'setter' => 'setPhoneNumber',
+        ),
+        'deliveryPoint' => array(
+            'type' => 'string',
+            'getter' => 'getDeliveryPoint',
+            'setter' => 'setDeliveryPoint',
+        ),
+        'city' => array(
+            'type' => 'string',
+            'getter' => 'getCity',
+            'setter' => 'setCity',
+        ),
+        'administrativeArea' => array(
+            'type' => 'string',
+            'getter' => 'getAdministrativeArea',
+            'setter' => 'setAdministrativeArea',
+        ),
+        'postalCode' => array(
+            'type' => 'string',
+            'getter' => 'getPostalCode',
+            'setter' => 'setPostalCode',
+        ),
+        'country' => array(
+            'type' => 'string',
+            'getter' => 'getCountry',
+            'setter' => 'setCountry',
+        ),
+        'fundingCycles' => array(
+            'type' => 'fundingCycle',
+            'getter' => 'getFundingCycles',
+            'setter' => 'setFundingCycles',
+            'serialize' => false,
+        ),
+        'personFundingOrganizations' => array(
+            'type' => 'object',
+            'class' => '\Doctrine\Common\Collections\Collection',
+            'getter' => 'getPersonFundingOrganizations',
+            'setter' => 'setPersonFundingOrganizations',
+            'serialize' => false,
+        ),
+    );
+
+    /**
      * Name of a funding organization.
      *
      * @var string $name
@@ -576,151 +653,6 @@ class FundingOrganization extends Entity
     public function getPersonFundingOrganizations()
     {
         return $this->personFundingOrganizations;
-    }
-
-    /**
-     * Static array containing a list of the properties and their attributes.
-     *
-     * @var array $properties
-     */
-    protected static $properties = array(
-        'name' => array(
-            'type' => 'string',
-            'getter' => 'getName',
-            'setter' => 'setName',
-        ),
-        'logo' => array(
-            'type' => 'string',
-            'getter' => 'getLogo',
-            'setter' => 'setLogo',
-            'serializer' => 'serializeBinary',
-        ),
-        'emailAddress' => array(
-            'type' => 'string',
-            'getter' => 'getEmailAddress',
-            'setter' => 'setEmailAddress',
-        ),
-        'description' => array(
-            'type' => 'string',
-            'getter' => 'getDescription',
-            'setter' => 'setDescription',
-        ),
-        'url' => array(
-            'type' => 'string',
-            'getter' => 'getUrl',
-            'setter' => 'setUrl',
-        ),
-        'phoneNumber' => array(
-            'type' => 'string',
-            'getter' => 'getPhoneNumber',
-            'setter' => 'setPhoneNumber',
-        ),
-        'deliveryPoint' => array(
-            'type' => 'string',
-            'getter' => 'getDeliveryPoint',
-            'setter' => 'setDeliveryPoint',
-        ),
-        'city' => array(
-            'type' => 'string',
-            'getter' => 'getCity',
-            'setter' => 'setCity',
-        ),
-        'administrativeArea' => array(
-            'type' => 'string',
-            'getter' => 'getAdministrativeArea',
-            'setter' => 'setAdministrativeArea',
-        ),
-        'postalCode' => array(
-            'type' => 'string',
-            'getter' => 'getPostalCode',
-            'setter' => 'setPostalCode',
-        ),
-        'country' => array(
-            'type' => 'string',
-            'getter' => 'getCountry',
-            'setter' => 'setCountry',
-        ),
-        'fundingCycles' => array(
-            'type' => 'fundingCycle',
-            'getter' => 'getFundingCycles',
-            'setter' => 'setFundingCycles',
-            'serialize' => false,
-        ),
-        'personFundingOrganizations' => array(
-            'type' => 'object',
-            'class' => '\Doctrine\Common\Collections\Collection',
-            'getter' => 'getPersonFundingOrganizations',
-            'setter' => 'setPersonFundingOrganizations',
-            'serialize' => false,
-        ),
-    );
-
-    /**
-     * Method that returns a FundingOrganization's properties as an array.
-     *
-     * Default is to not localize time stamps.
-     *
-     * @param array   $properties         An array listing the properties to include.
-     * @param boolean $localizeTimeStamps A flag to inidcate whether or not to localize time stamps.
-     *
-     * @return array An array of property values for this FundingOrganization.
-     */
-    public function asArray(array $properties, $localizeTimeStamps = false)
-    {
-        $personArray = array();
-        foreach ($properties as $property) {
-            switch ($property) {
-                case 'id':
-                    $personArray[] = $this->getId();
-                    break;
-                case 'name':
-                    $personArray[] = $this->getName();
-                    break;
-                case 'description':
-                    $personArray[] = $this->getDescription();
-                    break;
-                case 'phoneNumber':
-                    $personArray[] = $this->getPhoneNumber();
-                    break;
-                case 'emailAddress':
-                    $personArray[] = $this->getEmailAddress();
-                    break;
-                case 'url':
-                    $personArray[] = $this->getUrl();
-                    break;
-                case 'administrativeArea':
-                    $personArray[] = $this->getAdministrativeArea();
-                    break;
-                case 'postalCode':
-                    $personArray[] = $this->getPostalCode();
-                    break;
-                case 'country':
-                    $personArray[] = $this->getCountry();
-                    break;
-                case 'logo':
-                    $personArray[] = $this->getLogo();
-                    break;
-                case 'creationTimeStamp':
-                    $personArray[] = $this->getCreationTimeStamp($localizeTimeStamps);
-                    break;
-                case 'creator':
-                    $personArray[] = $this->getCreator();
-                    break;
-                case 'modificationTimeStamp':
-                    $personArray[] = $this->getModificationTimeStamp($localizeTimeStamps);
-                    break;
-                case 'modifier':
-                    $personArray[] = $this->getModifier();
-                    break;
-                case 'city':
-                    $personArray[] = $this->getCity();
-                    break;
-                case 'deliveryPoint':
-                    $personArray[] = $this->getDeliveryPoint();
-                    break;
-            }
-        }
-        return $personArray;
     }
 
     /**
