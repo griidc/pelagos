@@ -4,8 +4,6 @@ namespace Pelagos\Entity;
 
 use Symfony\Component\Validator\Validation;
 
-require_once 'PersonTest.php';
-
 /**
  * Unit tests for Pelagos\Entity\Person.
  *
@@ -15,8 +13,20 @@ require_once 'PersonTest.php';
    @group   Pelagos\Entity\User
    @package Pelagos\Entity
  */
-class UserTest extends PersonTest
+class UserTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * Property to hold an instance of Person for testing.
+     * @var Person
+     */
+    protected $person;
+
+    /**
+     * Property to hold an instance of the Symfony Validator.
+     * @var \Symfony\Component\Validator\Validator
+     */
+    protected $validator;
+
     /**
      * Static class variable containing a user id to use for testing.
      * @var string
@@ -51,7 +61,7 @@ class UserTest extends PersonTest
      */
     protected function setUp()
     {
-        parent::setUp();
+        $this->create();
         $this->person->setUserId(self::$userId);
         $this->person->setPassword(self::$password);
     }
@@ -97,7 +107,7 @@ class UserTest extends PersonTest
      */
     public function getStateArray()
     {
-        $personData = parent::getStateArray();
+        $personData = array();
         $personData['userId'] = self::$userId;
         $personData['password'] = self::$password;
         return $personData;

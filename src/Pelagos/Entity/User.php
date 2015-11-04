@@ -61,7 +61,7 @@ class User extends Person
     /**
      * Assign for userId property.
      *
-     * @param string $userId  user credential user id of a Person.
+     * @param string $userId User credential user id of a Person.
      *
      * @return void
      */
@@ -83,13 +83,13 @@ class User extends Person
     /**
      * Assign for password property.
      *
-     * @param string $password  user credential password  of a Person.
+     * @param string $password User credential password  of a Person.
      *
      * @return void
      */
-    public function setPassword($pw)
+    public function setPassword($password)
     {
-        $this->password = $pw;
+        $this->password = $password;
     }
 
     /**
