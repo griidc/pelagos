@@ -37,9 +37,7 @@ Pelagos.Entity.Entity.dcm.xml
 
         <field name="postalCode"         column="postal_code"         type="string" />
 
-        <!--
-            <one-to-many field="personDataRepositories" target-entity="PersonDataRepository" mapped-by="dataRepository" />
-        -->
+        <one-to-many field="personDataRepositories" target-entity="PersonDataRepository" mapped-by="dataRepository" />
 
     </entity>
 
