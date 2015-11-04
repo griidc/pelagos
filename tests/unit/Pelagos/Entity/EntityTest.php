@@ -522,4 +522,16 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $returnObj = $testClass->resolveDate('meaningless string data');
         $this->assertInstanceOf('\DateTime', $returnObj);
     }
+
+    /**
+     * Test Entity's serializeDate method.
+     *
+     * @return void
+     */
+    public function testSerializeDate()
+    {
+        $testClass = new \Pelagos\Entity\ConcreteEntity;
+        $returnStr = $testClass->serializeDate($this->timeStamp);
+        $this->assertEquals($returnStr, $this->timeStamp->format('Y-m-d'));
+    }
 }
