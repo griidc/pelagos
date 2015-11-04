@@ -388,6 +388,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $updates = array(
             'creator' => 'new_creator',
             'modifier' => 'new_modifier',
+            'id' => '12345',
         );
         $this->concreteEntity->update($updates);
         $this->assertEquals(
@@ -397,6 +398,12 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(
             'new_modifier',
             $this->concreteEntity->getModifier()
+        );
+        // ID is not updateable so should still be null.  This
+        // was added to test so the logic that skips non-updatable
+        // properties could be tested.
+        $this->assertNull(
+            $this->concreteEntity->getId()
         );
     }
 
