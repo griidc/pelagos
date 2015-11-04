@@ -5,27 +5,21 @@ namespace Pelagos\Entity;
 use Symfony\Component\Validator\Validation;
 
 /**
- * Unit tests for Pelagos\Entity\Person.
+ * Unit tests for Pelagos\Entity\User.
  *
-   @group   Pelagos
-   @group   Pelagos\Entity
-   @group   Pelagos\Entity\Person
-   @group   Pelagos\Entity\User
-   @package Pelagos\Entity
+ * @group Pelagos
+ * @group Pelagos\Entity
+ * @group Pelagos\Entity\User
+ *
+ * @package Pelagos\Entity
  */
 class UserTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * Property to hold an instance of Person for testing.
-     * @var Person
+     * Property to hold an instance of User for testing.
+     * @var User
      */
-    protected $person;
-
-    /**
-     * Property to hold an instance of the Symfony Validator.
-     * @var \Symfony\Component\Validator\Validator
-     */
-    protected $validator;
+    protected $user;
 
     /**
      * Static class variable containing a user id to use for testing.
@@ -40,30 +34,17 @@ class UserTest extends \PHPUnit_Framework_TestCase
     protected static $password = 'MyP@$$w0rd';
 
     /**
-     * Instantiate the Validation object and the test object.
-     *
-     * @return void
-     */
-    protected function create()
-    {
-        $this->validator = Validation::createValidatorBuilder()
-            ->enableAnnotationMapping()
-            ->getValidator();
-        $this->person = new User;
-    }
-
-    /**
      * Setup for PHPUnit tests.
      *
-     * This includes the autoloader and instantiates an instance of User.
+     * This instantiates an instance of User and sets its properties.
      *
      * @return void
      */
     protected function setUp()
     {
-        $this->create();
-        $this->person->setUserId(self::$userId);
-        $this->person->setPassword(self::$password);
+        $this->user = new User;
+        $this->user->setUserId(self::$userId);
+        $this->user->setPassword(self::$password);
     }
 
     /**
@@ -76,7 +57,7 @@ class UserTest extends \PHPUnit_Framework_TestCase
     public function testGetUserId()
     {
         $this->assertEquals(
-            $this->person->getUserId(),
+            $this->user->getUserId(),
             self::$userId
         );
     }
@@ -91,25 +72,8 @@ class UserTest extends \PHPUnit_Framework_TestCase
     public function testGetPassword()
     {
         $this->assertEquals(
-            $this->person->getPassword(),
+            $this->user->getPassword(),
             self::$password
         );
-    }
-
-    /**
-     * Get an array of all the state values.
-     *
-     * Add this objects state to that of the parent.
-     * Used for testing JSON serialization.
-     * This function overrides the parent implementation.
-     *
-     * @return array Return an array of state of this and the parent object.
-     */
-    public function getStateArray()
-    {
-        $personData = array();
-        $personData['userId'] = self::$userId;
-        $personData['password'] = self::$password;
-        return $personData;
     }
 }
