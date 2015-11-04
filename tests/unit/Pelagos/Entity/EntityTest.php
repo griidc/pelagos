@@ -466,7 +466,8 @@ class EntityTest extends \PHPUnit_Framework_TestCase
      */
     public function testCheckDeletable()
     {
-        $rc = new \ReflectionClass('\Pelagos\Entity\Entity');
-        $this->assertTrue($rc->hasMethod('checkDeletable'));
+        $testClass = new \Pelagos\Entity\ConcreteEntity;
+        $this->assertTrue(method_exists($testClass, 'checkDeletable'));
+        $testClass->checkDeletable();
     }
 }
