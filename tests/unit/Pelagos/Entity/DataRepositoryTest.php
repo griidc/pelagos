@@ -156,6 +156,30 @@ class DataRepositoryTest extends \PHPUnit_Framework_TestCase
         $this->timeStampLocalized = clone $this->timeStamp;
         $this->timeStampLocalized->setTimeZone(new \DateTimeZone(date_default_timezone_get()));
         $this->timeStampLocalizedISO = $this->timeStampLocalized->format(\DateTime::ISO8601);
+        $this->testPersonDataRepositories = array(
+            \Mockery::mock(
+                '\Pelagos\Entity\PersonDataRepository',
+                array(
+                    'setDataRepository' => null,
+                )
+            ),
+            \Mockery::mock(
+                '\Pelagos\Entity\PersonDataRepository',
+                array(
+                    'setDataRepository' => null,
+                )
+            ),
+        );
+        $this->dataRepository->setPersonDataRepositories($this->testPersonDataRepositories);
+
+        $this->newTestPersonDataRepositories = array(
+            \Mockery::mock(
+                '\Pelagos\Entity\PersonDataRepository',
+                array(
+                    'setDataRepository' => null,
+                )
+            ),
+        );
     }
 
     /**
@@ -309,6 +333,51 @@ class DataRepositoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test the getPersonDataRepositories method.
+     *
+     * Verifies the associated PersonDataRepositories are each an instance of PersonDataRepository.
+     *
+     * @return void
+     */
+    public function testGetPersonDataRepositories()
+    {
+        $personDataRepositories = $this->dataRepository->getPersonDataRepositories();
+        foreach ($personDataRepositories as $personDataRepository) {
+            $this->assertInstanceOf('\Pelagos\Entity\PersonDataRepository', $personDataRepository);
+        }
+    }
+
+    /**
+     * Test the setPersonDataRepositories() method with a non-array/traversable object.
+     *
+     * This method should result in an exception being thrown.
+     *
+     * @expectedException \Exception
+     *
+     * @return void
+     */
+    public function testSetPersonDataRepositoriesWithNonTraversable()
+    {
+        $this->dataRepository->setPersonDataRepositories('string data');
+    }
+
+    /**
+     * Test setPersonDataRepositories() with a bad (non-PersonFundingOrganization) element.
+     *
+     * This method should result in an exception being thrown.
+     *
+     * @expectedException \Exception
+     *
+     * @return void
+     */
+    public function testSetPersonDataRepositoriesWithANonPersonDataRepositoryInArray()
+    {
+        $testArry = $this->testPersonDataRepositories;
+        array_push($testArry, 'string data');
+        $this->dataRepository->setPersonDataRepositories($testArry);
+    }
+
+    /**
      * Test the update method.
      *
      * @return void
@@ -327,7 +396,8 @@ class DataRepositoryTest extends \PHPUnit_Framework_TestCase
                 'administrativeArea' => 'new_administrativeArea',
                 'postalCode' => 'new_postalCode',
                 'country' => 'new_country',
-                'creator' => 'new_creator'
+                'creator' => 'new_creator',
+                'personDataRepositories' => $this->newTestPersonDataRepositories,
             )
         );
         $this->assertEquals(
@@ -373,6 +443,10 @@ class DataRepositoryTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(
             'new_creator',
             $this->dataRepository->getCreator()
+        );
+        $this->assertEquals(
+            $this->newTestPersonDataRepositories,
+            $this->dataRepository->getPersonDataRepositories()
         );
     }
 
