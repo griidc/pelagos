@@ -466,9 +466,8 @@ class EntityTest extends \PHPUnit_Framework_TestCase
      */
     public function testCheckDeletable()
     {
-        $testClass = new \Pelagos\Entity\ConcreteEntity;
-        $this->assertTrue(method_exists($testClass, 'checkDeletable'));
-        $testClass->checkDeletable();
+        $this->assertTrue(method_exists($this->concreteEntity, 'checkDeletable'));
+        $this->concreteEntity->checkDeletable();
     }
 
     /**
@@ -478,8 +477,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
      */
     public function testResolveDateTime()
     {
-        $testClass = new \Pelagos\Entity\ConcreteEntity;
-        $returnObj = $testClass->resolveDateTime('2015-11-04 15:11:31');
+        $returnObj = $this->concreteEntity->resolveDateTime('2015-11-04 15:11:31');
         $this->assertInstanceOf('\DateTime', $returnObj);
     }
 
@@ -492,8 +490,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
      */
     public function testResolveDateTimeBadDate()
     {
-        $testClass = new \Pelagos\Entity\ConcreteEntity;
-        $returnObj = $testClass->resolveDateTime('meaningless string data');
+        $returnObj = $this->concreteEntity->resolveDateTime('meaningless string data');
         $this->assertInstanceOf('\DateTime', $returnObj);
     }
 
@@ -504,8 +501,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
      */
     public function testResolveDate()
     {
-        $testClass = new \Pelagos\Entity\ConcreteEntity;
-        $returnObj = $testClass->resolveDate('2015-11-04');
+        $returnObj = $this->concreteEntity->resolveDate('2015-11-04');
         $this->assertInstanceOf('\DateTime', $returnObj);
     }
 
@@ -518,8 +514,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
      */
     public function testResolveDateBadDate()
     {
-        $testClass = new \Pelagos\Entity\ConcreteEntity;
-        $returnObj = $testClass->resolveDate('meaningless string data');
+        $returnObj = $this->concreteEntity->resolveDate('meaningless string data');
         $this->assertInstanceOf('\DateTime', $returnObj);
     }
 
@@ -530,8 +525,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
      */
     public function testSerializeDate()
     {
-        $testClass = new \Pelagos\Entity\ConcreteEntity;
-        $returnStr = $testClass->serializeDate($this->timeStamp);
+        $returnStr = $this->concreteEntity->serializeDate($this->timeStamp);
         $this->assertEquals($returnStr, $this->timeStamp->format('Y-m-d'));
     }
 }
