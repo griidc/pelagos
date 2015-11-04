@@ -77,7 +77,14 @@ class DataRepository extends Entity
             'type' => 'string',
             'getter' => 'getCountry',
             'setter' => 'setCountry',
-        )
+        ),
+        'personDataRepositories' => array(
+            'type' => 'object',
+            'class' => '\Doctrine\Common\Collections\Collection',
+            'getter' => 'getPersonDataRepositories',
+            'setter' => 'setPersonDataRepositories',
+            'serialize' => false,
+        ),
     );
 
     /**
@@ -242,6 +249,15 @@ class DataRepository extends Entity
      * )
      */
     protected $country;
+
+    /**
+     * Data Repository's relationship with Persons.
+     *
+     * @var \Doctrine\Common\Collections\Collection $personDataRepositories
+     *
+     * @access protected
+     */
+    protected $personDataRepositories;
 
     /**
      * Setter for name.
@@ -501,5 +517,47 @@ class DataRepository extends Entity
     public function getCountry()
     {
         return $this->country;
+    }
+
+    /**
+     * Setter for personDataRepositories.
+     *
+     * @param array|\Traversable $personDataRepositories Set of PersonDataRepository objects.
+     *
+     * @access public
+     *
+     * @throws \Exception When $personDataRepositories is not an array or traversable object.
+     * @throws \Exception When Non-PersonDataRepository found within $personDataRepositories.
+     *
+     * @return void
+     */
+    public function setPersonDataRepositories($personDataRepositories)
+    {
+        if (is_array($personDataRepositories) || $personDataRepositories instanceof \Traversable) {
+            foreach ($personDataRepositories as $personDataRepository) {
+                if (!$personDataRepository instanceof PersonDataRepository) {
+                    throw new \Exception('Non-PersonDataRepository found in personDataRepositories.');
+                }
+            }
+            $this->personDataRepositories = $personDataRepositories;
+            foreach ($this->personDataRepositories as $personDataRepository) {
+                $personDataRepository->setDataRepository($this);
+            }
+        } else {
+            throw new \Exception('personDataRepositories must be either array or traversable objects.');
+        }
+    }
+
+    /**
+     * Getter for personDataRepositories.
+     *
+     * @access public
+     *
+     * @return \Doctrine\Common\Collections\Collection Collection containing personDataRepositories
+     *                                                 listings for this Data Repository.
+     */
+    public function getPersonDataRepositories()
+    {
+        return $this->personDataRepositories;
     }
 }
