@@ -11,4 +11,32 @@
     <label for="emailAddress">E-Mail Address:</label>
     <input type="email" name="emailAddress" size="80" value="{{Person.getEmailAddress}}" required><br>
 
+    <label for="phoneNumber">Phone Number:</label>
+    <input type="text" dontvalidate id="phoneNumber" size="80"><br>
+    <input type="hidden" name="phoneNumber" value="{{Person.getPhoneNumber}}">
+
+    <label for="deliveryPoint">Delivery Point:</label><br>
+    <textarea name="deliveryPoint" cols="80" rows="5">{{Person.getDeliveryPoint}}</textarea><br>
+
+    <label for="city">City:</label>
+    <input type="text" name="city" size="80" value="{{Person.getCity}}"><br>
+
+    <label for="administrativeArea">Administrative Area:</label>
+    <input type="text" name="administrativeArea" size="80" value="{{Person.getAdministrativeArea}}"><br>
+
+    <label for="postalCode">Postal Code:</label>
+    <input type="text" name="postalCode" size="80" value="{{Person.getPostalCode}}"><br>
+
+    <label for="country">Country:</label>
+    <input type="text" name="country" size="80" value="{{Person.getCountry}}"><br>
+
+    <label for="url">Website:</label>
+    <input type="text" name="url" class="clickableLink" size="80" value="{{Person.getUrl}}"><br>
+
+    <label for="organization">Organization:</label>
+    <input type="text" name="organization" id="organization" size="80" value="{{Person.getOrganization}}"><br>
+
+    <label for="position">Position:</label>
+    <input type="text" name="position" id="position" size="80" value="{{Person.getPosition}}"><br>
+
 </form>
