@@ -470,4 +470,56 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(method_exists($testClass, 'checkDeletable'));
         $testClass->checkDeletable();
     }
+
+    /**
+     * Test Entity's resolveDateTime method with known good value.
+     *
+     * @return void
+     */
+    public function testResolveDateTime()
+    {
+        $testClass = new \Pelagos\Entity\ConcreteEntity;
+        $returnObj = $testClass->resolveDateTime('2015-11-04 15:11:31');
+        $this->assertInstanceOf('\DateTime', $returnObj);
+    }
+
+    /**
+     * Test Entity's resolveDateTime method with invalid data.
+     *
+     * @expectedException \Exception
+     *
+     * @return void
+     */
+    public function testResolveDateTimeBadDate()
+    {
+        $testClass = new \Pelagos\Entity\ConcreteEntity;
+        $returnObj = $testClass->resolveDateTime('meaningless string data');
+        $this->assertInstanceOf('\DateTime', $returnObj);
+    }
+
+    /**
+     * Test Entity's resolveDate method with known good value.
+     *
+     * @return void
+     */
+    public function testResolveDate()
+    {
+        $testClass = new \Pelagos\Entity\ConcreteEntity;
+        $returnObj = $testClass->resolveDate('2015-11-04');
+        $this->assertInstanceOf('\DateTime', $returnObj);
+    }
+
+    /**
+     * Test Entity's resolveDate method with invalid data.
+     *
+     * @expectedException \Exception
+     *
+     * @return void
+     */
+    public function testResolveDateBadDate()
+    {
+        $testClass = new \Pelagos\Entity\ConcreteEntity;
+        $returnObj = $testClass->resolveDate('meaningless string data');
+        $this->assertInstanceOf('\DateTime', $returnObj);
+    }
 }
