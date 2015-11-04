@@ -104,19 +104,6 @@ class PersonTest extends \PHPUnit_Framework_TestCase
     protected static $testPosition = 'Rehabilitation Officer';
 
     /**
-     * Instantiate the Validation object and the test object.
-     *
-     * @return void
-     */
-    protected function create()
-    {
-        $this->validator = Validation::createValidatorBuilder()
-            ->enableAnnotationMapping()
-            ->getValidator();
-        $this->person = new Person;
-    }
-
-    /**
      * Setup for PHPUnit tests.
      *
      * This includes the autoloader and instantiates an instance of Person.
@@ -125,7 +112,10 @@ class PersonTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->create();
+        $this->validator = Validation::createValidatorBuilder()
+            ->enableAnnotationMapping()
+            ->getValidator();
+        $this->person = new Person;
         $this->person->setFirstName(self::$testFirstName);
         $this->person->setLastName(self::$testLastName);
         $this->person->setEmailAddress(self::$testEmailAddress);
@@ -550,18 +540,6 @@ class PersonTest extends \PHPUnit_Framework_TestCase
      */
     public function testJsonSerialize()
     {
-        $this->assertJsonStringEqualsJsonString(json_encode($this->getStateArray()), json_encode($this->person));
-    }
-
-    /**
-     * Get an array of all the state values.
-     *
-     * Used for testing JSON serialization..
-     *
-     * @return array Return an array of state of this and the parent object.
-     */
-    public function getStateArray()
-    {
         $personData = array(
             'id' => null,
             'creator' => null,
@@ -581,7 +559,7 @@ class PersonTest extends \PHPUnit_Framework_TestCase
             'organization' => self::$testOrganization,
             'position' => self::$testPosition,
         );
-        return $personData;
+        $this->assertJsonStringEqualsJsonString(json_encode($personData), json_encode($this->person));
     }
 
     /**
