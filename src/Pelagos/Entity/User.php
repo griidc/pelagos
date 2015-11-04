@@ -28,6 +28,11 @@ class User extends Person
             'type' => 'string',
             'setter' => 'setUserId',
             'getter' => 'getUserId',
+        ),
+        'password' => array(
+            'type' => 'string',
+            'setter' => 'setPassword',
+            'getter' => 'getPassword',
         )
     );
 
@@ -43,9 +48,20 @@ class User extends Person
     protected $userId;
 
     /**
+     * User's password .
+     *
+     * @var string $password
+     *
+     * @Assert\NotBlank(
+     *     message="User password is required"
+     * )
+     */
+    protected $password;
+
+    /**
      * Assign for userId property.
      *
-     * @param string $userId GRIIDC user credential of a Person.
+     * @param string $userId  user credential user id of a Person.
      *
      * @return void
      */
@@ -57,10 +73,32 @@ class User extends Person
     /**
      * Retrieve the userId property.
      *
-     * @return string GRIIDC user credential of a Person.
+     * @return string  user credential userid of a Person.
      */
     public function getUserId()
     {
         return $this->userId;
+    }
+
+    /**
+     * Assign for password property.
+     *
+     * @param string $password  user credential password  of a Person.
+     *
+     * @return void
+     */
+    public function setPassword($pw)
+    {
+        $this->password = $pw;
+    }
+
+    /**
+     * Retrieve the password property.
+     *
+     * @return string  user credential password of a Person.
+     */
+    public function getPassword()
+    {
+        return $this->password;
     }
 }
