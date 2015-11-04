@@ -2,14 +2,13 @@
 
 namespace Pelagos\Entity;
 
-use \Pelagos\Exception\NotDeletableException;
 use \Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Implementation of the User class which extends Person.
  *
- * This class defines a User which is a Person with the
- * addition of User ID credential
+ * This class defines a User, which is a Person with the
+ * addition of credentials.
  *
  * @package Pelagos\Entity
  */
@@ -33,11 +32,11 @@ class User extends Person
             'type' => 'string',
             'setter' => 'setPassword',
             'getter' => 'getPassword',
-        )
+        ),
     );
 
     /**
-     * User's ID .
+     * User's ID.
      *
      * @var string $userId
      *
@@ -48,7 +47,7 @@ class User extends Person
     protected $userId;
 
     /**
-     * User's password .
+     * User's password.
      *
      * @var string $password
      *
@@ -73,7 +72,7 @@ class User extends Person
     /**
      * Retrieve the userId property.
      *
-     * @return string  user credential userid of a Person.
+     * @return string User credential user id of a Person.
      */
     public function getUserId()
     {
@@ -83,7 +82,7 @@ class User extends Person
     /**
      * Assign for password property.
      *
-     * @param string $password User credential password  of a Person.
+     * @param string $password User credential password of a Person.
      *
      * @return void
      */
@@ -95,7 +94,7 @@ class User extends Person
     /**
      * Retrieve the password property.
      *
-     * @return string  user credential password of a Person.
+     * @return string User credential password of a Person.
      */
     public function getPassword()
     {
