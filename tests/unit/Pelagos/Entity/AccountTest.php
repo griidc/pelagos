@@ -5,21 +5,21 @@ namespace Pelagos\Entity;
 use Symfony\Component\Validator\Validation;
 
 /**
- * Unit tests for Pelagos\Entity\User.
+ * Unit tests for Pelagos\Entity\Account.
  *
  * @group Pelagos
  * @group Pelagos\Entity
- * @group Pelagos\Entity\User
+ * @group Pelagos\Entity\Account
  *
  * @package Pelagos\Entity
  */
-class UserTest extends \PHPUnit_Framework_TestCase
+class AccountTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * Property to hold an instance of User for testing.
-     * @var User
+     * Property to hold an instance of Account for testing.
+     * @var Account
      */
-    protected $user;
+    protected $account;
 
     /**
      * Static class variable containing a user id to use for testing.
@@ -36,15 +36,15 @@ class UserTest extends \PHPUnit_Framework_TestCase
     /**
      * Setup for PHPUnit tests.
      *
-     * This instantiates an instance of User and sets its properties.
+     * This instantiates an instance of Account and sets its properties.
      *
      * @return void
      */
     protected function setUp()
     {
-        $this->user = new User;
-        $this->user->setUserId(self::$userId);
-        $this->user->setPassword(self::$password);
+        $this->account = new Account;
+        $this->account->setUserId(self::$userId);
+        $this->account->setPassword(self::$password);
     }
 
     /**
@@ -57,23 +57,22 @@ class UserTest extends \PHPUnit_Framework_TestCase
     public function testGetUserId()
     {
         $this->assertEquals(
-            $this->user->getUserId(),
+            $this->account->getUserId(),
             self::$userId
         );
     }
 
     /**
-     * Test the getPassword method.
+     * Test the comparePassword method.
      *
-     * This method should return the password that was assigned in setUp.
+     * This method should return true id the provided password matches the
+     * password that was assigned in setUp and false when it does not.
      *
      * @return void
      */
-    public function testGetPassword()
+    public function testComparePassword()
     {
-        $this->assertEquals(
-            $this->user->getPassword(),
-            self::$password
-        );
+        $this->assertTrue($this->account->comparePassword(self::$password));
+        $this->assertFalse($this->account->comparePassword('something else'));
     }
 }
