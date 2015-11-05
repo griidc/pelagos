@@ -33,24 +33,6 @@ class Account extends Entity
             'setter' => 'setUserId',
             'getter' => 'getUserId',
         ),
-        'passwordHash' => array(
-            'type' => 'string',
-            'setter' => 'setPasswordHash',
-            'getter' => 'getPasswordHash',
-            'serialize' => false,
-        ),
-        'passwordHashAlgorithm' => array(
-            'type' => 'string',
-            'setter' => 'setPasswordHashAlgorithm',
-            'getter' => 'getPasswordHashAlgorithm',
-            'serialize' => false,
-        ),
-        'passwordHashSalt' => array(
-            'type' => 'string',
-            'setter' => 'setPasswordHashSalt',
-            'getter' => 'getPasswordHashSalt',
-            'serialize' => false,
-        ),
     );
 
     /**
@@ -153,72 +135,6 @@ class Account extends Entity
     }
 
     /**
-     * Set the password hash.
-     *
-     * @param string $passwordHash A binary string containing the password hash.
-     *
-     * @return void
-     */
-    public function setPasswordHash($passwordHash)
-    {
-        $this->passwordHash = $passwordHash;
-    }
-
-    /**
-     * Get the password hash.
-     *
-     * @return string A binary string containing the password hash.
-     */
-    public function getPasswordHash()
-    {
-        return $this->passwordHash;
-    }
-
-    /**
-     * Set the password hash algorithm.
-     *
-     * @param string $passwordHashAlgorithm The algorithm used to hash the password.
-     *
-     * @return void
-     */
-    public function setPasswordHashAlgorithm($passwordHashAlgorithm)
-    {
-        $this->passwordHashAlgorithm = $passwordHashAlgorithm;
-    }
-
-    /**
-     * Get the password hash algorithm.
-     *
-     * @return string The algorithm used to hash the password.
-     */
-    public function getPasswordHashAlgorithm()
-    {
-        return $this->passwordHashAlgorithm;
-    }
-
-    /**
-     * Set the password hash salt.
-     *
-     * @param string $passwordHashSalt A binary string containing the salt used when hashing the password.
-     *
-     * @return void
-     */
-    public function setPasswordHashSalt($passwordHashSalt)
-    {
-        $this->passwordHashSalt = $passwordHashSalt;
-    }
-
-    /**
-     * Get the password hash salt.
-     *
-     * @return string A binary string containing the salt used when hashing the password.
-     */
-    public function getPasswordHashSalt()
-    {
-        return $this->passwordHashSalt;
-    }
-
-    /**
      * Set the password attributes for a provided plain text password.
      *
      * @param string $password Plain text password.
@@ -228,9 +144,9 @@ class Account extends Entity
     public function setPassword($password)
     {
         mt_srand((double) (microtime() * 1000000));
-        $this->setPasswordHashAlgorithm('SSHA');
-        $this->setPasswordHashSalt(pack('CCCC', mt_rand(), mt_rand(), mt_rand(), mt_rand()));
-        $this->setPasswordHash(sha1($password . $this->getPasswordHashSalt(), true));
+        $this->passwordHashAlgorithm = 'SSHA';
+        $this->passwordHashSalt = pack('CCCC', mt_rand(), mt_rand(), mt_rand(), mt_rand());
+        $this->passwordHash = sha1($password . $this->passwordHashSalt, true);
     }
 
     /**
@@ -242,8 +158,8 @@ class Account extends Entity
      */
     public function comparePassword($password)
     {
-        $hash = sha1($password . $this->getPasswordHashSalt(), true);
-        if ($hash === $this->getPasswordHash()) {
+        $hash = sha1($password . $this->passwordHashSalt, true);
+        if ($hash === $this->passwordHash) {
             return true;
         }
         return false;
