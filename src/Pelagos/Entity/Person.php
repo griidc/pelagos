@@ -100,6 +100,13 @@ class Person extends Entity
             'setter' => 'setPersonResearchGroups',
             'serialize' => false,
         ),
+        'token' => array(
+            'type' => 'object',
+            'class' => '\Pelagos\Entity\Token',
+            'getter' => 'getToken',
+            'setter' => 'setToken',
+            'serialize' => false,
+        ),
     );
 
     /**
@@ -281,6 +288,15 @@ class Person extends Entity
      * @access protected
      */
     protected $personResearchGroups;
+
+    /**
+     * Person's Token.
+     *
+     * @var \Pelagos\Entity\Token $token
+     *
+     * @access protected
+     */
+    protected $token;
 
     /**
      * Setter for firstName property.
@@ -664,6 +680,38 @@ class Person extends Entity
     public function getPersonResearchGroups()
     {
         return $this->personResearchGroups;
+    }
+
+    /**
+     * Setter for token.
+     *
+     * @param Token $token Person's token.
+     *
+     * @access public
+     *
+     * @throws \Exception When Non-Token is found in $token.
+     *
+     * @return void
+     */
+    public function setToken(Token $token)
+    {
+        if ($token instanceof Token) {
+            $this->token = $token;
+        } else {
+            throw new \Exception('token must be of type Token.');
+        }
+    }
+
+    /**
+     * Getter for token.
+     *
+     * @access public
+     *
+     * @return Token Person's token.
+     */
+    public function getToken()
+    {
+        return $this->token;
     }
 
     /**
