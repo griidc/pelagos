@@ -1,42 +1,62 @@
-<form class="entityForm" entityType="Person" editable>
+<div base_path="{{base_path}}" userLoggedIn="{{userLoggedIn}}"></div>
+<table border="0" width="100%">
+    <tr>
+        <td width="25%">
+            <div id="placeholder" style="height:100px;">
+            </div>
+        </td>
+        <td style="padding:10px;" width="60%" valign="top">
+            <div id="details">
+                <h2>Person Details</h2>
+                {% include 'Entity/Person.html' %}
+            </div>
+        </td>
+        </tr>
+</table>
 
-    <input type="hidden" name="id" value="{{Person.getId}}">
-
-    <label for="firstName">Given Name:</label>
-    <input type="text" name="firstName" size="80" value="{{Person.getFirstName}}" required><br>
-
-    <label for="lastName">Family Name:</label>
-    <input type="text" name="lastName" size="80" value="{{Person.getLastName}}" required><br>
-
-    <label for="emailAddress">E-Mail Address:</label>
-    <input type="email" name="emailAddress" size="80" value="{{Person.getEmailAddress}}" required><br>
-
-    <label for="phoneNumber">Phone Number:</label>
-    <input type="text" dontvalidate id="phoneNumber" size="80"><br>
-    <input type="hidden" name="phoneNumber" value="{{Person.getPhoneNumber}}">
-
-    <label for="deliveryPoint">Delivery Point:</label><br>
-    <textarea name="deliveryPoint" cols="80" rows="5">{{Person.getDeliveryPoint}}</textarea><br>
-
-    <label for="city">City:</label>
-    <input type="text" name="city" size="80" value="{{Person.getCity}}"><br>
-
-    <label for="administrativeArea">Administrative Area:</label>
-    <input type="text" name="administrativeArea" size="80" value="{{Person.getAdministrativeArea}}"><br>
-
-    <label for="postalCode">Postal Code:</label>
-    <input type="text" name="postalCode" size="80" value="{{Person.getPostalCode}}"><br>
-
-    <label for="country">Country:</label>
-    <input type="text" name="country" size="80" value="{{Person.getCountry}}"><br>
-
-    <label for="url">Website:</label>
-    <input type="text" name="url" class="clickableLink" size="80" value="{{Person.getUrl}}"><br>
-
-    <label for="organization">Organization:</label>
-    <input type="text" name="organization" id="organization" size="80" value="{{Person.getOrganization}}"><br>
-
-    <label for="position">Position:</label>
-    <input type="text" name="position" id="position" size="80" value="{{Person.getPosition}}"><br>
-
-</form>
+<div id="tabs" style="width:100%">
+    <ul>
+        {% if Person.getPersonFundingOrganizations | length > 0 %}
+            <li><a href="#tabs-FundingOrganizations">Funding Organizations</a></li>
+        {% endif %}
+        <li><a href="#tabs-1">Research Groups</a></li>
+        <li><a href="#tabs-2">Datasets</a></li>
+        <li><a href="#tabs-3">Publications</a></li>
+    </ul>
+    {% if Person.getPersonFundingOrganizations | length > 0 %}
+        {% set PersonFundingOrganizationEditable = false %}
+        <div id="tabs-FundingOrganizations">
+            <table border="0" width="100%">
+                {% for PersonFundingOrganization in Person.getPersonFundingOrganizations | sortBy(["fundingOrganization.name"]) %}
+                    <tr>
+                        <td>
+                            <div>
+                                <p>
+                                    {% include 'Entity/PersonFundingOrganization.html' %}
+                                </p>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    {% endif %}
+    <div id="tabs-1">
+        <table border="0" width="100%">
+        {% set PersonResearchGroupEditable = false %}
+        {% if Person.getPersonResearchGroups | length > 0 %}
+            {% for PersonResearchGroup in Person.getPersonResearchGroups | sortBy(["researchGroup.name"]) %}
+                <tr>
+                    <td>
+                        <div>
+                            <p>
+                                {% include 'Entity/PersonResearchGroup.html' %}
+                            </p>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+        </table>
+    </div>
+</div>

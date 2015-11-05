@@ -1,10 +1,5 @@
-$(document).ready(function()
-{
-    "use strict";
-
-    $(".entityForm[entityType=PersonDataRepository] select[name=person]").select2({
-        placeholder: "[Please Select a Person]",
-        allowClear: true
-    });
-
+$.ajax({
+    url: pelagosComponentPath + "/static/js/Entity/PersonDataRepository.js",
+    dataType: "script",
+    cache: true
 });
