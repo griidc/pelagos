@@ -52,7 +52,7 @@ class TokenTest extends \PHPUnit_Framework_TestCase
     public function testGetTokenText()
     {
         $this->assertEquals(
-            $this->user->getTokenText(),
+            $this->token->getTokenText(),
             self::$tokenText
         );
     }
