@@ -535,4 +535,16 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $returnStr = $this->concreteEntity->serializeDate($this->timeStamp);
         $this->assertEquals($returnStr, $this->timeStamp->format('Y-m-d'));
     }
+
+    /**
+     * Test Entity's propertyExists method.
+     *
+     * @return void
+     */
+    public function testPropertyExists()
+    {
+        $this->assertFalse($this->concreteEntity->propertyExists('not_a_property'));
+        // this is a known property in the test helper class, ConcreteEntity, which extends Entity.
+        $this->assertTrue($this->concreteEntity->propertyExists('name'));
+    }
 }
