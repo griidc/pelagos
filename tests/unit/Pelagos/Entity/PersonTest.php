@@ -158,6 +158,10 @@ class PersonTest extends \PHPUnit_Framework_TestCase
             ),
         );
         $this->person->setPersonResearchGroups($this->testPersonResearchGroups);
+        $this->testToken = \Mockery::mock(
+            '\Pelagos\Entity\Token'
+        );
+        $this->person->setToken($this->testToken);
     }
 
     /**
@@ -689,5 +693,17 @@ class PersonTest extends \PHPUnit_Framework_TestCase
         $testArry = $this->testPersonResearchGroups;
         array_push($testArry, 'string data');
         $this->person->setPersonResearchGroups($testArry);
+    }
+
+    /**
+     * Test the getToken method.
+     *
+     * This getToken method of person and verify it returns a Token object.
+     *
+     * @return void
+     */
+    public function testGetToken()
+    {
+        $this->assertInstanceOf('\Pelagos\Entity\Token', $this->person->getToken());
     }
 }
