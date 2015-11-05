@@ -21,45 +21,45 @@ class Token extends Entity
      * @var array $properties
      */
     protected static $properties = array(
-        'token' => array(
+        'tokenText' => array(
             'type' => 'string',
-            'setter' => 'setToken',
-            'getter' => 'getToken'
+            'setter' => 'setTokenText',
+            'getter' => 'getTokenText'
         )
     );
 
     /**
-     * Token's token text string.
+     * Token's identifying text string.
      *
-     * @var string $token
+     * @var string $tokenText
      *
      * @Assert\NotBlank(
      *     message="Token text is required."
      * )
      */
-    protected $token;
+    protected $tokenText;
 
     /**
-     * Getter for token property.
+     * Getter for tokenText property.
      *
-     * @return string Token text-based token to identify a Token entity.
+     * @return string Tokentext to identify a Token entity.
      */
-    public function getToken()
+    public function getTokenText()
     {
-        return $this->token;
+        return $this->tokenText;
     }
 
     /**
-     * Setter for token property.
+     * Setter for tokenText property.
      *
-     * @param string $token Token text-based token to identify a Token entity.
+     * @param string $tokenText Tokentext to identify a Token entity.
      *
      * @access public
      *
      * @return void
      */
-    public function setToken($token)
+    public function setTokenText($tokenText)
     {
-        $this->token = $token;
+        $this->tokenText = $tokenText;
     }
 }
