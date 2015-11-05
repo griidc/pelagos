@@ -78,10 +78,9 @@ class ConcreteEntity extends Entity
     }
 
     /**
-     *
      * Helper function, turns string to uppercase.
      *
-     * @param string $str Text to be uppercased.
+     * @param string $string Text to be uppercased.
      *
      * @access public
      *
