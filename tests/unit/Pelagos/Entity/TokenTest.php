@@ -23,11 +23,12 @@ class TokenTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Static class variable containing token text to use for testing.
+     *
+     * This is a sha256sum of 'test'.
+     *
      * @var string
      */
-    // sha256sum of 'test'
     protected static $tokenText = 'f2ca1bb6c7e907d06dafe4687e579fce76b37e4e93b7605022da52e6ccc26fd2';
-
 
     /**
      * Setup for PHPUnit tests.
