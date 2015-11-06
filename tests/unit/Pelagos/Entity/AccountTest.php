@@ -52,6 +52,9 @@ class AccountTest extends \PHPUnit_Framework_TestCase
         $this->account = new Account;
         $this->account->setPerson($this->mockPerson);
         $this->account->setUserId(self::$userId);
+        // Tell our mock openssl_random_pseudo_bytes function to report that
+        // it was able to generate a cryptographically strong byte string.
+        $GLOBALS['cryptoStrong'] = true;
         $this->account->setPassword(self::$password);
     }
 
@@ -97,5 +100,32 @@ class AccountTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertTrue($this->account->comparePassword(self::$password));
         $this->assertFalse($this->account->comparePassword('something else'));
+    }
+
+    /**
+     * Test that an excpetion is thrown when we are unable to generate a cryptographically strong password hash salt.
+     *
+     * @expectedException \Exception
+     *
+     * @return void
+     */
+    public function testSetPasswordUnableToGenerateCryptographicallyStrongSalt()
+    {
+        // Tell our mock openssl_random_pseudo_bytes function to report that
+        // it was NOT able to generate a cryptographically strong byte string.
+        $GLOBALS['cryptoStrong'] = false;
+        $this->account->setPassword(self::$password);
+    }
+
+    /**
+     * Clean up after tests.
+     *
+     * @return void
+     */
+    public function tearDown()
+    {
+        // Unset the 'cryptoStrong' global so as not to interfere with any
+        // other tests of code that uses openssl_random_pseudo_bytes
+        unset($GLOBALS['cryptoStrong']);
     }
 }
