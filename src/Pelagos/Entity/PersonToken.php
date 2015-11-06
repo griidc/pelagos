@@ -1,17 +1,17 @@
 <?php
 /**
- * This file contains the implementation of the Token entity class.
+ * This file contains the implementation of the PersonToken entity class.
  *
  * @package    Pelagos\Entity
- * @subpackage Token
+ * @subpackage PersonToken
  */
 
 namespace Pelagos\Entity;
 
 /**
- * Class to represent a token.
+ * Class to represent a person token.
  */
-class Token extends Entity
+class PersonToken extends Entity
 {
     /**
      * Static array containing a list of the properties and their attributes.
@@ -21,6 +21,13 @@ class Token extends Entity
      * @var array $properties
      */
     protected static $properties = array(
+        'person' => array(
+            'type' => 'object',
+            'class' => 'Pelagos\Entity\Person',
+            'entity' => 'Person',
+            'setter' => 'setPerson',
+            'getter' => 'getPerson',
+        ),
         'tokenText' => array(
             'type' => 'string',
             'getter' => 'getTokenText',
@@ -28,9 +35,20 @@ class Token extends Entity
     );
 
     /**
-     * Token's identifying text string.
+     * Person entity this PersonToken belongs to.
      *
-     * @var string $tokenText
+     * @var Person
+     *
+     * @Assert\NotBlank(
+     *     message="Person is required"
+     * )
+     */
+    protected $person;
+
+    /**
+     * PersonToken's text string.
+     *
+     * @var string
      *
      * @Assert\NotBlank(
      *     message="Token text is required."
@@ -47,11 +65,33 @@ class Token extends Entity
     }
 
     /**
+     * Setter for Person.
+     *
+     * @param Person|null $person The Person entity this token belongs to.
+     *
+     * @return void
+     */
+    public function setPerson(Person $person = null)
+    {
+        $this->person = $person;
+    }
+
+    /**
+     * Getter for Person.
+     *
+     * @return Person|null The Person entity this token belongs to.
+     */
+    public function getPerson()
+    {
+        return $this->person;
+    }
+
+    /**
      * Getter for tokenText property.
      *
      * @access public
      *
-     * @return string Token text for a Token entity.
+     * @return string Token text for a PersonToken entity.
      */
     public function getTokenText()
     {
