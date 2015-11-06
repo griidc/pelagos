@@ -139,13 +139,22 @@ class Account extends Entity
      *
      * @param string $password Plain text password.
      *
+     * @throws \Exception When unable to generate a cryptographically strong password hash salt.
+     *
      * @return void
      */
     public function setPassword($password)
     {
-        mt_srand((double) (microtime() * 1000000));
         $this->passwordHashAlgorithm = 'SSHA';
-        $this->passwordHashSalt = pack('CCCC', mt_rand(), mt_rand(), mt_rand(), mt_rand());
+        // Assume the salt is not crptographically strong by default.
+        $cryptoStrongSalt = false;
+        // Attempt to generate a cryptographically strong 4 byte random salt.
+        $this->passwordHashSalt = openssl_random_pseudo_bytes(4, $cryptoStrongSalt);
+        // If the generate salt is not cryptographically strong.
+        if (!$cryptoStrongSalt) {
+            throw new \Exception('Could not generate a cryptographically strong password hash salt');
+        }
+        // Append the salt to the password, hash it, and save the hash.
         $this->passwordHash = sha1($password . $this->passwordHashSalt, true);
     }
 
