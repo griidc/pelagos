@@ -4,6 +4,8 @@ namespace Pelagos\Component;
 
 use \Pelagos\Entity\Entity;
 use \Pelagos\Service\EntityService;
+use \Pelagos\Exception\ArgumentException;
+use \Pelagos\Exception\RecordNotFoundPersistenceException;
 
 /**
  * Class for the entity application.
@@ -78,6 +80,7 @@ class EntityApplication extends \Pelagos\Component
             )
         );
 
+
         if (preg_match_all('/([A-Z][a-z]*)/', $entityType, $entityName)) {
             $this->setTitle(implode(' ', $entityName[1]) . ' Landing Page');
         }
@@ -87,7 +90,7 @@ class EntityApplication extends \Pelagos\Component
         }
 
         $twigData = array(
-        'userLoggedIn' => ($this->userIsLoggedIn()) ? 'true' : 'false',
+            'userLoggedIn' => ($this->userIsLoggedIn()) ? 'true' : 'false',
         );
         $entityService = new EntityService($this->getEntityManager());
         $twigData['entityService'] = $entityService;
@@ -138,4 +141,8 @@ class EntityApplication extends \Pelagos\Component
 
     }
 
+    public function handlePost($entityType)
+    {
+        $this->slim->render('error.html', array('errorMessage' => 'Post Not Allowed!'), 405);
+    }
 }

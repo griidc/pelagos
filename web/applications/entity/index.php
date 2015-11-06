@@ -2,10 +2,6 @@
 
 require_once __DIR__ . '/../../../vendor/autoload.php';
 
-use Pelagos\Service\EntityService;
-use Pelagos\Exception\ArgumentException;
-use Pelagos\Exception\RecordNotFoundPersistenceException;
-
 $app = new \Slim\Slim(
     array(
             'view' => new \Slim\Views\Twig()
@@ -41,6 +37,24 @@ $app->get(
         } else {
             $comp->handleEntity($entityType);
         }
+        $comp->finalize();
+    }
+);
+
+$app->post(
+    '/:entityType(/)',
+    function ($entityType) use ($app)
+    {
+        $appClass = "\Pelagos\Component\EntityApplication\\$entityType" . 'Application';
+
+        if (class_exists($appClass)) {
+            $comp = new $appClass($app);
+        } else {
+            $comp = new \Pelagos\Component\EntityApplication($app);
+        }
+
+        $comp->handlePost($entityType);
+
         $comp->finalize();
     }
 );
