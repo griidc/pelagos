@@ -49,19 +49,12 @@ CREATE VIEW person AS
              AS creation_time,
           p.person_modifier AS modifier,
           CAST(DATE_TRUNC('seconds', p.person_modification_time) AS TEXT)
-             AS modification_time,
-          CASE
-             WHEN u.person_number IS NOT NULL
-                THEN 'user'
-             ELSE 'person'
-          END AS discriminator
+             AS modification_time
    FROM person_table p
       JOIN email2person_table e2p
          ON p.person_number = e2p.person_number
       JOIN email_table e
          ON e2p.email_address = e.email_address
-      LEFT JOIN person_user_table u
-         ON p.person_number = u.person_number
    WHERE e2p.is_primary_email_address = TRUE;
 
 -- CREATE THE trigger function:
