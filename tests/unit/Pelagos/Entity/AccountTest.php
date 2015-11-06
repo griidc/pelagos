@@ -80,8 +80,8 @@ class AccountTest extends \PHPUnit_Framework_TestCase
     public function testGetUserId()
     {
         $this->assertEquals(
-            $this->account->getUserId(),
-            self::$userId
+            self::$userId,
+            $this->account->getUserId()
         );
     }
 
