@@ -14,7 +14,7 @@
 \c gomri postgres
 
 -- Start by dropping everything:
-DROP VIEW account;
+DROP VIEW account;;
 DROP TABLE account_table CASCADE;
 DROP TYPE HASH_ALGORITHM_TYPE CASCADE;
 DROP TYPE USER_ID_TYPE CASCADE;
@@ -49,7 +49,7 @@ CREATE TABLE account_table
 );
 
 ALTER TABLE account_table
-   ADD CONSTRAINT uidx_pk_fk_person_number
+   ADD CONSTRAINT uidx_pk_account
       PRIMARY KEY (person_number);
 
 ALTER TABLE account_table
