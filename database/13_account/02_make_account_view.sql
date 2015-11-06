@@ -29,7 +29,7 @@ CREATE VIEW account AS
                  account_hash_algorithm,
                  '}',
                  ENCODE(account_password, 'base64')) AS password_string,
-          CAST(account_hash_algorithm AS TEXT) AS hash_algorithm,
+          UPPER(CAST(account_hash_algorithm AS TEXT)) AS hash_algorithm,
           account_password AS password,
           account_password_salt AS salt,
           account_creator AS creator,
@@ -101,7 +101,7 @@ AS $account_func$
                                NEW.hash_algorithm,
                                '" ',
                                'is not a valid hash algorithm');
-         _hash_algorithm := NEW.hash_algorithm;
+         _hash_algorithm := UPPER(NEW.hash_algorithm);
 
          IF TG_OP = 'INSERT'
          THEN

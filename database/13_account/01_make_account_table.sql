@@ -17,13 +17,14 @@
 DROP VIEW account;;
 DROP TABLE account_table CASCADE;
 DROP TYPE HASH_ALGORITHM_TYPE CASCADE;
+DROP TYPE USER_ID_TYPE CASCADE;
 
 -- Create the custom data type:
 CREATE TYPE HASH_ALGORITHM_TYPE
-AS ENUM ('sha1',
-         'sha256',
-         'sha512',
-         'ssha');
+AS ENUM ('SHA1',
+         'SHA256',
+         'SHA512',
+         'SSHA');
 
 CREATE DOMAIN USER_ID_TYPE
 AS TEXT
@@ -38,7 +39,7 @@ CREATE TABLE account_table
       DEFAULT DATE_TRUNC('seconds', NOW())  NOT NULL,
    account_creator                          TEXT                NOT NULL,
    account_hash_algorithm                   HASH_ALGORITHM_TYPE NOT NULL
-      DEFAULT 'ssha',
+      DEFAULT 'SSHA',
    account_modification_time                TIMESTAMP WITH TIME ZONE
       DEFAULT DATE_TRUNC('seconds', NOW())  NOT NULL,
    account_modifier                         TEXT                NOT NULL,
