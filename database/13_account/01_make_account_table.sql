@@ -14,7 +14,7 @@
 \c gomri postgres
 
 -- Start by dropping everything:
-DROP VIEW account;;
+DROP VIEW account;
 DROP TABLE account_table CASCADE;
 DROP TYPE HASH_ALGORITHM_TYPE CASCADE;
 DROP TYPE USER_ID_TYPE CASCADE;
