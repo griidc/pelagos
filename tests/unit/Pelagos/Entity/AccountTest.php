@@ -22,6 +22,12 @@ class AccountTest extends \PHPUnit_Framework_TestCase
     protected $account;
 
     /**
+     * Property to hold a mock instance of Person for testing.
+     * @var Person
+     */
+    protected $mockPerson;
+
+    /**
      * Static class variable containing a user id to use for testing.
      * @var string
      */
@@ -42,9 +48,26 @@ class AccountTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
+        $this->mockPerson = \Mockery::mock('\Pelagos\Entity\Person');
         $this->account = new Account;
+        $this->account->setPerson($this->mockPerson);
         $this->account->setUserId(self::$userId);
         $this->account->setPassword(self::$password);
+    }
+
+    /**
+     * Test the getPerson method.
+     *
+     * This method should return the Person that was assigned in setUp.
+     *
+     * @return void
+     */
+    public function testGetPerson()
+    {
+        $this->assertSame(
+            $this->mockPerson,
+            $this->account->getPerson()
+        );
     }
 
     /**
