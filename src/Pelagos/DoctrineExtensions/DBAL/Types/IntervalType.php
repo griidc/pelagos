@@ -25,16 +25,10 @@ class IntervalType extends Type
      * @param array            $fieldDeclaration The field declaration.
      * @param AbstractPlatform $platform         The currently used database platform.
      *
-     * @throws DBALException::notSupported When attempting to use this type for
-     *                                     any platform other than PostgreSql.
-     *
      * @return string The SQL snippet to create a column of type interval.
      */
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
     {
-        if (get_class($platform) !== 'Doctrine\DBAL\Platforms\PostgreSqlPlatform') {
-            throw DBALException::notSupported(self::INTERVAL . ' type');
-        }
         return 'INTERVAL';
     }
 
@@ -44,8 +38,6 @@ class IntervalType extends Type
      * @param mixed            $value    The value to convert.
      * @param AbstractPlatform $platform The currently used database platform.
      *
-     * @throws DBALException::notSupported When attempting to use this type for
-     *                                     any platform other than PostgreSql.
      * @throws DBALException::notSupported When attempting to convert from anything
      *                                     other than a PHP DateInterval.
      *
@@ -53,9 +45,6 @@ class IntervalType extends Type
      */
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
-        if (get_class($platform) !== 'Doctrine\DBAL\Platforms\PostgreSqlPlatform') {
-            throw DBALException::notSupported(self::INTERVAL . ' type');
-        }
         if (gettype($value) !== 'object' or get_class($value) !== 'DateInterval') {
             throw DBALException::notSupported('convert from non DateInterval');
         }
@@ -68,8 +57,6 @@ class IntervalType extends Type
      * @param string           $value    The value to convert.
      * @param AbstractPlatform $platform The currently used database platform.
      *
-     * @throws DBALException::notSupported                 When attempting to use this type for
-     *                                                     any platform other than PostgreSql.
      * @throws ConversionException::conversionFailedFormat When the value from the database
      *                                                     does not look like an ISO 8601 interval.
      * @throws ConversionException::conversionFailed       When the value from the database
@@ -79,9 +66,6 @@ class IntervalType extends Type
      */
     public function convertToPHPValue($value, AbstractPlatform $platform)
     {
-        if (get_class($platform) !== 'Doctrine\DBAL\Platforms\PostgreSqlPlatform') {
-            throw DBALException::notSupported(self::INTERVAL . ' type');
-        }
         if (null !== $value) {
             $iso8601IntervalRegEx
                 = '/^P(?=.)' .
