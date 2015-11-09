@@ -33,9 +33,9 @@ CREATE VIEW account AS
           account_password AS password,
           account_password_salt AS salt,
           account_creator AS creator,
-          account_creation_time AS creation_time,
+          DATE_TRUNC('seconds', account_creation_time) AS creation_time,
           account_modifier AS modifier,
-          account_modification_time AS modification_time
+          DATE_TRUNC('seconds', account_modification_time) AS modification_time
    FROM account_table;
 
 -- CREATE THE trigger function:
@@ -177,10 +177,10 @@ AS $account_func$
                      )
                      VALUES ( $1,  $2,  $3,  $4,  $5,  $6,  $7,  $8,  $9)'
                USING NEW.person_number,
-                     NEW.creation_time,
+                     DATE_TRUNC('seconds', NOW()),
                      NEW.creator,
                      _hash_algorithm,
-                     NEW.modification_time,
+                     DATE_TRUNC('seconds', NOW()),
                      NEW.modifier,
                      NEW.password,
                      NEW.salt,
