@@ -48,7 +48,7 @@ class IntervalType extends Type
         if (gettype($value) !== 'object' or get_class($value) !== 'DateInterval') {
             throw DBALException::notSupported('convert from non DateInterval');
         }
-        return (null === $value) ? null : $value->format('%s seconds');
+        return (null === $value) ? null : $value->format('P%yY%mM%dDT%hH%iM%sS');
     }
 
     /**
