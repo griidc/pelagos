@@ -1,13 +1,20 @@
 <table width="100%" border="0">
     <tr>
         <td width="50%">
-            <form id="accountForm" method="post" action="./Account">
-                <label for="emailAddress">E-mail Address:</label>
-                <input type="email" size="100" name="emailAddress" id="emailAddress" required>
-                <br><br>
-                <button type="submit">Submit</button>
-            </form>
+             <h2>Please provide the email address associated with your GoMRI funding agreement when requesting an account.</h2>
+        </td>
+    </tr>
+        <tr>
+        <td width="50%">
+
+                <form id="accountForm" method="post" action="./Account">
+                    <label for="emailAddress">E-mail Address:</label>
+                    <input type="email" size="100" name="emailAddress" id="emailAddress" required>
+                    &nbsp;
+                    <button type="submit">Submit</button><br>
+                    <label for="emailAddress" class="error"></label>
+                </form>
+
         </td>
     </tr>
 </table>
-

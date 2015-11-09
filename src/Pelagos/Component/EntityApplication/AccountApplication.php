@@ -19,6 +19,13 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
      */
     private $twig;
 
+    /**
+     * Constructor for AccountApplication.
+     *
+     * @param \Slim\Slim $slim The instance of \Slim\Slim used by this application service.
+     *
+     * @access public
+     */
     public function __construct(\Slim\Slim $slim)
     {
         parent::__construct($slim);
@@ -26,6 +33,13 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
         $this->twig = new \Twig_Environment(new \Twig_Loader_Filesystem('./templates'));
     }
 
+    /**
+     * Method to handle Account Creation, returns template/form.
+     *
+     * @param string $entityType The type of entity to create.
+     *
+     * @access public
+     */
     public function handleEntity($entityType)
     {
         $this->addJS(
@@ -39,6 +53,31 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
         $this->slim->render('Account.html');
     }
 
+    /**
+     * Function to handle entities and id or value.
+     *
+     * @param string  $entityType The type of entity to handle (account).
+     * @param string $entityId   The hash verification value of the account.
+     *
+     * @access public
+     */
+    public function handleEntityInstance($entityType, $entityId)
+    {
+        $entityService = new EntityService($this->getEntityManager());
+        $entity = $entityService->getBy('PersonToken', array('tokenText' => $entityId));
+
+        foreach ($entity as $PersonToken) {
+            var_dump($PersonToken);
+        }
+    }
+
+    /**
+     * Function the post for e-mail verification, and token emailing.
+     *
+     * @param string  $entityType The type of entity (account).
+     *
+     * @access public
+     */
     public function handlePost($entityType)
     {
         $this->setTitle('Account Creation Result');
@@ -51,7 +90,9 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
 
         $knownEmail = false;
 
+
         foreach ($entity as $Person) {
+        /*
             // Get PersonToken
             $PersonToken = $Person->getToken();
 
@@ -71,7 +112,7 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
             // Persist PersonToken
             $PersonToken->setPerson($Person);
             $PersonToken = $this->entityService->persist($PersonToken);
-
+        */
             $mailData = array(
                 'Person' => $Person,
             );
@@ -92,7 +133,8 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
         }
 
         $twigData = array(
-            "knownEmail" => $knownEmail
+            "knownEmail" => $knownEmail,
+            "postValues" => $postValues,
         );
 
         $this->slim->render('AccountRequestResponse.html', $twigData);
@@ -107,7 +149,7 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
      */
     private function sendMail($email)
     {
-        // Hurray a Transport, we're saved!
+        // Hooray a Transport, we're saved!
         $transport = \Swift_MailTransport::newInstance();
 
         // Create the Mailer using your created Transport
@@ -124,6 +166,5 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
 
         // Send the message
         return $mailer->send($message);
-
     }
 }

@@ -3,17 +3,25 @@
 {% block subject '[GRIIDC] Account Confirmation' %}
 
 {% block body_html %}
-    Hello {{Person.getFirstName()}}, please confirm this e-mail by clicking LINK: http://www.gogo.elcoem
-    
-    Grtting,
-    
-    <i>GRIIDC</i>
+    Dear {{Person.firstName}} {{Person.lastName}},<br>
+    <br>
+    Your GRIIDC account creation is almost complete. Please click on the link below to verify your email address.<br>
+    <br>
+    Thank you,<br>
+    <br>
+    The GRIIDC Team<br>
+    <br>
+    *You are receiving this email because you are identified as a user of the Gulf of Mexico Research Initiative Research System. If you believe you should not be receiving this email please notify <a href="mailto:griidc@gomri.org">griidc@gomri.org</a>.*
 {% endblock %}
 
 {% block body_text %}
-    Hello {{Person.getFirstName()}}, please confirm this e-mail by clicking LINK: http://www.gogo.elcoem
-    
-    Grtting,
-    
-    GRIIDC
+Dear {{Person.firstName}} {{Person.lastName}},
+
+Your GRIIDC account creation is almost complete. Please click on the link below to verify your email address.<br>
+
+Thank you,
+
+The GRIIDC Team
+
+*You are receiving this email because you are identified as a user of the Gulf of Mexico Research Initiative Research System. If you believe you should not be receiving this email please notify griidc@gomri.org.*
 {% endblock %}
