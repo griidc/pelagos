@@ -20,20 +20,44 @@ class IntervalType extends Type
     const INTERVAL = 'interval';
 
     /**
-     * Converts a value from its PHP representation to its database representation of this type.
+     * Gets the SQL declaration snippet for a field of this type.
      *
-     * @param \DateInterval    $value    The value to convert.
-     * @param AbstractPlatform $platform The currently used database platform.
+     * @param array            $fieldDeclaration The field declaration.
+     * @param AbstractPlatform $platform         The currently used database platform.
      *
      * @throws DBALException::notSupported When attempting to use this type for
      *                                     any platform other than PostgreSql.
      *
-     * @return string The database representation of the value.
+     * @return string The SQL snippet to create a column of type interval.
      */
-    public function convertToDatabaseValue(\DateInterval $value, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
     {
         if (get_class($platform) !== 'Doctrine\DBAL\Platforms\PostgreSqlPlatform') {
             throw DBALException::notSupported(self::INTERVAL . ' type');
+        }
+        return 'INTERVAL';
+    }
+
+    /**
+     * Converts a value from its PHP representation to its database representation of this type.
+     *
+     * @param mixed            $value    The value to convert.
+     * @param AbstractPlatform $platform The currently used database platform.
+     *
+     * @throws DBALException::notSupported When attempting to use this type for
+     *                                     any platform other than PostgreSql.
+     * @throws DBALException::notSupported When attempting to convert from anything
+     *                                     other than a PHP DateInterval.
+     *
+     * @return string The database representation of the value.
+     */
+    public function convertToDatabaseValue($value, AbstractPlatform $platform)
+    {
+        if (get_class($platform) !== 'Doctrine\DBAL\Platforms\PostgreSqlPlatform') {
+            throw DBALException::notSupported(self::INTERVAL . ' type');
+        }
+        if (gettype($value) !== 'object' or get_class($value) !== 'DateInterval') {
+            throw DBALException::notSupported('convert from non DateInterval');
         }
         return (null === $value) ? null : $value->format('%s seconds');
     }
