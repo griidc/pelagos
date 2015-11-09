@@ -32,6 +32,11 @@ class PersonToken extends Entity
             'type' => 'string',
             'getter' => 'getTokenText',
         ),
+        'use'   => array(
+            'type' => 'string',
+            'setter' => 'setUse',
+            'getter' => 'getUse',
+        ),
     );
 
     /**
@@ -55,6 +60,17 @@ class PersonToken extends Entity
      * )
      */
     protected $tokenText;
+
+    /**
+     * PersonToken's use string.
+     *
+     * @var string
+     *
+     * @Assert\NotBlank(
+     *     message="Token use is required."
+     * )
+     */
+    protected $use;
 
     /**
      * Constructor for PersonToken.
@@ -96,6 +112,28 @@ class PersonToken extends Entity
     public function getTokenText()
     {
         return $this->tokenText;
+    }
+
+    /**
+     * Setter for use.
+     *
+     * @param string $use String enumerating token usage.
+     *
+     * @return void
+     */
+    public function setUse($use)
+    {
+        $this->use = $use;
+    }
+
+    /**
+     * Getter for use.
+     *
+     * @return string String enumerating token usage.
+     */
+    public function getUse()
+    {
+        return $this->use;
     }
 
     /**
