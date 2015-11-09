@@ -4,6 +4,7 @@ namespace Pelagos;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\DBAL\Event\Listeners\PostgresSessionInit;
+use Doctrine\DBAL\Types\Type;
 
 /**
  * A class to handle setting up persistence.
@@ -44,6 +45,9 @@ class Persistance
         $entityManager->getConnection()->getEventManager()->addEventSubscriber(
             new PostgresSessionInit(array('timezone' => 'UTC'))
         );
+        // Add and register the interval type.
+        Type::addType('interval', 'Pelagos\DoctrineExtensions\DBAL\Types\IntervalType');
+        $entityManager->getConnection()->getDatabasePlatform()->registerDoctrineTypeMapping('interval', 'interval');
         // Return the entity manager.
         return $entityManager;
     }
