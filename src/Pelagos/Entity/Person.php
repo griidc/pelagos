@@ -100,6 +100,13 @@ class Person extends Entity
             'setter' => 'setPersonResearchGroups',
             'serialize' => false,
         ),
+        'account' => array(
+            'type' => 'object',
+            'class' => 'Pelagos\Entity\Account',
+            'getter' => 'getAccount',
+            'setter' => 'setAccount',
+            'serialize' => false,
+        ),
     );
 
     /**
@@ -664,6 +671,33 @@ class Person extends Entity
     public function getPersonResearchGroups()
     {
         return $this->personResearchGroups;
+    }
+
+    /**
+     * Setter for account.
+     *
+     * @param Account|null $account Account to attach to this person.
+     *
+     * @access public
+     *
+     * @return void
+     */
+    public function setAccount(Account $account = null)
+    {
+        $this->account = $account;
+        $this->account->setPerson($this);
+    }
+
+    /**
+     * Getter for account.
+     *
+     * @access public
+     *
+     * @return Account|null Account that is attached to this person.
+     */
+    public function getAccount()
+    {
+        return $this->account;
     }
 
     /**
