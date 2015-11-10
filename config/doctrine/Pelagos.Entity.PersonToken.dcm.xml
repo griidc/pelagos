@@ -1,6 +1,6 @@
 <!--
 This file defines the Doctrine mapping between the Pelagos\Entity\PersonToken
-entity class and the person_token table in the postgres database.
+entity class and the person_token view in the postgres database.
 Properties other than id that are inherited from Pelagos\Entity\Entity and are mapped in
 Pelagos.Entity.Entity.dcm.xml
 -->
