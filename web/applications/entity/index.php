@@ -42,8 +42,8 @@ $app->get(
 );
 
 $app->post(
-    '/:entityType(/)',
-    function ($entityType) use ($app)
+    '/:entityType(/)(:entityId)',
+    function ($entityType, $entityId = null) use ($app)
     {
         $appClass = "\Pelagos\Component\EntityApplication\\$entityType" . 'Application';
 
@@ -53,7 +53,14 @@ $app->post(
             $comp = new \Pelagos\Component\EntityApplication($app);
         }
 
-        $comp->handlePost($entityType);
+
+        if (isset($entityId)) {
+            $comp->handlePost($entityType, $entityId);
+        } else {
+             $comp->handlePost($entityType);
+        }
+
+
 
         $comp->finalize();
     }

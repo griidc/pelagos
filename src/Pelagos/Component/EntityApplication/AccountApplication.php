@@ -31,6 +31,14 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
         parent::__construct($slim);
 
         $this->twig = new \Twig_Environment(new \Twig_Loader_Filesystem('./templates'));
+
+        $this->addJS(
+            array(
+                'static/js/account.js',
+                //'static/js/xregexp-all-min.js',
+                '//cdnjs.cloudflare.com/ajax/libs/xregexp/2.0.0/xregexp-all-min.js',
+            )
+        );
     }
 
     /**
@@ -42,11 +50,7 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
      */
     public function handleEntity($entityType)
     {
-        $this->addJS(
-            array(
-                'static/js/account.js',
-            )
-        );
+
 
         $this->setTitle('Account Creation');
 
@@ -63,12 +67,25 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
      */
     public function handleEntityInstance($entityType, $entityId)
     {
-        $entityService = new EntityService($this->getEntityManager());
-        $entity = $entityService->getBy('PersonToken', array('tokenText' => $entityId));
+        $this->setTitle('Account Creation');
+        // $entityService = new EntityService($this->getEntityManager());
+        // $entity = $entityService->getBy('PersonToken', array('tokenText' => $entityId));
 
-        foreach ($entity as $PersonToken) {
-            var_dump($PersonToken);
-        }
+        // $goodToken = false;
+
+        // foreach ($entity as $PersonToken) {
+            // var_dump($PersonToken);
+
+            // $goodToken = true;
+        // }
+
+        $goodToken = true;
+
+        $twigData = array(
+            "goodToken" => $goodToken,
+        );
+
+        $this->slim->render('AccountApprovalResponse.html', $twigData);
     }
 
     /**
@@ -80,28 +97,39 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
      */
     public function handlePost($entityType)
     {
-        $this->setTitle('Account Creation Result');
-
         $postValues = $this->slim->request->params();
+
+
+        if (array_key_exists('action', $postValues)) {
+            if ($postValues['action'] === 'accountrequest') {
+                $this->verifyEmail($postValues['emailAddress']);
+            }
+        }
+
+        var_dump($postValues);
+    }
+
+    private function verifyEmail($emailAddress)
+    {
+        $this->setTitle('Account Request Result');
 
         $entityService = new EntityService($this->getEntityManager());
 
-        $entity = $entityService->getBy('Person', $this->slim->request->params());
+        $entity = $entityService->getBy('Person', array('emailAddress' => $emailAddress));
 
         $knownEmail = false;
 
-
         foreach ($entity as $Person) {
-        /*
+            /*
             // Get PersonToken
             $PersonToken = $Person->getToken();
 
             // if $Person has Token, remove Token
             if ($PersonToken) {
                 try {
-                    $this->getEntityService()->delete($PersonToken);
-                } catch (\Exception $e) {
-                    echo 'An error has occured: ' . $e->getMessage();
+                        $this->getEntityService()->delete($PersonToken);
+                    } catch (\Exception $e) {
+                        echo 'An error has occured: ' . $e->getMessage();
                     $this->quit();
                 }
             }
@@ -112,7 +140,9 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
             // Persist PersonToken
             $PersonToken->setPerson($Person);
             $PersonToken = $this->entityService->persist($PersonToken);
-        */
+
+            */
+
             $mailData = array(
                 'Person' => $Person,
             );
@@ -127,14 +157,14 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
                 'bodyText' => $template->renderBlock('body_text', $mailData),
             );
 
-            $this->sendMail($email);
+            //$this->sendMail($email);
 
             $knownEmail = true;
         }
 
         $twigData = array(
             "knownEmail" => $knownEmail,
-            "postValues" => $postValues,
+            "emailAddress" => $emailAddress,
         );
 
         $this->slim->render('AccountRequestResponse.html', $twigData);

@@ -1,0 +1,44 @@
+{% if goodToken %}
+    <div class="messages status">
+        <h2 class="element-invisible">Status message</h2>
+        You have successfully created a GRIIDC account.
+    </div>
+        <form id="passwordForm" method="post" action=".">
+        <p>
+        Your user id is: <strong>mvandeneijnden</strong><br>
+        Please create a password.
+        </p>
+        New Password: <input type="password" id="password" name="password" size="40" required>&nbsp;
+        <label style="display:inline;" for="password" class="error"></label>
+        <p>
+        Verify Password: <input type="password" id="verify_password" name="verify_password" size="40">&nbsp;
+        <label style="display:inline;" for="verify_password" class="error"></label>
+        </p>
+        <p>
+          <ul>
+            <li>Passwords must be a minimum of eight characters/numerals.</li>
+            <li>Passwords must contain a combination of three of the the following:
+                <ul>
+                    <li>Upper Case Letters (A, B, C, etc...)</li>
+                    <li>Lower Case Letters (a, b, c, etc...)</li>
+                    <li>Numbers (1, 2, 3, etc...)</li>
+                    <li>Non-Alphabetic Characters (!, @, #, etc...)</li>
+                </ul>
+            </li>
+            <li>You cannot use a password that you have previously used the last ten (10) times.</li>
+            <li>You cannot use a password that contains any part of your name.</li>
+            <li>You can only change your password one (1) time per 24 hour period.</li>
+          </ul>
+          </p>
+            <button type="submit">Next</button>
+            <p></p>
+            <input type="hidden" name="uid" value="{{userID}}">
+            <input type="hidden" name="hash" value="{{hash}}">
+            <input type="hidden" name="action" value="establishaccount">
+        </form>
+{% else %}
+    <div class="messages error">
+        <h2 class="element-invisible">Error message</h2>
+        The token is invalid or expired! Please contact <a href="griidc@gomri.org">griidc@gomri.org</a> for additional help.
+    </div>
+{% endif %}
