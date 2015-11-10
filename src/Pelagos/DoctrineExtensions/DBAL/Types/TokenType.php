@@ -1,6 +1,8 @@
 <?php
 namespace Pelagos\DoctrineExtensions\DBAL\Types;
 
+use Doctrine\DBAL\Platforms\AbstractPlatform;
+
 /**
  * TokenType class implementation of EnumeratedType base class.
  *
@@ -49,17 +51,12 @@ class TokenType extends EnumType
      * @param mixed            $value    The value to convert.
      * @param AbstractPlatform $platform The currently used database platform.
      *
-     * @throws DBALException::notSupported When attempting to convert from anything
-     *                                     other than a TokenType type.
      * @throws \InvalidArgumentException   When attempting convert a non-enumerated value.
      *
      * @return string The database representation of the value.
      */
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
-        if (gettype($value !== 'object') or get_class($value) !== ENUM_TOKEN_TYPE) {
-            throw DBALException::notSupported('convert from non TokenType');
-        }
         if (!in_array($value, $this->values)) {
             throw new \InvalidArgumentException("Invalid '" . $this->name . "' value.");
         }
