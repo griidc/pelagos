@@ -1,6 +1,6 @@
 <!--
 This file defines the Doctrine mapping between the Pelagos\Entity\PersonToken
-entity class and the data_repository_role view in the postgres database.
+entity class and the person_token table in the postgres database.
 Properties other than id that are inherited from Pelagos\Entity\Entity and are mapped in
 Pelagos.Entity.Entity.dcm.xml
 -->
@@ -12,15 +12,15 @@ Pelagos.Entity.Entity.dcm.xml
 
     <entity name="Pelagos\Entity\PersonToken" table="person_token">
 
-        <id name="id" column="person_number" type="integer">
-            <generator strategy="SEQUENCE" />
-            <sequence-generator sequence-name="seq_token_number" allocation-size="1" initial-value="1" />
-        </id>
+        <id name="person" association-key="true"/>
 
-        <field name="tokenText"   column="person_token_token"   type="string" />
+        <field name="tokenText"   column="token"   type="string" />
 
-        <field name="use"   column="person_token_use"   type="token_use_type" />
+        <field name="use"   column="use"   type="token_use_type" />
 
+        <field name="validFor"   column="valid_for"   type="interval" />
+
+        <one-to-one field="person" target-entity="Person" />
     </entity>
 
 </doctrine-mapping>
