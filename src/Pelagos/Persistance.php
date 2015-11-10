@@ -44,6 +44,9 @@ class Persistance
         $entityManager->getConnection()->getEventManager()->addEventSubscriber(
             new PostgresSessionInit(array('timezone' => 'UTC'))
         );
+        // Add and register the TokenUse type.
+        Type::addType('token_use_type', 'Pelagos\DoctrineExtensions\DBAL\Types\TokenType');
+        $entityManager->getConnection()->getDatabasePlatform()->registerDoctrineTypeMapping('token_use_type', 'token_use_type');
         // Return the entity manager.
         return $entityManager;
     }
