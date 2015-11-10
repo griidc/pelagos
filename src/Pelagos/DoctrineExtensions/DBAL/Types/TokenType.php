@@ -49,9 +49,9 @@ class TokenType extends EnumType
      * @param mixed            $value    The value to convert.
      * @param AbstractPlatform $platform The currently used database platform.
      *
-     * @throws \InvalidArgumentException When attempting convert a non-enumerated value.
      * @throws DBALException::notSupported When attempting to convert from anything
-     *         other than a TokenType type.
+     *                                     other than a TokenType type.
+     * @throws \InvalidArgumentException   When attempting convert a non-enumerated value.
      *
      * @return string The database representation of the value.
      */
@@ -64,7 +64,7 @@ class TokenType extends EnumType
             throw DBALException::notSupported('convert from non TokenType');
         }
         if (!in_array($value, $this->values)) {
-            throw new InvalidArgumentException("Invalid '" . $this->name . "' value.");
+            throw new \InvalidArgumentException("Invalid '" . $this->name . "' value.");
         }
         return $value;
     }
