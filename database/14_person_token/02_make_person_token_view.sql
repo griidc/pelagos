@@ -33,8 +33,8 @@ CREATE VIEW person_token AS
           CAST(person_token_valid_for AS TEXT) AS valid_for,
           person_token_creator AS creator,
           DATE_TRUNC('seconds', person_token_creation_time) AS creation_time,
-          CAST('N/A' AS TEXT) AS modifier,
-          CAST('N/A' AS TEXT) AS modification_time
+          person_token_creator AS modifier,
+          DATE_TRUNC('seconds', person_token_creation_time) AS modification_time
    FROM person_token_table;
 
 -- CREATE THE trigger function:
@@ -109,16 +109,16 @@ AS $person_token_func$
                                NEW.valid_for,
                                '" ',
                                'is not a valid validity interval');
-         _valid_for := UPPER(NEW.valid_for);
+         _valid_for := NEW.valid_for;
 
          IF TG_OP = 'INSERT'
          THEN
-            -- Make sure we are not trying to INSERT another token where one
-            -- already exists for a person_number:
+            -- Make sure we are not trying to INSERT another token for an
+            -- existing person_number:
             _count := NULL;
             EXECUTE 'SELECT 1
                      WHERE EXISTS (SELECT person_number
-                                   FROM person_token
+                                   FROM person_token_table
                                    WHERE person_number = $1)'
                INTO _count
                USING NEW.person_number;
@@ -127,7 +127,25 @@ AS $person_token_func$
                _err_hint := CONCAT('person_number "',
                                    NEW.person_number,
                                    '" currently has an active token.');
-               _err_msg  := 'Duplicate token violation';
+               _err_msg  := 'Duplicate person_token violation';
+               RAISE EXCEPTION USING ERRCODE = '23505';
+            END IF;
+
+            -- Tokens themselves are to be unique as well. We can test for
+            -- that here:
+            _count := NULL;
+            EXECUTE 'SELECT 1
+                     WHERE EXISTS (SELECT person_token_token
+                                   FROM person_token_table
+                                   WHERE person_token_token = $1)'
+               INTO _count
+               USING _token;
+            IF _count = 1
+            THEN
+               _err_hint := CONCAT('token "',
+                                   _token,
+                                   '" is currently in use.');
+               _err_msg  := 'Duplicate person_token violation';
                RAISE EXCEPTION USING ERRCODE = '23505';
             END IF;
 
