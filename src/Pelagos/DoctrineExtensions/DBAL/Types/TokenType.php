@@ -57,9 +57,6 @@ class TokenType extends EnumType
      */
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
-        // prevent coding standards violation
-        $griidcDummy = $platform;
-
         if (gettype($value !== 'object') or get_class($value) !== ENUM_TOKEN_TYPE) {
             throw DBALException::notSupported('convert from non TokenType');
         }

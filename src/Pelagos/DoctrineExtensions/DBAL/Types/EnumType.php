@@ -33,10 +33,6 @@ abstract class EnumType extends Type
      */
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
     {
-        // prevent coding standards violation
-        $griidcDummy = $fieldDeclaration;
-        $griidcDummy = $platform;
-
         $values = array_map(
             function ($val) {
                 return "'" . $val . "'";
@@ -59,9 +55,6 @@ abstract class EnumType extends Type
      */
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
-        // prevent coding standards violation
-        $griidcDummy = $platform;
-
         if (!in_array($value, $this->values)) {
             throw new \InvalidArgumentException("Invalid '" . $this->name . "' value.");
         }
