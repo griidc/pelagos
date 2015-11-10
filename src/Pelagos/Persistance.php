@@ -3,7 +3,7 @@
 namespace Pelagos;
 
 use Doctrine\ORM\EntityManager;
-use Doctrine\DBAL\Event\Listeners\PostgresSessionInit;
+use Pelagos\DoctrineExtensions\DBAL\Event\Listeners\PostgresSessionInit;
 
 /**
  * A class to handle setting up persistence.

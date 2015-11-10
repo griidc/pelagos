@@ -1,9 +1,10 @@
 <?php
 
-namespace Doctrine\DBAL\Event\Listeners;
+namespace Pelagos\DoctrineExtensions\DBAL\Event\Listeners;
 
-use Doctrine\DBAL\Events;
 use Doctrine\Common\EventSubscriber;
+use Doctrine\DBAL\Event\ConnectionEventArgs;
+use Doctrine\DBAL\Events;
 
 /**
  * Should be used when Postgres Server default environment does not match the Doctrine requirements.
@@ -34,7 +35,7 @@ class PostgresSessionInit implements EventSubscriber
      *
      * @return void
      */
-    public function postConnect(\Doctrine\DBAL\Event\ConnectionEventArgs $args)
+    public function postConnect(ConnectionEventArgs $args)
     {
         if (count($this->sessionVars)) {
             foreach ($this->sessionVars as $var => $value) {
