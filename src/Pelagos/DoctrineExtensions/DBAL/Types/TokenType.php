@@ -57,6 +57,10 @@ class TokenUseType extends EnumType
      */
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
+        // pass null values through and do no further checks.  Useful in case a null is allowed in DB.
+        if ($value === null) {
+            return null;
+        }
         if (!in_array($value, $this->values)) {
             throw new \InvalidArgumentException("Invalid '" . $this->name . "' value.");
         }
