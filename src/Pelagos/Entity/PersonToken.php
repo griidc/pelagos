@@ -37,7 +37,20 @@ class PersonToken extends Entity
             'setter' => 'setUse',
             'getter' => 'getUse',
         ),
+        'validFor' => array(
+            'type' => 'object',
+            'class' => 'Pelagos\DoctrineExtensions\DBAL\Types\DateInterval',
+            'setter' => 'setValidFor',
+            'getter' => 'getValidFor',
+        ),
     );
+
+    /**
+     * Property containing a DateInterval of validity of token.
+     *
+     * @var DateInterval $validFor
+     */
+    protected $validFor;
 
     /**
      * Person entity this PersonToken belongs to.
@@ -134,6 +147,28 @@ class PersonToken extends Entity
     public function getUse()
     {
         return $this->use;
+    }
+
+    /**
+     * Setter for ValidFor.
+     *
+     * @param DateInterval $validFor The interval entity is valid beyond creationtime.
+     *
+     * @return void
+     */
+    public function setValidFor( DateInterval $validFor)
+    {
+        $this->validFor = $validFor;
+    }
+
+    /**
+     * Getter for ValidFor.
+     *
+     * @return DateInterval The interval entity is valid beyond creationtime.
+     */
+    public function getValidFor()
+    {
+        return $this->validFor;
     }
 
     /**
