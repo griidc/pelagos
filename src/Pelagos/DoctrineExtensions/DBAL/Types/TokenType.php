@@ -8,7 +8,7 @@ use Doctrine\DBAL\Platforms\AbstractPlatform;
  *
  * @see EnumType
  */
-class TokenType extends EnumType
+class TokenUseType extends EnumType
 {
    /**
     * Enumeration's name.
