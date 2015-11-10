@@ -156,7 +156,7 @@ class PersonToken extends Entity
      *
      * @return void
      */
-    public function setValidFor( DateInterval $validFor)
+    public function setValidFor(DateInterval $validFor)
     {
         $this->validFor = $validFor;
     }
