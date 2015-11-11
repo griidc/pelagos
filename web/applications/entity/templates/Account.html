@@ -7,15 +7,16 @@
         <tr>
         <td width="50%">
 
-                <form id="accountForm" method="post" action="./Account">
+                <form id="accountForm" method="post" action=".">
                     <label for="emailAddress">E-mail Address:</label>
                     <input type="email" size="100" name="emailAddress" id="emailAddress" required>
-                    &nbsp;
-                    <button type="submit">Submit</button><br>
-                    <label for="emailAddress" class="error"></label>
+                    <label style="display:inline;" for="emailAddress" class="error"></label>
+                    <p>
+                        <button type="submit">Submit</button>
+                    </p>
                     <input type="hidden" name="action" value="accountrequest">
                 </form>
 
         </td>
-    </tr>
+    </p>
 </table>

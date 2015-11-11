@@ -35,7 +35,6 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
         $this->addJS(
             array(
                 'static/js/account.js',
-                //'static/js/xregexp-all-min.js',
                 '//cdnjs.cloudflare.com/ajax/libs/xregexp/2.0.0/xregexp-all-min.js',
             )
         );
@@ -50,10 +49,7 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
      */
     public function handleEntity($entityType)
     {
-
-
         $this->setTitle('Account Creation');
-
         $this->slim->render('Account.html');
     }
 
@@ -83,6 +79,7 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
 
         $twigData = array(
             "goodToken" => $goodToken,
+            "token" => $entityId,
         );
 
         $this->slim->render('AccountApprovalResponse.html', $twigData);
@@ -99,14 +96,27 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
     {
         $postValues = $this->slim->request->params();
 
+        var_dump($postValues);
 
         if (array_key_exists('action', $postValues)) {
             if ($postValues['action'] === 'accountrequest') {
                 $this->verifyEmail($postValues['emailAddress']);
             }
+            if ($postValues['action'] === 'establishaccount') {
+                $this->setCredentials($postValues);
+            }
         }
+    }
 
-        var_dump($postValues);
+    private function setCredentials($formData)
+    {
+        $entityService = new EntityService($this->getEntityManager());
+
+        $personId = $formData['person'];
+
+
+        $entity = $entityService->getBy('Person', array('id' => $personId));
+
     }
 
     private function verifyEmail($emailAddress)
