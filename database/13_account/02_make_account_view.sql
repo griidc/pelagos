@@ -28,7 +28,8 @@ CREATE VIEW account AS
           CONCAT('{',
                  account_hash_algorithm,
                  '}',
-                 ENCODE(account_password, 'base64')) AS password_string,
+                 ENCODE(account_password || account_password_salt, 'base64')
+                ) AS password_string,
           UPPER(CAST(account_hash_algorithm AS TEXT)) AS hash_algorithm,
           account_password AS password,
           account_password_salt AS salt,
