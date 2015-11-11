@@ -193,4 +193,28 @@ class PersonToken extends Entity
         // Encode the byte string as hex, and save it as the token text.
         $this->tokenText = bin2hex($randomBytes);
     }
+
+    /**
+     * Return true if token is valid, otherwise false.
+     *
+     * @param PersonToken $personToken To be validated.
+     *
+     * @access public
+     *
+     * @return boolean|null
+     */
+    public function isValid(PersonToken $personToken = null)
+    {
+        $now = new DateTime();
+        $created = $personToken->getCreationTimeStamp();
+        $goodFor = $personToken->getValidFor();
+
+        if ($token === null) {
+            return null;
+        } elseif ($now < ($created->add($goodFor))) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
