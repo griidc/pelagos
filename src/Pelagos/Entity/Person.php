@@ -689,16 +689,15 @@ class Person extends Entity
      *
      * @access public
      *
-     * @throws \Exception When Non-Token is found in $token.
-     *
      * @return void
      */
-    public function setToken(Token $token)
+    public function setToken(Token $token == null)
     {
-        if ($token instanceof Token) {
+        if ($token === null) {
+            return null;
+        } elseif ($token instanceof Token) {
             $this->token = $token;
-        } else {
-            throw new \Exception('token must be of type Token.');
+            $this->token->person = $this;
         }
     }
 
