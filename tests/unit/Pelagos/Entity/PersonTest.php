@@ -704,6 +704,6 @@ class PersonTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetToken()
     {
-        $this->assertInstanceOf('\Pelagos\Entity\Token', $this->person->getToken());
+        $this->assertSame($this->testToken, $this->person->getToken());
     }
 }
