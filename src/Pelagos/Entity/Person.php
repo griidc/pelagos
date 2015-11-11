@@ -691,7 +691,7 @@ class Person extends Entity
      *
      * @return void
      */
-    public function setToken(Token $token == null)
+    public function setToken(Token $token = null)
     {
         if ($token === null) {
             return null;
