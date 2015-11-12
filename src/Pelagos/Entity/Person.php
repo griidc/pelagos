@@ -100,6 +100,20 @@ class Person extends Entity
             'setter' => 'setPersonResearchGroups',
             'serialize' => false,
         ),
+        'account' => array(
+            'type' => 'object',
+            'class' => 'Pelagos\Entity\Account',
+            'getter' => 'getAccount',
+            'setter' => 'setAccount',
+            'serialize' => false,
+        ),
+        'token' => array(
+            'type' => 'object',
+            'class' => '\Pelagos\Entity\PersonToken',
+            'getter' => 'getToken',
+            'setter' => 'setToken',
+            'serialize' => false,
+        ),
     );
 
     /**
@@ -281,6 +295,24 @@ class Person extends Entity
      * @access protected
      */
     protected $personResearchGroups;
+
+    /**
+     * Person's Account.
+     *
+     * @var \Pelagos\Entity\Account $account
+     *
+     * @access protected
+     */
+    protected $account;
+
+    /**
+     * Person's Token.
+     *
+     * @var \Pelagos\Entity\PersonToken $token
+     *
+     * @access protected
+     */
+    protected $token;
 
     /**
      * Setter for firstName property.
@@ -664,6 +696,64 @@ class Person extends Entity
     public function getPersonResearchGroups()
     {
         return $this->personResearchGroups;
+    }
+
+    /**
+     * Setter for account.
+     *
+     * @param Account|null $account Account to attach to this person.
+     *
+     * @access public
+     *
+     * @return void
+     */
+    public function setAccount(Account $account = null)
+    {
+        $this->account = $account;
+        if ($this->account !== null) {
+            $this->account->setPerson($this);
+        }
+    }
+
+    /**
+     * Getter for account.
+     *
+     * @access public
+     *
+     * @return Account|null Account that is attached to this person.
+     */
+    public function getAccount()
+    {
+        return $this->account;
+    }
+
+    /**
+     * Setter for token.
+     *
+     * @param PersonToken $token Person's token.
+     *
+     * @access public
+     *
+     * @return void
+     */
+    public function setToken(PersonToken $token = null)
+    {
+        $this->token = $token;
+        if ($this->token !== null) {
+            $this->token->setPerson($this);
+        }
+    }
+
+    /**
+     * Getter for token.
+     *
+     * @access public
+     *
+     * @return PersonToken Person's token.
+     */
+    public function getToken()
+    {
+        return $this->token;
     }
 
     /**

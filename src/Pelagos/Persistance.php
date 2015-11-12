@@ -42,7 +42,12 @@ class Persistance
         $entityManager = EntityManager::create($doctrineConn, $doctrineConfig);
         // Register the PostgresSessionInit listener with session variables.
         $entityManager->getConnection()->getEventManager()->addEventSubscriber(
-            new PostgresSessionInit(array('timezone' => 'UTC'))
+            new PostgresSessionInit(
+                array(
+                    'timezone' => 'UTC',
+                    'intervalstyle' => 'iso_8601',
+                )
+            )
         );
         // Add and register the TokenUse type.
         Type::addType('token_use_type', 'Pelagos\DoctrineExtensions\DBAL\Types\TokenUseType');
