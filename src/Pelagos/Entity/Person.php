@@ -292,7 +292,7 @@ class Person extends Entity
     /**
      * Person's Token.
      *
-     * @var \Pelagos\Entity\Token $token
+     * @var \Pelagos\Entity\PersonToken $token
      *
      * @access protected
      */
