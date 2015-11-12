@@ -45,10 +45,13 @@ class IntervalType extends Type
      */
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
+        if ($value === null) {
+            return null;
+        }
         if (gettype($value) !== 'object' or get_class($value) !== 'DateInterval') {
             throw DBALException::notSupported('convert from non DateInterval');
         }
-        return (null === $value) ? null : $value->format('P%yY%mM%dDT%hH%iM%sS');
+        return $value->format('P%yY%mM%dDT%hH%iM%sS');
     }
 
     /**
