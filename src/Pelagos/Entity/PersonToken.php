@@ -206,13 +206,11 @@ class PersonToken extends Entity
     /**
      * Return true if token is valid, otherwise false.
      *
-     * @param PersonToken $personToken To be validated.
-     *
      * @access public
      *
      * @return boolean|null
      */
-    public function isValid(PersonToken $personToken = null)
+    public function isValid()
     {
         $now = new \DateTime();
         // \DateTime object
@@ -220,9 +218,7 @@ class PersonToken extends Entity
         // \DateInterval object
         $goodFor = $this->getValidFor();
 
-        if ($personToken === null) {
-            return null;
-        } elseif ($now < ($created->add($goodFor))) {
+        if ($now < ($created->add($goodFor))) {
             return true;
         } else {
             return false;
