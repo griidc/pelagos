@@ -43,15 +43,8 @@ CREATE VIEW metadata_view AS
 ALTER TABLE metadata_view
    OWNER TO gomri_admin;
 
--- Set the other permissions:
-GRANT DELETE,
-      INSERT,
-      SELECT,
-      UPDATE
-ON TABLE metadata_view
-TO gomri_user,
-   gomri_writer;
-
 GRANT SELECT
 ON TABLE metadata_view
-TO gomri_reader;
+TO gomri_reader,
+   gomri_user,
+   gomri_writer;
