@@ -19,11 +19,12 @@ DROP TABLE account_table CASCADE;
 DROP TYPE HASH_ALGORITHM_TYPE CASCADE;
 DROP TYPE USER_ID_TYPE CASCADE;
 
--- Create the custom data type:
+-- Create the custom data type, The HASH_ALGORITHM represents possible LDAP
+-- values (excluding CRYPT derived values):
 CREATE TYPE HASH_ALGORITHM_TYPE
-AS ENUM ('SHA1',
-         'SHA256',
-         'SHA512',
+AS ENUM ('MD5',
+         'SHA',
+         'SMD5',
          'SSHA');
 
 CREATE DOMAIN USER_ID_TYPE
