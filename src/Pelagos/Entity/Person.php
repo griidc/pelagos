@@ -685,7 +685,7 @@ class Person extends Entity
     public function setAccount(Account $account = null)
     {
         $this->account = $account;
-        if ($account !== null) {
+        if ($this->account !== null) {
             $this->account->setPerson($this);
         }
     }
