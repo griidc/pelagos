@@ -22,7 +22,7 @@ Pelagos.Entity.Person.dcm.xml
 
         <field name="passwordHashSalt"      column="salt"           type="blob"   />
 
-        <one-to-one field="person" target-entity="Person">
+        <one-to-one field="person" target-entity="Person" inversed-by="account">
             <join-column name="person_number" referenced-column-name="person_number" />
         </one-to-one>
 
