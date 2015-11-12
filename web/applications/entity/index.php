@@ -53,14 +53,7 @@ $app->post(
             $comp = new \Pelagos\Component\EntityApplication($app);
         }
 
-
-        if (isset($entityId)) {
-            $comp->handlePost($entityType, $entityId);
-        } else {
-             $comp->handlePost($entityType);
-        }
-
-
+        $comp->handlePost($entityType, $entityId);
 
         $comp->finalize();
     }

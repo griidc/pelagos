@@ -92,7 +92,7 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
      *
      * @access public
      */
-    public function handlePost($entityType)
+    public function handlePost($entityType, $entityId)
     {
         $postValues = $this->slim->request->params();
 
