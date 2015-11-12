@@ -695,7 +695,7 @@ class Person extends Entity
     {
         $this->token = $token;
         if ($this->token !== null) {
-            $this->token->person = $this;
+            $this->token->setPerson($this);
         }
     }
 
