@@ -693,10 +693,8 @@ class Person extends Entity
      */
     public function setToken(Token $token = null)
     {
-        if ($token === null) {
-            return null;
-        } elseif ($token instanceof Token) {
-            $this->token = $token;
+        $this->token = $token;
+        if ($token !== null) {
             $this->token->person = $this;
         }
     }
