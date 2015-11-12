@@ -102,7 +102,7 @@ class Person extends Entity
         ),
         'token' => array(
             'type' => 'object',
-            'class' => '\Pelagos\Entity\Token',
+            'class' => '\Pelagos\Entity\PersonToken',
             'getter' => 'getToken',
             'setter' => 'setToken',
             'serialize' => false,
@@ -685,13 +685,13 @@ class Person extends Entity
     /**
      * Setter for token.
      *
-     * @param Token $token Person's token.
+     * @param PersonToken $token Person's token.
      *
      * @access public
      *
      * @return void
      */
-    public function setToken(Token $token = null)
+    public function setToken(PersonToken $token = null)
     {
         $this->token = $token;
         if ($this->token !== null) {
@@ -704,7 +704,7 @@ class Person extends Entity
      *
      * @access public
      *
-     * @return Token Person's token.
+     * @return PersonToken Person's token.
      */
     public function getToken()
     {
