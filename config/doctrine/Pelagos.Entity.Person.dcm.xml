@@ -45,6 +45,8 @@ Pelagos.Entity.Entity.dcm.xml
 
         <one-to-many field="personResearchGroups"       target-entity="PersonResearchGroup"       mapped-by="person" />
 
+        <one-to-one  field="account" target-entity="Account" mapped-by="person" />
+
     </entity>
 
 </doctrine-mapping>
