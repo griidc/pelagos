@@ -87,6 +87,12 @@ class PersonToken extends Entity
 
     /**
      * Constructor for PersonToken.
+     *
+     * @param Person        $person   Person who owns the token to be created.
+     * @param string        $use      String representing use of token to be created.
+     * @param \DateInterval $validFor Validity duration of token to be created.
+     *
+     * @return void
      */
     public function __construct(Person $person, $use, \DateInterval $validFor)
     {
