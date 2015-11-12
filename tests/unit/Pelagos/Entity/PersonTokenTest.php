@@ -48,6 +48,8 @@ class PersonTokenTest extends \PHPUnit_Framework_TestCase
         // it was able to generate a cryptographically strong byte string.
         $GLOBALS['cryptoStrong'] = true;
         $this->personToken = new PersonToken;
+        // Sets entity's creationTimeStamp to now.
+        $this->personToken->setCreationTimeStamp();
         $this->mockPerson = \Mockery::mock('\Pelagos\Entity\Person');
         $this->personToken->setPerson($this->mockPerson);
     }
@@ -83,7 +85,7 @@ class PersonTokenTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test that an excpetion is thrown when we are unable to generate a cryptographically strong token.
+     * Test that an exception is thrown when we are unable to generate a cryptographically strong token.
      *
      * @expectedException \Exception
      *
@@ -97,6 +99,29 @@ class PersonTokenTest extends \PHPUnit_Framework_TestCase
         new PersonToken;
     }
 
+    /**
+     * Test the isValid method with a non-expired token.
+     *
+     * @return void
+     */
+    public function testAffirmIsValid()
+    {
+        $this->personToken->setValidFor(\DateInterval::createFromDateString('1 week'));
+        $this->assertTrue($this->personToken->isValid($this->personToken));
+    }
+
+    /**
+     * Test the isValid method with an expired token.
+     *
+     * @return void
+     */
+    public function testAffirmIsNotValid()
+    {
+        $this->personToken->setValidFor(\DateInterval::createFromDateString('- 1 week'));
+        $this->assertFalse($this->personToken->isValid($this->personToken));
+    }
+
+    /**
     /**
      * Clean up after tests.
      *
