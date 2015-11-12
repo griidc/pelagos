@@ -20,7 +20,7 @@ Pelagos.Entity.Entity.dcm.xml
 
         <field name="validFor"   column="valid_for"   type="interval" />
 
-        <one-to-one field="person" target-entity="Person">
+        <one-to-one field="person" target-entity="Person" inversed-by="token">
            <join-column name="person_number" referenced-column-name="person_number" />
         </one-to-one>
     </entity>
