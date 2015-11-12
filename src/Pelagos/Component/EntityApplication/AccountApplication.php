@@ -51,9 +51,9 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
     {
         $this->setTitle('Account Creation');
         $this->slim->render('Account.html');
-        
+
         try {
-    
+
         } catch (Exception $e) {
             $this->slim->render('error.html', array('errorMessage' => $e->getMessage()));
             return;
@@ -140,26 +140,28 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
             $PersonToken = $Person->getToken();
 
             // if $Person has Token, remove Token
-            if ($PersonToken) {
+            if ($PersonToken instanceof \Pelagos\Entity\PersonToken) {
                 try {
-                    $this->getEntityService()->delete($PersonToken);
+                    $PersonToken->getPerson()->setToken(null);
+                    $entityService->delete($PersonToken);
                 } catch (Exception $e) {
                     $this->slim->render('error.html', array('errorMessage' => $e->getMessage()));
                     return;
                 }
             }
-            
-            $dateInterval = new DateInterval('P7D');
+
+            $dateInterval = new \DateInterval('P7D');
 
             // Create new PersonToken
-            $PersonToken = new \Pelagos\PersonToken($Person, 'CREATE_ACCOUNT', $dateInterval);
+            $PersonToken = new \Pelagos\Entity\PersonToken($Person, 'CREATE_ACCOUNT', $dateInterval);
 
             // Persist PersonToken
             $PersonToken->setPerson($Person);
-            $PersonToken = $this->entityService->persist($PersonToken);
+            $PersonToken = $entityService->persist($PersonToken);
 
             $mailData = array(
                 'Person' => $Person,
+                'baseUri' => $this->baseUri,
             );
 
             $template = $this->twig->loadTemplate('accountConfirmation.email.html.twig');
@@ -171,6 +173,8 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
                 'bodyHTML' => $template->renderBlock('body_html', $mailData),
                 'bodyText' => $template->renderBlock('body_text', $mailData),
             );
+
+            var_dump($email);
 
             //$this->sendMail($email);
 

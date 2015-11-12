@@ -3,11 +3,11 @@
 {% block subject '[GRIIDC] Account Confirmation' %}
 
 {% block body_html %}
-    Dear {{Person.firstName}} {{Person.lastName}},<br>
+    Dear {{Person.getFirstName}} {{Person.getLastName}},<br>
     <br>
     Your GRIIDC account creation is almost complete. Please click on the link below to verify your email address.<br>
     <br>
-    {{link}}
+    <a href="baseUri/">{{Person.getToken.getTokenText}}</a>
     <br>
     Thank you,<br>
     <br>
@@ -17,7 +17,7 @@
 {% endblock %}
 
 {% block body_text %}
-Dear {{Person.firstName}} {{Person.lastName}},
+Dear {{Person.getFirstName}} {{Person.getLastName}},
 
 Your GRIIDC account creation is almost complete. Please click on the link below to verify your email address.<br>
 
