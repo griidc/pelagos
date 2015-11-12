@@ -689,7 +689,7 @@ class Person extends Entity
      *
      * @access public
      *
-     * @return void|null
+     * @return void
      */
     public function setToken(Token $token = null)
     {
