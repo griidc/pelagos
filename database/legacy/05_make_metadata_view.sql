@@ -36,7 +36,21 @@ CREATE VIEW metadata_view AS
                        ]
                  )
                )[1] AS TEXT
-              ) AS title
+              ) AS title,
+          CAST((xpath(CONCAT('/gmi:MI_Metadata/',
+                             'gmd:identificationInfo/'
+                             'gmd:MD_DataIdentification/'
+                             'gmd:abstract/'
+                             'gco:CharacterString/text()'),
+                 m.metadata_xml,
+                 ARRAY [ARRAY ['gco', 'http://www.isotc211.org/2005/gco'],
+                        ARRAY ['gmd', 'http://www.isotc211.org/2005/gmd'],
+                        ARRAY ['gmi', 'http://www.isotc211.org/2005/gmi'],
+                        ARRAY ['gml', 'http://www.opengis.net/gml/3.2']
+                       ]
+                 )
+               )[1] AS TEXT
+              ) AS abstract
    FROM metadata m;
 
 -- Set object ownership:
