@@ -107,6 +107,13 @@ class Person extends Entity
             'setter' => 'setAccount',
             'serialize' => false,
         ),
+        'token' => array(
+            'type' => 'object',
+            'class' => '\Pelagos\Entity\PersonToken',
+            'getter' => 'getToken',
+            'setter' => 'setToken',
+            'serialize' => false,
+        ),
     );
 
     /**
@@ -288,6 +295,24 @@ class Person extends Entity
      * @access protected
      */
     protected $personResearchGroups;
+
+    /**
+     * Person's Account.
+     *
+     * @var \Pelagos\Entity\Account $account
+     *
+     * @access protected
+     */
+    protected $account;
+
+    /**
+     * Person's Token.
+     *
+     * @var \Pelagos\Entity\PersonToken $token
+     *
+     * @access protected
+     */
+    protected $token;
 
     /**
      * Setter for firstName property.
@@ -700,6 +725,35 @@ class Person extends Entity
     public function getAccount()
     {
         return $this->account;
+    }
+
+    /**
+     * Setter for token.
+     *
+     * @param PersonToken $token Person's token.
+     *
+     * @access public
+     *
+     * @return void
+     */
+    public function setToken(PersonToken $token = null)
+    {
+        $this->token = $token;
+        if ($this->token !== null) {
+            $this->token->setPerson($this);
+        }
+    }
+
+    /**
+     * Getter for token.
+     *
+     * @access public
+     *
+     * @return PersonToken Person's token.
+     */
+    public function getToken()
+    {
+        return $this->token;
     }
 
     /**

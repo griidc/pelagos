@@ -165,6 +165,13 @@ class PersonTest extends \PHPUnit_Framework_TestCase
             )
         );
         $this->person->setAccount($this->mockAccount);
+        $this->testToken = \Mockery::mock(
+            '\Pelagos\Entity\PersonToken',
+            array(
+                'setPerson' => null
+            )
+        );
+        $this->person->setToken($this->testToken);
     }
 
     /**
@@ -725,5 +732,17 @@ class PersonTest extends \PHPUnit_Framework_TestCase
     public function testSetAccountWithNonAccount()
     {
         $this->person->setAccount('foo');
+    }
+
+    /**
+     * Test the getToken method.
+     *
+     * This getToken method of person and verify it returns a Token object.
+     *
+     * @return void
+     */
+    public function testGetToken()
+    {
+        $this->assertSame($this->testToken, $this->person->getToken());
     }
 }
