@@ -34,6 +34,12 @@ class PersonTokenTest extends \PHPUnit_Framework_TestCase
     protected $nullTokenText;
 
     /**
+     * Property to hold a test use.
+     * @var PersonTokenUse
+     */
+    protected $personTokenUse;
+
+    /**
      * Setup for PHPUnit tests.
      *
      * This instantiates an instance of PersonToken.
@@ -48,7 +54,8 @@ class PersonTokenTest extends \PHPUnit_Framework_TestCase
         // Tell our mock openssl_random_pseudo_bytes function to report that
         // it was able to generate a cryptographically strong byte string.
         $GLOBALS['cryptoStrong'] = true;
-        $this->personToken = new PersonToken($this->mockPerson, 'CREATE_ACCOUNT', new \DateInterval('P1W'));
+        $this->persontokenUse = 'CREATE_ACCOUNT';
+        $this->personToken = new PersonToken($this->mockPerson, $this->personTokenUse, new \DateInterval('P1W'));
         // Sets entity's creationTimeStamp to now.
         $this->personToken->setCreationTimeStamp();
     }
@@ -65,6 +72,21 @@ class PersonTokenTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(
             $this->mockPerson,
             $this->personToken->getPerson()
+        );
+    }
+
+    /**
+     * Test the getUse method.
+     *
+     * This method should return the same use value set in setUp.
+     *
+     * @return void
+     */
+    public function testGetUse()
+    {
+        $this->assertEquals(
+            $this->personTokenUse,
+            $this->personToken->getUse()
         );
     }
 
@@ -95,7 +117,7 @@ class PersonTokenTest extends \PHPUnit_Framework_TestCase
         // Tell our mock openssl_random_pseudo_bytes function to report that
         // it was NOT able to generate a cryptographically strong byte string.
         $GLOBALS['cryptoStrong'] = false;
-        new PersonToken($this->mockPerson, 'CREATE_ACCOUNT', new \DateInterval('P1W'));
+        new PersonToken($this->mockPerson, $this->personTokenUse, new \DateInterval('P1W'));
     }
 
     /**
