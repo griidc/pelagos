@@ -88,8 +88,11 @@ class PersonToken extends Entity
     /**
      * Constructor for PersonToken.
      */
-    public function __construct()
+    public function __construct(Person $person, $use, \DateInterval $validFor)
     {
+        $this->setPerson($person);
+        $this->setUse($use);
+        $this->setValidFor($validFor);
         $this->generateTokenText();
     }
 

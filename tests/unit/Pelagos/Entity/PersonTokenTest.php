@@ -42,16 +42,15 @@ class PersonTokenTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
+        $this->mockPerson = \Mockery::mock('\Pelagos\Entity\Person');
         // Create a 32 null byte token.
         $this->nullTokenText = bin2hex(str_repeat("\0", 32));
         // Tell our mock openssl_random_pseudo_bytes function to report that
         // it was able to generate a cryptographically strong byte string.
         $GLOBALS['cryptoStrong'] = true;
-        $this->personToken = new PersonToken;
+        $this->personToken = new PersonToken($this->mockPerson, 'CREATE_ACCOUNT', new \DateInterval('P1W'));
         // Sets entity's creationTimeStamp to now.
         $this->personToken->setCreationTimeStamp();
-        $this->mockPerson = \Mockery::mock('\Pelagos\Entity\Person');
-        $this->personToken->setPerson($this->mockPerson);
     }
 
     /**
@@ -96,7 +95,7 @@ class PersonTokenTest extends \PHPUnit_Framework_TestCase
         // Tell our mock openssl_random_pseudo_bytes function to report that
         // it was NOT able to generate a cryptographically strong byte string.
         $GLOBALS['cryptoStrong'] = false;
-        new PersonToken;
+        new PersonToken($this->mockPerson, 'CREATE_ACCOUNT', new \DateInterval('P1W'));
     }
 
     /**
