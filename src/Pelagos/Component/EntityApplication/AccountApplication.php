@@ -64,16 +64,16 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
     public function handleEntityInstance($entityType, $entityId)
     {
         $this->setTitle('Account Creation');
-        // $entityService = new EntityService($this->getEntityManager());
-        // $entity = $entityService->getBy('PersonToken', array('tokenText' => $entityId));
+        $entityService = new EntityService($this->getEntityManager());
+        $entity = $entityService->getBy('PersonToken', array('tokenText' => $entityId));
 
-        // $goodToken = false;
+        $goodToken = false;
 
-        // foreach ($entity as $PersonToken) {
-            // var_dump($PersonToken);
+        foreach ($entity as $PersonToken) {
+            var_dump($PersonToken);
 
-            // $goodToken = true;
-        // }
+            $goodToken = true;
+        }
 
         $goodToken = true;
 
@@ -130,7 +130,6 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
         $knownEmail = false;
 
         foreach ($entity as $Person) {
-            /*
             // Get PersonToken
             $PersonToken = $Person->getToken();
 
@@ -150,8 +149,6 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
             // Persist PersonToken
             $PersonToken->setPerson($Person);
             $PersonToken = $this->entityService->persist($PersonToken);
-
-            */
 
             $mailData = array(
                 'Person' => $Person,
