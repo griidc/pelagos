@@ -44,26 +44,4 @@ class TokenUseType extends EnumType
     * @var array
     */
     protected $values = array(self::CREATE_TOKEN, self::RESET_TOKEN);
-
-    /**
-     * Converts a value from its PHP representation to its database representation of this type.
-     *
-     * @param mixed            $value    The value to convert.
-     * @param AbstractPlatform $platform The currently used database platform.
-     *
-     * @throws \InvalidArgumentException   When attempting convert a non-enumerated value.
-     *
-     * @return string The database representation of the value.
-     */
-    public function convertToDatabaseValue($value, AbstractPlatform $platform)
-    {
-        // pass null values through and do no further checks.  Useful in case a null is allowed in DB.
-        if ($value === null) {
-            return null;
-        }
-        if (!in_array($value, $this->values)) {
-            throw new \InvalidArgumentException("Invalid '" . $this->name . "' value.");
-        }
-        return $value;
-    }
 }
