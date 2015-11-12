@@ -159,7 +159,7 @@ class PersonTest extends \PHPUnit_Framework_TestCase
         );
         $this->person->setPersonResearchGroups($this->testPersonResearchGroups);
         $this->testToken = \Mockery::mock(
-            '\Pelagos\Entity\Token'
+            '\Pelagos\Entity\PersonToken'
         );
         $this->person->setToken($this->testToken);
     }
