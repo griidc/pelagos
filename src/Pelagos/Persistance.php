@@ -42,7 +42,12 @@ class Persistance
         $entityManager = EntityManager::create($doctrineConn, $doctrineConfig);
         // Register the PostgresSessionInit listener with session variables.
         $entityManager->getConnection()->getEventManager()->addEventSubscriber(
-            new PostgresSessionInit(array('timezone' => 'UTC'))
+            new PostgresSessionInit(
+                array(
+                    'timezone' => 'UTC',
+                    'intervalstyle' => 'iso_8601',
+                )
+            )
         );
         // Return the entity manager.
         return $entityManager;

@@ -44,6 +44,10 @@ Pelagos.Entity.Entity.dcm.xml
         <one-to-many field="personFundingOrganizations" target-entity="PersonFundingOrganization" mapped-by="person" />
 
         <one-to-many field="personResearchGroups"       target-entity="PersonResearchGroup"       mapped-by="person" />
+        
+        <one-to-many field="token"                      target-entity="PersonToken"               mapped-by="person" />
+
+        <one-to-one  field="account" target-entity="Account" mapped-by="person" />
 
     </entity>
 
