@@ -205,11 +205,13 @@ class PersonToken extends Entity
      */
     public function isValid(PersonToken $personToken = null)
     {
-        $now = new DateTime();
-        $created = $personToken->getCreationTimeStamp();
-        $goodFor = $personToken->getValidFor();
+        $now = new \DateTime();
+        // \DateTime object
+        $created = $this->getCreationTimeStamp();
+        // \DateInterval object
+        $goodFor = $this->getValidFor();
 
-        if ($token === null) {
+        if ($personToken === null) {
             return null;
         } elseif ($now < ($created->add($goodFor))) {
             return true;
