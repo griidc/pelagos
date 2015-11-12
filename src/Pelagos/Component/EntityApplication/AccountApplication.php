@@ -51,6 +51,13 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
     {
         $this->setTitle('Account Creation');
         $this->slim->render('Account.html');
+        
+        try {
+    
+        } catch (Exception $e) {
+            $this->slim->render('error.html', array('errorMessage' => $e->getMessage()));
+            return;
+        }
     }
 
     /**
@@ -114,7 +121,6 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
 
         $personId = $formData['person'];
 
-
         $entity = $entityService->getBy('Person', array('id' => $personId));
 
     }
@@ -136,15 +142,17 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
             // if $Person has Token, remove Token
             if ($PersonToken) {
                 try {
-                        $this->getEntityService()->delete($PersonToken);
-                    } catch (\Exception $e) {
-                        echo 'An error has occured: ' . $e->getMessage();
-                    $this->quit();
+                    $this->getEntityService()->delete($PersonToken);
+                } catch (Exception $e) {
+                    $this->slim->render('error.html', array('errorMessage' => $e->getMessage()));
+                    return;
                 }
             }
+            
+            $dateInterval = new DateInterval('P7D');
 
             // Create new PersonToken
-            $PersonToken = new \Pelagos\PersonToken($Person);
+            $PersonToken = new \Pelagos\PersonToken($Person, 'CREATE_ACCOUNT', $dateInterval);
 
             // Persist PersonToken
             $PersonToken->setPerson($Person);

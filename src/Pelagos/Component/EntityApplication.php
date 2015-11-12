@@ -141,7 +141,7 @@ class EntityApplication extends \Pelagos\Component
 
     }
 
-    public function handlePost($entityType)
+    public function handlePost($entityType, $entityId)
     {
         $this->slim->render('error.html', array('errorMessage' => 'Post Not Allowed!'), 405);
     }
