@@ -114,6 +114,9 @@ class Account extends Entity
     public function setPerson(Person $person)
     {
         $this->person = $person;
+        if ($this->person !== null and $this->person->getAccount() !== $this) {
+            $this->person->setAccount($this);
+        }
     }
 
     /**

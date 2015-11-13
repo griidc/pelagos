@@ -161,14 +161,16 @@ class PersonTest extends \PHPUnit_Framework_TestCase
         $this->mockAccount = \Mockery::mock(
             '\Pelagos\Entity\Account',
             array(
-                'setPerson' => null
+                'setPerson' => null,
+                'getPerson' => null,
             )
         );
         $this->person->setAccount($this->mockAccount);
         $this->testToken = \Mockery::mock(
             '\Pelagos\Entity\PersonToken',
             array(
-                'setPerson' => null
+                'setPerson' => null,
+                'getPerson' => null,
             )
         );
         $this->person->setToken($this->testToken);

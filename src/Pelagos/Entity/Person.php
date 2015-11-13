@@ -710,7 +710,7 @@ class Person extends Entity
     public function setAccount(Account $account = null)
     {
         $this->account = $account;
-        if ($this->account !== null) {
+        if ($this->account !== null and $this->account->getPerson() !== $this) {
             $this->account->setPerson($this);
         }
     }
@@ -739,7 +739,7 @@ class Person extends Entity
     public function setToken(PersonToken $token = null)
     {
         $this->token = $token;
-        if ($this->token !== null) {
+        if ($this->token !== null and $this->token->getPerson() !== $this) {
             $this->token->setPerson($this);
         }
     }
