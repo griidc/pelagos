@@ -67,10 +67,18 @@ class EntityApplication extends \Pelagos\Component
                 'ui.autocomplete',
             )
         );
-
-        /* I loaded all the default stuff */
     }
 
+    /**
+     * Function to handle entities and id.
+     *
+     * @param string $entityType The type of entity to handle.
+     * @param string $entityId   The id of the entity.
+     *
+     * @access public
+     *
+     * @return void
+     */
     public function handleEntityInstance($entityType, $entityId)
     {
 
@@ -79,7 +87,6 @@ class EntityApplication extends \Pelagos\Component
                 'static/js/entity.js',
             )
         );
-
 
         if (preg_match_all('/([A-Z][a-z]*)/', $entityType, $entityName)) {
             $this->setTitle(implode(' ', $entityName[1]) . ' Landing Page');
@@ -98,11 +105,11 @@ class EntityApplication extends \Pelagos\Component
             try {
                 $entity = $entityService->get($entityType, $entityId);
                 $this->slim->response->setStatus(200);
-                } catch (ArgumentException $e) {
+            } catch (ArgumentException $e) {
                 $this->slim->response->setStatus(400);
-                } catch (RecordNotFoundPersistenceException $e) {
+            } catch (RecordNotFoundPersistenceException $e) {
                 $this->slim->response->setStatus(404);
-                } catch (\Exception $e) {
+            } catch (\Exception $e) {
                 $this->slim->response->setStatus(500);
             }
             if ($this->slim->response->getStatus() != 200) {
@@ -115,6 +122,15 @@ class EntityApplication extends \Pelagos\Component
 
     }
 
+    /**
+     * Method to handle Entity creation.
+     *
+     * @param string $entityType The type of entity to create.
+     *
+     * @access public
+     *
+     * @return void
+     */
     public function handleEntity($entityType)
     {
         $this->addJS(
@@ -141,6 +157,16 @@ class EntityApplication extends \Pelagos\Component
 
     }
 
+    /**
+     * Function to handle to post.
+     *
+     * @param string $entityType The type of entity.
+     * @param string $entityId   The value of the entity.
+     *
+     * @access public
+     *
+     * @return void
+     */
     public function handlePost($entityType, $entityId)
     {
         $this->slim->render('error.html', array('errorMessage' => 'Post Not Allowed!'), 405);

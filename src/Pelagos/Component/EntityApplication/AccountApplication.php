@@ -2,7 +2,6 @@
 
 namespace Pelagos\Component\EntityApplication;
 
-use \Pelagos\Entity\Entity;
 use \Pelagos\Service\EntityService;
 
 /**
@@ -48,14 +47,13 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
      * @param string $entityType The type of entity to create.
      *
      * @access public
+     *
+     * @return void
      */
     public function handleEntity($entityType)
     {
-        $this->setTitle('Account Creation');
-        $this->slim->render('Account.html');
-
         try {
-
+            $this->slim->render('Account.html', array('path' => $this->path));
         } catch (Exception $e) {
             $this->slim->render('error.html', array('errorMessage' => $e->getMessage()));
             return;
@@ -65,37 +63,32 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
     /**
      * Function to handle entities and id or value.
      *
-     * @param string  $entityType The type of entity to handle (account).
+     * @param string $entityType The type of entity to handle (account).
      * @param string $entityId   The hash verification value of the account.
      *
      * @access public
+     *
+     * @return void
      */
     public function handleEntityInstance($entityType, $entityId)
     {
-        $this->setTitle('Account Creation');
-        $entityService = new EntityService($this->getEntityManager());
-        $entity = $entityService->getBy('PersonToken', array('tokenText' => $entityId));
-
-        $goodToken = false;
-
-        foreach ($entity as $PersonToken) {
-            $goodToken = $PersonToken->isValid();
+        try {
+            $this->setPassword($entityId);
+        } catch (\Exception $e) {
+            $this->slim->render('error.html', array('errorMessage' => $e->getMessage()));
+            return;
         }
-
-        $twigData = array(
-            "goodToken" => $goodToken,
-            "token" => $entityId,
-        );
-
-        $this->slim->render('AccountApprovalResponse.html', $twigData);
     }
 
     /**
      * Function the post for e-mail verification, and token emailing.
      *
-     * @param string  $entityType The type of entity (account).
+     * @param string $entityType The type of entity (account).
+     * @param string $entityId   The value of the entity (email address).
      *
      * @access public
+     *
+     * @return void
      */
     public function handlePost($entityType, $entityId)
     {
@@ -107,8 +100,7 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
                     $this->verifyEmail($postValues['emailAddress']);
                 }
                 if ($postValues['action'] === 'establishaccount') {
-                    $this->setCredentials($postValues, $entityId);
-
+                    $this->createAccount($postValues, $entityId);
                 }
             } catch (\Exception $e) {
                 $this->slim->render('error.html', array('errorMessage' => $e->getMessage()));
@@ -117,56 +109,17 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
         }
     }
 
-    private function setCredentials($formData, $token)
-    {
-        $entityService = new EntityService($this->getEntityManager());
-
-        $personId = $formData['person'];
-
-        //var_dump($formData);
-
-        $entity = $entityService->getBy('PersonToken', array('tokenText' => $token));
-
-        foreach ($entity as $PersonToken) {
-
-            if (!$PersonToken->isValid()) {
-                throw new \Exception('Token is not valid!');
-            }
-            $Person = $PersonToken->getPerson();
-
-            if ($Person->getAccount() !== null) {
-                throw new \Exception('You already have an account!');
-            }
-
-
-            if ($formData['password'] !== $formData['verify_password']) {
-                throw new \Exception('Password do not match!');
-            }
-
-            $userId = \Pelagos\Factory\UserIdFactory::generateUniqueUserId($Person, $entityService);
-
-            //var_dump($userId);
-
-            $Account = new \Pelagos\Entity\Account($Person, $userId, $formData['password']);
-
-            $Account->setCreator($userId);
-
-            $Account = $entityService->persist($Account);
-
-
-            //var_dump($Account);
-
-
-
-            $twigData = array(
-                "Account" => $Account,
-            );
-
-            $this->slim->render('AccountCreatedResponse.html', $twigData);
-        }
-
-    }
-
+    /**
+     * Function that checks your email.
+     *
+     * @param string $emailAddress Email address.
+     *
+     * @access private
+     *
+     * @throws \Exception When you already have an account.
+     *
+     * @return void
+     */
     private function verifyEmail($emailAddress)
     {
         $this->setTitle('Account Request Result');
@@ -177,46 +130,40 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
 
         $knownEmail = false;
 
-        foreach ($entity as $Person) {
-            // Get PersonToken
-            $PersonToken = $Person->getToken();
+        foreach ($entity as $person) {
+            // Get personToken
+            $personToken = $person->getToken();
 
-            if ($Person->getAccount() !== null) {
+            if ($person->getAccount() !== null) {
                 throw new \Exception('You already have an account!');
             }
 
-            //var_dump($PersonToken);
-
-            // if $Person has Token, remove Token
-            if ($PersonToken instanceof \Pelagos\Entity\PersonToken) {
-                $PersonToken->getPerson()->setToken(null);
-                $entityService->delete($PersonToken);
+            // if $person has Token, remove Token
+            if ($personToken instanceof \Pelagos\Entity\personToken) {
+                $personToken->getPerson()->setToken(null);
+                $entityService->delete($personToken);
             }
 
             $dateInterval = new \DateInterval('P7D');
 
-            // Create new PersonToken
-            $PersonToken = new \Pelagos\Entity\PersonToken($Person, 'CREATE_ACCOUNT', $dateInterval);
+            // Create new personToken
+            $personToken = new \Pelagos\Entity\PersonToken($person, 'CREATE_ACCOUNT', $dateInterval);
 
             // Persist PersonToken
-            $PersonToken->setPerson($Person);
-            $PersonToken = $entityService->persist($PersonToken);
+            $personToken->setPerson($person);
+            $personToken = $entityService->persist($personToken);
 
             $mailData = array(
-                'Person' => $Person,
-                'PersonToken' => $PersonToken,
+                'Person' => $person,
+                'PersonToken' => $personToken,
                 'uri' => $this->uri,
             );
-
-            $tokenText = $PersonToken->getTokenText();
-
-            //var_dump($tokenText);
 
             $template = $this->twig->loadTemplate('accountConfirmation.email.html.twig');
 
             $email = array(
-                'toEmail'  => $Person->getEmailAddress(),
-                'toName'   => $Person->getFirstName() . ' ' . $Person->getLastName(),
+                'toEmail'  => $person->getEmailAddress(),
+                'toName'   => $person->getFirstName() . ' ' . $person->getLastName(),
                 'subject'  => $template->renderBlock('subject', $mailData),
                 'bodyHTML' => $template->renderBlock('body_html', $mailData),
                 'bodyText' => $template->renderBlock('body_text', $mailData),
@@ -228,21 +175,109 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
         }
 
         $twigData = array(
-            "knownEmail" => $knownEmail,
-            "emailAddress" => $emailAddress,
+            'knownEmail' => $knownEmail,
+            'emailAddress' => $emailAddress,
         );
 
         $this->slim->render('AccountRequestResponse.html', $twigData);
     }
 
     /**
-     * A swift mailer function to send e-mail.
+     * Function the post for e-mail verification, and token emailing.
      *
-     * @param $email Array An array of parameters used to send e-mail.
+     * @param string $tokenText The type of entity (account).
      *
      * @access private
+     *
+     * @throws \Exception When you already have an account.
+     *
+     * @return void
      */
-    private function sendMail($email)
+    private function setPassword($tokenText)
+    {
+        $entityService = new EntityService($this->getEntityManager());
+        $entity = $entityService->getBy('PersonToken', array('tokenText' => $tokenText));
+
+        $goodToken = false;
+
+        foreach ($entity as $personToken) {
+            $goodToken = $personToken->isValid();
+            $person = $personToken->getPerson();
+
+            if ($person->getAccount() !== null) {
+                throw new \Exception('You already have an account!');
+            }
+        }
+
+        $twigData = array(
+            'goodToken' => $goodToken,
+            'tokenText' => $tokenText,
+            'path' => $this->path,
+        );
+
+        $this->slim->render('AccountApprovalResponse.html', $twigData);
+    }
+
+    /**
+     * Function that creates the Account.
+     *
+     * @param string $formData The form data.
+     * @param string $token    The token string.
+     *
+     * @access private
+     *
+     * @throws \Exception When token in not valid.
+     * @throws \Exception When you already have an account.
+     * @throws \Exception When password to not match.
+     *
+     * @return void
+     */
+    private function createAccount($formData, $token)
+    {
+        $entityService = new EntityService($this->getEntityManager());
+
+        $entity = $entityService->getBy('PersonToken', array('tokenText' => $token));
+
+        foreach ($entity as $personToken) {
+            if (!$personToken->isValid()) {
+                throw new \Exception('Token is not valid!');
+            }
+            $person = $personToken->getPerson();
+
+            if ($person->getAccount() !== null) {
+                throw new \Exception('You already have an account!');
+            }
+
+            if ($formData['password'] !== $formData['verify_password']) {
+                throw new \Exception('Password do not match!');
+            }
+
+            $userId = \Pelagos\Factory\UserIdFactory::generateUniqueUserId($person, $entityService);
+
+            $account = new \Pelagos\Entity\Account($person, $userId, $formData['password']);
+
+            $account->setCreator($userId);
+
+            $account = $entityService->persist($account);
+
+            $twigData = array(
+                'Account' => $account,
+            );
+
+            $this->slim->render('AccountCreatedResponse.html', $twigData);
+        }
+    }
+
+    /**
+     * A swift mailer function to send e-mail.
+     *
+     * @param array $email An array of parameters used to send e-mail.
+     *
+     * @access private
+     *
+     * @return integer The number of successful recipients.
+     */
+    private function sendMail(array $email)
     {
         // Hooray a Transport, we're saved!
         $transport = \Swift_MailTransport::newInstance();
@@ -256,8 +291,7 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
             ->setTo(array($email['toEmail'] => $email['toName']))
             ->setSubject($email['subject'])
             ->setBody($email['bodyText'], 'text/plain')
-            ->addPart($email['bodyHTML'], 'text/html')
-            ;
+            ->addPart($email['bodyHTML'], 'text/html');
 
         // Send the message
         return $mailer->send($message);
