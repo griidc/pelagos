@@ -91,6 +91,20 @@ class Account extends Entity
     protected $passwordHashSalt;
 
     /**
+     * Constructor for Account.
+     *
+     * @param Person $person   The Person this account is for.
+     * @param string $userId   The user ID for this account.
+     * @param string $password The password for this account.
+     */
+    public function __construct(Person $person, $userId, $password)
+    {
+        $this->setPerson($person);
+        $this->setUserId($userId);
+        $this->setPassword($password);
+    }
+
+    /**
      * Attach a Person to this account.
      *
      * @param Person $person The person to attach to this account.

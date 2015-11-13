@@ -4,6 +4,7 @@ namespace Pelagos;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\DBAL\Event\Listeners\PostgresSessionInit;
+use Doctrine\DBAL\Types\Type;
 
 /**
  * A class to handle setting up persistence.
@@ -49,6 +50,12 @@ class Persistance
                 )
             )
         );
+        // Add and register the TokenUse type.
+        Type::addType('token_use_type', 'Pelagos\DoctrineExtensions\DBAL\Types\TokenUseType');
+        $entityManager->getConnection()->getDatabasePlatform()->registerDoctrineTypeMapping('token_use_type', 'token_use_type');
+        // Add and register the interval type.
+        Type::addType('interval', 'Pelagos\DoctrineExtensions\DBAL\Types\IntervalType');
+        $entityManager->getConnection()->getDatabasePlatform()->registerDoctrineTypeMapping('interval', 'interval');
         // Return the entity manager.
         return $entityManager;
     }
