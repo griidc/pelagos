@@ -64,10 +64,15 @@ class UserIdFactory
         $uniquifier = 2;
         // Loop and check if $userId is unique.
         while (in_array($userId, $userIds)) {
-            // If $userId is not unique, append the uniquifier.
-            $userId = $candidateUserId . $uniquifier;
+            // If $userId is not unique, append the uniquifier (while still making sure the user ID will be <= 32 characters).
+            $userId = substr($candidateUserId, 0, (32 - strlen("$uniquifier"))) . $uniquifier;
             // Increment the uniquifier for next iteration.
             $uniquifier++;
+        }
+        // If our user ID is not long enough.
+        if (strlen($userId) < 2) {
+            // Complain about it.
+            throw new \Exception('could not generate valid user ID from Person\'s names');
         }
         // Return unique user ID.
         return $userId;
