@@ -21,13 +21,13 @@ DROP VIEW metadata_view;
 
 CREATE VIEW metadata_view AS
    SELECT m.registry_id,
-          CAST((xpath(CONCAT('/gmi:MI_Metadata/',
-                             'gmd:identificationInfo/',
-                             'gmd:MD_DataIdentification/',
-                             'gmd:citation/',
-                             'gmd:CI_Citation/',
-                             'gmd:title/',
-                             'gco:CharacterString/text()'),
+          CAST((xpath(CONCAT('/gmi:MI_Metadata',
+                             '/gmd:identificationInfo',
+                             '/gmd:MD_DataIdentification',
+                             '/gmd:citation',
+                             '/gmd:CI_Citation',
+                             '/gmd:title',
+                             '/gco:CharacterString/text()'),
                  m.metadata_xml,
                  ARRAY [ARRAY ['gco', 'http://www.isotc211.org/2005/gco'],
                         ARRAY ['gmd', 'http://www.isotc211.org/2005/gmd'],
@@ -37,11 +37,11 @@ CREATE VIEW metadata_view AS
                  )
                )[1] AS TEXT
               ) AS title,
-          CAST((xpath(CONCAT('/gmi:MI_Metadata/',
-                             'gmd:identificationInfo/'
-                             'gmd:MD_DataIdentification/'
-                             'gmd:abstract/'
-                             'gco:CharacterString/text()'),
+          CAST((xpath(CONCAT('/gmi:MI_Metadata',
+                             '/gmd:identificationInfo'
+                             '/gmd:MD_DataIdentification'
+                             '/gmd:abstract'
+                             '/gco:CharacterString/text()'),
                  m.metadata_xml,
                  ARRAY [ARRAY ['gco', 'http://www.isotc211.org/2005/gco'],
                         ARRAY ['gmd', 'http://www.isotc211.org/2005/gmd'],
