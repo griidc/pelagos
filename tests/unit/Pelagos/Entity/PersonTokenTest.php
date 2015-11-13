@@ -49,11 +49,11 @@ class PersonTokenTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->mockPerson = \Mockery::mock(
-                                '\Pelagos\Entity\Person',
-                                array(
-                                    'setToken' => null
-                                )
-                            );
+            '\Pelagos\Entity\Person',
+            array(
+                'setToken' => null
+            )
+        );
         // Create a 32 null byte token.
         $this->nullTokenText = bin2hex(str_repeat("\0", 32));
         // Tell our mock openssl_random_pseudo_bytes function to report that
