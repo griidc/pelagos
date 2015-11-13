@@ -1,5 +1,5 @@
 -- -----------------------------------------------------------------------------
--- Name:      make_metadata_view_test.sql
+-- Name:      make_metadata_view.sql
 -- Author:    Patrick Krepps
 -- Date:      12 November 2015
 -- Inputs:    NONE
@@ -17,7 +17,7 @@
 \c gomri postgres
 
 -- Start by dropping everything:
-DROP VIEW metadata_view_test;
+DROP VIEW metadata_view;
 DROP INDEX idx_reg_udi_from_id;
 DROP INDEX idx_md_udi_from_id;
 
@@ -32,7 +32,7 @@ VACUUM ANALYZE registry;
 VACUUM ANALYZE metadata;
 
 -- Now create the view:
-CREATE VIEW metadata_view_test AS
+CREATE VIEW metadata_view AS
    SELECT m.registry_id,
           CAST((xpath(CONCAT('/gmi:MI_Metadata',
                              '/gmd:identificationInfo',
@@ -121,11 +121,11 @@ CREATE VIEW metadata_view_test AS
    FROM metadata m;
 
 -- Set object ownership:
-ALTER TABLE metadata_view_test
+ALTER TABLE metadata_view
    OWNER TO gomri_admin;
 
 GRANT SELECT
-ON TABLE metadata_view_test
+ON TABLE metadata_view
 TO gomri_reader,
    gomri_user,
    gomri_writer;
