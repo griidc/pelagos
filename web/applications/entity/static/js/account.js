@@ -1,20 +1,19 @@
 (function($) {
+    "use strict";
     $(document).ready(function()
     {
-        "use strict";
-
         jQuery.validator.addMethod("complexPassword", function(value, element) {
             var score = 0;
 
-            if (XRegExp('\\p{Lu}').test(value)) { score++; };
-            if (XRegExp('\\p{Ll}').test(value)) { score++; };
-            if (/\d/.test(value)) { score++; };
-            if (XRegExp('[^\\p{Lu}\\p{Ll}\\d]').test(value)) { score++; };
+            if (XRegExp("\\p{Lu}").test(value)) { score++; }
+            if (XRegExp("\\p{Ll}").test(value)) { score++; }
+            if (/\d/.test(value)) { score++; }
+            if (XRegExp("[^\\p{Lu}\\p{Ll}\\d]").test(value)) { score++; }
 
             return this.optional(element) || (score >= 3);
-        }, 'Please enter a complex password.');
+        }, "Please enter a complex password.");
 
-        var formValidator = $("form").validate({
+        $("form").validate({
             rules: {
                 password: {
                         complexPassword: true,
