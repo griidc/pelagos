@@ -12,19 +12,14 @@ function getTasksAndDatasets($projects)
     }
 
     $SELECT = "SELECT DISTINCT status, dataset_uid, d.dataset_udi AS udi,
-               CASE
-                   WHEN mv.title IS NOT NULL THEN mv.title
-                   WHEN r.dataset_title IS NOT NULL THEN r.dataset_title
-               ELSE
-                   d.title
-               END AS title,
+               CASE WHEN r.dataset_title IS NULL THEN title ELSE r.dataset_title END AS title,
 
                CASE WHEN status = 2 THEN 10
                     WHEN status = 1 THEN 1
                     ELSE 0
                END AS identified,
 
-               CASE WHEN r.registry_id IS NULL THEN 0
+               CASE WHEN registry_id IS NULL THEN 0
                     WHEN url_data IS NULL OR url_data = '' THEN 1
                     ELSE 10
                END AS registered,
@@ -64,8 +59,7 @@ function getTasksAndDatasets($projects)
                  ) m
              ON r2.registry_id = m.MaxID
              ) r
-             ON r.dataset_udi = d.dataset_udi
-            LEFT OUTER JOIN metadata_view mv ON substring(mv.registry_id FROM 1 FOR 16) = d.dataset_udi';
+             ON r.dataset_udi = d.dataset_udi';
     $RIS_DBH = openDB('RIS_RO');
     $GOMRI_DBH = openDB('GOMRI_RO');
     for ($i=0; $i<count($projects); $i++) {
