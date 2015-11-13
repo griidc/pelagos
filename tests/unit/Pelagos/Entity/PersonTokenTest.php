@@ -51,7 +51,8 @@ class PersonTokenTest extends \PHPUnit_Framework_TestCase
         $this->mockPerson = \Mockery::mock(
             '\Pelagos\Entity\Person',
             array(
-                'setToken' => null
+                'setToken' => null,
+                'getToken' => null
             )
         );
         // Create a 32 null byte token.
