@@ -49,13 +49,10 @@ class AccountTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->mockPerson = \Mockery::mock('\Pelagos\Entity\Person');
-        $this->account = new Account;
-        $this->account->setPerson($this->mockPerson);
-        $this->account->setUserId(self::$userId);
         // Tell our mock openssl_random_pseudo_bytes function to report that
         // it was able to generate a cryptographically strong byte string.
         $GLOBALS['cryptoStrong'] = true;
-        $this->account->setPassword(self::$password);
+        $this->account = new Account($this->mockPerson, self::$userId, self::$password);
     }
 
     /**
