@@ -112,7 +112,7 @@ class PersonToken extends Entity
     public function setPerson(Person $person = null)
     {
         $this->person = $person;
-        if ($this->person !== null) {
+        if ($this->person !== null and $this->person->getToken() !== $this) {
             $this->person->setToken($this);
         }
     }
