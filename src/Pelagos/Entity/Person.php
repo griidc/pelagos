@@ -353,7 +353,7 @@ class Person extends Entity
      *
      * @return string Last name of the Person.
      */
-    public function getLastname()
+    public function getLastName()
     {
         return $this->lastName;
     }
