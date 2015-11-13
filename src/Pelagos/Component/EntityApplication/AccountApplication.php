@@ -77,12 +77,8 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
         $goodToken = false;
 
         foreach ($entity as $PersonToken) {
-            var_dump($PersonToken);
-
-            $goodToken = true;
+            $goodToken = $PersonToken->isValid();
         }
-
-        $goodToken = true;
 
         $twigData = array(
             "goodToken" => $goodToken,
@@ -103,25 +99,62 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
     {
         $postValues = $this->slim->request->params();
 
-        var_dump($postValues);
-
         if (array_key_exists('action', $postValues)) {
             if ($postValues['action'] === 'accountrequest') {
-                $this->verifyEmail($postValues['emailAddress']);
+                try {
+                    $this->verifyEmail($postValues['emailAddress']);
+                } catch (Exception $e) {
+                    $this->slim->render('error.html', array('errorMessage' => $e->getMessage()));
+                    return;
+                }
             }
             if ($postValues['action'] === 'establishaccount') {
-                $this->setCredentials($postValues);
+                try {
+                    $this->setCredentials($postValues, $entityId);
+                } catch (Exception $e) {
+                    $this->slim->render('error.html', array('errorMessage' => $e->getMessage()));
+                    return;
+                }
             }
         }
     }
 
-    private function setCredentials($formData)
+    private function setCredentials($formData, $token)
     {
         $entityService = new EntityService($this->getEntityManager());
 
         $personId = $formData['person'];
 
-        $entity = $entityService->getBy('Person', array('id' => $personId));
+        var_dump($formData);
+
+        $entity = $entityService->getBy('PersonToken', array('tokenText' => $token));
+
+        foreach ($entity as $PersonToken) {
+
+            if (!$PersonToken->isValid()) {
+                throw new Exception('Token is not valid!');
+            }
+            $Person = $PersonToken->getPerson();
+
+            if ($formData['password'] !== $formData['verify_password']) {
+                throw new Exception('Password do not match!');
+            }
+
+            $Account = new \Pelagos\Entity\Account($Person, $formData['password']);
+
+            //$Account = $entityService->persist($Account);
+
+
+            var_dump($Account);
+
+
+
+            $twigData = array(
+                "Account" => $Account,
+            );
+
+            $this->slim->render('AccountCreatedResponse.html', $twigData);
+        }
 
     }
 
@@ -138,6 +171,10 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
         foreach ($entity as $Person) {
             // Get PersonToken
             $PersonToken = $Person->getToken();
+
+            if ($Person-getAccount() !== null) {
+                throw new Exception('You already have an account!');
+            }
 
             // if $Person has Token, remove Token
             if ($PersonToken instanceof \Pelagos\Entity\PersonToken) {
@@ -161,8 +198,13 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
 
             $mailData = array(
                 'Person' => $Person,
-                'baseUri' => $this->baseUri,
+                'PersonToken' => $PersonToken,
+                'uri' => $this->uri,
             );
+
+            $tokenText = $PersonToken->getTokenText();
+
+            var_dump($tokenText);
 
             $template = $this->twig->loadTemplate('accountConfirmation.email.html.twig');
 
@@ -174,9 +216,7 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
                 'bodyText' => $template->renderBlock('body_text', $mailData),
             );
 
-            var_dump($email);
-
-            //$this->sendMail($email);
+            $this->sendMail($email);
 
             $knownEmail = true;
         }
