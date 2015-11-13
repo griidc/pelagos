@@ -24,6 +24,8 @@ class UserIdFactory
      * @param Person        $person        The Person to generate a user ID for.
      * @param EntityService $entityService An instance of the EntityService.
      *
+     * @throws \Exception When the resulting user ID is less than two characters.
+     *
      * @return string A unique user ID for $person.
      */
     public static function generateUniqueUserId(Person $person, EntityService $entityService)
@@ -64,7 +66,8 @@ class UserIdFactory
         $uniquifier = 2;
         // Loop and check if $userId is unique.
         while (in_array($userId, $userIds)) {
-            // If $userId is not unique, append the uniquifier (while still making sure the user ID will be <= 32 characters).
+            // If $userId is not unique, append the uniquifier.
+            // (while still making sure the user ID will be <= 32 characters)
             $userId = substr($candidateUserId, 0, (32 - strlen("$uniquifier"))) . $uniquifier;
             // Increment the uniquifier for next iteration.
             $uniquifier++;
