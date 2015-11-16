@@ -92,8 +92,16 @@ $GLOBALS['DIF_FIELDS'] = array(
 );
 
 $GLOBALS['REGISTRY_OVERRIDE_FIELDS'] = array(
-    "CASE WHEN r.dataset_title IS NULL THEN title ELSE r.dataset_title END AS title",
-    "CASE WHEN r.dataset_abstract IS NULL THEN abstract ELSE r.dataset_abstract END AS abstract"
+    "CASE
+        WHEN mv.title IS NOT NULL then mv.title
+        WHEN r.dataset_title IS NOT NULL THEN r.dataset_title
+        ELSE d.title
+     END AS title",
+    "CASE
+        WHEN mv.abstract IS NOT NULL then mv.title
+        WHEN r.dataset_abstract IS NOT NULL THEN r.dataset_abstract
+        ELSE d.abstract
+     END AS abstract"
 );
 
 $GLOBALS['IDENTIFIED_FROM'] = 'FROM datasets d
@@ -108,7 +116,8 @@ $GLOBALS['IDENTIFIED_FROM'] = 'FROM datasets d
                                ) r
                                ON r.dataset_udi = d.dataset_udi
                                LEFT JOIN projects p on p."ID" = d.project_id
-                               LEFT JOIN metadata md ON r."registry_id" = md."registry_id"';
+                               LEFT JOIN metadata md ON r."registry_id" = md."registry_id"
+                               LEFT JOIN metadata_view mv ON r."registry_id" = mv."registry_id"';
 
 $GLOBALS['REGISTERED_FROM'] = 'FROM registry r
                                INNER JOIN (
@@ -120,7 +129,8 @@ $GLOBALS['REGISTERED_FROM'] = 'FROM registry r
                                LEFT JOIN datasets d
                                ON d.dataset_udi = r.dataset_udi
                                LEFT JOIN projects p on p."ID" = d.project_id
-                               LEFT JOIN metadata md ON r."registry_id" = md."registry_id"';
+                               LEFT JOIN metadata md ON r."registry_id" = md."registry_id"
+                               LEFT JOIN metadata_view mv ON r."registry_id" = mv."registry_id"';
 
 $GLOBALS['IDENTIFIED_SEARCH_RANK'] = "
 JOIN
