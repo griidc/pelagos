@@ -140,15 +140,12 @@ if ($udi <> '')
     $prow = pdoDBQuery($pconn,$pquery);
 
     $prow = $prow[0];
-    echo "\ndetails prow metadata_view_key: ".$prow['metadata_view_key'];
-
 
     //  get information from the meatadata_view Postgres view
     if($prow['metadata_view_key'] != null) {
         $metadataView = new \Pelagos\Dataland\MetadataView($pconn);
         $metadataViewTitle = $metadataView->getTitle($prow['metadata_view_key']);
         if ($metadataViewTitle != null) {
-             echo "<BR>Title from meatadata view: " . $metadataViewTitle;
             $prow['title'] = $metadataViewTitle;
         }
     }
