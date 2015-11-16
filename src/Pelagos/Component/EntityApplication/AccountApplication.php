@@ -19,6 +19,15 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
     private $twig;
 
     /**
+     * The template that hold all Account verbiage.
+     *
+     * @var \Twig_Template $accountTemplate
+     *
+     * @access private
+     */
+    private $accountTemplate;
+
+    /**
      * Constructor for AccountApplication.
      *
      * @param \Slim\Slim $slim The instance of \Slim\Slim used by this application service.
@@ -32,6 +41,8 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
         $this->setTitle('Account Creation');
 
         $this->twig = new \Twig_Environment(new \Twig_Loader_Filesystem('./templates'));
+
+        $this->accountTemplate = $this->twig->loadTemplate('Account.html.twig');
 
         $this->addJS(
             array(
@@ -53,8 +64,8 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
     public function handleEntity($entityType)
     {
         try {
-            $this->slim->render('Account.html', array('path' => $this->path));
-        } catch (Exception $e) {
+            echo $this->accountTemplate->renderBlock('accountRequest', array('path' => $this->path));
+        } catch (\Exception $e) {
             $this->slim->render('error.html', array('errorMessage' => $e->getMessage()));
             return;
         }
@@ -74,6 +85,15 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
     {
         try {
             $this->setPassword($entityId);
+        } catch (\Pelagos\Exception\AccountExistsException $e) {
+            echo $this->accountTemplate->renderBlock('accountExists', array());
+            return;
+        } catch (\Pelagos\Exception\NotFoundException $e) {
+            echo $this->accountTemplate->renderBlock('invalidToken', array());
+            return;
+        } catch (\Pelagos\Exception\InvalidTokenException $e) {
+            echo $this->accountTemplate->renderBlock('expiredToken', array('uri' => $this->uri));
+            return;
         } catch (\Exception $e) {
             $this->slim->render('error.html', array('errorMessage' => $e->getMessage()));
             return;
@@ -102,6 +122,12 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
                 if ($postValues['action'] === 'establishaccount') {
                     $this->createAccount($postValues, $entityId);
                 }
+            } catch (\Pelagos\Exception\AccountExistsException $e) {
+                echo $this->accountTemplate->renderBlock('accountExists', array());
+                return;
+            } catch (\Pelagos\Exception\NotFoundException $e) {
+                echo $this->accountTemplate->renderBlock('emailNotFound', array());
+                return;
             } catch (\Exception $e) {
                 $this->slim->render('error.html', array('errorMessage' => $e->getMessage()));
                 return;
@@ -116,7 +142,8 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
      *
      * @access private
      *
-     * @throws \Exception When you already have an account.
+     * @throws \Pelagos\Exception\NotFoundException      When the email is not found.
+     * @throws \Pelagos\Exception\AccountExistsException When you already have an account.
      *
      * @return void
      */
@@ -128,14 +155,16 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
 
         $entity = $entityService->getBy('Person', array('emailAddress' => $emailAddress));
 
-        $knownEmail = false;
+        if (count($entity) === 0) {
+            throw new \Pelagos\Exception\NotFoundException('e-mail not found!');
+        }
 
         foreach ($entity as $person) {
             // Get personToken
             $personToken = $person->getToken();
 
             if ($person->getAccount() !== null) {
-                throw new \Exception('You already have an account!');
+                throw new \Pelagos\Exception\AccountExistsException('You already have an account!');
             }
 
             // if $person has Token, remove Token
@@ -159,7 +188,7 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
                 'uri' => $this->uri,
             );
 
-            $template = $this->twig->loadTemplate('accountConfirmation.email.html.twig');
+            $template = $this->twig->loadTemplate('AccountConfirmation.email.html.twig');
 
             $email = array(
                 'toEmail'  => $person->getEmailAddress(),
@@ -170,16 +199,9 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
             );
 
             $this->sendMail($email);
-
-            $knownEmail = true;
         }
 
-        $twigData = array(
-            'knownEmail' => $knownEmail,
-            'emailAddress' => $emailAddress,
-        );
-
-        $this->slim->render('AccountRequestResponse.html', $twigData);
+        echo $this->accountTemplate->renderBlock('emailFound', array());
     }
 
     /**
@@ -189,7 +211,9 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
      *
      * @access private
      *
-     * @throws \Exception When you already have an account.
+     * @throws \Pelagos\Exception\NotFoundException      When the Token is not found.
+     * @throws \Pelagos\Exception\InvalidTokenException  When the Token is invalid (expired).
+     * @throws \Pelagos\Exception\AccountExistsException When you already have an account.
      *
      * @return void
      */
@@ -198,24 +222,28 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
         $entityService = new EntityService($this->getEntityManager());
         $entity = $entityService->getBy('PersonToken', array('tokenText' => $tokenText));
 
-        $goodToken = false;
+        if (count($entity) === 0) {
+            throw new \Pelagos\Exception\NotFoundException('Token not found!');
+        }
 
         foreach ($entity as $personToken) {
-            $goodToken = $personToken->isValid();
+            if (!$personToken->isValid()) {
+                throw new \Pelagos\Exception\InvalidTokenException('Invalid Token!');
+            }
+
             $person = $personToken->getPerson();
 
             if ($person->getAccount() !== null) {
-                throw new \Exception('You already have an account!');
+                throw new \Pelagos\Exception\AccountExistsException('You already have an account!');
             }
         }
 
         $twigData = array(
-            'goodToken' => $goodToken,
             'tokenText' => $tokenText,
             'path' => $this->path,
         );
 
-        $this->slim->render('AccountApprovalResponse.html', $twigData);
+        echo $this->accountTemplate->renderBlock('setPassword', $twigData);
     }
 
     /**
@@ -226,9 +254,10 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
      *
      * @access private
      *
-     * @throws \Exception When token in not valid.
-     * @throws \Exception When you already have an account.
-     * @throws \Exception When password to not match.
+     * @throws \Pelagos\Exception\NotFoundException      When the Token is not found.
+     * @throws \Pelagos\Exception\InvalidTokenException  When the Token is invalid (expired).
+     * @throws \Pelagos\Exception\AccountExistsException When you already have an account.
+     * @throws \Exception                                When password to not match.
      *
      * @return void
      */
@@ -238,14 +267,18 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
 
         $entity = $entityService->getBy('PersonToken', array('tokenText' => $token));
 
+        if (count($entity) === 0) {
+            throw new \Pelagos\Exception\NotFoundException('Token not found!');
+        }
+
         foreach ($entity as $personToken) {
             if (!$personToken->isValid()) {
-                throw new \Exception('Token is not valid!');
+                throw new \Pelagos\Exception\InvalidTokenException('Invalid Token!');
             }
             $person = $personToken->getPerson();
 
             if ($person->getAccount() !== null) {
-                throw new \Exception('You already have an account!');
+                throw new \Pelagos\Exception\AccountExistsException('You already have an account!');
             }
 
             if ($formData['password'] !== $formData['verify_password']) {
@@ -264,7 +297,7 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
                 'Account' => $account,
             );
 
-            $this->slim->render('AccountCreatedResponse.html', $twigData);
+            echo $this->accountTemplate->renderBlock('accountCreated', $twigData);
         }
     }
 
