@@ -38,6 +38,8 @@ include_once 'aliasIncludes.php';
 require_once 'auth.php'; # for user_is_logged_in_somehow()
 include_once 'pdo.php'; # for pdoDBQuery()
 require_once 'lib/DataLand/PubLink.php';
+require_once 'MetadataView.php';
+
 
 $loader = new \Twig_Loader_Filesystem('./templates');
 $twig = new \Twig_Environment($loader,array('autoescape' => false));
@@ -75,6 +77,8 @@ if ($udi <> '')
 
     $pquery = "
     SELECT *,
+
+    CASE WHEN metadata.registry_id IS NULL THEN NULL ELSE metadata.registry_id END AS metadata_view_key,
 
     CASE WHEN metadata.registry_id IS NULL AND datasets.geom IS NULL THEN 'baseMap'
 
@@ -125,6 +129,7 @@ if ($udi <> '')
          ELSE 0
     END AS available
 
+
     FROM datasets
     LEFT JOIN registry_view registry ON registry.dataset_udi = datasets.dataset_udi
     LEFT JOIN metadata on registry.registry_id = metadata.registry_id
@@ -135,7 +140,18 @@ if ($udi <> '')
     $prow = pdoDBQuery($pconn,$pquery);
 
     $prow = $prow[0];
+    echo "\ndetails prow metadata_view_key: ".$prow['metadata_view_key'];
 
+
+    //  get information from the meatadata_view Postgres view
+    if($prow['metadata_view_key'] != null) {
+        $metadataView = new \Pelagos\Dataland\MetadataView($pconn);
+        $metadataViewTitle = $metadataView->getTitle($prow['metadata_view_key']);
+        if ($metadataViewTitle != null) {
+             echo "<BR>Title from meatadata view: " . $metadataViewTitle;
+            $prow['title'] = $metadataViewTitle;
+        }
+    }
     if($prow["doi"]) {
         $prow["noheader_doi"] = preg_replace("/doi:/",'',$prow["doi"]);
     }
@@ -145,6 +161,10 @@ if ($udi <> '')
     } elseif ($prow["geom_data"] != 'baseMap') { //  add the geometry from the data. Either datasets or metadata
         $dsscript = 'dlmap.addFeatureFromWKT("' . $prow['geom_data'] . '",{"udi":"' . $prow['dataset_udi'] . '"});dlmap.gotoAllFeatures();';
     } //  else
+
+
+
+
     //  fall through and only the base map will show
 
     $mconn = OpenDB("RIS_RO");
@@ -276,7 +296,7 @@ var dlmap = new GeoViz();
                 }
             },
             modal: true,
-            resizable:false,
+            resizable:false
         });
 
         $("#downloaddsden").button().click(function() {
