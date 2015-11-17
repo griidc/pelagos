@@ -141,6 +141,7 @@ if ($udi <> '')
 
     $prow = $prow[0];
 
+    
     //  get information from the meatadata_view Postgres view
     if($prow['metadata_view_key'] != null) {
         $metadataView = new \Pelagos\Dataland\MetadataView($pconn);
