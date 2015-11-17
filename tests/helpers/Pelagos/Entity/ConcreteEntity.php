@@ -76,18 +76,4 @@ class ConcreteEntity extends Entity
     {
         return $this->name;
     }
-
-    /**
-     * Helper function, turns string to uppercase.
-     *
-     * @param string $string Text to be uppercased.
-     *
-     * @access public
-     *
-     * @return string String containing uppercase paramater.
-     */
-    public function upperCaser($string)
-    {
-        return strtoupper($string);
-    }
 }
