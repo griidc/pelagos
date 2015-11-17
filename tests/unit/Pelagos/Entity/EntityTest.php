@@ -533,7 +533,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
     public function testSerializeDate()
     {
         $returnStr = $this->concreteEntity->serializeDate($this->timeStamp);
-        $this->assertEquals($returnStr, $this->timeStamp->format('Y-m-d'));
+        $this->assertEquals($this->timeStamp->format('Y-m-d'), $returnStr);
     }
 
     /**
