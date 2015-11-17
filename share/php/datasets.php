@@ -98,7 +98,7 @@ $GLOBALS['REGISTRY_OVERRIDE_FIELDS'] = array(
         ELSE d.title
      END AS title",
     "CASE
-        WHEN mv.abstract IS NOT NULL then mv.title
+        WHEN mv.abstract IS NOT NULL then mv.abstract
         WHEN r.dataset_abstract IS NOT NULL THEN r.dataset_abstract
         ELSE d.abstract
      END AS abstract"
