@@ -3,6 +3,7 @@
 namespace Pelagos;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\DBAL\Types\Type;
 use Pelagos\DoctrineExtensions\DBAL\Event\Listeners\PostgresSessionInit;
 
 /**
@@ -42,8 +43,19 @@ class Persistance
         $entityManager = EntityManager::create($doctrineConn, $doctrineConfig);
         // Register the PostgresSessionInit listener with session variables.
         $entityManager->getConnection()->getEventManager()->addEventSubscriber(
-            new PostgresSessionInit(array('timezone' => 'UTC'))
+            new PostgresSessionInit(
+                array(
+                    'timezone' => 'UTC',
+                    'intervalstyle' => 'iso_8601',
+                )
+            )
         );
+        // Add and register the TokenUse type.
+        Type::addType('token_use_type', 'Pelagos\DoctrineExtensions\DBAL\Types\TokenUseType');
+        $entityManager->getConnection()->getDatabasePlatform()->registerDoctrineTypeMapping('token_use_type', 'token_use_type');
+        // Add and register the interval type.
+        Type::addType('interval', 'Pelagos\DoctrineExtensions\DBAL\Types\IntervalType');
+        $entityManager->getConnection()->getDatabasePlatform()->registerDoctrineTypeMapping('interval', 'interval');
         // Return the entity manager.
         return $entityManager;
     }

@@ -158,6 +158,22 @@ class PersonTest extends \PHPUnit_Framework_TestCase
             ),
         );
         $this->person->setPersonResearchGroups($this->testPersonResearchGroups);
+        $this->mockAccount = \Mockery::mock(
+            '\Pelagos\Entity\Account',
+            array(
+                'setPerson' => null,
+                'getPerson' => null,
+            )
+        );
+        $this->person->setAccount($this->mockAccount);
+        $this->testToken = \Mockery::mock(
+            '\Pelagos\Entity\PersonToken',
+            array(
+                'setPerson' => null,
+                'getPerson' => null,
+            )
+        );
+        $this->person->setToken($this->testToken);
     }
 
     /**
@@ -689,5 +705,46 @@ class PersonTest extends \PHPUnit_Framework_TestCase
         $testArry = $this->testPersonResearchGroups;
         array_push($testArry, 'string data');
         $this->person->setPersonResearchGroups($testArry);
+    }
+
+    /**
+     * Test the getAccount method.
+     *
+     * This method should return the same account set in setUp.
+     *
+     * @return void
+     */
+    public function testGetAccount()
+    {
+        $this->assertSame(
+            $this->mockAccount,
+            $this->person->getAccount()
+        );
+    }
+
+    /**
+     * Test the setAccount method with a non Account.
+     *
+     * This method should result in an exception being thrown.
+     *
+     * @expectedException \PHPUnit_Framework_Error
+     *
+     * @return void
+     */
+    public function testSetAccountWithNonAccount()
+    {
+        $this->person->setAccount('foo');
+    }
+
+    /**
+     * Test the getToken method.
+     *
+     * This getToken method of person and verify it returns a Token object.
+     *
+     * @return void
+     */
+    public function testGetToken()
+    {
+        $this->assertSame($this->testToken, $this->person->getToken());
     }
 }
