@@ -20,9 +20,11 @@ $app->view->parserExtensions = array(
     )
 );
 
+$comp = null;
+
 $app->get(
     '/:entityType(/)(:entityId)',
-    function ($entityType, $entityId = null) use ($app) {
+    function ($entityType, $entityId = null) use ($app, &$comp) {
         $appClass = "\Pelagos\Component\EntityApplication\\$entityType" . 'Application';
 
         if (class_exists($appClass)) {
@@ -36,13 +38,12 @@ $app->get(
         } else {
             $comp->handleEntity($entityType);
         }
-        $comp->finalize();
     }
 );
 
 $app->post(
     '/:entityType(/)(:entityId)',
-    function ($entityType, $entityId = null) use ($app) {
+    function ($entityType, $entityId = null) use ($app, &$comp) {
         $appClass = "\Pelagos\Component\EntityApplication\\$entityType" . 'Application';
 
         if (class_exists($appClass)) {
@@ -52,9 +53,11 @@ $app->post(
         }
 
         $comp->handlePost($entityType, $entityId);
-
-        $comp->finalize();
     }
 );
 
 $app->run();
+
+if (isset($comp)) {
+    $comp->finalize();
+}
