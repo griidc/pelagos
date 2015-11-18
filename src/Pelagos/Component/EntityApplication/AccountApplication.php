@@ -14,18 +14,27 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
      *
      * @var \Twig $twig
      *
-     * @access private
+     * @access protected
      */
-    private $twig;
+    protected $twig;
+
+    /**
+     * An instance of Pelagos\Service\EntityService.
+     *
+     * @var EntityService $entityService
+     *
+     * @access protected
+     */
+    protected $entityService;
 
     /**
      * The template that hold all Account verbiage.
      *
      * @var \Twig_Template $accountTemplate
      *
-     * @access private
+     * @access protected
      */
-    private $accountTemplate;
+    protected $accountTemplate;
 
     /**
      * Constructor for AccountApplication.
@@ -40,7 +49,7 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
 
         $this->setTitle('Account Creation');
 
-        $this->twig = new \Twig_Environment(new \Twig_Loader_Filesystem('./templates'));
+        $this->twig = $this->slim->view->getInstance();
 
         $this->accountTemplate = $this->twig->loadTemplate('Account.html.twig');
 
@@ -151,9 +160,7 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
     {
         $this->setTitle('Account Request Result');
 
-        $entityService = new EntityService($this->getEntityManager());
-
-        $entity = $entityService->getBy('Person', array('emailAddress' => $emailAddress));
+        $entity = $this->entityService->getBy('Person', array('emailAddress' => $emailAddress));
 
         if (count($entity) === 0) {
             throw new \Pelagos\Exception\NotFoundException('e-mail not found!');
@@ -170,7 +177,7 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
             // if $person has Token, remove Token
             if ($personToken instanceof \Pelagos\Entity\personToken) {
                 $personToken->getPerson()->setToken(null);
-                $entityService->delete($personToken);
+                $this->entityService->delete($personToken);
             }
 
             $dateInterval = new \DateInterval('P7D');
@@ -180,7 +187,7 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
 
             // Persist PersonToken
             $personToken->setPerson($person);
-            $personToken = $entityService->persist($personToken);
+            $personToken = $this->entityService->persist($personToken);
 
             $mailData = array(
                 'Person' => $person,
@@ -219,8 +226,7 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
      */
     private function setPassword($tokenText)
     {
-        $entityService = new EntityService($this->getEntityManager());
-        $entity = $entityService->getBy('PersonToken', array('tokenText' => $tokenText));
+        $entity = $this->entityService->getBy('PersonToken', array('tokenText' => $tokenText));
 
         if (count($entity) === 0) {
             throw new \Pelagos\Exception\NotFoundException('Token not found!');
@@ -263,9 +269,7 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
      */
     private function createAccount($formData, $token)
     {
-        $entityService = new EntityService($this->getEntityManager());
-
-        $entity = $entityService->getBy('PersonToken', array('tokenText' => $token));
+        $entity = $this->entityService->getBy('PersonToken', array('tokenText' => $token));
 
         if (count($entity) === 0) {
             throw new \Pelagos\Exception\NotFoundException('Token not found!');
@@ -285,13 +289,13 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
                 throw new \Exception('Password do not match!');
             }
 
-            $userId = \Pelagos\Factory\UserIdFactory::generateUniqueUserId($person, $entityService);
+            $userId = \Pelagos\Factory\UserIdFactory::generateUniqueUserId($person, $this->entityService);
 
             $account = new \Pelagos\Entity\Account($person, $userId, $formData['password']);
 
             $account->setCreator($userId);
 
-            $account = $entityService->persist($account);
+            $account = $this->entityService->persist($account);
 
             $twigData = array(
                 'Account' => $account,
