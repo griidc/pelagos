@@ -19,15 +19,6 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
     protected $twig;
 
     /**
-     * An instance of Pelagos\Service\EntityService.
-     *
-     * @var EntityService $entityService
-     *
-     * @access protected
-     */
-    protected $entityService;
-
-    /**
      * The template that hold all Account verbiage.
      *
      * @var \Twig_Template $accountTemplate

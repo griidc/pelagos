@@ -22,6 +22,15 @@ class EntityApplication extends \Pelagos\Component
     protected $slim;
 
     /**
+     * An instance of Pelagos\Service\EntityService.
+     *
+     * @var EntityService $entityService
+     *
+     * @access protected
+     */
+    protected $entityService;
+
+    /**
      * Constructor for EntityApplicationService.
      *
      * @param \Slim\Slim $slim The instance of \Slim\Slim used by this application service.
