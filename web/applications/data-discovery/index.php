@@ -99,7 +99,7 @@ $app->get('/css/:name.css', function ($name) use ($app) {
 
 $app->get('/', function () use ($app) {
     drupal_add_js('//cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js', array('type'=>'external'));
-    drupal_add_js('//maps.google.com/maps/api/js?v=3&sensor=false', array('type'=>'external'));
+    drupal_add_js('//maps.google.com/maps/api/js?v=3.21&sensor=false', array('type'=>'external'));
     drupal_add_js('/includes/geoviz/geoviz.js', array('type'=>'external'));
     $stash = index($app);
     # for now, only do this for guestAuthUser people, GoMRI auto-download is handled elsewhere.
