@@ -10,7 +10,7 @@ use \Pelagos\Service\EntityService;
 class AccountApplication extends \Pelagos\Component\EntityApplication
 {
     /**
-     * The instance of \Slim\Slim used by this application service.
+     * The instance of \Twig used by this application service.
      *
      * @var \Twig $twig
      *
