@@ -106,7 +106,7 @@ class AccountTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test that an excpetion is thrown when we are unable to generate a cryptographically strong password hash salt.
+     * Test that an exception is thrown when we are unable to generate a cryptographically strong password hash salt.
      *
      * @expectedException \Exception
      *
@@ -118,6 +118,36 @@ class AccountTest extends \PHPUnit_Framework_TestCase
         // it was NOT able to generate a cryptographically strong byte string.
         $GLOBALS['cryptoStrong'] = false;
         $this->account->setPassword(self::$password);
+    }
+
+    /**
+     * Test that a PasswordException is thrown when we attempt to set a password that is too short.
+     *
+     * @expectedException \Pelagos\Exception\PasswordException
+     *
+     * @return void
+     */
+    public function testSetPasswordTooShort()
+    {
+        // Tell our mock openssl_random_pseudo_bytes function to report that
+        // it was able to generate a cryptographically strong byte string.
+        $GLOBALS['cryptoStrong'] = true;
+        $this->account->setPassword('Sh*rtpw');
+    }
+
+    /**
+     * Test that a PasswordException is thrown when we attempt to set a password that is not complex enough.
+     *
+     * @expectedException \Pelagos\Exception\PasswordException
+     *
+     * @return void
+     */
+    public function testSetPasswordNotComplexEnough()
+    {
+        // Tell our mock openssl_random_pseudo_bytes function to report that
+        // it was able to generate a cryptographically strong byte string.
+        $GLOBALS['cryptoStrong'] = true;
+        $this->account->setPassword('SimplePassword');
     }
 
     /**

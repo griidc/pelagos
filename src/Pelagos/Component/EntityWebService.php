@@ -47,20 +47,14 @@ class EntityWebService extends \Pelagos\Component
      *
      * @access public
      */
-    public function __construct(\Slim\Slim $slim, EntityService $entityService = null)
+    public function __construct(\Slim\Slim $slim, EntityService $entityService)
     {
         // Call constructor for \Pelagos\Component
         parent::__construct();
         // Save the Slim instance
         $this->slim = $slim;
-        // If an Entity Service has been provided
-        if (isset($entityService)) {
-            // Save the EntityService instance
-            $this->entityService = $entityService;
-        } else {
-            // Create an EntityService instance
-            $this->entityService = new EntityService($this->getEntityManager());
-        }
+        // Save the EntityService instance
+        $this->entityService = $entityService;
     }
 
     /**
@@ -306,8 +300,7 @@ class EntityWebService extends \Pelagos\Component
         $response->headers->set('Content-Type', 'application/json');
         $this->setQuitOnFinalize(true);
         try {
-            $entityService = new EntityService($this->getEntityManager());
-            $entity = $entityService->get($entityType, $entityId);
+            $entity = $this->getEntityService()->get($entityType, $entityId);
             if ($this->slim->request->params('properties') !== null) {
                 $properties = explode(',', $this->slim->request->params('properties'));
                 $entity->setSerializeProperties($properties);

@@ -2,8 +2,18 @@
 
 require_once __DIR__ . '/../../../vendor/autoload.php';
 
+use Pelagos\Component\EntityWebService;
+use Pelagos\Service\EntityService;
+use Pelagos\Factory\EntityManagerFactory;
+
 $slim = new \Slim\Slim;
-$comp = new \Pelagos\Component\EntityWebService($slim);
+
+$comp = new EntityWebService(
+    $slim,
+    new EntityService(
+        EntityManagerFactory::create()
+    )
+);
 
 // Set the default condition for the entityType parameter to match a camel-case word.
 \Slim\Route::setDefaultConditions(
