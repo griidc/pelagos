@@ -37,20 +37,14 @@ class EntityApplication extends \Pelagos\Component
      *
      * @access public
      */
-    public function __construct(\Slim\Slim $slim, EntityService $entityService = null)
+    public function __construct(\Slim\Slim $slim, EntityService $entityService)
     {
         // Call constructor for \Pelagos\Component
         parent::__construct();
         // Save the Slim instance
         $this->slim = $slim;
-        // If an Entity Service has been provided
-        if (isset($entityService)) {
-            // Save the EntityService instance
-            $this->entityService = $entityService;
-        } else {
-            // Create an EntityService instance
-            $this->entityService = new EntityService($this->getEntityManager());
-        }
+        // Save the EntityService instance
+        $this->entityService = $entityService;
 
         $this->setTitle('Entity');
 

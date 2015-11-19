@@ -2,6 +2,9 @@
 
 require_once __DIR__ . '/../../../vendor/autoload.php';
 
+use Pelagos\Factory\EntityManagerFactory;
+use Pelagos\Service\EntityService;
+
 $app = new \Slim\Slim(
     array(
             'view' => new \Slim\Views\Twig()
@@ -20,17 +23,19 @@ $app->view->parserExtensions = array(
     )
 );
 
+$entityService = new EntityService(EntityManagerFactory::create());
+
 $comp = null;
 
 $app->get(
     '/:entityType(/)(:entityId)',
-    function ($entityType, $entityId = null) use ($app, &$comp) {
+    function ($entityType, $entityId = null) use ($app, $entityService, &$comp) {
         $appClass = "\Pelagos\Component\EntityApplication\\$entityType" . 'Application';
 
         if (class_exists($appClass)) {
-            $comp = new $appClass($app);
+            $comp = new $appClass($app, $entityService);
         } else {
-            $comp = new \Pelagos\Component\EntityApplication($app);
+            $comp = new \Pelagos\Component\EntityApplication($app, $entityService);
         }
 
         if (isset($entityId)) {
@@ -43,13 +48,13 @@ $app->get(
 
 $app->post(
     '/:entityType(/)(:entityId)',
-    function ($entityType, $entityId = null) use ($app, &$comp) {
+    function ($entityType, $entityId = null) use ($app, $entityService, &$comp) {
         $appClass = "\Pelagos\Component\EntityApplication\\$entityType" . 'Application';
 
         if (class_exists($appClass)) {
-            $comp = new $appClass($app);
+            $comp = new $appClass($app, $entityService);
         } else {
-            $comp = new \Pelagos\Component\EntityApplication($app);
+            $comp = new \Pelagos\Component\EntityApplication($app, $entityService);
         }
 
         $comp->handlePost($entityType, $entityId);

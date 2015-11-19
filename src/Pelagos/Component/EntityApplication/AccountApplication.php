@@ -34,7 +34,7 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
      *
      * @access public
      */
-    public function __construct(\Slim\Slim $slim, EntityService $entityService = null)
+    public function __construct(\Slim\Slim $slim, EntityService $entityService)
     {
         parent::__construct($slim, $entityService);
 
