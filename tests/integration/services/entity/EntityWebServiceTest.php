@@ -77,8 +77,12 @@ class EntityWebServiceTest extends \PHPUnit_Framework_TestCase
         $this->mockEntityManager->shouldReceive('getRepository')->andReturn($this->mockEntityRepository);
         $this->mockEntityManager->shouldReceive('getClassMetadata')->andReturn($this->mockClassMetadata);
 
-        $mockPersistence = \Mockery::mock('alias:\Pelagos\Persistance');
-        $mockPersistence->shouldReceive('createEntityManager')->andReturn($this->mockEntityManager);
+        \Mockery::mock(
+            'alias:\Pelagos\Factory\EntityManagerFactory',
+            array(
+                'create' => $this->mockEntityManager,
+            )
+        );
 
         $this->saveCwd = getcwd();
         chdir(__DIR__ . '/../../../../web/services/entity');

@@ -7,6 +7,7 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
+use Pelagos\Factory\EntityManagerFactory;
 
 /**
  * The validator for a constraint that tests that a combination of fields are unique.
@@ -30,8 +31,7 @@ class UniqueEntityValidator extends ConstraintValidator
      */
     public function validate($entity, Constraint $constraint)
     {
-        $comp = new \Pelagos\Component;
-        $em = $comp->getEntityManager();
+        $em = EntityManagerFactory::create();
 
         if (!$constraint instanceof UniqueEntity) {
             throw new UnexpectedTypeException($constraint, __NAMESPACE__ . '\UniqueEntity');

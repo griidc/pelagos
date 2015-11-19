@@ -5,6 +5,7 @@ require_once __DIR__ . '/../../../vendor/autoload.php';
 use Pelagos\Service\EntityService;
 use Pelagos\Exception\ArgumentException;
 use Pelagos\Exception\RecordNotFoundPersistenceException;
+use Pelagos\Factory\EntityManagerFactory;
 
 $comp = new \Pelagos\Component;
 
@@ -76,7 +77,7 @@ $app->get(
         $twigData = array(
             'userLoggedIn' => ($comp->userIsLoggedIn()) ? 'true' : 'false',
         );
-        $entityService = new EntityService($comp->getEntityManager());
+        $entityService = new EntityService(EntityManagerFactory::create());
         $twigData['entityService'] = $entityService;
         if (isset($entityId)) {
             try {
