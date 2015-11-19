@@ -3,6 +3,7 @@
 namespace Pelagos\Entity;
 
 use \Symfony\Component\Validator\Constraints as Assert;
+use \Pelagos\Exception\PasswordException;
 
 /**
  * Implementation of the Account class.
@@ -156,12 +157,44 @@ class Account extends Entity
      *
      * @param string $password Plain text password.
      *
-     * @throws \Exception When unable to generate a cryptographically strong password hash salt.
+     * @throws PasswordException When $password is shorter than 8 characters.
+     * @throws PasswordException When $password does not meet complexity requirements.
+     * @throws \Exception        When unable to generate a cryptographically strong password hash salt.
      *
      * @return void
      */
     public function setPassword($password)
     {
+        if (strlen($password) < 8) {
+            throw new PasswordException('Password is not long enough (must be at least 8 characters)');
+        }
+
+        $passwordComplexityRegEx
+            = '/^' .
+            // Password must contain:
+            '(?:' .
+                // a digit, a lowercase letter, and an uppercase letter
+                '(?:(?=.*\d)(?=.*\p{Ll})(?=.*\p{Lu}))' .
+                // or
+                '|' .
+                // a digit, a lowercase letter, and a character that is not a digit or cased letter
+                '(?:(?=.*\d)(?=.*\p{Ll})(?=.*[^\d\p{Ll}\p{Lu}]))' .
+                // or
+                '|' .
+                // a digit, an uppercase letter, and a character that is not a digit or cased letter
+                '(?:(?=.*\d)(?=.*\p{Lu})(?=.*[^\d\p{Ll}\p{Lu}]))' .
+                // or
+                '|' .
+                // a lowercase letter, an uppercase letter, and a character that is not a digit or cased letter
+                '(?:(?=.*\p{Ll})(?=.*\p{Lu})(?=.*[^\d\p{Ll}\p{Lu}]))' .
+            ')' .
+            // and can contain any other characters as long as the above matches.
+            '.+$/';
+
+        if (!preg_match($passwordComplexityRegEx, $password)) {
+            throw new PasswordException('Password is not complex enough');
+        }
+
         $this->passwordHashAlgorithm = 'SSHA';
         // Assume the salt is not crptographically strong by default.
         $cryptoStrongSalt = false;
