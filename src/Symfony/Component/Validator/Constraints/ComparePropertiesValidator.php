@@ -7,6 +7,7 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
+use Pelagos\Factory\EntityManagerFactory;
 
 /**
  * The validator for a constraint that tests that two fields meet a comparison test.
@@ -29,9 +30,6 @@ class ComparePropertiesValidator extends ConstraintValidator
      */
     public function validate($entity, Constraint $constraint)
     {
-        $comp = new \Pelagos\Component;
-        $em = $comp->getEntityManager();
-
         if (!$constraint instanceof CompareProperties) {
             throw new UnexpectedTypeException($constraint, __NAMESPACE__ . '\CompareProperties');
         }
@@ -40,7 +38,7 @@ class ComparePropertiesValidator extends ConstraintValidator
             throw new UnexpectedTypeException($constraint->errorPath, 'string or null');
         }
 
-        $class = $em->getClassMetadata(get_class($entity));
+        $class = EntityManagerFactory::create()->getClassMetadata(get_class($entity));
 
         if (!$class->hasField($constraint->left)) {
             throw new ConstraintDefinitionException(

@@ -306,8 +306,7 @@ class EntityWebService extends \Pelagos\Component
         $response->headers->set('Content-Type', 'application/json');
         $this->setQuitOnFinalize(true);
         try {
-            $entityService = new EntityService($this->getEntityManager());
-            $entity = $entityService->get($entityType, $entityId);
+            $entity = $this->getEntityService()->get($entityType, $entityId);
             if ($this->slim->request->params('properties') !== null) {
                 $properties = explode(',', $this->slim->request->params('properties'));
                 $entity->setSerializeProperties($properties);
