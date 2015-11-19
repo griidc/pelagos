@@ -116,11 +116,10 @@ class EntityApplication extends \Pelagos\Component
         $twigData = array(
             'userLoggedIn' => ($this->userIsLoggedIn()) ? 'true' : 'false',
         );
-        $entityService = new EntityService($this->getEntityManager());
-        $twigData['entityService'] = $entityService;
+        $twigData['entityService'] = $this->entityService;
         if (isset($entityId)) {
             try {
-                $entity = $entityService->get($entityType, $entityId);
+                $entity = $this->entityService->get($entityType, $entityId);
                 $this->slim->response->setStatus(200);
             } catch (ArgumentException $e) {
                 $this->slim->response->setStatus(400);
@@ -167,8 +166,7 @@ class EntityApplication extends \Pelagos\Component
         $twigData = array(
             'userLoggedIn' => ($this->userIsLoggedIn()) ? 'true' : 'false',
         );
-        $entityService = new EntityService($this->getEntityManager());
-        $twigData['entityService'] = $entityService;
+        $twigData['entityService'] = $this->entityService;
 
         $this->slim->render($entityType . '.html', $twigData);
 
