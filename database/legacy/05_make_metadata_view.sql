@@ -1,23 +1,38 @@
 -- -----------------------------------------------------------------------------
 -- Name:      make_metadata_view.sql
 -- Author:    Patrick Krepps
--- Date:      12 November 2015
+-- Date:      18 November 2015
 -- Inputs:    NONE
--- Output:    A new database view
--- Info:      This script creates the metadata view for the legacy system.
---            This view will allow the front-end to logically determine which
---            attributes to display, generally metadata info if available,
---            registry table attrbiutes if available and metadata info is not,
---            and dataset table attributes if neither are available. Regardless
---            of the logic, this view presents information from the metadata.
---            This view is indended to be read-only.
+-- Output:    Modifications to the metadata table and a new database view
+-- Info:      This script modifies the metadata table, adding abstract, begin
+--            and end positions, and title attributes. It then creates a
+--            trigger function to populate those, and the extent_description
+--            attributes from the metadata_xml data.
+--            The script then goes on to create a view used by the front-end to
+--            logically determine the authorative source of the abstract, the
+--            begin and end positions, the extent_description, and the title.
 -- -----------------------------------------------------------------------------
--- TODO:
+-- TODO:      Figure out the best error handling strategy.
 -- -----------------------------------------------------------------------------
 \c gomri postgres
 
 -- Start by dropping everything:
 DROP VIEW metadata_view;
+DROP TRIGGER trg_metadata_elements_insert
+   ON metadata;
+DROP TRIGGER trg_metadata_elements_update
+   ON metadata;
+DROP FUNCTION udf_extract_metadata_elements();
+-- The columns are dropped separately because if one or more is not present,
+-- but one or more exist the ALTER statement fails, causing the script to fail.
+ALTER TABLE metadata
+   DROP COLUMN metadata_abstract;
+ALTER TABLE metadata
+   DROP COLUMN metadata_begin_position;
+ALTER TABLE metadata
+   DROP COLUMN metadata_end_position;
+ALTER TABLE metadata
+   DROP COLUMN metadata_title;
 DROP INDEX idx_reg_udi_from_id;
 DROP INDEX idx_md_udi_from_id;
 
@@ -31,96 +46,189 @@ CREATE INDEX idx_md_udi_from_id
 VACUUM ANALYZE registry;
 VACUUM ANALYZE metadata;
 
--- Now create the view:
-CREATE VIEW metadata_view AS
-   SELECT m.registry_id,
-          CAST((xpath(CONCAT('/gmi:MI_Metadata',
-                             '/gmd:identificationInfo',
-                             '/gmd:MD_DataIdentification',
-                             '/gmd:citation',
-                             '/gmd:CI_Citation',
-                             '/gmd:title',
-                             '/gco:CharacterString/text()'),
-                      m.metadata_xml,
-                      ARRAY [ARRAY ['gco', 'http://www.isotc211.org/2005/gco'],
-                             ARRAY ['gmd', 'http://www.isotc211.org/2005/gmd'],
-                             ARRAY ['gmi', 'http://www.isotc211.org/2005/gmi'],
-                             ARRAY ['gml', 'http://www.opengis.net/gml/3.2']
-                            ]
-                     )
-               )[1] AS TEXT
-              ) AS title,
-          CAST((xpath(CONCAT('/gmi:MI_Metadata',
-                             '/gmd:identificationInfo'
-                             '/gmd:MD_DataIdentification'
-                             '/gmd:abstract'
-                             '/gco:CharacterString/text()'),
-                      m.metadata_xml,
-                      ARRAY [ARRAY ['gco', 'http://www.isotc211.org/2005/gco'],
-                             ARRAY ['gmd', 'http://www.isotc211.org/2005/gmd'],
-                             ARRAY ['gmi', 'http://www.isotc211.org/2005/gmi'],
-                             ARRAY ['gml', 'http://www.opengis.net/gml/3.2']
-                            ]
-                     )
-               )[1] AS TEXT
-              ) AS abstract,
-          CAST((xpath(CONCAT('/gmi:MI_Metadata',
-                             '/gmd:identificationInfo',
-                             '/gmd:MD_DataIdentification',
-                             '/gmd:extent',
-                             '/gmd:EX_Extent',
-                             '/gmd:description',
-                             '/gco:CharacterString/text()'),
-                      m.metadata_xml,
-                      ARRAY [ARRAY ['gco', 'http://www.isotc211.org/2005/gco'],
-                             ARRAY ['gmd', 'http://www.isotc211.org/2005/gmd'],
-                             ARRAY ['gmi', 'http://www.isotc211.org/2005/gmi'],
-                             ARRAY ['gml', 'http://www.opengis.net/gml/3.2']
-                            ]
-                     )
-               )[1] AS TEXT
-              ) AS extent_description,
-          CAST((xpath(CONCAT('/gmi:MI_Metadata',
-                             '/gmd:identificationInfo',
-                             '/gmd:MD_DataIdentification',
-                             '/gmd:extent/gmd:EX_Extent',
-                             '/gmd:temporalElement',
-                             '/gmd:EX_TemporalExtent',
-                             '/gmd:extent',
-                             '/gml:TimePeriod',
-                             '/gml:beginPosition/text()'
-                             ),
-                      m.metadata_xml,
-                      ARRAY [ARRAY ['gco', 'http://www.isotc211.org/2005/gco'],
-                             ARRAY ['gmd', 'http://www.isotc211.org/2005/gmd'],
-                             ARRAY ['gmi', 'http://www.isotc211.org/2005/gmi'],
-                             ARRAY ['gml', 'http://www.opengis.net/gml/3.2']
-                            ]
-                     )
-               )[1] AS TEXT
-              ) AS begin_position,
-          CAST((xpath(CONCAT('/gmi:MI_Metadata',
-                             '/gmd:identificationInfo',
-                             '/gmd:MD_DataIdentification',
-                             '/gmd:extent/gmd:EX_Extent',
-                             '/gmd:temporalElement',
-                             '/gmd:EX_TemporalExtent',
-                             '/gmd:extent',
-                             '/gml:TimePeriod',
-                             '/gml:endPosition/text()'
-                             ),
-                      m.metadata_xml,
-                      ARRAY [ARRAY ['gco', 'http://www.isotc211.org/2005/gco'],
-                             ARRAY ['gmd', 'http://www.isotc211.org/2005/gmd'],
-                             ARRAY ['gmi', 'http://www.isotc211.org/2005/gmi'],
-                             ARRAY ['gml', 'http://www.opengis.net/gml/3.2']
-                            ]
-                     )
-               )[1] AS TEXT
-              ) AS end_position
-   FROM metadata m;
+-- Add the new metadata attributes:
+ALTER TABLE metadata
+   ADD COLUMN metadata_abstract        TEXT,
+   ADD COLUMN metadata_begin_position  TEXT,
+   ADD COLUMN metadata_end_position    TEXT,
+   ADD COLUMN metadata_title           TEXT;
 
--- Set object ownership:
+-- Create the trigger function:
+CREATE FUNCTION udf_extract_metadata_elements()
+RETURNS TRIGGER
+AS $get_things$
+
+   DECLARE
+      -- Function CONSTANTS:
+
+      -- Function variables:
+
+   BEGIN
+      -- Nothing needs to be done on DELETE (this trigger should never be
+      -- called on a DELETE operation either, but...):
+      IF TG_OP = 'DELETE'
+      THEN
+         RETURN OLD;
+      END IF;
+
+      -- metadata_xml has a NOT NULL constraint, so if something is trying
+      -- to set it to NULL just return and let the in place mechanisms for
+      -- that scenario handle the exception:
+      IF NEW.metadata_xml IS NULL
+      THEN
+         RETURN NEW;
+      END IF;
+
+      -- If this is an update, let's see if the XML has changed:
+      IF TG_OP = 'UPDATE'
+      THEN
+         IF MD5(CAST(OLD.metadata_xml AS TEXT)) =
+            MD5(CAST(NEW.metadata_xml AS TEXT))
+         THEN
+            RETURN NEW;
+         END IF;
+      END IF;
+
+      -- Get the data elements:
+     EXECUTE
+        'SELECT
+            CAST((xpath(CONCAT(''/gmi:MI_Metadata'',
+                               ''/gmd:identificationInfo''
+                               ''/gmd:MD_DataIdentification''
+                               ''/gmd:abstract''
+                               ''/gco:CharacterString/text()''),
+                        $1,
+                        ARRAY [ARRAY [''gco'',
+                                      ''http://www.isotc211.org/2005/gco''],
+                               ARRAY [''gmd'',
+                                      ''http://www.isotc211.org/2005/gmd''],
+                               ARRAY [''gmi'',
+                                      ''http://www.isotc211.org/2005/gmi''],
+                               ARRAY [''gml'',
+                                      ''http://www.opengis.net/gml/3.2'']
+                              ]
+                       )
+                 )[1] AS TEXT
+                ), -- abstract
+            CAST((xpath(CONCAT(''/gmi:MI_Metadata'',
+                               ''/gmd:identificationInfo'',
+                               ''/gmd:MD_DataIdentification'',
+                               ''/gmd:extent/gmd:EX_Extent'',
+                               ''/gmd:temporalElement'',
+                               ''/gmd:EX_TemporalExtent'',
+                               ''/gmd:extent'',
+                               ''/gml:TimePeriod'',
+                               ''/gml:beginPosition/text()''
+                               ),
+                        $1,
+                        ARRAY [ARRAY [''gco'',
+                                      ''http://www.isotc211.org/2005/gco''],
+                               ARRAY [''gmd'',
+                                      ''http://www.isotc211.org/2005/gmd''],
+                               ARRAY [''gmi'',
+                                      ''http://www.isotc211.org/2005/gmi''],
+                               ARRAY [''gml'',
+                                      ''http://www.opengis.net/gml/3.2'']
+                              ]
+                       )
+                 )[1] AS TEXT
+                ), -- begin_position
+            CAST((xpath(CONCAT(''/gmi:MI_Metadata'',
+                               ''/gmd:identificationInfo'',
+                               ''/gmd:MD_DataIdentification'',
+                               ''/gmd:extent/gmd:EX_Extent'',
+                               ''/gmd:temporalElement'',
+                               ''/gmd:EX_TemporalExtent'',
+                               ''/gmd:extent'',
+                               ''/gml:TimePeriod'',
+                               ''/gml:endPosition/text()''
+                               ),
+                        $1,
+                        ARRAY [ARRAY [''gco'',
+                                      ''http://www.isotc211.org/2005/gco''],
+                               ARRAY [''gmd'',
+                                      ''http://www.isotc211.org/2005/gmd''],
+                               ARRAY [''gmi'',
+                                      ''http://www.isotc211.org/2005/gmi''],
+                               ARRAY [''gml'',
+                                      ''http://www.opengis.net/gml/3.2'']
+                              ]
+                       )
+                 )[1] AS TEXT
+                ), -- end_position
+            CAST((xpath(CONCAT(''/gmi:MI_Metadata'',
+                               ''/gmd:identificationInfo'',
+                               ''/gmd:MD_DataIdentification'',
+                               ''/gmd:extent'',
+                               ''/gmd:EX_Extent'',
+                               ''/gmd:description'',
+                               ''/gco:CharacterString/text()''),
+                        $1,
+                        ARRAY [ARRAY [''gco'',
+                                      ''http://www.isotc211.org/2005/gco''],
+                               ARRAY [''gmd'',
+                                      ''http://www.isotc211.org/2005/gmd''],
+                               ARRAY [''gmi'',
+                                      ''http://www.isotc211.org/2005/gmi''],
+                               ARRAY [''gml'',
+                                      ''http://www.opengis.net/gml/3.2'']
+                              ]
+                       )
+                 )[1] AS TEXT
+                ), -- extent_description
+            CAST((xpath(CONCAT(''/gmi:MI_Metadata'',
+                               ''/gmd:identificationInfo'',
+                               ''/gmd:MD_DataIdentification'',
+                               ''/gmd:citation'',
+                               ''/gmd:CI_Citation'',
+                               ''/gmd:title'',
+                               ''/gco:CharacterString/text()''),
+                        $1,
+                        ARRAY [ARRAY [''gco'',
+                                      ''http://www.isotc211.org/2005/gco''],
+                               ARRAY [''gmd'',
+                                      ''http://www.isotc211.org/2005/gmd''],
+                               ARRAY [''gmi'',
+                                      ''http://www.isotc211.org/2005/gmi''],
+                               ARRAY [''gml'',
+                                      ''http://www.opengis.net/gml/3.2'']
+                              ]
+                       )
+                 )[1] AS TEXT
+                ) -- title'
+        USING NEW.metadata_xml
+        INTO NEW.metadata_abstract,
+             NEW.metadata_begin_position,
+             NEW.metadata_end_position,
+             NEW.extent_description,
+             NEW.metadata_title;
+
+      RETURN NEW;
+   END;
+$get_things$
+LANGUAGE PLPGSQL IMMUTABLE STRICT;
+
+-- Create the triggers:
+CREATE TRIGGER trg_metadata_elements_insert
+   BEFORE INSERT ON metadata
+   FOR EACH ROW EXECUTE PROCEDURE udf_extract_metadata_elements();
+CREATE TRIGGER trg_metadata_elements_update
+   BEFORE UPDATE ON metadata
+   FOR EACH ROW EXECUTE PROCEDURE udf_extract_metadata_elements();
+
+-- Create the view:
+CREATE VIEW metadata_view AS
+   SELECT registry_id,
+          extent_description,
+          geom,
+          metadata_title,
+          metadata_begin_position,
+          metadata_end_position,
+          metadata_abstract,
+          metadata_xml
+   FROM metadata;
+
+-- Set object ownership and permissions:
 ALTER TABLE metadata_view
    OWNER TO gomri_admin;
 
