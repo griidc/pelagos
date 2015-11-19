@@ -314,7 +314,7 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
         $mailer = \Swift_Mailer::newInstance($transport);
 
         // Create a message
-        $message = \Swift_Message::newInstance('Wonderful Subject')
+        $message = \Swift_Message::newInstance()
             ->setFrom(array('griidc@gomri.org' => 'GRIIDC'))
             ->setTo(array($email['toEmail'] => $email['toName']))
             ->setSubject($email['subject'])
