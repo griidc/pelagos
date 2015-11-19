@@ -15,13 +15,6 @@ namespace Pelagos;
 class Component
 {
     /**
-     * A private class variable to hold the entity manager.
-     *
-     * @var \Doctrine\ORM\EntityManager $entityManager
-     */
-    private $entityManager;
-
-    /**
      * A boolean value that is used to decide whether or not to call quit() when finalize() is called.
      *
      * @var bool $quitOnFinalize
@@ -168,21 +161,6 @@ class Component
         } else {
             exit;
         }
-    }
-
-    /**
-     * Get the entity manager.
-     *
-     * This method returns the entity manager (and creates it first if doesn't exist).
-     *
-     * @return \Doctrine\ORM\EntityManager The Doctrine entity manager.
-     */
-    public function getEntityManager()
-    {
-        if (!isset($this->entityManager)) {
-            $this->entityManager = Persistance::createEntityManager();
-        }
-        return $this->entityManager;
     }
 
     /**
