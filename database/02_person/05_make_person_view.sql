@@ -325,6 +325,16 @@ AS $pers_func$
                                      ' is not a valid email address.');
                _email_addr := NEW.email_address;
 
+               -- Set the error hint and message so that if any exceptions are
+               -- thrown they are not set to the above strings (that could be
+               -- confusing, especially when the email address is actually a
+               -- valid email address):
+               _err_hint   := 'Check the database log for more information.';
+               _err_msg    := CONCAT('Unable to ',
+                                     TG_OP,
+                                     ' a person. An unknown error has ',
+                                     'occurred.');
+
                -- Since we have a different email address, we need to DELETE
                -- the existing email address association:
                EXECUTE 'DELETE
