@@ -30,7 +30,8 @@ class AccountApplication extends \Pelagos\Component\EntityApplication
     /**
      * Constructor for AccountApplication.
      *
-     * @param \Slim\Slim $slim The instance of \Slim\Slim used by this application service.
+     * @param \Slim\Slim                     $slim          The instance of \Slim\Slim used by this application.
+     * @param \Pelagos\Service\EntityService $entityService The instance of Pelagos Entity Service for this application.
      *
      * @access public
      */
