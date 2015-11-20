@@ -1,0 +1,51 @@
+<form class="entityForm" entityType="PersonFundingOrganization" {{ (PersonFundingOrganizationEditable ? 'editable' : '') }}
+{{(PersonFundingOrganizationDeletable ? 'deletable' : '') }} >
+
+    <input type="hidden" name="id" value="{{PersonFundingOrganization.getId}}">
+
+    {% if not Person %}
+        <label for="person">Person:</label>
+        {% if not FundingOrganization %}
+            <select required name="person" person="{{PersonFundingOrganization.getPerson.getId}}">
+            <option value="">[Please Select a Person]</option>
+            {% for Person in entityService.getAll("Person", {"lastName":"ASC","firstName":"ASC"}) %}
+                <option value="{{Person.getId}}"
+                {{ (PersonFundingOrganization.getPerson.getId == Person.getId ? ' selected ' : '') }}
+                >{{Person.getLastName}}, {{Person.getFirstName}}, {{Person.getEmailAddress}}</option>
+            {% endfor %}
+            </select>
+            <label for="person" class="error"></label>
+        {% else %}
+            {{PersonFundingOrganization.getPerson.getFirstName}} {{PersonFundingOrganization.getPerson.getLastName}} &lt;{{PersonFundingOrganization.getPerson.getEmailAddress}}&gt;
+        {% endif %}
+        <br>
+    {% endif %}
+
+    {% if not FundingOrganization %}
+        <label for="researchGroup.fundingCycle.fundingOrganization">Funding Organization:</label>
+        <select required name="fundingOrganization" fundingOrganization="{{PersonFundingOrganization.getFundingOrganization.getId}}">
+        <option value="">[Please Select a Funding Organization]</option>
+        {% for FundingOrganization in entityService.getAll("FundingOrganization", {"name":"ASC"}) %}
+            <option value="{{FundingOrganization.getId}}"
+            {{ (PersonFundingOrganization.getFundingOrganization.getId == FundingOrganization.getId ? ' selected ' : '') }}
+            >{{FundingOrganization.getName}}</option>
+        {% endfor %}
+        </select><br>
+    {% endif %}
+
+    {% if userLoggedIn == "true" %}
+        <label for="role">Role:</label>
+        <select required name="role" researchGroupRole="{{PersonFundingOrganization.getRole.getId}}">
+        <option value="">[Please Select a Role]</option>
+        {% for Role in entityService.getAll("FundingOrganizationRole", {"weight":"ASC"}) %}
+            <option value="{{Role.getId}}"
+            {{ (PersonFundingOrganization.getRole.getId == Role.getId ? ' selected ' : '') }}
+            >{{Role.getName}}</option>
+        {% endfor %}
+        </select><br>
+    {% endif %}
+
+    <label for="label">Label:</label>
+    <input type="text" name="label" size="50" value="{{PersonFundingOrganization.getLabel}}"><br>
+
+</form>
