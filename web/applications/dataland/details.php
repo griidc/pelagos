@@ -30,7 +30,7 @@ drupal_add_library('system', 'ui.button');
 drupal_add_library('system', 'ui.dialog');
 
 drupal_add_js('//cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js',array('type'=>'external'));
-drupal_add_js('//maps.google.com/maps/api/js?v=3&sensor=false',array('type'=>'external'));
+drupal_add_js('//maps.google.com/maps/api/js?v=3.21&sensor=false',array('type'=>'external'));
 drupal_add_js('/includes/geoviz/geoviz.js','external');
 drupal_add_js('/data-discovery/js/search.js',array('type'=>'external'));
 
