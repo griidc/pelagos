@@ -38,8 +38,6 @@ include_once 'aliasIncludes.php';
 require_once 'auth.php'; # for user_is_logged_in_somehow()
 include_once 'pdo.php'; # for pdoDBQuery()
 require_once 'lib/DataLand/PubLink.php';
-require_once 'MetadataView.php';
-
 
 $loader = new \Twig_Loader_Filesystem('./templates');
 $twig = new \Twig_Environment($loader,array('autoescape' => false));
@@ -77,8 +75,6 @@ if ($udi <> '')
 
     $pquery = "
     SELECT *,
-
-    CASE WHEN metadata.registry_id IS NULL THEN NULL ELSE metadata.registry_id END AS metadata_view_key,
 
     CASE WHEN metadata.registry_id IS NULL AND datasets.geom IS NULL THEN 'baseMap'
          WHEN metadata.registry_id IS NULL AND datasets.geom IS NOT NULL THEN ST_AsText(datasets.geom)
@@ -142,15 +138,6 @@ if ($udi <> '')
 
     $prow = $prow[0];
 
-    
-    //  get information from the meatadata_view Postgres view
-    if($prow['metadata_view_key'] != null) {
-        $metadataView = new \Pelagos\Dataland\MetadataView($pconn);
-        $metadataViewTitle = $metadataView->getTitle($prow['metadata_view_key']);
-        if ($metadataViewTitle != null) {
-            $prow['title'] = $metadataViewTitle;
-        }
-    }
     if($prow["doi"]) {
         $prow["noheader_doi"] = preg_replace("/doi:/",'',$prow["doi"]);
     }
