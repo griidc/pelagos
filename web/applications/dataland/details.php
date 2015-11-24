@@ -81,18 +81,19 @@ if ($udi <> '')
     CASE WHEN metadata.registry_id IS NULL THEN NULL ELSE metadata.registry_id END AS metadata_view_key,
 
     CASE WHEN metadata.registry_id IS NULL AND datasets.geom IS NULL THEN 'baseMap'
+         WHEN metadata.registry_id IS NULL AND datasets.geom IS NOT NULL THEN ST_AsText(datasets.geom)
+         WHEN metadata.registry_id IS NOT NULL AND metadata.geom IS NOT NULL THEN ST_AsText(metadata.geom)
+         WHEN metadata.registry_id IS NOT NULL AND metadata.geom IS NULL AND metadata.extent_description IS NULL THEN 'baseMap'
+         WHEN metadata.registry_id IS NOT NULL AND metadata.geom IS NULL AND metadata.extent_description IS NOT NULL THEN 'labOnly'
+    END AS geom_data,
 
-    WHEN metadata.registry_id IS NULL AND datasets.geom IS NOT NULL THEN ST_AsText(datasets.geom)
+    CASE WHEN registry.dataset_udi IS NULL THEN datasets.dataset_udi ELSE registry.dataset_udi
+    END AS dataset_udi,
 
-    WHEN metadata.registry_id IS NOT NULL AND metadata.geom IS NOT NULL THEN ST_AsText(metadata.geom)
-
-    WHEN metadata.registry_id IS NOT NULL AND metadata.geom IS NULL AND metadata.extent_description IS NULL THEN 'baseMap'
-
-    WHEN metadata.registry_id IS NOT NULL AND metadata.geom IS NULL AND metadata.extent_description IS NOT NULL THEN 'labOnly'
-                                                                     END AS geom_data,
-
-    CASE WHEN registry.dataset_udi IS NULL THEN datasets.dataset_udi ELSE registry.dataset_udi END AS dataset_udi,
-    CASE WHEN registry.dataset_title IS NULL THEN datasets.title ELSE registry.dataset_title END AS title,
+    CASE WHEN metadata.metadata_title IS NOT NULL THEN metadata.metadata_title
+         WHEN registry.dataset_title IS NOT NULL THEN registry.dataset_title
+         ELSE  datasets.title
+    END AS title,
 
     CASE WHEN status = 2 THEN 10
          WHEN status = 1 THEN 1
@@ -132,7 +133,7 @@ if ($udi <> '')
 
     FROM datasets
     LEFT JOIN registry_view registry ON registry.dataset_udi = datasets.dataset_udi
-    LEFT JOIN metadata on registry.registry_id = metadata.registry_id
+    LEFT JOIN metadata_view metadata ON registry.registry_id = metadata.registry_id
     WHERE datasets.dataset_udi = '$udi' LIMIT 1
     ;
     ";
