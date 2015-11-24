@@ -9,7 +9,8 @@
         "pelagosBasePath": 2,
         "pelagosComponentPath": 2,
         "pelagosBaseUri": 2,
-        "pelagosComponentUri": 2
+        "pelagosComponentUri": 2,
+        "XRegExp": 2
     },
     "rules": {
         "no-underscore-dangle": 0,
@@ -23,7 +24,8 @@
         "no-shadow": 0,
         "new-cap": [2, {
             "capIsNewExceptions": [
-                "Deferred"
+                "Deferred",
+                "XRegExp"
             ]
         }],
         "quotes": [2, "double", "avoid-escape"]
