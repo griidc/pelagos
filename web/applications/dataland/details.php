@@ -77,18 +77,19 @@ if ($udi <> '')
     SELECT *,
 
     CASE WHEN metadata.registry_id IS NULL AND datasets.geom IS NULL THEN 'baseMap'
+         WHEN metadata.registry_id IS NULL AND datasets.geom IS NOT NULL THEN ST_AsText(datasets.geom)
+         WHEN metadata.registry_id IS NOT NULL AND metadata.geom IS NOT NULL THEN ST_AsText(metadata.geom)
+         WHEN metadata.registry_id IS NOT NULL AND metadata.geom IS NULL AND metadata.extent_description IS NULL THEN 'baseMap'
+         WHEN metadata.registry_id IS NOT NULL AND metadata.geom IS NULL AND metadata.extent_description IS NOT NULL THEN 'labOnly'
+    END AS geom_data,
 
-    WHEN metadata.registry_id IS NULL AND datasets.geom IS NOT NULL THEN ST_AsText(datasets.geom)
+    CASE WHEN registry.dataset_udi IS NULL THEN datasets.dataset_udi ELSE registry.dataset_udi
+    END AS dataset_udi,
 
-    WHEN metadata.registry_id IS NOT NULL AND metadata.geom IS NOT NULL THEN ST_AsText(metadata.geom)
-
-    WHEN metadata.registry_id IS NOT NULL AND metadata.geom IS NULL AND metadata.extent_description IS NULL THEN 'baseMap'
-
-    WHEN metadata.registry_id IS NOT NULL AND metadata.geom IS NULL AND metadata.extent_description IS NOT NULL THEN 'labOnly'
-                                                                     END AS geom_data,
-
-    CASE WHEN registry.dataset_udi IS NULL THEN datasets.dataset_udi ELSE registry.dataset_udi END AS dataset_udi,
-    CASE WHEN registry.dataset_title IS NULL THEN datasets.title ELSE registry.dataset_title END AS title,
+    CASE WHEN metadata.metadata_title IS NOT NULL THEN metadata.metadata_title
+         WHEN registry.dataset_title IS NOT NULL THEN registry.dataset_title
+         ELSE  datasets.title
+    END AS title,
 
     CASE WHEN status = 2 THEN 10
          WHEN status = 1 THEN 1
@@ -125,9 +126,10 @@ if ($udi <> '')
          ELSE 0
     END AS available
 
+
     FROM datasets
     LEFT JOIN registry_view registry ON registry.dataset_udi = datasets.dataset_udi
-    LEFT JOIN metadata on registry.registry_id = metadata.registry_id
+    LEFT JOIN metadata_view metadata ON registry.registry_id = metadata.registry_id
     WHERE datasets.dataset_udi = '$udi' LIMIT 1
     ;
     ";
@@ -145,6 +147,10 @@ if ($udi <> '')
     } elseif ($prow["geom_data"] != 'baseMap') { //  add the geometry from the data. Either datasets or metadata
         $dsscript = 'dlmap.addFeatureFromWKT("' . $prow['geom_data'] . '",{"udi":"' . $prow['dataset_udi'] . '"});dlmap.gotoAllFeatures();';
     } //  else
+
+
+
+
     //  fall through and only the base map will show
 
     $mconn = OpenDB("RIS_RO");
@@ -276,7 +282,7 @@ var dlmap = new GeoViz();
                 }
             },
             modal: true,
-            resizable:false,
+            resizable:false
         });
 
         $("#downloaddsden").button().click(function() {
