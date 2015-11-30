@@ -9,7 +9,7 @@
 --            trigger function to populate those, and the extent_description
 --            attributes from the metadata_xml data.
 --            The script then goes on to create a view used by the front-end to
---            logically determine the authorative source of the abstract, the
+--            logically determine the authoritative source of the abstract, the
 --            begin and end positions, the extent_description, and the title.
 -- -----------------------------------------------------------------------------
 -- TODO:      Figure out the best error handling strategy.
@@ -196,12 +196,12 @@ AS $get_things$
                        )
                  )[1] AS TEXT
                 ) -- title'
-        USING NEW.metadata_xml
-        INTO NEW.metadata_abstract,
-             NEW.metadata_begin_position,
-             NEW.metadata_end_position,
+        USING NEW.xml
+        INTO NEW.abstract,
+             NEW.begin_position,
+             NEW.end_position,
              NEW.extent_description,
-             NEW.metadata_title;
+             NEW.title;
 
       RETURN NEW;
    END;
@@ -216,15 +216,18 @@ CREATE TRIGGER trg_metadata_elements_update
    BEFORE UPDATE ON metadata
    FOR EACH ROW EXECUTE PROCEDURE udf_extract_metadata_elements();
 
--- Create the view:
+-- Create the view (we are only aliasing the newly added columns because there
+-- will be a lot of legacy code that depends on the original entity attribute
+-- names. In particular this creates a naming anomaly where what should be
+-- named xml in the view will remain known as metadata_xml):
 CREATE VIEW metadata_view AS
    SELECT registry_id,
           extent_description,
           geom,
-          metadata_title,
-          metadata_begin_position,
-          metadata_end_position,
-          metadata_abstract,
+          metadata_title AS title,
+          metadata_begin_position AS begin_position,
+          metadata_end_position AS end_position,
+          metadata_abstract AS abstract,
           metadata_xml
    FROM metadata;
 
