@@ -22,6 +22,9 @@ DROP TRIGGER udf_person_update_trigger
 DROP FUNCTION udf_modify_person();
 DROP VIEW person;
 
+-- Add the CITEXT data type if needed:
+CREATE EXTENSION IF NOT EXISTS citext;
+
 -- Create the view (we cast email address to TEXT so that we can handle CHECK
 -- errors in our exception block. We also cast creation and modification times
 -- to TEXT as we ignore any input values. By casting to TEXT we can handle an
@@ -35,7 +38,7 @@ CREATE VIEW person AS
           p.person_name_suffix AS suffix,
           p.person_organization AS organization,
           p.person_position AS position,
-          CAST(e2p.email_address AS TEXT) AS email_address,
+          CAST(e2p.email_address AS CITEXT) AS email_address,
           e.email_validated AS email_verified,
           p.person_website AS website,
           p.person_delivery_point AS delivery_point,
@@ -322,6 +325,23 @@ AS $pers_func$
                                      ' is not a valid email address.');
                _email_addr := NEW.email_address;
 
+               -- Set the error hint and message so that if any exceptions are
+               -- thrown they are not set to the above strings (that could be
+               -- confusing, especially when the email address is actually a
+               -- valid email address):
+               _err_hint   := 'Check the database log for more information.';
+               _err_msg    := CONCAT('Unable to ',
+                                     TG_OP,
+                                     ' a person. An unknown error has ',
+                                     'occurred.');
+
+               -- Since we have a different email address, we need to DELETE
+               -- the existing email address association:
+               EXECUTE 'DELETE
+                        FROM email2person_table
+                        WHERE person_number = $1'
+                  USING NEW.person_number;
+
                -- Let's see if the email address needs to be added to the email
                -- table:
                _count := NULL;
@@ -329,24 +349,34 @@ AS $pers_func$
                         FROM email_table
                         WHERE LOWER(email_address) = $1'
                   INTO _count
-                  USING _email_addr;
+                  USING LOWER(_email_addr);
 
-               IF _count = 0
+               -- If _count is greater than one or less than zero we have
+               -- something seriously wrong. Throw an exception and hope to
+               -- sort the mess out before taking a chance on corrupting
+               -- anything:
+               IF _count > 1 OR _count < 0
                THEN
-                  EXECUTE 'INSERT INTO email_table
-                           ( email_address, email_validated )
-                           VALUES ($1, FALSE)'
-                     USING _email_addr;
+                  RAISE EXCEPTION 'Unique email address violation'
+                     USING ERRCODE = '23505';
                END IF;
 
-               -- Since we have a different email address, we need to modify
-               -- the existing email address association to not be the primary
-               -- address:
-               EXECUTE 'UPDATE email2person_table
-                        SET is_primary_email_address = FALSE
-                        WHERE person_number = $1
-                           AND is_primary_email_address = TRUE'
-                  USING NEW.person_number;
+               IF _count = 1
+               THEN
+                  -- We have an existing email address that differs in case.
+                  -- Delete the existing email address prior to inserting the
+                  -- new one (if _count = 0 then we didn't get here and we just
+                  -- need to insert the new address):
+                  EXECUTE 'DELETE
+                           FROM email_table
+                           WHERE LOWER(email_address) = $1'
+                     USING LOWER(_email_addr);
+               END IF;
+
+               EXECUTE 'INSERT INTO email_table
+                        ( email_address, email_validated )
+                        VALUES ($1, FALSE)'
+                  USING _email_addr;
 
                -- And now make the new association:
                EXECUTE 'INSERT INTO email2person_table
