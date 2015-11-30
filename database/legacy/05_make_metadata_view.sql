@@ -196,7 +196,7 @@ AS $get_things$
                        )
                  )[1] AS TEXT
                 ) -- title'
-        USING NEW.xml
+        USING NEW.metadata_xml
         INTO NEW.abstract,
              NEW.begin_position,
              NEW.end_position,
