@@ -93,12 +93,12 @@ $GLOBALS['DIF_FIELDS'] = array(
 
 $GLOBALS['REGISTRY_OVERRIDE_FIELDS'] = array(
     "CASE
-        WHEN mv.metadata_title IS NOT NULL then mv.metadata_title
+        WHEN mv.title IS NOT NULL then mv.title
         WHEN r.dataset_title IS NOT NULL THEN r.dataset_title
         ELSE d.title
      END AS title",
     "CASE
-        WHEN mv.metadata_abstract IS NOT NULL then mv.metadata_abstract
+        WHEN mv.abstract IS NOT NULL then mv.abstract
         WHEN r.dataset_abstract IS NOT NULL THEN r.dataset_abstract
         ELSE d.abstract
      END AS abstract"
