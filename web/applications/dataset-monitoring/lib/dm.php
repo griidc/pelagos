@@ -13,7 +13,7 @@ function getTasksAndDatasets($projects)
 
     $SELECT = "SELECT DISTINCT status, dataset_uid, d.dataset_udi AS udi,
                CASE
-                   WHEN mv.metadata_title IS NOT NULL THEN mv.metadata_title
+                   WHEN mv.title IS NOT NULL THEN mv.title
                    WHEN r.dataset_title IS NOT NULL THEN r.dataset_title
                ELSE
                    d.title
