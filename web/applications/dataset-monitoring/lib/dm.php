@@ -65,7 +65,7 @@ function getTasksAndDatasets($projects)
              ON r2.registry_id = m.MaxID
              ) r
              ON r.dataset_udi = d.dataset_udi
-            LEFT OUTER JOIN metadata_view mv ON substring(mv.registry_id FROM 1 FOR 16) = d.dataset_udi';
+            LEFT OUTER JOIN metadata_view mv ON mv.registry_id = r.registry_id';
     $RIS_DBH = openDB('RIS_RO');
     $GOMRI_DBH = openDB('GOMRI_RO');
     for ($i=0; $i<count($projects); $i++) {
