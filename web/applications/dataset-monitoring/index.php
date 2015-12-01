@@ -213,7 +213,7 @@ $app->get('/dataset_details/:udi', function ($udi) use ($app) {
     $SELECT = '
     SELECT
         CASE
-            WHEN mv.metadata_title IS NOT NULL THEN mv.metadata_title
+            WHEN mv.title IS NOT NULL THEN mv.title
             WHEN r.dataset_title IS NOT NULL THEN r.dataset_title
         ELSE
             d.title
@@ -225,7 +225,7 @@ $app->get('/dataset_details/:udi', function ($udi) use ($app) {
         d.secondary_poc AS spoc_ris_id,
         dataset_originator,
         CASE
-            WHEN mv.metadata_abstract IS NOT NULL THEN mv.metadata_abstract
+            WHEN mv.abstract IS NOT NULL THEN mv.abstract
             WHEN r.dataset_abstract IS NOT NULL THEN r.dataset_abstract
             ELSE d.abstract
         END AS abstract,
