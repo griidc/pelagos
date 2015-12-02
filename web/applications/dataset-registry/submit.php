@@ -24,7 +24,7 @@ echo '<table border="1" width="100%" style="background-color:white; color:black;
 echo "<tr><td width=\"200px\" align=\"top\"><b>Registry Identifier:</b></td><td><h2><a href=\"".$_SERVER['SCRIPT_NAME']."?regid=$registry_vals[registry_id]\">$registry_vals[registry_id]</h2></td></tr>";
 echo "<tr rowspan=2><td><b>Dataset Title:</b></td><td>$registry_vals[dataset_title]</td></tr>";
 echo "<tr rowspan=3><td><b>Dataset Abstract:</b></td><td>$registry_vals[dataset_abstract]</td></tr>";
-echo "<tr><td><b>Dataset Originator(s):</b></td><td>$registry_vals[dataset_originator]</td></tr>";
+echo "<tr><td><b>Dataset Author(s):</b></td><td>$registry_vals[dataset_originator]</td></tr>";
 echo "<tr><td><b>Point of Contact Name:</b></td><td>$registry_vals[dataset_poc_name]</td></tr>";
 echo "<tr><td><b>Point of Contact E-Mail:</b></td><td>$registry_vals[dataset_poc_email]</td></tr>";
 echo "<tr><td><b>Restrictions:</b></td><td>$registry_vals[access_status]</td></tr>";

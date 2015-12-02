@@ -831,7 +831,7 @@ fieldset {
 <div id="dataset_originator_tip" style="display:none;">
     <img src="includes/images/info.png" style="float:right;" />
     <p>
-        <strong>Dataset Originator(s):</strong><p/><p>This is the person (or people) or organization that generated the dataset. It is preferable to specify an individual, rather than an organization, whenever possible. Please specify individuals using the following format: Lastname, Firstname</p><p>For multiple originators, please use the MLA citation style, eg.:</p><p>Two originators:<br/>Cross, Susan, and Christine Hoffman</p><p>Three originators:<br/>Lowi, Theodore, Benjamin Ginsberg, and Steve Jackson</p><p>More than three originators:<br/> Gilman, Sander, et al</p>
+        <strong>Dataset Authors(s):</strong><p/><p>This is the person (or people) or organization that generated the dataset. It is preferable to specify an individual, rather than an organization, whenever possible. Please specify individuals using the following format: Lastname, Firstname</p><p>For multiple originators, please use the MLA citation style, eg.:</p><p>Two originators:<br/>Cross, Susan, and Christine Hoffman</p><p>Three originators:<br/>Lowi, Theodore, Benjamin Ginsberg, and Steve Jackson</p><p>More than three originators:<br/> Gilman, Sander, et al</p>
     </p>
 </div>
 
@@ -1014,10 +1014,10 @@ fieldset {
             </fieldset>
         </p>
 
-        <p> <!-- Dataset Originator(s) -->
+        <p> <!-- Dataset Author(s) -->
             <fieldset>
                 <span id="qtip_dataset_originator" style="float:right;"><img src="includes/images/info.png"></span>
-                <label for="dataset_originator"><span class="emRequired"/><b>Dataset Originator(s): </b></label>
+                <label for="dataset_originator"><span class="emRequired"/><b>Dataset Author(s): </b></label>
                 <div class="fwtextboxcont">
                     <input
                         <?php formDisabled($formDisabled); ?>
