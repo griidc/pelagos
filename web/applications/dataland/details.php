@@ -86,7 +86,7 @@ if ($udi <> '')
     CASE WHEN registry.dataset_udi IS NULL THEN datasets.dataset_udi ELSE registry.dataset_udi
     END AS dataset_udi,
 
-    CASE WHEN metadata.metadata_title IS NOT NULL THEN metadata.metadata_title
+    CASE WHEN metadata.title IS NOT NULL THEN metadata.title
          WHEN registry.dataset_title IS NOT NULL THEN registry.dataset_title
          ELSE  datasets.title
     END AS title,
@@ -124,7 +124,11 @@ if ($udi <> '')
                   ELSE 0
              END
          ELSE 0
-    END AS available
+    END AS available,
+
+    CASE WHEN metadata.metadata_xml::text LIKE '%gmd:geographicElement%' THEN TRUE
+         ELSE FALSE
+    END AS geographic_element
 
 
     FROM datasets
