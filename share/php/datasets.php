@@ -61,7 +61,7 @@ $GLOBALS['REGISTRY_FIELDS'] = array(
     "r.dataset_download_status",
     "r.dataset_originator",
     "to_char(r.submittimestamp,'YYYY') as year",
-    "ST_AsText(md.geom) as \"the_geom\""
+    "ST_AsText(mv.geom) as \"the_geom\""
 );
 
 $GLOBALS['DIF_FIELDS'] = array(
@@ -116,7 +116,6 @@ $GLOBALS['IDENTIFIED_FROM'] = 'FROM datasets d
                                ) r
                                ON r.dataset_udi = d.dataset_udi
                                LEFT JOIN projects p on p."ID" = d.project_id
-                               LEFT JOIN metadata md ON r."registry_id" = md."registry_id"
                                LEFT JOIN metadata_view mv ON r."registry_id" = mv."registry_id"';
 
 $GLOBALS['REGISTERED_FROM'] = 'FROM registry r
@@ -129,7 +128,6 @@ $GLOBALS['REGISTERED_FROM'] = 'FROM registry r
                                LEFT JOIN datasets d
                                ON d.dataset_udi = r.dataset_udi
                                LEFT JOIN projects p on p."ID" = d.project_id
-                               LEFT JOIN metadata md ON r."registry_id" = md."registry_id"
                                LEFT JOIN metadata_view mv ON r."registry_id" = mv."registry_id"';
 
 $GLOBALS['IDENTIFIED_SEARCH_RANK'] = "
@@ -619,7 +617,7 @@ EOT;
                     $WHERE .= " AND p.\"FundSrc\" $matches[2] $matches[3]";
                     break;
                 case 'geo_filter':
-                    $WHERE .= " AND ST_Intersects('SRID=4326;$matches[3]'::geometry,md.geom)";
+                    $WHERE .= " AND ST_Intersects('SRID=4326;$matches[3]'::geometry,mv.geom)";
                     break;
                 case 'has_data':
                     $WHERE .= " AND r.url_data " . $GLOBALS['IS_MAP'][$matches[2]] . ' ' .
