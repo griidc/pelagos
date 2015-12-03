@@ -233,7 +233,7 @@ $app->get('/dataset_details/:udi', function ($udi) use ($app) {
 
     $FROM = 'FROM datasets d
              LEFT OUTER JOIN registry r ON r.dataset_udi = d.dataset_udi
-             LEFT OUTER JOIN metadata_view mv ON substring(mv.registry_id FROM 1 FOR 16) = d.dataset_udi';
+             LEFT OUTER JOIN metadata_view mv ON mv.registry_id  = r.registry_id';
 
     $WHERE = "WHERE d.dataset_udi='$udi'";
 
