@@ -82,7 +82,7 @@
 
     <tr>
         <td valign="top">
-            {% if (pdata.begin_position and pdata.end_position) and pdata.extent_description  and pdata.geographic_element %}
+            {% if (pdata.begin_position and pdata.end_position) and pdata.extent_description and pdata.geom %}
                <b>Data Collection Period:</b><br/>
                {{pdata.begin_position}}
                to
@@ -93,7 +93,7 @@
 
     <tr>
         <td valign="top">
-            {% if (pdata.begin_position and pdata.end_position) and pdata.extent_description  and ( not pdata.geographic_element ) %}
+            {% if (pdata.begin_position and pdata.end_position) and pdata.extent_description and ( not pdata.geom ) %}
                 <tr><td colspan="2">&nbsp;</td></tr>
                 <tr><td colspan="2"><b>Extent Description:</b><br/> {{pdata.extent_description}}</td></tr>
             {% endif %}
