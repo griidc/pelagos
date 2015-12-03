@@ -86,8 +86,8 @@ if ($udi <> '')
     CASE WHEN registry_view.dataset_udi IS NULL THEN datasets.dataset_udi ELSE registry_view.dataset_udi
     END AS dataset_udi,
 
-    CASE WHEN metadata_view.title IS NOT NULL THEN metadata_view.title
-         WHEN registry_view.dataset_title IS NOT NULL THEN registry_view.dataset_title
+    CASE WHEN metadata_view.title IS NOT NULL THEN  metadata_view.title
+         WHEN registry_view.dataset_title IS NOT NULL THEN  registry_view.dataset_title
          ELSE  datasets.title
     END AS title,
 
