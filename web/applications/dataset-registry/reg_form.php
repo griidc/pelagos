@@ -831,7 +831,7 @@ fieldset {
 <div id="dataset_originator_tip" style="display:none;">
     <img src="includes/images/info.png" style="float:right;" />
     <p>
-        <strong>Dataset Author(s):</strong><p/><p>This is the person (or people) or organization that generated the dataset. It is preferable to specify an individual, rather than an organization, whenever possible. Please specify individuals using the following format: Lastname, Firstname</p><p>For multiple originators, please use the MLA citation style, eg.:</p><p>Two originators:<br/>Cross, Susan, and Christine Hoffman</p><p>Three originators:<br/>Lowi, Theodore, Benjamin Ginsberg, and Steve Jackson</p><p>More than three originators:<br/> Gilman, Sander, et al</p>
+        <strong>Dataset Author(s):</strong><p/><p>The Suggested Author List should contain all participants who collaborated in the creation, processing or analysis of the data you are sending to GRIIDC who should be acknowledged if these data are cited as a published work. Please list suggested authors in the order in which they should be listed in a citation.</p>
     </p>
 </div>
 
