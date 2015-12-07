@@ -58,6 +58,7 @@ $URI = preg_split('/\?/',$_SERVER['REQUEST_URI']);
 $URIs = preg_split('/\//',$_SERVER['REQUEST_URI']);
 
 $udi = urldecode($URIs[count($URIs)-2]);
+
 $logged_in = user_is_logged_in_somehow(); # returns bool, true if logged in.
 
 if ($udi <> '')
@@ -491,7 +492,18 @@ var dlmap = new GeoViz();
             if (in_array($prow['dataset_download_status'], array('Completed','RemotelyHosted'))) {
                 $dataset_available = 1;
             }
-            echo $twig->render('summary.html', array('pdata' => $prow,'mdata' => $mrow,'mpdata' => $mprow, 'baseurl' => $_SERVER['SCRIPT_NAME'], 'dl_ok' => $dl_ok, 'dataset_available' => $dataset_available));
+            echo $twig->render(
+                'summary.html',
+                array(
+                    'pdata' => $prow,
+                    'mdata' => $mrow,
+                    'mpdata' => $mprow,
+                    'baseurl' => $_SERVER['SCRIPT_NAME'],
+                    'dl_ok' => $dl_ok,
+                    'dataset_available' => $dataset_available,
+                    'lastUpdateTimeStamp' => getLastUpdateTimeStamp($udi)
+                )
+            );
             ?>
             </div>
         </td>
@@ -571,4 +583,10 @@ No dataset has been identified or registered with the UDI: <?php echo "$udi";?><
 If you are experiencing difficulties, please contact <a href="mailto:griidc@gomri.org">GRIIDC</a>.
 </p>
 
-<?php };?>
+<?php };
+
+function getLastUpdateTimeStamp($udi)
+{
+    $lastUpdate = gmdate("M m, Y (G:i ")."UTC)";
+    return $lastUpdate;
+}
