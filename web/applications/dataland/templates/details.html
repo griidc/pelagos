@@ -12,24 +12,10 @@
 </div>
 {% endif %}
 
-{% if pdata.purpose %}
-<h2>Purpose:</h2>
-<div>
-    {{pdata.purpose}}
-</div>
-{% endif %}
-
-{% if pdata.keywords %}
-<h2>Keywords:</h2>
-<div>
-    {{pdata.keywords}}
-</div>
-{% endif %}
-
-{% if pdata.abstract %}
+{% if pdata.dataset_abstract %}
 <h2>Abstract:</h2>
 <div>
-{{pdata.abstract}}
+{{pdata.dataset_abstract}}
 </div>
 {% endif %}
 
