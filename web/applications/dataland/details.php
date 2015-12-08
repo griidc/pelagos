@@ -125,8 +125,13 @@ if ($udi <> '')
                   ELSE 0
              END
          ELSE 0
-    END AS available
+    END AS available,
 
+    CASE WHEN registry.submittimestamp IS NULL THEN
+        to_char(timezone('UTC', datasets.last_edit), 'Mon DD, YYYY (HH24:MI UTC)')
+    ELSE
+        to_char(timezone('UTC', registry.submittimestamp), 'Mon DD, YYYY (HH24:MI UTC)')
+    END AS lastupdatetimestamp
 
     FROM datasets
     LEFT JOIN registry_view registry ON registry.dataset_udi = datasets.dataset_udi
@@ -500,8 +505,7 @@ var dlmap = new GeoViz();
                     'mpdata' => $mprow,
                     'baseurl' => $_SERVER['SCRIPT_NAME'],
                     'dl_ok' => $dl_ok,
-                    'dataset_available' => $dataset_available,
-                    'lastUpdateTimeStamp' => getLastUpdateTimeStamp($udi)
+                    'dataset_available' => $dataset_available
                 )
             );
             ?>
@@ -584,9 +588,3 @@ If you are experiencing difficulties, please contact <a href="mailto:griidc@gomr
 </p>
 
 <?php };
-
-function getLastUpdateTimeStamp($udi)
-{
-    $lastUpdate = gmdate("M m, Y (G:i ")."UTC)";
-    return $lastUpdate;
-}
