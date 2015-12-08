@@ -58,6 +58,9 @@ $URI = preg_split('/\?/',$_SERVER['REQUEST_URI']);
 $URIs = preg_split('/\//',$_SERVER['REQUEST_URI']);
 
 $udi = urldecode($URIs[count($URIs)-2]);
+if (!preg_match('/^[RrYy]\d\.x\d{3}.\d{3}:\d{4}$/', $udi)) {
+    $udi = '';
+}
 
 $logged_in = user_is_logged_in_somehow(); # returns bool, true if logged in.
 
