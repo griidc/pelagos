@@ -138,6 +138,13 @@ if ($udi <> '')
 
     $prow = $prow[0];
 
+// remove the double quotes and curly braces from the keyword list
+    if($prow['keywords']) {
+        $prow['keywords'] = preg_replace('%[\{\}\"]%', '',$prow['keywords']);
+        $prow['keywords'] = preg_replace('%\,%',', ',$prow['keywords']);
+    }
+
+
     if($prow["doi"]) {
         $prow["noheader_doi"] = preg_replace("/doi:/",'',$prow["doi"]);
     }
