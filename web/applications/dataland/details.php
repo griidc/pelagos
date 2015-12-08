@@ -53,8 +53,6 @@ $prow ='';
 $mrow ='';
 $mprow ='';
 
-$URI = preg_split('/\?/',$_SERVER['REQUEST_URI']);
-
 $URIs = preg_split('/\//',$_SERVER['REQUEST_URI']);
 
 $udi = urldecode($URIs[count($URIs)-2]);
