@@ -128,10 +128,13 @@ if ($udi <> '')
          ELSE 0
     END AS available,
 
-    CASE WHEN registry_view.submittimestamp IS NULL THEN
-        to_char(timezone('UTC', datasets.last_edit), 'Mon DD, YYYY (HH24:MI UTC)')
-    ELSE
-        to_char(timezone('UTC', registry_view.submittimestamp), 'Mon DD, YYYY (HH24:MI UTC)')
+    CASE
+        WHEN registry_view.submittimestamp IS NULL AND datasets.last_edit IS NOT NULL THEN
+            to_char(timezone('UTC', datasets.last_edit), 'Mon DD, YYYY (HH24:MI UTC)')
+        WHEN registry_view.submittimestamp IS NOT NULL THEN
+            to_char(timezone('UTC', registry_view.submittimestamp), 'Mon DD, YYYY (HH24:MI UTC)')
+        ELSE
+            NULL
     END AS lastupdatetimestamp
 
     FROM datasets
