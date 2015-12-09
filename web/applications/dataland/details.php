@@ -78,18 +78,18 @@ if ($udi <> '')
     $pquery = "
     SELECT *,
 
-    CASE WHEN metadata.registry_id IS NULL AND datasets.geom IS NULL THEN 'baseMap'
-         WHEN metadata.registry_id IS NULL AND datasets.geom IS NOT NULL THEN ST_AsText(datasets.geom)
-         WHEN metadata.registry_id IS NOT NULL AND metadata.geom IS NOT NULL THEN ST_AsText(metadata.geom)
-         WHEN metadata.registry_id IS NOT NULL AND metadata.geom IS NULL AND metadata.extent_description IS NULL THEN 'baseMap'
-         WHEN metadata.registry_id IS NOT NULL AND metadata.geom IS NULL AND metadata.extent_description IS NOT NULL THEN 'labOnly'
+    CASE WHEN metadata_view.registry_id IS NULL AND datasets.geom IS NULL THEN 'baseMap'
+         WHEN metadata_view.registry_id IS NULL AND datasets.geom IS NOT NULL THEN ST_AsText(datasets.geom)
+         WHEN metadata_view.registry_id IS NOT NULL AND metadata_view.geom IS NOT NULL THEN ST_AsText(metadata_view.geom)
+         WHEN metadata_view.registry_id IS NOT NULL AND metadata_view.geom IS NULL AND metadata_view.extent_description IS NULL THEN 'baseMap'
+         WHEN metadata_view.registry_id IS NOT NULL AND metadata_view.geom IS NULL AND metadata_view.extent_description IS NOT NULL THEN 'labOnly'
     END AS geom_data,
 
-    CASE WHEN registry.dataset_udi IS NULL THEN datasets.dataset_udi ELSE registry.dataset_udi
+    CASE WHEN registry_view.dataset_udi IS NULL THEN datasets.dataset_udi ELSE registry_view.dataset_udi
     END AS dataset_udi,
 
-    CASE WHEN metadata.title IS NOT NULL THEN metadata.title
-         WHEN registry.dataset_title IS NOT NULL THEN registry.dataset_title
+    CASE WHEN metadata_view.title IS NOT NULL THEN metadata_view.title
+         WHEN registry_view.dataset_title IS NOT NULL THEN registry_view.dataset_title
          ELSE  datasets.title
     END AS title,
 
@@ -98,7 +98,7 @@ if ($udi <> '')
          ELSE 0
     END AS identified,
 
-    CASE WHEN registry.registry_id IS NULL THEN 0
+    CASE WHEN registry_view.registry_id IS NULL THEN 0
          WHEN url_data IS NULL OR url_data = '' THEN 1
          ELSE 10
     END AS registered,
@@ -128,15 +128,15 @@ if ($udi <> '')
          ELSE 0
     END AS available,
 
-    CASE WHEN registry.submittimestamp IS NULL THEN
+    CASE WHEN registry_view.submittimestamp IS NULL THEN
         to_char(timezone('UTC', datasets.last_edit), 'Mon DD, YYYY (HH24:MI UTC)')
     ELSE
-        to_char(timezone('UTC', registry.submittimestamp), 'Mon DD, YYYY (HH24:MI UTC)')
+        to_char(timezone('UTC', registry_view.submittimestamp), 'Mon DD, YYYY (HH24:MI UTC)')
     END AS lastupdatetimestamp
 
     FROM datasets
-    LEFT JOIN registry_view registry ON registry.dataset_udi = datasets.dataset_udi
-    LEFT JOIN metadata_view metadata ON registry.registry_id = metadata.registry_id
+    LEFT JOIN registry_view ON registry_view.dataset_udi = datasets.dataset_udi
+    LEFT JOIN metadata_view ON registry_view.registry_id = metadata_view.registry_id
     WHERE datasets.dataset_udi = '$udi' LIMIT 1
     ;
     ";

@@ -74,26 +74,43 @@
 
     <tr>
         <td valign="top">
-            {% if mdata.Program_StartDate %}
-                <b>Program Start Date:</b><br/>
-                {{mdata.Program_StartDate}}
+            {% if (pdata.begin_position and pdata.end_position) and not pdata.extent_description  %}
+                <b>Data Collection Period:</b><br/>
+                {{pdata.begin_position}}
+                  to
+                {{pdata.end_position}}
             {% endif %}
         </td>
     </tr>
 
     <tr>
-        <td>
-            {% if mdata.Program_EndDate %}
-                <b>Program End Date:</b><br/>
-                {{mdata.Program_EndDate}}
+        <td valign="top">
+            {% if pdata.extent_description and not (pdata.begin_position and pdata.end_position) %}
+              <tr><td colspan="2">&nbsp;</td></tr>
+              <tr><td colspan="2"><b>Extent Description:</b><br/> {{pdata.extent_description}}</td></tr>
+            {% endif %}
+         </td>
+    </tr>
+
+    <tr>
+        <td valign="top">
+            {% if (pdata.begin_position and pdata.end_position) and pdata.extent_description and pdata.geom %}
+               <b>Data Collection Period:</b><br/>
+               {{pdata.begin_position}}
+               to
+               {{pdata.end_position}}
             {% endif %}
         </td>
     </tr>
 
-    {% if pdata.extent_description %}
-        <tr><td colspan="2">&nbsp;</td></tr>
-        <tr><td colspan="2"><b>Extent Description:</b><br/> {{pdata.extent_description}}</td></tr>
-    {% endif %}
+    <tr>
+        <td valign="top">
+            {% if (pdata.begin_position and pdata.end_position) and pdata.extent_description and ( not pdata.geom ) %}
+                <tr><td colspan="2">&nbsp;</td></tr>
+                <tr><td colspan="2"><b>Extent Description:</b><br/> {{pdata.extent_description}}</td></tr>
+            {% endif %}
+        </td>
+    </tr>
 
 </table>
 
