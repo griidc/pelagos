@@ -83,6 +83,11 @@ if ($udi <> '')
          WHEN metadata.registry_id IS NOT NULL AND metadata.geom IS NULL AND metadata.extent_description IS NOT NULL THEN 'labOnly'
     END AS geom_data,
 
+    CASE WHEN metadata.abstract IS NOT NULL THEN metadata.abstract
+         WHEN metadata.abstract IS NULL AND registry.dataset_abstract IS NOT NULL THEN registry.dataset_abstract
+         WHEN metadata.abstract IS NULL AND registry.dataset_abstract IS NULL AND datasets.abstract IS NOT NULL THEN datasets.abstract
+    END AS abstract,
+
     CASE WHEN registry.dataset_udi IS NULL THEN datasets.dataset_udi ELSE registry.dataset_udi
     END AS dataset_udi,
 
@@ -138,10 +143,21 @@ if ($udi <> '')
 
     $prow = $prow[0];
 
-// remove the double quotes and curly braces from the keyword list
-    if($prow['keywords']) {
-        $prow['keywords'] = preg_replace('%[\{\}\"]%', '',$prow['keywords']);
-        $prow['keywords'] = preg_replace('%\,%',', ',$prow['keywords']);
+// make the theme_keywords pretty for display
+    define("RIGHT_CURLY_BRACE", "}");  // the right curly brace character string
+    define("LEFT_CURLY_BRACE","{");    // left curly brace character string
+    define("DOUBLE_QUOTE",'"');        // double quotation mark character string
+    define("COMMA",',');               // a string with a single comma
+    define("COMMA_SPACE",", ");        // a string with a comma followed by a space
+    define("EMPTY_STRING",'');         // a string with nothing in it
+    if($prow['theme_keywords']) {
+        $temp = $prow['theme_keywords'];
+        $temp = str_replace(RIGHT_CURLY_BRACE,EMPTY_STRING,$temp);
+        $temp = str_replace(LEFT_CURLY_BRACE,EMPTY_STRING,$temp);
+        $temp = str_replace(DOUBLE_QUOTE,EMPTY_STRING,$temp);
+        $temp = str_replace(COMMA,COMMA_SPACE,$temp);
+        //  make a new entry in the array for use in details.html
+        $prow['keywords'] = $temp;
     }
 
 
