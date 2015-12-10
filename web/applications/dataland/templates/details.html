@@ -1,16 +1,3 @@
-{% if mdata.Program_Title %}
-<h2>Project Title:</h2>
-<div>
-<a target="_blank" href="http://research.gulfresearchinitiative.org/research-awards/projects/?pid={{mdata.Program_ID}}">{{mdata.Program_Title}}</a>
-</div>
-{% endif %}
-
-{% if mdata.Project_Title %}
-<h2>Task Title:</h2>
-<div>
-{{mdata.Project_Title}}
-</div>
-{% endif %}
 
 {% if pdata.purpose %}
 <h2>Purpose:</h2>
