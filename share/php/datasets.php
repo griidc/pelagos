@@ -61,7 +61,7 @@ $GLOBALS['REGISTRY_FIELDS'] = array(
     "r.dataset_download_status",
     "r.dataset_originator",
     "to_char(r.submittimestamp,'YYYY') as year",
-    "ST_AsText(md.geom) as \"the_geom\""
+    "ST_AsText(mv.geom) as \"the_geom\""
 );
 
 $GLOBALS['DIF_FIELDS'] = array(
@@ -92,8 +92,16 @@ $GLOBALS['DIF_FIELDS'] = array(
 );
 
 $GLOBALS['REGISTRY_OVERRIDE_FIELDS'] = array(
-    "CASE WHEN r.dataset_title IS NULL THEN title ELSE r.dataset_title END AS title",
-    "CASE WHEN r.dataset_abstract IS NULL THEN abstract ELSE r.dataset_abstract END AS abstract"
+    "CASE
+        WHEN mv.title IS NOT NULL then mv.title
+        WHEN r.dataset_title IS NOT NULL THEN r.dataset_title
+        ELSE d.title
+     END AS title",
+    "CASE
+        WHEN mv.abstract IS NOT NULL then mv.abstract
+        WHEN r.dataset_abstract IS NOT NULL THEN r.dataset_abstract
+        ELSE d.abstract
+     END AS abstract"
 );
 
 $GLOBALS['IDENTIFIED_FROM'] = 'FROM datasets d
@@ -108,7 +116,7 @@ $GLOBALS['IDENTIFIED_FROM'] = 'FROM datasets d
                                ) r
                                ON r.dataset_udi = d.dataset_udi
                                LEFT JOIN projects p on p."ID" = d.project_id
-                               LEFT JOIN metadata md ON r."registry_id" = md."registry_id"';
+                               LEFT JOIN metadata_view mv ON r."registry_id" = mv."registry_id"';
 
 $GLOBALS['REGISTERED_FROM'] = 'FROM registry r
                                INNER JOIN (
@@ -120,7 +128,7 @@ $GLOBALS['REGISTERED_FROM'] = 'FROM registry r
                                LEFT JOIN datasets d
                                ON d.dataset_udi = r.dataset_udi
                                LEFT JOIN projects p on p."ID" = d.project_id
-                               LEFT JOIN metadata md ON r."registry_id" = md."registry_id"';
+                               LEFT JOIN metadata_view mv ON r."registry_id" = mv."registry_id"';
 
 $GLOBALS['IDENTIFIED_SEARCH_RANK'] = "
 JOIN
@@ -609,7 +617,7 @@ EOT;
                     $WHERE .= " AND p.\"FundSrc\" $matches[2] $matches[3]";
                     break;
                 case 'geo_filter':
-                    $WHERE .= " AND ST_Intersects('SRID=4326;$matches[3]'::geometry,md.geom)";
+                    $WHERE .= " AND ST_Intersects('SRID=4326;$matches[3]'::geometry,mv.geom)";
                     break;
                 case 'has_data':
                     $WHERE .= " AND r.url_data " . $GLOBALS['IS_MAP'][$matches[2]] . ' ' .

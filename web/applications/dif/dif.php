@@ -194,6 +194,7 @@ function postDIF($fielddata)
                 case 8: $fundingSource = 'R2'; break;
                 case 9: $fundingSource = 'R3'; break;
                 case 10: $fundingSource = 'R4'; break;
+                case 11: $fundingSource = 'R5'; break;
                 default: return json_encode(array('success'=>false,'message'=>'Unknown Funding Source!','title'=>'ERROR'));
             }
         }
