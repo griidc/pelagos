@@ -53,11 +53,13 @@ $prow ='';
 $mrow ='';
 $mprow ='';
 
-$URI = preg_split('/\?/',$_SERVER['REQUEST_URI']);
-
 $URIs = preg_split('/\//',$_SERVER['REQUEST_URI']);
 
 $udi = urldecode($URIs[count($URIs)-2]);
+if (!preg_match('/^[RrYy]\d\.x\d{3}.\d{3}:\d{4}$/', $udi)) {
+    $udi = '';
+}
+
 $logged_in = user_is_logged_in_somehow(); # returns bool, true if logged in.
 
 if ($udi <> '')
@@ -124,7 +126,16 @@ if ($udi <> '')
                   ELSE 0
              END
          ELSE 0
-    END AS available
+    END AS available,
+
+    CASE
+        WHEN registry_view.submittimestamp IS NULL AND datasets.last_edit IS NOT NULL THEN
+            to_char(timezone('UTC', datasets.last_edit), 'Mon DD, YYYY (HH24:MI UTC)')
+        WHEN registry_view.submittimestamp IS NOT NULL THEN
+            to_char(timezone('UTC', registry_view.submittimestamp), 'Mon DD, YYYY (HH24:MI UTC)')
+        ELSE
+            NULL
+    END AS lastupdatetimestamp
 
     FROM datasets
     LEFT JOIN registry_view ON registry_view.dataset_udi = datasets.dataset_udi
@@ -490,7 +501,17 @@ var dlmap = new GeoViz();
             if (in_array($prow['dataset_download_status'], array('Completed','RemotelyHosted'))) {
                 $dataset_available = 1;
             }
-            echo $twig->render('summary.html', array('pdata' => $prow,'mdata' => $mrow,'mpdata' => $mprow, 'baseurl' => $_SERVER['SCRIPT_NAME'], 'dl_ok' => $dl_ok, 'dataset_available' => $dataset_available));
+            echo $twig->render(
+                'summary.html',
+                array(
+                    'pdata' => $prow,
+                    'mdata' => $mrow,
+                    'mpdata' => $mprow,
+                    'baseurl' => $_SERVER['SCRIPT_NAME'],
+                    'dl_ok' => $dl_ok,
+                    'dataset_available' => $dataset_available
+                )
+            );
             ?>
             </div>
         </td>
@@ -570,4 +591,4 @@ No dataset has been identified or registered with the UDI: <?php echo "$udi";?><
 If you are experiencing difficulties, please contact <a href="mailto:griidc@gomri.org">GRIIDC</a>.
 </p>
 
-<?php };?>
+<?php };

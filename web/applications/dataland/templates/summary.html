@@ -32,10 +32,22 @@
         <tr><td colspan="2"><b>DOI:</b><br/> {{pdata.noheader_doi}}</td></tr>
         <tr><td colspan="2">&nbsp;</td></tr>
     {% endif %}
-    <tr><td colspan="2"><b>UDI:</b><br/> {{pdata.dataset_udi}}</td></tr>
-    <tr><td colspan="2">&nbsp;</td></tr>
+    <tr>
+        <td><b>UDI:</b><br/>{{pdata.dataset_udi}}</td>
+        <td>
+            {% if pdata.lastupdatetimestamp %}
+                <b>Last Update:</b><br />
+                {{pdata.lastupdatetimestamp}}<br />
+            {% endif %}
+        </td>
+    </tr>
 
-    <tr><td valign="top"><b>Dataset Author(s):</b><br/> {{pdata.dataset_originator}}</td>
+    <tr>
+        <td colspan="2">&nbsp;</td>
+    </tr>
+
+    <tr>
+        <td valign="top"><b>Dataset Author(s):</b><br/> {{pdata.dataset_originator}}</td>
         <td rowspan="4" valign="top">
             {% if mpdata %}
                 <b>Point of Contact:</b><br/>
