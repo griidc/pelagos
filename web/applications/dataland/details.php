@@ -76,7 +76,7 @@ if ($udi <> '')
     $pquery = "
     SELECT *,
 
-    TRIM(BOTH FROM array_to_string(theme_keywords, ', ')) AS theme_keywords,
+    TRIM(BOTH FROM array_to_string(theme_keywords, ', ')) AS theme_keywords_string,
 
     CASE WHEN metadata_view.registry_id IS NULL AND datasets.geom IS NULL THEN 'baseMap'
          WHEN metadata_view.registry_id IS NULL AND datasets.geom IS NOT NULL THEN ST_AsText(datasets.geom)
