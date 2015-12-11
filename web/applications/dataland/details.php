@@ -76,6 +76,8 @@ if ($udi <> '')
     $pquery = "
     SELECT *,
 
+    TRIM(BOTH FROM array_to_string(theme_keywords, ', ')) AS theme_keywords,
+
     CASE WHEN metadata_view.registry_id IS NULL AND datasets.geom IS NULL THEN 'baseMap'
          WHEN metadata_view.registry_id IS NULL AND datasets.geom IS NOT NULL THEN ST_AsText(datasets.geom)
          WHEN metadata_view.registry_id IS NOT NULL AND metadata_view.geom IS NOT NULL THEN ST_AsText(metadata_view.geom)
@@ -141,24 +143,6 @@ if ($udi <> '')
     $prow = pdoDBQuery($pconn,$pquery);
 
     $prow = $prow[0];
-
-// make the theme_keywords pretty for display
-    define("RIGHT_CURLY_BRACE", "}");  // the right curly brace character string
-    define("LEFT_CURLY_BRACE","{");    // left curly brace character string
-    define("DOUBLE_QUOTE",'"');        // double quotation mark character string
-    define("COMMA",',');               // a string with a single comma
-    define("COMMA_SPACE",", ");        // a string with a comma followed by a space
-    define("EMPTY_STRING",'');         // a string with nothing in it
-    if($prow['theme_keywords']) {
-        $temp = $prow['theme_keywords'];
-        $temp = str_replace(RIGHT_CURLY_BRACE,EMPTY_STRING,$temp);
-        $temp = str_replace(LEFT_CURLY_BRACE,EMPTY_STRING,$temp);
-        $temp = str_replace(DOUBLE_QUOTE,EMPTY_STRING,$temp);
-        $temp = str_replace(COMMA,COMMA_SPACE,$temp);
-        //  make a new entry in the array for use in details.html
-        $prow['keywords'] = $temp;
-    }
-
 
     if($prow["doi"]) {
         $prow["noheader_doi"] = preg_replace("/doi:/",'',$prow["doi"]);
