@@ -1,16 +1,14 @@
 -- -----------------------------------------------------------------------------
--- Name:      make_metadata_view.sql
+-- Name:      modify_metadata_table.sql
 -- Author:    Patrick Krepps
--- Date:      18 November 2015
+-- Date:      02 December 2015
 -- Inputs:    NONE
--- Output:    Modifications to the metadata table and a new database view
--- Info:      This script modifies the metadata table, adding abstract, begin
---            and end positions, and title attributes. It then creates a
---            trigger function to populate those, and the extent_description
---            attributes from the metadata_xml data.
---            The script then goes on to create a view used by the front-end to
---            logically determine the authoritative source of the abstract, the
---            begin and end positions, the extent_description, and the title.
+-- Output:    Modifications to the metadata table to support a future database
+--            view based on the table.
+-- Info:      This script modifies the metadata table, adding several
+--            additional attributes. It then creates a trigger function to
+--            populate all but the registry_id and geom attributes from the
+--            supplied metadata_xml.
 -- -----------------------------------------------------------------------------
 -- TODO:      Figure out the best error handling strategy.
 -- -----------------------------------------------------------------------------
@@ -32,11 +30,17 @@ ALTER TABLE metadata
 ALTER TABLE metadata
    DROP COLUMN metadata_end_position;
 ALTER TABLE metadata
+   DROP COLUMN metadata_file_format;
+ALTER TABLE metadata
+   DROP COLUMN metadata_purpose;
+ALTER TABLE metadata
+   DROP COLUMN metadata_theme_keyword_array;
+ALTER TABLE metadata
    DROP COLUMN metadata_title;
 DROP INDEX idx_reg_udi_from_id;
 DROP INDEX idx_md_udi_from_id;
 
--- Create the indexes used by the front-end logic that makes use of this view:
+-- Create the indexes used by the front-end logic:
 CREATE INDEX idx_reg_udi_from_id
    ON registry (SUBSTRING(registry_id FROM 1 FOR 16));
 CREATE INDEX idx_md_udi_from_id
@@ -48,10 +52,13 @@ VACUUM ANALYZE metadata;
 
 -- Add the new metadata attributes:
 ALTER TABLE metadata
-   ADD COLUMN metadata_abstract        TEXT,
-   ADD COLUMN metadata_begin_position  TEXT,
-   ADD COLUMN metadata_end_position    TEXT,
-   ADD COLUMN metadata_title           TEXT;
+   ADD COLUMN metadata_abstract             TEXT,
+   ADD COLUMN metadata_begin_position       TEXT,
+   ADD COLUMN metadata_end_position         TEXT,
+   ADD COLUMN metadata_file_format          TEXT,
+   ADD COLUMN metadata_purpose              TEXT,
+   ADD COLUMN metadata_theme_keyword_array  TEXT[],
+   ADD COLUMN metadata_title                TEXT;
 
 -- Create the trigger function:
 CREATE FUNCTION udf_extract_metadata_elements()
@@ -176,6 +183,68 @@ AS $get_things$
                        )
                  )[1] AS TEXT
                 ), -- extent_description
+             CAST((xpath(CONCAT(''/gmi:MI_Metadata'',
+                                ''/gmd:distributionInfo'',
+                                ''/gmd:MD_Distribution'',
+                                ''/gmd:distributor'',
+                                ''/gmd:MD_Distributor'',
+                                ''/gmd:distributorFormat'',
+                                ''/gmd:MD_Format'',
+                                ''/gmd:name'',
+                                ''/gco:CharacterString/text()''),
+                         $1,
+                         ARRAY [ARRAY [''gco'',
+                                       ''http://www.isotc211.org/2005/gco''],
+                                ARRAY [''gmd'',
+                                       ''http://www.isotc211.org/2005/gmd''],
+                                ARRAY [''gmi'',
+                                       ''http://www.isotc211.org/2005/gmi''],
+                                ARRAY [''gml'',
+                                       ''http://www.opengis.net/gml/3.2'']
+                               ]
+                        )
+                  )[1] AS TEXT
+                 ), -- file_format
+             CAST((xpath(CONCAT(''/gmi:MI_Metadata'',
+                                ''/gmd:identificationInfo'',
+                                ''/gmd:MD_DataIdentification'',
+                                ''/gmd:purpose'',
+                                ''/gco:CharacterString/text()''),
+                         $1,
+                         ARRAY [ARRAY [''gco'',
+                                       ''http://www.isotc211.org/2005/gco''],
+                                ARRAY [''gmd'',
+                                       ''http://www.isotc211.org/2005/gmd''],
+                                ARRAY [''gmi'',
+                                       ''http://www.isotc211.org/2005/gmi''],
+                                ARRAY [''gml'',
+                                       ''http://www.opengis.net/gml/3.2'']
+                               ]
+                        )
+                  )[1] AS TEXT
+                 ), -- purpose
+             CAST((xpath(CONCAT(''/gmi:MI_Metadata'',
+                                ''/gmd:identificationInfo'',
+                                ''/gmd:MD_DataIdentification'',
+                                ''/gmd:descriptiveKeywords'',
+                                ''/gmd:MD_Keywords'',
+                                ''/gmd:type[descendant::text()="theme"]'',
+                                ''/parent::gmd:MD_Keywords'',
+                                ''/gmd:keyword'',
+                                ''/gco:CharacterString/text()''),
+                         $1,
+                         ARRAY [ARRAY [''gco'',
+                                       ''http://www.isotc211.org/2005/gco''],
+                                ARRAY [''gmd'',
+                                       ''http://www.isotc211.org/2005/gmd''],
+                                ARRAY [''gmi'',
+                                       ''http://www.isotc211.org/2005/gmi''],
+                                ARRAY [''gml'',
+                                       ''http://www.opengis.net/gml/3.2'']
+                               ]
+                        )
+                  ) AS TEXT[]
+                 ), -- theme_keywords
             CAST((xpath(CONCAT(''/gmi:MI_Metadata'',
                                ''/gmd:identificationInfo'',
                                ''/gmd:MD_DataIdentification'',
@@ -197,11 +266,14 @@ AS $get_things$
                  )[1] AS TEXT
                 ) -- title'
         USING NEW.metadata_xml
-        INTO NEW.abstract,
-             NEW.begin_position,
-             NEW.end_position,
+        INTO NEW.metadata_abstract,
+             NEW.metadata_begin_position,
+             NEW.metadata_end_position,
              NEW.extent_description,
-             NEW.title;
+             NEW.metadata_file_format,
+             NEW.metadata_purpose,
+             NEW.metadata_theme_keyword_array,
+             NEW.metadata_title;
 
       RETURN NEW;
    END;
@@ -215,28 +287,3 @@ CREATE TRIGGER trg_metadata_elements_insert
 CREATE TRIGGER trg_metadata_elements_update
    BEFORE UPDATE ON metadata
    FOR EACH ROW EXECUTE PROCEDURE udf_extract_metadata_elements();
-
--- Create the view (we are only aliasing the newly added columns because there
--- will be a lot of legacy code that depends on the original entity attribute
--- names. In particular this creates a naming anomaly where what should be
--- named xml in the view will remain known as metadata_xml):
-CREATE VIEW metadata_view AS
-   SELECT registry_id,
-          extent_description,
-          geom,
-          metadata_title AS title,
-          metadata_begin_position AS begin_position,
-          metadata_end_position AS end_position,
-          metadata_abstract AS abstract,
-          metadata_xml
-   FROM metadata;
-
--- Set object ownership and permissions:
-ALTER TABLE metadata_view
-   OWNER TO gomri_admin;
-
-GRANT SELECT
-ON TABLE metadata_view
-TO gomri_reader,
-   gomri_user,
-   gomri_writer;
