@@ -78,12 +78,19 @@ if ($udi <> '')
     $pquery = "
     SELECT *,
 
+    TRIM(BOTH FROM array_to_string(theme_keywords, ', ')) AS theme_keywords_string,
+
     CASE WHEN metadata_view.registry_id IS NULL AND datasets.geom IS NULL THEN 'baseMap'
          WHEN metadata_view.registry_id IS NULL AND datasets.geom IS NOT NULL THEN ST_AsText(datasets.geom)
          WHEN metadata_view.registry_id IS NOT NULL AND metadata_view.geom IS NOT NULL THEN ST_AsText(metadata_view.geom)
          WHEN metadata_view.registry_id IS NOT NULL AND metadata_view.geom IS NULL AND metadata_view.extent_description IS NULL THEN 'baseMap'
          WHEN metadata_view.registry_id IS NOT NULL AND metadata_view.geom IS NULL AND metadata_view.extent_description IS NOT NULL THEN 'labOnly'
     END AS geom_data,
+
+    CASE WHEN metadata_view.abstract IS NOT NULL THEN metadata_view.abstract
+         WHEN metadata_view.abstract IS NULL AND registry_view.dataset_abstract IS NOT NULL THEN registry_view.dataset_abstract
+         WHEN metadata_view.abstract IS NULL AND registry_view.dataset_abstract IS NULL AND datasets.abstract IS NOT NULL THEN datasets.abstract
+    END AS abstract,
 
     CASE WHEN registry_view.dataset_udi IS NULL THEN datasets.dataset_udi ELSE registry_view.dataset_udi
     END AS dataset_udi,
