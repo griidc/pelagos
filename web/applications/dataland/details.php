@@ -75,6 +75,11 @@ if ($udi <> '')
         $enforceMetadataRule = 0;
     }
 
+    $serverTZ = ini_get('date.timezone');
+    if(empty($serverTZ)) {
+        $serverTZ = date_default_timezone_get();
+    }
+
     $pquery = "
     SELECT *,
 
@@ -137,9 +142,9 @@ if ($udi <> '')
 
     CASE
         WHEN registry_view.submittimestamp IS NULL AND datasets.last_edit IS NOT NULL THEN
-            to_char(timezone('UTC', datasets.last_edit), 'Mon DD, YYYY (HH24:MI UTC)')
+            to_char(timezone('UTC', timezone('$serverTZ', datasets.last_edit)), 'Mon DD YYYY HH24:MI') || ' UTC'
         WHEN registry_view.submittimestamp IS NOT NULL THEN
-            to_char(timezone('UTC', registry_view.submittimestamp), 'Mon DD, YYYY (HH24:MI UTC)')
+            to_char(timezone('UTC', timezone('$serverTZ', registry_view.submittimestamp)), 'Mon DD YYYY HH24:MI') || ' UTC'
         ELSE
             NULL
     END AS lastupdatetimestamp
