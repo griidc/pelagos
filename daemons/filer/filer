@@ -231,17 +231,18 @@ while (my $r = $sth->fetchrow_hashref()) {
                 dataset_metadata = ?,
                 metadata_dl_status = ?,
                 metadata_status = ?,
-                metadata_sha256_hash = ?
+                metadata_file_hash = ?
             WHERE
-                registry_id = ?;"
+                registry_id = ?"
     );
+
     $log->write("[$udi] updating dataset_metadata, metadata_dl_status, metadata_status, and metadata_sha256_hash");
-    $sth2->execute($filename, 'Completed', 'Submitted', $reg_id, $digest) or die "Couldn't execute statement: " . $sth2->errstr;
+    $sth2->execute($filename, 'Completed', 'Submitted', $digest, $reg_id) or die "Couldn't execute statement: " . $sth2->errstr;
 
     # set parameters for submitter notification
     $notify{$r->{'userid'}}->{'metadata'} = [] unless exists $notify{$r->{'userid'}}->{'metadata'};
-    push(@{$notify{$r->{'userid'}}->{'metadata'}}, { udi => $udi, title => $r->{'dataset_title'}, filename => $filename, metadata_sha256_hash => $digest });
-    push(@md_approve, { udi => $udi, title => $r->{'dataset_title'}, filename => $filename, metadata_sha256_hash => $digest });
+    push(@{$notify{$r->{'userid'}}->{'metadata'}}, { udi => $udi, title => $r->{'dataset_title'}, filename => $filename, metadata_file_hash => $digest });
+    push(@md_approve, { udi => $udi, title => $r->{'dataset_title'}, filename => $filename, metadata_file_hash => $digest });
 
 }
 
