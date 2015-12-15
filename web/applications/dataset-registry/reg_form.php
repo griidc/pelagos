@@ -305,7 +305,7 @@ function formDisabled($isDisabled)
             title:
             {
                 required: true,
-                maxlength: 200
+                maxlength: 300
             },
             abstrct:
             {
