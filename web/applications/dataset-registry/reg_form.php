@@ -817,7 +817,7 @@ fieldset {
     <img src="includes/images/info.png" style="float:right;" />
     <p>
         <strong>Title:</strong><p/><p>It is in the discretion of the researcher to define the level of data aggregation to define a dataset. If this level of data aggregation has not been identified, it is recommended to start by answering the ‘what, how, when, where’. It is also not recommended to aggregate data too much that the data attributes can no longer be segregated and discoverable.</p><p>Example Input: Hydrodynamics: ADCP Data for June – July 2012 in Station 42001</p>
-        <p>200 Characters Max</p>
+        <p>300 Characters Max</p>
     </p>
 </div>
 
