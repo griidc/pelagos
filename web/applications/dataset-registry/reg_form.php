@@ -744,27 +744,6 @@ function submitRegistry() {
     width: 100%;
 }
 
-#regForm .textareacontainer {
-    position: relative;
-    height: 20em;
-}
-#regForm textarea {
-    position: absolute;
-    left: 0px;
-    right: 0px;
-    height: 50px;
-}
-
-#regForm .fwtextboxcont {
-    position: relative;
-    height: 25px;
-}
-#regForm .fwtextboxcont input {
-    position: absolute;
-    left: 0px;
-    right: 0px;
-}
-
 legend.section-header {
     font-size: 130%;
     font-weight: bold;
@@ -1009,7 +988,7 @@ fieldset {
                 <div class="textareacontainer">
                     <textarea
                         <?php formDisabled($formDisabled); ?>
-                        name="abstrct" id="abstrct" style="height:100%;width:100%"><?php if (isset($row['abstract'])) echo htmlspecialchars($row['abstract']); ?></textarea>
+                        name="abstrct" id="abstrct" style="height:20em;width:100%"><?php if (isset($row['abstract'])) echo htmlspecialchars($row['abstract']); ?></textarea>
                 </div>
             </fieldset>
         </p>
