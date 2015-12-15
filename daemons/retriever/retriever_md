@@ -16,6 +16,7 @@ use IO::File;
 use Pelagos::Logger;
 use Sys::Hostname;
 use Pelagos::DataStore;
+use Digest::SHA qw(sha256_hex);
 
 umask 0022;
 
@@ -89,7 +90,7 @@ while (my $r = $sth->fetchrow_hashref()) {
     if ($url_metadata =~ /^http/) {
 
         my $response = $ua->head($url_metadata);
- 
+
         if ($response->is_success) {
             my $filename;
             my $cd = $response->header('content-disposition');
@@ -145,15 +146,31 @@ while (my $r = $sth->fetchrow_hashref()) {
             # add to filed list
             $md_filed{$reg_id} = { url => $url_metadata, path => "$conf->{paths}->{data_store}/$udi/$udi.met" };
 
-            # update dataset_metadata (original filename), metadata_dl_status, and metadata_status
-            my $sth2 = $dbh->prepare("UPDATE registry SET dataset_metadata = ?, metadata_dl_status = ?, metadata_status = ? WHERE registry_id = ?;");
-            $log->write("[$udi] updating dataset_metadata, metadata_dl_status, and metadata_status");
-            $sth2->execute($filename,'Completed','Submitted',$reg_id) or die "Couldn't execute statement: " . $sth2->errstr;
+            # Calculate SHA256 hash of metadata file.
+            my $sha = Digest::SHA->new('sha256');
+            $sha->addfile("$conf->{paths}->{data_store}/$udi/$udi.met");
+            my $digest = $sha->hexdigest;
+
+            # update dataset_metadata (original filename), metadata_dl_status, metadata_status, and metadata_file_hash.
+            my $sth2 = $dbh->prepare("
+                UPDATE
+                    registry
+                SET
+                    dataset_metadata = ?,
+                    metadata_dl_status = ?,
+                    metadata_status = ?,
+                    metadata_file_hash = ?
+                WHERE
+                    registry_id = ?"
+            );
+
+            $log->write("[$udi] updating dataset_metadata, metadata_dl_status, metadata_status, and metadata_file_hash.");
+            $sth2->execute($filename, 'Completed', 'Submitted', $digest, $reg_id) or die "Couldn't execute statement: " . $sth2->errstr;
 
             # set parameters for submitter notification
             $notify{$r->{'userid'}}->{'metadata'} = [] unless exists $notify{$r->{'userid'}}->{'metadata'};
-            push(@{$notify{$r->{'userid'}}->{'metadata'}}, { udi => $udi, title => $r->{'dataset_title'}, filename => $filename });
-            push(@md_approve, { udi => $udi, title => $r->{'dataset_title'}, filename => $filename });
+            push(@{$notify{$r->{'userid'}}->{'metadata'}}, { udi => $udi, title => $r->{'dataset_title'}, filename => $filename, metadata_file_hash => $digest });
+            push(@md_approve, { udi => $udi, title => $r->{'dataset_title'}, filename => $filename, metadata_file_hash => $digest });
         }
         else {
             $log->write("[$udi] failed to download metadata file from $url_metadata (" . $response->status_line . ")");
