@@ -13,7 +13,7 @@ use IO::Handle;
 use Pelagos::DataStore;
 use Pelagos::Logger;
 use Sys::Hostname;
-use Digest::SHA wq(sha256_hex);
+use Digest::SHA qw(sha256_hex);
 
 umask 0022;
 
@@ -222,7 +222,7 @@ while (my $r = $sth->fetchrow_hashref()) {
 
     # Calculate SHA256 hash of metadata file.
     my $sha = Digest::SHA->new('sha256');
-    $sha256->addfile("$config->{paths}->{data_store}/$udi/$udi.met");
+    $sha->addfile("$config->{paths}->{data_store}/$udi/$udi.met");
     my $digest = $sha->hexdigest;
 
     my $sth2 = $dbh->prepare("
