@@ -236,7 +236,7 @@ while (my $r = $sth->fetchrow_hashref()) {
                 registry_id = ?"
     );
 
-    $log->write("[$udi] updating dataset_metadata, metadata_dl_status, metadata_status, and metadata_sha256_hash");
+    $log->write("[$udi] updating dataset_metadata, metadata_dl_status, metadata_status, and metadata_file_hash");
     $sth2->execute($filename, 'Completed', 'Submitted', $digest, $reg_id) or die "Couldn't execute statement: " . $sth2->errstr;
 
     # set parameters for submitter notification
