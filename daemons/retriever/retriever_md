@@ -16,7 +16,7 @@ use IO::File;
 use Pelagos::Logger;
 use Sys::Hostname;
 use Pelagos::DataStore;
-use Digest::SHA qw(sha256_hex);
+use Digest::SHA;
 
 umask 0022;
 
@@ -393,7 +393,7 @@ for my $md (@md_approve) {
     $text .= "\nDataset Title: $md->{title}";
     $text .= "\nProject: $project_title";
     $text .= "\nTask: $task_title" if $task_title;
-    $text .= "\nSHA256 Hash: $md->{digest}";
+    $text .= "\nSHA256 Hash: $md->{metadata_file_hash}";
     $text .= "\n\nThe metadata file is attached.";
 
     $msg->attach(
