@@ -19,6 +19,8 @@
 -- -----------------------------------------------------------------------------
 -- DONE:
 -- -----------------------------------------------------------------------------
+\c gomri postgres
+
 DROP TRIGGER IF EXISTS udf_update_reg_trigger ON registry;
 DROP FUNCTION IF EXISTS udf_update_reg();
 
