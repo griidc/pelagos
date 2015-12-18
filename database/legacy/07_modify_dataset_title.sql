@@ -1,7 +1,7 @@
 -- -----------------------------------------------------------------------------
--- Name:      change_registry_varchar_columns.sql
+-- Name:      modify_dataset_title.sql
 -- Author:    Patrick N. Krepps Jr.
--- Date:      04 November 2015
+-- Date:      15 December 2015
 -- Purpose:   This script changes the registry table's dataset_title data type
 --            to TEXT. That DDL statement requires all views based on the table
 --            to be DROPped and then redefined. This script takes care of that
