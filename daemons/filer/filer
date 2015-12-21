@@ -241,7 +241,7 @@ while (my $r = $sth->fetchrow_hashref()) {
 
     # set parameters for submitter notification
     $notify{$r->{'userid'}}->{'metadata'} = [] unless exists $notify{$r->{'userid'}}->{'metadata'};
-    push(@{$notify{$r->{'userid'}}->{'metadata'}}, { udi => $udi, title => $r->{'dataset_title'}, filename => $filename, metadata_file_hash => $digest });
+    push(@{$notify{$r->{'userid'}}->{'metadata'}}, { udi => $udi, title => $r->{'dataset_title'}, filename => $filename });
     push(@md_approve, { udi => $udi, title => $r->{'dataset_title'}, filename => $filename, metadata_file_hash => $digest });
 
 }
@@ -560,6 +560,7 @@ for my $md (@md_approve) {
     $text .= "\nDataset Title: $md->{title}";
     $text .= "\nProject: $project_title";
     $text .= "\nTask: $task_title" if $task_title;
+    $text .= "\nSHA256 Hash: $md->{metadata_file_hash}";
     $text .= "\n\nThe metadata file is attached.";
 
     $msg->attach(
