@@ -53,11 +53,13 @@ $prow ='';
 $mrow ='';
 $mprow ='';
 
-$URI = preg_split('/\?/',$_SERVER['REQUEST_URI']);
-
 $URIs = preg_split('/\//',$_SERVER['REQUEST_URI']);
 
 $udi = urldecode($URIs[count($URIs)-2]);
+if (!preg_match('/^[RrYy]\d\.x\d{3}.\d{3}:\d{4}$/', $udi)) {
+    $udi = '';
+}
+
 $logged_in = user_is_logged_in_somehow(); # returns bool, true if logged in.
 
 if ($udi <> '')
@@ -73,29 +75,42 @@ if ($udi <> '')
         $enforceMetadataRule = 0;
     }
 
+    $serverTZ = ini_get('date.timezone');
+    if(empty($serverTZ)) {
+        $serverTZ = date_default_timezone_get();
+    }
+
     $pquery = "
     SELECT *,
 
-    CASE WHEN metadata.registry_id IS NULL AND datasets.geom IS NULL THEN 'baseMap'
+    TRIM(BOTH FROM array_to_string(theme_keywords, ', ')) AS theme_keywords_string,
 
-    WHEN metadata.registry_id IS NULL AND datasets.geom IS NOT NULL THEN ST_AsText(datasets.geom)
+    CASE WHEN metadata_view.registry_id IS NULL AND datasets.geom IS NULL THEN 'baseMap'
+         WHEN metadata_view.registry_id IS NULL AND datasets.geom IS NOT NULL THEN ST_AsText(datasets.geom)
+         WHEN metadata_view.registry_id IS NOT NULL AND metadata_view.geom IS NOT NULL THEN ST_AsText(metadata_view.geom)
+         WHEN metadata_view.registry_id IS NOT NULL AND metadata_view.geom IS NULL AND metadata_view.extent_description IS NULL THEN 'baseMap'
+         WHEN metadata_view.registry_id IS NOT NULL AND metadata_view.geom IS NULL AND metadata_view.extent_description IS NOT NULL THEN 'labOnly'
+    END AS geom_data,
 
-    WHEN metadata.registry_id IS NOT NULL AND metadata.geom IS NOT NULL THEN ST_AsText(metadata.geom)
+    CASE WHEN metadata_view.abstract IS NOT NULL THEN metadata_view.abstract
+         WHEN metadata_view.abstract IS NULL AND registry_view.dataset_abstract IS NOT NULL THEN registry_view.dataset_abstract
+         WHEN metadata_view.abstract IS NULL AND registry_view.dataset_abstract IS NULL AND datasets.abstract IS NOT NULL THEN datasets.abstract
+    END AS abstract,
 
-    WHEN metadata.registry_id IS NOT NULL AND metadata.geom IS NULL AND metadata.extent_description IS NULL THEN 'baseMap'
+    CASE WHEN registry_view.dataset_udi IS NULL THEN datasets.dataset_udi ELSE registry_view.dataset_udi
+    END AS dataset_udi,
 
-    WHEN metadata.registry_id IS NOT NULL AND metadata.geom IS NULL AND metadata.extent_description IS NOT NULL THEN 'labOnly'
-                                                                     END AS geom_data,
-
-    CASE WHEN registry.dataset_udi IS NULL THEN datasets.dataset_udi ELSE registry.dataset_udi END AS dataset_udi,
-    CASE WHEN registry.dataset_title IS NULL THEN datasets.title ELSE registry.dataset_title END AS title,
+    CASE WHEN metadata_view.title IS NOT NULL THEN metadata_view.title
+         WHEN registry_view.dataset_title IS NOT NULL THEN registry_view.dataset_title
+         ELSE  datasets.title
+    END AS title,
 
     CASE WHEN status = 2 THEN 10
          WHEN status = 1 THEN 1
          ELSE 0
     END AS identified,
 
-    CASE WHEN registry.registry_id IS NULL THEN 0
+    CASE WHEN registry_view.registry_id IS NULL THEN 0
          WHEN url_data IS NULL OR url_data = '' THEN 1
          ELSE 10
     END AS registered,
@@ -123,11 +138,20 @@ if ($udi <> '')
                   ELSE 0
              END
          ELSE 0
-    END AS available
+    END AS available,
+
+    CASE
+        WHEN registry_view.submittimestamp IS NULL AND datasets.last_edit IS NOT NULL THEN
+            to_char(timezone('UTC', timezone('$serverTZ', datasets.last_edit)), 'Mon DD YYYY HH24:MI') || ' UTC'
+        WHEN registry_view.submittimestamp IS NOT NULL THEN
+            to_char(timezone('UTC', timezone('$serverTZ', registry_view.submittimestamp)), 'Mon DD YYYY HH24:MI') || ' UTC'
+        ELSE
+            NULL
+    END AS lastupdatetimestamp
 
     FROM datasets
-    LEFT JOIN registry_view registry ON registry.dataset_udi = datasets.dataset_udi
-    LEFT JOIN metadata on registry.registry_id = metadata.registry_id
+    LEFT JOIN registry_view ON registry_view.dataset_udi = datasets.dataset_udi
+    LEFT JOIN metadata_view ON registry_view.registry_id = metadata_view.registry_id
     WHERE datasets.dataset_udi = '$udi' LIMIT 1
     ;
     ";
@@ -145,6 +169,10 @@ if ($udi <> '')
     } elseif ($prow["geom_data"] != 'baseMap') { //  add the geometry from the data. Either datasets or metadata
         $dsscript = 'dlmap.addFeatureFromWKT("' . $prow['geom_data'] . '",{"udi":"' . $prow['dataset_udi'] . '"});dlmap.gotoAllFeatures();';
     } //  else
+
+
+
+
     //  fall through and only the base map will show
 
     $mconn = OpenDB("RIS_RO");
@@ -276,7 +304,7 @@ var dlmap = new GeoViz();
                 }
             },
             modal: true,
-            resizable:false,
+            resizable:false
         });
 
         $("#downloaddsden").button().click(function() {
@@ -485,7 +513,17 @@ var dlmap = new GeoViz();
             if (in_array($prow['dataset_download_status'], array('Completed','RemotelyHosted'))) {
                 $dataset_available = 1;
             }
-            echo $twig->render('summary.html', array('pdata' => $prow,'mdata' => $mrow,'mpdata' => $mprow, 'baseurl' => $_SERVER['SCRIPT_NAME'], 'dl_ok' => $dl_ok, 'dataset_available' => $dataset_available));
+            echo $twig->render(
+                'summary.html',
+                array(
+                    'pdata' => $prow,
+                    'mdata' => $mrow,
+                    'mpdata' => $mprow,
+                    'baseurl' => $_SERVER['SCRIPT_NAME'],
+                    'dl_ok' => $dl_ok,
+                    'dataset_available' => $dataset_available
+                )
+            );
             ?>
             </div>
         </td>
@@ -565,4 +603,4 @@ No dataset has been identified or registered with the UDI: <?php echo "$udi";?><
 If you are experiencing difficulties, please contact <a href="mailto:griidc@gomri.org">GRIIDC</a>.
 </p>
 
-<?php };?>
+<?php };

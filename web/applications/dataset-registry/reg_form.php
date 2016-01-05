@@ -305,7 +305,7 @@ function formDisabled($isDisabled)
             title:
             {
                 required: true,
-                maxlength: 200
+                maxlength: 300
             },
             abstrct:
             {
@@ -744,27 +744,6 @@ function submitRegistry() {
     width: 100%;
 }
 
-#regForm .textareacontainer {
-    position: relative;
-    height: 20em;
-}
-#regForm textarea {
-    position: absolute;
-    left: 0px;
-    right: 0px;
-    height: 50px;
-}
-
-#regForm .fwtextboxcont {
-    position: relative;
-    height: 25px;
-}
-#regForm .fwtextboxcont input {
-    position: absolute;
-    left: 0px;
-    right: 0px;
-}
-
 legend.section-header {
     font-size: 130%;
     font-weight: bold;
@@ -817,7 +796,7 @@ fieldset {
     <img src="includes/images/info.png" style="float:right;" />
     <p>
         <strong>Title:</strong><p/><p>It is in the discretion of the researcher to define the level of data aggregation to define a dataset. If this level of data aggregation has not been identified, it is recommended to start by answering the ‘what, how, when, where’. It is also not recommended to aggregate data too much that the data attributes can no longer be segregated and discoverable.</p><p>Example Input: Hydrodynamics: ADCP Data for June – July 2012 in Station 42001</p>
-        <p>200 Characters Max</p>
+        <p>300 Characters Max</p>
     </p>
 </div>
 
@@ -831,7 +810,7 @@ fieldset {
 <div id="dataset_originator_tip" style="display:none;">
     <img src="includes/images/info.png" style="float:right;" />
     <p>
-        <strong>Dataset Originator(s):</strong><p/><p>This is the person (or people) or organization that generated the dataset. It is preferable to specify an individual, rather than an organization, whenever possible. Please specify individuals using the following format: Lastname, Firstname</p><p>For multiple originators, please use the MLA citation style, eg.:</p><p>Two originators:<br/>Cross, Susan, and Christine Hoffman</p><p>Three originators:<br/>Lowi, Theodore, Benjamin Ginsberg, and Steve Jackson</p><p>More than three originators:<br/> Gilman, Sander, et al</p>
+        <strong>Dataset Author(s):</strong><p/><p>The Suggested Author List should contain all participants who collaborated in the creation, processing or analysis of the data you are sending to GRIIDC who should be acknowledged if these data are cited as a published work. Please list suggested authors in the order in which they should be listed in a citation.</p>
     </p>
 </div>
 
@@ -1009,15 +988,15 @@ fieldset {
                 <div class="textareacontainer">
                     <textarea
                         <?php formDisabled($formDisabled); ?>
-                        name="abstrct" id="abstrct" style="height:100%;width:100%"><?php if (isset($row['abstract'])) echo htmlspecialchars($row['abstract']); ?></textarea>
+                        name="abstrct" id="abstrct" style="height:20em;width:100%"><?php if (isset($row['abstract'])) echo htmlspecialchars($row['abstract']); ?></textarea>
                 </div>
             </fieldset>
         </p>
 
-        <p> <!-- Dataset Originator(s) -->
+        <p> <!-- Dataset Author(s) -->
             <fieldset>
                 <span id="qtip_dataset_originator" style="float:right;"><img src="includes/images/info.png"></span>
-                <label for="dataset_originator"><span class="emRequired"/><b>Dataset Originator(s): </b></label>
+                <label for="dataset_originator"><span class="emRequired"/><b>Dataset Author(s): </b></label>
                 <div class="fwtextboxcont">
                     <input
                         <?php formDisabled($formDisabled); ?>
