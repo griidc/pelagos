@@ -618,49 +618,10 @@ function setPath(type,path)
     document.getElementById('sftp_force_' + type + '_download').style.visibility = 'hidden';
 }
 
-var progressBarInt;
-
-function showProgressBar() {
-    jQuery("body").addClass("noscroll");
-    jQuery("#progressBar").show();
-
-    progressBarInt = window.setInterval(function() {
-        jQuery.ajax({
-            "url": "/registry_upload_progress?key=" + jQuery("#APC_UPLOAD_PROGRESS").val(),
-            "success": function(data) {
-                jQuery("#progressBarBar").html(data);
-            }
-        });
-    },1000);
-}
-
-function hideProgressBar() {
-    jQuery("#progressBar").hide();
-    jQuery("#progressBarBar").html('<div id="progressBarBar" style="width:0px;"><div id="progressBarPercent">0%</div></div>');
-    jQuery("body").removeClass("noscroll");
-}
-
-function cancelUpload() {
-    if (typeof(window.stop) == 'undefined') {
-        document.execCommand('Stop');
-        window.frames[0].document.execCommand('Stop');
-    }
-    else {
-        window.stop();
-    }
-
-    hideProgressBar();
-    window.clearInterval(progressBarInt);
-}
-
 function submitRegistry() {
     weekDays();
     getTimeZone();
     if (jQuery("#regForm").valid()) {
-        if (jQuery('#servertype').val() == 'upload' && jQuery('#datafile').val() != '' ||
-            jQuery('#md_servertype').val() == 'upload' && jQuery('#metadatafile').val() != '') {
-            showProgressBar();
-        }
         jQuery('#post_frame').load(function() {
             response = jQuery('#post_frame').contents().find("#main").html();
             jQuery("#main").html(response);
@@ -697,53 +658,6 @@ function submitRegistry() {
     background-color: white;
 }
 
-#progressBar {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1000;
-    background: transparent url(/modules/overlay/images/background.png) repeat;
-}
-#progressBarContent {
-    position: absolute;
-    width: 600px;
-    height: 110px;
-    top: 50%;
-    left: 50%;
-    margin-left: -300px;
-    margin-top: -55px;
-    border: 1px solid black;
-    background-color: white;
-    padding: 10px;
-}
-
-#progressBarMessage {
-    font-weight: bold;
-}
-
-#progressBarContainer {
-    margin-top: 10px;
-}
-
-#progressBarBar {
-    height:20px;
-    background-color:#aaf;
-    font-weight:bold;
-}
-#progressBarPercent {
-    padding-left:2px;
-    padding-top:2px;
-}
-
-#progressBarCancel {
-    margin-top: 10px;
-    text-align: center;
-    width: 100%;
-}
-
 legend.section-header {
     font-size: 130%;
     font-weight: bold;
@@ -769,20 +683,6 @@ fieldset {
 
 <div id="fileBrowser">
     <div id="fileBrowserContent"></div>
-</div>
-
-<div id="progressBar">
-    <div id="progressBarContent">
-        <div id="progressBarMessage">Upload progress:</div>
-
-        <div id="progressBarContainer" style="width:580px; border: 1px solid black;">
-            <div id="progressBarBar" style="width:0px;"><div id="progressBarPercent">0%</div></div>
-        </div>
-
-        <div id="progressBarCancel">
-            <input type="button" value="Cancel" onclick="cancelUpload();">
-        </div>
-    </div>
 </div>
 
 <div id="regid_tip" style="display:none;">
@@ -1089,10 +989,6 @@ fieldset {
             <div id="tabs-1"> <!-- Direct Upload -->
                 For small datasets (&lt;1 GB), you may upload the dataset file directly, using your web browser. Depending on the size of the file, this may take several minutes. The maximum time the system will wait for the file to upload is 10 minutes. For larger files, please consider using SFTP or GridFTP to upload the file.
                 <fieldset>
-                    <?php
-                        $upload_progress_key = md5(mt_rand());
-                        echo "<input type='hidden' id='APC_UPLOAD_PROGRESS' name='APC_UPLOAD_PROGRESS' value='$upload_progress_key' />";
-                    ?>
                     <p>
                         <span id="qtip_uploaddataurl" style="float:right;"><img src="includes/images/info.png"></span>
                         <label for="datafile">Dataset File:</label>
