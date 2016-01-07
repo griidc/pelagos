@@ -22,13 +22,7 @@ if (get_class($response) == 'Symfony\Component\HttpFoundation\BinaryFileResponse
     drupal_exit();
 }
 
-$drupalNamespaces = array(
-    'AppBundle',
-    'Pelagos',
-);
-
-if (preg_match('!^[^\\\\]+!', $request->attributes->get('_controller'), $matches)
-    and in_array($matches[0], $drupalNamespaces)) {
+if (preg_match('/^Pelagos\\\\/', $request->attributes->get('_controller'))) {
     $content = $response->getContent();
     $newContent = preg_replace('/<\/body>/', '', $content);
     $response->setContent($newContent);
