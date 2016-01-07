@@ -9,8 +9,8 @@
 
 require_once __DIR__.'/../../../vendor/autoload.php';
 
-ini_set('display_errors',true);
-error_reporting(-1);
+// Disable deprecation errors if enabled
+error_reporting(~E_DEPRECATED);
 
 require 'getTaskData.php';
 

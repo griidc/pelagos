@@ -7,9 +7,10 @@
 // Returns: xml rest request
 // Purpose: Entry point in REST (using Slim) to return XML data for People Data
 
-//error_reporting(-1);
-
 require_once __DIR__.'/../../../vendor/autoload.php';
+
+// Disable deprecation errors if enabled
+error_reporting(~E_DEPRECATED);
 
 require 'getPeopleData.php';
 
