@@ -20,12 +20,17 @@ if (!class_exists('griidcMailer')) {
         {
             $config = parse_ini_file('/etc/opt/pelagos.ini', true);
             $config = array_merge($config, parse_ini_file($config['paths']['conf'].'/ldap.ini', true));
-            include_once $config['paths']['share'].'/php/ldap.php';
-            include_once $config['paths']['share'].'/php/drupal.php';
+
+            if (!function_exists('getDrupalUserName')) {
+                include_once $config['paths']['share'].'/php/drupal.php';
+            }
 
             $this->donotBCC = false;
             $userId = getDrupalUserName();
             if (isset($userId)) {
+                if (!function_exists('connectLDAP')) {
+                    include_once $config['paths']['share'].'/php/ldap.php';
+                }
                 $ldap = connectLDAP($config['ldap']['server']);
                 $userDN = getDNs($ldap, "dc=griidc,dc=org", "(uid=$userId)");
                 $userDN = $userDN[0]['dn'];
