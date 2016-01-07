@@ -28,6 +28,7 @@ CREATE TABLE funding_organization_history_table
    funding_organization_number              INTEGER             NOT NULL,
    name                                     TEXT,
    description                              TEXT,
+   data_repository_number                   INTEGER             NOT NULL,
    creator                                  TEXT                NOT NULL,
    creation_time                            TIMESTAMP WITH TIME ZONE
       NOT NULL,

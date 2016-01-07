@@ -30,6 +30,7 @@ CREATE VIEW funding_organization AS
           DATE_TRUNC('seconds', f.funding_organization_creation_time)
              AS creation_time,
           f.funding_organization_creator AS creator,
+          f.data_repository_number AS data_repository_number,
           f.funding_organization_phone_number AS phone_number,
           CAST(e2f.email_address AS TEXT) AS email_address,
           f.funding_organization_website AS website,
@@ -79,10 +80,13 @@ AS $f_o_func$
             _email_addr := COALESCE(NEW.email_address);
          END IF;
 
+         -- INSERT SECTION --
          IF TG_OP = 'INSERT'
          THEN
-            -- Make sure we were supplied a Funding Organization name:
+            -- Make sure we were supplied a Funding Organization name
+            -- and a Data Repository number.
             IF NEW.creator IS NULL OR NEW.creator = '' OR
+               NEW.data_repository_number is NULL OR
                NEW.name IS NULL OR NEW.name = ''
             THEN
                _err_hint := CONCAT('A Funding Organization entity requires a ',
@@ -97,21 +101,24 @@ AS $f_o_func$
             END IF;
 
             -- The task requirements call for the Funding Organization name to
-            -- be unique. That can be enforced here:
+            -- be unique within a Data Repository. That can be enforced here:
             EXECUTE 'SELECT COUNT(*)
                      FROM funding_organization_table
-                     WHERE LOWER(funding_organization_name) = LOWER($1)'
+                     WHERE LOWER(funding_organization_name) = LOWER($1)
+                     AND data_repository_number = $2'
                INTO _count
-               USING NEW.name;
+               USING NEW.name,
+                     NEW.data_repository_number;
 
             IF _count > 0
             THEN
                -- This is a duplicate entry.
-               _err_hint := CONCAT('Please supply a unique name for Funding ',
+               _err_hint := CONCAT('Please supply a unique within Data Repository name for Funding ',
                                    'Organization.');
                _err_msg  := CONCAT('A Funding Organization by the name ',
                                    NEW.name,
-                                   ' already exists.');
+                                   ' already exists within Data Repository number ',
+                                   NEW.data_repository_number);
                RAISE EXCEPTION 'Duplicate funding_organization entry'
                   USING ERRCODE = '23505';
             END IF;
@@ -168,10 +175,11 @@ AS $f_o_func$
                         funding_organization_name,
                         funding_organization_phone_number,
                         funding_organization_postal_code,
-                        funding_organization_website
+                        funding_organization_website,
+                        data_repository_number
                      )
                      VALUES ($1,  $2,  $3,  $4,  $5,  $6,  $7,  $8,
-                             $9,  $10, $11, $12, $13, $14, $15)'
+                             $9,  $10, $11, $12, $13, $14, $15, $16)'
                USING NEW.funding_organization_number,
                      NEW.administrative_area,
                      NEW.city,
@@ -186,7 +194,8 @@ AS $f_o_func$
                      NEW.name,
                      NEW.phone_number,
                      NEW.postal_code,
-                     NEW.website;
+                     NEW.website,
+                     NEW.data_repository_number;
 
             -- If we were supplied an email address then associate the
             -- funding_organization and email address with each other. We will
@@ -212,9 +221,10 @@ AS $f_o_func$
             END IF;
 
             RETURN NEW;
-
+         -- END INSERT SECTION --
          ELSEIF TG_OP = 'UPDATE'
          THEN
+         -- UPDATE SECTION --
             -- Update the history table with the current OLD information:
             EXECUTE 'INSERT INTO funding_organization_history_table
                      (
@@ -234,11 +244,12 @@ AS $f_o_func$
                          postal_code,
                          logo,
                          modifier,
-                         modification_time
+                         modification_time,
+                         data_repository_number
                       )
                       VALUES ($1,  $2,  $3,  $4,  $5,  $6,
                               $7,  $8,  $9,  $10, $11, $12,
-                              $13, $14, $15, $16, $17)'
+                              $13, $14, $15, $16, $17, $18)'
                USING TG_OP,
                      OLD.funding_organization_number,
                      OLD.name,
@@ -256,7 +267,8 @@ AS $f_o_func$
                      OLD.logo,
                      OLD.modifier,
                      DATE_TRUNC('seconds', CAST(OLD.modification_time AS
-                                                TIMESTAMP WITH TIME ZONE));
+                                                TIMESTAMP WITH TIME ZONE)),
+                     OLD.data_repository_number;
 
             -- Update the funding_organization information if necessary:
             IF ROW(NEW.administrative_area,
@@ -268,7 +280,8 @@ AS $f_o_func$
                    NEW.name,
                    NEW.phone_number,
                    NEW.postal_code,
-                   NEW.website)
+                   NEW.website,
+                   NEW.data_repository_number)
                IS DISTINCT FROM ROW(OLD.administrative_area,
                                     OLD.city,
                                     OLD.country,
@@ -278,7 +291,8 @@ AS $f_o_func$
                                     OLD.name,
                                     OLD.phone_number,
                                     OLD.postal_code,
-                                    OLD.website)
+                                    OLD.website,
+                                    OLD.data_repository_number)
             THEN
                EXECUTE 'UPDATE funding_organization_table
                         SET funding_organization_administrative_area = $1,
@@ -291,7 +305,8 @@ AS $f_o_func$
                             funding_organization_phone_number = $8,
                             funding_organization_postal_code = $9,
                             funding_organization_website = $10
-                        WHERE funding_organization_number = $11'
+                            data_repository_number = $11
+                        WHERE funding_organization_number = $12'
                USING NEW.administrative_area,
                      NEW.city,
                      NEW.country,
@@ -302,6 +317,7 @@ AS $f_o_func$
                      NEW.phone_number,
                      NEW.postal_code,
                      NEW.website,
+                     NEW.data_repository_number,
                      NEW.funding_organization_number;
             END IF;
 
@@ -364,7 +380,7 @@ AS $f_o_func$
 
                -- Finally, update the modification information:
                EXECUTE 'UPDATE funding_organization_table
-                        SET funding_organization_modification_time = 
+                        SET funding_organization_modification_time =
                                DATE_TRUNC(''seconds'', NOW()),
                             funding_organization_modifier = $1
                         WHERE funding_organization_number = $2'
@@ -374,7 +390,9 @@ AS $f_o_func$
 
             RETURN NEW;
          END IF;
+         -- END UPDATE SECTION
       ELSE
+      -- DELETE SECTION --
          -- This is a deletion.
          -- First update the history table with all current information:
          EXECUTE 'INSERT INTO funding_organization_history_table
@@ -395,11 +413,12 @@ AS $f_o_func$
                       postal_code,
                       logo,
                       modifier,
-                      modification_time
+                      modification_time,
+                      data_repository_number
                    )
                    VALUES ($1,  $2,  $3,  $4,  $5,  $6,
                            $7,  $8,  $9,  $10, $11, $12,
-                           $13, $14, $15, $16, $17)'
+                           $13, $14, $15, $16, $17, $18)'
             USING TG_OP,
                   OLD.funding_organization_number,
                   OLD.name,
@@ -416,7 +435,8 @@ AS $f_o_func$
                   OLD.postal_code,
                   OLD.logo,
                   current_user,
-                  DATE_TRUNC('seconds', NOW());
+                  DATE_TRUNC('seconds', NOW()),
+                  OLD.data_repository_number;
 
          -- The DELETE operation will leave the email address behind, on the
          -- off chance that we need to associate that email address with
@@ -435,6 +455,7 @@ AS $f_o_func$
             USING OLD.funding_organization_number;
          RETURN OLD;
       END IF;
+      -- END DELETE SECTION --
 
       EXCEPTION
          WHEN SQLSTATE '23502'

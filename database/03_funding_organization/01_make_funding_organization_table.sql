@@ -28,6 +28,7 @@ DROP TABLE funding_organization_table;
 CREATE TABLE funding_organization_table
 (
    funding_organization_number              SERIAL,
+   data_repository_number                   INTEGER             NOT NULL,
    funding_organization_administrative_area TEXT                DEFAULT NULL,
    funding_organization_city                TEXT                DEFAULT NULL,
    funding_organization_country             TEXT                DEFAULT NULL,
@@ -49,6 +50,12 @@ CREATE TABLE funding_organization_table
       CHECK(funding_organization_modification_time >=
             funding_organization_creation_time),
 
+    CONSTRAINT fk_funding_organization_data_repository
+        FOREIGN KEY (data_repository_number)
+        REFERENCES data_repository_table(data_repository_number)
+        ON DELETE RESTRICT
+        ON UPDATE RESTRICT,
+
    PRIMARY KEY (funding_organization_number)
 );
 
@@ -65,9 +72,10 @@ ALTER SEQUENCE seq_funding_organization_number
 ALTER TABLE funding_organization_table
    OWNER TO gomri_admin;
 
--- Enforce name uniqueness:
+-- Enforce name/DR uniqueness:
 CREATE UNIQUE INDEX uidx_lower_funding_organization
-   ON funding_organization_table(LOWER(funding_organization_name));
+   ON funding_organization_table(LOWER(funding_organization_name),
+    data_repository_number);
 
 -- Set the other permissions:
 GRANT USAGE
