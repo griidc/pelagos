@@ -137,10 +137,12 @@ $app->get('/oauth2callback', function () use ($app) {
         "redirect_uri" => "$pelagos[component_url]/oauth2callback",
         "grant_type" => "authorization_code"
     );
-    $request = new HttpRequest($url, HttpRequest::METH_POST);
-    $request->setPostFields($params);
-    $request->send();
-    $responseObj = json_decode($request->getResponseBody());
+    $request = new http\Client\Request('POST', $url);
+    $request->getBody()->append(new http\QueryString($params));
+    $client = new http\Client;
+    $client->enqueue($request)->send();
+    $response = $client->getResponse($request);
+    $responseObj = json_decode($response->getBody());
     if((isset($responseObj->access_token)) and (!isset($responseObj->error))) {
 
         preg_match("/^([^\.]+)\.([^\.]+)/",$responseObj->id_token,$jwt);
