@@ -304,7 +304,7 @@ AS $f_o_func$
                             funding_organization_name = $7,
                             funding_organization_phone_number = $8,
                             funding_organization_postal_code = $9,
-                            funding_organization_website = $10
+                            funding_organization_website = $10,
                             data_repository_number = $11
                         WHERE funding_organization_number = $12'
                USING NEW.administrative_area,
