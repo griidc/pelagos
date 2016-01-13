@@ -12,14 +12,14 @@
 \c gomri postgres
 
 -- To begin with, DROP everything:
-DROP TRIGGER udf_data_repository_role_delete_trigger
+DROP TRIGGER IF EXISTS udf_data_repository_role_delete_trigger
    ON data_repository_role;
-DROP TRIGGER udf_data_repository_role_insert_trigger
+DROP TRIGGER IF EXISTS udf_data_repository_role_insert_trigger
    ON data_repository_role;
-DROP TRIGGER udf_data_repository_role_update_trigger
+DROP TRIGGER IF EXISTS udf_data_repository_role_update_trigger
    ON data_repository_role;
-DROP FUNCTION udf_modify_data_repository_role();
-DROP VIEW data_repository_role;
+DROP FUNCTION IF EXISTS udf_modify_data_repository_role();
+DROP VIEW IF EXISTS data_repository_role;
 
 -- Add the CITEXT data type if needed:
 CREATE EXTENSION IF NOT EXISTS citext;
@@ -107,7 +107,7 @@ AS $rgr_func$
                              WHERE LOWER(data_repository_role_name) = $1)'
                   INTO _count
                   USING LOWER(NEW.name);
-   
+
                IF _count IS NOT NULL
                THEN
                   _err_hint := 'Perhaps you need to perform an update instead?';

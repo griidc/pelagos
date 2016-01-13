@@ -12,14 +12,14 @@
 \c gomri postgres
 
 -- To begin with, DROP everything:
-DROP TRIGGER udf_person_token_delete_trigger
+DROP TRIGGER IF EXISTS udf_person_token_delete_trigger
    ON person_token;
-DROP TRIGGER udf_person_token_insert_trigger
+DROP TRIGGER IF EXISTS udf_person_token_insert_trigger
    ON person_token;
-DROP TRIGGER udf_person_token_update_trigger
+DROP TRIGGER IF EXISTS udf_person_token_update_trigger
    ON person_token;
-DROP FUNCTION udf_modify_person_token();
-DROP VIEW person_token;
+DROP FUNCTION IF EXISTS udf_modify_person_token();
+DROP VIEW IF EXISTS person_token;
 
 -- Create the view (the modification attributes are retained in the view
 -- because the ORM entity model expects them. However since we are disallowing

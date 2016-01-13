@@ -12,14 +12,14 @@
 \c gomri postgres
 
 -- To begin with, DROP everything:
-DROP TRIGGER udf_funding_cycle_delete_trigger
+DROP TRIGGER IF EXISTS udf_funding_cycle_delete_trigger
    ON funding_cycle;
-DROP TRIGGER udf_funding_cycle_insert_trigger
+DROP TRIGGER IF EXISTS udf_funding_cycle_insert_trigger
    ON funding_cycle;
-DROP TRIGGER udf_funding_cycle_update_trigger
+DROP TRIGGER IF EXISTS udf_funding_cycle_update_trigger
    ON funding_cycle;
-DROP FUNCTION udf_modify_funding_cycle();
-DROP VIEW funding_cycle;
+DROP FUNCTION IF EXISTS udf_modify_funding_cycle();
+DROP VIEW IF EXISTS funding_cycle;
 
 -- Add the CITEXT data type if needed:
 CREATE EXTENSION IF NOT EXISTS citext;

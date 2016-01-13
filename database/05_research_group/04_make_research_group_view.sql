@@ -12,14 +12,14 @@
 \c gomri postgres
 
 -- To begin with, DROP everything:
-DROP TRIGGER udf_research_group_delete_trigger
+DROP TRIGGER IF EXISTS udf_research_group_delete_trigger
    ON research_group;
-DROP TRIGGER udf_research_group_insert_trigger
+DROP TRIGGER IF EXISTS udf_research_group_insert_trigger
    ON research_group;
-DROP TRIGGER udf_research_group_update_trigger
+DROP TRIGGER IF EXISTS udf_research_group_update_trigger
    ON research_group;
-DROP FUNCTION udf_modify_research_group();
-DROP VIEW research_group;
+DROP FUNCTION IF EXISTS udf_modify_research_group();
+DROP VIEW IF EXISTS research_group;
 
 -- Create the view (we cast email address to text so that we can handle CHECK
 -- errors in our exception block):
@@ -309,7 +309,7 @@ AS $r_g_func$
                            WHERE LOWER(email_address) = LOWER($1)'
                      INTO _count
                      USING _email_addr;
-   
+
                   IF _count = 0
                   THEN
                      -- Apparently we have a previously unknown email address.
@@ -323,7 +323,7 @@ AS $r_g_func$
                         USING _email_addr,
                               FALSE;
                   END IF;
-   
+
                   -- Now create the email-to-research_group association:
                   EXECUTE 'INSERT INTO email2research_group_table
                            (
@@ -436,7 +436,7 @@ AS $r_g_func$
 
             -- Finally, update the modification information:
             EXECUTE 'UPDATE research_group_table
-                     SET research_group_modification_time = 
+                     SET research_group_modification_time =
                             DATE_TRUNC(''seconds'', NOW()),
                          research_group_modifier = $1
                      WHERE research_group_number = $2'

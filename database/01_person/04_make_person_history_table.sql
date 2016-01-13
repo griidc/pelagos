@@ -15,7 +15,7 @@
 \c gomri postgres
 
 -- Start by dropping the history table:
-DROP TABLE person_history_table CASCADE;
+DROP TABLE IF EXISTS person_history_table CASCADE;
 
 -- Create the person_history_table with a surrogate key and all person
 -- attributes of interest. The attribute names remain the same as the names

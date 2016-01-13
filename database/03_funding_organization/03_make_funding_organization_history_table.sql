@@ -16,7 +16,7 @@
 \c gomri postgres
 
 -- Start by dropping the history table:
-DROP TABLE funding_organization_history_table;
+DROP TABLE IF EXISTS funding_organization_history_table;
 
 -- Create the funding_organization_history_table with a surrogate key and all
 -- funding_organization attributes of interest. The attribute names remain the

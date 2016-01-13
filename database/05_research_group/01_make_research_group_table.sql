@@ -12,9 +12,10 @@
 \c gomri postgres
 
 -- Start by dropping everything:
-DROP TABLE email2research_group_table;
-DROP VIEW research_group;
-DROP TABLE research_group_table;
+DROP TABLE IF EXISTS email2research_group_table;
+DROP VIEW IF EXISTS research_group;
+-- CASCADE due to fk_person2research_group2role_rg_number on table person2research_group2role_table
+DROP TABLE IF EXISTS research_group_table CASCADE;
 
 -- Now create research_group_table, and make the necessary alterations:
 CREATE TABLE research_group_table
@@ -25,7 +26,7 @@ CREATE TABLE research_group_table
    research_group_city                      TEXT                DEFAULT NULL,
    research_group_country                   TEXT                DEFAULT NULL,
    research_group_creation_time             TIMESTAMP WITH TIME ZONE
-      DEFAULT DATE_TRUNC('seconds', NOW())  NOT NULL, 
+      DEFAULT DATE_TRUNC('seconds', NOW())  NOT NULL,
    research_group_creator                   TEXT                NOT NULL,
    research_group_delivery_point            TEXT                DEFAULT NULL,
    research_group_description               TEXT                DEFAULT NULL,

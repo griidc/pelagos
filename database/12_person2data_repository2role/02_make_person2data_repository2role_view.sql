@@ -12,14 +12,14 @@
 \c gomri postgres
 
 -- To begin with, DROP everything:
-DROP TRIGGER udf_person2data_repository2role_delete_trigger
+DROP TRIGGER IF EXISTS udf_person2data_repository2role_delete_trigger
    ON person2data_repository2role;
-DROP TRIGGER udf_person2data_repository2role_insert_trigger
+DROP TRIGGER IF EXISTS udf_person2data_repository2role_insert_trigger
    ON person2data_repository2role;
-DROP TRIGGER udf_person2data_repository2role_update_trigger
+DROP TRIGGER IF EXISTS udf_person2data_repository2role_update_trigger
    ON person2data_repository2role;
-DROP FUNCTION udf_modify_person2data_repository2role();
-DROP VIEW person2data_repository2role;
+DROP FUNCTION IF EXISTS udf_modify_person2data_repository2role();
+DROP VIEW IF EXISTS person2data_repository2role;
 
 -- Create the view:
 CREATE VIEW person2data_repository2role AS

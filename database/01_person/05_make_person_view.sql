@@ -13,14 +13,15 @@
 \c gomri postgres
 
 -- To begin with, DROP everything:
-DROP TRIGGER udf_person_delete_trigger
-   ON person;
-DROP TRIGGER udf_person_insert_trigger
-   ON person;
-DROP TRIGGER udf_person_update_trigger
-   ON person;
-DROP FUNCTION udf_modify_person();
-DROP VIEW person;
+DROP TRIGGER IF EXISTS udf_person_delete_trigger
+    ON person;
+DROP TRIGGER IF EXISTS udf_person_insert_trigger
+    ON person;
+DROP TRIGGER IF EXISTS udf_person_update_trigger
+    ON person;
+
+DROP FUNCTION IF EXISTS udf_modify_person();
+DROP VIEW IF EXISTS person;
 
 -- Add the CITEXT data type if needed:
 CREATE EXTENSION IF NOT EXISTS citext;
@@ -120,7 +121,7 @@ AS $pers_func$
                                 '" ',
                                 'is not a valid phone number.');
             _phone_number := NEW.phone_number;
-   
+
             -- The requirements call for the combination of given name,
             -- surname, and the (case-insensitive) email_address to be unique.
             -- We can enforce that here:

@@ -12,14 +12,14 @@
 \c gomri postgres
 
 -- To begin with, DROP everything:
-DROP TRIGGER udf_account_delete_trigger
+DROP TRIGGER IF EXISTS udf_account_delete_trigger
    ON account;
-DROP TRIGGER udf_account_insert_trigger
+DROP TRIGGER IF EXISTS udf_account_insert_trigger
    ON account;
-DROP TRIGGER udf_account_update_trigger
+DROP TRIGGER IF EXISTS udf_account_update_trigger
    ON account;
-DROP FUNCTION udf_modify_account();
-DROP VIEW account;
+DROP FUNCTION IF EXISTS udf_modify_account();
+DROP VIEW IF EXISTS account;
 
 -- Create the view:
 CREATE VIEW account AS

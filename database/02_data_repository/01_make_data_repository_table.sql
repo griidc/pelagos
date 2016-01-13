@@ -17,9 +17,9 @@
 \c gomri postgres
 
 -- Start by dropping everything:
-DROP VIEW data_repository;
-DROP TABLE email2data_repository_table CASCADE;
-DROP TABLE data_repository_table CASCADE;
+DROP VIEW IF EXISTS data_repository;
+DROP TABLE IF EXISTS email2data_repository_table CASCADE;
+DROP TABLE IF EXISTS data_repository_table CASCADE;
 
 -- Now create data_repository_table, and make the necessary alterations:
 CREATE TABLE data_repository_table

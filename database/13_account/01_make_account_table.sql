@@ -14,10 +14,10 @@
 \c gomri postgres
 
 -- Start by dropping everything:
-DROP VIEW account;;
-DROP TABLE account_table CASCADE;
-DROP TYPE HASH_ALGORITHM_TYPE CASCADE;
-DROP TYPE USER_ID_TYPE CASCADE;
+DROP VIEW IF EXISTS account;
+DROP TABLE IF EXISTS account_table CASCADE;
+DROP TYPE IF EXISTS HASH_ALGORITHM_TYPE CASCADE;
+DROP TYPE IF EXISTS USER_ID_TYPE CASCADE;
 
 -- Create the custom data type, The HASH_ALGORITHM represents possible LDAP
 -- values (excluding CRYPT derived values):

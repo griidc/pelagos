@@ -12,14 +12,14 @@
 \c gomri postgres
 
 -- To begin with, DROP everything:
-DROP TRIGGER udf_data_repository_delete_trigger
+DROP TRIGGER IF EXISTS udf_data_repository_delete_trigger
    ON data_repository;
-DROP TRIGGER udf_data_repository_insert_trigger
+DROP TRIGGER IF EXISTS udf_data_repository_insert_trigger
    ON data_repository;
-DROP TRIGGER udf_data_repository_update_trigger
+DROP TRIGGER IF EXISTS udf_data_repository_update_trigger
    ON data_repository;
-DROP FUNCTION udf_modify_data_repository();
-DROP VIEW data_repository;
+DROP FUNCTION IF EXISTS udf_modify_data_repository();
+DROP VIEW IF EXISTS data_repository;
 
 -- Create the view (we cast email address to text so that we can handle CHECK
 -- errors in our exception block):
@@ -379,7 +379,7 @@ AS $f_o_func$
 
                -- Finally, update the modification information:
                EXECUTE 'UPDATE data_repository_table
-                        SET data_repository_modification_time = 
+                        SET data_repository_modification_time =
                                DATE_TRUNC(''seconds'', NOW()),
                             data_repository_modifier = $1
                         WHERE data_repository_number = $2'

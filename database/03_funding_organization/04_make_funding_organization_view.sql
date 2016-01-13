@@ -12,14 +12,15 @@
 \c gomri postgres
 
 -- To begin with, DROP everything:
-DROP TRIGGER udf_funding_organization_delete_trigger
+DROP TRIGGER IF EXISTS udf_funding_organization_delete_trigger
    ON funding_organization;
-DROP TRIGGER udf_funding_organization_insert_trigger
+DROP TRIGGER IF EXISTS udf_funding_organization_insert_trigger
    ON funding_organization;
-DROP TRIGGER udf_funding_organization_update_trigger
+DROP TRIGGER IF EXISTS udf_funding_organization_update_trigger
    ON funding_organization;
-DROP FUNCTION udf_modify_funding_organization();
-DROP VIEW funding_organization;
+
+DROP FUNCTION IF EXISTS udf_modify_funding_organization();
+DROP VIEW IF EXISTS funding_organization;
 
 -- Create the view (we cast email address to text so that we can handle CHECK
 -- errors in our exception block):
