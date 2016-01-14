@@ -13,12 +13,19 @@
 \c gomri postgres
 
 -- To begin with, DROP everything:
-DROP TRIGGER IF EXISTS udf_person_delete_trigger
-    ON person;
-DROP TRIGGER IF EXISTS udf_person_insert_trigger
-    ON person;
-DROP TRIGGER IF EXISTS udf_person_update_trigger
-    ON person;
+DO
+$$
+BEGIN
+IF EXISTS (SELECT relname FROM pg_class WHERE relname = 'person')
+THEN
+    DROP TRIGGER IF EXISTS udf_person_delete_trigger ON person;
+    DROP TRIGGER IF EXISTS udf_person_insert_trigger ON person;
+    DROP TRIGGER IF EXISTS udf_person_update_trigger ON person;
+ELSE
+    RAISE NOTICE 'person view does not exist, so no triggers to drop. Skipping.';
+END IF;
+END
+$$;
 
 DROP FUNCTION IF EXISTS udf_modify_person();
 DROP VIEW IF EXISTS person;

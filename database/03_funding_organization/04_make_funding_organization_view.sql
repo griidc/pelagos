@@ -12,12 +12,19 @@
 \c gomri postgres
 
 -- To begin with, DROP everything:
-DROP TRIGGER IF EXISTS udf_funding_organization_delete_trigger
-   ON funding_organization;
-DROP TRIGGER IF EXISTS udf_funding_organization_insert_trigger
-   ON funding_organization;
-DROP TRIGGER IF EXISTS udf_funding_organization_update_trigger
-   ON funding_organization;
+DO
+$$
+BEGIN
+IF EXISTS (SELECT relname FROM pg_class WHERE relname = 'funding_organization')
+THEN
+    DROP TRIGGER IF EXISTS udf_funding_organization_delete_trigger ON funding_organization;
+    DROP TRIGGER IF EXISTS udf_funding_organization_insert_trigger ON funding_organization;
+    DROP TRIGGER IF EXISTS udf_funding_organization_update_trigger ON funding_organization;
+ELSE
+    RAISE NOTICE 'funding_organization view does not exist, so no triggers to drop. Skipping.';
+END IF;
+END
+$$;
 
 DROP FUNCTION IF EXISTS udf_modify_funding_organization();
 DROP VIEW IF EXISTS funding_organization;

@@ -12,12 +12,20 @@
 \c gomri postgres
 
 -- To begin with, DROP everything:
-DROP TRIGGER IF EXISTS udf_data_repository_delete_trigger
-   ON data_repository;
-DROP TRIGGER IF EXISTS udf_data_repository_insert_trigger
-   ON data_repository;
-DROP TRIGGER IF EXISTS udf_data_repository_update_trigger
-   ON data_repository;
+DO
+$$
+BEGIN
+IF EXISTS (SELECT relname FROM pg_class WHERE relname = 'data_repository')
+THEN
+    DROP TRIGGER IF EXISTS udf_data_repository_delete_trigger ON data_repository;
+    DROP TRIGGER IF EXISTS udf_data_repository_insert_trigger ON data_repository;
+    DROP TRIGGER IF EXISTS udf_data_repository_update_trigger ON data_repository;
+ELSE
+    RAISE NOTICE 'data_repository view does not exist, so no triggers to drop. Skipping.';
+END IF;
+END
+$$;
+
 DROP FUNCTION IF EXISTS udf_modify_data_repository();
 DROP VIEW IF EXISTS data_repository;
 

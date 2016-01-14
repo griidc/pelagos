@@ -12,12 +12,22 @@
 \c gomri postgres
 
 -- To begin with, DROP everything:
-DROP TRIGGER IF EXISTS udf_account_delete_trigger
-   ON account;
-DROP TRIGGER IF EXISTS udf_account_insert_trigger
-   ON account;
-DROP TRIGGER IF EXISTS udf_account_update_trigger
-   ON account;
+DO
+$$
+BEGIN
+IF EXISTS (SELECT relname FROM pg_class WHERE relname = 'account')
+THEN
+    DROP TRIGGER IF EXISTS udf_account_delete_trigger ON account;
+    DROP TRIGGER IF EXISTS udf_account_insert_trigger ON account;
+    DROP TRIGGER IF EXISTS udf_account_update_trigger ON account;
+ELSE
+    RAISE NOTICE 'account view does not exist, so no triggers to drop. Skipping.';
+END IF;
+END
+$$;
+
+
+
 DROP FUNCTION IF EXISTS udf_modify_account();
 DROP VIEW IF EXISTS account;
 

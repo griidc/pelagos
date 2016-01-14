@@ -12,12 +12,20 @@
 \c gomri postgres
 
 -- To begin with, DROP everything:
-DROP TRIGGER IF EXISTS udf_research_group_role_delete_trigger
-   ON research_group_role;
-DROP TRIGGER IF EXISTS udf_research_group_role_insert_trigger
-   ON research_group_role;
-DROP TRIGGER IF EXISTS udf_research_group_role_update_trigger
-   ON research_group_role;
+DO
+$$
+BEGIN
+IF EXISTS (SELECT relname FROM pg_class WHERE relname = 'research_group_role')
+THEN
+    DROP TRIGGER IF EXISTS udf_research_group_role_delete_trigger ON research_group_role;
+    DROP TRIGGER IF EXISTS udf_research_group_role_insert_trigger ON research_group_role;
+    DROP TRIGGER IF EXISTS udf_research_group_role_update_trigger ON research_group_role;
+ELSE
+    RAISE NOTICE 'research_group_role view does not exist, so no triggers to drop. Skipping.';
+END IF;
+END
+$$;
+
 DROP FUNCTION IF EXISTS udf_modify_research_group_role();
 DROP VIEW IF EXISTS research_group_role;
 
