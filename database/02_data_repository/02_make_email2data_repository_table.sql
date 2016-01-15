@@ -12,7 +12,7 @@
 \c gomri postgres
 
 -- Start by dropping the table (ignore warnings if it does not exist)
-DROP TABLE email2data_repository_table CASCADE;
+DROP TABLE IF EXISTS email2data_repository_table CASCADE;
 
 CREATE TABLE email2data_repository_table
 (

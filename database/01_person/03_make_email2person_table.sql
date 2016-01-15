@@ -11,7 +11,7 @@
 \c gomri postgres
 
 -- Start by dropping the table (ignore warnings if it does not exist)
-DROP TABLE email2person_table CASCADE;
+DROP TABLE IF EXISTS email2person_table CASCADE;
 CREATE TABLE email2person_table
 (
    email_address                            EMAIL_ADDRESS_TYPE  NOT NULL,

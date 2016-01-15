@@ -20,9 +20,10 @@
 \c gomri postgres
 
 -- Start by dropping everything:
-DROP VIEW funding_organization;
-DROP TABLE email2funding_organization_table;
-DROP TABLE funding_organization_table;
+DROP VIEW IF EXISTS funding_organization;
+DROP TABLE IF EXISTS email2funding_organization_table;
+-- CASCADE needed due to fk_funding_cycle_funding_organization on table funding_cycle_table
+DROP TABLE IF EXISTS funding_organization_table CASCADE;
 
 -- Now create funding_organization_table, and make the necessary alterations:
 CREATE TABLE funding_organization_table

@@ -16,7 +16,7 @@
 \c gomri postgres
 
 -- Start by dropping the history table:
-DROP TABLE data_repository_history_table CASCADE;
+DROP TABLE IF EXISTS data_repository_history_table CASCADE;
 
 -- Create the data_repository_history_table with a surrogate key and all
 -- data_repository attributes of interest. The attribute names remain the
