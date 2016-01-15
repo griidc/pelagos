@@ -4,6 +4,7 @@ namespace Pelagos\Entity;
 
 use \Symfony\Component\Validator\Constraints as Assert;
 use \Pelagos\Exception\PasswordException;
+use \Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Implementation of the Account class.
@@ -12,7 +13,7 @@ use \Pelagos\Exception\PasswordException;
  *
  * @package Pelagos\Entity
  */
-class Account extends Entity
+class Account extends Entity implements UserInterface, \Serializable
 {
     /**
      * Static array containing a list of the properties and their attributes.
@@ -222,5 +223,96 @@ class Account extends Entity
             return true;
         }
         return false;
+    }
+
+    /**
+     * Returns the userId for this Account.
+     *
+     * This is required by \Symfony\Component\Security\Core\User\UserInterface
+     *
+     * @return string The userId for this Account.
+     */
+    public function getUsername()
+    {
+        return $this->userId;
+    }
+
+    /**
+     * Returns the passwordHashSalt for this Account.
+     *
+     * This is required by \Symfony\Component\Security\Core\User\UserInterface
+     *
+     * @return string The passwordHashSalt for this Account.
+     */
+    public function getSalt()
+    {
+        return $this->passwordHashSalt;
+    }
+
+    /**
+     * Returns the passwordHash for this Account.
+     *
+     * This is required by \Symfony\Component\Security\Core\User\UserInterface
+     *
+     * @return string The passwordHash for this Account.
+     */
+    public function getPassword()
+    {
+        return $this->passwordHash;
+    }
+
+    /**
+     * Returns the roles for this Account.
+     *
+     * This is required by \Symfony\Component\Security\Core\User\UserInterface
+     *
+     * @return array The roles for this Account.
+     */
+    public function getRoles()
+    {
+        return array('ROLE_USER');
+    }
+
+    /**
+     * Does nothing because aren't keeping the plaintext password in the Account object.
+     *
+     * This is required by \Symfony\Component\Security\Core\User\UserInterface
+     *
+     * @return void
+     */
+    public function eraseCredentials()
+    {
+    }
+
+    /**
+     * Serialize this Account.
+     *
+     * This is required by \Serializable.
+     *
+     * @return string Serialized Account string.
+     */
+    public function serialize()
+    {
+        return serialize(array(
+            $this->person,
+            $this->userId,
+        ));
+    }
+
+    /**
+     * Unserialize this Account.
+     *
+     * This is required by \Serializable.
+     *
+     * @param string $serialized Serialized Account string.
+     *
+     * @return void
+     */
+    public function unserialize($serialized)
+    {
+        list (
+            $this->person,
+            $this->userId,
+        ) = unserialize($serialized);
     }
 }
