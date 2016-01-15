@@ -12,14 +12,22 @@
 \c gomri postgres
 
 -- To begin with, DROP everything:
-DROP TRIGGER udf_person2funding_organization2role_delete_trigger
-   ON person2funding_organization2role;
-DROP TRIGGER udf_person2funding_organization2role_insert_trigger
-   ON person2funding_organization2role;
-DROP TRIGGER udf_person2funding_organization2role_update_trigger
-   ON person2funding_organization2role;
-DROP FUNCTION udf_modify_person2funding_organization2role();
-DROP VIEW person2funding_organization2role;
+DO
+$$
+BEGIN
+IF EXISTS (SELECT relname FROM pg_class WHERE relname = 'person2funding_organization2role')
+THEN
+    DROP TRIGGER IF EXISTS udf_person2funding_organization2role_delete_trigger ON person2funding_organization2role;
+    DROP TRIGGER IF EXISTS udf_person2funding_organization2role_insert_trigger ON person2funding_organization2role;
+    DROP TRIGGER IF EXISTS udf_person2funding_organization2role_update_trigger ON person2funding_organization2role;
+ELSE
+    RAISE NOTICE 'person2funding_organization2role view does not exist, so no triggers to drop. Skipping.';
+END IF;
+END
+$$;
+
+DROP FUNCTION IF EXISTS udf_modify_person2funding_organization2role();
+DROP VIEW IF EXISTS person2funding_organization2role;
 
 -- Create the view:
 CREATE VIEW person2funding_organization2role AS

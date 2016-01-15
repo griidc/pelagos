@@ -14,10 +14,10 @@
 \c gomri postgres
 
 -- Start by dropping everything:
-DROP VIEW person_token;
-DROP TABLE person_token_table CASCADE;
-DROP DOMAIN TOKEN_TYPE;
-DROP TYPE TOKEN_USE_TYPE CASCADE;
+DROP VIEW IF EXISTS person_token;
+DROP TABLE IF EXISTS person_token_table CASCADE;
+DROP DOMAIN IF EXISTS TOKEN_TYPE;
+DROP TYPE IF EXISTS TOKEN_USE_TYPE CASCADE;
 
 -- Create the custom data types:
 CREATE DOMAIN TOKEN_TYPE

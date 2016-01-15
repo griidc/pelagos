@@ -12,11 +12,11 @@
 \c gomri postgres
 
 -- Start by dropping everything:
-DROP VIEW person;
-DROP TABLE email2person_table CASCADE;
-DROP TABLE email_table CASCADE;
-DROP TABLE person_table CASCADE;
-DROP DOMAIN PHONE_NUMBER_TYPE;
+DROP VIEW IF EXISTS person;
+DROP TABLE IF EXISTS email2person_table CASCADE;
+DROP TABLE IF EXISTS email_table CASCADE;
+DROP TABLE IF EXISTS person_table CASCADE;
+DROP DOMAIN IF EXISTS PHONE_NUMBER_TYPE;
 
 -- Now create the telephone number type:
 CREATE DOMAIN PHONE_NUMBER_TYPE

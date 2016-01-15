@@ -19,8 +19,9 @@
 \c gomri postgres
 
 -- Start by dropping everything:
-DROP VIEW funding_cycle;
-DROP TABLE funding_cycle_table;
+DROP VIEW IF EXISTS funding_cycle;
+-- CASCADE needed due to fk_research_group_funding_cycle on table research_group_table
+DROP TABLE IF EXISTS funding_cycle_table CASCADE;
 
 -- Now create funding_cycle_table, and make the necessary alterations:
 CREATE TABLE funding_cycle_table
@@ -28,7 +29,7 @@ CREATE TABLE funding_cycle_table
    funding_cycle_number                     SERIAL,
    funding_organization_number              INTEGER             NOT NULL,
    funding_cycle_creation_time              TIMESTAMP WITH TIME ZONE
-      DEFAULT DATE_TRUNC('seconds', NOW())  NOT NULL, 
+      DEFAULT DATE_TRUNC('seconds', NOW())  NOT NULL,
    funding_cycle_creator                    TEXT                NOT NULL,
    funding_cycle_description                TEXT                DEFAULT NULL,
    funding_cycle_end_date                   DATE                DEFAULT NULL,

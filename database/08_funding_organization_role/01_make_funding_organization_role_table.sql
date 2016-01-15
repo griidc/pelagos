@@ -12,10 +12,10 @@
 \c gomri postgres
 
 -- Drop everything to start with:
-DROP VIEW funding_organization_role;
-DROP VIEW person2funding_organization2role;
-DROP TABLE person2funding_organization2role_table;
-DROP TABLE funding_organization_role_table;
+DROP VIEW IF EXISTS funding_organization_role;
+DROP VIEW IF EXISTS person2funding_organization2role;
+DROP TABLE IF EXISTS person2funding_organization2role_table;
+DROP TABLE IF EXISTS funding_organization_role_table;
 
 -- Create the table:
 CREATE TABLE funding_organization_role_table

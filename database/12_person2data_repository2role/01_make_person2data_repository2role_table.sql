@@ -12,8 +12,8 @@
 \c gomri postgres
 
 -- Drop everything to start with:
-DROP VIEW person2data_repository2role;
-DROP TABLE person2data_repository2role_table CASCADE;
+DROP VIEW IF EXISTS person2data_repository2role;
+DROP TABLE IF EXISTS person2data_repository2role_table CASCADE;
 
 -- Create the table:
 CREATE TABLE person2data_repository2role_table
