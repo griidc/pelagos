@@ -788,4 +788,16 @@ class Person extends Entity
             throw $notDeletableException;
         }
     }
+
+    /**
+     * Return the id as a string when converting a Person to a string.
+     *
+     * This is needed for serialization of the Account entity.
+     *
+     * @return string String representation of a Person object.
+     */
+    public function __toString()
+    {
+        return (string) $this->id;
+    }
 }
