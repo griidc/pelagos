@@ -1,18 +1,15 @@
 _wdt:
     resource: "@WebProfilerBundle/Resources/config/routing/wdt.xml"
-    prefix:   /%drupal.prefix%/_wdt
+    prefix:   /%pelagos.prefix%/_wdt
 
 _profiler:
     resource: "@WebProfilerBundle/Resources/config/routing/profiler.xml"
-    prefix:   /%drupal.prefix%/_profiler
+    prefix:   /%pelagos.prefix%/_profiler
 
 _errors:
     resource: "@TwigBundle/Resources/config/routing/errors.xml"
-    prefix:   /%drupal.prefix%/_error
+    prefix:   /%pelagos.prefix%/_error
 
 _main:
     resource: routing.yml
-    prefix:   /{prefix}
-    requirements:
-        prefix: "%drupal.prefix%"
-
+    prefix:   /%pelagos.prefix%

@@ -52,21 +52,13 @@ class DefaultController extends Controller
      * @param string  $category The component category (e.g. applications, modules, services, etc).
      * @param string  $target   The component target (e.g. dif, stats, etc).
      * @param string  $route    Additional route component.
-     * @param string  $prefix   The route prefix.
      *
      * @return Response A Response instance.
      */
-    public function execAction(Request $request, $category, $target, $route = '', $prefix = '')
+    public function execAction(Request $request, $category, $target, $route = '')
     {
         $pelagosRoot = $this->get('kernel')->getRootDir() . '/..';
         $targetPath = "$category/$target";
-
-        if (!empty($prefix)) {
-            $prefix = "$prefix/legacy";
-            $basePath = "/$prefix";
-        } else {
-            $basePath = $_SERVER['SCRIPT_NAME'];
-        }
 
         // Save original environment.
         $originalEnvironment = array();
@@ -76,6 +68,13 @@ class DefaultController extends Controller
         }
         $originalEnvironment['REQUEST_URI'] = $_SERVER['REQUEST_URI'];
 
+        if ($this->container->hasParameter('pelagos.prefix')) {
+            $basePath = '/' . $this->getParameter('pelagos.prefix') . '/legacy';
+        } else {
+            $_SERVER['SCRIPT_NAME'] .= '/legacy';
+            $basePath = $_SERVER['SCRIPT_NAME'];
+        }
+
         if (false !== strpos($_SERVER['REQUEST_URI'], $_SERVER['SCRIPT_NAME'])) {
             // append target path to SCRIPT_NAME
             $_SERVER['SCRIPT_NAME'] .= "/$targetPath";
@@ -84,15 +83,15 @@ class DefaultController extends Controller
             // Modify environment for the target.
             // Fix up REQUEST_URI.
             // Grab extra path information.
-            $extraPath = preg_replace("!^/$prefix/$targetPath!", '', $_SERVER['REQUEST_URI']);
+            $extraPath = preg_replace("!^$basePath/$targetPath!", '', $_SERVER['REQUEST_URI']);
             // Start rebuilding REQUEST_URI with Drupal base path + target path.
-            $_SERVER['REQUEST_URI'] = "/$prefix/$targetPath";
+            $_SERVER['REQUEST_URI'] = "$basePath/$targetPath";
             if (isset($extraPath) and !empty($extraPath)) {
                 // If there was extra path info, append it.
                 $_SERVER['REQUEST_URI'] .= $extraPath;
             }
             // Fix up SCRIPT_NAME.
-            $_SERVER['SCRIPT_NAME'] = "/$prefix/$targetPath";
+            $_SERVER['SCRIPT_NAME'] = "$basePath/$targetPath";
             if (array_key_exists('QUERY_STRING', $_SERVER)) {
                 // Fix up QUERY_STRING.
                 $_SERVER['QUERY_STRING'] = preg_replace('/^q=[^&]+&?/', '', $_SERVER['QUERY_STRING']);
@@ -102,19 +101,13 @@ class DefaultController extends Controller
         // Initialize output.
         $output = '';
 
-        if (!empty($prefix)) {
-            $componentPath = "/$prefix/$targetPath";
-        } else {
-            $componentPath = $_SERVER['SCRIPT_NAME'];
-        }
-
         // Define Pelagos global.
         $GLOBALS['pelagos'] = array(
             'root' => $pelagosRoot,
             'base_path' => $basePath,
-            'base_url' => $request->getUriForPath("/$prefix"),
-            'component_path' => $componentPath,
-            'component_url' => $request->getUriForPath("/$prefix/$targetPath"),
+            'base_url' => $request->getUriForPath($basePath),
+            'component_path' => "$basePath/$targetPath",
+            'component_url' => $request->getUriForPath("$basePath/$targetPath"),
         );
 
         // Save the current working directory.
