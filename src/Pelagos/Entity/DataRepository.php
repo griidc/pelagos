@@ -85,6 +85,13 @@ class DataRepository extends Entity
             'setter' => 'setPersonDataRepositories',
             'serialize' => false,
         ),
+        'fundingOrganizations' => array(
+            'type' => 'object',
+            'class' => '\Doctrine\Common\Collections\Collection',
+            'getter' => 'getFundingOrganizations',
+            'setter' => 'setFundingOrganizations',
+            'serialize' => false,
+        ),
     );
 
     /**
@@ -258,6 +265,17 @@ class DataRepository extends Entity
      * @access protected
      */
     protected $personDataRepositories;
+
+    /**
+     * Data Repositories collection of Funding Organization.
+     *
+     *
+     * @var FundingOrganizations
+     *
+     * @access protected
+     *
+     */
+    protected $fundingOrganizations;
 
     /**
      * Setter for name.
@@ -559,5 +577,46 @@ class DataRepository extends Entity
     public function getPersonDataRepositories()
     {
         return $this->personDataRepositories;
+    }
+
+    /**
+     * Setter for fundingOrganizations.
+     *
+     * @param array|\Traversable $fundingOrganizations Set of FundingOrganization objects.
+     *
+     * @access public
+     *
+     * @throws \Exception When $fundingOrganizations is not an array or traversable object.
+     * @throws \Exception When Non-FundingOrganization found within $fundingOrganizations.
+     *
+     * @return void
+     */
+    public function setFundingOrganizations($fundingOrganizations)
+    {
+        if (is_array($fundingOrganizations) || $fundingOrganizations instanceof \Traversable) {
+            foreach ($fundingOrganizations as $fundingOrganization) {
+                if (!$fundingOrganization instanceof FundingOrganization) {
+                    throw new \Exception('Non-FundingOrganization found in fundingOrganizations.');
+                }
+            }
+            $this->fundingOrganizations = $fundingOrganizations;
+            foreach ($this->fundingOrganizations as $fundingOrganization) {
+                $fundingOrganization->setDataRepository($this);
+            }
+        } else {
+            throw new \Exception('fundingOrganizations must be either array or traversable objects.');
+        }
+    }
+    /**
+     * Getter for fundingOrganizations.
+     *
+     * @access public
+     *
+     * @return \Doctrine\Common\Collections\Collection Collection containing FundingOrganization
+     *                                                 listings for this Data Repository.
+     */
+    public function getFundingOrganizations()
+    {
+        return $this->fundingOrganizations;
     }
 }

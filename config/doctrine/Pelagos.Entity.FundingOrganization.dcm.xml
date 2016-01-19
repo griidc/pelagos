@@ -31,6 +31,9 @@ Pelagos.Entity.Entity.dcm.xml
 
         <field name="deliveryPoint"      column="delivery_point"      type="string" />
 
+
+        
+
         <field name="city"               column="city"                type="string" />
 
         <field name="country"            column="country"             type="string" />
@@ -47,9 +50,9 @@ Pelagos.Entity.Entity.dcm.xml
 
         <one-to-many field="personFundingOrganizations" target-entity="PersonFundingOrganization" mapped-by="fundingOrganization" />
 
-        <one-to-one field="dataRepository" target-entity="DataRepository">
-            <join-column name="data_repository_number" referenced-column-name="data_repository_number" />
-        </one-to-one>
+        <many-to-one  field="dataRepository" target-entity="DataRepository" inversed-by="fundingOrganizations">
+                    <join-column name="data_repository_number" referenced-column-name="data_repository_number" />
+        </many-to-one>
 
     </entity>
 
