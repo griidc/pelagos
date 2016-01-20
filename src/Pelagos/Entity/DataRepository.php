@@ -269,11 +269,9 @@ class DataRepository extends Entity
     /**
      * Data Repositories collection of Funding Organization.
      *
-     *
      * @var FundingOrganizations
      *
      * @access protected
-     *
      */
     protected $fundingOrganizations;
 
@@ -607,6 +605,7 @@ class DataRepository extends Entity
             throw new \Exception('fundingOrganizations must be either array or traversable objects.');
         }
     }
+    
     /**
      * Getter for fundingOrganizations.
      *
