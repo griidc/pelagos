@@ -10,7 +10,6 @@ namespace Pelagos\Entity;
 
 use \Symfony\Component\Validator\Constraints as Assert;
 use \Pelagos\Exception\NotDeletableException;
-use \Pelagos\Entity\DataRepository;
 
 /**
  * Class to represent funding organizations.
@@ -273,7 +272,7 @@ class FundingOrganization extends Entity
     /**
      * This FundingOrganization's parent DataRepository..
      *
-     * @var \Pelagos\Entity\\DataRepository $dataRepository
+     * @var \Pelagos\Entity\DataRepository $dataRepository
      *
      * * @access protected
      */
