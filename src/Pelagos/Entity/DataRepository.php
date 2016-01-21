@@ -10,6 +10,7 @@ namespace Pelagos\Entity;
 
 use \Symfony\Component\Validator\Constraints as Assert;
 use \Pelagos\Exception\NotDeletableException;
+use \Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Class to represent a Data Repository.
@@ -578,22 +579,24 @@ class DataRepository extends Entity
     }
 
     /**
-     * Setter for fundingOrganizations.
+     * Add a FundingOrganization to the set of fundingOrganizations.
      *
-     * @param array|\Traversable $fundingOrganizations Set of FundingOrganization objects.
+     * @param FundingOrganization $fo A FundingOrganization instance to be added to the set..
      *
      * @access public
      *
      * @return void
      */
-    public function addFundingOrganization(FundingOrganization $fo) {
-        if($this->fundingOrganizations == null) {
-            $this->fundingOrganizations = array();
+    public function addFundingOrganization(FundingOrganization $fo)
+    {
+        if ($this->fundingOrganizations == null) {
+            $this->fundingOrganizations = new ArrayCollection();;
         }
-        if(!in_array($fo,$this->fundingOrganizations)) {
-            $this->fundingOrganizations[] = $fo;
+        if (!$this->fundingOrganizations->contains($fo)) {
+              $this->fundingOrganizations->add($fo);
         }
     }
+
     /**
      * Setter for fundingOrganizations.
      *
@@ -622,6 +625,7 @@ class DataRepository extends Entity
             throw new \Exception('fundingOrganizations must be either array or traversable objects.');
         }
     }
+
     /**
      * Getter for fundingOrganizations.
      *
