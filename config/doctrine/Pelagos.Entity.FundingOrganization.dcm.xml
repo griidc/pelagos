@@ -31,9 +31,6 @@ Pelagos.Entity.Entity.dcm.xml
 
         <field name="deliveryPoint"      column="delivery_point"      type="string" />
 
-
-        
-
         <field name="city"               column="city"                type="string" />
 
         <field name="country"            column="country"             type="string" />

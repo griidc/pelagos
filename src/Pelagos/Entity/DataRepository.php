@@ -270,11 +270,21 @@ class DataRepository extends Entity
     /**
      * Data Repositories collection of Funding Organization.
      *
-     * @var FundingOrganizations
+     * @var ArrayCollection
      *
      * @access protected
      */
     protected $fundingOrganizations;
+
+    /**
+     * DataRepository Constructor.
+     *
+     * Create a DataRepository Object and allocate the fundingOrganizations ArrayCollection.
+     */
+    public function __construct()
+    {
+        $this->fundingOrganizations = new ArrayCollection();
+    }
 
     /**
      * Setter for name.
@@ -589,11 +599,9 @@ class DataRepository extends Entity
      */
     public function addFundingOrganization(FundingOrganization $fo)
     {
-        if ($this->fundingOrganizations == null) {
-            $this->fundingOrganizations = new ArrayCollection();;
-        }
         if (!$this->fundingOrganizations->contains($fo)) {
-              $this->fundingOrganizations->add($fo);
+            $this->fundingOrganizations->add($fo);
+            $fo->setDataRepository($this);
         }
     }
 
@@ -617,9 +625,8 @@ class DataRepository extends Entity
                     throw new \Exception('Non-FundingOrganization found in fundingOrganizations.');
                 }
             }
-            $this->fundingOrganizations = $fundingOrganizations;
-            foreach ($this->fundingOrganizations as $fundingOrganization) {
-                $fundingOrganization->setDataRepository($this);
+            foreach ($fundingOrganizations as $fundingOrganization) {
+                $this->addFundingOrganization($fundingOrganization);
             }
         } else {
             throw new \Exception('fundingOrganizations must be either array or traversable objects.');
