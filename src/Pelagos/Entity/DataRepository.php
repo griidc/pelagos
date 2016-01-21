@@ -89,7 +89,7 @@ class DataRepository extends Entity
             'type' => 'object',
             'class' => '\Doctrine\Common\Collections\Collection',
             'getter' => 'getFundingOrganizations',
-            'setter' => 'setFundingOrganizations',
+         //   'setter' => 'setFundingOrganizations',
             'serialize' => false,
         ),
     );
@@ -584,6 +584,23 @@ class DataRepository extends Entity
      *
      * @access public
      *
+     * @return void
+     */
+    public function addFundingOrganization(FundingOrganization $fo) {
+        if($this->fundingOrganizations == null) {
+            $this->fundingOrganizations = array();
+        }
+        if(!in_array($fo,$this->fundingOrganizations)) {
+            $this->fundingOrganizations[] = $fo;
+        }
+    }
+    /**
+     * Setter for fundingOrganizations.
+     *
+     * @param array|\Traversable $fundingOrganizations Set of FundingOrganization objects.
+     *
+     * @access public
+     *
      * @throws \Exception When $fundingOrganizations is not an array or traversable object.
      * @throws \Exception When Non-FundingOrganization found within $fundingOrganizations.
      *
@@ -605,7 +622,6 @@ class DataRepository extends Entity
             throw new \Exception('fundingOrganizations must be either array or traversable objects.');
         }
     }
-    
     /**
      * Getter for fundingOrganizations.
      *
