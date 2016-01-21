@@ -16,6 +16,16 @@ class DefaultController extends Controller
      */
     public function indexAction()
     {
+        echo 'here?';
+        
+        $user = $this->getUser();
+
+       	var_dump($user);
+
+        if (!$this->isGranted('CAN_CREATE', $user)) {
+            throw $this->createAccessDeniedException('NO!');
+        }
+        
         return $this->render('PelagosAppBundle:Default:index.html.twig');
     }
 }
