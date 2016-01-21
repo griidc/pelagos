@@ -273,7 +273,7 @@ class FundingOrganization extends Entity
     /**
      * This FundingOrganization's parent DataRepository..
      *
-     * @var \Pelagos\Entity\DataRepository $dataRepository
+     * @var DataRepository $dataRepository
      *
      * * @access protected
      */
