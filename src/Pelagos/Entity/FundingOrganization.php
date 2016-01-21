@@ -99,6 +99,7 @@ class FundingOrganization extends Entity
         ),
         'dataRepository' => array(
             'type' => 'object',
+            'entity' => 'DataRepository',
             'class' => '\Pelagos\Entity\DataRepository',
             'getter' => 'getDataRepository',
             'setter' => 'setDataRepository',
