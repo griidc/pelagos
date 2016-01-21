@@ -7,7 +7,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 /**
  * The default controller for the Pelagos App Bundle.
  */
-class DefaultController extends Controller
+use Pelagos\Entity\ResearchGroup;
+ 
+ class DefaultController extends Controller
 {
     /**
      * The index action.
@@ -16,13 +18,14 @@ class DefaultController extends Controller
      */
     public function indexAction()
     {
-        echo 'here?';
-        
-        $user = $this->getUser();
+       
+        $rg = new ResearchGroup();
+        $rg->setName('Blaa');
 
-       	var_dump($user);
 
-        if (!$this->isGranted('CAN_CREATE', $user)) {
+       	//var_dump($user);
+
+        if (!$this->isGranted('CAN_CREATE', $rg)) {
             throw $this->createAccessDeniedException('NO!');
         }
         
