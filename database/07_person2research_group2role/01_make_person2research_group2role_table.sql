@@ -12,8 +12,8 @@
 \c gomri postgres
 
 -- Drop everything to start with:
-DROP VIEW person2research_group2role;
-DROP TABLE person2research_group2role_table;
+DROP VIEW IF EXISTS person2research_group2role;
+DROP TABLE IF EXISTS person2research_group2role_table;
 
 -- Create the table:
 CREATE TABLE person2research_group2role_table

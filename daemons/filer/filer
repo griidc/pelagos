@@ -13,6 +13,7 @@ use IO::Handle;
 use Pelagos::DataStore;
 use Pelagos::Logger;
 use Sys::Hostname;
+use Digest::SHA qw(sha256_hex);
 
 umask 0022;
 
@@ -218,14 +219,30 @@ while (my $r = $sth->fetchrow_hashref()) {
     # update dataset_metadata (original filename), metadata_dl_status, and metadata_status
     my $filename = $url_metadata;
     $filename =~ s/.*\///;
-    my $sth2 = $dbh->prepare("UPDATE registry SET dataset_metadata = ?, metadata_dl_status = ?, metadata_status = ? WHERE registry_id = ?;");
-    $log->write("[$udi] updating dataset_metadata, metadata_dl_status, and metadata_status");
-    $sth2->execute($filename,'Completed','Submitted',$reg_id) or die "Couldn't execute statement: " . $sth2->errstr;
+
+    # Calculate SHA256 hash of metadata file.
+    my $sha = Digest::SHA->new('sha256');
+    $sha->addfile("$config->{paths}->{data_store}/$udi/$udi.met");
+    my $digest = $sha->hexdigest;
+
+    my $sth2 = $dbh->prepare("
+            UPDATE registry
+            SET
+                dataset_metadata = ?,
+                metadata_dl_status = ?,
+                metadata_status = ?,
+                metadata_file_hash = ?
+            WHERE
+                registry_id = ?"
+    );
+
+    $log->write("[$udi] updating dataset_metadata, metadata_dl_status, metadata_status, and metadata_file_hash");
+    $sth2->execute($filename, 'Completed', 'Submitted', $digest, $reg_id) or die "Couldn't execute statement: " . $sth2->errstr;
 
     # set parameters for submitter notification
     $notify{$r->{'userid'}}->{'metadata'} = [] unless exists $notify{$r->{'userid'}}->{'metadata'};
     push(@{$notify{$r->{'userid'}}->{'metadata'}}, { udi => $udi, title => $r->{'dataset_title'}, filename => $filename });
-    push(@md_approve, { udi => $udi, title => $r->{'dataset_title'}, filename => $filename });
+    push(@md_approve, { udi => $udi, title => $r->{'dataset_title'}, filename => $filename, metadata_file_hash => $digest });
 
 }
 
@@ -543,6 +560,7 @@ for my $md (@md_approve) {
     $text .= "\nDataset Title: $md->{title}";
     $text .= "\nProject: $project_title";
     $text .= "\nTask: $task_title" if $task_title;
+    $text .= "\nSHA256 Hash: $md->{metadata_file_hash}";
     $text .= "\n\nThe metadata file is attached.";
 
     $msg->attach(

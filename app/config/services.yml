@@ -1,0 +1,12 @@
+# Learn more about services, parameters and containers at
+# http://symfony.com/doc/current/book/service_container.html
+parameters:
+#    parameter_name: value
+
+services:
+    postgres_session_init.listener:
+        class: Pelagos\DoctrineExtensions\DBAL\Event\Listeners\PostgresSessionInit
+        arguments:
+            - { timezone: UTC, intervalstyle: iso_8601 }
+        tags:
+            - { name: doctrine.event_listener, event: postConnect }

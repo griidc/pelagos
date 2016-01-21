@@ -1,0 +1,3 @@
+pelagos_app_homepage:
+    path:     /
+    defaults: { _controller: PelagosAppBundle:Default:index }

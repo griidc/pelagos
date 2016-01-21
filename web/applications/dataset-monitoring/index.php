@@ -210,24 +210,35 @@ $app->get('/dataset_details/:udi', function ($udi) use ($app) {
     $GOMRI_DBH = openDB('GOMRI_RO');
     $RIS_DBH = openDB('RIS_RO');
 
-    $SELECT = 'SELECT
-               CASE WHEN r.dataset_title IS NULL THEN title ELSE r.dataset_title END AS title,
-               status,
-               dataset_uid,
-               d.dataset_udi AS udi,
-               d.primary_poc AS ppoc_ris_id,
-               d.secondary_poc AS spoc_ris_id,
-               dataset_originator,
-               CASE WHEN r.dataset_abstract IS NULL THEN abstract ELSE r.dataset_abstract END AS abstract,
-               CASE WHEN registry_id IS NULL THEN 0 ELSE 1 END AS registered';
+    $SELECT = '
+    SELECT
+        CASE
+            WHEN mv.title IS NOT NULL THEN mv.title
+            WHEN r.dataset_title IS NOT NULL THEN r.dataset_title
+        ELSE
+            d.title
+        END AS title,
+        status,
+        dataset_uid,
+        d.dataset_udi AS udi,
+        d.primary_poc AS ppoc_ris_id,
+        d.secondary_poc AS spoc_ris_id,
+        dataset_originator,
+        CASE
+            WHEN mv.abstract IS NOT NULL THEN mv.abstract
+            WHEN r.dataset_abstract IS NOT NULL THEN r.dataset_abstract
+            ELSE d.abstract
+        END AS abstract,
+        CASE WHEN r.registry_id IS NULL THEN 0 ELSE 1 END AS registered';
 
     $FROM = 'FROM datasets d
-             LEFT OUTER JOIN registry r ON r.dataset_udi = d.dataset_udi';
+             LEFT OUTER JOIN registry r ON r.dataset_udi = d.dataset_udi
+             LEFT OUTER JOIN metadata_view mv ON mv.registry_id  = r.registry_id';
 
     $WHERE = "WHERE d.dataset_udi='$udi'";
 
     $stmt = $GOMRI_DBH->prepare(
-        "$SELECT $FROM $WHERE ORDER BY CAST(SUBSTRING(registry_id from 18 for 3) AS INTEGER) DESC LIMIT 1;"
+        "$SELECT $FROM $WHERE ORDER BY CAST(SUBSTRING(r.registry_id from 18 for 3) AS INTEGER) DESC LIMIT 1;"
     );
     $stmt->execute();
     $stash['datasets'] = $stmt->fetchAll();

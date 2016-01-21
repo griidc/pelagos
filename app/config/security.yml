@@ -1,0 +1,20 @@
+security:
+
+    providers:
+        pelagos:
+            entity:
+                class: Pelagos:Account
+                property: userId
+
+    firewalls:
+        # disables authentication for assets and the profiler, adapt it according to your needs
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        main:
+            # allow anonymous access
+            anonymous: ~
+            # use REMOTE_USER environment variable if set
+            remote_user:
+                provider: pelagos

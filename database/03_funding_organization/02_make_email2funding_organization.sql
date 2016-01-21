@@ -12,7 +12,7 @@
 \c gomri postgres
 
 -- Start by dropping the table (ignore warnings if it does not exist)
-DROP TABLE email2funding_organization_table;
+DROP TABLE IF EXISTS email2funding_organization_table;
 CREATE TABLE email2funding_organization_table
 (
    email_address                            EMAIL_ADDRESS_TYPE  NOT NULL,

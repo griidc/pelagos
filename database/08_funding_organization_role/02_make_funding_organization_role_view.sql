@@ -12,14 +12,22 @@
 \c gomri postgres
 
 -- To begin with, DROP everything:
-DROP TRIGGER udf_funding_organization_role_delete_trigger
-   ON funding_organization_role;
-DROP TRIGGER udf_funding_organization_role_insert_trigger
-   ON funding_organization_role;
-DROP TRIGGER udf_funding_organization_role_update_trigger
-   ON funding_organization_role;
-DROP FUNCTION udf_modify_funding_organization_role();
-DROP VIEW funding_organization_role;
+DO
+$$
+BEGIN
+IF EXISTS (SELECT relname FROM pg_class WHERE relname = 'funding_organization_role')
+THEN
+    DROP TRIGGER IF EXISTS udf_funding_organization_role_delete_trigger ON funding_organization_role;
+    DROP TRIGGER IF EXISTS udf_funding_organization_role_insert_trigger ON funding_organization_role;
+    DROP TRIGGER IF EXISTS udf_funding_organization_role_update_trigger ON funding_organization_role;
+ELSE
+    RAISE NOTICE 'funding_organization_role view does not exist, so no triggers to drop. Skipping.';
+END IF;
+END
+$$;
+
+DROP FUNCTION IF EXISTS udf_modify_funding_organization_role();
+DROP VIEW IF EXISTS funding_organization_role;
 
 -- Add the CITEXT data type if needed:
 CREATE EXTENSION IF NOT EXISTS citext;
@@ -108,7 +116,7 @@ AS $rgr_func$
                              WHERE LOWER(funding_organization_role_name) = $1)'
                   INTO _count
                   USING LOWER(NEW.name);
-   
+
                IF _count IS NOT NULL
                THEN
                   _err_hint := 'Perhaps you need to perform an update instead?';
