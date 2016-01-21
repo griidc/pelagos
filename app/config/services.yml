@@ -4,6 +4,9 @@ parameters:
 #    parameter_name: value
 
 services:
-#    service_name:
-#        class: AppBundle\Directory\ClassName
-#        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+    postgres_session_init.listener:
+        class: Pelagos\DoctrineExtensions\DBAL\Event\Listeners\PostgresSessionInit
+        arguments:
+            - { timezone: UTC, intervalstyle: iso_8601 }
+        tags:
+            - { name: doctrine.event_listener, event: postConnect }

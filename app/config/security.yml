@@ -1,11 +1,10 @@
-# To get started with security, check out the documentation:
-# http://symfony.com/doc/current/book/security.html
 security:
 
-    # http://symfony.com/doc/current/book/security.html#where-do-users-come-from-user-providers
     providers:
-        in_memory:
-            memory: ~
+        pelagos:
+            entity:
+                class: Pelagos:Account
+                property: userId
 
     firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs
@@ -14,15 +13,12 @@ security:
             security: false
 
         main:
+            # allow anonymous access
             anonymous: ~
-            # activate different ways to authenticate
-
-            # http_basic: ~
-            # http://symfony.com/doc/current/book/security.html#a-configuring-how-your-users-will-authenticate
-
-            # form_login: ~
-            # http://symfony.com/doc/current/cookbook/security/form_login_setup.html
-    
+            # use REMOTE_USER environment variable if set
+            remote_user:
+                provider: pelagos
+                
 services:
     # generic create voter
     create_voter:
