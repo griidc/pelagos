@@ -1,4 +1,10 @@
 $.ajax({
+    url: pelagosComponentPath + "/static/js/Entity/FundingOrganization.js",
+    dataType: "script",
+    cache: true
+});
+
+$.ajax({
     url: pelagosComponentPath + "/static/js/Entity/FundingCycle.js",
     dataType: "script",
     cache: true
