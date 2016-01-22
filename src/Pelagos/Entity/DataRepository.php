@@ -10,6 +10,7 @@ namespace Pelagos\Entity;
 
 use \Symfony\Component\Validator\Constraints as Assert;
 use \Pelagos\Exception\NotDeletableException;
+use JMS\Serializer\Annotation\Exclude;
 
 /**
  * Class to represent a Data Repository.
@@ -26,6 +27,8 @@ class DataRepository extends Entity
      * Static array containing a list of the properties and their attributes.
      *
      * @var array $properties
+     *
+     * @Exclude
      */
     protected static $properties = array(
         'name' => array(

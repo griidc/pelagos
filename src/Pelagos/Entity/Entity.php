@@ -10,6 +10,7 @@ namespace Pelagos\Entity;
 
 use \Symfony\Component\Validator\Constraints as Assert;
 use \Pelagos\Exception\InvalidFormatArgumentException;
+use JMS\Serializer\Annotation\Exclude;
 
 /**
  * Abstract class that contains basic properties and methods common to all Pelagos entities.
@@ -79,6 +80,8 @@ abstract class Entity implements \JsonSerializable
      * Static array containing a list of the properties and their attributes.
      *
      * @var array $properties
+     *
+     * @Exclude
      */
     protected static $properties = array(
         'id' => array(

@@ -5,6 +5,7 @@ namespace Pelagos\Entity;
 use \Symfony\Component\Validator\Constraints as Assert;
 use \Pelagos\Exception\PasswordException;
 use \Symfony\Component\Security\Core\User\UserInterface;
+use JMS\Serializer\Annotation\Exclude;
 
 /**
  * Implementation of the Account class.
@@ -21,6 +22,8 @@ class Account extends Entity implements UserInterface, \Serializable
      * @var array
      *
      * @see Entity
+     *
+     * @Exclude
      */
     protected static $properties = array(
         'person' => array(
@@ -67,6 +70,8 @@ class Account extends Entity implements UserInterface, \Serializable
      * @Assert\NotBlank(
      *     message="Password hash is required"
      * )
+     *
+     * @Exclude
      */
     protected $passwordHash;
 
@@ -78,6 +83,8 @@ class Account extends Entity implements UserInterface, \Serializable
      * @Assert\NotBlank(
      *     message="Password hash algorithm is required"
      * )
+     *
+     * @Exclude
      */
     protected $passwordHashAlgorithm;
 
@@ -89,6 +96,8 @@ class Account extends Entity implements UserInterface, \Serializable
      * @Assert\NotBlank(
      *     message="Password hash salt is required"
      * )
+     *
+     * @Exclude
      */
     protected $passwordHashSalt;
 

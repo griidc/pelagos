@@ -1,4 +1,4 @@
 services:
-#    pelagos_app.example:
-#        class: Pelagos\Bundle\AppBundle\Example
-#        arguments: [@service_id, "plain_value", %parameter%]
+    pelagos.entity.handler:
+        class: Pelagos\Bundle\AppBundle\Handler\EntityHandler
+        arguments: ["@doctrine.orm.entity_manager", "@form.factory"]

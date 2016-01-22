@@ -1,0 +1,4 @@
+research_group:
+    type: rest
+    resource: Pelagos\Bundle\AppBundle\Controller\Api\ResearchGroupController
+    name_prefix: pelagos_api_

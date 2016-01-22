@@ -8,6 +8,9 @@
 
 namespace Pelagos\Entity;
 
+use \Symfony\Component\Validator\Constraints as Assert;
+use JMS\Serializer\Annotation\Exclude;
+
 /**
  * Class to represent a person token.
  */
@@ -19,6 +22,8 @@ class PersonToken extends Entity
      * Used by common update code.
      *
      * @var array $properties
+     *
+     * @Exclude
      */
     protected static $properties = array(
         'person' => array(
@@ -71,6 +76,8 @@ class PersonToken extends Entity
      * @Assert\NotBlank(
      *     message="Token text is required."
      * )
+     *
+     * @Exclude
      */
     protected $tokenText;
 

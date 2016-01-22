@@ -1,3 +1,12 @@
 pelagos_app_homepage:
     path:     /
     defaults: { _controller: PelagosAppBundle:Default:index }
+
+pelagos_api:
+    type: rest
+    prefix: /api
+    resource: "@PelagosAppBundle/Resources/config/routing_api.yml"
+
+NelmioApiDocBundle:
+    prefix:   /api/doc
+    resource: "@NelmioApiDocBundle/Resources/config/routing.yml"
