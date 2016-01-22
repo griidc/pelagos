@@ -3,7 +3,7 @@
 namespace Pelagos\Bundle\AppBundle\Exception;
 
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Form\FormTypeInterface;
+use Symfony\Component\Form\Form;
 
 /**
  * An exception to be thrown when a form does not validate.
@@ -22,12 +22,12 @@ class InvalidFormException extends BadRequestHttpException
     /**
      * Constructor that saves the form in $this->form.
      *
-     * @param string            $message A message regarding why the form did not validate.
-     * @param FormTypeInterface $form    The form that did not validate.
+     * @param string $message A message regarding why the form did not validate.
+     * @param Form   $form    The form that did not validate.
      *
      * @return void
      */
-    public function __construct($message, FormTypeInterface $form = null)
+    public function __construct($message, Form $form = null)
     {
         parent::__construct($message);
         $this->form = $form;
