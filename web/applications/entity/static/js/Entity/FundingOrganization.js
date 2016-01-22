@@ -20,9 +20,9 @@ function populateDataRepositories(selectElement)
     var url = pelagosBasePath + "/services/entity/DataRepository";
 
     $.getJSON(url, function(json) {
-        var dataRepositorys = sortObject(json.data, "name", false, true);
+        var dataRepositories = sortObject(json.data, "name", false, true);
 
-        $.each(dataRepositorys, function(seq, dataRepo) {
+        $.each(dataRepositories, function(seq, dataRepo) {
             selectElement.append(
                 $("<option></option>").val(dataRepo.id).html(dataRepo.name)
             );
