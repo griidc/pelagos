@@ -7,9 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 /**
  * The default controller for the Pelagos App Bundle.
  */
-use Pelagos\Entity\ResearchGroup;
- 
- class DefaultController extends Controller
+class DefaultController extends Controller
 {
     /**
      * The index action.
