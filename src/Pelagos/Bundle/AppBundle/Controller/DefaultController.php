@@ -18,17 +18,6 @@ use Pelagos\Entity\ResearchGroup;
      */
     public function indexAction()
     {
-       
-        $rg = new ResearchGroup();
-        $rg->setName('Blaa');
-
-
-       	//var_dump($user);
-
-        if (!$this->isGranted('CAN_CREATE', $rg)) {
-            throw $this->createAccessDeniedException('NO!');
-        }
-        
         return $this->render('PelagosAppBundle:Default:index.html.twig');
     }
 }
