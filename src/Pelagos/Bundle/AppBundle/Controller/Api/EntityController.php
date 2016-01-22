@@ -107,7 +107,8 @@ abstract class EntityController extends FOSRestController
      */
     public function newAction()
     {
-        return $this->createForm(
+        return $this->container->get('form.factory')->createNamed(
+            null,
             'Pelagos\Bundle\AppBundle\Form\\' . $this->entityType . 'Type',
             null,
             array(

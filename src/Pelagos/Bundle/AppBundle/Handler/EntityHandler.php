@@ -100,11 +100,11 @@ class EntityHandler
      */
     private function processForm($formType, Entity $entity, Request $request, $method = 'PUT')
     {
-        $form = $this->formFactory->create($formType, $entity, array('method' => $method));
+        $form = $this->formFactory->createNamed(null, $formType, $entity, array('method' => $method));
         $form->handleRequest($request);
         if ($form->isValid()) {
-            foreach ($request->files->all() as $type => $files) {
-                foreach ($files as $property => $file) {
+            foreach ($request->files->all() as $property => $file) {
+                if (isset($file)) {
                     $setter = 'set' . ucfirst($property);
                     $entity->$setter(file_get_contents($file->getPathname()));
                 }
