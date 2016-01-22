@@ -47,6 +47,10 @@ Pelagos.Entity.Entity.dcm.xml
 
         <one-to-many field="personFundingOrganizations" target-entity="PersonFundingOrganization" mapped-by="fundingOrganization" />
 
+        <many-to-one  field="dataRepository" target-entity="DataRepository" inversed-by="fundingOrganizations">
+                    <join-column name="data_repository_number" referenced-column-name="data_repository_number" />
+        </many-to-one>
+
     </entity>
 
 </doctrine-mapping>

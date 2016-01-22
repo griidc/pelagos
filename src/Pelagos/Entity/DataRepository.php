@@ -10,6 +10,7 @@ namespace Pelagos\Entity;
 
 use \Symfony\Component\Validator\Constraints as Assert;
 use \Pelagos\Exception\NotDeletableException;
+use \Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Class to represent a Data Repository.
@@ -83,6 +84,13 @@ class DataRepository extends Entity
             'class' => '\Doctrine\Common\Collections\Collection',
             'getter' => 'getPersonDataRepositories',
             'setter' => 'setPersonDataRepositories',
+            'serialize' => false,
+        ),
+        'fundingOrganizations' => array(
+            'type' => 'object',
+            'class' => '\Doctrine\Common\Collections\Collection',
+            'getter' => 'getFundingOrganizations',
+            'setter' => 'setFundingOrganizations',
             'serialize' => false,
         ),
     );
@@ -258,6 +266,25 @@ class DataRepository extends Entity
      * @access protected
      */
     protected $personDataRepositories;
+
+    /**
+     * Data Repositories collection of Funding Organization.
+     *
+     * @var ArrayCollection
+     *
+     * @access protected
+     */
+    protected $fundingOrganizations;
+
+    /**
+     * DataRepository Constructor.
+     *
+     * Create a DataRepository Object and allocate the fundingOrganizations ArrayCollection.
+     */
+    public function __construct()
+    {
+        $this->fundingOrganizations = new ArrayCollection();
+    }
 
     /**
      * Setter for name.
@@ -559,5 +586,63 @@ class DataRepository extends Entity
     public function getPersonDataRepositories()
     {
         return $this->personDataRepositories;
+    }
+
+    /**
+     * Add a FundingOrganization to the set of fundingOrganizations connected this instance.
+     *
+     * @param FundingOrganization $fundingOrganization A FundingOrganization instance to be added to the set.
+     *
+     * @access public
+     *
+     * @return void
+     */
+    public function addFundingOrganization(FundingOrganization $fundingOrganization)
+    {
+        if (!$this->fundingOrganizations->contains($fundingOrganization)) {
+            $this->fundingOrganizations->add($fundingOrganization);
+            $fundingOrganization->setDataRepository($this);
+        }
+    }
+
+    /**
+     * Setter for fundingOrganizations.
+     *
+     * @param array|\Traversable $fundingOrganizations Set of FundingOrganization objects.
+     *
+     * @access public
+     *
+     * @throws \Exception When $fundingOrganizations is not an array or traversable object.
+     * @throws \Exception When Non-FundingOrganization found within $fundingOrganizations.
+     *
+     * @return void
+     */
+    public function setFundingOrganizations($fundingOrganizations)
+    {
+        if (is_array($fundingOrganizations) || $fundingOrganizations instanceof \Traversable) {
+            foreach ($fundingOrganizations as $fundingOrganization) {
+                if (!$fundingOrganization instanceof FundingOrganization) {
+                    throw new \Exception('Non-FundingOrganization found in fundingOrganizations.');
+                }
+            }
+            foreach ($fundingOrganizations as $fundingOrganization) {
+                $this->addFundingOrganization($fundingOrganization);
+            }
+        } else {
+            throw new \Exception('fundingOrganizations must be either array or traversable objects.');
+        }
+    }
+
+    /**
+     * Getter for fundingOrganizations.
+     *
+     * @access public
+     *
+     * @return \Doctrine\Common\Collections\Collection Collection containing FundingOrganization
+     *                                                 listings for this Data Repository.
+     */
+    public function getFundingOrganizations()
+    {
+        return $this->fundingOrganizations;
     }
 }
