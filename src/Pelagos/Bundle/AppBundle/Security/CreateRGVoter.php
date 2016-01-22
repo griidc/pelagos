@@ -41,7 +41,7 @@ class CreateRGVoter extends Voter
             $roleName = $personDR->getRole()->getName();
             $person = $personDR->getPerson();
 
-            if ($userPerson === $person and in_array($roleName, array('Developer'))) {
+            if ($userPerson === $person and in_array($roleName, array('Manager'))) {
                 return true;
             }
         }
