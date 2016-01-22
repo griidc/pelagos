@@ -589,7 +589,7 @@ class DataRepository extends Entity
     }
 
     /**
-     * Add a FundingOrganization to the set of fundingOrganizations.
+     * Add a FundingOrganization to the set of fundingOrganizations connected this instance.
      *
      * @param FundingOrganization $fundingOrganization A FundingOrganization instance to be added to the set.
      *
