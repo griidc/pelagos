@@ -22,7 +22,14 @@ class CreateRGVoter extends Voter
         
         $user = $token->getUser();
         
-        //$user->getAccount();
+        var_dump($user->getPerson());
+        
+        if (!$user instanceof User) {
+            return false;
+        }
+        
+        var_dump($object);
+
         return true;
     }
 
