@@ -99,6 +99,7 @@ class FundingOrganization extends Entity
         ),
         'dataRepository' => array(
             'type' => 'object',
+            'entity' => 'DataRepository',
             'class' => '\Pelagos\Entity\DataRepository',
             'getter' => 'getDataRepository',
             'setter' => 'setDataRepository',
@@ -272,7 +273,7 @@ class FundingOrganization extends Entity
     /**
      * This FundingOrganization's parent DataRepository..
      *
-     * @var \Pelagos\Entity\DataRepository $dataRepository
+     * @var DataRepository $dataRepository
      *
      * * @access protected
      */
@@ -683,6 +684,7 @@ class FundingOrganization extends Entity
     public function setDataRepository(DataRepository $dataRepository)
     {
         $this->dataRepository = $dataRepository;
+        $this->dataRepository->addFundingOrganization($this);
     }
 
     /**

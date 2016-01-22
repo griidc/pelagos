@@ -39,6 +39,8 @@ Pelagos.Entity.Entity.dcm.xml
 
         <one-to-many field="personDataRepositories" target-entity="PersonDataRepository" mapped-by="dataRepository" />
 
+        <one-to-many field="fundingOrganizations" target-entity="FundingOrganization"  mapped-by="dataRepository" />
+
     </entity>
 
 </doctrine-mapping>
