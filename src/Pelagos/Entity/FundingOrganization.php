@@ -100,6 +100,14 @@ class FundingOrganization extends Entity
             'setter' => 'setPersonFundingOrganizations',
             'serialize' => false,
         ),
+        'dataRepository' => array(
+            'type' => 'object',
+            'entity' => 'DataRepository',
+            'class' => '\Pelagos\Entity\DataRepository',
+            'getter' => 'getDataRepository',
+            'setter' => 'setDataRepository',
+            'serialize' => false,
+        ),
     );
 
     /**
@@ -264,6 +272,15 @@ class FundingOrganization extends Entity
      * @access protected
      */
     protected $personFundingOrganizations;
+
+    /**
+     * This FundingOrganization's parent DataRepository..
+     *
+     * @var DataRepository $dataRepository
+     *
+     * * @access protected
+     */
+    protected $dataRepository;
 
     /**
      * Getter for fundingCycles.
@@ -656,6 +673,33 @@ class FundingOrganization extends Entity
     public function getPersonFundingOrganizations()
     {
         return $this->personFundingOrganizations;
+    }
+
+    /**
+     * Setter for dataRepository.
+     *
+     * @param DataRepository $dataRepository An instance of \Pelagos\Entity\DataRepository.
+     *
+     * @access public
+     *
+     * @return void
+     */
+    public function setDataRepository(DataRepository $dataRepository)
+    {
+        $this->dataRepository = $dataRepository;
+        $this->dataRepository->addFundingOrganization($this);
+    }
+
+    /**
+     * Getter for dataRepository.
+     *
+     * @access public
+     *
+     * @return DataRepository instance representing the parent data repository.
+     */
+    public function getDataRepository()
+    {
+        return $this->dataRepository;
     }
 
     /**
