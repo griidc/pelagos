@@ -59,31 +59,31 @@ class CreateRGVoter extends Voter
         $userPerson = $user->getPerson();
 
         $fundingCycle = $object->getFundingCycle();
-        if (!$fundingCycle instanceOf FundingCycle) {
+        if (!$fundingCycle instanceof FundingCycle) {
             return false;
         }
 
         $fundingOrganization = $fundingCycle->getFundingOrganization();
-        if (!$fundingOrganization instanceOf FundingOrganization) {
+        if (!$fundingOrganization instanceof FundingOrganization) {
             return false;
         }
 
         $dataRepository = $fundingOrganization->getDataRepository();
-        if (!$dataRepository instanceOf DataRepository) {
+        if (!$dataRepository instanceof DataRepository) {
             return false;
         }
 
         $personDataRepositories = $dataRepository->getPersonDataRepositories();
-        if (!$personDataRepositories instanceOf \Traversable) {
+        if (!$personDataRepositories instanceof \Traversable) {
             return false;
         }
 
         foreach ($personDataRepositories as $personDR) {
-            if (!$personDR instanceOf PersonDataRepository) {
+            if (!$personDR instanceof PersonDataRepository) {
                 continue;
             }
             $role = $personDR->getRole();
-            if (!$role instanceOf DataRepositoryRole) {
+            if (!$role instanceof DataRepositoryRole) {
                 continue;
             }
             $roleName = $role->getName();
