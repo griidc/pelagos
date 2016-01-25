@@ -5,6 +5,14 @@ namespace Pelagos\Bundle\AppBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
+use Pelagos\Entity\Account;
+use Pelagos\Entity\ResearchGroup;
+use Pelagos\Entity\FundingCycle;
+use Pelagos\Entity\FundingOrganization;
+use Pelagos\Entity\DataRepository;
+use Pelagos\Entity\PersonDataRepository;
+use Pelagos\Entity\DataRepositoryRole;
+
 /**
  * A voter to determine if a ResearchGroup can be created.
  */
@@ -24,7 +32,7 @@ class CreateRGVoter extends Voter
             return false;
         }
 
-        if (!$object instanceof \Pelagos\Entity\ResearchGroup) {
+        if (!$object instanceof ResearchGroup) {
             return false;
         }
 
@@ -44,20 +52,41 @@ class CreateRGVoter extends Voter
     {
         $user = $token->getUser();
 
-        if (!$user instanceof \Pelagos\Entity\Account) {
+        if (!$user instanceof Account) {
             return false;
         }
 
         $userPerson = $user->getPerson();
 
-        $personDataRepositories = $object
-            ->getFundingCycle()
-            ->getFundingOrganization()
-            ->getDataRepository()
-            ->getPersonDataRepositories();
+        $fundingCycle = $object->getFundingCycle();
+        if (!$fundingCycle instanceOf FundingCycle) {
+            return false;
+        }
+
+        $fundingOrganization = $fundingCycle->getFundingOrganization();
+        if (!$fundingOrganization instanceOf FundingOrganization) {
+            return false;
+        }
+
+        $dataRepository = $fundingOrganization->getDataRepository();
+        if (!$dataRepository instanceOf DataRepository) {
+            return false;
+        }
+
+        $personDataRepositories = $dataRepository->getPersonDataRepositories();
+        if (!$personDataRepositories instanceOf \Traversable) {
+            return false;
+        }
 
         foreach ($personDataRepositories as $personDR) {
-            $roleName = $personDR->getRole()->getName();
+            if (!$personDR instanceOf PersonDataRepository) {
+                continue;
+            }
+            $role = $personDR->getRole();
+            if (!$role instanceOf DataRepositoryRole) {
+                continue;
+            }
+            $roleName = $role->getName();
             $person = $personDR->getPerson();
 
             if ($userPerson === $person and in_array($roleName, array('Manager'))) {
