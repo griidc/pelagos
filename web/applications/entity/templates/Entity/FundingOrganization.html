@@ -7,7 +7,7 @@
     
     {% if not DataRepository %}
         <label for="dataRepository">Data Repository:</label>
-        <select required name="dataRepository" fundingOrganization="{{FundingOrganization.getDataRepository.getId}}">
+        <select required name="dataRepository" dataRepository="{{FundingOrganization.getDataRepository.getId}}">
             <option value="">[Please Select a Data Repository]</option>
         </select><br>
     {% endif %}
