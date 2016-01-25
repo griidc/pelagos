@@ -681,7 +681,7 @@ class FundingOrganization extends Entity
      *
      * @return void
      */
-    public function setDataRepository(DataRepository $dataRepository)
+    public function setDataRepository(DataRepository $dataRepository = null)
     {
         $this->dataRepository = $dataRepository;
         $this->dataRepository->addFundingOrganization($this);
