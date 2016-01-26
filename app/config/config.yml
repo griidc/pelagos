@@ -75,11 +75,14 @@ fos_rest:
             - { path: '^/%pelagos.prefix%/', priorities: ['html'], fallback_format: 'html' }
     view:
         view_response_listener: true
+        exception_wrapper_handler: Pelagos\Bundle\AppBundle\Handler\ExceptionWrapperHandler
     routing_loader:
         default_format: json
         include_format: false
     serializer:
-      serialize_null: true
+        serialize_null: true
+    exception:
+        enabled: true
 
 nelmio_api_doc:
     sandbox:
