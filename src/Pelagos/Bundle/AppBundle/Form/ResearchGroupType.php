@@ -59,6 +59,7 @@ class ResearchGroupType extends AbstractType
     {
         $resolver->setDefaults(array(
             'data_class' => 'Pelagos\Entity\ResearchGroup',
+            'allow_extra_fields' => true,
         ));
     }
 }
