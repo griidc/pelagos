@@ -82,3 +82,9 @@ nelmio_api_doc:
     sandbox:
         request_format:
             method: accept_header
+
+assetic:
+    debug:          '%kernel.debug%'
+    use_controller: '%kernel.debug%'
+    filters:
+        cssrewrite: ~
