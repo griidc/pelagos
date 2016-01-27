@@ -2,3 +2,9 @@ services:
     pelagos.entity.handler:
         class: Pelagos\Bundle\AppBundle\Handler\EntityHandler
         arguments: ["@doctrine.orm.entity_manager", "@form.factory"]
+
+    pelagos.twig_entity_extensions:
+        class: Pelagos\TwigEntityExtensions
+        public: false
+        tags:
+            - { name: twig.extension }
