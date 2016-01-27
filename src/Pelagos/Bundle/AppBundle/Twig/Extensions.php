@@ -35,6 +35,11 @@ class Extensions extends \Twig_Extension
                 array(self::class, 'addCSS'),
                 array('is_safe' => array('html'))
             ),
+            new \Twig_SimpleFunction(
+                'add_library',
+                array(self::class, 'addLibrary'),
+                array('is_safe' => array('html'))
+            ),
         );
     }
 
@@ -93,6 +98,34 @@ class Extensions extends \Twig_Extension
                 drupal_add_css($cssUrl, array('type' => $type));
             } else {
                 $return .= "<style type=\"text/css\" media=\"all\">@import url(\"$cssUrl\");</style>\n";
+            }
+        }
+        return $return;
+    }
+
+    /**
+     * Add a library.
+     *
+     * @param string|array $library The name of the library to add (or an array of library names).
+     *
+     * @return null|string Nothing if drupal_add_library is used, a list of libraries otherwise.
+     */
+    public static function addLibrary($library)
+    {
+        if (!is_array($library)) {
+            $library = array($library);
+        }
+        $drupal = false;
+        $return = '';
+        if (function_exists('drupal_add_library')) {
+            $drupal = true;
+            $return = null;
+        }
+        foreach ($library as $libraryName) {
+            if ($drupal) {
+                drupal_add_library('system', $libraryName);
+            } else {
+                $return .= "$libraryName\n";
             }
         }
         return $return;
