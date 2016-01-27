@@ -3,6 +3,7 @@
 namespace Pelagos\Entity;
 
 use \Symfony\Component\Validator\Constraints as Assert;
+use JMS\Serializer\Annotation\Exclude;
 
 /**
  * A Class for Data Repository Roles.
@@ -13,6 +14,8 @@ class DataRepositoryRole extends Entity
      * Static array containing a list of the properties and their attributes.
      *
      * @var array $properties
+     *
+     * @Exclude
      */
     protected static $properties = array(
         'name' => array(

@@ -3,6 +3,7 @@
 namespace Pelagos\Entity;
 
 use \Symfony\Component\Validator\Constraints as Assert;
+use JMS\Serializer\Annotation\Exclude;
 
 /**
  * Class to represent Person - Research Group associations.
@@ -19,6 +20,8 @@ class PersonResearchGroup extends Entity
      * Static array containing a list of the properties and their attributes.
      *
      * @var array $properties
+     *
+     * @Exclude
      */
     protected static $properties = array(
         'person' => array(

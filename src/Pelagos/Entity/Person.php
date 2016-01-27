@@ -12,9 +12,16 @@ use \Pelagos\Exception\EmptyRequiredArgumentException;
 use \Pelagos\Exception\InvalidFormatArgumentException;
 use \Pelagos\Exception\NotDeletableException;
 use \Symfony\Component\Validator\Constraints as Assert;
+use JMS\Serializer\Annotation\Exclude;
 
 /**
  * Class to represent people.
+ *
+ * @Assert\UniqueEntity(
+ *     fields={"emailAddress"},
+ *     errorPath="emailAddress",
+ *     message="A Person with this email address already exists"
+ * )
  */
 class Person extends Entity
 {
@@ -24,6 +31,8 @@ class Person extends Entity
      * Used by common update code.
      *
      * @var array $properties
+     *
+     * @Exclude
      */
     protected static $properties = array(
         'firstName' => array(
@@ -302,6 +311,8 @@ class Person extends Entity
      * @var \Pelagos\Entity\Account $account
      *
      * @access protected
+     *
+     * @Exclude
      */
     protected $account;
 
@@ -311,6 +322,8 @@ class Person extends Entity
      * @var \Pelagos\Entity\PersonToken $token
      *
      * @access protected
+     *
+     * @Exclude
      */
     protected $token;
 

@@ -3,6 +3,7 @@
 namespace Pelagos\Entity;
 
 use \Symfony\Component\Validator\Constraints as Assert;
+use JMS\Serializer\Annotation\Exclude;
 
 /**
  * A Class for Research Group Roles.
@@ -13,6 +14,8 @@ class ResearchGroupRole extends Entity
      * Static array containing a list of the properties and their attributes.
      *
      * @var array $properties
+     *
+     * @Exclude
      */
     protected static $properties = array(
         'name' => array(

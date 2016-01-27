@@ -7,6 +7,7 @@ imports:
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: en
+    jms_serializer.camel_case_naming_strategy.class: JMS\Serializer\Naming\IdenticalPropertyNamingStrategy
 
 framework:
     #esi:             ~
@@ -16,7 +17,6 @@ framework:
         resource: "%kernel.root_dir%/config/routing.yml"
         strict_requirements: ~
     form:            ~
-    csrf_protection: ~
     validation:      { enable_annotations: true }
     #serializer:      { enable_annotations: true }
     templating:
@@ -65,3 +65,20 @@ swiftmailer:
     username:  "%mailer_user%"
     password:  "%mailer_password%"
     spool:     { type: memory }
+
+fos_rest:
+    view:
+        view_response_listener: true
+        exception_wrapper_handler: Pelagos\Bundle\AppBundle\Handler\ExceptionWrapperHandler
+    routing_loader:
+        default_format: json
+        include_format: false
+    serializer:
+        serialize_null: true
+    exception:
+        enabled: true
+
+nelmio_api_doc:
+    sandbox:
+        request_format:
+            method: accept_header

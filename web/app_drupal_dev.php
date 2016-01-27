@@ -22,6 +22,12 @@ if (get_class($response) == 'Symfony\Component\HttpFoundation\BinaryFileResponse
     drupal_exit();
 }
 
+if (preg_match('/^Pelagos\\\\Bundle\\\\AppBundle\\\\Controller\\\\Api\\\\/', $request->attributes->get('_controller'))) {
+    $response->send();
+    $kernel->terminate($request, $response);
+    drupal_exit();
+}
+
 if (preg_match('/^Pelagos\\\\/', $request->attributes->get('_controller'))) {
     $content = $response->getContent();
     $newContent = preg_replace('/<\/body>/', '', $content);
