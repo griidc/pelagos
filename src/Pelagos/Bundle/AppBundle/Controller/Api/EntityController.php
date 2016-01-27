@@ -12,6 +12,7 @@ use FOS\RestBundle\Controller\FOSRestController;
 use Pelagos\Bundle\AppBundle\Exception\InvalidFormException;
 
 use Pelagos\Entity\Entity;
+use Pelagos\Entity\Account;
 
 /**
  * The Entity api controller.
@@ -84,7 +85,12 @@ abstract class EntityController extends FOSRestController
     {
         $entityClass = '\Pelagos\Entity\\' . $this->entityType;
         $entity = new $entityClass;
-        $entity->setCreator($this->getUser()->getUsername());
+        $user = $this->getUser();
+        $creator = 'anonymous';
+        if ($user instanceof Account) {
+            $creator = $user->getUsername();
+        }
+        $entity->setCreator($creator);
         try {
             $this
                 ->container
