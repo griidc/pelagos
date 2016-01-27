@@ -67,12 +67,6 @@ swiftmailer:
     spool:     { type: memory }
 
 fos_rest:
-    format_listener:
-        enabled: true
-        rules:
-            - { path: '^/%pelagos.prefix%/api/[^/]+/new', priorities: ['html'], fallback_format: 'html' }
-            - { path: '^/%pelagos.prefix%/api/', priorities: ['json'], fallback_format: 'json' }
-            - { path: '^/%pelagos.prefix%/', priorities: ['html'], fallback_format: 'html' }
     view:
         view_response_listener: true
         exception_wrapper_handler: Pelagos\Bundle\AppBundle\Handler\ExceptionWrapperHandler
