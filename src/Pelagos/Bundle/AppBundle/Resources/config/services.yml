@@ -3,6 +3,12 @@ services:
         class: Pelagos\Bundle\AppBundle\Handler\EntityHandler
         arguments: ["@doctrine.orm.entity_manager", "@form.factory"]
 
+    pelagos.twig.extensions:
+        class: Pelagos\Bundle\AppBundle\Twig\Extensions
+        public: false
+        tags:
+            - { name: twig.extension }
+
     pelagos.twig_entity_extensions:
         class: Pelagos\TwigEntityExtensions
         public: false
