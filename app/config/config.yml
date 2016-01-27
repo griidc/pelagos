@@ -37,6 +37,10 @@ framework:
 twig:
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
+    paths:
+        "%kernel.root_dir%/../src/Pelagos/Bundle/AppBundle/Resources/views/template": templates
+    globals:
+        basePath: "/%pelagos.prefix%"
 
 # Doctrine Configuration
 doctrine:

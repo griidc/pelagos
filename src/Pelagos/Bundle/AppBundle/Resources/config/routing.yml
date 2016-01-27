@@ -1,6 +1,10 @@
 pelagos_app_homepage:
     path:     /
     defaults: { _controller: PelagosAppBundle:Default:index }
+    
+pelagos_ui:
+    path:     /ui/{template}/{id}
+    defaults: { _controller: PelagosAppBundle:UI:index, id: null }
 
 pelagos_api:
     type: rest

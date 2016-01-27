@@ -1,0 +1,80 @@
+{% extends "PelagosAppBundle::layout.html.twig" %}
+
+{% block head %}
+
+{% image '@PelagosAppBundle/Resources/public/images/application_edit.png' output='static/images/application_edit.png' %}
+{% endimage %}
+
+{% image '@PelagosAppBundle/Resources/public/images/delete.png' output='static/images/delete.png' %}
+{% endimage %}
+
+    {{
+        add_library (
+            [
+                'ui.datepicker',
+                'ui.dialog',
+                'ui.tabs',
+                'ui.widget',
+                'ui.autocomplete'
+            ]
+        )
+    }}
+    
+  
+
+    {% stylesheets  '@PelagosAppBundle/Resources/public/css/entity.css' %}
+        {{ add_css(asset_url) }}
+    {% endstylesheets  %}
+    
+    {{
+        add_css (
+            [
+                '//cdnjs.cloudflare.com/ajax/libs/animate.css/3.3.0/animate.min.css',
+                '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css',
+            ]  
+        )
+    }}
+    
+    {{
+        add_js(
+            [
+                '//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js',
+                '//cdnjs.cloudflare.com/ajax/libs/jquery-noty/2.3.5/packaged/jquery.noty.packaged.min.js',
+                '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js',
+                '//cdnjs.cloudflare.com/ajax/libs/jquery.maskedinput/1.4.1/jquery.maskedinput.min.js'
+            ]
+        ) 
+    }}
+    
+    {% javascripts '@PelagosAppBundle/Resources/public/js/common.js' %}
+        {{ add_js(asset_url) }}
+    {% endjavascripts %}
+    
+    {% javascripts '@PelagosAppBundle/Resources/public/js/entityForm.js' %}
+        {{ add_js(asset_url) }}
+    {% endjavascripts %}
+    
+    {{ add_js("
+        var $ = jQuery.noConflict();
+        
+        var pelagosBasePath = '#{basePath}';
+
+        $(document).ready(function()
+        {
+            'use strict';
+            $('form.entityForm').entityForm({
+                canEdit: #{can_edit}
+            });
+        });
+        ",
+        'inline') 
+    }}
+
+{% endblock %}
+
+{% block body %}
+    <div class="PelagosUI">
+        {% include "@templates/#{ui.templateName}" %}
+    </div>
+{% endblock %}
+
