@@ -60,7 +60,34 @@ class CreateRGVoter extends Voter
 
         $fundingCycle = $object->getFundingCycle();
         if (!$fundingCycle instanceof FundingCycle) {
-            return false;
+            if ($fundingCycle === null) {
+                # check to see if this is an attempt to check for CAN_CREATE
+                if ($attribute == 'CAN_CREATE') {
+                    # check to ensure user has DRP/M role on at least one DataRepository.
+                    $personDataRepositories = $dataRepository->getPersonDataRepositories();
+                    if (!$personDataRepositories instanceof \Traversable) {
+                        return false;
+                    }
+
+                    foreach ($personDataRepositories as $personDR) {
+                        if (!$personDR instanceof PersonDataRepository) {
+                            continue;
+                        }
+                        $role = $personDR->getRole();
+                        if (!$role instanceof DataRepositoryRole) {
+                            continue;
+                        }
+                        $roleName = $role->getName();
+                        $person = $personDR->getPerson();
+
+                        if ($userPerson === $person and in_array($roleName, array('Manager'))) {
+                            return true;
+                        }
+                    }
+                }
+            } else {
+                return false;
+            }
         }
 
         $fundingOrganization = $fundingCycle->getFundingOrganization();
