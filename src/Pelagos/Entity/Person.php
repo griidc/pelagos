@@ -13,6 +13,7 @@ use \Pelagos\Exception\InvalidFormatArgumentException;
 use \Pelagos\Exception\NotDeletableException;
 use \Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation\Exclude;
+use \Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Class to represent people.
@@ -304,6 +305,14 @@ class Person extends Entity
      * @access protected
      */
     protected $personResearchGroups;
+    /**
+     * Person's PersonDataRepositories.
+     *
+     * @var \Doctrine\Common\Collections\Collection $personDataRepositories
+     *
+     * @access protected
+     */
+    protected $personDataRepositories;
 
     /**
      * Person's Account.
@@ -709,6 +718,64 @@ class Person extends Entity
     public function getPersonResearchGroups()
     {
         return $this->personResearchGroups;
+    }
+
+    /**
+     * Setter for personDataRepositories.
+     *
+     * @param array|\Traversable $personDataRepositories Set of PersonDataRepository objects.
+     *
+     * @access public
+     *
+     * @throws \Exception When Non-PersonDataRepository found in $personDataRepositories.
+     * @throws \Exception When $personDataRepositories is not an array or traversable object.
+     *
+     * @return void
+     */
+    public function setPersonDataRepositories($personDataRepositories)
+    {
+        if (is_array($personDataRepositories) || $personDataRepositories instanceof \Traversable) {
+            foreach ($personDataRepositories as $personDataRepository) {
+                if (!$personDataRepository instanceof PersonDataRepository) {
+                    throw new \Exception('Non-PersonDataRepository found in personDataRepositories.');
+                }
+            }
+            $this->personDataRepositories = $personDataRepositories;
+            foreach ($this->personDataRepositories as $personDataRepository) {
+                $personDataRepository->setPerson($this);
+            }
+        } else {
+            throw new \Exception('personDataRepositories must be either array or traversable objects.');
+        }
+    }
+
+    /**
+     * Getter for PersonDataRepositories.
+     *
+     * @access public
+     *
+     * @return \Doctrine\Common\Collections\Collection Collection containing all personDataRepositories for this Person.
+     */
+    public function getPersonDataRepositories()
+    {
+        return $this->personDataRepositories;
+    }
+    /**
+     * Getter for DataRepositories.
+     *
+     * @access public
+     *
+     * @return \Doctrine\Common\Collections\ArrayCollection Collection containing all DataRepositories for this Person.
+     *
+     */
+    public function getDataRepositories()
+    {
+        $personDataRepositories = $this->getPersonDataRepositories();
+        $collection = new ArrayCollection;
+        foreach($personDataRepositories as $personDataRepository) {
+            $collection->add($personDataRepository->getDataRepository());
+        }
+        return $collection;
     }
 
     /**
