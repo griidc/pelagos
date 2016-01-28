@@ -305,6 +305,7 @@ class Person extends Entity
      * @access protected
      */
     protected $personResearchGroups;
+
     /**
      * Person's PersonDataRepositories.
      *
@@ -760,19 +761,19 @@ class Person extends Entity
     {
         return $this->personDataRepositories;
     }
+
     /**
      * Getter for DataRepositories.
      *
      * @access public
      *
      * @return \Doctrine\Common\Collections\ArrayCollection Collection containing all DataRepositories for this Person.
-     *
      */
     public function getDataRepositories()
     {
         $personDataRepositories = $this->getPersonDataRepositories();
         $collection = new ArrayCollection;
-        foreach($personDataRepositories as $personDataRepository) {
+        foreach ($personDataRepositories as $personDataRepository) {
             $collection->add($personDataRepository->getDataRepository());
         }
         return $collection;
