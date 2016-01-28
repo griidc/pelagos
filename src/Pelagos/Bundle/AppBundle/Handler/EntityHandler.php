@@ -136,8 +136,9 @@ class EntityHandler
         if ($form->isValid()) {
             if ($method == 'POST') {
                 if (!$this->authorizationChecker->isGranted('CAN_CREATE', $entity)) {
-                    $entityType = substr(strrchr(get_class($entity), '\\'), 1);
-                    throw new AccessDeniedException("You do not have sufficient privileges to create this $entityType.");
+                    throw new AccessDeniedException(
+                        'You do not have sufficient privileges to create this ' . $entity::FRIENDLY_NAME  . '.'
+                    );
                 }
             }
             foreach ($request->files->all() as $property => $file) {
