@@ -63,9 +63,9 @@ class CreateRGVoter extends Voter
             if ($fundingCycle === null) {
                 // check to see if this is an attempt to check for CAN_CREATE
                 if ($attribute == 'CAN_CREATE') {
-                    # check to ensure user has DRP/M role on at least one DataRepository.
+                    // check to ensure user has DRP/M role on at least one DataRepository.
                     $personDataRepositories = $userPerson->getPersonDataRepositories();
-                    return $this->isUserAManager($userPerson,$personDataRepositories);
+                    return $this->isUserAManager($userPerson, $personDataRepositories);
                 }
             } else {
                 return false;
@@ -83,17 +83,19 @@ class CreateRGVoter extends Voter
         }
 
         $personDataRepositories = $dataRepository->getPersonDataRepositories();
-        return $this->isUserAManager($userPerson,$personDataRepositories);
+        return $this->isUserAManager($userPerson, $personDataRepositories);
     }
 
     /**
      * Search the tree to find out if the User/Person is a manager.
-     * @param Person $userPerson
-     * @param mixed $personDataRepositories
+     *
+     * @param Person $userPerson             This is the logged in user's representation.
+     * @param mixed  $personDataRepositories List of data repositories the user is associated with.
      *
      * @return bool True if the user is a manager.
      */
-    private function isUserAManager(Person $userPerson, $personDataRepositories) {
+    private function isUserAManager(Person $userPerson, $personDataRepositories)
+    {
         if (!$personDataRepositories instanceof \Traversable) {
             return false;
         }
