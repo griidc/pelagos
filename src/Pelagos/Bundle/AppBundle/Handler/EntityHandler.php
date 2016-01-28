@@ -86,6 +86,15 @@ class EntityHandler
             ->findAll();
     }
 
+    /**
+     * Return all entities of $entityClass filtered by $criteria and sorted by $orderBy.
+     *
+     * @param string     $entityClass The type of entity to retrieve.
+     * @param array      $criteria    The criteria to filter by.
+     * @param array|null $orderBy     The properties to sort by.
+     *
+     * @return Collection A collection of entities.
+     */
     public function getBy($entityClass, array $criteria, $orderBy = null)
     {
         return $this->entityManager

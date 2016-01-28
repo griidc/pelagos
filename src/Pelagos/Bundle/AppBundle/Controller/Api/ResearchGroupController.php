@@ -22,6 +22,8 @@ class ResearchGroupController extends EntityController
     /**
      * Get all research groups.
      *
+     * @param Request $request The request object.
+     *
      * @ApiDoc(
      *   resource = true,
      *   section = "Research Groups",
