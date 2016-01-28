@@ -85,13 +85,45 @@ abstract class EntityController extends FOSRestController
         }
         $entity->setCreator($creator);
         try {
-            $this
-                ->container
-                ->get('pelagos.entity.handler')
-                ->post($formType, $entity, $request);
-            return $entity;
+            $this->processForm($formType, $entity, $request, 'POST');
         } catch (InvalidFormException $exception) {
             return $exception->getForm();
         }
+        $this->container->get('pelagos.entity.handler')->create($entity);
+        return $entity;
+    }
+
+    /**
+     * Processes the form.
+     *
+     * @param string  $formType The type of form to process.
+     * @param Entity  $entity   The entity to populate.
+     * @param Request $request  The request object.
+     * @param string  $method   The HTTP method.
+     *
+     * @throws BadRequestHttpException When no valid parameters are passed.
+     * @throws InvalidFormException    When invalid data is submitted.
+     *
+     * @return Entity The updated entity.
+     */
+    private function processForm($formType, Entity $entity, Request $request, $method = 'PUT')
+    {
+        $form = $this->get('form.factory')->createNamed(null, $formType, $entity, array('method' => $method));
+        $form->handleRequest($request);
+        if (!$form->isSubmitted()) {
+            throw new BadRequestHttpException(
+                'You did not pass any valid parameters for a ' . $entity::FRIENDLY_NAME . '.'
+            );
+        }
+        if (!$form->isValid()) {
+            throw new InvalidFormException('Invalid submitted data', $form);
+        }
+        foreach ($request->files->all() as $property => $file) {
+            if (isset($file)) {
+                $setter = 'set' . ucfirst($property);
+                $entity->$setter(file_get_contents($file->getPathname()));
+            }
+        }
+        return $entity;
     }
 }

@@ -11,8 +11,6 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\Common\Collections\Collection;
 
 use Pelagos\Entity\Entity;
-use Pelagos\Bundle\AppBundle\Form\PersonType;
-use Pelagos\Bundle\AppBundle\Exception\InvalidFormException;
 
 /**
  * A handler for entities.
@@ -27,13 +25,6 @@ class EntityHandler
     private $entityManager;
 
     /**
-     * The form factory to use in this entity handler.
-     *
-     * @var FormFactoryInterface
-     */
-    private $formFactory;
-
-    /**
      * The authorization checker to use in this entity handler.
      *
      * @var AuthorizationCheckerInterface
@@ -44,16 +35,13 @@ class EntityHandler
      * Constructor for EntityHandler.
      *
      * @param EntityManager                 $entityManager        The entity manager to use.
-     * @param FormFactoryInterface          $formFactory          The form factory to use.
      * @param AuthorizationCheckerInterface $authorizationChecker The authorization checker to use.
      */
     public function __construct(
         EntityManager $entityManager,
-        FormFactoryInterface $formFactory,
         AuthorizationCheckerInterface $authorizationChecker
     ) {
         $this->entityManager = $entityManager;
-        $this->formFactory = $formFactory;
         $this->authorizationChecker = $authorizationChecker;
     }
 
@@ -103,54 +91,23 @@ class EntityHandler
     }
 
     /**
-     * Handle a post of a new entity.
+     * Create a new entity.
      *
-     * @param string  $formType The type of form to process.
-     * @param Entity  $entity   The entity to populate.
-     * @param Request $request  The request object.
+     * @param Entity $entity The entity to create.
      *
-     * @return Entity The updated entity.
-     */
-    public function post($formType, Entity $entity, Request $request)
-    {
-        return $this->processForm($formType, $entity, $request, 'POST');
-    }
-
-    /**
-     * Processes the form.
-     *
-     * @param string  $formType The type of form to process.
-     * @param Entity  $entity   The entity to populate.
-     * @param Request $request  The request object.
-     * @param string  $method   The HTTP method.
-     *
-     * @throws InvalidFormException  When invalid data is submitted.
      * @throws AccessDeniedException When the user does not have sufficient privileges to create the entity.
      *
-     * @return Entity The updated entity.
+     * @return Entity The new entity.
      */
-    private function processForm($formType, Entity $entity, Request $request, $method = 'PUT')
+    public function create(Entity $entity)
     {
-        $form = $this->formFactory->createNamed(null, $formType, $entity, array('method' => $method));
-        $form->handleRequest($request);
-        if ($form->isValid()) {
-            if ($method == 'POST') {
-                if (!$this->authorizationChecker->isGranted('CAN_CREATE', $entity)) {
-                    throw new AccessDeniedException(
-                        'You do not have sufficient privileges to create this ' . $entity::FRIENDLY_NAME  . '.'
-                    );
-                }
-            }
-            foreach ($request->files->all() as $property => $file) {
-                if (isset($file)) {
-                    $setter = 'set' . ucfirst($property);
-                    $entity->$setter(file_get_contents($file->getPathname()));
-                }
-            }
-            $this->entityManager->persist($entity);
-            $this->entityManager->flush($entity);
-            return $entity;
+        if (!$this->authorizationChecker->isGranted('CAN_CREATE', $entity)) {
+            throw new AccessDeniedException(
+                'You do not have sufficient privileges to create this ' . $entity::FRIENDLY_NAME . '.'
+            );
         }
-        throw new InvalidFormException('Invalid submitted data', $form);
+        $this->entityManager->persist($entity);
+        $this->entityManager->flush($entity);
+        return $entity;
     }
 }
