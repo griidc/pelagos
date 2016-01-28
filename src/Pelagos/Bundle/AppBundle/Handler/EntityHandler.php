@@ -118,13 +118,11 @@ class EntityHandler
         $form = $this->formFactory->createNamed(null, $formType, $entity, array('method' => $method));
         $form->handleRequest($request);
         if ($form->isValid()) {
-            if (!$this->authorizationChecker->isGranted('CAN_CREATE', $entity)) {
-                $action = 'edit';
-                if ($method == 'POST') {
-                    $action = 'create';
+            if ($method == 'POST') {
+                if (!$this->authorizationChecker->isGranted('CAN_CREATE', $entity)) {
+                    $entityType = substr(strrchr(get_class($entity), '\\'), 1);
+                    throw new AccessDeniedException("You do not have sufficient privileges to create this $entityType.");
                 }
-                $entityType = substr(strrchr(get_class($entity), '\\'), 1);
-                throw new AccessDeniedException("You do not have sufficient privileges to $action this $entityType.");
             }
             foreach ($request->files->all() as $property => $file) {
                 if (isset($file)) {
