@@ -1,4 +1,11 @@
-research_group:
+funding_cycles:
+    type: rest
+    resource: Pelagos\Bundle\AppBundle\Controller\Api\FundingCycleController
+    name_prefix: pelagos_api_funding_cycles_
+    prefix: funding_cycles
+
+research_groups:
     type: rest
     resource: Pelagos\Bundle\AppBundle\Controller\Api\ResearchGroupController
-    name_prefix: pelagos_api_
+    name_prefix: pelagos_api_research_groups_
+    prefix: research_groups

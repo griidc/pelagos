@@ -10,7 +10,7 @@ namespace Pelagos\Entity;
 
 use \Symfony\Component\Validator\Constraints as Assert;
 use \Pelagos\Exception\NotDeletableException;
-use JMS\Serializer\Annotation\Exclude;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * Class to represent funding cycles.
@@ -29,6 +29,11 @@ use JMS\Serializer\Annotation\Exclude;
  */
 class FundingCycle extends Entity
 {
+    /**
+     * A friendly name for this type of entity.
+     */
+    const FRIENDLY_NAME = 'Funding Cycle';
+
     /**
      * Name of a funding cycle.
      *
@@ -99,6 +104,8 @@ class FundingCycle extends Entity
      * @Assert\NotBlank(
      *     message="Funding Organization is required"
      * )
+     *
+     * @Serializer\MaxDepth(1)
      */
     protected $fundingOrganization;
 
@@ -108,6 +115,8 @@ class FundingCycle extends Entity
      * @var \Doctrine\Common\Collections\Collection
      *
      * @access protected
+     *
+     * @Serializer\MaxDepth(2)
      */
     protected $researchGroups;
 
@@ -116,7 +125,7 @@ class FundingCycle extends Entity
      *
      * @var array $properties
      *
-     * @Exclude
+     * @Serializer\Exclude
      */
     protected static $properties = array(
         'name' => array(

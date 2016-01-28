@@ -58,32 +58,39 @@ class EntityHandler
     }
 
     /**
-     * Return an entity of $entityType identified by $id.
+     * Return an entity of $entityClass identified by $id.
      *
-     * @param string  $entityType The type of entity to retrieve.
-     * @param integer $id         The id of the entity to retrieve.
+     * @param string  $entityClass The type of entity to retrieve.
+     * @param integer $id          The id of the entity to retrieve.
      *
      * @return Entity|null The entity.
      */
-    public function get($entityType, $id)
+    public function get($entityClass, $id)
     {
         return $this->entityManager
-            ->getRepository('Pelagos:' . $entityType)
+            ->getRepository($entityClass)
             ->find($id);
     }
 
     /**
-     * Return all entities of $entityType.
+     * Return all entities of $entityClass.
      *
-     * @param string $entityType The type of entity to retrieve.
+     * @param string $entityClass The type of entity to retrieve.
      *
      * @return Collection A collection of entities.
      */
-    public function getAll($entityType)
+    public function getAll($entityClass)
     {
         return $this->entityManager
-            ->getRepository('Pelagos:' . $entityType)
+            ->getRepository($entityClass)
             ->findAll();
+    }
+
+    public function getBy($entityClass, array $criteria, $orderBy = null)
+    {
+        return $this->entityManager
+            ->getRepository($entityClass)
+            ->findBy($criteria, $orderBy);
     }
 
     /**

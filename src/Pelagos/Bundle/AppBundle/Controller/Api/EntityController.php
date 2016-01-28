@@ -20,46 +20,38 @@ use Pelagos\Entity\Account;
 abstract class EntityController extends FOSRestController
 {
     /**
-     * The type of entity this controller is for.
-     *
-     * @var string
-     */
-    private $entityType;
-
-    /**
-     * Constructor that sets $entityType based on the class name.
-     */
-    public function __construct()
-    {
-        preg_match('/([^\\\\]+)Controller$/', get_class($this), $matches);
-        $this->entityType = $matches[1];
-    }
-
-    /**
      * Get all entities of a given type.
+     *
+     * @param string  $entityClass The type of entity.
+     * @param Request $request     The request object.
      *
      * @return array
      */
-    public function cgetAction()
+    public function handleGetCollection($entityClass, Request $request)
     {
-        $entities = $this
-            ->container
-            ->get('pelagos.entity.handler')
-            ->getAll($this->entityType);
-        return $entities;
+        $params = $request->query->all();
+        if (array_key_exists('q', $params)) {
+            // Remove the 'q' parameter if it exists (this comes from Drupal).
+            unset($params['q']);
+        }
+        if (count($params) > 0) {
+            return $this->container->get('pelagos.entity.handler')->getBy($entityClass, $params);
+        }
+        return $this->container->get('pelagos.entity.handler')->getAll($entityClass);
     }
 
     /**
      * Get a single entity of a given type identified by $id.
      *
-     * @param integer $id The id of the entity to return.
+     * @param string  $entityClass The type of entity.
+     * @param integer $id          The id of the entity.
      *
      * @throws BadRequestHttpException When the provided id is not a non-negative integer.
      * @throws NotFoundHttpException   When an entity of a given type identified by $id is not found.
      *
      * @return Entity
      */
-    public function getAction($id)
+    public function handleGetOne($entityClass, $id)
     {
         if (!preg_match('/^\d+$/', $id)) {
             throw new BadRequestHttpException('id must be a non-negative integer');
@@ -67,9 +59,9 @@ abstract class EntityController extends FOSRestController
         $entity = $this
             ->container
             ->get('pelagos.entity.handler')
-            ->get($this->entityType, $id);
+            ->get($entityClass, $id);
         if ($entity === null) {
-            throw $this->createNotFoundException('No ' . $this->entityType . " exists with id: $id");
+            throw $this->createNotFoundException('No ' . $entityClass::FRIENDLY_NAME . " exists with id: $id");
         }
         return $entity;
     }
@@ -77,13 +69,14 @@ abstract class EntityController extends FOSRestController
     /**
      * Create an entity from the submitted data.
      *
-     * @param Request $request The request object.
+     * @param string  $formType    The type of form.
+     * @param string  $entityClass The type of entity.
+     * @param Request $request     The request object.
      *
      * @return Entity|FormTypeInterface
      */
-    public function postAction(Request $request)
+    public function handlePost($formType, $entityClass, Request $request)
     {
-        $entityClass = '\Pelagos\Entity\\' . $this->entityType;
         $entity = new $entityClass;
         $user = $this->getUser();
         $creator = 'anonymous';
@@ -95,34 +88,10 @@ abstract class EntityController extends FOSRestController
             $this
                 ->container
                 ->get('pelagos.entity.handler')
-                ->post(
-                    'Pelagos\Bundle\AppBundle\Form\\' . $this->entityType . 'Type',
-                    $entity,
-                    $request
-                );
+                ->post($formType, $entity, $request);
             return $entity;
         } catch (InvalidFormException $exception) {
             return $exception->getForm();
         }
-    }
-
-    /**
-     * Presents the form to use to create a new entity.
-     *
-     * @return FormTypeInterface
-     */
-    public function newAction()
-    {
-        return $this->container->get('form.factory')->createNamed(
-            null,
-            'Pelagos\Bundle\AppBundle\Form\\' . $this->entityType . 'Type',
-            null,
-            array(
-                'action' => $this->generateUrl(
-                    'pelagos_api_post_' . ltrim(strtolower(preg_replace('/[A-Z]/', '_$0', $this->entityType)), '_')
-                ),
-                'method' => 'POST',
-            )
-        );
     }
 }
