@@ -28,7 +28,7 @@ class UIController extends Controller
         if (isset($id)) {
             $ui[$template] = $entityHandler->get($template, $id);
         } else {
-            $ui[$template] = null;
+            $ui[$template] = new \Pelagos\Entity\ResearchGroup;
         }
 
         $ui['can_edit'] = (true) ? 'true' : 'false';

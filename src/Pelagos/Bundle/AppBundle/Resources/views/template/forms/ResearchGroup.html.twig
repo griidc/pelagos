@@ -1,4 +1,4 @@
-<form class="entityForm" entityType="ResearchGroup" editable deletable>
+<form class="entityForm" entityType="ResearchGroup" editable deletable action="{{"#{basePath}/api/research_groups"}}">
 
     <input type="hidden" name="id" value="{{ResearchGroup.getId}}">
 
@@ -6,24 +6,24 @@
     <input type="text" name="name" value="{{ResearchGroup.getName}}" required><br>
 
     <label for="fundingOrganization">Funding Organization:</label>
-    <select dontvalidate required name="fundingCycle.fundingOrganization" fundingOrganization="{{ResearchGroup.getFundingCycle.getFundingOrganization.getId}}">
+    <select dontvalidate required name="fundingCycle.fundingOrganization" fundingOrganization="{{ResearchGroup.getFundingCycle.getFundingOrganization.getId|default}}">
     <option value="">[Please Select a Funding Organization]</option>
     {% for FundingOrganization in entityService.getAll("FundingOrganization") | sortBy(["name"]) %}
         <option value="{{FundingOrganization.getId}}"
-        {{ (ResearchGroup.getFundingCycle.getFundingOrganization.getId == FundingOrganization.getId ? ' selected ' : '') }}
-        >{{FundingOrganization.getName}}</option>
+        {{ (ResearchGroup.getFundingCycle.getFundingOrganization.getId|default == FundingOrganization.getId ? ' selected ' : '') }}
+        >{{FundingOrganization.getName|default}}</option>
     {% endfor %}
     </select><br>
 
     <label for="fundingCycle">Funding Cycle:</label>
     <select
-    {{ (ResearchGroup.getFundingCycle.getId == '' ? ' disabled ' : '')  }}
-    required name="fundingCycle" fundingCycle="{{ResearchGroup.getFundingCycle.getId}}">
+    {{ (ResearchGroup.getFundingCycle.getId|default == '' ? ' disabled ' : '')  }}
+    required name="fundingCycle" fundingCycle="{{ResearchGroup.getFundingCycle.getId|default}}">
         <option value="">[Please Select a Funding Organization First]</option>
         {% if (ResearchGroup) %}
-            {% for FundingCycle in ResearchGroup.getFundingCycle.getFundingOrganization.getFundingCycles %}
+            {% for FundingCycle in ResearchGroup.getFundingCycle.getFundingOrganization.getFundingCycles|default %}
                 <option value="{{FundingCycle.getId}}"
-                {{ (ResearchGroup.getFundingCycle.getId == FundingCycle.getId ? ' selected ' : '') }}
+                {{ (ResearchGroup.getFundingCycle.getId|default == FundingCycle.getId ? ' selected ' : '') }}
                 >{{FundingCycle.getName}}</option>
             {% endfor %}
         {% endif %}

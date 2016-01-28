@@ -35,6 +35,8 @@
             if (!$(this).is("form")) {
                 return false;
             }
+            
+            var actionURL = $(this).attr('action');
 
             $("input,textarea,select", this).each(function() {
                 $(this)
@@ -127,16 +129,16 @@
                 if (!$(this).hasClass("active")) {
                     $(this).addClass("active");
 
-                    var url = pelagosBasePath + "/services/entity/" + entityType + "/validateProperty";
+                    var url = actionURL + "/validateProperty";
 
                     $("input:visible,textarea,select", this).each(function() {
                         $(this).attr("disabled", false);
                         if (!$(this).hasAttr("dontvalidate")) {
-                            $(this).rules("add", {
-                                remote: {
-                                    url: url
-                                }
-                            });
+                            // $(this).rules("add", {
+                                // remote: {
+                                    // url: url
+                                // }
+                            // });
                         }
                     });
                     $(".innerForm", this).hide();
@@ -269,6 +271,7 @@
         var entityType = $(form).attr("entityType");
         var entityId = $(form).find("[name=\"id\"]").val();
         var url;
+        var actionURL = $(form).attr('action');
 
         $("form input:hidden").each(function(key, input){
             data.append(input.name, input.value);
@@ -280,22 +283,26 @@
         switch (action)
         {
             case "Create":
-                url = pelagosBasePath + "/services/entity/" + entityType;
+                //url = pelagosBasePath + "/services/entity/" + entityType;
+                url = actionURL;
                 type = "POST";
                 returnCode = 201;
                 break;
             case "Update":
-                url = pelagosBasePath + "/services/entity/" + entityType + "/" + entityId;
+                //url = pelagosBasePath + "/services/entity/" + entityType + "/" + entityId;
+                url = actionURL + "/" + entityId;
                 type = "PUT";
                 returnCode = 200;
                 break;
             case "Delete":
-                url = pelagosBasePath + "/services/entity/" + entityType + "/" + entityId;
+                //url = pelagosBasePath + "/services/entity/" + entityType + "/" + entityId;
+                url = actionURL + "/" + entityId;
                 type = "DELETE";
                 returnCode = 200;
                 break;
             default:
-                url = pelagosBasePath + "/services/entity/" + entityType + "/" + entityId;
+                //url = pelagosBasePath + "/services/entity/" + entityType + "/" + entityId;
+                url = actionURL + "/" + entityId;
                 type = "GET";
                 returnCode = 200;
                 break;
@@ -305,7 +312,8 @@
             var title = "";
             var message = "";
             var mainPromise = this;
-            var myAjax = $.ajax({
+            
+            $.ajax({
                 type: type,
                 data: data,
                 url: url,
@@ -314,7 +322,8 @@
                 cache: false,
                 contentType: false,
                 processData: false,
-                success: function(json) {
+                success: function(data, textStatus, jqXHR) {
+                    
                     if (json.code === returnCode) {
                         title = "Success!";
                         message = json.message;
@@ -324,7 +333,6 @@
                     } else {
                         title = "Error!";
                         message = "Something went wrong!<br>Didn't receive the correct success message!";
-						myAjax.reject();
                     }
                 },
                 error: function(response) {
