@@ -65,25 +65,7 @@ class CreateRGVoter extends Voter
                 if ($attribute == 'CAN_CREATE') {
                     # check to ensure user has DRP/M role on at least one DataRepository.
                     $personDataRepositories = $dataRepository->getPersonDataRepositories();
-                    if (!$personDataRepositories instanceof \Traversable) {
-                        return false;
-                    }
-
-                    foreach ($personDataRepositories as $personDR) {
-                        if (!$personDR instanceof PersonDataRepository) {
-                            continue;
-                        }
-                        $role = $personDR->getRole();
-                        if (!$role instanceof DataRepositoryRole) {
-                            continue;
-                        }
-                        $roleName = $role->getName();
-                        $person = $personDR->getPerson();
-
-                        if ($userPerson === $person and in_array($roleName, array('Manager'))) {
-                            return true;
-                        }
-                    }
+                    return $this->isUserAManager($userPerson,$personDataRepositories);
                 }
             } else {
                 return false;
@@ -101,6 +83,17 @@ class CreateRGVoter extends Voter
         }
 
         $personDataRepositories = $dataRepository->getPersonDataRepositories();
+        return $this->isUserAManager($userPerson,$personDataRepositories);
+    }
+
+    /**
+     * Search the tree to find out if the User/Person is a manager.
+     * @param Person $userPerson
+     * @param mixed $personDataRepositories
+     *
+     * @return bool True if the user is a manager.
+     */
+    private function isUserAManager(Person $userPerson, $personDataRepositories) {
         if (!$personDataRepositories instanceof \Traversable) {
             return false;
         }
@@ -120,7 +113,6 @@ class CreateRGVoter extends Voter
                 return true;
             }
         }
-
         return false;
     }
 }
