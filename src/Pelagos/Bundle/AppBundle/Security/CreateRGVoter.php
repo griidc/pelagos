@@ -12,6 +12,7 @@ use Pelagos\Entity\FundingOrganization;
 use Pelagos\Entity\DataRepository;
 use Pelagos\Entity\PersonDataRepository;
 use Pelagos\Entity\DataRepositoryRole;
+use Pelagos\Entity\Person;
 
 /**
  * A voter to determine if a ResearchGroup can be created.
@@ -94,7 +95,7 @@ class CreateRGVoter extends Voter
      *
      * @return bool True if the user is a manager.
      */
-    private function isUserAManager(\Pelagos\Entity\Person $userPerson, $personDataRepositories)
+    private function isUserAManager(Person $userPerson, $personDataRepositories)
     {
         if (!$personDataRepositories instanceof \Traversable) {
             return false;
