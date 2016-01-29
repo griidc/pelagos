@@ -94,7 +94,7 @@ class CreateRGVoter extends Voter
      *
      * @return bool True if the user is a manager.
      */
-    private function isUserAManager(Person $userPerson, $personDataRepositories)
+    private function isUserAManager(\Pelagos\Entity\Person $userPerson, $personDataRepositories)
     {
         if (!$personDataRepositories instanceof \Traversable) {
             return false;
