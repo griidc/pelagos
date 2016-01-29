@@ -26,7 +26,7 @@ class UIController extends Controller
         $ui['ui']['templateName'] = "$template.html.twig";
 
         if (isset($id)) {
-            $ui[$template] = $entityHandler->get($template, $id);
+            $ui[$template] = $entityHandler->get("Pelagos:$template", $id);
         } else {
             $ui[$template] = new \Pelagos\Entity\ResearchGroup;
         }

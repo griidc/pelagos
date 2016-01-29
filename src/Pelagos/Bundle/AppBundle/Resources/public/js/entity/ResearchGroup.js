@@ -14,7 +14,7 @@ $(document).ready(function()
             fundingCycle.append("<option value=\"\">[Please Select a Funding Cycle]</option>");
             addOptionsByEntity(
                 fundingCycle,
-                "FundingCycle", "fundingOrganization=" + $(this).val()
+                "funding_cycles", "fundingOrganization=" + $(this).val()
             );
         }
     });
@@ -50,9 +50,9 @@ function addOptionsByEntity(selectElement, entity, filter)
 
     var url = pelagosBasePath + "/api/" + entity;
     if (typeof filter !== "undefined") {
-        url += "?" + filter + "&properties=id,name";
+        url += "?" + filter;// + "&properties=id,name";
     } else {
-        url += "?properties=id,name";
+        //url += "?properties=id,name";
     }
 
     $.ajax({
@@ -60,8 +60,8 @@ function addOptionsByEntity(selectElement, entity, filter)
         dataType: "json",
         async: false
     })
-    .done(function(json) {
-        var entities = sortObject(json.data, "name", false, true);
+    .done(function(data) {
+        var entities = sortObject(data, "name", false, true);
 
         $.each(entities, function(seq, item) {
             selectElement.append(
