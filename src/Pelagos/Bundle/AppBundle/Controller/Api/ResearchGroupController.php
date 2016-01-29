@@ -12,6 +12,7 @@ use FOS\RestBundle\Controller\Annotations;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 use Pelagos\Entity\ResearchGroup;
+use Pelagos\Bundle\AppBundle\Form\ResearchGroupType;
 
 /**
  * The ResearchGroup api controller.
@@ -117,5 +118,33 @@ class ResearchGroupController extends EntityController implements ClassResourceI
     public function newAction()
     {
         return parent::newAction();
+    }
+
+    /**
+     * Validate a value for a property of a research group.
+     *
+     * @param Request $request The request object.
+     *
+     * @ApiDoc(
+     *   resource = true,
+     *   section = "Research Group",
+     *   parameters = {
+     *     {"name"="someProperty", "dataType"="string", "required"="true"}
+     *   },
+     *   statusCodes = {
+     *     200 = "Returned when validation is successful (regardless of validity)",
+     *     400 = "Returned when bad parameters are passed in the query string"
+     *   }
+     * )
+     *
+     * @Annotations\Get("/research_groups/validateProperty")
+     *
+     * @Annotations\View()
+     *
+     * @return boolean|string True if valid, or a message indicating why the property is invalid.
+     */
+    public function validatePropertyAction(Request $request)
+    {
+        return $this->validateProperty($request, ResearchGroup::class, ResearchGroupType::class);
     }
 }

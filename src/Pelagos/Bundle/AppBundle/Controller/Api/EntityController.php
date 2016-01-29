@@ -12,6 +12,7 @@ use FOS\RestBundle\Controller\FOSRestController;
 use Pelagos\Bundle\AppBundle\Exception\InvalidFormException;
 
 use Pelagos\Entity\Entity;
+use Pelagos\Entity\Account;
 
 /**
  * The Entity api controller.
@@ -84,7 +85,12 @@ abstract class EntityController extends FOSRestController
     {
         $entityClass = '\Pelagos\Entity\\' . $this->entityType;
         $entity = new $entityClass;
-        $entity->setCreator($this->getUser()->getUsername());
+        $user = $this->getUser();
+        $creator = 'anonymous';
+        if ($user instanceof Account) {
+            $creator = $user->getUsername();
+        }
+        $entity->setCreator($creator);
         try {
             $this
                 ->container
@@ -118,5 +124,63 @@ abstract class EntityController extends FOSRestController
                 'method' => 'POST',
             )
         );
+    }
+
+    /**
+     * Validate a value for a property of an entity.
+     *
+     * This method will validate key/value pairs found in the query string against
+     * properties of the given entity type.
+     *
+     * @param Request $request     The request object.
+     * @param string  $entityClass The class of the type of entity to validate against.
+     * @param string  $formType    The class of the type of form to use for validation.
+     *
+     * @access public
+     *
+     * @throws BadRequestHttpException When no property is supplied.
+     * @throws BadRequestHttpException When more than one property is supplied.
+     * @throws BadRequestHttpException The supplied property is not valid for the resource.
+     *
+     * @return boolean|string True if valid, or a message indicating why the property is invalid.
+     */
+    public function validateProperty(Request $request, $entityClass, $formType)
+    {
+        // Get all the parameters from the query string.
+        $params = $request->query->all();
+        if (array_key_exists('q', $params)) {
+            // Remove the 'q' parameter if it exists (this comes from Drupal).
+            unset($params['q']);
+        }
+        if (count($params) == 0) {
+            throw new BadRequestHttpException('Property to be validated not supplied.');
+        }
+        if (count($params) > 1) {
+            throw new BadRequestHttpException('Only one property can be validated at a time.');
+        }
+        // Grab the property name from the parameter array.
+        $property = array_keys($params)[0];
+        // Instantiate a new entity.
+        $entity = new $entityClass;
+        // Create a form with this entity.
+        $form = $this->get('form.factory')->createNamed(null, $formType, $entity, array('method' => 'GET'));
+        // Process the request against the form.
+        $form->handleRequest($request);
+        if (!$form->isSubmitted()) {
+            // If the form does not contain the given property, it will not submit.
+            throw new BadRequestHttpException("$property is not a valid property for this resource.");
+        }
+        $errors = $form->get($property)->getErrors();
+        if ($errors->count() == 0) {
+            // If there are no errors, return true.
+            return true;
+        }
+        $errorMessages = array();
+        foreach ($errors as $error) {
+            // Get each error message.
+            $errorMessages[] = $error->getMessage();
+        }
+        // Return the list of error messages.
+        return implode(', ', $errorMessages);
     }
 }

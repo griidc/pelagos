@@ -4,6 +4,8 @@ namespace Pelagos\Bundle\AppBundle\Handler;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\Common\Collections\Collection;
@@ -32,15 +34,27 @@ class EntityHandler
     private $formFactory;
 
     /**
+     * The authorization checker to use in this entity handler.
+     *
+     * @var AuthorizationCheckerInterface
+     */
+    private $authorizationChecker;
+
+    /**
      * Constructor for EntityHandler.
      *
-     * @param EntityManager        $entityManager The entity manager to use in this entity handler.
-     * @param FormFactoryInterface $formFactory   The form factory to use in this entity handler.
+     * @param EntityManager                 $entityManager        The entity manager to use.
+     * @param FormFactoryInterface          $formFactory          The form factory to use.
+     * @param AuthorizationCheckerInterface $authorizationChecker The authorization checker to use.
      */
-    public function __construct(EntityManager $entityManager, FormFactoryInterface $formFactory)
-    {
+    public function __construct(
+        EntityManager $entityManager,
+        FormFactoryInterface $formFactory,
+        AuthorizationCheckerInterface $authorizationChecker
+    ) {
         $this->entityManager = $entityManager;
         $this->formFactory = $formFactory;
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     /**
@@ -94,7 +108,8 @@ class EntityHandler
      * @param Request $request  The request object.
      * @param string  $method   The HTTP method.
      *
-     * @throws InvalidFormException When invalid data is submitted.
+     * @throws InvalidFormException  When invalid data is submitted.
+     * @throws AccessDeniedException When the user does not have sufficient privileges to create the entity.
      *
      * @return Entity The updated entity.
      */
@@ -103,6 +118,12 @@ class EntityHandler
         $form = $this->formFactory->createNamed(null, $formType, $entity, array('method' => $method));
         $form->handleRequest($request);
         if ($form->isValid()) {
+            if ($method == 'POST') {
+                if (!$this->authorizationChecker->isGranted('CAN_CREATE', $entity)) {
+                    $entityType = substr(strrchr(get_class($entity), '\\'), 1);
+                    throw new AccessDeniedException("You do not have sufficient privileges to create this $entityType.");
+                }
+            }
             foreach ($request->files->all() as $property => $file) {
                 if (isset($file)) {
                     $setter = 'set' . ucfirst($property);
