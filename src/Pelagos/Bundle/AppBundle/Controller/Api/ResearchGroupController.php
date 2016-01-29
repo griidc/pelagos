@@ -115,7 +115,7 @@ class ResearchGroupController extends EntityController
      *   }
      * )
      *
-     * @Annotations\Get("/research_groups/validateProperty")
+     * @Annotations\Get("/validateProperty")
      *
      * @Annotations\View()
      *
