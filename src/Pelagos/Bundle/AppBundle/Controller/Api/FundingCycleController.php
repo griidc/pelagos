@@ -20,7 +20,7 @@ use Pelagos\Bundle\AppBundle\Form\FundingCycleType;
 class FundingCycleController extends EntityController
 {
     /**
-     * Get all research groups.
+     * Get all funding cycles.
      *
      * @param Request $request The request object.
      *
@@ -48,9 +48,9 @@ class FundingCycleController extends EntityController
     }
 
     /**
-     * Get a single research group for a given id.
+     * Get a single funding cycle for a given id.
      *
-     * @param integer $id The id of the research group to return.
+     * @param integer $id The id of the funding cycle to return.
      *
      * @ApiDoc(
      *   resource = true,
@@ -58,7 +58,7 @@ class FundingCycleController extends EntityController
      *   output = "Pelagos\Entity\FundingCycle",
      *   statusCodes = {
      *     200 = "Returned when successful",
-     *     404 = "Returned when the research group is not found"
+     *     404 = "Returned when the funding cycle is not found"
      *   }
      * )
      *
@@ -72,7 +72,7 @@ class FundingCycleController extends EntityController
     }
 
     /**
-     * Create a new research group from the submitted data.
+     * Create a new funding cycle from the submitted data.
      *
      * @param Request $request The request object.
      *
