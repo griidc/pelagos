@@ -133,9 +133,9 @@ abstract class EntityController extends FOSRestController
      * This method will validate key/value pairs found in the query string against
      * properties of the given entity type.
      *
-     * @param Request $request     The request object.
-     * @param string  $entityClass The class of the type of entity to validate against.
      * @param string  $formType    The class of the type of form to use for validation.
+     * @param string  $entityClass The class of the type of entity to validate against.
+     * @param Request $request     The request object.
      *
      * @access public
      *
@@ -145,7 +145,7 @@ abstract class EntityController extends FOSRestController
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
-    public function validateProperty(Request $request, $entityClass, $formType)
+    public function validateProperty($formType, $entityClass, Request $request)
     {
         // Get all the parameters from the query string.
         $params = $request->query->all();

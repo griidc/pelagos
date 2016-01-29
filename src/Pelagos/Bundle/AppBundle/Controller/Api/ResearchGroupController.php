@@ -105,7 +105,7 @@ class ResearchGroupController extends EntityController
      *
      * @ApiDoc(
      *   resource = true,
-     *   section = "Research Group",
+     *   section = "Research Groups",
      *   parameters = {
      *     {"name"="someProperty", "dataType"="string", "required"="true"}
      *   },
@@ -123,6 +123,6 @@ class ResearchGroupController extends EntityController
      */
     public function validatePropertyAction(Request $request)
     {
-        return $this->validateProperty($request, ResearchGroup::class, ResearchGroupType::class);
+        return $this->validateProperty(ResearchGroupType::class, ResearchGroup::class, $request);
     }
 }
