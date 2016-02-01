@@ -20,6 +20,34 @@ use Pelagos\Bundle\AppBundle\Form\ResearchGroupType;
 class ResearchGroupController extends EntityController
 {
     /**
+     * Validate a value for a property of a research group.
+     *
+     * @param Request $request The request object.
+     *
+     * @ApiDoc(
+     *   resource = true,
+     *   section = "Research Groups",
+     *   parameters = {
+     *     {"name"="someProperty", "dataType"="string", "required"="true"}
+     *   },
+     *   statusCodes = {
+     *     200 = "Returned when validation is successful (regardless of validity)",
+     *     400 = "Returned when bad parameters are passed in the query string"
+     *   }
+     * )
+     *
+     * @Annotations\Get("/validateProperty")
+     *
+     * @Annotations\View()
+     *
+     * @return boolean|string True if valid, or a message indicating why the property is invalid.
+     */
+    public function validatePropertyAction(Request $request)
+    {
+        return $this->validateProperty(ResearchGroupType::class, ResearchGroup::class, $request);
+    }
+
+    /**
      * Get all research groups.
      *
      * @param Request $request The request object.
@@ -96,33 +124,5 @@ class ResearchGroupController extends EntityController
     public function postAction(Request $request)
     {
         return $this->handlePost(ResearchGroupType::class, ResearchGroup::class, $request);
-    }
-
-    /**
-     * Validate a value for a property of a research group.
-     *
-     * @param Request $request The request object.
-     *
-     * @ApiDoc(
-     *   resource = true,
-     *   section = "Research Groups",
-     *   parameters = {
-     *     {"name"="someProperty", "dataType"="string", "required"="true"}
-     *   },
-     *   statusCodes = {
-     *     200 = "Returned when validation is successful (regardless of validity)",
-     *     400 = "Returned when bad parameters are passed in the query string"
-     *   }
-     * )
-     *
-     * @Annotations\Get("/validateProperty")
-     *
-     * @Annotations\View()
-     *
-     * @return boolean|string True if valid, or a message indicating why the property is invalid.
-     */
-    public function validatePropertyAction(Request $request)
-    {
-        return $this->validateProperty(ResearchGroupType::class, ResearchGroup::class, $request);
     }
 }
