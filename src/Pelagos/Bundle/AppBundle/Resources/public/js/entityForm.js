@@ -323,11 +323,12 @@
                 contentType: false,
                 processData: false,
                 success: function(data, textStatus, jqXHR) {
-                    
-                    if (json.code === returnCode) {
+                    debugger;
+                    if (jqXHR.status === returnCode) {
                         title = "Success!";
-                        message = json.message;
-                        $(form).fillForm(json.data);
+                        var newID = data.id;
+                        message = "New " + entityType + " successfully created with ID:" + newID;
+                        $(form).fillForm(data);
                         //$(form).trigger("saved");
                         $(form).trigger("reset");
                     } else {
