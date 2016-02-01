@@ -3,9 +3,8 @@
 namespace Pelagos\Bundle\AppBundle\Controller\Api;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Form\FormTypeInterface;
+use Symfony\Component\Form\FormInterface;
 
-use FOS\RestBundle\Routing\ClassResourceInterface;
 use FOS\RestBundle\Util\Codes;
 use FOS\RestBundle\Controller\Annotations;
 
@@ -119,7 +118,7 @@ class ResearchGroupController extends EntityController
      *   serializerEnableMaxDepthChecks = true
      * )
      *
-     * @return ResearchGroup|FormTypeInterface
+     * @return ResearchGroup|FormInterface
      */
     public function postAction(Request $request)
     {
