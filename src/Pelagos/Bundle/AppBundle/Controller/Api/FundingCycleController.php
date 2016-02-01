@@ -6,7 +6,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\FormInterface;
 
 use FOS\RestBundle\Util\Codes;
-use FOS\RestBundle\Controller\Annotations;
+use FOS\RestBundle\Controller\Annotations as Rest;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
@@ -35,9 +35,9 @@ class FundingCycleController extends EntityController
      *   }
      * )
      *
-     * @Annotations\Get("")
+     * @Rest\Get("")
      *
-     * @Annotations\View(serializerEnableMaxDepthChecks = true)
+     * @Rest\View(serializerEnableMaxDepthChecks = true)
      *
      * @return array
      */
@@ -61,7 +61,7 @@ class FundingCycleController extends EntityController
      *   }
      * )
      *
-     * @Annotations\View(serializerEnableMaxDepthChecks = true)
+     * @Rest\View(serializerEnableMaxDepthChecks = true)
      *
      * @return FundingCycle
      */
@@ -85,7 +85,7 @@ class FundingCycleController extends EntityController
      *   }
      * )
      *
-     * @Annotations\View(
+     * @Rest\View(
      *   statusCode = Codes::HTTP_CREATED,
      *   serializerEnableMaxDepthChecks = true
      * )
