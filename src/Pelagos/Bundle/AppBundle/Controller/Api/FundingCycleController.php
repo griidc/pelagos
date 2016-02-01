@@ -61,7 +61,7 @@ class FundingCycleController extends EntityController
      *   }
      * )
      *
-     * @Rest\View(serializerEnableMaxDepthChecks = true)
+     * @Rest\View()
      *
      * @return FundingCycle
      */
@@ -86,8 +86,7 @@ class FundingCycleController extends EntityController
      * )
      *
      * @Rest\View(
-     *   statusCode = Codes::HTTP_CREATED,
-     *   serializerEnableMaxDepthChecks = true
+     *   statusCode = Codes::HTTP_CREATED
      * )
      *
      * @return FundingCycle|FormInterface

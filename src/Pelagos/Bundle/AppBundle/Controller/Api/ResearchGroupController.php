@@ -89,7 +89,7 @@ class ResearchGroupController extends EntityController
      *   }
      * )
      *
-     * @Rest\View(serializerEnableMaxDepthChecks = true)
+     * @Rest\View()
      *
      * @return ResearchGroup
      */
@@ -114,8 +114,7 @@ class ResearchGroupController extends EntityController
      * )
      *
      * @Rest\View(
-     *   statusCode = Codes::HTTP_CREATED,
-     *   serializerEnableMaxDepthChecks = true
+     *   statusCode = Codes::HTTP_CREATED
      * )
      *
      * @return ResearchGroup|FormInterface
