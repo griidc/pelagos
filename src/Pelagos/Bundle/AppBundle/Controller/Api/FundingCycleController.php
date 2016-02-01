@@ -19,7 +19,7 @@ use Pelagos\Bundle\AppBundle\Form\FundingCycleType;
 class FundingCycleController extends EntityController
 {
     /**
-     * Get all funding cycles.
+     * Get a collection of funding cycles.
      *
      * @param Request $request The request object.
      *
@@ -75,7 +75,11 @@ class FundingCycleController extends EntityController
      *
      * @ApiDoc(
      *   section = "Funding Cycles",
-     *   input = "FundingCycleType",
+     *   input = {
+     *     "class" = "Pelagos\Bundle\AppBundle\Form\FundingCycleType",
+     *     "name" = ""
+     *   },
+     *   output = "Pelagos\Entity\FundingCycle",
      *   statusCodes = {
      *     201 = "Returned when successful",
      *     400 = "Returned when the form has errors"

@@ -46,7 +46,7 @@ class ResearchGroupController extends EntityController
     }
 
     /**
-     * Get all research groups.
+     * Get a collection of research groups.
      *
      * @param Request $request The request object.
      *
@@ -102,7 +102,11 @@ class ResearchGroupController extends EntityController
      *
      * @ApiDoc(
      *   section = "Research Groups",
-     *   input = "Pelagos\Bundle\AppBundle\Form\ResearchGroupType",
+     *   input = {
+     *     "class" = "Pelagos\Bundle\AppBundle\Form\ResearchGroupType",
+     *     "name" = ""
+     *   },
+     *   output = "Pelagos\Entity\ResearchGroup",
      *   statusCodes = {
      *     201 = "Returned when successful",
      *     400 = "Returned when the form has errors"
