@@ -24,7 +24,6 @@ class ResearchGroupController extends EntityController
      * @param Request $request The request object.
      *
      * @ApiDoc(
-     *   resource = true,
      *   section = "Research Groups",
      *   parameters = {
      *     {"name"="someProperty", "dataType"="string", "required"="true"}
@@ -52,7 +51,6 @@ class ResearchGroupController extends EntityController
      * @param Request $request The request object.
      *
      * @ApiDoc(
-     *   resource = true,
      *   section = "Research Groups",
      *   parameters = {
      *     {"name"="someProperty", "dataType"="string", "required"=false, "description"="Filter by someProperty"}
@@ -80,7 +78,6 @@ class ResearchGroupController extends EntityController
      * @param integer $id The id of the research group to return.
      *
      * @ApiDoc(
-     *   resource = true,
      *   section = "Research Groups",
      *   output = "Pelagos\Entity\ResearchGroup",
      *   statusCodes = {
@@ -104,7 +101,6 @@ class ResearchGroupController extends EntityController
      * @param Request $request The request object.
      *
      * @ApiDoc(
-     *   resource = true,
      *   section = "Research Groups",
      *   input = "Pelagos\Bundle\AppBundle\Form\ResearchGroupType",
      *   statusCodes = {

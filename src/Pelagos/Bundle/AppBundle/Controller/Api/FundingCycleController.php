@@ -24,7 +24,6 @@ class FundingCycleController extends EntityController
      * @param Request $request The request object.
      *
      * @ApiDoc(
-     *   resource = true,
      *   section = "Funding Cycles",
      *   parameters = {
      *     {"name"="someProperty", "dataType"="string", "required"=false, "description"="Filter by someProperty"}
@@ -52,7 +51,6 @@ class FundingCycleController extends EntityController
      * @param integer $id The id of the funding cycle to return.
      *
      * @ApiDoc(
-     *   resource = true,
      *   section = "Funding Cycles",
      *   output = "Pelagos\Entity\FundingCycle",
      *   statusCodes = {
@@ -76,7 +74,6 @@ class FundingCycleController extends EntityController
      * @param Request $request The request object.
      *
      * @ApiDoc(
-     *   resource = true,
      *   section = "Funding Cycles",
      *   input = "FundingCycleType",
      *   statusCodes = {
