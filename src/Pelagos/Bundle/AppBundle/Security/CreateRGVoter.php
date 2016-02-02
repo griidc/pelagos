@@ -92,6 +92,7 @@ class CreateRGVoter extends Voter
      *
      * @param Person $userPerson             This is the logged in user's representation.
      * @param mixed  $personDataRepositories List of data repositories the user is associated with.
+     * @see voteOnAttribute
      *
      * @return bool True if the user is a manager.
      */
