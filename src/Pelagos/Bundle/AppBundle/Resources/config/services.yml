@@ -1,4 +1,4 @@
 services:
     pelagos.entity.handler:
         class: Pelagos\Bundle\AppBundle\Handler\EntityHandler
-        arguments: ["@doctrine.orm.entity_manager", "@form.factory", "@security.authorization_checker"]
+        arguments: ["@doctrine.orm.entity_manager", "@security.authorization_checker"]
