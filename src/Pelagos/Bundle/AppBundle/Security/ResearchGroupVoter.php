@@ -18,7 +18,7 @@ use Pelagos\Entity\Person;
 /**
  * A voter to determine if a ResearchGroup can be created.
  */
-class RGVoter extends Voter
+class ResearchGroupVoter extends Voter
 {
     /**
      * Class constants.

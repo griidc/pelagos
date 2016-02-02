@@ -22,6 +22,6 @@ security:
 services:
     # generic create voter
     create_voter:
-        class: Pelagos\Bundle\AppBundle\Security\RGVoter
+        class: Pelagos\Bundle\AppBundle\Security\ResearchGroupVoter
         tags:
             - { name: security.voter }
