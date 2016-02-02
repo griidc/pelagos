@@ -127,7 +127,7 @@ class ResearchGroupController extends EntityController
     /**
      * Replace a research group with the submitted data.
      *
-     * @param ResearchGroup $id      The entity to update (automatically resolved with ParamConvert)
+     * @param ResearchGroup $id      The entity to update (automatically resolved with ParamConvert).
      * @param Request       $request The request object.
      *
      * @ApiDoc(
@@ -155,7 +155,7 @@ class ResearchGroupController extends EntityController
     /**
      * Update a research group with the submitted data.
      *
-     * @param ResearchGroup $id      The entity to update (automatically resolved with ParamConvert)
+     * @param ResearchGroup $id      The entity to update (automatically resolved with ParamConvert).
      * @param Request       $request The request object.
      *
      * @ApiDoc(
