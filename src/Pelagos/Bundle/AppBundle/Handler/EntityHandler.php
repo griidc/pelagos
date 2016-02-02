@@ -32,13 +32,6 @@ class EntityHandler
     private $authorizationChecker;
 
     /**
-     * The authorization checker to use in this entity handler.
-     *
-     * @var AuthorizationCheckerInterface
-     */
-    private $authorizationChecker;
-
-    /**
      * Constructor for EntityHandler.
      *
      * @param EntityManager                 $entityManager        The entity manager to use.
