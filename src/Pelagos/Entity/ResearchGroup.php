@@ -10,7 +10,7 @@ namespace Pelagos\Entity;
 
 use \Symfony\Component\Validator\Constraints as Assert;
 use \Pelagos\Exception\NotDeletableException;
-use JMS\Serializer\Annotation\Exclude;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * Class to represent research groups.
@@ -24,11 +24,16 @@ use JMS\Serializer\Annotation\Exclude;
 class ResearchGroup extends Entity
 {
     /**
+     * A friendly name for this type of entity.
+     */
+    const FRIENDLY_NAME = 'Research Group';
+
+    /**
      * Static array containing a list of the properties and their attributes.
      *
      * @var array $properties
      *
-     * @Exclude
+     * @Serializer\Exclude
      */
     protected static $properties = array(
         'name' => array(
@@ -130,6 +135,8 @@ class ResearchGroup extends Entity
      * @Assert\NotBlank(
      *     message="Funding Cycle is required"
      * )
+     *
+     * @Serializer\MaxDepth(1)
      */
     protected $fundingCycle;
 
@@ -244,7 +251,7 @@ class ResearchGroup extends Entity
      *
      * @access protected
      *
-     * @Exclude
+     * @Serializer\Exclude
      */
     protected $logo;
 
@@ -270,6 +277,8 @@ class ResearchGroup extends Entity
      * @var \Doctrine\Common\Collections\Collection $personResearchGroups
      *
      * @access protected
+     *
+     * @Serializer\MaxDepth(2)
      */
     protected $personResearchGroups;
 

@@ -18,6 +18,11 @@ use JMS\Serializer\Annotation\Exclude;
 abstract class Entity implements \JsonSerializable
 {
     /**
+     * A friendly name for this type of entity.
+     */
+    const FRIENDLY_NAME = 'Pelagos Entity';
+
+    /**
      * Entity identifier.
      *
      * @var int $id
