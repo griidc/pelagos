@@ -110,4 +110,20 @@ class EntityHandler
         $this->entityManager->flush($entity);
         return $entity;
     }
+
+    /**
+     * Update an entity.
+     *
+     * @param Entity $entity The entity to update.
+     *
+     * @throws AccessDeniedException When the user does not have sufficient privileges to update the entity.
+     *
+     * @return Entity The updated entity.
+     */
+    public function update(Entity $entity)
+    {
+        $this->entityManager->persist($entity);
+        $this->entityManager->flush($entity);
+        return $entity;
+    }
 }
