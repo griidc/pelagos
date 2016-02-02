@@ -21,6 +21,12 @@ use Pelagos\Entity\Person;
 class RGVoter extends Voter
 {
     /**
+     * Class constants.
+     */
+    const CAN_CREATE = 'CAN_CREATE';
+    const CAN_EDIT = 'CAN_EDIT';
+
+    /**
      * Determines if the attribute and subject are supported by this voter.
      *
      * @param string $attribute An attribute.
@@ -30,7 +36,7 @@ class RGVoter extends Voter
      */
     protected function supports($attribute, $object)
     {
-        if (!in_array($attribute, array('CAN_CREATE', 'CAN_EDIT'))) {
+        if (!in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT))) {
             return false;
         }
 
@@ -64,7 +70,7 @@ class RGVoter extends Voter
         if (!$fundingCycle instanceof FundingCycle) {
             if ($fundingCycle === null) {
                 // check to see if this is an attempt to check for CAN_CREATE
-                if ($attribute == 'CAN_CREATE') {
+                if ($attribute == self::CAN_CREATE) {
                     // check to ensure user has DRP/M role on at least one DataRepository.
                     $personDataRepositories = $userPerson->getPersonDataRepositories();
                     return $this->isUserADataRepositoryManager($userPerson, $personDataRepositories);
