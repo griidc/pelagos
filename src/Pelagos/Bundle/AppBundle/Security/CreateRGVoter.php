@@ -4,6 +4,7 @@ namespace Pelagos\Bundle\AppBundle\Security;
 
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use \Doctrine\Common\Collections\Collection;
 
 use Pelagos\Entity\Account;
 use Pelagos\Entity\ResearchGroup;
@@ -12,6 +13,7 @@ use Pelagos\Entity\FundingOrganization;
 use Pelagos\Entity\DataRepository;
 use Pelagos\Entity\PersonDataRepository;
 use Pelagos\Entity\DataRepositoryRole;
+use Pelagos\Entity\Person;
 
 /**
  * A voter to determine if a ResearchGroup can be created.
@@ -60,7 +62,16 @@ class CreateRGVoter extends Voter
 
         $fundingCycle = $object->getFundingCycle();
         if (!$fundingCycle instanceof FundingCycle) {
-            return false;
+            if ($fundingCycle === null) {
+                // check to see if this is an attempt to check for CAN_CREATE
+                if ($attribute == 'CAN_CREATE') {
+                    // check to ensure user has DRP/M role on at least one DataRepository.
+                    $personDataRepositories = $userPerson->getPersonDataRepositories();
+                    return $this->isUserADataRepositoryManager($userPerson, $personDataRepositories);
+                }
+            } else {
+                return false;
+            }
         }
 
         $fundingOrganization = $fundingCycle->getFundingOrganization();
@@ -74,6 +85,21 @@ class CreateRGVoter extends Voter
         }
 
         $personDataRepositories = $dataRepository->getPersonDataRepositories();
+        return $this->isUserADataRepositoryManager($userPerson, $personDataRepositories);
+    }
+
+    /**
+     * Search the tree to find out if the User/Person is a manager.
+     *
+     * @param Person     $userPerson             This is the logged in user's representation.
+     * @param Collection $personDataRepositories List of data repositories the user is associated with.
+     *
+     * @see voteOnAttribute($attribute, $object, TokenInterface $token)
+     *
+     * @return bool True if the user is a manager.
+     */
+    private function isUserADataRepositoryManager(Person $userPerson, Collection $personDataRepositories)
+    {
         if (!$personDataRepositories instanceof \Traversable) {
             return false;
         }
@@ -93,7 +119,6 @@ class CreateRGVoter extends Voter
                 return true;
             }
         }
-
         return false;
     }
 }
