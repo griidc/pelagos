@@ -4,6 +4,7 @@ namespace Pelagos\Bundle\AppBundle\Security;
 
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use \Doctrine\Common\Collections\Collection;
 
 use Pelagos\Entity\Account;
 use Pelagos\Entity\ResearchGroup;
@@ -66,7 +67,7 @@ class CreateRGVoter extends Voter
                 if ($attribute == 'CAN_CREATE') {
                     // check to ensure user has DRP/M role on at least one DataRepository.
                     $personDataRepositories = $userPerson->getPersonDataRepositories();
-                    return $this->isUserAManager($userPerson, $personDataRepositories);
+                    return $this->isUserADataRepositoryManager($userPerson, $personDataRepositories);
                 }
             } else {
                 return false;
@@ -84,19 +85,20 @@ class CreateRGVoter extends Voter
         }
 
         $personDataRepositories = $dataRepository->getPersonDataRepositories();
-        return $this->isUserAManager($userPerson, $personDataRepositories);
+        return $this->isUserADataRepositoryManager($userPerson, $personDataRepositories);
     }
 
     /**
      * Search the tree to find out if the User/Person is a manager.
      *
-     * @param Person $userPerson             This is the logged in user's representation.
-     * @param mixed  $personDataRepositories List of data repositories the user is associated with.
-     * @see voteOnAttribute
+     * @param Person     $userPerson             This is the logged in user's representation.
+     * @param Collection $personDataRepositories List of data repositories the user is associated with.
+     *
+     * @see voteOnAttribute($attribute, $object, TokenInterface $token)
      *
      * @return bool True if the user is a manager.
      */
-    private function isUserAManager(Person $userPerson, $personDataRepositories)
+    private function isUserADataRepositoryManager(Person $userPerson, Collection $personDataRepositories)
     {
         if (!$personDataRepositories instanceof \Traversable) {
             return false;
