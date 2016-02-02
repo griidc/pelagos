@@ -30,7 +30,7 @@ class RGVoter extends Voter
      */
     protected function supports($attribute, $object)
     {
-        if ($attribute != 'CAN_CREATE') {
+        if (!in_array($attribute, array('CAN_CREATE', 'CAN_EDIT'))) {
             return false;
         }
 
