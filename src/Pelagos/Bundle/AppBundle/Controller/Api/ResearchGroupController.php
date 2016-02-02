@@ -5,8 +5,6 @@ namespace Pelagos\Bundle\AppBundle\Controller\Api;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\FormInterface;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-
 use FOS\RestBundle\Util\Codes;
 use FOS\RestBundle\Controller\Annotations as Rest;
 
@@ -129,8 +127,8 @@ class ResearchGroupController extends EntityController
     /**
      * Replace a research group with the submitted data.
      *
-     * @param ResearchGroup $id      The entity to update (automatically resolved with ParamConvert).
-     * @param Request       $request The request object.
+     * @param integer $id      The id of the research group to replace.
+     * @param Request $request The request object.
      *
      * @ApiDoc(
      *   section = "Research Groups",
@@ -157,8 +155,8 @@ class ResearchGroupController extends EntityController
     /**
      * Update a research group with the submitted data.
      *
-     * @param ResearchGroup $id      The entity to update (automatically resolved with ParamConvert).
-     * @param Request       $request The request object.
+     * @param integer $id      The id of the research group to update.
+     * @param Request $request The request object.
      *
      * @ApiDoc(
      *   section = "Research Groups",
