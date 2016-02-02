@@ -34,7 +34,7 @@ class UIController extends Controller
         $ui[$template] = $ResearchGroup;
 
         $ui['can_edit'] = (true) ? 'true' : 'false';
-        $ui['can_create'] = (true) ? 'true' : 'false';
+        $ui['can_delete'] = (true) ? 'true' : 'false';
 
         $ui['entityService'] = $entityHandler;
 

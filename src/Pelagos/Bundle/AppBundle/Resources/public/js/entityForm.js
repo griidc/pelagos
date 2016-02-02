@@ -2,9 +2,9 @@
     "use strict";
 
     $.fn.entityForm = function(options) {
-        
+
         console.log(options);
-        
+
         $.validator.methods._required = $.validator.methods.required;
         $.validator.methods.required = function(value, element, param)
         {
@@ -35,7 +35,7 @@
             if (!$(this).is("form")) {
                 return false;
             }
-            
+
             var actionURL = $(this).attr('action');
 
             $("input,textarea,select", this).each(function() {
@@ -53,17 +53,22 @@
             });
 
             var wrapper = "<div class=\"entityWrapper formReadonly\"></div>";
+            var entityType = $(this).attr("entityType");
+            var entityId = $(this).find("[name=\"id\"]").val();
 
             $(this).wrap(wrapper);
 
-            if (!options.canEdit || !$(this).hasAttr("editable")) {
-                return null;
+            if (entityId === "") {
+                if (!options.canCreate) {
+                    return null;
+                }
+            } else {
+                if (!options.canEdit || !$(this).hasAttr("editable")) {
+                    return null;
+                }
             }
 
             $(this).prop("unsavedChanges", false);
-
-            var entityType = $(this).attr("entityType");
-            var entityId = $(this).find("[name=\"id\"]").val();
 
             var formValidator = $(this).validate({
                 submitHandler: function(form) {
@@ -88,7 +93,7 @@
                             "<img class=\"editimg\" src=\"" +
                             pelagosBasePath +
                             "/static/images/application_edit.png\">";
-            if ($(this).hasAttr("deletable")) {
+            if ($(this).hasAttr("deletable")) { // && options.canDelete
                  innerform += "<img class=\"deleteimg\" src=\"" +
                             pelagosBasePath +
                             "/static/images/delete.png\">";
@@ -312,7 +317,7 @@
             var title = "";
             var message = "";
             var mainPromise = this;
-            
+
             $.ajax({
                 type: type,
                 data: data,
