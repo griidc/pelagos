@@ -69,8 +69,8 @@ class RGVoter extends Voter
         $fundingCycle = $object->getFundingCycle();
         if (!$fundingCycle instanceof FundingCycle) {
             if ($fundingCycle === null) {
-                // check to see if this is an attempt to check for CAN_CREATE
-                if ($attribute == self::CAN_CREATE) {
+                // check to see if this is an attempt to check for CAN_CREATE or CAN_EDIT
+                if (in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT))) {
                     // check to ensure user has DRP/M role on at least one DataRepository.
                     $personDataRepositories = $userPerson->getPersonDataRepositories();
                     return $this->isUserADataRepositoryManager($userPerson, $personDataRepositories);
