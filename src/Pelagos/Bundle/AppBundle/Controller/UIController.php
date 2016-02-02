@@ -26,12 +26,12 @@ class UIController extends Controller
         $ui['ui']['templateName'] = "$template.html.twig";
 
         if (isset($id)) {
-            $ResearchGroup = $entityHandler->get("Pelagos:$template", $id);
+            $researchGroup = $entityHandler->get("Pelagos:$template", $id);
         } else {
-            $ResearchGroup = new \Pelagos\Entity\ResearchGroup;
+            $researchGroup = new \Pelagos\Entity\ResearchGroup;
         }
         
-        $ui[$template] = $ResearchGroup;
+        $ui[$template] = $researchGroup;
 
         $ui['can_edit'] = (true) ? 'true' : 'false';
         $ui['can_delete'] = (true) ? 'true' : 'false';
