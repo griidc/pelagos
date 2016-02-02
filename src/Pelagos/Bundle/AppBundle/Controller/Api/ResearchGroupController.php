@@ -5,6 +5,8 @@ namespace Pelagos\Bundle\AppBundle\Controller\Api;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\FormInterface;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+
 use FOS\RestBundle\Util\Codes;
 use FOS\RestBundle\Controller\Annotations as Rest;
 
@@ -147,9 +149,9 @@ class ResearchGroupController extends EntityController
      *
      * @return ResearchGroup|FormInterface
      */
-    public function putAction(ResearchGroup $id, Request $request)
+    public function putAction($id, Request $request)
     {
-        return $this->handleUpdate(ResearchGroupType::class, $id, $request, 'PUT');
+        return $this->handleUpdate(ResearchGroupType::class, ResearchGroup::class, $id, $request, 'PUT');
     }
 
     /**
@@ -175,8 +177,8 @@ class ResearchGroupController extends EntityController
      *
      * @return ResearchGroup|FormInterface
      */
-    public function patchAction(ResearchGroup $id, Request $request)
+    public function patchAction($id, Request $request)
     {
-        return $this->handleUpdate(ResearchGroupType::class, $id, $request, 'PATCH');
+        return $this->handleUpdate(ResearchGroupType::class, ResearchGroup::class, $id, $request, 'PATCH');
     }
 }

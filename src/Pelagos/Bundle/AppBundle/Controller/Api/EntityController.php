@@ -96,15 +96,17 @@ abstract class EntityController extends FOSRestController
     /**
      * Update an entity from the submitted data.
      *
-     * @param string  $formType The type of form.
-     * @param Entity  $entity   The entity to update.
-     * @param Request $request  The request object.
-     * @param string  $method   The HTTP method (PUT or PATCH).
+     * @param string  $formType    The type of form.
+     * @param string  $entityClass The type of entity.
+     * @param integer $id          The id of the entity.
+     * @param Request $request     The request object.
+     * @param string  $method      The HTTP method (PUT or PATCH).
      *
      * @return Entity|FormInterface
      */
-    public function handleUpdate($formType, Entity $entity, Request $request, $method)
+    public function handleUpdate($formType, $entityClass, $id, Request $request, $method)
     {
+        $entity = $this->handleGetOne($entityClass, $id);
         $user = $this->getUser();
         $modifier = 'anonymous';
         if ($user instanceof Account) {
