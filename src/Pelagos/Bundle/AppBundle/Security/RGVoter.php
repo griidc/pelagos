@@ -70,14 +70,13 @@ class RGVoter extends Voter
         if (!$fundingCycle instanceof FundingCycle) {
             if ($fundingCycle === null) {
                 // check to see if this is an attempt to check for CAN_CREATE or CAN_EDIT
-                if (in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT))) {
+                if ($attribute === self::CAN_CREATE) {
                     // check to ensure user has DRP/M role on at least one DataRepository.
                     $personDataRepositories = $userPerson->getPersonDataRepositories();
                     return $this->isUserADataRepositoryManager($userPerson, $personDataRepositories);
                 }
-            } else {
-                return false;
             }
+            return false;
         }
 
         $fundingOrganization = $fundingCycle->getFundingOrganization();
@@ -91,7 +90,10 @@ class RGVoter extends Voter
         }
 
         $personDataRepositories = $dataRepository->getPersonDataRepositories();
-        return $this->isUserADataRepositoryManager($userPerson, $personDataRepositories);
+        if (in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT))) {
+            return $this->isUserADataRepositoryManager($userPerson, $personDataRepositories);
+        }
+        return false;
     }
 
     /**
