@@ -3,7 +3,9 @@
 <html style="height:100%;">
     <head>
         <title>{% block title %}{% endblock %}</title>
+{% endif %}
         {% block head %}{% endblock %}
+{% if not wrapped %}
     </head>
     <body style="height:100%; margin:0; padding:0;">
         <div style="height:100%;">

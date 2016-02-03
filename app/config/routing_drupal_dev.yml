@@ -13,3 +13,8 @@ _errors:
 _main:
     resource: routing.yml
     prefix:   /%pelagos.prefix%
+
+_assetic:
+    resource: .
+    type:     assetic
+    prefix:   /%pelagos.prefix%
