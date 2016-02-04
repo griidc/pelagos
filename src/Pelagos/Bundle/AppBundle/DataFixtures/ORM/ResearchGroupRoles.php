@@ -11,8 +11,13 @@ use Pelagos\Entity\ResearchGroupRole;
  *
  * These roles were defined in PELAGOS-1588.
  */
-class LoadResearchGroupRoles implements FixtureInterface
+class ResearchGroupRoles implements FixtureInterface
 {
+    const LEADERSHIP = 'Leadership';
+    const ADMIN = 'Administration';
+    const DATA = 'Data';
+    const RESEARCHER = 'Researcher';
+
     /**
      * Load data fixtures for Research Group Roles.
      *
@@ -24,19 +29,19 @@ class LoadResearchGroupRoles implements FixtureInterface
     {
         $researchGroupRoles = array(
             array(
-                'name' => 'Leadership',
+                'name' => self::LEADERSHIP,
                 'weight' => 1,
             ),
             array(
-                'name' => 'Administration',
+                'name' => self::ADMIN,
                 'weight' => 2,
             ),
             array(
-                'name' => 'Data',
+                'name' => self::DATA,
                 'weight' => 3,
             ),
             array(
-                'name' => 'Researcher',
+                'name' => self::RESEARCHER,
                 'weight' => 4,
             ),
         );

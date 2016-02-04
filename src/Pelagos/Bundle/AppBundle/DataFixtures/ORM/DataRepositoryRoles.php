@@ -11,8 +11,13 @@ use Pelagos\Entity\DataRepositoryRole;
  *
  * These roles were defined in PELAGOS-1678.
  */
-class LoadDataRepositoryRoles implements FixtureInterface
+class DataRepositoryRoles implements FixtureInterface
 {
+    const MANAGER = 'Manager';
+    const ENGINEER = 'Developer';
+    const SUPPORT = 'Support';
+    const SME = 'Subject Matter Expert';
+
     /**
      * Load data fixtures for Data Repository Roles.
      *
@@ -24,19 +29,19 @@ class LoadDataRepositoryRoles implements FixtureInterface
     {
         $dataRepositoryRoles = array(
             array(
-                'name' => 'Manager',
+                'name' => self::MANAGER,
                 'weight' => 1,
             ),
             array(
-                'name' => 'Developer',
+                'name' => self::ENGINEER,
                 'weight' => 2,
             ),
             array(
-                'name' => 'Support',
+                'name' => self::SUPPORT,
                 'weight' => 3,
             ),
             array(
-                'name' => 'Subject Matter Expert',
+                'name' => self::SME,
                 'weight' => 4,
             ),
         );

@@ -11,8 +11,12 @@ use Pelagos\Entity\FundingOrganizationRole;
  *
  * These roles were defined in PELAGOS-1596.
  */
-class LoadFundingOrganizationRoles implements FixtureInterface
+class FundingOrganizationRoles implements FixtureInterface
 {
+    const LEADERSHIP = 'Leadership';
+    const ADVISORY = 'Advisory';
+    const ADMIN = 'Admin';
+
     /**
      * Load data fixtures for Funding Organization Roles.
      *
@@ -24,15 +28,15 @@ class LoadFundingOrganizationRoles implements FixtureInterface
     {
         $fundingOrganizationRoles = array(
             array(
-                'name' => 'Leadership',
+                'name' => self::LEADERSHIP,
                 'weight' => 1,
             ),
             array(
-                'name' => 'Advisory',
+                'name' => self::ADVISORY,
                 'weight' => 2,
             ),
             array(
-                'name' => 'Admin',
+                'name' => self::ADMIN,
                 'weight' => 3,
             ),
         );
