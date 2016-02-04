@@ -11,7 +11,7 @@ use Pelagos\Entity\FundingOrganization;
 use Pelagos\Entity\DataRepository;
 
 /**
- * A voter to determine if a ResearchGroup can be created.
+ * A voter to determine if a ResearchGroup can be created or edited.
  */
 class ResearchGroupVoter extends PelagosEntityVoter
 {
