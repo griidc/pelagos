@@ -3,8 +3,6 @@
 
     $.fn.entityForm = function(options) {
 
-        console.log(options);
-
         $.validator.methods._required = $.validator.methods.required;
         $.validator.methods.required = function(value, element, param)
         {
@@ -59,11 +57,13 @@
             $(this).wrap(wrapper);
 
             if (entityId === "") {
-                if (!options.canCreate) {
+                if (!$(this).hasAttr("creatable")) {
+                    $('.innerForm').hide()
                     return null;
                 }
             } else {
-                if (!options.canEdit || !$(this).hasAttr("editable")) {
+                if (!$(this).hasAttr("editable")) {
+                    $('.innerForm').hide()
                     return null;
                 }
             }
@@ -89,18 +89,18 @@
 
             $(".entityFormButton").css("visibility", "hidden").button();
 
-            var innerform = "<div class=\"innerForm\">" +
-                            "<img class=\"editimg\" src=\"" +
-                            pelagosBasePath +
-                            "/static/images/application_edit.png\">";
-            if ($(this).hasAttr("deletable")) { // && options.canDelete
-                 innerform += "<img class=\"deleteimg\" src=\"" +
-                            pelagosBasePath +
-                            "/static/images/delete.png\">";
-            }
-            innerform += "</div>";
+            // var innerform = "<div class=\"innerForm\">" +
+                            // "<img class=\"editimg\" src=\"" +
+                            // pelagosBasePath +
+                            // "/static/images/application_edit.png\">";
+            // if ($(this).hasAttr("deletable")) {
+                 // innerform += "<img class=\"deleteimg\" src=\"" +
+                            // pelagosBasePath +
+                            // "/static/images/delete.png\">";
+            // }
+            // innerform += "</div>";
 
-            $(this).append(innerform);
+            // $(this).append(innerform);
 
             $(".deleteimg", this).button().click(function (event) {
                 event.stopPropagation();
@@ -288,25 +288,21 @@
         switch (action)
         {
             case "Create":
-                //url = pelagosBasePath + "/services/entity/" + entityType;
                 url = actionURL;
                 type = "POST";
                 returnCode = 201;
                 break;
             case "Update":
-                //url = pelagosBasePath + "/services/entity/" + entityType + "/" + entityId;
                 url = actionURL + "/" + entityId;
                 type = "PUT";
                 returnCode = 200;
                 break;
             case "Delete":
-                //url = pelagosBasePath + "/services/entity/" + entityType + "/" + entityId;
                 url = actionURL + "/" + entityId;
                 type = "DELETE";
                 returnCode = 200;
                 break;
             default:
-                //url = pelagosBasePath + "/services/entity/" + entityType + "/" + entityId;
                 url = actionURL + "/" + entityId;
                 type = "GET";
                 returnCode = 200;
@@ -328,7 +324,6 @@
                 contentType: false,
                 processData: false,
                 success: function(data, textStatus, jqXHR) {
-                    debugger;
                     if (jqXHR.status === returnCode) {
                         title = "Success!";
                         var newID = data.id;

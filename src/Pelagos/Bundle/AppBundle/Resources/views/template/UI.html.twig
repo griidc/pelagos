@@ -2,11 +2,6 @@
 
 {% block head %}
 
-{% image '@PelagosAppBundle/Resources/public/images/application_edit.png' output='static/images/application_edit.png' %}
-{% endimage %}
-
-{% image '@PelagosAppBundle/Resources/public/images/delete.png' output='static/images/delete.png' %}
-{% endimage %}
 
     {{
         add_library (
@@ -54,6 +49,10 @@
         {{ add_js(asset_url) }}
     {% endjavascripts %}
 
+    {% javascripts '@PelagosAppBundle/Resources/public/js/ui.js' %}
+        {{ add_js(asset_url) }}
+    {% endjavascripts %}
+
     {% if is_granted('CAN_CREATE', ResearchGroup) %}
         {% set can_create = 'true' %}
     {% else %}
@@ -61,19 +60,7 @@
     {% endif %}
 
     {{ add_js("
-        var $ = jQuery.noConflict();
-
         var pelagosBasePath = '#{basePath}';
-
-        $(document).ready(function()
-        {
-            'use strict';
-            $('form.entityForm').entityForm({
-                canEdit:   #{can_edit},
-                canCreate: #{can_create},
-                canDelete: #{can_delete}
-            });
-        });
         ",
         'inline')
     }}
@@ -82,7 +69,7 @@
 
 {% block body %}
     <div class="PelagosUI">
-        {% include "@templates/#{ui.templateName}" %}
+        {% include "@templates/#{templateName}" %}
     </div>
 {% endblock %}
 

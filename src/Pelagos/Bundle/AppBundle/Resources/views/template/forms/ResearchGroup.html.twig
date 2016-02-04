@@ -1,4 +1,14 @@
-<form class="entityForm" entityType="ResearchGroup" editable deletable action="{{"#{basePath}/api/research_groups"}}">
+<form class="entityForm" entityType="ResearchGroup"
+{% if is_granted('CAN_CREATE', ResearchGroup) %}
+ creatable
+{% endif %}
+{% if is_granted('CAN_EDIT', ResearchGroup) %}
+ editable
+{% endif %}
+{% if is_granted('CAN_DELETE', ResearchGroup) %}
+ deletable
+{% endif %}
+ action="{{path('pelagos_api_research_groups_post')}}">
 
     <input type="hidden" name="id" value="{{ResearchGroup.getId}}">
 
@@ -63,4 +73,14 @@
             mimeType="{{ResearchGroup.serializeBinary(ResearchGroup.getLogo).mimeType}}">
         <br>
     </span>
+     <div class="innerForm">
+         {% image '@PelagosAppBundle/Resources/public/images/application_edit.png' output='static/images/application_edit.png' %}
+            <img class="editimg" src="{{asset_url}}">
+         {% endimage %}
+         {% if is_granted('CAN_DELETE', ResearchGroup) %}
+            {% image '@PelagosAppBundle/Resources/public/images/delete.png' output='static/images/delete.png' %}
+                <img class="deleteimg" src="{{asset_url}}">
+            {% endimage %}
+         {% endif %}
+     </div>
 </form>

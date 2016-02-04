@@ -20,21 +20,20 @@ class UIController extends Controller
     public function indexAction($template, $id)
     {
         $entityHandler = $this->get('pelagos.entity.handler');
-        
+
         $ui = array();
 
-        $ui['ui']['templateName'] = "$template.html.twig";
+        $ui['templateName'] = "$template.html.twig";
+
+        $entityClass = "\\Pelagos\\Entity\\$template";
 
         if (isset($id)) {
-            $researchGroup = $entityHandler->get("Pelagos:$template", $id);
+            $entity = $entityHandler->get("Pelagos:$template", $id);
         } else {
-            $researchGroup = new \Pelagos\Entity\ResearchGroup;
+            $entity = new $entityClass();
         }
-        
-        $ui[$template] = $researchGroup;
 
-        $ui['can_edit'] = (true) ? 'true' : 'false';
-        $ui['can_delete'] = (true) ? 'true' : 'false';
+        $ui[$template] = $entity;
 
         $ui['entityService'] = $entityHandler;
 
