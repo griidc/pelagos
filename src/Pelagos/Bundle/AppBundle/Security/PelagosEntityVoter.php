@@ -9,30 +9,35 @@ use \Doctrine\Common\Collections\Collection;
 /**
  * Class PelagosEntityVoter An abstract base class for implementing a Symfony Voter..
  *
- *
  * Concrete implementations of this class must implement the Voter contract which requires
- * 1. supports($attribute, $object).
- * voteOnAttribute($attribute, $object, TokenInterface $token) and
+ * supports($attribute, $object).and
+ * voteOnAttribute($attribute, $object, TokenInterface $token)
  * The supports function is called by the Symfony Controller->isGranted() mechanism will call
  * supports and then voteOnAttribute. Success (returning true) from supports() precedes the call
  * to voteOnAttribute.
  * multiple lines goes here.
+ *
  * @package Pelagos\Bundle\AppBundle\Security
  */
-abstract class PelagosEntityVoter extends Voter {
+abstract class PelagosEntityVoter extends Voter
+{
     /**
-     * Class constants identifying authority
-     */
-    const CAN_CREATE = 'CAN_CREATE';
-    const CAN_EDIT = 'CAN_EDIT';
-
-    /**
-     * Class constants that identify user roles
-     * @todo The universe of roles is or will be stored in the database
-     *
+     * Class constant that identify user manager role.
+     * @var string DATA_REPOSITORY_MANAGER
      */
     const DATA_REPOSITORY_MANAGER = 'Manager';
 
+    /**
+     * Class constant identifying create authority.
+     * @var string CAN_CREATE
+     */
+    const CAN_CREATE = 'CAN_CREATE';
+
+    /**
+     * Class constant identifying edit authority.
+     * @var string CAN_EDIT
+     */
+    const CAN_EDIT = 'CAN_EDIT';
 
     private static $supportedActions = array(self::CAN_CREATE, self::CAN_EDIT);
 
@@ -43,7 +48,8 @@ abstract class PelagosEntityVoter extends Voter {
      *
      * @return boolean True if the attribute is one supported by this voter, false otherwise.
      */
-    protected function supportsAttribute ($attribute) {
+    protected function supportsAttribute($attribute)
+    {
         if (!in_array($attribute, self::$supportedActions)) {
             return false;
         }

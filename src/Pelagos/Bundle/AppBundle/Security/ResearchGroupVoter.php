@@ -35,10 +35,11 @@ class ResearchGroupVoter extends PelagosEntityVoter
 
     /**
      * Perform a single authorization test on an attribute, ResearchGroup subject and authentication token.
+     *
      * The Symfony calling security framework calls supports before calling voteOnAttribute.
      *
-     * @param string         $attribute Unused by this function but required by VoterInterface
-     * @param mixed          $object    A ResearchGroup
+     * @param string         $attribute Unused by this function but required by VoterInterface.
+     * @param mixed          $object    A ResearchGroup.
      * @param TokenInterface $token     A security token containing user authentication information.
      *
      * @return boolean True if the attribute is allowed on the subject for the user specified by the token.
@@ -61,12 +62,15 @@ class ResearchGroupVoter extends PelagosEntityVoter
             if ($fundingCycle === null) {
                 // check to ensure user has DRP/M role on at least one DataRepository.
                 $personDataRepositories = $userPerson->getPersonDataRepositories();
-                return $this->isUserDataRepositoryRole($userPerson, $personDataRepositories, array(self::DATA_REPOSITORY_MANAGER));
+                return $this->isUserDataRepositoryRole(
+                    $userPerson,
+                    $personDataRepositories,
+                    array(self::DATA_REPOSITORY_MANAGER)
+                );
 
             }
             return false;
-        }
-        else {
+        } else {
             $fundingOrganization = $fundingCycle->getFundingOrganization();
             if (!$fundingOrganization instanceof FundingOrganization) {
                 return false;
@@ -78,7 +82,11 @@ class ResearchGroupVoter extends PelagosEntityVoter
             }
 
             $personDataRepositories = $dataRepository->getPersonDataRepositories();
-            return $this->isUserDataRepositoryRole($userPerson, $personDataRepositories, array(self::DATA_REPOSITORY_MANAGER));
+            return $this->isUserDataRepositoryRole(
+                $userPerson,
+                $personDataRepositories,
+                array(self::DATA_REPOSITORY_MANAGER)
+            );
         }
         return false;
     }
