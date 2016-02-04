@@ -15,7 +15,6 @@ use \Doctrine\Common\Collections\Collection;
  * The supports function is called by the Symfony Controller->isGranted() mechanism will call
  * supports and then voteOnAttribute. Success (returning true) from supports() precedes the call
  * to voteOnAttribute.
- * multiple lines goes here.
  *
  * @package Pelagos\Bundle\AppBundle\Security
  */
