@@ -8,6 +8,8 @@ use Pelagos\Entity\ResearchGroupRole;
 
 /**
  * Fixture to load the standard Research Group Roles.
+ *
+ * These roles were defined in PELAGOS-1588.
  */
 class LoadResearchGroupRoles implements FixtureInterface
 {

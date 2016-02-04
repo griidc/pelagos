@@ -8,6 +8,8 @@ use Pelagos\Entity\DataRepositoryRole;
 
 /**
  * Fixture to load the standard Data Repository Roles.
+ *
+ * These roles were defined in PELAGOS-1678.
  */
 class LoadDataRepositoryRoles implements FixtureInterface
 {

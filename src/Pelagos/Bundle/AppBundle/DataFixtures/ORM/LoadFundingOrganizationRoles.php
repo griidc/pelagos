@@ -8,6 +8,8 @@ use Pelagos\Entity\FundingOrganizationRole;
 
 /**
  * Fixture to load the standard Funding Organization Roles.
+ *
+ * These roles were defined in PELAGOS-1596.
  */
 class LoadFundingOrganizationRoles implements FixtureInterface
 {
