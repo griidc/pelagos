@@ -19,8 +19,8 @@ use \Doctrine\Common\Collections\Collection;
  * voteOnAttribute. Success (returning true) from supports() precedes the call to voteOnAttribute.
  *
  * @package Pelagos\Bundle\AppBundle\Security
- * @see Symfony\Component\Security\Core\Authorization\Voter\Voter
- * @see Symfony\Component\Security\Core\Authorization\Voter\VoterInterface
+ * @see     Symfony\Component\Security\Core\Authorization\Voter\Voter
+ * @see     Symfony\Component\Security\Core\Authorization\Voter\VoterInterface
  */
 abstract class PelagosEntityVoter extends Voter
 {
@@ -64,6 +64,7 @@ abstract class PelagosEntityVoter extends Voter
      *
      * @param Person     $userPerson             This is the logged in user's representation.
      * @param Collection $personDataRepositories List of data repositories the user is associated with.
+     * @param string     $roleName               List of user roles to be tested.
      *
      * @see voteOnAttribute($attribute, $object, TokenInterface $token)
      *
