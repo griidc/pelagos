@@ -60,7 +60,7 @@ abstract class PelagosEntityVoter extends Voter {
      *
      * @return bool True if the user is a manager.
      */
-    protected function isUserDataRepositoryRole(Person $userPerson, Collection $personDataRepositories, $roleNames)
+    protected function isUserDataRepositoryRole(Person $userPerson, Collection $personDataRepositories, voteOn)
     {
         if (!$personDataRepositories instanceof \Traversable) {
             return false;

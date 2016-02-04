@@ -37,7 +37,7 @@ class ResearchGroupVoter extends PelagosEntityVoter
      * Perform a single authorization test on an attribute, ResearchGroup subject and authentication token.
      * The Symfony calling security framework calls supports before calling voteOnAttribute.
      *
-     * @param string         $attribute An a
+     * @param string         $attribute Unused by this function but required by VoterInterface
      * @param mixed          $object    A ResearchGroup
      * @param TokenInterface $token     A security token containing user authentication information.
      *
