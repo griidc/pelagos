@@ -3,29 +3,18 @@
 namespace Pelagos\Bundle\AppBundle\Security;
 
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use \Doctrine\Common\Collections\Collection;
 
 use Pelagos\Entity\Account;
 use Pelagos\Entity\ResearchGroup;
 use Pelagos\Entity\FundingCycle;
 use Pelagos\Entity\FundingOrganization;
 use Pelagos\Entity\DataRepository;
-use Pelagos\Entity\PersonDataRepository;
-use Pelagos\Entity\DataRepositoryRole;
-use Pelagos\Entity\Person;
 
 /**
  * A voter to determine if a ResearchGroup can be created.
  */
-class ResearchGroupVoter extends Voter
+class ResearchGroupVoter extends PelagosEntityVoter
 {
-    /**
-     * Class constants.
-     */
-    const CAN_CREATE = 'CAN_CREATE';
-    const CAN_EDIT = 'CAN_EDIT';
-
     /**
      * Determines if the attribute and subject are supported by this voter.
      *
@@ -36,28 +25,29 @@ class ResearchGroupVoter extends Voter
      */
     protected function supports($attribute, $object)
     {
-        if (!in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT))) {
-            return false;
+        if ($this->supportsAttribute($attribute)) {
+            if (!$object instanceof ResearchGroup) {
+                return false;
+            }
         }
-
-        if (!$object instanceof ResearchGroup) {
-            return false;
-        }
-
         return true;
     }
 
     /**
-     * Perform a single access check operation on a given attribute, subject and token.
+     * Perform a single authorization test on an attribute, ResearchGroup subject and authentication token.
+     * The Symfony calling security framework calls supports before calling voteOnAttribute.
      *
-     * @param string         $attribute An attribute.
-     * @param mixed          $object    The subject to secure.
+     * @param string         $attribute An a
+     * @param mixed          $object    A ResearchGroup
      * @param TokenInterface $token     A security token containing user authentication information.
      *
      * @return boolean True if the attribute is allowed on the subject for the user specified by the token.
      */
     protected function voteOnAttribute($attribute, $object, TokenInterface $token)
     {
+        if (!$object instanceof ResearchGroup) {
+            return false;
+        }
         $user = $token->getUser();
 
         if (!$user instanceof Account) {
@@ -69,63 +59,26 @@ class ResearchGroupVoter extends Voter
         $fundingCycle = $object->getFundingCycle();
         if (!$fundingCycle instanceof FundingCycle) {
             if ($fundingCycle === null) {
-                // check to see if this is an attempt to check for CAN_CREATE or CAN_EDIT
-                if ($attribute === self::CAN_CREATE) {
-                    // check to ensure user has DRP/M role on at least one DataRepository.
-                    $personDataRepositories = $userPerson->getPersonDataRepositories();
-                    return $this->isUserADataRepositoryManager($userPerson, $personDataRepositories);
-                }
+                // check to ensure user has DRP/M role on at least one DataRepository.
+                $personDataRepositories = $userPerson->getPersonDataRepositories();
+                return $this->isUserDataRepositoryRole($userPerson, $personDataRepositories, array(self::DATA_REPOSITORY_MANAGER));
+
             }
             return false;
         }
-
-        $fundingOrganization = $fundingCycle->getFundingOrganization();
-        if (!$fundingOrganization instanceof FundingOrganization) {
-            return false;
-        }
-
-        $dataRepository = $fundingOrganization->getDataRepository();
-        if (!$dataRepository instanceof DataRepository) {
-            return false;
-        }
-
-        $personDataRepositories = $dataRepository->getPersonDataRepositories();
-        if (in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT))) {
-            return $this->isUserADataRepositoryManager($userPerson, $personDataRepositories);
-        }
-        return false;
-    }
-
-    /**
-     * Search the tree to find out if the User/Person is a manager.
-     *
-     * @param Person     $userPerson             This is the logged in user's representation.
-     * @param Collection $personDataRepositories List of data repositories the user is associated with.
-     *
-     * @see voteOnAttribute($attribute, $object, TokenInterface $token)
-     *
-     * @return bool True if the user is a manager.
-     */
-    private function isUserADataRepositoryManager(Person $userPerson, Collection $personDataRepositories)
-    {
-        if (!$personDataRepositories instanceof \Traversable) {
-            return false;
-        }
-
-        foreach ($personDataRepositories as $personDR) {
-            if (!$personDR instanceof PersonDataRepository) {
-                continue;
+        else {
+            $fundingOrganization = $fundingCycle->getFundingOrganization();
+            if (!$fundingOrganization instanceof FundingOrganization) {
+                return false;
             }
-            $role = $personDR->getRole();
-            if (!$role instanceof DataRepositoryRole) {
-                continue;
-            }
-            $roleName = $role->getName();
-            $person = $personDR->getPerson();
 
-            if ($userPerson === $person and in_array($roleName, array('Manager'))) {
-                return true;
+            $dataRepository = $fundingOrganization->getDataRepository();
+            if (!$dataRepository instanceof DataRepository) {
+                return false;
             }
+
+            $personDataRepositories = $dataRepository->getPersonDataRepositories();
+            return $this->isUserDataRepositoryRole($userPerson, $personDataRepositories, array(self::DATA_REPOSITORY_MANAGER));
         }
         return false;
     }
