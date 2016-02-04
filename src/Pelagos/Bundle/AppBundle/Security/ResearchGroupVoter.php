@@ -26,9 +26,9 @@ class ResearchGroupVoter extends PelagosEntityVoter
     protected function supports($attribute, $object)
     {
         if (!$object instanceof ResearchGroup) {
-           return false;
+            return false;
         }
-        if(!in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT))) {
+        if (!in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT))) {
             return false;
         }
         return true;

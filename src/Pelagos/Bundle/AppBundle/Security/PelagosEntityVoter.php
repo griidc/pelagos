@@ -28,8 +28,6 @@ abstract class PelagosEntityVoter extends Voter
     const CAN_CREATE = 'CAN_CREATE';
     const CAN_EDIT = 'CAN_EDIT';
 
-    private static $supportedActions = array(self::CAN_CREATE, self::CAN_EDIT);
-
     /**
      * Determines if the attribute is one of those known to this voter.
      *
