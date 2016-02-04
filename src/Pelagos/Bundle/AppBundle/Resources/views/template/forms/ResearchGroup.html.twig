@@ -2,7 +2,7 @@
 {% if is_granted('CAN_CREATE', ResearchGroup) %}
  creatable
 {% endif %}
-{% if is_granted('CAN_EDIT', ResearchGroup) %}
+{% if is_granted('CAN_CREATE', ResearchGroup) %}
  editable
 {% endif %}
 {% if is_granted('CAN_DELETE', ResearchGroup) %}
@@ -68,9 +68,9 @@
 
     <span class="showOnEdit">
         <label for="logo">Logo:</label>
-        <input name="logo" type="file"
+        <!--<input name="logo" type="file"
             base64="{{ResearchGroup.serializeBinary(ResearchGroup.getLogo).base64}}"
-            mimeType="{{ResearchGroup.serializeBinary(ResearchGroup.getLogo).mimeType}}">
+            mimeType="{{ResearchGroup.serializeBinary(ResearchGroup.getLogo).mimeType}}">-->
         <br>
     </span>
      <div class="innerForm">
