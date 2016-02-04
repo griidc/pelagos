@@ -29,21 +29,6 @@ abstract class PelagosEntityVoter extends Voter
     const CAN_EDIT = 'CAN_EDIT';
 
     /**
-     * Determines if the attribute is one of those known to this voter.
-     *
-     * @param string $attribute A candidate attribute.
-     *
-     * @return boolean True if the attribute is one supported by this voter, false otherwise.
-     */
-    protected function supportsAttribute($attribute)
-    {
-        if (!in_array($attribute, self::$supportedActions)) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
      * Traverse the tree to find out if the User/Person is a manager.
      *
      * @param Person     $userPerson             This is the logged in user's representation.
