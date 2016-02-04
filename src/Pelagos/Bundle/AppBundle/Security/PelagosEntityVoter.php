@@ -24,22 +24,8 @@ use \Doctrine\Common\Collections\Collection;
  */
 abstract class PelagosEntityVoter extends Voter
 {
-    /**
-     * Class constant that identify user manager role.
-     * @var string DATA_REPOSITORY_MANAGER
-     */
     const DATA_REPOSITORY_MANAGER = 'Manager';
-
-    /**
-     * Class constant identifying create authority.
-     * @var string CAN_CREATE
-     */
     const CAN_CREATE = 'CAN_CREATE';
-
-    /**
-     * Class constant identifying edit authority.
-     * @var string CAN_EDIT
-     */
     const CAN_EDIT = 'CAN_EDIT';
 
     private static $supportedActions = array(self::CAN_CREATE, self::CAN_EDIT);
@@ -64,13 +50,13 @@ abstract class PelagosEntityVoter extends Voter
      *
      * @param Person     $userPerson             This is the logged in user's representation.
      * @param Collection $personDataRepositories List of data repositories the user is associated with.
-     * @param string     $roleName               List of user roles to be tested.
+     * @param array      $roleNames              List of user roles to be tested.
      *
      * @see voteOnAttribute($attribute, $object, TokenInterface $token)
      *
      * @return bool True if the user is a manager.
      */
-    protected function isUserDataRepositoryRole(Person $userPerson, Collection $personDataRepositories, $roleNames)
+    protected function isUserDataRepositoryRole(Person $userPerson, Collection $personDataRepositories, array $roleNames)
     {
         if (!$personDataRepositories instanceof \Traversable) {
             return false;
