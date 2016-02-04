@@ -9,14 +9,18 @@ use \Doctrine\Common\Collections\Collection;
 /**
  * Class PelagosEntityVoter An abstract base class for implementing a Symfony Voter..
  *
- * Concrete implementations of this class must implement the Voter contract which requires
- * supports($attribute, $object).and
- * voteOnAttribute($attribute, $object, TokenInterface $token)
- * The supports function is called by the Symfony Controller->isGranted() mechanism will call
- * supports and then voteOnAttribute. Success (returning true) from supports() precedes the call
- * to voteOnAttribute.
+ * Implementation of the VoterInterface is required by all voters. The VoterInterface requires
+ * the implementation of the function  vote(TokenInterface $token, $subject, array $attributes).
+ * The Symfony abstract class Voter implements function vote, thus satisfying VoterInterface, but
+ * requires the implementation of two other functions: supports($attribute, $object).and
+ * voteOnAttribute($attribute, $object, TokenInterface $token).
+ * Concrete implementations of this class must implement the Voter contract.
+ * Vote,implemented in this instance via the abstract class Voter, will call supports and then
+ * voteOnAttribute. Success (returning true) from supports() precedes the call to voteOnAttribute.
  *
  * @package Pelagos\Bundle\AppBundle\Security
+ * @see Symfony\Component\Security\Core\Authorization\Voter\Voter
+ * @see Symfony\Component\Security\Core\Authorization\Voter\VoterInterface
  */
 abstract class PelagosEntityVoter extends Voter
 {
@@ -65,7 +69,7 @@ abstract class PelagosEntityVoter extends Voter
      *
      * @return bool True if the user is a manager.
      */
-    protected function isUserDataRepositoryRole(Person $userPerson, Collection $personDataRepositories, voteOn)
+    protected function isUserDataRepositoryRole(Person $userPerson, Collection $personDataRepositories, $roleNames)
     {
         if (!$personDataRepositories instanceof \Traversable) {
             return false;
