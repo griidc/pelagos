@@ -250,8 +250,6 @@ class ResearchGroup extends Entity
      * @var string|resource $logo
      *
      * @access protected
-     *
-     * @Serializer\Exclude
      */
     protected $logo;
 
