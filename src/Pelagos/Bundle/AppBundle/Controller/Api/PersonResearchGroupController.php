@@ -3,6 +3,7 @@
 namespace Pelagos\Bundle\AppBundle\Controller\Api;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Form\FormInterface;
 
 use FOS\RestBundle\Util\Codes;
@@ -122,5 +123,24 @@ class PersonResearchGroupController extends EntityController
     public function postAction(Request $request)
     {
         return $this->handlePost(PersonResearchGroupType::class, PersonResearchGroup::class, $request);
+    }
+
+    /**
+     * Delete a person research group.
+     *
+     * @param integer $id The id of the person research group to delete.
+     *
+     * @ApiDoc(
+     *   section = "Person Research Groups",
+     *   statusCodes = {
+     *     204 = "Returned when the person research group is successfully deleted.",
+     *   }
+     * )
+     *
+     * @return Response A response object with an empty body and a "no content" status code.
+     */
+    public function deleteAction($id)
+    {
+        return $this->handleDelete(PersonResearchGroup::class, $id);
     }
 }
