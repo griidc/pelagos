@@ -17,6 +17,11 @@ use JMS\Serializer\Annotation\Exclude;
 class PersonResearchGroup extends Entity
 {
     /**
+     * A friendly name for this type of entity.
+     */
+    const FRIENDLY_NAME = 'Person to Research Group Association';
+
+    /**
      * Static array containing a list of the properties and their attributes.
      *
      * @var array $properties

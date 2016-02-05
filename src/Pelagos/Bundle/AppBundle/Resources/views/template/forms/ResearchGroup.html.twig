@@ -1,0 +1,86 @@
+<form class="entityForm" entityType="ResearchGroup"
+{% if is_granted('CAN_CREATE', ResearchGroup) %}
+ creatable
+{% endif %}
+{% if is_granted('CAN_EDIT', ResearchGroup) %}
+ editable
+{% endif %}
+{% if is_granted('CAN_DELETE', ResearchGroup) %}
+ deletable
+{% endif %}
+ action="{{path('pelagos_api_research_groups_post')}}">
+
+    <input type="hidden" name="id" value="{{ResearchGroup.getId}}">
+
+    <label for="name">Name:</label>
+    <input type="text" name="name" value="{{ResearchGroup.getName}}" required><br>
+
+    <label for="fundingOrganization">Funding Organization:</label>
+    <select dontvalidate required name="fundingCycle.fundingOrganization" fundingOrganization="{{ResearchGroup.getFundingCycle.getFundingOrganization.getId|default}}">
+    <option value="">[Please Select a Funding Organization]</option>
+    {% for FundingOrganization in entityService.getAll('Pelagos:FundingOrganization') | sortBy(["name"]) %}
+        <option value="{{FundingOrganization.getId}}"
+        {{ (ResearchGroup.getFundingCycle.getFundingOrganization.getId|default == FundingOrganization.getId ? ' selected ' : '') }}
+        >{{FundingOrganization.getName|default}}</option>
+    {% endfor %}
+    </select><br>
+
+    <label for="fundingCycle">Funding Cycle:</label>
+    <select
+    {{ (ResearchGroup.getFundingCycle.getId|default == '' ? ' disabled ' : '')  }}
+    required name="fundingCycle" fundingCycle="{{ResearchGroup.getFundingCycle.getId|default}}">
+        <option value="">[Please Select a Funding Organization First]</option>
+        {% if (ResearchGroup) %}
+            {% for FundingCycle in ResearchGroup.getFundingCycle.getFundingOrganization.getFundingCycles|default %}
+                <option value="{{FundingCycle.getId}}"
+                {{ (ResearchGroup.getFundingCycle.getId|default == FundingCycle.getId ? ' selected ' : '') }}
+                >{{FundingCycle.getName}}</option>
+            {% endfor %}
+        {% endif %}
+    </select><br>
+
+    <label for="url">Website:</label>
+    <input type="text" name="url" class="clickableLink" value="{{ResearchGroup.getUrl}}">
+
+    <label for="phoneNumber">Phone Number:</label>
+    <input type="text" name="phoneNumber" value="{{ResearchGroup.getPhoneNumber}}"><br>
+
+    <label for="deliveryPoint">Delivery Point:</label><br>
+    <textarea maxlength="300" name="deliveryPoint" rows="3">{{ResearchGroup.getDeliveryPoint}}</textarea><br>
+
+    <label for="city">City:</label>
+    <input type="text" name="city" value="{{ResearchGroup.getCity}}"><br>
+
+    <label for="administrativeArea">State/Province:</label>
+    <input type="text" name="administrativeArea" value="{{ResearchGroup.getAdministrativeArea}}"><br>
+
+    <label for="postalCode">Postal Code:</label>
+    <input type="text" name="postalCode" value="{{ResearchGroup.getPostalCode}}"><br>
+
+    <label for="country">Country:</label>
+    <input type="text" name="country" value="{{ResearchGroup.getCountry}}"><br>
+
+    <label for="description">Description:</label><br>
+    <textarea name="description" rows="5">{{ResearchGroup.getDescription}}</textarea><br>
+
+    <label for="emailAddress">E-Mail Address:</label>
+    <input type="text" name="emailAddress" value="{{ResearchGroup.getEmailAddress}}"><br>
+
+    <span class="showOnEdit">
+        <label for="logo">Logo:</label>
+        <!--<input name="logo" type="file"
+            base64="{{ResearchGroup.serializeBinary(ResearchGroup.getLogo).base64}}"
+            mimeType="{{ResearchGroup.serializeBinary(ResearchGroup.getLogo).mimeType}}">-->
+        <br>
+    </span>
+     <div class="innerForm">
+         {% image '@PelagosAppBundle/Resources/public/images/application_edit.png' output='static/images/application_edit.png' %}
+            <img class="editimg" src="{{asset_url}}">
+         {% endimage %}
+         {% if is_granted('CAN_DELETE', ResearchGroup) %}
+            {% image '@PelagosAppBundle/Resources/public/images/delete.png' output='static/images/delete.png' %}
+                <img class="deleteimg" src="{{asset_url}}">
+            {% endimage %}
+         {% endif %}
+     </div>
+</form>

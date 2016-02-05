@@ -123,4 +123,60 @@ class ResearchGroupController extends EntityController
     {
         return $this->handlePost(ResearchGroupType::class, ResearchGroup::class, $request);
     }
+
+    /**
+     * Replace a research group with the submitted data.
+     *
+     * @param integer $id      The id of the research group to replace.
+     * @param Request $request The request object.
+     *
+     * @ApiDoc(
+     *   section = "Research Groups",
+     *   input = {
+     *     "class" = "Pelagos\Bundle\AppBundle\Form\ResearchGroupType",
+     *     "name" = ""
+     *   },
+     *   output = "Pelagos\Entity\ResearchGroup",
+     *   statusCodes = {
+     *     200 = "Returned when successful",
+     *     400 = "Returned when the form has errors"
+     *   }
+     * )
+     *
+     * @Rest\View()
+     *
+     * @return ResearchGroup|FormInterface
+     */
+    public function putAction($id, Request $request)
+    {
+        return $this->handleUpdate(ResearchGroupType::class, ResearchGroup::class, $id, $request, 'PUT');
+    }
+
+    /**
+     * Update a research group with the submitted data.
+     *
+     * @param integer $id      The id of the research group to update.
+     * @param Request $request The request object.
+     *
+     * @ApiDoc(
+     *   section = "Research Groups",
+     *   input = {
+     *     "class" = "Pelagos\Bundle\AppBundle\Form\ResearchGroupType",
+     *     "name" = ""
+     *   },
+     *   output = "Pelagos\Entity\ResearchGroup",
+     *   statusCodes = {
+     *     200 = "Returned when successful",
+     *     400 = "Returned when the form has errors"
+     *   }
+     * )
+     *
+     * @Rest\View()
+     *
+     * @return ResearchGroup|FormInterface
+     */
+    public function patchAction($id, Request $request)
+    {
+        return $this->handleUpdate(ResearchGroupType::class, ResearchGroup::class, $id, $request, 'PATCH');
+    }
 }
