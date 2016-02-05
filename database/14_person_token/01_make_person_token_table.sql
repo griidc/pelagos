@@ -35,7 +35,7 @@ CREATE TABLE person_token_table
    person_number                            INTEGER             NOT NULL,
    person_token_creation_time               TIMESTAMP WITH TIME ZONE
       DEFAULT DATE_TRUNC('seconds', NOW())  NOT NULL,
-   person_token_creator                     TEXT                NOT NULL,
+   person_token_creator                     TEXT,
    person_token_token                       TOKEN_TYPE          NOT NULL,
    person_token_use                         TOKEN_USE_TYPE      NOT NULL,
    person_token_valid_for                   INTERVAL            NOT NULL
