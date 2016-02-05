@@ -18,10 +18,10 @@ security:
             # use REMOTE_USER environment variable if set
             remote_user:
                 provider: pelagos
-                
+
 services:
     # generic create voter
     create_voter:
-        class: Pelagos\Bundle\AppBundle\Security\CreateRGVoter
+        class: Pelagos\Bundle\AppBundle\Security\ResearchGroupVoter
         tags:
             - { name: security.voter }
