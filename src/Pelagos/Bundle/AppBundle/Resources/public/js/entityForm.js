@@ -3,8 +3,6 @@
 
     $.fn.entityForm = function(options) {
 
-        console.log(options);
-
         $.validator.methods._required = $.validator.methods.required;
         $.validator.methods.required = function(value, element, param)
         {
@@ -59,11 +57,13 @@
             $(this).wrap(wrapper);
 
             if (entityId === "") {
-                if (!options.canCreate) {
+                if (!$(this).hasAttr("creatable")) {
+                    $('.innerForm').hide()
                     return null;
                 }
             } else {
-                if (!options.canEdit || !$(this).hasAttr("editable")) {
+                if (!$(this).hasAttr("editable")) {
+                    $('.innerForm').hide()
                     return null;
                 }
             }
@@ -72,7 +72,7 @@
 
             var formValidator = $(this).validate({
                 submitHandler: function(form) {
-                    if (entityId === "") {
+                    if ($(thisForm).find("[name=\"id\"]").val() === "") {
                         updateEntity(form, "Create");
                     } else {
                         updateEntity(form, "Update");
@@ -88,19 +88,6 @@
             $(this).append(buttons);
 
             $(".entityFormButton").css("visibility", "hidden").button();
-
-            var innerform = "<div class=\"innerForm\">" +
-                            "<img class=\"editimg\" src=\"" +
-                            pelagosBasePath +
-                            "/static/images/application_edit.png\">";
-            if ($(this).hasAttr("deletable")) { // && options.canDelete
-                 innerform += "<img class=\"deleteimg\" src=\"" +
-                            pelagosBasePath +
-                            "/static/images/delete.png\">";
-            }
-            innerform += "</div>";
-
-            $(this).append(innerform);
 
             $(".deleteimg", this).button().click(function (event) {
                 event.stopPropagation();
@@ -139,11 +126,11 @@
                     $("input:visible,textarea,select", this).each(function() {
                         $(this).attr("disabled", false);
                         if (!$(this).hasAttr("dontvalidate")) {
-                            // $(this).rules("add", {
-                                // remote: {
-                                    // url: url
-                                // }
-                            // });
+                            $(this).rules("add", {
+                                remote: {
+                                    url: url
+                                }
+                            });
                         }
                     });
                     $(".innerForm", this).hide();
@@ -272,41 +259,40 @@
 
     function updateEntity(form, action)
     {
-        var data = new FormData(form);
+        var data = $(form).serialize(); //new FormData(form);
         var entityType = $(form).attr("entityType");
         var entityId = $(form).find("[name=\"id\"]").val();
         var url;
         var actionURL = $(form).attr('action');
 
-        $("form input:hidden").each(function(key, input){
-            data.append(input.name, input.value);
-        });
+        // $("form input:hidden").each(function(key, input){
+            // data.append(input.name, input.value);
+        // });
 
         var type;
         var returnCode;
+        var prefixPhrase;
 
         switch (action)
         {
             case "Create":
-                //url = pelagosBasePath + "/services/entity/" + entityType;
                 url = actionURL;
                 type = "POST";
                 returnCode = 201;
+                prefixPhrase = "Created";
                 break;
             case "Update":
-                //url = pelagosBasePath + "/services/entity/" + entityType + "/" + entityId;
                 url = actionURL + "/" + entityId;
                 type = "PUT";
                 returnCode = 200;
+                prefixPhrase = "Updated";
                 break;
             case "Delete":
-                //url = pelagosBasePath + "/services/entity/" + entityType + "/" + entityId;
                 url = actionURL + "/" + entityId;
                 type = "DELETE";
-                returnCode = 200;
+                returnCode = 204;
                 break;
             default:
-                //url = pelagosBasePath + "/services/entity/" + entityType + "/" + entityId;
                 url = actionURL + "/" + entityId;
                 type = "GET";
                 returnCode = 200;
@@ -325,16 +311,23 @@
                 // Optionally enforce JSON return, in case a status 200 happens, but no JSON returns
                 //dataType: 'json',
                 cache: false,
-                contentType: false,
+                contentType: "application/x-www-form-urlencoded; charset=UTF-8",
                 processData: false,
+                statusCode: {
+                    201: function(data) {
+                        var currentURL = window.location.pathname;
+                        var docTitle = document.title;
+                        var newID = data.id;
+                        var newURL = currentURL + "/" + newID;
+                        window.history.pushState(newID, docTitle, newURL);
+                    }
+                },
                 success: function(data, textStatus, jqXHR) {
-                    debugger;
                     if (jqXHR.status === returnCode) {
                         title = "Success!";
                         var newID = data.id;
-                        message = "New " + entityType + " successfully created with ID:" + newID;
+                        message = prefixPhrase + " " + entityType + " successfully with ID:" + newID;
                         $(form).fillForm(data);
-                        //$(form).trigger("saved");
                         $(form).trigger("reset");
                     } else {
                         title = "Error!";

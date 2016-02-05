@@ -68,8 +68,7 @@ AS $person_token_func$
       THEN
          -- Make sure we have all required fields for an INSERT (UPDATE
          -- operations will not be allowed on this view):
-         IF NEW.creator IS NULL OR NEW.creator = '' OR
-            NEW.person_number IS NULL OR
+         IF NEW.person_number IS NULL OR
             NEW.token IS NULL OR NEW.token = '' OR
             NEW.use IS NULL OR NEW.use = '' OR
             NEW.valid_for IS NULL OR NEW.valid_for = ''
@@ -87,8 +86,6 @@ AS $person_token_func$
                                 NEW.use,
                                 '"; valid_for="',
                                 NEW.valid_for,
-                                '"; Creator="',
-                                NEW.creator,
                                 '".');
             -- This is an invalid entry. Raise an exception and quit (the
             -- exception text is only used when we disable exception

@@ -5,7 +5,7 @@ namespace Pelagos\Bundle\AppBundle\Controller\Api;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Form\FormTypeInterface;
+use Symfony\Component\Form\FormInterface;
 
 use FOS\RestBundle\Controller\FOSRestController;
 
@@ -73,7 +73,7 @@ abstract class EntityController extends FOSRestController
      * @param string  $entityClass The type of entity.
      * @param Request $request     The request object.
      *
-     * @return Entity|FormTypeInterface
+     * @return Entity|FormInterface
      */
     public function handlePost($formType, $entityClass, Request $request)
     {
@@ -90,6 +90,35 @@ abstract class EntityController extends FOSRestController
             return $exception->getForm();
         }
         $this->container->get('pelagos.entity.handler')->create($entity);
+        return $entity;
+    }
+
+    /**
+     * Update an entity from the submitted data.
+     *
+     * @param string  $formType    The type of form.
+     * @param string  $entityClass The type of entity.
+     * @param integer $id          The id of the entity.
+     * @param Request $request     The request object.
+     * @param string  $method      The HTTP method (PUT or PATCH).
+     *
+     * @return Entity|FormInterface
+     */
+    public function handleUpdate($formType, $entityClass, $id, Request $request, $method)
+    {
+        $entity = $this->handleGetOne($entityClass, $id);
+        $user = $this->getUser();
+        $modifier = 'anonymous';
+        if ($user instanceof Account) {
+            $modifier = $user->getUsername();
+        }
+        $entity->setModifier($modifier);
+        try {
+            $this->processForm($formType, $entity, $request, $method);
+        } catch (InvalidFormException $exception) {
+            return $exception->getForm();
+        }
+        $this->container->get('pelagos.entity.handler')->update($entity);
         return $entity;
     }
 
