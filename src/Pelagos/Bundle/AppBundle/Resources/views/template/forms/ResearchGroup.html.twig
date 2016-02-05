@@ -73,14 +73,5 @@
             mimeType="{{ResearchGroup.serializeBinary(ResearchGroup.getLogo).mimeType}}">-->
         <br>
     </span>
-     <div class="innerForm">
-         {% image '@PelagosAppBundle/Resources/public/images/application_edit.png' output='static/images/application_edit.png' %}
-            <img class="editimg" src="{{asset_url}}">
-         {% endimage %}
-         {% if is_granted('CAN_DELETE', ResearchGroup) %}
-            {% image '@PelagosAppBundle/Resources/public/images/delete.png' output='static/images/delete.png' %}
-                <img class="deleteimg" src="{{asset_url}}">
-            {% endimage %}
-         {% endif %}
-     </div>
+   {% include '@templates/forms/innerForm.html.twig' %}
 </form>
