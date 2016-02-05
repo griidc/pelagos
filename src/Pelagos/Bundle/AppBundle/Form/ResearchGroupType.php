@@ -43,9 +43,7 @@ class ResearchGroupType extends AbstractType
             ->add('postalCode', TextType::class, array('required' => false))
             ->add('country', TextType::class, array('required' => false))
             ->add('description', TextType::class, array('required' => false))
-            ->add('logo', FileType::class, array('required' => false))
-            ->add('emailAddress', TextType::class, array('required' => false))
-            ->add('save', SubmitType::class, array('label' => 'Create Research Group'));
+            ->add('emailAddress', TextType::class, array('required' => false));
     }
     
     /**
