@@ -126,4 +126,18 @@ class EntityHandler
         $this->entityManager->flush($entity);
         return $entity;
     }
+
+    /**
+     * Delete an entity.
+     *
+     * @param Entity $entity The entity object to delete.
+     *
+     * @return Entity The entity object that was deleted.
+     */
+    public function delete(Entity $entity)
+    {
+        $this->entityManager->remove($entity);
+        $this->entityManager->flush();
+        return $entity;
+    }
 }
