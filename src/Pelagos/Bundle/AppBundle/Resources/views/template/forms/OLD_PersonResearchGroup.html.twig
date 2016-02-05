@@ -1,0 +1,88 @@
+<form class="entityForm" entityType="PersonResearchGroup" 
+{% if is_granted('CAN_CREATE', PersonResearchGroup) %}
+ creatable
+{% endif %}
+{% if is_granted('CAN_EDIT', PersonResearchGroup) %}
+ editable
+{% endif %}
+{% if is_granted('CAN_DELETE', PersonResearchGroup) %}
+ deletable
+{% endif %}
+ action="{{path('pelagos_api_person_research_groups_post')}}">
+
+    <input type="hidden" name="id" value="{{PersonResearchGroup.getId|default}}">
+
+    {% if not Person is defined %}
+        <label for="person">Person:</label>
+        {% if not ResearchGroup is defined %}
+            <select required name="person" person="{{PersonResearchGroup.getPerson.getId|default}}">
+            <option value="">[Please Select a Person]</option>
+            {% for Person in entityService.getAll("Pelagos:Person") | sortBy(["lastName","firstName"]) %}
+                <option value="{{Person.getId}}"
+                {{ (PersonResearchGroup.getPerson.getId|default == Person.getId ? ' selected ' : '') }}
+                >{{Person.getLastName}}, {{Person.getFirstName}}, {{Person.getEmailAddress}}</option>
+            {% endfor %}
+            </select>
+            <label for="person" class="error"></label>
+        {% else %}
+            {{PersonResearchGroup.getPerson.getLastName}}, {{PersonResearchGroup.getPerson.getFirstName}} &lt;{{PersonResearchGroup.getPerson.getEmailAddress}}&gt;
+        {% endif %}
+        <br>
+    {% endif %}
+
+    {% if not ResearchGroup is defined%}
+        <label for="researchGroup.fundingCycle.fundingOrganization">Funding Organization:</label>
+        <select dontvalidate required name="researchGroup.fundingCycle.fundingOrganization" fundingOrganization="{{PersonResearchGroup.getResearchGroup.getFundingCycle.getFundingOrganization.getId|default}}">
+        <option value="">[Please Select a Funding Organization]</option>
+        {% for FundingOrganization in entityService.getAll("Pelagos:FundingOrganization") | sortBy(["name"]) %}
+            <option value="{{FundingOrganization.getId}}"
+            {{ (PersonResearchGroup.getResearchGroup.getFundingCycle.getFundingOrganization.getId|default == FundingOrganization.getId|default ? ' selected ' : '') }}
+            >{{FundingOrganization.getName}}</option>
+        {% endfor %}
+        </select><br>
+
+        <label for="researchGroup.fundingCycle">Funding Cycle:</label>
+        <select
+        {{ (PersonResearchGroup.getResearchGroup.getFundingCycle.getId|default == '' ? ' disabled ' : '')  }}
+        required dontvalidate name="researchGroup.fundingCycle" fundingCycle="{{PersonResearchGroup.getResearchGroup.getFundingCycle.getId|default}}">
+            <option value="">[Please Select a Funding Organization First]</option>
+            {% if (PersonResearchGroup is defined) %}
+                {% for FundingCycle in PersonResearchGroup.getResearchGroup.getFundingCycle.getFundingOrganization.getFundingCycles | sortBy(["name"] ) %}
+                    <option value="{{FundingCycle.getId}}"
+                    {{ (PersonResearchGroup.getResearchGroup.getFundingCycle.getId == FundingCycle.getId ? ' selected ' : '') }}
+                    >{{FundingCycle.getName}}</option>
+                {% endfor %}
+            {% endif %}
+        </select><br>
+
+        <label for="researchGroup">Research Group:</label>
+        <select
+        {{ (PersonResearchGroup.getResearchGroup.getId == '' ? ' disabled ' : '')  }}
+        required name="researchGroup" researchGroup="{{PersonResearchGroup.getResearchGroup.getId}}">
+            <option value="">[Please Select a Funding Cycle First]</option>
+            {% if (PersonResearchGroup) %}
+                {% for ResearchGroup in PersonResearchGroup.getResearchGroup.getFundingCycle.getResearchGroups | sortBy(["name"]) %}
+                    <option value="{{ResearchGroup.getId}}"
+                    {{ (PersonResearchGroup.getResearchGroup.getId == ResearchGroup.getId ? ' selected ' : '') }}
+                    >{{ResearchGroup.getName}}</option>
+                {% endfor %}
+            {% endif %}
+        </select><br>
+    {% endif %}
+
+    {% if userLoggedIn == "true" %}
+        <label for="role">Role:</label>
+        <select required name="role" role="{{PersonResearchGroup.getRole.getId}}">
+        <option value="">[Please Select a Role]</option>
+        {% for Role in entityService.getAll("Pelagos:ResearchGroupRole") | sortBy(["weight"]) %}
+            <option value="{{Role.getId}}"
+            {{ (PersonResearchGroup.getRole.getId == Role.getId ? ' selected ' : '') }}
+            >{{Role.getName}}</option>
+        {% endfor %}
+        </select><br>
+    {% endif %}
+
+    <label for="label">Label:</label>
+    <input type="text" name="label" size="50" value="{{PersonResearchGroup.getLabel}}"><br>
+    {% include '@templates/forms/innerForm.html.twig' %}
+</form>

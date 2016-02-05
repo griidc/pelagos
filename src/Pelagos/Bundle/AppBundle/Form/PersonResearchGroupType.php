@@ -8,6 +8,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -36,16 +37,32 @@ class PersonResearchGroupType extends AbstractType
                 'choice_label' => function ($value, $key, $index) {
                     return $value->getLastName() . ', ' . $value->getFirstName() . ', ' . $value->getEmailAddress();
                 },
+                'placeholder' => '[Please Select a Person]',
+            ))
+            ->add('fundingOrganization', EntityType::class, array(
+                'label' => 'Funding Organization',
+                'class' => 'Pelagos:FundingOrganization',
+                'choice_label' => 'name',
+                'placeholder' => '[Please Select a Funding Organization]',
+                'mapped' => false,
+            ))
+            ->add('fundingCycle', ChoiceType::class, array(
+                'label' => 'Funding Cycle',
+                'placeholder' => '[Please Select a Funding Organization]',
+                'mapped' => false,
             ))
             ->add('researchGroup', EntityType::class, array(
                 'label' => 'Research Group',
                 'class' => 'Pelagos:ResearchGroup',
                 'choice_label' => 'name',
+#                'choices' => array(),
+                'placeholder' => '[Please Select a Funding Organization First]',
             ))
             ->add('role', EntityType::class, array(
                 'label' => 'Role',
                 'class' => 'Pelagos:ResearchGroupRole',
                 'choice_label' => 'name',
+                'placeholder' => '[Please Select a Person]',
             ))
             ->add('label', TextType::class, array('required' => true));
     }

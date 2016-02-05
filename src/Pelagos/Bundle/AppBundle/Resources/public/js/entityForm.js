@@ -56,7 +56,7 @@
 
             $(this).wrap(wrapper);
 
-            if (entityId === "") {
+            if (entityId === undefined) {
                 if (!$(this).hasAttr("creatable")) {
                     $('.innerForm').hide()
                     return null;
@@ -72,7 +72,7 @@
 
             var formValidator = $(this).validate({
                 submitHandler: function(form) {
-                    if ($(thisForm).find("[name=\"id\"]").val() === "") {
+                    if ($(thisForm).find("[name=\"id\"]").val() === undefined) {
                         updateEntity(form, "Create");
                     } else {
                         updateEntity(form, "Update");
@@ -161,7 +161,7 @@
                 $("button", this).button("disable");
             });
 
-            if (entityId === "") {
+            if (entityId === undefined) {
                 $(".entityWrapper").has(this).click();
             }
         });
