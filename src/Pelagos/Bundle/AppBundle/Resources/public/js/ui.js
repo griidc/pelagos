@@ -4,6 +4,5 @@ $(document).ready(function()
 {
     "use strict";
     $("form.entityForm").entityForm({
-        canEdit: true
     });
 });
