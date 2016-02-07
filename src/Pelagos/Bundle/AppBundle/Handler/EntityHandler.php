@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\Common\Collections\Collection;
 
 use Pelagos\Entity\Entity;
+use Pelagos\Bundle\AppBundle\Security\PelagosEntityVoter;
 
 /**
  * A handler for entities.
@@ -122,6 +123,11 @@ class EntityHandler
      */
     public function update(Entity $entity)
     {
+        if (!$this->authorizationChecker->isGranted(PelagosEntityVoter::CAN_EDIT, $entity)) {
+            throw new AccessDeniedException(
+                'You do not have sufficient privileges to edit this ' . $entity::FRIENDLY_NAME . '.'
+            );
+        }
         $this->entityManager->persist($entity);
         $this->entityManager->flush($entity);
         return $entity;
