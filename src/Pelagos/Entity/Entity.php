@@ -604,4 +604,20 @@ abstract class Entity implements \JsonSerializable
             'base64' => base64_encode($binaryData)
         );
     }
+
+    /**
+     * Return true if the class type and instance id of the $other are the same is $this.
+     *
+     * @param Entity $other The object to which this is compared.
+     *
+     * @return bool Return true if the type and id match.
+     */
+    public function equals(Entity $other)
+    {
+        if (get_class($this) == get_class($other) &&
+            $this->getId() == $other->getId()) {
+            return true;
+        }
+        return false;
+    }
 }
