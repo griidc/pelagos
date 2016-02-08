@@ -49,10 +49,13 @@ class DataRepositoryManagerVoter extends PelagosEntityVoter
         $userPerson = $user->getPerson();
 
         $personDataRepositories = $userPerson->getPersonDataRepositories();
-        return $this->isUserDataRepositoryRole(
+        if ($this->isUserDataRepositoryRole(
             $userPerson,
             $personDataRepositories,
             array(self::DATA_REPOSITORY_MANAGER)
-        );
+        ) and ($attribute === self::CAN_CREATE)) {
+            return true;
+        }
+        return false;
     }
 }
