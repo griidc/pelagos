@@ -69,7 +69,12 @@ class ResearchGroupVoter extends PelagosEntityVoter
         if ($attribute == PelagosEntityVoter::CAN_CREATE) {
             if (!$fundingCycle instanceof FundingCycle) {
                 if ($fundingCycle === null) {
-                    if ($this->isUserDataRepositoryRole($userPerson, array(DataRepositoryRoles::MANAGER))) {
+                    // check to ensure user has DRP/M role on at least one DataRepository.
+                    $personDataRepositories = $userPerson->getPersonDataRepositories();
+                    if ($this->doesUserHaveRole(
+                        $userPerson,
+                        $personDataRepositories,
+                        array(DataRepositoryRoles::MANAGER))) {
                         return true;
                     }
                 }
@@ -87,20 +92,20 @@ class ResearchGroupVoter extends PelagosEntityVoter
             return false;
         }
 
-        $personDataRepositories = $dataRepository->getPersonDataRepositories();
+        //  At this point the subject ResearchGroup has a FundingOrganization and DataRepository context.
 
-        //  This subject ResearchGroup has a FundingOrganization and DataRepository context.
-
-        // if this user is DataRepositoryRole Manger they can create or edit ResearchGroup
+        // if this user has DataRepositoryRole Manger they can create or edit ResearchGroup
         if (in_array($attribute, array(PelagosEntityVoter::CAN_CREATE, PelagosEntityVoter::CAN_EDIT))) {
-            if ($this->isUserDataRepositoryRole($userPerson, array(DataRepositoryRoles::MANAGER))) {
+            $personDataRepositories = $dataRepository->getPersonDataRepositories();
+            if($this->doesUserHaveRole($userPerson, $personDataRepositories,array(DataRepositoryRoles::MANAGER))) {
                 return true;
             }
         }
         // if the user has one of ResearchGroupRole Leadership, Admin or Data they can edit the ResearchGroup object.
         $rgRoles = array(ResearchGroupRoles::LEADERSHIP, ResearchGroupRoles::ADMIN, ResearchGroupRoles::DATA);
         if ($attribute == PelagosEntityVoter::CAN_EDIT) {
-            if ($this->isUserResearchGroupRole($userPerson, $rgRoles)) {
+            $personDataRepositories = $userPerson->getPersonDataRepositories();
+            if ($this->doesUserHaveRole($userPerson, $personDataRepositories, $rgRoles)) {
                 return true;
             }
         }

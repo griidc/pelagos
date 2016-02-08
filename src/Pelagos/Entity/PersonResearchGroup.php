@@ -14,7 +14,7 @@ use JMS\Serializer\Annotation\Exclude;
  *     message="A Person can have only one association with a Research Group"
  * )
  */
-class PersonResearchGroup extends Entity
+class PersonResearchGroup extends Entity implements HasRoleInterface
 {
     /**
      * A friendly name for this type of entity.
