@@ -142,6 +142,11 @@ class EntityHandler
      */
     public function delete(Entity $entity)
     {
+        if (!$this->authorizationChecker->isGranted(PelagosEntityVoter::CAN_DELETE, $entity)) {
+            throw new AccessDeniedException(
+                'You do not have sufficient privileges to delete this ' . $entity::FRIENDLY_NAME . '.'
+            );
+        }
         $this->entityManager->remove($entity);
         $this->entityManager->flush();
         return $entity;

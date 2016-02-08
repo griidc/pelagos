@@ -27,6 +27,7 @@ abstract class PelagosEntityVoter extends Voter
     const DATA_REPOSITORY_MANAGER = 'Manager';
     const CAN_CREATE = 'CAN_CREATE';
     const CAN_EDIT = 'CAN_EDIT';
+    const CAN_DELETE = 'CAN_DELETE';
 
     /**
      * Traverse the tree to find out if the User/Person is a manager.
