@@ -30,17 +30,15 @@ abstract class PelagosEntityVoter extends Voter
     const CAN_CREATE = 'CAN_CREATE';
     const CAN_EDIT = 'CAN_EDIT';
 
-
     /**
      * Does this Person have one of the Roles listed in roleNames?.
      *
-     * @param Person $userPerson This is the logged in user's representation.
-     * @param Collection $hasRoleObjects A set of HsaRoleInterface instances
-     * @param array  $roleNames  List of user roles to be tested.
+     * @param Person     $userPerson     This is the logged in user's representation.
+     * @param Collection $hasRoleObjects A set of HsaRoleInterface instances.
+     * @param array      $roleNames      List of user roles to be tested.
      *
-     * @see voteOnAttribute($attribute, $object, TokenInterface $token)
-     *
-     * @return bool True if the user is a manager.
+     * @see    voteOnAttribute($attribute, $object, TokenInterface $token)
+     * @return bool True if the user has a role in the roleNames.
      */
     protected function doesUserHaveRole(Person $userPerson, Collection $hasRoleObjects, array $roleNames)
     {
@@ -48,13 +46,12 @@ abstract class PelagosEntityVoter extends Voter
             return false;
         }
 
-
         foreach ($hasRoleObjects as $hasRole) {
             //  check to see if each object in the list implements the HasRoleInterface
             if (!$hasRole instanceof HasRoleInterface) {
                 continue;
             }
-            //  get the role from the Person/DataRepository object
+            //  get the role from the object
             $role = $hasRole->getRole();
             if (!$role instanceof RoleInterface) {
                 continue;
@@ -72,11 +69,13 @@ abstract class PelagosEntityVoter extends Voter
         }
         return false;
     }
+
     /**
      * Does this Person have one of the DataRepositoryRoles listed in roleNames?.
      *
-     * @param Person $userPerson This is the logged in user's representation.
-     * @param array  $roleNames  List of user roles to be tested.
+     * @param Person     $userPerson             This is the logged in user's representation.
+     * @param Collection $personDataRepositories A set of PersonDataRepository instances.
+     * @param array      $roleNames              List of user roles to be tested.
      *
      * @see voteOnAttribute($attribute, $object, TokenInterface $token)
      *
@@ -112,14 +111,15 @@ abstract class PelagosEntityVoter extends Voter
     /**
      * Does this Person have one of the ResearchGroupRoles listed in roleNames?.
      *
-     * @param Person $userPerson The logged in user's representation.
-     * @param array  $roleNames  List of user roles to be tested.
+     * @param Person     $userPerson           This is the logged in user's representation.
+     * @param Collection $personResearchGroups A set of PersonResearchGroup instances.
+     * @param array      $roleNames            List of user roles to be tested.
      *
      * @see voteOnAttribute($attribute, $object, TokenInterface $token)
      *
      * @return bool True if the user is a manager.
      */
-    protected function isUserResearchGroupRole(Person $userPerson,Collection $personResearchGroups,  array $roleNames)
+    protected function isUserResearchGroupRole(Person $userPerson, Collection $personResearchGroups, array $roleNames)
     {
         if (!$personResearchGroups instanceof \Traversable) {
             return false;

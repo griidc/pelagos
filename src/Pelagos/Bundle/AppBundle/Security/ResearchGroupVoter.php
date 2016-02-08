@@ -74,7 +74,8 @@ class ResearchGroupVoter extends PelagosEntityVoter
                     if ($this->doesUserHaveRole(
                         $userPerson,
                         $personDataRepositories,
-                        array(DataRepositoryRoles::MANAGER))) {
+                        array(DataRepositoryRoles::MANAGER)
+                    )) {
                         return true;
                     }
                 }
@@ -97,7 +98,7 @@ class ResearchGroupVoter extends PelagosEntityVoter
         // if this user has DataRepositoryRole Manger they can create or edit ResearchGroup
         if (in_array($attribute, array(PelagosEntityVoter::CAN_CREATE, PelagosEntityVoter::CAN_EDIT))) {
             $personDataRepositories = $dataRepository->getPersonDataRepositories();
-            if($this->doesUserHaveRole($userPerson, $personDataRepositories,array(DataRepositoryRoles::MANAGER))) {
+            if ($this->doesUserHaveRole($userPerson, $personDataRepositories, array(DataRepositoryRoles::MANAGER))) {
                 return true;
             }
         }
