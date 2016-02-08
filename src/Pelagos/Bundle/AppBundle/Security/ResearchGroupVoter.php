@@ -28,7 +28,7 @@ class ResearchGroupVoter extends PelagosEntityVoter
         if (!$object instanceof ResearchGroup) {
             return false;
         }
-        if (!in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT))) {
+        if (!in_array($attribute, array(self::CAN_EDIT))) {
             return false;
         }
         return true;
@@ -59,36 +59,22 @@ class ResearchGroupVoter extends PelagosEntityVoter
         $userPerson = $user->getPerson();
 
         $fundingCycle = $object->getFundingCycle();
-        if (!$fundingCycle instanceof FundingCycle) {
-            if ($fundingCycle === null) {
-                // check to ensure user has DRP/M role on at least one DataRepository.
-                $personDataRepositories = $userPerson->getPersonDataRepositories();
-                return $this->isUserDataRepositoryRole(
-                    $userPerson,
-                    $personDataRepositories,
-                    array(self::DATA_REPOSITORY_MANAGER)
-                );
-
-            }
+        $fundingOrganization = $fundingCycle->getFundingOrganization();
+        if (!$fundingOrganization instanceof FundingOrganization) {
             return false;
-        } else {
-            $fundingOrganization = $fundingCycle->getFundingOrganization();
-            if (!$fundingOrganization instanceof FundingOrganization) {
-                return false;
-            }
-
-            $dataRepository = $fundingOrganization->getDataRepository();
-            if (!$dataRepository instanceof DataRepository) {
-                return false;
-            }
-
-            $personDataRepositories = $dataRepository->getPersonDataRepositories();
-            return $this->isUserDataRepositoryRole(
-                $userPerson,
-                $personDataRepositories,
-                array(self::DATA_REPOSITORY_MANAGER)
-            );
         }
+
+        $dataRepository = $fundingOrganization->getDataRepository();
+        if (!$dataRepository instanceof DataRepository) {
+            return false;
+        }
+
+        $personDataRepositories = $dataRepository->getPersonDataRepositories();
+        return $this->isUserDataRepositoryRole(
+            $userPerson,
+            $personDataRepositories,
+            array(self::DATA_REPOSITORY_MANAGER)
+        );
         return false;
     }
 }
