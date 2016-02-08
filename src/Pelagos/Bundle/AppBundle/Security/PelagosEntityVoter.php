@@ -30,6 +30,48 @@ abstract class PelagosEntityVoter extends Voter
     const CAN_CREATE = 'CAN_CREATE';
     const CAN_EDIT = 'CAN_EDIT';
 
+
+    /**
+     * Does this Person have one of the Roles listed in roleNames?.
+     *
+     * @param Person $userPerson This is the logged in user's representation.
+     * @param Collection $hasRoleObjects A set of HsaRoleInterface instances
+     * @param array  $roleNames  List of user roles to be tested.
+     *
+     * @see voteOnAttribute($attribute, $object, TokenInterface $token)
+     *
+     * @return bool True if the user is a manager.
+     */
+    protected function doesUserHaveRole(Person $userPerson, Collection $hasRoleObjects, array $roleNames)
+    {
+        if (!$hasRoleObjects instanceof \Traversable) {
+            return false;
+        }
+
+
+        foreach ($hasRoleObjects as $hasRole) {
+            //  check to see if each object in the list implements the HasRoleInterface
+            if (!$hasRole instanceof HasRoleInterface) {
+                continue;
+            }
+            //  get the role from the Person/DataRepository object
+            $role = $hasRole->getRole();
+            if (!$role instanceof RoleInterface) {
+                continue;
+            }
+            //  what is the name
+            $roleName = $role->getName();
+            // get the Person to which the Role refers
+            $person = $hasRole->getPerson();
+
+            // if the Role Person is the same as the $userPerson and
+            // the $roleName is in the list of $roleNames return true.
+            if ($userPerson->equals($person) && in_array($roleName, $roleNames)) {
+                return true;
+            }
+        }
+        return false;
+    }
     /**
      * Does this Person have one of the DataRepositoryRoles listed in roleNames?.
      *
@@ -40,10 +82,8 @@ abstract class PelagosEntityVoter extends Voter
      *
      * @return bool True if the user is a manager.
      */
-    protected function isUserDataRepositoryRole(Person $userPerson, array $roleNames)
+    protected function isUserDataRepositoryRole(Person $userPerson, Collection $personDataRepositories, array $roleNames)
     {
-        $personDataRepositories = $userPerson->getPersonDataRepositories();
-
         if (!$personDataRepositories instanceof \Traversable) {
             return false;
         }
@@ -79,9 +119,8 @@ abstract class PelagosEntityVoter extends Voter
      *
      * @return bool True if the user is a manager.
      */
-    protected function isUserResearchGroupRole(Person $userPerson, array $roleNames)
+    protected function isUserResearchGroupRole(Person $userPerson,Collection $personResearchGroups,  array $roleNames)
     {
-        $personResearchGroups = $userPerson->getPersonResearchGroups();
         if (!$personResearchGroups instanceof \Traversable) {
             return false;
         }
