@@ -20,18 +20,17 @@ use Pelagos\Bundle\AppBundle\Form\PersonResearchGroupType;
 class PersonResearchGroupController extends EntityController
 {
     /**
-     * Validate a value for a property of a person research group.
+     * Validate a value for a property of a Person to Research Group Association.
      *
      * @param Request $request The request object.
      *
      * @ApiDoc(
-     *   section = "Person Research Groups",
-     *   parameters = {
-     *     {"name"="someProperty", "dataType"="string", "required"="true"}
-     *   },
+     *   section = "Person to Research Group Associations",
+     *   parameters = {{"name"="someProperty", "dataType"="string", "required"="true"}},
      *   statusCodes = {
-     *     200 = "Returned when validation is successful (regardless of validity)",
-     *     400 = "Returned when bad parameters are passed in the query string"
+     *     200 = "Validation was performed successfully (regardless of validity).",
+     *     400 = "Bad parameters were passed in the query string.",
+     *     500 = "An internal error has occurred.",
      *   }
      * )
      *
@@ -47,18 +46,19 @@ class PersonResearchGroupController extends EntityController
     }
 
     /**
-     * Get a collection of person research groups.
+     * Get a collection of Person to Research Group Associations.
      *
      * @param Request $request The request object.
      *
      * @ApiDoc(
-     *   section = "Person Research Groups",
+     *   section = "Person to Research Group Associations",
      *   parameters = {
      *     {"name"="someProperty", "dataType"="string", "required"=false, "description"="Filter by someProperty"}
      *   },
      *   output = "array<Pelagos\Entity\PersonResearchGroup>",
      *   statusCodes = {
-     *     200 = "Returned when successful",
+     *     200 = "The requested collection of Person to Research Group Associations was successfully retrieved.",
+     *     500 = "An internal error has occurred.",
      *   }
      * )
      *
@@ -74,16 +74,17 @@ class PersonResearchGroupController extends EntityController
     }
 
     /**
-     * Get a single person research group for a given id.
+     * Get a single Person to Research Group Association for a given id.
      *
-     * @param integer $id The id of the person research group to return.
+     * @param integer $id The id of the Person to Research Group Association to return.
      *
      * @ApiDoc(
-     *   section = "Person Research Groups",
+     *   section = "Person to Research Group Associations",
      *   output = "Pelagos\Entity\PersonResearchGroup",
      *   statusCodes = {
-     *     200 = "Returned when successful",
-     *     404 = "Returned when the person research group is not found"
+     *     200 = "The requested Person to Research Group Association was successfully retrieved.",
+     *     404 = "The requested Person to Research Group Association was not found.",
+     *     500 = "An internal error has occurred.",
      *   }
      * )
      *
@@ -97,43 +98,50 @@ class PersonResearchGroupController extends EntityController
     }
 
     /**
-     * Create a new person research group from the submitted data.
+     * Create a new Person to Research Group Association from the submitted data.
      *
      * @param Request $request The request object.
      *
      * @ApiDoc(
-     *   section = "Person Research Groups",
-     *   input = {
-     *     "class" = "Pelagos\Bundle\AppBundle\Form\PersonResearchGroupType",
-     *     "name" = ""
-     *   },
-     *   output = "Pelagos\Entity\PersonResearchGroup",
+     *   section = "Person to Research Group Associations",
+     *   input = {"class" = "Pelagos\Bundle\AppBundle\Form\PersonResearchGroupType", "name" = ""},
      *   statusCodes = {
-     *     201 = "Returned when successful",
-     *     400 = "Returned when the form has errors"
+     *     201 = "The Person to Research Group Association was successfully created.",
+     *     400 = "The request could not be processed due to validation or other errors.",
+     *     403 = "The authenticated user was not authorized to create the Person to Research Group Association.",
+     *     500 = "An internal error has occurred.",
      *   }
      * )
      *
-     * @Rest\View(
-     *   statusCode = Codes::HTTP_CREATED
-     * )
-     *
-     * @return PersonResearchGroup|FormInterface
+     * @return Response A Response object with an empty body, a "created" status code,
+     *                  and the location of the new Person to Research Group Association in the Location header.
      */
     public function postAction(Request $request)
     {
-        return $this->handlePost(PersonResearchGroupType::class, PersonResearchGroup::class, $request);
+        $personResearchGroup = $this->handlePost(PersonResearchGroupType::class, PersonResearchGroup::class, $request);
+        return new Response(
+            null,
+            Codes::HTTP_CREATED,
+            array(
+                'Location' => $this->generateUrl(
+                    'pelagos_api_person_research_groups_get',
+                    ['id' => $personResearchGroup->getId()]
+                )
+            )
+        );
     }
 
     /**
-     * Delete a person research group.
+     * Delete a Person to Research Group Association.
      *
-     * @param integer $id The id of the person research group to delete.
+     * @param integer $id The id of the Person to Research Group Association to delete.
      *
      * @ApiDoc(
-     *   section = "Person Research Groups",
+     *   section = "Person to Research Group Associations",
      *   statusCodes = {
-     *     204 = "Returned when the person research group is successfully deleted.",
+     *     204 = "The Person to Research Group Association was successfully deleted.",
+     *     404 = "The requested Person to Research Group Association was not found.",
+     *     500 = "An internal error has occurred.",
      *   }
      * )
      *
@@ -141,6 +149,7 @@ class PersonResearchGroupController extends EntityController
      */
     public function deleteAction($id)
     {
-        return $this->handleDelete(PersonResearchGroup::class, $id);
+        $this->handleDelete(PersonResearchGroup::class, $id);
+        return new Response(null, Codes::HTTP_NO_CONTENT);
     }
 }
