@@ -2,6 +2,8 @@
 
 namespace Pelagos\Bundle\AppBundle\Security;
 
+use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
+use Pelagos\Bundle\AppBundle\DataFixtures\ORM\ResearchGroupRoles;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 use Pelagos\Entity\Account;
@@ -35,59 +37,72 @@ class ResearchGroupVoter extends PelagosEntityVoter
     }
 
     /**
-     * Perform a single authorization test on an attribute, ResearchGroup subject and authentication token.
+     * Perform a authorization test on an attribute, ResearchGroup subject and authentication token.
      *
      * The Symfony calling security framework calls supports before calling voteOnAttribute.
      *
-     * @param string         $attribute Unused by this function but required by VoterInterface.
+     * @param string         $attribute The action to be considered.
      * @param mixed          $object    A ResearchGroup.
      * @param TokenInterface $token     A security token containing user authentication information.
      *
-     * @return boolean True if the attribute is allowed on the subject for the user specified by the token.
+     * @return boolean True if the attribute (action) is allowed on the subject for the user specified by the token.
      */
     protected function voteOnAttribute($attribute, $object, TokenInterface $token)
     {
+        //  If object is not a ResearchGroup we are done here. Return false.
         if (!$object instanceof ResearchGroup) {
             return false;
         }
         $user = $token->getUser();
 
+        // If the user token does not contain an Account object return false.
         if (!$user instanceof Account) {
             return false;
         }
 
+        //  Get the Person associated with this Account.
         $userPerson = $user->getPerson();
 
         $fundingCycle = $object->getFundingCycle();
-        if (!$fundingCycle instanceof FundingCycle) {
-            if ($fundingCycle === null) {
-                // check to ensure user has DRP/M role on at least one DataRepository.
-                $personDataRepositories = $userPerson->getPersonDataRepositories();
-                return $this->isUserDataRepositoryRole(
-                    $userPerson,
-                    $personDataRepositories,
-                    array(self::DATA_REPOSITORY_MANAGER)
-                );
-
+        // If the user is a MANAGER they can create a ResearchGroup and connect it later.
+        //  can the user create a ResearchGroup without FundingCycle context?
+        if ($attribute == PelagosEntityVoter::CAN_CREATE) {
+            if (!$fundingCycle instanceof FundingCycle) {
+                if ($fundingCycle === null) {
+                    if ($this->isUserDataRepositoryRole($userPerson, array(DataRepositoryRoles::MANAGER))) {
+                        return true;
+                    }
+                }
+                return false;
             }
+        }
+
+        $fundingOrganization = $fundingCycle->getFundingOrganization();
+        if (!$fundingOrganization instanceof FundingOrganization) {
             return false;
-        } else {
-            $fundingOrganization = $fundingCycle->getFundingOrganization();
-            if (!$fundingOrganization instanceof FundingOrganization) {
-                return false;
-            }
+        }
 
-            $dataRepository = $fundingOrganization->getDataRepository();
-            if (!$dataRepository instanceof DataRepository) {
-                return false;
-            }
+        $dataRepository = $fundingOrganization->getDataRepository();
+        if (!$dataRepository instanceof DataRepository) {
+            return false;
+        }
 
-            $personDataRepositories = $dataRepository->getPersonDataRepositories();
-            return $this->isUserDataRepositoryRole(
-                $userPerson,
-                $personDataRepositories,
-                array(self::DATA_REPOSITORY_MANAGER)
-            );
+        $personDataRepositories = $dataRepository->getPersonDataRepositories();
+
+        //  This subject ResearchGroup has a FundingOrganization and DataRepository context.
+
+        // if this user is DataRepositoryRole Manger they can create or edit ResearchGroup
+        if (in_array($attribute, array(PelagosEntityVoter::CAN_CREATE, PelagosEntityVoter::CAN_EDIT))) {
+            if ($this->isUserDataRepositoryRole($userPerson, array(DataRepositoryRoles::MANAGER))) {
+                return true;
+            }
+        }
+        // if the user has one of ResearchGroupRole Leadership, Admin or Data they can edit the ResearchGroup object.
+        $rgRoles = array(ResearchGroupRoles::LEADERSHIP, ResearchGroupRoles::ADMIN, ResearchGroupRoles::DATA);
+        if ($attribute == PelagosEntityVoter::CAN_EDIT) {
+            if ($this->isUserResearchGroupRole($userPerson, $rgRoles)) {
+                return true;
+            }
         }
         return false;
     }
