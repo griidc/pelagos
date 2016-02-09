@@ -13,10 +13,6 @@
         )
     }}
 
-    {% stylesheets  '@PelagosAppBundle/Resources/public/css/entity.css' %}
-        {{ add_css(asset_url) }}
-    {% endstylesheets  %}
-
     {{
         add_css (
             [
@@ -25,6 +21,10 @@
             ]
         )
     }}
+    
+    {% stylesheets  '@PelagosAppBundle/Resources/public/css/entity.css' %}
+        {{ add_css(asset_url) }}
+    {% endstylesheets  %}
 
     {{
         add_js(
@@ -56,9 +56,4 @@
     }}
 {% endblock %}
 
-{% block body %}
-    <div class="PelagosUI">
-        {% include "@templates/#{templateName}" %}
-    </div>
-{% endblock %}
 

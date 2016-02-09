@@ -11,11 +11,11 @@ function addOptionsByEntity(selectElement, entity, filter)
 {
     "use strict";
 
-    var url = pelagosBasePath + "/services/entity/" + entity;
+    var url = pelagosBasePath + "/api/" + entity;
     if (typeof filter !== "undefined") {
-        url += "?" + filter + "&properties=id,name";
+        url += "?" + filter;// + "&properties=id,name";
     } else {
-        url += "?properties=id,name";
+        //url += "?properties=id,name";
     }
 
     $.ajax({
@@ -23,8 +23,8 @@ function addOptionsByEntity(selectElement, entity, filter)
         dataType: "json",
         async: false
     })
-    .done(function(json) {
-        var entities = sortObject(json.data, "name", false, true);
+    .done(function(data) {
+        var entities = sortObject(data, "name", false, true);
 
         $.each(entities, function(seq, item) {
             selectElement.append(
@@ -44,7 +44,7 @@ $(document).ready(function()
         allowClear: true
     });
 
-    $("[fundingOrganization]").change(function () {
+    $("#fundingOrganization").change(function () {
         var fundingCycle = $(this).nextAll("[fundingCycle]");
         fundingCycle.removeAttr("disabled")
             .find("option").remove();
@@ -56,14 +56,14 @@ $(document).ready(function()
             fundingCycle.append("<option value=\"\">[Please Select a Funding Cycle]</option>");
             addOptionsByEntity(
                 fundingCycle,
-                "FundingCycle", "fundingOrganization=" + $(this).val()
+                "funding_cycles", "fundingOrganization=" + $(this).val()
             );
         }
-        $("[fundingCycle]").change();
+        $("#fundingCycle").change();
     });
 
-    $("[fundingCycle]").change(function () {
-        var researchGroup = $(this).nextAll("[researchGroup]");
+    $("#fundingCycle").change(function () {
+        var researchGroup = $(this).nextAll("#researchGroup");
         researchGroup.removeAttr("disabled")
         .find("option").remove();
 
@@ -74,7 +74,7 @@ $(document).ready(function()
             researchGroup.append("<option value=\"\">[Please Select a Research Group]</option>");
             addOptionsByEntity(
             researchGroup,
-            "ResearchGroup", "fundingCycle=" + $(this).val()
+            "research_groups", "fundingCycle=" + $(this).val()
             );
         }
     });
@@ -83,24 +83,24 @@ $(document).ready(function()
     $("form[entityType=\"PersonResearchGroup\"]").on("reset", function(event) {
         var form = event.target;
 
-        var fundingOrganization = $("[fundingOrganization]", form);
+        var fundingOrganization = $("#fundingOrganization", form);
         var fundingOrganizationValue = fundingOrganization.attr("fundingOrganization");
         fundingOrganization.find("option").attr("selected", false);
         fundingOrganization.val(fundingOrganizationValue);
         fundingOrganization.find("[value=\"" + fundingOrganizationValue + "\"]").attr("selected", true);
         fundingOrganization.change();
 
-        var fundingCycle = $("[fundingCycle]", form);
+        var fundingCycle = $("#fundingCycle", form);
         var fundingCycleValue = fundingCycle.attr("fundingCycle");
         fundingCycle.val(fundingCycleValue);
         fundingCycle.find("option[value=\"" + fundingCycleValue + "\"]").attr("selected", true);
         fundingCycle.change();
 
-        var researchGroup = $("[researchGroup]", form);
+        var researchGroup = $("#researchGroup", form);
         var researchGroupValue = researchGroup.attr("researchGroup");
         researchGroup.val(researchGroupValue);
         researchGroup.find("option[value=\"" + researchGroupValue + "\"]").attr("selected", true);
 
-        $("[person]", form).select2("val", $("[person]").attr("person"));
+        $("#person", form).select2("val", $("#person").attr("person"));
     });
 });

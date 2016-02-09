@@ -1,8 +1,15 @@
+{# this has to be removed, test only! #}
+{% extends "PelagosAppBundle:template:UI.html.twig" %}
+
 {% block head %}
+    {{ parent() }}
     {% javascripts '@PelagosAppBundle/Resources/public/js/entity/PersonResearchGroup.js' %}
         {{ add_js(asset_url) }}
     {% endjavascripts %}
 {% endblock %}
+{# end this has to be removed, test only! #}
+
+{% block body %}
 <div>
     <table border="0" width="100%">
         <tr>
@@ -16,3 +23,4 @@
         </tr>
     </table>
 </div>
+{% endblock %}

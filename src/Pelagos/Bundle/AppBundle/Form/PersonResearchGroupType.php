@@ -9,9 +9,11 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+
 
 /**
  * A form for creating person research groups.
@@ -39,24 +41,12 @@ class PersonResearchGroupType extends AbstractType
                 },
                 'placeholder' => '[Please Select a Person]',
             ))
-            ->add('fundingOrganization', EntityType::class, array(
-                'label' => 'Funding Organization',
-                'class' => 'Pelagos:FundingOrganization',
-                'choice_label' => 'name',
-                'placeholder' => '[Please Select a Funding Organization]',
-                'mapped' => false,
-            ))
-            ->add('fundingCycle', ChoiceType::class, array(
-                'label' => 'Funding Cycle',
-                'placeholder' => '[Please Select a Funding Organization]',
-                'mapped' => false,
-            ))
             ->add('researchGroup', EntityType::class, array(
                 'label' => 'Research Group',
                 'class' => 'Pelagos:ResearchGroup',
                 'choice_label' => 'name',
-#                'choices' => array(),
-                'placeholder' => '[Please Select a Funding Organization First]',
+                'placeholder' => '[Please Select a Funding Organization]',
+                'attr' => array('class' => 'hiddenFormField'),
             ))
             ->add('role', EntityType::class, array(
                 'label' => 'Role',
