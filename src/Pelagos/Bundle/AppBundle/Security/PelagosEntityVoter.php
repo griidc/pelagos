@@ -4,10 +4,10 @@ namespace Pelagos\Bundle\AppBundle\Security;
 
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use Doctrine\Common\Collections\Collection;
 use Pelagos\Entity\Person;
-use Pelagos\Entity\PersonDataRepository;
-use Pelagos\Entity\PersonResearchGroup;
-use Pelagos\Entity\DataRepositoryRole;
+use Pelagos\Entity\PersonRoleInterface;
+use Pelagos\Entity\RoleInterface;
 
 /**
  * Class PelagosEntityVoter An abstract base class for implementing a Symfony Voter..
@@ -47,8 +47,8 @@ abstract class PelagosEntityVoter extends Voter
         }
 
         foreach ($hasRoleObjects as $hasRole) {
-            //  check to see if each object in the list implements the HasRoleInterface
-            if (!$hasRole instanceof HasRoleInterface) {
+            //  check to see if each object in the list implements the PersonRoleInterface
+            if (!$hasRole instanceof PersonRoleInterface) {
                 continue;
             }
             //  get the role from the object
@@ -63,83 +63,7 @@ abstract class PelagosEntityVoter extends Voter
 
             // if the Role Person is the same as the $userPerson and
             // the $roleName is in the list of $roleNames return true.
-            if ($userPerson->equals($person) && in_array($roleName, $roleNames)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Does this Person have one of the DataRepositoryRoles listed in roleNames?.
-     *
-     * @param Person     $userPerson             This is the logged in user's representation.
-     * @param Collection $personDataRepositories A set of PersonDataRepository instances.
-     * @param array      $roleNames              List of user roles to be tested.
-     *
-     * @see voteOnAttribute($attribute, $object, TokenInterface $token)
-     *
-     * @return bool True if the user is a manager.
-     */
-    protected function isUserDataRepositoryRole(Person $userPerson, Collection $personDataRepositories, array $roleNames)
-    {
-        if (!$personDataRepositories instanceof \Traversable) {
-            return false;
-        }
-
-        foreach ($personDataRepositories as $personDR) {
-            if (!$personDR instanceof PersonDataRepository) {
-                continue;
-            }
-            //  get the role from the Person/DataRepository object
-            $role = $personDR->getRole();
-            if (!$role instanceof DataRepositoryRole) {
-                continue;
-            }
-            //  what is the name
-            $roleName = $role->getName();
-            // what Person is in the relation to DataRepository
-            $person = $personDR->getPerson();
-
-            if ($userPerson->equals($person) && in_array($roleName, $roleNames)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Does this Person have one of the ResearchGroupRoles listed in roleNames?.
-     *
-     * @param Person     $userPerson           This is the logged in user's representation.
-     * @param Collection $personResearchGroups A set of PersonResearchGroup instances.
-     * @param array      $roleNames            List of user roles to be tested.
-     *
-     * @see voteOnAttribute($attribute, $object, TokenInterface $token)
-     *
-     * @return bool True if the user is a manager.
-     */
-    protected function isUserResearchGroupRole(Person $userPerson, Collection $personResearchGroups, array $roleNames)
-    {
-        if (!$personResearchGroups instanceof \Traversable) {
-            return false;
-        }
-
-        foreach ($personResearchGroups as $personRG) {
-            if (!$personRG instanceof PersonResearchGroup) {
-                continue;
-            }
-            //  get the role from the Person/ResearchGroup object
-            $role = $personRG->getRole();
-            if (!$role instanceof ResearchGroupRole) {
-                continue;
-            }
-            //  what is the name
-            $roleName = $role->getName();
-            // what Person is in the relation to DataRepository
-            $person = $personRG->getPerson();
-
-            if ($userPerson->equals($person) && in_array($roleName, $roleNames)) {
+            if ($userPerson->isSameTypeAndId($person) && in_array($roleName, $roleNames)) {
                 return true;
             }
         }
