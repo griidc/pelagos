@@ -2,10 +2,11 @@
 
 namespace Pelagos\Bundle\AppBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Pelagos\Bundle\AppBundle\Form\PersonResearchGroupType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * The default controller for the Pelagos App Bundle.
@@ -54,6 +55,10 @@ class UIController extends Controller
     {
         $researchGroupId = $request->query->get('ResearchGroup');
         
+        if (!isset($researchGroupId) and !isset($id)) {
+            throw new BadRequestHttpException('Research Group parameter is not set');
+        }
+        
         $entityHandler = $this->get('pelagos.entity.handler');
 
         $ui = array();
@@ -67,10 +72,8 @@ class UIController extends Controller
         
         $form = $this->get('form.factory')->createNamed(null, PersonResearchGroupType::class, $PersonResearchGroup);
 
-        $ui["PersonResearchGroup"] = $PersonResearchGroup;
-        $ui["form"] = $form->createView();
-        
-        //var_dump($form);
+        $ui['PersonResearchGroup'] = $PersonResearchGroup;
+        $ui['form'] = $form->createView();
 
         $ui['entityService'] = $entityHandler;
 

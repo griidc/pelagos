@@ -73,5 +73,5 @@
             mimeType="{{ResearchGroup.serializeBinary(ResearchGroup.getLogo).mimeType}}">-->
         <br>
     </span>
-   {% include '@templates/forms/innerForm.html.twig' %}
+   {% include '@templates/forms/innerForm.html.twig' with {'Entity': ResearchGroup} %}
 </form>

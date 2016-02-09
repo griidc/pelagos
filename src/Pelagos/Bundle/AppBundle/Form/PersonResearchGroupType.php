@@ -34,7 +34,7 @@ class PersonResearchGroupType extends AbstractType
     {
         $builder
             ->add('person', EntityType::class, array(
-                'label' => 'Person',
+                'label' => 'Person:',
                 'class' => 'Pelagos:Person',
                 'choice_label' => function ($value, $key, $index) {
                     return $value->getLastName() . ', ' . $value->getFirstName() . ', ' . $value->getEmailAddress();
@@ -42,19 +42,22 @@ class PersonResearchGroupType extends AbstractType
                 'placeholder' => '[Please Select a Person]',
             ))
             ->add('researchGroup', EntityType::class, array(
-                'label' => 'Research Group',
+                'label' => 'Research Group:',
                 'class' => 'Pelagos:ResearchGroup',
                 'choice_label' => 'name',
                 'placeholder' => '[Please Select a Funding Organization]',
                 'attr' => array('class' => 'hiddenFormField'),
             ))
             ->add('role', EntityType::class, array(
-                'label' => 'Role',
+                'label' => 'Role:',
                 'class' => 'Pelagos:ResearchGroupRole',
                 'choice_label' => 'name',
                 'placeholder' => '[Please Select a Person]',
             ))
-            ->add('label', TextType::class, array('required' => true));
+            ->add('label', TextType::class, array(
+                'label' => 'Label:',
+                'required' => true,
+            ));
     }
     
     /**
