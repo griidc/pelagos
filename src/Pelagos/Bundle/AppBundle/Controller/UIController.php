@@ -31,6 +31,11 @@ class UIController extends Controller
         
         if (isset($id)) {
             $ResearchGroup = $entityHandler->get("Pelagos:ResearchGroup", $id);
+            
+            foreach ($ResearchGroup->getPersonResearchGroups() as PersonResearchGroup) {
+                
+            }
+            
         } else {
             $ResearchGroup = new \Pelagos\Entity\ResearchGroup;
         }
