@@ -6,7 +6,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Doctrine\Common\Collections\Collection;
 use Pelagos\Entity\Person;
-use Pelagos\Entity\PersonRoleInterface;
+use Pelagos\Entity\PersonAssociationInterface;
 use Pelagos\Entity\RoleInterface;
 
 /**
@@ -47,8 +47,8 @@ abstract class PelagosEntityVoter extends Voter
         }
 
         foreach ($hasRoleObjects as $hasRole) {
-            //  check to see if each object in the list implements the PersonRoleInterface
-            if (!$hasRole instanceof PersonRoleInterface) {
+            //  check to see if each object in the list implements the PersonAssociationInterface
+            if (!$hasRole instanceof PersonAssociationInterface) {
                 continue;
             }
             //  get the role from the object
