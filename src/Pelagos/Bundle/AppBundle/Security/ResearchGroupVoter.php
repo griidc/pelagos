@@ -66,23 +66,23 @@ class ResearchGroupVoter extends PelagosEntityVoter
         $fundingCycle = $object->getFundingCycle();
         // If the user is a MANAGER they can create a ResearchGroup and connect it later.
         //  can the user create a ResearchGroup without FundingCycle context?
-        if ($attribute == PelagosEntityVoter::CAN_CREATE) {
-            if (!$fundingCycle instanceof FundingCycle) {
-                if ($fundingCycle === null) {
-                    // check to ensure user has DRP/M role on at least one DataRepository.
-                    $personDataRepositories = $userPerson->getPersonDataRepositories();
-                    if ($this->doesUserHaveRole(
-                        $userPerson,
-                        $personDataRepositories,
-                        array(DataRepositoryRoles::MANAGER)
-                    )) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-        }
 
+        if (!$fundingCycle instanceof FundingCycle) {
+            if ($fundingCycle === null and $attribute == PelagosEntityVoter::CAN_CREATE) {
+                // check to ensure user has DRP/M role on at least one DataRepository.
+                $personDataRepositories = $userPerson->getPersonDataRepositories();
+                if ($this->doesUserHaveRole(
+                    $userPerson,
+                    $personDataRepositories,
+                    array(DataRepositoryRoles::MANAGER)
+                )
+                ) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        // $fundingCycle IS instanceof FundingCycle
         $fundingOrganization = $fundingCycle->getFundingOrganization();
         if (!$fundingOrganization instanceof FundingOrganization) {
             return false;
@@ -105,8 +105,8 @@ class ResearchGroupVoter extends PelagosEntityVoter
         // if the user has one of ResearchGroupRole Leadership, Admin or Data they can edit the ResearchGroup object.
         $rgRoles = array(ResearchGroupRoles::LEADERSHIP, ResearchGroupRoles::ADMIN, ResearchGroupRoles::DATA);
         if ($attribute == PelagosEntityVoter::CAN_EDIT) {
-            $personDataRepositories = $userPerson->getPersonDataRepositories();
-            if ($this->doesUserHaveRole($userPerson, $personDataRepositories, $rgRoles)) {
+            $personResearchGroups = $object->getPersonResearchGroups();
+            if ($this->doesUserHaveRole($userPerson, $personResearchGroups, $rgRoles)) {
                 return true;
             }
         }
