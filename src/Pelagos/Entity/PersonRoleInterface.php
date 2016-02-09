@@ -1,13 +1,13 @@
 <?php
 /**
- * Interface HasRoleInterface. An abstract api for classes that contain a RoleInterface attribute.
+ * Interface PersonRoleInterface. An abstract api for classes that contain a RoleInterface attribute.
  *
  * @package Pelagos\Entity
  */
 
 namespace Pelagos\Entity;
 
-interface HasRoleInterface
+interface PersonRoleInterface
 {
 
     /**

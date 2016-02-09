@@ -612,7 +612,7 @@ abstract class Entity implements \JsonSerializable
      *
      * @return bool Return true if the type and id match.
      */
-    public function equals(Entity $other)
+    public function isSameTypeAndId(Entity $other)
     {
         if (get_class($this) == get_class($other) &&
             $this->getId() == $other->getId()) {
