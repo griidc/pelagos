@@ -3,11 +3,13 @@
 namespace Pelagos\Bundle\AppBundle\Controller\Api;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Form\FormInterface;
 
 use FOS\RestBundle\Controller\FOSRestController;
+use FOS\RestBundle\Util\Codes;
 
 use Pelagos\Bundle\AppBundle\Exception\InvalidFormException;
 
@@ -120,6 +122,21 @@ abstract class EntityController extends FOSRestController
         }
         $this->container->get('pelagos.entity.handler')->update($entity);
         return $entity;
+    }
+
+    /**
+     * Delete an entity of a given type identified by $id.
+     *
+     * @param string  $entityClass The type of entity.
+     * @param integer $id          The id of the entity.
+     *
+     * @return Response A Response object with an empty body and a "no content" status code.
+     */
+    public function handleDelete($entityClass, $id)
+    {
+        $entity = $this->handleGetOne($entityClass, $id);
+        $this->container->get('pelagos.entity.handler')->delete($entity);
+        return new Response(null, Codes::HTTP_NO_CONTENT);
     }
 
     /**
