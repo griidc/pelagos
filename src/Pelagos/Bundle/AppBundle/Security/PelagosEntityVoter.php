@@ -29,6 +29,7 @@ abstract class PelagosEntityVoter extends Voter
 {
     const CAN_CREATE = 'CAN_CREATE';
     const CAN_EDIT = 'CAN_EDIT';
+    const CAN_DELETE = 'CAN_DELETE';
 
     /**
      * Does this Person have one of the Roles listed in roleNames?.
