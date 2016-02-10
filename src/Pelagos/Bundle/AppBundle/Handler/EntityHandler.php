@@ -138,6 +138,8 @@ class EntityHandler
      *
      * @param Entity $entity The entity object to delete.
      *
+     * @throws AccessDeniedException When the user does not have sufficient privileges to delete the entity.
+     *
      * @return Entity The entity object that was deleted.
      */
     public function delete(Entity $entity)
