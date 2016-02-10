@@ -27,13 +27,33 @@ class ResearchGroupVoter extends PelagosEntityVoter
      */
     protected function supports($attribute, $object)
     {
-        if (!$object instanceof ResearchGroup) {
-            return false;
-        }
+        // If this isn't a CAN_EDIT attribute, we cannot vote.
         if (!in_array($attribute, array(self::CAN_EDIT))) {
             return false;
         }
-        return true;
+
+        // Only if the tree is as expected, vote.
+        if (($object->getResearchGroup instanceof ResearchGroup) and
+            ($object
+                ->getResearchGroup
+                ->getFundingCycle
+                instanceof FundingCycle) and
+            ($object
+                ->getResearchGroup
+                ->getFundingCycle
+                ->getFundingOrganization()
+                instanceof FundingOrganization) and
+            ($object
+                ->getResearchGroup
+                ->getFundingCycle
+                ->getFundingOrganization()
+                ->getDataRepository()
+                instanceof DataRepository)
+        ) {
+            return true;
+        }
+        // Otherwise abstain.
+        return false;
     }
 
     /**
@@ -49,30 +69,15 @@ class ResearchGroupVoter extends PelagosEntityVoter
      */
     protected function voteOnAttribute($attribute, $object, TokenInterface $token)
     {
-        //  If object is not a ResearchGroup we are done here. Return false.
-        if (!$object instanceof ResearchGroup) {
-            return false;
-        }
         $user = $token->getUser();
 
-        // If the user token does not contain an Account object return false.
+        // If the user token does not contain an Account, vote false.
         if (!$user instanceof Account) {
             return false;
         }
 
-        //  Get the Person associated with this Account.
+        // Get the Person associated with this Account.
         $userPerson = $user->getPerson();
-
-        $fundingCycle = $object->getFundingCycle();
-        $fundingOrganization = $fundingCycle->getFundingOrganization();
-        if (!$fundingOrganization instanceof FundingOrganization) {
-            return false;
-        }
-
-        $dataRepository = $fundingOrganization->getDataRepository();
-        if (!$dataRepository instanceof DataRepository) {
-            return false;
-        }
 
         // These people are allowed to edit ResearchGroups.
         if ($attribute == PelagosEntityVoter::CAN_EDIT) {
@@ -87,13 +92,12 @@ class ResearchGroupVoter extends PelagosEntityVoter
             }
             // Research Group Person - Leadership, Admin, Data (aka DR-P/LAD)
             $personResearchGroups = $object->getPersonResearchGroups();
-            // if the user has one of ResearchGroupRole Leadership, Admin or Data they can edit the ResearchGroup object.
+            // If user has one of ResearchGroupRole Leadership, Admin or Data they can edit the ResearchGroup object.
             $rgRoles = array(ResearchGroupRoles::LEADERSHIP, ResearchGroupRoles::ADMIN, ResearchGroupRoles::DATA);
             if ($this->doesUserHaveRole($userPerson, $personResearchGroups, $rgRoles)) {
                 return true;
             }
         }
-
         return false;
     }
 }
