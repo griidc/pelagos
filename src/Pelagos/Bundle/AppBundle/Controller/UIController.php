@@ -20,9 +20,9 @@ class UIController extends Controller
      *
      * @param string $id The id of the entity to retrieve.
      *
-     * @return Response A Response instance.
-     *
      * @Route("/ResearchGroup/{id}")
+     *
+     * @return Response A Response instance.
      */
     public function researchGroupAction($id = null)
     {
@@ -32,33 +32,33 @@ class UIController extends Controller
         $ui['PersonResearchGroups'] = array();
 
         if (isset($id)) {
-            $ResearchGroup = $entityHandler->get("Pelagos:ResearchGroup", $id);
+            $researchGroup = $entityHandler->get('Pelagos:ResearchGroup', $id);
 
-            foreach ($ResearchGroup->getPersonResearchGroups() as $PersonResearchGroup) {
+            foreach ($researchGroup->getPersonResearchGroups() as $personResearchGroup) {
                 $form = $this
                     ->get('form.factory')
-                    ->createNamed(null, PersonResearchGroupType::class, $PersonResearchGroup);
+                    ->createNamed(null, PersonResearchGroupType::class, $personResearchGroup);
                 $formView = $form->createView();
 
-                $ui['PersonResearchGroups'][] = $PersonResearchGroup;
-                $ui['PersonResearchGroupForms'][$PersonResearchGroup->getId()] = $formView;
-                
+                $ui['PersonResearchGroups'][] = $personResearchGroup;
+                $ui['PersonResearchGroupForms'][$personResearchGroup->getId()] = $formView;
+
             }
-            
+
             $newResearchGroupPerson = new \Pelagos\Entity\PersonResearchGroup;
-            $newResearchGroupPerson->setResearchGroup($ResearchGroup);
+            $newResearchGroupPerson->setResearchGroup($researchGroup);
             $ui['newResearchGroupPerson'] = $newResearchGroupPerson;
             $ui['newResearchGroupPersonForm'] = $this
                 ->get('form.factory')
                 ->createNamed(null, PersonResearchGroupType::class, $ui['newResearchGroupPerson'])
                 ->createView();
         } else {
-            $ResearchGroup = new \Pelagos\Entity\ResearchGroup;
+            $researchGroup = new \Pelagos\Entity\ResearchGroup;
         }
-       
-        $form = $this->get('form.factory')->createNamed(null, ResearchGroupType::class, $ResearchGroup);
+
+        $form = $this->get('form.factory')->createNamed(null, ResearchGroupType::class, $researchGroup);
         $ui['form'] = $form->createView();
-        $ui['ResearchGroup'] = $ResearchGroup;
+        $ui['ResearchGroup'] = $researchGroup;
         $ui['entityService'] = $entityHandler;
 
         return $this->render('PelagosAppBundle:template:ResearchGroup.html.twig', $ui);
@@ -67,13 +67,16 @@ class UIController extends Controller
     /**
      * The Person Research Group action.
      *
-     * @param string $id The id of the entity to retrieve.
+     * @param string  $id      The id of the entity to retrieve.
+     * @param Request $request The HTTP request.
      *
-     * @return Response A Response instance.
+     * @throws BadRequestHttpException When the Research Group ID is not provided.
      *
      * @Route("/PersonResearchGroup/{id}")
+     *
+     * @return Response A Response instance.
      */
-    public function personResearchGroupAction($id = null, Request $request)
+    public function personResearchGroupAction($id = null, Request $request = null)
     {
         $researchGroupId = $request->query->get('ResearchGroup');
 
@@ -86,15 +89,15 @@ class UIController extends Controller
         $ui = array();
 
         if (isset($id)) {
-            $PersonResearchGroup = $entityHandler->get("Pelagos:PersonResearchGroup", $id);
+            $personResearchGroup = $entityHandler->get('Pelagos:PersonResearchGroup', $id);
         } else {
-            $PersonResearchGroup = new \Pelagos\Entity\PersonResearchGroup;
-            $PersonResearchGroup->setResearchGroup($entityHandler->get("Pelagos:ResearchGroup", $researchGroupId));
+            $personResearchGroup = new \Pelagos\Entity\PersonResearchGroup;
+            $personResearchGroup->setResearchGroup($entityHandler->get('Pelagos:ResearchGroup', $researchGroupId));
         }
 
-        $form = $this->get('form.factory')->createNamed(null, PersonResearchGroupType::class, $PersonResearchGroup);
+        $form = $this->get('form.factory')->createNamed(null, PersonResearchGroupType::class, $personResearchGroup);
 
-        $ui['PersonResearchGroup'] = $PersonResearchGroup;
+        $ui['PersonResearchGroup'] = $personResearchGroup;
         $ui['form'] = $form->createView();
         $ui['entityService'] = $entityHandler;
 
