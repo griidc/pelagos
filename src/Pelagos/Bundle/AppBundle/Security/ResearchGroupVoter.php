@@ -33,18 +33,13 @@ class ResearchGroupVoter extends PelagosEntityVoter
         }
 
         // Only if the tree is as expected, vote.
-        if (($object->getResearchGroup instanceof ResearchGroup) and
+        if (($object
+                ->getFundingCycle instanceof FundingCycle) and
             ($object
-                ->getResearchGroup
-                ->getFundingCycle
-                instanceof FundingCycle) and
-            ($object
-                ->getResearchGroup
                 ->getFundingCycle
                 ->getFundingOrganization()
                 instanceof FundingOrganization) and
             ($object
-                ->getResearchGroup
                 ->getFundingCycle
                 ->getFundingOrganization()
                 ->getDataRepository()
