@@ -27,8 +27,8 @@ Pelagos.Entity.Entity.dcm.xml
 
         <field name="endDate"     column="end_date"    type="date" />
 
-        <many-to-one field="fundingOrganization" target-entity="FundingOrganization">
-            <join-column name="funding_organization_number" referenced-column-name="funding_organization_number" inversed-by="fundingCycles" />
+        <many-to-one field="fundingOrganization" target-entity="FundingOrganization" inversed-by="fundingCycles">
+            <join-column name="funding_organization_number" referenced-column-name="funding_organization_number" />
         </many-to-one>
 
         <one-to-many field="researchGroups" target-entity="ResearchGroup" mapped-by="fundingCycle">
