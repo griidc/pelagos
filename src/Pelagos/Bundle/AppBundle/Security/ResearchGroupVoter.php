@@ -34,13 +34,13 @@ class ResearchGroupVoter extends PelagosEntityVoter
 
         // Only if the tree is as expected, vote.
         if (($object
-                ->getFundingCycle instanceof FundingCycle) and
+                ->getFundingCycle() instanceof FundingCycle) and
             ($object
-                ->getFundingCycle
+                ->getFundingCycle()
                 ->getFundingOrganization()
                 instanceof FundingOrganization) and
             ($object
-                ->getFundingCycle
+                ->getFundingCycle()
                 ->getFundingOrganization()
                 ->getDataRepository()
                 instanceof DataRepository)
@@ -77,7 +77,11 @@ class ResearchGroupVoter extends PelagosEntityVoter
         // These people are allowed to edit ResearchGroups.
         if ($attribute == PelagosEntityVoter::CAN_EDIT) {
             // Data Repository Person - Manager (aka DR-P/M)
-            $personDataRepositories = $dataRepository->getPersonDataRepositories();
+            $personDataRepositories = $object
+                                          ->getFundingCycle()
+                                          ->getFundingOrganization()
+                                          ->getDataRepository()
+                                          ->getPersonDataRepositories();
             if ($this->doesUserHaveRole(
                 $userPerson,
                 $personDataRepositories,
