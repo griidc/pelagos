@@ -24,7 +24,7 @@ services:
         class: Pelagos\Bundle\AppBundle\Security\ResearchGroupVoter
         tags:
             - { name: security.voter }
-    data_repository_voter:
-        class: Pelagos\Bundle\AppBundle\Security\DataRepositoryVoter
+    create_anything_voter:
+        class: Pelagos\Bundle\AppBundle\Security\CreateAnythingVoter
         tags:
             - { name: security.voter }

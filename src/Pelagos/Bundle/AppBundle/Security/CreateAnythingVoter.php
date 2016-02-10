@@ -11,7 +11,7 @@ use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
 /**
  * A voter to allow all Data Repository Managers to create anything.
  */
-class DataRepositoryVoter extends PelagosEntityVoter
+class CreateAnythingVoter extends PelagosEntityVoter
 {
     /**
      * Determines if the attribute and subject are supported by this voter.
