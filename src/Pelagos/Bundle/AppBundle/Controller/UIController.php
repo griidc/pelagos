@@ -42,24 +42,24 @@ class UIController extends Controller
 
                 $ui['PersonResearchGroups'][] = $PersonResearchGroup;
                 $ui['PersonResearchGroupForms'][$PersonResearchGroup->getId()] = $formView;
+                
             }
+            
+            $newResearchGroupPerson = new \Pelagos\Entity\PersonResearchGroup;
+            $newResearchGroupPerson->setResearchGroup($ResearchGroup);
+            $ui['newResearchGroupPerson'] = $newResearchGroupPerson;
+            $ui['newResearchGroupPersonForm'] = $this
+                ->get('form.factory')
+                ->createNamed(null, PersonResearchGroupType::class, $ui['newResearchGroupPerson'])
+                ->createView();
         } else {
             $ResearchGroup = new \Pelagos\Entity\ResearchGroup;
         }
-
+       
         $form = $this->get('form.factory')->createNamed(null, ResearchGroupType::class, $ResearchGroup);
-
         $ui['form'] = $form->createView();
         $ui['ResearchGroup'] = $ResearchGroup;
         $ui['entityService'] = $entityHandler;
-        $newResearchGroupPerson = new \Pelagos\Entity\PersonResearchGroup;
-        $newResearchGroupPerson->setResearchGroup($ResearchGroup);
-        $ui['newResearchGroupPerson'] = $newResearchGroupPerson;
-        
-        $ui['newResearchGroupPersonForm'] = $this
-            ->get('form.factory')
-            ->createNamed(null, PersonResearchGroupType::class, $ui['newResearchGroupPerson'])
-            ->createView();
 
         return $this->render('PelagosAppBundle:template:ResearchGroup.html.twig', $ui);
     }
