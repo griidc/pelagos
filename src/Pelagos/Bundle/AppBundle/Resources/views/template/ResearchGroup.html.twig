@@ -44,12 +44,12 @@
         <div id="tabs-1">
             <table border="0" width="100%">
             {% if PersonResearchGroups | length > 0 %}
-                {% for PersonResearchGroup in PersonResearchGroups %}
+                {% for PersonResearchGroup in PersonResearchGroups | sortBy(["role.weight","person.lastName","person.firstName"])%}
                     <tr>
                         <td>
                             <div>
                                 <p>
-                                    {% include '@templates/forms/PersonResearchGroup.html.twig' with {'PersonResearchGroup': PersonResearchGroup.Entity, 'form' : PersonResearchGroup.Form}%}
+                                    {% include '@templates/forms/PersonResearchGroup.html.twig' with {'PersonResearchGroup': PersonResearchGroup, 'form' : PersonResearchGroupForms[PersonResearchGroup.getId]}%}
                                 </p>
                             </div>
                         </td>

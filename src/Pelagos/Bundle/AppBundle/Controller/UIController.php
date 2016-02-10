@@ -40,7 +40,8 @@ class UIController extends Controller
                     ->createNamed(null, PersonResearchGroupType::class, $PersonResearchGroup);
                 $formView = $form->createView();
 
-                $ui['PersonResearchGroups'][] = array('Entity' => $PersonResearchGroup, 'Form' => $formView);
+                $ui['PersonResearchGroups'][] = $PersonResearchGroup;
+                $ui['PersonResearchGroupForms'][$PersonResearchGroup->getId()] = $formView;
             }
         } else {
             $ResearchGroup = new \Pelagos\Entity\ResearchGroup;
