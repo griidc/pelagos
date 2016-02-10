@@ -40,24 +40,21 @@ class PersonResearchGroupVoter extends PelagosEntityVoter
     }
 
     /**
-     * Perform a single authorization test on an attribute, ResearchGroup subject and authentication token.
+     * Perform a single authorization test on an attribute, PersonResearchGroup subject and authentication token.
      *
      * The Symfony calling security framework calls supports before calling voteOnAttribute.
      *
-     * @param string         $attribute Unused by this function but required by VoterInterface.
-     * @param mixed          $object    A ResearchGroup.
+     * @param string         $attribute The action for which the user seeks authorization.
+     * @param mixed          $object    A PersonResearchGroup to be created (persisted).
      * @param TokenInterface $token     A security token containing user authentication information.
+     * @see this->supports($attribute, $object)
      *
      * @return boolean True if the attribute is allowed on the subject for the user specified by the token.
      */
     protected function voteOnAttribute($attribute, $object, TokenInterface $token)
     {
-        //  If object is not a PersonResearchGroup we are done here. Return false.
-        if (!$object instanceof PersonResearchGroup) {
-            return false;
-        }
+        //  we know the attribute is "CAN_CREATE" and the object is a PersonResearchGroup
         $user = $token->getUser();
-
         // If the user token does not contain an Account object return false.
         if (!$user instanceof Account) {
             return false;
@@ -66,50 +63,17 @@ class PersonResearchGroupVoter extends PelagosEntityVoter
         //  Get the Person associated with this Account.
         $userPerson = $user->getPerson();
 
-        $fundingCycle = $object->getFundingCycle();
-        // If the user is a MANAGER they can create a ResearchGroup and connect it later.
-        //  can the user create a ResearchGroup without FundingCycle context?
-
-        if (!$fundingCycle instanceof FundingCycle) {
-            if ($fundingCycle === null and $attribute == PelagosEntityVoter::CAN_CREATE) {
-                // check to ensure user has DRP/M role on at least one DataRepository.
-                $personDataRepositories = $userPerson->getPersonDataRepositories();
-                if ($this->doesUserHaveRole(
-                    $userPerson,
-                    $personDataRepositories,
-                    array(DataRepositoryRoles::MANAGER)
-                )
-                ) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        // $fundingCycle IS instanceof FundingCycle
-        $fundingOrganization = $fundingCycle->getFundingOrganization();
-        if (!$fundingOrganization instanceof FundingOrganization) {
-            return false;
-        }
-
-        $dataRepository = $fundingOrganization->getDataRepository();
-        if (!$dataRepository instanceof DataRepository) {
-            return false;
-        }
-
-        //  At this point the subject ResearchGroup has a FundingOrganization and DataRepository context.
-
-        // if this user has DataRepositoryRole Manger they can create or edit ResearchGroup
-        if (in_array($attribute, array(PelagosEntityVoter::CAN_CREATE, PelagosEntityVoter::CAN_EDIT))) {
-            $personDataRepositories = $dataRepository->getPersonDataRepositories();
-            if ($this->doesUserHaveRole($userPerson, $personDataRepositories, array(DataRepositoryRoles::MANAGER))) {
-                return true;
-            }
-        }
-        // if the user has one of ResearchGroupRole Leadership, Admin or Data they can edit the ResearchGroup object.
-        $rgRoles = array(ResearchGroupRoles::LEADERSHIP, ResearchGroupRoles::ADMIN, ResearchGroupRoles::DATA);
-        if ($attribute == PelagosEntityVoter::CAN_EDIT) {
-            $personResearchGroups = $object->getPersonResearchGroups();
-            if ($this->doesUserHaveRole($userPerson, $personResearchGroups, $rgRoles)) {
+        // if the user (Person) has a PersonResearchGroup with a Role name that is one of [Leadership, Admin or Data]
+        // and that PersonResearchGroup's ResearchGroup matches the ResearchGroup of the $object (voter subject)
+        // the user can create (persist) the subject PersonResearchGroup ($object).
+        $targetRoles = array(ResearchGroupRoles::LEADERSHIP, ResearchGroupRoles::ADMIN, ResearchGroupRoles::DATA);
+        $objectResearchGroup = $object->getResearchGroup();
+        $userPersonResearchGroups = $userPerson->getPersonResearchGroups();
+        foreach($userPersonResearchGroups as $userPersonResearchGroup) {
+            $currentResearchGroup = $userPersonResearchGroup->getResearchGroup();
+            $currentRoleName = $userPersonResearchGroup->getRole()->getName();
+            if (in_array($currentRoleName, $targetRoles) &&
+                $currentResearchGroup->isSameTypeAndId($objectResearchGroup)) {
                 return true;
             }
         }
