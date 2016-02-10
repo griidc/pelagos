@@ -32,6 +32,11 @@ class ResearchGroupVoter extends PelagosEntityVoter
             return false;
         }
 
+        // Make sure the object is an instance of ResearchGroup
+        if (!$object instanceOf ResearchGroup) {
+            return false;
+        }
+
         // Only if the tree is as expected, vote.
         if (($object
                 ->getFundingCycle() instanceof FundingCycle) and
