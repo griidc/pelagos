@@ -8,7 +8,7 @@ use JMS\Serializer\Annotation\Exclude;
 /**
  * A Class for Funding Organization Roles.
  */
-class FundingOrganizationRole extends Entity
+class FundingOrganizationRole extends Entity implements RoleInterface
 {
     /**
      * Static array containing a list of the properties and their attributes.
