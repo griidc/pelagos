@@ -27,19 +27,20 @@ class ResearchGroupVoter extends PelagosEntityVoter
      */
     protected function supports($attribute, $object)
     {
-        // If this isn't a CAN_EDIT attribute, we cannot vote.
-        if (!in_array($attribute, array(self::CAN_EDIT))) {
-            return false;
-        }
-
         // Make sure the object is an instance of ResearchGroup
         if (!$object instanceof ResearchGroup) {
             return false;
         }
 
+        // If this isn't a CAN_EDIT attribute, we cannot vote.
+        if (!in_array($attribute, array(self::CAN_EDIT))) {
+            return false;
+        }
+
         // Only if the tree is as expected, vote.
         if (($object
-                ->getFundingCycle() instanceof FundingCycle) and
+                ->getFundingCycle()
+                instanceof FundingCycle) and
             ($object
                 ->getFundingCycle()
                 ->getFundingOrganization()
