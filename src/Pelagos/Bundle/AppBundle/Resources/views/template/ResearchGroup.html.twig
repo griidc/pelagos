@@ -1,11 +1,11 @@
 {% extends "PelagosAppBundle:template:UI.html.twig" %}
 
 {% block head %}
-{{ parent() }}
+    {{ parent() }}
     {% javascripts '@PelagosAppBundle/Resources/public/js/ResearchGroup.js' %}
         {{ add_js(asset_url) }}
     {% endjavascripts %}
-    
+
     {% javascripts '@PelagosAppBundle/Resources/public/js/entity/ResearchGroup.js' %}
         {{ add_js(asset_url) }}
     {% endjavascripts %}
@@ -43,21 +43,32 @@
         </ul>
         <div id="tabs-1">
             <table border="0" width="100%">
-            {% set PersonResearchGroupEditable = true %}
-            {% set PersonResearchGroupDeletable = true %}
-            {% if ResearchGroup.getPersonResearchGroups | length > 0 %}
-                {% for PersonResearchGroup in ResearchGroup.getPersonResearchGroups | sortBy(["role.weight","person.lastName","person.firstName"]) %}
+            {% if PersonResearchGroups | length > 0 %}
+                {% for PersonResearchGroup in PersonResearchGroups %}
                     <tr>
                         <td>
                             <div>
                                 <p>
-                                    {% include '@templates/forms/PersonResearchGroup.html.twig' %}
+                                    {% include '@templates/forms/PersonResearchGroup.html.twig' with {'PersonResearchGroup': PersonResearchGroup.Entity, 'form' : PersonResearchGroup.Form}%}
                                 </p>
                             </div>
                         </td>
                     </tr>
                 {% endfor %}
             {% endif %}
+            {% if is_granted('CAN_CREATE', newResearchGroupPerson) %}
+                <tr>
+                    <td>
+                        <div class="addForm">
+                            <p>
+                            <h2>Add New:</h2>
+                                {% include '@templates/forms/PersonResearchGroup.html.twig' with {'PersonResearchGroup': newResearchGroupPerson, 'form' : newResearchGroupPersonForm }%}
+                            </p>
+                        </div>
+
+                    </td>
+                </tr>
+                {% endif %}
             </table>
         </div>
     </div>

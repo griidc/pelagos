@@ -58,12 +58,12 @@
 
             if (entityId === "") {
                 if (!$(this).hasAttr("creatable")) {
-                    $('.innerForm').hide()
+                    $(this).find('.innerForm').hide()
                     return null;
                 }
             } else {
                 if (!$(this).hasAttr("editable")) {
-                    $('.innerForm').hide()
+                    $(this).find('.innerForm').hide()
                     return null;
                 }
             }
