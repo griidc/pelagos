@@ -74,8 +74,9 @@ class ResearchGroupVoter extends PelagosEntityVoter
             return false;
         }
 
+        // These people are allowed to edit ResearchGroups.
         if ($attribute == PelagosEntityVoter::CAN_EDIT) {
-            // DRP-M
+            // Data Repository Person - Manager (aka DR-P/M)
             $personDataRepositories = $dataRepository->getPersonDataRepositories();
             if ($this->doesUserHaveRole(
                 $userPerson,
@@ -84,7 +85,7 @@ class ResearchGroupVoter extends PelagosEntityVoter
             )) {
                 return true;
             }
-            // RGP-LAD
+            // Research Group Person - Leadership, Admin, Data (aka DR-P/LAD)
             $personResearchGroups = $object->getPersonResearchGroups();
             // if the user has one of ResearchGroupRole Leadership, Admin or Data they can edit the ResearchGroup object.
             $rgRoles = array(ResearchGroupRoles::LEADERSHIP, ResearchGroupRoles::ADMIN, ResearchGroupRoles::DATA);
