@@ -52,7 +52,10 @@ class UIController extends Controller
         $ui['form'] = $form->createView();
         $ui['ResearchGroup'] = $ResearchGroup;
         $ui['entityService'] = $entityHandler;
-        $ui['newResearchGroupPerson'] = new \Pelagos\Entity\PersonResearchGroup;
+        $newResearchGroupPerson = new \Pelagos\Entity\PersonResearchGroup;
+        $newResearchGroupPerson->setResearchGroup($ResearchGroup);
+        $ui['newResearchGroupPerson'] = $newResearchGroupPerson;
+        
         $ui['newResearchGroupPersonForm'] = $this
             ->get('form.factory')
             ->createNamed(null, PersonResearchGroupType::class, $ui['newResearchGroupPerson'])
