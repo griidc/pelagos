@@ -74,12 +74,25 @@ class ResearchGroupVoter extends PelagosEntityVoter
             return false;
         }
 
-        $personDataRepositories = $dataRepository->getPersonDataRepositories();
-        return $this->isUserDataRepositoryRole(
-            $userPerson,
-            $personDataRepositories,
-            array(self::DATA_REPOSITORY_MANAGER)
-        );
+        if ($attribute == PelagosEntityVoter::CAN_EDIT) {
+            // DRP-M
+            $personDataRepositories = $dataRepository->getPersonDataRepositories();
+            if ($this->doesUserHaveRole(
+                $userPerson,
+                $personDataRepositories,
+                array(DataRepositoryRoles::MANAGER)
+            )) {
+                return true;
+            }
+            // RGP-LAD
+            $personResearchGroups = $object->getPersonResearchGroups();
+            // if the user has one of ResearchGroupRole Leadership, Admin or Data they can edit the ResearchGroup object.
+            $rgRoles = array(ResearchGroupRoles::LEADERSHIP, ResearchGroupRoles::ADMIN, ResearchGroupRoles::DATA);
+            if ($this->doesUserHaveRole($userPerson, $personResearchGroups, $rgRoles)) {
+                return true;
+            }
+        }
+
         return false;
     }
 }
