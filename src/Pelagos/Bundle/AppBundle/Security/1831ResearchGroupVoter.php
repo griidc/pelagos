@@ -1,59 +1,56 @@
 <?php
 
-
 namespace Pelagos\Bundle\AppBundle\Security;
 
+use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
+use Pelagos\Bundle\AppBundle\DataFixtures\ORM\ResearchGroupRoles;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
-use Pelagos\Entity\PersonResearchGroup;
 use Pelagos\Entity\Account;
+use Pelagos\Entity\ResearchGroup;
 use Pelagos\Entity\FundingCycle;
 use Pelagos\Entity\FundingOrganization;
 use Pelagos\Entity\DataRepository;
 
 /**
- * Class PersonResearchGroupVoter Grant or deny authority to PersonResearchGroup objects.
- *
- * This is a Symfony voter that operates only on objects of type PersonResearchGroup.
- * @see supports() to see which operations attributes are supported
- * @package Pelagos\Bundle\AppBundle\Security
+ * A voter to determine if a ResearchGroup can be created or edited.
  */
-class PersonResearchGroupVoter extends PelagosEntityVoter
+class ResearchGroupVoter extends PelagosEntityVoter
 {
     /**
      * Determines if the attribute and subject are supported by this voter.
      *
-     * @param string $attribute An attribute defined in the base class that indicates the action.
-     * @param mixed  $object    The subject of the operation, Must be a PersonResearchGroup.
+     * @param string $attribute An attribute.
+     * @param mixed  $object    The subject to secure.
      *
      * @return boolean True if the attribute and subject are supported, false otherwise.
      */
     protected function supports($attribute, $object)
     {
-        if (!$object instanceof PersonResearchGroup) {
+        if (!$object instanceof ResearchGroup) {
             return false;
         }
-        if (!in_array($attribute, array(self::CAN_CREATE))) {
+        if (!in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT))) {
             return false;
         }
         return true;
     }
 
     /**
-     * Perform a single authorization test on an attribute, ResearchGroup subject and authentication token.
+     * Perform a authorization test on an attribute, ResearchGroup subject and authentication token.
      *
      * The Symfony calling security framework calls supports before calling voteOnAttribute.
      *
-     * @param string         $attribute Unused by this function but required by VoterInterface.
+     * @param string         $attribute The action to be considered.
      * @param mixed          $object    A ResearchGroup.
      * @param TokenInterface $token     A security token containing user authentication information.
      *
-     * @return boolean True if the attribute is allowed on the subject for the user specified by the token.
+     * @return boolean True if the attribute (action) is allowed on the subject for the user specified by the token.
      */
     protected function voteOnAttribute($attribute, $object, TokenInterface $token)
     {
-        //  If object is not a PersonResearchGroup we are done here. Return false.
-        if (!$object instanceof PersonResearchGroup) {
+        //  If object is not a ResearchGroup we are done here. Return false.
+        if (!$object instanceof ResearchGroup) {
             return false;
         }
         $user = $token->getUser();
