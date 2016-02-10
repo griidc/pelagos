@@ -33,7 +33,7 @@ class ResearchGroupVoter extends PelagosEntityVoter
         }
 
         // Make sure the object is an instance of ResearchGroup
-        if (!$object instanceOf ResearchGroup) {
+        if (!$object instanceof ResearchGroup) {
             return false;
         }
 
