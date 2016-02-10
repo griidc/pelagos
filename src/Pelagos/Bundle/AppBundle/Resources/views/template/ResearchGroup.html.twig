@@ -56,7 +56,7 @@
                     </tr>
                 {% endfor %}
             {% endif %}
-            {% if is_granted('CAN_CREATE', newResearchGroupPerson|default) %}
+            {% if newResearchGroupPerson is defined and is_granted('CAN_CREATE', newResearchGroupPerson) %}
                 <tr>
                     <td>
                         <div class="addForm">
