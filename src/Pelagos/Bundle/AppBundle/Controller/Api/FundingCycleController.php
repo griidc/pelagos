@@ -91,6 +91,6 @@ class FundingCycleController extends EntityController
     public function postAction(Request $request)
     {
         $fundingCycle = $this->handlePost(FundingCycleType::class, FundingCycle::class, $request);
-        return $this->makeCreatedResponse('pelagos_api_funding_cycles_get', $fundingCycle-->getId());
+        return $this->makeCreatedResponse('pelagos_api_funding_cycles_get', $fundingCycle->getId());
     }
 }
