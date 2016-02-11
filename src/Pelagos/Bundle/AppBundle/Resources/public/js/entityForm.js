@@ -164,6 +164,23 @@
             if (entityId === "") {
                 $(".entityWrapper").has(this).click();
             }
+            
+            // Special stuff for Addform
+            
+            if ($(this).has(".addimg").length ? true : false) {
+                $(this).hide();
+                
+                $(".addimg", this).button().click(function (event) {
+                    $(this).hide();
+                    $(thisForm).show();
+                });
+                
+                var addimg = $(".addimg", this).detach();
+                
+                addimg.insertAfter($(this));
+                
+            }
+            
         });
     };
 

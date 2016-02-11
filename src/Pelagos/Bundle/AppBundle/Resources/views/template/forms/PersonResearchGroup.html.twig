@@ -18,5 +18,11 @@ action="{{path('pelagos_api_person_research_groups_post')}}">
     {{ form_row(form.label) }}
 
     {% include '@templates/forms/innerForm.html.twig' with {'Entity': PersonResearchGroup} %}
+    
+    {% if addForm is defined %}
+        {% image '@PelagosAppBundle/Resources/public/images/add.png' %}
+            <img class="addimg" src="{{asset_url}}">
+        {% endimage %}
+    {% endif %}
 
-    </form>
+</form>

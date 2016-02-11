@@ -61,11 +61,9 @@
                     <td>
                         <div class="addForm">
                             <p>
-                            <h2>Add New:</h2>
-                                {% include '@templates/forms/PersonResearchGroup.html.twig' with {'PersonResearchGroup': newResearchGroupPerson, 'form' : newResearchGroupPersonForm }%}
+                                {% include '@templates/forms/PersonResearchGroup.html.twig' with {'PersonResearchGroup': newResearchGroupPerson, 'form' : newResearchGroupPersonForm, 'addForm' : true }%}
                             </p>
                         </div>
-
                     </td>
                 </tr>
                 {% endif %}
