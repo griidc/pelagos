@@ -128,7 +128,8 @@ class ResearchGroupController extends EntityController
                 'Location' => $this->generateUrl(
                     'pelagos_api_research_groups_get',
                     ['id' => $researchGroup->getId()]
-                )
+                ),
+                'X-Entity-Id' => $researchGroup->getId(),
             )
         );
     }

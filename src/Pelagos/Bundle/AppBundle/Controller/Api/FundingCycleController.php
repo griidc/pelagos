@@ -99,7 +99,8 @@ class FundingCycleController extends EntityController
                 'Location' => $this->generateUrl(
                     'pelagos_api_funding_cycles_get',
                     ['id' => $fundingCycle->getId()]
-                )
+                ),
+                'X-Entity-Id' => $fundingCycle->getId(),
             )
         );
     }
