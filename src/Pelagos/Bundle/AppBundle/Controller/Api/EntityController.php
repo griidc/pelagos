@@ -230,4 +230,76 @@ abstract class EntityController extends FOSRestController
         // Return the list of error messages.
         return implode(', ', $errorMessages);
     }
+
+    /**
+     * Get a property of an entity.
+     *
+     * @param string  $entityClass The type of entity.
+     * @param integer $id          The id of the entity.
+     * @param string  $property    The property to retrieve.
+     *
+     * @return Response A Response object containing the property or an empty body
+     *                  and a "no content" status code if the property is not set.
+     */
+    public function getProperty($entityClass, $id, $property)
+    {
+        $entity = $this->handleGetOne($entityClass, $id);
+        $getter = 'get' . ucfirst($property);
+        $content = $entity->$getter();
+        if ($content === null) {
+            return new Response(null, Codes::HTTP_NO_CONTENT);
+        }
+        $info = finfo_open(FILEINFO_MIME_TYPE);
+        $mimeType = finfo_buffer($info, $content);
+        finfo_close($info);
+        return new Response(
+            $content,
+            Codes::HTTP_OK,
+            array(
+                'Content-Type' => $mimeType,
+                'Content-Length' => strlen($content),
+            )
+        );
+    }
+
+    /**
+     * Set or replace a property of an entity via multipart/form-data POST.
+     *
+     * @param string  $entityClass The type of entity.
+     * @param integer $id          The id of the entity.
+     * @param string  $property    The property to set.
+     * @param Request $request     The request object.
+     *
+     * @return Response A Response object with an empty body and a "no content" status code.
+     */
+    public function postProperty($entityClass, $id, $property, Request $request)
+    {
+        $entity = $this->handleGetOne($entityClass, $id);
+        $file = $request->files->get($property);
+        if (isset($file)) {
+            $setter = 'set' . ucfirst($property);
+            $entity->$setter(file_get_contents($file->getPathname()));
+        }
+        $this->container->get('pelagos.entity.handler')->update($entity);
+        return new Response(null, Codes::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * Set or replace a property of an entity via HTTP PUT file upload.
+     *
+     * @param string  $entityClass The type of entity.
+     * @param integer $id          The id of the entity.
+     * @param string  $property    The property to set.
+     * @param Request $request     The request object.
+     *
+     * @return Response A Response object with an empty body and a "no content" status code.
+     */
+    public function putProperty($entityClass, $id, $property, Request $request)
+    {
+        $entity = $this->handleGetOne($entityClass, $id);
+        $setter = 'set' . ucfirst($property);
+        $entity->$setter($request->getContent());
+        $this->container->get('pelagos.entity.handler')->update($entity);
+        return new Response(null, Codes::HTTP_NO_CONTENT);
+    }
 }
