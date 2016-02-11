@@ -21,7 +21,7 @@ Pelagos.Entity.Entity.dcm.xml
             <join-column name="person_number" referenced-column-name="person_number" />
         </many-to-one>
 
-        <many-to-one field="dataRepository" target-entity="DataRepository">
+        <many-to-one field="dataRepository" target-entity="DataRepository" inversed-by="personDataRepositories">
             <join-column name="data_repository_number" referenced-column-name="data_repository_number" />
         </many-to-one>
 
