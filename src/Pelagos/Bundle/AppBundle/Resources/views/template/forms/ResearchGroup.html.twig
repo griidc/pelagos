@@ -1,19 +1,10 @@
 <form class="entityForm" entityType="ResearchGroup"
-{% if is_granted('CAN_CREATE', ResearchGroup) %}
- creatable
-{% endif %}
-{% if is_granted('CAN_EDIT', ResearchGroup) %}
- editable
-{% endif %}
-{% if is_granted('CAN_DELETE', ResearchGroup) %}
- deletable
-{% endif %}
- action="{{path('pelagos_api_research_groups_post')}}">
+{% include '@templates/forms/permissionsBlock.html.twig' with {'Entity': ResearchGroup} %}
+action="{{path('pelagos_api_research_groups_post')}}">
 
     <input type="hidden" name="id" value="{{ResearchGroup.getId}}">
 
-    <label for="name">Name:</label>
-    <input type="text" name="name" value="{{ResearchGroup.getName}}" required><br>
+    {{ form_row(form.name) }}
 
     <label for="fundingOrganization">Funding Organization:</label>
     <select dontvalidate required name="fundingCycle.fundingOrganization" fundingOrganization="{{ResearchGroup.getFundingCycle.getFundingOrganization.getId|default}}">
@@ -39,32 +30,23 @@
         {% endif %}
     </select><br>
 
-    <label for="url">Website:</label>
-    <input type="text" name="url" class="clickableLink" value="{{ResearchGroup.getUrl}}">
+    {{ form_row(form.url) }}
 
-    <label for="phoneNumber">Phone Number:</label>
-    <input type="text" name="phoneNumber" value="{{ResearchGroup.getPhoneNumber}}"><br>
+    {{ form_row(form.phoneNumber) }}
 
-    <label for="deliveryPoint">Delivery Point:</label><br>
-    <textarea maxlength="300" name="deliveryPoint" rows="3">{{ResearchGroup.getDeliveryPoint}}</textarea><br>
+    {{ form_row(form.deliveryPoint) }}
 
-    <label for="city">City:</label>
-    <input type="text" name="city" value="{{ResearchGroup.getCity}}"><br>
+    {{ form_row(form.city) }}
 
-    <label for="administrativeArea">State/Province:</label>
-    <input type="text" name="administrativeArea" value="{{ResearchGroup.getAdministrativeArea}}"><br>
+    {{ form_row(form.administrativeArea) }}
 
-    <label for="postalCode">Postal Code:</label>
-    <input type="text" name="postalCode" value="{{ResearchGroup.getPostalCode}}"><br>
+    {{ form_row(form.postalCode) }}
 
-    <label for="country">Country:</label>
-    <input type="text" name="country" value="{{ResearchGroup.getCountry}}"><br>
+    {{ form_row(form.country) }}
 
-    <label for="description">Description:</label><br>
-    <textarea name="description" rows="5">{{ResearchGroup.getDescription}}</textarea><br>
+    {{ form_row(form.description) }}
 
-    <label for="emailAddress">E-Mail Address:</label>
-    <input type="text" name="emailAddress" value="{{ResearchGroup.getEmailAddress}}"><br>
+    {{ form_row(form.emailAddress) }}
 
     <span class="showOnEdit">
         <label for="logo">Logo:</label>
@@ -73,14 +55,5 @@
             mimeType="{{ResearchGroup.serializeBinary(ResearchGroup.getLogo).mimeType}}">-->
         <br>
     </span>
-     <div class="innerForm">
-         {% image '@PelagosAppBundle/Resources/public/images/application_edit.png' output='static/images/application_edit.png' %}
-            <img class="editimg" src="{{asset_url}}">
-         {% endimage %}
-         {% if is_granted('CAN_DELETE', ResearchGroup) %}
-            {% image '@PelagosAppBundle/Resources/public/images/delete.png' output='static/images/delete.png' %}
-                <img class="deleteimg" src="{{asset_url}}">
-            {% endimage %}
-         {% endif %}
-     </div>
+   {% include '@templates/forms/innerForm.html.twig' with {'Entity': ResearchGroup} %}
 </form>

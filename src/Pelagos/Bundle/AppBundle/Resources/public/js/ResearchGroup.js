@@ -1,9 +1,3 @@
-// $.ajax({
-    // url: pelagosComponentPath + "/static/js/Entity/ResearchGroup.js",
-    // dataType: "script",
-    // cache: true
-// });
-
 $(document).ready(function()
 {
     "use strict";

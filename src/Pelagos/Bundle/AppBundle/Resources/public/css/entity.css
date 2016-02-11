@@ -33,6 +33,10 @@
 }
 /* */
 
+.hiddenFormField {
+    display:none;
+}
+
 /* to counteract user-agent font sizing */
 input, textarea, keygen, select, button {
     font-size: 100%;
