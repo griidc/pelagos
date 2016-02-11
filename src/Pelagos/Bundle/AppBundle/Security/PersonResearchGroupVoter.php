@@ -95,8 +95,6 @@ class PersonResearchGroupVoter extends PelagosEntityVoter
             // and that PersonResearchGroup's ResearchGroup matches the ResearchGroup of the $object (voter subject)
             // the user can create (persist) the subject PersonResearchGroup ($object).
             $targetRoles = array(ResearchGroupRoles::LEADERSHIP, ResearchGroupRoles::ADMIN, ResearchGroupRoles::DATA);
-            //  The ResearchGroup instance to which the subject refers.
-            $objectResearchGroup = $object->getResearchGroup();
             // Get all PersonResearchGroups associated with the ResearchGroup the object is associated with and
             // filter out the one we are attempting to create.
             $authPersonResearchGroups = $object->getResearchGroup()->getPersonResearchGroups()->filter(
