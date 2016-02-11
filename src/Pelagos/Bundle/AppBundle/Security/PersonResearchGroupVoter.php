@@ -7,9 +7,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 use Pelagos\Entity\PersonResearchGroup;
 use Pelagos\Entity\Account;
-use Pelagos\Entity\FundingCycle;
-use Pelagos\Entity\FundingOrganization;
-use Pelagos\Entity\DataRepository;
+use Pelagos\Bundle\AppBundle\DataFixtures\ORM\ResearchGroupRoles;
 
 /**
  * Class PersonResearchGroupVoter Grant or deny authority to PersonResearchGroup objects.
