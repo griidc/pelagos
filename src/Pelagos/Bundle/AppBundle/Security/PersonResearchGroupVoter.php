@@ -6,6 +6,10 @@ namespace Pelagos\Bundle\AppBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 use Pelagos\Entity\PersonResearchGroup;
+use Pelagos\Entity\ResearchGroup;
+use Pelagos\Entity\FundingCycle;
+use Pelagos\Entity\FundingOrganization;
+use Pelagos\Entity\DataRepository;
 use Pelagos\Entity\Account;
 use Pelagos\Bundle\AppBundle\DataFixtures\ORM\ResearchGroupRoles;
 
@@ -35,7 +39,30 @@ class PersonResearchGroupVoter extends PelagosEntityVoter
         if (!in_array($attribute, array(self::CAN_CREATE))) {
             return false;
         }
-        return true;
+        // Only if the tree is as expected, vote.
+        if (($object
+                ->getResearchGroup()
+                instanceof ResearchGroup) and
+            ($object
+                ->getResearchGroup()
+                ->getFundingCycle()
+                instanceof FundingCycle) and
+            ($object
+                ->getResearchGroup()
+                ->getFundingCycle()
+                ->getFundingOrganization()
+                instanceof FundingOrganization) and
+            ($object
+                ->getResearchGroup()
+                ->getFundingCycle()
+                ->getFundingOrganization()
+                ->getDataRepository()
+                instanceof DataRepository)
+        ) {
+            return true;
+        }
+        // Otherwise abstain.
+        return false;
     }
 
     /**
