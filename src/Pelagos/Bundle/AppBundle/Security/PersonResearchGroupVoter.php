@@ -12,6 +12,7 @@ use Pelagos\Entity\FundingOrganization;
 use Pelagos\Entity\DataRepository;
 use Pelagos\Entity\Account;
 use Pelagos\Bundle\AppBundle\DataFixtures\ORM\ResearchGroupRoles;
+use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
 
 /**
  * Class PersonResearchGroupVoter Grant or deny authority to PersonResearchGroup objects.
@@ -36,7 +37,7 @@ class PersonResearchGroupVoter extends PelagosEntityVoter
         if (!$object instanceof PersonResearchGroup) {
             return false;
         }
-        if (!in_array($attribute, array(self::CAN_CREATE))) {
+        if (!in_array($attribute, array(self::CAN_CREATE, self::CAN_DELETE))) {
             return false;
         }
         // Only if the tree is as expected, vote.
@@ -104,6 +105,16 @@ class PersonResearchGroupVoter extends PelagosEntityVoter
             );
             // If the user has one of the target roles, they can create the object.
             if ($this->doesUserHaveRole($userPerson, $authPersonResearchGroups, $targetRoles)) {
+                return true;
+            }
+        } elseif ($attribute == self::CAN_DELETE) {
+            $personDataRepositories = $object
+                                          ->getResearchGroup()
+                                          ->getFundingCycle()
+                                          ->getFundingOrganization()
+                                          ->getDataRepository()
+                                          ->getPersonDataRepositories();
+            if ($this->doesUserHaveRole($userPerson, $personDataRepositories, array(DataRepositoryRoles::MANAGER))) {
                 return true;
             }
         }
