@@ -67,8 +67,8 @@ class UIController extends Controller
     /**
      * The Person Research Group action.
      *
-     * @param string  $id      The id of the entity to retrieve.
      * @param Request $request The HTTP request.
+     * @param string  $id      The id of the entity to retrieve.
      *
      * @throws BadRequestHttpException When the Research Group ID is not provided.
      *
@@ -76,7 +76,7 @@ class UIController extends Controller
      *
      * @return Response A Response instance.
      */
-    public function personResearchGroupAction($id = null, Request $request)
+    public function personResearchGroupAction(Request $request. $id = null)
     {
         $researchGroupId = $request->query->get('ResearchGroup');
 
