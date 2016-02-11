@@ -9,6 +9,8 @@
 namespace Pelagos\Entity;
 
 use \Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use \Pelagos\Exception\NotDeletableException;
 use JMS\Serializer\Annotation as Serializer;
 
@@ -672,5 +674,20 @@ class ResearchGroup extends Entity
             $notDeletableException->setReasons($notDeletableReasons);
             throw $notDeletableException;
         }
+    }
+
+    /**
+     * Return a Collection of Person objects that are associated with this ResearchGroup.
+     *
+     * @return Collection A set of Person that are connected to this ResearchGroup via PersonResearchGroup objects.
+     */
+    public function getAssociatedPersons()
+    {
+        $people = new ArrayCollection();
+        $personResearchGroups = $this->getPersonResearchGroups();
+        foreach ($personResearchGroups as $personResearchGroup) {
+            $people->add($personResearchGroup->getPerson());
+        }
+        return $people;
     }
 }

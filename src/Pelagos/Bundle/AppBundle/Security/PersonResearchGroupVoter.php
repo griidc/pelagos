@@ -15,7 +15,8 @@ use Pelagos\Entity\DataRepository;
  * Class PersonResearchGroupVoter Grant or deny authority to PersonResearchGroup objects.
  *
  * This is a Symfony voter that operates only on objects of type PersonResearchGroup.
- * @see supports() to see which operations attributes are supported
+ *
+ * @see     supports() to see which operations attributes are supported
  * @package Pelagos\Bundle\AppBundle\Security
  */
 class PersonResearchGroupVoter extends PelagosEntityVoter
@@ -45,8 +46,9 @@ class PersonResearchGroupVoter extends PelagosEntityVoter
      * The Symfony calling security framework calls supports before calling voteOnAttribute.
      *
      * @param string         $attribute The action for which the user seeks authorization.
-     * @param mixed          $object    A PersonResearchGroup to be created (persisted).
+     * @param mixed          $object    The subject of the voter, A PersonResearchGroup to be created (persisted).
      * @param TokenInterface $token     A security token containing user authentication information.
+     *
      * @see this->supports($attribute, $object)
      *
      * @return boolean True if the attribute is allowed on the subject for the user specified by the token.
@@ -63,18 +65,28 @@ class PersonResearchGroupVoter extends PelagosEntityVoter
         //  Get the Person associated with this Account.
         $userPerson = $user->getPerson();
 
-        // if the user (Person) has a PersonResearchGroup with a Role name that is one of [Leadership, Admin or Data]
+        // if the user has a PersonResearchGroup with a Role name that is one of [Leadership, Admin or Data]
         // and that PersonResearchGroup's ResearchGroup matches the ResearchGroup of the $object (voter subject)
         // the user can create (persist) the subject PersonResearchGroup ($object).
         $targetRoles = array(ResearchGroupRoles::LEADERSHIP, ResearchGroupRoles::ADMIN, ResearchGroupRoles::DATA);
+        //  The ResearchGroup instance to which the subject refers.
         $objectResearchGroup = $object->getResearchGroup();
+        //  all of this User's  PersonResearchGroup relationships
         $userPersonResearchGroups = $userPerson->getPersonResearchGroups();
-        foreach($userPersonResearchGroups as $userPersonResearchGroup) {
-            $currentResearchGroup = $userPersonResearchGroup->getResearchGroup();
-            $currentRoleName = $userPersonResearchGroup->getRole()->getName();
-            if (in_array($currentRoleName, $targetRoles) &&
-                $currentResearchGroup->isSameTypeAndId($objectResearchGroup)) {
-                return true;
+        foreach ($userPersonResearchGroups as $currentPersonResearchGroup) {
+            //  don't use the subject PersonResearchGroup $object as authorization to store the $object - ignore it
+            if ($currentPersonResearchGroup !== $object) {
+                //   the ResearchGroup considered in this pass through the loop
+                $currentResearchGroup = $currentPersonResearchGroup->getResearchGroup();
+                //  Only consider ResearchGroups that are the same as the subject's ResearchGroup
+                if ($currentResearchGroup->isSameTypeAndId($objectResearchGroup)) {
+                    //  the role name of the current PersonResearchGroup
+                    $currentRoleName = $currentPersonResearchGroup->getRole()->getName();
+                    // If the current PersonResearchGroup Role name is one of those in the $targetRoles return true.
+                    if (in_array($currentRoleName, $targetRoles)) {
+                        return true;
+                    }
+                }
             }
         }
         return false;
