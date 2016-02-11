@@ -14,7 +14,7 @@ use JMS\Serializer\Annotation\Exclude;
  *     message="A Person can have only one association with a Data Repository"
  * )
  */
-class PersonDataRepository extends Entity
+class PersonDataRepository extends Entity implements PersonAssociationInterface
 {
     /**
      * Static array containing a list of the properties and their attributes.

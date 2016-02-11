@@ -20,8 +20,11 @@ security:
                 provider: pelagos
 
 services:
-    # generic create voter
-    create_voter:
+    research_group_voter:
         class: Pelagos\Bundle\AppBundle\Security\ResearchGroupVoter
+        tags:
+            - { name: security.voter }
+    create_anything_voter:
+        class: Pelagos\Bundle\AppBundle\Security\CreateAnythingVoter
         tags:
             - { name: security.voter }

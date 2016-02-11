@@ -4,7 +4,10 @@ namespace Pelagos\Bundle\AppBundle\Security;
 
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use \Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Collection;
+use Pelagos\Entity\Person;
+use Pelagos\Entity\PersonAssociationInterface;
+use Pelagos\Entity\RoleInterface;
 
 /**
  * Class PelagosEntityVoter An abstract base class for implementing a Symfony Voter..
@@ -24,42 +27,44 @@ use \Doctrine\Common\Collections\Collection;
  */
 abstract class PelagosEntityVoter extends Voter
 {
-    const DATA_REPOSITORY_MANAGER = 'Manager';
     const CAN_CREATE = 'CAN_CREATE';
     const CAN_EDIT = 'CAN_EDIT';
+    const CAN_DELETE = 'CAN_DELETE';
 
     /**
-     * Traverse the tree to find out if the User/Person is a manager.
+     * Does this Person have one of the Roles listed in roleNames?.
      *
-     * @param Person     $userPerson             This is the logged in user's representation.
-     * @param Collection $personDataRepositories List of data repositories the user is associated with.
-     * @param array      $roleNames              List of user roles to be tested.
+     * @param Person     $userPerson     This is the logged in user's representation.
+     * @param Collection $hasRoleObjects A set of HsaRoleInterface instances.
+     * @param array      $roleNames      List of user roles to be tested.
      *
-     * @see voteOnAttribute($attribute, $object, TokenInterface $token)
-     *
-     * @return bool True if the user is a manager.
+     * @see    voteOnAttribute($attribute, $object, TokenInterface $token)
+     * @return bool True if the user has a role in the roleNames.
      */
-    protected function isUserDataRepositoryRole(Person $userPerson, Collection $personDataRepositories, array $roleNames)
+    protected function doesUserHaveRole(Person $userPerson, Collection $hasRoleObjects, array $roleNames)
     {
-        if (!$personDataRepositories instanceof \Traversable) {
+        if (!$hasRoleObjects instanceof \Traversable) {
             return false;
         }
 
-        foreach ($personDataRepositories as $personDR) {
-            if (!$personDR instanceof PersonDataRepository) {
+        foreach ($hasRoleObjects as $hasRole) {
+            //  check to see if each object in the list implements the PersonAssociationInterface
+            if (!$hasRole instanceof PersonAssociationInterface) {
                 continue;
             }
-            //  get the role from the Person/DataRepository object
-            $role = $personDR->getRole();
-            if (!$role instanceof DataRepositoryRole) {
+            //  get the role from the object
+            $role = $hasRole->getRole();
+            if (!$role instanceof RoleInterface) {
                 continue;
             }
-            //  what is the name name
+            //  what is the name
             $roleName = $role->getName();
-            // what Person is in the relation to DataRepository
-            $person = $personDR->getPerson();
+            // get the Person to which the Role refers
+            $person = $hasRole->getPerson();
 
-            if ($userPerson === $person and in_array($roleName, $roleNames)) {
+            // if the Role Person is the same as the $userPerson and
+            // the $roleName is in the list of $roleNames return true.
+            if ($userPerson->isSameTypeAndId($person) && in_array($roleName, $roleNames)) {
                 return true;
             }
         }

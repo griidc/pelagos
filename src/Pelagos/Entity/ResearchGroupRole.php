@@ -8,7 +8,7 @@ use JMS\Serializer\Annotation\Exclude;
 /**
  * A Class for Research Group Roles.
  */
-class ResearchGroupRole extends Entity
+class ResearchGroupRole extends Entity implements RoleInterface
 {
     /**
      * Static array containing a list of the properties and their attributes.

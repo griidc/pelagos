@@ -8,7 +8,7 @@ use JMS\Serializer\Annotation\Exclude;
 /**
  * A Class for Data Repository Roles.
  */
-class DataRepositoryRole extends Entity
+class DataRepositoryRole extends Entity implements RoleInterface
 {
     /**
      * Static array containing a list of the properties and their attributes.
