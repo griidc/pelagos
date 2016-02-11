@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
- * The default controller for the Pelagos App Bundle.
+ * The default controller for the Pelagos UI App Bundle.
  */
 class UIController extends Controller
 {
@@ -76,7 +76,7 @@ class UIController extends Controller
      *
      * @return Response A Response instance.
      */
-    public function personResearchGroupAction($id = null, Request $request = null)
+    public function personResearchGroupAction($id = null, Request $request)
     {
         $researchGroupId = $request->query->get('ResearchGroup');
 
