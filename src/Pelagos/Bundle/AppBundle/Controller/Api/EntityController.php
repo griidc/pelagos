@@ -3,6 +3,7 @@
 namespace Pelagos\Bundle\AppBundle\Controller\Api;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Form\FormInterface;
@@ -220,5 +221,46 @@ abstract class EntityController extends FOSRestController
         }
         // Return the list of error messages.
         return implode(', ', $errorMessages);
+    }
+
+    /**
+     * Creates and returns a Response object that indicates successful creation of a new resource.
+     *
+     * @param string  $locationRouteName The name of the route to put in the Location header.
+     * @param integer $resourceId        The id of the newly created resource.
+     *
+     * @return Response A Response object with an empty body, a "created" status code,
+     *                  and the location of the new Person to Research Group Association in the Location header.
+     */
+    protected function makeCreatedResponse($locationRouteName, $resourceId)
+    {
+        return new Response(
+            null,
+            Codes::HTTP_CREATED,
+            array(
+                'Content-Type' => 'application/x-empty',
+                'Location' => $this->generateUrl(
+                    $locationRouteName,
+                    ['id' => $resourceId]
+                ),
+                'X-Resource-Id' => $resourceId,
+            )
+        );
+    }
+
+    /**
+     * Creates and returns a Response object with no content.
+     *
+     * @return Response A Response object with an empty body and a "no content" status code.
+     */
+    protected function makeNoContentResponse()
+    {
+        return new Response(
+            null,
+            Codes::HTTP_NO_CONTENT,
+            array(
+                'Content-Type' => 'application/x-empty',
+            )
+        );
     }
 }

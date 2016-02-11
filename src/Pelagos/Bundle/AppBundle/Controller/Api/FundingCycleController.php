@@ -5,7 +5,6 @@ namespace Pelagos\Bundle\AppBundle\Controller\Api;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\FormInterface;
 
-use FOS\RestBundle\Util\Codes;
 use FOS\RestBundle\Controller\Annotations as Rest;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
@@ -92,16 +91,6 @@ class FundingCycleController extends EntityController
     public function postAction(Request $request)
     {
         $fundingCycle = $this->handlePost(FundingCycleType::class, FundingCycle::class, $request);
-        return new Response(
-            null,
-            Codes::HTTP_CREATED,
-            array(
-                'Location' => $this->generateUrl(
-                    'pelagos_api_funding_cycles_get',
-                    ['id' => $fundingCycle->getId()]
-                ),
-                'X-Entity-Id' => $fundingCycle->getId(),
-            )
-        );
+        return $this->makeCreatedResponse('pelagos_api_funding_cycles_get', $fundingCycle-->getId());
     }
 }

@@ -6,7 +6,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Form\FormInterface;
 
-use FOS\RestBundle\Util\Codes;
 use FOS\RestBundle\Controller\Annotations as Rest;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
@@ -121,17 +120,7 @@ class ResearchGroupController extends EntityController
     public function postAction(Request $request)
     {
         $researchGroup = $this->handlePost(ResearchGroupType::class, ResearchGroup::class, $request);
-        return new Response(
-            null,
-            Codes::HTTP_CREATED,
-            array(
-                'Location' => $this->generateUrl(
-                    'pelagos_api_research_groups_get',
-                    ['id' => $researchGroup->getId()]
-                ),
-                'X-Entity-Id' => $researchGroup->getId(),
-            )
-        );
+        return $this->makeCreatedResponse('pelagos_api_research_groups_get', $researchGroup->getId());
     }
 
     /**
@@ -157,7 +146,7 @@ class ResearchGroupController extends EntityController
     public function putAction($id, Request $request)
     {
         $this->handleUpdate(ResearchGroupType::class, ResearchGroup::class, $id, $request, 'PUT');
-        return new Response(null, Codes::HTTP_NO_CONTENT);
+        return $this->makeNoContentResponse();
     }
 
     /**
@@ -183,6 +172,6 @@ class ResearchGroupController extends EntityController
     public function patchAction($id, Request $request)
     {
         $this->handleUpdate(ResearchGroupType::class, ResearchGroup::class, $id, $request, 'PATCH');
-        return new Response(null, Codes::HTTP_NO_CONTENT);
+        return $this->makeNoContentResponse();
     }
 }
