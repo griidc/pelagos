@@ -24,6 +24,10 @@ services:
         class: Pelagos\Bundle\AppBundle\Security\ResearchGroupVoter
         tags:
             - { name: security.voter }
+    person_research_group_voter:
+            class: Pelagos\Bundle\AppBundle\Security\PersonResearchGroupVoter
+            tags:
+                - { name: security.voter }
     create_anything_voter:
         class: Pelagos\Bundle\AppBundle\Security\CreateAnythingVoter
         tags:
