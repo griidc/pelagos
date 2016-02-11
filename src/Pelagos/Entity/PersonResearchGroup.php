@@ -197,23 +197,4 @@ class PersonResearchGroup extends Entity implements PersonAssociationInterface
     {
         return $this->label;
     }
-
-    /**
-     * Compare this PersonResearchGroupRoles Person, ResearchGroup and Role name with another's.
-     *
-     * @param Person        $person        A test Person object.
-     * @param ResearchGroup $researchGroup A test ResearchGroup.
-     * @param string        $roleName      The name of the test Role.
-     *
-     * @return bool Return true of all the arguments match the state of this object. False otherwise.
-     */
-    public function matches(Person $person, ResearchGroup $researchGroup, $roleName)
-    {
-        if ($this->getPerson()->isSameTypeAndId($person) &&
-           $this->getResearchGroup()->isSameTypeAndId($researchGroup) &&
-           $this->getRole()->getName() == $roleName) {
-            return true;
-        }
-        return false;
-    }
 }

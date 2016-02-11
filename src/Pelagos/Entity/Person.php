@@ -8,10 +8,12 @@
 
 namespace Pelagos\Entity;
 
+use \Pelagos\Exception\EmptyRequiredArgumentException;
+use \Pelagos\Exception\InvalidFormatArgumentException;
 use \Pelagos\Exception\NotDeletableException;
 use \Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation\Exclude;
-use Doctrine\Common\Collections\ArrayCollection;
+use \Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Class to represent people.
@@ -712,7 +714,7 @@ class Person extends Entity
      * @access public
      *
      * @return \Doctrine\Common\Collections\Collection Collection containing personResearchGroups
-     *                                                 listings for this Person.
+     *                                                 listings for this research group.
      */
     public function getPersonResearchGroups()
     {
@@ -878,56 +880,5 @@ class Person extends Entity
     public function __toString()
     {
         return (string) $this->id;
-    }
-
-    /**
-     * Return a ArrayCollection of ResearchGroup objects that are associated with this Person.
-     *
-     * @see $personResearchGroups
-     *
-     * @return ArrayCollection A set of ResearchGroups that are connected to this Person via PersonResearchGroup.
-     */
-    public function getAssociatedResearchGroups()
-    {
-        $researchGroups = new ArrayCollection();
-        $personResearchGroups = $this->getPersonResearchGroups();
-        foreach ($personResearchGroups as $personResearchGroup) {
-            $researchGroups->add($personResearchGroup->getResearchGroup());
-        }
-        return $researchGroups;
-    }
-
-    /**
-     * Return a ArrayCollection of DataRepositories objects that are associated with this Person.
-     *
-     * @see $personDataRepositories
-     *
-     * @return ArrayCollection A set of DataRepositories connected to this Person via PersonDataRepositories.
-     */
-    public function getAssociatedDataRepositories()
-    {
-        $dataRepositories = new ArrayCollection();
-        $personDataRepositories = $this->getPersonDataRepositories();
-        foreach ($personDataRepositories as $personDataRepository) {
-            $dataRepositories->add($personDataRepository->getDataRepository());
-        }
-        return $dataRepositories;
-    }
-
-    /**
-     * Return a ArrayCollection of FundingOrganizations objects that are associated with this Person.
-     *
-     * @see $personFundingOrganizations
-     *
-     * @return ArrayCollection A set of FundingOrganizations connected to this Person by PersonFundingOrganizations.
-     */
-    public function getAssociatedFundingOrganizations()
-    {
-        $fundingOrganizations = new ArrayCollection();
-        $personFundingOrganizations = $this->getPersonFundingOrganizations();
-        foreach ($personFundingOrganizations as $personFundingOrganization) {
-            $fundingOrganizations->add($personFundingOrganization->getFundingOrganizations());
-        }
-        return $fundingOrganizations;
     }
 }
