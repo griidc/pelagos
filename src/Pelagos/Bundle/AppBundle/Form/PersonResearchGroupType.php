@@ -50,7 +50,7 @@ class PersonResearchGroupType extends AbstractType
                 'label' => 'Role:',
                 'class' => 'Pelagos:ResearchGroupRole',
                 'choice_label' => 'name',
-                'placeholder' => '[Please Select a Person]',
+                'placeholder' => '[Please Select a Role]',
             ))
             ->add('label', TextType::class, array(
                 'label' => 'Label:',
