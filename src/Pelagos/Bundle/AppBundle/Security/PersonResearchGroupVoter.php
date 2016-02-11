@@ -55,7 +55,6 @@ class PersonResearchGroupVoter extends PelagosEntityVoter
      */
     protected function voteOnAttribute($attribute, $object, TokenInterface $token)
     {
-        //  we know the attribute is "CAN_CREATE" and the object is a PersonResearchGroup
         $user = $token->getUser();
         // If the user token does not contain an Account object return false.
         if (!$user instanceof Account) {
@@ -65,26 +64,29 @@ class PersonResearchGroupVoter extends PelagosEntityVoter
         //  Get the Person associated with this Account.
         $userPerson = $user->getPerson();
 
-        // if the user has a PersonResearchGroup with a Role name that is one of [Leadership, Admin or Data]
-        // and that PersonResearchGroup's ResearchGroup matches the ResearchGroup of the $object (voter subject)
-        // the user can create (persist) the subject PersonResearchGroup ($object).
-        $targetRoles = array(ResearchGroupRoles::LEADERSHIP, ResearchGroupRoles::ADMIN, ResearchGroupRoles::DATA);
-        //  The ResearchGroup instance to which the subject refers.
-        $objectResearchGroup = $object->getResearchGroup();
-        //  all of this User's  PersonResearchGroup relationships
-        $userPersonResearchGroups = $userPerson->getPersonResearchGroups();
-        foreach ($userPersonResearchGroups as $currentPersonResearchGroup) {
-            //  don't use the subject PersonResearchGroup $object as authorization to store the $object - ignore it
-            if ($currentPersonResearchGroup !== $object) {
-                //   the ResearchGroup considered in this pass through the loop
-                $currentResearchGroup = $currentPersonResearchGroup->getResearchGroup();
-                //  Only consider ResearchGroups that are the same as the subject's ResearchGroup
-                if ($currentResearchGroup->isSameTypeAndId($objectResearchGroup)) {
-                    //  the role name of the current PersonResearchGroup
-                    $currentRoleName = $currentPersonResearchGroup->getRole()->getName();
-                    // If the current PersonResearchGroup Role name is one of those in the $targetRoles return true.
-                    if (in_array($currentRoleName, $targetRoles)) {
-                        return true;
+        // if attribute is CAN_CREATE check to see if this user has a role with sufficient authority.
+        if ($attribute == self::CAN_CREATE) {
+            // if the user has a PersonResearchGroup with a Role name that is one of [Leadership, Admin or Data]
+            // and that PersonResearchGroup's ResearchGroup matches the ResearchGroup of the $object (voter subject)
+            // the user can create (persist) the subject PersonResearchGroup ($object).
+            $targetRoles = array(ResearchGroupRoles::LEADERSHIP, ResearchGroupRoles::ADMIN, ResearchGroupRoles::DATA);
+            //  The ResearchGroup instance to which the subject refers.
+            $objectResearchGroup = $object->getResearchGroup();
+            //  all of this User's  PersonResearchGroup relationships
+            $userPersonResearchGroups = $userPerson->getPersonResearchGroups();
+            foreach ($userPersonResearchGroups as $currentPersonResearchGroup) {
+                //  don't use the subject PersonResearchGroup $object as authorization to store the $object - ignore it
+                if ($currentPersonResearchGroup !== $object) {
+                    //   the ResearchGroup considered in this pass through the loop
+                    $currentResearchGroup = $currentPersonResearchGroup->getResearchGroup();
+                    //  Only consider ResearchGroups that are the same as the subject's ResearchGroup
+                    if ($currentResearchGroup->isSameTypeAndId($objectResearchGroup)) {
+                        //  the role name of the current PersonResearchGroup
+                        $currentRoleName = $currentPersonResearchGroup->getRole()->getName();
+                        // If the current PersonResearchGroup Role name is one of those in the $targetRoles return true.
+                        if (in_array($currentRoleName, $targetRoles)) {
+                            return true;
+                        }
                     }
                 }
             }
