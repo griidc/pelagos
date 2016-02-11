@@ -3,6 +3,8 @@
 
 namespace Pelagos\Entity;
 
+use \Symfony\Component\Validator\Constraints as Assert;
+use JMS\Serializer\Annotation\Exclude;
 /**
  * Class AbstractRole A base class for the representation of typed Role classes.
  *
