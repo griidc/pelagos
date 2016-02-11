@@ -3,8 +3,8 @@ pelagos_app_homepage:
     defaults: { _controller: PelagosAppBundle:Default:index }
     
 pelagos_ui:
-    path:     /ui/{template}/{id}
-    defaults: { _controller: PelagosAppBundle:UI:index, id: null }
+    prefix: ui
+    resource: Pelagos\Bundle\AppBundle\Controller\UIController
 
 pelagos_rest:
     type: rest

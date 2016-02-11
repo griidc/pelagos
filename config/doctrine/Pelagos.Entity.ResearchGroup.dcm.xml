@@ -39,7 +39,7 @@ Pelagos.Entity.Entity.dcm.xml
 
         <field name="emailAddress"       column="email_address"       type="string" />
 
-        <many-to-one field="fundingCycle" target-entity="FundingCycle">
+        <many-to-one field="fundingCycle" target-entity="FundingCycle" inversed-by="researchGroups">
             <join-column name="funding_cycle_number" referenced-column-name="funding_cycle_number" />
         </many-to-one>
 

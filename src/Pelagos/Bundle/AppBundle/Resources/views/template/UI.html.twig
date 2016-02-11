@@ -1,8 +1,6 @@
 {% extends "PelagosAppBundle::layout.html.twig" %}
 
 {% block head %}
-
-
     {{
         add_library (
             [
@@ -15,12 +13,6 @@
         )
     }}
 
-
-
-    {% stylesheets  '@PelagosAppBundle/Resources/public/css/entity.css' %}
-        {{ add_css(asset_url) }}
-    {% endstylesheets  %}
-
     {{
         add_css (
             [
@@ -29,6 +21,10 @@
             ]
         )
     }}
+
+    {% stylesheets  '@PelagosAppBundle/Resources/public/css/entity.css' %}
+        {{ add_css(asset_url) }}
+    {% endstylesheets  %}
 
     {{
         add_js(
@@ -53,23 +49,11 @@
         {{ add_js(asset_url) }}
     {% endjavascripts %}
 
-    {% if is_granted('CAN_CREATE', ResearchGroup) %}
-        {% set can_create = 'true' %}
-    {% else %}
-        {% set can_create = 'false' %}
-    {% endif %}
-
     {{ add_js("
         var pelagosBasePath = '#{basePath}';
         ",
         'inline')
     }}
-
 {% endblock %}
 
-{% block body %}
-    <div class="PelagosUI">
-        {% include "@templates/#{templateName}" %}
-    </div>
-{% endblock %}
 

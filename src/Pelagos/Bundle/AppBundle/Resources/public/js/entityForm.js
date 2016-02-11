@@ -58,12 +58,12 @@
 
             if (entityId === "") {
                 if (!$(this).hasAttr("creatable")) {
-                    $('.innerForm').hide()
+                    $(this).find('.innerForm').hide()
                     return null;
                 }
             } else {
                 if (!$(this).hasAttr("editable")) {
-                    $('.innerForm').hide()
+                    $(this).find('.innerForm').hide()
                     return null;
                 }
             }
@@ -164,6 +164,23 @@
             if (entityId === "") {
                 $(".entityWrapper").has(this).click();
             }
+            
+            // Special stuff for Addform
+            
+            if ($(this).has(".addimg").length ? true : false) {
+                $(this).hide();
+                
+                $(".addimg", this).button().click(function (event) {
+                    $(this).hide();
+                    $(thisForm).show();
+                });
+                
+                var addimg = $(".addimg", this).detach();
+                
+                addimg.insertAfter($(this));
+                
+            }
+            
         });
     };
 
@@ -186,6 +203,72 @@
         } else {
             return false;
         }
+    };
+
+    /*
+     * This function makes the form reset proof.
+     */
+    $.fn.hardenForm = function()
+    {
+        //make sure this is of type form
+        if (!this.is("form")) {
+            return false;
+        }
+
+        var Form = $(this);
+
+        var formArray = Form.serializeArray();
+
+        $.each(formArray, function(index, element) {
+            var name = element.name;
+            var value = element.value;
+
+            //set value to blank, for default value, to avoid display of null
+            value = (value === null) ? "" : value;
+
+            Form.find("a[name=\"" + name + "\"]").attr("href", value).html(value);
+
+            var selector = Form.find("input,textarea,select").filter("[name=\"" + name + "\"]");
+
+            var elementType = selector.prop("type");
+            //Check if value is an object, and switch between the case that can handle objects
+            if (typeof value !== "object") {
+                switch (elementType)
+                {
+                    case "radio":
+                    selector.filter("[value=\"" + value + "\"]").attr("checked", true);
+                    break;
+                    case "checkbox":
+                    selector.attr("checked", value);
+                    break;
+                    case "select-one":
+                    selector.find("option").attr("selected", false);
+                    selector.val(value);
+                    selector.find("[value=\"" + value + "\"]").attr("selected", true);
+                    break;
+                    case "textarea":
+                    selector.html(value);
+                    selector.val(value);
+                    break;
+                    default:
+                    selector.attr("value", value);
+                    selector.val(value);
+                    break;
+                }
+            } else {
+                switch (elementType)
+                {
+                    case "file":
+                    selector.attr("base64", value.base64);
+                    selector.attr("mimeType", value.mimeType);
+                    selector.trigger("logoChanged");
+                    break;
+                    default:
+                    break;
+                }
+
+            }
+        });
     };
 
     function fillElement(Data, Form, Parent)
@@ -319,7 +402,11 @@
                         var docTitle = document.title;
                         var newID = data.id;
                         var newURL = currentURL + "/" + newID;
-                        window.history.pushState(newID, docTitle, newURL);
+                        var urlParts = currentURL.split('/');
+                        // If an entity ID already exists, dont add another one.
+                        if (!$.isNumeric(urlParts[urlParts.length-1])) {
+                            window.history.pushState(newID, docTitle, newURL);
+                        }
                     }
                 },
                 success: function(data, textStatus, jqXHR) {
@@ -327,7 +414,8 @@
                         title = "Success!";
                         var newID = data.id;
                         message = prefixPhrase + " " + entityType + " successfully with ID:" + newID;
-                        $(form).fillForm(data);
+                        //$(form).fillForm(data);
+                        $(form).hardenForm();
                         $(form).trigger("reset");
                     } else {
                         title = "Error!";
