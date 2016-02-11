@@ -10,7 +10,6 @@ namespace Pelagos\Entity;
 
 use \Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use \Pelagos\Exception\NotDeletableException;
 use JMS\Serializer\Annotation as Serializer;
 
@@ -677,9 +676,9 @@ class ResearchGroup extends Entity
     }
 
     /**
-     * Return a Collection of Person objects that are associated with this ResearchGroup.
+     * Return a ArrayCollection of Person objects that are associated with this ResearchGroup.
      *
-     * @return Collection A set of Person that are connected to this ResearchGroup via PersonResearchGroup objects.
+     * @return ArrayCollection A set of Person that are connected to this ResearchGroup via PersonResearchGroup objects.
      */
     public function getAssociatedPersons()
     {

@@ -8,13 +8,10 @@
 
 namespace Pelagos\Entity;
 
-use \Pelagos\Exception\EmptyRequiredArgumentException;
-use \Pelagos\Exception\InvalidFormatArgumentException;
 use \Pelagos\Exception\NotDeletableException;
 use \Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation\Exclude;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 
 /**
  * Class to represent people.
@@ -884,11 +881,11 @@ class Person extends Entity
     }
 
     /**
-     * Return a Collection of ResearchGroup objects that are associated with this Person.
+     * Return a ArrayCollection of ResearchGroup objects that are associated with this Person.
      *
      * @see $personResearchGroups
      *
-     * @return Collection A set of ResearchGroups that are connected to this Person via PersonResearchGroup.
+     * @return ArrayCollection A set of ResearchGroups that are connected to this Person via PersonResearchGroup.
      */
     public function getAssociatedResearchGroups()
     {
@@ -901,11 +898,11 @@ class Person extends Entity
     }
 
     /**
-     * Return a Collection of DataRepositories objects that are associated with this Person.
+     * Return a ArrayCollection of DataRepositories objects that are associated with this Person.
      *
      * @see $personDataRepositories
      *
-     * @return Collection A set of DataRepositories connected to this Person via PersonDataRepositories.
+     * @return ArrayCollection A set of DataRepositories connected to this Person via PersonDataRepositories.
      */
     public function getAssociatedDataRepositories()
     {
@@ -918,11 +915,11 @@ class Person extends Entity
     }
 
     /**
-     * Return a Collection of FundingOrganizations objects that are associated with this Person.
+     * Return a ArrayCollection of FundingOrganizations objects that are associated with this Person.
      *
      * @see $personFundingOrganizations
      *
-     * @return Collection A set of FundingOrganizations connected to this Person by PersonFundingOrganizations.
+     * @return ArrayCollection A set of FundingOrganizations connected to this Person by PersonFundingOrganizations.
      */
     public function getAssociatedFundingOrganizations()
     {
