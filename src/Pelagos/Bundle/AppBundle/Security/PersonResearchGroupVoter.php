@@ -97,23 +97,16 @@ class PersonResearchGroupVoter extends PelagosEntityVoter
             $targetRoles = array(ResearchGroupRoles::LEADERSHIP, ResearchGroupRoles::ADMIN, ResearchGroupRoles::DATA);
             //  The ResearchGroup instance to which the subject refers.
             $objectResearchGroup = $object->getResearchGroup();
-            //  all of this User's  PersonResearchGroup relationships
-            $userPersonResearchGroups = $userPerson->getPersonResearchGroups();
-            foreach ($userPersonResearchGroups as $currentPersonResearchGroup) {
-                //  don't use the subject PersonResearchGroup $object as authorization to store the $object - ignore it
-                if ($currentPersonResearchGroup !== $object) {
-                    //   the ResearchGroup considered in this pass through the loop
-                    $currentResearchGroup = $currentPersonResearchGroup->getResearchGroup();
-                    //  Only consider ResearchGroups that are the same as the subject's ResearchGroup
-                    if ($currentResearchGroup->isSameTypeAndId($objectResearchGroup)) {
-                        //  the role name of the current PersonResearchGroup
-                        $currentRoleName = $currentPersonResearchGroup->getRole()->getName();
-                        // If the current PersonResearchGroup Role name is one of those in the $targetRoles return true.
-                        if (in_array($currentRoleName, $targetRoles)) {
-                            return true;
-                        }
-                    }
+            // Get all PersonResearchGroups associated with the ResearchGroup the object is associated with and
+            // filter out the one we are attempting to create.
+            $authPersonResearchGroups = $object->getResearchGroup()->getPersonResearchGroups()->filter(
+                function ($personResearchGroup) use ($object) {
+                    return ($personResearchGroup !== $object);
                 }
+            );
+            // If the user has one of the target roles, they can create the object.
+            if ($this->doesUserHaveRole($userPerson, $authPersonResearchGroups, $targetRoles)) {
+                return true;
             }
         }
         return false;
