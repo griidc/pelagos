@@ -107,7 +107,7 @@ class PersonResearchGroupVoter extends PelagosEntityVoter
             if ($this->doesUserHaveRole($userPerson, $authPersonResearchGroups, $targetRoles)) {
                 return true;
             }
-        } elseif ($attribute == self::CAN_DELETE) {
+        } elseif (in_array($attribute, array(self::CAN_EDIT, self::CAN_DELETE)) {
             $personDataRepositories = $object
                                           ->getResearchGroup()
                                           ->getFundingCycle()
