@@ -90,8 +90,8 @@ class PersonResearchGroupVoter extends PelagosEntityVoter
         //  Get the Person associated with this Account.
         $userPerson = $user->getPerson();
 
-        // Action: CAN_CREATE or CAN_DELETE  Research Group Role: LEADERSHIP, ADMIN or DATA
-        // If attribute is CAN_CREATE or CAN_DELETE and user role is one of Research Group LEADERSHIP, ADMIN or DATA
+        // Action: CAN_CREATE or CAN_DELETE  Role: LEADERSHIP, ADMIN or DATA
+        // If attribute is CAN_CREATE or CAN_DELETE and user role is one of LEADERSHIP, ADMIN or DATA
         // the user is authorized for the action.
         if (in_array($attribute, array(self::CAN_CREATE, self::CAN_DELETE))) {
             // Get all PersonResearchGroups for the $object's ResearchGroup but
