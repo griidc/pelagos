@@ -78,6 +78,7 @@ class PersonVoter extends PelagosEntityVoter
             // is associated with the user can edit the subject (Person).
             foreach ($objectDataRepositories as $objectDataRepository) {
                 foreach ($userPersonDataRepositories as $userPersonDataRepository) {
+                    //  Is the DataRepository in common? If so does the user have the needed role?
                     if ($objectDataRepository->isSameTypeAndId($userPersonDataRepository->getDataRepository()) &&
                         in_array($voterRoles, $userPersonDataRepository->getRole())
                     ) {
