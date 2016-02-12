@@ -367,7 +367,7 @@
             case "Update":
                 url = actionURL + "/" + entityId;
                 type = "PUT";
-                returnCode = 200;
+                returnCode = 204;
                 prefixPhrase = "Updated";
                 break;
             case "Delete":
@@ -397,10 +397,10 @@
                 contentType: "application/x-www-form-urlencoded; charset=UTF-8",
                 processData: false,
                 statusCode: {
-                    201: function(data) {
+                    201: function(data, textStatus, jqXHR) {
                         var currentURL = window.location.pathname;
                         var docTitle = document.title;
-                        var newID = data.id;
+                        var newID = jqXHR.getResponseHeader('X-Resource-Id');
                         var newURL = currentURL + "/" + newID;
                         var urlParts = currentURL.split('/');
                         // If an entity ID already exists, dont add another one.
@@ -412,7 +412,10 @@
                 success: function(data, textStatus, jqXHR) {
                     if (jqXHR.status === returnCode) {
                         title = "Success!";
-                        var newID = data.id;
+                        var newID = entityId;
+                        if (returnCode === 201) {
+                            newID = jqXHR.getResponseHeader('X-Resource-Id');
+                        }
                         message = prefixPhrase + " " + entityType + " successfully with ID:" + newID;
                         //$(form).fillForm(data);
                         $(form).hardenForm();
