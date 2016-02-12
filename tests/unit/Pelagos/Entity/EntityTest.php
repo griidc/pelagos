@@ -498,7 +498,6 @@ class EntityTest extends \PHPUnit_Framework_TestCase
     public function testResolveDateTimeBadDate()
     {
         $returnObj = $this->concreteEntity->resolveDateTime('meaningless string data');
-        $this->assertInstanceOf('\DateTime', $returnObj);
     }
 
     /**
@@ -522,7 +521,6 @@ class EntityTest extends \PHPUnit_Framework_TestCase
     public function testResolveDateBadDate()
     {
         $returnObj = $this->concreteEntity->resolveDate('meaningless string data');
-        $this->assertInstanceOf('\DateTime', $returnObj);
     }
 
     /**
