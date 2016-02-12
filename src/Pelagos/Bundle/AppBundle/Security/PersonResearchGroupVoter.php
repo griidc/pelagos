@@ -114,11 +114,11 @@ class PersonResearchGroupVoter extends PelagosEntityVoter
         // If attribute is CAN_DELETE and user role is MANAGER the user is authorized for the action.
         if ($attribute == self::CAN_DELETE) {
             $personDataRepositories = $object
-                ->getResearchGroup()
-                ->getFundingCycle()
-                ->getFundingOrganization()
-                ->getDataRepository()
-                ->getPersonDataRepositories();
+                                          ->getResearchGroup()
+                                          ->getFundingCycle()
+                                          ->getFundingOrganization()
+                                          ->getDataRepository()
+                                          ->getPersonDataRepositories();
             if ($this->doesUserHaveRole($userPerson, $personDataRepositories, array(DataRepositoryRoles::MANAGER))) {
                 return true;
             }
