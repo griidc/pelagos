@@ -17,7 +17,7 @@ use Pelagos\Entity\Person;
 class PersonVoter extends PelagosEntityVoter
 {
     /**
-     * Determines if the attribute and subject are supported by this voter.
+     * Determine if the attribute and subject are supported by this voter.
      *
      * @param string $attribute An attribute denoting an action.
      * @param mixed  $object    The subject of creation, deletion or change.
