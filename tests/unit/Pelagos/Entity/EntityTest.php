@@ -388,6 +388,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $updates = array(
             'creator' => 'new_creator',
             'modifier' => 'new_modifier',
+            'id' => '12345',
         );
         $this->concreteEntity->update($updates);
         $this->assertEquals(
@@ -397,6 +398,12 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(
             'new_modifier',
             $this->concreteEntity->getModifier()
+        );
+        // ID is not updateable so should still be null.  This
+        // was added to test so the logic that skips non-updatable
+        // properties could be tested.
+        $this->assertNull(
+            $this->concreteEntity->getId()
         );
     }
 
@@ -466,7 +473,76 @@ class EntityTest extends \PHPUnit_Framework_TestCase
      */
     public function testCheckDeletable()
     {
-        $rc = new \ReflectionClass('\Pelagos\Entity\Entity');
-        $this->assertTrue($rc->hasMethod('checkDeletable'));
+        $this->assertTrue(method_exists($this->concreteEntity, 'checkDeletable'));
+        $this->concreteEntity->checkDeletable();
+    }
+
+    /**
+     * Test Entity's resolveDateTime method with known good value.
+     *
+     * @return void
+     */
+    public function testResolveDateTime()
+    {
+        $returnObj = $this->concreteEntity->resolveDateTime('2015-11-04 15:11:31');
+        $this->assertInstanceOf('\DateTime', $returnObj);
+    }
+
+    /**
+     * Test Entity's resolveDateTime method with invalid data.
+     *
+     * @expectedException \Exception
+     *
+     * @return void
+     */
+    public function testResolveDateTimeBadDate()
+    {
+        $returnObj = $this->concreteEntity->resolveDateTime('meaningless string data');
+    }
+
+    /**
+     * Test Entity's resolveDate method with known good value.
+     *
+     * @return void
+     */
+    public function testResolveDate()
+    {
+        $returnObj = $this->concreteEntity->resolveDate('2015-11-04');
+        $this->assertInstanceOf('\DateTime', $returnObj);
+    }
+
+    /**
+     * Test Entity's resolveDate method with invalid data.
+     *
+     * @expectedException \Exception
+     *
+     * @return void
+     */
+    public function testResolveDateBadDate()
+    {
+        $returnObj = $this->concreteEntity->resolveDate('meaningless string data');
+    }
+
+    /**
+     * Test Entity's serializeDate method.
+     *
+     * @return void
+     */
+    public function testSerializeDate()
+    {
+        $returnStr = $this->concreteEntity->serializeDate($this->timeStamp);
+        $this->assertEquals($this->timeStamp->format('Y-m-d'), $returnStr);
+    }
+
+    /**
+     * Test Entity's propertyExists method.
+     *
+     * @return void
+     */
+    public function testPropertyExists()
+    {
+        $this->assertFalse($this->concreteEntity->propertyExists('not_a_property'));
+        // this is a known property in the test helper class, ConcreteEntity, which extends Entity.
+        $this->assertTrue($this->concreteEntity->propertyExists('name'));
     }
 }
