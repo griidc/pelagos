@@ -34,10 +34,19 @@ class PersonResearchGroupVoter extends PelagosEntityVoter
      */
     protected function supports($attribute, $object)
     {
+        // If the object is an EntityProperty.
+        if ($object instanceof EntityProperty) {
+            // If the property is not 'label' we abstain.
+            if ($object->getProperty() != 'label') {
+                return false;
+            }
+            // Make the Entity the object for further inspection.
+            $object = $object->getEntity();
+        }
         if (!$object instanceof PersonResearchGroup) {
             return false;
         }
-        if (!in_array($attribute, array(self::CAN_CREATE, self::CAN_DELETE))) {
+        if (!in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT, self::CAN_DELETE))) {
             return false;
         }
         // Only if the tree is as expected, vote.
@@ -89,6 +98,19 @@ class PersonResearchGroupVoter extends PelagosEntityVoter
 
         //  Get the Person associated with this Account.
         $userPerson = $user->getPerson();
+
+        // If the object is an EntityProperty
+        if ($object instanceof EntityProperty) {
+            // If attribute is CAN_EDIT and the property is 'label' and
+            // the Person associated with the Entity is the same as the authenticated user,
+            // the user is authorized for the action.
+            if (in_array($attribute, array(self::CAN_EDIT)) and
+                $object->getProperty() == 'label' and
+                $userPerson->isSameTypeAndId($object->getEntity()->getPerson())) {
+                return true;
+            }
+            return false;
+        }
 
         // Action: CAN_CREATE or CAN_DELETE  Role: LEADERSHIP, ADMIN or DATA
         // If attribute is CAN_CREATE or CAN_DELETE and user role is one of LEADERSHIP, ADMIN or DATA
