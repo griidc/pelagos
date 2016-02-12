@@ -32,8 +32,8 @@ class ResearchGroupVoter extends PelagosEntityVoter
             return false;
         }
 
-        // If this isn't a CAN_EDIT attribute, we cannot vote.
-        if (!in_array($attribute, array(self::CAN_EDIT))) {
+        // If the attribute isn't one of  CAN_EDIT or CAN_DELETE, we cannot vote.
+        if (!in_array($attribute, array(PelagosEntityVoter::CAN_EDIT, PelagosEntityVoter::CAN_DELETE))) {
             return false;
         }
 
@@ -80,21 +80,30 @@ class ResearchGroupVoter extends PelagosEntityVoter
         // Get the Person associated with this Account.
         $userPerson = $user->getPerson();
 
-        // These people are allowed to edit ResearchGroups.
-        if ($attribute == PelagosEntityVoter::CAN_EDIT) {
-            // Data Repository Person - Manager (aka DR-P/M)
+        // Action: CAN_EDIT or CAN_DELETE  Role: MANAGER
+        // If attribute is CAN_EDIT or CAN_DELETE and user role is MANAGER defined in PersonDataRepository
+        // the user is authorized for the action.
+        if (in_array($attribute, array(PelagosEntityVoter::CAN_EDIT, PelagosEntityVoter::CAN_DELETE))) {
+            // Get all of the PersonDataRepository objects associated with the DataRepository for this ResearchGroup.
             $personDataRepositories = $object
-                                          ->getFundingCycle()
-                                          ->getFundingOrganization()
-                                          ->getDataRepository()
-                                          ->getPersonDataRepositories();
+                ->getFundingCycle()
+                ->getFundingOrganization()
+                ->getDataRepository()
+                ->getPersonDataRepositories();
+            // If this user has the role Data Repository Person - Manager (aka DR-P/M)
             if ($this->doesUserHaveRole(
                 $userPerson,
                 $personDataRepositories,
                 array(DataRepositoryRoles::MANAGER)
-            )) {
+            )
+            ) {
                 return true;
             }
+        }
+        // Action: CAN_EDIT  Role: LEADERSHIP, ADMIN or DATA
+        // If attribute is CAN_EDIT and user role is one of LEADERSHIP, ADMIN, DATA  n PersonResearchGroup
+        // the user is authorized for the action.
+        if (in_array($attribute, array(PelagosEntityVoter::CAN_EDIT))) {
             // Research Group Person - Leadership, Admin, Data (aka DR-P/LAD)
             $personResearchGroups = $object->getPersonResearchGroups();
             // If user has one of ResearchGroupRole Leadership, Admin or Data they can edit the ResearchGroup object.
@@ -103,6 +112,7 @@ class ResearchGroupVoter extends PelagosEntityVoter
                 return true;
             }
         }
+        // The default is to not authorize.
         return false;
     }
 }
