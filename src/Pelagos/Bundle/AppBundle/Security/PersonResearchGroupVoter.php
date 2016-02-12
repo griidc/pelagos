@@ -90,24 +90,30 @@ class PersonResearchGroupVoter extends PelagosEntityVoter
         //  Get the Person associated with this Account.
         $userPerson = $user->getPerson();
 
-        // if attribute is CAN_CREATE check to see if this user has a role with sufficient authority.
-        if ($attribute == self::CAN_CREATE) {
-            // if the user has a PersonResearchGroup with a Role name that is one of [Leadership, Admin or Data]
-            // and that PersonResearchGroup's ResearchGroup matches the ResearchGroup of the $object (voter subject)
-            // the user can create (persist) the subject PersonResearchGroup ($object).
-            $targetRoles = array(ResearchGroupRoles::LEADERSHIP, ResearchGroupRoles::ADMIN, ResearchGroupRoles::DATA);
-            // Get all PersonResearchGroups associated with the ResearchGroup the object is associated with and
-            // filter out the one we are attempting to create.
+        // Action: CAN_CREATE or CAN_DELETE  Role: LEADERSHIP, ADMIN or DATA
+        // If attribute is CAN_CREATE or CAN_DELETE and user role is one of LEADERSHIP, ADMIN or DATA
+        // the user is authorized for the action.
+        if (in_array($attribute, array(self::CAN_CREATE, self::CAN_DELETE))) {
+            // Get all PersonResearchGroups for the $object's ResearchGroup but
+            // exclude the one we are attempting to create.
             $authPersonResearchGroups = $object->getResearchGroup()->getPersonResearchGroups()->filter(
+                //  anonymous function to exclude the subject from the list of PersonResearchGroups
                 function ($personResearchGroup) use ($object) {
                     return ($personResearchGroup !== $object);
                 }
+                // end of anonymous function
             );
-            // If the user has one of the target roles, they can create the object.
+            // If the user has a PersonResearchGroup with a Role that is one of [Leadership, Admin or Data]
+            // the user can create (persist) the subject PersonResearchGroup ($object).
+            $targetRoles = array(ResearchGroupRoles::LEADERSHIP, ResearchGroupRoles::ADMIN, ResearchGroupRoles::DATA);
             if ($this->doesUserHaveRole($userPerson, $authPersonResearchGroups, $targetRoles)) {
                 return true;
             }
-        } elseif (in_array($attribute, array(self::CAN_EDIT, self::CAN_DELETE)) {
+        }
+        // Action: CAN_EDIT or CAN_DELETE  Role: Data Repository MANAGER
+        // If attribute is CAN_EDIT or CAN_DELETE and user role is Data Repository MANAGER
+        // the user is authorized for the action.
+        if (in_array($attribute, array(self::CAN_EDIT, self::CAN_DELETE)) {
             $personDataRepositories = $object
                                           ->getResearchGroup()
                                           ->getFundingCycle()
