@@ -5,7 +5,6 @@ namespace Pelagos\Bundle\AppBundle\Controller\Api;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\FormInterface;
 
-use FOS\RestBundle\Util\Codes;
 use FOS\RestBundle\Controller\Annotations as Rest;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
@@ -19,7 +18,7 @@ use Pelagos\Bundle\AppBundle\Form\FundingCycleType;
 class FundingCycleController extends EntityController
 {
     /**
-     * Get a collection of funding cycles.
+     * Get a collection of Funding Cycles.
      *
      * @param Request $request The request object.
      *
@@ -30,7 +29,8 @@ class FundingCycleController extends EntityController
      *   },
      *   output = "array<Pelagos\Entity\FundingCycle>",
      *   statusCodes = {
-     *     200 = "Returned when successful",
+     *     200 = "The requested collection of Funding Cycles was successfully retrieved.",
+     *     500 = "An internal error has occurred.",
      *   }
      * )
      *
@@ -46,16 +46,17 @@ class FundingCycleController extends EntityController
     }
 
     /**
-     * Get a single funding cycle for a given id.
+     * Get a single Funding Cycle for a given id.
      *
-     * @param integer $id The id of the funding cycle to return.
+     * @param integer $id The id of the Funding Cycle to return.
      *
      * @ApiDoc(
      *   section = "Funding Cycles",
      *   output = "Pelagos\Entity\FundingCycle",
      *   statusCodes = {
-     *     200 = "Returned when successful",
-     *     404 = "Returned when the funding cycle is not found"
+     *     200 = "The requested Funding Cycle was successfully retrieved.",
+     *     404 = "The requested Funding Cycle was not found.",
+     *     500 = "An internal error has occurred.",
      *   }
      * )
      *
@@ -69,31 +70,27 @@ class FundingCycleController extends EntityController
     }
 
     /**
-     * Create a new funding cycle from the submitted data.
+     * Create a new Funding Cycle from the submitted data.
      *
      * @param Request $request The request object.
      *
      * @ApiDoc(
      *   section = "Funding Cycles",
-     *   input = {
-     *     "class" = "Pelagos\Bundle\AppBundle\Form\FundingCycleType",
-     *     "name" = ""
-     *   },
-     *   output = "Pelagos\Entity\FundingCycle",
+     *   input = {"class" = "Pelagos\Bundle\AppBundle\Form\FundingCycleType", "name" = ""},
      *   statusCodes = {
-     *     201 = "Returned when successful",
-     *     400 = "Returned when the form has errors"
+     *     201 = "The Funding Cycle was successfully created.",
+     *     400 = "The request could not be processed due to validation or other errors.",
+     *     403 = "The authenticated user was not authorized to create the Funding Cycle.",
+     *     500 = "An internal error has occurred.",
      *   }
      * )
      *
-     * @Rest\View(
-     *   statusCode = Codes::HTTP_CREATED
-     * )
-     *
-     * @return FundingCycle|FormInterface
+     * @return Response A Response object with an empty body, a "created" status code,
+     *                  and the location of the new Funding Cycle in the Location header.
      */
     public function postAction(Request $request)
     {
-        return $this->handlePost(FundingCycleType::class, FundingCycle::class, $request);
+        $fundingCycle = $this->handlePost(FundingCycleType::class, FundingCycle::class, $request);
+        return $this->makeCreatedResponse('pelagos_api_funding_cycles_get', $fundingCycle->getId());
     }
 }

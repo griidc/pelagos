@@ -11,8 +11,6 @@ use Symfony\Component\Form\FormInterface;
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Util\Codes;
 
-use Pelagos\Bundle\AppBundle\Exception\InvalidFormException;
-
 use Pelagos\Entity\Entity;
 use Pelagos\Entity\Account;
 
@@ -75,7 +73,7 @@ abstract class EntityController extends FOSRestController
      * @param string  $entityClass The type of entity.
      * @param Request $request     The request object.
      *
-     * @return Entity|FormInterface
+     * @return Entity The newly created entity.
      */
     public function handlePost($formType, $entityClass, Request $request)
     {
@@ -86,11 +84,7 @@ abstract class EntityController extends FOSRestController
             $creator = $user->getUsername();
         }
         $entity->setCreator($creator);
-        try {
-            $this->processForm($formType, $entity, $request, 'POST');
-        } catch (InvalidFormException $exception) {
-            return $exception->getForm();
-        }
+        $this->processForm($formType, $entity, $request, 'POST');
         $this->container->get('pelagos.entity.handler')->create($entity);
         return $entity;
     }
@@ -104,7 +98,7 @@ abstract class EntityController extends FOSRestController
      * @param Request $request     The request object.
      * @param string  $method      The HTTP method (PUT or PATCH).
      *
-     * @return Entity|FormInterface
+     * @return Entity The updated entity.
      */
     public function handleUpdate($formType, $entityClass, $id, Request $request, $method)
     {
@@ -115,11 +109,7 @@ abstract class EntityController extends FOSRestController
             $modifier = $user->getUsername();
         }
         $entity->setModifier($modifier);
-        try {
-            $this->processForm($formType, $entity, $request, $method);
-        } catch (InvalidFormException $exception) {
-            return $exception->getForm();
-        }
+        $this->processForm($formType, $entity, $request, $method);
         $this->container->get('pelagos.entity.handler')->update($entity);
         return $entity;
     }
@@ -130,13 +120,13 @@ abstract class EntityController extends FOSRestController
      * @param string  $entityClass The type of entity.
      * @param integer $id          The id of the entity.
      *
-     * @return Response A Response object with an empty body and a "no content" status code.
+     * @return Entity The deleted entity.
      */
     public function handleDelete($entityClass, $id)
     {
         $entity = $this->handleGetOne($entityClass, $id);
         $this->container->get('pelagos.entity.handler')->delete($entity);
-        return new Response(null, Codes::HTTP_NO_CONTENT);
+        return $entity;
     }
 
     /**
@@ -148,7 +138,7 @@ abstract class EntityController extends FOSRestController
      * @param string  $method   The HTTP method.
      *
      * @throws BadRequestHttpException When no valid parameters are passed.
-     * @throws InvalidFormException    When invalid data is submitted.
+     * @throws BadRequestHttpException When invalid data is submitted.
      *
      * @return Entity The updated entity.
      */
@@ -162,7 +152,9 @@ abstract class EntityController extends FOSRestController
             );
         }
         if (!$form->isValid()) {
-            throw new InvalidFormException('Invalid submitted data', $form);
+            throw new BadRequestHttpException(
+                (string) $form->getErrors(true, true)
+            );
         }
         foreach ($request->files->all() as $property => $file) {
             if (isset($file)) {
@@ -301,5 +293,46 @@ abstract class EntityController extends FOSRestController
         $entity->$setter($request->getContent());
         $this->container->get('pelagos.entity.handler')->update($entity);
         return new Response(null, Codes::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * Creates and returns a Response object that indicates successful creation of a new resource.
+     *
+     * @param string  $locationRouteName The name of the route to put in the Location header.
+     * @param integer $resourceId        The id of the newly created resource.
+     *
+     * @return Response A Response object with an empty body, a "created" status code,
+     *                  and the location of the new Person to Research Group Association in the Location header.
+     */
+    protected function makeCreatedResponse($locationRouteName, $resourceId)
+    {
+        return new Response(
+            null,
+            Codes::HTTP_CREATED,
+            array(
+                'Content-Type' => 'application/x-empty',
+                'Location' => $this->generateUrl(
+                    $locationRouteName,
+                    ['id' => $resourceId]
+                ),
+                'X-Resource-Id' => $resourceId,
+            )
+        );
+    }
+
+    /**
+     * Creates and returns a Response object with no content.
+     *
+     * @return Response A Response object with an empty body and a "no content" status code.
+     */
+    protected function makeNoContentResponse()
+    {
+        return new Response(
+            null,
+            Codes::HTTP_NO_CONTENT,
+            array(
+                'Content-Type' => 'application/x-empty',
+            )
+        );
     }
 }
