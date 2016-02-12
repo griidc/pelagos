@@ -79,7 +79,7 @@ class PersonVoter extends PelagosEntityVoter
             foreach ($objectDataRepositories as $objectDataRepository) {
                 foreach ($userPersonDataRepositories as $userPersonDataRepository) {
                     if ($objectDataRepository->isSameTypeAndId($userPersonDataRepository->getDataRepository()) &&
-                        in_array($voterRoles,$userPersonDataRepository->getRole())
+                        in_array($voterRoles, $userPersonDataRepository->getRole())
                     ) {
                         return true;
                     }
