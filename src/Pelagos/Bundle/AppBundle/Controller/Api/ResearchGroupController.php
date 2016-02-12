@@ -181,6 +181,28 @@ class ResearchGroupController extends EntityController
     }
 
     /**
+     * Delete a Research Group.
+     *
+     * @param integer $id The id of the Research Group to delete.
+     *
+     * @ApiDoc(
+     *   section = "Research Groups",
+     *   statusCodes = {
+     *     204 = "The Research Group was successfully deleted.",
+     *     404 = "The requested Research Group was not found.",
+     *     500 = "An internal error has occurred.",
+     *   }
+     * )
+     *
+     * @return Response A response object with an empty body and a "no content" status code.
+     */
+    public function deleteAction($id)
+    {
+        $this->handleDelete(ResearchGroup::class, $id);
+        return $this->makeNoContentResponse();
+    }
+
+    /**
      * Get the logo for a research group.
      *
      * @param integer $id The id of the research group to get the logo for.
