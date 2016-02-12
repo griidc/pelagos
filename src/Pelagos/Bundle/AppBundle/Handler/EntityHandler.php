@@ -12,6 +12,7 @@ use Doctrine\Common\Collections\Collection;
 
 use Pelagos\Entity\Entity;
 use Pelagos\Bundle\AppBundle\Security\PelagosEntityVoter;
+use Pelagos\Bundle\AppBundle\Security\EntityProperty;
 
 /**
  * A handler for entities.
@@ -124,9 +125,17 @@ class EntityHandler
     public function update(Entity $entity)
     {
         if (!$this->authorizationChecker->isGranted(PelagosEntityVoter::CAN_EDIT, $entity)) {
-            throw new AccessDeniedException(
-                'You do not have sufficient privileges to edit this ' . $entity::FRIENDLY_NAME . '.'
-            );
+            $unitOfWork = $this->entityManager->getUnitOfWork();
+            $unitOfWork->computeChangeSets();
+            $changeSet = $unitOfWork->getEntityChangeSet($entity);
+            foreach (array_keys($changeSet) as $property) {
+                $entityProperty = new EntityProperty($entity, $property);
+                if (!$this->authorizationChecker->isGranted(PelagosEntityVoter::CAN_EDIT, $entityProperty)) {
+                    throw new AccessDeniedException(
+                        'You do not have sufficient privileges to edit this ' . $entity::FRIENDLY_NAME . '.'
+                    );
+                }
+            }
         }
         $this->entityManager->persist($entity);
         $this->entityManager->flush($entity);
