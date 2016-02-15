@@ -8,6 +8,7 @@ use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
+use Pelagos\Bundle\AppBundle\DataFixtures\ORM\FundingOrganizationRoles;
 use Pelagos\Bundle\AppBundle\DataFixtures\ORM\ResearchGroupRoles;
 use Pelagos\Bundle\AppBundle\Security\ResearchGroupVoter;
 use Pelagos\Entity\ResearchGroup;
@@ -26,11 +27,58 @@ class ResearchGroupVoterTest extends \PHPUnit_Framework_TestCase
     protected $researchGroupVoter;
 
     /**
+     * Roles and the permissions they should have.
+     *
+     * @var array
+     */
+    protected $roles = array(
+        'DataRepository' => array(
+            DataRepositoryRoles::MANAGER => array(
+                ResearchGroupVoter::CAN_EDIT => VoterInterface::ACCESS_GRANTED,
+            ),
+            DataRepositoryRoles::ENGINEER => array(
+                ResearchGroupVoter::CAN_EDIT => VoterInterface::ACCESS_DENIED,
+            ),
+            DataRepositoryRoles::SUPPORT => array(
+                ResearchGroupVoter::CAN_EDIT => VoterInterface::ACCESS_DENIED,
+            ),
+            DataRepositoryRoles::SME => array(
+                ResearchGroupVoter::CAN_EDIT => VoterInterface::ACCESS_DENIED,
+            ),
+        ),
+        'FundingOrganization' => array(
+            FundingOrganizationRoles::LEADERSHIP => array(
+                ResearchGroupVoter::CAN_EDIT => VoterInterface::ACCESS_DENIED,
+            ),
+            FundingOrganizationRoles::ADVISORY => array(
+                ResearchGroupVoter::CAN_EDIT => VoterInterface::ACCESS_DENIED,
+            ),
+            FundingOrganizationRoles::ADMIN => array(
+                ResearchGroupVoter::CAN_EDIT => VoterInterface::ACCESS_DENIED,
+            ),
+        ),
+        'ResearchGroup' => array(
+            ResearchGroupRoles::LEADERSHIP => array(
+                ResearchGroupVoter::CAN_EDIT => VoterInterface::ACCESS_GRANTED,
+            ),
+            ResearchGroupRoles::ADMIN => array(
+                ResearchGroupVoter::CAN_EDIT => VoterInterface::ACCESS_GRANTED,
+            ),
+            ResearchGroupRoles::DATA => array(
+                ResearchGroupVoter::CAN_EDIT => VoterInterface::ACCESS_GRANTED,
+            ),
+            ResearchGroupRoles::RESEARCHER => array(
+                ResearchGroupVoter::CAN_EDIT => VoterInterface::ACCESS_DENIED,
+            ),
+        ),
+    );
+
+    /**
      * An array of mock tokens for Persons with various roles.
      *
      * @var array
      */
-    protected $mockTokens;
+    protected $mockTokens = array();
 
     /**
      * Property to hold a mock Research Group for testing.
@@ -38,13 +86,6 @@ class ResearchGroupVoterTest extends \PHPUnit_Framework_TestCase
      * @var ResearchGroup
      */
     protected $mockResearchGroup;
-
-    /**
-     * Property to hold a second mock Research Group for testing.
-     *
-     * @var ResearchGroup
-     */
-    protected $mockResearchGroup2;
 
     /**
      * Set up run for each test.
@@ -55,28 +96,12 @@ class ResearchGroupVoterTest extends \PHPUnit_Framework_TestCase
     {
         $this->researchGroupVoter = new ResearchGroupVoter;
 
-        $roles = array(
-            'DataRepository' => array(
-                DataRepositoryRoles::MANAGER,
-                DataRepositoryRoles::ENGINEER,
-                DataRepositoryRoles::SUPPORT,
-                DataRepositoryRoles::SME,
-            ),
-            'ResearchGroup' => array(
-                ResearchGroupRoles::LEADERSHIP,
-                ResearchGroupRoles::ADMIN,
-                ResearchGroupRoles::DATA,
-                ResearchGroupRoles::RESEARCHER,
-            ),
-        );
-
-        $this->mockTokens = array();
         $personAssociations = array();
 
-        foreach ($roles as $type => $roleNames) {
+        foreach ($this->roles as $type => $roleNames) {
             $this->mockTokens[$type] = array();
             $personAssociations[$type] = array();
-            foreach ($roleNames as $roleName) {
+            foreach (array_keys($roleNames) as $roleName) {
                 $this->mockTokens[$type][$roleName] = $this->createMockToken();
                 $personAssociations[$type][] = $this->createMockPersonAssociation(
                     $type,
@@ -99,6 +124,9 @@ class ResearchGroupVoterTest extends \PHPUnit_Framework_TestCase
                         'getFundingOrganization' => \Mockery::mock(
                             '\Pelagos\Entity\FundingOrganization',
                             array(
+                                'getPersonFundingOrganizations' => new ArrayCollection(
+                                    $personAssociations['FundingOrganization']
+                                ),
                                 'getDataRepository' => \Mockery::mock(
                                     '\Pelagos\Entity\DataRepository',
                                     array(
@@ -113,25 +141,34 @@ class ResearchGroupVoterTest extends \PHPUnit_Framework_TestCase
                 ),
             )
         );
+    }
 
-        // Create a mock Token for a Person that will be given the role of Research Group Leadership.
-        $this->mockTokens['ResearchGroup2'][ResearchGroupRoles::LEADERSHIP] = $this->createMockToken();
-
-        $this->mockResearchGroup2 = \Mockery::mock(
-            '\Pelagos\Entity\ResearchGroup',
-            array(
-                'getPersonResearchGroups' => new ArrayCollection(
-                    array(
-                        $this->createMockPersonAssociation(
-                            'ResearchGroup',
-                            $this->mockTokens['ResearchGroup2'][ResearchGroupRoles::LEADERSHIP],
-                            ResearchGroupRoles::LEADERSHIP
-                        ),
-                    )
-                ),
-                'getFundingCycle' => $this->mockResearchGroup->getFundingCycle(),
-            )
+    /**
+     * Test that all roles for associated entities can do or not do what they should be able to.
+     *
+     * @return void
+     */
+    public function testAssociatedRoles()
+    {
+        $permissionMap = array(
+            VoterInterface::ACCESS_GRANTED => 'should',
+            VoterInterface::ACCESS_DENIED => 'should not',
         );
+
+        foreach ($this->roles as $type => $roleNames) {
+            foreach ($roleNames as $roleName => $permissions) {
+                $this->assertEquals(
+                    $permissions[ResearchGroupVoter::CAN_EDIT],
+                    $this->researchGroupVoter->vote(
+                        $this->mockTokens[$type][$roleName],
+                        $this->mockResearchGroup,
+                        array(ResearchGroupVoter::CAN_EDIT)
+                    ),
+                    "$type $roleName " . $permissionMap[$permissions[ResearchGroupVoter::CAN_EDIT]] .
+                    ' be allowed to edit a Research Group'
+                );
+            }
+        }
     }
 
     /**
@@ -219,108 +256,6 @@ class ResearchGroupVoterTest extends \PHPUnit_Framework_TestCase
             VoterInterface::ACCESS_DENIED,
             $this->researchGroupVoter->vote(
                 $this->createMockToken(),
-                $this->mockResearchGroup,
-                array(ResearchGroupVoter::CAN_EDIT)
-            )
-        );
-    }
-
-    /**
-     * Test that the voter grants access for CAN_EDIT to Data Repository Managers.
-     *
-     * @return void
-     */
-    public function testGrantCanEditToDataRepositoryManager()
-    {
-        $this->assertEquals(
-            VoterInterface::ACCESS_GRANTED,
-            $this->researchGroupVoter->vote(
-                $this->mockTokens['DataRepository'][DataRepositoryRoles::MANAGER],
-                $this->mockResearchGroup,
-                array(ResearchGroupVoter::CAN_EDIT)
-            )
-        );
-    }
-
-    /**
-     * Test that the voter grants access for CAN_EDIT to Research Group Leadership.
-     *
-     * @return void
-     */
-    public function testGrantCanEditToResearchGroupLeadership()
-    {
-        $this->assertEquals(
-            VoterInterface::ACCESS_GRANTED,
-            $this->researchGroupVoter->vote(
-                $this->mockTokens['ResearchGroup'][ResearchGroupRoles::LEADERSHIP],
-                $this->mockResearchGroup,
-                array(ResearchGroupVoter::CAN_EDIT)
-            )
-        );
-    }
-
-    /**
-     * Test that the voter grants access for CAN_EDIT to Research Group Administration.
-     *
-     * @return void
-     */
-    public function testGrantCanEditToResearchGroupAdmin()
-    {
-        $this->assertEquals(
-            VoterInterface::ACCESS_GRANTED,
-            $this->researchGroupVoter->vote(
-                $this->mockTokens['ResearchGroup'][ResearchGroupRoles::ADMIN],
-                $this->mockResearchGroup,
-                array(ResearchGroupVoter::CAN_EDIT)
-            )
-        );
-    }
-
-    /**
-     * Test that the voter grants access for CAN_EDIT to Research Group Data Managers.
-     *
-     * @return void
-     */
-    public function testGrantCanEditToResearchGroupData()
-    {
-        $this->assertEquals(
-            VoterInterface::ACCESS_GRANTED,
-            $this->researchGroupVoter->vote(
-                $this->mockTokens['ResearchGroup'][ResearchGroupRoles::DATA],
-                $this->mockResearchGroup,
-                array(ResearchGroupVoter::CAN_EDIT)
-            )
-        );
-    }
-
-    /**
-     * Test that the voter denies access for CAN_EDIT to Research Group Researchers.
-     *
-     * @return void
-     */
-    public function testDenyCanEditToOtherResearchGroupResearcher()
-    {
-        $this->assertEquals(
-            VoterInterface::ACCESS_DENIED,
-            $this->researchGroupVoter->vote(
-                $this->mockTokens['ResearchGroup'][ResearchGroupRoles::RESEARCHER],
-                $this->mockResearchGroup,
-                array(ResearchGroupVoter::CAN_EDIT)
-            )
-        );
-    }
-
-    /**
-     * Test that the voter denies access for CAN_EDIT to Research Group Leadership of another Research Group.
-     *
-     * @return void
-     */
-    public function testDenyCanEditToOtherResearchGroupLeadership()
-    {
-        $this->assertEquals(
-            VoterInterface::ACCESS_DENIED,
-            $this->researchGroupVoter->vote(
-                $this->mockTokens['ResearchGroup2'][ResearchGroupRoles::LEADERSHIP],
                 $this->mockResearchGroup,
                 array(ResearchGroupVoter::CAN_EDIT)
             )
