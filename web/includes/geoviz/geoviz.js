@@ -92,7 +92,13 @@ function GeoViz()
                     //console.log("Map says: " + e.feature.id + " clicked on " + e.feature.layer.name + " udi:" + e.feature.attributes["udi"]);
                     jQuery(mapDiv).trigger('clickFeature',{"featureID":e.feature.id,"attributes":e.feature.attributes});
                 }
-            }
+            },
+            layers: [
+                new OpenLayers.Layer.Google(
+                    "Google Satellite",
+                    {type: google.maps.MapTypeId.SATELLITE, numZoomLevels: 22}
+                )
+            ]
         });
         
         if (Options.staticMap)
@@ -371,7 +377,9 @@ function GeoViz()
             google.maps.event.addListener(google_hybrid.mapObject, "idle", function() {
             console.log("Google Map Idle");
      
-            setTimeout( function() { 
+            setTimeout( function() {
+                // Hotfix to allow Hybrid map being loaded with New Google API (15 Feb 2016)
+                map.setBaseLayer(google_hybrid);
                 console.log("Map is Ready");  
                 jQuery(mapDiv).trigger('imready',mapDiv);
                 }
