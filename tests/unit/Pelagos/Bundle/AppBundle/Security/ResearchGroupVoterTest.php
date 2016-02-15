@@ -34,40 +34,51 @@ class ResearchGroupVoterTest extends \PHPUnit_Framework_TestCase
     protected $roles = array(
         'DataRepository' => array(
             DataRepositoryRoles::MANAGER => array(
+                ResearchGroupVoter::CAN_CREATE => VoterInterface::ACCESS_ABSTAIN,
                 ResearchGroupVoter::CAN_EDIT => VoterInterface::ACCESS_GRANTED,
             ),
             DataRepositoryRoles::ENGINEER => array(
+                ResearchGroupVoter::CAN_CREATE => VoterInterface::ACCESS_ABSTAIN,
                 ResearchGroupVoter::CAN_EDIT => VoterInterface::ACCESS_DENIED,
             ),
             DataRepositoryRoles::SUPPORT => array(
+                ResearchGroupVoter::CAN_CREATE => VoterInterface::ACCESS_ABSTAIN,
                 ResearchGroupVoter::CAN_EDIT => VoterInterface::ACCESS_DENIED,
             ),
             DataRepositoryRoles::SME => array(
+                ResearchGroupVoter::CAN_CREATE => VoterInterface::ACCESS_ABSTAIN,
                 ResearchGroupVoter::CAN_EDIT => VoterInterface::ACCESS_DENIED,
             ),
         ),
         'FundingOrganization' => array(
             FundingOrganizationRoles::LEADERSHIP => array(
+                ResearchGroupVoter::CAN_CREATE => VoterInterface::ACCESS_ABSTAIN,
                 ResearchGroupVoter::CAN_EDIT => VoterInterface::ACCESS_DENIED,
             ),
             FundingOrganizationRoles::ADVISORY => array(
+                ResearchGroupVoter::CAN_CREATE => VoterInterface::ACCESS_ABSTAIN,
                 ResearchGroupVoter::CAN_EDIT => VoterInterface::ACCESS_DENIED,
             ),
             FundingOrganizationRoles::ADMIN => array(
+                ResearchGroupVoter::CAN_CREATE => VoterInterface::ACCESS_ABSTAIN,
                 ResearchGroupVoter::CAN_EDIT => VoterInterface::ACCESS_DENIED,
             ),
         ),
         'ResearchGroup' => array(
             ResearchGroupRoles::LEADERSHIP => array(
+                ResearchGroupVoter::CAN_CREATE => VoterInterface::ACCESS_ABSTAIN,
                 ResearchGroupVoter::CAN_EDIT => VoterInterface::ACCESS_GRANTED,
             ),
             ResearchGroupRoles::ADMIN => array(
+                ResearchGroupVoter::CAN_CREATE => VoterInterface::ACCESS_ABSTAIN,
                 ResearchGroupVoter::CAN_EDIT => VoterInterface::ACCESS_GRANTED,
             ),
             ResearchGroupRoles::DATA => array(
+                ResearchGroupVoter::CAN_CREATE => VoterInterface::ACCESS_ABSTAIN,
                 ResearchGroupVoter::CAN_EDIT => VoterInterface::ACCESS_GRANTED,
             ),
             ResearchGroupRoles::RESEARCHER => array(
+                ResearchGroupVoter::CAN_CREATE => VoterInterface::ACCESS_ABSTAIN,
                 ResearchGroupVoter::CAN_EDIT => VoterInterface::ACCESS_DENIED,
             ),
         ),
@@ -151,22 +162,24 @@ class ResearchGroupVoterTest extends \PHPUnit_Framework_TestCase
     public function testAssociatedRoles()
     {
         $permissionMap = array(
-            VoterInterface::ACCESS_GRANTED => 'should',
-            VoterInterface::ACCESS_DENIED => 'should not',
+            VoterInterface::ACCESS_GRANTED => 'allow',
+            VoterInterface::ACCESS_DENIED => 'deny',
+            VoterInterface::ACCESS_ABSTAIN => 'abstain',
         );
 
         foreach ($this->roles as $type => $roleNames) {
             foreach ($roleNames as $roleName => $permissions) {
-                $this->assertEquals(
-                    $permissions[ResearchGroupVoter::CAN_EDIT],
-                    $this->researchGroupVoter->vote(
-                        $this->mockTokens[$type][$roleName],
-                        $this->mockResearchGroup,
-                        array(ResearchGroupVoter::CAN_EDIT)
-                    ),
-                    "$type $roleName " . $permissionMap[$permissions[ResearchGroupVoter::CAN_EDIT]] .
-                    ' be allowed to edit a Research Group'
-                );
+                foreach ($permissions as $permission => $expected) {
+                    $this->assertEquals(
+                        $expected,
+                        $this->researchGroupVoter->vote(
+                            $this->mockTokens[$type][$roleName],
+                            $this->mockResearchGroup,
+                            array($permission)
+                        ),
+                        "For \"$type $roleName $permission\" expected: " . $permissionMap[$expected]
+                    );
+                }
             }
         }
     }
