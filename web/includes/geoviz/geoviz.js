@@ -51,17 +51,25 @@ function GeoViz()
         
         mapOptions = Options;
         
-        google_hybrid = new OpenLayers.Layer.Google('Google Hybrid Map', 
+        google_hybrid = new OpenLayers.Layer.Google('Google Hybrid Map',
         {
             type: google.maps.MapTypeId.HYBRID,
             numZoomLevels: googleZoomLevel,
             sphericalMercator: true,
             displayInLayerSwitcher: true
         });
+
+        google_sat = new OpenLayers.Layer.Google('Google BaseMap',
+        {
+            type: google.maps.MapTypeId.SATELLITE,
+            numZoomLevels: 22,
+            sphericalMercator: true,
+            displayInLayerSwitcher: true
+        });
         
         map = new OpenLayers.Map( 
         {
-            layers: [google_hybrid],
+            layers: [google_sat, google_hybrid],
             center: new OpenLayers.LonLat(lon, lat).transform('EPSG:4326', 'EPSG:900913'),
             zoom: zoom,
             div: DIV,
@@ -369,14 +377,16 @@ function GeoViz()
             console.log("Google Tiles Loaded");
             google.maps.event.clearListeners(google_hybrid.mapObject, 'tilesloaded');
             google.maps.event.addListener(google_hybrid.mapObject, "idle", function() {
-            console.log("Google Map Idle");
-     
-            setTimeout( function() { 
-                console.log("Map is Ready");  
-                jQuery(mapDiv).trigger('imready',mapDiv);
-                }
-            , 300);
-            google.maps.event.clearListeners(google_hybrid.mapObject, 'idle');
+                console.log("Google Map Idle");
+
+                setTimeout( function() {
+                    // Hotfix to allow Hybrid map being loaded with New Google API (15 Feb 2016)
+                    map.setBaseLayer(google_hybrid);
+                    console.log("Map is Ready");
+                    jQuery(mapDiv).trigger('imready',mapDiv);
+                    }
+                , 100);
+                google.maps.event.clearListeners(google_hybrid.mapObject, 'idle');
             });
         });
         
