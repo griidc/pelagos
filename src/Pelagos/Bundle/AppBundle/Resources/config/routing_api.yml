@@ -15,3 +15,9 @@ person_research_groups:
     resource: Pelagos\Bundle\AppBundle\Controller\Api\PersonResearchGroupController
     name_prefix: person_research_groups_
     prefix: person_research_groups
+
+people:
+    type: rest
+    resource: Pelagos\Bundle\AppBundle\Controller\Api\PersonController
+    name_prefix: people_
+    prefix: people
