@@ -37,7 +37,7 @@ class PersonResearchGroupVoter extends PelagosEntityVoter
         if (!$object instanceof PersonResearchGroup) {
             return false;
         }
-        if (!in_array($attribute, array(self::CAN_CREATE, self::CAN_DELETE))) {
+        if (!in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT, self::CAN_DELETE))) {
             return false;
         }
         // Only if the tree is as expected, vote.
@@ -90,10 +90,12 @@ class PersonResearchGroupVoter extends PelagosEntityVoter
         //  Get the Person associated with this Account.
         $userPerson = $user->getPerson();
 
-        // Action: CAN_CREATE or CAN_DELETE  Role: LEADERSHIP, ADMIN or DATA
-        // If attribute is CAN_CREATE or CAN_DELETE and user role is one of LEADERSHIP, ADMIN or DATA
-        // the user is authorized for the action.
-        if (in_array($attribute, array(self::CAN_CREATE, self::CAN_DELETE))) {
+        // Action: CAN_CREATE, CAN_EDIT, or CAN_DELETE
+        // Role Type: Research Group
+        // Roles: LEADERSHIP, ADMIN or DATA
+        // If attribute is CAN_CREATE, CAN_EDIT, or CAN_DELETE and user role is one of
+        // Research Group LEADERSHIP, ADMIN or DATA, the user is authorized for the action.
+        if (in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT, self::CAN_DELETE))) {
             // Get all PersonResearchGroups for the $object's ResearchGroup but
             // exclude the one we are attempting to create.
             $authPersonResearchGroups = $object->getResearchGroup()->getPersonResearchGroups()->filter(
@@ -110,9 +112,10 @@ class PersonResearchGroupVoter extends PelagosEntityVoter
                 return true;
             }
         }
-        // Action: CAN_DELETE  Role: MANAGER
-        // If attribute is CAN_DELETE and user role is MANAGER the user is authorized for the action.
-        if ($attribute == self::CAN_DELETE) {
+        // Action: CAN_EDIT or CAN_DELETE  Role: Data Repository MANAGER
+        // If attribute is CAN_EDIT or CAN_DELETE and user role is Data Repository MANAGER
+        // the user is authorized for the action.
+        if (in_array($attribute, array(self::CAN_EDIT, self::CAN_DELETE))) {
             $personDataRepositories = $object
                                           ->getResearchGroup()
                                           ->getFundingCycle()
