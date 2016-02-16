@@ -1,0 +1,68 @@
+{% extends "PelagosAppBundle::layout.html.twig" %}
+
+{% block head %}
+    {{
+        add_library (
+            [
+                'ui.dialog'
+            ]
+        )
+    }}
+
+    {{
+        add_css (
+            [
+                '//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css',
+                '//cdn.datatables.net/select/1.0.1/css/select.dataTables.min.css'
+            ]
+        )
+    }}
+
+    {% stylesheets  '@PelagosAppBundle/Resources/public/css/entity.css' %}
+        {{ add_css(asset_url) }}
+    {% endstylesheets  %}
+
+    {{
+        add_js(
+            [
+                '//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js',
+                '//cdn.datatables.net/select/1.0.1/js/dataTables.select.min.js'
+            ]
+        )
+    }}
+
+    {% javascripts '@PelagosAppBundle/Resources/public/js/common.js' %}
+        {{ add_js(asset_url) }}
+    {% endjavascripts %}
+
+    {% javascripts '@PelagosAppBundle/Resources/public/js/entityList.js' %}
+        {{ add_js(asset_url) }}
+    {% endjavascripts %}
+
+    {% javascripts '@PelagosAppBundle/Resources/public/js/ResearchGroup.js' %}
+        {{ add_js(asset_url) }}
+    {% endjavascripts %}
+
+    {{ add_js("
+        var pelagosBasePath = 'https://proteus.tamucc.edu/pelagos/dev/mwilliamson';
+        ",
+        'inline')
+    }}
+{% endblock %}
+
+{% block body %}
+Hello
+<table class="entityTable stripe" width="100%" entityType="{{entityType}}">
+    <thead>
+        <tr>
+
+        </tr>
+    </thead>
+    <tfoot>
+        <tr>
+
+        </tr>
+    </tfoot>
+</table>
+{% endblock %}
+

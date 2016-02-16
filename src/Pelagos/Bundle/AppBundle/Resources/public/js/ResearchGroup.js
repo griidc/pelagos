@@ -1,26 +1,41 @@
-$(document).ready(function()
-{
+var $ = jQuery.noConflict();
+$(document).ready(function(){
     "use strict";
-    $(".entityForm[entityType=\"ResearchGroup\"] [name=\"logo\"]").on("logoChanged", function ()
-    {
-        if ($(this).attr("mimeType") !== "application/x-empty") {
-            $("#researchGroupLogo").html("<img src=\"data:" + $(this).attr("mimeType") + ";base64," + $(this).attr("base64") + "\">");
-        }
+
+    $(".entityTable").pelagosDataTable({
+        "ajax": pelagosBasePath + "/services/entity/ResearchGroup?properties=id,name,fundingCycle,creationTimeStamp,modificationTimeStamp,creator,modifier",
+        "columns": [
+            { "data": "id" },
+            { "data": "name" },
+            { "data": "fundingCycle.name" },
+            { "data": "fundingCycle.fundingOrganization.name" },
+            { "data": "creationTimeStamp" },
+            { "data": "modificationTimeStamp" },
+            { "data": "creator" },
+            { "data": "modifier" }
+        ],
+        "headers": [
+            "Id",
+            "Research Group Name",
+            "Funding Cycle Name",
+            "Funding Organization Name",
+            "Created",
+            "Modified",
+            "Created By",
+            "Modified By"
+        ],
+        "order": [[ 5, "desc" ]],
+        "columnDefs": [
+            {
+                "targets": [ 0 ],
+                "visible": false,
+                "searchable": false
+            },
+            {
+                "targets": [ 2, 3, 4, 5, 6, 7 ],
+                "searchable": false
+            }
+        ]
     });
-
-    $(".entityForm[entityType=\"PersonResearchGroup\"]").on("entityDelete", function (event, deleteId)
-    {
-        $("#leadership tr[PersonResearchGroupId=\"" + deleteId + "\"]")
-        .animate({ height: "toggle", opacity: "toggle" }, "slow", function() {
-            $(this).slideUp("fast", function() {
-                $(this)
-                .remove();
-            });
-        });
-
-    });
-
-    $("#tabs")
-        .tabs({ heightStyle: "content" })
-        .tabs("disable", 1);
+    $(".entityTable").attr("deletable", "");
 });
