@@ -117,7 +117,7 @@ class PersonController extends EntityController
      */
     public function postAction(Request $request)
     {
-        $personResearchGroup = $this->handlePost(PersonType::class, Person::class, $request);
-        return $this->makeCreatedResponse('pelagos_api_people_get', $personResearchGroup->getId());
+        $person = $this->handlePost(PersonType::class, Person::class, $request);
+        return $this->makeCreatedResponse('pelagos_api_people_get', $person->getId());
     }
 }
