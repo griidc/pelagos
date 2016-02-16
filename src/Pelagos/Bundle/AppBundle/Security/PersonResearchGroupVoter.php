@@ -37,7 +37,7 @@ class PersonResearchGroupVoter extends PelagosEntityVoter
         if (!$object instanceof PersonResearchGroup) {
             return false;
         }
-        if (!in_array($attribute, array(self::CAN_CREATE, self::CAN_DELETE))) {
+        if (!in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT, self::CAN_DELETE))) {
             return false;
         }
         // Only if the tree is as expected, vote.
