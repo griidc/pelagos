@@ -1,4 +1,4 @@
-{% if is_granted('CAN_CREATE', Entity) %}
+{% if is_granted('CAN_CREATE', Entity) and Entity.id is empty %}
  creatable
 {% endif %}
 {% if is_granted('CAN_EDIT', Entity) %}
