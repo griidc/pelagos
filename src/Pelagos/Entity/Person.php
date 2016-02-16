@@ -27,6 +27,11 @@ use \Doctrine\Common\Collections\ArrayCollection;
 class Person extends Entity
 {
     /**
+     * A friendly name for this type of entity.
+     */
+    const FRIENDLY_NAME = 'Person';
+
+    /**
      * Static array containing a list of the properties and their attributes.
      *
      * Used by common update code.
