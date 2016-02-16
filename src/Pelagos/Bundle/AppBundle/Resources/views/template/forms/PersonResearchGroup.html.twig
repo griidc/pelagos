@@ -1,4 +1,7 @@
 <form class="entityForm" entityType="PersonResearchGroup"
+{% if addForm is defined %}
+ newform
+{% endif %}
 {% include '@templates/forms/permissionsBlock.html.twig' with {'Entity': PersonResearchGroup} %}
 action="{{path('pelagos_api_person_research_groups_post')}}">
 
@@ -7,7 +10,11 @@ action="{{path('pelagos_api_person_research_groups_post')}}">
     {{ form_row(form.person) }}
     <label for="person" class="error"></label>
 
-    {{ form_widget(form.researchGroup) }}
+    <span
+    {% if Person is not defined %}
+        style="display:none;"
+    {% endif %}
+    >{{ form_row(form.researchGroup) }}</span>
 
     {% if is_granted('CAN_CREATE', PersonResearchGroup) or  is_granted('CAN_EDIT', PersonResearchGroup)%}
 
@@ -18,7 +25,7 @@ action="{{path('pelagos_api_person_research_groups_post')}}">
     {{ form_row(form.label) }}
 
     {% include '@templates/forms/innerForm.html.twig' with {'Entity': PersonResearchGroup} %}
-    
+
     {% if addForm is defined %}
         {% image '@PelagosAppBundle/Resources/public/images/add.png' %}
             <img class="addimg" src="{{asset_url}}">
