@@ -105,6 +105,11 @@ abstract class PelagosEntityVoterTest extends \PHPUnit_Framework_TestCase
      */
     protected $mockTokens = array();
 
+    /**
+     * An array of person associations.
+     *
+     * @var array
+     */
     protected $personAssociations = array();
 
     /**
@@ -114,6 +119,11 @@ abstract class PelagosEntityVoterTest extends \PHPUnit_Framework_TestCase
      */
     protected $mockEntity;
 
+    /**
+     * Set up run for each test.
+     *
+     * @return void
+     */
     public function setUp()
     {
         foreach ($this->roles as $type => $roleNames) {
