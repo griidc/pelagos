@@ -112,9 +112,10 @@ class PersonResearchGroupVoter extends PelagosEntityVoter
                 return true;
             }
         }
-        // Action: CAN_DELETE  Role: MANAGER
-        // If attribute is CAN_DELETE and user role is MANAGER the user is authorized for the action.
-        if ($attribute == self::CAN_DELETE) {
+        // Action: CAN_EDIT or CAN_DELETE  Role: Data Repository MANAGER
+        // If attribute is CAN_EDIT or CAN_DELETE and user role is Data Repository MANAGER
+        // the user is authorized for the action.
+        if (in_array($attribute, array(self::CAN_EDIT, self::CAN_DELETE)) {
             $personDataRepositories = $object
                                           ->getResearchGroup()
                                           ->getFundingCycle()
