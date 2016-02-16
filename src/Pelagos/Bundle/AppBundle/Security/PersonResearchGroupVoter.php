@@ -115,7 +115,7 @@ class PersonResearchGroupVoter extends PelagosEntityVoter
         // Action: CAN_EDIT or CAN_DELETE  Role: Data Repository MANAGER
         // If attribute is CAN_EDIT or CAN_DELETE and user role is Data Repository MANAGER
         // the user is authorized for the action.
-        if (in_array($attribute, array(self::CAN_EDIT, self::CAN_DELETE)) {
+        if (in_array($attribute, array(self::CAN_EDIT, self::CAN_DELETE))) {
             $personDataRepositories = $object
                                           ->getResearchGroup()
                                           ->getFundingCycle()
