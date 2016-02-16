@@ -120,4 +120,56 @@ class PersonController extends EntityController
         $person = $this->handlePost(PersonType::class, Person::class, $request);
         return $this->makeCreatedResponse('pelagos_api_people_get', $person->getId());
     }
+
+    /**
+     * Replace a Person with the submitted data.
+     *
+     * @param integer $id      The id of the Person to replace.
+     * @param Request $request The request object.
+     *
+     * @ApiDoc(
+     *   section = "People",
+     *   input = {"class" = "Pelagos\Bundle\AppBundle\Form\PersonType", "name" = ""},
+     *   statusCodes = {
+     *     204 = "The Person was successfully replaced.",
+     *     400 = "The request could not be processed due to validation or other errors.",
+     *     403 = "The authenticated user was not authorized to edit the Person.",
+     *     404 = "The requested Person was not found.",
+     *     500 = "An internal error has occurred.",
+     *   }
+     * )
+     *
+     * @return Response A Response object with an empty body and a "no content" status code.
+     */
+    public function putAction($id, Request $request)
+    {
+        $this->handleUpdate(PersonType::class, Person::class, $id, $request, 'PUT');
+        return $this->makeNoContentResponse();
+    }
+
+    /**
+     * Update a Person with the submitted data.
+     *
+     * @param integer $id      The id of the Person to update.
+     * @param Request $request The request object.
+     *
+     * @ApiDoc(
+     *   section = "People",
+     *   input = {"class" = "Pelagos\Bundle\AppBundle\Form\PersonType", "name" = ""},
+     *   statusCodes = {
+     *     204 = "The Person was successfully updated.",
+     *     400 = "The request could not be processed due to validation or other errors.",
+     *     403 = "The authenticated user was not authorized to edit the Person.",
+     *     404 = "The requested Person was not found.",
+     *     500 = "An internal error has occurred.",
+     *   }
+     * )
+     *
+     * @return Response A Response object with an empty body and a "no content" status code.
+     */
+    public function patchAction($id, Request $request)
+    {
+        $this->handleUpdate(PersonType::class, Person::class, $id, $request, 'PATCH');
+        return $this->makeNoContentResponse();
+    }
 }
