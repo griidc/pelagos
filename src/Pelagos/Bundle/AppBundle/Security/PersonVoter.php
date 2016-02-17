@@ -72,17 +72,17 @@ class PersonVoter extends PelagosEntityVoter
             // get all of the PersonDataRepositories for the user that have the one of the target Roles
             // and the subject Person ($object) is not the User
             $userPersonDataRepositoriesWithAuthority = $userPerson->getPersonDataRepositories()->filter(
-            //  Exclude the subject from the list of PersonResearchGroups
-            // and include only those with one of the target Roles
+                // Exclude the subject from the list of PersonResearchGroups
+                // and include only those with one of the target Roles
                 function ($itemInCollection) use ($object, $voterRoles) {
                     return (!$itemInCollection->gerPerson()->isSameTypeAndId($object) &&
-                        in_array($itemInCollection->getRole()->getName(),$voterRoles));
+                        in_array($itemInCollection->getRole()->getName(), $voterRoles));
                 }
-            // end of anonymous function
+                // end of anonymous function
             );
 
             //  if there are no user Roles that match one of the target Roles the user does not have authority.
-            if($userPersonDataRepositoriesWithAuthority->isEmpty()) {
+            if ($userPersonDataRepositoriesWithAuthority->isEmpty()) {
                 return false;
             }
             // get all the DataRepositories with witch the subject is associated..
