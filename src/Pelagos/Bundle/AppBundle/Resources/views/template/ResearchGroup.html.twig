@@ -49,7 +49,7 @@
                         <td>
                             <div>
                                 <p>
-                                    {% include '@templates/forms/PersonResearchGroup.html.twig' with {'PersonResearchGroup': PersonResearchGroup, 'form' : PersonResearchGroupForms[PersonResearchGroup.getId]}%}
+                                    {% include '@templates/forms/PersonResearchGroup.html.twig' with {'PersonResearchGroup': PersonResearchGroup, 'form' : PersonResearchGroupForms[PersonResearchGroup.getId], 'editlabel' : PersonResearchGroupEditLabel[PersonResearchGroup.getId]}%}
                                 </p>
                             </div>
                         </td>
