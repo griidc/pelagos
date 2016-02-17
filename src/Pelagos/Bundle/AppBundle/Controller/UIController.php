@@ -104,21 +104,4 @@ class UIController extends Controller
 
         return $this->render('PelagosAppBundle:template:PersonResearchGroup.html.twig', $ui);
     }
-
-    /**
-     * The Research Group Generate List action.
-     *
-     * @Route("/ResearchGroupList")
-     *
-     * @return Response A list of Research Groups.
-     */
-    public function researchGroupListAction(Request $request)
-    {
-        //return new Response(var_dump($request));
-        $ui = array();
-        $ui['entityType'] = 'ResearchGroup';
-        $ui['isUserLoggedIn'] = true;
-        return $this->render('PelagosAppBundle:template:UI-ResearchGroupList.html.twig', $ui);
-    }
-
 }
