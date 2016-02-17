@@ -16,6 +16,13 @@ use Pelagos\Bundle\AppBundle\Security\CreateAnythingVoter as Voter;
 class CreateAnythingVoterTest extends PelagosEntityVoterTest
 {
     /**
+     * The attributes that CreateAnythingVoter should support.
+     *
+     * @var array
+     */
+    protected $supportedAttributes = array(Voter::CAN_CREATE);
+
+    /**
      * Set up run for each test.
      *
      * @return void
@@ -41,6 +48,16 @@ class CreateAnythingVoterTest extends PelagosEntityVoterTest
         $this->roles['ResearchGroup'][RG_Roles::ADMIN][Voter::CAN_CREATE] = Voter::ACCESS_DENIED;
         $this->roles['ResearchGroup'][RG_Roles::DATA][Voter::CAN_CREATE] = Voter::ACCESS_DENIED;
         $this->roles['ResearchGroup'][RG_Roles::RESEARCHER][Voter::CAN_CREATE] = Voter::ACCESS_DENIED;
+    }
+
+    /**
+     * This voter supports any subject, so it should never abstain dependent on the subject.
+     *
+     * @return void
+     */
+    public function testAbstainForUnsupportedSubject()
+    {
+        // Nothing here because we are overriding this test that does not apply from the abstract class.
     }
 
     /**

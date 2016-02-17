@@ -120,6 +120,15 @@ abstract class PelagosEntityVoterTest extends \PHPUnit_Framework_TestCase
     protected $mockEntity;
 
     /**
+     * The attributes that the voter should support.
+     *
+     * This should be overridden with the attributes supported by each voter.
+     *
+     * @var array
+     */
+    protected $supportedAttributes = array();
+
+    /**
      * Set up run for each test.
      *
      * @return void
@@ -167,6 +176,92 @@ abstract class PelagosEntityVoterTest extends \PHPUnit_Framework_TestCase
                     );
                 }
             }
+        }
+    }
+
+    /**
+     * Test that the voter abstains for a subject that is not supported.
+     *
+     * @return void
+     */
+    public function testAbstainForUnsupportedSubject()
+    {
+        foreach ($this->supportedAttributes as $attribute) {
+            $this->assertEquals(
+                Voter::ACCESS_ABSTAIN,
+                $this->voter->vote(
+                    $this->mockTokens['DataRepository'][DR_Roles::MANAGER],
+                    \Mockery::mock('UnsupportedSubject'),
+                    array($attribute)
+                ),
+                "Did not abstain for $attribute an unsupported subject"
+            );
+        }
+    }
+
+    /**
+     * Test that the voter abstains for an attribute it doesn't support.
+     *
+     * @return void
+     */
+    public function testAbstainForUnsupportedAttribute()
+    {
+        $this->assertEquals(
+            Voter::ACCESS_ABSTAIN,
+            $this->voter->vote(
+                $this->mockTokens['DataRepository'][DR_Roles::MANAGER],
+                $this->mockEntity,
+                array('THIS_IS_AN_UNSUPPORTED_ATTRIBUTE')
+            )
+        );
+    }
+
+    /**
+     * Test that the voter denies access for a token that does not resolve to a user.
+     *
+     * @return void
+     */
+    public function testDenyBadUser()
+    {
+        foreach ($this->supportedAttributes as $attribute) {
+            $this->assertEquals(
+                Voter::ACCESS_DENIED,
+                $this->voter->vote(
+                    \Mockery::mock(
+                        '\Symfony\Component\Security\Core\Authentication\Token\TokenInterface',
+                        array('getUser' => null)
+                    ),
+                    $this->mockEntity,
+                    array($attribute)
+                ),
+                "Did not deny $attribute for a bad user token"
+            );
+        }
+    }
+
+    /**
+     * Test that the voter denies access to a Person with no roles.
+     *
+     * @return void
+     */
+    public function testDenyPersonWithNoRoles()
+    {
+        foreach ($this->supportedAttributes as $attribute) {
+            $mockToken = $this->createMockToken();
+            $mockToken
+                ->getUser()
+                ->getPerson()
+                ->shouldReceive('getPersonDataRepositories')
+                ->andReturn(new ArrayCollection);
+            $this->assertEquals(
+                Voter::ACCESS_DENIED,
+                $this->voter->vote(
+                    $mockToken,
+                    $this->mockEntity,
+                    array($attribute)
+                ),
+                "Did not deny $attribute for a Person with no roles"
+            );
         }
     }
 

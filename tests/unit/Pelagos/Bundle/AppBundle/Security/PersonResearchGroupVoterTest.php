@@ -16,6 +16,17 @@ use Pelagos\Bundle\AppBundle\Security\PersonResearchGroupVoter as Voter;
 class PersonResearchGroupVoterTest extends PelagosEntityVoterTest
 {
     /**
+     * The attributes that PersonResearchGroupVoter should support.
+     *
+     * @var array
+     */
+    protected $supportedAttributes = array(
+        Voter::CAN_CREATE,
+        Voter::CAN_EDIT,
+        Voter::CAN_DELETE,
+    );
+
+    /**
      * Set up run for each test.
      *
      * @return void
@@ -100,93 +111,25 @@ class PersonResearchGroupVoterTest extends PelagosEntityVoterTest
     }
 
     /**
-     * Test that the voter abstains for something that is not a PersonResearchGroup.
-     *
-     * @return void
-     */
-    public function testAbstainForNonPersonResearchGroup()
-    {
-        $this->assertEquals(
-            Voter::ACCESS_ABSTAIN,
-            $this->voter->vote(
-                $this->mockTokens['DataRepository'][DR_Roles::MANAGER],
-                \Mockery::mock('\Pelagos\Entity\Entity'),
-                array(Voter::CAN_CREATE)
-            )
-        );
-    }
-
-    /**
-     * Test that the voter abstains for an attribute it doesn't support.
-     *
-     * @return void
-     */
-    public function testAbstainForUnsupportedAttribute()
-    {
-        $this->assertEquals(
-            Voter::ACCESS_ABSTAIN,
-            $this->voter->vote(
-                $this->mockTokens['DataRepository'][DR_Roles::MANAGER],
-                $this->mockEntity,
-                array('THIS_IS_AN_UNSUPPORTED_ATTRIBUTE')
-            )
-        );
-    }
-
-    /**
      * Test that the voter abstains for a Person Research Group that has no context.
      *
      * @return void
      */
-    public function testAbstainForResearchGroupWithNoContext()
+    public function testAbstainForPersonResearchGroupWithNoContext()
     {
-        $this->assertEquals(
-            Voter::ACCESS_ABSTAIN,
-            $this->voter->vote(
-                $this->mockTokens['DataRepository'][DR_Roles::MANAGER],
-                \Mockery::mock(
-                    '\Pelagos\Entity\PersonResearchGroup',
-                    array('getResearchGroup' => null)
+        foreach ($this->supportedAttributes as $attribute) {
+            $this->assertEquals(
+                Voter::ACCESS_ABSTAIN,
+                $this->voter->vote(
+                    $this->mockTokens['DataRepository'][DR_Roles::MANAGER],
+                    \Mockery::mock(
+                        '\Pelagos\Entity\PersonResearchGroup',
+                        array('getResearchGroup' => null)
+                    ),
+                    array($attribute)
                 ),
-                array(Voter::CAN_CREATE)
-            )
-        );
-    }
-
-    /**
-     * Test that the voter denies access for a token that does not resolve to a user.
-     *
-     * @return void
-     */
-    public function testDenyBadUserCanEditResearchGroup()
-    {
-        $this->assertEquals(
-            Voter::ACCESS_DENIED,
-            $this->voter->vote(
-                \Mockery::mock(
-                    '\Symfony\Component\Security\Core\Authentication\Token\TokenInterface',
-                    array('getUser' => null)
-                ),
-                $this->mockEntity,
-                array(Voter::CAN_CREATE)
-            )
-        );
-    }
-
-    /**
-     * Test that the voter denies access to a Person with no roles.
-     *
-     * @return void
-     */
-    public function testDenyPersonWithNoRolesCanEditResearchGroup()
-    {
-        $this->assertEquals(
-            Voter::ACCESS_DENIED,
-            $this->voter->vote(
-                $this->createMockToken(),
-                $this->mockEntity,
-                array(Voter::CAN_CREATE)
-            )
-        );
+                "Did not abstain for $attribute Person Research Group with no context"
+            );
+        }
     }
 }
