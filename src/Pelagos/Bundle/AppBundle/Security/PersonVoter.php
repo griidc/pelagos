@@ -5,7 +5,6 @@ namespace Pelagos\Bundle\AppBundle\Security;
 
 use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-
 use Pelagos\Entity\Account;
 use Pelagos\Entity\Person;
 
@@ -49,7 +48,7 @@ class PersonVoter extends PelagosEntityVoter
      * @param mixed          $object    A Person.
      * @param TokenInterface $token     A security token containing user authentication information.
      *
-     * @return boolean True if the attribute (action) is allowed on the subject for the user specified by the token.
+     * @return boolean True If the user has one of the target roles for any of the subject's DataRepositories.
      */
     protected function voteOnAttribute($attribute, $object, TokenInterface $token)
     {
@@ -70,20 +69,31 @@ class PersonVoter extends PelagosEntityVoter
         if ($attribute == PelagosEntityVoter::CAN_EDIT) {
             // The DataRepositoryRoles that we are looking for.
             $voterRoles = array(DataRepositoryRoles::MANAGER);
-            // get all of the PersonDataRepositories for the user
-            $userPersonDataRepositories = $userPerson->getPersonDataRepositories();
+            // get all of the PersonDataRepositories for the user that have the one of the target Roles
+            // and the subject Person ($object) is not the User
+            $userPersonDataRepositoriesWithAuthority = $userPerson->getPersonDataRepositories()->filter(
+            //  Exclude the subject from the list of PersonResearchGroups
+            // and include only those with one of the target Roles
+                function ($itemInCollection) use ($object, $voterRoles) {
+                    return (!$itemInCollection->gerPerson()->isSameTypeAndId($object) &&
+                        in_array($itemInCollection->getRole()->getName(),$voterRoles));
+                }
+            // end of anonymous function
+            );
+
+            //  if there are no user Roles that match one of the target Roles the user does not have authority.
+            if($userPersonDataRepositoriesWithAuthority->isEmpty()) {
+                return false;
+            }
             // get all the DataRepositories with witch the subject is associated..
             $objectDataRepositories = $object->getDataRepositories();
-            // If the user has one of the target roles for any of the DataRepositories that the subject
-            // is associated with the user can edit the subject (Person).
-            foreach ($objectDataRepositories as $objectDataRepository) {
-                foreach ($userPersonDataRepositories as $userPersonDataRepository) {
-                    //  Is the DataRepository in common? If so does the user have the needed role?
-                    if ($objectDataRepository->isSameTypeAndId($userPersonDataRepository->getDataRepository()) &&
-                        in_array($voterRoles, $userPersonDataRepository->getRole())
-                    ) {
-                        return true;
-                    }
+
+            // if the user has one of the target Roles on a DataRepository that is also in the
+            // DataRepository list of the subject Person, then the user is granted Authority
+
+            foreach ($userPersonDataRepositoriesWithAuthority as $userPdrWithAuthority) {
+                if (in_array($userPdrWithAuthority->getDataRepository(), $objectDataRepositories)) {
+                    return true;
                 }
             }
         }

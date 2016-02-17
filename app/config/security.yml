@@ -32,3 +32,8 @@ services:
         class: Pelagos\Bundle\AppBundle\Security\CreateAnythingVoter
         tags:
             - { name: security.voter }
+
+    person_voter:
+        class: Pelagos\Bundle\AppBundle\Security\PersonVoter
+        tags:
+            - { name: security.voter }
