@@ -10,12 +10,12 @@ action="{{path('pelagos_api_person_research_groups_post')}}">
     {{ form_widget(form.researchGroup) }}
 
     {% if is_granted('CAN_CREATE', PersonResearchGroup) or  is_granted('CAN_EDIT', PersonResearchGroup)%}
-
         {{ form_row(form.role) }}
-
     {% endif %}
-
-    {{ form_row(form.label) }}
+    
+    <div class="editableField">
+        {{ form_row(form.label) }}
+    </div>
 
     {% include '@templates/forms/innerForm.html.twig' with {'Entity': PersonResearchGroup} %}
     
