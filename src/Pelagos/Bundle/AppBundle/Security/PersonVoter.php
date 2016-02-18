@@ -92,7 +92,7 @@ class PersonVoter extends PelagosEntityVoter
             // DataRepository list of the subject Person, then the user is granted Authority
 
             foreach ($userPersonDataRepositoriesWithAuthority as $userPdrWithAuthority) {
-                if (in_array($userPdrWithAuthority->getDataRepository(), $objectDataRepositories)) {
+                if ($objectDataRepositories->contains($userPdrWithAuthority->getDataRepository())) {
                     return true;
                 }
             }
