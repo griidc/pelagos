@@ -19,10 +19,10 @@ $(document).ready(function()
     });
 
     $.ajax({
-        url: pelagosBasePath + "/services/entity/Person/getDistinctVals/organization",
+        url: $("#organization").attr("data-url"),
         dataType: "json",
         success: function(json) {
-            var organizationList = json.data;
+            var organizationList = json;
 
             $("#organization").autocomplete({
                 source: organizationList
@@ -31,10 +31,10 @@ $(document).ready(function()
     });
 
     $.ajax({
-        url: pelagosBasePath + "/services/entity/Person/getDistinctVals/position",
+        url: $("#position").attr("data-url"),
         dataType: "json",
         success: function(json) {
-            var personList = json.data;
+            var personList = json;
 
             $("#position").autocomplete({
                 source: personList

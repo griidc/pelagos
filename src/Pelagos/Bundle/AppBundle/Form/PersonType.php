@@ -9,11 +9,30 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
+use Symfony\Bundle\FrameworkBundle\Routing\Router;
+
 /**
  * A form for creating people.
  */
 class PersonType extends AbstractType
 {
+    /**
+     * Proteced router value instance of router service.
+     *
+     * @var Router
+     */
+    protected $router;
+
+    /**
+     * Constructor that provides router.
+     *
+     * @param Router $router The router instance.
+     */
+    public function __construct(Router $router)
+    {
+        $this->router = $router;
+    }
+
     /**
      * Builds the form.
      *
@@ -68,10 +87,22 @@ class PersonType extends AbstractType
             ->add('organization', TextType::class, array(
                 'label' => 'Organization:',
                 'required' => false,
+                'attr' => array(
+                    'data-url' => $this->router->generate(
+                        'pelagos_api_people_get_distinct_vals',
+                        array('property' => 'organization')
+                    )
+                ),
             ))
             ->add('position', TextType::class, array(
                 'label' => 'Position:',
                 'required' => false,
+                'attr' => array(
+                    'data-url' => $this->router->generate(
+                        'pelagos_api_people_get_distinct_vals',
+                        array('property' => 'position')
+                    )
+                ),
             ));
     }
 
