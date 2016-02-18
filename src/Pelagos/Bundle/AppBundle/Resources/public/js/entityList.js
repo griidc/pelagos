@@ -34,8 +34,8 @@
         })
         .click(function () {
             var id = table.row(".selected").data().id;
-            //var url = pelagosBasePath + "/applications/entity/" + entityType + "/" + id;
-            var url = "https://proteus.tamucc.edu/pelagos-symfony/dev/mwilliamson/ui/ResearchGroup/" + id;
+            var url = $(self).attr("viewinterface") + '/' + id;
+            debugger;
             window.open(url, "_blank");
         });
 
@@ -60,8 +60,7 @@
                         }
                     })).done(function() {
                     $.ajax({
-                        //url: pelagosBasePath + "/services/entity/" + entityType + "/" + id,
-                        url: "https://proteus.tamucc.edu/pelagos-symfony/dev/mwilliamson/api/research_groups/" + id,
+                        url: table.row(".selected").data()._links.delete.href,
                         method: "DELETE"
                     }).done(function () {
                         $(".selected").fadeOut("slow", function () {

@@ -43,16 +43,12 @@
         {{ add_js(asset_url) }}
     {% endjavascripts %}
 
-    {{ add_js("
-        var pelagosBasePath = 'https://proteus.tamucc.edu/pelagos/dev/mwilliamson';
-        ",
-        'inline')
-    }}
 {% endblock %}
 
 {% block body %}
 Hello
 <table
+  viewInterface = "{{ path('pelagos_app_ui_researchgroup') }}"
   class="entityTable stripe" width="100%" entityType="{{entityType}}"
   data-ajax='{
     "url": "{{ path('pelagos_api_research_groups_get_collection') }}",
@@ -79,7 +75,7 @@ Hello
             <th>Created</th>
             <th>Modified</th>
             <th>Created By</th>
-            <th>Changed By</th>
+            <th>Modified By</th>
         </tr>
     </thead>
     <tfoot>
