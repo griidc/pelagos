@@ -75,7 +75,7 @@ class PersonVoter extends PelagosEntityVoter
                 // Exclude the subject from the list of PersonResearchGroups
                 // and include only those with one of the target Roles
                 function ($itemInCollection) use ($object, $voterRoles) {
-                    return (!$itemInCollection->gerPerson()->isSameTypeAndId($object) &&
+                    return (!$itemInCollection->getPerson()->isSameTypeAndId($object) &&
                         in_array($itemInCollection->getRole()->getName(), $voterRoles));
                 }
                 // end of anonymous function
