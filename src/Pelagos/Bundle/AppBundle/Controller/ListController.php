@@ -17,7 +17,7 @@ class ListController extends Controller
     /**
      * The Research Group Generate List action.
      *
-     * @Route("/ResearchGroupList")
+     * @Route("/ResearchGroup")
      *
      * @return Response A list of Research Groups.
      */
@@ -29,5 +29,4 @@ class ListController extends Controller
         $ui['isUserLoggedIn'] = true;
         return $this->render('PelagosAppBundle:template:UI-ResearchGroupList.html.twig', $ui);
     }
-
 }

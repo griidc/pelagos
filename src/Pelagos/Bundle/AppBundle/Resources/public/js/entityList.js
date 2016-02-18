@@ -8,10 +8,6 @@
 
         var self = this;
 
-        $.each(options.headers, function() {
-            $(self).find("thead > tr").append("<th>" + this + "</th>");
-        });
-
         var listButtons = '<td class="buttons">' +
                           "<div>" +
                           '<button id="button_detail">View ' + entityType + " Details</button>&nbsp;" +
@@ -20,8 +16,7 @@
                           "</div></td>";
 
         $(this).find("tfoot > tr").append(listButtons);
-
-        $(".buttons").attr("colspan", options.headers.length);
+        $(".buttons").attr("colspan", $(this).find("th").length);
 
         var table = $(this).DataTable($.extend(true, {
                 "lengthMenu": [ [25, 40, 100, -1], [25, 50, 100, "Show All"] ],
