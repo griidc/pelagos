@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\Common\Collections\Collection;
 
 use Pelagos\Entity\Entity;
+use Pelagos\Exception\UnmappedPropertyException;
 use Pelagos\Bundle\AppBundle\Security\PelagosEntityVoter;
 
 /**
@@ -152,5 +153,42 @@ class EntityHandler
         $this->entityManager->remove($entity);
         $this->entityManager->flush();
         return $entity;
+    }
+
+    /**
+     * Get a list of all distinct values for a property of a given Entity class.
+     *
+     * @param string $entityClass Entity class to get distinct values from.
+     * @param string $property    Property to get distinct values of.
+     *
+     * @throws UnmappedPropertyException When Entity $entityClass does not have a mapped property $property.
+     *
+     * @return array List of all distinct values for $property for $entityClass.
+     */
+    public function getDistinctVals($entityClass, $property)
+    {
+        $class = $this->entityManager->getClassMetadata($entityClass);
+        if (!$class->hasField($property) && !$class->hasAssociation($property)) {
+            $exception = new UnmappedPropertyException;
+            $exception->setClassName($entityClass);
+            $exception->setPropertyName($property);
+            throw $exception;
+        }
+        $this->entityManager
+            ->getConfiguration()
+            ->addCustomHydrationMode(
+                'COLUMN_HYDRATOR',
+                'Pelagos\DoctrineExtensions\Hydrators\ColumnHydrator'
+            );
+        // Get distinct vals
+        $query = $this->entityManager
+            ->getRepository($entityClass)
+            ->createQueryBuilder('entity')
+            ->select("entity.$property")
+            ->where("entity.$property IS NOT NULL")
+            ->distinct()
+            ->orderBy("entity.$property")
+            ->getQuery();
+        return $query->getResult('COLUMN_HYDRATOR');
     }
 }

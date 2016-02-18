@@ -45,6 +45,31 @@ class PersonController extends EntityController
     }
 
     /**
+     * Get the distinct values for a property of a Person.
+     *
+     * @param string $property The property for which the distinct values are being requested.
+     *
+     * @ApiDoc(
+     *   section = "People",
+     *   statusCodes = {
+     *     200 = "The list of distinct values was returned successfully.",
+     *     400 = "An invalid property was requested.",
+     *     500 = "An internal error has occurred.",
+     *   }
+     * )
+     *
+     * @Rest\Get("/getDistinctVals/{property}")
+     *
+     * @Rest\View()
+     *
+     * @return array The list of distinct values for a property.
+     */
+    public function getDistinctValsAction($property)
+    {
+        return $this->getDistinctVals(Person::class, $property);
+    }
+
+    /**
      * Get a collection of People.
      *
      * @param Request $request The request object.
