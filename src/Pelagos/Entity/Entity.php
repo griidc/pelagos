@@ -10,6 +10,7 @@ namespace Pelagos\Entity;
 
 use \Symfony\Component\Validator\Constraints as Assert;
 use \Pelagos\Exception\InvalidFormatArgumentException;
+use Pelagos\Exception\NotDeletableException;
 use JMS\Serializer\Annotation\Exclude;
 
 /**
@@ -619,5 +620,20 @@ abstract class Entity implements \JsonSerializable
             return true;
         }
         return false;
+    }
+
+    /**
+     * Checks if the entty is deletable.
+     *
+     * @return boolean True is the entity is deletable, false otherwise.
+     */
+    public function isDeletable()
+    {
+        try {
+            $this->checkDeletable();
+        } catch (NotDeletableException $e) {
+            return false;
+        }
+        return true;
     }
 }
