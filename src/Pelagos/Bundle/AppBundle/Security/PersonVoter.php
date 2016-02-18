@@ -64,35 +64,17 @@ class PersonVoter extends PelagosEntityVoter
 
         // Action: PelagosEntityVoter::CAN_EDIT
         // Role:   DataRepositoryRoles::MANAGER
-        // If attribute is CAN_EDIT and user has the role MANAGER for a DataRepository that [the user
-        // and the subject Person] have in common via association, then the user can edit the object.
+        // If attribute is CAN_EDIT and
+        // user has the role MANAGER for a DataRepository and
+        // that DataRepository is associated with the subject Person
+        // then the User can edit the Person object..
         if ($attribute == PelagosEntityVoter::CAN_EDIT) {
-            // The DataRepositoryRoles that we are looking for.
-            $voterRoles = array(DataRepositoryRoles::MANAGER);
-            // get all of the PersonDataRepositories for the user that have the one of the target Roles
-            // and the subject Person ($object) is not the User
-            $userPersonDataRepositoriesWithAuthority = $userPerson->getPersonDataRepositories()->filter(
-                // Exclude the subject from the list of PersonResearchGroups
-                // and include only those with one of the target Roles
-                function ($itemInCollection) use ($object, $voterRoles) {
-                    return (!$itemInCollection->getPerson()->isSameTypeAndId($object) &&
-                        in_array($itemInCollection->getRole()->getName(), $voterRoles));
-                }
-                // end of anonymous function
-            );
-
-            //  if there are no user Roles that match one of the target Roles the user does not have authority.
-            if ($userPersonDataRepositoriesWithAuthority->isEmpty()) {
-                return false;
-            }
-            // get all the DataRepositories with witch the subject is associated..
-            $objectDataRepositories = $object->getDataRepositories();
-
-            // if the user has one of the target Roles on a DataRepository that is also in the
-            // DataRepository list of the subject Person, then the user is granted Authority
-
-            foreach ($userPersonDataRepositoriesWithAuthority as $userPdrWithAuthority) {
-                if ($objectDataRepositories->contains($userPdrWithAuthority->getDataRepository())) {
+            foreach ($object->getDataRepositories() as $dataRepository) {
+                if (doesUserHaveRole(
+                    $userPerson,
+                    $dataRepository->getPersonDataRepositories(),
+                    array(DataRepositoryRoles::MANAGER)
+                )) {
                     return true;
                 }
             }
