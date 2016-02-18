@@ -34,7 +34,7 @@
                 return false;
             }
 
-            var actionURL = $(this).attr('action');
+            var actionURL = $(this).attr("action");
 
             $("input,textarea,select", this).each(function() {
                 $(this)
@@ -56,17 +56,20 @@
 
             $(this).wrap(wrapper);
 
-            if (entityId === "") {
-                if (!$(this).hasAttr("creatable")) {
-                    $(this).find('.innerForm').hide()
-                    return null;
-                }
-            } else {
-                if (!$(this).hasAttr("editable")) {
-                    $(this).find('.innerForm').hide()
-                    return null;
-                }
+            //View Only!
+            if (!($(this).hasAttr("creatable") || $(this).hasAttr("editable") || $(this).hasAttr("deletable"))) {
+                $(this).find(".innerForm").hide();
+                return null;
             }
+
+            // if (entityId === "") {
+
+            // } else {
+                // if (!$(this).hasAttr("editable")) {
+                    // $(this).find('.innerForm').hide()
+                    // return null;
+                // }
+            // }
 
             $(this).prop("unsavedChanges", false);
 
@@ -117,7 +120,7 @@
                 }
             });
 
-            $(".entityWrapper").has(this).on("click", function() {
+            $(".entityWrapper").has("[editable],[creatable] input[name='id'][value='']", this).on("click", function() {
                 if (!$(this).hasClass("active")) {
                     $(this).addClass("active");
 
@@ -164,23 +167,30 @@
             if (entityId === "") {
                 $(".entityWrapper").has(this).click();
             }
-            
+
             // Special stuff for Addform
-            
             if ($(this).has(".addimg").length ? true : false) {
-                $(this).hide();
-                
-                $(".addimg", this).button().click(function (event) {
-                    $(this).hide();
-                    $(thisForm).show();
+
+                $(this).fadeOut();
+
+                $(".addimg", this).button().click(function() {
+                    $(this).fadeOut();
+                    var newForm = $(thisForm).clone(true).insertBefore(this).fadeIn();
+
+                    $(newForm).find("#cancelButton").click(function() {
+                        $(newForm).next(".addimg").fadeIn();
+                        newForm.remove();
+                    });
+
+                    // TODO: Need code for when form is persisted and
+                    // TODO: Catch submit button to wrap this form in table row
                 });
-                
+
                 var addimg = $(".addimg", this).detach();
-                
+
                 addimg.insertAfter($(this));
-                
             }
-            
+
         });
     };
 
@@ -236,24 +246,25 @@
                 switch (elementType)
                 {
                     case "radio":
-                    selector.filter("[value=\"" + value + "\"]").attr("checked", true);
-                    break;
+                        selector.filter("[value=\"" + value + "\"]").attr("checked", true);
+                        break;
                     case "checkbox":
-                    selector.attr("checked", value);
-                    break;
+                        selector.attr("checked", value);
+                        break;
                     case "select-one":
-                    selector.find("option").attr("selected", false);
-                    selector.val(value);
-                    selector.find("[value=\"" + value + "\"]").attr("selected", true);
-                    break;
+                        selector.attr(name, value);
+                        selector.find("option").attr("selected", false);
+                        selector.val(value);
+                        selector.find("[value=\"" + value + "\"]").attr("selected", true);
+                        break;
                     case "textarea":
-                    selector.html(value);
-                    selector.val(value);
-                    break;
+                        selector.html(value);
+                        selector.val(value);
+                        break;
                     default:
-                    selector.attr("value", value);
-                    selector.val(value);
-                    break;
+                        selector.attr("value", value);
+                        selector.val(value);
+                        break;
                 }
             } else {
                 switch (elementType)
@@ -342,11 +353,11 @@
 
     function updateEntity(form, action)
     {
-        var data = $(form).serialize(); //new FormData(form);
+        var formData = $(form).serialize(); //new FormData(form);
         var entityType = $(form).attr("entityType");
         var entityId = $(form).find("[name=\"id\"]").val();
         var url;
-        var actionURL = $(form).attr('action');
+        var actionURL = $(form).attr("action");
 
         // $("form input:hidden").each(function(key, input){
             // data.append(input.name, input.value);
@@ -374,6 +385,7 @@
                 url = actionURL + "/" + entityId;
                 type = "DELETE";
                 returnCode = 204;
+                prefixPhrase = "Deleted";
                 break;
             default:
                 url = actionURL + "/" + entityId;
@@ -389,7 +401,7 @@
 
             $.ajax({
                 type: type,
-                data: data,
+                data: formData,
                 url: url,
                 // Optionally enforce JSON return, in case a status 200 happens, but no JSON returns
                 //dataType: 'json',
@@ -400,13 +412,16 @@
                     201: function(data, textStatus, jqXHR) {
                         var currentURL = window.location.pathname;
                         var docTitle = document.title;
-                        var newID = jqXHR.getResponseHeader('X-Resource-Id');
+                        var newID = jqXHR.getResponseHeader("X-Resource-Id");
                         var newURL = currentURL + "/" + newID;
-                        var urlParts = currentURL.split('/');
+                        var urlParts = currentURL.split("/");
                         // If an entity ID already exists, dont add another one.
-                        if (!$.isNumeric(urlParts[urlParts.length-1])) {
+                        if (!$.isNumeric(urlParts[urlParts.length - 1])) {
                             window.history.pushState(newID, docTitle, newURL);
                         }
+
+                        //Should set ID?
+                        $(form).filter("#id").val(newID);
                     }
                 },
                 success: function(data, textStatus, jqXHR) {
@@ -414,7 +429,7 @@
                         title = "Success!";
                         var newID = entityId;
                         if (returnCode === 201) {
-                            newID = jqXHR.getResponseHeader('X-Resource-Id');
+                            newID = jqXHR.getResponseHeader("X-Resource-Id");
                         }
                         message = prefixPhrase + " " + entityType + " successfully with ID:" + newID;
                         //$(form).fillForm(data);

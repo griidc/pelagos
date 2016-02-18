@@ -122,6 +122,58 @@ class PersonResearchGroupController extends EntityController
     }
 
     /**
+     * Replace a Person to Research Group Association with the submitted data.
+     *
+     * @param integer $id      The id of the Person to Research Group Association to replace.
+     * @param Request $request The request object.
+     *
+     * @ApiDoc(
+     *   section = "Person to Research Group Associations",
+     *   input = {"class" = "Pelagos\Bundle\AppBundle\Form\PersonResearchGroupType", "name" = ""},
+     *   statusCodes = {
+     *     204 = "The Person to Research Group Association was successfully replaced.",
+     *     400 = "The request could not be processed due to validation or other errors.",
+     *     403 = "The authenticated user was not authorized to edit the Person to Research Group Association.",
+     *     404 = "The requested Person to Research Group Association was not found.",
+     *     500 = "An internal error has occurred.",
+     *   }
+     * )
+     *
+     * @return Response A Response object with an empty body and a "no content" status code.
+     */
+    public function putAction($id, Request $request)
+    {
+        $this->handleUpdate(PersonResearchGroupType::class, PersonResearchGroup::class, $id, $request, 'PUT');
+        return $this->makeNoContentResponse();
+    }
+
+    /**
+     * Update a Person to Research Group Association with the submitted data.
+     *
+     * @param integer $id      The id of the Person to Research Group Association to update.
+     * @param Request $request The request object.
+     *
+     * @ApiDoc(
+     *   section = "Person to Research Group Associations",
+     *   input = {"class" = "Pelagos\Bundle\AppBundle\Form\PersonResearchGroupType", "name" = ""},
+     *   statusCodes = {
+     *     204 = "The Person to Research Group Association was successfully updated.",
+     *     400 = "The request could not be processed due to validation or other errors.",
+     *     403 = "The authenticated user was not authorized to edit the Person to Research Group Association.",
+     *     404 = "The requested Person to Research Group Association was not found.",
+     *     500 = "An internal error has occurred.",
+     *   }
+     * )
+     *
+     * @return Response A Response object with an empty body and a "no content" status code.
+     */
+    public function patchAction($id, Request $request)
+    {
+        $this->handleUpdate(PersonResearchGroupType::class, PersonResearchGroup::class, $id, $request, 'PATCH');
+        return $this->makeNoContentResponse();
+    }
+
+    /**
      * Delete a Person to Research Group Association.
      *
      * @param integer $id The id of the Person to Research Group Association to delete.
