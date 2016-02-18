@@ -311,7 +311,9 @@ abstract class EntityController extends FOSRestController
         try {
             return $this->container->get('pelagos.entity.handler')->getDistinctVals($entityClass, $property);
         } catch (UnmappedPropertyException $e) {
-            throw new BadRequestHttpException("$property is not a valid property of $entityClass.");
+            throw new BadRequestHttpException(
+                "$property is not a valid property of " . $entityClass::FRIENDLY_NAME . '.'
+            );
         }
     }
 
