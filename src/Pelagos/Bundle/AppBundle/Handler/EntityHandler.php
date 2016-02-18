@@ -161,12 +161,21 @@ class EntityHandler
      * @param string $entityClass Entity class to get distinct values from.
      * @param string $property    Property to get distinct values of.
      *
+     * @throws AccessDeniedException     When the user does not have sufficient privileges to get
+     *                                   a list of distinct values for properties of the entity.
      * @throws UnmappedPropertyException When Entity $entityClass does not have a mapped property $property.
      *
      * @return array List of all distinct values for $property for $entityClass.
      */
     public function getDistinctVals($entityClass, $property)
     {
+        $entity = new $entityClass;
+        if (!$this->authorizationChecker->isGranted(PelagosEntityVoter::CAN_CREATE, $entity)) {
+            throw new AccessDeniedException(
+                'You do not have sufficient privileges to retrieve a list of distinct values ' .
+                "for property $property of " . $entity::FRIENDLY_NAME . '.'
+            );
+        }
         $class = $this->entityManager->getClassMetadata($entityClass);
         if (!$class->hasField($property) && !$class->hasAssociation($property)) {
             $exception = new UnmappedPropertyException;

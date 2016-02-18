@@ -53,7 +53,9 @@ class PersonController extends EntityController
      *   section = "People",
      *   statusCodes = {
      *     200 = "The list of distinct values was returned successfully.",
-     *     400 = "An invalid property was requested.",
+     *     400 = "An invalid property for Person was requested.",
+     *     403 = "The authenticated user was not authorized to retrieve a list of
+                  distinct values for properties of Person.",
      *     500 = "An internal error has occurred.",
      *   }
      * )
