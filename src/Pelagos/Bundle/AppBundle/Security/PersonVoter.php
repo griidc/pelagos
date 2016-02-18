@@ -70,7 +70,7 @@ class PersonVoter extends PelagosEntityVoter
         // then the User can edit the Person object..
         if ($attribute == PelagosEntityVoter::CAN_EDIT) {
             foreach ($object->getDataRepositories() as $dataRepository) {
-                if (doesUserHaveRole(
+                if ($this->doesUserHaveRole(
                     $userPerson,
                     $dataRepository->getPersonDataRepositories(),
                     array(DataRepositoryRoles::MANAGER)
