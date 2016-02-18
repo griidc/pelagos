@@ -48,12 +48,6 @@
     {% javascripts '@PelagosAppBundle/Resources/public/js/ui.js' %}
         {{ add_js(asset_url) }}
     {% endjavascripts %}
-
-    {{ add_js("
-        var pelagosBasePath = '#{basePath}';
-        ",
-        'inline')
-    }}
 {% endblock %}
 
 
