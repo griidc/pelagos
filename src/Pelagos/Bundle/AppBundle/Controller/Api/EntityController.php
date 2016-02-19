@@ -13,6 +13,7 @@ use FOS\RestBundle\Util\Codes;
 
 use Pelagos\Entity\Entity;
 use Pelagos\Entity\Account;
+use Pelagos\Exception\UnmappedPropertyException;
 
 /**
  * The Entity api controller.
@@ -293,6 +294,27 @@ abstract class EntityController extends FOSRestController
         $entity->$setter($request->getContent());
         $this->container->get('pelagos.entity.handler')->update($entity);
         return new Response(null, Codes::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * Retrieves the list of distinct values for $property of $entityClass.
+     *
+     * @param string $entityClass The type of entity.
+     * @param string $property    The property to request distinct values for.
+     *
+     * @throws BadRequestHttpException When $property is not a valid property for $entityClass.
+     *
+     * @return array The list of distinct values for $property of $entityClass.
+     */
+    public function getDistinctVals($entityClass, $property)
+    {
+        try {
+            return $this->container->get('pelagos.entity.handler')->getDistinctVals($entityClass, $property);
+        } catch (UnmappedPropertyException $e) {
+            throw new BadRequestHttpException(
+                "$property is not a valid property of " . $entityClass::FRIENDLY_NAME . '.'
+            );
+        }
     }
 
     /**
