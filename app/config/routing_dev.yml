@@ -1,3 +1,5 @@
+# Routing configuration for all development environments.
+
 _wdt:
     resource: "@WebProfilerBundle/Resources/config/routing/wdt.xml"
     prefix:   /_wdt
@@ -12,3 +14,7 @@ _errors:
 
 _main:
     resource: routing.yml
+
+_assetic:
+    resource: .
+    type:     assetic
