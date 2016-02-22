@@ -22,7 +22,7 @@
         })
         .click(function () {
             var id = table.row(".selected").data().id;
-            var url = $(self).attr("viewinterface") + '/' + id;
+            var url = $(self).attr("viewinterface") + "/" + id;
             window.open(url, "_blank");
         });
 
@@ -31,7 +31,6 @@
             disabled: true
         })
         .click(function () {
-            var id = table.row(".selected").data().id;
             var deleteURL = table.row(".selected").data()._links.delete.href;
             var msg = "You are about to remove a Research Group.";
             $.when(showConfirmation({
@@ -70,10 +69,10 @@
             $("#selection_comment").show();
         });
 
-        table.on("select", function ( e, dt, type, indexes)
+        table.on("select", function(e, dt, type, indexes)
         {
-            if ( type === 'row' ) {
-                if (typeof table.row( indexes ).data()._links.delete === 'undefined') {
+            if (type === "row") {
+                if (typeof table.row(indexes).data()._links.delete === "undefined") {
                     $("#button_delete").button("option", "disabled", true);
                 } else {
                     $("#button_delete").button("option", "disabled", false);
