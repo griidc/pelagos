@@ -199,4 +199,26 @@ class PersonController extends EntityController
         $this->handleUpdate(PersonType::class, Person::class, $id, $request, 'PATCH');
         return $this->makeNoContentResponse();
     }
+
+    /**
+     * Delete a Person.
+     *
+     * @param integer $id The id of the Person to delete.
+     *
+     * @ApiDoc(
+     *   section = "People",
+     *   statusCodes = {
+     *     204 = "The Person was successfully deleted.",
+     *     404 = "The requested Person was not found.",
+     *     500 = "An internal error has occurred.",
+     *   }
+     * )
+     *
+     * @return Response A response object with an empty body and a "no content" status code.
+     */
+    public function deleteAction($id)
+    {
+        $this->handleDelete(Person::class, $id);
+        return $this->makeNoContentResponse();
+    }
 }
