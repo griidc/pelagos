@@ -24,6 +24,11 @@ use JMS\Serializer\Annotation\Exclude;
 class FundingOrganization extends Entity
 {
     /**
+     * A friendly name for this type of entity.
+     */
+    const FRIENDLY_NAME = 'Funding Organization';
+
+    /**
      * Static array containing a list of the properties and their attributes.
      *
      * @var array $properties
@@ -274,11 +279,15 @@ class FundingOrganization extends Entity
     protected $personFundingOrganizations;
 
     /**
-     * This FundingOrganization's parent DataRepository..
+     * This FundingOrganization's parent DataRepository.
      *
      * @var DataRepository $dataRepository
      *
-     * * @access protected
+     * @access protected
+     *
+     * @Assert\NotBlank(
+     *     message="Data Repository is required"
+     * )
      */
     protected $dataRepository;
 
@@ -687,7 +696,9 @@ class FundingOrganization extends Entity
     public function setDataRepository(DataRepository $dataRepository = null)
     {
         $this->dataRepository = $dataRepository;
-        $this->dataRepository->addFundingOrganization($this);
+        if ($dataRepository !== null) {
+            $this->dataRepository->addFundingOrganization($this);
+        }
     }
 
     /**
