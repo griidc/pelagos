@@ -22,7 +22,6 @@ class ListController extends Controller
     public function researchGroupListAction()
     {
         $ui = array();
-        $ui['entityType'] = 'ResearchGroup';
         return $this->render('PelagosAppBundle:template:UI-ResearchGroupList.html.twig', $ui);
     }
 }

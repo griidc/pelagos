@@ -2,8 +2,6 @@
     "use strict";
     $.fn.pelagosDataTable = function(options) {
 
-        var entityType = $(this).attr("entityType");
-
         var self = this;
 
         $(this).find(".buttons").attr("colspan", $(this).find("th").length);
@@ -35,13 +33,13 @@
         .click(function () {
             var id = table.row(".selected").data().id;
             var deleteURL = table.row(".selected").data()._links.delete.href;
-            var msg = "You are about to remove a " + entityType + ".";
+            var msg = "You are about to remove a Research Group.";
             $.when(showConfirmation({
                     title: "Please confirm:",
                     message: msg,
                     buttons: {
                         "Yes": {
-                            text: "Delete " + entityType
+                            text: "Delete Research Group "
                         },
                         "No": {
                             text: "Cancel"

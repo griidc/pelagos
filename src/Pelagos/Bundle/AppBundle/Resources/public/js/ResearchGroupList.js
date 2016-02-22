@@ -16,5 +16,4 @@ $(document).ready(function(){
             }
         ]
     });
-    $(".entityTable").attr("deletable", "");
 });
