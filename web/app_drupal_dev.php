@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * The front controller for the Drupal development environment (drupal_dev).
+ */
+
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Debug\Debug;
 use Symfony\Component\HttpKernel\AppKernel;
@@ -16,26 +20,4 @@ $kernel = new AppKernel('drupal_dev', true);
 $request = Request::createFromGlobals();
 $response = $kernel->handle($request);
 
-if (get_class($response) == 'Symfony\Component\HttpFoundation\BinaryFileResponse') {
-    $response->send();
-    $kernel->terminate($request, $response);
-    drupal_exit();
-}
-
-if (preg_match('/^Pelagos\\\\Bundle\\\\AppBundle\\\\Controller\\\\Api\\\\/', $request->attributes->get('_controller'))) {
-    $response->send();
-    $kernel->terminate($request, $response);
-    drupal_exit();
-}
-
-if (preg_match('/^Pelagos\\\\/', $request->attributes->get('_controller'))) {
-    $content = $response->getContent();
-    $newContent = preg_replace('/<\/body>/', '', $content);
-    $response->setContent($newContent);
-    $response->sendContent();
-    $kernel->terminate($request, $response);
-} else {
-    $response->send();
-    $kernel->terminate($request, $response);
-    drupal_exit();
-}
+require_once __DIR__ . '/../app/drupal_send_and_terminate.php';
