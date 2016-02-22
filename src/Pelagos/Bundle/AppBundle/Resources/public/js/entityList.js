@@ -61,7 +61,7 @@
                     method: "DELETE"
                 }).done(function () {
                     $(".selected").fadeOut("slow", function () {
-                        table.row(".selected").remove().draw(true);
+                        table.row(".selected").remove().draw(false);
                         $("#button_delete").button("option", "disabled", "true");
                         $("#button_detail").button("option", "disabled", "true");
                         $("#selection_comment").fadeIn();
