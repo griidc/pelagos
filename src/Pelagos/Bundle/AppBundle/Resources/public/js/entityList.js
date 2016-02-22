@@ -2,8 +2,6 @@
     "use strict";
     $.fn.pelagosDataTable = function(options) {
 
-        options["canDelete"] = true;
-
         var entityType = $(this).attr("entityType");
 
         var self = this;
@@ -35,7 +33,6 @@
         .click(function () {
             var id = table.row(".selected").data().id;
             var url = $(self).attr("viewinterface") + '/' + id;
-            debugger;
             window.open(url, "_blank");
         });
 
@@ -45,56 +42,56 @@
         })
         .click(function () {
             var id = table.row(".selected").data().id;
+            var deleteURL = table.row(".selected").data()._links.delete.href;
             var msg = "You are about to remove a " + entityType + ".";
-            if ((options.canDelete) && $(this).closest("table").is("[deletable]")) {
-                $.when(showConfirmation({
-                        title: "Please confirm:",
-                        message: msg,
-                        buttons: {
-                            "Yes": {
-                                text: "Delete " + entityType
-                            },
-                            "No": {
-                                text: "Cancel"
-                            }
+            $.when(showConfirmation({
+                    title: "Please confirm:",
+                    message: msg,
+                    buttons: {
+                        "Yes": {
+                            text: "Delete " + entityType
+                        },
+                        "No": {
+                            text: "Cancel"
                         }
-                    })).done(function() {
-                    $.ajax({
-                        url: table.row(".selected").data()._links.delete.href,
-                        method: "DELETE"
-                    }).done(function () {
-                        $(".selected").fadeOut("slow", function () {
-                            table.row(".selected").remove().draw(true);
-                            $("#button_delete").button("option", "disabled", "true");
-                            $("#button_detail").button("option", "disabled", "true");
-                            $("#selection_comment").fadeIn();
-                        });
-                    }).fail(function (xhr) {
-                        var jsonError = xhr.responseJSON.message;
-                        showDialog("Error", jsonError);
+                    }
+                })).done(function() {
+                $.ajax({
+                    url: deleteURL,
+                    method: "DELETE"
+                }).done(function () {
+                    $(".selected").fadeOut("slow", function () {
+                        table.row(".selected").remove().draw(true);
+                        $("#button_delete").button("option", "disabled", "true");
+                        $("#button_detail").button("option", "disabled", "true");
+                        $("#selection_comment").fadeIn();
                     });
+                }).fail(function (xhr) {
+                    var jsonError = xhr.responseJSON.message;
+                    showDialog("Error", jsonError);
                 });
-            }
+            });
         });
 
         table.on("deselect", function ()
         {
             $("#button_detail").button("option", "disabled", true);
-            if ((options.canDelete) && $(this).closest("table").is("[deletable]")) {
-                $("#button_delete").button("option", "disabled", true);
-            }
+            $("#button_delete").button("option", "disabled", true);
             $("#selection_comment").show();
         });
 
-        table.on("select", function ()
+        table.on("select", function ( e, dt, type, indexes)
         {
-            $("#button_detail").button("option", "disabled", false);
-            if ((options.canDelete) && $(this).closest("table").is("[deletable]")) {
-                $("#button_delete").button("option", "disabled", false);
+            if ( type === 'row' ) {
+                if (typeof table.row( indexes ).data()._links.delete === 'undefined') {
+                    $("#button_delete").button("option", "disabled", true);
+                } else {
+                    $("#button_delete").button("option", "disabled", false);
+                }
+                $("#button_detail").button("option", "disabled", false);
+                $("#selection_comment").hide();
             }
-            $("#selection_comment").hide();
         });
-
         return table;
     };
 }(jQuery));
