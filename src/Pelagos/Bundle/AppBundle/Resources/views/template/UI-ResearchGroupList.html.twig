@@ -48,23 +48,25 @@
 {% block body %}
 Hello
 <table
-  viewInterface = "{{ path('pelagos_app_ui_researchgroup') }}"
-  class="entityTable stripe" width="100%" entityType="{{entityType}}"
-  data-ajax='{
-    "url": "{{ path('pelagos_api_research_groups_get_collection') }}",
-    "dataSrc": "",
-    "cache": true
-  }'
- data-columns='[
-            { "data": "id"},
-            { "data": "name"},
-            { "data": "fundingCycle.name"},
-            { "data": "fundingCycle.fundingOrganization.name"},
-            { "data": "creationTimeStamp"},
-            { "data": "modificationTimeStamp"},
-            { "data": "creator"},
-            { "data": "modifier"}
-        ]'
+    viewInterface = "{{ path('pelagos_app_ui_researchgroup') }}"
+    class = "entityTable stripe"
+    width = "100%"
+    entityType = "{{entityType}}"
+    data-ajax = '{
+        "url": "{{ path('pelagos_api_research_groups_get_collection') }}",
+        "dataSrc": "",
+        "cache": true
+    }'
+    data-columns = '[
+        { "data": "id" },
+        { "data": "name" },
+        { "data": "fundingCycle.name" },
+        { "data": "fundingCycle.fundingOrganization.name" },
+        { "data": "creationTimeStamp" },
+        { "data": "modificationTimeStamp" },
+        { "data": "creator" },
+        { "data": "modifier" }
+    ]'
 >
     <thead>
         <tr>
@@ -80,7 +82,15 @@ Hello
     </thead>
     <tfoot>
         <tr>
-
+            <td class="buttons" colspan = "7">
+                <div>
+                    <button id="button_detail">View Research Group Details</button>
+                    <button id="button_delete">Delete Research Group</button>
+                    <span id="selection_comment">
+                        <i>For additional options, please make a selection above.</i>
+                    </span>
+                </div>
+            </td>
         </tr>
     </tfoot>
 </table>
