@@ -93,4 +93,56 @@ class FundingCycleController extends EntityController
         $fundingCycle = $this->handlePost(FundingCycleType::class, FundingCycle::class, $request);
         return $this->makeCreatedResponse('pelagos_api_funding_cycles_get', $fundingCycle->getId());
     }
+
+    /**
+     * Replace a Funding Cycle with the submitted data.
+     *
+     * @param integer $id      The id of the Funding Cycle to replace.
+     * @param Request $request The request object.
+     *
+     * @ApiDoc(
+     *   section = "Funding Cycles",
+     *   input = {"class" = "Pelagos\Bundle\AppBundle\Form\FundingCycleType", "name" = ""},
+     *   statusCodes = {
+     *     204 = "The Funding Cycle was successfully replaced.",
+     *     400 = "The request could not be processed due to validation or other errors.",
+     *     403 = "The authenticated user was not authorized to edit the Funding Cycle.",
+     *     404 = "The requested Funding Cycle was not found.",
+     *     500 = "An internal error has occurred.",
+     *   }
+     * )
+     *
+     * @return Response A Response object with an empty body and a "no content" status code.
+     */
+    public function putAction($id, Request $request)
+    {
+        $this->handleUpdate(FundingCycleType::class, FundingCycle::class, $id, $request, 'PUT');
+        return $this->makeNoContentResponse();
+    }
+
+    /**
+     * Update a Funding Cycle with the submitted data.
+     *
+     * @param integer $id      The id of the Funding Cycle to update.
+     * @param Request $request The request object.
+     *
+     * @ApiDoc(
+     *   section = "Funding Cycles",
+     *   input = {"class" = "Pelagos\Bundle\AppBundle\Form\FundingCycleType", "name" = ""},
+     *   statusCodes = {
+     *     204 = "The Funding Cycle was successfully updated.",
+     *     400 = "The request could not be processed due to validation or other errors.",
+     *     403 = "The authenticated user was not authorized to edit the Funding Cycle.",
+     *     404 = "The requested Funding Cycle was not found.",
+     *     500 = "An internal error has occurred.",
+     *   }
+     * )
+     *
+     * @return Response A Response object with an empty body and a "no content" status code.
+     */
+    public function patchAction($id, Request $request)
+    {
+        $this->handleUpdate(FundingCycleType::class, FundingCycle::class, $id, $request, 'PATCH');
+        return $this->makeNoContentResponse();
+    }
 }
