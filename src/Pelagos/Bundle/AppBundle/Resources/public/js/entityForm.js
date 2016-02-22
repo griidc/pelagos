@@ -75,6 +75,7 @@
 
             var formValidator = $(this).validate({
                 submitHandler: function(form) {
+                    $(thisForm).trigger("presubmit");
                     if ($(form).find("[name=\"id\"]").val() === "") {
                         updateEntity(form, "Create");
                     } else {

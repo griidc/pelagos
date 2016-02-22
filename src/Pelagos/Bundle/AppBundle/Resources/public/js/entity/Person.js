@@ -6,7 +6,7 @@ $(document).ready(function()
     $("#phoneNumber").mask("(999) 999-9999");
     $("#phoneNumber").prop("defaultValue", $("#phoneNumber").val());
 
-    $("form[entityType=\"Person\"]").on("submit", function() {
+    $("form[entityType=\"Person\"]").on("presubmit", function() {
         var phoneValue = $("#phoneNumber").val().replace(/[^\d]/g, "");
         $('form[entityType="Person"] input[name="phoneNumber"]').val(phoneValue);
     });
