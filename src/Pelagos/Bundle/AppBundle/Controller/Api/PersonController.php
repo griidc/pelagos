@@ -45,6 +45,33 @@ class PersonController extends EntityController
     }
 
     /**
+     * Get the distinct values for a property of a Person.
+     *
+     * @param string $property The property for which the distinct values are being requested.
+     *
+     * @ApiDoc(
+     *   section = "People",
+     *   statusCodes = {
+     *     200 = "The list of distinct values was returned successfully.",
+     *     400 = "An invalid property for Person was requested.",
+     *     403 = "The authenticated user was not authorized to retrieve a list of
+                  distinct values for properties of Person.",
+     *     500 = "An internal error has occurred.",
+     *   }
+     * )
+     *
+     * @Rest\Get("/getDistinctVals/{property}")
+     *
+     * @Rest\View()
+     *
+     * @return array The list of distinct values for a property.
+     */
+    public function getDistinctValsAction($property)
+    {
+        return $this->getDistinctVals(Person::class, $property);
+    }
+
+    /**
      * Get a collection of People.
      *
      * @param Request $request The request object.
@@ -119,5 +146,57 @@ class PersonController extends EntityController
     {
         $person = $this->handlePost(PersonType::class, Person::class, $request);
         return $this->makeCreatedResponse('pelagos_api_people_get', $person->getId());
+    }
+
+    /**
+     * Replace a Person with the submitted data.
+     *
+     * @param integer $id      The id of the Person to replace.
+     * @param Request $request The request object.
+     *
+     * @ApiDoc(
+     *   section = "People",
+     *   input = {"class" = "Pelagos\Bundle\AppBundle\Form\PersonType", "name" = ""},
+     *   statusCodes = {
+     *     204 = "The Person was successfully replaced.",
+     *     400 = "The request could not be processed due to validation or other errors.",
+     *     403 = "The authenticated user was not authorized to edit the Person.",
+     *     404 = "The requested Person was not found.",
+     *     500 = "An internal error has occurred.",
+     *   }
+     * )
+     *
+     * @return Response A Response object with an empty body and a "no content" status code.
+     */
+    public function putAction($id, Request $request)
+    {
+        $this->handleUpdate(PersonType::class, Person::class, $id, $request, 'PUT');
+        return $this->makeNoContentResponse();
+    }
+
+    /**
+     * Update a Person with the submitted data.
+     *
+     * @param integer $id      The id of the Person to update.
+     * @param Request $request The request object.
+     *
+     * @ApiDoc(
+     *   section = "People",
+     *   input = {"class" = "Pelagos\Bundle\AppBundle\Form\PersonType", "name" = ""},
+     *   statusCodes = {
+     *     204 = "The Person was successfully updated.",
+     *     400 = "The request could not be processed due to validation or other errors.",
+     *     403 = "The authenticated user was not authorized to edit the Person.",
+     *     404 = "The requested Person was not found.",
+     *     500 = "An internal error has occurred.",
+     *   }
+     * )
+     *
+     * @return Response A Response object with an empty body and a "no content" status code.
+     */
+    public function patchAction($id, Request $request)
+    {
+        $this->handleUpdate(PersonType::class, Person::class, $id, $request, 'PATCH');
+        return $this->makeNoContentResponse();
     }
 }
