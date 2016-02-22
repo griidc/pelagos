@@ -19,7 +19,7 @@ class ListController extends Controller
      *
      * @return Response A list of Research Groups.
      */
-    public function researchGroupListAction(Request $request)
+    public function researchGroupListAction()
     {
         $ui = array();
         $ui['entityType'] = 'ResearchGroup';
