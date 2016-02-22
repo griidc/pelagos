@@ -14,7 +14,7 @@ action="{{path('pelagos_api_person_research_groups_post')}}">
     {% endif %}
     
     <div
-    {% if is_granted('CAN_EDIT', editlabel) %}
+    {% if is_granted('CAN_EDIT', editlabel|default) %}
      class="editableField"
     {% endif %}
     >
