@@ -209,7 +209,7 @@ class PersonController extends EntityController
      *   section = "People",
      *   statusCodes = {
      *     204 = "The Person was successfully deleted.",
-     *     403 = "ou do not have sufficient privileges to delete this Person.",
+     *     403 = "You do not have sufficient privileges to delete this Person.",
      *     404 = "The requested Person was not found.",
      *     500 = "An internal error has occurred.",
      *   }
