@@ -45,6 +45,34 @@ class PersonController extends EntityController
     }
 
     /**
+     * Validate a value for a property of an existing Person.
+     *
+     * @param integer $id      The id of the existing Person.
+     * @param Request $request The request object.
+     *
+     * @ApiDoc(
+     *   section = "People",
+     *   parameters = {{"name"="someProperty", "dataType"="string", "required"="true"}},
+     *   statusCodes = {
+     *     200 = "Validation was performed successfully (regardless of validity).",
+     *     400 = "Bad parameters were passed in the query string.",
+     *     404 = "The requested Person was not found.",
+     *     500 = "An internal error has occurred.",
+     *   }
+     * )
+     *
+     * @Rest\Get("/{id}/validateProperty")
+     *
+     * @Rest\View()
+     *
+     * @return boolean|string True if valid, or a message indicating why the property is invalid.
+     */
+    public function validatePropertyExistingAction($id, Request $request)
+    {
+        return $this->validateProperty(PersonType::class, Person::class, $request, $id);
+    }
+
+    /**
      * Get the distinct values for a property of a Person.
      *
      * @param string $property The property for which the distinct values are being requested.
