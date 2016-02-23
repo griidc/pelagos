@@ -19,7 +19,7 @@ action="{{path('pelagos_api_research_groups_post')}}">
     <label for="fundingCycle">Funding Cycle:</label>
     <select
     {{ (ResearchGroup.getFundingCycle.getId|default == '' ? ' disabled ' : '')  }}
-    required name="fundingCycle" fundingCycle="{{ResearchGroup.getFundingCycle.getId|default}}">
+    required name="fundingCycle" fundingCycle="{{ResearchGroup.getFundingCycle.getId|default}}" data-url="{{path('pelagos_api_funding_cycles_get_collection')}}">
         <option value="">[Please Select a Funding Organization First]</option>
         {% if (ResearchGroup) %}
             {% for FundingCycle in ResearchGroup.getFundingCycle.getFundingOrganization.getFundingCycles|default %}

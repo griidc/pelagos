@@ -11,6 +11,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
+use Pelagos\Bundle\AppBundle\Security\EntityProperty;
+
 /**
  * The default controller for the Pelagos UI App Bundle.
  */
@@ -44,6 +46,7 @@ class UIController extends Controller
 
                 $ui['PersonResearchGroups'][] = $personResearchGroup;
                 $ui['PersonResearchGroupForms'][$personResearchGroup->getId()] = $formView;
+                $ui['PersonResearchGroupEditLabel'][$personResearchGroup->getId()] = new EntityProperty($personResearchGroup, 'label');
             }
 
             $newResearchGroupPerson = new \Pelagos\Entity\PersonResearchGroup;

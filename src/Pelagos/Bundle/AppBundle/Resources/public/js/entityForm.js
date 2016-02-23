@@ -58,8 +58,11 @@
 
             //View Only!
             if (!($(this).hasAttr("creatable") || $(this).hasAttr("editable") || $(this).hasAttr("deletable"))) {
-                $(this).find(".innerForm").hide();
-                return null;
+                //Also check if single fields are not editable.
+                if (!$(this).has(".editableField").length ? true : false) {
+                    $(this).find(".innerForm").hide();
+                    return null;
+                }
             }
 
             // if (entityId === "") {
@@ -198,6 +201,37 @@
 
                 addimg.insertAfter($(this));
             }
+
+            //Special stuff for Single Field
+            if ($(this).has(".editableField").length ? true : false) {
+                var field = $(this).find(".editableField input,.editableField select,.editableField textarea");
+
+                $(".entityWrapper").has(this).on("click", function() {
+                    if (!$(this).hasClass("active")) {
+                        $(this).addClass("active");
+
+                        var url = actionURL + "/validateProperty";
+
+                        $(field).each(function() {
+                            $(this).attr("disabled", false);
+                            if (!$(this).hasAttr("dontvalidate")) {
+                                $(this).rules("add", {
+                                    remote: {
+                                        url: url
+                                    }
+                                });
+                            }
+                        });
+                        $(".innerForm", this).hide();
+                        $(".entityFormButton,.showOnEdit", this)
+                        .css({opacity: 0.0, visibility: "visible"})
+                        .animate({opacity: 1.0});
+                        $("button", this).button("enable");
+                    }
+                });
+            }
+
+
 
         });
     };
@@ -385,7 +419,7 @@
                 break;
             case "Update":
                 url = actionURL + "/" + entityId;
-                type = "PUT";
+                type = "PATCH";
                 returnCode = 204;
                 prefixPhrase = "Updated";
                 break;
@@ -427,9 +461,9 @@
                         if (!$.isNumeric(urlParts[urlParts.length - 1])) {
                             window.history.pushState(newID, docTitle, newURL);
                         }
+                        //Set ID on form
+                        $(form).find('[name="id"]').val(newID);
 
-                        //Should set ID?
-                        $(form).filter("#id").val(newID);
                     }
                 },
                 success: function(data, textStatus, jqXHR) {
