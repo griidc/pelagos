@@ -201,17 +201,17 @@
 
                 addimg.insertAfter($(this));
             }
-            
+
             //Special stuff for Single Field
             if ($(this).has(".editableField").length ? true : false) {
                 var field = $(this).find(".editableField input,.editableField select,.editableField textarea");
-                
+
                 $(".entityWrapper").has(this).on("click", function() {
                     if (!$(this).hasClass("active")) {
                         $(this).addClass("active");
-                        
+
                         var url = actionURL + "/validateProperty";
-                        
+
                         $(field).each(function() {
                             $(this).attr("disabled", false);
                             if (!$(this).hasAttr("dontvalidate")) {
@@ -230,8 +230,8 @@
                     }
                 });
             }
-            
-            
+
+
 
         });
     };
@@ -461,9 +461,9 @@
                         if (!$.isNumeric(urlParts[urlParts.length - 1])) {
                             window.history.pushState(newID, docTitle, newURL);
                         }
+                        //Set ID on form
+                        $(form).find('[name="id"]').val(newID);
 
-                        //Should set ID?
-                        $(form).filter("#id").val(newID);
                     }
                 },
                 success: function(data, textStatus, jqXHR) {
