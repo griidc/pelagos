@@ -14,3 +14,9 @@ services:
         public: false
         tags:
             - { name: twig.extension }
+
+    pelagos.form.type.person:
+        class: Pelagos\Bundle\AppBundle\Form\PersonType
+        arguments: ["@router"]
+        tags:
+            - { name: form.type }
