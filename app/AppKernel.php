@@ -31,6 +31,7 @@ class AppKernel extends Kernel
             new \FOS\RestBundle\FOSRestBundle(),
             new \JMS\SerializerBundle\JMSSerializerBundle(),
             new \Nelmio\ApiDocBundle\NelmioApiDocBundle(),
+            new \Bazinga\Bundle\HateoasBundle\BazingaHateoasBundle(),
             new \Pelagos\Bundle\LegacyBundle\PelagosLegacyBundle(),
             new \Pelagos\Bundle\AppBundle\PelagosAppBundle(),
         );
