@@ -14,9 +14,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 /**
- * A form for creating person research groups.
+ * A form for creating person funding organizations.
  */
-class PersonResearchGroupType extends AbstractType
+class PersonFundingOrganizationType extends AbstractType
 {
     /**
      * Builds the form.
@@ -39,16 +39,16 @@ class PersonResearchGroupType extends AbstractType
                 },
                 'placeholder' => '[Please Select a Person]',
             ))
-            ->add('researchGroup', EntityType::class, array(
-                'label' => 'Research Group:',
-                'class' => 'Pelagos:ResearchGroup',
+            ->add('fundingOrganization', EntityType::class, array(
+                'label' => 'Funding Organization:',
+                'class' => 'Pelagos:FundingOrganization',
                 'choice_label' => 'name',
-                'placeholder' => '[Please Select a Research Group]',
+                'placeholder' => '[Please Select a Funding Organization]',
                 //'attr' => array('class' => 'hiddenFormField'),
             ))
             ->add('role', EntityType::class, array(
                 'label' => 'Role:',
-                'class' => 'Pelagos:ResearchGroupRole',
+                'class' => 'Pelagos:FundingOrganizationRole',
                 'choice_label' => 'name',
                 'placeholder' => '[Please Select a Role]',
             ))
@@ -68,7 +68,7 @@ class PersonResearchGroupType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Pelagos\Entity\PersonResearchGroup',
+            'data_class' => 'Pelagos\Entity\PersonFundingOrganization',
             'allow_extra_fields' => true,
         ));
     }
@@ -93,7 +93,7 @@ class PersonResearchGroupType extends AbstractType
             }
         );
         usort(
-            $view->children['researchGroup']->vars['choices'],
+            $view->children['fundingOrganization']->vars['choices'],
             function (ChoiceView $a, ChoiceView $b) {
                 return strcasecmp($a->label, $b->label);
             }

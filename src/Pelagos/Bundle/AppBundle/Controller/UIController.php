@@ -4,6 +4,8 @@ namespace Pelagos\Bundle\AppBundle\Controller;
 
 use Pelagos\Bundle\AppBundle\Form\ResearchGroupType;
 use Pelagos\Bundle\AppBundle\Form\PersonResearchGroupType;
+use Pelagos\Bundle\AppBundle\Form\PersonFundingOrganizationType;
+use Pelagos\Bundle\AppBundle\Form\PersonType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -42,7 +44,6 @@ class UIController extends Controller
 
                 $ui['PersonResearchGroups'][] = $personResearchGroup;
                 $ui['PersonResearchGroupForms'][$personResearchGroup->getId()] = $formView;
-
             }
 
             $newResearchGroupPerson = new \Pelagos\Entity\PersonResearchGroup;
@@ -102,5 +103,57 @@ class UIController extends Controller
         $ui['entityService'] = $entityHandler;
 
         return $this->render('PelagosAppBundle:template:PersonResearchGroup.html.twig', $ui);
+    }
+
+    /**
+     * The Person Research Group action.
+     *
+     * @param string $id The id of the entity to retrieve.
+     *
+     * @throws BadRequestHttpException When the Research Group ID is not provided.
+     *
+     * @Route("/Person/{id}")
+     *
+     * @return Response A Response instance.
+     */
+    public function personAction($id = null)
+    {
+        $entityHandler = $this->get('pelagos.entity.handler');
+
+        $ui = array();
+
+        if (isset($id)) {
+            $person = $entityHandler->get('Pelagos:Person', $id);
+
+            foreach ($person->getPersonResearchGroups() as $personResearchGroup) {
+                $formView = $this
+                    ->get('form.factory')
+                    ->createNamed(null, PersonResearchGroupType::class, $personResearchGroup)
+                    ->createView();
+
+                $ui['PersonResearchGroups'][] = $personResearchGroup;
+                $ui['PersonResearchGroupForms'][$personResearchGroup->getId()] = $formView;
+            }
+
+            foreach ($person->getPersonFundingOrganizations() as $personFundingOrganization) {
+                $formView = $this
+                    ->get('form.factory')
+                    ->createNamed(null, PersonFundingOrganizationType::class, $personFundingOrganization)
+                    ->createView();
+
+                $ui['PersonFundingOrganizations'][] = $personFundingOrganization;
+                $ui['PersonFundingOrganizationForms'][$personFundingOrganization->getId()] = $formView;
+            }
+        } else {
+            $person = new \Pelagos\Entity\Person;
+        }
+
+        $form = $this->get('form.factory')->createNamed(null, PersonType::class, $person);
+
+        $ui['Person'] = $person;
+        $ui['form'] = $form->createView();
+        $ui['entityService'] = $entityHandler;
+
+        return $this->render('PelagosAppBundle:template:Person.html.twig', $ui);
     }
 }

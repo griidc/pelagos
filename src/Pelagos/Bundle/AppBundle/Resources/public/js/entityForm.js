@@ -75,7 +75,8 @@
 
             var formValidator = $(this).validate({
                 submitHandler: function(form) {
-                    if ($(thisForm).find("[name=\"id\"]").val() === "") {
+                    $(thisForm).trigger("presubmit");
+                    if ($(form).find("[name=\"id\"]").val() === "") {
                         updateEntity(form, "Create");
                     } else {
                         updateEntity(form, "Update");
@@ -88,7 +89,9 @@
                           "</div><br><button class=\"entityFormButton\" type=\"submit\">Save</button>" +
                           "&nbsp;<button id=\"cancelButton\" class=\"entityFormButton\" type=\"reset\">Cancel</button></div>";
 
-            $(this).append(buttons);
+            if (!$(this).hasAttr("newform")) {
+                $(this).append(buttons);
+            }
 
             $(".entityFormButton").css("visibility", "hidden").button();
 
@@ -174,11 +177,16 @@
                 $(this).fadeOut();
 
                 $(".addimg", this).button().click(function() {
-                    $(this).fadeOut();
-                    var newForm = $(thisForm).clone(true).insertBefore(this).fadeIn();
+                    var addImg = $(this).fadeOut();
+                    var newForm = $(thisForm)
+                        .clone(false)
+                        .removeAttr("newform")
+                        .insertBefore(this)
+                        .fadeIn()
+                        .entityForm();
 
                     $(newForm).find("#cancelButton").click(function() {
-                        $(newForm).next(".addimg").fadeIn();
+                        addImg.fadeIn();
                         newForm.remove();
                     });
 
