@@ -1,5 +1,7 @@
+# Configuration settings specific to the Drupal development environment.
+
 imports:
-    - { resource: config.yml }
+    - { resource: config_drupal.yml }
 
 framework:
     router:
@@ -41,12 +43,5 @@ monolog:
         #    type:   chromephp
         #    level:  info
 
-#assetic:
-#    use_controller: true
-
 #swiftmailer:
 #    delivery_address: me@example.com
-
-twig:
-    globals:
-        wrapped: true
