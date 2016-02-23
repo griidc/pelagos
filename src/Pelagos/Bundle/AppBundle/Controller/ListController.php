@@ -19,7 +19,6 @@ class ListController extends Controller
      */
     public function researchGroupListAction()
     {
-        $ui = array();
         return $this->render('PelagosAppBundle:template:UI-ResearchGroupList.html.twig');
     }
 }
