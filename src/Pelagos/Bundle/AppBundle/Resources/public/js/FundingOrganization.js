@@ -22,4 +22,19 @@ $(document).ready(function()
 
     });
 
+    $("#logobutton")
+        .button()
+        .click(function( event ) {
+              $('#fileupload').click();
+        });
+
+    $('#fileupload').fileupload({
+        url: $(this).attr("data-url"),
+        method: 'POST',
+        done: function (e, data) {
+            $("#fundingOrganizationLogo img").attr('src', data.url);
+        }
+    }).prop('disabled', !$.support.fileInput)
+    .parent().addClass($.support.fileInput ? undefined : 'disabled');
+
 });

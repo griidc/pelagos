@@ -1,21 +1,11 @@
-<form class="entityForm" entityType="FundingOrganization" editable creatable deletable 
+<form class="entityForm" entityType="FundingOrganization"
 {% include '@templates/forms/permissionsBlock.html.twig' with {'Entity': FundingOrganization} %}
 action="{{path('pelagos_api_funding_organizations_post')}}">
 
     <input type="hidden" name="id" value="{{FundingOrganization.getId}}">
 
     {{ form_widget(form) }}
-    
-    <!--
-        <span class="showOnEdit">
-            <label for="logo">Logo:</label>
-            <input name="logo" type="file"
-                base64="{{FundingOrganization.serializeBinary(FundingOrganization.getLogo).base64}}"
-                mimeType="{{FundingOrganization.serializeBinary(FundingOrganization.getLogo).mimeType}}">
-            <br>
-        </span>
-    -->
-    
+
     {% include '@templates/forms/innerForm.html.twig' with {'Entity': FundingOrganization} %}
 
 </form>

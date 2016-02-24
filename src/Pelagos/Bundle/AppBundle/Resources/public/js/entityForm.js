@@ -132,7 +132,7 @@
 
                     var url = actionURL + "/validateProperty";
 
-                    $("input:visible,textarea,select", this).each(function() {
+                    $("input:visible:text,textarea,select", this).each(function() {
                         $(this).attr("disabled", false);
                         if (!$(this).hasAttr("dontvalidate")) {
                             $(this).rules("add", {

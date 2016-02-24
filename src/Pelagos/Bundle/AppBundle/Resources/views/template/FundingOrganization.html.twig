@@ -5,10 +5,12 @@
     {% javascripts '@PelagosAppBundle/Resources/public/js/FundingOrganization.js' %}
         {{ add_js(asset_url) }}
     {% endjavascripts %}
-    
+
     {% javascripts '@PelagosAppBundle/Resources/public/js/entity/FundingCycle.js' %}
         {{ add_js(asset_url) }}
     {% endjavascripts %}
+
+
 {% endblock %}
 
 {% block body %}
@@ -16,8 +18,20 @@
         <tr>
             <td width="25%" valign="top">
                 <div id="fundingOrganizationLogo">
-                    {% if FundingOrganization.getLogo %}
-                        <img src="data:{{FundingOrganization.serializeBinary(FundingOrganization.getLogo).mimeType}};base64,{{FundingOrganization.serializeBinary(FundingOrganization.getLogo).base64}}">
+
+                    <label for="logo">Logo:</label>
+                    <p>
+                        <img
+                        {% if FundingOrganization.getLogo %}
+                                src="{{path('pelagos_api_funding_organizations_put_logo', {'id': FundingOrganization.getId}) }}"
+                        {% endif %}
+                        >
+                    </p>
+                    {% if FundingOrganization.getId %}
+                         <span style="display:none;">
+                            <input id="fileupload" type="file" name="logo" data-url="{{path('pelagos_api_funding_organizations_put_logo', {'id': FundingOrganization.getId}) }}">
+                        </span>
+                        <button id="logobutton" type="button">Change Logo</button>
                     {% endif %}
                 </div>
             </td>

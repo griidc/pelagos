@@ -49,13 +49,13 @@ class FundingCycleType extends AbstractType
             ->add('startDate', TextType::class, array(
                 'label' => 'Start Date:',
                 'required' => false,
-                'placeholder' => 'yyyy-mm-dd',
+                'attr' => array('placeholder' => 'yyyy-mm-dd'),
                 //'widget' => 'single_text',
             ))
             ->add('endDate', TextType::class, array(
                 'label' => 'End Date:',
                 'required' => false,
-                'placeholder' => 'yyyy-mm-dd',
+                'attr' => array('placeholder' => 'yyyy-mm-dd'),
                 //'widget' => 'single_text',
             ));
     }
