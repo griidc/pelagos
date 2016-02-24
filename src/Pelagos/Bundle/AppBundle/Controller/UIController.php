@@ -182,7 +182,7 @@ class UIController extends Controller
         if ($id !== null) {
             $fundingOrganization = $entityHandler->get('Pelagos:FundingOrganization', $id);
             
-            if (!$person instanceof \Pelagos\Entity\FundingOrganization) {
+            if (!$fundingOrganization instanceof \Pelagos\Entity\FundingOrganization) {
                 throw $this->createNotFoundException('The Funding Organization was not found');
             }
 
