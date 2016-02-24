@@ -62,6 +62,10 @@ class PersonVoter extends PelagosEntityVoter
         // Get the Person associated with this Account.
         $userPerson = $user->getPerson();
 
+        // People can edit themselves.
+        if ($attribute == PelagosEntityVoter::CAN_EDIT and $object->isSameTypeAndId($userPerson)) {
+            return true;
+        }
         // Action: PelagosEntityVoter::CAN_EDIT
         // Role:   DataRepositoryRoles::MANAGER
         // If attribute is CAN_EDIT and
