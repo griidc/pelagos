@@ -1,3 +1,9 @@
+funding_organizations:
+    type: rest
+    resource: Pelagos\Bundle\AppBundle\Controller\Api\FundingOrganizationController
+    name_prefix: funding_organizations_
+    prefix: funding_organizations
+
 funding_cycles:
     type: rest
     resource: Pelagos\Bundle\AppBundle\Controller\Api\FundingCycleController

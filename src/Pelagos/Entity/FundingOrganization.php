@@ -11,6 +11,7 @@ namespace Pelagos\Entity;
 use \Symfony\Component\Validator\Constraints as Assert;
 use \Pelagos\Exception\NotDeletableException;
 use JMS\Serializer\Annotation\Exclude;
+use Hateoas\Configuration\Annotation as Hateoas;
 
 /**
  * Class to represent funding organizations.
@@ -20,9 +21,42 @@ use JMS\Serializer\Annotation\Exclude;
  *     errorPath="name",
  *     message="A Funding Organization with this name already exists"
  * )
+ *
+ * @Hateoas\Relation(
+ *   "self",
+ *   href = @Hateoas\Route(
+ *     "pelagos_api_funding_organizations_get",
+ *     parameters = { "id" = "expr(object.getId())" }
+ *   )
+ * )
+ * @Hateoas\Relation(
+ *   "edit",
+ *   href = @Hateoas\Route(
+ *     "pelagos_api_funding_organizations_put",
+ *     parameters = { "id" = "expr(object.getId())" }
+ *   ),
+ *   exclusion = @Hateoas\Exclusion(
+ *     excludeIf = "expr(not service('security.authorizationchecker').isGranted(['CAN_EDIT'], object))"
+ *   )
+ * )
+ * @Hateoas\Relation(
+ *   "delete",
+ *   href = @Hateoas\Route(
+ *     "pelagos_api_funding_organizations_delete",
+ *     parameters = { "id" = "expr(object.getId())" }
+ *   ),
+ *   exclusion = @Hateoas\Exclusion(
+ *     excludeIf = "expr(not object.isDeletable() or not service('security.authorizationchecker').isGranted(['CAN_DELETE'], object))"
+ *   )
+ * )
  */
 class FundingOrganization extends Entity
 {
+    /**
+     * A friendly name for this type of entity.
+     */
+    const FRIENDLY_NAME = 'Funding Organization';
+
     /**
      * Static array containing a list of the properties and their attributes.
      *
@@ -274,11 +308,15 @@ class FundingOrganization extends Entity
     protected $personFundingOrganizations;
 
     /**
-     * This FundingOrganization's parent DataRepository..
+     * This FundingOrganization's parent DataRepository.
      *
      * @var DataRepository $dataRepository
      *
-     * * @access protected
+     * @access protected
+     *
+     * @Assert\NotBlank(
+     *     message="Data Repository is required"
+     * )
      */
     protected $dataRepository;
 
@@ -687,7 +725,9 @@ class FundingOrganization extends Entity
     public function setDataRepository(DataRepository $dataRepository = null)
     {
         $this->dataRepository = $dataRepository;
-        $this->dataRepository->addFundingOrganization($this);
+        if ($dataRepository !== null) {
+            $this->dataRepository->addFundingOrganization($this);
+        }
     }
 
     /**
