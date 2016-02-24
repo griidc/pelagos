@@ -2,19 +2,20 @@
 
 namespace Pelagos\Bundle\AppBundle\Controller;
 
+use Pelagos\Bundle\AppBundle\Security\EntityProperty;
+
 use Pelagos\Bundle\AppBundle\Form\ResearchGroupType;
 use Pelagos\Bundle\AppBundle\Form\PersonResearchGroupType;
 use Pelagos\Bundle\AppBundle\Form\PersonFundingOrganizationType;
-
 use Pelagos\Bundle\AppBundle\Form\FundingOrganizationType;
-
+use Pelagos\Bundle\AppBundle\Form\FundingCycleType;
 use Pelagos\Bundle\AppBundle\Form\PersonType;
+
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-
-use Pelagos\Bundle\AppBundle\Security\EntityProperty;
 
 /**
  * The default controller for the Pelagos UI App Bundle.
@@ -190,10 +191,20 @@ class UIController extends Controller
                 $ui['PersonFundingOrganizations'][] = $personFundingOrganization;
                 $ui['PersonFundingOrganizationForms'][$personFundingOrganization->getId()] = $formView;
             }
+            
+            foreach ($fundingOrganization->getFundingCycles() as $fundingCycle) {
+                $formView = $this
+                    ->get('form.factory')
+                    ->createNamed(null, FundingCycleType::class, $fundingCycle)
+                    ->createView();
+
+                $ui['FundingCycles'][] = $fundingCycle;
+                $ui['FundingCycleForms'][$fundingCycle->getId()] = $formView;
+            }
         } else {
             $fundingOrganization = new \Pelagos\Entity\FundingOrganization;
         }
-        
+            
         $form = $this->get('form.factory')->createNamed(null, FundingOrganizationType::class, $fundingOrganization);
         
         $ui['FundingOrganization'] = $fundingOrganization;

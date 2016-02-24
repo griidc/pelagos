@@ -32,8 +32,8 @@ class FundingCycleType extends AbstractType
             ->add('name', TextType::class, array(
                 'label' => 'Name:',
             ))
-            ->add('fundingCycle', EntityType::class, array(
-                'label' => 'Funding Organization',
+            ->add('fundingOrganization', EntityType::class, array(
+                'label' => 'Funding Organization:',
                 'class' => 'Pelagos:FundingOrganization',
                 'choice_label' => 'name',
             ))
@@ -43,18 +43,20 @@ class FundingCycleType extends AbstractType
                 'required' => false,
             ))
             ->add('url', TextType::class, array(
-                'label' => 'Website',
+                'label' => 'Website:',
                 'required' => false,
             ))
-            ->add('startDate', DateType::class, array(
+            ->add('startDate', TextType::class, array(
                 'label' => 'Start Date:',
                 'required' => false,
-                'widget' => 'single_text',
+                'placeholder' => 'yyyy-mm-dd',
+                //'widget' => 'single_text',
             ))
-            ->add('endDate', DateType::class, array(
+            ->add('endDate', TextType::class, array(
                 'label' => 'End Date:',
                 'required' => false,
-                'widget' => 'single_text',
+                'placeholder' => 'yyyy-mm-dd',
+                //'widget' => 'single_text',
             ));
     }
 
