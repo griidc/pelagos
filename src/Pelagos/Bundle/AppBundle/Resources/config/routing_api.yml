@@ -22,6 +22,12 @@ person_research_groups:
     name_prefix: person_research_groups_
     prefix: person_research_groups
 
+person_data_repositories:
+    type: rest
+    resource: Pelagos\Bundle\AppBundle\Controller\Api\PersonDataRepositoryController
+    name_prefix: person_data_repositories_
+    prefix: person_data_repositories
+
 people:
     type: rest
     resource: Pelagos\Bundle\AppBundle\Controller\Api\PersonController
