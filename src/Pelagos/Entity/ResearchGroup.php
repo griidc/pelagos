@@ -165,7 +165,7 @@ class ResearchGroup extends Entity
      *     message="Funding Cycle is required"
      * )
      *
-     * @Serializer\MaxDepth(1)
+     * @Serializer\MaxDepth(2)
      */
     protected $fundingCycle;
 

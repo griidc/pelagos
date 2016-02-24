@@ -28,7 +28,8 @@
         "new-cap": [2, {
             "capIsNewExceptions": [
                 "Deferred",
-                "XRegExp"
+                "XRegExp",
+                "DataTable"
             ]
         }],
         "quotes": [2, "double", "avoid-escape"]
