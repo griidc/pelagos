@@ -9,9 +9,9 @@ use Pelagos\Entity\Person;
 use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
 
 /**
- * A voter to allow all Data Repository Managers to create anything.
+ * A voter to allow Super Users to do anything.
  */
-class CreateAnythingVoter extends PelagosEntityVoter
+class SuperUserVoter extends PelagosEntityVoter
 {
     /**
      * Determines if the attribute and subject are supported by this voter.
@@ -23,7 +23,7 @@ class CreateAnythingVoter extends PelagosEntityVoter
      */
     protected function supports($attribute, $object)
     {
-        if (!in_array($attribute, array(self::CAN_CREATE))) {
+        if (!in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT, self::CAN_DELETE))) {
             return false;
         }
         return true;
@@ -50,11 +50,12 @@ class CreateAnythingVoter extends PelagosEntityVoter
         $userPerson = $user->getPerson();
 
         $personDataRepositories = $userPerson->getPersonDataRepositories();
+        // Data Repository Managers are Super Users
         if ($this->doesUserHaveRole(
             $userPerson,
             $personDataRepositories,
             array(DataRepositoryRoles::MANAGER)
-        ) and ($attribute === self::CAN_CREATE)) {
+        ) and in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT, self::CAN_DELETE))) {
             return true;
         }
         return false;
