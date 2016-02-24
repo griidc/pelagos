@@ -117,8 +117,6 @@ class UIController extends Controller
      *
      * @param string $id The id of the entity to retrieve.
      *
-     * @throws BadRequestHttpException When the Research Group ID is not provided.
-     *
      * @Route("/Person/{id}")
      *
      * @return Response A Response instance.
@@ -169,6 +167,8 @@ class UIController extends Controller
      *
      * @param string $id The id of the entity to retrieve.
      *
+     * @throws NotFoundException When the Funding Organization is not found.
+     *
      * @Route("/FundingOrganization/{id}")
      *
      * @return Response A Response instance.
@@ -182,6 +182,10 @@ class UIController extends Controller
         if ($id !== null) {
             $fundingOrganization = $entityHandler->get('Pelagos:FundingOrganization', $id);
             
+            if (!$person instanceof \Pelagos\Entity\FundingOrganization) {
+                throw $this->createNotFoundException('The Funding Organization was not found');
+            }
+
             foreach ($fundingOrganization->getPersonFundingOrganizations() as $personFundingOrganization) {
                 $formView = $this
                     ->get('form.factory')
