@@ -2,17 +2,21 @@
 
 namespace Pelagos\Bundle\AppBundle\Controller;
 
+use Pelagos\Bundle\AppBundle\Security\EntityProperty;
+
 use Pelagos\Bundle\AppBundle\Form\ResearchGroupType;
 use Pelagos\Bundle\AppBundle\Form\PersonResearchGroupType;
 use Pelagos\Bundle\AppBundle\Form\PersonFundingOrganizationType;
+use Pelagos\Bundle\AppBundle\Form\FundingOrganizationType;
+use Pelagos\Bundle\AppBundle\Form\FundingCycleType;
 use Pelagos\Bundle\AppBundle\Form\PersonType;
+
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-
-use Pelagos\Bundle\AppBundle\Security\EntityProperty;
 
 /**
  * The default controller for the Pelagos UI App Bundle.
@@ -114,8 +118,6 @@ class UIController extends Controller
      *
      * @param string $id The id of the entity to retrieve.
      *
-     * @throws BadRequestHttpException When the Research Group ID is not provided.
-     *
      * @Route("/Person/{id}")
      *
      * @return Response A Response instance.
@@ -137,6 +139,7 @@ class UIController extends Controller
 
                 $ui['PersonResearchGroups'][] = $personResearchGroup;
                 $ui['PersonResearchGroupForms'][$personResearchGroup->getId()] = $formView;
+                $ui['PersonResearchGroupEditLabel'][$personResearchGroup->getId()] = new EntityProperty($personResearchGroup, 'label');
             }
 
             foreach ($person->getPersonFundingOrganizations() as $personFundingOrganization) {
@@ -159,5 +162,61 @@ class UIController extends Controller
         $ui['entityService'] = $entityHandler;
 
         return $this->render('PelagosAppBundle:template:Person.html.twig', $ui);
+    }
+    
+    /**
+     * The Funding Org action.
+     *
+     * @param string $id The id of the entity to retrieve.
+     *
+     * @throws NotFoundException When the Funding Organization is not found.
+     *
+     * @Route("/FundingOrganization/{id}")
+     *
+     * @return Response A Response instance.
+     */
+    public function fundingOrganizationAction($id = null)
+    {
+        $entityHandler = $this->get('pelagos.entity.handler');
+        
+        $ui = array();
+        
+        if ($id !== null) {
+            $fundingOrganization = $entityHandler->get('Pelagos:FundingOrganization', $id);
+            
+            if (!$fundingOrganization instanceof \Pelagos\Entity\FundingOrganization) {
+                throw $this->createNotFoundException('The Funding Organization was not found');
+            }
+
+            foreach ($fundingOrganization->getPersonFundingOrganizations() as $personFundingOrganization) {
+                $formView = $this
+                    ->get('form.factory')
+                    ->createNamed(null, PersonFundingOrganizationType::class, $personFundingOrganization)
+                    ->createView();
+                
+                $ui['PersonFundingOrganizations'][] = $personFundingOrganization;
+                $ui['PersonFundingOrganizationForms'][$personFundingOrganization->getId()] = $formView;
+            }
+            
+            foreach ($fundingOrganization->getFundingCycles() as $fundingCycle) {
+                $formView = $this
+                    ->get('form.factory')
+                    ->createNamed(null, FundingCycleType::class, $fundingCycle)
+                    ->createView();
+
+                $ui['FundingCycles'][] = $fundingCycle;
+                $ui['FundingCycleForms'][$fundingCycle->getId()] = $formView;
+            }
+        } else {
+            $fundingOrganization = new \Pelagos\Entity\FundingOrganization;
+        }
+            
+        $form = $this->get('form.factory')->createNamed(null, FundingOrganizationType::class, $fundingOrganization);
+        
+        $ui['FundingOrganization'] = $fundingOrganization;
+        $ui['form'] = $form->createView();
+        $ui['entityService'] = $entityHandler;
+        
+        return $this->render('PelagosAppBundle:template:FundingOrganization.html.twig', $ui);
     }
 }
