@@ -137,6 +137,7 @@ class UIController extends Controller
 
                 $ui['PersonResearchGroups'][] = $personResearchGroup;
                 $ui['PersonResearchGroupForms'][$personResearchGroup->getId()] = $formView;
+                $ui['PersonResearchGroupEditLabel'][$personResearchGroup->getId()] = new EntityProperty($personResearchGroup, 'label');
             }
 
             foreach ($person->getPersonFundingOrganizations() as $personFundingOrganization) {
