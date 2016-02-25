@@ -29,11 +29,11 @@ class FundingCycleType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-        ->add('name', TextType::class, array(
+            ->add('name', TextType::class, array(
                 'label' => 'Name:',
             ))
-            ->add('fundingCycle', EntityType::class, array(
-                'label' => 'Funding Organization',
+            ->add('fundingOrganization', EntityType::class, array(
+                'label' => 'Funding Organization:',
                 'class' => 'Pelagos:FundingOrganization',
                 'choice_label' => 'name',
             ))
@@ -43,18 +43,24 @@ class FundingCycleType extends AbstractType
                 'required' => false,
             ))
             ->add('url', TextType::class, array(
-                'label' => 'Website',
+                'label' => 'Website:',
                 'required' => false,
             ))
             ->add('startDate', DateType::class, array(
                 'label' => 'Start Date:',
                 'required' => false,
+                'attr' => array('placeholder' => 'yyyy-mm-dd'),
                 'widget' => 'single_text',
+                'html5' => false,
+                'format' => 'yyyy-MM-dd',
             ))
             ->add('endDate', DateType::class, array(
                 'label' => 'End Date:',
                 'required' => false,
+                'attr' => array('placeholder' => 'yyyy-mm-dd'),
                 'widget' => 'single_text',
+                'html5' => false,
+                'format' => 'yyyy-MM-dd',
             ));
     }
 
