@@ -1,0 +1,96 @@
+{% extends "PelagosAppBundle::layout.html.twig" %}
+
+{% block head %}
+    {{
+        add_library (
+            [
+                'ui.dialog'
+            ]
+        )
+    }}
+
+    {{
+        add_css (
+            [
+                '//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css',
+                '//cdn.datatables.net/select/1.0.1/css/select.dataTables.min.css'
+            ]
+        )
+    }}
+
+    {% stylesheets  '@PelagosAppBundle/Resources/public/css/entity.css' %}
+        {{ add_css(asset_url) }}
+    {% endstylesheets  %}
+
+    {{
+        add_js(
+            [
+                '//cdn.datatables.net/1.10.7/js/jquery.dataTables.js',
+                '//cdn.datatables.net/select/1.0.1/js/dataTables.select.min.js'
+            ]
+        )
+    }}
+
+    {% javascripts '@PelagosAppBundle/Resources/public/js/common.js' %}
+        {{ add_js(asset_url) }}
+    {% endjavascripts %}
+
+    {% javascripts '@PelagosAppBundle/Resources/public/js/entityList.js' %}
+        {{ add_js(asset_url) }}
+    {% endjavascripts %}
+
+    {% javascripts '@PelagosAppBundle/Resources/public/js/ResearchGroupList.js' %}
+        {{ add_js(asset_url) }}
+    {% endjavascripts %}
+
+{% endblock %}
+
+{% block body %}
+<table
+    viewInterface = "{{ path('pelagos_app_ui_researchgroup') }}"
+    class = "entityTable stripe"
+    width = "100%"
+    data-ajax = '{
+        "url": "{{ path('pelagos_api_research_groups_get_collection') }}",
+        "dataSrc": "",
+        "cache": true
+    }'
+    data-columns = '[
+        { "data": "id" },
+        { "data": "name" },
+        { "data": "fundingCycle.name" },
+        { "data": "fundingCycle.fundingOrganization.name" },
+        { "data": "creationTimeStamp" },
+        { "data": "modificationTimeStamp" },
+        { "data": "creator" },
+        { "data": "modifier" }
+    ]'
+>
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Research Group Name</th>
+            <th>Funding Cycle Name</th>
+            <th>Funding Org Name</th>
+            <th>Created</th>
+            <th>Modified</th>
+            <th>Created By</th>
+            <th>Modified By</th>
+        </tr>
+    </thead>
+    <tfoot>
+        <tr>
+            <td class="buttons" colspan = "7">
+                <div>
+                    <button id="button_detail">View Research Group Details</button>
+                    <button id="button_delete">Delete Research Group</button>
+                    <span id="selection_comment">
+                        <i>For additional options, please make a selection above.</i>
+                    </span>
+                </div>
+            </td>
+        </tr>
+    </tfoot>
+</table>
+{% endblock %}
+
