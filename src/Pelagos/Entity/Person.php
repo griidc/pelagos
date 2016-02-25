@@ -13,7 +13,9 @@ use \Pelagos\Exception\InvalidFormatArgumentException;
 use \Pelagos\Exception\NotDeletableException;
 use \Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation\Exclude;
-use \Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Hateoas\Configuration\Annotation as Hateoas;
 
 /**
  * Class to represent people.
@@ -22,6 +24,34 @@ use \Doctrine\Common\Collections\ArrayCollection;
  *     fields={"emailAddress"},
  *     errorPath="emailAddress",
  *     message="A Person with this email address already exists"
+ * )
+ *
+ * @Hateoas\Relation(
+ *   "self",
+ *   href = @Hateoas\Route(
+ *     "pelagos_api_people_get",
+ *     parameters = { "id" = "expr(object.getId())" }
+ *   )
+ * )
+ * @Hateoas\Relation(
+ *   "edit",
+ *   href = @Hateoas\Route(
+ *     "pelagos_api_people_put",
+ *     parameters = { "id" = "expr(object.getId())" }
+ *   ),
+ *   exclusion = @Hateoas\Exclusion(
+ *     excludeIf = "expr(not service('security.authorizationchecker').isGranted(['CAN_EDIT'], object))"
+ *   )
+ * )
+ * @Hateoas\Relation(
+ *   "delete",
+ *   href = @Hateoas\Route(
+ *     "pelagos_api_people_delete",
+ *     parameters = { "id" = "expr(object.getId())" }
+ *   ),
+ *   exclusion = @Hateoas\Exclusion(
+ *     excludeIf = "expr(not object.isDeletable() or not service('security.authorizationchecker').isGranted(['CAN_DELETE'], object))"
+ *   )
  * )
  */
 class Person extends Entity
@@ -296,7 +326,7 @@ class Person extends Entity
     /**
      * Person's PersonFundingOrganizations.
      *
-     * @var \Doctrine\Common\Collections\Collection $personFundingOrganizations
+     * @var Collection $personFundingOrganizations
      *
      * @access protected
      */
@@ -305,7 +335,7 @@ class Person extends Entity
     /**
      * Person's PersonResearchGroups.
      *
-     * @var \Doctrine\Common\Collections\Collection $personResearchGroups
+     * @var Collection $personResearchGroups
      *
      * @access protected
      */
@@ -314,7 +344,7 @@ class Person extends Entity
     /**
      * Person's PersonDataRepositories.
      *
-     * @var \Doctrine\Common\Collections\Collection $personDataRepositories
+     * @var Collection $personDataRepositories
      *
      * @access protected
      */
@@ -341,6 +371,16 @@ class Person extends Entity
      * @Exclude
      */
     protected $token;
+
+    /**
+     * Constructor that initializes Collections as empty ArrayCollections.
+     */
+    public function __construct()
+    {
+        $this->personDataRepositories = new ArrayCollection();
+        $this->personFundingOrganizations = new ArrayCollection();
+        $this->personResearchGroups = new ArrayCollection();
+    }
 
     /**
      * Setter for firstName property.
@@ -676,8 +716,7 @@ class Person extends Entity
      *
      * @access public
      *
-     * @return \Doctrine\Common\Collections\Collection Collection containing personFundingOrganizations
-     *                                                 listings for this Person.
+     * @return Collection Funding Organization associations for this Person.
      */
     public function getPersonFundingOrganizations()
     {
@@ -718,8 +757,7 @@ class Person extends Entity
      *
      * @access public
      *
-     * @return \Doctrine\Common\Collections\Collection Collection containing personResearchGroups
-     *                                                 listings for this research group.
+     * @return Collection Research Group associations for this Person.
      */
     public function getPersonResearchGroups()
     {
@@ -760,7 +798,7 @@ class Person extends Entity
      *
      * @access public
      *
-     * @return \Doctrine\Common\Collections\Collection Collection containing all personDataRepositories for this Person.
+     * @return Collection Data Repository associations for this Person.
      */
     public function getPersonDataRepositories()
     {
@@ -772,7 +810,7 @@ class Person extends Entity
      *
      * @access public
      *
-     * @return \Doctrine\Common\Collections\ArrayCollection Collection containing all DataRepositories for this Person.
+     * @return ArrayCollection Data Repositories this Person is associated with.
      */
     public function getDataRepositories()
     {

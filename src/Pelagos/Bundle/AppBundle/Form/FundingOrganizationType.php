@@ -6,33 +6,17 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
-use Symfony\Bundle\FrameworkBundle\Routing\Router;
-
 /**
- * A form for creating people.
+ * A form for creating Funding Organizations.
  */
-class PersonType extends AbstractType
+class FundingOrganizationType extends AbstractType
 {
-    /**
-     * Proteced router value instance of router service.
-     *
-     * @var Router
-     */
-    protected $router;
-
-    /**
-     * Constructor that provides router.
-     *
-     * @param Router $router The router instance.
-     */
-    public function __construct(Router $router)
-    {
-        $this->router = $router;
-    }
-
     /**
      * Builds the form.
      *
@@ -46,14 +30,26 @@ class PersonType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('firstName', TextType::class, array(
-                'label' => 'Given Name:',
+        ->add('name', TextType::class, array(
+                'label' => 'Name:',
             ))
-            ->add('lastName', TextType::class, array(
-                'label' => 'Family Name:',
+            ->add('dataRepository', EntityType::class, array(
+                'label' => 'Data Repository',
+                'class' => 'Pelagos:DataRepository',
+                'choice_label' => 'name',
             ))
             ->add('emailAddress', TextType::class, array(
                 'label' => 'E-Mail Address:',
+                'required' => false,
+            ))
+            ->add('description', TextareaType::class, array(
+                'label' => 'Description:',
+                'attr' => array('rows' => 5),
+                'required' => false,
+            ))
+            ->add('url', TextType::class, array(
+                'label' => 'Website:',
+                'required' => false,
             ))
             ->add('phoneNumber', TextType::class, array(
                 'label' => 'Phone Number:',
@@ -79,30 +75,6 @@ class PersonType extends AbstractType
             ->add('country', TextType::class, array(
                 'label' => 'Country:',
                 'required' => false,
-            ))
-           ->add('url', TextType::class, array(
-                'label' => 'Website:',
-                'required' => false,
-            ))
-            ->add('organization', TextType::class, array(
-                'label' => 'Organization:',
-                'required' => false,
-                'attr' => array(
-                    'data-url' => $this->router->generate(
-                        'pelagos_api_people_get_distinct_vals',
-                        array('property' => 'organization')
-                    )
-                ),
-            ))
-            ->add('position', TextType::class, array(
-                'label' => 'Position:',
-                'required' => false,
-                'attr' => array(
-                    'data-url' => $this->router->generate(
-                        'pelagos_api_people_get_distinct_vals',
-                        array('property' => 'position')
-                    )
-                ),
             ));
     }
 
@@ -116,7 +88,7 @@ class PersonType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Pelagos\Entity\Person',
+            'data_class' => 'Pelagos\Entity\FundingOrganization',
             'allow_extra_fields' => true,
         ));
     }

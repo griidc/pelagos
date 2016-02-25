@@ -85,9 +85,9 @@ select, input{
     display: block;
 }
 
-.entityWrapper:not(.active) input,
-.entityWrapper:not(.active) textarea,
-.entityWrapper:not(.active) select{
+.entityWrapper input:disabled,
+.entityWrapper textarea:disabled,
+.entityWrapper select:disabled{
     color:black;
 }
 
@@ -135,13 +135,13 @@ select, input{
     resize: none;
 }
 
-.entityWrapper.active input,
-.entityWrapper.active textarea,
-.entityWrapper.active select {
+.entityWrapper.active input:enabled,
+.entityWrapper.active textarea:enabled,
+.entityWrapper.active select:enabled {
     border: 1px solid #aaa;
 }
 
-.entityWrapper.active select {
+.entityWrapper.active select:enabled {
     -webkit-appearance: menulist;
        -moz-appearance: menulist;
     appearance: list-menu;

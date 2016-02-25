@@ -48,7 +48,7 @@ function addOptionsByEntity(selectElement, entity, filter)
 {
     "use strict";
 
-    var url = pelagosBasePath + "/api/" + entity;
+    var url = $(selectElement).attr("data-url");
     if (typeof filter !== "undefined") {
         url += "?" + filter;// + "&properties=id,name";
     } else {

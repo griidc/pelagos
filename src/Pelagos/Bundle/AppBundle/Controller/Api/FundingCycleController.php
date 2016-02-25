@@ -145,4 +145,27 @@ class FundingCycleController extends EntityController
         $this->handleUpdate(FundingCycleType::class, FundingCycle::class, $id, $request, 'PATCH');
         return $this->makeNoContentResponse();
     }
+
+    /**
+     * Delete a Funding Cycle.
+     *
+     * @param integer $id The id of the Funding Cycle to delete.
+     *
+     * @ApiDoc(
+     *   section = "Funding Cycles",
+     *   statusCodes = {
+     *     204 = "The Funding Cycle was successfully deleted.",
+     *     403 = "The authenticated user was not authorized to delete the Funding Cycle.",
+     *     404 = "The requested Funding Cycle was not found.",
+     *     500 = "An internal error has occurred.",
+     *   }
+     * )
+     *
+     * @return Response A response object with an empty body and a "no content" status code.
+     */
+    public function deleteAction($id)
+    {
+        $this->handleDelete(FundingCycle::class, $id);
+        return $this->makeNoContentResponse();
+    }
 }

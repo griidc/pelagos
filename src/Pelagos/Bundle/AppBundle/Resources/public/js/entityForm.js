@@ -58,8 +58,11 @@
 
             //View Only!
             if (!($(this).hasAttr("creatable") || $(this).hasAttr("editable") || $(this).hasAttr("deletable"))) {
-                $(this).find(".innerForm").hide();
-                return null;
+                //Also check if single fields are not editable.
+                if (!$(this).has(".editableField").length ? true : false) {
+                    $(this).find(".innerForm").hide();
+                    return null;
+                }
             }
 
             // if (entityId === "") {
@@ -75,7 +78,8 @@
 
             var formValidator = $(this).validate({
                 submitHandler: function(form) {
-                    if ($(thisForm).find("[name=\"id\"]").val() === "") {
+                    $(thisForm).trigger("presubmit");
+                    if ($(form).find("[name=\"id\"]").val() === "") {
                         updateEntity(form, "Create");
                     } else {
                         updateEntity(form, "Update");
@@ -88,7 +92,9 @@
                           "</div><br><button class=\"entityFormButton\" type=\"submit\">Save</button>" +
                           "&nbsp;<button id=\"cancelButton\" class=\"entityFormButton\" type=\"reset\">Cancel</button></div>";
 
-            $(this).append(buttons);
+            if (!$(this).hasAttr("newform")) {
+                $(this).append(buttons);
+            }
 
             $(".entityFormButton").css("visibility", "hidden").button();
 
@@ -124,7 +130,13 @@
                 if (!$(this).hasClass("active")) {
                     $(this).addClass("active");
 
-                    var url = actionURL + "/validateProperty";
+                    var url = actionURL;
+
+                    if (!($(thisForm).find("[name=\"id\"]").val() === "")) {
+                        url += "/" + $(thisForm).find("[name=\"id\"]").val();
+                    }
+
+                    url += "/validateProperty";
 
                     $("input:visible,textarea,select", this).each(function() {
                         $(this).attr("disabled", false);
@@ -174,11 +186,16 @@
                 $(this).fadeOut();
 
                 $(".addimg", this).button().click(function() {
-                    $(this).fadeOut();
-                    var newForm = $(thisForm).clone(true).insertBefore(this).fadeIn();
+                    var addImg = $(this).fadeOut();
+                    var newForm = $(thisForm)
+                        .clone(false)
+                        .removeAttr("newform")
+                        .insertBefore(this)
+                        .fadeIn()
+                        .entityForm();
 
                     $(newForm).find("#cancelButton").click(function() {
-                        $(newForm).next(".addimg").fadeIn();
+                        addImg.fadeIn();
                         newForm.remove();
                     });
 
@@ -190,6 +207,37 @@
 
                 addimg.insertAfter($(this));
             }
+
+            //Special stuff for Single Field
+            if ($(this).has(".editableField").length ? true : false) {
+                var field = $(this).find(".editableField input,.editableField select,.editableField textarea");
+
+                $(".entityWrapper").has(this).on("click", function() {
+                    if (!$(this).hasClass("active")) {
+                        $(this).addClass("active");
+
+                        var url = actionURL + "/validateProperty";
+
+                        $(field).each(function() {
+                            $(this).attr("disabled", false);
+                            if (!$(this).hasAttr("dontvalidate")) {
+                                $(this).rules("add", {
+                                    remote: {
+                                        url: url
+                                    }
+                                });
+                            }
+                        });
+                        $(".innerForm", this).hide();
+                        $(".entityFormButton,.showOnEdit", this)
+                        .css({opacity: 0.0, visibility: "visible"})
+                        .animate({opacity: 1.0});
+                        $("button", this).button("enable");
+                    }
+                });
+            }
+
+
 
         });
     };
@@ -377,7 +425,7 @@
                 break;
             case "Update":
                 url = actionURL + "/" + entityId;
-                type = "PUT";
+                type = "PATCH";
                 returnCode = 204;
                 prefixPhrase = "Updated";
                 break;
@@ -419,9 +467,9 @@
                         if (!$.isNumeric(urlParts[urlParts.length - 1])) {
                             window.history.pushState(newID, docTitle, newURL);
                         }
+                        //Set ID on form
+                        $(form).find('[name="id"]').val(newID);
 
-                        //Should set ID?
-                        $(form).filter("#id").val(newID);
                     }
                 },
                 success: function(data, textStatus, jqXHR) {

@@ -20,15 +20,19 @@ security:
                 provider: pelagos
 
 services:
+    super_user_voter:
+        class: Pelagos\Bundle\AppBundle\Security\SuperUserVoter
+        tags:
+            - { name: security.voter }
     research_group_voter:
         class: Pelagos\Bundle\AppBundle\Security\ResearchGroupVoter
         tags:
             - { name: security.voter }
     person_research_group_voter:
-            class: Pelagos\Bundle\AppBundle\Security\PersonResearchGroupVoter
-            tags:
-                - { name: security.voter }
-    create_anything_voter:
-        class: Pelagos\Bundle\AppBundle\Security\CreateAnythingVoter
+        class: Pelagos\Bundle\AppBundle\Security\PersonResearchGroupVoter
+        tags:
+            - { name: security.voter }
+    person_voter:
+        class: Pelagos\Bundle\AppBundle\Security\PersonVoter
         tags:
             - { name: security.voter }
