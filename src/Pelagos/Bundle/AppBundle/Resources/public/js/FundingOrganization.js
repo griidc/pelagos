@@ -24,17 +24,16 @@ $(document).ready(function()
 
     $("#logobutton")
         .button()
-        .click(function( event ) {
-              $('#fileupload').click();
+        .click(function() {
+              $("#fileupload").click();
         });
 
-    $('#fileupload').fileupload({
+    $("#fileupload").fileupload({
         url: $(this).attr("data-url"),
-        method: 'POST',
+        method: "POST",
         done: function (e, data) {
-            $("#fundingOrganizationLogo img").attr('src', data.url);
+            $("#fundingOrganizationLogo img").attr("src", data.url);
         }
-    }).prop('disabled', !$.support.fileInput)
-    .parent().addClass($.support.fileInput ? undefined : 'disabled');
-
+    }).prop("disabled", !$.support.fileInput)
+    .parent().addClass($.support.fileInput ? undefined : "disabled");
 });
