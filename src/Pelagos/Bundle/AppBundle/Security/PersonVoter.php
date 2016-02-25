@@ -66,23 +66,7 @@ class PersonVoter extends PelagosEntityVoter
         if ($attribute == PelagosEntityVoter::CAN_EDIT and $object->isSameTypeAndId($userPerson)) {
             return true;
         }
-        // Action: PelagosEntityVoter::CAN_EDIT
-        // Role:   DataRepositoryRoles::MANAGER
-        // If attribute is CAN_EDIT and
-        // user has the role MANAGER for a DataRepository and
-        // that DataRepository is associated with the subject Person
-        // then the User can edit the Person object..
-        if ($attribute == PelagosEntityVoter::CAN_EDIT) {
-            foreach ($object->getDataRepositories() as $dataRepository) {
-                if ($this->doesUserHaveRole(
-                    $userPerson,
-                    $dataRepository->getPersonDataRepositories(),
-                    array(DataRepositoryRoles::MANAGER)
-                )) {
-                    return true;
-                }
-            }
-        }
+
         return false;
     }
 }

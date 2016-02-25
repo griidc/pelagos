@@ -172,9 +172,10 @@ abstract class EntityController extends FOSRestController
      * This method will validate key/value pairs found in the query string against
      * properties of the given entity type.
      *
-     * @param string  $formType    The class of the type of form to use for validation.
-     * @param string  $entityClass The class of the type of entity to validate against.
-     * @param Request $request     The request object.
+     * @param string       $formType    The class of the type of form to use for validation.
+     * @param string       $entityClass The class of the type of entity to validate against.
+     * @param Request      $request     The request object.
+     * @param integer|null $id          The id of the entity to validate against.
      *
      * @access public
      *
@@ -184,7 +185,7 @@ abstract class EntityController extends FOSRestController
      *
      * @return boolean|string True if valid, or a message indicating why the property is invalid.
      */
-    public function validateProperty($formType, $entityClass, Request $request)
+    public function validateProperty($formType, $entityClass, Request $request, $id = null)
     {
         // Get all the parameters from the query string.
         $params = $request->query->all();
@@ -200,8 +201,14 @@ abstract class EntityController extends FOSRestController
         }
         // Grab the property name from the parameter array.
         $property = array_keys($params)[0];
-        // Instantiate a new entity.
-        $entity = new $entityClass;
+        // If we don't have an ID.
+        if ($id === null) {
+            // Instantiate a new entity.
+            $entity = new $entityClass;
+        } else {
+            // Get the entity.
+            $entity = $this->handleGetOne($entityClass, $id);
+        }
         // Create a form with this entity.
         $form = $this->get('form.factory')->createNamed(null, $formType, $entity, array('method' => 'GET'));
         // Process the request against the form.
