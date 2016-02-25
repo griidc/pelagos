@@ -30,7 +30,8 @@ $(document).ready(function()
 
     $("#fileupload").fileupload({
         url: $(this).attr("data-url"),
-        method: "POST",
+        method: "PUT",
+        multipart: false,
         done: function (e, data) {
             $("#fundingOrganizationLogo img").attr("src", data.url);
         }
