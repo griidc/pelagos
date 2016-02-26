@@ -29,8 +29,6 @@ class DataRepositoryController extends UIController
      */
     public function dataRepositoryAction($id = null)
     {
-        // $entityHandler = $this->get('pelagos.entity.handler');
-        
         $ui = array();
         
         if ($id !== null) {

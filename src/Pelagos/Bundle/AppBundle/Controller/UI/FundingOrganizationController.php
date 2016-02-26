@@ -2,9 +2,8 @@
 
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
-use Pelagos\Bundle\AppBundle\Security\EntityProperty;
-
 use Pelagos\Bundle\AppBundle\Form\FundingOrganizationType;
+use Pelagos\Bundle\AppBundle\Form\FundingCycleType;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
@@ -29,12 +28,10 @@ class FundingOrganizationController extends UIController
      */
     public function fundingOrganizationAction($id = null)
     {
-        $entityHandler = $this->get('pelagos.entity.handler');
-        
         $ui = array();
         
         if ($id !== null) {
-            $fundingOrganization = $entityHandler->get('Pelagos:FundingOrganization', $id);
+            $fundingOrganization = $this->entityHandler->get('Pelagos:FundingOrganization', $id);
             
             if (!$fundingOrganization instanceof \Pelagos\Entity\FundingOrganization) {
                 throw $this->createNotFoundException('The Funding Organization was not found');
@@ -67,7 +64,7 @@ class FundingOrganizationController extends UIController
         
         $ui['FundingOrganization'] = $fundingOrganization;
         $ui['form'] = $form->createView();
-        $ui['entityService'] = $entityHandler;
+        $ui['entityService'] = $this->entityHandler;
         
         return $this->render('PelagosAppBundle:template:FundingOrganization.html.twig', $ui);
     }

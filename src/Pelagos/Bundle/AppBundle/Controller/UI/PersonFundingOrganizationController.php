@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * The Research Group controller for the Pelagos UI App Bundle.
  */
-class FundingCycleController extends UIController
+class PersonFundingOrganizationController extends UIController
 {
     /**
      * The Person Funding Organization action.
@@ -27,12 +27,10 @@ class FundingCycleController extends UIController
      */
     public function personFundingOrganizationAction($id = null)
     {
-        $entityHandler = $this->get('pelagos.entity.handler');
-        
         $ui = array();
         
         if ($id !== null) {
-            $personFundingOrganization = $entityHandler->get('Pelagos:PersonFundingOrganization', $id);
+            $personFundingOrganization = $this->entityHandler->get('Pelagos:PersonFundingOrganization', $id);
             
             if (!$personFundingOrganization instanceof \Pelagos\Entity\PersonFundingOrganization) {
                 throw $this->createNotFoundException('The Person Funding Organization was not found');
@@ -46,7 +44,7 @@ class FundingCycleController extends UIController
         
         $ui['PersonFundingOrganization'] = $personFundingOrganization;
         $ui['form'] = $form->createView();
-        $ui['entityService'] = $entityHandler;
+        $ui['entityService'] = $this->entityHandler;
         
         return $this->render('PelagosAppBundle:template:PersonFundingOrganization.html.twig', $ui);
     }

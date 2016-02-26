@@ -4,7 +4,9 @@ namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
 use Pelagos\Bundle\AppBundle\Security\EntityProperty;
 
-use Pelagos\Bundle\AppBundle\Form\ResearchGroupType;
+use Pelagos\Bundle\AppBundle\Form\PersonType;
+use Pelagos\Bundle\AppBundle\Form\PersonResearchGroupType;
+use Pelagos\Bundle\AppBundle\Form\PersonFundingOrganizationType;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 

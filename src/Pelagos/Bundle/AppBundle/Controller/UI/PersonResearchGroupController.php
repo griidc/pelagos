@@ -9,12 +9,13 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+
 /**
  * The Research Group controller for the Pelagos UI App Bundle.
  */
 class PersonResearchGroupController extends UIController
 {
-
     /**
      * The Person Research Group action.
      *
@@ -35,22 +36,20 @@ class PersonResearchGroupController extends UIController
             throw new BadRequestHttpException('Research Group parameter is not set');
         }
 
-        $entityHandler = $this->get('pelagos.entity.handler');
-
         $ui = array();
 
         if (isset($id)) {
-            $personResearchGroup = $entityHandler->get('Pelagos:PersonResearchGroup', $id);
+            $personResearchGroup = $this->entityHandler->get('Pelagos:PersonResearchGroup', $id);
         } else {
             $personResearchGroup = new \Pelagos\Entity\PersonResearchGroup;
-            $personResearchGroup->setResearchGroup($entityHandler->get('Pelagos:ResearchGroup', $researchGroupId));
+            $personResearchGroup->setResearchGroup($this->entityHandler->get('Pelagos:ResearchGroup', $researchGroupId));
         }
 
         $form = $this->get('form.factory')->createNamed(null, PersonResearchGroupType::class, $personResearchGroup);
 
         $ui['PersonResearchGroup'] = $personResearchGroup;
         $ui['form'] = $form->createView();
-        $ui['entityService'] = $entityHandler;
+        $ui['entityService'] = $this->entityHandler;
 
         return $this->render('PelagosAppBundle:template:PersonResearchGroup.html.twig', $ui);
     }

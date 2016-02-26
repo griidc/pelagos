@@ -1,14 +1,13 @@
 <?php
 
-namespace Pelagos\Bundle\AppBundle\Controller;
+namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
 use Pelagos\Bundle\AppBundle\Security\EntityProperty;
-
 use Pelagos\Bundle\AppBundle\Form\ResearchGroupType;
+use Pelagos\Bundle\AppBundle\Form\PersonResearchGroupType;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -17,7 +16,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ResearchGroupController extends UIController
 {
-
     /**
      * The Research Group action.
      *
@@ -29,13 +27,11 @@ class ResearchGroupController extends UIController
      */
     public function researchGroupAction($id = null)
     {
-        $entityHandler = $this->get('pelagos.entity.handler');
-
         $ui = array();
         $ui['PersonResearchGroups'] = array();
 
         if (isset($id)) {
-            $researchGroup = $entityHandler->get('Pelagos:ResearchGroup', $id);
+            $researchGroup = $this->entityHandler->get('Pelagos:ResearchGroup', $id);
 
             foreach ($researchGroup->getPersonResearchGroups() as $personResearchGroup) {
                 $form = $this
@@ -62,7 +58,7 @@ class ResearchGroupController extends UIController
         $form = $this->get('form.factory')->createNamed(null, ResearchGroupType::class, $researchGroup);
         $ui['form'] = $form->createView();
         $ui['ResearchGroup'] = $researchGroup;
-        $ui['entityService'] = $entityHandler;
+        $ui['entityService'] = $this->entityHandler;
 
         return $this->render('PelagosAppBundle:template:ResearchGroup.html.twig', $ui);
     }

@@ -2,7 +2,6 @@
 
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
-
 use Pelagos\Bundle\AppBundle\Form\FundingCycleType;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -28,12 +27,10 @@ class FundingCycleController extends UIController
      */
     public function fundingCycleAction($id = null)
     {
-        $entityHandler = $this->get('pelagos.entity.handler');
-        
         $ui = array();
         
         if ($id !== null) {
-            $fundingCycle = $entityHandler->get('Pelagos:FundingCycle', $id);
+            $fundingCycle = $this->entityHandler->get('Pelagos:FundingCycle', $id);
             
             if (!$fundingCycle instanceof \Pelagos\Entity\FundingCycle) {
                 throw $this->createNotFoundException('The Funding Cycle was not found');
@@ -47,7 +44,7 @@ class FundingCycleController extends UIController
         
         $ui['FundingCycle'] = $fundingCycle;
         $ui['form'] = $form->createView();
-        $ui['entityService'] = $entityHandler;
+        $ui['entityService'] = $this->entityHandler;
         
         return $this->render('PelagosAppBundle:template:FundingCycle.html.twig', $ui);
     }
