@@ -29,7 +29,7 @@ action="{{path('pelagos_api_person_research_groups_post')}}">
     </div>
 
     <div class="innerForm">
-        {% if is_granted('CAN_EDIT', PersonResearchGroup) or is_granted('CAN_EDIT', editlabel)%}
+        {% if is_granted('CAN_EDIT', PersonResearchGroup) or is_granted('CAN_EDIT', editlabel|default)%}
             {% image '@PelagosAppBundle/Resources/public/images/application_edit.png' %}
                 <img class="editimg" src="{{asset_url}}">
             {% endimage %}

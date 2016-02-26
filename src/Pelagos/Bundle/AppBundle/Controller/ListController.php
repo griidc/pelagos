@@ -21,4 +21,16 @@ class ListController extends Controller
     {
         return $this->render('PelagosAppBundle:template:UI-ResearchGroupList.html.twig');
     }
+
+    /**
+     * The Person Generate List action.
+     *
+     * @Route("/People")
+     *
+     * @return Response A list of People.
+     */
+    public function peopleListAction()
+    {
+        return $this->render('PelagosAppBundle:template:UI-PersonList.html.twig');
+    }
 }
