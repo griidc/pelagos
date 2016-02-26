@@ -36,7 +36,7 @@ class DataRepositoryController extends UIController
             $dataRepository = $this->entityHandler->get('Pelagos:DataRepository', $id);
             
             if (!$dataRepository instanceof \Pelagos\Entity\DataRepository) {
-                throw $this->createNotFoundException('The Data Organization was not found');
+                throw $this->createNotFoundException('The Data Repository was not found');
             }
             
             foreach ($dataRepository->getPersonDataRepositories() as $personDataRepository) {
