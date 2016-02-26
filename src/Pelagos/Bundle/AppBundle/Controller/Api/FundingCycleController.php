@@ -18,6 +18,60 @@ use Pelagos\Bundle\AppBundle\Form\FundingCycleType;
 class FundingCycleController extends EntityController
 {
     /**
+     * Validate a value for a property of a Funding Cycle.
+     *
+     * @param Request $request The request object.
+     *
+     * @ApiDoc(
+     *   section = "Funding Cycles",
+     *   parameters = {{"name"="someProperty", "dataType"="string", "required"="true"}},
+     *   statusCodes = {
+     *     200 = "Validation was performed successfully (regardless of validity).",
+     *     400 = "Bad parameters were passed in the query string.",
+     *     500 = "An internal error has occurred.",
+     *   }
+     * )
+     *
+     * @Rest\Get("/validateProperty")
+     *
+     * @Rest\View()
+     *
+     * @return boolean|string True if valid, or a message indicating why the property is invalid.
+     */
+    public function validatePropertyAction(Request $request)
+    {
+        return $this->validateProperty(FundingCycleType::class, FundingCycle::class, $request);
+    }
+
+    /**
+     * Validate a value for a property of an existing Funding Cycle.
+     *
+     * @param integer $id      The id of the existing Funding Cycle.
+     * @param Request $request The request object.
+     *
+     * @ApiDoc(
+     *   section = "Funding Cycles",
+     *   parameters = {{"name"="someProperty", "dataType"="string", "required"="true"}},
+     *   statusCodes = {
+     *     200 = "Validation was performed successfully (regardless of validity).",
+     *     400 = "Bad parameters were passed in the query string.",
+     *     404 = "The requested Funding Cycle was not found.",
+     *     500 = "An internal error has occurred.",
+     *   }
+     * )
+     *
+     * @Rest\Get("/{id}/validateProperty")
+     *
+     * @Rest\View()
+     *
+     * @return boolean|string True if valid, or a message indicating why the property is invalid.
+     */
+    public function validatePropertyExistingAction($id, Request $request)
+    {
+        return $this->validateProperty(FundingCycleType::class, FundingCycle::class, $request, $id);
+    }
+
+    /**
      * Get a collection of Funding Cycles.
      *
      * @param Request $request The request object.
