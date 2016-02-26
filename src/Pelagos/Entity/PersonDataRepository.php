@@ -46,6 +46,11 @@ use Hateoas\Configuration\Annotation as Hateoas;
 class PersonDataRepository extends Entity implements PersonAssociationInterface
 {
     /**
+     * A friendly name for this type of entity.
+     */
+    const FRIENDLY_NAME = 'Person to Data Repository Association';
+
+    /**
      * Static array containing a list of the properties and their attributes.
      *
      * @var array $properties
