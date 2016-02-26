@@ -33,4 +33,16 @@ class ListController extends Controller
     {
         return $this->render('PelagosAppBundle:template:UI-PersonList.html.twig');
     }
+
+    /**
+     * The Funding Organization Generate List action.
+     *
+     * @Route("/FundingOrganization")
+     *
+     * @return Response A list of People.
+     */
+    public function fundingOrganizationListAction()
+    {
+        return $this->render('PelagosAppBundle:template:UI-FundingOrganizationList.html.twig');
+    }
 }
