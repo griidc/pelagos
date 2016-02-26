@@ -5,6 +5,7 @@ namespace Pelagos\Bundle\AppBundle\Controller\UI;
 use Pelagos\Bundle\AppBundle\Security\EntityProperty;
 
 use Pelagos\Bundle\AppBundle\Form\DataRepositoryType;
+use Pelagos\Bundle\AppBundle\Form\PersonDataRepositoryType;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
@@ -38,15 +39,15 @@ class DataRepositoryController extends UIController
                 throw $this->createNotFoundException('The Data Organization was not found');
             }
             
-            // foreach ($dataRepository->getPersonFundingOrganizations() as $personFundingOrganization) {
-                // $formView = $this
-                // ->get('form.factory')
-                // ->createNamed(null, PersonFundingOrganizationType::class, $personFundingOrganization)
-                // ->createView();
+            foreach ($dataRepository->getPersonDataRepositories() as $personDataRepository) {
+                $formView = $this
+                    ->get('form.factory')
+                    ->createNamed(null, PersonDataRepositoryType::class, $personDataRepository)
+                    ->createView();
                 
-                // $ui['DataRepositories'][] = $personFundingOrganization;
-                // $ui['DataRepositoryForms'][$personFundingOrganization->getId()] = $formView;
-            // }
+                $ui['PersonDataRepositories'][] = $personDataRepository;
+                $ui['PersonDataRepositoryForms'][$personDataRepository->getId()] = $formView;
+            }
         } else {
             $dataRepository = new \Pelagos\Entity\DataRepository;
         }
