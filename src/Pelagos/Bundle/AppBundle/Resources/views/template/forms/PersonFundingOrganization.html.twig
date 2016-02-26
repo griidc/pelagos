@@ -6,11 +6,7 @@ action="{{path('pelagos_api_person_funding_organizations_post')}}">
 
     {{ form_row(form.person) }}
 
-    <span
-    {% if Person is not defined %}
-        style="display:none;"
-    {% endif %}
-    >{{ form_row(form.fundingOrganization) }}</span>
+    {{ form_row(form.fundingOrganization) }}
 
     {% if is_granted('CAN_CREATE', PersonFundingOrganization) or  is_granted('CAN_EDIT', PersonFundingOrganization)%}
 
