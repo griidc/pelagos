@@ -222,13 +222,13 @@ class UIController extends Controller
     
     /**
      * The Funding Cycle action.
-        *
+     *
      * @param string $id The id of the entity to retrieve.
-        *
+     *
      * @throws NotFoundException When the Funding Organization is not found.
-        *
+     *
      * @Route("/FundingCycle/{id}")
-        *
+     *
      * @return Response A Response instance.
      */
     public function fundingCycleAction($id = null)
