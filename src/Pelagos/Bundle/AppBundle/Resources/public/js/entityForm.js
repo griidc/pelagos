@@ -138,7 +138,7 @@
 
                     url += "/validateProperty";
 
-                    $("input:visible,textarea,select", this).each(function() {
+                    $("input:visible:text,textarea,select", this).each(function() {
                         $(this).attr("disabled", false);
                         if (!$(this).hasAttr("dontvalidate")) {
                             $(this).rules("add", {
@@ -318,12 +318,12 @@
                 switch (elementType)
                 {
                     case "file":
-                    selector.attr("base64", value.base64);
-                    selector.attr("mimeType", value.mimeType);
-                    selector.trigger("logoChanged");
-                    break;
+                        selector.attr("base64", value.base64);
+                        selector.attr("mimeType", value.mimeType);
+                        selector.trigger("logoChanged");
+                        break;
                     default:
-                    break;
+                        break;
                 }
 
             }

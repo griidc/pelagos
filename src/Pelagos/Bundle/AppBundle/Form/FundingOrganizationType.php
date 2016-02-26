@@ -37,6 +37,7 @@ class FundingOrganizationType extends AbstractType
                 'label' => 'Data Repository',
                 'class' => 'Pelagos:DataRepository',
                 'choice_label' => 'name',
+                'placeholder' => '[Please Select a Data Repository]',
             ))
             ->add('emailAddress', TextType::class, array(
                 'label' => 'E-Mail Address:',
