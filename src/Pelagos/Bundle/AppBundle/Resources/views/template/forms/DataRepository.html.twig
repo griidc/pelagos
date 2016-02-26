@@ -1,0 +1,11 @@
+<form class="entityForm" entityType="DataRepository"
+{% include '@templates/forms/permissionsBlock.html.twig' with {'Entity': DataRepository} %}
+action="{# {path('pelagos_api_data_repositories_post')} #}">
+
+    <input type="hidden" name="id" value="{{DataRepository.getId}}">
+
+    {{ form_widget(form) }}
+
+    {% include '@templates/forms/innerForm.html.twig' with {'Entity': DataRepository} %}
+
+</form>
