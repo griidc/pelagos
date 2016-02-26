@@ -11,6 +11,19 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 class ListController extends Controller
 {
     /**
+     * The List the Lists action.
+     *
+     * @Route("/")
+     *
+     * @return Response A list of Lists.
+     */
+    public function listListAction()
+    {
+        $GLOBALS['pelagos']['title'] = 'Lists Available';
+        return $this->render('PelagosAppBundle:template:UI-Lists.html.twig');
+    }
+
+    /**
      * The Research Group Generate List action.
      *
      * @Route("/ResearchGroup")
