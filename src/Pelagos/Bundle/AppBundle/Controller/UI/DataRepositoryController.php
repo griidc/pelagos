@@ -28,7 +28,7 @@ class DataRepositoryController extends UIController
      *
      * @return Response A Response instance.
      */
-    public function dataRepositoryAction($id = null)
+    public function dataRepositoryAction($id)
     {
         $ui = array();
         
