@@ -33,7 +33,7 @@ DROP VIEW IF EXISTS funding_organization;
 -- errors in our exception block):
 CREATE VIEW funding_organization AS
    SELECT f.funding_organization_number AS funding_organization_number,
-          f.funding_organization_name AS name,
+          CAST(f.funding_organization_name AS CITEXT) AS name,
           f.funding_organization_description AS description,
           DATE_TRUNC('seconds', f.funding_organization_creation_time)
              AS creation_time,

@@ -130,9 +130,15 @@
                 if (!$(this).hasClass("active")) {
                     $(this).addClass("active");
 
-                    var url = actionURL + "/validateProperty";
+                    var url = actionURL;
 
-                    $("input:visible,textarea,select", this).each(function() {
+                    if (!($(thisForm).find("[name=\"id\"]").val() === "")) {
+                        url += "/" + $(thisForm).find("[name=\"id\"]").val();
+                    }
+
+                    url += "/validateProperty";
+
+                    $("input:visible:text,textarea,select", this).each(function() {
                         $(this).attr("disabled", false);
                         if (!$(this).hasAttr("dontvalidate")) {
                             $(this).rules("add", {
@@ -312,12 +318,12 @@
                 switch (elementType)
                 {
                     case "file":
-                    selector.attr("base64", value.base64);
-                    selector.attr("mimeType", value.mimeType);
-                    selector.trigger("logoChanged");
-                    break;
+                        selector.attr("base64", value.base64);
+                        selector.attr("mimeType", value.mimeType);
+                        selector.trigger("logoChanged");
+                        break;
                     default:
-                    break;
+                        break;
                 }
 
             }
