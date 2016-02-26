@@ -44,6 +44,11 @@ use Hateoas\Configuration\Annotation as Hateoas;
 class DataRepository extends Entity
 {
     /**
+     * A friendly name for this type of entity.
+     */
+    const FRIENDLY_NAME = 'Data Repository';
+
+    /**
      * Static array containing a list of the properties and their attributes.
      *
      * @var array $properties
