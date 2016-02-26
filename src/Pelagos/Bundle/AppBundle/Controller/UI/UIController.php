@@ -18,9 +18,11 @@ abstract class UIController extends Controller
     protected $entityHandler;
 
     /**
-     * Constructor UI Controller.
+     * Set Container function, to add to container.
      *
-     * @var container
+     * @param ContainerInterface $container The container for the UIController.
+     *
+     * @return void
      */
     public function setContainer(ContainerInterface $container = null)
     {
