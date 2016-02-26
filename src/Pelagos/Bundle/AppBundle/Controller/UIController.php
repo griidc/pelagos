@@ -241,7 +241,7 @@ class UIController extends Controller
             $fundingCycle = $entityHandler->get('Pelagos:FundingCycle', $id);
             
             if (!$fundingCycle instanceof \Pelagos\Entity\FundingCycle) {
-                throw $this->createNotFoundException('The Funding Organization was not found');
+                throw $this->createNotFoundException('The Funding Cycle was not found');
             }
             
         } else {
