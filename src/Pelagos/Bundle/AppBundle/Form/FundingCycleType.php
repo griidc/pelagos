@@ -36,6 +36,7 @@ class FundingCycleType extends AbstractType
                 'label' => 'Funding Organization:',
                 'class' => 'Pelagos:FundingOrganization',
                 'choice_label' => 'name',
+                'placeholder' => '[Please Select a Funding Organization]',
             ))
             ->add('description', TextareaType::class, array(
                 'label' => 'Description:',
