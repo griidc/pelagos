@@ -256,4 +256,41 @@ class UIController extends Controller
         
         return $this->render('PelagosAppBundle:template:FundingCycle.html.twig', $ui);
     }
+    
+    /**
+     * The Person Funding Organization action.
+     *
+     * @param string $id The id of the entity to retrieve.
+     *
+     * @throws NotFoundException When the Funding Organization is not found.
+     *
+     * @Route("/PersonFundingOrganization/{id}")
+     *
+     * @return Response A Response instance.
+     */
+    public function personFundingOrganizationAction($id = null)
+    {
+        $entityHandler = $this->get('pelagos.entity.handler');
+        
+        $ui = array();
+        
+        if ($id !== null) {
+            $personFundingOrganization = $entityHandler->get('Pelagos:PersonFundingOrganization', $id);
+            
+            if (!$personFundingOrganization instanceof \Pelagos\Entity\PersonFundingOrganization) {
+                throw $this->createNotFoundException('The Person Funding Organization was not found');
+            }
+            
+        } else {
+            $personFundingOrganization = new \Pelagos\Entity\PersonFundingOrganization;
+        }
+        
+        $form = $this->get('form.factory')->createNamed(null, PersonFundingOrganizationType::class, $personFundingOrganization);
+        
+        $ui['PersonFundingOrganization'] = $personFundingOrganization;
+        $ui['form'] = $form->createView();
+        $ui['entityService'] = $entityHandler;
+        
+        return $this->render('PelagosAppBundle:template:PersonFundingOrganization.html.twig', $ui);
+    }
 }
