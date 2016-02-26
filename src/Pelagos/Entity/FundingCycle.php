@@ -74,7 +74,7 @@ class FundingCycle extends Entity
      *     message="Name is required"
      * )
      * @Assert\NoAngleBrackets(
-     *     message="Last name cannot contain angle brackets (< or >)"
+     *     message="Name cannot contain angle brackets (< or >)"
      * )
      */
     protected $name;

@@ -212,7 +212,7 @@ abstract class EntityController extends FOSRestController
         // Create a form with this entity.
         $form = $this->get('form.factory')->createNamed(null, $formType, $entity, array('method' => 'GET'));
         // Process the request against the form.
-        $form->handleRequest($request);
+        $form->submit($params, false);
         if (!$form->isSubmitted()) {
             // If the form does not contain the given property, it will not submit.
             throw new BadRequestHttpException("$property is not a valid property for this resource.");
