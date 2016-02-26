@@ -4,6 +4,7 @@ namespace Pelagos\Entity;
 
 use \Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation\Exclude;
+use Hateoas\Configuration\Annotation as Hateoas;
 
 /**
  * Class to represent Person - Funding Organization associations.
@@ -12,6 +13,34 @@ use JMS\Serializer\Annotation\Exclude;
  *     fields={"person", "fundingOrganization"},
  *     errorPath="person",
  *     message="A Person can have only one association with a Funding Organization"
+ * )
+ *
+ * @Hateoas\Relation(
+ *   "self",
+ *   href = @Hateoas\Route(
+ *     "pelagos_api_person_funding_organizations_get",
+ *     parameters = { "id" = "expr(object.getId())" }
+ *   )
+ * )
+ * @Hateoas\Relation(
+ *   "edit",
+ *   href = @Hateoas\Route(
+ *     "pelagos_api_person_funding_organizations_put",
+ *     parameters = { "id" = "expr(object.getId())" }
+ *   ),
+ *   exclusion = @Hateoas\Exclusion(
+ *     excludeIf = "expr(not service('security.authorizationchecker').isGranted(['CAN_EDIT'], object))"
+ *   )
+ * )
+ * @Hateoas\Relation(
+ *   "delete",
+ *   href = @Hateoas\Route(
+ *     "pelagos_api_person_funding_organizations_delete",
+ *     parameters = { "id" = "expr(object.getId())" }
+ *   ),
+ *   exclusion = @Hateoas\Exclusion(
+ *     excludeIf = "expr(not object.isDeletable() or not service('security.authorizationchecker').isGranted(['CAN_DELETE'], object))"
+ *   )
  * )
  */
 class PersonFundingOrganization extends Entity implements PersonAssociationInterface
