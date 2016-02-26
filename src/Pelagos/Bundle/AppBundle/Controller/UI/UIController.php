@@ -20,6 +20,7 @@ abstract class UIController extends Controller
     /**
      * Constructor UI Controller.
      *
+     * @var container
      */
     public function setContainer(ContainerInterface $container = null)
     {
