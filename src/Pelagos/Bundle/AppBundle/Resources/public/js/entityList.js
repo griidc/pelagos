@@ -1,6 +1,7 @@
 (function($) {
     "use strict";
     $.fn.pelagosDataTable = function(options) {
+        var entityNiceName = $(this).attr("entityNiceName");
 
         var self = this;
 
@@ -32,13 +33,13 @@
         })
         .click(function () {
             var deleteURL = table.row(".selected").data()._links.delete.href;
-            var msg = "You are about to remove a Research Group.";
+            var msg = "You are about to remove a " + entityNiceName + ".";
             $.when(showConfirmation({
                     title: "Please confirm:",
                     message: msg,
                     buttons: {
                         "Yes": {
-                            text: "Delete Research Group "
+                            text: "Delete " + entityNiceName
                         },
                         "No": {
                             text: "Cancel"
