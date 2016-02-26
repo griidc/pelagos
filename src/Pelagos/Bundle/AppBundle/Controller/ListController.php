@@ -19,6 +19,7 @@ class ListController extends Controller
      */
     public function researchGroupListAction()
     {
+        $GLOBALS['pelagos']['title'] = 'Research Group List';
         return $this->render('PelagosAppBundle:template:UI-ResearchGroupList.html.twig');
     }
 
@@ -31,6 +32,7 @@ class ListController extends Controller
      */
     public function peopleListAction()
     {
+        $GLOBALS['pelagos']['title'] = 'People List';
         return $this->render('PelagosAppBundle:template:UI-PersonList.html.twig');
     }
 
@@ -43,6 +45,7 @@ class ListController extends Controller
      */
     public function fundingOrganizationListAction()
     {
+        $GLOBALS['pelagos']['title'] = 'Funding Organization List';
         return $this->render('PelagosAppBundle:template:UI-FundingOrganizationList.html.twig');
     }
 }
