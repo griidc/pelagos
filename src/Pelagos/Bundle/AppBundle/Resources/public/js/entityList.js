@@ -1,3 +1,9 @@
+var $ = jQuery.noConflict();
+$(document).ready(function(){
+    "use strict";
+    $(".entityTable").pelagosDataTable();
+});
+
 (function($) {
     "use strict";
     $.fn.pelagosDataTable = function(options) {
