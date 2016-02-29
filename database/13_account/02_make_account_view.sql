@@ -234,6 +234,23 @@ AS $account_func$
                RETURN NEW;
             END IF;
 
+            -- Update account_table:
+            EXECUTE 'UPDATE account_table
+                     SET account_user_id = $1,
+                         account_hash_algorithm = $2,
+                         account_password = $3,
+                         account_password_salt = $4,
+                         account_modification_time = $5,
+                         account_modifier = $6
+                     WHERE person_number = $7'
+            USING NEW.user_id,
+                  _hash_algorithm,
+                  NEW.password,
+                  NEW.salt,
+                  DATE_TRUNC('seconds', NOW()),
+                  NEW.modifier,
+                  OLD.person_number;
+
             -- Now update the history table with the current
 
          END IF; -- End of IF clause to determine if operation is an INSERT or
