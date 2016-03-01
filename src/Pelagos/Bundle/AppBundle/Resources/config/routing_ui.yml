@@ -18,3 +18,6 @@ pelagos_person_research_group_ui:
 
 pelagos_research_group_ui:
     resource: Pelagos\Bundle\AppBundle\Controller\UI\ResearchGroupController
+    
+pelagos_person_data_repository_ui:
+    resource: Pelagos\Bundle\AppBundle\Controller\UI\PersonDataRepositoryController
