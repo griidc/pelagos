@@ -8,13 +8,12 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 /**
- * A form for creating person funding organizations.
+ * A form for creating Person to Data Reppository Associations.
  */
 class PersonDataRepositoryType extends AbstractType
 {
@@ -44,7 +43,6 @@ class PersonDataRepositoryType extends AbstractType
                 'class' => 'Pelagos:DataRepository',
                 'choice_label' => 'name',
                 'placeholder' => '[Please Select a Data Repository]',
-                //'attr' => array('class' => 'hiddenFormField'),
             ))
             ->add('role', EntityType::class, array(
                 'label' => 'Role:',

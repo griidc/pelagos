@@ -12,6 +12,7 @@ use \Symfony\Component\Validator\Constraints as Assert;
 use \Pelagos\Exception\NotDeletableException;
 use \Doctrine\Common\Collections\ArrayCollection;
 use JMS\Serializer\Annotation\Exclude;
+use Hateoas\Configuration\Annotation as Hateoas;
 
 /**
  * Class to represent a Data Repository.
@@ -21,9 +22,32 @@ use JMS\Serializer\Annotation\Exclude;
  *     errorPath="name",
  *     message="A Data Repository with this name already exists"
  * )
+ *
+ * @Hateoas\Relation(
+ *   "self",
+ *   href = @Hateoas\Route(
+ *     "pelagos_api_data_repositories_get",
+ *     parameters = { "id" = "expr(object.getId())" }
+ *   )
+ * )
+ * @Hateoas\Relation(
+ *   "edit",
+ *   href = @Hateoas\Route(
+ *     "pelagos_api_data_repositories_put",
+ *     parameters = { "id" = "expr(object.getId())" }
+ *   ),
+ *   exclusion = @Hateoas\Exclusion(
+ *     excludeIf = "expr(not service('security.authorizationchecker').isGranted(['CAN_EDIT'], object))"
+ *   )
+ * )
  */
 class DataRepository extends Entity
 {
+    /**
+     * A friendly name for this type of entity.
+     */
+    const FRIENDLY_NAME = 'Data Repository';
+
     /**
      * Static array containing a list of the properties and their attributes.
      *

@@ -1,3 +1,9 @@
+data_repositories:
+    type: rest
+    resource: Pelagos\Bundle\AppBundle\Controller\Api\DataRepositoryController
+    name_prefix: data_repositories_
+    prefix: data_repositories
+
 funding_organizations:
     type: rest
     resource: Pelagos\Bundle\AppBundle\Controller\Api\FundingOrganizationController
@@ -27,6 +33,12 @@ person_research_groups:
     resource: Pelagos\Bundle\AppBundle\Controller\Api\PersonResearchGroupController
     name_prefix: person_research_groups_
     prefix: person_research_groups
+
+person_data_repositories:
+    type: rest
+    resource: Pelagos\Bundle\AppBundle\Controller\Api\PersonDataRepositoryController
+    name_prefix: person_data_repositories_
+    prefix: person_data_repositories
 
 people:
     type: rest
