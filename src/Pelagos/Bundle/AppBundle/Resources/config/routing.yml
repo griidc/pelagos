@@ -4,7 +4,7 @@ pelagos_app_homepage:
 
 pelagos_ui:
     prefix: ui
-    resource: Pelagos\Bundle\AppBundle\Controller\UIController
+    resource: "@PelagosAppBundle/Resources/config/routing_ui.yml"
 
 pelagos_list:
     prefix: lists

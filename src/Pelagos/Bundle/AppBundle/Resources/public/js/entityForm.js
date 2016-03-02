@@ -65,15 +65,6 @@
                 }
             }
 
-            // if (entityId === "") {
-
-            // } else {
-                // if (!$(this).hasAttr("editable")) {
-                    // $(this).find('.innerForm').hide()
-                    // return null;
-                // }
-            // }
-
             $(this).prop("unsavedChanges", false);
 
             var formValidator = $(this).validate({
@@ -177,7 +168,7 @@
             });
 
             if (entityId === "") {
-                $(".entityWrapper").has(this).click();
+                $(".entityWrapper").has("[creatable] input[name='id'][value='']", this).click();
             }
 
             // Special stuff for Addform
@@ -236,9 +227,6 @@
                     }
                 });
             }
-
-
-
         });
     };
 
@@ -406,11 +394,6 @@
         var entityId = $(form).find("[name=\"id\"]").val();
         var url;
         var actionURL = $(form).attr("action");
-
-        // $("form input:hidden").each(function(key, input){
-            // data.append(input.name, input.value);
-        // });
-
         var type;
         var returnCode;
         var prefixPhrase;
