@@ -25,7 +25,7 @@ class ResearchGroupController extends UIController
      *
      * @return Response A Response instance.
      */
-    public function researchGroupAction($id = null)
+    public function showAction($id = null)
     {
         $ui = array();
         $ui['PersonResearchGroups'] = array();

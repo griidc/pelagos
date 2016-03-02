@@ -23,7 +23,7 @@ class PersonDataRepositoryController extends UIController
      *
      * @return Response A Response instance.
      */
-    public function personDataRepositoryAction($id = null)
+    public function showAction($id = null)
     {
         $ui = array();
 

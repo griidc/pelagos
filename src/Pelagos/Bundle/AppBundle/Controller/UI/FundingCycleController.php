@@ -25,7 +25,7 @@ class FundingCycleController extends UIController
      *
      * @return Response A Response instance.
      */
-    public function fundingCycleAction($id = null)
+    public function showAction($id = null)
     {
         $ui = array();
         

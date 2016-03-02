@@ -28,7 +28,7 @@ class PersonResearchGroupController extends UIController
      *
      * @return Response A Response instance.
      */
-    public function personResearchGroupAction(Request $request, $id = null)
+    public function showAction(Request $request, $id = null)
     {
         $researchGroupId = $request->query->get('ResearchGroup');
 
