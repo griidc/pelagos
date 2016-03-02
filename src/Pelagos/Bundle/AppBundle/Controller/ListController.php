@@ -11,6 +11,19 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 class ListController extends Controller
 {
     /**
+     * The List the Lists action.
+     *
+     * @Route("/")
+     *
+     * @return Response A list of Lists.
+     */
+    public function listListAction()
+    {
+        $GLOBALS['pelagos']['title'] = 'Lists Available';
+        return $this->render('PelagosAppBundle:template:UI-Lists.html.twig');
+    }
+
+    /**
      * The Research Group Generate List action.
      *
      * @Route("/ResearchGroup")
@@ -19,6 +32,7 @@ class ListController extends Controller
      */
     public function researchGroupListAction()
     {
+        $GLOBALS['pelagos']['title'] = 'Research Group List';
         return $this->render('PelagosAppBundle:template:UI-ResearchGroupList.html.twig');
     }
 
@@ -31,6 +45,20 @@ class ListController extends Controller
      */
     public function peopleListAction()
     {
+        $GLOBALS['pelagos']['title'] = 'People List';
         return $this->render('PelagosAppBundle:template:UI-PersonList.html.twig');
+    }
+
+    /**
+     * The Funding Organization Generate List action.
+     *
+     * @Route("/FundingOrganization")
+     *
+     * @return Response A list of People.
+     */
+    public function fundingOrganizationListAction()
+    {
+        $GLOBALS['pelagos']['title'] = 'Funding Organization List';
+        return $this->render('PelagosAppBundle:template:UI-FundingOrganizationList.html.twig');
     }
 }
