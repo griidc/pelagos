@@ -28,7 +28,7 @@ class PersonController extends UIController
      *
      * @return Response A Response instance.
      */
-    public function personAction($id = null)
+    public function showAction($id = null)
     {
         $entityHandler = $this->get('pelagos.entity.handler');
         

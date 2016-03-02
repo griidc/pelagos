@@ -25,7 +25,7 @@ class PersonFundingOrganizationController extends UIController
      *
      * @return Response A Response instance.
      */
-    public function personFundingOrganizationAction($id = null)
+    public function showAction($id = null)
     {
         $ui = array();
         
