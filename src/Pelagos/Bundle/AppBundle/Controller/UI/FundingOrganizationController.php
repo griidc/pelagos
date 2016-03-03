@@ -4,6 +4,7 @@ namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
 use Pelagos\Bundle\AppBundle\Form\FundingOrganizationType;
 use Pelagos\Bundle\AppBundle\Form\FundingCycleType;
+use Pelagos\Bundle\AppBundle\Form\PersonFundingOrganizationType;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
