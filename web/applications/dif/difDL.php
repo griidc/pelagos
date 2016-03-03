@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 <?php
 // @codingStandardsIgnoreFile
 /**************
@@ -203,6 +204,8 @@ function displayTaskStatus($tasks,$conn,$update=null,$personid=null,$filterstatu
     return $resArray;
 }
 =======
+=======
+>>>>>>> parent of cd74b9c... Changed line endings and trailing whitespaces
 <?php
 // @codingStandardsIgnoreFile
 /**************
@@ -316,6 +319,7 @@ function displayTaskStatus($tasks,$conn,$update=null,$personid=null,$filterstatu
     
     $resArray = array();
     
+<<<<<<< HEAD
     $projectID ="";
     $taskTitle="";
     $taskID ="";
@@ -329,11 +333,40 @@ function displayTaskStatus($tasks,$conn,$update=null,$personid=null,$filterstatu
         $projectID = (string)$task->Project['ID'];
         
         $fundingSourceName = (string)$task->Project->FundingSource;
+=======
+    $projects = array();
+    $projectIDs = array();
+
+    foreach ($tasks as $task)
+    {
+        foreach ($task->Project as $project)
+        {
+            $projectId = (string)$project["ID"];
+            $projectTitle = (string)$project->Title;
+            $fundingSource = (string)$project->FundingSource;
+
+            if (!in_array($projectId, $projectIDs)) {
+
+                $projects[] = array('Title'=>$projectTitle,'FundingSource'=>$fundingSource,'projectID'=>$projectId);
+                $projectIDs[] = $projectId;
+            }
+        }
+    }
+
+    foreach ($projects as $project)
+    {
+        $childArr = array();
+        
+        $projectTitle = $project['Title'];
+        $projectID = $project['projectID'];
+        $fundingSourceName = $project['FundingSource'];
+>>>>>>> parent of cd74b9c... Changed line endings and trailing whitespaces
         
         if (preg_match('/\(([^\)]+)\)/', $fundingSourceName ,$matches)) {
             $fundingSourceName = $matches[1];
         }
         
+<<<<<<< HEAD
         if ($taskID > 0)
         {
             $query = "select title,status,dataset_uid,dataset_udi from datasets where task_uid=$taskID";
@@ -343,6 +376,9 @@ function displayTaskStatus($tasks,$conn,$update=null,$personid=null,$filterstatu
             $query = "select title,status,dataset_uid,dataset_udi from datasets where project_id=$projectID";
             
         }       
+=======
+        $query = "select title,status,dataset_uid,dataset_udi from datasets where project_id=$projectID";
+>>>>>>> parent of cd74b9c... Changed line endings and trailing whitespaces
         
         if (isset($_POST["status"]) AND $_POST["status"] != '')
         {
@@ -359,8 +395,11 @@ function displayTaskStatus($tasks,$conn,$update=null,$personid=null,$filterstatu
         
         if ($rows != null)
         {
+<<<<<<< HEAD
             
             
+=======
+>>>>>>> parent of cd74b9c... Changed line endings and trailing whitespaces
             foreach ($rows as $row) 
             {
                 $status = (integer)$row["status"];
@@ -370,7 +409,10 @@ function displayTaskStatus($tasks,$conn,$update=null,$personid=null,$filterstatu
                 
                 if ($filterstatus==$status OR $filterstatus==null OR $filterstatus=="")
                 {
+<<<<<<< HEAD
                     
+=======
+>>>>>>> parent of cd74b9c... Changed line endings and trailing whitespaces
                     switch ($status)
                     {
                         case null:
@@ -391,17 +433,28 @@ function displayTaskStatus($tasks,$conn,$update=null,$personid=null,$filterstatu
                 $childArr[] = array("text"=>"[$dataset_udi] $title","icon"=>$icon,"li_attr"=>array("longtitle"=>$title),"a_attr"=>array("onclick"=>"getNode('$dataset_udi');"));
                 
             }
+<<<<<<< HEAD
             $resArray[] = array("text"=>$taskTitle." ($fundingSourceName)","icon"=>"/images/icons/folder.png","state"=>array("opened"=>true),"children"=>$childArr,"li_attr"=>array("longtitle"=>$title),"a_attr"=>array("style"=>"color:black;cursor:default;opacity:1;background-color:transparent;box-shadow:none"));  
+=======
+            $resArray[] = array("text"=>$projectTitle." ($fundingSourceName)","icon"=>"/images/icons/folder.png","state"=>array("opened"=>true),"children"=>$childArr,"li_attr"=>array("longtitle"=>$title),"a_attr"=>array("style"=>"color:black;cursor:default;opacity:1;background-color:transparent;box-shadow:none"));
+>>>>>>> parent of cd74b9c... Changed line endings and trailing whitespaces
         }
         else
         {
             if ($ShowEmpty)
             {         
+<<<<<<< HEAD
                 $resArray[] = array("text"=>$taskTitle." ($fundingSourceName)","icon"=>"/images/icons/folder_gray.png","state"=>array("opened"=>false,"disabled"=>true),"children"=>$childArr,"li_attr"=>array("longtitle"=>$taskTitle,"style"=>"color:black"),"a_attr"=>array("style"=>"color:gray;cursor:default;opacity:.7;"));       
+=======
+                $resArray[] = array("text"=>$projectTitle." ($fundingSourceName)","icon"=>"/images/icons/folder_gray.png","state"=>array("opened"=>false,"disabled"=>true),"children"=>$childArr,"li_attr"=>array("longtitle"=>$projectTitle,"style"=>"color:black"),"a_attr"=>array("style"=>"color:gray;cursor:default;opacity:.7;"));
+>>>>>>> parent of cd74b9c... Changed line endings and trailing whitespaces
             }
         }
     }
     
     return $resArray;
 }
+<<<<<<< HEAD
 >>>>>>> parent of acb886a... Changed function displayTaskStatus to show by Project instead of tasks
+=======
+>>>>>>> parent of cd74b9c... Changed line endings and trailing whitespaces
