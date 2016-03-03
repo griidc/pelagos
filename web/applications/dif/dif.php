@@ -36,7 +36,7 @@ if (isset($_POST['function']))
         case 'loadTasks':
             header('Content-Type: application/json');
             $person = $_POST['person'];
-            echo getTaskOptions($person);
+            echo getProjectOptions($person);
             break;
         case 'fillForm':
             $difUDI = $_POST["udi"];
