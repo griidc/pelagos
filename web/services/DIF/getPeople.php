@@ -15,7 +15,7 @@ if (isset($_GET["pseudoid"]))
 
     $projectID = intval($pseudoID/1024);
 
-    $switch .= '&'.'projectID='.$projectID;
+    $switch '?projectID='.$projectID;
 }
 else
 {echo '{}';exit;}
