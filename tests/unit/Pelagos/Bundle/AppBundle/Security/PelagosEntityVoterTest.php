@@ -266,11 +266,13 @@ abstract class PelagosEntityVoterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Creates a mock token with a mock Account and Person.
+     * Creates a mock Person for use by extension classes and by createMockToken function.
+     *
+     * @see createMockToken
      *
      * @return TokenInterface
      */
-    protected function createMockToken()
+    protected function createMockPerson()
     {
         $person = \Mockery::mock('\Pelagos\Entity\Person');
         $person
@@ -280,6 +282,17 @@ abstract class PelagosEntityVoterTest extends \PHPUnit_Framework_TestCase
                     return $anotherPerson === $person;
                 }
             );
+        return $person;
+    }
+    
+    /**
+     * Creates a mock token with a mock Account and Person.
+     *
+     * @return TokenInterface
+     */
+    protected function createMockToken()
+    {
+        $person = $this->createMockPerson();
         return \Mockery::mock(
             '\Symfony\Component\Security\Core\Authentication\Token\TokenInterface',
             array(

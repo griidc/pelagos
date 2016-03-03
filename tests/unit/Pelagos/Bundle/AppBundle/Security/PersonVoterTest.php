@@ -21,9 +21,6 @@ use Pelagos\Bundle\AppBundle\Security\PersonVoter as PersonVoter;
  */
 class PersonVoterTest extends PelagosEntityVoterTest
 {
-    const SAME_ID = 1;
-    const SOME_OTHER_ID = 2;
-
     /**
      * The attributes that ResearchGroupVoter should support.
      *
@@ -42,98 +39,25 @@ class PersonVoterTest extends PelagosEntityVoterTest
     {
         parent::setUp();
 
+        //  change the expectations set by setup in the base class
         $this->roles['DataRepository'][DR_Roles::MANAGER][Voter::CAN_EDIT] = Voter::ACCESS_DENIED;
-        // $this->roles['DataRepository'][DR_Roles::MANAGER][Voter::CAN_DELETE] = Voter::ACCESS_ABSTAIN;
         $this->roles['DataRepository'][DR_Roles::ENGINEER][Voter::CAN_EDIT] = Voter::ACCESS_DENIED;
-        // $this->roles['DataRepository'][DR_Roles::ENGINEER][Voter::CAN_DELETE] = Voter::ACCESS_ABSTAIN;
         $this->roles['DataRepository'][DR_Roles::SUPPORT][Voter::CAN_EDIT] = Voter::ACCESS_DENIED;
-        // $this->roles['DataRepository'][DR_Roles::SUPPORT][Voter::CAN_DELETE] = Voter::ACCESS_ABSTAIN;
         $this->roles['DataRepository'][DR_Roles::SME][Voter::CAN_EDIT] = Voter::ACCESS_DENIED;
-        // $this->roles['DataRepository'][DR_Roles::SME][Voter::CAN_DELETE] = Voter::ACCESS_ABSTAIN;
 
         $this->roles['FundingOrganization'][FO_Roles::LEADERSHIP][Voter::CAN_EDIT] = Voter::ACCESS_DENIED;
-        // $this->roles['FundingOrganization'][FO_Roles::LEADERSHIP][Voter::CAN_DELETE] = Voter::ACCESS_ABSTAIN;
         $this->roles['FundingOrganization'][FO_Roles::ADVISORY][Voter::CAN_EDIT] = Voter::ACCESS_DENIED;
-        //  $this->roles['FundingOrganization'][FO_Roles::ADVISORY][Voter::CAN_DELETE] = Voter::ACCESS_ABSTAIN;
         $this->roles['FundingOrganization'][FO_Roles::ADMIN][Voter::CAN_EDIT] = Voter::ACCESS_DENIED;
-        //  $this->roles['FundingOrganization'][FO_Roles::ADMIN][Voter::CAN_DELETE] = Voter::ACCESS_ABSTAIN;
 
         $this->roles['ResearchGroup'][RG_Roles::LEADERSHIP][Voter::CAN_EDIT] = Voter::ACCESS_DENIED;
-        // $this->roles['ResearchGroup'][RG_Roles::LEADERSHIP][Voter::CAN_DELETE] = Voter::ACCESS_ABSTAIN;
         $this->roles['ResearchGroup'][RG_Roles::ADMIN][Voter::CAN_EDIT] = Voter::ACCESS_DENIED;
-        //  $this->roles['ResearchGroup'][RG_Roles::ADMIN][Voter::CAN_DELETE] = Voter::ACCESS_ABSTAIN;
         $this->roles['ResearchGroup'][RG_Roles::DATA][Voter::CAN_EDIT] = Voter::ACCESS_DENIED;
-        //  $this->roles['ResearchGroup'][RG_Roles::DATA][Voter::CAN_DELETE] = Voter::ACCESS_ABSTAIN;
         $this->roles['ResearchGroup'][RG_Roles::RESEARCHER][Voter::CAN_EDIT] = Voter::ACCESS_DENIED;
-        //  $this->roles['ResearchGroup'][RG_Roles::RESEARCHER][Voter::CAN_DELETE] = Voter::ACCESS_ABSTAIN;
 
         $this->voter = new \Pelagos\Bundle\AppBundle\Security\PersonVoter;
 
-        // Mock a Person and make the DataRepository association
-        $this->mockEntity = \Mockery::mock(
-            '\Pelagos\Entity\Person',
-            array(
-                'getDataRepositories' => array(\Mockery::mock(
-                    '\Pelagos\Entity\DataRepository',
-                    array(
-                        'getPersonDataRepositories' => new ArrayCollection(
-                            $this->personAssociations['DataRepository']
-                        ),
-                    )
-                )),
-
-            )
-        );
-        $person = $this->mockEntity;
-        $this->mockEntity->shouldReceive('isSameTypeAndId')
-            ->andReturnUsing(
-                function ($anotherPerson) use ($person) {
-                    return $anotherPerson === $person;
-                }
-            );
-    }
-
-    /**
-     * Creates a mock Person with an ID.
-     *
-     * @param integer $id The id used for testing.
-     *
-     * @return \Mockery\MockInterface Return the mock Person.
-     */
-    private function createMockPerson($id)
-    {
-        // Mock a Person and make the DataRepository association
-        $person = \Mockery::mock('\Pelagos\Entity\Person');
-        $person->shouldReceive(array('getId' => $id));
-        $person->shouldReceive('isSameTypeAndId')
-            ->andReturnUsing(
-                function ($anotherPerson) use ($person) {
-                    return (get_class($person) == get_class($anotherPerson) &&
-                        $person->getId() == $anotherPerson->getId());
-                }
-            );
-        return $person;
-    }
-
-    /**
-     * Creates a mock token with a mock Account and Person.
-     *
-     * @param integer $id The id used for testing.
-     *
-     * @return \Mockery\MockInterface Return the mock TokenInterface created.
-     */
-    protected function localCreateMockToken($id)
-    {
-        $person = $this->createMockPerson($id);
-        return \Mockery::mock(
-            '\Symfony\Component\Security\Core\Authentication\Token\TokenInterface',
-            array(
-                'getUser' => \Mockery::mock(
-                    '\Pelagos\Entity\Account',
-                    array('getPerson' => $person)
-                ),
-            )
-        );
+        // Mock a Person and make the DataRepository association to satisfy base class expectations
+        $this->mockEntity = $this->createMockPerson();
     }
 
     /**
@@ -147,9 +71,10 @@ class PersonVoterTest extends PelagosEntityVoterTest
      */
     public function testCanUserEditSelf()
     {
-        $mockToken = $this->localCreateMockToken(self::SAME_ID);
+        $mockToken = $this->createMockToken();
         $this->createMockPersonAssociation('DataRepository', $mockToken, 'Manager');
-        $sameIdPerson = $this->createMockPerson(self::SAME_ID);
+        //  get the Person out of the Token for comparison as the subject
+        $sameIdPerson = $mockToken->getUser()->getPerson();
 
         $this->assertEquals(
             Voter::ACCESS_GRANTED,
@@ -172,15 +97,15 @@ class PersonVoterTest extends PelagosEntityVoterTest
      */
     public function testCanUserEditOtherPerson()
     {
-        $mockToken = $this->localCreateMockToken(self::SAME_ID);
+        $mockToken = $this->createMockToken();
         $this->createMockPersonAssociation('DataRepository', $mockToken, 'Manager');
-        $personWithDifferentId = $this->createMockPerson(self::SOME_OTHER_ID);
+        $otherPerson = $this->createMockPerson();
 
         $this->assertEquals(
             Voter::ACCESS_DENIED,
             $this->voter->vote(
                 $mockToken,
-                $personWithDifferentId,
+                $otherPerson,
                 array(Voter::CAN_EDIT)
             )
         );
