@@ -12,10 +12,7 @@ use Pelagos\Bundle\AppBundle\Security\PersonVoter as Voter;
 use Pelagos\Bundle\AppBundle\Security\PersonVoter as PersonVoter;
 
 /**
- * Class PersonVoterTest Short name goes here. (Includes - GRIIDC PHP CLASS DOC).
- *
- * A longer more detailed description that can span
- * multiple lines goes here.
+ * Class PersonVoterTest.
  *
  * @package Tests\unit\Pelagos\Bundle\AppBundle\Security
  */
@@ -54,7 +51,7 @@ class PersonVoterTest extends PelagosEntityVoterTest
         $this->roles['ResearchGroup'][RG_Roles::DATA][Voter::CAN_EDIT] = Voter::ACCESS_DENIED;
         $this->roles['ResearchGroup'][RG_Roles::RESEARCHER][Voter::CAN_EDIT] = Voter::ACCESS_DENIED;
 
-        $this->voter = new \Pelagos\Bundle\AppBundle\Security\PersonVoter;
+        $this->voter = new PersonVoter;
 
         // Mock a Person and make the DataRepository association to satisfy base class expectations
         $this->mockEntity = $this->createMockPerson();
