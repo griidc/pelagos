@@ -37,7 +37,7 @@ class SuperUserVoterTest extends PelagosEntityVoterTest
 
         $this->voter = new Voter;
 
-        $this->mockEntity = 'anything';
+        $this->mockEntity = \Mockery::mock('\Pelagos\Entity\Entity');
 
         $this->roles['DataRepository'][DR_Roles::MANAGER][Voter::CAN_CREATE] = Voter::ACCESS_GRANTED;
         $this->roles['DataRepository'][DR_Roles::MANAGER][Voter::CAN_EDIT] = Voter::ACCESS_GRANTED;
@@ -77,12 +77,26 @@ class SuperUserVoterTest extends PelagosEntityVoterTest
     }
 
     /**
-     * This voter supports any subject, so it should never abstain dependent on the subject.
+     * Test that a user can't create, modify, or delete their own Data Repository associations.
      *
      * @return void
      */
-    public function testAbstainForUnsupportedSubject()
+    public function testDenyOwnDataRepositoryAssociation()
     {
-        // Nothing here because we are overriding this test that does not apply from the abstract class.
+        foreach ($this->supportedAttributes as $attribute) {
+            $this->assertEquals(
+                Voter::ACCESS_DENIED,
+                $this->voter->vote(
+                    $this->mockTokens['DataRepository'][DR_Roles::MANAGER],
+                    $this->mockTokens['DataRepository'][DR_Roles::MANAGER]
+                        ->getUser()
+                        ->getPerson()
+                        ->getPersonDataRepositories()
+                        ->first(),
+                    array($attribute)
+                ),
+                "Did not deny for $attribute own Data Repository association"
+            );
+        }
     }
 }

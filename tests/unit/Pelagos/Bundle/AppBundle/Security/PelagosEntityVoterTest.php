@@ -312,6 +312,11 @@ abstract class PelagosEntityVoterTest extends \PHPUnit_Framework_TestCase
                 ),
             )
         );
+        $personAssociation->shouldReceive('isSameTypeAndId')->andReturnUsing(
+            function ($somethingElse) use ($personAssociation) {
+                return $personAssociation === $somethingElse;
+            }
+        );
         if ($type == 'DataRepository') {
             $token->getUser()->getPerson()
                 ->shouldReceive('getPersonDataRepositories')
