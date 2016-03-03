@@ -42,7 +42,3 @@
 [exclude]
 funds[] = 6
 projects[] = 125
-tasks[] = "administration"
-tasks[] = "management"
-tasks[] = "data management"
-tasks[] = "education and outreach"

@@ -141,7 +141,7 @@ $app->get('/projects/:by/:id(/:renderer)', function ($by, $id, $renderer = 'brow
                     $projectFilter[] = "projectId!=$exclude";
                 }
             }
-            $stash['funds'][$i]['projects'] = getTasksAndDatasets(getProjectDetails($RIS_DBH, $projectFilter));
+            $stash['funds'][$i]['projects'] = getProjectsAndDatasets(getProjectDetails($RIS_DBH, $projectFilter));
         }
         $app->render('html/YR1.html', $stash);
     } else {
@@ -183,7 +183,7 @@ $app->get('/projects/:by/:id(/:renderer)', function ($by, $id, $renderer = 'brow
                 $projectFilter[] = "projectId!=$exclude";
             }
         }
-        $stash['projects'] = getTasksAndDatasets(getProjectDetails($RIS_DBH, $projectFilter));
+        $stash['projects'] = getProjectsAndDatasets(getProjectDetails($RIS_DBH, $projectFilter));
         if ($renderer == 'dompdf') {
             $env = $app->environment();
             header("Content-Type: text/html; charset=utf-8");
