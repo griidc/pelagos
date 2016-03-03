@@ -743,6 +743,47 @@ function getTaskOptions($personID)
     return json_encode($tasks);
 }
 
+function getProjectOptions($personID)
+{
+    $rpisTasks = getRISTasks($personID);
+
+    $projects = array();
+    $projectsId = array();
+
+    foreach ($rpisTasks as $task)
+    {
+        foreach ($task->Project as $project)
+        {
+            $fundingSourceName = (string)$project->FundingSource;
+
+            if (preg_match('/\(([^\)]+)\)/', $fundingSourceName ,$matches)) {
+                $fundingSourceName = $matches[1];
+            }
+
+            $maxLength = 200;
+            if (strlen($project->Title) > $maxLength){
+                $projectTitle=substr((string)$project->Title,0,$maxLength).'...'.'('.$fundingSourceName.')';
+            } else {
+                $projectTitle=(string)$project->Title.' ('.$fundingSourceName.')';
+            }
+
+            $fundingSource = (string)$project->FundingSource["ID"];
+
+            $taskID = "0";
+            $projectID = (string)$project["ID"];
+            $pseudoID = ((int)$projectID * 1024)+ (int)$taskID;
+
+            if (!in_array($projectID, $projectsId)) {
+                $projects[] = array('Title'=>$projectTitle,'ID'=>$pseudoID,'taskID'=>$taskID,'projectID'=>$projectID,'fundSrcID'=>$fundingSource);
+                $projectsId[] = $projectID;
+            }
+        }
+    }
+
+    sort($projects);
+
+    return json_encode($projects);
+}
 
 function getUserID()
 {
