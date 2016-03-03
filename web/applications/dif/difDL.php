@@ -111,33 +111,38 @@ function displayTaskStatus($tasks,$conn,$update=null,$personid=null,$filterstatu
     
     $resArray = array();
     
-    $projectID ="";
-    $taskTitle="";
-    $taskID ="";
+    $projects = array();
+    $projectIDs = array();
 
     foreach ($tasks as $task)
     {
-        $projectArr = array();
+        foreach ($task->Project as $project)
+        {
+            $projectId = (string)$project["ID"];
+            $projectTitle = (string)$project->Title;
+            $fundingSource = (string)$project->FundingSource;
+
+            if (!in_array($projectId, $projectIDs)) {
+
+                $projects[] = array('Title'=>$projectTitle,'FundingSource'=>$fundingSource,'projectID'=>$projectId);
+                $projectIDs[] = $projectId;
+            }
+        }
+    }
+
+    foreach ($projects as $project)
+    {
         $childArr = array();
-        $taskID = (string)$task['ID'];
-        $taskTitle = (string)$task->Title;
-        $projectID = (string)$task->Project['ID'];
         
-        $fundingSourceName = (string)$task->Project->FundingSource;
+        $projectTitle = $project['Title'];
+        $projectID = $project['projectID'];
+        $fundingSourceName = $project['FundingSource'];
         
         if (preg_match('/\(([^\)]+)\)/', $fundingSourceName ,$matches)) {
             $fundingSourceName = $matches[1];
         }
         
-        if ($taskID > 0)
-        {
-            $query = "select title,status,dataset_uid,dataset_udi from datasets where task_uid=$taskID";
-        }
-        else
-        {
-            $query = "select title,status,dataset_uid,dataset_udi from datasets where project_id=$projectID";
-            
-        }       
+        $query = "select title,status,dataset_uid,dataset_udi from datasets where project_id=$projectID";
         
         if (isset($_POST["status"]) AND $_POST["status"] != '')
         {
@@ -154,8 +159,6 @@ function displayTaskStatus($tasks,$conn,$update=null,$personid=null,$filterstatu
         
         if ($rows != null)
         {
-            
-            
             foreach ($rows as $row) 
             {
                 $status = (integer)$row["status"];
@@ -165,7 +168,6 @@ function displayTaskStatus($tasks,$conn,$update=null,$personid=null,$filterstatu
                 
                 if ($filterstatus==$status OR $filterstatus==null OR $filterstatus=="")
                 {
-                    
                     switch ($status)
                     {
                         case null:
@@ -186,13 +188,13 @@ function displayTaskStatus($tasks,$conn,$update=null,$personid=null,$filterstatu
                 $childArr[] = array("text"=>"[$dataset_udi] $title","icon"=>$icon,"li_attr"=>array("longtitle"=>$title),"a_attr"=>array("onclick"=>"getNode('$dataset_udi');"));
                 
             }
-            $resArray[] = array("text"=>$taskTitle." ($fundingSourceName)","icon"=>"/images/icons/folder.png","state"=>array("opened"=>true),"children"=>$childArr,"li_attr"=>array("longtitle"=>$title),"a_attr"=>array("style"=>"color:black;cursor:default;opacity:1;background-color:transparent;box-shadow:none"));  
+            $resArray[] = array("text"=>$projectTitle." ($fundingSourceName)","icon"=>"/images/icons/folder.png","state"=>array("opened"=>true),"children"=>$childArr,"li_attr"=>array("longtitle"=>$title),"a_attr"=>array("style"=>"color:black;cursor:default;opacity:1;background-color:transparent;box-shadow:none"));
         }
         else
         {
             if ($ShowEmpty)
             {         
-                $resArray[] = array("text"=>$taskTitle." ($fundingSourceName)","icon"=>"/images/icons/folder_gray.png","state"=>array("opened"=>false,"disabled"=>true),"children"=>$childArr,"li_attr"=>array("longtitle"=>$taskTitle,"style"=>"color:black"),"a_attr"=>array("style"=>"color:gray;cursor:default;opacity:.7;"));       
+                $resArray[] = array("text"=>$projectTitle." ($fundingSourceName)","icon"=>"/images/icons/folder_gray.png","state"=>array("opened"=>false,"disabled"=>true),"children"=>$childArr,"li_attr"=>array("longtitle"=>$projectTitle,"style"=>"color:black"),"a_attr"=>array("style"=>"color:gray;cursor:default;opacity:.7;"));
             }
         }
     }
