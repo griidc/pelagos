@@ -4,6 +4,7 @@ namespace Pelagos\Bundle\AppBundle\Security;
 
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
+use Pelagos\Entity\Entity;
 use Pelagos\Entity\Account;
 use Pelagos\Entity\Person;
 use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
@@ -23,6 +24,9 @@ class SuperUserVoter extends PelagosEntityVoter
      */
     protected function supports($attribute, $object)
     {
+        if (!$object instanceof Entity) {
+            return false;
+        }
         if (!in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT, self::CAN_DELETE))) {
             return false;
         }
@@ -49,7 +53,11 @@ class SuperUserVoter extends PelagosEntityVoter
 
         $userPerson = $user->getPerson();
 
-        $personDataRepositories = $userPerson->getPersonDataRepositories();
+        $personDataRepositories = $userPerson->getPersonDataRepositories()->filter(
+            function ($personDataRepository) use ($object) {
+                return (!$personDataRepository->isSameTypeAndId($object));
+            }
+        );
         // Data Repository Managers are Super Users
         if ($this->doesUserHaveRole(
             $userPerson,
