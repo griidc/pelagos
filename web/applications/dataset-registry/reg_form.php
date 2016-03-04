@@ -128,8 +128,44 @@ if (isset($reg_id))
     {
         if (isset($_GET['regid']))
         {
-            $dMessage= "Sorry, the registration with ID: $reg_id could not be found. Please email <a href=\"mailto:griidc@gomri.org?subject=REG Form\">griidc@gomri.org</a> if you have any questions.";
-            drupal_set_message($dMessage,'warning');
+            $query = "select * from datasets where dataset_udi='$reg_id'";
+
+            $difrow = pdoDBQuery($conn,$query);
+
+            if ($difrow == false OR is_null($difrow)) {
+                $dMessage= "Sorry, the registration with ID: $reg_id could not be found. Please email <a href=\"mailto:griidc@gomri.org?subject=REG Form\">griidc@gomri.org</a> if you have any questions.";
+                drupal_set_message($dMessage,'warning');
+            } elseif ($difrow['status'] < 2) {
+                drupal_set_message(
+                    "The DIF has not yet been approved for dataset: $reg_id",
+                    'warning'
+                );
+            } else {
+                $row = $difrow;
+                $formDisabled = false;
+                $dif_id = true;
+
+                $xml = RPIS_TASK_BASEURL.'?maxresults=-1&taskid=' . $row['task_uid'] . '&projectid=' . $row['project_id'];
+                $doc = simplexml_load_file($xml);
+                $row['task_uid'] = $doc->Task->Title;
+
+                $poc_email = "";
+
+                if ($row['primary_poc'] > 0)
+                {
+                    $pocpath = '/gomri/Task/Researchers/Person[@ID='.$row['primary_poc'] . ']';
+                    $pocnode = $doc->xpath($pocpath);
+                    if ($pocnode != false)
+                    {
+                        $row['primary_poc'] = $pocnode[0]->LastName . ', ' . $pocnode[0]->FirstName;
+                        $poc_email = $pocnode[0]->Email;
+                    }
+                }
+                drupal_set_message(
+                    "Values have been pre-populated from DIF for dataset: $reg_id",
+                    'status'
+                );
+            }
         }
     }
     else
