@@ -862,7 +862,7 @@ fieldset {
                     <?php if (isset($dif_id)) echo 'disabled'; ?>
                     type="text" id="registry_id" name="registry_id" size="60"
                     value="<?php if (isset($row['registry_id'])) echo $row['registry_id']; ?>">
-                <button disabled name="regbutton" id="regbutton" onclick="window.location.href='<?php echo $_SERVER['SCRIPT_NAME'];?>?regid='+document.getElementById('registry_id').value;" type="button">Retrieve Registration</button>
+                <button disabled name="regbutton" id="regbutton" onclick="window.location.href='<?php echo $_SERVER['SCRIPT_NAME'];?>?regid='+document.getElementById('registry_id').value;" type="button">Load Dataset</button>
             </fieldset>
         </p>
 
