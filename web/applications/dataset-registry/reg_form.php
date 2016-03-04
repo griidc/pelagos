@@ -845,7 +845,7 @@ fieldset {
 
     <fieldset>
         <p>
-            <strong>NOTE:</strong> <span style="color:grey">If you have a Dataset Information Form record submitted, click on the dataset in the right panel to extract the information needed for dataset registration. The red asterisk (<span class="emRequired"/>) is used to indicate required fields. If you require assistance in completing this form, do not hesitate to contact GRIIDC (email: <a href=mailto:griidc@gomri.org>griidc@gomri.org</a>).</span>
+            <strong>NOTE:</strong> <span style="color:grey">You must have an approved Dataset Information Form (DIF) to fill out and submit a Dataset Submission Form. The red asterisk (<span class="emRequired"/>) is used to indicate required fields. If you need assistance while completing this form, please contact <a href=mailto:griidc@gomri.org>griidc@gomri.org</a>.</span>
         </p>
     </fieldset>
 
