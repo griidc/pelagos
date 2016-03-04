@@ -227,8 +227,8 @@ class Account extends Entity implements UserInterface, \Serializable
      */
     public function comparePassword($password)
     {
-        $hash = sha1($password . $this->passwordHashSalt, true);
-        if ($hash === $this->passwordHash) {
+        $hash = sha1($password . $this->getSalt(), true);
+        if ($hash === $this->getPassword()) {
             return true;
         }
         return false;
@@ -255,6 +255,9 @@ class Account extends Entity implements UserInterface, \Serializable
      */
     public function getSalt()
     {
+        if (is_resource($this->passwordHashSalt)) {
+            return stream_get_contents($this->passwordHashSalt);
+        }
         return $this->passwordHashSalt;
     }
 
@@ -267,6 +270,9 @@ class Account extends Entity implements UserInterface, \Serializable
      */
     public function getPassword()
     {
+        if (is_resource($this->passwordHash)) {
+            return stream_get_contents($this->passwordHash);
+        }
         return $this->passwordHash;
     }
 
@@ -323,5 +329,15 @@ class Account extends Entity implements UserInterface, \Serializable
             $this->person,
             $this->userId,
         ) = unserialize($serialized);
+    }
+
+    /**
+     * Returns the hashing algorithm used to generate the password hash.
+     *
+     * @return string The hashing algorithm.
+     */
+    public function getHashAlgorithm()
+    {
+        return $this->passwordHashAlgorithm;
     }
 }
