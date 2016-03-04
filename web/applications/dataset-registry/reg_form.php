@@ -688,7 +688,7 @@ fieldset {
 <div id="regid_tip" style="display:none;">
     <img src="includes/images/info.png" style="float:right;" />
     <p>
-        <strong>Registation Identifier:</strong><p/> This identifier is generated once the dataset is registered. However, you may enter a Dataset Registration Identifier to extract previously submitted data.
+        <strong>Unique Dataset Identifier (UDI):</strong><p/> Please enter the Unique Dataset Identifier (UDI) that GRIIDC assigned to your dataset and select "Load Dataset" to load the most recent information for your dataset.
     </p>
 </div>
 
