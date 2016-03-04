@@ -260,13 +260,13 @@ function showAllExtents() {
 
 function addTree() {
     insertTree({
-        label: "Filter by:",
+        start: "ra",
+        title: "Filter by Research Award",
         theme: "classic",
         max_depth: 1,
         expand_to_depth: 0,
         include_datasets: "identified",
         animation: 250,
-        type: "ra",
         filter: "",
         onload: "if (!tree.selected) { showDatasets($('#by-input').val(),$('#id-input').val(),''); } else if ($('#' + tree.name).jstree('get_selected').length < 1) { showDatasets($('#by-input').val(),$('#id-input').val(),''); }",
         show_other_sources: false,
