@@ -133,7 +133,7 @@ if (isset($reg_id))
             $difrow = pdoDBQuery($conn,$query);
 
             if ($difrow == false OR is_null($difrow)) {
-                $dMessage= "Sorry, the registration with ID: $reg_id could not be found. Please email <a href=\"mailto:griidc@gomri.org?subject=REG Form\">griidc@gomri.org</a> if you have any questions.";
+                $dMessage= "Sorry, dataset with Unique Dataset Identifier (UDI) $reg_id could not be found. Please email <a href=\"mailto:griidc@gomri.org?subject=REG Form\">griidc@gomri.org</a> if you have any questions.";
                 drupal_set_message($dMessage,'warning');
             } elseif ($difrow['status'] < 2) {
                 drupal_set_message(
