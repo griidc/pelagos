@@ -857,7 +857,7 @@ fieldset {
         <p> <!-- Registry Identifier -->
             <fieldset>
                 <span id="qtip_regid" style="float:right;"><img src="includes/images/info.png"></span>
-                <label for="registry_id"><b>Registry Identifier: </b></label>
+                <label for="registry_id"><b>Unique Dataset Identifier (UDI): </b></label>
                 <input minlength="15" onkeyup="if (this.value.length == 0) document.getElementById('regbutton').disabled=true;"
                     <?php if (isset($dif_id)) echo 'disabled'; ?>
                     type="text" id="registry_id" name="registry_id" size="60"
