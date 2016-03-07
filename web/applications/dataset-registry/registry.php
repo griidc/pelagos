@@ -310,11 +310,31 @@ if ($_POST) {
                     break;
                 case 'HTTP':
                     if (array_key_exists('url_metadata_http',$_POST) and !empty($_POST['url_metadata_http'])) {
+
+                        // Get the current value of url_metadata from database.
+                        $statementHandle = $DBH->prepare('SELECT url_metadata FROM registry WHERE registry_id = ?');
+                        $statementHandle->execute(array($_POST['registry_id']));
+                        $result = $statementHandle->fetch();
+                        $storedUrl = $result['url_metadata'];
+
                         $registry_vals['url_metadata'] = $_POST['url_metadata_http'];
+
+                        $forceMetadataDownload = false;
                         if (array_key_exists('http_force_metadata_download',$_POST) and !empty($_POST['http_force_metadata_download'])) {
                             $registry_vals['metadata_dl_status'] = 'None';
+                            $forceMetadataDownload = true;
                         }
-                        $message = "$drupaluser->name has been registered new metadata via HTTP pull for ".addslashes($_POST['dataset_udi']);
+
+                        // Only make this update if either the Uri to the metadata file is different from what
+                        // is on record, or if the 'force' option has been selected by the user.
+                        if (($forceMetadataDownload == true) or ($_POST['url_metadata_http'] != $storedUrl)) {
+                            $message = "$drupaluser->name has been registered new metadata via HTTP pull for ".addslashes($_POST['dataset_udi']);
+                        } else {
+                            // Log reason why metadata was not changed.
+                            $message = "$drupaluser->name requested metadata via HTTP pull for ".addslashes($_POST['dataset_udi']);
+                            $message .= ', however, Uri has not changed from previous stored value and user has not ';
+                            $message .= ' opted to force the update. No changes were made to metadata.';
+                        }
                         writeLog($message,$mdapp_logfile);
                     }
             }
