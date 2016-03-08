@@ -23,23 +23,23 @@ Pelagos.Entity.Entity.dcm.xml
 
         <field name="emailAddress"       column="email_address"       type="string" />
 
-        <field name="phoneNumber"        column="phone_number"        type="string" />
+        <field name="phoneNumber"        column="phone_number"        type="string" nullable="true" />
 
-        <field name="deliveryPoint"      column="delivery_point"      type="string" />
+        <field name="deliveryPoint"      column="delivery_point"      type="string" nullable="true" />
 
-        <field name="city"               column="city"                type="string" />
+        <field name="city"               column="city"                type="string" nullable="true" />
 
-        <field name="administrativeArea" column="administrative_area" type="string" />
+        <field name="administrativeArea" column="administrative_area" type="string" nullable="true" />
 
-        <field name="postalCode"         column="postal_code"         type="string" />
+        <field name="postalCode"         column="postal_code"         type="string" nullable="true" />
 
-        <field name="country"            column="country"             type="string" />
+        <field name="country"            column="country"             type="string" nullable="true" />
 
-        <field name="url"                column="website"             type="string" />
+        <field name="url"                column="website"             type="string" nullable="true" />
 
-        <field name="organization"       column="organization"        type="string" />
+        <field name="organization"       column="organization"        type="string" nullable="true" />
 
-        <field name="position"           column="position"            type="string" />
+        <field name="position"           column="position"            type="string" nullable="true" />
 
         <one-to-many field="personDataRepositories"     target-entity="PersonDataRepository"      mapped-by="person" />
 

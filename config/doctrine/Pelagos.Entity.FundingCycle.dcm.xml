@@ -19,13 +19,13 @@ Pelagos.Entity.Entity.dcm.xml
 
         <field name="name"        column="name"        type="string" />
 
-        <field name="description" column="description" type="string" />
+        <field name="description" column="description" type="string" nullable="true" />
 
-        <field name="url"         column="website"     type="string" />
+        <field name="url"         column="website"     type="string" nullable="true" />
 
-        <field name="startDate"   column="start_date"  type="date" />
+        <field name="startDate"   column="start_date"  type="date"   nullable="true" />
 
-        <field name="endDate"     column="end_date"    type="date" />
+        <field name="endDate"     column="end_date"    type="date"   nullable="true" />
 
         <many-to-one field="fundingOrganization" target-entity="FundingOrganization" inversed-by="fundingCycles">
             <join-column name="funding_organization_number" referenced-column-name="funding_organization_number" />
