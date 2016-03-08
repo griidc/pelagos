@@ -712,7 +712,7 @@ fieldset {
 
 .emRequired::before {
     font-weight: bold; color:#FF0000;
-    content:"* ";
+    content:"*";
 }
 
 </style>
@@ -907,7 +907,7 @@ fieldset {
         <p> <!-- Dataset Title -->
             <fieldset>
                 <span id="qtip_title" style="float:right;"><img src="includes/images/info.png"></span>
-                <label for="title"><span class="emRequired"/><b>Dataset Title: </b></label>
+                <label for="title"><span class="emRequired"/> <b>Dataset Title: </b></label>
                 <div class="fwtextboxcont">
                     <input
                         <?php formDisabled($formDisabled); ?>
@@ -920,7 +920,7 @@ fieldset {
         <p> <!-- Dataset Abstract -->
             <fieldset>
                 <span id="qtip_abstrct" style="float:right;"><img src="includes/images/info.png"></span>
-                <label for="abstrct"><span class="emRequired"/><b>Dataset Abstract: </b></label>
+                <label for="abstrct"><span class="emRequired"/> <b>Dataset Abstract: </b></label>
                 <div class="textareacontainer">
                     <textarea
                         <?php formDisabled($formDisabled); ?>
@@ -932,7 +932,7 @@ fieldset {
         <p> <!-- Dataset Author(s) -->
             <fieldset>
                 <span id="qtip_dataset_originator" style="float:right;"><img src="includes/images/info.png"></span>
-                <label for="dataset_originator"><span class="emRequired"/><b>Dataset Author(s): </b></label>
+                <label for="dataset_originator"><span class="emRequired"/> <b>Dataset Author(s): </b></label>
                 <div class="fwtextboxcont">
                     <input
                         <?php formDisabled($formDisabled); ?>
@@ -949,7 +949,7 @@ fieldset {
                     <tr>
                         <td width="50%">
                             <span id="qtip_poc" style="float:right;"><img src="includes/images/info.png"></span>
-                            <label for="pocname"><span class="emRequired"/><b>Name: </b></label>
+                            <label for="pocname"><span class="emRequired"/> <b>Name: </b></label>
                             <div class="fwtextboxcont">
                                 <input
                                     <?php formDisabled($formDisabled); ?>
@@ -959,7 +959,7 @@ fieldset {
                         </td>
                         <td width="50%" style="padding-left:10px;">
                             <span id="qtip_pocemail" style="float:right;"><img src="includes/images/info.png"></span>
-                            <label for="pocemail"><span class="emRequired"/><b>E-Mail: </b></label>
+                            <label for="pocemail"><span class="emRequired"/> <b>E-Mail: </b></label>
                             <div class="fwtextboxcont">
                                 <input <?php formDisabled($formDisabled); ?> type="text" name="pocemail" id="pocemail" style="width:100%" value="<?php echo htmlspecialchars($poc_email);?>">
                             </div>
