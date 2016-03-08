@@ -385,8 +385,6 @@ $app->get('/metadata/:udi', function ($udi) use ($app) {
             drupal_exit();
         } elseif (strlen($disk_metadata_file) > 0) {
             # Serve it out from the data in the filesystem if it wasn't in the database
-            $filename = $dataset['metadata_filename'];
-
             header($_SERVER["SERVER_PROTOCOL"] . " 200 OK");
             header("Cache-Control: public"); // needed for i.e.
             header("Content-Type: $disk_metadata_file_mimetype");
@@ -557,6 +555,11 @@ $app->get('/download/:udi', function ($udi) use ($app) {
         $datasets = get_identified_datasets($GOMRI_DBH, array("udi=$udi"));
     }
     $dataset = $datasets[0];
+
+    if (isset($dataset['metadata_filename']) ) {
+        $dataset['metadata_filename'] = preg_replace('/:/', '-', $dataset['udi']) . '-metadata.xml';
+    }
+
     list($fs_hash_md5, $fs_hash_sha1, $fs_hash_sha256) = preg_split("/\|/", getHashes($udi));
 
     if ($dataset['access_status'] == "Restricted") {
