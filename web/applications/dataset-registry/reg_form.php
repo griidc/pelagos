@@ -135,9 +135,14 @@ if (isset($reg_id))
             if ($difrow == false OR is_null($difrow)) {
                 $dMessage= "Sorry, the dataset with Unique Dataset Identifier (UDI) $reg_id could not be found. Please email <a href=\"mailto:griidc@gomri.org?subject=REG Form\">griidc@gomri.org</a> if you have any questions.";
                 drupal_set_message($dMessage,'warning');
-            } elseif ($difrow['status'] < 2) {
+            } elseif ($difrow['status'] == 1) {
                 drupal_set_message(
                     "The DIF has not yet been approved for dataset: $reg_id",
+                    'warning'
+                );
+            } elseif ($difrow['status'] == 0) {
+                drupal_set_message(
+                    "The DIF has not yet been submitted for dataset: $reg_id",
                     'warning'
                 );
             } else {
@@ -162,7 +167,7 @@ if (isset($reg_id))
                     }
                 }
                 drupal_set_message(
-                    "Values have been pre-populated from DIF for dataset: $reg_id",
+                    "Values have been pre-populated from the DIF for dataset: $reg_id",
                     'status'
                 );
             }
