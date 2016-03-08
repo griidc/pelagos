@@ -329,13 +329,8 @@ if ($_POST) {
                         // is on record, or if the 'force' option has been selected by the user.
                         if (($forceMetadataDownload == true) or ($_POST['url_metadata_http'] != $storedUrl)) {
                             $message = "$drupaluser->name has been registered new metadata via HTTP pull for ".addslashes($_POST['dataset_udi']);
-                        } else {
-                            // Log reason why metadata was not changed.
-                            $message = "$drupaluser->name requested metadata via HTTP pull for ".addslashes($_POST['dataset_udi']);
-                            $message .= ', however, Uri has not changed from previous stored value and user has not ';
-                            $message .= ' opted to force the update. No changes were made to metadata.';
+                            writeLog($message,$mdapp_logfile);
                         }
-                        writeLog($message,$mdapp_logfile);
                     }
             }
 
