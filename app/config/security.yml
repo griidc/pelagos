@@ -36,3 +36,7 @@ services:
         class: Pelagos\Bundle\AppBundle\Security\PersonVoter
         tags:
             - { name: security.voter }
+    create_person_token_voter:
+        class: Pelagos\Bundle\AppBundle\Security\CreatePersonTokenVoter
+        tags:
+            - { name: security.voter }
