@@ -14,11 +14,11 @@ Pelagos.Entity.Entity.dcm.xml
 
         <id name="person" association-key="true"/>
 
-        <field name="tokenText"   column="token"   type="string" />
+        <field name="tokenText" column="token"     type="string" />
 
-        <field name="use"   column="use"   type="token_use_type" />
+        <field name="use"       column="use"       type="string" />
 
-        <field name="validFor"   column="valid_for"   type="interval" />
+        <field name="validFor"  column="valid_for" type="interval" />
 
         <one-to-one field="person" target-entity="Person" inversed-by="token">
            <join-column name="person_number" referenced-column-name="person_number" />
