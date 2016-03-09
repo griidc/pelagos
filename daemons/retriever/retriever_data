@@ -420,7 +420,7 @@ sub getdata {
     # update dataset_filename (original filename), dataset_download_size, and dataset_download_status
     my $filesize = -s "$conf->{paths}->{data_store}/$udi/$udi.dat";
     my $FTO = File::Type->new();
-    my $fileType = $FTO->checktype("$conf->{paths}->{data_store}/$udi/$udi.dat");
+    my $fileType = $FTO->checktype_filename("$conf->{paths}->{data_store}/$udi/$udi.dat");
     # Set registry status to 'NeedsReview' if file on disk is an HTML file, or set to 'Completed' if not.
     if ($fileType eq 'text/html') {
         my $sth2 = $dbh->prepare("UPDATE registry SET dataset_filename = ?, dataset_download_size = ?, dataset_download_status = ? WHERE registry_id = ?;");
