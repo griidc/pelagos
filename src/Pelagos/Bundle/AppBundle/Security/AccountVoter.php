@@ -21,11 +21,15 @@ class AccountVoter extends PelagosEntityVoter
      */
     protected function supports($attribute, $object)
     {
-        if ($object instanceof Account) {
-            return true;
+        if (!$object instanceof Account) {
+            return false;
         }
 
-        return false;
+        if (!in_array($attribute, array(self::CAN_CREATE))) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -43,17 +47,17 @@ class AccountVoter extends PelagosEntityVoter
     {
         // This can't return an account, so has to return person?
         $userPerson = $token->getUser();
-        
+
         // If the user token does not contain an Person, vote false.
         if (!$userPerson instanceof Person) {
             return false;
         }
-  
+
         // Person can create it's own account.
         if ($object->getPerson()->isSameTypeAndId($userPerson)) {
             return true;
         }
-        
+
         return false;
     }
 }

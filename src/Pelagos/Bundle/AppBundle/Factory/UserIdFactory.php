@@ -21,40 +21,40 @@ class UserIdFactory
     
     /**
      * Generate a unique user ID for a Person.
-        *
+     *
      * @param Person        $person        The Person to generate a user ID for.
-     * @param EntityService $entityService An instance of the EntityService.
-        *
+     * @param EntityHandler $entityHandler An instance of the EntityHandler.
+     *
      * @throws \Exception When the resulting user ID is less than two characters.
-        *
+     *
      * @return string A unique user ID for $person.
      */
     public static function generateUniqueUserId(Person $person, EntityHandler $entityHandler)
     {
         // Sanitize Person's first name.
         $sanitizedFirstName
-        = preg_replace(
-        // Remove any remaining invalid characters.
-        '/[^a-z0-9]/',
-        '',
-        transliterator_transliterate(
-        // Convert all characters in last name to latin, then to their ascii equivalent, then to lower case.
-        'Any-Latin; Latin-ASCII; Lower()',
-        $person->getFirstName()
-        )
-        );
+            = preg_replace(
+                // Remove any remaining invalid characters.
+                '/[^a-z0-9]/',
+                '',
+                transliterator_transliterate(
+                    // Convert all characters in last name to latin, then to their ascii equivalent, then to lower case.
+                    'Any-Latin; Latin-ASCII; Lower()',
+                    $person->getFirstName()
+                )
+            );
         // Sanitize Person's last name.
         $sanitizedLastName
-        = preg_replace(
-        // Remove any remaining invalid characters.
-        '/[^a-z0-9]/',
-        '',
-        transliterator_transliterate(
-        // Convert all characters in last name to latin, then to their ascii equivalent, then to lower case.
-        'Any-Latin; Latin-ASCII; Lower()',
-        $person->getLastName()
-        )
-        );
+            = preg_replace(
+                // Remove any remaining invalid characters.
+                '/[^a-z0-9]/',
+                '',
+                transliterator_transliterate(
+                    // Convert all characters in last name to latin, then to their ascii equivalent, then to lower case.
+                    'Any-Latin; Latin-ASCII; Lower()',
+                    $person->getLastName()
+                )
+            );
         // Construct candidate user ID from first character of sanitized first name and sanitized last name.
         $candidateUserId = substr($sanitizedFirstName, 0, 1) . $sanitizedLastName;
         // Truncate to 32 characters.

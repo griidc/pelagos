@@ -21,11 +21,15 @@ class PersonTokenVoter extends PelagosEntityVoter
      */
     protected function supports($attribute, $object)
     {
-        if ($object instanceof PersonToken) {
-            return true;
+        if (!$object instanceof PersonToken) {
+            return false;
         }
 
-        return false;
+        if (!in_array($attribute, array(self::CAN_CREATE, self::CAN_DELETE))) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -41,7 +45,18 @@ class PersonTokenVoter extends PelagosEntityVoter
      */
     protected function voteOnAttribute($attribute, $object, TokenInterface $token)
     {
-        // Anyone can create a PersonToken?
-        return true;
+
+        if ($attribute === self::CAN_CREATE) {
+            // Anyone can create a PersonToken
+            return true;
+        }
+
+        if ($attribute === self::CAN_DELETE) {
+            // You can only delete your own token.
+
+            //TODO: Additional Logic to determine you own that token.
+
+            return true;
+        }
     }
 }
