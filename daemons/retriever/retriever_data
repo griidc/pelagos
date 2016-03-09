@@ -5,6 +5,7 @@ use Config::PHPINI;
 use DBI;
 use Mail::Sendmail;
 use File::Copy;
+use File::Type;
 use Net::LDAP;
 use POSIX qw(strftime);
 use LWP::UserAgent;
@@ -410,9 +411,18 @@ sub getdata {
 
     # update dataset_filename (original filename), dataset_download_size, and dataset_download_status
     my $filesize = -s "$conf->{paths}->{data_store}/$udi/$udi.dat";
-    my $sth2 = $dbh->prepare("UPDATE registry SET dataset_filename = ?, dataset_download_size = ?, dataset_download_status = ? WHERE registry_id = ?;");
-    $log->write("[$udi] updating dataset_filename, dataset_download_size, and dataset_download_status");
-    $sth2->execute($filename,$filesize,'Completed',$reg_id) or die "Couldn't execute statement: " . $sth2->errstr;
+    my $FTO = File::Type->new();
+    my $fileType = $FTO->checktype("$conf->{paths}->{data_store}/$udi/$udi.dat");
+    # Set registry status to 'NeedsReview' if file on disk is an HTML file, or set to 'Completed' if not.
+    if ($fileType eq 'text/html') {
+        my $sth2 = $dbh->prepare("UPDATE registry SET dataset_filename = ?, dataset_download_size = ?, dataset_download_status = ? WHERE registry_id = ?;");
+        $log->write("[$udi] file pulled from $url_data was discovered to be an HTML page.");
+        $sth2->execute($filename,$filesize,'NeedsReview',$reg_id) or die "Couldn't execute statement: " . $sth2->errstr;
+    } else {
+        my $sth2 = $dbh->prepare("UPDATE registry SET dataset_filename = ?, dataset_download_size = ?, dataset_download_status = ? WHERE registry_id = ?;");
+        $log->write("[$udi] updating dataset_filename, dataset_download_size, and dataset_download_status");
+        $sth2->execute($filename,$filesize,'Completed',$reg_id) or die "Couldn't execute statement: " . $sth2->errstr;
+    }
 
     # set parameters for submitter notification
     $notify{$r->{'userid'}}->{'data'} = [] unless exists $notify{$r->{'userid'}}->{'data'};
