@@ -263,6 +263,14 @@ for my $email (keys %{$conf->{'notifications'}}) {
                 }
             }
         }
+        if ($type eq 'filehtml') {
+            if (exists $data_notify->{'filehtml'}) {
+                $mail{'Message'} .= "\nData was downloaded that subsequently identified as HTML:\n\n";
+                for my $reg_id (sort(keys(%{$data_notify->{'filehtml'}}))) {
+                    $mail{'Message'} .= "$reg_id $data_notify->{filehtml}->{$reg_id}\n";
+                }
+            }
+        }
         if ($type eq 'error') {
             if (exists $data_notify->{'error'}) {
                 $mail{'Message'} .= "\nData URLs that could not be downloaded due to an error:\n\n";
@@ -418,6 +426,7 @@ sub getdata {
         my $sth2 = $dbh->prepare("UPDATE registry SET dataset_filename = ?, dataset_download_size = ?, dataset_download_status = ? WHERE registry_id = ?;");
         $log->write("[$udi] file pulled from $url_data was discovered to be an HTML page.");
         $sth2->execute($filename,$filesize,'NeedsReview',$reg_id) or die "Couldn't execute statement: " . $sth2->errstr;
+        $data_notify->{'filehtml'}->{$reg_id} = { url => $url_data, path => "$conf->{paths}->{data_store}/$udi/$udi.dat" };
     } else {
         my $sth2 = $dbh->prepare("UPDATE registry SET dataset_filename = ?, dataset_download_size = ?, dataset_download_status = ? WHERE registry_id = ?;");
         $log->write("[$udi] updating dataset_filename, dataset_download_size, and dataset_download_status");
