@@ -9,7 +9,7 @@ use Pelagos\Entity\PersonToken;
 /**
  * A voter to allow anyone to create a Person Token.
  */
-class CreatePersonTokenVoter extends PelagosEntityVoter
+class PersonTokenVoter extends PelagosEntityVoter
 {
     /**
      * Determines if the attribute and subject are supported by this voter.
@@ -21,7 +21,7 @@ class CreatePersonTokenVoter extends PelagosEntityVoter
      */
     protected function supports($attribute, $object)
     {
-        if ($object instanceof \Pelagos\Entity\PersonToken) {
+        if ($object instanceof PersonToken) {
             return true;
         }
 

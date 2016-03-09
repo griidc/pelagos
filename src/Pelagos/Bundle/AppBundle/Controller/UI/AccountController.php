@@ -4,6 +4,8 @@ namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
 use Pelagos\Bundle\AppBundle\Security\EntityProperty;
 
+use Pelagos\Bundle\AppBundle\Factory\UserIdFactory;
+
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
@@ -164,7 +166,7 @@ class AccountController extends UIController
                 throw new \Exception('Password do not match!');
             }
             
-            $userId = \Pelagos\Factory\UserIdFactory::generateUniqueUserId($person, $this->entityHandler);
+            $userId = UserIdFactory::generateUniqueUserId($person, $this->entityHandler);
             
             $account = new \Pelagos\Entity\Account($person, $userId, $request->request->get('password'));
             
