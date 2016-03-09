@@ -45,13 +45,14 @@ class AccountVoter extends PelagosEntityVoter
      */
     protected function voteOnAttribute($attribute, $object, TokenInterface $token)
     {
-        // This can't return an account, so has to return person?
-        $userPerson = $token->getUser();
+        $user = $token->getUser();
 
         // If the user token does not contain an Person, vote false.
-        if (!$userPerson instanceof Person) {
+        if (!$user instanceof Account) {
             return false;
         }
+
+        $userPerson = $user-getPerson();
 
         // Person can create it's own account.
         if ($object->getPerson()->isSameTypeAndId($userPerson)) {
