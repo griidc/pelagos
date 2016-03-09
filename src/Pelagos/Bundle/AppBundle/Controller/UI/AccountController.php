@@ -49,7 +49,7 @@ class AccountController extends UIController
         $entity = $this->entityHandler->getBy('Pelagos:Person', array('emailAddress' => $emailAddress));
         
         if (count($entity) === 0) {
-            throw new \Pelagos\Exception\NotFoundException('e-mail not found!');
+            return $this->render('PelagosAppBundle:template:EmailNotFound.html.twig');
         }
         
         foreach ($entity as $person) {
@@ -57,7 +57,7 @@ class AccountController extends UIController
             $personToken = $person->getToken();
             
             if ($person->getAccount() instanceof \Pelagos\Entity\Account) {
-                throw new \Pelagos\Exception\AccountExistsException('You already have an account!');
+                return $this->render('PelagosAppBundle:template:AccountExists.html.twig');
             }
             
             // if $person has Token, remove Token
@@ -112,18 +112,18 @@ class AccountController extends UIController
         $entity = $this->entityHandler->getBy('Pelagos:PersonToken', array('tokenText' => $tokenText));
 
         if (count($entity) === 0) {
-            throw new \Pelagos\Exception\NotFoundException('Token not found!');
+            return $this->render('PelagosAppBundle:template:InvalidToken.html.twig');
         }
 
         foreach ($entity as $personToken) {
             if (!$personToken->isValid()) {
-                throw new \Pelagos\Exception\InvalidTokenException('Invalid Token!');
+                return $this->render('PelagosAppBundle:template:ExpiredToken.html.twig');
             }
 
             $person = $personToken->getPerson();
 
             if ($person->getAccount() !== null) {
-                throw new \Pelagos\Exception\AccountExistsException('You already have an account!');
+                return $this->render('PelagosAppBundle:template:AccountExists.html.twig');
             }
         }
 
@@ -149,17 +149,17 @@ class AccountController extends UIController
         $entity = $this->entityHandler->getBy('Pelagos:PersonToken', array('tokenText' => $tokenText));
         
         if (count($entity) === 0) {
-            throw new \Pelagos\Exception\NotFoundException('Token not found!');
+            return $this->render('PelagosAppBundle:template:InvalidToken.html.twig');
         }
         
         foreach ($entity as $personToken) {
             if (!$personToken->isValid()) {
-                throw new \Pelagos\Exception\InvalidTokenException('Invalid Token!');
+                return $this->render('PelagosAppBundle:template:InvalidToken.html.twig');
             }
             $person = $personToken->getPerson();
             
             if ($person->getAccount() !== null) {
-                throw new \Pelagos\Exception\AccountExistsException('You already have an account!');
+                return $this->render('PelagosAppBundle:template:AccountExists.html.twig');
             }
             
             if ($request->request->get('password') !== $request->request->get('verify_password')) {
@@ -178,7 +178,7 @@ class AccountController extends UIController
                 'Account' => $account,
             );
             
-            return $this->render('PelagosAppBundle:template:accountCreated.html.twig', $twigData);
+            return $this->render('PelagosAppBundle:template:AccountCreated.html.twig', $twigData);
         }
     }
     
