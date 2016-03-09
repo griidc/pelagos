@@ -405,7 +405,7 @@ sub getdata {
     # setting status to 'NeedsReview' if headers from retrieval showed mimetype of 'text/html', or completed
     # otherwise.
     my $filesize = -s "$conf->{paths}->{data_store}/$udi/$udi.dat";
-    if ($ua_response->header->content_type eq 'text/html') {
+    if ($ua_response->header('Content-Type') eq 'text/html') {
         my $sth2 = $dbh->prepare("UPDATE registry SET dataset_filename = ?, dataset_download_size = ?, dataset_download_status = ? WHERE registry_id = ?;");
         $log->write("[$udi] was downloaded and but identified as HTML.  Updating dataset_filename, dataset_download_size, and setting status to NeedsReview.");
         $sth2->execute($filename,$filesize,'NeedsReview',$reg_id) or die "Couldn't execute statement: " . $sth2->errstr;
