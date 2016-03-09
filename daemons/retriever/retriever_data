@@ -86,7 +86,7 @@ while (my $r = $sth->fetchrow_hashref()) {
     if ($url_data =~ /^http/) {
         my $response = $ua->head($url_data);
         if ($response->is_success) {
-            getdata($log,$r,$response);
+            getdata($ua,$log,$r,$response);
         }
         else {
             if ($response->status_line =~ /^403/) {
@@ -106,7 +106,7 @@ while (my $r = $sth->fetchrow_hashref()) {
             else {
                 my $response = $ua->get($url_data);
                 if ($response->is_success) {
-                    getdata($log,$r,$response);
+                    getdata($ua,$log,$r,$response);
                 }
                 else {
                     my $sth2 = $dbh->prepare("UPDATE registry SET dataset_download_status = ? WHERE registry_id = ?;");
@@ -119,7 +119,7 @@ while (my $r = $sth->fetchrow_hashref()) {
 
     }
     elsif ($url_data =~ /^ftp/) {
-        getdata($log,$r);
+        getdata($ua,$log,$r);
     }
 
 }
@@ -310,7 +310,7 @@ sub get_filename {
 }
 
 sub getdata {
-    my ($log,$r,$response) = @_;
+    my ($ua,$log,$r,$response) = @_;
 
     my $udi = $r->{'dataset_udi'};
     my $reg_id = $r->{'registry_id'};
@@ -368,21 +368,18 @@ sub getdata {
     $log->write("[$udi] fetching $url_data as $filename");
     mkdir($conf->{'paths'}->{'retriever'}) or die $! if !-d $conf->{'paths'}->{'retriever'};
     my $filepath = "$conf->{paths}->{retriever}/$udi.dat";
-    my $resp_code = getstore($url_data,$filepath);
-    if ($!
-        # workaround for getstore bug (https://rt.cpan.org/Public/Bug/Display.html?id=96429)
-        and not ($! eq 'Inappropriate ioctl for device' and -f $filepath and -s $filepath < 760)
-       ) {
-        my $errmsg = "[$udi] unable to fetch $url_data to $filepath ($!)";
-        print STDERR "$errmsg\n";
-        $log->write($errmsg);
-        return;
-    }
+    my $ua_response = $ua->get($url_data, ':content_file' => $filepath);
+    my $resp_code = $ua_response->code;
+
     if ($resp_code != 200) {
         my $errmsg = "[$udi] unable to fetch $url_data to $filepath ($resp_code)";
         print STDERR "$errmsg\n";
         $log->write($errmsg);
         return;
+    }
+
+    if ($ua_response->header->content_type eq 'text/html') {
+        print "HTML FOUND";
     }
 
     # check if data store directory exists for this udi
