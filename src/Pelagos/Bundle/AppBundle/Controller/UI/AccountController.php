@@ -2,15 +2,15 @@
 
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
-use Pelagos\Bundle\AppBundle\Security\EntityProperty;
-
-use Pelagos\Bundle\AppBundle\Factory\UserIdFactory;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Pelagos\Bundle\AppBundle\Factory\UserIdFactory;
+use Pelagos\Entity\Account;
+use Pelagos\Entity\PersonToken;
 
 /**
  * The Research Group controller for the Pelagos UI App Bundle.
@@ -18,174 +18,181 @@ use Symfony\Component\HttpFoundation\Response;
 class AccountController extends UIController
 {
     /**
-     * The Funding Org action.
+     * The default action.
      *
      * @Route("/Account")
      * @Method("GET")
      *
-     * @return Response A Response instance.
+     * @return Response A Symfony Response instance.
      */
-    public function showAction()
+    public function defaultAction()
     {
         return $this->render('PelagosAppBundle:template:Account.html.twig');
     }
 
     /**
-     * Function the post for e-mail verification, and token emailing.
+     * Post handler to verify the email address by sending a link with a Person Token.
      *
-     * @param Request $request The Symonfy Request Object.
+     * @param Request $request The Symfony Request object.
+     *
+     * @throws \Exception When more than one Person is found for an email address.
      *
      * @Route("/Account/VerifyEmail")
      * @Method("POST")
      *
-     * @return Response A Response instance.
+     * @return Response A Symfony Response instance.
      */
-    public function verifyEmail(Request $request)
+    public function verifyEmailAction(Request $request)
     {
         $emailAddress = $request->request->get('emailAddress');
 
-        //$this->setTitle('Account Request Result');
+        $people = $this->entityHandler->getBy('Pelagos:Person', array('emailAddress' => $emailAddress));
 
-        $entity = $this->entityHandler->getBy('Pelagos:Person', array('emailAddress' => $emailAddress));
-
-        if (count($entity) === 0) {
+        if (count($people) === 0) {
             return $this->render('PelagosAppBundle:template:EmailNotFound.html.twig');
         }
 
-        foreach ($entity as $person) {
-            // Get personToken
-            $personToken = $person->getToken();
-
-            if ($person->getAccount() instanceof \Pelagos\Entity\Account) {
-                return $this->render('PelagosAppBundle:template:AccountExists.html.twig');
-            }
-
-            // if $person has Token, remove Token
-            if ($personToken instanceof \Pelagos\Entity\personToken) {
-                $personToken->getPerson()->setToken(null);
-                $this->entityHandler->delete($personToken);
-            }
-
-            $dateInterval = new \DateInterval('P7D');
-
-            // Create new personToken
-            $personToken = new \Pelagos\Entity\PersonToken($person, 'CREATE_ACCOUNT', $dateInterval);
-
-            // Persist PersonToken
-            $personToken->setPerson($person);
-            $personToken->setCreator($person);
-            $personToken = $this->entityHandler->create($personToken);
-
-            $mailData = array(
-                'Person' => $person,
-                'PersonToken' => $personToken,
-            );
-
-            $twig = $this->get('twig');
-
-            $template = $twig->loadTemplate('PelagosAppBundle:template:AccountConfirmation.email.html.twig');
-
-            $email = array(
-                'toEmail'  => $person->getEmailAddress(),
-                'toName'   => $person->getFirstName() . ' ' . $person->getLastName(),
-                'subject'  => $template->renderBlock('subject', $mailData),
-                'bodyHTML' => $template->renderBlock('body_html', $mailData),
-                'bodyText' => $template->renderBlock('body_text', $mailData),
-            );
-
-            $this->sendMail($email);
+        if (count($people) > 1) {
+            throw new \Exception('More than one Person found for this email address');
         }
+
+        $person = $people[0];
+
+        // Get personToken
+        $personToken = $person->getToken();
+
+        if ($person->getAccount() instanceof Account) {
+            return $this->render('PelagosAppBundle:template:AccountExists.html.twig');
+        }
+
+        // if $person has Token, remove Token
+        if ($personToken instanceof PersonToken) {
+            $personToken->getPerson()->setToken(null);
+            $this->entityHandler->delete($personToken);
+        }
+
+        $dateInterval = new \DateInterval('P7D');
+
+        // Create new personToken
+        $personToken = new PersonToken($person, 'CREATE_ACCOUNT', $dateInterval);
+
+        // Persist PersonToken
+        $personToken->setPerson($person);
+        $personToken->setCreator($person);
+        $personToken = $this->entityHandler->create($personToken);
+
+        $mailData = array(
+            'person' => $person,
+            'personToken' => $personToken,
+        );
+
+        $twig = $this->get('twig');
+
+        $template = $twig->loadTemplate('PelagosAppBundle:template:AccountConfirmation.email.html.twig');
+
+        $email = array(
+            'toEmail'  => $person->getEmailAddress(),
+            'toName'   => $person->getFirstName() . ' ' . $person->getLastName(),
+            'subject'  => $template->renderBlock('subject', $mailData),
+            'bodyHTML' => $template->renderBlock('body_html', $mailData),
+            'bodyText' => $template->renderBlock('body_text', $mailData),
+        );
+
+        $this->sendMail($email);
 
         return $this->render('PelagosAppBundle:template:EmailFound.html.twig');
     }
 
     /**
-     * The Funding Org action.
+     * The target of the email verification link.
      *
-     * @param string $tokenText The token text of the to be verified token.
+     * This verifies that the token has authenticated the user and that the user does not already have an account.
+     * It then provides the user with a screen to establish a password.
      *
-     * @Route("/Account/Verify/{tokenText}")
+     * @Route("/Account/Verify")
      * @Method("GET")
      *
      * @return Response A Response instance.
      */
-    public function verifyTokenAction($tokenText)
+    public function verifyAction()
     {
-        $entity = $this->entityHandler->getBy('Pelagos:PersonToken', array('tokenText' => $tokenText));
-
-        if (count($entity) === 0) {
+        // If the user is not authenticated.
+        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            // The token must be bad or missing.
             return $this->render('PelagosAppBundle:template:InvalidToken.html.twig');
         }
 
-        foreach ($entity as $personToken) {
-            if (!$personToken->isValid()) {
-                return $this->render('PelagosAppBundle:template:ExpiredToken.html.twig');
-            }
-
-            $person = $personToken->getPerson();
-
-            if ($person->getAccount() !== null) {
-                return $this->render('PelagosAppBundle:template:AccountExists.html.twig');
-            }
+        // If a password has been set.
+        if ($this->getUser()->getPassword() !== null) {
+            // The user already has an account.
+            return $this->render('PelagosAppBundle:template:AccountExists.html.twig');
         }
 
-        $twigData = array(
-            'tokenText' => $tokenText
+        // Send back the set password screen.
+        return $this->render(
+            'PelagosAppBundle:template:setPassword.html.twig',
+            array(
+                'personToken' => $this->getUser()->getPerson()->getToken(),
+            )
         );
-
-        return $this->render('PelagosAppBundle:template:setPassword.html.twig', $twigData);
     }
 
     /**
-     * The Funding Org action.
+     * Post handler to create an account.
      *
-     * @param Request $request The Symonfy Request Object.
+     * @param Request $request The Symfony Request object.
      *
      * @throws \Exception When password do not match.
      *
      * @Route("/Account/Create")
      * @Method("POST")
      *
-     * @return Response A Response instance.
+     * @return Response A Symfony Response instance.
      */
-    public function createAccountAction(Request $request)
+    public function createAction(Request $request)
     {
-        $tokenText = $request->request->get('tokenText');
-
-        $entity = $this->entityHandler->getBy('Pelagos:PersonToken', array('tokenText' => $tokenText));
-
-        if (count($entity) === 0) {
+        // If the user is not authenticated.
+        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            // The token must be bad or missing.
             return $this->render('PelagosAppBundle:template:InvalidToken.html.twig');
         }
 
-        foreach ($entity as $personToken) {
-            if (!$personToken->isValid()) {
-                return $this->render('PelagosAppBundle:template:InvalidToken.html.twig');
-            }
-            $person = $personToken->getPerson();
-
-            if ($person->getAccount() !== null) {
-                return $this->render('PelagosAppBundle:template:AccountExists.html.twig');
-            }
-
-            if ($request->request->get('password') !== $request->request->get('verify_password')) {
-                throw new \Exception('Password do not match!');
-            }
-
-            $userId = UserIdFactory::generateUniqueUserId($person, $this->entityHandler);
-
-            $account = new \Pelagos\Entity\Account($person, $userId, $request->request->get('password'));
-
-            $account->setCreator($userId);
-
-            $account = $this->entityHandler->create($account);
-
-            $twigData = array(
-                'Account' => $account,
-            );
-
-            return $this->render('PelagosAppBundle:template:AccountCreated.html.twig', $twigData);
+        // If a password has been set.
+        if ($this->getUser()->getPassword() !== null) {
+            // The user already has an account.
+            return $this->render('PelagosAppBundle:template:AccountExists.html.twig');
         }
+
+        // If the supplied passwords don't match.
+        if ($request->request->get('password') !== $request->request->get('verify_password')) {
+            // Throw an exception.
+            throw new \Exception('Passwords do not match!');
+        }
+
+        // Get the authenticated Person.
+        $person = $this->getUser()->getPerson();
+
+        // Generate a unique User ID for this account.
+        $userId = UserIdFactory::generateUniqueUserId($person, $this->entityHandler);
+
+        // Create a new account.
+        $account = new Account($person, $userId, $request->request->get('password'));
+
+        // Set the creator.
+        $account->setCreator($userId);
+
+        // Save the account.
+        $account = $this->entityHandler->create($account);
+
+        // Delete the person token.
+        $this->entityHandler->delete($person->getToken());
+
+        return $this->render(
+            'PelagosAppBundle:template:AccountCreated.html.twig',
+            array(
+                'Account' => $account,
+            )
+        );
     }
 
     /**
@@ -207,11 +214,11 @@ class AccountController extends UIController
 
         // Create a message
         $message = \Swift_Message::newInstance()
-        ->setFrom(array('griidc@gomri.org' => 'GRIIDC'))
-        ->setTo(array($email['toEmail'] => $email['toName']))
-        ->setSubject($email['subject'])
-        ->setBody($email['bodyText'], 'text/plain')
-        ->addPart($email['bodyHTML'], 'text/html');
+            ->setFrom(array('griidc@gomri.org' => 'GRIIDC'))
+            ->setTo(array($email['toEmail'] => $email['toName']))
+            ->setSubject($email['subject'])
+            ->setBody($email['bodyText'], 'text/plain')
+            ->addPart($email['bodyHTML'], 'text/html');
 
         // Send the message
         return $mailer->send($message);

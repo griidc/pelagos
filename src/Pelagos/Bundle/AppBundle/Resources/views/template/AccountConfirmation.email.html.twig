@@ -1,13 +1,13 @@
-{% block sender 'griidc@gomri.org <GRIIDC>' %}
+{% block sender 'GRIIDC <griidc@gomri.org>' %}
 
 {% block subject '[GRIIDC] Account Confirmation' %}
 
 {% block body_html %}
-    Dear {{Person.getFirstName}} {{Person.getLastName}},<br>
+    Dear {{ person.getFirstName }} {{ person.getLastName }},<br>
     <br>
     Your GRIIDC account creation is almost complete. Please click on the link below to verify your email address.<br>
     <br>
-    <a href="{{ url('pelagos_app_ui_account_verifytoken', {'tokenText' : PersonToken.getTokenText}) }}">{{ url('pelagos_app_ui_account_verifytoken', {'tokenText' : PersonToken.getTokenText}) }}</a>
+    <a href="{{ url('pelagos_app_ui_account_verify') }}?person_token={{ personToken.getTokenText }}">{{ url('pelagos_app_ui_account_verify') }}?person_token={{ personToken.getTokenText }}</a>
     <br>
     Thank you,<br>
     <br>
@@ -17,11 +17,11 @@
 {% endblock %}
 
 {% block body_text %}
-Dear {{Person.getFirstName}} {{Person.getLastName}},
+Dear {{ person.getFirstName }} {{ person.getLastName }},
 
 Your GRIIDC account creation is almost complete. Please click on the link below to verify your email address.<br>
 
-{{ url('pelagos_app_ui_account_verifytoken', {'tokenText' : PersonToken.getTokenText}) }}
+{{ url('pelagos_app_ui_account_verify') }}?person_token={{ personToken.getTokenText }}
 
 Thank you,
 
