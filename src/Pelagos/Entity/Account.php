@@ -17,6 +17,11 @@ use JMS\Serializer\Annotation\Exclude;
 class Account extends Entity implements UserInterface, \Serializable
 {
     /**
+     * A friendly name for this type of entity.
+     */
+    const FRIENDLY_NAME = 'Account';
+
+    /**
      * Static array containing a list of the properties and their attributes.
      *
      * @var array
