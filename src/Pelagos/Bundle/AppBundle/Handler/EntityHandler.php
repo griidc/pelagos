@@ -179,9 +179,9 @@ class EntityHandler
     public function getDistinctVals($entityClass, $property)
     {
         $entity = new $entityClass;
-        if (!$this->authorizationChecker->isGranted(PelagosEntityVoter::CAN_CREATE, $entity)) {
+        if (!$this->authorizationChecker->isGranted('IS_AUTHENTICATED_FULLY')) {
             throw new AccessDeniedException(
-                'You do not have sufficient privileges to retrieve a list of distinct values ' .
+                'Only authenticated users may retrieve a list of distinct values ' .
                 "for property $property of " . $entity::FRIENDLY_NAME . '.'
             );
         }
