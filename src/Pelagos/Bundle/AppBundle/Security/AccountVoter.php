@@ -7,28 +7,31 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Pelagos\Entity\Account;
 
 /**
- * A voter to allow to create an Account.
+ * A voter for Accounts.
  */
 class AccountVoter extends PelagosEntityVoter
 {
     /**
      * Determines if the attribute and subject are supported by this voter.
      *
-     * @param string $attribute A string representing the supported attribute.
-     * @param mixed  $object    An object as required by the voter interface, not used otherwise.
+     * @param string $attribute The attribute being checked.
+     * @param mixed  $subject   The subject being voted on.
      *
      * @return boolean True if the attribute and subject are supported, false otherwise.
      */
-    protected function supports($attribute, $object)
+    protected function supports($attribute, $subject)
     {
-        if (!$object instanceof Account) {
+        // This voter only supports Accounts.
+        if (!$subject instanceof Account) {
             return false;
         }
 
+        // This voter only supports CAN_CREATE.
         if (!in_array($attribute, array(self::CAN_CREATE))) {
             return false;
         }
 
+        // If we get here, the attribute and subject are supported by this voter.
         return true;
     }
 
@@ -37,28 +40,33 @@ class AccountVoter extends PelagosEntityVoter
      *
      * The Symfony calling security framework calls supports before calling voteOnAttribute.
      *
-     * @param string         $attribute Unused by this function but required by VoterInterface.
-     * @param mixed          $object    A object required by Voter interface, ignored.
+     * @param string         $attribute The attribute being checked.
+     * @param mixed          $subject   The subject being voted on.
      * @param TokenInterface $token     A security token containing user authentication information.
      *
      * @return boolean True if the attribute is allowed on the subject for the user specified by the token.
      */
-    protected function voteOnAttribute($attribute, $object, TokenInterface $token)
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
+        // Get the user from the authentication token.
         $user = $token->getUser();
 
-        // If the user token does not contain an Person, vote false.
+        // If the user token does not contain an Account, deny.
         if (!$user instanceof Account) {
             return false;
         }
 
-        $userPerson = $user-getPerson();
+        // If we don't have Person for both the authenticated user and the subject, deny.
+        if ($user->getPerson() === null or $subject->getPerson() === null) {
+            return false;
+        }
 
-        // Person can create it's own account.
-        if ($object->getPerson()->isSameTypeAndId($userPerson)) {
+        // A Person can create their own account.
+        if ($attribute == self::CAN_CREATE and $subject->getPerson()->isSameTypeAndId($user->getPerson())) {
             return true;
         }
 
+        // Deny by default.
         return false;
     }
 }
