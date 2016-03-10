@@ -4,31 +4,35 @@ namespace Pelagos\Bundle\AppBundle\Security;
 
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
+use Pelagos\Entity\Account;
 use Pelagos\Entity\PersonToken;
 
 /**
- * A voter to allow anyone to create a Person Token.
+ * A voter for PersonTokens.
  */
 class PersonTokenVoter extends PelagosEntityVoter
 {
     /**
      * Determines if the attribute and subject are supported by this voter.
      *
-     * @param string $attribute A string representing the supported attribute.
-     * @param mixed  $object    An object as required by the voter interface, not used otherwise.
+     * @param string $attribute The attribute being checked.
+     * @param mixed  $subject   The subject being voted on.
      *
      * @return boolean True if the attribute and subject are supported, false otherwise.
      */
-    protected function supports($attribute, $object)
+    protected function supports($attribute, $subject)
     {
-        if (!$object instanceof PersonToken) {
+        // This voter only supports PersonTokens.
+        if (!$subject instanceof PersonToken) {
             return false;
         }
 
+        // This voter only supports attributes CAN_CREATE and CAN_DELETE.
         if (!in_array($attribute, array(self::CAN_CREATE, self::CAN_DELETE))) {
             return false;
         }
 
+        // If we get here, the attribute and subject are supported by this voter.
         return true;
     }
 
@@ -37,26 +41,21 @@ class PersonTokenVoter extends PelagosEntityVoter
      *
      * The Symfony calling security framework calls supports before calling voteOnAttribute.
      *
-     * @param string         $attribute Unused by this function but required by VoterInterface.
-     * @param mixed          $object    A object required by Voter interface, ignored.
+     * @param string         $attribute The attribute being checked.
+     * @param mixed          $subject   The subject being voted on.
      * @param TokenInterface $token     A security token containing user authentication information.
      *
      * @return boolean True if the attribute is allowed on the subject for the user specified by the token.
      */
-    protected function voteOnAttribute($attribute, $object, TokenInterface $token)
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
 
-        if ($attribute === self::CAN_CREATE) {
-            // Anyone can create a PersonToken
+        // Anyone can create and delete PersonTokens.
+        if (in_array($attribute, array(self::CAN_CREATE, self::CAN_DELETE))) {
             return true;
         }
 
-        if ($attribute === self::CAN_DELETE) {
-            // You can only delete your own token.
-
-            //TODO: Additional Logic to determine you own that token.
-
-            return true;
-        }
+        // Deny by default.
+        return false;
     }
 }
