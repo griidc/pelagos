@@ -10,3 +10,12 @@ services:
             - { timezone: UTC, intervalstyle: iso_8601 }
         tags:
             - { name: doctrine.event_listener, event: postConnect }
+
+    person_token_user_provider:
+        class: Pelagos\Bundle\AppBundle\Security\PersonTokenUserProvider
+        arguments: ["@doctrine.orm.entity_manager"]
+
+    person_token_authenticator:
+        class: Pelagos\Bundle\AppBundle\Security\PersonTokenAuthenticator
+        arguments: ["@twig"]
+        public: false

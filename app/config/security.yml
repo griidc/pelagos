@@ -5,6 +5,8 @@ security:
             entity:
                 class: Pelagos:Account
                 property: userId
+        person_token_user_provider:
+            id: person_token_user_provider
 
     firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs
@@ -18,6 +20,11 @@ security:
             # use REMOTE_USER environment variable if set
             remote_user:
                 provider: pelagos
+            # use a Person Token if present
+            stateless: true
+            simple_preauth:
+                authenticator: person_token_authenticator
+            provider: person_token_user_provider
 
 services:
     super_user_voter:
