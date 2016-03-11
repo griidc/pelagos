@@ -37,12 +37,12 @@ class AccountController extends UIController
      *
      * @throws \Exception When more than one Person is found for an email address.
      *
-     * @Route("/Account/VerifyEmail")
+     * @Route("/Account")
      * @Method("POST")
      *
      * @return Response A Symfony Response instance.
      */
-    public function verifyEmailAction(Request $request)
+    public function sendVerificationEmailAction(Request $request)
     {
         $emailAddress = $request->request->get('emailAddress');
 
@@ -109,12 +109,12 @@ class AccountController extends UIController
      * This verifies that the token has authenticated the user and that the user does not already have an account.
      * It then provides the user with a screen to establish a password.
      *
-     * @Route("/Account/Verify")
+     * @Route("/Account/VerifyEmail")
      * @Method("GET")
      *
      * @return Response A Response instance.
      */
-    public function verifyAction()
+    public function verifyEmailAction()
     {
         // If the user is not authenticated.
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
