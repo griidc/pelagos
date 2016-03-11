@@ -53,7 +53,7 @@ class AccountController extends UIController
         }
 
         if (count($people) > 1) {
-            throw new \Exception('More than one Person found for this email address');
+            throw new \Exception("More than one Person found for email address: $emailAddress");
         }
 
         $person = $people[0];
