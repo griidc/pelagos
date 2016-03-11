@@ -61,14 +61,14 @@ class AccountController extends UIController
         // Get personToken
         $personToken = $person->getToken();
 
-        if ($person->getAccount() instanceof Account) {
-            return $this->render('PelagosAppBundle:template:AccountExists.html.twig');
-        }
-
         // if $person has Token, remove Token
         if ($personToken instanceof PersonToken) {
             $personToken->getPerson()->setToken(null);
             $this->entityHandler->delete($personToken);
+        }
+
+        if ($person->getAccount() instanceof Account) {
+            return $this->render('PelagosAppBundle:template:AccountExists.html.twig');
         }
 
         $dateInterval = new \DateInterval('P7D');
