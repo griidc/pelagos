@@ -186,6 +186,7 @@ class AccountController extends UIController
 
         // Delete the person token.
         $this->entityHandler->delete($person->getToken());
+        $person->setToken(null);
 
         return $this->render(
             'PelagosAppBundle:template:AccountCreated.html.twig',
