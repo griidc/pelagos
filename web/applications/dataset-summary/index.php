@@ -44,6 +44,7 @@ $app->get('/:udi', function ($udi) use ($app) {
             $query = "\COPY ($query) TO '$resultFilename' WITH csv header";
             file_put_contents($queryFilename, $query);
             sleep(1);
+            # in production, we should create a separate read/only account for this pgpass auth to work safer.
             exec("/usr/bin/psql -U gomri_user gomri < $queryFilename");
             unlink($queryFilename);
         }
