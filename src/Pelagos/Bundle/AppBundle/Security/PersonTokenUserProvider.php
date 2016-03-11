@@ -67,7 +67,7 @@ class PersonTokenUserProvider implements UserProviderInterface
         if (!$personToken->isValid()) {
             throw new AuthenticationExpiredException;
         }
-        $person = $personTokens[0]->getPerson();
+        $person = $personToken->getPerson();
         $account = $person->getAccount();
         if ($account instanceof Account) {
             return $account;
