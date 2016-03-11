@@ -27,6 +27,17 @@ $app->view->parserExtensions = array(
 $app->get('/:udi', function ($udi) use ($app) {
     # Regexp check this flaming chainsaw juggling sword-swallowing dangerous beast!
     if (preg_match('/^[A-Z][0-6]\.x[0-9]{3}\.[0-9]{3}:[0-9]{4}$/', $udi) == 1) {
+        $winUdi = preg_replace('/:/', '-', $udi);
+
+        # Remove stale old ZIP so it doesn't get appended to.
+        if (file_exists("/var/tmp/$winUdi.zip")) {
+            unlink("/var/tmp/$winUdi.zip");
+        }
+
+        # Create directory for dumps.
+        exec("mkdir /var/tmp/$winUdi");
+
+        # Make unique between runs.
         $pid = getmypid();
 
         $tableQueries = array(
@@ -39,8 +50,8 @@ $app->get('/:udi', function ($udi) use ($app) {
         );
 
         foreach ($tableQueries as $table => $query) {
-            $queryFilename = "/var/tmp/$table-query.$pid";
-            $resultFilename = "/var/tmp/$table-result.$pid";
+            $queryFilename = "/var/tmp/$winUdi/$table-query.$pid";
+            $resultFilename = "/var/tmp/$winUdi/$table-result.$pid";
             $query = "\COPY ($query) TO '$resultFilename' WITH csv header";
             file_put_contents($queryFilename, $query);
             sleep(1);
@@ -51,6 +62,14 @@ $app->get('/:udi', function ($udi) use ($app) {
     } else {
         print "not a valid udi";
     }
+    exec("zip -r /var/tmp/$winUdi.zip /var/tmp/$winUdi");
+    exec("rm -rf /var/tmp/$winUdi");
+
+    # send zip to browser
+    header('Content-Type: application/zip');
+    header("Content-Disposition: attachment; filename=$winUdi.zip");
+    readfile("/var/tmp/$winUdi.zip");
+    drupal_exit();
 });
 
 $app->run();
