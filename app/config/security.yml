@@ -1,11 +1,11 @@
 security:
 
     providers:
-        pelagos:
+        pelagos_account:
             entity:
                 class: Pelagos:Account
                 property: userId
-        person_token_user_provider:
+        person_token:
             id: person_token_user_provider
 
     firewalls:
@@ -14,17 +14,25 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
+        account:
+            pattern: ^/ui/Account
+            stateless: true
+            # allow anonymous access
+            anonymous: ~
+            # use REMOTE_USER environment variable if set
+            remote_user:
+                provider: pelagos_account
+            # use a Person Token, if present
+            simple_preauth:
+                authenticator: person_token_authenticator
+                provider: person_token
+
         main:
             # allow anonymous access
             anonymous: ~
             # use REMOTE_USER environment variable if set
             remote_user:
-                provider: pelagos
-            # use a Person Token if present
-            stateless: true
-            simple_preauth:
-                authenticator: person_token_authenticator
-            provider: person_token_user_provider
+                provider: pelagos_account
 
 services:
     super_user_voter:
