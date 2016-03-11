@@ -76,9 +76,9 @@ class AccountController extends UIController
         // Create new personToken
         $personToken = new PersonToken($person, 'CREATE_ACCOUNT', $dateInterval);
 
-        // Persist PersonToken
-        $personToken->setPerson($person);
         $personToken->setCreator($person);
+
+        // Persist PersonToken
         $personToken = $this->entityHandler->create($personToken);
 
         $mailData = array(
