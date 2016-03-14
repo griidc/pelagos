@@ -26,7 +26,7 @@ $app->view->parserExtensions = array(
 $app->get('/:udi', function ($udi) use ($app) {
     // Regexp check this flaming chainsaw juggling sword-swallowing dangerous beast!
     if (preg_match('/^[A-Z][0-6]\.x[0-9]{3}\.[0-9]{3}:[0-9]{4}$/', $udi) == 1) {
-        $winUdi = preg_replace('/:/', '-', $udi);
+        $winUdi = preg_replace('/:/', '.', $udi);
 
         // Remove stale old ZIP so it doesn't get appended to.
         if (file_exists("/var/tmp/$winUdi.zip")) {
