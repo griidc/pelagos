@@ -58,16 +58,17 @@ $app->get('/:udi', function ($udi) use ($app) {
             exec("/usr/bin/psql -U gomri_user gomri < $queryFilename");
             unlink($queryFilename);
         }
+
+        exec("zip -rj /var/tmp/$winUdi.zip /var/tmp/$winUdi.$pid");
+        exec("rm -rf /var/tmp/$winUdi.$pid");
+
+        // send zip to browser
+        header('Content-Type: application/zip');
+        header("Content-Disposition: attachment; filename=$winUdi.zip");
+        readfile("/var/tmp/$winUdi.zip");
     } else {
         echo 'not a valid udi';
     }
-    exec("zip -rj /var/tmp/$winUdi.zip /var/tmp/$winUdi.$pid");
-    exec("rm -rf /var/tmp/$winUdi.$pid");
-
-    // send zip to browser
-    header('Content-Type: application/zip');
-    header("Content-Disposition: attachment; filename=$winUdi.zip");
-    readfile("/var/tmp/$winUdi.zip");
     drupal_exit();
 });
 
