@@ -358,14 +358,14 @@ sub getdata {
     }
 
     if ($ua_response->header('Content-Type') eq 'text/html') {
-        # delete temp file
-        $log->write("[$udi] deleting temp file ($filepath)");
-        unlink $filepath or die "Error: could not delete temp file: $filepath ($!)\n";
         # mark as html for further review
         $data_notify->{'html'}->{$reg_id} = $url_data;
         my $sth2 = $dbh->prepare("UPDATE registry SET dataset_download_status = ? WHERE registry_id = ?;");
         $log->write("[$udi] remote file at $url_data resolves to HTML page.");
         $sth2->execute('NeedsReview',$reg_id) or die "Couldn't execute statement: " . $sth2->errstr;
+        # delete temp file
+        $log->write("[$udi] deleting temp file ($filepath)");
+        unlink $filepath or die "Error: could not delete temp file: $filepath ($!)\n";
         return;
     }
 
