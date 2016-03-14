@@ -28,11 +28,6 @@ $app->get('/:udi', function ($udi) use ($app) {
     if (preg_match('/^[A-Z][0-6]\.x[0-9]{3}\.[0-9]{3}:[0-9]{4}$/', $udi) == 1) {
         $winUdi = preg_replace('/:/', '.', $udi);
 
-        // Remove stale old ZIP so it doesn't get appended to.
-        if (file_exists("/var/tmp/$winUdi.zip")) {
-            unlink("/var/tmp/$winUdi.zip");
-        }
-
         // Make unique between runs.
         $pid = getmypid();
 
@@ -48,24 +43,26 @@ $app->get('/:udi', function ($udi) use ($app) {
             'doi_regs' => "SELECT * FROM doi_regs WHERE url LIKE '%$udi%'",
         );
 
+        $fileNamePrefix = $winUdi . '-' . date('Ymd');
+
         foreach ($tableQueries as $table => $query) {
             $queryFilename = "/var/tmp/$winUdi.$pid/$table.sql";
-            $resultFilename = "/var/tmp/$winUdi.$pid/$table.csv";
+            $resultFilename = "/var/tmp/$winUdi.$pid/$fileNamePrefix-$table.csv";
             $query = "\COPY ($query) TO '$resultFilename' WITH csv header";
             file_put_contents($queryFilename, $query);
-            sleep(1);
             // in production, we should create a separate read/only account for this pgpass auth to work safer.
             exec("/usr/bin/psql -U gomri_user gomri < $queryFilename");
             unlink($queryFilename);
         }
 
-        exec("zip -rj /var/tmp/$winUdi.zip /var/tmp/$winUdi.$pid");
+        exec("zip -rj /var/tmp/$fileNamePrefix.zip /var/tmp/$winUdi.$pid");
         exec("rm -rf /var/tmp/$winUdi.$pid");
 
         // send zip to browser
         header('Content-Type: application/zip');
-        header("Content-Disposition: attachment; filename=$winUdi.zip");
-        readfile("/var/tmp/$winUdi.zip");
+        header("Content-Disposition: attachment; filename=$fileNamePrefix.zip");
+        readfile("/var/tmp/$fileNamePrefix.zip");
+        unlink("/var/tmp/$fileNamePrefix.zip");
     } else {
         echo 'not a valid udi';
     }
