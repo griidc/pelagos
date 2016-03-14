@@ -33,11 +33,11 @@ $app->get('/:udi', function ($udi) use ($app) {
             unlink("/var/tmp/$winUdi.zip");
         }
 
-        // Create directory for dumps.
-        exec("mkdir /var/tmp/$winUdi");
-
         // Make unique between runs.
         $pid = getmypid();
+
+        // Create directory for dumps.
+        exec("mkdir /var/tmp/$winUdi.$pid");
 
         $tableQueries = array(
             'datasets' => "SELECT * FROM datasets WHERE dataset_udi = '$udi'",
@@ -49,8 +49,8 @@ $app->get('/:udi', function ($udi) use ($app) {
         );
 
         foreach ($tableQueries as $table => $query) {
-            $queryFilename = "/var/tmp/$winUdi/$table-query.$pid";
-            $resultFilename = "/var/tmp/$winUdi/$table-result.$pid";
+            $queryFilename = "/var/tmp/$winUdi.$pid/$table.sql";
+            $resultFilename = "/var/tmp/$winUdi.$pid/$table.csv";
             $query = "\COPY ($query) TO '$resultFilename' WITH csv header";
             file_put_contents($queryFilename, $query);
             sleep(1);
@@ -61,8 +61,8 @@ $app->get('/:udi', function ($udi) use ($app) {
     } else {
         echo 'not a valid udi';
     }
-    exec("zip -r /var/tmp/$winUdi.zip /var/tmp/$winUdi");
-    exec("rm -rf /var/tmp/$winUdi");
+    exec("zip -rj /var/tmp/$winUdi.zip /var/tmp/$winUdi.$pid");
+    exec("rm -rf /var/tmp/$winUdi.$pid");
 
     // send zip to browser
     header('Content-Type: application/zip');
