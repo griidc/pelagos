@@ -36,13 +36,19 @@ $app->get('/:udi', function ($udi) use ($app) {
             'doi_regs' => "SELECT * FROM doi_regs WHERE url LIKE '%$udi%'",
         );
 
+        $dbHost = $GLOBALS['db']['GOMRI_RO']['host'];
+        $dbPort = $GLOBALS['db']['GOMRI_RO']['port'];
+        $dbName = $GLOBALS['db']['GOMRI_RO']['dbname'];
+        $dbUser = $GLOBALS['db']['GOMRI_RO']['username'];
+        putenv('PGPASSWORD=' . $GLOBALS['db']['GOMRI_RO']['password']);
+
         foreach ($tableQueries as $table => $query) {
             $queryFilename = "/var/tmp/$fileNamePrefix.$pid/$table.sql";
             $resultFilename = "/var/tmp/$fileNamePrefix.$pid/$fileNamePrefix-$table.csv";
             $query = "\COPY ($query) TO '$resultFilename' WITH csv header";
             file_put_contents($queryFilename, $query);
             // in production, we should create a separate read/only account for this pgpass auth to work safer.
-            exec("/usr/bin/psql -U gomri_user gomri < $queryFilename");
+            exec("/usr/bin/psql -h $dbHost -p $dbPort -U $dbUser $dbName < $queryFilename");
             unlink($queryFilename);
         }
 
