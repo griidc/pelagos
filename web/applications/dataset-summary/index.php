@@ -16,12 +16,7 @@ require_once 'drupal.php';
 require_once 'DBUtils.php';
 
 // initialize Slim
-$app = new \Slim\Slim(array('view' => new \Slim\Views\Twig()));
-
-// add custom Twig extensions
-$app->view->parserExtensions = array(
-    new \Pelagos\TwigExtensions()
-);
+$app = new \Slim\Slim();
 
 $app->get('/:udi', function ($udi) use ($app) {
     // Regexp check this flaming chainsaw juggling sword-swallowing dangerous beast!
