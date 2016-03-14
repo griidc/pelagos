@@ -2,8 +2,6 @@
 
 require_once __DIR__ . '/../../../vendor/autoload.php';
 
-$GLOBALS['pelagos']['title'] = 'Dataset Summary';
-
 set_include_path('../../../share/php' . PATH_SEPARATOR . get_include_path());
 
 // load global pelagos config
