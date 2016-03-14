@@ -8,8 +8,6 @@ use File::Copy;
 use Net::LDAP;
 use POSIX qw(strftime);
 use LWP::UserAgent;
-use LWP::Simple qw(getstore);
-use LWP::Simple::Cookies;
 use IO::File;
 use Pelagos::Logger;
 use Sys::Hostname;
@@ -325,25 +323,6 @@ sub getdata {
             my $sth2 = $dbh->prepare("UPDATE registry SET dataset_download_status = ? WHERE registry_id = ?;");
             $log->write("[$udi] remote file at $url_data resolves to HTML page.");
             $sth2->execute('NeedsReview',$reg_id) or die "Couldn't execute statement: " . $sth2->errstr;
-            $log->write("[$udi] saving page found at $url_data to $conf->{paths}->{retriever}/html_pages/$udi.html.");
-            mkdir("$conf->{paths}->{retriever}/html_pages") or die $! if !-d "$conf->{paths}->{retriever}/html_pages";
-            my $filepath = "$conf->{paths}->{retriever}/html_pages/$udi.html";
-            my $resp_code = getstore($url_data,$filepath);
-            if ($!
-                # workaround for getstore bug (https://rt.cpan.org/Public/Bug/Display.html?id=96429)
-                and not ($! eq 'Inappropriate ioctl for device' and -f $filepath and -s $filepath < 760)
-               ) {
-                my $errmsg = "[$udi] unable to fetch $url_data to $filepath ($!)";
-                print STDERR "$errmsg\n";
-                $log->write($errmsg);
-                return;
-            }
-            if ($resp_code != 200) {
-                my $errmsg = "[$udi] unable to fetch $url_data to $filepath ($resp_code)";
-                print STDERR "$errmsg\n";
-                $log->write($errmsg);
-                return;
-            }
             return;
         }
     }
@@ -378,6 +357,18 @@ sub getdata {
         return;
     }
 
+    if ($ua_response->header('Content-Type') eq 'text/html') {
+        # delete temp file
+        $log->write("[$udi] deleting temp file ($filepath)");
+        unlink $filepath or die "Error: could not delete temp file: $filepath ($!)\n";
+        # mark as html for further review
+        $data_notify->{'html'}->{$reg_id} = $url_data;
+        my $sth2 = $dbh->prepare("UPDATE registry SET dataset_download_status = ? WHERE registry_id = ?;");
+        $log->write("[$udi] remote file at $url_data resolves to HTML page.");
+        $sth2->execute('NeedsReview',$reg_id) or die "Couldn't execute statement: " . $sth2->errstr;
+        return;
+    }
+
     # check if data store directory exists for this udi
     check_data_store_directory($log,$conf->{'paths'}->{'data_store'},$udi);
 
@@ -398,23 +389,14 @@ sub getdata {
     # link from data file in download directory to data file in data store
     link("$conf->{paths}->{data_store}/$udi/$udi.dat","$conf->{paths}->{download}/$udi/$udi.dat");
 
+    # add to notify list
+    $data_notify->{'filed'}->{$reg_id} = { url => $url_data, path => "$conf->{paths}->{data_store}/$udi/$udi.dat" };
+
     # update dataset_filename (original filename), dataset_download_size, and dataset_download_status
-    # setting status to 'NeedsReview' if headers from retrieval showed mimetype of 'text/html', or completed
-    # otherwise. Notify accordingly.
     my $filesize = -s "$conf->{paths}->{data_store}/$udi/$udi.dat";
-    if ($ua_response->header('Content-Type') eq 'text/html') {
-        my $sth2 = $dbh->prepare("UPDATE registry SET dataset_filename = ?, dataset_download_size = ?, dataset_download_status = ? WHERE registry_id = ?;");
-        $log->write("[$udi] was downloaded and but identified as HTML.  Updating dataset_filename, dataset_download_size, and setting status to NeedsReview.");
-        $sth2->execute($filename,$filesize,'NeedsReview',$reg_id) or die "Couldn't execute statement: " . $sth2->errstr;
-        # add to html notify list
-        $data_notify->{'html'}->{$reg_id} = $url_data;
-    } else {
-        my $sth2 = $dbh->prepare("UPDATE registry SET dataset_filename = ?, dataset_download_size = ?, dataset_download_status = ? WHERE registry_id = ?;");
-        $log->write("[$udi] updating dataset_filename, dataset_download_size, and dataset_download_status");
-        $sth2->execute($filename,$filesize,'Completed',$reg_id) or die "Couldn't execute statement: " . $sth2->errstr;
-        # add to notify list
-        $data_notify->{'filed'}->{$reg_id} = { url => $url_data, path => "$conf->{paths}->{data_store}/$udi/$udi.dat" };
-    }
+    my $sth2 = $dbh->prepare("UPDATE registry SET dataset_filename = ?, dataset_download_size = ?, dataset_download_status = ? WHERE registry_id = ?;");
+    $log->write("[$udi] updating dataset_filename, dataset_download_size, and dataset_download_status");
+    $sth2->execute($filename,$filesize,'Completed',$reg_id) or die "Couldn't execute statement: " . $sth2->errstr;
 
     # set parameters for submitter notification
     $notify{$r->{'userid'}}->{'data'} = [] unless exists $notify{$r->{'userid'}}->{'data'};
