@@ -21,13 +21,13 @@ $app = new \Slim\Slim();
 $app->get('/:udi', function ($udi) use ($app) {
     // Regexp check this flaming chainsaw juggling sword-swallowing dangerous beast!
     if (preg_match('/^[A-Z][0-6]\.x[0-9]{3}\.[0-9]{3}:[0-9]{4}$/', $udi) == 1) {
-        $winUdi = preg_replace('/:/', '.', $udi);
+        $fileNamePrefix = preg_replace('/:/', '.', $udi) . '-' . date('Ymd');
 
         // Make unique between runs.
         $pid = getmypid();
 
         // Create directory for dumps.
-        exec("mkdir /var/tmp/$winUdi.$pid");
+        exec("mkdir /var/tmp/$fileNamePrefix.$pid");
 
         $tableQueries = array(
             'datasets' => "SELECT * FROM datasets WHERE dataset_udi = '$udi'",
@@ -38,11 +38,9 @@ $app->get('/:udi', function ($udi) use ($app) {
             'doi_regs' => "SELECT * FROM doi_regs WHERE url LIKE '%$udi%'",
         );
 
-        $fileNamePrefix = $winUdi . '-' . date('Ymd');
-
         foreach ($tableQueries as $table => $query) {
-            $queryFilename = "/var/tmp/$winUdi.$pid/$table.sql";
-            $resultFilename = "/var/tmp/$winUdi.$pid/$fileNamePrefix-$table.csv";
+            $queryFilename = "/var/tmp/$fileNamePrefix.$pid/$table.sql";
+            $resultFilename = "/var/tmp/$fileNamePrefix.$pid/$fileNamePrefix-$table.csv";
             $query = "\COPY ($query) TO '$resultFilename' WITH csv header";
             file_put_contents($queryFilename, $query);
             // in production, we should create a separate read/only account for this pgpass auth to work safer.
@@ -50,8 +48,8 @@ $app->get('/:udi', function ($udi) use ($app) {
             unlink($queryFilename);
         }
 
-        exec("zip -rj /var/tmp/$fileNamePrefix.zip /var/tmp/$winUdi.$pid");
-        exec("rm -rf /var/tmp/$winUdi.$pid");
+        exec("zip -rj /var/tmp/$fileNamePrefix.zip /var/tmp/$fileNamePrefix.$pid");
+        exec("rm -rf /var/tmp/$fileNamePrefix.$pid");
 
         // send zip to browser
         header('Content-Type: application/zip');
