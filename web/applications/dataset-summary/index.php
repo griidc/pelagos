@@ -16,7 +16,7 @@ require_once 'DBUtils.php';
 // initialize Slim
 $app = new \Slim\Slim();
 
-$app->get('/:udi', function ($udi) use ($app) {
+$app->get('/:udi(/:action)', function ($udi, $action = null) use ($app) {
     // Regexp check this flaming chainsaw juggling sword-swallowing dangerous beast!
     if (preg_match('/^[A-Z][0-6]\.x[0-9]{3}\.[0-9]{3}:[0-9]{4}$/', $udi) == 1) {
         $fileNamePrefix = preg_replace('/:/', '.', $udi) . '-' . date('Ymd');
@@ -52,14 +52,22 @@ $app->get('/:udi', function ($udi) use ($app) {
             unlink($queryFilename);
         }
 
-        exec("zip -rj /var/tmp/$fileNamePrefix.zip /var/tmp/$fileNamePrefix.$pid");
+        if ($action == 'download') {
+            exec("zip -rj /var/tmp/$fileNamePrefix.zip /var/tmp/$fileNamePrefix.$pid");
+            // send zip to browser
+            header('Content-Type: application/zip');
+            header("Content-Disposition: attachment; filename=$fileNamePrefix.zip");
+            readfile("/var/tmp/$fileNamePrefix.zip");
+            unlink("/var/tmp/$fileNamePrefix.zip");
+        } else {
+            header('Content-Type: text/plain');
+            foreach (array_keys($tableQueries) as $table) {
+                echo "$fileNamePrefix-$table.csv\n";
+                readfile("/var/tmp/$fileNamePrefix.$pid/$fileNamePrefix-$table.csv");
+                echo "\n";
+            }
+        }
         exec("rm -rf /var/tmp/$fileNamePrefix.$pid");
-
-        // send zip to browser
-        header('Content-Type: application/zip');
-        header("Content-Disposition: attachment; filename=$fileNamePrefix.zip");
-        readfile("/var/tmp/$fileNamePrefix.zip");
-        unlink("/var/tmp/$fileNamePrefix.zip");
     } else {
         echo 'not a valid udi';
     }
