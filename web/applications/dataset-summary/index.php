@@ -15,10 +15,10 @@ require_once 'dumpIncludesFile.php';
 // load database utilities
 require_once 'DBUtils.php';
 
-# initialize Slim
+// initialize Slim
 $app = new \Slim\Slim(array('view' => new \Slim\Views\Twig()));
 
-# add custom Twig extensions
+// add custom Twig extensions
 $app->view->parserExtensions = array(
     new \Pelagos\TwigExtensions()
 );
@@ -27,7 +27,7 @@ $app->get('/includes/:file', 'dumpIncludesFile')->conditions(array('file' => '.+
 
 $app->get('/', function () use ($app) {
     $env = $app->environment();
-    drupal_add_js("$env[SCRIPT_NAME]/includes/dataset-summary.js",array('type'=>'external'));
+    drupal_add_js("$env[SCRIPT_NAME]/includes/dataset-summary.js", array('type' => 'external'));
     return $app->render('index.html');
 });
 
