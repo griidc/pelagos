@@ -1,10 +1,12 @@
 security:
 
     providers:
-        pelagos:
+        pelagos_account:
             entity:
                 class: Pelagos:Account
                 property: userId
+        person_token:
+            id: person_token_user_provider
 
     firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs
@@ -12,12 +14,25 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
+        account:
+            pattern: ^/ui/Account
+            stateless: true
+            # allow anonymous access
+            anonymous: ~
+            # use REMOTE_USER environment variable if set
+            remote_user:
+                provider: pelagos_account
+            # use a Person Token, if present
+            simple_preauth:
+                authenticator: person_token_authenticator
+                provider: person_token
+
         main:
             # allow anonymous access
             anonymous: ~
             # use REMOTE_USER environment variable if set
             remote_user:
-                provider: pelagos
+                provider: pelagos_account
 
 services:
     super_user_voter:
@@ -36,3 +51,12 @@ services:
         class: Pelagos\Bundle\AppBundle\Security\PersonVoter
         tags:
             - { name: security.voter }
+    person_token_voter:
+        class: Pelagos\Bundle\AppBundle\Security\PersonTokenVoter
+        tags:
+            - { name: security.voter }
+    account_voter:
+        class: Pelagos\Bundle\AppBundle\Security\AccountVoter
+        tags:
+            - { name: security.voter }
+

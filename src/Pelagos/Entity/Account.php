@@ -17,6 +17,11 @@ use JMS\Serializer\Annotation\Exclude;
 class Account extends Entity implements UserInterface, \Serializable
 {
     /**
+     * A friendly name for this type of entity.
+     */
+    const FRIENDLY_NAME = 'Account';
+
+    /**
      * Static array containing a list of the properties and their attributes.
      *
      * @var array
@@ -108,11 +113,17 @@ class Account extends Entity implements UserInterface, \Serializable
      * @param string $userId   The user ID for this account.
      * @param string $password The password for this account.
      */
-    public function __construct(Person $person, $userId, $password)
+    public function __construct(Person $person = null, $userId = null, $password = null)
     {
-        $this->setPerson($person);
-        $this->setUserId($userId);
-        $this->setPassword($password);
+        if ($person !== null) {
+            $this->setPerson($person);
+        }
+        if ($userId !== null) {
+            $this->setUserId($userId);
+        }
+        if ($password !== null) {
+            $this->setPassword($password);
+        }
     }
 
     /**
