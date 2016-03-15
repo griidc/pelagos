@@ -246,12 +246,58 @@ while (my $r = $sth->fetchrow_hashref()) {
 
 }
 
-$dbh->disconnect();
-
 if ($retriever_md) {
     $log->write("Remote metadata found, spawning retriever_md");
     system('/opt/pelagos/back-end/retriever/retriever_md &');
 }
+
+# get all registry entries pending deletion
+$sth = $dbh->prepare("SELECT registry_id, dataset_udi, dataset_title
+                      FROM registry r
+                      INNER JOIN (
+                                  SELECT MAX(registry_id) AS MaxID
+                                  FROM registry
+                                  GROUP BY substr(registry_id,1,16)
+                                 ) m
+                      ON r.registry_id = m.MaxID
+                      WHERE dataset_download_status = 'PendingDeletion'
+                      ORDER BY dataset_udi");
+$sth->execute();
+
+# loop through all entries that need deletion
+while (my $r = $sth->fetchrow_hashref()) {
+    my $udi = $r->{'dataset_udi'};
+    my $data_download_dir = "$config->{paths}->{data_download}/$udi";
+    if (-f "$data_download_dir/$udi.dat") {
+        $log->write("[$udi] deleting $data_download_dir/$udi.dat");
+        unlink("$data_download_dir/$udi.dat") or die "$!: for file $data_download_dir/$udi.dat";
+    }
+    if (-f "$data_download_dir/$udi.met") {
+        $log->write("[$udi] deleting $data_download_dir/$udi.met");
+        unlink("$data_download_dir/$udi.met") or die "$!: for file $data_download_dir/$udi.met";
+    }
+    if (-d $data_download_dir) {
+        $log->write("[$udi] deleting $data_download_dir");
+        rmdir($data_download_dir) or die "$!: for directory $data_download_dir";
+    }
+    my $data_store_dir = "$config->{paths}->{data_store}/$udi";
+    if (-f "$data_store_dir/$udi.dat") {
+        $log->write("[$udi] deleting $data_store_dir/$udi.dat");
+        unlink("$data_store_dir/$udi.dat") or die "$!: for file $data_store_dir/$udi.dat";
+    }
+    if (-f "$data_store_dir/$udi.met") {
+        $log->write("[$udi] deleting $data_store_dir/$udi.met");
+        unlink("$data_store_dir/$udi.met") or die "$!: for file $data_store_dir/$udi.met";
+    }
+    if (-d $data_store_dir) {
+        $log->write("[$udi] deleting $data_store_dir");
+        rmdir($data_store_dir) or die "$!: for directory $data_store_dir";
+    }
+    my $sth2 = $dbh->prepare("DELETE FROM registry WHERE dataset_udi = ?");
+    $sth2->execute($udi);
+}
+
+$dbh->disconnect();
 
 my $ldap = Net::LDAP->new('triton.tamucc.edu') or die "$@";
 
