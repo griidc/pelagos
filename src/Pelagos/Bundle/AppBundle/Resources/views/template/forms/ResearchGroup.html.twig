@@ -2,7 +2,7 @@
 {% include '@templates/forms/permissionsBlock.html.twig' with {'Entity': ResearchGroup} %}
 action="{{path('pelagos_api_research_groups_post')}}">
 
-    <input type="hidden" name="id" value="{{ResearchGroup.getId}}">
+    {{ form_row(form.id) }}
 
     {{ form_row(form.name) }}
 
