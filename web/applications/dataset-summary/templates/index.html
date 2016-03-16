@@ -8,4 +8,9 @@
     <p>
         <button id="download-dataset-summary">Download Summary</button>
     </p>
+    {% if metadata_reviewer %}
+        <p>
+            <button id="delete-dataset" disabled>Delete Dataset</button>
+        </p>
+    {% endif %}
 </div>

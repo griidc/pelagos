@@ -14,6 +14,8 @@ require_once 'drupal.php';
 require_once 'dumpIncludesFile.php';
 // load database utilities
 require_once 'DBUtils.php';
+// load LDAP library
+include_once 'ldap.php';
 
 // initialize Slim
 $app = new \Slim\Slim(array('view' => new \Slim\Views\Twig()));
@@ -28,7 +30,45 @@ $app->get('/includes/:file', 'dumpIncludesFile')->conditions(array('file' => '.+
 $app->get('/', function () use ($app) {
     $env = $app->environment();
     drupal_add_js("$env[SCRIPT_NAME]/includes/dataset-summary.js", array('type' => 'external'));
-    return $app->render('index.html');
+    return $app->render(
+        'index.html',
+        array(
+            'metadata_reviewer' => memberHasApplicationRole($GLOBALS['user']->name, 'Metadata', 'reviewers'),
+        )
+    );
+});
+
+$app->get('/:udi/delete', function ($udi) use ($app) {
+    if (!memberHasApplicationRole($GLOBALS['user']->name, 'Metadata', 'reviewers')) {
+        drupal_set_message('Only Metadata Reviewers can delete datasets', 'error');
+        return;
+    }
+    if (!preg_match('/^[A-Z][0-6]\.x[0-9]{3}\.[0-9]{3}:[0-9]{4}$/', $udi)) {
+        drupal_set_message("$udi is not a valid udi", 'error');
+        return;
+    }
+    if (preg_match('/^[A-Z][0-6]\.x[0-9]{3}\.[0-9]{3}:[0-9]{4}$/', $udi) == 1) {
+        drupal_set_message("Deleted: $udi", 'status');
+        $tableQueries = array(
+            'datasets' => "DELETE FROM datasets WHERE dataset_udi = '$udi'",
+            'metadata' => "DELETE FROM metadata WHERE registry_id like '$udi%'",
+            'dataset2publication_link_table' => "DELETE FROM dataset2publication_link_table WHERE dataset_udi = '$udi'",
+            'alt_datasets' => "DELETE FROM alt_datasets WHERE primary_udi = '$udi' OR alternate_udi = '$udi'",
+            'doi_regs' => "DELETE FROM doi_regs WHERE url LIKE '%$udi%'",
+        );
+        $dbh = openDB('GOMRI_RO');
+        foreach ($tableQueries as $table => $query) {
+            $sth = $dbh->prepare($query);
+            $sth->execute();
+        }
+        $sth = $dbh->prepare('SELECT MAX(registry_id) FROM registry WHERE dataset_udi = ?');
+        $sth->execute(array($udi));
+        $registryId = $sth->fetchColumn();
+        $sth = $dbh->prepare('UPDATE registry SET dataset_download_status = \'PendingDeletion\' WHERE registry_id = ?');
+        $sth->execute(array($registryId));
+        $dbh = null;
+        system($GLOBALS['config']['paths']['root'] . '/daemons/filer/trigger-filer');
+    }
 });
 
 $app->get('/:udi(/:action)', function ($udi, $action = null) use ($app) {
@@ -47,7 +87,7 @@ $app->get('/:udi(/:action)', function ($udi, $action = null) use ($app) {
             'registry' => "SELECT * FROM registry WHERE registry_id like '%$udi%' ORDER BY registry_id DESC",
             'metadata' => "SELECT * FROM metadata WHERE registry_id like '%$udi%' ORDER BY registry_id DESC",
             'dataset2publication_link_table' => "SELECT * FROM dataset2publication_link_table WHERE dataset_udi = '$udi'",
-            'alt_datasets' => "SELECT * FROM alt_datasets WHERE primary_udi = '$udi'",
+            'alt_datasets' => "SELECT * FROM alt_datasets WHERE primary_udi = '$udi' OR alternate_udi = '$udi'",
             'doi_regs' => "SELECT * FROM doi_regs WHERE url LIKE '%$udi%'",
         );
 
