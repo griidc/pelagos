@@ -8,6 +8,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Id\AssignedGenerator;
 use Doctrine\Common\Collections\Collection;
 
 use Pelagos\Entity\Entity;
@@ -109,8 +110,24 @@ class EntityHandler
                 'You do not have sufficient privileges to create this ' . $entity::FRIENDLY_NAME . '.'
             );
         }
+        // Get the id.
+        $id = $entity->getId();
+        // Get the class metadata for this entity.
+        $metadata = $this->entityManager->getClassMetaData(get_class($entity));
+        // Save the original ID generator.
+        $idGenerator = $metadata->idGenerator;
+        // If the entity has been manually assigned an ID.
+        if ($id !== null) {
+            // Temporarily change the ID generator to AssignedGenerator.
+            $metadata->setIdGenerator(new AssignedGenerator());
+        }
         $this->entityManager->persist($entity);
         $this->entityManager->flush($entity);
+        // If the entity has been manually assigned an ID.
+        if ($id !== null) {
+            // Restore the original ID generator for entities of this class.
+            $metadata->setIdGenerator($idGenerator);
+        }
         return $entity;
     }
 
