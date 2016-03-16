@@ -4,6 +4,11 @@ $(document).ready(function()
 {
     "use strict";
 
+    //Disable RIS ID if not in create mode
+    if ($("form[entityType=\"FundingCycle\"] #id").val() !== "") {
+        $("form[entityType=\"FundingCycle\"] #id").attr("readonly",true);
+    }
+
     $(".entityForm[entityType=\"FundingCycle\"]").each(function () {
         var startDateField = $(this).find("[name=\"startDate\"]");
         var endDateField = $(this).find("[name=\"endDate\"]");

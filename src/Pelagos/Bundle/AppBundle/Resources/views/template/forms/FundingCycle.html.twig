@@ -2,8 +2,6 @@
 {% include '@templates/forms/permissionsBlock.html.twig' with {'Entity': FundingCycle} %}
 action="{{path('pelagos_api_funding_cycles_post')}}">
 
-    <input type="hidden" name="id" value="{{FundingCycle.getId}}">
-
     {{ form_widget(form) }}
 
     {% include '@templates/forms/innerForm.html.twig' with {'Entity': FundingCycle} %}
