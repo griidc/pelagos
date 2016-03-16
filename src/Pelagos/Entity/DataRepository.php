@@ -9,6 +9,7 @@
 namespace Pelagos\Entity;
 
 use \Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use \Pelagos\Exception\NotDeletableException;
 use \Doctrine\Common\Collections\ArrayCollection;
 use JMS\Serializer\Annotation\Exclude;
@@ -17,7 +18,7 @@ use Hateoas\Configuration\Annotation as Hateoas;
 /**
  * Class to represent a Data Repository.
  *
- * @Assert\UniqueEntity(
+ * @UniqueEntity(
  *     fields={"name"},
  *     errorPath="name",
  *     message="A Data Repository with this name already exists"

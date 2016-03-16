@@ -12,6 +12,7 @@ use \Pelagos\Exception\EmptyRequiredArgumentException;
 use \Pelagos\Exception\InvalidFormatArgumentException;
 use \Pelagos\Exception\NotDeletableException;
 use \Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use JMS\Serializer\Annotation\Exclude;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -20,7 +21,7 @@ use Hateoas\Configuration\Annotation as Hateoas;
 /**
  * Class to represent people.
  *
- * @Assert\UniqueEntity(
+ * @UniqueEntity(
  *     fields={"emailAddress"},
  *     errorPath="emailAddress",
  *     message="A Person with this email address already exists"

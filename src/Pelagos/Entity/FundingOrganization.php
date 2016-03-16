@@ -9,6 +9,7 @@
 namespace Pelagos\Entity;
 
 use \Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use \Pelagos\Exception\NotDeletableException;
 use JMS\Serializer\Annotation\Exclude;
 use Hateoas\Configuration\Annotation as Hateoas;
@@ -16,7 +17,7 @@ use Hateoas\Configuration\Annotation as Hateoas;
 /**
  * Class to represent funding organizations.
  *
- * @Assert\UniqueEntity(
+ * @UniqueEntity(
  *     fields={"name"},
  *     errorPath="name",
  *     message="A Funding Organization with this name already exists"

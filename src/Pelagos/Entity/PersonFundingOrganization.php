@@ -3,13 +3,14 @@
 namespace Pelagos\Entity;
 
 use \Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use JMS\Serializer\Annotation\Exclude;
 use Hateoas\Configuration\Annotation as Hateoas;
 
 /**
  * Class to represent Person - Funding Organization associations.
  *
- * @Assert\UniqueEntity(
+ * @UniqueEntity(
  *     fields={"person", "fundingOrganization"},
  *     errorPath="person",
  *     message="A Person can have only one association with a Funding Organization"

@@ -9,6 +9,7 @@
 namespace Pelagos\Entity;
 
 use \Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use \Pelagos\Exception\NotDeletableException;
 use JMS\Serializer\Annotation as Serializer;
 use Hateoas\Configuration\Annotation as Hateoas;
@@ -16,7 +17,7 @@ use Hateoas\Configuration\Annotation as Hateoas;
 /**
  * Class to represent research groups.
  *
- * @Assert\UniqueEntity(
+ * @UniqueEntity(
  *     fields={"name", "fundingCycle"},
  *     errorPath="name",
  *     message="A Research Group with this name already exists"
