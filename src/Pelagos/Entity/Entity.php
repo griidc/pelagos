@@ -15,6 +15,12 @@ use JMS\Serializer\Annotation\Exclude;
 
 /**
  * Abstract class that contains basic properties and methods common to all Pelagos entities.
+ *
+ * @Assert\UniqueEntity(
+ *     fields={"id"},
+ *     errorPath="id",
+ *     message="This id has already been assigned"
+ * )
  */
 abstract class Entity implements \JsonSerializable
 {
