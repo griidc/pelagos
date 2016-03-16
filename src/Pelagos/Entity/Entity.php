@@ -203,7 +203,7 @@ abstract class Entity implements \JsonSerializable
     /**
      * Setter for identifier.
      *
-     * @param int $id This entity's Identifier.
+     * @param integer $id This entity's Identifier.
      *
      * @return void
      */
@@ -217,7 +217,7 @@ abstract class Entity implements \JsonSerializable
     /**
      * Getter for id property.
      *
-     * @return int Persistent identifier for the Entity.
+     * @return integer Persistent identifier for the Entity.
      */
     public function getId()
     {
