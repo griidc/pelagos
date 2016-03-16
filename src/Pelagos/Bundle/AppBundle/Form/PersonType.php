@@ -47,7 +47,7 @@ class PersonType extends AbstractType
     {
         $builder
             ->add('id', TextType::class, array(
-                'label' => 'RIS Person ID:',
+                'label' => 'Person ID:',
                 'required' => false,
             ))
             ->add('firstName', TextType::class, array(
