@@ -30,7 +30,7 @@ class FundingCycleType extends AbstractType
     {
         $builder
             ->add('id', TextType::class, array(
-                'label' => 'RIS Funding Cycle ID:',
+                'label' => 'RIS Funding Source ID:',
                 'required' => false,
             ))
             ->add('name', TextType::class, array(
