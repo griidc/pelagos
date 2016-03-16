@@ -70,10 +70,11 @@
             var formValidator = $(this).validate({
                 submitHandler: function(form) {
                     $(thisForm).trigger("presubmit");
-                    if ($(form).find("[name=\"id\"]").val() === "") {
-                        updateEntity(form, "Create");
-                    } else {
+                    if ($(form).find("[name=\"id\"][readonly]").val() !== "" 
+                        && $(form).find("[name=\"id\"][readonly]").val() !== undefined) {
                         updateEntity(form, "Update");
+                    } else {
+                        updateEntity(form, "Create");
                     }
                 }
             });
@@ -117,7 +118,7 @@
                 }
             });
 
-            $(".entityWrapper").has("[editable],[creatable] input[name='id'][value='']", this).on("click", function() {
+            $(".entityWrapper").has("[editable],[creatable] input[name='id']", this).on("click", function() {
                 if (!$(this).hasClass("active")) {
                     $(this).addClass("active");
 
@@ -168,7 +169,7 @@
             });
 
             if (entityId === "") {
-                $(".entityWrapper").has("[creatable] input[name='id'][value='']", this).click();
+                $(".entityWrapper").has("[creatable] input[name='id']", this).click();
             }
 
             // Special stuff for Addform
@@ -451,7 +452,7 @@
                             window.history.pushState(newID, docTitle, newURL);
                         }
                         //Set ID on form
-                        $(form).find('[name="id"]').val(newID);
+                        $(form).find('[name="id"]').val(newID).attr("readonly", "true");
 
                     }
                 },
