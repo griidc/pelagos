@@ -31,7 +31,7 @@ class ResearchGroupType extends AbstractType
     {
         $builder
             ->add('id', TextType::class, array(
-                'label' => 'RIS Project ID:',
+                'label' => 'Research Group ID:',
                 'required' => false,
             ))
             ->add('name', TextType::class, array(
