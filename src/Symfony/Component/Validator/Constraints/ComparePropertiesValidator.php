@@ -7,7 +7,6 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
-use Pelagos\Factory\EntityManagerFactory;
 
 /**
  * The validator for a constraint that tests that two fields meet a comparison test.
@@ -38,21 +37,25 @@ class ComparePropertiesValidator extends ConstraintValidator
             throw new UnexpectedTypeException($constraint->errorPath, 'string or null');
         }
 
-        $class = EntityManagerFactory::create()->getClassMetadata(get_class($entity));
+        $reflection = new \ReflectionClass($entity);
 
-        if (!$class->hasField($constraint->left)) {
+        if (!$reflection->hasProperty($constraint->left)) {
             throw new ConstraintDefinitionException(
                 sprintf('"%s" is not a valid property of %s.', $constraint->left, get_class($entity))
             );
         }
-        $leftValue = $class->reflFields[$constraint->left]->getValue($entity);
+        $leftValueProperty = $reflection->getProperty($constraint->left);
+        $leftValueProperty->setAccessible(true);
+        $leftValue = $leftValueProperty->getValue($entity);
 
-        if (!$class->hasField($constraint->right)) {
+        if (!$reflection->hasProperty($constraint->right)) {
             throw new ConstraintDefinitionException(
                 sprintf('"%s" is not a valid property of %s.', $constraint->right, get_class($entity))
             );
         }
-        $rightValue = $class->reflFields[$constraint->right]->getValue($entity);
+        $rightValueProperty = $reflection->getProperty($constraint->right);
+        $rightValueProperty->setAccessible(true);
+        $rightValue = $rightValueProperty->getValue($entity);
 
         if ($constraint->ignoreNull and ($leftValue === null or $rightValue === null)) {
             return;
