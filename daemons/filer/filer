@@ -293,6 +293,7 @@ while (my $r = $sth->fetchrow_hashref()) {
         $log->write("[$udi] deleting $data_store_dir");
         rmdir($data_store_dir) or die "$!: for directory $data_store_dir";
     }
+    $log->write("[$udi] deleting all registry entries");
     my $sth2 = $dbh->prepare("DELETE FROM registry WHERE dataset_udi = ?");
     $sth2->execute($udi);
 }
