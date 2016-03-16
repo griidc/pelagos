@@ -9,6 +9,7 @@
 namespace Pelagos\Entity;
 
 use \Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use \Pelagos\Exception\InvalidFormatArgumentException;
 use Pelagos\Exception\NotDeletableException;
 use JMS\Serializer\Annotation\Exclude;
@@ -16,7 +17,7 @@ use JMS\Serializer\Annotation\Exclude;
 /**
  * Abstract class that contains basic properties and methods common to all Pelagos entities.
  *
- * @Assert\UniqueEntity(
+ * @UniqueEntity(
  *     fields={"id"},
  *     errorPath="id",
  *     message="This id has already been assigned"
