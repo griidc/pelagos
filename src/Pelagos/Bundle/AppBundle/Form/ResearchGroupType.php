@@ -30,7 +30,11 @@ class ResearchGroupType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-        ->add('name', TextType::class, array(
+            ->add('id', TextType::class, array(
+                'label' => 'RIS Project ID:',
+                'required' => false,
+            ))
+            ->add('name', TextType::class, array(
                 'label' => 'Name:',
             ))
             ->add('fundingCycle', EntityType::class, array(
