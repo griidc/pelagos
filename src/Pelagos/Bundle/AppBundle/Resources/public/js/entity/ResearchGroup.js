@@ -2,6 +2,11 @@ $(document).ready(function()
 {
     "use strict";
 
+    //Disable RIS ID if not in create mode
+    if ($("form[entityType=\"ResearchGroup\"] #id").val() !== "") {
+        $("form[entityType=\"ResearchGroup\"] #id").attr("readonly",true);
+    }
+
     $("[fundingOrganization]").change(function () {
         var fundingCycle = $(this).nextAll("[fundingCycle]");
         fundingCycle.removeAttr("disabled")
