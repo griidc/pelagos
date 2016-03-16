@@ -29,6 +29,10 @@ class FundingCycleType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('id', TextType::class, array(
+                'label' => 'RIS Funding Cycle ID:',
+                'required' => false,
+            ))
             ->add('name', TextType::class, array(
                 'label' => 'Name:',
             ))
