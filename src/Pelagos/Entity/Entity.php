@@ -94,6 +94,7 @@ abstract class Entity implements \JsonSerializable
             'type' => 'integer',
             'updateable' => false,
             'getter' => 'getId',
+            'setter' => 'setId',
         ),
         'creator' => array(
             'type' => 'string',
@@ -200,9 +201,23 @@ abstract class Entity implements \JsonSerializable
     }
 
     /**
+     * Setter for identifier.
+     *
+     * @param integer $id This entity's Identifier.
+     *
+     * @return void
+     */
+    public function setId($id)
+    {
+        if ($this->id === null) {
+            $this->id = $id;
+        }
+    }
+
+    /**
      * Getter for id property.
      *
-     * @return int Persistent identifier for the Entity.
+     * @return integer Persistent identifier for the Entity.
      */
     public function getId()
     {
