@@ -45,60 +45,6 @@ class PersonDataRepositoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test that the properties array is defined correctly.
-     *
-     * @return void
-     */
-    public function testProperties()
-    {
-        $properties = $this->personDataRepository->getProperties();
-
-        $this->assertArrayHasKey('person', $properties);
-        $this->assertArrayHasKey('type', $properties['person']);
-        $this->assertEquals('object', $properties['person']['type']);
-        $this->assertArrayHasKey('class', $properties['person']);
-        $this->assertEquals('Pelagos\Entity\Person', $properties['person']['class']);
-        $this->assertArrayHasKey('entity', $properties['person']);
-        $this->assertEquals('Person', $properties['person']['entity']);
-        $this->assertArrayHasKey('setter', $properties['person']);
-        $this->assertEquals('setPerson', $properties['person']['setter']);
-        $this->assertArrayHasKey('getter', $properties['person']);
-        $this->assertEquals('getPerson', $properties['person']['getter']);
-
-        $this->assertArrayHasKey('dataRepository', $properties);
-        $this->assertArrayHasKey('type', $properties['dataRepository']);
-        $this->assertEquals('object', $properties['dataRepository']['type']);
-        $this->assertArrayHasKey('class', $properties['dataRepository']);
-        $this->assertEquals('Pelagos\Entity\DataRepository', $properties['dataRepository']['class']);
-        $this->assertArrayHasKey('entity', $properties['dataRepository']);
-        $this->assertEquals('DataRepository', $properties['dataRepository']['entity']);
-        $this->assertArrayHasKey('setter', $properties['dataRepository']);
-        $this->assertEquals('setDataRepository', $properties['dataRepository']['setter']);
-        $this->assertArrayHasKey('getter', $properties['dataRepository']);
-        $this->assertEquals('getDataRepository', $properties['dataRepository']['getter']);
-
-        $this->assertArrayHasKey('role', $properties);
-        $this->assertArrayHasKey('type', $properties['role']);
-        $this->assertEquals('object', $properties['role']['type']);
-        $this->assertArrayHasKey('class', $properties['role']);
-        $this->assertEquals('Pelagos\Entity\DataRepositoryRole', $properties['role']['class']);
-        $this->assertArrayHasKey('entity', $properties['role']);
-        $this->assertEquals('DataRepositoryRole', $properties['role']['entity']);
-        $this->assertArrayHasKey('setter', $properties['role']);
-        $this->assertEquals('setRole', $properties['role']['setter']);
-        $this->assertArrayHasKey('getter', $properties['role']);
-        $this->assertEquals('getRole', $properties['role']['getter']);
-
-        $this->assertArrayHasKey('label', $properties);
-        $this->assertArrayHasKey('type', $properties['label']);
-        $this->assertEquals('string', $properties['label']['type']);
-        $this->assertArrayHasKey('setter', $properties['label']);
-        $this->assertEquals('setLabel', $properties['label']['setter']);
-        $this->assertArrayHasKey('getter', $properties['label']);
-        $this->assertEquals('getLabel', $properties['label']['getter']);
-    }
-
-    /**
      * Test the getPerson method.
      *
      * This method should return the Person set in setUp.

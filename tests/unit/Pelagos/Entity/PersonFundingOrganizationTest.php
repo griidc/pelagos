@@ -45,60 +45,6 @@ class PersonFundingOrganizationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test that the properties array is defined correctly.
-     *
-     * @return void
-     */
-    public function testProperties()
-    {
-        $properties = $this->personFundingOrganization->getProperties();
-
-        $this->assertArrayHasKey('person', $properties);
-        $this->assertArrayHasKey('type', $properties['person']);
-        $this->assertEquals('object', $properties['person']['type']);
-        $this->assertArrayHasKey('class', $properties['person']);
-        $this->assertEquals('Pelagos\Entity\Person', $properties['person']['class']);
-        $this->assertArrayHasKey('entity', $properties['person']);
-        $this->assertEquals('Person', $properties['person']['entity']);
-        $this->assertArrayHasKey('setter', $properties['person']);
-        $this->assertEquals('setPerson', $properties['person']['setter']);
-        $this->assertArrayHasKey('getter', $properties['person']);
-        $this->assertEquals('getPerson', $properties['person']['getter']);
-
-        $this->assertArrayHasKey('fundingOrganization', $properties);
-        $this->assertArrayHasKey('type', $properties['fundingOrganization']);
-        $this->assertEquals('object', $properties['fundingOrganization']['type']);
-        $this->assertArrayHasKey('class', $properties['fundingOrganization']);
-        $this->assertEquals('Pelagos\Entity\FundingOrganization', $properties['fundingOrganization']['class']);
-        $this->assertArrayHasKey('entity', $properties['fundingOrganization']);
-        $this->assertEquals('FundingOrganization', $properties['fundingOrganization']['entity']);
-        $this->assertArrayHasKey('setter', $properties['fundingOrganization']);
-        $this->assertEquals('setFundingOrganization', $properties['fundingOrganization']['setter']);
-        $this->assertArrayHasKey('getter', $properties['fundingOrganization']);
-        $this->assertEquals('getFundingOrganization', $properties['fundingOrganization']['getter']);
-
-        $this->assertArrayHasKey('role', $properties);
-        $this->assertArrayHasKey('type', $properties['role']);
-        $this->assertEquals('object', $properties['role']['type']);
-        $this->assertArrayHasKey('class', $properties['role']);
-        $this->assertEquals('Pelagos\Entity\FundingOrganizationRole', $properties['role']['class']);
-        $this->assertArrayHasKey('entity', $properties['role']);
-        $this->assertEquals('FundingOrganizationRole', $properties['role']['entity']);
-        $this->assertArrayHasKey('setter', $properties['role']);
-        $this->assertEquals('setRole', $properties['role']['setter']);
-        $this->assertArrayHasKey('getter', $properties['role']);
-        $this->assertEquals('getRole', $properties['role']['getter']);
-
-        $this->assertArrayHasKey('label', $properties);
-        $this->assertArrayHasKey('type', $properties['label']);
-        $this->assertEquals('string', $properties['label']['type']);
-        $this->assertArrayHasKey('setter', $properties['label']);
-        $this->assertEquals('setLabel', $properties['label']['setter']);
-        $this->assertArrayHasKey('getter', $properties['label']);
-        $this->assertEquals('getLabel', $properties['label']['getter']);
-    }
-
-    /**
      * Test the getPerson method.
      *
      * This method should return the Person set in setUp.
