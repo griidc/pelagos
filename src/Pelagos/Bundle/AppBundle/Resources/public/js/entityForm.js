@@ -26,6 +26,8 @@
         };
 
         return this.each(function() {
+            
+            console.log('run ent form');
             //plug-in
             var thisForm = this;
 
@@ -172,60 +174,62 @@
                 $(".entityWrapper").has("[creatable] input[name='id']", this).click();
             }
 
-            // Special stuff for Addform
-            if ($(this).has(".addimg").length ? true : false) {
+            // // Special stuff for Addform
+            // if ($(document).has(".addimg").length ? true : false) {
 
-                $(this).fadeOut();
-                
-                var myNewForm = this;
+                // console.log('found add img');
+            
+                // $(this).fadeOut();
 
-                $(".addimg", this).button().click(function() {
-                    console.log('found add img');
-                    var addImg = $(this).fadeOut();
-                    var newForm = $(thisForm)
-                        .clone(false)
-                        .removeAttr("newform")
-                        .insertBefore($(this).parent())
-                        .fadeIn()
-                        .entityForm();
-
-                    $(newForm).find("#cancelButton").click(function() {
-                        addImg.fadeIn();
-                        if ($(this).closest("form").find("input[name='id']").val() === "") {
-                            newForm
-                                .fadeOut()
-                                .unwrap()
-                                .remove();;
-                        }
-                    });
+                // $(".addimg", this).button().click(function() {
                     
-                    $(newForm).find('button[type="submit"]').click(function() {
-                        $(newForm).one("reset", function() {
-                            if ($(this).find("input[name='id']").val() !== undefined) {
-                                //debugger;
+                    // var addImg = $(this).fadeOut();
+                    // var newForm = $(thisForm)
+                        // .clone(false)
+                        // .removeAttr("newform")
+                        // .insertBefore($(this).parent())
+                        // .fadeIn()
+                        // .entityForm();
+                        
+                        // console.log('clone');
+
+                    // $(newForm).find("#cancelButton").click(function() {
+                        // addImg.fadeIn();
+                        // if ($(this).closest("form").find("input[name='id']").val() === "") {
+                            // newForm
+                                // .fadeOut()
+                                // .unwrap()
+                                // .remove();;
+                        // }
+                    // });
+                    
+                    // $(newForm).find('button[type="submit"]').click(function() {
+                        // $(newForm).one("reset", function() {
+                            // if ($(this).find("input[name='id']").val() !== undefined) {
+                                // debugger;
                                 
-                                var lastTr = $(this).closest("table").find("tr:last");
-                                var newEntityForm = $(this);
-                                var newEntity = newEntityForm
-                                    .parent()
-                                    .detach(false)
-                                    .insertBefore(lastTr)
-                                    .prepend("<p></p>")
-                                    .wrap("<tr><td></td></tr>");
+                                // var lastTr = $(this).closest("table").find("tr:last");
+                                // var newEntityForm = $(this);
+                                // var newEntity = newEntityForm
+                                    // .parent()
+                                    // .detach(false)
+                                    // .insertBefore(lastTr)
+                                    // .prepend("<p></p>")
+                                    // .wrap("<tr><td></td></tr>");
                                 
-                                addImg.fadeIn();
-                            }
-                        });
-                    });
+                                // addImg.fadeIn();
+                            // }
+                        // });
+                    // });
 
-                    // TODO: Need code for when form is persisted and
-                    // TODO: Catch submit button to wrap this form in table row
-                });
+                    // // TODO: Need code for when form is persisted and
+                    // // TODO: Catch submit button to wrap this form in table row
+                // });
 
-                var addimg = $(".addimg", this).detach();
+                // var addimg = $(".addimg", this).detach();
 
-                addimg.insertAfter($(this));
-            }
+                // addimg.insertAfter($(this));
+            // }
 
             //Special stuff for Single Field
             if ($(this).has(".editableField").length ? true : false) {

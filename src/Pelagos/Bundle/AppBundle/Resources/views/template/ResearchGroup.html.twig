@@ -67,8 +67,12 @@
                         </div>
                     </td>
                 </tr>
+                
                 {% endif %}
             </table>
+            {% image '@PelagosAppBundle/Resources/public/images/add.png' %}
+                <img class="addimg" src="{{asset_url}}">
+            {% endimage %}
         </div>
     </div>
 {% endblock %}
