@@ -176,19 +176,46 @@
             if ($(this).has(".addimg").length ? true : false) {
 
                 $(this).fadeOut();
+                
+                var myNewForm = this;
 
                 $(".addimg", this).button().click(function() {
+                    console.log('found add img');
                     var addImg = $(this).fadeOut();
                     var newForm = $(thisForm)
                         .clone(false)
                         .removeAttr("newform")
-                        .insertBefore(this)
+                        .insertBefore($(this).parent())
                         .fadeIn()
                         .entityForm();
 
                     $(newForm).find("#cancelButton").click(function() {
                         addImg.fadeIn();
-                        newForm.remove();
+                        if ($(this).closest("form").find("input[name='id']").val() === "") {
+                            newForm
+                                .fadeOut()
+                                .unwrap()
+                                .remove();;
+                        }
+                    });
+                    
+                    $(newForm).find('button[type="submit"]').click(function() {
+                        $(newForm).one("reset", function() {
+                            if ($(this).find("input[name='id']").val() !== undefined) {
+                                //debugger;
+                                
+                                var lastTr = $(this).closest("table").find("tr:last");
+                                var newEntityForm = $(this);
+                                var newEntity = newEntityForm
+                                    .parent()
+                                    .detach(false)
+                                    .insertBefore(lastTr)
+                                    .prepend("<p></p>")
+                                    .wrap("<tr><td></td></tr>");
+                                
+                                addImg.fadeIn();
+                            }
+                        });
                     });
 
                     // TODO: Need code for when form is persisted and
@@ -451,9 +478,6 @@
                         if (!$.isNumeric(urlParts[urlParts.length - 1])) {
                             window.history.pushState(newID, docTitle, newURL);
                         }
-                        //Set ID on form
-                        $(form).find('[name="id"]').val(newID).attr("readonly", "true");
-
                     }
                 },
                 success: function(data, textStatus, jqXHR) {
@@ -462,6 +486,8 @@
                         var newID = entityId;
                         if (returnCode === 201) {
                             newID = jqXHR.getResponseHeader("X-Resource-Id");
+                            //Set ID on form
+                            $(form).find('[name="id"]').val(newID).attr("readonly", "true");
                         }
                         message = prefixPhrase + " " + entityType + " successfully with ID:" + newID;
                         //$(form).fillForm(data);
