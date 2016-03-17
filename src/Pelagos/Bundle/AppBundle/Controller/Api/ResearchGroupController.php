@@ -122,7 +122,7 @@ class ResearchGroupController extends EntityController
      *   }
      * )
      *
-     * @Rest\View()
+     * @Rest\View(serializerEnableMaxDepthChecks = true)
      *
      * @return ResearchGroup The Research Group that was retrieved.
      */
