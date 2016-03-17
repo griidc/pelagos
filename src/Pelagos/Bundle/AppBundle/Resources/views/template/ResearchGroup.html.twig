@@ -17,9 +17,20 @@
             <tr>
                 <td width="25%" valign="top">
                     <div id="researchGroupLogo">
-                        {% if ResearchGroup.getLogo %}
-                        <img src="data:{{ResearchGroup.serializeBinary(ResearchGroup.getLogo).mimeType}};base64,{{ResearchGroup.serializeBinary(ResearchGroup.getLogo).base64}}">
-                        {% endif %}
+                        <label for="logo">Logo:</label>
+                        <p>
+                            <img
+                            {% if ResearchGroup.getLogo %}
+                                    src="{{path('pelagos_api_research_groups_put_logo', {'id': ResearchGroup.getId}) }}"
+                            {% endif %}
+                            >
+                        </p>
+                    {% if ResearchGroup.getId %}
+                         <span style="display:none;">
+                            <input id="fileupload" type="file" name="logo" data-url="{{path('pelagos_api_research_groups_put_logo', {'id': ResearchGroup.getId}) }}">
+                        </span>
+                        <button id="logobutton" type="button">Change Logo</button>
+                    {% endif %}
                     </div>
                 </td>
                 <td style="padding:10px;" width="50%" valign="top">
