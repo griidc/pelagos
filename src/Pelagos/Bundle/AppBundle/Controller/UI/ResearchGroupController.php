@@ -33,6 +33,10 @@ class ResearchGroupController extends UIController
         if (isset($id)) {
             $researchGroup = $this->entityHandler->get('Pelagos:ResearchGroup', $id);
 
+            if (!$researchGroup instanceof \Pelagos\Entity\ResearchGroup) {
+                throw $this->createNotFoundException('The Research Group was not found!');
+            }
+
             foreach ($researchGroup->getPersonResearchGroups() as $personResearchGroup) {
                 $form = $this
                     ->get('form.factory')
