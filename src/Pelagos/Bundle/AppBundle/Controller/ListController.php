@@ -13,11 +13,11 @@ class ListController extends Controller
     /**
      * The List the Lists action.
      *
-     * @Route("/")
+     * @Route("/lists")
      *
      * @return Response A list of Lists.
      */
-    public function listListAction()
+    public function listsAction()
     {
         $GLOBALS['pelagos']['title'] = 'Lists Available';
         return $this->render('PelagosAppBundle:template:UI-Lists.html.twig');
@@ -26,39 +26,39 @@ class ListController extends Controller
     /**
      * The Research Group Generate List action.
      *
-     * @Route("/ResearchGroup")
+     * @Route("/research_groups")
      *
      * @return Response A list of Research Groups.
      */
-    public function researchGroupListAction()
+    public function researchGroupsAction()
     {
-        $GLOBALS['pelagos']['title'] = 'Research Group List';
+        $GLOBALS['pelagos']['title'] = 'Research Groups';
         return $this->render('PelagosAppBundle:template:UI-ResearchGroupList.html.twig');
     }
 
     /**
      * The Person Generate List action.
      *
-     * @Route("/People")
+     * @Route("/people")
      *
      * @return Response A list of People.
      */
-    public function peopleListAction()
+    public function peopleAction()
     {
-        $GLOBALS['pelagos']['title'] = 'People List';
+        $GLOBALS['pelagos']['title'] = 'People';
         return $this->render('PelagosAppBundle:template:UI-PersonList.html.twig');
     }
 
     /**
      * The Funding Organization Generate List action.
      *
-     * @Route("/FundingOrganization")
+     * @Route("/funding_organizations")
      *
      * @return Response A list of People.
      */
-    public function fundingOrganizationListAction()
+    public function fundingOrganizationsAction()
     {
-        $GLOBALS['pelagos']['title'] = 'Funding Organization List';
+        $GLOBALS['pelagos']['title'] = 'Funding Organizations';
         return $this->render('PelagosAppBundle:template:UI-FundingOrganizationList.html.twig');
     }
 }

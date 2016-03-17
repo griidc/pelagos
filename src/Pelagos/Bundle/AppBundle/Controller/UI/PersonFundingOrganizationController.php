@@ -21,11 +21,11 @@ class PersonFundingOrganizationController extends UIController
      *
      * @throws NotFoundException When the Funding Organization is not found.
      *
-     * @Route("/PersonFundingOrganization/{id}")
+     * @Route("/person_funding_organization/{id}")
      *
      * @return Response A Response instance.
      */
-    public function showAction($id = null)
+    public function defaultAction($id = null)
     {
         $ui = array();
         

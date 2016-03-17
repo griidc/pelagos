@@ -20,7 +20,7 @@ class AccountController extends UIController
     /**
      * The default action.
      *
-     * @Route("/Account")
+     * @Route("/account")
      * @Method("GET")
      *
      * @return Response A Symfony Response instance.
@@ -37,7 +37,7 @@ class AccountController extends UIController
      *
      * @throws \Exception When more than one Person is found for an email address.
      *
-     * @Route("/Account")
+     * @Route("/account")
      * @Method("POST")
      *
      * @return Response A Symfony Response instance.
@@ -109,7 +109,7 @@ class AccountController extends UIController
      * This verifies that the token has authenticated the user and that the user does not already have an account.
      * It then provides the user with a screen to establish a password.
      *
-     * @Route("/Account/VerifyEmail")
+     * @Route("/account/verify_email")
      * @Method("GET")
      *
      * @return Response A Response instance.
@@ -144,7 +144,7 @@ class AccountController extends UIController
      *
      * @throws \Exception When password do not match.
      *
-     * @Route("/Account/Create")
+     * @Route("/account/create")
      * @Method("POST")
      *
      * @return Response A Symfony Response instance.

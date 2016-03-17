@@ -21,11 +21,11 @@ class ResearchGroupController extends UIController
      *
      * @param string $id The id of the entity to retrieve.
      *
-     * @Route("/ResearchGroup/{id}")
+     * @Route("/research_group/{id}")
      *
      * @return Response A Response instance.
      */
-    public function showAction($id = null)
+    public function defaultAction($id = null)
     {
         $ui = array();
         $ui['PersonResearchGroups'] = array();

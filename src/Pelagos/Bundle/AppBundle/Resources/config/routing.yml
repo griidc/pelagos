@@ -1,13 +1,11 @@
-pelagos_app_homepage:
+pelagos_homepage:
     path:     /
     defaults: { _controller: PelagosAppBundle:Default:index }
 
 pelagos_ui:
-    prefix: ui
     resource: "@PelagosAppBundle/Resources/config/routing_ui.yml"
 
 pelagos_list:
-    prefix: lists
     resource: Pelagos\Bundle\AppBundle\Controller\ListController
 
 pelagos_rest:
