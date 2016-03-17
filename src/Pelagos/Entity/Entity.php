@@ -1,16 +1,9 @@
 <?php
-/**
- * This file contains an abstract implementation of a Pelagos entity class.
- *
- * @package    Pelagos\Entity
- * @subpackage Entity
- */
 
 namespace Pelagos\Entity;
 
-use Symfony\Component\Validator\Constraints as Assert;
-
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 use Pelagos\Exception\NotDeletableException;
 

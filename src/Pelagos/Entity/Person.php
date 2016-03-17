@@ -1,25 +1,21 @@
 <?php
-/**
- * This file contains the implementation of the Person entity class.
- *
- * @package    Pelagos\Entity
- * @subpackage Person
- */
 
 namespace Pelagos\Entity;
 
-use \Pelagos\Exception\EmptyRequiredArgumentException;
-use \Pelagos\Exception\InvalidFormatArgumentException;
-use \Pelagos\Exception\NotDeletableException;
-use \Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use JMS\Serializer\Annotation\Exclude;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
+
 use Hateoas\Configuration\Annotation as Hateoas;
 
+use JMS\Serializer\Annotation as Serializer;
+
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+
+use Pelagos\Exception\NotDeletableException;
+
 /**
- * Class to represent people.
+ * Entity class to represent a Person.
  *
  * @UniqueEntity(
  *     fields={"emailAddress"},
@@ -61,106 +57,6 @@ class Person extends Entity
      * A friendly name for this type of entity.
      */
     const FRIENDLY_NAME = 'Person';
-
-    /**
-     * Static array containing a list of the properties and their attributes.
-     *
-     * Used by common update code.
-     *
-     * @var array $properties
-     *
-     * @Exclude
-     */
-    protected static $properties = array(
-        'firstName' => array(
-            'type' => 'string',
-            'setter' => 'setFirstName',
-            'getter' => 'getFirstName',
-        ),
-        'lastName' => array(
-            'type' => 'string',
-            'setter' => 'setLastName',
-            'getter' => 'getLastName',
-        ),
-        'emailAddress' => array(
-            'type' => 'string',
-            'setter' => 'setEmailAddress',
-            'getter' => 'getEmailAddress',
-        ),
-        'phoneNumber' => array(
-            'type' => 'string',
-            'setter' => 'setPhoneNumber',
-            'getter' => 'getPhoneNumber',
-        ),
-        'deliveryPoint' => array(
-            'type' => 'string',
-            'setter' => 'setDeliveryPoint',
-            'getter' => 'getDeliveryPoint',
-        ),
-        'city' => array(
-            'type' => 'string',
-            'setter' => 'setCity',
-            'getter' => 'getCity',
-        ),
-        'administrativeArea' => array(
-            'type' => 'string',
-            'setter' => 'setAdministrativeArea',
-            'getter' => 'getAdministrativeArea',
-        ),
-        'postalCode' => array(
-            'type' => 'string',
-            'setter' => 'setPostalCode',
-            'getter' => 'getPostalCode',
-        ),
-        'country' => array(
-            'type' => 'string',
-            'setter' => 'setCountry',
-            'getter' => 'getCountry',
-        ),
-        'url' => array(
-            'type' => 'string',
-            'setter' => 'setUrl',
-            'getter' => 'getUrl',
-        ),
-        'organization' => array(
-            'type' => 'string',
-            'setter' => 'setOrganization',
-            'getter' => 'getOrganization',
-        ),
-        'position' => array(
-            'type' => 'string',
-            'setter' => 'setPosition',
-            'getter' => 'getPosition',
-        ),
-        'personFundingOrganizations' => array(
-            'type' => 'object',
-            'class' => '\Doctrine\Common\Collections\Collection',
-            'getter' => 'getPersonFundingOrganizations',
-            'setter' => 'setPersonFundingOrganizations',
-            'serialize' => false,
-        ),
-        'personResearchGroups' => array(
-            'type' => 'object',
-            'class' => '\Doctrine\Common\Collections\Collection',
-            'getter' => 'getPersonResearchGroups',
-            'setter' => 'setPersonResearchGroups',
-            'serialize' => false,
-        ),
-        'account' => array(
-            'type' => 'object',
-            'class' => 'Pelagos\Entity\Account',
-            'getter' => 'getAccount',
-            'setter' => 'setAccount',
-            'serialize' => false,
-        ),
-        'token' => array(
-            'type' => 'object',
-            'class' => '\Pelagos\Entity\PersonToken',
-            'getter' => 'getToken',
-            'setter' => 'setToken',
-            'serialize' => false,
-        ),
-    );
 
     /**
      * Person's first name.
@@ -354,22 +250,22 @@ class Person extends Entity
     /**
      * Person's Account.
      *
-     * @var \Pelagos\Entity\Account $account
+     * @var Account $account
      *
      * @access protected
      *
-     * @Exclude
+     * @Serializer\Exclude
      */
     protected $account;
 
     /**
      * Person's Token.
      *
-     * @var \Pelagos\Entity\PersonToken $token
+     * @var PersonToken $token
      *
      * @access protected
      *
-     * @Exclude
+     * @Serializer\Exclude
      */
     protected $token;
 

@@ -1,21 +1,16 @@
 <?php
-/**
- * This file contains the implementation of the FundingOrganization entity class.
- *
- * @package    Pelagos\Entity
- * @subpackage FundingOrganization
- */
 
 namespace Pelagos\Entity;
 
-use \Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use \Pelagos\Exception\NotDeletableException;
-use JMS\Serializer\Annotation\Exclude;
+use Symfony\Component\Validator\Constraints as Assert;
+
 use Hateoas\Configuration\Annotation as Hateoas;
 
+use Pelagos\Exception\NotDeletableException;
+
 /**
- * Class to represent funding organizations.
+ * Entity class to represent a Funding Organization.
  *
  * @UniqueEntity(
  *     fields={"name"},
@@ -57,93 +52,6 @@ class FundingOrganization extends Entity
      * A friendly name for this type of entity.
      */
     const FRIENDLY_NAME = 'Funding Organization';
-
-    /**
-     * Static array containing a list of the properties and their attributes.
-     *
-     * @var array $properties
-     *
-     * @Exclude
-     */
-    protected static $properties = array(
-        'name' => array(
-            'type' => 'string',
-            'getter' => 'getName',
-            'setter' => 'setName',
-        ),
-        'logo' => array(
-            'type' => 'string',
-            'getter' => 'getLogo',
-            'setter' => 'setLogo',
-            'serializer' => 'serializeBinary',
-        ),
-        'emailAddress' => array(
-            'type' => 'string',
-            'getter' => 'getEmailAddress',
-            'setter' => 'setEmailAddress',
-        ),
-        'description' => array(
-            'type' => 'string',
-            'getter' => 'getDescription',
-            'setter' => 'setDescription',
-        ),
-        'url' => array(
-            'type' => 'string',
-            'getter' => 'getUrl',
-            'setter' => 'setUrl',
-        ),
-        'phoneNumber' => array(
-            'type' => 'string',
-            'getter' => 'getPhoneNumber',
-            'setter' => 'setPhoneNumber',
-        ),
-        'deliveryPoint' => array(
-            'type' => 'string',
-            'getter' => 'getDeliveryPoint',
-            'setter' => 'setDeliveryPoint',
-        ),
-        'city' => array(
-            'type' => 'string',
-            'getter' => 'getCity',
-            'setter' => 'setCity',
-        ),
-        'administrativeArea' => array(
-            'type' => 'string',
-            'getter' => 'getAdministrativeArea',
-            'setter' => 'setAdministrativeArea',
-        ),
-        'postalCode' => array(
-            'type' => 'string',
-            'getter' => 'getPostalCode',
-            'setter' => 'setPostalCode',
-        ),
-        'country' => array(
-            'type' => 'string',
-            'getter' => 'getCountry',
-            'setter' => 'setCountry',
-        ),
-        'fundingCycles' => array(
-            'type' => 'fundingCycle',
-            'getter' => 'getFundingCycles',
-            'setter' => 'setFundingCycles',
-            'serialize' => false,
-        ),
-        'personFundingOrganizations' => array(
-            'type' => 'object',
-            'class' => '\Doctrine\Common\Collections\Collection',
-            'getter' => 'getPersonFundingOrganizations',
-            'setter' => 'setPersonFundingOrganizations',
-            'serialize' => false,
-        ),
-        'dataRepository' => array(
-            'type' => 'object',
-            'entity' => 'DataRepository',
-            'class' => '\Pelagos\Entity\DataRepository',
-            'getter' => 'getDataRepository',
-            'setter' => 'setDataRepository',
-            'serialize' => false,
-        ),
-    );
 
     /**
      * Name of a funding organization.

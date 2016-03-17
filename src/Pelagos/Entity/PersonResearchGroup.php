@@ -2,13 +2,13 @@
 
 namespace Pelagos\Entity;
 
-use \Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use JMS\Serializer\Annotation\Exclude;
+use Symfony\Component\Validator\Constraints as Assert;
+
 use Hateoas\Configuration\Annotation as Hateoas;
 
 /**
- * Class to represent Person - Research Group associations.
+ * Entity class to represent a Person to Research Group Association.
  *
  * @UniqueEntity(
  *     fields={"person", "researchGroup"},
@@ -50,42 +50,6 @@ class PersonResearchGroup extends Entity implements PersonAssociationInterface
      * A friendly name for this type of entity.
      */
     const FRIENDLY_NAME = 'Person to Research Group Association';
-
-    /**
-     * Static array containing a list of the properties and their attributes.
-     *
-     * @var array $properties
-     *
-     * @Exclude
-     */
-    protected static $properties = array(
-        'person' => array(
-            'type' => 'object',
-            'class' => 'Pelagos\Entity\Person',
-            'entity' => 'Person',
-            'setter' => 'setPerson',
-            'getter' => 'getPerson',
-        ),
-        'researchGroup' => array(
-            'type' => 'object',
-            'class' => 'Pelagos\Entity\ResearchGroup',
-            'entity' => 'ResearchGroup',
-            'setter' => 'setResearchGroup',
-            'getter' => 'getResearchGroup',
-        ),
-        'role' => array(
-            'type' => 'object',
-            'class' => 'Pelagos\Entity\ResearchGroupRole',
-            'entity' => 'ResearchGroupRole',
-            'setter' => 'setRole',
-            'getter' => 'getRole',
-        ),
-        'label' => array(
-            'type' => 'string',
-            'getter' => 'getLabel',
-            'setter' => 'setLabel',
-        ),
-    );
 
     /**
      * Person entity for this association.

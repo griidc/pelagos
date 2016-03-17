@@ -1,21 +1,18 @@
 <?php
-/**
- * This file contains the implementation of the FundingCycle entity class.
- *
- * @package    Pelagos\Entity
- * @subpackage FundingCycle
- */
 
 namespace Pelagos\Entity;
 
-use \Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use \Pelagos\Exception\NotDeletableException;
-use JMS\Serializer\Annotation as Serializer;
+use Symfony\Component\Validator\Constraints as Assert;
+
 use Hateoas\Configuration\Annotation as Hateoas;
 
+use JMS\Serializer\Annotation as Serializer;
+
+use Pelagos\Exception\NotDeletableException;
+
 /**
- * Class to represent funding cycles.
+ * Entity class to represent a Funding Cycle.
  *
  * @UniqueEntity(
  *     fields={"fundingOrganization","name"},
@@ -149,60 +146,6 @@ class FundingCycle extends Entity
      * @Serializer\MaxDepth(2)
      */
     protected $researchGroups;
-
-    /**
-     * Static array containing a list of the properties and their attributes.
-     *
-     * @var array $properties
-     *
-     * @Serializer\Exclude
-     */
-    protected static $properties = array(
-        'name' => array(
-            'type' => 'string',
-            'setter' => 'setName',
-            'getter' => 'getName',
-        ),
-        'description' => array(
-            'type' => 'string',
-            'setter' => 'setDescription',
-            'getter' => 'getDescription',
-        ),
-        'url' => array(
-            'type' => 'string',
-            'setter' => 'setUrl',
-            'getter' => 'geturl',
-        ),
-        'startDate' => array(
-            'type' => 'object',
-            'class' => 'DateTime',
-            'resolver' => 'resolveDate',
-            'setter' => 'setStartDate',
-            'getter' => 'getStartDate',
-            'serializer' => 'serializeDate',
-        ),
-        'endDate' => array(
-            'type' => 'object',
-            'class' => 'DateTime',
-            'resolver' => 'resolveDate',
-            'setter' => 'setEndDate',
-            'getter' => 'getEndDate',
-            'serializer' => 'serializeDate',
-        ),
-        'fundingOrganization' => array(
-            'type' => 'object',
-            'class' => 'Pelagos\Entity\FundingOrganization',
-            'entity' => 'FundingOrganization',
-            'setter' => 'setFundingOrganization',
-            'getter' => 'getFundingOrganization',
-        ),
-        'researchGroups' => array(
-            'type' => 'object',
-            'class' => 'Doctrine\Common\Collections\Collection',
-            'getter' => 'getResearchGroups',
-            'serialize' => false,
-        ),
-    );
 
     /**
      * Setter for name.

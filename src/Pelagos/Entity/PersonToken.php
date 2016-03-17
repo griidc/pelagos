@@ -1,18 +1,13 @@
 <?php
-/**
- * This file contains the implementation of the PersonToken entity class.
- *
- * @package    Pelagos\Entity
- * @subpackage PersonToken
- */
 
 namespace Pelagos\Entity;
 
-use \Symfony\Component\Validator\Constraints as Assert;
-use JMS\Serializer\Annotation\Exclude;
+use Symfony\Component\Validator\Constraints as Assert;
+
+use JMS\Serializer\Annotation as Serializer;
 
 /**
- * Class to represent a person token.
+ * Enitity class to represent a Person Token.
  */
 class PersonToken extends Entity
 {
@@ -20,40 +15,6 @@ class PersonToken extends Entity
      * A friendly name for this type of entity.
      */
     const FRIENDLY_NAME = 'Person Token';
-
-    /**
-     * Static array containing a list of the properties and their attributes.
-     *
-     * Used by common update code.
-     *
-     * @var array $properties
-     *
-     * @Exclude
-     */
-    protected static $properties = array(
-        'person' => array(
-            'type' => 'object',
-            'class' => 'Pelagos\Entity\Person',
-            'entity' => 'Person',
-            'setter' => 'setPerson',
-            'getter' => 'getPerson',
-        ),
-        'tokenText' => array(
-            'type' => 'string',
-            'getter' => 'getTokenText',
-        ),
-        'use'   => array(
-            'type' => 'string',
-            'setter' => 'setUse',
-            'getter' => 'getUse',
-        ),
-        'validFor' => array(
-            'type' => 'object',
-            'class' => 'DateInterval',
-            'setter' => 'setValidFor',
-            'getter' => 'getValidFor',
-        ),
-    );
 
     /**
      * Property containing a \DateInterval of validity of token.
@@ -82,7 +43,7 @@ class PersonToken extends Entity
      *     message="Token text is required."
      * )
      *
-     * @Exclude
+     * @Serializer\Exclude
      */
     protected $tokenText;
 

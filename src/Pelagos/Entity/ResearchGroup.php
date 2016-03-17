@@ -1,21 +1,18 @@
 <?php
-/**
- * This file contains the implementation of the ResearchGroup entity class.
- *
- * @package    Pelagos\Entity
- * @subpackage ResearchGroup
- */
 
 namespace Pelagos\Entity;
 
-use \Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use \Pelagos\Exception\NotDeletableException;
-use JMS\Serializer\Annotation as Serializer;
+use Symfony\Component\Validator\Constraints as Assert;
+
 use Hateoas\Configuration\Annotation as Hateoas;
 
+use JMS\Serializer\Annotation as Serializer;
+
+use Pelagos\Exception\NotDeletableException;
+
 /**
- * Class to represent research groups.
+ * Entity class to represent a Research Group.
  *
  * @UniqueEntity(
  *     fields={"name", "fundingCycle"},
@@ -57,87 +54,6 @@ class ResearchGroup extends Entity
      * A friendly name for this type of entity.
      */
     const FRIENDLY_NAME = 'Research Group';
-
-    /**
-     * Static array containing a list of the properties and their attributes.
-     *
-     * @var array $properties
-     *
-     * @Serializer\Exclude
-     */
-    protected static $properties = array(
-        'name' => array(
-            'type' => 'string',
-            'getter' => 'getName',
-            'setter' => 'setName',
-        ),
-        'fundingCycle' => array(
-            'type' => 'object',
-            'class' => 'Pelagos\Entity\FundingCycle',
-            'entity' => 'FundingCycle',
-            'setter' => 'setFundingCycle',
-            'getter' => 'getFundingCycle',
-            'serialize' => true,
-        ),
-        'url' => array(
-            'type' => 'string',
-            'getter' => 'getUrl',
-            'setter' => 'setUrl',
-        ),
-        'phoneNumber' => array(
-            'type' => 'string',
-            'getter' => 'getPhoneNumber',
-            'setter' => 'setPhoneNumber',
-        ),
-        'deliveryPoint' => array(
-            'type' => 'string',
-            'getter' => 'getDeliveryPoint',
-            'setter' => 'setDeliveryPoint',
-        ),
-        'city' => array(
-            'type' => 'string',
-            'getter' => 'getCity',
-            'setter' => 'setCity',
-        ),
-        'administrativeArea' => array(
-            'type' => 'string',
-            'getter' => 'getAdministrativeArea',
-            'setter' => 'setAdministrativeArea',
-        ),
-        'postalCode' => array(
-            'type' => 'string',
-            'getter' => 'getPostalCode',
-            'setter' => 'setPostalCode',
-        ),
-        'country' => array(
-            'type' => 'string',
-            'getter' => 'getCountry',
-            'setter' => 'setCountry',
-        ),
-        'description' => array(
-            'type' => 'string',
-            'getter' => 'getDescription',
-            'setter' => 'setDescription',
-        ),
-        'logo' => array(
-            'type' => 'string',
-            'getter' => 'getLogo',
-            'setter' => 'setLogo',
-            'serializer' => 'serializeBinary',
-        ),
-        'emailAddress' => array(
-            'type' => 'string',
-            'getter' => 'getEmailAddress',
-            'setter' => 'setEmailAddress',
-        ),
-        'personResearchGroups' => array(
-            'type' => 'object',
-            'class' => '\Doctrine\Common\Collections\Collection',
-            'getter' => 'getPersonResearchGroups',
-            'setter' => 'setPersonResearchGroups',
-            'serialize' => false,
-        ),
-    );
 
     /**
      * Name of a research group.
