@@ -20,7 +20,7 @@ class ListController extends Controller
     public function listsAction()
     {
         $GLOBALS['pelagos']['title'] = 'Lists Available';
-        return $this->render('PelagosAppBundle:template:UI-Lists.html.twig');
+        return $this->render('PelagosAppBundle:List:Lists.html.twig');
     }
 
     /**
@@ -33,7 +33,7 @@ class ListController extends Controller
     public function researchGroupsAction()
     {
         $GLOBALS['pelagos']['title'] = 'Research Groups';
-        return $this->render('PelagosAppBundle:template:UI-ResearchGroupList.html.twig');
+        return $this->render('PelagosAppBundle:List:ResearchGroups.html.twig');
     }
 
     /**
@@ -46,7 +46,7 @@ class ListController extends Controller
     public function peopleAction()
     {
         $GLOBALS['pelagos']['title'] = 'People';
-        return $this->render('PelagosAppBundle:template:UI-PersonList.html.twig');
+        return $this->render('PelagosAppBundle:List:People.html.twig');
     }
 
     /**
@@ -59,6 +59,6 @@ class ListController extends Controller
     public function fundingOrganizationsAction()
     {
         $GLOBALS['pelagos']['title'] = 'Funding Organizations';
-        return $this->render('PelagosAppBundle:template:UI-FundingOrganizationList.html.twig');
+        return $this->render('PelagosAppBundle:List:FundingOrganizations.html.twig');
     }
 }
