@@ -19,7 +19,7 @@ class PersonDataRepositoryController extends UIController
      *
      * @param string $id The id of the entity to retrieve.
      *
-     * @Route("/person_data_repository/{id}")
+     * @Route("/person-data-repository/{id}")
      *
      * @return Response A Response instance.
      */

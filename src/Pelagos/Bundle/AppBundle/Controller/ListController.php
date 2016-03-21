@@ -26,7 +26,7 @@ class ListController extends Controller
     /**
      * The Research Group Generate List action.
      *
-     * @Route("/research_groups")
+     * @Route("/research-groups")
      *
      * @return Response A list of Research Groups.
      */
@@ -52,7 +52,7 @@ class ListController extends Controller
     /**
      * The Funding Organization Generate List action.
      *
-     * @Route("/funding_organizations")
+     * @Route("/funding-organizations")
      *
      * @return Response A list of People.
      */

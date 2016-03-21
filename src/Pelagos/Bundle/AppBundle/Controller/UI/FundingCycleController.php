@@ -21,7 +21,7 @@ class FundingCycleController extends UIController
      *
      * @throws NotFoundException When the Funding Organization is not found.
      *
-     * @Route("/funding_cycle/{id}")
+     * @Route("/funding-cycle/{id}")
      *
      * @return Response A Response instance.
      */

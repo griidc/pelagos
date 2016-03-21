@@ -24,7 +24,7 @@ class PersonResearchGroupController extends UIController
      *
      * @throws BadRequestHttpException When the Research Group ID is not provided.
      *
-     * @Route("/person_research_group/{id}")
+     * @Route("/person-research-group/{id}")
      *
      * @return Response A Response instance.
      */

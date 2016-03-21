@@ -24,7 +24,7 @@ class DataRepositoryController extends UIController
      *
      * @throws NotFoundException When the Funding Organization is not found.
      *
-     * @Route("/data_repository/{id}")
+     * @Route("/data-repository/{id}")
      *
      * @return Response A Response instance.
      */

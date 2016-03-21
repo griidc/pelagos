@@ -21,7 +21,7 @@ class ResearchGroupController extends UIController
      *
      * @param string $id The id of the entity to retrieve.
      *
-     * @Route("/research_group/{id}")
+     * @Route("/research-group/{id}")
      *
      * @return Response A Response instance.
      */

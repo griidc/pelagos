@@ -109,7 +109,7 @@ class AccountController extends UIController
      * This verifies that the token has authenticated the user and that the user does not already have an account.
      * It then provides the user with a screen to establish a password.
      *
-     * @Route("/account/verify_email")
+     * @Route("/account/verify-email")
      * @Method("GET")
      *
      * @return Response A Response instance.

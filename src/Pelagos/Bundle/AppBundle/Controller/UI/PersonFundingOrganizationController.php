@@ -21,7 +21,7 @@ class PersonFundingOrganizationController extends UIController
      *
      * @throws NotFoundException When the Funding Organization is not found.
      *
-     * @Route("/person_funding_organization/{id}")
+     * @Route("/person-funding-organization/{id}")
      *
      * @return Response A Response instance.
      */
