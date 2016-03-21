@@ -26,13 +26,15 @@
         };
 
         return this.each(function() {
-            
-            console.log('run ent form');
             //plug-in
             var thisForm = this;
 
             //make sure this is of type form
             if (!$(this).is("form")) {
+                return false;
+            }
+
+            if ($(this).hasAttr("newform")) {
                 return false;
             }
 
@@ -86,9 +88,9 @@
                           "</div><br><button class=\"entityFormButton\" type=\"submit\">Save</button>" +
                           "&nbsp;<button id=\"cancelButton\" class=\"entityFormButton\" type=\"reset\">Cancel</button></div>";
 
-            if (!$(this).hasAttr("newform")) {
+            // if (!$(this).hasAttr("newform")) {
                 $(this).append(buttons);
-            }
+            // }
 
             $(".entityFormButton").css("visibility", "hidden").button();
 
@@ -120,35 +122,40 @@
                 }
             });
 
-            $(".entityWrapper").has("[editable],[creatable] input[name='id']", this).on("click", function() {
-                if (!$(this).hasClass("active")) {
-                    $(this).addClass("active");
+            //$(".entityWrapper").has("[editable],[creatable] input[name='id']", this).on("click", function() {
+            $(".entityWrapper")
+                .find(this)
+                .filter("[editable],[creatable]")
+                .parent()
+                .on("click", function() {
+                    if (!$(this).hasClass("active")) {
+                        $(this).addClass("active");
 
-                    var url = actionURL;
+                        var url = actionURL;
 
-                    if (!($(thisForm).find("[name=\"id\"]").val() === "")) {
-                        url += "/" + $(thisForm).find("[name=\"id\"]").val();
-                    }
-
-                    url += "/validateProperty";
-
-                    $("input:visible:text,textarea,select", this).each(function() {
-                        $(this).attr("disabled", false);
-                        if (!$(this).hasAttr("dontvalidate")) {
-                            $(this).rules("add", {
-                                remote: {
-                                    url: url
-                                }
-                            });
+                        if (!($(thisForm).find("[name=\"id\"]").val() === "")) {
+                            url += "/" + $(thisForm).find("[name=\"id\"]").val();
                         }
-                    });
-                    $(".innerForm", this).hide();
-                    $(".entityFormButton,.showOnEdit", this)
-                    .css({opacity: 0.0, visibility: "visible"})
-                    .animate({opacity: 1.0});
-                    $("button", this).button("enable");
-                }
-            });
+
+                        url += "/validateProperty";
+
+                        $("input:visible:text,textarea,select", this).each(function() {
+                            $(this).attr("disabled", false);
+                            if (!$(this).hasAttr("dontvalidate")) {
+                                $(this).rules("add", {
+                                    remote: {
+                                        url: url
+                                    }
+                                });
+                            }
+                        });
+                        $(".innerForm", this).hide();
+                        $(".entityFormButton,.showOnEdit", this)
+                        .css({opacity: 0.0, visibility: "visible"})
+                        .animate({opacity: 1.0});
+                        $("button", this).button("enable");
+                    }
+                });
 
             $(this).bind("reset", function() {
                 formValidator.resetForm();
@@ -171,65 +178,17 @@
             });
 
             if (entityId === "") {
-                $(".entityWrapper").has("[creatable] input[name='id']", this).click();
+                //$(".entityWrapper").has("[creatable] input[name='id']", this).click();
+
+                $(".entityWrapper")
+                    .find(this)
+                    .filter("[creatable]")
+                    .has("input[name='id']")
+                    .parent()
+                    .click();
             }
 
-            // // Special stuff for Addform
-            // if ($(document).has(".addimg").length ? true : false) {
-
-                // console.log('found add img');
-            
-                // $(this).fadeOut();
-
-                // $(".addimg", this).button().click(function() {
-                    
-                    // var addImg = $(this).fadeOut();
-                    // var newForm = $(thisForm)
-                        // .clone(false)
-                        // .removeAttr("newform")
-                        // .insertBefore($(this).parent())
-                        // .fadeIn()
-                        // .entityForm();
-                        
-                        // console.log('clone');
-
-                    // $(newForm).find("#cancelButton").click(function() {
-                        // addImg.fadeIn();
-                        // if ($(this).closest("form").find("input[name='id']").val() === "") {
-                            // newForm
-                                // .fadeOut()
-                                // .unwrap()
-                                // .remove();;
-                        // }
-                    // });
-                    
-                    // $(newForm).find('button[type="submit"]').click(function() {
-                        // $(newForm).one("reset", function() {
-                            // if ($(this).find("input[name='id']").val() !== undefined) {
-                                // debugger;
-                                
-                                // var lastTr = $(this).closest("table").find("tr:last");
-                                // var newEntityForm = $(this);
-                                // var newEntity = newEntityForm
-                                    // .parent()
-                                    // .detach(false)
-                                    // .insertBefore(lastTr)
-                                    // .prepend("<p></p>")
-                                    // .wrap("<tr><td></td></tr>");
-                                
-                                // addImg.fadeIn();
-                            // }
-                        // });
-                    // });
-
-                    // // TODO: Need code for when form is persisted and
-                    // // TODO: Catch submit button to wrap this form in table row
-                // });
-
-                // var addimg = $(".addimg", this).detach();
-
-                // addimg.insertAfter($(this));
-            // }
+            // Special stuff for Addform
 
             //Special stuff for Single Field
             if ($(this).has(".editableField").length ? true : false) {
