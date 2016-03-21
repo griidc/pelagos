@@ -122,7 +122,6 @@
                 }
             });
 
-            //$(".entityWrapper").has("[editable],[creatable] input[name='id']", this).on("click", function() {
             $(".entityWrapper")
                 .find(this)
                 .filter("[editable],[creatable]")
@@ -178,8 +177,6 @@
             });
 
             if (entityId === "") {
-                //$(".entityWrapper").has("[creatable] input[name='id']", this).click();
-
                 $(".entityWrapper")
                     .find(this)
                     .filter("[creatable]")
