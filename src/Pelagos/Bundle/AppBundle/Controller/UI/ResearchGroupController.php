@@ -23,6 +23,8 @@ class ResearchGroupController extends UIController
      *
      * @Route("/ResearchGroup/{id}")
      *
+     * @throws createNotFoundException If research group could not be found.
+     *
      * @return Response A Response instance.
      */
     public function showAction($id = null)
@@ -45,7 +47,8 @@ class ResearchGroupController extends UIController
 
                 $ui['PersonResearchGroups'][] = $personResearchGroup;
                 $ui['PersonResearchGroupForms'][$personResearchGroup->getId()] = $formView;
-                $ui['PersonResearchGroupEditLabel'][$personResearchGroup->getId()] = new EntityProperty($personResearchGroup, 'label');
+                $ui['PersonResearchGroupEditLabel'][$personResearchGroup->getId()]
+                    = new EntityProperty($personResearchGroup, 'label');
             }
 
             $newResearchGroupPerson = new \Pelagos\Entity\PersonResearchGroup;
