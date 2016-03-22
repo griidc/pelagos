@@ -8,7 +8,11 @@ $(document).ready(function() {
             }).done(function(data) {
                 if (data) {
                     $("#delete-dataset").prop("disabled", false);
-                    window.open(location.href + "/" + $("#udi").val());
+                    $.ajax({
+                        url: location.href + "/" + $("#udi").val() + "/view"
+                    }).done(function(summary) {
+                        $("#summary-display").val(summary);
+                    });
                 }
                 else {
                     alert("No records found for this UDI!");
@@ -25,7 +29,7 @@ $(document).ready(function() {
                 url: location.href + "/" + $("#udi").val() + "/check-exists"
             }).done(function(data) {
                 if (data) {
-                    window.open(location.href + "/" + $("#udi").val() + "/download");
+                    location.href = location.href + "/" + $("#udi").val() + "/download";
                 }
                 else {
                     alert("No records found for this UDI!");
@@ -43,7 +47,11 @@ $(document).ready(function() {
             }).done(function(data) {
                 if (data) {
                     if (confirm("Are you sure you want to delete all records for this dataset?")) {
-                        location.href = location.href + "/" + $("#udi").val() + "/delete"
+                        $.ajax({
+                            url: location.href + "/" + $("#udi").val() + "/delete"
+                        }).done(function(result) {
+                            $("#summary-display").val(result);
+                        });
                     }
                 }
                 else {

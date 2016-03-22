@@ -9,6 +9,7 @@ set_include_path('../../../share/php' . PATH_SEPARATOR . get_include_path());
 // load global pelagos config
 $GLOBALS['config'] = parse_ini_file('/etc/opt/pelagos.ini', true);
 $GLOBALS['db'] = parse_ini_file($GLOBALS['config']['paths']['conf'] . '/db.ini', true);
+$GLOBALS['pelagos']['title'] = 'Dataset Summary';
 
 // load Drupal functions
 require_once 'drupal.php';
@@ -43,37 +44,40 @@ $app->get('/', function () use ($app) {
 });
 
 $app->get('/:udi/delete', function ($udi) use ($app) {
+    header('Content-Type: text/plain');
     if (!memberHasApplicationRole($GLOBALS['user']->name, 'Metadata', 'reviewers')) {
-        drupal_set_message('Only Metadata Reviewers can delete datasets', 'error');
+        echo 'Only Metadata Reviewers can delete datasets!';
         return;
     }
     if (!DatasetSummary::validUdi($udi)) {
-        drupal_set_message("$udi is not a valid UDI", 'error');
+        echo "$udi is not a valid UDI!";
         return;
     }
     $dbh = openDB('GOMRI_RO');
     if (!DatasetSummary::datasetExists($dbh, $udi)) {
-        drupal_set_message("No records exist for dataset $udi", 'warning');
+        echo "No records exist for dataset: $udi";
         return;
     }
-    foreach (DatasetSummary::getTables($udi) as $table => $where) {
+    foreach (DatasetSummary::getTables($dbh, $udi) as $table => $where) {
         if ($table == 'registry') {
             continue;
         }
         $sth = $dbh->prepare("DELETE FROM $table WHERE $where");
-        $sth->execute();
-        echo "<p>Deleted $udi from table: $table</p>";
+#        $sth->execute();
+        echo "Deleted $udi from table: $table\n\n";
     }
     $sth = $dbh->prepare('SELECT MAX(registry_id) FROM registry WHERE dataset_udi = ?');
     $sth->execute(array($udi));
     $registryId = $sth->fetchColumn();
-    $sth = $dbh->prepare('UPDATE registry SET dataset_download_status = \'PendingDeletion\' WHERE registry_id = ?');
-    $sth->execute(array($registryId));
-    echo "<p>Marked $udi as PendingDeletion in table: registry</p>";
+    if ($registryId !== null) {
+        $sth = $dbh->prepare('UPDATE registry SET dataset_download_status = \'PendingDeletion\' WHERE registry_id = ?');
+#        $sth->execute(array($registryId));
+        echo "Marked $udi as PendingDeletion in table: registry\n\n";
+        system($GLOBALS['config']['paths']['root'] . '/daemons/filer/trigger-filer');
+        echo "Triggered filer to remove files from disk and delete registry entries for $udi";
+    }
     $dbh = null;
-    system($GLOBALS['config']['paths']['root'] . '/daemons/filer/trigger-filer');
-    echo "<p>Triggered filer to remove files from disk and delete regsitry entries for $udi</p>";
-    drupal_set_message("Deleted all records for: $udi", 'status');
+    drupal_exit();
 });
 
 $app->get('/:udi/check-exists', function ($udi) use ($app) {
@@ -90,13 +94,13 @@ $app->get('/:udi/check-exists', function ($udi) use ($app) {
 
 $app->get('/:udi(/:action)', function ($udi, $action = null) use ($app) {
     if (!DatasetSummary::validUdi($udi)) {
-        drupal_set_message("$udi is not a valid UDI", 'error');
-        return;
+        echo "$udi is not a valid UDI";
+        drupal_exit();
     }
     $dbh = openDB('GOMRI_RO');
     if (!DatasetSummary::datasetExists($dbh, $udi)) {
-        drupal_set_message("No records exist for dataset $udi", 'warning');
-        return;
+        echo "No records exist for dataset $udi";
+        drupal_exit();
     }
     $fileNamePrefix = preg_replace('/:/', '.', $udi) . '-' . date('Ymd');
 
@@ -112,7 +116,7 @@ $app->get('/:udi(/:action)', function ($udi, $action = null) use ($app) {
     $dbUser = $GLOBALS['db']['GOMRI_RO']['username'];
     putenv('PGPASSWORD=' . $GLOBALS['db']['GOMRI_RO']['password']);
 
-    $tables = DatasetSummary::getTables($udi);
+    $tables = DatasetSummary::getTables($dbh, $udi);
 
     foreach ($tables as $table => $where) {
         $queryFilename = "/var/tmp/$fileNamePrefix.$pid/$table.sql";
