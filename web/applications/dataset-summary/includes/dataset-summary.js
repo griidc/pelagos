@@ -20,7 +20,9 @@ $(document).ready(function() {
     });
     $("#delete-dataset").click(function() {
         if (isValidUdi($("#udi").val())) {
-            location.href = location.href + "/" + $("#udi").val() + "/delete"
+            if (confirm("Are you sure you want to delete all records for this dataset?")) {
+                location.href = location.href + "/" + $("#udi").val() + "/delete"
+            }
         }
         else {
             alert("Invalid UDI!");
