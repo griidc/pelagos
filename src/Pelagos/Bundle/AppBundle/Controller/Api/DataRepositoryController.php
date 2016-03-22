@@ -118,7 +118,7 @@ class DataRepositoryController extends EntityController
      *   }
      * )
      *
-     * @Rest\View()
+     * @Rest\View(serializerEnableMaxDepthChecks = true)
      *
      * @return DataRepository The Data Repository that was retrieved.
      */
