@@ -27,9 +27,9 @@ class TwigEntityExtensions extends \Twig_Extension
     public function getFilters()
     {
         return array(
-            'sortBy' => new \Twig_Filter_Method(
-                $this,
-                'sortBy'
+            new \Twig_SimpleFilter(
+                'sortBy',
+                array(self::class, 'sortBy')
             ),
         );
     }
@@ -42,7 +42,7 @@ class TwigEntityExtensions extends \Twig_Extension
      *
      * @return array The sorted list of entities.
      */
-    public function sortBy($entityList, array $properties)
+    public static function sortBy($entityList, array $properties)
     {
         if (gettype($entityList) == 'object' and is_a($entityList, 'Doctrine\Common\Collections\Collection')) {
             // If the entity list is a collection, get it as an array.

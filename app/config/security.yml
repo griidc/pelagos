@@ -15,7 +15,7 @@ security:
             security: false
 
         account:
-            pattern: ^/ui/Account
+            pattern: ^/account
             stateless: true
             # allow anonymous access
             anonymous: ~

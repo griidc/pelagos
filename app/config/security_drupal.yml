@@ -5,4 +5,4 @@ security:
             pattern: ^/%pelagos.prefix%/(_(profiler|wdt)|css|images|js)/
 
         account:
-            pattern: ^/%pelagos.prefix%/ui/Account
+            pattern: ^/%pelagos.prefix%/account

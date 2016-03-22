@@ -24,11 +24,11 @@ class DataRepositoryController extends UIController
      *
      * @throws NotFoundException When the Funding Organization is not found.
      *
-     * @Route("/DataRepository/{id}")
+     * @Route("/data-repository/{id}")
      *
      * @return Response A Response instance.
      */
-    public function showAction($id)
+    public function defaultAction($id)
     {
         $ui = array();
         
