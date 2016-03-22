@@ -19,11 +19,11 @@ class PersonDataRepositoryController extends UIController
      *
      * @param string $id The id of the entity to retrieve.
      *
-     * @Route("/PersonDataRepository/{id}")
+     * @Route("/person-data-repository/{id}")
      *
      * @return Response A Response instance.
      */
-    public function showAction($id = null)
+    public function defaultAction($id = null)
     {
         $ui = array();
 

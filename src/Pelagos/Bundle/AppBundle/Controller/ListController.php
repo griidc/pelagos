@@ -13,52 +13,52 @@ class ListController extends Controller
     /**
      * The List the Lists action.
      *
-     * @Route("/")
+     * @Route("/lists")
      *
      * @return Response A list of Lists.
      */
-    public function listListAction()
+    public function listsAction()
     {
         $GLOBALS['pelagos']['title'] = 'Lists Available';
-        return $this->render('PelagosAppBundle:template:UI-Lists.html.twig');
+        return $this->render('PelagosAppBundle:List:Lists.html.twig');
     }
 
     /**
      * The Research Group Generate List action.
      *
-     * @Route("/ResearchGroup")
+     * @Route("/research-groups")
      *
      * @return Response A list of Research Groups.
      */
-    public function researchGroupListAction()
+    public function researchGroupsAction()
     {
-        $GLOBALS['pelagos']['title'] = 'Research Group List';
-        return $this->render('PelagosAppBundle:template:UI-ResearchGroupList.html.twig');
+        $GLOBALS['pelagos']['title'] = 'Research Groups';
+        return $this->render('PelagosAppBundle:List:ResearchGroups.html.twig');
     }
 
     /**
      * The Person Generate List action.
      *
-     * @Route("/People")
+     * @Route("/people")
      *
      * @return Response A list of People.
      */
-    public function peopleListAction()
+    public function peopleAction()
     {
-        $GLOBALS['pelagos']['title'] = 'People List';
-        return $this->render('PelagosAppBundle:template:UI-PersonList.html.twig');
+        $GLOBALS['pelagos']['title'] = 'People';
+        return $this->render('PelagosAppBundle:List:People.html.twig');
     }
 
     /**
      * The Funding Organization Generate List action.
      *
-     * @Route("/FundingOrganization")
+     * @Route("/funding-organizations")
      *
      * @return Response A list of People.
      */
-    public function fundingOrganizationListAction()
+    public function fundingOrganizationsAction()
     {
-        $GLOBALS['pelagos']['title'] = 'Funding Organization List';
-        return $this->render('PelagosAppBundle:template:UI-FundingOrganizationList.html.twig');
+        $GLOBALS['pelagos']['title'] = 'Funding Organizations';
+        return $this->render('PelagosAppBundle:List:FundingOrganizations.html.twig');
     }
 }
