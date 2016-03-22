@@ -25,7 +25,7 @@
                             {% endif %}
                             >
                         </p>
-                    {% if ResearchGroup.getId %}
+                    {% if ResearchGroup.getId and is_granted('CAN_EDIT', ResearchGroup) %}
                          <span style="display:none;">
                             <input id="fileupload" type="file" name="logo" data-url="{{path('pelagos_api_research_groups_put_logo', {'id': ResearchGroup.getId}) }}">
                         </span>
