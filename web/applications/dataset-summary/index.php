@@ -63,7 +63,7 @@ $app->get('/:udi/delete', function ($udi) use ($app) {
             continue;
         }
         $sth = $dbh->prepare("DELETE FROM $table WHERE $where");
-#        $sth->execute();
+        $sth->execute();
         echo "Deleted $udi from table: $table\n\n";
     }
     $sth = $dbh->prepare('SELECT MAX(registry_id) FROM registry WHERE dataset_udi = ?');
@@ -71,7 +71,7 @@ $app->get('/:udi/delete', function ($udi) use ($app) {
     $registryId = $sth->fetchColumn();
     if ($registryId !== null) {
         $sth = $dbh->prepare('UPDATE registry SET dataset_download_status = \'PendingDeletion\' WHERE registry_id = ?');
-#        $sth->execute(array($registryId));
+        $sth->execute(array($registryId));
         echo "Marked $udi as PendingDeletion in table: registry\n\n";
         system($GLOBALS['config']['paths']['root'] . '/daemons/filer/trigger-filer');
         echo "Triggered filer to remove files from disk and delete registry entries for $udi";
