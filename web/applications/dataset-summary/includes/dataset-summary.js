@@ -3,8 +3,17 @@ var $ = jQuery.noConflict();
 $(document).ready(function() {
     $("#view-dataset-summary").click(function() {
         if (isValidUdi($("#udi").val())) {
-            $("#delete-dataset").prop("disabled", false);
-            window.open(location.href + "/" + $("#udi").val());
+            $.ajax({
+                url: location.href + "/" + $("#udi").val() + "/check-exists"
+            }).done(function(data) {
+                if (data) {
+                    $("#delete-dataset").prop("disabled", false);
+                    window.open(location.href + "/" + $("#udi").val());
+                }
+                else {
+                    alert("No records found for this UDI!");
+                }
+            });
         }
         else {
             alert("Invalid UDI!");
@@ -12,7 +21,16 @@ $(document).ready(function() {
     });
     $("#download-dataset-summary").click(function() {
         if (isValidUdi($("#udi").val())) {
-            window.open(location.href + "/" + $("#udi").val() + "/download");
+            $.ajax({
+                url: location.href + "/" + $("#udi").val() + "/check-exists"
+            }).done(function(data) {
+                if (data) {
+                    window.open(location.href + "/" + $("#udi").val() + "/download");
+                }
+                else {
+                    alert("No records found for this UDI!");
+                }
+            });
         }
         else {
             alert("Invalid UDI!");
@@ -20,9 +38,18 @@ $(document).ready(function() {
     });
     $("#delete-dataset").click(function() {
         if (isValidUdi($("#udi").val())) {
-            if (confirm("Are you sure you want to delete all records for this dataset?")) {
-                location.href = location.href + "/" + $("#udi").val() + "/delete"
-            }
+            $.ajax({
+                url: location.href + "/" + $("#udi").val() + "/check-exists"
+            }).done(function(data) {
+                if (data) {
+                    if (confirm("Are you sure you want to delete all records for this dataset?")) {
+                        location.href = location.href + "/" + $("#udi").val() + "/delete"
+                    }
+                }
+                else {
+                    alert("No records found for this UDI!");
+                }
+            });
         }
         else {
             alert("Invalid UDI!");

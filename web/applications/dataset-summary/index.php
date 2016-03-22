@@ -76,6 +76,18 @@ $app->get('/:udi/delete', function ($udi) use ($app) {
     drupal_set_message("Deleted all records for: $udi", 'status');
 });
 
+$app->get('/:udi/check-exists', function ($udi) use ($app) {
+    $dbh = openDB('GOMRI_RO');
+    $datasetExists = false;
+    if (DatasetSummary::datasetExists($dbh, $udi)) {
+        $datasetExists = true;
+    }
+    $dbh = null;
+    header('Content-Type: application/json');
+    echo json_encode($datasetExists);
+    drupal_exit();
+});
+
 $app->get('/:udi(/:action)', function ($udi, $action = null) use ($app) {
     if (!DatasetSummary::validUdi($udi)) {
         drupal_set_message("$udi is not a valid UDI", 'error');
