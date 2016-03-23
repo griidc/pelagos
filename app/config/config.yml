@@ -90,3 +90,15 @@ assetic:
     use_controller: '%kernel.debug%'
     filters:
         cssrewrite: ~
+
+simple_things_entity_audit:
+    audited_entities:
+        - Pelagos\Entity\Account
+        - Pelagos\Entity\DataRepository
+        - Pelagos\Entity\FundingOrganization
+        - Pelagos\Entity\FundingCycle
+        - Pelagos\Entity\ResearchGroup
+        - Pelagos\Entity\Person
+        - Pelagos\Entity\PersonDataRepository
+        - Pelagos\Entity\PersonFundingOrganization
+        - Pelagos\Entity\PersonResearchGroup
