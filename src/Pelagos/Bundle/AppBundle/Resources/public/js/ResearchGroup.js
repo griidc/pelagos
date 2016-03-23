@@ -23,4 +23,20 @@ $(document).ready(function()
     $("#tabs")
         .tabs({ heightStyle: "content" })
         .tabs("disable", 1);
+
+    $("#logobutton")
+        .button()
+        .click(function() {
+            $("#fileupload").click();
+        });
+
+    $("#fileupload").fileupload({
+        url: $(this).attr("data-url"),
+        method: "PUT",
+        multipart: false,
+        done: function (e, data) {
+            $("#researchGroupLogo img").attr("src", data.url);
+        }
+    }).prop("disabled", !$.support.fileInput)
+    .parent().addClass($.support.fileInput ? undefined : "disabled");
 });
