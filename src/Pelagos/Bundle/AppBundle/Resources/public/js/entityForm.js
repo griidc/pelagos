@@ -88,9 +88,7 @@
                           "</div><br><button class=\"entityFormButton\" type=\"submit\">Save</button>" +
                           "&nbsp;<button id=\"cancelButton\" class=\"entityFormButton\" type=\"reset\">Cancel</button></div>";
 
-            // if (!$(this).hasAttr("newform")) {
-                $(this).append(buttons);
-            // }
+            $(this).append(buttons);
 
             $(".entityFormButton").css("visibility", "hidden").button();
 
