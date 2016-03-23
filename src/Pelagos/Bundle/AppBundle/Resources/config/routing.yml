@@ -2,6 +2,10 @@ pelagos_homepage:
     path:     /
     defaults: { _controller: PelagosAppBundle:Default:index }
 
+pelagos_admin:
+    path:     /admin
+    defaults: { _controller: PelagosAppBundle:Default:admin }
+
 pelagos_ui:
     resource: "@PelagosAppBundle/Resources/config/routing_ui.yml"
 

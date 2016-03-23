@@ -18,4 +18,14 @@ class DefaultController extends Controller
     {
         return $this->render('PelagosAppBundle:Default:index.html.twig');
     }
+
+    /**
+     * The admin action.
+     *
+     * @return Response A Response instance.
+     */
+    public function adminAction()
+    {
+        return $this->render('PelagosAppBundle:Default:admin.html.twig');
+    }
 }
