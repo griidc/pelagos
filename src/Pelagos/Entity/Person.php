@@ -906,6 +906,10 @@ class Person extends Entity
                 " $personResearchGroupCount associated Research Group" .
                 ($personResearchGroupCount > 1 ? 's' : '');
         }
+        $personAccountCount = count($this->getAccount());
+        if ($personAccountCount > 0) {
+            $notDeletableReasons[] = 'there is an associated Account';
+        }
         if (count($notDeletableReasons) > 0) {
             $notDeletableException = new NotDeletableException();
             $notDeletableException->setReasons($notDeletableReasons);
