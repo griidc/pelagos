@@ -894,18 +894,28 @@ class Person extends Entity
     public function checkDeletable()
     {
         $notDeletableReasons = array();
+
         $personFundingOrganizationCount = count($this->getPersonFundingOrganizations());
         if ($personFundingOrganizationCount > 0) {
             $notDeletableReasons[] = 'there ' . ($personFundingOrganizationCount > 1 ? 'are' : 'is') .
                 " $personFundingOrganizationCount associated Funding Organization" .
                 ($personFundingOrganizationCount > 1 ? 's' : '');
         }
+
         $personResearchGroupCount = count($this->getPersonResearchGroups());
         if ($personResearchGroupCount > 0) {
             $notDeletableReasons[] = 'there ' . ($personResearchGroupCount > 1 ? 'are' : 'is') .
                 " $personResearchGroupCount associated Research Group" .
                 ($personResearchGroupCount > 1 ? 's' : '');
         }
+
+        $personDataRepositoriesCount = count($this->getPersonDataRepositories());
+        if ($personDataRepositoriesCount > 0) {
+            $notDeletableReasons[] = 'there ' . ($personDataRepositoriesCount > 1 ? 'are' : 'is') .
+                " $personDataRepositoriesCount associated Data " .
+                ($personDataRepositoriesCount > 1 ? 'Repositories' : 'Repository');
+        }
+
         if (count($notDeletableReasons) > 0) {
             $notDeletableException = new NotDeletableException();
             $notDeletableException->setReasons($notDeletableReasons);
