@@ -115,7 +115,7 @@ class PersonDataRepositoryController extends EntityController
      *   }
      * )
      *
-     * @Rest\View()
+     * @Rest\View(serializerEnableMaxDepthChecks = true)
      *
      * @return PersonDataRepository
      */

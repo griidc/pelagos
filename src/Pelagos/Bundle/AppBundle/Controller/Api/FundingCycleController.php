@@ -114,7 +114,7 @@ class FundingCycleController extends EntityController
      *   }
      * )
      *
-     * @Rest\View()
+     * @Rest\View(serializerEnableMaxDepthChecks = true)
      *
      * @return FundingCycle
      */

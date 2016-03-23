@@ -48,12 +48,5 @@ action="{{path('pelagos_api_research_groups_post')}}">
 
     {{ form_row(form.emailAddress) }}
 
-    <span class="showOnEdit">
-        <label for="logo">Logo:</label>
-        <!--<input name="logo" type="file"
-            base64="{{ResearchGroup.serializeBinary(ResearchGroup.getLogo).base64}}"
-            mimeType="{{ResearchGroup.serializeBinary(ResearchGroup.getLogo).mimeType}}">-->
-        <br>
-    </span>
-   {% include '@templates/forms/innerForm.html.twig' with {'Entity': ResearchGroup} %}
+    {% include '@templates/forms/innerForm.html.twig' with {'Entity': ResearchGroup} %}
 </form>

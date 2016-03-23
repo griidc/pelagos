@@ -9,6 +9,8 @@ use JMS\Serializer\Annotation as Serializer;
 
 use Pelagos\Exception\PasswordException;
 
+use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
+
 /**
  * Entity class to represent an Account.
  *
@@ -20,6 +22,16 @@ class Account extends Entity implements UserInterface, \Serializable
      * A friendly name for this type of entity.
      */
     const FRIENDLY_NAME = 'Account';
+
+    /**
+     * The standard role given to all users.
+     */
+    const ROLE_USER = 'ROLE_USER';
+
+    /**
+     * A role given only to Data Repository Managers.
+     */
+    const ROLE_DATA_REPOSITORY_MANAGER = 'ROLE_DATA_REPOSITORY_MANAGER';
 
     /**
      * Person this account is attached to.
@@ -272,7 +284,14 @@ class Account extends Entity implements UserInterface, \Serializable
      */
     public function getRoles()
     {
-        return array('ROLE_USER');
+        $roles = array(self::ROLE_USER);
+        foreach ($this->getPerson()->getPersonDataRepositories() as $personDataRepository) {
+            if ($personDataRepository->getRole()->getName() == DataRepositoryRoles::MANAGER and
+                !in_array(self::ROLE_DATA_REPOSITORY_MANAGER, $roles)) {
+                $roles[] = self::ROLE_DATA_REPOSITORY_MANAGER;
+            }
+        }
+        return $roles;
     }
 
     /**

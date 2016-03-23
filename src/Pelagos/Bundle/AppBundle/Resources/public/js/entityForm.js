@@ -34,6 +34,10 @@
                 return false;
             }
 
+            if ($(this).hasAttr("newform")) {
+                return false;
+            }
+
             var actionURL = $(this).attr("action");
 
             $("input,textarea,select", this).each(function() {
@@ -70,8 +74,8 @@
             var formValidator = $(this).validate({
                 submitHandler: function(form) {
                     $(thisForm).trigger("presubmit");
-                    if ($(form).find("[name=\"id\"][readonly]").val() !== "" 
-                        && $(form).find("[name=\"id\"][readonly]").val() !== undefined) {
+                    if ($(form).find("[name=\"id\"][readonly],[name=\"id\"]:hidden").val() !== ""
+                        && $(form).find("[name=\"id\"][readonly],[name=\"id\"]:hidden").val() !== undefined) {
                         updateEntity(form, "Update");
                     } else {
                         updateEntity(form, "Create");
@@ -84,9 +88,7 @@
                           "</div><br><button class=\"entityFormButton\" type=\"submit\">Save</button>" +
                           "&nbsp;<button id=\"cancelButton\" class=\"entityFormButton\" type=\"reset\">Cancel</button></div>";
 
-            if (!$(this).hasAttr("newform")) {
-                $(this).append(buttons);
-            }
+            $(this).append(buttons);
 
             $(".entityFormButton").css("visibility", "hidden").button();
 
@@ -118,35 +120,39 @@
                 }
             });
 
-            $(".entityWrapper").has("[editable],[creatable] input[name='id']", this).on("click", function() {
-                if (!$(this).hasClass("active")) {
-                    $(this).addClass("active");
+            $(".entityWrapper")
+                .find(this)
+                .filter("[editable],[creatable]")
+                .parent()
+                .on("click", function() {
+                    if (!$(this).hasClass("active")) {
+                        $(this).addClass("active");
 
-                    var url = actionURL;
+                        var url = actionURL;
 
-                    if (!($(thisForm).find("[name=\"id\"]").val() === "")) {
-                        url += "/" + $(thisForm).find("[name=\"id\"]").val();
-                    }
-
-                    url += "/validateProperty";
-
-                    $("input:visible:text,textarea,select", this).each(function() {
-                        $(this).attr("disabled", false);
-                        if (!$(this).hasAttr("dontvalidate")) {
-                            $(this).rules("add", {
-                                remote: {
-                                    url: url
-                                }
-                            });
+                        if (!($(thisForm).find("[name=\"id\"]").val() === "")) {
+                            url += "/" + $(thisForm).find("[name=\"id\"]").val();
                         }
-                    });
-                    $(".innerForm", this).hide();
-                    $(".entityFormButton,.showOnEdit", this)
-                    .css({opacity: 0.0, visibility: "visible"})
-                    .animate({opacity: 1.0});
-                    $("button", this).button("enable");
-                }
-            });
+
+                        url += "/validateProperty";
+
+                        $("input:visible:text,textarea,select", this).each(function() {
+                            $(this).attr("disabled", false);
+                            if (!$(this).hasAttr("dontvalidate")) {
+                                $(this).rules("add", {
+                                    remote: {
+                                        url: url
+                                    }
+                                });
+                            }
+                        });
+                        $(".innerForm", this).hide();
+                        $(".entityFormButton,.showOnEdit", this)
+                        .css({opacity: 0.0, visibility: "visible"})
+                        .animate({opacity: 1.0});
+                        $("button", this).button("enable");
+                    }
+                });
 
             $(this).bind("reset", function() {
                 formValidator.resetForm();
@@ -169,36 +175,15 @@
             });
 
             if (entityId === "") {
-                $(".entityWrapper").has("[creatable] input[name='id']", this).click();
+                $(".entityWrapper")
+                    .find(this)
+                    .filter("[creatable]")
+                    .has("input[name='id']")
+                    .parent()
+                    .click();
             }
 
             // Special stuff for Addform
-            if ($(this).has(".addimg").length ? true : false) {
-
-                $(this).fadeOut();
-
-                $(".addimg", this).button().click(function() {
-                    var addImg = $(this).fadeOut();
-                    var newForm = $(thisForm)
-                        .clone(false)
-                        .removeAttr("newform")
-                        .insertBefore(this)
-                        .fadeIn()
-                        .entityForm();
-
-                    $(newForm).find("#cancelButton").click(function() {
-                        addImg.fadeIn();
-                        newForm.remove();
-                    });
-
-                    // TODO: Need code for when form is persisted and
-                    // TODO: Catch submit button to wrap this form in table row
-                });
-
-                var addimg = $(".addimg", this).detach();
-
-                addimg.insertAfter($(this));
-            }
 
             //Special stuff for Single Field
             if ($(this).has(".editableField").length ? true : false) {
@@ -451,9 +436,6 @@
                         if (!$.isNumeric(urlParts[urlParts.length - 1])) {
                             window.history.pushState(newID, docTitle, newURL);
                         }
-                        //Set ID on form
-                        $(form).find('[name="id"]').val(newID).attr("readonly", "true");
-
                     }
                 },
                 success: function(data, textStatus, jqXHR) {
@@ -462,6 +444,8 @@
                         var newID = entityId;
                         if (returnCode === 201) {
                             newID = jqXHR.getResponseHeader("X-Resource-Id");
+                            //Set ID on form
+                            $(form).find('[name="id"]').val(newID).attr("readonly", "true");
                         }
                         message = prefixPhrase + " " + entityType + " successfully with ID:" + newID;
                         //$(form).fillForm(data);

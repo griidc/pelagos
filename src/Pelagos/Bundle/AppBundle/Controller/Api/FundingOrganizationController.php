@@ -122,7 +122,7 @@ class FundingOrganizationController extends EntityController
      *   }
      * )
      *
-     * @Rest\View()
+     * @Rest\View(serializerEnableMaxDepthChecks = true)
      *
      * @return FundingOrganization The Funding Organization that was retrieved.
      */
