@@ -1,27 +1,34 @@
 {% extends "PelagosAppBundle::layout.html.twig" %}
 
 {% block body %}
-    <ul>
-        <li><a href="{{ path("pelagos_app_ui_account_default") }}">Request Account</a></li>
-        <li><a href="{{ path("pelagos_app_ui_datarepository_default", {id:1}) }}">Data Repository</a></li>
-        <li>
-            Lists
-            <ul>
-                <li><a href="{{ path("pelagos_app_list_fundingorganizations") }}">Funding Organizations</a></li>
-                <li><a href="{{ path("pelagos_app_list_researchgroups") }}">Research Groups</a></li>
-                <li><a href="{{ path("pelagos_app_list_people") }}">People</a></li>
-            </ul>
-        </li>
-        <li>
-            Create New:
-            <ul>
-                <li><a href="{{ path("pelagos_app_ui_fundingorganization_default") }}">Funding Organization</a></li>
-                <li><a href="{{ path("pelagos_app_ui_fundingcycle_default") }}">Funding Cycle</a></li>
-                <li><a href="{{ path("pelagos_app_ui_researchgroup_default") }}">Research Group</a></li>
-                <li><a href="{{ path("pelagos_app_ui_person_default") }}">Person</a></li>
-                <li><a href="{{ path("pelagos_app_ui_persondatarepository_default") }}">Person to Data Repository Association</a></li>
-                <li><a href="{{ path("pelagos_app_ui_personfundingorganization_default") }}">Person to Funding Organization Association</a></li>
-            </ul>
-        </li>
-    </ul>
+    {% if is_granted('ROLE_DATA_REPOSITORY_MANAGER') %}
+        <ul>
+            <li><a href="{{ path("pelagos_app_ui_account_default") }}">Request Account</a></li>
+            <li><a href="{{ path("pelagos_app_ui_datarepository_default", {id:1}) }}">Data Repository</a></li>
+            <li>
+                Lists
+                <ul>
+                    <li><a href="{{ path("pelagos_app_list_fundingorganizations") }}">Funding Organizations</a></li>
+                    <li><a href="{{ path("pelagos_app_list_researchgroups") }}">Research Groups</a></li>
+                    <li><a href="{{ path("pelagos_app_list_people") }}">People</a></li>
+                </ul>
+            </li>
+            <li>
+                Create New:
+                <ul>
+                    <li><a href="{{ path("pelagos_app_ui_fundingorganization_default") }}">Funding Organization</a></li>
+                    <li><a href="{{ path("pelagos_app_ui_fundingcycle_default") }}">Funding Cycle</a></li>
+                    <li><a href="{{ path("pelagos_app_ui_researchgroup_default") }}">Research Group</a></li>
+                    <li><a href="{{ path("pelagos_app_ui_person_default") }}">Person</a></li>
+                    <li><a href="{{ path("pelagos_app_ui_persondatarepository_default") }}">Person to Data Repository Association</a></li>
+                    <li><a href="{{ path("pelagos_app_ui_personfundingorganization_default") }}">Person to Funding Organization Association</a></li>
+                </ul>
+            </li>
+        </ul>
+    {% else %}
+        <div class="messages error">
+            <h2 class="element-invisible">Error message</h2>
+            This page is only accessible by Data Repository Managers.
+        </div>
+    {% endif %}
 {% endblock %}
