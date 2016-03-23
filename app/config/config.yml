@@ -93,7 +93,6 @@ assetic:
 
 simple_things_entity_audit:
     audited_entities:
-        - Pelagos\Entity\Account
         - Pelagos\Entity\DataRepository
         - Pelagos\Entity\FundingOrganization
         - Pelagos\Entity\FundingCycle
