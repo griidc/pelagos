@@ -70,8 +70,8 @@
             var formValidator = $(this).validate({
                 submitHandler: function(form) {
                     $(thisForm).trigger("presubmit");
-                    if ($(form).find("[name=\"id\"][readonly]").val() !== "" 
-                        && $(form).find("[name=\"id\"][readonly]").val() !== undefined) {
+                    if ($(form).find("[name=\"id\"][readonly],[name=\"id\"]:hidden").val() !== ""
+                        && $(form).find("[name=\"id\"][readonly],[name=\"id\"]:hidden").val() !== undefined) {
                         updateEntity(form, "Update");
                     } else {
                         updateEntity(form, "Create");
