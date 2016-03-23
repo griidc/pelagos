@@ -23,13 +23,13 @@ $(document).ready(function()
     $("#tabs")
         .tabs({ heightStyle: "content" })
         .tabs("disable", 1);
-
+        
     $("#logobutton")
-        .button()
-        .click(function() {
-            $("#fileupload").click();
-        });
-
+    .button()
+    .click(function() {
+        $("#fileupload").click();
+    });
+    
     $("#fileupload").fileupload({
         url: $(this).attr("data-url"),
         method: "PUT",
@@ -38,5 +38,48 @@ $(document).ready(function()
             $("#researchGroupLogo img").attr("src", data.url);
         }
     }).prop("disabled", !$.support.fileInput)
-    .parent().addClass($.support.fileInput ? undefined : "disabled");
+        .parent().addClass($.support.fileInput ? undefined : "disabled");
+
+    // Special stuff for Addform
+    if ($(document).has(".addimg").length ? true : false) {
+        var newForm = $("form[newform]");
+
+        newForm.fadeOut();
+
+        $(".addimg").button().click(function() {
+            var addImg = $(this).fadeOut();
+            var lastTr = $(newForm).closest("table").find("tr:last");
+
+            var cloneForm = newForm
+                .clone(false)
+                .insertBefore(lastTr)
+                .removeAttr("newform")
+                .fadeIn()
+                .entityForm()
+                ;
+
+            $(cloneForm).find("#cancelButton").click(function() {
+                addImg.fadeIn();
+                if ($(cloneForm).closest("form").find("input[name='id']").val() === "") {
+                    cloneForm
+                        .fadeOut()
+                        .unwrap()
+                        .remove();
+                }
+            });
+
+            $(cloneForm).find('button[type="submit"]').click(function() {
+                $(cloneForm).one("reset", function() {
+                    if ($(this).find("input[name='id']").val() !== undefined) {
+                        var newEntityForm = $(this);
+                        var newEntity = newEntityForm
+                            .parent()
+                            .wrap("<tr><td><div><p></p><p></p></div></td></tr>")
+                            ;
+                        addImg.fadeIn();
+                    }
+                });
+            });
+        });
+    }
 });

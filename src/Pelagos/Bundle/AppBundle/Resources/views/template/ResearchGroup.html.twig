@@ -78,8 +78,13 @@
                         </div>
                     </td>
                 </tr>
-                {% endif %}
+            {% endif %}
             </table>
+            {% if newResearchGroupPerson is defined and is_granted('CAN_CREATE', newResearchGroupPerson) %}
+                {% image '@PelagosAppBundle/Resources/public/images/add.png' %}
+                    <img class="addimg" src="{{asset_url}}">
+                {% endimage %}
+            {% endif %}
         </div>
     </div>
 {% endblock %}
