@@ -115,7 +115,7 @@ class PersonFundingOrganizationController extends EntityController
      *   }
      * )
      *
-     * @Rest\View()
+     * @Rest\View(serializerEnableMaxDepthChecks = true)
      *
      * @return PersonFundingOrganization
      */

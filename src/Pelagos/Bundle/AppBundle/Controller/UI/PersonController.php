@@ -24,11 +24,11 @@ class PersonController extends UIController
      *
      * @param string $id The id of the entity to retrieve.
      *
-     * @Route("/Person/{id}")
+     * @Route("/person/{id}")
      *
      * @return Response A Response instance.
      */
-    public function showAction($id = null)
+    public function defaultAction($id = null)
     {
         $entityHandler = $this->get('pelagos.entity.handler');
         

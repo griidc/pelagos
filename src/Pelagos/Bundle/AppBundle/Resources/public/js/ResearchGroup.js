@@ -23,6 +23,22 @@ $(document).ready(function()
     $("#tabs")
         .tabs({ heightStyle: "content" })
         .tabs("disable", 1);
+        
+    $("#logobutton")
+    .button()
+    .click(function() {
+        $("#fileupload").click();
+    });
+    
+    $("#fileupload").fileupload({
+        url: $(this).attr("data-url"),
+        method: "PUT",
+        multipart: false,
+        done: function (e, data) {
+            $("#researchGroupLogo img").attr("src", data.url);
+        }
+    }).prop("disabled", !$.support.fileInput)
+        .parent().addClass($.support.fileInput ? undefined : "disabled");
 
     // Special stuff for Addform
     if ($(document).has(".addimg").length ? true : false) {
@@ -60,7 +76,6 @@ $(document).ready(function()
                             .parent()
                             .wrap("<tr><td><div><p></p><p></p></div></td></tr>")
                             ;
-
                         addImg.fadeIn();
                     }
                 });

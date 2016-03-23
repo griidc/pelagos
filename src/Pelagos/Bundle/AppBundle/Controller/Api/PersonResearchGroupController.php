@@ -115,7 +115,7 @@ class PersonResearchGroupController extends EntityController
      *   }
      * )
      *
-     * @Rest\View()
+     * @Rest\View(serializerEnableMaxDepthChecks = true)
      *
      * @return PersonResearchGroup
      */

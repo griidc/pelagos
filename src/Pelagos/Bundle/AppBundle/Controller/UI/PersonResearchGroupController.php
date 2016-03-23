@@ -24,11 +24,11 @@ class PersonResearchGroupController extends UIController
      *
      * @throws BadRequestHttpException When the Research Group ID is not provided.
      *
-     * @Route("/PersonResearchGroup/{id}")
+     * @Route("/person-research-group/{id}")
      *
      * @return Response A Response instance.
      */
-    public function showAction(Request $request, $id = null)
+    public function defaultAction(Request $request, $id = null)
     {
         $researchGroupId = $request->query->get('ResearchGroup');
 
