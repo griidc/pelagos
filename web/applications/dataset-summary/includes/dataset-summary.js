@@ -63,6 +63,10 @@ $(document).ready(function() {
             alert("Invalid UDI!");
         }
     });
+    $("#udi").on("input", function() {
+        $("#delete-dataset").prop("disabled", true);
+        $("#summary-display").val("");
+    });
 });
 
 function isValidUdi(udi) {
