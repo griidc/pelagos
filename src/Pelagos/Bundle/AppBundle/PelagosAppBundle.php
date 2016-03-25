@@ -50,5 +50,21 @@ class PelagosAppBundle extends Bundle
                 // Doctrine type
                 'interval'
             );
+
+        // If the custom type "citext" has not already been added to the Doctrine type map.
+        if (!Type::hasType('citext')) {
+            // Add the mapping.
+            Type::addType('citext', 'Pelagos\DoctrineExtensions\DBAL\Types\CITextType');
+        }
+        // Register citext for use with our database platform.
+        $entityManager
+            ->getConnection()
+            ->getDatabasePlatform()
+            ->registerDoctrineTypeMapping(
+                // Database type
+                'citext',
+                // Doctrine type
+                'citext'
+            );
     }
 }
