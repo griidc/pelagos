@@ -122,6 +122,8 @@ abstract class EntityController extends FOSRestController
      * @param string  $entityClass The type of entity.
      * @param integer $id          The id of the entity.
      *
+     * @throws BadRequestHttpException When the entity is not deletable.
+     *
      * @return Entity The deleted entity.
      */
     public function handleDelete($entityClass, $id)
