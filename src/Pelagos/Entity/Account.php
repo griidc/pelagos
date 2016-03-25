@@ -2,19 +2,19 @@
 
 namespace Pelagos\Entity;
 
-use \Symfony\Component\Validator\Constraints as Assert;
-use \Pelagos\Exception\PasswordException;
-use \Symfony\Component\Security\Core\User\UserInterface;
-use JMS\Serializer\Annotation\Exclude;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
+
+use JMS\Serializer\Annotation as Serializer;
+
+use Pelagos\Exception\PasswordException;
 
 use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
 
 /**
- * Implementation of the Account class.
+ * Entity class to represent an Account.
  *
  * This class defines an Account, which is a set of credentials for a Person.
- *
- * @package Pelagos\Entity
  */
 class Account extends Entity implements UserInterface, \Serializable
 {
@@ -32,30 +32,6 @@ class Account extends Entity implements UserInterface, \Serializable
      * A role given only to Data Repository Managers.
      */
     const ROLE_DATA_REPOSITORY_MANAGER = 'ROLE_DATA_REPOSITORY_MANAGER';
-
-    /**
-     * Static array containing a list of the properties and their attributes.
-     *
-     * @var array
-     *
-     * @see Entity
-     *
-     * @Exclude
-     */
-    protected static $properties = array(
-        'person' => array(
-            'type' => 'object',
-            'class' => 'Pelagos\Entity\Person',
-            'entity' => 'Person',
-            'setter' => 'setPerson',
-            'getter' => 'getPerson',
-        ),
-        'userId' => array(
-            'type' => 'string',
-            'setter' => 'setUserId',
-            'getter' => 'getUserId',
-        ),
-    );
 
     /**
      * Person this account is attached to.
@@ -88,7 +64,7 @@ class Account extends Entity implements UserInterface, \Serializable
      *     message="Password hash is required"
      * )
      *
-     * @Exclude
+     * @Serializer\Exclude
      */
     protected $passwordHash;
 
@@ -101,7 +77,7 @@ class Account extends Entity implements UserInterface, \Serializable
      *     message="Password hash algorithm is required"
      * )
      *
-     * @Exclude
+     * @Serializer\Exclude
      */
     protected $passwordHashAlgorithm;
 
@@ -114,7 +90,7 @@ class Account extends Entity implements UserInterface, \Serializable
      *     message="Password hash salt is required"
      * )
      *
-     * @Exclude
+     * @Serializer\Exclude
      */
     protected $passwordHashSalt;
 

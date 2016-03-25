@@ -1,12 +1,10 @@
 <?php
-/**
- * Interface PersonAssociationInterface. An abstract api for classes that contain a RoleInterface attribute.
- *
- * @package Pelagos\Entity
- */
 
 namespace Pelagos\Entity;
 
+/**
+ * An abstract api for classes that contain a RoleInterface attribute.
+ */
 interface PersonAssociationInterface
 {
 

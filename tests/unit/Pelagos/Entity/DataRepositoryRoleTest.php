@@ -47,32 +47,6 @@ class DataRepositoryRoleTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test that the properties array is defined correctly.
-     *
-     * @return void
-     */
-    public function testProperties()
-    {
-        $properties = $this->dataRepositoryRole->getProperties();
-
-        $this->assertArrayHasKey('name', $properties);
-        $this->assertArrayHasKey('type', $properties['name']);
-        $this->assertEquals('string', $properties['name']['type']);
-        $this->assertArrayHasKey('setter', $properties['name']);
-        $this->assertEquals('setName', $properties['name']['setter']);
-        $this->assertArrayHasKey('getter', $properties['name']);
-        $this->assertEquals('getName', $properties['name']['getter']);
-
-        $this->assertArrayHasKey('weight', $properties);
-        $this->assertArrayHasKey('type', $properties['weight']);
-        $this->assertEquals('integer', $properties['weight']['type']);
-        $this->assertArrayHasKey('setter', $properties['weight']);
-        $this->assertEquals('setWeight', $properties['weight']['setter']);
-        $this->assertArrayHasKey('getter', $properties['weight']);
-        $this->assertEquals('getWeight', $properties['weight']['getter']);
-    }
-
-    /**
      * Test the getName method.
      *
      * This method should return the name that was set in setUp.

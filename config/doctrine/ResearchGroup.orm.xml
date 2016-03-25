@@ -1,1 +1,50 @@
-Pelagos.Entity.ResearchGroup.dcm.xml
+<!--
+This file defines the Doctrine mapping between the Pelagos\Entity\ResearchGroup
+entity class and the research_group view in the postgres database.
+Properties other than id that are inherited from Pelagos\Entity\Entity are mapped in
+Pelagos.Entity.Entity.dcm.xml
+-->
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                        http://raw.github.com/doctrine/doctrine2/master/doctrine-mapping.xsd">
+
+    <entity name="Pelagos\Entity\ResearchGroup" table="research_group">
+
+        <id name="id" column="research_group_number" type="integer">
+            <generator strategy="SEQUENCE" />
+            <sequence-generator sequence-name="seq_research_group_number" allocation-size="1" initial-value="1" />
+        </id>
+
+        <field name="name"               column="name"                type="string" />
+
+        <field name="description"        column="description"         type="string" nullable="true" />
+
+        <field name="url"                column="website"             type="string" nullable="true" />
+
+        <field name="phoneNumber"        column="phone_number"        type="string" nullable="true" />
+
+        <field name="deliveryPoint"      column="delivery_point"      type="string" nullable="true" />
+
+        <field name="city"               column="city"                type="string" nullable="true" />
+
+        <field name="country"            column="country"             type="string" nullable="true" />
+
+        <field name="administrativeArea" column="administrative_area" type="string" nullable="true" />
+
+        <field name="postalCode"         column="postal_code"         type="string" nullable="true" />
+
+        <field name="logo"               column="logo"                type="blob"   nullable="true" />
+
+        <field name="emailAddress"       column="email_address"       type="string" nullable="true" />
+
+        <many-to-one field="fundingCycle" target-entity="FundingCycle" inversed-by="researchGroups">
+            <join-column name="funding_cycle_number" referenced-column-name="funding_cycle_number" />
+        </many-to-one>
+
+        <one-to-many field="personResearchGroups" target-entity="PersonResearchGroup" mapped-by="researchGroup" />
+
+    </entity>
+
+</doctrine-mapping>

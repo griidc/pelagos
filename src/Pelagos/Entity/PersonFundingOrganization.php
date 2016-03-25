@@ -2,14 +2,15 @@
 
 namespace Pelagos\Entity;
 
-use \Symfony\Component\Validator\Constraints as Assert;
-use JMS\Serializer\Annotation\Exclude;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
+
 use Hateoas\Configuration\Annotation as Hateoas;
 
 /**
- * Class to represent Person - Funding Organization associations.
+ * Entity class to represent a Person to Funding Organization Association.
  *
- * @Assert\UniqueEntity(
+ * @UniqueEntity(
  *     fields={"person", "fundingOrganization"},
  *     errorPath="person",
  *     message="A Person can have only one association with a Funding Organization"
@@ -46,40 +47,9 @@ use Hateoas\Configuration\Annotation as Hateoas;
 class PersonFundingOrganization extends Entity implements PersonAssociationInterface
 {
     /**
-     * Static array containing a list of the properties and their attributes.
-     *
-     * @var array $properties
-     *
-     * @Exclude
+     * A friendly name for this type of entity.
      */
-    protected static $properties = array(
-        'person' => array(
-            'type' => 'object',
-            'class' => 'Pelagos\Entity\Person',
-            'entity' => 'Person',
-            'setter' => 'setPerson',
-            'getter' => 'getPerson',
-        ),
-        'fundingOrganization' => array(
-            'type' => 'object',
-            'class' => 'Pelagos\Entity\FundingOrganization',
-            'entity' => 'FundingOrganization',
-            'setter' => 'setFundingOrganization',
-            'getter' => 'getFundingOrganization',
-        ),
-        'role' => array(
-            'type' => 'object',
-            'class' => 'Pelagos\Entity\FundingOrganizationRole',
-            'entity' => 'FundingOrganizationRole',
-            'setter' => 'setRole',
-            'getter' => 'getRole',
-        ),
-        'label' => array(
-            'type' => 'string',
-            'getter' => 'getLabel',
-            'setter' => 'setLabel',
-        ),
-    );
+    const FRIENDLY_NAME = 'Person to Funding Organization Association';
 
     /**
      * Person entity for this association.

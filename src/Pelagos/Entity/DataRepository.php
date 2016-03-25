@@ -1,23 +1,20 @@
 <?php
-/**
- * This file contains the implementation of the DataRepository entity class.
- *
- * @package    Pelagos\Entity
- * @subpackage DataRepository
- */
 
 namespace Pelagos\Entity;
 
-use \Symfony\Component\Validator\Constraints as Assert;
-use \Pelagos\Exception\NotDeletableException;
-use \Doctrine\Common\Collections\ArrayCollection;
-use JMS\Serializer\Annotation\Exclude;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
+
 use Hateoas\Configuration\Annotation as Hateoas;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
+use Pelagos\Exception\NotDeletableException;
+
 /**
- * Class to represent a Data Repository.
+ * Entity class to represent a Data Repository.
  *
- * @Assert\UniqueEntity(
+ * @UniqueEntity(
  *     fields={"name"},
  *     errorPath="name",
  *     message="A Data Repository with this name already exists"
@@ -47,80 +44,6 @@ class DataRepository extends Entity
      * A friendly name for this type of entity.
      */
     const FRIENDLY_NAME = 'Data Repository';
-
-    /**
-     * Static array containing a list of the properties and their attributes.
-     *
-     * @var array $properties
-     *
-     * @Exclude
-     */
-    protected static $properties = array(
-        'name' => array(
-            'type' => 'string',
-            'getter' => 'getName',
-            'setter' => 'setName',
-        ),
-        'emailAddress' => array(
-            'type' => 'string',
-            'getter' => 'getEmailAddress',
-            'setter' => 'setEmailAddress',
-        ),
-        'description' => array(
-            'type' => 'string',
-            'getter' => 'getDescription',
-            'setter' => 'setDescription',
-        ),
-        'url' => array(
-            'type' => 'string',
-            'getter' => 'getUrl',
-            'setter' => 'setUrl',
-        ),
-        'phoneNumber' => array(
-            'type' => 'string',
-            'getter' => 'getPhoneNumber',
-            'setter' => 'setPhoneNumber',
-        ),
-        'deliveryPoint' => array(
-            'type' => 'string',
-            'getter' => 'getDeliveryPoint',
-            'setter' => 'setDeliveryPoint',
-        ),
-        'city' => array(
-            'type' => 'string',
-            'getter' => 'getCity',
-            'setter' => 'setCity',
-        ),
-        'administrativeArea' => array(
-            'type' => 'string',
-            'getter' => 'getAdministrativeArea',
-            'setter' => 'setAdministrativeArea',
-        ),
-        'postalCode' => array(
-            'type' => 'string',
-            'getter' => 'getPostalCode',
-            'setter' => 'setPostalCode',
-        ),
-        'country' => array(
-            'type' => 'string',
-            'getter' => 'getCountry',
-            'setter' => 'setCountry',
-        ),
-        'personDataRepositories' => array(
-            'type' => 'object',
-            'class' => '\Doctrine\Common\Collections\Collection',
-            'getter' => 'getPersonDataRepositories',
-            'setter' => 'setPersonDataRepositories',
-            'serialize' => false,
-        ),
-        'fundingOrganizations' => array(
-            'type' => 'object',
-            'class' => '\Doctrine\Common\Collections\Collection',
-            'getter' => 'getFundingOrganizations',
-            'setter' => 'setFundingOrganizations',
-            'serialize' => false,
-        ),
-    );
 
     /**
      * Name of a Data Repository.

@@ -2,6 +2,8 @@
 
 namespace Pelagos;
 
+use Symfony\Component\PropertyAccess\PropertyAccess;
+
 /**
  * Custom Twig extensions.
  */
@@ -50,6 +52,7 @@ class TwigEntityExtensions extends \Twig_Extension
         usort(
             $entityList,
             function ($a, $b) use ($properties, $collator) {
+                $accessor = PropertyAccess::createPropertyAccessor();
                 while (count($properties) > 0) {
                     // For each sort criteria, reset 'a' and 'b' entity back to original.
                     $aEntity = $a;
@@ -62,25 +65,14 @@ class TwigEntityExtensions extends \Twig_Extension
                     while (count($propertyChain) > 0) {
                         // Pull a property off the front of the chain.
                         $property = array_shift($propertyChain);
-                        // Make sure the the property exists on both sides.
-                        if (!$aEntity->propertyExists($property) or !$bEntity->propertyExists($property)) {
-                            // If $property doesn't exist on either side, we can't sort.
-                            return 0;
-                        }
-                        // Get the properties list from both sides.
-                        $aProperties = $aEntity->getProperties();
-                        $bProperties = $bEntity->getProperties();
-                        // Make sure the property has a getter on both sides.
-                        if (!array_key_exists($property, $aProperties) or
-                            !array_key_exists($property, $bProperties) or
-                            !array_key_exists('getter', $aProperties[$property]) or
-                            !array_key_exists('getter', $bProperties[$property])) {
-                            // If $property doesn't have a getter specified on either side, we can't sort.
+                        // Make sure the the property exists and is readable on both sides.
+                        if (!$accessor->isReadable($aEntity, $property) or !$accessor->isReadable($bEntity, $property)) {
+                            // If $property doesn't exist or is not readable on either side, we can't sort.
                             return 0;
                         }
                         // Get values for the property from both sides via the getter.
-                        $aVal = $aEntity->$aProperties[$property]['getter']();
-                        $bVal = $bEntity->$bProperties[$property]['getter']();
+                        $aVal = $accessor->getValue($aEntity, $property);
+                        $bVal = $accessor->getValue($bEntity, $property);
                         // If the property value from 'a' is a reference to another entity.
                         if (gettype($aVal) == 'object' and $aVal instanceof \Pelagos\Entity\Entity) {
                             // Put it in to $aEntity to allow further processing.

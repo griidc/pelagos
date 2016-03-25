@@ -1,39 +1,20 @@
 <?php
 
-
 namespace Pelagos\Entity;
 
-use \Symfony\Component\Validator\Constraints as Assert;
-use JMS\Serializer\Annotation\Exclude;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Class AbstractRole A base class for the representation of typed Role classes.
+ * Base entity class for the representation of typed Role classes.
  *
- * Classes of the type XxxRole can extends this base class.
- *
- * @package Pelagos\Entity
+ * Classes of the type XxxRole can extend this base class.
  */
 abstract class AbstractRole extends Entity implements RoleInterface
 {
     /**
-     * Static array containing a list of the properties and their attributes.
-     *
-     * @var array $properties
-     *
-     * @Exclude
+     * A friendly name for this type of entity.
      */
-    protected static $properties = array(
-        'name' => array(
-            'type' => 'string',
-            'getter' => 'getName',
-            'setter' => 'setName',
-        ),
-        'weight' => array(
-            'type' => 'integer',
-            'getter' => 'getWeight',
-            'setter' => 'setWeight',
-        ),
-    );
+    const FRIENDLY_NAME = 'Role';
 
     /**
      * The name of this role.
