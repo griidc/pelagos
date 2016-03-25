@@ -11,9 +11,10 @@ use Pelagos\Exception\NotDeletableException;
  * Abstract class that contains basic properties and methods common to all Pelagos entities.
  *
  * @UniqueEntity(
- *     fields={"id"},
- *     errorPath="id",
- *     message="This id has already been assigned"
+ *     fields = {"id"},
+ *     errorPath = "id",
+ *     message = "This id has already been assigned",
+ *     groups = {"unique_id"}
  * )
  */
 abstract class Entity
@@ -27,6 +28,12 @@ abstract class Entity
      * Entity identifier.
      *
      * @var int $id
+     *
+     * @Assert\Regex(
+     *     pattern = "/^(|[1-9]\d*)$/",
+     *     message = "ID must be a positive integer",
+     *     groups = {"id"}
+     * )
      */
     protected $id;
 

@@ -14,6 +14,13 @@ use Pelagos\Exception\NotDeletableException;
 /**
  * Entity class to represent a Research Group.
  *
+ * @Assert\GroupSequence({
+ *     "id",
+ *     "unique_id",
+ *     "ResearchGroup",
+ *     "Entity",
+ * })
+ *
  * @UniqueEntity(
  *     fields={"name", "fundingCycle"},
  *     errorPath="name",

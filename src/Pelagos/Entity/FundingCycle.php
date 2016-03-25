@@ -14,6 +14,13 @@ use Pelagos\Exception\NotDeletableException;
 /**
  * Entity class to represent a Funding Cycle.
  *
+ * @Assert\GroupSequence({
+ *     "id",
+ *     "unique_id",
+ *     "FundingCycle",
+ *     "Entity",
+ * })
+ *
  * @UniqueEntity(
  *     fields={"fundingOrganization","name"},
  *     errorPath="name",
