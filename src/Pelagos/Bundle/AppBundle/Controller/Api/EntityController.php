@@ -13,6 +13,7 @@ use FOS\RestBundle\Util\Codes;
 
 use Pelagos\Entity\Entity;
 use Pelagos\Entity\Account;
+use Pelagos\Exception\NotDeletableException;
 use Pelagos\Exception\UnmappedPropertyException;
 
 /**
@@ -121,12 +122,21 @@ abstract class EntityController extends FOSRestController
      * @param string  $entityClass The type of entity.
      * @param integer $id          The id of the entity.
      *
+     * @throws BadRequestHttpException When the entity is not deletable.
+     *
      * @return Entity The deleted entity.
      */
     public function handleDelete($entityClass, $id)
     {
         $entity = $this->handleGetOne($entityClass, $id);
-        $this->container->get('pelagos.entity.handler')->delete($entity);
+        try {
+            $this->container->get('pelagos.entity.handler')->delete($entity);
+        } catch (NotDeletableException $exception) {
+            throw new BadRequestHttpException(
+                'This ' . $entity::FRIENDLY_NAME . ' is not deletable because ' .
+                implode(', ', $exception->getReasons()) . '.'
+            );
+        }
         return $entity;
     }
 

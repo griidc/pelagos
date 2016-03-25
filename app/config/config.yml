@@ -79,6 +79,8 @@ fos_rest:
         serialize_null: true
     exception:
         enabled: true
+        messages:
+            'Symfony\Component\HttpKernel\Exception\BadRequestHttpException': true
 
 nelmio_api_doc:
     sandbox:
