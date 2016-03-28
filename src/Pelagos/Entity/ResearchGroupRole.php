@@ -2,8 +2,12 @@
 
 namespace Pelagos\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+
 /**
  * Entity class to represent a Research Group Role.
+ *
+ * @ORM\Entity
  */
 class ResearchGroupRole extends AbstractRole implements RoleInterface
 {

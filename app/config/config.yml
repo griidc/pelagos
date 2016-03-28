@@ -54,8 +54,8 @@ doctrine:
     orm:
         mappings:
             Pelagos:
-                type: xml
-                dir: '%kernel.root_dir%/../config/doctrine'
+                type: annotation
+                dir: '%kernel.root_dir%/../src/Pelagos/Entity'
                 is_bundle: false
                 prefix: Pelagos\Entity
                 alias: Pelagos

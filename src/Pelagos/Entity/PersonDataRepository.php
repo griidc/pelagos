@@ -2,6 +2,8 @@
 
 namespace Pelagos\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -9,6 +11,8 @@ use Hateoas\Configuration\Annotation as Hateoas;
 
 /**
  * Entity class to represent a Person to Data Repository Association.
+ *
+ * @ORM\Entity
  *
  * @UniqueEntity(
  *     fields={"person", "dataRepository"},
@@ -56,6 +60,8 @@ class PersonDataRepository extends Entity implements PersonAssociationInterface
      *
      * @var Person
      *
+     * @ORM\ManyToOne(targetEntity="Person", inversedBy="personDataRepositories")
+     *
      * @Assert\NotBlank(
      *     message="Person is required"
      * )
@@ -66,6 +72,8 @@ class PersonDataRepository extends Entity implements PersonAssociationInterface
      * Data Repository entity for this association.
      *
      * @var DataRepository
+     *
+     * @ORM\ManyToOne(targetEntity="DataRepository", inversedBy="personDataRepositories")
      *
      * @Assert\NotBlank(
      *     message="Data Repositry is required"
@@ -78,6 +86,8 @@ class PersonDataRepository extends Entity implements PersonAssociationInterface
      *
      * @var DataRepositoryRole
      *
+     * @ORM\ManyToOne(targetEntity="DataRepositoryRole")
+     *
      * @Assert\NotBlank(
      *     message="Role is required"
      * )
@@ -88,6 +98,8 @@ class PersonDataRepository extends Entity implements PersonAssociationInterface
      * Label for this association.
      *
      * @var string
+     *
+     * @ORM\Column
      *
      * @Assert\NotBlank(
      *     message="Label is required"
