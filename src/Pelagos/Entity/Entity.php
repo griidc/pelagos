@@ -29,9 +29,12 @@ abstract class Entity
      *
      * @var int $id
      *
-     * @Assert\Regex(
-     *     pattern = "/^(|[1-9]\d*)$/",
-     *     message = "ID must be a positive integer",
+     * @Assert\Range(
+     *     min = 1,
+     *     max = 2147483647,
+     *     minMessage = "ID must be {{ limit }} or more.",
+     *     maxMessage = "ID must be {{ limit }} or less",
+     *     invalidMessage = "ID must be a positive integer",
      *     groups = {"id"}
      * )
      */
