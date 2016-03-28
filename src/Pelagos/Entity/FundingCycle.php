@@ -72,7 +72,7 @@ class FundingCycle extends Entity
      *
      * @access protected
      *
-     * @ORM\Column
+     * @ORM\Column(type="citext")
      *
      * @Assert\NotBlank(
      *     message="Name is required"

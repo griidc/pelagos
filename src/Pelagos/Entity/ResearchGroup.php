@@ -66,7 +66,7 @@ class ResearchGroup extends Entity
      *
      * @access protected
      *
-     * @ORM\Column
+     * @ORM\Column(type="citext")
      *
      * @Assert\NotBlank(
      *     message="Name is required"
@@ -232,7 +232,7 @@ class ResearchGroup extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="citext", nullable=true)
      *
      * @Assert\NoAngleBrackets(
      *     message="Email address cannot contain angle brackets (< or >)"

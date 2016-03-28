@@ -56,7 +56,7 @@ class DataRepository extends Entity
      *
      * @access protected
      *
-     * @ORM\Column
+     * @ORM\Column(type="citext")
      *
      * @Assert\NotBlank(
      *     message="Name is required"
@@ -74,7 +74,7 @@ class DataRepository extends Entity
      *
      * @access protected
      *
-     * @ORM\Column
+     * @ORM\Column(type="citext")
      *
      * @Assert\NotBlank(
      *     message="Email address is required"

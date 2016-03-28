@@ -25,7 +25,7 @@ abstract class AbstractRole extends Entity implements RoleInterface
      *
      * @var string
      *
-     * @ORM\Column
+     * @ORM\Column(type="citext")
      *
      * @Assert\NotBlank(
      *     message="Name is required"
