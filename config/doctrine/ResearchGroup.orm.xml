@@ -17,7 +17,7 @@ Pelagos.Entity.Entity.dcm.xml
             <sequence-generator sequence-name="seq_research_group_number" allocation-size="1" initial-value="1" />
         </id>
 
-        <field name="name"               column="name"                type="string" />
+        <field name="name"               column="name"                type="citext" />
 
         <field name="description"        column="description"         type="string" nullable="true" />
 
@@ -37,7 +37,7 @@ Pelagos.Entity.Entity.dcm.xml
 
         <field name="logo"               column="logo"                type="blob"   nullable="true" />
 
-        <field name="emailAddress"       column="email_address"       type="string" nullable="true" />
+        <field name="emailAddress"       column="email_address"       type="citext" nullable="true" />
 
         <many-to-one field="fundingCycle" target-entity="FundingCycle" inversed-by="researchGroups">
             <join-column name="funding_cycle_number" referenced-column-name="funding_cycle_number" />

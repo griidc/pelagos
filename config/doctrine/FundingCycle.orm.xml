@@ -17,7 +17,7 @@ Pelagos.Entity.Entity.dcm.xml
             <sequence-generator sequence-name="seq_funding_cycle_number" allocation-size="1" initial-value="1" />
         </id>
 
-        <field name="name"        column="name"        type="string" />
+        <field name="name"        column="name"        type="citext" />
 
         <field name="description" column="description" type="string" nullable="true" />
 
