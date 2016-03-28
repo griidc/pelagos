@@ -16,9 +16,10 @@ use Pelagos\Exception\NotDeletableException;
  * @ORM\HasLifecycleCallbacks
  *
  * @UniqueEntity(
- *     fields={"id"},
- *     errorPath="id",
- *     message="This id has already been assigned"
+ *     fields = {"id"},
+ *     errorPath = "id",
+ *     message = "This id has already been assigned",
+ *     groups = {"unique_id"}
  * )
  */
 abstract class Entity
@@ -36,6 +37,15 @@ abstract class Entity
      * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue
+     *
+     * @Assert\Range(
+     *     min = 1,
+     *     max = 2147483647,
+     *     minMessage = "ID must be {{ limit }} or more.",
+     *     maxMessage = "ID must be {{ limit }} or less",
+     *     invalidMessage = "ID must be a positive integer",
+     *     groups = {"id"}
+     * )
      */
     protected $id;
 

@@ -18,6 +18,13 @@ use Pelagos\Exception\NotDeletableException;
  *
  * @ORM\Entity
  *
+ * @Assert\GroupSequence({
+ *     "id",
+ *     "unique_id",
+ *     "ResearchGroup",
+ *     "Entity",
+ * })
+ *
  * @UniqueEntity(
  *     fields={"name", "fundingCycle"},
  *     errorPath="name",

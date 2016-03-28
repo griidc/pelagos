@@ -21,6 +21,13 @@ use Pelagos\Exception\NotDeletableException;
  *
  * @ORM\Entity
  *
+ * @Assert\GroupSequence({
+ *     "id",
+ *     "unique_id",
+ *     "Person",
+ *     "Entity",
+ * })
+ *
  * @UniqueEntity(
  *     fields={"emailAddress"},
  *     errorPath="emailAddress",
