@@ -2,6 +2,8 @@
 
 namespace Pelagos\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -9,6 +11,9 @@ use Pelagos\Exception\NotDeletableException;
 
 /**
  * Abstract class that contains basic properties and methods common to all Pelagos entities.
+ *
+ * @ORM\MappedSuperclass
+ * @ORM\HasLifecycleCallbacks
  *
  * @UniqueEntity(
  *     fields = {"id"},
@@ -29,6 +34,10 @@ abstract class Entity
      *
      * @var int $id
      *
+     * @ORM\Column(type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     *
      * @Assert\Range(
      *     min = 1,
      *     max = 2147483647,
@@ -45,6 +54,8 @@ abstract class Entity
      *
      * @var string $creator;
      *
+     * @ORM\Column
+     *
      * @Assert\NotBlank(
      *     message="Creator is required"
      * )
@@ -55,6 +66,8 @@ abstract class Entity
      * The creation time stamp (in UTC) for this Entity.
      *
      * @var \DateTime $creationTimeStamp;
+     *
+     * @ORM\Column(type="datetimetz")
      */
     protected $creationTimeStamp;
 
@@ -62,6 +75,8 @@ abstract class Entity
      * The last modification time stamp (in UTC) for this Person.
      *
      * @var \DateTime $modificationTimeStamp;
+     *
+     * @ORM\Column(type="datetimetz")
      */
     protected $modificationTimeStamp;
 
@@ -69,6 +84,8 @@ abstract class Entity
      * The username of the user who last modified this Person.
      *
      * @var string $creator;
+     *
+     * @ORM\Column
      *
      * @Assert\NotBlank(
      *     message="Modifier is required"
@@ -222,6 +239,9 @@ abstract class Entity
      *
      * The creation time stamp is only updated if not already set.
      *
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     *
      * @return void
      */
     public function updateTimeStamps()
@@ -312,6 +332,8 @@ abstract class Entity
      * when the Entity is not deletable.
      *
      * @see \Pelagos\Exception\NotDeletableException
+     *
+     * @ORM\PreRemove
      *
      * @return void
      */

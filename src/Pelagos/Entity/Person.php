@@ -2,6 +2,8 @@
 
 namespace Pelagos\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -16,6 +18,8 @@ use Pelagos\Exception\NotDeletableException;
 
 /**
  * Entity class to represent a Person.
+ *
+ * @ORM\Entity
  *
  * @Assert\GroupSequence({
  *     "id",
@@ -70,6 +74,8 @@ class Person extends Entity
      *
      * @var string $firstName
      *
+     * @ORM\Column
+     *
      * @Assert\NotBlank(
      *     message="First name is required"
      * )
@@ -84,6 +90,8 @@ class Person extends Entity
      *
      * @var string $lastName
      *
+     * @ORM\Column
+     *
      * @Assert\NotBlank(
      *     message="Last name is required"
      * )
@@ -97,6 +105,8 @@ class Person extends Entity
      * Person's email address.
      *
      * @var string $emailAddress
+     *
+     * @ORM\Column(type="citext")
      *
      * @Assert\NotBlank(
      *     message="Email address is required"
@@ -117,6 +127,8 @@ class Person extends Entity
      *
      * @access protected
      *
+     * @ORM\Column(nullable=true)
+     *
      * @Assert\NoAngleBrackets(
      *     message="Phone number cannot contain angle brackets (< or >)"
      * )
@@ -129,6 +141,8 @@ class Person extends Entity
      * @var string
      *
      * @access protected
+     *
+     * @ORM\Column(nullable=true)
      *
      * @Assert\NoAngleBrackets(
      *     message="Delievery point (address) cannot contain angle brackets (< or >)"
@@ -143,6 +157,8 @@ class Person extends Entity
      *
      * @access protected
      *
+     * @ORM\Column(nullable=true)
+     *
      * @Assert\NoAngleBrackets(
      *     message="City cannot contain angle brackets (< or >)"
      * )
@@ -155,6 +171,8 @@ class Person extends Entity
      * @var string
      *
      * @access protected
+     *
+     * @ORM\Column(nullable=true)
      *
      * @Assert\NoAngleBrackets(
      *     message="Administrative area (state) cannot contain angle brackets (< or >)"
@@ -169,6 +187,8 @@ class Person extends Entity
      *
      * @access protected
      *
+     * @ORM\Column(nullable=true)
+     *
      * @Assert\NoAngleBrackets(
      *     message="Postal code (zip) cannot contain angle brackets (< or >)"
      * )
@@ -181,6 +201,8 @@ class Person extends Entity
      * @var string
      *
      * @access protected
+     *
+     * @ORM\Column(nullable=true)
      *
      * @Assert\NoAngleBrackets(
      *     message="Country cannot contain angle brackets (< or >)"
@@ -195,6 +217,8 @@ class Person extends Entity
      *
      * @access protected
      *
+     * @ORM\Column(nullable=true)
+     *
      * @Assert\NoAngleBrackets(
      *     message="Website URL cannot contain angle brackets (< or >)"
      * )
@@ -207,6 +231,8 @@ class Person extends Entity
      * @var string
      *
      * @access protected
+     *
+     * @ORM\Column(nullable=true)
      *
      * @Assert\NoAngleBrackets(
      *     message="Organization cannot contain angle brackets (< or >)"
@@ -221,6 +247,8 @@ class Person extends Entity
      *
      * @access protected
      *
+     * @ORM\Column(nullable=true)
+     *
      * @Assert\NoAngleBrackets(
      *     message="Position cannot contain angle brackets (< or >)"
      * )
@@ -233,6 +261,8 @@ class Person extends Entity
      * @var Collection $personFundingOrganizations
      *
      * @access protected
+     *
+     * @ORM\OneToMany(targetEntity="PersonFundingOrganization", mappedBy="person")
      */
     protected $personFundingOrganizations;
 
@@ -242,6 +272,8 @@ class Person extends Entity
      * @var Collection $personResearchGroups
      *
      * @access protected
+     *
+     * @ORM\OneToMany(targetEntity="PersonResearchGroup", mappedBy="person")
      */
     protected $personResearchGroups;
 
@@ -251,6 +283,8 @@ class Person extends Entity
      * @var Collection $personDataRepositories
      *
      * @access protected
+     *
+     * @ORM\OneToMany(targetEntity="PersonDataRepository", mappedBy="person")
      */
     protected $personDataRepositories;
 
@@ -260,6 +294,8 @@ class Person extends Entity
      * @var Account $account
      *
      * @access protected
+     *
+     * @ORM\OneToOne(targetEntity="Account", mappedBy="person")
      *
      * @Serializer\Exclude
      */
@@ -271,6 +307,8 @@ class Person extends Entity
      * @var PersonToken $token
      *
      * @access protected
+     *
+     * @ORM\OneToOne(targetEntity="PersonToken", mappedBy="person")
      *
      * @Serializer\Exclude
      */
@@ -818,6 +856,11 @@ class Person extends Entity
             $notDeletableReasons[] = 'there ' . ($personDataRepositoriesCount > 1 ? 'are' : 'is') .
                 " $personDataRepositoriesCount associated Data " .
                 ($personDataRepositoriesCount > 1 ? 'Repositories' : 'Repository');
+        }
+
+        $personAccountCount = count($this->getAccount());
+        if ($personAccountCount > 0) {
+            $notDeletableReasons[] = 'there is an associated Account';
         }
 
         if (count($notDeletableReasons) > 0) {

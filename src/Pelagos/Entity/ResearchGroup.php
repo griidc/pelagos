@@ -2,6 +2,8 @@
 
 namespace Pelagos\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -13,6 +15,8 @@ use Pelagos\Exception\NotDeletableException;
 
 /**
  * Entity class to represent a Research Group.
+ *
+ * @ORM\Entity
  *
  * @Assert\GroupSequence({
  *     "id",
@@ -69,6 +73,8 @@ class ResearchGroup extends Entity
      *
      * @access protected
      *
+     * @ORM\Column(type="citext")
+     *
      * @Assert\NotBlank(
      *     message="Name is required"
      * )
@@ -85,6 +91,8 @@ class ResearchGroup extends Entity
      *
      * @access protected
      *
+     * @ORM\ManyToOne(targetEntity="FundingCycle", inversedBy="researchGroups")
+     *
      * @Assert\NotBlank(
      *     message="Funding Cycle is required"
      * )
@@ -100,6 +108,8 @@ class ResearchGroup extends Entity
      *
      * @access protected
      *
+     * @ORM\Column(nullable=true)
+     *
      * @Assert\NoAngleBrackets(
      *     message="Website URL cannot contain angle brackets (< or >)"
      * )
@@ -112,6 +122,8 @@ class ResearchGroup extends Entity
      * @var string $phoneNumber
      *
      * @access protected
+     *
+     * @ORM\Column(nullable=true)
      *
      * @Assert\NoAngleBrackets(
      *     message="Phone number cannot contain angle brackets (< or >)"
@@ -126,6 +138,8 @@ class ResearchGroup extends Entity
      *
      * @access protected
      *
+     * @ORM\Column(nullable=true)
+     *
      * @Assert\NoAngleBrackets(
      *     message="Delievery point (address) cannot contain angle brackets (< or >)"
      * )
@@ -138,6 +152,8 @@ class ResearchGroup extends Entity
      * @var string $city
      *
      * @access protected
+     *
+     * @ORM\Column(nullable=true)
      *
      * @Assert\NoAngleBrackets(
      *     message="City cannot contain angle brackets (< or >)"
@@ -152,6 +168,8 @@ class ResearchGroup extends Entity
      *
      * @access protected
      *
+     * @ORM\Column(nullable=true)
+     *
      * @Assert\NoAngleBrackets(
      *     message="Administrative area (state) cannot contain angle brackets (< or >)"
      * )
@@ -164,6 +182,8 @@ class ResearchGroup extends Entity
      * @var string $postalCode
      *
      * @access protected
+     *
+     * @ORM\Column(nullable=true)
      *
      * @Assert\NoAngleBrackets(
      *     message="Postal code (zip) cannot contain angle brackets (< or >)"
@@ -178,6 +198,8 @@ class ResearchGroup extends Entity
      *
      * @access protected
      *
+     * @ORM\Column(nullable=true)
+     *
      * @Assert\NoAngleBrackets(
      *     message="Country cannot contain angle brackets (< or >)"
      * )
@@ -191,6 +213,8 @@ class ResearchGroup extends Entity
      *
      * @access protected
      *
+     * @ORM\Column(nullable=true)
+     *
      * @Assert\NoAngleBrackets(
      *     message="Description cannot contain angle brackets (< or >)"
      * )
@@ -203,6 +227,8 @@ class ResearchGroup extends Entity
      * @var string|resource $logo
      *
      * @access protected
+     *
+     * @ORM\Column(type="blob", nullable=true)
      */
     protected $logo;
 
@@ -212,6 +238,8 @@ class ResearchGroup extends Entity
      * @var string $emailAddress
      *
      * @access protected
+     *
+     * @ORM\Column(type="citext", nullable=true)
      *
      * @Assert\NoAngleBrackets(
      *     message="Email address cannot contain angle brackets (< or >)"
@@ -228,6 +256,8 @@ class ResearchGroup extends Entity
      * @var \Doctrine\Common\Collections\Collection $personResearchGroups
      *
      * @access protected
+     *
+     * @ORM\OneToMany(targetEntity="PersonResearchGroup", mappedBy="researchGroup")
      *
      * @Serializer\MaxDepth(2)
      */
