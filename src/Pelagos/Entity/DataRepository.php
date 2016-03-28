@@ -2,6 +2,8 @@
 
 namespace Pelagos\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -13,6 +15,8 @@ use Pelagos\Exception\NotDeletableException;
 
 /**
  * Entity class to represent a Data Repository.
+ *
+ * @ORM\Entity
  *
  * @UniqueEntity(
  *     fields={"name"},
@@ -52,6 +56,8 @@ class DataRepository extends Entity
      *
      * @access protected
      *
+     * @ORM\Column
+     *
      * @Assert\NotBlank(
      *     message="Name is required"
      * )
@@ -67,6 +73,8 @@ class DataRepository extends Entity
      * @var string $emailAddress
      *
      * @access protected
+     *
+     * @ORM\Column
      *
      * @Assert\NotBlank(
      *     message="Email address is required"
@@ -87,6 +95,8 @@ class DataRepository extends Entity
      *
      * @access protected
      *
+     * @ORM\Column
+     *
      * @Assert\NotBlank(
      *     message="Description is required"
      * )
@@ -102,6 +112,8 @@ class DataRepository extends Entity
      * @var string $url
      *
      * @access protected
+     *
+     * @ORM\Column
      *
      * @Assert\NotBlank(
      *     message="Website URL is required"
@@ -119,6 +131,8 @@ class DataRepository extends Entity
      *
      * @access protected
      *
+     * @ORM\Column
+     *
      * @Assert\NotBlank(
      *     message="Phone number is required"
      * )
@@ -134,6 +148,8 @@ class DataRepository extends Entity
      * @var string $deliveryPoint
      *
      * @access protected
+     *
+     * @ORM\Column
      *
      * @Assert\NotBlank(
      *     message="Delivery point is required"
@@ -151,6 +167,8 @@ class DataRepository extends Entity
      *
      * @access protected
      *
+     * @ORM\Column
+     *
      * @Assert\NotBlank(
      *     message="City is required"
      * )
@@ -166,6 +184,8 @@ class DataRepository extends Entity
      * @var string $administrativeArea
      *
      * @access protected
+     *
+     * @ORM\Column
      *
      * @Assert\NotBlank(
      *     message="Administrative area (state) is required"
@@ -183,6 +203,8 @@ class DataRepository extends Entity
      *
      * @access protected
      *
+     * @ORM\Column
+     *
      * @Assert\NotBlank(
      *     message="Postal code (zip) is required"
      * )
@@ -199,6 +221,8 @@ class DataRepository extends Entity
      *
      * @access protected
      *
+     * @ORM\Column
+     *
      * @Assert\NotBlank(
      *     message="Country is required"
      * )
@@ -214,6 +238,8 @@ class DataRepository extends Entity
      * @var \Doctrine\Common\Collections\Collection $personDataRepositories
      *
      * @access protected
+     *
+     * @ORM\OneToMany(targetEntity="PersonDataRepository", mappedBy="dataRepository")
      */
     protected $personDataRepositories;
 
@@ -223,6 +249,8 @@ class DataRepository extends Entity
      * @var ArrayCollection
      *
      * @access protected
+     *
+     * @ORM\OneToMany(targetEntity="FundingOrganization", mappedBy="dataRepository")
      */
     protected $fundingOrganizations;
 

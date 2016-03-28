@@ -2,6 +2,8 @@
 
 namespace Pelagos\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -15,6 +17,8 @@ use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
  * Entity class to represent an Account.
  *
  * This class defines an Account, which is a set of credentials for a Person.
+ *
+ * @ORM\Entity
  */
 class Account extends Entity implements UserInterface, \Serializable
 {
@@ -34,9 +38,21 @@ class Account extends Entity implements UserInterface, \Serializable
     const ROLE_DATA_REPOSITORY_MANAGER = 'ROLE_DATA_REPOSITORY_MANAGER';
 
     /**
+     * This is defined here to override the base class id.
+     *
+     * This is not used by the Account Entity because it gets its identity through Person.
+     *
+     * @var null
+     */
+    protected $id;
+
+    /**
      * Person this account is attached to.
      *
      * @var Person
+     *
+     * @ORM\OneToOne(targetEntity="Person", inversedBy="account")
+     * @ORM\Id
      *
      * @Assert\NotBlank(
      *     message="An account must be attached to a Person"
@@ -49,6 +65,8 @@ class Account extends Entity implements UserInterface, \Serializable
      *
      * @var string
      *
+     * @ORM\Column
+     *
      * @Assert\NotBlank(
      *     message="User ID is required"
      * )
@@ -59,6 +77,8 @@ class Account extends Entity implements UserInterface, \Serializable
      * A binary string containing the hashed password.
      *
      * @var string
+     *
+     * @ORM\Column(type="blob")
      *
      * @Assert\NotBlank(
      *     message="Password hash is required"
@@ -73,6 +93,8 @@ class Account extends Entity implements UserInterface, \Serializable
      *
      * @var string
      *
+     * @ORM\Column
+     *
      * @Assert\NotBlank(
      *     message="Password hash algorithm is required"
      * )
@@ -85,6 +107,8 @@ class Account extends Entity implements UserInterface, \Serializable
      * A binary string containing the salt used when hashing the password.
      *
      * @var string
+     *
+     * @ORM\Column(type="blob")
      *
      * @Assert\NotBlank(
      *     message="Password hash salt is required"

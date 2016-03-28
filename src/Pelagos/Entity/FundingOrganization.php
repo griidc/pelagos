@@ -2,6 +2,8 @@
 
 namespace Pelagos\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -11,6 +13,8 @@ use Pelagos\Exception\NotDeletableException;
 
 /**
  * Entity class to represent a Funding Organization.
+ *
+ * @ORM\Entity
  *
  * @UniqueEntity(
  *     fields={"name"},
@@ -60,6 +64,8 @@ class FundingOrganization extends Entity
      *
      * @access protected
      *
+     * @ORM\Column
+     *
      * @Assert\NotBlank(
      *     message="Name is required"
      * )
@@ -75,6 +81,8 @@ class FundingOrganization extends Entity
      * @var string|resource $logo
      *
      * @access protected
+     *
+     * @ORM\Column(type="blob", nullable=true)
      */
     protected $logo;
 
@@ -84,6 +92,8 @@ class FundingOrganization extends Entity
      * @var string $emailAddress
      *
      * @access protected
+     *
+     * @ORM\Column(nullable=true)
      *
      * @Assert\NoAngleBrackets(
      *     message="Email address cannot contain angle brackets (< or >)"
@@ -101,6 +111,8 @@ class FundingOrganization extends Entity
      *
      * @access protected
      *
+     * @ORM\Column(nullable=true)
+     *
      * @Assert\NoAngleBrackets(
      *     message="Description cannot contain angle brackets (< or >)"
      * )
@@ -113,6 +125,8 @@ class FundingOrganization extends Entity
      * @var string $url
      *
      * @access protected
+     *
+     * @ORM\Column(nullable=true)
      *
      * @Assert\NoAngleBrackets(
      *     message="Website URL cannot contain angle brackets (< or >)"
@@ -127,6 +141,8 @@ class FundingOrganization extends Entity
      *
      * @access protected
      *
+     * @ORM\Column(nullable=true)
+     *
      * @Assert\NoAngleBrackets(
      *     message="Phone number cannot contain angle brackets (< or >)"
      * )
@@ -139,6 +155,8 @@ class FundingOrganization extends Entity
      * @var string $deliveryPoint
      *
      * @access protected
+     *
+     * @ORM\Column(nullable=true)
      *
      * @Assert\NoAngleBrackets(
      *     message="Delievery point (address) cannot contain angle brackets (< or >)"
@@ -153,6 +171,8 @@ class FundingOrganization extends Entity
      *
      * @access protected
      *
+     * @ORM\Column(nullable=true)
+     *
      * @Assert\NoAngleBrackets(
      *     message="City cannot contain angle brackets (< or >)"
      * )
@@ -165,6 +185,8 @@ class FundingOrganization extends Entity
      * @var string $administrativeArea
      *
      * @access protected
+     *
+     * @ORM\Column(nullable=true)
      *
      * @Assert\NoAngleBrackets(
      *     message="Administrative area (state) cannot contain angle brackets (< or >)"
@@ -179,6 +201,8 @@ class FundingOrganization extends Entity
      *
      * @access protected
      *
+     * @ORM\Column(nullable=true)
+     *
      * @Assert\NoAngleBrackets(
      *     message="Postal code (zip) cannot contain angle brackets (< or >)"
      * )
@@ -192,6 +216,8 @@ class FundingOrganization extends Entity
      *
      * @access protected
      *
+     * @ORM\Column(nullable=true)
+     *
      * @Assert\NoAngleBrackets(
      *     message="Country cannot contain angle brackets (< or >)"
      * )
@@ -204,6 +230,10 @@ class FundingOrganization extends Entity
      * @var FundingCycle
      *
      * @access protected
+     *
+     * @ORM\OneToMany(targetEntity="FundingCycle", mappedBy="fundingOrganization")
+     *
+     * @ORM\OrderBy({"name" = "ASC"})
      */
     protected $fundingCycles;
 
@@ -213,6 +243,8 @@ class FundingOrganization extends Entity
      * @var \Doctrine\Common\Collections\Collection $personFundingOrganizations
      *
      * @access protected
+     *
+     * @ORM\OneToMany(targetEntity="PersonFundingOrganization", mappedBy="fundingOrganization")
      */
     protected $personFundingOrganizations;
 
@@ -222,6 +254,8 @@ class FundingOrganization extends Entity
      * @var DataRepository $dataRepository
      *
      * @access protected
+     *
+     * @ORM\ManyToOne(targetEntity="DataRepository", inversedBy="fundingOrganizations")
      *
      * @Assert\NotBlank(
      *     message="Data Repository is required"

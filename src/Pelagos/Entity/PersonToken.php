@@ -2,12 +2,16 @@
 
 namespace Pelagos\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+
 use Symfony\Component\Validator\Constraints as Assert;
 
 use JMS\Serializer\Annotation as Serializer;
 
 /**
  * Enitity class to represent a Person Token.
+ *
+ * @ORM\Entity
  */
 class PersonToken extends Entity
 {
@@ -17,9 +21,20 @@ class PersonToken extends Entity
     const FRIENDLY_NAME = 'Person Token';
 
     /**
+     * This is defined here to override the base class id.
+     *
+     * This is not used by the PersonToken Entity because it gets its identity through Person.
+     *
+     * @var null
+     */
+    protected $id;
+
+    /**
      * Property containing a \DateInterval of validity of token.
      *
      * @var \DateInterval $validFor
+     *
+     * @ORM\Column(type="interval")
      */
     protected $validFor;
 
@@ -27,6 +42,9 @@ class PersonToken extends Entity
      * Person entity this PersonToken belongs to.
      *
      * @var Person
+     *
+     * @ORM\OneToOne(targetEntity="Person", inversedBy="token")
+     * @ORM\Id
      *
      * @Assert\NotBlank(
      *     message="Person is required"
@@ -38,6 +56,8 @@ class PersonToken extends Entity
      * PersonToken's text string.
      *
      * @var string
+     *
+     * @ORM\Column
      *
      * @Assert\NotBlank(
      *     message="Token text is required."
@@ -51,6 +71,8 @@ class PersonToken extends Entity
      * PersonToken's use string.
      *
      * @var string
+     *
+     * @ORM\Column
      *
      * @Assert\NotBlank(
      *     message="Token use is required."

@@ -2,6 +2,8 @@
 
 namespace Pelagos\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -13,6 +15,8 @@ use Pelagos\Exception\NotDeletableException;
 
 /**
  * Entity class to represent a Funding Cycle.
+ *
+ * @ORM\Entity
  *
  * @UniqueEntity(
  *     fields={"fundingOrganization","name"},
@@ -68,6 +72,8 @@ class FundingCycle extends Entity
      *
      * @access protected
      *
+     * @ORM\Column
+     *
      * @Assert\NotBlank(
      *     message="Name is required"
      * )
@@ -84,6 +90,8 @@ class FundingCycle extends Entity
      *
      * @access protected
      *
+     * @ORM\Column(nullable=true)
+     *
      * @Assert\NoAngleBrackets(
      *     message="Description cannot contain angle brackets (< or >)"
      * )
@@ -97,6 +105,8 @@ class FundingCycle extends Entity
      *
      * @access protected
      *
+     * @ORM\Column(nullable=true)
+     *
      * @Assert\NoAngleBrackets(
      *     message="URL cannot contain angle brackets (< or >)"
      * )
@@ -109,6 +119,8 @@ class FundingCycle extends Entity
      * @var \Datetime $startDate
      *
      * @access protected
+     *
+     * @ORM\Column(type="date", nullable=true)
      */
     protected $startDate;
 
@@ -118,6 +130,8 @@ class FundingCycle extends Entity
      * @var \Datetime $endDate
      *
      * @access protected
+     *
+     * @ORM\Column(type="date", nullable=true)
      */
     protected $endDate;
 
@@ -127,6 +141,8 @@ class FundingCycle extends Entity
      * @var FundingOrganization
      *
      * @access protected
+     *
+     * @ORM\ManyToOne(targetEntity="FundingOrganization", inversedBy="fundingCycles")
      *
      * @Assert\NotBlank(
      *     message="Funding Organization is required"
@@ -142,6 +158,10 @@ class FundingCycle extends Entity
      * @var \Doctrine\Common\Collections\Collection
      *
      * @access protected
+     *
+     * @ORM\OneToMany(targetEntity="ResearchGroup", mappedBy="fundingCycle")
+     *
+     * @ORM\OrderBy({"name" = "ASC"})
      *
      * @Serializer\MaxDepth(2)
      */

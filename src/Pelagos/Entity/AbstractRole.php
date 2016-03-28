@@ -2,12 +2,16 @@
 
 namespace Pelagos\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Base entity class for the representation of typed Role classes.
  *
  * Classes of the type XxxRole can extend this base class.
+ *
+ * @ORM\MappedSuperclass
  */
 abstract class AbstractRole extends Entity implements RoleInterface
 {
@@ -20,6 +24,8 @@ abstract class AbstractRole extends Entity implements RoleInterface
      * The name of this role.
      *
      * @var string
+     *
+     * @ORM\Column
      *
      * @Assert\NotBlank(
      *     message="Name is required"
@@ -34,6 +40,8 @@ abstract class AbstractRole extends Entity implements RoleInterface
      * The weight associated with this role.
      *
      * @var integer
+     *
+     * @ORM\Column(type="integer")
      *
      * @Assert\NotBlank(
      *     message="Weight is required"
