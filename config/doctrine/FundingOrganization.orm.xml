@@ -17,11 +17,11 @@ Pelagos.Entity.Entity.dcm.xml
             <sequence-generator sequence-name="seq_funding_organization_number" allocation-size="1" initial-value="1" />
         </id>
 
-        <field name="name"               column="name"                type="string" />
+        <field name="name"               column="name"                type="citext" />
 
         <field name="logo"               column="logo"                type="blob"   nullable="true" />
 
-        <field name="emailAddress"       column="email_address"       type="string" nullable="true" />
+        <field name="emailAddress"       column="email_address"       type="citext" nullable="true" />
 
         <field name="description"        column="description"         type="string" nullable="true" />
 
