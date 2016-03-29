@@ -128,8 +128,49 @@ if (isset($reg_id))
     {
         if (isset($_GET['regid']))
         {
-            $dMessage= "Sorry, the registration with ID: $reg_id could not be found. Please email <a href=\"mailto:griidc@gomri.org?subject=REG Form\">griidc@gomri.org</a> if you have any questions.";
-            drupal_set_message($dMessage,'warning');
+            $query = "select * from datasets where dataset_udi='$reg_id'";
+
+            $difrow = pdoDBQuery($conn,$query);
+
+            if ($difrow == false OR is_null($difrow)) {
+                $dMessage= "Sorry, the dataset with Unique Dataset Identifier (UDI) $reg_id could not be found. Please email <a href=\"mailto:griidc@gomri.org?subject=REG Form\">griidc@gomri.org</a> if you have any questions.";
+                drupal_set_message($dMessage,'warning');
+            } elseif ($difrow['status'] == 1) {
+                drupal_set_message(
+                    "The DIF has not yet been approved for dataset: $reg_id",
+                    'warning'
+                );
+            } elseif ($difrow['status'] == 0) {
+                drupal_set_message(
+                    "The DIF has not yet been submitted for dataset: $reg_id",
+                    'warning'
+                );
+            } else {
+                $row = $difrow;
+                $formDisabled = false;
+                $dif_id = true;
+
+                $xml = RPIS_TASK_BASEURL.'?maxresults=-1&taskid=' . $row['task_uid'] . '&projectid=' . $row['project_id'];
+                $doc = simplexml_load_file($xml);
+                $row['task_uid'] = $doc->Task->Title;
+
+                $poc_email = "";
+
+                if ($row['primary_poc'] > 0)
+                {
+                    $pocpath = '/gomri/Task/Researchers/Person[@ID='.$row['primary_poc'] . ']';
+                    $pocnode = $doc->xpath($pocpath);
+                    if ($pocnode != false)
+                    {
+                        $row['primary_poc'] = $pocnode[0]->LastName . ', ' . $pocnode[0]->FirstName;
+                        $poc_email = $pocnode[0]->Email;
+                    }
+                }
+                drupal_set_message(
+                    "Values have been pre-populated from the DIF for dataset: $reg_id",
+                    'status'
+                );
+            }
         }
     }
     else
@@ -618,49 +659,10 @@ function setPath(type,path)
     document.getElementById('sftp_force_' + type + '_download').style.visibility = 'hidden';
 }
 
-var progressBarInt;
-
-function showProgressBar() {
-    jQuery("body").addClass("noscroll");
-    jQuery("#progressBar").show();
-
-    progressBarInt = window.setInterval(function() {
-        jQuery.ajax({
-            "url": "/registry_upload_progress?key=" + jQuery("#APC_UPLOAD_PROGRESS").val(),
-            "success": function(data) {
-                jQuery("#progressBarBar").html(data);
-            }
-        });
-    },1000);
-}
-
-function hideProgressBar() {
-    jQuery("#progressBar").hide();
-    jQuery("#progressBarBar").html('<div id="progressBarBar" style="width:0px;"><div id="progressBarPercent">0%</div></div>');
-    jQuery("body").removeClass("noscroll");
-}
-
-function cancelUpload() {
-    if (typeof(window.stop) == 'undefined') {
-        document.execCommand('Stop');
-        window.frames[0].document.execCommand('Stop');
-    }
-    else {
-        window.stop();
-    }
-
-    hideProgressBar();
-    window.clearInterval(progressBarInt);
-}
-
 function submitRegistry() {
     weekDays();
     getTimeZone();
     if (jQuery("#regForm").valid()) {
-        if (jQuery('#servertype').val() == 'upload' && jQuery('#datafile').val() != '' ||
-            jQuery('#md_servertype').val() == 'upload' && jQuery('#metadatafile').val() != '') {
-            showProgressBar();
-        }
         jQuery('#post_frame').load(function() {
             response = jQuery('#post_frame').contents().find("#main").html();
             jQuery("#main").html(response);
@@ -697,53 +699,6 @@ function submitRegistry() {
     background-color: white;
 }
 
-#progressBar {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1000;
-    background: transparent url(/modules/overlay/images/background.png) repeat;
-}
-#progressBarContent {
-    position: absolute;
-    width: 600px;
-    height: 110px;
-    top: 50%;
-    left: 50%;
-    margin-left: -300px;
-    margin-top: -55px;
-    border: 1px solid black;
-    background-color: white;
-    padding: 10px;
-}
-
-#progressBarMessage {
-    font-weight: bold;
-}
-
-#progressBarContainer {
-    margin-top: 10px;
-}
-
-#progressBarBar {
-    height:20px;
-    background-color:#aaf;
-    font-weight:bold;
-}
-#progressBarPercent {
-    padding-left:2px;
-    padding-top:2px;
-}
-
-#progressBarCancel {
-    margin-top: 10px;
-    text-align: center;
-    width: 100%;
-}
-
 legend.section-header {
     font-size: 130%;
     font-weight: bold;
@@ -762,7 +717,7 @@ fieldset {
 
 .emRequired::before {
     font-weight: bold; color:#FF0000;
-    content:"* ";
+    content:"*";
 }
 
 </style>
@@ -771,24 +726,10 @@ fieldset {
     <div id="fileBrowserContent"></div>
 </div>
 
-<div id="progressBar">
-    <div id="progressBarContent">
-        <div id="progressBarMessage">Upload progress:</div>
-
-        <div id="progressBarContainer" style="width:580px; border: 1px solid black;">
-            <div id="progressBarBar" style="width:0px;"><div id="progressBarPercent">0%</div></div>
-        </div>
-
-        <div id="progressBarCancel">
-            <input type="button" value="Cancel" onclick="cancelUpload();">
-        </div>
-    </div>
-</div>
-
 <div id="regid_tip" style="display:none;">
     <img src="includes/images/info.png" style="float:right;" />
     <p>
-        <strong>Registation Identifier:</strong><p/> This identifier is generated once the dataset is registered. However, you may enter a Dataset Registration Identifier to extract previously submitted data.
+        <strong>Unique Dataset Identifier (UDI):</strong><p/> Please enter the Unique Dataset Identifier (UDI) that GRIIDC assigned to your dataset and select "Load Dataset" to load the most recent information for your dataset.
     </p>
 </div>
 
@@ -945,7 +886,7 @@ fieldset {
 
     <fieldset>
         <p>
-            <strong>NOTE:</strong> <span style="color:grey">If you have a Dataset Information Form record submitted, click on the dataset in the right panel to extract the information needed for dataset registration. The red asterisk (<span class="emRequired"/>) is used to indicate required fields. If you require assistance in completing this form, do not hesitate to contact GRIIDC (email: <a href=mailto:griidc@gomri.org>griidc@gomri.org</a>).</span>
+            <strong>NOTE:</strong> <span style="color:grey">You must have an approved Dataset Information Form (DIF) to fill out and submit a Dataset Submission Form. The red asterisk (<span class="emRequired"/>) is used to indicate required fields. If you need assistance while completing this form, please contact <a href=mailto:griidc@gomri.org>griidc@gomri.org</a>.</span>
         </p>
     </fieldset>
 
@@ -957,12 +898,12 @@ fieldset {
         <p> <!-- Registry Identifier -->
             <fieldset>
                 <span id="qtip_regid" style="float:right;"><img src="includes/images/info.png"></span>
-                <label for="registry_id"><b>Registry Identifier: </b></label>
+                <label for="registry_id"><b>Unique Dataset Identifier (UDI): </b></label>
                 <input minlength="15" onkeyup="if (this.value.length == 0) document.getElementById('regbutton').disabled=true;"
                     <?php if (isset($dif_id)) echo 'disabled'; ?>
                     type="text" id="registry_id" name="registry_id" size="60"
                     value="<?php if (isset($row['registry_id'])) echo $row['registry_id']; ?>">
-                <button disabled name="regbutton" id="regbutton" onclick="window.location.href='<?php echo $_SERVER['SCRIPT_NAME'];?>?regid='+document.getElementById('registry_id').value;" type="button">Retrieve Registration</button>
+                <button disabled name="regbutton" id="regbutton" onclick="window.location.href='<?php echo $_SERVER['SCRIPT_NAME'];?>?regid='+document.getElementById('registry_id').value;" type="button">Load Dataset</button>
             </fieldset>
         </p>
 
@@ -971,7 +912,7 @@ fieldset {
         <p> <!-- Dataset Title -->
             <fieldset>
                 <span id="qtip_title" style="float:right;"><img src="includes/images/info.png"></span>
-                <label for="title"><span class="emRequired"/><b>Dataset Title: </b></label>
+                <label for="title"><span class="emRequired"/> <b>Dataset Title: </b></label>
                 <div class="fwtextboxcont">
                     <input
                         <?php formDisabled($formDisabled); ?>
@@ -984,7 +925,7 @@ fieldset {
         <p> <!-- Dataset Abstract -->
             <fieldset>
                 <span id="qtip_abstrct" style="float:right;"><img src="includes/images/info.png"></span>
-                <label for="abstrct"><span class="emRequired"/><b>Dataset Abstract: </b></label>
+                <label for="abstrct"><span class="emRequired"/> <b>Dataset Abstract: </b></label>
                 <div class="textareacontainer">
                     <textarea
                         <?php formDisabled($formDisabled); ?>
@@ -996,7 +937,7 @@ fieldset {
         <p> <!-- Dataset Author(s) -->
             <fieldset>
                 <span id="qtip_dataset_originator" style="float:right;"><img src="includes/images/info.png"></span>
-                <label for="dataset_originator"><span class="emRequired"/><b>Dataset Author(s): </b></label>
+                <label for="dataset_originator"><span class="emRequired"/> <b>Dataset Author(s): </b></label>
                 <div class="fwtextboxcont">
                     <input
                         <?php formDisabled($formDisabled); ?>
@@ -1013,7 +954,7 @@ fieldset {
                     <tr>
                         <td width="50%">
                             <span id="qtip_poc" style="float:right;"><img src="includes/images/info.png"></span>
-                            <label for="pocname"><span class="emRequired"/><b>Name: </b></label>
+                            <label for="pocname"><span class="emRequired"/> <b>Name: </b></label>
                             <div class="fwtextboxcont">
                                 <input
                                     <?php formDisabled($formDisabled); ?>
@@ -1023,7 +964,7 @@ fieldset {
                         </td>
                         <td width="50%" style="padding-left:10px;">
                             <span id="qtip_pocemail" style="float:right;"><img src="includes/images/info.png"></span>
-                            <label for="pocemail"><span class="emRequired"/><b>E-Mail: </b></label>
+                            <label for="pocemail"><span class="emRequired"/> <b>E-Mail: </b></label>
                             <div class="fwtextboxcont">
                                 <input <?php formDisabled($formDisabled); ?> type="text" name="pocemail" id="pocemail" style="width:100%" value="<?php echo htmlspecialchars($poc_email);?>">
                             </div>
@@ -1089,10 +1030,6 @@ fieldset {
             <div id="tabs-1"> <!-- Direct Upload -->
                 For small datasets (&lt;1 GB), you may upload the dataset file directly, using your web browser. Depending on the size of the file, this may take several minutes. The maximum time the system will wait for the file to upload is 10 minutes. For larger files, please consider using SFTP or GridFTP to upload the file.
                 <fieldset>
-                    <?php
-                        $upload_progress_key = md5(mt_rand());
-                        echo "<input type='hidden' id='APC_UPLOAD_PROGRESS' name='APC_UPLOAD_PROGRESS' value='$upload_progress_key' />";
-                    ?>
                     <p>
                         <span id="qtip_uploaddataurl" style="float:right;"><img src="includes/images/info.png"></span>
                         <label for="datafile">Dataset File:</label>

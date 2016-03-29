@@ -250,7 +250,9 @@ $(document).ready(function() {
     if ((<?php if ($logged_in) { print "1"; } else { print "0";} ?>) && (typeof $.cookie('dl_attempt_udi_cookie') != 'undefined')) {
         var dl_cookie = $.cookie('dl_attempt_udi_cookie');
         $.cookie("dl_attempt_udi_cookie", null, { path: "/", domain: "<?php print "$server_name"; ?>" });
-        showDatasetDownload(dl_cookie);
+        if (dl_cookie != null) {
+            showDatasetDownload(dl_cookie);
+        }
     }
 });
 

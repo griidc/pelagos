@@ -6,7 +6,7 @@ function MapWizard(json)
     
     var seed = Math.round(Math.random()*1e10);
     
-    var buttonText = 'The Spatial Extent Wizard is a guided tools to create the Spatial Extent of a dataset. Users can 1) Create a description to indicate that the data has no spatial or temporal extent, or 2) Create a spatial extent geometry by either providing a list of coordinates or drawing a geometry using a map.';
+    var buttonText = 'The Spatial Extent Wizard guides the user in creating the Spatial Extent for a dataset. Users can 1) Create a description to indicate that the data has no spatial or temporal extent, or 2) Define the spatial extent of your dataset by providing a list of coordinates (in decimal degrees) or drawing on a map. GRIIDC prefers that you submit a list of coordinates to ensure the most accurate representation of your data.';
 
     var featureSend = false;
     var drawTheMap = false;

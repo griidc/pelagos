@@ -121,6 +121,12 @@ AS $$
          END IF;
       END IF;
 
+      -- Set the jira_ticket attribute:
+      IF NEW.jira_ticket IS NULL OR NEW.jira_ticket = ''
+      THEN
+         NEW.jira_ticket = _reg_row.jira_ticket;
+      END IF;
+
       RETURN NEW;
    END;
 
