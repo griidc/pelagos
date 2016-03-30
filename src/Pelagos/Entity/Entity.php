@@ -7,6 +7,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
+use JMS\Serializer\Annotation as Serializer;
+
 use Pelagos\Exception\NotDeletableException;
 
 use Pelagos\Entity\Person;
@@ -61,6 +63,8 @@ abstract class Entity
      * @Assert\NotBlank(
      *     message="Creator is required"
      * )
+     *
+     * @Serializer\Exclude
      */
     protected $creator;
 
@@ -92,6 +96,8 @@ abstract class Entity
      * @Assert\NotBlank(
      *     message="Modifier is required"
      * )
+     *
+     * @Serializer\Exclude
      */
     protected $modifier;
 
@@ -391,5 +397,39 @@ abstract class Entity
             return false;
         }
         return true;
+    }
+
+    /**
+     * Serializer for the creator virtual property.
+     *
+     * @Serializer\VirtualProperty
+     * @Serializer\SerializedName("creator")
+     *
+     * @return array
+     */
+    public function serializeCreator()
+    {
+        return array(
+            'id' => $this->creator->getId(),
+            'firstName' => $this->creator->getFirstName(),
+            'lastName' => $this->creator->getLastName(),
+        );
+    }
+
+    /**
+     * Serializer for the modifier virtual property.
+     *
+     * @Serializer\VirtualProperty
+     * @Serializer\SerializedName("modifier")
+     *
+     * @return array
+     */
+    public function modifierCreator()
+    {
+        return array(
+            'id' => $this->modifier->getId(),
+            'firstName' => $this->modifier->getFirstName(),
+            'lastName' => $this->modifier->getLastName(),
+        );
     }
 }
