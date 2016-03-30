@@ -2,16 +2,19 @@
 
 namespace Pelagos\Bundle\AppBundle\DataFixtures\ORM;
 
-use Doctrine\Common\DataFixtures\FixtureInterface;
+use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+
 use Pelagos\Entity\ResearchGroupRole;
+use Pelagos\Entity\Person;
 
 /**
  * Fixture to load the standard Research Group Roles.
  *
  * These roles were defined in PELAGOS-1588.
  */
-class ResearchGroupRoles implements FixtureInterface
+class ResearchGroupRoles extends AbstractFixture implements OrderedFixtureInterface
 {
     const LEADERSHIP = 'Leadership';
     const ADMIN = 'Administration';
@@ -45,13 +48,24 @@ class ResearchGroupRoles implements FixtureInterface
                 'weight' => 4,
             ),
         );
+        $systemPerson = $entityManager->find(Person::class, 0);
         foreach ($researchGroupRoles as $researchGroupRole) {
             $entity = new ResearchGroupRole();
             $entity->setName($researchGroupRole['name']);
             $entity->setWeight($researchGroupRole['weight']);
-            $entity->setCreator('pelagos');
+            $entity->setCreator($systemPerson);
             $entityManager->persist($entity);
         }
         $entityManager->flush();
+    }
+
+    /**
+     * The order this fixture should be run in.
+     *
+     * @return integer
+     */
+    public function getOrder()
+    {
+        return 3;
     }
 }
