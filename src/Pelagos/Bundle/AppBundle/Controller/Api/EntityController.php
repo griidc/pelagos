@@ -83,7 +83,7 @@ abstract class EntityController extends FOSRestController
         $user = $this->getUser();
         $creator = 'anonymous';
         if ($user instanceof Account) {
-            $creator = $user->getUsername();
+            $creator = $user->getPerson();
         }
         $entity->setCreator($creator);
         $this->processForm($formType, $entity, $request, 'POST');
@@ -108,7 +108,7 @@ abstract class EntityController extends FOSRestController
         $user = $this->getUser();
         $modifier = 'anonymous';
         if ($user instanceof Account) {
-            $modifier = $user->getUsername();
+            $modifier = $user->getPerson();
         }
         $entity->setModifier($modifier);
         $this->processForm($formType, $entity, $request, $method);
