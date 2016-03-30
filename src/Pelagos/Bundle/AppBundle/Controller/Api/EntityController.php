@@ -13,6 +13,7 @@ use FOS\RestBundle\Util\Codes;
 
 use Pelagos\Entity\Entity;
 use Pelagos\Entity\Account;
+use Pelagos\Entity\Person;
 use Pelagos\Exception\NotDeletableException;
 use Pelagos\Exception\UnmappedPropertyException;
 
@@ -81,9 +82,11 @@ abstract class EntityController extends FOSRestController
     {
         $entity = new $entityClass;
         $user = $this->getUser();
-        $creator = 'anonymous';
         if ($user instanceof Account) {
             $creator = $user->getPerson();
+        } else {
+            // Get the anonymous Person.
+            $creator = $this->container->get('pelagos.entity.handler')->get(Person::class, -1);
         }
         $entity->setCreator($creator);
         $this->processForm($formType, $entity, $request, 'POST');
@@ -106,9 +109,11 @@ abstract class EntityController extends FOSRestController
     {
         $entity = $this->handleGetOne($entityClass, $id);
         $user = $this->getUser();
-        $modifier = 'anonymous';
         if ($user instanceof Account) {
             $modifier = $user->getPerson();
+        } else {
+            // Get the anonymous Person.
+            $modifier = $this->container->get('pelagos.entity.handler')->get(Person::class, -1);
         }
         $entity->setModifier($modifier);
         $this->processForm($formType, $entity, $request, $method);
