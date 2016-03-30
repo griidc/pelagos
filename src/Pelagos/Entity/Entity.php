@@ -85,7 +85,7 @@ abstract class Entity
     /**
      * The Person who last modified this Entity.
      *
-     * @var Person $creator;
+     * @var Person $modifier
      *
      * @ORM\ManyToOne(targetEntity="Person")
      *
