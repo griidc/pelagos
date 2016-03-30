@@ -7,7 +7,11 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
+use JMS\Serializer\Annotation as Serializer;
+
 use Pelagos\Exception\NotDeletableException;
+
+use Pelagos\Entity\Person;
 
 /**
  * Abstract class that contains basic properties and methods common to all Pelagos entities.
@@ -50,15 +54,17 @@ abstract class Entity
     protected $id;
 
     /**
-     * The username of the user who created this Entity.
+     * The Person who created this Entity.
      *
-     * @var string $creator;
+     * @var Person $creator;
      *
-     * @ORM\Column
+     * @ORM\ManyToOne(targetEntity="Person")
      *
      * @Assert\NotBlank(
      *     message="Creator is required"
      * )
+     *
+     * @Serializer\Exclude
      */
     protected $creator;
 
@@ -72,7 +78,7 @@ abstract class Entity
     protected $creationTimeStamp;
 
     /**
-     * The last modification time stamp (in UTC) for this Person.
+     * The last modification time stamp (in UTC) for this Entity.
      *
      * @var \DateTime $modificationTimeStamp;
      *
@@ -81,15 +87,17 @@ abstract class Entity
     protected $modificationTimeStamp;
 
     /**
-     * The username of the user who last modified this Person.
+     * The Person who last modified this Entity.
      *
-     * @var string $creator;
+     * @var Person $modifier
      *
-     * @ORM\Column
+     * @ORM\ManyToOne(targetEntity="Person")
      *
      * @Assert\NotBlank(
      *     message="Modifier is required"
      * )
+     *
+     * @Serializer\Exclude
      */
     protected $modifier;
 
@@ -127,13 +135,13 @@ abstract class Entity
     /**
      * Setter for creator.
      *
-     * @param string $creator This entity's creator's username.
+     * @param Person $creator This entity's creator.
      *
      * @access public
      *
      * @return void
      */
-    public function setCreator($creator)
+    public function setCreator(Person $creator)
     {
         $this->creator = $creator;
         $this->modifier = $creator;
@@ -144,7 +152,7 @@ abstract class Entity
      *
      * @access public
      *
-     * @return string This entity's creator's username.
+     * @return Person This entity's creator.
      */
     public function getCreator()
     {
@@ -154,11 +162,11 @@ abstract class Entity
     /**
      * Setter for modifier property.
      *
-     * @param string $modifier The username of the user who modified this Person.
+     * @param Person $modifier The Person who last modified this Entity.
      *
      * @return void
      */
-    public function setModifier($modifier)
+    public function setModifier(Person $modifier)
     {
         $this->modifier = $modifier;
     }
@@ -166,7 +174,7 @@ abstract class Entity
     /**
      * Getter for modifier property.
      *
-     * @return string The username of the user who modified this Person.
+     * @return Person The Person who modified this Entity.
      */
     public function getModifier()
     {
@@ -389,5 +397,39 @@ abstract class Entity
             return false;
         }
         return true;
+    }
+
+    /**
+     * Serializer for the creator virtual property.
+     *
+     * @Serializer\VirtualProperty
+     * @Serializer\SerializedName("creator")
+     *
+     * @return array
+     */
+    public function serializeCreator()
+    {
+        return array(
+            'id' => $this->creator->getId(),
+            'firstName' => $this->creator->getFirstName(),
+            'lastName' => $this->creator->getLastName(),
+        );
+    }
+
+    /**
+     * Serializer for the modifier virtual property.
+     *
+     * @Serializer\VirtualProperty
+     * @Serializer\SerializedName("modifier")
+     *
+     * @return array
+     */
+    public function serializeModifier()
+    {
+        return array(
+            'id' => $this->modifier->getId(),
+            'firstName' => $this->modifier->getFirstName(),
+            'lastName' => $this->modifier->getLastName(),
+        );
     }
 }

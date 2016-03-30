@@ -76,7 +76,16 @@ class AccountController extends UIController
         // Create new personToken
         $personToken = new PersonToken($person, 'CREATE_ACCOUNT', $dateInterval);
 
-        $personToken->setCreator($person);
+        $user = $this->getUser();
+        // If user is authenticated.
+        if ($user instanceof Account) {
+            // Get the authenticated person.
+            $creator = $user->getPerson();
+        } else {
+            // Get the anonymous person.
+            $creator = $this->entityHandler->get('Pelagos:Person', -1);
+        }
+        $personToken->setCreator($creator);
 
         // Persist PersonToken
         $personToken = $this->entityHandler->create($personToken);
@@ -179,7 +188,7 @@ class AccountController extends UIController
         $account = new Account($person, $userId, $request->request->get('password'));
 
         // Set the creator.
-        $account->setCreator($userId);
+        $account->setCreator($person);
 
         // Save the account.
         $account = $this->entityHandler->create($account);

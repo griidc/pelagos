@@ -44,6 +44,7 @@
 {% block body %}
 <table
     viewInterface = "{{ path('pelagos_app_ui_fundingorganization_default') }}"
+    personInterface = "{{ path('pelagos_app_ui_person_default') }}"
     entityNiceName = "Funding Organization"
     class = "entityTable stripe"
     width = "100%"
@@ -69,6 +70,8 @@
         { "data": "modifier" }
     ]'
     data-order = '[[ 0, "asc" ]]'
+    creatorColumn = "11"
+    modifierColumn = "13"
 >
     <thead>
         <tr>
