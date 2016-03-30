@@ -1,4 +1,0 @@
-These scripts need to be run in numerical order. Ignore error messages about
-objects not existing, those are normal. The first script also has a DROP
-DOMAIN statement that will fail if the data type currently exists and is in
-use by any other object. Again this is a harmless message and can be ignored.
