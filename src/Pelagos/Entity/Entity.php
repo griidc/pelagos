@@ -424,7 +424,7 @@ abstract class Entity
      *
      * @return array
      */
-    public function modifierCreator()
+    public function serializeModifier()
     {
         return array(
             'id' => $this->modifier->getId(),
