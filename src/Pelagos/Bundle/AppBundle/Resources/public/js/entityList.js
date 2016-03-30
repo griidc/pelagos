@@ -9,6 +9,52 @@ $(document).ready(function(){
     $.fn.pelagosDataTable = function(options) {
         var entityNiceName = $(this).attr("entityNiceName");
 
+        var personInterface = $(this).attr("personInterface");
+
+        var creatorColumn = $(this).attr("creatorColumn");
+
+        if (typeof options === "undefined") {
+            options = {};
+        }
+
+        if (typeof options.columnDefs === "undefined") {
+            options.columnDefs = [];
+        }
+
+        var columnDefinitions = $(this).data("columnDefinitions");
+        if (typeof columnDefinitions !== "undefined") {
+            $.merge(options.columnDefs, columnDefinitions);
+        }
+
+
+        if (typeof creatorColumn !== "undefined") {
+            options.columnDefs.push({
+                "render": function (data, type, row) {
+                    if (row.creator === null) {
+                        return "";
+                    }
+                    var personLink = personInterface + "/" + row.creator.id;
+                    return "<a href='" + personLink + "' target='_blank'>" + row.creator.firstName + " " + row.creator.lastName + "</a>";
+                },
+                "targets": [ parseInt(creatorColumn) ]
+            });
+        }
+
+        var modifierColumn = $(this).attr("modifierColumn");
+
+        if (typeof modifierColumn !== "undefined") {
+            options.columnDefs.push({
+                "render": function (data, type, row) {
+                    if (row.modifier === null) {
+                        return "";
+                    }
+                    var personLink = personInterface + "/" + row.modifier.id;
+                    return "<a href='" + personLink + "' target='_blank'>" + row.modifier.firstName + " " + row.modifier.lastName + "</a>";
+                },
+                "targets": [ parseInt(modifierColumn) ]
+            });
+        }
+
         var self = this;
 
         $(this).find(".buttons").attr("colspan", $(this).find("th").length);
