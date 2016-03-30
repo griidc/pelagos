@@ -3,7 +3,6 @@ var $ = jQuery.noConflict();
 $(document).ready(function(){
     if ($.cookie("activetab") == null) {
         $.cookie("activetab", 0, { path: "/mdapp" });
-
     }
 
     $("#tabs").tabs({
@@ -24,7 +23,6 @@ $(document).ready(function(){
             "caseInsensitive": true
          }
     } );
-} );
 
     $(".jlink").click(function(){
         // store original value in cookie for .fail later
