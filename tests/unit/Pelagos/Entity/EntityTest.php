@@ -56,11 +56,11 @@ class EntityTest extends \PHPUnit_Framework_TestCase
     protected $timeStampLocalizedISO;
 
     /**
-     * Static class variable containing creator to use for testing.
+     * Property to hold a creator to use for testing.
      *
-     * @var string $testCreator
+     * @var Person $testCreator
      */
-    protected static $testCreator = 'tuser';
+    protected $testCreator;
 
     /**
      * Setup for PHPUnit tests.
@@ -71,12 +71,13 @@ class EntityTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
+        $this->testCreator = new Person;
         $this->validator = Validation::createValidatorBuilder()
             ->enableAnnotationMapping()
             ->getValidator();
         $this->concreteEntity = new ConcreteEntity;
-        $this->concreteEntity->setCreator(self::$testCreator);
-        $this->concreteEntity->setModifier(self::$testCreator);
+        $this->concreteEntity->setCreator($this->testCreator);
+        $this->concreteEntity->setModifier($this->testCreator);
         $this->timeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->timeStampISO = $this->timeStamp->format(\DateTime::ISO8601);
         $this->timeStampLocalized = clone $this->timeStamp;
@@ -109,9 +110,9 @@ class EntityTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetCreator()
     {
-        $this->assertEquals(
+        $this->assertSame(
             $this->concreteEntity->getCreator(),
-            self::$testCreator
+            $this->testCreator
         );
     }
 
@@ -126,7 +127,7 @@ class EntityTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertEquals(
             $this->concreteEntity->getModifier(),
-            self::$testCreator
+            $this->testCreator
         );
     }
 
@@ -392,9 +393,9 @@ class EntityTest extends \PHPUnit_Framework_TestCase
         $timeStampISO = $timeStamp->format(\DateTime::ISO8601);
         $concreteEntityData = array(
             'id' => null,
-            'creator' => self::$testCreator,
+            'creator' => $this->testCreator,
             'creationTimeStamp' => $timeStampISO,
-            'modifier' => self::$testCreator,
+            'modifier' => $this->testCreator,
             'modificationTimeStamp' => $timeStampISO,
             'name' => null,
         );

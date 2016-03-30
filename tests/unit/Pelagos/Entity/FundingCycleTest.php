@@ -54,11 +54,11 @@ class FundingCycleTest extends \PHPUnit_Framework_TestCase
     protected $testEndDate;
 
     /**
-     * Static class variable containing username to use as creator.
+     * Property to hold a creator to use for testing.
      *
-     * @var string $testCreator
+     * @var Person $testCreator
      */
-    protected static $testCreator = 'testcreator';
+    protected $testCreator;
 
     /**
      * Class variable to hold a FundingOrganization to use for testing.
@@ -76,11 +76,12 @@ class FundingCycleTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
+        $this->testCreator = new Person;
         $this->fundingCycle = new FundingCycle;
         $this->fundingCycle->setName(self::$testName);
         $this->fundingCycle->setDescription(self::$testDescription);
         $this->fundingCycle->setUrl(self::$testUrl);
-        $this->fundingCycle->setCreator(self::$testCreator);
+        $this->fundingCycle->setCreator($this->testCreator);
         $this->testStartDate = new \DateTime('2015-01-01');
         $this->fundingCycle->setStartDate($this->testStartDate);
         $this->testEndDate = new \DateTime('2015-12-31');

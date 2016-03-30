@@ -103,11 +103,11 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
     protected static $testCountry = 'USA';
 
     /**
-     * Static class variable containing username to use as creator.
+     * Property to hold a creator to use for testing.
      *
-     * @var string $testCreator
+     * @var Person $testCreator
      */
-    protected static $testCreator = 'testcreator';
+    protected $testCreator;
 
     /**
      * Property to hold a time stamp to use in testing.
@@ -160,6 +160,7 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
+        $this->testCreator = new Person;
         $this->fundingOrganization = new FundingOrganization;
         $this->fundingOrganization->setName(self::$testName);
         $this->fundingOrganization->setLogo(self::$testLogo);
@@ -172,7 +173,7 @@ class FundingOrganizationTest extends \PHPUnit_Framework_TestCase
         $this->fundingOrganization->setAdministrativeArea(self::$testAdministrativeArea);
         $this->fundingOrganization->setPostalCode(self::$testPostalCode);
         $this->fundingOrganization->setCountry(self::$testCountry);
-        $this->fundingOrganization->setCreator(self::$testCreator);
+        $this->fundingOrganization->setCreator($this->testCreator);
         $this->testPersonFundingOrganizations = array(
             \Mockery::mock(
                 '\Pelagos\Entity\PersonFundingOrganization',

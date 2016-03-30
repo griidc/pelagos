@@ -89,11 +89,11 @@ class DataRepositoryTest extends \PHPUnit_Framework_TestCase
     protected static $testCountry = 'USA';
 
     /**
-     * Static class variable containing username to use as creator.
+     * Property to hold a creator to use for testing.
      *
-     * @var string $testCreator
+     * @var Person $testCreator
      */
-    protected static $testCreator = 'testcreator';
+    protected $testCreator;
 
     /**
      * Property to hold a time stamp to use in testing.
@@ -139,6 +139,7 @@ class DataRepositoryTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
+        $this->testCreator = new Person;
         $this->dataRepository = new DataRepository;
         $this->dataRepository->setName(self::$testName);
         $this->dataRepository->setEmailAddress(self::$testEmailAddress);
@@ -150,7 +151,7 @@ class DataRepositoryTest extends \PHPUnit_Framework_TestCase
         $this->dataRepository->setAdministrativeArea(self::$testAdministrativeArea);
         $this->dataRepository->setPostalCode(self::$testPostalCode);
         $this->dataRepository->setCountry(self::$testCountry);
-        $this->dataRepository->setCreator(self::$testCreator);
+        $this->dataRepository->setCreator($this->testCreator);
         $this->timeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->timeStampISO = $this->timeStamp->format(\DateTime::ISO8601);
         $this->timeStampLocalized = clone $this->timeStamp;
