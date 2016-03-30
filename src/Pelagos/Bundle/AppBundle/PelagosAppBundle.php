@@ -19,22 +19,6 @@ class PelagosAppBundle extends Bundle
     {
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
-        // If the custom type "token_use_type" has not already been added to the Doctrine type map.
-        if (!Type::hasType('token_use_type')) {
-            // Add the mapping.
-            Type::addType('token_use_type', 'Pelagos\DoctrineExtensions\DBAL\Types\TokenUseType');
-        }
-        // Register token_use_type for use with our database platform.
-        $entityManager
-            ->getConnection()
-            ->getDatabasePlatform()
-            ->registerDoctrineTypeMapping(
-                // Database type
-                'token_use_type',
-                // Doctrine type
-                'token_use_type'
-            );
-
         // If the custom type "interval" has not already been added to the Doctrine type map.
         if (!Type::hasType('interval')) {
             // Add the mapping.
