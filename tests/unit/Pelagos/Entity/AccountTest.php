@@ -28,16 +28,16 @@ class AccountTest extends \PHPUnit_Framework_TestCase
     protected $mockPerson;
 
     /**
+     * Property to hold a mock instance of Password for testing.
+     * @var Password
+     */
+    protected $mockPassword;
+
+    /**
      * Static class variable containing a user id to use for testing.
      * @var string
      */
     protected static $userId = 'MyUserId';
-
-    /**
-     * Static class variable containing a password to use for testing.
-     * @var string
-     */
-    protected static $password = 'MyP@$$w0rd';
 
     /**
      * Setup for PHPUnit tests.
@@ -55,10 +55,10 @@ class AccountTest extends \PHPUnit_Framework_TestCase
                 'getAccount' => null,
             )
         );
-        // Tell our mock openssl_random_pseudo_bytes function to report that
-        // it was able to generate a cryptographically strong byte string.
-        $GLOBALS['cryptoStrong'] = true;
-        $this->account = new Account($this->mockPerson, self::$userId, self::$password);
+        $this->mockPassword = \Mockery::mock(
+            '\Pelagos\Entity\Password'
+        );
+        $this->account = new Account($this->mockPerson, self::$userId, $this->mockpassword);
     }
 
     /**
@@ -91,64 +91,6 @@ class AccountTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * Test the comparePassword method.
-     *
-     * This method should return true id the provided password matches the
-     * password that was assigned in setUp and false when it does not.
-     *
-     * @return void
-     */
-    public function testComparePassword()
-    {
-        $this->assertTrue($this->account->comparePassword(self::$password));
-        $this->assertFalse($this->account->comparePassword('something else'));
-    }
-
-    /**
-     * Test that an exception is thrown when we are unable to generate a cryptographically strong password hash salt.
-     *
-     * @expectedException \Exception
-     *
-     * @return void
-     */
-    public function testSetPasswordUnableToGenerateCryptographicallyStrongSalt()
-    {
-        // Tell our mock openssl_random_pseudo_bytes function to report that
-        // it was NOT able to generate a cryptographically strong byte string.
-        $GLOBALS['cryptoStrong'] = false;
-        $this->account->setPassword(self::$password);
-    }
-
-    /**
-     * Test that a PasswordException is thrown when we attempt to set a password that is too short.
-     *
-     * @expectedException \Pelagos\Exception\PasswordException
-     *
-     * @return void
-     */
-    public function testSetPasswordTooShort()
-    {
-        // Tell our mock openssl_random_pseudo_bytes function to report that
-        // it was able to generate a cryptographically strong byte string.
-        $GLOBALS['cryptoStrong'] = true;
-        $this->account->setPassword('Sh*rtpw');
-    }
-
-    /**
-     * Test that a PasswordException is thrown when we attempt to set a password that is not complex enough.
-     *
-     * @expectedException \Pelagos\Exception\PasswordException
-     *
-     * @return void
-     */
-    public function testSetPasswordNotComplexEnough()
-    {
-        // Tell our mock openssl_random_pseudo_bytes function to report that
-        // it was able to generate a cryptographically strong byte string.
-        $GLOBALS['cryptoStrong'] = true;
-        $this->account->setPassword('SimplePassword');
-    }
 
     /**
      * Clean up after tests.
@@ -157,8 +99,5 @@ class AccountTest extends \PHPUnit_Framework_TestCase
      */
     public function tearDown()
     {
-        // Unset the 'cryptoStrong' global so as not to interfere with any
-        // other tests of code that uses openssl_random_pseudo_bytes
-        unset($GLOBALS['cryptoStrong']);
     }
 }

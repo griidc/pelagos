@@ -269,6 +269,24 @@ class Account extends Entity implements UserInterface, \Serializable
     }
 
     /**
+     * Returns the passwordHashSalt for this Account.
+     *
+     * This is required by \Symfony\Component\Security\Core\User\UserInterface
+     *
+     * @return string The passwordHashSalt for this Account.
+     */
+    public function getSalt()
+    {
+        if ($this->password === null) {
+            return null;
+        }
+        if (is_resource($this->password->passwordHashSalt)) {
+            return stream_get_contents($this->password->passwordHashSalt);
+        }
+        return $this->password->passwordHashSalt;
+    }
+
+    /**
      * Returns the hashing algorithm used to generate the password hash.
      *
      * @return string The hashing algorithm.
