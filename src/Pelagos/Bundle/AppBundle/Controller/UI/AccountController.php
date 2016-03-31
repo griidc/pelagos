@@ -14,13 +14,15 @@ use Pelagos\Entity\PersonToken;
 
 /**
  * The Research Group controller for the Pelagos UI App Bundle.
+ *
+ * @Route("/account")
  */
 class AccountController extends UIController
 {
     /**
      * The default action.
      *
-     * @Route("/")
+     * @Route("")
      * @Method("GET")
      *
      * @return Response A Symfony Response instance.
@@ -50,7 +52,7 @@ class AccountController extends UIController
      *
      * @throws \Exception When more than one Person is found for an email address.
      *
-     * @Route("/")
+     * @Route("")
      * @Method("POST")
      *
      * @return Response A Symfony Response instance.
