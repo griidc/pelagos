@@ -206,6 +206,61 @@ class AccountController extends UIController
     }
 
     /**
+     * The action to change your password, will show password change dialog.
+     *
+     * @Route("/change-password")
+     * @Method("GET")
+     *
+     * @return Response A Response instance.
+     */
+    public function changePasswordAction()
+    {
+        // If the user is not authenticated.
+        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            // The token must be bad or missing.
+            return $this->render('PelagosAppBundle:template:NotLoggedIn.html.twig');
+        }
+
+        // Send back the set password screen.
+        return $this->render('PelagosAppBundle:template:changePassword.html.twig');
+    }
+
+    /**
+     * Post handler to change password.
+     *
+     * @param Request $request The Symfony Request object.
+     *
+     * @throws \Exception When password do not match.
+     *
+     * @Route("/change-password")
+     * @Method("POST")
+     *
+     * @return Response A Symfony Response instance.
+     */
+    public function changePasswordPostAction(Request $request)
+    {
+        // If the user is not authenticated.
+        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            // User is not logged in, or doesn't have a token.
+            return $this->render('PelagosAppBundle:template:NotLoggedIn.html.twig');
+        }
+
+        // If the supplied passwords don't match.
+        if ($request->request->get('password') !== $request->request->get('verify_password')) {
+            // Throw an exception.
+            throw new \Exception('Passwords do not match!');
+        }
+
+        // Get the authenticated Person.
+        $person = $this->getUser()->getPerson();
+
+        $account = $person->getAccount();
+        $account->setPassword($request->request->get('password'));
+
+        return $this->render('PelagosAppBundle:template:AccountReset.html.twig');
+    }
+
+    /**
      * A swift mailer function to send e-mail.
      *
      * @param array $email An array of parameters used to send e-mail.
