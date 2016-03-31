@@ -9,8 +9,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 use Pelagos\Exception\PasswordException;
 
-use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
-
 /**
  * Entity class to represent a Password.
  *
@@ -33,7 +31,7 @@ class Password extends Entity
      * @ORM\ManyToOne(targetEntity="Account")
      *
      * @Assert\NotBlank(
-     *     message="An account must be attached to a Password"
+     *     message="A Password must be attached to an Account"
      * )
      */
     protected $account;
@@ -66,8 +64,6 @@ class Password extends Entity
      * @Serializer\Exclude
      */
     protected $clearTextPassword;
-
-    /**
 
     /**
      * The algorithm used to hash the password.
@@ -112,7 +108,7 @@ class Password extends Entity
         }
         if ($passwordText !== null) {
             $this->setPassword($passwordText);
-            $this->setClearTextPassword($passwordText);
+            $this->clearTextPassword = $passwordText;
         }
     }
 
@@ -126,18 +122,6 @@ class Password extends Entity
     public function setAccount(Account $account)
     {
         $this->account = $account;
-    }
-
-    /**
-     * Set the never-to-be-persisted clear text password.
-     *
-     * @param string $passwordText The account to attach to this password.
-     *
-     * @return void
-     */
-    protected function setClearTextPassword($passwordText)
-    {
-        $this->clearTextPassword = $passwordText;
     }
 
     /**
@@ -215,7 +199,7 @@ class Password extends Entity
         // Append the salt to the password, hash it, and save the hash.
         $this->passwordHash = sha1($password . $this->passwordHashSalt, true);
         // set cleartext password
-        $this->setClearTextPassword($password);
+        $this->clearTextPassword = $password;
     }
 
     /**
