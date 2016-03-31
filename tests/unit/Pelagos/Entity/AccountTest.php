@@ -58,7 +58,7 @@ class AccountTest extends \PHPUnit_Framework_TestCase
         $this->mockPassword = \Mockery::mock(
             '\Pelagos\Entity\Password'
         );
-        $this->account = new Account($this->mockPerson, self::$userId, $this->mockpassword);
+        $this->account = new Account($this->mockPerson, self::$userId, $this->mockPassword);
     }
 
     /**
