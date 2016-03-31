@@ -23,4 +23,5 @@ pelagos_person_data_repository_ui:
     resource: Pelagos\Bundle\AppBundle\Controller\UI\PersonDataRepositoryController
 
 pelagos_account_ui:
+    prefix: /account
     resource: Pelagos\Bundle\AppBundle\Controller\UI\AccountController
