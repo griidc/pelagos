@@ -3,7 +3,6 @@ var $ = jQuery.noConflict();
 $(document).ready(function(){
     if ($.cookie("activetab") == null) {
         $.cookie("activetab", 0, { path: "/mdapp" });
-
     }
 
     $("#tabs").tabs({
@@ -19,8 +18,11 @@ $(document).ready(function(){
         "jQueryUI": true,
         "lengthMenu": [ [25, 50, 75, 100, -1], [25, 50, 75, 100, "All"] ],
         "stateSave": true,
-        "stateDuration": -1
-    });
+        "stateDuration": -1,
+        "search": {
+            "caseInsensitive": true
+         }
+    } );
 
     $(".jlink").click(function(){
         // store original value in cookie for .fail later

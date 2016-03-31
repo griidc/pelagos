@@ -1,0 +1,13 @@
+# Configuration parameters common to all Drupal environments
+
+imports:
+    - { resource: config.yml }
+    - { resource: security_drupal.yml }
+
+framework:
+    assets:
+        base_path: "/%pelagos.prefix%"
+
+twig:
+    globals:
+        wrapped: true

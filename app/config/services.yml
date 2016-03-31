@@ -1,0 +1,21 @@
+# Learn more about services, parameters and containers at
+# http://symfony.com/doc/current/book/service_container.html
+parameters:
+#    parameter_name: value
+
+services:
+    postgres_session_init.listener:
+        class: Pelagos\DoctrineExtensions\DBAL\Event\Listeners\PostgresSessionInit
+        arguments:
+            - { timezone: UTC, intervalstyle: iso_8601 }
+        tags:
+            - { name: doctrine.event_listener, event: postConnect }
+
+    person_token_user_provider:
+        class: Pelagos\Bundle\AppBundle\Security\PersonTokenUserProvider
+        arguments: ["@doctrine.orm.entity_manager"]
+
+    person_token_authenticator:
+        class: Pelagos\Bundle\AppBundle\Security\PersonTokenAuthenticator
+        arguments: ["@twig"]
+        public: false

@@ -1,0 +1,21 @@
+<form class="entityForm" entityType="PersonDataRepository"
+{% include '@templates/forms/permissionsBlock.html.twig' with {'Entity': PersonDataRepository} %}
+action="{{path('pelagos_api_person_data_repositories_post')}}">
+
+    <input type="hidden" name="id" value="{{PersonDataRepository.getId}}">
+
+    {{ form_row(form.person) }}
+
+    {{ form_row(form.dataRepository) }}
+
+    {% if is_granted('CAN_CREATE', PersonDataRepository) or  is_granted('CAN_EDIT', PersonDataRepository)%}
+
+    {{ form_row(form.role) }}
+
+    {% endif %}
+
+    {{ form_row(form.label) }}
+
+    {% include '@templates/forms/innerForm.html.twig' with {'Entity': PersonDataRepository} %}
+
+</form>
