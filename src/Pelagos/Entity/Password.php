@@ -112,6 +112,7 @@ class Password extends Entity
         }
         if ($passwordText !== null) {
             $this->setPassword($passwordText);
+            $this->setClearTextPassword($passwordText);
         }
     }
 
@@ -134,9 +135,9 @@ class Password extends Entity
      *
      * @return void
      */
-    public function setClearTextPassword($passwordText)
+    protected function setClearTextPassword($passwordText)
     {
-        $this->clearTextPassword = $passwordtext;
+        $this->clearTextPassword = $passwordText;
     }
 
     /**
@@ -213,6 +214,8 @@ class Password extends Entity
         }
         // Append the salt to the password, hash it, and save the hash.
         $this->passwordHash = sha1($password . $this->passwordHashSalt, true);
+        // set cleartext password
+        $this->setClearTextPassword($password);
     }
 
     /**
@@ -225,7 +228,7 @@ class Password extends Entity
     public function comparePassword($password)
     {
         $hash = sha1($password . $this->getSalt(), true);
-        if ($hash === $this->getPassword()) {
+        if ($hash === $this->getPasswordHash()) {
             return true;
         }
         return false;
