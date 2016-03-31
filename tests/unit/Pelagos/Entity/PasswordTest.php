@@ -66,7 +66,7 @@ class PasswordTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test constructor's setting of cleartext password
+     * Test constructor's setting of cleartext password.
      *
      * This method should return true if the cleartext representation
      * matches the password set via the constructor.
