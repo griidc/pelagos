@@ -54,6 +54,22 @@ class Password extends Entity
     protected $passwordHash;
 
     /**
+     * A string containing the cleartext password.
+     *
+     * This field is to only be used for comparison
+     * against existing hashes after salting and hashing
+     * its contents.
+     * THIS FIELD SHALL NOT BE PERSISTED.
+     *
+     * @var string
+     *
+     * @Serializer\Exclude
+     */
+    protected $clearTextPassword;
+
+    /**
+
+    /**
      * The algorithm used to hash the password.
      *
      * @var string
@@ -109,6 +125,28 @@ class Password extends Entity
     public function setAccount(Account $account)
     {
         $this->account = $account;
+    }
+
+    /**
+     * Set the never-to-be-persisted clear text password.
+     *
+     * @param string $passwordText The account to attach to this password.
+     *
+     * @return void
+     */
+    public function setClearTextPassword($passwordText)
+    {
+        $this->clearTextPassword = $passwordtext;
+    }
+
+    /**
+     * Get the never-to-be-persisted clear text password.
+     *
+     * @return string The clear text password.
+     */
+    public function getClearTextPassword()
+    {
+        return $this->clearTextPassword;
     }
 
     /**
