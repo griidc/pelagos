@@ -56,7 +56,7 @@ class Password extends Entity
      *
      * This field is to only be used for comparison
      * against existing hashes after salting and hashing
-     * its contents.
+     * its contents, and for populating OpenLDAP.
      * THIS FIELD SHALL NOT BE PERSISTED.
      *
      * @var string
