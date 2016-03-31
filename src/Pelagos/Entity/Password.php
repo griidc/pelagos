@@ -98,18 +98,11 @@ class Password extends Entity
     /**
      * Constructor for Password.
      *
-     * @param Account $account      The Account this password is for.
-     * @param string  $passwordText The password text for this account.
+     * @param string $passwordText The password text for this account.
      */
-    public function __construct(Account $account = null, $passwordText = null)
+    public function __construct($passwordText)
     {
-        if ($account !== null) {
-            $this->setAccount($account);
-        }
-        if ($passwordText !== null) {
-            $this->setPassword($passwordText);
-            $this->clearTextPassword = $passwordText;
-        }
+        $this->setPassword($passwordText);
     }
 
     /**

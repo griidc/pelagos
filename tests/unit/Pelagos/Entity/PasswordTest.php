@@ -48,7 +48,7 @@ class PasswordTest extends \PHPUnit_Framework_TestCase
         // Tell our mock openssl_random_pseudo_bytes function to report that
         // it was able to generate a cryptographically strong byte string.
         $GLOBALS['cryptoStrong'] = true;
-        $this->password = new Password($this->mockAccount, self::$passwordString);
+        $this->password = new Password(self::$passwordString);
     }
 
     /**
