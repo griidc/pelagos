@@ -59,7 +59,3 @@ services:
         class: Pelagos\Bundle\AppBundle\Security\AccountVoter
         tags:
             - { name: security.voter }
-    password_voter:
-        class: Pelagos\Bundle\AppBundle\Security\PasswordVoter
-        tags:
-            - { name: security.voter }
