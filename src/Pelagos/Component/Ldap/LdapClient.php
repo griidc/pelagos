@@ -73,7 +73,7 @@ class LdapClient implements LdapClientInterface
      * @param boolean $useStartTls  Whether or not to use StartTls.
      * @param boolean $optReferrals Whether or not to use referrals.
      *
-     * @throws LdapException When th ldap module is not loaded.
+     * @throws LdapException When the ldap module is not loaded.
      */
     public function __construct(
         $host = null,
@@ -187,11 +187,15 @@ class LdapClient implements LdapClientInterface
      *                      In case of multiple values for an attribute, they are indexed
      *                      using integers starting with 0.
      *
-     * @return boolean Returns true on success or false on failure.
+     * @throws LdapException When the add fails.
+     *
+     * @return void
      */
     public function add($dn, array $entry)
     {
-        return ldap_add($this->connection, $dn, $entry);
+        if (false === @ldap_add($this->connection, $dn, $entry)) {
+            throw new LdapException(ldap_error($this->connection));
+        }
     }
 
     /**
@@ -203,11 +207,15 @@ class LdapClient implements LdapClientInterface
      *                      In case of multiple values for an attribute, they are indexed
      *                      using integers starting with 0.
      *
-     * @return boolean Returns true on success or false on failure.
+     * @throws LdapException When the modify fails.
+     *
+     * @return void
      */
     public function modify($dn, array $entry)
     {
-        return ldap_modify($this->connection, $dn, $entry);
+        if (false === @ldap_modify($this->connection, $dn, $entry)) {
+            throw new LdapException(ldap_error($this->connection));
+        }
     }
 
     /**
@@ -221,11 +229,15 @@ class LdapClient implements LdapClientInterface
      *                                  Null keeps the same parent.
      * @param boolean     $deleteOldRdn Whether or not to delete the old RDN value(s).
      *
-     * @return boolean Returns true on success or false on failure.
+     * @throws LdapException When the rename fails.
+     *
+     * @return void
      */
     public function rename($dn, $newRdn, $newParent = null, $deleteOldRdn = true)
     {
-        return ldap_rename($this->connection, $dn, $newRdn, $newParent, $deleteOldRdn);
+        if (false === @ldap_rename($this->connection, $dn, $newRdn, $newParent, $deleteOldRdn)) {
+            throw new LdapException(ldap_error($this->connection));
+        }
     }
 
     /**
@@ -233,11 +245,15 @@ class LdapClient implements LdapClientInterface
      *
      * @param string $dn Distinguished name of an LDAP entity to delete.
      *
-     * @return boolean Returns true on success or false on failure.
+     * @throws LdapException When the delete fails.
+     *
+     * @return void
      */
     public function delete($dn)
     {
-        return ldap_delete($this->connection, $dn);
+        if (false === @ldap_delete($this->connection, $dn)) {
+            throw new LdapException(ldap_error($this->connection));
+        }
     }
 
     /**
@@ -249,11 +265,15 @@ class LdapClient implements LdapClientInterface
      *                      In case of multiple values for an attribute, they are indexed
      *                      using integers starting with 0.
      *
-     * @return boolean Returns true on success or false on failure.
+     * @throws LdapException When the add fails.
+     *
+     * @return void
      */
     public function addValues($dn, array $entry)
     {
-        return ldap_mod_add($this->connection, $dn, $entry);
+        if (false === @ldap_mod_add($this->connection, $dn, $entry)) {
+            throw new LdapException(ldap_error($this->connection));
+        }
     }
 
     /**
@@ -267,11 +287,15 @@ class LdapClient implements LdapClientInterface
      *                      In case of multiple values for an attribute, they are indexed
      *                      using integers starting with 0.
      *
-     * @return boolean Returns true on success or false on failure.
+     * @throws LdapException When the replace fails.
+     *
+     * @return void
      */
     public function replaceValues($dn, array $entry)
     {
-        return ldap_mod_replace($this->connection, $dn, $entry);
+        if (false === @ldap_mod_replace($this->connection, $dn, $entry)) {
+            throw new LdapException(ldap_error($this->connection));
+        }
     }
 
     /**
@@ -283,11 +307,15 @@ class LdapClient implements LdapClientInterface
      *                      In case of multiple values for an attribute, they are indexed
      *                      using integers starting with 0.
      *
-     * @return boolean Returns true on success or false on failure.
+     * @throws LdapException When the delete fails.
+     *
+     * @return void
      */
     public function deleteValues($dn, array $entry)
     {
-        return ldap_mod_del($this->connection, $dn, $entry);
+        if (false === @ldap_mod_del($this->connection, $dn, $entry)) {
+            throw new LdapException(ldap_error($this->connection));
+        }
     }
 
     /**
