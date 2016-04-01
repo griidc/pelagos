@@ -228,11 +228,10 @@ class AccountController extends UIController
         if ($reset === true) {
             $account = $person->getAccount();
             $account->setPassword($password);
+            $account = $this->entityHandler->update($account);
         } else {
             // Generate a unique User ID for this account.
             $userId = UserIdFactory::generateUniqueUserId($person, $this->entityHandler);
-            
-            $password = new Password($request->request->get('password'));
 
             // Create a new account.
             $account = new Account($person, $userId, $password);
@@ -312,6 +311,7 @@ class AccountController extends UIController
         $account = $person->getAccount();
         $password = new Password($request->request->get('password'));
         $account->setPassword($password);
+        $account = $this->entityHandler->update($account);
 
         return $this->render('PelagosAppBundle:template:AccountReset.html.twig');
     }
