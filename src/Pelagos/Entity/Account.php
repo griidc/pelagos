@@ -205,6 +205,16 @@ class Account extends Entity implements UserInterface, \Serializable
     }
 
     /**
+     * Returns the Password entity attached to this Account.
+     *
+     * @return Password The Password entity attached to this Account.
+     */
+    public function getPasswordEntity()
+    {
+        return $this->password;
+    }
+
+    /**
      * Returns the roles for this Account.
      *
      * This is required by \Symfony\Component\Security\Core\User\UserInterface
