@@ -201,9 +201,6 @@ class Account extends Entity implements UserInterface, \Serializable
         if ($this->password === null) {
             return null;
         }
-        if (is_resource($this->password->getPasswordHash())) {
-            return stream_get_contents($this->password->getPasswordHash());
-        }
         return $this->password->getPasswordHash();
     }
 
@@ -281,22 +278,6 @@ class Account extends Entity implements UserInterface, \Serializable
         if ($this->password === null) {
             return null;
         }
-        if (is_resource($this->password->passwordHashSalt)) {
-            return stream_get_contents($this->password->passwordHashSalt);
-        }
-        return $this->password->passwordHashSalt;
-    }
-
-    /**
-     * Returns the hashing algorithm used to generate the password hash.
-     *
-     * @return string The hashing algorithm.
-     */
-    public function getHashAlgorithm()
-    {
-        if ($this->password === null) {
-            return null;
-        }
-        return $this->password->getPasswordHashAlgorithm();
+        return $this->password->getSalt();
     }
 }
