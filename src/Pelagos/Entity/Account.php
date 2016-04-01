@@ -79,7 +79,7 @@ class Account extends Entity implements UserInterface, \Serializable
      *
      * @var Password
      *
-     * @ORM\OneToOne(targetEntity="Password")
+     * @ORM\OneToOne(targetEntity="Password", cascade={"persist"})
      *
      * @Assert\NotBlank(
      *     message="An Account must be attached to a Password"

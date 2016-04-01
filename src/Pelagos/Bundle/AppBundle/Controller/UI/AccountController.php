@@ -226,13 +226,11 @@ class AccountController extends UIController
             $account = $person->getAccount();
             $password = new Password($request->request->get('password'));
             $account->setPassword($password);
-
         } else {
             // Generate a unique User ID for this account.
             $userId = UserIdFactory::generateUniqueUserId($person, $this->entityHandler);
             
             $password = new Password($request->request->get('password'));
-            $password = $this->entityHandler->create($password);
 
             // Create a new account.
             $account = new Account($person, $userId, $password);
