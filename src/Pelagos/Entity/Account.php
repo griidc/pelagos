@@ -90,9 +90,9 @@ class Account extends Entity implements UserInterface, \Serializable
     /**
      * Historical Password objects associated with Account.
      *
-     * @var Collection $passwordHistory
+     * @var Collection
      *
-     * @ORM\OneToMany(targetEntity="Password", inversedBy="account")
+     * @ORM\OneToMany(targetEntity="Password", mappedBy="account")
      */
     protected $passwordHistory;
 
@@ -174,6 +174,7 @@ class Account extends Entity implements UserInterface, \Serializable
     public function setPassword(Password $password)
     {
         $this->password = $password;
+        $this->password->setAccount($this);
     }
 
     /**
