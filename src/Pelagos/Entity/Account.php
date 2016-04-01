@@ -37,7 +37,7 @@ class Account extends Entity implements UserInterface, \Serializable
      * A role given only to Data Repository Managers.
      */
     const ROLE_DATA_REPOSITORY_MANAGER = 'ROLE_DATA_REPOSITORY_MANAGER';
-    
+
     /**
      * This is defined here to override the base class id.
      *
@@ -46,7 +46,7 @@ class Account extends Entity implements UserInterface, \Serializable
      * @var null
      */
     protected $id;
-    
+
     /**
      * Person this account is attached to.
      *
@@ -169,11 +169,24 @@ class Account extends Entity implements UserInterface, \Serializable
      *
      * @param Password $password Pelagos password object.
      *
+     * @throws PasswordException When an old password is re-used.
+     *
      * @return void
      */
     public function setPassword(Password $password)
     {
         $this->password = $password;
+        // Immediately get the cleartext and hash out of the Password attribute we just set.
+        $hash = $this->password->getPasswordHash();
+        $clearText = $this->password->getClearTextPassword();
+        foreach ($this->passwordHistory as $oldPasswordObject) {
+            $comparisonHash = sha1($clearText . $oldPasswordObject->getSalt(), true);
+            if ($comparisionHash === $hash) {
+                throw new PasswordException('This password has already been used.');
+            }
+        }
+        // Throw exception if this password hash is
+        // found in password history.
         $this->password->setAccount($this);
     }
 
