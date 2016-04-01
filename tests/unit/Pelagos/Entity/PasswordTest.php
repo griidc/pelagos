@@ -124,6 +124,47 @@ class PasswordTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test that an Account can be set in the Password entity.
+     *
+     * @return void
+     */
+    public function testSetAccount()
+    {
+        $this->password->setAccount($this->mockAccount);
+        $this->assertSame($this->password->getAccount(), $this->mockAccount);
+    }
+
+    /**
+     * Test that the salt can be retrieved from the Password entity.
+     *
+     * @return void
+     */
+    public function testGetSalt()
+    {
+        $this->assertNotNull($this->password->getSalt());
+    }
+
+    /**
+     * Test that the hash can be retrieved from the Password entity.
+     *
+     * @return void
+     */
+    public function testGetHash()
+    {
+        $this->assertNotNull($this->password->getPasswordHash());
+    }
+
+    /**
+     * Test that the hash alrorithm can be retrieved from the Password entity.
+     *
+     * @return void
+     */
+    public function testGetHashAlgorithm()
+    {
+        $this->assertEquals($this->password->getHashAlgorithm(), 'SSHA');
+    }
+
+    /**
      * Clean up after tests.
      *
      * @return void

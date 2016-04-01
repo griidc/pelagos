@@ -28,7 +28,7 @@ class Password extends Entity
      *
      * @var Account
      *
-     * @ORM\ManyToOne(targetEntity="Account")
+     * @ORM\ManyToOne(targetEntity="Account", inversedBy="passwordHistory")
      *
      * @Assert\NotBlank(
      *     message="A Password must be attached to an Account"
