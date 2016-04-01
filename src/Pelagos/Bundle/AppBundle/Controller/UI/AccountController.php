@@ -14,13 +14,15 @@ use Pelagos\Entity\PersonToken;
 
 /**
  * The Research Group controller for the Pelagos UI App Bundle.
+ *
+ * @Route("/account")
  */
 class AccountController extends UIController
 {
     /**
      * The default action.
      *
-     * @Route("/account")
+     * @Route("")
      * @Method("GET")
      *
      * @return Response A Symfony Response instance.
@@ -31,13 +33,26 @@ class AccountController extends UIController
     }
 
     /**
+     * Password Reset action.
+     *
+     * @Route("/password-reset")
+     * @Method("GET")
+     *
+     * @return Response A Symfony Response instance.
+     */
+    public function passwordResetAction()
+    {
+        return $this->render('PelagosAppBundle:template:PasswordReset.html.twig');
+    }
+
+    /**
      * Post handler to verify the email address by sending a link with a Person Token.
      *
      * @param Request $request The Symfony Request object.
      *
      * @throws \Exception When more than one Person is found for an email address.
      *
-     * @Route("/account")
+     * @Route("")
      * @Method("POST")
      *
      * @return Response A Symfony Response instance.
@@ -45,6 +60,7 @@ class AccountController extends UIController
     public function sendVerificationEmailAction(Request $request)
     {
         $emailAddress = $request->request->get('emailAddress');
+        $reset = ($request->request->get('reset') == 'reset') ? true : false;
 
         $people = $this->entityHandler->getBy('Pelagos:Person', array('emailAddress' => $emailAddress));
 
@@ -67,14 +83,26 @@ class AccountController extends UIController
             $this->entityHandler->delete($personToken);
         }
 
-        if ($person->getAccount() instanceof Account) {
+        if ($person->getAccount() instanceof Account and !$reset) {
             return $this->render('PelagosAppBundle:template:AccountExists.html.twig');
         }
 
         $dateInterval = new \DateInterval('P7D');
 
-        // Create new personToken
-        $personToken = new PersonToken($person, 'CREATE_ACCOUNT', $dateInterval);
+        // Get TWIG instance
+        $twig = $this->get('twig');
+
+        if ($reset === true) {
+            // Create new personToken
+            $personToken = new PersonToken($person, 'PASSWORD_RESET', $dateInterval);
+            // Load email template
+            $template = $twig->loadTemplate('PelagosAppBundle:template:PasswordReset.email.html.twig');
+        } else {
+            // Create new personToken
+            $personToken = new PersonToken($person, 'CREATE_ACCOUNT', $dateInterval);
+            // Load email template
+            $template = $twig->loadTemplate('PelagosAppBundle:template:AccountConfirmation.email.html.twig');
+        }
 
         $user = $this->getUser();
         // If user is authenticated.
@@ -95,21 +123,23 @@ class AccountController extends UIController
             'personToken' => $personToken,
         );
 
-        $twig = $this->get('twig');
+        // Create a message
+        $message = \Swift_Message::newInstance()
+            ->setFrom(array('griidc@gomri.org' => 'GRIIDC'))
+            ->setTo(array($person->getEmailAddress() => $person->getFirstName() . ' ' . $person->getLastName()))
+            ->setSubject($template->renderBlock('subject', $mailData))
+            ->setBody($template->renderBlock('body_text', $mailData), 'text/plain')
+            ->addPart($template->renderBlock('body_html', $mailData), 'text/html');
 
-        $template = $twig->loadTemplate('PelagosAppBundle:template:AccountConfirmation.email.html.twig');
+        // Send the message
+        $this->get('mailer')->send($message);
 
-        $email = array(
-            'toEmail'  => $person->getEmailAddress(),
-            'toName'   => $person->getFirstName() . ' ' . $person->getLastName(),
-            'subject'  => $template->renderBlock('subject', $mailData),
-            'bodyHTML' => $template->renderBlock('body_html', $mailData),
-            'bodyText' => $template->renderBlock('body_text', $mailData),
+        return $this->render(
+            'PelagosAppBundle:template:EmailFound.html.twig',
+            array(
+                'reset' => $reset,
+            )
         );
-
-        $this->sendMail($email);
-
-        return $this->render('PelagosAppBundle:template:EmailFound.html.twig');
     }
 
     /**
@@ -118,7 +148,7 @@ class AccountController extends UIController
      * This verifies that the token has authenticated the user and that the user does not already have an account.
      * It then provides the user with a screen to establish a password.
      *
-     * @Route("/account/verify-email")
+     * @Route("/verify-email")
      * @Method("GET")
      *
      * @return Response A Response instance.
@@ -131,8 +161,13 @@ class AccountController extends UIController
             return $this->render('PelagosAppBundle:template:InvalidToken.html.twig');
         }
 
+        $reset = false;
+        if ($this->getUser()->getPerson()->getToken() instanceof PersonToken) {
+            $reset = ($this->getUser()->getPerson()->getToken()->getUse() === 'PASSWORD_RESET') ? true : false;
+        }
+
         // If a password has been set.
-        if ($this->getUser()->getPassword() !== null) {
+        if ($this->getUser()->getPassword() !== null and $reset === false) {
             // The user already has an account.
             return $this->render('PelagosAppBundle:template:AccountExists.html.twig');
         }
@@ -153,7 +188,7 @@ class AccountController extends UIController
      *
      * @throws \Exception When password do not match.
      *
-     * @Route("/account/create")
+     * @Route("/create")
      * @Method("POST")
      *
      * @return Response A Symfony Response instance.
@@ -166,8 +201,13 @@ class AccountController extends UIController
             return $this->render('PelagosAppBundle:template:InvalidToken.html.twig');
         }
 
+        $reset = false;
+        if ($this->getUser()->getPerson()->getToken() instanceof PersonToken) {
+            $reset = ($this->getUser()->getPerson()->getToken()->getUse() === 'PASSWORD_RESET') ? true : false;
+        }
+
         // If a password has been set.
-        if ($this->getUser()->getPassword() !== null) {
+        if ($this->getUser()->getPassword() !== null and $reset === false) {
             // The user already has an account.
             return $this->render('PelagosAppBundle:template:AccountExists.html.twig');
         }
@@ -181,56 +221,37 @@ class AccountController extends UIController
         // Get the authenticated Person.
         $person = $this->getUser()->getPerson();
 
-        // Generate a unique User ID for this account.
-        $userId = UserIdFactory::generateUniqueUserId($person, $this->entityHandler);
+        if ($reset === true) {
+            $account = $person->getAccount();
+            $account->setPassword($request->request->get('password'));
 
-        // Create a new account.
-        $account = new Account($person, $userId, $request->request->get('password'));
+        } else {
+            // Generate a unique User ID for this account.
+            $userId = UserIdFactory::generateUniqueUserId($person, $this->entityHandler);
 
-        // Set the creator.
-        $account->setCreator($person);
+            // Create a new account.
+            $account = new Account($person, $userId, $request->request->get('password'));
 
-        // Save the account.
-        $account = $this->entityHandler->create($account);
+            // Set the creator.
+            $account->setCreator($person);
+
+            // Save the account.
+            $account = $this->entityHandler->create($account);
+        }
 
         // Delete the person token.
         $this->entityHandler->delete($person->getToken());
         $person->setToken(null);
 
-        return $this->render(
-            'PelagosAppBundle:template:AccountCreated.html.twig',
-            array(
-                'Account' => $account,
-            )
-        );
-    }
-
-    /**
-     * A swift mailer function to send e-mail.
-     *
-     * @param array $email An array of parameters used to send e-mail.
-     *
-     * @access private
-     *
-     * @return integer The number of successful recipients.
-     */
-    private function sendMail(array $email)
-    {
-        // Hooray a Transport, we're saved!
-        $transport = \Swift_MailTransport::newInstance();
-
-        // Create the Mailer using your created Transport
-        $mailer = \Swift_Mailer::newInstance($transport);
-
-        // Create a message
-        $message = \Swift_Message::newInstance()
-            ->setFrom(array('griidc@gomri.org' => 'GRIIDC'))
-            ->setTo(array($email['toEmail'] => $email['toName']))
-            ->setSubject($email['subject'])
-            ->setBody($email['bodyText'], 'text/plain')
-            ->addPart($email['bodyHTML'], 'text/html');
-
-        // Send the message
-        return $mailer->send($message);
+        if ($reset === true) {
+            return $this->render('PelagosAppBundle:template:AccountReset.html.twig');
+        } else {
+            return $this->render(
+                'PelagosAppBundle:template:AccountCreated.html.twig',
+                array(
+                    'Account' => $account,
+                )
+            );
+        }
     }
 }
