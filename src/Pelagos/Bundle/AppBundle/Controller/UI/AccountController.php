@@ -10,6 +10,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 use Pelagos\Bundle\AppBundle\Factory\UserIdFactory;
 use Pelagos\Entity\Account;
+use Pelagos\Entity\Password;
 use Pelagos\Entity\PersonToken;
 
 /**
@@ -223,14 +224,18 @@ class AccountController extends UIController
 
         if ($reset === true) {
             $account = $person->getAccount();
-            $account->setPassword($request->request->get('password'));
+            $password = new Password($request->request->get('password'));
+            $account->setPassword($password);
 
         } else {
             // Generate a unique User ID for this account.
             $userId = UserIdFactory::generateUniqueUserId($person, $this->entityHandler);
+            
+            $password = new Password($request->request->get('password'));
+            $password = $this->entityHandler->create($password);
 
             // Create a new account.
-            $account = new Account($person, $userId, $request->request->get('password'));
+            $account = new Account($person, $userId, $password);
 
             // Set the creator.
             $account->setCreator($person);

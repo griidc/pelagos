@@ -37,23 +37,13 @@ class Account extends Entity implements UserInterface, \Serializable
      * A role given only to Data Repository Managers.
      */
     const ROLE_DATA_REPOSITORY_MANAGER = 'ROLE_DATA_REPOSITORY_MANAGER';
-
-    /**
-     * This is defined here to override the base class id.
-     *
-     * This is not used by the Account Entity because it gets its identity through Person.
-     *
-     * @var null
-     */
-    protected $id;
-
+    
     /**
      * Person this account is attached to.
      *
      * @var Person
      *
      * @ORM\OneToOne(targetEntity="Person", inversedBy="account")
-     * @ORM\Id
      *
      * @Assert\NotBlank(
      *     message="An account must be attached to a Person"
