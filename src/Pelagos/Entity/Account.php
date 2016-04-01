@@ -40,9 +40,9 @@ class Account extends Entity implements UserInterface, \Serializable
     
     /**
      * This is defined here to override the base class id.
-        *
+     *
      * This is not used by the Account Entity because it gets its identity through Person.
-        *
+     *
      * @var null
      */
     protected $id;
