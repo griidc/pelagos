@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
+use JMS\Serializer\Annotation as Serializer;
 
 use Pelagos\Exception\PasswordException;
 
@@ -29,6 +30,8 @@ class Password extends Entity
      * @var Account
      *
      * @ORM\ManyToOne(targetEntity="Account", inversedBy="passwordHistory")
+     *
+     * @ORM\JoinColumn(referencedColumnName="person_id")
      *
      * @Assert\NotBlank(
      *     message="A Password must be attached to an Account"

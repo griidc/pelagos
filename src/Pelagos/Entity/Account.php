@@ -37,7 +37,7 @@ class Account extends Entity implements UserInterface, \Serializable
      * A role given only to Data Repository Managers.
      */
     const ROLE_DATA_REPOSITORY_MANAGER = 'ROLE_DATA_REPOSITORY_MANAGER';
-
+    
     /**
      * This is defined here to override the base class id.
      *
@@ -46,7 +46,7 @@ class Account extends Entity implements UserInterface, \Serializable
      * @var null
      */
     protected $id;
-
+    
     /**
      * Person this account is attached to.
      *
@@ -79,7 +79,7 @@ class Account extends Entity implements UserInterface, \Serializable
      *
      * @var Password
      *
-     * @ORM\OneToOne(targetEntity="Password")
+     * @ORM\OneToOne(targetEntity="Password", cascade={"persist"})
      *
      * @Assert\NotBlank(
      *     message="An Account must be attached to a Password"
