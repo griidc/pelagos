@@ -183,19 +183,18 @@ class Account extends Entity implements UserInterface, \Serializable
         $hash = $this->password->getPasswordHash();
         $clearText = $this->password->getClearTextPassword();
 
-        // Throw exception if this password hash is
-        // found in last 10 of password history.  The subset of history
-        // is provided by a combination of EXTRA_LAZY and the Slice() method.  Also
-        // check for password minimum age.
+        // check for minimum age.
         $interval = new \DateInterval('PT24H');
         $now = new \DateTime();
+        if ($this->passwordHistory->first()->getModificationTimeStamp()->add($interval) > $now) {
+            throw new PasswordException('This password has already been changed within the last 24 hrs.');
+        }
+
+        // Throw exception if this password hash is
+        // found in last 10 of password history.  The subset of history
+        // is provided by a combination of EXTRA_LAZY and the Slice() method.
         foreach ($this->passwordHistory->slice(0, 10) as $oldPasswordObject) {
-            // Since these are orderded DESC, the first one will be the newest.
-            if ($oldPasswordObject->getModificationTimeStamp()->add($interval) > $now) {
-                throw new PasswordException('This password has already been changed within the last 24 hrs.');
-            }
             $comparisonHash = sha1($clearText . $oldPasswordObject->getSalt(), true);
-            // Is this an old password?
             if ($comparisionHash === $hash) {
                 throw new PasswordException('This password has already been used.');
             }
