@@ -37,7 +37,7 @@ class Account extends Entity implements UserInterface, \Serializable
      * A role given only to Data Repository Managers.
      */
     const ROLE_DATA_REPOSITORY_MANAGER = 'ROLE_DATA_REPOSITORY_MANAGER';
-    
+
     /**
      * This is defined here to override the base class id.
      *
@@ -46,7 +46,7 @@ class Account extends Entity implements UserInterface, \Serializable
      * @var null
      */
     protected $id;
-    
+
     /**
      * Person this account is attached to.
      *
@@ -92,7 +92,9 @@ class Account extends Entity implements UserInterface, \Serializable
      *
      * @var Collection
      *
-     * @ORM\OneToMany(targetEntity="Password", mappedBy="account")
+     * @ORM\OneToMany(targetEntity="Password", mappedBy="account", fetch="EXTRA_LAZY")
+     *
+     * @ORM\OrderBy({"modificationTimeStamp"="DESC"})
      */
     protected $passwordHistory;
 
@@ -105,6 +107,7 @@ class Account extends Entity implements UserInterface, \Serializable
      */
     public function __construct(Person $person = null, $userId = null, Password $password = null)
     {
+        $this->passwordHistory = new ArrayCollection();
         if ($person !== null) {
             $this->setPerson($person);
         }
@@ -114,7 +117,6 @@ class Account extends Entity implements UserInterface, \Serializable
         if ($password !== null) {
             $this->setPassword($password);
         }
-        $this->passwordHistory = new ArrayCollection();
     }
 
     /**
@@ -169,11 +171,33 @@ class Account extends Entity implements UserInterface, \Serializable
      *
      * @param Password $password Pelagos password object.
      *
+     * @throws PasswordException When password last changed within 24 hrs.
+     * @throws PasswordException When an old password is re-used.
+     *
      * @return void
      */
     public function setPassword(Password $password)
     {
         $this->password = $password;
+
+        // check for minimum age.
+        $interval = new \DateInterval('PT24H');
+        $now = new \DateTime();
+        if (!$this->passwordHistory->isEmpty() and
+            $this->passwordHistory->first()->getModificationTimeStamp()->add($interval) > $now) {
+            throw new PasswordException('This password has already been changed within the last 24 hrs.');
+        }
+
+        // Throw exception if this password hash is
+        // found in last 10 of password history.  The subset of history
+        // is provided by a combination of EXTRA_LAZY and the Slice() method.
+        $clearText = $this->password->getClearTextPassword();
+        foreach ($this->passwordHistory->slice(0, 10) as $oldPasswordObject) {
+            $comparisonHash = sha1($clearText . $oldPasswordObject->getSalt(), true);
+            if ($comparisonHash === $oldPasswordObject->getPasswordHash()) {
+                throw new PasswordException('This password has already been used.');
+            }
+        }
         $this->password->setAccount($this);
     }
 
@@ -215,8 +239,9 @@ class Account extends Entity implements UserInterface, \Serializable
     {
         $roles = array(self::ROLE_USER);
         foreach ($this->getPerson()->getPersonDataRepositories() as $personDataRepository) {
-            if ($personDataRepository->getRole()->getName() == DataRepositoryRoles::MANAGER and
-                !in_array(self::ROLE_DATA_REPOSITORY_MANAGER, $roles)) {
+            if ($personDataRepository->getRole()->getName() == DataRepositoryRoles::MANAGER
+                and !in_array(self::ROLE_DATA_REPOSITORY_MANAGER, $roles)
+            ) {
                 $roles[] = self::ROLE_DATA_REPOSITORY_MANAGER;
             }
         }
@@ -243,10 +268,12 @@ class Account extends Entity implements UserInterface, \Serializable
      */
     public function serialize()
     {
-        return serialize(array(
+        return serialize(
+            array(
             $this->person,
             $this->userId,
-        ));
+            )
+        );
     }
 
     /**

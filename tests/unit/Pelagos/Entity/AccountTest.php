@@ -52,13 +52,15 @@ class AccountTest extends \PHPUnit_Framework_TestCase
             '\Pelagos\Entity\Person',
             array(
                 'setAccount' => null,
-                'getAccount' => null,
+                'getAccount' => null
             )
         );
         $this->mockPassword = \Mockery::mock(
             '\Pelagos\Entity\Password',
             array(
-                'setAccount' => null
+                'setAccount' => null,
+                'getPasswordHash' => null,
+                'getClearTextPassword' => null
             )
         );
         $this->account = new Account($this->mockPerson, self::$userId, $this->mockPassword);
