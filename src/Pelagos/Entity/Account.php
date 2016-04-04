@@ -187,7 +187,7 @@ class Account extends Entity implements UserInterface, \Serializable
         // found in last 10 of password history.  The subset of history
         // is provided by a combination of EXTRA_LAZY and the Slice() method.  Also
         // check for password minimum age.
-        $interval = new \DateInterval('P24H');
+        $interval = new \DateInterval('PT24H');
         $now = new \DateTime();
         foreach ($this->passwordHistory->slice(0, 10) as $oldPasswordObject) {
             // Since these are orderded DESC, the first one will be the newest.
