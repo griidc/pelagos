@@ -37,13 +37,13 @@ abstract class UIController extends Controller
     /**
      * Validates the Entity prior to persisting it.
      *
-     * @param  Entity $container The Entity (and it's extentions).
+     * @param Entity $entity The Entity (and it's extentions).
      *
      * @throws BadRequestHttpException When invalid data is submitted.
      *
      * @return void
      */
-    public function validateEntity(Entity $entity = null)
+    public function validateEntity(Entity $entity)
     {
         $validator = $this->get('validator');
         $errors = $validator->validate($entity);
