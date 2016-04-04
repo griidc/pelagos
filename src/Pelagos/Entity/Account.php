@@ -93,7 +93,7 @@ class Account extends Entity implements UserInterface, \Serializable
      * @var Collection
      *
      * @ORM\OneToMany(targetEntity="Password", mappedBy="account", fetch="EXTRA_LAZY")
-     * @ORM\OrderBy({"modificationTimeStamp" = "DESC"})
+     * @ORM\OrderBy({"modificationTimeStamp"   = "DESC"})
      */
     protected $passwordHistory;
 
@@ -171,6 +171,7 @@ class Account extends Entity implements UserInterface, \Serializable
      * @param Password $password Pelagos password object.
      *
      * @throws PasswordException When an old password is re-used.
+     * @throws PasswordException When password last changed within 24 hrs.
      *
      * @return void
      */
@@ -184,12 +185,21 @@ class Account extends Entity implements UserInterface, \Serializable
 
         // Throw exception if this password hash is
         // found in last 10 of password history.  The subset of history
-        // is provided by a combination of EXTRA_LAZY and the Slice() method.
+        // is provided by a combination of EXTRA_LAZY and the Slice() method.  Also
+        // check for password minimum age.
+        $interval = new DateInterval('P24H');
+        $now = new DateTime();
         foreach ($this->passwordHistory->slice(0, 10) as $oldPasswordObject) {
+            // Since these are orderded DESC, the first one will be the newest.
+            if ($oldPasswordObject->getModificationTimeStamp()->add($interval) > $now) {
+                throw new PasswordException('This password has already been changed within the last 24 hrs.');
+            }
             $comparisonHash = sha1($clearText . $oldPasswordObject->getSalt(), true);
+            // Is this an old password?
             if ($comparisionHash === $hash) {
                 throw new PasswordException('This password has already been used.');
             }
+
         }
         $this->password->setAccount($this);
     }
@@ -232,8 +242,9 @@ class Account extends Entity implements UserInterface, \Serializable
     {
         $roles = array(self::ROLE_USER);
         foreach ($this->getPerson()->getPersonDataRepositories() as $personDataRepository) {
-            if ($personDataRepository->getRole()->getName() == DataRepositoryRoles::MANAGER and
-                !in_array(self::ROLE_DATA_REPOSITORY_MANAGER, $roles)) {
+            if ($personDataRepository->getRole()->getName() == DataRepositoryRoles::MANAGER
+                and !in_array(self::ROLE_DATA_REPOSITORY_MANAGER, $roles)
+            ) {
                 $roles[] = self::ROLE_DATA_REPOSITORY_MANAGER;
             }
         }
@@ -260,10 +271,12 @@ class Account extends Entity implements UserInterface, \Serializable
      */
     public function serialize()
     {
-        return serialize(array(
+        return serialize(
+            array(
             $this->person,
             $this->userId,
-        ));
+            )
+        );
     }
 
     /**
