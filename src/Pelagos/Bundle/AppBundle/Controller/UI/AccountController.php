@@ -219,7 +219,7 @@ class AccountController extends UIController
             $account = $person->getAccount();
             $account->setPassword($password);
 
-            // Validate the entitys.
+            // Validate the entities.
             $this->validateEntity($password);
             $this->validateEntity($account);
 
@@ -232,7 +232,7 @@ class AccountController extends UIController
             // Create a new account.
             $account = new Account($person, $userId, $password);
 
-            // Validate the entitys.
+            // Validate the entities.
             $this->validateEntity($password);
             $this->validateEntity($account);
 
