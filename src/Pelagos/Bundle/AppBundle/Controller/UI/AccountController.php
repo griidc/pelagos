@@ -12,6 +12,7 @@ use Pelagos\Bundle\AppBundle\Factory\UserIdFactory;
 use Pelagos\Entity\Account;
 use Pelagos\Entity\Password;
 use Pelagos\Entity\PersonToken;
+use Pelagos\Exception\PasswordException;
 
 /**
  * The Research Group controller for the Pelagos UI App Bundle.
@@ -217,7 +218,14 @@ class AccountController extends UIController
 
         if ($reset === true) {
             $account = $person->getAccount();
-            $account->setPassword($password);
+           
+            try {
+                $account->setPassword($password);
+            } catch (PasswordException $e) {
+                return $this->render('PelagosAppBundle:template:ErrorMessage.html.twig', 
+                    array('errormessage' => $e->getMessage())
+                );
+            }
 
             // Validate the entities.
             $this->validateEntity($password);
@@ -230,7 +238,13 @@ class AccountController extends UIController
             $userId = UserIdFactory::generateUniqueUserId($person, $this->entityHandler);
 
             // Create a new account.
-            $account = new Account($person, $userId, $password);
+            try {
+                $account = new Account($person, $userId, $password);
+            } catch (PasswordException $e) {
+                return $this->render('PelagosAppBundle:template:ErrorMessage.html.twig', 
+                    array('errormessage' => $e->getMessage())
+                );
+            }
 
             // Validate the entities.
             $this->validateEntity($password);
@@ -312,7 +326,13 @@ class AccountController extends UIController
         $password = new Password($request->request->get('password'));
 
         // Attach the password to the account.
-        $account->setPassword($password);
+        try {
+            $account->setPassword($password);
+        } catch (PasswordException $e) {
+            return $this->render('PelagosAppBundle:template:ErrorMessage.html.twig', 
+                array('errormessage' => $e->getMessage())
+            );
+        }
 
         // Validate both Password and Account
         $this->validateEntity($password);
