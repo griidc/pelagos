@@ -60,10 +60,6 @@ abstract class Entity
      *
      * @ORM\ManyToOne(targetEntity="Person")
      *
-     * @Assert\NotBlank(
-     *     message="Creator is required"
-     * )
-     *
      * @Serializer\Exclude
      */
     protected $creator;
@@ -92,10 +88,6 @@ abstract class Entity
      * @var Person $modifier
      *
      * @ORM\ManyToOne(targetEntity="Person")
-     *
-     * @Assert\NotBlank(
-     *     message="Modifier is required"
-     * )
      *
      * @Serializer\Exclude
      */
