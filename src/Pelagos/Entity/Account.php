@@ -186,7 +186,8 @@ class Account extends Entity implements UserInterface, \Serializable
         // check for minimum age.
         $interval = new \DateInterval('PT24H');
         $now = new \DateTime();
-        if ($this->passwordHistory->first()->getModificationTimeStamp()->add($interval) > $now) {
+        if (!$this->passwordHistory->isEmpty() and
+            $this->passwordHistory->first()->getModificationTimeStamp()->add($interval) > $now) {
             throw new PasswordException('This password has already been changed within the last 24 hrs.');
         }
 
