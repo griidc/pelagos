@@ -105,18 +105,8 @@ class AccountController extends UIController
             $template = $twig->loadTemplate('PelagosAppBundle:template:AccountConfirmation.email.html.twig');
         }
 
-        $user = $this->getUser();
-        // If user is authenticated.
-        if ($user instanceof Account) {
-            // Get the authenticated person.
-            $creator = $user->getPerson();
-        } else {
-            // Get the anonymous person.
-            $creator = $this->entityHandler->get('Pelagos:Person', -1);
-        }
-        $personToken->setCreator($creator);
-
-        // Persist PersonToken
+        // Persist and Validate PersonToken
+        $this->validateEntity($personToken);
         $personToken = $this->entityHandler->create($personToken);
 
         $mailData = array(
@@ -228,6 +218,12 @@ class AccountController extends UIController
         if ($reset === true) {
             $account = $person->getAccount();
             $account->setPassword($password);
+
+            // Validate the entitys.
+            $this->validateEntity($password);
+            $this->validateEntity($account);
+
+            // Persist Account
             $account = $this->entityHandler->update($account);
         } else {
             // Generate a unique User ID for this account.
@@ -236,10 +232,11 @@ class AccountController extends UIController
             // Create a new account.
             $account = new Account($person, $userId, $password);
 
-            // Set the creator.
-            $account->setCreator($person);
+            // Validate the entitys.
+            $this->validateEntity($password);
+            $this->validateEntity($account);
 
-            // Save the account.
+            // Persist Account
             $account = $this->entityHandler->create($account);
         }
 
@@ -308,9 +305,19 @@ class AccountController extends UIController
         // Get the authenticated Person.
         $person = $this->getUser()->getPerson();
 
+        // Get their Account
         $account = $person->getAccount();
+
+        // Create a new Password Entity.
         $password = new Password($request->request->get('password'));
+
+        // Attach the password to the account.
         $account->setPassword($password);
+
+        // Validate both Password and Account
+        $this->validateEntity($password);
+        $this->validateEntity($account);
+
         $account = $this->entityHandler->update($account);
 
         return $this->render('PelagosAppBundle:template:AccountReset.html.twig');
