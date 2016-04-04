@@ -12,6 +12,7 @@ use Pelagos\Bundle\AppBundle\Factory\UserIdFactory;
 use Pelagos\Entity\Account;
 use Pelagos\Entity\Password;
 use Pelagos\Entity\PersonToken;
+use Pelagos\Exception\PasswordException;
 
 /**
  * The Research Group controller for the Pelagos UI App Bundle.
@@ -36,7 +37,7 @@ class AccountController extends UIController
     /**
      * Password Reset action.
      *
-     * @Route("/password-reset")
+     * @Route("/reset-password")
      * @Method("GET")
      *
      * @return Response A Symfony Response instance.
@@ -105,7 +106,8 @@ class AccountController extends UIController
             $template = $twig->loadTemplate('PelagosAppBundle:template:AccountConfirmation.email.html.twig');
         }
 
-        // Persist PersonToken
+        // Persist and Validate PersonToken
+        $this->validateEntity($personToken);
         $personToken = $this->entityHandler->create($personToken);
 
         $mailData = array(
@@ -216,15 +218,41 @@ class AccountController extends UIController
 
         if ($reset === true) {
             $account = $person->getAccount();
-            $account->setPassword($password);
+
+            try {
+                $account->setPassword($password);
+            } catch (PasswordException $e) {
+                return $this->render(
+                    'PelagosAppBundle:template:ErrorMessage.html.twig',
+                    array('errormessage' => $e->getMessage())
+                );
+            }
+
+            // Validate the entities.
+            $this->validateEntity($password);
+            $this->validateEntity($account);
+
+            // Persist Account
+            $account = $this->entityHandler->update($account);
         } else {
             // Generate a unique User ID for this account.
             $userId = UserIdFactory::generateUniqueUserId($person, $this->entityHandler);
 
             // Create a new account.
-            $account = new Account($person, $userId, $password);
+            try {
+                $account = new Account($person, $userId, $password);
+            } catch (PasswordException $e) {
+                return $this->render(
+                    'PelagosAppBundle:template:ErrorMessage.html.twig',
+                    array('errormessage' => $e->getMessage())
+                );
+            }
 
-            // Save the account.
+            // Validate the entities.
+            $this->validateEntity($password);
+            $this->validateEntity($account);
+
+            // Persist Account
             $account = $this->entityHandler->create($account);
         }
 
@@ -242,5 +270,79 @@ class AccountController extends UIController
                 )
             );
         }
+    }
+
+    /**
+     * The action to change your password, will show password change dialog.
+     *
+     * @Route("/change-password")
+     * @Method("GET")
+     *
+     * @return Response A Response instance.
+     */
+    public function changePasswordAction()
+    {
+        // If the user is not authenticated.
+        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            // The token must be bad or missing.
+            return $this->render('PelagosAppBundle:template:NotLoggedIn.html.twig');
+        }
+
+        // Send back the set password screen.
+        return $this->render('PelagosAppBundle:template:changePassword.html.twig');
+    }
+
+    /**
+     * Post handler to change password.
+     *
+     * @param Request $request The Symfony Request object.
+     *
+     * @throws \Exception When password do not match.
+     *
+     * @Route("/change-password")
+     * @Method("POST")
+     *
+     * @return Response A Symfony Response instance.
+     */
+    public function changePasswordPostAction(Request $request)
+    {
+        // If the user is not authenticated.
+        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            // User is not logged in, or doesn't have a token.
+            return $this->render('PelagosAppBundle:template:NotLoggedIn.html.twig');
+        }
+
+        // If the supplied passwords don't match.
+        if ($request->request->get('password') !== $request->request->get('verify_password')) {
+            // Throw an exception.
+            throw new \Exception('Passwords do not match!');
+        }
+
+        // Get the authenticated Person.
+        $person = $this->getUser()->getPerson();
+
+        // Get their Account
+        $account = $person->getAccount();
+
+        // Create a new Password Entity.
+        $password = new Password($request->request->get('password'));
+
+        // Attach the password to the account.
+        try {
+            $account->setPassword($password);
+        } catch (PasswordException $e) {
+            return $this->render(
+                'PelagosAppBundle:template:ErrorMessage.html.twig',
+                array('errormessage' => $e->getMessage())
+            );
+        }
+
+        // Validate both Password and Account
+        $this->validateEntity($password);
+        $this->validateEntity($account);
+
+        $account = $this->entityHandler->update($account);
+
+        return $this->render('PelagosAppBundle:template:AccountReset.html.twig');
     }
 }

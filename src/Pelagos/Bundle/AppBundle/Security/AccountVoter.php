@@ -26,8 +26,8 @@ class AccountVoter extends PelagosEntityVoter
             return false;
         }
 
-        // This voter only supports CAN_CREATE.
-        if (!in_array($attribute, array(self::CAN_CREATE))) {
+        // This voter only supports CAN_CREATE and CAN_EDIT.
+        if (!in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT))) {
             return false;
         }
 
@@ -61,8 +61,9 @@ class AccountVoter extends PelagosEntityVoter
             return false;
         }
 
-        // A Person can create their own account.
-        if ($attribute == self::CAN_CREATE and $subject->getPerson()->isSameTypeAndId($user->getPerson())) {
+        // A Person can create and edit their own account.
+        if (in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT)) and
+            $subject->getPerson()->isSameTypeAndId($user->getPerson())) {
             return true;
         }
 
