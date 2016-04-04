@@ -105,17 +105,6 @@ class AccountController extends UIController
             $template = $twig->loadTemplate('PelagosAppBundle:template:AccountConfirmation.email.html.twig');
         }
 
-        $user = $this->getUser();
-        // If user is authenticated.
-        if ($user instanceof Account) {
-            // Get the authenticated person.
-            $creator = $user->getPerson();
-        } else {
-            // Get the anonymous person.
-            $creator = $this->entityHandler->get('Pelagos:Person', -1);
-        }
-        $personToken->setCreator($creator);
-
         // Persist PersonToken
         $personToken = $this->entityHandler->create($personToken);
 
@@ -234,9 +223,6 @@ class AccountController extends UIController
 
             // Create a new account.
             $account = new Account($person, $userId, $password);
-
-            // Set the creator.
-            $account->setCreator($person);
 
             // Save the account.
             $account = $this->entityHandler->create($account);

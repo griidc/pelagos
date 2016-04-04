@@ -4,6 +4,7 @@ namespace Pelagos\Bundle\AppBundle\Handler;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
@@ -12,6 +13,8 @@ use Doctrine\ORM\Id\AssignedGenerator;
 use Doctrine\Common\Collections\Collection;
 
 use Pelagos\Entity\Entity;
+use Pelagos\Entity\Account;
+use Pelagos\Entity\Person;
 use Pelagos\Exception\UnmappedPropertyException;
 use Pelagos\Bundle\AppBundle\Security\PelagosEntityVoter;
 use Pelagos\Bundle\AppBundle\Security\EntityProperty;
@@ -29,6 +32,13 @@ class EntityHandler
     private $entityManager;
 
     /**
+     * The token storage to use in this entity handler.
+     *
+     * @var TokenStorageInterface
+     */
+    private $tokenStorage;
+
+    /**
      * The authorization checker to use in this entity handler.
      *
      * @var AuthorizationCheckerInterface
@@ -39,13 +49,16 @@ class EntityHandler
      * Constructor for EntityHandler.
      *
      * @param EntityManager                 $entityManager        The entity manager to use.
+     * @param TokenStorageInterface         $tokenStorage         The token storage to use.
      * @param AuthorizationCheckerInterface $authorizationChecker The authorization checker to use.
      */
     public function __construct(
         EntityManager $entityManager,
+        TokenStorageInterface $tokenStorage,
         AuthorizationCheckerInterface $authorizationChecker
     ) {
         $this->entityManager = $entityManager;
+        $this->tokenStorage = $tokenStorage;
         $this->authorizationChecker = $authorizationChecker;
     }
 
@@ -110,6 +123,8 @@ class EntityHandler
                 'You do not have sufficient privileges to create this ' . $entity::FRIENDLY_NAME . '.'
             );
         }
+        // Set the creator to the currently authenticated user.
+        $entity->setCreator($this->getAuthenticatedPerson());
         // Get the id.
         $id = $entity->getId();
         // Get the class metadata for this entity.
@@ -155,6 +170,8 @@ class EntityHandler
                 }
             }
         }
+        // Set the modifier to the currently authenticated user.
+        $entity->setModifier($this->getAuthenticatedPerson());
         $this->entityManager->persist($entity);
         $this->entityManager->flush($entity);
         return $entity;
@@ -225,5 +242,22 @@ class EntityHandler
             ->orderBy("entity.$property")
             ->getQuery();
         return $query->getResult('COLUMN_HYDRATOR');
+    }
+
+    /**
+     * Get the currently authenticated Person.
+     *
+     * @return Person The currently authenticated Person.
+     */
+    protected function getAuthenticatedPerson()
+    {
+        $user = $this->tokenStorage->getToken()->getUser();
+        // If user is authenticated.
+        if ($user instanceof Account) {
+            // Return the authenticated person.
+            return $user->getPerson();
+        }
+        // Return the anonymous person by default.
+        return $this->get(Person::class, -1);
     }
 }

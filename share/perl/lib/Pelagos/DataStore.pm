@@ -32,7 +32,7 @@ sub check_download_directory {
     my (undef,undef,$apache_uid,$apache_gid) = getpwnam('apache');
     # check if download directory exists for this udi
     if (! -d "$download_directory_path/$udi") {
-        $log->write($log,"[$udi] creating download directory $download_directory_path/$udi");
+        $log->write("[$udi] creating download directory $download_directory_path/$udi");
         # determine download directory permissions
         my $dl_dir_perms = 0750;
         $dl_dir_perms = 0751 if $access_status eq 'None';
