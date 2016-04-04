@@ -37,7 +37,7 @@ class AccountController extends UIController
     /**
      * Password Reset action.
      *
-     * @Route("/password-reset")
+     * @Route("/reset-password")
      * @Method("GET")
      *
      * @return Response A Symfony Response instance.
@@ -218,11 +218,11 @@ class AccountController extends UIController
 
         if ($reset === true) {
             $account = $person->getAccount();
-           
+
             try {
                 $account->setPassword($password);
             } catch (PasswordException $e) {
-                return $this->render('PelagosAppBundle:template:ErrorMessage.html.twig', 
+                return $this->render('PelagosAppBundle:template:ErrorMessage.html.twig',
                     array('errormessage' => $e->getMessage())
                 );
             }
@@ -241,7 +241,7 @@ class AccountController extends UIController
             try {
                 $account = new Account($person, $userId, $password);
             } catch (PasswordException $e) {
-                return $this->render('PelagosAppBundle:template:ErrorMessage.html.twig', 
+                return $this->render('PelagosAppBundle:template:ErrorMessage.html.twig',
                     array('errormessage' => $e->getMessage())
                 );
             }
@@ -329,7 +329,7 @@ class AccountController extends UIController
         try {
             $account->setPassword($password);
         } catch (PasswordException $e) {
-            return $this->render('PelagosAppBundle:template:ErrorMessage.html.twig', 
+            return $this->render('PelagosAppBundle:template:ErrorMessage.html.twig',
                 array('errormessage' => $e->getMessage())
             );
         }
