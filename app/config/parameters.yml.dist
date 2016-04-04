@@ -15,5 +15,10 @@ parameters:
     mailer_user:       ~
     mailer_password:   ~
 
+    ldap_host: localhost
+    ldap_bind_dn: cn=ldapadmin,dc=griidc,dc=org
+    ldap_bind_pw: ~
+    ldap_people_ou: ou=members,ou=people,dc=griidc,dc=org
+
     # A secret key that's used to generate certain security-related tokens
     secret:            ThisTokenIsNotSoSecretChangeIt
