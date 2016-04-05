@@ -5,6 +5,8 @@ namespace Pelagos\Bundle\AppBundle\Controller\UI;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use Symfony\Component\Ldap\Exception\LdapException;
+
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
@@ -254,6 +256,14 @@ class AccountController extends UIController
 
             // Persist Account
             $account = $this->entityHandler->create($account);
+
+            try {
+                // Try to add the person to LDAP.
+                $this->get('pelagos.ldap')->addPerson($person);
+            } catch (LdapException $exception) {
+                // If that fails, try to update the person in LDAP.
+                $this->get('pelagos.ldap')->updatePerson($person);
+            }
         }
 
         // Delete the person token.
