@@ -19,3 +19,11 @@ services:
         class: Pelagos\Bundle\AppBundle\Security\PersonTokenAuthenticator
         arguments: ["@twig"]
         public: false
+
+    pelagos.ldap_client:
+        class: Pelagos\Component\Ldap\LdapClient
+        arguments: ["%ldap_host%"]
+
+    pelagos.ldap:
+        class: Pelagos\Component\Ldap\Ldap
+        arguments: ["@pelagos.ldap_client","%ldap_bind_dn%","%ldap_bind_pw%","%ldap_people_ou%"]
