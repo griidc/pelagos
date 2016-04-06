@@ -236,6 +236,8 @@ class AccountController extends UIController
 
             // Persist Account
             $account = $this->entityHandler->update($account);
+
+            $this->get('pelagos.ldap')->updatePerson($person);
         } else {
             // Generate a unique User ID for this account.
             $userId = UserIdFactory::generateUniqueUserId($person, $this->entityHandler);
