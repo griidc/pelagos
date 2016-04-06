@@ -2,6 +2,8 @@
 # Set parameters here that may be different on each deployment target of the app, e.g. development, staging, production.
 # http://symfony.com/doc/current/best_practices/configuration.html#infrastructure-related-configuration
 parameters:
+    hostname: ~
+
     database_host:     127.0.0.1
     database_port:     5432
     database_name:     gomri
@@ -10,15 +12,22 @@ parameters:
     # You should uncomment this if you want use pdo_sqlite
     # database_path: "%kernel.root_dir%/data.db3"
 
-    mailer_transport:  smtp
-    mailer_host:       127.0.0.1
+    mailer_transport:  sendmail
+    mailer_host:       ~
     mailer_user:       ~
     mailer_password:   ~
+    mailer_from_addr:  ~
+    mailer_from_name:  ~
 
     ldap_host: localhost
     ldap_bind_dn: cn=ldapadmin,dc=griidc,dc=org
     ldap_bind_pw: ~
     ldap_people_ou: ou=members,ou=people,dc=griidc,dc=org
+
+    # The maximum age allowed for account passwords (as an ISO 8601 duration)
+    account_password_max_age: P180D
+    # When to warn account holders of soon to expire passwords (as ISO 8601 durations)
+    account_password_expiration_warn: [P7D, P1D]
 
     # A secret key that's used to generate certain security-related tokens
     secret:            ThisTokenIsNotSoSecretChangeIt
