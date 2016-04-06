@@ -100,12 +100,12 @@ class AccountController extends UIController
             // Create new personToken
             $personToken = new PersonToken($person, 'PASSWORD_RESET', $dateInterval);
             // Load email template
-            $template = $twig->loadTemplate('PelagosAppBundle:template:PasswordReset.email.html.twig');
+            $template = $twig->loadTemplate('PelagosAppBundle:template:PasswordReset.email.twig');
         } else {
             // Create new personToken
             $personToken = new PersonToken($person, 'CREATE_ACCOUNT', $dateInterval);
             // Load email template
-            $template = $twig->loadTemplate('PelagosAppBundle:template:AccountConfirmation.email.html.twig');
+            $template = $twig->loadTemplate('PelagosAppBundle:template:AccountConfirmation.email.twig');
         }
 
         // Persist and Validate PersonToken
