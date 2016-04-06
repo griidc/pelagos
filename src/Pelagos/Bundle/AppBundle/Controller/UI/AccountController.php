@@ -218,6 +218,9 @@ class AccountController extends UIController
         // Create new Password
         $password = new Password($request->request->get('password'));
 
+        // Set the creator for password.
+        $password->setCreator($person);
+
         if ($reset === true) {
             $account = $person->getAccount();
 
@@ -338,6 +341,9 @@ class AccountController extends UIController
 
         // Create a new Password Entity.
         $password = new Password($request->request->get('password'));
+
+        // Set the creator for password.
+        $password->setCreator($person);
 
         // Attach the password to the account.
         try {
