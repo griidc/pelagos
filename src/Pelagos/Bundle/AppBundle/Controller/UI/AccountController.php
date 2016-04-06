@@ -33,7 +33,7 @@ class AccountController extends UIController
      */
     public function defaultAction()
     {
-        return $this->render('PelagosAppBundle:template:Account.html.twig');
+        return $this->render('PelagosAppBundle:Account:Account.html.twig');
     }
 
     /**
@@ -46,7 +46,7 @@ class AccountController extends UIController
      */
     public function passwordResetAction()
     {
-        return $this->render('PelagosAppBundle:template:PasswordReset.html.twig');
+        return $this->render('PelagosAppBundle:Account:PasswordReset.html.twig');
     }
 
     /**
@@ -69,7 +69,7 @@ class AccountController extends UIController
         $people = $this->entityHandler->getBy('Pelagos:Person', array('emailAddress' => $emailAddress));
 
         if (count($people) === 0) {
-            return $this->render('PelagosAppBundle:template:EmailNotFound.html.twig');
+            return $this->render('PelagosAppBundle:Account:EmailNotFound.html.twig');
         }
 
         if (count($people) > 1) {
@@ -88,7 +88,7 @@ class AccountController extends UIController
         }
 
         if ($person->getAccount() instanceof Account and !$reset) {
-            return $this->render('PelagosAppBundle:template:AccountExists.html.twig');
+            return $this->render('PelagosAppBundle:Account:AccountExists.html.twig');
         }
 
         $dateInterval = new \DateInterval('P7D');
@@ -100,12 +100,12 @@ class AccountController extends UIController
             // Create new personToken
             $personToken = new PersonToken($person, 'PASSWORD_RESET', $dateInterval);
             // Load email template
-            $template = $twig->loadTemplate('PelagosAppBundle:template:PasswordReset.email.twig');
+            $template = $twig->loadTemplate('PelagosAppBundle:Account:PasswordReset.email.twig');
         } else {
             // Create new personToken
             $personToken = new PersonToken($person, 'CREATE_ACCOUNT', $dateInterval);
             // Load email template
-            $template = $twig->loadTemplate('PelagosAppBundle:template:AccountConfirmation.email.twig');
+            $template = $twig->loadTemplate('PelagosAppBundle:Account:AccountConfirmation.email.twig');
         }
 
         // Persist and Validate PersonToken
@@ -129,7 +129,7 @@ class AccountController extends UIController
         $this->get('mailer')->send($message);
 
         return $this->render(
-            'PelagosAppBundle:template:EmailFound.html.twig',
+            'PelagosAppBundle:Account:EmailFound.html.twig',
             array(
                 'reset' => $reset,
             )
@@ -163,12 +163,12 @@ class AccountController extends UIController
         // If a password has been set.
         if ($this->getUser()->getPassword() !== null and $reset === false) {
             // The user already has an account.
-            return $this->render('PelagosAppBundle:template:AccountExists.html.twig');
+            return $this->render('PelagosAppBundle:Account:AccountExists.html.twig');
         }
 
         // Send back the set password screen.
         return $this->render(
-            'PelagosAppBundle:template:setPassword.html.twig',
+            'PelagosAppBundle:Account:setPassword.html.twig',
             array(
                 'personToken' => $this->getUser()->getPerson()->getToken(),
             )
@@ -203,7 +203,7 @@ class AccountController extends UIController
         // If a password has been set.
         if ($this->getUser()->getPassword() !== null and $reset === false) {
             // The user already has an account.
-            return $this->render('PelagosAppBundle:template:AccountExists.html.twig');
+            return $this->render('PelagosAppBundle:Account:AccountExists.html.twig');
         }
 
         // If the supplied passwords don't match.
@@ -273,10 +273,10 @@ class AccountController extends UIController
         $person->setToken(null);
 
         if ($reset === true) {
-            return $this->render('PelagosAppBundle:template:AccountReset.html.twig');
+            return $this->render('PelagosAppBundle:Account:AccountReset.html.twig');
         } else {
             return $this->render(
-                'PelagosAppBundle:template:AccountCreated.html.twig',
+                'PelagosAppBundle:Account:AccountCreated.html.twig',
                 array(
                     'Account' => $account,
                 )
@@ -301,7 +301,7 @@ class AccountController extends UIController
         }
 
         // Send back the set password screen.
-        return $this->render('PelagosAppBundle:template:changePassword.html.twig');
+        return $this->render('PelagosAppBundle:Account:changePassword.html.twig');
     }
 
     /**
@@ -358,6 +358,6 @@ class AccountController extends UIController
         // Update LDAP
         $this->get('pelagos.ldap')->updatePerson($person);
 
-        return $this->render('PelagosAppBundle:template:AccountReset.html.twig');
+        return $this->render('PelagosAppBundle:Account:AccountReset.html.twig');
     }
 }
