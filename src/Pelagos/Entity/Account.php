@@ -185,7 +185,7 @@ class Account extends Entity implements UserInterface, \Serializable
         $now = new \DateTime();
         if (!$this->passwordHistory->isEmpty() and
             $this->passwordHistory->first()->getModificationTimeStamp()->add($interval) > $now) {
-            throw new PasswordException('This password has already been changed within the last 24 hrs.');
+            throw new PasswordException('This password has already been changed within the last 24 hrs');
         }
 
         // Throw exception if this password hash is
@@ -195,7 +195,7 @@ class Account extends Entity implements UserInterface, \Serializable
         foreach ($this->passwordHistory->slice(0, 10) as $oldPasswordObject) {
             $comparisonHash = sha1($clearText . $oldPasswordObject->getSalt(), true);
             if ($comparisonHash === $oldPasswordObject->getPasswordHash()) {
-                throw new PasswordException('This password has already been used.');
+                throw new PasswordException('This password has already been used');
             }
         }
         $this->password->setAccount($this);
