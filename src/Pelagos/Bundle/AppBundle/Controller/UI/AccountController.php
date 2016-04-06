@@ -355,6 +355,9 @@ class AccountController extends UIController
 
         $account = $this->entityHandler->update($account);
 
+        // Update LDAP
+        $this->get('pelagos.ldap')->updatePerson($person);
+
         return $this->render('PelagosAppBundle:template:AccountReset.html.twig');
     }
 }
