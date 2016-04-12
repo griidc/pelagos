@@ -396,7 +396,7 @@ else {
     echo '</td>';
     echo '<td width="*">&nbsp;&nbsp;</td>';
     echo '<td width="40%" style="vertical-align: top; background: transparent;">';
-    include $GLOBALS['pelagos_config']['paths']['share'].'/php/sidebar.php';
+    include 'sidebar.php';
     echo '</td>';
     echo '</tr>';
     echo '</table>';
