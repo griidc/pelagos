@@ -1,0 +1,22 @@
+services:
+    pelagos.entity.handler:
+        class: Pelagos\Bundle\AppBundle\Handler\EntityHandler
+        arguments: ["@doctrine.orm.entity_manager", "@security.token_storage", "@security.authorization_checker"]
+
+    pelagos.twig.extensions:
+        class: Pelagos\Bundle\AppBundle\Twig\Extensions
+        public: false
+        tags:
+            - { name: twig.extension }
+
+    pelagos.twig_entity_extensions:
+        class: Pelagos\TwigEntityExtensions
+        public: false
+        tags:
+            - { name: twig.extension }
+
+    pelagos.form.type.person:
+        class: Pelagos\Bundle\AppBundle\Form\PersonType
+        arguments: ["@router"]
+        tags:
+            - { name: form.type }

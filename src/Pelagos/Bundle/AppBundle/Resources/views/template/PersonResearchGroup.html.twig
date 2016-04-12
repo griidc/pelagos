@@ -1,0 +1,24 @@
+{% extends "PelagosAppBundle:template:UI.html.twig" %}
+
+{% block head %}
+    {{ parent() }}
+    {% javascripts '@PelagosAppBundle/Resources/public/js/entity/PersonResearchGroup.js' %}
+        {{ add_js(asset_url) }}
+    {% endjavascripts %}
+{% endblock %}
+
+{% block body %}
+<div>
+    <table border="0" width="100%">
+        <tr>
+            <td width="25%" valign="top">
+            </td>
+            <td style="padding:10px;" width="60%" valign="top">
+                <div id="details">
+                    {% include '@templates/forms/PersonResearchGroup.html.twig' %}
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+{% endblock %}

@@ -10,7 +10,10 @@
         "pelagosComponentPath": 2,
         "pelagosBaseUri": 2,
         "pelagosComponentUri": 2,
-        "XRegExp": 2
+        "XRegExp": 2,
+        "sortObject": 2,
+        "showDialog": 2,
+        "showConfirmation": 2
     },
     "rules": {
         "no-underscore-dangle": 0,
@@ -25,7 +28,8 @@
         "new-cap": [2, {
             "capIsNewExceptions": [
                 "Deferred",
-                "XRegExp"
+                "XRegExp",
+                "DataTable"
             ]
         }],
         "quotes": [2, "double", "avoid-escape"]

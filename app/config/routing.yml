@@ -1,0 +1,6 @@
+pelagos_legacy:
+    resource: "@PelagosLegacyBundle/Resources/config/routing.yml"
+    prefix:   /legacy
+
+pelagos:
+    resource: "@PelagosAppBundle/Resources/config/routing.yml"

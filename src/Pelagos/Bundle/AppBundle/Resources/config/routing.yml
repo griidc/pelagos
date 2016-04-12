@@ -1,0 +1,21 @@
+pelagos_homepage:
+    path:     /
+    defaults: { _controller: PelagosAppBundle:Default:index }
+
+pelagos_admin:
+    path:     /admin
+    defaults: { _controller: PelagosAppBundle:Default:admin }
+
+pelagos_ui:
+    resource: "@PelagosAppBundle/Resources/config/routing_ui.yml"
+
+pelagos_list:
+    resource: Pelagos\Bundle\AppBundle\Controller\ListController
+
+pelagos_rest:
+    type: rest
+    resource: "@PelagosAppBundle/Resources/config/routing_rest.yml"
+
+NelmioApiDocBundle:
+    prefix:   /api/doc
+    resource: "@NelmioApiDocBundle/Resources/config/routing.yml"

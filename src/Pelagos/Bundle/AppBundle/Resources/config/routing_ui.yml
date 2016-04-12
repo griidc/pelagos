@@ -1,0 +1,26 @@
+pelagos_data_repository_ui:
+    resource: Pelagos\Bundle\AppBundle\Controller\UI\DataRepositoryController
+
+pelagos_funding_cycle_ui:
+    resource: Pelagos\Bundle\AppBundle\Controller\UI\FundingCycleController
+
+pelagos_funding_organization_ui:
+    resource: Pelagos\Bundle\AppBundle\Controller\UI\FundingOrganizationController
+
+pelagos_person_ui:
+    resource: Pelagos\Bundle\AppBundle\Controller\UI\PersonController
+
+pelagos_person_funding_organization_ui:
+    resource: Pelagos\Bundle\AppBundle\Controller\UI\PersonFundingOrganizationController
+
+pelagos_person_research_group_ui:
+    resource: Pelagos\Bundle\AppBundle\Controller\UI\PersonResearchGroupController
+
+pelagos_research_group_ui:
+    resource: Pelagos\Bundle\AppBundle\Controller\UI\ResearchGroupController
+    
+pelagos_person_data_repository_ui:
+    resource: Pelagos\Bundle\AppBundle\Controller\UI\PersonDataRepositoryController
+
+pelagos_account_ui:
+    resource: Pelagos\Bundle\AppBundle\Controller\UI\AccountController

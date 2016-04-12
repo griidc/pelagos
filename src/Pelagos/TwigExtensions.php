@@ -25,33 +25,33 @@ class TwigExtensions extends \Twig_Extension
     public function getFilters()
     {
         return array(
-            'removeYR1BG' => new \Twig_Filter_Method(
-                $this,
-                'removeYR1BG'
+            new \Twig_SimpleFilter(
+                'removeYR1BG',
+                array(self::class, 'removeYR1BG')
             ),
-            'statusToImg' => new \Twig_Filter_Method(
-                $this,
-                'statusToImg'
+            new \Twig_SimpleFilter(
+                'statusToImg',
+                array(self::class, 'statusToImg')
             ),
-            'statusToTitle' => new \Twig_Filter_Method(
-                $this,
-                'statusToTitle'
+            new \Twig_SimpleFilter(
+                'statusToTitle',
+                array(self::class, 'statusToTitle')
             ),
-            'trimws' => new \Twig_Filter_Method(
-                $this,
-                'trimws'
+            new \Twig_SimpleFilter(
+                'trimws',
+                array(self::class, 'trimws')
             ),
-            'evaluate' => new \Twig_Filter_Method(
-                $this,
+            new \Twig_SimpleFilter(
                 'evaluate',
+                array(self::class, 'evaluate'),
                 array(
                     'needs_environment' => true,
                     'needs_context' => true,
                     'is_safe' => array(
-                        'evaluate' => true
+                        'evaluate' => true,
                     )
                 )
-            )
+            ),
         );
     }
 
@@ -62,7 +62,7 @@ class TwigExtensions extends \Twig_Extension
      *
      * @return string The filtered string.
      */
-    public function removeYR1BG($string)
+    public static function removeYR1BG($string)
     {
         return preg_replace('/^Year One Block Grant - /', '', $string);
     }
@@ -74,7 +74,7 @@ class TwigExtensions extends \Twig_Extension
      *
      * @return string The status icon name.
      */
-    public function statusToImg($status)
+    public static function statusToImg($status)
     {
         return $GLOBALS['config']['status_icons'][$status];
     }
@@ -86,7 +86,7 @@ class TwigExtensions extends \Twig_Extension
      *
      * @return string The status title.
      */
-    public function statusToTitle($statusType)
+    public static function statusToTitle($statusType)
     {
         return $GLOBALS['config']['status_titles'][$statusType];
     }
@@ -98,7 +98,7 @@ class TwigExtensions extends \Twig_Extension
      *
      * @return string The trimmed string.
      */
-    public function trimws($string)
+    public static function trimws($string)
     {
         return preg_replace('/^\s+|\s+$/', '', $string);
     }
@@ -112,10 +112,10 @@ class TwigExtensions extends \Twig_Extension
      *
      * @return string The evaluated string.
      */
-    public function evaluate(\Twig_Environment $environment, array $context, $string)
+    public static function evaluate(\Twig_Environment $environment, array $context, $string)
     {
         $loader = $environment->getLoader();
-        $parsed = $this->parseString($environment, $context, $string);
+        $parsed = self::parseString($environment, $context, $string);
         $environment->setLoader($loader);
         return $parsed;
     }
@@ -129,7 +129,7 @@ class TwigExtensions extends \Twig_Extension
      *
      * @return string The parsed string.
      */
-    protected function parseString(\Twig_Environment $environment, array $context, $string)
+    protected static function parseString(\Twig_Environment $environment, array $context, $string)
     {
         $environment->setLoader(new \Twig_Loader_String());
         return $environment->render($string, $context);

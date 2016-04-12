@@ -79,19 +79,6 @@ class ComponentTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test retrieving the entity manager from the component.
-     *
-     * Checks to see that we get an instance of \Doctrine\ORM\EntityManager back.
-     *
-     * @return void
-     */
-    public function testGetEntityManager()
-    {
-        $entityManager = $this->component->getEntityManager();
-        $this->assertInstanceOf('\Doctrine\ORM\EntityManager', $entityManager);
-    }
-
-    /**
      * Test adding a javascript file with a relative path (relative to the component path).
      *
      * @return void

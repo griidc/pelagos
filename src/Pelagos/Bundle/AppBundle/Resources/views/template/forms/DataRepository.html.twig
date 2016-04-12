@@ -1,0 +1,19 @@
+<form class="entityForm" entityType="DataRepository"
+{% if is_granted('CAN_EDIT', DataRepository) %}
+ editable
+{% endif %}
+action="{{path('pelagos_api_data_repositories_get_collection')}}">
+
+    <input type="hidden" name="id" value="{{DataRepository.getId}}">
+
+    {{ form_widget(form) }}
+
+    <div class="innerForm">
+        {% if is_granted('CAN_EDIT', DataRepository) %}
+            {% image '@PelagosAppBundle/Resources/public/images/application_edit.png' %}
+                <img class="editimg" src="{{asset_url}}">
+            {% endimage %}
+        {% endif %}
+    </div>
+    
+</form>
