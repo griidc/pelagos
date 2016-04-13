@@ -9,296 +9,259 @@ class DIF extends Entity
 {
     /**
      * PROPDESCRIPTION
-     * 
-     * @access protected
+     *
      * @var PROPTYPE
      */
     protected $status;
 
     /**
      * PROPDESCRIPTION
-     * 
-     * @access protected
+     *
      * @var PROPTYPE
      */
     protected $researchGroup;
 
     /**
      * PROPDESCRIPTION
-     * 
-     * @access protected
+     *
      * @var PROPTYPE
      */
     protected $title;
 
     /**
      * PROPDESCRIPTION
-     * 
-     * @access protected
+     *
      * @var PROPTYPE
      */
     protected $primaryPointOfContact;
 
     /**
      * PROPDESCRIPTION
-     * 
-     * @access protected
+     *
      * @var PROPTYPE
      */
     protected $secondaryPointOfContact;
 
     /**
      * PROPDESCRIPTION
-     * 
-     * @access protected
+     *
      * @var PROPTYPE
      */
     protected $abstract;
 
     /**
      * PROPDESCRIPTION
-     * 
-     * @access protected
+     *
      * @var PROPTYPE
      */
     protected $fieldOfStudyEcologicalBiological;
 
     /**
      * PROPDESCRIPTION
-     * 
-     * @access protected
+     *
      * @var PROPTYPE
      */
     protected $fieldOfStudyPhysicalOceanography;
 
     /**
      * PROPDESCRIPTION
-     * 
-     * @access protected
+     *
      * @var PROPTYPE
      */
     protected $fieldOfStudyAtmospheric;
 
     /**
      * PROPDESCRIPTION
-     * 
-     * @access protected
+     *
      * @var PROPTYPE
      */
     protected $fieldOfStudyChemical;
 
     /**
      * PROPDESCRIPTION
-     * 
-     * @access protected
+     *
      * @var PROPTYPE
      */
     protected $fieldOfStudyHumanHealth;
 
     /**
      * PROPDESCRIPTION
-     * 
-     * @access protected
+     *
      * @var PROPTYPE
      */
     protected $fieldOfStudySocialCulturalPolitical;
 
     /**
      * PROPDESCRIPTION
-     * 
-     * @access protected
+     *
      * @var PROPTYPE
      */
     protected $fieldOfStudyEconomics;
 
     /**
      * PROPDESCRIPTION
-     * 
-     * @access protected
+     *
      * @var PROPTYPE
      */
     protected $fieldOfStudyOther;
 
     /**
      * PROPDESCRIPTION
-     * 
-     * @access protected
+     *
      * @var PROPTYPE
      */
     protected $dataSize;
 
     /**
      * PROPDESCRIPTION
-     * 
-     * @access protected
+     *
      * @var PROPTYPE
      */
     protected $variablesObserved;
 
     /**
      * PROPDESCRIPTION
-     * 
-     * @access protected
+     *
      * @var PROPTYPE
      */
     protected $collectionMethodFieldSampling;
 
     /**
      * PROPDESCRIPTION
-     * 
-     * @access protected
+     *
      * @var PROPTYPE
      */
     protected $collectionMethodSimulatedGenerated;
 
     /**
      * PROPDESCRIPTION
-     * 
-     * @access protected
+     *
      * @var PROPTYPE
      */
     protected $collectionMethodLaboratory;
 
     /**
      * PROPDESCRIPTION
-     * 
-     * @access protected
+     *
      * @var PROPTYPE
      */
     protected $collectionMethodLiteratureBased;
 
     /**
      * PROPDESCRIPTION
-     * 
-     * @access protected
+     *
      * @var PROPTYPE
      */
     protected $collectionMethodRemoteSensing;
 
     /**
      * PROPDESCRIPTION
-     * 
-     * @access protected
+     *
      * @var PROPTYPE
      */
     protected $collectionMethodOther;
 
     /**
      * PROPDESCRIPTION
-     * 
-     * @access protected
+     *
      * @var PROPTYPE
      */
     protected $estimatedStartDate;
 
     /**
      * PROPDESCRIPTION
-     * 
-     * @access protected
+     *
      * @var PROPTYPE
      */
     protected $estimatedEndDate;
 
     /**
      * PROPDESCRIPTION
-     * 
-     * @access protected
+     *
      * @var PROPTYPE
      */
     protected $spatialDescription;
 
     /**
      * PROPDESCRIPTION
-     * 
-     * @access protected
+     *
      * @var PROPTYPE
      */
     protected $spatialGeometry;
 
     /**
      * PROPDESCRIPTION
-     * 
-     * @access protected
+     *
      * @var PROPTYPE
      */
     protected $collectionMethod;
 
     /**
      * PROPDESCRIPTION
-     * 
-     * @access protected
+     *
      * @var PROPTYPE
      */
     protected $nationalDataArchiveNODC;
 
     /**
      * PROPDESCRIPTION
-     * 
-     * @access protected
+     *
      * @var PROPTYPE
      */
     protected $nationalDataArchiveUSEPAStoret;
 
     /**
      * PROPDESCRIPTION
-     * 
-     * @access protected
+     *
      * @var PROPTYPE
      */
     protected $nationalDataArchiveGBIF;
 
     /**
      * PROPDESCRIPTION
-     * 
-     * @access protected
+     *
      * @var PROPTYPE
      */
     protected $nationalDataArchiveNCBI;
 
     /**
      * PROPDESCRIPTION
-     * 
-     * @access protected
+     *
      * @var PROPTYPE
      */
     protected $nationalDataArchiveDataGov;
 
     /**
      * PROPDESCRIPTION
-     * 
-     * @access protected
+     *
      * @var PROPTYPE
      */
     protected $nationalDataArchiveOther;
 
     /**
      * PROPDESCRIPTION
-     * 
-     * @access protected
+     *
      * @var PROPTYPE
      */
     protected $ethicalIssues;
 
     /**
      * PROPDESCRIPTION
-     * 
-     * @access protected
+     *
      * @var PROPTYPE
      */
     protected $ethicalIssuesExplanation;
 
     /**
      * PROPDESCRIPTION
-     * 
-     * @access protected
+     *
      * @var PROPTYPE
      */
     protected $remarks;
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @return RETURNTYPE RETURNDESCRIPTION
      */
     public function getStatus()
@@ -308,9 +271,10 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @param ARGTYPE $status ARGDESCRIPTION
+     *
+     * @return void
      */
     public function setStatus($status)
     {
@@ -319,8 +283,7 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @return RETURNTYPE RETURNDESCRIPTION
      */
     public function getResearchGroup()
@@ -330,9 +293,10 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @param ARGTYPE $researchGroup ARGDESCRIPTION
+     *
+     * @return void
      */
     public function setResearchGroup($researchGroup)
     {
@@ -341,8 +305,7 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @return RETURNTYPE RETURNDESCRIPTION
      */
     public function getTitle()
@@ -352,9 +315,10 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @param ARGTYPE $title ARGDESCRIPTION
+     *
+     * @return void
      */
     public function setTitle($title)
     {
@@ -363,8 +327,7 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @return RETURNTYPE RETURNDESCRIPTION
      */
     public function getPrimaryPointOfContact()
@@ -374,9 +337,10 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @param ARGTYPE $primaryPointOfContact ARGDESCRIPTION
+     *
+     * @return void
      */
     public function setPrimaryPointOfContact($primaryPointOfContact)
     {
@@ -385,8 +349,7 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @return RETURNTYPE RETURNDESCRIPTION
      */
     public function getSecondaryPointOfContact()
@@ -396,9 +359,10 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @param ARGTYPE $secondaryPointOfContact ARGDESCRIPTION
+     *
+     * @return void
      */
     public function setSecondaryPointOfContact($secondaryPointOfContact)
     {
@@ -407,8 +371,7 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @return RETURNTYPE RETURNDESCRIPTION
      */
     public function getAbstract()
@@ -418,9 +381,10 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @param ARGTYPE $abstract ARGDESCRIPTION
+     *
+     * @return void
      */
     public function setAbstract($abstract)
     {
@@ -429,8 +393,7 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @return RETURNTYPE RETURNDESCRIPTION
      */
     public function getFieldOfStudyEcologicalBiological()
@@ -440,9 +403,10 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @param ARGTYPE $fieldOfStudyEcologicalBiological ARGDESCRIPTION
+     *
+     * @return void
      */
     public function setFieldOfStudyEcologicalBiological($fieldOfStudyEcologicalBiological)
     {
@@ -451,8 +415,7 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @return RETURNTYPE RETURNDESCRIPTION
      */
     public function getFieldOfStudyPhysicalOceanography()
@@ -462,9 +425,10 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @param ARGTYPE $fieldOfStudyPhysicalOceanography ARGDESCRIPTION
+     *
+     * @return void
      */
     public function setFieldOfStudyPhysicalOceanography($fieldOfStudyPhysicalOceanography)
     {
@@ -473,8 +437,7 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @return RETURNTYPE RETURNDESCRIPTION
      */
     public function getFieldOfStudyAtmospheric()
@@ -484,9 +447,10 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @param ARGTYPE $fieldOfStudyAtmospheric ARGDESCRIPTION
+     *
+     * @return void
      */
     public function setFieldOfStudyAtmospheric($fieldOfStudyAtmospheric)
     {
@@ -495,8 +459,7 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @return RETURNTYPE RETURNDESCRIPTION
      */
     public function getFieldOfStudyChemical()
@@ -506,9 +469,10 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @param ARGTYPE $fieldOfStudyChemical ARGDESCRIPTION
+     *
+     * @return void
      */
     public function setFieldOfStudyChemical($fieldOfStudyChemical)
     {
@@ -517,8 +481,7 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @return RETURNTYPE RETURNDESCRIPTION
      */
     public function getFieldOfStudyHumanHealth()
@@ -528,9 +491,10 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @param ARGTYPE $fieldOfStudyHumanHealth ARGDESCRIPTION
+     *
+     * @return void
      */
     public function setFieldOfStudyHumanHealth($fieldOfStudyHumanHealth)
     {
@@ -539,8 +503,7 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @return RETURNTYPE RETURNDESCRIPTION
      */
     public function getFieldOfStudySocialCulturalPolitical()
@@ -550,9 +513,10 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @param ARGTYPE $fieldOfStudySocialCulturalPolitical ARGDESCRIPTION
+     *
+     * @return void
      */
     public function setFieldOfStudySocialCulturalPolitical($fieldOfStudySocialCulturalPolitical)
     {
@@ -561,8 +525,7 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @return RETURNTYPE RETURNDESCRIPTION
      */
     public function getFieldOfStudyEconomics()
@@ -572,9 +535,10 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @param ARGTYPE $fieldOfStudyEconomics ARGDESCRIPTION
+     *
+     * @return void
      */
     public function setFieldOfStudyEconomics($fieldOfStudyEconomics)
     {
@@ -583,8 +547,7 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @return RETURNTYPE RETURNDESCRIPTION
      */
     public function getFieldOfStudyOther()
@@ -594,9 +557,10 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @param ARGTYPE $fieldOfStudyOther ARGDESCRIPTION
+     *
+     * @return void
      */
     public function setFieldOfStudyOther($fieldOfStudyOther)
     {
@@ -605,8 +569,7 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @return RETURNTYPE RETURNDESCRIPTION
      */
     public function getDataSize()
@@ -616,9 +579,10 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @param ARGTYPE $dataSize ARGDESCRIPTION
+     *
+     * @return void
      */
     public function setDataSize($dataSize)
     {
@@ -627,8 +591,7 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @return RETURNTYPE RETURNDESCRIPTION
      */
     public function getVariablesObserved()
@@ -638,9 +601,10 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @param ARGTYPE $variablesObserved ARGDESCRIPTION
+     *
+     * @return void
      */
     public function setVariablesObserved($variablesObserved)
     {
@@ -649,8 +613,7 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @return RETURNTYPE RETURNDESCRIPTION
      */
     public function getCollectionMethodFieldSampling()
@@ -660,9 +623,10 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @param ARGTYPE $collectionMethodFieldSampling ARGDESCRIPTION
+     *
+     * @return void
      */
     public function setCollectionMethodFieldSampling($collectionMethodFieldSampling)
     {
@@ -671,8 +635,7 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @return RETURNTYPE RETURNDESCRIPTION
      */
     public function getCollectionMethodSimulatedGenerated()
@@ -682,9 +645,10 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @param ARGTYPE $collectionMethodSimulatedGenerated ARGDESCRIPTION
+     *
+     * @return void
      */
     public function setCollectionMethodSimulatedGenerated($collectionMethodSimulatedGenerated)
     {
@@ -693,8 +657,7 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @return RETURNTYPE RETURNDESCRIPTION
      */
     public function getCollectionMethodLaboratory()
@@ -704,9 +667,10 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @param ARGTYPE $collectionMethodLaboratory ARGDESCRIPTION
+     *
+     * @return void
      */
     public function setCollectionMethodLaboratory($collectionMethodLaboratory)
     {
@@ -715,8 +679,7 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @return RETURNTYPE RETURNDESCRIPTION
      */
     public function getCollectionMethodLiteratureBased()
@@ -726,9 +689,10 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @param ARGTYPE $collectionMethodLiteratureBased ARGDESCRIPTION
+     *
+     * @return void
      */
     public function setCollectionMethodLiteratureBased($collectionMethodLiteratureBased)
     {
@@ -737,8 +701,7 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @return RETURNTYPE RETURNDESCRIPTION
      */
     public function getCollectionMethodRemoteSensing()
@@ -748,9 +711,10 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @param ARGTYPE $collectionMethodRemoteSensing ARGDESCRIPTION
+     *
+     * @return void
      */
     public function setCollectionMethodRemoteSensing($collectionMethodRemoteSensing)
     {
@@ -759,8 +723,7 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @return RETURNTYPE RETURNDESCRIPTION
      */
     public function getCollectionMethodOther()
@@ -770,9 +733,10 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @param ARGTYPE $collectionMethodOther ARGDESCRIPTION
+     *
+     * @return void
      */
     public function setCollectionMethodOther($collectionMethodOther)
     {
@@ -781,8 +745,7 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @return RETURNTYPE RETURNDESCRIPTION
      */
     public function getEstimatedStartDate()
@@ -792,9 +755,10 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @param ARGTYPE $estimatedStartDate ARGDESCRIPTION
+     *
+     * @return void
      */
     public function setEstimatedStartDate($estimatedStartDate)
     {
@@ -803,8 +767,7 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @return RETURNTYPE RETURNDESCRIPTION
      */
     public function getEstimatedEndDate()
@@ -814,9 +777,10 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @param ARGTYPE $estimatedEndDate ARGDESCRIPTION
+     *
+     * @return void
      */
     public function setEstimatedEndDate($estimatedEndDate)
     {
@@ -825,8 +789,7 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @return RETURNTYPE RETURNDESCRIPTION
      */
     public function getSpatialDescription()
@@ -836,9 +799,10 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @param ARGTYPE $spatialDescription ARGDESCRIPTION
+     *
+     * @return void
      */
     public function setSpatialDescription($spatialDescription)
     {
@@ -847,8 +811,7 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @return RETURNTYPE RETURNDESCRIPTION
      */
     public function getSpatialGeometry()
@@ -858,9 +821,10 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @param ARGTYPE $spatialGeometry ARGDESCRIPTION
+     *
+     * @return void
      */
     public function setSpatialGeometry($spatialGeometry)
     {
@@ -869,8 +833,7 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @return RETURNTYPE RETURNDESCRIPTION
      */
     public function getCollectionMethod()
@@ -880,9 +843,10 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @param ARGTYPE $collectionMethod ARGDESCRIPTION
+     *
+     * @return void
      */
     public function setCollectionMethod($collectionMethod)
     {
@@ -891,8 +855,7 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @return RETURNTYPE RETURNDESCRIPTION
      */
     public function getNationalDataArchiveNODC()
@@ -902,9 +865,10 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @param ARGTYPE $nationalDataArchiveNODC ARGDESCRIPTION
+     *
+     * @return void
      */
     public function setNationalDataArchiveNODC($nationalDataArchiveNODC)
     {
@@ -913,8 +877,7 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @return RETURNTYPE RETURNDESCRIPTION
      */
     public function getNationalDataArchiveUSEPAStoret()
@@ -924,9 +887,10 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @param ARGTYPE $nationalDataArchiveUSEPAStoret ARGDESCRIPTION
+     *
+     * @return void
      */
     public function setNationalDataArchiveUSEPAStoret($nationalDataArchiveUSEPAStoret)
     {
@@ -935,8 +899,7 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @return RETURNTYPE RETURNDESCRIPTION
      */
     public function getNationalDataArchiveGBIF()
@@ -946,9 +909,10 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @param ARGTYPE $nationalDataArchiveGBIF ARGDESCRIPTION
+     *
+     * @return void
      */
     public function setNationalDataArchiveGBIF($nationalDataArchiveGBIF)
     {
@@ -957,8 +921,7 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @return RETURNTYPE RETURNDESCRIPTION
      */
     public function getNationalDataArchiveNCBI()
@@ -968,9 +931,10 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @param ARGTYPE $nationalDataArchiveNCBI ARGDESCRIPTION
+     *
+     * @return void
      */
     public function setNationalDataArchiveNCBI($nationalDataArchiveNCBI)
     {
@@ -979,8 +943,7 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @return RETURNTYPE RETURNDESCRIPTION
      */
     public function getNationalDataArchiveDataGov()
@@ -990,9 +953,10 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @param ARGTYPE $nationalDataArchiveDataGov ARGDESCRIPTION
+     *
+     * @return void
      */
     public function setNationalDataArchiveDataGov($nationalDataArchiveDataGov)
     {
@@ -1001,8 +965,7 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @return RETURNTYPE RETURNDESCRIPTION
      */
     public function getNationalDataArchiveOther()
@@ -1012,9 +975,10 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @param ARGTYPE $nationalDataArchiveOther ARGDESCRIPTION
+     *
+     * @return void
      */
     public function setNationalDataArchiveOther($nationalDataArchiveOther)
     {
@@ -1023,8 +987,7 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @return RETURNTYPE RETURNDESCRIPTION
      */
     public function getEthicalIssues()
@@ -1034,9 +997,10 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @param ARGTYPE $ethicalIssues ARGDESCRIPTION
+     *
+     * @return void
      */
     public function setEthicalIssues($ethicalIssues)
     {
@@ -1045,8 +1009,7 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @return RETURNTYPE RETURNDESCRIPTION
      */
     public function getEthicalIssuesExplanation()
@@ -1056,9 +1019,10 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @param ARGTYPE $ethicalIssuesExplanation ARGDESCRIPTION
+     *
+     * @return void
      */
     public function setEthicalIssuesExplanation($ethicalIssuesExplanation)
     {
@@ -1067,8 +1031,7 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @return RETURNTYPE RETURNDESCRIPTION
      */
     public function getRemarks()
@@ -1078,9 +1041,10 @@ class DIF extends Entity
 
     /**
      * METHODDESCRIPTION
-     * 
-     * @access public
+     *
      * @param ARGTYPE $remarks ARGDESCRIPTION
+     *
+     * @return void
      */
     public function setRemarks($remarks)
     {
