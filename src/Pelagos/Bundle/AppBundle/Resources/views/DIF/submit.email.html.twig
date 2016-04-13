@@ -1,0 +1,23 @@
+{% block sender 'GRIIDC <griidc@gomri.org>' %}
+
+{% block subject '[GRIIDC] DIF Unlocked Request' %}
+
+{% block body_html %}
+Dear {{ person.getFirstName }} {{ person.getLastName }},<br>
+<br>
+Thank you for submitting your Dataset Information Form (DIF) <a href="{{ url('PATH_TO_DIF_ROUTE') }}">{{udi}}</a>.<br>
+Your DIF is now being reviewed by staff at the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC). You will receive an e-mail notification once your DIF has been approved.<br>
+<br>
+Thank you,<br>
+The GRIIDC Team<br>
+{% endblock %}
+
+{% block body_text %}
+Dear {{ person.getFirstName }} {{ person.getLastName }},
+
+Thank you for submitting your Dataset Information Form (DIF) <a href="{{ url('PATH_TO_DIF_ROUTE') }}">{{udi}}</a>.
+Your DIF is now being reviewed by staff at the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC). You will receive an e-mail notification once your DIF has been approved.
+
+Thank you,
+The GRIIDC Team
+{% endblock %}
