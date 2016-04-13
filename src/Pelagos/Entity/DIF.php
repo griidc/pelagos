@@ -57,7 +57,7 @@ class DIF extends Entity
      *
      * @var ResearchGroup
      *
-     * @ORM\ManyToMany(targetEntity="ResearchGroup")
+     * @ORM\ManyToOne(targetEntity="ResearchGroup")
      */
     protected $researchGroup;
 
@@ -75,7 +75,7 @@ class DIF extends Entity
      *
      * @var Person
      *
-     * @ORM\ManyToMany(targetEntity="Person")
+     * @ORM\ManyToOne(targetEntity="Person")
      */
     protected $primaryPointOfContact;
 
@@ -84,7 +84,7 @@ class DIF extends Entity
      *
      * @var Person
      *
-     * @ORM\ManyToMany(targetEntity="Person")
+     * @ORM\ManyToOne(targetEntity="Person")
      */
     protected $secondaryPointOfContact;
 
@@ -275,7 +275,7 @@ class DIF extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="geometry", nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $spatialExtentGeometry;
 
