@@ -70,16 +70,60 @@ class DIFType extends AbstractType
                     'placeholder' => 'Please provide a brief narrative describing: What, where, why, how, and when the data will be or have been collected/generated?  (4000 Character Maximum'),
                 'required' => false,
             ))
-            ->add('fieldOfStudy', ChoiceType::class, array(
+            ->add('fieldOfStudyEcologicalBiological', ChoiceType::class, array(
                 'choices' => [
                         new Category('Ecological/Biological'),
+                 ],
+                'expanded' => true,
+                'multiple' => true,
+                'required' => false,
+            ))
+            ->add('fieldOfStudyPhysicalOceanography', ChoiceType::class, array(
+                'choices' => [
                         new Category('Physical Oceanography'),
+                    ],
+                'expanded' => true,
+                'multiple' => true,
+                'required' => false,
+            ))
+            ->add('fieldOfStudyAtmospheric', ChoiceType::class, array(
+                'choices' => [
                         new Category('Atmospheric'),
+                    ],
+                'expanded' => true,
+                'multiple' => true,
+                'required' => false,
+            ))
+            ->add('fieldOfStudyChemical', ChoiceType::class, array(
+                'choices' => [
                         new Category('Chemical'),
+                    ],
+                'expanded' => true,
+                'multiple' => true,
+                'required' => false,
+            ))
+            ->add('fieldOfStudyHumanHealth', ChoiceType::class, array(
+                'choices' => [
                         new Category('Human Health'),
+                    ],
+                'expanded' => true,
+                'multiple' => true,
+                'required' => false,
+            ))
+            ->add('fieldOfStudySocialCulturalPolitical', ChoiceType::class, array(
+                'choices' => [
                         new Category('Social/Cultural/Political'),
+                    ],
+                'expanded' => true,
+                'multiple' => true,
+                'required' => false,
+            ))
+            ->add('fieldOfStudyEconomics', ChoiceType::class, array(
+                'choices' => [
                         new Category('Economics'),
                     ],
+                'expanded' => true,
+                'multiple' => true,
                 'required' => false,
             ))
             ->add('fieldOfStudyOther', TextType::class, array(
@@ -98,14 +142,44 @@ class DIFType extends AbstractType
                 ),
                 'required' => false,
             ))
-            ->add('CollectionMethod', ChoiceType::class, array(
+            ->add('collectionMethodFieldSampling', ChoiceType::class, array(
                 'choices' => [
                         new Category('Field Sampling'),
+                    ],
+                'expanded' => true,
+                'multiple' => true,
+                'required' => false,
+            ))
+            ->add('collectionMethodSimulatedGenerated', ChoiceType::class, array(
+                'choices' => [
                         new Category('Simulated/Generated'),
+                    ],
+                'expanded' => true,
+                'multiple' => true,
+                'required' => false,
+            ))
+            ->add('collectionMethodLaboratory', ChoiceType::class, array(
+                'choices' => [
                         new Category('Laboratory'),
+                    ],
+                'expanded' => true,
+                'multiple' => true,
+                'required' => false,
+            ))
+            ->add('collectionMethodLiteratureBased', ChoiceType::class, array(
+                'choices' => [
                         new Category('Literature Based'),
+                    ],
+                'expanded' => true,
+                'multiple' => true,
+                'required' => false,
+            ))
+            ->add('collectionMethodRemoteSensing', ChoiceType::class, array(
+                'choices' => [
                         new Category('Remote Sensing'),
                     ],
+                'expanded' => true,
+                'multiple' => true,
                 'required' => false,
             ))
             ->add('CollectionMethodOther', TextType::class, array(
@@ -132,14 +206,44 @@ class DIFType extends AbstractType
                 'required' => false,
             ))
             ->add('spacialGeometry', HiddenType::class)
-            ->add('NationalDataArchive', ChoiceType::class, array(
+            ->add('nationalDataArchiveNODC', ChoiceType::class, array(
                 'choices' => [
-                        new Category('NODC'),
-                        new Category('US EPA Storet'),
-                        new Category('GBIF'),
-                        new Category('NCBI'),
-                        new Category('Data Gov'),
+                        new Category('National Oceanographic Data Center'),
                     ],
+                'expanded' => true,
+                'multiple' => true,
+                'required' => false,
+            ))
+            ->add('nationalDataArchiveUSEPAStoret', ChoiceType::class, array(
+                'choices' => [
+                        new Category('US EPA Storet'),
+                    ],
+                'expanded' => true,
+                'multiple' => true,
+                'required' => false,
+            ))
+            ->add('nationalDataArchiveGBIF', ChoiceType::class, array(
+                'choices' => [
+                        new Category('Global Biodiversity Information Facility'),
+                    ],
+                'expanded' => true,
+                'multiple' => true,
+                'required' => false,
+            ))
+            ->add('nationalDataArchiveNCBI', ChoiceType::class, array(
+                'choices' => [
+                        new Category('National Center for Biotechnology Information'),
+                    ],
+                'expanded' => true,
+                'multiple' => true,
+                'required' => false,
+            ))
+            ->add('nationalDataArchiveDataGov', ChoiceType::class, array(
+                'choices' => [
+                        new Category('Data.gov Dataset Management System'),
+                    ],
+                'expanded' => true,
+                'multiple' => true,
                 'required' => false,
             ))
             ->add('NationalDataArchiveOther', TextType::class, array(
@@ -152,7 +256,9 @@ class DIFType extends AbstractType
                         new Category('Yes'),
                         new Category('Uncertain'),
                     ],
-                'required' => false,
+                'expanded' => true,
+                'multiple' => false,
+                'required' => true,
             ))
             ->add('ethicalIssuesExplanation', TextType::class, array(
                 'label' => 'If yes or uncertain, please explain:',
