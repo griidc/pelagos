@@ -84,7 +84,7 @@ class DIF extends Entity
      *
      * @var Person
      *
-     * @ORM\ManyToMany(targetEntity="Person", nullable=true)
+     * @ORM\ManyToMany(targetEntity="Person")
      */
     protected $secondaryPointOfContact;
 
