@@ -12,6 +12,8 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
+use Pelagos\Entity\DIF;
+
 /**
  * A form for creating a DIF.
  */
@@ -71,45 +73,45 @@ class DIFType extends AbstractType
                 'required' => false,
             ))
             ->add('fieldOfStudyEcologicalBiological', ChoiceType::class, array(
-                 'choices' => array('Ecological/Biological' => 'Ecological/Biological')
-                 'expanded' => true
-                 'multiple' => true
+                 'choices' => array('Ecological/Biological' => 'Ecological/Biological'),
+                 'expanded' => true,
+                 'multiple' => true,
                  'required' => false,
             ))
             ->add('fieldOfStudyPhysicalOceanography', ChoiceType::class, array(
-                 'choices' => array('Physical Oceanography' => 'Physical Oceanography')
-                 'expanded' => true
-                 'multiple' => true
+                 'choices' => array('Physical Oceanography' => 'Physical Oceanography'),
+                 'expanded' => true,
+                 'multiple' => true,
                  'required' => false,
             ))
             ->add('fieldOfStudyAtmospheric', ChoiceType::class, array(
-                 'choices' => array('Atmospheric' => 'Atmospheric')
-                 'expanded' => true
-                 'multiple' => true
+                 'choices' => array('Atmospheric' => 'Atmospheric'),
+                 'expanded' => true,
+                 'multiple' => true,
                  'required' => false,
             ))
             ->add('fieldOfStudyChemical', ChoiceType::class, array(
-                 'choices' => array('Chemical' => 'Chemical')
-                 'expanded' => true
-                 'multiple' => true
+                 'choices' => array('Chemical' => 'Chemical'),
+                 'expanded' => true,
+                 'multiple' => true,
                  'required' => false,
             ))
             ->add('fieldOfStudyHumanHealth', ChoiceType::class, array(
-                 'choices' => array('Human Health' => 'Human Health')
-                 'expanded' => true
-                 'multiple' => true
+                 'choices' => array('Human Health' => 'Human Health'),
+                 'expanded' => true,
+                 'multiple' => true,
                  'required' => false,
             ))
             ->add('fieldOfStudySocialCulturalPolitical', ChoiceType::class, array(
-                 'choices' => array('Social/Cultural/Political' => 'Social/Cultural/Political')
-                 'expanded' => true
-                 'multiple' => true
+                 'choices' => array('Social/Cultural/Political' => 'Social/Cultural/Political'),
+                 'expanded' => true,
+                 'multiple' => true,
                  'required' => false,
             ))
             ->add('fieldOfStudyEconomics', ChoiceType::class, array(
-                 'choices' => array('Economics' => 'Economics')
-                 'expanded' => true
-                 'multiple' => true
+                 'choices' => array('Economics' => 'Economics'),
+                 'expanded' => true,
+                 'multiple' => true,
                  'required' => false,
             ))
             ->add('fieldOfStudyOther', TextType::class, array(
@@ -117,6 +119,7 @@ class DIFType extends AbstractType
                 'required' => false,
             ))
             ->add('dataSize', TextType::class, array(
+                'choices' => DIF::DATA_SIZES,
                 'label' => 'Approximate Dataset Size:',
                 'required' => false,
             ))
@@ -129,33 +132,33 @@ class DIFType extends AbstractType
                 'required' => false,
             ))
             ->add('collectionMethodFieldSampling', ChoiceType::class, array(
-                 'choices' => array('Field Sampling' => 'Field Sampling')
-                 'expanded' => true
-                 'multiple' => true
+                 'choices' => array('Field Sampling' => 'Field Sampling'),
+                 'expanded' => true,
+                 'multiple' => true,
                  'required' => false,
             ))
             ->add('collectionMethodSimulatedGenerated', ChoiceType::class, array(
-                 'choices' => array('Simulated/Generated' => 'Simulated/Generated')
-                 'expanded' => true
-                 'multiple' => true
+                 'choices' => array('Simulated/Generated' => 'Simulated/Generated'),
+                 'expanded' => true,
+                 'multiple' => true,
                  'required' => false,
             ))
             ->add('collectionMethodLaboratory', ChoiceType::class, array(
-                 'choices' => array('Laboratory' => 'Laboratory')
-                 'expanded' => true
-                 'multiple' => true
+                 'choices' => array('Laboratory' => 'Laboratory'),
+                 'expanded' => true,
+                 'multiple' => true,
                  'required' => false,
             ))
             ->add('collectionMethodLiteratureBased', ChoiceType::class, array(
-                 'choices' => array('Literature Based' => 'Literature Based')
-                 'expanded' => true
-                 'multiple' => true
+                 'choices' => array('Literature Based' => 'Literature Based'),
+                 'expanded' => true,
+                 'multiple' => true,
                  'required' => false,
             ))
             ->add('collectionMethodRemoteSensing', ChoiceType::class, array(
-                 'choices' => array('Remote Sensing' => 'Remote Sensing')
-                 'expanded' => true
-                 'multiple' => true
+                 'choices' => array('Remote Sensing' => 'Remote Sensing'),
+                 'expanded' => true,
+                 'multiple' => true,
                  'required' => false,
             ))
             ->add('CollectionMethodOther', TextType::class, array(
@@ -183,33 +186,33 @@ class DIFType extends AbstractType
             ))
             ->add('spacialGeometry', HiddenType::class)
             ->add('nationalDataArchiveNODC', ChoiceType::class, array(
-                 'choices' => array('National Oceanographic Data Center' => 'National Oceanographic Data Center')
-                 'expanded' => true
-                 'multiple' => true
+                 'choices' => array('National Oceanographic Data Center' => 'National Oceanographic Data Center'),
+                 'expanded' => true,
+                 'multiple' => true,
                  'required' => false,
             ))
             ->add('nationalDataArchiveUSEPAStoret', ChoiceType::class, array(
-                 'choices' => array('US EPA Storet' => 'US EPA Storet')
-                 'expanded' => true
-                 'multiple' => true
+                 'choices' => array('US EPA Storet' => 'US EPA Storet'),
+                 'expanded' => true,
+                 'multiple' => true,
                  'required' => false,
             ))
             ->add('nationalDataArchiveGBIF', ChoiceType::class, array(
-                 'choices' => array('Global Biodiversity Information Facility' => 'Global Biodiversity Information Facility')
-                 'expanded' => true
-                 'multiple' => true
+                 'choices' => array('Global Biodiversity Information Facility' => 'Global Biodiversity Information Facility'),
+                 'expanded' => true,
+                 'multiple' => true,
                  'required' => false,
             ))
             ->add('nationalDataArchiveNCBI', ChoiceType::class, array(
-                 'choices' => array('National Center for Biotechnology Information' => 'National Center for Biotechnology Information')
-                 'expanded' => true
-                 'multiple' => true
+                 'choices' => array('National Center for Biotechnology Information' => 'National Center for Biotechnology Information'),
+                 'expanded' => true,
+                 'multiple' => true,
                  'required' => false,
             ))
             ->add('nationalDataArchiveDataGov', ChoiceType::class, array(
-                 'choices' => array('Data.gov Dataset Management System' => 'Data.gov Dataset Management System')
-                 'expanded' => true
-                 'multiple' => true
+                 'choices' => array('Data.gov Dataset Management System' => 'Data.gov Dataset Management System'),
+                 'expanded' => true,
+                 'multiple' => true,
                  'required' => false,
             ))
             ->add('NationalDataArchiveOther', TextType::class, array(
@@ -217,11 +220,7 @@ class DIFType extends AbstractType
                 'required' => false,
             ))
             ->add('ethicalIssues', ChoiceType::class, array(
-                'choices' => [
-                        new Category('No'),
-                        new Category('Yes'),
-                        new Category('Uncertain'),
-                    ],
+                'choices' => DIF::ETHICAL_ISSUES,
                 'expanded' => true,
                 'multiple' => false,
                 'required' => true,
