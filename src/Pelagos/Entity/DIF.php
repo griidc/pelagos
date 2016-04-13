@@ -3,276 +3,292 @@
 namespace Pelagos\Entity;
 
 /**
- * DIF Entity class
+ * DIF Entity class.
  */
 class DIF extends Entity
 {
     /**
-     * PROPDESCRIPTION
+     * Status value for a DIF that has been saved, but not submitted.
+     */
+    const STATUS_UNSUBMITTED = 0;
+
+    /**
+     * Status value for a DIF that has been submitted, but not yet approved.
+     */
+    const STATUS_SUBMITTED = 1;
+
+    /**
+     * Status value for a DIF that has been approved.
+     */
+    const STATUS_APPROVED = 2;
+
+    /**
+     * Valid data sizes for $dataSize.
+     */
+    const DATA_SIZES = array('< 1GB', '1GB-10GB', '10GB-200GB', '200GB-1TB', '1TB-5TB', '>5TB');
+
+    /**
+     * Valid values for $ethicalIssues.
+     */
+    const ETHICAL_ISSUES = array('No', 'Yes', 'Uncertain');
+
+    /**
+     * The status of this DIF.
      *
-     * @var PROPTYPE
+     * @var integer
+     *
+     * @see STATUS_* constants.
      */
     protected $status;
 
     /**
-     * PROPDESCRIPTION
+     * The Research Group this DIF is attached to.
      *
-     * @var PROPTYPE
+     * @var ResearchGroup
      */
     protected $researchGroup;
 
     /**
-     * PROPDESCRIPTION
+     * The title for this DIF.
      *
-     * @var PROPTYPE
+     * @var string
      */
     protected $title;
 
     /**
-     * PROPDESCRIPTION
+     * The primary point of contact for this DIF.
      *
-     * @var PROPTYPE
+     * @var Person
      */
     protected $primaryPointOfContact;
 
     /**
-     * PROPDESCRIPTION
+     * The secondary point of contact for this DIF.
      *
-     * @var PROPTYPE
+     * @var Person
      */
     protected $secondaryPointOfContact;
 
     /**
-     * PROPDESCRIPTION
+     * The abstract for this DIF.
      *
-     * @var PROPTYPE
+     * @var string
      */
     protected $abstract;
 
     /**
-     * PROPDESCRIPTION
+     * Whether the fields of study for the dataset identified by this DIF include Ecological/Biological.
      *
-     * @var PROPTYPE
+     * @var boolean
      */
     protected $fieldOfStudyEcologicalBiological;
 
     /**
-     * PROPDESCRIPTION
+     * Whether the fields of study for the dataset identified by this DIF include Physical Oceanography.
      *
-     * @var PROPTYPE
+     * @var boolean
      */
     protected $fieldOfStudyPhysicalOceanography;
 
     /**
-     * PROPDESCRIPTION
+     * Whether the fields of study for the dataset identified by this DIF include Atmospheric.
      *
-     * @var PROPTYPE
+     * @var boolean
      */
     protected $fieldOfStudyAtmospheric;
 
     /**
-     * PROPDESCRIPTION
+     * Whether the fields of study for the dataset identified by this DIF include Chemical.
      *
-     * @var PROPTYPE
+     * @var boolean
      */
     protected $fieldOfStudyChemical;
 
     /**
-     * PROPDESCRIPTION
+     * Whether the fields of study for the dataset identified by this DIF include Human Health.
      *
-     * @var PROPTYPE
+     * @var boolean
      */
     protected $fieldOfStudyHumanHealth;
 
     /**
-     * PROPDESCRIPTION
+     * Whether the fields of study for the dataset identified by this DIF include Social/Cultural/Political.
      *
-     * @var PROPTYPE
+     * @var boolean
      */
     protected $fieldOfStudySocialCulturalPolitical;
 
     /**
-     * PROPDESCRIPTION
+     * Whether the fields of study for the dataset identified by this DIF include Economics.
      *
-     * @var PROPTYPE
+     * @var boolean
      */
     protected $fieldOfStudyEconomics;
 
     /**
-     * PROPDESCRIPTION
+     * Other fields of study for the dataset identified by this DIF.
      *
-     * @var PROPTYPE
+     * @var string
      */
     protected $fieldOfStudyOther;
 
     /**
-     * PROPDESCRIPTION
+     * The approximate data size for the dataset identified by this DIF.
      *
-     * @var PROPTYPE
+     * @var string
+     *
+     * @see DATA_SIZES class constant for valid values.
      */
     protected $dataSize;
 
     /**
-     * PROPDESCRIPTION
+     * The Phenomenon/Variables Observed or Generated for the dataset identified by this DIF.
      *
-     * @var PROPTYPE
+     * @var string
      */
     protected $variablesObserved;
 
     /**
-     * PROPDESCRIPTION
+     * Whether the methods for collecting or generating the dataset identified by this DIF include Field Sampling.
      *
-     * @var PROPTYPE
+     * @var boolean
      */
     protected $collectionMethodFieldSampling;
 
     /**
-     * PROPDESCRIPTION
+     * Whether the methods for collecting or generating the dataset identified by this DIF include Simulated/Generated.
      *
-     * @var PROPTYPE
+     * @var boolean
      */
     protected $collectionMethodSimulatedGenerated;
 
     /**
-     * PROPDESCRIPTION
+     * Whether the methods for collecting or generating the dataset identified by this DIF include Laboratory.
      *
-     * @var PROPTYPE
+     * @var boolean
      */
     protected $collectionMethodLaboratory;
 
     /**
-     * PROPDESCRIPTION
+     * Whether the methods for collecting or generating the dataset identified by this DIF include Literature Based.
      *
-     * @var PROPTYPE
+     * @var boolean
      */
     protected $collectionMethodLiteratureBased;
 
     /**
-     * PROPDESCRIPTION
+     * Whether the methods for collecting or generating the dataset identified by this DIF include Remote Sensing.
      *
-     * @var PROPTYPE
+     * @var boolean
      */
     protected $collectionMethodRemoteSensing;
 
     /**
-     * PROPDESCRIPTION
+     * Other methods for collecting or generating the dataset identified by this DIF.
      *
-     * @var PROPTYPE
+     * @var string
      */
     protected $collectionMethodOther;
 
     /**
-     * PROPDESCRIPTION
+     * The start date of the estimated data sampling/generation period.
      *
-     * @var PROPTYPE
+     * @var \DateTime
      */
     protected $estimatedStartDate;
 
     /**
-     * PROPDESCRIPTION
+     * The end date of the estimated data sampling/generation period.
      *
-     * @var PROPTYPE
+     * @var \DateTime
      */
     protected $estimatedEndDate;
 
     /**
-     * PROPDESCRIPTION
+     * A text description of the spatial extent.
      *
-     * @var PROPTYPE
+     * @var string
      */
-    protected $spatialDescription;
+    protected $spatialExtentDescription;
 
     /**
-     * PROPDESCRIPTION
+     * The geometry for the spatial extent.
      *
-     * @var PROPTYPE
+     * @var geometry
      */
-    protected $spatialGeometry;
+    protected $spatialExtentGeometry;
 
     /**
-     * PROPDESCRIPTION
+     * Whether the national data archives for the dataset identified by this DIF include the National Oceanographic Data Center (NODC).
      *
-     * @var PROPTYPE
-     */
-    protected $collectionMethod;
-
-    /**
-     * PROPDESCRIPTION
-     *
-     * @var PROPTYPE
+     * @var boolean
      */
     protected $nationalDataArchiveNODC;
 
     /**
-     * PROPDESCRIPTION
+     * Whether the national data archives for the dataset identified by this DIF include US EPA Storet.
      *
-     * @var PROPTYPE
+     * @var boolean
      */
-    protected $nationalDataArchiveUSEPAStoret;
+    protected $nationalDataArchiveStoret;
 
     /**
-     * PROPDESCRIPTION
+     * Whether the national data archives for the dataset identified by this DIF include the Global Biodiversity Information Facility.
      *
-     * @var PROPTYPE
+     * @var boolean
      */
     protected $nationalDataArchiveGBIF;
 
     /**
-     * PROPDESCRIPTION
+     * Whether the national data archives for the dataset identified by this DIF include the National Center for Biotechnology Information.
      *
-     * @var PROPTYPE
+     * @var boolean
      */
     protected $nationalDataArchiveNCBI;
 
     /**
-     * PROPDESCRIPTION
+     * Whether the national data archives for the dataset identified by this DIF include the Data.gov Dataset Management System.
      *
-     * @var PROPTYPE
+     * @var boolean
      */
     protected $nationalDataArchiveDataGov;
 
     /**
-     * PROPDESCRIPTION
+     * Other national data archives for the dataset identified by this DIF.
      *
-     * @var PROPTYPE
+     * @var string
      */
     protected $nationalDataArchiveOther;
 
     /**
-     * PROPDESCRIPTION
+     * Whether the dataset identified by this DIF will include any data governed under the IRB or HIPAA, or data with other ethical issues.
      *
-     * @var PROPTYPE
+     * @var string
+     *
+     * @see ETHICAL_ISSUES class constant for valid values;
      */
     protected $ethicalIssues;
 
     /**
-     * PROPDESCRIPTION
+     * An explanation of ethical issues for the dataset identified by this DIF.
      *
-     * @var PROPTYPE
+     * @var string
      */
     protected $ethicalIssuesExplanation;
 
     /**
-     * PROPDESCRIPTION
+     * Additional remarks for this DIF.
      *
-     * @var PROPTYPE
+     * @var string
      */
     protected $remarks;
 
     /**
-     * METHODDESCRIPTION
+     * Sets the status of this DIF.
      *
-     * @return RETURNTYPE RETURNDESCRIPTION
-     */
-    public function getStatus()
-    {
-        return $this->status;
-    }
-
-    /**
-     * METHODDESCRIPTION
+     * @param integer $status The status of this DIF.
      *
-     * @param ARGTYPE $status ARGDESCRIPTION
+     * @see STATUS_* constants.
      *
      * @return void
      */
@@ -282,9 +298,33 @@ class DIF extends Entity
     }
 
     /**
-     * METHODDESCRIPTION
+     * Returns the status of this DIF.
      *
-     * @return RETURNTYPE RETURNDESCRIPTION
+     * @see STATUS_* constants.
+     *
+     * @return integer The status of this DIF.
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * Sets the Research Group this DIF is attached to.
+     *
+     * @param ResearchGroup $researchGroup The Research Group this DIF is attached to.
+     *
+     * @return void
+     */
+    public function setResearchGroup(ResearchGroup $researchGroup)
+    {
+        $this->researchGroup = $researchGroup;
+    }
+
+    /**
+     * Gets the Research Group this DIF is attached to.
+     *
+     * @return ResearchGroup The Research Group this DIF is attached to.
      */
     public function getResearchGroup()
     {
@@ -292,31 +332,9 @@ class DIF extends Entity
     }
 
     /**
-     * METHODDESCRIPTION
+     * Sets the title for this DIF.
      *
-     * @param ARGTYPE $researchGroup ARGDESCRIPTION
-     *
-     * @return void
-     */
-    public function setResearchGroup($researchGroup)
-    {
-        $this->researchGroup = $researchGroup;
-    }
-
-    /**
-     * METHODDESCRIPTION
-     *
-     * @return RETURNTYPE RETURNDESCRIPTION
-     */
-    public function getTitle()
-    {
-        return $this->title;
-    }
-
-    /**
-     * METHODDESCRIPTION
-     *
-     * @param ARGTYPE $title ARGDESCRIPTION
+     * @param string $title The title for this DIF.
      *
      * @return void
      */
@@ -326,9 +344,31 @@ class DIF extends Entity
     }
 
     /**
-     * METHODDESCRIPTION
+     * Gets the title for this DIF.
      *
-     * @return RETURNTYPE RETURNDESCRIPTION
+     * @return string The title for this DIF.
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    /**
+     * Sets the primary point of contact for this DIF.
+     *
+     * @param Person $primaryPointOfContact The primary point of contact for this DIF.
+     *
+     * @return void
+     */
+    public function setPrimaryPointOfContact(Person $primaryPointOfContact)
+    {
+        $this->primaryPointOfContact = $primaryPointOfContact;
+    }
+
+    /**
+     * Gets the primary point of contact for this DIF.
+     *
+     * @return Person The primary point of contact for this DIF.
      */
     public function getPrimaryPointOfContact()
     {
@@ -336,21 +376,21 @@ class DIF extends Entity
     }
 
     /**
-     * METHODDESCRIPTION
+     * Sets the secondary point of contact for this DIF.
      *
-     * @param ARGTYPE $primaryPointOfContact ARGDESCRIPTION
+     * @param Person $secondaryPointOfContact The secondary point of contact for this DIF.
      *
      * @return void
      */
-    public function setPrimaryPointOfContact($primaryPointOfContact)
+    public function setSecondaryPointOfContact(Person $secondaryPointOfContact)
     {
-        $this->primaryPointOfContact = $primaryPointOfContact;
+        $this->secondaryPointOfContact = $secondaryPointOfContact;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Gets the secondary point of contact for this DIF.
      *
-     * @return RETURNTYPE RETURNDESCRIPTION
+     * @return Person The secondary point of contact for this DIF.
      */
     public function getSecondaryPointOfContact()
     {
@@ -358,31 +398,9 @@ class DIF extends Entity
     }
 
     /**
-     * METHODDESCRIPTION
+     * Sets the abstract for this DIF.
      *
-     * @param ARGTYPE $secondaryPointOfContact ARGDESCRIPTION
-     *
-     * @return void
-     */
-    public function setSecondaryPointOfContact($secondaryPointOfContact)
-    {
-        $this->secondaryPointOfContact = $secondaryPointOfContact;
-    }
-
-    /**
-     * METHODDESCRIPTION
-     *
-     * @return RETURNTYPE RETURNDESCRIPTION
-     */
-    public function getAbstract()
-    {
-        return $this->abstract;
-    }
-
-    /**
-     * METHODDESCRIPTION
-     *
-     * @param ARGTYPE $abstract ARGDESCRIPTION
+     * @param string $abstract The abstract for this DIF.
      *
      * @return void
      */
@@ -392,173 +410,219 @@ class DIF extends Entity
     }
 
     /**
-     * METHODDESCRIPTION
+     * Gets the abstract for this DIF.
      *
-     * @return RETURNTYPE RETURNDESCRIPTION
+     * @return string The abstract for this DIF.
      */
-    public function getFieldOfStudyEcologicalBiological()
+    public function getAbstract()
     {
-        return $this->fieldOfStudyEcologicalBiological;
+        return $this->abstract;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Sets whether the fields of study for the dataset identified by this DIF include Ecological/Biological.
      *
-     * @param ARGTYPE $fieldOfStudyEcologicalBiological ARGDESCRIPTION
+     * @param boolean $fieldOfStudyEcologicalBiological Whether the fields of study for the dataset identified
+     *                                                  by this DIF include Ecological/Biological.
+     *
+     * @throws \InvalidArgumentException When $fieldOfStudyEcologicalBiological is not boolean.
      *
      * @return void
      */
     public function setFieldOfStudyEcologicalBiological($fieldOfStudyEcologicalBiological)
     {
+        if ('boolean' !== gettype($fieldOfStudyEcologicalBiological)) {
+            throw new \InvalidArgumentException('fieldOfStudyEcologicalBiological must be boolean');
+        }
         $this->fieldOfStudyEcologicalBiological = $fieldOfStudyEcologicalBiological;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Whether the fields of study for the dataset identified by this DIF include Ecological/Biological.
      *
-     * @return RETURNTYPE RETURNDESCRIPTION
+     * @return boolean Whether the fields of study for the dataset identified
+     *                 by this DIF include Ecological/Biological.
      */
-    public function getFieldOfStudyPhysicalOceanography()
+    public function hasFieldOfStudyEcologicalBiological()
     {
-        return $this->fieldOfStudyPhysicalOceanography;
+        return $this->fieldOfStudyEcologicalBiological;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Sets whether the fields of study for the dataset identified by this DIF include Physical Oceanography.
      *
-     * @param ARGTYPE $fieldOfStudyPhysicalOceanography ARGDESCRIPTION
+     * @param boolean $fieldOfStudyPhysicalOceanography Whether the fields of study for the dataset identified
+     *                                                  by this DIF include Physical Oceanography.
+     *
+     * @throws \InvalidArgumentException When $fieldOfStudyPhysicalOceanography is not boolean.
      *
      * @return void
      */
     public function setFieldOfStudyPhysicalOceanography($fieldOfStudyPhysicalOceanography)
     {
+        if ('boolean' !== gettype($fieldOfStudyPhysicalOceanography)) {
+            throw new \InvalidArgumentException('fieldOfStudyPhysicalOceanography must be boolean');
+        }
         $this->fieldOfStudyPhysicalOceanography = $fieldOfStudyPhysicalOceanography;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Whether the fields of study for the dataset identified by this DIF include Physical Oceanography.
      *
-     * @return RETURNTYPE RETURNDESCRIPTION
+     * @return boolean Whether the fields of study for the dataset identified
+     *                 by this DIF include Physical Oceanography.
      */
-    public function getFieldOfStudyAtmospheric()
+    public function hasFieldOfStudyPhysicalOceanography()
     {
-        return $this->fieldOfStudyAtmospheric;
+        return $this->fieldOfStudyPhysicalOceanography;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Sets whether the fields of study for the dataset identified by this DIF include Atmospheric.
      *
-     * @param ARGTYPE $fieldOfStudyAtmospheric ARGDESCRIPTION
+     * @param boolean $fieldOfStudyAtmospheric Whether the fields of study for the dataset identified
+     *                                         by this DIF include Atmospheric.
+     *
+     * @throws \InvalidArgumentException When $fieldOfStudyAtmospheric is not boolean.
      *
      * @return void
      */
     public function setFieldOfStudyAtmospheric($fieldOfStudyAtmospheric)
     {
+        if ('boolean' !== gettype($fieldOfStudyAtmospheric)) {
+            throw new \InvalidArgumentException('fieldOfStudyAtmospheric must be boolean');
+        }
         $this->fieldOfStudyAtmospheric = $fieldOfStudyAtmospheric;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Whether the fields of study for the dataset identified by this DIF include Atmospheric.
      *
-     * @return RETURNTYPE RETURNDESCRIPTION
+     * @return boolean Whether the fields of study for the dataset identified by this DIF include Atmospheric.
      */
-    public function getFieldOfStudyChemical()
+    public function hasFieldOfStudyAtmospheric()
     {
-        return $this->fieldOfStudyChemical;
+        return $this->fieldOfStudyAtmospheric;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Sets whether the fields of study for the dataset identified by this DIF include Chemical.
      *
-     * @param ARGTYPE $fieldOfStudyChemical ARGDESCRIPTION
+     * @param boolean $fieldOfStudyChemical Whether the fields of study for the dataset identified
+     *                                      by this DIF include Chemical.
+     *
+     * @throws \InvalidArgumentException When $fieldOfStudyChemical is not boolean.
      *
      * @return void
      */
     public function setFieldOfStudyChemical($fieldOfStudyChemical)
     {
+        if ('boolean' !== gettype($fieldOfStudyChemical)) {
+            throw new \InvalidArgumentException('fieldOfStudyChemical must be boolean');
+        }
         $this->fieldOfStudyChemical = $fieldOfStudyChemical;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Whether the fields of study for the dataset identified by this DIF include Chemical.
      *
-     * @return RETURNTYPE RETURNDESCRIPTION
+     * @return boolean Whether the fields of study for the dataset identified by this DIF include Chemical.
      */
-    public function getFieldOfStudyHumanHealth()
+    public function hasFieldOfStudyChemical()
     {
-        return $this->fieldOfStudyHumanHealth;
+        return $this->fieldOfStudyChemical;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Sets whether the fields of study for the dataset identified by this DIF include Human Health.
      *
-     * @param ARGTYPE $fieldOfStudyHumanHealth ARGDESCRIPTION
+     * @param boolean $fieldOfStudyHumanHealth Whether the fields of study for the dataset identified
+     *                                         by this DIF include Human Health.
+     *
+     * @throws \InvalidArgumentException When $fieldOfStudyHumanHealth is not boolean.
      *
      * @return void
      */
     public function setFieldOfStudyHumanHealth($fieldOfStudyHumanHealth)
     {
+        if ('boolean' !== gettype($fieldOfStudyHumanHealth)) {
+            throw new \InvalidArgumentException('fieldOfStudyHumanHealth must be boolean');
+        }
         $this->fieldOfStudyHumanHealth = $fieldOfStudyHumanHealth;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Whether the fields of study for the dataset identified by this DIF include Human Health.
      *
-     * @return RETURNTYPE RETURNDESCRIPTION
+     * @return boolean RETURNDESCRIPTION
      */
-    public function getFieldOfStudySocialCulturalPolitical()
+    public function hasFieldOfStudyHumanHealth()
     {
-        return $this->fieldOfStudySocialCulturalPolitical;
+        return $this->fieldOfStudyHumanHealth;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Sets whether the fields of study for the dataset identified by this DIF include Social/Cultural/Political.
      *
-     * @param ARGTYPE $fieldOfStudySocialCulturalPolitical ARGDESCRIPTION
+     * @param boolean $fieldOfStudySocialCulturalPolitical Whether the fields of study for the dataset identified
+     *                                                     by this DIF include Social/Cultural/Political.
+     *
+     * @throws \InvalidArgumentException When $fieldOfStudySocialCulturalPolitical is not boolean.
      *
      * @return void
      */
     public function setFieldOfStudySocialCulturalPolitical($fieldOfStudySocialCulturalPolitical)
     {
+        if ('boolean' !== gettype($fieldOfStudySocialCulturalPolitical)) {
+            throw new \InvalidArgumentException('fieldOfStudySocialCulturalPolitical must be boolean');
+        }
         $this->fieldOfStudySocialCulturalPolitical = $fieldOfStudySocialCulturalPolitical;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Whether the fields of study for the dataset identified by this DIF include Social/Cultural/Political.
      *
-     * @return RETURNTYPE RETURNDESCRIPTION
+     * @return boolean Whether the fields of study for the dataset identified
+     *                 by this DIF include Social/Cultural/Political.
      */
-    public function getFieldOfStudyEconomics()
+    public function hasFieldOfStudySocialCulturalPolitical()
     {
-        return $this->fieldOfStudyEconomics;
+        return $this->fieldOfStudySocialCulturalPolitical;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Sets whether the fields of study for the dataset identified by this DIF include Economics.
      *
-     * @param ARGTYPE $fieldOfStudyEconomics ARGDESCRIPTION
+     * @param boolean $fieldOfStudyEconomics Whether the fields of study for the dataset identified
+     *                                       by this DIF include Economics.
+     *
+     * @throws \InvalidArgumentException When $fieldOfStudyEconomics is not boolean.
      *
      * @return void
      */
     public function setFieldOfStudyEconomics($fieldOfStudyEconomics)
     {
+        if ('boolean' !== gettype($fieldOfStudyEconomics)) {
+            throw new \InvalidArgumentException('fieldOfStudyEconomics must be boolean');
+        }
         $this->fieldOfStudyEconomics = $fieldOfStudyEconomics;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Whether the fields of study for the dataset identified by this DIF include Economics.
      *
-     * @return RETURNTYPE RETURNDESCRIPTION
+     * @return boolean Whether the fields of study for the dataset identified
+     *                 by this DIF include Economics.
      */
-    public function getFieldOfStudyOther()
+    public function hasFieldOfStudyEconomics()
     {
-        return $this->fieldOfStudyOther;
+        return $this->fieldOfStudyEconomics;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Sets other fields of study for the dataset identified by this DIF.
      *
-     * @param ARGTYPE $fieldOfStudyOther ARGDESCRIPTION
+     * @param string $fieldOfStudyOther Other fields of study for the dataset identified by this DIF.
      *
      * @return void
      */
@@ -568,9 +632,38 @@ class DIF extends Entity
     }
 
     /**
-     * METHODDESCRIPTION
+     * Gets other fields of study for the dataset identified by this DIF.
      *
-     * @return RETURNTYPE RETURNDESCRIPTION
+     * @return string Other fields of study for the dataset identified by this DIF.
+     */
+    public function getFieldOfStudyOther()
+    {
+        return $this->fieldOfStudyOther;
+    }
+
+    /**
+     * Sets the approximate data size for the dataset identified by this DIF.
+     *
+     * @param string $dataSize The approximate data size for the dataset identified by this DIF.
+     *
+     * @throws \InvalidArgumentException When $dataSize is not a valid data size.
+     *
+     * @see DATA_SIZES class constant for valid values.
+     *
+     * @return void
+     */
+    public function setDataSize($dataSize)
+    {
+        if (!in_array($dataSize, self::DATA_SIZES)) {
+            throw new \InvalidArgumentException('Data size must be one of: ' . implode(', ', self::DATA_SIZES));
+        }
+        $this->dataSize = $dataSize;
+    }
+
+    /**
+     * Gets the approximate data size for the dataset identified by this DIF.
+     *
+     * @return string The approximate data size for the dataset identified by this DIF.
      */
     public function getDataSize()
     {
@@ -578,31 +671,10 @@ class DIF extends Entity
     }
 
     /**
-     * METHODDESCRIPTION
+     * Sets the Phenomenon/Variables Observed or Generated for the dataset identified by this DIF.
      *
-     * @param ARGTYPE $dataSize ARGDESCRIPTION
-     *
-     * @return void
-     */
-    public function setDataSize($dataSize)
-    {
-        $this->dataSize = $dataSize;
-    }
-
-    /**
-     * METHODDESCRIPTION
-     *
-     * @return RETURNTYPE RETURNDESCRIPTION
-     */
-    public function getVariablesObserved()
-    {
-        return $this->variablesObserved;
-    }
-
-    /**
-     * METHODDESCRIPTION
-     *
-     * @param ARGTYPE $variablesObserved ARGDESCRIPTION
+     * @param string $variablesObserved The Phenomenon/Variables Observed or Generated
+     *                                  for the dataset identified by this DIF.
      *
      * @return void
      */
@@ -612,129 +684,166 @@ class DIF extends Entity
     }
 
     /**
-     * METHODDESCRIPTION
+     * Gets the Phenomenon/Variables Observed or Generated for the dataset identified by this DIF.
      *
-     * @return RETURNTYPE RETURNDESCRIPTION
+     * @return string The Phenomenon/Variables Observed or Generated
+     *                for the dataset identified by this DIF.
      */
-    public function getCollectionMethodFieldSampling()
+    public function getVariablesObserved()
     {
-        return $this->collectionMethodFieldSampling;
+        return $this->variablesObserved;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Sets whether the methods for collecting or generating the dataset identified by this DIF include Field Sampling.
      *
-     * @param ARGTYPE $collectionMethodFieldSampling ARGDESCRIPTION
+     * @param boolean $collectionMethodFieldSampling Whether the methods for collecting or generating the dataset
+     *                                               identified by this DIF include Field Sampling.
+     *
+     * @throws \InvalidArgumentException When $collectionMethodFieldSampling is not boolean.
      *
      * @return void
      */
     public function setCollectionMethodFieldSampling($collectionMethodFieldSampling)
     {
+        if ('boolean' !== gettype($collectionMethodFieldSampling)) {
+            throw new \InvalidArgumentException('collectionMethodFieldSampling must be boolean');
+        }
         $this->collectionMethodFieldSampling = $collectionMethodFieldSampling;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Whether the methods for collecting or generating the dataset identified by this DIF include Field Sampling.
      *
-     * @return RETURNTYPE RETURNDESCRIPTION
+     * @return boolean Whether the methods for collecting or generating the dataset
+     *                 identified by this DIF include Field Sampling.
      */
-    public function getCollectionMethodSimulatedGenerated()
+    public function hasCollectionMethodFieldSampling()
     {
-        return $this->collectionMethodSimulatedGenerated;
+        return $this->collectionMethodFieldSampling;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Sets whether the methods for collecting or generating the dataset identified by this DIF include Simulated/Generated.
      *
-     * @param ARGTYPE $collectionMethodSimulatedGenerated ARGDESCRIPTION
+     * @param boolean $collectionMethodSimulatedGenerated Whether the methods for collecting or generating the dataset
+     *                                                    identified by this DIF include Simulated/Generated.
+     *
+     * @throws \InvalidArgumentException When $collectionMethodSimulatedGenerated is not boolean.
      *
      * @return void
      */
     public function setCollectionMethodSimulatedGenerated($collectionMethodSimulatedGenerated)
     {
+        if ('boolean' !== gettype($collectionMethodSimulatedGenerated)) {
+            throw new \InvalidArgumentException('collectionMethodSimulatedGenerated must be boolean');
+        }
         $this->collectionMethodSimulatedGenerated = $collectionMethodSimulatedGenerated;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Whether the methods for collecting or generating the dataset identified by this DIF include Simulated/Generated.
      *
-     * @return RETURNTYPE RETURNDESCRIPTION
+     * @return boolean Whether the methods for collecting or generating the dataset
+     *                 identified by this DIF include Simulated/Generated.
      */
-    public function getCollectionMethodLaboratory()
+    public function hasCollectionMethodSimulatedGenerated()
     {
-        return $this->collectionMethodLaboratory;
+        return $this->collectionMethodSimulatedGenerated;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Sets whether the methods for collecting or generating the dataset identified by this DIF include Laboratory.
      *
-     * @param ARGTYPE $collectionMethodLaboratory ARGDESCRIPTION
+     * @param boolean $collectionMethodLaboratory Whether the methods for collecting or generating the dataset
+     *                                            identified by this DIF include Laboratory.
+     *
+     * @throws \InvalidArgumentException When $collectionMethodLaboratory is not boolean.
      *
      * @return void
      */
     public function setCollectionMethodLaboratory($collectionMethodLaboratory)
     {
+        if ('boolean' !== gettype($collectionMethodLaboratory)) {
+            throw new \InvalidArgumentException('collectionMethodLaboratory must be boolean');
+        }
         $this->collectionMethodLaboratory = $collectionMethodLaboratory;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Whether the methods for collecting or generating the dataset identified by this DIF include Laboratory.
      *
-     * @return RETURNTYPE RETURNDESCRIPTION
+     * @return boolean Whether the methods for collecting or generating the dataset
+     *                 identified by this DIF include Laboratory.
      */
-    public function getCollectionMethodLiteratureBased()
+    public function hasCollectionMethodLaboratory()
     {
-        return $this->collectionMethodLiteratureBased;
+        return $this->collectionMethodLaboratory;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Sets whether the methods for collecting or generating the dataset identified by this DIF include Literature Based.
      *
-     * @param ARGTYPE $collectionMethodLiteratureBased ARGDESCRIPTION
+     * @param boolean $collectionMethodLiteratureBased Whether the methods for collecting or generating the dataset
+     *                                                 identified by this DIF include Literature Based.
+     *
+     * @throws \InvalidArgumentException When $collectionMethodLiteratureBased is not boolean.
      *
      * @return void
      */
     public function setCollectionMethodLiteratureBased($collectionMethodLiteratureBased)
     {
+        if ('boolean' !== gettype($collectionMethodLiteratureBased)) {
+            throw new \InvalidArgumentException('collectionMethodLiteratureBased must be boolean');
+        }
         $this->collectionMethodLiteratureBased = $collectionMethodLiteratureBased;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Whether the methods for collecting or generating the dataset identified by this DIF include Literature Based.
      *
-     * @return RETURNTYPE RETURNDESCRIPTION
+     * @return boolean Whether the methods for collecting or generating the dataset
+     *                 dentified by this DIF include Literature Based.
      */
-    public function getCollectionMethodRemoteSensing()
+    public function hasCollectionMethodLiteratureBased()
     {
-        return $this->collectionMethodRemoteSensing;
+        return $this->collectionMethodLiteratureBased;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Sets whether the methods for collecting or generating the dataset identified by this DIF include Remote Sensing.
      *
-     * @param ARGTYPE $collectionMethodRemoteSensing ARGDESCRIPTION
+     * @param boolean $collectionMethodRemoteSensing Whether the methods for collecting or generating the dataset
+     *                                               identified by this DIF include Remote Sensing.
+     *
+     * @throws \InvalidArgumentException When $collectionMethodRemoteSensing is not boolean.
      *
      * @return void
      */
     public function setCollectionMethodRemoteSensing($collectionMethodRemoteSensing)
     {
+        if ('boolean' !== gettype($collectionMethodRemoteSensing)) {
+            throw new \InvalidArgumentException('collectionMethodRemoteSensing must be boolean');
+        }
         $this->collectionMethodRemoteSensing = $collectionMethodRemoteSensing;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Whether the methods for collecting or generating the dataset identified by this DIF include Remote Sensing.
      *
-     * @return RETURNTYPE RETURNDESCRIPTION
+     * @return boolean Whether the methods for collecting or generating the dataset
+     *                 identified by this DIF include Remote Sensing.
      */
-    public function getCollectionMethodOther()
+    public function hasCollectionMethodRemoteSensing()
     {
-        return $this->collectionMethodOther;
+        return $this->collectionMethodRemoteSensing;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Sets other methods for collecting or generating the dataset identified by this DIF.
      *
-     * @param ARGTYPE $collectionMethodOther ARGDESCRIPTION
+     * @param string $collectionMethodOther Other methods for collecting or generating
+     *                                      the dataset identified by this DIF.
      *
      * @return void
      */
@@ -744,9 +853,31 @@ class DIF extends Entity
     }
 
     /**
-     * METHODDESCRIPTION
+     * Other methods for collecting or generating the dataset identified by this DIF.
      *
-     * @return RETURNTYPE RETURNDESCRIPTION
+     * @return string Other methods for collecting or generating the dataset identified by this DIF.
+     */
+    public function getCollectionMethodOther()
+    {
+        return $this->collectionMethodOther;
+    }
+
+    /**
+     * Sets the start date of the estimated data sampling/generation period.
+     *
+     * @param \DateTime $estimatedStartDate The start date of the estimated data sampling/generation period.
+     *
+     * @return void
+     */
+    public function setEstimatedStartDate(\DateTime $estimatedStartDate)
+    {
+        $this->estimatedStartDate = $estimatedStartDate;
+    }
+
+    /**
+     * Gets the start date of the estimated data sampling/generation period.
+     *
+     * @return \DateTime The start date of the estimated data sampling/generation period.
      */
     public function getEstimatedStartDate()
     {
@@ -754,21 +885,21 @@ class DIF extends Entity
     }
 
     /**
-     * METHODDESCRIPTION
+     * Sets the end date of the estimated data sampling/generation period.
      *
-     * @param ARGTYPE $estimatedStartDate ARGDESCRIPTION
+     * @param \DateTime $estimatedEndDate The end date of the estimated data sampling/generation period.
      *
      * @return void
      */
-    public function setEstimatedStartDate($estimatedStartDate)
+    public function setEstimatedEndDate(\DateTime $estimatedEndDate)
     {
-        $this->estimatedStartDate = $estimatedStartDate;
+        $this->estimatedEndDate = $estimatedEndDate;
     }
 
     /**
-     * METHODDESCRIPTION
+     * The end date of the estimated data sampling/generation period.
      *
-     * @return RETURNTYPE RETURNDESCRIPTION
+     * @return \DateTime The end date of the estimated data sampling/generation period.
      */
     public function getEstimatedEndDate()
     {
@@ -776,207 +907,198 @@ class DIF extends Entity
     }
 
     /**
-     * METHODDESCRIPTION
+     * Sets a text description of the spatial extent.
      *
-     * @param ARGTYPE $estimatedEndDate ARGDESCRIPTION
-     *
-     * @return void
-     */
-    public function setEstimatedEndDate($estimatedEndDate)
-    {
-        $this->estimatedEndDate = $estimatedEndDate;
-    }
-
-    /**
-     * METHODDESCRIPTION
-     *
-     * @return RETURNTYPE RETURNDESCRIPTION
-     */
-    public function getSpatialDescription()
-    {
-        return $this->spatialDescription;
-    }
-
-    /**
-     * METHODDESCRIPTION
-     *
-     * @param ARGTYPE $spatialDescription ARGDESCRIPTION
+     * @param string $spatialExtentDescription A text description of the spatial extent.
      *
      * @return void
      */
-    public function setSpatialDescription($spatialDescription)
+    public function setSpatialExtentDescription($spatialExtentDescription)
     {
-        $this->spatialDescription = $spatialDescription;
+        $this->spatialExtentDescription = $spatialExtentDescription;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Gets the text description of the spatial extent.
      *
-     * @return RETURNTYPE RETURNDESCRIPTION
+     * @return string The text description of the spatial extent.
      */
-    public function getSpatialGeometry()
+    public function getSpatialExtentDescription()
     {
-        return $this->spatialGeometry;
+        return $this->spatialExtentDescription;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Sets the geometry for the spatial extent.
      *
-     * @param ARGTYPE $spatialGeometry ARGDESCRIPTION
+     * @param string $spatialExtentGeometry The geometry for the spatial extent.
      *
      * @return void
      */
-    public function setSpatialGeometry($spatialGeometry)
+    public function setSpatialExtentGeometry($spatialExtentGeometry)
     {
-        $this->spatialGeometry = $spatialGeometry;
+        $this->spatialExtentGeometry = $spatialExtentGeometry;
     }
 
     /**
-     * METHODDESCRIPTION
+     * The geometry for the spatial extent.
      *
-     * @return RETURNTYPE RETURNDESCRIPTION
+     * @return string The geometry for the spatial extent.
      */
-    public function getCollectionMethod()
+    public function getSpatialExtentGeometry()
     {
-        return $this->collectionMethod;
+        return $this->spatialExtentGeometry;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Sets Whether the national data archives for the dataset identified by this DIF include the National Oceanographic Data Center (NODC).
      *
-     * @param ARGTYPE $collectionMethod ARGDESCRIPTION
+     * @param boolean $nationalDataArchiveNODC Whether the national data archives for the dataset identified
+     *                                         by this DIF include the National Oceanographic Data Center (NODC).
      *
-     * @return void
-     */
-    public function setCollectionMethod($collectionMethod)
-    {
-        $this->collectionMethod = $collectionMethod;
-    }
-
-    /**
-     * METHODDESCRIPTION
-     *
-     * @return RETURNTYPE RETURNDESCRIPTION
-     */
-    public function getNationalDataArchiveNODC()
-    {
-        return $this->nationalDataArchiveNODC;
-    }
-
-    /**
-     * METHODDESCRIPTION
-     *
-     * @param ARGTYPE $nationalDataArchiveNODC ARGDESCRIPTION
+     * @throws \InvalidArgumentException When $nationalDataArchiveNODC is not boolean.
      *
      * @return void
      */
     public function setNationalDataArchiveNODC($nationalDataArchiveNODC)
     {
+        if ('boolean' !== gettype($nationalDataArchiveNODC)) {
+            throw new \InvalidArgumentException('nationalDataArchiveNODC must be boolean');
+        }
         $this->nationalDataArchiveNODC = $nationalDataArchiveNODC;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Whether the national data archives for the dataset identified by this DIF include the National Oceanographic Data Center (NODC).
      *
-     * @return RETURNTYPE RETURNDESCRIPTION
+     * @return boolean Whether the national data archives for the dataset identified
+     *                 by this DIF include the National Oceanographic Data Center (NODC).
      */
-    public function getNationalDataArchiveUSEPAStoret()
+    public function hasNationalDataArchiveNODC()
     {
-        return $this->nationalDataArchiveUSEPAStoret;
+        return $this->nationalDataArchiveNODC;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Sets Whether the national data archives for the dataset identified by this DIF include US EPA Storet.
      *
-     * @param ARGTYPE $nationalDataArchiveUSEPAStoret ARGDESCRIPTION
+     * @param boolean $nationalDataArchiveStoret Whether the national data archives for the dataset identified
+     *                                           by this DIF include US EPA Storet.
+     *
+     * @throws \InvalidArgumentException When $nationalDataArchiveStoret is not boolean.
      *
      * @return void
      */
-    public function setNationalDataArchiveUSEPAStoret($nationalDataArchiveUSEPAStoret)
+    public function setNationalDataArchiveStoret($nationalDataArchiveStoret)
     {
-        $this->nationalDataArchiveUSEPAStoret = $nationalDataArchiveUSEPAStoret;
+        if ('boolean' !== gettype($nationalDataArchiveStoret)) {
+            throw new \InvalidArgumentException('nationalDataArchiveStoret must be boolean');
+        }
+        $this->nationalDataArchiveStoret = $nationalDataArchiveStoret;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Whether the national data archives for the dataset identified by this DIF include US EPA Storet.
      *
-     * @return RETURNTYPE RETURNDESCRIPTION
+     * @return boolean Whether the national data archives for the dataset identified
+     *                 by this DIF include US EPA Storet.
      */
-    public function getNationalDataArchiveGBIF()
+    public function hasNationalDataArchiveStoret()
     {
-        return $this->nationalDataArchiveGBIF;
+        return $this->nationalDataArchiveStoret;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Sets Whether the national data archives for the dataset identified by this DIF include the Global Biodiversity Information Facility.
      *
-     * @param ARGTYPE $nationalDataArchiveGBIF ARGDESCRIPTION
+     * @param boolean $nationalDataArchiveGBIF Whether the national data archives for the dataset identified
+     *                                         by this DIF include the Global Biodiversity Information Facility.
+     *
+     * @throws \InvalidArgumentException When $nationalDataArchiveGBIF is not boolean.
      *
      * @return void
      */
     public function setNationalDataArchiveGBIF($nationalDataArchiveGBIF)
     {
+        if ('boolean' !== gettype($nationalDataArchiveGBIF)) {
+            throw new \InvalidArgumentException('nationalDataArchiveGBIF must be boolean');
+        }
         $this->nationalDataArchiveGBIF = $nationalDataArchiveGBIF;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Whether the national data archives for the dataset identified by this DIF include the Global Biodiversity Information Facility.
      *
-     * @return RETURNTYPE RETURNDESCRIPTION
+     * @return boolean Whether the national data archives for the dataset identified
+     *                 by this DIF include the Global Biodiversity Information Facility.
      */
-    public function getNationalDataArchiveNCBI()
+    public function hasNationalDataArchiveGBIF()
     {
-        return $this->nationalDataArchiveNCBI;
+        return $this->nationalDataArchiveGBIF;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Sets Whether the national data archives for the dataset identified by this DIF include the National Center for Biotechnology Information.
      *
-     * @param ARGTYPE $nationalDataArchiveNCBI ARGDESCRIPTION
+     * @param boolean $nationalDataArchiveNCBI Whether the national data archives for the dataset identified
+     *                                         by this DIF include the National Center for Biotechnology Information.
+     *
+     * @throws \InvalidArgumentException When $nationalDataArchiveNCBI is not boolean.
      *
      * @return void
      */
     public function setNationalDataArchiveNCBI($nationalDataArchiveNCBI)
     {
+        if ('boolean' !== gettype($nationalDataArchiveNCBI)) {
+            throw new \InvalidArgumentException('nationalDataArchiveNCBI must be boolean');
+        }
         $this->nationalDataArchiveNCBI = $nationalDataArchiveNCBI;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Whether the national data archives for the dataset identified by this DIF include the National Center for Biotechnology Information.
      *
-     * @return RETURNTYPE RETURNDESCRIPTION
+     * @return boolean Whether the national data archives for the dataset identified
+     *                 by this DIF include the National Center for Biotechnology Information.
      */
-    public function getNationalDataArchiveDataGov()
+    public function hasNationalDataArchiveNCBI()
     {
-        return $this->nationalDataArchiveDataGov;
+        return $this->nationalDataArchiveNCBI;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Sets Whether the national data archives for the dataset identified by this DIF include the Data.gov Dataset Management System.
      *
-     * @param ARGTYPE $nationalDataArchiveDataGov ARGDESCRIPTION
+     * @param boolean $nationalDataArchiveDataGov Whether the national data archives for the dataset identified
+     *                                            by this DIF include the Data.gov Dataset Management System.
+     *
+     * @throws \InvalidArgumentException When $nationalDataArchiveDataGov is not boolean.
      *
      * @return void
      */
     public function setNationalDataArchiveDataGov($nationalDataArchiveDataGov)
     {
+        if ('boolean' !== gettype($nationalDataArchiveDataGov)) {
+            throw new \InvalidArgumentException('nationalDataArchiveDataGov must be boolean');
+        }
         $this->nationalDataArchiveDataGov = $nationalDataArchiveDataGov;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Whether the national data archives for the dataset identified by this DIF include the Data.gov Dataset Management System.
      *
-     * @return RETURNTYPE RETURNDESCRIPTION
+     * @return boolean Whether the national data archives for the dataset identified
+     *                 by this DIF include the Data.gov Dataset Management System.
      */
-    public function getNationalDataArchiveOther()
+    public function hasNationalDataArchiveDataGov()
     {
-        return $this->nationalDataArchiveOther;
+        return $this->nationalDataArchiveDataGov;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Sets Other national data archives for the dataset identified by this DIF.
      *
-     * @param ARGTYPE $nationalDataArchiveOther ARGDESCRIPTION
+     * @param string $nationalDataArchiveOther Other national data archives for the dataset identified by this DIF.
      *
      * @return void
      */
@@ -986,9 +1108,40 @@ class DIF extends Entity
     }
 
     /**
-     * METHODDESCRIPTION
+     * Other national data archives for the dataset identified by this DIF.
      *
-     * @return RETURNTYPE RETURNDESCRIPTION
+     * @return string Other national data archives for the dataset identified by this DIF.
+     */
+    public function getNationalDataArchiveOther()
+    {
+        return $this->nationalDataArchiveOther;
+    }
+
+    /**
+     * Sets whether the dataset identified by this DIF will include any data governed under the IRB or HIPAA, or data with other ethical issues.
+     *
+     * @param string $ethicalIssues Whether the dataset identified by this DIF will include any data
+     *                              governed under the IRB or HIPAA, or data with other ethical issues.
+     *
+     * @throws \InvalidArgumentException When $ethicalIssues is not a valid value.
+     *
+     * @return void
+     */
+    public function setEthicalIssues($ethicalIssues)
+    {
+        if (!in_array($ethicalIssues, self::ETHICAL_ISSUES)) {
+            throw new \InvalidArgumentException(
+                'Ethical issues must be one of: ' . implode(', ', self::ETHICAL_ISSUES)
+            );
+        }
+        $this->ethicalIssues = $ethicalIssues;
+    }
+
+    /**
+     * Gets whether the dataset identified by this DIF will include any data governed under the IRB or HIPAA, or data with other ethical issues.
+     *
+     * @return string Whether the dataset identified by this DIF will include any data
+     *                governed under the IRB or HIPAA, or data with other ethical issues.
      */
     public function getEthicalIssues()
     {
@@ -996,31 +1149,9 @@ class DIF extends Entity
     }
 
     /**
-     * METHODDESCRIPTION
+     * Sets an explanation of ethical issues for the dataset identified by this DIF.
      *
-     * @param ARGTYPE $ethicalIssues ARGDESCRIPTION
-     *
-     * @return void
-     */
-    public function setEthicalIssues($ethicalIssues)
-    {
-        $this->ethicalIssues = $ethicalIssues;
-    }
-
-    /**
-     * METHODDESCRIPTION
-     *
-     * @return RETURNTYPE RETURNDESCRIPTION
-     */
-    public function getEthicalIssuesExplanation()
-    {
-        return $this->ethicalIssuesExplanation;
-    }
-
-    /**
-     * METHODDESCRIPTION
-     *
-     * @param ARGTYPE $ethicalIssuesExplanation ARGDESCRIPTION
+     * @param string $ethicalIssuesExplanation An explanation of ethical issues for the dataset identified by this DIF.
      *
      * @return void
      */
@@ -1030,24 +1161,34 @@ class DIF extends Entity
     }
 
     /**
-     * METHODDESCRIPTION
+     * An explanation of ethical issues for the dataset identified by this DIF.
      *
-     * @return RETURNTYPE RETURNDESCRIPTION
+     * @return string An explanation of ethical issues for the dataset identified by this DIF.
      */
-    public function getRemarks()
+    public function getEthicalIssuesExplanation()
     {
-        return $this->remarks;
+        return $this->ethicalIssuesExplanation;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Sets additional remarks for this DIF.
      *
-     * @param ARGTYPE $remarks ARGDESCRIPTION
+     * @param string $remarks Additional remarks for this DIF.
      *
      * @return void
      */
     public function setRemarks($remarks)
     {
         $this->remarks = $remarks;
+    }
+
+    /**
+     * Gets additional remarks for this DIF.
+     *
+     * @return string Additional remarks for this DIF.
+     */
+    public function getRemarks()
+    {
+        return $this->remarks;
     }
 }
