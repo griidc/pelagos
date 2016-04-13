@@ -2,11 +2,20 @@
 
 namespace Pelagos\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+
 /**
  * DIF Entity class.
+ *
+ * @ORM\Entity
  */
 class DIF extends Entity
 {
+    /**
+     * A friendly name for this type of entity.
+     */
+    const FRIENDLY_NAME = 'DIF';
+
     /**
      * Status value for a DIF that has been saved, but not submitted.
      */
@@ -38,6 +47,8 @@ class DIF extends Entity
      * @var integer
      *
      * @see STATUS_* constants.
+     *
+     * @ORM\Column(type="smallint")
      */
     protected $status;
 
@@ -45,6 +56,8 @@ class DIF extends Entity
      * The Research Group this DIF is attached to.
      *
      * @var ResearchGroup
+     *
+     * @ORM\ManyToMany(targetEntity="ResearchGroup")
      */
     protected $researchGroup;
 
@@ -52,6 +65,8 @@ class DIF extends Entity
      * The title for this DIF.
      *
      * @var string
+     *
+     * @ORM\Column
      */
     protected $title;
 
@@ -59,6 +74,8 @@ class DIF extends Entity
      * The primary point of contact for this DIF.
      *
      * @var Person
+     *
+     * @ORM\ManyToMany(targetEntity="Person")
      */
     protected $primaryPointOfContact;
 
@@ -66,6 +83,8 @@ class DIF extends Entity
      * The secondary point of contact for this DIF.
      *
      * @var Person
+     *
+     * @ORM\ManyToMany(targetEntity="Person", nullable=true)
      */
     protected $secondaryPointOfContact;
 
@@ -73,6 +92,8 @@ class DIF extends Entity
      * The abstract for this DIF.
      *
      * @var string
+     *
+     * @ORM\Column
      */
     protected $abstract;
 
@@ -80,6 +101,8 @@ class DIF extends Entity
      * Whether the fields of study for the dataset identified by this DIF include Ecological/Biological.
      *
      * @var boolean
+     *
+     * @ORM\Column(type="boolean", nullable=true)
      */
     protected $fieldOfStudyEcologicalBiological;
 
@@ -87,6 +110,8 @@ class DIF extends Entity
      * Whether the fields of study for the dataset identified by this DIF include Physical Oceanography.
      *
      * @var boolean
+     *
+     * @ORM\Column(type="boolean", nullable=true)
      */
     protected $fieldOfStudyPhysicalOceanography;
 
@@ -94,6 +119,8 @@ class DIF extends Entity
      * Whether the fields of study for the dataset identified by this DIF include Atmospheric.
      *
      * @var boolean
+     *
+     * @ORM\Column(type="boolean", nullable=true)
      */
     protected $fieldOfStudyAtmospheric;
 
@@ -101,6 +128,8 @@ class DIF extends Entity
      * Whether the fields of study for the dataset identified by this DIF include Chemical.
      *
      * @var boolean
+     *
+     * @ORM\Column(type="boolean", nullable=true)
      */
     protected $fieldOfStudyChemical;
 
@@ -108,6 +137,8 @@ class DIF extends Entity
      * Whether the fields of study for the dataset identified by this DIF include Human Health.
      *
      * @var boolean
+     *
+     * @ORM\Column(type="boolean", nullable=true)
      */
     protected $fieldOfStudyHumanHealth;
 
@@ -115,6 +146,8 @@ class DIF extends Entity
      * Whether the fields of study for the dataset identified by this DIF include Social/Cultural/Political.
      *
      * @var boolean
+     *
+     * @ORM\Column(type="boolean", nullable=true)
      */
     protected $fieldOfStudySocialCulturalPolitical;
 
@@ -122,6 +155,8 @@ class DIF extends Entity
      * Whether the fields of study for the dataset identified by this DIF include Economics.
      *
      * @var boolean
+     *
+     * @ORM\Column(type="boolean", nullable=true)
      */
     protected $fieldOfStudyEconomics;
 
@@ -129,6 +164,8 @@ class DIF extends Entity
      * Other fields of study for the dataset identified by this DIF.
      *
      * @var string
+     *
+     * @ORM\Column(nullable=true)
      */
     protected $fieldOfStudyOther;
 
@@ -138,6 +175,8 @@ class DIF extends Entity
      * @var string
      *
      * @see DATA_SIZES class constant for valid values.
+     *
+     * @ORM\Column(nullable=true)
      */
     protected $dataSize;
 
@@ -145,6 +184,8 @@ class DIF extends Entity
      * The Phenomenon/Variables Observed or Generated for the dataset identified by this DIF.
      *
      * @var string
+     *
+     * @ORM\Column(nullable=true)
      */
     protected $variablesObserved;
 
@@ -152,6 +193,8 @@ class DIF extends Entity
      * Whether the methods for collecting or generating the dataset identified by this DIF include Field Sampling.
      *
      * @var boolean
+     *
+     * @ORM\Column(type="boolean", nullable=true)
      */
     protected $collectionMethodFieldSampling;
 
@@ -159,6 +202,8 @@ class DIF extends Entity
      * Whether the methods for collecting or generating the dataset identified by this DIF include Simulated/Generated.
      *
      * @var boolean
+     *
+     * @ORM\Column(type="boolean", nullable=true)
      */
     protected $collectionMethodSimulatedGenerated;
 
@@ -166,6 +211,8 @@ class DIF extends Entity
      * Whether the methods for collecting or generating the dataset identified by this DIF include Laboratory.
      *
      * @var boolean
+     *
+     * @ORM\Column(type="boolean", nullable=true)
      */
     protected $collectionMethodLaboratory;
 
@@ -173,6 +220,8 @@ class DIF extends Entity
      * Whether the methods for collecting or generating the dataset identified by this DIF include Literature Based.
      *
      * @var boolean
+     *
+     * @ORM\Column(type="boolean", nullable=true)
      */
     protected $collectionMethodLiteratureBased;
 
@@ -180,6 +229,8 @@ class DIF extends Entity
      * Whether the methods for collecting or generating the dataset identified by this DIF include Remote Sensing.
      *
      * @var boolean
+     *
+     * @ORM\Column(type="boolean", nullable=true)
      */
     protected $collectionMethodRemoteSensing;
 
@@ -187,6 +238,8 @@ class DIF extends Entity
      * Other methods for collecting or generating the dataset identified by this DIF.
      *
      * @var string
+     *
+     * @ORM\Column(nullable=true)
      */
     protected $collectionMethodOther;
 
@@ -194,6 +247,8 @@ class DIF extends Entity
      * The start date of the estimated data sampling/generation period.
      *
      * @var \DateTime
+     *
+     * @ORM\Column(type="date", nullable=true)
      */
     protected $estimatedStartDate;
 
@@ -201,6 +256,8 @@ class DIF extends Entity
      * The end date of the estimated data sampling/generation period.
      *
      * @var \DateTime
+     *
+     * @ORM\Column(type="date", nullable=true)
      */
     protected $estimatedEndDate;
 
@@ -208,13 +265,17 @@ class DIF extends Entity
      * A text description of the spatial extent.
      *
      * @var string
+     *
+     * @ORM\Column(nullable=true)
      */
     protected $spatialExtentDescription;
 
     /**
      * The geometry for the spatial extent.
      *
-     * @var geometry
+     * @var string
+     *
+     * @ORM\Column(type="geometry", nullable=true)
      */
     protected $spatialExtentGeometry;
 
@@ -222,6 +283,8 @@ class DIF extends Entity
      * Whether the national data archives for the dataset identified by this DIF include the National Oceanographic Data Center (NODC).
      *
      * @var boolean
+     *
+     * @ORM\Column(type="boolean", nullable=true)
      */
     protected $nationalDataArchiveNODC;
 
@@ -229,6 +292,8 @@ class DIF extends Entity
      * Whether the national data archives for the dataset identified by this DIF include US EPA Storet.
      *
      * @var boolean
+     *
+     * @ORM\Column(type="boolean", nullable=true)
      */
     protected $nationalDataArchiveStoret;
 
@@ -236,6 +301,8 @@ class DIF extends Entity
      * Whether the national data archives for the dataset identified by this DIF include the Global Biodiversity Information Facility.
      *
      * @var boolean
+     *
+     * @ORM\Column(type="boolean", nullable=true)
      */
     protected $nationalDataArchiveGBIF;
 
@@ -243,6 +310,8 @@ class DIF extends Entity
      * Whether the national data archives for the dataset identified by this DIF include the National Center for Biotechnology Information.
      *
      * @var boolean
+     *
+     * @ORM\Column(type="boolean", nullable=true)
      */
     protected $nationalDataArchiveNCBI;
 
@@ -250,6 +319,8 @@ class DIF extends Entity
      * Whether the national data archives for the dataset identified by this DIF include the Data.gov Dataset Management System.
      *
      * @var boolean
+     *
+     * @ORM\Column(type="boolean", nullable=true)
      */
     protected $nationalDataArchiveDataGov;
 
@@ -257,6 +328,8 @@ class DIF extends Entity
      * Other national data archives for the dataset identified by this DIF.
      *
      * @var string
+     *
+     * @ORM\Column(nullable=true)
      */
     protected $nationalDataArchiveOther;
 
@@ -266,6 +339,8 @@ class DIF extends Entity
      * @var string
      *
      * @see ETHICAL_ISSUES class constant for valid values;
+     *
+     * @ORM\Column(nullable=true)
      */
     protected $ethicalIssues;
 
@@ -273,6 +348,8 @@ class DIF extends Entity
      * An explanation of ethical issues for the dataset identified by this DIF.
      *
      * @var string
+     *
+     * @ORM\Column(nullable=true)
      */
     protected $ethicalIssuesExplanation;
 
@@ -280,6 +357,8 @@ class DIF extends Entity
      * Additional remarks for this DIF.
      *
      * @var string
+     *
+     * @ORM\Column(nullable=true)
      */
     protected $remarks;
 
