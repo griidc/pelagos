@@ -51,7 +51,7 @@ class DIFType extends AbstractType
                 'class' => '\Pelagos\Entity\Person',
                 'label' => 'Primary POC:',
                 'choice_label' => function ($value, $key, $index) {
-                    return $value->lastName . ',' . $value->firstName . '(' . $value->emailAddress . ')';
+                    return $value->getLastName() . ',' . $value->getFirstName() . '(' . $value->getEmailAddress() . ')';
                 },
                 'required' => true,
             ))
@@ -59,7 +59,7 @@ class DIFType extends AbstractType
                 'class' => '\Pelagos\Entity\Person',
                 'label' => 'Secondary POC:',
                 'choice_label' => function ($value, $key, $index) {
-                    return $value->lastName . ',' . $value->firstName . '(' . $value->emailAddress . ')';
+                    return $value->getLastName() . ',' . $value->getFirstName() . '(' . $value->getEmailAddress() . ')';
                 },
                 'required' => true,
             ))
