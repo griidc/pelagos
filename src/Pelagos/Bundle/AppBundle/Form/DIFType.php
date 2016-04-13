@@ -71,60 +71,46 @@ class DIFType extends AbstractType
                 'required' => false,
             ))
             ->add('fieldOfStudyEcologicalBiological', ChoiceType::class, array(
-                'choices' => [
-                        new Category('Ecological/Biological'),
-                 ],
-                'expanded' => true,
-                'multiple' => true,
-                'required' => false,
+                 'choices' => array('Ecological/Biological' => 'Ecological/Biological')
+                 'expanded' => true
+                 'multiple' => true
+                 'required' => false,
             ))
             ->add('fieldOfStudyPhysicalOceanography', ChoiceType::class, array(
-                'choices' => [
-                        new Category('Physical Oceanography'),
-                    ],
-                'expanded' => true,
-                'multiple' => true,
-                'required' => false,
+                 'choices' => array('Physical Oceanography' => 'Physical Oceanography')
+                 'expanded' => true
+                 'multiple' => true
+                 'required' => false,
             ))
             ->add('fieldOfStudyAtmospheric', ChoiceType::class, array(
-                'choices' => [
-                        new Category('Atmospheric'),
-                    ],
-                'expanded' => true,
-                'multiple' => true,
-                'required' => false,
+                 'choices' => array('Atmospheric' => 'Atmospheric')
+                 'expanded' => true
+                 'multiple' => true
+                 'required' => false,
             ))
             ->add('fieldOfStudyChemical', ChoiceType::class, array(
-                'choices' => [
-                        new Category('Chemical'),
-                    ],
-                'expanded' => true,
-                'multiple' => true,
-                'required' => false,
+                 'choices' => array('Chemical' => 'Chemical')
+                 'expanded' => true
+                 'multiple' => true
+                 'required' => false,
             ))
             ->add('fieldOfStudyHumanHealth', ChoiceType::class, array(
-                'choices' => [
-                        new Category('Human Health'),
-                    ],
-                'expanded' => true,
-                'multiple' => true,
-                'required' => false,
+                 'choices' => array('Human Health' => 'Human Health')
+                 'expanded' => true
+                 'multiple' => true
+                 'required' => false,
             ))
             ->add('fieldOfStudySocialCulturalPolitical', ChoiceType::class, array(
-                'choices' => [
-                        new Category('Social/Cultural/Political'),
-                    ],
-                'expanded' => true,
-                'multiple' => true,
-                'required' => false,
+                 'choices' => array('Social/Cultural/Political' => 'Social/Cultural/Political')
+                 'expanded' => true
+                 'multiple' => true
+                 'required' => false,
             ))
             ->add('fieldOfStudyEconomics', ChoiceType::class, array(
-                'choices' => [
-                        new Category('Economics'),
-                    ],
-                'expanded' => true,
-                'multiple' => true,
-                'required' => false,
+                 'choices' => array('Economics' => 'Economics')
+                 'expanded' => true
+                 'multiple' => true
+                 'required' => false,
             ))
             ->add('fieldOfStudyOther', TextType::class, array(
                 'label' => 'Other Field of Study:',
@@ -143,44 +129,34 @@ class DIFType extends AbstractType
                 'required' => false,
             ))
             ->add('collectionMethodFieldSampling', ChoiceType::class, array(
-                'choices' => [
-                        new Category('Field Sampling'),
-                    ],
-                'expanded' => true,
-                'multiple' => true,
-                'required' => false,
+                 'choices' => array('Field Sampling' => 'Field Sampling')
+                 'expanded' => true
+                 'multiple' => true
+                 'required' => false,
             ))
             ->add('collectionMethodSimulatedGenerated', ChoiceType::class, array(
-                'choices' => [
-                        new Category('Simulated/Generated'),
-                    ],
-                'expanded' => true,
-                'multiple' => true,
-                'required' => false,
+                 'choices' => array('Simulated/Generated' => 'Simulated/Generated')
+                 'expanded' => true
+                 'multiple' => true
+                 'required' => false,
             ))
             ->add('collectionMethodLaboratory', ChoiceType::class, array(
-                'choices' => [
-                        new Category('Laboratory'),
-                    ],
-                'expanded' => true,
-                'multiple' => true,
-                'required' => false,
+                 'choices' => array('Laboratory' => 'Laboratory')
+                 'expanded' => true
+                 'multiple' => true
+                 'required' => false,
             ))
             ->add('collectionMethodLiteratureBased', ChoiceType::class, array(
-                'choices' => [
-                        new Category('Literature Based'),
-                    ],
-                'expanded' => true,
-                'multiple' => true,
-                'required' => false,
+                 'choices' => array('Literature Based' => 'Literature Based')
+                 'expanded' => true
+                 'multiple' => true
+                 'required' => false,
             ))
             ->add('collectionMethodRemoteSensing', ChoiceType::class, array(
-                'choices' => [
-                        new Category('Remote Sensing'),
-                    ],
-                'expanded' => true,
-                'multiple' => true,
-                'required' => false,
+                 'choices' => array('Remote Sensing' => 'Remote Sensing')
+                 'expanded' => true
+                 'multiple' => true
+                 'required' => false,
             ))
             ->add('CollectionMethodOther', TextType::class, array(
                 'label' => 'Other Collection Method:',
@@ -207,44 +183,34 @@ class DIFType extends AbstractType
             ))
             ->add('spacialGeometry', HiddenType::class)
             ->add('nationalDataArchiveNODC', ChoiceType::class, array(
-                'choices' => [
-                        new Category('National Oceanographic Data Center'),
-                    ],
-                'expanded' => true,
-                'multiple' => true,
-                'required' => false,
+                 'choices' => array('National Oceanographic Data Center' => 'National Oceanographic Data Center')
+                 'expanded' => true
+                 'multiple' => true
+                 'required' => false,
             ))
             ->add('nationalDataArchiveUSEPAStoret', ChoiceType::class, array(
-                'choices' => [
-                        new Category('US EPA Storet'),
-                    ],
-                'expanded' => true,
-                'multiple' => true,
-                'required' => false,
+                 'choices' => array('US EPA Storet' => 'US EPA Storet')
+                 'expanded' => true
+                 'multiple' => true
+                 'required' => false,
             ))
             ->add('nationalDataArchiveGBIF', ChoiceType::class, array(
-                'choices' => [
-                        new Category('Global Biodiversity Information Facility'),
-                    ],
-                'expanded' => true,
-                'multiple' => true,
-                'required' => false,
+                 'choices' => array('Global Biodiversity Information Facility' => 'Global Biodiversity Information Facility')
+                 'expanded' => true
+                 'multiple' => true
+                 'required' => false,
             ))
             ->add('nationalDataArchiveNCBI', ChoiceType::class, array(
-                'choices' => [
-                        new Category('National Center for Biotechnology Information'),
-                    ],
-                'expanded' => true,
-                'multiple' => true,
-                'required' => false,
+                 'choices' => array('National Center for Biotechnology Information' => 'National Center for Biotechnology Information')
+                 'expanded' => true
+                 'multiple' => true
+                 'required' => false,
             ))
             ->add('nationalDataArchiveDataGov', ChoiceType::class, array(
-                'choices' => [
-                        new Category('Data.gov Dataset Management System'),
-                    ],
-                'expanded' => true,
-                'multiple' => true,
-                'required' => false,
+                 'choices' => array('Data.gov Dataset Management System' => 'Data.gov Dataset Management System')
+                 'expanded' => true
+                 'multiple' => true
+                 'required' => false,
             ))
             ->add('NationalDataArchiveOther', TextType::class, array(
                 'label' => 'Other National Data Archive:',
