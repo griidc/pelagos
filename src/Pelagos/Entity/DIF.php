@@ -42,13 +42,13 @@ class DIF extends Entity
     const ETHICAL_ISSUES = array('No', 'Yes', 'Uncertain');
     
     /**
-     * The Research Group this DIF is attached to.
+     * The Dataset this DIF is attached to.
      *
-     * @var DataSet
+     * @var Dataset
      *
-     * @ORM\OneToOne(targetEntity="DataSet")
+     * @ORM\OneToOne(targetEntity="Dataset")
      */
-    protected $dataSet;
+    protected $dataset;
 
     /**
      * The status of this DIF.
@@ -372,25 +372,25 @@ class DIF extends Entity
     protected $remarks;
     
     /**
-     * Sets the DataSet for this DIF.
+     * Sets the Dataset this DIF is attached to.
      *
-     * @param DataSet $dataSet The DIF for this DataSet.
+     * @param Dataset $dataset The Dataset this DIF is attached to.
      *
      * @return void
      */
-    public function setDataSet(DataSet $dataSet)
+    public function setDataset(Dataset $dataset)
     {
-        $this->dataSet = $dataSet;
+        $this->dataset = $dataset;
     }
     
     /**
-     * Gets the DataSet for this DIF.
+     * Gets the Dataset this DIF is attached to.
      *
-     * @return DataSet The DataSet for this DIF.
+     * @return Dataset The Dataset this DIF is attached to.
      */
-    public function getDataSet()
+    public function getDataset()
     {
-        return $this->dataSet;
+        return $this->dataset;
     }
 
     /**
