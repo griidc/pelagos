@@ -3,6 +3,8 @@
 namespace Pelagos\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -10,7 +12,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation as Serializer;
 
 use Pelagos\Exception\PasswordException;
-
 use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
 
 /**
@@ -74,59 +75,39 @@ class Account extends Entity implements UserInterface, \Serializable
     protected $userId;
 
     /**
-     * A binary string containing the hashed password.
+     * Current Password object associated with Account.
      *
-     * @var string
+     * @var Password
      *
-     * @ORM\Column(type="blob")
+     * @ORM\OneToOne(targetEntity="Password", cascade={"persist"})
      *
      * @Assert\NotBlank(
-     *     message="Password hash is required"
+     *     message="An Account must be attached to a Password"
      * )
-     *
-     * @Serializer\Exclude
      */
-    protected $passwordHash;
+    protected $password;
 
     /**
-     * The algorithm used to hash the password.
+     * Historical Password objects associated with Account.
      *
-     * @var string
+     * @var Collection
      *
-     * @ORM\Column
+     * @ORM\OneToMany(targetEntity="Password", mappedBy="account", fetch="EXTRA_LAZY")
      *
-     * @Assert\NotBlank(
-     *     message="Password hash algorithm is required"
-     * )
-     *
-     * @Serializer\Exclude
+     * @ORM\OrderBy({"modificationTimeStamp"="DESC"})
      */
-    protected $passwordHashAlgorithm;
-
-    /**
-     * A binary string containing the salt used when hashing the password.
-     *
-     * @var string
-     *
-     * @ORM\Column(type="blob")
-     *
-     * @Assert\NotBlank(
-     *     message="Password hash salt is required"
-     * )
-     *
-     * @Serializer\Exclude
-     */
-    protected $passwordHashSalt;
+    protected $passwordHistory;
 
     /**
      * Constructor for Account.
      *
-     * @param Person $person   The Person this account is for.
-     * @param string $userId   The user ID for this account.
-     * @param string $password The password for this account.
+     * @param Person   $person   The Person this account is for.
+     * @param string   $userId   The user ID for this account.
+     * @param Password $password The password for this account.
      */
-    public function __construct(Person $person = null, $userId = null, $password = null)
+    public function __construct(Person $person = null, $userId = null, Password $password = null)
     {
+        $this->passwordHistory = new ArrayCollection();
         if ($person !== null) {
             $this->setPerson($person);
         }
@@ -186,75 +167,38 @@ class Account extends Entity implements UserInterface, \Serializable
     }
 
     /**
-     * Set the password attributes for a provided plain text password.
+     * Set the password attribute with a Password object.
      *
-     * @param string $password Plain text password.
+     * @param Password $password Pelagos password object.
      *
-     * @throws PasswordException When $password is shorter than 8 characters.
-     * @throws PasswordException When $password does not meet complexity requirements.
-     * @throws \Exception        When unable to generate a cryptographically strong password hash salt.
+     * @throws PasswordException When password last changed within 24 hrs.
+     * @throws PasswordException When an old password is re-used.
      *
      * @return void
      */
-    public function setPassword($password)
+    public function setPassword(Password $password)
     {
-        if (strlen($password) < 8) {
-            throw new PasswordException('Password is not long enough (must be at least 8 characters)');
+        $this->password = $password;
+
+        // check for minimum age.
+        $interval = new \DateInterval('PT24H');
+        $now = new \DateTime();
+        if (!$this->passwordHistory->isEmpty() and
+            $this->passwordHistory->first()->getModificationTimeStamp()->add($interval) > $now) {
+            throw new PasswordException('This password has already been changed within the last 24 hrs');
         }
 
-        $passwordComplexityRegEx
-            = '/^' .
-            // Password must contain:
-            '(?:' .
-                // a digit, a lowercase letter, and an uppercase letter
-                '(?:(?=.*\d)(?=.*\p{Ll})(?=.*\p{Lu}))' .
-                // or
-                '|' .
-                // a digit, a lowercase letter, and a character that is not a digit or cased letter
-                '(?:(?=.*\d)(?=.*\p{Ll})(?=.*[^\d\p{Ll}\p{Lu}]))' .
-                // or
-                '|' .
-                // a digit, an uppercase letter, and a character that is not a digit or cased letter
-                '(?:(?=.*\d)(?=.*\p{Lu})(?=.*[^\d\p{Ll}\p{Lu}]))' .
-                // or
-                '|' .
-                // a lowercase letter, an uppercase letter, and a character that is not a digit or cased letter
-                '(?:(?=.*\p{Ll})(?=.*\p{Lu})(?=.*[^\d\p{Ll}\p{Lu}]))' .
-            ')' .
-            // and can contain any other characters as long as the above matches.
-            '.+$/';
-
-        if (!preg_match($passwordComplexityRegEx, $password)) {
-            throw new PasswordException('Password is not complex enough');
+        // Throw exception if this password hash is
+        // found in last 10 of password history.  The subset of history
+        // is provided by a combination of EXTRA_LAZY and the Slice() method.
+        $clearText = $this->password->getClearTextPassword();
+        foreach ($this->passwordHistory->slice(0, 10) as $oldPasswordObject) {
+            $comparisonHash = sha1($clearText . $oldPasswordObject->getSalt(), true);
+            if ($comparisonHash === $oldPasswordObject->getPasswordHash()) {
+                throw new PasswordException('This password has already been used');
+            }
         }
-
-        $this->passwordHashAlgorithm = 'SSHA';
-        // Assume the salt is not crptographically strong by default.
-        $cryptoStrongSalt = false;
-        // Attempt to generate a cryptographically strong 4 byte random salt.
-        $this->passwordHashSalt = openssl_random_pseudo_bytes(4, $cryptoStrongSalt);
-        // If the generate salt is not cryptographically strong.
-        if (!$cryptoStrongSalt) {
-            throw new \Exception('Could not generate a cryptographically strong password hash salt');
-        }
-        // Append the salt to the password, hash it, and save the hash.
-        $this->passwordHash = sha1($password . $this->passwordHashSalt, true);
-    }
-
-    /**
-     * Compare a plain text password against the hashed password.
-     *
-     * @param string $password Plain text password.
-     *
-     * @return boolean Whether or not the provided password matches the hash.
-     */
-    public function comparePassword($password)
-    {
-        $hash = sha1($password . $this->getSalt(), true);
-        if ($hash === $this->getPassword()) {
-            return true;
-        }
-        return false;
+        $this->password->setAccount($this);
     }
 
     /**
@@ -270,33 +214,28 @@ class Account extends Entity implements UserInterface, \Serializable
     }
 
     /**
-     * Returns the passwordHashSalt for this Account.
+     * Returns the passwordHash contained in the account's Password attribute.
      *
      * This is required by \Symfony\Component\Security\Core\User\UserInterface
      *
-     * @return string The passwordHashSalt for this Account.
-     */
-    public function getSalt()
-    {
-        if (is_resource($this->passwordHashSalt)) {
-            return stream_get_contents($this->passwordHashSalt);
-        }
-        return $this->passwordHashSalt;
-    }
-
-    /**
-     * Returns the passwordHash for this Account.
-     *
-     * This is required by \Symfony\Component\Security\Core\User\UserInterface
-     *
-     * @return string The passwordHash for this Account.
+     * @return string|null The passwordHash for this Account.
      */
     public function getPassword()
     {
-        if (is_resource($this->passwordHash)) {
-            return stream_get_contents($this->passwordHash);
+        if ($this->password === null) {
+            return null;
         }
-        return $this->passwordHash;
+        return $this->password->getPasswordHash();
+    }
+
+    /**
+     * Returns the Password entity attached to this Account.
+     *
+     * @return Password The Password entity attached to this Account.
+     */
+    public function getPasswordEntity()
+    {
+        return $this->password;
     }
 
     /**
@@ -310,8 +249,9 @@ class Account extends Entity implements UserInterface, \Serializable
     {
         $roles = array(self::ROLE_USER);
         foreach ($this->getPerson()->getPersonDataRepositories() as $personDataRepository) {
-            if ($personDataRepository->getRole()->getName() == DataRepositoryRoles::MANAGER and
-                !in_array(self::ROLE_DATA_REPOSITORY_MANAGER, $roles)) {
+            if ($personDataRepository->getRole()->getName() == DataRepositoryRoles::MANAGER
+                and !in_array(self::ROLE_DATA_REPOSITORY_MANAGER, $roles)
+            ) {
                 $roles[] = self::ROLE_DATA_REPOSITORY_MANAGER;
             }
         }
@@ -338,10 +278,12 @@ class Account extends Entity implements UserInterface, \Serializable
      */
     public function serialize()
     {
-        return serialize(array(
+        return serialize(
+            array(
             $this->person,
             $this->userId,
-        ));
+            )
+        );
     }
 
     /**
@@ -362,12 +304,17 @@ class Account extends Entity implements UserInterface, \Serializable
     }
 
     /**
-     * Returns the hashing algorithm used to generate the password hash.
+     * Returns the passwordHashSalt for this Account.
      *
-     * @return string The hashing algorithm.
+     * This is required by \Symfony\Component\Security\Core\User\UserInterface
+     *
+     * @return string The passwordHashSalt for this Account.
      */
-    public function getHashAlgorithm()
+    public function getSalt()
     {
-        return $this->passwordHashAlgorithm;
+        if ($this->password === null) {
+            return null;
+        }
+        return $this->password->getSalt();
     }
 }
