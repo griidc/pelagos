@@ -33,7 +33,7 @@ class Dataset extends Entity
      *
      * @var DIF
      *
-     * @ORM\OneToOne(targetEntity="DIF")
+     * @ORM\OneToOne(targetEntity="DIF", inversedBy="dataset")
      */
     protected $dif;
         

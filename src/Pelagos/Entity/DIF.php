@@ -46,7 +46,7 @@ class DIF extends Entity
      *
      * @var Dataset
      *
-     * @ORM\OneToOne(targetEntity="Dataset")
+     * @ORM\OneToOne(targetEntity="Dataset", mappedBy="dif")
      */
     protected $dataset;
 
