@@ -138,11 +138,11 @@
                 </div>
             </span>
             <label for="difSize"><b>Approximate Dataset Size: </b></label>
-            <table width="75%">
+            <table width="75%" class="choice-label">
                 <tr>
                     {% for key, dataSizeItem in form.dataSize.children %}
                     <td>
-                        {{ form_widget(dataSizeItem) }}
+                        {{ form_widget(dataSizeItem) }} {{ form_label(dataSizeItem) }}
                     <td>
                     {% endfor %}
                 </tr>
@@ -158,7 +158,7 @@
                 <p>Please expand on information you have provided in the abstract by giving more exact details about all variables or phenomena that you plan to measure, collect or generate. Please separate list items using a comma. </p>
             </div>
         </span>
-        {{ form_row(variablesObserved) }}
+        {{ form_row(form.variablesObserved) }}
     </fieldset>
     </div>
 
@@ -228,10 +228,10 @@
                             <div>
                                 <div style="width:500px;height:300px;" id="difMap"></div>
                             </div>
-                            {{ form_widget(form.spatialGeometry) }} <!-- Previously Called id:difGeoloc & hidden -->
+                            {{ form_widget(form.spatialExtentGeometry) }} <!-- Previously Called id:difGeoloc & hidden -->
                         </div>
                         <div id="nonspatial" style="display:none;width:500px;margin:15px;">
-                            {{ form_row(form.spatialDescription) }} <!-- Previously Called id:spatialdesc -->
+                            {{ form_row(form.spatialExtentDescription) }} <!-- Previously Called id:spatialdesc -->
                         </div>
                     </td>
                     <td>
@@ -253,7 +253,7 @@
             </span>
             <label for="difNatRepo"><b>Identify a National Data Archive for your Dataset, if applicable: </b></label>
             {{ form_row(form.nationalDataArchiveNODC) }}<br>
-            {{ form_row(form.nationalDataArchiveUSEPAStoret) }}<br>
+            {{ form_row(form.nationalDataArchiveStoret) }}<br>
             {{ form_row(form.nationalDataArchiveGBIF) }}<br>
             {{ form_row(form.nationalDataArchiveNCBI) }}<br>
             {{ form_row(form.nationalDataArchiveDataGov) }}<br>
