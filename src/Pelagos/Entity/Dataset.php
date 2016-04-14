@@ -11,16 +11,16 @@ use Pelagos\Entity\DIF;
  *
  * @ORM\Entity
  */
-class DataSet extends Entity
+class Dataset extends Entity
 {
     
     /**
      * A friendly name for this type of entity.
      */
-    const FRIENDLY_NAME = 'DIF';
+    const FRIENDLY_NAME = 'Dataset';
     
     /**
-     * The UDI for this DataSet.
+     * The UDI for this Dataset.
      *
      * @var string
      *
@@ -29,7 +29,7 @@ class DataSet extends Entity
     protected $udi;
     
     /**
-     * The DIF this DataSet is attached to.
+     * The DIF for this Dataset.
      *
      * @var DIF
      *
@@ -38,9 +38,9 @@ class DataSet extends Entity
     protected $dif;
         
     /**
-     * Sets the UDI for this DataSet.
+     * Sets the UDI for this Dataset.
      *
-     * @param string $udi The UDI for this DataSet.
+     * @param string $udi The UDI for this Dataset.
      *
      * @return void
      */
@@ -50,9 +50,9 @@ class DataSet extends Entity
     }
     
     /**
-     * Gets the UDI for this DataSet.
+     * Gets the UDI for this Dataset.
      *
-     * @return string The UDI for this DataSet.
+     * @return string The UDI for this Dataset.
      */
     public function getUdi()
     {
@@ -60,9 +60,9 @@ class DataSet extends Entity
     }
     
     /**
-     * Sets the DIF for this DataSet.
+     * Sets the DIF for this Dataset.
      *
-     * @param DIF $dif The DIF for this DataSet.
+     * @param DIF $dif The DIF for this Dataset.
      *
      * @return void
      */
@@ -72,9 +72,9 @@ class DataSet extends Entity
     }
     
     /**
-     * Gets the DIF for this DataSet.
+     * Gets the DIF for this Dataset.
      *
-     * @return DIF The DIF for this DataSet.
+     * @return DIF The DIF for this Dataset.
      */
     public function getDif()
     {
