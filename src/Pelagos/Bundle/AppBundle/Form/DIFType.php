@@ -54,14 +54,14 @@ class DIFType extends AbstractType
             ))
             ->add('primaryPointOfContact', EntityType::class, array(
                 'class' => Person::class,
-                'label' => 'Primary POC:',
+                'label' => 'Primary Point of Contact:',
                 'choices' => array(),
                 'placeholder' => '[PLEASE SELECT PROJECT FIRST]',
                 'required' => true,
             ))
             ->add('secondaryPointOfContact', EntityType::class, array(
                 'class' => Person::class,
-                'label' => 'Secondary POC:',
+                'label' => 'Secondary Point of Contact:',
                 'choices' => array(),
                 'placeholder' => '[PLEASE SELECT PROJECT FIRST]',
                 'required' => true,
@@ -109,6 +109,7 @@ class DIFType extends AbstractType
             ))
             ->add('dataSize', ChoiceType::class, array(
                 'choices' => array_combine(DIF::DATA_SIZES, DIF::DATA_SIZES),
+                'data' => DIF::DATA_SIZES[0],
                 'label' => 'Approximate Dataset Size:',
                 'required' => true,
                 'expanded' => true,
