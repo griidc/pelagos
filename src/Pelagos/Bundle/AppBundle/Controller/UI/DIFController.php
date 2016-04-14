@@ -34,7 +34,7 @@ class DIFController extends UIController
         $form = $this->get('form.factory')->createNamed(null, DIFType::class, $dif);
 
         return $this->render(
-            'PelagosAppBundle:DIF:difForm.html.twig',
+            'PelagosAppBundle:DIF:dif.html.twig',
             array('form' => $form->createView())
         );
     }
