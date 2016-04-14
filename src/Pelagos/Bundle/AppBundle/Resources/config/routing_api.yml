@@ -45,3 +45,9 @@ people:
     resource: Pelagos\Bundle\AppBundle\Controller\Api\PersonController
     name_prefix: people_
     prefix: people
+
+difs:
+    type: rest
+    resource: Pelagos\Bundle\AppBundle\Controller\Api\DIFController
+    name_prefix: difs_
+    prefix: difs
