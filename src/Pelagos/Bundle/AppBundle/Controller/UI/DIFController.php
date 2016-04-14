@@ -21,7 +21,8 @@ class DIFController extends UIController
     /**
      * The default action for the DIF.
      *
-     * @param string $id The id of the DIF to load.
+     * @param Request     $request The Symfony request object.
+     * @param string|null $id      The id of the DIF to load.
      *
      * @Route("/{id}")
      *
