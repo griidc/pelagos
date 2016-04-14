@@ -10,7 +10,6 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -77,46 +76,32 @@ class DIFType extends AbstractType
                     'placeholder' => 'Please provide a brief narrative describing: What, where, why, how, and when the data will be or have been collected/generated?  (4000 Character Maximum'),
                 'required' => false,
             ))
-            ->add('fieldOfStudyEcologicalBiological', ChoiceType::class, array(
-                 'choices' => array('Ecological/Biological' => 'Ecological/Biological'),
-                 'expanded' => true,
-                 'multiple' => true,
+            ->add('fieldOfStudyEcologicalBiological', CheckboxType::class, array(
+                 'label' => 'Ecological/Biological',
                  'required' => false,
             ))
-            ->add('fieldOfStudyPhysicalOceanography', ChoiceType::class, array(
-                 'choices' => array('Physical Oceanography' => 'Physical Oceanography'),
-                 'expanded' => true,
-                 'multiple' => true,
+            ->add('fieldOfStudyPhysicalOceanography', CheckboxType::class, array(
+                 'label' => 'Physical Oceanography',
                  'required' => false,
             ))
-            ->add('fieldOfStudyAtmospheric', ChoiceType::class, array(
-                 'choices' => array('Atmospheric' => 'Atmospheric'),
-                 'expanded' => true,
-                 'multiple' => true,
+            ->add('fieldOfStudyAtmospheric', CheckboxType::class, array(
+                 'label' => 'Atmospheric',
                  'required' => false,
             ))
-            ->add('fieldOfStudyChemical', ChoiceType::class, array(
-                 'choices' => array('Chemical' => 'Chemical'),
-                 'expanded' => true,
-                 'multiple' => true,
+            ->add('fieldOfStudyChemical', CheckboxType::class, array(
+                 'label' => 'Chemical',
                  'required' => false,
             ))
-            ->add('fieldOfStudyHumanHealth', ChoiceType::class, array(
-                 'choices' => array('Human Health' => 'Human Health'),
-                 'expanded' => true,
-                 'multiple' => true,
+            ->add('fieldOfStudyHumanHealth', CheckboxType::class, array(
+                 'label' => 'Human Health',
                  'required' => false,
             ))
-            ->add('fieldOfStudySocialCulturalPolitical', ChoiceType::class, array(
-                 'choices' => array('Social/Cultural/Political' => 'Social/Cultural/Political'),
-                 'expanded' => true,
-                 'multiple' => true,
+            ->add('fieldOfStudySocialCulturalPolitical', CheckboxType::class, array(
+                 'label' => 'Social/Cultural/Political',
                  'required' => false,
             ))
-            ->add('fieldOfStudyEconomics', ChoiceType::class, array(
-                 'choices' => array('Economics' => 'Economics'),
-                 'expanded' => true,
-                 'multiple' => true,
+            ->add('fieldOfStudyEconomics', CheckboxType::class, array(
+                 'label' => 'Economics',
                  'required' => false,
             ))
             ->add('fieldOfStudyOther', TextType::class, array(
@@ -138,34 +123,24 @@ class DIFType extends AbstractType
                 ),
                 'required' => false,
             ))
-            ->add('collectionMethodFieldSampling', ChoiceType::class, array(
-                 'choices' => array('Field Sampling' => 'Field Sampling'),
-                 'expanded' => true,
-                 'multiple' => true,
+            ->add('collectionMethodFieldSampling', CheckboxType::class, array(
+                 'label' => 'Field Sampling',
                  'required' => false,
             ))
-            ->add('collectionMethodSimulatedGenerated', ChoiceType::class, array(
-                 'choices' => array('Simulated/Generated' => 'Simulated/Generated'),
-                 'expanded' => true,
-                 'multiple' => true,
+            ->add('collectionMethodSimulatedGenerated', CheckboxType::class, array(
+                 'label' => 'Simulated/Generated',
                  'required' => false,
             ))
-            ->add('collectionMethodLaboratory', ChoiceType::class, array(
-                 'choices' => array('Laboratory' => 'Laboratory'),
-                 'expanded' => true,
-                 'multiple' => true,
+            ->add('collectionMethodLaboratory', CheckboxType::class, array(
+                 'label' => 'Laboratory',
                  'required' => false,
             ))
-            ->add('collectionMethodLiteratureBased', ChoiceType::class, array(
-                 'choices' => array('Literature Based' => 'Literature Based'),
-                 'expanded' => true,
-                 'multiple' => true,
+            ->add('collectionMethodLiteratureBased', CheckboxType::class, array(
+                 'label' => 'Literature Based',
                  'required' => false,
             ))
-            ->add('collectionMethodRemoteSensing', ChoiceType::class, array(
-                 'choices' => array('Remote Sensing' => 'Remote Sensing'),
-                 'expanded' => true,
-                 'multiple' => true,
+            ->add('collectionMethodRemoteSensing', CheckboxType::class, array(
+                 'label' => 'Remote Sensing',
                  'required' => false,
             ))
             ->add('collectionMethodOther', TextType::class, array(
@@ -197,31 +172,23 @@ class DIFType extends AbstractType
             ))
             ->add('spatialExtentGeometry', HiddenType::class)
             ->add('nationalDataArchiveNODC', CheckboxType::class, array(
-                'required' => false,
-                'label' => 'National Oceanographic Data Center',
-            ))
-            ->add('nationalDataArchiveStoret', ChoiceType::class, array(
-                 'choices' => array('US EPA Storet' => 'US EPA Storet'),
-                 'expanded' => true,
-                 'multiple' => true,
+                 'label' => 'National Oceanographic Data Center',
                  'required' => false,
             ))
-            ->add('nationalDataArchiveGBIF', ChoiceType::class, array(
-                 'choices' => array('Global Biodiversity Information Facility' => 'Global Biodiversity Information Facility'),
-                 'expanded' => true,
-                 'multiple' => true,
+            ->add('nationalDataArchiveUSEPAStoret', CheckboxType::class, array(
+                 'label' => 'US EPA Storet',
                  'required' => false,
             ))
-            ->add('nationalDataArchiveNCBI', ChoiceType::class, array(
-                 'choices' => array('National Center for Biotechnology Information' => 'National Center for Biotechnology Information'),
-                 'expanded' => true,
-                 'multiple' => true,
+            ->add('nationalDataArchiveGBIF', CheckboxType::class, array(
+                 'label' => 'Global Biodiversity Information Facility',
                  'required' => false,
             ))
-            ->add('nationalDataArchiveDataGov', ChoiceType::class, array(
-                 'choices' => array('Data.gov Dataset Management System' => 'Data.gov Dataset Management System'),
-                 'expanded' => true,
-                 'multiple' => true,
+            ->add('nationalDataArchiveNCBI', CheckboxType::class, array(
+                 'label' => 'National Center for Biotechnology Information',
+                 'required' => false,
+            ))
+            ->add('nationalDataArchiveDataGov', CheckboxType::class, array(
+                 'label' => 'Data.gov Dataset Management System',
                  'required' => false,
             ))
             ->add('nationalDataArchiveOther', TextType::class, array(
