@@ -105,17 +105,39 @@
             <label for="difDatafor"><b>Field of Study:</b></label>
             <table id="difDatafor" width="100%" class="choice-label">
                 <tr>
-                    <td>{{ form_row(form.fieldOfStudyEcologicalBiological) }}</td>
-                    <td>{{ form_row(form.fieldOfStudyPhysicalOceanography) }}</td>
-                    <td>{{ form_row(form.fieldOfStudyAtmospheric) }}</td>
+                    <td>
+                        {{ form_widget(form.fieldOfStudyEcologicalBiological) }}
+                        {{ form_label(form.fieldOfStudyEcologicalBiological) }}
+                    </td>
+                    <td>
+                        {{ form_widget(form.fieldOfStudyPhysicalOceanography) }}
+                        {{ form_label(form.fieldOfStudyPhysicalOceanography) }}
+                    </td>
+                    <td>
+                        {{ form_widget(form.fieldOfStudyAtmospheric) }}
+                        {{ form_label(form.fieldOfStudyAtmospheric) }}
+                    </td>
                 </tr>
                 <tr>
-                    <td>{{ form_row(form.fieldOfStudyChemical) }}</td>
-                    <td>{{ form_row(form.fieldOfStudyHumanHealth) }}</td>
-                    <td>{{ form_row(form.fieldOfStudySocialCulturalPolitical) }}</td>
+                    <td>
+                        {{ form_widget(form.fieldOfStudyChemical) }}
+                        {{ form_label(form.fieldOfStudyChemical) }}
+                    </td>
+                    <td>
+                        {{ form_widget(form.fieldOfStudyHumanHealth) }}
+                        {{ form_label(form.fieldOfStudyHumanHealth) }}
+                    </td>
+                    <td>
+                        {{ form_widget(form.fieldOfStudySocialCulturalPolitical) }}
+                        {{ form_label(form.fieldOfStudySocialCulturalPolitical) }}
+                    </td>
                 </tr>
                 <tr>
-                    <td>{{ form_row(form.fieldOfStudyEconomics) }}</td>
+                    <td>
+                        {{ form_widget(form.fieldOfStudyEconomics) }}
+                        {{ form_label(form.fieldOfStudyEconomics) }}
+                    </td>
+                    
                     <td colspan="2">
                         <table width="100%">
                             <tr>
@@ -143,7 +165,7 @@
                     {% for key, dataSizeItem in form.dataSize.children %}
                     <td>
                         {{ form_widget(dataSizeItem) }} {{ form_label(dataSizeItem) }}
-                    <td>
+                    </td>
                     {% endfor %}
                 </tr>
             </table>
@@ -173,13 +195,28 @@
             <label for="difApproach"><b>Method(s) for Collecting or Generating the Data: </b></label>
             <table width="100%" class="choice-label">
                 <tr>
-                    <td>{{ form_row(form.collectionMethodFieldSampling) }}<td>
-                    <td>{{ form_row(form.collectionMethodSimulatedGenerated) }}<td>
-                    <td>{{ form_row(form.collectionMethodLaboratory) }}<td>
+                    <td>
+                        {{ form_widget(form.collectionMethodFieldSampling) }}
+                        {{ form_label(form.collectionMethodFieldSampling) }}
+                    </td>
+                    <td>
+                        {{ form_widget(form.collectionMethodSimulatedGenerated) }}
+                        {{ form_label(form.collectionMethodSimulatedGenerated) }}
+                    </td>
+                    <td>
+                        {{ form_widget(form.collectionMethodLaboratory) }}
+                        {{ form_label(form.collectionMethodLaboratory) }}
+                    </td>
                 </tr>
                 <tr>
-                    <td>{{ form_row(form.collectionMethodLiteratureBased) }}<td>
-                    <td>{{ form_row(form.collectionMethodRemoteSensing) }}<td>
+                    <td>
+                        {{ form_widget(form.collectionMethodLiteratureBased) }}
+                        {{ form_label(form.collectionMethodLiteratureBased) }}
+                    </td>
+                    <td>
+                        {{ form_widget(form.collectionMethodRemoteSensing) }}
+                        {{ form_label(form.collectionMethodRemoteSensing) }}
+                    </td>
                     <td>
                         <table width="100%">
                             <tr>
@@ -253,12 +290,21 @@
             </span>
             <label for="difNatRepo"><b>Identify a National Data Archive for your Dataset, if applicable: </b></label>
             <div class="choice-label">
-                {{ form_row(form.nationalDataArchiveNODC) }}<br>
-                {{ form_row(form.nationalDataArchiveStoret) }}<br>
-                {{ form_row(form.nationalDataArchiveGBIF) }}<br>
-                {{ form_row(form.nationalDataArchiveNCBI) }}<br>
-                {{ form_row(form.nationalDataArchiveDataGov) }}<br>
-              
+                {{ form_widget(form.nationalDataArchiveNODC) }}
+                {{ form_label(form.nationalDataArchiveNODC) }}
+                <br>
+                {{ form_widget(form.nationalDataArchiveStoret) }}
+                {{ form_label(form.nationalDataArchiveStoret) }}
+                <br>
+                {{ form_widget(form.nationalDataArchiveGBIF) }}
+                {{ form_label(form.nationalDataArchiveGBIF) }}
+                <br>
+                {{ form_widget(form.nationalDataArchiveNCBI) }}
+                {{ form_label(form.nationalDataArchiveNCBI) }}
+                <br>
+                {{ form_widget(form.nationalDataArchiveDataGov) }}
+                {{ form_label(form.nationalDataArchiveDataGov) }}
+                <br>
                 <table width="100%">
                     <tr>
                         <td>Others:</td>
@@ -279,7 +325,13 @@
             </span>
             <div class="choice-label">
                 <label for="difPrivacy"><b>Will this dataset include any data governed under the IRB or HIPAA, or data with other ethical issues?</b></label>
-                {{ form_row(form.ethicalIssues) }}<br>
+                <br>
+                {% for key, ethicalIssuesItem in form.ethicalIssues.children %}
+                    {{ form_widget(ethicalIssuesItem) }} 
+                    {{ form_label(ethicalIssuesItem) }} 
+                    <br>
+                {% endfor %}
+                
                 <table width="100%">
                     <tr>
                         <td>If yes or uncertain, please explain:
