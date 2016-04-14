@@ -81,14 +81,6 @@ abstract class EntityController extends FOSRestController
     public function handlePost($formType, $entityClass, Request $request)
     {
         $entity = new $entityClass;
-        $user = $this->getUser();
-        if ($user instanceof Account) {
-            $creator = $user->getPerson();
-        } else {
-            // Get the anonymous Person.
-            $creator = $this->container->get('pelagos.entity.handler')->get(Person::class, -1);
-        }
-        $entity->setCreator($creator);
         $this->processForm($formType, $entity, $request, 'POST');
         $this->container->get('pelagos.entity.handler')->create($entity);
         return $entity;
@@ -108,14 +100,6 @@ abstract class EntityController extends FOSRestController
     public function handleUpdate($formType, $entityClass, $id, Request $request, $method)
     {
         $entity = $this->handleGetOne($entityClass, $id);
-        $user = $this->getUser();
-        if ($user instanceof Account) {
-            $modifier = $user->getPerson();
-        } else {
-            // Get the anonymous Person.
-            $modifier = $this->container->get('pelagos.entity.handler')->get(Person::class, -1);
-        }
-        $entity->setModifier($modifier);
         $this->processForm($formType, $entity, $request, $method);
         $this->container->get('pelagos.entity.handler')->update($entity);
         return $entity;

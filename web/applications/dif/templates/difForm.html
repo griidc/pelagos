@@ -340,15 +340,8 @@
         <tr>
         <td>
             <div id="difFilterTools">
-                <table width="100%"><tr><td>
-                <label for="acResearcher">Filter by Researcher:</label>
-                <input placeholder="Start typing a Researchers Last Name" style="width:95%;" id="acResearcher">
-                </td>
+                <table width="100%"><tr>
                 <td><label>Show Projects Without Datasets</label><input type="radio" value="1" name="showempty" checked>Yes<input type="radio" value="0" name="showempty">No</td>
-                <td>
-                    <button style="width:120px;" id="fltReset">Reset Filters</button></td></tr>
-                <input type="hidden" id="fltResearcher">
-                <tr>
                     <td>
                         <label>Filter by Status:</label>
                         <select id="fltStatus" style="width:95%;">
@@ -359,6 +352,10 @@
                         </select>
                     </td>
                 <td>
+                    <button style="width:120px;" id="fltReset">Reset Filters</button></td></tr>
+                <input type="hidden" id="fltResearcher">
+                <tr>
+                <td colspan="2">
                     <label>Search in Results</label><input placeholder="Search Title or UDI" style="width:95%;" id="fltResults">
                 </td>
 
