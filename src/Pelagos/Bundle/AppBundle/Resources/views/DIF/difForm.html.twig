@@ -103,7 +103,7 @@
                 </div>
             </span>
             <label for="difDatafor"><b>Field of Study:</b></label>
-            <table id="difDatafor" width="100%">
+            <table id="difDatafor" width="100%" class="choice-label">
                 <tr>
                     <td>{{ form_row(form.fieldOfStudyEcologicalBiological) }}</td>
                     <td>{{ form_row(form.fieldOfStudyPhysicalOceanography) }}</td>
@@ -171,7 +171,7 @@
                 </div>
             </span>
             <label for="difApproach"><b>Method(s) for Collecting or Generating the Data: </b></label>
-            <table width="100%">
+            <table width="100%" class="choice-label">
                 <tr>
                     <td>{{ form_row(form.collectionMethodFieldSampling) }}<td>
                     <td>{{ form_row(form.collectionMethodSimulatedGenerated) }}<td>
@@ -252,18 +252,20 @@
                 </div>
             </span>
             <label for="difNatRepo"><b>Identify a National Data Archive for your Dataset, if applicable: </b></label>
-            {{ form_row(form.nationalDataArchiveNODC) }}<br>
-            {{ form_row(form.nationalDataArchiveStoret) }}<br>
-            {{ form_row(form.nationalDataArchiveGBIF) }}<br>
-            {{ form_row(form.nationalDataArchiveNCBI) }}<br>
-            {{ form_row(form.nationalDataArchiveDataGov) }}<br>
-          
-            <table width="100%">
-                <tr>
-                    <td>Others:</td>
-                    <td>{{ form_widget(form.nationalDataArchiveOther) }}</td>
-                </tr>
-            </table>
+            <div class="choice-label">
+                {{ form_row(form.nationalDataArchiveNODC) }}<br>
+                {{ form_row(form.nationalDataArchiveStoret) }}<br>
+                {{ form_row(form.nationalDataArchiveGBIF) }}<br>
+                {{ form_row(form.nationalDataArchiveNCBI) }}<br>
+                {{ form_row(form.nationalDataArchiveDataGov) }}<br>
+              
+                <table width="100%">
+                    <tr>
+                        <td>Others:</td>
+                        <td>{{ form_widget(form.nationalDataArchiveOther) }}</td>
+                    </tr>
+                </table>
+            </div>
         </fieldset>
     </div>
 
@@ -275,15 +277,17 @@
                     <p>Datasets that contain human health information or personal identifying information may have ethical and/or privacy issues that prevent the data from being shared or distributed. If such conditions exist, please select &ldquo;yes&rdquo;. If uncertain, please select &ldquo;uncertain&rdquo; and provide a short description of potential issues. GRIIDC staff will then follow up to help determine if privacy or ethical issues apply to your dataset.</p>
                 </div>
             </span>
-            <label for="difPrivacy"><b>Will this dataset include any data governed under the IRB or HIPAA, or data with other ethical issues?</b></label>
-            {{ form_row(form.ethicalIssues) }}<br>
-            <table width="100%">
-                <tr>
-                    <td>If yes or uncertain, please explain:
-                       {{ form_widget(form.ethicalIssuesExplanation) }}
-                    </td>
-                </tr>
-           </table>
+            <div class="choice-label">
+                <label for="difPrivacy"><b>Will this dataset include any data governed under the IRB or HIPAA, or data with other ethical issues?</b></label>
+                {{ form_row(form.ethicalIssues) }}<br>
+                <table width="100%">
+                    <tr>
+                        <td>If yes or uncertain, please explain:
+                           {{ form_widget(form.ethicalIssuesExplanation) }}
+                        </td>
+                    </tr>
+               </table>
+           </div>
         </fieldset>
     </div>
 

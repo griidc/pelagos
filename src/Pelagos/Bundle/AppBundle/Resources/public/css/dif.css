@@ -1,4 +1,19 @@
-select:visible,textarea:visible {
+select,textarea {
+    width:100%;
+}
+
+label:not(.button) 
+{
+    font-weight: bold;
+    display: block;
+}
+
+.choice-label label {
+    font-weight: normal;
+    display: inline;
+}
+
+.choice-label input[type=text] {
     width:100%;
 }
 
@@ -38,12 +53,6 @@ select:visible,textarea:visible {
 .helpSection img:hover
 {
     opacity:1;   
-}
-
-label:not(.button) 
-{
-    font-weight: bold;
-    display: block;
 }
 
 .helpSection
