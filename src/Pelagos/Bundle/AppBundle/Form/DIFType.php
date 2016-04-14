@@ -43,17 +43,15 @@ class DIFType extends AbstractType
                 'placeholder' => '[PLEASE SELECT A PROJECT]',
                 'required' => true,
             ))
-            ->add('title', TextType::class, array(
-                'attr' => array('Placeholder' => ''),
-                'label' => 'Title:',
+            ->add('title', TextareaType::class, array(
                 'attr' => array(
                     'placeholder' => 'Dataset Title (200 Character Maximum)',
                     'rows' => '2',
                     'maxsize' => 200,
                 ),
+                'label' => 'Title:',
                 'required' => true,
             ))
-            // the following will need choiceloader to constrain list, not choice_label, but it is undocumented.
             ->add('primaryPointOfContact', EntityType::class, array(
                 'class' => Person::class,
                 'label' => 'Primary POC:',
@@ -69,10 +67,12 @@ class DIFType extends AbstractType
                 'required' => true,
             ))
             ->add('abstract', TextareaType::class, array(
-                'attr' => array('rows' => 6, 'maxlength' => 4000),
-                'label' => 'Abstract:',
                 'attr' => array(
-                    'placeholder' => 'Please provide a brief narrative describing: What, where, why, how, and when the data will be or have been collected/generated?  (4000 Character Maximum'),
+                    'rows' => 6,
+                    'placeholder' => 'Please provide a brief narrative describing: What, where, why, how, and when the data will be or have been collected/generated?  (4000 Character Maximum',
+                    'maxlength' => 4000,
+                ),
+                'label' => 'Abstract:',
                 'required' => false,
             ))
             ->add('fieldOfStudyEcologicalBiological', CheckboxType::class, array(
@@ -195,7 +195,7 @@ class DIFType extends AbstractType
                 'required' => false,
             ))
             ->add('ethicalIssues', ChoiceType::class, array(
-                'choices' => DIF::ETHICAL_ISSUES,
+                'choices' => array_combine(DIF::ETHICAL_ISSUES, DIF::ETHICAL_ISSUES),
                 'expanded' => true,
                 'multiple' => false,
                 'required' => true,
