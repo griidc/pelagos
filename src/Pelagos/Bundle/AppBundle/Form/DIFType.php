@@ -64,9 +64,8 @@ class DIFType extends AbstractType
             ->add('secondaryPointOfContact', EntityType::class, array(
                 'class' => Person::class,
                 'label' => 'Secondary POC:',
-                'choice_label' => function ($value, $key, $index) {
-                    return $value->getLastName() . ',' . $value->getFirstName() . '(' . $value->getEmailAddress() . ')';
-                },
+                'choices' => array(),
+                'placeholder' => '[PLEASE SELECT PROJECT FIRST]',
                 'required' => true,
             ))
             ->add('abstract', TextareaType::class, array(
@@ -175,7 +174,7 @@ class DIFType extends AbstractType
                  'label' => 'National Oceanographic Data Center',
                  'required' => false,
             ))
-            ->add('nationalDataArchiveUSEPAStoret', CheckboxType::class, array(
+            ->add('nationalDataArchiveStoret', CheckboxType::class, array(
                  'label' => 'US EPA Storet',
                  'required' => false,
             ))
