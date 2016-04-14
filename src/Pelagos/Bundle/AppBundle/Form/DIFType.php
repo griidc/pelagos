@@ -10,10 +10,14 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 use Pelagos\Entity\DIF;
+use Pelagos\Entity\ResearchGroup;
+use Pelagos\Entity\Person;
 
 /**
  * A form for creating a DIF.
@@ -35,9 +39,9 @@ class DIFType extends AbstractType
         $builder
             ->add('status', HiddenType::class)
             ->add('researchGroup', EntityType::class, array(
-                'class' => '\Pelagos\Entity\ResearchGroup',
+                'class' => ResearchGroup::class,
                 'choice_label' => 'name',
-                'placeholder' => 'Select a Research Group',
+                'placeholder' => '[PLEASE SELECT A PROJECT]',
                 'required' => true,
             ))
             ->add('title', TextType::class, array(
@@ -46,20 +50,20 @@ class DIFType extends AbstractType
                 'attr' => array(
                     'placeholder' => 'Dataset Title (200 Character Maximum)',
                     'rows' => '2',
+                    'maxsize' => 200,
                 ),
                 'required' => true,
             ))
             // the following will need choiceloader to constrain list, not choice_label, but it is undocumented.
             ->add('primaryPointOfContact', EntityType::class, array(
-                'class' => '\Pelagos\Entity\Person',
+                'class' => Person::class,
                 'label' => 'Primary POC:',
-                'choice_label' => function ($value, $key, $index) {
-                    return $value->getLastName() . ',' . $value->getFirstName() . '(' . $value->getEmailAddress() . ')';
-                },
+                'choices' => array(),
+                'placeholder' => '[PLEASE SELECT PROJECT FIRST]',
                 'required' => true,
             ))
             ->add('secondaryPointOfContact', EntityType::class, array(
-                'class' => '\Pelagos\Entity\Person',
+                'class' => Person::class,
                 'label' => 'Secondary POC:',
                 'choice_label' => function ($value, $key, $index) {
                     return $value->getLastName() . ',' . $value->getFirstName() . '(' . $value->getEmailAddress() . ')';
@@ -119,10 +123,12 @@ class DIFType extends AbstractType
                 'label' => 'Other Field of Study:',
                 'required' => false,
             ))
-            ->add('dataSize', TextType::class, array(
-                'choices' => DIF::DATA_SIZES,
+            ->add('dataSize', ChoiceType::class, array(
+                'choices' => array_combine(DIF::DATA_SIZES, DIF::DATA_SIZES),
                 'label' => 'Approximate Dataset Size:',
-                'required' => false,
+                'required' => true,
+                'expanded' => true,
+                'multiple' => false,
             ))
             ->add('variablesObserved', TextareaType::class, array(
                 'attr' => array('rows' => 3),
@@ -162,37 +168,39 @@ class DIFType extends AbstractType
                  'multiple' => true,
                  'required' => false,
             ))
-            ->add('CollectionMethodOther', TextType::class, array(
+            ->add('collectionMethodOther', TextType::class, array(
                 'label' => 'Other Collection Method:',
                 'required' => false,
             ))
             ->add('estimatedStartDate', DateType::class, array(
                 'label' => 'Start Date:',
                 'input' => 'datetime',
-                'widget' => 'choice',
+                'widget' => 'single_text',
+                'html5' => false,
+                'format' => 'yyyy-MM-dd',
                 'required' => false,
             ))
             ->add('estimatedEndDate', DateType::class, array(
                 'label' => 'End Date:',
                 'input' => 'datetime',
-                'widget' => 'choice',
+                'widget' => 'single_text',
+                'html5' => false,
+                'format' => 'yyyy-MM-dd',
                 'required' => false,
             ))
-            ->add('spacialDescription', TextType::class, array(
+            ->add('spatialExtentDescription', TextType::class, array(
                 'label' => 'Description:',
                 'attr' => array(
                     'placeholder' => 'Example - "lab measurements of oil degradation, no field sampling involved"'
                 ),
                 'required' => false,
             ))
-            ->add('spacialGeometry', HiddenType::class)
-            ->add('nationalDataArchiveNODC', ChoiceType::class, array(
-                 'choices' => array('National Oceanographic Data Center' => 'National Oceanographic Data Center'),
-                 'expanded' => true,
-                 'multiple' => true,
-                 'required' => false,
+            ->add('spatialExtentGeometry', HiddenType::class)
+            ->add('nationalDataArchiveNODC', CheckboxType::class, array(
+                'required' => false,
+                'label' => 'National Oceanographic Data Center',
             ))
-            ->add('nationalDataArchiveUSEPAStoret', ChoiceType::class, array(
+            ->add('nationalDataArchiveStoret', ChoiceType::class, array(
                  'choices' => array('US EPA Storet' => 'US EPA Storet'),
                  'expanded' => true,
                  'multiple' => true,
@@ -216,7 +224,7 @@ class DIFType extends AbstractType
                  'multiple' => true,
                  'required' => false,
             ))
-            ->add('NationalDataArchiveOther', TextType::class, array(
+            ->add('nationalDataArchiveOther', TextType::class, array(
                 'label' => 'Other National Data Archive:',
                 'required' => false,
             ))
