@@ -4,6 +4,7 @@ namespace Pelagos\Bundle\AppBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Pelagos\Entity\Account;
 use Pelagos\Entity\DIF;
+use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
 
 /**
  * A voter to determine if a actions are possible by the user on a DIF object.
@@ -35,8 +36,23 @@ class DIFVoter extends PelagosEntityVoter
             return false;
         }
 
-        // Otherwise vote.
-        return true;
+        // Supports create, edit, submit, approve, reject, and unlock.
+        if (in_array(
+            $attribute,
+            array(
+                self::CAN_CREATE,
+                self::CAN_EDIT,
+                self::CAN_SUBMIT,
+                self::CAN_APPROVE,
+                self::CAN_REJECT,
+                self::CAN_UNLOCK,
+            )
+        )) {
+            return true;
+        }
+
+        // Otherwise abstain.
+        return false;
     }
 
     /**
@@ -59,7 +75,35 @@ class DIFVoter extends PelagosEntityVoter
             return false;
         }
 
-        // Eventually this will actually check something.
-        return true;
+        $userPerson = $user->getPerson();
+
+        $personDataRepositories = $userPerson->getPersonDataRepositories()->filter(
+            function ($personDataRepository) use ($object) {
+                return (!$personDataRepository->isSameTypeAndId($object));
+            }
+        );
+        // Data Repository Managers can submit, approve, reject, and unlock
+        if ($this->doesUserHaveRole(
+            $userPerson,
+            $personDataRepositories,
+            array(DataRepositoryRoles::MANAGER)
+        ) and in_array(
+            $attribute,
+            array(
+                self::CAN_SUBMIT,
+                self::CAN_APPROVE,
+                self::CAN_REJECT,
+                self::CAN_UNLOCK,
+            )
+        )) {
+            return true;
+        }
+
+        // Anyone can create, update, or submit.
+        if (in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT, self::CAN_SUBMIT))) {
+            return true;
+        }
+
+        return false;
     }
 }
