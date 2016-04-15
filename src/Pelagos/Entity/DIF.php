@@ -4,6 +4,8 @@ namespace Pelagos\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Symfony\Component\Validator\Constraints as Assert;
+
 /**
  * DIF Entity class.
  *
@@ -67,6 +69,10 @@ class DIF extends Entity
      * @var ResearchGroup
      *
      * @ORM\ManyToOne(targetEntity="ResearchGroup")
+     *
+     * @Assert\NotBlank(
+     *     message="You must select a project"
+     * )
      */
     protected $researchGroup;
 
@@ -76,6 +82,10 @@ class DIF extends Entity
      * @var string
      *
      * @ORM\Column
+     *
+     * @Assert\NotBlank(
+     *     message="Title is required"
+     * )
      */
     protected $title;
 
@@ -85,6 +95,10 @@ class DIF extends Entity
      * @var Person
      *
      * @ORM\ManyToOne(targetEntity="Person")
+     *
+     * @Assert\NotBlank(
+     *     message="Primary Point of Contact is required"
+     * )
      */
     protected $primaryPointOfContact;
 
@@ -103,6 +117,10 @@ class DIF extends Entity
      * @var string
      *
      * @ORM\Column
+     *
+     * @Assert\NotBlank(
+     *     message="Abstract is required"
+     * )
      */
     protected $abstract;
 
