@@ -36,7 +36,6 @@ class DIFType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('status', HiddenType::class)
             ->add('researchGroup', EntityType::class, array(
                 'class' => ResearchGroup::class,
                 'choice_label' => 'name',
