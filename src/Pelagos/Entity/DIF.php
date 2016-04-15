@@ -423,20 +423,6 @@ class DIF extends Entity
     }
 
     /**
-     * Sets the status of this DIF.
-     *
-     * @param integer $status The status of this DIF.
-     *
-     * @see STATUS_* constants.
-     *
-     * @return void
-     */
-    public function setStatus($status)
-    {
-        $this->status = $status;
-    }
-
-    /**
      * Returns the status of this DIF.
      *
      * @see STATUS_* constants.
@@ -1329,5 +1315,77 @@ class DIF extends Entity
     public function getRemarks()
     {
         return $this->remarks;
+    }
+
+    /**
+     * Submit this DIF.
+     *
+     * This will set the DIF's status to submitted when it's current status is unsubmitted,
+     *
+     * @throws \Exception When a DIF's status is anything other than unsubmitted.
+     *
+     * @return void
+     */
+    public function submit()
+    {
+        if (self::STATUS_UNSUBMITTED === $this->status) {
+            $this->status = self::STATUS_SUBMITTED;
+        } else {
+            throw new \Exception('Can only submit an unsubmitted DIF');
+        }
+    }
+
+    /**
+     * Approve this DIF.
+     *
+     * This will set the DIF's status to approved when its current status is submitted,
+     *
+     * @throws \Exception When a DIF's status is anything other than submitted.
+     *
+     * @return void
+     */
+    public function approve()
+    {
+        if (self::STATUS_SUBMITTED === $this->status) {
+            $this->status = self::STATUS_APPROVED;
+        } else {
+            throw new \Exception('Can only approve a submitted DIF');
+        }
+    }
+
+    /**
+     * Reject this DIF.
+     *
+     * This will set the DIF's status to unsubmitted when its current status is submitted,
+     *
+     * @throws \Exception When a DIF's status is anything other than unsubmitted.
+     *
+     * @return void
+     */
+    public function reject()
+    {
+        if (self::STATUS_SUBMITTED === $this->status) {
+            $this->status = self::STATUS_UNSUBMITTED;
+        } else {
+            throw new \Exception('Can only reject a submitted DIF');
+        }
+    }
+
+    /**
+     * Unlock this DIF.
+     *
+     * This will set the DIF's status to unsubmitted when its current status is submitted or approved,
+     *
+     * @throws \Exception When a DIF's status is anything other than submitted or approved.
+     *
+     * @return void
+     */
+    public function unlock()
+    {
+        if (self::STATUS_SUBMITTED === $this->status or self::STATUS_APPROVED === $this->status) {
+            $this->status = self::STATUS_UNSUBMITTED;
+        } else {
+            throw new \Exception('Can only unlock a submitted or approved DIF');
+        }
     }
 }
