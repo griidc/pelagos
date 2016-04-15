@@ -6,12 +6,16 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Form\FormInterface;
 
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+
 use FOS\RestBundle\Controller\Annotations as Rest;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 use Pelagos\Entity\DIF;
 use Pelagos\Bundle\AppBundle\Form\DIFType;
+use Pelagos\Bundle\AppBundle\Security\DIFVoter;
 
 /**
  * The DIF api controller.
@@ -175,10 +179,14 @@ class DIFController extends EntityController
      *
      * @param integer $id The id of the DIF to submit.
      *
+     * @throws AccessDeniedException   When the DIF authenticated user does not have permission to submit the DIF.
+     * @throws BadRequestHttpException When the DIF could not be submitted.
+     *
      * @ApiDoc(
      *   section = "DIFs",
      *   statusCodes = {
      *     204 = "The DIF was successfully submitted.",
+     *     400 = "The DIF could not be submitted (see error message for reason).",
      *     403 = "You do not have sufficient privileges to submit this DIF.",
      *     404 = "The requested DIF was not found.",
      *     500 = "An internal error has occurred.",
@@ -190,7 +198,17 @@ class DIFController extends EntityController
     public function submitAction($id)
     {
         $dif = $this->handleGetOne(DIF::class, $id);
-        $dif->setStatus(DIF::STATUS_SUBMITTED);
+        if (!$this->isGranted(DIFVoter::CAN_SUBMIT, $dif)) {
+            throw new AccessDeniedException(
+                'You do not have sufficient privileges to submit this ' . $dif::FRIENDLY_NAME . '.'
+            );
+        }
+        try {
+            $dif->submit();
+        } catch (\Exception $exception) {
+            throw new BadRequestHttpException($exception->getMessage());
+        }
+        $this->container->get('pelagos.entity.handler')->update($dif);
         return $this->makeNoContentResponse();
     }
 
@@ -199,10 +217,14 @@ class DIFController extends EntityController
      *
      * @param integer $id The id of the DIF to approve.
      *
+     * @throws AccessDeniedException   When the DIF authenticated user does not have permission to approve the DIF.
+     * @throws BadRequestHttpException When the DIF could not be approved.
+     *
      * @ApiDoc(
      *   section = "DIFs",
      *   statusCodes = {
      *     204 = "The DIF was successfully approved.",
+     *     400 = "The DIF could not be approved (see error message for reason).",
      *     403 = "You do not have sufficient privileges to approve this DIF.",
      *     404 = "The requested DIF was not found.",
      *     500 = "An internal error has occurred.",
@@ -214,7 +236,17 @@ class DIFController extends EntityController
     public function approveAction($id)
     {
         $dif = $this->handleGetOne(DIF::class, $id);
-        $dif->setStatus(DIF::STATUS_APPROVED);
+        if (!$this->isGranted(DIFVoter::CAN_APPROVE, $dif)) {
+            throw new AccessDeniedException(
+                'You do not have sufficient privileges to approve this ' . $dif::FRIENDLY_NAME . '.'
+            );
+        }
+        try {
+            $dif->approve();
+        } catch (\Exception $exception) {
+            throw new BadRequestHttpException($exception->getMessage());
+        }
+        $this->container->get('pelagos.entity.handler')->update($dif);
         return $this->makeNoContentResponse();
     }
 
@@ -223,10 +255,14 @@ class DIFController extends EntityController
      *
      * @param integer $id The id of the DIF to reject.
      *
+     * @throws AccessDeniedException   When the DIF authenticated user does not have permission to reject the DIF.
+     * @throws BadRequestHttpException When the DIF could not be rejected.
+     *
      * @ApiDoc(
      *   section = "DIFs",
      *   statusCodes = {
      *     204 = "The DIF was successfully rejected.",
+     *     400 = "The DIF could not be rejected (see error message for reason).",
      *     403 = "You do not have sufficient privileges to reject this DIF.",
      *     404 = "The requested DIF was not found.",
      *     500 = "An internal error has occurred.",
@@ -238,7 +274,17 @@ class DIFController extends EntityController
     public function rejectAction($id)
     {
         $dif = $this->handleGetOne(DIF::class, $id);
-        $dif->setStatus(DIF::STATUS_UNSUBMITTED);
+        if (!$this->isGranted(DIFVoter::CAN_REJECT, $dif)) {
+            throw new AccessDeniedException(
+                'You do not have sufficient privileges to reject this ' . $dif::FRIENDLY_NAME . '.'
+            );
+        }
+        try {
+            $dif->reject();
+        } catch (\Exception $exception) {
+            throw new BadRequestHttpException($exception->getMessage());
+        }
+        $this->container->get('pelagos.entity.handler')->update($dif);
         return $this->makeNoContentResponse();
     }
 
@@ -247,10 +293,14 @@ class DIFController extends EntityController
      *
      * @param integer $id The id of the DIF to unlock.
      *
+     * @throws AccessDeniedException   When the DIF authenticated user does not have permission to unlock the DIF.
+     * @throws BadRequestHttpException When the DIF could not be unlocked.
+     *
      * @ApiDoc(
      *   section = "DIFs",
      *   statusCodes = {
      *     204 = "The DIF was successfully unlocked.",
+     *     400 = "The DIF could not be unlocked (see error message for reason).",
      *     403 = "You do not have sufficient privileges to unlock this DIF.",
      *     404 = "The requested DIF was not found.",
      *     500 = "An internal error has occurred.",
@@ -262,7 +312,17 @@ class DIFController extends EntityController
     public function unlockAction($id)
     {
         $dif = $this->handleGetOne(DIF::class, $id);
-        $dif->setStatus(DIF::STATUS_UNSUBMITTED);
+        if (!$this->isGranted(DIFVoter::CAN_UNLOCK, $dif)) {
+            throw new AccessDeniedException(
+                'You do not have sufficient privileges to unlock this ' . $dif::FRIENDLY_NAME . '.'
+            );
+        }
+        try {
+            $dif->unlock();
+        } catch (\Exception $exception) {
+            throw new BadRequestHttpException($exception->getMessage());
+        }
+        $this->container->get('pelagos.entity.handler')->update($dif);
         return $this->makeNoContentResponse();
     }
 }
