@@ -396,7 +396,6 @@ class DIF extends Entity
      */
     public function __construct()
     {
-        parent::__construct();
         $this->status = self::STATUS_UNSUBMITTED;
     }
 
