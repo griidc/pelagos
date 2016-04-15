@@ -374,11 +374,11 @@ class DIF extends Entity
     /**
      * Sets the Dataset this DIF is attached to.
      *
-     * @param Dataset $dataset The Dataset this DIF is attached to.
+     * @param Dataset|null $dataset The Dataset this DIF is attached to.
      *
      * @return void
      */
-    public function setDataset(Dataset $dataset)
+    public function setDataset(Dataset $dataset = null)
     {
         $this->dataset = $dataset;
     }
@@ -422,11 +422,11 @@ class DIF extends Entity
     /**
      * Sets the Research Group this DIF is attached to.
      *
-     * @param ResearchGroup $researchGroup The Research Group this DIF is attached to.
+     * @param ResearchGroup|null $researchGroup The Research Group this DIF is attached to.
      *
      * @return void
      */
-    public function setResearchGroup(ResearchGroup $researchGroup)
+    public function setResearchGroup(ResearchGroup $researchGroup = null)
     {
         $this->researchGroup = $researchGroup;
     }
@@ -466,11 +466,11 @@ class DIF extends Entity
     /**
      * Sets the primary point of contact for this DIF.
      *
-     * @param Person $primaryPointOfContact The primary point of contact for this DIF.
+     * @param Person|null $primaryPointOfContact The primary point of contact for this DIF.
      *
      * @return void
      */
-    public function setPrimaryPointOfContact(Person $primaryPointOfContact)
+    public function setPrimaryPointOfContact(Person $primaryPointOfContact = null)
     {
         $this->primaryPointOfContact = $primaryPointOfContact;
     }
@@ -488,11 +488,11 @@ class DIF extends Entity
     /**
      * Sets the secondary point of contact for this DIF.
      *
-     * @param Person $secondaryPointOfContact The secondary point of contact for this DIF.
+     * @param Person|null $secondaryPointOfContact The secondary point of contact for this DIF.
      *
      * @return void
      */
-    public function setSecondaryPointOfContact(Person $secondaryPointOfContact)
+    public function setSecondaryPointOfContact(Person $secondaryPointOfContact = null)
     {
         $this->secondaryPointOfContact = $secondaryPointOfContact;
     }
@@ -975,11 +975,11 @@ class DIF extends Entity
     /**
      * Sets the start date of the estimated data sampling/generation period.
      *
-     * @param \DateTime $estimatedStartDate The start date of the estimated data sampling/generation period.
+     * @param \DateTime|null $estimatedStartDate The start date of the estimated data sampling/generation period.
      *
      * @return void
      */
-    public function setEstimatedStartDate(\DateTime $estimatedStartDate)
+    public function setEstimatedStartDate(\DateTime $estimatedStartDate = null)
     {
         $this->estimatedStartDate = $estimatedStartDate;
     }
@@ -997,11 +997,11 @@ class DIF extends Entity
     /**
      * Sets the end date of the estimated data sampling/generation period.
      *
-     * @param \DateTime $estimatedEndDate The end date of the estimated data sampling/generation period.
+     * @param \DateTime|null $estimatedEndDate The end date of the estimated data sampling/generation period.
      *
      * @return void
      */
-    public function setEstimatedEndDate(\DateTime $estimatedEndDate)
+    public function setEstimatedEndDate(\DateTime $estimatedEndDate = null)
     {
         $this->estimatedEndDate = $estimatedEndDate;
     }
