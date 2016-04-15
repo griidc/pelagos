@@ -497,9 +497,6 @@ function loadTasks()
 
 function loadPOCs(researchGroup,ppoc,spoc)
 {
-    var element = $('[name="primaryPointOfContact"],[name="secondaryPointOfContact"]');
-    element.find('option').remove().end().append('<option value="">Loading...</option>').val('');
-    
     $.ajax({
         url: " /pelagos-symfony/dev/mvde/api/person_research_groups",
         type: "GET",
