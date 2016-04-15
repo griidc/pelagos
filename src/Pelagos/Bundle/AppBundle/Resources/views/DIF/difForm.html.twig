@@ -22,10 +22,7 @@
                     <p>This is a required field. The drop-down menu will list all projects that you are associated with.</p>
                 </div>
             </span>
-            <label class="emRequired" for="difTasks">
-                <b>Project Title:</b>
-            </label>
-            {{ form_widget(form.researchGroup) }}
+            {{ form_row(form.researchGroup) }}
         </fieldset>
     </div>
 
@@ -37,11 +34,7 @@
                     <p>This is a required field. Please provide a descriptive title that briefly explains the contents of your dataset. This will be similar to titles used in publications, and may include location where, and time period when the research was completed. It should be understandable by a user unfamiliar with your methods, site collections or research platforms.</p>
                 </div>
             </span>
-            
-            <label class="emRequired" for="difTitle">
-                <b>Dataset Title:</b>
-            </label>
-            {{ form_widget(form.title) }}
+            {{ form_row(form.title) }}
         </fieldset>
     </div>
     
@@ -56,10 +49,7 @@
                                 <p>This is a required field. This is the person responsible for answering questions associated with this dataset and responding to requests for the dataset. Please select the appropriate person from the dropdown list.</p>
                             </div>
                         </span>
-                        <label class="emRequired" for="difPpoc">
-                            <b>Primary Point of Contact:</b>
-                        </label>
-                        {{ form_widget(form.primaryPointOfContact) }}
+                        {{ form_row(form.primaryPointOfContact) }}
                 </fieldset>
                 </div>
             </td>
@@ -328,7 +318,7 @@
                 <br>
                 {% for key, ethicalIssuesItem in form.ethicalIssues.children %}
                     {{ form_widget(ethicalIssuesItem) }} 
-                    {{ form_label(ethicalIssuesItem) }} 
+                    {{ form_label(ethicalIssuesItem) }}
                     <br>
                 {% endfor %}
                 

@@ -40,9 +40,9 @@
         )
     }}
 
-    {# % javascripts '@PelagosAppBundle/Resources/public/js/dif.js' %}
+    {% javascripts '@PelagosAppBundle/Resources/public/js/dif.js' %}
         {{ add_js(asset_url) }}
-    {% endjavascripts % #}
+    {% endjavascripts %}
    
 {% endblock %}
 
@@ -69,15 +69,11 @@
         <tr>
         <td>
             <div id="difFilterTools">
-                <table width="100%"><tr><td>
-                <label for="acResearcher">Filter by Researcher:</label>
-                <input placeholder="Start typing a Researchers Last Name" style="width:95%;" id="acResearcher">
-                </td>
-                <td><label>Show Projects Without Datasets</label><input type="radio" value="1" name="showempty" checked>Yes<input type="radio" value="0" name="showempty">No</td>
-                <td>
-                    <button style="width:120px;" id="fltReset">Reset Filters</button></td></tr>
-                <input type="hidden" id="fltResearcher">
+                <table width="100%">
                 <tr>
+                    <td>
+                        <label>Show Projects Without Datasets</label><input type="radio" value="1" name="showempty" checked>Yes<input type="radio" value="0" name="showempty">No
+                    </td>
                     <td>
                         <label>Filter by Status:</label>
                         <select id="fltStatus" style="width:95%;">
@@ -87,12 +83,15 @@
                             <option value="2">Approved</option>
                         </select>
                     </td>
-                <td>
-                    <label>Search in Results</label><input placeholder="Search Title or UDI" style="width:95%;" id="fltResults">
-                </td>
-
-                <td><button style="width:120px;" type="button" id="btnSearch">Search</button></td>
-
+                    <td>
+                        <button style="width:120px;" id="fltReset">Reset Filters</button>
+                        <input type="hidden" id="fltResearcher">
+                    </td>
+                <tr>
+                    <td colspan="2">
+                        <label>Search in Results</label><input placeholder="Search Title or UDI" style="width:95%;" id="fltResults">
+                    </td>
+                    <td><button style="width:120px;" type="button" id="btnSearch">Search</button></td>
                 </tr>
                 </table>
             </div>
@@ -135,4 +134,5 @@
 </table>
 
 <div id="noresults" title="Search...">No Results Found.</div>
+<div class="modal" id="spinner"></div>
 {% endblock %}
