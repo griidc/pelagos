@@ -219,6 +219,30 @@ class DIFController extends EntityController
     }
 
     /**
+     * Reject a DIF.
+     *
+     * @param integer $id The id of the DIF to reject.
+     *
+     * @ApiDoc(
+     *   section = "DIFs",
+     *   statusCodes = {
+     *     204 = "The DIF was successfully rejected.",
+     *     403 = "You do not have sufficient privileges to reject this DIF.",
+     *     404 = "The requested DIF was not found.",
+     *     500 = "An internal error has occurred.",
+     *   }
+     * )
+     *
+     * @return Response A response object with an empty body and a "no content" status code.
+     */
+    public function rejectAction($id)
+    {
+        $dif = $this->handleGetOne(DIF::class, $id);
+        $dif->setStatus(DIF::STATUS_UNSUBMITTED);
+        return $this->makeNoContentResponse();
+    }
+
+    /**
      * Unlock a DIF.
      *
      * @param integer $id The id of the DIF to unlock.
