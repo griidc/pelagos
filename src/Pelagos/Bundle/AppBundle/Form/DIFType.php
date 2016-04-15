@@ -245,7 +245,7 @@ class DIFType extends AbstractType
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-       $view->children['primaryPointOfContact']->vars['choices'] = array();
-       $view->children['secondaryPointOfContact']->vars['choices'] = array();
+        $view->children['primaryPointOfContact']->vars['choices'] = array();
+        $view->children['secondaryPointOfContact']->vars['choices'] = array();
     }
 }
