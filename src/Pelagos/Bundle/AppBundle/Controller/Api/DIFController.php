@@ -16,6 +16,7 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Pelagos\Entity\DIF;
 use Pelagos\Bundle\AppBundle\Form\DIFType;
 use Pelagos\Bundle\AppBundle\Security\DIFVoter;
+use Pelagos\Event\DIFEvent;
 
 /**
  * The DIF api controller.
@@ -197,18 +198,27 @@ class DIFController extends EntityController
      */
     public function submitAction($id)
     {
+        // Get the specified DIF.
         $dif = $this->handleGetOne(DIF::class, $id);
+        // Check if the user has permission to submit it.
         if (!$this->isGranted(DIFVoter::CAN_SUBMIT, $dif)) {
+            // Throw an exception if they don't.
             throw new AccessDeniedException(
                 'You do not have sufficient privileges to submit this ' . $dif::FRIENDLY_NAME . '.'
             );
         }
         try {
+            // Try to submit the DIF.
             $dif->submit();
         } catch (\Exception $exception) {
+            // Throw an exception if we can't.
             throw new BadRequestHttpException($exception->getMessage());
         }
+        // Update the DIF in persistence.
         $this->container->get('pelagos.entity.handler')->update($dif);
+        // Dispatch an event.
+        $this->get('event_dispatcher')->dispatch('dif.submitted', new DIFEvent($dif));
+        // Return a no content success response.
         return $this->makeNoContentResponse();
     }
 
@@ -235,18 +245,27 @@ class DIFController extends EntityController
      */
     public function approveAction($id)
     {
+        // Get the specified DIF.
         $dif = $this->handleGetOne(DIF::class, $id);
+        // Check if the user has permission to approve it.
         if (!$this->isGranted(DIFVoter::CAN_APPROVE, $dif)) {
+            // Throw an exception if they don't.
             throw new AccessDeniedException(
                 'You do not have sufficient privileges to approve this ' . $dif::FRIENDLY_NAME . '.'
             );
         }
         try {
+            // Try to approve the DIF.
             $dif->approve();
         } catch (\Exception $exception) {
+            // Throw an exception if we can't.
             throw new BadRequestHttpException($exception->getMessage());
         }
+        // Update the DIF in persistence.
         $this->container->get('pelagos.entity.handler')->update($dif);
+        // Dispatch an event.
+        $this->get('event_dispatcher')->dispatch('dif.approved', new DIFEvent($dif));
+        // Return a no content success response.
         return $this->makeNoContentResponse();
     }
 
@@ -273,18 +292,27 @@ class DIFController extends EntityController
      */
     public function rejectAction($id)
     {
+        // Get the specified DIF.
         $dif = $this->handleGetOne(DIF::class, $id);
+        // Check if the user has permission to reject it.
         if (!$this->isGranted(DIFVoter::CAN_REJECT, $dif)) {
+            // Throw an exception if they don't.
             throw new AccessDeniedException(
                 'You do not have sufficient privileges to reject this ' . $dif::FRIENDLY_NAME . '.'
             );
         }
         try {
+            // Try to reject the DIF.
             $dif->reject();
         } catch (\Exception $exception) {
+            // Throw an exception if we can't.
             throw new BadRequestHttpException($exception->getMessage());
         }
+        // Update the DIF in persistence.
         $this->container->get('pelagos.entity.handler')->update($dif);
+        // Dispatch an event.
+        $this->get('event_dispatcher')->dispatch('dif.rejected', new DIFEvent($dif));
+        // Return a no content success response.
         return $this->makeNoContentResponse();
     }
 
@@ -311,18 +339,27 @@ class DIFController extends EntityController
      */
     public function unlockAction($id)
     {
+        // Get the specified DIF.
         $dif = $this->handleGetOne(DIF::class, $id);
+        // Check if the user has permission to unlock it.
         if (!$this->isGranted(DIFVoter::CAN_UNLOCK, $dif)) {
+            // Throw an exception if they don't.
             throw new AccessDeniedException(
                 'You do not have sufficient privileges to unlock this ' . $dif::FRIENDLY_NAME . '.'
             );
         }
         try {
+            // Try to unlock the DIF.
             $dif->unlock();
         } catch (\Exception $exception) {
+            // Throw an exception if we can't.
             throw new BadRequestHttpException($exception->getMessage());
         }
+        // Update the DIF in persistence.
         $this->container->get('pelagos.entity.handler')->update($dif);
+        // Dispatch an event.
+        $this->get('event_dispatcher')->dispatch('dif.unlocked', new DIFEvent($dif));
+        // Return a no content success response.
         return $this->makeNoContentResponse();
     }
 }
