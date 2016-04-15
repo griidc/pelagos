@@ -169,4 +169,76 @@ class DIFController extends EntityController
         $this->handleDelete(DIF::class, $id);
         return $this->makeNoContentResponse();
     }
+
+    /**
+     * Submit a DIF.
+     *
+     * @param integer $id The id of the DIF to submit.
+     *
+     * @ApiDoc(
+     *   section = "DIFs",
+     *   statusCodes = {
+     *     204 = "The DIF was successfully submitted.",
+     *     403 = "You do not have sufficient privileges to submit this DIF.",
+     *     404 = "The requested DIF was not found.",
+     *     500 = "An internal error has occurred.",
+     *   }
+     * )
+     *
+     * @return Response A response object with an empty body and a "no content" status code.
+     */
+    public function submitAction($id)
+    {
+        $dif = $this->handleGetOne(DIF::class, $id);
+        $dif->setStatus(DIF::STATUS_SUBMITTED);
+        return $this->makeNoContentResponse();
+    }
+
+    /**
+     * Approve a DIF.
+     *
+     * @param integer $id The id of the DIF to approve.
+     *
+     * @ApiDoc(
+     *   section = "DIFs",
+     *   statusCodes = {
+     *     204 = "The DIF was successfully approved.",
+     *     403 = "You do not have sufficient privileges to approve this DIF.",
+     *     404 = "The requested DIF was not found.",
+     *     500 = "An internal error has occurred.",
+     *   }
+     * )
+     *
+     * @return Response A response object with an empty body and a "no content" status code.
+     */
+    public function approveAction($id)
+    {
+        $dif = $this->handleGetOne(DIF::class, $id);
+        $dif->setStatus(DIF::STATUS_APPROVED);
+        return $this->makeNoContentResponse();
+    }
+
+    /**
+     * Unlock a DIF.
+     *
+     * @param integer $id The id of the DIF to unlock.
+     *
+     * @ApiDoc(
+     *   section = "DIFs",
+     *   statusCodes = {
+     *     204 = "The DIF was successfully unlocked.",
+     *     403 = "You do not have sufficient privileges to unlock this DIF.",
+     *     404 = "The requested DIF was not found.",
+     *     500 = "An internal error has occurred.",
+     *   }
+     * )
+     *
+     * @return Response A response object with an empty body and a "no content" status code.
+     */
+    public function unlockAction($id)
+    {
+        $dif = $this->handleGetOne(DIF::class, $id);
+        $dif->setStatus(DIF::STATUS_UNSUBMITTED);
+        return $this->makeNoContentResponse();
+    }
 }
