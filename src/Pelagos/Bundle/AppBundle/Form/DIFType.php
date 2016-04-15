@@ -54,14 +54,18 @@ class DIFType extends AbstractType
             ->add('primaryPointOfContact', EntityType::class, array(
                 'class' => Person::class,
                 'label' => 'Primary Point of Contact:',
-                'choices' => array(),
+                'choice_label' => function ($value, $key, $index) {
+                    return $value->getLastName() . ', ' . $value->getFirstName() . ', ' . $value->getEmailAddress();
+                },
                 'placeholder' => '[PLEASE SELECT PROJECT FIRST]',
                 'required' => true,
             ))
             ->add('secondaryPointOfContact', EntityType::class, array(
                 'class' => Person::class,
                 'label' => 'Secondary Point of Contact:',
-                'choices' => array(),
+                'choice_label' => function ($value, $key, $index) {
+                    return $value->getLastName() . ', ' . $value->getFirstName() . ', ' . $value->getEmailAddress();
+                },
                 'placeholder' => '[PLEASE SELECT PROJECT FIRST]',
                 'required' => true,
             ))
