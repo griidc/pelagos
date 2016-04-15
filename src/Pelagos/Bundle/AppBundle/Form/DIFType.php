@@ -13,6 +13,8 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\Form\FormInterface;
 
 use Pelagos\Entity\DIF;
 use Pelagos\Entity\ResearchGroup;
@@ -228,5 +230,22 @@ class DIFType extends AbstractType
             'data_class' => 'Pelagos\Entity\DIF',
             'allow_extra_fields' => true,
         ));
+    }
+
+    /**
+     * Finish the form view.
+     *
+     * This overrides the empty finishView in AbstractType and removes the POC choices.
+     *
+     * @param FormView      $view    The view.
+     * @param FormInterface $form    The form.
+     * @param array         $options The options.
+     *
+     * @return void
+     */
+    public function finishView(FormView $view, FormInterface $form, array $options)
+    {
+       $view->children['primaryPointOfContact']->vars['choices'] = array();
+       $view->children['secondaryPointOfContact']->vars['choices'] = array();
     }
 }
