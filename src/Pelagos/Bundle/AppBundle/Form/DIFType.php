@@ -69,7 +69,7 @@ class DIFType extends AbstractType
                     return $value->getLastName() . ', ' . $value->getFirstName() . ', ' . $value->getEmailAddress();
                 },
                 'placeholder' => '[PLEASE SELECT PROJECT FIRST]',
-                'required' => true,
+                'required' => false,
             ))
             ->add('abstract', TextareaType::class, array(
                 'attr' => array(
@@ -204,7 +204,7 @@ class DIFType extends AbstractType
                 'choices' => array_combine(DIF::ETHICAL_ISSUES, DIF::ETHICAL_ISSUES),
                 'expanded' => true,
                 'multiple' => false,
-                'required' => true,
+                'required' => false,
             ))
             ->add('ethicalIssuesExplanation', TextType::class, array(
                 'label' => 'If yes or uncertain, please explain:',
