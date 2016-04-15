@@ -388,7 +388,18 @@ class DIF extends Entity
      * @ORM\Column(nullable=true)
      */
     protected $remarks;
-    
+
+    /**
+     * Constructor.
+     *
+     * Initializes status to unsubmitted.
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        $this->status = self::STATUS_UNSUBMITTED;
+    }
+
     /**
      * Sets the Dataset this DIF is attached to.
      *
@@ -400,7 +411,7 @@ class DIF extends Entity
     {
         $this->dataset = $dataset;
     }
-    
+
     /**
      * Gets the Dataset this DIF is attached to.
      *
