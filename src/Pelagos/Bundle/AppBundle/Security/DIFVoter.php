@@ -13,6 +13,14 @@ use Pelagos\Entity\DIF;
 class DIFVoter extends PelagosEntityVoter
 {
     /**
+     * These attributes represent actions that the voter may be asked about.
+     */
+    const CAN_SUBMIT  = 'CAN_SUBMIT';
+    const CAN_APPROVE = 'CAN_APPROVE';
+    const CAN_REJECT  = 'CAN_REJECT';
+    const CAN_UNLOCK  = 'CAN_UNLOCK';
+
+    /**
      * Determine if the attribute and subject are supported by this voter.
      *
      * @param string $attribute An attribute denoting an action.
