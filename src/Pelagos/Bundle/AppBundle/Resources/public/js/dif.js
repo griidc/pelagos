@@ -493,10 +493,8 @@ function loadDIFS(Status,Person,ShowEmpty)
     if (personid > 0 && !Person) {Person = personid;}
     $.ajax({
         url: '/pelagos-symfony/dev/mvde/api/research_groups',
-        cache: false,
         type: 'GET',
         datatype: 'json',
-        data: {'function':'loadDIFS','status':Status,'person':Person,'showempty':ShowEmpty}
     }).done(function(json) {
         makeTree(json);
 
@@ -505,8 +503,54 @@ function loadDIFS(Status,Person,ShowEmpty)
 
 function makeTree(json)
 {
+    treeData = [];
+   
+    $.each(json, function(index, researchGroup) {
+        var difs = [];
+        
+        $.each(researchGroup.difs, function(index, dif) {
+            switch (dif.status)
+            {
+                case 0:
+                    var icon = '/images/icons/cross.png';
+                    break;
+                case 1:
+                    var icon = '/images/icons/error.png';
+                    break;
+                case 2:
+                    var icon =  '/images/icons/tick.png';
+                    break;
+                default:
+                    var icon = '/images/icons/cross.png';
+                    break;
+            }
+            var difFunction = "getNode(" + dif.id + ");";
+            difs.push(
+                {
+                    id          : dif.id,
+                    text        : dif.title,
+                    icon        : icon,
+                    li_attr     : {"title": dif.title},
+                    a_attr      : {"onclick": difFunction}
+                }
+            );
+        });
+        
+        var researchGroup = {
+            "text"        : researchGroup.name,
+            "icon"        : "/images/icons/folderopen.gif",
+            "state"       : {
+                opened    : true
+            },
+            "children": difs,
+            li_attr     : {"title": researchGroup.name}
+        };
+        
+        treeData.push(researchGroup);
+    });
+    
     $('#diftree').jstree({
-        'core' : {'data':json},
+        'core' : {'data':treeData},
         'plugins' : ['search'],
         'search' : {
             'case_insensitive' : true,
