@@ -13,6 +13,7 @@ use FOS\RestBundle\Controller\Annotations as Rest;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
+use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DIF;
 use Pelagos\Bundle\AppBundle\Form\DIFType;
 use Pelagos\Bundle\AppBundle\Security\DIFVoter;
@@ -96,8 +97,10 @@ class DIFController extends EntityController
      */
     public function postAction(Request $request)
     {
-        $person = $this->handlePost(DIFType::class, DIF::class, $request);
-        return $this->makeCreatedResponse('pelagos_api_difs_get', $person->getId());
+        $dif = $this->handlePost(DIFType::class, DIF::class, $request);
+        $dataset = $this->container->get('pelagos.factory.dataset')->createDataset($dif);
+        $this->container->get('pelagos.entity.handler')->create($dataset);
+        return $this->makeCreatedResponse('pelagos_api_difs_get', $dif->getId());
     }
 
     /**

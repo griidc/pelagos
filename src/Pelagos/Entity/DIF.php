@@ -479,6 +479,9 @@ class DIF extends Entity
     public function setDataset(Dataset $dataset = null)
     {
         $this->dataset = $dataset;
+        if ($dataset !== null and $this->dataset->getDif() !== $this) {
+            $this->dataset->setDif($this);
+        }
     }
 
     /**
