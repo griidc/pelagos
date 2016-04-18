@@ -9,16 +9,19 @@ class DIFListener
     protected $twig;
     protected $mailer;
     protected $currentUser;
+    protected $tokenStorage;
 
     public function __construct(\Twig_Environment $twig, \Swift_Mailer $mailer, TokenStorage $tokenStorage)
     {
         $this->twig = $twig;
         $this->mailer = $mailer;
-        $this->currentUser = $tokenStorage->getToken()->getUser()->getPerson(); // getUser() is Account's method.
+        $this->tokenStorage = $tokenStorage;
     }
 
     public function onSubmitted(DIFEvent $event)
     {
+        $currentUser = $this->tokenStorage->getToken()->getUser()->getPerson(); // getUser() is Account's method.
+
         // email DRPM(s)
         $drpms = $this->getDRPMs($event->getDIF());
         $template = $this->twig->loadTemplate('PelagosAppBundle:DIF:submit.drpm.email.twig');
@@ -26,7 +29,7 @@ class DIFListener
 
         // email User
         $template = $this->twig->loadTemplate('PelagosAppBundle:DIF:submit.email.twig');
-        $this->sendMailMsg(array($this->currentUser), $template, 'R9.x999.999.9999', 'DIF Submitted');
+        $this->sendMailMsg(array($currentUser), $template, 'R9.x999.999.9999', 'DIF Submitted');
 
     }
     public function onApproved(DIFEvent $event)
