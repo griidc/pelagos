@@ -175,6 +175,17 @@ class FundingCycle extends Entity
     protected $researchGroups;
 
     /**
+     * Funding cycle's UDI Prefix.
+     *
+     * @var string $udiPrefix
+     *
+     * @access protected
+     *
+     * @ORM\Column(nullable=true)
+     */
+    protected $udiPrefix;
+
+    /**
      * Setter for name.
      *
      * @param string $name Textual name of funding cycle.
@@ -340,6 +351,32 @@ class FundingCycle extends Entity
     public function getResearchGroups()
     {
         return $this->researchGroups;
+    }
+
+    /**
+     * Setter for udiPrefix.
+     *
+     * @param string $udiPrefix The prefix of the UDI for this Funding Cycle.
+     *
+     * @access public
+     *
+     * @return void
+     */
+    public function setUdiPrefix($udiPrefix)
+    {
+        $this->udiPrefix = $udiPrefix;
+    }
+
+    /**
+     * Getter for udiPrefix.
+     *
+     * @access public
+     *
+     * @return string String containing UDI prefix of funding cycle.
+     */
+    public function getUdiPrefix()
+    {
+        return $this->udiPrefix;
     }
 
     /**
