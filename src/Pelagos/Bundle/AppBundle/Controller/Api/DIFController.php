@@ -97,7 +97,7 @@ class DIFController extends EntityController
     public function postAction(Request $request)
     {
         $person = $this->handlePost(DIFType::class, DIF::class, $request);
-        return $this->makeCreatedResponse('pelagos_api_people_get', $person->getId());
+        return $this->makeCreatedResponse('pelagos_api_difs_get', $person->getId());
     }
 
     /**
