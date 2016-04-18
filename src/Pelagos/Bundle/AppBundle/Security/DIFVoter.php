@@ -99,8 +99,13 @@ class DIFVoter extends PelagosEntityVoter
             return true;
         }
 
-        // Anyone can create, update, or submit.
-        if (in_array($attribute, array(self::CAN_CREATE, self::CAN_EDIT, self::CAN_SUBMIT))) {
+        // Anyone can create or submit.
+        if (in_array($attribute, array(self::CAN_CREATE, self::CAN_SUBMIT))) {
+            return true;
+        }
+
+        // Anyone can update if not locked.
+        if (self::CAN_EDIT === $attribute and !$object->isLocked()) {
             return true;
         }
 
