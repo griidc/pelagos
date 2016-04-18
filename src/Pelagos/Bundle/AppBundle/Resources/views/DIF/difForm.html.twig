@@ -1,4 +1,4 @@
-<form id="difForm" action="{{ path('pelagos_api_difs_post') }}">
+<form id="difForm" action="{{ path('pelagos_api_difs_post') }}" method="post">
     <input type="hidden" id="status" name="status" value="0">
     <input type="hidden" id="projectid" name="projectid">
     <input type="hidden" id="taskid" name="taskid">
@@ -13,7 +13,7 @@
     <div id="udidiv" style="display:none;">
         <h1>Unique Dataset Identifer (UDI):<span class="title" id="udilabel"></span></h1>
     </div>
-    
+
     <div class="frmSection">
         <fieldset>
             <span class="helpSection">
@@ -41,7 +41,7 @@
             {{ form_row(form.title) }}
         </fieldset>
     </div>
-    
+
     <table width="100%">
         <tr>
             <td width="50%" >
@@ -139,7 +139,7 @@
                         {{ form_widget(form.fieldOfStudyEconomics) }}
                         {{ form_label(form.fieldOfStudyEconomics) }}
                     </td>
-                    
+
                     <td colspan="2">
                         <table width="100%">
                             <tr>
@@ -175,7 +175,7 @@
             </table>
         </fieldset>
     </div>
-        
+
     <div class="frmSection">
     <fieldset>
         <span class="helpSection">
@@ -255,6 +255,8 @@
                to
                {{ form_widget(form.estimatedEndDate) }}
                <b>End Date</b>
+               <label for="estimatedStartDate" class="error"></label>
+               <label for="estimatedEndDate" class="error"/></label>
           </center>
         </fieldset>
     </div>
@@ -343,11 +345,11 @@
                 <label for="difPrivacy"><b>Will this dataset include any data governed under the IRB or HIPAA, or data with other ethical issues?</b></label>
                 <br>
                 {% for key, ethicalIssuesItem in form.ethicalIssues.children %}
-                    {{ form_widget(ethicalIssuesItem) }} 
+                    {{ form_widget(ethicalIssuesItem) }}
                     {{ form_label(ethicalIssuesItem) }}
                     <br>
                 {% endfor %}
-                
+
                 <table width="100%">
                     <tr>
                         <td>If yes or uncertain, please explain:
@@ -372,7 +374,7 @@
             {{ form_row(form.remarks) }}
         </fieldset>
     </div>
-        
+
     <div id="diftoolbar" class="ui-widget-header ui-corner-all">
         <center>
             {% if is_granted('ROLE_DATA_REPOSITORY_MANAGER') %}
