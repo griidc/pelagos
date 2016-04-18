@@ -6,10 +6,80 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
+use Hateoas\Configuration\Annotation as Hateoas;
+
 /**
  * DIF Entity class.
  *
  * @ORM\Entity
+ *
+ * @Hateoas\Relation(
+ *   "self",
+ *   href = @Hateoas\Route(
+ *     "pelagos_api_difs_get",
+ *     parameters = { "id" = "expr(object.getId())" }
+ *   )
+ * )
+ * @Hateoas\Relation(
+ *   "edit",
+ *   href = @Hateoas\Route(
+ *     "pelagos_api_difs_put",
+ *     parameters = { "id" = "expr(object.getId())" }
+ *   ),
+ *   exclusion = @Hateoas\Exclusion(
+ *     excludeIf = "expr(not service('security.authorizationchecker').isGranted(['CAN_EDIT'], object))"
+ *   )
+ * )
+ * @Hateoas\Relation(
+ *   "delete",
+ *   href = @Hateoas\Route(
+ *     "pelagos_api_difs_delete",
+ *     parameters = { "id" = "expr(object.getId())" }
+ *   ),
+ *   exclusion = @Hateoas\Exclusion(
+ *     excludeIf = "expr(not object.isDeletable() or not service('security.authorizationchecker').isGranted(['CAN_DELETE'], object))"
+ *   )
+ * )
+ * @Hateoas\Relation(
+ *   "submit",
+ *   href = @Hateoas\Route(
+ *     "pelagos_api_difs_submit",
+ *     parameters = { "id" = "expr(object.getId())" }
+ *   ),
+ *   exclusion = @Hateoas\Exclusion(
+ *     excludeIf = "expr(not object.isSubmittable() or not service('security.authorizationchecker').isGranted(['CAN_SUBMIT'], object))"
+ *   )
+ * )
+ * @Hateoas\Relation(
+ *   "approve",
+ *   href = @Hateoas\Route(
+ *     "pelagos_api_difs_approve",
+ *     parameters = { "id" = "expr(object.getId())" }
+ *   ),
+ *   exclusion = @Hateoas\Exclusion(
+ *     excludeIf = "expr(not object.isApprovable() or not service('security.authorizationchecker').isGranted(['CAN_APPROVE'], object))"
+ *   )
+ * )
+ * @Hateoas\Relation(
+ *   "reject",
+ *   href = @Hateoas\Route(
+ *     "pelagos_api_difs_reject",
+ *     parameters = { "id" = "expr(object.getId())" }
+ *   ),
+ *   exclusion = @Hateoas\Exclusion(
+ *     excludeIf = "expr(not object.isRejectable() or not service('security.authorizationchecker').isGranted(['CAN_REJECT'], object))"
+ *   )
+ * )
+ * @Hateoas\Relation(
+ *   "unlock",
+ *   href = @Hateoas\Route(
+ *     "pelagos_api_difs_unlock",
+ *     parameters = { "id" = "expr(object.getId())" }
+ *   ),
+ *   exclusion = @Hateoas\Exclusion(
+ *     excludeIf = "expr(not object.isUnlockable() or not service('security.authorizationchecker').isGranted(['CAN_UNLOCK'], object))"
+ *   )
+ * )
  */
 class DIF extends Entity
 {
@@ -1317,6 +1387,16 @@ class DIF extends Entity
     }
 
     /**
+     * Whether or not this DIF can be submitted.
+     *
+     * @return boolean True if this DIF can be submitted, False otherwise.
+     */
+    public function isSubmittable()
+    {
+        return self::STATUS_UNSUBMITTED === $this->status;
+    }
+
+    /**
      * Submit this DIF.
      *
      * This will set the DIF's status to submitted when it's current status is unsubmitted,
@@ -1327,11 +1407,21 @@ class DIF extends Entity
      */
     public function submit()
     {
-        if (self::STATUS_UNSUBMITTED === $this->status) {
+        if ($this->isSubmittable()) {
             $this->status = self::STATUS_SUBMITTED;
         } else {
             throw new \Exception('Can only submit an unsubmitted DIF');
         }
+    }
+
+    /**
+     * Whether or not this DIF can be approved.
+     *
+     * @return boolean True if this DIF can be approved, False otherwise.
+     */
+    public function isApprovable()
+    {
+        return self::STATUS_SUBMITTED === $this->status;
     }
 
     /**
@@ -1345,11 +1435,21 @@ class DIF extends Entity
      */
     public function approve()
     {
-        if (self::STATUS_SUBMITTED === $this->status) {
+        if ($this->isApprovable()) {
             $this->status = self::STATUS_APPROVED;
         } else {
             throw new \Exception('Can only approve a submitted DIF');
         }
+    }
+
+    /**
+     * Whether or not this DIF can be rejected.
+     *
+     * @return boolean True if this DIF can be rejected, False otherwise.
+     */
+    public function isRejectable()
+    {
+        return self::STATUS_SUBMITTED === $this->status;
     }
 
     /**
@@ -1363,11 +1463,21 @@ class DIF extends Entity
      */
     public function reject()
     {
-        if (self::STATUS_SUBMITTED === $this->status) {
+        if (isRejectable()) {
             $this->status = self::STATUS_UNSUBMITTED;
         } else {
             throw new \Exception('Can only reject a submitted DIF');
         }
+    }
+
+    /**
+     * Whether or not this DIF can be unlocked.
+     *
+     * @return boolean True if this DIF can be unlocked, False otherwise.
+     */
+    public function isUnlockable()
+    {
+        return self::STATUS_APPROVED === $this->status;
     }
 
     /**
@@ -1381,10 +1491,10 @@ class DIF extends Entity
      */
     public function unlock()
     {
-        if (self::STATUS_SUBMITTED === $this->status or self::STATUS_APPROVED === $this->status) {
+        if ($this->isUnlockable()) {
             $this->status = self::STATUS_UNSUBMITTED;
         } else {
-            throw new \Exception('Can only unlock a submitted or approved DIF');
+            throw new \Exception('Can only unlock an approved DIF');
         }
     }
 }
