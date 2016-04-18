@@ -31,6 +31,16 @@ class DIFVoter extends PelagosEntityVoter
      */
     protected function supports($attribute, $object)
     {
+        // If the object is an EntityProperty.
+        if ($object instanceof EntityProperty) {
+            // If the property is not 'status' we abstain.
+            if ($object->getProperty() != 'status') {
+                return false;
+            }
+            // Make the Entity the object for further inspection.
+            $object = $object->getEntity();
+        }
+
         // Make sure the object is an instance of DIF
         if (!$object instanceof DIF) {
             return false;
@@ -76,6 +86,16 @@ class DIFVoter extends PelagosEntityVoter
         }
 
         $userPerson = $user->getPerson();
+
+        // If the object is an EntityProperty
+        if ($object instanceof EntityProperty) {
+            // If attribute is CAN_EDIT and the property is 'status'
+            if (in_array($attribute, array(self::CAN_EDIT)) and
+                $object->getProperty() == 'status') {
+                return true;
+            }
+            return false;
+        }
 
         $personDataRepositories = $userPerson->getPersonDataRepositories()->filter(
             function ($personDataRepository) use ($object) {
