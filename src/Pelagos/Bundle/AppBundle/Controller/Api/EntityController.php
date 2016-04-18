@@ -40,6 +40,25 @@ abstract class EntityController extends FOSRestController
             // Remove the 'q' parameter if it exists (this comes from Drupal).
             unset($params['q']);
         }
+        if (array_key_exists('_permission', $params)) {
+            $permission = $params['_permission'];
+            unset($params['_permission']);
+            if (count($params) > 0) {
+                $entities = $this->container->get('pelagos.entity.handler')->getBy($entityClass, $params);
+            } else {
+                $entities = $this->container->get('pelagos.entity.handler')->getAll($entityClass);
+            }
+            if (isset($permission)) {
+                $authorizedEntities = array();
+                foreach ($entities as $entity) {
+                    if ($this->isGranted($permission, $entity)) {
+                        $authorizedEntities[] = $entity;
+                    }
+                }
+                $entities = $authorizedEntities;
+            }
+            return $entities;
+        }
         foreach (array_keys($params) as $param) {
             str_replace('_', '.', $params[$param]);
         }
