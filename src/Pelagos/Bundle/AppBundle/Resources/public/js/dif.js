@@ -15,14 +15,14 @@ $(document).ready(function()
     
     $('[name="primaryPointOfContact"],[name="secondaryPointOfContact"]').prop('disabled',true);
 
-    $.ajaxSetup({
-        error: function(x, t, m) {
-            var message;
-            if (typeof m.message != 'undefined')
-            {message = m.message;}else{message = m;};
-            console.log('Error in Ajax:'+t+' Message:'+message);
-        }
-    });
+    // $.ajaxSetup({
+        // error: function(x, t, m) {
+            // var message;
+            // if (typeof m.message != 'undefined')
+            // {message = m.message;}else{message = m;};
+            // console.log('Error in Ajax:'+t+' Message:'+message);
+        // }
+    // });
         
     initSpinner();
     
@@ -344,17 +344,23 @@ function saveDIF(form)
         type: 'POST',
         datatype: 'json',
         data: formData,
-    }).done(function(json) 
-        {
-            hideSpinner();
-            if (json.success == true)
-            {
-                formReset(true);
+        statusCode: {
+            201: function(data, textStatus, jqXHR) {
+                console.log('201');
             }
-                $("<div>"+json.message+"</div>").dialog({
+        },
+        success: function(json, textStatus, jqXHR) {
+            hideSpinner();
+            debugger;
+            console.log('success');
+            if (jqXHR.status === 201) {
+                formReset(true);
+                var title = 'Success!';
+                var message = 'A DIF was create, enjoy....';
+                $("<div>"+message+"</div>").dialog({
                     height: "auto",
                     width: "auto",
-                    title: json.title,
+                    title: title,
                     resizable: false,
                     modal: true,
                     buttons: {
@@ -368,9 +374,43 @@ function saveDIF(form)
                         }
                     }
                 });
-        });
+            }
+            
+          
+            
+            // if (jqXHR.status === returnCode) {
+                // title = "Success!";
+                // var newID = entityId;
+                // if (returnCode === 201) {
+                    // newID = jqXHR.getResponseHeader("X-Resource-Id");
+                    // //Set ID on form
+                    // $(form).find('[name="id"]').val(newID).attr("readonly", "true");
+                // }
+                // message = prefixPhrase + " " + entityType + " successfully with ID:" + newID;
+                // //$(form).fillForm(data);
+                // $(form).hardenForm();
+                // $(form).trigger("reset");
+            // } else {
+                // title = "Error!";
+                // message = "Something went wrong!<br>Didn't receive the correct success message!";
+            // }
+        },
+        error: function(response) {
+            var json = response.responseJSON;
+            if (typeof response.responseJSON === "undefined") {
+                json = {};
+                json.code = response.status;
+                json.message = response.statusText;
+            }
+            title = "Error!";
+            message = json.message;
+        }
+    })
+    .done(function() {
+            console.log('done');
+    });
 }
-
+    
 function formReset(dontScrollToTop)
 {
     $.when(formChanged()).done(function() {

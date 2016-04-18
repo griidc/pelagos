@@ -39,6 +39,10 @@
             ]
         )
     }}
+    
+    {% javascripts '@PelagosAppBundle/Resources/public/js/common.js' %}
+        {{ add_js(asset_url) }}
+    {% endjavascripts %}
 
     {% javascripts '@PelagosAppBundle/Resources/public/js/dif.js' %}
         {{ add_js(asset_url) }}
@@ -104,11 +108,36 @@
                     <tr>
                         <td>
                             <h3>Legend:&nbsp;
-                                <span id="statusicon" title="DIF is Open. DIF has been started and saved for this dataset, but has not yet been submitted to GRIIDC."><img src="/images/icons/cross.png">&nbsp;Open</span>&nbsp;-
-                                <span id="statusicon" title="DIF is locked and is in review. DIF has been completed and submitted to GRIIDC for review and approval."><img src="/images/icons/error.png">&nbsp;Submitted</span>&nbsp;-
-                                <span id="statusicon" title="DIF is locked and approved. DIF has been submitted to GRIIDC and reviewed and approved by GRIIDC. It is locked to prevent additional changes."><img src="/images/icons/tick.png">&nbsp;Approved</span>&nbsp;-
-                                <span id="statusicon" title="This is a project that you are associated with through your GoMRI proposal or grant funding agreement that has datasets identified"><img src="/images/icons/folder.png">&nbsp;Project</span>&nbsp;-
-                                <span id="statusicon" title="This is a project that you are associated with through your GoMRI proposal or grant funding agreement that does not yet have datasets identified."><img style="-webkit-filter:grayscale(100%);" src="/images/icons/folder_gray.png">&nbsp;Project Without Datasets</span>
+                                <span id="statusicon" title="DIF is Open. DIF has been started and saved for this dataset, but has not yet been submitted to GRIIDC.">
+                                    {% image '@PelagosAppBundle/Resources/public/images/cross.png' %}
+                                    <img src="{{ asset_url }}">
+                                    {% endimage %}
+                                    &nbsp;Open
+                                </span>&nbsp;-
+                                <span id="statusicon" title="DIF is locked and is in review. DIF has been completed and submitted to GRIIDC for review and approval.">
+                                    {% image '@PelagosAppBundle/Resources/public/images/error.png' %}
+                                    <img src="{{ asset_url }}">
+                                    {% endimage %}
+                                    &nbsp;Submitted
+                                </span>&nbsp;-
+                                <span id="statusicon" title="DIF is locked and approved. DIF has been submitted to GRIIDC and reviewed and approved by GRIIDC. It is locked to prevent additional changes.">
+                                    {% image '@PelagosAppBundle/Resources/public/images/tick.png' %}
+                                    <img src="{{ asset_url }}">
+                                    {% endimage %}
+                                    &nbsp;Approved
+                                </span>&nbsp;-
+                                <span id="statusicon" title="This is a project that you are associated with through your GoMRI proposal or grant funding agreement that has datasets identified">
+                                    {% image '@PelagosAppBundle/Resources/public/images/folder.png' %}
+                                    <img src="{{ asset_url }}">
+                                    {% endimage %}
+                                    &nbsp;Project
+                                </span>&nbsp;-
+                                <span id="statusicon" title="This is a project that you are associated with through your GoMRI proposal or grant funding agreement that does not yet have datasets identified.">
+                                    {% image '@PelagosAppBundle/Resources/public/images/folder_gray.png' %}
+                                    <img style="-webkit-filter:grayscale(100%);" src="{{ asset_url }}">
+                                    {% endimage %}
+                                    &nbsp;Project Without Datasets
+                                </span>
                             </h3>
                             <h1>Datasets</h1>
                             <hr width="100%">
