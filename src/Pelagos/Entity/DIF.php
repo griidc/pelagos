@@ -68,7 +68,7 @@ class DIF extends Entity
      *
      * @var ResearchGroup
      *
-     * @ORM\ManyToOne(targetEntity="ResearchGroup")
+     * @ORM\ManyToOne(targetEntity="ResearchGroup", inversedBy="difs")
      *
      * @Assert\NotBlank(
      *     message="You must select a project"
