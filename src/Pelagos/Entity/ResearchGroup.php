@@ -283,7 +283,7 @@ class ResearchGroup extends Entity
      *
      * @return Collection A Collection of DIFs.
      */
-    public function getDifs()::
+    public function getDifs()
     {
         return $this->difs;
     }
@@ -303,6 +303,7 @@ class ResearchGroup extends Entity
         $difs[] = array(
             'id' => $dif->getId(),
             'title' => $dif->getTitle(),
+            'status' => $dif->getStatus(),
         );
 
         return $difs;
