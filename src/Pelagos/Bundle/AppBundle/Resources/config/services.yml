@@ -22,7 +22,7 @@ services:
             - { name: form.type }
     pelagos.dif.listener:
         class: Pelagos\Event\DIFListener
-        arguments: ["@twig", "@mailer"]
+        arguments: ["@twig", "@mailer", "@security.token_storage"]
         tags:
             - { name: kernel.event_listener, event: dif.submitted, method: onSubmitted }
             - { name: kernel.event_listener, event: dif.approved, method: onApproved }
