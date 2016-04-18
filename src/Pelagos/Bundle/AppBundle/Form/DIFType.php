@@ -15,6 +15,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+
+use Doctrine\ORM\EntityManager;
+
+use Pelagos\Bundle\AppBundle\Security\ResearchGroupVoter;
 
 use Pelagos\Entity\DIF;
 use Pelagos\Entity\ResearchGroup;
@@ -25,6 +32,32 @@ use Pelagos\Entity\Person;
  */
 class DIFType extends AbstractType
 {
+    /**
+     * The entity manager to use in this form type.
+     *
+     * @var EntityManager
+     */
+    protected $entityManager;
+
+    /**
+     * The authorization checker to use in this form type.
+     *
+     * @var AuthorizationCheckerInterface
+     */
+    protected $authorizationChecker;
+
+    /**
+     * Constructor.
+     *
+     * @param EntityManager                 $entityManager        The entity manager to use.
+     * @param AuthorizationCheckerInterface $authorizationChecker The authorization checker to use.
+     */
+    public function __construct(EntityManager $entityManager, AuthorizationCheckerInterface $authorizationChecker)
+    {
+        $this->entityManager = $entityManager;
+        $this->authorizationChecker = $authorizationChecker;
+    }
+
     /**
      * Builds the form.
      *
@@ -38,12 +71,6 @@ class DIFType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('researchGroup', EntityType::class, array(
-                'class' => ResearchGroup::class,
-                'choice_label' => 'name',
-                'placeholder' => '[PLEASE SELECT A PROJECT]',
-                'required' => true,
-            ))
             ->add('title', TextareaType::class, array(
                 'attr' => array(
                     'placeholder' => 'Dataset Title (200 Character Maximum)',
@@ -215,6 +242,36 @@ class DIFType extends AbstractType
                 'label' => 'Remarks:',
                 'required' => false,
             ));
+
+            $builder->addEventListener(FormEvents::PRE_SET_DATA, array($this, 'onPreSetData'));
+    }
+
+    /**
+     * Listener for PRE_SET_DATA event.
+     *
+     * This adds researchGroup with choices filtered by authorization.
+     *
+     * @param FormEvent $event The event object for that triggered this listener.
+     *
+     * @return void
+     */
+    public function onPreSetData(FormEvent $event)
+    {
+        $researchGroups = array();
+        $allResearchGroups = $this->entityManager->getRepository(ResearchGroup::class)->findAll();
+        foreach ($allResearchGroups as $researchGroup) {
+            if ($this->authorizationChecker->isGranted(ResearchGroupVoter::CAN_CREATE_DIF_FOR, $researchGroup)) {
+                $researchGroups[] = $researchGroup;
+            }
+        }
+
+        $event->getForm()->add('researchGroup', EntityType::class, array(
+            'class' => ResearchGroup::class,
+            'choices' => $researchGroups,
+            'choice_label' => 'name',
+            'placeholder' => '[PLEASE SELECT A PROJECT]',
+            'required' => true,
+        ));
     }
 
     /**

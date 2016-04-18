@@ -20,3 +20,9 @@ services:
         arguments: ["@router"]
         tags:
             - { name: form.type }
+
+    pelagos.form.type.dif:
+        class: Pelagos\Bundle\AppBundle\Form\DIFType
+        arguments: ["@doctrine.orm.entity_manager", "@security.authorization_checker"]
+        tags:
+            - { name: form.type }
