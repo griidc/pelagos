@@ -1463,7 +1463,7 @@ class DIF extends Entity
      */
     public function reject()
     {
-        if (isRejectable()) {
+        if ($this->isRejectable()) {
             $this->status = self::STATUS_UNSUBMITTED;
         } else {
             throw new \Exception('Can only reject a submitted DIF');
