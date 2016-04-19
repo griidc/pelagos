@@ -1,10 +1,11 @@
 var $ = jQuery.noConflict();
 
 var spinner;
-var targer;
+var target;
 var formHash;
 var personid;
 var difValidator;
+var difList = [];
 
 $(document).ready(function()
 {
@@ -21,6 +22,19 @@ $(document).ready(function()
             if (typeof m.message != 'undefined')
             {message = m.message;}else{message = m;};
             console.log('Error in Ajax:'+t+' Message:'+message);
+            hidespinner();
+            $(Message).dialog({
+                height: "auto",
+                width: "auto",
+                title: "Ajax Error",
+                resizable: false,
+                modal: true,
+                buttons: {
+                    OK: function() {
+                        $(this).dialog( "close" );
+                    }
+                }
+            });
         }
     });
 
@@ -138,14 +152,11 @@ $(document).ready(function()
     });
 
     $("#researchGroup").change(function(){
-        // $("#taskid").val($('#difTasks option:selected').attr("task"));
-        // $("#projectid").val($('#difTasks option:selected').attr("project"));
-        // $("#fundsrcid").val($('#difTasks option:selected').attr("fund"));
         loadPOCs($(this).val());
     });
-
+ 
     //loadTasks();
-    loadDIFS(null,personid,true);
+    loadDIFS();
 
     jQuery.validator.addMethod("trueISODate", function(value, element) {
         var regPattern = /^\d{4}-\d{1,2}-\d{1,2}$/
@@ -160,8 +171,7 @@ $(document).ready(function()
             estimatedEndDate: "End Date is not a valid ISO date"
         },
         submitHandler: function(form) {
-            $("#difTasks").prop('disabled', false);
-           saveDIF(form);
+            saveDIF(form);
         },
         rules: {
             estimatedStartDate: "trueISODate",
@@ -220,13 +230,13 @@ $(document).ready(function()
             {
                 $("#statustext").html('<fieldset><img src="/images/icons/tick.png">&nbsp;DIF approved (locked)</fieldset>');
             }
-            $("#difTasks").prop('disabled', true);
+            $("#researchGroup").prop('disabled', true);
             formHash = $("#difForm").serialize();
         }
         else
         {
             $("#statustext").html('');
-            $("#difTasks").prop('disabled', false);
+            $("#researchGroup").prop('disabled', false);
         }
     });
 
@@ -326,6 +336,16 @@ function scrollToTop()
 
 function saveDIF(form)
 {
+    if ($('[name="udi"]', form).val() != "") {
+        updateDIF(form);
+    } else {
+        createDIF(form);
+    }
+    
+}
+
+function createDIF(form)
+{
     var Form = $(form);
     var formData = $(form).serialize(); //new FormData(form);
     var url = $(form).attr('action');
@@ -335,6 +355,11 @@ function saveDIF(form)
     var udi = '';
     var resourceId = '';
     var status = 0;
+    var submit = false;
+    
+    if ($('[name="button"]', form).val() == "submit") {
+        submit = true;
+    }
 
     showSpinner();
     formHash = Form.serialize();
@@ -347,6 +372,8 @@ function saveDIF(form)
             // Saving the DIF
             if (jqXHR.status === 201) {
                 resourceLocation = jqXHR.getResponseHeader("location");
+            } else {
+                resourceLocation = url;
             }
         }
     })
@@ -359,14 +386,13 @@ function saveDIF(form)
             success: function(json, textStatus, jqXHR) {
                 // Got the Resource, setting variables
                 resourceId = json.id;
-                udi = json.dataset;
-
+                udi = json.dataset.udi;
             }
         })
     })
     .then(function() {
         // Update the status if submit was pressed
-        if ($('[name="button"]', form).val() == "submit") {
+        if (submit) {
             // It was the submit button
             return $.ajax({
                 url: '/pelagos-symfony/dev/mvde/api/difs/' + resourceId +'/submit',
@@ -374,7 +400,6 @@ function saveDIF(form)
                 datatype: 'json',
                 data: formData,
                 success: function(json, textStatus, jqXHR) {
-                    console.log('success again?');
                     if (jqXHR.status === 204) {
                         status = 1;
                     }
@@ -387,7 +412,6 @@ function saveDIF(form)
     })
     .then(function() {
         // Then show the dialog according the how it was saved.
-        udi = "R1.I.DONT.EXIST.0001"; // get from json.dataset.udi;
         if (status == 0) {
             var title = "New DIF Created";
             var message = '<div><img src="/images/icons/info32.png"><p>You have saved a DIF. This DIF has been given the ID: ' + udi +'<br>In order to submit your dataset to GRIIDC you must return to this page and submit the DIF for review and approval.</p></div>';
@@ -402,7 +426,7 @@ function saveDIF(form)
 
         hideSpinner();
         formReset(true);
-        console.log('show dialog');
+        loadDIFS();
 
         $("<div>"+message+"</div>").dialog({
             autoOpen: true,
@@ -411,6 +435,103 @@ function saveDIF(form)
             height: "auto",
             width: "auto",
             modal: true,
+            title: title,
+            buttons: {
+                OK: function() {
+                    $(this).dialog( "close" );
+                    scrollToTop();
+                    treeFilter();
+                    return $.Deferred().resolve();
+                }
+            }
+        });
+    });
+}
+
+function updateDIF(form)
+{
+    var Form = $(form);
+    var formData = $(form).serialize(); //new FormData(form);
+    var url = $(form).attr('action');
+    var method = $(form).attr('method');
+
+    var resourceLocation= '';
+    var udi = $('[name="udi"]', form).val();
+    var resourceId = $('[name="id"]', form).val();
+    var status = 0;
+    var submit = false;
+    
+    if (udi != "") {
+        method = "PATCH"
+        url = url + "/" + resourceId;
+    }
+    
+    if ($('[name="button"]', form).val() == "submit") {
+        submit = true;
+    }
+
+    showSpinner();
+    formHash = Form.serialize();
+    $.ajax({
+        url: url,
+        type: method,
+        datatype: 'json',
+        data: formData,
+        success: function(json, textStatus, jqXHR) {
+            // Saving the DIF
+            if (jqXHR.status === 201) {
+                resourceLocation = jqXHR.getResponseHeader("location");
+            } else {
+                resourceLocation = url;
+            }
+        }
+    })
+    .then(function() {
+        // Update the status if submit was pressed
+        if (submit) {
+            // It was the submit button
+            return $.ajax({
+                url: '/pelagos-symfony/dev/mvde/api/difs/' + resourceId +'/submit',
+                type: 'PATCH',
+                datatype: 'json',
+                data: formData,
+                success: function(json, textStatus, jqXHR) {
+                    if (jqXHR.status === 204) {
+                        status = 1;
+                    }
+                }
+            })
+        } else {
+            // Not the submit button, still resolve.
+            return $.Deferred().resolve();
+        }
+    })
+    .then(function() {
+        // Then show the dialog according the how it was saved.
+        if (status == 0) {
+            var title = "DIF Submitted";
+            var message = '<div><img src="/images/icons/info32.png"><p>Thank you for saving DIF with ID:  ' + udi 
+            + '.<br>Before registering this dataset you must return to this page and submit the dataset information form.</p></div>';
+        } else {
+            var title = 'DIF Submitted';
+            var message = '<div><img src="/images/icons/info32.png">' +
+            '<p>Congratulations! You have successfully submitted a DIF to GRIIDC. The UDI for this dataset is '+ udi + "." +
+            '<br>The DIF will now be reviewed by GRIIDC staff and is locked to prevent editing. To make changes' +
+            '<br>to your DIF, please email GRIIDC at griidc@gomri.org with the UDI for your dataset.' +
+            '<br>Please note that you will receive an email notification when your DIF is approved.</p></div>';
+        }
+
+        hideSpinner();
+        formReset(true);
+
+        $("<div>"+message+"</div>").dialog({
+            autoOpen: true,
+            resizable: false,
+            minWidth: 300,
+            height: "auto",
+            width: "auto",
+            modal: true,
+            title: title,
             buttons: {
                 OK: function() {
                     $(this).dialog( "close" );
@@ -445,10 +566,11 @@ function formReset(dontScrollToTop)
 
 function treeFilter()
 {
+    console.log('running tree filter');
     $('#diftree').html('<a class="jstree-anchor" href="#"><img src="/images/icons/throbber.gif"> Loading...</a>');
     $('#diftree').jstree("destroy");
     //$('#acResearcher').val('');
-    loadDIFS($("#fltStatus").val(),$("#fltResearcher").val(),$("[name='showempty']:checked").val());
+    makeTree($("#fltStatus").val(),$("#fltResearcher").val(),$("[name='showempty']:checked").val())
 }
 
 function initSpinner()
@@ -482,31 +604,45 @@ function showSpinner()
 function hideSpinner()
 {$('#spinner').hide();}
 
-function getNode(UDI)
+function getNode(UDI, ID)
 {
-    fillForm($("#difForm"),UDI);
+    fillForm($("#difForm"),UDI,ID);
 }
 
-function loadDIFS(Status,Person,ShowEmpty)
+function loadDIFS()
 {
+    console.log('loading difs');
     $("#btnSearch").button('disable');
     if (personid > 0 && !Person) {Person = personid;}
     $.ajax({
+        //url: '/pelagos-symfony/dev/mvde/api/research_groups?_permission=CAN_CREATE_DIF_FOR',
         url: '/pelagos-symfony/dev/mvde/api/research_groups',
         type: 'GET',
         datatype: 'json',
     }).done(function(json) {
-        makeTree(json);
-
+        difList = json;
+        makeTree("", null, true);
     });
 }
 
-function makeTree(json)
+function makeTree(Status, Person, ShowEmpty)
 {
-    treeData = [];
+    var treeData = [];
+    
+    if (ShowEmpty == "0") {
+        ShowEmpty = false;
+    } else {
+       ShowEmpty = true;
+    }
    
-    $.each(json, function(index, researchGroup) {
+    $.each(difList, function(index, researchGroup) {
         var difs = [];
+        
+        // researchGroup.difs.sort(
+            // function(a, b){
+                // return a.udi.toLowerCase() > b.udi.toLowerCase() ? 1 : -1; 
+            // }
+        // );
         
         $.each(researchGroup.difs, function(index, dif) {
             switch (dif.status)
@@ -524,21 +660,35 @@ function makeTree(json)
                     var icon = '/images/icons/cross.png';
                     break;
             }
-            var difFunction = "getNode(" + dif.id + ");";
-            difs.push(
-                {
-                    id          : dif.id,
-                    text        : dif.title,
-                    icon        : icon,
-                    li_attr     : {"title": dif.title},
-                    a_attr      : {"onclick": difFunction}
+            var difFunction = "getNode('" + dif.udi + "'," + dif.id + ");";
+            var difTitle = "[" + dif.udi + "] " + dif.title;
+            
+            var newdif = {
+                id          : dif.id,
+                text        : difTitle,
+                icon        : icon,
+                li_attr     : {"title": dif.title},
+                a_attr      : {"onclick": difFunction}
+            };
+            
+            if (Status != "") {
+                if (Status == dif.status) {
+                    difs.push(newdif)
                 }
-            );
+            } else {
+                difs.push(newdif)
+            }
         });
+        
+        if ($.isEmptyObject(difs) === true) {
+            var folderIcon = "/images/icons/folder_gray.png";
+        } else {
+            var folderIcon = "/images/icons/folder.png";
+        }
         
         var researchGroup = {
             "text"        : researchGroup.name,
-            "icon"        : "/images/icons/folderopen.gif",
+            "icon"        : folderIcon,
             "state"       : {
                 opened    : true
             },
@@ -546,25 +696,38 @@ function makeTree(json)
             li_attr     : {"title": researchGroup.name}
         };
         
-        treeData.push(researchGroup);
+        
+        
+        if ($.isEmptyObject(difs) === true && ShowEmpty === false) {
+            //treeData.push(researchGroup);
+        } else {
+            treeData.push(researchGroup);
+        }
     });
+    
+    //debugger;
     
     $('#diftree').jstree({
         'core' : {'data':treeData},
-        'plugins' : ['search'],
+        'plugins' : ['search','sort'],
         'search' : {
             'case_insensitive' : true,
             'show_only_matches': true,
             'search_leaves_only': true,
             'fuzzy' : false
         },
-    })
+        'sort': function (a, b) {
+            //return this.get_text(a) > this.get_text(b) ? 1 : -1; 
+        },
+    });
+    
+    $('#diftree')
     .on('loaded.jstree', function (e, data) {
         var searchValue = $('#fltResults').val();
         $('#diftree').jstree(true).search(searchValue);
         $("#btnSearch").button('enable');
     })
-
+    ;
 }
 
 function loadTasks()
@@ -577,7 +740,6 @@ function loadTasks()
         }).done(function(json) {
         //var json = $.parseJSON(html);
         var element = $('[name="task"]');
-        //console.debug(json);
         $.each(json, function(id,task) {
             var o = new Option(task.Title, task.ID);
             $(o).attr("task",task.taskID);
@@ -680,7 +842,7 @@ function formChanged()
     });
 }
 
-function fillForm(Form,UDI)
+function fillForm(Form, UDI, ID)
 {
     if (Form == null){form = $("form");}
 
@@ -690,31 +852,31 @@ function fillForm(Form,UDI)
 
         $.ajax({
             context: document.body,
-            type: "POST",
+            url: "/pelagos-symfony/dev/mvde/api/difs",
+            type: "GET",
             datatype: "JSON",
-            data: {'function':'fillForm',udi:UDI}
-            }).done(function(json) {
-            //$('[name="primarypoc"],[name="secondarypoc"]').prop('disabled',false);
-            if (json.success == false)
-            {
-                $(json.message).dialog({
-                    height: "auto",
-                    width: "auto",
-                    title: json.title,
-                    resizable: false,
-                    modal: true,
-                    buttons: {
-                        OK: function() {
-                            $(this).dialog( "close" );
-                        }
-                    }
-                });
-            }
-
+            data: {'id':ID},
+        }).done(function(json) {
             difValidator.resetForm();
-
-            loadPOCs(json.data.task,json.data.primarypoc,json.data.secondarypoc);
-            $.each(json.data, function(name,value) {
+            if (json.length == 1) {
+                json = json[0];
+                $.extend(json, {researchGroup: json.researchGroup.id});
+            }
+            
+            $("[name='udi']").val(UDI).change();
+            var primaryPointOfContact = null;
+            var secondaryPointOfContact = null;
+           
+            if (json.primaryPointOfContact != null) {
+                var primaryPointOfContact = json.primaryPointOfContact.id
+            }
+            
+            if (json.secondaryPointOfContact != null) {
+                var secondaryPointOfContact = json.secondaryPointOfContact.id
+            }
+            
+            loadPOCs(json.researchGroup.id, primaryPointOfContact, secondaryPointOfContact);
+            $.each(json, function(name,value) {
                 var element = $("[name="+name+"]");
                 var elementType = element.prop("type");
                 switch (elementType)
@@ -738,7 +900,7 @@ function fillForm(Form,UDI)
             });
             formHash = $("#difForm").serialize();
             setFormStatus();
-            hideSpinner();
+            //hideSpinner();
         });
     });
 }
