@@ -108,33 +108,33 @@
                     <tr>
                         <td>
                             <h3>Legend:&nbsp;
-                                <span id="statusicon" title="DIF is Open. DIF has been started and saved for this dataset, but has not yet been submitted to GRIIDC.">
+                                <span class="statusicon" title="DIF is Open. DIF has been started and saved for this dataset, but has not yet been submitted to GRIIDC.">
                                     {% image '@PelagosAppBundle/Resources/public/images/cross.png' %}
-                                    <img src="{{ asset_url }}">
+                                    <img id="imgcross" src="{{ asset_url }}">
                                     {% endimage %}
                                     &nbsp;Open
                                 </span>&nbsp;-
-                                <span id="statusicon" title="DIF is locked and is in review. DIF has been completed and submitted to GRIIDC for review and approval.">
+                                <span class="statusicon" title="DIF is locked and is in review. DIF has been completed and submitted to GRIIDC for review and approval.">
                                     {% image '@PelagosAppBundle/Resources/public/images/error.png' %}
-                                    <img src="{{ asset_url }}">
+                                    <img id="imgerror" src="{{ asset_url }}">
                                     {% endimage %}
                                     &nbsp;Submitted
                                 </span>&nbsp;-
-                                <span id="statusicon" title="DIF is locked and approved. DIF has been submitted to GRIIDC and reviewed and approved by GRIIDC. It is locked to prevent additional changes.">
+                                <span class="statusicon" title="DIF is locked and approved. DIF has been submitted to GRIIDC and reviewed and approved by GRIIDC. It is locked to prevent additional changes.">
                                     {% image '@PelagosAppBundle/Resources/public/images/tick.png' %}
-                                    <img src="{{ asset_url }}">
+                                    <img id="imgtick" src="{{ asset_url }}">
                                     {% endimage %}
                                     &nbsp;Approved
                                 </span>&nbsp;-
-                                <span id="statusicon" title="This is a project that you are associated with through your GoMRI proposal or grant funding agreement that has datasets identified">
+                                <span class="statusicon" title="This is a project that you are associated with through your GoMRI proposal or grant funding agreement that has datasets identified">
                                     {% image '@PelagosAppBundle/Resources/public/images/folder.png' %}
-                                    <img src="{{ asset_url }}">
+                                    <img id="imgfolder" src="{{ asset_url }}">
                                     {% endimage %}
                                     &nbsp;Project
                                 </span>&nbsp;-
-                                <span id="statusicon" title="This is a project that you are associated with through your GoMRI proposal or grant funding agreement that does not yet have datasets identified.">
+                                <span class="statusicon" title="This is a project that you are associated with through your GoMRI proposal or grant funding agreement that does not yet have datasets identified.">
                                     {% image '@PelagosAppBundle/Resources/public/images/folder_gray.png' %}
-                                    <img style="-webkit-filter:grayscale(100%);" src="{{ asset_url }}">
+                                    <img id="imgfoldergray" style="-webkit-filter:grayscale(100%);" src="{{ asset_url }}">
                                     {% endimage %}
                                     &nbsp;Project Without Datasets
                                 </span>
@@ -147,7 +147,12 @@
                         <td height="100%">
                             <div style="position:relative;height:100%;overflow:auto;">
                                 <div id="diftree" class="diftree">
-                                    <a class="jstree-anchor" href="#"><img src="/images/icons/throbber.gif"> Loading...</a>
+                                    <a class="jstree-anchor" href="#">
+                                        {% image '@PelagosAppBundle/Resources/public/images/throbber.gif' %}
+                                        <img id="imgthrobber" src="{{ asset_url }}">
+                                        {% endimage %}
+                                        Loading...
+                                    </a>
                                 </div>
                             </div>
                         </td>

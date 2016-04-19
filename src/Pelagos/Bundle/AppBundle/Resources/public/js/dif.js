@@ -72,7 +72,7 @@ $(document).ready(function()
             }
         });
     });
-    $('#statusicon[title]').qtip();
+    $('.statusicon[title]').qtip();
 
     // set up DatePickers
     $("#estimatedStartDate").datepicker({
@@ -567,7 +567,8 @@ function formReset(dontScrollToTop)
 function treeFilter()
 {
     console.log('running tree filter');
-    $('#diftree').html('<a class="jstree-anchor" href="#"><img src="/images/icons/throbber.gif"> Loading...</a>');
+    var difTreeHTML = '<a class="jstree-anchor" href="#"><img src="/images/icons/throbber.gif"> Loading...</a>';
+    $('#diftree').html(difTreeHTML);
     $('#diftree').jstree("destroy");
     //$('#acResearcher').val('');
     makeTree($("#fltStatus").val(),$("#fltResearcher").val(),$("[name='showempty']:checked").val())
@@ -648,16 +649,16 @@ function makeTree(Status, Person, ShowEmpty)
             switch (dif.status)
             {
                 case 0:
-                    var icon = '/images/icons/cross.png';
+                    var icon = $('#imgcross').attr('src');
                     break;
                 case 1:
-                    var icon = '/images/icons/error.png';
+                    var icon = $('#imgerror').attr('src');
                     break;
                 case 2:
-                    var icon =  '/images/icons/tick.png';
+                    var icon =  $('#imgtick').attr('src');
                     break;
                 default:
-                    var icon = '/images/icons/cross.png';
+                    var icon = $('#imgcross').attr('src');
                     break;
             }
             var difFunction = "getNode('" + dif.udi + "'," + dif.id + ");";
@@ -681,9 +682,9 @@ function makeTree(Status, Person, ShowEmpty)
         });
         
         if ($.isEmptyObject(difs) === true) {
-            var folderIcon = "/images/icons/folder_gray.png";
+            var folderIcon = $("#imgfoldergray").attr("src");
         } else {
-            var folderIcon = "/images/icons/folder.png";
+            var folderIcon = $("#imgfolder").attr("src");
         }
         
         var researchGroup = {
@@ -704,8 +705,6 @@ function makeTree(Status, Person, ShowEmpty)
             treeData.push(researchGroup);
         }
     });
-    
-    //debugger;
     
     $('#diftree').jstree({
         'core' : {'data':treeData},
