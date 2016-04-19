@@ -24,7 +24,7 @@ class Dataset extends Entity
      *
      * @var string
      *
-     * @ORM\Column
+     * @ORM\Column(nullable=true)
      */
     protected $udi;
     
