@@ -299,13 +299,14 @@ class ResearchGroup extends Entity
     public function serializeDifs()
     {
         $difs = array();
-        foreach ($this->difs as $dif)
-        $difs[] = array(
-            'id' => $dif->getId(),
-            'title' => $dif->getTitle(),
-            'status' => $dif->getStatus(),
-            'udi' => $dif->getDataset()->getUdi(),
-        );
+        foreach ($this->difs as $dif) {
+            $difs[] = array(
+                'id' => $dif->getId(),
+                'title' => $dif->getTitle(),
+                'status' => $dif->getStatus(),
+                'udi' => $dif->getDataset()->getUdi(),
+            );
+        }
 
         return $difs;
     }
