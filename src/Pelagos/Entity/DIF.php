@@ -1500,4 +1500,15 @@ class DIF extends Entity
             throw new \Exception('Can only unlock an approved DIF');
         }
     }
+
+    /**
+     * Whether a DIF is locked or not.
+     *
+     * @return boolean True if a DIF is locked, False otherwise.
+     */
+    public function isLocked()
+    {
+        // A DIF is locked if its status is anything other than unsubmitted.
+        return self::STATUS_UNSUBMITTED !== $this->status;
+    }
 }
