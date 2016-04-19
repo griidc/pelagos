@@ -365,4 +365,49 @@ class DIFController extends EntityController
         // Return a no content success response.
         return $this->makeNoContentResponse();
     }
+
+    /**
+     * Request a DIF be unlocked.
+     *
+     * @param integer $id The id of the DIF to request unlock for.
+     *
+     * @throws AccessDeniedException   When the authenticated user does not have
+     *                                 permission to request unlock for the DIF.
+     * @throws BadRequestHttpException When the DIF could not be requested to be unlocked.
+     *
+     * @ApiDoc(
+     *   section = "DIFs",
+     *   statusCodes = {
+     *     204 = "The DIF was successfully requested to be unlocked.",
+     *     400 = "The DIF cannot be requested to be unlocked (see error message for reason).",
+     *     404 = "The requested DIF was not found.",
+     *     500 = "An internal error has occurred.",
+     *   }
+     * )
+     *
+     * @Rest\Patch("/{id}/request-unlock")
+     *
+     * @return Response A response object with an empty body and a "no content" status code.
+     */
+    public function requestUnlockAction($id)
+    {
+        // Get the specified DIF.
+        $dif = $this->handleGetOne(DIF::class, $id);
+        // Check if the user has permission to request it be unlocked.
+        if (!$this->isGranted(DIFVoter::CAN_REQUEST_UNLOCK, $dif)) {
+            // Throw an exception if they don't.
+            throw new AccessDeniedException(
+                'You do not have sufficient privileges to request this ' . $dif::FRIENDLY_NAME . ' be unlocked'
+            );
+        }
+        // Check if the DIF is in an unlockable state.
+        if (!$dif->isUnlockable()) {
+            // Throw an exception if it's not.
+            throw new BadRequestHttpException('This ' . $dif::FRIENDLY_NAME . ' cannot be unlocked');
+        }
+        // Dispatch an event.
+        $this->get('event_dispatcher')->dispatch('dif.unlock_requested', new DIFEvent($dif));
+        // Return a no content success response.
+        return $this->makeNoContentResponse();
+    }
 }

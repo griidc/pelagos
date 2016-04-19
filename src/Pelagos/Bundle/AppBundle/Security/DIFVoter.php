@@ -20,6 +20,7 @@ class DIFVoter extends PelagosEntityVoter
     const CAN_APPROVE = 'CAN_APPROVE';
     const CAN_REJECT  = 'CAN_REJECT';
     const CAN_UNLOCK  = 'CAN_UNLOCK';
+    const CAN_REQUEST_UNLOCK  = 'CAN_REQUEST_UNLOCK';
 
     /**
      * Determine if the attribute and subject are supported by this voter.
@@ -46,7 +47,7 @@ class DIFVoter extends PelagosEntityVoter
             return false;
         }
 
-        // Supports create, edit, submit, approve, reject, and unlock.
+        // Supports create, edit, submit, approve, reject, unlock, and request unlock.
         if (in_array(
             $attribute,
             array(
@@ -56,6 +57,7 @@ class DIFVoter extends PelagosEntityVoter
                 self::CAN_APPROVE,
                 self::CAN_REJECT,
                 self::CAN_UNLOCK,
+                self::CAN_REQUEST_UNLOCK,
             )
         )) {
             return true;
@@ -119,8 +121,8 @@ class DIFVoter extends PelagosEntityVoter
             return true;
         }
 
-        // Anyone can create or submit.
-        if (in_array($attribute, array(self::CAN_CREATE, self::CAN_SUBMIT))) {
+        // Anyone can create, submit, or request unlock.
+        if (in_array($attribute, array(self::CAN_CREATE, self::CAN_SUBMIT, self::CAN_REQUEST_UNLOCK))) {
             return true;
         }
 
