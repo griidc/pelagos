@@ -59,3 +59,7 @@ services:
         class: Pelagos\Bundle\AppBundle\Security\AccountVoter
         tags:
             - { name: security.voter }
+    DIF_voter:
+        class: Pelagos\Bundle\AppBundle\Security\DIFVoter
+        tags:
+            - { name: security.voter }
