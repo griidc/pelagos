@@ -416,7 +416,11 @@ function get_password_policy() {
 }
 
 function password_old_enough($ppolicy,$person){
-    $pwdMinAge = $ppolicy['pwdminage'][0];
+    if (array_key_exists('pwdminage', $ppolicy)) {
+        $pwdMinAge = $ppolicy['pwdminage'][0];
+    } else {
+        $pwdMinAge = 86400;
+    }
     if (array_key_exists('pwdchangedtime',$person) and count($person['pwdchangedtime']) > 0) {
         $pwdChangedTime = $person['pwdchangedtime'][0];
         if (preg_match('/^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/',$pwdChangedTime,$matches)) {
