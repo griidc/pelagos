@@ -304,6 +304,7 @@ class ResearchGroup extends Entity
             'id' => $dif->getId(),
             'title' => $dif->getTitle(),
             'status' => $dif->getStatus(),
+            'udi' => $dif->getDataset()->getUdi(),
         );
 
         return $difs;
