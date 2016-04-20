@@ -59,6 +59,7 @@ class DatasetSubmissionType extends AbstractType
                 'choices' => DatasetSubmission::RESTRICTIONS,
                 'data' => DatasetSubmission::RESTRICTION_NONE,
                 'label' => 'Restrictions:',
+                'placeholder' => false,
                 'required' => false,
                 'expanded' => true,
                 'multiple' => false,
