@@ -20,7 +20,7 @@ class DatasetFactory
     protected $entityManager;
 
     /**
-     * Constructor for EntityHandler.
+     * Constructor.
      *
      * @param EntityManager $entityManager The entity manager to use.
      */
