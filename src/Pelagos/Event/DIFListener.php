@@ -184,11 +184,10 @@ class DIFListener
      *
      * @return Array of Persons having DRPM status.
      */
-    protected function getDRPMs(DIF $dif)
+    protected function getDRPMs(\Pelagos\Entity\DIF $dif)
     {
         $recepientPeople = array();
         $personDataRepositories = $dif->getResearchGroup()
-                                      ->getFundingCycle()
                                       ->getFundingCycle()
                                       ->getFundingOrganization()
                                       ->getDataRepository()
