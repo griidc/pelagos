@@ -514,6 +514,16 @@ class DatasetSubmission extends Entity
     }
 
     /**
+     * Get the Dataset this Dataset Submission is attached to.
+     *
+     * @return Dataset
+     */
+    public function getDataset()
+    {
+        return $this->dataset;
+    }
+
+    /**
      * Set the ID for this Dataset Submission.
      *
      * @param string $datasetSubmissionId The ID for this Dataset Submission.
@@ -526,13 +536,19 @@ class DatasetSubmission extends Entity
     }
 
     /**
+     * Get the ID for this Dataset Submission.
+     *
+     * @return string
+     */
+    public function getDatasetSubmissionId()
+    {
+        return $this->datasetSubmissionId;
+    }
+
+    /**
      * Set the title for this Dataset Submission.
      *
      * @param string $title The title for this Dataset Submission.
-     *
-     * @Assert\NotBlank(
-     *     message="Title is required"
-     * )
      *
      * @return void
      */
@@ -542,13 +558,19 @@ class DatasetSubmission extends Entity
     }
 
     /**
+     * Get the title for this Dataset Submission.
+     *
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    /**
      * Set the abstract for this Dataset Submission.
      *
      * @param string $abstract The abstract for this Dataset Submission.
-     *
-     * @Assert\NotBlank(
-     *     message="Abstract is required"
-     * )
      *
      * @return void
      */
@@ -558,13 +580,19 @@ class DatasetSubmission extends Entity
     }
 
     /**
+     * Get the abstract for this Dataset Submission.
+     *
+     * @return string
+     */
+    public function getAbstract()
+    {
+        return $this->abstract;
+    }
+
+    /**
      * Set the author(s) for this Dataset Submission.
      *
      * @param string $authors The author(s) for this Dataset Submission.
-     *
-     * @Assert\NotBlank(
-     *     message="At least one author is required"
-     * )
      *
      * @return void
      */
@@ -574,13 +602,19 @@ class DatasetSubmission extends Entity
     }
 
     /**
+     * Get the author(s) for this Dataset Submission.
+     *
+     * @return string
+     */
+    public function getAuthors()
+    {
+        return $this->authors;
+    }
+
+    /**
      * Set the Point of Contact Name for this Dataset Submission.
      *
      * @param string $pointOfContactName The Point of Contact Name for this Dataset Submission.
-     *
-     * @Assert\NotBlank(
-     *     message="Point of Contact Name is required"
-     * )
      *
      * @return void
      */
@@ -590,19 +624,35 @@ class DatasetSubmission extends Entity
     }
 
     /**
+     * Get the Point of Contact Name for this Dataset Submission.
+     *
+     * @return string
+     */
+    public function getPointOfContactName()
+    {
+        return $this->pointOfContactName;
+    }
+
+    /**
      * Set the Point of Contact E-Mail for this Dataset Submission.
      *
      * @param string $pointOfContactEmail The Point of Contact E-Mail for this Dataset Submission.
-     *
-     * @Assert\NotBlank(
-     *     message="Point of Contact E-Mail is required"
-     * )
      *
      * @return void
      */
     public function setPointOfContactEmail($pointOfContactEmail)
     {
         $this->pointOfContactEmail = $pointOfContactEmail;
+    }
+
+    /**
+     * Get the Point of Contact E-Mail for this Dataset Submission.
+     *
+     * @return string
+     */
+    public function getPointOfContactEmail()
+    {
+        return $this->pointOfContactEmail;
     }
 
     /**
@@ -620,6 +670,16 @@ class DatasetSubmission extends Entity
     }
 
     /**
+     * Get whether the dataset has any restrictions.
+     *
+     * @return string
+     */
+    public function getRestrictions()
+    {
+        return $this->restrictions;
+    }
+
+    /**
      * Set the DOI for this dataset.
      *
      * @param string $doi The DOI for this dataset.
@@ -629,6 +689,16 @@ class DatasetSubmission extends Entity
     public function setDoi($doi)
     {
         $this->doi = $doi;
+    }
+
+    /**
+     * Get the DOI for this dataset.
+     *
+     * @return string
+     */
+    public function getDoi()
+    {
+        return $this->doi;
     }
 
     /**
@@ -646,6 +716,16 @@ class DatasetSubmission extends Entity
     }
 
     /**
+     * Get the dataset file transfer type.
+     *
+     * @return string
+     */
+    public function getDatasetFileTransferType()
+    {
+        return $this->datasetFileTransferType;
+    }
+
+    /**
      * Set the dataset file URL.
      *
      * @param string $datasetFileUrl The dataset file URL.
@@ -655,6 +735,16 @@ class DatasetSubmission extends Entity
     public function setDatasetFileUrl($datasetFileUrl)
     {
         $this->datasetFileUrl = $datasetFileUrl;
+    }
+
+    /**
+     * Get the dataset file URL.
+     *
+     * @return string
+     */
+    public function getDatasetFileUrl()
+    {
+        return $this->datasetFileUrl;
     }
 
     /**
@@ -672,6 +762,16 @@ class DatasetSubmission extends Entity
     }
 
     /**
+     * Get the dataset file transfer status.
+     *
+     * @return string
+     */
+    public function getDatasetFileTransferStatus()
+    {
+        return $this->datasetFileTransferStatus;
+    }
+
+    /**
      * Set the dataset file name.
      *
      * @param string $datasetFileName The dataset file name.
@@ -681,6 +781,16 @@ class DatasetSubmission extends Entity
     public function setDatasetFileName($datasetFileName)
     {
         $this->datasetFileName = $datasetFileName;
+    }
+
+    /**
+     * Get the dataset file name.
+     *
+     * @return string
+     */
+    public function getDatasetFileName()
+    {
+        return $this->datasetFileName;
     }
 
     /**
@@ -696,6 +806,16 @@ class DatasetSubmission extends Entity
     }
 
     /**
+     * Get the dataset file size.
+     *
+     * @return integer
+     */
+    public function getDatasetFileSize()
+    {
+        return $this->datasetFileSize;
+    }
+
+    /**
      * Set the dataset file md5 hash.
      *
      * @param string $datasetFileMd5Hash The dataset file md5 hash.
@@ -705,6 +825,16 @@ class DatasetSubmission extends Entity
     public function setDatasetFileMd5Hash($datasetFileMd5Hash)
     {
         $this->datasetFileMd5Hash = $datasetFileMd5Hash;
+    }
+
+    /**
+     * Set the dataset file md5 hash.
+     *
+     * @return string
+     */
+    public function getDatasetFileMd5Hash()
+    {
+        return $this->datasetFileMd5Hash;
     }
 
     /**
@@ -720,6 +850,16 @@ class DatasetSubmission extends Entity
     }
 
     /**
+     * Get the dataset file sha1 hash.
+     *
+     * @return string
+     */
+    public function getDatasetFileSha1Hash()
+    {
+        return $this->datasetFileSha1Hash;
+    }
+
+    /**
      * Set the dataset file sha256 hash.
      *
      * @param string $datasetFileSha256Hash The dataset file sha256 hash.
@@ -729,6 +869,16 @@ class DatasetSubmission extends Entity
     public function setDatasetFileSha256Hash($datasetFileSha256Hash)
     {
         $this->datasetFileSha256Hash = $datasetFileSha256Hash;
+    }
+
+    /**
+     * Get the dataset file sha256 hash.
+     *
+     * @return string
+     */
+    public function getDatasetFileSha256Hash()
+    {
+        return $this->datasetFileSha256Hash;
     }
 
     /**
@@ -744,6 +894,16 @@ class DatasetSubmission extends Entity
     }
 
     /**
+     * Get the date after which the dataset file will be available for pull.
+     *
+     * @return \DateTime
+     */
+    public function getDatasetFileAvailabilityDate()
+    {
+        return $this->datasetFileAvailabilityDate;
+    }
+
+    /**
      * Set whether the dataset should only be pulled at certain times.
      *
      * @param boolean $datasetFilePullCertainTimesOnly Whether the dataset should only be pulled at certain times.
@@ -753,6 +913,16 @@ class DatasetSubmission extends Entity
     public function setDatasetFilePullCertainTimesOnly($datasetFilePullCertainTimesOnly)
     {
         $this->datasetFilePullCertainTimesOnly = $datasetFilePullCertainTimesOnly;
+    }
+
+    /**
+     * Get whether the dataset should only be pulled at certain times.
+     *
+     * @return boolean
+     */
+    public function getDatasetFilePullCertainTimesOnly()
+    {
+        return $this->datasetFilePullCertainTimesOnly;
     }
 
     /**
@@ -768,6 +938,16 @@ class DatasetSubmission extends Entity
     }
 
     /**
+     * Set the time of day to start pulling this dataset.
+     *
+     * @return \DateTime
+     */
+    public function getDatasetFilePullStartTime()
+    {
+        return $this->datasetFilePullStartTime;
+    }
+
+    /**
      * Set the Days this dataset can be pulled.
      *
      * @param string $datasetFilePullDays The days this dataset can be pulled.
@@ -780,6 +960,16 @@ class DatasetSubmission extends Entity
     }
 
     /**
+     * Get the Days this dataset can be pulled.
+     *
+     * @return string
+     */
+    public function getDatasetFilePullDays()
+    {
+        return $this->datasetFilePullDays;
+    }
+
+    /**
      * Set whether to pull the source data.
      *
      * @param boolean $datasetFilePullSourceData Whether to pull the source data.
@@ -789,6 +979,16 @@ class DatasetSubmission extends Entity
     public function setDatasetFilePullSourceData($datasetFilePullSourceData)
     {
         $this->datasetFilePullSourceData = $datasetFilePullSourceData;
+    }
+
+    /**
+     * Set whether to pull the source data.
+     *
+     * @return boolean
+     */
+    public function getDatasetFilePullSourceData()
+    {
+        return $this->datasetFilePullSourceData;
     }
 
     /**
@@ -806,6 +1006,16 @@ class DatasetSubmission extends Entity
     }
 
     /**
+     * Get the metadata file transfer type.
+     *
+     * @return string
+     */
+    public function getMetadataFileTransferType()
+    {
+        return $this->metadataFileTransferType;
+    }
+
+    /**
      * Set the metadata file URL.
      *
      * @param string $metadataFileUrl The metadata file URL.
@@ -815,6 +1025,16 @@ class DatasetSubmission extends Entity
     public function setMetadataFileUrl($metadataFileUrl)
     {
         $this->metadataFileUrl = $metadataFileUrl;
+    }
+
+    /**
+     * Get the metadata file URL.
+     *
+     * @return string
+     */
+    public function getMetadataFileUrl()
+    {
+        return $this->metadataFileUrl;
     }
 
     /**
@@ -832,6 +1052,16 @@ class DatasetSubmission extends Entity
     }
 
     /**
+     * Get the metadata file transfer status.
+     *
+     * @return string
+     */
+    public function getMetadataFileTransferStatus()
+    {
+        return $this->metadataFileTransferStatus;
+    }
+
+    /**
      * Set the metadata file name.
      *
      * @param string $metadataFileName The metadata file name.
@@ -841,6 +1071,16 @@ class DatasetSubmission extends Entity
     public function setMetadataFileName($metadataFileName)
     {
         $this->metadataFileName = $metadataFileName;
+    }
+
+    /**
+     * Get the metadata file name.
+     *
+     * @return string
+     */
+    public function getMetadataFileName()
+    {
+        return $this->metadataFileName;
     }
 
     /**
@@ -856,6 +1096,16 @@ class DatasetSubmission extends Entity
     }
 
     /**
+     * Get the metadata file sha256 hash.
+     *
+     * @return string
+     */
+    public function getMetadataFileSha256Hash)
+    {
+        return $this->metadataFileSha256Hash;
+    }
+
+    /**
      * Set the status of the metadata.
      *
      * @param string $metadataStatus The status of the metadata.
@@ -867,5 +1117,15 @@ class DatasetSubmission extends Entity
     public function setMetadataStatus($metadataStatus)
     {
         $this->metadataStatus = $metadataStatus;
+    }
+
+    /**
+     * Get the status of the metadata.
+     *
+     * @return string
+     */
+    public function getMetadataStatus()
+    {
+        return $this->metadataStatus;
     }
 }
