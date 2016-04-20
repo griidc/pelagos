@@ -74,8 +74,8 @@ class DIFListener
     private function getDRPMs($dif)
     {
         $recepientPeople = array();
-        foreach($dif->getDataset()->getDataRepository()->getPersonDataRepositories() as $pdr) {
-            if ($pdr->getRole()->getName() == 'ROLE_DATA_REPOSITORY_MANAGER') {
+        foreach($dif->getResearchGroup()->getFundingCycle()->getFundingOrganization()->getDataRepository()->getPersonDataRepositories() as $pdr) {
+            if ($pdr->getRole()->getName() == DataRepositoryRoles::MANAGER) {
                 $recepientPeople[] = $pdr->getPerson();
             }
         }
