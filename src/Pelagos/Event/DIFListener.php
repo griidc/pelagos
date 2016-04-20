@@ -3,6 +3,7 @@ namespace Pelagos\Event;
 
 use Pelagos\Entity\Account;
 use Pelagos\Entity\Person;
+use Pelagos\Entity\DIF;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
 
@@ -184,7 +185,7 @@ class DIFListener
      *
      * @return Array of Persons having DRPM status.
      */
-    protected function getDRPMs(\Pelagos\Entity\DIF $dif)
+    protected function getDRPMs(DIF $dif)
     {
         $recepientPeople = array();
         $personDataRepositories = $dif->getResearchGroup()
