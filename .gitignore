@@ -3,7 +3,6 @@ config.ini
 config.php
 /app/config/parameters.yml
 /app/config/config_dev_local.yml
-/app/config/config_drupal_dev_local.yml
 /build/
 /phpunit.xml
 /var/*
