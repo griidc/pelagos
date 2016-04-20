@@ -20,6 +20,7 @@ services:
         arguments: ["@router"]
         tags:
             - { name: form.type }
+
     pelagos.dif.listener:
         class: Pelagos\Event\DIFListener
         arguments: ["@twig", "@mailer", "@security.token_storage"]
@@ -28,3 +29,9 @@ services:
             - { name: kernel.event_listener, event: dif.approved, method: onApproved }
             - { name: kernel.event_listener, event: dif.rejected, method: onRejected }
             - { name: kernel.event_listener, event: dif.unlocked, method: onUnlocked }
+
+    pelagos.form.type.dif:
+        class: Pelagos\Bundle\AppBundle\Form\DIFType
+        arguments: ["@doctrine.orm.entity_manager", "@security.authorization_checker"]
+        tags:
+            - { name: form.type }

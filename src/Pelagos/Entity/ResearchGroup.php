@@ -264,6 +264,54 @@ class ResearchGroup extends Entity
     protected $personResearchGroups;
 
     /**
+     * Research group's list of DIFs.
+     *
+     * @var DIF $difs
+     *
+     * @access protected
+     *
+     * @ORM\OneToMany(targetEntity="DIF", mappedBy="researchGroup")
+     *
+     * @Serializer\Exclude
+     */
+    protected $difs;
+
+    /**
+     * Getter for DIFs.
+     *
+     * @access public
+     *
+     * @return Collection A Collection of DIFs.
+     */
+    public function getDifs()
+    {
+        return $this->difs;
+    }
+
+    /**
+     * Serializer for the difs virtual property.
+     *
+     * @Serializer\VirtualProperty
+     * @Serializer\SerializedName("difs")
+     *
+     * @return array
+     */
+    public function serializeDifs()
+    {
+        $difs = array();
+        foreach ($this->difs as $dif) {
+            $difs[] = array(
+                'id' => $dif->getId(),
+                'title' => $dif->getTitle(),
+                'status' => $dif->getStatus(),
+                'udi' => $dif->getDataset()->getUdi(),
+            );
+        }
+
+        return $difs;
+    }
+
+    /**
      * Setter for name.
      *
      * @param string $name Textual name of research group.
