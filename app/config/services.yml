@@ -27,3 +27,7 @@ services:
     pelagos.ldap:
         class: Pelagos\Component\Ldap\Ldap
         arguments: ["@pelagos.ldap_client","%ldap_bind_dn%","%ldap_bind_pw%","%ldap_people_ou%"]
+
+    pelagos.factory.dataset:
+        class: Pelagos\Factory\DatasetFactory
+        arguments: ["@doctrine.orm.entity_manager"]

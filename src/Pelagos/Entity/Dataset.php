@@ -36,6 +36,16 @@ class Dataset extends Entity
      * @ORM\OneToOne(targetEntity="DIF", inversedBy="dataset")
      */
     protected $dif;
+
+    /**
+     * Constructor.
+     *
+     * @param DIF $dif The DIF for this Dataset.
+     */
+    public function __construct(DIF $dif)
+    {
+        $this->setDif($dif);
+    }
         
     /**
      * Sets the UDI for this Dataset.
@@ -69,6 +79,9 @@ class Dataset extends Entity
     public function setDif(DIF $dif)
     {
         $this->dif = $dif;
+        if ($this->dif->getDataset() !== $this) {
+            $this->dif->setDataset($this);
+        }
     }
     
     /**
