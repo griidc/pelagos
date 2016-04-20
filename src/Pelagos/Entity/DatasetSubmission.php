@@ -1100,7 +1100,7 @@ class DatasetSubmission extends Entity
      *
      * @return string
      */
-    public function getMetadataFileSha256Hash)
+    public function getMetadataFileSha256Hash()
     {
         return $this->metadataFileSha256Hash;
     }
