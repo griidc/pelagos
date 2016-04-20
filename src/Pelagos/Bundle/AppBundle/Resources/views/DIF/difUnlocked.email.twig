@@ -5,25 +5,16 @@
 {% block body_html %}
     Dear {{ person.getFirstName }} {{ person.getLastName }},<br>
     <br>
-    Your DIF <a href="{{url}}">{{udi}}</a> has been unlocked.<br>
+    Your DIF <a href="{{ url('pelagos_app_ui_dif_default') }}?id={{udi}}">{{udi}}</a> has been unlocked.<br>
     <br>
     Thank you,<br>
     The GRIIDC Team<br>
 {% endblock %}
 
 {% block body_text %}
-Dear {{firstName}} {{lastName}},
-
-Your DIF <a href="{{url}}">{{udi}}</a> has been unlocked.
-
-Thank you,
-The GRIIDC Team
-{% endblock %}
-
-{% block body_text %}
 Dear {{ person.getFirstName }} {{ person.getLastName }},
 
-Your DIF <a href="{{url}}">{{udi}}</a> has been unlocked.
+Your DIF <a href="{{ url('pelagos_app_ui_dif_default') }}?id={{udi}}">{{udi}}</a> has been unlocked.
 
 Thank you,
 The GRIIDC Team

@@ -106,7 +106,7 @@ class DIFListener
         $currentUser = $this->tokenStorage->getToken()->getUser()->getPerson();
         $udi = $event->getDIF()->getDataset()->getUdi();
         $template = $this->twig->loadTemplate('PelagosAppBundle:DIF:approved.email.twig');
-        $this->sendMailMsg(array($currentUser), $template, $udi, 'DIF Submitted');
+        $this->sendMailMsg(array($currentUser), $template, $udi, 'DIF has been approved');
     }
 
     /**
@@ -149,7 +149,7 @@ class DIFListener
         $udi = $event->getDIF()->getDataset()->getUdi();
         $drpms = $this->getDRPMs($event->getDIF());
         $template = $this->twig->loadTemplate('PelagosAppBundle:DIF:difUnlockReq.email.twig');
-        $this->sendMailMsg($drpms, $template, $udi, 'DIF Submitted');
+        $this->sendMailMsg($drpms, $template, $udi, 'DIF unlock requested');
     }
 
     /**
