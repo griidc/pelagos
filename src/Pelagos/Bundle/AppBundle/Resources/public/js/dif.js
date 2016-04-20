@@ -258,11 +258,10 @@ $(document).ready(function()
     $.ajaxSetup({
         error: function(x, t, m) {
             var message;
-            console.log('i run?');
             if (typeof m.message != 'undefined') {
                 message = m.message;}else{message = m;
             }
-            if (x.status == 400) {
+            if (x.status == 400 || x.status == 403) {
                 message = x.responseJSON.message;
             }
             console.log('Error in Ajax:'+t+', Message:'+message);
@@ -457,7 +456,7 @@ function createDIF(form)
         if (submit) {
             // It was the submit button
             return $.ajax({
-                url: '/pelagos-symfony/dev/mvde/api/difs/' + resourceId +'/submit',
+                url: url +'/submit',
                 type: 'PATCH',
                 datatype: 'json',
                 data: formData,
@@ -553,7 +552,7 @@ function updateDIF(form)
         if (submit) {
             // It was the submit button
             return $.ajax({
-                url: '/pelagos-symfony/dev/mvde/api/difs/' + resourceId +'/submit',
+                url: url +'/submit',
                 type: 'PATCH',
                 datatype: 'json',
                 data: formData,
@@ -676,10 +675,11 @@ function getNode(UDI, ID)
 
 function loadDIFS()
 {
+    var url = $("#difForm").attr('researchgroup');
     $("#btnSearch").button('disable');
     $.ajax({
         //url: '/pelagos-symfony/dev/mvde/api/research_groups?_permission=CAN_CREATE_DIF_FOR',
-        url: '/pelagos-symfony/dev/mvde/api/research_groups',
+        url: url,
         type: 'GET',
         datatype: 'json',
     }).done(function(json) {
@@ -792,8 +792,9 @@ function makeTree(Status, Person, ShowEmpty)
 
 function loadPOCs(researchGroup,ppoc,spoc)
 {
+    var url = $("#difForm").attr('personresearchgroup');
     $.ajax({
-        url: " /pelagos-symfony/dev/mvde/api/person_research_groups",
+        url: url,
         type: "GET",
         datatype: "JSON",
         data: {'researchGroup':researchGroup}
@@ -887,10 +888,12 @@ function fillForm(Form, UDI, ID)
     $.when(formChanged()).done(function() {
 
         showSpinner();
+        
+        var url = $("#difForm").attr('action');
 
         $.ajax({
             context: document.body,
-            url: "/pelagos-symfony/dev/mvde/api/difs",
+            url: url,
             type: "GET",
             datatype: "JSON",
             data: {'id':ID},
