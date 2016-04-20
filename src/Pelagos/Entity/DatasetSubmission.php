@@ -38,17 +38,17 @@ class DatasetSubmission extends Entity
     const FRIENDLY_NAME = 'Dataset Submission';
 
     /**
-     * A value for $restrictions that indicates the dataset has no restriction.
+     * Indicates the dataset has no restriction.
      */
     const RESTRICTION_NONE = 'None';
 
     /**
-     * A value for $restrictions that indicates the dataset requires author's approval to be downloaded.
+     * Indicates the dataset requires author's approval to be downloaded.
      */
     const RESTRICTION_APPROVAL = 'Approval';
 
     /**
-     * A value for $restrictions that indicates the dataset may only be downloaded by the submitter.
+     * Indicates the dataset may only be downloaded by the submitter.
      */
     const RESTRICTION_RESTRICTED = 'Restricted';
 
@@ -62,17 +62,17 @@ class DatasetSubmission extends Entity
     );
 
     /**
-     * A value for $datasetFileTransferType and $metadataFileTransferType that indicates transfer via direct upload.
+     * Indicates transfer via direct upload.
      */
     const TRANSFER_TYPE_UPLOAD = 'upload';
 
     /**
-     * A value for $datasetFileTransferType and $metadataFileTransferType that indicates transfer via SFTP or GridFTP.
+     * Indicates transfer via SFTP or GridFTP.
      */
     const TRANSFER_TYPE_SFTP = 'SFTP';
 
     /**
-     * A value for $datasetFileTransferType and $metadataFileTransferType that indicates transfer via HTTP or FTP pull.
+     * Indicates transfer via HTTP or FTP pull.
      */
     const TRANSFER_TYPE_HTTP = 'HTTP';
 
@@ -86,27 +86,27 @@ class DatasetSubmission extends Entity
     );
 
     /**
-     * A value for $datasetFileTransferStatus and $metadataFileTransferStatus that indicates the transfer has not yet been attempted.
+     * Indicates the transfer has not yet been attempted.
      */
     const TRANSFER_STATUS_NONE = 'None';
 
     /**
-     * A value for $datasetFileTransferStatus and $metadataFileTransferStatus that indicates the transfer has been completed.
+     * Indicates the transfer has been completed.
      */
     const TRANSFER_STATUS_COMPLETED = 'Completed';
 
     /**
-     * A value for $datasetFileTransferStatus and $metadataFileTransferStatus that indicates there was an error during transfer.
+     * Indicates there was an error during transfer.
      */
     const TRANSFER_STATUS_ERROR = 'Error';
 
     /**
-     * A value for $datasetFileTransferStatus and $metadataFileTransferStatus that indicates the URL needs review.
+     * Indicates the URL needs review.
      */
     const TRANSFER_STATUS_NEEDS_REVIEW = 'NeedsReview';
 
     /**
-     * A value for $datasetFileTransferStatus and $metadataFileTransferStatus that indicates that the dataset is remotely hosted.
+     * Indicates that the dataset is remotely hosted.
      */
     const TRANSFER_STATUS_REMOTELY_HOSTED = 'RemotelyHosted';
 
@@ -168,7 +168,7 @@ class DatasetSubmission extends Entity
      *
      * @var Dataset
      *
-     * @ORM\OneToOne(targetEntity="Dataset")
+     * @ORM\ManyToOne(targetEntity="Dataset")
      */
     protected $dataset;
 
@@ -272,7 +272,7 @@ class DatasetSubmission extends Entity
     protected $restrictions;
 
     /**
-     * DOI for this dataset.
+     * The DOI for this dataset.
      *
      * Legacy DB column: doi
      *
@@ -283,7 +283,7 @@ class DatasetSubmission extends Entity
     protected $doi;
 
     /**
-     * Dataset file transfer type.
+     * The dataset file transfer type.
      *
      * Legacy DB column: data_server_type
      *
@@ -296,7 +296,7 @@ class DatasetSubmission extends Entity
     protected $datasetFileTransferType;
 
     /**
-     * Dataset file URL.
+     * The dataset file URL.
      *
      * Legacy DB column: url_data
      *
@@ -307,7 +307,7 @@ class DatasetSubmission extends Entity
     protected $datasetFileUrl;
 
     /**
-     * Dataset file transfer status.
+     * The dataset file transfer status.
      *
      * Legacy DB column: dataset_download_status
      *
@@ -320,7 +320,7 @@ class DatasetSubmission extends Entity
     protected $datasetFileTransferStatus;
 
     /**
-     * Dataset file name.
+     * The dataset file name.
      *
      * Legacy DB column: dataset_filename
      *
@@ -331,7 +331,7 @@ class DatasetSubmission extends Entity
     protected $datasetFileName;
 
     /**
-     * Dataset file size.
+     * The dataset file size.
      *
      * Legacy DB column: dataset_download_size
      *
@@ -342,7 +342,7 @@ class DatasetSubmission extends Entity
     protected $datasetFileSize;
 
     /**
-     * Dataset file md5 hash.
+     * The dataset file md5 hash.
      *
      * Legacy DB column: fs_md5_hash
      *
@@ -353,7 +353,7 @@ class DatasetSubmission extends Entity
     protected $datasetFileMd5Hash;
 
     /**
-     * Dataset file sha1 hash.
+     * The dataset file sha1 hash.
      *
      * Legacy DB column: fs_sha1_hash
      *
@@ -364,7 +364,7 @@ class DatasetSubmission extends Entity
     protected $datasetFileSha1Hash;
 
     /**
-     * Dataset file sha256 hash.
+     * The dataset file sha256 hash.
      *
      * Legacy DB column: fs_sha256_hash
      *
@@ -430,7 +430,7 @@ class DatasetSubmission extends Entity
     protected $datasetFilePullSourceData;
 
     /**
-     * Metadata file transfer type for this dataset.
+     * The metadata file transfer type.
      *
      * Legacy DB column: metadata_server_type
      *
@@ -443,7 +443,7 @@ class DatasetSubmission extends Entity
     protected $metadataFileTransferType;
 
     /**
-     * Metadata file URL for this dataset.
+     * The metadata file URL.
      *
      * Legacy DB column: url_metadata
      *
@@ -454,7 +454,7 @@ class DatasetSubmission extends Entity
     protected $metadataFileUrl;
 
     /**
-     * Metadata file transfer status.
+     * The metadata file transfer status.
      *
      * Legacy DB column: metadata_dl_status
      *
@@ -467,7 +467,7 @@ class DatasetSubmission extends Entity
     protected $metadataFileTransferStatus;
 
     /**
-     * Metadata file name for this dataset.
+     * The metadata file name.
      *
      * Legacy DB column: dataset_metadata
      *
@@ -478,7 +478,7 @@ class DatasetSubmission extends Entity
     protected $metadataFileName;
 
     /**
-     * Metadata file sha256 hash for this dataset.
+     * The metadata file sha256 hash.
      *
      * Legacy DB column: metadata_file_hash
      *
@@ -489,7 +489,7 @@ class DatasetSubmission extends Entity
     protected $metadataFileSha256Hash;
 
     /**
-     * Status of the metadata for this dataset.
+     * Status of the metadata.
      *
      * Legacy DB column: metadata_status
      *
@@ -500,4 +500,372 @@ class DatasetSubmission extends Entity
      * @ORM\Column(nullable=true)
      */
     protected $metadataStatus;
+
+    /**
+     * Set the Dataset this Dataset Submission is attached to.
+     *
+     * @param Dataset $dataset The Dataset this Dataset Submission is attached to.
+     *
+     * @return void
+     */
+    public function setDataset(Dataset $dataset)
+    {
+        $this->dataset = $dataset;
+    }
+
+    /**
+     * Set the ID for this Dataset Submission.
+     *
+     * @param string $datasetSubmissionId The ID for this Dataset Submission.
+     *
+     * @return void
+     */
+    public function setDatasetSubmissionId($datasetSubmissionId)
+    {
+        $this->datasetSubmissionId = $datasetSubmissionId;
+    }
+
+    /**
+     * Set the title for this Dataset Submission.
+     *
+     * @param string $title The title for this Dataset Submission.
+     *
+     * @Assert\NotBlank(
+     *     message="Title is required"
+     * )
+     *
+     * @return void
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
+    }
+
+    /**
+     * Set the abstract for this Dataset Submission.
+     *
+     * @param string $abstract The abstract for this Dataset Submission.
+     *
+     * @Assert\NotBlank(
+     *     message="Abstract is required"
+     * )
+     *
+     * @return void
+     */
+    public function setAbstract($abstract)
+    {
+        $this->abstract = $abstract;
+    }
+
+    /**
+     * Set the author(s) for this Dataset Submission.
+     *
+     * @param string $authors The author(s) for this Dataset Submission.
+     *
+     * @Assert\NotBlank(
+     *     message="At least one author is required"
+     * )
+     *
+     * @return void
+     */
+    public function setAuthors($authors)
+    {
+        $this->authors = $authors;
+    }
+
+    /**
+     * Set the Point of Contact Name for this Dataset Submission.
+     *
+     * @param string $pointOfContactName The Point of Contact Name for this Dataset Submission.
+     *
+     * @Assert\NotBlank(
+     *     message="Point of Contact Name is required"
+     * )
+     *
+     * @return void
+     */
+    public function setPointOfContactName($pointOfContactName)
+    {
+        $this->pointOfContactName = $pointOfContactName;
+    }
+
+    /**
+     * Set the Point of Contact E-Mail for this Dataset Submission.
+     *
+     * @param string $pointOfContactEmail The Point of Contact E-Mail for this Dataset Submission.
+     *
+     * @Assert\NotBlank(
+     *     message="Point of Contact E-Mail is required"
+     * )
+     *
+     * @return void
+     */
+    public function setPointOfContactEmail($pointOfContactEmail)
+    {
+        $this->pointOfContactEmail = $pointOfContactEmail;
+    }
+
+    /**
+     * Set whether the dataset has any restrictions.
+     *
+     * @param string $restrictions Whether the dataset has any restrictions.
+     *
+     * @see RESTRICTIONS class constant for valid values.
+     *
+     * @return void
+     */
+    public function setRestrictions($restrictions)
+    {
+        $this->restrictions = $restrictions;
+    }
+
+    /**
+     * Set the DOI for this dataset.
+     *
+     * @param string $doi The DOI for this dataset.
+     *
+     * @return void
+     */
+    public function setDoi($doi)
+    {
+        $this->doi = $doi;
+    }
+
+    /**
+     * Set the dataset file transfer type.
+     *
+     * @param string $datasetFileTransferType The dataset file transfer type.
+     *
+     * @see TRANSFER_TYPES class constant for valid values.
+     *
+     * @return void
+     */
+    public function setDatasetFileTransferType($datasetFileTransferType)
+    {
+        $this->datasetFileTransferType = $datasetFileTransferType;
+    }
+
+    /**
+     * Set the dataset file URL.
+     *
+     * @param string $datasetFileUrl The dataset file URL.
+     *
+     * @return void
+     */
+    public function setDatasetFileUrl($datasetFileUrl)
+    {
+        $this->datasetFileUrl = $datasetFileUrl;
+    }
+
+    /**
+     * Set the dataset file transfer status.
+     *
+     * @param string $datasetFileTransferStatus The dataset file transfer status.
+     *
+     * @see TRANSFER_STATUSES class constant for valid values.
+     *
+     * @return void
+     */
+    public function setDatasetFileTransferStatus($datasetFileTransferStatus)
+    {
+        $this->datasetFileTransferStatus = $datasetFileTransferStatus;
+    }
+
+    /**
+     * Set the dataset file name.
+     *
+     * @param string $datasetFileName The dataset file name.
+     *
+     * @return void
+     */
+    public function setDatasetFileName($datasetFileName)
+    {
+        $this->datasetFileName = $datasetFileName;
+    }
+
+    /**
+     * Set the dataset file size.
+     *
+     * @param integer $datasetFileSize The dataset file size.
+     *
+     * @return void
+     */
+    public function setDatasetFileSize($datasetFileSize)
+    {
+        $this->datasetFileSize = $datasetFileSize;
+    }
+
+    /**
+     * Set the dataset file md5 hash.
+     *
+     * @param string $datasetFileMd5Hash The dataset file md5 hash.
+     *
+     * @return void
+     */
+    public function setDatasetFileMd5Hash($datasetFileMd5Hash)
+    {
+        $this->datasetFileMd5Hash = $datasetFileMd5Hash;
+    }
+
+    /**
+     * Set the dataset file sha1 hash.
+     *
+     * @param string $datasetFileSha1Hash The dataset file sha1 hash.
+     *
+     * @return void
+     */
+    public function setDatasetFileSha1Hash($datasetFileSha1Hash)
+    {
+        $this->datasetFileSha1Hash = $datasetFileSha1Hash;
+    }
+
+    /**
+     * Set the dataset file sha256 hash.
+     *
+     * @param string $datasetFileSha256Hash The dataset file sha256 hash.
+     *
+     * @return void
+     */
+    public function setDatasetFileSha256Hash($datasetFileSha256Hash)
+    {
+        $this->datasetFileSha256Hash = $datasetFileSha256Hash;
+    }
+
+    /**
+     * Set the date after which the dataset file will be available for pull.
+     *
+     * @param \DateTime $datasetFileAvailabilityDate The date after which the dataset file will be available for pull.
+     *
+     * @return void
+     */
+    public function setDatasetFileAvailabilityDate(\DateTime $datasetFileAvailabilityDate)
+    {
+        $this->datasetFileAvailabilityDate = $datasetFileAvailabilityDate;
+    }
+
+    /**
+     * Set whether the dataset should only be pulled at certain times.
+     *
+     * @param boolean $datasetFilePullCertainTimesOnly Whether the dataset should only be pulled at certain times.
+     *
+     * @return void
+     */
+    public function setDatasetFilePullCertainTimesOnly($datasetFilePullCertainTimesOnly)
+    {
+        $this->datasetFilePullCertainTimesOnly = $datasetFilePullCertainTimesOnly;
+    }
+
+    /**
+     * Set the time of day to start pulling this dataset.
+     *
+     * @param \DateTime $datasetFilePullStartTime The time of day to start pulling this dataset.
+     *
+     * @return void
+     */
+    public function setDatasetFilePullStartTime(\DateTime $datasetFilePullStartTime)
+    {
+        $this->datasetFilePullStartTime = $datasetFilePullStartTime;
+    }
+
+    /**
+     * Set the Days this dataset can be pulled.
+     *
+     * @param string $datasetFilePullDays The days this dataset can be pulled.
+     *
+     * @return void
+     */
+    public function setDatasetFilePullDays($datasetFilePullDays)
+    {
+        $this->datasetFilePullDays = $datasetFilePullDays;
+    }
+
+    /**
+     * Set whether to pull the source data.
+     *
+     * @param boolean $datasetFilePullSourceData Whether to pull the source data.
+     *
+     * @return void
+     */
+    public function setDatasetFilePullSourceData($datasetFilePullSourceData)
+    {
+        $this->datasetFilePullSourceData = $datasetFilePullSourceData;
+    }
+
+    /**
+     * Set the metadata file transfer type.
+     *
+     * @param string $metadataFileTransferType The metadata file transfer type.
+     *
+     * @see TRANSFER_TYPES class constant for valid values.
+     *
+     * @return void
+     */
+    public function setMetadataFileTransferType($metadataFileTransferType)
+    {
+        $this->metadataFileTransferType = $metadataFileTransferType;
+    }
+
+    /**
+     * Set the metadata file URL.
+     *
+     * @param string $metadataFileUrl The metadata file URL.
+     *
+     * @return void
+     */
+    public function setMetadataFileUrl($metadataFileUrl)
+    {
+        $this->metadataFileUrl = $metadataFileUrl;
+    }
+
+    /**
+     * Set the metadata file transfer status.
+     *
+     * @param string $metadataFileTransferStatus The metadata file transfer status.
+     *
+     * @see TRANSFER_STATUSES class constant for valid values.
+     *
+     * @return void
+     */
+    public function setMetadataFileTransferStatus($metadataFileTransferStatus)
+    {
+        $this->metadataFileTransferStatus = $metadataFileTransferStatus;
+    }
+
+    /**
+     * Set the metadata file name.
+     *
+     * @param string $metadataFileName The metadata file name.
+     *
+     * @return void
+     */
+    public function setMetadataFileName($metadataFileName)
+    {
+        $this->metadataFileName = $metadataFileName;
+    }
+
+    /**
+     * Set the metadata file sha256 hash.
+     *
+     * @param string $metadataFileSha256Hash The metadata file sha256 hash.
+     *
+     * @return void
+     */
+    public function setMetadataFileSha256Hash($metadataFileSha256Hash)
+    {
+        $this->metadataFileSha256Hash = $metadataFileSha256Hash;
+    }
+
+    /**
+     * Set the status of the metadata.
+     *
+     * @param string $metadataStatus The status of the metadata.
+     *
+     * @see METADATA_STATUSES class constant for valid values.
+     *
+     * @return void
+     */
+    public function setMetadataStatus($metadataStatus)
+    {
+        $this->metadataStatus = $metadataStatus;
+    }
 }
