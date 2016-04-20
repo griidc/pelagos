@@ -3,6 +3,7 @@ namespace Pelagos\Event;
 
 use Pelagos\Entity\Account;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
 
 class DIFListener
 {
@@ -10,12 +11,14 @@ class DIFListener
     protected $mailer;
     protected $currentUser;
     protected $tokenStorage;
+    protected $from;
 
-    public function __construct(\Twig_Environment $twig, \Swift_Mailer $mailer, TokenStorage $tokenStorage)
+    public function __construct(\Twig_Environment $twig, \Swift_Mailer $mailer, TokenStorage $tokenStorage, $fromAddress, $fromName)
     {
         $this->twig = $twig;
         $this->mailer = $mailer;
         $this->tokenStorage = $tokenStorage;
+        $this->from = array($fromAddress => $fromName);
     }
 
     public function onSubmitted(DIFEvent $event)
@@ -32,15 +35,23 @@ class DIFListener
         $this->sendMailMsg(array($currentUser), $template, 'R9.x999.999.9999', 'DIF Submitted');
 
     }
+
     public function onApproved(DIFEvent $event)
     {
         $dif = $event->getDIF();
     }
+
     public function onRejected(DIFEvent $event)
     {
         $dif = $event->getDIF();
     }
+
     public function onUnlocked(DIFEvent $event)
+    {
+        $dif = $event->getDIF();
+    }
+
+    public function onUnlockRequested(DIFEvent $event)
     {
         $dif = $event->getDIF();
     }
@@ -52,7 +63,7 @@ class DIFListener
             $mailData['person'] = $person;
             $message = \Swift_Message::newInstance()
                 ->setSubject($subject)
-                ->setFrom('griidc@gomri.org')
+                ->setFrom($this->from)
                 ->setTo($person->getEmailAddress())
                 ->setBody($twigTemplate->renderBlock('body_html', $mailData), 'text/html')
                 ->addPart($twigTemplate->renderBlock('body_text', $mailData), 'text/plain');
