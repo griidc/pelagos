@@ -678,8 +678,7 @@ function loadDIFS()
     var url = $("#difForm").attr('researchgroup');
     $("#btnSearch").button('disable');
     $.ajax({
-        //url: '/pelagos-symfony/dev/mvde/api/research_groups?_permission=CAN_CREATE_DIF_FOR',
-        url: url,
+        url: url +'?_permission=CAN_CREATE_DIF_FOR',
         type: 'GET',
         datatype: 'json',
     }).done(function(json) {
