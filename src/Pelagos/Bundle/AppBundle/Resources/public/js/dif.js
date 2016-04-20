@@ -3,9 +3,16 @@ var $ = jQuery.noConflict();
 var spinner;
 var target;
 var formHash;
-var personid;
 var difValidator;
 var difList = [];
+var imgWarning;
+var imgInfo;
+var imgCross;
+var imgTick;
+var imgError;
+var imgFolder;
+var imgFolderGray;
+var imgThrobber;
 
 $(document).ready(function()
 {
@@ -15,32 +22,18 @@ $(document).ready(function()
     $('label').next('input[required],textarea[required],select[required]').prev().addClass('emRequired');
 
     $('[name="primaryPointOfContact"],[name="secondaryPointOfContact"]').prop('disabled',true);
-
-    $.ajaxSetup({
-        error: function(x, t, m) {
-            var message;
-            if (typeof m.message != 'undefined')
-            {message = m.message;}else{message = m;};
-            console.log('Error in Ajax:'+t+' Message:'+message);
-            hidespinner();
-            $(Message).dialog({
-                height: "auto",
-                width: "auto",
-                title: "Ajax Error",
-                resizable: false,
-                modal: true,
-                buttons: {
-                    OK: function() {
-                        $(this).dialog( "close" );
-                    }
-                }
-            });
-        }
-    });
+    
+    // Getting Assetic Image paths
+    imgWarning = $("#imgwarning").attr("src");
+    imgInfo = $(".info").attr("src");
+    imgCross = $("#imgcross").attr("src");
+    imgTick = $("#imgtick").attr("src");
+    imgError = $("#imgerror").attr("src");
+    imgFolder = $("#imgfolder").attr("src");
+    imgFolderGray = $("#imgfoldergray").attr("src");
+    imgThrobber = $("#imgthrobber").attr("src");
 
     initSpinner();
-
-    personid = $('#personid').val();
 
     // Load a DIF if the ID is passed in.
     $(document).one("difReady", function()
@@ -124,12 +117,13 @@ $(document).ready(function()
 
     $('#btnApprove').button().click(function() {
         $('#btn').val($(this).val());
-        $('#difForm').submit();
+        //$('#difForm').submit();
+        difStatus($('#difForm [name="id"]').val(), 'approve');
     });
 
     $('#btnReject').button().click(function() {
         $('#btn').val($(this).val());
-        $('#difForm').submit();
+        difStatus($('#difForm [name="id"]').val(), 'reject');
     });
 
     $('#btnUpdate').button().click(function() {
@@ -139,12 +133,12 @@ $(document).ready(function()
 
     $('#btnUnlock').button().click(function() {
         $('#btn').val($(this).val())
-        $('#difForm').submit();
+        difStatus($('#difForm [name="id"]').val(), 'unlock');
     });
 
     $('#btnReqUnlock').button().click(function() {
         $('#btn').val($(this).val())
-        $('#difForm').submit();
+        difStatus($('#difForm [name="id"]').val(), 'request-unlock');
     });
 
     $('#btnSearch').button().click(function () {
@@ -155,7 +149,6 @@ $(document).ready(function()
         loadPOCs($(this).val());
     });
  
-    //loadTasks();
     loadDIFS();
 
     jQuery.validator.addMethod("trueISODate", function(value, element) {
@@ -198,7 +191,6 @@ $(document).ready(function()
 
     $("#fltReset").button().click(function (){
         $("#fltStatus").val('');
-        $("#acResearcher").val('');
         $("#fltResearcher").val('');
         $("#fltResults").val('');
 
@@ -220,15 +212,15 @@ $(document).ready(function()
         {
             if ($(this).val() == '0')
             {
-                $("#statustext").html('<fieldset><img src="/images/icons/cross.png">&nbsp;DIF saved but not yet submitted</fieldset>');
+                $("#statustext").html('<fieldset><img src="' + imgCross +'">&nbsp;DIF saved but not yet submitted</fieldset>');
             }
             else if ($(this).val() == '1')
             {
-                $("#statustext").html('<fieldset><img src="/images/icons/error.png">&nbsp;DIF submitted for review (locked)</fieldset>');
+                $("#statustext").html('<fieldset><img src="' + imgError +'">&nbsp;DIF submitted for review (locked)</fieldset>');
             }
             else if ($(this).val() == '2')
             {
-                $("#statustext").html('<fieldset><img src="/images/icons/tick.png">&nbsp;DIF approved (locked)</fieldset>');
+                $("#statustext").html('<fieldset><img src="' + imgTick +'">&nbsp;DIF approved (locked)</fieldset>');
             }
             $("#researchGroup").prop('disabled', true);
             formHash = $("#difForm").serialize();
@@ -262,7 +254,77 @@ $(document).ready(function()
         if ($('#spatialExtentGeometry').val()!='')
         { geowizard.haveSpatial(false); }
     });
+    
+    $.ajaxSetup({
+        error: function(x, t, m) {
+            var message;
+            console.log('i run?');
+            if (typeof m.message != 'undefined') {
+                message = m.message;}else{message = m;
+            }
+            if (x.status == 400) {
+                message = x.responseJSON.message;
+            }
+            console.log('Error in Ajax:'+t+', Message:'+message);
+            $('#spinner').hide();
+            $('<div>'+message+'</div>').dialog({
+                autoOpen: true,
+                height: "auto",
+                resizable: false,
+                minWidth: 300,
+                title: "Error",
+                modal: true,
+                buttons: {
+                    OK: function() {
+                        $(this).dialog( "close" );
+                    }
+                }
+            });
+        }
+    });
 });
+
+function difStatus(id, status) {
+    showSpinner();
+    
+    var url = $('#difForm').attr('action') + '/' + id + '/' + status;
+    
+    formHash = $('#difForm').serialize();
+    
+    message = '<div><img src="' + imgInfo + '"><p>The application with DIF ID: ' 
+              + $('#difForm [name="udi"]').val() + ' was successfully '
+              + status + 'ed!'
+              + '</p></div>';
+    msgtitle = 'DIF ' + status + 'ed';
+
+    $.ajax({
+        url: url,
+        type: 'PATCH',
+        success: function(json, textStatus, jqXHR) {
+            hideSpinner();
+            formReset(true);
+            loadDIFS();
+            
+            $("<div>"+message+"</div>").dialog({
+                autoOpen: true,
+                resizable: false,
+                minWidth: 300,
+                height: "auto",
+                width: "auto",
+                modal: true,
+                title: msgtitle,
+                buttons: {
+                    OK: function() {
+                        $(this).dialog( "close" );
+                        scrollToTop();
+                        treeFilter();
+                        return $.Deferred().resolve();
+                    }
+                }
+            });   
+        }
+    })
+}
 
 function getQueryParams(qs) {
     qs = qs.split("+").join(" ");
@@ -414,10 +476,10 @@ function createDIF(form)
         // Then show the dialog according the how it was saved.
         if (status == 0) {
             var title = "New DIF Created";
-            var message = '<div><img src="/images/icons/info32.png"><p>You have saved a DIF. This DIF has been given the ID: ' + udi +'<br>In order to submit your dataset to GRIIDC you must return to this page and submit the DIF for review and approval.</p></div>';
+            var message = '<div><img src="' + $('.info').attr('src') + '"><p>You have saved a DIF. This DIF has been given the ID: ' + udi +'<br>In order to submit your dataset to GRIIDC you must return to this page and submit the DIF for review and approval.</p></div>';
         } else {
             var title = 'New DIF Submitted';
-            var message = '<div><img src="/images/icons/info32.png">' +
+            var message = '<div><img src="' + $('.info').attr('src') + '">' +
             '<p>Congratulations! You have successfully submitted a DIF to GRIIDC. The UDI for this dataset is '+ udi + "." +
             '<br>The DIF will now be reviewed by GRIIDC staff and is locked to prevent editing. To make changes' +
             '<br>to your DIF, please email GRIIDC at griidc@gomri.org with the UDI for your dataset.' +
@@ -510,11 +572,11 @@ function updateDIF(form)
         // Then show the dialog according the how it was saved.
         if (status == 0) {
             var title = "DIF Submitted";
-            var message = '<div><img src="/images/icons/info32.png"><p>Thank you for saving DIF with ID:  ' + udi 
+            var message = '<div><img src="' + $('.info').attr('src') + '"><p>Thank you for saving DIF with ID:  ' + udi 
             + '.<br>Before registering this dataset you must return to this page and submit the dataset information form.</p></div>';
         } else {
             var title = 'DIF Submitted';
-            var message = '<div><img src="/images/icons/info32.png">' +
+            var message = '<div><img ssrc="' + $('.info').attr('src') + '">' +
             '<p>Congratulations! You have successfully submitted a DIF to GRIIDC. The UDI for this dataset is '+ udi + "." +
             '<br>The DIF will now be reviewed by GRIIDC staff and is locked to prevent editing. To make changes' +
             '<br>to your DIF, please email GRIIDC at griidc@gomri.org with the UDI for your dataset.' +
@@ -523,6 +585,7 @@ function updateDIF(form)
 
         hideSpinner();
         formReset(true);
+        loadDIFS();
 
         $("<div>"+message+"</div>").dialog({
             autoOpen: true,
@@ -561,16 +624,13 @@ function formReset(dontScrollToTop)
         if (!dontScrollToTop){scrollToTop();}
         difValidator.resetForm();
     });
-
 }
 
 function treeFilter()
 {
-    console.log('running tree filter');
-    var difTreeHTML = '<a class="jstree-anchor" href="#"><img src="/images/icons/throbber.gif"> Loading...</a>';
+    var difTreeHTML = '<a class="jstree-anchor" href="#"><img src="' + imgThrobber + '"> Loading...</a>';
     $('#diftree').html(difTreeHTML);
     $('#diftree').jstree("destroy");
-    //$('#acResearcher').val('');
     makeTree($("#fltStatus").val(),$("#fltResearcher").val(),$("[name='showempty']:checked").val())
 }
 
@@ -600,10 +660,14 @@ function initSpinner()
 }
 
 function showSpinner()
-{$('#spinner').show();}
+{
+    $('#spinner').show();
+}
 
 function hideSpinner()
-{$('#spinner').hide();}
+{
+    $('#spinner').hide();
+}
 
 function getNode(UDI, ID)
 {
@@ -612,9 +676,7 @@ function getNode(UDI, ID)
 
 function loadDIFS()
 {
-    console.log('loading difs');
     $("#btnSearch").button('disable');
-    if (personid > 0 && !Person) {Person = personid;}
     $.ajax({
         //url: '/pelagos-symfony/dev/mvde/api/research_groups?_permission=CAN_CREATE_DIF_FOR',
         url: '/pelagos-symfony/dev/mvde/api/research_groups',
@@ -649,16 +711,16 @@ function makeTree(Status, Person, ShowEmpty)
             switch (dif.status)
             {
                 case 0:
-                    var icon = $('#imgcross').attr('src');
+                    var icon = imgCross;
                     break;
                 case 1:
-                    var icon = $('#imgerror').attr('src');
+                    var icon = imgError;
                     break;
                 case 2:
-                    var icon =  $('#imgtick').attr('src');
+                    var icon =  imgTick;
                     break;
                 default:
-                    var icon = $('#imgcross').attr('src');
+                    var icon = imgCross;
                     break;
             }
             var difFunction = "getNode('" + dif.udi + "'," + dif.id + ");";
@@ -682,9 +744,9 @@ function makeTree(Status, Person, ShowEmpty)
         });
         
         if ($.isEmptyObject(difs) === true) {
-            var folderIcon = $("#imgfoldergray").attr("src");
+            var folderIcon = imgFolderGray;
         } else {
-            var folderIcon = $("#imgfolder").attr("src");
+            var folderIcon = imgFolder;
         }
         
         var researchGroup = {
@@ -725,30 +787,6 @@ function makeTree(Status, Person, ShowEmpty)
         var searchValue = $('#fltResults').val();
         $('#diftree').jstree(true).search(searchValue);
         $("#btnSearch").button('enable');
-    })
-    ;
-}
-
-function loadTasks()
-{
-    $.ajax({
-        url: " /pelagos-symfony/dev/mvde/api/research_groups",
-        datatype: 'JSON',
-        type: 'GET',
-        data: {'function':'loadTasks','person':personid}
-        }).done(function(json) {
-        //var json = $.parseJSON(html);
-        var element = $('[name="task"]');
-        $.each(json, function(id,task) {
-            var o = new Option(task.Title, task.ID);
-            $(o).attr("task",task.taskID);
-            $(o).attr("project",task.projectID);
-            $(o).attr("fund",task.fundSrcID);
-            // element.append(o);
-            element.append(o);
-        });
-        element.prop('disabled',false);
-        $(document).trigger("difReady");
     });
 }
 
@@ -762,11 +800,12 @@ function loadPOCs(researchGroup,ppoc,spoc)
     }).done(function(json) {
             if (json.length>0)
             {
-                //json.sort(SortByContact);
+                
                 var selectedID = 0;
                 var element = $('[name="primaryPointOfContact"],[name="secondaryPointOfContact"]');
                 element.find('option').remove().end().append('<option value="">[PLEASE SELECT A CONTACT]</option>').val('');
                 $.each(json, function(id, personResearchGroup) {
+                    json.sort(personResearchGroup);
                     element.append(new Option(
                         personResearchGroup.person.lastName
                             + ', '
@@ -806,7 +845,7 @@ function loadPOCs(researchGroup,ppoc,spoc)
 }
 
 function SortByContact(x,y) {
-    return ((x.Contact.toLowerCase() == y.Contact.toLowerCase()) ? 0 : ((x.Contact.toLowerCase() > y.Contact.toLowerCase()) ? 1 : -1 ));
+    return ((x.person.lastName.toLowerCase() == y.person.lastName.toLowerCase()) ? 0 : ((x.person.lastName.toLowerCase() > y.person.lastName.toLowerCase()) ? 1 : -1 ));
 }
 
 function formChanged()
@@ -815,7 +854,7 @@ function formChanged()
         var self = this;
         if (formHash != $("#difForm").serialize() && typeof formHash !='undefined')
         {
-            $('<div><img src="/images/icons/warning.png"><p>You will lose all changes. Do you wish to continue?</p></div>').dialog({
+            $('<div><img src="' + imgWarning +'"><p>You will lose all changes. Do you wish to continue?</p></div>').dialog({
                 title: "Warning!",
                 resizable: false,
                 modal: true,

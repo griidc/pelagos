@@ -9,12 +9,14 @@
     <input type="hidden" id="submitter" name="submitter">
     <input type="hidden" id="personid" value="this is the logged in person id">
     {% if is_granted('ROLE_DATA_REPOSITORY_MANAGER') %}
-    <input type="hidden" id="isadmin" name="isadmin" value="true">
+    <input type="hidden" id="isadmin" name="isadmin" value="{{ is_granted('ROLE_DATA_REPOSITORY_MANAGER') }}">
     {% endif %}
     <div id="udidiv" style="display:none;">
         <h1>Unique Dataset Identifer (UDI):<span class="title" id="udilabel"></span></h1>
     </div>
-
+    {% image '@PelagosAppBundle/Resources/public/images/warning.png' %}
+    <div id="imgwarning" src="{{ asset_url }}">
+    {% endimage %}
     <div class="frmSection">
         <fieldset>
             <span class="helpSection">
