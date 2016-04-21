@@ -77,7 +77,7 @@ class DIFType extends AbstractType
                     'rows' => '2',
                     'maxsize' => 200,
                 ),
-                'label' => 'Title:',
+                'label' => 'Dataset Title:',
                 'required' => true,
             ))
             ->add('primaryPointOfContact', EntityType::class, array(
@@ -186,6 +186,9 @@ class DIFType extends AbstractType
                 'html5' => false,
                 'format' => 'yyyy-MM-dd',
                 'required' => false,
+                'attr' => array(
+                    'placeholder' => 'yyyy-mm-dd'
+                ),
             ))
             ->add('estimatedEndDate', DateType::class, array(
                 'label' => 'End Date:',
@@ -194,6 +197,9 @@ class DIFType extends AbstractType
                 'html5' => false,
                 'format' => 'yyyy-MM-dd',
                 'required' => false,
+                'attr' => array(
+                    'placeholder' => 'yyyy-mm-dd'
+                ),
             ))
             ->add('spatialExtentDescription', TextType::class, array(
                 'label' => 'Description:',
@@ -271,6 +277,7 @@ class DIFType extends AbstractType
             'choice_label' => 'name',
             'placeholder' => '[PLEASE SELECT A PROJECT]',
             'required' => true,
+            'label' => 'Project Title:',
         ));
     }
 
