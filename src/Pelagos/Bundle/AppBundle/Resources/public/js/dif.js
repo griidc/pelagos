@@ -138,7 +138,7 @@ $(document).ready(function()
         loadPOCs($(this).val());
     });
 
-    loadDIFS();
+    loadDIFS("", null, true);
 
     jQuery.validator.addMethod("trueISODate", function(value, element) {
         var regPattern = /^\d{4}-\d{1,2}-\d{1,2}$/
@@ -700,7 +700,7 @@ function loadDIFS(Status, Person, ShowEmpty)
         type: "GET",
         datatype: "json",
     }).done(function(json) {
-        makeTree("", null, true, json);
+        makeTree(Status, Person, ShowEmpty, json);
     });
 }
 
