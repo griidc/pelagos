@@ -86,7 +86,7 @@ class DIFListener
 
         // email DRPM(s)
         $drpms = $this->getDRPMs($event->getDIF());
-        $template = $this->twig->loadTemplate('PelagosAppBundle:DIF:submit.drpm.email.twig');
+        $template = $this->twig->loadTemplate('PelagosAppBundle:DIF:reviewDIF.email.twig');
         $this->sendMailMsg($drpms, $template, $udi);
 
         // email User
