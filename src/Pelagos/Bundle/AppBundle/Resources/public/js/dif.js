@@ -4,7 +4,6 @@ var spinner;
 var target;
 var formHash;
 var difValidator;
-var difList = [];
 var imgWarning;
 var imgInfo;
 var imgCross;
@@ -302,7 +301,7 @@ function difStatus(id, status) {
         success: function(json, textStatus, jqXHR) {
             hideSpinner();
             formReset(true);
-            loadDIFS();
+            //loadDIFS();
 
             $("<div>"+message+"</div>").dialog({
                 autoOpen: true,
@@ -456,7 +455,7 @@ function createDIF(form)
         if (submit) {
             // It was the submit button
             return $.ajax({
-                url: url +"/submit",
+                url: resourceLocation +"/submit",
                 type: "PATCH",
                 datatype: "json",
                 data: formData,
@@ -487,7 +486,7 @@ function createDIF(form)
 
         hideSpinner();
         formReset(true);
-        loadDIFS();
+        //loadDIFS();
 
         $("<div>"+message+"</div>").dialog({
             autoOpen: true,
@@ -584,7 +583,7 @@ function updateDIF(form)
 
         hideSpinner();
         formReset(true);
-        loadDIFS();
+        //loadDIFS();
 
         $("<div>"+message+"</div>").dialog({
             autoOpen: true,
@@ -630,7 +629,7 @@ function treeFilter()
     var difTreeHTML = '<a class="jstree-anchor" href="#"><img src="' + imgThrobber + '"> Loading...</a>';
     $("#diftree").html(difTreeHTML);
     $("#diftree").jstree("destroy");
-    makeTree($("#fltStatus").val(),$("#fltResearcher").val(),$("[name='showempty']:checked").val())
+    loadDIFS($("#fltStatus").val(),$("#fltResearcher").val(),$("[name='showempty']:checked").val())
 }
 
 function initSpinner()
@@ -673,7 +672,7 @@ function getNode(UDI, ID)
     fillForm($("#difForm"),UDI,ID);
 }
 
-function loadDIFS()
+function loadDIFS(Status, Person, ShowEmpty)
 {
     var url = $("#difForm").attr("researchgroup");
     $("#btnSearch").button("disable");
@@ -682,12 +681,11 @@ function loadDIFS()
         type: "GET",
         datatype: "json",
     }).done(function(json) {
-        difList = json;
-        makeTree("", null, true);
+        makeTree("", null, true, json);
     });
 }
 
-function makeTree(Status, Person, ShowEmpty)
+function makeTree(Status, Person, ShowEmpty, json)
 {
     var treeData = [];
 
@@ -697,7 +695,7 @@ function makeTree(Status, Person, ShowEmpty)
        ShowEmpty = true;
     }
 
-    $.each(difList, function(index, researchGroup) {
+    $.each(json, function(index, researchGroup) {
         var difs = [];
 
         // researchGroup.difs.sort(
