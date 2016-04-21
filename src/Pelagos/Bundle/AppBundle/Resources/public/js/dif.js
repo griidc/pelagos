@@ -289,11 +289,30 @@ function difStatus(id, status) {
 
     formHash = $("#difForm").serialize();
 
-    message = '<div><img src="' + imgInfo + '"><p>The application with DIF ID: '
-              + $('#difForm [name="udi"]').val() + " was successfully "
-              + status + "ed!"
-              + "</p></div>";
-    msgtitle = "DIF " + status + "ed";
+    udi = $('#difForm [name="udi"]').val();
+
+    var message = '<div><img src="' + imgInfo + '"><p>';
+
+    switch (status) {
+        case 'approve':
+            var msgtext  = "The application with DIF ID: " + udi + " was successfully approved!";
+            var msgtitle = "DIF Approved";
+            break;
+        case 'reject':
+            var msgtext  = "The application with DIF ID: " + udi + " was successfully rejected!";
+            var msgtitle = "DIF Rejected";
+            break;
+        case 'unlock':
+            var msgtext  = "Successfully unlocked DIF with ID: " + udi + ".";
+            var msgtitle = "DIF Unlocked";
+            break;
+        case 'request-unlock':
+            var msgtext  = "Your unlock request has been submitted for ID: " + udi + ".<br>Your unlock request will be reviewed by GRIIDC staff.<br>You will receive an e-mail when the DIF is unlocked.";
+            var msgtitle = "DIF Unlock Request Submitted";
+            break;
+    }
+
+    message = + msgtext + "</p></div>";
 
     $.ajax({
         url: url,
@@ -301,7 +320,6 @@ function difStatus(id, status) {
         success: function(json, textStatus, jqXHR) {
             hideSpinner();
             formReset(true);
-            //loadDIFS();
 
             $("<div>"+message+"</div>").dialog({
                 autoOpen: true,
