@@ -592,7 +592,7 @@ function updateDIF(form)
             + ".<br>Before registering this dataset you must return to this page and submit the dataset information form.</p></div>";
         } else {
             var title = "DIF Submitted";
-            var message = '<div><img ssrc="' + imgInfo + '">' +
+            var message = '<div><img src="' + imgInfo + '">' +
             "<p>Congratulations! You have successfully submitted a DIF to GRIIDC. The UDI for this dataset is " + udi + "." +
             "<br>The DIF will now be reviewed by GRIIDC staff and is locked to prevent editing. To make changes" +
             "<br>to your DIF, please email GRIIDC at griidc@gomri.org with the UDI for your dataset." +
