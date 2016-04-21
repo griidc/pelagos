@@ -245,7 +245,7 @@ $(document).ready(function()
     geowizard = new MapWizard({"divSmallMap":"difMap","divSpatial":"spatial","divNonSpatial":"nonspatial","divSpatialWizard":"spatwizbtn","gmlField":"spatialExtentGeometry","descField":"spatialExtentDescription","spatialFunction":""});
 
     $("#spatialExtentGeometry").change(function(){
-        if ($("#spatialdesc").val()!="" && $("#spatialExtentGeometry").val()=="")
+        if ($("#spatialExtentDescription").val()!="" && $("#spatialExtentGeometry").val()=="")
         { geowizard.haveSpatial(true);}
         else
         { geowizard.haveSpatial(false); }
@@ -312,7 +312,7 @@ function difStatus(id, status) {
             break;
     }
 
-    message = + msgtext + "</p></div>";
+    message += msgtext + "</p></div>";
 
     $.ajax({
         url: url,
