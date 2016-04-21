@@ -34,16 +34,6 @@ $(document).ready(function()
 
     initSpinner();
 
-    // Load a DIF if the ID is passed in.
-    $(document).one("difReady", function()
-    {
-        var $_GET = getQueryParams(document.location.search);
-        if (typeof $_GET["id"] != "undefined")
-        {
-            getNode($_GET["id"]);
-        }
-    });
-
     //Setup qTip
     $.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
         position: {
@@ -280,6 +270,17 @@ $(document).ready(function()
             });
         }
     });
+
+    var $_GET = getQueryParams(document.location.search);
+    if (typeof $_GET["id"] != "undefined") {
+        var udi = $_GET["id"];
+        var url =  $("#difForm").attr("dataset") + "?udi=" + udi;
+        $.get(url, function(data) {
+            if (data.length == 1) {
+                getNode(udi, data[0].dif.id);
+            }
+        });
+    }
 });
 
 function difStatus(id, status) {
