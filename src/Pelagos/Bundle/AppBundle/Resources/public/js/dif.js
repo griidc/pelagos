@@ -707,6 +707,8 @@ function loadDIFS(Status, Person, ShowEmpty)
 function makeTree(Status, Person, ShowEmpty, json)
 {
     var treeData = [];
+    
+    debugger;
 
     if (ShowEmpty == "0") {
         ShowEmpty = false;
@@ -750,7 +752,7 @@ function makeTree(Status, Person, ShowEmpty, json)
                 a_attr      : {"onclick": difFunction}
             };
 
-            if (Status != "") {
+            if (Status != "" && Status != undefined) {
                 if (Status == dif.status) {
                     difs.push(newdif)
                 }
