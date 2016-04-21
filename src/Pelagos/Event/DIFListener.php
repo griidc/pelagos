@@ -15,35 +15,35 @@ class DIFListener
     /**
      * The twig templating engine instance.
      *
-     * @var \Twig_Environment $twig
+     * @var \Twig_Environment
      */
     protected $twig;
 
     /**
      * The swiftmailer instance.
      *
-     * @var \Swift_Mailere $mailer
+     * @var \Swift_Mailer
      */
     protected $mailer;
 
     /**
      * Person entity for the logged-in user.
      *
-     * @var Person $currentUser
+     * @var Person
      */
     protected $currentUser;
 
     /**
      * The symfony-managed token object to traverse to current user Person.
      *
-     * @var TokenStorage $tokenStorage.
+     * @var TokenStorage
      */
     protected $tokenStorage;
 
     /**
      * An array holding email from name/email information.
      *
-     * @var Array $from
+     * @var array
      */
     protected $from;
 
