@@ -17,7 +17,6 @@ use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DIF;
 use Pelagos\Bundle\AppBundle\Form\DIFType;
 use Pelagos\Bundle\AppBundle\Security\DIFVoter;
-use Pelagos\Event\DIFEvent;
 
 /**
  * The DIF api controller.
@@ -217,10 +216,12 @@ class DIFController extends EntityController
             // Throw an exception if we can't.
             throw new BadRequestHttpException($exception->getMessage());
         }
+        // Get the entity handler.
+        $entityHandler = $this->container->get('pelagos.entity.handler');
         // Update the DIF in persistence.
-        $this->container->get('pelagos.entity.handler')->update($dif);
+        $entityHandler->update($dif);
         // Dispatch an event.
-        $this->get('event_dispatcher')->dispatch('dif.submitted', new DIFEvent($dif));
+        $entityHandler->dispatchEntityEvent($entity, 'submitted');
         // Return a no content success response.
         return $this->makeNoContentResponse();
     }
@@ -264,10 +265,12 @@ class DIFController extends EntityController
             // Throw an exception if we can't.
             throw new BadRequestHttpException($exception->getMessage());
         }
+        // Get the entity handler.
+        $entityHandler = $this->container->get('pelagos.entity.handler');
         // Update the DIF in persistence.
-        $this->container->get('pelagos.entity.handler')->update($dif);
+        $entityHandler->update($dif);
         // Dispatch an event.
-        $this->get('event_dispatcher')->dispatch('dif.approved', new DIFEvent($dif));
+        $entityHandler->dispatchEntityEvent($entity, 'approved');
         // Return a no content success response.
         return $this->makeNoContentResponse();
     }
@@ -311,10 +314,12 @@ class DIFController extends EntityController
             // Throw an exception if we can't.
             throw new BadRequestHttpException($exception->getMessage());
         }
+        // Get the entity handler.
+        $entityHandler = $this->container->get('pelagos.entity.handler');
         // Update the DIF in persistence.
-        $this->container->get('pelagos.entity.handler')->update($dif);
+        $entityHandler->update($dif);
         // Dispatch an event.
-        $this->get('event_dispatcher')->dispatch('dif.rejected', new DIFEvent($dif));
+        $entityHandler->dispatchEntityEvent($entity, 'rejected');
         // Return a no content success response.
         return $this->makeNoContentResponse();
     }
@@ -358,10 +363,12 @@ class DIFController extends EntityController
             // Throw an exception if we can't.
             throw new BadRequestHttpException($exception->getMessage());
         }
+        // Get the entity handler.
+        $entityHandler = $this->container->get('pelagos.entity.handler');
         // Update the DIF in persistence.
-        $this->container->get('pelagos.entity.handler')->update($dif);
+        $entityHandler->update($dif);
         // Dispatch an event.
-        $this->get('event_dispatcher')->dispatch('dif.unlocked', new DIFEvent($dif));
+        $entityHandler->dispatchEntityEvent($entity, 'unlocked');
         // Return a no content success response.
         return $this->makeNoContentResponse();
     }
@@ -405,8 +412,10 @@ class DIFController extends EntityController
             // Throw an exception if it's not.
             throw new BadRequestHttpException('This ' . $dif::FRIENDLY_NAME . ' cannot be unlocked');
         }
+        // Get the entity handler.
+        $entityHandler = $this->container->get('pelagos.entity.handler');
         // Dispatch an event.
-        $this->get('event_dispatcher')->dispatch('dif.unlock_requested', new DIFEvent($dif));
+        $entityHandler->dispatchEntityEvent($entity, 'unlock_requested');
         // Return a no content success response.
         return $this->makeNoContentResponse();
     }

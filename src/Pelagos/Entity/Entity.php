@@ -424,4 +424,14 @@ abstract class Entity
             'lastName' => $this->modifier->getLastName(),
         );
     }
+
+    /**
+     * Returns the name of this entity lowercased and separated by underscores.
+     *
+     * @return string
+     */
+    public function getUnderscoredName()
+    {
+        return strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', substr(strrchr(get_class($this), '\\'), 1)));
+    }
 }
