@@ -27,7 +27,6 @@ services:
         tags:
             - { name: kernel.event_listener, event: dif.submitted, method: onSubmitted }
             - { name: kernel.event_listener, event: dif.approved, method: onApproved }
-            - { name: kernel.event_listener, event: dif.rejected, method: onRejected }
             - { name: kernel.event_listener, event: dif.unlocked, method: onUnlocked }
             - { name: kernel.event_listener, event: dif.unlock_requested, method: onUnlockRequested }
 

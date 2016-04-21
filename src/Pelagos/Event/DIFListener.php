@@ -111,18 +111,6 @@ class DIFListener
     }
 
     /**
-     * Method to send an email on a rejected event.
-     *
-     * @param DIFEvent $event Event being acted upon.
-     *
-     * @return void
-     */
-    public function onRejected(DIFEvent $event)
-    {
-        $dif = $event->getDIF();
-    }
-
-    /**
      * Method to email user their DIF unlock request has been granted.
      *
      * @param DIFEvent $event Event being acted upon.
