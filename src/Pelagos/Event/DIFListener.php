@@ -87,11 +87,11 @@ class DIFListener
         // email DRPM(s)
         $drpms = $this->getDRPMs($event->getDIF());
         $template = $this->twig->loadTemplate('PelagosAppBundle:DIF:submit.drpm.email.twig');
-        $this->sendMailMsg($drpms, $template, $udi, 'DIF Submitted');
+        $this->sendMailMsg($drpms, $template, $udi);
 
         // email User
         $template = $this->twig->loadTemplate('PelagosAppBundle:DIF:submit.email.twig');
-        $this->sendMailMsg(array($currentUser), $template, $udi, 'DIF Submitted');
+        $this->sendMailMsg(array($currentUser), $template, $udi);
 
     }
 
@@ -107,7 +107,7 @@ class DIFListener
         $currentUser = $this->tokenStorage->getToken()->getUser()->getPerson();
         $udi = $event->getDIF()->getDataset()->getUdi();
         $template = $this->twig->loadTemplate('PelagosAppBundle:DIF:approved.email.twig');
-        $this->sendMailMsg(array($currentUser), $template, $udi, 'DIF has been approved');
+        $this->sendMailMsg(array($currentUser), $template, $udi);
     }
 
     /**
@@ -134,7 +134,7 @@ class DIFListener
         $currentUser = $this->tokenStorage->getToken()->getUser()->getPerson();
         $udi = $event->getDIF()->getDataset()->getUdi();
         $template = $this->twig->loadTemplate('PelagosAppBundle:DIF:difUnlocked.email.twig');
-        $this->sendMailMsg(array($currentUser), $template, $udi, 'DIF has been unlocked');
+        $this->sendMailMsg(array($currentUser), $template, $udi);
     }
 
     /**
@@ -150,7 +150,7 @@ class DIFListener
         $udi = $event->getDIF()->getDataset()->getUdi();
         $drpms = $this->getDRPMs($event->getDIF());
         $template = $this->twig->loadTemplate('PelagosAppBundle:DIF:difUnlockReq.email.twig');
-        $this->sendMailMsg($drpms, $template, $udi, 'DIF unlock requested');
+        $this->sendMailMsg($drpms, $template, $udi);
     }
 
     /**
@@ -163,13 +163,13 @@ class DIFListener
      *
      * @return void
      */
-    protected function sendMailMsg(array $peopleObjs, \Twig_Template $twigTemplate, $udi, $subject)
+    protected function sendMailMsg(array $peopleObjs, \Twig_Template $twigTemplate, $udi)
     {
         $mailData['udi'] = $udi;
         foreach ($peopleObjs as $person) {
             $mailData['person'] = $person;
             $message = \Swift_Message::newInstance()
-                ->setSubject($subject)
+                ->setSubject($twigTemplate->renderBlock('subject', $mailData), 'text/plain'))
                 ->setFrom($this->from)
                 ->setTo($person->getEmailAddress())
                 ->setBody($twigTemplate->renderBlock('body_html', $mailData), 'text/html')
