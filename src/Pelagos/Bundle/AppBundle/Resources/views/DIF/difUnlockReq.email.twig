@@ -1,11 +1,9 @@
-{% block sender 'GRIIDC <griidc@gomri.org>' %}
-
 {% block subject '[GRIIDC] DIF Unlocked Request' %}
 
 {% block body_html %}
     Dear DIF Approver(s),<br>
     <br>
-    Please unlock DIF: <a href="{{ url('pelagos_app_ui_dif_default') }}"?id={{udi}}>{{udi}}</a>.<br>
+    Please unlock DIF: <a href="{{ url('pelagos_app_ui_dif_default') }}?id={{udi}}">{{udi}}</a>.<br>
     <br>
     Thank you,<br>
     The GRIIDC Team<br>
@@ -14,7 +12,7 @@
 {% block body_text %}
 Dear DIF Approver(s),
 
-Please unlock DIF: {{ url('pelagos_app_ui_dif_default') }}?id={{udi}} .
+Please unlock DIF: {{ url('pelagos_app_ui_dif_default') }}?id={{udi}}
 
 Thank you,
 The GRIIDC Team

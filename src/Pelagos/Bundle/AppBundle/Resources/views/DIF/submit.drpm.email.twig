@@ -1,8 +1,10 @@
+{% block subject '[GRIIDC] DIF Submitted' %}
+
 {% block body_html %}
 Dear {{ person.getFirstName }} {{ person.getLastName }},
 <br />
 <br />
-A Dataset Information Form (DIF) <a href="{{ url('pelagos_app_ui_dif_default') }}"?id={{udi}}>{{udi}}</a> has
+A Dataset Information Form (DIF) <a href="{{ url('pelagos_app_ui_dif_default') }}?id={{udi}}">{{udi}}</a> has
 been submitted for review.  You are being notified as you are identified as having the role of
 Data Repository Manager.
 <br />

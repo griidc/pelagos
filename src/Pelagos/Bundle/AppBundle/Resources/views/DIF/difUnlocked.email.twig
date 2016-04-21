@@ -1,5 +1,3 @@
-{% block sender 'GRIIDC <griidc@gomri.org>' %}
-
 {% block subject '[GRIIDC] DIF Unlocked' %}
 
 {% block body_html %}
@@ -14,7 +12,7 @@
 {% block body_text %}
 Dear {{ person.getFirstName }} {{ person.getLastName }},
 
-Your DIF <a href="{{ url('pelagos_app_ui_dif_default') }}?id={{udi}}">{{udi}}</a> has been unlocked.
+Your DIF {{ url('pelagos_app_ui_dif_default') }}?id={{udi}} has been unlocked.
 
 Thank you,
 The GRIIDC Team
