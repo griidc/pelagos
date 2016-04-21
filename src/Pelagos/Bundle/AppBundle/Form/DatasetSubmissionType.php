@@ -11,6 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -71,6 +72,14 @@ class DatasetSubmissionType extends AbstractType
             ->add('datasetFileTransferType', HiddenType::class, array(
                 'required' => false,
             ))
+            ->add('datasetFile', FileType::class, array(
+                'label' => 'Dataset File:',
+                'required' => false,
+            ))
+            ->add('datasetFilePath', TextType::class, array(
+                'label' => 'Dataset File Path:',
+                'required' => false,
+            ))
             ->add('datasetFileUrl', TextType::class, array(
                 'label' => 'Dataset File URL:',
                 'required' => false,
@@ -115,6 +124,14 @@ class DatasetSubmissionType extends AbstractType
                 'multiple' => false,
             ))
             ->add('metadataFileTransferType', HiddenType::class, array(
+                'required' => false,
+            ))
+            ->add('metadataFile', FileType::class, array(
+                'label' => 'Metadata File:',
+                'required' => false,
+            ))
+            ->add('metadataFilePath', TextType::class, array(
+                'label' => 'Metadata File Path:',
                 'required' => false,
             ))
             ->add('metadataFileUrl', TextType::class, array(
