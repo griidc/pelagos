@@ -147,7 +147,6 @@ class DIFListener
      * @param array          $peopleObjs   An array of recepient Persons.
      * @param \Twig_Template $twigTemplate A twig template.
      * @param string         $udi          UDI of a dataset to include in email message.
-     * @param string         $subject      Subjet for email message.
      *
      * @return void
      */
@@ -185,6 +184,26 @@ class DIFListener
         foreach ($personDataRepositories as $pdr) {
             if ($pdr->getRole()->getName() == DataRepositoryRoles::MANAGER) {
                 $recepientPeople[] = $pdr->getPerson();
+            }
+        }
+        return $recepientPeople;
+    }
+
+    /**
+     * Internal method to resolve Data Managers from a dif.
+     *
+     * @param DIF $dif A DIF entity.
+     *
+     * @return Array of Persons who are Data Managers for the Research Group tied back to the DIF.
+     */
+    protected function getDMs(DIF $dif)
+    {
+        $recepientPeople = array();
+        $personResearchGroups = $dif->getResearchGroup()->getPersonResearchGroups();
+
+        foreach ($personResearchGroups as $prg) {
+            if ($prg->getRole()->getName() == ResearchGroupRoles::DATA) {
+                $recepientPeople[] = $prg->getPerson();
             }
         }
         return $recepientPeople;
