@@ -793,7 +793,7 @@ function makeTree(Status, Person, ShowEmpty, json)
             "fuzzy" : false
         },
         "sort": function (a, b) {
-            //return this.get_text(a) > this.get_text(b) ? 1 : -1;
+            return this.get_text(a) > this.get_text(b) ? 1 : -1;
         },
     });
 
