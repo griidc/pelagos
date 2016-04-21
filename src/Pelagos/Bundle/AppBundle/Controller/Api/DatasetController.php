@@ -67,5 +67,4 @@ class DatasetController extends EntityController
     {
         return $this->handleGetOne(Dataset::class, $id);
     }
-
 }
