@@ -1,9 +1,25 @@
-Dear {{dm.firstName}} {{dm.lastName}},<br>
+{% block subject '[GRIIDC] DIF Unlock Requested' %}
+
+{% block body_html %}
+Dear {{ recipient.firstName }} {{ recipient.lastName }},<br>
 <br>
-The Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) has received a request to unlock the Dataset Information Form (DIF) approved for dataset {{data.udi}}. This request was submitted by {{data.user.firstName}} {{data.user.lastName}} who is a member of {{ data.user.RCs | join(', ') }}. The dataset {{data.udi}} is associated with {{rcbyudi.Title}}.<br>
+The Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) has received a request to unlock the Dataset Information Form (DIF) approved for dataset {{ dif.dataset.udi }}. This request was submitted by {{ user.firstName }} {{ user.lastName }} who is a member of {{ user.researchGroupTitles | join(', ') }}. The dataset {{ dif.dataset.udi }} is associated with {{ dif.researchGroup.title }}.<br>
 <br>
 Thank you,<br>
 <br>
 The GRIIDC Team<br>
 <br>
 *You are receiving this email because you are identified as a data manager for a Gulf of Mexico Research Initiative Research Consortium. If you believe you should not be receiving this email please notify <a href="mailto:griidc@gomri.org">griidc@gomri.org</a>.*
+{% endblock %}
+
+{% block body_text %}
+Dear {{ recipient.firstName }} {{ recipient.lastName }},
+
+The Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) has received a request to unlock the Dataset Information Form (DIF) approved for dataset {{ dif.dataset.udi }}. This request was submitted by {{ user.firstName }} {{ user.lastName }} who is a member of {{ user.researchGroupTitles | join(', ') }}. The dataset {{ dif.dataset.udi }} is associated with {{ dif.researchGroup.title }}.
+
+Thank you,
+
+The GRIIDC Team
+
+*You are receiving this email because you are identified as a data manager for a Gulf of Mexico Research Initiative Research Consortium. If you believe you should not be receiving this email please notify griidc@gomri.org.*
+{% endblock %}
