@@ -166,7 +166,7 @@ class DIFListener
     {
         // email DM
         $template = $this->twig->loadTemplate('@DIFEmail/data-managers/data-managers.dif-created.email.twig');
-        $this->sendMailMsg($template, $dif, $this->getDMs($this->getDIF($event)));
+        $this->sendMailMsg($template, $this->getDIF($event), $this->getDMs($this->getDIF($event)));
     }
 
     /**
