@@ -1,3 +1,22 @@
+.emRequired::before {
+    font-weight: bold; color:#FF0000;
+    content:"*";
+}
+
+textarea#abstract {
+    height:20em;
+    width:100%;
+}
+
+input#pointOfContactName, input#pointOfContactEmail {
+    width:100%;
+}
+
+.choice-label label {
+    font-weight: normal;
+    display: inline;
+}
+
 .ccc {
 background: -webkit-gradient(linear, bottom, left 175px, from(#CCCCCC), to(#EEEEEE));
 background: -moz-linear-gradient(bottom, #CCCCCC, #EEEEEE 175px);
@@ -252,8 +271,5 @@ fieldset {
     font-size: 12px;
 }
 
-.emRequired::before {
-    font-weight: bold; color:#FF0000;
-    content:"*";
-}
+
 

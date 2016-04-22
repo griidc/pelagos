@@ -6,13 +6,13 @@
         $( "#tabs" ).tabs({
             heightStyleType: "fill",
             disabled: [3,4,5],
-            active: 1
+            active: 0
         });
         
         $( "#md-tabs" ).tabs({
             heightStyleType: "fill",
             disabled: [3,4,5],
-            active: 1
+            active: 0
         });
         
         $( "#availdate" ).datepicker({

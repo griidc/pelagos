@@ -2,7 +2,7 @@
     <div id="fileBrowserContent"></div>
 </div>
 
-{% include 'PelagosAppBundle:Registry:registry-qtip.html.twig' %}
+{% include 'PelagosAppBundle:DatasetSubmission:qtip.html.twig' %}
 
 <div class="cleair" style="width:auto; padding:10px;">
 
@@ -40,9 +40,8 @@
                     <img class="info" src="{{ asset_url }}">
                     {% endimage %}
                 </span>
-                <label for="title"><span class="emRequired"/> <b>Dataset Title: </b></label>
                 <div class="fwtextboxcont">
-                    <input type="text" name="title" id="title" style="width:100%">
+                    {{ form_row(form.title) }}
                 </div>
             </fieldset>
         </p>
@@ -54,9 +53,8 @@
                     <img class="info" src="{{ asset_url }}">
                     {% endimage %}
                 </span>
-                <label for="abstrct"><span class="emRequired"/> <b>Dataset Abstract: </b></label>
                 <div class="textareacontainer">
-                    <textarea name="abstrct" id="abstrct" style="height:20em;width:100%"></textarea>
+                    {{ form_row(form.abstract) }}
                 </div>
             </fieldset>
         </p>
@@ -68,9 +66,8 @@
                     <img class="info" src="{{ asset_url }}">
                     {% endimage %}
                 </span>
-                <label for="dataset_originator"><span class="emRequired"/> <b>Dataset Author(s): </b></label>
                 <div class="fwtextboxcont">
-                    <input type="text" name="dataset_originator" id="dataset_originator" style="width:100%">
+                    {{ form_row(form.authors) }}
                 </div>
             </fieldset>
         </p>
@@ -86,9 +83,8 @@
                                 <img class="info" src="{{ asset_url }}">
                                 {% endimage %}
                             </span>
-                            <label for="pocname"><span class="emRequired"/> <b>Name: </b></label>
                             <div class="fwtextboxcont">
-                                <input type="text" name="pocname" id="pocname" style="width:100%">
+                                {{ form_row(form.pointOfContactName) }}
                             </div>
                         </td>
                         <td width="50%" style="padding-left:10px;">
@@ -97,9 +93,8 @@
                                 <img class="info" src="{{ asset_url }}">
                                 {% endimage %}
                             </span>
-                            <label for="pocemail"><span class="emRequired"/> <b>E-Mail: </b></label>
                             <div class="fwtextboxcont">
-                                <input type="text" name="pocemail" id="pocemail" style="width:100%">
+                                {{ form_row(form.pointOfContactEmail) }}
                             </div>
                         </td>
                     </tr>
@@ -114,10 +109,9 @@
                     <img class="info" src="{{ asset_url }}">
                     {% endimage %}
                 </span>
-                <label for="avail">Restrictions:</label>
-                    <input name="access_status" id="avail" type="radio" value="None"/>None
-                    <input name="access_status" id="avail" type="radio" value="Approval"/>Requires Author&apos;s Approval
-                    <input name="access_status" id="avail" type="radio" value="Restricted"/>Restricted
+                <div class="choice-label">
+                    {{ form_row(form.restrictions) }}
+                </div>
             </fieldset>
         </p>
 
@@ -129,9 +123,8 @@
                     <img class="info" src="{{ asset_url }}">
                     {% endimage %}
                 </span>
-                <label for="doi">Digital Object Identifier:</label>
                 <div class="fwtextboxcont">
-                    <input type="text" name="doi" id="doi" size="60">
+                    {{ form_row(form.doi) }}
                 </div>
             </fieldset>
         </p>

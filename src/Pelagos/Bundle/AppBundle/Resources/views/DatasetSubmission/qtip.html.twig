@@ -169,7 +169,9 @@
 </div>
 
 <div id="date_tip" style="display:none;">
-    <img src="includes/images/info.png" style="float:right;" />
+    {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
+    <img class="info" src="{{ asset_url }}"  style="float:right;">
+    {% endimage %}
     <p>
         <strong>Date:</strong><p/> In some cases, registration is made prior to moving the data onto a space that it can be harvested or read by GRIIDC. In such cases, enter the appropriate date when data is ready for downloading or reading. Enter the current date (date of registration) if data is ready for downloading or reading.
     </p>
