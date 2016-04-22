@@ -1,9 +1,9 @@
 {% block subject '[GRIIDC] DIF Unlocked Request' %}
 
 {% block body_html %}
-Dear {{ person.getFirstName }} {{ person.getLastName }},<br />
+Dear {{ recipient.getFirstName }} {{ recipient.getLastName }},<br />
 <br />
-Thank you for submitting your Dataset Information Form (DIF) <a href="{{ url('pelagos_app_ui_dif_default') }}?id={{ udi }}">{{ udi }}</a>.<br />
+Thank you for submitting your Dataset Information Form (DIF) <a href="{{ url('pelagos_app_ui_dif_default') }}?id={{ dif.dataset.udi }}">{{ dif.dataset.udi }}</a>.<br />
 Your DIF is now being reviewed by staff at the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC). You will receive an e-mail notification once your DIF has been approved.<br />
 <br />
 Thank you,<br />
@@ -11,9 +11,9 @@ The GRIIDC Team<br />
 {% endblock %}
 
 {% block body_text %}
-Dear {{ person.getFirstName }} {{ person.getLastName }},
+Dear {{ recipient.getFirstName }} {{ recipient.getLastName }},
 
-Thank you for submitting your Dataset Information Form (DIF) {{ url('pelagos_app_ui_dif_default') }}?id={{ udi }}
+Thank you for submitting your Dataset Information Form (DIF) {{ url('pelagos_app_ui_dif_default') }}?id={{ dif.dataset.udi }}
 Your DIF is now being reviewed by staff at the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC). You will receive an e-mail notification once your DIF has been approved.
 
 Thank you,

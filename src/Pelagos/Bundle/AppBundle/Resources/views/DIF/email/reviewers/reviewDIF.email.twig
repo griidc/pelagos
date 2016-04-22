@@ -2,7 +2,7 @@
 
 {% block body_html %}
 Dear DIF Approver(s),<br /><br />
-Please review DIF: <a href="{{ url('pelagos_app_ui_dif_default') }}?id={{ udi }}">{{ udi }}</a>.<br />
+Please review DIF: <a href="{{ url('pelagos_app_ui_dif_default') }}?id={{ dif.dataset.udi }}">{{ dif.dataset.udi }}</a>.<br />
 <br />
 Thank you,<br />The GRIIDC Team<br />
 {% endblock %}
@@ -10,7 +10,7 @@ Thank you,<br />The GRIIDC Team<br />
 {% block body_text %}
 Dear DIF Approver(s),
 
-Please review DIF: {{ url('pelagos_app_ui_dif_default') }}?id={{ udi }}
+Please review DIF: {{ url('pelagos_app_ui_dif_default') }}?id={{ dif.dataset.udi }}
 
 Thank you,
 The GRIIDC Team

@@ -1,18 +1,18 @@
 {% block subject '[GRIIDC] DIF Unlocked' %}
 
 {% block body_html %}
-    Dear {{ person.getFirstName }} {{ person.getLastName }},<br>
+    Dear {{ recipient.getFirstName }} {{ recipient.getLastName }},<br>
     <br>
-    Your DIF <a href="{{ url('pelagos_app_ui_dif_default') }}?id={{ udi }}">{{ udi }}</a> has been unlocked.<br>
+    Your DIF <a href="{{ url('pelagos_app_ui_dif_default') }}?id={{ dif.dataset.udi }}">{{ dif.dataset.udi }}</a> has been unlocked.<br>
     <br>
     Thank you,<br>
     The GRIIDC Team<br>
 {% endblock %}
 
 {% block body_text %}
-Dear {{ person.getFirstName }} {{ person.getLastName }},
+Dear {{ recipient.getFirstName }} {{ recipient.getLastName }},
 
-Your DIF {{ url('pelagos_app_ui_dif_default') }}?id={{ udi }} has been unlocked.
+Your DIF {{ url('pelagos_app_ui_dif_default') }}?id={{ dif.dataset.udi }} has been unlocked.
 
 Thank you,
 The GRIIDC Team
