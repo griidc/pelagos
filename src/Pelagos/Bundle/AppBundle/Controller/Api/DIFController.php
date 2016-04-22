@@ -99,6 +99,7 @@ class DIFController extends EntityController
         $dif = $this->handlePost(DIFType::class, DIF::class, $request);
         $dataset = $this->container->get('pelagos.factory.dataset')->createDataset($dif);
         $this->container->get('pelagos.entity.handler')->create($dataset);
+        $this->container->get('pelagos.entity.handler')->dispatchEntityEvent($dif, 'dataset-created');
         return $this->makeCreatedResponse('pelagos_api_difs_get', $dif->getId());
     }
 
