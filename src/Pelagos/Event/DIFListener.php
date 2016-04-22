@@ -72,20 +72,22 @@ class DIFListener
     /**
      * Method to send an email to user and DRPMs on a submit event.
      *
-     * @param DIFEvent $event Event being acted upon.
+     * @param EntityEvent $event Event being acted upon.
      *
      * @return void
      */
-    public function onSubmitted(DIFEvent $event)
+    public function onSubmitted(EntityEvent $event)
     {
+        $dif = getDIF($event);
+
         // Token's getUser returns an account, not a person directly.
         $currentUser = $this->tokenStorage->getToken()->getUser()->getPerson();
 
         // Traverse to dataset to get Udi.
-        $udi = $event->getDIF()->getDataset()->getUdi();
+        $udi = $dif->getDataset()->getUdi();
 
         // email DRPM(s)
-        $drpms = $this->getDRPMs($event->getDIF());
+        $drpms = $this->getDRPMs($dif);
         $template = $this->twig->loadTemplate('PelagosAppBundle:DIF:reviewDIF.email.twig');
         $this->sendMailMsg($drpms, $template, $udi);
 
@@ -98,14 +100,15 @@ class DIFListener
     /**
      * Method to send an email to the user of an approval.
      *
-     * @param DIFEvent $event Event being acted upon.
+     * @param EntityEvent $event Event being acted upon.
      *
      * @return void
      */
-    public function onApproved(DIFEvent $event)
+    public function onApproved(EntityEvent $event)
     {
+        $dif = getDIF($event);
         $currentUser = $this->tokenStorage->getToken()->getUser()->getPerson();
-        $udi = $event->getDIF()->getDataset()->getUdi();
+        $udi = $dif->getDataset()->getUdi();
         $template = $this->twig->loadTemplate('PelagosAppBundle:DIF:approved.email.twig');
         $this->sendMailMsg(array($currentUser), $template, $udi);
     }
@@ -113,14 +116,15 @@ class DIFListener
     /**
      * Method to email user their DIF unlock request has been granted.
      *
-     * @param DIFEvent $event Event being acted upon.
+     * @param EntityEvent $event Event being acted upon.
      *
      * @return void
      */
-    public function onUnlocked(DIFEvent $event)
+    public function onUnlocked(EntityEvent $event)
     {
+        $dif = getDIF($event);
         $currentUser = $this->tokenStorage->getToken()->getUser()->getPerson();
-        $udi = $event->getDIF()->getDataset()->getUdi();
+        $udi = $dif->getDataset()->getUdi();
         $template = $this->twig->loadTemplate('PelagosAppBundle:DIF:difUnlocked.email.twig');
         $this->sendMailMsg(array($currentUser), $template, $udi);
     }
@@ -128,15 +132,16 @@ class DIFListener
     /**
      * Method to send an email on unlock request event to DRPMs.
      *
-     * @param DIFEvent $event Event being acted upon.
+     * @param EntityEvent $event Event being acted upon.
      *
      * @return void
      */
-    public function onUnlockRequested(DIFEvent $event)
+    public function onUnlockRequested(EntityEvent $event)
     {
+        $dif = getDIF($event);
         $currentUser = $this->tokenStorage->getToken()->getUser()->getPerson();
-        $udi = $event->getDIF()->getDataset()->getUdi();
-        $drpms = $this->getDRPMs($event->getDIF());
+        $udi = $dif->getDataset()->getUdi();
+        $drpms = $this->getDRPMs($dif);
         $template = $this->twig->loadTemplate('PelagosAppBundle:DIF:difUnlockReq.email.twig');
         $this->sendMailMsg($drpms, $template, $udi);
     }
@@ -208,4 +213,18 @@ class DIFListener
         }
         return $recepientPeople;
     }
+
+    /**
+     * getDIF
+     *
+     * @param EntityEvent $event
+     */
+    protected function getDIF(EntityEvent $event)
+    {
+        $dif = $event->getEntity();
+        if (DIF::class != get_class($dif) {
+            throw new \Exception("Internal error: handler expects a DIF");
+        }
+        return $dif;
+    {
 }
