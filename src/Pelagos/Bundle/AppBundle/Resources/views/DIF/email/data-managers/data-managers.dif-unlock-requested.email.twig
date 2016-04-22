@@ -3,7 +3,7 @@
 {% block body_html %}
 Dear {{ recipient.firstName }} {{ recipient.lastName }},<br>
 <br>
-The Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) has received a request to unlock the Dataset Information Form (DIF) approved for dataset {{ dif.dataset.udi }}. This request was submitted by {{ user.firstName }} {{ user.lastName }} who is a member of {{ user.researchGroupNames | join(', ') }}. The dataset {{ dif.dataset.udi }} is associated with {{ dif.researchGroup.name }}.<br>
+The Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) has received a request to unlock the Dataset Information Form (DIF) approved for dataset {{ dif.dataset.udi }}. This request was submitted by {{ user.firstName }} {{ user.lastName }} who is a member of {{ user.getResearchGroupNames() | join(', ') }}. The dataset {{ dif.dataset.udi }} is associated with {{ dif.researchGroup.name }}.<br>
 <br>
 Thank you,<br>
 <br>
@@ -15,7 +15,7 @@ The GRIIDC Team<br>
 {% block body_text %}
 Dear {{ recipient.firstName }} {{ recipient.lastName }},
 
-The Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) has received a request to unlock the Dataset Information Form (DIF) approved for dataset {{ dif.dataset.udi }}. This request was submitted by {{ user.firstName }} {{ user.lastName }} who is a member of {{ user.researchGroupNames | join(', ') }}. The dataset {{ dif.dataset.udi }} is associated with {{ dif.researchGroup.name }}.
+The Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) has received a request to unlock the Dataset Information Form (DIF) approved for dataset {{ dif.dataset.udi }}. This request was submitted by {{ user.firstName }} {{ user.lastName }} who is a member of {{ user.getResearchGroupNames() | join(', ') }}. The dataset {{ dif.dataset.udi }} is associated with {{ dif.researchGroup.name }}.
 
 Thank you,
 

@@ -3,7 +3,7 @@
 {% block body_html %}
 Dear {{ recipient.firstName }} {{ recipient.lastName }},<br>
 <br>
-A Dataset Information Form (DIF) has been saved and submitted to the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) by {{ user.firstName }} {{ user.lastName }} for dataset {{ dif.dataset.udi }}. {{ user.firstName }} {{ user.lastName }} is a member of {{ user.researchGroupNames | join(', ') }} and the DIF submitted is associated with {{ dif.researchGroup.name }}.<br>
+A Dataset Information Form (DIF) has been saved and submitted to the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) by {{ user.firstName }} {{ user.lastName }} for dataset {{ dif.dataset.udi }}. {{ user.firstName }} {{ user.lastName }} is a member of {{ user.getResearchGroupNames() | join(', ') }} and the DIF submitted is associated with {{ dif.researchGroup.name }}.<br>
 <br>
 Thank you,<br>
 <br>
@@ -15,7 +15,7 @@ The GRIIDC Team<br>
 {% block body_text %}
 Dear {{ recipient.firstName }} {{ recipient.lastName }},
 
-A Dataset Information Form (DIF) has been saved and submitted to the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) by {{ user.firstName }} {{ user.lastName }} for dataset {{ dif.dataset.udi }}. {{ user.firstName }} {{ user.lastName }} is a member of {{ user.researchGroupNames | join(', ') }} and the DIF submitted is associated with {{ dif.researchGroup.name }}.
+A Dataset Information Form (DIF) has been saved and submitted to the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) by {{ user.firstName }} {{ user.lastName }} for dataset {{ dif.dataset.udi }}. {{ user.firstName }} {{ user.lastName }} is a member of {{ user.getResearchGroupNames() | join(', ') }} and the DIF submitted is associated with {{ dif.researchGroup.name }}.
 
 Thank you,
 
