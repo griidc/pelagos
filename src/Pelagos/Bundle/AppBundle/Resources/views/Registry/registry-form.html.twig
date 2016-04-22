@@ -1,0 +1,439 @@
+<div id="fileBrowser">
+    <div id="fileBrowserContent"></div>
+</div>
+
+{% include 'PelagosAppBundle:Registry:registry-qtip.html.twig' %}
+
+<div class="cleair" style="width:auto; padding:10px;">
+
+<form id="regForm" name="regForm" action="" method="post" enctype="multipart/form-data">
+
+    <fieldset>
+        <p>
+            <strong>NOTE:</strong> <span style="color:grey">You must have an approved Dataset Information Form (DIF) to fill out and submit a Dataset Submission Form. The red asterisk (<span class="emRequired"/>) is used to indicate required fields. If you need assistance while completing this form, please contact <a href=mailto:griidc@gomri.org>griidc@gomri.org</a>.</span>
+        </p>
+    </fieldset>
+
+    <fieldset> <!-- Dataset Information Header -->
+
+        <legend class="section-header">Dataset Information Header</legend>
+
+        <p> <!-- Registry Identifier -->
+            <fieldset>
+                <span id="qtip_regid" style="float:right;">
+                    {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
+                    <img class="info" src="{{ asset_url }}">
+                    {% endimage %}
+                </span>
+                <label for="registry_id"><b>Unique Dataset Identifier (UDI): </b></label>
+                <input type="text" id="registry_id" name="registry_id" size="60">
+                <button disabled name="regbutton" id="regbutton" type="button">Load Dataset</button>
+            </fieldset>
+        </p>
+
+        <input type="hidden" id="task" name="task">
+
+        <p> <!-- Dataset Title -->
+            <fieldset>
+                <span id="qtip_title" style="float:right;">
+                    {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
+                    <img class="info" src="{{ asset_url }}">
+                    {% endimage %}
+                </span>
+                <label for="title"><span class="emRequired"/> <b>Dataset Title: </b></label>
+                <div class="fwtextboxcont">
+                    <input type="text" name="title" id="title" style="width:100%">
+                </div>
+            </fieldset>
+        </p>
+
+        <p> <!-- Dataset Abstract -->
+            <fieldset>
+                <span id="qtip_abstrct" style="float:right;">
+                    {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
+                    <img class="info" src="{{ asset_url }}">
+                    {% endimage %}
+                </span>
+                <label for="abstrct"><span class="emRequired"/> <b>Dataset Abstract: </b></label>
+                <div class="textareacontainer">
+                    <textarea name="abstrct" id="abstrct" style="height:20em;width:100%"></textarea>
+                </div>
+            </fieldset>
+        </p>
+
+        <p> <!-- Dataset Author(s) -->
+            <fieldset>
+                <span id="qtip_dataset_originator" style="float:right;">
+                    {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
+                    <img class="info" src="{{ asset_url }}">
+                    {% endimage %}
+                </span>
+                <label for="dataset_originator"><span class="emRequired"/> <b>Dataset Author(s): </b></label>
+                <div class="fwtextboxcont">
+                    <input type="text" name="dataset_originator" id="dataset_originator" style="width:100%">
+                </div>
+            </fieldset>
+        </p>
+
+        <p> <!-- Point of Contact -->
+            <fieldset>
+                <legend>Point of Contact</legend>
+                <table width="100%">
+                    <tr>
+                        <td width="50%">
+                            <span id="qtip_poc" style="float:right;">
+                                {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
+                                <img class="info" src="{{ asset_url }}">
+                                {% endimage %}
+                            </span>
+                            <label for="pocname"><span class="emRequired"/> <b>Name: </b></label>
+                            <div class="fwtextboxcont">
+                                <input type="text" name="pocname" id="pocname" style="width:100%">
+                            </div>
+                        </td>
+                        <td width="50%" style="padding-left:10px;">
+                            <span id="qtip_pocemail" style="float:right;">
+                                {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
+                                <img class="info" src="{{ asset_url }}">
+                                {% endimage %}
+                            </span>
+                            <label for="pocemail"><span class="emRequired"/> <b>E-Mail: </b></label>
+                            <div class="fwtextboxcont">
+                                <input type="text" name="pocemail" id="pocemail" style="width:100%">
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </fieldset>
+        </p>
+
+        <p> <!-- Restrictions -->
+            <fieldset>
+                <span id="qtip_avail" style="float:right;">
+                    {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
+                    <img class="info" src="{{ asset_url }}">
+                    {% endimage %}
+                </span>
+                <label for="avail">Restrictions:</label>
+                    <input name="access_status" id="avail" type="radio" value="None"/>None
+                    <input name="access_status" id="avail" type="radio" value="Approval"/>Requires Author&apos;s Approval
+                    <input name="access_status" id="avail" type="radio" value="Restricted"/>Restricted
+            </fieldset>
+        </p>
+
+        <p>
+            <fieldset>
+                <legend>DOI for dataset (if available):</legend>
+                <span id="qtip_doi" style="float:right;">
+                    {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
+                    <img class="info" src="{{ asset_url }}">
+                    {% endimage %}
+                </span>
+                <label for="doi">Digital Object Identifier:</label>
+                <div class="fwtextboxcont">
+                    <input type="text" name="doi" id="doi" size="60">
+                </div>
+            </fieldset>
+        </p>
+
+    </fieldset> <!-- Dataset Information Header -->
+
+    <fieldset> <!-- Dataset File Transfer Details -->
+
+        <legend class="section-header">Dataset File Transfer Details</legend>
+
+        <div style="background: transparent;" id="tabs">
+            <ul>
+                <li><a value="upload" href="#tabs-1">Direct Upload</a></li>
+                <li><a value="SFTP" href="#tabs-2">Upload via SFTP/GridFTP</a></li>
+                <li><a value="HTTP" href="#tabs-3">Request Pull from HTTP/FTP Server</a></li>
+                <li><a href="#tabs-4">ERDDAP</a></li>
+                <li><a href="#tabs-5">TDS</a></li>
+                <li><a href="#tabs-6">...</a></li>
+            </ul>
+
+            <div id="tabs-1"> <!-- Direct Upload -->
+                For small datasets (&lt;1 GB), you may upload the dataset file directly, using your web browser. Depending on the size of the file, this may take several minutes. The maximum time the system will wait for the file to upload is 10 minutes. For larger files, please consider using SFTP or GridFTP to upload the file.
+                <fieldset>
+                    <p>
+                        <span id="qtip_uploaddataurl" style="float:right;">
+                            {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
+                            <img class="info" src="{{ asset_url }}">
+                            {% endimage %}
+                        </span>
+                        <label for="datafile">Dataset File:</label>
+                        {% if 'data_server_type' == 'upload' %}
+                                <div class="fwtextboxcont">
+                                    <input disabled type="text" style="width:100%" 
+                                        style="color:black;background-color:transparent;padding:2px;">
+                                </div>
+                                <input type="hidden" name="url_data_upload">
+                                To replace the dataset file:
+                        {% endif %}
+                        <input name="datafile" id="datafile" type="file"/>
+                    </p>
+                </fieldset>
+            </div> <!-- tabs-1 -->
+
+            <div id="tabs-2"> <!-- Upload via SFTP/GridFTP -->
+                Use this method when the dataset is &gt;1GB and you wish to upload the dataset file to GRIIDC (rather than place the dataset file on an HTTP (web) or FTP server and have GRIIDC pull it).
+                <strong>Note:</strong> <em>Using this method requires that you have <strong>first</strong> uploaded the file via SFTP or GridFTP.</em>
+                {% if sftpuser|default %}
+                <div style="color:red;">
+                    Your account has not been configured for SFTP/GridFTP access.<br>
+                    If you wish to use SFTP/GridFTP, please contact <a href="mailto:griidc@gomri.org">griidc@gomri.org</a> to request SFTP/GridFTP access.
+                </div>
+                {% elseif sftpdir|default %}
+                <div style="color:red;">
+                    Your SFTP/GridFTP directory has not been set up.<br>
+                    Please contact <a href="mailto:griidc@gomri.org">griidc@gomri.org</a> for assistance.
+                </div>
+                {% endif %}
+                <fieldset>
+                    <p>
+                        <span id="qtip_sshdataurl" style="float:right;">
+                            {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
+                            <img class="info" src="{{ asset_url }}">
+                            {% endimage %}
+                        </span>
+                        <label for="sshdatapath">Dataset File Path:</label>
+                        <div class="fwtextboxcont">
+                            <input name="url_data_sftp" id="sshdatapath" type="text" style="width:100%">
+                        </div>
+                        <input type="button" value="Browse...">
+                        <div id="sftp_force_data_download">
+                            {% if sftp_type|default and url_set|default and sftpuser|default and sftpdir|default %}
+                            <!-- this can be done with js logic -->
+                            <input type="checkbox" name="sftp_force_data_download">import this file again from the same path"
+                            {% endif %}
+                        </div>
+                    </p>
+                </fieldset>
+            </div> <!-- tabs-2 -->
+
+            <div id="tabs-3"> <!-- Request Pull from HTTP/FTP Server -->
+                Use this method when you wish to place the dataset file on an HTTP (web) or FTP server at your institution (or elsewhere) and have GRIIDC pull it. You may specify an optional availability date, after which the dataset will be available at the provided URL, as well as optional preferred days and times of day to initiate the download. Additionally, if the dataset file is archived in a cyber-infrastructure that can be maintained for the next decade (e.g. NODC), you may specify that GRIIDC point to the dataset at the provided URL rather than download and house it at GRIIDC.
+                <fieldset>
+                    <p>
+                        <span id="qtip_dataurl" style="float:right;">
+                            {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
+                            <img class="info" src="{{ asset_url }}">
+                            {% endimage %}
+                        </span>
+                        <label for="dataurl">Dataset File URL:</label>
+                        <div class="fwtextboxcont">
+                            <input  name="url_data_http" id="dataurl" type="text" style="width:100%">
+                        </div>
+                        <div id="http_force_data_download">
+                            {% if downloadagain|default %}
+                                <input type="checkbox" name="http_force_data_download">download this file again from the same URL
+                            {% endif %}
+                        </div>
+                    </p>
+                </fieldset>
+
+                <table width="100%">
+                    <tr>
+                        <td width="50%"> <!-- Availability Date -->
+                            <fieldset>
+                                <p>
+                                    <span id="qtip_date" style="float:right;">
+                                        {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
+                                        <img class="info" src="{{ asset_url }}">
+                                        {% endimage %}
+                                    </span>
+                                    <label for="availdate">Availability Date:</label>
+                                    <input type="text" name="availability_date" id="availdate" size="40" style="width:100px;"/>
+                                    (leave blank for immediate availability
+                                </p>
+                            </fieldset>
+                        </td>
+                        <td width="50%"> <!-- Download Certain Times Only -->
+                            <fieldset>
+                                <p>
+                                    <span id="qtip_when" style="float:right;">
+                                        {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
+                                        <img class="info" src="{{ asset_url }}">
+                                        {% endimage %}
+                                    </span>
+                                    <label for="whendl">Download Certain Times Only:</label>
+                                    <input name="access_period" id="whendl" type="radio" value="Yes">Yes
+                                    <input name="access_period" id="whendl" type="radio" value="No">No
+                                </p>
+                            </fieldset>
+                       </td>
+                    </tr>
+                    <input name="auth" id="auth" type="hidden" value="No"/>
+                </table>
+
+                <div id="whendiv">
+                    <fieldset>
+                        <span id="qtip_times" style="float:right;">
+                            {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
+                            <img class="info" src="{{ asset_url }}">
+                            {% endimage %}
+                        </span>
+                        <legend>Pull Times:</legend>
+                        <table width="100%">
+                            <tr>
+                                <td valign="top">
+                                    <label for="dlstart">Start Time:</label>
+                                    <select name="dlstart" id="dlstart">
+                                        <option selected>this needs to a time picker</option>
+                                    </select>
+
+                                </td>
+                                <td>
+                                    <label for="weekdays">Weekdays:</label>
+                                    <input name="weekdays" id="weekdays" type="checkbox" value="Monday">Monday<br>
+                                    <input name="weekdays" id="weekdays" type="checkbox" value="Tuesday">Tuesday<br>
+                                    <input name="weekdays" id="weekdays" type="checkbox" value="Wednesday">Wednesday<br>
+                                    <input name="weekdays" id="weekdays" type="checkbox" value="Thursday">Thursday<br>
+                                    <input name="weekdays" id="weekdays" type="checkbox" value="Friday">Friday<br>
+                                    <input name="weekdays" id="weekdays" type="checkbox" value="Saturday"/>Saturday<br>
+                                    <input name="weekdays" id="weekdays" type="checkbox" value="Sunday"/>Sunday
+
+                                </td>
+                                <td valign="top">
+                                    <button style="width:100px" type="button">Weekends</button><br \>
+                                    <button style="width:100px" type="button">Workdays</button>
+                                </td>
+                            </tr>
+                        </table>
+                    </fieldset>
+                </div> <!-- whendiv -->
+                <div>
+                    <fieldset>
+                        <p>
+                            <span id="qtip_pull" style="float:right;">
+                                {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
+                                <img class="info" src="{{ asset_url }}">
+                                {% endimage %}
+                            </span>
+                            <label for="pullds">Pull Source Data:</label>
+                            <input name="data_source_pull" id="pullds" type="radio" value="Yes">Yes
+                            <input name="data_source_pull" id="pullds" type="radio" value="No">No
+                        </p>
+                    </fieldset>
+                </div>
+            </div> <!-- tabs-3 -->
+
+        </div> <!-- tabs -->
+
+    </fieldset> <!-- Dataset File Transfer Details -->
+
+    <fieldset> <!-- Metadata File Transfer Details -->
+
+        <legend class="section-header">Metadata File Transfer Details</legend>
+
+        <div style="background: transparent;" id="md-tabs">
+            <ul>
+                <li><a value="upload" href="#md-tabs-1">Direct Upload</a></li>
+                <li><a value="SFTP" href="#md-tabs-2">Upload via SFTP/GridFTP</a></li>
+                <li><a value="HTTP" href="#md-tabs-3">Pull from HTTP/FTP Server</a></li>
+                <li><a href="#md-tabs-4">ERDDAP</a></li>
+                <li><a href="#md-tabs-5">TDS</a></li>
+                <li><a href="#md-tabs-6">...</a></li>
+            </ul>
+
+            <div id="md-tabs-1"> <!-- Direct Upload -->
+                You may upload the metadata file directly, using your web browser.
+                <fieldset>
+                    <p>
+                        <span id="qtip_uploadmetadataurl" style="float:right;">
+                            {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
+                            <img class="info" src="{{ asset_url }}">
+                            {% endimage %}
+                        </span>
+                        <label for="metadatafile">Metadata File:</label>
+                        {% if file_exists_upload|default %}
+                            <div class="fwtextboxcont">
+                                <input disabled type="text" style="width:100%" 
+                                       style="color:black; background-color:transparent; padding:2px;">
+                            </div>
+                            <input type="hidden" name="upload_metadataurl">
+                            To replace the metadata file: 
+                        {% endif %}
+                        <input name="metadatafile" id="metadatafile" type="file">
+                    </p>
+                </fieldset>
+            </div> <!-- md-tabs-1 -->
+
+            <div id="md-tabs-2"> <!-- Upload via SFTP/GridFTP -->
+                You may use this method if you wish to upload the metadata file via SFTP/GridFTP (e.g. if you uploaded a metadata file alongside a data file that you uploaded using SFTP/GridFTP).
+                <strong>Note:</strong> <em>Using this method requires that you have <strong>first</strong> uploaded your file via SFTP or GridFTP.</em>
+                    {% if sftpuser|default %}
+                    <div style="color:red;">
+                        Your account has not been configured for SFTP/GridFTP access.<br>
+                        If you wish to use SFTP/GridFTP, please contact <a href="mailto:griidc@gomri.org">griidc@gomri.org</a> to request SFTP/GridFTP access.
+                    </div>
+                    {% elseif sftpdir|default %}
+                    <div style="color:red;">
+                        Your SFTP/GridFTP directory has not been set up.<br>
+                        Please contact <a href="mailto:griidc@gomri.org">griidc@gomri.org</a> for assistance.
+                    </div>
+                    {% endif %}
+                <fieldset>
+                    <p>
+                        <span id="qtip_sshmetadataurl" style="float:right;">
+                            {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
+                            <img class="info" src="{{ asset_url }}">
+                            {% endimage %}
+                        </span>
+                        <label for="sshmetadatapath">Metadata File Path:</label>
+                        <div class="fwtextboxcont">
+                            <input name="url_metadata_sftp" id="sshmetadatapath" type="text" style="width:100%">
+                        </div>
+                        <input type="button" value="Browse...">
+                        <div id="sftp_force_metadata_download">
+                        {% if sftp|default %}
+                            <input type="checkbox" name="sftp_force_metadata_download">import this file again from the same path
+                        {% endif %}
+                        </div>
+                    </p>
+                 </fieldset>
+            </div> <!-- md-tabs-2 -->
+
+            <div id="md-tabs-3"> <!-- Pull from HTTP/FTP Server -->
+                Use this method when you wish to place the metadata file on an HTTP (web) or FTP server at your institution (or elsewhere) and have GRIIDC pull it. The file will be downloaded immediately upon submission.
+                <fieldset>
+                    <p>
+                        <span id="qtip_metadataurl" style="float:right;">
+                            {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
+                            <img class="info" src="{{ asset_url }}">
+                            {% endimage %}
+                        </span>
+                        <label for="url_metadata_http">Metadata File URL:</label>
+                        <div class="fwtextboxcont">
+                            <input name="url_metadata_http" id="url_metadata_http" style="width:100%">
+                        </div>
+                        <div id="http_force_metadata_download">
+                            {% if upload|default %}
+                                <input type="checkbox" name="http_force_metadata_download">download this file again from the same URL
+                            {% endif %}
+                        </div>
+                    </p>
+                </fieldset>
+            </div> <!-- md-tabs-3 -->
+
+        </div> <!-- md-tabs -->
+
+    </fieldset> <!-- Metadata File Transfer Details -->
+
+    <input type="hidden" name="dataset_udi" id="udi" >
+    <input type="hidden" name="registry_id" id="regid">
+    <input type="hidden" name="urlvalidate" id="urlvalidate"/>
+    <input type="hidden" name="access_period_weekdays" id="weekdayslst"/>
+    <input type="hidden" name="timezone" id="timezone"/>
+    <input type="hidden" name="data_server_type" id="servertype">
+    <input type="hidden" name="metadata_server_type" id="md_servertype">
+
+    <br>
+    <div style="text-align:center;">
+        <input type="submit" name="submit" style="font-size:120%; font-weight:bold;" value="Register">
+    </div>
+</form>
+
+</div>
+
+<iframe id="post_frame" name="post_frame" style="display:none;"></iframe>
