@@ -6,6 +6,7 @@ use Pelagos\Entity\Person;
 use Pelagos\Entity\DIF;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
+use Pelagos\Bundle\AppBundle\DataFixtures\ORM\ResearchGroupRoles;
 
 /**
  * Listener class for DIF-related events.
@@ -78,22 +79,19 @@ class DIFListener
      */
     public function onSubmitted(EntityEvent $event)
     {
-        $dif = getDIF($event);
+        $dif = $this->getDIF($event);
 
-        // Token's getUser returns an account, not a person directly.
-        $currentUser = $this->tokenStorage->getToken()->getUser()->getPerson();
-
-        // Traverse to dataset to get Udi.
-        $udi = $dif->getDataset()->getUdi();
-
-        // email DRPM(s)
-        $drpms = $this->getDRPMs($dif);
-        $template = $this->twig->loadTemplate('PelagosAppBundle:DIF:reviewDIF.email.twig');
-        $this->sendMailMsg($drpms, $template, $udi);
+        // email Reviewers
+        $template = $this->twig->loadTemplate('@DIFEmail/reviewers/reviewDIF.email.twig');
+        $this->sendMailMsg($template, $dif, $this->getDRPMs($dif));
 
         // email User
-        $template = $this->twig->loadTemplate('PelagosAppBundle:DIF:submit.email.twig');
-        $this->sendMailMsg(array($currentUser), $template, $udi);
+        $template = $this->twig->loadTemplate('@DIFEmail/users/submit.email.twig');
+        $this->sendMailMsg($template, $dif);
+
+        // email Data Managers
+        $template = $this->twig->loadTemplate('@DIFEmail/data-managers/data-managers.dif-submitted.email.twig');
+        $this->sendMailMsg($template, $dif, $this->getDMs($dif));
 
     }
 
@@ -106,15 +104,19 @@ class DIFListener
      */
     public function onApproved(EntityEvent $event)
     {
-        $dif = getDIF($event);
-        $currentUser = $this->tokenStorage->getToken()->getUser()->getPerson();
-        $udi = $dif->getDataset()->getUdi();
-        $template = $this->twig->loadTemplate('PelagosAppBundle:DIF:approved.email.twig');
-        $this->sendMailMsg(array($currentUser), $template, $udi);
+        $dif = $this->getDIF($event);
+
+        // email user
+        $template = $this->twig->loadTemplate('@DIFEmail/users/user.approved.email.twig');
+        $this->sendMailMsg($template, $dif);
+
+        // email DM
+        $template = $this->twig->loadTemplate('@DIFEmail/data-managers/data-managers.dif-approved.email.twig');
+        $this->sendMailMsg($template, $dif, $this->getDMs($dif));
     }
 
     /**
-     * Method to email user their DIF unlock request has been granted.
+     * Method to email user (and data managers) that their DIF unlock request has been granted.
      *
      * @param EntityEvent $event Event being acted upon.
      *
@@ -122,15 +124,19 @@ class DIFListener
      */
     public function onUnlocked(EntityEvent $event)
     {
-        $dif = getDIF($event);
-        $currentUser = $this->tokenStorage->getToken()->getUser()->getPerson();
-        $udi = $dif->getDataset()->getUdi();
-        $template = $this->twig->loadTemplate('PelagosAppBundle:DIF:difUnlocked.email.twig');
-        $this->sendMailMsg(array($currentUser), $template, $udi);
+        $dif = $this->getDIF($event);
+
+        // email user
+        $template = $this->twig->loadTemplate('@DIFEmail/users/difUnlocked.email.twig');
+        $this->sendMailMsg($template, $dif);
+
+        // email data managers
+        $template = $this->twig->loadTemplate('@DIFEmail/data-managers/data-managers.dif-unlocked.email.twig');
+        $this->sendMailMsg($template, $dif, $this->getDMs($dif));
     }
 
     /**
-     * Method to send an email on unlock request event to DRPMs.
+     * Method to send an email on unlock request event to reviewers and data managers.
      *
      * @param EntityEvent $event Event being acted upon.
      *
@@ -138,30 +144,52 @@ class DIFListener
      */
     public function onUnlockRequested(EntityEvent $event)
     {
-        $dif = getDIF($event);
-        $currentUser = $this->tokenStorage->getToken()->getUser()->getPerson();
-        $udi = $dif->getDataset()->getUdi();
-        $drpms = $this->getDRPMs($dif);
-        $template = $this->twig->loadTemplate('PelagosAppBundle:DIF:difUnlockReq.email.twig');
-        $this->sendMailMsg($drpms, $template, $udi);
+        $dif = $this->getDIF($event);
+
+        // email reviewers
+        $template = $this->twig->loadTemplate('@DIFEmail/reviewers/difUnlockReq.email.twig');
+        $this->sendMailMsg($template, $dif, $this->getDRPMs($dif));
+
+        // email DM
+        $template = $this->twig->loadTemplate('@DIFEmail/data-managers/data-managers.dif-unlock-requested.email.twig');
+        $this->sendMailMsg($template, $dif, $this->getDMs($dif));
+    }
+
+    /**
+     * Method to email data managers when a DIF is created.
+     *
+     * @param EntityEvent $event Event being acted upon.
+     *
+     * @return void
+     */
+    public function onCreated(EntityEvent $event)
+    {
+        // email DM
+        $template = $this->twig->loadTemplate('@DIFEmail/data-managers/data-managers.dif-created.email.twig');
+        $this->sendMailMsg($template, $dif, $this->getDMs($this->getDIF($event)));
     }
 
     /**
      * Method to build and send an email.
      *
-     * @param array          $peopleObjs   An array of recepient Persons.
      * @param \Twig_Template $twigTemplate A twig template.
-     * @param string         $udi          UDI of a dataset to include in email message.
+     * @param DIF            $dif          DIF of interest.
+     * @param array|null     $peopleObjs   An optional array of recepient Persons.
      *
      * @return void
      */
-    protected function sendMailMsg(array $peopleObjs, \Twig_Template $twigTemplate, $udi)
+    protected function sendMailMsg(\Twig_Template $twigTemplate, $dif, array $peopleObjs = null)
     {
-        $mailData['udi'] = $udi;
+        // Token's getUser returns an account, not a person directly.
+        $currentUser = $this->tokenStorage->getToken()->getUser()->getPerson();
+
+        $mailData = array('dif' => $dif, 'user' => $currentUser);
+        if ($peopleObjs == null) ($peopleObjs = array($currentUser));
+
         foreach ($peopleObjs as $person) {
-            $mailData['person'] = $person;
+            $mailData['recipient'] = $person;
             $message = \Swift_Message::newInstance()
-                ->setSubject($twigTemplate->renderBlock('subject', $mailData), 'text/plain')
+                ->setSubject($twigTemplate->renderBlock('subject', $mailData))
                 ->setFrom($this->from)
                 ->setTo($person->getEmailAddress())
                 ->setBody($twigTemplate->renderBlock('body_html', $mailData), 'text/html')
