@@ -161,7 +161,7 @@ class DIFListener
         foreach ($peopleObjs as $person) {
             $mailData['person'] = $person;
             $message = \Swift_Message::newInstance()
-                ->setSubject($twigTemplate->renderBlock('subject', $mailData), 'text/plain'))
+                ->setSubject($twigTemplate->renderBlock('subject', $mailData), 'text/plain')
                 ->setFrom($this->from)
                 ->setTo($person->getEmailAddress())
                 ->setBody($twigTemplate->renderBlock('body_html', $mailData), 'text/html')
@@ -222,9 +222,9 @@ class DIFListener
     protected function getDIF(EntityEvent $event)
     {
         $dif = $event->getEntity();
-        if (DIF::class != get_class($dif) {
+        if (DIF::class != get_class($dif)) {
             throw new \Exception("Internal error: handler expects a DIF");
         }
         return $dif;
-    {
+    }
 }
