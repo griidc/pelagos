@@ -178,13 +178,15 @@ class DIFListener
      *
      * @return void
      */
-    protected function sendMailMsg(\Twig_Template $twigTemplate, $dif, array $peopleObjs = null)
+    protected function sendMailMsg(\Twig_Template $twigTemplate, DIF $dif, array $peopleObjs = null)
     {
         // Token's getUser returns an account, not a person directly.
         $currentUser = $this->tokenStorage->getToken()->getUser()->getPerson();
 
         $mailData = array('dif' => $dif, 'user' => $currentUser);
-        if ($peopleObjs == null) ($peopleObjs = array($currentUser));
+        if ($peopleObjs == null) {
+            $peopleObjs = array($currentUser);
+        }
 
         foreach ($peopleObjs as $person) {
             $mailData['recipient'] = $person;
@@ -243,15 +245,19 @@ class DIFListener
     }
 
     /**
-     * getDIF
+     * Internal method to get a DIF object from an Event.
      *
-     * @param EntityEvent $event
+     * @param EntityEvent $event The event listener is for.
+     *
+     * @throws \Exception If event passed is not an instance of DIF (bad usage).
+     *
+     * @return DIF A DIF object associated with the event being listened on.
      */
     protected function getDIF(EntityEvent $event)
     {
         $dif = $event->getEntity();
         if (DIF::class != get_class($dif)) {
-            throw new \Exception("Internal error: handler expects a DIF");
+            throw new \Exception('Internal error: handler expects a DIF');
         }
         return $dif;
     }
