@@ -82,11 +82,11 @@ class DIFListener
         $dif = $this->getDIF($event);
 
         // email Reviewers
-        $template = $this->twig->loadTemplate('@DIFEmail/reviewers/reviewDIF.email.twig');
+        $template = $this->twig->loadTemplate('@DIFEmail/reviewers/reviewers.dif-submitted.email.twig');
         $this->sendMailMsg($template, $dif, $this->getDRPMs($dif));
 
         // email User
-        $template = $this->twig->loadTemplate('@DIFEmail/users/submit.email.twig');
+        $template = $this->twig->loadTemplate('@DIFEmail/user/user.dif-submitted.email.twig');
         $this->sendMailMsg($template, $dif);
 
         // email Data Managers
@@ -107,7 +107,7 @@ class DIFListener
         $dif = $this->getDIF($event);
 
         // email user
-        $template = $this->twig->loadTemplate('@DIFEmail/users/user.approved.email.twig');
+        $template = $this->twig->loadTemplate('@DIFEmail/user/user.dif-approved.email.twig');
         $this->sendMailMsg($template, $dif);
 
         // email DM
@@ -127,7 +127,7 @@ class DIFListener
         $dif = $this->getDIF($event);
 
         // email user
-        $template = $this->twig->loadTemplate('@DIFEmail/users/difUnlocked.email.twig');
+        $template = $this->twig->loadTemplate('@DIFEmail/user/user.dif-unlocked.email.twig');
         $this->sendMailMsg($template, $dif);
 
         // email data managers
@@ -147,7 +147,7 @@ class DIFListener
         $dif = $this->getDIF($event);
 
         // email reviewers
-        $template = $this->twig->loadTemplate('@DIFEmail/reviewers/difUnlockReq.email.twig');
+        $template = $this->twig->loadTemplate('@DIFEmail/reviewers/reviewers.dif-unlock-requested.email.twig');
         $this->sendMailMsg($template, $dif, $this->getDRPMs($dif));
 
         // email DM
