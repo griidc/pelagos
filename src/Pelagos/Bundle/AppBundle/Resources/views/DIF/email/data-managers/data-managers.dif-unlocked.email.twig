@@ -1,9 +1,25 @@
-Dear {{dm.firstName}} {{dm.lastName}},<br>
-<br>
-The Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) has approved a request to unlock the Dataset Information Form (DIF) for dataset {{data.udi}} submitted by {{data.user.firstName}} {{data.user.lastName}}.<br>
-<br>
-Thank you,<br>
-<br>
-The GRIIDC Team<br>
-<br>
-*You are receiving this email because you are identified as a data manager for a Gulf of Mexico Research Initiative Research Consortium. If you believe you should not be receiving this email please notify <a href="mailto:griidc@gomri.org">griidc@gomri.org</a>.*
+{% block subject '[GRIIDC] DIF Submitted' %}
+
+{% block body_html %}
+    Dear {{ dataManager.firstName }} {{ dataManager.lastName }},<br>
+    <br>
+    The Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) has approved a request to unlock the Dataset Information Form (DIF) for dataset {{ udi }} submitted by {{ user.firstName }} {{ data.user.lastName }}.<br>
+    <br>
+    Thank you,<br>
+    <br>
+    The GRIIDC Team<br>
+    <br>
+    *You are receiving this email because you are identified as a data manager for a Gulf of Mexico Research Initiative Research Consortium. If you believe you should not be receiving this email please notify <a href="mailto:griidc@gomri.org">griidc@gomri.org</a>.*
+{% endblock %}
+
+{% block body_text %}
+Dear {{ dataManager.firstName }} {{ dataManager.lastName }},
+
+The Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) has approved a request to unlock the Dataset Information Form (DIF) for dataset {{ udi }} submitted by {{ user.firstName }} {{ data.user.lastName }}.
+
+Thank you,
+
+The GRIIDC Team
+
+*You are receiving this email because you are identified as a data manager for a Gulf of Mexico Research Initiative Research Consortium. If you believe you should not be receiving this email please notify griidc@gomri.org.*
+{% endblock %}
