@@ -149,7 +149,7 @@ class DIFType extends AbstractType
             ))
             ->add('variablesObserved', TextareaType::class, array(
                 'attr' => array('rows' => 3),
-                'label' => 'Abstract:',
+                'label' => 'Phenomenon/Variables Observed or Generated:',
                 'attr' => array(
                     'placeholder' => 'Examples: wind speed (km/hr), salinity (ppt), temperature (°C), PCB concentrations in eggs from a specified species (ng/g wet weight), Ionic Strength (mM)'
                 ),

@@ -707,8 +707,6 @@ function loadDIFS(Status, Person, ShowEmpty)
 function makeTree(Status, Person, ShowEmpty, json)
 {
     var treeData = [];
-    
-    debugger;
 
     if (ShowEmpty == "0") {
         ShowEmpty = false;
