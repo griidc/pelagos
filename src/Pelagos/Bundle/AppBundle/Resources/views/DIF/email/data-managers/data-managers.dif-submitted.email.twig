@@ -1,21 +1,21 @@
 {% block subject '[GRIIDC] DIF Submitted' %}
 
 {% block body_html %}
-    Dear {{ dataManager.firstName }} {{ dataManager.lastName }},<br>
-    <br>
-    A Dataset Information Form (DIF) has been saved and submitted to the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) by {{ user.firstName }} {{ user.lastName }} for dataset {{ udi }}. {{ user.firstName }} {{ user.lastName }} is a member of {{ user.researchGroups | join(', ') }} and the DIF submitted is associated with {{ researchGroup.title }}.<br>
-    <br>
-    Thank you,<br>
-    <br>
-    The GRIIDC Team<br>
-    <br>
-    *You are receiving this email because you are identified as a data manager for a Gulf of Mexico Research Initiative Research Consortium. If you believe you should not be receiving this email please notify <a href="mailto:griidc@gomri.org">griidc@gomri.org</a>.*
+Dear {{ recipient.firstName }} {{ recipient.lastName }},<br>
+<br>
+A Dataset Information Form (DIF) has been saved and submitted to the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) by {{ user.firstName }} {{ user.lastName }} for dataset {{ dif.dataset.udi }}. {{ user.firstName }} {{ user.lastName }} is a member of {{ user.researchGroupNames | join(', ') }} and the DIF submitted is associated with {{ dif.researchGroup.name }}.<br>
+<br>
+Thank you,<br>
+<br>
+The GRIIDC Team<br>
+<br>
+*You are receiving this email because you are identified as a data manager for a Gulf of Mexico Research Initiative Research Consortium. If you believe you should not be receiving this email please notify <a href="mailto:griidc@gomri.org">griidc@gomri.org</a>.*
 {% endblock %}
 
 {% block body_text %}
-Dear {{ dataManager.firstName }} {{ dataManager.lastName }},
+Dear {{ recipient.firstName }} {{ recipient.lastName }},
 
-A Dataset Information Form (DIF) has been saved and submitted to the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) by {{ user.firstName }} {{ user.lastName }} for dataset {{ udi }}. {{ user.firstName }} {{ user.lastName }} is a member of {{ user.researchGroups | join(', ') }} and the DIF submitted is associated with {{ researchGroup.title }}.
+A Dataset Information Form (DIF) has been saved and submitted to the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) by {{ user.firstName }} {{ user.lastName }} for dataset {{ dif.dataset.udi }}. {{ user.firstName }} {{ user.lastName }} is a member of {{ user.researchGroupNames | join(', ') }} and the DIF submitted is associated with {{ dif.researchGroup.name }}.
 
 Thank you,
 
