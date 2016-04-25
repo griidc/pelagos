@@ -253,7 +253,6 @@ $(document).ready(function()
             if (x.status == 400 || x.status == 403) {
                 message = x.responseJSON.message;
             }
-            console.log("Error in Ajax:"+t+", Message:"+message);
             $("#spinner").hide();
             $("<div>"+message+"</div>").dialog({
                 autoOpen: true,
