@@ -41,7 +41,7 @@ class DatasetSubmissionType extends AbstractType
                 'required' => true,
             ))
             ->add('abstract', TextareaType::class, array(
-                'label' => 'Abstract:',
+                'label' => 'Dataset Abstract:',
                 'required' => true,
             ))
             ->add('authors', TextType::class, array(
