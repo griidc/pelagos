@@ -105,13 +105,10 @@ $(document).ready(function()
     });
 
     $("#btnApprove").button().click(function() {
-        $("#btn").val($(this).val());
-        //$("#difForm").submit();
         difStatus($('#difForm [name="id"]').val(), "approve");
     });
 
     $("#btnReject").button().click(function() {
-        $("#btn").val($(this).val());
         difStatus($('#difForm [name="id"]').val(), "reject");
     });
 
@@ -121,12 +118,10 @@ $(document).ready(function()
     });
 
     $("#btnUnlock").button().click(function() {
-        $("#btn").val($(this).val())
         difStatus($('#difForm [name="id"]').val(), "unlock");
     });
 
     $("#btnReqUnlock").button().click(function() {
-        $("#btn").val($(this).val())
         difStatus($('#difForm [name="id"]').val(), "request-unlock");
     });
 
@@ -253,20 +248,7 @@ $(document).ready(function()
             if (x.status == 400 || x.status == 403) {
                 message = x.responseJSON.message;
             }
-            $("#spinner").hide();
-            $("<div>"+message+"</div>").dialog({
-                autoOpen: true,
-                height: "auto",
-                resizable: false,
-                minWidth: 300,
-                title: "Error",
-                modal: true,
-                buttons: {
-                    OK: function() {
-                        $(this).dialog("close");
-                    }
-                }
-            });
+            console.log("Error in Ajax:"+t+", Message:"+message)
         }
     });
 
@@ -282,12 +264,9 @@ $(document).ready(function()
     }
 });
 
-function difStatus(id, status) {
-    showSpinner();
-
+function difStatus(id, status)
+{
     var url = $("#difForm").attr("action") + "/" + id + "/" + status;
-
-    formHash = $("#difForm").serialize();
 
     udi = $('#difForm [name="udi"]').val();
 
@@ -314,32 +293,58 @@ function difStatus(id, status) {
 
     message += msgtext + "</p></div>";
 
-    $.ajax({
-        url: url,
-        type: "PATCH",
-        success: function(json, textStatus, jqXHR) {
-            hideSpinner();
-            formReset(true);
+    $.when(formChanged()).done(function() {
+        showSpinner();
+        $.ajax({
+            url: url,
+            type: "PATCH",
+            success: function(json, textStatus, jqXHR) {
+                hideSpinner();
+                formReset(true);
 
-            $("<div>"+message+"</div>").dialog({
-                autoOpen: true,
-                resizable: false,
-                minWidth: 300,
-                height: "auto",
-                width: "auto",
-                modal: true,
-                title: msgtitle,
-                buttons: {
-                    OK: function() {
-                        $(this).dialog("close");
-                        scrollToTop();
-                        treeFilter();
-                        return $.Deferred().resolve();
+                $("<div>"+message+"</div>").dialog({
+                    autoOpen: true,
+                    resizable: false,
+                    minWidth: 300,
+                    height: "auto",
+                    width: "auto",
+                    modal: true,
+                    title: msgtitle,
+                    buttons: {
+                        OK: function() {
+                            $(this).dialog("close");
+                            scrollToTop();
+                            treeFilter();
+                            return $.Deferred().resolve();
+                        }
                     }
+                });
+            },
+            error: function(x, t, m) {
+                var message;
+                if (typeof m.message != "undefined") {
+                    message = m.message;}else{message = m;
                 }
-            });
-        }
-    })
+                if (x.status == 400 || x.status == 403) {
+                    message = x.responseJSON.message;
+                }
+                $("#spinner").hide();
+                $("<div>"+message+"</div>").dialog({
+                    autoOpen: true,
+                    height: "auto",
+                    resizable: false,
+                    minWidth: 300,
+                    title: "Error",
+                    modal: true,
+                    buttons: {
+                        OK: function() {
+                            $(this).dialog("close");
+                        }
+                    }
+                });
+            }
+        });
+    });
 }
 
 function getQueryParams(qs) {
