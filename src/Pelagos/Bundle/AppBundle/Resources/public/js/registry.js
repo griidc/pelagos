@@ -15,6 +15,8 @@
             active: 0
         });
         
+        //disableForm();
+        
         $( "#datasetFileAvailabilityDate" ).datepicker({
             showOn: "button",
             buttonImageOnly: false,
@@ -56,7 +58,7 @@
         
         datasetFilePullCertainTimesOnly
         
-        $("#regForm").validate({
+        $("form").validate({
         rules: {
             title:
             {
@@ -253,6 +255,22 @@
 
     });
 })(jQuery);
+
+function disableForm()
+{
+    jQuery("form :input").prop("disabled",true);
+    jQuery("#tabs").tabs("disable");
+    jQuery("#md-tabs").tabs("disable");
+    jQuery('input[type="submit"]').prop("disabled",true);   
+}
+
+function enableForm()
+{
+    jQuery("form :input").prop("disabled",false);
+    jQuery("#tabs").tabs("enable");
+    jQuery("#md-tabs").tabs("enable");
+    jQuery('input[type="submit"]').prop("disabled",false);  
+}
 
 function addToFiles()
 {

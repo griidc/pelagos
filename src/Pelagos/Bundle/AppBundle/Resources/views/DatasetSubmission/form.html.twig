@@ -6,7 +6,7 @@
 
 <div class="cleair" style="width:auto; padding:10px;">
 
-<form id="regForm" name="regForm" action="" method="post" enctype="multipart/form-data">
+
 
     <fieldset>
         <p>
@@ -30,7 +30,7 @@
                 <button disabled name="regbutton" id="regbutton" type="button">Load Dataset</button>
             </fieldset>
         </p>
-
+    {{ form_start(form) }}
         <input type="hidden" id="task" name="task">
 
         <p> <!-- Dataset Title -->
@@ -422,7 +422,8 @@
     <div style="text-align:center;">
         <input type="submit" name="submit" style="font-size:120%; font-weight:bold;" value="Register">
     </div>
-</form>
+{{ form_end(form) }}
+    
 
 </div>
 
