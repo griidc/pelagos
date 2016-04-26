@@ -68,6 +68,7 @@ class DatasetSubmissionType extends AbstractType
             ->add('doi', TextType::class, array(
                 'label' => 'Digital Object Identifier:',
                 'required' => false,
+                 'attr' => array('size' => '60'),
             ))
             ->add('datasetFileTransferType', HiddenType::class, array(
                 'required' => false,
@@ -111,6 +112,7 @@ class DatasetSubmissionType extends AbstractType
             ->add('datasetFilePullDays', ChoiceType::class, array(
                 'choices' => array_combine($days, $days),
                 'label' => 'Weekdays:',
+                'data' => $days,
                 'required' => false,
                 'expanded' => true,
                 'multiple' => true,
