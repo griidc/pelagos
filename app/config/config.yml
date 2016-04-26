@@ -39,6 +39,7 @@ twig:
     strict_variables: "%kernel.debug%"
     paths:
         "%kernel.root_dir%/../src/Pelagos/Bundle/AppBundle/Resources/views/template": templates
+        "%kernel.root_dir%/../src/Pelagos/Bundle/AppBundle/Resources/views/DIF/email": DIFEmail
 
 # Doctrine Configuration
 doctrine:
@@ -59,6 +60,7 @@ doctrine:
                 is_bundle: false
                 prefix: Pelagos\Entity
                 alias: Pelagos
+        naming_strategy: doctrine.orm.naming_strategy.underscore
 
 # Swiftmailer Configuration
 swiftmailer:

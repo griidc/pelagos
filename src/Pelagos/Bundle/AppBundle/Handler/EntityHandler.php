@@ -6,6 +6,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use Doctrine\ORM\EntityManager;
@@ -15,7 +16,11 @@ use Doctrine\Common\Collections\Collection;
 use Pelagos\Entity\Entity;
 use Pelagos\Entity\Account;
 use Pelagos\Entity\Person;
+
+use Pelagos\Event\EntityEvent;
+
 use Pelagos\Exception\UnmappedPropertyException;
+
 use Pelagos\Bundle\AppBundle\Security\PelagosEntityVoter;
 use Pelagos\Bundle\AppBundle\Security\EntityProperty;
 
@@ -46,20 +51,30 @@ class EntityHandler
     private $authorizationChecker;
 
     /**
+     * The event dispatcher to use in this entity handler.
+     *
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
+
+    /**
      * Constructor for EntityHandler.
      *
      * @param EntityManager                 $entityManager        The entity manager to use.
      * @param TokenStorageInterface         $tokenStorage         The token storage to use.
      * @param AuthorizationCheckerInterface $authorizationChecker The authorization checker to use.
+     * @param EventDispatcherInterface      $eventDispatcher      The event dispatcher to use.
      */
     public function __construct(
         EntityManager $entityManager,
         TokenStorageInterface $tokenStorage,
-        AuthorizationCheckerInterface $authorizationChecker
+        AuthorizationCheckerInterface $authorizationChecker,
+        EventDispatcherInterface $eventDispatcher
     ) {
         $this->entityManager = $entityManager;
         $this->tokenStorage = $tokenStorage;
         $this->authorizationChecker = $authorizationChecker;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -110,13 +125,14 @@ class EntityHandler
     /**
      * Create a new entity.
      *
-     * @param Entity $entity The entity to create.
+     * @param Entity      $entity          The entity to create.
+     * @param string|null $entityEventName The name of the entity event to dispatch (default: 'created').
      *
      * @throws AccessDeniedException When the user does not have sufficient privileges to create the entity.
      *
      * @return Entity The new entity.
      */
-    public function create(Entity $entity)
+    public function create(Entity $entity, $entityEventName = 'created')
     {
         if (!$this->authorizationChecker->isGranted('CAN_CREATE', $entity)) {
             throw new AccessDeniedException(
@@ -143,19 +159,21 @@ class EntityHandler
             // Restore the original ID generator for entities of this class.
             $metadata->setIdGenerator($idGenerator);
         }
+        $this->dispatchEntityEvent($entity, $entityEventName);
         return $entity;
     }
 
     /**
      * Update an entity.
      *
-     * @param Entity $entity The entity to update.
+     * @param Entity      $entity          The entity to update.
+     * @param string|null $entityEventName The name of the entity event to dispatch (default: 'updated').
      *
      * @throws AccessDeniedException When the user does not have sufficient privileges to update the entity.
      *
      * @return Entity The updated entity.
      */
-    public function update(Entity $entity)
+    public function update(Entity $entity, $entityEventName = 'updated')
     {
         if (!$this->authorizationChecker->isGranted(PelagosEntityVoter::CAN_EDIT, $entity)) {
             $unitOfWork = $this->entityManager->getUnitOfWork();
@@ -174,19 +192,21 @@ class EntityHandler
         $entity->setModifier($this->getAuthenticatedPerson());
         $this->entityManager->persist($entity);
         $this->entityManager->flush($entity);
+        $this->dispatchEntityEvent($entity, $entityEventName);
         return $entity;
     }
 
     /**
      * Delete an entity.
      *
-     * @param Entity $entity The entity object to delete.
+     * @param Entity      $entity          The entity object to delete.
+     * @param string|null $entityEventName The name of the entity event to dispatch (default: 'deleted').
      *
      * @throws AccessDeniedException When the user does not have sufficient privileges to delete the entity.
      *
      * @return Entity The entity object that was deleted.
      */
-    public function delete(Entity $entity)
+    public function delete(Entity $entity, $entityEventName = 'deleted')
     {
         if (!$this->authorizationChecker->isGranted(PelagosEntityVoter::CAN_DELETE, $entity)) {
             throw new AccessDeniedException(
@@ -195,6 +215,7 @@ class EntityHandler
         }
         $this->entityManager->remove($entity);
         $this->entityManager->flush();
+        $this->dispatchEntityEvent($entity, $entityEventName);
         return $entity;
     }
 
@@ -242,6 +263,22 @@ class EntityHandler
             ->orderBy("entity.$property")
             ->getQuery();
         return $query->getResult('COLUMN_HYDRATOR');
+    }
+
+    /**
+     * Dispatch an Entity event.
+     *
+     * @param Entity $entity          The Entity the event is for.
+     * @param string $entityEventName The name of the entity event.
+     *
+     * @return void
+     */
+    public function dispatchEntityEvent(Entity $entity, $entityEventName)
+    {
+        $this->eventDispatcher->dispatch(
+            'pelagos.entity.' . $entity->getUnderscoredName() . '.' . $entityEventName,
+            new EntityEvent($entity)
+        );
     }
 
     /**
