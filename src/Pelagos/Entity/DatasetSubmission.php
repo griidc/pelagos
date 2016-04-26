@@ -179,7 +179,7 @@ class DatasetSubmission extends Entity
      *
      * @var string
      *
-     * @ORM\Column
+     * @ORM\Column(nullable=true)
      */
     protected $datasetSubmissionId;
 
@@ -440,9 +440,9 @@ class DatasetSubmission extends Entity
      *
      * Legacy DB column: access_period_weekdays
      *
-     * @var string
+     * @var array
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column(type="simple_array", nullable=true)
      */
     protected $datasetFilePullDays;
 
@@ -1000,7 +1000,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setDatasetFileAvailabilityDate(\DateTime $datasetFileAvailabilityDate)
+    public function setDatasetFileAvailabilityDate(\DateTime $datasetFileAvailabilityDate = null)
     {
         $this->datasetFileAvailabilityDate = $datasetFileAvailabilityDate;
     }
@@ -1044,7 +1044,7 @@ class DatasetSubmission extends Entity
      *
      * @return void
      */
-    public function setDatasetFilePullStartTime(\DateTime $datasetFilePullStartTime)
+    public function setDatasetFilePullStartTime(\DateTime $datasetFilePullStartTime = null)
     {
         $this->datasetFilePullStartTime = $datasetFilePullStartTime;
     }
@@ -1062,11 +1062,11 @@ class DatasetSubmission extends Entity
     /**
      * Set the Days this dataset can be pulled.
      *
-     * @param string $datasetFilePullDays The days this dataset can be pulled.
+     * @param array $datasetFilePullDays The days this dataset can be pulled.
      *
      * @return void
      */
-    public function setDatasetFilePullDays($datasetFilePullDays)
+    public function setDatasetFilePullDays(array $datasetFilePullDays)
     {
         $this->datasetFilePullDays = $datasetFilePullDays;
     }
