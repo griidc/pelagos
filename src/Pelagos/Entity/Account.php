@@ -13,6 +13,7 @@ use JMS\Serializer\Annotation as Serializer;
 
 use Pelagos\Exception\PasswordException;
 use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
+use Pelagos\Bundle\AppBundle\DataFixtures\ORM\ResearchGroupRoles;
 
 /**
  * Entity class to represent an Account.
@@ -37,6 +38,11 @@ class Account extends Entity implements UserInterface, \Serializable
      * A role given only to Data Repository Managers.
      */
     const ROLE_DATA_REPOSITORY_MANAGER = 'ROLE_DATA_REPOSITORY_MANAGER';
+
+    /**
+     * A role given only to Research Group Data people.
+     */
+    const ROLE_RESEARCH_GROUP_DATA = 'ROLE_RESEARCH_GROUP_DATA';
 
     /**
      * This is defined here to override the base class id.
@@ -253,6 +259,13 @@ class Account extends Entity implements UserInterface, \Serializable
                 and !in_array(self::ROLE_DATA_REPOSITORY_MANAGER, $roles)
             ) {
                 $roles[] = self::ROLE_DATA_REPOSITORY_MANAGER;
+            }
+        }
+        foreach ($this->getPerson()->getPersonResearchGroups() as $personResearchGroup) {
+            if ($personResearchGroup->getRole()->getName() == ResearchGroupRoles::DATA
+                and !in_array(self::ROLE_RESEARCH_GROUP_DATA, $roles)
+            ) {
+                $roles[] = self::ROLE_RESEARCH_GROUP_DATA;
             }
         }
         return $roles;
