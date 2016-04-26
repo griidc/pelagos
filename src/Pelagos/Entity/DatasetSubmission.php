@@ -444,7 +444,7 @@ class DatasetSubmission extends Entity
      *
      * @ORM\Column(type="simple_array", nullable=true)
      */
-    protected $datasetFilePullDays;
+    protected $datasetFilePullDays = array();
 
     /**
      * Whether to pull the source data.
@@ -996,7 +996,8 @@ class DatasetSubmission extends Entity
     /**
      * Set the date after which the dataset file will be available for pull.
      *
-     * @param \DateTime $datasetFileAvailabilityDate The date after which the dataset file will be available for pull.
+     * @param \DateTime|null $datasetFileAvailabilityDate The date after which the dataset
+     *                                                    file will be available for pull.
      *
      * @return void
      */
@@ -1040,7 +1041,7 @@ class DatasetSubmission extends Entity
     /**
      * Set the time of day to start pulling this dataset.
      *
-     * @param \DateTime $datasetFilePullStartTime The time of day to start pulling this dataset.
+     * @param \DateTime|null $datasetFilePullStartTime The time of day to start pulling this dataset.
      *
      * @return void
      */
