@@ -77,7 +77,7 @@ class DIFType extends AbstractType
                     'rows' => '2',
                     'maxsize' => 200,
                 ),
-                'label' => 'Title:',
+                'label' => 'Dataset Title:',
                 'required' => true,
             ))
             ->add('primaryPointOfContact', EntityType::class, array(
@@ -149,7 +149,7 @@ class DIFType extends AbstractType
             ))
             ->add('variablesObserved', TextareaType::class, array(
                 'attr' => array('rows' => 3),
-                'label' => 'Abstract:',
+                'label' => 'Phenomenon/Variables Observed or Generated:',
                 'attr' => array(
                     'placeholder' => 'Examples: wind speed (km/hr), salinity (ppt), temperature (°C), PCB concentrations in eggs from a specified species (ng/g wet weight), Ionic Strength (mM)'
                 ),
@@ -186,6 +186,9 @@ class DIFType extends AbstractType
                 'html5' => false,
                 'format' => 'yyyy-MM-dd',
                 'required' => false,
+                'attr' => array(
+                    'placeholder' => 'yyyy-mm-dd'
+                ),
             ))
             ->add('estimatedEndDate', DateType::class, array(
                 'label' => 'End Date:',
@@ -194,6 +197,9 @@ class DIFType extends AbstractType
                 'html5' => false,
                 'format' => 'yyyy-MM-dd',
                 'required' => false,
+                'attr' => array(
+                    'placeholder' => 'yyyy-mm-dd'
+                ),
             ))
             ->add('spatialExtentDescription', TextType::class, array(
                 'label' => 'Description:',
@@ -271,6 +277,7 @@ class DIFType extends AbstractType
             'choice_label' => 'name',
             'placeholder' => '[PLEASE SELECT A PROJECT]',
             'required' => true,
+            'label' => 'Project Title:',
         ));
     }
 
