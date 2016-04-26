@@ -168,7 +168,7 @@ class DatasetSubmission extends Entity
      *
      * @var Dataset
      *
-     * @ORM\ManyToOne(targetEntity="Dataset")
+     * @ORM\ManyToOne(targetEntity="Dataset", inversedBy="datasetSubmissionHistory")
      */
     protected $dataset;
 
