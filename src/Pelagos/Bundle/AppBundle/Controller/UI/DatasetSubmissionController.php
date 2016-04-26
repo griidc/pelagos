@@ -26,7 +26,7 @@ class DatasetSubmissionController extends UIController
      * @param string|null $id      The id of the Dataset to load.
      *
      * @Route("/{id}")
-     * 
+     *
      * @Method("GET")
      *
      * @return Response A Response instance.
@@ -35,8 +35,8 @@ class DatasetSubmissionController extends UIController
     {
         $dataset = new DatasetSubmission;
         $form = $this->get('form.factory')->createNamed(
-            null, 
-            DatasetSubmissionType::class, 
+            null,
+            DatasetSubmissionType::class,
             $dataset
         );
 
@@ -45,10 +45,10 @@ class DatasetSubmissionController extends UIController
             array('form' => $form->createView())
         );
     }
-    
+
     /**
      * The default action for Dataset Submission.
-        *
+     *
      * @param Request     $request The Symfony request object.
      * @param string|null $id      The id of the Dataset to load.
      *
@@ -62,21 +62,21 @@ class DatasetSubmissionController extends UIController
     {
         $dataset = new DatasetSubmission;
         $form = $this->get('form.factory')->createNamed(
-        null, 
-        DatasetSubmissionType::class, 
-        $dataset
+            null,
+            DatasetSubmissionType::class,
+            $dataset
         );
-        
+
         $form->handleRequest($request);
-        
+
         if ($form->isSubmitted() && $form->isValid()) {
             // ... perform some action, such as saving the task to the database
-            
+
             echo 'works!';
-            
+
             $this->container->get('pelagos.entity.handler')->create($dataset);
         }
-        
+
         return $this->render(
             'PelagosAppBundle:DatasetSubmission:index.html.twig',
             array('form' => $form->createView())
