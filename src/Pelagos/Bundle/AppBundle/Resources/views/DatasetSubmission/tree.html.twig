@@ -50,7 +50,22 @@
                                  style="position:absolute; top:0px; left:10px; right:0px; bottom:10px; overflow:auto;" 
                                  BGCOLOR="#efefef">
                                 <div class="dtree" style="position:absolute;">
-                                    YOUR TREE HERE!
+                                    <script  type="text/javascript">
+                                        d = new dTree('d');
+                                        
+                                        {% set nodecount = 0 %}
+                                        {% set folderCount = 1 %}
+                                        
+                                        d.add({{ nodecount }},-1,'My Registries','');
+                                        
+                                        {% set mynode = nodecount %}
+                                        {% set nodecount = nodecount + 1 %}
+                                        
+                                        d.add({{ nodecount }},{{ mynode }},'Others','javascript: d.o({{ nodecount }});','Other Registrations','','','',true);
+                                        
+                                        document.write(d);
+                                        
+                                    </script>
                                 </div>
                             </div>
                         </div>

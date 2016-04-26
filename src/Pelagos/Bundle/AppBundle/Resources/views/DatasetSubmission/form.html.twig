@@ -163,7 +163,7 @@
                                 <input type="hidden" name="url_data_upload">
                                 To replace the dataset file:
                         {% endif %}
-                        <input name="datafile" id="datafile" type="file"/>
+                        {{ form_widget(form.datasetFile) }}
                     </p>
                 </fieldset>
             </div> <!-- tabs-1 -->
@@ -189,9 +189,8 @@
                             <img class="info" src="{{ asset_url }}">
                             {% endimage %}
                         </span>
-                        <label for="sshdatapath">Dataset File Path:</label>
                         <div class="fwtextboxcont">
-                            <input name="url_data_sftp" id="sshdatapath" type="text" style="width:100%">
+                            {{ form_row(form.datasetFilePath) }}
                         </div>
                         <input type="button" value="Browse...">
                         <div id="sftp_force_data_download">
@@ -213,9 +212,8 @@
                             <img class="info" src="{{ asset_url }}">
                             {% endimage %}
                         </span>
-                        <label for="dataurl">Dataset File URL:</label>
                         <div class="fwtextboxcont">
-                            <input  name="url_data_http" id="dataurl" type="text" style="width:100%">
+                            {{ form_row(form.datasetFileUrl) }}
                         </div>
                         <div id="http_force_data_download">
                             {% if downloadagain|default %}
@@ -229,37 +227,40 @@
                     <tr>
                         <td width="50%"> <!-- Availability Date -->
                             <fieldset>
-                                <p>
+                                <br>
                                     <span id="qtip_date" style="float:right;">
                                         {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
                                         <img class="info" src="{{ asset_url }}">
                                         {% endimage %}
                                     </span>
-                                    <label for="availdate">Availability Date:</label>
-                                    <input type="text" name="availability_date" id="availdate" size="40" style="width:100px;"/>
-                                    (leave blank for immediate availability
-                                </p>
+                                    {{ form_label(form.datasetFileAvailabilityDate) }}
+                                    <div class="choice-label">
+                                        {{ form_widget(form.datasetFileAvailabilityDate) }}
+                                        (leave blank for immediate availability)
+                                    </div>
+                                <br>
                             </fieldset>
                         </td>
                         <td width="50%"> <!-- Download Certain Times Only -->
                             <fieldset>
-                                <p>
+                                <br>
                                     <span id="qtip_when" style="float:right;">
                                         {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
                                         <img class="info" src="{{ asset_url }}">
                                         {% endimage %}
                                     </span>
-                                    <label for="whendl">Download Certain Times Only:</label>
-                                    <input name="access_period" id="whendl" type="radio" value="Yes">Yes
-                                    <input name="access_period" id="whendl" type="radio" value="No">No
-                                </p>
+                                    {{ form_label(form.datasetFilePullCertainTimesOnly) }}
+                                    <div class="choice-label">
+                                        {{ form_widget(form.datasetFilePullCertainTimesOnly) }}
+                                    </div>
+                                <br>
                             </fieldset>
                        </td>
                     </tr>
                     <input name="auth" id="auth" type="hidden" value="No"/>
                 </table>
 
-                <div id="whendiv">
+                <div id="whendiv" style="display:none;">
                     <fieldset>
                         <span id="qtip_times" style="float:right;">
                             {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
@@ -270,22 +271,16 @@
                         <table width="100%">
                             <tr>
                                 <td valign="top">
-                                    <label for="dlstart">Start Time:</label>
-                                    <select name="dlstart" id="dlstart">
-                                        <option selected>this needs to a time picker</option>
-                                    </select>
+                                    {{ form_row(form.datasetFilePullStartTime) }}
 
                                 </td>
                                 <td>
-                                    <label for="weekdays">Weekdays:</label>
-                                    <input name="weekdays" id="weekdays" type="checkbox" value="Monday">Monday<br>
-                                    <input name="weekdays" id="weekdays" type="checkbox" value="Tuesday">Tuesday<br>
-                                    <input name="weekdays" id="weekdays" type="checkbox" value="Wednesday">Wednesday<br>
-                                    <input name="weekdays" id="weekdays" type="checkbox" value="Thursday">Thursday<br>
-                                    <input name="weekdays" id="weekdays" type="checkbox" value="Friday">Friday<br>
-                                    <input name="weekdays" id="weekdays" type="checkbox" value="Saturday"/>Saturday<br>
-                                    <input name="weekdays" id="weekdays" type="checkbox" value="Sunday"/>Sunday
-
+                                    {{ form_label(form.datasetFilePullDays) }}
+                                    {% for key, datasetFilePullDay in form.datasetFilePullDays.children %}
+                                    <div class="choice-label">
+                                        {{ form_widget(datasetFilePullDay) }} {{ form_label(datasetFilePullDay) }} <br>
+                                    </div>
+                                    {% endfor %}
                                 </td>
                                 <td valign="top">
                                     <button style="width:100px" type="button">Weekends</button><br \>
@@ -297,16 +292,17 @@
                 </div> <!-- whendiv -->
                 <div>
                     <fieldset>
-                        <p>
+                        <br>
                             <span id="qtip_pull" style="float:right;">
                                 {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
                                 <img class="info" src="{{ asset_url }}">
                                 {% endimage %}
                             </span>
-                            <label for="pullds">Pull Source Data:</label>
-                            <input name="data_source_pull" id="pullds" type="radio" value="Yes">Yes
-                            <input name="data_source_pull" id="pullds" type="radio" value="No">No
-                        </p>
+                            {{ form_label(form.datasetFilePullSourceData) }}
+                            <div class="choice-label">
+                                {{ form_widget(form.datasetFilePullSourceData) }}
+                            </div>
+                        <br>
                     </fieldset>
                 </div>
             </div> <!-- tabs-3 -->
@@ -338,16 +334,17 @@
                             <img class="info" src="{{ asset_url }}">
                             {% endimage %}
                         </span>
-                        <label for="metadatafile">Metadata File:</label>
+                        {{ form_label(form.metadataFile) }}
                         {% if file_exists_upload|default %}
                             <div class="fwtextboxcont">
                                 <input disabled type="text" style="width:100%" 
                                        style="color:black; background-color:transparent; padding:2px;">
                             </div>
                             <input type="hidden" name="upload_metadataurl">
+                            {{ form_row(form.metadataFileTransferType) }}
                             To replace the metadata file: 
                         {% endif %}
-                        <input name="metadatafile" id="metadatafile" type="file">
+                        {{ form_widget(form.metadataFile) }}
                     </p>
                 </fieldset>
             </div> <!-- md-tabs-1 -->
@@ -367,15 +364,15 @@
                     </div>
                     {% endif %}
                 <fieldset>
-                    <p>
+                    <br>
                         <span id="qtip_sshmetadataurl" style="float:right;">
                             {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
                             <img class="info" src="{{ asset_url }}">
                             {% endimage %}
                         </span>
-                        <label for="sshmetadatapath">Metadata File Path:</label>
+                        {{ form_label(form.metadataFilePath) }}
                         <div class="fwtextboxcont">
-                            <input name="url_metadata_sftp" id="sshmetadatapath" type="text" style="width:100%">
+                            {{ form_widget(form.metadataFilePath) }}
                         </div>
                         <input type="button" value="Browse...">
                         <div id="sftp_force_metadata_download">
@@ -383,7 +380,7 @@
                             <input type="checkbox" name="sftp_force_metadata_download">import this file again from the same path
                         {% endif %}
                         </div>
-                    </p>
+                    <br>
                  </fieldset>
             </div> <!-- md-tabs-2 -->
 
@@ -398,7 +395,7 @@
                         </span>
                         <label for="url_metadata_http">Metadata File URL:</label>
                         <div class="fwtextboxcont">
-                            <input name="url_metadata_http" id="url_metadata_http" style="width:100%">
+                            {{ form_widget(form.metadataFileUrl) }}
                         </div>
                         <div id="http_force_metadata_download">
                             {% if upload|default %}

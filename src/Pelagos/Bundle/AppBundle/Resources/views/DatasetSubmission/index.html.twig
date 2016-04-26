@@ -21,6 +21,10 @@
         )
     }}
     
+    {% stylesheets  '@PelagosAppBundle/Resources/public/css/dtree.css' %}
+        {{ add_css(asset_url) }}
+    {% endstylesheets  %}
+    
     {% stylesheets  '@PelagosAppBundle/Resources/public/css/registry.css' %}
         {{ add_css(asset_url) }}
     {% endstylesheets  %}
@@ -34,6 +38,10 @@
             ]
         )
     }}
+    
+    {% javascripts '@PelagosAppBundle/Resources/public/js/dtree.js' %}
+        {{ add_js(asset_url) }}
+    {% endjavascripts %}
 
     {% javascripts '@PelagosAppBundle/Resources/public/js/registry.js' %}
         {{ add_js(asset_url) }}

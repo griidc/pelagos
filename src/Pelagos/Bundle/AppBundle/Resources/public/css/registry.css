@@ -8,13 +8,49 @@ textarea#abstract {
     width:100%;
 }
 
-input#pointOfContactName, input#pointOfContactEmail {
+input#pointOfContactName, 
+input#pointOfContactEmail,
+input#authors,
+input#title,
+input#datasetFilePath,
+input#datasetFileUrl,
+input#metadataFilePath,
+input#metadataFileUrl
+{
     width:100%;
 }
+
+.input[type=text] {
+    width:100%;
+}
+
+label {
+    color:#40626B;
+    font-family: sans-serif, Tahoma, Geneva;
+    font-size: 12px;
+}
+
+legend.section-header {
+    font-size: 130%;
+    font-weight: bold;
+}
+
+
+
+fieldset {
+    font-family: sans-serif, Tahoma, Geneva;
+    font-size: 12px;
+}
+
 
 .choice-label label {
     font-weight: normal;
     display: inline;
+    color:black;
+}
+
+#datasetFileAvailabilityDate{
+    width:100px;
 }
 
 .ccc {
@@ -255,21 +291,6 @@ a.boxclose{
     background-color: white;
 }
 
-legend.section-header {
-    font-size: 130%;
-    font-weight: bold;
-}
-
-label {
-    color:#40626B;
-    font-family: sans-serif, Tahoma, Geneva;
-    font-size: 12px;
-}
-
-fieldset {
-    font-family: sans-serif, Tahoma, Geneva;
-    font-size: 12px;
-}
 
 
 

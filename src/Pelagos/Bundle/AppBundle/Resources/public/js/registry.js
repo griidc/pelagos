@@ -15,7 +15,7 @@
             active: 0
         });
         
-        $( "#availdate" ).datepicker({
+        $( "#datasetFileAvailabilityDate" ).datepicker({
             showOn: "button",
             buttonImageOnly: false,
             dateFormat: "yy-mm-dd",
@@ -44,6 +44,17 @@
         
         
         ***************************************************************/
+        
+        $('input[name="datasetFilePullCertainTimesOnly"').click(function() {
+            console.log('clicked?');
+            if (this.value == "1") {
+                $("#whendiv").show();
+            } else {
+                $("#whendiv").hide();
+            }
+        });
+        
+        datasetFilePullCertainTimesOnly
         
         $("#regForm").validate({
         rules: {
