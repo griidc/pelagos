@@ -121,7 +121,21 @@ class Ldap
                 $ldapPerson['entry'][$ldapAttribute] = $accessor->getValue($person, $personAttribute);
             }
         }
-        
+
+        if ($person->getAccount()->isPosix()) {
+            $ldapPerson['entry']['objectClass'][] = 'posixAccount';
+            $posixAttributes = array('uidNumber', 'gidNumber', 'homeDirectory', 'loginShell');
+            foreach ($posixAttributes as $attribute) {
+                if ($accessor->getValue($person->getAccount(), $attribute) !== null) {
+                    $ldapPerson['entry'][$attribute] = $accessor->getValue($person->getAccount(), $attribute);
+                }
+            }
+            if (count($accessor->getValue($person->getAccount(), 'sshPublicKeys')) > 0) {
+                $ldapPerson['entry']['objectClass'][] = 'ldapPublicKey';
+                $ldapPerson['entry']['sshPublicKey'] = array_values($accessor->getValue($person->getAccount(), 'sshPublicKeys'));
+            }
+        }
+
         return $ldapPerson;
     }
 }
