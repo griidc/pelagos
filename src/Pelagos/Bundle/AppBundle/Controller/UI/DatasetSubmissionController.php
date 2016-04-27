@@ -70,16 +70,12 @@ class DatasetSubmissionController extends UIController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // ... perform some action, such as saving the task to the database
-
-            echo 'works!';
-
             $this->container->get('pelagos.entity.handler')->create($dataset);
         }
 
         return $this->render(
-            'PelagosAppBundle:DatasetSubmission:index.html.twig',
-            array('form' => $form->createView())
+            'PelagosAppBundle:DatasetSubmission:submit.html.twig',
+            array('DatasetSubmission' => $dataset)
         );
     }
 }
