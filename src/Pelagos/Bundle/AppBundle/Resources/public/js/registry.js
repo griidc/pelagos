@@ -1,128 +1,166 @@
 (function ($) {
     $(document).ready(function(){
-        
+
         jQuery("#pelagos-content > table > tbody > tr > td:last-child").height(jQuery("#pelagos-content > table > tbody > tr > td:first-child").height());
-        
-        $( "#tabs" ).tabs({
+
+        // Get the time zone, put it in timezone field.
+        getTimeZone();
+
+
+        $("#tabs").tabs({
             heightStyleType: "fill",
             disabled: [3,4,5],
-            active: 0
+            activate: function(event, ui) {
+                $("#datasetFileTransferType").val(ui.newTab.attr("value"));
+            },
+            create: function(event, ui) {
+                var datasetFileTransferType = $("#datasetFileTransferType");
+                if (datasetFileTransferType.val() == "") {
+                    datasetFileTransferType.val(ui.tab.attr("value"));
+                }
+            }
         });
-        
-        $( "#md-tabs" ).tabs({
+
+        $("#md-tabs").tabs({
             heightStyleType: "fill",
             disabled: [3,4,5],
-            active: 0
+            activate: function(event, ui) {
+                $("#metadataFileTransferType").val(ui.newTab.attr("value"));
+            },
+            create: function(event, ui) {
+                var metadataFileTransferType = $("#metadataFileTransferType");
+                if (metadataFileTransferType.val() == "") {
+                    metadataFileTransferType.val(ui.tab.attr("value"));
+                }
+            }
         });
-        
-        //disableForm();
-        
+
+        switch ($("#datasetFileTransferType").val()) {
+            case "upload":
+                $("#tabs").tabs("option", "active", 0);
+                break;
+            case "SFTP":
+                $("#tabs").tabs("option", "active", 1);
+                break;
+            case "HTTP":
+                $("#tabs").tabs("option", "active", 2);
+                break;
+        }
+
+        switch ($("#metadataFileTransferType").val()) {
+            case "upload":
+                $("#md-tabs").tabs("option", "active", 0);
+                break;
+            case "SFTP":
+                $("#md-tabs").tabs("option", "active", 1);
+                break;
+            case "HTTP":
+                $("#md-tabs").tabs("option", "active", 2);
+                break;
+        }
+
+        // This should really check DS id or something.
+        if ($("#title").val() == "" ) {
+            $("form :input").not("#registry_id").prop("disabled",true);
+            $("#tabs").tabs("disable");
+            $("#md-tabs").tabs("disable");
+            $('input[type="submit"]').prop("disabled",true);
+        } else {
+            $("#registry_id").prop("disabled",true);
+        }
+
         $( "#datasetFileAvailabilityDate" ).datepicker({
             showOn: "button",
             buttonImageOnly: false,
             dateFormat: "yy-mm-dd",
             autoSize:true
         });
-        
-        
-        //TODO:  
-        /**************************************************************
-        
-        - If there is no DIF id, then disable the button next to it, but it least 15 characters.
-        - if there is a regid set, then disable the UDI input.
-        - regbutton onclick = this url + ?regid= {UDI field}.
-        
-        Handle this: (somehow)
-            <li><a onclick="document.getElementById('servertype').value='upload'" href="#tabs-1">Direct Upload</a></li>
-            <li><a onclick="document.getElementById('servertype').value='SFTP'" href="#tabs-2">Upload via SFTP/GridFTP</a></li>
-            <li><a onclick="document.getElementById('servertype').value='HTTP'" href="#tabs-3">Request Pull from HTTP/FTP Server</a></li>
-            
-            on field: url_data_sftp, onchange="document.getElementById('sftp_force_data_download').style.visibility = 'hidden';"
-            
-            button "Browse..." = onclick="showFileBrowser('data','%home%');"
-            url_data_http = "document.getElementById('http_force_data_download').style.visibility = 'hidden';"
-            access_period = onclick="showCreds(this,'whendiv','Yes');getTimeZone();weekDays();"
-            
-        
-        
-        ***************************************************************/
-        
+
+        $('#btnWeekends').click(function() {
+            selDays(true);
+        });
+
+        $('#btnWorkdays').click(function() {
+            selDays(false);
+        });
+
         $('input[name="datasetFilePullCertainTimesOnly"').click(function() {
-            console.log('clicked?');
             if (this.value == "1") {
                 $("#whendiv").show();
             } else {
                 $("#whendiv").hide();
             }
         });
-        
-        datasetFilePullCertainTimesOnly
-        
-        $("form").validate({
-        rules: {
-            title:
-            {
-                required: true,
-                maxlength: 300
-            },
-            abstrct:
-            {
-                required: true,
-                maxlength: 4000
-            },
-            sshdatapath: "required",
-            auth: "required",
-            sshauth: "required",
-            pocname: "required",
-            whendl: "required",
-            pullds: "required",
-            pocemail:
-            {
-                required: true,
-                email: true
-            },
-            dataurl:
-            {
-                required: true,
-                url: true
-            },
-            url_metadata_http:
-            {
-                required: false,
-                url: true
-            },
-            availdate:
-            {
-                required: true,
-                dateISO: true
-            },
-            regbutton:
-            {
-                required: "#registry_id:minlength:15",
-            },
-            dataset_originator:
-            {
-                required: true
-            }
-        },
-        errorPlacement: function(error, element) {
-            if (element.attr("name") == "registry_id") {
-                error.insertAfter( $("#regbutton") );
-            } else {
-                error.insertAfter(element);
-            }
-        },
-        messages: {
-            txtMetaURL: "Please enter a valid URL.",
-            radAuth: "Please select one.",
-            dataurl: {
-                required: "Please enter a valid URL",
-                remote: jQuery.format("Please check the URL, it may not exist!")
-            }
+
+        if ($('input[name="datasetFilePullCertainTimesOnly"').val() == 1) {
+            $("#whendiv").show();
         }
+
+        $("form").validate({
+            rules: {
+                title:
+                {
+                    required: true,
+                    maxlength: 300
+                },
+                abstrct:
+                {
+                    required: true,
+                    maxlength: 4000
+                },
+                sshdatapath: "required",
+                auth: "required",
+                sshauth: "required",
+                pocname: "required",
+                whendl: "required",
+                pullds: "required",
+                pocemail:
+                {
+                    required: true,
+                    email: true
+                },
+                dataurl:
+                {
+                    required: true,
+                    url: true
+                },
+                url_metadata_http:
+                {
+                    required: false,
+                    url: true
+                },
+                availdate:
+                {
+                    required: true,
+                    dateISO: true
+                },
+                regbutton:
+                {
+                    required: "#registry_id:minlength:15",
+                },
+                dataset_originator:
+                {
+                    required: true
+                }
+            },
+            errorPlacement: function(error, element) {
+                if (element.attr("name") == "registry_id") {
+                    error.insertAfter( $("#regbutton") );
+                } else {
+                    error.insertAfter(element);
+                }
+            },
+            messages: {
+                txtMetaURL: "Please enter a valid URL.",
+                radAuth: "Please select one.",
+                dataurl: {
+                    required: "Please enter a valid URL",
+                    remote: jQuery.format("Please check the URL, it may not exist!")
+                }
+            }
         });
-        
-        $('#regForm').bind('change keyup mouseout', function() {
+
+        $('#regidform').bind('change keyup mouseout', function() {
             if($(this).validate().checkForm() && $('#registry_id').val() != '' && $('#registry_id').is(':disabled') == false) {
                 $('#regbutton').removeClass('button_disabled').attr('disabled', false);
             } else {
@@ -256,22 +294,6 @@
     });
 })(jQuery);
 
-function disableForm()
-{
-    jQuery("form :input").prop("disabled",true);
-    jQuery("#tabs").tabs("disable");
-    jQuery("#md-tabs").tabs("disable");
-    jQuery('input[type="submit"]').prop("disabled",true);   
-}
-
-function enableForm()
-{
-    jQuery("form :input").prop("disabled",false);
-    jQuery("#tabs").tabs("enable");
-    jQuery("#md-tabs").tabs("enable");
-    jQuery('input[type="submit"]').prop("disabled",false);  
-}
-
 function addToFiles()
 {
     if (document.getElementById("txtURL").value !== "")
@@ -299,28 +321,15 @@ function showCreds(from,what,when)
 
 function selDays(weeknds)
 {
-    document.forms['regForm'].elements['weekdays'][0].checked = !weeknds;
-    document.forms['regForm'].elements['weekdays'][1].checked = !weeknds;
-    document.forms['regForm'].elements['weekdays'][2].checked = !weeknds;
-    document.forms['regForm'].elements['weekdays'][3].checked = !weeknds;
-    document.forms['regForm'].elements['weekdays'][4].checked = !weeknds;
+    jQuery('[name="datasetFilePullDays[]"]').filter('[value="Monday"]').prop('checked', !weeknds)
+    jQuery('[name="datasetFilePullDays[]"]').filter('[value="Tuesday"]').prop('checked', !weeknds)
+    jQuery('[name="datasetFilePullDays[]"]').filter('[value="Wednesday"]').prop('checked', !weeknds)
+    jQuery('[name="datasetFilePullDays[]"]').filter('[value="Thursday"]').prop('checked', !weeknds)
+    jQuery('[name="datasetFilePullDays[]"]').filter('[value="Friday"]').prop('checked', !weeknds)
 
-    document.forms['regForm'].elements['weekdays'][5].checked = weeknds;
-    document.forms['regForm'].elements['weekdays'][6].checked = weeknds;
 
-    weekDays();
-}
-
-function weekDays()
-{
-    var values = [];
-    var cbs = document.forms['regForm'].elements['weekdays'];
-    for(var i=0,cbLen=cbs.length;i<cbLen;i++){
-        if(cbs[i].checked){
-            values.push(cbs[i].value);
-        }
-    }
-    document.getElementById("weekdayslst").value = values.join('|');
+    jQuery('[name="datasetFilePullDays[]"]').filter('[value="Saturday"]').prop('checked', weeknds)
+    jQuery('[name="datasetFilePullDays[]"]').filter('[value="Sunday"]').prop('checked', weeknds)
 }
 
 function getTimeZone()
