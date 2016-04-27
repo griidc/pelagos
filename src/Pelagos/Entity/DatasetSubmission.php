@@ -173,15 +173,17 @@ class DatasetSubmission extends Entity
     protected $dataset;
 
     /**
-     * The ID for this Dataset Submission.
+     * The sequence for this Dataset Submission.
      *
-     * Legacy DB column: registry_id
+     * This should be incremented for each submission for the same dataset.
      *
-     * @var string
+     * Legacy DB column: registry_id (the sequence portion)
      *
-     * @ORM\Column(nullable=true)
+     * @var integer
+     *
+     * @ORM\Column(type="integer")
      */
-    protected $datasetSubmissionId;
+    protected $sequence;
 
     /**
      * The title for this Dataset Submission.
@@ -580,25 +582,30 @@ class DatasetSubmission extends Entity
     }
 
     /**
-     * Set the ID for this Dataset Submission.
+     * Set the sequence for this Dataset Submission.
      *
-     * @param string $datasetSubmissionId The ID for this Dataset Submission.
+     * @param integer $sequence The sequence for this Dataset Submission.
+     *
+     * @throws \Exception When $sequence is not an integer.
      *
      * @return void
      */
-    public function setDatasetSubmissionId($datasetSubmissionId)
+    public function setSequence($sequence)
     {
-        $this->datasetSubmissionId = $datasetSubmissionId;
+        if ('integer' !== gettype($sequence)) {
+            throw new \Exception('Seqeunce must be an integer');
+        }
+        $this->sequence = $sequence;
     }
 
     /**
-     * Get the ID for this Dataset Submission.
+     * Get the sequence for this Dataset Submission.
      *
      * @return string
      */
-    public function getDatasetSubmissionId()
+    public function getSequence()
     {
-        return $this->datasetSubmissionId;
+        return $this->sequence;
     }
 
     /**
@@ -1296,5 +1303,17 @@ class DatasetSubmission extends Entity
     public function getMetadataStatus()
     {
         return $this->metadataStatus;
+    }
+
+    /**
+     * Get the Dataset Submission ID (UDI + 3 digit sequence).
+     *
+     * This is equivalent to the legacy registry_id.
+     *
+     * @return string
+     */
+    public function getDatasetSubmissionId()
+    {
+        return $this->dataset->getUdi() . '.' . strftime('%03d', $this->seqeunce);
     }
 }
