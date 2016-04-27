@@ -10,6 +10,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionType;
 
+use Pelagos\Entity\DIF;
+use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 
 /**
@@ -33,11 +35,44 @@ class DatasetSubmissionController extends UIController
      */
     public function defaultAction(Request $request, $id = null)
     {
-        $dataset = new DatasetSubmission;
+        $difId = $request->query->get('uid');
+
+        //var_dump($difId);
+
+        $dataSetSubmission = new DatasetSubmission;
+
+        if ($difId != null) {
+            $dif = $this->entityHandler->get(DIF::class, $difId);
+            $dataset = $dif->getDataset();
+
+            // copy some stuff.
+            $dataSetSubmission->setTitle($dif->getTitle());
+            $dataSetSubmission->setAbstract($dif->getAbstract());
+            $dataSetSubmission->setPointOfContactName(
+                $dif
+                ->getPrimaryPointOfContact()
+                ->getLastName()
+                . ', ' .
+                $dif
+                ->getPrimaryPointOfContact()
+                ->getFirstName()
+            );
+            $dataSetSubmission->setPointOfContactEmail(
+                $dif
+                ->getPrimaryPointOfContact()
+                ->getEmailAddress()
+            );
+
+            $dataset->setDatasetSubmission($dataSetSubmission);
+
+            // when do this?
+            //$this->entityHandler->update($dataset);
+        }
+
         $form = $this->get('form.factory')->createNamed(
             null,
             DatasetSubmissionType::class,
-            $dataset
+            $dataSetSubmission
         );
 
         return $this->render(
@@ -60,22 +95,22 @@ class DatasetSubmissionController extends UIController
      */
     public function postAction(Request $request, $id = null)
     {
-        $dataset = new DatasetSubmission;
+        $dataSetSubmission = new DatasetSubmission;
         $form = $this->get('form.factory')->createNamed(
             null,
             DatasetSubmissionType::class,
-            $dataset
+            $dataSetSubmission
         );
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->container->get('pelagos.entity.handler')->create($dataset);
+            $this->entityHandler->create($dataSetSubmission);
         }
 
         return $this->render(
             'PelagosAppBundle:DatasetSubmission:submit.html.twig',
-            array('DatasetSubmission' => $dataset)
+            array('DatasetSubmission' => $dataSetSubmission)
         );
     }
 }
