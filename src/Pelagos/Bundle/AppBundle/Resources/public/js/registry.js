@@ -96,7 +96,10 @@
             $("#whendiv").show();
         }
 
-        $("form").validate({
+        $("#regForm").validate({
+            // submitHandler: function(form) {
+                // submitRegistry();
+            // },
             rules: {
                 title:
                 {
@@ -370,7 +373,6 @@ function setPath(type,path)
 }
 
 function submitRegistry() {
-    weekDays();
     getTimeZone();
     if (jQuery("#regForm").valid()) {
         jQuery('#post_frame').load(function() {

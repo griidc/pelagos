@@ -107,11 +107,9 @@ abstract class Entity
      *
      * @return void
      */
-    public function setId($id)
+    public function setId($id = null)
     {
-        if ($this->id === null) {
-            $this->id = $id;
-        }
+        $this->id = $id;
     }
 
     /**
