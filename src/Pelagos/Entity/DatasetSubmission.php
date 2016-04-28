@@ -1310,10 +1310,16 @@ class DatasetSubmission extends Entity
      *
      * This is equivalent to the legacy registry_id.
      *
-     * @return string
+     * This will return null if the dataset is not set or the dataset does not have an UDI.
+     *
+     * @return string|null
      */
     public function getDatasetSubmissionId()
     {
+        // If the dataset is not set or the dataset does not have an UDI.
+        if (!$this->dataset instanceof Dataset or null === $this->dataset->getUdi()) {
+            return null;
+        }
         return $this->dataset->getUdi() . '.' . sprintf('%03d', $this->seqeunce);
     }
 }
