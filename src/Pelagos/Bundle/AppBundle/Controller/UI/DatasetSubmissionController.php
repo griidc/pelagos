@@ -59,18 +59,18 @@ class DatasetSubmissionController extends UIController
                     $datasetSubmission->setTitle($dif->getTitle());
                     $datasetSubmission->setAbstract($dif->getAbstract());
                     $datasetSubmission->setPointOfContactName(
-                    $dif
-                    ->getPrimaryPointOfContact()
-                    ->getLastName()
-                    . ', ' .
-                    $dif
-                    ->getPrimaryPointOfContact()
-                    ->getFirstName()
+                        $dif
+                        ->getPrimaryPointOfContact()
+                        ->getLastName()
+                        . ', ' .
+                        $dif
+                        ->getPrimaryPointOfContact()
+                        ->getFirstName()
                     );
                     $datasetSubmission->setPointOfContactEmail(
-                    $dif
-                    ->getPrimaryPointOfContact()
-                    ->getEmailAddress()
+                        $dif
+                        ->getPrimaryPointOfContact()
+                        ->getEmailAddress()
                     );
                 }
             } else {
