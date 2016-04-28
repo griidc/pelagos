@@ -593,7 +593,7 @@ class DatasetSubmission extends Entity
     public function setSequence($sequence)
     {
         if ('integer' !== gettype($sequence)) {
-            throw new \Exception('Seqeunce must be an integer');
+            throw new \Exception('Sequence must be an integer');
         }
         $this->sequence = $sequence;
     }
