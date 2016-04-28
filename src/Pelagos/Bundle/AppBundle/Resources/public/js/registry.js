@@ -59,7 +59,6 @@
                 break;
         }
 
-        // This should really check DS id or something.
         if ($("#title").val() == "" ) {
             $("form :input").not("#registry_id").prop("disabled",true);
             $("#tabs").tabs("disable");

@@ -27,8 +27,12 @@
                 </span>
                 <form id="regidform">
                     <label for="registry_id"><b>Unique Dataset Identifier (UDI): </b></label>
-                    <input minlength="15" type="text" id="registry_id" name="registry_id" size="60">
-                    <button disabled name="regbutton" id="regbutton" type="button">Load Dataset</button>
+                    <input minlength="15" type="text" id="registry_id" name="registry_id" size="60" value="{{ udi }}">
+                    <button disabled 
+                    onclick="window.location.href='{{ path('pelagos_app_ui_datasetsubmission_default') }}?regid=' + 
+                    document.getElementById('registry_id').value;"
+                    name="regbutton" id="regbutton" 
+                    type="button">Load Dataset</button>
                 </form>
             </fieldset>
         </p>

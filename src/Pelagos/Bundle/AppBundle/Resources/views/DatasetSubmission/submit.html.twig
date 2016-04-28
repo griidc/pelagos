@@ -5,6 +5,11 @@
 {% endblock %}
 
 {% block body %}
+<div class="messages status">
+<h2 class="element-invisible">Status message</h2>
+Thank you for your submission. Please email <a href="mailto:griidc@gomri.org?subject=Registration Form">griidc@gomri.org</a> if you have any questions.
+</div>
+
 <fieldset>
     <table border="1" width="100%" style="background-color:white; color:black;" border="0">
         <tr>
@@ -13,8 +18,8 @@
             </td>
             <td>
                 <h2>
-                    <a href="{{ path('pelagos_app_ui_datasetsubmission_default') }}?regid={{ DatasetSubmission.getDataset.getUdi }}">
-                        {{ DatasetSubmission.getDataset.getUdi }}
+                    <a href="{{ path('pelagos_app_ui_datasetsubmission_default') }}?regid={{ DatasetSubmission.getDatasetSubmissionId }}">
+                        {{ DatasetSubmission.getDatasetSubmissionId }}
                     </a>
                 </h2>
             </td>
