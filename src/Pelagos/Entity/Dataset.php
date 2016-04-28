@@ -126,6 +126,7 @@ class Dataset extends Entity
     public function setDatasetSubmission(DatasetSubmission $datasetSubmission)
     {
         $this->datasetSubmission = $datasetSubmission;
+        $this->datasetSubmission->setDataset($this);
     }
 
     /**
