@@ -36,19 +36,57 @@ class DatasetSubmissionController extends UIController
     public function defaultAction(Request $request, $id = null)
     {
         $difId = $request->query->get('uid');
+        $udi = $request->query->get('regid');
 
         //var_dump($difId);
+        
+        $datasetSubmission = null;
+        $datasetId = null;
+        
+        if ($udi != null) {
+            $datasets = $this->entityHandler
+                ->getBy(Dataset::class, array('udi' => $udi));
 
-        $dataSetSubmission = new DatasetSubmission;
+            if (count($datasets) == 1) {
+                $dataset = $datasets[0];
+            }
+
+            $datasetId = $dataset->getId();
+            
+            $dif = $dataset->getDif();
+            
+            $datasetSubmission = $dataset->getDatasetSubmission();
+            if ($datasetSubmission instanceof DatasetSubmission == false) {
+                $datasetSubmission = new DatasetSubmission;
+                $datasetSubmission->setTitle($dif->getTitle());
+                $datasetSubmission->setAbstract($dif->getAbstract());
+                $datasetSubmission->setPointOfContactName(
+                $dif
+                    ->getPrimaryPointOfContact()
+                    ->getLastName()
+                    . ', ' .
+                    $dif
+                    ->getPrimaryPointOfContact()
+                    ->getFirstName()
+                );
+                $datasetSubmission->setPointOfContactEmail(
+                    $dif
+                    ->getPrimaryPointOfContact()
+                    ->getEmailAddress()
+                );
+            }
+        }
 
         if ($difId != null) {
             $dif = $this->entityHandler->get(DIF::class, $difId);
             $dataset = $dif->getDataset();
+            
+            $datasetId = $dataset->getId();
 
-            // copy some stuff.
-            $dataSetSubmission->setTitle($dif->getTitle());
-            $dataSetSubmission->setAbstract($dif->getAbstract());
-            $dataSetSubmission->setPointOfContactName(
+            $datasetSubmission = new DatasetSubmission;
+            $datasetSubmission->setTitle($dif->getTitle());
+            $datasetSubmission->setAbstract($dif->getAbstract());
+            $datasetSubmission->setPointOfContactName(
                 $dif
                 ->getPrimaryPointOfContact()
                 ->getLastName()
@@ -57,22 +95,21 @@ class DatasetSubmissionController extends UIController
                 ->getPrimaryPointOfContact()
                 ->getFirstName()
             );
-            $dataSetSubmission->setPointOfContactEmail(
+            $datasetSubmission->setPointOfContactEmail(
                 $dif
                 ->getPrimaryPointOfContact()
                 ->getEmailAddress()
             );
-
-            $dataset->setDatasetSubmission($dataSetSubmission);
-
-            // when do this?
-            //$this->entityHandler->update($dataset);
         }
 
         $form = $this->get('form.factory')->createNamed(
             null,
             DatasetSubmissionType::class,
-            $dataSetSubmission
+            $datasetSubmission,
+            array(
+                'action' => $this->generateUrl('pelagos_app_ui_datasetsubmission_post', array('id' => $datasetId)),
+                'method' => 'POST',
+            )
         );
 
         return $this->render(
@@ -82,7 +119,7 @@ class DatasetSubmissionController extends UIController
     }
 
     /**
-     * The default action for Dataset Submission.
+     * The post action for Dataset Submission.
      *
      * @param Request     $request The Symfony request object.
      * @param string|null $id      The id of the Dataset to load.
@@ -95,22 +132,35 @@ class DatasetSubmissionController extends UIController
      */
     public function postAction(Request $request, $id = null)
     {
-        $dataSetSubmission = new DatasetSubmission;
+        $dataset = $this->entityHandler->get(Dataset::class, $id);
+        
+        $datasetSubmission = $dataset->getDatasetSubmission();
+        if ($datasetSubmission instanceof DatasetSubmission) {
+            $datasetSubmission = clone $datasetSubmission;
+            $datasetSubmission->setId(null);
+        } else {
+             $datasetSubmission = new DatasetSubmission;
+        }
+        
+        
         $form = $this->get('form.factory')->createNamed(
             null,
             DatasetSubmissionType::class,
-            $dataSetSubmission
+            $datasetSubmission
         );
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->entityHandler->create($dataSetSubmission);
+            $dataset->setDatasetSubmission($datasetSubmission);
+            
+            $this->entityHandler->create($datasetSubmission);
+            $this->entityHandler->update($dataset);
+            
+            return $this->render(
+                'PelagosAppBundle:DatasetSubmission:submit.html.twig',
+                array('DatasetSubmission' => $datasetSubmission)
+            );
         }
-
-        return $this->render(
-            'PelagosAppBundle:DatasetSubmission:submit.html.twig',
-            array('DatasetSubmission' => $dataSetSubmission)
-        );
     }
 }
