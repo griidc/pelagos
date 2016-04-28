@@ -24,21 +24,18 @@ class DatasetSubmissionController extends UIController
     /**
      * The default action for Dataset Submission.
      *
-     * @param Request     $request The Symfony request object.
-     * @param string|null $id      The id of the Dataset to load.
+     * @param Request $request The Symfony request object.
      *
-     * @Route("/{id}")
+     * @Route("/")
      *
      * @Method("GET")
      *
      * @return Response A Response instance.
      */
-    public function defaultAction(Request $request, $id = null)
+    public function defaultAction(Request $request)
     {
         $difId = $request->query->get('uid');
         $udi = $request->query->get('regid');
-
-        //var_dump($difId);
         
         $datasetSubmission = null;
         $datasetId = null;
@@ -61,13 +58,13 @@ class DatasetSubmissionController extends UIController
                 $datasetSubmission->setTitle($dif->getTitle());
                 $datasetSubmission->setAbstract($dif->getAbstract());
                 $datasetSubmission->setPointOfContactName(
-                $dif
-                    ->getPrimaryPointOfContact()
-                    ->getLastName()
-                    . ', ' .
                     $dif
-                    ->getPrimaryPointOfContact()
-                    ->getFirstName()
+                        ->getPrimaryPointOfContact()
+                        ->getLastName()
+                        . ', ' .
+                        $dif
+                        ->getPrimaryPointOfContact()
+                        ->getFirstName()
                 );
                 $datasetSubmission->setPointOfContactEmail(
                     $dif
