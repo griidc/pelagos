@@ -105,13 +105,15 @@ abstract class Entity
      *
      * @param integer|null $id This entity's Identifier.
      *
+     * @throws \InvalidArgumentException When $id id not an integer or null.
+     *
      * @return void
      */
     public function setId($id = null)
     {
         // Must be an integer or null.
         if (null !== $id and 'integer' !== gettype($id)) {
-            throw new \Exception('id must be an integer or null');
+            throw new \InvalidArgumentException('id must be an integer or null');
         }
         // Can only change from or to null.
         if (null === $this->id or null === $id) {
