@@ -1314,6 +1314,6 @@ class DatasetSubmission extends Entity
      */
     public function getDatasetSubmissionId()
     {
-        return $this->dataset->getUdi() . '.' . strftime('%03d', $this->seqeunce);
+        return $this->dataset->getUdi() . '.' . sprintf('%03d', $this->seqeunce);
     }
 }
