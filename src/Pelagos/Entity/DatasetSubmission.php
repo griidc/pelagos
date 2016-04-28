@@ -1320,6 +1320,6 @@ class DatasetSubmission extends Entity
         if (!$this->dataset instanceof Dataset or null === $this->dataset->getUdi()) {
             return null;
         }
-        return $this->dataset->getUdi() . '.' . sprintf('%03d', $this->seqeunce);
+        return $this->dataset->getUdi() . '.' . sprintf('%03d', $this->sequence);
     }
 }
