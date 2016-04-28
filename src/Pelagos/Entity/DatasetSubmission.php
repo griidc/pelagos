@@ -586,14 +586,14 @@ class DatasetSubmission extends Entity
      *
      * @param integer $sequence The sequence for this Dataset Submission.
      *
-     * @throws \Exception When $sequence is not an integer.
+     * @throws \InvalidArgumentException When $sequence is not an integer.
      *
      * @return void
      */
     public function setSequence($sequence)
     {
         if ('integer' !== gettype($sequence)) {
-            throw new \Exception('Sequence must be an integer');
+            throw new \InvalidArgumentException('Sequence must be an integer');
         }
         $this->sequence = $sequence;
     }
