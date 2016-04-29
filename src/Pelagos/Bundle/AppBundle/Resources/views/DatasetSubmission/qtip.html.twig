@@ -1,0 +1,196 @@
+
+<div id="regid_tip" style="display:none;">
+    {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
+    <img class="info" src="{{ asset_url }}"  style="float:right;">
+    {% endimage %}
+    <p>
+        <strong>Unique Dataset Identifier (UDI):</strong><p/> Please enter the Unique Dataset Identifier (UDI) that GRIIDC assigned to your dataset and select "Load Dataset" to load the most recent information for your dataset.
+    </p>
+</div>
+
+<div id="title_tip" style="display:none;">
+    {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
+    <img class="info" src="{{ asset_url }}"  style="float:right;">
+    {% endimage %}
+    <p>
+        <strong>Title:</strong><p/><p>It is in the discretion of the researcher to define the level of data aggregation to define a dataset. If this level of data aggregation has not been identified, it is recommended to start by answering the ‘what, how, when, where’. It is also not recommended to aggregate data too much that the data attributes can no longer be segregated and discoverable.</p><p>Example Input: Hydrodynamics: ADCP Data for June – July 2012 in Station 42001</p>
+        <p>300 Characters Max</p>
+    </p>
+</div>
+
+<div id="abstract_tip" style="display:none;">
+    {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
+    <img class="info" src="{{ asset_url }}"  style="float:right;">
+    {% endimage %}
+    <p>
+        <strong>Abstract:</strong><p/><p>This field should describe the rationale of collecting the dataset, procedure/process how this dataset will be created, period of data collection and what it will contain. Note that some of the fields that follow in this form are or may be components of this field.</p><br /><p>4000 Characters Max</p>
+    </p>
+</div>
+
+<div id="dataset_originator_tip" style="display:none;">
+    {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
+    <img class="info" src="{{ asset_url }}"  style="float:right;">
+    {% endimage %}
+    <p>
+        <strong>Dataset Author(s):</strong><p/><p>The Suggested Author List should contain all participants who collaborated in the creation, processing or analysis of the data you are sending to GRIIDC who should be acknowledged if these data are cited as a published work. Please list suggested authors in the order in which they should be listed in a citation.</p>
+    </p>
+</div>
+
+<div id="poc_tip" style="display:none;">
+    {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
+    <img class="info" src="{{ asset_url }}"  style="float:right;">
+    {% endimage %}
+    <p>
+        <strong>Point Of Contact:</strong><p/> This is the person responsible for answering questions associated with this dataset.
+    </p>
+</div>
+
+<div id="pocemail_tip" style="display:none;">
+    {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
+    <img class="info" src="{{ asset_url }}"  style="float:right;">
+    {% endimage %}
+    <p>
+        <strong>Point Of Contact E-Mail:</strong><p/> This is the primary email of the POC.
+    </p>
+</div>
+
+<div id="dataurl_tip" style="display:none;">
+    {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
+    <img class="info" src="{{ asset_url }}"  style="float:right;">
+    {% endimage %}
+    <p>
+        <p><strong>Dataset File URL:</strong></p>
+        <p>This is the URL that leads to the data being registered. Package the components of the datasets (if applicable) to form a single file (e.g. ZIP, TAR).</p>
+        <p style="color:red">Do not include copyrighted materials (e.g. published journal articles) in your data package.</p>
+    </p>
+</div>
+
+<div id="sshdataurl_tip" style="display:none;">
+    {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
+    <img class="info" src="{{ asset_url }}"  style="float:right;">
+    {% endimage %}
+    <p>
+        <p><strong>Dataset File Path:</strong></p>
+        <p>This is the path on the server to the data file being registered. Click "Browse..." to find and select the data file you uploaded via SFTP/GridFTP.</p>
+        <p style="color:red">Do not include copyrighted materials (e.g. published journal articles) in your data package.</p>
+    </p>
+</div>
+
+<div id="uploaddataurl_tip" style="display:none;">
+    {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
+    <img class="info" src="{{ asset_url }}"  style="float:right;">
+    {% endimage %}
+    <p>
+        <p><strong>Dataset File:</strong></p>
+        <p>Please select from your local machine the data file for the dataset you are registering.</p>
+        <p style="color:red">Do not include copyrighted materials (e.g. published journal articles) in your data package.</p>
+    </p>
+</div>
+
+<div id="metadataurl_tip" style="display:none;">
+    {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
+    <img class="info" src="{{ asset_url }}"  style="float:right;">
+    {% endimage %}
+    <p>
+        <strong>Metadata File URL:</strong><p/> This is the URL that leads to the metadata of the data being registered. The ISO 19115/19115-2 is recommended but a link to a form-based system and other XML or TXT formatted files are also acceptable.
+    </p>
+</div>
+
+<div id="sshmetadataurl_tip" style="display:none;">
+    {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
+    <img class="info" src="{{ asset_url }}"  style="float:right;">
+    {% endimage %}
+    <p>
+        <strong>Metadata File Path:</strong><p/>This is the path on the server to the metadata file for the data being registered. Click "Browse..." to find and select the data file you uploaded via SFTP/GridFTP.
+    </p>
+</div>
+
+<div id="uploadmetadataurl_tip" style="display:none;">
+    {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
+    <img class="info" src="{{ asset_url }}"  style="float:right;">
+    {% endimage %}>
+    <p>
+        <strong>Metadata File:</strong><p/>Please select from your local machine the metadata file for the dataset you are registering.
+    </p>
+</div>
+
+<div id="auth_tip" style="display:none;">
+    {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
+    <img class="info" src="{{ asset_url }}"  style="float:right;">
+    {% endimage %}
+    <p>
+        <strong>Requires Authentication:</strong><p/> If accessing the files requires user authentication, please click ‘Yes’ (default is ‘No’).
+    </p>
+</div>
+
+<div id="pull_tip" style="display:none;">
+    {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
+    <img class="info" src="{{ asset_url }}"  style="float:right;">
+    {% endimage %}
+    <p>
+        <strong>Pull Source Data::</strong><p/> If the source data is archived in a cyber-infrastructure that can be maintained in the next decade, select ‘No’. If unsure, select ‘Yes’.
+    </p>
+</div>
+
+<div id="when_tip" style="display:none;">
+    {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
+    <img class="info" src="{{ asset_url }}"  style="float:right;">
+    {% endimage %}
+    <p>
+        <strong>Download Certain Times Only:</strong><p/> If you prefer for GRIIDC to download the time only on specified start period, click ‘Yes’ (default is ‘No’).
+    </p>
+</div>
+
+<div id="uname_tip" style="display:none;">
+    {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
+    <img class="info" src="{{ asset_url }}"  style="float:right;">
+    {% endimage %}
+    <p>
+        <strong>Username:</strong><p/> Enter the username required to access the data.
+    </p>
+</div>
+
+<div id="pword_tip" style="display:none;">
+    {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
+    <img class="info" src="{{ asset_url }}"  style="float:right;">
+    {% endimage %}
+    <p>
+        <strong>Password:</strong><p/> Enter the password needed to access the data.
+    </p>
+</div>
+
+<div id="times_tip" style="display:none;">
+    {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
+    <img class="info" src="{{ asset_url }}"  style="float:right;">
+    {% endimage %}
+    <p>
+        <strong>Pull Times:</strong><p/> Select the appropriate start period when GRIIDC can start downloading or reading the dataset.
+    </p>
+</div>
+
+<div id="date_tip" style="display:none;">
+    {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
+    <img class="info" src="{{ asset_url }}"  style="float:right;">
+    {% endimage %}
+    <p>
+        <strong>Date:</strong><p/> In some cases, registration is made prior to moving the data onto a space that it can be harvested or read by GRIIDC. In such cases, enter the appropriate date when data is ready for downloading or reading. Enter the current date (date of registration) if data is ready for downloading or reading.
+    </p>
+</div>
+
+<div id="avail_tip" style="display:none;">
+    {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
+    <img class="info" src="{{ asset_url }}"  style="float:right;">
+    {% endimage %}
+    <p>
+        <strong>Restrictions:</strong><p/> If data is available to the general public, select ‘None’. Select ‘Restricted’ if data cannot be shared to anyone. Select ‘Requires Author’s Approval’ if you can share the data but prefer to control the sharing of the dataset. In the later case, GRIIDC will maintain a list of users associated to a dataset.
+    </p>
+</div>
+
+<div id="doi_tip" style="display:none;">
+    {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
+    <img class="info" src="{{ asset_url }}"  style="float:right;">
+        {% endimage %}
+    <p>
+        <strong>Digital Object Identifier:</strong><p/> If your dataset has been issued a DOI from another repository or archive, please provide it here. Please note that this field is for <strong>dataset</strong> DOIs only, as publication DOIs are recorded elsewhere.
+    </p>
+</div>
