@@ -1,3 +1,39 @@
+<div id="dImg"
+
+{% image '@PelagosAppBundle/Resources/public/images/griidc_fav.png' %}
+ root="{{ asset_url }}"
+{% endimage %}
+
+{% image '@PelagosAppBundle/Resources/public/images/empty.gif' %}
+ empty="{{ asset_url }}"
+{% endimage %}
+
+{% image '@PelagosAppBundle/Resources/public/images/folder.gif' %}
+ folder="{{ asset_url }}"
+{% endimage %}
+
+{% image '@PelagosAppBundle/Resources/public/images/folderopen.gif' %}
+ folderopen="{{ asset_url }}"
+{% endimage %}
+
+{% image '@PelagosAppBundle/Resources/public/images/nofolder.png' %}
+ node="{{ asset_url }}"
+{% endimage %}
+
+{% image '@PelagosAppBundle/Resources/public/images/nolines_plus.gif' %}
+ nlPlus="{{ asset_url }}"
+{% endimage %}
+
+{% image '@PelagosAppBundle/Resources/public/images/nolines_minus.gif' %}
+ nlMinus="{{ asset_url }}"
+{% endimage %}
+
+{% image '@PelagosAppBundle/Resources/public/images/green_bobble.png' %}
+ green="{{ asset_url }}"
+{% endimage %}
+
+></div>
+
 <table style="height:100%;width:100%;">
     {% if true %} {# admin #}
     <tr>
@@ -46,32 +82,93 @@
                 <tr>
                     <td style="height:100%;">
                         <div style="position:relative;height:100%;">
-                            <div id="dstree" 
-                                 style="position:absolute; top:0px; left:10px; right:0px; bottom:10px; overflow:auto;" 
+                            <div id="dstree"
+                                 style="position:absolute; top:0px; left:10px; right:0px; bottom:10px; overflow:auto;"
                                  BGCOLOR="#efefef">
                                 <div class="dtree" style="position:absolute;">
                                     <script  type="text/javascript">
                                         d = new dTree('d');
-                                        
-                                        {% set nodecount = 0 %}
-                                        {% set folderCount = 1 %}
-                                        
-                                        d.add({{ nodecount }},-1,'My Registries','');
-                                        
-                                        {% set mynode = nodecount %}
-                                        {% set nodecount = nodecount + 1 %}
-                                        
-                                        d.add({{ nodecount }},{{ mynode }},'Others','javascript: d.o({{ nodecount }});','Other Registrations','','','',true);
-                                        
+
+                                        var green = jQuery("#dImg").attr("green");
+
+                                        var nodecount = 0;
+                                        var folderCount = 1;
+                                        var mynode = nodecount;
+
+                                        d.add(
+                                            nodecount,
+                                            -1,
+                                            'My Registries',
+                                            ''
+                                        );
+                                        nodecount++;
+
+                                        d.add(
+                                            nodecount,
+                                            mynode,
+                                            'Others',
+                                            'javascript: d.o('+nodecount+');',
+                                            'Other Registrations',
+                                            '',
+                                            '',
+                                            '',
+                                            true
+                                        );
+                                        nodecount++;
+
+                                        {% for reg in regs %}
+                                            d.add(
+                                                nodecount,
+                                                folderCount,
+                                                '[{{reg.getDatasetSubmissionId}}] {{reg.getTitle}}',
+                                                '?regid={{reg.getDatasetSubmissionId}}',
+                                                '[{{reg.getDatasetSubmissionId}}] {{reg.getTitle}}',
+                                                '_self',
+                                                green
+                                            );
+                                            nodecount++;
+                                        {% endfor %}
+
+                                        d.add(
+                                            nodecount,
+                                            -1,
+                                            'Datasets',
+                                            ''
+                                        );
+
+                                        var dsnode = nodecount;
+                                        nodecount++;
+
+                                        {% for rgrp in rgrps %}
+
+                                            d.add(
+                                                nodecount,
+                                                dsnode,
+                                                '{{rgrp.getName}}',
+                                                'javascript: d.o('+nodecount+');',
+                                                '{{rgrp.getName}}',
+                                                '',
+                                                '',
+                                                '',
+                                                true
+                                            );
+                                            nodecount++;
+
+                                            //Another for loop here for datasets
+
+                                        {% endfor %}
+
+                                        folderCount = nodecount;
+
                                         document.write(d);
-                                        
+
                                     </script>
                                 </div>
                             </div>
                         </div>
                     </td>
                 </tr>
-                </tbody> 
+                </tbody>
             </table>
         </td>
     </tr>

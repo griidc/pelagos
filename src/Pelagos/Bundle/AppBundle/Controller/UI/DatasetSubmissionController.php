@@ -13,6 +13,7 @@ use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionType;
 use Pelagos\Entity\DIF;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
+use Pelagos\Entity\ResearchGroup;
 
 /**
  * The Dataset Submission controller for the Pelagos UI App Bundle.
@@ -39,8 +40,8 @@ class DatasetSubmissionController extends UIController
 
         $datasetSubmission = null;
         $datasetId = null;
-        
-        $found = true;
+
+        $found = false;
 
         if ($udi != null) {
             $datasets = $this->entityHandler
@@ -48,11 +49,11 @@ class DatasetSubmissionController extends UIController
 
             if (count($datasets) == 1) {
                 $dataset = $datasets[0];
-                
+
                 $datasetId = $dataset->getId();
-                
+
                 $dif = $dataset->getDif();
-                
+
                 $datasetSubmission = $dataset->getDatasetSubmission();
                 if ($datasetSubmission instanceof DatasetSubmission == false) {
                     $datasetSubmission = new DatasetSubmission;
@@ -73,14 +74,13 @@ class DatasetSubmissionController extends UIController
                         ->getEmailAddress()
                     );
                 }
-            } else {
-                $found = false;
+                $found = true;
             }
         }
 
         if ($difId != null) {
             $dif = $this->entityHandler->get(DIF::class, $difId);
-            
+
             if ($dif instanceof DIF) {
                 $dataset = $dif->getDataset();
 
@@ -104,8 +104,7 @@ class DatasetSubmissionController extends UIController
                     ->getPrimaryPointOfContact()
                     ->getEmailAddress()
                 );
-            } else {
-                $found = false;
+                $found = true;
             }
         }
 
@@ -119,6 +118,12 @@ class DatasetSubmissionController extends UIController
             )
         );
 
+        $regs = $this->entityHandler
+            ->getAll(DatasetSubmission::class);
+
+        $rgrps = $this->entityHandler
+            ->getAll(ResearchGroup::class);
+
         return $this->render(
             'PelagosAppBundle:DatasetSubmission:index.html.twig',
             array(
@@ -126,6 +131,8 @@ class DatasetSubmissionController extends UIController
                 'datasetSubmission' => $datasetSubmission,
                 'found'  => $found,
                 'udi'  => $udi,
+                'regs' => $regs,
+                'rgrps' => $rgrps,
             )
         );
     }
