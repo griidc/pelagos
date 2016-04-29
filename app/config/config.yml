@@ -105,4 +105,6 @@ simple_things_entity_audit:
         - Pelagos\Entity\PersonDataRepository
         - Pelagos\Entity\PersonFundingOrganization
         - Pelagos\Entity\PersonResearchGroup
+        - Pelagos\Entity\Dataset
+        - Pelagos\Entity\DIF
         - Pelagos\Entity\DatasetSubmission
