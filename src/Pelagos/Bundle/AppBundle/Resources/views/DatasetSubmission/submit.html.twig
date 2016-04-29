@@ -1,0 +1,175 @@
+{% extends "PelagosAppBundle::layout.html.twig" %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block body %}
+<div class="messages status">
+<h2 class="element-invisible">Status message</h2>
+Thank you for your submission. Please email <a href="mailto:griidc@gomri.org?subject=Registration Form">griidc@gomri.org</a> if you have any questions.
+</div>
+
+<fieldset>
+    <table border="1" width="100%" style="background-color:white; color:black;" border="0">
+        <tr>
+            <td width="200px" align="top">
+                <b>Registry Identifier:</b>
+            </td>
+            <td>
+                <h2>
+                    <a href="{{ path('pelagos_app_ui_datasetsubmission_default') }}?regid={{ DatasetSubmission.getDatasetSubmissionId }}">
+                        {{ DatasetSubmission.getDatasetSubmissionId }}
+                    </a>
+                </h2>
+            </td>
+        </tr>
+        <tr rowspan=2>
+            <td>
+                <b>Dataset Title:</b>
+            </td>
+            <td>
+                {{ DatasetSubmission.getTitle }}
+            </td>
+        </tr>
+        <tr rowspan=3>
+            <td>
+                <b>Dataset Abstract:</b>
+            </td>
+            <td>
+                {{ DatasetSubmission.getAbstract }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <b>Dataset Author(s):</b>
+            </td>
+            <td>
+                {{ DatasetSubmission.getAuthors }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <b>Point of Contact Name:</b>
+            </td>
+            <td>
+                {{ DatasetSubmission.getPointOfContactName }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <b>Point of Contact E-Mail:</b>
+            </td>
+            <td>
+                {{ DatasetSubmission.getPointOfContactEmail }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <b>Restrictions:</b>
+            </td>
+            <td>
+                {{ DatasetSubmission.getRestrictions }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <b>DOI:</b>
+            </td>
+            <td>
+                {{ DatasetSubmission.getDoi }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <b>Data URL:</b>
+            </td>
+            <td>
+                {{ DatasetSubmission.getDatasetFileUrl }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <b>Metadata URL:</b>
+            </td>
+            <td>
+                {{ DatasetSubmission.getMetadataFileUrl }}
+            </td>
+        </tr>
+        {% if DatasetSubmission.getDatasetFileTransferType == 'HTTP' %}
+        <tr>
+            <td>
+                <b>Available Date:</b>
+            </td>
+            <td>
+                {{ DatasetSubmission.getDatasetFileAvailabilityDate }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <b>Download on Certain Times:</b>
+            </td>
+            <td>
+                {{ DatasetSubmission.access_period }}
+            </td>
+        </tr>
+            {% if DatasetSubmission.access_period == TRUE %}
+        <tr>
+            <td>
+                <b>Download only on these days:</b>
+            </td>
+            <td>
+                {{ DatasetSubmission.getDatasetFilePullDays }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <b>Download only after:</b>
+            </td>
+            <td>
+            {{ DatasetSubmission.getDatasetFilePullStartTime }}
+                $_POST[dlstart]
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <b>Local Timezone:</b>
+            </td>
+            <td>
+                {{ DatasetSubmission.getDatasetFilePullStartTime.getTimezone }}
+            </td>
+        </tr>
+            {% endif %}
+        <tr>
+            <td>
+                <b>Pull Source Data:</b>
+            </td>
+            <td>
+                {{ DatasetSubmission.getDatasetFilePullSourceData }}
+            </td>
+        </tr>
+        {% endif %}
+        <tr>
+            <td>
+                <b>Submitted by User:</b>
+            </td>
+            <td>
+                {{ DatasetSubmission.getCreator.getFirstName }} {{ DatasetSubmission.getCreator.getLastName }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <b>Submitted On:</b>
+            </td>
+            <td>
+                {{ DatasetSubmission.getCreationTimeStamp.format('c') }}
+            </td>
+        </tr>
+    </table>
+    <p/>
+    <br>
+    <button type="button" onclick="window.location.href='{{ path('pelagos_app_ui_datasetsubmission_default') }}';">
+        Fill out another Registration Form
+    </button>
+</fieldset>
+{% endblock %}
