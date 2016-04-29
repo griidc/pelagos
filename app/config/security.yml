@@ -63,6 +63,10 @@ services:
         class: Pelagos\Bundle\AppBundle\Security\DIFVoter
         tags:
             - { name: security.voter }
+    dataset_submission_voter:
+        class: Pelagos\Bundle\AppBundle\Security\DatasetSubmissionVoter
+        tags:
+            - { name: security.voter }
     dataset_voter:
         class: Pelagos\Bundle\AppBundle\Security\DatasetVoter
         tags:

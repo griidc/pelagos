@@ -69,7 +69,7 @@
     <div style="height:100%; position:relative;">
     <div class="cleair" style="position:absolute; top:0px; left:0px; right:0px; bottom:0px;">
         <table width="100%" height="100%">
-        {% if is_granted('ROLE_DATA_REPOSITORY_MANAGER') %}
+        {% if is_granted('ROLE_DATA_REPOSITORY_MANAGER') or is_granted('ROLE_RESEARCH_GROUP_DATA') %}
         <tr>
         <td>
             <div id="difFilterTools">
