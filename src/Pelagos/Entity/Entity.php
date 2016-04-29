@@ -107,7 +107,7 @@ abstract class Entity
      *
      * @return void
      */
-    public function setId($id = null)
+    public function setId($id)
     {
         $this->id = $id;
     }
