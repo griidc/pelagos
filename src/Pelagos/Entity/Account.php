@@ -13,6 +13,7 @@ use JMS\Serializer\Annotation as Serializer;
 
 use Pelagos\Exception\PasswordException;
 use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
+use Pelagos\Bundle\AppBundle\DataFixtures\ORM\ResearchGroupRoles;
 
 /**
  * Entity class to represent an Account.
@@ -37,6 +38,11 @@ class Account extends Entity implements UserInterface, \Serializable
      * A role given only to Data Repository Managers.
      */
     const ROLE_DATA_REPOSITORY_MANAGER = 'ROLE_DATA_REPOSITORY_MANAGER';
+
+    /**
+     * A role given only to Research Group Data people.
+     */
+    const ROLE_RESEARCH_GROUP_DATA = 'ROLE_RESEARCH_GROUP_DATA';
 
     /**
      * This is defined here to override the base class id.
@@ -97,6 +103,60 @@ class Account extends Entity implements UserInterface, \Serializable
      * @ORM\OrderBy({"modificationTimeStamp"="DESC"})
      */
     protected $passwordHistory;
+
+    /**
+     * Whether this Account is a POSIX account.
+     *
+     * @var boolean
+     *
+     * @ORM\Column(type="boolean")
+     */
+    protected $posix = false;
+
+    /**
+     * The uid number for this Account.
+     *
+     * @var integer
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    protected $uidNumber;
+
+    /**
+     * The gid number for this Account.
+     *
+     * @var integer
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    protected $gidNumber;
+
+    /**
+     * The home directory for this Account.
+     *
+     * @var string
+     *
+     * @ORM\Column(nullable=true)
+     */
+    protected $homeDirectory;
+
+    /**
+     * The login shell for this Account.
+     *
+     * @var string
+     *
+     * @ORM\Column(nullable=true)
+     */
+    protected $loginShell;
+
+    /**
+     * SSH public keys for this account.
+     *
+     * @var array
+     *
+     * @ORM\Column(type="json_array", nullable=true)
+     */
+    protected $sshPublicKeys = array();
 
     /**
      * Constructor for Account.
@@ -239,6 +299,136 @@ class Account extends Entity implements UserInterface, \Serializable
     }
 
     /**
+     * Make this Account a POSIX account.
+     *
+     * @param integer     $uidNumber           The uid number for this account.
+     * @param integer     $gidNumber           The gid number for this account.
+     * @param string      $homeDirectoryPrefix The home dircectory prefix for this account.
+     * @param string|null $loginShell          The login shell for this account (default: /sbin/nologin).
+     *
+     * @throws \Exception When $uidNumber is not an integer.
+     * @throws \Exception When $gidNumber is not an integer.
+     *
+     * @return void
+     */
+    public function makePosix($uidNumber, $gidNumber, $homeDirectoryPrefix, $loginShell = '/sbin/nologin')
+    {
+        if ('integer' !== gettype($uidNumber)) {
+            throw new \Exception("$uidNumber is not as valid uid number (must be an integer)");
+        }
+        if ('integer' !== gettype($gidNumber)) {
+            throw new \Exception("$gidNumber is not as valid gid number (must be an integer)");
+        }
+        $this->uidNumber = $uidNumber;
+        $this->gidNumber = $gidNumber;
+        $this->homeDirectory = preg_replace('/\/$/', '', $homeDirectoryPrefix) . '/' . $this->userId;
+        $this->loginShell = $loginShell;
+        $this->posix = true;
+    }
+
+    /**
+     * Whether or not this account is POSIX.
+     *
+     * @return boolean
+     */
+    public function isPosix()
+    {
+        return $this->posix;
+    }
+
+    /**
+     * Get the uid number for this account.
+     *
+     * @return integer
+     */
+    public function getUidNumber()
+    {
+        return $this->uidNumber;
+    }
+
+    /**
+     * Get the gid number for this account.
+     *
+     * @return integer
+     */
+    public function getGidNumber()
+    {
+        return $this->gidNumber;
+    }
+
+    /**
+     * Get the home directory for this account.
+     *
+     * @return string
+     */
+    public function getHomeDirectory()
+    {
+        return $this->homeDirectory;
+    }
+
+    /**
+     * Get the login shell for this account.
+     *
+     * @return string
+     */
+    public function getLoginShell()
+    {
+        return $this->loginShell;
+    }
+
+    /**
+     * Add an SSH public key for this account.
+     *
+     * @param string $sshPublicKey The SSH public key to add.
+     * @param string $keyName      A name for this SSH public key.
+     *
+     * @return void
+     */
+    public function addSshPublicKey($sshPublicKey, $keyName)
+    {
+        $this->sshPublicKeys[$keyName] = $sshPublicKey;
+    }
+
+    /**
+     * Remove an SSH public key from this account.
+     *
+     * @param string $keyName The name of the SSH public key to remove.
+     *
+     * @throws \Exception When the SSH public key referenced by $keyName does not exist.
+     *
+     * @return void
+     */
+    public function removeSshPublicKey($keyName)
+    {
+        if (!array_key_exists($number, $this->sshPublicKeys)) {
+            throw new \Exception("SSH pubilc key $keyName does not exist");
+        }
+        unset($this->sshPublicKeys[$keyName]);
+    }
+
+    /**
+     * Get all SSH public keys for this account.
+     *
+     * @return array
+     */
+    public function getSshPublicKeys()
+    {
+        return $this->sshPublicKeys;
+    }
+
+    /**
+     * Get the SSH public key for this account referenced by $keyName.
+     *
+     * @param string $keyName The name of the SSH public key to retrieve.
+     *
+     * @return string
+     */
+    public function getSshPublicKey($keyName)
+    {
+        return $this->sshPublicKeys[$keyName];
+    }
+
+    /**
      * Returns the roles for this Account.
      *
      * This is required by \Symfony\Component\Security\Core\User\UserInterface
@@ -253,6 +443,13 @@ class Account extends Entity implements UserInterface, \Serializable
                 and !in_array(self::ROLE_DATA_REPOSITORY_MANAGER, $roles)
             ) {
                 $roles[] = self::ROLE_DATA_REPOSITORY_MANAGER;
+            }
+        }
+        foreach ($this->getPerson()->getPersonResearchGroups() as $personResearchGroup) {
+            if ($personResearchGroup->getRole()->getName() == ResearchGroupRoles::DATA
+                and !in_array(self::ROLE_RESEARCH_GROUP_DATA, $roles)
+            ) {
+                $roles[] = self::ROLE_RESEARCH_GROUP_DATA;
             }
         }
         return $roles;
