@@ -36,6 +36,9 @@ class FundingCycleType extends AbstractType
             ->add('name', TextType::class, array(
                 'label' => 'Name:',
             ))
+            ->add('udiPrefix', TextType::class, array(
+                'label' => 'UDI Prefix:',
+            ))
             ->add('fundingOrganization', EntityType::class, array(
                 'label' => 'Funding Organization:',
                 'class' => 'Pelagos:FundingOrganization',
