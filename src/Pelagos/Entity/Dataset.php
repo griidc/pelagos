@@ -32,6 +32,15 @@ class Dataset extends Entity
     protected $udi;
 
     /**
+     * The Research Group this Dataset is attached to.
+     *
+     * @var ResearchGroup
+     *
+     * @ORM\ManyToOne(targetEntity="ResearchGroup", inversedBy="datasets")
+     */
+    protected $researchGroup;
+
+    /**
      * The DIF for this Dataset.
      *
      * @var DIF
@@ -60,13 +69,10 @@ class Dataset extends Entity
 
     /**
      * Constructor.
-     *
-     * @param DIF $dif The DIF for this Dataset.
      */
-    public function __construct(DIF $dif)
+    public function __construct()
     {
         $this->datasetSubmissionHistory = new ArrayCollection();
-        $this->setDif($dif);
     }
 
     /**
@@ -89,6 +95,28 @@ class Dataset extends Entity
     public function getUdi()
     {
         return $this->udi;
+    }
+
+    /**
+     * Sets the Research Group this Dataset is attached to.
+     *
+     * @param ResearchGroup|null $researchGroup The Research Group this Dataset is attached to.
+     *
+     * @return void
+     */
+    public function setResearchGroup(ResearchGroup $researchGroup = null)
+    {
+        $this->researchGroup = $researchGroup;
+    }
+
+    /**
+     * Gets the Research Group this Dataset is attached to.
+     *
+     * @return ResearchGroup The Research Group this DIF is attached to.
+     */
+    public function getResearchGroup()
+    {
+        return $this->researchGroup;
     }
 
     /**
@@ -147,5 +175,26 @@ class Dataset extends Entity
     public function getDatasetSubmissionHistory()
     {
         return $this->datasetSubmissionHistory;
+    }
+
+    /**
+     * Get the title for this dataset.
+     *
+     * @return string
+     */
+    public function getTitle()
+    {
+        // If this Dataset has a submission.
+        if (null !== $this->datasetSubmission) {
+            // Return its title.
+            return $this->datasetSubmission->getTitle();
+        }
+        // If this Dataset only has a DIF.
+        if (null !== $this->dif) {
+            // Return its title.
+            return $this->dif->getTitle();
+        }
+        // Return null if we can't find a title.
+        return null;
     }
 }
