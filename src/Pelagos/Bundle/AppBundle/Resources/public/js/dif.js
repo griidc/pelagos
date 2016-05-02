@@ -719,16 +719,16 @@ function makeTree(Status, Person, ShowEmpty, json)
     }
 
     $.each(json, function(index, researchGroup) {
-        var difs = [];
+        var datasets = [];
 
-        // researchGroup.difs.sort(
+        // researchGroup.datasets.sort(
             // function(a, b){
                 // return a.udi.toLowerCase() > b.udi.toLowerCase() ? 1 : -1;
             // }
         // );
 
-        $.each(researchGroup.difs, function(idx, dif) {
-            switch (dif.status)
+        $.each(researchGroup.datasets, function(idx, dataset) {
+            switch (dataset.dif.status)
             {
                 case 0:
                     var icon = imgCross;
@@ -743,27 +743,27 @@ function makeTree(Status, Person, ShowEmpty, json)
                     var icon = imgCross;
                     break;
             }
-            var difFunction = "getNode('" + dif.udi + "'," + dif.id + ");";
-            var difTitle = "[" + dif.udi + "] " + dif.title;
+            var clickAction = "getNode('" + dataset.udi + "'," + dataset.dif.id + ");";
+            var datasetNodeText = "[" + dataset.udi + "] " + dataset.dif.title;
 
-            var newdif = {
-                id          : dif.id,
-                text        : difTitle,
+            var datasetNode = {
+                id          : dataset.id,
+                text        : datasetNodeText,
                 icon        : icon,
-                li_attr     : {"title": dif.title},
-                a_attr      : {"onclick": difFunction}
+                li_attr     : {"title": dataset.dif.title},
+                a_attr      : {"onclick": clickAction}
             };
 
             if (Status != "" && Status != undefined) {
-                if (Status == dif.status) {
-                    difs.push(newdif)
+                if (Status == dataset.dif.status) {
+                    datasets.push(datasetNode)
                 }
             } else {
-                difs.push(newdif)
+                datasets.push(datasetNode)
             }
         });
 
-        if ($.isEmptyObject(difs) === true) {
+        if ($.isEmptyObject(datasets) === true) {
             var folderIcon = imgFolderGray;
         } else {
             var folderIcon = imgFolder;
@@ -775,13 +775,13 @@ function makeTree(Status, Person, ShowEmpty, json)
             "state"       : {
                 opened    : true
             },
-            "children": difs,
+            "children": datasets,
             li_attr     : {"title": researchGroup.name}
         };
 
 
 
-        if ($.isEmptyObject(difs) === true && ShowEmpty === false) {
+        if ($.isEmptyObject(datasets) === true && ShowEmpty === false) {
             //treeData.push(researchGroup);
         } else {
             treeData.push(researchGroup);
@@ -921,7 +921,7 @@ function fillForm(Form, UDI, ID)
             difValidator.resetForm();
             if (json.length == 1) {
                 json = json[0];
-                $.extend(json, {researchGroup: json.researchGroup.id});
+                $.extend(json, {researchGroup: json.dataset.researchGroup.id});
             }
 
             $("[name='udi']").val(UDI).change();
