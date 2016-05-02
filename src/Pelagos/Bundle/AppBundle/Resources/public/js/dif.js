@@ -744,13 +744,13 @@ function makeTree(Status, Person, ShowEmpty, json)
                     break;
             }
             var clickAction = "getNode('" + dataset.udi + "'," + dataset.dif.id + ");";
-            var datasetNodeText = "[" + dataset.udi + "] " + dataset.title;
+            var datasetNodeText = "[" + dataset.udi + "] " + dataset.dif.title;
 
             var datasetNode = {
                 id          : dataset.id,
                 text        : datasetNodeText,
                 icon        : icon,
-                li_attr     : {"title": dataset.title},
+                li_attr     : {"title": dataset.dif.title},
                 a_attr      : {"onclick": clickAction}
             };
 
