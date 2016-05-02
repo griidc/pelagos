@@ -139,8 +139,9 @@
                                         var dsnode = nodecount;
                                         nodecount++;
 
-                                        {% for rgrp in rgrps %}
+                                        folderCount = nodecount;
 
+                                        {% for rgrp in rgrps %}
                                             d.add(
                                                 nodecount,
                                                 dsnode,
@@ -155,13 +156,22 @@
                                             nodecount++;
 
                                             //Another for loop here for datasets
-
+                                            {% for dataset in rgrp.getDatasets %}
+                                                d.add(
+                                                    nodecount,
+                                                    folderCount,
+                                                    '[{{dataset.getUdi}}] {{dataset.getTitle}}',
+                                                    '?regid={{dataset.getUdi}}',
+                                                    '[{{dataset.getUdi}}] {{dataset.getTitle}}',
+                                                    '_self',
+                                                    green
+                                                );
+                                                nodecount++;
+                                            {% endfor %}
+                                            folderCount = nodecount;
                                         {% endfor %}
 
-                                        folderCount = nodecount;
-
                                         document.write(d);
-
                                     </script>
                                 </div>
                             </div>
