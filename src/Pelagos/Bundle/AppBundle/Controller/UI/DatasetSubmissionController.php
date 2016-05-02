@@ -12,6 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionType;
 
+use Pelagos\Entity\Account;
 use Pelagos\Entity\DIF;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
@@ -139,7 +140,7 @@ class DatasetSubmissionController extends UIController
         $researchers = $this->entityHandler
             ->getAll(Person::class);
 
-        if ($this->getUser() instanceOf Account) {
+        if ($this->getUser() instanceof Account) {
             $loggedInPerson = $this->getUser()->getPerson();
         } else {
             $loggedInPerson = null;
