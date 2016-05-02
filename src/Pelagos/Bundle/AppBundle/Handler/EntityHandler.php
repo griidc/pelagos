@@ -102,6 +102,64 @@ class EntityHandler
      */
     public function getBy($entityClass, array $criteria, $orderBy = null)
     {
+        // Default to not use query builder.
+        $useQb = false;
+        // Look through the criteria.
+        foreach (array_keys($criteria) as $property) {
+            // If a propery contains a . it is a "deep" property and we need to use query builder.
+            if (false !== strpos($property, '.')) {
+                $useQb = true;
+            }
+        }
+        if ($useQb) {
+            $qb = $this->entityManager->createQueryBuilder();
+            // Start with a select of the entity type we are querying as 'e'.
+            $qb->select('e')
+               ->from($entityClass, 'e');
+            // Initialize an array to collect parameters.
+            $parameters = array();
+            // Initialize our parameter tokens at 1.
+            $paramToken = 1;
+            // Loop through the criteria.
+            foreach ($criteria as $property => $value) {
+                // If the property contains a dot, capture both sides.
+                if (preg_match('/^([^\.]+)\.([^\.]+)$/', $property, $matches)) {
+                    list ($descriptor, $property, $propertyProperty) = $matches;
+                    // Join the property as 'e2' and filter by its property.
+                    $qb->join("e.$property", 'e2')
+                       ->andWhere($qb->expr()->eq("e2.$propertyProperty", "?$paramToken"));
+                } else {
+                    // Otherwise, do a regular filter.
+                    $qb->andWhere($qb->expr()->eq("e.$property", "?$paramToken"));
+                }
+                // Add the value to the parameter array.
+                $parameters[$paramToken] = $value;
+                // Increment our parameter token counter;
+                $paramToken++;
+            }
+            // If we've specified an order by.
+            if (null !== $orderBy) {
+                // Loop through the properties.
+                foreach ($orderBy as $property => $order) {
+                    // If the property contains a dot, capture both sides.
+                    if (preg_match('/^([^\.]+)\.([^\.]+)$/', $property, $matches)) {
+                        list ($descriptor, $property, $propertyProperty) = $matches;
+                        // Order by 'e2's property.
+                        $qb->orderBy("e2.$propertyProperty", $order);
+                    } else {
+                        // Otherwise do a regular order by.
+                        $qb->orderBy("e.$property", $order);
+                    }
+                }
+            }
+            // Set the parameters from the parameter array.
+            $qb->setParameters($parameters);
+            // Get the query.
+            $query = $qb->getQuery();
+            // Return the result.
+            return $query->getResult();
+        }
+        // If we don't need to use query builder, just use findBy.
         return $this->entityManager
             ->getRepository($entityClass)
             ->findBy($criteria, $orderBy);
