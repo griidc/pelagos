@@ -112,7 +112,6 @@ class DatasetSubmissionController extends UIController
                     ->getEmailAddress()
                 );
                 $found = true;
-                $buttonLabel = 'Update';
             }
         }
 
@@ -126,25 +125,34 @@ class DatasetSubmissionController extends UIController
             )
         );
 
+        if ($this->getUser() instanceof Account) {
+            $loggedInPerson = $this->getUser()->getPerson();
+        } else {
+            $loggedInPerson = null;
+        }
+
         $form->add('submit', SubmitType::class, array(
             'label' => $buttonLabel,
             'attr'  => array('class' => 'submitButton'),
         ));
 
         $datasetSubmissions = $this->entityHandler
-            ->getAll(Dataset::class);
+            ->getBy(
+                Dataset::class,
+                array (
+                    'datasetSubmission.creator' => $loggedInPerson,
+                )
+            );
 
-        $researchGroups = $this->entityHandler
-            ->getAll(ResearchGroup::class);
+        $researchGroups = array();
+        foreach ($this->entityHandler->getAll(ResearchGroup::class) as $entity) {
+            if ($this->isGranted('CAN_CREATE_DIF_FOR', $entity)) {
+                $researchGroups[] = $entity;
+            }
+        }
 
         $researchers = $this->entityHandler
             ->getAll(Person::class);
-
-        if ($this->getUser() instanceof Account) {
-            $loggedInPerson = $this->getUser()->getPerson();
-        } else {
-            $loggedInPerson = null;
-        }
 
         return $this->render(
             'PelagosAppBundle:DatasetSubmission:index.html.twig',
