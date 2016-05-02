@@ -118,36 +118,21 @@ class EntityHandler
      */
     public function getBy($entityClass, array $criteria, $orderBy = null)
     {
-        // Default to not use query builder.
-        $useQb = false;
-        // Look through the criteria.
-        foreach (array_keys($criteria) as $property) {
-            // If a propery contains a . it is a "deep" property and we need to use query builder.
-            if (false !== strpos($property, '.')) {
-                $useQb = true;
-            }
+        $qb = $this->entityManager->createQueryBuilder();
+        // Start with a select of the entity type we are querying as 'e'.
+        $qb->select('e')
+           ->from($entityClass, 'e');
+        // Process the critera.
+        $this->processCriteria($criteria, $qb);
+        // If we've specified an order by.
+        if (null !== $orderBy) {
+            // Process the order by.
+            $this->processOrderBy($orderBy, $qb);
         }
-        if ($useQb) {
-            $qb = $this->entityManager->createQueryBuilder();
-            // Start with a select of the entity type we are querying as 'e'.
-            $qb->select('e')
-               ->from($entityClass, 'e');
-            // Process the critera.
-            $this->processCriteria($criteria, $qb);
-            // If we've specified an order by.
-            if (null !== $orderBy) {
-                // Process the order by.
-                $this->processOrderBy($orderBy, $qb);
-            }
-            // Get the query.
-            $query = $qb->getQuery();
-            // Return the result.
-            return $query->getResult();
-        }
-        // If we don't need to use query builder, just use findBy.
-        return $this->entityManager
-            ->getRepository($entityClass)
-            ->findBy($criteria, $orderBy);
+        // Get the query.
+        $query = $qb->getQuery();
+        // Return the result.
+        return $query->getResult();
     }
 
     /**
