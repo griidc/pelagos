@@ -137,7 +137,13 @@ class DatasetSubmissionController extends UIController
             ->getAll(ResearchGroup::class);
 
         $researchers = $this->entityHandler
-        ->getAll(Person::class);
+            ->getAll(Person::class);
+
+        if ($this->getUser() instanceOf Account) {
+            $loggedInPerson = $this->getUser()->getPerson();
+        } else {
+            $loggedInPerson = null;
+        }
 
         return $this->render(
             'PelagosAppBundle:DatasetSubmission:index.html.twig',
@@ -149,7 +155,7 @@ class DatasetSubmissionController extends UIController
                 'datasetSubmissions' => $datasetSubmissions,
                 'researchGroups' => $researchGroups,
                 'researchers' => $researchers,
-                'loggedInPerson' => $this->getUser()->getPerson(),
+                'loggedInPerson' => $loggedInPerson,
             )
         );
     }
