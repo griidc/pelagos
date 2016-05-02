@@ -31,3 +31,7 @@ services:
     pelagos.factory.dataset:
         class: Pelagos\Factory\DatasetFactory
         arguments: ["@doctrine.orm.entity_manager"]
+
+    pelagos.util.posixudi:
+        class: Pelagos\Util\POSIXUID
+        arguments: ["@doctrine.orm.entity_manager", "@pelagos.ldap", "@pelagos.entity.handler" ]
