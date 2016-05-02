@@ -305,7 +305,7 @@ class EntityHandler
             // Initialize the alias to 'e', the root entity.
             $alias = 'e';
             // While the property contains a dot.
-            while (preg_match('/^([^\.]+)\.(.+)$/', $property, $matches)) {
+            while (preg_match('/^([^\._]+)[\._](.+)$/', $property, $matches)) {
                 // Extract the entity property and the remaining property.
                 list (, $entityProperty, $property) = $matches;
                 // If we've never used this alias.
@@ -350,7 +350,7 @@ class EntityHandler
             // Initialize the alias to 'e', the root entity.
             $alias = 'e';
             // While the property contains a dot.
-            while (preg_match('/^([^\.]+)\.(.+)$/', $property, $matches)) {
+            while (preg_match('/^([^\._]+)[\._](.+)$/', $property, $matches)) {
                 // Extract the entity property and the remaining property.
                 list (, $entityProperty, $property) = $matches;
                 // If we've never used this alias.
