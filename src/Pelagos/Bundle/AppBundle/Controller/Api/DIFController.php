@@ -96,11 +96,24 @@ class DIFController extends EntityController
      */
     public function postAction(Request $request)
     {
-        $dif = $this->handlePost(DIFType::class, DIF::class, $request);
-        $dataset = $this->container->get('pelagos.factory.dataset')->createDataset($dif);
-        $this->container->get('pelagos.entity.handler')->create($dataset);
+        // Create a new Dataset.
+        $dataset = new Dataset;
+        // Set the creator for the Dataset.
+        $dataset->setCreator($this->getUser()->getPerson());
+        // Create a new DIF for the Dataset.
+        $dif = new DIF($dataset);
+        // Handle the post.
+        $this->handlePost(DIFType::class, DIF::class, $request, $dif);
+        // Create the DIF (Dataset creation will cascade).
+        $this->container->get('pelagos.entity.handler')->create($dif);
+        // Mint an UDI for the Dataset.
+        $udi = $this->container->get('pelagos.util.udi')->mintUdi($dataset);
+        // Update the Dataset with the new UDI.
+        $this->container->get('pelagos.entity.handler')->update($dataset);
+        // Dispatch an event to indicate a dataset has been created via a DIF.
         $this->container->get('pelagos.entity.handler')->dispatchEntityEvent($dif, 'dataset_created');
-        return $this->makeCreatedResponse('pelagos_api_difs_get', $dif->getId());
+        // Return a created response, adding the UDI as a custom response header.
+        return $this->makeCreatedResponse('pelagos_api_difs_get', $dif->getId(), array('X-UDI' => $udi));
     }
 
     /**
