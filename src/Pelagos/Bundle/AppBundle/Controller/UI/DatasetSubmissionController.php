@@ -14,6 +14,7 @@ use Pelagos\Entity\DIF;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\ResearchGroup;
+use Pelagos\Entity\Person;
 
 /**
  * The Dataset Submission controller for the Pelagos UI App Bundle.
@@ -85,7 +86,6 @@ class DatasetSubmissionController extends UIController
                 $dataset = $dif->getDataset();
 
                 $datasetId = $dataset->getId();
-                $udi = $dataset->getUdi();
 
                 $datasetSubmission = new DatasetSubmission;
                 $datasetSubmission->setTitle($dif->getTitle());
@@ -118,11 +118,14 @@ class DatasetSubmissionController extends UIController
             )
         );
 
-        $regs = $this->entityHandler
-            ->getAll(DatasetSubmission::class);
+        $datasetSubmissions = $this->entityHandler
+            ->getAll(Dataset::class);
 
-        $rgrps = $this->entityHandler
+        $researchGroups = $this->entityHandler
             ->getAll(ResearchGroup::class);
+
+        $researchers = $this->entityHandler
+        ->getAll(Person::class);
 
         return $this->render(
             'PelagosAppBundle:DatasetSubmission:index.html.twig',
@@ -131,8 +134,10 @@ class DatasetSubmissionController extends UIController
                 'datasetSubmission' => $datasetSubmission,
                 'found'  => $found,
                 'udi'  => $udi,
-                'regs' => $regs,
-                'rgrps' => $rgrps,
+                'datasetSubmissions' => $datasetSubmissions,
+                'researchGroups' => $researchGroups,
+                'researchers' => $researchers,
+                'loggedInPerson' => $this->getUser()->getPerson(),
             )
         );
     }
