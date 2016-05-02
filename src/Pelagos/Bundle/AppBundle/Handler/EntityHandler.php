@@ -140,9 +140,9 @@ class EntityHandler
                 // If the property contains a dot, capture both sides.
                 if (preg_match('/^([^\.]+)\.([^\.]+)$/', $property, $matches)) {
                     list ($descriptor, $property, $propertyProperty) = $matches;
-                    // Join the property as 'e2' and filter by its property.
-                    $qb->join("e.$property", 'e2')
-                       ->andWhere($qb->expr()->eq("e2.$propertyProperty", "?$paramToken"));
+                    // Join the property as '$property' and filter by its property.
+                    $qb->join("e.$property", $property)
+                       ->andWhere($qb->expr()->eq("$property.$propertyProperty", "?$paramToken"));
                 } else {
                     // Otherwise, do a regular filter.
                     $qb->andWhere($qb->expr()->eq("e.$property", "?$paramToken"));
@@ -160,7 +160,7 @@ class EntityHandler
                     if (preg_match('/^([^\.]+)\.([^\.]+)$/', $property, $matches)) {
                         list ($descriptor, $property, $propertyProperty) = $matches;
                         // Order by 'e2's property.
-                        $qb->orderBy("e2.$propertyProperty", $order);
+                        $qb->orderBy("$property.$propertyProperty", $order);
                     } else {
                         // Otherwise do a regular order by.
                         $qb->orderBy("e.$property", $order);
