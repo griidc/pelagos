@@ -61,9 +61,10 @@
 
         if ($("#title").val() == "" ) {
             $("#regForm :input").not("#registry_id").prop("disabled",true);
+            $(":file").prop("disabled",true);
             $("#tabs").tabs("disable");
             $("#md-tabs").tabs("disable");
-            $('input[type="submit"]').prop("disabled",true);
+            $('button[type="submit"]').prop("disabled",true);
         } else {
             $("#registry_id").prop("disabled",true);
         }

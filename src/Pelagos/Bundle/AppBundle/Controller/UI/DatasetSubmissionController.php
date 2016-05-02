@@ -8,13 +8,15 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+
 use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionType;
 
 use Pelagos\Entity\DIF;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
-use Pelagos\Entity\ResearchGroup;
 use Pelagos\Entity\Person;
+use Pelagos\Entity\ResearchGroup;
 
 /**
  * The Dataset Submission controller for the Pelagos UI App Bundle.
@@ -43,6 +45,8 @@ class DatasetSubmissionController extends UIController
         $datasetId = null;
 
         $found = false;
+
+        $buttonLabel = 'Register';
 
         if ($udi != null) {
             $datasets = $this->entityHandler
@@ -74,6 +78,8 @@ class DatasetSubmissionController extends UIController
                         ->getPrimaryPointOfContact()
                         ->getEmailAddress()
                     );
+                } else {
+                    $buttonLabel = 'Update';
                 }
                 $found = true;
             }
@@ -105,6 +111,7 @@ class DatasetSubmissionController extends UIController
                     ->getEmailAddress()
                 );
                 $found = true;
+                $buttonLabel = 'Update';
             }
         }
 
@@ -117,6 +124,11 @@ class DatasetSubmissionController extends UIController
                 'method' => 'POST',
             )
         );
+
+        $form->add('submit', SubmitType::class, array(
+            'label' => $buttonLabel,
+            'attr'  => array('class' => 'submitButton'),
+        ));
 
         $datasetSubmissions = $this->entityHandler
             ->getAll(Dataset::class);

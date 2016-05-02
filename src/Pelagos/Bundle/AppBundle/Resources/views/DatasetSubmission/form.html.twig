@@ -28,10 +28,10 @@
                 <form id="regidform">
                     <label for="registry_id"><b>Unique Dataset Identifier (UDI): </b></label>
                     <input minlength="15" type="text" id="registry_id" name="registry_id" size="60" value="{{datasetSubmission.getDatasetSubmissionId|default}}">
-                    <button disabled 
-                    onclick="window.location.href='{{ path('pelagos_app_ui_datasetsubmission_default') }}?regid=' + 
+                    <button disabled
+                    onclick="window.location.href='{{ path('pelagos_app_ui_datasetsubmission_default') }}?regid=' +
                     document.getElementById('registry_id').value;"
-                    name="regbutton" id="regbutton" 
+                    name="regbutton" id="regbutton"
                     type="button">Load Dataset</button>
                 </form>
             </fieldset>
@@ -163,7 +163,7 @@
                         <label for="datafile">Dataset File:</label>
                         {% if 'data_server_type' == 'upload' %}
                                 <div class="fwtextboxcont">
-                                    <input disabled type="text" style="width:100%" 
+                                    <input disabled type="text" style="width:100%"
                                         style="color:black;background-color:transparent;padding:2px;">
                                 </div>
                                 <input type="hidden" name="url_data_upload">
@@ -343,12 +343,12 @@
                         {{ form_label(form.metadataFile) }}
                         {% if file_exists_upload|default %}
                             <div class="fwtextboxcont">
-                                <input disabled type="text" style="width:100%" 
+                                <input disabled type="text" style="width:100%"
                                        style="color:black; background-color:transparent; padding:2px;">
                             </div>
                             <input type="hidden" name="upload_metadataurl">
                             {{ form_row(form.metadataFileTransferType) }}
-                            To replace the metadata file: 
+                            To replace the metadata file:
                         {% endif %}
                         {{ form_widget(form.metadataFile) }}
                     </p>
@@ -426,10 +426,10 @@
 
     <br>
     <div style="text-align:center;">
-        <input type="submit" name="submit" style="font-size:120%; font-weight:bold;" value="Register">
+        {{ form_widget(form.submit) }}
     </div>
 {{ form_end(form) }}
-    
+
 
 </div>
 
