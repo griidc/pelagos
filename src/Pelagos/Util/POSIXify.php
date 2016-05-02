@@ -19,13 +19,30 @@ class POSIXify
     protected $entityManager;
 
     /**
+     * The pelagos LDAP component.
+     *
+     * @var ldap
+     */
+    protected $ldap;
+
+    /**
+     * The Pelagos entity handler.
+     *
+     * @var entityHandler;
+     */
+    protected $entityHandler;
+
+
+    /**
      * Constructor.
      *
      * @param EntityManager $entityManager The entity manager to use.
      */
-    public function __construct(EntityManager $entityManager)
+    public function __construct(EntityManager $entityManager, $ldap, $entityHandler)
     {
         $this->entityManager = $entityManager;
+        $this->ldap = $ldap;
+        $this->entityHandler = $entityHandler;
     }
 
     public function POSIXifyAccount(Account $account)
@@ -46,15 +63,14 @@ class POSIXify
         $homedirPrefix = $this->getContainer()->getParameter('homedir_prefix');
 
         // Update account's POSIX attributes.
-        $account->makePosix($uid, POSIX_GID, HOMEDIR_PREFIX);
-        $this->container->get('pelagos.entity.handler')->update($account);
+        $account->makePosix($uid, $gid, $homedir_prefix);
+        $this->entityHandler->update($account);
 
         // Get Person associated with this Account.
         $accountOwnerPerson = $account->getPerson();
 
         // Update LDAP with this modified Account (via Person).
-        $ldap = $this->container->get('pelagos.ldap');
-        $ldap->updatePerson($accountOwnerPerson);
+        $this->$ldap->updatePerson($accountOwnerPerson);
 
         $username = $account->getUsername();
 
