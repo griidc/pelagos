@@ -90,12 +90,15 @@ abstract class EntityController extends FOSRestController
      * @param string  $formType    The type of form.
      * @param string  $entityClass The type of entity.
      * @param Request $request     The request object.
+     * @param Entity  $entity      An optional entity to use instead of creating a new one.
      *
      * @return Entity The newly created entity.
      */
-    public function handlePost($formType, $entityClass, Request $request)
+    public function handlePost($formType, $entityClass, Request $request, Entity $entity = null)
     {
-        $entity = new $entityClass;
+        if (null === $entity) {
+            $entity = new $entityClass;
+        }
         $this->processForm($formType, $entity, $request, 'POST');
         $this->container->get('pelagos.entity.handler')->create($entity);
         return $entity;
@@ -343,22 +346,26 @@ abstract class EntityController extends FOSRestController
      *
      * @param string  $locationRouteName The name of the route to put in the Location header.
      * @param integer $resourceId        The id of the newly created resource.
+     * @param array   $additionalHeaders Array of additional headers to add to the response.
      *
      * @return Response A Response object with an empty body, a "created" status code,
      *                  and the location of the new Person to Research Group Association in the Location header.
      */
-    protected function makeCreatedResponse($locationRouteName, $resourceId)
+    protected function makeCreatedResponse($locationRouteName, $resourceId, array $additionalHeaders = array())
     {
         return new Response(
             null,
             Codes::HTTP_CREATED,
-            array(
-                'Content-Type' => 'application/x-empty',
-                'Location' => $this->generateUrl(
-                    $locationRouteName,
-                    ['id' => $resourceId]
+            array_merge(
+                array(
+                    'Content-Type' => 'application/x-empty',
+                    'Location' => $this->generateUrl(
+                        $locationRouteName,
+                        ['id' => $resourceId]
+                    ),
+                    'X-Resource-Id' => $resourceId,
                 ),
-                'X-Resource-Id' => $resourceId,
+                $additionalHeaders
             )
         );
     }

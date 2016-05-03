@@ -114,11 +114,11 @@ class DIF extends Entity
     const ETHICAL_ISSUES = array('No', 'Yes', 'Uncertain');
     
     /**
-     * The Dataset this DIF is attached to.
+     * The Dataset this DIF identifies.
      *
      * @var Dataset
      *
-     * @ORM\OneToOne(targetEntity="Dataset", mappedBy="dif")
+     * @ORM\OneToOne(targetEntity="Dataset", mappedBy="dif", cascade={"persist"})
      */
     protected $dataset;
 
@@ -132,19 +132,6 @@ class DIF extends Entity
      * @ORM\Column(type="smallint")
      */
     protected $status;
-
-    /**
-     * The Research Group this DIF is attached to.
-     *
-     * @var ResearchGroup
-     *
-     * @ORM\ManyToOne(targetEntity="ResearchGroup", inversedBy="difs")
-     *
-     * @Assert\NotBlank(
-     *     message="You must select a project"
-     * )
-     */
-    protected $researchGroup;
 
     /**
      * The title for this DIF.
@@ -463,16 +450,21 @@ class DIF extends Entity
      * Constructor.
      *
      * Initializes status to unsubmitted.
+     *
+     * @param Dataset $dataset The dataset this DIF identifies.
      */
-    public function __construct()
+    public function __construct(Dataset $dataset = null)
     {
+        if (null !== $dataset) {
+            $this->setDataset($dataset);
+        }
         $this->status = self::STATUS_UNSUBMITTED;
     }
 
     /**
-     * Sets the Dataset this DIF is attached to.
+     * Sets the Dataset this DIF identifies.
      *
-     * @param Dataset|null $dataset The Dataset this DIF is attached to.
+     * @param Dataset|null $dataset The Dataset this DIF identifies.
      *
      * @return void
      */
@@ -485,9 +477,9 @@ class DIF extends Entity
     }
 
     /**
-     * Gets the Dataset this DIF is attached to.
+     * Gets the Dataset this DIF identifies.
      *
-     * @return Dataset The Dataset this DIF is attached to.
+     * @return Dataset The Dataset this DIF identifies.
      */
     public function getDataset()
     {
@@ -511,21 +503,33 @@ class DIF extends Entity
      *
      * @param ResearchGroup|null $researchGroup The Research Group this DIF is attached to.
      *
+     * @throws \Exception When the DIF does not yet have a Dataset.
+     *
      * @return void
      */
     public function setResearchGroup(ResearchGroup $researchGroup = null)
     {
-        $this->researchGroup = $researchGroup;
+        if (!$this->dataset instanceof Dataset) {
+            throw new \Exception('You must set a dataset before you can set a Research Group');
+        }
+        $this->dataset->setResearchGroup($researchGroup);
     }
 
     /**
      * Gets the Research Group this DIF is attached to.
      *
+     * @Assert\NotBlank(
+     *     message="You must select a project"
+     * )
+     *
      * @return ResearchGroup The Research Group this DIF is attached to.
      */
     public function getResearchGroup()
     {
-        return $this->researchGroup;
+        if (!$this->dataset instanceof Dataset) {
+            return null;
+        }
+        return $this->dataset->getResearchGroup();
     }
 
     /**
