@@ -32,22 +32,32 @@ class POSIXify
      */
     protected $entityHandler;
 
-
     /**
      * Constructor.
      *
-     * @param EntityManager $entityManager The entity manager to use.
+     * @param EntityManager $entityManager The entity manager to use in querybuilder.
+     * @param LDAPInterface $ldap          The instance of the LDAPClient class.
+     * @param EntityHandler $entityHandler The Pelagos entity handler to handle updates.
      */
-    public function __construct(EntityManager $entityManager, $ldap, $entityHandler)
+    public function __construct(EntityManager $entityManager, LDAPInterface $ldap, EntityHandler $entityHandler)
     {
         $this->entityManager = $entityManager;
         $this->ldap = $ldap;
         $this->entityHandler = $entityHandler;
     }
 
+    /**
+     * Method to turn an Account into a POSIX-enabled account.
+     *
+     * @param Account $account The account needing to be POSIX-enabled.
+     *
+     * @throws Exception In event account is already POSIX-enabled.
+     *
+     * @return void
+     */
     public function POSIXifyAccount(Account $account)
     {
-        if($account->isPosix() == true) {
+        if ($account->isPosix() == true) {
             throw Exception('Account is already a POSIX account.');
         }
 
@@ -63,7 +73,7 @@ class POSIXify
         $homedirPrefix = $this->getContainer()->getParameter('homedir_prefix');
 
         // Update account's POSIX attributes.
-        $account->makePosix($uid, $gid, $homedir_prefix);
+        $account->makePosix($uid, $gid, $homedirPrefix);
         $this->entityHandler->update($account);
 
         // Get Person associated with this Account.
@@ -79,9 +89,7 @@ class POSIXify
         // (2) handle the possibility of the directory already existing.
 
         // exec("/opt/pelagos/bin/homedirmaker -d $homedirPrefix/$username");
-
     }
-
 
     /**
      * Mint a POSIX UID.
@@ -100,10 +108,10 @@ class POSIXify
         $startingUid = $this->getContainer()->getParameter('posix_starting_uid');
         if (count($accounts) == 0) {
             // If this is the first POSIX UID, we start per parameters.yml configuration.
-            $sequence = $starting_uid;
+            $sequence = intval($startingUid);
         } else {
             $highUID = $accounts[0]->getUidNumber();
-            $sequence = $highUID+1;
+            $sequence = (intval($highUID) + 1);
         }
         return $sequence;
     }
