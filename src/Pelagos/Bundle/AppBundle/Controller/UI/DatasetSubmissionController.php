@@ -94,23 +94,28 @@ class DatasetSubmissionController extends UIController
 
                 $datasetId = $dataset->getId();
 
-                $datasetSubmission = new DatasetSubmission;
-                $datasetSubmission->setTitle($dif->getTitle());
-                $datasetSubmission->setAbstract($dif->getAbstract());
-                $datasetSubmission->setPointOfContactName(
-                    $dif
-                    ->getPrimaryPointOfContact()
-                    ->getLastName()
-                    . ', ' .
-                    $dif
-                    ->getPrimaryPointOfContact()
-                    ->getFirstName()
-                );
-                $datasetSubmission->setPointOfContactEmail(
-                    $dif
-                    ->getPrimaryPointOfContact()
-                    ->getEmailAddress()
-                );
+                $datasetSubmission = $dataset->getDatasetSubmission();
+                if ($datasetSubmission instanceof DatasetSubmission == false) {
+                    $datasetSubmission = new DatasetSubmission;
+                    $datasetSubmission->setTitle($dif->getTitle());
+                    $datasetSubmission->setAbstract($dif->getAbstract());
+                    $datasetSubmission->setPointOfContactName(
+                        $dif
+                        ->getPrimaryPointOfContact()
+                        ->getLastName()
+                        . ', ' .
+                        $dif
+                        ->getPrimaryPointOfContact()
+                        ->getFirstName()
+                    );
+                    $datasetSubmission->setPointOfContactEmail(
+                        $dif
+                        ->getPrimaryPointOfContact()
+                        ->getEmailAddress()
+                    );
+                } else {
+                    $udi = $dataset->getUdi();
+                }
                 $found = true;
             }
         }
