@@ -1085,8 +1085,6 @@ class DIF extends Entity
      * Gets the start date of the estimated data sampling/generation period.
      *
      * @return \DateTime The start date of the estimated data sampling/generation period.
-     *
-     *
      */
     public function getEstimatedStartDate()
     {
