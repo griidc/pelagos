@@ -8,6 +8,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 use Hateoas\Configuration\Annotation as Hateoas;
 
+use JMS\Serializer\Annotation as Serializer;
+
 /**
  * DIF Entity class.
  *
@@ -112,7 +114,7 @@ class DIF extends Entity
      * Valid values for $ethicalIssues.
      */
     const ETHICAL_ISSUES = array('No', 'Yes', 'Uncertain');
-    
+
     /**
      * The Dataset this DIF identifies.
      *
@@ -333,6 +335,8 @@ class DIF extends Entity
      * @var \DateTime
      *
      * @ORM\Column(type="date", nullable=true)
+     *
+     * @Serializer\Type("DateTime<'Y-m-d'>")
      */
     protected $estimatedStartDate;
 
@@ -342,6 +346,8 @@ class DIF extends Entity
      * @var \DateTime
      *
      * @ORM\Column(type="date", nullable=true)
+     *
+     * @Serializer\Type("DateTime<'Y-m-d'>")
      */
     protected $estimatedEndDate;
 
@@ -1079,6 +1085,8 @@ class DIF extends Entity
      * Gets the start date of the estimated data sampling/generation period.
      *
      * @return \DateTime The start date of the estimated data sampling/generation period.
+     *
+     *
      */
     public function getEstimatedStartDate()
     {
