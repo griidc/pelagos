@@ -96,10 +96,7 @@
                     <p>This is a required field. This field should summarize the rationale for collecting the dataset, methods that will be used to collect or generate the dataset, period of data collection and what the dataset will contain. This may be similar to a publication abstract, however, it does not need to include details about conclusions drawn or statistical analysis completed using the dataset.</p>
                 </div>
             </span>
-            <label class="emRequired" for="difAbstract">
-                <b>Dataset Abstract: </b>
-            </label>
-            {{ form_widget(form.abstract) }}
+            {{ form_row(form.abstract) }}
         </fieldset>
     </div>
 
