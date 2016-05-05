@@ -57,3 +57,9 @@ datasets:
     resource: Pelagos\Bundle\AppBundle\Controller\Api\DatasetController
     name_prefix: datasets_
     prefix: datasets
+
+account:
+    type: rest
+    resource: Pelagos\Bundle\AppBundle\Controller\Api\AccountController
+    name_prefix: account_
+    prefix: account
