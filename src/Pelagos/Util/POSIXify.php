@@ -37,33 +37,42 @@ class POSIXify
     /**
      * Starting POSIX UID parameter.
      *
-     * @var String
+     * @var string
      */
     protected $posixStartingUid;
 
     /**
      * The POSIX group id parameter.
      *
-     * @var String
+     * @var string
      */
     protected $posixGid;
 
     /**
      * The homedir prefix parameter.
      *
-     * @var String
+     * @var string
      */
     protected $homedirPrefix;
 
     /**
      * Constructor.
      *
-     * @param EntityManager $entityManager The entity manager to use in querybuilder.
-     * @param LDAPInterface $ldap          The instance of the LDAPClient class.
-     * @param EntityHandler $entityHandler The Pelagos entity handler to handle updates.
+     * @param EntityManager $entityManager    The entity manager to use in querybuilder.
+     * @param LDAPInterface $ldap             The instance of the LDAPClient class.
+     * @param EntityHandler $entityHandler    The Pelagos entity handler to handle updates.
+     * @param string        $posixStartingUid The value to start creating user ID number entries at.
+     * @param string        $posixGid         The value to set group ID to.
+     * @param string        $homedirPrefix    The location created homedirs start from.
      */
-    public function __construct(EntityManager $entityManager, Ldap $ldap, EntityHandler $entityHandler, $posixStartingUid, $posixGid, $homedirPrefix)
-    {
+    public function __construct(
+        EntityManager $entityManager,
+        LDAPInterface $ldap,
+        EntityHandler $entityHandler,
+        $posixStartingUid,
+        $posixGid,
+        $homedirPrefix
+    ) {
         $this->entityManager = $entityManager;
         $this->ldap = $ldap;
         $this->entityHandler = $entityHandler;
@@ -77,7 +86,9 @@ class POSIXify
      *
      * @param Account $account The account needing to be POSIX-enabled.
      *
-     * @throws Exception In event account is already POSIX-enabled.
+     * @throws \Exception In event account is already POSIX-enabled.
+     * @throws \Exception In event UID minted is greater than minimum UID from parameter.
+     * @throws \Exception In event UID is already found in the LDAP.
      *
      * @return void
      */
@@ -122,13 +133,17 @@ class POSIXify
     /**
      * Mint a POSIX UID.
      *
+     * @throws \Exception In event UID minted is greater than minimum UID from parameter.
+     *
      * @return string The next available UID.
      */
     protected function mintUidNumber()
     {
         // Get the account with the highest POSIX UID.
         $em = $this->entityManager;
-        $query = $em->createQuery("SELECT a FROM \Pelagos\Entity\Account a WHERE a.uidNumber IS NOT NULL ORDER BY a.uidNumber DESC");
+        $query = $em->createQuery(
+            'SELECT a FROM \Pelagos\Entity\Account a WHERE a.uidNumber IS NOT NULL ORDER BY a.uidNumber DESC'
+        );
         $query->setMaxResults(1);
         $account = $query->getOneOrNullResult();
 
@@ -142,7 +157,7 @@ class POSIXify
 
         // sanity check.  Throw error if generated sequence > minimum UID number parameter.
         if ($sequence < $this->posixStartingUid) {
-            throw new \Exception("Generated UID > starting UID number parameter");
+            throw new \Exception('Generated UID > starting UID number parameter');
         }
 
         return $sequence;

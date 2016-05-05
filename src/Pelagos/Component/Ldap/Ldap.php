@@ -41,11 +41,11 @@ class Ldap
     }
 
     /**
-     * Search for a person in LDAP
+     * Search for a person in LDAP.
      *
-     * @param String $filter The LDAP query filter.
+     * @param string $query The LDAP query filter.
      *
-     * @return void
+     * @return array|null
      */
     public function searchPerson($query)
     {
@@ -148,7 +148,9 @@ class Ldap
             }
             if (count($accessor->getValue($person->getAccount(), 'sshPublicKeys')) > 0) {
                 $ldapPerson['entry']['objectClass'][] = 'ldapPublicKey';
-                $ldapPerson['entry']['sshPublicKey'] = array_values($accessor->getValue($person->getAccount(), 'sshPublicKeys'));
+                $ldapPerson['entry']['sshPublicKey'] = array_values(
+                    $accessor->getValue($person->getAccount(), 'sshPublicKeys')
+                );
             }
         }
 

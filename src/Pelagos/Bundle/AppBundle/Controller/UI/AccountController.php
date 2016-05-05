@@ -370,14 +370,12 @@ class AccountController extends UIController
     /**
      * Get handler to change account into a POSIX account.
      *
-     * @param Request $request The Symfony Request object.
-     *
      * @Route("/make-posix")
      * @Method("POST")
      *
      * @return Response A Symfony Response instance.
      */
-    public function makePosixAction(Request $request)
+    public function makePosixAction()
     {
         // If the user is not authenticated.
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
@@ -388,11 +386,13 @@ class AccountController extends UIController
         // Call utility class to POSIX-enable this Account.
         try {
             $this->get('pelagos.util.posixuid')->POSIXifyAccount($this->getUser()->getPerson()->getAccount());
-            return $this->render('PelagosAppBundle:Account:AccountPosixEnabled.html.twig',
+            return $this->render(
+                'PelagosAppBundle:Account:AccountPosixEnabled.html.twig',
                 array(
                     'username' => $this->getUser()->getPerson()->getAccount()->getUserId(),
                     'homedir' => $this->getUser()->getPerson()->getAccount()->getHomeDirectory(),
-                ));
+                )
+            );
         } catch (\Exception $e) {
             return $this->render(
                 'PelagosAppBundle:template:ErrorMessage.html.twig',
