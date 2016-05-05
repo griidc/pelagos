@@ -5,6 +5,8 @@ namespace Pelagos\Util;
 use Doctrine\ORM\EntityManager;
 use Pelagos\Entity\Account;
 use Pelagos\Entity\Person;
+use Pelagos\Component\Ldap\Ldap;
+use Pelagos\Bundle\AppBundle\Handler\EntityHandler;
 
 /**
  * A utility class to make an account into a POSIX account.
@@ -33,17 +35,41 @@ class POSIXify
     protected $entityHandler;
 
     /**
+     * Starting POSIX UID parameter.
+     *
+     * @var String
+     */
+    protected $posixStartingUid;
+
+    /**
+     * The POSIX group id parameter.
+     *
+     * @var String
+     */
+    protected $posixGid;
+
+    /**
+     * The homedir prefix parameter.
+     *
+     * @var String
+     */
+    protected $homedirPrefix;
+
+    /**
      * Constructor.
      *
      * @param EntityManager $entityManager The entity manager to use in querybuilder.
      * @param LDAPInterface $ldap          The instance of the LDAPClient class.
      * @param EntityHandler $entityHandler The Pelagos entity handler to handle updates.
      */
-    public function __construct(EntityManager $entityManager, LDAPInterface $ldap, EntityHandler $entityHandler)
+    public function __construct(EntityManager $entityManager, Ldap $ldap, EntityHandler $entityHandler, $posixStartingUid, $posixGid, $homedirPrefix)
     {
         $this->entityManager = $entityManager;
         $this->ldap = $ldap;
         $this->entityHandler = $entityHandler;
+        $this->posixStartingUid = $posixStartingUid;
+        $this->posixGid = $posixGid;
+        $this->homedirPrefix = $homedirPrefix;
     }
 
     /**
@@ -58,7 +84,7 @@ class POSIXify
     public function POSIXifyAccount(Account $account)
     {
         if ($account->isPosix() == true) {
-            throw Exception('Account is already a POSIX account.');
+            throw new \Exception('Account is already a POSIX account.');
         }
 
         $uid = $this->mintUid();
@@ -69,25 +95,21 @@ class POSIXify
 
         // I'm not sure how to use the raw ldapclient....add this later.
 
-        $gid = $this->getContainer()->getParameter('posix_gid');
-        $homedirPrefix = $this->getContainer()->getParameter('homedir_prefix');
-
         // Update account's POSIX attributes.
-        $account->makePosix($uid, $gid, $homedirPrefix);
+        $account->makePosix($uid, $this->posixGid, $this->homedirPrefix);
         $this->entityHandler->update($account);
 
         // Get Person associated with this Account.
         $accountOwnerPerson = $account->getPerson();
 
         // Update LDAP with this modified Account (via Person).
-        $this->$ldap->updatePerson($accountOwnerPerson);
-
-        $username = $account->getUsername();
+        $this->ldap->updatePerson($accountOwnerPerson);
 
         // Issue system call to daemon that creates homedir
         // The following SUID program should (1) only write to expected places,
         // (2) handle the possibility of the directory already existing.
 
+        // $username = $account->getUsername();
         // exec("/opt/pelagos/bin/homedirmaker -d $homedirPrefix/$username");
     }
 
@@ -99,18 +121,15 @@ class POSIXify
     protected function mintUid()
     {
         // Get the account with the highest POSIX UID.
-        $query = $this->entityManager->getRepository(Account::class)->createQueryBuilder('a')
-            ->orderBy('a.uidNumber', 'DESC')
-            ->getQuery();
-
+        $em = $this->entityManager;
+        $query = $em->createQuery("SELECT a FROM \Pelagos\Entity\Account a WHERE a.uidNumber IS NOT NULL ORDER BY a.uidNumber DESC");
         $accounts = $query->getResult();
 
-        $startingUid = $this->getContainer()->getParameter('posix_starting_uid');
         if (count($accounts) == 0) {
             // If this is the first POSIX UID, we start per parameters.yml configuration.
-            $sequence = intval($startingUid);
+            $sequence = intval($this->posixStartingUid);
         } else {
-            $highUID = $accounts[0]->getUidNumber();
+            $highUID = intval($accounts[0]->getUidNumber());
             $sequence = (intval($highUID) + 1);
         }
         return $sequence;

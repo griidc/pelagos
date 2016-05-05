@@ -33,5 +33,5 @@ services:
         arguments: ["@doctrine.orm.entity_manager"]
 
     pelagos.util.posixuid:
-        class: Pelagos\Util\POSIXUID
-        arguments: ["@doctrine.orm.entity_manager", "@pelagos.ldap", "@pelagos.entity.handler" ]
+        class: Pelagos\Util\POSIXify
+        arguments: ["@doctrine.orm.entity_manager", "@pelagos.ldap", "@pelagos.entity.handler", '%posix_starting_uid%', '%posix_gid%', '%homedir_prefix%']
