@@ -59,7 +59,7 @@ class POSIXify
      * Constructor.
      *
      * @param EntityManager $entityManager    The entity manager to use in querybuilder.
-     * @param LDAPInterface $ldap             The instance of the LDAPClient class.
+     * @param Ldap          $ldap             The instance of the LDAPClient class.
      * @param EntityHandler $entityHandler    The Pelagos entity handler to handle updates.
      * @param string        $posixStartingUid The value to start creating user ID number entries at.
      * @param string        $posixGid         The value to set group ID to.
@@ -67,7 +67,7 @@ class POSIXify
      */
     public function __construct(
         EntityManager $entityManager,
-        LDAPInterface $ldap,
+        Ldap $ldap,
         EntityHandler $entityHandler,
         $posixStartingUid,
         $posixGid,
