@@ -384,20 +384,27 @@ class AccountController extends UIController
         }
 
         // Call utility class to POSIX-enable this Account.
-        try {
-            $this->get('pelagos.util.posixuid')->POSIXifyAccount($this->getUser()->getPerson()->getAccount());
-            return $this->render(
-                'PelagosAppBundle:Account:AccountPosixEnabled.html.twig',
-                array(
-                    'username' => $this->getUser()->getPerson()->getAccount()->getUserId(),
-                    'homedir' => $this->getUser()->getPerson()->getAccount()->getHomeDirectory(),
-                )
-            );
-        } catch (\Exception $e) {
-            return $this->render(
-                'PelagosAppBundle:template:ErrorMessage.html.twig',
-                array('errormessage' => $e->getMessage())
-            );
-        }
+            if ($this->getUser() instanceof Account) {
+                try {
+                    $this->get('pelagos.util.posixuid')->POSIXifyAccount($this->getUser()->getPerson()->getAccount());
+                    return $this->render(
+                        'PelagosAppBundle:Account:AccountPosixEnabled.html.twig',
+                        array(
+                            'username' => $this->getUser()->getPerson()->getAccount()->getUserId(),
+                            'homedir' => $this->getUser()->getPerson()->getAccount()->getHomeDirectory(),
+                        )
+                    );
+                } catch (\Exception $e) {
+                    return $this->render(
+                        'PelagosAppBundle:template:ErrorMessage.html.twig',
+                        array('errormessage' => $e->getMessage())
+                    );
+                }
+            } else {
+                return $this->render(
+                    'PelagosAppBundle:template:ErrorMessage.html.twig',
+                    array('errormessage' => 'The currently logged-in user has no account.')
+                );
+            }
     }
 }
