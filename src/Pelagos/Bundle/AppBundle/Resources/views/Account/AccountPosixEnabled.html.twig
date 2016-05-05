@@ -1,0 +1,16 @@
+{% extends "PelagosAppBundle:template:UI.html.twig" %}
+
+{% block head %}
+    {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <div class="messages status">
+        <h2 class="element-invisible">Status message</h2>
+        SFTP/GridFTP access enabled.
+    </div>
+    <p>
+    The SFTP and GridFTP upload options are now enabled for this account, {{ username }}.<br />
+    Files should be uploaded into the {{ homedir }}/incoming directory.
+    </p>
+{% endblock %}
