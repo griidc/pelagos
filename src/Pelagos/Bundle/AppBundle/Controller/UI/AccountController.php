@@ -366,4 +366,38 @@ class AccountController extends UIController
 
         return $this->render('PelagosAppBundle:Account:AccountReset.html.twig');
     }
+
+    /**
+     * Get handler to change account into a POSIX account.
+     *
+     * @param Request $request The Symfony Request object.
+     *
+     * @Route("/make-posix")
+     * @Method("POST")
+     *
+     * @return Response A Symfony Response instance.
+     */
+    public function makePosixAction(Request $request)
+    {
+        // If the user is not authenticated.
+        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            // User is not logged in, or doesn't have a token.
+            return $this->render('PelagosAppBundle:template:NotLoggedIn.html.twig');
+        }
+
+        // Call utility class to POSIX-enable this Account.
+        try {
+            $this->get('pelagos.util.posixuid')->POSIXifyAccount($this->getUser()->getPerson()->getAccount());
+            return $this->render('PelagosAppBundle:Account:AccountPosixEnabled.html.twig',
+                array(
+                    'username' => $this->getUser()->getPerson()->getAccount()->getUserId(),
+                    'homedir' => $this->getUser()->getPerson()->getAccount()->getHomeDirectory(),
+                ));
+        } catch (\Exception $e) {
+            return $this->render(
+                'PelagosAppBundle:template:ErrorMessage.html.twig',
+                array('errormessage' => $e->getMessage())
+            );
+        }
+    }
 }
