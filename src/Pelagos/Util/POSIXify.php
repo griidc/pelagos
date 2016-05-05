@@ -84,16 +84,22 @@ class POSIXify
     public function POSIXifyAccount(Account $account)
     {
         if ($account->isPosix() == true) {
-            throw new \Exception('Account is already a POSIX account.');
+            throw new \Exception('This account already has SFTP/GridFTP access.');
         }
 
-        $uid = $this->mintUid();
+        try {
+            $uid = $this->mintUidNumber();
+        } catch (\Exception $e) {
+            throw $e;
+        }
 
         // check LDAP to make sure this UID is not already in use, throwing
         // an exception if this is the case.  This would represent a system
         // sync issue that would need to be manually resolved.
-
-        // I'm not sure how to use the raw ldapclient....add this later.
+        $LDAPResults = $this->ldap->searchPerson("uidNumber=$uid");
+        if ($LDAPResults) {
+            throw new \Exception("LDAP database error: The gidNumber $uid already exists in LDAP.");
+        }
 
         // Update account's POSIX attributes.
         $account->makePosix($uid, $this->posixGid, $this->homedirPrefix);
@@ -118,20 +124,27 @@ class POSIXify
      *
      * @return string The next available UID.
      */
-    protected function mintUid()
+    protected function mintUidNumber()
     {
         // Get the account with the highest POSIX UID.
         $em = $this->entityManager;
         $query = $em->createQuery("SELECT a FROM \Pelagos\Entity\Account a WHERE a.uidNumber IS NOT NULL ORDER BY a.uidNumber DESC");
-        $accounts = $query->getResult();
+        $query->setMaxResults(1);
+        $account = $query->getOneOrNullResult();
 
-        if (count($accounts) == 0) {
+        if (null === $account) {
             // If this is the first POSIX UID, we start per parameters.yml configuration.
             $sequence = intval($this->posixStartingUid);
         } else {
-            $highUID = intval($accounts[0]->getUidNumber());
-            $sequence = (intval($highUID) + 1);
+            $highUID = $account->getUidNumber();
+            $sequence = ($highUID + 1);
         }
+
+        // sanity check.  Throw error if generated sequence > minimum UID number parameter.
+        if ($sequence < $this->posixStartingUid) {
+            throw new \Exception("Generated UID > starting UID number parameter");
+        }
+
         return $sequence;
     }
 }
