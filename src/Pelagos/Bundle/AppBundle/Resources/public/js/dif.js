@@ -420,6 +420,7 @@ function scrollToTop()
 function saveDIF(form)
 {
     if ($('[name="udi"]', form).val() != "") {
+        $("#researchGroup", form).attr("disabled", false);
         updateDIF(form);
     } else {
         createDIF(form);
@@ -545,7 +546,7 @@ function updateDIF(form)
     var submit = false;
 
     if (udi != "") {
-        method = "PATCH"
+        method = "PUT"
         url = url + "/" + resourceId;
     }
 
@@ -936,7 +937,7 @@ function fillForm(Form, UDI, ID)
                 var secondaryPointOfContact = json.secondaryPointOfContact.id
             }
 
-            loadPOCs(json.researchGroup.id, primaryPointOfContact, secondaryPointOfContact);
+            loadPOCs(json.dataset.researchGroup.id, primaryPointOfContact, secondaryPointOfContact);
             $.each(json, function(name,value) {
                 var element = $("[name="+name+"]");
                 var elementType = element.prop("type");
