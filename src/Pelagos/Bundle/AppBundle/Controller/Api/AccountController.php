@@ -26,6 +26,7 @@ class AccountController extends EntityController
      * @param Request $request The request object.
      * @param integer $id      The id of the Account to return the incoming directory for.
      *
+     * @throws BadRequestHttpException When self is request but the user is not logged in with an account.
      * @throws AccessDeniedException   When the currnt user does not have permission to browse
      *                                 the incoming directory for the requested account.
      * @throws BadRequestHttpException When the requested account is not a POSIX account.
@@ -51,8 +52,15 @@ class AccountController extends EntityController
      */
     public function getIncomingDirectoryAction(Request $request, $id)
     {
-        // Get the specified Account.
-        $account = $this->handleGetOne(Account::class, $id);
+        if ('self' == $id) {
+            if (!$this->getUser() instanceof Account) {
+                throw new BadRequestHttpException('You are not logged in with an Account.');
+            }
+            $account = $this->getUser();
+        } else {
+            // Get the specified Account.
+            $account = $this->handleGetOne(Account::class, $id);
+        }
         // Check if the user has permission to browse its incoming directory.
         if (!$this->isGranted(AccountVoter::CAN_BROWSE_INCOMING_DIRECTORY, $account)) {
             // Throw an exception if they don't.
