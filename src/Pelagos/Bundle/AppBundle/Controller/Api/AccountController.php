@@ -108,7 +108,7 @@ class AccountController extends EntityController
         }
 
         $directories = new Finder();
-        $directories->directories()->in($directory)->depth('== 0');
+        $directories->directories()->in($directory)->depth('== 0')->sortByName();
 
         foreach ($directories as $dir) {
             $directoryData['directories'][] = array(
@@ -118,7 +118,7 @@ class AccountController extends EntityController
         }
 
         $files = new Finder();
-        $files->files()->in($directory)->depth('== 0');
+        $files->files()->in($directory)->depth('== 0')->sortByName();
 
         date_default_timezone_set('America/Chicago');
 
