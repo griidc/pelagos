@@ -93,6 +93,7 @@ class AccountController extends EntityController
         }
 
         $directoryData = array(
+            'basePath' => $baseDirectory,
             'directories' => array(),
             'files' => array(),
         );
@@ -110,10 +111,9 @@ class AccountController extends EntityController
         $directories->directories()->in($directory)->depth('== 0');
 
         foreach ($directories as $dir) {
-            $directoryData['directories'][$dir->getBaseName()] = str_replace(
-                "$baseDirectory/",
-                '',
-                $dir->getRealPath()
+            $directoryData['directories'][] = array(
+                'name' => $dir->getBaseName(),
+                'path' => str_replace("$baseDirectory/", '', $dir->getRealPath()),
             );
         }
 
@@ -125,7 +125,7 @@ class AccountController extends EntityController
         foreach ($files as $file) {
             $directoryData['files'][] = array(
                 'name' => $file->getBasename(),
-                'path' => $file->getRealPath(),
+                'path' => str_replace("$baseDirectory/", '', $file->getRealPath()),
                 'mtime' => date('Y-m-d g:i A T', $file->getMTime()),
                 'size' => $file->getSize(),
             );
