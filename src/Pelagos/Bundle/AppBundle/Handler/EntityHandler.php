@@ -10,6 +10,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Id\AssignedGenerator;
 use Doctrine\Common\Collections\Collection;
 
@@ -117,9 +118,21 @@ class EntityHandler
      */
     public function getBy($entityClass, array $criteria, $orderBy = null)
     {
-        return $this->entityManager
-            ->getRepository($entityClass)
-            ->findBy($criteria, $orderBy);
+        $qb = $this->entityManager->createQueryBuilder();
+        // Start with a select of the entity type we are querying as 'e'.
+        $qb->select('e')
+           ->from($entityClass, 'e');
+        // Process the critera.
+        $this->processCriteria($criteria, $qb);
+        // If we've specified an order by.
+        if (null !== $orderBy) {
+            // Process the order by.
+            $this->processOrderBy($orderBy, $qb);
+        }
+        // Get the query.
+        $query = $qb->getQuery();
+        // Return the result.
+        return $query->getResult();
     }
 
     /**
@@ -306,5 +319,89 @@ class EntityHandler
     protected function getEntityManager()
     {
         return $this->entityManager;
+    }
+
+    /**
+     * Process filter criteria and add filters to a query builder.
+     *
+     * @param array        $criteria The criteria to process.
+     * @param QueryBuilder $qb       A query builder to add to.
+     *
+     * @return void
+     */
+    protected function processCriteria(array $criteria, QueryBuilder $qb)
+    {
+        // Initialize our parameter tokens at 1.
+        $paramToken = 1;
+        // Keep a count of aliases so we can make then unique.
+        $aliasCount = array();
+        // Loop through the criteria.
+        foreach ($criteria as $property => $value) {
+            // Initialize the alias to 'e', the root entity.
+            $alias = 'e';
+            // While the property contains a dot.
+            while (preg_match('/^([^\._]+)[\._](.+)$/', $property, $matches)) {
+                // Extract the entity property and the remaining property.
+                list (, $entityProperty, $property) = $matches;
+                // If we've never used this alias.
+                if (!array_key_exists($entityProperty, $aliasCount)) {
+                    // Initialize the count to 1.
+                    $aliasCount[$entityProperty] = 1;
+                }
+                // Build a unique alias for this entity.
+                $entityPropertyAlias = $entityProperty . $aliasCount[$entityProperty];
+                // Increment the alias count.
+                $aliasCount[$entityProperty]++;
+                // Join the entity property with the unique alias.
+                $qb->join("$alias.$entityProperty", $entityPropertyAlias);
+                // Update the alias to be the entity property alias.
+                $alias = $entityPropertyAlias;
+            }
+            // Filter by the property of the final alias.
+            $qb->andWhere(
+                $qb->expr()->eq("$alias.$property", "?$paramToken")
+            );
+            // Set the parameter.
+            $qb->setParameter($paramToken, $value);
+            // Increment our parameter token counter;
+            $paramToken++;
+        }
+    }
+
+    /**
+     * Process order by criteria and add order by to a query builder.
+     *
+     * @param array        $orderBy The order by criteria to process.
+     * @param QueryBuilder $qb      A query builder to add to.
+     *
+     * @return void
+     */
+    protected function processOrderBy(array $orderBy, QueryBuilder $qb)
+    {
+        // Keep a count of aliases so we can make then unique.
+        $aliasCount = array();
+        // Loop through the properties to order by.
+        foreach ($orderBy as $property => $order) {
+            // Initialize the alias to 'e', the root entity.
+            $alias = 'e';
+            // While the property contains a dot.
+            while (preg_match('/^([^\._]+)[\._](.+)$/', $property, $matches)) {
+                // Extract the entity property and the remaining property.
+                list (, $entityProperty, $property) = $matches;
+                // If we've never used this alias.
+                if (!array_key_exists($entityProperty, $aliasCount)) {
+                    // Initialize the count to 1.
+                    $aliasCount[$entityProperty] = 1;
+                }
+                // Build a unique alias for this entity.
+                $entityPropertyAlias = $entityProperty . $aliasCount[$entityProperty];
+                // Increment the alias count.
+                $aliasCount[$entityProperty]++;
+                // Update the alias to be the entityProperty.
+                $alias = $entityPropertyAlias;
+            }
+            // Order by the property of the final alias.
+            $qb->orderBy("$alias.$property", $order);
+        }
     }
 }

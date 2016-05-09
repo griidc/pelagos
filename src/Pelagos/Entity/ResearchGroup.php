@@ -2,6 +2,8 @@
 
 namespace Pelagos\Entity;
 
+use Doctrine\Common\Collections\Collection;
+
 use Doctrine\ORM\Mapping as ORM;
 
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -264,51 +266,55 @@ class ResearchGroup extends Entity
     protected $personResearchGroups;
 
     /**
-     * Research group's list of DIFs.
+     * Research group's list of Datasets.
      *
-     * @var DIF $difs
+     * @var Collection $datasets
      *
-     * @access protected
-     *
-     * @ORM\OneToMany(targetEntity="DIF", mappedBy="researchGroup")
+     * @ORM\OneToMany(targetEntity="Dataset", mappedBy="researchGroup")
      *
      * @Serializer\Exclude
      */
-    protected $difs;
+    protected $datasets;
 
     /**
-     * Getter for DIFs.
+     * Getter for Datasets.
      *
-     * @access public
-     *
-     * @return Collection A Collection of DIFs.
+     * @return Collection A Collection of Datasets.
      */
-    public function getDifs()
+    public function getDatasets()
     {
-        return $this->difs;
+        return $this->datasets;
     }
 
     /**
-     * Serializer for the difs virtual property.
+     * Serializer for the datasets virtual property.
      *
      * @Serializer\VirtualProperty
-     * @Serializer\SerializedName("difs")
+     * @Serializer\SerializedName("datasets")
      *
      * @return array
      */
-    public function serializeDifs()
+    public function serializeDatasets()
     {
-        $difs = array();
-        foreach ($this->difs as $dif) {
-            $difs[] = array(
-                'id' => $dif->getId(),
-                'title' => $dif->getTitle(),
-                'status' => $dif->getStatus(),
-                'udi' => $dif->getDataset()->getUdi(),
+        $datasets = array();
+        foreach ($this->datasets as $dataset) {
+            $datasetArray = array(
+                'id' => $dataset->getId(),
+                'title' => $dataset->getTitle(),
+                'udi' => $dataset->getUdi(),
             );
+            if (null !== $dataset->getDif()) {
+                $datasetArray['dif'] = array(
+                    'id' => $dataset->getDif()->getId(),
+                    'status' => $dataset->getDif()->getStatus(),
+                    'title' => $dataset->getDif()->getTitle(),
+                );
+            } else {
+                $datasetArray['dif'] = null;
+            }
+            $datasets[] = $datasetArray;
         }
-
-        return $difs;
+        return $datasets;
     }
 
     /**
