@@ -316,7 +316,7 @@ class EntityHandler
      *
      * @return EntityManager The entity manager object.
      */
-    protected function getEntityManager()
+    public function getEntityManager()
     {
         return $this->entityManager;
     }
