@@ -297,4 +297,14 @@ class EntityHandler
         // Return the anonymous person by default.
         return $this->get(Person::class, -1);
     }
+
+    /**
+     * Return the entity manager originally created in constructor.
+     *
+     * @return EntityManager The entity manager object.
+     */
+    protected function getEntityManager()
+    {
+        return $this->entityManager;
+    }
 }
