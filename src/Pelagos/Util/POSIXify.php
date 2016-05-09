@@ -78,7 +78,9 @@ class POSIXify
         $this->entityHandler = $entityHandler;
         $this->posixStartingUid = $posixStartingUid;
         $this->posixGid = $posixGid;
-        $this->homedirPrefix = $homedirPrefix;
+        // This is set to a temporary value of /dev/null as a flag
+        // for a later cronjob to correctly set after creating the directory.
+        $this->homedirPrefix = '/dev/null';
     }
 
     /**

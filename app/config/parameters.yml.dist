@@ -33,6 +33,6 @@ parameters:
     secret:            ThisTokenIsNotSoSecretChangeIt
 
     # Parameters for POSIX account generation
-    homedir_prefix:
-    posix_starting_uid:
-    posix_gid:
+    homedir_prefix: /san/home
+    posix_starting_uid: 10000
+    posix_gid: 1001
