@@ -38,8 +38,11 @@ class CreateHomedirCommand extends ContainerAwareCommand
     /**
      * Executes the current command.
      *
+     * @param InputInterface  $input  An Input Interface instance we don't use.
      * @param OutputInterface $output An OutputInterface instance.
-     * @param InputInterface $input An Input Interface instance we don't use.
+     *
+     * @throws \Exception If a directory to be created already exists.
+     * @throws \Exception If a non-account is encountered.
      *
      * @return integer Return 0 on success, or an error code otherwise.
      */
@@ -109,6 +112,6 @@ class CreateHomedirCommand extends ContainerAwareCommand
                 throw new \Exception('Expected account, got something else.');
             }
         }
-    return 0;
+        return 0;
     }
 }

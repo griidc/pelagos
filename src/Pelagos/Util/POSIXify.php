@@ -63,7 +63,6 @@ class POSIXify
      * @param EntityHandler $entityHandler    The Pelagos entity handler to handle updates.
      * @param string        $posixStartingUid The value to start creating user ID number entries at.
      * @param string        $posixGid         The value to set group ID to.
-     * @param string        $homedirPrefix    The location created homedirs start from.
      */
     public function __construct(
         EntityManager $entityManager,
@@ -71,7 +70,6 @@ class POSIXify
         EntityHandler $entityHandler,
         $posixStartingUid,
         $posixGid,
-        $homedirPrefix
     ) {
         $this->entityManager = $entityManager;
         $this->ldap = $ldap;
@@ -123,13 +121,6 @@ class POSIXify
 
         // Update LDAP with this modified Account (via Person).
         $this->ldap->updatePerson($accountOwnerPerson);
-
-        // Issue system call to daemon that creates homedir
-        // The following SUID program should (1) only write to expected places,
-        // (2) handle the possibility of the directory already existing.
-
-        // $username = $account->getUsername();
-        // exec("/opt/pelagos/bin/homedirmaker -d $homedirPrefix/$username");
     }
 
     /**
