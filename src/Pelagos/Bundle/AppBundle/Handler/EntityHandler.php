@@ -312,16 +312,6 @@ class EntityHandler
     }
 
     /**
-     * Return the entity manager originally created in constructor.
-     *
-     * @return EntityManager The entity manager object.
-     */
-    public function getEntityManager()
-    {
-        return $this->entityManager;
-    }
-
-    /**
      * Process filter criteria and add filters to a query builder.
      *
      * @param array        $criteria The criteria to process.
