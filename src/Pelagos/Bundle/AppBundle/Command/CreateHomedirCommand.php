@@ -48,15 +48,14 @@ class CreateHomedirCommand extends ContainerAwareCommand
         // not used
         unset($input);
 
-        // get entity handler
-        $entityHandler = $this->getContainer()->get('pelagos.entity.handler');
+        // get entitymanager
+        $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
 
         // get homedir prefix set in paramaters.yml
         $prefix = $this->getContainer()->getParameter('homedir_prefix');
 
         // find accounts flagged with /dev/null
-        //$queryBuilder = $this->getContainer()->get('doctrine.orm.entity_manager')->createQueryBuilder();
-        $queryBuilder = $entityHandler->getEntityManager()->createQueryBuilder();
+        $queryBuilder = $entityManager->createQueryBuilder();
         $result = $queryBuilder
             ->select('account')
             ->from(Account::class, 'account')
@@ -68,9 +67,9 @@ class CreateHomedirCommand extends ContainerAwareCommand
             ->getResult();
 
         $accounts = $result;
-
         foreach ($accounts as $account) {
             if ($account instanceof Account) {
+
                 // Get username for the last part of homedir.
                 $username = $account->getUserName();
                 $homeDir = "$prefix/$username";
@@ -78,24 +77,38 @@ class CreateHomedirCommand extends ContainerAwareCommand
                 // Set correct path in the model.
                 $output->writeln('Updating database for: ' . $username . '.');
                 $account->setHomeDirectory($homeDir);
-                $entityHandler->update($account);
+                $entityManager->persist($account);
+                $entityManager->flush();
 
                 // adjust LDAP definition
                 // Get Person associated with this Account.
                 $accountOwnerPerson = $account->getPerson();
 
                 // Update LDAP with this modified Account (via Person).
-                //$output->writeln('Updating LDAP for: ' . $username . '.');
-                //$this->getContainer()->get('pelagos.ldap')->updatePerson($accountOwnerPerson);
+                $output->writeln('Updating LDAP for: ' . $username . '.');
+                $this->getContainer()->get('pelagos.ldap')->updatePerson($accountOwnerPerson);
 
                 // Create home directory on server.
-                $output->writeln('Creating homedir for user: ' . $username . 'as' . "$prefix/$username" . '.');
-                mkdir("$homeDir/incoming", 0711, true);
+                if (is_dir($homeDir)) {
+                    throw new \Exception("Directory for $username already exists.");
+                }
+                $output->writeln('Creating homedir for user ' . $username . ': ' . "$prefix/$username\n");
+                // Create home directory.
+                mkdir("$homeDir", 0750, false);
+                exec("/usr/bin/setfacl -m u:apache:r-x $homeDir");
+                exec("/usr/bin/setfacl -m u:$username:r-x $homeDir");
+                // create incoming directory.
+                mkdir("$homeDir/incoming", 0750, false);
+                exec("/usr/bin/setfacl -m u:apache:rwx $homeDir/incoming");
+                exec("/usr/bin/setfacl -m u:$username:rwx $homeDir/incoming");
+                // Create download directory
+                mkdir("$homeDir/download", 0750, false);
+                exec("/usr/bin/setfacl -m u:apache:rwx $homeDir/download");
+                exec("/usr/bin/setfacl -m u:$username:r-x $homeDir/download");
             } else {
                 throw new \Exception('Expected account, got something else.');
             }
-        // Return success.
-        return 0;
         }
+    return 0;
     }
 }
