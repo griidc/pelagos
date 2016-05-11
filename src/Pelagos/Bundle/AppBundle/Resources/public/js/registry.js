@@ -294,8 +294,6 @@
             }
         });
 
-        $(".fileBrowserButton").fileBrowser();
-
     });
 })(jQuery);
 
