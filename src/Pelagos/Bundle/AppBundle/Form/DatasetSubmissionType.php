@@ -95,11 +95,11 @@ class DatasetSubmissionType extends AbstractType
             ))
             ->add('datasetFilePullCertainTimesOnly', ChoiceType::class, array(
                 'choices' => array('Yes' => true, 'No' => false),
-                'data' => false,
                 'label' => 'Download Certain Times Only:',
-                'required' => false,
+                'required' => true,
                 'expanded' => true,
                 'multiple' => false,
+                'placeholder' => false,
             ))
             ->add('datasetFilePullStartTime', TimeType::class, array(
                 'label' => 'Start Time:',

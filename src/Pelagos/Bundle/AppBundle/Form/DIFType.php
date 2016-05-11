@@ -104,8 +104,8 @@ class DIFType extends AbstractType
                     'placeholder' => 'Please provide a brief narrative describing: What, where, why, how, and when the data will be or have been collected/generated?  (4000 Character Maximum',
                     'maxlength' => 4000,
                 ),
-                'label' => 'Abstract:',
-                'required' => false,
+                'label' => 'Dataset Abstract:',
+                'required' => true,
             ))
             ->add('fieldOfStudyEcologicalBiological', CheckboxType::class, array(
                  'label' => 'Ecological/Biological',
@@ -238,6 +238,7 @@ class DIFType extends AbstractType
                 'expanded' => true,
                 'multiple' => false,
                 'required' => false,
+                'placeholder' => false,
             ))
             ->add('ethicalIssuesExplanation', TextType::class, array(
                 'label' => 'If yes or uncertain, please explain:',
