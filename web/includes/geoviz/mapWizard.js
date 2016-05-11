@@ -652,7 +652,7 @@ function MapWizard(json)
         .parent()
         .attr('title','Saves extent to the metadata editor and closes wizard')
         .qtip({    
-            content: $(this).attr('title')
+            content: $("#saveFeature").attr('title')
         });
         
         
@@ -682,7 +682,7 @@ function MapWizard(json)
         .parent()
         .attr('title','Deletes selected feature')
         .qtip({    
-            content: $(this).attr('title')
+            content: $("#deleteFeature").attr('title')
         });
         // .qtip({    content: {
             // text: 'Deletes selected feature'

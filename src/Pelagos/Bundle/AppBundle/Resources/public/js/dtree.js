@@ -41,20 +41,20 @@ function dTree(objName) {
 		inOrder					: false
 	}
 	this.icon = {
-		root				: 'includes/images/griidc_fav.png',
-		folder			: 'includes/images/folder.gif',
-		folderOpen	: 'includes/images/folderopen.gif',
-		node				: 'includes/images/nofolder.png',
-		empty				: 'includes/images/empty.gif',
-		line				: 'includes/images/line.gif',
-		join				: 'includes/images/join.gif',
-		joinBottom	: 'includes/images/joinbottom.gif',
-		plus				: 'includes/images/plus.gif',
-		plusBottom	: 'includes/images/plusbottom.gif',
-		minus				: 'includes/images/minus.gif',
-		minusBottom	: 'includes/images/minusbottom.gif',
-		nlPlus			: 'includes/images/nolines_plus.gif',
-		nlMinus			: 'includes/images/nolines_minus.gif'
+		root			: jQuery("#dImg").attr("root"),
+		folder			: jQuery("#dImg").attr("folder"),
+		folderOpen	    : jQuery("#dImg").attr("folderOpen"),
+		node			: jQuery("#dImg").attr("node"),
+		empty			: jQuery("#dImg").attr("empty"),
+		line			: 'includes/images/line.gif',
+		join			: 'includes/images/join.gif',
+		joinBottom	    : 'includes/images/joinbottom.gif',
+		plus			: 'includes/images/plus.gif',
+		plusBottom	    : 'includes/images/plusbottom.gif',
+		minus			: 'includes/images/minus.gif',
+		minusBottom	    : 'includes/images/minusbottom.gif',
+		nlPlus			: jQuery("#dImg").attr("nlPlus"), //'includes/images/nolines_plus.gif',
+		nlMinus			: jQuery("#dImg").attr("nlMinus") //'includes/images/nolines_minus.gif'
 	};
 	this.obj = objName;
 	this.aNodes = [];
