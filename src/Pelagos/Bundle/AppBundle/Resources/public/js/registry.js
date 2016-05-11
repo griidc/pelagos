@@ -92,7 +92,7 @@
             }
         });
 
-        if ($('input[name="datasetFilePullCertainTimesOnly"').val() == 1) {
+        if ($('input[name="datasetFilePullCertainTimesOnly"]:checked').val() == 1) {
             $("#whendiv").show();
         }
 
