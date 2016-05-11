@@ -108,3 +108,6 @@ simple_things_entity_audit:
         - Pelagos\Entity\Dataset
         - Pelagos\Entity\DIF
         - Pelagos\Entity\DatasetSubmission
+
+fos_js_routing:
+    routes_to_expose: [ .* ]
