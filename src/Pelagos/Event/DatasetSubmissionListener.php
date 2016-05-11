@@ -13,7 +13,7 @@ use Pelagos\Entity\DatasetSubmission;
 /**
  * Listener class for Dataset Submission-related events.
  */
-class DatasetSubmissionListener extends eventListener
+class DatasetSubmissionListener extends EventListener
 {
     /**
      * This is the class constructor to handle dependency injections.
@@ -38,40 +38,22 @@ class DatasetSubmissionListener extends eventListener
     }
 
     /**
-     * Method to send an email to user and DRPMs on a submit event.
+     * Method to send an email to user and DRPMs on a create event.
      *
      * @param EntityEvent $event Event being acted upon.
      *
      * @return void
      */
-    public function onSubmitted(EntityEvent $event)
+    public function onCreated(EntityEvent $event)
     {
-        $dif = $this->getDIF($event);
+        $datasetSubmission = $event->getEntity();
 
         // email User
-        $template = $this->twig->loadTemplate('@DIFEmail/user/user.dif-submitted.email.twig');
-        $this->sendMailMsg($template, $dif);
+        $template = $this->twig->loadTemplate('PelagosAppBundle:Email:registered.email.twig');
+        $this->sendMailMsg($template, array('datasetSubmission' => $datasetSubmission));
 
-        // email Data Managers
-        $template = $this->twig->loadTemplate('@DIFEmail/data-managers/data-managers.dif-submitted.email.twig');
-        $this->sendMailMsg($template, $dif, $this->getDMs($dif));
-    }
-
-    /**
-     * Internal method to get a DIF object from an Event.
-     *
-     * @param EntityEvent $event The event listener is for.
-     *
-     * @throws \Exception If event passed is not an instance of DIF (bad usage).
-     *
-     * @return DIF A DIF object associated with the event being listened on.
-     */
-    protected function getDatasetSubmission(EntityEvent $event)
-    {
-        $dif = $event->getEntity();
-        if (DIF::class != get_class($dif)) {
-            throw new \Exception('Internal error: handler expects a DIF');
-        }
-        return $dif;
+        // // email Data Managers
+        // $template = $this->twig->loadTemplate('@DIFEmail/data-managers/data-managers.dif-submitted.email.twig');
+        // $this->sendMailMsg($template, $dif, $this->getDMs($dif));
     }
 }

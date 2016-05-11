@@ -91,13 +91,13 @@ abstract class EventListener
         }
 
         foreach ($peopleObjs as $person) {
-            $this->mailData['recipient'] = $person;
+            $mailData['recipient'] = $person;
             $message = \Swift_Message::newInstance()
-                ->setSubject($twigTemplate->renderBlock('subject', $this->mailData))
+                ->setSubject($twigTemplate->renderBlock('subject', $mailData))
                 ->setFrom($this->from)
                 ->setTo($person->getEmailAddress())
-                ->setBody($twigTemplate->renderBlock('body_html', $this->mailData), 'text/html')
-                ->addPart($twigTemplate->renderBlock('body_text', $this->mailData), 'text/plain');
+                ->setBody($twigTemplate->renderBlock('body_html', $mailData), 'text/html')
+                ->addPart($twigTemplate->renderBlock('body_text', $mailData), 'text/plain');
             $this->mailer->send($message);
         }
     }
