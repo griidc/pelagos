@@ -294,7 +294,11 @@
             }
         });
 
-        $(".fileBrowserButton").fileBrowser();
+        $(".fileBrowserButton").fileBrowser(
+            {
+                url: Routing.generate("pelagos_api_account_get_incoming_directory", { id: "self" })
+            }
+        );
 
     });
 })(jQuery);
