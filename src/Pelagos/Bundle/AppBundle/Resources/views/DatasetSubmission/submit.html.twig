@@ -110,16 +110,16 @@ Thank you for your submission. Please email <a href="mailto:griidc@gomri.org?sub
                 <b>Download on Certain Times:</b>
             </td>
             <td>
-                {{ DatasetSubmission.access_period }}
+                {{ DatasetSubmission.getDatasetFilePullCertainTimesOnly ? 'Yes':'No' }}
             </td>
         </tr>
-            {% if DatasetSubmission.access_period == TRUE %}
+            {% if DatasetSubmission.getDatasetFilePullCertainTimesOnly %}
         <tr>
             <td>
                 <b>Download only on these days:</b>
             </td>
             <td>
-                {{ DatasetSubmission.getDatasetFilePullDays }}
+                {{ DatasetSubmission.getDatasetFilePullDays|join(',') }}
             </td>
         </tr>
         <tr>
@@ -127,8 +127,7 @@ Thank you for your submission. Please email <a href="mailto:griidc@gomri.org?sub
                 <b>Download only after:</b>
             </td>
             <td>
-            {{ DatasetSubmission.getDatasetFilePullStartTime }}
-                $_POST[dlstart]
+            {{ DatasetSubmission.getDatasetFilePullStartTime.format('H:i') }}
             </td>
         </tr>
         <tr>
@@ -136,7 +135,7 @@ Thank you for your submission. Please email <a href="mailto:griidc@gomri.org?sub
                 <b>Local Timezone:</b>
             </td>
             <td>
-                {{ DatasetSubmission.getDatasetFilePullStartTime.getTimezone }}
+                {{ DatasetSubmission.getDatasetFilePullStartTime.getTimezone.getName }}
             </td>
         </tr>
             {% endif %}
@@ -145,7 +144,7 @@ Thank you for your submission. Please email <a href="mailto:griidc@gomri.org?sub
                 <b>Pull Source Data:</b>
             </td>
             <td>
-                {{ DatasetSubmission.getDatasetFilePullSourceData }}
+                {{ DatasetSubmission.getDatasetFilePullSourceData ? 'Yes':'No' }}
             </td>
         </tr>
         {% endif %}

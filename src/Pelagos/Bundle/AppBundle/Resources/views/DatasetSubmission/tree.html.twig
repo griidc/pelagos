@@ -1,5 +1,41 @@
+<div id="dImg"
+
+{% image '@PelagosAppBundle/Resources/public/images/griidc_fav.png' %}
+ root="{{ asset_url }}"
+{% endimage %}
+
+{% image '@PelagosAppBundle/Resources/public/images/empty.gif' %}
+ empty="{{ asset_url }}"
+{% endimage %}
+
+{% image '@PelagosAppBundle/Resources/public/images/folder.gif' %}
+ folder="{{ asset_url }}"
+{% endimage %}
+
+{% image '@PelagosAppBundle/Resources/public/images/folderopen.gif' %}
+ folderopen="{{ asset_url }}"
+{% endimage %}
+
+{% image '@PelagosAppBundle/Resources/public/images/nofolder.png' %}
+ node="{{ asset_url }}"
+{% endimage %}
+
+{% image '@PelagosAppBundle/Resources/public/images/nolines_plus.gif' %}
+ nlPlus="{{ asset_url }}"
+{% endimage %}
+
+{% image '@PelagosAppBundle/Resources/public/images/nolines_minus.gif' %}
+ nlMinus="{{ asset_url }}"
+{% endimage %}
+
+{% image '@PelagosAppBundle/Resources/public/images/green_bobble.png' %}
+ green="{{ asset_url }}"
+{% endimage %}
+
+></div>
+
 <table style="height:100%;width:100%;">
-    {% if true %} {# admin #}
+    {% if is_granted('ROLE_DATA_REPOSITORY_MANAGER') %}
     <tr>
         <td>
             <table class="cleair" style="width:100%;">
@@ -9,7 +45,10 @@
                             <form id="filter" name="filter">
                                 <label for="filtername">Filter by Researcher:</label>
                                 <select id="filtername" style="width:100%">
-                                    <option>list of something here</option>
+                                    <option value="">[Show ALL]</option>
+                                    {% for person in researchers|sort %}
+                                        <option>{{person.getLastName}}, {{person.getFirstName}} &lt;{{person.getEmailAddress}}&gt;</option>
+                                    {% endfor %}
                                 </select>
                                 <label for="filterstatus">Filter by Status:</label>
                                 <select id="filterstatus" style="width:100%">
@@ -38,7 +77,7 @@
                     <tr>
                         <td>
                             <h2 class="title" align="center">
-                                Projects and datasets for {{ firstName|default + ' ' + lastName|default }}
+                                Projects and datasets for {{ loggedInPerson.getFirstName|default }} {{loggedInPerson.lastName|default }}
                                 <hr>
                             </h2>
                         </td>
@@ -46,32 +85,105 @@
                 <tr>
                     <td style="height:100%;">
                         <div style="position:relative;height:100%;">
-                            <div id="dstree" 
-                                 style="position:absolute; top:0px; left:10px; right:0px; bottom:10px; overflow:auto;" 
+                            <div id="dstree"
+                                 style="position:absolute; top:0px; left:10px; right:0px; bottom:10px; overflow:auto;"
                                  BGCOLOR="#efefef">
                                 <div class="dtree" style="position:absolute;">
                                     <script  type="text/javascript">
                                         d = new dTree('d');
-                                        
-                                        {% set nodecount = 0 %}
-                                        {% set folderCount = 1 %}
-                                        
-                                        d.add({{ nodecount }},-1,'My Registries','');
-                                        
-                                        {% set mynode = nodecount %}
-                                        {% set nodecount = nodecount + 1 %}
-                                        
-                                        d.add({{ nodecount }},{{ mynode }},'Others','javascript: d.o({{ nodecount }});','Other Registrations','','','',true);
-                                        
+
+                                        var green = jQuery("#dImg").attr("green");
+
+                                        var nodecount = 0;
+                                        var folderCount = 1;
+                                        var mynode = nodecount;
+
+                                        d.add(
+                                            nodecount,
+                                            -1,
+                                            'My Registries',
+                                            ''
+                                        );
+                                        nodecount++;
+
+                                        d.add(
+                                            nodecount,
+                                            mynode,
+                                            'Others',
+                                            'javascript: d.o('+nodecount+');',
+                                            'Other Registrations',
+                                            '',
+                                            '',
+                                            '',
+                                            true
+                                        );
+                                        nodecount++;
+
+                                        {% for dataset in datasetSubmissions %}
+                                            d.add(
+                                                nodecount,
+                                                folderCount,
+                                                '[{{dataset.getDatasetSubmission.getDatasetSubmissionId}}] {{dataset.getTitle}}',
+                                                '?regid={{dataset.getDatasetSubmission.getDatasetSubmissionId|default}}',
+                                                '[{{dataset.getDatasetSubmission.getDatasetSubmissionId}}] {{dataset.getTitle}}',
+                                                '_self',
+                                                green
+                                            );
+                                            nodecount++;
+                                        {% endfor %}
+
+                                        d.add(
+                                            nodecount,
+                                            -1,
+                                            'Datasets',
+                                            ''
+                                        );
+
+                                        var dsnode = nodecount;
+                                        nodecount++;
+
+                                        folderCount = nodecount;
+
+                                        {% for researchGroup in researchGroups %}
+                                            d.add(
+                                                nodecount,
+                                                dsnode,
+                                                '{{researchGroup.getName}}',
+                                                'javascript: d.o('+nodecount+');',
+                                                '{{researchGroup.getName}}',
+                                                '',
+                                                '',
+                                                '',
+                                                true
+                                            );
+                                            nodecount++;
+
+                                            //Another for loop here for datasets
+                                            {% for dataset in researchGroup.getDatasets %}
+                                                if ({{dataset.getDif.getStatus}} == '2') {
+                                                    d.add(
+                                                        nodecount,
+                                                        folderCount,
+                                                        '[{{dataset.getUdi}}] {{dataset.getTitle}}',
+                                                        '?uid={{dataset.getDif.getId}}',
+                                                        '[{{dataset.getUdi}}] {{dataset.getTitle}}',
+                                                        '_self',
+                                                        green
+                                                    );
+                                                    nodecount++;
+                                                }
+                                            {% endfor %}
+                                            folderCount = nodecount;
+                                        {% endfor %}
+
                                         document.write(d);
-                                        
                                     </script>
                                 </div>
                             </div>
                         </div>
                     </td>
                 </tr>
-                </tbody> 
+                </tbody>
             </table>
         </td>
     </tr>

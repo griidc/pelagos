@@ -27,3 +27,6 @@ pelagos_account_ui:
 
 pelagos_dif_ui:
     resource: Pelagos\Bundle\AppBundle\Controller\UI\DIFController
+    
+pelagos_dataset_submission_ui:
+    resource: Pelagos\Bundle\AppBundle\Controller\UI\DatasetSubmissionController
