@@ -172,11 +172,11 @@
 
         var sftpuser = $('#sftpSection').attr('sftpuser');
         if (sftpuser == true) {
-            $('#sftpYes').show();
-            $('#sftpNo').hide();
+            $('.sftpYes').show();
+            $('.sftpNo').hide();
         } else {
-            $('#sftpNo').show();
-            $('#sftpYes').hide();
+            $('.sftpNo').show();
+            $('.sftpYes').hide();
         }
 
         $('#sftpButton').click(function() {
