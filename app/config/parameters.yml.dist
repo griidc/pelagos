@@ -29,5 +29,8 @@ parameters:
     # When to warn account holders of soon to expire passwords (as ISO 8601 durations)
     account_password_expiration_warn: [P7D, P1D]
 
+    data_store_directory:    /san/data/store
+    data_download_directory: /san/data/download
+
     # A secret key that's used to generate certain security-related tokens
     secret:            ThisTokenIsNotSoSecretChangeIt

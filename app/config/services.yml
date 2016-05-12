@@ -31,3 +31,7 @@ services:
     pelagos.util.udi:
         class: Pelagos\Util\Udi
         arguments: ["@doctrine.orm.entity_manager"]
+
+    pelagos.util.data_store:
+        class: Pelagos\Util\DataStore
+        arguments: ["%data_store_directory%","%data_download_directory%"]
