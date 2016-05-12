@@ -159,6 +159,12 @@ class DatasetSubmissionController extends UIController
         $researchers = $this->entityHandler
             ->getAll(Person::class);
 
+        $homeDir = $this->getUser()->getPerson()->getAccount()->getHomeDirectory();
+        if ($homeDir and !preg_match('/^\/dev\/null/',$homeDir)) {
+            $sftpUserStatus = true;
+        } else {
+            $sftpUserStatus = false;
+        }
         return $this->render(
             'PelagosAppBundle:DatasetSubmission:index.html.twig',
             array(
@@ -170,6 +176,7 @@ class DatasetSubmissionController extends UIController
                 'researchGroups' => $researchGroups,
                 'researchers' => $researchers,
                 'loggedInPerson' => $loggedInPerson,
+                'sftpuser' => $sftpUserStatus,
             )
         );
     }
