@@ -108,3 +108,27 @@ simple_things_entity_audit:
         - Pelagos\Entity\Dataset
         - Pelagos\Entity\DIF
         - Pelagos\Entity\DatasetSubmission
+
+old_sound_rabbit_mq:
+    connections:
+        default:
+            host:     'localhost'
+            port:     5672
+            user:     'guest'
+            password: 'guest'
+            vhost:    '/'
+            lazy:     false
+            connection_timeout: 3
+            read_write_timeout: 3
+            keepalive: false
+            heartbeat: 0
+    producers:
+        filer:
+            connection:       default
+            exchange_options: { name: 'filer', type: direct }
+    consumers:
+        filer:
+            connection:       default
+            exchange_options: { name: 'filer', type: direct }
+            queue_options:    { name: 'filer' }
+            callback:         pelagos.rabbit.consumer.filer

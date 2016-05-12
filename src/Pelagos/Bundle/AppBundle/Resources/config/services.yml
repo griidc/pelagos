@@ -36,3 +36,7 @@ services:
         arguments: ["@doctrine.orm.entity_manager", "@security.authorization_checker"]
         tags:
             - { name: form.type }
+
+    pelagos.rabbit.consumer.filer:
+        class: Pelagos\Bundle\AppBundle\Rabbit\Consumer\FilerConsumer
+        arguments: ["@doctrine.orm.entity_manager", "@pelagos.util.data_store"]
