@@ -38,7 +38,8 @@
         "symfony/assetic-bundle": "^2.7",
         "doctrine/doctrine-fixtures-bundle": "^2.3",
         "willdurand/hateoas-bundle": "^1.1",
-        "simplethings/entity-audit-bundle": "^0.9.1"
+        "simplethings/entity-audit-bundle": "^0.9.1",
+        "php-amqplib/rabbitmq-bundle": "^1.9"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",
