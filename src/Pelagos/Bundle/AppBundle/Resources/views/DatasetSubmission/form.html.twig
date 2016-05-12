@@ -198,7 +198,7 @@
                         <div class="fwtextboxcont">
                             {{ form_row(form.datasetFilePath) }}
                         </div>
-                        <input type="button" value="Browse...">
+                        <input type="button" value="Browse..." class="fileBrowserButton" data-target="#datasetFilePath" data-type="data">
                         <div id="sftp_force_data_download">
                             {% if sftp_type|default and url_set|default and sftpuser|default and sftpdir|default %}
                             <!-- this can be done with js logic -->
@@ -380,7 +380,7 @@
                         <div class="fwtextboxcont">
                             {{ form_widget(form.metadataFilePath) }}
                         </div>
-                        <input type="button" value="Browse...">
+                        <input type="button" value="Browse..." class="fileBrowserButton" data-target="#metadataFilePath" data-type="metadata">
                         <div id="sftp_force_metadata_download">
                         {% if sftp|default %}
                             <input type="checkbox" name="sftp_force_metadata_download">import this file again from the same path
