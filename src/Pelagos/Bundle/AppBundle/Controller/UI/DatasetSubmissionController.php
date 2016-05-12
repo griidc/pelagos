@@ -213,12 +213,20 @@ class DatasetSubmissionController extends UIController
 
             if ($sequence == null) {
                 $sequence = 0;
+                $eventName = 'submitted';
+            } else {
+                $eventName = 'updated';
             }
 
             $datasetSubmission->setSequence(++$sequence);
 
             $this->entityHandler->create($datasetSubmission);
             $this->entityHandler->update($dataset);
+
+            $this->container->get('pelagos.entity.handler')->dispatchEntityEvent(
+                $datasetSubmission,
+                $eventName
+            );
 
             return $this->render(
                 'PelagosAppBundle:DatasetSubmission:submit.html.twig',

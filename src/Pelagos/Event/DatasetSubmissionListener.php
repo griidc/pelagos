@@ -8,6 +8,7 @@ use Pelagos\Bundle\AppBundle\DataFixtures\ORM\ResearchGroupRoles;
 
 use Pelagos\Entity\Account;
 use Pelagos\Entity\Person;
+use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 
 /**
@@ -38,7 +39,7 @@ class DatasetSubmissionListener extends EventListener
     }
 
     /**
-     * Method to send an email to user and DRPMs on a create event.
+     * Method to send an email to user on a create event.
      *
      * @param EntityEvent $event Event being acted upon.
      *
@@ -49,11 +50,61 @@ class DatasetSubmissionListener extends EventListener
         $datasetSubmission = $event->getEntity();
 
         // email User
-        $template = $this->twig->loadTemplate('PelagosAppBundle:Email:registered.email.twig');
+        $template = $this->twig->loadTemplate('PelagosAppBundle:Email:user.dataset-created.email.twig');
         $this->sendMailMsg($template, array('datasetSubmission' => $datasetSubmission));
 
         // // email Data Managers
         // $template = $this->twig->loadTemplate('@DIFEmail/data-managers/data-managers.dif-submitted.email.twig');
         // $this->sendMailMsg($template, $dif, $this->getDMs($dif));
+    }
+
+    /**
+     * Method to send an email to user and DRPMs on a submitted event.
+        *
+     * @param EntityEvent $event Event being acted upon.
+        *
+     * @return void
+     */
+    public function onSubmitted(EntityEvent $event)
+    {
+        $datasetSubmission = $event->getEntity();
+        $dataset = $datasetSubmission->getDataset();
+
+        // email User
+        $template = $this->twig->loadTemplate('PelagosAppBundle:Email:data-managers.dataset-submitted.email.twig');
+        $this->sendMailMsg(
+            $template,
+            array(
+                'dataset' => $dataset
+            ),
+            $this->getDMs(
+                $dataset
+            )
+        );
+    }
+
+    /**
+     * Method to send an email to DMs on a updated event.
+     *
+     * @param EntityEvent $event Event being acted upon.
+     *
+     * @return void
+     */
+    public function onUpdated(EntityEvent $event)
+    {
+        $datasetSubmission = $event->getEntity();
+        $dataset = $datasetSubmission->getDataset();
+
+        // email DM
+        $template = $this->twig->loadTemplate('PelagosAppBundle:Email:data-managers.dataset-updated.email.twig');
+        $this->sendMailMsg(
+            $template,
+            array(
+                'dataset' => $dataset
+            ),
+            $this->getDMs(
+                $dataset
+            )
+        );
     }
 }

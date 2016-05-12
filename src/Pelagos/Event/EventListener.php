@@ -8,6 +8,7 @@ use Pelagos\Bundle\AppBundle\DataFixtures\ORM\ResearchGroupRoles;
 
 use Pelagos\Entity\Account;
 use Pelagos\Entity\Person;
+use Pelagos\Entity\Dataset;
 
 /**
  * Listener class for Dataset Submission-related events.
