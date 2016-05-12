@@ -52,17 +52,13 @@ class DatasetSubmissionListener extends EventListener
         // email User
         $template = $this->twig->loadTemplate('PelagosAppBundle:Email:user.dataset-created.email.twig');
         $this->sendMailMsg($template, array('datasetSubmission' => $datasetSubmission));
-
-        // // email Data Managers
-        // $template = $this->twig->loadTemplate('@DIFEmail/data-managers/data-managers.dif-submitted.email.twig');
-        // $this->sendMailMsg($template, $dif, $this->getDMs($dif));
     }
 
     /**
      * Method to send an email to user and DRPMs on a submitted event.
-        *
+     *
      * @param EntityEvent $event Event being acted upon.
-        *
+     *
      * @return void
      */
     public function onSubmitted(EntityEvent $event)
