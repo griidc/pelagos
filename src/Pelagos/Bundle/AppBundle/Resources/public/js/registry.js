@@ -6,7 +6,6 @@
         // Get the time zone, put it in timezone field.
         getTimeZone();
 
-
         $("#tabs").tabs({
             heightStyleType: "fill",
             disabled: [3,4,5],
@@ -169,6 +168,22 @@
             } else {
                 $('#regbutton').addClass('button_disabled').attr('disabled', true);
             }
+        });
+
+        var sftpuser = $('#sftpSection').attr('sftpuser');
+        if (sftpuser == true) {
+            $('#sftpYes').show();
+            $('#sftpNo').hide();
+        } else {
+            $('#sftpNo').show();
+            $('#sftpYes').hide();
+        }
+
+        $('#sftpButton').click(function() {
+            var sftpReqPath = $('#sftpButton').attr("sftppath");
+            var post = $.post( sftpReqPath ).done(function ( data ) {
+                alert('worked');
+            });
         });
 
         $.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
