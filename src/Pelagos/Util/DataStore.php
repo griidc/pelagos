@@ -45,6 +45,7 @@ class DataStore
      * @throws \Exception When the type is not valid.
      * @throws \Exception When unable to copy the file into the data store.
      * @throws \Exception When unable to set the mode on the file in the data store.
+     * @throws \Exception When unable to create a link in the download directory..
      *
      * @return void
      */
@@ -53,27 +54,33 @@ class DataStore
         if (!file_exists($filePath)) {
             throw new \Exception("File: $filePath not found!");
         }
-        $destination = "$this->dataStoreDirectory/$udi/$udi.";
+        $this->checkDataStoreDirectory($udi);
+        $storeFileName = "$udi.";
         switch ($type) {
             case 'data':
-                $destination .= 'dat';
+                $storeFileName .= 'dat';
                 break;
             case 'metadata':
-                $destination .= 'met';
+                $storeFileName .= 'met';
                 break;
             default:
-                throw new \Exception("$type is not a vlid type");
+                throw new \Exception("$type is not a valid type");
         }
-        $this->checkDataStoreDirectory($udi);
+        $storeFilePath = "$this->dataStoreDirectory/$udi/$storeFileName";
+        if (!copy($filePath, $storeFilePath)) {
+            throw new \Exception("Could not copy $filePath to $storeFilePath");
+        }
+        if (!chmod($storeFilePath, 0644)) {
+            throw new \Exception("Could not set file mode on $storeFilePath");
+        }
+        $this->setOwnerGroupFacls($storeFilePath, 'custodian', 'custodian');
+        echo "Added $filePath to $storeFilePath\n";
         $this->checkDataDownloadDirectory($udi);
-        if (!copy($filePath, $destination)) {
-            throw new \Exception("Could not copy $filePath to $destination");
+        $downloadFilePath = "$this->dataDownloadDirectory/$udi/$storeFileName";
+        if (!link($storeFilePath, $downloadFilePath)) {
+            throw new \Exception("Could not link $downloadFilePath to $storeFilePath");
         }
-        if (!chmod($destination, 0644)) {
-            throw new \Exception("Could not set file mode on $destination");
-        }
-        $this->setOwnerGroupFacls($destination, 'custodian', 'custodian');
-        echo "Adding $filePath to $destination\n";
+        echo "Linked $downloadFilePath to $storeFilePath\n";
     }
 
     /**
