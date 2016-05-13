@@ -1,3 +1,5 @@
+var spinner;
+
 (function ($) {
     $(document).ready(function(){
 
@@ -5,6 +7,8 @@
 
         // Get the time zone, put it in timezone field.
         getTimeZone();
+
+        initSpinner();
 
         $("#tabs").tabs({
             heightStyleType: "fill",
@@ -180,10 +184,30 @@
         }
 
         $('#sftpButton').click(function() {
+            showSpinner();
             var sftpReqPath = $('#sftpButton').attr("sftppath");
-            var post = $.post( sftpReqPath ).done(function ( data ) {
-                alert('worked');
-            });
+
+            $.ajax({
+              url: sftpReqPath,
+              type: 'PATCH',
+              success: function() {
+                var msg = 'SFTP Access has been granted, however, this request may take up to 60 seconds.';
+                showDialog('SFTP Access', msg);
+                $('.sftpYes').show();
+                $('.sftpNo').hide();
+                // Enable file path for dataset.
+                $('#datasetFilePath').prop("disabled", false);
+                // Enable file path for metadata.
+                $('#metadataFilePath').prop("disabled", false);
+                // Enable file browse buttons..
+                $('.fileBrowserButton').prop("disabled", false);
+              },
+              error: function(jqXHR, textStatus, errorThrown ) {
+                  showDialog('Problem with your request', jqXHR.responseJSON.message);
+              }})
+              .always(function() {
+                  hideSpinner();
+              });
         });
 
         $.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
@@ -315,6 +339,7 @@
             }
         );
 
+        hideSpinner();
     });
 })(jQuery);
 
@@ -403,3 +428,39 @@ function submitRegistry() {
     }
     jQuery("#regForm").submit();
 }
+
+function initSpinner()
+{
+    var opts = {
+        lines: 13, // The number of lines to draw
+        length: 40, // The length of each line
+        width: 15, // The line thickness
+        radius: 50, // The radius of the inner circle
+        corners: 1, // Corner roundness (0..1)
+        rotate: 0, // The rotation offset
+        direction: 1, // 1: clockwise, -1: counterclockwise
+        color: "#000", // #rgb or #rrggbb or array of colors
+        speed: 1, // Rounds per second
+        trail: 60, // Afterglow percentage
+        shadow: true, // Whether to render a shadow
+        hwaccel: true, // Whether to use hardware acceleration
+        className: "spinner", // The CSS class to assign to the spinner
+        zIndex: 2000000000, // The z-index (defaults to 2000000000)
+        top: "50%", // Top position relative to parent
+        left: "50%" // Left position relative to parent
+    };
+
+    target = document.getElementById("spinner");
+    spinner = new Spinner(opts).spin(target);
+}
+
+function showSpinner()
+{
+    $("#spinner").show();
+}
+
+function hideSpinner()
+{
+    $("#spinner").hide();
+}
+
