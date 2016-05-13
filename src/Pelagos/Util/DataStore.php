@@ -37,21 +37,21 @@ class DataStore
     /**
      * Add a file to the data store.
      *
-     * @param string $filePath The path to the file to add.
-     * @param string $udi      The UDI of the dataset to add the file to.
-     * @param string $type     The type (data or metadata) of the file.
+     * @param string $filePath  The path to the file to add.
+     * @param string $datasetId The id of the dataset to add the file to.
+     * @param string $type      The type (data or metadata) of the file.
      *
      * @throws \Exception When the file does not exist.
      * @throws \Exception When the type is not valid.
      *
      * @return void
      */
-    public function addFile($filePath, $udi, $type)
+    public function addFile($filePath, $datasetId, $type)
     {
         if (!file_exists($filePath)) {
             throw new \Exception("File: $filePath not found!");
         }
-        $storeFileName = "$udi.";
+        $storeFileName = "$datasetId.";
         switch ($type) {
             case 'data':
                 $storeFileName .= 'dat';
@@ -62,9 +62,9 @@ class DataStore
             default:
                 throw new \Exception("$type is not a valid type");
         }
-        $storeFilePath = $this->addFileToDataStoreDirectory($filePath, $udi, $storeFileName);
+        $storeFilePath = $this->addFileToDataStoreDirectory($filePath, $datasetId, $storeFileName);
         echo "Added $filePath to $storeFilePath\n";
-        $downloadFilePath = $this->createLinkInDownloadDirectory($storeFilePath, $udi, $storeFileName);
+        $downloadFilePath = $this->createLinkInDownloadDirectory($storeFilePath, $datasetId, $storeFileName);
         echo "Linked $downloadFilePath to $storeFilePath\n";
     }
 
@@ -72,7 +72,7 @@ class DataStore
      * Add a file to the data store directory.
      *
      * @param string $filePath      The path of the file to add.
-     * @param string $udi           The UDI of the dataset.
+     * @param string $datasetId     The id of the dataset.
      * @param string $storeFileName The name of the file in the data store.
      *
      * @throws \Exception When unable to delete an existing file in the data store.
@@ -81,9 +81,9 @@ class DataStore
      *
      * @return string The path to the file in the data store directory.
      */
-    protected function addFileToDataStoreDirectory($filePath, $udi, $storeFileName)
+    protected function addFileToDataStoreDirectory($filePath, $datasetId, $storeFileName)
     {
-        $dataStoreDirectory = $this->getDataStoreDirectory($udi);
+        $dataStoreDirectory = $this->getDataStoreDirectory($datasetId);
         $storeFilePath = "$dataStoreDirectory/$storeFileName";
         if (file_exists($storeFilePath)) {
             if (!unlink($storeFilePath)) {
@@ -104,7 +104,7 @@ class DataStore
      * Create a link in the download directory.
      *
      * @param string $storeFilePath The path to the file in the data store.
-     * @param string $udi           The UDI of the dataset.
+     * @param string $datasetId     The id of the dataset.
      * @param string $storeFileName The name of the file in the data store.
      *
      * @throws \Exception When unable to delete an existing file in the download directory.
@@ -112,9 +112,9 @@ class DataStore
      *
      * @return string The path to the file in the download directory.
      */
-    protected function createLinkInDownloadDirectory($storeFilePath, $udi, $storeFileName)
+    protected function createLinkInDownloadDirectory($storeFilePath, $datasetId, $storeFileName)
     {
-        $dataDownloadDirectory = $this->getDataDownloadDirectory($udi);
+        $dataDownloadDirectory = $this->getDataDownloadDirectory($datasetId);
         $downloadFilePath = "$dataDownloadDirectory/$storeFileName";
         if (file_exists($downloadFilePath)) {
             if (!unlink($downloadFilePath)) {
@@ -132,15 +132,15 @@ class DataStore
      *
      * This creates one if it doesn't exist.
      *
-     * @param string $udi The UDI of the dataset to get the data store directory for.
+     * @param string $datasetId The id of the dataset to get the data store directory for.
      *
      * @throws \Exception When an error occurs creating the data store directory.
      *
      * @return string
      */
-    protected function getDataStoreDirectory($udi)
+    protected function getDataStoreDirectory($datasetId)
     {
-        $dataStoreDirectory = "$this->dataStoreDirectory/$udi";
+        $dataStoreDirectory = "$this->dataStoreDirectory/$datasetId";
         if (!file_exists($dataStoreDirectory)) {
             if (!mkdir($dataStoreDirectory, 0750)) {
                 throw new \Exception("Could not create $dataStoreDirectory");
@@ -155,16 +155,16 @@ class DataStore
      *
      * This creates one if it doesn't exist.
      *
-     * @param string  $udi        The UDI of the dataset to check the data download directory for.
+     * @param string  $datasetId  The id of the dataset to check the data download directory for.
      * @param boolean $restricted Whether or not the dataset is restricted.
      *
      * @throws \Exception When an error occurs creating the data download directory.
      *
      * @return string
      */
-    protected function getDataDownloadDirectory($udi, $restricted = false)
+    protected function getDataDownloadDirectory($datasetId, $restricted = false)
     {
-        $downloadDirectory = "$this->dataDownloadDirectory/$udi";
+        $downloadDirectory = "$this->dataDownloadDirectory/$datasetId";
         if (!file_exists($downloadDirectory)) {
             if ($restricted) {
                 $mode = 0750;
