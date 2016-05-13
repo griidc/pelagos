@@ -76,14 +76,17 @@ class DatasetSubmissionType extends AbstractType
             ->add('datasetFile', FileType::class, array(
                 'label' => 'Dataset File:',
                 'required' => false,
+                'mapped' => false,
             ))
             ->add('datasetFilePath', TextType::class, array(
                 'label' => 'Dataset File Path:',
                 'required' => false,
+                'mapped' => false,
             ))
             ->add('datasetFileUrl', TextType::class, array(
                 'label' => 'Dataset File URL:',
                 'required' => false,
+                'mapped' => false,
             ))
             ->add('datasetFileAvailabilityDate', DateType::class, array(
                 'label' => 'Availability Date:',
@@ -131,14 +134,17 @@ class DatasetSubmissionType extends AbstractType
             ->add('metadataFile', FileType::class, array(
                 'label' => 'Metadata File:',
                 'required' => false,
+                'mapped' => false,
             ))
             ->add('metadataFilePath', TextType::class, array(
                 'label' => 'Metadata File Path:',
                 'required' => false,
+                'mapped' => false,
             ))
             ->add('metadataFileUrl', TextType::class, array(
                 'label' => 'Metadata File URL:',
                 'required' => false,
+                'mapped' => false,
             ));
     }
 
