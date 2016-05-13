@@ -69,7 +69,7 @@ class POSIXify
         Ldap $ldap,
         EntityHandler $entityHandler,
         $posixStartingUid,
-        $posixGid,
+        $posixGid
     ) {
         $this->entityManager = $entityManager;
         $this->ldap = $ldap;
