@@ -9,6 +9,10 @@ framework:
 
 monolog:
     handlers:
+        filer:
+            type:     stream
+            path:     "%kernel.logs_dir%/filer.log"
+            channels: ["filer"]
         main:
             type:         fingers_crossed
             action_level: error
