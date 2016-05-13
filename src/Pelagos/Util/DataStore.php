@@ -39,7 +39,7 @@ class DataStore
      *
      * @param string $fileUri   The URI of the file to add.
      * @param string $datasetId The id of the dataset to add the file to.
-     * @param string $type      The type (data or metadata) of the file.
+     * @param string $type      The type (dataset or metadata) of the file.
      *
      * @throws \Exception When the file does not exist.
      * @throws \Exception When the type is not valid.
@@ -53,7 +53,7 @@ class DataStore
         }
         $storeFileName = "$datasetId.";
         switch ($type) {
-            case 'data':
+            case 'dataset':
                 $storeFileName .= 'dat';
                 break;
             case 'metadata':
