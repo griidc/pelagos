@@ -177,7 +177,7 @@
             <div id="tabs-2"> <!-- Upload via SFTP/GridFTP -->
                 <p>Use this method when the dataset is &gt;1GB and you wish to upload the dataset file to GRIIDC (rather than place the dataset file on an HTTP (web) or FTP server and have GRIIDC pull it).
                 <strong>Note:</strong> <em>Using this method requires that you have <strong>first</strong> uploaded the file via SFTP or GridFTP.</em></p>
-                <div id=sftpSection sftpuser={{ sftpuser }}>
+                <div id=sftpSection sftpuser={{ loggedInPerson.getAccount().isPosix() }}>
                     <div class="sftpYes" style="color:black;">
                         Your account has been configured for SFTP/GridFTP access.
                         Click <a href="https://data.gulfresearchinitiative.org/data-file-transfer-methods#SFTP" TARGET="_NEW">here</a> for instructions.</p>
@@ -186,7 +186,7 @@
                         <p>
                         Your account has not been configured for SFTP/GridFTP access.
                         If you wish to use SFTP/GridFTP, please click here to request SFTP/GridFTP access:
-                        <BUTTON id=sftpButton sftpPath={{ path('pelagos_app_ui_account_makeposix') }}>REQUEST SFTP/GridFTP</button></p>
+                        <BUTTON id=sftpButton sftpPath={{ path('pelagos_api_account_request_make_posix') }}>REQUEST SFTP/GridFTP</button></p>
                     </div>
                 </div>
                 <fieldset>
@@ -197,9 +197,13 @@
                             {% endimage %}
                         </span>
                         <div class="fwtextboxcont">
-                            {{ form_row(form.datasetFilePath) }}
+                            {% if loggedInPerson.getAccount().isPosix() %}
+                                {{ form_row(form.datasetFilePath) }}
+                            {% else %}
+                                {{ form_row(form.datasetFilePath, { 'attr':{'disabled':'disabled'} }) }}
+                            {% endif %}
                         </div>
-                        <input type="button" value="Browse..." class="fileBrowserButton" data-target="#datasetFilePath" data-type="data">
+                        <input type="button" value="Browse..." class="fileBrowserButton" data-target="#datasetFilePath" data-type="data" {% if not loggedInPerson.getAccount().isPosix() %} DISABLED {% endif %}>
                         <div id="sftp_force_data_download">
                             {% if sftp_type|default and url_set|default and sftpuser|default and sftpdir|default %}
                             <!-- this can be done with js logic -->
@@ -359,7 +363,7 @@
             <div id="md-tabs-2"> <!-- Upload via SFTP/GridFTP -->
                 <p>You may use this method if you wish to upload the metadata file via SFTP/GridFTP (e.g. if you uploaded a metadata file alongside a data file that you uploaded using SFTP/GridFTP).
                 <strong>Note:</strong> <em>Using this method requires that you have <strong>first</strong> uploaded your file via SFTP or GridFTP.</em></p>
-                <div id=mdSftpSection sftpuser={{ sftpuser }}>
+                <div id=mdSftpSection sftpuser={{ loggedInPerson.getAccount().isPosix() }}>
                     <div class="sftpYes" style="color:black;">
                         <p>Your account has been configured for SFTP/GridFTP access.
                         Click <a href="https://data.gulfresearchinitiative.org/data-file-transfer-methods#SFTP" TARGET="_NEW">here</a> for instructions.</p>
@@ -378,9 +382,13 @@
                         </span>
                         {{ form_label(form.metadataFilePath) }}
                         <div class="fwtextboxcont">
-                            {{ form_widget(form.metadataFilePath) }}
+                            {% if loggedInPerson.getAccount().isPosix() %}
+                                {{ form_widget(form.metadataFilePath) }}
+                            {% else %}
+                                {{ form_widget(form.metadataFilePath, { 'attr':{'disabled':'disabled'} }) }}
+                            {% endif %}
                         </div>
-                        <input type="button" value="Browse..." class="fileBrowserButton" data-target="#metadataFilePath" data-type="metadata">
+                        <input type="button" value="Browse..." class="fileBrowserButton" data-target="#metadataFilePath" data-type="metadata" {% if not loggedInPerson.getAccount().isPosix() %} DISABLED {% endif %}>
                         <div id="sftp_force_metadata_download">
                         {% if sftp|default %}
                             <input type="checkbox" name="sftp_force_metadata_download">import this file again from the same path
