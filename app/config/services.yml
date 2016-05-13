@@ -35,3 +35,8 @@ services:
     pelagos.util.data_store:
         class: Pelagos\Util\DataStore
         arguments: ["%data_store_directory%","%data_download_directory%"]
+
+    monolog.processor.process_id:
+        class: Monolog\Processor\ProcessIdProcessor
+        tags:
+            - { name: monolog.processor, channel: filer }
