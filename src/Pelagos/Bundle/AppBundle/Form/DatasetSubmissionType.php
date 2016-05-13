@@ -78,6 +78,11 @@ class DatasetSubmissionType extends AbstractType
                 'required' => false,
                 'mapped' => false,
             ))
+            ->add('datasetFileUpload', TextType::class, array(
+                'required' => false,
+                'mapped' => false,
+                'disabled' => true,
+            ))
             ->add('datasetFilePath', TextType::class, array(
                 'label' => 'Dataset File Path:',
                 'required' => false,
@@ -135,6 +140,11 @@ class DatasetSubmissionType extends AbstractType
                 'label' => 'Metadata File:',
                 'required' => false,
                 'mapped' => false,
+            ))
+            ->add('metadataFileUpload', TextType::class, array(
+                'required' => false,
+                'mapped' => false,
+                'disabled' => true,
             ))
             ->add('metadataFilePath', TextType::class, array(
                 'label' => 'Metadata File Path:',

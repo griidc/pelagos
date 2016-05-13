@@ -13,8 +13,10 @@ input#pointOfContactName,
 input#pointOfContactEmail,
 input#authors,
 input#title,
+input#datasetFileUpload,
 input#datasetFilePath,
 input#datasetFileUrl,
+input#metadataFileUpload,
 input#metadataFilePath,
 input#metadataFileUrl
 {
