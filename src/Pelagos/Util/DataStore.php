@@ -43,9 +43,6 @@ class DataStore
      *
      * @throws \Exception When the file does not exist.
      * @throws \Exception When the type is not valid.
-     * @throws \Exception When unable to copy the file into the data store.
-     * @throws \Exception When unable to set the mode on the file in the data store.
-     * @throws \Exception When unable to create a link in the download directory..
      *
      * @return void
      */
@@ -54,7 +51,6 @@ class DataStore
         if (!file_exists($filePath)) {
             throw new \Exception("File: $filePath not found!");
         }
-        $this->checkDataStoreDirectory($udi);
         $storeFileName = "$udi.";
         switch ($type) {
             case 'data':
@@ -66,7 +62,34 @@ class DataStore
             default:
                 throw new \Exception("$type is not a valid type");
         }
+        $storeFilePath = $this->addFileToDataStoreDirectory($filePath, $udi, $storeFileName);
+        echo "Added $filePath to $storeFilePath\n";
+        $this->createLinkInDownloadDirectory($storeFilePath, $udi, $storeFileName);
+        echo "Linked $downloadFilePath to $storeFilePath\n";
+    }
+
+    /**
+     * Add a file to the data store directory.
+     *
+     * @param string $filePath      The path of the file to add.
+     * @param string $udi           The UDI of the dataset.
+     * @param string $storeFileName The name of the file in the data store.
+     *
+     * @throws \Exception When unable to delete an existing file in the data store.
+     * @throws \Exception When unable to copy the file into the data store.
+     * @throws \Exception When unable to set the mode on the file in the data store.
+     *
+     * @return string The path to the file in the data store.
+     */
+    protected function addFileToDataStoreDirectory($filePath, $udi, $storeFileName)
+    {
+        $this->checkDataStoreDirectory($udi);
         $storeFilePath = "$this->dataStoreDirectory/$udi/$storeFileName";
+        if (file_exists($storeFilePath)) {
+            if (!unlink($storeFilePath)) {
+                throw new \Exception("Could not delete existing file: $storeFilePath");
+            }
+        }
         if (!copy($filePath, $storeFilePath)) {
             throw new \Exception("Could not copy $filePath to $storeFilePath");
         }
@@ -74,13 +97,33 @@ class DataStore
             throw new \Exception("Could not set file mode on $storeFilePath");
         }
         $this->setOwnerGroupFacls($storeFilePath, 'custodian', 'custodian');
-        echo "Added $filePath to $storeFilePath\n";
+        return $storeFilePath;
+    }
+
+    /**
+     * Create a link in the download directory.
+     *
+     * @param string $storeFilePath The path to the file in the data store.
+     * @param string $udi           The UDI of the dataset.
+     * @param string $storeFileName The name of the file in the data store.
+     *
+     * @throws \Exception When unable to delete an existing file in the download directory.
+     * @throws \Exception When unable to create a link in the download directory..
+     *
+     * @return void
+     */
+    protected function createLinkInDownloadDirectory($storeFilePath, $udi, $storeFileName)
+    {
         $this->checkDataDownloadDirectory($udi);
         $downloadFilePath = "$this->dataDownloadDirectory/$udi/$storeFileName";
+        if (file_exists($downloadFilePath)) {
+            if (!unlink($downloadFilePath)) {
+                throw new \Exception("Could not delete existing file: $downloadFilePath");
+            }
+        }
         if (!link($storeFilePath, $downloadFilePath)) {
             throw new \Exception("Could not link $downloadFilePath to $storeFilePath");
         }
-        echo "Linked $downloadFilePath to $storeFilePath\n";
     }
 
     /**
@@ -92,7 +135,7 @@ class DataStore
      *
      * @return void
      */
-    public function checkDataStoreDirectory($udi)
+    protected function checkDataStoreDirectory($udi)
     {
         $dataStoreDirectory = "$this->dataStoreDirectory/$udi";
         if (!file_exists($dataStoreDirectory)) {
@@ -113,7 +156,7 @@ class DataStore
      *
      * @return void
      */
-    public function checkDataDownloadDirectory($udi, $restricted = false)
+    protected function checkDataDownloadDirectory($udi, $restricted = false)
     {
         $downloadDirectory = "$this->dataDownloadDirectory/$udi";
         if (!file_exists($downloadDirectory)) {
