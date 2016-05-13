@@ -92,48 +92,21 @@ class FilerConsumer implements ConsumerInterface
      */
     protected function processDataset(DatasetSubmission $datasetSubmission)
     {
-        switch ($datasetSubmission->getDatasetFileTransferType()) {
-            case DatasetSubmission::TRANSFER_TYPE_UPLOAD:
-            case DatasetSubmission::TRANSFER_TYPE_SFTP:
-                if (null === $datasetSubmission->getDatasetFilePath()) {
-                    // Log no file path.
-                    echo "No dataset file path\n";
-                    return;
-                }
-                try {
-                    $this->dataStore->addFile(
-                        $datasetSubmission->getDatasetFilePath(),
-                        $datasetSubmission->getDataset()->getUdi(),
-                        'data'
-                    );
-                    $datasetSubmission->setDatasetFileTransferStatus(
-                        DatasetSubmission::TRANSFER_STATUS_COMPLETED
-                    );
-                } catch (\Exception $exception) {
-                    echo 'Error filing dataset: ' . $exception->getMessage() . "\n";
-                }
-                // Log processing complete.
-                echo "Dataset file processing complete\n";
-                // Email user.
-                break;
-            case DatasetSubmission::TRANSFER_TYPE_HTTP:
-                if (null === $datasetSubmission->getDatasetFileUrl()) {
-                    // Log no file URL.
-                    echo "No dataset file url\n";
-                    return;
-                }
-                // Publish message to retriever queue.
-                echo "Publish to retriever queue\n";
-                // Email user that data pull has been queued.
-                break;
-            case null:
-                // Transfer type not set.
-                echo "Dataset file transfer type not set\n";
-                break;
-            default:
-                // Log unknown transfer type.
-                echo 'Unknown dataset file transfer type: ' . $datasetSubmission->getDatasetFileTransferType() . "\n";
+        try {
+            $this->dataStore->addFile(
+                $datasetSubmission->getDatasetFileUri(),
+                $datasetSubmission->getDataset()->getUdi(),
+                'dataset'
+            );
+            $datasetSubmission->setDatasetFileTransferStatus(
+                DatasetSubmission::TRANSFER_STATUS_COMPLETED
+            );
+        } catch (\Exception $exception) {
+            echo 'Error filing dataset: ' . $exception->getMessage() . "\n";
         }
+        // Log processing complete.
+        echo "Dataset file processing complete\n";
+        // Email user.
     }
 
     /**
@@ -145,46 +118,20 @@ class FilerConsumer implements ConsumerInterface
      */
     protected function processMetadata(DatasetSubmission $datasetSubmission)
     {
-        switch ($datasetSubmission->getMetadataFileTransferType()) {
-            case DatasetSubmission::TRANSFER_TYPE_UPLOAD:
-            case DatasetSubmission::TRANSFER_TYPE_SFTP:
-                if (null === $datasetSubmission->getMetadataFilePath()) {
-                    // Log no file path.
-                    echo "No metadata file path\n";
-                    return;
-                }
-                try {
-                    $this->dataStore->addFile(
-                        $datasetSubmission->getMetadataFilePath(),
-                        $datasetSubmission->getDataset()->getUdi(),
-                        'metadata'
-                    );
-                    $datasetSubmission->setMetadataFileTransferStatus(
-                        DatasetSubmission::TRANSFER_STATUS_COMPLETED
-                    );
-                } catch (\Exception $exception) {
-                    echo 'Error filing metadata: ' . $exception->getMessage() . "\n";
-                }
-                // Log processing complete.
-                echo "Metadata file processing complete\n";
-                // Email user.
-                break;
-            case DatasetSubmission::TRANSFER_TYPE_HTTP:
-                if (null === $datasetSubmission->getMetadataFileUrl()) {
-                    // Log no file URL.
-                    echo "No metadata file url\n";
-                    return;
-                }
-                // Retrieve metadata.
-                // Email user that metadata has been retrieved.
-                break;
-            case null:
-                // Transfer type not set.
-                echo "Metadata file transfer type not set\n";
-                break;
-            default:
-                // Unknown transfer type.
-                echo 'Unknown metadata file transfer type: ' . $datasetSubmission->getMetadataFileTransferType() . "\n";
+        try {
+            $this->dataStore->addFile(
+                $datasetSubmission->getMetadataFileUri(),
+                $datasetSubmission->getDataset()->getUdi(),
+                'metadata'
+            );
+            $datasetSubmission->setMetadataFileTransferStatus(
+                DatasetSubmission::TRANSFER_STATUS_COMPLETED
+            );
+        } catch (\Exception $exception) {
+            echo 'Error filing metadata: ' . $exception->getMessage() . "\n";
         }
+        // Log processing complete.
+        echo "Metadata file processing complete\n";
+        // Email user.
     }
 }
