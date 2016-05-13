@@ -41,6 +41,7 @@ class DataStore
      * @param string $datasetId The id of the dataset to add the file to.
      * @param string $type      The type (dataset or metadata) of the file.
      *
+     * @throws \Exception When the file URI is not set.
      * @throws \Exception When the file does not exist.
      * @throws \Exception When the type is not valid.
      *
@@ -48,6 +49,9 @@ class DataStore
      */
     public function addFile($fileUri, $datasetId, $type)
     {
+        if (null === $fileUri) {
+            throw new \Exception("$type file URI not set");
+        }
         if (preg_match('#^(file://|/)#', $fileUri) and !file_exists($fileUri)) {
             throw new \Exception("File: $fileUri not found!");
         }
