@@ -48,7 +48,7 @@ class DataStore
      */
     public function addFile($filePath, $datasetId, $type)
     {
-        if (!file_exists($filePath)) {
+        if (preg_match('#^(file://|/)#', $filePath) and !file_exists($filePath)) {
             throw new \Exception("File: $filePath not found!");
         }
         $storeFileName = "$datasetId.";
