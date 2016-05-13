@@ -39,4 +39,6 @@ services:
 
     pelagos.rabbit.consumer.filer:
         class: Pelagos\Bundle\AppBundle\Rabbit\Consumer\FilerConsumer
-        arguments: ["@doctrine.orm.entity_manager", "@pelagos.util.data_store"]
+        arguments: ["@doctrine.orm.entity_manager", "@pelagos.util.data_store", "@logger"]
+        tags:
+            - { name: monolog.logger, channel: filer }

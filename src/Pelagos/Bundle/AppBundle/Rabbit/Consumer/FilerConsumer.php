@@ -8,6 +8,8 @@ use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 
 use PhpAmqpLib\Message\AMQPMessage;
 
+use Symfony\Bridge\Monolog\Logger;
+
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 
@@ -35,15 +37,24 @@ class FilerConsumer implements ConsumerInterface
     protected $dataStore;
 
     /**
+     * A Monolog logger.
+     *
+     * @var Logger
+     */
+    protected $logger;
+
+    /**
      * Constructor.
      *
      * @param EntityManager $entityManager The entity manager.
      * @param DataStore     $dataStore     The data store service.
+     * @param Logger        $logger        A Monolog logger.
      */
-    public function __construct(EntityManager $entityManager, DataStore $dataStore)
+    public function __construct(EntityManager $entityManager, DataStore $dataStore, Logger $logger)
     {
         $this->entityManager = $entityManager;
         $this->dataStore = $dataStore;
+        $this->logger = $logger;
     }
 
     /**
@@ -63,13 +74,19 @@ class FilerConsumer implements ConsumerInterface
                         ->find($messageData->datasetId);
         if (!$dataset instanceof Dataset) {
             // Log bad id.
-            echo "No dataset found with id: $messageData->datasetId\n";
+            $this->logger->error(
+                'No dataset found',
+                array('dataset_id' => $messageData->datasetId)
+            );
             return true;
         }
         $datasetSubmission = $dataset->getDatasetSubmission();
         if (!$datasetSubmission instanceof DatasetSubmission) {
             // Log no submission.
-            echo "No submission found for dataset: $messageData->datasetId\n";
+            $this->logger->error(
+                'No submission found for dataset',
+                array('dataset_id' => $messageData->datasetId)
+            );
             return true;
         }
         if ($datasetSubmission->getDatasetFileTransferStatus() === DatasetSubmission::TRANSFER_STATUS_NONE) {
@@ -92,6 +109,10 @@ class FilerConsumer implements ConsumerInterface
      */
     protected function processDataset(DatasetSubmission $datasetSubmission)
     {
+        $context = array(
+            'dataset_submission_id' => $datasetSubmission->getId(),
+            'udi' => $datasetSubmission->getDataset()->getUdi(),
+        );
         try {
             $this->dataStore->addFile(
                 $datasetSubmission->getDatasetFileUri(),
@@ -102,11 +123,11 @@ class FilerConsumer implements ConsumerInterface
                 DatasetSubmission::TRANSFER_STATUS_COMPLETED
             );
         } catch (\Exception $exception) {
-            echo 'Error filing dataset: ' . $exception->getMessage() . "\n";
+            $this->logger->error('Error processing dataset: ' . $exception->getMessage(), $context);
         }
         // Log processing complete.
-        echo "Dataset file processing complete\n";
-        // Email user.
+        $this->logger->info('Dataset file processing complete', $context);
+        // TODO: trigger event to email user.
     }
 
     /**
@@ -118,6 +139,10 @@ class FilerConsumer implements ConsumerInterface
      */
     protected function processMetadata(DatasetSubmission $datasetSubmission)
     {
+        $context = array(
+            'dataset_submission_id' => $datasetSubmission->getId(),
+            'udi' => $datasetSubmission->getDataset()->getUdi(),
+        );
         try {
             $this->dataStore->addFile(
                 $datasetSubmission->getMetadataFileUri(),
@@ -128,10 +153,10 @@ class FilerConsumer implements ConsumerInterface
                 DatasetSubmission::TRANSFER_STATUS_COMPLETED
             );
         } catch (\Exception $exception) {
-            echo 'Error filing metadata: ' . $exception->getMessage() . "\n";
+            $this->logger->error('Error processing metadata: ' . $exception->getMessage(), $context);
         }
         // Log processing complete.
-        echo "Metadata file processing complete\n";
-        // Email user.
+        $this->logger->info('Metadata file processing complete', $context);
+        // TODO: trigger event to email user.
     }
 }
