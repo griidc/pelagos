@@ -37,7 +37,7 @@ class DataStore
     /**
      * Add a file to the data store.
      *
-     * @param string $filePath  The path to the file to add.
+     * @param string $fileUri   The URI of the file to add.
      * @param string $datasetId The id of the dataset to add the file to.
      * @param string $type      The type (data or metadata) of the file.
      *
@@ -46,10 +46,10 @@ class DataStore
      *
      * @return void
      */
-    public function addFile($filePath, $datasetId, $type)
+    public function addFile($fileUri, $datasetId, $type)
     {
-        if (preg_match('#^(file://|/)#', $filePath) and !file_exists($filePath)) {
-            throw new \Exception("File: $filePath not found!");
+        if (preg_match('#^(file://|/)#', $fileUri) and !file_exists($fileUri)) {
+            throw new \Exception("File: $fileUri not found!");
         }
         $storeFileName = "$datasetId.";
         switch ($type) {
@@ -62,8 +62,8 @@ class DataStore
             default:
                 throw new \Exception("$type is not a valid type");
         }
-        $storeFilePath = $this->addFileToDataStoreDirectory($filePath, $datasetId, $storeFileName);
-        echo "Added $filePath to $storeFilePath\n";
+        $storeFilePath = $this->addFileToDataStoreDirectory($fileUri, $datasetId, $storeFileName);
+        echo "Added $fileUri to $storeFilePath\n";
         $downloadFilePath = $this->createLinkInDownloadDirectory($storeFilePath, $datasetId, $storeFileName);
         echo "Linked $downloadFilePath to $storeFilePath\n";
     }
@@ -71,7 +71,7 @@ class DataStore
     /**
      * Add a file to the data store directory.
      *
-     * @param string $filePath      The path of the file to add.
+     * @param string $fileUri       The URI of the file to add.
      * @param string $datasetId     The id of the dataset.
      * @param string $storeFileName The name of the file in the data store.
      *
@@ -81,7 +81,7 @@ class DataStore
      *
      * @return string The path to the file in the data store directory.
      */
-    protected function addFileToDataStoreDirectory($filePath, $datasetId, $storeFileName)
+    protected function addFileToDataStoreDirectory($fileUri, $datasetId, $storeFileName)
     {
         $dataStoreDirectory = $this->getDataStoreDirectory($datasetId);
         $storeFilePath = "$dataStoreDirectory/$storeFileName";
@@ -90,8 +90,8 @@ class DataStore
                 throw new \Exception("Could not delete existing file: $storeFilePath");
             }
         }
-        if (!copy($filePath, $storeFilePath)) {
-            throw new \Exception("Could not copy $filePath to $storeFilePath");
+        if (!copy($fileUri, $storeFilePath)) {
+            throw new \Exception("Could not copy $fileUri to $storeFilePath");
         }
         if (!chmod($storeFilePath, 0644)) {
             throw new \Exception("Could not set file mode on $storeFilePath");
