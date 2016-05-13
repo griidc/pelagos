@@ -67,9 +67,7 @@ class DataStore
                 throw new \Exception("$type is not a valid type");
         }
         $storeFilePath = $this->addFileToDataStoreDirectory($fileUri, $datasetId, $storeFileName);
-        echo "Added $fileUri to $storeFilePath\n";
-        $downloadFilePath = $this->createLinkInDownloadDirectory($storeFilePath, $datasetId, $storeFileName);
-        echo "Linked $downloadFilePath to $storeFilePath\n";
+        $this->createLinkInDownloadDirectory($storeFilePath, $datasetId, $storeFileName);
     }
 
     /**
