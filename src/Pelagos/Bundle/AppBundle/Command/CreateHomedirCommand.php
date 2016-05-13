@@ -175,7 +175,7 @@ class CreateHomedirCommand extends ContainerAwareCommand
                     $entityManager->persist($account);
                     $entityManager->flush();
                 } else {
-                    print $errorString;
+                    echo $errorString;
                 }
             } else {
                     $output->writeln("Encountered unexpected non-Account object.\n");
