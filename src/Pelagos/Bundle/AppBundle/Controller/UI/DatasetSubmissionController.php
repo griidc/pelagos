@@ -253,7 +253,7 @@ class DatasetSubmissionController extends UIController
             if ($this->getUser()->isPosix()) {
                 $incomingDirectory = $this->getUser()->getHomeDirectory() . '/incoming';
             } else {
-                $incomingDirectory = '/san/home/http/upload/' . $this->getUser()->getUserName() . '/incoming';
+                $incomingDirectory = $this->getParameter('homedir_prefix') . '/upload/' . $this->getUser()->getUserName() . '/incoming';
             }
 
             switch ($datasetSubmission->getDatasetFileTransferType()) {
