@@ -128,10 +128,10 @@ old_sound_rabbit_mq:
     producers:
         filer:
             connection:       default
-            exchange_options: { name: 'filer', type: direct }
+            exchange_options: { name: "%pelagos_name%.filer", type: direct }
     consumers:
         filer:
             connection:       default
-            exchange_options: { name: 'filer', type: direct }
-            queue_options:    { name: 'filer' }
+            exchange_options: { name: "%pelagos_name%.filer", type: direct }
+            queue_options:    { name: "%pelagos_name%.filer" }
             callback:         pelagos.rabbit.consumer.filer
