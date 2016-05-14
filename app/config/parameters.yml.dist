@@ -3,6 +3,8 @@
 # http://symfony.com/doc/current/best_practices/configuration.html#infrastructure-related-configuration
 parameters:
     hostname: ~
+    # A unique name for this Pelagos instance
+    pelagos_name: ~
 
     database_host:     127.0.0.1
     database_port:     5432
