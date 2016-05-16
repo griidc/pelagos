@@ -37,7 +37,7 @@ services:
         tags:
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.created, method: onCreated }
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.submitted, method: onSubmitted }
-            - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.updated, method: onUpdated }
+            - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.resubmitted, method: onResubmitted }
 
     pelagos.form.type.dif:
         class: Pelagos\Bundle\AppBundle\Form\DIFType

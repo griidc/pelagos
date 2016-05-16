@@ -215,7 +215,7 @@ class DatasetSubmissionController extends UIController
                 $sequence = 0;
                 $eventName = 'submitted';
             } else {
-                $eventName = 'updated';
+                $eventName = 'resubmitted';
             }
 
             $datasetSubmission->setSequence(++$sequence);
