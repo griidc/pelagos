@@ -6,7 +6,6 @@ use FOS\RestBundle\Controller\Annotations as Rest;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
-use Pelagos\Entity\Person;
 use Pelagos\Entity\Account;
 use Pelagos\Bundle\AppBundle\Security\AccountVoter;
 
@@ -143,46 +142,5 @@ class AccountController extends EntityController
         date_default_timezone_set('UTC');
 
         return $directoryData;
-    }
-
-    /**
-     * Request a user to be converted to POSIX.
-     *
-     * @throws BadRequestHttpException In event POSIX cannot be requested.
-     * @throws AccessDeniedException   If user isn't logged in or does not have an account.
-     *
-     * @ApiDoc(
-     *   section = "Account",
-     *   statusCodes = {
-     *     204 = "The user successfully requested to be made into a POSIX user.",
-     *     400 = "The user can not be made into a POSIX user (see error message for reason).",
-     *     500 = "An internal error has occurred.",
-     *   }
-     * )
-     *
-     * @Rest\Patch("/self/make-posix")
-     *
-     * @Rest\View()
-     *
-     * @return Response A response object with an empty body and a "no content" status code.
-     */
-    public function requestMakePosixAction()
-    {
-        if (!($this->getUser() instanceof Account)) {
-            throw new AccessDeniedException('User is either not logged in or does not have an account');
-        }
-
-        // Call utility class to POSIX-enable this Account.
-        try {
-            $this->get('pelagos.util.posixify')->POSIXifyAccount($this->getUser()->getPerson()->getAccount());
-        } catch (\Exception $e) {
-                throw new BadRequestHttpException(
-                    'Could not request POSIX conversion on this account.  Reason: '
-                    . $e->getMessage()
-                );
-        }
-
-        // Return a no content success response.
-        return $this->makeNoContentResponse();
     }
 }

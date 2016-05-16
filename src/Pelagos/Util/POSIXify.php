@@ -69,7 +69,7 @@ class POSIXify
         Ldap $ldap,
         EntityHandler $entityHandler,
         $posixStartingUid,
-        $posixGid
+        $posixGid,
     ) {
         $this->entityManager = $entityManager;
         $this->ldap = $ldap;
@@ -86,8 +86,8 @@ class POSIXify
      *
      * @param Account $account The account needing to be POSIX-enabled.
      *
-     * @throws \Exception In event of db-failure.
      * @throws \Exception In event account is already POSIX-enabled.
+     * @throws \Exception In event UID minted is greater than minimum UID from parameter.
      * @throws \Exception In event UID is already found in the LDAP.
      *
      * @return void
@@ -126,6 +126,8 @@ class POSIXify
     /**
      * Mint a POSIX UID.
      *
+     * @throws \Exception In event UID minted is greater than minimum UID from parameter.
+     *
      * @return string The next available UID.
      */
     protected function mintUidNumber()
@@ -144,6 +146,11 @@ class POSIXify
         } else {
             $highUID = $account->getUidNumber();
             $sequence = ($highUID + 1);
+        }
+
+        // sanity check.  Throw error if generated sequence > minimum UID number parameter.
+        if ($sequence < $this->posixStartingUid) {
+            throw new \Exception('Generated UID > starting UID number parameter');
         }
 
         return $sequence;
