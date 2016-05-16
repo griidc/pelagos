@@ -26,7 +26,7 @@ services:
         arguments: ["@twig", "@mailer", "@security.token_storage", "%mailer_from_addr%", "%mailer_from_name%"]
         tags:
             - { name: kernel.event_listener, event: pelagos.entity.dif.dataset_created, method: onCreated }
-            - { name: kernel.event_listener, event: pelagos.entity.dif.created, method: onSubmitted }
+            - { name: kernel.event_listener, event: pelagos.entity.dif.submitted, method: onSubmitted }
             - { name: kernel.event_listener, event: pelagos.entity.dif.approved, method: onApproved }
             - { name: kernel.event_listener, event: pelagos.entity.dif.unlock_requested, method: onUnlockRequested }
             - { name: kernel.event_listener, event: pelagos.entity.dif.unlocked, method: onUnlocked }
