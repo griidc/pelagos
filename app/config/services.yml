@@ -36,6 +36,10 @@ services:
         class: Pelagos\Util\DataStore
         arguments: ["%data_store_directory%","%data_download_directory%"]
 
+    pelagos.event.entity_event_dispatcher:
+        class: Pelagos\Event\EntityEventDispatcher
+        arguments: ["@event_dispatcher"]
+
     monolog.processor.process_id:
         class: Monolog\Processor\ProcessIdProcessor
         tags:
