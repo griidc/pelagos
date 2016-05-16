@@ -13,6 +13,8 @@ use Symfony\Bridge\Monolog\Logger;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 
+use Pelagos\Event\EntityEventDispatcher;
+
 use Pelagos\Util\DataStore;
 
 /**
@@ -44,17 +46,30 @@ class FilerConsumer implements ConsumerInterface
     protected $logger;
 
     /**
+     * The entity event dispatcher.
+     *
+     * @var EntityEventDispatcher
+     */
+    protected $entityEventDispatcher;
+
+    /**
      * Constructor.
      *
-     * @param EntityManager $entityManager The entity manager.
-     * @param DataStore     $dataStore     The data store service.
-     * @param Logger        $logger        A Monolog logger.
+     * @param EntityManager         $entityManager         The entity manager.
+     * @param DataStore             $dataStore             The data store service.
+     * @param Logger                $logger                A Monolog logger.
+     * @param EntityEventDispatcher $entityEventDispatcher The entity event dispatcher.
      */
-    public function __construct(EntityManager $entityManager, DataStore $dataStore, Logger $logger)
-    {
+    public function __construct(
+        EntityManager $entityManager,
+        DataStore $dataStore,
+        Logger $logger,
+        EntityEventDispatcher $entityEventDispatcher
+    ) {
         $this->entityManager = $entityManager;
         $this->dataStore = $dataStore;
         $this->logger = $logger;
+        $this->entityEventDispatcher = $entityEventDispatcher;
     }
 
     /**
@@ -124,10 +139,12 @@ class FilerConsumer implements ConsumerInterface
             );
         } catch (\Exception $exception) {
             $this->logger->error('Error processing dataset: ' . $exception->getMessage(), $context);
+            return;
         }
         // Log processing complete.
         $this->logger->info('Dataset file processing complete', $context);
-        // TODO: trigger event to email user.
+        // Dispatch entity event.
+        $this->entityEventDispatcher->dispatch($datasetSubmission, 'dataset_processed');
     }
 
     /**
@@ -154,9 +171,11 @@ class FilerConsumer implements ConsumerInterface
             );
         } catch (\Exception $exception) {
             $this->logger->error('Error processing metadata: ' . $exception->getMessage(), $context);
+            return;
         }
         // Log processing complete.
         $this->logger->info('Metadata file processing complete', $context);
-        // TODO: trigger event to email user.
+        // Dispatch entity event.
+        $this->entityEventDispatcher->dispatch($datasetSubmission, 'metadata_processed');
     }
 }
