@@ -298,22 +298,9 @@ class DatasetSubmission extends Entity
     protected $datasetFileTransferType;
 
     /**
-     * The dataset file.
+     * The dataset file URI.
      *
-     * This is used for direct upload.
-     *
-     * Legacy DB column: url_data
-     *
-     * @var string
-     *
-     * @ORM\Column(nullable=true)
-     */
-    protected $datasetFile;
-
-    /**
-     * The dataset file path.
-     *
-     * This is used for SFTP/GridFTP.
+     * This specifies the location of the source dataset file and can be a file, http(s), or ftp URI.
      *
      * Legacy DB column: url_data
      *
@@ -321,20 +308,7 @@ class DatasetSubmission extends Entity
      *
      * @ORM\Column(nullable=true)
      */
-    protected $datasetFilePath;
-
-    /**
-     * The dataset file URL.
-     *
-     * This is used for HTTP/FTP pull.
-     *
-     * Legacy DB column: url_data
-     *
-     * @var string
-     *
-     * @ORM\Column(nullable=true)
-     */
-    protected $datasetFileUrl;
+    protected $datasetFileUri;
 
     /**
      * The dataset file transfer status.
@@ -473,22 +447,9 @@ class DatasetSubmission extends Entity
     protected $metadataFileTransferType;
 
     /**
-     * The metadata file.
+     * The metadata file URI.
      *
-     * This is used for direct upload.
-     *
-     * Legacy DB column: url_metadata
-     *
-     * @var string
-     *
-     * @ORM\Column(nullable=true)
-     */
-    protected $metadataFile;
-
-    /**
-     * The metadata file path.
-     *
-     * This is used for SFTP/GridFTP.
+     * This specifies the location of the source metadata file and can be a file, http(s), or ftp URI.
      *
      * Legacy DB column: url_metadata
      *
@@ -496,20 +457,7 @@ class DatasetSubmission extends Entity
      *
      * @ORM\Column(nullable=true)
      */
-    protected $metadataFilePath;
-
-    /**
-     * The metadata file URL.
-     *
-     * This is used for HTTP/FTP pull.
-     *
-     * Legacy DB column: url_metadata
-     *
-     * @var string
-     *
-     * @ORM\Column(nullable=true)
-     */
-    protected $metadataFileUrl;
+    protected $metadataFileUri;
 
     /**
      * The metadata file transfer status.
@@ -789,81 +737,25 @@ class DatasetSubmission extends Entity
     }
 
     /**
-     * Set the dataset file.
+     * Set the dataset file URI.
      *
-     * This is used for direct upload.
-     *
-     * @param string $datasetFile The dataset file.
+     * @param string $datasetFileUri The dataset file URI.
      *
      * @return void
      */
-    public function setDatasetFile($datasetFile)
+    public function setDatasetFileUri($datasetFileUri)
     {
-        $this->datasetFile = $datasetFile;
+        $this->datasetFileUri = $datasetFileUri;
     }
 
     /**
-     * Get the dataset file.
-     *
-     * This is used for direct upload.
+     * Get the dataset file URI.
      *
      * @return string
      */
-    public function getDatasetFile()
+    public function getDatasetFileUri()
     {
-        return $this->datasetFile;
-    }
-
-    /**
-     * Set the dataset file path.
-     *
-     * This is used for SFTP/GridFTP.
-     *
-     * @param string $datasetFilePath The dataset file path.
-     *
-     * @return void
-     */
-    public function setDatasetFilePath($datasetFilePath)
-    {
-        $this->datasetFilePath = $datasetFilePath;
-    }
-
-    /**
-     * Get the dataset file path.
-     *
-     * This is used for SFTP/GridFTP.
-     *
-     * @return string
-     */
-    public function getDatasetFilePath()
-    {
-        return $this->datasetFilePath;
-    }
-
-    /**
-     * Set the dataset file URL.
-     *
-     * This is used for HTTP/FTP pull.
-     *
-     * @param string $datasetFileUrl The dataset file URL.
-     *
-     * @return void
-     */
-    public function setDatasetFileUrl($datasetFileUrl)
-    {
-        $this->datasetFileUrl = $datasetFileUrl;
-    }
-
-    /**
-     * Get the dataset file URL.
-     *
-     * This is used for HTTP/FTP pull.
-     *
-     * @return string
-     */
-    public function getDatasetFileUrl()
-    {
-        return $this->datasetFileUrl;
+        return $this->datasetFileUri;
     }
 
     /**
@@ -1136,81 +1028,25 @@ class DatasetSubmission extends Entity
     }
 
     /**
-     * Set the metadata file.
+     * Set the metadata file URI.
      *
-     * This is used for direct upload.
-     *
-     * @param string $metadataFile The metadata file.
+     * @param string $metadataFileUri The metadata file URI.
      *
      * @return void
      */
-    public function setMetadataFile($metadataFile)
+    public function setMetadataFileUri($metadataFileUri)
     {
-        $this->metadataFile = $metadataFile;
+        $this->metadataFileUri = $metadataFileUri;
     }
 
     /**
-     * Get the metadata file URL.
-     *
-     * This is used for direct upload.
+     * Get the metadata file URI.
      *
      * @return string
      */
-    public function getMetadataFile()
+    public function getMetadataFileUri()
     {
-        return $this->metadataFile;
-    }
-
-    /**
-     * Set the metadata file path.
-     *
-     * This is used for SFTP/GridFTP.
-     *
-     * @param string $metadataFilePath The metadata file URL.
-     *
-     * @return void
-     */
-    public function setMetadataFilePath($metadataFilePath)
-    {
-        $this->metadataFilePath = $metadataFilePath;
-    }
-
-    /**
-     * Get the metadata file path.
-     *
-     * This is used for SFTP/GridFTP.
-     *
-     * @return string
-     */
-    public function getMetadataFilePath()
-    {
-        return $this->metadataFilePath;
-    }
-
-    /**
-     * Set the metadata file URL.
-     *
-     * This is used for HTTP/FTP pull.
-     *
-     * @param string $metadataFileUrl The metadata file URL.
-     *
-     * @return void
-     */
-    public function setMetadataFileUrl($metadataFileUrl)
-    {
-        $this->metadataFileUrl = $metadataFileUrl;
-    }
-
-    /**
-     * Get the metadata file URL.
-     *
-     * This is used for HTTP/FTP pull.
-     *
-     * @return string
-     */
-    public function getMetadataFileUrl()
-    {
-        return $this->metadataFileUrl;
+        return $this->metadataFileUri;
     }
 
     /**
