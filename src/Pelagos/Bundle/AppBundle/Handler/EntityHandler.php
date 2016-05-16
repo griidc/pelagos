@@ -6,7 +6,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use Doctrine\ORM\EntityManager;
@@ -18,7 +17,7 @@ use Pelagos\Entity\Entity;
 use Pelagos\Entity\Account;
 use Pelagos\Entity\Person;
 
-use Pelagos\Event\EntityEvent;
+use Pelagos\Event\EntityEventDispatcher;
 
 use Pelagos\Exception\UnmappedPropertyException;
 
@@ -52,30 +51,30 @@ class EntityHandler
     private $authorizationChecker;
 
     /**
-     * The event dispatcher to use in this entity handler.
+     * The entity event dispatcher.
      *
-     * @var EventDispatcherInterface
+     * @var EntityEventDispatcher
      */
-    private $eventDispatcher;
+    private $entityEventDispatcher;
 
     /**
      * Constructor for EntityHandler.
      *
-     * @param EntityManager                 $entityManager        The entity manager to use.
-     * @param TokenStorageInterface         $tokenStorage         The token storage to use.
-     * @param AuthorizationCheckerInterface $authorizationChecker The authorization checker to use.
-     * @param EventDispatcherInterface      $eventDispatcher      The event dispatcher to use.
+     * @param EntityManager                 $entityManager         The entity manager to use.
+     * @param TokenStorageInterface         $tokenStorage          The token storage to use.
+     * @param AuthorizationCheckerInterface $authorizationChecker  The authorization checker to use.
+     * @param EntityEventDispatcher         $entityEventDispatcher The entity event dispatcher.
      */
     public function __construct(
         EntityManager $entityManager,
         TokenStorageInterface $tokenStorage,
         AuthorizationCheckerInterface $authorizationChecker,
-        EventDispatcherInterface $eventDispatcher
+        EntityEventDispatcher $entityEventDispatcher
     ) {
         $this->entityManager = $entityManager;
         $this->tokenStorage = $tokenStorage;
         $this->authorizationChecker = $authorizationChecker;
-        $this->eventDispatcher = $eventDispatcher;
+        $this->entityEventDispatcher = $entityEventDispatcher;
     }
 
     /**
@@ -172,7 +171,7 @@ class EntityHandler
             // Restore the original ID generator for entities of this class.
             $metadata->setIdGenerator($idGenerator);
         }
-        $this->dispatchEntityEvent($entity, $entityEventName);
+        $this->entityEventDispatcher->dispatch($entity, $entityEventName);
         return $entity;
     }
 
@@ -205,7 +204,7 @@ class EntityHandler
         $entity->setModifier($this->getAuthenticatedPerson());
         $this->entityManager->persist($entity);
         $this->entityManager->flush($entity);
-        $this->dispatchEntityEvent($entity, $entityEventName);
+        $this->entityEventDispatcher->dispatch($entity, $entityEventName);
         return $entity;
     }
 
@@ -228,7 +227,7 @@ class EntityHandler
         }
         $this->entityManager->remove($entity);
         $this->entityManager->flush();
-        $this->dispatchEntityEvent($entity, $entityEventName);
+        $this->entityEventDispatcher->dispatch($entity, $entityEventName);
         return $entity;
     }
 
@@ -276,22 +275,6 @@ class EntityHandler
             ->orderBy("entity.$property")
             ->getQuery();
         return $query->getResult('COLUMN_HYDRATOR');
-    }
-
-    /**
-     * Dispatch an Entity event.
-     *
-     * @param Entity $entity          The Entity the event is for.
-     * @param string $entityEventName The name of the entity event.
-     *
-     * @return void
-     */
-    public function dispatchEntityEvent(Entity $entity, $entityEventName)
-    {
-        $this->eventDispatcher->dispatch(
-            'pelagos.entity.' . $entity->getUnderscoredName() . '.' . $entityEventName,
-            new EntityEvent($entity)
-        );
     }
 
     /**

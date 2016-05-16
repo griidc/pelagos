@@ -1,7 +1,7 @@
 services:
     pelagos.entity.handler:
         class: Pelagos\Bundle\AppBundle\Handler\EntityHandler
-        arguments: ["@doctrine.orm.entity_manager", "@security.token_storage", "@security.authorization_checker", "@event_dispatcher"]
+        arguments: ["@doctrine.orm.entity_manager", "@security.token_storage", "@security.authorization_checker", "@pelagos.event.entity_event_dispatcher"]
 
     pelagos.twig.extensions:
         class: Pelagos\Bundle\AppBundle\Twig\Extensions
