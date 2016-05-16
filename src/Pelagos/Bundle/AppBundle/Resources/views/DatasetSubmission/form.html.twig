@@ -160,14 +160,12 @@
                             <img class="info" src="{{ asset_url }}">
                             {% endimage %}
                         </span>
-                        <label for="datafile">Dataset File:</label>
-                        {% if 'data_server_type' == 'upload' %}
-                                <div class="fwtextboxcont">
-                                    <input disabled type="text" style="width:100%"
-                                        style="color:black;background-color:transparent;padding:2px;">
-                                </div>
-                                <input type="hidden" name="url_data_upload">
-                                To replace the dataset file:
+                        {{ form_label(form.datasetFile) }}
+                        {% if form.datasetFileUpload.vars.value is not empty %}
+                            <div class="fwtextboxcont">
+                                {{ form_widget(form.datasetFileUpload) }}
+                            </div>
+                            To replace the dataset file:
                         {% endif %}
                         {{ form_widget(form.datasetFile) }}
                     </p>
@@ -341,13 +339,10 @@
                             {% endimage %}
                         </span>
                         {{ form_label(form.metadataFile) }}
-                        {% if file_exists_upload|default %}
+                        {% if form.metadataFileUpload.vars.value is not empty %}
                             <div class="fwtextboxcont">
-                                <input disabled type="text" style="width:100%"
-                                       style="color:black; background-color:transparent; padding:2px;">
+                                {{ form_widget(form.metadataFileUpload) }}
                             </div>
-                            <input type="hidden" name="upload_metadataurl">
-                            {{ form_row(form.metadataFileTransferType) }}
                             To replace the metadata file:
                         {% endif %}
                         {{ form_widget(form.metadataFile) }}
@@ -428,7 +423,7 @@
     <div style="text-align:center;">
         {{ form_widget(form.submit) }}
     </div>
-{{ form_end(form) }}
+{{ form_end(form, {'render_rest': false}) }}
 
 
 </div>
