@@ -6,7 +6,6 @@ use FOS\RestBundle\Controller\Annotations as Rest;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
-use Pelagos\Entity\Person;
 use Pelagos\Entity\Account;
 use Pelagos\Bundle\AppBundle\Security\AccountVoter;
 
@@ -176,10 +175,10 @@ class AccountController extends EntityController
         try {
             $this->get('pelagos.util.posixify')->POSIXifyAccount($this->getUser()->getPerson()->getAccount());
         } catch (\Exception $e) {
-                throw new BadRequestHttpException(
-                    'Could not request POSIX conversion on this account.  Reason: '
-                    . $e->getMessage()
-                );
+            throw new BadRequestHttpException(
+                'Could not request POSIX conversion on this account.  Reason: '
+                . $e->getMessage()
+            );
         }
 
         // Return a no content success response.
