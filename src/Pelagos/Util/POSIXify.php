@@ -7,8 +7,8 @@ use Pelagos\Entity\Account;
 use Pelagos\Entity\Person;
 use Pelagos\Component\Ldap\Ldap;
 use Pelagos\Bundle\AppBundle\Handler\EntityHandler;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
+use Pelagos\Exception\POSIXify\AccountAlreadyPOSIXEnabledException;
+use Pelagos\Exception\POSIXify\NumericUidInUseInLDAPException;
 
 /**
  * A utility class to make an account into a POSIX account.
@@ -88,15 +88,15 @@ class POSIXify
      *
      * @param Account $account The account needing to be POSIX-enabled.
      *
-     * @throws BadRequestHttpException In event account is already POSIX-enabled.
-     * @throws ConflictHttpException In event UID is already found in the LDAP.
+     * @throws AccountAlreadyPOSIXEnabledException In event account is already POSIX-enabled.
+     * @throws NumericUidInUseInLDAPException In event UID is already found in the LDAP.
      *
      * @return void
      */
     public function POSIXifyAccount(Account $account)
     {
         if ($account->isPosix() == true) {
-            throw new BadRequestHttpException('This account already has SFTP/GridFTP access.');
+            throw new AccountAlreadyPOSIXEnabledException('This account already has SFTP/GridFTP access.');
         }
 
         $uid = $this->mintUidNumber();
@@ -105,7 +105,7 @@ class POSIXify
         // an exception if this is the case.  This would represent a system
         // sync issue that would need to be manually resolved.
         if ($this->ldap->searchPerson("uidNumber=$uid")) {
-            throw new ConflictHttpException("LDAP database error: The gidNumber $uid already exists in LDAP.");
+            throw new NumericUidInUseInLDAPException("LDAP database error: The gidNumber $uid already exists in LDAP.");
         }
 
         // Update account's POSIX attributes.
