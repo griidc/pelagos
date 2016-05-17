@@ -7,6 +7,8 @@ use Pelagos\Entity\Account;
 use Pelagos\Entity\Person;
 use Pelagos\Component\Ldap\Ldap;
 use Pelagos\Bundle\AppBundle\Handler\EntityHandler;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 
 /**
  * A utility class to make an account into a POSIX account.
@@ -37,14 +39,14 @@ class POSIXify
     /**
      * Starting POSIX UID parameter.
      *
-     * @var string
+     * @var integer
      */
     protected $posixStartingUid;
 
     /**
      * The POSIX group id parameter.
      *
-     * @var string
+     * @var integer
      */
     protected $posixGid;
 
@@ -61,8 +63,8 @@ class POSIXify
      * @param EntityManager $entityManager    The entity manager to use in querybuilder.
      * @param Ldap          $ldap             The instance of the LDAPClient class.
      * @param EntityHandler $entityHandler    The Pelagos entity handler to handle updates.
-     * @param string        $posixStartingUid The value to start creating user ID number entries at.
-     * @param string        $posixGid         The value to set group ID to.
+     * @param integer       $posixStartingUid The value to start creating user ID number entries at.
+     * @param integer       $posixGid         The value to set group ID to.
      */
     public function __construct(
         EntityManager $entityManager,
@@ -86,51 +88,42 @@ class POSIXify
      *
      * @param Account $account The account needing to be POSIX-enabled.
      *
-     * @throws \Exception In event of db-failure.
-     * @throws \Exception In event account is already POSIX-enabled.
-     * @throws \Exception In event UID is already found in the LDAP.
+     * @throws BadRequestHttpException In event account is already POSIX-enabled.
+     * @throws ConflictHttpException In event UID is already found in the LDAP.
      *
      * @return void
      */
     public function POSIXifyAccount(Account $account)
     {
         if ($account->isPosix() == true) {
-            throw new \Exception('This account already has SFTP/GridFTP access.');
+            throw new BadRequestHttpException('This account already has SFTP/GridFTP access.');
         }
 
-        try {
-            $uid = $this->mintUidNumber();
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        $uid = $this->mintUidNumber();
 
         // check LDAP to make sure this UID is not already in use, throwing
         // an exception if this is the case.  This would represent a system
         // sync issue that would need to be manually resolved.
-        $LDAPResults = $this->ldap->searchPerson("uidNumber=$uid");
-        if ($LDAPResults) {
-            throw new \Exception("LDAP database error: The gidNumber $uid already exists in LDAP.");
+        if ($this->ldap->searchPerson("uidNumber=$uid")) {
+            throw new ConflictHttpException("LDAP database error: The gidNumber $uid already exists in LDAP.");
         }
 
         // Update account's POSIX attributes.
         $account->makePosix($uid, $this->posixGid, $this->homedirPrefix);
         $this->entityHandler->update($account);
 
-        // Get Person associated with this Account.
-        $accountOwnerPerson = $account->getPerson();
-
         // Update LDAP with this modified Account (via Person).
-        $this->ldap->updatePerson($accountOwnerPerson);
+        $this->ldap->updatePerson($account->getPerson());
     }
 
     /**
      * Mint a POSIX UID.
      *
-     * @return string The next available UID.
+     * @return integer The next available numeric userid.
      */
     protected function mintUidNumber()
     {
-        // Get the account with the highest POSIX UID.
+        // Get the account with the highest POSIX numeric UID.
         $em = $this->entityManager;
         $query = $em->createQuery(
             'SELECT a FROM \Pelagos\Entity\Account a WHERE a.uidNumber IS NOT NULL ORDER BY a.uidNumber DESC'
@@ -139,7 +132,7 @@ class POSIXify
         $account = $query->getOneOrNullResult();
 
         if (null === $account) {
-            // If this is the first POSIX UID, we start per parameters.yml configuration.
+            // If this is the first numeric POSIX UID, we start per parameters.yml configuration.
             $sequence = intval($this->posixStartingUid);
         } else {
             $highUID = $account->getUidNumber();
