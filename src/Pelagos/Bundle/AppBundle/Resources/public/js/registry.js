@@ -174,15 +174,6 @@ var spinner;
             }
         });
 
-        var sftpuser = $('#sftpSection').attr('sftpuser');
-        if (sftpuser == true) {
-            $('.sftpYes').show();
-            $('.sftpNo').hide();
-        } else {
-            $('.sftpNo').show();
-            $('.sftpYes').hide();
-        }
-
         $('#sftpButton').click(function() {
             showSpinner();
             var sftpReqPath = $('#sftpButton').attr("sftppath");
