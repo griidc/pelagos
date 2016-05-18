@@ -58,3 +58,5 @@ other_sources_folder_action = ""
 
 other_sources_color = "black"
 other_sources_action = ""
+
+other_sources_label = "Other Sources"
