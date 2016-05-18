@@ -40,7 +40,7 @@
         ,
         {
             "data": {
-                "title": "Other Sources{% if other_sources.dataset_count %} <span style='color:black;font-weight:bold;'>({{other_sources.dataset_count}})</span>{% endif %}",
+                "title": "{{tree.other_sources_label}}{% if other_sources.dataset_count %} <span style='color:black;font-weight:bold;'>({{other_sources.dataset_count}})</span>{% endif %}",
                 "attr": {
                     "style": "color:{{tree.other_sources_folder_color}}"
                 }
