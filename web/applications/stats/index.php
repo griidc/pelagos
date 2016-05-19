@@ -11,7 +11,8 @@ require_once $GLOBALS['libraries']['GRIIDC']['directory'].'/php/db-utils.lib.php
 require_once $GLOBALS['libraries']['GRIIDC']['directory'].'/php/drupal.php';
 require_once $GLOBALS['libraries']['GRIIDC']['directory'].'/php/dumpIncludesFile.php';
 require_once $GLOBALS['libraries']['GRIIDC']['directory'].'/php/rpis.php';
-require_once $GLOBALS['libraries']['GRIIDC']['directory'].'/php/datasets.php';
+#require_once $GLOBALS['libraries']['GRIIDC']['directory'].'/php/datasets.php';
+require_once '../../../share/php/datasets.php';
 
 $GLOBALS['config'] = parse_ini_file('config.ini',true);
 
@@ -234,20 +235,20 @@ $app->get('/', function () use ($app) {
 
     $dbh = OpenDB('RIS_RO');
     $sth = $dbh->prepare('SELECT * FROM
-                          (SELECT COUNT(*) AS projects_count FROM Programs) AS T1,
+                          (SELECT COUNT(*) AS projects_count FROM Programs WHERE Program_ID < 700) AS T1,
                           (SELECT COUNT(*) AS tasks_count FROM Projects) AS T2,
-                          (SELECT COUNT(*) AS researchers_count FROM People) AS T3,
-                          (SELECT COUNT(*) AS institutions_count FROM Institutions) AS T4,
-                          (SELECT COUNT(DISTINCT Institution_Country) AS countries_count FROM Institutions) AS T5
+                          (SELECT COUNT(*) AS researchers_count FROM People WHERE People_ID < 9000) AS T3,
+                          (SELECT COUNT(*) AS institutions_count FROM Institutions WHERE Institution_ID < 1000) AS T4,
+                          (SELECT COUNT(DISTINCT Institution_Country) AS countries_count FROM Institutions WHERE Institution_ID < 1000) AS T5
                         ');
     $sth->execute();
     $ris = $sth->fetchAll();
     $stash['ris'] = $ris[0];
     $sth = null;
     $dbh = null;
-    
+
     $gomri_dbh = OpenDB("GOMRI_RO");
-    $stash['datasetCount']=count_registered_datasets($gomri_dbh, array());
+    $stash['datasetCount']=count_registered_datasets($gomri_dbh, array("udi != F%"));
     $gomri_dbh = null;
 
     return $app->render('html/index.html',$stash);
@@ -274,8 +275,8 @@ $app->get('/data/overview/summary-of-records', function () use ($app) {
 
     # called from datasets.php library
     # 0 = unsubmitted, 1 = Submitted (locked), 2 = Approved
-    $countIdentified = count_identified_datasets($dbh,array("status>1"));
-    $countAvailable = count_registered_datasets($dbh,array("availability=available"));
+    $countIdentified = count_identified_datasets($dbh,array("status>1", "udi != F%"));
+    $countAvailable = count_registered_datasets($dbh,array("availability=available", "udi != F%"));
     $sor_data[] = array(
         'label' => 'Datasets In Development',
         'data' => array(array(.225,$countIdentified-$countAvailable)),
@@ -331,7 +332,11 @@ $app->get('/data/overview/total-records-over-time', function () use ($app) {
             WHERE registry_id IN (SELECT min_id FROM (SELECT SUBSTRING(registry_id FROM 1 FOR 16) AS udi,
                                          MIN(registry_id) AS min_id
                                   FROM registry
-                                  WHERE registry_id NOT LIKE '00%' AND url_data IS NOT NULL
+                                  WHERE
+                                      registry_id NOT LIKE '00%'
+                                      AND registry_id NOT LIKE 'F%'
+                                      AND url_data IS NOT NULL
+                                      AND registry_id NOT LIKE 'F%'
                                   GROUP BY udi
                                   ORDER BY udi) AS dataset_udi)
             ORDER BY submittimestamp;";
@@ -351,10 +356,13 @@ $app->get('/data/overview/total-records-over-time', function () use ($app) {
             WHERE registry_id IN (SELECT min_id FROM (SELECT SUBSTRING(registry_id FROM 1 FOR 16) AS udi,
                                          MIN(registry_id) AS min_id
                                   FROM registry
-                                  WHERE registry_id NOT LIKE '00%' AND metadata_status = 'Accepted' AND
-                                        access_status = 'None' AND
-                                        url_data IS NOT null AND
-                                        (dataset_download_status = 'Completed' OR dataset_download_status = 'RemotelyHosted')
+                                  WHERE
+                                        registry_id NOT LIKE '00%'
+                                        AND registry_id NOT LIKE 'F%'
+                                        AND metadata_status = 'Accepted'
+                                        AND access_status = 'None'
+                                        AND url_data IS NOT null
+                                        AND (dataset_download_status = 'Completed' OR dataset_download_status = 'RemotelyHosted')
                                   GROUP BY udi
                                   ORDER BY udi) AS dataset_udi)
             ORDER BY submittimestamp;";
@@ -381,7 +389,9 @@ $app->get('/data/overview/dataset-size-ranges', function () use ($app) {
     foreach ($GLOBALS['size_ranges'] AS $range) {
         $SQL = "SELECT COUNT(*)
                 FROM registry_view
-                WHERE dataset_download_size $range[range0]";
+                WHERE
+                    registry_id NOT LIKE 'F%'
+                    AND dataset_download_size $range[range0]";
         if (array_key_exists('range1',$range)) {
             $SQL .= " AND dataset_download_size $range[range1]";
         }
