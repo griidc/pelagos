@@ -248,7 +248,7 @@ $app->get('/', function () use ($app) {
     $dbh = null;
 
     $gomri_dbh = OpenDB("GOMRI_RO");
-    $stash['datasetCount']=count_registered_datasets($gomri_dbh, array("udi != F%"));
+    $stash['datasetCount']=count_registered_datasets($gomri_dbh, array("funding_envelope <= 700"));
     $gomri_dbh = null;
 
     return $app->render('html/index.html',$stash);
@@ -275,8 +275,8 @@ $app->get('/data/overview/summary-of-records', function () use ($app) {
 
     # called from datasets.php library
     # 0 = unsubmitted, 1 = Submitted (locked), 2 = Approved
-    $countIdentified = count_identified_datasets($dbh,array("status>1", "udi != F%"));
-    $countAvailable = count_registered_datasets($dbh,array("availability=available", "udi != F%"));
+    $countIdentified = count_identified_datasets($dbh,array("status>1", "funding_envelope <= 700"));
+    $countAvailable = count_registered_datasets($dbh,array("availability=available", "funding_envelope <= 700"));
     $sor_data[] = array(
         'label' => 'Datasets In Development',
         'data' => array(array(.225,$countIdentified-$countAvailable)),
@@ -315,7 +315,15 @@ $app->get('/data/overview/total-records-over-time', function () use ($app) {
     $dbh = OpenDB('GOMRI_RO');
 
     $identifications = array( 'label' => 'Identified', 'data' => array() );
-    $SQL = "SELECT row_number() OVER(ORDER BY dataset_uid) AS count, dataset_uid::INT8 * 1000 AS ts FROM datasets WHERE status > 1;";
+    $SQL = 'SELECT
+                row_number() OVER(ORDER BY d.dataset_uid) AS count,
+                d.dataset_uid::INT8 * 1000 AS ts
+            FROM
+                datasets d LEFT JOIN projects p
+                ON d.project_id = p."ID"
+            WHERE
+                d.status > 1
+                AND p."FundSrc" <= 700;';
     $sth = $dbh->prepare($SQL);
     $sth->execute();
     $rows = $sth->fetchAll();
@@ -326,20 +334,23 @@ $app->get('/data/overview/total-records-over-time', function () use ($app) {
     $trot_data[] = $identifications;
 
     $registrations = array( 'label' => 'Registered', 'data' => array() );
-    $SQL = "SELECT row_number() OVER(ORDER BY submittimestamp) AS count,
+    $SQL = 'SELECT row_number() OVER(ORDER BY submittimestamp) AS count,
                    extract(epoch from submittimestamp) * 1000 AS ts
             FROM registry
             WHERE registry_id IN (SELECT min_id FROM (SELECT SUBSTRING(registry_id FROM 1 FOR 16) AS udi,
                                          MIN(registry_id) AS min_id
-                                  FROM registry
+                                  FROM registry r
+                                      LEFT JOIN datasets d
+                                          ON SUBSTRING(r.registry_id FROM 1 FOR 16) = d.dataset_udi
+                                      LEFT JOIN projects p
+                                          ON d.project_id = p."ID"
                                   WHERE
-                                      registry_id NOT LIKE '00%'
-                                      AND registry_id NOT LIKE 'F%'
-                                      AND url_data IS NOT NULL
-                                      AND registry_id NOT LIKE 'F%'
+                                      p."FundSrc" <= 700
+                                      AND r.registry_id NOT LIKE \'00%\'
+                                      AND r.url_data IS NOT NULL
                                   GROUP BY udi
                                   ORDER BY udi) AS dataset_udi)
-            ORDER BY submittimestamp;";
+            ORDER BY submittimestamp;';
     $sth = $dbh->prepare($SQL);
     $sth->execute();
     $rows = $sth->fetchAll();
@@ -350,22 +361,26 @@ $app->get('/data/overview/total-records-over-time', function () use ($app) {
     $trot_data[] = $registrations;
 
     $metadata = array( 'label' => 'Available', 'data' => array() );
-    $SQL = "SELECT row_number() OVER(ORDER BY submittimestamp) AS count,
+    $SQL = 'SELECT row_number() OVER(ORDER BY submittimestamp) AS count,
                    extract(epoch from submittimestamp) * 1000 AS ts
             FROM registry
             WHERE registry_id IN (SELECT min_id FROM (SELECT SUBSTRING(registry_id FROM 1 FOR 16) AS udi,
                                          MIN(registry_id) AS min_id
-                                  FROM registry
-                                  WHERE
-                                        registry_id NOT LIKE '00%'
-                                        AND registry_id NOT LIKE 'F%'
-                                        AND metadata_status = 'Accepted'
-                                        AND access_status = 'None'
-                                        AND url_data IS NOT null
-                                        AND (dataset_download_status = 'Completed' OR dataset_download_status = 'RemotelyHosted')
-                                  GROUP BY udi
-                                  ORDER BY udi) AS dataset_udi)
-            ORDER BY submittimestamp;";
+                                 FROM registry r
+                                     LEFT JOIN datasets d
+                                         ON SUBSTRING(r.registry_id FROM 1 FOR 16) = d.dataset_udi
+                                     LEFT JOIN projects p
+                                         ON d.project_id = p."ID"
+                                     WHERE
+                                         p."FundSrc" <= 700
+                                         AND r.registry_id NOT LIKE \'00%\'
+                                         AND r.url_data IS NOT null
+                                         AND r.metadata_status = \'Accepted\'
+                                         AND r.access_status = \'None\'
+                                         AND (r.dataset_download_status = \'Completed\' OR r.dataset_download_status = \'RemotelyHosted\')
+                                 GROUP BY udi
+                                 ORDER BY udi) AS dataset_udi)
+            ORDER BY submittimestamp;';
     $sth = $dbh->prepare($SQL);
     $sth->execute();
     $rows = $sth->fetchAll();
@@ -387,13 +402,17 @@ $app->get('/data/overview/dataset-size-ranges', function () use ($app) {
     $dbh = OpenDB('GOMRI_RO');
     $i=0;
     foreach ($GLOBALS['size_ranges'] AS $range) {
-        $SQL = "SELECT COUNT(*)
-                FROM registry_view
-                WHERE
-                    registry_id NOT LIKE 'F%'
-                    AND dataset_download_size $range[range0]";
+        $SQL = 'SELECT COUNT(*)
+                FROM registry_view r
+                    LEFT JOIN datasets d
+                        ON r.dataset_udi = d.dataset_udi
+                    LEFT JOIN projects p
+                        ON d.project_id = p."ID"
+                    WHERE
+                    p."FundSrc" <= 700
+                    AND r.dataset_download_size ' . $range['range0'];
         if (array_key_exists('range1',$range)) {
-            $SQL .= " AND dataset_download_size $range[range1]";
+            $SQL .= ' AND r.dataset_download_size ' . $range['range1'];
         }
         $sth = $dbh->prepare($SQL);
         $sth->execute();
