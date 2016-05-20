@@ -9,7 +9,7 @@
 </div>
 {% for project in projects %}
     <div class="project">
-        <div class="project-title"><a href="http://research.gulfresearchinitiative.org/research-awards/projects/?pid={{project.ID}}" target="_blank">{{project.Title}}<span style="font-size:85%; margin-left:1em;">Project ID: {{project.ID}}</span></a></div>
+        <div class="project-title">{{project.Title}}<span style="font-size:85%; margin-left:1em;">Project ID: {{project.ID}}</span></div>
         <div class="project-container">
             <div class="fundSrc">
                 <span class="attr">Funding Source:</span> {{project.Fund_Name}}
@@ -18,13 +18,13 @@
                 {% endif %}
             </div>
             <div class="pi">
-                <span class="attr">Principal Investigator:</span> <a href="http://research.gulfresearchinitiative.org/gomri-funded-researchers/person/?pid={{project.PI.ID}}" target="_blank">{{project.PI.FirstName | raw}} {{project.PI.LastName}}</a> - <a href="http://research.gulfresearchinitiative.org/gomri-funded-institutions/institution/?instid={{project.PI.Institution_ID}}" target="_blank">{{project.PI.Institution_Name}}</a>
+                <span class="attr">Principal Investigator:</span> {{project.PI.FirstName | raw}} {{project.PI.LastName}} - {{project.PI.Institution_Name}}
             </div>
             <div class="institutions">
                 <span class="attr">Member Institutions:</span>
                 {% for inst in project.Institutions %}
                     {% if inst.Name != '' %}
-                        <a href="http://research.gulfresearchinitiative.org/gomri-funded-institutions/institution/?instid={{inst.ID}}" target="_blank">{{inst.Name | trimws}}</a>{% if not loop.last %}, {% endif %}
+                        {{inst.Name | trimws}}{% if not loop.last %}, {% endif %}
                     {% endif %}
                 {% endfor %}
             </div>
