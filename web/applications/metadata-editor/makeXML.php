@@ -87,7 +87,7 @@ function createNodesXML($xml, $doc, $validated)
             foreach ($nodelevels as $nodelevel) {
                 $splitnodelevel = preg_split("/\!/", $nodelevel);
 
-                $xpath .= "/" . $splitnodelevel[0];
+                $xpath .= "/" . $splitnodelevel[0] . '[1]';
             }
 
             $xpathdoc = new DOMXpath($doc);
@@ -189,6 +189,7 @@ function createNodesXML($xml, $doc, $validated)
                             if ($thisIndex > 0) {
                                 $node = addXMLChildValue($doc, $parent, $nodelevel, $val);
                             } else {
+                                $nodelevel = preg_split("/\[.\]/", $nodelevel)[0];
                                 $node = $doc->createElement($nodelevel);
                                 $node = $parent->appendChild($node);
                                 addNodeAttributes($doc, $parent, $node, $nodelevel, $val);
