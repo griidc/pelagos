@@ -31,14 +31,20 @@ $(document).ready(function() {
         if (m) {
             if (typeof m[1] !== 'undefined') {
                 if (typeof m[2] === 'undefined') {
-                    $("#tree").jstree("deselect_all");
-                    $("#tree").jstree("select_node", ('#projects_fundSrc_' + map_fund_src(m[1])));
+                    if ($('#projects_fundSrc_' + map_fund_src(m[1])).length && $('#tree').jstree('get_selected').attr('id') != 'projects_fundSrc_' + map_fund_src(m[1])) {
+                        $("#tree").jstree("deselect_all");
+                        $("#tree").jstree("select_node", ('#projects_fundSrc_' + map_fund_src(m[1])));
+                    }
                 }
                 else {
-                    $("#tree").jstree("deselect_all");
                     $("#tree").jstree("open_node", $('#projects_fundSrc_' + map_fund_src(m[1])));
-                    if ($('#tree').jstree('get_selected').attr('id') != 'datasets_projectId_' + map_project(m[2])) {
+                    if ($('#datasets_projectId_' + map_project(m[2])).length && $('#tree').jstree('get_selected').attr('id') != 'datasets_projectId_' + map_project(m[2])) {
+                        $("#tree").jstree("deselect_all");
                         $("#tree").jstree("select_node", $('#datasets_projectId_' + map_project(m[2])), true);
+                    }
+                    else if ($('#tasks_projectId_' + map_project(m[2])).length && $('#tree').jstree('get_selected').attr('id') != 'tasks_projectId_' + map_project(m[2])) {
+                        $("#tree").jstree("deselect_all");
+                        $("#tree").jstree("select_node", $('#tasks_projectId_' + map_project(m[2])), true);
                     }
                 }
             }
