@@ -175,7 +175,7 @@ function showDatasetDownload(udi) {
                         viewport: $(window),
                         my: 'bottom left',  // position of arrow
                         at: 'top right'     // position relative to selector
-                    }, 
+                    },
                     style: {
                         classes: "qtip-shadow qtip-tipped customqtip"
                     }
@@ -269,7 +269,6 @@ function addTree() {
         animation: 250,
         filter: "",
         onload: "if (!tree.selected) { showDatasets($('#by-input').val(),$('#id-input').val(),''); } else if ($('#' + tree.name).jstree('get_selected').length < 1) { showDatasets($('#by-input').val(),$('#id-input').val(),''); }",
-        show_other_sources: false,
         on_filter_by_change: "$('#by-input').val('');$('#id-input').val('');",
 
         yr1_folder_color: "#00A",
@@ -296,11 +295,8 @@ function addTree() {
         institution_color: "#00A",
         institution_action: "$('#by-input').val('institutionId'); $('#id-input').val('\{\{institution.ID\}\}'); showDatasets('institutionId',\{\{institution.ID\}\});",
 
-        other_sources_folder_color: "#00A",
-        other_sources_folder_action: "$('#by-input').val('otherSources'); $('#id-input').val('1'); showDatasets('otherSources',1);",
-
         other_sources_color: "#00A",
-        other_sources_action: "$('#by-input').val('otherSource'); $('#id-input').val('\{\{source.ID\}\}'); showDatasets('otherSource','\{\{source.ID\}\}');",
+        other_sources_action: "$('#by-input').val('otherSource'); $('#id-input').val('\{\{source.ID\}\}'); showDatasets('fundSrc', \{\{fundSrc.ID\}\});",
 
         deselect_action: "$('#by-input').val(''); $('#id-input').val(''); showDatasets('','');"
     });

@@ -180,7 +180,7 @@ $app->get('/json/:type.json', function ($type) use ($app) {
                     }
                 }
 
-                $data_count = count_registered_datasets($GOMRI_DBH,array('registry_id=00%','dataset_download_status=done'),$stash['tree']['filter']);
+                $data_count = count_identified_datasets($GOMRI_DBH,array('funding_envelope>=700'),$stash['tree']['filter']);
                 if ($data_count > 0) {
                     if ($GLOBALS['config']['tree']['show_counts'] == 1) {
                         $stash['other_sources']['dataset_count'] = $data_count;
