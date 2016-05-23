@@ -31,20 +31,14 @@ $(document).ready(function() {
         if (m) {
             if (typeof m[1] !== 'undefined') {
                 if (typeof m[2] === 'undefined') {
-                    if ($('#tree').jstree('get_selected').attr('id') != 'datasets_projectId_' + m[1]) {
-                        $("#tree").jstree("select_node", $('#datasets_projectId_' + m[1]), true);
-                    }
-                    if ($('#tree').jstree('get_selected').attr('id') != 'tasks_projectId_' + m[1]) {
-                        $("#tree").jstree("select_node", $('#tasks_projectId_' + m[1]), true);
-                    }
+                    $("#tree").jstree("deselect_all");
+                    $("#tree").jstree("select_node", ('#projects_fundSrc_' + map_fund_src(m[1])));
                 }
                 else {
+                    $("#tree").jstree("deselect_all");
                     $("#tree").jstree("open_node", $('#projects_fundSrc_' + map_fund_src(m[1])));
                     if ($('#tree').jstree('get_selected').attr('id') != 'datasets_projectId_' + map_project(m[2])) {
                         $("#tree").jstree("select_node", $('#datasets_projectId_' + map_project(m[2])), true);
-                    }
-                    if ($('#tree').jstree('get_selected').attr('id') != 'tasks_projectId_' + map_project(m[2])) {
-                        $("#tree").jstree("select_node", $('#tasks_projectId_' + map_project(m[2])), true);
                     }
                 }
             }
@@ -138,7 +132,11 @@ function showProjects(by,id) {
 }
 
 function updateHash(fund_src,project_id) {
-    location.href = '#' + rev_map_fund_src(fund_src) + '/' + rev_map_project(project_id);
+    if (typeof(project_id) != "undefined") {
+        location.href = '#' + rev_map_fund_src(fund_src) + '/' + rev_map_project(project_id);
+    } else {
+        location.href = '#' + rev_map_fund_src(fund_src);
+    }
 }
 
 function map_fund_src(name) {
