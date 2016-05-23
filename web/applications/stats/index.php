@@ -248,7 +248,7 @@ $app->get('/', function () use ($app) {
     $dbh = null;
 
     $gomri_dbh = OpenDB("GOMRI_RO");
-    $stash['datasetCount']=count_registered_datasets($gomri_dbh, array("funding_envelope <= 700"));
+    $stash['datasetCount']=count_registered_datasets($gomri_dbh, array("funding_envelope < 700"));
     $gomri_dbh = null;
 
     return $app->render('html/index.html',$stash);
@@ -275,8 +275,8 @@ $app->get('/data/overview/summary-of-records', function () use ($app) {
 
     # called from datasets.php library
     # 0 = unsubmitted, 1 = Submitted (locked), 2 = Approved
-    $countIdentified = count_identified_datasets($dbh,array("status>1", "funding_envelope <= 700"));
-    $countAvailable = count_registered_datasets($dbh,array("availability=available", "funding_envelope <= 700"));
+    $countIdentified = count_identified_datasets($dbh,array("status>1", "funding_envelope < 700"));
+    $countAvailable = count_registered_datasets($dbh,array("availability=available", "funding_envelope < 700"));
     $sor_data[] = array(
         'label' => 'Datasets In Development',
         'data' => array(array(.225,$countIdentified-$countAvailable)),
@@ -323,7 +323,7 @@ $app->get('/data/overview/total-records-over-time', function () use ($app) {
                 ON d.project_id = p."ID"
             WHERE
                 d.status > 1
-                AND p."FundSrc" <= 700;';
+                AND p."FundSrc" < 700;';
     $sth = $dbh->prepare($SQL);
     $sth->execute();
     $rows = $sth->fetchAll();
@@ -345,7 +345,7 @@ $app->get('/data/overview/total-records-over-time', function () use ($app) {
                                       LEFT JOIN projects p
                                           ON d.project_id = p."ID"
                                   WHERE
-                                      p."FundSrc" <= 700
+                                      p."FundSrc" < 700
                                       AND r.registry_id NOT LIKE \'00%\'
                                       AND r.url_data IS NOT NULL
                                   GROUP BY udi
@@ -372,7 +372,7 @@ $app->get('/data/overview/total-records-over-time', function () use ($app) {
                                      LEFT JOIN projects p
                                          ON d.project_id = p."ID"
                                      WHERE
-                                         p."FundSrc" <= 700
+                                         p."FundSrc" < 700
                                          AND r.registry_id NOT LIKE \'00%\'
                                          AND r.url_data IS NOT null
                                          AND r.metadata_status = \'Accepted\'
@@ -409,7 +409,7 @@ $app->get('/data/overview/dataset-size-ranges', function () use ($app) {
                     LEFT JOIN projects p
                         ON d.project_id = p."ID"
                     WHERE
-                    p."FundSrc" <= 700
+                    p."FundSrc" < 700
                     AND r.dataset_download_size ' . $range['range0'];
         if (array_key_exists('range1',$range)) {
             $SQL .= ' AND r.dataset_download_size ' . $range['range1'];
