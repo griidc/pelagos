@@ -18,22 +18,16 @@
     {% endif %}
     <gmd:contactInfo>
         <gmd:CI_Contact>
-            {% if RP[RPType].Phone or RP[RPType].Fax %}
                 <gmd:phone>
                     <gmd:CI_Telephone>
-                        {% if RP[RPType].Phone %}
                             <gmd:voice>
                                 <gco:CharacterString>{{RP[RPType].Phone}}</gco:CharacterString>
                             </gmd:voice>
-                        {% endif %}
-                        {% if RP[RPType].Fax %}
                             <gmd:facsimile>
                                 <gco:CharacterString>{{RP[RPType].Fax}}</gco:CharacterString>
                             </gmd:facsimile>
-                        {% endif %}
                     </gmd:CI_Telephone>
                 </gmd:phone>
-            {% endif %}
             <gmd:address>
                 <gmd:CI_Address>
                     {% if RP[RPType].Department_Addr1 %}
