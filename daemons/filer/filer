@@ -65,13 +65,13 @@ while (my $r = $sth->fetchrow_hashref()) {
     my $url_data = $r->{'url_data'};
 
     # check if we have a valid registry id
-    if ($reg_id !~ /^[YR]\d\.x\d\d\d.\d\d\d:\d\d\d\d\.\d\d\d$/) {
+    if ($reg_id !~ /^[YRF]\d\.x\d\d\d.\d\d\d:\d\d\d\d\.\d\d\d$/) {
         $data_bad_reg_id{$reg_id} = $reg_id;
         next;
     }
 
     # check if we have a valid udi
-    if ($udi !~ /^[YR]\d\.x\d\d\d.\d\d\d:\d\d\d\d$/) {
+    if ($udi !~ /^[YRF]\d\.x\d\d\d.\d\d\d:\d\d\d\d$/) {
         $data_bad_udi{$reg_id} = $udi;
         next;
     }
@@ -158,13 +158,13 @@ while (my $r = $sth->fetchrow_hashref()) {
     my $url_metadata = $r->{'url_metadata'};
 
     # check if we have a valid registry id
-    if ($reg_id !~ /^[YR]\d\.x\d\d\d.\d\d\d:\d\d\d\d\.\d\d\d$/) {
+    if ($reg_id !~ /^[YRF]\d\.x\d\d\d.\d\d\d:\d\d\d\d\.\d\d\d$/) {
         $md_bad_reg_id{$reg_id} = $reg_id;
         next;
     }
 
     # check if we have a valid udi
-    if ($udi !~ /^[YR]\d\.x\d\d\d.\d\d\d:\d\d\d\d$/) {
+    if ($udi !~ /^[YRF]\d\.x\d\d\d.\d\d\d:\d\d\d\d$/) {
         $md_bad_udi{$reg_id} = $udi;
         next;
     }
