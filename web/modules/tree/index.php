@@ -115,7 +115,7 @@ $app->get('/json/:type.json', function ($type) use ($app) {
             $app->render('json/letters.json',$stash);
             break;
         case 'ra':
-            $fundFilter = array('fundId>6');
+            $fundFilter = array('fundId>6','fundId<100');
             if (isset($GLOBALS['config']['exclude']['funds'])) {
                 foreach ($GLOBALS['config']['exclude']['funds'] as $exclude) {
                     $fundFilter[] = "fundId!=$exclude";
@@ -180,7 +180,7 @@ $app->get('/json/:type.json', function ($type) use ($app) {
                     }
                 }
 
-                $data_count = count_registered_datasets($GOMRI_DBH,array('registry_id=00%','dataset_download_status=done'),$stash['tree']['filter']);
+                $data_count = count_identified_datasets($GOMRI_DBH,array('funding_envelope>=700'),$stash['tree']['filter']);
                 if ($data_count > 0) {
                     if ($GLOBALS['config']['tree']['show_counts'] == 1) {
                         $stash['other_sources']['dataset_count'] = $data_count;
@@ -250,14 +250,44 @@ $app->get('/json/ra/YR1.json', function () use ($app) {
 
 $app->get('/json/ra/otherSources.json', function () use ($app) {
     $stash['tree'] = array_merge($GLOBALS['config']['tree'],json_decode($app->request()->get('tree'),true));
-    $stash['otherSources'] = array(array('ID' => '000', 'Name' => 'National Oceanographic Data Center',));
-    if (array_key_exists('filter',$stash['tree']) and !empty($stash['tree']['filter']) or
-        array_key_exists('geo_filter',$stash['tree']) and !empty($stash['tree']['geo_filter'])) {
-        if ($GLOBALS['config']['tree']['show_counts'] == 1) {
-            $GOMRI_DBH = openDB('GOMRI_RO');
-            $stash['otherSources'][0]['dataset_count'] = count_registered_datasets($GOMRI_DBH,array('registry_id=00.x000%','dataset_download_status=done'),$stash['tree']['filter']);
+    $RIS_DBH = openDB('RIS_RO');
+    $fundFilter = array('fundId>99');
+    if (isset($GLOBALS['config']['exclude']['funds'])) {
+        foreach ($GLOBALS['config']['exclude']['funds'] as $exclude) {
+            $fundFilter[] = "fundId!=$exclude";
         }
     }
+    $others = getFundingSources($RIS_DBH,$fundFilter);
+
+    if (array_key_exists('filter',$stash['tree']) and !empty($stash['tree']['filter']) or
+        array_key_exists('geo_filter',$stash['tree']) and !empty($stash['tree']['geo_filter'])) {
+        $dataset_filters = getDatasetFilters($stash['tree']);
+        $GOMRI_DBH = openDB('GOMRI_RO');
+        $stash['otherSources'] = array();
+        foreach ($others as $other) {
+            $data_count = 0;
+            $projectFilter = array("fundSrc=$other[ID]");
+            if (isset($GLOBALS['config']['exclude']['projects'])) {
+                foreach ($GLOBALS['config']['exclude']['projects'] as $exclude) {
+                    $projectFilter[] = "projectId!=$exclude";
+                }
+            }
+            $projects = getProjectDetails($RIS_DBH,$projectFilter);
+            foreach ($projects as $project) {
+                $data_count += count_identified_datasets($GOMRI_DBH,array_merge($dataset_filters,array("projectId=$project[ID]")),$stash['tree']['filter']);
+            }
+            if ($data_count > 0) {
+                if ($GLOBALS['config']['tree']['show_counts'] == 1) {
+                    $other['dataset_count'] = $data_count;
+                }
+                array_push($stash['otherSources'],$other);
+            }
+        }
+    }
+    else {
+        $stash['otherSources'] = $others;
+    }
+
     $app->render('json/otherSources.json',$stash);
     exit;
 });
