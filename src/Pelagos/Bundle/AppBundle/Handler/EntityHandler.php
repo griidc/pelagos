@@ -112,12 +112,16 @@ class EntityHandler
      *
      * @param Entity $entity The entity to create.
      *
+     * @throws \Exception            When the entity is already tracked by the entity manager.
      * @throws AccessDeniedException When the user does not have sufficient privileges to create the entity.
      *
      * @return Entity The new entity.
      */
     public function create(Entity $entity)
     {
+        if ($this->entityManager->contains($entity)) {
+            throw new \Exception('Attempted to create a ' . $entity::FRIENDLY_NAME . ' that is already tracked');
+        }
         if (!$this->authorizationChecker->isGranted('CAN_CREATE', $entity)) {
             throw new AccessDeniedException(
                 'You do not have sufficient privileges to create this ' . $entity::FRIENDLY_NAME . '.'
@@ -151,12 +155,16 @@ class EntityHandler
      *
      * @param Entity $entity The entity to update.
      *
+     * @throws \Exception            When the entity is not tracked by the entity manager.
      * @throws AccessDeniedException When the user does not have sufficient privileges to update the entity.
      *
      * @return Entity The updated entity.
      */
     public function update(Entity $entity)
     {
+        if (!$this->entityManager->contains($entity)) {
+            throw new \Exception('Attempted to update an untracked ' . $entity::FRIENDLY_NAME);
+        }
         if (!$this->authorizationChecker->isGranted(PelagosEntityVoter::CAN_EDIT, $entity)) {
             $unitOfWork = $this->entityManager->getUnitOfWork();
             $unitOfWork->computeChangeSets();
@@ -182,12 +190,16 @@ class EntityHandler
      *
      * @param Entity $entity The entity object to delete.
      *
+     * @throws \Exception            When the entity is not tracked by the entity manager.
      * @throws AccessDeniedException When the user does not have sufficient privileges to delete the entity.
      *
      * @return Entity The entity object that was deleted.
      */
     public function delete(Entity $entity)
     {
+        if (!$this->entityManager->contains($entity)) {
+            throw new \Exception('Attempted to delete an untracked ' . $entity::FRIENDLY_NAME);
+        }
         if (!$this->authorizationChecker->isGranted(PelagosEntityVoter::CAN_DELETE, $entity)) {
             throw new AccessDeniedException(
                 'You do not have sufficient privileges to delete this ' . $entity::FRIENDLY_NAME . '.'
