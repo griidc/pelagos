@@ -8,6 +8,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
@@ -88,8 +89,18 @@ class DatasetSubmissionType extends AbstractType
                 'required' => false,
                 'mapped' => false,
             ))
+            ->add('datasetFileForceImport', CheckboxType::class, array(
+                'label' => 'import this file again from the same path',
+                'required' => false,
+                'mapped' => false,
+            ))
             ->add('datasetFileUrl', TextType::class, array(
                 'label' => 'Dataset File URL:',
+                'required' => false,
+                'mapped' => false,
+            ))
+            ->add('datasetFileForceDownload', CheckboxType::class, array(
+                'label' => 'download this file again from the same URL',
                 'required' => false,
                 'mapped' => false,
             ))
@@ -151,8 +162,18 @@ class DatasetSubmissionType extends AbstractType
                 'required' => false,
                 'mapped' => false,
             ))
+            ->add('metadataFileForceImport', CheckboxType::class, array(
+                'label' => 'import this file again from the same path',
+                'required' => false,
+                'mapped' => false,
+            ))
             ->add('metadataFileUrl', TextType::class, array(
                 'label' => 'Metadata File URL:',
+                'required' => false,
+                'mapped' => false,
+            ))
+            ->add('metadataFileForceDownload', CheckboxType::class, array(
+                'label' => 'download this file again from the same URL',
                 'required' => false,
                 'mapped' => false,
             ));
