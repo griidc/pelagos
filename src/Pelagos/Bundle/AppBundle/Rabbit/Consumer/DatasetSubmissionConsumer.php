@@ -101,7 +101,9 @@ class DatasetSubmissionConsumer implements ConsumerInterface
             return true;
         }
         $loggingContext['dataset_submission_id'] = $datasetSubmission->getId();
+        // @codingStandardsIgnoreStart
         $routingKey = $message->delivery_info['routing_key'];
+        // @codingStandardsIgnoreEnd
         if (preg_match('/^dataset\./', $routingKey)) {
             $this->processDataset($datasetSubmission, $loggingContext);
         } elseif (preg_match('/^metadata\./', $routingKey)) {
