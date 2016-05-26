@@ -2,6 +2,7 @@
 namespace Pelagos\Event;
 
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
 use Pelagos\Bundle\AppBundle\DataFixtures\ORM\ResearchGroupRoles;
@@ -30,6 +31,13 @@ abstract class EventListener
     protected $mailer;
 
     /**
+     * The real swiftmailer transport.
+     *
+     * @var \Swift_Transport
+     */
+    protected $mailerTransportReal;
+
+    /**
      * Person entity for the logged-in user.
      *
      * @var Person
@@ -53,21 +61,24 @@ abstract class EventListener
     /**
      * This is the class constructor to handle dependency injections.
      *
-     * @param \Twig_Environment $twig         Twig engine.
-     * @param \Swift_Mailer     $mailer       Email handling library.
-     * @param TokenStorage      $tokenStorage Symfony's token object.
-     * @param string            $fromAddress  Sender's email address.
-     * @param string            $fromName     Sender's name to include in email.
+     * @param \Twig_Environment $twig                Twig engine.
+     * @param \Swift_Mailer     $mailer              Email handling library.
+     * @param \Swift_Transport  $mailerTransportReal The real swiftmailer transport.
+     * @param TokenStorage      $tokenStorage        Symfony's token object.
+     * @param string            $fromAddress         Sender's email address.
+     * @param string            $fromName            Sender's name to include in email.
      */
     public function __construct(
         \Twig_Environment $twig,
         \Swift_Mailer $mailer,
+        \Swift_Transport $mailerTransportReal,
         TokenStorage $tokenStorage,
         $fromAddress,
         $fromName
     ) {
         $this->twig = $twig;
         $this->mailer = $mailer;
+        $this->mailerTransportReal = $mailerTransportReal;
         $this->tokenStorage = $tokenStorage;
         $this->from = array($fromAddress => $fromName);
     }
@@ -83,12 +94,16 @@ abstract class EventListener
      */
     protected function sendMailMsg(\Twig_Template $twigTemplate, array $mailData, array $peopleObjs = null)
     {
-        // Token's getUser returns an account, not a person directly.
-        $currentUser = $this->tokenStorage->getToken()->getUser()->getPerson();
-        $mailData['user'] = $currentUser;
-        
-        if ($peopleObjs == null) {
-            $peopleObjs = array($currentUser);
+        $currentToken = $this->tokenStorage->getToken();
+        if ($currentToken instanceof TokenInterface) {
+            $currentUser = $this->tokenStorage->getToken()->getUser();
+            if ($currentUser instanceof Account) {
+                $currentPerson = $currentUser->getPerson();
+                $mailData['user'] = $currentPerson;
+                if ($peopleObjs == null) {
+                    $peopleObjs = array($currentPerson);
+                }
+            }
         }
 
         foreach ($peopleObjs as $person) {

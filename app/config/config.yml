@@ -8,6 +8,8 @@ imports:
 parameters:
     locale: en
     jms_serializer.camel_case_naming_strategy.class: JMS\Serializer\Naming\IdenticalPropertyNamingStrategy
+    router.request_context.host: "%hostname%"
+    router.request_context.scheme: https
 
 framework:
     #esi:             ~
