@@ -44,3 +44,9 @@ services:
         class: Monolog\Processor\ProcessIdProcessor
         tags:
             - { name: monolog.processor, channel: filer }
+            - { name: monolog.processor, channel: retriever }
+
+    pelagos.console.listener:
+        class: Pelagos\Event\ConsoleListener
+        tags:
+            - { name: kernel.event_listener, event: console.exception, method: onException }

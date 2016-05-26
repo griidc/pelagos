@@ -18,11 +18,11 @@ use Pelagos\Event\EntityEventDispatcher;
 use Pelagos\Util\DataStore;
 
 /**
- * A consumer of filer messages.
+ * A consumer of dataset submission messages.
  *
  * @see ConsumerInterface
  */
-class FilerConsumer implements ConsumerInterface
+class DatasetSubmissionConsumer implements ConsumerInterface
 {
     /**
      * The entity manager.
@@ -81,34 +81,34 @@ class FilerConsumer implements ConsumerInterface
      */
     public function execute(AMQPMessage $message)
     {
-        $messageData = json_decode($message->body);
+        $datasetId = $message->body;
+        $loggingContext = array('dataset_id' => $datasetId);
         // Clear Doctrine's cache to force loading from persistence.
         $this->entityManager->clear();
         $dataset = $this->entityManager
                         ->getRepository(Dataset::class)
-                        ->find($messageData->datasetId);
+                        ->find($datasetId);
         if (!$dataset instanceof Dataset) {
-            // Log bad id.
-            $this->logger->error(
-                'No dataset found',
-                array('dataset_id' => $messageData->datasetId)
-            );
+            $this->logger->warning('No dataset found', $loggingContext);
             return true;
+        }
+        if (null !== $dataset->getUdi()) {
+            $loggingContext['udi'] = $dataset->getUdi();
         }
         $datasetSubmission = $dataset->getDatasetSubmission();
         if (!$datasetSubmission instanceof DatasetSubmission) {
-            // Log no submission.
-            $this->logger->error(
-                'No submission found for dataset',
-                array('dataset_id' => $messageData->datasetId)
-            );
+            $this->logger->warning('No submission found for dataset', $loggingContext);
             return true;
         }
-        if ($datasetSubmission->getDatasetFileTransferStatus() === DatasetSubmission::TRANSFER_STATUS_NONE) {
-            $this->processDataset($datasetSubmission);
-        }
-        if ($datasetSubmission->getMetadataFileTransferStatus() === DatasetSubmission::TRANSFER_STATUS_NONE) {
-            $this->processMetadata($datasetSubmission);
+        $loggingContext['dataset_submission_id'] = $datasetSubmission->getId();
+        $routingKey = $message->delivery_info['routing_key'];
+        if (preg_match('/^dataset\./', $routingKey)) {
+            $this->processDataset($datasetSubmission, $loggingContext);
+        } elseif (preg_match('/^metadata\./', $routingKey)) {
+            $this->processMetadata($datasetSubmission, $loggingContext);
+        } else {
+            $this->logger->warning("Unknown routing key: $routingKey", $loggingContext);
+            return true;
         }
         $this->entityManager->persist($datasetSubmission);
         $this->entityManager->flush();
@@ -119,15 +119,20 @@ class FilerConsumer implements ConsumerInterface
      * Process the dataset for a dataset submission.
      *
      * @param DatasetSubmission $datasetSubmission The dataset submission to process.
+     * @param array             $loggingContext    The logging context to use when logging.
      *
      * @return void
      */
-    protected function processDataset(DatasetSubmission $datasetSubmission)
+    protected function processDataset(DatasetSubmission $datasetSubmission, array $loggingContext)
     {
-        $context = array(
-            'dataset_submission_id' => $datasetSubmission->getId(),
-            'udi' => $datasetSubmission->getDataset()->getUdi(),
-        );
+        $datasetFileTransferStatus = $datasetSubmission->getDatasetFileTransferStatus();
+        if ($datasetFileTransferStatus !== DatasetSubmission::TRANSFER_STATUS_NONE) {
+            $this->logger->warning(
+                "Unexpected dataset file transfer status: $datasetFileTransferStatus",
+                $loggingContext
+            );
+            return;
+        }
         try {
             $this->dataStore->addFile(
                 $datasetSubmission->getDatasetFileUri(),
@@ -138,11 +143,11 @@ class FilerConsumer implements ConsumerInterface
                 DatasetSubmission::TRANSFER_STATUS_COMPLETED
             );
         } catch (\Exception $exception) {
-            $this->logger->error('Error processing dataset: ' . $exception->getMessage(), $context);
+            $this->logger->error('Error processing dataset: ' . $exception->getMessage(), $loggingContext);
             return;
         }
         // Log processing complete.
-        $this->logger->info('Dataset file processing complete', $context);
+        $this->logger->info('Dataset file processing complete', $loggingContext);
         // Dispatch entity event.
         $this->entityEventDispatcher->dispatch($datasetSubmission, 'dataset_processed');
     }
@@ -151,15 +156,20 @@ class FilerConsumer implements ConsumerInterface
      * Process the metadata for a dataset submission.
      *
      * @param DatasetSubmission $datasetSubmission The dataset submission to process.
+     * @param array             $loggingContext    The logging context to use when logging.
      *
      * @return void
      */
-    protected function processMetadata(DatasetSubmission $datasetSubmission)
+    protected function processMetadata(DatasetSubmission $datasetSubmission, array $loggingContext)
     {
-        $context = array(
-            'dataset_submission_id' => $datasetSubmission->getId(),
-            'udi' => $datasetSubmission->getDataset()->getUdi(),
-        );
+        $metadataFileTransferStatus = $datasetSubmission->getMetadataFileTransferStatus();
+        if ($metadataFileTransferStatus !== DatasetSubmission::TRANSFER_STATUS_NONE) {
+            $this->logger->warning(
+                "Unexpected metadata file transfer status: $metadataFileTransferStatus",
+                $loggingContext
+            );
+            return;
+        }
         try {
             $this->dataStore->addFile(
                 $datasetSubmission->getMetadataFileUri(),
@@ -170,11 +180,11 @@ class FilerConsumer implements ConsumerInterface
                 DatasetSubmission::TRANSFER_STATUS_COMPLETED
             );
         } catch (\Exception $exception) {
-            $this->logger->error('Error processing metadata: ' . $exception->getMessage(), $context);
+            $this->logger->error('Error processing metadata: ' . $exception->getMessage(), $loggingContext);
             return;
         }
         // Log processing complete.
-        $this->logger->info('Metadata file processing complete', $context);
+        $this->logger->info('Metadata file processing complete', $loggingContext);
         // Dispatch entity event.
         $this->entityEventDispatcher->dispatch($datasetSubmission, 'metadata_processed');
     }
