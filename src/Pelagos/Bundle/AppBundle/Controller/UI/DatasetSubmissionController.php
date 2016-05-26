@@ -266,9 +266,9 @@ class DatasetSubmissionController extends UIController
                 }
             }
 
-            $this->processDatasetFileTransferDetails($form, $datasetSubmission);
+            $this->processDatasetFileTransferDetails($form, $datasetSubmission, $incomingDirectory);
 
-            $this->processMetadataFileTransferDetails($form, $datasetSubmission);
+            $this->processMetadataFileTransferDetails($form, $datasetSubmission, $incomingDirectory);
 
             $this->entityHandler->create($datasetSubmission);
             $this->entityHandler->update($dataset);
@@ -290,11 +290,15 @@ class DatasetSubmissionController extends UIController
      *
      * @param Form              $form              The submitted dataset submission form.
      * @param DatasetSubmission $datasetSubmission The Dataset Submission to update.
+     * @param string            $incomingDirectory The user's incoming directory.
      *
      * @return void
      */
-    protected function processDatasetFileTransferDetails(Form $form, DatasetSubmission $datasetSubmission)
-    {
+    protected function processDatasetFileTransferDetails(
+        Form $form,
+        DatasetSubmission $datasetSubmission,
+        $incomingDirectory
+    ) {
         switch ($datasetSubmission->getDatasetFileTransferType()) {
             case DatasetSubmission::TRANSFER_TYPE_UPLOAD:
                 $datasetFile = $form['datasetFile']->getData();
@@ -335,11 +339,15 @@ class DatasetSubmissionController extends UIController
      *
      * @param Form              $form              The submitted dataset submission form.
      * @param DatasetSubmission $datasetSubmission The Dataset Submission to update.
+     * @param string            $incomingDirectory The user's incoming directory.
      *
      * @return void
      */
-    protected function processMetadataFileTransferDetails(Form $form, DatasetSubmission $datasetSubmission)
-    {
+    protected function processMetadataFileTransferDetails(
+        Form $form,
+        DatasetSubmission $datasetSubmission,
+        $incomingDirectory
+    ) {
         switch ($datasetSubmission->getMetadataFileTransferType()) {
             case DatasetSubmission::TRANSFER_TYPE_UPLOAD:
                 $metadataFile = $form['metadataFile']->getData();
