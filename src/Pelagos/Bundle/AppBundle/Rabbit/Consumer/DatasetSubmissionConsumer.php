@@ -136,11 +136,12 @@ class DatasetSubmissionConsumer implements ConsumerInterface
             return;
         }
         try {
-            $this->dataStore->addFile(
-                $datasetSubmission->getDatasetFileUri(),
-                $datasetSubmission->getDataset()->getUdi(),
-                'dataset'
-            );
+            $datasetFileUri = $datasetSubmission->getDatasetFileUri();
+            $datasetId = $datasetSubmission->getDataset()->getUdi();
+            $this->dataStore->addFile($datasetFileUri, $datasetId, 'dataset');
+            $datasetSubmission->setDatasetFileName(basename($datasetFileUri));
+            $datasetFileInfo = $this->dataStore->getFileInfo($datasetId, 'dataset');
+            $datasetSubmission->setDatasetFileSize($datasetFileInfo->getSize());
             $datasetSubmission->setDatasetFileTransferStatus(
                 DatasetSubmission::TRANSFER_STATUS_COMPLETED
             );
@@ -173,11 +174,10 @@ class DatasetSubmissionConsumer implements ConsumerInterface
             return;
         }
         try {
-            $this->dataStore->addFile(
-                $datasetSubmission->getMetadataFileUri(),
-                $datasetSubmission->getDataset()->getUdi(),
-                'metadata'
-            );
+            $metadataFileUri = $datasetSubmission->getMetadataFileUri();
+            $datasetId = $datasetSubmission->getDataset()->getUdi();
+            $this->dataStore->addFile($metadataFileUri, $datasetId, 'metadata');
+            $datasetSubmission->setMetadataFileName(basename($metadataFileUri));
             $datasetSubmission->setMetadataFileTransferStatus(
                 DatasetSubmission::TRANSFER_STATUS_COMPLETED
             );

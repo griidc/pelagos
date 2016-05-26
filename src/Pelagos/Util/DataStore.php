@@ -43,7 +43,6 @@ class DataStore
      *
      * @throws \Exception When the file URI is not set.
      * @throws \Exception When the file does not exist.
-     * @throws \Exception When the type is not valid.
      *
      * @return void
      */
@@ -55,19 +54,24 @@ class DataStore
         if (preg_match('#^(file://|/)#', $fileUri) and !file_exists($fileUri)) {
             throw new \Exception("File: $fileUri not found!");
         }
-        $storeFileName = "$datasetId.";
-        switch ($type) {
-            case 'dataset':
-                $storeFileName .= 'dat';
-                break;
-            case 'metadata':
-                $storeFileName .= 'met';
-                break;
-            default:
-                throw new \Exception("$type is not a valid type");
-        }
+        $storeFileName = $this->getStoreFileName($datasetId, $type);
         $storeFilePath = $this->addFileToDataStoreDirectory($fileUri, $datasetId, $storeFileName);
         $this->createLinkInDownloadDirectory($storeFilePath, $datasetId, $storeFileName);
+    }
+
+    /**
+     * Get the info for a file in the data store.
+     *
+     * @param string $datasetId The id of the dataset to add the file to.
+     * @param string $type      The type (dataset or metadata) of the file.
+     *
+     * @return \SplFileInfo
+     */
+    public function getFileInfo($datasetId, $type)
+    {
+        $dataStoreDirectory = $this->getDataStoreDirectory($datasetId);
+        $storeFileName = $this->getStoreFileName($datasetId, $type);
+        return new \SplFileInfo("$dataStoreDirectory/$storeFileName");
     }
 
     /**
@@ -210,5 +214,31 @@ class DataStore
                 throw new \Exception("Could not set ACls to $facls for $file (Return value: $returnVal)");
             }
         }
+    }
+
+    /**
+     * Get the name for a file in the data store.
+     *
+     * @param string $datasetId The id of the dataset to add the file to.
+     * @param string $type      The type (dataset or metadata) of the file.
+     *
+     * @throws \Exception When the type is not valid.
+     *
+     * @return string
+     */
+    protected function getStoreFileName($datasetId, $type)
+    {
+        $storeFileName = "$datasetId.";
+        switch ($type) {
+            case 'dataset':
+                $storeFileName .= 'dat';
+                break;
+            case 'metadata':
+                $storeFileName .= 'met';
+                break;
+            default:
+                throw new \Exception("$type is not a valid type");
+        }
+        return $storeFileName;
     }
 }
