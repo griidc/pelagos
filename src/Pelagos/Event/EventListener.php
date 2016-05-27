@@ -54,11 +54,11 @@ abstract class EventListener
     /**
      * This is the class constructor to handle dependency injections.
      *
-     * @param \Twig_Environment $twig                Twig engine.
-     * @param \Swift_Mailer     $mailer              Email handling library.
-     * @param TokenStorage      $tokenStorage        Symfony's token object.
-     * @param string            $fromAddress         Sender's email address.
-     * @param string            $fromName            Sender's name to include in email.
+     * @param \Twig_Environment $twig         Twig engine.
+     * @param \Swift_Mailer     $mailer       Email handling library.
+     * @param TokenStorage      $tokenStorage Symfony's token object.
+     * @param string            $fromAddress  Sender's email address.
+     * @param string            $fromName     Sender's name to include in email.
      */
     public function __construct(
         \Twig_Environment $twig,
