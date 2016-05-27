@@ -83,4 +83,27 @@ class DatasetSubmissionListener extends EventListener
         $spool = $transport->getSpool();
         $spool->flushQueue($this->mailerTransportReal);
     }
+
+    /**
+     * Method to send an email to user on a metadata_processed event.
+     *
+     * @param EntityEvent $event Event being acted upon.
+     *
+     * @return void
+     */
+    public function onMetadataProcessed(EntityEvent $event)
+    {
+        $datasetSubmission = $event->getEntity();
+
+        // email creator
+        $template = $this->twig->loadTemplate('PelagosAppBundle:Email:user.metadata-processed.email.twig');
+        $this->sendMailMsg(
+            $template,
+            array('datasetSubmission' => $datasetSubmission),
+            array($datasetSubmission->getCreator())
+        );
+        $transport = $this->mailer->getTransport();
+        $spool = $transport->getSpool();
+        $spool->flushQueue($this->mailerTransportReal);
+    }
 }
