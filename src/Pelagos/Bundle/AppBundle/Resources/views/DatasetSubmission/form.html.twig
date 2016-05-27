@@ -160,14 +160,12 @@
                             <img class="info" src="{{ asset_url }}">
                             {% endimage %}
                         </span>
-                        <label for="datafile">Dataset File:</label>
-                        {% if 'data_server_type' == 'upload' %}
-                                <div class="fwtextboxcont">
-                                    <input disabled type="text" style="width:100%"
-                                        style="color:black;background-color:transparent;padding:2px;">
-                                </div>
-                                <input type="hidden" name="url_data_upload">
-                                To replace the dataset file:
+                        {{ form_label(form.datasetFile) }}
+                        {% if form.datasetFileUpload.vars.value is not empty %}
+                            <div class="fwtextboxcont">
+                                {{ form_widget(form.datasetFileUpload) }}
+                            </div>
+                            To replace the dataset file:
                         {% endif %}
                         {{ form_widget(form.datasetFile) }}
                     </p>
@@ -198,13 +196,12 @@
                         <div class="fwtextboxcont">
                             {{ form_row(form.datasetFilePath) }}
                         </div>
-                        <input type="button" value="Browse...">
-                        <div id="sftp_force_data_download">
-                            {% if sftp_type|default and url_set|default and sftpuser|default and sftpdir|default %}
-                            <!-- this can be done with js logic -->
-                            <input type="checkbox" name="sftp_force_data_download">import this file again from the same path"
-                            {% endif %}
-                        </div>
+                        <input type="button" value="Browse..." class="fileBrowserButton" data-target="#datasetFilePath" data-type="data">
+                        {% if form.datasetFilePath.vars.value is not empty %}
+                            <div class="file_force">
+                                {{ form_widget(form.datasetFileForceImport) }} {{ form_label(form.datasetFileForceImport) }}
+                            </div>
+                        {% endif %}
                     </p>
                 </fieldset>
             </div> <!-- tabs-2 -->
@@ -221,11 +218,11 @@
                         <div class="fwtextboxcont">
                             {{ form_row(form.datasetFileUrl) }}
                         </div>
-                        <div id="http_force_data_download">
-                            {% if downloadagain|default %}
-                                <input type="checkbox" name="http_force_data_download">download this file again from the same URL
-                            {% endif %}
-                        </div>
+                        {% if form.datasetFileUrl.vars.value is not empty %}
+                            <div class="file_force">
+                                {{ form_widget(form.datasetFileForceDownload) }} {{ form_label(form.datasetFileForceDownload) }}
+                            </div>
+                        {% endif %}
                     </p>
                 </fieldset>
 
@@ -341,13 +338,10 @@
                             {% endimage %}
                         </span>
                         {{ form_label(form.metadataFile) }}
-                        {% if file_exists_upload|default %}
+                        {% if form.metadataFileUpload.vars.value is not empty %}
                             <div class="fwtextboxcont">
-                                <input disabled type="text" style="width:100%"
-                                       style="color:black; background-color:transparent; padding:2px;">
+                                {{ form_widget(form.metadataFileUpload) }}
                             </div>
-                            <input type="hidden" name="upload_metadataurl">
-                            {{ form_row(form.metadataFileTransferType) }}
                             To replace the metadata file:
                         {% endif %}
                         {{ form_widget(form.metadataFile) }}
@@ -380,12 +374,12 @@
                         <div class="fwtextboxcont">
                             {{ form_widget(form.metadataFilePath) }}
                         </div>
-                        <input type="button" value="Browse...">
-                        <div id="sftp_force_metadata_download">
-                        {% if sftp|default %}
-                            <input type="checkbox" name="sftp_force_metadata_download">import this file again from the same path
+                        <input type="button" value="Browse..." class="fileBrowserButton" data-target="#metadataFilePath" data-type="metadata">
+                        {% if form.metadataFilePath.vars.value is not empty %}
+                            <div class="file_force">
+                                {{ form_widget(form.metadataFileForceImport) }} {{ form_label(form.metadataFileForceImport) }}
+                            </div>
                         {% endif %}
-                        </div>
                     <br>
                  </fieldset>
             </div> <!-- md-tabs-2 -->
@@ -403,11 +397,11 @@
                         <div class="fwtextboxcont">
                             {{ form_widget(form.metadataFileUrl) }}
                         </div>
-                        <div id="http_force_metadata_download">
-                            {% if upload|default %}
-                                <input type="checkbox" name="http_force_metadata_download">download this file again from the same URL
-                            {% endif %}
-                        </div>
+                        {% if form.metadataFileUrl.vars.value is not empty %}
+                            <div class="file_force">
+                                {{ form_widget(form.metadataFileForceDownload) }} {{ form_label(form.metadataFileForceDownload) }}
+                            </div>
+                        {% endif %}
                     </p>
                 </fieldset>
             </div> <!-- md-tabs-3 -->
@@ -428,7 +422,7 @@
     <div style="text-align:center;">
         {{ form_widget(form.submit) }}
     </div>
-{{ form_end(form) }}
+{{ form_end(form, {'render_rest': false}) }}
 
 
 </div>

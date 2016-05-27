@@ -37,10 +37,12 @@
         {% include 'json/YR1_outer.json' %}
     {% endif %}
     {% if tree.show_other_sources %}
-        ,
+        {% if not YR1.hide or RFPS %}
+            ,
+        {% endif %}
         {
             "data": {
-                "title": "Other Sources{% if other_sources.dataset_count %} <span style='color:black;font-weight:bold;'>({{other_sources.dataset_count}})</span>{% endif %}",
+                "title": "{{tree.other_sources_label}}{% if other_sources.dataset_count %} <span style='color:black;font-weight:bold;'>({{other_sources.dataset_count}})</span>{% endif %}",
                 "attr": {
                     "style": "color:{{tree.other_sources_folder_color}}"
                 }

@@ -30,6 +30,10 @@ class DIFController extends UIController
      */
     public function defaultAction(Request $request, $id = null)
     {
+        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            return $this->render('PelagosAppBundle:DIF:notLoggedIn.html.twig');
+        }
+
         $dif = new DIF;
         $form = $this->get('form.factory')->createNamed(null, DIFType::class, $dif);
 

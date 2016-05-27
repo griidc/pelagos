@@ -35,3 +35,22 @@ services:
     pelagos.util.posixify:
         class: Pelagos\Util\POSIXify
         arguments: ["@doctrine.orm.entity_manager", "@pelagos.ldap", "@pelagos.entity.handler", '%posix_starting_uid%', '%posix_gid%']
+
+    pelagos.util.data_store:
+        class: Pelagos\Util\DataStore
+        arguments: ["%data_store_directory%","%data_download_directory%"]
+
+    pelagos.event.entity_event_dispatcher:
+        class: Pelagos\Event\EntityEventDispatcher
+        arguments: ["@event_dispatcher"]
+
+    monolog.processor.process_id:
+        class: Monolog\Processor\ProcessIdProcessor
+        tags:
+            - { name: monolog.processor, channel: filer }
+            - { name: monolog.processor, channel: retriever }
+
+    pelagos.console.listener:
+        class: Pelagos\Event\ConsoleListener
+        tags:
+            - { name: kernel.event_listener, event: console.exception, method: onException }
