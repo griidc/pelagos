@@ -3,21 +3,21 @@
 {% block body_html %}
 Dear {{ recipient.getFirstName }} {{ recipient.getLastName }},<br>
 <br>
-Thank you for registering your datasets with the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC).<br>
+Thank you for registering your dataset with the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC).<br>
 <br>
 <table style='border-collapse: collapse;'>
     <tr>
-        <td colspan='4' style='border:none; padding-bottom: 0.5em;'>The following dataset has been processed and can now be viewed:</td>
+        <td colspan='4' style='border:none; padding-bottom: 0.5em;'>The following {{ type }} file has been processed and can now be viewed:</td>
     </tr>
     <tr>
         <th style='padding: 3px; text-align: center; width: 400px;'>Dataset Title</th>
-        <th style='padding: 3px; text-align: center;'>Dataset Filename</th>
+        <th style='padding: 3px; text-align: center;'>{{ type | capitalize }} Filename</th>
         <th style='padding: 3px; text-align: center;'>UDI</th>
         <th style='padding: 3px; text-align: center;'>Link</th>
     </tr>
     <tr>
         <td style='border: 1px solid black; padding: 3px; vertical-align: top; width: 400px;'>{{ datasetSubmission.title }}</td>
-        <td style='border: 1px solid black; padding: 3px; vertical-align: top;'>{{ datasetSubmission.datasetFileName }}</td>
+        <td style='border: 1px solid black; padding: 3px; vertical-align: top;'>{{ type == 'dataset' ? datasetSubmission.datasetFileName : datasetSubmission.metadataFileName }}</td>
         <td style='border: 1px solid black; padding: 3px; vertical-align: top;'>{{ datasetSubmission.dataset.udi }}</td>
         <td style='border: 1px solid black; padding: 3px; vertical-align: top;'><a href="{{ url('pelagos_app_ui_datasetsubmission_default') }}?regid={{datasetSubmission.dataset.udi}}">{{ url('pelagos_app_ui_datasetsubmission_default') }}?regid={{datasetSubmission.dataset.udi}}</a></td>
     </tr>
@@ -32,12 +32,12 @@ The GRIIDC Team<br>
 {% block body_text %}
 Dear {{ recipient.getFirstName }} {{ recipient.getLastName }},
 
-Thank you for registering your datasets with the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC).
+Thank you for registering your dataset with the Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC).
 
-The following dataset has been processed and can now be viewed:
+The following {{ type }} file has been processed and can now be viewed:
 
 Dataset Title: {{ datasetSubmission.title }}
-Dataset Filename: {{ datasetSubmission.datasetFileName }}
+Dataset Filename: {{ type == 'dataset' ? datasetSubmission.datasetFileName : datasetSubmission.metadataFileName }}
 UDI: {{ datasetSubmission.dataset.udi }}
 Link: {{ url('pelagos_app_ui_datasetsubmission_default') }}?regid={{datasetSubmission.dataset.udi}}
 
