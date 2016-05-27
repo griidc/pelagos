@@ -31,13 +31,6 @@ abstract class EventListener
     protected $mailer;
 
     /**
-     * The real swiftmailer transport.
-     *
-     * @var \Swift_Transport
-     */
-    protected $mailerTransportReal;
-
-    /**
      * Person entity for the logged-in user.
      *
      * @var Person
@@ -63,7 +56,6 @@ abstract class EventListener
      *
      * @param \Twig_Environment $twig                Twig engine.
      * @param \Swift_Mailer     $mailer              Email handling library.
-     * @param \Swift_Transport  $mailerTransportReal The real swiftmailer transport.
      * @param TokenStorage      $tokenStorage        Symfony's token object.
      * @param string            $fromAddress         Sender's email address.
      * @param string            $fromName            Sender's name to include in email.
@@ -71,14 +63,12 @@ abstract class EventListener
     public function __construct(
         \Twig_Environment $twig,
         \Swift_Mailer $mailer,
-        \Swift_Transport $mailerTransportReal,
         TokenStorage $tokenStorage,
         $fromAddress,
         $fromName
     ) {
         $this->twig = $twig;
         $this->mailer = $mailer;
-        $this->mailerTransportReal = $mailerTransportReal;
         $this->tokenStorage = $tokenStorage;
         $this->from = array($fromAddress => $fromName);
     }

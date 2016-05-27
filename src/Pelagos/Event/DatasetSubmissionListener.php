@@ -79,9 +79,6 @@ class DatasetSubmissionListener extends EventListener
             array('datasetSubmission' => $datasetSubmission),
             array($datasetSubmission->getCreator())
         );
-        $transport = $this->mailer->getTransport();
-        $spool = $transport->getSpool();
-        $spool->flushQueue($this->mailerTransportReal);
     }
 
     /**
@@ -102,8 +99,5 @@ class DatasetSubmissionListener extends EventListener
             array('datasetSubmission' => $datasetSubmission),
             array($datasetSubmission->getCreator())
         );
-        $transport = $this->mailer->getTransport();
-        $spool = $transport->getSpool();
-        $spool->flushQueue($this->mailerTransportReal);
     }
 }
