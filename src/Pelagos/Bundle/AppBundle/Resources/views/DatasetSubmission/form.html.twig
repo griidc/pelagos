@@ -197,12 +197,11 @@
                             {{ form_row(form.datasetFilePath) }}
                         </div>
                         <input type="button" value="Browse..." class="fileBrowserButton" data-target="#datasetFilePath" data-type="data">
-                        <div id="sftp_force_data_download">
-                            {% if sftp_type|default and url_set|default and sftpuser|default and sftpdir|default %}
-                            <!-- this can be done with js logic -->
-                            <input type="checkbox" name="sftp_force_data_download">import this file again from the same path"
-                            {% endif %}
-                        </div>
+                        {% if form.datasetFilePath.vars.value is not empty %}
+                            <div class="file_force">
+                                {{ form_widget(form.datasetFileForceImport) }} {{ form_label(form.datasetFileForceImport) }}
+                            </div>
+                        {% endif %}
                     </p>
                 </fieldset>
             </div> <!-- tabs-2 -->
@@ -219,11 +218,11 @@
                         <div class="fwtextboxcont">
                             {{ form_row(form.datasetFileUrl) }}
                         </div>
-                        <div id="http_force_data_download">
-                            {% if downloadagain|default %}
-                                <input type="checkbox" name="http_force_data_download">download this file again from the same URL
-                            {% endif %}
-                        </div>
+                        {% if form.datasetFileUrl.vars.value is not empty %}
+                            <div class="file_force">
+                                {{ form_widget(form.datasetFileForceDownload) }} {{ form_label(form.datasetFileForceDownload) }}
+                            </div>
+                        {% endif %}
                     </p>
                 </fieldset>
 
@@ -376,11 +375,11 @@
                             {{ form_widget(form.metadataFilePath) }}
                         </div>
                         <input type="button" value="Browse..." class="fileBrowserButton" data-target="#metadataFilePath" data-type="metadata">
-                        <div id="sftp_force_metadata_download">
-                        {% if sftp|default %}
-                            <input type="checkbox" name="sftp_force_metadata_download">import this file again from the same path
+                        {% if form.metadataFilePath.vars.value is not empty %}
+                            <div class="file_force">
+                                {{ form_widget(form.metadataFileForceImport) }} {{ form_label(form.metadataFileForceImport) }}
+                            </div>
                         {% endif %}
-                        </div>
                     <br>
                  </fieldset>
             </div> <!-- md-tabs-2 -->
@@ -398,11 +397,11 @@
                         <div class="fwtextboxcont">
                             {{ form_widget(form.metadataFileUrl) }}
                         </div>
-                        <div id="http_force_metadata_download">
-                            {% if upload|default %}
-                                <input type="checkbox" name="http_force_metadata_download">download this file again from the same URL
-                            {% endif %}
-                        </div>
+                        {% if form.metadataFileUrl.vars.value is not empty %}
+                            <div class="file_force">
+                                {{ form_widget(form.metadataFileForceDownload) }} {{ form_label(form.metadataFileForceDownload) }}
+                            </div>
+                        {% endif %}
                     </p>
                 </fieldset>
             </div> <!-- md-tabs-3 -->
