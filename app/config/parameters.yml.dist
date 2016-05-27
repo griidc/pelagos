@@ -3,6 +3,8 @@
 # http://symfony.com/doc/current/best_practices/configuration.html#infrastructure-related-configuration
 parameters:
     hostname: ~
+    # A unique name for this Pelagos instance
+    pelagos_name: ~
 
     database_host:     127.0.0.1
     database_port:     5432
@@ -28,6 +30,14 @@ parameters:
     account_password_max_age: P180D
     # When to warn account holders of soon to expire passwords (as ISO 8601 durations)
     account_password_expiration_warn: [P7D, P1D]
+
+    rabbit_mq_host: localhost
+    rabbit_mq_port: 5672
+    rabbit_mq_user: pelagos
+    rabbit_mq_pass: pelagos
+
+    data_store_directory:    /san/data/store
+    data_download_directory: /san/data/download
 
     # A secret key that's used to generate certain security-related tokens
     secret:            ThisTokenIsNotSoSecretChangeIt

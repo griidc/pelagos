@@ -2,6 +2,7 @@
 namespace Pelagos\Event;
 
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
 use Pelagos\Bundle\AppBundle\DataFixtures\ORM\ResearchGroupRoles;
@@ -83,12 +84,16 @@ abstract class EventListener
      */
     protected function sendMailMsg(\Twig_Template $twigTemplate, array $mailData, array $peopleObjs = null)
     {
-        // Token's getUser returns an account, not a person directly.
-        $currentUser = $this->tokenStorage->getToken()->getUser()->getPerson();
-        $mailData['user'] = $currentUser;
-        
-        if ($peopleObjs == null) {
-            $peopleObjs = array($currentUser);
+        $currentToken = $this->tokenStorage->getToken();
+        if ($currentToken instanceof TokenInterface) {
+            $currentUser = $this->tokenStorage->getToken()->getUser();
+            if ($currentUser instanceof Account) {
+                $currentPerson = $currentUser->getPerson();
+                $mailData['user'] = $currentPerson;
+                if ($peopleObjs == null) {
+                    $peopleObjs = array($currentPerson);
+                }
+            }
         }
 
         foreach ($peopleObjs as $person) {

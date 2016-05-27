@@ -111,7 +111,7 @@ class DIFController extends EntityController
         // Update the Dataset with the new UDI.
         $this->container->get('pelagos.entity.handler')->update($dataset);
         // Dispatch an event to indicate a dataset has been created via a DIF.
-        $this->container->get('pelagos.entity.handler')->dispatchEntityEvent($dif, 'dataset_created');
+        $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch($dif, 'dataset_created');
         // Return a created response, adding the UDI as a custom response header.
         return $this->makeCreatedResponse('pelagos_api_difs_get', $dif->getId(), array('X-UDI' => $udi));
     }
@@ -411,7 +411,7 @@ class DIFController extends EntityController
             throw new BadRequestHttpException('This ' . $dif::FRIENDLY_NAME . ' cannot be unlocked');
         }
         // Dispatch an 'unlock_requested' event.
-        $this->container->get('pelagos.entity.handler')->dispatchEntityEvent($dif, 'unlock_requested');
+        $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch($dif, 'unlock_requested');
         // Return a no content success response.
         return $this->makeNoContentResponse();
     }

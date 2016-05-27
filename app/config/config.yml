@@ -8,6 +8,8 @@ imports:
 parameters:
     locale: en
     jms_serializer.camel_case_naming_strategy.class: JMS\Serializer\Naming\IdenticalPropertyNamingStrategy
+    router.request_context.host: "%hostname%"
+    router.request_context.scheme: https
 
 framework:
     #esi:             ~
@@ -68,7 +70,6 @@ swiftmailer:
     host:      "%mailer_host%"
     username:  "%mailer_user%"
     password:  "%mailer_password%"
-    spool:     { type: memory }
 
 fos_rest:
     view:
@@ -111,3 +112,41 @@ simple_things_entity_audit:
 
 fos_js_routing:
     routes_to_expose: [ .* ]
+
+old_sound_rabbit_mq:
+    connections:
+        default:
+            host:     "%rabbit_mq_host%"
+            port:     "%rabbit_mq_port%"
+            user:     "%rabbit_mq_user%"
+            password: "%rabbit_mq_pass%"
+            vhost:    "%pelagos_name%"
+            lazy:     true
+            connection_timeout: 3
+            read_write_timeout: 3
+            keepalive: false
+            heartbeat: 0
+    producers:
+        dataset_submission:
+            connection:       default
+            exchange_options: { name: 'dataset_submission', type: topic }
+    consumers:
+        filer:
+            connection:       default
+            exchange_options: { name: 'dataset_submission', type: topic }
+            callback:         pelagos.rabbit.consumer.dataset_submission.filer
+            queue_options:
+                name: 'filer'
+                routing_keys:
+                    - 'dataset.upload'
+                    - 'dataset.SFTP'
+                    - 'metadata.#'
+        retriever:
+            connection:       default
+            exchange_options: { name: 'dataset_submission', type: topic }
+            callback:         pelagos.rabbit.consumer.dataset_submission.retriever
+            idle_timeout:     1
+            queue_options:
+                name: 'retriever'
+                routing_keys:
+                    - 'dataset.HTTP'

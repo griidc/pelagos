@@ -9,6 +9,14 @@ framework:
 
 monolog:
     handlers:
+        filer:
+            type:     stream
+            path:     "%kernel.logs_dir%/filer.log"
+            channels: ["filer"]
+        retriever:
+            type:     stream
+            path:     "%kernel.logs_dir%/retriever.log"
+            channels: ["retriever"]
         main:
             type:         fingers_crossed
             action_level: error
