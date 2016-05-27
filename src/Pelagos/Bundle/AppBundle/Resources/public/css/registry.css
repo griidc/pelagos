@@ -13,8 +13,10 @@ input#pointOfContactName,
 input#pointOfContactEmail,
 input#authors,
 input#title,
+input#datasetFileUpload,
 input#datasetFilePath,
 input#datasetFileUrl,
+input#metadataFileUpload,
 input#metadataFilePath,
 input#metadataFileUrl
 {
@@ -297,6 +299,8 @@ a.boxclose{
     background-color: white;
 }
 
-.sftphidden {
-    display: none;
+.file_force label {
+    color: #222;
+    display: inline;
+    font-weight: normal;
 }
