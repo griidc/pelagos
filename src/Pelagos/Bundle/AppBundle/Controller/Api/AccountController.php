@@ -174,6 +174,7 @@ class AccountController extends EntityController
         // Call utility class to POSIX-enable this Account.
         try {
             $this->get('pelagos.util.posixify')->POSIXifyAccount($this->getUser()->getPerson()->getAccount());
+            $this->get('old_sound_rabbit_mq.dataset_submission_producer')->publish($this->getUser()->getUserId(), 'posixify');
         } catch (\Exception $e) {
             throw new BadRequestHttpException(
                 'Could not request POSIX conversion on this account.  Reason: '
