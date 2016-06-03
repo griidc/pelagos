@@ -85,7 +85,7 @@ Thank you for your submission. Please email <a href="mailto:griidc@gomri.org?sub
                 <b>Data URL:</b>
             </td>
             <td>
-                {{ DatasetSubmission.getDatasetFileUrl }}
+                {{ DatasetSubmission.datasetFileUri }}
             </td>
         </tr>
         <tr>
@@ -93,7 +93,7 @@ Thank you for your submission. Please email <a href="mailto:griidc@gomri.org?sub
                 <b>Metadata URL:</b>
             </td>
             <td>
-                {{ DatasetSubmission.getMetadataFileUrl }}
+                {{ DatasetSubmission.metadataFileUri }}
             </td>
         </tr>
         {% if DatasetSubmission.getDatasetFileTransferType == 'HTTP' %}

@@ -403,7 +403,7 @@ $app->get('/metadata/:udi', function ($udi) use ($app) {
         drupal_set_message('Metadata that has not been approved cannot be downloaded.', 'error');
         drupal_goto(preg_replace('/^\//', '', $env['SCRIPT_NAME'])); # reload calling page
     }
-})->conditions(array('udi' => '(00|Y1|R\d)\.x\d{3}\.\d{3}:\d{4}'));
+})->conditions(array('udi' => '(00|[A-Z]\d)\.x\d{3}\.\d{3}:\d{4}'));
 
 $app->get('/metadata/', function () use ($app) {
     $files = array();

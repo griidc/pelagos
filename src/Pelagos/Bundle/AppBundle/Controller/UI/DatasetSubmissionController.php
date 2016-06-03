@@ -5,9 +5,11 @@ namespace Pelagos\Bundle\AppBundle\Controller\UI;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use Symfony\Component\Form\Form;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 use Pelagos\Bundle\AppBundle\Form\DatasetSubmissionType;
@@ -26,6 +28,13 @@ use Pelagos\Entity\ResearchGroup;
  */
 class DatasetSubmissionController extends UIController
 {
+    /**
+     * A queue of messages to publish to RabbitMQ.
+     *
+     * @var array
+     */
+    protected $messages = array();
+
     /**
      * The default action for Dataset Submission.
      *
@@ -130,6 +139,40 @@ class DatasetSubmissionController extends UIController
             )
         );
 
+        if ($datasetSubmission instanceof DatasetSubmission) {
+            switch ($datasetSubmission->getDatasetFileTransferType()) {
+                case DatasetSubmission::TRANSFER_TYPE_UPLOAD:
+                    $form->get('datasetFileUpload')->setData(
+                        preg_replace('#^file://#', '', $datasetSubmission->getDatasetFileUri())
+                    );
+                    break;
+                case DatasetSubmission::TRANSFER_TYPE_SFTP:
+                    $form->get('datasetFilePath')->setData(
+                        preg_replace('#^file://#', '', $datasetSubmission->getDatasetFileUri())
+                    );
+                    break;
+                case DatasetSubmission::TRANSFER_TYPE_HTTP:
+                    $form->get('datasetFileUrl')->setData($datasetSubmission->getDatasetFileUri());
+                    break;
+            }
+
+            switch ($datasetSubmission->getMetadataFileTransferType()) {
+                case DatasetSubmission::TRANSFER_TYPE_UPLOAD:
+                    $form->get('metadataFileUpload')->setData(
+                        preg_replace('#^file://#', '', $datasetSubmission->getMetadataFileUri())
+                    );
+                    break;
+                case DatasetSubmission::TRANSFER_TYPE_SFTP:
+                    $form->get('metadataFilePath')->setData(
+                        preg_replace('#^file://#', '', $datasetSubmission->getMetadataFileUri())
+                    );
+                    break;
+                case DatasetSubmission::TRANSFER_TYPE_HTTP:
+                    $form->get('metadataFileUrl')->setData($datasetSubmission->getMetadataFileUri());
+                    break;
+            }
+        }
+
         if ($this->getUser() instanceof Account) {
             $loggedInPerson = $this->getUser()->getPerson();
         } else {
@@ -196,7 +239,7 @@ class DatasetSubmissionController extends UIController
             $datasetSubmission = clone $datasetSubmission;
             $datasetSubmission->setId(null);
         } else {
-             $datasetSubmission = new DatasetSubmission;
+            $datasetSubmission = new DatasetSubmission;
         }
 
         $form = $this->get('form.factory')->createNamed(
@@ -213,17 +256,152 @@ class DatasetSubmissionController extends UIController
 
             if ($sequence == null) {
                 $sequence = 0;
+                $eventName = 'submitted';
+            } else {
+                $eventName = 'resubmitted';
             }
 
             $datasetSubmission->setSequence(++$sequence);
 
+            if ($this->getUser()->isPosix()) {
+                $incomingDirectory = $this->getUser()->getHomeDirectory() . '/incoming';
+            } else {
+                $incomingDirectory = $this->getParameter('homedir_prefix') . '/upload/'
+                                         . $this->getUser()->getUserName() . '/incoming';
+                if (!file_exists($incomingDirectory)) {
+                    mkdir($incomingDirectory, 0755, true);
+                }
+            }
+
+            $this->processDatasetFileTransferDetails($form, $datasetSubmission, $incomingDirectory);
+
+            $this->processMetadataFileTransferDetails($form, $datasetSubmission, $incomingDirectory);
+
             $this->entityHandler->create($datasetSubmission);
             $this->entityHandler->update($dataset);
+
+            $this->container->get('pelagos.event.entity_event_dispatcher')->dispatch(
+                $datasetSubmission,
+                $eventName
+            );
+
+            foreach ($this->messages as $message) {
+                $this->get('old_sound_rabbit_mq.dataset_submission_producer')->publish(
+                    $message['body'],
+                    $message['routing_key']
+                );
+            }
 
             return $this->render(
                 'PelagosAppBundle:DatasetSubmission:submit.html.twig',
                 array('DatasetSubmission' => $datasetSubmission)
             );
+        }
+    }
+
+    /**
+     * Process the Dataset File Transfer Details and update the Dataset Submission.
+     *
+     * @param Form              $form              The submitted dataset submission form.
+     * @param DatasetSubmission $datasetSubmission The Dataset Submission to update.
+     * @param string            $incomingDirectory The user's incoming directory.
+     *
+     * @return void
+     */
+    protected function processDatasetFileTransferDetails(
+        Form $form,
+        DatasetSubmission $datasetSubmission,
+        $incomingDirectory
+    ) {
+        $datasetId = $datasetSubmission->getDataset()->getId();
+        switch ($datasetSubmission->getDatasetFileTransferType()) {
+            case DatasetSubmission::TRANSFER_TYPE_UPLOAD:
+                $datasetFile = $form['datasetFile']->getData();
+                if ($datasetFile instanceof UploadedFile) {
+                    $originalFileName = $datasetFile->getClientOriginalName();
+                    $movedDatasetFile = $datasetFile->move($incomingDirectory, $originalFileName);
+                    $datasetSubmission->setDatasetFileUri('file://' . $movedDatasetFile->getRealPath());
+                    $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
+                    $this->messages[] = array('body' => $datasetId, 'routing_key' => 'dataset.upload');
+                }
+                break;
+            case DatasetSubmission::TRANSFER_TYPE_SFTP:
+                $datasetFilePath = $form['datasetFilePath']->getData();
+                $newDatasetFileUri = empty($datasetFilePath) ? null : "file://$datasetFilePath";
+                if ($newDatasetFileUri !== $datasetSubmission->getDatasetFileUri()) {
+                    $datasetSubmission->setDatasetFileUri($newDatasetFileUri);
+                    $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
+                    $this->messages[] = array('body' => $datasetId, 'routing_key' => 'dataset.SFTP');
+                } elseif ($form['datasetFileForceImport']->getData()) {
+                    $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
+                    $this->messages[] = array('body' => $datasetId, 'routing_key' => 'dataset.SFTP');
+                }
+                break;
+            case DatasetSubmission::TRANSFER_TYPE_HTTP:
+                $datasetFileUrl = $form['datasetFileUrl']->getData();
+                $newDatasetFileUri = empty($datasetFileUrl) ? null : $datasetFileUrl;
+                if ($newDatasetFileUri !== $datasetSubmission->getDatasetFileUri()) {
+                    $datasetSubmission->setDatasetFileUri($newDatasetFileUri);
+                    $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
+                    $this->messages[] = array('body' => $datasetId, 'routing_key' => 'dataset.HTTP');
+                } elseif ($form['datasetFileForceDownload']->getData()) {
+                    $datasetSubmission->setDatasetFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
+                    $this->messages[] = array('body' => $datasetId, 'routing_key' => 'dataset.HTTP');
+                }
+                break;
+        }
+    }
+
+    /**
+     * Process the Metadata File Transfer Details and update the Dataset Submission.
+     *
+     * @param Form              $form              The submitted dataset submission form.
+     * @param DatasetSubmission $datasetSubmission The Dataset Submission to update.
+     * @param string            $incomingDirectory The user's incoming directory.
+     *
+     * @return void
+     */
+    protected function processMetadataFileTransferDetails(
+        Form $form,
+        DatasetSubmission $datasetSubmission,
+        $incomingDirectory
+    ) {
+        $datasetId = $datasetSubmission->getDataset()->getId();
+        switch ($datasetSubmission->getMetadataFileTransferType()) {
+            case DatasetSubmission::TRANSFER_TYPE_UPLOAD:
+                $metadataFile = $form['metadataFile']->getData();
+                if ($metadataFile instanceof UploadedFile) {
+                    $originalFileName = $metadataFile->getClientOriginalName();
+                    $movedMetadataFile = $metadataFile->move($incomingDirectory, $originalFileName);
+                    $datasetSubmission->setMetadataFileUri('file://' . $movedMetadataFile->getRealPath());
+                    $datasetSubmission->setMetadataFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
+                    $this->messages[] = array('body' => $datasetId, 'routing_key' => 'metadata.upload');
+                }
+                break;
+            case DatasetSubmission::TRANSFER_TYPE_SFTP:
+                $metadataFilePath = $form['metadataFilePath']->getData();
+                $newMetadataFileUri = empty($metadataFilePath) ? null : "file://$metadataFilePath";
+                if ($newMetadataFileUri !== $datasetSubmission->getMetadataFileUri()) {
+                    $datasetSubmission->setMetadataFileUri($newMetadataFileUri);
+                    $datasetSubmission->setMetadataFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
+                    $this->messages[] = array('body' => $datasetId, 'routing_key' => 'metadata.SFTP');
+                } elseif ($form['metadataFileForceImport']->getData()) {
+                    $datasetSubmission->setMetadataFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
+                    $this->messages[] = array('body' => $datasetId, 'routing_key' => 'metadata.SFTP');
+                }
+                break;
+            case DatasetSubmission::TRANSFER_TYPE_HTTP:
+                $metadataFileUrl = $form['metadataFileUrl']->getData();
+                $newMetadataFileUri = empty($metadataFileUrl) ? null : $metadataFileUrl;
+                if ($newMetadataFileUri !== $datasetSubmission->getMetadataFileUri()) {
+                    $datasetSubmission->setMetadataFileUri($newMetadataFileUri);
+                    $datasetSubmission->setMetadataFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
+                    $this->messages[] = array('body' => $datasetId, 'routing_key' => 'metadata.HTTP');
+                } elseif ($form['metadataFileForceDownload']->getData()) {
+                    $datasetSubmission->setMetadataFileTransferStatus(DatasetSubmission::TRANSFER_STATUS_NONE);
+                    $this->messages[] = array('body' => $datasetId, 'routing_key' => 'metadata.HTTP');
+                }
+                break;
         }
     }
 }
