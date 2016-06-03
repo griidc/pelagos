@@ -10,6 +10,9 @@ var spinner;
 
         initSpinner();
 
+        // Add emRequired class to each field that is required.
+        $("label").next("input[required],textarea[required],select[required]").prev().addClass("emRequired");
+
         $("#tabs").tabs({
             heightStyleType: "fill",
             disabled: [3,4,5],
@@ -454,4 +457,3 @@ function hideSpinner()
 {
     $("#spinner").hide();
 }
-
