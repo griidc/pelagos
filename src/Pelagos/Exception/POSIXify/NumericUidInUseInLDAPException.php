@@ -3,7 +3,7 @@
 namespace Pelagos\Exception\POSIXify;
 
 /**
- * Class NumericUidInUseInLDAPException
+ * Class NumericUidInUseInLDAPException.
  *
  * An exception to be thrown when an someone requests POSIX
  * conversion of their account and the numeric UID is already
