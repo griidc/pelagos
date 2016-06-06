@@ -41,14 +41,14 @@ class POSIXify
      *
      * @var integer
      */
-    protected $posixStartingUid;
+    protected $posixStartingUidNumber;
 
     /**
      * The POSIX group id parameter.
      *
      * @var integer
      */
-    protected $posixGid;
+    protected $posixGidNumber;
 
     /**
      * The homedir prefix parameter.
@@ -60,24 +60,24 @@ class POSIXify
     /**
      * Constructor.
      *
-     * @param EntityManager $entityManager    The entity manager to use in querybuilder.
-     * @param Ldap          $ldap             The instance of the LDAPClient class.
-     * @param EntityHandler $entityHandler    The Pelagos entity handler to handle updates.
-     * @param integer       $posixStartingUid The value to start creating user ID number entries at.
-     * @param integer       $posixGid         The value to set group ID to.
+     * @param EntityManager $entityManager          The entity manager to use in querybuilder.
+     * @param Ldap          $ldap                   The instance of the LDAPClient class.
+     * @param EntityHandler $entityHandler          The Pelagos entity handler to handle updates.
+     * @param integer       $posixStartingUidNumber The value to start creating user ID number entries at.
+     * @param integer       $posixGidNumber         The value to set group ID to.
      */
     public function __construct(
         EntityManager $entityManager,
         Ldap $ldap,
         EntityHandler $entityHandler,
-        $posixStartingUid,
-        $posixGid
+        $posixStartingUidNumber,
+        $posixGidNumber
     ) {
         $this->entityManager = $entityManager;
         $this->ldap = $ldap;
         $this->entityHandler = $entityHandler;
-        $this->posixStartingUid = $posixStartingUid;
-        $this->posixGid = $posixGid;
+        $this->posixStartingUidNumber = $posixStartingUidNumber;
+        $this->posixGidNumber = $posixGidNumber;
         // This is set to a temporary value of /dev/null as a flag
         // for a later cronjob to correctly set after creating the directory.
         $this->homedirPrefix = '/dev/null';
@@ -109,7 +109,7 @@ class POSIXify
         }
 
         // Update account's POSIX attributes.
-        $account->makePosix($uid, $this->posixGid, $this->homedirPrefix);
+        $account->makePosix($uid, $this->posixGidNumber, $this->homedirPrefix);
         $this->entityHandler->update($account);
 
         // Update LDAP with this modified Account (via Person).
@@ -133,7 +133,7 @@ class POSIXify
 
         if (null === $account) {
             // If this is the first numeric POSIX UID, we start per parameters.yml configuration.
-            $sequence = intval($this->posixStartingUid);
+            $sequence = intval($this->posixStartingUidNumber);
         } else {
             $highUID = $account->getUidNumber();
             $sequence = ($highUID + 1);
