@@ -150,3 +150,12 @@ old_sound_rabbit_mq:
                 name: 'retriever'
                 routing_keys:
                     - 'dataset.HTTP'
+        posixify:
+            connection:       default
+            exchange_options: { name: 'dataset_submission', type: topic }
+            callback:         pelagos.rabbit.consumer.dataset_submission.posixify
+            idle_timeout:     1
+            queue_options:
+                name: 'posixify'
+                routing_keys:
+                    - 'dataset.posixify'

@@ -58,3 +58,9 @@ services:
         arguments: ["@doctrine.orm.entity_manager", "@pelagos.util.data_store", "@logger", "@pelagos.event.entity_event_dispatcher"]
         tags:
             - { name: monolog.logger, channel: retriever }
+
+    pelagos.rabbit.consumer.dataset_submission.posixify:
+        class: Pelagos\Bundle\AppBundle\Rabbit\Consumer\CreateHomedirConsumer
+        arguments: ["@doctrine.orm.entity_manager", "@logger", "%homedir_prefix%" ,"@pelagos.ldap" ]
+        tags:
+            - { name: monolog.logger, channel: retriever }
