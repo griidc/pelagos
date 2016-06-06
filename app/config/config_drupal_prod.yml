@@ -17,6 +17,10 @@ monolog:
             type:     stream
             path:     "%kernel.logs_dir%/retriever.log"
             channels: ["retriever"]
+        posixify:
+            type:     stream
+            path:     "%kernel.logs_dir%/posixify.log"
+            channels: ["posixify"]
         main:
             type:         fingers_crossed
             action_level: error
