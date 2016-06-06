@@ -17,7 +17,7 @@ use Pelagos\Entity\Person;
 class DataRepositoryRoles extends AbstractFixture implements OrderedFixtureInterface
 {
     const MANAGER = 'Manager';
-    const ENGINEER = 'Developer';
+    const ENGINEER = 'Engineer';
     const SUPPORT = 'Support';
     const SME = 'Subject Matter Expert';
 
