@@ -8,6 +8,8 @@ use Pelagos\Entity\Account;
 use Pelagos\Entity\Person;
 use Pelagos\Component\Ldap\Ldap;
 
+use Doctrine\ORM\EntityManager;
+
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
 use Symfony\Bridge\Monolog\Logger;
@@ -17,7 +19,7 @@ use Symfony\Bridge\Monolog\Logger;
  *
  * @see ConsumerInterface
  */
-class CreateHomedirConsumer extends ConsumerInterface
+class CreateHomedirConsumer implements ConsumerInterface
 {
 
     /**
@@ -75,7 +77,7 @@ class CreateHomedirConsumer extends ConsumerInterface
     *
     * @return boolean True if success, false otherwise.
     */
-    protected function execute(AMQPMessage $message)
+    public function execute(AMQPMessage $message)
     {
         $userId = $message->body;
 
