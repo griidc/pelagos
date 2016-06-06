@@ -3,7 +3,7 @@
 namespace Pelagos\Exception\POSIXify;
 
 /**
- * Class AccountAlreadyPOSIXEnabledException
+ * Class AccountAlreadyPOSIXEnabledException.
  *
  * An exception to be thrown when an someone requests
  * an account be converted to a POSIX account but the
