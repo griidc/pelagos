@@ -56,7 +56,7 @@ class DataRepository extends Entity
      *
      * @access protected
      *
-     * @ORM\Column(type="citext")
+     * @ORM\Column(type="citext", unique=true)
      *
      * @Assert\NotBlank(
      *     message="Name is required"
