@@ -64,22 +64,22 @@ class POSIXifyAccount
      * @param EntityHandler $entityHandler          The Pelagos entity handler to handle updates.
      * @param integer       $posixStartingUidNumber The value to start creating user ID number entries at.
      * @param integer       $posixGidNumber         The value to set group ID to.
+     * @param string        $homedirPrefix          Home directory prefix, from parameter.
      */
     public function __construct(
         EntityManager $entityManager,
         Ldap $ldap,
         EntityHandler $entityHandler,
         $posixStartingUidNumber,
-        $posixGidNumber
+        $posixGidNumber,
+        $homedirPrefix
     ) {
         $this->entityManager = $entityManager;
         $this->ldap = $ldap;
         $this->entityHandler = $entityHandler;
         $this->posixStartingUidNumber = $posixStartingUidNumber;
         $this->posixGidNumber = $posixGidNumber;
-        // This is set to a temporary value of /dev/null as a flag
-        // for a later cronjob to correctly set after creating the directory.
-        $this->homedirPrefix = '/dev/null';
+        $this->homedirPrefix = $homedirPrefix;
     }
 
     /**

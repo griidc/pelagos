@@ -37,13 +37,6 @@ class CreateHomedirConsumer implements ConsumerInterface
     protected $entityManager;
 
     /**
-     * The prefix for home directories, from config.
-     *
-     * @var string
-     */
-    protected $homedirPrefix;
-
-    /**
      * The pelagos LDAP component.
      *
      * @var ldap
@@ -55,18 +48,15 @@ class CreateHomedirConsumer implements ConsumerInterface
      *
      * @param EntityManager $entityManager The entity manager.
      * @param Logger        $logger        A Monolog logger.
-     * @param string        $homedirPrefix Prefix of home directories.
      * @param Ldap          $ldap          The Pelagos Ldap component.
      */
     public function __construct(
         EntityManager $entityManager,
         Logger $logger,
-        $homedirPrefix,
         Ldap $ldap
     ) {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
-        $this->homedirPrefix = $homedirPrefix;
         $this->ldap = $ldap;
     }
 
@@ -79,31 +69,13 @@ class CreateHomedirConsumer implements ConsumerInterface
     */
     public function execute(AMQPMessage $message)
     {
-        $userId = $message->body;
+        $account = $this->entityManager->find($message->body);
 
-       // find account by id and that is flagged with /dev/null
-        $queryBuilder = $this->entityManager->createQueryBuilder();
-        $account = $queryBuilder
-            ->select('account')
-            ->from(Account::class, 'account')
-            ->where('account.userId = :userId')
-            ->andWhere(
-                $queryBuilder->expr()->like('account.homeDirectory', ':pattern')
-            )
-            ->setParameter('pattern', '/dev/null/%')
-            ->setParameter('userId', $userId)
-            ->getQuery()
-            ->getOneOrNullResult();
+        if (instanceOf($account)) {
 
-        if ($account) {
-
-            // Get username for the last part of homedir.
+            // Get username, homedir.
             $username = $account->getUserName();
-            $homeDir = $this->homedirPrefix . "/$username";
-
-           // Set correct path in the model.
-            $this->logger->info('Updating database for: ' . $username . '.');
-            $account->setHomeDirectory($homeDir);
+            $homeDir = $this->getHomeDirectory;
 
             // Get Person associated with this Account.
             $accountOwnerPerson = $account->getPerson();
@@ -125,7 +97,7 @@ class CreateHomedirConsumer implements ConsumerInterface
             }
 
             $this->logger->info(
-                'Creating homedir for user ' . $username . ': ' . $this->homedirPrefix . "/$username\n"
+                "Creating homedir for user $username: $homeDir"
             );
 
             // Create home directory, owned by script-running system user (pelagos).
@@ -198,7 +170,7 @@ class CreateHomedirConsumer implements ConsumerInterface
             $entityManager->persist($account);
             $entityManager->flush();
         } else {
-            $this->logger->error("No account found for $userId");
+            $this->logger->error("No account found for Account Entity id# $message->body");
             return true;
         }
         return true;

@@ -34,7 +34,7 @@ services:
 
     pelagos.util.posixify:
         class: Pelagos\Util\POSIXify
-        arguments: ["@doctrine.orm.entity_manager", "@pelagos.ldap", "@pelagos.entity.handler", '%posix_starting_uid%', '%posix_gid%']
+        arguments: ["@doctrine.orm.entity_manager", "@pelagos.ldap", "@pelagos.entity.handler", '%posix_starting_uid%', '%posix_gid%', '%homedir_prefix%']
 
     pelagos.util.data_store:
         class: Pelagos\Util\DataStore
