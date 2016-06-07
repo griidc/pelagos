@@ -106,7 +106,7 @@ class Person extends Entity
      *
      * @var string $emailAddress
      *
-     * @ORM\Column(type="citext")
+     * @ORM\Column(type="citext", unique=true)
      *
      * @Assert\NotBlank(
      *     message="Email address is required"
