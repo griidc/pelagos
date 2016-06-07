@@ -55,7 +55,7 @@ $app->get(
         $fsrow = $fsrow[0];
         $stash['used_storage_space'] = bytes2filesize($fsrow['total_file_size'], 1);
 
-        $fundFilter = array('fundId>0');
+        $fundFilter = array('fundId>0','fundId<700');
         if (isset($GLOBALS['config']['exclude']['funds'])) {
             foreach ($GLOBALS['config']['exclude']['funds'] as $exclude) {
                 $fundFilter[] = "fundId!=$exclude";
