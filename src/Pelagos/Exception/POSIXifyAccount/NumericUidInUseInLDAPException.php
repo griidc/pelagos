@@ -1,6 +1,6 @@
 <?php
 
-namespace Pelagos\Exception\POSIXify;
+namespace Pelagos\Exception\POSIXifyAccount;
 
 /**
  * Class NumericUidInUseInLDAPException.

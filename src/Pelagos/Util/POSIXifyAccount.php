@@ -13,7 +13,7 @@ use Pelagos\Exception\POSIXify\NumericUidInUseInLDAPException;
 /**
  * A utility class to make an account into a POSIX account.
  */
-class POSIXify
+class POSIXifyAccount
 {
     /**
      * The entity manager to use.
