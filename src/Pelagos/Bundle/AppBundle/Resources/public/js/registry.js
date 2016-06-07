@@ -185,7 +185,7 @@ var spinner;
               url: sftpReqPath,
               type: 'PATCH',
               success: function() {
-                var msg = 'SFTP Access has been granted, however, this request may take up to 60 seconds.';
+                var msg = 'SFTP Access has been granted.';
                 showDialog('SFTP Access', msg);
                 $('.sftpYes').show();
                 $('.sftpNo').hide();
