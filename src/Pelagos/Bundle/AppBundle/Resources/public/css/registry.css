@@ -300,3 +300,7 @@ a.boxclose{
     display: inline;
     font-weight: normal;
 }
+
+.sftphidden {
+    display: none;
+}
