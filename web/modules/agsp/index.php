@@ -42,27 +42,20 @@ $app->get(
     '/datasets',
     function () use ($app) {
 
-        $query = "SELECT COUNT(downloads.registry_id) as total_number_of_downloads,
-                         (SELECT SUM(dataset_download_size) FROM registry) AS total_file_size,
-                         (SELECT COALESCE(SUM(dataset_download_size),0) FROM registry
-                         WHERE substr(registry.registry_id,0,17) = dataset_udi AND
-                         dataset_download_status = 'Completed') AS total_file_size_by_gomri
-                         FROM registry
-                         LEFT OUTER JOIN datasets on registry.dataset_udi = datasets.dataset_udi
-                         LEFT OUTER JOIN downloads on downloads.registry_id = substr(registry.registry_id,0,17);";
+        $query = 'SELECT SUM(dataset_download_size) AS total_file_size
+                         FROM registry_view
+                         LEFT OUTER JOIN datasets on registry_view.dataset_udi = datasets.dataset_udi
+                         LEFT OUTER JOIN projects on projects."ID" = datasets.project_id
+                         WHERE projects."FundSrc" < 700;';
 
         $gomriDBH = openDB('GOMRI_RO');
         $stmt = $gomriDBH->prepare($query);
         $stmt->execute();
         $fsrow = $stmt->fetchAll();
         $fsrow = $fsrow[0];
-        $stash['avail_storage_space'] = bytes2filesize(
-            ($GLOBALS['config']['misc']['system_capacity'] - $fsrow['total_file_size']),
-            1
-        );
         $stash['used_storage_space'] = bytes2filesize($fsrow['total_file_size'], 1);
 
-        $fundFilter = array('fundId>0');
+        $fundFilter = array('fundId>0','fundId<700');
         if (isset($GLOBALS['config']['exclude']['funds'])) {
             foreach ($GLOBALS['config']['exclude']['funds'] as $exclude) {
                 $fundFilter[] = "fundId!=$exclude";
