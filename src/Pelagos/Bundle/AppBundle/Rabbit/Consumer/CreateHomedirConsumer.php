@@ -104,8 +104,6 @@ class CreateHomedirConsumer implements ConsumerInterface
            // Set correct path in the model.
             $this->logger->info('Updating database for: ' . $username . '.');
             $account->setHomeDirectory($homeDir);
-            $entityManager->persist($account);
-            $entityManager->flush();
 
             // Get Person associated with this Account.
             $accountOwnerPerson = $account->getPerson();
@@ -116,13 +114,14 @@ class CreateHomedirConsumer implements ConsumerInterface
                 $this->logger->info('Updating LDAP for: ' . $username . '.');
             } catch (LdapException $e) {
                 $this->logger->error("Failed updating LDAP for $username.");
-                return false;
+                // Returning true on consumer failure prevents re-execution of message.  (Must log error or throw event.)
+                return true;
             }
 
             // Check to see if a directory already exists.
             if (is_dir($homeDir)) {
                 $this->logger->error("Directory for $username already exists.");
-                return false;
+                return true;
             }
 
             $this->logger->info(
@@ -132,7 +131,7 @@ class CreateHomedirConsumer implements ConsumerInterface
             // Create home directory, owned by script-running system user (pelagos).
             if (false == mkdir("$homeDir", 0750, false)) {
                 $this->logger->error("Could not create homedir: $homeDir");
-                return false;
+                return true;
             }
 
             // Give Apache r-x on homedir with FACL.
@@ -140,7 +139,7 @@ class CreateHomedirConsumer implements ConsumerInterface
             exec("/usr/bin/setfacl -m u:apache:r-x $homeDir", $outputLines, $returnValue);
             if ($returnValue != 0) {
                 $this->logger->error("Error setting facl (u:apache:r-x) on $homeDir. $outputLines");
-                return false;
+                return true;
             }
 
             // Give user r-x on homedir with FACL.
@@ -148,13 +147,13 @@ class CreateHomedirConsumer implements ConsumerInterface
             exec("/usr/bin/setfacl -m u:$username:r-x $homeDir", $outputLines, $returnValue);
             if ($returnValue != 0) {
                 $this->logger->error("Error setting facl (u:$username:r-x) on $homeDir. $outputLines");
-                return false;
+                return true;
             }
 
             // Create incoming directory, owned by script-running system user (pelagos).
             if (false == mkdir("$homeDir/incoming", 0750, false)) {
                 $this->logger->error("Could not create directory: $homeDir/incoming.");
-                return false;
+                return true;
             }
 
             // Give Apache rwx on homedir/incoming with FACL.
@@ -162,20 +161,20 @@ class CreateHomedirConsumer implements ConsumerInterface
             exec("/usr/bin/setfacl -m u:apache:rwx $homeDir/incoming", $outputLines, $returnValue);
             if ($returnValue != 0) {
                 $this->logger->error("Error setting facl (u:apache:rwx) on $homeDir/incoming. $outputLines");
-                return false;
+                return true;
             }
 
             // Give user rwx on homedir/incoming with FACL.
             exec("/usr/bin/setfacl -m u:$username:rwx $homeDir/incoming");
             if ($returnValue != 0) {
                 $this->logger->error("Error setting facl (u:$username:rwx) on $homeDir/incoming. $outputLines");
-                return false;
+                return true;
             }
 
             // Create download directory, owned by script-running system user (pelagos).
             if (false == mkdir("$homeDir/download", 0750, false)) {
                 $this->logger->error("Could not create $homeDir/download.");
-                return false;
+                return true;
             }
 
             // Give Apache rwx on homedir/download with FACL.
@@ -183,7 +182,7 @@ class CreateHomedirConsumer implements ConsumerInterface
             exec("/usr/bin/setfacl -m u:apache:rwx $homeDir/download", $outputLines, $returnValue);
             if ($returnValue != 0) {
                 $this->logger->error("Error setting facl (u:apache:rwx) on $homeDir/download.");
-                return false;
+                return true;
             }
 
             // Give user r-x on homedir/download with FACL.
@@ -191,7 +190,7 @@ class CreateHomedirConsumer implements ConsumerInterface
             exec("/usr/bin/setfacl -m u:$username:r-x $homeDir/download", $outputLines, $returnValue);
             if ($returnValue != 0) {
                 $this->logger->error("Error setting facl (u:$username:r-x) on $homeDir/download.");
-                return false;
+                return true;
             }
 
             // Persist changes to Account if everything has worked up to this point.
@@ -200,7 +199,7 @@ class CreateHomedirConsumer implements ConsumerInterface
             $entityManager->flush();
         } else {
             $this->logger->error("No account found for $userId");
-            return false;
+            return true;
         }
         return true;
     }
