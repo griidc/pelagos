@@ -69,13 +69,13 @@ class CreateHomedirConsumer implements ConsumerInterface
     */
     public function execute(AMQPMessage $message)
     {
-        $account = $this->entityManager->find($message->body);
+        $account = $this->entityManager->find(Account::class, $message->body);
 
-        if (instanceOf($account)) {
+        if ($account instanceOf Account) {
 
             // Get username, homedir.
             $username = $account->getUserName();
-            $homeDir = $this->getHomeDirectory;
+            $homeDir = $account->getHomeDirectory();
 
             // Get Person associated with this Account.
             $accountOwnerPerson = $account->getPerson();
@@ -164,11 +164,6 @@ class CreateHomedirConsumer implements ConsumerInterface
                 $this->logger->error("Error setting facl (u:$username:r-x) on $homeDir/download.");
                 return true;
             }
-
-            // Persist changes to Account if everything has worked up to this point.
-            $this->logger->info("Updating database for: $username.");
-            $entityManager->persist($account);
-            $entityManager->flush();
         } else {
             $this->logger->error("No account found for Account Entity id# $message->body");
             return true;
