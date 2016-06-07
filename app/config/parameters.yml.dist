@@ -38,6 +38,7 @@ parameters:
 
     data_store_directory:    /san/data/store
     data_download_directory: /san/data/download
+    homedir_prefix:          /san/home
 
     # A secret key that's used to generate certain security-related tokens
     secret:            ThisTokenIsNotSoSecretChangeIt
