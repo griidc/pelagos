@@ -174,7 +174,7 @@ class Account extends Entity implements UserInterface, \Serializable
     }
 
     /**
-     * Override Entity's getId() method.
+     * Override Account's getId() method with Person's Id.
      *
      * @return The EntityID of the Person associated with this Account.
      */
