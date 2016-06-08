@@ -7,7 +7,7 @@ use Pelagos\Entity\Account;
 use Pelagos\Entity\Person;
 use Pelagos\Component\Ldap\Ldap;
 use Pelagos\Bundle\AppBundle\Handler\EntityHandler;
-use Pelagos\Exception\POSIXify\AccountAlreadyPOSIXEnabledException;
+use Pelagos\Exception\POSIXifyAccount\AccountAlreadyPOSIXEnabledException;
 
 /**
  * A utility class to make an account into a POSIX account.

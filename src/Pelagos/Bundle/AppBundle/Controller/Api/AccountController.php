@@ -153,7 +153,7 @@ class AccountController extends EntityController
      * @ApiDoc(
      *   section = "Account",
      *   statusCodes = {
-     *     204 = "The user successfully requested to be made into a POSIX user.",
+     *     204 = "The user account has been made a POSIX account.",
      *     400 = "The user can not be made into a POSIX user (see error message for reason).",
      *     500 = "An internal error has occurred.",
      *   }
@@ -165,7 +165,7 @@ class AccountController extends EntityController
      *
      * @return Response A response object with an empty body and a "no content" status code.
      */
-    public function requestMakePosixAction()
+    public function makePosixAction()
     {
         if (!($this->getUser() instanceof Account)) {
             throw new AccessDeniedException('User is either not logged in or does not have an account');
@@ -177,7 +177,7 @@ class AccountController extends EntityController
             $this->get('old_sound_rabbit_mq.create_homedir_producer')->publish($this->getUser()->getPerson()->getId());
         } catch (\Exception $e) {
             throw new BadRequestHttpException(
-                'Could not request POSIX conversion on this account.  Reason: '
+                'There was a problem. '
                 . $e->getMessage()
             );
         }
