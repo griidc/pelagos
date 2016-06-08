@@ -3,6 +3,7 @@
 imports:
     - { resource: config_drupal.yml }
     - { resource: config_dev_local.yml }
+    - { resource: parameters_drupal_dev.yml }
 
 framework:
     router:
