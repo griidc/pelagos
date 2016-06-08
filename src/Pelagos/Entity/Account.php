@@ -180,6 +180,16 @@ class Account extends Entity implements UserInterface, \Serializable
     }
 
     /**
+     * Override Account's getId() method with Person's Id.
+     *
+     * @return The EntityID of the Person associated with this Account.
+     */
+    public function getId()
+    {
+        return $this->getPerson()->getId();
+    }
+
+    /**
      * Attach a Person to this account.
      *
      * @param Person $person The person to attach to this account.
