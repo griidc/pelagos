@@ -203,7 +203,7 @@
                                 {{ form_row(form.datasetFilePath, { 'attr':{'disabled':'disabled'} }) }}
                             {% endif %}
                         </div>
-                        <input type="button" value="Browse..." class="fileBrowserButton" data-target="#datasetFilePath" data-type="data">
+                        <input type="button" value="Browse..." class="fileBrowserButton" data-target="#datasetFilePath" data-type="data" {{ sftpuser ? '' : 'disabled' }}>
                         {% if form.datasetFilePath.vars.value is not empty %}
                             <div class="file_force">
                                 {{ form_widget(form.datasetFileForceImport) }} {{ form_label(form.datasetFileForceImport) }}
@@ -384,7 +384,7 @@
                                 {{ form_widget(form.metadataFilePath, { 'attr':{'disabled':'disabled'} }) }}
                             {% endif %}
                         </div>
-                        <input type="button" value="Browse..." class="fileBrowserButton" data-target="#metadataFilePath" data-type="metadata">
+                        <input type="button" value="Browse..." class="fileBrowserButton" data-target="#metadataFilePath" data-type="metadata" {{ sftpuser ? '' : 'disabled' }}>
                         {% if form.metadataFilePath.vars.value is not empty %}
                             <div class="file_force">
                                 {{ form_widget(form.metadataFileForceImport) }} {{ form_label(form.metadataFileForceImport) }}
