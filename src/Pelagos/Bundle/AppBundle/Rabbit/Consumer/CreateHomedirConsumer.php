@@ -37,13 +37,6 @@ class CreateHomedirConsumer implements ConsumerInterface
     protected $entityManager;
 
     /**
-     * The pelagos LDAP component.
-     *
-     * @var ldap
-     */
-    protected $ldap;
-
-    /**
      * Constructor.
      *
      * @param EntityManager $entityManager The entity manager.
@@ -52,12 +45,10 @@ class CreateHomedirConsumer implements ConsumerInterface
      */
     public function __construct(
         EntityManager $entityManager,
-        Logger $logger,
-        Ldap $ldap
+        Logger $logger
     ) {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
-        $this->ldap = $ldap;
     }
 
    /**
@@ -76,19 +67,6 @@ class CreateHomedirConsumer implements ConsumerInterface
             // Get username, homedir.
             $username = $account->getUserName();
             $homeDir = $account->getHomeDirectory();
-
-            // Get Person associated with this Account.
-            $accountOwnerPerson = $account->getPerson();
-
-            // Adjust LDAP definition.
-            try {
-                $this->ldap->updatePerson($accountOwnerPerson);
-                $this->logger->info('Updating LDAP for: ' . $username . '.');
-            } catch (LdapException $e) {
-                $this->logger->error("Failed updating LDAP for $username.");
-                // Returning true on consumer failure prevents re-execution of message.  (Must log error or throw event.)
-                return true;
-            }
 
             // Check to see if a directory already exists.
             if (is_dir($homeDir)) {
