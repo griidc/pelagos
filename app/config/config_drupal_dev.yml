@@ -2,6 +2,7 @@
 
 imports:
     - { resource: config_drupal.yml }
+    - { resource: parameters_drupal_dev.yml }
 
 framework:
     router:
