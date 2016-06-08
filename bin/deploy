@@ -1,0 +1,31 @@
+#/bin/sh
+
+# Set Symfony environment to drupal_prod
+export SYMFONY_ENV=drupal_prod
+
+# Disable Symfony debug mode
+export SYMFONY_DEBUG=0
+
+# Stop RabbitMQ consumers
+#bin/console rabbitmq-supervisor:control stop
+
+# Make sure apache and pelagos will have write permissions on all files and directories created under var/cache, var/log, and var/sessions
+echo -n "Ensuring apache and pelagos will have write access on all files and directories under var..."
+setfacl -d -m u:pelagos:rwX -m u:apache:rwX var/cache
+setfacl -d -m u:pelagos:rwX -m u:apache:rwX var/logs
+setfacl -d -m u:pelagos:rwX -m u:apache:rwX var/sessions
+echo "Done"; echo
+
+# Run composer install to make sure all non-dev dependencies are installed and parameters are defined
+composer install --no-dev --optimize-autoloader
+echo
+
+# Dump assetic assets
+bin/console assetic:dump
+
+# Dump FOSJsRouting routes
+#echo "Dumping FOSJsRouting routes..."
+#bin/console fos:js-routing:dump --target=web/js/routing
+
+# Start RabbitMQ consumers
+#bin/console rabbitmq-supervisor:control start
