@@ -8,6 +8,7 @@ use Pelagos\Entity\Person;
 use Pelagos\Component\Ldap\Ldap;
 use Pelagos\Bundle\AppBundle\Handler\EntityHandler;
 use Pelagos\Exception\POSIXifyAccount\AccountAlreadyPOSIXEnabledException;
+use OldSound\RabbitMqBundle\RabbitMq\Producer;
 
 /**
  * A utility class to make an account into a POSIX account.
@@ -57,6 +58,13 @@ class POSIXifyAccount
     protected $homedirPrefix;
 
     /**
+     * A AQMP producer.
+     *
+     * @var Producer
+     */
+    protected $aqmpProducer;
+
+    /**
      * Constructor.
      *
      * @param EntityManager $entityManager          The entity manager to use in querybuilder.
@@ -65,6 +73,7 @@ class POSIXifyAccount
      * @param integer       $posixStartingUidNumber The value to start creating user ID number entries at.
      * @param integer       $posixGidNumber         The value to set group ID to.
      * @param string        $homedirPrefix          Home directory prefix, from parameter.
+     * @param Producer      $producer               A RabbitMQ or other AQMP producer.
      */
     public function __construct(
         EntityManager $entityManager,
@@ -72,7 +81,8 @@ class POSIXifyAccount
         EntityHandler $entityHandler,
         $posixStartingUidNumber,
         $posixGidNumber,
-        $homedirPrefix
+        $homedirPrefix,
+        Producer $producer
     ) {
         $this->entityManager = $entityManager;
         $this->ldap = $ldap;
@@ -80,6 +90,7 @@ class POSIXifyAccount
         $this->posixStartingUidNumber = $posixStartingUidNumber;
         $this->posixGidNumber = $posixGidNumber;
         $this->homedirPrefix = $homedirPrefix;
+        $this->amqpProducer = $producer;
     }
 
     /**
@@ -105,6 +116,9 @@ class POSIXifyAccount
 
         // Update LDAP with this modified Account (via Person).
         $this->ldap->updatePerson($account->getPerson());
+
+        // Publish to AQMP homedir_producer consumer that there is a homedir to create.
+        $this->amqpProducer->publish($account->getPerson()->getId());
     }
 
     /**

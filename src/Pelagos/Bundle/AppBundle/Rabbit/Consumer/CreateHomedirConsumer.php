@@ -73,33 +73,35 @@ class CreateHomedirConsumer implements ConsumerInterface
                 return true;
             }
 
-            $this->logger->info(
-                "Creating homedir for user $username: $homeDir"
-            );
-
             // Create home directory, owned by script-running system user (pelagos).
             if (false == mkdir("$homeDir", 0750, false)) {
                 $this->logger->error("Could not create homedir: $homeDir");
                 return true;
+            } else {
+                $this->logger->info("Creating $homeDir.");
+                $this->setLinuxAcl('apache', $homeDir, 'r-x');
+                $this->setLinuxAcl($username, $homeDir, 'r-x');
             }
-            $this->setLinuxAcl('apache', $homeDir, 'r-x');
-            $this->setLinuxAcl($username, $homeDir, 'r-x');
 
             // Create incoming directory, owned by script-running system user (pelagos).
             if (false == mkdir("$homeDir/incoming", 0750, false)) {
                 $this->logger->error("Could not create directory: $homeDir/incoming.");
                 return true;
+            } else {
+                $this->logger->info("Creating $homeDir/incoming.");
+                $this->setLinuxAcl('apache', "$homeDir/incoming", 'rwx');
+                $this->setLinuxAcl($username, "$homeDir/incoming", 'rwx');
             }
-            $this->setLinuxAcl('apache', "$homeDir/incoming", 'rwx');
-            $this->setLinuxAcl($username, "$homeDir/incoming", 'rwx');
 
             // Create download directory, owned by script-running system user (pelagos).
             if (false == mkdir("$homeDir/download", 0750, false)) {
                 $this->logger->error("Could not create $homeDir/download.");
                 return true;
+            } else {
+                $this->logger->info("Creating $homeDir/download.");
+                $this->setLinuxAcl('apache', "$homeDir/download", 'rwx');
+                $this->setLinuxAcl($username, "$homeDir/download", 'r-x');
             }
-            $this->setLinuxAcl('apache', "$homeDir/download", 'rwx');
-            $this->setLinuxAcl($username, "$homeDir/download", 'r-x');
         } else {
             $this->logger->error("No account found for Account Entity id# $message->body");
         }
@@ -123,6 +125,8 @@ class CreateHomedirConsumer implements ConsumerInterface
         if ($returnValue != 0) {
             $this->logger->error("Error setting facl (u:$user:$acl) on $path.");
             $status = false;
+        } else {
+            $this->logger->info("ACL Configuration: Set $acl on $path for $user.");
         }
         return $status;
     }
