@@ -41,7 +41,6 @@ class CreateHomedirConsumer implements ConsumerInterface
      *
      * @param EntityManager $entityManager The entity manager.
      * @param Logger        $logger        A Monolog logger.
-     * @param Ldap          $ldap          The Pelagos Ldap component.
      */
     public function __construct(
         EntityManager $entityManager,
@@ -83,69 +82,48 @@ class CreateHomedirConsumer implements ConsumerInterface
                 $this->logger->error("Could not create homedir: $homeDir");
                 return true;
             }
-
-            // Give Apache r-x on homedir with FACL.
-            $outputLines = array();
-            exec("/usr/bin/setfacl -m u:apache:r-x $homeDir", $outputLines, $returnValue);
-            if ($returnValue != 0) {
-                $this->logger->error("Error setting facl (u:apache:r-x) on $homeDir. $outputLines");
-                return true;
-            }
-
-            // Give user r-x on homedir with FACL.
-            $outputLines = array();
-            exec("/usr/bin/setfacl -m u:$username:r-x $homeDir", $outputLines, $returnValue);
-            if ($returnValue != 0) {
-                $this->logger->error("Error setting facl (u:$username:r-x) on $homeDir. $outputLines");
-                return true;
-            }
+            $this->setLinuxAcl('apache', $homeDir, 'r-x');
+            $this->setLinuxAcl($username, $homeDir, 'r-x');
 
             // Create incoming directory, owned by script-running system user (pelagos).
             if (false == mkdir("$homeDir/incoming", 0750, false)) {
                 $this->logger->error("Could not create directory: $homeDir/incoming.");
                 return true;
             }
-
-            // Give Apache rwx on homedir/incoming with FACL.
-            $outputLines = array();
-            exec("/usr/bin/setfacl -m u:apache:rwx $homeDir/incoming", $outputLines, $returnValue);
-            if ($returnValue != 0) {
-                $this->logger->error("Error setting facl (u:apache:rwx) on $homeDir/incoming. $outputLines");
-                return true;
-            }
-
-            // Give user rwx on homedir/incoming with FACL.
-            exec("/usr/bin/setfacl -m u:$username:rwx $homeDir/incoming");
-            if ($returnValue != 0) {
-                $this->logger->error("Error setting facl (u:$username:rwx) on $homeDir/incoming. $outputLines");
-                return true;
-            }
+            $this->setLinuxAcl('apache', "$homeDir/incoming", 'rwx');
+            $this->setLinuxAcl($username, "$homeDir/incoming", 'rwx');
 
             // Create download directory, owned by script-running system user (pelagos).
             if (false == mkdir("$homeDir/download", 0750, false)) {
                 $this->logger->error("Could not create $homeDir/download.");
                 return true;
             }
-
-            // Give Apache rwx on homedir/download with FACL.
-            $outputLines = array();
-            exec("/usr/bin/setfacl -m u:apache:rwx $homeDir/download", $outputLines, $returnValue);
-            if ($returnValue != 0) {
-                $this->logger->error("Error setting facl (u:apache:rwx) on $homeDir/download.");
-                return true;
-            }
-
-            // Give user r-x on homedir/download with FACL.
-            $outputLines = array();
-            exec("/usr/bin/setfacl -m u:$username:r-x $homeDir/download", $outputLines, $returnValue);
-            if ($returnValue != 0) {
-                $this->logger->error("Error setting facl (u:$username:r-x) on $homeDir/download.");
-                return true;
-            }
+            $this->setLinuxAcl('apache', "$homeDir/download", 'rwx');
+            $this->setLinuxAcl($username, "$homeDir/download", 'r-x');
         } else {
             $this->logger->error("No account found for Account Entity id# $message->body");
-            return true;
         }
         return true;
+    }
+
+   /**
+    * Sets Filesystem Access Control List.
+    *
+    * @param string $user Linux username to set ACL for.
+    * @param string $path Path of directory or file to set ACL on.
+    * @param string $acl  Actual rwx string to use in setting ACL.
+    *
+    * @return Boolean True on success, false on failure.
+    */
+    protected function setLinuxAcl($user, $path, $acl)
+    {
+        $outputLines = array();
+        $status = true;
+        exec("/usr/bin/setfacl -m u:$user:$acl $path", $outputLines, $returnValue);
+        if ($returnValue != 0) {
+            $this->logger->error("Error setting facl (u:$user:$acl) on $path.");
+            $status = false;
+        }
+        return $status;
     }
 }
