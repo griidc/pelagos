@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "bc0b52c37e9ada5a737fefc644c7102f",
-    "content-hash": "c340e0af3de330b67647ee7dade48f04",
+    "hash": "0797cda43c6f1e5d08a43d1b5049f9ae",
+    "content-hash": "4de1e68373b62d93ad8dbb2eedfd5bad",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -3299,7 +3299,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/padraic/mockery/zipball/ad31ff997d983e0d5d60ac80cfcedcbb4e6c4461",
+                "url": "https://api.github.com/repos/padraic/mockery/zipball/1a9bde4985f4a125ed7287be7d9f4d3df25d5d10",
                 "reference": "1a9bde4985f4a125ed7287be7d9f4d3df25d5d10",
                 "shasum": ""
             },
