@@ -44,6 +44,28 @@ class Extensions extends \Twig_Extension
     }
 
     /**
+     * Return a list of filters.
+        *
+     * @return array A list of Twig filters.
+     */
+    public function getFilters()
+    {
+        return array(
+            new \Twig_SimpleFilter(
+                'evaluate',
+                array(self::class, 'evaluate'),
+                array(
+                    'needs_environment' => true,
+                    'needs_context' => true,
+                    'is_safe' => array(
+                        'evaluate' => true,
+                    )
+                )
+            ),
+        );
+    }
+
+    /**
      * Add a javascript file.
      *
      * @param string|array $js   The path to the javascript file or a string containing javascript code
@@ -129,5 +151,37 @@ class Extensions extends \Twig_Extension
             }
         }
         return $return;
+    }
+
+    /**
+     * Evaluate Twig commands in a string.
+     *
+     * @param \Twig_Environment $environment The Twig environment.
+     * @param array             $context     The Twig context.
+     * @param string            $string      The string to evaluate.
+     *
+     * @return string The evaluated string.
+     */
+    public static function evaluate(\Twig_Environment $environment, array $context, $string)
+    {
+        $loader = $environment->getLoader();
+        $parsed = self::parseString($environment, $context, $string);
+        $environment->setLoader($loader);
+        return $parsed;
+    }
+
+    /**
+     * Parse Twig commands in a string.
+     *
+     * @param \Twig_Environment $environment The Twig environment.
+     * @param array             $context     The Twig context.
+     * @param string            $string      The string to parse.
+     *
+     * @return string The parsed string.
+     */
+    protected static function parseString(\Twig_Environment $environment, array $context, $string)
+    {
+        $environment->setLoader(new \Twig_Loader_String());
+        return $environment->render($string, $context);
     }
 }

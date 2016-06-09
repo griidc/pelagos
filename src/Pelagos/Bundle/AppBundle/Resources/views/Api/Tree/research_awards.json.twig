@@ -5,16 +5,16 @@
             ,
         {% endif %}
     {% endif %}
-    {% for fundingCycle in RFPS %}
+    {% for fundSrc in RFPS %}
         {
             "data": {
-                "title": "{{fundingCycle.getName}}",
+                "title": "{{fundSrc.getName}}",
                 "attr": {
                     "style": "color:{{tree.rfp_color}}"
                 }
             },
             "attr": {
-                "id": "projects_funding-cycle_{{fundingCycle.getId}}",
+                "id": "projects_funding-cycle_{{fundSrc.getId}}",
                 "action": "{{tree.rfp_action | evaluate}}"
             }
         }
@@ -26,22 +26,22 @@
         {% if RFPS %}
             ,
         {% endif %}
-        {% include 'json/YR1_outer.json' %}
+        {% include 'PelagosAppBundle:Api:Tree/YR1_outer.json.twig' %}
     {% endif %}
-    {% if tree.show_other_sources %}
+    {% if tree.show_other_sources | default %}
         {% if not YR1.hide or RFPS %}
             ,
         {% endif %}
         {
             "data": {
-                "title": "{{tree.other_sources_label}}",
+                "title": "{{tree.other_sources_label|default}}",
                 "attr": {
-                    "style": "color:{{tree.other_sources_folder_color}}"
+                    "style": "color:{{tree.other_sources_folder_color|default}}"
                 }
             },
             "attr": {
                 "id": "otherSources",
-                "action": "{{tree.other_sources_folder_action | evaluate}}"
+                "action": "{{tree.other_sources_folder_action | default | evaluate}}"
             },
             "state": "open"
         }
