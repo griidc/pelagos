@@ -30,3 +30,6 @@ pelagos_dif_ui:
     
 pelagos_dataset_submission_ui:
     resource: Pelagos\Bundle\AppBundle\Controller\UI\DatasetSubmissionController
+
+pelagos_datset_monitoring_ui:
+    resource: Pelagos\Bundle\AppBundle\Controller\UI\DatasetMonitoringController
