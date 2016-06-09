@@ -42,19 +42,6 @@ class Ldap
     }
 
     /**
-     * Search for a person in LDAP.
-     *
-     * @param string $query The LDAP query filter.
-     *
-     * @return array|null
-     */
-    public function searchPerson($query)
-    {
-        $entries = $this->ldapClient->find($this->peopleOu, $query);
-        return $entries;
-    }
-
-    /**
      * Add a Person to LDAP.
      *
      * @param Person $person The Person to add to LDAP.
