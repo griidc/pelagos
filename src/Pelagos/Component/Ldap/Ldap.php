@@ -52,11 +52,12 @@ class Ldap
      */
     public function addPerson(Person $person)
     {
-        if ($this->checkIfUidNumberAvailable($person->getAccount()->getUidNumber())) {
+        $uidNumber = $person->getAccount()->getUidNumber();
+        if ($this->checkIfUidNumberAvailable($uidNumber)) {
             $ldapPerson = $this->buildLdapPerson($person);
             $this->ldapClient->add($ldapPerson['dn'], $ldapPerson['entry']);
         } else {
-            throw new UidNumberInUseInLDAPException('This NumericUID in LDAP is already in use in LDAP.');
+            throw new UidNumberInUseInLDAPException("This UID number ($uidNumber) is already in use in LDAP .");
         }
     }
 
@@ -71,14 +72,12 @@ class Ldap
      */
     public function updatePerson(Person $person)
     {
-        if ($this->checkIfUidNumberAvailable(
-            $person->getAccount()->getUidNumber(),
-            $person->getAccount()->getUserName()
-        )) {
+        $uidNumber = $person->getAccount()->getUidNumber();
+        if ($this->checkIfUidNumberAvailable($uidNumber, $person->getAccount()->getUserName())) {
             $ldapPerson = $this->buildLdapPerson($person);
             $this->ldapClient->modify($ldapPerson['dn'], $ldapPerson['entry']);
         } else {
-            throw new UidNumberInUseInLDAPException('This NumericUID in LDAP is already in use in LDAP.');
+            throw new UidNumberInUseInLDAPException("This UID number ($uidNumber) is already in use in LDAP .");
         }
     }
 

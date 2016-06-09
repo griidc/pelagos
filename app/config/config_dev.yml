@@ -22,10 +22,10 @@ monolog:
             type:     stream
             path:     "%kernel.logs_dir%/retriever.log"
             channels: ["retriever"]
-        posixify:
+        create_homedir:
             type:     stream
-            path:     "%kernel.logs_dir%/posixify.log"
-            channels: ["posixify"]
+            path:     "%kernel.logs_dir%/create_homedir.log"
+            channels: ["create_homedir"]
         main:
             type:   stream
             path:   "%kernel.logs_dir%/%kernel.environment%.log"

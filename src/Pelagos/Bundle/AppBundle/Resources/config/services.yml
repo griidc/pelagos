@@ -63,4 +63,4 @@ services:
         class: Pelagos\Bundle\AppBundle\Rabbit\Consumer\CreateHomedirConsumer
         arguments: ["@doctrine.orm.entity_manager", "@logger"]
         tags:
-            - { name: monolog.logger, channel: posixify }
+            - { name: monolog.logger, channel: create_homedir }
