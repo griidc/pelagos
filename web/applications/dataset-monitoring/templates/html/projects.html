@@ -18,15 +18,7 @@
                 {% endif %}
             </div>
             <div class="pi">
-                <span class="attr">Principal Investigator:</span> {{project.PI.FirstName | raw}} {{project.PI.LastName}} - {{project.PI.Institution_Name}}
-            </div>
-            <div class="institutions">
-                <span class="attr">Member Institutions:</span>
-                {% for inst in project.Institutions %}
-                    {% if inst.Name != '' %}
-                        {{inst.Name | trimws}}{% if not loop.last %}, {% endif %}
-                    {% endif %}
-                {% endfor %}
+                <span class="attr">Principal Investigator:</span> {{project.PI.FirstName | raw}} {{project.PI.LastName}}
             </div>
             {% if not pdf %}
             <br />

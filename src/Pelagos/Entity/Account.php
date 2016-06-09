@@ -72,7 +72,7 @@ class Account extends Entity implements UserInterface, \Serializable
      *
      * @var string
      *
-     * @ORM\Column
+     * @ORM\Column(unique=true)
      *
      * @Assert\NotBlank(
      *     message="User ID is required"
@@ -118,7 +118,7 @@ class Account extends Entity implements UserInterface, \Serializable
      *
      * @var integer
      *
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="integer", nullable=true, unique=true)
      */
     protected $uidNumber;
 
@@ -177,6 +177,16 @@ class Account extends Entity implements UserInterface, \Serializable
         if ($password !== null) {
             $this->setPassword($password);
         }
+    }
+
+    /**
+     * Override Account's getId() method with Person's Id.
+     *
+     * @return The EntityID of the Person associated with this Account.
+     */
+    public function getId()
+    {
+        return $this->getPerson()->getId();
     }
 
     /**

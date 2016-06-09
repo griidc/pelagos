@@ -7,6 +7,8 @@
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\AppKernel;
 
+umask(0002);
+
 $loader = require __DIR__ . '/../app/autoload.php';
 
 require_once __DIR__ . '/../app/AppKernel.php';
