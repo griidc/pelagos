@@ -108,17 +108,17 @@ class POSIXifyAccount
             throw new AccountAlreadyPOSIXEnabledException('This account already has SFTP/GridFTP access.');
         }
 
-        $uid = $this->mintUidNumber();
+        $uidNumber = $this->mintUidNumber();
 
         // Update account's POSIX attributes.
-        $account->makePosix($uid, $this->posixGidNumber, $this->homedirPrefix);
+        $account->makePosix($uidNumber, $this->posixGidNumber, $this->homedirPrefix);
         $this->entityHandler->update($account);
 
         // Update LDAP with this modified Account (via Person).
         $this->ldap->updatePerson($account->getPerson());
 
         // Publish to AQMP homedir_producer consumer that there is a homedir to create.
-        $this->amqpProducer->publish($account->getPerson()->getId());
+        $this->amqpProducer->publish($account->getId());
     }
 
     /**

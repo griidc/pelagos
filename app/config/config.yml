@@ -153,7 +153,7 @@ old_sound_rabbit_mq:
                 name: 'retriever'
                 routing_keys:
                     - 'dataset.HTTP'
-        posixify:
+        create_homedir:
             connection:       default
             exchange_options: { name: 'create_homedir', type: direct }
             callback:         pelagos.rabbit.consumer.create_homedir

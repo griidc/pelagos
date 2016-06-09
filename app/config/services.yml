@@ -34,7 +34,14 @@ services:
 
     pelagos.util.posixify_account:
         class: Pelagos\Util\POSIXifyAccount
-        arguments: ["@doctrine.orm.entity_manager", "@pelagos.ldap", "@pelagos.entity.handler", '%posix_starting_uid%', '%posix_gid%', '%homedir_prefix%', "@old_sound_rabbit_mq.create_homedir_producer"]
+        arguments:
+            - "@doctrine.orm.entity_manager"
+            - "@pelagos.ldap"
+            - "@pelagos.entity.handler"
+            - '%posix_starting_uid%'
+            - '%posix_gid%'
+            - '%homedir_prefix%'
+            - "@old_sound_rabbit_mq.create_homedir_producer"
 
     pelagos.util.data_store:
         class: Pelagos\Util\DataStore

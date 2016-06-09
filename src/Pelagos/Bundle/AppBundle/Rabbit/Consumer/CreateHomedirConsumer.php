@@ -6,7 +6,6 @@ use Symfony\Component\Ldap\Exception\LdapException;
 
 use Pelagos\Entity\Account;
 use Pelagos\Entity\Person;
-use Pelagos\Component\Ldap\Ldap;
 
 use Doctrine\ORM\EntityManager;
 
@@ -51,9 +50,9 @@ class CreateHomedirConsumer implements ConsumerInterface
     }
 
    /**
-    * Process a filer message.
+    * Process a create_homedir message.
     *
-    * @param AMQPMessage $message A filer message.
+    * @param AMQPMessage $message A create_homedir message.
     *
     * @return boolean True if success, false otherwise.
     */
