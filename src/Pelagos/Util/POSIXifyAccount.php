@@ -112,10 +112,12 @@ class POSIXifyAccount
 
         // Update account's POSIX attributes.
         $account->makePosix($uidNumber, $this->posixGidNumber, $this->homedirPrefix);
-        $this->entityHandler->update($account);
 
         // Update LDAP with this modified Account (via Person).
         $this->ldap->updatePerson($account->getPerson());
+
+        // Persist changes.
+        $this->entityHandler->update($account);
 
         // Publish to AQMP homedir_producer consumer that there is a homedir to create.
         $this->amqpProducer->publish($account->getId());
