@@ -102,10 +102,8 @@ class DIFController extends EntityController
         $dataset->setCreator($this->getUser()->getPerson());
         // Create a new DIF for the Dataset.
         $dif = new DIF($dataset);
-        // Handle the post.
+        // Handle the post (DIF will be created and Dataset creation will cascade).
         $this->handlePost(DIFType::class, DIF::class, $request, $dif);
-        // Create the DIF (Dataset creation will cascade).
-        $this->container->get('pelagos.entity.handler')->create($dif);
         // Mint an UDI for the Dataset.
         $udi = $this->container->get('pelagos.util.udi')->mintUdi($dataset);
         // Update the Dataset with the new UDI.
