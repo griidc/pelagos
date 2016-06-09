@@ -1,0 +1,62 @@
+[
+    {% if not YR1.hide and YR1.top %}
+        {% include 'json/YR1_outer.json' %}
+        {% if RFPS or tree.show_other_sources %}
+            ,
+        {% endif %}
+    {% endif %}
+    {% for fundingCycle in RFPS %}
+        {
+            "data": {
+                "title": "{{fundingCycle.getName}}",
+                "attr": {
+                    "style": "color:{{tree.rfp_color}}"
+                }
+            },
+            "attr": {
+                "id": "projects_funding-cycle_{{fundingCycle.getId}}",
+                "action": "{{tree.rfp_action | evaluate}}"
+            }
+        }
+        {% if not loop.last %}
+            ,
+        {% endif %}
+    {% endfor %}
+    {% if not YR1.hide and not YR1.top %}
+        {% if RFPS %}
+            ,
+        {% endif %}
+        {% include 'json/YR1_outer.json' %}
+    {% endif %}
+    {% if tree.show_other_sources %}
+        {% if not YR1.hide or RFPS %}
+            ,
+        {% endif %}
+        {
+            "data": {
+                "title": "{{tree.other_sources_label}}",
+                "attr": {
+                    "style": "color:{{tree.other_sources_folder_color}}"
+                }
+            },
+            "attr": {
+                "id": "otherSources",
+                "action": "{{tree.other_sources_folder_action | evaluate}}"
+            },
+            "state": "open"
+        }
+    {% endif %}
+    {% if YR1.hide and not RFPS and not tree.show_other_sources %}
+        {
+            "data": {
+                "title": "no datasets found",
+                "attr": {
+                    "style": "color:red"
+                }
+            },
+            "attr": {
+                "id": "noDatasetsFound"
+            }
+        }
+    {% endif %}
+]

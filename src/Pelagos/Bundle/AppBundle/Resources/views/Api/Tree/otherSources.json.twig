@@ -1,0 +1,27 @@
+[
+    {% for fundingCycle in otherSources %}
+    {
+        "data": {
+            "title": "{{fundingCycle.getName}}",
+            "attr": {
+                "style": "color:{{tree.other_sources_color}}"
+            }
+        },
+        "attr": {
+            "id": "projects_funding-cycle_{{fundingCycle.getId}}",
+            "action": "{{tree.other_sources_action | evaluate}}"
+        }
+        {% if tree.max_depth > 0 %}
+        ,
+            {% if tree.expand_to_depth > 0 %}
+                "state": "open"
+            {% else %}
+                "state": "closed"
+            {% endif %}
+        {% endif %}
+    }
+    {% if not loop.last %}
+    ,
+    {% endif %}
+    {% endfor %}
+]

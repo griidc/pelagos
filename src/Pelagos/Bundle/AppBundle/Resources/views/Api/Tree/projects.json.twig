@@ -1,0 +1,20 @@
+[
+{% for project in projects %}
+    {
+        "data": {
+            "title": "{{project.getTitle | raw}}",
+            "attr": {
+                "style": "color:{{tree.project_color}}"
+            }
+        },
+        "attr": {
+            "id": "datasets_projectId_{{project.ID}}"
+            ,
+            "action": "{{tree.project_action | evaluate}}"
+        }
+    }
+    {% if not loop.last %}
+    ,
+    {% endif %}
+{% endfor %}
+]
