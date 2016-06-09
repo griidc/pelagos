@@ -69,39 +69,46 @@ class CreateHomedirConsumer implements ConsumerInterface
 
             // Check to see if a directory already exists.
             if (is_dir($homeDir)) {
-                $this->logger->error("Directory for $username already exists.");
-                return true;
-            }
-
-            // Create home directory, owned by script-running system user (pelagos).
-            if (false == mkdir("$homeDir", 0750, false)) {
-                $this->logger->error("Could not create homedir: $homeDir");
-                return true;
+                $this->logger->warn("Directory for $username already exists.");
             } else {
-                $this->logger->info("Creating $homeDir.");
-                $this->setLinuxAcl('apache', $homeDir, 'r-x');
-                $this->setLinuxAcl($username, $homeDir, 'r-x');
+                // Create home directory, owned by script-running system user (pelagos).
+                if (false == mkdir("$homeDir", 0750, false)) {
+                    $this->logger->error("Could not create homedir: $homeDir");
+                    return true;
+                } else {
+                    $this->logger->info("Creating $homeDir.");
+                }
             }
+            $this->setLinuxAcl('apache', $homeDir, 'r-x');
+            $this->setLinuxAcl($username, $homeDir, 'r-x');
 
             // Create incoming directory, owned by script-running system user (pelagos).
-            if (false == mkdir("$homeDir/incoming", 0750, false)) {
-                $this->logger->error("Could not create directory: $homeDir/incoming.");
-                return true;
+            if (is_dir("$homeDir/incoming")) {
+                $this->logger->warn("$homeDir/incoming already exists.");
             } else {
-                $this->logger->info("Creating $homeDir/incoming.");
-                $this->setLinuxAcl('apache', "$homeDir/incoming", 'rwx');
-                $this->setLinuxAcl($username, "$homeDir/incoming", 'rwx');
+                if (false == mkdir("$homeDir/incoming", 0750, false)) {
+                    $this->logger->error("Could not create directory: $homeDir/incoming.");
+                    return true;
+                } else {
+                    $this->logger->info("Creating $homeDir/incoming.");
+                }
             }
+            $this->setLinuxAcl('apache', "$homeDir/incoming", 'rwx');
+            $this->setLinuxAcl($username, "$homeDir/incoming", 'rwx');
 
             // Create download directory, owned by script-running system user (pelagos).
-            if (false == mkdir("$homeDir/download", 0750, false)) {
-                $this->logger->error("Could not create $homeDir/download.");
-                return true;
+            if (is_dir("$homeDir/download")) {
+                $this->logger->warn("$homeDir/download already exists.");
             } else {
-                $this->logger->info("Creating $homeDir/download.");
-                $this->setLinuxAcl('apache', "$homeDir/download", 'rwx');
-                $this->setLinuxAcl($username, "$homeDir/download", 'r-x');
+                if (false == mkdir("$homeDir/download", 0750, false)) {
+                    $this->logger->error("Could not create $homeDir/download.");
+                    return true;
+                } else {
+                    $this->logger->info("Creating $homeDir/download.");
+                }
             }
+            $this->setLinuxAcl('apache', "$homeDir/download", 'rwx');
+            $this->setLinuxAcl($username, "$homeDir/download", 'r-x');
         } else {
             $this->logger->error("No account found for Account Entity id# $message->body");
         }
