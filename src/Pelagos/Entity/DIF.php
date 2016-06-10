@@ -1524,7 +1524,7 @@ class DIF extends Entity
     /**
      * Set the DIF status.
      *
-     * @param integer $status
+     * @param integer $status The status of this DIF.
      *
      * @return void
      */
