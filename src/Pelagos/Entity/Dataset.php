@@ -68,6 +68,17 @@ class Dataset extends Entity
     protected $datasetSubmissionHistory;
 
     /**
+     * The identified state of this Dataset.
+     *
+     * @var integer
+     *
+     * @see DIF::STATUS_* constants.
+     *
+     * @ORM\Column(type="smallint")
+     */
+    protected $identified = DIF::STATUS_UNSUBMITTED;
+
+    /**
      * Constructor.
      */
     public function __construct()
@@ -196,5 +207,27 @@ class Dataset extends Entity
         }
         // Return null if we can't find a title.
         return null;
+    }
+
+    /**
+     * Set the identified state.
+     *
+     * @param integer $identified The identified state.
+     *
+     * @return void
+     */
+    public function setIdentified($identified)
+    {
+        $this->identified = $identified;
+    }
+
+    /**
+     * Get the identified state.
+     *
+     * @return integer
+     */
+    public function getIdentified()
+    {
+        return $this->identified;
     }
 }

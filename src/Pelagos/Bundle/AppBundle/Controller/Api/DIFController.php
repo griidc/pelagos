@@ -365,6 +365,8 @@ class DIFController extends EntityController
         }
         // Update the DIF in persistence and dispatch an 'unlocked' event.
         $this->container->get('pelagos.entity.handler')->update($dif, 'unlocked');
+        // Update the Dataset too because cascade persist doesn't work as expected.
+        $this->container->get('pelagos.entity.handler')->update($dif->getDataset());
         // Return a no content success response.
         return $this->makeNoContentResponse();
     }

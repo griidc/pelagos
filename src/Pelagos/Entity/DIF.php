@@ -133,7 +133,7 @@ class DIF extends Entity
      *
      * @ORM\Column(type="smallint")
      */
-    protected $status;
+    protected $status = self::STATUS_UNSUBMITTED;
 
     /**
      * The title for this DIF.
@@ -464,7 +464,6 @@ class DIF extends Entity
         if (null !== $dataset) {
             $this->setDataset($dataset);
         }
-        $this->status = self::STATUS_UNSUBMITTED;
     }
 
     /**
@@ -1421,7 +1420,7 @@ class DIF extends Entity
     public function submit()
     {
         if ($this->isSubmittable()) {
-            $this->status = self::STATUS_SUBMITTED;
+            $this->setStatus(self::STATUS_SUBMITTED);
         } else {
             throw new \Exception('Can only submit an unsubmitted DIF');
         }
@@ -1449,7 +1448,7 @@ class DIF extends Entity
     public function approve()
     {
         if ($this->isApprovable()) {
-            $this->status = self::STATUS_APPROVED;
+            $this->setStatus(self::STATUS_APPROVED);
         } else {
             throw new \Exception('Can only approve a submitted DIF');
         }
@@ -1477,7 +1476,7 @@ class DIF extends Entity
     public function reject()
     {
         if ($this->isRejectable()) {
-            $this->status = self::STATUS_UNSUBMITTED;
+            $this->setStatus(self::STATUS_UNSUBMITTED);
         } else {
             throw new \Exception('Can only reject a submitted DIF');
         }
@@ -1505,7 +1504,7 @@ class DIF extends Entity
     public function unlock()
     {
         if ($this->isUnlockable()) {
-            $this->status = self::STATUS_UNSUBMITTED;
+            $this->setStatus(self::STATUS_UNSUBMITTED);
         } else {
             throw new \Exception('Can only unlock an approved DIF');
         }
@@ -1520,5 +1519,20 @@ class DIF extends Entity
     {
         // A DIF is locked if its status is anything other than unsubmitted.
         return self::STATUS_UNSUBMITTED !== $this->status;
+    }
+
+    /**
+     * Set the DIF status.
+     *
+     * @param integer $status
+     *
+     * @return void
+     */
+    protected function setStatus($status)
+    {
+        $this->status = $status;
+        if ($this->getDataset() instanceof Dataset) {
+            $this->getDataset()->setIdentified($status);
+        }
     }
 }
