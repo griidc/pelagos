@@ -23,8 +23,8 @@ echo
 bin/console assetic:dump
 
 # Dump FOSJsRouting routes
-#echo "Dumping FOSJsRouting routes..."
-#bin/console fos:js-routing:dump --target=web/js/routing
+echo "Dumping FOSJsRouting routes..."
+bin/console fos:js-routing:dump --target=web/js/routing
 
 # Start RabbitMQ consumers
 #bin/console rabbitmq-supervisor:control start
