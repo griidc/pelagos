@@ -9,11 +9,10 @@ export SYMFONY_DEBUG=0
 # Stop RabbitMQ consumers
 #bin/console rabbitmq-supervisor:control stop
 
-# Make sure apache and pelagos will have write permissions on all files and directories created under var/cache, var/log, and var/sessions
+# Make sure apache and pelagos will have write permissions on all files and directories created under var
 echo -n "Ensuring apache and pelagos will have write access on all files and directories under var..."
-setfacl -d -m u:pelagos:rwX -m u:apache:rwX var/cache
-setfacl -d -m u:pelagos:rwX -m u:apache:rwX var/logs
-setfacl -d -m u:pelagos:rwX -m u:apache:rwX var/sessions
+setfacl -R -m u:pelagos:rwX -m u:apache:rwX var
+setfacl -dR -m u:pelagos:rwX -m u:apache:rwX var
 echo "Done"; echo
 
 # Run composer install to make sure all non-dev dependencies are installed and parameters are defined
