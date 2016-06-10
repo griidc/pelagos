@@ -67,6 +67,10 @@ class LdapAccountImportCommand extends ContainerAwareCommand
         $systemPerson = $entityManager->find(Person::class, 0);
 
         foreach ($people as $ldapPerson) {
+            // Skip LDAP accounts without email addresses.
+            if (!is_array($ldapPerson) or !array_key_exists('mail', $ldapPerson)) {
+                continue;
+            }
             $mail = $ldapPerson['mail'][0];
             $people = $entityManager->getRepository(Person::class)->findBy(array('emailAddress' => strtolower($mail)));
             if (count($people) === 0) {
