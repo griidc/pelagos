@@ -1,3 +1,5 @@
+{% set sftpuser=loggedInPerson.getAccount().isPosix() %}
+
 <div id="fileBrowser">
     <div id="fileBrowserContent"></div>
 </div>
@@ -173,30 +175,35 @@
             </div> <!-- tabs-1 -->
 
             <div id="tabs-2"> <!-- Upload via SFTP/GridFTP -->
-                Use this method when the dataset is &gt;1GB and you wish to upload the dataset file to GRIIDC (rather than place the dataset file on an HTTP (web) or FTP server and have GRIIDC pull it).
-                <strong>Note:</strong> <em>Using this method requires that you have <strong>first</strong> uploaded the file via SFTP or GridFTP.</em>
-                {% if sftpuser|default %}
-                <div style="color:red;">
-                    Your account has not been configured for SFTP/GridFTP access.<br>
-                    If you wish to use SFTP/GridFTP, please contact <a href="mailto:griidc@gomri.org">griidc@gomri.org</a> to request SFTP/GridFTP access.
+                <p>Use this method when the dataset is &gt;1GB and you wish to upload the dataset file to GRIIDC (rather than place the dataset file on an HTTP (web) or FTP server and have GRIIDC pull it).
+                <strong>Note:</strong> <em>Using this method requires that you have <strong>first</strong> uploaded the file via SFTP or GridFTP.</em></p>
+                <div>
+                    <div class="sftpYes {{ sftpuser ? 'sftpshow' : 'sftphidden' }}" style="color:black;">
+                        Your account has been configured for SFTP/GridFTP access.
+                        Click <a href="https://data.gulfresearchinitiative.org/data-file-transfer-methods#SFTP" TARGET="_NEW">here</a> for instructions.</p>
+                    </div>
+                    <div class="sftpNo {{ sftpuser ? 'sftphidden' : 'sftpshow' }}" style="color:red;">
+                        <p>
+                        Your account has not been configured for SFTP/GridFTP access.
+                        If you wish to use SFTP/GridFTP, please click here to request SFTP/GridFTP access:
+                        <BUTTON id=sftpButton sftpPath={{ path('pelagos_api_account_make_posix') }} type=button>REQUEST SFTP/GridFTP</button></p>
+                    </div>
                 </div>
-                {% elseif sftpdir|default %}
-                <div style="color:red;">
-                    Your SFTP/GridFTP directory has not been set up.<br>
-                    Please contact <a href="mailto:griidc@gomri.org">griidc@gomri.org</a> for assistance.
-                </div>
-                {% endif %}
                 <fieldset>
-                    <p>
+                    <br />
                         <span id="qtip_sshdataurl" style="float:right;">
                             {% image '@PelagosAppBundle/Resources/public/images/info.png' %}
                             <img class="info" src="{{ asset_url }}">
                             {% endimage %}
                         </span>
                         <div class="fwtextboxcont">
-                            {{ form_row(form.datasetFilePath) }}
+                            {% if sftpuser %}
+                                {{ form_row(form.datasetFilePath) }}
+                            {% else %}
+                                {{ form_row(form.datasetFilePath, { 'attr':{'disabled':'disabled'} }) }}
+                            {% endif %}
                         </div>
-                        <input type="button" value="Browse..." class="fileBrowserButton" data-target="#datasetFilePath" data-type="data">
+                        <input type="button" value="Browse..." class="fileBrowserButton" data-target="#datasetFilePath" data-type="data" {{ sftpuser ? '' : 'disabled' }}>
                         {% if form.datasetFilePath.vars.value is not empty %}
                             <div class="file_force">
                                 {{ form_widget(form.datasetFileForceImport) }} {{ form_label(form.datasetFileForceImport) }}
@@ -350,19 +357,18 @@
             </div> <!-- md-tabs-1 -->
 
             <div id="md-tabs-2"> <!-- Upload via SFTP/GridFTP -->
-                You may use this method if you wish to upload the metadata file via SFTP/GridFTP (e.g. if you uploaded a metadata file alongside a data file that you uploaded using SFTP/GridFTP).
-                <strong>Note:</strong> <em>Using this method requires that you have <strong>first</strong> uploaded your file via SFTP or GridFTP.</em>
-                    {% if sftpuser|default %}
-                    <div style="color:red;">
-                        Your account has not been configured for SFTP/GridFTP access.<br>
-                        If you wish to use SFTP/GridFTP, please contact <a href="mailto:griidc@gomri.org">griidc@gomri.org</a> to request SFTP/GridFTP access.
+                <p>You may use this method if you wish to upload the metadata file via SFTP/GridFTP (e.g. if you uploaded a metadata file alongside a data file that you uploaded using SFTP/GridFTP).
+                <strong>Note:</strong> <em>Using this method requires that you have <strong>first</strong> uploaded your file via SFTP or GridFTP.</em></p>
+                <div>
+                    <div class="sftpYes {{ sftpuser ? 'sftpshow' : 'sftphidden' }}" style="color:black;">
+                        <p>Your account has been configured for SFTP/GridFTP access.
+                        Click <a href="https://data.gulfresearchinitiative.org/data-file-transfer-methods#SFTP" TARGET="_NEW">here</a> for instructions.</p>
                     </div>
-                    {% elseif sftpdir|default %}
-                    <div style="color:red;">
-                        Your SFTP/GridFTP directory has not been set up.<br>
-                        Please contact <a href="mailto:griidc@gomri.org">griidc@gomri.org</a> for assistance.
+                    <div class="sftpNo {{ sftpuser ? 'sftphidden' : 'sftpshow' }}" style="color:red;">
+                        <p>Your account has not been configured for SFTP/GridFTP access.
+                        If you wish to use SFTP/GridFTP, use the "Request SFTP/GridFTP" button in the Dataset File section.</p>
                     </div>
-                    {% endif %}
+                </div>
                 <fieldset>
                     <br>
                         <span id="qtip_sshmetadataurl" style="float:right;">
@@ -372,9 +378,13 @@
                         </span>
                         {{ form_label(form.metadataFilePath) }}
                         <div class="fwtextboxcont">
-                            {{ form_widget(form.metadataFilePath) }}
+                            {% if sftpuser %}
+                                {{ form_widget(form.metadataFilePath) }}
+                            {% else %}
+                                {{ form_widget(form.metadataFilePath, { 'attr':{'disabled':'disabled'} }) }}
+                            {% endif %}
                         </div>
-                        <input type="button" value="Browse..." class="fileBrowserButton" data-target="#metadataFilePath" data-type="metadata">
+                        <input type="button" value="Browse..." class="fileBrowserButton" data-target="#metadataFilePath" data-type="metadata" {{ sftpuser ? '' : 'disabled' }}>
                         {% if form.metadataFilePath.vars.value is not empty %}
                             <div class="file_force">
                                 {{ form_widget(form.metadataFileForceImport) }} {{ form_label(form.metadataFileForceImport) }}

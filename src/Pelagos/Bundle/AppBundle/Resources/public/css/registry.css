@@ -9,7 +9,7 @@ textarea#abstract {
     width:100%;
 }
 
-input#pointOfContactName, 
+input#pointOfContactName,
 input#pointOfContactEmail,
 input#authors,
 input#title,
@@ -295,10 +295,12 @@ a.boxclose{
     background-color: white;
 }
 
-
-
 .file_force label {
     color: #222;
     display: inline;
     font-weight: normal;
+}
+
+.sftphidden {
+    display: none;
 }

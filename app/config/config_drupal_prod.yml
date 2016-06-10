@@ -18,6 +18,10 @@ monolog:
             type:     stream
             path:     "%kernel.logs_dir%/retriever.log"
             channels: ["retriever"]
+        create_homedir:
+            type:     stream
+            path:     "%kernel.logs_dir%/create_homedir.log"
+            channels: ["create_homedir"]
         main:
             type:         fingers_crossed
             action_level: error

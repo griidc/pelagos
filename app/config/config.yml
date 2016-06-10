@@ -130,6 +130,9 @@ old_sound_rabbit_mq:
         dataset_submission:
             connection:       default
             exchange_options: { name: 'dataset_submission', type: topic }
+        create_homedir:
+            connection:       default
+            exchange_options: { name: 'create_homedir', type: direct }
     consumers:
         filer:
             connection:       default
@@ -150,3 +153,9 @@ old_sound_rabbit_mq:
                 name: 'retriever'
                 routing_keys:
                     - 'dataset.HTTP'
+        create_homedir:
+            connection:       default
+            exchange_options: { name: 'create_homedir', type: direct }
+            callback:         pelagos.rabbit.consumer.create_homedir
+            queue_options:
+                name: 'create_homedir'

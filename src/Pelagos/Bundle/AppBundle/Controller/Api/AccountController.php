@@ -143,4 +143,45 @@ class AccountController extends EntityController
 
         return $directoryData;
     }
+
+    /**
+     * Request a user to be converted to POSIX.
+     *
+     * @throws BadRequestHttpException In event POSIX cannot be requested.
+     * @throws AccessDeniedException   If user isn't logged in or does not have an account.
+     *
+     * @ApiDoc(
+     *   section = "Account",
+     *   statusCodes = {
+     *     204 = "The user account has been made a POSIX account.",
+     *     400 = "The user can not be made into a POSIX user (see error message for reason).",
+     *     500 = "An internal error has occurred.",
+     *   }
+     * )
+     *
+     * @Rest\Patch("/self/make-posix")
+     *
+     * @Rest\View()
+     *
+     * @return Response A response object with an empty body and a "no content" status code.
+     */
+    public function makePosixAction()
+    {
+        if (!($this->getUser() instanceof Account)) {
+            throw new AccessDeniedException('User is either not logged in or does not have an account');
+        }
+
+        // Call utility class to POSIX-enable this Account.
+        try {
+            $this->get('pelagos.util.posixify_account')->POSIXifyAccount($this->getUser());
+        } catch (\Exception $e) {
+            throw new BadRequestHttpException(
+                'There was a problem. '
+                . $e->getMessage()
+            );
+        }
+
+        // Return a no content success response.
+        return $this->makeNoContentResponse();
+    }
 }

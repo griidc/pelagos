@@ -42,3 +42,7 @@ parameters:
 
     # A secret key that's used to generate certain security-related tokens
     secret:            ThisTokenIsNotSoSecretChangeIt
+
+    # Parameters for POSIX account generation
+    posix_starting_uid: 10000
+    posix_gid: 1001

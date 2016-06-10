@@ -377,6 +377,18 @@ class Account extends Entity implements UserInterface, \Serializable
     }
 
     /**
+     * Set the home directory for this account.
+     *
+     * @param string $homeDir The home directory.
+     *
+     * @return void
+     */
+    public function setHomeDirectory($homeDir)
+    {
+        $this->homeDirectory = $homeDir;
+    }
+
+    /**
      * Get the login shell for this account.
      *
      * @return string
