@@ -181,6 +181,9 @@ class DatasetSubmissionConsumer implements ConsumerInterface
             $datasetSubmission->setMetadataFileTransferStatus(
                 DatasetSubmission::TRANSFER_STATUS_COMPLETED
             );
+            $datasetSubmission->setMetadataStatus(
+                DatasetSubmission::METADATA_STATUS_SUBMITTED
+            );
         } catch (\Exception $exception) {
             $this->logger->error('Error processing metadata: ' . $exception->getMessage(), $loggingContext);
             return;
