@@ -230,6 +230,8 @@ class DIFController extends EntityController
         }
         // Update the DIF in persistence and dispatch a 'submitted' event.
         $this->container->get('pelagos.entity.handler')->update($dif, 'submitted');
+        // Update the Dataset too because cascade persist doesn't work as expected.
+        $this->container->get('pelagos.entity.handler')->update($dif->getDataset());
         // Return a no content success response.
         return $this->makeNoContentResponse();
     }
@@ -275,6 +277,8 @@ class DIFController extends EntityController
         }
         // Update the DIF in persistence and dispatch an 'approved' event.
         $this->container->get('pelagos.entity.handler')->update($dif, 'approved');
+        // Update the Dataset too because cascade persist doesn't work as expected.
+        $this->container->get('pelagos.entity.handler')->update($dif->getDataset());
         // Return a no content success response.
         return $this->makeNoContentResponse();
     }
@@ -320,6 +324,8 @@ class DIFController extends EntityController
         }
         // Update the DIF in persistence and dispatch a 'rejected' event.
         $this->container->get('pelagos.entity.handler')->update($dif, 'rejected');
+        // Update the Dataset too because cascade persist doesn't work as expected.
+        $this->container->get('pelagos.entity.handler')->update($dif->getDataset());
         // Return a no content success response.
         return $this->makeNoContentResponse();
     }
