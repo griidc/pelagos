@@ -518,9 +518,9 @@ class DatasetSubmission extends Entity
      *
      * @see METADATA_STATUSES class constant for valid values.
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column
      */
-    protected $metadataStatus;
+    protected $metadataStatus = self::METADATA_STATUS_NONE;
 
     /**
      * Set the Dataset this Dataset Submission is attached to.
@@ -533,6 +533,7 @@ class DatasetSubmission extends Entity
     {
         $this->dataset = $dataset;
         $this->updateDatasetSubmissionStatus();
+        $this->updateMetadataStatus();
     }
 
     /**
@@ -1146,6 +1147,7 @@ class DatasetSubmission extends Entity
     public function setMetadataStatus($metadataStatus)
     {
         $this->metadataStatus = $metadataStatus;
+        $this->updateMetadataStatus();
     }
 
     /**
@@ -1189,6 +1191,18 @@ class DatasetSubmission extends Entity
             } else {
                 $this->dataset->setDatasetSubmissionStatus(self::STATUS_COMPLETE);
             }
+        }
+    }
+
+    /**
+     * Update the metadata status in associated Dataset if a Dataset has been associated.
+     *
+     * @return void
+     */
+    protected function updateMetadataStatus()
+    {
+        if ($this->dataset instanceof Dataset) {
+            $this->getDataset()->setMetadataStatus($this->getMetadataStatus());
         }
     }
 }

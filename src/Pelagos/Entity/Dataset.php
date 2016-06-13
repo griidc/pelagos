@@ -90,6 +90,17 @@ class Dataset extends Entity
     protected $datasetSubmissionStatus = DatasetSubmission::STATUS_UNSUBMITTED;
 
     /**
+     * The metadata status of this Dataset.
+     *
+     * @var integer
+     *
+     * @see DatasetSubmission::METADATA_STATUS_* constants.
+     *
+     * @ORM\Column
+     */
+    protected $metadataStatus = DatasetSubmission::METADATA_STATUS_NONE;
+
+    /**
      * Constructor.
      */
     public function __construct()
@@ -262,5 +273,27 @@ class Dataset extends Entity
     public function getDatasetSubmissionStatus()
     {
         return $this->datasetSubmissionStatus;
+    }
+
+    /**
+     * Set the metadata status.
+     *
+     * @param integer $metadataStatus The metadata status.
+     *
+     * @return void
+     */
+    public function setMetadataStatus($metadataStatus)
+    {
+        $this->metadataStatus = $metadataStatus;
+    }
+
+    /**
+     * Get the metadata status.
+     *
+     * @return integer
+     */
+    public function getMetadataStatus()
+    {
+        return $this->metadataStatus;
     }
 }
