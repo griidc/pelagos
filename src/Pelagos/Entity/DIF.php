@@ -479,6 +479,7 @@ class DIF extends Entity
         if ($dataset !== null and $this->dataset->getDif() !== $this) {
             $this->dataset->setDif($this);
         }
+        $this->updateIdentifiedStatus();
     }
 
     /**
@@ -1531,8 +1532,18 @@ class DIF extends Entity
     protected function setStatus($status)
     {
         $this->status = $status;
+        $this->updateIdentifiedStatus();
+    }
+
+    /**
+     * Update the identified status in associated Dataset if a Dataset has been associated.
+     *
+     * @return void
+     */
+    protected function updateIdentifiedStatus()
+    {
         if ($this->getDataset() instanceof Dataset) {
-            $this->getDataset()->setIdentified($status);
+            $this->getDataset()->setIdentifiedStatus($this->status);
         }
     }
 }

@@ -68,7 +68,7 @@ class Dataset extends Entity
     protected $datasetSubmissionHistory;
 
     /**
-     * The identified state of this Dataset.
+     * The identified status of this Dataset.
      *
      * @var integer
      *
@@ -76,7 +76,7 @@ class Dataset extends Entity
      *
      * @ORM\Column(type="smallint")
      */
-    protected $identified = DIF::STATUS_UNSUBMITTED;
+    protected $identifiedStatus = DIF::STATUS_UNSUBMITTED;
 
     /**
      * Constructor.
@@ -210,24 +210,24 @@ class Dataset extends Entity
     }
 
     /**
-     * Set the identified state.
+     * Set the identified status.
      *
-     * @param integer $identified The identified state.
+     * @param integer $identifiedStatus The identified status.
      *
      * @return void
      */
-    public function setIdentified($identified)
+    public function setIdentifiedStatus($identifiedStatus)
     {
-        $this->identified = $identified;
+        $this->identifiedStatus = $identifiedStatus;
     }
 
     /**
-     * Get the identified state.
+     * Get the identified status.
      *
      * @return integer
      */
-    public function getIdentified()
+    public function getIdentifiedStatus()
     {
-        return $this->identified;
+        return $this->identifiedStatus;
     }
 }
