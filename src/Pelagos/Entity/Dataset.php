@@ -101,6 +101,17 @@ class Dataset extends Entity
     protected $metadataStatus = DatasetSubmission::METADATA_STATUS_NONE;
 
     /**
+     * The availability status of this Dataset.
+     *
+     * @var integer
+     *
+     * @see DatasetSubmission::AVAILABILITY_STATUS_* constants.
+     *
+     * @ORM\Column(type="smallint")
+     */
+    protected $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE;
+
+    /**
      * Constructor.
      */
     public function __construct()
@@ -295,5 +306,27 @@ class Dataset extends Entity
     public function getMetadataStatus()
     {
         return $this->metadataStatus;
+    }
+
+    /**
+     * Set the availability status.
+     *
+     * @param integer $availabilityStatus The availability status.
+     *
+     * @return void
+     */
+    public function setAvailabilityStatus($availabilityStatus)
+    {
+        $this->availabilityStatus = $availabilityStatus;
+    }
+
+    /**
+     * Get the availability status.
+     *
+     * @return integer
+     */
+    public function getAvailabilityStatus()
+    {
+        return $this->availabilityStatus;
     }
 }
