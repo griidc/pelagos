@@ -92,7 +92,7 @@ class Dataset extends Entity
     /**
      * The metadata status of this Dataset.
      *
-     * @var integer
+     * @var status
      *
      * @see DatasetSubmission::METADATA_STATUS_* constants.
      *
@@ -289,7 +289,7 @@ class Dataset extends Entity
     /**
      * Set the metadata status.
      *
-     * @param integer $metadataStatus The metadata status.
+     * @param string $metadataStatus The metadata status.
      *
      * @return void
      */
@@ -301,7 +301,7 @@ class Dataset extends Entity
     /**
      * Get the metadata status.
      *
-     * @return integer
+     * @return string
      */
     public function getMetadataStatus()
     {
