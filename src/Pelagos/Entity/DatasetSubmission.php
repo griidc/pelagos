@@ -164,6 +164,21 @@ class DatasetSubmission extends Entity
     );
 
     /**
+     * No dataset submission has been submitted.
+     */
+    const STATUS_UNSUBMITTED = 0;
+
+    /**
+     * A dataset submission has been submitted, but no data file URI has been provided.
+     */
+    const STATUS_INCOMPLETE = 1;
+
+    /**
+     * A dataset submission has been submitted, and a data file URI has been provided.
+     */
+    const STATUS_COMPLETE = 2;
+
+    /**
      * The Dataset this Dataset Submission is attached to.
      *
      * @var Dataset
@@ -517,6 +532,7 @@ class DatasetSubmission extends Entity
     public function setDataset(Dataset $dataset)
     {
         $this->dataset = $dataset;
+        $this->updateDatasetSubmissionStatus();
     }
 
     /**
@@ -746,6 +762,7 @@ class DatasetSubmission extends Entity
     public function setDatasetFileUri($datasetFileUri)
     {
         $this->datasetFileUri = $datasetFileUri;
+        $this->updateDatasetSubmissionStatus();
     }
 
     /**
@@ -1157,5 +1174,21 @@ class DatasetSubmission extends Entity
             return null;
         }
         return $this->dataset->getUdi() . '.' . sprintf('%03d', $this->sequence);
+    }
+
+    /**
+     * Update the dataset submission status in associated Dataset if a Dataset has been associated.
+     *
+     * @return void
+     */
+    protected function updateDatasetSubmissionStatus()
+    {
+        if ($this->dataset instanceof Dataset) {
+            if (null === $this->datasetFileUri) {
+                $this->dataset->setDatasetSubmissionStatus(self::STATUS_INCOMPLETE);
+            } else {
+                $this->dataset->setDatasetSubmissionStatus(self::STATUS_COMPLETE);
+            }
+        }
     }
 }

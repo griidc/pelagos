@@ -79,6 +79,17 @@ class Dataset extends Entity
     protected $identifiedStatus = DIF::STATUS_UNSUBMITTED;
 
     /**
+     * The dataset submission status of this Dataset.
+     *
+     * @var integer
+     *
+     * @see DatasetSubmission::STATUS_* constants.
+     *
+     * @ORM\Column(type="smallint")
+     */
+    protected $datasetSubmissionStatus = DatasetSubmission::STATUS_UNSUBMITTED;
+
+    /**
      * Constructor.
      */
     public function __construct()
@@ -229,5 +240,27 @@ class Dataset extends Entity
     public function getIdentifiedStatus()
     {
         return $this->identifiedStatus;
+    }
+
+    /**
+     * Set the dataset submission status.
+     *
+     * @param integer $datasetSubmissionStatus The dataset submission status.
+     *
+     * @return void
+     */
+    public function setDatasetSubmissionStatus($datasetSubmissionStatus)
+    {
+        $this->datasetSubmissionStatus = $datasetSubmissionStatus;
+    }
+
+    /**
+     * Get the dataset submission status.
+     *
+     * @return integer
+     */
+    public function getDatasetSubmissionStatus()
+    {
+        return $this->datasetSubmissionStatus;
     }
 }
