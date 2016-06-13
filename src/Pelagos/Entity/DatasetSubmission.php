@@ -1185,11 +1185,11 @@ class DatasetSubmission extends Entity
      */
     protected function updateDatasetSubmissionStatus()
     {
-        if ($this->dataset instanceof Dataset) {
-            if (null === $this->datasetFileUri) {
-                $this->dataset->setDatasetSubmissionStatus(self::STATUS_INCOMPLETE);
+        if ($this->getDataset() instanceof Dataset) {
+            if (null === $this->getDatasetFileUri()) {
+                $this->getDataset()->setDatasetSubmissionStatus(self::STATUS_INCOMPLETE);
             } else {
-                $this->dataset->setDatasetSubmissionStatus(self::STATUS_COMPLETE);
+                $this->getDataset()->setDatasetSubmissionStatus(self::STATUS_COMPLETE);
             }
         }
     }
@@ -1201,7 +1201,7 @@ class DatasetSubmission extends Entity
      */
     protected function updateMetadataStatus()
     {
-        if ($this->dataset instanceof Dataset) {
+        if ($this->getDataset() instanceof Dataset) {
             $this->getDataset()->setMetadataStatus($this->getMetadataStatus());
         }
     }
