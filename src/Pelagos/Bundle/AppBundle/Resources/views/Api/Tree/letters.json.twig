@@ -2,15 +2,15 @@
 {% for letter in letters %}
     {
         "data": {
-            "title": "{{letter.Letter}}",
+            "title": "{{letter}}",
             "attr": {
                 "style": "color:black"
             }
         },
         "attr": {
-            "id": "{{letter.Letter}}"
+            "id": "{{letter}}"
         },
-        {% if expand_to_depth > 0 %}
+        {% if tree.expand_to_depth > 0 %}
             "state": "open"
         {% else %}
             "state": "closed"
