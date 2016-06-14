@@ -16,6 +16,19 @@ if (preg_match('/^Pelagos\\\\Bundle\\\\AppBundle\\\\Controller\\\\Api\\\\/', $re
     drupal_exit();
 }
 
+if (in_array(
+    $request->attributes->get('_route'),
+    array(
+        'pelagos_app_ui_datasetmonitoring_allresearchgroup',
+        'pelagos_app_ui_datasetmonitoring_researchgroup',
+        'pelagos_app_ui_datasetmonitoring_researcher',
+    )
+)) {
+    $response->send();
+    $kernel->terminate($request, $response);
+    drupal_exit();
+}
+
 if (preg_match('/^Pelagos\\\\/', $request->attributes->get('_controller'))) {
     $content = $response->getContent();
     $newContent = preg_replace('/<\/body>/', '', $content);
