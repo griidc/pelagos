@@ -39,7 +39,7 @@ class DatasetMonitoringController extends UIController
      * @param string $fc       A Pelagos Funding Cycle entity id.
      * @param string $renderer Either 'browser' or 'html2pdf'.
      *
-     * @Route("/dataset-monitoring/research-groups/{fc}/{renderer}", defaults={"renderer" = "browser"})
+     * @Route("/funding-cycle/{fc}/{renderer}", defaults={"renderer" = "browser"})
      *
      * @return Response A Response instance.
      */
@@ -53,7 +53,7 @@ class DatasetMonitoringController extends UIController
             return $this->render(
                 'PelagosAppBundle:DatasetMonitoring:pdf.html',
                 array(
-                    'researchGroups' => array($researchGroup),
+                    'researchGroups' => $researchGroups,
                     'header' => $title,
                     'pdfFileName' => "Dataset Monitoring - $title"
                 )
@@ -62,7 +62,7 @@ class DatasetMonitoringController extends UIController
             return $this->render(
                 'PelagosAppBundle:DatasetMonitoring:projects.html',
                 array(
-                    'researchGroups' => array($researchGroup),
+                    'researchGroups' => $researchGroups,
                     'header' => $title,
                     'pdfFileName' => "Dataset Monitoring - $title"
                 )
@@ -76,14 +76,14 @@ class DatasetMonitoringController extends UIController
      * @param string $rg       A Pelagos Research Group entity id.
      * @param string $renderer Either 'browser' or 'html2pdf'.
      *
-     * @Route("/dataset-monitoring/research-group/{rg}/{renderer}", defaults={"renderer" = "browser"})
+     * @Route("/research-group/{rg}/{renderer}", defaults={"renderer" = "browser"})
      *
      * @return Response A Response instance.
      */
     public function researchGroupAction($rg, $renderer)
     {
         $researchGroup = $this->entityHandler->get('Pelagos:ResearchGroup', $rg);
-        $title = $researchGroup->getTitle();
+        $title = $researchGroup->getName();
         if ('html2pdf' == $renderer) {
             return $this->render(
                 'PelagosAppBundle:DatasetMonitoring:pdf.html',
@@ -111,7 +111,7 @@ class DatasetMonitoringController extends UIController
      * @param string $id       A Pelagos Person entity id of a researcher.
      * @param string $renderer Either 'browser' or 'html2pdf'.
      *
-     * @Route("/dataset-monitoring/researcher/{id}/{renderer}", defaults={"renderer" = "browser"})
+     * @Route("/researcher/{id}/{renderer}", defaults={"renderer" = "browser"})
      *
      * @return Response A Response instance.
      */
