@@ -2,7 +2,7 @@
 {% for project in projects %}
     {
         "data": {
-            "title": "{{project.getTitle | raw}}",
+            "title": "{{project.getName | raw}}",
             "attr": {
                 "style": "color:{{tree.project_color}}"
             }

@@ -3,61 +3,120 @@
 namespace Pelagos\Bundle\AppBundle\Controller\Api;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 use FOS\RestBundle\Controller\Annotations as Rest;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
-use Pelagos\Entity\FundingCycle;
+use Pelagos\Entity\FundingOrganization;
+use Pelagos\Entity\ResearchGroup;
 
 /**
- * The Dataset api controller.
+ * The Tree API controller.
  */
 class TreeController extends EntityController
 {
     /**
-     * Gets a collection of Projects.
+     * The default tree config.
+     *
+     * @var array
+     */
+    protected $defaultTree = array(
+        'rfp_color' => 'black',
+        'rfp_action' => '',
+        'project_color' => 'black',
+        'project_action' => '',
+        'max_depth' => 3,
+        'expand_to_depth' => 0,
+    );
+
+    /**
+     * Gets the root nodes.
      *
      * @param Request $request The request object.
      *
      * @ApiDoc(
      *   section = "Tree",
      *   parameters = {
-     *     {"name"="someProperty", "dataType"="string", "required"=false, "description"="Filter by someProperty"}
+     *     {"name"="tree", "dataType"="string", "required"=false, "description"="The tree configuration"}
      *   },
-     *   output = "json",
      *   statusCodes = {
-     *     200 = "The requested collection of Datasets was successfully retrieved.",
+     *     200 = "The requested root nodes were successfully retrieved.",
      *     500 = "An internal error has occurred.",
      *   }
      * )
      *
-     * @Rest\Get("/json/{type}.json")
+     * @Rest\Get("/json/ra.json")
      *
-     * @Rest\View(serializerEnableMaxDepthChecks = true)
-     *
-     * @return json
+     * @return string
      */
-    public function getCollectionAction(Request $request)
+    public function getRootNodesAction(Request $request)
     {
-        $entities = $this->container->get('pelagos.entity.handler')->getAll(FundingCycle::class);
-        
-        $tree = json_decode (urldecode($request->query->get('tree')));
-        
-        //print_r($tree);
-        
         return $this->render(
             'PelagosAppBundle:Api:Tree/research_awards.json.twig',
             array(
-                'RFPS' => $entities,
-                'YR1' => array (
-                        'top' => false,
-                        'hide' => false,
-                        ),
-                'tree' => $tree,
-                
-                )
+                'tree' => $this->buildTreeConfig($request),
+                'fundingOrgs' => $this->container->get('pelagos.entity.handler')->getAll(
+                    FundingOrganization::class
+                ),
+            )
         );
+    }
+
+    /**
+     * Gets the Research Group nodes.
+     *
+     * @param Request $request      The request object.
+     * @param integer $fundingCycle The funding cycle to return Research Groups for.
+     *
+     * @ApiDoc(
+     *   section = "Tree",
+     *   parameters = {
+     *     {"name"="tree", "dataType"="string", "required"=false, "description"="The tree configuration"}
+     *   },
+     *   statusCodes = {
+     *     200 = "The requested Research Group nodes were successfully retrieved.",
+     *     500 = "An internal error has occurred.",
+     *   }
+     * )
+     *
+     * @Rest\Get("/json/ra/projects/funding-cycle/{fundingCycle}.json")
+     *
+     * @return string
+     */
+    public function getResearchGroupNodesAction(Request $request, $fundingCycle)
+    {
+        return $this->render(
+            'PelagosAppBundle:Api:Tree/projects.json.twig',
+            array(
+                'tree' => $this->buildTreeConfig($request),
+                'projects' => $this->container->get('pelagos.entity.handler')->getBy(
+                    ResearchGroup::class,
+                    array('fundingCycle' => $fundingCycle),
+                    array('name' => 'ASC')
+                ),
+            )
+        );
+    }
+
+    /**
+     * Build the tree configuration array from the default tree and a Symfony request.
+     *
+     * @param Request $request A Symfony request object.
+     *
+     * @return array
+     */
+    protected function buildTreeConfig(Request $request)
+    {
+        $tree = $this->defaultTree;
+
+        if (null !== $request->query->get('tree')) {
+            $tree = array_merge(
+                $tree,
+                json_decode(urldecode($request->query->get('tree')), true)
+            );
+        }
+
+        return $tree;
     }
 }
