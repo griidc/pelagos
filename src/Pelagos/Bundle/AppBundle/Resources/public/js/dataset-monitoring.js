@@ -1,27 +1,3 @@
-var fund_src_map = {
-    {% for fund in funds %}
-        '{{fund.Abbr}}': '{{fund.ID}}',
-    {% endfor %}
-};
-
-var rev_fund_src_map = {
-    {% for fund in funds %}
-        '{{fund.ID}}': '{{fund.Abbr}}',
-    {% endfor %}
-};
-
-var project_map = {
-    {% for project in projects %}
-        '{{project.Abbr}}': '{{project.ID}}',
-    {% endfor %}
-}
-
-var rev_project_map = {
-    {% for project in projects %}
-        '{{project.ID}}': '{{project.Abbr}}',
-    {% endfor %}
-}
-
 var $ = jQuery.noConflict();
 
 $(document).ready(function() {
@@ -31,20 +7,20 @@ $(document).ready(function() {
         if (m) {
             if (typeof m[1] !== 'undefined') {
                 if (typeof m[2] === 'undefined') {
-                    if ($('#projects_fundSrc_' + map_fund_src(m[1])).length && $('#tree').jstree('get_selected').attr('id') != 'projects_fundSrc_' + map_fund_src(m[1])) {
+                    if ($('#projects_fundSrc_' + m[1]).length && $('#tree').jstree('get_selected').attr('id') != 'projects_fundSrc_' + m[1]) {
                         $("#tree").jstree("deselect_all");
-                        $("#tree").jstree("select_node", ('#projects_fundSrc_' + map_fund_src(m[1])));
+                        $("#tree").jstree("select_node", ('#projects_fundSrc_' + m[1]));
                     }
                 }
                 else {
-                    $("#tree").jstree("open_node", $('#projects_fundSrc_' + map_fund_src(m[1])));
-                    if ($('#datasets_projectId_' + map_project(m[2])).length && $('#tree').jstree('get_selected').attr('id') != 'datasets_projectId_' + map_project(m[2])) {
+                    $("#tree").jstree("open_node", $('#projects_fundSrc_' + m[1]));
+                    if ($('#datasets_projectId_' + m[2]).length && $('#tree').jstree('get_selected').attr('id') != 'datasets_projectId_' + m[2]) {
                         $("#tree").jstree("deselect_all");
-                        $("#tree").jstree("select_node", $('#datasets_projectId_' + map_project(m[2])), true);
+                        $("#tree").jstree("select_node", $('#datasets_projectId_' + m[2]), true);
                     }
-                    else if ($('#tasks_projectId_' + map_project(m[2])).length && $('#tree').jstree('get_selected').attr('id') != 'tasks_projectId_' + map_project(m[2])) {
+                    else if ($('#tasks_projectId_' + m[2]).length && $('#tree').jstree('get_selected').attr('id') != 'tasks_projectId_' + m[2]) {
                         $("#tree").jstree("deselect_all");
-                        $("#tree").jstree("select_node", $('#tasks_projectId_' + map_project(m[2])), true);
+                        $("#tree").jstree("select_node", $('#tasks_projectId_' + m[2]), true);
                     }
                 }
             }
@@ -55,8 +31,19 @@ $(document).ready(function() {
 function showProjects(by,id) {
     $('#content .overview').html('<div class="spinner"><div><img src="{{baseUrl}}/includes/images/spinner.gif"></div></div>');
     $('div.spinner').height($('#content .viewport').height()-12);
+    switch(by) {
+        case "fundSrc":
+            var url = Routing.generate("pelagos_app_ui_datasetmonitoring_allresearchgroup", {"fc": id, "renderer": "browser"});
+            break;
+        case "projectId":
+            var url = Routing.generate("pelagos_app_ui_datasetmonitoring_researchgroup", {"rg": id, "renderer": "browser"});
+            break;
+        case "peopleId":
+            var url = Routing.generate("pelagos_app_ui_datasetmonitoring_researcher", {"id": id, "renderer": "browser"});
+            break;
+    }
     $.ajax({
-        "url": "{{baseUrl}}/projects/" + by + "/" + id,
+        "url": url,
         "success": function(data) {
             $('#content .overview').html(data);
             $('#content .overview td[title]').qtip({
@@ -139,28 +126,8 @@ function showProjects(by,id) {
 
 function updateHash(fund_src,project_id) {
     if (typeof(project_id) != "undefined") {
-        location.href = '#' + rev_map_fund_src(fund_src) + '/' + rev_map_project(project_id);
+        location.href = '#' + fund_src + '/' + project_id;
     } else {
-        location.href = '#' + rev_map_fund_src(fund_src);
+        location.href = '#' + fund_src;
     }
-}
-
-function map_fund_src(name) {
-    if (name in fund_src_map) return fund_src_map[name];
-    return name;
-}
-
-function rev_map_fund_src(name) {
-    if (name in rev_fund_src_map) return rev_fund_src_map[name];
-    return name;
-}
-
-function map_project(name) {
-    if (name in project_map) return project_map[name];
-    return name;
-}
-
-function rev_map_project(name) {
-    if (name in rev_project_map) return rev_project_map[name];
-    return name;
 }
