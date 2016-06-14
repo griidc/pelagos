@@ -20,9 +20,9 @@
                             "id": "projects_funding-cycle_{{fundSrc.getId}}",
                             "action": "{{tree.rfp_action | evaluate}}"
                         }
-                        {% if tree.max_depth > 0 %}
+                        {% if tree.max_depth > 1 %}
                             ,
-                            {% if tree.expand_to_depth > 0 %}
+                            {% if tree.expand_to_depth > 1 %}
                                 "state": "open"
                             {% else %}
                                 "state": "closed"
@@ -34,6 +34,10 @@
                     {% endif %}
                 {% endfor %}
             ]
+            {% if tree.max_depth > 0 %}
+                ,
+                "state": "open"
+            {% endif %}
         }
         {% if not loop.last %}
             ,
