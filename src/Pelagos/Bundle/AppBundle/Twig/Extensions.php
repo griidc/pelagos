@@ -45,7 +45,7 @@ class Extensions extends \Twig_Extension
 
     /**
      * Return a list of filters.
-        *
+     *
      * @return array A list of Twig filters.
      */
     public function getFilters()
