@@ -68,6 +68,50 @@ class Dataset extends Entity
     protected $datasetSubmissionHistory;
 
     /**
+     * The identified status of this Dataset.
+     *
+     * @var integer
+     *
+     * @see DIF::STATUS_* constants.
+     *
+     * @ORM\Column(type="smallint")
+     */
+    protected $identifiedStatus = DIF::STATUS_UNSUBMITTED;
+
+    /**
+     * The dataset submission status of this Dataset.
+     *
+     * @var integer
+     *
+     * @see DatasetSubmission::STATUS_* constants.
+     *
+     * @ORM\Column(type="smallint")
+     */
+    protected $datasetSubmissionStatus = DatasetSubmission::STATUS_UNSUBMITTED;
+
+    /**
+     * The metadata status of this Dataset.
+     *
+     * @var status
+     *
+     * @see DatasetSubmission::METADATA_STATUS_* constants.
+     *
+     * @ORM\Column
+     */
+    protected $metadataStatus = DatasetSubmission::METADATA_STATUS_NONE;
+
+    /**
+     * The availability status of this Dataset.
+     *
+     * @var integer
+     *
+     * @see DatasetSubmission::AVAILABILITY_STATUS_* constants.
+     *
+     * @ORM\Column(type="smallint")
+     */
+    protected $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE;
+
+    /**
      * Constructor.
      */
     public function __construct()
@@ -196,5 +240,93 @@ class Dataset extends Entity
         }
         // Return null if we can't find a title.
         return null;
+    }
+
+    /**
+     * Set the identified status.
+     *
+     * @param integer $identifiedStatus The identified status.
+     *
+     * @return void
+     */
+    public function setIdentifiedStatus($identifiedStatus)
+    {
+        $this->identifiedStatus = $identifiedStatus;
+    }
+
+    /**
+     * Get the identified status.
+     *
+     * @return integer
+     */
+    public function getIdentifiedStatus()
+    {
+        return $this->identifiedStatus;
+    }
+
+    /**
+     * Set the dataset submission status.
+     *
+     * @param integer $datasetSubmissionStatus The dataset submission status.
+     *
+     * @return void
+     */
+    public function setDatasetSubmissionStatus($datasetSubmissionStatus)
+    {
+        $this->datasetSubmissionStatus = $datasetSubmissionStatus;
+    }
+
+    /**
+     * Get the dataset submission status.
+     *
+     * @return integer
+     */
+    public function getDatasetSubmissionStatus()
+    {
+        return $this->datasetSubmissionStatus;
+    }
+
+    /**
+     * Set the metadata status.
+     *
+     * @param string $metadataStatus The metadata status.
+     *
+     * @return void
+     */
+    public function setMetadataStatus($metadataStatus)
+    {
+        $this->metadataStatus = $metadataStatus;
+    }
+
+    /**
+     * Get the metadata status.
+     *
+     * @return string
+     */
+    public function getMetadataStatus()
+    {
+        return $this->metadataStatus;
+    }
+
+    /**
+     * Set the availability status.
+     *
+     * @param integer $availabilityStatus The availability status.
+     *
+     * @return void
+     */
+    public function setAvailabilityStatus($availabilityStatus)
+    {
+        $this->availabilityStatus = $availabilityStatus;
+    }
+
+    /**
+     * Get the availability status.
+     *
+     * @return integer
+     */
+    public function getAvailabilityStatus()
+    {
+        return $this->availabilityStatus;
     }
 }

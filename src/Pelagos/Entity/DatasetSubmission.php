@@ -164,6 +164,61 @@ class DatasetSubmission extends Entity
     );
 
     /**
+     * No dataset submission has been submitted.
+     */
+    const STATUS_UNSUBMITTED = 0;
+
+    /**
+     * A dataset submission has been submitted, but no data file URI has been provided.
+     */
+    const STATUS_INCOMPLETE = 1;
+
+    /**
+     * A dataset submission has been submitted, and a data file URI has been provided.
+     */
+    const STATUS_COMPLETE = 2;
+
+    /**
+     * The dataset is not available to anyone.
+     */
+    const AVAILABILITY_STATUS_NOT_AVAILABLE = 0;
+
+    /**
+     * The dataset is not available because it does not yet have approved metadata.
+     */
+    const AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL = 4;
+
+    /**
+     * The dataset is marked as restricted to author use only, but is remotely hosted.
+     */
+    const AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED = 5;
+
+    /**
+     * The dataset is marked as available to users with approval, but is remotely hosted.
+     */
+    const AVAILABILITY_STATUS_AVAILABLE_WITH_APPROVAL_REMOTELY_HOSTED = 6;
+
+    /**
+     * The dataset is marked as publicly available, but is remotely hosted.
+     */
+    const AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED = 7;
+
+    /**
+     * The dataset is restricted to author use only.
+     */
+    const AVAILABILITY_STATUS_RESTRICTED = 8;
+
+    /**
+     * The dataset is available to users with approval.
+     */
+    const AVAILABILITY_STATUS_AVAILABLE_WITH_APPROVAL = 9;
+
+    /**
+     * The dataset is publicly available.
+     */
+    const AVAILABILITY_STATUS_PUBLICLY_AVAILABLE = 10;
+
+    /**
      * The Dataset this Dataset Submission is attached to.
      *
      * @var Dataset
@@ -503,9 +558,9 @@ class DatasetSubmission extends Entity
      *
      * @see METADATA_STATUSES class constant for valid values.
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column
      */
-    protected $metadataStatus;
+    protected $metadataStatus = self::METADATA_STATUS_NONE;
 
     /**
      * Set the Dataset this Dataset Submission is attached to.
@@ -517,6 +572,8 @@ class DatasetSubmission extends Entity
     public function setDataset(Dataset $dataset)
     {
         $this->dataset = $dataset;
+        $this->updateDatasetSubmissionStatus();
+        $this->updateMetadataStatus();
     }
 
     /**
@@ -678,6 +735,7 @@ class DatasetSubmission extends Entity
     public function setRestrictions($restrictions)
     {
         $this->restrictions = $restrictions;
+        $this->updateAvailabilityStatus();
     }
 
     /**
@@ -746,6 +804,7 @@ class DatasetSubmission extends Entity
     public function setDatasetFileUri($datasetFileUri)
     {
         $this->datasetFileUri = $datasetFileUri;
+        $this->updateDatasetSubmissionStatus();
     }
 
     /**
@@ -770,6 +829,7 @@ class DatasetSubmission extends Entity
     public function setDatasetFileTransferStatus($datasetFileTransferStatus)
     {
         $this->datasetFileTransferStatus = $datasetFileTransferStatus;
+        $this->updateAvailabilityStatus();
     }
 
     /**
@@ -1129,6 +1189,8 @@ class DatasetSubmission extends Entity
     public function setMetadataStatus($metadataStatus)
     {
         $this->metadataStatus = $metadataStatus;
+        $this->updateMetadataStatus();
+        $this->updateAvailabilityStatus();
     }
 
     /**
@@ -1157,5 +1219,83 @@ class DatasetSubmission extends Entity
             return null;
         }
         return $this->dataset->getUdi() . '.' . sprintf('%03d', $this->sequence);
+    }
+
+    /**
+     * Update the dataset submission status in associated Dataset if a Dataset has been associated.
+     *
+     * @return void
+     */
+    protected function updateDatasetSubmissionStatus()
+    {
+        if ($this->getDataset() instanceof Dataset) {
+            if (null === $this->getDatasetFileUri()) {
+                $this->getDataset()->setDatasetSubmissionStatus(self::STATUS_INCOMPLETE);
+            } else {
+                $this->getDataset()->setDatasetSubmissionStatus(self::STATUS_COMPLETE);
+            }
+        }
+    }
+
+    /**
+     * Update the metadata status in associated Dataset if a Dataset has been associated.
+     *
+     * @return void
+     */
+    protected function updateMetadataStatus()
+    {
+        if ($this->getDataset() instanceof Dataset) {
+            $this->getDataset()->setMetadataStatus($this->getMetadataStatus());
+        }
+    }
+
+    /**
+     * Update the availability status in associated Dataset if a Dataset has been associated.
+     *
+     * @return void
+     */
+    protected function updateAvailabilityStatus()
+    {
+        if (!$this->getDataset() instanceof Dataset) {
+            return;
+        }
+        $availabilityStatus = self::AVAILABILITY_STATUS_NOT_AVAILABLE;
+        switch ($this->getDatasetFileTransferStatus()) {
+            case self::TRANSFER_STATUS_COMPLETED:
+                if ($this->getMetadataStatus() === self::METADATA_STATUS_ACCEPTED) {
+                    switch ($this->getRestrictions()) {
+                        case self::RESTRICTED_NONE:
+                            $availabilityStatus = self::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE;
+                            break;
+                        case self::RESTRICTED_APPROVAL:
+                            $availabilityStatus = self::AVAILABILITY_STATUS_AVAILABLE_WITH_APPROVAL;
+                            break;
+                        case self::RESTRICTED_RESTRICTED:
+                            $availabilityStatus = self::AVAILABILITY_STATUS_RESTRICTED;
+                            break;
+                    }
+                } else {
+                    $availabilityStatus = self::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL;
+                }
+                break;
+            case self::TRANSFER_STATUS_REMOTELY_HOSTED:
+                if ($this->getMetadataStatus() === self::METADATA_STATUS_ACCEPTED) {
+                    switch ($this->getRestrictions()) {
+                        case self::RESTRICTED_NONE:
+                            $availabilityStatus = self::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED;
+                            break;
+                        case self::RESTRICTED_APPROVAL:
+                            $availabilityStatus = self::AVAILABILITY_STATUS_AVAILABLE_WITH_APPROVAL_REMOTELY_HOSTED;
+                            break;
+                        case self::RESTRICTED_RESTRICTED:
+                            $availabilityStatus = self::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED;
+                            break;
+                    }
+                } else {
+                    $availabilityStatus = self::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL;
+                }
+                break;
+        }
+        $this->getDataset()->setAvailabilityStatus($availabilityStatus);
     }
 }
