@@ -1,0 +1,27 @@
+<html>
+    <head>
+        <script type="text/javascript">
+        //setting up headers and footers for html2pdf
+        var html2pdf = {
+            footer: {
+                height: "1cm",
+                contents: '<div class="center"><table width="100%"><tr><td align="left" style="font-size: 12px;">Generated: {{timestamp}}</td><td align="right" style="font-size: 12px;">page {% verbatim %}{{pageNumber}} of {{totalPages}}{% endverbatim %}</td></tr></table></div>'
+            }
+        };
+        </script>
+        <style type='text/css'>
+            @import url('{{baseUrl}}/css/projects.css');
+            @import url('{{baseUrl}}/includes/css/projects-pdf.css');
+        </style>
+        <style media='all'>
+            @page { margin: 48px; }
+            #header { position: relative; left: -1px; top: 5px; } 
+            #header img { height: 90px; }
+        </style>
+        <meta http-equiv='Content-Type' content='text/html; charset=utf-8'/>
+    </head>
+    <body style='font-family:'>
+        <div id='header'><img src='{{baseUrl}}/includes/images/griidc_header.png'></div>
+        {% include 'html/projects.html' %}
+    </body>
+</html>
