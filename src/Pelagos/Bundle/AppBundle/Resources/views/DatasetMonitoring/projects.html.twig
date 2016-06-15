@@ -1,27 +1,27 @@
 <div class="projects-header">
     Datasets for: {{header}}
-    {% if instName %}
+    {% if instName | default %}
         <span class="header-inst-name">({{instName}})</span>
     {% endif %}
-    {% if not pdf %}
-        <a href="{{path('pelagos_app_ui_datasetmonitoring_default ')}}/html2pdf?url={{baseUrl}}/projects/{{by}}/{{id}}/html2pdf&format=Letter&orientation=portrait&margin=1cm&download=true&filename={{pdfFilename}}" class="download-pdf" title="save as pdf">
+    {% if not pdf | default %}
+        <a href="/html2pdf?url={{ path(app.request.get('_route'), {'id': id, 'renderer': 'html2pdf'}) }}&format=Letter&orientation=portrait&margin=1cm&download=true&filename={{pdfFilename}}" class="download-pdf" title="save as pdf">
         {% image '@PelagosAppBundle/Resources/public/images/pdf_icon.png' %}
         <img src="{{asset_url}}">
         {% endimage %}
         </a>
     {% endif %}
 </div>
-{% for ResearchGroup in ResearchGroups %}
+{% for ResearchGroup in researchGroups %}
     <div class="project">
-        <div class="project-title">{{ResearchGroup.Title}}<span style="font-size:85%; margin-left:1em;">Project ID: {{project.id}}</span></div>
+        <div class="project-title">{{ResearchGroup.name}}</div>
         <div class="project-container">
             <div class="fundSrc">
-                <span class="attr">Funding Source:</span> {{ResearchGroup.Fund_Name}}
+                <span class="attr">Funding Source:</span> {{ResearchGroup.fundingCycle.name}}
             </div>
             <div class="pi">
                 (LEADERSHIP PLACEHOLDER!)
             </div>
-            {% if not pdf %}
+            {% if not pdf | default %}
             <br />
             <div class="dotchartcontainer">
                 <table width="100%" cellpadding="5">
@@ -57,7 +57,7 @@
             </div>
             {% endif %}
             {% if ResearchGroup.Datasets %}
-                {% include 'datasets.html' with {'datasets': ResearchGroup.datasets} %}
+                {% include 'PelagosAppBundle:DatasetMonitoring:datasets.html.twig' with {'datasets': ResearchGroup.datasets} %}
             {% else %}
                 <div class="nodata"><em>{no dataset identified}</em></div>
             {% endif %}

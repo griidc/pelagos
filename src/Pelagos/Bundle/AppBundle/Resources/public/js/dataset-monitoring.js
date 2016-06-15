@@ -33,10 +33,10 @@ function showProjects(by,id) {
     $("#right .spinner").show();
     switch(by) {
         case "fundSrc":
-            var url = Routing.generate("pelagos_app_ui_datasetmonitoring_allresearchgroup", {"fc": id, "renderer": "browser"});
+            var url = Routing.generate("pelagos_app_ui_datasetmonitoring_allresearchgroup", {"id": id, "renderer": "browser"});
             break;
         case "projectId":
-            var url = Routing.generate("pelagos_app_ui_datasetmonitoring_researchgroup", {"rg": id, "renderer": "browser"});
+            var url = Routing.generate("pelagos_app_ui_datasetmonitoring_researchgroup", {"id": id, "renderer": "browser"});
             break;
         case "peopleId":
             var url = Routing.generate("pelagos_app_ui_datasetmonitoring_researcher", {"id": id, "renderer": "browser"});
@@ -46,7 +46,7 @@ function showProjects(by,id) {
         "url": url,
         "success": function(data) {
             $('#content .overview').html(data);
-            $('#content .overview td[title]').qtip({
+            $('#content .overview td[title]').qtip({
                 position: {
                     my: 'right bottom',
                     at: 'center',
@@ -67,7 +67,7 @@ function showProjects(by,id) {
                     classes: "qtip-default qtip-tipped"
                 }
             });
-            $('#content .overview th[title]').qtip({
+            $('#content .overview th[title]').qtip({
                 position: {
                     my: 'bottom center',
                     at: 'top center',
@@ -85,8 +85,8 @@ function showProjects(by,id) {
                     classes: "qtip-default qtip-tipped"
                 }
             });
-            $('#content .overview td.details').each(function() {
-                $(this).qtip({
+            $('#content .overview td.details').each(function() {
+                $(this).qtip({
                     content: {
                         text: "loading...",
                         ajax: {
@@ -114,12 +114,14 @@ function showProjects(by,id) {
                     }
                 });
             });
+/*
             $('#content .overview table.tablesorter').tablesorter({
                 sortList: [[0,0]],
                 sortRestart : true,
                 sortInitialOrder: 'asc'
             });
-            graphDatasetStatus(".dotchart");
+*/
+//            graphDatasetStatus(".dotchart");
         }
     })
     .always(function() {

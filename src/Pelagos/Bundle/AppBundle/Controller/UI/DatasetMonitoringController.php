@@ -36,35 +36,36 @@ class DatasetMonitoringController extends UIController
     /**
      * The Dataset Monitoring display all research groups of a Funding Cycle.
      *
-     * @param string $fc       A Pelagos Funding Cycle entity id.
+     * @param string $id       A Pelagos Funding Cycle entity id.
      * @param string $renderer Either 'browser' or 'html2pdf'.
      *
-     * @Route("/funding-cycle/{fc}/{renderer}", defaults={"renderer" = "browser"})
+     * @Route("/funding-cycle/{id}/{renderer}", defaults={"renderer" = "browser"})
      *
      * @return Response A Response instance.
      */
-    public function allResearchGroupAction($fc, $renderer)
+    public function allResearchGroupAction($id, $renderer)
     {
-        $fundingCycle = $this->entityHandler->get('Pelagos:FundingCycle', $fc);
+        $fundingCycle = $this->entityHandler->get('Pelagos:FundingCycle', $id);
         $title = $fundingCycle->getName();
         $researchGroups = $fundingCycle->getResearchGroups();
 
         if ('html2pdf' == $renderer) {
             return $this->render(
-                'PelagosAppBundle:DatasetMonitoring:pdf.html',
+                'PelagosAppBundle:DatasetMonitoring:pdf.html.twig',
                 array(
                     'researchGroups' => $researchGroups,
                     'header' => $title,
-                    'pdfFileName' => "Dataset Monitoring - $title"
+                    'pdfFilename' => "Dataset Monitoring - $title"
                 )
             );
         } else {
             return $this->render(
-                'PelagosAppBundle:DatasetMonitoring:projects.html',
+                'PelagosAppBundle:DatasetMonitoring:projects.html.twig',
                 array(
                     'researchGroups' => $researchGroups,
                     'header' => $title,
-                    'pdfFileName' => "Dataset Monitoring - $title"
+                    'pdfFilename' => "Dataset Monitoring - $title",
+                    'id' => $id,
                 )
             );
         }
@@ -73,20 +74,20 @@ class DatasetMonitoringController extends UIController
     /**
      * The Dataset Monitoring display by research group.
      *
-     * @param string $rg       A Pelagos Research Group entity id.
+     * @param string $id       A Pelagos Research Group entity id.
      * @param string $renderer Either 'browser' or 'html2pdf'.
      *
-     * @Route("/research-group/{rg}/{renderer}", defaults={"renderer" = "browser"})
+     * @Route("/research-group/{id}/{renderer}", defaults={"renderer" = "browser"})
      *
      * @return Response A Response instance.
      */
-    public function researchGroupAction($rg, $renderer)
+    public function researchGroupAction($id, $renderer)
     {
-        $researchGroup = $this->entityHandler->get('Pelagos:ResearchGroup', $rg);
+        $researchGroup = $this->entityHandler->get('Pelagos:ResearchGroup', $id);
         $title = $researchGroup->getName();
         if ('html2pdf' == $renderer) {
             return $this->render(
-                'PelagosAppBundle:DatasetMonitoring:pdf.html',
+                'PelagosAppBundle:DatasetMonitoring:pdf.html.twig',
                 array(
                     'researchGroups' => array($researchGroup),
                     'header' => $title,
@@ -95,11 +96,12 @@ class DatasetMonitoringController extends UIController
             );
         } else {
             return $this->render(
-                'PelagosAppBundle:DatasetMonitoring:projects.html',
+                'PelagosAppBundle:DatasetMonitoring:projects.html.twig',
                 array(
                     'researchGroups' => array($researchGroup),
                     'header' => $title,
-                    'pdfFilename' => "Dataset Monitoring - $title"
+                    'pdfFilename' => "Dataset Monitoring - $title",
+                    'id' => $id,
                 )
             );
         }
@@ -122,7 +124,7 @@ class DatasetMonitoringController extends UIController
         $researchGroups = $researcher->getResearchGroups();
         if ('html2pdf' == $renderer) {
             return $this->render(
-                'PelagosAppBundle:DatasetMonitoring:pdf.html',
+                'PelagosAppBundle:DatasetMonitoring:pdf.html.twig',
                 array(
                     'researchGroups' => $researchGroups,
                     'header' => $title,
@@ -131,11 +133,12 @@ class DatasetMonitoringController extends UIController
             );
         } else {
             return $this->render(
-                'PelagosAppBundle:DatasetMonitoring:projects.html',
+                'PelagosAppBundle:DatasetMonitoring:projects.html.twig',
                 array(
                     'researchGroups' => $researchGroups,
                     'header' => $title,
-                    'pdfFilename' => 'Dataset Monitoring - ' . $researcher->getLastName() . ', ' . $researcher->getFirstName()
+                    'pdfFilename' => 'Dataset Monitoring - ' . $researcher->getLastName() . ', ' . $researcher->getFirstName(),
+                    'id' => $id,
                 )
             );
         }
