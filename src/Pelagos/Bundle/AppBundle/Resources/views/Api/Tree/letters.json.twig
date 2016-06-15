@@ -1,0 +1,23 @@
+[
+{% for letter in letters %}
+    {
+        "data": {
+            "title": "{{letter}}",
+            "attr": {
+                "style": "color:black"
+            }
+        },
+        "attr": {
+            "id": "{{letter}}"
+        },
+        {% if tree.expand_to_depth > 0 %}
+            "state": "open"
+        {% else %}
+            "state": "closed"
+        {% endif %}
+    }
+    {% if not loop.last %}
+    ,
+    {% endif %}
+{% endfor %}
+]
