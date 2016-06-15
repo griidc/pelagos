@@ -29,8 +29,8 @@ $(document).ready(function() {
 });
 
 function showProjects(by,id) {
-    $('#content .overview').html('<div class="spinner"><div><img src="{{baseUrl}}/includes/images/spinner.gif"></div></div>');
-    $('div.spinner').height($('#content .viewport').height()-12);
+    $('#content .overview').html("");
+    $("#right .spinner").show();
     switch(by) {
         case "fundSrc":
             var url = Routing.generate("pelagos_app_ui_datasetmonitoring_allresearchgroup", {"fc": id, "renderer": "browser"});
@@ -121,6 +121,9 @@ function showProjects(by,id) {
             });
             graphDatasetStatus(".dotchart");
         }
+    })
+    .always(function() {
+        $("#right .spinner").hide();
     });
 }
 
