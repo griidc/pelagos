@@ -86,11 +86,12 @@ function showProjects(by,id) {
                 }
             });
             $('#content .overview td.details').each(function() {
+                var udi = escape($(this).parent().attr('udi'));
                 $(this).qtip({
                     content: {
                         text: "loading...",
                         ajax: {
-                            url: "{{baseUrl}}/dataset_details/" + escape($(this).parent().attr('udi')),
+                            url: Routing.generate("pelagos_app_ui_datasetmonitoring_datasetdetails", {"udi": udi}),
                             loading: false
                         }
                     },

@@ -8,6 +8,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
+use Pelagos\Entity\Dataset;
+use Pelagos\Entity\DatasetSubmission;
+use Pelagos\Entity\DIF;
 use Pelagos\Entity\FundingOrganization;
 use Pelagos\Entity\FundingCycle;
 use Pelagos\Entity\ResearchGroup;
@@ -142,5 +145,26 @@ class DatasetMonitoringController extends UIController
                 )
             );
         }
+    }
+
+    /**
+     * The Dataset Monitoring details per UDI.
+     *
+     * @param string $udi A UDI.
+     *
+     * @Route("/dataset_details/{udi}")
+     *
+     * @return Response A Response instance.
+     */
+    public function datasetDetailsAction($udi)
+    {
+        $datasets = $this->entityHandler->getBy('Pelagos:Dataset', array('udi' => $udi));
+
+        return $this->render(
+            'PelagosAppBundle:DatasetMonitoring:dataset_details.html.twig',
+            array(
+                'datasets' => $datasets,
+                )
+        );
     }
 }
