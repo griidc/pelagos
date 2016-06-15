@@ -1,0 +1,40 @@
+[
+{% for person in people %}
+    {
+        "data": {
+            "title": "{{person.lastName | raw}}, {{person.firstName | raw}}",
+            "attr": {
+                "style": "color:{{tree.researcher_color}}"
+            }
+        },
+        "attr": {
+            "id": "projects_peopleId_{{person.id}}",
+            "action": "{{tree.researcher_action | evaluate}}"
+        }
+        {% if tree.max_depth > 0 %}
+        ,
+            {% if tree.expand_to_depth > 0 %}
+                "state": "open"
+            {% else %}
+                "state": "closed"
+            {% endif %}
+        {% endif %}
+    }
+    {% if not loop.last %}
+    ,
+    {% endif %}
+{% endfor %}
+{% if not people %}
+    {
+        "data": {
+            "title": "no datasets found",
+            "attr": {
+                "style": "color:red"
+            }
+        },
+        "attr": {
+            "id": "noDatasetsFound"
+        }
+    }
+{% endif %}
+]

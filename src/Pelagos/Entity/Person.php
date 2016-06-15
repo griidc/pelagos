@@ -895,4 +895,18 @@ class Person extends Entity
         }
         return $researchGroupNames;
     }
+
+    /**
+     * Get all Research Groups this person is associated with.
+     *
+     * @return array
+     */
+    public function getResearchGroups()
+    {
+        $researchGroups = array();
+        foreach ($this->personResearchGroups as $personResearchGroup) {
+            $researchGroups[] = $personResearchGroup->getResearchGroup();
+        }
+        return $researchGroups;
+    }
 }

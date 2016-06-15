@@ -63,3 +63,9 @@ account:
     resource: Pelagos\Bundle\AppBundle\Controller\Api\AccountController
     name_prefix: account_
     prefix: account
+
+tree:
+    type: rest
+    resource: Pelagos\Bundle\AppBundle\Controller\Api\TreeController
+    name_prefix: tree_
+    prefix: tree

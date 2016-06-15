@@ -708,4 +708,17 @@ class ResearchGroup extends Entity
             throw $notDeletableException;
         }
     }
+
+    /**
+     * Compare two Research Groups by name.
+     *
+     * @param ResearchGroup $a First Research Group to compare.
+     * @param ResearchGroup $b Second Research Group to compare.
+     *
+     * @return integer
+     */
+    public static function compareByName(ResearchGroup $a, ResearchGroup $b)
+    {
+        return strcmp($a->getName(), $b->getName());
+    }
 }
