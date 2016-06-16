@@ -1,0 +1,53 @@
+<div id="dataset_download" style="display: none;">
+    <div id="dataset_download_close"><input type="image" src="/data-discovery/includes/images/close.gif" onclick="jQuery('#dataset_download').hide();"></div>
+    <div id="dataset_download_content">
+
+    </div>
+</div>
+
+<div id="pre_login" style="display: none;">
+    <div id="pre_login_close"><input type="image" src="/data-discovery/includes/images/close.gif" onclick="jQuery('#pre_login').hide();"></div>
+    <div id="pre_login_content">
+        <table cellpadding="10">
+            <tbody><tr>
+                <td colspan="3" align="center">
+                    <h3>Please log in for access to this data.</h3>
+                </td>
+            </tr>
+            <tr>
+                <td align="center">
+                    <div id="griidc-logo">
+                        <a class="redir_url" href="/auth/cas?dest={{url(app.request.get('_route'), {'udi':dataset.udi})}}">
+                            <img src="/data-discovery/includes/images/GRIIDC-logo.png" alt="GRIIDC logo">
+                        </a>
+                    </div>
+                    <div>
+                        GoMRI Users, please use your<br>
+                        <a class="redir_url" href="/auth/cas?dest={{url(app.request.get('_route'), {'udi':dataset.udi})}}">
+                            GRIIDC login
+                        </a> to download data.
+                    </div>
+                </td>
+                <td><img src="/data-discovery/includes/images/vbar.png"></td>
+                <td align="center">
+                    <div>
+                        <a href="/auth/oauth2/google?dest={{url(app.request.get('_route'), {'udi':dataset.udi})}}">
+                            <img src="/data-discovery/includes/images/googleauth.png" alt="google auth logo">
+                        </a>
+                    </div>
+                    <div>
+                        Members of the public may use their<br>
+                        <a href="/auth/oauth2/google?dest={{url(app.request.get('_route'), {'udi':dataset.udi})}}">
+                            Google login
+                        </a> to download data.
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3" align="center">
+                    <button onclick="jQuery('#pre_login').hide();" style="font-weight:bold;">Cancel</button>
+                </td>
+            </tr>
+        </tbody></table>
+    </div>
+</div>
