@@ -11,6 +11,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Id\AssignedGenerator;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\Common\Collections\Collection;
 
 use Pelagos\Entity\Entity;
@@ -81,43 +82,61 @@ class EntityHandler
     /**
      * Return all entities of $entityClass.
      *
-     * @param string $entityClass The type of entity to retrieve.
+     * @param string       $entityClass The type of entity to retrieve.
+     * @param array        $orderBy     The properties to sort by.
+     * @param array        $properties  The properties to hydrate.
+     * @param integer|null $hydrator    The hydrator to use or null for the default hydrator
+     *                                  (see Query::HYDRATE_* constants).
      *
-     * @return Collection A collection of entities.
+     * @return Collection|array A collection of entities or an array depending on the hydrator.
      */
-    public function getAll($entityClass)
-    {
-        return $this->entityManager
-            ->getRepository($entityClass)
-            ->findAll();
+    public function getAll(
+        $entityClass,
+        array $orderBy = array(),
+        array $properties = array(),
+        $hydrator = null
+    ) {
+        // Just call getBy with no criteria.
+        return $this->getBy($entityClass, array(), $orderBy, $properties, $hydrator);
     }
 
     /**
      * Return all entities of $entityClass filtered by $criteria and sorted by $orderBy.
      *
-     * @param string     $entityClass The type of entity to retrieve.
-     * @param array      $criteria    The criteria to filter by.
-     * @param array|null $orderBy     The properties to sort by.
+     * @param string       $entityClass The type of entity to retrieve.
+     * @param array        $criteria    The criteria to filter by.
+     * @param array        $orderBy     The properties to sort by.
+     * @param array        $properties  The properties to hydrate.
+     * @param integer|null $hydrator    The hydrator to use or null for the default hydrator
+     *                                  (see Query::HYDRATE_* constants).
      *
-     * @return Collection A collection of entities.
+     * @return Collection|array A collection of entities or an array depending on the hydrator.
      */
-    public function getBy($entityClass, array $criteria, $orderBy = null)
-    {
-        $qb = $this->entityManager->createQueryBuilder();
-        // Start with a select of the entity type we are querying as 'e'.
-        $qb->select('e')
-           ->from($entityClass, 'e');
+    public function getBy(
+        $entityClass,
+        array $criteria,
+        array $orderBy = array(),
+        array $properties = array(),
+        $hydrator = null
+    ) {
+        // Create query builder for this type of entity.
+        $qb = $this->entityManager->getRepository($entityClass)->createQueryBuilder('e');
+        // Initialize an array to hold all necessary joins.
+        $joins = array();
+        // Process the properties.
+        $this->processProperties($entityClass, $properties, $qb, $joins);
         // Process the critera.
-        $this->processCriteria($criteria, $qb);
-        // If we've specified an order by.
-        if (null !== $orderBy) {
-            // Process the order by.
-            $this->processOrderBy($orderBy, $qb);
+        $this->processCriteria($criteria, $qb, $joins);
+        // Process the order by.
+        $this->processOrderBy($orderBy, $qb, $joins);
+        // Join all necessary joins.
+        foreach ($joins as $entityProperty => $alias) {
+            $qb->join($entityProperty, $alias);
         }
         // Get the query.
         $query = $qb->getQuery();
-        // Return the result.
-        return $query->getResult();
+        // Return the result using the requested hydrator.
+        return $query->getResult($hydrator);
     }
 
     /**
@@ -291,38 +310,19 @@ class EntityHandler
      *
      * @param array        $criteria The criteria to process.
      * @param QueryBuilder $qb       A query builder to add to.
+     * @param array        $joins    The joins array that is passed by reference and updated with new joins.
      *
      * @return void
      */
-    protected function processCriteria(array $criteria, QueryBuilder $qb)
+    protected function processCriteria(array $criteria, QueryBuilder $qb, array &$joins)
     {
         // Initialize our parameter tokens at 1.
         $paramToken = 1;
-        // Keep a count of aliases so we can make then unique.
-        $aliasCount = array();
         // Loop through the criteria.
         foreach ($criteria as $property => $value) {
-            // Initialize the alias to 'e', the root entity.
-            $alias = 'e';
-            // While the property contains a dot.
-            while (preg_match('/^([^\._]+)[\._](.+)$/', $property, $matches)) {
-                // Extract the entity property and the remaining property.
-                list (, $entityProperty, $property) = $matches;
-                // If we've never used this alias.
-                if (!array_key_exists($entityProperty, $aliasCount)) {
-                    // Initialize the count to 1.
-                    $aliasCount[$entityProperty] = 1;
-                }
-                // Build a unique alias for this entity.
-                $entityPropertyAlias = $entityProperty . $aliasCount[$entityProperty];
-                // Increment the alias count.
-                $aliasCount[$entityProperty]++;
-                // Join the entity property with the unique alias.
-                $qb->join("$alias.$entityProperty", $entityPropertyAlias);
-                // Update the alias to be the entity property alias.
-                $alias = $entityPropertyAlias;
-            }
-            // Filter by the property of the final alias.
+            // Get the alias and the property.
+            list ($alias, $property) = $this->buildAliasedProperty($property, $joins);
+            // Filter by the aliased property.
             $qb->andWhere(
                 $qb->expr()->eq("$alias.$property", "?$paramToken")
             );
@@ -338,35 +338,174 @@ class EntityHandler
      *
      * @param array        $orderBy The order by criteria to process.
      * @param QueryBuilder $qb      A query builder to add to.
+     * @param array        $joins   The joins array that is passed by reference and updated with new joins.
      *
      * @return void
      */
-    protected function processOrderBy(array $orderBy, QueryBuilder $qb)
+    protected function processOrderBy(array $orderBy, QueryBuilder $qb, array &$joins)
     {
-        // Keep a count of aliases so we can make then unique.
-        $aliasCount = array();
         // Loop through the properties to order by.
         foreach ($orderBy as $property => $order) {
-            // Initialize the alias to 'e', the root entity.
-            $alias = 'e';
-            // While the property contains a dot.
-            while (preg_match('/^([^\._]+)[\._](.+)$/', $property, $matches)) {
-                // Extract the entity property and the remaining property.
-                list (, $entityProperty, $property) = $matches;
-                // If we've never used this alias.
-                if (!array_key_exists($entityProperty, $aliasCount)) {
-                    // Initialize the count to 1.
-                    $aliasCount[$entityProperty] = 1;
-                }
-                // Build a unique alias for this entity.
-                $entityPropertyAlias = $entityProperty . $aliasCount[$entityProperty];
-                // Increment the alias count.
-                $aliasCount[$entityProperty]++;
-                // Update the alias to be the entityProperty.
-                $alias = $entityPropertyAlias;
-            }
-            // Order by the property of the final alias.
+            // Get the alias and the property.
+            list ($alias, $property) = $this->buildAliasedProperty($property, $joins);
+            // Order by the aliased property.
             $qb->orderBy("$alias.$property", $order);
         }
+    }
+
+    /**
+     * Process the property specification.
+     *
+     * @param string       $entityClass The type of entity to process properties for.
+     * @param array        $properties  The properties array to process.
+     * @param QueryBuilder $qb          The query builder to add a select to.
+     * @param array        $joins       The joins array that is passed by reference and updated with new joins.
+     *
+     * @return void
+     */
+    protected function processProperties($entityClass, array $properties, QueryBuilder $qb, array &$joins)
+    {
+        // An array to hold all the entity aliases their properties to hydrate.
+        $hydrate = array();
+        // If the properties array is empty.
+        if (count($properties) === 0) {
+            // Just hydrate root entity alias with no properties.
+            $hydrate['e'] = true;
+        } else {
+            foreach ($properties as $property) {
+                // Get the entity alias and the property.
+                list ($alias, $property) = $this->buildAliasedProperty($property, $joins);
+                // Process the entity alias.
+                $propertyMetadata = $this->processEntityAlias($entityClass, $alias, $hydrate, $joins);
+                // If the property is an association.
+                if (array_key_exists($property, $propertyMetadata->associationMappings)) {
+                    // Join the property.
+                    $joins["$alias.$property"] = $alias . '_' . $property;
+                    // Hydrate the property.
+                    $hydrate[$alias . '_' . $property] = true;
+                    // If the property's parent is not the root and it's not already marked for hydration.
+                    if ('e' !== $alias and !array_key_exists($alias, $hydrate)) {
+                        // Hydrate its id.
+                        $hydrate[$alias] = array('id');
+                    }
+                    // Nothing more to do for this property.
+                    continue;
+                }
+                // If this entity alias is already marked for hydration.
+                if (array_key_exists($alias, $hydrate)) {
+                    // And it's a partial hydration.
+                    if (is_array($hydrate[$alias])) {
+                        // Add the property.
+                        $hydrate[$alias][] = $property;
+                    }
+                } else {
+                    // Mark this entity alias for partial hydration with this property.
+                    $hydrate[$alias] = array($property);
+                }
+            }
+        }
+        // Add the selects to the query builder.
+        $qb->select($this->buildSelect($hydrate));
+    }
+
+    /**
+     * Process an entity alias and return the class metadata for the last node in the path.
+     *
+     * @param string $entityClass The type of entity to process an entity alias for.
+     * @param string $alias       The alias to process.
+     * @param array  $hydrate     The hydrate array that is passed by reference and updated with new joins.
+     * @param array  $joins       The joins array that is passed by reference and updated with new joins.
+     *
+     * @return ClassMetadata
+     */
+    protected function processEntityAlias($entityClass, $alias, array &$hydrate, array &$joins)
+    {
+        // Split the entity alias on _ and loop through the nodes.
+        foreach (explode('_', $alias) as $node) {
+            // If we're on the root node.
+            if ('e' === $node) {
+                // Get the class metadata for the root entity type.
+                $nodeMetadata = $this->entityManager->getClassMetadata($entityClass);
+                // Set the parent to the root entity.
+                $parent = 'e';
+            } elseif (array_key_exists($node, $nodeMetadata->associationMappings)) {
+                // Join this node.
+                $joins["$parent.$node"] = $parent . '_' . $node;
+                // If the parent is not the root entity and it's not already marked for hydration.
+                if ('e' !== $parent and !array_key_exists($parent, $hydrate)) {
+                    // Hydrate its id.
+                    $hydrate[$parent] = array('id');
+                }
+                // Get the class metadata for the entityProperty's type.
+                $nodeMetadata = $this->entityManager->getClassMetadata(
+                    $nodeMetadata->associationMappings[$node]['targetEntity']
+                );
+                // Append the current node to the parent string.
+                $parent .= "_$node";
+            }
+        }
+        // Return the last node's class metadata.
+        return $nodeMetadata;
+    }
+
+    /**
+     * Build an alias to the entity for a property.
+     *
+     * @param string $property The property to build aliases for.
+     * @param array  $joins    The joins array that is passed by reference and updated with new joins.
+     *
+     * @return array The entity alias and the property.
+     */
+    protected function buildAliasedProperty($property, array &$joins)
+    {
+        // Initialize the alias to 'e', the root entity.
+        $alias = 'e';
+        // While the property contains a dot or an underscore.
+        while (preg_match('/^([^\._]+)[\._](.+)$/', $property, $matches)) {
+            // Extract the entity property and the remaining property.
+            list (, $entityProperty, $property) = $matches;
+            // Create a unique alias for this entity property.
+            $entityPropertyAlias = str_replace('.', '_', "$alias.$entityProperty");
+            // Join the entity property with the unique alias.
+            $joins["$alias.$entityProperty"] = $entityPropertyAlias;
+            // Update the alias to be the entity property alias.
+            $alias = $entityPropertyAlias;
+        }
+        // Return the final alias and the last operty.
+        return array($alias, $property);
+    }
+
+    /**
+     * Build the select array for query builder.
+     *
+     * @param array $hydrate An array of entity aliases and their properties to hydrate.
+     *
+     * @return array
+     */
+    protected function buildSelect(array $hydrate)
+    {
+        // If the root entity alias is not already marked for hydration.
+        if (!in_array('e', array_keys($hydrate))) {
+            // Mark it for full hydration.
+            $hydrate['e'] = true;
+        }
+        // Initialize an array to hold select DQL.
+        $select = array();
+        // Loop though our aliases to be hydrated.
+        foreach ($hydrate as $alias => $properties) {
+            // If properties is in an array.
+            if (is_array($properties)) {
+                // Make sure id is included.
+                if (!in_array('id', $properties)) {
+                    $properties[] = 'id';
+                }
+                // Do a partial hydration.
+                $select[] = "partial $alias.{" . implode(',', $properties) . '}';
+            } else {
+                // Do a full hydration of this alias.
+                $select[] = $alias;
+            }
+        }
+        return $select;
     }
 }
