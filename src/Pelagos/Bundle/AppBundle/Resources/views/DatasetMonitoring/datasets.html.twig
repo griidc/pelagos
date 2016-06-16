@@ -30,19 +30,19 @@
         {% set available_yellow = 0 %}
         {% set available_red = 0 %}
         {% set available_na = 0 %}
-        
+
         {% image '@PelagosAppBundle/Resources/public/images/check.png' %}
         {% set green_icon = asset_url %}
         {% endimage %}
-        
+
         {% image '@PelagosAppBundle/Resources/public/images/triangle_yellow.png' %}
         {% set yellow_icon = asset_url %}
         {% endimage %}
-        
+
         {% image '@PelagosAppBundle/Resources/public/images/x.png' %}
         {% set red_icon = asset_url %}
         {% endimage %}
-        
+
         {% image '@PelagosAppBundle/Resources/public/images/na.png' %}
         {% set na_icon = asset_url %}
         {% endimage %}
@@ -115,7 +115,7 @@
             {% if dataset.datasetSubmissionStatus != constant('Pelagos\\Entity\\DatasetSubmission::STATUS_COMPLETE') %}
                 {% set available_na = available_na+1 %}
                 {% set available_icon = na_icon %}
-            {% elseif dataset.availabilityStatus == constant('Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE') or dataset.available == constant('Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED') %}
+            {% elseif dataset.availabilityStatus == constant('Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE') or dataset.availabilityStatus == constant('Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED') %}
                 {% set available_green = available_green+1 %}
                 {% set available_title = "This dataset is available for all users to download." %}
                 {% set available_icon = na_icon %}
