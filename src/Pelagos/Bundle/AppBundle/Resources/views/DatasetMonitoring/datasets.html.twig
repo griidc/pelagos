@@ -53,11 +53,11 @@
                 {% set identified_green = identified_green+1 %}
                 {% set identified_title = "This dataset has been identified and the DIF has been approved." %}
                 {% set identified_icon = green_icon %}
-            {% elseif dataset.identifiedStatus == constant('Pelagos\\Entity\\DIF::STATUS_UNSUBMITTED') %}
+            {% elseif dataset.identifiedStatus == constant('Pelagos\\Entity\\DIF::STATUS_SUBMITTED') %}
                 {% set identified_red = identified_yellow+1 %}
                 {% set identified_title = "A DIF has been submitted for this dataset and is in review." %}
                 {% set identified_icon = yellow_icon %}
-            {% elseif dataset.identifiedStatus == constant('Pelagos\\Entity\\DIF::STATUS_SUBMITTED') %}
+            {% elseif dataset.identifiedStatus == constant('Pelagos\\Entity\\DIF::STATUS_UNSUBMITTED') %}
                 {% set identified_red = identified_red+1 %}
                 {% set identified_title = "" %}
                 {% set identified_icon = red_icon %}
