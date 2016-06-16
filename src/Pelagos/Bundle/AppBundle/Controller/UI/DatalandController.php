@@ -28,7 +28,7 @@ class DatalandController extends UIController
      *
      * @param string $udi A UDI.
      *
-     * @throws Exception When more than one dataset is found with this UDI.
+     * @throws \Exception When more than one dataset is found with this UDI.
      *
      * @Route("/{udi}")
      *
