@@ -574,6 +574,7 @@ class DatasetSubmission extends Entity
         $this->dataset = $dataset;
         $this->updateDatasetSubmissionStatus();
         $this->updateMetadataStatus();
+        $this->updateAvailabilityStatus();
     }
 
     /**
