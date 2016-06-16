@@ -28,6 +28,8 @@ class DatalandController extends UIController
      *
      * @param string $udi A UDI.
      *
+     * @throws Exception When more than one dataset is found with this UDI.
+     *
      * @Route("/{udi}")
      *
      * @return Response A Response instance.
@@ -35,11 +37,11 @@ class DatalandController extends UIController
     public function defaultAction($udi)
     {
         $datasets = $this->entityHandler->getBy('Pelagos:Dataset', array('udi' => $udi));
-        
+
         if (count($datasets) != 1) {
             throw new \Exception("Got more than one return for UDI: $udi");
         }
-        
+
         $dataset = $datasets[0];
 
         return $this->render(
