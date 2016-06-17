@@ -86,7 +86,7 @@ function showProjects(by,id) {
                 }
             });
             $('#content .overview td.details').each(function() {
-                var udi = escape($(this).parent().attr('udi'));
+                var udi = $(this).parent().attr('udi');
                 $(this).qtip({
                     content: {
                         text: "loading...",
@@ -122,7 +122,7 @@ function showProjects(by,id) {
                 sortInitialOrder: 'asc'
             });
 
-//            graphDatasetStatus(".dotchart");
+            graphDatasetStatus();
         }
     })
     .always(function() {
