@@ -2,6 +2,8 @@
 
 namespace Pelagos\Bundle\AppBundle\Twig;
 
+use Pelagos\Entity\DIF;
+
 /**
  * Custom Twig extensions for Pelagos.
  */
@@ -61,6 +63,10 @@ class Extensions extends \Twig_Extension
                         'evaluate' => true,
                     )
                 )
+            ),
+			new \Twig_SimpleFilter(
+                'submittedDIFs',
+                array(self::class, 'submittedDIFs')
             ),
         );
     }
@@ -168,6 +174,22 @@ class Extensions extends \Twig_Extension
         $parsed = self::parseString($environment, $context, $string);
         $environment->setLoader($loader);
         return $parsed;
+    }
+
+	/**
+     * Filter for DIFs in submitted status.
+     *
+     * @param array $datasets A collection of datasets.
+     *
+     * @return string The evaluated string.
+     */
+    public static function submittedDIFs($datasets)
+    {
+		return $datasets->filter(
+			function($dataset) {
+				return $dataset->getDif()->getStatus() !== DIF::STATUS_UNSUBMITTED;
+			}
+		);
     }
 
     /**

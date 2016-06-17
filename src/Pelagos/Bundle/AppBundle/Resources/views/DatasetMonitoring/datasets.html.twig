@@ -47,14 +47,14 @@
         {% set na_icon = asset_url %}
         {% endimage %}
 
-        {% for dataset in datasets %}
+        {% for dataset in datasets | submittedDIFs %}
 
             {% if dataset.identifiedStatus == constant('Pelagos\\Entity\\DIF::STATUS_APPROVED') %}
                 {% set identified_green = identified_green+1 %}
                 {% set identified_title = "This dataset has been identified and the DIF has been approved." %}
                 {% set identified_icon = green_icon %}
             {% elseif dataset.identifiedStatus == constant('Pelagos\\Entity\\DIF::STATUS_SUBMITTED') %}
-                {% set identified_red = identified_yellow+1 %}
+                {% set identified_yellow = identified_yellow+1 %}
                 {% set identified_title = "A DIF has been submitted for this dataset and is in review." %}
                 {% set identified_icon = yellow_icon %}
             {% elseif dataset.identifiedStatus == constant('Pelagos\\Entity\\DIF::STATUS_UNSUBMITTED') %}
@@ -88,7 +88,7 @@
                 {% set metadata_icon = green_icon %}
             {% elseif dataset.metadataStatus == constant('Pelagos\\Entity\\DatasetSubmission::METADATA_STATUS_NONE') %}
                 {% set metadata_red = metadata_red+1 %}
-                {% set registered_title = "This dataset has been registered, but no metadata has been submitted." %}
+                {% set metadata_title = "This dataset has been registered, but no metadata has been submitted." %}
                 {% set metadata_icon = red_icon %}
             {% elseif dataset.metadataStatus == constant('Pelagos\\Entity\\DatasetSubmission::METADATA_STATUS_SUBMITTED') %}
                 {% set metadata_yellow = metadata_yellow+1 %}
@@ -103,9 +103,9 @@
                 {% set metadata_title = "This dataset has not yet been registered, therefore no metadata is available." %}
                 {% set metadata_icon = na_icon %}
             {% else %}
-                {% set metadata_na = metadata_na+1 %}
-                {% set metadata_title = "This dataset has not yet been registered, therefore no metadata is available." %}
-                {% set metadata_icon = na_icon %}
+                {% set metadata_yellow = metadata_yellow+1 %}
+                {% set metadata_title = "Metadata for this dataset has been submitted and is in review." %}
+                {% set metadata_icon = yellow_icon %}
             {% endif %}
 
             {% if dataset.datasetSubmissionStatus != constant('Pelagos\\Entity\\DatasetSubmission::STATUS_COMPLETE') %}
