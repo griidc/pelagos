@@ -574,6 +574,7 @@ class DatasetSubmission extends Entity
         $this->dataset = $dataset;
         $this->updateDatasetSubmissionStatus();
         $this->updateMetadataStatus();
+        $this->updateAvailabilityStatus();
     }
 
     /**
@@ -1264,13 +1265,13 @@ class DatasetSubmission extends Entity
             case self::TRANSFER_STATUS_COMPLETED:
                 if ($this->getMetadataStatus() === self::METADATA_STATUS_ACCEPTED) {
                     switch ($this->getRestrictions()) {
-                        case self::RESTRICTED_NONE:
+                        case self::RESTRICTION_NONE:
                             $availabilityStatus = self::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE;
                             break;
-                        case self::RESTRICTED_APPROVAL:
+                        case self::RESTRICTION_APPROVAL:
                             $availabilityStatus = self::AVAILABILITY_STATUS_AVAILABLE_WITH_APPROVAL;
                             break;
-                        case self::RESTRICTED_RESTRICTED:
+                        case self::RESTRICTION_RESTRICTED:
                             $availabilityStatus = self::AVAILABILITY_STATUS_RESTRICTED;
                             break;
                     }
@@ -1281,13 +1282,13 @@ class DatasetSubmission extends Entity
             case self::TRANSFER_STATUS_REMOTELY_HOSTED:
                 if ($this->getMetadataStatus() === self::METADATA_STATUS_ACCEPTED) {
                     switch ($this->getRestrictions()) {
-                        case self::RESTRICTED_NONE:
+                        case self::RESTRICTION_NONE:
                             $availabilityStatus = self::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED;
                             break;
-                        case self::RESTRICTED_APPROVAL:
+                        case self::RESTRICTION_APPROVAL:
                             $availabilityStatus = self::AVAILABILITY_STATUS_AVAILABLE_WITH_APPROVAL_REMOTELY_HOSTED;
                             break;
-                        case self::RESTRICTED_RESTRICTED:
+                        case self::RESTRICTION_RESTRICTED:
                             $availabilityStatus = self::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED;
                             break;
                     }
