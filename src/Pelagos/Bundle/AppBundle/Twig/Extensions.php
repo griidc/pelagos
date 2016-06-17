@@ -64,7 +64,7 @@ class Extensions extends \Twig_Extension
                     )
                 )
             ),
-			new \Twig_SimpleFilter(
+            new \Twig_SimpleFilter(
                 'submittedDIFs',
                 array(self::class, 'submittedDIFs')
             ),
@@ -176,20 +176,20 @@ class Extensions extends \Twig_Extension
         return $parsed;
     }
 
-	/**
+    /**
      * Filter for DIFs in submitted status.
      *
      * @param array $datasets A collection of datasets.
      *
      * @return string The evaluated string.
      */
-    public static function submittedDIFs($datasets)
+    public static function submittedDIFs(array $datasets)
     {
-		return $datasets->filter(
-			function($dataset) {
-				return $dataset->getDif()->getStatus() !== DIF::STATUS_UNSUBMITTED;
-			}
-		);
+        return $datasets->filter(
+            function ($dataset) {
+                return $dataset->getDif()->getStatus() !== DIF::STATUS_UNSUBMITTED;
+            }
+        );
     }
 
     /**
