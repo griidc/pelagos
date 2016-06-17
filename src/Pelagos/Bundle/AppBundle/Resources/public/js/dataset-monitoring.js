@@ -115,13 +115,13 @@ function showProjects(by,id) {
                     }
                 });
             });
-/*
+
             $('#content .overview table.tablesorter').tablesorter({
                 sortList: [[0,0]],
                 sortRestart : true,
                 sortInitialOrder: 'asc'
             });
-*/
+
 //            graphDatasetStatus(".dotchart");
         }
     })

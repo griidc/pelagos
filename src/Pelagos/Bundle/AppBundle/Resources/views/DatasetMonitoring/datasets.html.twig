@@ -152,19 +152,59 @@
                 <td class="udi details"><a href="/data/{{dataset.udi}}" target="_blank">{{dataset.udi}}</a></td>
                 <td class="details"><a href="/data/{{dataset.udi}}" target="_blank">{{dataset.title}}</a></td>
                 <td class="status" title="{{ identified_title | default }}">
-                    <span style="display:none;">{{dataset.identifiedStatus}}</span>
+                    <span style="display:none;">
+                        {% if identified_icon == na_icon %}
+                            0
+                        {% elseif identified_icon == red_icon %}
+                            1
+                        {% elseif identified_icon == yellow_icon %}
+                            2
+                        {% else %}
+                            3
+                        {% endif %}
+                    </span>
                     <img src="{{ identified_icon | default }}">
                 </td>
                 <td class="status" title="{{ registered_title | default }}">
-                    <span style="display:none;">{{dataset.datasetSubmissionStatus}}</span>
+                    <span style="display:none;">
+                        {% if registered_icon == na_icon %}
+                            0
+                        {% elseif registered_icon == red_icon %}
+                            1
+                        {% elseif registered_icon == yellow_icon %}
+                            2
+                        {% else %}
+                            3
+                        {% endif %}
+                    </span>
                     <img src="{{ registered_icon | default }}">
                 </td>
                 <td class="status" title="{{ metadata_title | default }}">
-                    <span style="display:none;">{{dataset.metadataStatus}}</span>
+                    <span style="display:none;">
+                        {% if metadata_icon == na_icon %}
+                            0
+                        {% elseif metadata_icon == red_icon %}
+                            1
+                        {% elseif metadata_icon == yellow_icon %}
+                            2
+                        {% else %}
+                            3
+                        {% endif %}
+                    </span>
                     <img src="{{ metadata_icon | default }}">
                 </td>
                 <td class="status" title="{{ available_title | default }}">
-                    <span style="display:none;">{{ dataset.availabilityStatus }}</span>
+                    <span style="display:none;">
+                        {% if available_icon == na_icon %}
+                            0
+                        {% elseif available_icon == red_icon %}
+                            1
+                        {% elseif available_icon == yellow_icon %}
+                            2
+                        {% else %}
+                            3
+                        {% endif %}
+                    </span>
                     <img src="{{ available_icon | default }}">
                 </td>
             </tr>
