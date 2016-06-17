@@ -2,6 +2,8 @@
 
 namespace Pelagos\Bundle\AppBundle\Twig;
 
+use Doctrine\Common\Collections\Collection;
+
 use Pelagos\Entity\DIF;
 
 /**
@@ -179,11 +181,11 @@ class Extensions extends \Twig_Extension
     /**
      * Filter for DIFs in submitted status.
      *
-     * @param array $datasets A collection of datasets.
+     * @param Collection $datasets A collection of datasets.
      *
      * @return string The evaluated string.
      */
-    public static function submittedDIFs(array $datasets)
+    public static function submittedDIFs(Collection $datasets)
     {
         return $datasets->filter(
             function ($dataset) {
