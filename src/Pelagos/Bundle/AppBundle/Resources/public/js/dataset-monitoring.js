@@ -122,7 +122,7 @@ function showProjects(by,id) {
                 sortInitialOrder: 'asc'
             });
 
-//            graphDatasetStatus(".dotchart");
+            graphDatasetStatus();
         }
     })
     .always(function() {

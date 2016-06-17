@@ -266,3 +266,9 @@
     </tfoot>
     {% endif %}
 </table>
+<div
+    class="dotTotal"
+    total-available="{{available_green}}"
+    total-registered="{{registered_green - available_green}}"
+    total-identified="{{identified_green - registered_green}}"
+    />

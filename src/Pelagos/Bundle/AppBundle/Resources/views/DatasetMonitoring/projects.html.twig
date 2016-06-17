@@ -12,7 +12,7 @@
     {% endif %}
 </div>
 {% for ResearchGroup in researchGroups %}
-    <div class="project">
+<div class="project" project="{{ResearchGroup.id}}">
         <div class="project-title">{{ResearchGroup.name}}</div>
         <div class="project-container">
             <div class="fundSrc">
@@ -27,11 +27,11 @@
                 <table width="100%" cellpadding="5">
                     <tr width="100%">
                         <td width="80%">
-                            <div class="dotchart" project="{{ResearchGroup.id}}"></div>
+                            <div class="dotchart"></div>
                         </td>
                     <tr width="100%">
                         <td>
-                            <div class="dotchart_legend" project="{{ResearchGroup.id}}" style="position: relative;">
+                            <div class="dotchart_legend" style="position: relative;">
                                 <span id="a"><strong>Dataset with status:</strong>
                                 {% image '@PelagosAppBundle/Resources/public/images/green-circle.png' %}
                                     <img src="{{asset_url}}"> Available:
