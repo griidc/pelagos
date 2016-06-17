@@ -4,7 +4,7 @@
         <span class="header-inst-name">({{instName}})</span>
     {% endif %}
     {% if not pdf | default %}
-        <a href="/html2pdf?url={{ path(app.request.get('_route'), {'id': id, 'renderer': 'html2pdf'}) }}&format=Letter&orientation=portrait&margin=1cm&download=true&filename={{pdfFilename}}" class="download-pdf" title="save as pdf">
+        <a href="/html2pdf?url={{ url(app.request.get('_route'), {'id': id, 'renderer': 'html2pdf'}) }}&format=Letter&orientation=portrait&margin=1cm&download=true&filename={{pdfFilename}}" class="download-pdf" title="save as pdf">
         {% image '@PelagosAppBundle/Resources/public/images/pdf_icon.png' %}
         <img src="{{asset_url}}">
         {% endimage %}
