@@ -16,6 +16,7 @@ use Doctrine\Common\Collections\Collection;
 
 use Pelagos\Entity\Entity;
 use Pelagos\Entity\Account;
+use Pelagos\Entity\Password;
 use Pelagos\Entity\Person;
 use Pelagos\Exception\UnmappedPropertyException;
 use Pelagos\Bundle\AppBundle\Security\PelagosEntityVoter;
@@ -46,6 +47,16 @@ class EntityHandler
      * @var AuthorizationCheckerInterface
      */
     private $authorizationChecker;
+
+    /**
+     * A list of entities that are proctected and not accessible in collections.
+     *
+     * @var array
+     */
+    private $protectedEntities = array(
+        Account::class,
+        Password::class,
+    );
 
     /**
      * Constructor for EntityHandler.
@@ -361,6 +372,8 @@ class EntityHandler
      * @param QueryBuilder $qb          The query builder to add a select to.
      * @param array        $joins       The joins array that is passed by reference and updated with new joins.
      *
+     * @throws \Exception When attempting to access a protected entity.
+     *
      * @return void
      */
     protected function processProperties($entityClass, array $properties, QueryBuilder $qb, array &$joins)
@@ -379,6 +392,12 @@ class EntityHandler
                 $propertyMetadata = $this->processEntityAlias($entityClass, $alias, $hydrate, $joins);
                 // If the property is an association.
                 if (array_key_exists($property, $propertyMetadata->associationMappings)) {
+                    // Get the target entitiy.
+                    $targetEntity = $propertyMetadata->associationMappings[$property]['targetEntity'];
+                    // If it's a protected entity, throw an exception.
+                    if (in_array($targetEntity, $this->protectedEntities)) {
+                        throw new \Exception("Access to $targetEntity not allowed");
+                    }
                     // Join the property.
                     $joins["$alias.$property"] = $alias . '_' . $property;
                     // Hydrate the property.
@@ -416,6 +435,8 @@ class EntityHandler
      * @param array  $hydrate     The hydrate array that is passed by reference and updated with new joins.
      * @param array  $joins       The joins array that is passed by reference and updated with new joins.
      *
+     * @throws \Exception When attempting to access a protected entity.
+     *
      * @return ClassMetadata
      */
     protected function processEntityAlias($entityClass, $alias, array &$hydrate, array &$joins)
@@ -429,6 +450,12 @@ class EntityHandler
                 // Set the parent to the root entity.
                 $parent = 'e';
             } elseif (array_key_exists($node, $nodeMetadata->associationMappings)) {
+                // Get the target entity.
+                $targetEntity = $nodeMetadata->associationMappings[$node]['targetEntity'];
+                 // If it's a protected entity, throw an exception.
+                if (in_array($targetEntity, $this->protectedEntities)) {
+                    throw new \Exception("Access to $targetEntity not allowed");
+                }
                 // Join this node.
                 $joins["$parent.$node"] = $parent . '_' . $node;
                 // If the parent is not the root entity and it's not already marked for hydration.
@@ -437,9 +464,7 @@ class EntityHandler
                     $hydrate[$parent] = array('id');
                 }
                 // Get the class metadata for the entityProperty's type.
-                $nodeMetadata = $this->entityManager->getClassMetadata(
-                    $nodeMetadata->associationMappings[$node]['targetEntity']
-                );
+                $nodeMetadata = $this->entityManager->getClassMetadata($targetEntity);
                 // Append the current node to the parent string.
                 $parent .= "_$node";
             }
