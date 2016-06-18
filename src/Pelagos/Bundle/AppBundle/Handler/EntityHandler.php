@@ -9,6 +9,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Id\AssignedGenerator;
 use Doctrine\ORM\Mapping\ClassMetadata;
@@ -121,6 +122,8 @@ class EntityHandler
      * @param integer|null $hydrator    The hydrator to use or null for the default hydrator
      *                                  (see Query::HYDRATE_* constants).
      *
+     * @throws \Exception When properties are specified and we're using the default hydrator or an object hydrator.
+     *
      * @return Collection|array A collection of entities or an array depending on the hydrator.
      */
     public function getBy(
@@ -130,6 +133,10 @@ class EntityHandler
         array $properties = array(),
         $hydrator = null
     ) {
+        // If properties are specified and we're using the default hydrator or an object hydrator, throw an exception.
+        if (count($properties) > 0 and in_array($hydrator, array(null, Query::HYDRATE_OBJECT, HYDRATE_SIMPLEOBJECT))) {
+            throw new \Exception('Cannot specify properties when using object hydration');
+        }
         // Create query builder for this type of entity.
         $qb = $this->entityManager->getRepository($entityClass)->createQueryBuilder('e');
         // Initialize an array to hold all necessary joins.
