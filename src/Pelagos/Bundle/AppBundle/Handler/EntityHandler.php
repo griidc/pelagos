@@ -134,7 +134,7 @@ class EntityHandler
         $hydrator = null
     ) {
         // If properties are specified and we're using the default hydrator or an object hydrator, throw an exception.
-        if (count($properties) > 0 and in_array($hydrator, array(null, Query::HYDRATE_OBJECT, HYDRATE_SIMPLEOBJECT))) {
+        if (count($properties) > 0 and in_array($hydrator, array(null, Query::HYDRATE_OBJECT, Query::HYDRATE_SIMPLEOBJECT))) {
             throw new \Exception('Cannot specify properties when using object hydration');
         }
         // Create query builder for this type of entity.
