@@ -26,6 +26,33 @@ $(document).ready(function(){
             $.merge(options.columnDefs, columnDefinitions);
         }
 
+        var creationTimeStampColumn = $(this).attr("creationTimeStampColumn");
+
+        if (typeof creationTimeStampColumn !== "undefined") {
+            options.columnDefs.push({
+                "render": function (data, type, row) {
+                    if (row.creationTimeStamp === null) {
+                        return "";
+                    }
+                    return row.creationTimeStamp.date.replace(/\.\d+$/,"") + row.creationTimeStamp.timezone;
+                },
+                "targets": [ parseInt(creationTimeStampColumn) ]
+            });
+        }
+
+        var modificationTimeStampColumn = $(this).attr("modificationTimeStampColumn");
+
+        if (typeof modificationTimeStampColumn !== "undefined") {
+            options.columnDefs.push({
+                "render": function (data, type, row) {
+                    if (row.modificationTimeStamp === null) {
+                        return "";
+                    }
+                    return row.modificationTimeStamp.date.replace(/\.\d+$/,"") + row.modificationTimeStamp.timezone;
+                },
+                "targets": [ parseInt(modificationTimeStampColumn) ]
+            });
+        }
 
         if (typeof creatorColumn !== "undefined") {
             options.columnDefs.push({
@@ -84,7 +111,15 @@ $(document).ready(function(){
             disabled: true
         })
         .click(function () {
-            var deleteURL = table.row(".selected").data()._links.delete.href;
+            var id = table.row(".selected").data().id;
+            var url = $(self).attr("entityApi") + "/" + id;
+            var deleteURL;
+            $.ajax({
+                url: url
+            }).done(function (data) {
+                console.log(data);
+                deleteURL = data._links.delete.href;
+            });
             var msg = "You are about to remove a " + entityNiceName + ".";
             $.when(showConfirmation({
                     title: "Please confirm:",
@@ -125,11 +160,17 @@ $(document).ready(function(){
         table.on("select", function(e, dt, type, indexes)
         {
             if (type === "row") {
-                if (typeof table.row(indexes).data()._links.delete === "undefined") {
-                    $("#button_delete").button("option", "disabled", true);
-                } else {
-                    $("#button_delete").button("option", "disabled", false);
-                }
+                var id = table.row(".selected").data().id;
+                var url = $(self).attr("entityApi") + "/" + id;
+                $.ajax({
+                    url: url
+                }).done(function (data) {
+                    if (typeof data._links.delete === "undefined") {
+                        $("#button_delete").button("option", "disabled", true);
+                    } else {
+                        $("#button_delete").button("option", "disabled", false);
+                    }
+                });
                 $("#button_detail").button("option", "disabled", false);
                 $("#selection_comment").hide();
             }
