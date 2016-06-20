@@ -66,7 +66,7 @@ class Metadata extends Entity {
      *
      * @ORM\Column(type="string")
      */
-    protected $beginPosition;
+    protected $beginPositions;
 
     /**
      * End date of the dataset in the metadata.
@@ -75,7 +75,7 @@ class Metadata extends Entity {
      *
      * @ORM\Column(type="string")
      */
-    protected $endPosition;
+    protected $endPositions;
 
     /**
      * The file format of the dataset in the metadata.
@@ -254,10 +254,10 @@ class Metadata extends Entity {
      * METHODDESCRIPTION
      *
      * @access public
-     * @param ARGTYPE $beginPosition ARGDESCRIPTION
+     * @param ARGTYPE $beginPositions ARGDESCRIPTION
      */
-    public function setBeginPosition($beginPosition) {
-        $this->beginPosition = $beginPosition;
+    public function setBeginPosition($beginPositions) {
+        $this->beginPosition = $beginPositions;
     }
 
     /**
@@ -274,10 +274,10 @@ class Metadata extends Entity {
      * METHODDESCRIPTION
      *
      * @access public
-     * @param ARGTYPE $endPosition ARGDESCRIPTION
+     * @param ARGTYPE $endPositions ARGDESCRIPTION
      */
-    public function setEndPosition($endPosition) {
-        $this->endPosition = $endPosition;
+    public function setEndPosition($endPositions) {
+        $this->endPosition = $endPositions;
     }
 
     /**
@@ -359,12 +359,61 @@ class Metadata extends Entity {
             $this->setTitle($titles[0]);
         }
 
-        $titles = $this->xml->xpath(
-            
-	);
+        $abstracts = $this->xml->xpath(
+        '/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:abstract/gco:CharacterString/text()'
+	    );
 
-        if (count($titles) == 1) {
-            $this->setTitle($titles[0]);
+        if (count($abstracts) == 1) {
+            $this->setAbstract($abstracts[0]);
         }
+
+        $beginPositions = $this->xml->xpath(
+            '/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:temporalElement/gmd:EX_TemporalExtent/gmd:extent/gml:TimePeriod/gml:beginPosition/text()'
+	    );
+
+        if (count($beginPositions) == 1) {
+            $this->setBeginPosition($beginPosition[0]);
+        }
+
+        $endPositions = $this->xml->xpath(
+	        '/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:temporalElement/gmd:EX_TemporalExtent/gmd:extent/gml:TimePeriod/gml:endPosition/text()'
+        );
+
+        if (count($endPositions) == 1) {
+            $this->setEndPosition($endPositions[0]);
+        }
+
+        $extentDescriptions = $this->xml->xpath(
+            '/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:description/gco:CharacterString/text()'
+       );
+
+        if (count($extentDescriptions) == 1) {
+            $this->setExtentDescription($extentDescriptions[0]);
+        }
+
+        $fileFormats = $this->xml->xpath(
+            '/gmi:MI_Metadata/gmd:distributionInfo/gmd:MD_Distribution/gmd:distributor/gmd:MD_Distributor/gmd:distributorFormat/gmd:MD_Format/gmd:name/gco:CharacterString/text()'
+       );
+
+        if (count($fileFormats) == 1) {
+            $this->setFileFormat($fileFormats[0]);
+        }
+
+        $purpose = $this->xml->xpath(
+            '/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:purpose/gco:CharacterString/text()'
+       );
+
+        if (count($purpose) == 1) {
+            $this->setPurpose($purpose[0]);
+        }
+
+        $themeKeywords = $this->xml->xpath(
+            '/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:descriptiveKeywords/gmd:MD_Keywords/gmd:type[descendant::text()="theme"]/parent::gmd:MD_Keywords/gmd:keyword/gco:CharacterString/text()'
+       );
+
+        if (count($themeKeywords) > 0) {
+            $this->setThemeKeywords($themeKeywords);
+        }
+
     }
 }
