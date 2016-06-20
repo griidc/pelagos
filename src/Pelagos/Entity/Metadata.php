@@ -4,7 +4,13 @@ namespace Pelagos\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-class Metadata extends Entity {
+/**
+ * This class represents Pelagos Dataset metadata.
+ *
+ * @ORM\Entity
+ */
+class Metadata extends Entity
+{
     /**
      * The Dataset this DIF identifies.
      *
@@ -17,7 +23,7 @@ class Metadata extends Entity {
     /**
      * XML of the Metadata.
      *
-     * @var string
+     * @var \SimpleXMLElement
      *
      * @ORM\Column(type="xml")
      */
@@ -110,17 +116,16 @@ class Metadata extends Entity {
      * @param Dataset $dataset Dataset this metadata is for.
      * @param string  $xml     XML for this metadata.
      */
-    public __construct(Dataset $dataset, $xml)
+    public function __construct(Dataset $dataset, $xml)
     {
         $this->setDataset($dataset);
         $this->setXml($xml);
     }
 
     /**
-     * METHODDESCRIPTION
+     * Get the Dataset for this Metadata.
      *
-     * @access public
-     * @return RETURNTYPE RETURNDESCRIPTION
+     * @return Dataset
      */
     public function getDataset()
     {
@@ -128,21 +133,21 @@ class Metadata extends Entity {
     }
 
     /**
-     * METHODDESCRIPTION
+     * Set the Dataset for this Metadata.
      *
-     * @access public
-     * @param ARGTYPE $dataset ARGDESCRIPTION
+     * @param Dataset $dataset The dataset for this Metadata.
+     *
+     * @return void
      */
-    public function setDataset($dataset)
+    public function setDataset(Dataset $dataset)
     {
         $this->dataset = $dataset;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Get the XML metadata for this Metadata.
      *
-     * @access public
-     * @return RETURNTYPE RETURNDESCRIPTION
+     * @return \SimpleXMLElement
      */
     public function getXml()
     {
@@ -150,193 +155,216 @@ class Metadata extends Entity {
     }
 
     /**
-     * METHODDESCRIPTION
+     * Set the XML metadata for this Metadata.
      *
-     * @access public
-     * @param ARGTYPE $xml ARGDESCRIPTION
+     * @param \SimpleXMLElement|string $xml XML representation of metadata.
+     *
+     * @return void
      */
     public function setXml($xml)
     {
-        $this->xml = $xml;
+        if (!$xml instanceof \SimpleXMLElement) {
+            $this->xml = new \SimpleXMLElement($xml);
+        } else {
+            $this->xml = $xml;
+        }
     }
 
     /**
-     * METHODDESCRIPTION
+     * Get the geometry for this Metadata.
      *
-     * @access public
-     * @return RETURNTYPE RETURNDESCRIPTION
+     * @return string
      */
-    public function getGeometry() {
+    public function getGeometry()
+    {
         return $this->geometry;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Sets the geometry extracted from the XML.
      *
-     * @access public
-     * @param ARGTYPE $geometry ARGDESCRIPTION
+     * @param string $geometry String representing a PostGreSQL geometry.
+     *
+     * @return void
      */
-    public function setGeometry($geometry) {
+    private function setGeometry($geometry)
+    {
         $this->geometry = $geometry;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Get the extent description for this Metadata.
      *
-     * @access public
-     * @return RETURNTYPE RETURNDESCRIPTION
+     * @return string
      */
-    public function getExtentDescription() {
+    public function getExtentDescription()
+    {
         return $this->extentDescription;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Set the extent description for this Metadata.
      *
-     * @access public
-     * @param ARGTYPE $extentDescription ARGDESCRIPTION
+     * @param string $extentDescription String description of extent type.
+     *
+     * @return void
      */
-    public function setExtentDescription($extentDescription) {
+    private function setExtentDescription($extentDescription)
+    {
         $this->extentDescription = $extentDescription;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Gets the title.
      *
-     * @access public
-     * @return RETURNTYPE RETURNDESCRIPTION
+     * @return string Title from metadata.
      */
-    public function getTitle() {
+    public function getTitle()
+    {
         return $this->title;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Sets the title.
      *
-     * @access public
-     * @param ARGTYPE $title ARGDESCRIPTION
+     * @param string $title Title from metadata.
+     *
+     * @return void
      */
-    public function setTitle($title) {
+    private function setTitle($title)
+    {
         $this->title = $title;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Get the abstract.
      *
-     * @access public
-     * @return RETURNTYPE RETURNDESCRIPTION
+     * @return string Abstract from the metadata.
      */
-    public function getAbstract() {
+    public function getAbstract()
+    {
         return $this->abstract;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Sets the abstract.
      *
-     * @access public
-     * @param ARGTYPE $abstract ARGDESCRIPTION
+     * @param string $abstract The abstract from the metadata.
+     *
+     * @return void
      */
-    public function setAbstract($abstract) {
+    private function setAbstract($abstract)
+    {
         $this->abstract = $abstract;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Gets the begin_position (date).
      *
-     * @access public
-     * @return RETURNTYPE RETURNDESCRIPTION
+     * @return string
      */
-    public function getBeginPosition() {
+    public function getBeginPosition()
+    {
         return $this->beginPosition;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Sets the begin_position (date).
      *
-     * @access public
-     * @param ARGTYPE $beginPositions ARGDESCRIPTION
+     * @param string $beginPositions The begin_position extracted from XML.
+     *
+     * @return void
      */
-    public function setBeginPosition($beginPositions) {
+    private function setBeginPosition($beginPositions)
+    {
         $this->beginPosition = $beginPositions;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Gets the end_position (date).
      *
-     * @access public
-     * @return RETURNTYPE RETURNDESCRIPTION
+     * @return string
      */
-    public function getEndPosition() {
+    public function getEndPosition()
+    {
         return $this->endPosition;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Sets the end_position (date).
      *
-     * @access public
-     * @param ARGTYPE $endPositions ARGDESCRIPTION
+     * @param string $endPositions The end_position extracted from XML.
+     *
+     * @return void
      */
-    public function setEndPosition($endPositions) {
+    public function setEndPosition($endPositions)
+    {
         $this->endPosition = $endPositions;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Gets the file format extracted from XML.
      *
-     * @access public
-     * @return RETURNTYPE RETURNDESCRIPTION
+     * @return string.
      */
-    public function getFileFormat() {
+    public function getFileFormat()
+    {
         return $this->fileFormat;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Sets the file format.
      *
-     * @access public
-     * @param ARGTYPE $fileFormat ARGDESCRIPTION
+     * @param string $fileFormat The file format as specified in the XML.
+     *
+     * @return void
      */
-    public function setFileFormat($fileFormat) {
+    public function setFileFormat($fileFormat)
+    {
         $this->fileFormat = $fileFormat;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Gets the purpose.
      *
-     * @access public
-     * @return RETURNTYPE RETURNDESCRIPTION
+     * @return string
      */
-    public function getPurpose() {
+    public function getPurpose()
+    {
         return $this->purpose;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Sets the purpose as specified in the XML.
      *
-     * @access public
-     * @param ARGTYPE $purpose ARGDESCRIPTION
+     * @param string $purpose The Purpose specified in the metadata XML.
+     *
+     * @return void
      */
-    public function setPurpose($purpose) {
+    private function setPurpose($purpose)
+    {
         $this->purpose = $purpose;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Gets array of keywords as specified in the XML.
      *
-     * @access public
-     * @return RETURNTYPE RETURNDESCRIPTION
+     * @return array An array of keywords as specified in the XML file.
      */
-    public function getThemeKeywords() {
+    public function getThemeKeywords()
+    {
         return $this->themeKeywords;
     }
 
     /**
-     * METHODDESCRIPTION
+     * Sets the keywords as specfied in the XML.
      *
-     * @access public
-     * @param ARGTYPE $themeKeywords ARGDESCRIPTION
+     * @param array $themeKeywords An array of keywords extracted from the XML.
+     *
+     * @return void
      */
-    public function setThemeKeywords($themeKeywords) {
+    private function setThemeKeywords(array $themeKeywords)
+    {
         $this->themeKeywords = $themeKeywords;
     }
 
@@ -360,8 +388,8 @@ class Metadata extends Entity {
         }
 
         $abstracts = $this->xml->xpath(
-        '/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:abstract/gco:CharacterString/text()'
-	    );
+            '/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:abstract/gco:CharacterString/text()'
+        );
 
         if (count($abstracts) == 1) {
             $this->setAbstract($abstracts[0]);
@@ -369,14 +397,14 @@ class Metadata extends Entity {
 
         $beginPositions = $this->xml->xpath(
             '/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:temporalElement/gmd:EX_TemporalExtent/gmd:extent/gml:TimePeriod/gml:beginPosition/text()'
-	    );
+        );
 
         if (count($beginPositions) == 1) {
             $this->setBeginPosition($beginPosition[0]);
         }
 
         $endPositions = $this->xml->xpath(
-	        '/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:temporalElement/gmd:EX_TemporalExtent/gmd:extent/gml:TimePeriod/gml:endPosition/text()'
+            '/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:temporalElement/gmd:EX_TemporalExtent/gmd:extent/gml:TimePeriod/gml:endPosition/text()'
         );
 
         if (count($endPositions) == 1) {
@@ -385,7 +413,7 @@ class Metadata extends Entity {
 
         $extentDescriptions = $this->xml->xpath(
             '/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:description/gco:CharacterString/text()'
-       );
+        );
 
         if (count($extentDescriptions) == 1) {
             $this->setExtentDescription($extentDescriptions[0]);
@@ -393,7 +421,7 @@ class Metadata extends Entity {
 
         $fileFormats = $this->xml->xpath(
             '/gmi:MI_Metadata/gmd:distributionInfo/gmd:MD_Distribution/gmd:distributor/gmd:MD_Distributor/gmd:distributorFormat/gmd:MD_Format/gmd:name/gco:CharacterString/text()'
-       );
+        );
 
         if (count($fileFormats) == 1) {
             $this->setFileFormat($fileFormats[0]);
@@ -401,7 +429,7 @@ class Metadata extends Entity {
 
         $purpose = $this->xml->xpath(
             '/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:purpose/gco:CharacterString/text()'
-       );
+        );
 
         if (count($purpose) == 1) {
             $this->setPurpose($purpose[0]);
@@ -409,7 +437,7 @@ class Metadata extends Entity {
 
         $themeKeywords = $this->xml->xpath(
             '/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:descriptiveKeywords/gmd:MD_Keywords/gmd:type[descendant::text()="theme"]/parent::gmd:MD_Keywords/gmd:keyword/gco:CharacterString/text()'
-       );
+        );
 
         if (count($themeKeywords) > 0) {
             $this->setThemeKeywords($themeKeywords);
