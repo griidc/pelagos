@@ -34,7 +34,7 @@ class Metadata extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="geometry", options={"geometry_type"="Geometry", "srid"=4326)
+     * @ORM\Column(type="geometry", options={"srid"=4326}, nullable=true)
      */
     protected $geometry;
 
@@ -43,7 +43,7 @@ class Metadata extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $extentDescription;
 
@@ -52,7 +52,7 @@ class Metadata extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $title;
 
@@ -61,7 +61,7 @@ class Metadata extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $abstract;
 
@@ -70,25 +70,25 @@ class Metadata extends Entity
      *
      * @var string
      *
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="text", nullable=true)
      */
-    protected $beginPositions;
+    protected $beginPosition;
 
     /**
      * End date of the dataset in the metadata.
      *
      * @var string
      *
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="text", nullable=true)
      */
-    protected $endPositions;
+    protected $endPosition;
 
     /**
      * The file format of the dataset in the metadata.
      *
      * @var PROPTYPE
      *
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $fileFormat;
 
@@ -97,7 +97,7 @@ class Metadata extends Entity
      *
      * @var PROPTYPE
      *
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $purpose;
 
@@ -106,7 +106,7 @@ class Metadata extends Entity
      *
      * @var array
      *
-     * @ORM\Column(type="text_array")
+     * @ORM\Column(type="text_array", nullable=true)
      */
     protected $themeKeywords;
 
@@ -168,6 +168,7 @@ class Metadata extends Entity
         } else {
             $this->xml = $xml;
         }
+        $this->setPropertiesFromXml();
     }
 
     /**
@@ -275,9 +276,9 @@ class Metadata extends Entity
      *
      * @return void
      */
-    private function setBeginPosition($beginPositions)
+    private function setBeginPosition($beginPosition)
     {
-        $this->beginPosition = $beginPositions;
+        $this->beginPosition = $beginPosition;
     }
 
     /**
@@ -400,7 +401,7 @@ class Metadata extends Entity
         );
 
         if (count($beginPositions) == 1) {
-            $this->setBeginPosition($beginPosition[0]);
+            $this->setBeginPosition($beginPositions[0]);
         }
 
         $endPositions = $this->xml->xpath(
