@@ -12,12 +12,13 @@ use Doctrine\DBAL\DBALException;
  */
 class GeometryType extends \Jsor\Doctrine\PostGIS\Types\GeometryType
 {
-    /** 
+    /**
      * Function to convert GML to Geometry.
-     * 
+     *
      * @param string           $sqlExpr  The SQL.
      * @param AbstractPlatform $platform The DB Platform.
-     * 
+     *
+     * @return string The sql string for a geometry.
      */
     public function convertToDatabaseValueSQL($sqlExpr, AbstractPlatform $platform)
     {
