@@ -272,7 +272,7 @@ class Metadata extends Entity
     /**
      * Sets the begin_position (date).
      *
-     * @param string $beginPositions The begin_position extracted from XML.
+     * @param string $beginPosition The begin_position extracted from XML.
      *
      * @return void
      */
@@ -380,8 +380,35 @@ class Metadata extends Entity
             return;
         }
 
+        $basePath = '/gmi:MI_Metadata';
+
+        $fileFormats = $this->xml->xpath(
+            $basePath .
+            '/gmd:distributionInfo' .
+            '/gmd:MD_Distribution' .
+            '/gmd:distributor' .
+            '/gmd:MD_Distributor' .
+            '/gmd:distributorFormat' .
+            '/gmd:MD_Format' .
+            '/gmd:name' .
+            '/gco:CharacterString' .
+            '/text()'
+        );
+
+        if (count($fileFormats) == 1) {
+            $this->setFileFormat($fileFormats[0]);
+        }
+
+        $basePath .= '/gmd:identificationInfo' .
+                     '/gmd:MD_DataIdentification';
+
         $titles = $this->xml->xpath(
-            '/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:title/gco:CharacterString/text()'
+            $basePath .
+            '/gmd:citation' .
+            '/gmd:CI_Citation' .
+            '/gmd:title' .
+            '/gco:CharacterString' .
+            '/text()'
         );
 
         if (count($titles) == 1) {
@@ -389,47 +416,21 @@ class Metadata extends Entity
         }
 
         $abstracts = $this->xml->xpath(
-            '/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:abstract/gco:CharacterString/text()'
+            $basePath .
+            '/gmd:abstract' .
+            '/gco:CharacterString' .
+            '/text()'
         );
 
         if (count($abstracts) == 1) {
             $this->setAbstract($abstracts[0]);
         }
 
-        $beginPositions = $this->xml->xpath(
-            '/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:temporalElement/gmd:EX_TemporalExtent/gmd:extent/gml:TimePeriod/gml:beginPosition/text()'
-        );
-
-        if (count($beginPositions) == 1) {
-            $this->setBeginPosition($beginPositions[0]);
-        }
-
-        $endPositions = $this->xml->xpath(
-            '/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:temporalElement/gmd:EX_TemporalExtent/gmd:extent/gml:TimePeriod/gml:endPosition/text()'
-        );
-
-        if (count($endPositions) == 1) {
-            $this->setEndPosition($endPositions[0]);
-        }
-
-        $extentDescriptions = $this->xml->xpath(
-            '/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:description/gco:CharacterString/text()'
-        );
-
-        if (count($extentDescriptions) == 1) {
-            $this->setExtentDescription($extentDescriptions[0]);
-        }
-
-        $fileFormats = $this->xml->xpath(
-            '/gmi:MI_Metadata/gmd:distributionInfo/gmd:MD_Distribution/gmd:distributor/gmd:MD_Distributor/gmd:distributorFormat/gmd:MD_Format/gmd:name/gco:CharacterString/text()'
-        );
-
-        if (count($fileFormats) == 1) {
-            $this->setFileFormat($fileFormats[0]);
-        }
-
         $purpose = $this->xml->xpath(
-            '/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:purpose/gco:CharacterString/text()'
+            $basePath .
+            '/gmd:purpose' .
+            '/gco:CharacterString' .
+            '/text()'
         );
 
         if (count($purpose) == 1) {
@@ -437,12 +438,73 @@ class Metadata extends Entity
         }
 
         $themeKeywords = $this->xml->xpath(
-            '/gmi:MI_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:descriptiveKeywords/gmd:MD_Keywords/gmd:type[descendant::text()="theme"]/parent::gmd:MD_Keywords/gmd:keyword/gco:CharacterString/text()'
+            $basePath .
+            '/gmd:descriptiveKeywords' .
+            '/gmd:MD_Keywords' .
+            '/gmd:type[descendant::text()="theme"]' .
+            '/parent::gmd:MD_Keywords' .
+            '/gmd:keyword' .
+            '/gco:CharacterString' .
+            '/text()'
         );
 
         if (count($themeKeywords) > 0) {
             $this->setThemeKeywords($themeKeywords);
         }
 
+        $basePath .= '/gmd:extent' .
+                     '/gmd:EX_Extent';
+
+        $beginPositions = $this->xml->xpath(
+            $basePath .
+            '/gmd:temporalElement' .
+            '/gmd:EX_TemporalExtent' .
+            '/gmd:extent' .
+            '/gml:TimePeriod' .
+            '/gml:beginPosition' .
+            '/text()'
+        );
+
+        if (count($beginPositions) == 1) {
+            $this->setBeginPosition($beginPositions[0]);
+        }
+
+        $endPositions = $this->xml->xpath(
+            $basePath .
+            '/gmd:temporalElement' .
+            '/gmd:EX_TemporalExtent' .
+            '/gmd:extent' .
+            '/gml:TimePeriod' .
+            '/gml:endPosition' .
+            '/text()'
+        );
+
+        if (count($endPositions) == 1) {
+            $this->setEndPosition($endPositions[0]);
+        }
+
+        $extentDescriptions = $this->xml->xpath(
+            $basePath .
+            '/gmd:description' .
+            '/gco:CharacterString' .
+            '/text()'
+        );
+
+        if (count($extentDescriptions) == 1) {
+            $this->setExtentDescription($extentDescriptions[0]);
+        }
+
+        $gmls = $this->xml->xpath(
+            $basePath .
+            '/gmd:geographicElement' .
+            '/gmd:EX_BoundingPolygon' .
+            '/gmd:polygon' .
+            '/child::*'
+        );
+
+        if (count($gmls) == 1) {
+            $gml = $gmls[0]->asXML();
+            $this->setGeometry($gml);
+        }
     }
 }
