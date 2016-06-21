@@ -56,7 +56,7 @@
                 </table>
             </div>
             {% endif %}
-            {% if ResearchGroup.Datasets %}
+            {% if ResearchGroup.Datasets|length > 0 %}
                 {% include 'PelagosAppBundle:DatasetMonitoring:datasets.html.twig' with {'datasets': ResearchGroup.datasets} %}
             {% else %}
                 <div class="nodata"><em>{no dataset identified}</em></div>
