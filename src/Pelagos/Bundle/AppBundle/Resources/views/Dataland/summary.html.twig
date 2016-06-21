@@ -65,7 +65,7 @@
     </tr>
 
     <tr>
-        <td valign="top"><b>Dataset Author(s):</b><br/> {{dataset.datasetSubmission.authors}}</td>
+        <td valign="top"><b>Dataset Author(s):</b><br/> {{dataset.datasetSubmission.authors|default}}</td>
         <td rowspan="4" valign="top">
             {% if dataset.dif %}
                 <b>Point of Contact:</b><br/>
