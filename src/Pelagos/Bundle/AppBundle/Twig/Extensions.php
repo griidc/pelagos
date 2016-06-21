@@ -70,6 +70,10 @@ class Extensions extends \Twig_Extension
                 'submittedDIFs',
                 array(self::class, 'submittedDIFs')
             ),
+            new \Twig_SimpleFilter(
+                'role',
+                array(self::class, 'role')
+            ),
         );
     }
 
@@ -183,13 +187,30 @@ class Extensions extends \Twig_Extension
      *
      * @param Collection $datasets A collection of datasets.
      *
-     * @return string The evaluated string.
+     * @return Collection The filtered collection.
      */
     public static function submittedDIFs(Collection $datasets)
     {
         return $datasets->filter(
             function ($dataset) {
                 return $dataset->getDif()->getStatus() !== DIF::STATUS_UNSUBMITTED;
+            }
+        );
+    }
+
+    /**
+     * Filter Person associations by role name.
+     *
+     * @param Collection $personAssociations A collection of Person associations.
+     * @param string     $roleName           The role name to filter by.
+     *
+     * @return Collection The filtered collection.
+     */
+    public static function role(Collection $personAssociations, $roleName)
+    {
+        return $personAssociations->filter(
+            function ($personAssociation) use ($roleName) {
+                return $personAssociation->getRole()->getName() === $roleName;
             }
         );
     }
