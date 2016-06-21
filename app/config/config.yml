@@ -56,9 +56,11 @@ doctrine:
         types:
             text_array: "Doctrine\\DBAL\\PostgresTypes\\TextArrayType"
             xml: "Doctrine\\DBAL\\PostgresTypes\\XmlType"
+            pelagos_geometry: "Pelagos\\DoctrineExtensions\\DBAL\\Types\\GeometryType"
         mapping_types:
             _text: text_array
             xml: xml
+            pelagos_geometry: pelagos_geometry
     orm:
         mappings:
             Pelagos:
