@@ -6,6 +6,15 @@ function graphDatasetStatus(){
         var datasetsAvailable = $(".dotTotal", myDiv).attr("total-available");
         var datasetsRegistered = myDiv.find(".dotTotal").attr("total-registered");
         var datasetsIdentified = myDiv.find(".dotTotal").attr("total-identified");
+        if (typeof datasetsAvailable == 'undefined') {
+            datasetsAvailable = 0;
+        }
+        if (typeof datasetsRegistered == 'undefined') {
+            datasetsRegistered = 0;
+        }
+        if (typeof datasetsIdentified == 'undefined') {
+            datasetsIdentified = 0;
+        }
         var bitmapdatastring = '';
         for (var i=0; i<datasetsAvailable; i++) {
             bitmapdatastring += 'a';
