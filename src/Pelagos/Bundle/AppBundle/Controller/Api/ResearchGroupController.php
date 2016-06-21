@@ -83,7 +83,9 @@ class ResearchGroupController extends EntityController
      * @ApiDoc(
      *   section = "Research Groups",
      *   parameters = {
-     *     {"name"="someProperty", "dataType"="string", "required"=false, "description"="Filter by someProperty"}
+     *     {"name"="properties", "dataType"="string", "required"=false, "format"="property1,property2,property3.subProperty,etc.", "description"="Return these properties"},
+     *     {"name"="orderBy", "dataType"="string", "required"=false, "format"="property1,property2,property3.subProperty,etc.", "description"="Order by these properties"},
+     *     {"name"="someProperty", "dataType"="string", "required"=false, "format"="value", "description"="Filter by someProperty"},
      *   },
      *   output = "array<Pelagos\Entity\ResearchGroup>",
      *   statusCodes = {
@@ -94,17 +96,23 @@ class ResearchGroupController extends EntityController
      *
      * @Rest\Get("")
      *
-     * @Rest\View(serializerEnableMaxDepthChecks = true)
-     *
-     * @return array The collection of Research Groups that was retrieved.
+     * @return Response
      */
     public function getCollectionAction(Request $request)
     {
         $researchGroups = $this->handleGetCollection(ResearchGroup::class, $request);
-        foreach ($researchGroups as $researchGroup) {
-            $this->setLogoToResourceUrl($researchGroup);
+        for ($i = 0; $i < count($researchGroups); $i++) {
+            if (is_array($researchGroups[$i])
+                and array_key_exists('logo', $researchGroups[$i])
+                and null !== $researchGroups[$i]['logo']
+                and array_key_exists('id', $researchGroups[$i])) {
+                $researchGroups[$i]['logo'] = $this->getResourceUrl(
+                    'pelagos_api_research_groups_get_logo',
+                    $researchGroups[$i]['id']
+                );
+            }
         }
-        return $researchGroups;
+        return $this->makeJsonResponse($researchGroups);
     }
 
     /**
@@ -128,7 +136,16 @@ class ResearchGroupController extends EntityController
      */
     public function getAction($id)
     {
-        return $this->setLogoToResourceUrl($this->handleGetOne(ResearchGroup::class, $id));
+        $researchGroup = $this->handleGetOne(ResearchGroup::class, $id);
+        if ($researchGroup instanceof ResearchGroup and $researchGroup->getLogo(true) !== null) {
+            $researchGroup->setLogo(
+                $this->getResourceUrl(
+                    'pelagos_api_research_groups_get_logo',
+                    $researchGroup->getId()
+                )
+            );
+        }
+        return $researchGroup;
     }
 
     /**
@@ -299,26 +316,5 @@ class ResearchGroupController extends EntityController
     public function putLogoAction($id, Request $request)
     {
         return $this->putProperty(ResearchGroup::class, $id, 'logo', $request);
-    }
-
-    /**
-     * Set the logo attribute of a research group to be the logo resource URL.
-     *
-     * @param ResearchGroup $researchGroup The research group to update.
-     *
-     * @return ResearchGroup The research group with it's logo set to the logo resource URL.
-     */
-    private function setLogoToResourceUrl(ResearchGroup $researchGroup)
-    {
-        if ($researchGroup->getLogo(true) !== null) {
-            $researchGroup->setLogo(
-                $this->generateUrl(
-                    'pelagos_api_research_groups_get_logo',
-                    array('id' => $researchGroup->getId()),
-                    UrlGeneratorInterface::ABSOLUTE_URL
-                )
-            );
-        }
-        return $researchGroup;
     }
 }

@@ -2,11 +2,14 @@
 
 namespace Pelagos\Bundle\AppBundle\Controller\Api;
 
+use Doctrine\ORM\Query;
+
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Util\Codes;
@@ -37,10 +40,29 @@ abstract class EntityController extends FOSRestController
             // Remove the 'q' parameter if it exists (this comes from Drupal).
             unset($params['q']);
         }
-        if (count($params) > 0) {
-            return $this->container->get('pelagos.entity.handler')->getBy($entityClass, $params);
+        foreach (array_keys($params) as $param) {
+            str_replace('_', '.', $params[$param]);
         }
-        return $this->container->get('pelagos.entity.handler')->getAll($entityClass);
+        $orderBy = array();
+        if (array_key_exists('orderBy', $params)) {
+            foreach (preg_split('/[,\s]+/', $params['orderBy']) as $propertyOrder) {
+                $property = preg_split('/:/', $propertyOrder);
+                $orderBy[$property[0]] = count($property) === 1 ? 'ASC' : $property[1];
+            }
+            unset($params['orderBy']);
+        }
+        $properties = array();
+        if (array_key_exists('properties', $params)) {
+            $properties = preg_split('/[,\s]+/', $params['properties']);
+            unset($params['properties']);
+        }
+        return $this->container->get('pelagos.entity.handler')->getBy(
+            $entityClass,
+            $params,
+            $orderBy,
+            $properties,
+            Query::HYDRATE_ARRAY
+        );
     }
 
     /**
@@ -360,6 +382,41 @@ abstract class EntityController extends FOSRestController
             Codes::HTTP_NO_CONTENT,
             array(
                 'Content-Type' => 'application/x-empty',
+            )
+        );
+    }
+
+    /**
+     * Get a resource URL for an Entity.
+     *
+     * @param string  $routeName The name of the route for the resource.
+     * @param integer $id        The id of the Entity.
+     *
+     * @return string
+     */
+    protected function getResourceUrl($routeName, $id)
+    {
+        return $this->generateUrl(
+            $routeName,
+            array('id' => $id),
+            UrlGeneratorInterface::ABSOLUTE_URL
+        );
+    }
+
+    /**
+     * Make a JSON response.
+     *
+     * @param array $data The data to JSON encode.
+     *
+     * @return Response
+     */
+    protected function makeJsonResponse(array $data)
+    {
+        return new Response(
+            json_encode($data),
+            Codes::HTTP_OK,
+            array(
+                'Content-Type' => 'application/json',
             )
         );
     }

@@ -1,0 +1,7 @@
+#/bin/sh
+
+# Make sure apache and pelagos will have write permissions on all files and directories created under var
+echo -n "Ensuring apache and pelagos will have write access on all files and directories under var..."
+setfacl -R -m u:pelagos:rwX -m u:apache:rwX var
+setfacl -dR -m u:pelagos:rwX -m u:apache:rwX var
+echo "Done"; echo

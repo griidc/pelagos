@@ -83,7 +83,9 @@ class FundingOrganizationController extends EntityController
      * @ApiDoc(
      *   section = "Funding Organizations",
      *   parameters = {
-     *     {"name"="someProperty", "dataType"="string", "required"=false, "description"="Filter by someProperty"}
+     *     {"name"="properties", "dataType"="string", "required"=false, "format"="property1,property2,property3.subProperty,etc.", "description"="Return these properties"},
+     *     {"name"="orderBy", "dataType"="string", "required"=false, "format"="property1,property2,property3.subProperty,etc.", "description"="Order by these properties"},
+     *     {"name"="someProperty", "dataType"="string", "required"=false, "format"="value", "description"="Filter by someProperty"},
      *   },
      *   output = "array<Pelagos\Entity\FundingOrganization>",
      *   statusCodes = {
@@ -94,17 +96,23 @@ class FundingOrganizationController extends EntityController
      *
      * @Rest\Get("")
      *
-     * @Rest\View(serializerEnableMaxDepthChecks = true)
-     *
-     * @return array The collection of Funding Organizations that was retrieved.
+     * @return Response
      */
     public function getCollectionAction(Request $request)
     {
         $fundingOrganizations = $this->handleGetCollection(FundingOrganization::class, $request);
-        foreach ($fundingOrganizations as $fundingOrganization) {
-            $this->setLogoToResourceUrl($fundingOrganization);
+        for ($i = 0; $i < count($fundingOrganizations); $i++) {
+            if (is_array($fundingOrganizations[$i])
+                and array_key_exists('logo', $fundingOrganizations[$i])
+                and null !== $fundingOrganizations[$i]['logo']
+                and array_key_exists('id', $fundingOrganizations[$i])) {
+                $fundingOrganizations[$i]['logo'] = $this->getResourceUrl(
+                    'pelagos_api_funding_organizations_get_logo',
+                    $fundingOrganizations[$i]['id']
+                );
+            }
         }
-        return $fundingOrganizations;
+        return $this->makeJsonResponse($fundingOrganizations);
     }
 
     /**
@@ -128,7 +136,16 @@ class FundingOrganizationController extends EntityController
      */
     public function getAction($id)
     {
-        return $this->setLogoToResourceUrl($this->handleGetOne(FundingOrganization::class, $id));
+        $fundingOrganization = $this->handleGetOne(FundingOrganization::class, $id);
+        if ($fundingOrganization instanceof FundingOrganization and $fundingOrganization->getLogo(true) !== null) {
+            $fundingOrganization->setLogo(
+                $this->getResourceUrl(
+                    'pelagos_api_funding_organizations_get_logo',
+                    $fundingOrganization->getId()
+                )
+            );
+        }
+        return $fundingOrganization;
     }
 
     /**
@@ -299,26 +316,5 @@ class FundingOrganizationController extends EntityController
     public function putLogoAction($id, Request $request)
     {
         return $this->putProperty(FundingOrganization::class, $id, 'logo', $request);
-    }
-
-    /**
-     * Set the logo attribute of a Funding Organization to be the logo resource URL.
-     *
-     * @param FundingOrganization $fundingOrganization The Funding Organization to update.
-     *
-     * @return FundingOrganization The Funding Organization with it's logo set to the logo resource URL.
-     */
-    private function setLogoToResourceUrl(FundingOrganization $fundingOrganization)
-    {
-        if ($fundingOrganization->getLogo(true) !== null) {
-            $fundingOrganization->setLogo(
-                $this->generateUrl(
-                    'pelagos_api_funding_organizations_get_logo',
-                    array('id' => $fundingOrganization->getId()),
-                    UrlGeneratorInterface::ABSOLUTE_URL
-                )
-            );
-        }
-        return $fundingOrganization;
     }
 }

@@ -1,0 +1,24 @@
+#/bin/sh
+
+# Set Symfony environment to drupal_prod
+export SYMFONY_ENV=drupal_prod
+
+# Disable Symfony debug mode
+export SYMFONY_DEBUG=0
+
+# Stop RabbitMQ consumers
+#bin/console rabbitmq-supervisor:control stop
+
+# Run composer install to make sure all non-dev dependencies are installed and parameters are defined
+composer install --no-dev --optimize-autoloader
+echo
+
+# Dump assetic assets
+bin/console assetic:dump
+
+# Dump FOSJsRouting routes
+#echo "Dumping FOSJsRouting routes..."
+#bin/console fos:js-routing:dump --target=web/js/routing
+
+# Start RabbitMQ consumers
+#bin/console rabbitmq-supervisor:control start

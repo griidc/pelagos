@@ -45,11 +45,12 @@
 <table
     viewInterface = "{{ path('pelagos_app_ui_fundingorganization_default') }}"
     personInterface = "{{ path('pelagos_app_ui_person_default') }}"
+    entityApi = "{{ path('pelagos_api_funding_organizations_get_collection') }}"
     entityNiceName = "Funding Organization"
     class = "entityTable stripe"
     width = "100%"
     data-ajax = '{
-        "url": "{{ path('pelagos_api_funding_organizations_get_collection') }}",
+        "url": "{{ path('pelagos_api_funding_organizations_get_collection') }}?properties=name,emailAddress,description,url,phoneNumber,deliveryPoint,city,administrativeArea,postalCode,country,creationTimeStamp,modificationTimeStamp,creator.id,creator.firstName,creator.lastName,modifier.id,modifier.firstName,modifier.lastName",
         "dataSrc": "",
         "cache": true
     }'
@@ -72,6 +73,8 @@
     data-order = '[[ 0, "asc" ]]'
     creatorColumn = "11"
     modifierColumn = "13"
+    creationTimeStampColumn = "10"
+    modificationTimeStampColumn = "12"
 >
     <thead>
         <tr>
