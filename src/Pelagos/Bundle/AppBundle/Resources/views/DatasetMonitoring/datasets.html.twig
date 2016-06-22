@@ -8,10 +8,10 @@
             <th class="udi" title="sort by UDI">UDI</th>
             <th title="sort by Title">Title</th>
             {% endif %}
-            <th class="status" title="sort by Identified status">Identified</th>
-            <th class="status" title="sort by Registered status">Registered</th>
-            <th class="status" title="sort by Metadata status">Metadata</th>
-            <th class="status" title="sort by Available status">Available</th>
+            <th class="status" {% if not dataland | default %} title="sort by Identified status" {% endif %}>Identified</th>
+            <th class="status" {% if not dataland | default %} title="sort by Registered status" {% endif %}>Registered</th>
+            <th class="status" {% if not dataland | default %} title="sort by Metadata status" {% endif %}>Metadata</th>
+            <th class="status" {% if not dataland | default %} title="sort by Available status" {% endif %}>Available</th>
         </tr>
     </thead>
     <tbody>
