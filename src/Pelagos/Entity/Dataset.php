@@ -64,13 +64,13 @@ class Dataset extends Entity
      * @ORM\OneToMany(targetEntity="DatasetSubmission", mappedBy="dataset")
      */
     protected $datasetSubmissionHistory;
-    
+
     /**
      * The metadata for this dataset.
      *
      * @var Metadata
      *
-     * @ORM\OneToOne(targetEntity="Metadata", inversedBy="dataset")
+     * @ORM\OneToOne(targetEntity="Metadata", mappedBy="dataset")
      */
     protected $metadata;
 
@@ -229,6 +229,26 @@ class Dataset extends Entity
     }
 
     /**
+     * Get the Metadata.
+     *
+     * @return Collection
+     */
+    public function getMetadata()
+    {
+        return $this->metadata;
+    }
+
+    /**
+     * Set the Metadata.
+     *
+     * @return Collection
+     */
+    public function setMetadata(Metadata $metadata)
+    {
+        $this->metadata = $metadata;
+    }
+
+    /**
      * Get the title for this dataset.
      *
      * @return string
@@ -248,7 +268,7 @@ class Dataset extends Entity
         // Return null if we can't find a title.
         return null;
     }
-    
+
     /**
      * Get the abstract for this dataset.
      *

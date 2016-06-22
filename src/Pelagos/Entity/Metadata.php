@@ -16,7 +16,7 @@ class Metadata extends Entity
      *
      * @var Dataset
      *
-     * @ORM\OneToOne(targetEntity="Dataset", mappedBy="metadata", cascade={"persist"})
+     * @ORM\OneToOne(targetEntity="Dataset", inversedBy="metadata")
      */
     protected $dataset;
 
