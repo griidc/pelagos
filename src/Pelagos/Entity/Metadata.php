@@ -142,6 +142,9 @@ class Metadata extends Entity
     public function setDataset(Dataset $dataset)
     {
         $this->dataset = $dataset;
+        if ($dataset->getMetadata() !== $this) {
+            $this->dataset->setMetadata($this);
+        }
     }
 
     /**
