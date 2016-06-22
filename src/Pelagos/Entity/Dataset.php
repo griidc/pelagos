@@ -7,8 +7,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 
-use Pelagos\Entity\DIF;
-
 /**
  * Dataset Entity class.
  *
@@ -66,6 +64,15 @@ class Dataset extends Entity
      * @ORM\OneToMany(targetEntity="DatasetSubmission", mappedBy="dataset")
      */
     protected $datasetSubmissionHistory;
+
+    /**
+     * The metadata for this dataset.
+     *
+     * @var Metadata
+     *
+     * @ORM\OneToOne(targetEntity="Metadata", mappedBy="dataset")
+     */
+    protected $metadata;
 
     /**
      * The identified status of this Dataset.
@@ -222,6 +229,31 @@ class Dataset extends Entity
     }
 
     /**
+     * Get the Metadata.
+     *
+     * @return Collection
+     */
+    public function getMetadata()
+    {
+        return $this->metadata;
+    }
+
+    /**
+     * Set the Metadata.
+     *
+     * @param Metadata $metadata The metadata for this dataset.
+     *
+     * @return void
+     */
+    public function setMetadata(Metadata $metadata)
+    {
+        $this->metadata = $metadata;
+        if ($this->metadata->getDataset() !== $this) {
+            $this->metadata->setDataset($this);
+        }
+    }
+
+    /**
      * Get the title for this dataset.
      *
      * @return string
@@ -241,7 +273,7 @@ class Dataset extends Entity
         // Return null if we can't find a title.
         return null;
     }
-    
+
     /**
      * Get the abstract for this dataset.
      *

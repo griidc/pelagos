@@ -40,7 +40,9 @@
         "willdurand/hateoas-bundle": "^1.1",
         "simplethings/entity-audit-bundle": "^0.9.1",
         "friendsofsymfony/jsrouting-bundle": "^1.6",
-        "php-amqplib/rabbitmq-bundle": "^1.9"
+        "php-amqplib/rabbitmq-bundle": "^1.9",
+        "jsor/doctrine-postgis": "^1.1",
+        "opensoft/doctrine-postgres-types": "^1.2"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",
