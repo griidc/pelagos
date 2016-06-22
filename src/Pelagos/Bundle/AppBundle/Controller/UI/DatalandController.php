@@ -13,6 +13,7 @@ use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\DIF;
 use Pelagos\Entity\FundingOrganization;
 use Pelagos\Entity\FundingCycle;
+use Pelagos\Entity\Metadata;
 use Pelagos\Entity\ResearchGroup;
 use Pelagos\Entity\Person;
 
@@ -43,12 +44,18 @@ class DatalandController extends UIController
         }
 
         $dataset = $datasets[0];
+        $rawXml = null;
+
+        if ($dataset->getMetadata() instanceof Metadata) {
+            $rawXml = $dataset->getMetadata()->getXml()->asXml();
+        }
 
         return $this->render(
             'PelagosAppBundle:Dataland:index.html.twig',
-            array(
+            $twigData = array(
                 'dataset' => $dataset,
-                )
+                'rawxml' => $rawXml,
+            )
         );
     }
 }

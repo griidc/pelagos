@@ -3,18 +3,17 @@
     {{dataset.abstract|default}}
 </div>
 
-{% if dataset.metadata|default %}
+{% if dataset.metadata.purpose|default %}
 <h2>Purpose:</h2>
 <div>
-    {(dataset.metadata.purpose)}
+    {{dataset.metadata.purpose}}
 </div>
 {% endif %}
 
 {% if dataset.metadata.themeKeywords|default %}
 <h2>Theme Keywords:</h2>
 <div>
-    {% for themeKeyword in dataset.metadata.themeKeywords %}
-    {{themeKeyword|join}}
+    {{dataset.metadata.themeKeywords|join(', ')}}
 </div>
 {% endif %}
 

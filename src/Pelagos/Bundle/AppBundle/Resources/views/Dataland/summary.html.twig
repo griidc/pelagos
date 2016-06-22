@@ -97,9 +97,9 @@
         <td valign="top">
             {% if dataset.metadata|default  %}
                 <b>Data Collection Period:</b><br/>
-                {{dataset.metadata.beginPeriod}}
+                {{dataset.metadata.beginPosition}}
                   to
-                {{dataset.metadata.endPeriod}}
+                {{dataset.metadata.endPosition}}
             {% endif %}
         </td>
     </tr>

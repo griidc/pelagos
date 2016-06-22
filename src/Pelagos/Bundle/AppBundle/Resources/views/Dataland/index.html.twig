@@ -2,7 +2,7 @@
 
 {% block head %}
     {{ parent() }}
-    
+
     {{
         add_library (
             [
@@ -12,14 +12,15 @@
             ]
         )
     }}
-    
-    {% stylesheets 
-        '@PelagosAppBundle/Resources/public/css/dataland-details.css' 
-        '@PelagosAppBundle/Resources/public/css/status.css' 
+
+    {% stylesheets
+        '@PelagosAppBundle/Resources/public/css/dataland-details.css'
+        '@PelagosAppBundle/Resources/public/css/status.css'
+        '@PelagosAppBundle/Resources/public/css/xmlverbatim.css'
     %}
         {{ add_css(asset_url) }}
     {% endstylesheets %}
-    
+
     {{ add_js(
             [
                 '//cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js',
@@ -27,9 +28,9 @@
                 '/includes/geoviz/geoviz.js',
                 '/includes/geoviz/mapWizard.js',
             ]
-        ) 
+        )
     }}
-    
+
     {% javascripts '@PelagosAppBundle/Resources/public/js/dataland.js' %}
         {{ add_js(asset_url) }}
     {% endjavascripts %}
@@ -37,7 +38,7 @@
 
 {% block body %}
     {% if dataset %}
-    
+
         {% include 'PelagosAppBundle:Dataland:download.html.twig' %}
         <table border="0" width="100%">
             <tr>
@@ -65,46 +66,24 @@
                 <div class="tabb" id="tabs-1">
                     {% include 'PelagosAppBundle:Dataland:details.html.twig' %}
                 </div>
+
                 <div class="tabb" id="tabs-2" style="overflow:auto;word-wrap:break-word;height:100%;">
+                    {% if rawxml %}
                     <div id="xmlradio">
                         <input type="radio" id="xmlformated" name="radio" checked="checked"><label for="xmlformated">Formatted</label>
                         <input type="radio" id="xmlraw" name="radio" ><label for="xmlraw">Raw</label>
                     </div>
                     <p>
                         <div id="formatedxml">
-                            FORMATED XML HERE!
-                            {# 
-                                <?php
-                                    $xml = '';
-                                    $xsl = 'xsl/xml-to-html-ISO.xsl';
-
-                                    if ($prow <>'')
-                                    {
-                                        $xml = $prow["metadata_xml"];
-                                    }
-
-                                    echo transform($xml,$xsl);
-                                ?>
-                            #}
+                            {{ rawxml|transformXml('xml-to-html-ISO.xsl')|raw }}
                         </div>
                         <div id="rawxml" style="display:none;">
-                            RAW XML HERE!
-                            {# 
-                                <?php
-                                    $xml = '';
-
-                                    $xsl = 'xsl/xmlverbatim.xsl';
-
-                                    if ($prow <>'')
-                                    {
-                                        $xml = $prow["metadata_xml"];
-                                    }
-
-                                    echo transform($xml,$xsl);
-                                ?>
-                            #}
+                            {{ rawxml|transformXml('xmlverbatim.xsl')|raw }}
                         </div>
                     </p>
+                    {% else %}
+                    <p><h3>No Metadata Available</h3</p>
+                    {% endif %}
                 </div>
                 <div class="tabb" id="tabs-3">
                     {% include 'PelagosAppBundle:Dataland:publications.html.twig' %}
