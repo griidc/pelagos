@@ -4,11 +4,9 @@ namespace Pelagos\DoctrineExtensions\DBAL\Types;
 
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
-use Doctrine\DBAL\Types\ConversionException;
-use Doctrine\DBAL\DBALException;
 
 /**
- * A new type of Case Insensitive Text, citext.
+ * A Geometry type, that accepts GML.
  */
 class GeometryType extends \Jsor\Doctrine\PostGIS\Types\GeometryType
 {
