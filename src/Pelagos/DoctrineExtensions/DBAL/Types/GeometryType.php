@@ -2,7 +2,6 @@
 
 namespace Pelagos\DoctrineExtensions\DBAL\Types;
 
-use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 
 /**
