@@ -2,6 +2,10 @@
 
 namespace Pelagos\Bundle\AppBundle\Twig;
 
+use Doctrine\Common\Collections\Collection;
+
+use Pelagos\Entity\DIF;
+
 /**
  * Custom Twig extensions for Pelagos.
  */
@@ -86,6 +90,10 @@ class Extensions extends \Twig_Extension
             new \Twig_SimpleFilter(
                 'transformXml',
                 array($this, 'transformXml')
+            ),
+            new \Twig_SimpleFilter(
+                'role',
+                array(self::class, 'role')
             ),
         );
     }
@@ -193,6 +201,39 @@ class Extensions extends \Twig_Extension
         $parsed = self::parseString($environment, $context, $string);
         $environment->setLoader($loader);
         return $parsed;
+    }
+
+    /**
+     * Filter for DIFs in submitted status.
+     *
+     * @param Collection $datasets A collection of datasets.
+     *
+     * @return Collection The filtered collection.
+     */
+    public static function submittedDIFs(Collection $datasets)
+    {
+        return $datasets->filter(
+            function ($dataset) {
+                return $dataset->getDif()->getStatus() !== DIF::STATUS_UNSUBMITTED;
+            }
+        );
+    }
+
+    /**
+     * Filter Person associations by role name.
+     *
+     * @param Collection $personAssociations A collection of Person associations.
+     * @param string     $roleName           The role name to filter by.
+     *
+     * @return Collection The filtered collection.
+     */
+    public static function role(Collection $personAssociations, $roleName)
+    {
+        return $personAssociations->filter(
+            function ($personAssociation) use ($roleName) {
+                return $personAssociation->getRole()->getName() === $roleName;
+            }
+        );
     }
 
     /**

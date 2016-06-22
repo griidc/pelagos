@@ -241,6 +241,27 @@ class Dataset extends Entity
         // Return null if we can't find a title.
         return null;
     }
+    
+    /**
+     * Get the abstract for this dataset.
+     *
+     * @return string
+     */
+    public function getAbstract()
+    {
+        // If this Dataset has a submission.
+        if (null !== $this->datasetSubmission) {
+            // Return its abstract.
+            return $this->datasetSubmission->getAbstract();
+        }
+        // If this Dataset only has a DIF.
+        if (null !== $this->dif) {
+            // Return its abstract.
+            return $this->dif->getAbstract();
+        }
+        // Return null if we can't find a abstract.
+        return null;
+    }
 
     /**
      * Set the identified status.

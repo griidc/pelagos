@@ -2,6 +2,8 @@
 config.ini
 config.php
 /app/config/parameters.yml
+/app/config/parameters_drupal_dev.yml
+/app/config/parameters_drupal_prod.yml
 /app/config/config_dev_local.yml
 /build/
 /phpunit.xml
@@ -18,3 +20,4 @@ config.php
 /vendor/
 /web/bundles/
 bin/symfony_requirements
+/src/Pelagos/Bundle/AppBundle/DataFixtures/ORM/Test*
