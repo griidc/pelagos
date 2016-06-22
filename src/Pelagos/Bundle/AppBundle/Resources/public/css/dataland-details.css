@@ -112,12 +112,9 @@ tr:hover.dsrow
 	background-color: #DFD;
 }
 
-.datasets
+.datasets td
 {
-	width:100%;
-	height:100%;
-	overflow-y:scroll;
-	overflow-x:hidden;
+    padding: 0px;
 }
 
 .dsdetails

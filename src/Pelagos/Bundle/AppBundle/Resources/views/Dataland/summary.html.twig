@@ -116,31 +116,7 @@
 
 </font>
 <p/>
-<table class="status">
-    <tr>
-        <th>Identified</th>
-        <th>Registered</th>
-        <th>Metadata</th>
-        <th>Available</th>
-    </tr>
-    <tr>
-    {#
-        {% if pdata.identified %}
-            <td title="{{(pdata.identified ~ '_identified') | statusToTitle}}">
-                <img src="{{baseurl}}/includes/images/{{pdata.identified | statusToImg}}">
-            </td>
-        {% endif %}
-        <td title="{{(pdata.registered ~ '_registered') | statusToTitle}}">
-            <img src="{{baseurl}}/includes/images/{{pdata.registered | statusToImg}}">
-        </td>
-        <td title="{% if pdata.registered %}{{(pdata.metadata ~ '_metadata') | statusToTitle}}{% else %}{{'-1_metadata' | statusToTitle}}{% endif %}">
-            <img src="{{baseurl}}/includes/images/{% if pdata.registered %}{{pdata.metadata | statusToImg}}{% else %}{{'-1' | statusToImg}}{% endif %}">
-        </td>
-        <td title="{% if pdata.registered %}{{(pdata.available ~ '_available') | statusToTitle}}{% else %}{{'-1_available' | statusToTitle}}{% endif %}">
-            <img src="{{baseurl}}/includes/images/{% if pdata.registered %}{{pdata.available | statusToImg}}{% else %}{{'-1' | statusToImg}}{% endif %}">
-        </td>
-        #}
-    </tr>
-    </table>
+    {% include 'PelagosAppBundle:DatasetMonitoring:datasets.html.twig' with
+            { 'datasets' : [dataset], 'dataland' : true } %}
 </div>
 
