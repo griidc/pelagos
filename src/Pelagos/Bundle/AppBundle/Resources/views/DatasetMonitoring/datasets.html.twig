@@ -156,8 +156,8 @@
 
             <tr udi="{{dataset.udi}}">
                 {% if not dataland | default %}
-                <td class="udi details"><a href="/data/{{dataset.udi}}" target="_blank">{{dataset.udi}}</a></td>
-                <td class="details"><a href="/data/{{dataset.udi}}" target="_blank">{{dataset.title}}</a></td>
+                <td class="udi details"><a href="{{ path('pelagos_app_ui_dataland_default', { 'udi': dataset.udi }) }}" target="_blank">{{dataset.udi}}</a></td>
+                <td class="details"><a href="{{ path('pelagos_app_ui_dataland_default', { 'udi': dataset.udi }) }}" target="_blank">{{dataset.title}}</a></td>
                 {% endif %}
                 <td class="status" title="{{ identified_title | default }}">
                     <span style="display:none;">
