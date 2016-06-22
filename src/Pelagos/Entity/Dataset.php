@@ -241,7 +241,9 @@ class Dataset extends Entity
     /**
      * Set the Metadata.
      *
-     * @return Collection
+     * @param Metadata $metadata The metadata for this dataset.
+     *
+     * @return void
      */
     public function setMetadata(Metadata $metadata)
     {
