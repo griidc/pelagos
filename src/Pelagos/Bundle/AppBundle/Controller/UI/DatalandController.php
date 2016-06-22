@@ -4,6 +4,7 @@ namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -29,7 +30,8 @@ class DatalandController extends UIController
      *
      * @param string $udi A UDI.
      *
-     * @throws \Exception When more than one dataset is found with this UDI.
+     * @throws NotFoundHttpException When no dataset is found with this UDI.
+     * @throws \Exception            When more than one dataset is found with this UDI.
      *
      * @Route("/{udi}")
      *
@@ -39,7 +41,11 @@ class DatalandController extends UIController
     {
         $datasets = $this->entityHandler->getBy('Pelagos:Dataset', array('udi' => $udi));
 
-        if (count($datasets) != 1) {
+        if (count($datasets) == 0) {
+            throw $this->createNotFoundException("No dataset found for UDI: $udi");
+        }
+
+        if (count($datasets) > 1) {
             throw new \Exception("Got more than one return for UDI: $udi");
         }
 
