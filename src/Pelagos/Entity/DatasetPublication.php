@@ -2,8 +2,10 @@
 
 namespace Pelagos\Entity;
 
-use Pelagos\Entity\Publication;
+use Doctrine\ORM\Mapping as ORM;
+
 use Pelagos\Entity\Dataset;
+use Pelagos\Entity\PublicationCitation;
 
 /**
  * This Entity contains a link between Publications and Datasets.

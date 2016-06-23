@@ -2,8 +2,10 @@
 
 namespace Pelagos\Entity;
 
-use \Pelagos\HTTPStatus;
-use \Pelagos\Entity\Citation;
+use Doctrine\ORM\Mapping as ORM;
+
+use Pelagos\Entity\PublicationCitation;
+use Pelagos\HTTPStatus;
 
 /**
  * This class generates a Publication object,* which holds the DOI an a Citation object.
@@ -18,13 +20,6 @@ class Publication extends Entity
      * @var $doi string Contains the DOI.
      *
      * @ORM\Column(type="citext")
-     *
-     * @Assert\NotBlank(
-     *     message="A DOI is required."
-     * )
-     * @Assert\NoAngleBrackets(
-     *     message="A DOI cannot contain angle brackets (< or >)"
-     * )
      */
     protected $doi;
 
@@ -33,7 +28,7 @@ class Publication extends Entity
      *
      * @var Citation $citation object Contains the Citation Object.
      *
-     * @ORM\OneToMany(targetEntity="Citation", mappedBy="publication")
+     * @ORM\OneToMany(targetEntity="PublicationCitation", mappedBy="publication")
      */
     protected $citation;
 
@@ -53,9 +48,9 @@ class Publication extends Entity
     /**
      * Sets the Citation object.
      *
-     * @param Citation $citation A Pelagos Citation.
+     * @param PublicationCitation $citation A Pelagos Citation.
      */
-    public function setCitation(Citation $citation)
+    public function setCitation(PublicationCitation $citation)
     {
         $this->citation = $citation;
     }

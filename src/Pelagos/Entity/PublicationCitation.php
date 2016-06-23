@@ -2,10 +2,12 @@
 
 namespace Pelagos\Entity;
 
-use Pelagos\Entity\Publication;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * This class holds a Citation object.
+ *
+ * @ORM\Entity
  */
 class PublicationCitation extends Entity
 {
@@ -13,6 +15,8 @@ class PublicationCitation extends Entity
      * Citation Text.
      *
      * @var $text string
+     *
+     * @ORM\Column(type="citext")
      */
     private $text;
 
@@ -41,8 +45,10 @@ class PublicationCitation extends Entity
      * The Publication this PublicationCitation is about.
      *
      * @var Publication $publication
+     *
+     * @ORM\ManyToOne(targetEntity="Publication", inversedBy="citation")
      */
-    protected $publication
+    protected $publication;
 
     /**
      * Citation Constructor.
