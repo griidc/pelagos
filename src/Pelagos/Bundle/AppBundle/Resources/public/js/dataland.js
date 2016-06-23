@@ -49,11 +49,15 @@ var dlmap = new GeoViz();
         dlmap.initMap('dlolmap',{'onlyOneFeature':false,'allowModify':false,'allowDelete':false,'staticMap':false,'labelAttr':'udi'});
 
         $("#downloadds").button().click(function() {
+            // For now, just attempt to download.
+            window.location = Routing.generate("pelagos_app_ui_dataland_download", {"udi": udi});
+            /* Should eventually do this:
             if ("dataset_download_status"  == "RemotelyHosted") {
                 showDatasetDownloadExternal(udi)
             } else {
                 showDatasetDownload(udi)
             }
+            */
         });
 
         $("#download_dialog").dialog({
