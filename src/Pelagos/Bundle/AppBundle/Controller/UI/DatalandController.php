@@ -3,6 +3,7 @@
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -97,11 +98,22 @@ class DatalandController extends UIController
      */
     public function downloadAction($udi)
     {
+        $dataset = $this->getDataset($udi);
+
+        if ($dataset->getAvailabilityStatus()
+            === DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED) {
+            if ($dataset->getDatasetSubmission() instanceof DatasetSubmission
+                and null !== $dataset->getDatasetSubmission()->getDatasetFileUri()
+                and preg_match('/^http/', $dataset->getDatasetSubmission()->getDatasetFileUri())) {
+                return new RedirectResponse($dataset->getDatasetSubmission()->getDatasetFileUri());
+            } else {
+                throw new \Exception("Could not find valid url for remotely hosted dataset: $udi");
+            }
+        }
+
         if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
             throw $this->createAccessDeniedException('You must be logged in to download dataset files');
         }
-
-        $dataset = $this->getDataset($udi);
 
         if ($dataset->getAvailabilityStatus() !== DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE) {
             throw $this->createAccessDeniedException('This dataset is not publicly available');
