@@ -7,6 +7,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 
+use Pelagos\Entity\DatasetPublication;
+
 /**
  * Dataset Entity class.
  *
@@ -117,6 +119,13 @@ class Dataset extends Entity
      * @ORM\Column(type="smallint")
      */
     protected $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE;
+
+    /**
+     * Collection of DatasetPublication.
+     *
+     * @var Collection
+     */
+    protected $datasetPublications;
 
     /**
      * Constructor.
@@ -381,5 +390,29 @@ class Dataset extends Entity
     public function getAvailabilityStatus()
     {
         return $this->availabilityStatus;
+    }
+
+    /**
+     * Getter for DatasetPublications for this Dataset.
+     *
+     * @return DatasetPublication
+     */
+    public function getDatasetPublications()
+    {
+        return $this->datasetPublications;
+    }
+
+    /**
+     * Gets Publications associated with this Dataset.
+     *
+     * @return ArrayCollection
+     */
+    public function getPublications()
+    {
+        $collection = new ArrayCollection;
+        foreach ($this->getDatasetPublications() as $datasetPublication) {
+            $collection->add($datasetPublication->getPublication());
+        }
+        return $collection;
     }
 }

@@ -3,6 +3,7 @@
 namespace Pelagos\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
 
 use Pelagos\Entity\PublicationCitation;
 use Pelagos\HTTPStatus;
@@ -17,7 +18,7 @@ class Publication extends Entity
     /**
      * DOI.
      *
-     * @var $doi string Contains the DOI.
+     * @var string
      *
      * @ORM\Column(type="citext")
      */
@@ -26,29 +27,35 @@ class Publication extends Entity
     /**
      * Citation.
      *
-     * @var Citation $citation object Contains the Citation Object.
+     * @var Citation
      *
      * @ORM\OneToMany(targetEntity="PublicationCitation", mappedBy="publication")
      */
     protected $citation;
 
     /**
+     * Collection of DatasetPublication.
+     *
+     * @var Collection
+     */
+    protected $datasetPublications;
+
+    /**
      * Publication Constructor.
      *
      * @param string $doi DOI.
-     *
-     * @return void
      */
     public function __construct($doi)
     {
         $this->doi = $doi;
     }
 
-
     /**
      * Sets the Citation object.
      *
      * @param PublicationCitation $citation A Pelagos Citation.
+     *
+     * @return void
      */
     public function setCitation(PublicationCitation $citation)
     {
