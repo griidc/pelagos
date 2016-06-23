@@ -2,19 +2,39 @@
 
 namespace Pelagos\Util;
 
-use \Pelagos\Entity\Publication;
-use \Pelagos\Entity\Citation;
-use \Pelagos\Entity\Dataset;
+use Pelagos\Bundle\AppBundle\Handler\EntityHandler;
+
+use Pelagos\Entity\Dataset;
+use Pelagos\Entity\Publication;
+use Pelagos\Entity\PublicationCitation;
 
 /**
- * This is a helper class for publication/dataset linking.  This class is not
- * an entity in itself.
+ * This is a helper class for publication/dataset linking.
  */
 class PubLinkUtil
 {
+    /**
+     * Class constructor for Dependency Injection.
+     *
+     * @param EntityHandler $entityHandler The Pelagos EntityHandler class.
+     */
+    public function __construct(EntityHandler $entityHandler)
+    {
+        $this->entityHandler = $entityHandler;
+    }
+
+    /**
+     * This method looks up a citation string at doi.org.
+     *
+     * @param string      $doi    The DOI of the publication.
+     * @param string|null $style  The textual style desired.
+     * @param string|null $locale The character representation desired.
+     *
+     * @return array
+     */
     public function getCitationFromDoiDotOrg($doi, $style = 'apa', $locale = 'utf-8')
     {
-            $statusCodes = array(
+        $statusCodes = array(
             200 => 'The request was OK.',
             204 => 'The request was OK but there was no metadata available.',
             404 => 'The DOI requested doesn\'t exist.',
@@ -37,12 +57,12 @@ class PubLinkUtil
         $status = $curlInfo['http_code'];
 
         if ($status == 200) {
-            $citation = new Citation($doi, $curlResponse, $style, $locale);
+            $citation = new PublicationCitation($curlResponse, $style, $locale);
         } else {
             $citation = null;
         }
 
-        return array("citation" => $citation, "status" => $status);
+        return array('citation' => $citation, 'status' => $status);
     }
 
     /**
@@ -59,26 +79,24 @@ class PubLinkUtil
         $udi;
         $regId;
 
-        // determine $url to use
-        // The doi could include a url - check for it
+        // determine $url to use.
+        // The doi could include a url - check for it.
         if ($doi && strlen($doi) > 0) {
-            // does the doi contain the string http
-            $pos = strpos($doi, "http");
-            if ($pos === false) { // make a url from the doi
-                $url = "http://dx.doi.org/" . $doi;
-            } else {  // stored doi is a url
+            // Does the doi contain the string 'http'?
+            $pos = strpos($doi, 'http');
+            // Make URL from DOI directly.
+            if ($pos === false) {
+                $url = 'http://dx.doi.org/' . $doi;
+            // otherwise the stored DOI is a url.
+            } else {
                 $url = $doi;
             }
         } else {
-            $url = "http://data.gulfresearchinitiative.org/data/" . $udi;
+            $url = 'http://data.gulfresearchinitiative.org/data/' . $udi;
         }
 
-        $citationString = $author . " (" . $year . "). " . $title ." (".$udi.") ".
-                   "[Data files] Available from " . $url;
-
+        $citationString = $author . ' (' . $year . '). ' . $title . ' (' . $udi . ') ' .
+                   '[Data files] Available from ' . $url;
         return $citationString;
-
     }
-
-
 }

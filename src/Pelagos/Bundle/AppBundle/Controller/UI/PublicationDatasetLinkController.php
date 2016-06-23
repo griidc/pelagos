@@ -8,8 +8,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\Publication;
+use Pelagos\Entity\PublicationCitation;
 use Pelagos\Util\PubLinkUtil;
 
 /**
@@ -44,15 +47,19 @@ class PublicationDatasetLinkController extends UIController
      */
     public function getCitationPublicationAction($doi)
     {
-        $helper = new PubLinkUtil();
-        $citationStruct = $helper->getCitationFromDoiDotOrg($doi);
+        $pubLinkUtil = $this->get('pelagos.util.publink');
+        $citationStruct = $pubLinkUtil->getCitationFromDoiDotOrg($doi);
         if (200 == $citationStruct['status']) {
-            $citation = $citationStruct['citation'];
+            $entityHandler = $this->get('pelagos.entity.handler');
+
             $publication = new Publication($doi);
-            $publication->setCitation($citation);
-            $entityHandler->update($publication);
-            $entityHandler->persist();
-            $entityHandler->flush();
+            $entityHandler->create($publication);
+
+            $publicationCitation = $citationStruct['citation'];
+            $publicationCitation->setPublication($publication);
+
+            $entityHandler->create($publicationCitation);
+            return new Response('');
         }
     }
 

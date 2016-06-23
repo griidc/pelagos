@@ -30,7 +30,7 @@ class PublicationCitation extends Entity
     private $style;
 
     /**
-     * Ciation Locale.
+     * Citation Locale.
      *
      * @var $locale string
      *
@@ -43,7 +43,7 @@ class PublicationCitation extends Entity
      *
      * @var Publication $publication
      *
-     * @ORM\ManyToOne(targetEntity="Publication", inversedBy="citation")
+     * @ORM\ManyToOne(targetEntity="Publication", inversedBy="citations")
      */
     protected $publication;
 
@@ -52,22 +52,40 @@ class PublicationCitation extends Entity
      *
      * Will create a Citation Object from given parameters.
      *
-     * @param string    $id        Citation ID, can be DOI or UDI.
      * @param string    $text      Citation Text.
      * @param string    $style     Citation Style commonly APA.
      * @param string    $locale    Citation Text Locale commonly utf-8.
      */
     public function __construct(
-        $id,
         $text = null,
         $style = null,
         $locale = null
     ) {
-        $this->id = $id;
         $this->text = $text;
         $this->style = $style;
         $this->locale = $locale;
     }
+
+    /**
+     * Setter for Publication.
+     *
+     * @param Publication $publication A Pelagos Publication.
+     */
+    public function setPublication($publication)
+    {
+        $this->publication = $publication;
+    }
+
+    /**
+     * Getter for Publication.
+     *
+     * @return Publication
+     */
+    public function getPublication()
+    {
+        return $this->publication;
+    }
+
 
     /**
      * Returns the Citation Object as an array.
