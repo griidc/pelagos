@@ -69,3 +69,9 @@ tree:
     resource: Pelagos\Bundle\AppBundle\Controller\Api\TreeController
     name_prefix: tree_
     prefix: tree
+
+metadata:
+    type: rest
+    resource: Pelagos\Bundle\AppBundle\Controller\Api\MetadataController
+    name_prefix: metadata_
+    prefix: metadata

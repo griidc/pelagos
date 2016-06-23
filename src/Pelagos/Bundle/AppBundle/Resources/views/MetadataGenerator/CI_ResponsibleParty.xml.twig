@@ -1,0 +1,66 @@
+<gmd:CI_ResponsibleParty>
+        <gmd:individualName>
+            <gco:CharacterString>{{Person.firstName}} {{Person.lastName}}</gco:CharacterString>
+        </gmd:individualName>
+        <gmd:organisationName>
+            <gco:CharacterString>{{Person.organization}}</gco:CharacterString>
+        </gmd:organisationName>
+        <gmd:positionName>
+            <gco:CharacterString>{{Person.Position}}</gco:CharacterString>
+        </gmd:positionName>
+    <gmd:contactInfo>
+        <gmd:CI_Contact>
+                <gmd:phone>
+                    <gmd:CI_Telephone>
+                            <gmd:voice>
+                                <gco:CharacterString>{{Person.phoneNumber}}</gco:CharacterString>
+                            </gmd:voice>
+                            <gmd:facsimile>
+                                <gco:CharacterString></gco:CharacterString>
+                            </gmd:facsimile>
+                    </gmd:CI_Telephone>
+                </gmd:phone>
+            <gmd:address>
+                <gmd:CI_Address>
+                        <gmd:deliveryPoint>
+                            <gco:CharacterString>
+                                <![CDATA[{{Person.deliveryPoint|trim}}]]>
+                            </gco:CharacterString>
+                        </gmd:deliveryPoint>
+                        <gmd:city>
+                            <gco:CharacterString>{{Person.city}}</gco:CharacterString>
+                        </gmd:city>
+                        <gmd:administrativeArea>
+                            <gco:CharacterString>{{Person.administrativeArea}}</gco:CharacterString>
+                        </gmd:administrativeArea>
+                        <gmd:postalCode>
+                            <gco:CharacterString>{{Person.postalCode}}</gco:CharacterString>
+                        </gmd:postalCode>
+                        <gmd:country>
+                            <gco:CharacterString>{{Person.country}}</gco:CharacterString>
+                        </gmd:country>
+                        <gmd:electronicMailAddress>
+                            <gco:CharacterString>{{Person.emailAddress}}</gco:CharacterString>
+                        </gmd:electronicMailAddress>
+                </gmd:CI_Address>
+            </gmd:address>
+            {% if Person.url %}
+                <gmd:onlineResource>
+                    <gmd:CI_OnlineResource>
+                        <gmd:linkage>
+                            <gmd:URL>{{Person.url}}</gmd:URL>
+                        </gmd:linkage>
+                            <gmd:protocol>
+                                <gco:CharacterString>http</gco:CharacterString>
+                            </gmd:protocol>
+                    </gmd:CI_OnlineResource>
+                </gmd:onlineResource>
+            {% endif %}
+        </gmd:CI_Contact>
+    </gmd:contactInfo>
+    <gmd:role>
+        {% if role %}
+            <gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="{{role.name}}" codeSpace="{{role.code}}">{{role.name}}</gmd:CI_RoleCode>
+        {% endif %}
+    </gmd:role>
+</gmd:CI_ResponsibleParty>
