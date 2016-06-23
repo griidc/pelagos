@@ -23,6 +23,7 @@ if (in_array(
         'pelagos_app_ui_datasetmonitoring_researchgroup',
         'pelagos_app_ui_datasetmonitoring_researcher',
         'pelagos_app_ui_datasetmonitoring_datasetdetails',
+        'pelagos_app_ui_dataland_metadata',
     )
 )) {
     $response->send();

@@ -31,9 +31,15 @@
         )
     }}
 
-    {% javascripts '@PelagosAppBundle/Resources/public/js/dataland.js' %}
+    {% javascripts
+        '@PelagosAppBundle/Resources/public/js/dataland.js'
+        '@FOSJsRoutingBundle/Resources/public/js/router.js'
+    %}
         {{ add_js(asset_url) }}
     {% endjavascripts %}
+
+    {{ add_js(path('fos_js_routing_js', { callback: 'fos.Router.setData' })) }}
+
 {% endblock %}
 
 {% block body %}

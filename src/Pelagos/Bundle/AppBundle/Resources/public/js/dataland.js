@@ -74,7 +74,7 @@ var dlmap = new GeoViz();
         });
 
         $("#metadatadl").button().click(function() {
-            window.location = '<?php echo "$pageLessBaseUrl/metadata/$udi"; ?>';
+            window.location = Routing.generate("pelagos_app_ui_dataland_metadata", {"udi": udi});
         });
 
         $.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
