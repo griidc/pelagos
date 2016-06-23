@@ -19,7 +19,12 @@
                 <span class="attr">Funding Source:</span> {{ResearchGroup.fundingCycle.name}}
             </div>
             <div class="pi">
-                (LEADERSHIP PLACEHOLDER!)
+                <span class="attr">Leadership:</span>
+                {% set leadership = ResearchGroup.personResearchGroups | role(constant('Pelagos\\Bundle\\AppBundle\\DataFixtures\\ORM\\ResearchGroupRoles::LEADERSHIP')) %}
+                {% for prg in leadership | sortBy(['person.lastName', 'person.firstName']) %}
+                    {{ prg.person.firstName }} {{ prg.person.lastName }} - {{ prg.label }}
+                    {% if not loop.last %}, {% endif %}
+                {% endfor %}
             </div>
             {% if not pdf | default %}
             <br />
@@ -56,7 +61,7 @@
                 </table>
             </div>
             {% endif %}
-            {% if ResearchGroup.Datasets %}
+            {% if ResearchGroup.Datasets | submittedDIFs | length > 0 %}
                 {% include 'PelagosAppBundle:DatasetMonitoring:datasets.html.twig' with {'datasets': ResearchGroup.datasets} %}
             {% else %}
                 <div class="nodata"><em>{no dataset identified}</em></div>

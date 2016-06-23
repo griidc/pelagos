@@ -65,3 +65,8 @@ services:
         class: Pelagos\Event\ConsoleListener
         tags:
             - { name: kernel.event_listener, event: console.exception, method: onException }
+
+    doctrine.postgis.subscriber:
+        class: Jsor\Doctrine\PostGIS\Event\ORMSchemaEventSubscriber
+        tags:
+            - { name: doctrine.event_subscriber, connection: default }
