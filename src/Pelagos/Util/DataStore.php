@@ -2,6 +2,9 @@
 
 namespace Pelagos\Util;
 
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
+
 /**
  * A class for manipulating the data store.
  */
@@ -65,13 +68,28 @@ class DataStore
      * @param string $datasetId The id of the dataset to add the file to.
      * @param string $type      The type (dataset or metadata) of the file.
      *
-     * @return \SplFileInfo
+     * @return File
      */
     public function getFileInfo($datasetId, $type)
     {
         $dataStoreDirectory = $this->getDataStoreDirectory($datasetId);
         $storeFileName = $this->getStoreFileName($datasetId, $type);
-        return new \SplFileInfo("$dataStoreDirectory/$storeFileName");
+        return new File("$dataStoreDirectory/$storeFileName");
+    }
+
+    /**
+     * Get the info for the linked download file for a file in the data store.
+     *
+     * @param string $datasetId The id of the dataset to add the file to.
+     * @param string $type      The type (dataset or metadata) of the file.
+     *
+     * @return File
+     */
+    public function getDownloadFileInfo($datasetId, $type)
+    {
+        $dataDownloadDirectory = $this->getDataDownloadDirectory($datasetId);
+        $storeFileName = $this->getStoreFileName($datasetId, $type);
+        return new File("$dataDownloadDirectory/$storeFileName");
     }
 
     /**
@@ -89,7 +107,11 @@ class DataStore
      */
     protected function addFileToDataStoreDirectory($fileUri, $datasetId, $storeFileName)
     {
-        $dataStoreDirectory = $this->getDataStoreDirectory($datasetId);
+        try {
+            $dataStoreDirectory = $this->getDataStoreDirectory($datasetId);
+        } catch (FileNotFoundException $e) {
+            $dataStoreDirectory = $this->createDataStoreDirectory($datasetId);
+        }
         $storeFilePath = "$dataStoreDirectory/$storeFileName";
         if (file_exists($storeFilePath)) {
             if (!unlink($storeFilePath)) {
@@ -120,7 +142,11 @@ class DataStore
      */
     protected function createLinkInDownloadDirectory($storeFilePath, $datasetId, $storeFileName)
     {
-        $dataDownloadDirectory = $this->getDataDownloadDirectory($datasetId);
+        try {
+            $dataDownloadDirectory = $this->getDataDownloadDirectory($datasetId);
+        } catch (FileNotFoundException $e) {
+            $dataDownloadDirectory = $this->createDataDownloadDirectory($datasetId);
+        }
         $downloadFilePath = "$dataDownloadDirectory/$storeFileName";
         if (file_exists($downloadFilePath)) {
             if (!unlink($downloadFilePath)) {
@@ -136,15 +162,31 @@ class DataStore
     /**
      * Get the data store directory for a dataset.
      *
-     * This creates one if it doesn't exist.
-     *
      * @param string $datasetId The id of the dataset to get the data store directory for.
+     *
+     * @throws FileNotFoundException When the data store directory is not found.
+     *
+     * @return string
+     */
+    protected function getDataStoreDirectory($datasetId)
+    {
+        $dataStoreDirectory = "$this->dataStoreDirectory/$datasetId";
+        if (!file_exists($dataStoreDirectory)) {
+            throw new FileNotFoundException($dataStoreDirectory);
+        }
+        return $dataStoreDirectory;
+    }
+
+    /**
+     * Create the data store directory for a dataset if it doesn't exist.
+     *
+     * @param string $datasetId The id of the dataset to create the data store directory for.
      *
      * @throws \Exception When an error occurs creating the data store directory.
      *
      * @return string
      */
-    protected function getDataStoreDirectory($datasetId)
+    protected function createDataStoreDirectory($datasetId)
     {
         $dataStoreDirectory = "$this->dataStoreDirectory/$datasetId";
         if (!file_exists($dataStoreDirectory)) {
@@ -159,7 +201,23 @@ class DataStore
     /**
      * Get the data download directory for a dataset.
      *
-     * This creates one if it doesn't exist.
+     * @param string $datasetId The id of the dataset to get the data download directory for.
+     *
+     * @throws FileNotFoundException When the data download directory is not found.
+     *
+     * @return string
+     */
+    protected function getDataDownloadDirectory($datasetId)
+    {
+        $dataDownloadDirectory = "$this->dataDownloadDirectory/$datasetId";
+        if (!file_exists($dataDownloadDirectory)) {
+            throw new FileNotFoundException($dataDownloadDirectory);
+        }
+        return $dataDownloadDirectory;
+    }
+
+    /**
+     * Create the data download directory for a dataset if it doesn't exist.
      *
      * @param string  $datasetId  The id of the dataset to check the data download directory for.
      * @param boolean $restricted Whether or not the dataset is restricted.
@@ -168,7 +226,7 @@ class DataStore
      *
      * @return string
      */
-    protected function getDataDownloadDirectory($datasetId, $restricted = false)
+    protected function createDataDownloadDirectory($datasetId, $restricted = false)
     {
         $downloadDirectory = "$this->dataDownloadDirectory/$datasetId";
         if (!file_exists($downloadDirectory)) {
