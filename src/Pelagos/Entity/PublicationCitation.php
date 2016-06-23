@@ -2,18 +2,13 @@
 
 namespace Pelagos\Entity;
 
+use Pelagos\Entity\Publication;
+
 /**
  * This class holds a Citation object.
  */
-class Citation
+class PublicationCitation extends Entity
 {
-    /**
-     * Citation ID.
-     *
-     * @var $id string
-     */
-    private $id;
-
     /**
      * Citation Text.
      *
@@ -41,6 +36,13 @@ class Citation
      * @var $timestamp \DateTime
      */
     private $timestamp;
+
+    /**
+     * The Publication this PublicationCitation is about.
+     *
+     * @var Publication $publication
+     */
+    protected $publication
 
     /**
      * Citation Constructor.
