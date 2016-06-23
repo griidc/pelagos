@@ -89,6 +89,8 @@ class DatalandController extends UIController
      *
      * @param string $udi The UDI of the dataset to download.
      *
+     * @throws \Exception            When the dataset is marked as remotely hosted,
+     *                               but datasetFileUri does not contain a valid URL.
      * @throws AccessDeniedException When the user is not authenticated.
      * @throws AccessDeniedException When the dataset is not publicly available.
      *
