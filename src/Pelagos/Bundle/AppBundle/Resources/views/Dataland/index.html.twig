@@ -1,0 +1,108 @@
+{% extends "PelagosAppBundle:template:UI.html.twig" %}
+
+{% block head %}
+    {{ parent() }}
+
+    {{
+        add_library (
+            [
+                'ui.dialog',
+                'ui.tabs',
+                'ui.widget',
+            ]
+        )
+    }}
+
+    {% stylesheets
+        '@PelagosAppBundle/Resources/public/css/dataland-details.css'
+        '@PelagosAppBundle/Resources/public/css/status.css'
+        '@PelagosAppBundle/Resources/public/css/xmlverbatim.css'
+    %}
+        {{ add_css(asset_url) }}
+    {% endstylesheets %}
+
+    {{ add_js(
+            [
+                '//cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js',
+                '//maps.google.com/maps/api/js?v=3',
+                '/includes/geoviz/geoviz.js',
+                '/includes/geoviz/mapWizard.js',
+            ]
+        )
+    }}
+
+    {% javascripts
+        '@PelagosAppBundle/Resources/public/js/dataland.js'
+        '@FOSJsRoutingBundle/Resources/public/js/router.js'
+    %}
+        {{ add_js(asset_url) }}
+    {% endjavascripts %}
+
+    {{ add_js(path('fos_js_routing_js', { callback: 'fos.Router.setData' })) }}
+
+{% endblock %}
+
+{% block body %}
+    {% if dataset %}
+
+        {% include 'PelagosAppBundle:Dataland:download.html.twig' %}
+        <table border="0" width="100%">
+            <tr>
+                <td width="40%">
+                    <div id="dlolmap" style="width: 640px;height: 480px;"></div>
+                </td>
+                <td style="padding:10px;" width="60%" valign="top">
+                    <div id="summary">
+                        {% include 'PelagosAppBundle:Dataland:summary.html.twig' %}
+                    </div>
+                </td>
+                </tr>
+        </table>
+
+        <div>
+            <div id="tabs" style="width:100%">
+                <ul>
+                    <li><a href="#tabs-1">Details</a></li>
+                    <li><a href="#tabs-2">Metadata</a></li>
+                    <li><a href="#tabs-3">Publications</a></li>
+                    <!--
+                    <li><a href="#tabs-4">Manifest</a></li>
+                    -->
+                </ul>
+                <div class="tabb" id="tabs-1">
+                    {% include 'PelagosAppBundle:Dataland:details.html.twig' %}
+                </div>
+
+                <div class="tabb" id="tabs-2" style="overflow:auto;word-wrap:break-word;height:100%;">
+                    {% if rawxml %}
+                    <div id="xmlradio">
+                        <input type="radio" id="xmlformated" name="radio" checked="checked"><label for="xmlformated">Formatted</label>
+                        <input type="radio" id="xmlraw" name="radio" ><label for="xmlraw">Raw</label>
+                    </div>
+                    <p>
+                        <div id="formatedxml">
+                            {{ rawxml|transformXml('xml-to-html-ISO.xsl')|raw }}
+                        </div>
+                        <div id="rawxml" style="display:none;">
+                            {{ rawxml|transformXml('xmlverbatim.xsl')|raw }}
+                        </div>
+                    </p>
+                    {% else %}
+                    <p><h3>No Metadata Available</h3</p>
+                    {% endif %}
+                </div>
+                <div class="tabb" id="tabs-3">
+                    {% include 'PelagosAppBundle:Dataland:publications.html.twig' %}
+                </div>
+            </div>
+        </div>
+
+        <div id="download_dialog"></div>
+    {% else %}
+        <p>
+        <h1>Dataset not found</h1>
+        No dataset has been identified or registered with the UDI: <?php echo "$udi";?><br/>
+        If you are experiencing difficulties, please contact <a href="mailto:griidc@gomri.org">GRIIDC</a>.
+        </p>
+    {% endif %}
+{% endblock %}
