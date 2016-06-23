@@ -3,20 +3,12 @@
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 use Pelagos\Entity\Dataset;
-use Pelagos\Entity\DatasetSubmission;
-use Pelagos\Entity\DIF;
-use Pelagos\Entity\FundingOrganization;
-use Pelagos\Entity\FundingCycle;
 use Pelagos\Entity\Metadata;
-use Pelagos\Entity\ResearchGroup;
-use Pelagos\Entity\Person;
 
 /**
  * The Dataset Monitoring controller.
