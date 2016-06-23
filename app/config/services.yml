@@ -43,6 +43,10 @@ services:
             - '%homedir_prefix%'
             - "@old_sound_rabbit_mq.create_homedir_producer"
 
+    pelagos.util.publink:
+        class: Pelagos\Util\PubLinkUtil
+        arguments: ["@pelagos.entity.handler"]
+
     pelagos.util.data_store:
         class: Pelagos\Util\DataStore
         arguments: ["%data_store_directory%","%data_download_directory%"]
