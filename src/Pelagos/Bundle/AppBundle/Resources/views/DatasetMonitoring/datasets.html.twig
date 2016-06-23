@@ -1,15 +1,17 @@
 <div class="tooltip-note" style="float:right; margin-right:5px; margin-bottom:3px; font-size:8pt;">
     place your mouse over each icon for a description
 </div>
-<table class="datasets tablesorter">
+<table class="datasets tablesorter status">
     <thead>
         <tr>
+            {% if not dataland | default %}
             <th class="udi" title="sort by UDI">UDI</th>
             <th title="sort by Title">Title</th>
-            <th class="status" title="sort by Identified status">Identified</th>
-            <th class="status" title="sort by Registered status">Registered</th>
-            <th class="status" title="sort by Metadata status">Metadata</th>
-            <th class="status" title="sort by Available status">Available</th>
+            {% endif %}
+            <th class="status" {% if not dataland | default %} title="sort by Identified status" {% endif %}>Identified</th>
+            <th class="status" {% if not dataland | default %} title="sort by Registered status" {% endif %}>Registered</th>
+            <th class="status" {% if not dataland | default %} title="sort by Metadata status" {% endif %}>Metadata</th>
+            <th class="status" {% if not dataland | default %} title="sort by Available status" {% endif %}>Available</th>
         </tr>
     </thead>
     <tbody>
@@ -47,7 +49,11 @@
         {% set na_icon = asset_url %}
         {% endimage %}
 
-        {% for dataset in datasets | submittedDIFs %}
+        {% if not dataland | default %}
+        {% set datasets = datasets|submittedDIFs%}
+        {% endif %}
+
+        {% for dataset in datasets %}
 
             {% if dataset.identifiedStatus == constant('Pelagos\\Entity\\DIF::STATUS_APPROVED') %}
                 {% set identified_green = identified_green+1 %}
@@ -149,8 +155,10 @@
             {% endif %}
 
             <tr udi="{{dataset.udi}}">
-                <td class="udi details"><a href="/data/{{dataset.udi}}" target="_blank">{{dataset.udi}}</a></td>
-                <td class="details"><a href="/data/{{dataset.udi}}" target="_blank">{{dataset.title}}</a></td>
+                {% if not dataland | default %}
+                <td class="udi details"><a href="{{ path('pelagos_app_ui_dataland_default', { 'udi': dataset.udi }) }}" target="_blank">{{dataset.udi}}</a></td>
+                <td class="details"><a href="{{ path('pelagos_app_ui_dataland_default', { 'udi': dataset.udi }) }}" target="_blank">{{dataset.title}}</a></td>
+                {% endif %}
                 <td class="status" title="{{ identified_title | default }}">
                     <span style="display:none;">
                         {% if identified_icon == na_icon %}
@@ -211,59 +219,61 @@
 
         {% endfor %}
 
-    {% if not pdf | default %}
-    </tbody>
-    <tfoot>
-    {% endif %}
-        <tr style="border-top:3.25px solid black;">
-            <th style="text-align:center; font-weight:bold;" data-column="0" rowspan="4">TOTALS</th>
-            <th style="text-align:right;">
-                <img src="{{green_icon}}">
-            </th>
-            <td class="status">{{identified_green}}</td>
-            <td class="status">{{registered_green}}</td>
-            <td class="status">{{metadata_green}}</td>
-            <td class="status">{{available_green}}</td>
-        </tr>
-        <tr>
-            <th style="text-align:right;">
-                <img src="{{yellow_icon}}">
-            </th>
-            <td class="status">{{identified_yellow}}</td>
-            <td class="status">{{registered_yellow}}</td>
-            <td class="status">{{metadata_yellow}}</td>
-            <td class="status">{{available_yellow}}</td>
-        </tr>
-        <tr>
-            <th style="text-align:right;">
-                <img src="{{red_icon}}">
-            </th>
-            <td class="status" bgcolor='#D8D8D8'></td>
-            <td class="status">{{registered_red}}</td>
-            <td class="status">{{metadata_red}}</td>
-            <td class="status">{{available_red}}</td>
-        </tr>
-        <tr>
-            <th style="text-align:right;">
-                <img src="{{na_icon}}">
-            </th>
-            <td class="status" bgcolor='#D8D8D8'></td>
-            <td class="status" bgcolor='#D8D8D8'></td>
-            <td class="status">{{metadata_na}}</td>
-            <td class="status">{{available_na}}</td>
-        </tr>
-        <tr>
-            <td style="border: 0px;"></td>
-            <td style="border: 0px;"></td>
-            <th>Identified</th>
-            <th>Registered</th>
-            <th>Metadata</th>
-            <th>Available</th>
-        </tr>
-    {% if pdf | default %}
-    </tbody>
-    {% else %}
-    </tfoot>
+    {% if not dataland | default %}
+        {% if not pdf | default %}
+        </tbody>
+        <tfoot>
+        {% endif %}
+            <tr style="border-top:3.25px solid black;">
+                <th style="text-align:center; font-weight:bold;" data-column="0" rowspan="4">TOTALS</th>
+                <th style="text-align:right;">
+                    <img src="{{green_icon}}">
+                </th>
+                <td class="status">{{identified_green}}</td>
+                <td class="status">{{registered_green}}</td>
+                <td class="status">{{metadata_green}}</td>
+                <td class="status">{{available_green}}</td>
+            </tr>
+            <tr>
+                <th style="text-align:right;">
+                    <img src="{{yellow_icon}}">
+                </th>
+                <td class="status">{{identified_yellow}}</td>
+                <td class="status">{{registered_yellow}}</td>
+                <td class="status">{{metadata_yellow}}</td>
+                <td class="status">{{available_yellow}}</td>
+            </tr>
+            <tr>
+                <th style="text-align:right;">
+                    <img src="{{red_icon}}">
+                </th>
+                <td class="status" bgcolor='#D8D8D8'></td>
+                <td class="status">{{registered_red}}</td>
+                <td class="status">{{metadata_red}}</td>
+                <td class="status">{{available_red}}</td>
+            </tr>
+            <tr>
+                <th style="text-align:right;">
+                    <img src="{{na_icon}}">
+                </th>
+                <td class="status" bgcolor='#D8D8D8'></td>
+                <td class="status" bgcolor='#D8D8D8'></td>
+                <td class="status">{{metadata_na}}</td>
+                <td class="status">{{available_na}}</td>
+            </tr>
+            <tr>
+                <td style="border: 0px;"></td>
+                <td style="border: 0px;"></td>
+                <th>Identified</th>
+                <th>Registered</th>
+                <th>Metadata</th>
+                <th>Available</th>
+            </tr>
+        {% if pdf | default %}
+        </tbody>
+        {% else %}
+        </tfoot>
+        {% endif %}
     {% endif %}
 </table>
 <div
@@ -271,4 +281,4 @@
     total-available="{{available_green}}"
     total-registered="{{registered_green - available_green}}"
     total-identified="{{identified_green - registered_green}}"
-    />
+/>
