@@ -2,9 +2,11 @@
 
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
@@ -77,6 +79,47 @@ class DatalandController extends UIController
 
         $response = new Response($dataset->getMetadata()->getXml()->asXml());
         $response->headers->set('Content-Type', 'text/xml');
+        $response->headers->set('Content-Disposition', "attachment; filename=$filename;");
+        return $response;
+    }
+
+    /**
+     * Download the dataset file.
+     *
+     * @param string $udi The UDI of the dataset to download.
+     *
+     * @throws AccessDeniedException When the user is not authenticated.
+     * @throws AccessDeniedException When the dataset is not publicly available.
+     *
+     * @Route("/{udi}/download")
+     *
+     * @return BinaryFileResponse
+     */
+    public function downloadAction($udi)
+    {
+        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            throw $this->createAccessDeniedException('You must be logged in to download dataset files');
+        }
+
+        $dataset = $this->getDataset($udi);
+
+        if ($dataset->getAvailabilityStatus() !== DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE) {
+            throw $this->createAccessDeniedException('This dataset is not publicly available');
+        }
+
+        $fileInfo = $this->get('pelagos.util.data_store')->getDownloadFileInfo($udi, 'dataset');
+
+        $filename = null;
+
+        if ($dataset->getDatasetSubmission() instanceof DatasetSubmission) {
+            $filename = $dataset->getDatasetSubmission()->getDatasetFileName();
+        }
+
+        if (null === $filename) {
+            $filename = str_replace(':', '-', $fileInfo->getBaseName());
+        }
+
+        $response = new BinaryFileResponse($fileInfo->getRealPath());
         $response->headers->set('Content-Disposition', "attachment; filename=$filename;");
         return $response;
     }
