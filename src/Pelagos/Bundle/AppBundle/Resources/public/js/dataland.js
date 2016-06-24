@@ -16,7 +16,7 @@ var dlmap = new GeoViz();
 
 (function ($) {
     $(function() {
-        
+
         var udi = $('#udi').html();
 
         resizeMap();
@@ -203,14 +203,19 @@ var dlmap = new GeoViz();
     };
 
     $(document).on('imready', function(e) {
-        
-        if ('labOnly') {
-            //dlmap.addImage('/includes/images/labonly.png',0.4);
+
+        var geovizMap =  $(e.target);
+        var udi = $('#udi').html();
+
+        if (geovizMap.attr("description") != "" && geovizMap.attr("wkt") == "") {
+            var imagePath = geovizMap.attr('labimage');
+            dlmap.addImage(imagePath,0.4);
+            console.log('lab only')
             dlmap.makeStatic();
-        } else if ('baseMap') { //  add the geometry from the data. Either datasets or metadata
-            var wkt = "POLYGON((-92 21,-92 27,-84 27,-84 21,-92 21))"; // WKT GET FROM DOM!!!!
+        } else if (geovizMap.attr("wkt") != "") { //  add the geometry from the data. Either datasets or metadata
+            var wkt = geovizMap.attr("wkt").split(";")[1];
             dlmap.addFeatureFromWKT(wkt, {"udi":udi});
             dlmap.gotoAllFeatures();
-        } 
+        }
     });
 })(jQuery);

@@ -49,7 +49,14 @@
         <table border="0" width="100%">
             <tr>
                 <td width="40%">
-                    <div id="dlolmap" style="width: 640px;height: 480px;"></div>
+
+                    <div id="dlolmap" style="width: 640px;height: 480px;"
+                        wkt="{{dataset.metadata.geometry|default}}"
+                        description="{{dataset.metadata.extentDescription|default}}"
+                    {% image '@PelagosAppBundle/Resources/public/images/labonly.png' %}
+                        labimage="{{asset_url}}"/>
+                    {% endimage %}
+
                 </td>
                 <td style="padding:10px;" width="60%" valign="top">
                     <div id="summary">
