@@ -51,7 +51,7 @@ class MetadataController extends EntityController
         $metadata = $dataset->getMetadata();
 
         if ($dataset->getMetadataStatus() != DatasetSubmission::METADATA_STATUS_NONE) {
-            if ($dataset->getMeqtadata() instanceof Metadata and
+            if ($dataset->getMetadata() instanceof Metadata and
                 $dataset->getMetadata()->getXml() instanceof \SimpleXMLElement
             ) {
                 $xml = $metadata->getXml()->asXML();
