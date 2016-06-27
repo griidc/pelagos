@@ -4,6 +4,8 @@ namespace Pelagos\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use JMS\Serializer\Annotation as Serializer;
+
 /**
  * This class represents Pelagos Dataset metadata.
  *
@@ -24,6 +26,8 @@ class Metadata extends Entity
      * XML of the Metadata.
      *
      * @var \SimpleXMLElement
+     *
+     * @Serializer\Exclude
      *
      * @ORM\Column(type="xml")
      */
