@@ -24,6 +24,9 @@ class MetadataController extends EntityController
      *
      * @ApiDoc(
      *   section = "Metadata",
+     *   parameters = {
+     *     {"name"="someProperty", "dataType"="string", "required"=true, "description"="Filter by someProperty"}
+     *   },
      *   output = "XML",
      *   statusCodes = {
      *     200 = "The requested Metadata was successfully retrieved.",
