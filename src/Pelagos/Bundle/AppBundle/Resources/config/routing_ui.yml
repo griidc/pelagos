@@ -36,3 +36,6 @@ pelagos_datset_monitoring_ui:
 
 pelagos_dataland_ui:
     resource: Pelagos\Bundle\AppBundle\Controller\UI\DatalandController
+
+pelagos_data_discovery_ui:
+    resource: Pelagos\Bundle\AppBundle\Controller\UI\DataDiscoveryController

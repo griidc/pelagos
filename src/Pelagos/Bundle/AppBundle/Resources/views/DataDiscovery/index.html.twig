@@ -1,0 +1,189 @@
+{% extends "PelagosAppBundle:template:UI.html.twig" %}
+
+{% block head %}
+    {{ parent() }}
+
+    {% stylesheets
+        '@PelagosAppBundle/Resources/public/css/data-discovery.css'
+        '@PelagosAppBundle/Resources/public/css/data-discovery-scrollbars.css'
+    %}
+        {{ add_css(asset_url) }}
+    {% endstylesheets %}
+
+    {{ 
+        add_js(
+            [
+                '//cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js',
+                '//maps.google.com/maps/api/js?v=3',
+                '/includes/geoviz/geoviz.js',
+            ]
+        )
+    }}
+
+    {% javascripts
+        '@PelagosAppBundle/Resources/public/js/data-discovery.js'
+        '@PelagosAppBundle/Resources/public/js/tree.js'
+        '@FOSJsRoutingBundle/Resources/public/js/router.js'
+    %}
+        {{ add_js(asset_url) }}
+    {% endjavascripts %}
+
+    {{ add_js(path('fos_js_routing_js', { callback: 'fos.Router.setData' })) }}
+{% endblock %}
+
+{% block body %}
+    <input id="by-input" type="hidden">
+    <input id="id-input" type="hidden">
+
+    <div id="container">
+
+        <div id="left">
+            <div>
+                <div id="map_pane">
+                    <div id="olmap"></div>
+                    <div id="map_buttons">
+                        <div class="map_button_container">
+                            <label for="show_all_extents_checkbox" id="show_all_extents_label">Show All Extents</label>
+                            <input type="checkbox" id="show_all_extents_checkbox" class="map_button" onclick="showAllExtents();">
+                        </div>
+                        <div class="map_button_container">
+                            <input type="button" id="clearGeoFilterButton" class="map_button" value="Clear Filter" disabled onclick="$(this).button('disable');myGeoViz.clearFilter();trees['tree'].geo_filter = null;applyFilter();">
+                        </div>
+                        <div class="map_button_container">
+                            <input type="button" id="drawGeoFilterButton" class="map_button" value="Draw Filter" onclick="myGeoViz.drawFilter();$(this).button('disable');$('body').css('cursor','crosshair');$('#olmap').css('cursor','crosshair');$('input').css('cursor','crosshair');" disabled>
+                        </div>
+                    </div>
+                    <div class="map_border map_border_top_bottom map_border_top map_border_top_bg"></div>
+                    <div class="map_border map_border_top_bottom map_border_top map_border_top_fg"></div>
+                    <div class="map_border map_border_top_bottom map_border_bottom map_border_bottom_bg"></div>
+                    <div class="map_border map_border_top_bottom map_border_bottom map_border_bottom_fg"></div>
+                    <div class="map_border map_border_left_right map_border_left map_border_left_bg"></div>
+                    <div class="map_border map_border_left_right map_border_left map_border_left_fg"></div>
+                    <div class="map_border map_border_left_right map_border_right map_border_right_bg"></div>
+                    <div class="map_border map_border_left_right map_border_right map_border_right_fg"></div>
+                </div>
+            </div>
+            <div>
+                <div id="menu-wrapper">
+                    <div id="menu">
+                        <div class="viewport">
+                            <div class="overview">
+                                <script type="text/javascript">addTree();</script>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="right" style="{% if treePaneCollapsed %} left: 0%; width: 100%; {% else %} left: 45%; width: 55%; {% endif %}">
+            <div>
+                <div id="filter" class="right-panel">
+                    <table>
+                        <tr>
+                            <td valign="top" style="width:100%; padding-right:10px;">
+                                <input id="filter-input" class="textbox" type="text" size="50" value="{{defaultFilter}}">
+                                <input id="filter-applied" type="hidden" value="{{defaultFilter}}">
+                                {% if treePaneCollapsed %}
+                                    <div>NOTE: To filter by consortia, research award, researcher, or institution, please expand the pane using the arrow tab on the left.</div>
+                                {% endif %}
+                            </td>
+                            <td valign="top">
+                                <input type="button" id="filter-button" class="button" value="Filter" onclick="applyFilter();" disabled>
+                            </td>
+                            <td valign="top">
+                                <input type="button" id="clear-button" class="button" value="Clear/Show All" onclick="clearAll();" disabled>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div>
+                <div id="dataset_listing_wrapper" class="right-panel">
+                    <div id="dataset_listing" />
+                    <div class="spinner">
+                        <div>
+                            {% image '@PelagosAppBundle/Resources/public/images/spinner.gif' %}
+                                <img src="{{asset_url}}">
+                            {% endimage %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="expand-collapse" {% if treePaneCollapsed %} class="collapsed" {% endif %}>
+                <div style="height:50px; width:12px"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="pre_login">
+        <div id="pre_login_close">
+            {% image '@PelagosAppBundle/Resources/public/images/close.gif' %}
+                <input type="image" src="{{asset_url}}" onclick="jQuery('#pre_login').hide();">
+            {% endimage %}
+        </div>
+        <div id="pre_login_content">
+            <table cellpadding=10>
+                <tr>
+                    <td colspan=3 align=center>
+                        <h3>Please log in for access to this data.</h3>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="center">
+                        <div id="griidc-logo">
+                            <a href="/auth/cas?dest={{pageName}}">
+                                {% image '@PelagosAppBundle/Resources/public/images/GRIIDC-logo.png' %}
+                                    <img src="{{asset_url}}" alt="GRIIDC logo">
+                                {% endimage %}
+                            </a>
+                        </div>
+                        <div>
+                            GoMRI Users, please use your<br />
+                            <a href="/auth/cas?dest={{pageName}}">GRIIDC login</a> to download data.
+                        </div>
+                    </td>
+                    <td>
+                        {% image '@PelagosAppBundle/Resources/public/images/vbar.png' %}
+                            <img src="{{asset_url}}">
+                        {% endimage %}
+                    </td>
+                    <td align="center">
+                        <div>
+                            <a href="/auth/oauth2/google?dest={{pageName}}">
+                                {% image '@PelagosAppBundle/Resources/public/images/googleauth.png' %}
+                                    <img src="{{asset_url}}" alt="google auth logo">
+                                {% endimage %}
+                            </a>
+                        </div>
+                        <div>
+                            Members of the public may use their<br />
+                            <a href="/auth/oauth2/google?dest={{pageName}}">Google login</a> to download data.
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=3 align=center>
+                        <button onclick="jQuery('#pre_login').hide();" style="font-weight:bold;">Cancel</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div id="dataset_download">
+        <div id="dataset_download_close">
+            {% image '@PelagosAppBundle/Resources/public/images/close.gif' %}
+                <input type="image" src="{{asset_url}}" onclick="jQuery('#dataset_download').hide();">
+            {% endimage %}
+        </div>
+        <div id="dataset_download_content"></div>
+    </div>
+
+    {% if download %}
+        <script type="text/javascript">
+            showDatasetDownload('{{download}}');
+        </script>
+    {% endif %}
+{% endblock %}
