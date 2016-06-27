@@ -46,3 +46,12 @@ parameters:
     # Parameters for POSIX account generation
     posix_starting_uid: 10000
     posix_gid: 1001
+
+    # The POSIX user that will own files and directories in the data store.
+    data_store_owner: pelagos
+    # The POSIX group for files and directories in the data store.
+    data_store_group: pelagos
+    # The POSIX group that contains users that can browse all of the data download directory.
+    data_download_browser_group: GRIIDC
+    # The POSIX user the web server runs under.
+    web_server_user: apache
