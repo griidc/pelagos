@@ -14,11 +14,11 @@ class PublicationCitation extends Entity
     /**
      * Citation Text.
      *
-     * @var $text string
+     * @var $citationText string
      *
      * @ORM\Column(type="citext")
      */
-    private $text;
+    private $citationText;
 
     /**
      * Citation Style.
@@ -52,16 +52,16 @@ class PublicationCitation extends Entity
      *
      * Will create a Citation Object from given parameters.
      *
-     * @param string    $text      Citation Text.
-     * @param string    $style     Citation Style commonly APA.
-     * @param string    $locale    Citation Text Locale commonly utf-8.
+     * @param string    $citationText Citation Text.
+     * @param string    $style        Citation Style commonly APA.
+     * @param string    $locale       Citation Text Locale commonly utf-8.
      */
     public function __construct(
-        $text = null,
+        $citationText = null,
         $style = null,
         $locale = null
     ) {
-        $this->text = $text;
+        $this->citationText = $citationText;
         $this->style = $style;
         $this->locale = $locale;
     }
@@ -86,30 +86,13 @@ class PublicationCitation extends Entity
         return $this->publication;
     }
 
-
     /**
-     * Returns the Citation Object as an array.
+     * Getter for citationtext.
      *
-     * @return array
+     * @return string
      */
-    public function asArray()
+    public function getCitationText()
     {
-        return array(
-            'id' => $this->id,
-            'text' => $this->text,
-            'style' => $this->style,
-            'locale' => $this->locale,
-            'timestamp' => $this->timestamp->format('c'),
-        );
-    }
-
-    /**
-     * Return the Citation Object as JSON.
-     *
-     * @return JSON
-     */
-    public function asJSON()
-    {
-        return json_encode($this->asArray(), JSON_UNESCAPED_SLASHES);
+        return $this->citationText;
     }
 }
