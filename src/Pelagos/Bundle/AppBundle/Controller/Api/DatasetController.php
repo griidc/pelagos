@@ -67,4 +67,61 @@ class DatasetController extends EntityController
     {
         return $this->handleGetOne(Dataset::class, $id);
     }
+
+    /**
+     * Suggest a citation for a Dataset identified by UDI.
+     *
+     * @param string $udi The UDI of the Dataset to return.
+     *
+     * @ApiDoc(
+     *   section = "Datasets",
+     *   statusCodes = {
+     *     200 = "The requested Dataset Citation was successfully retrieved.",
+     *     404 = "The requested Dataset was not found by the supplied UDI.",
+     *     500 = "An internal error has occurred.",
+     *   }
+     * )
+     *
+     * @Rest\Get("/{id}/citation")
+     *
+     * @Rest\View
+     *
+     * @return string
+     */
+    public function getCitationAction($id)
+    {
+        $dataset = $this->handleGetOne(Dataset::class, $id);
+        $submission = $dataset->getDatasetSubmission();
+
+        $title = $dataset->getTitle();
+        $udi =  $dataset->getUdi();
+
+        if ($submission instanceof DatasetSubmission) {
+            $author = $submission->getAuthors();
+            $year = $submission->getModificationTimeStamp()->format('Y');
+            $doi = $submission->getDoi();
+
+            // The doi could include a url - check for it
+            if ($doi && strlen($doi) > 0) {
+                // does the doi contain the string http
+                $pos = strpos($doi, "http");
+                if ($pos === false) { // make a url from the doi
+                    $url = "http://dx.doi.org/" . $doi;
+                } else {  // stored doi is a url
+                    $url = $doi;
+                }
+            } else {
+                $url = "http://data.gulfresearchinitiative.org/data/" . $udi;
+            }
+
+            $citationString = $author . " (" . $year . "). " . $title ." (".$udi.") ".
+                       "[Data files] Available from " . $url;
+
+            return $citationString;
+        } else {
+            $citationString = "This dataset has no registration: $title ($udi)";
+            return $citationString;
+        }
+
+    }
 }
