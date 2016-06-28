@@ -71,7 +71,7 @@ class DatasetController extends EntityController
     /**
      * Suggest a citation for a Dataset identified by UDI.
      *
-     * @param string $udi The UDI of the Dataset to return.
+     * @param integer $id The ID of the Dataset to suggest a citation for.
      *
      * @ApiDoc(
      *   section = "Datasets",
@@ -94,7 +94,7 @@ class DatasetController extends EntityController
         $submission = $dataset->getDatasetSubmission();
 
         $title = $dataset->getTitle();
-        $udi =  $dataset->getUdi();
+        $udi = $dataset->getUdi();
 
         if ($submission instanceof DatasetSubmission) {
             $author = $submission->getAuthors();
@@ -104,18 +104,18 @@ class DatasetController extends EntityController
             // The doi could include a url - check for it
             if ($doi && strlen($doi) > 0) {
                 // does the doi contain the string http
-                $pos = strpos($doi, "http");
-                if ($pos === false) { // make a url from the doi
-                    $url = "http://dx.doi.org/" . $doi;
-                } else {  // stored doi is a url
+                $pos = strpos($doi, 'http');
+                if ($pos === false) {
+                    $url = 'http://dx.doi.org/' . $doi;
+                } else {
                     $url = $doi;
                 }
             } else {
-                $url = "http://data.gulfresearchinitiative.org/data/" . $udi;
+                $url = 'http://data.gulfresearchinitiative.org/data/' . $udi;
             }
 
-            $citationString = $author . " (" . $year . "). " . $title ." (".$udi.") ".
-                       "[Data files] Available from " . $url;
+            $citationString = "$author ($year) $title ($udi)" .
+                       "[Data files] Available from $url";
 
             return $citationString;
         } else {
