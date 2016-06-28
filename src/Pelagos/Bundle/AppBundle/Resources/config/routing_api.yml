@@ -69,3 +69,9 @@ tree:
     resource: Pelagos\Bundle\AppBundle\Controller\Api\TreeController
     name_prefix: tree_
     prefix: tree
+
+publications:
+    type: rest
+    resource: Pelagos\Bundle\AppBundle\Controller\Api\PublicationController
+    name_prefix: publications_
+    prefix: publications
