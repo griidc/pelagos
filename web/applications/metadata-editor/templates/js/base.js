@@ -8,9 +8,6 @@ var $ = jQuery.noConflict();
 
 var onceValidated = false;
 
-var base_path = '{{base_path}}';
-var component_path = '{{component_path}}';
-
 function copyValue(what,to)
 {
     document.getElementById(to).value = what.value;
@@ -276,36 +273,22 @@ function uploadFile()
         {
             var udival = $('#udifld').val();
             jQuery.ajax({
-                url: component_path,
-                type: "GET",
-                data: {udi: udival},
-                context: document.body
-                }).done(function(html) {
-                console.log(html);
-                eventObj = jQuery.parseJSON(html);
-                var udi = eventObj.udi;
-                if (eventObj.UDIexists == true)
-                {
-                    location.href = "?dataUrl=http://" + location.hostname + base_path +"/modules/metadata-generator/" + udival.substring(0,16);;
-                }
-                else
-                {
-                    var errMessage = 'Sorry, UDI:'+ udi +' could not be found.';
-                    $('#udifld').val('');
-                    $('<div>'+errMessage+'</div>').dialog({
-                        height: 'auto',
-                        width: 'auto',
-                        title: "UDI Not found",
-                        resizable: false,
+                url: "/pelagos-symfony/api/metadata?udi=" + udival.substring(0,16),
+                type: "HEAD",
+                async: true,
+                error: function(message,text,jqXHR) {
+                    jQuery('<div title="Warning"><p>Dataset with UDI:' + udival + ', not found</p></div>').dialog({
                         modal: true,
                         buttons: {
-                            OK: function() {
-                                $(this).dialog( "close" );
+                            Ok: function() {
+                                jQuery(this).dialog( "close" );
                             }
                         }
                     });
+                },
+                success: function(message,text,jqXHR) {
+                    location.href = "/metadata-editor/?dataUrl=http://" + location.hostname + "/pelagos-symfony/api/metadata?udi=" + udival.substring(0,16);
                 }
-                return true;
             });
         }
 
