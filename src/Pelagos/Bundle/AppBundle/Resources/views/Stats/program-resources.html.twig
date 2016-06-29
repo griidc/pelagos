@@ -1,0 +1,36 @@
+<div id="program-resources" class="stats-overview-cell stats-section">
+    <div style="height:100%; width:100%; display:table;">
+        <div style="display:table-row;">
+            <div class="caption" style="display:table-cell;">Program Resources</div>
+        </div>
+        <div style="display:table-row;">
+            <div style="display:table-cell;">
+                <table>
+                    <tr>
+                        <td>
+                            {% image '@PelagosAppBundle/Resources/public/images/icon-datasets.png' %}
+                            <img src="{{asset_url}}">
+                            {% endimage %}
+                            <div class="count">{{datasets|default}}</div>
+                            <div class="label">Datasets</div>
+                        </td>
+                        <td>
+                            {% image '@PelagosAppBundle/Resources/public/images/icon-projects.png' %}
+                            <img src="{{asset_url}}">
+                            {% endimage %}
+                            <div class="count">{{researchGroups|default}}</div>
+                            <div class="label">Research Groups</div>
+                        </td>
+                        <td>
+                            {% image '@PelagosAppBundle/Resources/public/images/icon-researchers.png' %}
+                            <img src="{{asset_url}}">
+                            {% endimage %}
+                            <div class="count">{{people|default}}</div>
+                            <div class="label">People</div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
