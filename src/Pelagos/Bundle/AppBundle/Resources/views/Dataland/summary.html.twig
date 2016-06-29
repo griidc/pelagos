@@ -48,7 +48,7 @@
 
 
 <table width="90%">
-    {% if dataset.datasetSubmission %}
+    {% if dataset.datasetSubmission.doi %}
         <tr><td colspan="2"><b>DOI:</b><br/> {{dataset.datasetSubmission.doi}}</td></tr>
         <tr><td colspan="2">&nbsp;</td></tr>
     {% endif %}
