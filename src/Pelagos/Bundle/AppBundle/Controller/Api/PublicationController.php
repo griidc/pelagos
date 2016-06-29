@@ -4,6 +4,8 @@ namespace Pelagos\Bundle\AppBundle\Controller\Api;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 use Doctrine\Common\Collections\Collection;
 
@@ -12,6 +14,7 @@ use FOS\RestBundle\Controller\Annotations as Rest;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 use Pelagos\Entity\Dataset;
+use Pelagos\Entity\DatasetPublication;
 use Pelagos\Entity\Publication;
 use Pelagos\Entity\PublicationCitation;
 
@@ -26,7 +29,7 @@ class PublicationController extends EntityController
      * @param Request $request A Symfony http request object, data includes the doi.
      *
      * @ApiDoc(
-     *   section = "Publink",
+     *   section = "Publications",
      *   output = "Pelagos\Entity\PublicationCitation",
      *   statusCodes = {
      *     200 = "The requested Dataset was successfully retrieved.",
@@ -100,5 +103,46 @@ class PublicationController extends EntityController
     public function getAction($id)
     {
         return $this->handleGetOne(Publication::class, $id);
+    }
+
+    /**
+     * Link a Publication to a Dataset by their respective IDs.
+     *
+     * @param integer $pubId
+     *
+     * @return Request
+     *
+     * @ApiDoc(
+     *   section = "Publications",
+     *   parameters = {
+     *                    {"name"="dataset", "dataType"="integer", "required"=true, "description"="Numeric ID of Dataset to be linked."}
+     *                },
+     *   statusCodes = {
+     *     204 = "The Publication has been linked to the Dataset.",
+     *     400 = "The request could not be processed. (see message for reason)",
+     *     404 = "The Publication requested could not be found.",
+     *     403 = "The authenticated user was not authorized to create a Publication to Dataset link.",
+     *     500 = "An internal error has occurred."
+     *   }
+     * )
+     *
+     * @Rest\View
+     */
+    public function linkAction($id, Request $request)
+    {
+        $datasetId = $request->query->get('dataset');
+
+        $publication = $this->handleGetOne(Publication::class, $id);
+        try {
+            $dataset = $this->handleGetOne(Dataset::class, $datasetId);
+        } catch (NotFoundHttpException $e) {
+            throw new BadRequestHttpException($e->getMessage());
+        }
+        // do something...
+        $dataPub = new DatasetPublication($publication, $dataset);
+        $entityHandler = $this->get('pelagos.entity.handler');
+        $entityHandler->create($dataPub);
+
+        return $this->makeNoContentResponse();
     }
 }
