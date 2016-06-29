@@ -36,7 +36,6 @@
 }
 
 .map_button {
-    font-size: 90%;
     margin-top: 2px;
     margin-right: 2px;
     margin-left: 0px;
@@ -46,11 +45,17 @@
 
 #show_all_extents_label {
     font-weight: normal;
-    font-size: 90%;
-    padding: 0px 6px;
     margin-top: 2px;
     width: 9em;
     text-align: center;
+}
+
+.ui-button-text-only .ui-button-text {
+    padding: 2px 0px;
+}
+
+input.ui-button {
+    padding: 0px 6px;
 }
 
 #show_all_extents_checkbox {

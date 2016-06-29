@@ -70,6 +70,10 @@ doctrine:
                 prefix: Pelagos\Entity
                 alias: Pelagos
         naming_strategy: doctrine.orm.naming_strategy.underscore
+        dql:
+            string_functions:
+                ST_Intersects: Jsor\Doctrine\PostGIS\Functions\ST_Intersects
+                ST_GeomFromText: Jsor\Doctrine\PostGIS\Functions\ST_GeomFromText
 
 # Swiftmailer Configuration
 swiftmailer:

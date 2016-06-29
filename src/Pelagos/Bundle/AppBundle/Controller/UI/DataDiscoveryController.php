@@ -4,6 +4,7 @@ namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
 use Doctrine\ORM\Query;
 
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -48,40 +49,75 @@ class DataDiscoveryController extends UIController
      *
      * @return Response
      */
-    public function datasetsAction()
+    public function datasetsAction(Request $request)
     {
+        $filters = array();
+        if (!empty($request->query->get('by')) and !empty($request->query->get('id'))) {
+            switch ($request->query->get('by')) {
+                case 'fundSrc':
+                    $filters['fundingCycle'] = array(
+                        $request->query->get('id')
+                    );
+                    break;
+                case 'projectId':
+                    $filters['researchGroup'] = array(
+                        $request->query->get('id')
+                    );
+                    break;
+            }
+        }
+        $geoFilter = null;
+        if (!empty($request->query->get('geo_filter'))) {
+            $geoFilter = $request->query->get('geo_filter');
+        }
         $datasets = array();
         $datasets['available'] = $this->getDatasets(
-            array(
-                'dataset.availabilityStatus' => array(
-                    DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE,
-                    DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED,
+            array_merge(
+                $filters,
+                array(
+                    'dataset.availabilityStatus' => array(
+                        DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE,
+                        DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED,
+                    )
                 )
-            )
+            ),
+            $geoFilter
         );
         $datasets['restricted'] = $this->getDatasets(
-            array(
-                'dataset.availabilityStatus' => array(
-                    DatasetSubmission::AVAILABILITY_STATUS_AVAILABLE_WITH_APPROVAL,
-                    DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED,
-                    DatasetSubmission::AVAILABILITY_STATUS_AVAILABLE_WITH_APPROVAL_REMOTELY_HOSTED,
-                    DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED,
+            array_merge(
+                $filters,
+                array(
+                    'dataset.availabilityStatus' => array(
+                        DatasetSubmission::AVAILABILITY_STATUS_AVAILABLE_WITH_APPROVAL,
+                        DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED,
+                        DatasetSubmission::AVAILABILITY_STATUS_AVAILABLE_WITH_APPROVAL_REMOTELY_HOSTED,
+                        DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED,
+                    )
                 )
-            )
+            ),
+            $geoFilter
         );
         $datasets['inReview'] = $this->getDatasets(
-            array(
-                'dataset.availabilityStatus' => array(
-                    DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL,
+            array_merge(
+                $filters,
+                array(
+                    'dataset.availabilityStatus' => array(
+                        DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL,
+                    )
                 )
-            )
+            ),
+            $geoFilter
         );
         $datasets['identified'] = $this->getDatasets(
-            array(
-                'dataset.availabilityStatus' => array(
-                    DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE,
+            array_merge(
+                $filters,
+                array(
+                    'dataset.availabilityStatus' => array(
+                        DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE,
+                    )
                 )
-            )
+            ),
+            $geoFilter
         );
 
         return $this->render(
@@ -95,11 +131,12 @@ class DataDiscoveryController extends UIController
     /**
      * Get datasets with properties matching any values specified by $criteria.
      *
-     * @param array $criteria An array of criteria.
+     * @param array  $criteria  An array of criteria.
+     # @param string $geoFilter A WKT string of a geometry to filter by.
      *
      * @return array
      */
-    protected function getDatasets(array $criteria)
+    protected function getDatasets(array $criteria, $geoFilter = null)
     {
         $qb = $this->get('doctrine.orm.entity_manager')
                    ->getRepository(Dataset::class)
@@ -109,15 +146,31 @@ class DataDiscoveryController extends UIController
         $qb->join('dataset.datasetSubmission', 'datasetSubmission');
         $qb->join('dataset.metadata', 'metadata');
         $qb->join('dataset.researchGroup', 'researchGroup');
+        $qb->join('researchGroup.fundingCycle', 'fundingCycle');
         foreach ($criteria as $property => $values) {
+            $orX = null;
             foreach ($values as $value) {
-                $qb->orWhere(
-                    $qb->expr()->eq(
-                        $property,
-                        $qb->expr()->literal($value)
-                    )
-                );
+                if (null === $orX) {
+                    $orX = $qb->expr()->orX(
+                        $qb->expr()->eq(
+                            $property,
+                            $qb->expr()->literal($value)
+                        )
+                    );
+                } else {
+                    $orX->add(
+                        $qb->expr()->eq(
+                            $property,
+                            $qb->expr()->literal($value)
+                        )
+                    );
+                }
             }
+            $qb->andWhere($orX);
+        }
+        if (null !== $geoFilter) {
+            $qb->andWhere('ST_Intersects(ST_GeomFromText(:geometry), metadata.geometry) = true');
+            $qb->setParameter('geometry', "SRID=4326;$geoFilter::geometry");
         }
         $query = $qb->getQuery();
         return $query->getResult(Query::HYDRATE_ARRAY);

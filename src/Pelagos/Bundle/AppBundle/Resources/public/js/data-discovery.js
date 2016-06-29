@@ -252,7 +252,7 @@ function clearAll() {
 
 function showAllExtents() {
     if ($('#show_all_extents_checkbox').is(':checked')) {
-        $('#show_all_extents_label').html('Hide All Extents');
+        $('#show_all_extents_label').html('<span class="ui-button-text">Hide All Extents</span>');
         var selectedTab = $("#tabs").tabs('option','active');
         myGeoViz.removeAllFeaturesFromMap();
         if (datasets[selectedTab]) {
@@ -262,7 +262,7 @@ function showAllExtents() {
         }
     }
     else {
-        $('#show_all_extents_label').html('Show All Extents');
+        $('#show_all_extents_label').html('<span class="ui-button-text">Show All Extents</span>');
         $('table.datasets tr td').removeClass('highlight');
         myGeoViz.removeAllFeaturesFromMap();
     }
