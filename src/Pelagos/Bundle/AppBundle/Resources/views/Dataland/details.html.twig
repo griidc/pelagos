@@ -1,0 +1,25 @@
+<h2>Abstract:</h2>
+<div>
+    {{dataset.abstract|default}}
+</div>
+
+{% if dataset.metadata.purpose|default %}
+<h2>Purpose:</h2>
+<div>
+    {{dataset.metadata.purpose}}
+</div>
+{% endif %}
+
+{% if dataset.metadata.themeKeywords|default %}
+<h2>Theme Keywords:</h2>
+<div>
+    {{dataset.metadata.themeKeywords|join(', ')}}
+</div>
+{% endif %}
+
+{% if dataset.metadata.fileFormat|default %}
+<h2>File Format:</h2>
+<div>
+{{dataset.metadata.fileFormat}}
+</div>
+{% endif %}

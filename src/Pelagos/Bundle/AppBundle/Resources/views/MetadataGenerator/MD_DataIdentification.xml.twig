@@ -1,0 +1,83 @@
+<gmd:MD_DataIdentification>
+    <gmd:citation>
+        <gmd:CI_Citation>
+            <gmd:title>
+                <gco:CharacterString>{{dataset.title}}</gco:CharacterString>
+            </gmd:title>
+            <gmd:alternateTitle/>
+            <gmd:date>
+                <gmd:CI_Date>
+                    <gmd:date>
+                        <gco:Date>{{ "now" | date("Y-m-d") }}</gco:Date>
+                    </gmd:date>
+                    <gmd:dateType></gmd:dateType>
+                </gmd:CI_Date>
+            </gmd:date>
+        </gmd:CI_Citation>
+    </gmd:citation>
+    <gmd:abstract>
+        <gco:CharacterString><![CDATA[{{dataset.abstract | trim}}]]></gco:CharacterString>
+    </gmd:abstract>
+    <gmd:purpose/>
+    <gmd:status>
+        <gmd:MD_ProgressCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_ProgressCode" codeListValue="completed" codeSpace="001">completed</gmd:MD_ProgressCode>
+    </gmd:status>
+    {% if dataset.dif.primaryPointOfContact %}
+    <gmd:pointOfContact>
+        {% include "PelagosAppBundle:MetadataGenerator:CI_ResponsibleParty.xml.twig" with 
+            {
+                "Person" : dataset.dif.primaryPointOfContact,
+                "role" : {"name" : "pointOfContact", "code" : "007"},
+            } 
+        %}
+    </gmd:pointOfContact>
+    {% endif %}
+    <gmd:language>
+        <gco:CharacterString>eng; USA</gco:CharacterString>
+    </gmd:language>
+    {% if dataset.dif.spatialExtentDescription or 
+        dataset.dif.spatialExtentGeometry or 
+        dataset.dif.estimatedStartDate or 
+        dataset.dif.estimatedEndDate 
+    %}
+        <gmd:extent>
+            <gmd:EX_Extent id="boundingExtent">
+                {% if dataset.dif.spatialExtentDescription %}
+                    <gmd:description>
+                        <gco:CharacterString>{{dataset.dif.spatialExtentDescription}}</gco:CharacterString>
+                    </gmd:description>
+                {% endif %}
+                {% if dataset.dif.spatialExtentGeometry %}
+                    <gmd:geographicElement>
+                        <gmd:EX_BoundingPolygon>
+                            <gmd:polygon>
+                                {{dataset.dif.spatialExtentGeometry | raw}}
+                            </gmd:polygon>
+                        </gmd:EX_BoundingPolygon>
+                    </gmd:geographicElement>
+                {% endif %}
+                {% if dataset.dif.estimatedStartDate or dataset.dif.estimatedEndDate %}
+                    <gmd:temporalElement>
+                        <gmd:EX_TemporalExtent>
+                            <gmd:extent>
+                                <gml:TimePeriod gml:id="boundingTemporalExtent">
+                                    <gml:description />
+                                    {% if dataset.dif.estimatedStartDate %}
+                                        <gml:beginPosition>{{dataset.dif.estimatedStartDate|date("Y-m-d")}}</gml:beginPosition>
+                                    {% else %}
+                                        <gml:beginPosition />
+                                    {% endif %}
+                                    {% if dataset.dif.estimatedStartDate %}
+                                        <gml:endPosition>{{dataset.dif.estimatedEndDate|date("Y-m-d")}}</gml:endPosition>
+                                    {% else %}
+                                        <gml:endPosition />
+                                    {% endif %}
+                                </gml:TimePeriod>
+                           </gmd:extent>
+                       </gmd:EX_TemporalExtent>
+                   </gmd:temporalElement>
+                {% endif %}
+           </gmd:EX_Extent>
+       </gmd:extent>
+    {% endif %}
+</gmd:MD_DataIdentification>

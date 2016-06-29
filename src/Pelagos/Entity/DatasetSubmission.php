@@ -324,9 +324,9 @@ class DatasetSubmission extends Entity
      *
      * @see RESTRICTIONS class constant for valid values.
      *
-     * @ORM\Column(nullable=true)
+     * @ORM\Column
      */
-    protected $restrictions;
+    protected $restrictions = self::RESTRICTION_NONE;
 
     /**
      * The DOI for this dataset.

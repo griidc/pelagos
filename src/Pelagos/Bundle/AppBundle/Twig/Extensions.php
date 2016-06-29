@@ -12,6 +12,23 @@ use Pelagos\Entity\DIF;
 class Extensions extends \Twig_Extension
 {
     /**
+     * The kernel root path.
+     *
+     * @var string
+     */
+    private $kernelRootDir;
+
+    /**
+     *  Constructor.
+     *
+     * @param string $kernelRootDir The kernel root path.
+     */
+    public function __construct($kernelRootDir)
+    {
+        $this->kernelRootDir = $kernelRootDir;
+    }
+
+    /**
      * Return the name of this extension set.
      *
      * @return string The name of this extension set.
@@ -69,6 +86,10 @@ class Extensions extends \Twig_Extension
             new \Twig_SimpleFilter(
                 'submittedDIFs',
                 array(self::class, 'submittedDIFs')
+            ),
+            new \Twig_SimpleFilter(
+                'transformXml',
+                array($this, 'transformXml')
             ),
             new \Twig_SimpleFilter(
                 'role',
@@ -228,5 +249,32 @@ class Extensions extends \Twig_Extension
     {
         $environment->setLoader(new \Twig_Loader_String());
         return $environment->render($string, $context);
+    }
+
+    /**
+     * Transform the xml document with provided xslt.
+     *
+     * @param string $xml The raw xml string of the to be formated xml.
+     * @param string $xsl The filename of the xsl template.
+     *
+     * @return string The xslt transformed xml.
+     */
+    public function transformXml($xml, $xsl)
+    {
+        if ($xml <> '' and $xml != null) {
+            $xmlDoc = new \DOMDocument();
+            $xmlDoc->loadXML($xml);
+
+            // XSL template.
+            $xslDoc = new \DOMDocument();
+            $xslDoc->load($this->kernelRootDir . '/../src/Pelagos/Bundle/AppBundle/Resources/views/xsl/' . $xsl);
+
+            // The Processor.
+            $proc = new \XSLTProcessor();
+            $proc->importStylesheet($xslDoc);
+            $newdom = $proc->transformToDoc($xmlDoc);
+
+            return $newdom->saveXML();
+        }
     }
 }

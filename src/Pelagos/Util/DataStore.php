@@ -2,6 +2,9 @@
 
 namespace Pelagos\Util;
 
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
+
 /**
  * A class for manipulating the data store.
  */
@@ -23,15 +26,58 @@ class DataStore
     protected $dataDownloadDirectory;
 
     /**
+     * The POSIX user that will own files and directories in the data store.
+     *
+     * @var string
+     */
+    protected $dataStoreOwner;
+
+    /**
+     * The POSIX group for files and directories in the data store.
+     *
+     * @var string
+     */
+    protected $dataStoreGroup;
+
+    /**
+     * The POSIX group that contains users that can browse all of the data download directory.
+     *
+     * @var string
+     */
+    protected $dataDownloadBrowserGroup;
+
+    /**
+     * The POSIX user the web server runs under.
+     *
+     * @var string
+     */
+    protected $webServerUser;
+
+    /**
      * Constructor.
      *
-     * @param string $dataStoreDirectory    The data store directory.
-     * @param string $dataDownloadDirectory The data download directory.
+     * @param string $dataStoreDirectory       The data store directory.
+     * @param string $dataDownloadDirectory    The data download directory.
+     * @param string $dataStoreOwner           The POSIX user that will own files and directories in the data store.
+     * @param string $dataStoreGroup           The POSIX group for files and directories in the data store.
+     * @param string $dataDownloadBrowserGroup The POSIX group that contains users that can
+     *                                         browse all of the data download directory.
+     * @param string $webServerUser            The POSIX user the web server runs under.
      */
-    public function __construct($dataStoreDirectory, $dataDownloadDirectory)
-    {
+    public function __construct(
+        $dataStoreDirectory,
+        $dataDownloadDirectory,
+        $dataStoreOwner,
+        $dataStoreGroup,
+        $dataDownloadBrowserGroup,
+        $webServerUser
+    ) {
         $this->dataStoreDirectory = $dataStoreDirectory;
         $this->dataDownloadDirectory = $dataDownloadDirectory;
+        $this->dataStoreOwner = $dataStoreOwner;
+        $this->dataStoreGroup = $dataStoreGroup;
+        $this->dataDownloadBrowserGroup = $dataDownloadBrowserGroup;
+        $this->webServerUser = $webServerUser;
     }
 
     /**
@@ -65,13 +111,28 @@ class DataStore
      * @param string $datasetId The id of the dataset to add the file to.
      * @param string $type      The type (dataset or metadata) of the file.
      *
-     * @return \SplFileInfo
+     * @return File
      */
     public function getFileInfo($datasetId, $type)
     {
         $dataStoreDirectory = $this->getDataStoreDirectory($datasetId);
         $storeFileName = $this->getStoreFileName($datasetId, $type);
-        return new \SplFileInfo("$dataStoreDirectory/$storeFileName");
+        return new File("$dataStoreDirectory/$storeFileName");
+    }
+
+    /**
+     * Get the info for the linked download file for a file in the data store.
+     *
+     * @param string $datasetId The id of the dataset to add the file to.
+     * @param string $type      The type (dataset or metadata) of the file.
+     *
+     * @return File
+     */
+    public function getDownloadFileInfo($datasetId, $type)
+    {
+        $dataDownloadDirectory = $this->getDataDownloadDirectory($datasetId);
+        $storeFileName = $this->getStoreFileName($datasetId, $type);
+        return new File("$dataDownloadDirectory/$storeFileName");
     }
 
     /**
@@ -89,7 +150,11 @@ class DataStore
      */
     protected function addFileToDataStoreDirectory($fileUri, $datasetId, $storeFileName)
     {
-        $dataStoreDirectory = $this->getDataStoreDirectory($datasetId);
+        try {
+            $dataStoreDirectory = $this->getDataStoreDirectory($datasetId);
+        } catch (FileNotFoundException $e) {
+            $dataStoreDirectory = $this->createDataStoreDirectory($datasetId);
+        }
         $storeFilePath = "$dataStoreDirectory/$storeFileName";
         if (file_exists($storeFilePath)) {
             if (!unlink($storeFilePath)) {
@@ -102,7 +167,7 @@ class DataStore
         if (!chmod($storeFilePath, 0644)) {
             throw new \Exception("Could not set file mode on $storeFilePath");
         }
-        $this->setOwnerGroupFacls($storeFilePath, 'custodian', 'custodian');
+        $this->setOwnerGroupFacls($storeFilePath, $this->dataStoreOwner, $this->dataStoreGroup);
         return $storeFilePath;
     }
 
@@ -120,7 +185,11 @@ class DataStore
      */
     protected function createLinkInDownloadDirectory($storeFilePath, $datasetId, $storeFileName)
     {
-        $dataDownloadDirectory = $this->getDataDownloadDirectory($datasetId);
+        try {
+            $dataDownloadDirectory = $this->getDataDownloadDirectory($datasetId);
+        } catch (FileNotFoundException $e) {
+            $dataDownloadDirectory = $this->createDataDownloadDirectory($datasetId);
+        }
         $downloadFilePath = "$dataDownloadDirectory/$storeFileName";
         if (file_exists($downloadFilePath)) {
             if (!unlink($downloadFilePath)) {
@@ -136,11 +205,9 @@ class DataStore
     /**
      * Get the data store directory for a dataset.
      *
-     * This creates one if it doesn't exist.
-     *
      * @param string $datasetId The id of the dataset to get the data store directory for.
      *
-     * @throws \Exception When an error occurs creating the data store directory.
+     * @throws FileNotFoundException When the data store directory is not found.
      *
      * @return string
      */
@@ -148,10 +215,33 @@ class DataStore
     {
         $dataStoreDirectory = "$this->dataStoreDirectory/$datasetId";
         if (!file_exists($dataStoreDirectory)) {
+            throw new FileNotFoundException($dataStoreDirectory);
+        }
+        return $dataStoreDirectory;
+    }
+
+    /**
+     * Create the data store directory for a dataset if it doesn't exist.
+     *
+     * @param string $datasetId The id of the dataset to create the data store directory for.
+     *
+     * @throws \Exception When an error occurs creating the data store directory.
+     *
+     * @return string
+     */
+    protected function createDataStoreDirectory($datasetId)
+    {
+        $dataStoreDirectory = "$this->dataStoreDirectory/$datasetId";
+        if (!file_exists($dataStoreDirectory)) {
             if (!mkdir($dataStoreDirectory, 0750)) {
                 throw new \Exception("Could not create $dataStoreDirectory");
             }
-            $this->setOwnerGroupFacls($dataStoreDirectory, 'custodian', 'custodian', 'u:apache:--x');
+            $this->setOwnerGroupFacls(
+                $dataStoreDirectory,
+                $this->dataStoreOwner,
+                $this->dataStoreGroup,
+                'u:' . $this->webServerUser . ':--x'
+            );
         }
         return $dataStoreDirectory;
     }
@@ -159,7 +249,23 @@ class DataStore
     /**
      * Get the data download directory for a dataset.
      *
-     * This creates one if it doesn't exist.
+     * @param string $datasetId The id of the dataset to get the data download directory for.
+     *
+     * @throws FileNotFoundException When the data download directory is not found.
+     *
+     * @return string
+     */
+    protected function getDataDownloadDirectory($datasetId)
+    {
+        $dataDownloadDirectory = "$this->dataDownloadDirectory/$datasetId";
+        if (!file_exists($dataDownloadDirectory)) {
+            throw new FileNotFoundException($dataDownloadDirectory);
+        }
+        return $dataDownloadDirectory;
+    }
+
+    /**
+     * Create the data download directory for a dataset if it doesn't exist.
      *
      * @param string  $datasetId  The id of the dataset to check the data download directory for.
      * @param boolean $restricted Whether or not the dataset is restricted.
@@ -168,7 +274,7 @@ class DataStore
      *
      * @return string
      */
-    protected function getDataDownloadDirectory($datasetId, $restricted = false)
+    protected function createDataDownloadDirectory($datasetId, $restricted = false)
     {
         $downloadDirectory = "$this->dataDownloadDirectory/$datasetId";
         if (!file_exists($downloadDirectory)) {
@@ -180,7 +286,12 @@ class DataStore
             if (!mkdir($downloadDirectory, $mode)) {
                 throw new \Exception("Could not create $downloadDirectory");
             }
-            $this->setOwnerGroupFacls($downloadDirectory, 'apache', 'apache', 'g:GRIIDC:r-x');
+            $this->setOwnerGroupFacls(
+                $downloadDirectory,
+                $this->dataStoreOwner,
+                $this->dataStoreGroup,
+                'u:' . $this->webServerUser . ':r-x,' . 'g:' . $this->dataDownloadBrowserGroup . ':r-x'
+            );
         }
         return $downloadDirectory;
     }

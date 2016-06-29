@@ -1,0 +1,119 @@
+{% set dl_ok = 0 %}
+{% set dataset_available = 0 %}
+
+{% if dataset.metadataStatus == constant('Pelagos\\Entity\\DatasetSubmission::METADATA_STATUS_ACCEPTED') %}
+{% set dl_ok = 1 %}
+{% endif %}
+{% if dataset.availabilityStatus == constant('Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE') or dataset.availabilityStatus == constant('Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED') %}
+{% set dataset_available = 1 %}
+{% endif %}
+        
+<div style="position: relative;">
+<font size="3">
+<div style="float:right;" class="minitoolbar">
+    <div>
+        {% if dl_ok == 1 %}
+            {% if dataset_available %}
+                {% image '@PelagosAppBundle/Resources/public/images/download-package.png' %}
+                <img width="40px" height="40px" id="downloadds" src="{{asset_url}}">
+                {% endimage %}
+            {% else %}
+                {% image '@PelagosAppBundle/Resources/public/images/download-package-grey.png' %}
+                <img width="40px" height="40px" id="downloaddsden" src="{{asset_url}}">
+                {% endimage %}
+            {% endif %}
+            {% if dataset.metadataStatus == constant('Pelagos\\Entity\\DatasetSubmission::METADATA_STATUS_ACCEPTED') %}
+                {% image '@PelagosAppBundle/Resources/public/images/xmlc.png' %}
+                <img title="test" width="40px" height="40px" id="metadatadl" src="{{asset_url}}">
+                {% endimage %}
+            {% else %}
+                {% image '@PelagosAppBundle/Resources/public/images/xmlc-bw.png' %}
+                <img title="test" width="40px" height="40px" id="metadatadl-dis" src="{{asset_url}}">
+                {% endimage %}
+            {% endif %}
+        {% else %}
+            {% image '@PelagosAppBundle/Resources/public/images/download-package-grey.png' %}
+            <img width="40px" height="40px" id="downloaddsdenmd" src="{{asset_url}}">
+            {% endimage %}
+            {% image '@PelagosAppBundle/Resources/public/images/xmlc-bw.png' %}
+            <img title="test" width="40px" height="40px" id="metadatadl-dis" src="{{asset_url}}">
+            {% endimage %}
+        {% endif %}
+    </div>
+</div>
+
+<h2>{{dataset.title}}</h2>
+
+<h3>{{dataset.researchGroup.name}}</h3>
+
+
+<table width="90%">
+    {% if dataset.datasetSubmission %}
+        <tr><td colspan="2"><b>DOI:</b><br/> {{dataset.datasetSubmission.doi}}</td></tr>
+        <tr><td colspan="2">&nbsp;</td></tr>
+    {% endif %}
+    <tr>
+        <td><b>UDI:</b><br/><span id="udi">{{dataset.udi}}</span></td>
+        <td>
+            <b>Last Update:</b><br>
+            {{dataset.modificationTimeStamp|date('c')}}<br>
+        </td>
+    </tr>
+
+    <tr>
+        <td colspan="2">&nbsp;</td>
+    </tr>
+
+    <tr>
+        <td valign="top"><b>Dataset Author(s):</b><br/> {{dataset.datasetSubmission.authors|default}}</td>
+        <td rowspan="4" valign="top">
+            {% if dataset.dif %}
+                <b>Point of Contact:</b><br/>
+                {{dataset.dif.primaryPointOfContact.lastName}}, {{dataset.dif.primaryPointOfContact.firstName}}<br/>
+                {{dataset.dif.primaryPointOfContact.organization}}<br/>
+                {{dataset.dif.primaryPointOfContact.deliveryPoint}}<br>
+                {{dataset.dif.primaryPointOfContact.city}}, {{dataset.dif.primaryPointOfContact.administrativeArea}}&nbsp;&nbsp;{{dataset.dif.primaryPointOfContact.postalCode}}<br>
+                {{dataset.dif.primaryPointOfContact.country}}<br>
+                <a href="mailto:{{dataset.dif.primaryPointOfContact.emailAddress}}">
+                    {{dataset.dif.primaryPointOfContact.emailAddress}}
+                </a>
+            {% endif %}
+        </td>
+    </tr>
+
+    <tr>
+        <td valign="top">
+            {% if dataset.researchGroup.fundingCycle %}
+                <b>Funding Source:</b><br/>
+                {{dataset.researchGroup.fundingCycle.name}}
+            {% endif %}
+        </td>
+    </tr>
+
+    <tr>
+        <td valign="top">
+            {% if dataset.metadata|default  %}
+                <b>Data Collection Period:</b><br/>
+                {{dataset.metadata.beginPosition}}
+                  to
+                {{dataset.metadata.endPosition}}
+            {% endif %}
+        </td>
+    </tr>
+
+    <tr>
+        <td valign="top">
+            {% if dataset.metadata|default %}
+              <tr><td colspan="2">&nbsp;</td></tr>
+              <tr><td colspan="2"><b>Extent Description:</b><br/> {{dataset.metadata.extentDescription}}</td></tr>
+            {% endif %}
+         </td>
+    </tr>
+</table>
+
+</font>
+<p/>
+    {% include 'PelagosAppBundle:DatasetMonitoring:datasets.html.twig' with
+            { 'datasets' : [dataset], 'dataland' : true } %}
+</div>
+
