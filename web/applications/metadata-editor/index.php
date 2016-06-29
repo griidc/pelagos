@@ -5,6 +5,8 @@ require_once __DIR__.'/../../../vendor/autoload.php';
 
 $GLOBALS['pelagos']['title'] = 'ISO 19115-2 Metadata Editor';
 
+$config = parse_ini_file(__DIR__ . '/config.ini');
+
 include_once '/opt/pelagos/share/php/aliasIncludes.php';
 
 include 'metaData.php';
@@ -117,6 +119,7 @@ $twigArray['onReady'] = $mMD->onReady;
 $twigArray['jqUIs'] = $mMD->jqUIs;
 $twigArray['validateRules'] = $mMD->validateRules;
 $twigArray['validateMessages'] = $mMD->validateMessages;
+$twigArray['metadata_api_path'] = $config['metadata_api_path'];
 
 echo "\n\n<script type=\"text/javascript\">\n";
 $mMD->jsString .= $mMD->twig->render('js/base.js', $twigArray);

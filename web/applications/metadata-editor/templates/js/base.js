@@ -273,7 +273,7 @@ function uploadFile()
         {
             var udival = $('#udifld').val();
             jQuery.ajax({
-                url: "/pelagos-symfony/api/metadata?udi=" + udival.substring(0,16),
+                url: "{{ metadata_api_path }}?udi=" + udival.substring(0,16),
                 type: "HEAD",
                 async: true,
                 error: function(message,text,jqXHR) {
@@ -287,7 +287,7 @@ function uploadFile()
                     });
                 },
                 success: function(message,text,jqXHR) {
-                    location.href = "/metadata-editor/?dataUrl=http://" + location.hostname + "/pelagos-symfony/api/metadata?udi=" + udival.substring(0,16);
+                    location.href = location.href.split('?')[0] + "?dataUrl=http://" + location.hostname + "{{ metadata_api_path }}?udi=" + udival.substring(0,16);
                 }
             });
         }
