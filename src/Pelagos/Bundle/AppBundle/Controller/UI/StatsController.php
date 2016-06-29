@@ -52,6 +52,12 @@ class StatsController extends UIController
         // Get the people count.
         $peopleCount = $queryBuilder
             ->select($queryBuilder->expr()->count('person.id'))
+            ->where(
+                $queryBuilder->expr()->gt(
+                    'person.id',
+                    $queryBuilder->expr()->literal(0)
+                )
+            )
             ->getQuery()->getSingleScalarResult();
 
         // Recreate a Query Builder for the Research Group Repository
