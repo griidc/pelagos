@@ -5,12 +5,11 @@ var valid_dataset = false;
 var last_retrieved = { dataset: "", publication: "" };
 
 $(document).ready(function() {
-    var pelagos_base_path = Routing.generate("pelagos_app_ui_publicationdatasetlink_default");
     $('#retrieve_publication').button().click(function () {
-        retrieveCitation('publication');
+        retrievePublicationCitation();
     });
     $('#retrieve_dataset').button().click(function () {
-        retrieveCitation('dataset');
+        retrieveDatasetCitation();
     });
     $('#link').button().click(function () {
         $.ajax({
@@ -51,47 +50,120 @@ $(document).ready(function() {
     initSpinners();
 });
 
-function retrieveCitation(type) {
-    $('#' + type + ' .pelagos-spinner').show();
-    $('#' + type + ' .pelagos-citation').empty();
+function retrievePublicationCitation() {
+    $('#publication .pelagos-spinner').show();
+    $('#publication .pelagos-citation').empty();
     $.ajax({
-        url: pelagos_base_path + '/services/citation/' + type + '/' + $('#' + type + ' .id').val()
-    }).done(function (data) {
-        $('#' + type + ' .pelagos-citation').html(data.text);
-        $('#' + type + ' .pelagos-citation').removeClass('pelagos-error');
-        // always show the citation div, in case it has been faded out
-        $('#' + type + ' .pelagos-citation').show();
-        if (type == 'dataset') {
-            valid_dataset = true;
-        }
-        if (type == 'publication') {
-            valid_publication = true;
-        }
-        if (valid_dataset && valid_publication) {
-            $('#link').button("option", "disabled", false);
+        url: Routing.generate("pelagos_api_publications_post"),
+        method: "POST",
+        data: {
+            'doi': $('#publication .id').val()
+        },
+        success: function(json, textStatus, jqXHR) {
+            if (jqXHR.status === 201) {
+                $.ajax({
+                    url: jqXHR.getResponseHeader("location"),
+                    method: "GET"
+                }).done(function (data) {
+                    $('#publication .pelagos-citation').html(data.citations[0].citationText);
+                    $('#publication .pelagos-citation').removeClass('pelagos-error');
+                    // always show the citation div, in case it has been faded out
+                    $('#publication .pelagos-citation').show();
+                    valid_publication = true;
+
+                    if (valid_dataset && valid_publication) {
+                        $('#link').button("option", "disabled", false);
+                    }
+                })
+            }
         }
     }).fail(function (data) {
         if (data.responseJSON) {
-            $('#' + type + ' .pelagos-citation').html(data.responseJSON.message);
+            $('#publication .pelagos-citation').html(data.responseJSON.message);
         } else {
-            $('#' + type + ' .pelagos-citation').html(data.statusText);
+            $('#publication .pelagos-citation').html(data.statusText);
         }
-        $('#' + type + ' .pelagos-citation').addClass('pelagos-error');
+        $('#publication .pelagos-citation').addClass('pelagos-error');
         // always show the citation div, in case it has been faded out
-        $('#' + type + ' .pelagos-citation').show();
-        if (type == 'dataset') {
-            valid_dataset = false;
-        }
-        if (type == 'publication') {
-            valid_publication = false;
-        }
+        $('#publication .pelagos-citation').show();
+        valid_publication = false;
         // disable the Link button
         $('#link').button("option", "disabled", true);
     }).always(function () {
-        last_retrieved[type] = $('#' + type + ' .id').val();
-        $('#' + type + ' .pelagos-spinner').hide();
+        last_retrieved["publication"] = $('#publication .id').val();
+        $('#publication .pelagos-spinner').hide();
         // add a keyup listener to fade out citation and remove itself
-        $('#' + type + ' .id').on('keyup', { type: type }, function(event) {
+        $('#publication .id').on('keyup', { type: "publication" }, function(event) {
+            if ($(this).val() != last_retrieved[event.data.type]) {
+                // find citation div in my parent and fade it out
+                $(this).parent().find('.pelagos-citation').first().fadeOut();
+                // remove listener
+                $(this).off('keyup');
+                // disable the Link button
+                $('#link').button("option", "disabled", true);
+            }
+        });
+    });
+}
+
+function retrieveDatasetCitation() {
+    $('#dataset .pelagos-spinner').show();
+    $('#dataset .pelagos-citation').empty();
+    console.log($('#dataset .id').val());
+    $.ajax({
+        url: Routing.generate("pelagos_api_datasets_get_collection", { "udi" : $('#dataset .id').val()} ),
+        method: "GET",
+    }).done(function (datasets) {
+        if('undefined' !== typeof datasets[0]) {
+            $.ajax({
+                url: Routing.generate("pelagos_api_datasets_get_citation", { "id" : datasets[0].id} ),
+                method: "GET"
+            }).done(function (data) {
+                $('#dataset .pelagos-citation').html(data);
+                $('#dataset .pelagos-citation').removeClass('pelagos-error');
+                // always show the citation div, in case it has been faded out
+                $('#dataset .pelagos-citation').show();
+                valid_dataset = true;
+                if (valid_dataset && valid_publication) {
+                    $('#link').button("option", "disabled", false);
+                }
+            }).fail(function (data) {
+                if (data.responseJSON) {
+                    $('#dataset .pelagos-citation').html(data.responseJSON.message);
+                } else {
+                    $('#dataset .pelagos-citation').html(data.statusText);
+                }
+                $('#dataset .pelagos-citation').addClass('pelagos-error');
+                // always show the citation div, in case it has been faded out
+                $('#dataset .pelagos-citation').show();
+                valid_publication = false;
+                // disable the Link button
+                $('#link').button("option", "disabled", true);
+            });
+        } else {
+            $('#dataset .pelagos-citation').html('A dataset could not be found matching the given UDI');
+            $('#dataset .pelagos-citation').addClass('pelagos-error');
+            $('#dataset .pelagos-citation').show();
+            valid_publication = false;
+            $('#link').button("option", "disabled", true);
+        }
+    }).fail(function (data) {
+        if (data.responseJSON) {
+            $('#dataset .pelagos-citation').html(data.responseJSON.message);
+        } else {
+            $('#dataset .pelagos-citation').html(data.statusText);
+        }
+        $('#dataset .pelagos-citation').addClass('pelagos-error');
+        // always show the citation div, in case it has been faded out
+        $('#dataset .pelagos-citation').show();
+        valid_publication = false;
+        // disable the Link button
+        $('#link').button("option", "disabled", true);
+    }).always(function () {
+        last_retrieved["publication"] = $('#dataset .id').val();
+        $('#dataset .pelagos-spinner').hide();
+        // add a keyup listener to fade out citation and remove itself
+        $('#dataset .id').on('keyup', { type: "publication" }, function(event) {
             if ($(this).val() != last_retrieved[event.data.type]) {
                 // find citation div in my parent and fade it out
                 $(this).parent().find('.pelagos-citation').first().fadeOut();
