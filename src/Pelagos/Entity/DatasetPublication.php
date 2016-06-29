@@ -10,6 +10,8 @@ use Pelagos\Entity\PublicationCitation;
 
 /**
  * This Entity contains a link between Publications and Datasets.
+ *
+ * @ORM\Entity
  */
 class DatasetPublication extends Entity
 {
@@ -28,6 +30,18 @@ class DatasetPublication extends Entity
      * @var Dataset
      */
     protected $dataset;
+
+    /**
+     * Class constructor.
+     *
+     * @param Publication $publication A Pelagos Publication.
+     * @param Dataset     $dataset     A Pelagos Dataset.
+     */
+    public function __construct(Publication $publication, Dataset $dataset)
+    {
+        $this->publication = $publication;
+        $this->dataset = $dataset;
+    }
 
     /**
      * Getter for Publication.
