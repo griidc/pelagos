@@ -192,6 +192,7 @@
 
 #dataset_listing_wrapper {
     height: 100%;
+    position: relative;
 }
 
 #dataset_listing {

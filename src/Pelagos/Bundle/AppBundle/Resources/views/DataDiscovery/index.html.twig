@@ -6,6 +6,11 @@
     {% stylesheets
         '@PelagosAppBundle/Resources/public/css/data-discovery.css'
         '@PelagosAppBundle/Resources/public/css/data-discovery-scrollbars.css'
+        '@PelagosAppBundle/Resources/public/css/data-discovery-datasets.css'
+        '@PelagosAppBundle/Resources/public/css/downloads.css'
+        '@PelagosAppBundle/Resources/public/css/dataset_details.css'
+        '@PelagosAppBundle/Resources/public/css/dataset_download.css'
+        '@PelagosAppBundle/Resources/public/css/logins.css'
     %}
         {{ add_css(asset_url) }}
     {% endstylesheets %}
@@ -100,7 +105,7 @@
             </div>
             <div>
                 <div id="dataset_listing_wrapper" class="right-panel">
-                    <div id="dataset_listing" />
+                    <div id="dataset_listing"></div>
                     <div class="spinner">
                         <div>
                             {% image '@PelagosAppBundle/Resources/public/images/spinner.gif' %}

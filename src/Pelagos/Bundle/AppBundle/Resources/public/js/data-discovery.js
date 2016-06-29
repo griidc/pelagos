@@ -100,15 +100,23 @@ function showDatasets(by,id) {
         }
         $('#packageLink').attr('href',newlink);
     }
+    $('#dataset_listing').html("");
     $('#dataset_listing_wrapper .spinner').show();
     geo_filter = '';
     if (trees['tree'].geo_filter) {
         geo_filter = trees['tree'].geo_filter;
     }
+    console.log(geo_filter);
     $.ajax({
-//        "url": "{{baseUrl}}/datasets/" + encodeURIComponent(jQuery('#filter-applied').val().replace(/\//g,"")) + "/" + by + "/" + id + "/" + geo_filter,
         "url": Routing.generate('pelagos_app_ui_datadiscovery_datasets'),
+        "data": {
+            "filter": jQuery('#filter-applied').val().replace(/\//g,""),
+            "by": by,
+            "id": id,
+            "geo_filter": geo_filter
+        },
         "success": function(data) {
+            $('#dataset_listing_wrapper .spinner').hide();
             $('#dataset_listing').html(data);
             $('#tabs').tabs({
                 activate: function(event, ui) {
