@@ -15,6 +15,11 @@ use Pelagos\HTTPStatus;
 class Publication extends Entity
 {
     /**
+     * Friendly name for Publication Entity.
+     */
+    const FRIENDLY_NAME = "Publication";
+
+    /**
      * DOI.
      *
      * @var string
