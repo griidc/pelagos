@@ -2,12 +2,17 @@ var $ = jQuery.noConflict();
 
 $(document).ready(function() {
     $('#linkList').dataTable( {
-        "ajax":"GetLinksJSON/",
+        "ajax":
+        {
+            "url": Routing.generate('pelagos_api_publications_get_collection'),
+            "cache": true,
+            "dataSrc": ""
+        },
         "aoColumns": [
             { "mDataProp": "fc" },
             { "mDataProp": "proj" },
-            { "mDataProp": "udi", "sClass": "udi" },
-            { "mDataProp": "doi", "sClass": "doi" },
+            { "mDataProp": "udi" },
+            { "mDataProp": "doi" },
             { "mDataProp": "username" },
             { "mDataProp": "created" },
         ],
@@ -16,10 +21,10 @@ $(document).ready(function() {
         "lengthMenu": [ [10, 25, 100, 250, -1], [10 , 25, 100, 250, "All"] ],
         "stateSave": true,
         "stateDuration": -1,
-         "search": {
+        "search": {
             "caseInsensitive": true
-         }
-        });
+        },
+    });
 
     var table = $('#linkList').DataTable();
 

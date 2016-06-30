@@ -1,0 +1,65 @@
+{% block head %}
+    {{
+        add_library (
+            [
+                'ui.dialog',
+                'ui.tooltip',
+                'ui.button'
+            ]
+        )
+    }}
+
+    {{
+        add_css (
+            [
+                '//cdn.datatables.net/1.10.6/css/jquery.dataTables.min.css',
+                '//cdn.datatables.net/plug-ins/1.10.6/integration/jqueryui/dataTables.jqueryui.css'
+            ]
+        )
+    }}
+
+    {% stylesheets  '@PelagosAppBundle/Resources/public/css/entity.css' %}
+        {{ add_css(asset_url) }}
+    {% endstylesheets  %}
+
+    {{
+        add_js(
+            [
+                '//cdn.datatables.net/1.10.6/js/jquery.dataTables.min.js',
+                '//cdn.datatables.net/plug-ins/1.10.6/integration/jqueryui/dataTables.jqueryui.min.js'
+            ]
+        )
+    }}
+
+    {% javascripts '@PelagosAppBundle/Resources/public/js/linkList.js' %}
+        {{ add_js(asset_url) }}
+    {% endjavascripts %}
+
+    {% javascripts '@FOSJsRoutingBundle/Resources/public/js/router.js' %}
+        {{ add_js(asset_url) }}
+    {% endjavascripts %}
+
+    {{ add_js(path('fos_js_routing_js', { callback: 'fos.Router.setData' })) }}
+
+{% endblock %}
+
+{% block body %}
+<h2>UDI to DOI Relations maintained by Pelagos</h2>
+<table id="linkList" class="display">
+<thead>
+    <tr>
+        <th>FC</th>
+        <th>Project</th>
+        <th>UDI</th>
+        <th>DOI</th>
+        <th>Link Creator</th>
+        <th>Created On</th>
+    </tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+<button id="delete_button" disabled>Delete Selected Row</button>
+<div id="dialog-confirm" title="Are you sure?">
+</div>
+{% endblock %}

@@ -36,4 +36,16 @@ class PublicationDatasetLinkController extends UIController
         return $this->render('PelagosAppBundle:PublicationDatasetLink:index.html.twig');
     }
 
+    /**
+     * List all publinks.
+     *
+     * @Route("/list")
+     * @Method("GET")
+     *
+     * @return Response A Symfony Response instance.
+     */
+    public function listAction()
+    {
+        return $this->render('PelagosAppBundle:PublicationDatasetLink:linkList.html.twig');
+    }
 }
