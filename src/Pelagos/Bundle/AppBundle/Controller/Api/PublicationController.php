@@ -108,14 +108,16 @@ class PublicationController extends EntityController
     /**
      * Link a Publication to a Dataset by their respective IDs.
      *
-     * @param integer $pubId
-     *
-     * @return Request
+     * @param integer $id      Publication ID.
+     * @param Request $request A Request object.
      *
      * @ApiDoc(
      *   section = "Publications",
      *   parameters = {
-     *                    {"name"="dataset", "dataType"="integer", "required"=true, "description"="Numeric ID of Dataset to be linked."}
+     *                    {"name"="dataset",
+     *                      "dataType"="integer",
+     *                      "required"=true,
+     *                      "description"="Numeric ID of Dataset to be linked."}
      *                },
      *   statusCodes = {
      *     204 = "The Publication has been linked to the Dataset.",
@@ -127,12 +129,29 @@ class PublicationController extends EntityController
      * )
      *
      * @Rest\View
+     *
+     * @throws BadRequestHttpException If link already exists.
+     * @throws BadRequestHttpException If Dataset is not found internally.
+     *
+     * @return Response A HTTP Response object.
      */
     public function linkAction($id, Request $request)
     {
         $datasetId = $request->query->get('dataset');
 
         $publication = $this->handleGetOne(Publication::class, $id);
+
+        // Check for existing publink and throw bad request error if exists.
+        $criteria = array('dataset' => $datasetId, 'publication' => $id);
+        $publinks = $this->get('pelagos.entity.handler')->getBy(DatasetPublication::class, $criteria);
+        if ($publinks != null) {
+            $existingPublink = $publinks[0];
+            $createdOn = $existingPublink->getCreationTimeStamp()->format('m/d/Y H:i');
+            $createdBy = $existingPublink->getCreator()->getFirstName()
+                . ' ' . $existingPublink->getCreator()->getLastName();
+            throw new BadRequestHttpException("Link already exists - created by $createdBy on $createdOn" . 'z');
+        }
+
         try {
             $dataset = $this->handleGetOne(Dataset::class, $datasetId);
         } catch (NotFoundHttpException $e) {

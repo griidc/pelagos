@@ -28,6 +28,8 @@ class DatasetPublication extends Entity
      * A Pelagos Datasent entity.
      *
      * @var Dataset
+     *
+     * @ORM\ManyToOne(targetEntity="Dataset", inversedBy="datasetPublications")
      */
     protected $dataset;
 
