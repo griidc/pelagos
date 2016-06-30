@@ -6,7 +6,6 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\Publication;
-use Pelagos\Entity\PublicationCitation;
 
 /**
  * This Entity contains a link between Publications and Datasets.
@@ -52,7 +51,7 @@ class DatasetPublication extends Entity
      */
     public function getPublication()
     {
-        return $this->publication();
+        return $this->publication;
     }
 
     /**
@@ -62,6 +61,6 @@ class DatasetPublication extends Entity
      */
     public function getDataset()
     {
-        return $this->dataset();
+        return $this->dataset;
     }
 }
