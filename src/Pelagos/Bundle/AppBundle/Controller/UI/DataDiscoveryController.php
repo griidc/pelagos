@@ -44,6 +44,8 @@ class DataDiscoveryController extends UIController
     /**
      * The datasets action.
      *
+     * @param Request $request The Symfony request object.
+     *
      * @Route("/datasets")
      * @Method("GET")
      *
@@ -132,7 +134,7 @@ class DataDiscoveryController extends UIController
      * Get datasets with properties matching any values specified by $criteria.
      *
      * @param array  $criteria  An array of criteria.
-     # @param string $geoFilter A WKT string of a geometry to filter by.
+     * @param string $geoFilter A WKT string of a geometry to filter by.
      *
      * @return array
      */
@@ -142,9 +144,10 @@ class DataDiscoveryController extends UIController
                    ->getRepository(Dataset::class)
                    ->createQueryBuilder('dataset');
         $qb->select('dataset, dif, datasetSubmission, metadata, researchGroup');
+        $qb->addSelect('ST_AsText(ST_GeomFromGML(dif.spatialExtentGeometry, 4326)) difSpatialExtentGeometry');
         $qb->join('dataset.dif', 'dif');
-        $qb->join('dataset.datasetSubmission', 'datasetSubmission');
-        $qb->join('dataset.metadata', 'metadata');
+        $qb->leftJoin('dataset.datasetSubmission', 'datasetSubmission');
+        $qb->leftJoin('dataset.metadata', 'metadata');
         $qb->join('dataset.researchGroup', 'researchGroup');
         $qb->join('researchGroup.fundingCycle', 'fundingCycle');
         foreach ($criteria as $property => $values) {
@@ -169,7 +172,12 @@ class DataDiscoveryController extends UIController
             $qb->andWhere($orX);
         }
         if (null !== $geoFilter) {
-            $qb->andWhere('ST_Intersects(ST_GeomFromText(:geometry), metadata.geometry) = true');
+            $qb->andWhere(
+                $qb->expr()->orX(
+                    'ST_Intersects(ST_GeomFromText(:geometry), metadata.geometry) = true',
+                    'ST_Intersects(ST_GeomFromText(:geometry), ST_GeomFromGML(dif.spatialExtentGeometry)) = true'
+                )
+            );
             $qb->setParameter('geometry', "SRID=4326;$geoFilter::geometry");
         }
         $query = $qb->getQuery();
