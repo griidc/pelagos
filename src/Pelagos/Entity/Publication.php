@@ -17,7 +17,7 @@ class Publication extends Entity
     /**
      * Friendly name for Publication Entity.
      */
-    const FRIENDLY_NAME = "Publication";
+    const FRIENDLY_NAME = 'Publication';
 
     /**
      * DOI.
@@ -55,9 +55,19 @@ class Publication extends Entity
     }
 
     /**
+     * Getter for doi.
+     *
+     * @return string
+     */
+    public function getDoi()
+    {
+        return $this->doi;
+    }
+
+    /**
      * Sets the Citation object.
      *
-     * @param PublicationCitation $citation A Pelagos Citation.
+     * @param Collection $citations A collection of Pelagos Citations.
      *
      * @return void
      */
