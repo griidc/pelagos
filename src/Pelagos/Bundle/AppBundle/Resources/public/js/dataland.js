@@ -213,8 +213,7 @@ var dlmap = new GeoViz();
             console.log('lab only')
             dlmap.makeStatic();
         } else if (geovizMap.attr("wkt") != "") { //  add the geometry from the data. Either datasets or metadata
-            var wkt = geovizMap.attr("wkt").split(";")[1];
-            dlmap.addFeatureFromWKT(wkt, {"udi":udi});
+            dlmap.addFeatureFromWKT(geovizMap.attr("wkt"), {"udi":udi});
             dlmap.gotoAllFeatures();
         }
     });
