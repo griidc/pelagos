@@ -105,6 +105,54 @@ class PublicationController extends EntityController
         return $this->handleGetOne(Publication::class, $id);
     }
 
+   /**
+     * Get a collection of PublicationDatasets
+     *
+     * @param Request $request The request object.
+     *
+     * @ApiDoc(
+     *   section = "PublicationDatasets",
+     *   parameters = {
+     *     {"name"="someProperty", "dataType"="string", "required"=false, "description"="Filter by someProperty"}
+     *   },
+     *   output = "array<Pelagos\Entity\DatasetPublication>",
+     *   statusCodes = {
+     *     200 = "The requested collection of PublicationDatasets was successfully retrieved.",
+     *     500 = "An internal error has occurred.",
+     *   }
+     * )
+     *
+     * @Rest\Get("")
+     *
+     * @Rest\View(serializerEnableMaxDepthChecks = true)
+     *
+     * @return array
+     */
+    public function getCollectionAction(Request $request)
+    {
+        $collection = $this->handleGetCollection(DatasetPublication::class, $request);
+        $data = array();
+        foreach ($collection as $datasetPublication) {
+            $dataset = $datasetPublication->getDataset();
+
+            $fc = $dataset->getResearchGroup()->getFundingCycle()->getName();
+            $proj = $dataset->getResearchGroup()->getName();
+            $udi = $dataset->getUdi();
+            $doi = $datasetPublication->getPublication()->getDoi();
+            $linkCreator = $datasetPublication->getCreator();
+            $createdOn = $datasetPublication->getModificationTimeStamp()->format('m/i/Y');
+            $data[] = array(
+                    'fc' => $fc,
+                    'proj' => $proj,
+                    'udi' => $udi,
+                    'doi' => $doi,
+                    'username' => $linkCreator->getAccount()->getUserId(),
+                    'created' => $createdOn
+                );
+        }
+        return $data;
+    }
+
     /**
      * Link a Publication to a Dataset by their respective IDs.
      *
