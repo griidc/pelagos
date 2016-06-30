@@ -13,13 +13,14 @@ $(document).ready(function() {
     });
     $('#link').button().click(function () {
         $.ajax({
-            url: pelagos_base_path + '/services/plinker/' + $('#udi').val() + '/' + $('#doi').val(),
-            method: 'LINK'
-        }).done(function (data) {
+            // Build route based on previously stored values of ID numbers.
+            url: Routing.generate("pelagos_api_publications_link", { "id" : $('#publicationId').text()} ) + '?dataset=' + $('#datasetId').text(),
+            method: 'LINK',
+        }).done(function (response) {
             $('#dialog-linked .dialog-text').html('Dataset ' + $('#udi').val() + ' and publication<br>' + $('#doi').val() + ' have been linked.');
             $('#dialog-linked').dialog('open');
-        }).fail(function (data) {
-            $('#dialog-error .dialog-text').text('Error: ' + data.responseJSON.message);
+        }).fail(function (response) {
+            $('#dialog-error .dialog-text').text('Error: ' + response.responseJSON.message);
             $('#dialog-error').dialog('open');
         });
     });
@@ -66,6 +67,7 @@ function retrievePublicationCitation() {
                     method: "GET"
                 }).done(function (data) {
                     $('#publication .pelagos-citation').html(data.citations[0].citationText);
+                    $('#publicationId').html(data.citations[0].id);
                     $('#publication .pelagos-citation').removeClass('pelagos-error');
                     // always show the citation div, in case it has been faded out
                     $('#publication .pelagos-citation').show();
@@ -121,6 +123,7 @@ function retrieveDatasetCitation() {
             }).done(function (data) {
                 $('#dataset .pelagos-citation').html(data);
                 $('#dataset .pelagos-citation').removeClass('pelagos-error');
+                $('#datasetId').html(datasets[0].id);
                 // always show the citation div, in case it has been faded out
                 $('#dataset .pelagos-citation').show();
                 valid_dataset = true;
