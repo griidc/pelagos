@@ -72,6 +72,10 @@ class DataDiscoveryController extends UIController
         if (!empty($request->query->get('geo_filter'))) {
             $geoFilter = $request->query->get('geo_filter');
         }
+        $textFilter = null;
+        if (!empty($request->query->get('filter'))) {
+            $textFilter = $request->query->get('filter');
+        }
         $datasets = array();
         $datasets['available'] = $this->getDatasets(
             array_merge(
@@ -83,7 +87,8 @@ class DataDiscoveryController extends UIController
                     )
                 )
             ),
-            $geoFilter
+            $geoFilter,
+            $textFilter
         );
         $datasets['restricted'] = $this->getDatasets(
             array_merge(
@@ -97,7 +102,8 @@ class DataDiscoveryController extends UIController
                     )
                 )
             ),
-            $geoFilter
+            $geoFilter,
+            $textFilter
         );
         $datasets['inReview'] = $this->getDatasets(
             array_merge(
@@ -108,7 +114,8 @@ class DataDiscoveryController extends UIController
                     )
                 )
             ),
-            $geoFilter
+            $geoFilter,
+            $textFilter
         );
         $datasets['identified'] = $this->getDatasets(
             array_merge(
@@ -119,7 +126,8 @@ class DataDiscoveryController extends UIController
                     )
                 )
             ),
-            $geoFilter
+            $geoFilter,
+            $textFilter
         );
 
         return $this->render(
@@ -133,12 +141,13 @@ class DataDiscoveryController extends UIController
     /**
      * Get datasets with properties matching any values specified by $criteria.
      *
-     * @param array  $criteria  An array of criteria.
-     * @param string $geoFilter A WKT string of a geometry to filter by.
+     * @param array  $criteria   An array of criteria.
+     * @param string $geoFilter  A WKT string of a geometry to filter by.
+     * @param string $textFilter A string of words to filter by.
      *
      * @return array
      */
-    protected function getDatasets(array $criteria, $geoFilter = null)
+    protected function getDatasets(array $criteria, $geoFilter = null, $textFilter = null)
     {
         $qb = $this->get('doctrine.orm.entity_manager')
                    ->getRepository(Dataset::class)
@@ -179,6 +188,35 @@ class DataDiscoveryController extends UIController
                 )
             );
             $qb->setParameter('geometry', "SRID=4326;$geoFilter::geometry");
+        }
+        if (null !== $textFilter) {
+            $searchProperties = array(
+                'dif.title',
+                'dif.abstract',
+                'datasetSubmission.title',
+                'datasetSubmission.abstract',
+                'researchGroup.name',
+            );
+            $orX = null;
+            $keywords = preg_split('/\s+/', $textFilter);
+            foreach ($keywords as $index => $keyword) {
+                foreach ($searchProperties as $searchProperty) {
+                    $like = $qb->expr()->like(
+                        $qb->expr()->lower($searchProperty),
+                        ':keyword' . $index . str_replace('.', '_', $searchProperty)
+                    );
+                    if (null === $orX) {
+                        $orX = $qb->expr()->orX($like);
+                    } else {
+                        $orX->add($like);
+                    }
+                    $qb->setParameter(
+                        'keyword' . $index . str_replace('.', '_', $searchProperty),
+                        '%' . strtolower($keyword) . '%'
+                    );
+                }
+            }
+            $qb->andWhere($orX);
         }
         $query = $qb->getQuery();
         return $query->getResult(Query::HYDRATE_ARRAY);
