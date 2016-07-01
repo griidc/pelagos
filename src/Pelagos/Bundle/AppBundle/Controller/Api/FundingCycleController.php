@@ -3,6 +3,7 @@
 namespace Pelagos\Bundle\AppBundle\Controller\Api;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Form\FormInterface;
 
 use FOS\RestBundle\Controller\Annotations as Rest;
@@ -79,7 +80,9 @@ class FundingCycleController extends EntityController
      * @ApiDoc(
      *   section = "Funding Cycles",
      *   parameters = {
-     *     {"name"="someProperty", "dataType"="string", "required"=false, "description"="Filter by someProperty"}
+     *     {"name"="properties", "dataType"="string", "required"=false, "format"="property1,property2,property3.subProperty,etc.", "description"="Return these properties"},
+     *     {"name"="orderBy", "dataType"="string", "required"=false, "format"="property1,property2,property3.subProperty,etc.", "description"="Order by these properties"},
+     *     {"name"="someProperty", "dataType"="string", "required"=false, "format"="value", "description"="Filter by someProperty"},
      *   },
      *   output = "array<Pelagos\Entity\FundingCycle>",
      *   statusCodes = {
@@ -90,13 +93,13 @@ class FundingCycleController extends EntityController
      *
      * @Rest\Get("")
      *
-     * @Rest\View(serializerEnableMaxDepthChecks = true)
-     *
-     * @return array
+     * @return Response
      */
     public function getCollectionAction(Request $request)
     {
-        return $this->handleGetCollection(FundingCycle::class, $request);
+        return $this->makeJsonResponse(
+            $this->handleGetCollection(FundingCycle::class, $request)
+        );
     }
 
     /**
