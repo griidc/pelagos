@@ -7,17 +7,16 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * DOI Entity class.
+ * DOI Request Entity class.
  *
  * @ORM\Entity
  */
-class DOI extends Entity
+class DoiRequest extends Entity
 {
-
     /**
      * A friendly name for this type of entity.
      */
-    const FRIENDLY_NAME = 'DOI';
+    const FRIENDLY_NAME = 'DOI Request';
 
     /**
      * Status value for a DOI Request that has been submitted for approval.
@@ -112,6 +111,19 @@ class DOI extends Entity
      * )
      */
     protected $publisher;
+
+    /**
+     * The start date of the estimated data sampling/generation period.
+     *
+     * @var \DateTime
+     *
+     * @ORM\Column(type="date")
+     *
+     * @Assert\NotBlank(
+     *     message="Publication Date is required"
+     * )
+     */
+    protected $publicationDate;
 
     /**
      * Sets the DOI.
@@ -240,12 +252,34 @@ class DOI extends Entity
     }
 
     /**
-     * Gets the publisher for this DOI.
+     * Gets the publisher for the DOI request.
      *
      * @return string The publisher for this DOI.
      */
     public function getPublisher()
     {
         return $this->publisher;
+    }
+
+    /**
+     * Gets the publication date of the DOI request.
+     *
+     * @return \DateTime The publication date for this DOI request.
+     */
+    public function getPublicationDate()
+    {
+        return $this->publicationDate;
+    }
+
+    /**
+     * Sets the publication date of the DOI request.
+     *
+     * @param \DateTime $publicationDate The publication date for this DOI request.
+     *
+     * @return void
+     */
+    public function setEstimatedEndDate(\DateTime $publicationDate)
+    {
+        $this->publicationDate = $publicationDate;
     }
 }
