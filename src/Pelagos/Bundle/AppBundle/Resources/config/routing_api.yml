@@ -76,6 +76,12 @@ publications:
     name_prefix: publications_
     prefix: publications
 
+dataset_publications:
+    type: rest
+    resource: Pelagos\Bundle\AppBundle\Controller\Api\DatasetPublicationController
+    name_prefix: dataset_publications_
+    prefix: dataset_publications
+
 metadata:
     type: rest
     resource: Pelagos\Bundle\AppBundle\Controller\Api\MetadataController

@@ -4,7 +4,7 @@ $(document).ready(function() {
     $('#linkList').dataTable( {
         "ajax":
         {
-            "url": Routing.generate('pelagos_api_publications_get_collection'),
+            "url": Routing.generate('pelagos_api_dataset_publications_get_collection'),
             "cache": true,
             "dataSrc": ""
         },

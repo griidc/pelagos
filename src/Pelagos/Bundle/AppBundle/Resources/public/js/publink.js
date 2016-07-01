@@ -14,7 +14,7 @@ $(document).ready(function() {
     $('#link').button().click(function () {
         $.ajax({
             // Build route based on previously stored values of ID numbers.
-            url: Routing.generate("pelagos_api_publications_link", { "id" : $('#publicationId').text()} ) + '?dataset=' + $('#datasetId').text(),
+            url: Routing.generate("pelagos_api_dataset_publications_link", { "id" : $('#publicationId').text()} ) + '?dataset=' + $('#datasetId').text(),
             method: 'LINK',
         }).done(function (response) {
             $('#dialog-linked .dialog-text').html('Dataset ' + $('#udi').val() + ' and publication<br>' + $('#doi').val() + ' have been linked.');
