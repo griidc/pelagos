@@ -116,12 +116,15 @@ abstract class EntityController extends FOSRestController
      * @param string  $formType    The type of form.
      * @param string  $entityClass The type of entity.
      * @param Request $request     The request object.
+     * @param Entity  $entity      An optional entity to use instead of creating a new one.
      *
      * @return Entity The newly created entity.
      */
-    public function handlePost($formType, $entityClass, Request $request)
+    public function handlePost($formType, $entityClass, Request $request, Entity $entity = null)
     {
-        $entity = new $entityClass;
+        if (null === $entity) {
+            $entity = new $entityClass;
+        }
         $this->processForm($formType, $entity, $request, 'POST');
         $this->container->get('pelagos.entity.handler')->create($entity);
         return $entity;
