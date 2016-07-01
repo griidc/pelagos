@@ -148,14 +148,14 @@ class DoiRequest extends Entity
     }
 
     /**
-    * Set the DOI request status.
-    *
-    * @see STATUS_* constants.
-    *
-    * @param integer $status The status of the DOI request.
-    *
-    * @return void
-    */
+     * Set the DOI request status.
+     *
+     * @param integer $status The status of the DOI request.
+     *
+     * @see STATUS_* constants.
+     *
+     * @return void
+     */
     protected function setStatus($status)
     {
         $this->status = $status;
