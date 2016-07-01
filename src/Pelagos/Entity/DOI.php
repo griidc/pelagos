@@ -4,8 +4,7 @@ namespace Pelagos\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * DOI Entity class.
@@ -24,17 +23,17 @@ class DOI extends Entity
      * Status value for a DOI Request that has been submitted for approval.
      */
     const STATUS_SUBMITTED = 0;
-    
+
     /**
      * Status value for a DOI Request that is approved.
      */
     const STATUS_APPROVED = 1;
-    
+
     /**
      * Status value for a DOI Request, when the DOI has been generated and issued.
      */
     const STATUS_ISSUED = 2;
-    
+
     /**
      * The DOI for this Dataset.
      *
@@ -43,7 +42,7 @@ class DOI extends Entity
      * @ORM\Column(nullable=true)
      */
     protected $doi;
-    
+
     /**
      * The status of this DOI.
      *
@@ -54,13 +53,11 @@ class DOI extends Entity
      * @ORM\Column(type="smallint")
      */
     protected $status = self::STATUS_SUBMITTED;
-    
+
     /**
      * The URL for this DOI.
      *
-     * @var string $url
-     *
-     * @access protected
+     * @var string
      *
      * @ORM\Column
      *
@@ -72,9 +69,13 @@ class DOI extends Entity
      * )
      */
     protected $url;
-    
+
     /**
-     * The DOI creator for this DOI.
+     * The DOI Responsible Party (Creator) for this DOI.
+     *
+     * Since creator is already used in the base entity,
+     * this attribute is called responsibleParty,
+     * but is really the DOI creator.
      *
      * @var string
      *
@@ -84,8 +85,8 @@ class DOI extends Entity
      *     message="Creator is required"
      * )
      */
-    protected $creator;
-    
+    protected $responsibleParty;
+
     /**
      * The title for this DOI.
      *
@@ -98,7 +99,7 @@ class DOI extends Entity
      * )
      */
     protected $title;
-    
+
     /**
      * The publisher for this DOI.
      *
@@ -111,7 +112,7 @@ class DOI extends Entity
      * )
      */
     protected $publisher;
-    
+
     /**
      * Sets the DOI.
      *
@@ -123,7 +124,7 @@ class DOI extends Entity
     {
         $this->doi = $doi;
     }
-    
+
     /**
      * Gets the DOI.
      *
@@ -133,12 +134,12 @@ class DOI extends Entity
     {
         return $this->doi;
     }
-    
+
     /**
     * Set the DOI request status.
     *
     * @see STATUS_* constants.
-    * 
+    *
     * @param integer $status The status of the DOI request.
     *
     * @return void
@@ -147,7 +148,7 @@ class DOI extends Entity
     {
         $this->status = $status;
     }
-    
+
     /**
      * Returns the status of this DIF.
      *
@@ -159,7 +160,7 @@ class DOI extends Entity
     {
         return $this->status;
     }
-    
+
     /**
      * Setter for url.
      *
@@ -171,7 +172,7 @@ class DOI extends Entity
     {
         $this->url = $url;
     }
-    
+
     /**
      * Getter for url.
      *
@@ -181,29 +182,29 @@ class DOI extends Entity
     {
         return $this->url;
     }
-    
+
     /**
-     * Setter for creator.
+     * Setter for Responsible Party (creator).
      *
-     * @param string $creator Creator of the DOI.
+     * @param string $responsibleParty The Responsible Party (Creator) of the DOI.
      *
      * @return void
      */
-    public function setCreator($creator)
+    public function setResponsibleParty($responsibleParty)
     {
-        $this->creator = $creator;
+        $this->creator = $responsibleParty;
     }
-    
+
     /**
-     * Getter for creator.
+     * Getter for Responsible Party (creator).
      *
-     * @return string Creator of the DOI.
+     * @return string The Responsible Party (Creator) of the DOI.
      */
-    public function getCreator()
+    public function getResponsibleParty()
     {
-        return $this->creator;
+        return $this->responsibleParty;
     }
-    
+
     /**
      * Sets the title for this DOI.
      *
@@ -215,7 +216,7 @@ class DOI extends Entity
     {
         $this->title = $title;
     }
-    
+
     /**
      * Gets the title for this DOI.
      *
@@ -225,7 +226,7 @@ class DOI extends Entity
     {
         return $this->title;
     }
-    
+
     /**
      * Sets the publisher for this DOI.
      *
@@ -237,7 +238,7 @@ class DOI extends Entity
     {
         $this->publisher = $publisher;
     }
-    
+
     /**
      * Gets the publisher for this DOI.
      *
