@@ -4,15 +4,16 @@ $(document).ready(function() {
     $('#linkList').dataTable( {
         "ajax":
         {
-            "url": Routing.generate('pelagos_api_dataset_publications_get_collection'),
+            "url": Routing.generate('pelagos_api_dataset_publications_get_collection') + '?properties=dataset.researchGroup.fundingCycle.name,dataset.researchGroup.name,dataset.udi,publication.doi,creator.lastName,creator.firstName,creationTimeStamp',
             "cache": true,
             "dataSrc": ""
         },
         "aoColumns": [
+            { "mDataProp": "id", "sClass": "id" },
             { "mDataProp": "fc" },
             { "mDataProp": "proj" },
-            { "mDataProp": "udi" },
-            { "mDataProp": "doi" },
+            { "mDataProp": "udi", "sClass": "udi" },
+            { "mDataProp": "doi", "sClass": "doi" },
             { "mDataProp": "username" },
             { "mDataProp": "created" },
         ],
@@ -69,30 +70,37 @@ $(document).ready(function() {
         $('.doi').qtip({
             content: {
                 text: function(event, api) {
+                    var doi = $(this).text();
                     $.ajax({
-                        url: pelagos_base_path + '/services/citation/publication/' + $(this).text()
+                        url: Routing.generate('pelagos_api_publications_get_cached_citation') + '?doi=' + doi
                     })
                     .then(function(content) {
-                        api.set('content.text', content.text);
+                        api.set('content.text', content);
                     }, function(xhr, status, error) {
                         api.set('content.text', status + ': ' + error);
                     });
-                    return '<img src="static/images/throbber.gif"> Looking up publication citation...';
+                    return 'Loading...';
                 }
             }
         });
         $('.udi').qtip({
             content: {
                 text: function(event, api) {
+                    var udi = $(this).text();
                     $.ajax({
-                        url: pelagos_base_path + '/services/citation/dataset/' + $(this).text()
+                        url: Routing.generate('pelagos_api_datasets_get_collection') + '?udi=' + udi + '&properties=id'
                     })
                     .then(function(content) {
-                        api.set('content.text', content.text);
+                        $.ajax({
+                            url: Routing.generate('pelagos_api_datasets_get_citation', {"id": content[0].id})
+                        })
+                        .then(function(data) {
+                            api.set('content.text', data);
+                        });
                     }, function(xhr, status, error) {
                         api.set('content.text', status + ': ' + error);
                     });
-                    return '<img src="static/images/throbber.gif"> Looking up dataset citation...';
+                    return 'Loading...';
                 }
             }
         });

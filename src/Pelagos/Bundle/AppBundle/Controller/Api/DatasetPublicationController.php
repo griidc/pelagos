@@ -50,22 +50,21 @@ class DatasetPublicationController extends EntityController
         $collection = $this->handleGetCollection(DatasetPublication::class, $request);
         $data = array();
         foreach ($collection as $datasetPublication) {
-            $dataset = $datasetPublication->getDataset();
-
-            $linkId = $datasetPublication->getId();
-            $fc = $dataset->getResearchGroup()->getFundingCycle()->getName();
-            $proj = $dataset->getResearchGroup()->getName();
-            $udi = $dataset->getUdi();
-            $doi = $datasetPublication->getPublication()->getDoi();
-            $linkCreator = $datasetPublication->getCreator();
-            $createdOn = $datasetPublication->getModificationTimeStamp()->format('m/d/Y H:i:s') . 'z';
+            $dataset = $datasetPublication['dataset'];
+            $linkId = $datasetPublication['id'];
+            $fc = $dataset['researchGroup']['fundingCycle']['name'];
+            $proj = $dataset['researchGroup']['name'];
+            $udi = $dataset['udi'];
+            $doi = $datasetPublication['publication']['doi'];
+            $linkCreator = $datasetPublication['creator']['firstName'] . ' ' . $datasetPublication['creator']['lastName'];
+            $createdOn = $datasetPublication['creationTimeStamp']->setTimezone(new \DateTimeZone ('America/Chicago'))->format('m/d/y H:i:s') . ' CDT';
             $data[] = array(
                     'id' => $linkId,
                     'fc' => $fc,
                     'proj' => $proj,
                     'udi' => $udi,
                     'doi' => $doi,
-                    'username' => $linkCreator->getAccount()->getUserId(),
+                    'username' => $linkCreator,
                     'created' => $createdOn
                 );
         }

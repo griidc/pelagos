@@ -4,6 +4,7 @@ namespace Pelagos\Bundle\AppBundle\Controller\Api;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
@@ -101,5 +102,44 @@ class PublicationController extends EntityController
     public function getAction($id)
     {
         return $this->handleGetOne(Publication::class, $id);
+    }
+
+    /**
+     * Retrieve a cached citation for a given DOI.
+     *
+     * @param Request $request A Symfony http request object, data includes the doi.
+     *
+     * @ApiDoc(
+     *   section = "Publications",
+     *   output = "Pelagos\Entity\PublicationCitation",
+     *   statusCodes = {
+     *     200 = "The requested cached Publication citation was successfully retrieved.",
+     *     404 = "The requested cached Publication citation was not found.",
+     *     500 = "An internal error has occurred.",
+     *   }
+     * )
+     *
+     * @throws \Exception Upon internal unexpected result.
+     * @throws \Exception If more than one cached publication found by DOI.
+     *
+     * @return PublicationCitation|null
+     */
+    public function getCachedCitationAction(Request $request)
+    {
+        $doi = $request->query->get('doi');
+        $entityHandler = $this->get('pelagos.entity.handler');
+
+        $publications = $entityHandler->getBy(Publication::class, array('doi' => $doi));
+        if (gettype($publications) == 'array') {
+            if (count($publications) == 1) {
+                return new JsonResponse($publications[0]->getCitations()[0]->getCitationText());
+            } elseif (count($publications) > 1) {
+                throw new \Exception("Unexpected system error. DOI $doi references more than 1 cached Publication.");
+            } else {
+                return null;
+            }
+        } else {
+            throw new \Exception('Unexpected system error. Expected array of Publications, but got something else.');
+        }
     }
 }
