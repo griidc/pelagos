@@ -17,6 +17,14 @@
     %}
         {{ add_css(asset_url) }}
     {% endstylesheets %}
+    
+     {{
+        add_js(
+            [
+                '//cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js',
+            ]
+        )
+    }}
 
     {% javascripts
         '@PelagosAppBundle/Resources/public/js/doi.js'

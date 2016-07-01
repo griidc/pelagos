@@ -30,6 +30,9 @@ class DoiRequestType extends AbstractType
         $builder
             ->add('url', TextType::class, array(
                 'label' => 'Digital Object URL:',
+                'attr' => array(
+                    'maxsize' => 10,
+                ),
             ))
             ->add('responsibleParty', TextType::class, array(
                 'label' => 'Digital Object Creator(s):',
