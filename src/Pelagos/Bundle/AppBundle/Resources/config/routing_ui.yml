@@ -39,3 +39,6 @@ pelagos_publication_dataset_link_ui:
 
 pelagos_dataland_ui:
     resource: Pelagos\Bundle\AppBundle\Controller\UI\DatalandController
+
+pelagos_stats_ui:
+    resource: Pelagos\Bundle\AppBundle\Controller\UI\StatsController

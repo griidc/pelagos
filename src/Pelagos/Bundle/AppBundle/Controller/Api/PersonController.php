@@ -107,7 +107,9 @@ class PersonController extends EntityController
      * @ApiDoc(
      *   section = "People",
      *   parameters = {
-     *     {"name"="someProperty", "dataType"="string", "required"=false, "description"="Filter by someProperty"}
+     *     {"name"="properties", "dataType"="string", "required"=false, "format"="property1,property2,property3.subProperty,etc.", "description"="Return these properties"},
+     *     {"name"="orderBy", "dataType"="string", "required"=false, "format"="property1,property2,property3.subProperty,etc.", "description"="Order by these properties"},
+     *     {"name"="someProperty", "dataType"="string", "required"=false, "format"="value", "description"="Filter by someProperty"},
      *   },
      *   output = "array<Pelagos\Entity\Person>",
      *   statusCodes = {
@@ -118,13 +120,13 @@ class PersonController extends EntityController
      *
      * @Rest\Get("")
      *
-     * @Rest\View(serializerEnableMaxDepthChecks = true)
-     *
-     * @return array
+     * @return Response
      */
     public function getCollectionAction(Request $request)
     {
-        return $this->handleGetCollection(Person::class, $request);
+        return $this->makeJsonResponse(
+            $this->handleGetCollection(Person::class, $request)
+        );
     }
 
     /**
