@@ -25,6 +25,9 @@ if (in_array(
         'pelagos_app_ui_datasetmonitoring_datasetdetails',
         'pelagos_app_ui_dataland_metadata',
         'pelagos_app_ui_dataland_download',
+        'pelagos_app_ui_stats_getdatasetsizeranges',
+        'pelagos_app_ui_stats_getdatasetovertime',
+        'pelagos_app_ui_stats_getsummaryofrecords',
     )
 )) {
     $response->send();

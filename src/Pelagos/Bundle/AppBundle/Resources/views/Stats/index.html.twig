@@ -1,0 +1,53 @@
+{% extends "PelagosAppBundle::layout.html.twig" %}
+
+{% block head %}
+    {% stylesheets  '@PelagosAppBundle/Resources/public/css/stats.css' %}
+        {{ add_css(asset_url) }}
+    {% endstylesheets  %}
+
+    {{
+        add_js(
+            [
+                '//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.min.js',
+                '//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.resize.min.js',
+                '//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.time.min.js',
+                '//cdnjs.cloudflare.com/ajax/libs/flot/0.8.2/jquery.flot.pie.min.js',
+            ]
+        )
+    }}
+
+    {% javascripts '@PelagosAppBundle/Resources/public/js/jquery.flot.barnumbers.js' %}
+        {{ add_js(asset_url) }}
+    {% endjavascripts %}
+
+    {% javascripts '@FOSJsRoutingBundle/Resources/public/js/router.js' %}
+        {{ add_js(asset_url) }}
+    {% endjavascripts %}
+
+    {% javascripts '@PelagosAppBundle/Resources/public/js/stats.js' %}
+        {{ add_js(asset_url) }}
+    {% endjavascripts %}
+
+    {{ add_js(path('fos_js_routing_js', { callback: 'fos.Router.setData' })) }}
+{% endblock %}
+
+{% block body %}
+<div id="stats-tabs">
+    <div style="display: table-cell; height:100%;">
+        <div class="stats-overview" style="margin-bottom: -10px;">
+            <div class="stats-overview-row">
+                {% include "PelagosAppBundle:Stats:total-records-over-time.html.twig" %}
+            </div>
+        </div>
+        <div class="stats-overview">
+            <div class="stats-overview-row">
+                {% include "PelagosAppBundle:Stats:dataset-size-ranges.html.twig" %}
+                {% include "PelagosAppBundle:Stats:program-resources.html.twig" %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="section_canvas_div">
+</div>
+{% endblock %}
