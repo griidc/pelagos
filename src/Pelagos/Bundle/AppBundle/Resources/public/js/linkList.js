@@ -99,11 +99,10 @@ $(document).ready(function() {
     });
 
     $('#delete_button').click( function ( ) {
-        var doi = table.row('.selected').data().doi;
-        var udi = table.row('.selected').data().udi;
-        $.when(confirmDialog(doi, udi)).done(function() {
+        var id = table.row('.selected').data().id;
+        $.when(confirmDialog()).done(function() {
             $.ajax({
-                url: pelagos_base_path + "/services/plinker/" + udi + "/" + doi,
+                url: Routing.generate('pelagos_api_dataset_publications_delete') + '/' + id,
                 method: "DELETE"
             }).done(function () {
                 $('.selected').fadeOut('slow', function () {
@@ -123,7 +122,7 @@ $(document).ready(function() {
     });
 });
 
-function confirmDialog(doi, udi)
+function confirmDialog()
 {
     return $.Deferred(function() {
         var self = this;
@@ -134,7 +133,6 @@ function confirmDialog(doi, udi)
             title: 'Please Confirm',
             buttons: {
                 "Delete?": function() {
-                    console.log(doi, udi);
                     $( this ).dialog( "close" );
                     self.resolve();
                 },

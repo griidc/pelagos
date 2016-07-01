@@ -28,7 +28,7 @@ class DatasetPublicationController extends EntityController
      * @param Request $request The request object.
      *
      * @ApiDoc(
-     *   section = "PublicationDatasets",
+     *   section = "Publication to Dataset Association",
      *   parameters = {
      *     {"name"="someProperty", "dataType"="string", "required"=false, "description"="Filter by someProperty"}
      *   },
@@ -52,13 +52,15 @@ class DatasetPublicationController extends EntityController
         foreach ($collection as $datasetPublication) {
             $dataset = $datasetPublication->getDataset();
 
+            $linkId = $datasetPublication->getId();
             $fc = $dataset->getResearchGroup()->getFundingCycle()->getName();
             $proj = $dataset->getResearchGroup()->getName();
             $udi = $dataset->getUdi();
             $doi = $datasetPublication->getPublication()->getDoi();
             $linkCreator = $datasetPublication->getCreator();
-            $createdOn = $datasetPublication->getModificationTimeStamp()->format('m/i/Y');
+            $createdOn = $datasetPublication->getModificationTimeStamp()->format('m/d/Y H:i:s') . 'z';
             $data[] = array(
+                    'id' => $linkId,
                     'fc' => $fc,
                     'proj' => $proj,
                     'udi' => $udi,
@@ -77,7 +79,7 @@ class DatasetPublicationController extends EntityController
      * @param Request $request A Request object.
      *
      * @ApiDoc(
-     *   section = "Publications",
+     *   section = "Publication to Dataset Association",
      *   parameters = {
      *                    {"name"="dataset",
      *                      "dataType"="integer",
@@ -127,6 +129,28 @@ class DatasetPublicationController extends EntityController
         $entityHandler = $this->get('pelagos.entity.handler');
         $entityHandler->create($dataPub);
 
+        return $this->makeNoContentResponse();
+    }
+
+   /**
+     * Delete a Publication to Dataset Association.
+     *
+     * @param integer $id The id of the Publication to Dataset Association to delete.
+     *
+     * @ApiDoc(
+     *   section = "Publication to Dataset Association",
+     *   statusCodes = {
+     *     204 = "The Publication to Dataset Association was successfully deleted.",
+     *     404 = "The requested Publication to Dataset Association was not found.",
+     *     500 = "An internal error has occurred.",
+     *   }
+     * )
+     *
+     * @return Response A response object with an empty body and a "no content" status code.
+     */
+    public function deleteAction($id)
+    {
+        $this->handleDelete(DatasetPublication::class, $id);
         return $this->makeNoContentResponse();
     }
 }
