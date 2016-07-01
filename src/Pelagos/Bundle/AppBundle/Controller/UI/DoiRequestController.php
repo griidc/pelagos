@@ -7,6 +7,10 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use Pelagos\Bundle\AppBundle\Form\DoiRequestType;
+
+use Pelagos\Entity\DoiRequest;
+
 /**
  * The DOI Request controller for the Pelagos UI App Bundle.
  *
@@ -29,12 +33,12 @@ class DoiRequestController extends UIController
             return $this->render('PelagosAppBundle:DIF:notLoggedIn.html.twig');
         }
 
-        // $dif = new DIF;
-        // $form = $this->get('form.factory')->createNamed(null, DIFType::class, $dif);
+        $doiRequest = new DoiRequest;
+        $form = $this->get('form.factory')->createNamed(null, DoiRequestType::class, $doiRequest);
 
         return $this->render(
             'PelagosAppBundle:DoiRequest:index.html.twig',
-            array()
+            array('form' => $form->createView())
         );
     }
 }

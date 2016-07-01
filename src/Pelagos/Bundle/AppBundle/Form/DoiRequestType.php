@@ -34,7 +34,7 @@ class DoiRequestType extends AbstractType
             ->add('responsibleParty', TextType::class, array(
                 'label' => 'Digital Object Creator(s):',
             ))
-            ->add('title', TextareaType::class, array(
+            ->add('title', TextType::class, array(
                 'label' => 'Digital Object Title:',
             ))
             ->add('publisher', TextType::class, array(
@@ -61,7 +61,7 @@ class DoiRequestType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Pelagos\Entity\DOI',
+            'data_class' => 'Pelagos\Entity\DoiRequest',
             'allow_extra_fields' => true,
         ));
     }

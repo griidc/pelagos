@@ -50,9 +50,9 @@
     <span id="qtip_url" style="float:right;">
         <img src="/images/icons/info.png">
     </span>
-    <label for="txtURL"><em>*</em>Digital Object URL:</label>
+    {{ form_label(form.url) }}
     <br />
-    <input name="txtURL" id="txtURL" type="url" size="120"/>
+    {{ form_widget(form.url) }}
 </fieldset>
 
 <fieldset id="qcreator">
