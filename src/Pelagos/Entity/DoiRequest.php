@@ -34,7 +34,7 @@ class DoiRequest extends Entity
     const STATUS_ISSUED = 2;
 
     /**
-     * The DOI for this Dataset.
+     * The DOI for this Doi Request.
      *
      * @var string
      *
@@ -81,7 +81,7 @@ class DoiRequest extends Entity
      * @ORM\Column
      *
      * @Assert\NotBlank(
-     *     message="Creator is required"
+     *     message="DOI Creator is required"
      * )
      */
     protected $responsibleParty;
@@ -204,7 +204,7 @@ class DoiRequest extends Entity
      */
     public function setResponsibleParty($responsibleParty)
     {
-        $this->creator = $responsibleParty;
+        $this->responsibleParty = $responsibleParty;
     }
 
     /**
@@ -278,8 +278,18 @@ class DoiRequest extends Entity
      *
      * @return void
      */
-    public function setEstimatedEndDate(\DateTime $publicationDate)
+    public function setPublicationDate(\DateTime $publicationDate)
     {
         $this->publicationDate = $publicationDate;
+    }
+    
+    /**
+     * Approve DOI Request.
+     *
+     * @return void
+     */
+    public function approve()
+    {
+        $this->setStatus(self::STATUS_APPROVED);
     }
 }

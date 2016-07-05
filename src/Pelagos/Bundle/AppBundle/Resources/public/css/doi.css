@@ -1,3 +1,25 @@
+.emRequired::before
+{
+    font-weight: bold; color:#FF0000;
+    content:"*";
+}
+
+.helpSection img:hover
+{
+    opacity:1;   
+}
+
+.helpSection
+{
+    float:right;
+    
+}
+
+.tooltiptext
+{
+    display: none;
+}
+
 .ccc {
 background: -webkit-gradient(linear, bottom, left 175px, from(#CCCCCC), to(#EEEEEE));
 background: -moz-linear-gradient(bottom, #CCCCCC, #EEEEEE 175px);
@@ -87,6 +109,7 @@ padding:50px;
 -webkit-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
 -moz-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
 box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+}
 
 .info {
 margin:auto;

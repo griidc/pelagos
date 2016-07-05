@@ -31,23 +31,34 @@ class DoiRequestType extends AbstractType
             ->add('url', TextType::class, array(
                 'label' => 'Digital Object URL:',
                 'attr' => array(
-                    'maxsize' => 10,
+                    'size' => 120,
                 ),
             ))
             ->add('responsibleParty', TextType::class, array(
                 'label' => 'Digital Object Creator(s):',
+                'attr' => array(
+                    'size' => 120,
+                ),
             ))
             ->add('title', TextType::class, array(
                 'label' => 'Digital Object Title:',
+                'attr' => array(
+                    'size' => 120,
+                ),
             ))
             ->add('publisher', TextType::class, array(
                 'label' => 'Digital Object Publisher:',
-                'data' => 'Harte Research Institute'
+                'data' => 'Harte Research Institute',
+                'attr' => array(
+                    'size' => 120,
+                ),
             ))
             ->add('publicationDate', DateType::class, array(
                 'label' => 'Digital Object Publication Date:',
                 'required' => true,
-                'attr' => array('placeholder' => 'yyyy-mm-dd'),
+                'attr' => array(
+                    'placeholder' => 'yyyy-mm-dd',
+                ),
                 'widget' => 'single_text',
                 'html5' => false,
                 'format' => 'yyyy-MM-dd',
