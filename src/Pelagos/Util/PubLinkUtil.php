@@ -51,7 +51,9 @@ class PubLinkUtil
         curl_setopt($ch, CURLOPT_HEADER, false);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
         $curlResponse = curl_exec($ch);
+        $errorText = curl_error($ch);
         $curlInfo = curl_getinfo($ch);
         curl_close($ch);
         $status = $curlInfo['http_code'];
@@ -62,7 +64,7 @@ class PubLinkUtil
             $citation = null;
         }
 
-        return array('citation' => $citation, 'status' => $status);
+        return array('citation' => $citation, 'status' => $status, 'errorText' => $errorText);
     }
 
     /**

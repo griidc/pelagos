@@ -37,9 +37,11 @@ class PublicationController extends EntityController
      *   }
      * )
      *
-     * @throws \Exception Upon DOI pull failure.
-     * @throws \Exception If more than one cached publication found by DOI.
      * @throws \Exception Upon internal unexpected result.
+     * @throws \Exception If more than one cached publication found by DOI.
+     * @throws \Exception If DOI couldn't be resolved by doi.org.
+     * @throws \Exception If doi.org couldn't site this type of DOI (dataset doi).
+     * @throws \Exception Upon other DOI pull failure.
      *
      * @return PublicationCitation
      */
@@ -51,6 +53,11 @@ class PublicationController extends EntityController
         $doi = $request->request->get('doi');
         $pubLinkUtil = $this->get('pelagos.util.publink');
         $entityHandler = $this->get('pelagos.entity.handler');
+
+
+        if (preg_match('/^10\./', $doi) != 1) {
+            throw new \Exception('Invalid format or missing DOI.');
+        }
 
         // Attempt to get publication by DOI.
         $publications = $entityHandler->getBy(Publication::class, array('doi' => $doi));
@@ -79,8 +86,14 @@ class PublicationController extends EntityController
                     $entityHandler->create($publicationCitation);
 
                     return $this->makeCreatedResponse('pelagos_api_publications_get', $publication->getId());
+                } elseif (404 == $citationStruct['status']) {
+                    throw new \Exception('This DOI could not be found at doi.org. (404)');
+                } elseif (406 == $citationStruct['status']) {
+                    throw new \Exception('Doi.org could not generate a citation.  It is likely a dataset DOI. (406)');
                 } else {
-                    throw new \Exception('Unable to pull citation from doi.org.');
+                    $errorText = $citationStruct['errorText'];
+                    throw new \Exception('Unable to pull citation from doi.org.  Reason: ('
+                        . $citationStruct['status'] . ") $errorText");
                 }
             } else {
                 throw new \Exception("Unexpected system error. DOI $doi references more than 1 cached Publication.");
