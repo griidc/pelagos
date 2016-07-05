@@ -8,6 +8,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Query;
 
 use FOS\RestBundle\Controller\Annotations as Rest;
 
@@ -47,7 +48,20 @@ class DatasetPublicationController extends EntityController
     */
     public function getCollectionAction(Request $request)
     {
-        $collection = $this->handleGetCollection(DatasetPublication::class, $request);
+        $entityHandler = $this->get('pelagos.entity.handler');
+        $collection = $entityHandler->getAll(DatasetPublication::class,
+            array('creationTimeStamp' => 'DESC'),
+            array(
+                    'dataset.researchGroup.fundingCycle.name',
+                    'dataset.researchGroup.name',
+                    'dataset.udi',
+                    'publication.doi',
+                    'creator.lastName',
+                    'creator.firstName',
+                    'creationTimeStamp',
+                ),
+                Query::HYDRATE_ARRAY
+            );
         $data = array();
         foreach ($collection as $datasetPublication) {
             $dataset = $datasetPublication['dataset'];
