@@ -37,6 +37,7 @@ class PublicationController extends EntityController
      *   }
      * )
      *
+     * @throws \Exception If DOI in request is missing or not 10.something format.
      * @throws \Exception Upon internal unexpected result.
      * @throws \Exception If more than one cached publication found by DOI.
      * @throws \Exception If DOI couldn't be resolved by doi.org.

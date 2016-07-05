@@ -23,28 +23,28 @@ use Pelagos\Entity\Publication;
 class DatasetPublicationController extends EntityController
 {
    /**
-     * Get a collection of PublicationDatasets
-     *
-     * @param Request $request The request object.
-     *
-     * @ApiDoc(
-     *   section = "Publication to Dataset Association",
-     *   parameters = {
-     *     {"name"="someProperty", "dataType"="string", "required"=false, "description"="Filter by someProperty"}
-     *   },
-     *   output = "array<Pelagos\Entity\DatasetPublication>",
-     *   statusCodes = {
-     *     200 = "The requested collection of PublicationDatasets was successfully retrieved.",
-     *     500 = "An internal error has occurred.",
-     *   }
-     * )
-     *
-     * @Rest\Get("")
-     *
-     * @Rest\View(serializerEnableMaxDepthChecks = true)
-     *
-     * @return array
-     */
+    * Get a collection of PublicationDatasets.
+    *
+    * @param Request $request The request object.
+    *
+    * @ApiDoc(
+    *   section = "Publication to Dataset Association",
+    *   parameters = {
+    *     {"name"="someProperty", "dataType"="string", "required"=false, "description"="Filter by someProperty"}
+    *   },
+    *   output = "array<Pelagos\Entity\DatasetPublication>",
+    *   statusCodes = {
+    *     200 = "The requested collection of PublicationDatasets was successfully retrieved.",
+    *     500 = "An internal error has occurred.",
+    *   }
+    * )
+    *
+    * @Rest\Get("")
+    *
+    * @Rest\View(serializerEnableMaxDepthChecks = true)
+    *
+    * @return array
+    */
     public function getCollectionAction(Request $request)
     {
         $collection = $this->handleGetCollection(DatasetPublication::class, $request);
@@ -56,8 +56,10 @@ class DatasetPublicationController extends EntityController
             $proj = $dataset['researchGroup']['name'];
             $udi = $dataset['udi'];
             $doi = $datasetPublication['publication']['doi'];
-            $linkCreator = $datasetPublication['creator']['firstName'] . ' ' . $datasetPublication['creator']['lastName'];
-            $createdOn = $datasetPublication['creationTimeStamp']->setTimezone(new \DateTimeZone ('America/Chicago'))->format('m/d/y H:i:s') . ' CDT';
+            $linkCreator = $datasetPublication['creator']['firstName'] .
+                ' ' . $datasetPublication['creator']['lastName'];
+            $createdOn = $datasetPublication['creationTimeStamp']->
+                setTimezone(new \DateTimeZone('America/Chicago'))->format('m/d/y H:i:s') . ' CDT';
             $data[] = array(
                     'id' => $linkId,
                     'fc' => $fc,
@@ -132,21 +134,21 @@ class DatasetPublicationController extends EntityController
     }
 
    /**
-     * Delete a Publication to Dataset Association.
-     *
-     * @param integer $id The id of the Publication to Dataset Association to delete.
-     *
-     * @ApiDoc(
-     *   section = "Publication to Dataset Association",
-     *   statusCodes = {
-     *     204 = "The Publication to Dataset Association was successfully deleted.",
-     *     404 = "The requested Publication to Dataset Association was not found.",
-     *     500 = "An internal error has occurred.",
-     *   }
-     * )
-     *
-     * @return Response A response object with an empty body and a "no content" status code.
-     */
+    * Delete a Publication to Dataset Association.
+    *
+    * @param integer $id The id of the Publication to Dataset Association to delete.
+    *
+    * @ApiDoc(
+    *   section = "Publication to Dataset Association",
+    *   statusCodes = {
+    *     204 = "The Publication to Dataset Association was successfully deleted.",
+    *     404 = "The requested Publication to Dataset Association was not found.",
+    *     500 = "An internal error has occurred.",
+    *   }
+    * )
+    *
+    * @return Response A response object with an empty body and a "no content" status code.
+    */
     public function deleteAction($id)
     {
         $this->handleDelete(DatasetPublication::class, $id);

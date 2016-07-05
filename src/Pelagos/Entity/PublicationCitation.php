@@ -52,9 +52,9 @@ class PublicationCitation extends Entity
      *
      * Will create a Citation Object from given parameters.
      *
-     * @param string    $citationText Citation Text.
-     * @param string    $style        Citation Style commonly APA.
-     * @param string    $locale       Citation Text Locale commonly utf-8.
+     * @param string $citationText Citation Text.
+     * @param string $style        Citation Style commonly APA.
+     * @param string $locale       Citation Text Locale commonly utf-8.
      */
     public function __construct(
         $citationText = null,
@@ -70,8 +70,10 @@ class PublicationCitation extends Entity
      * Setter for Publication.
      *
      * @param Publication $publication A Pelagos Publication.
+     *
+     * @return void
      */
-    public function setPublication($publication)
+    public function setPublication(Publication $publication)
     {
         $this->publication = $publication;
     }
