@@ -8,15 +8,15 @@ $(document).ready(function() {
             "cache": true,
             "dataSrc": ""
         },
-        "aoColumns": [
-            { "mDataProp": "id", "sClass": "id" },
-            { "mDataProp": "fc" },
-            { "mDataProp": "proj" },
-            { "mDataProp": "udi", "sClass": "udi" },
-            { "mDataProp": "doi", "sClass": "doi" },
-            { "mDataProp": "username" },
-            { "mDataProp": "created" },
+        "columns": [
+            { "data": "fc" },
+            { "data": "proj" },
+            { "data": "udi", "sClass": "udi" },
+            { "data": "doi", "sClass": "doi" },
+            { "data": "username" },
+            { "data": "created" },
         ],
+        "order": [[ 5, "desc" ]],
         "deferRender": true,
         "autoWidth": true,
         "lengthMenu": [ [10, 25, 100, 250, -1], [10 , 25, 100, 250, "All"] ],
