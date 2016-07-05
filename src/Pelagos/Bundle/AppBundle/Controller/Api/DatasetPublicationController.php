@@ -26,8 +26,6 @@ class DatasetPublicationController extends EntityController
    /**
     * Get a collection of PublicationDatasets.
     *
-    * @param Request $request The request object.
-    *
     * @ApiDoc(
     *   section = "Publication to Dataset Association",
     *   parameters = {
@@ -46,22 +44,25 @@ class DatasetPublicationController extends EntityController
     *
     * @return array
     */
-    public function getCollectionAction(Request $request)
+    public function getCollectionAction()
     {
         $entityHandler = $this->get('pelagos.entity.handler');
-        $collection = $entityHandler->getAll(DatasetPublication::class,
-            array('creationTimeStamp' => 'DESC'),
+        $collection = $entityHandler->getAll(
+            DatasetPublication::class,
             array(
-                    'dataset.researchGroup.fundingCycle.name',
-                    'dataset.researchGroup.name',
-                    'dataset.udi',
-                    'publication.doi',
-                    'creator.lastName',
-                    'creator.firstName',
-                    'creationTimeStamp',
+                'creationTimeStamp' => 'DESC'
+            ),
+            array(
+                'dataset.researchGroup.fundingCycle.name',
+                'dataset.researchGroup.name',
+                'dataset.udi',
+                'publication.doi',
+                'creator.lastName',
+                'creator.firstName',
+                'creationTimeStamp',
                 ),
-                Query::HYDRATE_ARRAY
-            );
+            Query::HYDRATE_ARRAY
+        );
         $data = array();
         foreach ($collection as $datasetPublication) {
             $dataset = $datasetPublication['dataset'];
