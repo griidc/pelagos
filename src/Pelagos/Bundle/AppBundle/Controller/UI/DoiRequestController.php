@@ -53,9 +53,12 @@ class DoiRequestController extends UIController
             DoiRequestType::class,
             $doiRequest
         )
-        ->add('submit', SubmitType::class, array(
-            'label' => 'Submit',
-            'attr'  => array('class' => 'submitButton'),
+        ->add(
+            'submit',
+            SubmitType::class,
+            array(
+                'label' => 'Submit',
+                'attr'  => array('class' => 'submitButton'),
             )
         );
 
@@ -66,6 +69,9 @@ class DoiRequestController extends UIController
                 $doiRequest = $this->entityHandler->update($doiRequest);
             } else {
                 $doiRequest = $this->entityHandler->create($doiRequest);
+
+                $this->container->get('pelagos.event.entity_event_dispatcher')
+                ->dispatch($doiRequest, 'doi_requested');
             }
         }
 
