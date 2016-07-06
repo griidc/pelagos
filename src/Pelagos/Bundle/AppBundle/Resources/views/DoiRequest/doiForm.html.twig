@@ -1,5 +1,5 @@
 
-{% if isValid and isSubmitted %}
+{% if isValid and isSubmitted  and doiRequest.status == constant('Pelagos\\Entity\\DoiRequest::STATUS_SUBMITTED') %}
 <div class="messages status">
     <h2 class="element-invisible">Status message</h2>
     Thank you for your submission. You will be contacted by GRIIDC shortly with your DOI. Please email <a href="mailto:griidc@gomri.org?subject=Registration Form">griidc@gomri.org</a> if you have any questions.
@@ -17,7 +17,7 @@
 {% if doiRequest.status == constant('Pelagos\\Entity\\DoiRequest::STATUS_APPROVED') %}
 <div class="messages warning">
     <h2 class="element-invisible">Status message</h2>
-    The DOI form was Approved, the DOI will be issues shortly by e-mail. Please email <a href="mailto:griidc@gomri.org?subject=Registration Form">griidc@gomri.org</a> if you have any questions.
+    The DOI form was Approved, your DOI will be e-mailed shorly. Please email <a href="mailto:griidc@gomri.org?subject=Registration Form">griidc@gomri.org</a> if you have any questions.
     {{ form_errors(form) }}
 </div>
 {% endif %}
@@ -129,10 +129,6 @@
                 </fieldset>
 
             {{ form_end(form) }}
-            <br>
-            {% if is_granted('ROLE_DATA_REPOSITORY_MANAGER') and doiRequest.status == constant('Pelagos\\Entity\\DoiRequest::STATUS_SUBMITTED') %}
-                <button type="button" id="btnApprove" value="approve">Approve</button>
-            {% endif %}
             </td>
         <td>
         </td>

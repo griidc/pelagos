@@ -132,7 +132,7 @@ class DoiRequest extends Entity
      *
      * @return void
      */
-    public function setDoi($doi)
+    protected function setDoi($doi)
     {
         $this->doi = $doi;
     }
@@ -162,11 +162,11 @@ class DoiRequest extends Entity
     }
 
     /**
-     * Returns the status of this DIF.
+     * Returns the status of this DOI Request.
      *
      * @see STATUS_* constants.
      *
-     * @return integer The status of this DIF.
+     * @return integer The status of this DOI Request.
      */
     public function getStatus()
     {
@@ -282,14 +282,63 @@ class DoiRequest extends Entity
     {
         $this->publicationDate = $publicationDate;
     }
-    
+
     /**
-     * Approve DOI Request.
+     * Whether or not this DOI Request can be approved.
+     *
+     * @return boolean True if this DOI Request can be approved, False otherwise.
+     */
+    public function isApprovable()
+    {
+        return self::STATUS_SUBMITTED === $this->status;
+    }
+
+    /**
+     * Approve this DOI Request.
+     *
+     * This will set the DOI Request's status to approved when its current status is submitted,
+     *
+     * @throws \Exception When a DOI Request's status is anything other than submitted.
      *
      * @return void
      */
     public function approve()
     {
-        $this->setStatus(self::STATUS_APPROVED);
+        if ($this->isApprovable()) {
+            $this->setStatus(self::STATUS_APPROVED);
+        } else {
+            throw new \Exception('Can only approve a submitted DOI Request');
+        }
+    }
+
+    /**
+     * Whether or not this DOI can be set to issues.
+     *
+     * @return boolean True if this DOI Request can have a DOI issued, False otherwise.
+     */
+    public function isIssueable()
+    {
+        return self::STATUS_APPROVED === $this->status;
+    }
+
+    /**
+     * Set the status to DOI Issued.
+     *
+     * This will set the DOI Request to DOI Issued when its current status is approved,
+     *
+     * @param string $doi The doi text .
+     *
+     * @throws \Exception When a DOI Request status is not approved.
+     *
+     * @return void
+     */
+    public function issue($doi)
+    {
+        if ($this->isIssueable()) {
+            $this->setStatus(self::STATUS_ISSUED);
+            $this->setDoi($doi);
+        } else {
+            throw new \Exception('Can only issue a DOI for a approved DOI Request');
+        }
     }
 }

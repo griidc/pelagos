@@ -47,6 +47,33 @@ class DoiRequestController extends UIController
             $doiRequest = new DoiRequest;
         }
 
+        if ($request->request->get('Approve') == 'Approve') {
+            $this->approve($doiRequest);
+
+            // $url, $who, $what, $where, $date
+            $doi = $this->issueDOI(
+                $doiRequest->getUrl(),
+                $doiRequest->getResponsibleParty(),
+                $doiRequest->getTitle(),
+                $doiRequest->getPublisher(),
+                $doiRequest->getPublicationDate()->format('Y-m-d')
+            );
+
+            $doiRequest->issue($doi);
+
+            $this->container->get('pelagos.event.entity_event_dispatcher')
+            ->dispatch($doiRequest, 'doi_issued');
+        }
+
+        if ($this->isGranted(DoiRequestVoter::CAN_APPROVE, $doiRequest) and
+            null !== $id and
+            $doiRequest->getStatus() == DoiRequest::STATUS_SUBMITTED
+        ) {
+            $buttonLabel = 'Approve';
+        } else {
+            $buttonLabel = 'Submit';
+        }
+
         $form = $this->get('form.factory')
         ->createNamed(
             null,
@@ -54,11 +81,14 @@ class DoiRequestController extends UIController
             $doiRequest
         )
         ->add(
-            'submit',
+            $buttonLabel,
             SubmitType::class,
             array(
-                'label' => 'Submit',
-                'attr'  => array('class' => 'submitButton'),
+                'label' => $buttonLabel,
+                'attr'  => array(
+                'class' => 'submitButton',
+                'value' => $buttonLabel,
+                ),
             )
         );
 
@@ -87,22 +117,17 @@ class DoiRequestController extends UIController
     }
 
     /**
-     * The Approve action for the DOI Request.
+     * To approve the DOI Request.
      *
-     * @param string $id The id of the Doi Request to approve.
-     *
-     * @Route("/{id}/approve")
+     * @param DoiRequest $doiRequest The DOI Request to be approved.
      *
      * @throws AccessDeniedException   When the authenticated user does not have permission to approve the DIF.
      * @throws BadRequestHttpException When the DOI Request could not be approved.
      *
-     * @return Response A Response instance.
+     * @return void
      */
-    public function approveAction($id)
+    private function approve(DoiRequest &$doiRequest)
     {
-        // Get the specific DOI Request.
-        $doiRequest = $this->entityHandler->get(DoiRequest::class, $id);
-
         //Check if the user has permission to approve it.
         if (!$this->isGranted(DoiRequestVoter::CAN_APPROVE, $doiRequest)) {
             // Throw an exception if they don't.
@@ -118,8 +143,60 @@ class DoiRequestController extends UIController
             // Throw an exception if we can't.
             throw new BadRequestHttpException($exception->getMessage());
         }
-        $doiRequest = $this->entityHandler->update($doiRequest);
+    }
 
-        return new Response(null, Codes::HTTP_NO_CONTENT, array('Content-Type' => 'application/x-empty'));
+    /**
+     * This function will change the status to issued, and set the DOI.
+     *
+     * @param string $url   URL for DOI Request.
+     * @param string $who   Creator for DOI Request.
+     * @param string $what  Title for DOI Request.
+     * @param string $where Publisher for DOI Request.
+     * @param string $date  Published Date for DOI Request.
+     * @param string $type  Type for DOI Request, by default Dataset.
+     *
+     * @throws \Exception When there was an error negotiating with EZID.
+     *
+     * @return string The DOI issued by EZID.
+     */
+    private function issueDOI($url, $who, $what, $where, $date, $type = 'Dataset')
+    {
+        $input = "_target:$url\n";
+        $input .= "_profile:dc\n";
+        $input .= "dc.creator:$who\n";
+        $input .= "dc.title:$what\n";
+        $input .= "dc.publisher:$where\n";
+        $input .= "dc.date:$date\n";
+        $input .= "dc.type:$type";
+
+        //The have to come from Parameter Bag?
+        $doishoulder = 'doi:10.5072/FK2';
+        $doiusername = 'apitest';
+        $doipassword = 'apitest';
+
+        utf8_encode($input);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "https://ezid.cdlib.org/shoulder/$doishoulder");
+        curl_setopt($ch, CURLOPT_USERPWD, "$doiusername:$doipassword");
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt(
+            $ch,
+            CURLOPT_HTTPHEADER,
+            array('Content-Type: text/plain; charset=UTF-8','Content-Length: ' . strlen($input))
+        );
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $input);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $output = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        //check to see if it worked.
+        if (201 != $httpCode) {
+            throw new \Exception("ezid failed with:$httpCode");
+        }
+
+        $doi = preg_match('/^success: (doi:\S+)/', $output, $matches);
+
+        return $matches[1];
     }
 }

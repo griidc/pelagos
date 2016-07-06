@@ -20,58 +20,9 @@
             $("form :input").not(":hidden").prop("disabled",true);
         }
         
-        if ($("#id").val() != "" && $("#btnApprove").length == 0) {
+        if ($("#id").val() != "" && $("#Approve").length == 0) {
             lockForm();
         }
-        
-        $("#btnApprove").click(function() {
-            var url = Routing.generate("pelagos_app_ui_doirequest_approve", {"id": id});
-            
-            $.ajax({
-                url: url,
-                type: "POST",
-                success: function(json, textStatus, jqXHR) {
-                    lockForm();
-                    $('#btnApprove').hide();
-                    $("<div>The DOI form was Approved, the DOI will be emailed.</div>").dialog({
-                        autoOpen: true,
-                        resizable: false,
-                        minWidth: 300,
-                        height: "auto",
-                        width: "auto",
-                        modal: true,
-                        title: "DOI Request Approved",
-                        buttons: {
-                            OK: function() {
-                                $(this).dialog("close");
-                            }
-                        }
-                    });
-                },
-                error: function(x, t, m) {
-                    var message;
-                    if (typeof m.message != "undefined") {
-                        message = m.message;
-                    }else{
-                        message = m;
-                    }
-                    $("<div>"+message+"</div>").dialog({
-                        autoOpen: true,
-                        height: "auto",
-                        resizable: false,
-                        minWidth: 300,
-                        title: "Error",
-                        modal: true,
-                        buttons: {
-                            OK: function() {
-                                $(this).dialog("close");
-                            }
-                        }
-                    });
-                }
-            });
-            
-        });
         
         // validate doi form on submit
         $("form").validate({
