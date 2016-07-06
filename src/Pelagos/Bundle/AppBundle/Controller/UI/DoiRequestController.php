@@ -169,7 +169,6 @@ class DoiRequestController extends UIController
         $input .= "dc.date:$date\n";
         $input .= "dc.type:$type";
 
-        //The have to come from Parameter Bag?
         $doishoulder = $this->getParameter('doi_api_shoulder');
         $doiusername = $this->getParameter('doi_api_user_name');
         $doipassword = $this->getParameter('doi_api_password');
