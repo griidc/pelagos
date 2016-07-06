@@ -170,9 +170,9 @@ class DoiRequestController extends UIController
         $input .= "dc.type:$type";
 
         //The have to come from Parameter Bag?
-        $doishoulder = 'doi:10.5072/FK2';
-        $doiusername = 'apitest';
-        $doipassword = 'apitest';
+        $doishoulder = $this->getParameter('doi_api_shoulder');
+        $doiusername = $this->getParameter('doi_api_user_name');
+        $doipassword = $this->getParameter('doi_api_password');
 
         utf8_encode($input);
         $ch = curl_init();
