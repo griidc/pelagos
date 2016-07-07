@@ -139,6 +139,26 @@ class DataDiscoveryController extends UIController
     }
 
     /**
+     * Show details for a dataset.
+     *
+     * @param integer $id The id of the Dataset.
+     *
+     * @Route("/show-details/{id}")
+     * @Method("GET")
+     *
+     * @return Response
+     */
+    public function showDetailsAction($id)
+    {
+        return $this->render(
+            'PelagosAppBundle:DataDiscovery:dataset_details.html.twig',
+            array(
+                'dataset' => $this->get('pelagos.entity.handler')->get(Dataset::class, $id)
+            )
+        );
+    }
+
+    /**
      * Get datasets with properties matching any values specified by $criteria.
      *
      * @param array  $criteria   An array of criteria.

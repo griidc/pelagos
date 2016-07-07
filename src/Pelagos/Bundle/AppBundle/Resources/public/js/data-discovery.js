@@ -145,25 +145,25 @@ function showDatasets(by,id) {
     });
 }
 
-function showDatasetDetails(udi) {
-    if ($('tr[udi="' + udi + '"] td.info').has("div.details:empty").length == 1) {
+function showDatasetDetails(id) {
+    if ($('tr[datasetId="' + id + '"] td.info').has("div.details:empty").length == 1) {
         $.ajax({
-            "url": "{{baseUrl}}/dataset_details/" + udi,
+            "url": Routing.generate("pelagos_app_ui_datadiscovery_showdetails", { "id": id }),
             "success": function(data) {
-                $('tr[udi="' + udi + '"] td.info div.details').html(data);
-                $('tr[udi="' + udi + '"] td.info div.details').show();
-                $('tr[udi="' + udi + '"] td.info div.attributes a.details_link').html('Hide Details');
+                $('tr[datasetId="' + id + '"] td.info div.details').html(data);
+                $('tr[datasetId="' + id + '"] td.info div.details').show();
+                $('tr[datasetId="' + id + '"] td.info div.attributes a.details_link').html('Hide Details');
             }
         });
     }
     else {
-        if ($('tr[udi="' + udi + '"] td.info div.details:visible').length == 1) {
-            $('tr[udi="' + udi + '"] td.info div.details').hide();
-            $('tr[udi="' + udi + '"] td.info div.attributes a.details_link').html('Show Details');
+        if ($('tr[datasetId="' + id + '"] td.info div.details:visible').length == 1) {
+            $('tr[datasetId="' + id + '"] td.info div.details').hide();
+            $('tr[datasetId="' + id + '"] td.info div.attributes a.details_link').html('Show Details');
         }
         else {
-            $('tr[udi="' + udi + '"] td.info div.details').show();
-            $('tr[udi="' + udi + '"] td.info div.attributes a.details_link').html('Hide Details');
+            $('tr[datasetId="' + id + '"] td.info div.details').show();
+            $('tr[datasetId="' + id + '"] td.info div.attributes a.details_link').html('Hide Details');
         }
     }
 }

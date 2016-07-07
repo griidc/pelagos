@@ -41,20 +41,20 @@ var tabIndex = 0;
                                             datasets[tabIndex].push(ds);
                                         </script>
                                     {% endif %}
-                                    <tr udi="{{ dataset[0].udi }}">
+                                    <tr udi="{{ dataset[0].udi }}" datasetId="{{ dataset[0].id }}">
                                         <td valign="top" class="direct-download">
                                             {% if dataset[0].datasetSubmission.datasetFileTransferStatus == "RemotelyHosted" %}
                                                 {% set title = "This dataset can be downloaded from an external repository." %}
                                                 {% if dataset[0].datasetSubmission.datasetFileUri matches '!^https?://data.gulfresearchinitiative.org!' %}
                                                     {% set title='download dataset' %}
                                                 {% endif %}
-                                                <a href="javascript:showDatasetDownloadExternal('{{ dataset[0].udi }}');">
+                                                <a href="javascript:showDatasetDownloadExternal({{ dataset[0].id }});">
                                                     {% image '@PelagosAppBundle/Resources/public/images/download-package.png' %}
                                                         <img src="{{ asset_url }}" title="{{ title }}">
                                                     {% endimage %}
                                                 </a>
                                             {% else %}
-                                                <a href="javascript:showDatasetDownload('{{ dataset[0].udi }}');">
+                                                <a href="javascript:showDatasetDownload({{ dataset[0].id }});">
                                                     {% image '@PelagosAppBundle/Resources/public/images/download-package.png' %}
                                                         <img src="{{ asset_url }}" title="download dataset">
                                                     {% endimage %}
@@ -73,7 +73,7 @@ var tabIndex = 0;
                                             {% endif %}
                                             <div class="details" style="display:none;"/>
                                             <div class="attributes">
-                                                [<a href="javascript:showDatasetDetails('{{ dataset[0].udi }}');" class="details_link">Show Details</a>]
+                                                [<a href="javascript:showDatasetDetails({{ dataset[0].id }});" class="details_link">Show Details</a>]
                                                 {% if dataset[0].datasetSubmission.datasetFileSize %}
                                                     [Size: <span style="{% if dataset[0].datasetSubmission.datasetFileSize > 1073741824 %}color:red;{% endif %}">{{ dataset[0].datasetSubmission.datasetFileSize | formatBytes }}</span>]
                                                 {% endif %}
@@ -103,10 +103,10 @@ var tabIndex = 0;
                                             datasets[tabIndex].push(ds);
                                         </script>
                                     {% endif %}
-                                    <tr udi="{{ dataset[0].udi }}">
+                                    <tr udi="{{ dataset[0].udi }}" datasetId="{{ dataset[0].id }}">
                                         <td valign="top" class="direct-download">
                                             {% if dataset[0].datasetSubmission.datasetFileTransferStatus == "RemotelyHosted" %}
-                                                <a href="javascript:showDatasetDownloadExternal('{{ dataset[0].udi }}');">
+                                                <a href="javascript:showDatasetDownloadExternal({{ dataset[0].id }});">
                                                 {% if dataset[0].datasetSubmission.restrictions == "Restricted" %}
                                                     {% set title = "This dataset is hosted by an external repository and has been marked as restricted for author use only. Please contact the external repository for information on how to access this dataset." %}
                                                     {% if dataset[0].datasetSubmission.datasetFileUri matches '!^https?://data.gulfresearchinitiative.org!' %}
@@ -159,7 +159,7 @@ var tabIndex = 0;
                                             {% endif %}
                                             <div class="details" style="display:none;"/>
                                             <div class="attributes">
-                                                [<a href="javascript:showDatasetDetails('{{ dataset[0].udi }}');" class="details_link">Show Details</a>]
+                                                [<a href="javascript:showDatasetDetails({{ dataset[0].id }});" class="details_link">Show Details</a>]
                                                 {% if dataset[0].datasetSubmission.datasetFileSize %}
                                                     [Size: <span style="{% if dataset[0].datasetSubmission.datasetFileSize > 1073741824 %}color:red;{% endif %}">{{ dataset[0].datasetSubmission.datasetFileSize | formatBytes }}</span>]
                                                 {% endif %}
@@ -202,7 +202,7 @@ var tabIndex = 0;
                                             datasets[tabIndex].push(ds);
                                         </script>
                                     {% endif %}
-                                    <tr udi="{{ dataset[0].udi }}">
+                                    <tr udi="{{ dataset[0].udi }}" datasetId="{{ dataset[0].id }}">
                                         <td valign="top" class="direct-download">
                                             {% image '@PelagosAppBundle/Resources/public/images/download-package-grey.png' %}
                                                 <img src="{{ asset_url }}" title="download unavailable">
@@ -220,7 +220,7 @@ var tabIndex = 0;
                                             {% endif %}
                                             <div class="details" style="display:none;"/>
                                             <div class="attributes">
-                                                [<a href="javascript:showDatasetDetails('{{ dataset[0].udi }}');" class="details_link">Show Details</a>]
+                                                [<a href="javascript:showDatasetDetails({{ dataset[0].id }});" class="details_link">Show Details</a>]
                                                 {% if dataset[0].datasetSubmission.datasetFileSize %}
                                                     [Size: <span style="{% if dataset[0].datasetSubmission.datasetFileSize > 1073741824 %}color:red;{% endif %}">{{ dataset[0].datasetSubmission.datasetFileSize | formatBytes }}</span>]
                                                 {% endif %}
@@ -255,7 +255,7 @@ var tabIndex = 0;
                                             datasets[tabIndex].push(ds);
                                         </script>
                                     {% endif %}
-                                    <tr udi="{{ dataset[0].udi }}">
+                                    <tr udi="{{ dataset[0].udi }}" datasetId="{{ dataset[0].id }}">
                                         <td class="info">
                                             {% if dataset[0].datasetSubmission %}
                                                 {{ dataset[0].datasetSubmission.title }}.
@@ -268,7 +268,7 @@ var tabIndex = 0;
                                             {% endif %}
                                             <div class="details" style="display:none;"/>
                                             <div class="attributes">
-                                                [<a href="javascript:showDatasetDetails('{{ dataset[0].udi }}');" class="details_link">Show Details</a>]
+                                                [<a href="javascript:showDatasetDetails({{ dataset[0].id }});" class="details_link">Show Details</a>]
                                                 {% if dataset[0].dif.estimatedStartDate or dataset[0].dif.estimatedEndDate %}
                                                     [Data Acquisition Period: {{ dataset[0].dif.estimatedStartDate }} - {{ dataset[0].dif.estimatedEndDate }}]
                                                 {% endif %}

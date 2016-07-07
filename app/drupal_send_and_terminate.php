@@ -26,6 +26,7 @@ if (in_array(
         'pelagos_app_ui_dataland_metadata',
         'pelagos_app_ui_dataland_download',
         'pelagos_app_ui_datadiscovery_datasets',
+        'pelagos_app_ui_datadiscovery_showdetails',
     )
 )) {
     $response->send();
