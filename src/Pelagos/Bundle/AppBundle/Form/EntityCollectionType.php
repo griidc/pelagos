@@ -35,13 +35,13 @@ class EntityCollectionType extends AbstractType
                 'description' => "Only return $collectionName for which the current user " .
                                  'has the specified permission (e.g. CAN_EDIT). ',
             ))
-            ->add('properties', TextType::class, array(
+            ->add('_properties', TextType::class, array(
                 'required' => false,
                 'description' => "Return these properties for each $entityName. " .
                                  'Sub-properties of related entities can be accessed using dot notation ' .
                                  '(e.g. relatedEntityProperty.subProperty).',
             ))
-            ->add('orderBy', TextType::class, array(
+            ->add('_orderBy', TextType::class, array(
                 'required' => false,
                 'description' => 'Order by these properties. ' .
                                  'The default order is ascending (ASC). ' .

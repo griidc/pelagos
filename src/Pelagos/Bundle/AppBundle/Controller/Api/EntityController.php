@@ -452,12 +452,12 @@ abstract class EntityController extends FOSRestController
     private function getOrderBy(array &$params)
     {
         $orderBy = array();
-        if (array_key_exists('orderBy', $params)) {
-            foreach (preg_split('/[,\s]+/', $params['orderBy']) as $propertyOrder) {
+        if (array_key_exists('_orderBy', $params)) {
+            foreach (preg_split('/[,\s]+/', $params['_orderBy']) as $propertyOrder) {
                 $property = preg_split('/:/', $propertyOrder);
                 $orderBy[$property[0]] = count($property) === 1 ? 'ASC' : $property[1];
             }
-            unset($params['orderBy']);
+            unset($params['_orderBy']);
         }
         return $orderBy;
     }
@@ -472,9 +472,9 @@ abstract class EntityController extends FOSRestController
     private function getProperties(array &$params)
     {
         $properties = array();
-        if (array_key_exists('properties', $params)) {
-            $properties = preg_split('/[,\s]+/', $params['properties']);
-            unset($params['properties']);
+        if (array_key_exists('_properties', $params)) {
+            $properties = preg_split('/[,\s]+/', $params['_properties']);
+            unset($params['_properties']);
         }
         return $properties;
     }
