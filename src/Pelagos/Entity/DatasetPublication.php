@@ -4,9 +4,6 @@ namespace Pelagos\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use Pelagos\Entity\Dataset;
-use Pelagos\Entity\Publication;
-
 /**
  * This Entity contains a link between Publications and Datasets.
  *

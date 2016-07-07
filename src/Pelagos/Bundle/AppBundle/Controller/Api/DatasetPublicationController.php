@@ -59,7 +59,7 @@ class DatasetPublicationController extends EntityController
                 'publication.doi',
                 'creator.lastName',
                 'creator.firstName',
-                'creationTimeStamp',
+                'creationTimeStamp'
                 ),
             Query::HYDRATE_ARRAY
         );

@@ -52,6 +52,7 @@ $(document).ready(function() {
 });
 
 function retrievePublicationCitation() {
+    $('#publication .id').val($('#publication .id').val().trim());
     $('#publication .pelagos-spinner').show();
     $('#publication .pelagos-citation').empty();
     $.ajax({
@@ -109,9 +110,9 @@ function retrievePublicationCitation() {
 }
 
 function retrieveDatasetCitation() {
+    $('#dataset .id').val($('#dataset .id').val().trim());
     $('#dataset .pelagos-spinner').show();
     $('#dataset .pelagos-citation').empty();
-    console.log($('#dataset .id').val());
     $.ajax({
         url: Routing.generate("pelagos_api_datasets_get_collection", { "udi" : $('#dataset .id').val()} ),
         method: "GET",

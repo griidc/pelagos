@@ -3,18 +3,10 @@
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-
-use Doctrine\Common\Collections\ArrayCollection;
-
-use Pelagos\Entity\Dataset;
-use Pelagos\Entity\Publication;
-use Pelagos\Entity\PublicationCitation;
-use Pelagos\Util\PubLinkUtil;
 
 /**
  * The PublicationDatasetLink controller.

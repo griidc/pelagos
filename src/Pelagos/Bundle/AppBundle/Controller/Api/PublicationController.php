@@ -55,7 +55,6 @@ class PublicationController extends EntityController
         $pubLinkUtil = $this->get('pelagos.util.publink');
         $entityHandler = $this->get('pelagos.entity.handler');
 
-
         if (preg_match('/^10\./', $doi) != 1) {
             throw new \Exception('Invalid format or missing DOI.');
         }

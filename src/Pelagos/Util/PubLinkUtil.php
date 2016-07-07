@@ -66,39 +66,4 @@ class PubLinkUtil
 
         return array('citation' => $citation, 'status' => $status, 'errorText' => $errorText);
     }
-
-    /**
-     * Generates a suggested citation for this dataset based on best available information.
-     *
-     * @return string;
-     */
-    public function generateSuggestedCitation()
-    {
-        $author = $this->getDatasetSubmission()->getAuthors();
-        $year;
-        $title;
-        $doi;
-        $udi;
-        $regId;
-
-        // determine $url to use.
-        // The doi could include a url - check for it.
-        if ($doi && strlen($doi) > 0) {
-            // Does the doi contain the string 'http'?
-            $pos = strpos($doi, 'http');
-            // Make URL from DOI directly.
-            if ($pos === false) {
-                $url = 'http://dx.doi.org/' . $doi;
-            // otherwise the stored DOI is a url.
-            } else {
-                $url = $doi;
-            }
-        } else {
-            $url = 'http://data.gulfresearchinitiative.org/data/' . $udi;
-        }
-
-        $citationString = $author . ' (' . $year . '). ' . $title . ' (' . $udi . ') ' .
-                   '[Data files] Available from ' . $url;
-        return $citationString;
-    }
 }

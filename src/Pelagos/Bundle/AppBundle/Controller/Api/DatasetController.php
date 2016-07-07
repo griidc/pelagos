@@ -10,6 +10,7 @@ use FOS\RestBundle\Controller\Annotations as Rest;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 use Pelagos\Entity\Dataset;
+use Pelagos\Entity\DatasetSubmission;
 
 /**
  * The Dataset api controller.
@@ -91,31 +92,24 @@ class DatasetController extends EntityController
     public function getCitationAction($id)
     {
         $dataset = $this->handleGetOne(Dataset::class, $id);
-        $submission = $dataset->getDatasetSubmission();
+        $datasetSubmission = $dataset->getDatasetSubmission();
 
         $title = $dataset->getTitle();
         $udi = $dataset->getUdi();
 
-        if ($submission instanceof DatasetSubmission) {
-            $author = $submission->getAuthors();
-            $year = $submission->getModificationTimeStamp()->format('Y');
-            $doi = $submission->getDoi();
+        if ($datasetSubmission instanceof DatasetSubmission) {
+            $author = $datasetSubmission->getAuthors();
+            $year = $datasetSubmission->getModificationTimeStamp()->format('Y');
+            $doi = $datasetSubmission->getDoi();
 
-            // The doi could include a url - check for it
-            if ($doi && strlen($doi) > 0) {
-                // does the doi contain the string http
-                $pos = strpos($doi, 'http');
-                if ($pos === false) {
-                    $url = 'http://dx.doi.org/' . $doi;
-                } else {
-                    $url = $doi;
-                }
+            if ($doi !== null) {
+                $url = 'http://dx.doi.org/' . $doi;
             } else {
                 $url = 'http://data.gulfresearchinitiative.org/data/' . $udi;
             }
 
-            $citationString = "$author ($year) $title ($udi)" .
-                       "[Data files] Available from $url";
+            $citationString = "$author ($year) $title ($udi) " .
+                "[Data files] Available from $url";
 
             return $citationString;
         } else {
