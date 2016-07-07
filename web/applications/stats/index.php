@@ -314,25 +314,6 @@ $app->get('/data/overview/total-records-over-time', function () use ($app) {
     $trot_data = array();
     $dbh = OpenDB('GOMRI_RO');
 
-    $identifications = array( 'label' => 'Identified', 'data' => array() );
-    $SQL = 'SELECT
-                row_number() OVER(ORDER BY d.dataset_uid) AS count,
-                d.dataset_uid::INT8 * 1000 AS ts
-            FROM
-                datasets d LEFT JOIN projects p
-                ON d.project_id = p."ID"
-            WHERE
-                d.status > 1
-                AND p."FundSrc" < 700;';
-    $sth = $dbh->prepare($SQL);
-    $sth->execute();
-    $rows = $sth->fetchAll();
-    foreach ($rows as $row) {
-        $identifications['data'][] = array($row['ts'],$row['count']);
-    }
-    $identifications['data'][] = array(time()*1000,$rows[count($rows)-1]['count']);
-    $trot_data[] = $identifications;
-
     $registrations = array( 'label' => 'Registered', 'data' => array() );
     $SQL = 'SELECT row_number() OVER(ORDER BY submittimestamp) AS count,
                    extract(epoch from submittimestamp) * 1000 AS ts

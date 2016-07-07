@@ -2,43 +2,43 @@ data_repositories:
     type: rest
     resource: Pelagos\Bundle\AppBundle\Controller\Api\DataRepositoryController
     name_prefix: data_repositories_
-    prefix: data_repositories
+    prefix: data-repositories
 
 funding_organizations:
     type: rest
     resource: Pelagos\Bundle\AppBundle\Controller\Api\FundingOrganizationController
     name_prefix: funding_organizations_
-    prefix: funding_organizations
+    prefix: funding-organizations
 
 person_funding_organizations:
     type: rest
     resource: Pelagos\Bundle\AppBundle\Controller\Api\PersonFundingOrganizationController
     name_prefix: person_funding_organizations_
-    prefix: person_funding_organizations
+    prefix: person-funding-organizations
 
 funding_cycles:
     type: rest
     resource: Pelagos\Bundle\AppBundle\Controller\Api\FundingCycleController
     name_prefix: funding_cycles_
-    prefix: funding_cycles
+    prefix: funding-cycles
 
 research_groups:
     type: rest
     resource: Pelagos\Bundle\AppBundle\Controller\Api\ResearchGroupController
     name_prefix: research_groups_
-    prefix: research_groups
+    prefix: research-groups
 
 person_research_groups:
     type: rest
     resource: Pelagos\Bundle\AppBundle\Controller\Api\PersonResearchGroupController
     name_prefix: person_research_groups_
-    prefix: person_research_groups
+    prefix: person-research-groups
 
 person_data_repositories:
     type: rest
     resource: Pelagos\Bundle\AppBundle\Controller\Api\PersonDataRepositoryController
     name_prefix: person_data_repositories_
-    prefix: person_data_repositories
+    prefix: person-data-repositories
 
 people:
     type: rest

@@ -12,33 +12,24 @@ function getURLbyUDI()
 
     if (udival != "")
     {
-        udival = udival.substring(0,16);
         jQuery.ajax({
-                url: "/metadata-editor/",
-                type: "GET",
-                data: {udi: udival},
-                context: document.body
-            }).done(function(html) {
-                console.log(html);
-                eventObj = jQuery.parseJSON(html);
-                var udi = eventObj.udi;
-                if (eventObj.UDIexists == true)
-                {
-                    location.href = "/metadata-editor/?dataUrl=http://" + location.hostname + "/metadata-generator/" + udival.substring(0,16);;
-                }
-                else
-                {
-                    jQuery('<div title="Warning"><p>Sorry that UDI:'+ udi +' does not exist.</p></div>').dialog({
-                        modal: true,
-                        buttons: {
+            url: "/pelagos-symfony/api/metadata?udi=" + udival.substring(0,16),
+            type: "HEAD",
+            async: true,
+            error: function(message,text,jqXHR) {
+                jQuery('<div title="Warning"><p>Dataset with UDI:' + udival + ', not found</p></div>').dialog({
+                    modal: true,
+                    buttons: {
                         Ok: function() {
                             jQuery(this).dialog( "close" );
                         }
-                        }
-                    });
-                }
-            return true;
-        });    
+                    }
+                });
+            },
+            success: function(message,text,jqXHR) {
+                location.href = "/metadata-editor/?dataUrl=http://" + location.hostname + "/pelagos-symfony/api/metadata?udi=" + udival.substring(0,16);
+            }
+        });
     }
     else
     jQuery('<div title="Warning"><p>No UDI provided.</p></div>').dialog({
