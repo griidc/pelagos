@@ -2,16 +2,20 @@
 
 {% block body_html %}
 
-Dear {{ dm.firstName }} {{ recipient.lastName }},<br>
+Dear {{ recipient.firstName }} {{ recipient.lastName }},<br>
 <p>
-The Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) has
-approved the request for a Digital Object Identifier (DOI) for the URL
-<a href="{{data.doi.url}}">{{data.doi.id}}</a>. This request was submitted by
-{{data.user.firstName}} {{data.user.lastName}} who is a member of {{ data.user.RCs | join(', ') }}.
+    The Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) has
+    approved the request for a Digital Object Identifier (DOI) for the URL
+    <a href="{{ url }}">{{ doi }}</a>. This request was submitted by
+    {{creator.firstName}} {{creator.lastName}} who is a member of {{ creator.researchGroupNames | join(', ') }}.
 </p>
+
 Thank you,<br />
+
 The GRIIDC Team<br />
+
 <br />
+
 <p>
     You are receiving this email because you are identified as a data manager for a
     Gulf of Mexico Research Initiative Research Consortium. If you believe you
@@ -23,12 +27,12 @@ The GRIIDC Team<br />
 
 {% block body_text %}
 
-Dear {{ dm.firstName }} {{ recipient.lastName }},
+Dear {{ recipient.firstName }} {{ recipient.lastName }},
 
 The Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) has
-approved the request for a Digital Object Identifier (DOI) for the URL
-<a href="{{data.doi.url}}">{{data.doi.id}}</a>. This request was submitted by {{data.user.firstName}} {{data.user.lastName}}
-who is a member of {{ data.user.RCs | join(', ') }}.
+approved the request for a Digital Object Identifier (DOI) for the the URL
+{{ url }} for DOI {{ doi }}. This request was submitted by {{ creator.firstName }} {{ creator.lastName }}
+who is a member of {{ creator.researchGroupNames | join(', ') }}.
 
 
 Thank you,

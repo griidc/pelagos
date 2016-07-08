@@ -80,12 +80,12 @@ class DOIRequestListener
         $doiRequest = $this->getDoiRequest($event);
 
         // email User
-        $template = $this->twig->loadTemplate('@DoiRequestEmail/user/user.doi-submitted.email.twig');
-        $this->sendMailMsg($template, $dif);
+        $template = $this->twig->loadTemplate('@Email/DoiRequest/user.doi-approved.email.twig');
+        $this->sendMailMsg($template, $doiRequest, $this->getCreator());
 
         // email Data Managers
-        $template = $this->twig->loadTemplate('@DoiRequestEmail/data-managers/data-managers.doi-submitted.email.twig');
-        $this->sendMailMsg($template, $dif, $this->getDMs($dif));
+        $template = $this->twig->loadTemplate('@Email/DoiRequest/data-managers.doi-approved.email.twig');
+        $this->sendMailMsg($template, $doiRequest, $this->getDMs($doiRequest));
     }
 
     /**
@@ -98,12 +98,12 @@ class DOIRequestListener
     public function onDoiRequested(EntityEvent $event)
     {
         // email Reviewers (DRPMs)
-        $template = $this->twig->loadTemplate('@DoiRequestEmail/reviewers/reviewers.doi-submitted.email.twig');
-        $this->sendMailMsg($template, $dif, $this->getDRPMs($dif));
+        $template = $this->twig->loadTemplate('@Email/DoiRequest/reviewers.doi-requested.email.twig');
+        $this->sendMailMsg($template, $doiRequest, $this->getDRPMs($doiRequest));
 
         // email Data Managers
-        $template = $this->twig->loadTemplate('@DoiRequestEmail/data-managers/data-managers.doi-submitted.email.twig');
-        $this->sendMailMsg($template, $dif, $this->getDMs($dif));
+        $template = $this->twig->loadTemplate('@Email/DoiRequest/data-managers.doi-requested.email.twig');
+        $this->sendMailMsg($template, $doiRequest, $this->getDMs($doiRequest));
     }
 
     /**
@@ -147,7 +147,7 @@ class DOIRequestListener
     protected function getDRPMs(DoiRequest $doiRequset)
     {
         $recepientPeople = array();
-        $personDataRepositories = $doiRequest->crazyvoodoo()->getPersonDataRepositories();
+        $personDataRepositories = $doiRequest->getCreator()->getPersonDataRepositories();
 
         foreach ($personDataRepositories as $pdr) {
             if ($pdr->getRole()->getName() == DataRepositoryRoles::MANAGER) {
@@ -167,7 +167,7 @@ class DOIRequestListener
     protected function getDMs(DoiRequest $doiRequest)
     {
         $recepientPeople = array();
-        $personResearchGroups = $doiRequest->crazyvoodoo()->getPersonResearchGroups();
+        $personResearchGroups = $doiRequest->getCreator()->getPersonResearchGroups();
 
         foreach ($personResearchGroups as $prg) {
             if ($prg->getRole()->getName() == ResearchGroupRoles::DATA) {

@@ -1,9 +1,9 @@
 {% block subject 'DOI Approval Requested' %}
 
 {% block body_html %}
-Dear {{apprv.firstName}} {{apprv.lastName}},<br>
+Dear {{ recipient.firstName}} {{ recipient.lastName }},<br>
 <br>
-Please approve DOI:<a href="{{data.doi.formLink}}">{{data.doi.formLink}}</a>.<br>
+Please approve DOI:<a href="{{ url }}">{{ url }}</a>.<br>
 <br>
 Thank you,<br>
 <br>
@@ -15,9 +15,9 @@ If you believe you should not be receiving this email please notify
 {% endblock %}
 
 {% block body_text %}
-Dear {{apprv.firstName}} {{apprv.lastName}},
+Dear {{ recipient.firstName }} {{ recipient.lastName }},
 
-Please approve DOI:{{data.doi.formLink}}.
+Please approve DOI:{{ url }}.
 
 Thank you,
 
