@@ -4,6 +4,8 @@ namespace Pelagos\Event;
 use Pelagos\Entity\Account;
 use Pelagos\Entity\Person;
 use Pelagos\Entity\DoiRequest;
+use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
+
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 
 /**
@@ -81,7 +83,7 @@ class DOIRequestListener
 
         // email User
         $template = $this->twig->loadTemplate('@Email/DoiRequest/user.doi-approved.email.twig');
-        $this->sendMailMsg($template, $doiRequest, $this->getCreator());
+        $this->sendMailMsg($template, $doiRequest, array($doiRequest->getCreator()));
 
         // email Data Managers
         $template = $this->twig->loadTemplate('@Email/DoiRequest/data-managers.doi-approved.email.twig');
@@ -112,20 +114,14 @@ class DOIRequestListener
      * Method to build and send an email.
      *
      * @param \Twig_Template $twigTemplate A twig template.
-     * @param DIF            $dif          DIF of interest.
-     * @param array|null     $peopleObjs   An optional array of recepient Persons.
+     * @param DoiRequest     $doiRequest   The DOIRequest of interest.
+     * @param array          $peopleObjs   An array of recepient Persons.
      *
      * @return void
      */
-    protected function sendMailMsg(\Twig_Template $twigTemplate, DIF $dif, array $peopleObjs = null)
+    protected function sendMailMsg(\Twig_Template $twigTemplate, DoiRequest $doiRequest, array $peopleObjs = null)
     {
-        // Token's getUser returns an account, not a person directly.
-        $currentUser = $this->tokenStorage->getToken()->getUser()->getPerson();
-
-        $mailData = array('dif' => $dif, 'user' => $currentUser);
-        if ($peopleObjs == null) {
-            $peopleObjs = array($currentUser);
-        }
+        $mailData = array('doiRequest' => $doiRequest);
 
         foreach ($peopleObjs as $person) {
             $mailData['recipient'] = $person;
