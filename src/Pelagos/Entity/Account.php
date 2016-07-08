@@ -474,7 +474,7 @@ class Account extends Entity implements UserInterface, \Serializable
     {
         return serialize(
             array(
-            $this->person,
+            $this->getId(),
             $this->userId,
             )
         );
