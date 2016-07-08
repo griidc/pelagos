@@ -2,9 +2,13 @@
 namespace Pelagos\Event;
 
 use Pelagos\Entity\Account;
-use Pelagos\Entity\Person;
+use Pelagos\Entity\DataRepositoryRole;
 use Pelagos\Entity\DoiRequest;
+use Pelagos\Entity\Person;
+use Pelagos\Entity\PersonDataRepository;
 use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
+use Pelagos\Bundle\AppBundle\DataFixtures\ORM\ResearchGroupRoles;
+use Pelagos\Bundle\AppBundler\Handler\EntityHandler;
 
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 
@@ -49,25 +53,34 @@ class DOIRequestListener
     protected $from;
 
     /**
-     * This is the class constructor to handle dependency injections.
+     * A variable to hold instance of Pelagos Entityhandler
      *
-     * @param \Twig_Environment $twig         Twig engine.
-     * @param \Swift_Mailer     $mailer       Email handling library.
-     * @param TokenStorage      $tokenStorage Symfony's token object.
-     * @param string            $fromAddress  Sender's email address.
-     * @param string            $fromName     Sender's name to include in email.
+     * @var EntityHandler
+     */
+    protected $entityHandler;
+
+    /**
+     * This is the class constructor to handle dependency injections.
+     * @param \Twig_Environment $twig          Twig engine.
+     * @param \Swift_Mailer     $mailer        Email handling library.
+     * @param TokenStorage      $tokenStorage  Symfony's token object.
+     * @param string            $fromAddress   Sender's email address.
+     * @param string            $fromName      Sender's name to include in email.
+     * @param EntityHandler     $entityHandler Pelagos entity handler
      */
     public function __construct(
         \Twig_Environment $twig,
         \Swift_Mailer $mailer,
         TokenStorage $tokenStorage,
         $fromAddress,
-        $fromName
+        $fromName,
+        $entityHandler
     ) {
         $this->twig = $twig;
         $this->mailer = $mailer;
         $this->tokenStorage = $tokenStorage;
         $this->from = array($fromAddress => $fromName);
+        $this->entityHandler = $entityHandler;
     }
 
     /**
@@ -145,13 +158,18 @@ class DOIRequestListener
     protected function getDRPMs(DoiRequest $doiRequest)
     {
         $recepientPeople = array();
-        $personDataRepositories = $doiRequest->getCreator()->getPersonDataRepositories();
+        $eh = $this->entityHandler;
+
+        $drpmRole = $eh->getBy(DataRepositoryRole::class, array('name' => DataRepositoryRoles::MANAGER));
+        if (1 !== count($drpmRole)) {
+            throw new \Exception('More than one role found for manager role.');
+        }
+        $personDataRepositories = $eh->getBy(PersonDataRepository::class, array('role' => $drpmRole[0] ));
 
         foreach ($personDataRepositories as $pdr) {
-            if ($pdr->getRole()->getName() == DataRepositoryRoles::MANAGER) {
-                $recepientPeople[] = $pdr->getPerson();
-            }
+            $recepientPeople[] = $pdr->getPerson();
         }
+
         return $recepientPeople;
     }
 
@@ -165,11 +183,14 @@ class DOIRequestListener
     protected function getDMs(DoiRequest $doiRequest)
     {
         $recepientPeople = array();
-        $personResearchGroups = $doiRequest->getCreator()->getPersonResearchGroups();
+        $researchGroups = $doiRequest->getCreator()->getResearchGroups();
 
-        foreach ($personResearchGroups as $prg) {
-            if ($prg->getRole()->getName() == ResearchGroupRoles::DATA) {
-                $recepientPeople[] = $prg->getPerson();
+        foreach ($researchGroups as $rg) {
+            $prgs = $rg->getPersonResearchGroups();
+            foreach ($prgs as $prg) {
+                if ($prg->getRole()->getName() == ResearchGroupRoles::DATA) {
+                    $recepientPeople[] = $prg->getPerson();
+                }
             }
         }
         return $recepientPeople;
