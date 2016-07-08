@@ -91,12 +91,14 @@ class DOIRequestListener
     /**
      * Method to send an email to Approvers (DRPMs), and DMs on a DOI requested event.
      *
-     * @param EntityEvent $event
+     * @param EntityEvent $event Event being acted upon.
      *
      * @return void
      */
     public function onDoiRequested(EntityEvent $event)
     {
+        $doiRequest = $this->getDoiRequest($event);
+
         // email Reviewers (DRPMs)
         $template = $this->twig->loadTemplate('@Email/DoiRequest/reviewers.doi-requested.email.twig');
         $this->sendMailMsg($template, $doiRequest, $this->getDRPMs($doiRequest));
@@ -144,7 +146,7 @@ class DOIRequestListener
      *
      * @return Array of Persons having DRPM status.
      */
-    protected function getDRPMs(DoiRequest $doiRequset)
+    protected function getDRPMs(DoiRequest $doiRequest)
     {
         $recepientPeople = array();
         $personDataRepositories = $doiRequest->getCreator()->getPersonDataRepositories();
