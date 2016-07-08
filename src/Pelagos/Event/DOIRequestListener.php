@@ -53,7 +53,7 @@ class DOIRequestListener
     protected $from;
 
     /**
-     * A variable to hold instance of Pelagos Entityhandler
+     * A variable to hold instance of Pelagos Entityhandler.
      *
      * @var EntityHandler
      */
@@ -66,7 +66,7 @@ class DOIRequestListener
      * @param TokenStorage      $tokenStorage  Symfony's token object.
      * @param string            $fromAddress   Sender's email address.
      * @param string            $fromName      Sender's name to include in email.
-     * @param EntityHandler     $entityHandler Pelagos entity handler
+     * @param EntityHandler     $entityHandler Pelagos entity handler.
      */
     public function __construct(
         \Twig_Environment $twig,
@@ -74,7 +74,7 @@ class DOIRequestListener
         TokenStorage $tokenStorage,
         $fromAddress,
         $fromName,
-        $entityHandler
+        EntityHandler $entityHandler
     ) {
         $this->twig = $twig;
         $this->mailer = $mailer;
@@ -116,7 +116,7 @@ class DOIRequestListener
 
         // email Reviewers (DRPMs)
         $template = $this->twig->loadTemplate('@Email/DoiRequest/reviewers.doi-requested.email.twig');
-        $this->sendMailMsg($template, $doiRequest, $this->getDRPMs($doiRequest));
+        $this->sendMailMsg($template, $doiRequest, $this->getDRPMs());
 
         // email Data Managers
         $template = $this->twig->loadTemplate('@Email/DoiRequest/data-managers.doi-requested.email.twig');
@@ -149,13 +149,13 @@ class DOIRequestListener
     }
 
     /**
-     * Internal method to resolve DRPMs from a DoiRequest.
+     * Internal method to get all DRPMs.
      *
-     * @param DoiRequest $doiRequest A DoiRequest entity.
+     * @throws \Exception On more than one DataRepositoryRole found for MANAGER.
      *
      * @return Array of Persons having DRPM status.
      */
-    protected function getDRPMs(DoiRequest $doiRequest)
+    protected function getDRPMs()
     {
         $recepientPeople = array();
         $eh = $this->entityHandler;
