@@ -2,10 +2,10 @@
 
 {% block body_html %}
 
-Dear {{ creator.firstName }} {{ creator.lastName }},<br />
+Dear {{ doiRequest.creator.firstName }} {{ doiRequest.creator.lastName }},<br />
 <p>
     The Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) has approved the
-    DOI request for your dataset, {{ doi }}.</a>
+    DOI request for your dataset, {{ doiRequest.doi }}.</a>
 </p>
 <p>
     If you have any questions regarding this dataset DOI, please email griidc@gomri.org.<br>
@@ -16,10 +16,10 @@ The GRIIDC Team
 {% endblock %}
 
 {% block body_text %}
-Dear {{ creator.firstName }} {{ creator.lastName }},
+Dear {{ doiRequest.creator.firstName }} {{ doiRequest.creator.lastName }},
 
 The Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) has approved the
-DOI request for your dataset, {{ doi }}.
+DOI request for your dataset, {{ doiRequest.doi }}.
 
 If you have any questions regarding this dataset DOI, please email griidc@gomri.org.
 
