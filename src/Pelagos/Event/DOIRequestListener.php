@@ -8,7 +8,7 @@ use Pelagos\Entity\Person;
 use Pelagos\Entity\PersonDataRepository;
 use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
 use Pelagos\Bundle\AppBundle\DataFixtures\ORM\ResearchGroupRoles;
-use Pelagos\Bundle\AppBundler\Handler\EntityHandler;
+use Pelagos\Bundle\AppBundle\Handler\EntityHandler;
 
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 
