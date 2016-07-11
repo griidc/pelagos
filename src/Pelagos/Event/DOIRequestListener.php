@@ -100,7 +100,7 @@ class DOIRequestListener
 
         // email Data Managers
         $template = $this->twig->loadTemplate('@Email/DoiRequest/data-managers.doi-approved.email.twig');
-        $this->sendMailMsg($template, array('doiRequest' => $doiRequest), $this->getDMs($doiRequest));
+        $this->sendMailMsg($template, array('doiRequest' => $doiRequest), $this->getDMsFromDoiRequest($doiRequest));
     }
 
     /**
@@ -120,7 +120,7 @@ class DOIRequestListener
 
         // email Data Managers
         $template = $this->twig->loadTemplate('@Email/DoiRequest/data-managers.doi-requested.email.twig');
-        $this->sendMailMsg($template, array('doiRequest' => $doiRequest), $this->getDMs($doiRequest));
+        $this->sendMailMsg($template, array('doiRequest' => $doiRequest), $this->getDMsFromDoiRequest($doiRequest));
     }
 
     /**
@@ -130,7 +130,7 @@ class DOIRequestListener
      *
      * @return Array of Persons who are Data Managers for the Research Group tied back to the DoiRequest.
      */
-    protected function getDMs(DoiRequest $doiRequest)
+    protected function getDMsFromDoiRequest(DoiRequest $doiRequest)
     {
         $recepientPeople = array();
         $researchGroups = $doiRequest->getCreator()->getResearchGroups();
