@@ -16,41 +16,6 @@ use Pelagos\Entity\Person;
 class DOIRequestListener extends EventListener
 {
     /**
-     * The twig templating engine instance.
-     *
-     * @var \Twig_Environment
-     */
-    protected $twig;
-
-    /**
-     * The swiftmailer instance.
-     *
-     * @var \Swift_Mailer
-     */
-    protected $mailer;
-
-    /**
-     * Person entity for the logged-in user.
-     *
-     * @var Person
-     */
-    protected $currentUser;
-
-    /**
-     * The symfony-managed token object to traverse to current user Person.
-     *
-     * @var TokenStorage
-     */
-    protected $tokenStorage;
-
-    /**
-     * An array holding email from name/email information.
-     *
-     * @var array
-     */
-    protected $from;
-
-    /**
      * A variable to hold instance of Pelagos Entityhandler.
      *
      * @var EntityHandler
@@ -58,7 +23,8 @@ class DOIRequestListener extends EventListener
     protected $entityHandler;
 
     /**
-     * This is the class constructor to handle dependency injections.
+     * This is the overriden base class constructor to handle D.I. of EntityHandler.
+     *
      * @param \Twig_Environment $twig          Twig engine.
      * @param \Swift_Mailer     $mailer        Email handling library.
      * @param TokenStorage      $tokenStorage  Symfony's token object.
