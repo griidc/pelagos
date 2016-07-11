@@ -1,21 +1,20 @@
 <?php
 namespace Pelagos\Event;
 
-use Pelagos\Entity\Account;
-use Pelagos\Entity\DataRepositoryRole;
-use Pelagos\Entity\DoiRequest;
-use Pelagos\Entity\Person;
-use Pelagos\Entity\PersonDataRepository;
-use Pelagos\Bundle\AppBundle\DataFixtures\ORM\DataRepositoryRoles;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+
 use Pelagos\Bundle\AppBundle\DataFixtures\ORM\ResearchGroupRoles;
 use Pelagos\Bundle\AppBundle\Handler\EntityHandler;
 
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Pelagos\Entity\Account;
+use Pelagos\Entity\DoiRequest;
+use Pelagos\Entity\Person;
+
 
 /**
  * Listener class for DOI-related events.
  */
-class DOIRequestListener
+class DOIRequestListener extends EventListener
 {
     /**
      * The twig templating engine instance.
