@@ -10,7 +10,6 @@ use Pelagos\Entity\Account;
 use Pelagos\Entity\DoiRequest;
 use Pelagos\Entity\Person;
 
-
 /**
  * Listener class for DOI-related events.
  */
