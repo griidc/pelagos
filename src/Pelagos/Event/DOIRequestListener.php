@@ -96,11 +96,11 @@ class DOIRequestListener
 
         // email User
         $template = $this->twig->loadTemplate('@Email/DoiRequest/user.doi-approved.email.twig');
-        $this->sendMailMsg($template, $doiRequest, array($doiRequest->getCreator()));
+        $this->sendMailMsg($template, array('doiRequest' => $doiRequest), array($doiRequest->getCreator()));
 
         // email Data Managers
         $template = $this->twig->loadTemplate('@Email/DoiRequest/data-managers.doi-approved.email.twig');
-        $this->sendMailMsg($template, $doiRequest, $this->getDMs($doiRequest));
+        $this->sendMailMsg($template, array('doiRequest' => $doiRequest), $this->getDMs($doiRequest));
     }
 
     /**
@@ -116,36 +116,11 @@ class DOIRequestListener
 
         // email Reviewers (DRPMs)
         $template = $this->twig->loadTemplate('@Email/DoiRequest/reviewers.doi-requested.email.twig');
-        $this->sendMailMsg($template, $doiRequest, $this->getDRPMs());
+        $this->sendMailMsg($template, array('doiRequest' => $doiRequest), $this->getDRPMs());
 
         // email Data Managers
         $template = $this->twig->loadTemplate('@Email/DoiRequest/data-managers.doi-requested.email.twig');
-        $this->sendMailMsg($template, $doiRequest, $this->getDMs($doiRequest));
-    }
-
-    /**
-     * Method to build and send an email.
-     *
-     * @param \Twig_Template $twigTemplate A twig template.
-     * @param DoiRequest     $doiRequest   The DOIRequest of interest.
-     * @param array          $peopleObjs   An array of recepient Persons.
-     *
-     * @return void
-     */
-    protected function sendMailMsg(\Twig_Template $twigTemplate, DoiRequest $doiRequest, array $peopleObjs = null)
-    {
-        $mailData = array('doiRequest' => $doiRequest);
-
-        foreach ($peopleObjs as $person) {
-            $mailData['recipient'] = $person;
-            $message = \Swift_Message::newInstance()
-                ->setSubject($twigTemplate->renderBlock('subject', $mailData))
-                ->setFrom($this->from)
-                ->setTo($person->getEmailAddress())
-                ->setBody($twigTemplate->renderBlock('body_html', $mailData), 'text/html')
-                ->addPart($twigTemplate->renderBlock('body_text', $mailData), 'text/plain');
-            $this->mailer->send($message);
-        }
+        $this->sendMailMsg($template, array('doiRequest' => $doiRequest), $this->getDMs($doiRequest));
     }
 
     /**
