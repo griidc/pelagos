@@ -4,7 +4,6 @@ namespace Pelagos\Event;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 
 use Pelagos\Bundle\AppBundle\DataFixtures\ORM\ResearchGroupRoles;
-use Pelagos\Bundle\AppBundle\Handler\EntityHandler;
 
 use Pelagos\Entity\Account;
 use Pelagos\Entity\DoiRequest;
@@ -15,38 +14,6 @@ use Pelagos\Entity\Person;
  */
 class DOIRequestListener extends EventListener
 {
-    /**
-     * A variable to hold instance of Pelagos Entityhandler.
-     *
-     * @var EntityHandler
-     */
-    protected $entityHandler;
-
-    /**
-     * This is the overriden base class constructor to handle D.I. of EntityHandler.
-     *
-     * @param \Twig_Environment $twig          Twig engine.
-     * @param \Swift_Mailer     $mailer        Email handling library.
-     * @param TokenStorage      $tokenStorage  Symfony's token object.
-     * @param string            $fromAddress   Sender's email address.
-     * @param string            $fromName      Sender's name to include in email.
-     * @param EntityHandler     $entityHandler Pelagos entity handler.
-     */
-    public function __construct(
-        \Twig_Environment $twig,
-        \Swift_Mailer $mailer,
-        TokenStorage $tokenStorage,
-        $fromAddress,
-        $fromName,
-        EntityHandler $entityHandler
-    ) {
-        $this->twig = $twig;
-        $this->mailer = $mailer;
-        $this->tokenStorage = $tokenStorage;
-        $this->from = array($fromAddress => $fromName);
-        $this->entityHandler = $entityHandler;
-    }
-
     /**
      * Method to send an email to user, DRPMs, and DMs on a DOI issued event.
      *
