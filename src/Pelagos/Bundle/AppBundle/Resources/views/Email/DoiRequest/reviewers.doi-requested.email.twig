@@ -3,7 +3,7 @@
 {% block body_html %}
 Dear {{ recipient.firstName }} {{ recipient.lastName }},<br>
 <br>
-Please approve DOI:<a href="{{ url('pelagos_app_ui_doirequest_default', { 'id': doiRequest.id })}}">{{ doiRequest.url }}</a>.<br>
+Please approve DOI:<a href="{{ url('pelagos_app_ui_doirequest_default', { 'id': doiRequest.id }) }}">{{ doiRequest.id }}</a>.<br>
 <br>
 Thank you,<br>
 <br>
@@ -17,7 +17,7 @@ If you believe you should not be receiving this email please notify
 {% block body_text %}
 Dear {{ recipient.firstName }} {{ recipient.lastName }},
 
-Please approve DOI:{{ doiRequest.url }}.
+Please approve DOI:{{ url('', { 'id': doiRequest.id }) }}.
 
 Thank you,
 
