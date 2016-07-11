@@ -5,14 +5,12 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 
 use Pelagos\Bundle\AppBundle\DataFixtures\ORM\ResearchGroupRoles;
 
-use Pelagos\Entity\Account;
 use Pelagos\Entity\DoiRequest;
-use Pelagos\Entity\Person;
 
 /**
  * Listener class for DOI-related events.
  */
-class DOIRequestListener extends EventListener
+class DoiRequestListener extends EventListener
 {
     /**
      * Method to send an email to user, DRPMs, and DMs on a DOI issued event.
@@ -86,7 +84,7 @@ class DOIRequestListener extends EventListener
      *
      * @return DOI A DOI object associated with the event being listened on.
      */
-    protected function getDOIRequest(EntityEvent $event)
+    protected function getDoiRequest(EntityEvent $event)
     {
         $doiRequest = $event->getEntity();
         if (DoiRequest::class != get_class($doiRequest)) {

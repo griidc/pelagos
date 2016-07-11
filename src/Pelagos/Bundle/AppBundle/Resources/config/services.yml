@@ -43,7 +43,7 @@ services:
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.metadata_processed, method: onMetadataProcessed }
 
     pelagos.doirequest.listener:
-        class: Pelagos\Event\DOIRequestListener
+        class: Pelagos\Event\DoiRequestListener
         arguments: ["@twig", "@mailer", "@security.token_storage", "%mailer_from_addr%", "%mailer_from_name%", "@pelagos.entity.handler"]
         tags:
             - { name: kernel.event_listener, event: pelagos.entity.doi_request.doi_requested, method: onDoiRequested }
