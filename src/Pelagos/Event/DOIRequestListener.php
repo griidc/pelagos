@@ -116,36 +116,11 @@ class DOIRequestListener
 
         // email Reviewers (DRPMs)
         $template = $this->twig->loadTemplate('@Email/DoiRequest/reviewers.doi-requested.email.twig');
-        $this->sendMailMsg($template, array('doiRequest' => $doiRequest), $this->getDRPMs());
+        $this->sendMailMsg($template, array('doiRequest' => $doiRequest), $this->getAllDRPMs());
 
         // email Data Managers
         $template = $this->twig->loadTemplate('@Email/DoiRequest/data-managers.doi-requested.email.twig');
         $this->sendMailMsg($template, array('doiRequest' => $doiRequest), $this->getDMs($doiRequest));
-    }
-
-    /**
-     * Internal method to get all DRPMs.
-     *
-     * @throws \Exception On more than one DataRepositoryRole found for MANAGER.
-     *
-     * @return Array of Persons having DRPM status.
-     */
-    protected function getDRPMs()
-    {
-        $recepientPeople = array();
-        $eh = $this->entityHandler;
-
-        $drpmRole = $eh->getBy(DataRepositoryRole::class, array('name' => DataRepositoryRoles::MANAGER));
-        if (1 !== count($drpmRole)) {
-            throw new \Exception('More than one role found for manager role.');
-        }
-        $personDataRepositories = $eh->getBy(PersonDataRepository::class, array('role' => $drpmRole[0] ));
-
-        foreach ($personDataRepositories as $pdr) {
-            $recepientPeople[] = $pdr->getPerson();
-        }
-
-        return $recepientPeople;
     }
 
     /**

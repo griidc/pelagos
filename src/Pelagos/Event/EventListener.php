@@ -133,6 +133,31 @@ abstract class EventListener
     }
 
     /**
+     * Internal method to get _all_ DRPMs.
+     *
+     * @throws \Exception On more than one DataRepositoryRole found for MANAGER.
+     *
+     * @return Array of Persons having DRPM status.
+     */
+    protected function getAllDRPMs()
+    {
+        $recepientPeople = array();
+        $eh = $this->entityHandler;
+
+        $drpmRole = $eh->getBy(DataRepositoryRole::class, array('name' => DataRepositoryRoles::MANAGER));
+        if (1 !== count($drpmRole)) {
+            throw new \Exception('More than one role found for manager role.');
+        }
+        $personDataRepositories = $eh->getBy(PersonDataRepository::class, array('role' => $drpmRole[0] ));
+
+        foreach ($personDataRepositories as $pdr) {
+            $recepientPeople[] = $pdr->getPerson();
+        }
+
+        return $recepientPeople;
+    }
+
+    /**
      * Internal method to resolve Data Managers from a Dataset.
      *
      * @param Dataset $dataset A Dataset entity.
