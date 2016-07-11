@@ -71,3 +71,7 @@ services:
         class: Pelagos\Bundle\AppBundle\Security\DatasetVoter
         tags:
             - { name: security.voter }
+    doi_request_voter:
+        class: Pelagos\Bundle\AppBundle\Security\DoiRequestVoter
+        tags:
+            - { name: security.voter }

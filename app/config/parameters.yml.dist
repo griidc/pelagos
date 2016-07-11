@@ -55,3 +55,8 @@ parameters:
     data_download_browser_group: GRIIDC
     # The POSIX user the web server runs under.
     web_server_user: apache
+
+    # Parameters EZID DOI API
+    doi_api_user_name: apitest
+    doi_api_password : apitest
+    doi_api_shoulder : doi:10.5072/FK2
