@@ -3,7 +3,7 @@
 {% block body_html %}
 Dear {{ recipient.firstName }} {{ recipient.lastName }},<br>
 <br>
-Please approve DOI:<a href="{{ doiRequest.url }}">{{ doiRequest.url }}</a>.<br>
+Please approve DOI:<a href="{{ url('pelagos_app_ui_doirequest_default', { 'id': doiRequest.id })}}">{{ doiRequest.url }}</a>.<br>
 <br>
 Thank you,<br>
 <br>
