@@ -52,12 +52,6 @@ class StatsController extends UIController
         // Get the people count.
         $peopleCount = $queryBuilder
             ->select($queryBuilder->expr()->count('person.id'))
-            ->where(
-                $queryBuilder->expr()->gt(
-                    'person.id',
-                    $queryBuilder->expr()->literal(0)
-                )
-            )
             ->getQuery()->getSingleScalarResult();
 
         // Recreate a Query Builder for the Research Group Repository
@@ -93,14 +87,14 @@ class StatsController extends UIController
         $queryBuilder = $this
             ->container->get('doctrine.orm.entity_manager')
             ->getRepository(DatasetSubmission::class)
-            ->createQueryBuilder('datasetSubmission');        
-               
+            ->createQueryBuilder('datasetSubmission');
+
 
         $query = $queryBuilder
             ->select('datasetSubmission.creationTimeStamp')
             ->where('datasetSubmission.id IN (
                         SELECT MIN(subDatasetSubmission.id)
-                        FROM '.DatasetSubmission::class.' subDatasetSubmission
+                        FROM ' . DatasetSubmission::class . ' subDatasetSubmission
                         WHERE subDatasetSubmission.datasetFileUri is not null
                         GROUP BY subDatasetSubmission.dataset
                     )')
@@ -108,16 +102,19 @@ class StatsController extends UIController
             ->getQuery();
 
         $registeredDatasets = $query->getResult(Query::HYDRATE_ARRAY);
-        
+
         $query = $queryBuilder
             ->select('datasetSubmission.creationTimeStamp')
             ->where('datasetSubmission.id IN (
                 SELECT MIN(subDatasetSubmission.id)
-                FROM '.DatasetSubmission::class.' subDatasetSubmission
+                FROM ' . DatasetSubmission::class . ' subDatasetSubmission
                 WHERE subDatasetSubmission.datasetFileUri is not null
                 AND subDatasetSubmission.metadataStatus = :metadatastatus
                 AND subDatasetSubmission.restrictions = :restrictedstatus
-                AND (subDatasetSubmission.datasetFileTransferStatus = :transerstatuscompleted OR subDatasetSubmission.datasetFileTransferStatus = :transerstatusremotelyhosted)
+                AND (
+                    subDatasetSubmission.datasetFileTransferStatus = :transerstatuscompleted 
+                    OR subDatasetSubmission.datasetFileTransferStatus = :transerstatusremotelyhosted
+                )
                 GROUP BY subDatasetSubmission.dataset
             )')
             ->setParameters(
