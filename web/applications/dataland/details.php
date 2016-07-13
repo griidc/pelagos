@@ -56,7 +56,7 @@ $mprow ='';
 $URIs = preg_split('/\//',$_SERVER['REQUEST_URI']);
 
 $udi = urldecode($URIs[count($URIs)-2]);
-if (!preg_match('/^[RrYyFf]\d\.x\d{3}.\d{3}:\d{4}$/', $udi)) {
+if (!preg_match('/^[A-Z][A-Z\d]\.x\d{3}.\d{3}:\d{4}$/', $udi)) {
     $udi = '';
 }
 

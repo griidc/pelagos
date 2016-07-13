@@ -26,15 +26,58 @@ class DataStore
     protected $dataDownloadDirectory;
 
     /**
+     * The POSIX user that will own files and directories in the data store.
+     *
+     * @var string
+     */
+    protected $dataStoreOwner;
+
+    /**
+     * The POSIX group for files and directories in the data store.
+     *
+     * @var string
+     */
+    protected $dataStoreGroup;
+
+    /**
+     * The POSIX group that contains users that can browse all of the data download directory.
+     *
+     * @var string
+     */
+    protected $dataDownloadBrowserGroup;
+
+    /**
+     * The POSIX user the web server runs under.
+     *
+     * @var string
+     */
+    protected $webServerUser;
+
+    /**
      * Constructor.
      *
-     * @param string $dataStoreDirectory    The data store directory.
-     * @param string $dataDownloadDirectory The data download directory.
+     * @param string $dataStoreDirectory       The data store directory.
+     * @param string $dataDownloadDirectory    The data download directory.
+     * @param string $dataStoreOwner           The POSIX user that will own files and directories in the data store.
+     * @param string $dataStoreGroup           The POSIX group for files and directories in the data store.
+     * @param string $dataDownloadBrowserGroup The POSIX group that contains users that can
+     *                                         browse all of the data download directory.
+     * @param string $webServerUser            The POSIX user the web server runs under.
      */
-    public function __construct($dataStoreDirectory, $dataDownloadDirectory)
-    {
+    public function __construct(
+        $dataStoreDirectory,
+        $dataDownloadDirectory,
+        $dataStoreOwner,
+        $dataStoreGroup,
+        $dataDownloadBrowserGroup,
+        $webServerUser
+    ) {
         $this->dataStoreDirectory = $dataStoreDirectory;
         $this->dataDownloadDirectory = $dataDownloadDirectory;
+        $this->dataStoreOwner = $dataStoreOwner;
+        $this->dataStoreGroup = $dataStoreGroup;
+        $this->dataDownloadBrowserGroup = $dataDownloadBrowserGroup;
+        $this->webServerUser = $webServerUser;
     }
 
     /**
@@ -124,7 +167,7 @@ class DataStore
         if (!chmod($storeFilePath, 0644)) {
             throw new \Exception("Could not set file mode on $storeFilePath");
         }
-        $this->setOwnerGroupFacls($storeFilePath, 'custodian', 'custodian');
+        $this->setOwnerGroupFacls($storeFilePath, $this->dataStoreOwner, $this->dataStoreGroup);
         return $storeFilePath;
     }
 
@@ -193,7 +236,12 @@ class DataStore
             if (!mkdir($dataStoreDirectory, 0750)) {
                 throw new \Exception("Could not create $dataStoreDirectory");
             }
-            $this->setOwnerGroupFacls($dataStoreDirectory, 'custodian', 'custodian', 'u:apache:--x');
+            $this->setOwnerGroupFacls(
+                $dataStoreDirectory,
+                $this->dataStoreOwner,
+                $this->dataStoreGroup,
+                'u:' . $this->webServerUser . ':--x'
+            );
         }
         return $dataStoreDirectory;
     }
@@ -238,7 +286,12 @@ class DataStore
             if (!mkdir($downloadDirectory, $mode)) {
                 throw new \Exception("Could not create $downloadDirectory");
             }
-            $this->setOwnerGroupFacls($downloadDirectory, 'apache', 'apache', 'g:GRIIDC:r-x');
+            $this->setOwnerGroupFacls(
+                $downloadDirectory,
+                $this->dataStoreOwner,
+                $this->dataStoreGroup,
+                'u:' . $this->webServerUser . ':r-x,' . 'g:' . $this->dataDownloadBrowserGroup . ':r-x'
+            );
         }
         return $downloadDirectory;
     }

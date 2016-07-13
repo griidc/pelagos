@@ -42,6 +42,13 @@ services:
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.dataset_processed, method: onDatasetProcessed }
             - { name: kernel.event_listener, event: pelagos.entity.dataset_submission.metadata_processed, method: onMetadataProcessed }
 
+    pelagos.doirequest.listener:
+        class: Pelagos\Event\DoiRequestListener
+        arguments: ["@twig", "@mailer", "@security.token_storage", "%mailer_from_addr%", "%mailer_from_name%", "@pelagos.entity.handler"]
+        tags:
+            - { name: kernel.event_listener, event: pelagos.entity.doi_request.doi_requested, method: onDoiRequested }
+            - { name: kernel.event_listener, event: pelagos.entity.doi_request.doi_issued, method: onDoiIssued }
+
     pelagos.form.type.dif:
         class: Pelagos\Bundle\AppBundle\Form\DIFType
         arguments: ["@doctrine.orm.entity_manager", "@security.authorization_checker"]

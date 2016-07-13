@@ -39,6 +39,10 @@
         {% set green_icon = asset_url %}
         {% endimage %}
 
+        {% image '@PelagosAppBundle/Resources/public/images/check-remote.png' %}
+        {% set green_remote_icon = asset_url %}
+        {% endimage %}
+
         {% image '@PelagosAppBundle/Resources/public/images/triangle_yellow.png' %}
         {% set yellow_icon = asset_url %}
         {% endimage %}
@@ -58,102 +62,95 @@
         {% for dataset in datasets %}
 
             {% if dataset.identifiedStatus == constant('Pelagos\\Entity\\DIF::STATUS_APPROVED') %}
-                {% set identified_green = identified_green+1 %}
+                {% set identified_green = identified_green + 1 %}
                 {% set identified_title = "This dataset has been identified and the DIF has been approved." %}
                 {% set identified_icon = green_icon %}
             {% elseif dataset.identifiedStatus == constant('Pelagos\\Entity\\DIF::STATUS_SUBMITTED') %}
-                {% set identified_yellow = identified_yellow+1 %}
+                {% set identified_yellow = identified_yellow + 1 %}
                 {% set identified_title = "A DIF has been submitted for this dataset and is in review." %}
                 {% set identified_icon = yellow_icon %}
-            {% elseif dataset.identifiedStatus == constant('Pelagos\\Entity\\DIF::STATUS_UNSUBMITTED') %}
-                {% set identified_red = identified_red+1 %}
+            {% else %}
+                {% set identified_red = identified_red + 1 %}
                 {% set identified_title = "" %}
                 {% set identified_icon = red_icon %}
             {% endif %}
 
             {% if dataset.datasetSubmissionStatus == constant('Pelagos\\Entity\\DatasetSubmission::STATUS_COMPLETE') %}
-                {% set registered_green = registered_green+1 %}
+                {% set registered_green = registered_green + 1 %}
                 {% set registered_title = "This dataset has been registered successfully." %}
                 {% set registered_icon = green_icon %}
             {% elseif dataset.datasetSubmissionStatus == constant('Pelagos\\Entity\\DatasetSubmission::STATUS_INCOMPLETE') %}
-                {% set registered_yellow = registered_yellow+1 %}
-                {% set registered_title = "A registration has been created, but a data file was not provided at the time of
-                registration." %}
+                {% set registered_yellow = registered_yellow + 1 %}
+                {% set registered_title = "A registration has been created, but a data file was not provided at the time of registration." %}
                 {% set registered_icon = yellow_icon %}
-            {% elseif dataset.datasetSubmissionStatus == constant('Pelagos\\Entity\\DatasetSubmission::STATUS_UNSUBMITTED')%}
-                {% set registered_red = registered_red+1 %}
+            {% else %}
+                {% set registered_red = registered_red + 1 %}
                 {% set registered_title = "This dataset has not yet been registered." %}
                 {% set registered_icon = red_icon %}
             {% endif %}
 
             {% if dataset.datasetSubmissionStatus != constant('Pelagos\\Entity\\DatasetSubmission::STATUS_COMPLETE') %}
-                {% set metadata_na = metadata_na+1 %}
+                {% set metadata_na = metadata_na + 1 %}
                 {% set metadata_title = "This dataset has not yet been registered." %}
                 {% set metadata_icon = na_icon %}
-            {% elseif dataset.metadataStatus == constant('Pelagos\\Entity\\DatasetSubmission::METADATA_STATUS_ACCEPTED') %}
-                {% set metadata_green = metadata_green+1 %}
-                {% set metadata_title = "Metadata for this dataset is available, ISO compliant, and has been reviewed and accepted." %}
-                {% set metadata_icon = green_icon %}
             {% elseif dataset.metadataStatus == constant('Pelagos\\Entity\\DatasetSubmission::METADATA_STATUS_NONE') %}
-                {% set metadata_red = metadata_red+1 %}
+                {% set metadata_red = metadata_red + 1 %}
                 {% set metadata_title = "This dataset has been registered, but no metadata has been submitted." %}
                 {% set metadata_icon = red_icon %}
             {% elseif dataset.metadataStatus == constant('Pelagos\\Entity\\DatasetSubmission::METADATA_STATUS_SUBMITTED') %}
-                {% set metadata_yellow = metadata_yellow+1 %}
+                {% set metadata_yellow = metadata_yellow + 1 %}
                 {% set metadata_title = "Metadata for this dataset has been submitted for review." %}
                 {% set metadata_icon = yellow_icon %}
-            {% elseif dataset.metadataStatus == constant('Pelagos\\Entity\\DatasetSubmission::METADATA_STATUS_IN_REVIEW') %}
-                {% set metadata_yellow = metadata_yellow+1 %}
-                {% set metadata_title = "Metadata for this dataset has been submitted and is in review." %}
-                {% set metadata_icon = yellow_icon %}
-            {% elseif dataset.metadataStatus is null %}
-                {% set metadata_na = metadata_na+1 %}
-                {% set metadata_title = "This dataset has not yet been registered, therefore no metadata is available." %}
-                {% set metadata_icon = na_icon %}
+            {% elseif dataset.metadataStatus == constant('Pelagos\\Entity\\DatasetSubmission::METADATA_STATUS_ACCEPTED') %}
+                {% set metadata_green = metadata_green + 1 %}
+                {% set metadata_title = "Metadata for this dataset is available, ISO compliant, and has been reviewed and accepted." %}
+                {% set metadata_icon = green_icon %}
             {% else %}
-                {% set metadata_yellow = metadata_yellow+1 %}
+                {% set metadata_yellow = metadata_yellow + 1 %}
                 {% set metadata_title = "Metadata for this dataset has been submitted and is in review." %}
                 {% set metadata_icon = yellow_icon %}
             {% endif %}
 
             {% if dataset.datasetSubmissionStatus != constant('Pelagos\\Entity\\DatasetSubmission::STATUS_COMPLETE') %}
-                {% set available_na = available_na+1 %}
-                {% set available_icon = na_icon %}
-            {% elseif dataset.availabilityStatus == constant('Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE') or dataset.availabilityStatus == constant('Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED') %}
-                {% set available_green = available_green+1 %}
-                {% set available_title = "This dataset is available for all users to download." %}
-                {% set available_icon = green_icon %}
-            {% elseif dataset.availabilityStatus == '-1' %}
-                {% set available_na = available_na+1 %}
-                {% set available_title = "This dataset has not yet been registered, therefore it is not yet available." %}
+                {% set available_na = available_na + 1 %}
+                {% set available_title = "This dataset has not yet been registered." %}
                 {% set available_icon = na_icon %}
             {% elseif dataset.availabilityStatus == constant('Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE') %}
-                {% set available_red = available_red+1 %}
+                {% set available_red = available_red + 1 %}
                 {% set available_title = "This dataset has been registered, but the data is not yet available." %}
-                {% set available_icon = yellow_icon %}
+                {% set available_icon = red_icon %}
             {% elseif dataset.availabilityStatus == constant('Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PENDING_METADATA_APPROVAL') %}
-                {% set available_yellow = available_yellow+1 %}
+                {% set available_yellow = available_yellow + 1 %}
                 {% set available_title = "This dataset does not yet have approved metadata, therefore is not available for download." %}
                 {% set available_icon = yellow_icon %}
-            {% elseif dataset.availabilityStatus == constant('Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED') %}
-                {% set available_yellow = available_yellow+1 %}
-                {% set available_title = "This dataset has been marked as restricted to author only, but is remotely hosted on a non-GRIIDC server, so availability status is not guaranteed to be accurate." %}
-            {% elseif dataset.availabilityStatus == constant('Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_AVAILABLE_WITH_APPROVAL_REMOTELY_HOSTED') %}
-                {% set available_yellow = available_yellow+1 %}
-                {% set available_title = "This dataset has been marked as restricted to certain users, but is remotely hosted on a non-GRIIDC server, so availability status is not guaranteed to be accurate." %}
-                {% set available_icon = red_icon %}
-            {% elseif dataset.availabilityStatus == constant('Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED') %}
-                {% set available_yellow = available_yellow+1 %}
-                {% set available_title = "This dataset has been marked as available for all users to download, but is remotely hosted on a non-GRIIDC server, so availability status is not guaranteed to be accurate." %}
-                {% set available_icon = green_icon %}
-            {% elseif dataset.availabilityStatus == constant('Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED') %}
-                {% set available_yellow = available_yellow+1 %}
-                {% set available_title = "This dataset is available, but download is restricted to author only." %}
-                {% set available_icon = red_icon %}
             {% elseif dataset.availabilityStatus == constant('Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_AVAILABLE_WITH_APPROVAL') %}
-                {% set available_yellow = available_yellow+1 %}
+                {% set available_yellow = available_yellow + 1 %}
                 {% set available_title = "This dataset is available, but download is restricted to certain users." %}
-                {% set available_icon = red_icon %}
+                {% set available_icon = yellow_icon %}
+            {% elseif dataset.availabilityStatus == constant('Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_AVAILABLE_WITH_APPROVAL_REMOTELY_HOSTED') %}
+                {% set available_yellow = available_yellow + 1 %}
+                {% set available_title = "This dataset has been marked as restricted to certain users, but is remotely hosted on a non-GRIIDC server, so availability status is not guaranteed to be accurate." %}
+                {% set available_icon = yellow_icon %}
+            {% elseif dataset.availabilityStatus == constant('Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED') %}
+                {% set available_yellow = available_yellow + 1 %}
+                {% set available_title = "This dataset is available, but download is restricted to author only." %}
+                {% set available_icon = yellow_icon %}
+            {% elseif dataset.availabilityStatus == constant('Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED') %}
+                {% set available_yellow = available_yellow + 1 %}
+                {% set available_title = "This dataset has been marked as restricted to author only, but is remotely hosted on a non-GRIIDC server, so availability status is not guaranteed to be accurate." %}
+                {% set available_icon = yellow_icon %}
+            {% elseif dataset.availabilityStatus == constant('Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE') %}
+                {% set available_green = available_green + 1 %}
+                {% set available_title = "This dataset is available for all users to download." %}
+                {% set available_icon = green_icon %}
+            {% elseif dataset.availabilityStatus == constant('Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE_REMOTELY_HOSTED') %}
+                {% set available_green = available_green + 1 %}
+                {% set available_title = "This dataset has been marked as available for all users to download, but is remotely hosted on a non-GRIIDC server, so availability status is not guaranteed to be accurate." %}
+                {% set available_icon = green_remote_icon %}
+            {% else %}
+                {% set available_na = available_na + 1 %}
+                {% set available_title = "The availability of the dataset could not be determined at this time." %}
+                {% set available_icon = na_icon %}
             {% endif %}
 
             <tr udi="{{dataset.udi}}">

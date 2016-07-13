@@ -4,6 +4,8 @@ namespace Pelagos\Bundle\AppBundle\Controller\Api;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
@@ -35,14 +37,15 @@ class MetadataController extends EntityController
      *   }
      * )
      *
-     * @throws \Exception             When more than one dataset is found.
-     * @throws NotFoundHttpException When dataset is not found, or no metadata is available.
+     * @throws \Exception              When more than one dataset is found.
+     * @throws NotFoundHttpException   When dataset is not found, or no metadata is available.
+     * @throws BadRequestHttpException When the Dataset Submission is Unsubmitted.
      *
      * @return Response
      */
     public function getAction(Request $request)
     {
-        $datasets = $this->handleGetCollection(Dataset::class, $request);
+        $datasets = $this->container->get('pelagos.entity.handler')->getBy(Dataset::class, $request->query->all());
 
         if (count($datasets) > 1) {
             throw new \Exception('Found more than one Dataset');
@@ -51,6 +54,11 @@ class MetadataController extends EntityController
         }
 
         $dataset = $datasets[0];
+
+        if ($dataset->getDatasetSubmissionStatus() == DatasetSubmission::STATUS_UNSUBMITTED) {
+            throw new BadRequestHttpException('Dataset is not submitted');
+        }
+
         $metadata = $dataset->getMetadata();
 
         if ($dataset->getMetadataStatus() != DatasetSubmission::METADATA_STATUS_NONE) {

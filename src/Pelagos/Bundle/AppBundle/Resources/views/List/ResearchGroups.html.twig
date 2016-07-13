@@ -46,10 +46,11 @@
     entityNiceName = "Research Group"
     viewInterface = "{{ path('pelagos_app_ui_researchgroup_default') }}"
     personInterface = "{{ path('pelagos_app_ui_person_default') }}"
+    entityApi = "{{ path('pelagos_api_research_groups_get_collection') }}"
     class = "entityTable stripe"
     width = "100%"
     data-ajax = '{
-        "url": "{{ path('pelagos_api_research_groups_get_collection') }}",
+        "url": "{{ path('pelagos_api_research_groups_get_collection') }}?properties=name,creationTimeStamp,modificationTimeStamp,creator.id,creator.firstName,creator.lastName,modifier.id,modifier.firstName,modifier.lastName,fundingCycle.name,fundingCycle.fundingOrganization.name",
         "dataSrc": "",
         "cache": true
     }'
@@ -79,6 +80,8 @@
     ]'
     creatorColumn = "6"
     modifierColumn = "7"
+    creationTimeStampColumn = "4"
+    modificationTimeStampColumn = "5"
 >
     <thead>
         <tr>
