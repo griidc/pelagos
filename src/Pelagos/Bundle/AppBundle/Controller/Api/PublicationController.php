@@ -48,15 +48,14 @@ class PublicationController extends EntityController
      */
     public function postAction(Request $request)
     {
-        //query for a current publication/citation, if non-existent or too old,
-        //re-pull from doi.org and re-cache.
+        //query for a current publication/citation.
 
         $doi = $request->request->get('doi');
         $pubLinkUtil = $this->get('pelagos.util.publink');
         $entityHandler = $this->get('pelagos.entity.handler');
 
-        if (preg_match('/^10\./', $doi) != 1) {
-            throw new \Exception('Invalid format or missing DOI.');
+        if (false === preg_match('/^10\./', $doi)) {
+            throw new BadRequestHttpException('Invalid format or missing DOI.');
         }
 
         // Attempt to get publication by DOI.
@@ -73,7 +72,7 @@ class PublicationController extends EntityController
                 return $this->makeCreatedResponse('pelagos_api_publications_get', $publication->getId());
             // Does not exist in cache.  Pull from doi.org, cache and return citation.
             } elseif (count($publications == 0)) {
-                $citationStruct = $pubLinkUtil->getCitationFromDoiDotOrg($doi);
+                $citationStruct = $pubLinkUtil->fetchCitation($doi);
                 if (200 == $citationStruct['status']) {
                     $entityHandler = $this->get('pelagos.entity.handler');
 
@@ -132,8 +131,9 @@ class PublicationController extends EntityController
      *   }
      * )
      *
-     * @throws \Exception Upon internal unexpected result.
-     * @throws \Exception If more than one cached publication found by DOI.
+     * @throws \Exception            Upon internal unexpected result.
+     * @throws NotFoundHttpException If cached citation could not be retrieved.
+     * @throws \Exception            If more than one cached publication found by DOI.
      *
      * @return PublicationCitation|null
      */
@@ -149,7 +149,7 @@ class PublicationController extends EntityController
             } elseif (count($publications) > 1) {
                 throw new \Exception("Unexpected system error. DOI $doi references more than 1 cached Publication.");
             } else {
-                return null;
+                throw new NotFoundHttpException('This citation could not be found.');
             }
         } else {
             throw new \Exception('Unexpected system error. Expected array of Publications, but got something else.');

@@ -32,7 +32,7 @@ class PubLinkUtil
      *
      * @return array
      */
-    public function getCitationFromDoiDotOrg($doi, $style = 'apa', $locale = 'utf-8')
+    public function fetchCitation($doi, $style = PublicationCitation::CITATION_STYLE_APA, $locale = 'en-US')
     {
         $statusCodes = array(
             200 => 'The request was OK.',
@@ -42,16 +42,16 @@ class PubLinkUtil
         );
 
         $ch = curl_init();
-        $url = 'http://dx.doi.org/' . $doi;
-        $header = array("Accept: text/bibliography; style=$style; locale=$locale");
+        $url = 'http://crosscite.org/citeproc/format' . '?doi=' . $doi . "&style=$style&locale=$locale";
+        $header = array('Accept: text/plain;', "Accept-Language: $locale");
 
         curl_setopt($ch, CURLOPT_URL, $url);
-        // Since the request 303's (forwards) to http://data.crossref.org/, we have to turn follow on.
+        // Since the request 303's forward, we have to turn follow on.
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($ch, CURLOPT_HEADER, false);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
         $curlResponse = curl_exec($ch);
         $errorText = curl_error($ch);
         $curlInfo = curl_getinfo($ch);

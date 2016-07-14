@@ -11,6 +11,12 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class PublicationCitation extends Entity
 {
+
+    /**
+     * A class constant for citation style.
+     */
+    const CITATION_STYLE_APA = 'apa';
+
     /**
      * Citation Text.
      *
