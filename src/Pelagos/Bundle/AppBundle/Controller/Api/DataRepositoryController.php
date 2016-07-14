@@ -82,10 +82,13 @@ class DataRepositoryController extends EntityController
      *
      * @ApiDoc(
      *   section = "Data Repositories",
-     *   parameters = {
-     *     {"name"="properties", "dataType"="string", "required"=false, "format"="property1,property2,property3.subProperty,etc.", "description"="Return these properties"},
-     *     {"name"="orderBy", "dataType"="string", "required"=false, "format"="property1,property2,property3.subProperty,etc.", "description"="Order by these properties"},
-     *     {"name"="someProperty", "dataType"="string", "required"=false, "format"="value", "description"="Filter by someProperty"},
+     *   input = {
+     *     "class": "Pelagos\Bundle\AppBundle\Form\EntityCollectionType",
+     *     "name": "",
+     *     "options": {
+     *       "label": "Data Repositories",
+     *       "data_class": "Pelagos\Entity\DataRepository"
+     *     }
      *   },
      *   output = "array<Pelagos\Entity\DataRepository>",
      *   statusCodes = {
@@ -96,13 +99,13 @@ class DataRepositoryController extends EntityController
      *
      * @Rest\Get("")
      *
+     * @Rest\View(serializerEnableMaxDepthChecks = true)
+     *
      * @return Response
      */
     public function getCollectionAction(Request $request)
     {
-        return $this->makeJsonResponse(
-            $this->handleGetCollection(DataRepository::class, $request)
-        );
+        return $this->handleGetCollection(DataRepository::class, $request);
     }
 
     /**

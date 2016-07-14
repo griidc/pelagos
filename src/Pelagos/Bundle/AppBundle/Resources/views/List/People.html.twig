@@ -41,6 +41,23 @@
 
 {% endblock %}
 
+{%
+set properties = [
+    'id',
+    'firstName',
+    'lastName',
+    'emailAddress',
+    'creationTimeStamp',
+    'creator.id',
+    'creator.firstName',
+    'creator.lastName',
+    'modificationTimeStamp',
+    'modifier.id',
+    'modifier.firstName',
+    'modifier.lastName',
+]
+%}
+
 {% block body %}
 <table
     entityNiceName = "Person"
@@ -50,7 +67,7 @@
     class = "entityTable stripe"
     width = "100%"
     data-ajax = '{
-        "url": "{{ path('pelagos_api_people_get_collection') }}?properties=id,firstName,lastName,lastName,emailAddress,creationTimeStamp,creator.id,creator.firstName,creator.lastName,modificationTimeStamp,modifier.id,modifier.firstName,modifier.lastName",
+        "url": "{{ path('pelagos_api_people_get_collection', {'_properties': properties | join(',')}) }}",
         "dataSrc": "",
         "cache": true
     }'

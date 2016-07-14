@@ -41,6 +41,29 @@
 
 {% endblock %}
 
+{%
+set properties = [
+    'name',
+    'emailAddress',
+    'description',
+    'url',
+    'phoneNumber',
+    'deliveryPoint',
+    'city',
+    'administrativeArea',
+    'postalCode',
+    'country',
+    'creationTimeStamp',
+    'creator.id',
+    'creator.firstName',
+    'creator.lastName',
+    'modificationTimeStamp',
+    'modifier.id',
+    'modifier.firstName',
+    'modifier.lastName',
+]
+%}
+
 {% block body %}
 <table
     viewInterface = "{{ path('pelagos_app_ui_fundingorganization_default') }}"
@@ -50,7 +73,7 @@
     class = "entityTable stripe"
     width = "100%"
     data-ajax = '{
-        "url": "{{ path('pelagos_api_funding_organizations_get_collection') }}?properties=name,emailAddress,description,url,phoneNumber,deliveryPoint,city,administrativeArea,postalCode,country,creationTimeStamp,modificationTimeStamp,creator.id,creator.firstName,creator.lastName,modifier.id,modifier.firstName,modifier.lastName",
+        "url": "{{ path('pelagos_api_funding_organizations_get_collection', {'_properties': properties | join(',')}) }}",
         "dataSrc": "",
         "cache": true
     }'
