@@ -42,6 +42,7 @@ twig:
     paths:
         "%kernel.root_dir%/../src/Pelagos/Bundle/AppBundle/Resources/views/template": templates
         "%kernel.root_dir%/../src/Pelagos/Bundle/AppBundle/Resources/views/DIF/email": DIFEmail
+        "%kernel.root_dir%/../src/Pelagos/Bundle/AppBundle/Resources/views/Email": Email
 
 # Doctrine Configuration
 doctrine:
