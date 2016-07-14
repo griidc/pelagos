@@ -119,6 +119,13 @@ class Dataset extends Entity
     protected $availabilityStatus = DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE;
 
     /**
+     * Collection of DatasetPublication.
+     *
+     * @var Collection
+     */
+    protected $datasetPublications;
+
+    /**
      * Constructor.
      */
     public function __construct()
@@ -381,5 +388,29 @@ class Dataset extends Entity
     public function getAvailabilityStatus()
     {
         return $this->availabilityStatus;
+    }
+
+    /**
+     * Getter for DatasetPublications for this Dataset.
+     *
+     * @return DatasetPublication
+     */
+    public function getDatasetPublications()
+    {
+        return $this->datasetPublications;
+    }
+
+    /**
+     * Gets Publications associated with this Dataset.
+     *
+     * @return ArrayCollection
+     */
+    public function getPublications()
+    {
+        $collection = new ArrayCollection;
+        foreach ($this->getDatasetPublications() as $datasetPublication) {
+            $collection->add($datasetPublication->getPublication());
+        }
+        return $collection;
     }
 }
