@@ -34,16 +34,6 @@ class StatsController extends UIController
         $entityManager = $this
             ->container->get('doctrine.orm.entity_manager');
 
-        // Create a Query Builder for the Dataset Repository.
-        $queryBuilder = $entityManager
-            ->getRepository(Dataset::class)
-            ->createQueryBuilder('dataset');
-
-        // Get the dataset count.
-        $datasetCount = $queryBuilder
-            ->select($queryBuilder->expr()->count('dataset.id'))
-            ->getQuery()->getSingleScalarResult();
-
         // Recreate a Query Builder for the Person Repository.
         $queryBuilder = $entityManager
             ->getRepository(Person::class)
@@ -73,7 +63,7 @@ class StatsController extends UIController
         return $this->render(
             'PelagosAppBundle:Stats:index.html.twig',
             $twigData = array(
-                'datasets' => $datasetCount,
+                'datasets' => $entityManager->getRepository(Dataset::class)->countRegistered(),
                 'people' => $peopleCount,
                 'researchGroups' => $researchGroupCount,
             )
