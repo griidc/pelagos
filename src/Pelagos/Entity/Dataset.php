@@ -10,7 +10,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * Dataset Entity class.
  *
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Pelagos\Entity\DatasetRepository")
  */
 class Dataset extends Entity
 {
