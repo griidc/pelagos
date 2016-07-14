@@ -41,6 +41,23 @@
 
 {% endblock %}
 
+{%
+set properties = [
+    'id',
+    'name',
+    'fundingCycle.name',
+    'fundingCycle.fundingOrganization.name',
+    'creationTimeStamp',
+    'modificationTimeStamp',
+    'creator.id',
+    'creator.firstName',
+    'creator.lastName',
+    'modifier.id',
+    'modifier.firstName',
+    'modifier.lastName',
+]
+%}
+
 {% block body %}
 <table
     entityNiceName = "Research Group"
@@ -50,7 +67,7 @@
     class = "entityTable stripe"
     width = "100%"
     data-ajax = '{
-        "url": "{{ path('pelagos_api_research_groups_get_collection') }}?properties=name,creationTimeStamp,modificationTimeStamp,creator.id,creator.firstName,creator.lastName,modifier.id,modifier.firstName,modifier.lastName,fundingCycle.name,fundingCycle.fundingOrganization.name",
+        "url": "{{ path('pelagos_api_research_groups_get_collection', {'_properties': properties | join(',')}) }}",
         "dataSrc": "",
         "cache": true
     }'
