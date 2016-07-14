@@ -40,8 +40,8 @@ class PublicationController extends EntityController
      * @throws \Exception If DOI in request is missing or not 10.something format.
      * @throws \Exception Upon internal unexpected result.
      * @throws \Exception If more than one cached publication found by DOI.
-     * @throws \Exception If DOI couldn't be resolved by doi.org.
-     * @throws \Exception If doi.org couldn't site this type of DOI (dataset doi).
+     * @throws \Exception If DOI couldn't be resolved by external DOI resolver.
+     * @throws \Exception If external DOI service couldn't site this type of DOI (dataset doi).
      * @throws \Exception Upon other DOI pull failure.
      *
      * @return PublicationCitation
@@ -70,7 +70,7 @@ class PublicationController extends EntityController
                 $citationAge = $citation->getModificationTimeStamp();
 
                 return $this->makeCreatedResponse('pelagos_api_publications_get', $publication->getId());
-            // Does not exist in cache.  Pull from doi.org, cache and return citation.
+            // Does not exist in cache.  Pull from external DOI resolver, cache and return citation.
             } elseif (count($publications == 0)) {
                 $citationStruct = $pubLinkUtil->fetchCitation($doi);
                 if (200 == $citationStruct['status']) {
@@ -86,12 +86,12 @@ class PublicationController extends EntityController
 
                     return $this->makeCreatedResponse('pelagos_api_publications_get', $publication->getId());
                 } elseif (404 == $citationStruct['status']) {
-                    throw new \Exception('This DOI could not be found at doi.org. (404)');
+                    throw new \Exception('This DOI could not be found via external DOI resolution service. (404)');
                 } elseif (406 == $citationStruct['status']) {
-                    throw new \Exception('Doi.org could not generate a citation.  It is likely a dataset DOI. (406)');
+                    throw new \Exception('The external DOI resolver could not generate a citation.  It is likely a dataset DOI. (406)');
                 } else {
                     $errorText = $citationStruct['errorText'];
-                    throw new \Exception('Unable to pull citation from doi.org.  Reason: ('
+                    throw new \Exception('Unable to pull citation from external DOI resolution service.  Reason: ('
                         . $citationStruct['status'] . ") $errorText");
                 }
             } else {

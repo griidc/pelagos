@@ -85,20 +85,4 @@ class Publication extends Entity
     {
         return $this->citations;
     }
-
-    /**
-     * Return this class as JSON.
-     *
-     * @return JSON
-     */
-    public function asJSON()
-    {
-        return json_encode(
-            array(
-                'doi' => $this->doi,
-                'citation' => $this->citation,
-            ),
-            JSON_UNESCAPED_SLASHES
-        );
-    }
 }

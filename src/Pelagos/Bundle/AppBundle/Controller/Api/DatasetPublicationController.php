@@ -122,12 +122,18 @@ class DatasetPublicationController extends EntityController
     {
         $datasetId = $request->query->get('dataset');
 
+        try {
+            $dataset = $this->handleGetOne(Dataset::class, $datasetId);
+        } catch (NotFoundHttpException $e) {
+            throw new BadRequestHttpException($e->getMessage());
+        }
+
         $publication = $this->handleGetOne(Publication::class, $id);
 
         // Check for existing publink and throw bad request error if exists.
         $criteria = array('dataset' => $datasetId, 'publication' => $id);
         $publinks = $this->get('pelagos.entity.handler')->getBy(DatasetPublication::class, $criteria);
-        if ($publinks != null) {
+        if (count($publinks) > 0) {
             $existingPublink = $publinks[0];
             $createdOn = $existingPublink->getCreationTimeStamp()->format('m/d/Y H:i');
             $createdBy = $existingPublink->getCreator()->getFirstName()
@@ -135,12 +141,6 @@ class DatasetPublicationController extends EntityController
             throw new BadRequestHttpException("Link already exists - created by $createdBy on $createdOn" . 'z');
         }
 
-        try {
-            $dataset = $this->handleGetOne(Dataset::class, $datasetId);
-        } catch (NotFoundHttpException $e) {
-            throw new BadRequestHttpException($e->getMessage());
-        }
-        // do something...
         $dataPub = new DatasetPublication($publication, $dataset);
         $entityHandler = $this->get('pelagos.entity.handler');
         $entityHandler->create($dataPub);
