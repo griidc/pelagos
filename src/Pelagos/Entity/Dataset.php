@@ -126,6 +126,13 @@ class Dataset extends Entity
     protected $datasetPublications;
 
     /**
+     * The identifier for an issue tracking ticket related to this Dataset.
+     *
+     * @var string
+     */
+    protected $issueTrackingTicket;
+
+    /**
      * Constructor.
      */
     public function __construct()
@@ -412,5 +419,27 @@ class Dataset extends Entity
             $collection->add($datasetPublication->getPublication());
         }
         return $collection;
+    }
+
+    /**
+     * Sets the issue tracking ticket for this Dataset.
+     *
+     * @param string $issueTrackingTicket The identifier for an issue tracking ticket related to this Dataset.
+     *
+     * @return void
+     */
+    public function setIssueTrackingTicket($issueTrackingTicket)
+    {
+        $this->issueTrackingTicket = $issueTrackingTicket;
+    }
+
+    /**
+     * Gets the issue tracking ticket for this Dataset.
+     *
+     * @return string
+     */
+    public function getIssueTrackingTicket()
+    {
+        return $this->issueTrackingTicket;
     }
 }
