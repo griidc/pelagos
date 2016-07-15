@@ -84,11 +84,15 @@
                 <tbody>
                     {% for dta in section %}
                         <tr>
-                            <td valign="top" class="udiTD"><a href="{{pagelessBaseUrl}}/data/{{dta.dataset_udi}}" target="_BLANK" >{{dta.dataset_udi}}</a></td>
+                            <td valign="top" class="udiTD"><a href="{{ path('pelagos_app_ui_dataland_default', { 'udi': dta.udi }) }}" target="_BLANK" >{{dta.udi}}</a></td>
                             <td style="position:relative;">
                                 <div>
-                                    <button id="jiraLinkEditButton" class="jlink"><img src="{{baseUrl}}/includes/images/edit.png"></button>&nbsp;
-                                    <a href="{{jiraBase}}/{{dta.jira_ticket}}" target="_BLANK">{{dta.jira_ticket}}</a>
+                                    <button id="jiraLinkEditButton" class="jlink">
+                                        {% image '@PelagosAppBundle/Resources/public/images/edit.png' %}
+                                        <img src="{{ asset_url }}">
+                                        {% endimage %}
+                                    </button>&nbsp;
+                                    <a href="{{jiraBase}}/{{dta.jira_ticket|default}}" target="_BLANK">{{dta.jira_ticket|default}}</a>
                                     <table class="jiraForm">
                                         <tr>
                                             <td><input type="text" name="jiraTicket" class="jiraTicketClass" placeholder="URL or Jira Issue"></td>
@@ -98,8 +102,8 @@
                                     </table>
                                 </div>
                             </td>
-                            <td valign="top"><form name="AcceptedState" action="{{baseUrl}}/change_status/{{dta.dataset_udi}}" method="post">
-                            <select name="to" id="state_sel_{{dta.dataset_udi}}">
+                            <td valign="top"><form name="AcceptedState" action="/change_status/{{dta.udi}}" method="post">
+                            <select name="to" id="state_sel_{{dta.udi}}">
                                     {% if sname == 'submitted' %}
                                         <option value="Submitted" SELECTED>Submitted</option>
                                         <option value="InReview" style="background-color: yellow;">InReview</option>
@@ -139,21 +143,21 @@
                                     {% endif %}
 
                             </select>
-                            <input type="submit" value="->" id="state_sel_sub_{{dta.dataset_udi}}">
+                            <input type="submit" value="->" id="state_sel_sub_{{dta.udi}}">
                             </form>
                             </td>
                             <td>
-                                <form name="setApprovalForm" action="{{baseUrl}}/change_appr_status/{{dta.dataset_udi}}" method="post">
-                                    <select name="approval" id="appr_sel_{{dta.dataset_udi}}">
-                                        {% if dta.approval == 'Approved' %}
+                                <form name="setApprovalForm" action="/change_appr_status/{{dta.udi}}" method="post">
+                                    <select name="approval" id="appr_sel_{{dta.udi}}">
+                                        {% if dta.approval|default == 'Approved' %}
                                         <option value='Approved' SELECTED>Approved</option>
                                         <option value='NotRequired'>Not Required</option>
                                         <option value='ApprovalRequired'>Apr Required</option>
-                                        {% elseif dta.approval == 'NotRequired' %}
+                                        {% elseif dta.approval|default == 'NotRequired' %}
                                         <option value='Approved'>Approved</option>
                                         <option value='NotRequired' SELECTED>Not Required</option>
                                         <option value='ApprovalRequired'>Apr Required</option>
-                                        {% elseif  dta.approval == 'ApprovalRequired' %}
+                                        {% elseif  dta.approval|default == 'ApprovalRequired' %}
                                         <option value='Approved'>Approved</option>
                                         <option value='NotRequired'>Not Required</option>
                                         <option value='ApprovalRequired' SELECTED>Apr Required</option>
@@ -161,17 +165,33 @@
                                         <option value=''>Error</option>
                                         {% endif %}
                                     </select>
-                                    <input type="submit" value="->" id="appr_sel_sub_{{dta.dataset_udi}}">
+                                    <input type="submit" value="->" id="appr_sel_sub_{{dta.udi}}">
                                 </form>
                             </td>
-                            <td valign="top">{{dta.submittimestamp}}</td>
+                            <td valign="top">{{ dta.datasetSubmission.creationTimeStamp | date("c") }}</td>
                             <td valign="top">
                                 <table id="filedisp">
                                     <tr>
-                                        <td id="button"><button style="font-size:66%" onclick="javascript:showLogEntries('{{dta.dataset_udi}}')" id="log_butt_{{dta.dataset_udi}}">Log</button></td>
-                                        <td id="file_dl_icon"><a href="{{baseUrl}}/download-metadata/{{dta.dataset_udi}}" id="filedllnk_{{dta.dataset_udi}}"><img src="{{baseUrl}}/includes/images/download.png"></a></td>
-                                        <td id="db_dl_icon">{% if dta.hasxml == true %}<a href="{{baseUrl}}/download-metadata-db/{{dta.dataset_udi}}" id="dbdllnk_{{dta.dataset_udi}}"><img src="{{baseUrl}}/includes/images/download-from-db.png"></a>{% else %}&nbsp;{% endif %}</td>
-                                        <td id="md_filename">{{dta.dataset_metadata}}</td>
+                                        <td id="button"><button style="font-size:66%" onclick="javascript:showLogEntries('{{dta.udi}}')" id="log_butt_{{dta.udi}}">Log</button></td>
+                                        <td id="file_dl_icon">
+                                            <a href="/download-metadata/{{dta.udi}}" id="filedllnk_{{dta.udi}}">
+                                                {% image '@PelagosAppBundle/Resources/public/images/download.png' %}
+                                                    <img src="{{ asset_url }}">
+                                                {% endimage %}
+                                            </a>
+                                        </td>
+                                        <td id="db_dl_icon">
+                                            {% if dta.metadata %}
+                                                <a href="/download-metadata-db/{{dta.udi}}" id="dbdllnk_{{dta.udi}}">
+                                                    {% image '@PelagosAppBundle/Resources/public/images/download-from-db.png' %}
+                                                        <img src="{{ asset_url }}">
+                                                    {% endimage %}
+                                                </a>
+                                            {% else %}
+                                                &nbsp;
+                                            {% endif %}
+                                        </td>
+                                        <td id="md_filename">{{dta.datasetSubmission.metadataFileName}}</td>
                                     </tr>
                                 </table>
                             </td>
@@ -187,7 +207,7 @@
         <div id="uploadnewmetadata">
             <div>
                 <!-- The data encoding type, enctype, MUST be specified as below -->
-                <form enctype="multipart/form-data" action="{{baseUrl}}/upload-new-metadata-file" method="POST">
+                <form enctype="multipart/form-data" action="/upload-new-metadata-file" method="POST">
                     <!-- MAX_FILE_SIZE must precede the file input field -->
                     <input type="hidden" name="MAX_FILE_SIZE" value="1000000" />
                     <!-- Name of input element determines name in $_FILES array -->
@@ -215,16 +235,20 @@
             </div>
         </div>
         <div id="GeoTester">
-            <form action="{{baseUrl}}/TestGeometry" method="POST">
+            <form action="/TestGeometry" method="POST">
             Polygon as (latitude,longitude) tuples separated by single space, no line breaks, clockwise, first point repeated as last point<br />
-            <textarea name="testPolygon" style="width:100%" rows="4" id="testGeometry">{{testPolygon}}</textarea><br />
+            <textarea name="testPolygon" style="width:100%" rows="4" id="testGeometry">{{testPolygon|default}}</textarea><br />
             <input type="submit" value="Test This Geometry" />&nbsp; <button type="button" onClick="clearTestGeometry()">Clear This Geometery</button>
             </form>
         </div>
 
 </div>
 <div id='log'>
-    <div id="log_close"><input type="image" src="{{baseUrl}}/includes/images/close.gif" onclick="jQuery('#log').hide();"></div>
+    <div id="log_close">
+        {% image '@PelagosAppBundle/Resources/public/images/close.gif' %}
+            <input type="image" src="{{ asset_url }}" onclick="jQuery('#log').hide();">
+        {% endimage %}
+    </div>
     <div id='log_title'>Log replaces by js</div>
     <div id='log_content'>
         Log replaced by AJAX call to /getlog/:udi
