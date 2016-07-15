@@ -23,7 +23,19 @@ class MdAppController extends UIController
     public function defaultAction()
     {
         return $this->render(
-            'PelagosAppBundle:MdApp:main.html.twig'
+            'PelagosAppBundle:MdApp:main.html.twig',
+            array(
+                'jiraBase' => 'https://triton.tamucc.edu/issues',
+                'm_dataset' => array(
+                    'submitted' => array(),
+                    'inreview' => array(),
+                    'secondcheck' => array(),
+                    'accepted' => array(),
+                    'backtosubmitter' => array(),
+                ),
+                'baseUrl' => '',
+                'testPolygon' => '',
+            )
         );
     }
 }

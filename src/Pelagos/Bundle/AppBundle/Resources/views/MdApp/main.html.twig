@@ -1,3 +1,46 @@
+{% extends "PelagosAppBundle::layout.html.twig" %}
+
+{% block head %}
+
+    {{
+        add_library (
+            [
+                'ui.tabs',
+                'jquery.cookie',
+            ]
+        )
+    }}
+
+    {{
+        add_css (
+            [
+                '//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css',
+            ]
+        )
+    }}
+
+    {% stylesheets  '@PelagosAppBundle/Resources/public/css/mdapp.css' %}
+        {{ add_css(asset_url) }}
+    {% endstylesheets  %}
+
+    {{
+        add_js(
+            [
+                '//cdn.datatables.net/1.10.7/js/jquery.dataTables.js',
+                '//cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js',
+                '//maps.google.com/maps/api/js?v=3',
+                '/includes/geoviz/geoviz.js',
+            ]
+        )
+    }}
+
+    {% javascripts '@PelagosAppBundle/Resources/public/js/mdapp.js' %}
+        {{ add_js(asset_url) }}
+    {% endjavascripts %}
+
+{% endblock %}
+
+{% block body %}
 <script type="text/javascript">var jiraBase="{{jiraBase}}";</script>
 <div style="background: #fff2e8; padding:0px;" id="tabs">
   <div class="ui-tabs">
@@ -187,3 +230,4 @@
         Log replaced by AJAX call to /getlog/:udi
     </div>
 </div>
+{% endblock %}
