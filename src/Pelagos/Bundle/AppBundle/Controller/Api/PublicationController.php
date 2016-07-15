@@ -40,8 +40,8 @@ class PublicationController extends EntityController
      * @throws BadRequestHttpException If DOI in request is missing or not 10.something format.
      * @throws \Exception              Upon internal unexpected result.
      * @throws \Exception              If more than one cached publication found by DOI.
-     * @throws \Exception              If DOI couldn't be resolved by external DOI resolver.
-     * @throws \Exception              If external DOI service couldn't site this type of DOI (dataset doi).
+     * @throws NotFoundHttpException   If DOI couldn't be resolved by external DOI resolver.
+     * @throws NotFoundHttpException   If external DOI service couldn't site this type of DOI (dataset doi).
      * @throws \Exception              Upon other DOI pull failure.
      *
      * @return PublicationCitation
