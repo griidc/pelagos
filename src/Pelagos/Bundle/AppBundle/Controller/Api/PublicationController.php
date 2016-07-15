@@ -86,9 +86,9 @@ class PublicationController extends EntityController
 
                     return $this->makeCreatedResponse('pelagos_api_publications_get', $publication->getId());
                 } elseif (404 == $citationStruct['status']) {
-                    throw new \Exception('This DOI could not be found via external DOI resolution service. (404)');
+                    throw new NotFoundHttpException('This DOI could not be found via external DOI resolution service. (404)');
                 } elseif (406 == $citationStruct['status']) {
-                    throw new \Exception('The external DOI resolver could not generate a citation.  It is likely a dataset DOI. (406)');
+                    throw new NotFoundHttpException('The external DOI resolver could not generate a citation.  It is likely a dataset DOI. (406)');
                 } else {
                     $errorText = $citationStruct['errorText'];
                     throw new \Exception('Unable to pull citation from external DOI resolution service.  Reason: ('
