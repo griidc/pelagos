@@ -367,7 +367,7 @@ class Metadata extends Entity
     /**
      * Extracts BoundingPolygonGML from SimpleXML object.
      *
-     * @param \SimpleXMLElement $simpleXml Containing zero or more bonding polygons.
+     * @param \SimpleXMLElement $simpleXml Containing zero or more bounding polygons.
      *
      * @return array;
      */
@@ -382,12 +382,14 @@ class Metadata extends Entity
             '/gmd:extent[*]' .
             '/gmd:EX_Extent[*]' .
             '/gmd:geographicElement[*]' .
-            '/gmd:EX_BoundingPolygon[*]'
+            '/gmd:EX_BoundingPolygon[*]' .
+            '/gmd:polygon[*]'
         );
 
-
         foreach ($polygons as $polygon) {
-            $polygonArray[] = $polygon->asXml();
+            foreach ($polygon->children('gml', true) as $child) {
+                $polygonArray[] = $child->asXml();
+            }
         }
 
         return $polygonArray;
