@@ -40,8 +40,8 @@ class PublicationController extends EntityController
      * @throws BadRequestHttpException If DOI in request is missing or not 10.something format.
      * @throws \Exception              Upon internal unexpected result.
      * @throws \Exception              If more than one cached publication found by DOI.
-     * @throws \Exception              If DOI couldn't be resolved by external DOI resolver.
-     * @throws \Exception              If external DOI service couldn't site this type of DOI (dataset doi).
+     * @throws NotFoundHttpException   If DOI couldn't be resolved by external DOI resolver.
+     * @throws NotFoundHttpException   If external DOI service couldn't site this type of DOI (dataset doi).
      * @throws \Exception              Upon other DOI pull failure.
      *
      * @return PublicationCitation
@@ -86,9 +86,9 @@ class PublicationController extends EntityController
 
                     return $this->makeCreatedResponse('pelagos_api_publications_get', $publication->getId());
                 } elseif (404 == $citationStruct['status']) {
-                    throw new \Exception('This DOI could not be found via external DOI resolution service. (404)');
+                    throw new NotFoundHttpException('This DOI could not be found via external DOI resolution service. (404)');
                 } elseif (406 == $citationStruct['status']) {
-                    throw new \Exception('The external DOI resolver could not generate a citation.  It is likely a dataset DOI. (406)');
+                    throw new NotFoundHttpException('The external DOI resolver could not generate a citation.  It is likely a dataset DOI. (406)');
                 } else {
                     $errorText = $citationStruct['errorText'];
                     throw new \Exception('Unable to pull citation from external DOI resolution service.  Reason: ('

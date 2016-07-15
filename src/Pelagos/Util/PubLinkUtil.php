@@ -42,8 +42,9 @@ class PubLinkUtil
         );
 
         $ch = curl_init();
-        $url = 'http://crosscite.org/citeproc/format' . '?doi=' . $doi . "&style=$style&locale=$locale";
-        $header = array('Accept: text/plain;', "Accept-Language: $locale");
+        $url = 'http://dx.doi.org/' . $doi;
+        $header = array("Accept: text/bibliography; style=$style; locale=$locale");
+
 
         curl_setopt($ch, CURLOPT_URL, $url);
         // Since the request 303's forward, we have to turn follow on.

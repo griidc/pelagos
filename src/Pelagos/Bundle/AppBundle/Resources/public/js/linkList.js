@@ -4,7 +4,7 @@ $(document).ready(function() {
     $('#linkList').dataTable( {
         "ajax":
         {
-            "url": Routing.generate('pelagos_api_dataset_publications_get_collection') + '?properties=dataset.researchGroup.fundingCycle.name,dataset.researchGroup.name,dataset.udi,publication.doi,creator.lastName,creator.firstName,creationTimeStamp',
+            "url": Routing.generate('pelagos_api_dataset_publications_get_collection'),
             "cache": true,
             "dataSrc": ""
         },
@@ -88,7 +88,7 @@ $(document).ready(function() {
                 text: function(event, api) {
                     var udi = $(this).text();
                     $.ajax({
-                        url: Routing.generate('pelagos_api_datasets_get_collection') + '?udi=' + udi + '&properties=id'
+                        url: Routing.generate('pelagos_api_datasets_get_collection') + '?udi=' + udi + '&_properties=id'
                     })
                     .then(function(content) {
                         $.ajax({
