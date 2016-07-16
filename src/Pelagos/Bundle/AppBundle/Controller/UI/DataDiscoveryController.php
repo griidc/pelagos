@@ -211,10 +211,12 @@ class DataDiscoveryController extends UIController
         }
         if (null !== $textFilter) {
             $searchProperties = array(
+                'dataset.udi',
                 'dif.title',
                 'dif.abstract',
                 'datasetSubmission.title',
                 'datasetSubmission.abstract',
+                'datasetSubmission.authors',
                 'researchGroup.name',
             );
             $orX = null;
