@@ -82,10 +82,13 @@ class FundingOrganizationController extends EntityController
      *
      * @ApiDoc(
      *   section = "Funding Organizations",
-     *   parameters = {
-     *     {"name"="properties", "dataType"="string", "required"=false, "format"="property1,property2,property3.subProperty,etc.", "description"="Return these properties"},
-     *     {"name"="orderBy", "dataType"="string", "required"=false, "format"="property1,property2,property3.subProperty,etc.", "description"="Order by these properties"},
-     *     {"name"="someProperty", "dataType"="string", "required"=false, "format"="value", "description"="Filter by someProperty"},
+     *   input = {
+     *     "class": "Pelagos\Bundle\AppBundle\Form\EntityCollectionType",
+     *     "name": "",
+     *     "options": {
+     *       "label": "Funding Organizations",
+     *       "data_class": "Pelagos\Entity\FundingOrganization"
+     *     }
      *   },
      *   output = "array<Pelagos\Entity\FundingOrganization>",
      *   statusCodes = {
@@ -96,23 +99,17 @@ class FundingOrganizationController extends EntityController
      *
      * @Rest\Get("")
      *
+     * @Rest\View(serializerEnableMaxDepthChecks = true)
+     *
      * @return Response
      */
     public function getCollectionAction(Request $request)
     {
-        $fundingOrganizations = $this->handleGetCollection(FundingOrganization::class, $request);
-        for ($i = 0; $i < count($fundingOrganizations); $i++) {
-            if (is_array($fundingOrganizations[$i])
-                and array_key_exists('logo', $fundingOrganizations[$i])
-                and null !== $fundingOrganizations[$i]['logo']
-                and array_key_exists('id', $fundingOrganizations[$i])) {
-                $fundingOrganizations[$i]['logo'] = $this->getResourceUrl(
-                    'pelagos_api_funding_organizations_get_logo',
-                    $fundingOrganizations[$i]['id']
-                );
-            }
-        }
-        return $this->makeJsonResponse($fundingOrganizations);
+        return $this->handleGetCollection(
+            FundingOrganization::class,
+            $request,
+            array('logo' => 'pelagos_api_funding_organizations_get_logo')
+        );
     }
 
     /**

@@ -1,0 +1,257 @@
+{% extends "PelagosAppBundle::layout.html.twig" %}
+
+{% block head %}
+
+    {{
+        add_library (
+            [
+                'ui.tabs',
+                'jquery.cookie',
+            ]
+        )
+    }}
+
+    {{
+        add_css (
+            [
+                '//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css',
+            ]
+        )
+    }}
+
+    {% stylesheets  '@PelagosAppBundle/Resources/public/css/mdapp.css' %}
+        {{ add_css(asset_url) }}
+    {% endstylesheets  %}
+
+    {{
+        add_js(
+            [
+                '//cdn.datatables.net/1.10.7/js/jquery.dataTables.js',
+                '//cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js',
+                '//maps.google.com/maps/api/js?v=3',
+                '/includes/geoviz/geoviz.js',
+            ]
+        )
+    }}
+
+    {% javascripts '@PelagosAppBundle/Resources/public/js/mdapp.js' %}
+        {{ add_js(asset_url) }}
+    {% endjavascripts %}
+
+{% endblock %}
+
+{% block body %}
+<script type="text/javascript">var jiraBase="{{jiraBase}}";</script>
+<div style="background: #fff2e8; padding:0px;" id="tabs">
+  <div class="ui-tabs">
+    <ul class="ui-tabs-nav">
+        <li style="text-align:center"><a href="#submitted" onClick="clearStatusMessages()">Submitted ({{ m_dataset.submitted|length }})</a></li>
+        <li style="text-align:center"><a href="#inreview" onClick="clearStatusMessages()">In Review ({{ m_dataset.inreview|length }})</a></li>
+        <li style="text-align:center"><a href="#secondcheck" onClick="clearStatusMessages()" >2nd Chk ({{ m_dataset.secondcheck|length }})</a></li>
+        <li style="text-align:center"><a href="#accepted" onClick="clearStatusMessages()" >Accepted ({{ m_dataset.accepted|length }})</a></li>
+        <li style="text-align:center"><a href="#backtosubmitter" onClick="clearStatusMessages()" >Bk to Sub ({{ m_dataset.backtosubmitter|length }})</a></li>
+        <li style="text-align:center"><a href="#uploadnewmetadata" onClick="clearStatusMessages()">Upload New Metadata</a></li>
+        <li style="text-align:center"><a href="#GeoTester">Test a Geometry</a></li>
+    </ul>
+  </div>
+
+
+    {% for sname,section in m_dataset %} <!-- allows key,value iteration -->
+      {% if section|length %}
+        <div id="{{sname}}" class="tab" style="padding:0">
+          <fieldset>
+            <table id="metadata_fancy_{{sname}}" class="display">
+                <thead>
+                    <tr>
+                        <th><div class="title">UDI</div></th>
+                        <th><div class="title">Jira Link</div></th>
+                        <th><div class="title">Action</div></th>
+                        <th><div class="title">Approval</div></th>
+                        <th><div class="title">Timestamp</div></th>
+                        <th><div class="title">Filename</div></th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th><div class="title">UDI</div></th>
+                        <th><div class="title">Jira Link</div></th>
+                        <th><div class="title">Action</div></th>
+                        <th><div class="title">Approval</div></th>
+                        <th><div class="title">Timestamp</div></th>
+                        <th><div class="title">Filename</div></th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    {% for dta in section %}
+                        <tr>
+                            <td valign="top" class="udiTD"><a href="{{ path('pelagos_app_ui_dataland_default', { 'udi': dta.udi }) }}" target="_BLANK" >{{dta.udi}}</a></td>
+                            <td style="position:relative;">
+                                <div>
+                                    <button id="jiraLinkEditButton" class="jlink">
+                                        {% image '@PelagosAppBundle/Resources/public/images/edit.png' %}
+                                        <img src="{{ asset_url }}">
+                                        {% endimage %}
+                                    </button>&nbsp;
+                                    <a href="{{jiraBase}}/{{dta.jira_ticket|default}}" target="_BLANK">{{dta.jira_ticket|default}}</a>
+                                    <table class="jiraForm">
+                                        <tr>
+                                            <td><input type="text" name="jiraTicket" class="jiraTicketClass" placeholder="URL or Jira Issue"></td>
+                                            <td><button type="submit" class="jiraSaveButton">Save</button></td>
+                                            <td><button type="cancel" class="jiraCancelButton">Cancel</button></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </td>
+                            <td valign="top"><form name="AcceptedState" action="/change_status/{{dta.udi}}" method="post">
+                            <select name="to" id="state_sel_{{dta.udi}}">
+                                    {% if sname == 'submitted' %}
+                                        <option value="Submitted" SELECTED>Submitted</option>
+                                        <option value="InReview" style="background-color: yellow;">InReview</option>
+                                        <option value="SecondCheck">SecondCheck</option>
+                                        <option value="Accepted">Accepted</option>
+                                        <option value="BackToSubmitter">BackToSubmitter</option>
+                                    {% elseif sname == 'inreview' %}
+                                        <option value="Submitted">Submitted</option>
+                                        <option value="InReview" SELECTED>InReview</option>
+                                        <option value="SecondCheck" style="background-color: yellow;">SecondCheck</option>
+                                        <option value="Accepted">Accepted</option>
+                                        <option value="BackToSubmitter">BackToSubmitter</option>
+                                    {% elseif sname == 'secondcheck' %}
+                                        <option value="Submitted">Submitted</option>
+                                        <option value="SecondCheck" SELECTED>SecondCheck</option>
+                                        <option value="InReview">InReview</option>
+                                        <option value="Accepted" style="background-color: yellow;">Accepted</option>
+                                        <option value="BackToSubmitter">BackToSubmitter</option>
+                                    {% elseif sname == 'accepted' %}
+                                        <option value="Submitted">Submitted</option>
+                                        <option value="Accepted" SELECTED>Accepted</option>
+                                        <option value="InReview">InReview</option>
+                                        <option value="SecondCheck">SecondCheck</option>
+                                        <option value="BackToSubmitter">BackToSubmitter</option>
+                                    {% elseif sname == 'backtosubmitter' %}
+                                        <option value="Submitted">Submitted</option>
+                                        <option value="BackToSubmitter" SELECTED>BackToSubmitter</option>
+                                        <option value="InReview" style="background-color: yellow;">InReview</option>
+                                        <option value="SecondCheck">SecondCheck</option>
+                                        <option value="Accepted">Accepted</option>
+                                    {% else %}
+                                        <option value="Submitted">Submitted</option>
+                                        <option value="InReview">InReview</option>
+                                        <option value="SecondCheck">SecondCheck</option>
+                                        <option value="Accepted">Accepted</option>
+                                        <option value="BackToSubmitter">BackToSubmitter</option>
+                                    {% endif %}
+
+                            </select>
+                            <input type="submit" value="->" id="state_sel_sub_{{dta.udi}}">
+                            </form>
+                            </td>
+                            <td>
+                                <form name="setApprovalForm" action="/change_appr_status/{{dta.udi}}" method="post">
+                                    <select name="approval" id="appr_sel_{{dta.udi}}">
+                                        {% if dta.approval|default == 'Approved' %}
+                                        <option value='Approved' SELECTED>Approved</option>
+                                        <option value='NotRequired'>Not Required</option>
+                                        <option value='ApprovalRequired'>Apr Required</option>
+                                        {% elseif dta.approval|default == 'NotRequired' %}
+                                        <option value='Approved'>Approved</option>
+                                        <option value='NotRequired' SELECTED>Not Required</option>
+                                        <option value='ApprovalRequired'>Apr Required</option>
+                                        {% elseif  dta.approval|default == 'ApprovalRequired' %}
+                                        <option value='Approved'>Approved</option>
+                                        <option value='NotRequired'>Not Required</option>
+                                        <option value='ApprovalRequired' SELECTED>Apr Required</option>
+                                        {% else %}
+                                        <option value=''>Error</option>
+                                        {% endif %}
+                                    </select>
+                                    <input type="submit" value="->" id="appr_sel_sub_{{dta.udi}}">
+                                </form>
+                            </td>
+                            <td valign="top">{{ dta.datasetSubmission.creationTimeStamp | date("c") }}</td>
+                            <td valign="top">
+                                <table id="filedisp">
+                                    <tr>
+                                        <td id="button"><button style="font-size:66%" onclick="javascript:showLogEntries('{{dta.udi}}')" id="log_butt_{{dta.udi}}">Log</button></td>
+                                        <td id="file_dl_icon">
+                                            <a href="/download-metadata/{{dta.udi}}" id="filedllnk_{{dta.udi}}">
+                                                {% image '@PelagosAppBundle/Resources/public/images/download.png' %}
+                                                    <img src="{{ asset_url }}">
+                                                {% endimage %}
+                                            </a>
+                                        </td>
+                                        <td id="db_dl_icon">
+                                            {% if dta.metadata %}
+                                                <a href="/download-metadata-db/{{dta.udi}}" id="dbdllnk_{{dta.udi}}">
+                                                    {% image '@PelagosAppBundle/Resources/public/images/download-from-db.png' %}
+                                                        <img src="{{ asset_url }}">
+                                                    {% endimage %}
+                                                </a>
+                                            {% else %}
+                                                &nbsp;
+                                            {% endif %}
+                                        </td>
+                                        <td id="md_filename">{{dta.datasetSubmission.metadataFileName}}</td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+          </fieldset>
+        </div>
+       {% endif %}
+     {% endfor %}
+
+        <div id="uploadnewmetadata">
+            <div>
+                <!-- The data encoding type, enctype, MUST be specified as below -->
+                <form enctype="multipart/form-data" action="/upload-new-metadata-file" method="POST">
+                    <!-- MAX_FILE_SIZE must precede the file input field -->
+                    <input type="hidden" name="MAX_FILE_SIZE" value="1000000" />
+                    <!-- Name of input element determines name in $_FILES array -->
+                    <input name="newMetadataFile" type="file" style="width:100%" />
+                    <hr>
+                    <div>
+                        <h3>Additional Actions</h3>
+                        <input type="checkbox" name="validateSchema" CHECKED>Validate as ISO-19115-2<br />
+                        <input type="checkbox" name="acceptMetadata">Accept Metadata<br />
+                        <input type="checkbox" name="overrideDatestamp" CHECKED>Create/Update gmi:MI_Metadata/gmd:dateStamp with current gco:dateTime<br />
+                    </div>
+                    <hr>
+                    <h3>GRIIDC Metadata Standards Compliance Enforcement</h3>
+                    <p>The following checks help ensure that the UDI references within
+                       a metadata record are consistent. The UDI is determined by reading
+                       the uploaded filename. If checked, failed tests will result in
+                       rejection of the upload. If unchecked, failed tests will result in
+                       a non-blocking warning instead.</p>
+                    <input type="checkbox" name="test1" CHECKED>Filename matches file identifier (/gmi:MI_Metadata/gmd:fileIdentifier[1]/gco:CharacterString[1]) as UDI-metadata.xml (w/dash instead of colon)<br />
+                    <input type="checkbox" name="test2" CHECKED>UDI matches metadata URL (/gmi:MI_Metadata/gmd:dataSetURI/gco:CharacterString)<br />
+                    <input type="checkbox" name="test3" CHECKED>UDI matches distribution URL (/gmi:MI_Metadata/gmd:distributionInfo[1]/gmd:MD_Distribution[1]/gmd:distributor[1]/gmd:MD_Distributor[1]/gmd:distributorTransferOptions[1]/gmd:MD_DigitalTransferOptions[1]/gmd:onLine[1]/gmd:CI_OnlineResource[1]/gmd:linkage[1]/gmd:URL[1])<br />
+                    <hr>
+                    <input type="submit" value="Upload File" id="FileUploadButton" /><br />
+                </form>
+            </div>
+        </div>
+        <div id="GeoTester">
+            <form action="/TestGeometry" method="POST">
+            Polygon as (latitude,longitude) tuples separated by single space, no line breaks, clockwise, first point repeated as last point<br />
+            <textarea name="testPolygon" style="width:100%" rows="4" id="testGeometry">{{testPolygon|default}}</textarea><br />
+            <input type="submit" value="Test This Geometry" />&nbsp; <button type="button" onClick="clearTestGeometry()">Clear This Geometery</button>
+            </form>
+        </div>
+
+</div>
+<div id='log'>
+    <div id="log_close">
+        {% image '@PelagosAppBundle/Resources/public/images/close.gif' %}
+            <input type="image" src="{{ asset_url }}" onclick="jQuery('#log').hide();">
+        {% endimage %}
+    </div>
+    <div id='log_title'>Log replaces by js</div>
+    <div id='log_content'>
+        Log replaced by AJAX call to /getlog/:udi
+    </div>
+</div>
+{% endblock %}

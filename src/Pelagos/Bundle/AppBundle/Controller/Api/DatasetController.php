@@ -10,6 +10,7 @@ use FOS\RestBundle\Controller\Annotations as Rest;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 use Pelagos\Entity\Dataset;
+use Pelagos\Entity\DatasetSubmission;
 
 /**
  * The Dataset api controller.
@@ -66,5 +67,55 @@ class DatasetController extends EntityController
     public function getAction($id)
     {
         return $this->handleGetOne(Dataset::class, $id);
+    }
+
+    /**
+     * Suggest a citation for a Dataset identified by UDI.
+     *
+     * @param integer $id The ID of the Dataset to suggest a citation for.
+     *
+     * @ApiDoc(
+     *   section = "Datasets",
+     *   statusCodes = {
+     *     200 = "The requested Dataset Citation was successfully retrieved.",
+     *     404 = "The requested Dataset was not found by the supplied UDI.",
+     *     500 = "An internal error has occurred.",
+     *   }
+     * )
+     *
+     * @Rest\Get("/{id}/citation")
+     *
+     * @Rest\View
+     *
+     * @return string
+     */
+    public function getCitationAction($id)
+    {
+        $dataset = $this->handleGetOne(Dataset::class, $id);
+        $datasetSubmission = $dataset->getDatasetSubmission();
+
+        $title = $dataset->getTitle();
+        $udi = $dataset->getUdi();
+
+        if ($datasetSubmission instanceof DatasetSubmission) {
+            $author = $datasetSubmission->getAuthors();
+            $year = $datasetSubmission->getModificationTimeStamp()->format('Y');
+            $doi = $datasetSubmission->getDoi();
+
+            if ($doi !== null) {
+                $url = 'http://dx.doi.org/' . $doi;
+            } else {
+                $url = 'http://data.gulfresearchinitiative.org/data/' . $udi;
+            }
+
+            $citationString = "$author ($year) $title ($udi) " .
+                "[Data files] Available from $url";
+
+            return $citationString;
+        } else {
+            $citationString = "This dataset has no registration: $title ($udi)";
+            return $citationString;
+        }
+
     }
 }

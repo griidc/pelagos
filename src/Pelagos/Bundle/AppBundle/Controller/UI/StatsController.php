@@ -34,16 +34,6 @@ class StatsController extends UIController
         $entityManager = $this
             ->container->get('doctrine.orm.entity_manager');
 
-        // Create a Query Builder for the Dataset Repository.
-        $queryBuilder = $entityManager
-            ->getRepository(Dataset::class)
-            ->createQueryBuilder('dataset');
-
-        // Get the dataset count.
-        $datasetCount = $queryBuilder
-            ->select($queryBuilder->expr()->count('dataset.id'))
-            ->getQuery()->getSingleScalarResult();
-
         // Recreate a Query Builder for the Person Repository.
         $queryBuilder = $entityManager
             ->getRepository(Person::class)
@@ -73,7 +63,7 @@ class StatsController extends UIController
         return $this->render(
             'PelagosAppBundle:Stats:index.html.twig',
             $twigData = array(
-                'datasets' => $datasetCount,
+                'datasets' => $entityManager->getRepository(Dataset::class)->countRegistered(),
                 'people' => $peopleCount,
                 'researchGroups' => $researchGroupCount,
             )
@@ -89,51 +79,71 @@ class StatsController extends UIController
      */
     public function getDatasetOverTimeAction()
     {
-        $queryBuilder = $this
-            ->container->get('doctrine.orm.entity_manager')
-            ->getRepository(DIF::class)
-            ->createQueryBuilder('dif');
-
-        $query = $queryBuilder
-            ->select($queryBuilder->expr()->count('dif.id'))
-            ->select('dif.modificationTimeStamp')
-            ->andWhere('dif.status = ' . DIF::STATUS_APPROVED)
-            ->orderBy('dif.modificationTimeStamp', 'ASC')
-            ->getQuery();
-
-        $identfiedDatasets = $query->getResult(Query::HYDRATE_ARRAY);
 
         $queryBuilder = $this
             ->container->get('doctrine.orm.entity_manager')
-            ->getRepository(Dataset::class)
-            ->createQueryBuilder('dataset');
+            ->getRepository(DatasetSubmission::class)
+            ->createQueryBuilder('datasetSubmission');
+
 
         $query = $queryBuilder
-            ->select($queryBuilder->expr()->count('dataset.id'))
-            ->select('dataset.modificationTimeStamp')
-            ->andWhere('dataset.availabilityStatus = ' . DatasetSubmission::AVAILABILITY_STATUS_PUBLICLY_AVAILABLE)
-            ->orderBy('dataset.modificationTimeStamp', 'ASC')
+            ->select('datasetSubmission.creationTimeStamp')
+            ->where('datasetSubmission.id IN (
+                        SELECT MIN(subDatasetSubmission.id)
+                        FROM ' . DatasetSubmission::class . ' subDatasetSubmission
+                        WHERE subDatasetSubmission.datasetFileUri is not null
+                        GROUP BY subDatasetSubmission.dataset
+                    )')
+            ->orderBy('datasetSubmission.creationTimeStamp')
             ->getQuery();
+
+        $registeredDatasets = $query->getResult(Query::HYDRATE_ARRAY);
+
+        $query = $queryBuilder
+            ->select('datasetSubmission.creationTimeStamp')
+            ->where('datasetSubmission.id IN (
+                SELECT MIN(subDatasetSubmission.id)
+                FROM ' . DatasetSubmission::class . ' subDatasetSubmission
+                WHERE subDatasetSubmission.datasetFileUri is not null
+                AND subDatasetSubmission.metadataStatus = :metadatastatus
+                AND subDatasetSubmission.restrictions = :restrictedstatus
+                AND (
+                    subDatasetSubmission.datasetFileTransferStatus = :transerstatuscompleted 
+                    OR subDatasetSubmission.datasetFileTransferStatus = :transerstatusremotelyhosted
+                )
+                GROUP BY subDatasetSubmission.dataset
+            )')
+            ->setParameters(
+                array(
+                    'metadatastatus' => DatasetSubmission::METADATA_STATUS_ACCEPTED,
+                    'restrictedstatus' => DatasetSubmission::RESTRICTION_NONE,
+                    'transerstatuscompleted' => DatasetSubmission::TRANSFER_STATUS_COMPLETED,
+                    'transerstatusremotelyhosted' => DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED,
+                )
+            )
+            ->orderBy('datasetSubmission.creationTimeStamp')
+        ->getQuery();
+
 
         $availableDatasets = $query->getResult(Query::HYDRATE_ARRAY);
 
-        $identified = array();
-        foreach ($identfiedDatasets as $index => $value) {
-            $identified[] = array(($value['modificationTimeStamp']->format('U') * 1000), ($index + 1));
+        $registered = array();
+        foreach ($registeredDatasets as $index => $value) {
+            $registered[] = array(($value['creationTimeStamp']->format('U') * 1000), ($index + 1));
             $index = $index;
         }
-        $identified[] = array((time() * 1000), count($identified));
+        $registered[] = array((time() * 1000), count($registered));
 
         $available = array();
         foreach ($availableDatasets as $index => $value) {
-            $available[] = array(($value['modificationTimeStamp']->format('U') * 1000), ($index + 1));
+            $available[] = array(($value['creationTimeStamp']->format('U') * 1000), ($index + 1));
         }
         $available[] = array((time() * 1000), count($available));
 
         $result = array();
         $result['page'] = 'overview';
         $result['section'] = 'total-records-over-time';
-        $result['data'][0] = array ('label' => 'Identified', 'data' => $identified);
+        $result['data'][0] = array ('label' => 'Registered', 'data' => $registered);
         $result['data'][1] = array ('label' => 'Available', 'data' => $available);
 
         $response = new Response(json_encode($result));
