@@ -38,13 +38,14 @@ class DatasetRepository extends EntityRepository
     public function filter(array $criteria, $textFilter = null, $geoFilter = null, $hydrator = Query::HYDRATE_ARRAY)
     {
         $qb = $this->createQueryBuilder('dataset');
-        $qb->select('dataset, dif, datasetSubmission, metadata, researchGroup');
+        $qb->select('dataset, dif, datasetSubmission, metadata, researchGroup, fundingCycle, fundingOrganization');
         $qb->addSelect('ST_AsText(ST_GeomFromGML(dif.spatialExtentGeometry, 4326)) difSpatialExtentGeometry');
         $qb->join('dataset.dif', 'dif');
         $qb->leftJoin('dataset.datasetSubmission', 'datasetSubmission');
         $qb->leftJoin('dataset.metadata', 'metadata');
         $qb->join('dataset.researchGroup', 'researchGroup');
         $qb->join('researchGroup.fundingCycle', 'fundingCycle');
+        $qb->join('fundingCycle.fundingOrganization', 'fundingOrganization');
         foreach ($criteria as $property => $values) {
             $orX = null;
             foreach ($values as $value) {
