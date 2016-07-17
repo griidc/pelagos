@@ -100,8 +100,6 @@ function showDatasets(by,id) {
         }
         $('#packageLink').attr('href',newlink);
     }
-    $('#dataset_listing').html("");
-    $('#dataset_listing_wrapper .spinner').show();
     geo_filter = '';
     if (trees['tree'].geo_filter) {
         geo_filter = trees['tree'].geo_filter;
@@ -231,7 +229,8 @@ function applyFilter() {
     $('#clear-button').button('disable');
     $('#drawGeoFilterButton').button('disable');
     myGeoViz.removeAllFeaturesFromMap();
-    $('#dataset_listing').html('<div class="spinner"><div><img src="{{baseUrl}}/includes/images/spinner.gif"></div></div>');
+    $('#dataset_listing').html("");
+    $('#dataset_listing_wrapper .spinner').show();
     trees['tree'].filter=jQuery('#filter-input').val();
     jQuery('#filter-applied').val(jQuery('#filter-input').val());
     updateTree(trees['tree']);
