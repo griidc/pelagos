@@ -10,6 +10,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
+use Pelagos\Entity\DIF;
 
 /**
  * The Data Discovery controller.
@@ -126,7 +127,10 @@ class DataDiscoveryController extends UIController
                             array(
                                 'dataset.availabilityStatus' => array(
                                     DatasetSubmission::AVAILABILITY_STATUS_NOT_AVAILABLE,
-                                )
+                                ),
+                                'dataset.identifiedStatus' => array(
+                                    DIF::STATUS_APPROVED,
+                                ),
                             )
                         ),
                         $textFilter,
