@@ -47,6 +47,10 @@ services:
         class: Pelagos\Util\PubLinkUtil
         arguments: ["@pelagos.entity.handler"]
 
+    pelagos.util.geometry:
+        class: Pelagos\Util\Geometry
+        arguments: ["@doctrine.orm.entity_manager"]
+
     pelagos.util.data_store:
         class: Pelagos\Util\DataStore
         arguments:
