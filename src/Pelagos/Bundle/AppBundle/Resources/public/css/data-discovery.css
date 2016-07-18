@@ -240,11 +240,3 @@ input.ui-button {
 #expand-collapse.collapsed {
     left: -12px;
 }
-
-#expand-collapse div {
-    background: url({{baseUrl}}/includes/images/CollapseLeft-12.gif) no-repeat;
-}
-
-#expand-collapse.collapsed div {
-    background: url({{baseUrl}}/includes/images/CollapseRight-12.gif) no-repeat;
-}

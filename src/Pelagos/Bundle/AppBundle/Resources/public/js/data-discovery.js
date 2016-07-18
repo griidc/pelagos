@@ -39,6 +39,8 @@ $(document).ready(function() {
         }
     });
 
+    expand();
+
     $('#map_pane').mouseleave(function() {
         myGeoViz.unhighlightAll();
     });
@@ -65,6 +67,7 @@ function expand() {
         $('#expand-collapse').removeClass('collapsed');
         $('.right-panel').removeClass('right-panel-collapsed');
     }});
+    $("#expand-collapse > div").css("background-image", "url(" + $("#expand-collapse").attr("collapse-image") + ")");
     if (typeof($.cookie) == 'function') $.cookie("expanded", 1);
 }
 
@@ -75,6 +78,7 @@ function collapse() {
         $('#left').hide();
         $('.right-panel').addClass('right-panel-collapsed');
     }});
+    $("#expand-collapse > div").css("background-image", "url(" + $("#expand-collapse").attr("expand-image") + ")");
     if (typeof($.cookie) == 'function') $.cookie("expanded", 0);
 }
 

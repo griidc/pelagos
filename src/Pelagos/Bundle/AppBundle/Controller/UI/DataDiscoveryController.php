@@ -32,7 +32,6 @@ class DataDiscoveryController extends UIController
         return $this->render(
             'PelagosAppBundle:DataDiscovery:index.html.twig',
             array(
-                'treePaneCollapsed' => false,
                 'defaultFilter' => '',
                 'pageName' => 'data-discovery',
                 'download' => false,

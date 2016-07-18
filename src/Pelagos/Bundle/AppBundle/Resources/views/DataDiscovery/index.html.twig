@@ -81,7 +81,7 @@
             </div>
         </div>
 
-        <div id="right" style="{% if treePaneCollapsed %} left: 0%; width: 100%; {% else %} left: 45%; width: 55%; {% endif %}">
+        <div id="right" style="left: 45%; width: 55%;">
             <div>
                 <div id="filter" class="right-panel">
                     <table>
@@ -89,9 +89,6 @@
                             <td valign="top" style="width:100%; padding-right:10px;">
                                 <input id="filter-input" class="textbox" type="text" size="50" value="{{defaultFilter}}">
                                 <input id="filter-applied" type="hidden" value="{{defaultFilter}}">
-                                {% if treePaneCollapsed %}
-                                    <div>NOTE: To filter by consortia, research award, researcher, or institution, please expand the pane using the arrow tab on the left.</div>
-                                {% endif %}
                             </td>
                             <td valign="top">
                                 <input type="button" id="filter-button" class="button" value="Filter" onclick="applyFilter();" disabled>
@@ -115,7 +112,14 @@
                     </div>
                 </div>
             </div>
-            <div id="expand-collapse" {% if treePaneCollapsed %} class="collapsed" {% endif %}>
+            <div id="expand-collapse"
+                {% image '@PelagosAppBundle/Resources/public/images/CollapseLeft-12.gif' %}
+                    collapse-image="{{ asset_url }}"
+                {% endimage %}
+                {% image '@PelagosAppBundle/Resources/public/images/CollapseRight-12.gif' %}
+                    expand-image="{{ asset_url }}"
+                {% endimage %}
+                >
                 <div style="height:50px; width:12px"></div>
             </div>
         </div>
