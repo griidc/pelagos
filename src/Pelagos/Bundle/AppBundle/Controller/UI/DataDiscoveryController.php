@@ -22,17 +22,19 @@ class DataDiscoveryController extends UIController
     /**
      * The default action.
      *
+     * @param Request $request The Symfony request object.
+     *
      * @Route("")
      * @Method("GET")
      *
      * @return Response
      */
-    public function defaultAction()
+    public function defaultAction(Request $request)
     {
         return $this->render(
             'PelagosAppBundle:DataDiscovery:index.html.twig',
             array(
-                'defaultFilter' => '',
+                'defaultFilter' => $request->query->get('filter'),
                 'pageName' => 'data-discovery',
                 'download' => false,
             )
