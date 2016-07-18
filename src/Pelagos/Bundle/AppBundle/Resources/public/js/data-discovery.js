@@ -104,7 +104,6 @@ function showDatasets(by,id) {
     if (trees['tree'].geo_filter) {
         geo_filter = trees['tree'].geo_filter;
     }
-    console.log(geo_filter);
     $.ajax({
         "url": Routing.generate('pelagos_app_ui_datadiscovery_datasets'),
         "data": {
