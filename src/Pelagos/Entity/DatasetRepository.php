@@ -92,18 +92,18 @@ class DatasetRepository extends EntityRepository
                 foreach ($searchProperties as $searchProperty) {
                     $like = $qb->expr()->like(
                         $qb->expr()->lower($searchProperty),
-                        ':keyword' . $index . str_replace('.', '_', $searchProperty)
+                        ':keyword' . $index
                     );
                     if (null === $orX) {
                         $orX = $qb->expr()->orX($like);
                     } else {
                         $orX->add($like);
                     }
-                    $qb->setParameter(
-                        'keyword' . $index . str_replace('.', '_', $searchProperty),
-                        '%' . strtolower($keyword) . '%'
-                    );
                 }
+                $qb->setParameter(
+                    'keyword' . $index,
+                    '%' . strtolower($keyword) . '%'
+                );
             }
             $qb->andWhere($orX);
         }
