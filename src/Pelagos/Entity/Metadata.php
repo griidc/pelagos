@@ -394,8 +394,6 @@ class Metadata extends Entity
             '/gmd:dateStamp'
         );
 
-        var_dump($timeStamps);
-
         if (count($timeStamps) == 1) {
             $timeStamps[0]->DateTime = $timeStamp->format('c');
         }
