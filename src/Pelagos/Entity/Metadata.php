@@ -377,6 +377,80 @@ class Metadata extends Entity
     }
 
     /**
+     * Updated the the timestamp of the XML.
+     *
+     * @param \DateTime $timeStamp An time stamp, by default "now" in time zone UTC.
+     *
+     * @return void
+     */
+    public function updateXmlTimeStamp(\DateTime $timeStamp = null)
+    {
+        if (null === $timeStamp) {
+            $timeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
+        }
+
+        $timeStamps = $this->xml->xpath(
+            '/gmi:MI_Metadata' .
+            '/gmd:dateStamp'
+        );
+
+        var_dump($timeStamps);
+
+        if (count($timeStamps) == 1) {
+            $timeStamps[0]->DateTime = $timeStamp->format('c');
+        }
+    }
+
+    /**
+     * Add a new maintenance node to the xml.
+     *
+     * @param string $note A text string describing the maintenance note.
+     *
+     * @return void
+     */
+    public function addMaintenanceNote($note)
+    {
+        $maintenanceInformation = $this->xml->xpath(
+            '/gmi:MI_Metadata' .
+            '/gmd:metadataMaintenance' .
+            '/gmd:MD_MaintenanceInformation'
+        );
+
+        if (count($maintenanceInformation) >= 1) {
+            $maintenanceInformation =  $maintenanceInformation[0];
+        } else { // Not found, so we'll add one.
+            $metadataMaintenance = $this->xml->addChild(
+                'metadataMaintenance',
+                null,
+                'http://www.isotc211.org/2005/gmd'
+            );
+            $maintenanceInformation = $metadataMaintenance->addChild(
+                'MD_MaintenanceInformation',
+                null,
+                'http://www.isotc211.org/2005/gmd'
+            );
+            $maintenanceAndUpdateFrequency = $maintenanceInformation->addChild(
+                'gmd:maintenanceAndUpdateFrequency',
+                null,
+                'http://www.isotc211.org/2005/gmd'
+            );
+            $maintenanceAndUpdateFrequency->addAttribute(
+                'gco:nilReason',
+                'unknown',
+                'http://www.isotc211.org/2005/gco'
+            );
+        }
+
+        $maintenanceNote = $maintenanceInformation->addChild(
+            'maintenanceNote',
+            null,
+            'http://www.isotc211.org/2005/gmd'
+        );
+
+        $maintenanceNote->CharacterString = $note;
+    }
+
+    /**
      * Sets the Metadata title from the Metadata XML.
      *
      * @return void
