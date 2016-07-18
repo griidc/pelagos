@@ -87,7 +87,7 @@ class DatasetRepository extends EntityRepository
                 'researchGroup.name',
             );
             $orX = null;
-            $keywords = preg_split('/\s+/', $textFilter);
+            $keywords = preg_split('/\s+/', trim($textFilter));
             foreach ($keywords as $index => $keyword) {
                 foreach ($searchProperties as $searchProperty) {
                     $like = $qb->expr()->like(
