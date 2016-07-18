@@ -365,6 +365,37 @@ class Metadata extends Entity
     }
 
     /**
+     * Extracts BoundingPolygonGML from SimpleXML object.
+     *
+     * @param \SimpleXMLElement $simpleXml Containing zero or more bounding polygons.
+     *
+     * @return array;
+     */
+    public static function extractBoundingPolygonGML(\SimpleXMLElement $simpleXml)
+    {
+        $polygonArray = array();
+
+        $polygons = $simpleXml->xpath(
+            '/gmi:MI_Metadata' .
+            '/gmd:identificationInfo[*]' .
+            '/gmd:MD_DataIdentification[*]' .
+            '/gmd:extent[*]' .
+            '/gmd:EX_Extent[*]' .
+            '/gmd:geographicElement[*]' .
+            '/gmd:EX_BoundingPolygon[*]' .
+            '/gmd:polygon[*]'
+        );
+
+        foreach ($polygons as $polygon) {
+            foreach ($polygon->children('gml', true) as $child) {
+                $polygonArray[] = $child->asXml();
+            }
+        }
+
+        return $polygonArray;
+    }
+
+    /**
      * Sets the keywords as specfied in the XML.
      *
      * @param array $themeKeywords An array of keywords extracted from the XML.
