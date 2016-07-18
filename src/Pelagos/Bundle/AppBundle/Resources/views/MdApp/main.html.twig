@@ -102,7 +102,7 @@
                                     </table>
                                 </div>
                             </td>
-                            <td valign="top"><form name="AcceptedState" action="/change_status/{{dta.udi}}" method="post">
+                            <td valign="top"><form name="AcceptedState" action="{{ path('pelagos_app_ui_mdapp_changemetadatastatus', {'id': dta.id}) }}" method="post">
                             <select name="to" id="state_sel_{{dta.udi}}">
                                     {% if sname == 'submitted' %}
                                         <option value="Submitted" SELECTED>Submitted</option>
