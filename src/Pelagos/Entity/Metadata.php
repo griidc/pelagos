@@ -381,6 +381,8 @@ class Metadata extends Entity
      *
      * @param \DateTime $timeStamp An time stamp, by default "now" in time zone UTC.
      *
+     * @throws \Exception When gmd:dateStamp does not exist.
+     *
      * @return void
      */
     public function updateXmlTimeStamp(\DateTime $timeStamp = null)
@@ -395,7 +397,26 @@ class Metadata extends Entity
         );
 
         if (count($timeStamps) == 1) {
-            $timeStamps[0]->{'DateTime'} = $timeStamp->format('c');
+            // Check and see if there is gco:DateTime.
+            $childFound = false;
+            foreach ($timeStamps[0]->children('gco', true) as $child) {
+                if ($child->getName() == 'DateTime') {
+                    $childFound = true;
+                }
+            }
+            if (false === $childFound) {
+                // gco:DateTime now found, so one is created.
+                $timeStamps[0]->addChild(
+                    'DateTime',
+                    $timeStamp->format('c'),
+                    'http://www.isotc211.org/2005/gco'
+                );
+            } else {
+                // gco:DateTime was found, so it's updated.
+                $timeStamps[0]->{'DateTime'} = $timeStamp->format('c');
+            }
+        } else {
+            throw new \Exception('gmd:dateStamp does not Exist');
         }
     }
 
