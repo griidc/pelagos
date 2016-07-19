@@ -395,7 +395,7 @@ class Metadata extends Entity
         );
 
         if (count($timeStamps) == 1) {
-            $timeStamps[0]->DateTime = $timeStamp->format('c');
+            $timeStamps[0]->{'DateTime'} = $timeStamp->format('c');
         }
     }
 
@@ -415,8 +415,9 @@ class Metadata extends Entity
         );
 
         if (count($maintenanceInformation) >= 1) {
-            $maintenanceInformation =  $maintenanceInformation[0];
-        } else { // Not found, so we'll add one.
+            $maintenanceInformation = $maintenanceInformation[0];
+        } else {
+            // Not found, so we'll add one.
             $metadataMaintenance = $this->xml->addChild(
                 'metadataMaintenance',
                 null,
@@ -445,7 +446,7 @@ class Metadata extends Entity
             'http://www.isotc211.org/2005/gmd'
         );
 
-        $maintenanceNote->CharacterString = $note;
+        $maintenanceNote->{'CharacterString'} = $note;
     }
 
     /**
