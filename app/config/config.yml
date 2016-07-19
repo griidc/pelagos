@@ -71,11 +71,6 @@ doctrine:
                 prefix: Pelagos\Entity
                 alias: Pelagos
         naming_strategy: doctrine.orm.naming_strategy.underscore
-        dql:
-            string_functions:
-                ST_Envelope: Jsor\Doctrine\PostGIS\Functions\ST_Envelope
-                ST_GeomFromGML: Jsor\Doctrine\PostGIS\Functions\ST_GeomFromGML
-                ST_AsText: Jsor\Doctrine\PostGIS\Functions\ST_AsText
 
 # Swiftmailer Configuration
 swiftmailer:
