@@ -2,8 +2,6 @@
 namespace Pelagos\Util;
 
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Configuration;
-use Jsor\Doctrine\PostGIS\Event\ORMSchemaEventSubscriber;
 
 /**
  * This is a utility class for dealing with envelope calculation.
@@ -32,27 +30,17 @@ class Geometry
      *
      * @param string $gml The GML polygon to calculate the envelope for.
      *
-     * @var geom A geometry.
-     * @var envelope An envelope.
-     * @var wkt A well known text.
-     *
      * @return string WKT string for the envelope.
      */
     public function calculateEnvelopeFromGml($gml)
     {
-        $query = $this->entityManager->createQuery('SELECT ST_GeomFromGML(:gml)');
-        $query->setParameter('gml', $gml);
-        $geom = $query->getResult();
+        $sql = 'SELECT ST_AsText(ST_Envelope(ST_GeomFromGML(:gml, :srid)))';
+        $connection = $this->entityManager->getConnection();
+        $sth = $connection->prepare($sql);
+        $sth->execute(array('gml' => $gml, 'srid' => 4326));
+        $geom = $sth->fetchColumn();
 
-        $query = $this->entityManager->createQuery('SELECT ST_Envelope(:geom)');
-        $query->setParameter('geom', $geom);
-        $envelope = $query->getResult();
-
-        $query = $this->entityManager->createQuery('ST_AsText(:envelope)');
-        $query->setParameter('envelope', $envelope);
-        $wkt = $query->getResult();
-
-        return $wkt;
+        return $geom;
     }
 
     /**
@@ -60,11 +48,21 @@ class Geometry
      *
      * @param string $gml The GML polygon to calculate the bounding box for.
      *
-     * @return string XML String (gmd:EX_GeographicBoundingBox).
+     * @return array Of North, South, East, West.
      */
-    public function calculateGeographicBoundingBoxFromGml($gml)
+    public function calculateGeographicBoundsFromGml($gml)
     {
-        $boundingBox = '';
-        return $bondingBox;
+        $sql = 'SELECT
+                    ST_XMin(ST_GeomFromGml(:gml)) as "westBoundLongitude",
+                    ST_XMax(ST_GeomFromGml(:gml)) as "eastBoundLongitude",
+                    ST_YMin(ST_GeomFromGml(:gml)) as "southBoundLatitude",
+                    ST_YMax(ST_GeomFromGml(:gml)) as "northBoundLatitude"';
+
+        $connection = $this->entityManager->getConnection();
+        $sth = $connection->prepare($sql);
+        $sth->execute(array('gml' => $gml));
+        $geom = $sth->fetch(\PDO::FETCH_ASSOC);
+
+        return $geom;
     }
 }
