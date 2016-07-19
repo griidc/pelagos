@@ -16,21 +16,6 @@ class DefaultController extends Controller
      */
     public function indexAction()
     {
-        $datasets = $this->container->get('pelagos.entity.handler')->getBy(\Pelagos\Entity\Dataset::class, array('udi' => 'A1.x801.000:0021'));
-        $dataset = $datasets[0];
-        $metadata = $dataset->getMetadata();
-        $xml = $metadata->getXml();
-        
-        $metadata->updateXmlTimeStamp();
-        $metadata->addMaintenanceNote('BLAAAAAAAAAAAAAAAA');
-        
-        $xml =  $xml->asXML(); 
-        
-        $response = new \Symfony\Component\HttpFoundation\Response($xml);
-        $response->headers->set('Content-Type', 'text/xml');
-        
-        return $response;
-        
         return $this->render('PelagosAppBundle:Default:index.html.twig');
     }
 
