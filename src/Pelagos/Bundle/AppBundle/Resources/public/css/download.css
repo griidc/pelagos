@@ -1,0 +1,91 @@
+#dataset_download {
+    position: fixed;
+    background-color: white;
+    border: 2px solid black;
+    padding: 5px;
+    width: 80%;
+    left: 10%;
+    margin-top: 10px;
+    top: 15%;
+    z-index: 1000;
+    border-radius: 8px;
+    background: #e2e2e2; /* Old browsers */
+    background: -moz-linear-gradient(top,  #e2e2e2 0%, #dbdbdb 22%, #fefefe 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e2e2e2), color-stop(22%,#dbdbdb), color-stop(100%,#fefefe)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #e2e2e2 0%,#dbdbdb 22%,#fefefe 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #e2e2e2 0%,#dbdbdb 22%,#fefefe 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #e2e2e2 0%,#dbdbdb 22%,#fefefe 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #e2e2e2 0%,#dbdbdb 22%,#fefefe 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e2e2e2', endColorstr='#fefefe',GradientType=0 ); /* IE6-9 */
+    /* credit to: http://www.colorzilla.com/gradient-editor/ */
+}
+
+#dataset_download_close {
+    float: right;
+    margin-top: -3px;
+    margin-right: -3px;
+    margin-left: 5px;
+}
+
+#dataset_download_content {
+    margin: 0px 5px 10px 5px;
+}
+
+#dataset_download div.attr {
+    margin-bottom: .5em;
+}
+
+#dataset_download span.attr {
+    font-weight: bold;
+}
+
+.download_error {
+    color: red;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+#pre_login {
+    position: fixed;
+    background-color: white;
+    border: 2px solid black;
+    padding: 5px;
+    width: 580px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    border-radius: 8px;
+}
+
+#pre_login_close {
+    position: absolute;
+    float: right;
+    top: 3px;
+    right: 3px;
+}
+
+#pre_login div.attr {
+    margin-bottom: .5em;
+}
+
+#pre_login span.attr {
+    font-weight: bold;
+}
+
+#pre_login table {
+    width: 100%;
+}
+
+#pre_login td {
+    text-align: center;
+}
+
+#griidc-logo {
+    margin: 5px;
+}
+
+#pre_login h3 {
+    padding-bottom: 0px;
+    margin-bottom: 5px;
+}
