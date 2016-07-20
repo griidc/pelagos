@@ -2,8 +2,10 @@
 
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -27,6 +29,7 @@ class MdAppController extends UIController
      */
     public function defaultAction()
     {
+        $this->securityCheck();
         return $this->renderUi();
     }
 
@@ -43,6 +46,7 @@ class MdAppController extends UIController
      */
     public function changeMetadataStatusAction(Request $request, $id)
     {
+        $this->securityCheck();
         $entityHandler = $this->get('pelagos.entity.handler');
         $dataset = $entityHandler->get(Dataset::class, $id);
         if (null !== $request->request->get('to')) {
@@ -61,6 +65,7 @@ class MdAppController extends UIController
      */
     protected function renderUi()
     {
+        $this->securityCheck();
         $entityHandler = $this->get('pelagos.entity.handler');
         return $this->render(
             'PelagosAppBundle:MdApp:main.html.twig',
@@ -90,5 +95,19 @@ class MdAppController extends UIController
                 ),
             )
         );
+    }
+
+    /**
+     * A method to verify logged-in user's access credentials.
+     *
+     * @throws AccessDeniedHttpException Thrown if access is denied.
+     *
+     * @return void
+     */
+    protected function securityCheck()
+    {
+        if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+            throw new AccessDeniedHttpException('DRPM Access only');
+        }
     }
 }
