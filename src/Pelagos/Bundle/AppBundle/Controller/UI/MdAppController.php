@@ -3,6 +3,7 @@
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -28,6 +29,27 @@ class MdAppController extends UIController
     public function defaultAction()
     {
         return $this->renderUi();
+    }
+
+    /**
+     * Download original user-submitted raw metadata file.
+     *
+     * @param integer $id The Pelagos ID of the metadata's associated dataset.
+     *
+     * @Route("/download-orig-raw-xml/{id}")
+     *
+     * @return XML
+     */
+    public function downloadMetadataFromOriginalFile($id)
+    {
+        $entityHandler = $this->get('pelagos.entity.handler');
+        $dataset = $entityHandler->get(Dataset::class, $id);
+        $metadataFilename = $dataset->getDatasetSubmission()->getMetadataFileName();
+        $metadataFilepath = '/home/mwilliamson/san/data/store';
+        $winUdi = $dataset->getUdi();
+        $response = new BinaryFileResponse($metadataFilepath . '/' . $winUdi . '/' . $winUdi . '.met');
+        $response->headers->set('Content-Disposition', 'attachment; filename=' . $metadataFilename . ';');
+        return $response;
     }
 
     /**
