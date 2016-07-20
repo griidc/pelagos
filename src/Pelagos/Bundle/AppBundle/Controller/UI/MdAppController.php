@@ -31,6 +31,24 @@ class MdAppController extends UIController
     }
 
     /**
+     * Download metadata from persistance.
+     *
+     * @Route("/download-db-xml/{id}")
+     *
+     * @return XML
+     */
+    public function downloadMetadataFromDB($id)
+    {
+        $entityHandler = $this->get('pelagos.entity.handler');
+        $dataset = $entityHandler->get(Dataset::class, $id);
+        $metadataXml = $dataset->getMetadata()->getXml()->asXml();
+        $windowsFilenameSafeUdi =  str_replace(':', '-', $dataset->getUdi());
+        $response = new Response($metadataXml);
+        $response->headers->set('Content-Disposition', 'attachment; filename=' . $windowsFilenameSafeUdi . '-metadata.xml;');
+        return $response;
+    }
+
+    /**
      * Change the metadata status.
      *
      * @param Request $request The Symfony request object.
