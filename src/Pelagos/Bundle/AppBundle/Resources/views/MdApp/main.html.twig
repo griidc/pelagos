@@ -191,7 +191,12 @@
                                                 &nbsp;
                                             {% endif %}
                                         </td>
-                                        <td id="md_filename">{{dta.datasetSubmission.metadataFileName}}</td>
+
+                                        {% if dta.metadata %}
+                                            <td id="md_filename">{{ dta.udi }}</td>
+                                        {% else %}
+                                            <td id="md_filename">{{ dta.datasetsubmission.metadatafilename }}</td>
+                                        {% endif %}
                                     </tr>
                                 </table>
                             </td>
