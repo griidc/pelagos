@@ -18,6 +18,3 @@ _main:
 _assetic:
     resource: .
     type:     assetic
-
-pelagos_dev:
-    resource: Pelagos\Bundle\AppBundle\Controller\DevController
