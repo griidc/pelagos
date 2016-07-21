@@ -69,10 +69,13 @@ class DatasetRepository extends EntityRepository
         }
         if (null !== $geoFilter) {
             $qb->andWhere(
-                $qb->expr()->orX(
-                    'ST_Intersects(ST_GeomFromText(:geometry), metadata.geometry) = true',
-                    'ST_Intersects(ST_GeomFromText(:geometry), ST_GeomFromGML(dif.spatialExtentGeometry)) = true'
-                )
+                'ST_Intersects(
+                    ST_GeomFromText(:geometry),
+                    CASE
+                        WHEN (metadata.id IS NOT NULL) THEN metadata.geometry
+                        ELSE ST_GeomFromGML(dif.spatialExtentGeometry)
+                    END
+                ) = true'
             );
             $qb->setParameter('geometry', "SRID=4326;$geoFilter::geometry");
         }
