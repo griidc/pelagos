@@ -467,7 +467,11 @@ class Metadata extends Entity
             'http://www.isotc211.org/2005/gmd'
         );
 
-        $maintenanceNote->{'CharacterString'} = $note;
+        $maintenanceNote->addChild(
+            'CharacterString',
+            $note,
+            'http://www.isotc211.org/2005/gco'
+        );
     }
 
     /**
