@@ -38,18 +38,42 @@ class MdAppController extends UIController
      *
      * @Route("/download-orig-raw-xml/{id}")
      *
-     * @return XML
+     * @return XML|string
      */
     public function downloadMetadataFromOriginalFile($id)
     {
         $entityHandler = $this->get('pelagos.entity.handler');
+        $dataStoreUtil = $this->get('pelagos.util.data_store');
+
         $dataset = $entityHandler->get(Dataset::class, $id);
-        $metadataFilename = $dataset->getDatasetSubmission()->getMetadataFileName();
-        $metadataFilepath = '/home/mwilliamson/san/data/store';
-        $winUdi = $dataset->getUdi();
-        $response = new BinaryFileResponse($metadataFilepath . '/' . $winUdi . '/' . $winUdi . '.met');
-        $response->headers->set('Content-Disposition', 'attachment; filename=' . $metadataFilename . ';');
-        return $response;
+        if (null === $dataset) {
+            $response = new Response('This dataset could not be found.');
+            return $response;
+        }
+
+        $metadataFile = $dataStoreUtil->getDownloadFileInfo($dataset->getUdi(), 'metadata');
+
+        $datasetSubmission = $dataset->getDatasetSubmission();
+        if (null === $datasetSubmission) {
+            $response = new Response('Could not find dataset submission for dataset.');
+            return $response;
+        }
+
+        $originalMetadataFilename = $datasetSubmission->getMetadataFileName();
+        if (null === $originalMetadataFilename) {
+            $response = new Response('No metadata filename found in dataset submission.');
+            return $response;
+        }
+
+        $metadataFilePathName = $metadataFile->getRealPath();
+        if (false === $metadataFilePathName) {
+            $response = new Response("File $metadataFilePathName not available.");
+            return $response;
+        } else {
+            $response = new BinaryFileResponse($metadataFilePathName);
+            $response->headers->set('Content-Disposition', 'attachment; filename=' . $originalMetadataFilename . ';');
+            return $response;
+        }
     }
 
     /**
