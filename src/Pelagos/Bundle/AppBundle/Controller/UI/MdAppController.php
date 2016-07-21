@@ -33,18 +33,48 @@ class MdAppController extends UIController
     /**
      * Download metadata from persistance.
      *
+     * @param string $id The ID of Dataset associated with desired Metadata.
+     *
      * @Route("/download-db-xml/{id}")
      *
-     * @return XML
+     * @throws \Exception If SimpleXml not extractable from Metadata.
+     * @throws \Exception If conversion to string from SimpleXml fails.
+     * @return XML|string
      */
     public function downloadMetadataFromDB($id)
     {
         $entityHandler = $this->get('pelagos.entity.handler');
+
+        // Since ID is passed via URL, this could happen via end user action.
         $dataset = $entityHandler->get(Dataset::class, $id);
-        $metadataXml = $dataset->getMetadata()->getXml()->asXml();
-        $windowsFilenameSafeUdi =  str_replace(':', '-', $dataset->getUdi());
+        if (null === $dataset) {
+            $response = new Response('This dataset could not be found.');
+            return $response;
+        }
+
+        // This could also happen via end-user action if manually entering values on URL.
+        $metadata = $dataset->getMetadata();
+        if (null === $metadata) {
+            $response = new Response('This dataset has no Metadata in database.');
+            return $response;
+        }
+
+        // This isn't likely, but included for robustness.
+        $metadataSimpleXml = $metadata->getXml();
+        if (null === $metadataSimpleXml) {
+            throw new \Exception("Could not retrieve SimpleXML object from Metadata for Dataset ID: $id");
+        }
+
+        // This really isn't likely, but included for robustness.
+        $metadataXml = $metadataSimpleXml->asXml();
+        if (null === $metadataXml) {
+            throw new \Exception("Could not convert SimpleXML into string representation for: $id");
+        }
+
+        $windowsFilenameSafeUdi = str_replace(':', '-', $dataset->getUdi());
         $response = new Response($metadataXml);
-        $response->headers->set('Content-Disposition', 'attachment; filename=' . $windowsFilenameSafeUdi . '-metadata.xml;');
+        $response->headers->set('Content-Disposition', 'attachment; filename='
+            . $windowsFilenameSafeUdi . '-metadata.xml;');
         return $response;
     }
 
