@@ -43,6 +43,7 @@ $(document).ready(function(){
 
     $(".jiraSaveButton").click(function() {
         var udi = $(this).parents("tr").children(".udiTD").text();
+        var id = $(this).parents("tr[datasetId]").attr("datasetId");
         var curLinkVal = $(this).parents("tr").find(".jiraTicketClass").val();
 
         // if URL provided, trim an optional / at end, then
@@ -59,8 +60,9 @@ $(document).ready(function(){
 
             if (origValue !== curLinkVal) {
                 $.ajax({
-                    "method": "PUT",
-                    "url": "{{baseUrl}}/jiraLink/" + udi + "/" + curLinkVal + "/"
+                    "method": "PATCH",
+                    "url": Routing.generate("pelagos_api_datasets_patch", { "id" : id} ),
+                    "data": { "issueTrackingTicket": curLinkVal }
                     }).done(function() {
                         $(curPos).closest("div").find("a").attr('href', jiraBase + "/" + curLinkVal).text(curLinkVal);
                         $(curPos).closest(".jiraForm").fadeOut();
