@@ -182,7 +182,7 @@
                                         </td>
                                         <td id="db_dl_icon">
                                             {% if dta.metadata %}
-                                                <a href="/download-metadata-db/{{dta.udi}}" id="dbdllnk_{{dta.udi}}">
+                                            <a href="{{ path('pelagos_app_ui_mdapp_downloadmetadatafromdb', {'id': dta.id}) }}" id="dbdllnk_{{dta.id}}">
                                                     {% image '@PelagosAppBundle/Resources/public/images/download-from-db.png' %}
                                                         <img src="{{ asset_url }}">
                                                     {% endimage %}
