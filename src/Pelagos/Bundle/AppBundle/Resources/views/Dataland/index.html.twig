@@ -9,6 +9,7 @@
                 'ui.dialog',
                 'ui.tabs',
                 'ui.widget',
+                'jquery.cookie',
             ]
         )
     }}
@@ -17,6 +18,7 @@
         '@PelagosAppBundle/Resources/public/css/dataland-details.css'
         '@PelagosAppBundle/Resources/public/css/status.css'
         '@PelagosAppBundle/Resources/public/css/xmlverbatim.css'
+        '@PelagosAppBundle/Resources/public/css/download.css'
     %}
         {{ add_css(asset_url) }}
     {% endstylesheets %}
@@ -33,6 +35,7 @@
 
     {% javascripts
         '@PelagosAppBundle/Resources/public/js/dataland.js'
+        '@PelagosAppBundle/Resources/public/js/download.js'
         '@FOSJsRoutingBundle/Resources/public/js/router.js'
     %}
         {{ add_js(asset_url) }}
@@ -45,7 +48,6 @@
 {% block body %}
     {% if dataset %}
 
-        {% include 'PelagosAppBundle:Dataland:download.html.twig' %}
         <table border="0" width="100%">
             <tr>
                 <td width="40%">
