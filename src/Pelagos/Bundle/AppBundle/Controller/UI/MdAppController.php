@@ -2,13 +2,12 @@
 
 namespace Pelagos\Bundle\AppBundle\Controller\UI;
 
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
@@ -29,7 +28,6 @@ class MdAppController extends UIController
      */
     public function defaultAction()
     {
-        $this->securityCheck();
         return $this->renderUi();
     }
 
@@ -46,7 +44,6 @@ class MdAppController extends UIController
      */
     public function changeMetadataStatusAction(Request $request, $id)
     {
-        $this->securityCheck();
         $entityHandler = $this->get('pelagos.entity.handler');
         $dataset = $entityHandler->get(Dataset::class, $id);
         if (null !== $request->request->get('to')) {
@@ -61,11 +58,19 @@ class MdAppController extends UIController
     /**
      * Render the UI for MDApp.
      *
+     * @throws AccessDeniedException If user is not DRPM and tries to access this route.
+     *
      * @return Response
      */
     protected function renderUi()
     {
-        $this->securityCheck();
+        // If not DRPM, show Access Denied message.  This is simply for
+        // display purposes as the security model is enforced on the
+        // object by the handler.
+        if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+            throw new AccessDeniedException('DRPM Access only');
+        }
+
         $entityHandler = $this->get('pelagos.entity.handler');
         return $this->render(
             'PelagosAppBundle:MdApp:main.html.twig',
@@ -95,19 +100,5 @@ class MdAppController extends UIController
                 ),
             )
         );
-    }
-
-    /**
-     * A method to verify logged-in user's access credentials.
-     *
-     * @throws AccessDeniedHttpException Thrown if access is denied.
-     *
-     * @return void
-     */
-    protected function securityCheck()
-    {
-        if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
-            throw new AccessDeniedHttpException('DRPM Access only');
-        }
     }
 }
