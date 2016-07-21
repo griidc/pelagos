@@ -127,7 +127,7 @@ class DatasetController extends EntityController
      * @param Request $request The request object.
      *
      * @ApiDoc(
-     *   section = "Dataset",
+     *   section = "Datasets",
      *   input = {"class" = "Pelagos\Bundle\AppBundle\Form\DatasetType", "name" = ""},
      *   statusCodes = {
      *     204 = "The Dataset was successfully updated.",
