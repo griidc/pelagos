@@ -1,0 +1,21 @@
+{% extends "PelagosAppBundle::layout.html.twig" %}
+
+{% block head %}
+
+    {{
+        add_css (
+            [
+                '//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css',
+            ]
+        )
+    }}
+
+    {% stylesheets  '@PelagosAppBundle/Resources/public/css/mdapp.css' %}
+        {{ add_css(asset_url) }}
+    {% endstylesheets  %}
+
+{% endblock %}
+
+{% block body %}
+This resource is only available to Data Repository Managers.
+{% endblock %}
