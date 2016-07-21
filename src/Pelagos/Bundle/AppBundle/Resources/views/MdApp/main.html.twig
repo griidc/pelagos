@@ -34,9 +34,15 @@
         )
     }}
 
-    {% javascripts '@PelagosAppBundle/Resources/public/js/mdapp.js' %}
+    {% javascripts
+        '@PelagosAppBundle/Resources/public/js/mdapp.js'
+        '@FOSJsRoutingBundle/Resources/public/js/router.js'
+    %}
         {{ add_js(asset_url) }}
     {% endjavascripts %}
+
+    {{ add_js(path('fos_js_routing_js', { callback: 'fos.Router.setData' })) }}
+
 
 {% endblock %}
 
@@ -83,7 +89,7 @@
                 </tfoot>
                 <tbody>
                     {% for dta in section %}
-                        <tr>
+                    <tr datasetId = "{{ dta.id }}">
                             <td valign="top" class="udiTD"><a href="{{ path('pelagos_app_ui_dataland_default', { 'udi': dta.udi }) }}" target="_BLANK" >{{dta.udi}}</a></td>
                             <td style="position:relative;">
                                 <div>
