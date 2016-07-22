@@ -167,6 +167,9 @@ function updateTree(tree) {
     });
 
     $("#" + tree.name).bind("loaded.jstree", function(event, data) {
+        if (typeof tree.onload !== 'undefined') {
+            eval(tree.onload);
+        }
         cssUrl = '/tree/includes/css/jstree.css';
         if ($('link[rel*=style][href="' + cssUrl + '"]').length==0) {
             $('head').append('<link rel="stylesheet" type="text/css" media="all" href="' + cssUrl + '" />');

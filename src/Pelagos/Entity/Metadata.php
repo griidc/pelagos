@@ -365,6 +365,37 @@ class Metadata extends Entity
     }
 
     /**
+     * Extracts BoundingPolygonGML from SimpleXML object.
+     *
+     * @param \SimpleXMLElement $simpleXml Containing zero or more bounding polygons.
+     *
+     * @return array;
+     */
+    public static function extractBoundingPolygonGML(\SimpleXMLElement $simpleXml)
+    {
+        $polygonArray = array();
+
+        $polygons = $simpleXml->xpath(
+            '/gmi:MI_Metadata' .
+            '/gmd:identificationInfo[*]' .
+            '/gmd:MD_DataIdentification[*]' .
+            '/gmd:extent[*]' .
+            '/gmd:EX_Extent[*]' .
+            '/gmd:geographicElement[*]' .
+            '/gmd:EX_BoundingPolygon[*]' .
+            '/gmd:polygon[*]'
+        );
+
+        foreach ($polygons as $polygon) {
+            foreach ($polygon->children('gml', true) as $child) {
+                $polygonArray[] = $child->asXml();
+            }
+        }
+
+        return $polygonArray;
+    }
+
+    /**
      * Sets the keywords as specfied in the XML.
      *
      * @param array $themeKeywords An array of keywords extracted from the XML.
@@ -374,6 +405,104 @@ class Metadata extends Entity
     private function setThemeKeywords(array $themeKeywords)
     {
         $this->themeKeywords = $themeKeywords;
+    }
+
+    /**
+     * Updated the the timestamp of the XML.
+     *
+     * @param \DateTime $timeStamp An time stamp, by default "now" in time zone UTC.
+     *
+     * @throws \Exception When gmd:dateStamp does not exist.
+     *
+     * @return void
+     */
+    public function updateXmlTimeStamp(\DateTime $timeStamp = null)
+    {
+        if (null === $timeStamp) {
+            $timeStamp = new \DateTime('now', new \DateTimeZone('UTC'));
+        }
+
+        $timeStamps = $this->xml->xpath(
+            '/gmi:MI_Metadata' .
+            '/gmd:dateStamp'
+        );
+
+        if (count($timeStamps) == 1) {
+            // Check and see if there is gco:DateTime.
+            $childFound = false;
+            foreach ($timeStamps[0]->children('gco', true) as $child) {
+                if ($child->getName() == 'DateTime') {
+                    $childFound = true;
+                }
+            }
+            if (false === $childFound) {
+                // gco:DateTime now found, so one is created.
+                $timeStamps[0]->addChild(
+                    'DateTime',
+                    $timeStamp->format('c'),
+                    'http://www.isotc211.org/2005/gco'
+                );
+            } else {
+                // gco:DateTime was found, so it's updated.
+                $timeStamps[0]->{'DateTime'} = $timeStamp->format('c');
+            }
+        } else {
+            throw new \Exception('gmd:dateStamp does not Exist');
+        }
+    }
+
+    /**
+     * Add a new maintenance node to the xml.
+     *
+     * @param string $note A text string describing the maintenance note.
+     *
+     * @return void
+     */
+    public function addMaintenanceNote($note)
+    {
+        $maintenanceInformation = $this->xml->xpath(
+            '/gmi:MI_Metadata' .
+            '/gmd:metadataMaintenance' .
+            '/gmd:MD_MaintenanceInformation'
+        );
+
+        if (count($maintenanceInformation) >= 1) {
+            $maintenanceInformation = $maintenanceInformation[0];
+        } else {
+            // Not found, so we'll add one.
+            $metadataMaintenance = $this->xml->addChild(
+                'metadataMaintenance',
+                null,
+                'http://www.isotc211.org/2005/gmd'
+            );
+            $maintenanceInformation = $metadataMaintenance->addChild(
+                'MD_MaintenanceInformation',
+                null,
+                'http://www.isotc211.org/2005/gmd'
+            );
+            $maintenanceAndUpdateFrequency = $maintenanceInformation->addChild(
+                'gmd:maintenanceAndUpdateFrequency',
+                null,
+                'http://www.isotc211.org/2005/gmd'
+            );
+            $maintenanceAndUpdateFrequency->addAttribute(
+                'gco:nilReason',
+                'unknown',
+                'http://www.isotc211.org/2005/gco'
+            );
+        }
+
+        $maintenanceNote = $maintenanceInformation->addChild(
+            'maintenanceNote',
+            null,
+            'http://www.isotc211.org/2005/gmd'
+        );
+
+        $maintenanceNote->addChild(
+            'CharacterString',
+            $note,
+            'http://www.isotc211.org/2005/gco'
+        );
     }
 
     /**

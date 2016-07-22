@@ -10,6 +10,7 @@ use FOS\RestBundle\Controller\Annotations as Rest;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
+use Pelagos\Entity\Dataset;
 use Pelagos\Entity\FundingOrganization;
 use Pelagos\Entity\ResearchGroup;
 use Pelagos\Entity\Person;
@@ -57,13 +58,42 @@ class TreeController extends EntityController
      */
     public function getFundingOrganizationsAction(Request $request)
     {
+        $tree = $this->buildTreeConfig($request);
+        $filter = false;
+        $textFilter = null;
+        if (array_key_exists('filter', $tree) and !empty($tree['filter'])) {
+            $textFilter = $tree['filter'];
+            $filter = true;
+        }
+        $geoFilter = null;
+        if (array_key_exists('geo_filter', $tree) and !empty($tree['geo_filter'])) {
+            $geoFilter = $tree['geo_filter'];
+            $filter = true;
+        }
+        $criteria = array();
+        $fundingCycles = array();
+        if ($filter) {
+            $fundingOrganizations = array();
+            $datasets = $this->get('doctrine.orm.entity_manager')
+                ->getRepository(Dataset::class)
+                ->filter(array(), $textFilter, $geoFilter);
+            foreach ($datasets as $dataset) {
+                $fundingOrganizations[$dataset[0]['researchGroup']['fundingCycle']['fundingOrganization']['id']] = true;
+                $fundingCycles[$dataset[0]['researchGroup']['fundingCycle']['id']] = true;
+            }
+            $criteria['id'] = array_keys($fundingOrganizations);
+        }
         return $this->render(
             'PelagosAppBundle:Api:Tree/research_awards.json.twig',
             array(
-                'tree' => $this->buildTreeConfig($request),
-                'fundingOrgs' => $this->container->get('pelagos.entity.handler')->getAll(
-                    FundingOrganization::class
-                ),
+                'tree' => $tree,
+                'fundingOrgs' => $this->container->get('doctrine.orm.entity_manager')
+                    ->getRepository(FundingOrganization::class)
+                    ->findBy(
+                        $criteria,
+                        array('name' => 'ASC')
+                    ),
+                'fundingCycleIds' => array_keys($fundingCycles),
             )
         );
     }
@@ -91,15 +121,39 @@ class TreeController extends EntityController
      */
     public function getResearchGroupsByFundingCycleAction(Request $request, $fundingCycle)
     {
+        $tree = $this->buildTreeConfig($request);
+        $filter = false;
+        $textFilter = null;
+        if (array_key_exists('filter', $tree) and !empty($tree['filter'])) {
+            $textFilter = $tree['filter'];
+            $filter = true;
+        }
+        $geoFilter = null;
+        if (array_key_exists('geo_filter', $tree) and !empty($tree['geo_filter'])) {
+            $geoFilter = $tree['geo_filter'];
+            $filter = true;
+        }
+        $criteria = array('fundingCycle' => $fundingCycle);
+        if ($filter) {
+            $researchGroups = array();
+            $datasets = $this->get('doctrine.orm.entity_manager')
+                ->getRepository(Dataset::class)
+                ->filter(array(), $textFilter, $geoFilter);
+            foreach ($datasets as $dataset) {
+                $researchGroups[$dataset[0]['researchGroup']['id']] = true;
+            }
+            $criteria['id'] = array_keys($researchGroups);
+        }
         return $this->render(
             'PelagosAppBundle:Api:Tree/projects.json.twig',
             array(
-                'tree' => $this->buildTreeConfig($request),
-                'projects' => $this->container->get('pelagos.entity.handler')->getBy(
-                    ResearchGroup::class,
-                    array('fundingCycle' => $fundingCycle),
-                    array('name' => 'ASC')
-                ),
+                'tree' => $tree,
+                'projects' => $this->container->get('doctrine.orm.entity_manager')
+                    ->getRepository(ResearchGroup::class)
+                    ->findBy(
+                        $criteria,
+                        array('name' => 'ASC')
+                    ),
             )
         );
     }

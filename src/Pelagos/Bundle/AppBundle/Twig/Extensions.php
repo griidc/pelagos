@@ -95,6 +95,10 @@ class Extensions extends \Twig_Extension
                 'role',
                 array(self::class, 'role')
             ),
+            new \Twig_SimpleFilter(
+                'formatBytes',
+                array(self::class, 'formatBytes')
+            ),
         );
     }
 
@@ -276,5 +280,25 @@ class Extensions extends \Twig_Extension
 
             return $newdom->saveXML();
         }
+    }
+
+    /**
+     * Format bytes as a human-readable string.
+     *
+     * @param integer $bytes     The bytes to format.
+     * @param integer $precision The the precision to use (default: 0).
+     *
+     * @return string
+     */
+    public static function formatBytes($bytes, $precision = 0)
+    {
+        $units = array('B','KB','MB','GB','TB');
+        for ($e = (count($units) - 1); $e > 0; $e--) {
+            $one = pow(1024, $e);
+            if ($bytes >= $one) {
+                return round(($bytes / $one), $precision) . ' ' . $units[$e];
+            }
+        }
+        return "$bytes $units[0]";
     }
 }

@@ -1,0 +1,47 @@
+#pre_login {
+    position: fixed;
+    background-color: white;
+    display: none;
+    border: 2px solid black;
+    padding: 5px;
+    width: 580px;
+    height: 250px;
+    left: 50%;
+    margin-left: -290px;
+    top: 50%;
+    margin-top: -125px;
+    z-index: 1000;
+    border-radius: 8px;
+}
+
+#pre_login_close {
+    position: absolute;
+    float: right;
+    top: 3px;
+    right: 3px;
+}
+
+#pre_login div.attr {
+    margin-bottom: .5em;
+}
+
+#pre_login span.attr {
+    font-weight: bold;
+}
+
+#pre_login table {
+    width: 100%;
+}
+
+#pre_login td {
+    text-align: center;
+}
+
+#griidc-logo {
+    margin: 5px;
+}
+
+#pre_login h3 {
+    padding-bottom: 0px;
+    margin-bottom: 5px;
+}

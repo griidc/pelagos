@@ -1,0 +1,57 @@
+{% if dataset.datasetSubmission.datasetFileTransferStatus | default == 'RemotelyHosted' %}
+    {% if not dataset.datasetSubmission.datasetFileUri matches '!^https?://data.gulfresearchinitiative.org!' %}
+        <div class="attr"><span class="remote">Note: This dataset is not hosted by GRIIDC.</span></div>
+    {% endif %}
+    <div class="attr"><span class="attr">Dataset Location:</span> <a href="{{ dataset.datasetSubmission.datasetFileUri }}" target="_blank">{{ dataset.datasetSubmission.datasetFileUri }}</a></div>
+{% endif %}
+    <div class="attr"><span class="attr">Dataset Title:</span> {{ dataset.title }}</div>
+    <div class="attr"><span class="attr">UDI:</span> {{ dataset.udi }}</div>
+{% if dataset.datasetSubmission.authors | default %}
+    <div class="attr"><span class="attr">Dataset Author(s):</span> {{ dataset.datasetSubmission.authors }}</div>
+{% endif %}
+{% if dataset.datasetSubmission.pointOfContactName | default %}
+    <div class="attr">
+        <span class="attr">Point of Contact:</span> {{ dataset.datasetSubmission.pointOfContactName }}
+{% if dataset.datasetSubmission.pointOfContactEmail | default %}
+        (<a href="mailto:{{ dataset.datasetSubmission.pointOfContactEmail }}">{{ dataset.datasetSubmission.pointOfContactEmail }}</a>)
+{% endif %}
+    </div>
+{% endif %}
+
+{% if dataset.datasetSubmission.restrictions | default != "None" %}
+    <div class="attr">
+        <span class="attr">Restrictions:</span>
+        {% if dataset.datasetSubmission.restrictions | default == "Restricted" %}
+            {% if dataset.datasetSubmission.datasetFileTransferStatus == 'RemotelyHosted' and not dataset.datasetSubmission.datasetFileUri matches '!^https?://data.gulfresearchinitiative.org!' %}
+                This dataset is hosted by an external repository and has been marked as restricted for author use only. Please contact the external repository for access to this dataset.
+            {% else %}
+                This dataset is restricted for author use only.
+            {% endif %}
+        {% elseif dataset.datasetSubmission.restrictions | default == "Approval" %}
+            {% if dataset.datasetSubmission.datasetFileTransferStatus == 'RemotelyHosted' and not dataset.datasetSubmission.datasetFileUri matches '!^https?://data.gulfresearchinitiative.org!' %}
+                This dataset is hosted by an external repository and has been marked as requiring author approval for download. Please contact the external repository for access to this dataset.
+            {% else %}
+                This dataset can only be downloaded with author approval. Please contact the dataset Point of Contact to access this dataset.
+            {% endif %}
+        {% else %}
+            unknown
+        {% endif %}
+    </div>
+{% endif %}
+
+{% if not dataset.datasetSubmission %}
+    {% if dataset.dif.estimatedStartDate %}
+        <div class="attr">
+            <span class="attr">Start Date:</span> {{ dataset.dif.estimatedStartDate }}
+        </div>
+    {% endif %}
+    {% if dataset.dif.estimatedEndDate %}
+        <div class="attr">
+            <span class="attr">End Date:</span> {{ dataset.dif.end_date }}
+        </div>
+    {% endif %}
+{% endif %}
+<div class="abstract">
+    <div><span class="attr">Abstract:</span></div>
+    <div>{{ dataset.abstract }}</div>
+</div>

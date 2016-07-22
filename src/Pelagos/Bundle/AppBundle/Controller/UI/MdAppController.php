@@ -5,8 +5,8 @@ namespace Pelagos\Bundle\AppBundle\Controller\UI;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
@@ -61,6 +61,15 @@ class MdAppController extends UIController
      */
     protected function renderUi()
     {
+        // If not DRPM, show Access Denied message.  This is simply for
+        // display purposes as the security model is enforced on the
+        // object by the handler.
+        if (!$this->isGranted('ROLE_DATA_REPOSITORY_MANAGER')) {
+            return $this->render(
+                'PelagosAppBundle:MdApp:access-denied.html.twig'
+            );
+        }
+
         $entityHandler = $this->get('pelagos.entity.handler');
         return $this->render(
             'PelagosAppBundle:MdApp:main.html.twig',
