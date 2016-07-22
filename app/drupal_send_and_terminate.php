@@ -28,7 +28,6 @@ if (in_array(
         'pelagos_app_ui_stats_getdatasetsizeranges',
         'pelagos_app_ui_stats_getdatasetovertime',
         'pelagos_app_ui_stats_getsummaryofrecords',
-        'pelagos_app_ui_mdapp_downloadmetadatafromoriginalfile',
     )
 )) {
     $response->send();
