@@ -9,35 +9,54 @@ use Doctrine\ORM\EntityManager;
 class Metadata
 {
     /**
-     * This is a \SimpleXML object of Metadata.
+     * Metadata XML.
      *
-     * @var \SimpleXml
+     * @var string
      */
     protected $metadata;
 
     /**
-     * Validates a SimpleXML object against a schema.
+     * Setter for metadata.
      *
-     * @param \SimpleXml $metadata A XML doc to be validated.
-     * @param string     $schema   URL of Schema used to validate.
+     * @param string $metadata Metadata as XML text.
      *
-     * @throws \Exception When simpleXml not able to be converted to DomXML.
+     * @return void
+     */
+    public function setMetadata($metadata)
+    {
+        $this->metadata = $metadata;
+    }
+
+    /**
+     * Validates XML as SimpleXMLElement object against a schema.
+     *
+     * @param string $schema An optional URL of Schema used to validate.
+     *
+     * @throws \Exception When metadata is not set.
+     * @throws \Exception When XML not able to be converted to DomXML.
      *
      * @return array
      */
-    public function validateIso(
-        \SimpleXml $metadata,
-        $schema = 'http://www.ngdc.noaa.gov/metadata/published/xsd/schema.xsd'
-    ) {
-        $domDoc = dom_import_simplexml($metadata);
-        if (!$domDoc) {
-            throw new \Exception('Could not convert SimpleXML into DomXML');
+    public function validateIso($schema = 'http://www.ngdc.noaa.gov/metadata/published/xsd/schema.xsd')
+    {
+        if (null === $this->metadata) {
+            throw new \Exception('Metadata must be populated to use this method.');
         }
 
+        $domDoc = new \DomDocument('1.0', 'UTF-8');
+        $tmpp = @$domDoc->loadXML($this->metadata);
+        if (!$tmpp) {
+            $err = libxml_get_last_error();
+            $errStr = $err->message;
+            throw new \Exception(
+                "Malformed XML: XML could not be parsed by DomDoc. ($errStr)"
+            );
+        }
+
+        $errorList = array();
+        $warningList = array();
         if (!$domDoc->schemaValidate($schema)) {
             $xmlErrors = libxml_get_errors();
-            $errorList = array();
-            $warningList = array();
             libxml_clear_errors();
             for ($i = 0; $i < count($xmlErrors); $i++) {
                 switch ($xmlErrors[$i]->level) {
@@ -69,7 +88,7 @@ class Metadata
         }
 
         $return = array(
-            'valid' => $isoValid,
+            'validity' => $isoValid,
             'errors' => $errorList,
             'warnings' => $warningList
         );
