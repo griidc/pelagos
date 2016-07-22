@@ -54,7 +54,7 @@ var tabIndex = 0;
                                                     {% endimage %}
                                                 </a>
                                             {% else %}
-                                                <a href="javascript:showDatasetDownload({{ dataset[0].id }});">
+                                                <a href="javascript:startDownload({{ dataset[0].id }});">
                                                     {% image '@PelagosAppBundle/Resources/public/images/download-package.png' %}
                                                         <img src="{{ asset_url }}" title="download dataset">
                                                     {% endimage %}
