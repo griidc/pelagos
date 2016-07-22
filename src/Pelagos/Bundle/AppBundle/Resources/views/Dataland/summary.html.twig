@@ -47,7 +47,7 @@
 <h3>{{dataset.researchGroup.name}}</h3>
 
 
-<table width="90%">
+<table width="90%" datasetId="{{ dataset.id }}">
     {% if dataset.datasetSubmission.doi %}
         <tr><td colspan="2"><b>DOI:</b><br/> {{dataset.datasetSubmission.doi}}</td></tr>
         <tr><td colspan="2">&nbsp;</td></tr>

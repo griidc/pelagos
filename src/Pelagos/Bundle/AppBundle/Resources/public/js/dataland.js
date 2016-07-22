@@ -49,15 +49,8 @@ var dlmap = new GeoViz();
         dlmap.initMap('dlolmap',{'onlyOneFeature':false,'allowModify':false,'allowDelete':false,'staticMap':false,'labelAttr':'udi'});
 
         $("#downloadds").button().click(function() {
-            // For now, just attempt to download.
-            window.location = Routing.generate("pelagos_app_ui_dataland_download", {"udi": udi});
-            /* Should eventually do this:
-            if ("dataset_download_status"  == "RemotelyHosted") {
-                showDatasetDownloadExternal(udi)
-            } else {
-                showDatasetDownload(udi)
-            }
-            */
+            var id = $("[datasetId]").attr("datasetId");
+            startDownload(id);
         });
 
         $("#download_dialog").dialog({
@@ -213,8 +206,7 @@ var dlmap = new GeoViz();
             console.log('lab only')
             dlmap.makeStatic();
         } else if (geovizMap.attr("wkt") != "") { //  add the geometry from the data. Either datasets or metadata
-            var wkt = geovizMap.attr("wkt").split(";")[1];
-            dlmap.addFeatureFromWKT(wkt, {"udi":udi});
+            dlmap.addFeatureFromWKT(geovizMap.attr("wkt"), {"udi":udi});
             dlmap.gotoAllFeatures();
         }
     });

@@ -8,7 +8,11 @@
                 }
              },
             "children": [
-                {% for fundSrc in fundingOrg.getFundingCycles %}
+                {% set fundingCycles = [] %}
+                {% for fundingCycle in fundingOrg.getFundingCycles if fundingCycleIds|length == 0 or fundingCycle.id in fundingCycleIds %}
+                    {% set fundingCycles = fundingCycles|merge([fundingCycle]) %}
+                {% endfor %}
+                {% for fundSrc in fundingCycles %}
                     {
                         "data": {
                             "title": "{{fundSrc.getName}}",
