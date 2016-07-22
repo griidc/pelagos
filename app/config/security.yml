@@ -1,5 +1,8 @@
 security:
 
+    # leave session alone
+    session_fixation_strategy: none
+
     providers:
         pelagos_account:
             entity:
@@ -7,6 +10,8 @@ security:
                 property: userId
         person_token:
             id: person_token_user_provider
+        hwi_outh:
+            id: hwi_oauth.user.provider
 
     firewalls:
         # disables authentication for assets and the profiler, adapt it according to your needs
@@ -33,6 +38,12 @@ security:
             # use REMOTE_USER environment variable if set
             remote_user:
                 provider: pelagos_account
+            oauth:
+                resource_owners:
+                    google:     check_google
+                login_path:     /
+                oauth_user_provider:
+                    oauth:
 
 services:
     super_user_voter:

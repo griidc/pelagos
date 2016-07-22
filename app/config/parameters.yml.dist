@@ -60,3 +60,7 @@ parameters:
     doi_api_user_name: apitest
     doi_api_password : apitest
     doi_api_shoulder : doi:10.5072/FK2
+
+    # Google OAuth client id and secret used by HWIOAuthBundle.
+    google_oauth_client_id: ~
+    google_oauth_client_secret: ~

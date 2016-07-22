@@ -50,5 +50,8 @@ class PelagosAppBundle extends Bundle
                 // Doctrine type
                 'citext'
             );
+
+        // Force session creation.
+        $this->container->get('session')->count();
     }
 }
