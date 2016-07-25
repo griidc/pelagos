@@ -112,7 +112,8 @@ class MdAppController extends UIController
      */
     public function getlog($udi)
     {
-        $rawlog = file($this->getParameter('mdapp_logfile'));
+
+        $rawlog = file(strip_tags($this->getParameter('mdapp_logfile')));
         $entries = array_values(preg_grep("/$udi/i", $rawlog));
         $data = null;
         if (count($entries) > 0) {
