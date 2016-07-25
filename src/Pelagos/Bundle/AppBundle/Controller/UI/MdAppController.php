@@ -44,13 +44,17 @@ class MdAppController extends UIController
     public function changeMetadataStatusAction(Request $request, $id)
     {
         $entityHandler = $this->get('pelagos.entity.handler');
+        $metadataUtil = $this->get('pelagos.util.metadata');
         $dataset = $entityHandler->get(Dataset::class, $id);
+        $from = $dataset->getMetadataStatus();
+        $udi = $dataset->getUdi();
         if (null !== $request->request->get('to')) {
             $dataset->getDatasetSubmission()->setMetadataStatus(
                 $request->request->get('to')
             );
         }
         $entityHandler->update($dataset);
+        $metadataUtil->writeLog($user->name." has changed metadata status for $udi ($from -> $to)");
         return $this->renderUi();
     }
 
