@@ -48,3 +48,6 @@ pelagos_doi_request_ui:
 
 pelagos_mdapp_ui:
     resource: Pelagos\Bundle\AppBundle\Controller\UI\MdAppController
+
+pelagos_data_discovery_ui:
+    resource: Pelagos\Bundle\AppBundle\Controller\UI\DataDiscoveryController

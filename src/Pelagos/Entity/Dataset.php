@@ -122,6 +122,8 @@ class Dataset extends Entity
      * Collection of DatasetPublication.
      *
      * @var Collection
+     *
+     * @ORM\OneToMany(targetEntity="DatasetPublication", mappedBy="dataset")
      */
     protected $datasetPublications;
 

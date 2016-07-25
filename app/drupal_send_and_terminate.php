@@ -28,6 +28,8 @@ if (in_array(
         'pelagos_app_ui_stats_getdatasetsizeranges',
         'pelagos_app_ui_stats_getdatasetovertime',
         'pelagos_app_ui_stats_getsummaryofrecords',
+        'pelagos_app_ui_datadiscovery_datasets',
+        'pelagos_app_ui_datadiscovery_showdetails',
     )
 )) {
     $response->send();
