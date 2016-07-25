@@ -8,7 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use Pelagos\Entity\Account;
 use Pelagos\Entity\Dataset;
@@ -70,12 +70,17 @@ class DownloadController extends Controller
      *
      * @param string $id The id of the dataset to download.
      *
+     * @throws AccessDeniedException When no user is authenticated.
+     *
      * @Route("/{id}/http")
      *
      * @return Response
      */
     public function httpAction($id)
     {
+        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            throw $this->createAccessDeniedException('You must log in to download datasets');
+        }
         $dataset = $this->get('pelagos.entity.handler')->get(Dataset::class, $id);
         $downloadFileInfo = $this->get('pelagos.util.data_store')->getDownloadFileInfo($dataset->getUdi(), 'dataset');
         $uniqueDirectory = uniqid(
@@ -104,15 +109,21 @@ class DownloadController extends Controller
      *
      * @param string $id The id of the dataset to download.
      *
+     * @throws AccessDeniedException When no user is authenticated.
+     * @throws AccessDeniedException When a guest user attempts to download via GridFTP.
+     *
      * @Route("/{id}/grid-ftp")
      *
      * @return Response
      */
     public function gridFtpAction($id)
     {
+        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
+            throw $this->createAccessDeniedException('You must log in to download datasets');
+        }
         $dataset = $this->get('pelagos.entity.handler')->get(Dataset::class, $id);
         if (!$this->getUser() instanceof Account) {
-            throw new BadRequestHttpException('Only GRIIDC users can use GridFTP');
+            throw $this->createAccessDeniedException('Only GRIIDC users can use GridFTP');
         }
         $downloadFileInfo = $this->get('pelagos.util.data_store')->getDownloadFileInfo($dataset->getUdi(), 'dataset');
         $homeDirectory = $this->getUser()->getHomeDirectory();
