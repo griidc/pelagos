@@ -47,7 +47,7 @@
 {% endblock %}
 
 {% block body %}
-<script type="text/javascript">var jiraBase="{{jiraBase}}";</script>
+<script type="text/javascript">var issueTrackingBaseUrl="{{ issueTrackingBaseUrl }}";</script>
 <div style="background: #fff2e8; padding:0px;" id="tabs">
   <div class="ui-tabs">
     <ul class="ui-tabs-nav">
@@ -98,7 +98,7 @@
                                         <img src="{{ asset_url }}">
                                         {% endimage %}
                                     </button>&nbsp;
-                                    <a href="{{ jiraBase }}/{{ dta.issueTrackingTicket }}" target="_BLANK">{{ dta.issueTrackingTicket }}</a>
+                                    <a href="{{ issueTrackingBaseUrl }}/{{ dta.issueTrackingTicket }}" target="_BLANK">{{ dta.issueTrackingTicket }}</a>
                                     <table class="jiraForm">
                                         <tr>
                                             <td><input type="text" name="jiraTicket" class="jiraTicketClass" placeholder="URL or Jira Issue"></td>

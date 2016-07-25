@@ -83,7 +83,7 @@ class MdAppController extends UIController
         return $this->render(
             'PelagosAppBundle:MdApp:main.html.twig',
             array(
-                'jiraBase' => 'https://triton.tamucc.edu/issues',
+                'issueTrackingBaseUrl' => $this->getParameter('issue_tracking_base_url'),
                 'm_dataset' => array(
                     'submitted' => $entityHandler->getBy(
                         Dataset::class,

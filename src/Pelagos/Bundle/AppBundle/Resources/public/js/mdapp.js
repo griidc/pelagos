@@ -64,7 +64,7 @@ $(document).ready(function(){
                     "url": Routing.generate("pelagos_api_datasets_patch", { "id" : id} ),
                     "data": { "issueTrackingTicket": curLinkVal }
                     }).done(function() {
-                        $(curPos).closest("div").find("a").attr('href', jiraBase + "/" + curLinkVal).text(curLinkVal);
+                        $(curPos).closest("div").find("a").attr('href', issueTrackingBaseUrl + "/" + curLinkVal).text(curLinkVal);
                         $(curPos).closest(".jiraForm").fadeOut();
                         $(curPos).closest("div").find(".jlink").fadeIn();
                         $(curPos).closest("div").find("a").fadeIn();
