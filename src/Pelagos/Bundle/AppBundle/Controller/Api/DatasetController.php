@@ -151,9 +151,12 @@ class DatasetController extends EntityController
 
             $metadataUtil->writeLog(
                 $this->getUser()->getUserName() .
-                "set Jira Link for udi: " .
+                'set Jira Link for udi: ' .
                 $entityHandler->get(Dataset::class, $id)->getUdi() .
-                " to $jiraLinkValue.");
+                ' to ' .
+                $jiraLinkValue .
+                '.'
+            );
         }
         return $this->makeNoContentResponse();
     }
