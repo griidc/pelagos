@@ -28,12 +28,11 @@ class Metadata
     }
 
     /**
-     * Validates XML as SimpleXMLElement object against a schema.
+     * Validates XML against a schema.
      *
      * @param string $schema An optional URL of Schema used to validate.
      *
      * @throws \Exception When metadata is not set.
-     * @throws \Exception When XML not able to be converted to DomXML.
      *
      * @return array
      */
