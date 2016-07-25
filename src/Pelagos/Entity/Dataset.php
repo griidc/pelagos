@@ -122,6 +122,8 @@ class Dataset extends Entity
      * Collection of DatasetPublication.
      *
      * @var Collection
+     *
+     * @ORM\OneToMany(targetEntity="DatasetPublication", mappedBy="dataset")
      */
     protected $datasetPublications;
 
@@ -129,6 +131,8 @@ class Dataset extends Entity
      * The identifier for an issue tracking ticket related to this Dataset.
      *
      * @var string
+     *
+     * @ORM\Column(nullable=true)
      */
     protected $issueTrackingTicket;
 

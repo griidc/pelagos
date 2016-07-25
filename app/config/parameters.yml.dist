@@ -61,6 +61,10 @@ parameters:
     doi_api_password : apitest
     doi_api_shoulder : doi:10.5072/FK2
 
+    # Base URL for an issue tracking system use to track datasets (without trailing /).
+    # The issue tracking ticket identifier will be appended to this URL.
+    issue_tracking_base_url: ~
+
     # Google OAuth client id and secret used by HWIOAuthBundle.
     google_oauth_client_id: ~
     google_oauth_client_secret: ~
