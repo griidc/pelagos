@@ -39,6 +39,9 @@ class Metadata
      */
     public function validateIso($schema = 'http://www.ngdc.noaa.gov/metadata/published/xsd/schema.xsd')
     {
+        $errorList = array();
+        $warningList = array();
+
         if (null === $this->metadata) {
             throw new \Exception('Metadata must be populated to use this method.');
         }
@@ -46,37 +49,33 @@ class Metadata
         $domDoc = new \DomDocument('1.0', 'UTF-8');
         $tmpp = @$domDoc->loadXML($this->metadata);
         if (!$tmpp) {
-            $err = libxml_get_last_error();
-            $errStr = $err->message;
-            throw new \Exception(
-                "Malformed XML: XML could not be parsed by DomDoc. ($errStr)"
-            );
+            $error = 'Could not parse as XML: ' . libxml_get_last_error()->message;
+            $errorList[] = $error;
         }
 
-        $errorList = array();
-        $warningList = array();
-        if (!$domDoc->schemaValidate($schema)) {
-            $xmlErrors = libxml_get_errors();
-            libxml_clear_errors();
-            for ($i = 0; $i < count($xmlErrors); $i++) {
-                switch ($xmlErrors[$i]->level) {
-                    case LIBXML_ERR_WARNING:
-                        $error = 'WARNING (' . $xmlErrors[$i]->code . ') on XML line ';
-                        $error .= $xmlErrors[$i]->line . ': ' . $xmlErrors[$i]->message;
-                        $warningList[] = $error;
-                        break;
-                    case LIBXML_ERR_ERROR:
-                        $schemaErrors++;
-                        $error = 'ERROR (' . $xmlErrors[$i]->code . ') on XML line ';
-                        $error .= $xmlErrors[$i]->line . ': ' . $xmlErrors[$i]->message;
-                        $errorList[] = $error;
-                        break;
-                    case LIBXML_ERR_FATAL:
-                        $schemaErrors++;
-                        $error = 'FATAL ERROR (' . $xmlErrors[$i]->code . ') on XML line ';
-                        $error .= $xmlErrors[$i]->line . ': ' . $xmlErrors[$i]->message;
-                        $errorList[] = $error;
-                        break;
+        if (0 === count($errorList)) {
+            libxml_use_internal_errors(true);
+            if (false === $domDoc->schemaValidate($schema)) {
+                $xmlErrors = libxml_get_errors();
+                libxml_clear_errors();
+                for ($i = 0; $i < count($xmlErrors); $i++) {
+                    switch ($xmlErrors[$i]->level) {
+                        case LIBXML_ERR_WARNING:
+                            $error = 'WARNING (' . $xmlErrors[$i]->code . ') on XML line ';
+                            $error .= $xmlErrors[$i]->line . ': ' . $xmlErrors[$i]->message;
+                            $warningList[] = $error;
+                            break;
+                        case LIBXML_ERR_ERROR:
+                            $error = 'ERROR (' . $xmlErrors[$i]->code . ') on XML line ';
+                            $error .= $xmlErrors[$i]->line . ': ' . $xmlErrors[$i]->message;
+                            $errorList[] = $error;
+                            break;
+                        case LIBXML_ERR_FATAL:
+                            $error = 'FATAL ERROR (' . $xmlErrors[$i]->code . ') on XML line ';
+                            $error .= $xmlErrors[$i]->line . ': ' . $xmlErrors[$i]->message;
+                            $errorList[] = $error;
+                            break;
+                    }
                 }
             }
         }
