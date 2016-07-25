@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 use Pelagos\Entity\Dataset;
+use Pelagos\Entity\DatasetSubmission;
 
 /**
  * The Dataset download controller.
@@ -42,6 +43,16 @@ class DownloadController extends Controller
             );
         }
         $dataset = $this->get('pelagos.entity.handler')->get(Dataset::class, $id);
+        if ($dataset->getDatasetSubmission() instanceof DatasetSubmission
+            and DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED ===
+                $dataset->getDatasetSubmission()->getDatasetFileTransferStatus()) {
+            return $this->render(
+                'PelagosAppBundle:Download:download-external-resource-splash-screen.html.twig',
+                array(
+                    'dataset' => $dataset,
+                )
+            );
+        }
         return $this->render(
             'PelagosAppBundle:Download:download-splash-screen.html.twig',
             array(

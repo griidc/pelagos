@@ -1,0 +1,62 @@
+<div id="dataset_download">
+
+    <div id="dataset_download_close">
+        {% image '@PelagosAppBundle/Resources/public/images/close.gif' %}
+            <input class="close_button" type="image" src="{{ asset_url }}">
+        {% endimage %}
+    </div>
+
+    <div id="dataset_download_content">
+
+        {% if not dataset.datasetSubmission.datasetFileUri matches '!^https?://data.gulfresearchinitiative.org!' %}
+        <h3 style="text-align:center;">The dataset you selected is hosted by an external repository.</h3>
+        {% endif %}
+
+        <div style="border: 1px solid #aaa; padding: 10px; border-radius: 4px;">
+            <p style="margin-top:0"><strong>UDI:</strong> {{dataset.udi}}</p>
+
+            <p><strong>Title:</strong> {{dataset.title}}</p>
+
+            <p><strong>Author(s):</strong> {{dataset.datasetSubmission.authors}}</p>
+
+            {% if dataset.metadataStatus == constant('Pelagos\\Entity\\DatasetSubmission::METADATA_STATUS_ACCEPTED') %}
+                <p>
+                    <strong>Metadata:</strong> 
+                    <a href="{{ path('pelagos_app_ui_dataland_metadata', {'udi': dataset.udi}) }}">{{ dataset.udi|replace({':': '-'}) }}-metadata.xml</a>
+                </p>
+            {% endif %}
+
+            <p>
+                <strong>Location:</strong>
+                <a href="{{dataset.datasetSubmission.datasetFileUri}}" target=_BLANK>
+                    {{dataset.datasetSubmission.datasetFileUri}}
+                </a>
+            </p>
+
+            {% if dataset.availabilityStatus == constant('Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_RESTRICTED_REMOTELY_HOSTED') %}
+                <p style="color:#A00">This dataset has been marked as restricted for author use only.<br>To obtain access to this dataset, please click the location link above and follow any instructions provided.</p>
+            {% elseif dataset.availabilityStatus == constant('Pelagos\\Entity\\DatasetSubmission::AVAILABILITY_STATUS_AVAILABLE_WITH_APPROVAL_REMOTELY_HOSTED') %}
+                <p style="color:#A00">This dataset has been marked as requiring author approval for download.<br>To obtain access to this dataset, please click the location link above and follow any instructions provided.</p>
+            {% else %}
+                <p>To download this dataset, please use the location link above. Note, this dataset is not hosted at GRIIDC; the site is not under GRIIDC control and GRIIDC is not responsible for the information or links you may find there.</p>
+            {% endif %}
+
+        </div>
+
+        <div style="border: 1px solid #aaa; padding: 10px; margin-top: 20px; border-radius: 4px;">
+            <p style="margin-top:0">
+                <strong>DISCLAIMER:</strong> The Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) aggregates data from researchers funded by the Gulf of Mexico Research Initiative and other scientists working in the region. These data are furnished "as is" for the convenience of all data users. GRIIDC makes no warranties (including no warranties as to merchantability, timeliness or fitness) either expressed or implied with respect to the data or their fitness for any specific application.  This particular dataset is not hosted directly by GRIIDC, so additional terms and conditions may be imposed by the hosting entity.
+            </p>
+            <div style="text-align:center;">
+                <p>
+                    By using the link above, you agree to the GRIIDC terms in the above disclaimer.
+                </p>
+                <p style="margin-bottom:0">
+                    <button onclick="jQuery('#dataset_download').hide();" style="font-weight:bold;margin:10px 10px 10px 0px;">Cancel</button>
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+</div>
