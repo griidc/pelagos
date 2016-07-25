@@ -146,7 +146,7 @@ class MdAppController extends UIController
         if (count($entries) > 0) {
             $data .= '<ul>';
             foreach ($entries as $entry) {
-                $data .= '<li>' . strip_tags($entry) . '</li>\n';
+                $data .= '<li>' . strip_tags($entry) . "</li>\n";
             }
             $data .= '</ul>';
         }

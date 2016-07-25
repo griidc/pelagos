@@ -145,11 +145,15 @@ class DatasetController extends EntityController
         $this->handleUpdate(DatasetType::class, Dataset::class, $id, $request, 'PATCH');
         $jiraLinkValue = $request->request->get('issueTrackingTicket');
         if (null !== $jiraLinkValue) {
+
             $entityHandler = $this->get('pelagos.entity.handler');
             $metadataUtil = $this->get('pelagos.util.metadata');
-            $datasets = $entityHandler->getBy(Dataset::class, array('id' => $id));
-            $udi = $datasets[0]->getUdi();
-            $metadataUtil->writeLog($this->getUser()->getUserName() . "set Jira Link for udi: $udi to $jiraLinkValue.");
+
+            $metadataUtil->writeLog(
+                $this->getUser()->getUserName() .
+                "set Jira Link for udi: " .
+                $entityHandler->get(Dataset::class, $id)->getUdi() .
+                " to $jiraLinkValue.");
         }
         return $this->makeNoContentResponse();
     }
