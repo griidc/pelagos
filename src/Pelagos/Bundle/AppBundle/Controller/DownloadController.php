@@ -8,7 +8,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
+use Pelagos\Entity\Account;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 
@@ -57,8 +59,8 @@ class DownloadController extends Controller
             'PelagosAppBundle:Download:download-splash-screen.html.twig',
             array(
                 'dataset' => $dataset,
-                'guest' => false,
-                'gridOK' => true,
+                'guest' => !$this->getUser() instanceof Account,
+                'gridOK' => $this->getUser() instanceof Account and $this->getUser()->isPosix(),
             )
         );
     }
@@ -81,7 +83,7 @@ class DownloadController extends Controller
         );
         $downloadBaseDirectory = $this->getParameter('download_base_directory');
         $downloadDirectory = $downloadBaseDirectory . '/' . $uniqueDirectory;
-        mkdir($downloadDirectory);
+        mkdir($downloadDirectory, 0755);
         $datasetFileName  = $dataset->getDatasetSubmission()->getDatasetFileName();
         symlink(
             $downloadFileInfo->getRealPath(),
@@ -109,6 +111,25 @@ class DownloadController extends Controller
     public function gridFtpAction($id)
     {
         $dataset = $this->get('pelagos.entity.handler')->get(Dataset::class, $id);
-        return new Response();
+        if (!$this->getUser() instanceof Account) {
+            throw new BadRequestHttpException('Only GRIIDC users can use GridFTP');
+        }
+        $downloadFileInfo = $this->get('pelagos.util.data_store')->getDownloadFileInfo($dataset->getUdi(), 'dataset');
+        $homeDirectory = $this->getUser()->getHomeDirectory();
+        $downloadDirectory = $homeDirectory . '/download';
+        $datasetDownloadDirectory = $downloadDirectory . '/' . $dataset->getUdi();
+        if (!file_exists($datasetDownloadDirectory)) {
+            mkdir($datasetDownloadDirectory, 0755);
+        }
+        symlink(
+            $downloadFileInfo->getRealPath(),
+            $datasetDownloadDirectory . '/' . $dataset->getDatasetSubmission()->getDatasetFileName()
+        );
+        return $this->render(
+            'PelagosAppBundle:Download:download-via-gridftp-splash-screen.html.twig',
+            array(
+                'dataset' => $dataset,
+            )
+        );
     }
 }
