@@ -75,7 +75,26 @@ class DownloadController extends Controller
     public function httpAction($id)
     {
         $dataset = $this->get('pelagos.entity.handler')->get(Dataset::class, $id);
-        return new Response();
+        $downloadFileInfo = $this->get('pelagos.util.data_store')->getDownloadFileInfo($dataset->getUdi(), 'dataset');
+        $uniqueDirectory = uniqid(
+            preg_replace('/\s/', '_', $this->getUser()->getUsername()) . '_'
+        );
+        $downloadBaseDirectory = $this->getParameter('download_base_directory');
+        $downloadDirectory = $downloadBaseDirectory . '/' . $uniqueDirectory;
+        mkdir($downloadDirectory);
+        $datasetFileName  = $dataset->getDatasetSubmission()->getDatasetFileName();
+        symlink(
+            $downloadFileInfo->getRealPath(),
+            $downloadDirectory . '/' . $datasetFileName
+        );
+        $downloadBaseUrl = $this->getParameter('download_base_url');
+        return $this->render(
+            'PelagosAppBundle:Download:download-via-http-splash-screen.html.twig',
+            array(
+                'dataset' => $dataset,
+                'downloadUrl' => $downloadBaseUrl . '/' . $uniqueDirectory . '/' . $datasetFileName,
+            )
+        );
     }
 
     /**

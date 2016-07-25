@@ -58,7 +58,7 @@
                 <div style="width: 100%; display: table; border: 1px solid #aaa; border-radius: 4px;">
                     <div style="display: table-row; margin: 0 auto;">
                         <div style="display: table-cell;">
-                            <button title="Download file directly to your web browser." class="dl_button" onclick="showWebDownloadDetails('{{ dataset.udi }}');" style="padding: 0px 0px;">
+                            <button id="http_download_button" title="Download file directly to your web browser." class="dl_button" style="padding: 0px 0px;">
                                 {% image '@PelagosAppBundle/Resources/public/images/direct-download.png' %}
                                     <img style="vertical-align:middle;" src="{{ asset_url }}">
                                 {% endimage %}
@@ -67,7 +67,7 @@
                         </div>
                         {% if guest == false and gridOK == 1 %}
                         <div style="display: table-cell;">
-                            <button title="Place this file on the Globus/GridFTP gomri#griidc endpoint.  This option is the preferred method for server-to-server transfer of very large files, but requires access to a Globus-enabled GridFTP endpoint and a Globus.org login." class="dl_button" onclick="showGridFTPDetails('{{ dataset.udi }}');" style="padding: 0px 0px;">
+                            <button id="gridftp_download_button" title="Place this file on the Globus/GridFTP gomri#griidc endpoint.  This option is the preferred method for server-to-server transfer of very large files, but requires access to a Globus-enabled GridFTP endpoint and a Globus.org login." class="dl_button" style="padding: 0px 0px;">
                                 {% image '@PelagosAppBundle/Resources/public/images/globus.png' %}
                                     <img style="vertical-align:middle;" src="{{ asset_url }}">
                                 {% endimage %}

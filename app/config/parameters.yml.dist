@@ -64,3 +64,6 @@ parameters:
     # Google OAuth client id and secret used by HWIOAuthBundle.
     google_oauth_client_id: ~
     google_oauth_client_secret: ~
+
+    download_base_directory: /san/home/http/download
+    download_base_url: ~

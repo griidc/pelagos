@@ -43,6 +43,18 @@ function initializeDownload(id)
     $("#download_splash .close_button").click(function () {
         closeSplashScreen();
     });
+    $("#download_splash #http_download_button").click(function () {
+        $(".qtip").hide();
+        $('#dataset_download_content').load(
+            Routing.generate("pelagos_app_download_http", {"id": id})
+        );
+    });
+    $("#download_splash #gridftp_download_button").click(function () {
+        $(".qtip").hide();
+        $('#dataset_download_content').load(
+            Routing.generate("pelagos_app_download_gridftp", {"id": id})
+        );
+    });
 }
 
 function closeSplashScreen()

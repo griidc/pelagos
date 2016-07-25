@@ -169,26 +169,6 @@ function showDatasetDetails(id) {
     }
 }
 
-function showGridFTPDetails(udi) {
-    $(".qtip").hide();
-    $.ajax({
-            "url": "{{baseUrl}}/enableGridFTP/" + udi,
-            "success": function(data) {
-                $('#dataset_download_content').html(data);
-            }
-    });
-}
-
-function showWebDownloadDetails(udi) {
-    $(".qtip").hide();
-    $.ajax({
-            "url": "{{baseUrl}}/initiateWebDownload/" + udi,
-            "success": function(data) {
-                $('#dataset_download_content').html(data);
-            }
-    });
-}
-
 function applyFilter() {
     $('#filter-button').button('disable');
     $('#clear-button').button('disable');
