@@ -46,7 +46,7 @@
 {% endblock %}
 
 {% block body %}
-<script type="text/javascript">var jiraBase="{{jiraBase}}";</script>
+<script type="text/javascript">var issueTrackingBaseUrl="{{ issueTrackingBaseUrl }}";</script>
 <div style="background: #fff2e8; padding:0px;" id="tabs">
   <div class="ui-tabs">
     <ul class="ui-tabs-nav">
@@ -88,7 +88,7 @@
                 </tfoot>
                 <tbody>
                     {% for dta in section %}
-                        <tr>
+                    <tr datasetId = "{{ dta.id }}">
                             <td valign="top" class="udiTD"><a href="{{ path('pelagos_app_ui_dataland_default', { 'udi': dta.udi }) }}" target="_BLANK" >{{dta.udi}}</a></td>
                             <td style="position:relative;">
                                 <div>
@@ -97,7 +97,7 @@
                                         <img src="{{ asset_url }}">
                                         {% endimage %}
                                     </button>&nbsp;
-                                    <a href="{{jiraBase}}/{{dta.jira_ticket|default}}" target="_BLANK">{{dta.jira_ticket|default}}</a>
+                                    <a href="{{ issueTrackingBaseUrl }}/{{ dta.issueTrackingTicket }}" target="_BLANK">{{ dta.issueTrackingTicket }}</a>
                                     <table class="jiraForm">
                                         <tr>
                                             <td><input type="text" name="jiraTicket" class="jiraTicketClass" placeholder="URL or Jira Issue"></td>

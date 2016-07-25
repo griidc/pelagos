@@ -5,6 +5,8 @@ namespace Pelagos\Bundle\AppBundle\Controller\UI;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use Doctrine\ORM\Query;
+
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
@@ -74,31 +76,53 @@ class MdAppController extends UIController
             );
         }
 
+        $objNeeded = array(
+            'udi',
+            'issueTrackingTicket',
+            'datasetSubmission.creationTimeStamp',
+            'metadata.id',
+            'datasetSubmission.metadataFileName');
+
         $entityHandler = $this->get('pelagos.entity.handler');
         return $this->render(
             'PelagosAppBundle:MdApp:main.html.twig',
             array(
-                'jiraBase' => 'https://triton.tamucc.edu/issues',
+                'issueTrackingBaseUrl' => $this->getParameter('issue_tracking_base_url'),
                 'm_dataset' => array(
                     'submitted' => $entityHandler->getBy(
                         Dataset::class,
-                        array('metadataStatus' => DatasetSubmission::METADATA_STATUS_SUBMITTED)
+                        array('metadataStatus' => DatasetSubmission::METADATA_STATUS_SUBMITTED),
+                        array(),
+                        $objNeeded,
+                        Query::HYDRATE_ARRAY
                     ),
                     'inreview' => $entityHandler->getBy(
                         Dataset::class,
-                        array('metadataStatus' => DatasetSubmission::METADATA_STATUS_IN_REVIEW)
+                        array('metadataStatus' => DatasetSubmission::METADATA_STATUS_IN_REVIEW),
+                        array(),
+                        $objNeeded,
+                        Query::HYDRATE_ARRAY
                     ),
                     'secondcheck' => $entityHandler->getBy(
                         Dataset::class,
-                        array('metadataStatus' => DatasetSubmission::METADATA_STATUS_SECOND_CHECK)
+                        array('metadataStatus' => DatasetSubmission::METADATA_STATUS_SECOND_CHECK),
+                        array(),
+                        $objNeeded,
+                        Query::HYDRATE_ARRAY
                     ),
                     'accepted' => $entityHandler->getBy(
                         Dataset::class,
-                        array('metadataStatus' => DatasetSubmission::METADATA_STATUS_ACCEPTED)
+                        array('metadataStatus' => DatasetSubmission::METADATA_STATUS_ACCEPTED),
+                        array(),
+                        $objNeeded,
+                        Query::HYDRATE_ARRAY
                     ),
                     'backtosubmitter' => $entityHandler->getBy(
                         Dataset::class,
-                        array('metadataStatus' => DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER)
+                        array('metadataStatus' => DatasetSubmission::METADATA_STATUS_BACK_TO_SUBMITTER),
+                        array(),
+                        $objNeeded,
+                        Query::HYDRATE_ARRAY
                     ),
                 ),
             )
