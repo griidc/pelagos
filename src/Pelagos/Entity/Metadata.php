@@ -508,7 +508,7 @@ class Metadata extends Entity
     /**
      * Checks if the File Name matches the Identifier of the Metadata XML.
      *
-     * @throws \Exception When the identifier does not exist?
+     * @throws \Exception When the identifier does not exist.
      *
      * @return boolean
      */
@@ -523,7 +523,7 @@ class Metadata extends Entity
 
         if (count($fileIdentifier) > 0) {
             $fileName = preg_replace('/:/', '-', $this->dataset->getUdi()) . '-metadata.xml';
-            return (bool)preg_match("/$fileName/i", $fileIdentifier[0], $matches);
+            return (bool) preg_match("/$fileName/i", $fileIdentifier[0], $matches);
         } else {
             throw new \Exception('File Identifier does not exist');
         }
@@ -532,7 +532,7 @@ class Metadata extends Entity
     /**
      * Checks if the URL of the Metadata URL matches the UDI.
      *
-     * @throws \Exception When the URL does not exist?
+     * @throws \Exception When the URL does not exist.
      *
      * @return boolean
      */
@@ -547,7 +547,7 @@ class Metadata extends Entity
 
         if (count($metadataUrl) > 0) {
             $urlRegex = 'https:\/\/data.gulfresearchinitiative.org\/metadata\/' . $this->dataset->getUdi();
-            return (bool)preg_match("/$urlRegex/i", $metadataUrl[0], $matches);
+            return (bool) preg_match("/$urlRegex/i", $metadataUrl[0], $matches);
         } else {
             throw new \Exception('Metadata URL does not exist');
         }
@@ -556,7 +556,7 @@ class Metadata extends Entity
     /**
      * Checks if the URL of the Distributor URL matches the UDI.
      *
-     * @throws \Exception When the URL does not exist?
+     * @throws \Exception When the URL does not exist.
      *
      * @return boolean
      */
@@ -579,7 +579,7 @@ class Metadata extends Entity
 
         if (count($distributionUrl) > 0) {
             $urlRegex = '/https:\/\/data.gulfresearchinitiative.org\/data\/' . $this->dataset->getUdi();
-            return (bool)preg_match("/$urlRegex/i", $distributionUrl[0], $matches);
+            return (bool) preg_match("/$urlRegex/i", $distributionUrl[0], $matches);
         } else {
             throw new \Exception('Distribution URL does not exist');
         }
