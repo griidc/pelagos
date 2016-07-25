@@ -100,4 +100,31 @@ class MdAppController extends UIController
             )
         );
     }
+
+    /**
+     * Get logfile entries for particular dataset UDI.
+     *
+     * @param string $udi The dataset UDI identifier.
+     *
+     * @Route("/getlog/{udi}")
+     *
+     * @return response
+     */
+    public function getlog($udi)
+    {
+        $rawlog = file($this->getParameter('mdapp_logfile'));
+        $entries = array_values(preg_grep("/$udi/i", $rawlog));
+        $data = null;
+        if (count($entries) > 0) {
+            $data .= "<ul>\n";
+            foreach ($entries as $entry) {
+                $data .= "<li>$entry</li>\n";
+            }
+            $data .= "</ul>\n";
+        }
+        $response = new Response();
+        $response->setContent($data);
+        $response->headers->set('Content-Type', 'text/html');
+        return $response;
+    }
 }
