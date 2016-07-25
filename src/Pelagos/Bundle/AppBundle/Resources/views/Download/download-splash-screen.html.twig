@@ -93,8 +93,10 @@
         <strong>UDI:</strong> {{ dataset.udi }}<br />
         <strong>Title:</strong> {{ dataset.title }}<br />
         <strong>Author(s):</strong> {{ dataset.datasetSubmission.authors }}<br />
-        {% if dataset.datasetSubmission.metadataFileName %}
-            <strong>Metadata:</strong> <a href="/metadata/{{ dataset.udi }}">{{ dataset.datasetSubmission.metadataFileName }}</a><br />
+        {% if dataset.metadataStatus == constant('Pelagos\\Entity\\DatasetSubmission::METADATA_STATUS_ACCEPTED') %}
+            <strong>Metadata:</strong>
+            <a href="{{ path('pelagos_app_ui_dataland_metadata', {'udi': dataset.udi}) }}">{{ dataset.udi|replace({':': '-'}) }}-metadata.xml</a>
+            <br />
         {% endif %}
         <strong>File name:</strong> {{ dataset.datasetSubmission.datasetFileName }} &nbsp; <strong>File size:</strong> {{ dataset.datasetSubmission.datasetFileSize }}<br />
         <strong>Estimated Download Time:</strong> <span id="dl_time">calculating...</span>
