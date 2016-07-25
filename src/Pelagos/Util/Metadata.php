@@ -9,6 +9,23 @@ use Doctrine\ORM\EntityManager;
 class Metadata
 {
     /**
+     * String of full filepath to logfile.
+     *
+     * @var string
+     */
+    protected $logfile;
+
+    /**
+     * Constructor for dependency injection.
+     *
+     * @param string $logfile String with filepath.
+     */
+    public function __construct($logfile)
+    {
+        $this->logfile = $logfile;
+    }
+
+    /**
      * Writes MDAPP-related events to logfile.
      *
      * @param string $message The text to log to file.
@@ -17,8 +34,7 @@ class Metadata
      */
     public function writeLog($message)
     {
-        $logfileLocation = file($this->getParameter('mdapp_logfile'));
         $dstamp = date('r');
-        file_put_contents($logfileLocation, "$dstamp:$message\n", FILE_APPEND);
+        file_put_contents($this->logfile, "$dstamp:$message\n", FILE_APPEND);
     }
 }
