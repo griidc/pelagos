@@ -189,17 +189,6 @@ function showWebDownloadDetails(udi) {
     });
 }
 
-function showDatasetDownloadExternal(udi) {
-    $(".qtip").hide();
-    $.ajax({
-            "url": "{{baseUrl}}/download-external/" + udi,
-            "success": function(data) {
-                $('#dataset_download_content').html(data);
-                $('#dataset_download').show();
-            }
-    });
-}
-
 function applyFilter() {
     $('#filter-button').button('disable');
     $('#clear-button').button('disable');
