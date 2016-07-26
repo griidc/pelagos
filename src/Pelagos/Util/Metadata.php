@@ -9,44 +9,20 @@ use Doctrine\ORM\EntityManager;
 class Metadata
 {
     /**
-     * Metadata XML.
-     *
-     * @var string
-     */
-    protected $metadata;
-
-    /**
-     * Setter for metadata.
-     *
-     * @param string $metadata Metadata as XML text.
-     *
-     * @return void
-     */
-    public function setMetadata($metadata)
-    {
-        $this->metadata = $metadata;
-    }
-
-    /**
      * Validates XML against a schema.
      *
+     * @param string $xml    Metadata as a XML string.
      * @param string $schema An optional URL of Schema used to validate.
      *
-     * @throws \Exception When metadata is not set.
-     *
-     * @return array
+     * @return array of (validity boolean, array of errors, and array of warnings).
      */
-    public function validateIso($schema = 'http://www.ngdc.noaa.gov/metadata/published/xsd/schema.xsd')
+    public function validateIso($xml, $schema = 'http://www.ngdc.noaa.gov/metadata/published/xsd/schema.xsd')
     {
         $errorList = array();
         $warningList = array();
 
-        if (null === $this->metadata) {
-            throw new \Exception('Metadata must be populated to use this method.');
-        }
-
         $domDoc = new \DomDocument('1.0', 'UTF-8');
-        $tmpp = @$domDoc->loadXML($this->metadata);
+        $tmpp = @$domDoc->loadXML($xml);
         if (!$tmpp) {
             $error = 'Could not parse as XML: ' . libxml_get_last_error()->message;
             $errorList[] = $error;
