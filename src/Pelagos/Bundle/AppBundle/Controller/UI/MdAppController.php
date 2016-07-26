@@ -34,14 +34,14 @@ class MdAppController extends UIController
     }
 
    /**
-     * Download original user-submitted raw metadata file.
-     *
-     * @param integer $id The Pelagos ID of the metadata's associated dataset.
-     *
-     * @Route("/download-orig-raw-xml/{id}")
-     *
-     * @return XML|string
-     */
+    * Download original user-submitted raw metadata file.
+    *
+    * @param integer $id The Pelagos ID of the metadata's associated dataset.
+    *
+    * @Route("/download-orig-raw-xml/{id}")
+    *
+    * @return XML|string
+    */
     public function downloadMetadataFromOriginalFile($id)
     {
         $entityHandler = $this->get('pelagos.entity.handler');
@@ -77,7 +77,6 @@ class MdAppController extends UIController
             return $response;
         }
     }
-
 
     /**
      * Download metadata from persistance.
@@ -152,10 +151,10 @@ class MdAppController extends UIController
     }
 
    /**
-     * Render the UI for MDApp.
-     *
-     * @return Response
-     */
+    * Render the UI for MDApp.
+    *
+    * @return Response
+    */
     protected function renderUi()
     {
         // If not DRPM, show Access Denied message.  This is simply for
