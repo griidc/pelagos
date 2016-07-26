@@ -67,7 +67,7 @@ class MdAppController extends UIController
 
         // This really isn't likely, but included for robustness.
         $metadataXml = $metadataSimpleXml->asXml();
-        if (null === $metadataXml) {
+        if (false === $metadataXml) {
             throw new \Exception("Could not convert SimpleXML into string representation for: $id");
         }
 
