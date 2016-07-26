@@ -187,7 +187,7 @@
                                         </td>
                                         <td id="db_dl_icon">
                                             {% if dta.metadata %}
-                                                <a href="/download-metadata-db/{{dta.udi}}" id="dbdllnk_{{dta.udi}}">
+                                            <a href="{{ path('pelagos_app_ui_mdapp_downloadmetadatafromdb', {'id': dta.id}) }}" id="dbdllnk_{{dta.id}}">
                                                     {% image '@PelagosAppBundle/Resources/public/images/download-from-db.png' %}
                                                         <img src="{{ asset_url }}">
                                                     {% endimage %}
@@ -196,7 +196,12 @@
                                                 &nbsp;
                                             {% endif %}
                                         </td>
-                                        <td id="md_filename">{{dta.datasetSubmission.metadataFileName}}</td>
+
+                                        {% if dta.metadata %}
+                                            <td id="md_filename">{{ dta.udi }}</td>
+                                        {% else %}
+                                            <td id="md_filename">{{ dta.datasetsubmission.MetadataFileName }}</td>
+                                        {% endif %}
                                     </tr>
                                 </table>
                             </td>
