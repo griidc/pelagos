@@ -132,10 +132,11 @@ class DownloadController extends Controller
         if (!file_exists($datasetDownloadDirectory)) {
             mkdir($datasetDownloadDirectory, 0755);
         }
-        symlink(
-            $downloadFileInfo->getRealPath(),
-            $datasetDownloadDirectory . '/' . $dataset->getDatasetSubmission()->getDatasetFileName()
-        );
+        $linkFile = $datasetDownloadDirectory . '/' . $dataset->getDatasetSubmission()->getDatasetFileName();
+        if (file_exists($linkFile)) {
+            unlink($linkFile);
+        }
+        symlink($downloadFileInfo->getRealPath(), $linkFile);
         return $this->render(
             'PelagosAppBundle:Download:download-via-gridftp-splash-screen.html.twig',
             array(
