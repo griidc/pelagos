@@ -506,6 +506,62 @@ class Metadata extends Entity
     }
 
     /**
+     * Checks if the URL of the Metadata URL matches the UDI.
+     *
+     * @throws \Exception When the URL does not exist.
+     *
+     * @return boolean
+     */
+    public function doesUdiMatchMetadataUrl()
+    {
+        $metadataUrl = $this->xml->xpath(
+            '/gmi:MI_Metadata' .
+            '/gmd:dataSetURI' .
+            '/gco:CharacterString' .
+            '/text()'
+        );
+
+        if (count($metadataUrl) > 0) {
+            $udi = $this->dataset->getUdi();
+            return (bool) preg_match("/\/$udi$/", $metadataUrl[0])
+        } else {
+            throw new \Exception('Metadata URL does not exist');
+        }
+    }
+
+    /**
+     * Checks if the URL of the Distributor URL matches the UDI.
+     *
+     * @throws \Exception When the URL does not exist.
+     *
+     * @return boolean
+     */
+    public function doesUdiMatchDistributionUrl()
+    {
+        $distributionUrl = $this->xml->xpath(
+            '/gmi:MI_Metadata' .
+            '/gmd:distributionInfo' .
+            '/gmd:MD_Distribution' .
+            '/gmd:distributor' .
+            '/gmd:MD_Distributor' .
+            '/gmd:distributorTransferOptions' .
+            '/gmd:MD_DigitalTransferOptions' .
+            '/gmd:onLine' .
+            '/gmd:CI_OnlineResource' .
+            '/gmd:linkage' .
+            '/gmd:URL' .
+            '/text()'
+        );
+
+        if (count($distributionUrl) > 0) {
+            $udi = $this->dataset->getUdi();
+            return (bool) preg_match("/\/$udi$/", $distributionUrl[0])
+        } else {
+            throw new \Exception('Distribution URL does not exist');
+        }
+    }
+
+    /**
      * Sets the Metadata title from the Metadata XML.
      *
      * @return void

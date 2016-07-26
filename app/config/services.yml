@@ -55,6 +55,9 @@ services:
         class: Pelagos\Util\MdappLogger
         arguments: ["%mdapp_logfile%"]
 
+    pelagos.util.metadata:
+        class: Pelagos\Util\Metadata
+
     pelagos.util.data_store:
         class: Pelagos\Util\DataStore
         arguments:
