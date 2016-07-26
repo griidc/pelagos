@@ -1,0 +1,122 @@
+<div id="dataset_download">
+    <script type="text/javascript">
+        var $ = jQuery.noConflict();
+
+        var start = 0;
+        var end = 0;
+
+        function TestDownload() {
+            start = new Date().getTime();
+            $.ajax({
+                type: "GET",
+                url: "/download/testfile.bin?id=" + start,
+                success: function(msg) {
+                    end = new Date().getTime();
+                    diff = (end - start) / 1000;
+                    bytes = msg.length;
+                    speed = (bytes / diff);
+                    time = {{ dataset.datasetSubmission.datasetFileSize }} / speed;
+                    unit = "second";
+                    if (time > 60) {
+                        time = time / 60;
+                        unit = "minute";
+                    }
+                    if (time > 60) {
+                        time = time / 60;
+                        unit = "hour";
+                    }
+                    if (Math.round(time) != 1) unit += "s";
+                    $('#dl_time').html(Math.round(time) + " " + unit + " (based on your current connection speed)");
+                }
+            });
+        }
+
+        $(document).ready(function() {
+            TestDownload();
+        });
+
+    </script>
+
+    <div id="dataset_download_close">
+        {% image '@PelagosAppBundle/Resources/public/images/close.gif' %}
+            <input class="close_button" type="image" src="{{ asset_url }}">
+        {% endimage %}
+    </div>
+
+    <div id="dataset_download_content">
+
+    <h3 style="text-align:center;"> The dataset you selected is ready for download. </h3>
+
+        <div style="border: 1px solid #aaa; padding: 10px; margin-top: 15px; border-radius: 4px;">
+            <p style="margin-top:0">
+                <strong>DISCLAIMER:</strong> The Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) aggregates data from researchers funded by the Gulf of Mexico Research Initiative and other scientists working in the region. These data are furnished "as is" for the convenience of all data users. GRIIDC makes no warranties (including no warranties as to merchantability, timeliness or fitness) either expressed or implied with respect to the data or their fitness for any specific application.
+            </p>
+            <div style="text-align:left;">
+                <p>
+                    By downloading data you are expressing agreement with the disclaimer.
+                </p>
+                <div style="width: 100%; display: table; border: 1px solid #aaa; border-radius: 4px;">
+                    <div style="display: table-row; margin: 0 auto;">
+                        <div style="display: table-cell;">
+                            <button id="http_download_button" title="Download file directly to your web browser." class="dl_button" style="padding: 0px 0px;">
+                                {% image '@PelagosAppBundle/Resources/public/images/direct-download.png' %}
+                                    <img style="vertical-align:middle;" src="{{ asset_url }}">
+                                {% endimage %}
+                            </button>
+                            Direct File Download
+                        </div>
+                        {% if guest == false and gridOK == 1 %}
+                        <div style="display: table-cell;">
+                            <button id="gridftp_download_button" title="Place this file on the Globus/GridFTP gomri#griidc endpoint.  This option is the preferred method for server-to-server transfer of very large files, but requires access to a Globus-enabled GridFTP endpoint and a Globus.org login." class="dl_button" style="padding: 0px 0px;">
+                                {% image '@PelagosAppBundle/Resources/public/images/globus.png' %}
+                                    <img style="vertical-align:middle;" src="{{ asset_url }}">
+                                {% endimage %}
+                            </button>
+                            Download via the Globus/GridFTP Network
+                        </div>
+                        {% endif %}
+                        <div style="display: table-cell;">
+                            <button class="close_button" title="Cancel this download attempt and close this dialog screen." class="dl_button" style="padding: 0px 0px;">
+                                {% image '@PelagosAppBundle/Resources/public/images/cancel.png' %}
+                                    <img style="vertical-align:middle;" src="{{ asset_url }}" border="0">
+                                {% endimage %}
+                            </button>
+                            Cancel Download
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    <div style="border: 1px solid #aaa; padding: 10px; border-radius: 4px;">
+        <strong>UDI:</strong> {{ dataset.udi }}<br />
+        <strong>Title:</strong> {{ dataset.title }}<br />
+        <strong>Author(s):</strong> {{ dataset.datasetSubmission.authors }}<br />
+        {% if dataset.metadataStatus == constant('Pelagos\\Entity\\DatasetSubmission::METADATA_STATUS_ACCEPTED') %}
+            <strong>Metadata:</strong>
+            <a href="{{ path('pelagos_app_ui_dataland_metadata', {'udi': dataset.udi}) }}">{{ dataset.udi|replace({':': '-'}) }}-metadata.xml</a>
+            <br />
+        {% endif %}
+        <strong>File name:</strong> {{ dataset.datasetSubmission.datasetFileName }} &nbsp; <strong>File size:</strong> {{ dataset.datasetSubmission.datasetFileSize }}<br />
+        <strong>Estimated Download Time:</strong> <span id="dl_time">calculating...</span>
+        <table border='0'>
+        <tr>
+            <th colspan='2'>Datafile Checksums</th>
+        </tr>
+        <tr>
+            <td>md5</td><td>&nbsp; {{ dataset.datasetSubmission.datasetFileMd5Hash }}</td>
+        </tr>
+        <tr>
+            <td>sha1</td><td>&nbsp; {{ dataset.datasetSubmission.datasetFileSha1Hash }}</td>
+        </tr>
+        <tr>
+            <td>sha256</td><td>&nbsp; {{ dataset.datasetSubmission.datasetFileSha256Hash }}</td>
+        </tr>
+        </table>
+    </div>
+    <div style="border: 1px solid #aaa; padding: 10px; border-radius: 4px; margin-top: 15px">
+    <strong><i>Citation suggestion:</i></strong><br />
+    {{ dataset.citation }}
+    </div>
+</div>

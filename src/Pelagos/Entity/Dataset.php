@@ -122,6 +122,8 @@ class Dataset extends Entity
      * Collection of DatasetPublication.
      *
      * @var Collection
+     *
+     * @ORM\OneToMany(targetEntity="DatasetPublication", mappedBy="dataset")
      */
     protected $datasetPublications;
 
@@ -129,6 +131,8 @@ class Dataset extends Entity
      * The identifier for an issue tracking ticket related to this Dataset.
      *
      * @var string
+     *
+     * @ORM\Column(nullable=true)
      */
     protected $issueTrackingTicket;
 
@@ -441,5 +445,38 @@ class Dataset extends Entity
     public function getIssueTrackingTicket()
     {
         return $this->issueTrackingTicket;
+    }
+
+    /**
+     * Get a citation for this Dataset.
+     *
+     * @return string
+     */
+    public function getCitation()
+    {
+        $datasetSubmission = $this->getDatasetSubmission();
+
+        $title = $this->getTitle();
+        $udi = $this->getUdi();
+
+        if ($datasetSubmission instanceof DatasetSubmission) {
+            $author = $datasetSubmission->getAuthors();
+            $year = $datasetSubmission->getModificationTimeStamp()->format('Y');
+            $doi = $datasetSubmission->getDoi();
+
+            if ($doi !== null) {
+                $url = 'http://dx.doi.org/' . $doi;
+            } else {
+                $url = 'http://data.gulfresearchinitiative.org/data/' . $udi;
+            }
+
+            $citationString = "$author ($year) $title ($udi) " .
+                "[Data files] Available from $url";
+
+            return $citationString;
+        } else {
+            $citationString = "This dataset has no registration: $title ($udi)";
+            return $citationString;
+        }
     }
 }

@@ -9,6 +9,7 @@ use FOS\RestBundle\Controller\Annotations as Rest;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
+use Pelagos\Bundle\AppBundle\Form\DatasetType;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 
@@ -92,30 +93,32 @@ class DatasetController extends EntityController
     public function getCitationAction($id)
     {
         $dataset = $this->handleGetOne(Dataset::class, $id);
-        $datasetSubmission = $dataset->getDatasetSubmission();
+        return $dataset->getCitation();
+    }
 
-        $title = $dataset->getTitle();
-        $udi = $dataset->getUdi();
-
-        if ($datasetSubmission instanceof DatasetSubmission) {
-            $author = $datasetSubmission->getAuthors();
-            $year = $datasetSubmission->getModificationTimeStamp()->format('Y');
-            $doi = $datasetSubmission->getDoi();
-
-            if ($doi !== null) {
-                $url = 'http://dx.doi.org/' . $doi;
-            } else {
-                $url = 'http://data.gulfresearchinitiative.org/data/' . $udi;
-            }
-
-            $citationString = "$author ($year) $title ($udi) " .
-                "[Data files] Available from $url";
-
-            return $citationString;
-        } else {
-            $citationString = "This dataset has no registration: $title ($udi)";
-            return $citationString;
-        }
-
+    /**
+     * Update a Dataset with the submitted data.
+     *
+     * @param integer $id      The id of the Dataset to update.
+     * @param Request $request The request object.
+     *
+     * @ApiDoc(
+     *   section = "Datasets",
+     *   input = {"class" = "Pelagos\Bundle\AppBundle\Form\DatasetType", "name" = ""},
+     *   statusCodes = {
+     *     204 = "The Dataset was successfully updated.",
+     *     400 = "The request could not be processed due to validation or other errors.",
+     *     403 = "The authenticated user was not authorized to edit the Person.",
+     *     404 = "The requested Dataset was not found.",
+     *     500 = "An internal error has occurred.",
+     *   }
+     * )
+     *
+     * @return Response A Response object with an empty body and a "no content" status code.
+     */
+    public function patchAction($id, Request $request)
+    {
+        $this->handleUpdate(DatasetType::class, Dataset::class, $id, $request, 'PATCH');
+        return $this->makeNoContentResponse();
     }
 }

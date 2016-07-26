@@ -19,3 +19,6 @@ pelagos_rest:
 NelmioApiDocBundle:
     prefix:   /api/doc
     resource: "@NelmioApiDocBundle/Resources/config/routing.yml"
+
+pelagos_download:
+    resource: Pelagos\Bundle\AppBundle\Controller\DownloadController

@@ -163,7 +163,7 @@ class EntityHandler
         $this->processOrderBy($orderBy, $qb, $joins);
         // Join all necessary joins.
         foreach ($joins as $entityProperty => $alias) {
-            $qb->join($entityProperty, $alias);
+            $qb->leftJoin($entityProperty, $alias);
         }
         // Get the query.
         $query = $qb->getQuery();
