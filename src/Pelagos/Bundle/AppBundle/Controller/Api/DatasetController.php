@@ -119,6 +119,21 @@ class DatasetController extends EntityController
     public function patchAction($id, Request $request)
     {
         $this->handleUpdate(DatasetType::class, Dataset::class, $id, $request, 'PATCH');
+        $jiraLinkValue = $request->request->get('issueTrackingTicket');
+        if (null !== $jiraLinkValue) {
+
+            $entityHandler = $this->get('pelagos.entity.handler');
+            $mdappLogger = $this->get('pelagos.util.mdapplogger');
+
+            $mdappLogger->writeLog(
+                $this->getUser()->getUserName() .
+                'set Jira Link for udi: ' .
+                $entityHandler->get(Dataset::class, $id)->getUdi() .
+                ' to ' .
+                $jiraLinkValue .
+                '.'
+            );
+        }
         return $this->makeNoContentResponse();
     }
 }

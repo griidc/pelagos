@@ -98,7 +98,7 @@ function clearTestGeometry(){
 
 function showLogEntries(udi){
     $.ajax({
-            "url": "{{baseUrl}}/getlog/" + udi,
+            "url": Routing.generate('pelagos_app_ui_mdapp_getlog', { 'udi': udi} ),
             "success": function(data) {
                 $("#log_content").html(data);
                 $("#log_title").html("&nbsp; &nbsp; Log Entries For: " + udi);
