@@ -1,3 +1,6 @@
+parameters:
+    hwi_oauth.user.provider.class: Pelagos\Bundle\AppBundle\Security\OAuthUserProvider
+
 security:
 
     # leave session alone
