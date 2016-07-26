@@ -1,3 +1,10 @@
+hwi_oauth_redirect:
+    resource: "@HWIOAuthBundle/Resources/config/routing/redirect.xml"
+    prefix:   /connect
+
+check_google:
+    path: /login/check-google
+
 pelagos_legacy:
     resource: "@PelagosLegacyBundle/Resources/config/routing.yml"
     prefix:   /legacy

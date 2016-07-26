@@ -169,64 +169,6 @@ function showDatasetDetails(id) {
     }
 }
 
-function showDatasetDownload(udi) {
-//    {% if not logged_in %}
-        $.cookie('dl_attempt_udi_cookie', udi, { expires: 1, path: '/', domain: '{{hostname}}' });
-        $('#pre_login').show();
-/*
-    {% else %}
-        $.ajax({
-            "url": "{{baseUrl}}/download/" + udi,
-            "success": function(data) {
-                $('#dataset_download_content').html(data);
-                $('#dataset_download').show();
-                $(".dl_button[title]").qtip({
-                    position: {
-                        viewport: $(window),
-                        my: 'bottom left',  // position of arrow
-                        at: 'top right'     // position relative to selector
-                    },
-                    style: {
-                        classes: "qtip-shadow qtip-tipped customqtip"
-                    }
-                });
-            }
-        });
-    {% endif %}
-*/
-}
-
-function showGridFTPDetails(udi) {
-    $(".qtip").hide();
-    $.ajax({
-            "url": "{{baseUrl}}/enableGridFTP/" + udi,
-            "success": function(data) {
-                $('#dataset_download_content').html(data);
-            }
-    });
-}
-
-function showWebDownloadDetails(udi) {
-    $(".qtip").hide();
-    $.ajax({
-            "url": "{{baseUrl}}/initiateWebDownload/" + udi,
-            "success": function(data) {
-                $('#dataset_download_content').html(data);
-            }
-    });
-}
-
-function showDatasetDownloadExternal(udi) {
-    $(".qtip").hide();
-    $.ajax({
-            "url": "{{baseUrl}}/download-external/" + udi,
-            "success": function(data) {
-                $('#dataset_download_content').html(data);
-                $('#dataset_download').show();
-            }
-    });
-}
-
 function applyFilter() {
     $('#filter-button').button('disable');
     $('#clear-button').button('disable');
