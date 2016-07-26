@@ -219,7 +219,4 @@ class MdAppController extends UIController
             )
         );
     }
-
-
-
 }
