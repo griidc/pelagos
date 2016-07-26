@@ -51,8 +51,8 @@ services:
         class: Pelagos\Util\Geometry
         arguments: ["@doctrine.orm.entity_manager"]
 
-    pelagos.util.metadata:
-        class: Pelagos\Util\Metadata
+    pelagos.util.mdapplogger:
+        class: Pelagos\Util\MdappLogger
         arguments: ["%mdapp_logfile%"]
 
     pelagos.util.data_store:

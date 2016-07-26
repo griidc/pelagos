@@ -147,9 +147,9 @@ class DatasetController extends EntityController
         if (null !== $jiraLinkValue) {
 
             $entityHandler = $this->get('pelagos.entity.handler');
-            $metadataUtil = $this->get('pelagos.util.metadata');
+            $mdappLogger = $this->get('pelagos.util.mdapplogger');
 
-            $metadataUtil->writeLog(
+            $mdappLogger->writeLog(
                 $this->getUser()->getUserName() .
                 'set Jira Link for udi: ' .
                 $entityHandler->get(Dataset::class, $id)->getUdi() .

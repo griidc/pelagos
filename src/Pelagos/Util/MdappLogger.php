@@ -6,7 +6,7 @@ use Doctrine\ORM\EntityManager;
 /**
  * This is a Metadata utility class.
  */
-class Metadata
+class MdappLogger
 {
     /**
      * String of full filepath to logfile.
