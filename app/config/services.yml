@@ -28,6 +28,12 @@ services:
         class: Pelagos\Component\Ldap\Ldap
         arguments: ["@pelagos.ldap_client","%ldap_bind_dn%","%ldap_bind_pw%","%ldap_people_ou%"]
 
+    pelagos.router:
+        public: false
+        class: Pelagos\Routing\Router
+        decorates: router
+        arguments: ["@pelagos.router.inner", "%pelagos.prefix%"]
+
     pelagos.util.udi:
         class: Pelagos\Util\Udi
         arguments: ["@doctrine.orm.entity_manager"]
