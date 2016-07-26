@@ -1,0 +1,54 @@
+<div id="pre_login">
+    <div id="pre_login_close">
+        {% image '@PelagosAppBundle/Resources/public/images/close.gif' %}
+            <input class="close_button" type="image" src="{{ asset_url }}">
+        {% endimage %}
+    </div>
+    <div id="pre_login_content">
+        <table cellpadding=10>
+            <tr>
+                <td colspan=3 align=center>
+                    <h3>Please log in for access to this data.</h3>
+                </td>
+            </tr>
+            <tr>
+                <td align="center">
+                    <div id="griidc-logo">
+                        <a href="/auth/cas?dest={{ refererPath }}">
+                            {% image '@PelagosAppBundle/Resources/public/images/GRIIDC-logo.png' %}
+                                <img src="{{ asset_url }}" alt="GRIIDC logo">
+                            {% endimage %}
+                        </a>
+                    </div>
+                    <div>
+                        GoMRI Users, please use your<br />
+                        <a href="/auth/cas?dest={{ refererPath }}">GRIIDC login</a> to download data.
+                    </div>
+                </td>
+                <td>
+                    {% image '@PelagosAppBundle/Resources/public/images/vbar.png' %}
+                        <img src="{{ asset_url }}">
+                    {% endimage %}
+                </td>
+                <td align="center">
+                    <div>
+                        <a href="{{ path('hwi_oauth_service_redirect', {'service': 'google'}) }}">
+                            {% image '@PelagosAppBundle/Resources/public/images/googleauth.png' %}
+                                <img src="{{ asset_url }}" alt="google auth logo">
+                            {% endimage %}
+                        </a>
+                    </div>
+                    <div>
+                        Members of the public may use their<br />
+                        <a href="{{ path('hwi_oauth_service_redirect', {'service': 'google'}) }}">Google login</a> to download data.
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan=3 align=center>
+                    <button class="close_button" style="font-weight:bold;">Cancel</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>

@@ -43,23 +43,16 @@ var tabIndex = 0;
                                     {% endif %}
                                     <tr udi="{{ dataset[0].udi }}" datasetId="{{ dataset[0].id }}">
                                         <td valign="top" class="direct-download">
-                                            {% if dataset[0].datasetSubmission.datasetFileTransferStatus == "RemotelyHosted" %}
+                                            {% set title='download dataset' %}
+                                            {% if dataset[0].datasetSubmission.datasetFileTransferStatus == constant('Pelagos\\Entity\\DatasetSubmission::TRANSFER_STATUS_REMOTELY_HOSTED')
+                                                and not (dataset[0].datasetSubmission.datasetFileUri matches '!^https?://data.gulfresearchinitiative.org!') %}
                                                 {% set title = "This dataset can be downloaded from an external repository." %}
-                                                {% if dataset[0].datasetSubmission.datasetFileUri matches '!^https?://data.gulfresearchinitiative.org!' %}
-                                                    {% set title='download dataset' %}
-                                                {% endif %}
-                                                <a href="javascript:showDatasetDownloadExternal({{ dataset[0].id }});">
-                                                    {% image '@PelagosAppBundle/Resources/public/images/download-package.png' %}
-                                                        <img src="{{ asset_url }}" title="{{ title }}">
-                                                    {% endimage %}
-                                                </a>
-                                            {% else %}
-                                                <a href="javascript:showDatasetDownload({{ dataset[0].id }});">
-                                                    {% image '@PelagosAppBundle/Resources/public/images/download-package.png' %}
-                                                        <img src="{{ asset_url }}" title="download dataset">
-                                                    {% endimage %}
-                                                </a>
                                             {% endif %}
+                                            <a href="javascript:startDownload({{ dataset[0].id }});">
+                                                {% image '@PelagosAppBundle/Resources/public/images/download-package.png' %}
+                                                    <img src="{{ asset_url }}" title="{{ title }}">
+                                                {% endimage %}
+                                            </a>
                                         </td>
                                         <td class="info">
                                             {{ dataset[0].datasetSubmission.authors }}.
@@ -106,7 +99,7 @@ var tabIndex = 0;
                                     <tr udi="{{ dataset[0].udi }}" datasetId="{{ dataset[0].id }}">
                                         <td valign="top" class="direct-download">
                                             {% if dataset[0].datasetSubmission.datasetFileTransferStatus == "RemotelyHosted" %}
-                                                <a href="javascript:showDatasetDownloadExternal({{ dataset[0].id }});">
+                                                <a href="javascript:startDownload({{ dataset[0].id }});">
                                                 {% if dataset[0].datasetSubmission.restrictions == "Restricted" %}
                                                     {% set title = "This dataset is hosted by an external repository and has been marked as restricted for author use only. Please contact the external repository for information on how to access this dataset." %}
                                                     {% if dataset[0].datasetSubmission.datasetFileUri matches '!^https?://data.gulfresearchinitiative.org!' %}

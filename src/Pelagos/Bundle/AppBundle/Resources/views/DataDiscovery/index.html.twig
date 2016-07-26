@@ -3,14 +3,21 @@
 {% block head %}
     {{ parent() }}
 
+    {{
+        add_library (
+            [
+                'jquery.cookie',
+            ]
+        )
+    }}
+
     {% stylesheets
         '@PelagosAppBundle/Resources/public/css/data-discovery.css'
         '@PelagosAppBundle/Resources/public/css/data-discovery-scrollbars.css'
         '@PelagosAppBundle/Resources/public/css/data-discovery-datasets.css'
         '@PelagosAppBundle/Resources/public/css/downloads.css'
         '@PelagosAppBundle/Resources/public/css/dataset_details.css'
-        '@PelagosAppBundle/Resources/public/css/dataset_download.css'
-        '@PelagosAppBundle/Resources/public/css/logins.css'
+        '@PelagosAppBundle/Resources/public/css/download.css'
     %}
         {{ add_css(asset_url) }}
     {% endstylesheets %}
@@ -28,6 +35,7 @@
         '@PelagosAppBundle/Resources/public/js/geoviz.js'
         '@PelagosAppBundle/Resources/public/js/data-discovery.js'
         '@PelagosAppBundle/Resources/public/js/tree.js'
+        '@PelagosAppBundle/Resources/public/js/download.js'
         '@FOSJsRoutingBundle/Resources/public/js/router.js'
     %}
         {{ add_js(asset_url) }}
@@ -124,70 +132,6 @@
             </div>
         </div>
 
-    </div>
-
-    <div id="pre_login">
-        <div id="pre_login_close">
-            {% image '@PelagosAppBundle/Resources/public/images/close.gif' %}
-                <input type="image" src="{{asset_url}}" onclick="jQuery('#pre_login').hide();">
-            {% endimage %}
-        </div>
-        <div id="pre_login_content">
-            <table cellpadding=10>
-                <tr>
-                    <td colspan=3 align=center>
-                        <h3>Please log in for access to this data.</h3>
-                    </td>
-                </tr>
-                <tr>
-                    <td align="center">
-                        <div id="griidc-logo">
-                            <a href="/auth/cas?dest={{pageName}}">
-                                {% image '@PelagosAppBundle/Resources/public/images/GRIIDC-logo.png' %}
-                                    <img src="{{asset_url}}" alt="GRIIDC logo">
-                                {% endimage %}
-                            </a>
-                        </div>
-                        <div>
-                            GoMRI Users, please use your<br />
-                            <a href="/auth/cas?dest={{pageName}}">GRIIDC login</a> to download data.
-                        </div>
-                    </td>
-                    <td>
-                        {% image '@PelagosAppBundle/Resources/public/images/vbar.png' %}
-                            <img src="{{asset_url}}">
-                        {% endimage %}
-                    </td>
-                    <td align="center">
-                        <div>
-                            <a href="/auth/oauth2/google?dest={{pageName}}">
-                                {% image '@PelagosAppBundle/Resources/public/images/googleauth.png' %}
-                                    <img src="{{asset_url}}" alt="google auth logo">
-                                {% endimage %}
-                            </a>
-                        </div>
-                        <div>
-                            Members of the public may use their<br />
-                            <a href="/auth/oauth2/google?dest={{pageName}}">Google login</a> to download data.
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan=3 align=center>
-                        <button onclick="jQuery('#pre_login').hide();" style="font-weight:bold;">Cancel</button>
-                    </td>
-                </tr>
-            </table>
-        </div>
-    </div>
-
-    <div id="dataset_download">
-        <div id="dataset_download_close">
-            {% image '@PelagosAppBundle/Resources/public/images/close.gif' %}
-                <input type="image" src="{{asset_url}}" onclick="jQuery('#dataset_download').hide();">
-            {% endimage %}
-        </div>
-        <div id="dataset_download_content"></div>
     </div>
 
     {% if download %}

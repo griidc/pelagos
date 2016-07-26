@@ -67,3 +67,10 @@ parameters:
     # Base URL for an issue tracking system use to track datasets (without trailing /).
     # The issue tracking ticket identifier will be appended to this URL.
     issue_tracking_base_url: ~
+
+    # Google OAuth client id and secret used by HWIOAuthBundle.
+    google_oauth_client_id: ~
+    google_oauth_client_secret: ~
+
+    download_base_directory: /san/home/http/download
+    download_base_url: ~

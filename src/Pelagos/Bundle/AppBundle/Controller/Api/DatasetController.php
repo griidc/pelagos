@@ -93,31 +93,7 @@ class DatasetController extends EntityController
     public function getCitationAction($id)
     {
         $dataset = $this->handleGetOne(Dataset::class, $id);
-        $datasetSubmission = $dataset->getDatasetSubmission();
-
-        $title = $dataset->getTitle();
-        $udi = $dataset->getUdi();
-
-        if ($datasetSubmission instanceof DatasetSubmission) {
-            $author = $datasetSubmission->getAuthors();
-            $year = $datasetSubmission->getModificationTimeStamp()->format('Y');
-            $doi = $datasetSubmission->getDoi();
-
-            if ($doi !== null) {
-                $url = 'http://dx.doi.org/' . $doi;
-            } else {
-                $url = 'http://data.gulfresearchinitiative.org/data/' . $udi;
-            }
-
-            $citationString = "$author ($year) $title ($udi) " .
-                "[Data files] Available from $url";
-
-            return $citationString;
-        } else {
-            $citationString = "This dataset has no registration: $title ($udi)";
-            return $citationString;
-        }
-
+        return $dataset->getCitation();
     }
 
     /**
