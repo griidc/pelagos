@@ -92,13 +92,16 @@ class MdAppController extends UIController
     public function changeMetadataStatusAction(Request $request, $id)
     {
         $entityHandler = $this->get('pelagos.entity.handler');
+        $mdappLogger = $this->get('pelagos.util.mdapplogger');
         $dataset = $entityHandler->get(Dataset::class, $id);
-        if (null !== $request->request->get('to')) {
-            $dataset->getDatasetSubmission()->setMetadataStatus(
-                $request->request->get('to')
-            );
+        $from = $dataset->getMetadataStatus();
+        $udi = $dataset->getUdi();
+        $to = $request->request->get('to');
+        if (null !== $to) {
+            $dataset->getDatasetSubmission()->setMetadataStatus($to);
+            $entityHandler->update($dataset);
+            $mdappLogger->writeLog($this->getUser()->getUsername() . " has changed metadata status for $udi ($from -> $to)");
         }
-        $entityHandler->update($dataset);
         return $this->renderUi();
     }
 
@@ -169,5 +172,33 @@ class MdAppController extends UIController
                 ),
             )
         );
+    }
+
+    /**
+     * Get logfile entries for particular dataset UDI.
+     *
+     * @param string $udi The dataset UDI identifier.
+     *
+     * @Route("/getlog/{udi}")
+     *
+     * @return response
+     */
+    public function getlog($udi)
+    {
+
+        $rawlog = file($this->getParameter('mdapp_logfile'));
+        $entries = array_values(preg_grep("/$udi/i", $rawlog));
+        $data = null;
+        if (count($entries) > 0) {
+            $data .= '<ul>';
+            foreach ($entries as $entry) {
+                $data .= '<li>' . strip_tags($entry) . "</li>\n";
+            }
+            $data .= '</ul>';
+        }
+        $response = new Response();
+        $response->setContent($data);
+        $response->headers->set('Content-Type', 'text/html');
+        return $response;
     }
 }

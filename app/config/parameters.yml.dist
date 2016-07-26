@@ -21,6 +21,9 @@ parameters:
     mailer_from_addr:  ~
     mailer_from_name:  ~
 
+    # MDAPP Parameter - logfile l(must be read/writable by apache via facl)
+    mdapp_logfile: ~
+
     ldap_host: localhost
     ldap_bind_dn: cn=ldapadmin,dc=griidc,dc=org
     ldap_bind_pw: ~
