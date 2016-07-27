@@ -3,9 +3,19 @@
 {% block body %}
     <div class="messages warning">
         <h2 class="element-invisible">Warning message</h2>
+        <ul>
+        {% for warning in warnings %}
+            <li>{{ warning }}</li>
+        {% endfor %}
+        </ul>
     </div>
     <div class="messages error">
         <h2 class="element-invisible">Error message</h2>
+        <ul>
+        {% for error in errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+        </ul>
     </div>
 
     {% if envelope_wkt %}
@@ -15,8 +25,8 @@
         <ul>
             <li> Dataset ID: <a href='/dataset/download/path' target=0>{{ dataset.id (dataset.udi)}}</a></li>
             <li> Uploaded filename: {{ orig_filename }}</li>
-            <li> Geometry Detected: {{ geoflag }}</li>
-            <li> Geometry Status: {{ geo_status }} </li>
+            <li> Geometry Detected: {% if dataset.metadata.geometry%}Yes{% else %}No{% endif %}</li>
+            <li> Geometry Status: {% if errors|length = 0 %}Verified by PostGIS as OK{% else %} </li>
         </ul>
     </p>
 {% endblock %}

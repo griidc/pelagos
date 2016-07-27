@@ -288,15 +288,20 @@ class MdAppController extends UIController
             $file = $data['newMetadataFile'];
             $originalFileName = $file->getClientOriginalName();
 
+            $errors = array();
+            $warnings = array();
+
             if (1 !== preg_match('/[A-Z]\d\.x\d{3}\.\d{3}-\d{4}/i', $originalFileName, $matches)) {
-                throw new \Exception('UDI no detected in filename!');
+                //throw new \Exception('UDI not detected in filename!');
+                $errors[] = 'UDI not detected in filename!';
             }
 
             $udi = preg_replace('/-/', ':', $matches[0]);
             $datasets = $this->entityHandler->getBy(Dataset::class, array('udi' => $udi));
 
             if (0 == count($datasets)) {
-                throw new \Exception("Dataset with udi:$udi not found!");
+                $errors[] = "Dataset with udi:$udi not found!";
+                //throw new \Exception("Dataset with udi:$udi not found!");
             } elseif (1 > count($datasets)) {
                 throw new \Exception("More than one dataset found with udi:$udi!");
             } else {
@@ -306,16 +311,33 @@ class MdAppController extends UIController
             try {
                 $xml = simplexml_load_file($file->getPathname());
             } catch (\Exception $e) {
-                throw new \Exception('Not a parsable XML file!');
+                $errors[] = 'Not a parsable XML file!';
             }
 
-            if ($data['validateSchema'] == true) {
-                //TODO: Validate XML, you can use $xml.
-            }
+            // Seems OK to validate.
+            if (0 === count($errors)) {
+                if ($data['validateSchema'] == true) {
+                    //TODO: Validate XML, you can use $xml.
+                    $metadataUtil = $this->get('pelagos.util.metadata');
+                    $analysis = $metadataUtil->validateIso($xml->asXML());
+                    $errors = array_merge($errors, $analysis['errors']);
+                    $warnings = array_merge($warnings, $analysis['warnings']);
+                }
 
-            $metadata = new Metadata($dataset, $xml->asXML());
+                // If there is a geometry, figure out envelope.
+                $metadata = new Metadata($dataset, $xml->asXML());
+                if (null !== $metadata->getGeometry()) {
+                    $geoUtil=$this->get('pelagos.util.geometry');
+                    $gml = $metadata->extractBoundingPolygonGML($metadata->getXml())[0];
+                    $envelopeWkt = $geoUtil->calculateEnvelopeFromGml($gml);
+                }
 
-            if ($data['test1'] == true) {
+                if ($data['test1'] == true) {
+                    $errorArray = 'errors';
+                } else {
+                    $errorArray = 'warnings';
+                }
+
                 $fileIdentifier = $xml->xpath(
                     '/gmi:MI_Metadata' .
                     '/gmd:fileIdentifier' .
@@ -325,34 +347,80 @@ class MdAppController extends UIController
 
                 if (count($fileIdentifier) > 0) {
                     if (!(bool) preg_match("/$originalFileName/i", $fileIdentifier[0], $matches)) {
-                        throw new \Exception('Filename does not match gmd:fileIdentifier!');
+                        ${$errorArray}[] = 'Filename does not match gmd:fileIdentifier!';
                     }
                 } else {
-                    throw new \Exception('File Identifier does not exist');
+                    $warnings[] = 'File Identifier does not exist';
                 }
-            }
 
-            if ($data['test2'] == true) {
-                if (!$metadata->doesUdiMatchMetadataUrl()) {
-                    throw new \Exception('Metadata URL does not contain UDI');
+                if ($data['test2'] == true) {
+                    $errorArray = 'errors';
+                } else {
+                    $errorArray = 'warnings';
                 }
-            }
 
-            if ($data['test3'] == true) {
-                if (!$metadata->doesUdiMatchDistributionUrl()) {
-                    throw new \Exception('Distribution URL does not contain UDI');
+               $metadataUrl = $xml->xpath(
+                    '/gmi:MI_Metadata' .
+                    '/gmd:dataSetURI' .
+                    '/gco:CharacterString' .
+                    '/text()'
+                );
+
+                if (count($metadataUrl) > 0) {
+                    $udi = $dataset->getUdi();
+                    if (false === (bool) preg_match("/\/$udi$/", $metadataUrl[0])) {
+                        ${$errorArray}[] = 'UDI does not match metadata URL';
+                    }
+                } else {
+                    $warnings[] = 'Metadata URL does not exist';
                 }
-            }
 
-            if ($data['overrideDatestamp'] == true) {
-                $metadata->updateXmlTimeStamp();
+                if ($data['test3'] == true) {
+                    $errorArray = 'errors';
+                } else {
+                    $errorArray = 'warnings';
+                }
+
+               $distributionUrl = $xml->xpath(
+                    '/gmi:MI_Metadata' .
+                    '/gmd:distributionInfo' .
+                    '/gmd:MD_Distribution' .
+                    '/gmd:distributor' .
+                    '/gmd:MD_Distributor' .
+                    '/gmd:distributorTransferOptions' .
+                    '/gmd:MD_DigitalTransferOptions' .
+                    '/gmd:onLine' .
+                    '/gmd:CI_OnlineResource' .
+                    '/gmd:linkage' .
+                    '/gmd:URL' .
+                    '/text()'
+                );
+
+                if (count($distributionUrl) > 0) {
+                    $udi = $dataset->getUdi();
+                    if (false === (bool) preg_match("/\/$udi$/", $distributionUrl[0])) {
+                        ${$errorArray}[] = 'UDI does not match distribution URL.';
+                    }
+                } else {
+                    $warnings[] = 'Distribution URL does not exist';
+                }
+
+                if ($data['overrideDatestamp'] == true) {
+                    $metadata->updateXmlTimeStamp();
+                }
             }
         }
         return $this->render(
             'PelagosAppBundle:MdApp:upload-complete.html.twig',
-            array('form' => $form->createView())
+            array(
+                'errors' => $errors,
+                'warnings' => $warnings,
+                'envelope_wkt' => $envelopeWkt,
+                'dataset' => $dataset,
+                'orig_filename' => $originalFileName,
+                'geoflag' => $dataset->getMetadata()->getGeometry(),
+            )
         );
 
     }
-
 }
