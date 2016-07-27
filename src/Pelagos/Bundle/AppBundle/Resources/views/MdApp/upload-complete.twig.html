@@ -1,0 +1,22 @@
+{% extends "PelagosAppBundle::layout.html.twig" %}
+
+{% block body %}
+    <div class="messages warning">
+        <h2 class="element-invisible">Warning message</h2>
+    </div>
+    <div class="messages error">
+        <h2 class="element-invisible">Error message</h2>
+    </div>
+
+    {% if envelope_wkt %}
+        <div id=olmap style=\"width:600px; height:400px;\"></div>
+    {% endif %}
+    <p>
+        <ul>
+            <li> Dataset ID: <a href='/dataset/download/path' target=0>{{ dataset.id (dataset.udi)}}</a></li>
+            <li> Uploaded filename: {{ orig_filename }}</li>
+            <li> Geometry Detected: {{ geoflag }}</li>
+            <li> Geometry Status: {{ geo_status }} </li>
+        </ul>
+    </p>
+{% endblock %}
