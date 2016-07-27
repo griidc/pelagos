@@ -6,7 +6,14 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
 
+use Pelagos\Bundle\AppBundle\Form\MdappType;
+
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+
+
 use Doctrine\ORM\Query;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -249,4 +256,43 @@ class MdAppController extends UIController
         $response->headers->set('Content-Type', 'text/html');
         return $response;
     }
+
+    /**
+     * Create new Metadata from the submitted data.
+     *
+     * @param Request $request The request object.
+     *
+     * @Route("/upload-metadata-file")
+     * @Method("POST")
+     *
+     * @return Response A Response object with an empty body, a "created" status code,
+     *                  and the location of the new Person in the Location header.
+     */
+    public function uploadMetadataFileAction(Request $request)
+    {
+
+        $form = $this->get('form.factory')->createNamedBuilder('', FormType::class, null, array('allow_extra_fields' => true))
+            ->add('validateSchema', CheckboxType::class)
+            ->add('acceptMetadata', CheckboxType::class)
+            ->add('overrideDatestamp', CheckboxType::class)
+            ->add('test1', CheckboxType::class)
+            ->add('test2', CheckboxType::class)
+            ->add('test3', CheckboxType::class)
+            ->add('newMetadataFile', FileType::class)
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            print "Made it!";
+            $data = $form->getData();
+            var_dump($data);
+        }
+        return $this->render(
+            'PelagosAppBundle:MdApp:upload-form.html.twig',
+            array('form' => $form->createView())
+        );
+
+    }
+
 }

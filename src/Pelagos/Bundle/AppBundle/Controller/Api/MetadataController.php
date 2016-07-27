@@ -2,9 +2,10 @@
 
 namespace Pelagos\Bundle\AppBundle\Controller\Api;
 
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -13,6 +14,7 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Entity\Metadata;
+use Pelagos\Bundle\AppBundle\Form\MdappType;
 
 /**
  * The Metadata api controller.
