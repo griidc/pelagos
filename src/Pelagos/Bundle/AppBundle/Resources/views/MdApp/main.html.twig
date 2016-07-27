@@ -197,10 +197,10 @@
                                             {% endif %}
                                         </td>
 
-                                        {% if dta.metadata %}
+                                        {% if dta.datasetsubmission.MetadataFileName|default %}
                                             <td id="md_filename">{{ dta.udi }}</td>
                                         {% else %}
-                                            <td id="md_filename">{{ dta.datasetsubmission.MetadataFileName }}</td>
+                                            <td id="md_filename">{{ dta.datasetsubmission.MetadataFileName|default }}</td>
                                         {% endif %}
                                     </tr>
                                 </table>
