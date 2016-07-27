@@ -11,7 +11,6 @@ use Pelagos\Bundle\AppBundle\Form\MdappType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 
-
 use Doctrine\ORM\Query;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 
@@ -20,6 +19,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Pelagos\Entity\Dataset;
 use Pelagos\Entity\DatasetSubmission;
+use Pelagos\Entity\Metadata;
 
 /**
  * The MDApp controller.
@@ -283,13 +283,73 @@ class MdAppController extends UIController
 
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
-            print "Made it!";
+        if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
-            var_dump($data);
+            $file = $data['newMetadataFile'];
+            $originalFileName = $file->getClientOriginalName();
+
+            if (1 !== preg_match('/[A-Z]\d\.x\d{3}\.\d{3}-\d{4}/i', $originalFileName, $matches)) {
+                throw new \Exception('UDI no detected in filename!');
+            }
+
+            $udi = preg_replace('/-/', ':', $matches[0]);
+            $datasets = $this->entityHandler->getBy(Dataset::class, array('udi' => $udi));
+
+            if (0 == count($datasets)) {
+                throw new \Exception("Dataset with udi:$udi not found!");
+            } elseif (1 > count($datasets)) {
+                throw new \Exception("More than one dataset found with udi:$udi!");
+            } else {
+                $dataset = $datasets[0];
+            }
+
+            try {
+                $xml = simplexml_load_file($file->getPathname());
+            } catch (\Exception $e) {
+                throw new \Exception('Not a parsable XML file!');
+            }
+
+            if ($data['validateSchema'] == true) {
+                //TODO: Validate XML, you can use $xml.
+            }
+
+            $metadata = new Metadata($dataset, $xml->asXML());
+
+            if ($data['test1'] == true) {
+                $fileIdentifier = $xml->xpath(
+                    '/gmi:MI_Metadata' .
+                    '/gmd:fileIdentifier' .
+                    '/gco:CharacterString' .
+                    '/text()'
+                );
+
+                if (count($fileIdentifier) > 0) {
+                    if (!(bool) preg_match("/$originalFileName/i", $fileIdentifier[0], $matches)) {
+                        throw new \Exception('Filename does not match gmd:fileIdentifier!');
+                    }
+                } else {
+                    throw new \Exception('File Identifier does not exist');
+                }
+            }
+
+            if ($data['test2'] == true) {
+                if (!$metadata->doesUdiMatchMetadataUrl()) {
+                    throw new \Exception('Metadata URL does not contain UDI');
+                }
+            }
+
+            if ($data['test3'] == true) {
+                if (!$metadata->doesUdiMatchDistributionUrl()) {
+                    throw new \Exception('Distribution URL does not contain UDI');
+                }
+            }
+
+            if ($data['overrideDatestamp'] == true) {
+                $metadata->updateXmlTimeStamp();
+            }
         }
         return $this->render(
-            'PelagosAppBundle:MdApp:upload-form.html.twig',
+            'PelagosAppBundle:MdApp:upload-complete.html.twig',
             array('form' => $form->createView())
         );
 
