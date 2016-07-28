@@ -65,6 +65,9 @@
 
     <div id=olmap style="width:600px; height:400px;" geometry="{{ geometryWkt }}" envelope="{{ envelopeWkt }}" ></div>
     <p>
+    {{ message }}
+    </p>
+    <p>
         <ul>
             <li> Dataset ID: <a href='{{ path('pelagos_app_ui_dataland_default', { 'udi': dataset.udi|default } ) }}' target='0'>{{ dataset.id|default }} ({{ dataset.udi|default }})</a></li>
             <li> Uploaded filename: {{ orig_filename }}</li>

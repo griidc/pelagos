@@ -272,6 +272,7 @@ class MdAppController extends UIController
      */
     public function uploadMetadataFileAction(Request $request)
     {
+        $entityHandler = $this->get('pelagos.entity.handler');
 
         $form = $this->get('form.factory')->createNamedBuilder('', FormType::class, null, array('allow_extra_fields' => true))
             ->add('validateSchema', CheckboxType::class)
@@ -300,7 +301,7 @@ class MdAppController extends UIController
                 $udi = preg_replace('/-/', ':', $matches[0]);
             }
 
-            $datasets = $this->entityHandler->getBy(Dataset::class, array('udi' => $udi));
+            $datasets = $entityHandler->getBy(Dataset::class, array('udi' => $udi));
 
             if (0 == count($datasets)) {
                 $errors[] = "Dataset with udi:$udi not found!";
@@ -328,13 +329,21 @@ class MdAppController extends UIController
                     $warnings = array_merge($warnings, $analysis['warnings']);
                 }
 
-                // If there is a geometry, figure out envelope.
-                $metadata = new Metadata($dataset, $xml->asXML());
+                // Get or create new Metadata.
+                if ($dataset->getMetadata() instanceof Metadata) {
+                    $metadata = $dataset->getMetadata();
+                } else {
+                    $metadata = new Metadata($dataset, $xml->asXML());
+                }
+
+                // If there is a geometry, figure out envelope and bounding box array.
+                $boundingBoxArray = array();
                 if (null !== $metadata->getGeometry()) {
                     $geoUtil = $this->get('pelagos.util.geometry');
                     $geometry = $geoUtil->convertGmlToWkt($metadata->getGeometry());
                     $gml = $metadata->extractBoundingPolygonGML($metadata->getXml())[0];
                     $envelopeWkt = $geoUtil->calculateEnvelopeFromGml($gml);
+                    $boundingBoxArray = $geoUtil->calculateGeographicBoundsFromGml($gml);
                 }
 
                 if ($data['test1'] == true) {
@@ -413,6 +422,17 @@ class MdAppController extends UIController
                 if ($data['overrideDatestamp'] == true) {
                     $metadata->updateXmlTimeStamp();
                 }
+
+                if (null !== $metadata->getGeometry()) {
+                    $metadata->addBoundingBoxToXml($boundingBoxArray);
+                }
+
+                if (count($errors) === 0) {
+                    $entityHandler->update($metadata);
+                    $message = 'Metadata bas been successfully uploaded.';
+                } else {
+                    $message = 'Metadata was not uploaded due to errors as described.';
+                }
             }
         }
         return $this->render(
@@ -424,7 +444,8 @@ class MdAppController extends UIController
                 'orig_filename' => $originalFileName,
                 'geoflag' => $geometry,
                 'geometryWkt' => $geometry,
-                'envelopeWkt' => $envelopeWkt
+                'envelopeWkt' => $envelopeWkt,
+                'message' => $message,
             )
         );
 
