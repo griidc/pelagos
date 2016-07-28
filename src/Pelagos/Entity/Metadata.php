@@ -506,6 +506,83 @@ class Metadata extends Entity
     }
 
     /**
+     * Add bounding box to Metadata XML.
+     *
+     * @param array $boundingBox An array with west, east, south, north bound lat,long keys.
+     *
+     * @return void
+     */
+    public function addBoundingBoxToXml(array $boundingBox)
+    {
+        $envelope
+            = '<gmd:geographicElement>' .
+            '   <gmd:EX_GeographicBoundingBox>' .
+            '       <gmd:westBoundLongitude>' .
+            '           <gco:Decimal>' . $boundingBox['westBoundLongitude'] . '</gco:Decimal>' .
+            '       </gmd:westBoundLongitude>' .
+            '       <gmd:eastBoundLongitude>' .
+            '           <gco:Decimal>' . $boundingBox['eastBoundLongitude'] . '</gco:Decimal>' .
+            '       </gmd:eastBoundLongitude>' .
+            '       <gmd:southBoundLatitude>' .
+            '           <gco:Decimal>' . $boundingBox['southBoundLatitude'] . '</gco:Decimal>' .
+            '       </gmd:southBoundLatitude>' .
+            '       <gmd:northBoundLatitude>' .
+            '           <gco:Decimal>' . $boundingBox['northBoundLatitude'] . '</gco:Decimal>' .
+            '       </gmd:northBoundLatitude>' .
+            '   </gmd:EX_GeographicBoundingBox>' .
+            '</gmd:geographicElement>';
+
+        $doc = new \DOMDocument('1.0', 'utf-8');
+        $doc->loadXML($this->xml->asXML());
+        $xpath = new \DOMXpath($doc);
+
+        // locate any existing EX_GeographicBoundingBox and delete its parent.
+        $bBoxes = $xpath->query(
+            '/gmi:MI_Metadata' .
+            '/gmd:identificationInfo' .
+            '/gmd:MD_DataIdentification' .
+            '/gmd:extent' .
+            '/gmd:EX_Extent' .
+            '/gmd:geographicElement' .
+            '/gmd:EX_GeographicBoundingBox'
+        );
+
+        foreach ($bBoxes as $box) {
+            $parent = $box->parentNode;
+            $grandParent = $parent->parentNode;
+            $grandParent->removeChild($parent);
+        }
+
+        // create new gmd:geographicElement for the bounding-box envelope
+        $fragment = $doc->createDocumentFragment();
+        $fragment->appendXML($envelope);
+
+        $parent = $xpath->query(
+            '/gmi:MI_Metadata' .
+            '/gmd:identificationInfo[1]' .
+            '/gmd:MD_DataIdentification[1]' .
+            '/gmd:extent[1]' .
+            '/gmd:EX_Extent[1]'
+        );
+
+        // locate reference node
+        $referenceNode = $xpath->query(
+            '/gmi:MI_Metadata' .
+            '/gmd:identificationInfo[1]' .
+            '/gmd:MD_DataIdentification[1]' .
+            '/gmd:extent[1]' .
+            '/gmd:EX_Extent[1]' .
+            '/gmd:geographicElement[1]'
+        );
+
+        // insert into XML before first existing geographicElement
+        $parent->item(0)->insertBefore($fragment, $referenceNode->item(0));
+        $doc->normalizeDocument();
+        $doc->formatOutput = true;
+        $this->setXml($doc->saveXML());
+    }
+
+    /**
      * Checks if the URL of the Metadata URL matches the UDI.
      *
      * @throws \Exception When the URL does not exist.
