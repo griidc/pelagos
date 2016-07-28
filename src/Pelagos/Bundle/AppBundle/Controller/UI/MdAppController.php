@@ -291,16 +291,21 @@ class MdAppController extends UIController
             $errors = array();
             $warnings = array();
 
+            $udi = null;
             if (1 !== preg_match('/[A-Z]\d\.x\d{3}\.\d{3}-\d{4}/i', $originalFileName, $matches)) {
                 //throw new \Exception('UDI not detected in filename!');
                 $errors[] = 'UDI not detected in filename!';
+            } else {
+                $udi = preg_replace('/-/', ':', $matches[0]);
             }
 
-            $udi = preg_replace('/-/', ':', $matches[0]);
             $datasets = $this->entityHandler->getBy(Dataset::class, array('udi' => $udi));
 
             if (0 == count($datasets)) {
                 $errors[] = "Dataset with udi:$udi not found!";
+                $dataset = null;
+                $geometry = null;
+                $envelopeWkt = null;
                 //throw new \Exception("Dataset with udi:$udi not found!");
             } elseif (1 > count($datasets)) {
                 throw new \Exception("More than one dataset found with udi:$udi!");
@@ -326,8 +331,10 @@ class MdAppController extends UIController
 
                 // If there is a geometry, figure out envelope.
                 $metadata = new Metadata($dataset, $xml->asXML());
-                if (null !== $metadata->getGeometry()) {
+                if (null !== $metadata->getGeometry())
+                {
                     $geoUtil=$this->get('pelagos.util.geometry');
+                    $geometry = $geoUtil->convertGmlToWkt($metadata->getGeometry());
                     $gml = $metadata->extractBoundingPolygonGML($metadata->getXml())[0];
                     $envelopeWkt = $geoUtil->calculateEnvelopeFromGml($gml);
                 }
@@ -415,10 +422,11 @@ class MdAppController extends UIController
             array(
                 'errors' => $errors,
                 'warnings' => $warnings,
-                'envelope_wkt' => $envelopeWkt,
                 'dataset' => $dataset,
                 'orig_filename' => $originalFileName,
-                'geoflag' => $dataset->getMetadata()->getGeometry(),
+                'geoflag' => $geometry,
+                'geometryWkt' => $geometry,
+                'envelopeWkt' => $envelopeWkt
             )
         );
 
