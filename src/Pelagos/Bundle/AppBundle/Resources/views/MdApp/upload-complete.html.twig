@@ -1,6 +1,48 @@
 {% extends "PelagosAppBundle::layout.html.twig" %}
 
+{% block head %}
+    {{ parent() }}
+
+    {{
+        add_library (
+            [
+                'ui.tabs',
+                'jquery.cookie',
+            ]
+        )
+    }}
+
+    {% stylesheets
+        '@PelagosAppBundle/Resources/public/css/dataland-details.css'
+        '@PelagosAppBundle/Resources/public/css/status.css'
+        '@PelagosAppBundle/Resources/public/css/xmlverbatim.css'
+        '@PelagosAppBundle/Resources/public/css/download.css'
+    %}
+        {{ add_css(asset_url) }}
+    {% endstylesheets %}
+
+    {{ add_js(
+            [
+                '//cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js',
+                '//maps.google.com/maps/api/js?v=3',
+                '/includes/geoviz/geoviz.js',
+            ]
+        )
+    }}
+
+    {% javascripts
+        '@FOSJsRoutingBundle/Resources/public/js/router.js'
+        '@PelagosAppBundle/Resources/public/js/mdapp-ul.js'
+    %}
+        {{ add_js(asset_url) }}
+    {% endjavascripts %}
+
+    {{ add_js(path('fos_js_routing_js', { callback: 'fos.Router.setData' })) }}
+
+{% endblock %}
+
 {% block body %}
+    {% if warnings|length > 0 %}
     <div class="messages warning">
         <h2 class="element-invisible">Warning message</h2>
         <ul>
@@ -9,6 +51,8 @@
         {% endfor %}
         </ul>
     </div>
+    {% endif %}
+    {% if errors|length > 0 %}
     <div class="messages error">
         <h2 class="element-invisible">Error message</h2>
         <ul>
@@ -17,16 +61,15 @@
         {% endfor %}
         </ul>
     </div>
-
-    {% if envelope_wkt %}
-        <div id=olmap style=\"width:600px; height:400px;\"></div>
     {% endif %}
+
+    <div id=olmap style="width:600px; height:400px;" geometry="{{ geometryWkt }}" envelope="{{ envelopeWkt }}" ></div>
     <p>
         <ul>
-            <li> Dataset ID: <a href='/dataset/download/path' target=0>{{ dataset.id (dataset.udi)}}</a></li>
+            <li> Dataset ID: <a href='{{ path('pelagos_app_ui_dataland_default', { 'udi': dataset.udi|default } ) }}' target='0'>{{ dataset.id|default }} ({{ dataset.udi|default }})</a></li>
             <li> Uploaded filename: {{ orig_filename }}</li>
-            <li> Geometry Detected: {% if dataset.metadata.geometry%}Yes{% else %}No{% endif %}</li>
-            <li> Geometry Status: {% if errors|length = 0 %}Verified by PostGIS as OK{% else %} </li>
+            <li> Geometry Detected: {% if dataset.metadata.geometry|default %}Yes{% else %}No{% endif %}</li>
+            <li> Geometry Status: {% if errors|length == 0 %}Verified by PostGIS as OK{% else %}Geometry not valid per PostGIS.{% endif %} </li>
         </ul>
     </p>
 {% endblock %}
