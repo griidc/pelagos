@@ -431,7 +431,13 @@ class MdAppController extends UIController
                         $metadata->addBoundingBoxToXml($boundingBoxArray);
                     }
 
+                    if (true == $data['acceptMetadata']) {
+                        $dataset->setMetadataStatus(DatasetSubmission::METADATA_STATUS_ACCEPTED);
+                    }
+
                     $entityHandler->update($metadata);
+                    $entityHandler->update($dataset);
+
                     $message = 'Metadata bas been successfully uploaded.';
                 } else {
                     $message = 'Metadata was not uploaded due to errors as described.';
