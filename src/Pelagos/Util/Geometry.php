@@ -65,4 +65,22 @@ class Geometry
 
         return $geom;
     }
+
+    /**
+     * Convert GML to WKT
+     *
+     * @param string $gml The GML.
+     *
+     * @return string WKT string for the GML geometry.
+     */
+    public function convertGmlToWkt($gml)
+    {
+        $sql = 'SELECT ST_AsText(ST_GeomFromGML(:gml, :srid))';
+        $connection = $this->entityManager->getConnection();
+        $sth = $connection->prepare($sql);
+        $sth->execute(array('gml' => $gml, 'srid' => 4326));
+        $wkt = $sth->fetchColumn();
+        return $wkt;
+    }
+
 }
