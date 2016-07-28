@@ -329,23 +329,6 @@ class MdAppController extends UIController
                     $warnings = array_merge($warnings, $analysis['warnings']);
                 }
 
-                // Get or create new Metadata.
-                if ($dataset->getMetadata() instanceof Metadata) {
-                    $metadata = $dataset->getMetadata();
-                } else {
-                    $metadata = new Metadata($dataset, $xml->asXML());
-                }
-
-                // If there is a geometry, figure out envelope and bounding box array.
-                $boundingBoxArray = array();
-                if (null !== $metadata->getGeometry()) {
-                    $geoUtil = $this->get('pelagos.util.geometry');
-                    $geometry = $geoUtil->convertGmlToWkt($metadata->getGeometry());
-                    $gml = $metadata->extractBoundingPolygonGML($metadata->getXml())[0];
-                    $envelopeWkt = $geoUtil->calculateEnvelopeFromGml($gml);
-                    $boundingBoxArray = $geoUtil->calculateGeographicBoundsFromGml($gml);
-                }
-
                 if ($data['test1'] == true) {
                     $errorArray = 'errors';
                 } else {
@@ -419,15 +402,35 @@ class MdAppController extends UIController
                     $warnings[] = 'Distribution URL does not exist';
                 }
 
-                if ($data['overrideDatestamp'] == true) {
-                    $metadata->updateXmlTimeStamp();
-                }
-
-                if (null !== $metadata->getGeometry()) {
-                    $metadata->addBoundingBoxToXml($boundingBoxArray);
-                }
-
                 if (count($errors) === 0) {
+
+                    // Get or create new Metadata.
+                    if ($dataset->getMetadata() instanceof Metadata) {
+                        $metadata = $dataset->getMetadata();
+                    } else {
+                        $metadata = new Metadata($dataset, $xml->asXML());
+                        $entityHandler->create($metadata);
+                    }
+
+                    // If there is a geometry, figure out envelope and bounding box array.
+                    $boundingBoxArray = array();
+                    if (null !== $metadata->getGeometry()) {
+                        $geoUtil = $this->get('pelagos.util.geometry');
+                        //$geometry = $geoUtil->convertGmlToWkt($metadata->getGeometry());
+                        $geometry = $metadata->getGeometry();
+                        $gml = $metadata->extractBoundingPolygonGML($metadata->getXml())[0];
+                        $envelopeWkt = $geoUtil->calculateEnvelopeFromGml($gml);
+                        $boundingBoxArray = $geoUtil->calculateGeographicBoundsFromGml($gml);
+                    }
+
+                    if ($data['overrideDatestamp'] == true) {
+                        $metadata->updateXmlTimeStamp();
+                    }
+
+                    if (null !== $metadata->getGeometry()) {
+                        $metadata->addBoundingBoxToXml($boundingBoxArray);
+                    }
+
                     $entityHandler->update($metadata);
                     $message = 'Metadata bas been successfully uploaded.';
                 } else {
