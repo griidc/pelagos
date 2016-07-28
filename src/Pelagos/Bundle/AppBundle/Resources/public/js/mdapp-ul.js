@@ -6,11 +6,13 @@ $(document).ready(function () {
 });
 
 $(document).on("imready", function(e) {
-    if (typeof (envelope_wkt) !== "undefined") {
-        geomap.addFeatureFromWKT(envelope_wkt, {label: "bounding envelope"}, {"strokeColor": "#696969", "fillOpacity": "0"});
+    var envelopeWkt = $('[envelope]').attr('envelope');
+    var geometryWkt = $('[geometry]').attr('geometry');
+    if (typeof (envelopeWkt) !== "undefined") {
+        geomap.addFeatureFromWKT(envelopeWkt, {label: "bounding envelope"}, {"strokeColor": "#696969", "fillOpacity": "0"});
     }
-    if (typeof (geometry_wkt) !== "undefined") {
-        geomap.addFeatureFromWKT(geometry_wkt, {label: "data submitted"});
+    if (typeof (geometryWkt) !== "undefined") {
+        geomap.addFeatureFromWKT(geometryWkt, {label: "data submitted"});
     }
     geomap.gotoAllFeatures();
 });
