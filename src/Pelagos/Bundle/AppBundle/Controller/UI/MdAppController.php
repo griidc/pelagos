@@ -265,6 +265,8 @@ class MdAppController extends UIController
      * @Route("/upload-metadata-file")
      * @Method("POST")
      *
+     * @throws \Exception If more than one dataset found by UDI.
+     *
      * @return Response A Response object with an empty body, a "created" status code,
      *                  and the location of the new Person in the Location header.
      */
@@ -293,7 +295,6 @@ class MdAppController extends UIController
 
             $udi = null;
             if (1 !== preg_match('/[A-Z]\d\.x\d{3}\.\d{3}-\d{4}/i', $originalFileName, $matches)) {
-                //throw new \Exception('UDI not detected in filename!');
                 $errors[] = 'UDI not detected in filename!';
             } else {
                 $udi = preg_replace('/-/', ':', $matches[0]);
@@ -306,7 +307,6 @@ class MdAppController extends UIController
                 $dataset = null;
                 $geometry = null;
                 $envelopeWkt = null;
-                //throw new \Exception("Dataset with udi:$udi not found!");
             } elseif (1 > count($datasets)) {
                 throw new \Exception("More than one dataset found with udi:$udi!");
             } else {
@@ -322,7 +322,6 @@ class MdAppController extends UIController
             // Seems OK to validate.
             if (0 === count($errors)) {
                 if ($data['validateSchema'] == true) {
-                    //TODO: Validate XML, you can use $xml.
                     $metadataUtil = $this->get('pelagos.util.metadata');
                     $analysis = $metadataUtil->validateIso($xml->asXML());
                     $errors = array_merge($errors, $analysis['errors']);
@@ -331,9 +330,8 @@ class MdAppController extends UIController
 
                 // If there is a geometry, figure out envelope.
                 $metadata = new Metadata($dataset, $xml->asXML());
-                if (null !== $metadata->getGeometry())
-                {
-                    $geoUtil=$this->get('pelagos.util.geometry');
+                if (null !== $metadata->getGeometry()) {
+                    $geoUtil = $this->get('pelagos.util.geometry');
                     $geometry = $geoUtil->convertGmlToWkt($metadata->getGeometry());
                     $gml = $metadata->extractBoundingPolygonGML($metadata->getXml())[0];
                     $envelopeWkt = $geoUtil->calculateEnvelopeFromGml($gml);
@@ -366,7 +364,7 @@ class MdAppController extends UIController
                     $errorArray = 'warnings';
                 }
 
-               $metadataUrl = $xml->xpath(
+                $metadataUrl = $xml->xpath(
                     '/gmi:MI_Metadata' .
                     '/gmd:dataSetURI' .
                     '/gco:CharacterString' .
@@ -388,7 +386,7 @@ class MdAppController extends UIController
                     $errorArray = 'warnings';
                 }
 
-               $distributionUrl = $xml->xpath(
+                $distributionUrl = $xml->xpath(
                     '/gmi:MI_Metadata' .
                     '/gmd:distributionInfo' .
                     '/gmd:MD_Distribution' .

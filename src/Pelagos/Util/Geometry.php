@@ -67,7 +67,7 @@ class Geometry
     }
 
     /**
-     * Convert GML to WKT
+     * Convert GML to WKT.
      *
      * @param string $gml The GML.
      *
@@ -82,5 +82,4 @@ class Geometry
         $wkt = $sth->fetchColumn();
         return $wkt;
     }
-
 }
