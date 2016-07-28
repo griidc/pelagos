@@ -818,7 +818,7 @@ function loadPOCs(researchGroup,ppoc,spoc)
         url: url,
         type: "GET",
         datatype: "JSON",
-        data: {"researchGroup":researchGroup}
+        data: {"researchGroup":researchGroup, "_properties": "person"}
     }).done(function(json) {
             if (json.length>0)
             {
