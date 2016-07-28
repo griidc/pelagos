@@ -102,9 +102,7 @@ class PersonResearchGroupController extends EntityController
      */
     public function getCollectionAction(Request $request)
     {
-        return $this->makeJsonResponse(
-            $this->handleGetCollection(PersonResearchGroup::class, $request)
-        );
+        return $this->handleGetCollection(PersonResearchGroup::class, $request);
     }
 
     /**
