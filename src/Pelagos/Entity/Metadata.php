@@ -532,9 +532,9 @@ class Metadata extends Entity
             '   </gmd:EX_GeographicBoundingBox>' .
             '</gmd:geographicElement>';
 
-        $doc = new DOMDocument('1.0', 'utf-8');
+        $doc = new \DOMDocument('1.0', 'utf-8');
         $doc->loadXML($this->xml->asXML());
-        $xpath = new DOMXpath($doc);
+        $xpath = new \DOMXpath($doc);
 
         // locate any existing EX_GeographicBoundingBox and delete its parent.
         $bBoxes = $xpath->query(
@@ -546,7 +546,7 @@ class Metadata extends Entity
             '/gmd:geographicElement' .
             '/gmd:EX_GeographicBoundingBox'
         );
-        
+
         foreach ($bBoxes as $box) {
             $parent = $box->parentNode;
             $grandParent = $parent->parentNode;
