@@ -423,21 +423,35 @@ class MdAppController extends UIController
 
         $message = 'Metadata was not uploaded due to errors as described.';
 
+        // Since it parsed, try looking for a geometry.
         if ($parsable) {
-            // If there is a geometry, figure out envelope and bounding box array.
             $boundingBoxArray = array();
             $geoUtil = $this->get('pelagos.util.geometry');
-            $gml = Metadata::extractBoundingPolygonGML($xml)[0];
-            $geometry = $geoUtil->convertGmlToWkt($gml);
-            $envelopeWkt = $geoUtil->calculateEnvelopeFromGml($gml);
-            $boundingBoxArray = $geoUtil->calculateGeographicBoundsFromGml($gml);
+            $gmls = Metadata::extractBoundingPolygonGML($xml);
+            // If there is a geometry, figure out envelope and bounding box array,
+            // otherwise, leave them set to null.
+            if (count($gmls) > 0) {
+                $gml = $gmls[0];
+                $geometry = $geoUtil->convertGmlToWkt($gml);
+                $envelopeWkt = $geoUtil->calculateEnvelopeFromGml($gml);
+                $boundingBoxArray = $geoUtil->calculateGeographicBoundsFromGml($gml);
+                print "HERE";
+            }
         }
 
         // Seems OK to validate.
-        if ((count($errors) === 0) or ((count($errors) === 1) and ($errors[0] == 'UDI not detected in filename!'))) {
+        if ((count($errors) === 0)
+            or ((count($errors) === 1)
+                and ($errors[0] == 'UDI not detected in filename!')
+            )
+            or ((count($errors) === 1)
+                and ($errors[0] == "Dataset with udi:$udi not found!")
+            )
+        ) {
 
             $this->xmlChecks($xml, $data, $errors, $warnings, $originalFileName, $udi);
 
+            //var_dump($errors); var_dump($warnings); die();
             if (count($errors) === 0) {
                 // Get or create new Metadata.
                 if ($dataset->getMetadata() instanceof Metadata) {
@@ -470,7 +484,6 @@ class MdAppController extends UIController
             'warnings' => $warnings,
             'dataset' => $dataset,
             'orig_filename' => $originalFileName,
-            'geoflag' => $geometry,
             'geometryWkt' => $geometry,
             'envelopeWkt' => $envelopeWkt,
             'message' => $message,

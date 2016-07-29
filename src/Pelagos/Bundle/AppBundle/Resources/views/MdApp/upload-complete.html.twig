@@ -75,7 +75,7 @@
                 <li> Dataset ID: Unable to determine.</li>
             {% endif %}
             <li> Given Filename: {{ orig_filename }}</li>
-            <li> Geometry Detected: {% if dataset.metadata.geometry|default %}Yes{% else %}No{% endif %}</li>
+            <li> Geometry Detected: {% if geometryWkt|default %}Yes{% else %}No{% endif %}</li>
             <li> Geometry Status: {% if errors|length == 0 %}Verified by PostGIS as OK{% else %}Geometry not valid per PostGIS.{% endif %} </li>
         </ul>
     </p>
