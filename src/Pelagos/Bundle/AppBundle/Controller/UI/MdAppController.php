@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 use Pelagos\Bundle\AppBundle\Form\MdappType;
 
+use Symfony\Component\Form\Form;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 
@@ -272,9 +273,13 @@ class MdAppController extends UIController
      */
     public function uploadMetadataFileAction(Request $request)
     {
-        $entityHandler = $this->get('pelagos.entity.handler');
-
-        $form = $this->get('form.factory')->createNamedBuilder('', FormType::class, null, array('allow_extra_fields' => true))
+        $form = $this
+            ->get('form.factory')->createNamedBuilder(
+                '',
+                FormType::class,
+                null,
+                array('allow_extra_fields' => true)
+            )
             ->add('validateSchema', CheckboxType::class)
             ->add('acceptMetadata', CheckboxType::class)
             ->add('overrideDatestamp', CheckboxType::class)
@@ -286,186 +291,27 @@ class MdAppController extends UIController
 
         $form->handleRequest($request);
 
-        $geometry = null;
-        $envelopeWkt = null;
+        $twigArray = array();
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $data = $form->getData();
-            $file = $data['newMetadataFile'];
-            $originalFileName = $file->getClientOriginalName();
-
-            $errors = array();
-            $warnings = array();
-            $udi = null;
-
-            // Check to see if filename is in correct format.
-            // If so, get UDI from it.
-            if ($this->checkFilenameFormat($originalFileName)) {
-                if ($this->isAnUdiInFilename($originalFileName)) {
-                    $udi = $this->getUdiFromFilename($originalFileName);
-                } else {
-                    $errors[] = 'UDI not detected in filename!';
-                }
-            } else {
-                $errors[] = "Bad filename $originalFileName. Filename must be in the form of UDI-metadata.xml.";
-            }
-
-            // Attempt to query model for Dataset.
-            $dataset = $this->getDataset($entityHandler, $udi);
-            if (null === $dataset) {
-                $errors[] = "Dataset with udi:$udi not found!";
-            }
-
-            // Attempt to parse uploaded file.
-            $parsable = false;
-            try {
-                $xml = simplexml_load_file($file->getPathname());
-            } catch (\Exception $e) {
-                $errors[] = 'Not a parsable XML file!';
-                $parsable = true;
-            }
-
-            $message = 'Metadata was not uploaded due to errors as described.';
-
-            if ($parsable) {
-                // If there is a geometry, figure out envelope and bounding box array.
-                $boundingBoxArray = array();
-                $geoUtil = $this->get('pelagos.util.geometry');
-                $gml = Metadata::extractBoundingPolygonGML($xml)[0];
-                $geometry = $geoUtil->convertGmlToWkt($gml);
-                $envelopeWkt = $geoUtil->calculateEnvelopeFromGml($gml);
-                $boundingBoxArray = $geoUtil->calculateGeographicBoundsFromGml($gml);
-            }
-
-            // Seems OK to validate.
-            if ((count($errors) === 0) or ((count($errors) === 1) and ($errors[0] == 'UDI not detected in filename!'))) {
-
-                if ($data['validateSchema'] == true) {
-                    $metadataUtil = $this->get('pelagos.util.metadata');
-                    $analysis = $metadataUtil->validateIso($xml->asXML());
-                    $errors = array_merge($errors, $analysis['errors']);
-                    $warnings = array_merge($warnings, $analysis['warnings']);
-                }
-
-                if ($data['test1'] == true) {
-                    $errorArray = 'errors';
-                } else {
-                    $errorArray = 'warnings';
-                }
-
-                $fileIdentifier = $xml->xpath(
-                    '/gmi:MI_Metadata' .
-                    '/gmd:fileIdentifier' .
-                    '/gco:CharacterString' .
-                    '/text()'
-                );
-
-                if (count($fileIdentifier) > 0) {
-                    if (!(bool) preg_match("/$originalFileName/i", $fileIdentifier[0], $matches)) {
-                        ${$errorArray}[] = 'Filename does not match gmd:fileIdentifier!';
-                    }
-                } else {
-                    $warnings[] = 'File Identifier does not exist';
-                }
-
-                if ($data['test2'] == true) {
-                    $errorArray = 'errors';
-                } else {
-                    $errorArray = 'warnings';
-                }
-
-                $metadataUrl = $xml->xpath(
-                    '/gmi:MI_Metadata' .
-                    '/gmd:dataSetURI' .
-                    '/gco:CharacterString' .
-                    '/text()'
-                );
-
-                if (count($metadataUrl) > 0) {
-                    if (false === (bool) preg_match("/\/$udi$/", $metadataUrl[0])) {
-                        ${$errorArray}[] = 'UDI does not match metadata URL';
-                    }
-                } else {
-                    $warnings[] = 'Metadata URL does not exist';
-                }
-
-                if ($data['test3'] == true) {
-                    $errorArray = 'errors';
-                } else {
-                    $errorArray = 'warnings';
-                }
-
-                $distributionUrl = $xml->xpath(
-                    '/gmi:MI_Metadata' .
-                    '/gmd:distributionInfo' .
-                    '/gmd:MD_Distribution' .
-                    '/gmd:distributor' .
-                    '/gmd:MD_Distributor' .
-                    '/gmd:distributorTransferOptions' .
-                    '/gmd:MD_DigitalTransferOptions' .
-                    '/gmd:onLine' .
-                    '/gmd:CI_OnlineResource' .
-                    '/gmd:linkage' .
-                    '/gmd:URL' .
-                    '/text()'
-                );
-
-                if (count($distributionUrl) > 0) {
-                    if (false === (bool) preg_match("/\/$udi$/", $distributionUrl[0])) {
-                        ${$errorArray}[] = 'UDI does not match distribution URL.';
-                    }
-                } else {
-                    $warnings[] = 'Distribution URL does not exist';
-                }
-
-                if (count($errors) === 0) {
-
-                    // Get or create new Metadata.
-                    if ($dataset->getMetadata() instanceof Metadata) {
-                        $metadata = $dataset->getMetadata();
-                    } else {
-                        $metadata = new Metadata($dataset, $xml->asXML());
-                        $entityHandler->create($metadata);
-                    }
-
-
-                    if ($data['overrideDatestamp'] == true) {
-                        $metadata->updateXmlTimeStamp();
-                    }
-
-                    if (null !== $metadata->getGeometry()) {
-                        $metadata->addBoundingBoxToXml($boundingBoxArray);
-                    }
-
-                    if (true == $data['acceptMetadata']) {
-                        $dataset->setMetadataStatus(DatasetSubmission::METADATA_STATUS_ACCEPTED);
-                    }
-
-                    $entityHandler->update($metadata);
-                    $entityHandler->update($dataset);
-
-                    $message = 'Metadata bas been successfully uploaded.';
-                }
-            }
+            $twigArray = $this->processForm($form);
         }
+
         return $this->render(
             'PelagosAppBundle:MdApp:upload-complete.html.twig',
-            array(
-                'errors' => $errors,
-                'warnings' => $warnings,
-                'dataset' => $dataset,
-                'orig_filename' => $originalFileName,
-                'geoflag' => $geometry,
-                'geometryWkt' => $geometry,
-                'envelopeWkt' => $envelopeWkt,
-                'message' => $message,
-                'udi' => $udi,
-            )
+            $twigArray
         );
 
     }
 
-    protected function isAnUdiInFilename($filename)
+    /**
+     * Check if an UDI is in the File Name.
+     *
+     * @param string $filename The File Name.
+     *
+     * @return boolean
+     */
+    private function isAnUdiInFilename($filename)
     {
         $hasUdi = false;
         if (1 === preg_match('/[A-Z]\d\.x\d{3}\.\d{3}-\d{4}/i', $filename)) {
@@ -474,7 +320,14 @@ class MdAppController extends UIController
         return $hasUdi;
     }
 
-    protected function checkFilenameFormat($filename)
+    /**
+     * Check the see if file name pattern has an UDI in it.
+     *
+     * @param string $filename The File Name.
+     *
+     * @return boolean
+     */
+    private function checkFilenameFormat($filename)
     {
         if (1 === preg_match('/[A-Z]\d\.x\d{3}\.\d{3}-\d{4}-metadata.xml$/', $filename)) {
             return true;
@@ -483,15 +336,32 @@ class MdAppController extends UIController
         }
     }
 
-    protected function getUdiFromFilename($filename)
+    /**
+     * Retrieves the UDI from uploaded Metdata file name.
+     *
+     * @param string $filename The File Name.
+     *
+     * @return string The UDI.
+     */
+    private function getUdiFromFilename($filename)
     {
         $udi = preg_replace('/-metadata.xml$/', '', $filename);
+        $udi = preg_replace('/-/', ':', $udi);
         return $udi;
     }
 
-    protected function getDataset($entityHandler, $udi)
+    /**
+     * Retrieves the Dataset from an UDI.
+     *
+     * @param string $udi The UDI.
+     *
+     * @throws \Exception When more than one datasets were found.
+     *
+     * @return Dataset The found Dataset or null, if not found.
+     */
+    private function getDataset($udi)
     {
-        $datasets = $entityHandler->getBy(Dataset::class, array('udi' => $udi));
+        $datasets = $this->entityHandler->getBy(Dataset::class, array('udi' => $udi));
         if (0 == count($datasets)) {
             $dataset = null;
         } elseif (1 > count($datasets)) {
@@ -502,4 +372,205 @@ class MdAppController extends UIController
         return $dataset;
     }
 
+    /**
+     * Processes the submitted form.
+     *
+     * @param Form $form A Symfony Form to be processed.
+     *
+     * @return array A twig array for the output.
+     */
+    private function processForm(Form $form)
+    {
+        $data = $form->getData();
+        $file = $data['newMetadataFile'];
+        $originalFileName = $file->getClientOriginalName();
+
+        $errors = array();
+        $warnings = array();
+        $udi = null;
+        $boundingBoxArray = array();
+        $gml = null;
+        $geometry = null;
+        $envelopeWkt = null;
+        $boundingBoxArray = null;
+
+        // Check to see if filename is in correct format.
+        // If so, get UDI from it.
+        if ($this->checkFilenameFormat($originalFileName)) {
+            if ($this->isAnUdiInFilename($originalFileName)) {
+                $udi = $this->getUdiFromFilename($originalFileName);
+            } else {
+                $errors[] = 'UDI not detected in filename!';
+            }
+        } else {
+            $errors[] = "Bad filename $originalFileName. Filename must be in the form of UDI-metadata.xml.";
+        }
+
+        // Attempt to query model for Dataset.
+        $dataset = $this->getDataset($udi);
+        if (null === $dataset) {
+            $errors[] = "Dataset with udi:$udi not found!";
+        }
+
+        // Attempt to parse uploaded file.
+        $parsable = true;
+        try {
+            $xml = simplexml_load_file($file->getPathname());
+        } catch (\Exception $e) {
+            $errors[] = 'Not a parsable XML file!';
+            $parsable = false;
+        }
+
+        $message = 'Metadata was not uploaded due to errors as described.';
+
+        if ($parsable) {
+            // If there is a geometry, figure out envelope and bounding box array.
+            $boundingBoxArray = array();
+            $geoUtil = $this->get('pelagos.util.geometry');
+            $gml = Metadata::extractBoundingPolygonGML($xml)[0];
+            $geometry = $geoUtil->convertGmlToWkt($gml);
+            $envelopeWkt = $geoUtil->calculateEnvelopeFromGml($gml);
+            $boundingBoxArray = $geoUtil->calculateGeographicBoundsFromGml($gml);
+        }
+
+        // Seems OK to validate.
+        if ((count($errors) === 0) or ((count($errors) === 1) and ($errors[0] == 'UDI not detected in filename!'))) {
+
+            $this->xmlChecks($xml, $data, $errors, $warnings, $originalFileName, $udi);
+
+            if (count($errors) === 0) {
+                // Get or create new Metadata.
+                if ($dataset->getMetadata() instanceof Metadata) {
+                    $metadata = $dataset->getMetadata();
+                } else {
+                    $metadata = new Metadata($dataset, $xml->asXML());
+                    $this->entityHandler->create($metadata);
+                }
+
+                if ($data['overrideDatestamp'] == true) {
+                    $metadata->updateXmlTimeStamp();
+                }
+
+                if (null !== $metadata->getGeometry()) {
+                    $metadata->addBoundingBoxToXml($boundingBoxArray);
+                }
+
+                if (true == $data['acceptMetadata']) {
+                    $dataset->setMetadataStatus(DatasetSubmission::METADATA_STATUS_ACCEPTED);
+                }
+
+                $this->entityHandler->update($metadata);
+                $this->entityHandler->update($dataset);
+                $message = 'Metadata bas been successfully uploaded.';
+            }
+        }
+
+        return array(
+            'errors' => $errors,
+            'warnings' => $warnings,
+            'dataset' => $dataset,
+            'orig_filename' => $originalFileName,
+            'geoflag' => $geometry,
+            'geometryWkt' => $geometry,
+            'envelopeWkt' => $envelopeWkt,
+            'message' => $message,
+            'udi' => $udi,
+        );
+    }
+
+    /**
+     * Runs some common xml checks.
+     *
+     * @param string $xml              The XML to be checked.
+     * @param array  $data             Form data array.
+     * @param array  $errors           Errors array.
+     * @param array  $warnings         Warning array.
+     * @param string $originalFileName The original filename.
+     * @param string $udi              The UDI that goes with XML filename.
+     *
+     * @return void
+     */
+    private function xmlChecks($xml, array &$data, array &$errors, array &$warnings, &$originalFileName, &$udi)
+    {
+
+        if ($data['validateSchema'] == true) {
+            $metadataUtil = $this->get('pelagos.util.metadata');
+            $analysis = $metadataUtil->validateIso($xml->asXML());
+            $errors = array_merge($errors, $analysis['errors']);
+            $warnings = array_merge($warnings, $analysis['warnings']);
+        }
+
+        if ($data['test1'] == true) {
+            $errorArray = 'errors';
+        } else {
+            $errorArray = 'warnings';
+        }
+
+        $fileIdentifier = $xml->xpath(
+            '/gmi:MI_Metadata' .
+            '/gmd:fileIdentifier' .
+            '/gco:CharacterString' .
+            '/text()'
+        );
+
+        if (count($fileIdentifier) > 0) {
+            if (!(bool) preg_match("/$originalFileName/i", $fileIdentifier[0], $matches)) {
+                ${$errorArray}[] = 'Filename does not match gmd:fileIdentifier!';
+            }
+        } else {
+            $warnings[] = 'File Identifier does not exist';
+        }
+
+        if ($data['test2'] == true) {
+            $errorArray = 'errors';
+        } else {
+            $errorArray = 'warnings';
+        }
+
+        $metadataUrl = $xml->xpath(
+            '/gmi:MI_Metadata' .
+            '/gmd:dataSetURI' .
+            '/gco:CharacterString' .
+            '/text()'
+        );
+
+        if (count($metadataUrl) > 0) {
+            if (false === (bool) preg_match("/\/$udi$/", $metadataUrl[0])) {
+                ${$errorArray}[] = 'UDI does not match metadata URL';
+            }
+        } else {
+            $warnings[] = 'Metadata URL does not exist';
+        }
+
+        if ($data['test3'] == true) {
+            $errorArray = 'errors';
+        } else {
+            $errorArray = 'warnings';
+        }
+
+        $distributionUrl = $xml->xpath(
+            '/gmi:MI_Metadata' .
+            '/gmd:distributionInfo' .
+            '/gmd:MD_Distribution' .
+            '/gmd:distributor' .
+            '/gmd:MD_Distributor' .
+            '/gmd:distributorTransferOptions' .
+            '/gmd:MD_DigitalTransferOptions' .
+            '/gmd:onLine' .
+            '/gmd:CI_OnlineResource' .
+            '/gmd:linkage' .
+            '/gmd:URL' .
+            '/text()'
+        );
+
+        if (count($distributionUrl) > 0) {
+            if (false === (bool) preg_match("/\/$udi$/", $distributionUrl[0])) {
+                ${$errorArray}[] = 'UDI does not match distribution URL.';
+            }
+        } else {
+            $warnings[] = 'Distribution URL does not exist';
+        }
+
+        return;
+    }
 }
