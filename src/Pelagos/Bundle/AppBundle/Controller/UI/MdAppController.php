@@ -286,6 +286,9 @@ class MdAppController extends UIController
 
         $form->handleRequest($request);
 
+        $geometry = null;
+        $envelopeWkt = null;
+
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             $file = $data['newMetadataFile'];
@@ -293,35 +296,50 @@ class MdAppController extends UIController
 
             $errors = array();
             $warnings = array();
-
             $udi = null;
-            if (1 !== preg_match('/[A-Z]\d\.x\d{3}\.\d{3}-\d{4}/i', $originalFileName, $matches)) {
-                $errors[] = 'UDI not detected in filename!';
+
+            // Check to see if filename is in correct format.
+            // If so, get UDI from it.
+            if ($this->checkFilenameFormat($originalFileName)) {
+                if ($this->isAnUdiInFilename($originalFileName)) {
+                    $udi = $this->getUdiFromFilename($originalFileName);
+                } else {
+                    $errors[] = 'UDI not detected in filename!';
+                }
             } else {
-                $udi = preg_replace('/-/', ':', $matches[0]);
+                $errors[] = "Bad filename $originalFileName. Filename must be in the form of UDI-metadata.xml.";
             }
 
-            $datasets = $entityHandler->getBy(Dataset::class, array('udi' => $udi));
-
-            if (0 == count($datasets)) {
+            // Attempt to query model for Dataset.
+            $dataset = $this->getDataset($entityHandler, $udi);
+            if (null === $dataset) {
                 $errors[] = "Dataset with udi:$udi not found!";
-                $dataset = null;
-                $geometry = null;
-                $envelopeWkt = null;
-            } elseif (1 > count($datasets)) {
-                throw new \Exception("More than one dataset found with udi:$udi!");
-            } else {
-                $dataset = $datasets[0];
             }
 
+            // Attempt to parse uploaded file.
+            $parsable = false;
             try {
                 $xml = simplexml_load_file($file->getPathname());
             } catch (\Exception $e) {
                 $errors[] = 'Not a parsable XML file!';
+                $parsable = true;
+            }
+
+            $message = 'Metadata was not uploaded due to errors as described.';
+
+            if ($parsable) {
+                // If there is a geometry, figure out envelope and bounding box array.
+                $boundingBoxArray = array();
+                $geoUtil = $this->get('pelagos.util.geometry');
+                $gml = Metadata::extractBoundingPolygonGML($xml)[0];
+                $geometry = $geoUtil->convertGmlToWkt($gml);
+                $envelopeWkt = $geoUtil->calculateEnvelopeFromGml($gml);
+                $boundingBoxArray = $geoUtil->calculateGeographicBoundsFromGml($gml);
             }
 
             // Seems OK to validate.
-            if (0 === count($errors)) {
+            if ((count($errors) === 0) or ((count($errors) === 1) and ($errors[0] == 'UDI not detected in filename!'))) {
+
                 if ($data['validateSchema'] == true) {
                     $metadataUtil = $this->get('pelagos.util.metadata');
                     $analysis = $metadataUtil->validateIso($xml->asXML());
@@ -364,7 +382,6 @@ class MdAppController extends UIController
                 );
 
                 if (count($metadataUrl) > 0) {
-                    $udi = $dataset->getUdi();
                     if (false === (bool) preg_match("/\/$udi$/", $metadataUrl[0])) {
                         ${$errorArray}[] = 'UDI does not match metadata URL';
                     }
@@ -394,7 +411,6 @@ class MdAppController extends UIController
                 );
 
                 if (count($distributionUrl) > 0) {
-                    $udi = $dataset->getUdi();
                     if (false === (bool) preg_match("/\/$udi$/", $distributionUrl[0])) {
                         ${$errorArray}[] = 'UDI does not match distribution URL.';
                     }
@@ -412,16 +428,6 @@ class MdAppController extends UIController
                         $entityHandler->create($metadata);
                     }
 
-                    // If there is a geometry, figure out envelope and bounding box array.
-                    $boundingBoxArray = array();
-                    if (null !== $metadata->getGeometry()) {
-                        $geoUtil = $this->get('pelagos.util.geometry');
-                        //$geometry = $geoUtil->convertGmlToWkt($metadata->getGeometry());
-                        $geometry = $metadata->getGeometry();
-                        $gml = $metadata->extractBoundingPolygonGML($metadata->getXml())[0];
-                        $envelopeWkt = $geoUtil->calculateEnvelopeFromGml($gml);
-                        $boundingBoxArray = $geoUtil->calculateGeographicBoundsFromGml($gml);
-                    }
 
                     if ($data['overrideDatestamp'] == true) {
                         $metadata->updateXmlTimeStamp();
@@ -439,8 +445,6 @@ class MdAppController extends UIController
                     $entityHandler->update($dataset);
 
                     $message = 'Metadata bas been successfully uploaded.';
-                } else {
-                    $message = 'Metadata was not uploaded due to errors as described.';
                 }
             }
         }
@@ -455,8 +459,47 @@ class MdAppController extends UIController
                 'geometryWkt' => $geometry,
                 'envelopeWkt' => $envelopeWkt,
                 'message' => $message,
+                'udi' => $udi,
             )
         );
 
     }
+
+    protected function isAnUdiInFilename($filename)
+    {
+        $hasUdi = false;
+        if (1 === preg_match('/[A-Z]\d\.x\d{3}\.\d{3}-\d{4}/i', $filename)) {
+            $hasUdi = true;
+        }
+        return $hasUdi;
+    }
+
+    protected function checkFilenameFormat($filename)
+    {
+        if (1 === preg_match('/[A-Z]\d\.x\d{3}\.\d{3}-\d{4}-metadata.xml$/', $filename)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    protected function getUdiFromFilename($filename)
+    {
+        $udi = preg_replace('/-metadata.xml$/', '', $filename);
+        return $udi;
+    }
+
+    protected function getDataset($entityHandler, $udi)
+    {
+        $datasets = $entityHandler->getBy(Dataset::class, array('udi' => $udi));
+        if (0 == count($datasets)) {
+            $dataset = null;
+        } elseif (1 > count($datasets)) {
+            throw new \Exception("More than one dataset found with udi:$udi!");
+        } else {
+            $dataset = $datasets[0];
+        }
+        return $dataset;
+    }
+
 }

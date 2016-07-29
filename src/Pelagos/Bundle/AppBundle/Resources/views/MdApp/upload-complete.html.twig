@@ -69,8 +69,12 @@
     </p>
     <p>
         <ul>
-            <li> Dataset ID: <a href='{{ path('pelagos_app_ui_dataland_default', { 'udi': dataset.udi|default } ) }}' target='0'>{{ dataset.id|default }} ({{ dataset.udi|default }})</a></li>
-            <li> Uploaded filename: {{ orig_filename }}</li>
+            {% if udi %}
+                <li> Dataset ID: <a href='{{ path('pelagos_app_ui_dataland_default', { 'udi': udi|default } ) }}' target='0'>{{ dataset.id|default }} ({{ udi|default }})</a></li>
+            {% else %}
+                <li> Dataset ID: Unable to determine.</li>
+            {% endif %}
+            <li> Given Filename: {{ orig_filename }}</li>
             <li> Geometry Detected: {% if dataset.metadata.geometry|default %}Yes{% else %}No{% endif %}</li>
             <li> Geometry Status: {% if errors|length == 0 %}Verified by PostGIS as OK{% else %}Geometry not valid per PostGIS.{% endif %} </li>
         </ul>
