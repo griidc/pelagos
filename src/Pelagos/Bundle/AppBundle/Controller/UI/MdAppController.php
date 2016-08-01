@@ -454,6 +454,7 @@ class MdAppController extends UIController
             // Get or create new Metadata.
             if ($dataset->getMetadata() instanceof Metadata) {
                 $metadata = $dataset->getMetadata();
+                $metadata->setXml($xml->asXML());
             } else {
                 $metadata = new Metadata($dataset, $xml->asXML());
                 $this->entityHandler->create($metadata);
@@ -503,9 +504,15 @@ class MdAppController extends UIController
      *
      * @return void
      */
-    private function xmlChecks($xml, array &$data, array &$errors, array &$warnings, &$originalFileName, &$udi, &$schemaValidated)
-    {
-
+    private function xmlChecks(
+        $xml,
+        array &$data,
+        array &$errors,
+        array &$warnings,
+        &$originalFileName,
+        &$udi,
+        &$schemaValidated
+    ) {
         if ($data['validateSchema'] == true) {
             // put schema errors into error array as hard errors
             $metadataUtil = $this->get('pelagos.util.metadata');
@@ -596,7 +603,5 @@ class MdAppController extends UIController
         } else {
             $warnings[] = 'Distribution URL does not exist';
         }
-
-        return;
     }
 }
