@@ -419,7 +419,7 @@ class MdAppController extends UIController
         }
 
         // Attempt to parse uploaded file.
-        libxml_use_internal_errors(true); // enables capture of error information
+        libxml_use_internal_errors(true);
         $testDoc = new \DomDocument('1.0', 'UTF-8');
         $tmpp = @$testDoc->load($file->getPathname());
         if (!$tmpp) {
