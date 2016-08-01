@@ -445,9 +445,9 @@ class MdAppController extends UIController
         }
 
         // Seems OK to validate.
-        $isoValid = false;
+        $schemaValidated = false;
         if ($parsable) {
-            $this->xmlChecks($xml, $data, $errors, $warnings, $originalFileName, $udi, $isoValid);
+            $this->xmlChecks($xml, $data, $errors, $warnings, $originalFileName, $udi, $schemaValidated);
         }
 
         if (count($errors) === 0) {
@@ -486,23 +486,24 @@ class MdAppController extends UIController
             'envelopeWkt' => $envelopeWkt,
             'message' => $message,
             'udi' => $udi,
-            'isoValid' => $isoValid,
+            'isoValid' => $schemaValidated,
         );
     }
 
     /**
      * Runs some common xml checks.
      *
-     * @param string $xml              The XML to be checked.
-     * @param array  $data             Form data array.
-     * @param array  $errors           Errors array.
-     * @param array  $warnings         Warning array.
-     * @param string $originalFileName The original filename.
-     * @param string $udi              The UDI that goes with XML filename.
+     * @param string  $xml              The XML to be checked.
+     * @param array   $data             Form data array.
+     * @param array   $errors           Errors array.
+     * @param array   $warnings         Warning array.
+     * @param string  $originalFileName The original filename.
+     * @param string  $udi              The UDI that goes with XML filename.
+     * @param boolean $schemaValidated  Flag whether XML is schema validated.
      *
      * @return void
      */
-    private function xmlChecks($xml, array &$data, array &$errors, array &$warnings, &$originalFileName, &$udi, &$isoValid)
+    private function xmlChecks($xml, array &$data, array &$errors, array &$warnings, &$originalFileName, &$udi, &$schemaValidated)
     {
 
         if ($data['validateSchema'] == true) {
@@ -512,7 +513,7 @@ class MdAppController extends UIController
             $errors = array_merge($errors, $analysis['errors']);
             $warnings = array_merge($warnings, $analysis['warnings']);
             if (count($analysis['errors']) === 0) {
-                $isoValid = true;
+                $schemaValidated = true;
             }
         } else {
             // just warn of schema errors by putting into warning array
@@ -521,7 +522,7 @@ class MdAppController extends UIController
             $warnings = array_merge($warnings, $analysis['errors']);
             $warnings = array_merge($warnings, $analysis['warnings']);
             if (count($analysis['errors']) === 0) {
-                $isoValid = true;
+                $schemaValidated = true;
             }
         }
 
