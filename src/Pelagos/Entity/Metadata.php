@@ -514,23 +514,30 @@ class Metadata extends Entity
      */
     public function addBoundingBoxToXml(array $boundingBox)
     {
+        $westBoundLongitude = $boundingBox['westBoundLongitude'];
+        $eastBoundLongitude = $boundingBox['eastBoundLongitude'];
+        $southBoundLatitude = $boundingBox['southBoundLatitude'];
+        $northBoundLatitude = $boundingBox['northBoundLatitude'];
+
         $envelope
-            = '<gmd:geographicElement>' .
-            '   <gmd:EX_GeographicBoundingBox>' .
-            '       <gmd:westBoundLongitude>' .
-            '           <gco:Decimal>' . $boundingBox['westBoundLongitude'] . '</gco:Decimal>' .
-            '       </gmd:westBoundLongitude>' .
-            '       <gmd:eastBoundLongitude>' .
-            '           <gco:Decimal>' . $boundingBox['eastBoundLongitude'] . '</gco:Decimal>' .
-            '       </gmd:eastBoundLongitude>' .
-            '       <gmd:southBoundLatitude>' .
-            '           <gco:Decimal>' . $boundingBox['southBoundLatitude'] . '</gco:Decimal>' .
-            '       </gmd:southBoundLatitude>' .
-            '       <gmd:northBoundLatitude>' .
-            '           <gco:Decimal>' . $boundingBox['northBoundLatitude'] . '</gco:Decimal>' .
-            '       </gmd:northBoundLatitude>' .
-            '   </gmd:EX_GeographicBoundingBox>' .
-            '</gmd:geographicElement>';
+            = <<<EOF
+<gmd:geographicElement>
+                       <gmd:EX_GeographicBoundingBox>
+                           <gmd:westBoundLongitude>
+                               <gco:Decimal>$westBoundLongitude</gco:Decimal>
+                           </gmd:westBoundLongitude>
+                           <gmd:eastBoundLongitude>
+                               <gco:Decimal>$eastBoundLongitude</gco:Decimal>
+                           </gmd:eastBoundLongitude>
+                           <gmd:southBoundLatitude>
+                               <gco:Decimal>$southBoundLatitude</gco:Decimal>
+                           </gmd:southBoundLatitude>
+                           <gmd:northBoundLatitude>
+                               <gco:Decimal>$northBoundLatitude</gco:Decimal>
+                           </gmd:northBoundLatitude>
+                       </gmd:EX_GeographicBoundingBox>
+                    </gmd:geographicElement>
+EOF;
 
         $doc = new \DOMDocument('1.0', 'utf-8');
         $doc->loadXML($this->xml->asXML());
