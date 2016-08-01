@@ -419,12 +419,15 @@ class MdAppController extends UIController
         }
 
         // Attempt to parse uploaded file.
-        $parsable = true;
-        try {
-            $xml = simplexml_load_file($file->getPathname());
-        } catch (\Exception $e) {
+        libxml_use_internal_errors(true); // enables capture of error information
+        $testDoc = new \DomDocument('1.0', 'UTF-8');
+        $tmpp = @$testDoc->load($file->getPathname());
+        if (!$tmpp) {
             $errors[] = 'Not a parsable XML file!';
             $parsable = false;
+        } else {
+            $parsable = true;
+            $xml = simplexml_load_file($file->getPathname());
         }
 
         $message = 'Metadata was not uploaded due to errors as described.';
