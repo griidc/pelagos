@@ -76,7 +76,9 @@
             {% endif %}
             <li> Given Filename: {{ orig_filename }}</li>
             <li> Geometry Detected: {% if geometryWkt|default %}Yes{% else %}No{% endif %}</li>
-            <li> Geometry Status: {% if errors|length == 0 %}Verified by PostGIS as OK{% else %}Geometry not valid per PostGIS.{% endif %} </li>
+            {% if geometryWkt|default %}
+            <li> Geometry Status: {% if isoValid == true %}Verified by PostGIS as OK{% else %}Geometry not valid per PostGIS.{% endif %} </li>
+            {% endif %}
         </ul>
     </p>
 {% endblock %}

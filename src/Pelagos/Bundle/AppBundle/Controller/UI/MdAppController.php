@@ -345,9 +345,13 @@ class MdAppController extends UIController
      */
     private function getUdiFromFilename($filename)
     {
-        $udi = preg_replace('/-metadata.xml$/', '', $filename);
-        $udi = preg_replace('/-/', ':', $udi);
-        return $udi;
+        $matches = array();
+        $hasUdi = preg_match('/^.*([A-Z]\d\.x\d{3}\.\d{3}-\d{4}).*$/', $filename, $matches);
+        if ($hasUdi === 1) {
+            return preg_replace('/-/', ':', $matches[1]);
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -393,17 +397,19 @@ class MdAppController extends UIController
         $geometry = null;
         $envelopeWkt = null;
         $boundingBoxArray = null;
+        $okToValidate = true;
 
         // Check to see if filename is in correct format.
-        // If so, get UDI from it.
         if ($this->checkFilenameFormat($originalFileName)) {
-            if ($this->isAnUdiInFilename($originalFileName)) {
-                $udi = $this->getUdiFromFilename($originalFileName);
-            } else {
-                $errors[] = 'UDI not detected in filename!';
-            }
         } else {
             $errors[] = "Bad filename $originalFileName. Filename must be in the form of UDI-metadata.xml.";
+        }
+
+        // Attempt to get UDI from filename.
+        if ($this->isAnUdiInFilename($originalFileName)) {
+            $udi = $this->getUdiFromFilename($originalFileName);
+        } else {
+            $errors[] = 'UDI not detected in filename!';
         }
 
         // Attempt to query model for Dataset.
@@ -435,48 +441,40 @@ class MdAppController extends UIController
                 $geometry = $geoUtil->convertGmlToWkt($gml);
                 $envelopeWkt = $geoUtil->calculateEnvelopeFromGml($gml);
                 $boundingBoxArray = $geoUtil->calculateGeographicBoundsFromGml($gml);
-                print "HERE";
             }
         }
 
         // Seems OK to validate.
-        if ((count($errors) === 0)
-            or ((count($errors) === 1)
-                and ($errors[0] == 'UDI not detected in filename!')
-            )
-            or ((count($errors) === 1)
-                and ($errors[0] == "Dataset with udi:$udi not found!")
-            )
-        ) {
+        $isoValid = false;
+        if ($parsable) {
+            $this->xmlChecks($xml, $data, $errors, $warnings, $originalFileName, $udi, $isoValid);
+        }
 
-            $this->xmlChecks($xml, $data, $errors, $warnings, $originalFileName, $udi);
-
-            //var_dump($errors); var_dump($warnings); die();
-            if (count($errors) === 0) {
-                // Get or create new Metadata.
-                if ($dataset->getMetadata() instanceof Metadata) {
-                    $metadata = $dataset->getMetadata();
-                } else {
-                    $metadata = new Metadata($dataset, $xml->asXML());
-                    $this->entityHandler->create($metadata);
-                }
-
-                if ($data['overrideDatestamp'] == true) {
-                    $metadata->updateXmlTimeStamp();
-                }
-
-                if (null !== $metadata->getGeometry()) {
-                    $metadata->addBoundingBoxToXml($boundingBoxArray);
-                }
-
-                if (true == $data['acceptMetadata']) {
-                    $dataset->setMetadataStatus(DatasetSubmission::METADATA_STATUS_ACCEPTED);
-                }
-
-                $this->entityHandler->update($metadata);
-                $this->entityHandler->update($dataset);
-                $message = 'Metadata bas been successfully uploaded.';
+        if (count($errors) === 0) {
+            // Get or create new Metadata.
+            if ($dataset->getMetadata() instanceof Metadata) {
+                $metadata = $dataset->getMetadata();
+            } else {
+                $metadata = new Metadata($dataset, $xml->asXML());
+                $this->entityHandler->create($metadata);
             }
+
+            if ($data['overrideDatestamp'] == true) {
+                $metadata->updateXmlTimeStamp();
+            }
+
+            // Only do this if we have identified a geometry in the file.
+            if (null !== $geometry) {
+                $metadata->addBoundingBoxToXml($boundingBoxArray);
+            }
+
+            if (true == $data['acceptMetadata']) {
+                $dataset->setMetadataStatus(DatasetSubmission::METADATA_STATUS_ACCEPTED);
+            }
+
+            $this->entityHandler->update($metadata);
+            $this->entityHandler->update($dataset);
+            $message = 'Metadata bas been successfully uploaded.';
         }
 
         return array(
@@ -488,6 +486,7 @@ class MdAppController extends UIController
             'envelopeWkt' => $envelopeWkt,
             'message' => $message,
             'udi' => $udi,
+            'isoValid' => $isoValid,
         );
     }
 
@@ -503,14 +502,27 @@ class MdAppController extends UIController
      *
      * @return void
      */
-    private function xmlChecks($xml, array &$data, array &$errors, array &$warnings, &$originalFileName, &$udi)
+    private function xmlChecks($xml, array &$data, array &$errors, array &$warnings, &$originalFileName, &$udi, &$isoValid)
     {
 
         if ($data['validateSchema'] == true) {
+            // put schema errors into error array as hard errors
             $metadataUtil = $this->get('pelagos.util.metadata');
             $analysis = $metadataUtil->validateIso($xml->asXML());
             $errors = array_merge($errors, $analysis['errors']);
             $warnings = array_merge($warnings, $analysis['warnings']);
+            if (count($analysis['errors']) === 0) {
+                $isoValid = true;
+            }
+        } else {
+            // just warn of schema errors by putting into warning array
+            $metadataUtil = $this->get('pelagos.util.metadata');
+            $analysis = $metadataUtil->validateIso($xml->asXML());
+            $warnings = array_merge($warnings, $analysis['errors']);
+            $warnings = array_merge($warnings, $analysis['warnings']);
+            if (count($analysis['errors']) === 0) {
+                $isoValid = true;
+            }
         }
 
         if ($data['test1'] == true) {
