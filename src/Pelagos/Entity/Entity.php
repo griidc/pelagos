@@ -112,7 +112,7 @@ abstract class Entity
     public function setId($id = null)
     {
         // Must be an integer or null.
-        if (null !== $id and 'integer' !== gettype($id)) {
+        if (null !== $id and !is_numeric($id)) {
             throw new \InvalidArgumentException('id must be an integer or null');
         }
         // Can only change from or to null.
