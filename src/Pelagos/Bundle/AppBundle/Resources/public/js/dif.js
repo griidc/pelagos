@@ -917,7 +917,7 @@ function fillForm(Form, UDI, ID)
             url: url,
             type: "GET",
             datatype: "JSON",
-            data: {"id":ID},
+            data: {"id":ID, "_properties":"dataset.researchGroup"}
         }).done(function(json) {
             difValidator.resetForm();
             if (json.length == 1) {
