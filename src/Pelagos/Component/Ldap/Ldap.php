@@ -93,7 +93,6 @@ class Ldap
             'dn' => 'uid=' . $uid . ',' . $this->peopleOu,
             'entry' => array(
                 'uid' => $uid,
-                'userPassword' => $person->getAccount()->getPasswordEntity()->getClearTextPassword(),
                 'cn' => $person->getFirstName() . ' ' . $person->getLastName(),
                 'objectClass' => array(
                     'top',
@@ -103,6 +102,10 @@ class Ldap
                 ),
             ),
         );
+
+        if ($person->getAccount()->getPasswordEntity()->getClearTextPassword() != null) {
+            $ldapPerson['entry']['userPassword'] = $person->getAccount()->getPasswordEntity()->getClearTextPassword();
+        }
 
         $accessor = PropertyAccess::createPropertyAccessor();
 
