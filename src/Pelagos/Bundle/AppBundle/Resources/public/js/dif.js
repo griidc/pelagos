@@ -937,6 +937,14 @@ function fillForm(Form, UDI, ID)
                 var secondaryPointOfContact = json.secondaryPointOfContact.id
             }
 
+            if (json.estimatedStartDate != null) {
+                json.estimatedStartDate = json.estimatedStartDate.date.match(/[^\s]*/)[0];
+            }
+
+            if (json.estimatedEndDate != null) {
+                json.estimatedEndDate = json.estimatedEndDate.date.match(/[^\s]*/)[0];
+            }
+
             loadPOCs(json.dataset.researchGroup.id, primaryPointOfContact, secondaryPointOfContact);
             $.each(json, function(name,value) {
                 var element = $("[name="+name+"]");
