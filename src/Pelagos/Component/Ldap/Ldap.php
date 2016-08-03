@@ -119,7 +119,7 @@ class Ldap
         );
 
         if ($person->getAccount()->getPasswordEntity()->getClearTextPassword() != null) {
-            $ldapPerson['userPassword'] = $person->getAccount()->getPasswordEntity()->getClearTextPassword();
+            $ldapPerson['entry']['userPassword'] = $person->getAccount()->getPasswordEntity()->getClearTextPassword();
         }
 
         $accessor = PropertyAccess::createPropertyAccessor();
