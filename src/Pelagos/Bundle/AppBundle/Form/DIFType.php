@@ -265,7 +265,10 @@ class DIFType extends AbstractType
     public function onPreSetData(FormEvent $event)
     {
         $researchGroups = array();
-        $allResearchGroups = $this->entityManager->getRepository(ResearchGroup::class)->findAll();
+        $allResearchGroups = $this->entityManager->getRepository(ResearchGroup::class)->findBy(
+            array(),
+            array('name' => 'ASC')
+        );
         foreach ($allResearchGroups as $researchGroup) {
             if ($this->authorizationChecker->isGranted(ResearchGroupVoter::CAN_CREATE_DIF_FOR, $researchGroup)) {
                 $researchGroups[] = $researchGroup;
