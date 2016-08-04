@@ -56,7 +56,6 @@
         <li style="text-align:center"><a href="#accepted" onClick="clearStatusMessages()" >Accepted ({{ m_dataset.accepted|length }})</a></li>
         <li style="text-align:center"><a href="#backtosubmitter" onClick="clearStatusMessages()" >Bk to Sub ({{ m_dataset.backtosubmitter|length }})</a></li>
         <li style="text-align:center"><a href="#uploadnewmetadata" onClick="clearStatusMessages()">Upload New Metadata</a></li>
-        <li style="text-align:center"><a href="#GeoTester">Test a Geometry</a></li>
     </ul>
   </div>
 
@@ -244,14 +243,6 @@
                 </form>
             </div>
         </div>
-        <div id="GeoTester">
-            <form action="/TestGeometry" method="POST">
-            Polygon as (latitude,longitude) tuples separated by single space, no line breaks, clockwise, first point repeated as last point<br />
-            <textarea name="testPolygon" style="width:100%" rows="4" id="testGeometry">{{testPolygon|default}}</textarea><br />
-            <input type="submit" value="Test This Geometry" />&nbsp; <button type="button" onClick="clearTestGeometry()">Clear This Geometery</button>
-            </form>
-        </div>
-
 </div>
 <div id='log'>
     <div id="log_close">
