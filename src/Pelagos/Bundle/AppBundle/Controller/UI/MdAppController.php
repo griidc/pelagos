@@ -479,7 +479,7 @@ class MdAppController extends UIController
 
             $this->entityHandler->update($metadata);
             $this->entityHandler->update($dataset);
-            $message = 'Metadata bas been successfully uploaded.';
+            $message = 'Metadata has been successfully uploaded.';
 
             $loginfo = $this->getUser()->getUsername() . ' successfully uploaded metadata for ' . $udi;
             if (true == $data['acceptMetadata']) {
