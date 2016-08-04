@@ -388,6 +388,7 @@ class MdAppController extends UIController
         $data = $form->getData();
         $file = $data['newMetadataFile'];
         $originalFileName = $file->getClientOriginalName();
+        $mdappLogger = $this->get('pelagos.util.mdapplogger');
 
         $errors = array();
         $warnings = array();
@@ -479,6 +480,13 @@ class MdAppController extends UIController
             $this->entityHandler->update($metadata);
             $this->entityHandler->update($dataset);
             $message = 'Metadata bas been successfully uploaded.';
+
+            $loginfo = $this->getUser()->getUsername() . ' successfully uploaded metadata for ' . $udi;
+            if (true == $data['acceptMetadata']) {
+                $loginfo .= ' and data was flagged as accepted';
+            }
+            $loginfo .= '.';
+            $mdappLogger->writeLog($loginfo);
         }
 
         return array(
