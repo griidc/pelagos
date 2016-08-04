@@ -201,6 +201,7 @@ class DatasetSubmissionConsumer implements ConsumerInterface
         }
         // Log processing complete.
         $this->logger->info('Metadata file processing complete', $loggingContext);
+        $this->mdappLogger->writeLog(" $datasetId: Metadata file processing complete.");
         // Dispatch entity event.
         $this->entityEventDispatcher->dispatch($datasetSubmission, 'metadata_processed');
     }
