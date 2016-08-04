@@ -46,8 +46,8 @@ select, input{
    height: 20px;
 }
 
-#orgdetails .entityForm input[type="text"],
-#orgdetails .entityForm textarea {
+.entityForm input[type="text"],
+.entityForm textarea {
     width:100%;
 }
 
