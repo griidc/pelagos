@@ -329,7 +329,7 @@ class MdAppController extends UIController
      */
     private function checkFilenameFormat($filename)
     {
-        if (1 === preg_match('/[A-Z\d]{2}\.x\d{3}\.\d{3}-\d{4}-metadata.xml/', $filename)) {
+        if (1 === preg_match('/^[A-Z\d]{2}\.x\d{3}\.\d{3}-\d{4}-metadata.xml/', $filename)) {
             return true;
         } else {
             return false;
