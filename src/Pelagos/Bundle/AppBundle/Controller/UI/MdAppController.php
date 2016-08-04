@@ -492,7 +492,7 @@ class MdAppController extends UIController
             $errStr = implode(', ', $errors);
             $mdappLogger->writeLog('Failed upload attempt on: '
                 . $udi
-                . 'by: '
+                . ' by: '
                 . $this->getUser()->getUsername()
                 . ' Reason: '
                 . $errStr);
