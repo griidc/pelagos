@@ -314,7 +314,7 @@ class MdAppController extends UIController
     private function isAnUdiInFilename($filename)
     {
         $hasUdi = false;
-        if (1 === preg_match('/[A-Z]\d\.x\d{3}\.\d{3}-\d{4}/i', $filename)) {
+        if (1 === preg_match('/[A-Z\d]{2}\.x\d{3}\.\d{3}-\d{4}/i', $filename)) {
             $hasUdi = true;
         }
         return $hasUdi;
@@ -329,7 +329,7 @@ class MdAppController extends UIController
      */
     private function checkFilenameFormat($filename)
     {
-        if (1 === preg_match('/[A-Z]\d\.x\d{3}\.\d{3}-\d{4}-metadata.xml$/', $filename)) {
+        if (1 === preg_match('/[A-Z\d]{2}\.x\d{3}\.\d{3}-\d{4}-metadata.xml/', $filename)) {
             return true;
         } else {
             return false;
@@ -346,7 +346,7 @@ class MdAppController extends UIController
     private function getUdiFromFilename($filename)
     {
         $matches = array();
-        $hasUdi = preg_match('/^.*([A-Z]\d\.x\d{3}\.\d{3}-\d{4}).*$/', $filename, $matches);
+        $hasUdi = preg_match('/^.*([A-Z\d]{2}\.x\d{3}\.\d{3}-\d{4}).*$/', $filename, $matches);
         if ($hasUdi === 1) {
             return preg_replace('/-/', ':', $matches[1]);
         } else {
