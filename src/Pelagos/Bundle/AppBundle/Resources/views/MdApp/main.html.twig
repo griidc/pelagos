@@ -70,7 +70,6 @@
                         <th><div class="title">UDI</div></th>
                         <th><div class="title">Jira Link</div></th>
                         <th><div class="title">Action</div></th>
-                        <th><div class="title">Approval</div></th>
                         <th><div class="title">Timestamp</div></th>
                         <th><div class="title">Filename</div></th>
                     </tr>
@@ -80,7 +79,6 @@
                         <th><div class="title">UDI</div></th>
                         <th><div class="title">Jira Link</div></th>
                         <th><div class="title">Action</div></th>
-                        <th><div class="title">Approval</div></th>
                         <th><div class="title">Timestamp</div></th>
                         <th><div class="title">Filename</div></th>
                     </tr>
@@ -149,28 +147,6 @@
                             </select>
                             <input type="submit" value="->" id="state_sel_sub_{{dta.udi}}">
                             </form>
-                            </td>
-                            <td>
-                                <form name="setApprovalForm" action="/change_appr_status/{{dta.udi}}" method="post">
-                                    <select name="approval" id="appr_sel_{{dta.udi}}">
-                                        {% if dta.approval|default == 'Approved' %}
-                                        <option value='Approved' SELECTED>Approved</option>
-                                        <option value='NotRequired'>Not Required</option>
-                                        <option value='ApprovalRequired'>Apr Required</option>
-                                        {% elseif dta.approval|default == 'NotRequired' %}
-                                        <option value='Approved'>Approved</option>
-                                        <option value='NotRequired' SELECTED>Not Required</option>
-                                        <option value='ApprovalRequired'>Apr Required</option>
-                                        {% elseif  dta.approval|default == 'ApprovalRequired' %}
-                                        <option value='Approved'>Approved</option>
-                                        <option value='NotRequired'>Not Required</option>
-                                        <option value='ApprovalRequired' SELECTED>Apr Required</option>
-                                        {% else %}
-                                        <option value=''>Error</option>
-                                        {% endif %}
-                                    </select>
-                                    <input type="submit" value="->" id="appr_sel_sub_{{dta.udi}}">
-                                </form>
                             </td>
                             <td valign="top">{{ dta.datasetSubmission.creationTimeStamp | date("c") }}</td>
                             <td valign="top">
