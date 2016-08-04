@@ -487,6 +487,10 @@ class MdAppController extends UIController
             }
             $loginfo .= '.';
             $mdappLogger->writeLog($loginfo);
+        } else {
+            // Log why the upload failed.
+            $errStr = implode(', ', $errors);
+            $mdappLogger->writeLog($this->getUser()->getUsername() . ' ' . $errStr);
         }
 
         return array(
