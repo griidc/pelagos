@@ -184,7 +184,7 @@ class FundingCycle extends Entity
      * @ORM\Column(nullable=true)
      *
      * @Assert\Regex(
-     *      pattern="/[A-Z\d]{2}/",
+     *      pattern="/^[A-Z\d]{2}$/",
      *      message="Funding Cycle prefix must be composed of 2 uppercase characters or numbers."
      * )
      */
