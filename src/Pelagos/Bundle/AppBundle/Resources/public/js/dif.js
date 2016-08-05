@@ -818,7 +818,7 @@ function loadPOCs(researchGroup,ppoc,spoc)
         url: url,
         type: "GET",
         datatype: "JSON",
-        data: {"researchGroup":researchGroup, "_properties": "person"}
+        data: {"researchGroup":researchGroup, "_properties": "person", "_orderBy":"person.lastName"}
     }).done(function(json) {
             if (json.length>0)
             {
@@ -827,7 +827,6 @@ function loadPOCs(researchGroup,ppoc,spoc)
                 selectelement = $('[name="primaryPointOfContact"],[name="secondaryPointOfContact"]');
                 selectelement.find("option").remove().end().append('<option value="">[PLEASE SELECT A CONTACT]</option>').val("");
                 $.each(json, function(id, personResearchGroup) {
-                    json.sort(personResearchGroup);
                     selectelement.append(new Option(
                         personResearchGroup.person.lastName
                             + ", "
