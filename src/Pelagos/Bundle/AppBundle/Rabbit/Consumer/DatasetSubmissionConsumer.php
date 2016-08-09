@@ -16,6 +16,7 @@ use Pelagos\Entity\DatasetSubmission;
 use Pelagos\Event\EntityEventDispatcher;
 
 use Pelagos\Util\DataStore;
+use Pelagos\Util\MdappLogger;
 
 /**
  * A consumer of dataset submission messages.
@@ -46,6 +47,13 @@ class DatasetSubmissionConsumer implements ConsumerInterface
     protected $logger;
 
     /**
+     * A MDAPP logger.
+     *
+     * @var MdappLogger
+     */
+    protected $mdappLogger;
+
+    /**
      * The entity event dispatcher.
      *
      * @var EntityEventDispatcher
@@ -59,17 +67,20 @@ class DatasetSubmissionConsumer implements ConsumerInterface
      * @param DataStore             $dataStore             The data store service.
      * @param Logger                $logger                A Monolog logger.
      * @param EntityEventDispatcher $entityEventDispatcher The entity event dispatcher.
+     * @param MdappLogger           $mdappLogger           A MDAPP logger.
      */
     public function __construct(
         EntityManager $entityManager,
         DataStore $dataStore,
         Logger $logger,
-        EntityEventDispatcher $entityEventDispatcher
+        EntityEventDispatcher $entityEventDispatcher,
+        MdappLogger $mdappLogger
     ) {
         $this->entityManager = $entityManager;
         $this->dataStore = $dataStore;
         $this->logger = $logger;
         $this->entityEventDispatcher = $entityEventDispatcher;
+        $this->mdappLogger = $mdappLogger;
     }
 
     /**
@@ -190,6 +201,7 @@ class DatasetSubmissionConsumer implements ConsumerInterface
         }
         // Log processing complete.
         $this->logger->info('Metadata file processing complete', $loggingContext);
+        $this->mdappLogger->writeLog(" $datasetId: Metadata file processing complete.");
         // Dispatch entity event.
         $this->entityEventDispatcher->dispatch($datasetSubmission, 'metadata_processed');
     }

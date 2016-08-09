@@ -57,13 +57,13 @@ services:
 
     pelagos.rabbit.consumer.dataset_submission.filer:
         class: Pelagos\Bundle\AppBundle\Rabbit\Consumer\DatasetSubmissionConsumer
-        arguments: ["@doctrine.orm.entity_manager", "@pelagos.util.data_store", "@logger", "@pelagos.event.entity_event_dispatcher"]
+        arguments: ["@doctrine.orm.entity_manager", "@pelagos.util.data_store", "@logger", "@pelagos.event.entity_event_dispatcher", "@pelagos.util.mdapplogger"]
         tags:
             - { name: monolog.logger, channel: filer }
 
     pelagos.rabbit.consumer.dataset_submission.retriever:
         class: Pelagos\Bundle\AppBundle\Rabbit\Consumer\DatasetSubmissionConsumer
-        arguments: ["@doctrine.orm.entity_manager", "@pelagos.util.data_store", "@logger", "@pelagos.event.entity_event_dispatcher"]
+        arguments: ["@doctrine.orm.entity_manager", "@pelagos.util.data_store", "@logger", "@pelagos.event.entity_event_dispatcher", "@pelagos.util.mdapplogger"]
         tags:
             - { name: monolog.logger, channel: retriever }
 
